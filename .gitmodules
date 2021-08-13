@@ -1,14 +1,14 @@
 [submodule "molecular-dynamics"]
-	path = molecular-dynamics
+	path = MolecularDynamics
 	url = git@bitbucket.org:jstreibel/molecular-dynamics.git
 [submodule "core-fields"]
-	path = core-fields
+	path = CoreFields
 	url = git@bitbucket.org:jstreibel/core-fields.git
 [submodule "fields-tools"]
-	path = fields-tools
+	path = FieldsTools
 	url = git@bitbucket.org:jstreibel/fields-tools.git
 [submodule "ising"]
-	path = ising
+	path = Ising
 	url = git@bitbucket.org:jstreibel/ising.git
 [submodule "StudiesOpenGL"]
 	path = StudiesOpenGL
