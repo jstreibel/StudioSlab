@@ -1,0 +1,9 @@
+[submodule "molecular-dynamics"]
+	path = molecular-dynamics
+	url = git@bitbucket.org:jstreibel/molecular-dynamics.git
+[submodule "core-fields"]
+	path = core-fields
+	url = git@bitbucket.org:jstreibel/core-fields.git
+[submodule "fields-tools"]
+	path = fields-tools
+	url = git@bitbucket.org:jstreibel/fields-tools.git
