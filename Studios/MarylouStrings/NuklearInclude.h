@@ -1,0 +1,24 @@
+//
+// Created by joao on 25/06/2021.
+//
+
+#ifndef MARYLOUSTRINGS_NUKLEARINCLUDE_H
+#define MARYLOUSTRINGS_NUKLEARINCLUDE_H
+
+
+#include <cstdint>
+
+
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_STANDARD_VARARGS
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+
+
+#include "../lib/nuklear.h"
+#include "../lib/nuklear_sfml.hpp"
+
+#endif //MARYLOUSTRINGS_NUKLEARINCLUDE_H

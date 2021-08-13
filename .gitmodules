@@ -7,3 +7,12 @@
 [submodule "fields-tools"]
 	path = fields-tools
 	url = git@bitbucket.org:jstreibel/fields-tools.git
+[submodule "ising"]
+	path = ising
+	url = git@bitbucket.org:jstreibel/ising.git
+[submodule "StudiesOpenGL"]
+	path = StudiesOpenGL
+	url = git@bitbucket.org:jstreibel/openglstudies.git
+[submodule "lib-studios"]
+	path = lib-studios
+	url = git@bitbucket.org:jstreibel/lib-studios.git
