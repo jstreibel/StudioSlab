@@ -3,7 +3,7 @@
 //
 
 #include "NuklearInclude.h"
-#include "../lib/sfml-utils/Graph.h"
+#include "sfml-utils/Graph.h"
 
 #include "Integrator.h"
 

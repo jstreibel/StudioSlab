@@ -7,7 +7,7 @@
 #include "Integrator.h"
 
 #define NK_INCLUDE_DEFAULT_FONT
-#include "../lib/nuklear.h"
+#include "nuklear.h"
 
 #include <iostream>
 #include <boost/numeric/odeint.hpp>
@@ -67,7 +67,8 @@ int run(Output *output, Real f0, Real dgdx0, Real dhdx0, double start_time, doub
     StringsOfMarylou rs = {beta, alpha_phi};
 
     if(1) {
-        boost::numeric::odeint::integrate(rs, V0, start_time, end_time, dt, OutputHelper(output));
+        auto nSteps = boost::numeric::odeint::integrate(rs, V0, start_time, end_time, dt, OutputHelper(output));
+        return nSteps;
     } else if(1) {
         boost::numeric::odeint::runge_kutta4<Funcs> stepper;
         boost::numeric::odeint::integrate_const( stepper , rs, V0, start_time , end_time , dt );
