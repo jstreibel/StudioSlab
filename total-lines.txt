@@ -1,0 +1,15 @@
+Tue 11 Jun 2019 06:17:57 PM -03 ---- 11894 total lines
+Fri 19 Jul 2019 08:57:48 PM -03 ---- 12805 total lines
+seg ago 5 14:02:07 -03 2019 ---- 14319 total lines
+qui set 19 04:43:18 -03 2019 ---- lines
+qui out 3 15:28:12 -03 2019 ---- 14728 total lines
+sex out 11 20:00:03 -03 2019 ---- 14879 total lines
+seg out 21 13:48:52 -03 2019 ---- 16203 total lines
+seg 08 mar 2021 16:45:19 -03 ---- 16937 total lines
+ter 23 mar 2021 17:16:18 -03 ---- 16925 total lines
+sex 23 abr 2021 15:15:33 -03 ---- 17381 total lines
+dom 25 abr 2021 22:47:25 -03 ---- 17420 total lines
+qua 26 mai 2021 01:36:57 -03 ---- 17573 total lines
+qua 07 jul 2021 19:41:19 -03 ---- 18529 total lines
+seg 02 ago 2021 15:14:25 -03 ---- 39212 total lines
+ter 07 set 2021 11:18:56 -03 ---- lines
