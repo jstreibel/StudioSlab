@@ -14,7 +14,7 @@
 	path = StudiesOpenGL
 	url = git@bitbucket.org:jstreibel/openglstudies.git
 [submodule "lib-studios"]
-	path = lib-studios
+	path = StudiosLib
 	url = git@bitbucket.org:jstreibel/lib-studios.git
 [submodule "GlumpyStudios"]
 	path = GlumpyStudios
