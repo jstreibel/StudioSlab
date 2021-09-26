@@ -22,3 +22,6 @@
 [submodule "pylib"]
 	path = pylib
 	url = git@bitbucket.org:jstreibel/pylib.git
+[submodule "xy"]
+	path = xy
+	url = git@bitbucket.org:jstreibel/xy.git

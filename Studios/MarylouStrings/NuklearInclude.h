@@ -18,7 +18,7 @@
 #define NK_INCLUDE_DEFAULT_FONT
 
 
-#include "nuklear.h"
-#include "nuklear_sfml.hpp"
+#include "Nuklear/nuklear.h"
+#include "Nuklear/nuklear_sfml.hpp"
 
 #endif //MARYLOUSTRINGS_NUKLEARINCLUDE_H

@@ -6,8 +6,8 @@
 
 #include "Integrator.h"
 
-#define NK_INCLUDE_DEFAULT_FONT
-#include "nuklear.h"
+
+#include "Nuklear/nuklear.h"
 
 #include <iostream>
 #include <boost/numeric/odeint.hpp>

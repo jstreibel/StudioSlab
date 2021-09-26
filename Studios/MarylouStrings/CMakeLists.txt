@@ -3,7 +3,7 @@ project(MarylouStrings)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(MY_LIBS_DIR "../../lib-studios")
+set(MY_LIBS_DIR "../../StudiosLib")
 include_directories(${MY_LIBS_DIR})
 
 set(EXTERNAL_SRC
