@@ -7,11 +7,11 @@
 #include "Apps/Simulations/BCInterface.h"
 #include <boost/algorithm/string.hpp>
 
-
-#include "Core/Util/Workaround/StringStream.h"
 #include "CLInterfaceManager.h"
 
 #include "Controller/Interface/InterfaceManager.h"
+
+#include <Util/Workaround/StringStream.h>
 
 
 CLInterfaceSelector::CLInterfaceSelector() : Interface("Available boundary conditions")

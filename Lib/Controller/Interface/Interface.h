@@ -5,8 +5,7 @@
 #ifndef FIELDS_INTERFACE_H
 #define FIELDS_INTERFACE_H
 
-
-#include "ParameterUtils.h"
+#include "ParameterBase.h"
 
 #include <set>
 

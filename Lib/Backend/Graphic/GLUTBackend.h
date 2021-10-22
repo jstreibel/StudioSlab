@@ -1,7 +1,7 @@
 #ifndef GLUTBACKEND_H
 #define GLUTBACKEND_H
 
-#include "View/Graphic/OutputOpenGL.h"
+#include "OpenGLArtistBase.h"
 #include "Lib/Backend/Backend.h"
 
 class GLUTBackend : public Backend
@@ -15,7 +15,7 @@ class GLUTBackend : public Backend
 public:
     static GLUTBackend *GetInstance();
 
-    void setOpenGLOutput(Base::OutputOpenGL *outputOpenGL);
+    void setOpenGLOutput(Base::OpenGLArtistBase *outputOpenGL);
 
 
     void run(Program *) override;

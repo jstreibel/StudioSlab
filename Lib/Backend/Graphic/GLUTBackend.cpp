@@ -1,6 +1,8 @@
 #include "GLUTBackend.h"
+#include "Util/Workaround/StringStream.h"
 
 #include "GL/freeglut.h"
+
 
 GLUTBackend *GLUTBackend::glutBackend = nullptr;
 
@@ -35,7 +37,7 @@ GLUTBackend::GLUTBackend() : Backend(this)
     std::cout << "Initialized GLUTBackend." << std::endl;
 }
 
-void GLUTBackend::setOpenGLOutput(Base::OutputOpenGL *outputOpenGL) {
+void GLUTBackend::setOpenGLOutput(Base::OpenGLArtistBase *outputOpenGL) {
     this->outGL = outputOpenGL;
 
     IntPair size = outGL->getWindowSizeHint();

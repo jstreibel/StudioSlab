@@ -1,6 +1,8 @@
 cmake_minimum_required ( VERSION 3.14 FATAL_ERROR )
 
-include_directories(./)
+include_directories(./ ../)
+
+add_subdirectory(Fields)
 
 set ( BACKEND_SOURCES
 		Backend/Backend.cpp
@@ -24,3 +26,5 @@ set ( APP_SOURCES
 		App/SafetyNet.cpp
 		)
 
+
+add_library(Studios ${BACKEND_SOURCES} ${CONTROLLER_SOURCES} ${APP_SOURCES})

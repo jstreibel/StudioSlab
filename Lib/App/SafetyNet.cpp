@@ -3,7 +3,9 @@
 //
 
 #include "SafetyNet.h"
-#include "Core/Util/Workaround/STDLibInclude.h"
+
+#include <Util/Workaround/STDLibInclude.h>
+#include <boost/program_options.hpp>
 
 
 void showHelp(AppBase &prog){
@@ -12,8 +14,7 @@ void showHelp(AppBase &prog){
 
 
 int SafetyNet::jump(int argc, const char *argv[], AppBase &prog){
-    std::cout << "FP precision " << sizeof(floatt) * 8 << " bits. ";
-    if (GPU_DEBUG) std::cout << "\033[1m\033[93mGPU IS IN DEBUG MODE => NO GPU.\033[0m" << std::endl;
+    // if (GPU_DEBUG) std::cout << "\033[1m\033[93mGPU IS IN DEBUG MODE => NO GPU.\033[0m" << std::endl;
 
     try {
         return prog.run();

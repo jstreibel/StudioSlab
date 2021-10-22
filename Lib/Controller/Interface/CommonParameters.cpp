@@ -2,11 +2,11 @@
 // Created by joao on 7/19/19.
 //
 
-#include <Core/Util/Workaround/StringStream.h>
+#include <Util/Workaround/StringStream.h>
+#include "Util/Workaround/STDLibInclude.h"
+#include "CommonParameters.h"
 
 #include <utility>
-#include "CommonParameters.h"
-#include "Core/Util/Workaround/STDLibInclude.h"
 
 
 auto std::to_string(String str) -> String { return String("\"") + str + String("\""); }

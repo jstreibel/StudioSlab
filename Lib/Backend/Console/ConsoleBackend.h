@@ -1,7 +1,7 @@
 #ifndef CONSOLEBACKEND_H
 #define CONSOLEBACKEND_H
 
-#include "Lib/Backend/Backend.h"
+#include "Backend/Backend.h"
 
 class ConsoleBackend : public Backend
 {

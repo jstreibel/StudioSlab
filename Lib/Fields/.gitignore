@@ -1,0 +1,11 @@
+.ccls-cache
+temp
+*.so 
+*__pycache__* 
+*.cxx 
+*.pyc
+*.ipynb_checkpoints
+sim/cmake-build-debug
+.idea
+cmake-build-debug
+cmake-build-release

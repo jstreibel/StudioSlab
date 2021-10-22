@@ -2,8 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include <Controller/Console/CommandLineInterfaceManager.h>
-#include <Core/Util/Workaround/StringStream.h>
+#include <Util/Workaround/StringStream.h>
 #include "InterfaceManager.h"
 
 InterfaceManager *InterfaceManager::instance = nullptr;

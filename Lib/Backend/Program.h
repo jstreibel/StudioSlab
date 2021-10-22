@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_PROGRAM_H
 #define V_SHAPE_PROGRAM_H
 
-#include <Model/MathTypes.h>
+#include <Util/MathTypes.h>
 
 class Program {
 public:
