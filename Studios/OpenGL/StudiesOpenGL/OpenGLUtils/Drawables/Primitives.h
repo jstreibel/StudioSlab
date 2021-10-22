@@ -1,0 +1,8 @@
+//
+// Created by joao on 29/04/2021.
+//
+
+#ifndef OPENGLSTUDIES_PRIMITIVES_H
+#define OPENGLSTUDIES_PRIMITIVES_H
+
+#endif //OPENGLSTUDIES_PRIMITIVES_H
