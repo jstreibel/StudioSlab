@@ -1,12 +1,8 @@
 #include "input-perturbed.h"
 
-#include "Model/math-util.h"
-#include "Lib/Fields/Maps/RtoR/Model/RtoRFieldState.h"
-#include "Lib/Fields/Maps/RtoR/Model/RtoRBoundaryCondition.h"
-#include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/PerturbedOscillonTimeDerivative.h"
-
-#include "Core/Util/Workaround/StringStream.h"
+#include "../../Model/RtoRBoundaryCondition.h"
+#include "../../Model/FunctionsCollection/NullFunction.h"
+#include "../../Model/FunctionsCollection/PerturbedOscillonTimeDerivative.h"
 
 
 using namespace RtoR;

@@ -3,7 +3,7 @@
 
 #include "View/Base/OutputChannel.h"
 #include "View/Base/OutputHistory.h"
-#include "Backend/Graphic/OpenGLArtistBase.h"
+#include "Studios/Backend/Graphic/OpenGLArtistBase.h"
 
 #include <GL/glut.h>
 // STD includes

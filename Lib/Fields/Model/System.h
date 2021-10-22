@@ -1,7 +1,7 @@
 #ifndef HAMILTON_H
 #define HAMILTON_H
 
-#include "Util/MathTypes.h"
+#include "Studios/Util/MathTypes.h"
 #include "Core/NumericParams.h"
 
 

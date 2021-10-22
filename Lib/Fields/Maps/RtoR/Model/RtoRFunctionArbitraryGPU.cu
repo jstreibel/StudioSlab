@@ -6,7 +6,7 @@
 #include "RtoRFunctionArbitraryGPU.h"
 #include <thrust/iterator/constant_iterator.h>
 
-#include "Model/GPUFriendly.h"
+#include "Studios/Math/GPUFriendly.h"
 #include "Lib/Fields/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
 
 // Created by joao on 17/09/2019.
@@ -68,7 +68,7 @@ Base::FunctionArbitrary<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Func
 FunctionArbitrary &FunctionArbitraryGPU::Laplacian(FunctionArbitrary &outFunc) const {
     if(laplacianType == FunctionArbitrary::LaplacianType::RadialSymmetry2D) throw "GPU RadialSymmetry2D laplacian not implemented.";
 
-    cast(out, FunctionArbitraryGPU&, outFunc);
+    // cast(out, FunctionArbitraryGPU&, outFunc);
 
     auto &outSpace = dynamic_cast<DiscreteSpaceGPU&>(outFunc.getSpace());
 

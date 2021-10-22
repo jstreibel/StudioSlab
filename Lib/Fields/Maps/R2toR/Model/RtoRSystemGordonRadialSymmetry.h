@@ -6,7 +6,7 @@
 #define V_SHAPE_RTORSYSTEMGORDONRADIALSYMMETRY_H
 
 #include <Model/System.h>
-#include <Model/FunctionsBase.h>
+#include <Studios/Math/FunctionsBase.h>
 #include "RtoRSystemGordonRadialSymmetry.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFieldState.h"
 #include "Core/Allocator.h"

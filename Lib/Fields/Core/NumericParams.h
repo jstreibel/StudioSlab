@@ -8,9 +8,9 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include <Controller/Interface/Interface.h>
-#include <Controller/Interface/CommonParameters.h>
-#include <Lib/Util/MathTypes.h>
+#include <Studios/Controller/Interface/Interface.h>
+#include <Studios/Controller/Interface/CommonParameters.h>
+#include <Studios/Util/MathTypes.h>
 
 /* DEFAULTS */
 

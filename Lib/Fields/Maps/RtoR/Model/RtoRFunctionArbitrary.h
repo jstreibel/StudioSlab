@@ -6,9 +6,9 @@
 #define V_SHAPE_RTORFUNCTIONARBITRARY_H
 
 #include "RtoRFunction.h"
-#include "Model/FunctionArbitrary.h"
-#include "Controller/Interface/CommonParameters.h"
-#include "Lib/Util/MathTypes.h"
+#include "Studios/Math/FunctionArbitrary.h"
+#include "Studios/Controller/Interface/CommonParameters.h"
+#include "Studios/Util/MathTypes.h"
 
 
 namespace RtoR {

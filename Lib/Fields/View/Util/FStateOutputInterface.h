@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FSTATEOUTPUTINTERFACE_H
 #define V_SHAPE_FSTATEOUTPUTINTERFACE_H
 
-#include <Lib/Util/MathTypes.h>
+#include <Studios/Util/MathTypes.h>
 
 class FStateOutputInterface {
 public:

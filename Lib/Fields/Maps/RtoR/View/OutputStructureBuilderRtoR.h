@@ -5,7 +5,7 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 
-#include "Apps/Simulations/OutputStructureBuilderBase.h"
+#include "View/OutputStructureBuilderBase.h"
 
 class OutputStructureBuilderRtoR : public OutputStructureBuilderBase {
 public:

@@ -6,7 +6,7 @@
 #define FIELDS_INPUTSINGLEOSCILLON_H
 
 
-#include "Lib/Fields/Maps/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBCInterface.h"
 
 
 namespace RtoR {

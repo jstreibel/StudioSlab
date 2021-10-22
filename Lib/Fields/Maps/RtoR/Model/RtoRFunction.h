@@ -4,7 +4,7 @@
 
 #ifndef V_SHAPE_FUNCTIONRTOR_H
 
-#include "Model/FunctionsBase.h"
+#include "Studios/Math/FunctionsBase.h"
 
 namespace RtoR {
     typedef Base::Functions<Real>::Function1D Function;

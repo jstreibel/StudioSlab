@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FIELDSTATE_H
 #define V_SHAPE_FIELDSTATE_H
 
-#include "Lib/Util/ArithmeticOpsInterface.h"
+#include "Studios/Util/ArithmeticOpsInterface.h"
 #include "View/Util/FStateOutputInterface.h"
 #include "Model/DiscreteSpace/DiscreteSpace.h"
 

@@ -2,7 +2,7 @@
 #define OUTPUTMANAGER_H
 
 
-#include "Apps/Simulations/BCInterface.h"
+#include "BCInterface.h"
 #include "View/Base/OutputChannel.h"
 
 

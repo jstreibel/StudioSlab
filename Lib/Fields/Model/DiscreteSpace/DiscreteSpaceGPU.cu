@@ -2,7 +2,7 @@
 // Created by joao on 11/10/2019.
 //
 
-#include "Lib/Util/Workaround/ABIDef.h"
+#include "Studios/Util/Workaround/ABIDef.h"
 
 #include "DiscreteSpaceGPU.h"
 #include <thrust/iterator/constant_iterator.h>

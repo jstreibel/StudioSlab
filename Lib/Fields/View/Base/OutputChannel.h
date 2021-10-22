@@ -1,7 +1,7 @@
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
-#include "Lib/Fields/View/Util/OutputPacket.h"
+#include "../Util/OutputPacket.h"
 
 #define INT_BASED 1
 #define FLOAT_BASED 2

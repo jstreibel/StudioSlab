@@ -6,8 +6,8 @@
 #define V_SHAPE_DISCRETESPACE_H
 
 
-#include "Lib/Util/MathTypes.h"
-#include "Lib/Util/ArithmeticOpsInterface.h"
+#include "Studios/Util/MathTypes.h"
+#include "Studios/Util/ArithmeticOpsInterface.h"
 
 struct DimensionMetaData {
     /*!

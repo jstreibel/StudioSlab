@@ -12,8 +12,8 @@
 #include "Core/Stepper/stepper.h"
 #include "Core/Stepper/stepper-rk.h"
 
-#include <Lib/Util/BenchmarkHistogram.h>
-#include "Lib/Backend/Program.h"
+#include <Studios/Util/BenchmarkHistogram.h>
+#include "Studios/Backend/Program.h"
 
 
 class NumericalIntegration : public Program {

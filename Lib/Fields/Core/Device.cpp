@@ -1,6 +1,7 @@
-#include <Controller/Interface/InterfaceManager.h>
+#include <Studios/Controller/Interface/InterfaceManager.h>
 #include "Device.h"
 
+#include "Studios/Controller/Interface/CommonParameters.h"
 
 Device::Device() : Interface("Device options")
 {

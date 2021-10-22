@@ -1,6 +1,6 @@
 #include "shockwave.h"
 
-#include "Model/math-util.h"
+#include <Studios/Util/MathTypes.h>
 
 
 RtoR::ShockwavePhi::ShockwavePhi(Real h) : h(h) { }

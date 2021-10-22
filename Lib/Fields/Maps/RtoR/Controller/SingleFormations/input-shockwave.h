@@ -1,9 +1,9 @@
 #ifndef SIMSHOCKWAVE_H
 #define SIMSHOCKWAVE_H
 
-#include "Lib/Fields/Maps/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBCInterface.h"
 
-#include <Lib/Fields/View/Base/OutputChannel.h>
+#include "../../../../View/Base/OutputChannel.h"
 
 namespace RtoR {
     class InputShockwave : public RtoRBCInterface {

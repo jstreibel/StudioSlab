@@ -1,5 +1,5 @@
 #include "analytic-breather.h"
-#include "Model/math-util.h"
+#include <Studios/Util/math-util.h>
 
 /* (*Basic partial solutions for 0<t'<1/2 *) */
 

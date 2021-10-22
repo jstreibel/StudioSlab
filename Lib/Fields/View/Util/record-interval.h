@@ -1,7 +1,7 @@
 #ifndef RECORDINTERVAL_H
 #define RECORDINTERVAL_H
 
-#include "Lib/Util/Workaround/STDLibInclude.h"
+#include "Studios/Util/Workaround/STDLibInclude.h"
 
 struct RecordInterval{
 	RecordInterval(const double beginT, const double endT, const double x);

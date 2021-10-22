@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_TRANSFORM_H
 #define V_SHAPE_TRANSFORM_H
 
-#include "Model/MathTypes.h"
+#include <Studios/Util/MathTypes.h>
 
 class Transform {
 public:

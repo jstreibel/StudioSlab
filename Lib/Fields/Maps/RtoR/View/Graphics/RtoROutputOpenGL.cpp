@@ -6,7 +6,7 @@
 #include <Lib/Fields/Maps/RtoR/Model/RtoRFuncArbResizable.h>
 #include <Lib/Fields/Maps/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h>
 #include "RtoROutputOpenGL.h"
-#include "View/Graphic/Tools/FunctionRenderer.h"
+#include <Studios/Graphics/FunctionRenderer.h>
 //
 // Created by joao on 23/09/2019.
 

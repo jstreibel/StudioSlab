@@ -6,7 +6,7 @@
 #define V_SHAPE_FUNCTIONRTORARBITRARYGPU_CUH
 
 #include "RtoRFunctionArbitrary.h"
-#include "Lib/Util/device-config.h"
+#include "Studios/Util/device-config.h"
 
 namespace RtoR {
 #if USE_CUDA == true

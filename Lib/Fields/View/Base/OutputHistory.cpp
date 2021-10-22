@@ -1,7 +1,7 @@
 #include "OutputHistory.h"
 
-#include <Controller/Interface/InterfaceManager.h>
-#include <Lib/Fields/Core/Allocator.h>
+#include <Studios/Controller/Interface/InterfaceManager.h>
+#include <Fields/Core/Allocator.h>
 
 const long long unsigned int ONE_GB = 1073741824;
 

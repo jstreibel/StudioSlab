@@ -4,12 +4,12 @@
 
 #include "RtoROutputOpenGlShockwave.h"
 
-#include "View/Graphic/Tools/FunctionRenderer.h"
+#include <Studios/Graphics/FunctionRenderer.h>
 
 #include <Lib/Fields/Maps/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h>
 #include <Lib/Fields/Maps/RtoR/Model/FunctionsCollection/QuasiShockwave.h>
 
-#include "Apps/Backend/GLUTBackend.h"
+#include <Studios/Backend/Graphic/GLUTBackend.h>
 
 #define max(a,b) (a>b?a:b)
 #define min(a,b) (a<b?a:b)

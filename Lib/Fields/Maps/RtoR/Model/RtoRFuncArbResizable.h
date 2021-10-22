@@ -6,7 +6,7 @@
 #define V_SHAPE_RTORFUNCARBRESIZABLE_H
 
 
-#include <Model/FunctionArbitrary.h>
+#include <Studios/Math/FunctionArbitrary.h>
 #include "RtoRFunction.h"
 
 namespace RtoR {

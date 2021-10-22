@@ -6,10 +6,10 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
 #include "R2toRFunction.h"
-#include "Lib/Util/ArithmeticOpsInterface.h"
-#include "Model/FunctionArbitrary.h"
+#include "Studios/Util/ArithmeticOpsInterface.h"
+#include "Studios/Math/FunctionArbitrary.h"
 #include "Util/EXPOSE_BASE.h"
-#include "Controller/Interface/CommonParameters.h"
+#include "Studios/Controller/Interface/CommonParameters.h"
 
 
 namespace R2toR {

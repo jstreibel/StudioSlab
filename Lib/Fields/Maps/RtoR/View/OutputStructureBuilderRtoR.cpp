@@ -6,7 +6,8 @@
 
 #include "View/OutputManager.h"
 
-#include <Apps/Backend/GLUTBackend.h>
+#include <Studios/Backend/Graphic/GLUTBackend.h>
+#include <Studios/Backend/Console/ConsoleBackend.h>
 
 #include <View/OutputFormatter/BinarySOF.h>
 #include "View/Base/OutputHistoryToFile.h"
@@ -15,7 +16,6 @@
 #include "View/SpaceFilter/ResolutionReductionFilter.h"
 
 #include <Lib/Fields/Maps/RtoR/View/OutputSnapshots.h>
-#include <Apps/Backend/ConsoleBackend.h>
 #include "Lib/Fields/Maps/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
 

@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_RTORSYSTEMGORDONGPU_H
 #define V_SHAPE_RTORSYSTEMGORDONGPU_H
 
-#include "Lib/Util/Workaround/ABIDef.h"
+#include "Studios/Util/Workaround/ABIDef.h"
 #include "Model/System.h"
 #include "RtoRFieldState.h"
-#include "Lib/Util/device-config.h"
+#include "Studios/Util/device-config.h"
 
 namespace RtoR {
 

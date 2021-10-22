@@ -5,7 +5,7 @@
 #include "AnalyticOscillon.h"
 
 #include "analytic-breather.h"
-#include "Model/MathTypes.h"
+#include <Studios/Util/MathTypes.h>
 #include <cmath>
 
 using namespace RtoR;

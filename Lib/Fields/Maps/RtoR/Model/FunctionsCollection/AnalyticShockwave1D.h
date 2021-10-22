@@ -6,7 +6,7 @@
 #define V_SHAPE_ANALYTICSHOCKWAVE1D_H
 
 
-#include "Model/MathTypes.h"
+#include "Studios/Util/MathTypes.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {

@@ -1,10 +1,10 @@
 
-#include "Lib/Util/Workaround/ABIDef.h"
+#include "Studios/Util/Workaround/ABIDef.h"
 
 #include <thrust/iterator/constant_iterator.h>
 #include "R2ToRFunctionArbitraryGPU.h"
 #include "Lib/Fields/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
-#include "Model/GPUFriendly.h"
+#include "Studios/Math/GPUFriendly.h"
 
 using namespace R2toR;
 

@@ -2,7 +2,7 @@
 #define SIMGENERALOSCILLON_H
 
 
-#include "Lib/Fields/Maps/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBCInterface.h"
 
 namespace RtoR {
     class InputSymmetricOscillon : public RtoRBCInterface {

@@ -7,8 +7,6 @@
 #include <Model/SystemGordon.h>
 #include "RtoRModelAllocator.h"
 
-#include "Controller/Interface/CommonParameters.h"
-
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFieldState.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFunctionArbitraryCPU.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"

@@ -5,9 +5,12 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGL_H
 #define V_SHAPE_RTOROUTPUTOPENGL_H
 
-#include "View/Graphic/OutputOpenGL.h"
-#include "Lib/Fields/Maps/RtoR/Model/RtoRFuncArbResizable.h"
-#include "Lib/Fields/Maps/RtoR/View/EnergyCalculator.h"
+#include "../../Model/RtoRFuncArbResizable.h"
+#include "../../View/EnergyCalculator.h"
+
+#include <Studios/Graphics/GraphCollections.h>
+#include <Fields/View/Graphic/OutputOpenGL.h>
+
 
 namespace RtoR {
 

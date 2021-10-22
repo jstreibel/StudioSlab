@@ -2,11 +2,13 @@
 // Created by joao on 7/22/19.
 //
 
-#include <Controller/Interface/InterfaceManager.h>
 #include "OutputSnapshots.h"
-#include "Core/Util/Workaround/StringStream.h"
 
-#include "View/OutputFormatter/CustomStringSeparatedSOF.h"
+#include <Fields/View/OutputFormatter/CustomStringSeparatedSOF.h>
+
+#include <Studios/Util/Workaround/StringStream.h>
+#include <Studios/Controller/Interface/InterfaceManager.h>
+
 
 OutputSnapshot::OutputSnapshot(const String &customFileDescription, const size_t T_fileNamePrecision)
         : OutputChannel(1), customFileDescription(customFileDescription),

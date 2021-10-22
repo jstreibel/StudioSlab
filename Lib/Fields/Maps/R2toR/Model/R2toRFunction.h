@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORFUNCTION_H
 #define V_SHAPE_R2TORFUNCTION_H
 
-#include "Model/FunctionsBase.h"
+#include "Studios/Math/FunctionsBase.h"
 
 namespace R2toR {
     typedef Base::Functions<Real>::Function2D Function;

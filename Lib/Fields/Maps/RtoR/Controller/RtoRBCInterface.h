@@ -5,8 +5,9 @@
 #ifndef FIELDS_RTORBCINTERFACE_H
 #define FIELDS_RTORBCINTERFACE_H
 
-#include "Apps/Simulations/BCInterface.h"
-#include "Lib/Fields/Maps/RtoR/View/OutputStructureBuilderRtoR.h"
+#include "Fields/View/BCInterface.h"
+
+#include "../View/OutputStructureBuilderRtoR.h"
 
 class RtoRBCInterface : public Base::BCInterface {
 public:

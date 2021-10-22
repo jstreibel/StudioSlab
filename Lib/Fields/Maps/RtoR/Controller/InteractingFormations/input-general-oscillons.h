@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_INPUT_GENERAL_OSCILLONS_H
 #define V_SHAPE_INPUT_GENERAL_OSCILLONS_H
 
-#include "Lib/Fields/Maps/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBCInterface.h"
 
 namespace RtoR {
 

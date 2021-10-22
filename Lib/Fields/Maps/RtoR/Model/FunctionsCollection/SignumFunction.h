@@ -5,10 +5,9 @@
 #ifndef V_SHAPE_SIGNUMFUNCTION_H
 #define V_SHAPE_SIGNUMFUNCTION_H
 
-#include "Lib/Util/Workaround/ABIDef.h"
-
+#include "Studios/Util/Workaround/ABIDef.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
-#include "Lib/Fields/Model/GPUFriendly.h"
+#include "Studios/Math/GPUFriendly.h"
 
 namespace RtoR {
     class SignumFunction : public Function, Base::GPUFriendly {

@@ -1,15 +1,15 @@
 
 
-#include "Lib/App/SafetyNet.h"
+#include "Studios/App/SafetyNet.h"
 
-#include "Lib/Controller/Console/CLInterfaceSelector.h"
+#include "Studios/Controller/Console/CLInterfaceSelector.h"
 
-#include "Lib/Fields/Maps/RtoR/Controller/InteractingFormations/input-sym-oscillons.h"
-#include "Lib/Fields/Maps/RtoR/Controller/InteractingFormations/input-general-oscillons.h"
-#include "Lib/Fields/Maps/RtoR/Controller/SingleFormations/input-perturbed.h"
-#include "Lib/Fields/Maps/RtoR/Controller/SingleFormations/input-shockwave.h"
-#include "Lib/Fields/Maps/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
-#include "Lib/Fields/Maps/RtoR/App/SimulationsAppRtoR.h"
+#include "Fields/Maps/RtoR/Controller/InteractingFormations/input-sym-oscillons.h"
+#include "Fields/Maps/RtoR/Controller/InteractingFormations/input-general-oscillons.h"
+#include "Fields/Maps/RtoR/Controller/SingleFormations/input-perturbed.h"
+#include "Fields/Maps/RtoR/Controller/SingleFormations/input-shockwave.h"
+#include "Fields/Maps/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
+#include "Fields/Maps/RtoR/App/SimulationsAppRtoR.h"
 
 auto main(int argc, const char **argv) -> int {
 

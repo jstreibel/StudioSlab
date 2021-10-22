@@ -7,7 +7,7 @@
 #include "Lib/Fields/Maps/RtoR/Model/RtoRBoundaryCondition.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 
-#include "Core/Util/Workaround/StringStream.h"
+#include <Studios/Util/Workaround/StringStream.h>
 
 using namespace RtoR;
 

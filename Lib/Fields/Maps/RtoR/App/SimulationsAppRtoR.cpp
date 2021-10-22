@@ -3,22 +3,14 @@
 //
 
 #include "SimulationsAppRtoR.h"
+#include "../Core/RtoRModelAllocator.h"
 
+#include <Studios/Backend/Backend.h>
+#include <Studios/Controller/Console/CLInterfaceManager.h>
+#include <Studios/Controller/Console/CLInterfaceSelector.h>
 
-#include <Apps/Simulations/OutputStructureBuilders/OutputStructureBuilderBase.h>
-#include <Lib/Fields/Maps/RtoR/View/OutputStructureBuilderRtoR.h>
-#include <Lib/Fields/Maps/R2toR/View/OutputStructureBuilderR2ToR.h>
-
-#include "Controller/Console/CommandLineInterfaceDefinitions.h"
-
-#include <Core/NumericalIntegration.h>
-#include <Lib/Fields/Maps/RtoR/Core/RtoRModelAllocator.h>
-#include <Controller/Console/CommandLineInterfaceManager.h>
-#include "Core/Util/Workaround/StringStream.h"
-
-#include "Apps/Backend/GLUTBackend.h"
-#include "Apps/Backend/ConsoleBackend.h"
-#include "Core/Device.h"
+#include <Fields/Core/NumericalIntegration.h>
+#include <Fields/View/BCInterface.h>
 
 
 SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
@@ -30,7 +22,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = CLInterfaceSelector::getInstance().getSelectedBCInterface();
+    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getSelectedBCInterface());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();

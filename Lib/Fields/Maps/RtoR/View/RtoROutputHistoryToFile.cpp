@@ -2,8 +2,13 @@
 // Created by joao on 10/8/21.
 //
 
-#include <Controller/Interface/InterfaceManager.h>
 #include "RtoROutputHistoryToFile.h"
+
+#include <Studios/Controller/Interface/InterfaceManager.h>
+#include <Studios/Util/timer.h>
+
+#include <Fields/Core/Allocator.h>
+
 
 
 RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,

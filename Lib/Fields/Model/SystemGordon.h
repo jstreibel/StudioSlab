@@ -2,7 +2,6 @@
 #define HamiltonCPU_H
 
 #include "System.h"
-#include "RtoR/Model/RtoRFieldState.h"
 
 #include "Core/Allocator.h"
 

@@ -2,7 +2,7 @@
 #define OUTPUTINFO_H
 
 #include "FStateOutputInterface.h"
-#include "Lib/Fields/Model/DiscreteSpace/DiscreteSpace.h"
+#include "../../Model/DiscreteSpace/DiscreteSpace.h"
 
 
 typedef std::unique_ptr<FStateOutputInterface*> FieldDataPtr;
