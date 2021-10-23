@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_PARAMETRICCURVE_H
 #define V_SHAPE_PARAMETRICCURVE_H
 
-#include "Studios/Math/FunctionsBase.h"
+#include "Studios/MathTools/FunctionsBase.h"
 
 namespace RtoR2 {
     class ParametricCurve : public Base::Function<Real, Real2D> {

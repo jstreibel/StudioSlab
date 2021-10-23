@@ -1,42 +1,42 @@
 include_directories(../../)
 
 set ( RTOR_SOURCES
-		RtoR/App/SimulationsAppRtoR.cpp
+		../../Studios/MathTools/Maps/RtoR/App/SimulationsAppRtoR.cpp
 
-		RtoR/Core/RtoRModelAllocator.cpp
+		../../Studios/MathTools/Maps/RtoR/Core/RtoRModelAllocator.cpp
 
-		RtoR/Controller/RtoRBCInterface.cpp
-		RtoR/Controller/SingleFormations/input-perturbed.cpp
-		RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
-		RtoR/Controller/SingleFormations/input-shockwave.cpp
-		RtoR/Controller/InteractingFormations/input-general-oscillons.cpp
-		RtoR/Controller/ManyOscillons/InputManyOscillons.cpp
-		RtoR/Controller/ManyOscillons/InputMachineGun.cpp
-		RtoR/Controller/ManyOscillons/InputStatistical.cpp
-		RtoR/Controller/ManyOscillons/RandUtils.cpp
-		RtoR/Controller/SingleFormations/InputSingleOscillon.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/RtoRBCInterface.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/SingleFormations/input-perturbed.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/SingleFormations/input-shockwave.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/InteractingFormations/input-general-oscillons.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/ManyOscillons/InputManyOscillons.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/ManyOscillons/InputMachineGun.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/ManyOscillons/InputStatistical.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/ManyOscillons/RandUtils.cpp
+		../../Studios/MathTools/Maps/RtoR/Controller/SingleFormations/InputSingleOscillon.cpp
 
-		RtoR/Model/FunctionsCollection/analytic-breather.cpp
-		RtoR/Model/FunctionsCollection/shockwave.cpp
-		RtoR/Model/FunctionsCollection/AnalyticShockwave1D.cpp
-		RtoR/Model/FunctionsCollection/AnalyticOscillon.cpp
-		RtoR/Model/FunctionsCollection/AbsFunction.cpp
-		RtoR/Model/FunctionsCollection/AbsPerturbedFunction.cpp
-		RtoR/Model/FunctionsCollection/NoiseFunction.cpp
-		RtoR/Model/FunctionsCollection/QuasiShockwave.cpp
-		RtoR/Model/RtoRFunctionArbitrary.cpp
-		RtoR/Model/RtoRFunctionArbitraryCPU.cpp
-		RtoR/Model/Derivatives/DerivativesCPU.cpp
-		RtoR/Model/RtoRBoundaryCondition.cpp
-		RtoR/Model/RtoRFuncArbResizable.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/analytic-breather.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/shockwave.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/AnalyticOscillon.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/AbsFunction.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/AbsPerturbedFunction.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/NoiseFunction.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/QuasiShockwave.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/RtoRFunctionArbitrary.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/RtoRFunctionArbitraryCPU.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/Derivatives/DerivativesCPU.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/RtoRBoundaryCondition.cpp
+		../../Studios/MathTools/Maps/RtoR/Model/RtoRFuncArbResizable.cpp
 
-		RtoR/View/OutputStructureBuilderRtoR.cpp
-		RtoR/View/RtoROutputHistoryToFile.cpp
-		RtoR/View/Graphics/RtoROutputOpenGlShockwave.cpp
-		RtoR/View/Graphics/RtoROutputOpenGL.cpp
-		RtoR/View/EnergyCalculator.cpp
-		RtoR/View/OutputSnapshots.cpp
-		RtoR/View/Util.cpp
+		../../Studios/MathTools/Maps/RtoR/View/OutputStructureBuilderRtoR.cpp
+		../../Studios/MathTools/Maps/RtoR/View/RtoROutputHistoryToFile.cpp
+		../../Studios/MathTools/Maps/RtoR/View/Graphics/RtoROutputOpenGlShockwave.cpp
+		../../Studios/MathTools/Maps/RtoR/View/Graphics/RtoROutputOpenGL.cpp
+		../../Studios/MathTools/Maps/RtoR/View/EnergyCalculator.cpp
+		../../Studios/MathTools/Maps/RtoR/View/OutputSnapshots.cpp
+		../../Studios/MathTools/Maps/RtoR/View/Util.cpp
 
 		)
 

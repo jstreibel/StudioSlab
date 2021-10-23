@@ -7,7 +7,7 @@
 
 #include "R2toRFunction.h"
 #include "Studios/Util/ArithmeticOpsInterface.h"
-#include "Studios/Math/FunctionArbitrary.h"
+#include "Studios/MathTools/FunctionArbitrary.h"
 #include "Util/EXPOSE_BASE.h"
 #include "Studios/Controller/Interface/CommonParameters.h"
 

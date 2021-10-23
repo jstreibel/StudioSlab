@@ -12,10 +12,10 @@ if( FIELDS_CUDA_SUPPORT )
 
 	include_directories(/opt/cuda/include)
 	set ( CUDA_SOURCES
-			Maps/RtoR/Model/Derivatives/DerivativesGPU.cu
-			Maps/RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			Maps/RtoR/Model/FunctionsCollection/SignumFunction.cu
-			Maps/RtoR/Model/RtoRSystemGordonGPU.cu
+			../Studios/MathTools/Maps/RtoR/Model/Derivatives/DerivativesGPU.cu
+			../Studios/MathTools/Maps/RtoR/Model/RtoRFunctionArbitraryGPU.cu
+			../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/SignumFunction.cu
+			../Studios/MathTools/Maps/RtoR/Model/RtoRSystemGordonGPU.cu
 
 			Model/DiscreteSpace/DiscreteSpaceGPU.cu
 
@@ -54,7 +54,7 @@ set ( CORE_SOURCES
 set ( MODEL_SOURCES
 		Core/Allocator.cpp
 
-		../Studios/Math/FunctionsBase.h
+		../Studios/MathTools/FunctionsBase.h
 		Model/DiscreteSpace/DiscreteSpace.cpp
 		Model/DiscreteSpace/DiscreteSpaceCPU.cpp
 
