@@ -10,8 +10,7 @@
 
 #include "PlottingUtils.h"
 
-#include "../Util/Workaround/STDLibInclude.h"
-#include "../Controller/Interface/CommonParameters.h"
+#include <Studios/Util/STDLibInclude.h>
 
 #include <GL/gl.h>
 #include <GL/glut.h>

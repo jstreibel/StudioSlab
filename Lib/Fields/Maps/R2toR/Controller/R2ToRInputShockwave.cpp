@@ -3,14 +3,14 @@
 //
 
 #include "R2ToRInputShockwave.h"
-#include "Lib/Fields/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Lib/Fields/Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Lib/Fields/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Lib/Fields/Maps/R2toR/Model/R2ToRBoundaryCondition.h"
-#include "Lib/Fields/Maps/R2toR/View/R2toROutputOpenGLShockwave.h"
-#include "Lib/Fields/Maps/R2toR/View/OutputShockwaveZeros.h"
+#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Studios/Math/Maps/R2toR/Model/R2ToRBoundaryCondition.h"
+#include "Studios/Math/Maps/R2toR/View/R2toROutputOpenGLShockwave.h"
+#include "Studios/Math/Maps/R2toR/View/OutputShockwaveZeros.h"
 
 
 using namespace R2toR;

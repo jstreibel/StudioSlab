@@ -3,8 +3,8 @@
 
 #include <thrust/iterator/constant_iterator.h>
 #include "R2ToRFunctionArbitraryGPU.h"
-#include "Lib/Fields/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
-#include "Studios/MathTools/GPUFriendly.h"
+#include "Studios/Math/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
+#include "Studios/Math/Core/GPUFriendly.h"
 
 using namespace R2toR;
 

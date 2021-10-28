@@ -7,16 +7,16 @@
 
 #include <Apps/Simulations/OutputStructureBuilders/OutputStructureBuilderBase.h>
 #include <Lib/Fields/Maps/RtoR/View/OutputStructureBuilderRtoR.h>
-#include <Lib/Fields/Maps/R2toR/View/OutputStructureBuilderR2ToR.h>
+#include <Studios/Math/Maps/R2toR/View/OutputStructureBuilderR2ToR.h>
 
 #include "Controller/Console/CommandLineInterfaceDefinitions.h"
 
-#include <Core/NumericalIntegration.h>
+#include <Studios/Math/Integrator/Integrator.h>
 #include "Core/Util/Workaround/StringStream.h"
 
 #include "Apps/Backend/GLUTBackend.h"
 #include "Apps/Backend/ConsoleBackend.h"
-#include "Core/Device.h"
+#include "Studios/Math/Device.h"
 
 
 SimulationsAppR2toR::SimulationsAppR2toR(int argc, const char **argv)

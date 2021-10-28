@@ -10,7 +10,7 @@
 
 #include "Lib/App/AppBase.h"
 
-#include "View/OutputManager.h"
+#include "Studios/CoreMath/Numerics/Output/OutputManager.h"
 
 
 

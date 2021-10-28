@@ -6,7 +6,7 @@
 #define FIELDS_COMMANDLINEINTERFACEMANAGER_H
 
 #include "Studios/Controller/Interface/Interface.h"
-#include "CLInterfaceDefs.h"
+#include "Studios/Controller/CLDefs.h"
 
 class CommandLineInterfaceManager {
     static CommandLineInterfaceManager *singleton;

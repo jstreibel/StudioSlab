@@ -5,11 +5,11 @@
 #include "OutputStructureBuilderR2ToR.h"
 
 #include <View/OutputFormatter/BinarySOF.h>
-#include <Lib/Fields/Maps/RtoR2/StraightLine.h>
+#include <Studios/Math/Maps/RtoR2/StraightLine.h>
 #include <Lib/Fields/Maps/RtoR/View/OutputSnapshots.h>
-#include <Lib/Fields/Maps/R2toR/View/Filters/DimensionReductionFilter.h>
+#include <Studios/Math/Maps/R2toR/View/Filters/DimensionReductionFilter.h>
 #include <Apps/Backend/GLUTBackend.h>
-#include <Lib/Fields/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
+#include <Studios/Math/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
 #include "View/Base/OutputHistoryToFile.h"
 #include "View/Base/OutputConsoleMonitor.h"
 #include "View/OutputFormatter/CustomStringSeparatedSOF.h"

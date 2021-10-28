@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORREGULARDELTA_H
 #define V_SHAPE_R2TORREGULARDELTA_H
 
-#include "Lib/Fields/Maps/R2toR/Model/R2toRFunction.h"
+#include "Studios/Math/Maps/R2toR/Model/R2toRFunction.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 
 namespace R2toR {

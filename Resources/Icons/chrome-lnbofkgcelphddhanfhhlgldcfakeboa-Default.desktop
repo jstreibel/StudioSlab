@@ -1,0 +1,9 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Version=1.0
+Terminal=false
+Type=Application
+Name=123RF Stock Photos
+Exec=/usr/sbin/chromium --profile-directory=Default --app-id=lnbofkgcelphddhanfhhlgldcfakeboa
+Icon=chrome-lnbofkgcelphddhanfhhlgldcfakeboa-Default
+StartupWMClass=crx_lnbofkgcelphddhanfhhlgldcfakeboa

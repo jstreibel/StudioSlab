@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_UTILS_H
 #define V_SHAPE_UTILS_H
 
-#include "Studios/Util/Workaround/STDLibInclude.h"
+#include "Studios/Util/STDLibInclude.h"
 
 #ifdef NDEBUG // Release
 #define cast(NAME, TO_TYPE, OBJECT) \
@@ -23,27 +23,6 @@ if(&NAME == nullptr) throw "Bad cast.";
 #define letr auto&
 #define letcr const auto&
 
-template<class T1, class T2>
-struct Pair {
-    T1 first;
-    T2 second;
-};
-
-typedef Pair<int, int> IntPair;
-typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> DiscreteSpacePair;
-
-IntPair getBeginAndEndForThreadedFor(int N);
-
-#define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
-    IntPair be = getBeginAndEndForThreadedFor(NSites); \
-    int beginVarName = be.first, endVarName = be.second;
-
-/** Esse for espera estar em um ambiente (um escopo) onde globalmente seja valida
- * uma chamada a
- * #pragma omp parallel num_threads(NUM_THREADS) */
-#define OMP_PARALLEL_FOR(indexLabel, NSites) \
-    IntPair be = getBeginAndEndForThreadedFor(NSites); \
-    for(PosInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
 
 void PrintThere(int x, int y, const char *format, ...);
 

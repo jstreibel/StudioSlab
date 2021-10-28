@@ -6,7 +6,7 @@
 #define V_SHAPE_DIMENSIONREDUCTIONFILTER_H
 
 #include "View/SpaceFilter/SpaceFilterBase.h"
-#include "Lib/Fields/Maps/RtoR2/StraightLine.h"
+#include "Studios/Math/Maps/RtoR2/StraightLine.h"
 
 class DimensionReductionFilter : public SpaceFilterBase {
     /**

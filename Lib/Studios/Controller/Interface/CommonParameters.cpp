@@ -3,7 +3,7 @@
 //
 
 #include <Studios/Util/Workaround/StringStream.h>
-#include "Studios/Util/Workaround/STDLibInclude.h"
+#include "Studios/Util/STDLibInclude.h"
 #include "CommonParameters.h"
 
 #include <utility>

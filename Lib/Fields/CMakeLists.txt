@@ -12,12 +12,12 @@ if( FIELDS_CUDA_SUPPORT )
 
 	include_directories(/opt/cuda/include)
 	set ( CUDA_SOURCES
-			../Studios/MathTools/Maps/RtoR/Model/Derivatives/DerivativesGPU.cu
-			../Studios/MathTools/Maps/RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			../Studios/MathTools/Maps/RtoR/Model/FunctionsCollection/SignumFunction.cu
-			../Studios/MathTools/Maps/RtoR/Model/RtoRSystemGordonGPU.cu
+			Maps/RtoR/Model/Derivatives/DerivativesGPU.cu
+			Maps/RtoR/Model/RtoRFunctionArbitraryGPU.cu
+			Maps/RtoR/Model/FunctionsCollection/SignumFunction.cu
+			Maps/RtoR/Model/RtoRSystemGordonGPU.cu
 
-			Model/DiscreteSpace/DiscreteSpaceGPU.cu
+			../Studios/CoreMath/Function/Space/DiscreteSpaceGPU.cu
 
 			Maps/R2toR/Model/R2ToRFunctionArbitraryGPU.cu
 			)
@@ -46,36 +46,36 @@ include_directories (
 )
 
 set ( CORE_SOURCES
-		Core/NumericalIntegration.cpp
-		Core/NumericParams.cpp
-		Core/Device.cpp
+		../Studios/CoreMath/Numerics/Integrator.cpp
+		../Studios/CoreMath/Numerics/NumericParams.cpp
+		../Studios/CoreMath/Device.cpp
 		)
 
 set ( MODEL_SOURCES
-		Core/Allocator.cpp
+		../Studios/CoreMath/Allocator.cpp
 
-		../Studios/MathTools/FunctionsBase.h
-		Model/DiscreteSpace/DiscreteSpace.cpp
-		Model/DiscreteSpace/DiscreteSpaceCPU.cpp
+		../Studios/CoreMath/Function/FunctionsBase.h
+		../Studios/CoreMath/Function/Space/DiscreteSpace.cpp
+		../Studios/CoreMath/Function/Space/DiscreteSpaceCPU.cpp
 
 		)
 
 set ( VIEW_SOURCES
-		View/OutputManager.cpp
-		View/Util/Printing.cpp View/Util/Printing.h
-		View/Util/record-interval.cpp
-		View/Util/FStateOutputInterface.cpp
-		View/Base/OutputHistoryToFile.cpp
-		View/Base/OutputConsoleMonitor.cpp
-		View/Base/OutputHistory.cpp
-		View/OutputFormatter/CustomStringSeparatedSOF.cpp
-		View/SpaceFilter/ResolutionReductionFilter.cpp
-		View/Graphic/OutputOpenGL.cpp
+		../Studios/CoreMath/Numerics/Output/OutputManager.cpp
+		../Studios/Util/Printing.cpp ../Studios/Util/Printing.h
+		../Studios/CoreMath/Numerics/Output/Util/record-interval.cpp
+		../Studios/CoreMath/Numerics/Output/Util/FieldStateOutputInterface.cpp
+		../Studios/CoreMath/Numerics/Output/Channel/OutputHistoryToFile.cpp
+		../Studios/CoreMath/Numerics/Output/Channel/OutputConsoleMonitor.cpp
+		../Studios/CoreMath/Numerics/Output/Channel/OutputHistory.cpp
+		../Studios/CoreMath/Numerics/Output/Format/CustomStringSeparatedSOF.cpp
+		../Studios/CoreMath/Numerics/Output/Format/ResolutionReductionFilter.cpp
+		../Studios/Graphics/OutputOpenGL.cpp
 
-		View/OutputFormatter/BinarySOF.cpp View/OutputFormatter/BinarySOF.h
+		../Studios/CoreMath/Numerics/Output/Format/BinarySOF.cpp ../Studios/CoreMath/Numerics/Output/Format/BinarySOF.h
 
-		View/Util/ByteData.cpp View/Util/ByteData.h
-		View/Base/OutputChannel.cpp
+		../Studios/CoreMath/Numerics/Output/Util/ByteData.cpp ../Studios/CoreMath/Numerics/Output/Util/ByteData.h
+		../Studios/CoreMath/Numerics/Output/Channel/OutputChannel.cpp
 		)
 
 set( SOURCES
@@ -84,10 +84,10 @@ set( SOURCES
 		${VIEW_SOURCES}
 		${CUDA_SOURCES})
 
-add_library(Fields-Core STATIC ${SOURCES})
+#add_library(Fields-Core STATIC ${SOURCES})
 # target_link_libraries (Fields GL glut boost_program_options boost_timer)
-set_property(TARGET Fields-Core PROPERTY CUDA_ARCHITECTURES 61)
+#set_property(TARGET Fields-Core PROPERTY CUDA_ARCHITECTURES 61)
 
 
 
-add_subdirectory(Maps)
+# add_subdirectory(Maps)

@@ -2,7 +2,7 @@
 #define GLUTBACKEND_H
 
 #include "OpenGLArtistBase.h"
-#include "Studios/Backend/Backend.h"
+#include "../Backend.h"
 
 class GLUTBackend : public Backend
 {

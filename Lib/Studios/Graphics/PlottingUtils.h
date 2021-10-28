@@ -1,7 +1,7 @@
 #ifndef PLOTTINGUTILS_H
 #define PLOTTINGUTILS_H
 
-#include <Studios/Util/Workaround/STDLibInclude.h>
+#include <Studios/Util/STDLibInclude.h>
 
 #include <GL/gl.h>
 #include <GL/glut.h>
@@ -63,7 +63,7 @@ public:
 
 private:
     String annotation;
-} __attribute__((aligned(32))) __attribute__((packed));
+} __attribute__((aligned(32)));
 
 struct VariableLabelSource : public LabelSource {
 public:
@@ -140,6 +140,6 @@ public:
     bool isPosAbsolute;
 
     bool keepSource;
-} __attribute__((aligned(32)));
+};
 
 #endif // PLOTTINGUTILS_H

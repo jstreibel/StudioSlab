@@ -5,11 +5,11 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
-#include "../../RtoR2/StraightLine.h"
+#include "Studios/Math/Maps/RtoR2/StraightLine.h"
 
 #include <Studios/Graphics/ZoomPanRotate.h>
-#include <Studios/Util/MathTypes.h>
-#include <Fields/View/Graphic/OutputOpenGL.h>
+#include <Studios/CoreMath/Util/MathTypes.h>
+#include <Studios/Graphics/OutputOpenGL.h>
 
 namespace R2toR {
     class OutputOpenGL : public Base::OutputOpenGL {

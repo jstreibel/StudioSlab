@@ -3,26 +3,15 @@ cmake_minimum_required ( VERSION 3.14 FATAL_ERROR )
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)
 
-include_directories(./)
+add_subdirectory(Util)
 
-set ( LIB_BACKEND_SOURCES
-		Backend/Backend.cpp
-		Backend/Console/ConsoleBackend.cpp
-		Backend/Graphic/GLUTBackend.cpp
-		)
+#everything below depends on Util and they are all independent from one another
 
-set ( LIB_CONTROLLER_SOURCES
-		Controller/Console/CLInterfaceSelector.cpp
-		Controller/Console/CommandLineInterfaceManager.cpp
+add_subdirectory(Tools)
+add_subdirectory(Controller)
+add_subdirectory(Backend)
+add_subdirectory(App)
+add_subdirectory(Graphics)
 
-		Controller/Interface/CommonParameters.cpp
-		Controller/Interface/ParameterBase.cpp
-		Controller/Interface/Interface.cpp
-		Controller/Interface/InterfaceManager.cpp
-		)
+add_subdirectory(CoreMath) # depends on Backend (Integrator is a Backend::Program) and Controller (for Interface)
 
-set ( LIB_APP_SOURCES
-		App/SafetyNet.cpp
-		)
-
-add_library(Studios STATIC ${LIB_BACKEND_SOURCES} ${LIB_CONTROLLER_SOURCES} ${LIB_APP_SOURCES})

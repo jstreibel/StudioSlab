@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_STRAIGHTLINE_H
 #define V_SHAPE_STRAIGHTLINE_H
 
-#include <Lib/Fields/Maps/R2toR/Model/Transform.h>
+#include <Fields/Maps/R2toR/Model/Transform.h>
 #include "ParametricCurve.h"
 
 namespace RtoR2 {

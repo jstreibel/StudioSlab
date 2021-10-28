@@ -7,10 +7,10 @@
 
 
 #include <View/Graphic/Tools/ZoomPanRotate.h>
-#include <Lib/Fields/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
+#include <Studios/Math/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
 #include "Model/MathTypes.h"
 #include "View/Graphic/OutputOpenGL.h"
-#include "Lib/Fields/Maps/RtoR2/StraightLine.h"
+#include "Studios/Math/Maps/RtoR2/StraightLine.h"
 #include "R2toROutputOpenGLShockwave.h"
 
 

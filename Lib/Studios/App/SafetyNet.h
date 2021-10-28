@@ -5,8 +5,6 @@
 #ifndef V_SHAPE_SAFETYNET_H
 #define V_SHAPE_SAFETYNET_H
 
-
-
 #include "AppBase.h"
 
 

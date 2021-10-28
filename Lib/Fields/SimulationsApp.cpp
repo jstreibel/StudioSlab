@@ -10,7 +10,7 @@
 
 #include "Core/Util/Workaround/StringStream.h"
 
-#include "Core/Device.h"
+#include "Studios/Math/Device.h"
 
 #include "Controller/Console/CommandLineInterfaceManager.h"
 

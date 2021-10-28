@@ -1,7 +1,7 @@
 //
 
 #include "R2toRFunctionArbitrary.h"
-#include "Studios/Util/MathTypes.h"
+#include "Studios/CoreMath/Util/MathTypes.h"
 
 //
 // Created by joao on 30/09/2019.

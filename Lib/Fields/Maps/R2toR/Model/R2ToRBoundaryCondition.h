@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORBOUNDARYCONDITION_H
 
 #include "FieldState.h"
-#include "Model/BoundaryConditions.h"
+#include "Studios/Math/System/BoundaryConditions.h"
 
 
 namespace R2toR {

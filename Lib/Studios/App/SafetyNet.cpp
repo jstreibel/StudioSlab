@@ -4,7 +4,8 @@
 
 #include "SafetyNet.h"
 
-#include <Studios/Util/Workaround/STDLibInclude.h>
+#include "../Util/STDLibInclude.h"
+
 #include <boost/program_options.hpp>
 
 

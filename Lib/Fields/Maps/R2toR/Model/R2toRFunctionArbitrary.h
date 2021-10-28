@@ -6,9 +6,9 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
 #include "R2toRFunction.h"
-#include "Studios/Util/ArithmeticOpsInterface.h"
-#include "Studios/MathTools/FunctionArbitrary.h"
-#include "Util/EXPOSE_BASE.h"
+#include "Studios/CoreMath/Util/ArithmeticOpsInterface.h"
+#include "Studios/Math/Core/FunctionArbitrary.h"
+#include "Studios/Math/Maps/R2toR/Model/Util/EXPOSE_BASE.h"
 #include "Studios/Controller/Interface/CommonParameters.h"
 
 

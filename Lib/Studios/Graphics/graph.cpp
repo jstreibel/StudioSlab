@@ -1,10 +1,10 @@
 #include "graph.h"
 
+#include <Studios/Util/Workaround/StringStream.h>
+
 #include <iostream>
 #include <cmath>
 
-#include "Core/Util/Workaround/StringStream.h"
-#include "PlottingUtils.h"
 
 
 #define TITLE_FONT FONT9

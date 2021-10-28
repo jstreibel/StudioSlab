@@ -2,10 +2,10 @@
 // Created by joao on 10/8/21.
 //
 
-#include <Lib/Fields/Maps/R2toR/Model/R2toRFunctionArbitraryCPU.h>
-#include <Lib/Fields/Maps/R2toR/Model/R2ToRFunctionArbitraryGPU.h>
-#include <Lib/Fields/Maps/R2toR/Model/FieldState.h>
-#include <Model/SystemGordon.h>
+#include <Studios/Math/Maps/R2toR/Model/R2toRFunctionArbitraryCPU.h>
+#include <Studios/Math/Maps/R2toR/Model/R2ToRFunctionArbitraryGPU.h>
+#include <Studios/Math/Maps/R2toR/Model/FieldState.h>
+#include <Studios/Math/System/SystemGordon.h>
 #include <Lib/Fields/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h>
 #include "R2ToRModelBuilder.h"
 

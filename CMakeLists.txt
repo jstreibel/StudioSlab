@@ -9,7 +9,7 @@ add_subdirectory(Apps/)
 add_subdirectory(Lib/)
 #add_subdirectory(xy/)
 
-add_dependencies(Fields-RtoR Studios Fields-Map-RtoR Fields-Core )
+#add_dependencies(Fields-RtoR Studios Fields-Map-RtoR Fields-Core )
 
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fopenmp")

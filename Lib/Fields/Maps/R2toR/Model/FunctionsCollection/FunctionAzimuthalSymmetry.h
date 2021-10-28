@@ -6,10 +6,10 @@
 #define V_SHAPE_FUNCTIONAZIMUTHALSYMMETRY_H
 
 
-#include "Lib/Fields/Maps/R2toR/Model/R2toRFunction.h"
+#include "Studios/Math/Maps/R2toR/Model/R2toRFunction.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
 #include <cmath>
-#include <Lib/Fields/Maps/R2toR/Model/Transform.h>
+#include <Studios/Math/Maps/R2toR/Model/Transform.h>
 
 
 namespace R2toR {

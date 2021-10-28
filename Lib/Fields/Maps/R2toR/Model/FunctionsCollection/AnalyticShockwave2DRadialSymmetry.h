@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ANALYTICSHOCKWAVE2DRADIALSYMMETRY_H
 #define V_SHAPE_ANALYTICSHOCKWAVE2DRADIALSYMMETRY_H
 
-#include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
+#include "Lib/Studios/MathTools//Maps/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
     class AnalyticShockwave2DRadialSymmetry : public Function {

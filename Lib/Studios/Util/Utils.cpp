@@ -3,17 +3,6 @@
 //
 
 #include "Utils.h"
-#include "omp.h"
-
-IntPair getBeginAndEndForThreadedFor(int N) {
-    const int nThreads = omp_get_num_threads();
-    const int myThreadRank = omp_get_thread_num();
-    const int block_size = N/nThreads;
-    const int begin = myThreadRank * block_size;
-    const int end = begin + block_size;
-
-    return {begin, end};
-}
 
 void PrintThere(int x, int y, const char *format, ...)
 {

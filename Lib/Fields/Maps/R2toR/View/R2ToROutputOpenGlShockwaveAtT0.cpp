@@ -5,11 +5,11 @@
 #include "R2ToROutputOpenGlShockwaveAtT0.h"
 
 #include <filesystem>
-#include "Lib/Fields/Maps/R2toR/Model/Transform.h"
-#include "Lib/Fields/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Lib/Fields/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Studios/Math/Maps/R2toR/Model/Transform.h"
+#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "R2toROutputOpenGLShockwave.h"
-#include "Lib/Fields/Maps/R2toR/Model/FieldState.h"
+#include "Studios/Math/Maps/R2toR/Model/FieldState.h"
 
 #include "View/Graphic/Tools/FunctionRenderer.h"
 
