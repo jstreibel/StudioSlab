@@ -13,4 +13,8 @@ set( CONSOLE_BACKEND_SOURCE
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Backend ${BACKEND_SOURCE} ${GRAPHIC_BACKEND_SOURCE} ${CONSOLE_BACKEND_SOURCE})
 
-target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Backend Slab-Common)
+target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Backend
+		GL
+		glut
+		Slab-Common
+		)

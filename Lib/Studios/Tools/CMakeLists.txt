@@ -4,4 +4,7 @@ set ( TOOLS_SOURCE
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Tools STATIC ${TOOLS_SOURCE})
 
-target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Tools Slab-Common)
+target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Tools
+		boost_timer
+		Slab-Common
+		)

@@ -2,18 +2,14 @@
 add_executable ( Fields-RtoR MainRtoR.cpp)
 
 target_link_libraries ( Fields-RtoR
-		GL
-		glut
-		boost_program_options
-		boost_timer
+		Slab-Common
 
-		Slab-Fields-Maps-RtoR_GPU
-		Slab-Studios-Controller
 		Slab-Studios-App
 		Slab-Studios-Backend
+		Slab-Studios-Controller
 		Slab-Studios-CoreMath
 
-		Slab-Common
+		Slab-Fields-Maps-RtoR_GPU
 
 		#Slab-Studios-Graphics
 		#Slab-Studios-Tools
