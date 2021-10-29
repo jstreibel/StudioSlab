@@ -26,21 +26,6 @@ OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *
     String spaces(HEADER_SIZE_BYTES-1, ' ');
 
     file << spaces << '\n';
-
-    // TODO "Colocar essas coisas abaixo em algum lugar";
-    // Output header:
-    // long long int totalTimeSteps = lastOutInfo.getSteps(); // Isso eh o que deveria ser, mas so opde acontecer ao
-    // final da simulacao, de forma que temos o numero preciso de timesteps dados. O valor abaixo e uma estimativa.
-
-    //size_t totalTimeSteps = p.getn();
-    //double recordInterval = this->getRecDt(); // Nao lembro porque mas eh isso mesmo.
-    //long long int outputResolutionT = p.T/recordInterval;
-    //double _lastT = p.T; // ta errado mas vai ter que ser isso (devia ser de fato o ultimo T, this->lastT).
-
-    //file << "# N | timesteps | h | dT | L | T | " << simInfoKeys << " | outresX | outresT | initTime " << std::endl;
-    //file << p.N << " " << totalTimeSteps << " " << p.h << " " << p.dT << " " << p.L
-    //     << " " << _lastT << " " << simInfoVals << " " << outputResolutionX << " " << outputResolutionT
-    //     << " " << startT_ << std::endl;
 }
 
 OutputHistoryToFile::~OutputHistoryToFile() {

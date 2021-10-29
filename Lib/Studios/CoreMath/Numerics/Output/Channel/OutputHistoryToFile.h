@@ -6,6 +6,8 @@
 
 #include "Studios/CoreMath/Numerics/Output/Format/BinarySOF.h"
 
+/* TODO this should actually be computed in execution, and be on the first 4 bytes (32 bit unsigned int) of the file,
+        indicating header size. */
 const int HEADER_SIZE_BYTES = 2048;
 
 class OutputHistoryToFile : public OutputHistory {
