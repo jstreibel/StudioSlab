@@ -52,7 +52,7 @@ auto InterfaceManager::renderAsPythonDictionaryEnrties() -> String {
     for(auto *interface : interfaces) {
         auto parameters = interface->getParameters();
         for(const auto *parameter : parameters)
-            ss << "\"" << parameter->getCommandLineArgName() << "\": " << parameter->valueToString() << ", ";
+            ss << "\"" << parameter->getCommandLineArgName(true) << "\": " << parameter->valueToString() << ", ";
     }
 
     return ss.str();

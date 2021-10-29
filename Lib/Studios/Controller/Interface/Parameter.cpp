@@ -12,11 +12,10 @@ Parameter::Parameter(const String& commandLineArgName, const String& description
 }
 
 auto Parameter::getCommandLineArgName(bool clean) const -> String {
-    auto s = commandLineArgName;
+    const auto s = commandLineArgName;
+    const auto separator = ',';
 
-    if(clean) s = s.substr(0, s.find(","));
-
-    return s;
+    return clean ? s.substr(0, s.find(separator)) : s;
 }
 auto Parameter::getDescription() const -> String {return description; }
 
