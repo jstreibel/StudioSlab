@@ -22,7 +22,7 @@ public:
     void registerBCInterface(Interface *interface);
 
     void setup(int argc, const char **argv);
-    auto getSelectedBCInterface() const -> Interface *;
+    auto getCurrentSelectedInterface() const -> Interface *;
 
 private:
     std::vector<Interface*> bcInterfaces;

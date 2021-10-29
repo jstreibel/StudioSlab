@@ -15,9 +15,13 @@ class Interface {
 protected:
     friend InterfaceManager;
 
+
     std::set<Parameter*> parameters;
     void addParameter(Parameter *parameter);
     void addParameters(std::initializer_list<Parameter*> parameters);
+
+    std::set<Interface*> subInterfaces;
+    void addSubInterface(Interface *subInterface);
 
     String description;
 
@@ -26,6 +30,8 @@ public:
 
     auto getParameters() const -> std::vector<const Parameter*>;
     auto getParameter(String key) const -> Parameter*;
+
+    auto getSubInterfaces() const -> std::vector<Interface*>;
 
     auto getGeneralDescription() const -> String;
 

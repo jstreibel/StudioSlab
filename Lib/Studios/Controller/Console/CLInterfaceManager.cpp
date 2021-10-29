@@ -5,7 +5,6 @@
 #include "CLInterfaceManager.h"
 #include "Studios/Controller/CLDefs.h"
 #include "Studios/Controller/Interface/InterfaceManager.h"
-#include "CLInterfaceSelector.h"
 
 CommandLineInterfaceManager* CommandLineInterfaceManager::singleton = nullptr;
 
@@ -18,7 +17,8 @@ auto CommandLineInterfaceManager::GetInstance() -> CommandLineInterfaceManager *
 }
 
 void CommandLineInterfaceManager::ShowHelp() {
-
+    std::cout << "Show help not implemented";
+    throw        "Show help not implemented";
 }
 
 void CommandLineInterfaceManager::Parse(int argc, const char **argv) {

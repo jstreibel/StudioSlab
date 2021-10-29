@@ -28,7 +28,7 @@ auto CLInterfaceSelector::getInstance() -> CLInterfaceSelector & {
     return *mySingleInstance;
 }
 
-auto CLInterfaceSelector::getSelectedBCInterface() const -> Interface * {
+auto CLInterfaceSelector::getCurrentSelectedInterface() const -> Interface * {
     const int simType = currentSelection;
 
     CLInterfaceSelector &me = CLInterfaceSelector::getInstance();
@@ -60,14 +60,19 @@ void CLInterfaceSelector::setup(int argc, const char **argv) {
         }
     }
 
-    auto *sim = getSelectedBCInterface();
+    auto *sim = getCurrentSelectedInterface();
 
     auto &interfaceManager = InterfaceManager::getInstance();
 
     interfaceManager.registerInterface(sim);
     // TODO this class should work with a more general Interface instead of BCInterface
+
     //throw "This below needs a proper solution";
     //interfaceManager.registerInterface(sim->getOutputStructureBuilder());
+
+    auto subInterfaces = sim->getSubInterfaces();
+    for(auto *subInterface : subInterfaces)
+        interfaceManager.registerInterface(subInterface);
 
 }
 

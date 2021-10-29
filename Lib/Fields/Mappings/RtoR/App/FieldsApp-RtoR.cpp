@@ -24,7 +24,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getSelectedBCInterface());
+    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getCurrentSelectedInterface());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();

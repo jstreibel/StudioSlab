@@ -12,7 +12,7 @@ RtoRBCInterface::RtoRBCInterface(String generalDescription,
                                  bool selfRegister)
     : BCInterface(std::move(generalDescription), outputStructureBuilder, selfRegister)
 {
-
+    addSubInterface(outputStructureBuilder);
 }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {

@@ -20,6 +20,14 @@ auto Interface::getParameters() const -> std::vector<const Parameter *> {
     return constParameters;
 }
 
+auto Interface::getSubInterfaces() const -> std::vector<Interface*> {
+    std::vector<Interface*> interfaces;
+
+    std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
+
+    return interfaces;
+}
+
 void Interface::addParameter(Parameter *parameter) {
     if(!parameters.insert(parameter).second) throw "Error while inserting parameter in interface.";
 
@@ -30,6 +38,10 @@ void Interface::addParameter(Parameter *parameter) {
 void Interface::addParameters(std::initializer_list<Parameter*> parametersList) {
     for(auto *param : parametersList)
         addParameter(param);
+}
+
+void Interface::addSubInterface(Interface *subInterface) {
+    if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
 }
 
 auto Interface::getGeneralDescription() const -> String { return description; }
@@ -46,4 +58,6 @@ void Interface::setup(CLVariablesMap vm) {
 auto Interface::getParameter(String key) const -> Parameter * {
     return nullptr;
 }
+
+
 
