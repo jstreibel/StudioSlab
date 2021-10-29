@@ -13,6 +13,8 @@ Backend::~Backend() = default;
 
 Backend *Backend::GetInstance()
 {
+    if(Backend::myInstance == nullptr) throw "Backend not initialized";
+
     return Backend::myInstance;
 }
 

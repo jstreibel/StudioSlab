@@ -28,13 +28,13 @@ auto CLInterfaceSelector::getInstance() -> CLInterfaceSelector & {
     return *mySingleInstance;
 }
 
-auto CLInterfaceSelector::getCurrentSelectedInterface() const -> Interface * {
+auto CLInterfaceSelector::getCurrentCandidate() const -> Interface * {
     const int simType = currentSelection;
 
     CLInterfaceSelector &me = CLInterfaceSelector::getInstance();
-    if(simType > me.bcInterfaces.size()-1) throw (String("Unknown sim type: ") + std::to_string(simType)).c_str();
+    if(simType > me.candidates.size() - 1) throw (String("Unknown sim type: ") + std::to_string(simType)).c_str();
 
-    return me.bcInterfaces[simType];
+    return me.candidates[simType];
 }
 
 void CLInterfaceSelector::setup(int argc, const char **argv) {
@@ -60,7 +60,7 @@ void CLInterfaceSelector::setup(int argc, const char **argv) {
         }
     }
 
-    auto *sim = getCurrentSelectedInterface();
+    auto *sim = getCurrentCandidate();
 
     auto &interfaceManager = InterfaceManager::getInstance();
 
@@ -76,14 +76,14 @@ void CLInterfaceSelector::setup(int argc, const char **argv) {
 
 }
 
-void CLInterfaceSelector::registerBCInterface(Interface *interface) {
-    bcInterfaces.push_back(interface);
+void CLInterfaceSelector::registerCandidate(Interface *interface) {
+    candidates.push_back(interface);
 
     StringStream simsHelp;
     simsHelp << "Sim types:\n";
 
-    for(int i=0; i<bcInterfaces.size(); i++)
-        simsHelp << i << ". " << bcInterfaces[i]->getGeneralDescription() << "\n";
+    for(int i=0; i < candidates.size(); i++)
+        simsHelp << i << ". " << candidates[i]->getGeneralDescription() << "\n";
 
     selection.setDescription(simsHelp.str());
 }

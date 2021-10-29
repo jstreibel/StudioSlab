@@ -14,12 +14,19 @@ NumericParams::NumericParams()
 //      t(GET("t", double)), r(GET("r", double)), h(L/double(N)), dt(r*h) {   }
 
 
-auto NumericParams::getn() const -> size_t { return size_t(t.value() / dt); }
 auto NumericParams::getN() const -> size_t { return N.value(); }
 auto NumericParams::getL() const -> floatt { return L.value(); }
 auto NumericParams::getxLeft() const -> floatt { return xLeft.value(); }
 auto NumericParams::gett() const -> floatt { return  t.value(); }
 auto NumericParams::getr() const -> floatt { return r.value(); }
-auto NumericParams::geth() const -> floatt { return h; }
-auto NumericParams::getdt() const -> floatt { return dt; }
+auto NumericParams::getn() const -> size_t {
+    return size_t(*t / getdt());
+}
+auto NumericParams::geth() -> floatt {
+    h = *L / *N;
+    return h;
+}
+auto NumericParams::getdt() const -> floatt {
+    return dt;
+}
 

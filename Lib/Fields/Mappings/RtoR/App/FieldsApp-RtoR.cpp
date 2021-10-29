@@ -24,14 +24,15 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getCurrentSelectedInterface());
+    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getCurrentCandidate());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();
 
     auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output);
 
-    Backend::GetInstance()->run(integrator);
+    auto backend = Backend::GetInstance();
+    backend->run(integrator);
     Backend::Destroy();
 
     delete integrator;

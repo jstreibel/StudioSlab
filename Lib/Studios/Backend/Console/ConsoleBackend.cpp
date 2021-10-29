@@ -14,7 +14,7 @@ ConsoleBackend::ConsoleBackend() : Backend(this) {
 
 ConsoleBackend *ConsoleBackend::getSingleton()
 {
-    if(Backend::GetInstance() == nullptr) return new ConsoleBackend();
+    if(Backend::myInstance == nullptr) return new ConsoleBackend();
 
     return dynamic_cast<ConsoleBackend*>(Backend::GetInstance());
 }

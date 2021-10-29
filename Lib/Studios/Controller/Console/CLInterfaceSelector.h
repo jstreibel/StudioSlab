@@ -9,23 +9,23 @@
 #include "../Interface/CommonParameters.h"
 
 class CLInterfaceSelector : Interface {
-private:
+
     CLInterfaceSelector();
     static CLInterfaceSelector *mySingleInstance;
 
     int currentSelection = 0;
+    std::vector<Interface*> candidates;
 
     IntegerParameter selection{0, "sim", "Sim type selection"};
+
 public:
     static auto getInstance() -> CLInterfaceSelector &;
 
-    void registerBCInterface(Interface *interface);
+    void registerCandidate(Interface *interface);
 
     void setup(int argc, const char **argv);
-    auto getCurrentSelectedInterface() const -> Interface *;
+    auto getCurrentCandidate() const -> Interface *;
 
-private:
-    std::vector<Interface*> bcInterfaces;
 };
 
 

@@ -31,9 +31,13 @@
 *.out
 *.app
 
+# Docs
+Lib/Docs/*
+
 Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
 BUILD
 venv
 ./Build/
 Build/
 Lib/Docs/
+

@@ -5,9 +5,9 @@
 
 class Backend
 {
-    static Backend *myInstance;
-
 protected:
+
+    static Backend *myInstance;
     explicit Backend(Backend *instance);
     virtual ~Backend();
 

@@ -15,11 +15,11 @@ auto main(int argc, const char **argv) -> int {
 
     auto &im = CLInterfaceSelector::getInstance();
 
-    /* sim 0 */im.registerBCInterface(new RtoR::InputSymmetricOscillon);
-    /* sim 1 */im.registerBCInterface(new RtoR::InputPerturbations);
-    /* sim 2 */im.registerBCInterface(new RtoR::InputGeneralOscillons);
-    /* sim 3 */im.registerBCInterface(new RtoR::InputShockwave);
-    /* sim 4 */im.registerBCInterface(new RtoR::InputSingleOscillon);
+    /* sim 0 */im.registerCandidate(new RtoR::InputSymmetricOscillon);
+    /* sim 1 */im.registerCandidate(new RtoR::InputPerturbations);
+    /* sim 2 */im.registerCandidate(new RtoR::InputGeneralOscillons);
+    /* sim 3 */im.registerCandidate(new RtoR::InputShockwave);
+    /* sim 4 */im.registerCandidate(new RtoR::InputSingleOscillon);
 
     im.setup(argc, argv);
 
