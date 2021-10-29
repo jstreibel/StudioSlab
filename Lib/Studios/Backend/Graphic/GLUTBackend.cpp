@@ -1,5 +1,5 @@
 #include "GLUTBackend.h"
-#include "Studios/Util/Workaround/StringStream.h"
+#include "Common/Workaround/StringStream.h"
 
 #include "GL/freeglut.h"
 

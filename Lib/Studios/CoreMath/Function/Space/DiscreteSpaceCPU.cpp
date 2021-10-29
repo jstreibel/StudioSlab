@@ -2,7 +2,7 @@
 
 #include "DiscreteSpaceCPU.h"
 
-#include <Studios/Util/OMPUtils.h>
+#include <Common/OMPUtils.h>
 
 //
 // Created by joao on 11/10/2019.

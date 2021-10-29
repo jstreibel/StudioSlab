@@ -3,7 +3,7 @@
 
 #include "CoreNativeTypes.h"
 
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 
 #ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
 #include <boost/multiprecision/float128.hpp>

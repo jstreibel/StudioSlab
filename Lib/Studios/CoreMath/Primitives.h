@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_MATHTYPES_H
 #define V_SHAPE_MATHTYPES_H
 
-#include "Studios/Util/Utils.h"
+#include "Common/Utils.h"
 #include "NativeFunctions.h"
 
 // NaN: uncomment one of the following 3 methods of defining a global NaN

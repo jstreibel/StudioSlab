@@ -7,8 +7,8 @@
 
 
 #include <Studios/Graphics/animation.h>
-#include <Studios/Util/Utils.h>
-#include <Studios/Util/Timer.h>
+#include <Common/Utils.h>
+#include <Common/Timer.h>
 
 
 namespace Base {

@@ -5,7 +5,10 @@
 #ifndef V_SHAPE_FUNCTIONSBASE_H
 #define V_SHAPE_FUNCTIONSBASE_H
 
-#include <Studios/Util/Typedefs.h>
+#include "../Primitives.h"
+
+#include <Common/Typedefs.h>
+
 //#include "View/Util/FStateOutputInterface.h"
 
 namespace Base {

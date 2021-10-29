@@ -3,7 +3,7 @@
 
 #include "Equation.h"
 
-#include "Studios/Math/Allocator.h"
+#include "../../Allocator.h"
 
 
 #define FType(a) typename FieldState::a

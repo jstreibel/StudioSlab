@@ -7,12 +7,10 @@
 
 #include "Studios/Graphics/graph.h"
 
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 
 #include <Studios/CoreMath/Maps/RtoR2/StraightLine.h>
 #include <Studios/CoreMath/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
-
-
 
 
 namespace Base {

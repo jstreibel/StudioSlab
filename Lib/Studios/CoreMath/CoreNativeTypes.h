@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_NATIVEREALNUMBER_H
 #define STUDIOSLAB_NATIVEREALNUMBER_H
 
+#include <cstdint>
 
 #ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
 #include <boost/multiprecision/float128.hpp>

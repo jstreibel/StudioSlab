@@ -2,8 +2,8 @@
 // Created by joao on 7/19/19.
 //
 
-#include <Studios/Util/Workaround/StringStream.h>
-#include "Studios/Util/STDLibInclude.h"
+#include <Common/Workaround/StringStream.h>
+#include "Common/STDLibInclude.h"
 #include "CommonParameters.h"
 
 #include <utility>

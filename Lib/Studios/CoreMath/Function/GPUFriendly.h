@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_GPUFRIENDLY_H
 #define V_SHAPE_GPUFRIENDLY_H
 
-#include "Studios/CoreMath/Util/device-config.h"
+#include <Common/DeviceConfig.h>
 
 namespace Base {
 #if USE_CUDA == true

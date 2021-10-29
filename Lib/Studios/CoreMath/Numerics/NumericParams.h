@@ -10,7 +10,7 @@
 
 #include <Studios/Controller/Interface/Interface.h>
 #include <Studios/Controller/Interface/CommonParameters.h>
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 #include <Studios/CoreMath/CoreNativeTypes.h>
 
 /* DEFAULTS */

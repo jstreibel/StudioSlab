@@ -5,9 +5,10 @@
 #ifndef V_SHAPE_FIELDSTATE_H
 #define V_SHAPE_FIELDSTATE_H
 
-#include "Studios/CoreMath/Util/ArithmeticOpsInterface.h"
-#include "View/Util/FStateOutputInterface.h"
-#include "Studios/Math/System/DiscreteSpace/DiscreteSpace.h"
+#include <Studios/CoreMath/Function/Space/ArithmeticOperationInterface.h>
+#include <Studios/CoreMath/Function/Space/DiscreteSpace.h>
+
+#include <Studios/CoreMath/Numerics/Output/Util/FieldStateOutputInterface.h>
 
 namespace Base {
 

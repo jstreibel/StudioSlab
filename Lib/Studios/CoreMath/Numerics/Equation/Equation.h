@@ -1,7 +1,7 @@
 #ifndef HAMILTON_H
 #define HAMILTON_H
 
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 
 
 namespace Base {

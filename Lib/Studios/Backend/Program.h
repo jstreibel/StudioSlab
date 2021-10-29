@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_PROGRAM_H
 #define V_SHAPE_PROGRAM_H
 
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 
 class Program {
 public:

@@ -2,7 +2,7 @@
 #define OUTPUTCONSOLEMONITOR_H
 
 #include "OutputChannel.h"
-#include <Studios/Util/Timer.h>
+#include <Common/Timer.h>
 
 class OutputConsoleMonitor : public OutputChannel
 {

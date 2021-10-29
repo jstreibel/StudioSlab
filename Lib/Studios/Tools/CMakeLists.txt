@@ -2,4 +2,4 @@ set ( TOOLS_SOURCE
 		BenchmarkHistogram.cpp
 		)
 
-add_library(Studios-Tools STATIC ${TOOLS_SOURCE})
+add_library(${STUDIOS_LIB_BASE_NAME}-Tools STATIC ${TOOLS_SOURCE})

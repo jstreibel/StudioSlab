@@ -11,4 +11,4 @@ set ( CONSOLE_SOURCES
 		Console/CLInterfaceManager.cpp
 		)
 
-add_library(Studios-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES})
+add_library(${STUDIOS_LIB_BASE_NAME}-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES})

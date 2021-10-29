@@ -10,7 +10,7 @@
 
 #include "Studios/Controller/Interface/InterfaceManager.h"
 
-#include <Studios/Util/Workaround/StringStream.h>
+#include <Common/Workaround/StringStream.h>
 
 
 CLInterfaceSelector::CLInterfaceSelector() : Interface("Available boundary conditions")

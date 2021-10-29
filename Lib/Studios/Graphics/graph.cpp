@@ -1,6 +1,6 @@
 #include "graph.h"
 
-#include <Studios/Util/Workaround/StringStream.h>
+#include <Common/Workaround/StringStream.h>
 
 #include <iostream>
 #include <cmath>

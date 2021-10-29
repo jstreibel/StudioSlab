@@ -8,4 +8,4 @@ set( GRAPHICS_SOURCES
 		ZoomPanRotate.cpp
 		)
 
-add_library(Studios-Graphics STATIC ${GRAPHICS_SOURCES})
+add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})

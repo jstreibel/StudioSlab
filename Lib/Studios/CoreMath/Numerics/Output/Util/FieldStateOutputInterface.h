@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FSTATEOUTPUTINTERFACE_H
 #define V_SHAPE_FSTATEOUTPUTINTERFACE_H
 
-#include <Studios/Util/Typedefs.h>
+#include <Common/Typedefs.h>
 
 #include <ostream>
 

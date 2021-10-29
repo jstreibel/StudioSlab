@@ -5,7 +5,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)
 
-add_subdirectory(Apps/)
+#add_subdirectory(Apps/)
 add_subdirectory(Lib/)
 #add_subdirectory(xy/)
 

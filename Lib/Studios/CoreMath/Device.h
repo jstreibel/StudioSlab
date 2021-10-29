@@ -2,7 +2,7 @@
 #define DEVICE_H
 
 #include <Studios/Controller/Interface/Interface.h>
-#include <Studios/Util/DeviceConfig.h>
+#include <Common/DeviceConfig.h>
 
 
 class Device : public Interface
