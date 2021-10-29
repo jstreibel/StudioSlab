@@ -34,6 +34,6 @@
 Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
 BUILD
 venv
-.idea
 ./Build/
 Build/
+Lib/Docs/
