@@ -1,7 +1,7 @@
 #ifndef DERIVATIVESGPU_CUH
 #define DERIVATIVESGPU_CUH
 
-#include "Studios/CoreMath/Util/device-config.h"
+#include <Common/DeviceConfig.h>
 
 #include <cuda_runtime_api.h>
 #include <cuda_runtime.h>

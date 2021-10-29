@@ -3,9 +3,11 @@
 //
 
 #include "OpenGLArtistBase.h"
-#include "GL/gl.h"
+#include "GLUTUtils.h"
 
-#include "View/Graphic/Tools/PlottingUtils.h"
+#include <GL/gl.h>
+
+#include <Common/Typedefs.h>
 
 
 
@@ -53,7 +55,7 @@ void Base::OpenGLArtistBase::SetWindow(double x, double y, double width, double 
                myw-2*winXoffset, myh-2*winYoffset);
     glLoadIdentity();
 
-    write(-0.95, 0.9, title);
+    // write(-0.95, 0.9, title);
 
     const double p = 0.999;
     glBegin(GL_QUADS);

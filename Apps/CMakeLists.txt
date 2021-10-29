@@ -1,13 +1,23 @@
-include_directories(../Lib)
-include_directories(../Lib/Fields)
-link_directories(../Slab/lib)
 
-add_executable ( Fields-RtoR MainRtoR.cpp ${RTOR_SOURCES})
+add_executable ( Fields-RtoR MainRtoR.cpp)
+
 target_link_libraries ( Fields-RtoR
-		GL glut boost_program_options boost_timer
-		Studios
-		Fields-Core
-		Fields-Map-RtoR
+		GL
+		glut
+		boost_program_options
+		boost_timer
+
+		Slab-Fields-Maps-RtoR_GPU
+		Slab-Studios-Controller
+		Slab-Studios-App
+		Slab-Studios-Backend
+		Slab-Studios-CoreMath
+
+		Slab-Common
+
+		#Slab-Studios-Graphics
+		#Slab-Studios-Tools
+
 		)
 
 #set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)

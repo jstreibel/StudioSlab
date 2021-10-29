@@ -7,3 +7,4 @@ set ( UTIL_SOURCES
 		)
 
 add_library(${STUDIOSLAB_BASE_LIB_NAME}-Common STATIC ${UTIL_SOURCES})
+target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}-Common omp )

@@ -10,6 +10,8 @@ set ( INTEGRATOR_SOURCES
 		Numerics/Integrator.cpp
 		Numerics/NumericParams.cpp
 
+		Numerics/Output/OutputManager.cpp
+		Numerics/Output/OutputStructureBuilderBase.cpp
 
 		Numerics/Output/Channel/OutputChannel.cpp
 		Numerics/Output/Channel/OutputConsoleMonitor.cpp
@@ -33,5 +35,12 @@ set ( BASE_SOURCES
 
 
 add_library(${STUDIOS_LIB_BASE_NAME}-CoreMath STATIC ${FUNCTION_SOURCES} ${INTEGRATOR_SOURCES} ${BASE_SOURCES})
+
+target_link_libraries(${STUDIOS_LIB_BASE_NAME}-CoreMath
+		Slab-Common
+		Slab-Studios-Backend
+		Slab-Studios-Controller
+		)
+
 set_property(TARGET ${STUDIOS_LIB_BASE_NAME}-CoreMath PROPERTY CUDA_ARCHITECTURES 61)
 

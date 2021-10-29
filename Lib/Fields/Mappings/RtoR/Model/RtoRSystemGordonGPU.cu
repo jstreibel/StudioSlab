@@ -8,7 +8,7 @@
 
 #include "RtoRSystemGordonGPU.h"
 #include "RtoRFunctionArbitraryGPU.h"
-#include "Studios/Math/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
+#include "Derivatives/DerivativesGPU.h"
 
 using namespace RtoR;
 

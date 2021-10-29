@@ -3,7 +3,7 @@
 //
 
 // #include <RtoR/View/OutputSnapshots.h>
-#include "Studios/CoreMath/Integrator/Output/Channel/OutputConsoleMonitor.h"
+#include "Channel/OutputConsoleMonitor.h"
 #include "OutputStructureBuilderBase.h"
 
 #include "OutputManager.h"

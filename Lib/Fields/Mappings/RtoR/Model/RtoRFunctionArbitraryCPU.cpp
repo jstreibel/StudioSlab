@@ -7,6 +7,8 @@
 #include "RtoRFunctionArbitraryCPU.h"
 #include "Derivatives/DerivativesCPU.h"
 
+#include <Common/OMPUtils.h>
+
 // Created by joao on 17/09/2019.
 
 using namespace RtoR;

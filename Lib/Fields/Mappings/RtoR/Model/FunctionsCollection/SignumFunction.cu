@@ -2,10 +2,11 @@
 // Created by joao on 18/09/2019.
 //
 
-#include "Studios/Util/Workaround/ABIDef.h"
-
 #include "SignumFunction.h"
-#include "Studios/Util/device-config.h"
+
+#include <Common/Workaround/ABIDef.h>
+#include <Common/DeviceConfig.h>
+
 
 struct Sign
 {

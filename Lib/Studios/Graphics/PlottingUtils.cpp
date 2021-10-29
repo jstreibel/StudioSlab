@@ -2,12 +2,6 @@
 
 #include <string>
 
-void write(float x, float y, std::string str, void *font)
-{
-    glRasterPos2f(x, y);
-    for(char c : str) glutBitmapCharacter(font, c);
-}
-
 AARect2D::AARect2D(Point2D topLeft, Point2D bottomRight) : topLeft(topLeft), bottomRight(bottomRight) {
 
 }

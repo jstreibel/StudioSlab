@@ -2,7 +2,7 @@
 #define OUTPUTMANAGER_H
 
 
-#include "Fields/BCInterface.h"
+#include "Fields/Mappings/BCInterface.h"
 #include "Channel/OutputChannel.h"
 
 

@@ -5,12 +5,14 @@
 #include "SafetyNet.h"
 
 #include <Common/STDLibInclude.h>
+#include <Studios/Controller/Console/CLInterfaceManager.h>
 
 #include <boost/program_options.hpp>
 
 
-void showHelp(AppBase &prog){
-    //prog.buildFullCommandLineOptions().print(std::cout);
+void showHelp(AppBase &prog)
+{
+    CommandLineInterfaceManager::ShowHelp();
 }
 
 

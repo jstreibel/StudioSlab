@@ -4,12 +4,12 @@
 
 #include "Studios/Controller/Console/CLInterfaceSelector.h"
 
-#include "Studios/MathTools/Maps/RtoR/Controller/InteractingFormations/input-sym-oscillons.h"
-#include "Studios/MathTools/Maps/RtoR/Controller/InteractingFormations/input-general-oscillons.h"
-#include "Studios/MathTools/Maps/RtoR/Controller/SingleFormations/input-perturbed.h"
-#include "Studios/MathTools/Maps/RtoR/Controller/SingleFormations/input-shockwave.h"
-#include "Studios/MathTools/Maps/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
-#include "Studios/MathTools/Maps/RtoR/App/SimulationsAppRtoR.h"
+#include <Fields/Mappings/RtoR/Controller/InteractingFormations/input-sym-oscillons.h>
+#include <Fields/Mappings/RtoR/Controller/InteractingFormations/input-general-oscillons.h>
+#include <Fields/Mappings/RtoR/Controller/SingleFormations/input-perturbed.h>
+#include <Fields/Mappings/RtoR/Controller/SingleFormations/input-shockwave.h>
+#include <Fields/Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h>
+#include <Fields/Mappings/RtoR/App/FieldsApp-RtoR.h>
 
 auto main(int argc, const char **argv) -> int {
 

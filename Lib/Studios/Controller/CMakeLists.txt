@@ -12,3 +12,5 @@ set ( CONSOLE_SOURCES
 		)
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES})
+
+target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Controller Slab-Common)

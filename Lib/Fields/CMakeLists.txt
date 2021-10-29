@@ -4,7 +4,6 @@ set(FIELDS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Fields)
 
 add_subdirectory(Mappings)
 
-
 set ( OpenGL_GL_PREFERENCE GLVND )
 find_package(OpenMP)
 find_package(Boost COMPONENTS program_options REQUIRED)

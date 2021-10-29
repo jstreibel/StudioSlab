@@ -66,7 +66,7 @@ void CLInterfaceSelector::setup(int argc, const char **argv) {
 
     interfaceManager.registerInterface(sim);
     // TODO this class should work with a more general Interface instead of BCInterface
-    throw "This below needs a proper solution";
+    //throw "This below needs a proper solution";
     //interfaceManager.registerInterface(sim->getOutputStructureBuilder());
 
 }

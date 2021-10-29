@@ -8,14 +8,14 @@
 #ifndef STEPPER_RK_H
 #define STEPPER_RK_H
 
-#include <cstring> // contains memcpy
-#include <omp.h>
+#include "Method.h"
 
 #include "../Equation/BoundaryConditions.h"
 #include "../Equation/Equation.h"
 #include "../../Allocator.h"
 
-#include "Method.h"
+#include <cstring> // contains memcpy
+#include <omp.h>
 
 template<int NUM_THREADS, class FIELD_STATE_TYPE>
 class StepperRK : public Stepper{

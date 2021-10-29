@@ -24,15 +24,19 @@ break;
 
 class NumericalIntegration : public Program {
 
-private:
     Stepper *stepper;
     OutputManager *outputManager;
 
+    NumericalIntegration(const void *dPhi, OutputManager *outputManager);
+
 public:
     template <class FIELD_STATE_TYPE>
-    NumericalIntegration(const void *dPhi, OutputManager *outputManager): outputManager(outputManager), dt(Allocator::getInstance().getNumericParams().getdt()), steps(0)
-    {
+    static NumericalIntegration* New(const void *dPhi, OutputManager *outputManager) {
+        auto *instance = new NumericalIntegration(dPhi, outputManager);
+
         const unsigned int numThreads = Allocator::getInstance().getDevice().get_nThreads();
+
+        Stepper *stepper = nullptr;
 
         switch (numThreads) {
             GENERATE_FOR_NTHREADS(1);
@@ -55,8 +59,14 @@ public:
                 throw "Number of threads must be <= 16.";
         }
 
-        output(); // output do estado inicial
+        instance->stepper = stepper;
+        instance->output(); // output do estado inicial
+
+        return instance;
     }
+
+
+
     ~NumericalIntegration();
 
     void step(PosInt nSteps = 1) override;

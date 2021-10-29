@@ -11,7 +11,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 			RtoR/Model/RtoRSystemGordonGPU.cu
 
-			R2toR/Model/R2ToRFunctionArbitraryGPU.cu
+			# R2toR/Model/R2ToRFunctionArbitraryGPU.cu
 			)
 
 	message(STATUS "Maps CUDA support is ENABLED")
@@ -21,7 +21,13 @@ else()
 	message(STATUS "CUDA is disabled in Maps.")
 endif()
 
+
+set ( COMMON_SOURCES FunctionRenderer.cpp BCInterface.cpp )
+
+
 set ( RTOR_SOURCES
+		${COMMON_SOURCES}
+
 		RtoR/App/FieldsApp-RtoR.cpp
 
 		RtoR/Core/RtoRModelAllocator.cpp
@@ -56,10 +62,8 @@ set ( RTOR_SOURCES
 		RtoR/View/Graphics/RtoROutputOpenGlShockwave.cpp
 		RtoR/View/Graphics/RtoROutputOpenGL.cpp
 		RtoR/View/EnergyCalculator.cpp
-		../../Studios/CoreMath/Numerics/Output/Channel/OutputSnapshots.cpp
-		../../Studios/CoreMath/Function/Space/Debug/Util.cpp
-
 		)
+
 
 set ( R2TOR_SOURCES
 		Maps/R2toR/Model/R2toRFunctionArbitrary.cpp
@@ -88,5 +92,21 @@ set ( R2TOR_SOURCES
 		R2toR/Model/Builder/R2ToRModelBuilder.cpp
 		)
 
-add_library(${FIELDS_BASE_LIB_NAME}-Maps-RtoR STATIC ${RTOR_SOURCES})
-# set_property(TARGET Studios-Math-Maps-RtoR PROPERTY CUDA_ARCHITECTURES 61)
+set ( MAPS_LINKS
+		Slab-Studios-App
+		Slab-Studios-Backend
+		Slab-Studios-Controller
+		Slab-Studios-CoreMath
+		Slab-Studios-Graphics
+		Slab-Studios-Tools
+		)
+
+set ( MAPS_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
+
+add_library( ${MAPS_LIB_NAME} STATIC ${RTOR_SOURCES} )
+target_link_libraries( ${MAPS_LIB_NAME} ${MAPS_LINKS})
+
+add_library(${MAPS_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${MAPS_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${MAPS_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
+

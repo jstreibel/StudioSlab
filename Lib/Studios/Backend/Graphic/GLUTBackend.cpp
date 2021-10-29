@@ -1,7 +1,9 @@
 #include "GLUTBackend.h"
-#include "Common/Workaround/StringStream.h"
 
-#include "GL/freeglut.h"
+#include <Common/Workaround/StringStream.h>
+
+#include <GL/freeglut.h>
+#include <cassert>
 
 
 GLUTBackend *GLUTBackend::glutBackend = nullptr;

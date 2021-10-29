@@ -8,6 +8,8 @@ set( STUDIOSLAB_BASE_LIB_NAME Slab )
 if( STUDIOSLAB_CUDA_SUPPORT )
 	enable_language( CUDA )
 
+	find_package(CUDA)
+
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
 
 	include_directories(/opt/cuda/include)

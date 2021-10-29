@@ -5,9 +5,9 @@
 #ifndef FIELDS_RTORBCINTERFACE_H
 #define FIELDS_RTORBCINTERFACE_H
 
-#include "Fields/BCInterface.h"
-
 #include "../View/OutputStructureBuilderRtoR.h"
+
+#include <Fields/Mappings/BCInterface.h>
 
 class RtoRBCInterface : public Base::BCInterface {
 public:

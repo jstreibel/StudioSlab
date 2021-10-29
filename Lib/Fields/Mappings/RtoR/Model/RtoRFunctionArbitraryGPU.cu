@@ -4,10 +4,11 @@
 //
 
 #include "RtoRFunctionArbitraryGPU.h"
-#include <thrust/iterator/constant_iterator.h>
+#include "Derivatives/DerivativesGPU.h"
 
-#include "Studios/Math/Core/GPUFriendly.h"
-#include "Studios/Math/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
+#include <Studios/CoreMath/Function/GPUFriendly.h>
+
+#include <thrust/iterator/constant_iterator.h>
 
 // Created by joao on 17/09/2019.
 

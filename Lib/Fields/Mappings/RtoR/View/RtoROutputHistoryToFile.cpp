@@ -7,9 +7,11 @@
 #include <Common/Timer.h>
 
 #include <Studios/CoreMath/Allocator.h>
+#include <Studios/CoreMath/Numerics/Output/Format/SpaceFilterBase.h>
+#include <Studios/CoreMath/Numerics/Output/Format/BinarySOF.h>
 #include <Studios/Controller/Interface/InterfaceManager.h>
 
-
+const int HEADER_SIZE_BYTES = 2048;
 
 RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                                String  outputFileName)

@@ -2,6 +2,10 @@
 
 // #include "Maps/RtoR/Model/RtoRFieldState.h"
 
+NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager): outputManager(outputManager),
+                                                                      dt(Allocator::getInstance().getNumericParams().getdt()),
+                                                                      steps(0)
+{ }
 
 NumericalIntegration::~NumericalIntegration() {
     // std::cout << histogram;

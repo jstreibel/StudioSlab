@@ -5,7 +5,7 @@
 #include "FieldsApp-RtoR.h"
 #include "../Model/RtoRFieldState.h"
 #include "../Core/RtoRModelAllocator.h"
-#include "../../../BCInterface.h"
+#include "Fields/Mappings/BCInterface.h"
 
 #include <Studios/Backend/Backend.h>
 #include <Studios/Controller/Console/CLInterfaceManager.h>
@@ -29,7 +29,7 @@ auto SimulationsAppRtoR::run() -> int {
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();
 
-    auto *integrator = new NumericalIntegration<RtoR::FieldState>(boundaryConditions, output);
+    auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output);
 
     Backend::GetInstance()->run(integrator);
     Backend::Destroy();
