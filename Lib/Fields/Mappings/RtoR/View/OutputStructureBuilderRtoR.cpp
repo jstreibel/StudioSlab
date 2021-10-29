@@ -29,7 +29,7 @@ OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : OutputStructureBuilde
 }
 
 auto
-OutputStructureBuilderRtoR::build() -> OutputManager * {
+OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
     const auto shouldOutputOpenGL = *useOpenGL;
     const auto shouldOutputHistory = ! *noHistory;
 
@@ -46,8 +46,6 @@ OutputStructureBuilderRtoR::build() -> OutputManager * {
     int fileOutputStepsInterval = -1;
     if(shouldOutputHistory)
     {
-        String ext = ".osc";
-
         const double Tf=p.gett();
 
         OutputFormatterBase *outputFilter = new BinarySOF;
@@ -60,7 +58,7 @@ OutputStructureBuilderRtoR::build() -> OutputManager * {
         const auto stepsInterval = PosInt(N/(Np*r));
 
         OutputChannel *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
-                                                     fileNameBase + ext, outputFilter);
+                                                     outputFileName, outputFilter);
         fileOutputStepsInterval = out->getNSteps();
         outputManager->addOutputChannel(out);
     }

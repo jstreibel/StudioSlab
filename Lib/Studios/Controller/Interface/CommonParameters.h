@@ -33,6 +33,7 @@ public:
     auto getValue() const -> const void * override;
     auto value() const -> Type;
 
+    auto operator*() -> Type&;
     auto operator*() const -> Type;
 
 private:

@@ -12,14 +12,17 @@ namespace Base {
     class BCInterface : public Interface {
     protected:
         OutputStructureBuilderBase *outputStructureBuilder;
+        String prefix = "";
     public:
-        explicit BCInterface(String generalDescription, OutputStructureBuilderBase* osb, bool selfRegister=false);
+        explicit BCInterface(String generalDescription, OutputStructureBuilderBase* osb, String prefix="", bool selfRegister=false);
 
         virtual auto getBoundary() const -> const void * = 0;
 
         virtual auto buildOutputManager() -> OutputManager * = 0;
 
         auto getOutputStructureBuilder() -> Interface *;
+
+        auto toString() const -> String override;
     };
 
 }

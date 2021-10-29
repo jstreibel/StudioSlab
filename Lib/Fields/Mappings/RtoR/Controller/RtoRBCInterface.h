@@ -12,6 +12,7 @@
 class RtoRBCInterface : public Base::BCInterface {
 public:
     explicit RtoRBCInterface(String generalDescription,
+                             String name = "",
                              OutputStructureBuilderBase *outputStructureBuilder =  new OutputStructureBuilderRtoR,
                              bool selfRegister=false);
 

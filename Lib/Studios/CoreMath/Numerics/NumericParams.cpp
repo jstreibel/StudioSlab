@@ -20,13 +20,20 @@ auto NumericParams::getxLeft() const -> floatt { return xLeft.value(); }
 auto NumericParams::gett() const -> floatt { return  t.value(); }
 auto NumericParams::getr() const -> floatt { return r.value(); }
 auto NumericParams::getn() const -> size_t {
-    return size_t(*t / getdt());
+    return n;
 }
-auto NumericParams::geth() -> floatt {
-    h = *L / *N;
+auto NumericParams::geth() const -> floatt {
     return h;
 }
 auto NumericParams::getdt() const -> floatt {
     return dt;
+}
+
+void NumericParams::setup(CLVariablesMap vm) {
+    Interface::setup(vm);
+
+    h = *L / *N;
+    dt = *r * h;
+    n = PosInt(*t / dt);
 }
 

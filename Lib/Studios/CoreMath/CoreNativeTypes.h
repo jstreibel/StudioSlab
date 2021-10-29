@@ -21,7 +21,7 @@ typedef FLOAT64 floatt;
 
 typedef floatt Real;
 
-typedef unsigned int PosInt;
+typedef size_t PosInt;
 typedef int_least64_t BigInt;
 
 #include <vector>

@@ -5,10 +5,12 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
-#include <Common/STDLibInclude.h>
 #include "../CLDefs.h"
 
+#include <Common/STDLibInclude.h>
+
 class Parameter {
+
 public:
     Parameter(const String& commandLineArgName, const String& description);
 

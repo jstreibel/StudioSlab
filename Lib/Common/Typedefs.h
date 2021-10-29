@@ -7,7 +7,7 @@
 
 #include "STDLibInclude.h"
 
-typedef unsigned int PosInt;
+typedef size_t PosInt;
 typedef int_least64_t BigInt;
 
 template<class T1, class T2>

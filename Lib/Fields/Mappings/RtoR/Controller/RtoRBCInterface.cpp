@@ -8,14 +8,16 @@
 
 
 RtoRBCInterface::RtoRBCInterface(String generalDescription,
+                                 String name,
                                  OutputStructureBuilderBase *outputStructureBuilder,
                                  bool selfRegister)
-    : BCInterface(std::move(generalDescription), outputStructureBuilder, selfRegister)
+    : BCInterface(std::move(generalDescription), outputStructureBuilder, "RtoR-" + name, selfRegister)
 {
     addSubInterface(outputStructureBuilder);
 }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
-    return outputStructureBuilder->build();
+    auto outputFileName = this->toString();
+    return outputStructureBuilder->build(outputFileName);
 }
 

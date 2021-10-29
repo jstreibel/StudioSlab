@@ -46,18 +46,37 @@ void Interface::addSubInterface(Interface *subInterface) {
 
 auto Interface::getGeneralDescription() const -> String { return description; }
 
-void Interface::setup(CLVariablesMap vm) {
-    for(auto *param : parameters) {
-        auto key = param->getCommandLineArgName();
-        auto val = vm[key];
+auto Interface::getParameter(String key) const -> Parameter * {
+    throw "Not implemented";
+    //return parameters[key];
+}
 
-        param->setValueFrom(val);
+auto Interface::toString() const -> String {
+    std::stringstream ss;
+
+    for(auto param : parameters)
+        ss << param->getCommandLineArgName(true) << "=" << param->valueToString() << "-";
+
+    auto str = ss.str();
+    str.pop_back(); // remove trailing '-'
+
+    return str;
+}
+
+void Interface::setup(CLVariablesMap vm) {
+    try {
+        for (auto *param : parameters) {
+            auto key = param->getCommandLineArgName(true);
+            auto val = vm[key];
+
+            param->setValueFrom(val);
+        }
+    } catch (boost::bad_any_cast &exception) {
+        std::cout << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << std::endl;
+        throw exception;
     }
 }
 
-auto Interface::getParameter(String key) const -> Parameter * {
-    return nullptr;
-}
 
 
 

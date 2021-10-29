@@ -38,10 +38,10 @@ auto InterfaceManager::getInterfaces() -> std::vector<const Interface *> {
 
 void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
     for(auto *interface : interfaces){
-        for(auto *parameter : interface->parameters) {
-            auto argName = parameter->getCommandLineArgName(true);
-            parameter->setValueFrom(vm[argName]);
-        }
+        // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
+        // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
+
+        interface->setup(vm);
     }
 }
 

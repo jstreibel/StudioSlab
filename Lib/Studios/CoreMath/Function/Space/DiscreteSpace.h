@@ -36,16 +36,16 @@ class DiscreteSpaceCPU;
 class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
 public:
     DiscreteSpace(DimensionMetaData dim, Real h);
-    [[nodiscard]] DiscreteSpaceCPU *hostCopy(PosInt maxResolution) const;
+    DiscreteSpaceCPU *hostCopy(PosInt maxResolution) const;
 
-    [[nodiscard]] PosInt getTotalDiscreteSites() const;
-    [[nodiscard]] const VecFloat &getHostData(bool syncWithServer=false) const;
+    PosInt getTotalDiscreteSites() const;
+    const VecFloat &getHostData(bool syncWithServer=false) const;
     VecFloat& getHostData(bool syncWithServer=false);
 
-    [[nodiscard]] const DimensionMetaData& getDim() const { return dim; }
-    [[nodiscard]] const VecFloat& getX() const;
+    const DimensionMetaData& getDim() const { return dim; }
+    const VecFloat& getX() const;
     VecFloat& getX();
-    [[nodiscard]] Real geth() const;
+    Real geth() const;
 
     // TODO colocar essa aqui no operator =
     virtual void setToValue(const DiscreteSpace &param) = 0;

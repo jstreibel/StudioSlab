@@ -11,7 +11,7 @@ class OutputStructureBuilderRtoR : public OutputStructureBuilderBase {
 public:
     OutputStructureBuilderRtoR();
 
-    auto build() -> OutputManager * override;
+    auto build(String outputFileName) -> OutputManager * override;
 };
 
 

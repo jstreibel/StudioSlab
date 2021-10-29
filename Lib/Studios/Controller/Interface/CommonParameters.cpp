@@ -7,6 +7,7 @@
 #include "CommonParameters.h"
 
 #include <utility>
+#include <typeinfo>
 
 
 auto std::to_string(String str) -> String { return String("\"") + str + String("\""); }
@@ -47,12 +48,12 @@ const void *ParameterTemplate<Type>::getValue() const {
 
 template<class Type>
 void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
-    try {;
+    try {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
     } catch (boost::bad_any_cast &exception) {
-        auto msg = String("Parameter ") + commandLineArgName + " failed conversion from program_options::variable_value.";
-        std::cout << msg << std::endl;
+        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from program_options::variable_value";
+        std::cout << msg << ". Type is " << typeid(Type).name() << std::endl;
         throw exception;
     }
 }
@@ -63,9 +64,16 @@ auto ParameterTemplate<Type>::value() const -> Type {
 }
 
 template<class Type>
-Type ParameterTemplate<Type>::operator*() const {
+auto ParameterTemplate<Type>::operator*() -> Type & {
     return val;
 }
+
+template<class Type>
+auto ParameterTemplate<Type>::operator*() const -> Type {
+    return val;
+}
+
+
 
 template class ParameterTemplate<int>;
 template class ParameterTemplate<double>;

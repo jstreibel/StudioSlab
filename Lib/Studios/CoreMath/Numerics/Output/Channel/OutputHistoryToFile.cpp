@@ -8,11 +8,12 @@
 
 #include <utility>
 
+const String extension = ".osc";
 
 OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                          String outputFileName, OutputFormatterBase *outputFormatter)
                                : OutputHistory(stepsInterval, spaceFilter, endT),
-                                 outFileName(std::move(outputFileName)), outputFormatter(*outputFormatter)
+                                 outFileName(std::move(outputFileName + extension)), outputFormatter(*outputFormatter)
 {
     auto flags = std::ios::out;
 
@@ -20,7 +21,7 @@ OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *
 
     if(!file) throw "Erro: nao abriu arquivo.";
 
-    std::cout << "O resultado sera salvo em \'" << outFileName << "\'. " << std::endl;
+    std::cout << "Sim history data file is \'" << outFileName << "\'. " << std::endl;
 
     String spaces(HEADER_SIZE_BYTES-1, ' ');
 

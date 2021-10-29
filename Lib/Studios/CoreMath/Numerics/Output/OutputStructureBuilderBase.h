@@ -29,10 +29,8 @@ protected:
     // void buildCommon(OutputManager &outputManager);
     static void addConsoleMonitor(OutputManager &outputManager, int nSteps);
 
-    String fileNameBase;
-
 public:
-    virtual auto build() -> OutputManager * = 0;
+    virtual auto build(String outputFileName) -> OutputManager * = 0;
 };
 
 

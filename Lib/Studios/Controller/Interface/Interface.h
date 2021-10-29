@@ -14,7 +14,7 @@ class InterfaceManager;
 class Interface {
 protected:
     friend InterfaceManager;
-
+    String description;
 
     std::set<Parameter*> parameters;
     void addParameter(Parameter *parameter);
@@ -23,18 +23,17 @@ protected:
     std::set<Interface*> subInterfaces;
     void addSubInterface(Interface *subInterface);
 
-    String description;
-
 public:
     Interface(/*std::initializer_list<Parameter*> parameters, */const String& generalDescription, bool doNotRegisterInterface=false);
+
+    auto getGeneralDescription() const -> String;
 
     auto getParameters() const -> std::vector<const Parameter*>;
     auto getParameter(String key) const -> Parameter*;
 
     auto getSubInterfaces() const -> std::vector<Interface*>;
 
-    auto getGeneralDescription() const -> String;
-
+    virtual auto toString() const -> String;
     virtual void setup(CLVariablesMap vm);
 };
 
