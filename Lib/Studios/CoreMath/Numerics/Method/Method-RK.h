@@ -18,11 +18,11 @@
 #include <omp.h>
 
 template<int NUM_THREADS, class FIELD_STATE_TYPE>
-class StepperRK : public Stepper{
+class StepperRK : public Method{
 public:
 
     StepperRK(const void *dPhi_)
-        : Stepper(), H(*(Base::System<FIELD_STATE_TYPE>*) Allocator::getInstance().getSystemSolver()),
+        : Method(), H(*(Base::Equation<FIELD_STATE_TYPE>*) Allocator::getInstance().getSystemSolver()),
           dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
           _phi((FIELD_STATE_TYPE*)Allocator::getInstance().newFieldState()),
           _k1((FIELD_STATE_TYPE*)Allocator::getInstance().newFieldState()),
@@ -58,7 +58,7 @@ public:
         FIELD_STATE_TYPE &k4 = *_k4;
         FIELD_STATE_TYPE &phiTemp = *_phiTemp;
 
-         #pragma omp parallel num_threads(NUM_THREADS)
+        #pragma omp parallel num_threads(NUM_THREADS)
         {
             for(size_t i=0; i<n_steps; ++i)
             {
@@ -101,7 +101,7 @@ public:
     }
 
 private:
-    Base::System<FIELD_STATE_TYPE> &H;
+    Base::Equation<FIELD_STATE_TYPE> &H;
 
     const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
 

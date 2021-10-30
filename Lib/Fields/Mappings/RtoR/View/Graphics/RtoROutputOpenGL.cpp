@@ -4,7 +4,7 @@
 
 #include "../../Model/FunctionsCollection/AnalyticShockwave1D.h"
 
-#include <Studios/CoreMath/Numerics/Equation/SystemGordon.h>
+#include <Studios/CoreMath/Numerics/Equation/Equation_LorentzCovariant-2ndOrder.h>
 
 #include "../../../FunctionRenderer.h"
 //

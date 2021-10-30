@@ -24,7 +24,7 @@ break;
 
 class NumericalIntegration : public Program {
 
-    Stepper *stepper;
+    Method *stepper;
     OutputManager *outputManager;
 
     NumericalIntegration(const void *dPhi, OutputManager *outputManager);
@@ -36,7 +36,7 @@ public:
 
         const unsigned int numThreads = Allocator::getInstance().getDevice().get_nThreads();
 
-        Stepper *stepper = nullptr;
+        Method *stepper = nullptr;
 
         switch (numThreads) {
             GENERATE_FOR_NTHREADS(1);

@@ -11,14 +11,20 @@
 namespace Base {
 
     template <class FieldState>
-    class SystemGordon : public Base::System<FieldState> {
+    class Equation_LorentzCovariant_2ndOrder : public Base::Equation<FieldState> {
     private:
         typedef Base::Function<FType(FunctionType::TgtSpaceType),FType(FunctionType::TgtSpaceType)> TargetToTargetFunction;
     public:
-    SystemGordon(TargetToTargetFunction &V)
+    explicit Equation_LorentzCovariant_2ndOrder(TargetToTargetFunction &potential)
             : temp1(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
               temp2(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
-              V(V), dVDPhi(*V.diff(0).release()) {
+              V(potential), dVDPhi(*potential.diff(0).release()) {   }
+
+    ~Equation_LorentzCovariant_2ndOrder() override {
+        delete &temp1;
+        delete &temp2;
+        delete &V;
+        delete &dVDPhi;
     }
 
     FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
@@ -37,16 +43,10 @@ namespace Base {
 
             oDPhi.StoreSubtraction(laplacian, dV) *= dt;
         }
-        
+
         return fieldStateOut;
     }
 
-    ~SystemGordon() override {
-        delete &temp1;
-        delete &temp2;
-        delete &V;
-        delete &dVDPhi;
-    }
 
     static bool isDissipating() { return false; }
 

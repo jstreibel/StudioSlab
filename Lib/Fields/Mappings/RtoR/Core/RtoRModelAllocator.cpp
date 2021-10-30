@@ -13,7 +13,7 @@
 #include "../Model/FunctionsCollection/AbsPerturbedFunction.h"
 #include "../Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include <Studios/CoreMath/Numerics/Equation/SystemGordon.h>
+#include <Studios/CoreMath/Numerics/Equation/Equation_LorentzCovariant-2ndOrder.h>
 
 
 RtoRModelAllocator::RtoRModelAllocator() = default;
@@ -84,5 +84,5 @@ auto RtoRModelAllocator::getSystemSolver() -> void * {
     //        thePotential = new RtoR::HarmonicPotential();
     //}
 
-    return new Base::SystemGordon<RtoR::FieldState>(*thePotential);
+    return new Base::Equation_LorentzCovariant_2ndOrder<RtoR::FieldState>(*thePotential);
 }

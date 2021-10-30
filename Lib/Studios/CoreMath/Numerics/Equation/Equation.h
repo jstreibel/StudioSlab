@@ -6,11 +6,11 @@
 
 namespace Base {
     template<class FIELD_STATE_TYPE>
-    class System {
+    class Equation {
     public:
-        System() {}
+        Equation() {}
 
-        virtual ~System() {}
+        virtual ~Equation() {}
 
         //virtual floatt E(const void *phi)                     = 0;
         //virtual floatt Hdens(const void *phi, const floatt x) const = 0;

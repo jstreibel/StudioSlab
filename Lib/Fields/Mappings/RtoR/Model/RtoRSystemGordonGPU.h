@@ -14,7 +14,7 @@
 
 namespace RtoR {
 
-    class SystemGordonGPU : Base::System<FieldState> {
+    class SystemGordonGPU : Base::Equation<FieldState> {
     public:
         SystemGordonGPU(PosInt N);
         FieldState &dtF(const FieldState &in, FieldState &out, Real t, Real dt) override;
