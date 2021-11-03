@@ -1,11 +1,24 @@
 set( GRAPHICS_SOURCES
 		NotHere/OutputOpenGL.cpp
-		animation.cpp
+
+		#Tools/Graph.cpp
+		#Tools/plotting-utils.cpp
+
+
+		WindowManagement/Window.cpp
+		WindowManagement/WindowStyles.cpp
+
+		WindowManagement/WindowContainer/WindowPanel.cpp
+		WindowManagement/WindowTree/NodeWindow.cpp
+		WindowManagement/WindowTree/WindowTreeBuilder.cpp
+
+
 		#FunctionRenderer.cpp
-		graph.cpp
 		#GraphCollections.cpp
+
+		animation.cpp
+		deprecated/graph_depr.cpp
 		PlottingUtils.cpp
-		Window.cpp
 		ZoomPanRotate.cpp
 		)
 

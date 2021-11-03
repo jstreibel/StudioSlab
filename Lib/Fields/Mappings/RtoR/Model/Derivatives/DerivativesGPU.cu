@@ -97,8 +97,8 @@ __host__ DeviceVector &d2dx2(const DeviceVector &in_const,
                              }
 
 
-
-                             struct Laplacian2D {
+//*******************************************************************************
+struct Laplacian2D {
     int N, M;
     double invhsqr;
     Laplacian2D(int N, int M, double h) : N(N), M(M), invhsqr(1./(h*h)) {}

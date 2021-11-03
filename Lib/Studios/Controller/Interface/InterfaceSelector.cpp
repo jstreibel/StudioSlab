@@ -2,42 +2,42 @@
 // Created by joao on 09/09/2019.
 //
 
-#include "CLInterfaceSelector.h"
+#include "InterfaceSelector.h"
 
 #include <boost/algorithm/string.hpp>
 
-#include "CLInterfaceManager.h"
+#include "Studios/Controller/Console/CLInterfaceManager.h"
 
 #include "Studios/Controller/Interface/InterfaceManager.h"
 
 #include <Common/Workaround/StringStream.h>
 
 
-CLInterfaceSelector::CLInterfaceSelector() : Interface("Available boundary conditions")
+InterfaceSelector::InterfaceSelector() : Interface("Available boundary conditions")
 {
     addParameters({&selection});
 };
 
 
-CLInterfaceSelector *CLInterfaceSelector::mySingleInstance = nullptr;
+InterfaceSelector *InterfaceSelector::mySingleInstance = nullptr;
 
 
-auto CLInterfaceSelector::getInstance() -> CLInterfaceSelector & {
-    if (mySingleInstance == nullptr) mySingleInstance = new CLInterfaceSelector;
+auto InterfaceSelector::getInstance() -> InterfaceSelector & {
+    if (mySingleInstance == nullptr) mySingleInstance = new InterfaceSelector;
 
     return *mySingleInstance;
 }
 
-auto CLInterfaceSelector::getCurrentCandidate() const -> Interface * {
+auto InterfaceSelector::getCurrentCandidate() const -> Interface * {
     const int simType = currentSelection;
 
-    CLInterfaceSelector &me = CLInterfaceSelector::getInstance();
+    InterfaceSelector &me = InterfaceSelector::getInstance();
     if(simType > me.candidates.size() - 1) throw (String("Unknown sim type: ") + std::to_string(simType)).c_str();
 
     return me.candidates[simType];
 }
 
-void CLInterfaceSelector::setup(int argc, const char **argv) {
+void InterfaceSelector::setup(int argc, const char **argv) {
     typedef std::string str;
 
     const str simStr("--sim");
@@ -76,7 +76,7 @@ void CLInterfaceSelector::setup(int argc, const char **argv) {
 
 }
 
-void CLInterfaceSelector::registerCandidate(Interface *interface) {
+void InterfaceSelector::registerCandidate(Interface *interface) {
     candidates.push_back(interface);
 
     StringStream simsHelp;

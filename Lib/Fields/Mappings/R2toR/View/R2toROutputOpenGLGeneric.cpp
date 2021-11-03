@@ -98,7 +98,7 @@ void R2toR::OutputOpenGL::draw() {
     RtoR::FunctionRenderer::renderFunction(dPhi, xMin, xMin, xMax - xMin, 100, 100);
 }
 
-void R2toR::OutputOpenGL::reshape(int width, int height) {
+void R2toR::OutputOpenGL::notifyReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     windowWidth = width;
@@ -111,10 +111,10 @@ void R2toR::OutputOpenGL::reshape(int width, int height) {
 
 }
 
-void R2toR::OutputOpenGL::notifyGLUTKeyboardSpecial(int key, int x, int y) {
+void R2toR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
 }
 
-void R2toR::OutputOpenGL::notifyGLUTKeyboard(unsigned char key, int x, int y) {
+void R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == '2'){
         showAnalytic = !showAnalytic;
         return;
@@ -141,10 +141,10 @@ IntPair R2toR::OutputOpenGL::getWindowSizeHint() {
     return {1200, 800};
 }
 
-void R2toR::OutputOpenGL::notifyGLUTMouseButton(int button, int dir, int x, int y) {
+void R2toR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
     zpr.zprMouseButton(button, dir, x, y);
 }
 
-void R2toR::OutputOpenGL::notifyGLUTMouseMotion(int x, int y) {
+void R2toR::OutputOpenGL::notifyMouseMotion(int x, int y) {
     zpr.zprMouseMotion(x, y);
 }

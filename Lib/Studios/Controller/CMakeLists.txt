@@ -7,7 +7,7 @@ set ( INTERFACE_SOURCES
 		)
 
 set ( CONSOLE_SOURCES
-		Console/CLInterfaceSelector.cpp
+		Interface/InterfaceSelector.cpp
 		Console/CLInterfaceManager.cpp
 		)
 

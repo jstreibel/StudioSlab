@@ -3,8 +3,8 @@
 //
 
 
-#include "Tests/TestsApp.h"
-#include <Studios/App/SafetyNet.h>
+#include "Apps/Tests/TestsApp.h"
+#include "Apps/SafetyNet.h"
 
 
 int main(int argc, const char **argv) {

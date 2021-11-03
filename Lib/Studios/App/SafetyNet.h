@@ -9,7 +9,7 @@
 
 
 namespace SafetyNet {
-    int jump(int argc, const char *argv[], AppBase &program);
+    int jump(AppBase &program);
 }
 
 #endif //V_SHAPE_SAFETYNET_H

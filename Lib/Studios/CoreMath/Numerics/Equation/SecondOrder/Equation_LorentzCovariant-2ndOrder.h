@@ -1,9 +1,9 @@
 #ifndef HamiltonCPU_H
 #define HamiltonCPU_H
 
-#include "Equation.h"
+#include "Studios/CoreMath/Numerics/Equation/Equation.h"
 
-#include "../../Allocator.h"
+#include "Studios/CoreMath/Allocator.h"
 
 
 #define FType(a) typename FieldState::a

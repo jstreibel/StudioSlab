@@ -73,7 +73,7 @@ void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
 
 void RtoR::OutputHistoryToFile::_printHeaderToFile() {
-    Allocator &builder = Allocator::getInstance();
+    // Allocator &builder = Allocator::getInstance();
 
 
     std::ostringstream oss;

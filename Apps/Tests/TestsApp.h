@@ -6,7 +6,7 @@
 #define V_SHAPE_TESTSAPP_H
 
 
-#include "Lib/App/AppBase.h"
+#include <Studios/App/AppBase.h>
 
 
 class TestsApp : public AppBase {
@@ -15,8 +15,6 @@ public:
     TestsApp(int argc, const char**argv);
 
     int run() override;
-
-    CLOptionsDescription buildFullCommandLineOptions() override;
 
 };
 

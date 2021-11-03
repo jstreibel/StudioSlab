@@ -4,7 +4,7 @@
 
 #include "../../Model/FunctionsCollection/AnalyticShockwave1D.h"
 
-#include <Studios/CoreMath/Numerics/Equation/Equation_LorentzCovariant-2ndOrder.h>
+#include <Studios/CoreMath/Numerics/Equation/SecondOrder/Equation_LorentzCovariant-2ndOrder.h>
 
 #include "../../../FunctionRenderer.h"
 //
@@ -152,25 +152,25 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 }
 
 
-void RtoR::OutputOpenGL::reshape(int width, int height) {
+void RtoR::OutputOpenGL::notifyReshape(int width, int height) {
     windowWidth = width;
     windowHeight = height;
 
-    fieldsGraph = Graph(statsWindowWidth, 0, windowWidth-statsWindowWidth, windowHeight,
+    fieldsGraph = Graph_depr(statsWindowWidth, 0, windowWidth - statsWindowWidth, windowHeight,
             1.1*xMin, 1.1*xMax, phiMin, phiMax);
 
     auto Y = statsWindowHeight;
     auto H = (windowHeight-statsWindowHeight)*.5;
 
-    totalEnergyGraph = Graph(0, Y, statsWindowWidth, H,
-                             0, 3, 0, 3.e5, "E(t))");
+    totalEnergyGraph = Graph_depr(0, Y, statsWindowWidth, H,
+                                  0, 3, 0, 3.e5, "E(t))");
 
     Y+=H;
-    phaseSpaceGraph = Graph(0, Y, statsWindowWidth, H,
-                            -0.015, 0.015, -0.080, 0.080, "phase space");
+    phaseSpaceGraph = Graph_depr(0, Y, statsWindowWidth, H,
+                                 -0.015, 0.015, -0.080, 0.080, "phase space");
 }
 
-void RtoR::OutputOpenGL::notifyGLUTKeyboard(unsigned char key, int x, int y) {
+void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 
     switch(key)
     {
@@ -194,7 +194,7 @@ void RtoR::OutputOpenGL::notifyGLUTKeyboard(unsigned char key, int x, int y) {
     finishFrameAndRender();
 }
 
-void RtoR::OutputOpenGL::notifyGLUTKeyboardSpecial(int key, int x, int y) {
+void RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
     const double kDown = 3.8;
     const double kUp = 1/kDown;
 
@@ -237,7 +237,7 @@ void RtoR::OutputOpenGL::notifyGLUTKeyboardSpecial(int key, int x, int y) {
     finishFrameAndRender();
 }
 
-void RtoR::OutputOpenGL::notifyGLUTMouseButton(int button, int dir, int x, int y) {
+void RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
     const double faktor = 1.5;
     if(button == 3 && dir == 0){
         setPhiMax(getPhiMax()*faktor);

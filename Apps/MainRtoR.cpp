@@ -2,7 +2,7 @@
 
 #include "Studios/App/SafetyNet.h"
 
-#include "Studios/Controller/Console/CLInterfaceSelector.h"
+#include "Studios/Controller/Interface/InterfaceSelector.h"
 
 #include <Fields/Mappings/RtoR/Controller/InteractingFormations/input-sym-oscillons.h>
 #include <Fields/Mappings/RtoR/Controller/InteractingFormations/input-general-oscillons.h>
@@ -13,7 +13,7 @@
 
 auto main(int argc, const char **argv) -> int {
 
-    auto &im = CLInterfaceSelector::getInstance();
+    auto &im = InterfaceSelector::getInstance();
 
     /* sim 0 */im.registerCandidate(new RtoR::InputSymmetricOscillon);
     /* sim 1 */im.registerCandidate(new RtoR::InputPerturbations);

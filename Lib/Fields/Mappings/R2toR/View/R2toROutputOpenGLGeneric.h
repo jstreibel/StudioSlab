@@ -18,15 +18,15 @@ namespace R2toR {
 
 
         void draw() override;
-        void reshape(int width, int height) override;
+        void notifyReshape(int width, int height) override;
 
-        void notifyGLUTMouseButton(int button, int dir, int x, int y) override;
+        void notifyMouseButton(int button, int dir, int x, int y) override;
 
-        void notifyGLUTMouseMotion(int x, int y) override;
+        void notifyMouseMotion(int x, int y) override;
 
-        void notifyGLUTKeyboardSpecial(int key, int x, int y) override;
+        void notifyKeyboardSpecial(int key, int x, int y) override;
 
-        void notifyGLUTKeyboard(unsigned char key, int x, int y) override;
+        void notifyKeyboard(unsigned char key, int x, int y) override;
 
         IntPair getWindowSizeHint() override;
 

@@ -110,3 +110,8 @@ add_library(${MAPS_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
 set_property(TARGET ${MAPS_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
 
+add_library(${MAPS_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${MAPS_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PERIODIC_BC=true ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+set_property( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
+

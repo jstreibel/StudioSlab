@@ -9,7 +9,7 @@
 
 #include <Studios/Backend/Backend.h>
 #include <Studios/Controller/Console/CLInterfaceManager.h>
-#include <Studios/Controller/Console/CLInterfaceSelector.h>
+#include <Studios/Controller/Interface/InterfaceSelector.h>
 
 #include <Studios/CoreMath/Numerics/Integrator.h>
 
@@ -24,7 +24,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCInterface*>(CLInterfaceSelector::getInstance().getCurrentCandidate());
+    auto *bcInput = dynamic_cast<Base::BCInterface*>(InterfaceSelector::getInstance().getCurrentCandidate());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();

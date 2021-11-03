@@ -8,23 +8,23 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
-#include "PlottingUtils.h"
+#include "Studios/Graphics/PlottingUtils.h"
 
 #include <Common/STDLibInclude.h>
 
 #include <GL/gl.h>
 #include <GL/glut.h>
 
-struct Graph
+struct Graph_depr
 {
-    Graph();
-    Graph(const double winX, const double winY,
-          const double winW, const double winH,
-          const double xMin, const double xMax,
-          const double yMin, const double yMax,
-          String title = "");
+    Graph_depr();
+    Graph_depr(const double winX, const double winY,
+               const double winW, const double winH,
+               const double xMin, const double xMax,
+               const double yMin, const double yMax,
+               String title = "");
 
-    ~Graph();
+    ~Graph_depr();
 
     void BindWindow(bool clearAndDrawDecor=true);
 

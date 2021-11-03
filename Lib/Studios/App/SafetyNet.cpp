@@ -16,7 +16,7 @@ void showHelp(AppBase &prog)
 }
 
 
-int SafetyNet::jump(int argc, const char *argv[], AppBase &prog){
+int SafetyNet::jump(AppBase &prog){
     // if (GPU_DEBUG) std::cout << "\033[1m\033[93mGPU IS IN DEBUG MODE => NO GPU.\033[0m" << std::endl;
 
     try {
@@ -34,10 +34,7 @@ int SafetyNet::jump(int argc, const char *argv[], AppBase &prog){
     }
     catch (boost::program_options::error &e) {
         showHelp(prog);
-        std::cout << "Error parsing command line: \"" << e.what() << "\" " << "Args are";
-        for (int i = 0; i < argc; i++)
-            std::cout << "\n\t" << argv[i];
-        std::cout << std::endl;
+        std::cout << "Error parsing command line: \"" << e.what() << "\" " << std::endl;
 
         return -3;
     }
@@ -61,6 +58,7 @@ int SafetyNet::jump(int argc, const char *argv[], AppBase &prog){
     }
     catch (...) {
         std::cout << "\n\nUnknown exception reached the top of main. \n" << std::endl;
+        return -7;
     }
 
     throw "Dafuk...";

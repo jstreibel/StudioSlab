@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FIELDSTATERTOR_H
 #define V_SHAPE_FIELDSTATERTOR_H
 
-#include <Studios/CoreMath/Numerics/Equation/FieldState.h>
+#include <Studios/CoreMath/Numerics/Equation/SecondOrder/FieldState.h>
 #include "RtoRFunctionArbitrary.h"
 
 namespace RtoR {

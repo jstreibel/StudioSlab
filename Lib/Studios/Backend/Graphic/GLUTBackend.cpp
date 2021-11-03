@@ -39,7 +39,7 @@ GLUTBackend::GLUTBackend() : Backend(this)
     std::cout << "Initialized GLUTBackend." << std::endl;
 }
 
-void GLUTBackend::setOpenGLOutput(Base::OpenGLArtistBase *outputOpenGL) {
+void GLUTBackend::setOpenGLOutput(Base::GLUTEventListener *outputOpenGL) {
     this->outGL = outputOpenGL;
 
     IntPair size = outGL->getWindowSizeHint();
@@ -95,7 +95,7 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
             */
     }
     else {
-        GLUTBackend::GetInstance()->outGL->notifyGLUTKeyboard(key, x, y);
+        GLUTBackend::GetInstance()->outGL->notifyKeyboard(key, x, y);
     }
 }
 
@@ -103,7 +103,7 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
     auto *outGL = GLUTBackend::GetInstance()->outGL;
 
-    outGL->notifyGLUTKeyboardSpecial(key, x, y);
+    outGL->notifyKeyboardSpecial(key, x, y);
 
 }
 
@@ -112,7 +112,7 @@ void GLUTBackend::mouseButton(int button, int dir, int x, int y)
     GLUTBackend *gb = GLUTBackend::GetInstance();
     auto *outGL = gb->outGL;
 
-    outGL->notifyGLUTMouseButton(button, dir, x, y);
+    outGL->notifyMouseButton(button, dir, x, y);
 
     glutPostRedisplay();
 }
@@ -125,7 +125,7 @@ void GLUTBackend::mousePassiveMotion(int x, int y)
 void GLUTBackend::mouseMotion(int x, int y)
 {
     auto *outGL = GLUTBackend::GetInstance()->outGL;
-    outGL->notifyGLUTMouseMotion(x, y);
+    outGL->notifyMouseMotion(x, y);
 }
 
 void GLUTBackend::render()
@@ -140,7 +140,7 @@ void GLUTBackend::render()
     assert(outGL != nullptr);
 
     if(!gb->programIsRunning){
-        outGL->finishFrameAndRender();
+        outGL->notifyRender();
     }
 
     glutSwapBuffers();
@@ -177,18 +177,6 @@ void GLUTBackend::reshape(int w, int h)
     auto *outGL = gb->outGL;
 
     if(outGL != nullptr)
-        outGL->reshape(w, h);
-}
-
-auto GLUTBackend::getWidth() -> int {
-    return GLUTBackend::GetInstance()->w;
-}
-
-auto GLUTBackend::getHeight() -> int {
-    return GLUTBackend::GetInstance()->h;
-}
-
-auto GLUTBackend::getProgram() const -> const Program & {
-    return *program;
+        outGL->notifyReshape(w, h);
 }
 

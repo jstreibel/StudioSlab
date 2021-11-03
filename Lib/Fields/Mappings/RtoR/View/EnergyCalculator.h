@@ -13,7 +13,6 @@
 
 namespace RtoR {
     class EnergyCalculator {
-        // TODO colocar essa calculadora em .h e .cpp proprios
         RtoR::FunctionArbitrary *_oEnergyDensityFunc = static_cast<RtoR::FunctionArbitrary *>(Allocator::getInstance().newFunctionArbitrary());
     public:
         const RtoR::FunctionArbitrary &computeEnergyDensity(const RtoR::FieldState &field);

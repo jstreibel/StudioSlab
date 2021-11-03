@@ -1,4 +1,4 @@
-#include "graph.h"
+#include "graph_depr.h"
 
 #include <Common/Workaround/StringStream.h>
 
@@ -11,14 +11,14 @@
 #define TICK_FONT FONT9
 
 
-Graph::Graph() : title("") {
+Graph_depr::Graph_depr() : title("") {
     yspacing = 1.e-5;
 }
 
-Graph::Graph(const double winX, const double winY,
-             const double winW, const double winH,
-             const double xMin, const double xMax,
-             const double yMin, const double yMax, String title)
+Graph_depr::Graph_depr(const double winX, const double winY,
+                       const double winW, const double winH,
+                       const double xMin, const double xMax,
+                       const double yMin, const double yMax, String title)
     : //windowRect({winX, winY}, {winX+winW, winY+winH}),
       winX(winX), winY(winY),
       winW(winW), winH(winH),
@@ -32,7 +32,7 @@ Graph::Graph(const double winX, const double winY,
     markStart = yMin;
 }
 
-Graph::~Graph()
+Graph_depr::~Graph_depr()
 {
     while(!labels.empty()){
         delete labels.back();
@@ -40,7 +40,7 @@ Graph::~Graph()
     }
 }
 
-void Graph::BindWindow(bool clearAndDrawDecor)
+void Graph_depr::BindWindow(bool clearAndDrawDecor)
 {
 
 
@@ -90,7 +90,7 @@ void Graph::BindWindow(bool clearAndDrawDecor)
     }
 }
 
-void Graph::drawYAxis()
+void Graph_depr::drawYAxis()
 {
     const double deltaY = yMax-yMin;
     const double deltaX = xMax-xMin;
@@ -135,7 +135,7 @@ void Graph::drawYAxis()
     glPopAttrib();
 }
 
-void Graph::drawXAxis(const double xMin, const double xMax, const double yspacing)
+void Graph_depr::drawXAxis(const double xMin, const double xMax, const double yspacing)
 {
     const double xspacing = xMax / 8.0;
 
@@ -172,7 +172,7 @@ void Graph::drawXAxis(const double xMin, const double xMax, const double yspacin
     }
 }
 
-void Graph::drawXAxis()
+void Graph_depr::drawXAxis()
 {
     const double inPixelsTimes2 = 5;
     const double vTick = inPixelsTimes2 * (yMax-yMin) / winH;
@@ -226,7 +226,7 @@ void Graph::drawXAxis()
     }
 }
 
-void Graph::DrawAxes(double deltaY)
+void Graph_depr::DrawAxes(double deltaY)
 {
     BindWindow();
 
@@ -242,8 +242,8 @@ void Graph::DrawAxes(double deltaY)
         if(deltaY/yspacing > 10) yspacing *= 2.0;
     }
 
-    Graph::drawXAxis();
-    Graph::drawYAxis();
+    Graph_depr::drawXAxis();
+    Graph_depr::drawYAxis();
 
     if(!labels.empty()){
         const double Sx = (xMax-xMin) / winW;

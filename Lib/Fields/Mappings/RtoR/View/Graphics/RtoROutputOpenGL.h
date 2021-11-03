@@ -8,7 +8,7 @@
 #include "../EnergyCalculator.h"
 #include "../../Model/RtoRFuncArbResizable.h"
 
-#include <Studios/Graphics/graph.h>
+#include <Studios/Graphics/deprecated/graph_depr.h>
 #include <Studios/Graphics/NotHere/OutputOpenGL.h>
 
 namespace RtoR {
@@ -27,12 +27,12 @@ namespace RtoR {
         void _out(const OutputPacket &outInfo) override;
 
     private:
-        void notifyGLUTKeyboard(unsigned char key, int x, int y) override;
-        void notifyGLUTKeyboardSpecial(int key, int x, int y) override;
-        void notifyGLUTMouseButton(int button, int dir, int x, int y) override;
+        void notifyKeyboard(unsigned char key, int x, int y) override;
+        void notifyKeyboardSpecial(int key, int x, int y) override;
+        void notifyMouseButton(int button, int dir, int x, int y) override;
 
     public:
-        void reshape(int width, int height) override;
+        void notifyReshape(int width, int height) override;
 
     protected:
         auto getPhiMax() const -> double { return fieldsGraph.yMax; }
@@ -51,10 +51,10 @@ namespace RtoR {
         Animation *xMinAnim;
         Animation *xMaxAnim;
 
-        Graph fieldsGraph;
+        Graph_depr fieldsGraph;
 
-        Graph totalEnergyGraph;
-        Graph phaseSpaceGraph;
+        Graph_depr totalEnergyGraph;
+        Graph_depr phaseSpaceGraph;
         EnergyCalculator energyCalculator;
         FuncArbResizable energyHistory;
         Real energyTotal;

@@ -2,7 +2,7 @@
 #define OUTPUTOPENGL_H
 
 #include <Studios/CoreMath/Numerics/Output/Channel/OutputChannel.h>
-#include <Studios/Backend/Graphic/OpenGLArtistBase.h>
+#include <Studios/Backend/Graphic/GLUTEventListener.h>
 
 #include <GL/glut.h>
 // STD includes
@@ -13,7 +13,7 @@ namespace Base {
 
     #define isOutputOpenGL(output) (dynamic_cast<Base::OutputOpenGL*>(output) != nullptr)
 
-    class OutputOpenGL : public OutputChannel, public OpenGLArtistBase{
+    class OutputOpenGL : public OutputChannel, public GLUTEventListener{
     public:
         OutputOpenGL();
         ~OutputOpenGL() override;

@@ -7,6 +7,10 @@
 #include <cuda_runtime.h>
 #include <cuda.h>
 
+__host__ DeviceVector &d2dx2_DANIEL(const DeviceVector &in,
+                             DeviceVector &out,
+                             const double h, const size_t N);
+
 __host__ DeviceVector &d2dx2(const DeviceVector &in,
                              DeviceVector &out,
                              const double h, const size_t N);

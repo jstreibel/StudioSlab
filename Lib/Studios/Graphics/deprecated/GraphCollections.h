@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_GRAPHCOLLECTIONS_H
 #define V_SHAPE_GRAPHCOLLECTIONS_H
 
-#include "Studios/Graphics/graph.h"
+#include "graph_depr.h"
 
 #include <Common/Typedefs.h>
 

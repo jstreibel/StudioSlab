@@ -1,7 +1,7 @@
 #ifndef GLUTBACKEND_H
 #define GLUTBACKEND_H
 
-#include "OpenGLArtistBase.h"
+#include "GLUTEventListener.h"
 #include "../Backend.h"
 
 class GLUTBackend : public Backend
@@ -15,7 +15,7 @@ class GLUTBackend : public Backend
 public:
     static GLUTBackend *GetInstance();
 
-    void setOpenGLOutput(Base::OpenGLArtistBase *outputOpenGL);
+    void setOpenGLOutput(Base::GLUTEventListener *outputOpenGL);
 
 
     void run(Program *) override;
@@ -29,16 +29,11 @@ public:
     static void idleCall();
     static void reshape(int w, int h);
 
-    static auto getWidth() -> int;
-    static auto getHeight() -> int;
-
-    auto getProgram() const -> const Program &;
-
     auto isRunning() const -> bool {return programIsRunning;}
 
 private:
 	Program *program = nullptr;
-    Base::OpenGLArtistBase *outGL = nullptr;
+    Base::GLUTEventListener *outGL = nullptr;
 
     PosInt steps = 10;
 

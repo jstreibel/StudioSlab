@@ -2,7 +2,7 @@
 // Created by joao on 02/09/2021.
 //
 
-#include "OpenGLArtistBase.h"
+#include "GLUTEventListener.h"
 #include "GLUTUtils.h"
 
 #include <GL/gl.h>
@@ -11,17 +11,17 @@
 
 
 
-Base::OpenGLArtistBase::OpenGLArtistBase() {
+Base::GLUTEventListener::GLUTEventListener() {
 
 }
 
 
 
-auto Base::OpenGLArtistBase::getWindowSizeHint() -> IntPair {
+auto Base::GLUTEventListener::getWindowSizeHint() -> IntPair {
     return {-1,-1};
 }
 
-auto Base::OpenGLArtistBase::finishFrameAndRender() -> bool {
+auto Base::GLUTEventListener::finishFrameAndRender() -> bool {
     for(auto *anim : animations) anim->step(frameTimer.getElTime());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -45,7 +45,7 @@ auto Base::OpenGLArtistBase::finishFrameAndRender() -> bool {
     return true;
 }
 
-void Base::OpenGLArtistBase::SetWindow(double x, double y, double width, double height, const char *title) const {
+void Base::GLUTEventListener::SetWindow(double x, double y, double width, double height, const char *title) const {
     const double myx = x;// - winXoffset/1.0;
     const double myy = y;// - winYoffset/1.0;
     const double myw = width;
@@ -80,7 +80,7 @@ void Base::OpenGLArtistBase::SetWindow(double x, double y, double width, double 
 }
 
 
-void Base::OpenGLArtistBase::renderStats()
+void Base::GLUTEventListener::renderStats()
 {
     SetWindow(0, 0, statsWindowWidth, statsWindowHeight);
 
@@ -108,7 +108,8 @@ void Base::OpenGLArtistBase::renderStats()
         float delta = fontHeight;
         auto font = FONT9;
 
-        glColor3b(0.9*255,0.9*255,0.9*255);
+        auto colorTone = char(0.9*255);
+        glColor3b(colorTone, colorTone, colorTone);
 
         for(auto stat : stats){
             delta += fontHeight;
@@ -120,11 +121,11 @@ void Base::OpenGLArtistBase::renderStats()
 
 }
 
-void Base::OpenGLArtistBase::reshape(int width, int height) {
+void Base::GLUTEventListener::notifyReshape(int width, int height) {
     windowWidth = width;
     windowHeight = height;
 }
 
-auto Base::OpenGLArtistBase::needDraw() const -> bool {return true;}
+auto Base::GLUTEventListener::needDraw() const -> bool {return true;}
 
 

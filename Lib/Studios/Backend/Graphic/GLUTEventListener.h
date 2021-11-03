@@ -15,21 +15,23 @@
 
 namespace Base {
 
-    class OpenGLArtistBase {
+    class GLUTEventListener {
     public:
-        OpenGLArtistBase();
-        virtual ~OpenGLArtistBase() = default;
+        GLUTEventListener();
+        virtual ~GLUTEventListener() = default;
 
-        virtual void notifyGLUTKeyboard(unsigned char key, int x, int y) {};
-        virtual void notifyGLUTKeyboardSpecial(int key, int x, int y) {};
-        virtual void notifyGLUTMouseButton(int button, int dir, int x, int y) {};
-        virtual void notifyGLUTMouseMotion(int x, int y) {};
+        virtual void notifyKeyboard(unsigned char key, int x, int y) {};
+        virtual void notifyKeyboardSpecial(int key, int x, int y) {};
+        virtual void notifyMouseButton(int button, int dir, int x, int y) {};
+        virtual void notifyMouseMotion(int x, int y) {};
+
+        virtual void notifyReshape(int width, int height);
+
+        virtual void notifyRender() {finishFrameAndRender();};
+        auto finishFrameAndRender() -> bool;
+
 
         virtual auto getWindowSizeHint() -> IntPair;
-
-        virtual void reshape(int width, int height);
-
-        auto finishFrameAndRender() -> bool;
 
         void addVolatileStat(const String& stat) { stats.push_back(stat); }
 

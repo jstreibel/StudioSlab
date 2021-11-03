@@ -5,13 +5,13 @@
 #ifndef V_SHAPE_COMMANDLINEINPUTMANAGER_H
 #define V_SHAPE_COMMANDLINEINPUTMANAGER_H
 
-#include "../Interface/Interface.h"
-#include "../Interface/CommonParameters.h"
+#include "Interface.h"
+#include "CommonParameters.h"
 
-class CLInterfaceSelector : Interface {
+class InterfaceSelector : Interface {
 
-    CLInterfaceSelector();
-    static CLInterfaceSelector *mySingleInstance;
+    InterfaceSelector();
+    static InterfaceSelector *mySingleInstance;
 
     int currentSelection = 0;
     std::vector<Interface*> candidates;
@@ -19,7 +19,7 @@ class CLInterfaceSelector : Interface {
     IntegerParameter selection{0, "sim", "Sim type selection"};
 
 public:
-    static auto getInstance() -> CLInterfaceSelector &;
+    static auto getInstance() -> InterfaceSelector &;
 
     void registerCandidate(Interface *interface);
 
