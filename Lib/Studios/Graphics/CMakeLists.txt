@@ -1,5 +1,5 @@
 set( GRAPHICS_SOURCES
-		NotHere/OutputOpenGL.cpp
+		ARCHIVE/NotHere/OutputOpenGL.cpp
 
 		#Tools/Graph.cpp
 		#Tools/plotting-utils.cpp
@@ -17,7 +17,7 @@ set( GRAPHICS_SOURCES
 		#GraphCollections.cpp
 
 		animation.cpp
-		deprecated/graph_depr.cpp
+		ARCHIVE/deprecated/graph_depr.cpp
 		PlottingUtils.cpp
 		ZoomPanRotate.cpp
 		)

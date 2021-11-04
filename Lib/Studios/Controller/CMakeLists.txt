@@ -8,10 +8,14 @@ set ( INTERFACE_SOURCES
 
 set ( CONSOLE_SOURCES
 		Interface/InterfaceSelector.cpp
-		Console/CLInterfaceManager.cpp
+		CLArgsManager.cpp
 		)
 
-add_library(${STUDIOS_LIB_BASE_NAME}-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES})
+set ( NUKLEAR_SOURCES
+		Nuklear/NuklearImplementation.cpp
+		)
+
+add_library(${STUDIOS_LIB_BASE_NAME}-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} ${NUKLEAR_SOURCES})
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Controller
 		boost_program_options

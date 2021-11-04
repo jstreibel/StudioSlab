@@ -6,7 +6,7 @@
 #include "RtoRFunctionArbitraryGPU.h"
 #include "Derivatives/DerivativesGPU.h"
 
-#include <Studios/CoreMath/Function/GPUFriendly.h>
+#include <Phys/DiffMath/Function/GPUFriendly.h>
 
 #include <thrust/iterator/constant_iterator.h>
 

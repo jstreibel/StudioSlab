@@ -6,8 +6,8 @@
 
 #include <Common/Typedefs.h>
 
-#include <Studios/CoreMath/CoreNativeTypes.h>
-#include <Studios/CoreMath/Function/FunctionsBase.h>
+#include <Phys/DiffMath/CoreNativeTypes.h>
+#include <Phys/DiffMath/Function/FunctionsBase.h>
 
 namespace RtoR {
     typedef Base::Functions<Real>::Function1D Function;

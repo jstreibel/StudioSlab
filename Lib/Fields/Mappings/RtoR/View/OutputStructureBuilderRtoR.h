@@ -5,7 +5,7 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 
-#include <Studios/CoreMath/Numerics/Output/OutputStructureBuilderBase.h>
+#include <Phys/DiffMath/Numerics/Output/OutputStructureBuilderBase.h>
 
 class OutputStructureBuilderRtoR : public OutputStructureBuilderBase {
 public:

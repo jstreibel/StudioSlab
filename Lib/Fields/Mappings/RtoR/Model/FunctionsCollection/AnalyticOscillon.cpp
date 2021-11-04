@@ -5,7 +5,7 @@
 #include "AnalyticOscillon.h"
 
 #include "analytic-breather.h"
-#include <Studios/CoreMath/Primitives.h>
+#include <Phys/DiffMath/Primitives.h>
 #include <cmath>
 
 using namespace RtoR;

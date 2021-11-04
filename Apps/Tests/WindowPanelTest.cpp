@@ -6,7 +6,7 @@
 #include "WindowPanelTest.h"
 
 #include <Studios/Graphics/WindowManagement/Window.h>
-#include <Studios/Graphics/Graph.h>
+//#include <Studios/Graphics/Graph.h>
 
 
 WindowPanelTest::WindowPanelTest() : panel(new WindowPanel) {
@@ -22,7 +22,7 @@ WindowPanelTest::WindowPanelTest() : panel(new WindowPanel) {
     panel->addWindow(window);
 
     window = new Window();
-    window->addArtist(new Graph(-1, 1, -1, 1));
+    //window->addArtist(new Graph(-1, 1, -1, 1));
     panel->addWindow(window, true);
 
     window = new Window();

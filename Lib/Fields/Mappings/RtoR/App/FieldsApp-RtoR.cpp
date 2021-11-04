@@ -8,10 +8,10 @@
 #include "Fields/Mappings/BCInterface.h"
 
 #include <Studios/Backend/Backend.h>
-#include <Studios/Controller/Console/CLInterfaceManager.h>
+
 #include <Studios/Controller/Interface/InterfaceSelector.h>
 
-#include <Studios/CoreMath/Numerics/Integrator.h>
+#include <Phys/DiffMath/Numerics/Integrator.h>
 
 
 
@@ -20,7 +20,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
 {
     RtoRModelAllocator::Choose();
 
-    CommandLineInterfaceManager::Parse(argc, argv);
+    AppBase::parseCLArgs();
 }
 
 auto SimulationsAppRtoR::run() -> int {

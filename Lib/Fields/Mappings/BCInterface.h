@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Studios/CoreMath/Numerics/Output/OutputStructureBuilderBase.h"
+#include <Phys/DiffMath/Numerics/Output/OutputStructureBuilderBase.h>
 #include "Studios/Controller/Interface/Interface.h"
 
 namespace Base {

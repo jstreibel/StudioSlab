@@ -34,6 +34,8 @@ include_directories(./)
 # in order of dependency:
 add_subdirectory(Common)
 add_subdirectory(Studios)
+
+add_subdirectory(Phys)
 add_subdirectory(Fields)
 
 # add_dependencies(Fields Studios)

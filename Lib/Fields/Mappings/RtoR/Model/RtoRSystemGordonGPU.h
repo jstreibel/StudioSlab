@@ -9,7 +9,7 @@
 
 #include <Common/Workaround/ABIDef.h>
 
-#include <Studios/CoreMath/Numerics/Equation/Equation.h>
+#include <Phys/DiffMath/Numerics/Equation/Equation.h>
 #include <Common/DeviceConfig.h>
 
 namespace RtoR {

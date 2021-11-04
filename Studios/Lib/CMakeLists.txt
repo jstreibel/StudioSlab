@@ -12,9 +12,9 @@ include_directories(sfml-utils)
 include_directories(ThermoUtils)
 
 add_executable(StudiosLib
-		cegui-sfml/imconfig-SFML.h
-		cegui-sfml/imgui-SFML.h
-		cegui-sfml/imgui-SFML_export.h
+		../../Lib/Studios/Graphics/SFML/imconfig-SFML.h
+		../../Lib/Studios/Graphics/SFML/imgui-SFML.h
+		../../Lib/Studios/Graphics/SFML/imgui-SFML_export.h
 		colormap/itadpt/map_iterator_adapter.hpp
 		colormap/color.hpp
 		colormap/colormap.hpp
@@ -22,14 +22,14 @@ add_executable(StudiosLib
 		colormap/map.hpp
 		colormap/palettes.hpp
 		colormap/pixmap.hpp
-		GraphicsUtils/Colors.h
-		sfml-utils/Graph.cpp
-		sfml-utils/Graph.h
-		ThermoUtils/RandUtils.cpp
-		ThermoUtils/RandUtils.h
-		ThermoUtils/ThermoUtils.cpp
-		ThermoUtils/ThermoUtils.h
-		glad.c
-		glad.h
-		Nuklear/nuklear.h
-		Nuklear/nuklear_sfml.hpp)
+		../../Lib/Studios/Graphics/Colors.h
+		../../Lib/Studios/Graphics/SFML/Graph.cpp
+		../../Lib/Studios/Graphics/SFML/Graph.h
+		../../Lib/Phys/Thermal/Utils/RandUtils.cpp
+		../../Lib/Phys/Thermal/Utils/RandUtils.h
+		../../Lib/Phys/Thermal/Utils/ThermoUtils.cpp
+		../../Lib/Phys/Thermal/Utils/ThermoUtils.h
+		../../Lib/Studios/Graphics/OpenGL/glad.c
+		../../Lib/Studios/Graphics/OpenGL/glad.h
+		../../Lib/Studios/Controller/Nuklear/nuklear.h
+		../../Lib/Studios/Controller/Nuklear/nuklear_sfml.hpp)

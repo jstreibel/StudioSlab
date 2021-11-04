@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARYGPU_H
 
 #include "R2toRFunctionArbitrary.h"
-#include "Studios/CoreMath/Util/device-config.h"
+#include "Phys/DiffMath/Util/device-config.h"
 
 namespace R2toR {
 

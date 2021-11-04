@@ -6,7 +6,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "Studios/Controller/Console/CLInterfaceManager.h"
+#include "Studios/Controller/CLArgsManager.h"
 
 #include "Studios/Controller/Interface/InterfaceManager.h"
 

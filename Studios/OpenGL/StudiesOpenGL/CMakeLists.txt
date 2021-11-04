@@ -7,7 +7,7 @@ set ( OpenGL_GL_PREFERENCE GLVND )
 find_package(OpenGL)
 find_package(Eigen3)
 
-add_executable(ExampleNanogui exampleNanogui.cpp)
+add_executable(ExampleNanogui ../../../Lib/Studios/Controller/Nanogui/exampleNanogui.cpp)
 
 add_executable(OpenGLStudies
 		main.cpp

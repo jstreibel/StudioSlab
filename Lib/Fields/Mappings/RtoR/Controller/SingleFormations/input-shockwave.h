@@ -3,7 +3,7 @@
 
 #include "../../Controller/RtoRBCInterface.h"
 
-#include <Studios/CoreMath/Numerics/Output/Channel/OutputChannel.h>
+#include <Phys/DiffMath/Numerics/Output/Channel/OutputChannel.h>
 
 namespace RtoR {
     class InputShockwave : public RtoRBCInterface {

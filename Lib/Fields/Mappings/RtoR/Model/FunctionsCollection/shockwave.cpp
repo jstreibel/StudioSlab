@@ -1,6 +1,6 @@
 #include "shockwave.h"
 
-#include <Studios/CoreMath/Primitives.h>
+#include <Phys/DiffMath/Primitives.h>
 
 
 RtoR::ShockwavePhi::ShockwavePhi(Real h) : h(h) { }

@@ -8,15 +8,15 @@
 
 
 
-// #include <Studios/CoreMath/Numerics/Output/Channel/OutputSnapshot.h>
-#include <Studios/CoreMath/Numerics/Output/OutputManager.h>
+// #include <Phys/DiffMath/Numerics/Output/Channel/OutputSnapshot.h>
+#include <Phys/DiffMath/Numerics/Output/OutputManager.h>
 
-#include <Studios/CoreMath/Numerics/Output/Format/BinarySOF.h>
-#include <Studios/CoreMath/Numerics/Output/Format/CustomStringSeparatedSOF.h>
-#include <Studios/CoreMath/Numerics/Output/Format/ResolutionReductionFilter.h>
+#include <Phys/DiffMath/Numerics/Output/Format/BinarySOF.h>
+#include <Phys/DiffMath/Numerics/Output/Format/CustomStringSeparatedSOF.h>
+#include <Phys/DiffMath/Numerics/Output/Format/ResolutionReductionFilter.h>
 
-#include <Studios/CoreMath/Numerics/Output/Channel/OutputHistoryToFile.h>
-#include <Studios/CoreMath/Numerics/Output/Channel/OutputConsoleMonitor.h>
+#include <Phys/DiffMath/Numerics/Output/Channel/OutputHistoryToFile.h>
+#include <Phys/DiffMath/Numerics/Output/Channel/OutputConsoleMonitor.h>
 
 
 #include <Studios/Backend/Graphic/GLUTBackend.h>

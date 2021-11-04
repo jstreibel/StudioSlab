@@ -1,7 +1,7 @@
 #ifndef ANALYTIC_BREATHER_H
 #define ANALYTIC_BREATHER_H
 
-#include <Studios/CoreMath/CoreNativeTypes.h>
+#include <Phys/DiffMath/CoreNativeTypes.h>
 
 /* (* A static breather *) */
 floatt getPhiValue(floatt t, floatt x, floatt v);

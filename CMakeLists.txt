@@ -10,7 +10,7 @@ link_directories(Slab/lib)
 
 add_subdirectory(Lib/)
 add_subdirectory(Apps/)
-#add_subdirectory(xy/)
+add_subdirectory(xy/)
 
 #add_dependencies(Fields-RtoR Studios Fields-Map-RtoR Fields-Core )
 

@@ -8,7 +8,7 @@
 #include "Studios/Math/Maps/RtoR2/StraightLine.h"
 
 #include <Studios/Graphics/ZoomPanRotate.h>
-#include <Studios/CoreMath/Util/MathTypes.h>
+#include <Phys/DiffMath/Util/MathTypes.h>
 #include <Studios/Graphics/NotHere/OutputOpenGL.h>
 
 namespace R2toR {

@@ -12,5 +12,3 @@ add_subdirectory(App)
 
 add_subdirectory(Graphics)
 
-add_subdirectory(CoreMath) # depends on Backend (Integrator is a Backend::Program) and Controller (lots of things are Interface)
-

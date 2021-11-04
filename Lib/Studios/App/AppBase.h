@@ -5,11 +5,18 @@
 #ifndef V_SHAPE_APPBASE_H
 #define V_SHAPE_APPBASE_H
 
-class AppBase {
+#include <Studios/Controller/Interface/Interface.h>
+
+class AppBase : protected Interface {
 protected:
-    AppBase(int argc, const char *argv[]) : argc(argc), argv(argv) {};
-    int argc;
+    AppBase(int argc, const char *argv[]);
+
+    // TODO colocar argc argv em um std::vector<String> args.
+    const int argc;
     const char **argv;
+
+    void parseCLArgs();
+
 public:
     virtual int run() = 0;
 };

@@ -8,8 +8,8 @@
 #include "../EnergyCalculator.h"
 #include "../../Model/RtoRFuncArbResizable.h"
 
-#include <Studios/Graphics/deprecated/graph_depr.h>
-#include <Studios/Graphics/NotHere/OutputOpenGL.h>
+#include <Studios/Graphics/ARCHIVE/deprecated/graph_depr.h>
+#include <Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h>
 
 namespace RtoR {
 
