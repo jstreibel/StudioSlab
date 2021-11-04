@@ -7,7 +7,7 @@
 #include "WindowPanelTest.h"
 //#include "WindowTreeBuilderTest.h"
 
-#include <Studios/Backend/Graphic/GLUTBackend.h>
+#include <Studios/Backend/GLUT/GLUTBackend.h>
 #include <Studios/Backend/DummyProgram.h>
 
 

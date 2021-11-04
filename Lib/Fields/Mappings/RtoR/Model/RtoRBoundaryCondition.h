@@ -9,7 +9,7 @@
 #include "RtoRFunction.h"
 #include "RtoRFieldState.h"
 
-#include <Phys/DiffMath/Numerics/Equation/BoundaryConditions.h>
+#include <Phys/Numerics/Equation/BoundaryConditions.h>
 
 namespace RtoR {
     class BoundaryCondition : public Base::BoundaryConditions<RtoR::FieldState> {

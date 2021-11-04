@@ -14,7 +14,7 @@
 
 #define IS ==
 
-#include "../../../../xy/COMPILE_CONFIG.h"
+#include "Studios/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 
 
 ThermoUtils::Real avg(const RealVector &v) {

@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include <Studios/Backend/Graphic/GLUTEventListener.h>
+#include <Studios/Backend/GLUT/GLUTEventListener.h>
 #include <Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h>
 
 

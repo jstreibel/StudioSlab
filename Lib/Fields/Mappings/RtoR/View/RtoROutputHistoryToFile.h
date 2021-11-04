@@ -5,9 +5,8 @@
 #ifndef FIELDS_RTOROUTPUTHISTORYTOFILE_H
 #define FIELDS_RTOROUTPUTHISTORYTOFILE_H
 
-#include <Phys/DiffMath/Numerics/Output/Channel/OutputHistory.h>
-
-#include <Phys/DiffMath/Numerics/Output/Format/OutputFormatterBase.h>
+#include <Phys/Numerics/Output/Channel/OutputHistory.h>
+#include <Phys/Numerics/Output/Format/OutputFormatterBase.h>
 
 namespace RtoR {
     class OutputHistoryToFile : public OutputHistory {

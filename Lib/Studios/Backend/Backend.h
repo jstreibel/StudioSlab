@@ -11,6 +11,8 @@ protected:
     explicit Backend(Backend *instance);
     virtual ~Backend();
 
+protected:
+
 public:
     static auto GetInstance() -> Backend *;
 

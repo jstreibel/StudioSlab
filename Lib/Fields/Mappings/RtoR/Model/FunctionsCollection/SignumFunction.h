@@ -9,7 +9,7 @@
 
 #include <Common/Workaround/ABIDef.h>
 
-#include <Phys/DiffMath/Function/GPUFriendly.h>
+#include <Phys/Function/GPUFriendly.h>
 
 namespace RtoR {
     class SignumFunction : public Function, Base::GPUFriendly {

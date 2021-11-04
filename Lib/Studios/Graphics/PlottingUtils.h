@@ -1,7 +1,7 @@
 #ifndef PLOTTINGUTILS_H
 #define PLOTTINGUTILS_H
 
-#include <Studios/Backend/Graphic/GLUTUtils.h>
+#include <Studios/Backend/GLUT/GLUTUtils.h>
 
 #include <Common/STDLibInclude.h>
 

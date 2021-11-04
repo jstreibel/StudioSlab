@@ -4,7 +4,7 @@
 
 #include "../../Model/FunctionsCollection/AnalyticShockwave1D.h"
 
-#include <Phys/DiffMath/Numerics/Equation/SecondOrder/Equation_LorentzCovariant-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/Equation_LorentzCovariant-2ndOrder.h>
 
 #include "../../../FunctionRenderer.h"
 //

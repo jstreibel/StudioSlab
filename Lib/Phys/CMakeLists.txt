@@ -1,5 +1,79 @@
+#TODO MAKE POSSIBLE TO COMPILE WITHOUT GPU ( RLY? IN 2021? )
+
+
 set (PHYS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
 
-add_subdirectory( DiffMath )
 
-add_subdirectory( Thermal )
+set ( TOOLSET_SOURCES
+		Numerics/Allocator.cpp
+		Toolset/Device.cpp
+		Toolset/Categories.cpp
+		)
+
+set ( SPACE_SOURCES
+		Space/DiscreteSpace.cpp
+		Space/DiscreteSpaceCPU.cpp
+		Space/DiscreteSpaceGPU.cu
+		)
+
+set ( NUMERICS_SOURCES
+		Numerics/Program/Integrator.cpp
+		Numerics/Program/NumericParams.cpp
+
+		Numerics/Output/OutputManager.cpp
+		Numerics/Output/OutputStructureBuilderBase.cpp
+
+		Numerics/Output/Channel/OutputChannel.cpp
+		Numerics/Output/Channel/OutputConsoleMonitor.cpp
+		Numerics/Output/Channel/OutputHistory.cpp
+		Numerics/Output/Channel/OutputHistoryToFile.cpp
+
+		Numerics/Output/Format/BinarySOF.cpp
+		Numerics/Output/Format/CustomStringSeparatedSOF.cpp
+		Numerics/Output/Format/ResolutionReductionFilter.cpp
+
+		Numerics/Output/Util/ByteData.cpp
+		Numerics/Output/Util/FieldStateOutputInterface.cpp
+		Numerics/Output/Util/record-interval.cpp
+		)
+
+
+set ( THERMO_SOURCES
+		Thermal/Utils/RandUtils.cpp
+		Thermal/Utils/ThermoUtils.cpp
+		Thermal/SpinNetwork.cpp
+
+		Thermal/Metropolis/MetropolisAlgorithm.cpp
+
+		Thermal/Model/XYNetwork.cpp
+
+		Thermal/IO/SingleSim/SingleSimViewController.cpp
+
+		Thermal/IO/ManyHistories/QuenchViewController.cpp
+		Thermal/IO/ManyHistories/HistoryViewController.cpp
+
+		Thermal/IO/Tools/Graph.cpp
+		Thermal/IO/Tools/GraphAndAverageCalc.cpp
+
+		Thermal/Utils/ViewerUtils.cpp
+
+		)
+
+add_library(${PHYS_BASE_LIB_NAME} STATIC
+		${TOOLSET_SOURCES}
+		${SPACE_SOURCES}
+		${NUMERICS_SOURCES}
+		${THERMO_SOURCES}
+		)
+
+target_link_libraries(${PHYS_BASE_LIB_NAME}
+		Slab-Common
+		Slab-Studios-Backend
+		Slab-Studios-Controller
+		)
+
+set_property(TARGET ${PHYS_BASE_LIB_NAME} PROPERTY CUDA_ARCHITECTURES 61)
+
+
+# add_library( ${PHYS_BASE_LIB_NAME}-CoreThermo STATIC ${THERMO_SOURCES} )
+# target_link_libraries( ${PHYS_BASE_LIB_NAME}-CoreThermo sfml-graphics sfml-window sfml-system OpenGL)

@@ -7,7 +7,7 @@
 
 #include "RtoRFunction.h"
 
-#include <Phys/DiffMath/Function/FunctionArbitrary.h>
+#include <Phys/Function/FunctionArbitrary.h>
 
 #include <Studios/Controller/Interface/CommonParameters.h>
 #include <Common/Typedefs.h>

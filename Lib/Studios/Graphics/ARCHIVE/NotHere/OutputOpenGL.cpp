@@ -1,7 +1,7 @@
-#include <Studios/Backend/Graphic/GLUTBackend.h>
+#include <Studios/Backend/GLUT/GLUTBackend.h>
 #include "OutputOpenGL.h"
 
-#include <Phys/DiffMath/Allocator.h>
+#include <Phys/Numerics/Allocator.h>
 
 
 using namespace Base;

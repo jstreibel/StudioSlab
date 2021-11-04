@@ -11,7 +11,7 @@
 
 #include <Studios/Controller/Interface/InterfaceSelector.h>
 
-#include <Phys/DiffMath/Numerics/Integrator.h>
+#include <Phys/Numerics/Program/Integrator.h>
 
 
 

@@ -6,13 +6,13 @@
 
 #include "../../Utils/ViewerUtils.h"
 #include <Studios/Graphics/Colors.h>
+#include <Studios/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
 #include <ostream>
 #include <fstream>
 #include <boost/range/combine.hpp>
 #include <iostream>
-
 
 
 #define COMPUTE_AVERAGES false

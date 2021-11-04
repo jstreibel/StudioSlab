@@ -32,4 +32,4 @@ add_executable(StudiosLib
 		../../Lib/Studios/Graphics/OpenGL/glad.c
 		../../Lib/Studios/Graphics/OpenGL/glad.h
 		../../Lib/Studios/Controller/Nuklear/nuklear.h
-		../../Lib/Studios/Controller/Nuklear/nuklear_sfml.hpp)
+		../../Lib/Studios/Controller/Nuklear/_nuklear_sfml.hpp)

@@ -6,7 +6,7 @@
 #define FIELDS_RTORMODELALLOCATOR_H
 
 
-#include <Phys/DiffMath/Allocator.h>
+#include <Phys/Numerics/Allocator.h>
 
 class RtoRModelAllocator : public Allocator {
     RtoRModelAllocator();

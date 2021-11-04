@@ -1,8 +1,8 @@
 #ifndef OUTPUTOPENGL_H
 #define OUTPUTOPENGL_H
 
-#include <Phys/DiffMath/Numerics/Output/Channel/OutputChannel.h>
-#include <Studios/Backend/Graphic/GLUTEventListener.h>
+#include <Phys/Numerics/Output/Channel/OutputChannel.h>
+#include <Studios/Backend/GLUT/GLUTEventListener.h>
 
 #include <GL/glut.h>
 // STD includes

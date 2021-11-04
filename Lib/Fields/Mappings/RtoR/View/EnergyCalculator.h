@@ -8,7 +8,7 @@
 #include "../Model/RtoRFunctionArbitrary.h"
 #include "../Model/RtoRFieldState.h"
 
-#include <Phys/DiffMath/Allocator.h>
+#include <Phys/Numerics/Allocator.h>
 
 
 namespace RtoR {

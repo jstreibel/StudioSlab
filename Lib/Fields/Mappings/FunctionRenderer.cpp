@@ -1,6 +1,6 @@
 //
 
-#include <Phys/DiffMath/Allocator.h>
+#include <Phys/Numerics/Allocator.h>
 #include "FunctionRenderer.h"
 
 

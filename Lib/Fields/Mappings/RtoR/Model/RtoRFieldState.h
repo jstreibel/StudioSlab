@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FIELDSTATERTOR_H
 #define V_SHAPE_FIELDSTATERTOR_H
 
-#include <Phys/DiffMath/Numerics/Equation/SecondOrder/FieldState.h>
+#include <Phys/DifferentialEquations/2nd-Order/FieldState.h>
 #include "RtoRFunctionArbitrary.h"
 
 namespace RtoR {

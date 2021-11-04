@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_TRANSFORM_H
 #define V_SHAPE_TRANSFORM_H
 
-#include "Phys/DiffMath/Primitives.h"
+#include "Phys/Toolset/Categories.h"
 
 class Transform {
 public:

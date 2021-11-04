@@ -13,7 +13,7 @@
 #include "../Model/FunctionsCollection/AbsPerturbedFunction.h"
 #include "../Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include <Phys/DiffMath/Numerics/Equation/SecondOrder/Equation_LorentzCovariant-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/Equation_LorentzCovariant-2ndOrder.h>
 
 
 RtoRModelAllocator::RtoRModelAllocator() = default;

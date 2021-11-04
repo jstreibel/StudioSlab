@@ -1,5 +1,5 @@
 #include "analytic-breather.h"
-#include <Phys/DiffMath/NativeFunctions.h>
+#include <Phys/Toolset/NativeFunctions.h>
 
 /* (*Basic partial solutions for 0<t'<1/2 *) */
 

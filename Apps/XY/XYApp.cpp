@@ -4,11 +4,16 @@
 
 #include "XYApp.h"
 
+#include <Studios/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h>
+
 #include <Phys/Thermal/IO/SingleSim/SingleSimViewController.h>
 #include <Phys/Thermal/Metropolis/MetropolisAlgorithm.h>
+#include <Studios/Backend/DummyProgram.h>
 
 XYApp::XYApp(int argc, const char **argv) : AppBase(argc, argv) {
     addParameters({&L, &T, &MCSteps, &TSteps, &transient});
+
+    SFMLNuklearBackend::GetInstance();
 
     AppBase::parseCLArgs();
 }
@@ -16,14 +21,19 @@ XYApp::XYApp(int argc, const char **argv) : AppBase(argc, argv) {
 
 int XYApp::run() {
 
-    auto *viewControl = new ThermoOutput::SingleSimViewController(*L, *MCSteps, *transient);
+    if(0)
+    {
+        auto *viewControl = new ThermoOutput::SingleSimViewController(*L, *MCSteps, *transient);
 
-    MetropolisAlgorithm mcCalculator(*L, *T, .0, viewControl,
-                                     MetropolisAlgorithm::Ferromagnetic,
-                                     MetropolisAlgorithm::Metropolis,
-                                     MetropolisAlgorithm::Random);
+        MetropolisAlgorithm mcCalculator(*L, *T, .0, viewControl,
+                                         MetropolisAlgorithm::Ferromagnetic,
+                                         MetropolisAlgorithm::Metropolis,
+                                         MetropolisAlgorithm::Random);
 
-    mcCalculator.Simulate(*MCSteps, *transient);
+        mcCalculator.Simulate(*MCSteps, *transient);
+    }
+
+    SFMLNuklearBackend::GetInstance()->run(new DummyProgram);
 
     return 0;
 }

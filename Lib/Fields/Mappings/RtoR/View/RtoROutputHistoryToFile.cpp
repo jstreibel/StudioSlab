@@ -6,9 +6,9 @@
 
 #include <Common/Timer.h>
 
-#include <Phys/DiffMath/Allocator.h>
-#include <Phys/DiffMath/Numerics/Output/Format/SpaceFilterBase.h>
-#include <Phys/DiffMath/Numerics/Output/Format/BinarySOF.h>
+#include <Phys/Numerics/Allocator.h>
+#include <Phys/Numerics/Output/Format/SpaceFilterBase.h>
+#include <Phys/Numerics/Output/Format/BinarySOF.h>
 #include <Studios/Controller/Interface/InterfaceManager.h>
 
 const int HEADER_SIZE_BYTES = 2048;
