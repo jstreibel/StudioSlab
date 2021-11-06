@@ -7,7 +7,7 @@
 
 #include "Phys/Numerics/Output/Util/OutputPacket.h"
 
-#include <Phys/Space/DiscreteSpace.h>
+#include <Phys/Space/Impl/DiscreteSpace.h>
 
 class SpaceFilterBase {
 public:

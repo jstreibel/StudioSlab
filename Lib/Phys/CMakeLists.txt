@@ -7,14 +7,14 @@ set (PHYS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
 set ( TOOLSET_SOURCES
 		Numerics/Allocator.cpp
 		Toolset/Device.cpp
-		Toolset/Categories.cpp
+		Category/Categories.cpp
 		)
 
 set ( SPACE_SOURCES
-		Space/DiscreteSpace.cpp
-		Space/DiscreteSpaceCPU.cpp
-		Space/DiscreteSpaceGPU.cu
-		)
+		Space/Impl/DiscreteSpace.cpp
+		Space/Impl/DiscreteSpaceCPU.cpp
+		Space/Impl/DiscreteSpaceGPU.cu
+		Space/Space.cpp Space/Space.h Space/Measure.cpp Space/Measure.h Space/HyperCube/AAHyperCube.cpp Space/HyperCube/AAHyperCube.h Category/Category.cpp Category/Category.h Function/AllBaseFunctions.h)
 
 set ( NUMERICS_SOURCES
 		Numerics/Program/Integrator.cpp
@@ -57,7 +57,7 @@ set ( THERMO_SOURCES
 
 		Thermal/Utils/ViewerUtils.cpp
 
-		)
+		Function/SummableFunction.h Function/CommonFunctions.h)
 
 add_library(${PHYS_BASE_LIB_NAME} STATIC
 		${TOOLSET_SOURCES}

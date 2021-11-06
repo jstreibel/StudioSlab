@@ -5,8 +5,8 @@
 #ifndef V_SHAPE_FIELDSTATE_H
 #define V_SHAPE_FIELDSTATE_H
 
-#include <Phys/Space/ArithmeticOperationInterface.h>
-#include <Phys/Space/DiscreteSpace.h>
+#include <Phys/Space/Impl/ArithmeticOperationInterface.h>
+#include <Phys/Space/Impl/DiscreteSpace.h>
 
 #include <Phys/Numerics/Output/Util/FieldStateOutputInterface.h>
 
@@ -17,7 +17,7 @@ namespace Base {
     public:
         FieldState(ArbitraryFunctionType *phi, ArbitraryFunctionType *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
 
-        using FunctionType = typename ArbitraryFunctionType::BaseType;
+        using FunctionType = typename ArbitraryFunctionType::Type;
         using FunctionArbitraryType = ArbitraryFunctionType;
 
         ~FieldState() {
@@ -52,11 +52,11 @@ namespace Base {
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
-        void setPhi(const typename ArbitraryFunctionType::BaseType &function) {
+        void setPhi(const typename ArbitraryFunctionType::Type &function) {
             phi->Set(function);
         }
         /*! Basicamente utilizado por BoundaryConditions */
-        void setDPhiDt(const typename ArbitraryFunctionType::BaseType &function) {
+        void setDPhiDt(const typename ArbitraryFunctionType::Type &function) {
             dPhiDt->Set(function);
         }
 

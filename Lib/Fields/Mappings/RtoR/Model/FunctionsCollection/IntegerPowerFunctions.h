@@ -25,8 +25,8 @@ namespace RtoR {
             return .5*x*x;
         }
 
-        FunctionPtr diff(int n) const override {
-            return FunctionPtr(new HarmonicDerivative());
+        Pointer diff(int n) const override {
+            return Pointer(new HarmonicDerivative());
         }
 
         Function<Real, Real> *Clone() const override {

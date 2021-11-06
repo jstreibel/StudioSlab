@@ -46,19 +46,19 @@ auto RtoRModelAllocator::newFunctionArbitrary() -> void * {
     const floatt xRight = xLeft + numericParams.getL();
 
     if(dev==CPU)
-        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::FunctionArbitrary::Standard1D);
+        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::ArbitraryFunction::Standard1D);
 
 #if USE_CUDA
     else if(dev==GPU)
-        return new RtoR::FunctionArbitraryGPU(N, xLeft, xRight, RtoR::FunctionArbitrary::Standard1D);
+        return new RtoR::FunctionArbitraryGPU(N, xLeft, xRight, RtoR::ArbitraryFunction::Standard1D);
 #endif
 
     throw "Error while instantiating Field: device not recognized.";
 }
 
 auto RtoRModelAllocator::newFieldState() -> void * {
-    return new RtoR::FieldState((RtoR::FunctionArbitrary*)this->newFunctionArbitrary(),
-                                (RtoR::FunctionArbitrary*)this->newFunctionArbitrary());
+    return new RtoR::FieldState((RtoR::ArbitraryFunction*)this->newFunctionArbitrary(),
+                                (RtoR::ArbitraryFunction*)this->newFunctionArbitrary());
 }
 
 auto RtoRModelAllocator::getSystemSolver() -> void * {

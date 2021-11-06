@@ -16,7 +16,7 @@ namespace RtoR {
 
         Real operator()(Real x) const override;
 
-        FunctionPtr diff(int n) const override;
+        Pointer diff(int n) const override;
 
         Function<Real, Real> *Clone() const override;
 
@@ -30,7 +30,7 @@ namespace RtoR {
 
         Real operator()(Real x) const override;
 
-        FunctionPtr diff(int n) const override;
+        Pointer diff(int n) const override;
 
         Function<Real, Real> *Clone() const override;
 

@@ -20,8 +20,8 @@ Real AbsPerturbedDiffFunction::operator()(Real x) const {
     }
     return Vp;}
 
-Base::Function<Real, Real>::FunctionPtr AbsPerturbedDiffFunction::diff(int n) const {
-    return Function<Real, Real>::FunctionPtr(new AbsPerturbedDiffFunction(Ns));
+Base::Function<Real, Real>::Pointer AbsPerturbedDiffFunction::diff(int n) const {
+    return Function<Real, Real>::Pointer(new AbsPerturbedDiffFunction(Ns));
 }
 
 Base::Function<Real, Real> *AbsPerturbedDiffFunction::Clone() const {
@@ -44,8 +44,8 @@ Real AbsPerturbedFunction::operator()(Real x) const {
     return V;
 }
 
-Base::Function<Real, Real>::FunctionPtr AbsPerturbedFunction::diff(int n) const {
-    return Function<Real, Real>::FunctionPtr(new AbsPerturbedDiffFunction(Ns));
+Base::Function<Real, Real>::Pointer AbsPerturbedFunction::diff(int n) const {
+    return Function<Real, Real>::Pointer(new AbsPerturbedDiffFunction(Ns));
 }
 
 Base::Function<Real, Real> *AbsPerturbedFunction::Clone() const {

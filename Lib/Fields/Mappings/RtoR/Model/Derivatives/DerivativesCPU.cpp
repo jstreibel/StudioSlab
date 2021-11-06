@@ -9,7 +9,7 @@
 
 using namespace RtoR;
 
-DerivativeCPU::DerivativeCPU(const FunctionArbitrary &in)
+DerivativeCPU::DerivativeCPU(const ArbitraryFunction &in)
     : f_(&in.getSpace().getX()), h(in.getSpace().geth()), invh(1./h), invhsqr(1./(h*h)), N(in.getSpace().getTotalDiscreteSites()) { }
 
 auto DerivativeCPU::dfdx_3s(PosInt X) const -> Real {

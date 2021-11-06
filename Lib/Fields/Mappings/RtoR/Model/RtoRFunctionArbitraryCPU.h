@@ -8,20 +8,20 @@
 #include "RtoRFunctionArbitrary.h"
 
 namespace RtoR {
-    class FunctionArbitraryCPU : public FunctionArbitrary {
+    class FunctionArbitraryCPU : public ArbitraryFunction {
     public:
         FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
-        FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, FunctionArbitrary::LaplacianType laplacianType);
+        FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, ArbitraryFunction::LaplacianType laplacianType);
 
         [[nodiscard]] auto Clone() const -> Base::Function<Real, Real> * override;
 
-        [[nodiscard]] auto CloneWithSize(PosInt N) const -> Base::FunctionArbitrary<Real, Real> * override;
+        [[nodiscard]] auto CloneWithSize(PosInt N) const -> Base::ArbitraryFunction<Real, Real> * override;
 
         auto Set(const Function &func) -> FunctionArbitraryCPU & override;
 
-        auto Apply(const MyBase &func, Base::FunctionArbitrary<Real, Real> &out) const -> Base::FunctionArbitrary<Real, Real> & override;
+        auto Apply(const MyBase &func, Base::ArbitraryFunction<Real, Real> &out) const -> Base::ArbitraryFunction<Real, Real> & override;
 
-        auto Laplacian(FunctionArbitrary &outFunc) const -> FunctionArbitrary & override;
+        auto Laplacian(ArbitraryFunction &outFunc) const -> ArbitraryFunction & override;
 
     };
 }

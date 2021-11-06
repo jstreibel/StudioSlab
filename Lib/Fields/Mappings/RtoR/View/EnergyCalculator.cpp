@@ -4,7 +4,7 @@
 
 #include "EnergyCalculator.h"
 
-auto RtoR::EnergyCalculator::computeEnergyDensity(const RtoR::FieldState &field) -> const RtoR::FunctionArbitrary &{
+auto RtoR::EnergyCalculator::computeEnergyDensity(const RtoR::FieldState &field) -> const RtoR::ArbitraryFunction &{
     auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();

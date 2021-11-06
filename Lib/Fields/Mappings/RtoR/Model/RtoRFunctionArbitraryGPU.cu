@@ -15,11 +15,11 @@
 using namespace RtoR;
 
 FunctionArbitraryGPU::FunctionArbitraryGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType)
-    : FunctionArbitrary(N, xMin, xMax, device::GPU, laplacianType) {
+    : ArbitraryFunction(N, xMin, xMax, device::GPU, laplacianType) {
 
 }
 
-Base::FunctionArbitrary<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Function &func) {
+Base::ArbitraryFunction<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Function &func) {
     DiscreteSpaceGPU &spaceGPU = dynamic_cast<DiscreteSpaceGPU&>(getSpace());
 
     auto& XHost = spaceGPU.getHostData(false);
@@ -38,7 +38,7 @@ Base::FunctionArbitrary<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Funct
 
         return *this;
     } else {
-        cast(inFunc, const RtoR::FunctionArbitrary&, func);
+        cast(inFunc, const RtoR::ArbitraryFunction&, func);
         return Set(inFunc);
     }
 
@@ -47,8 +47,8 @@ Base::FunctionArbitrary<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Funct
 
 
 
-Base::FunctionArbitrary<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Function &func,
-                                                                Base::FunctionArbitrary<Real,Real> &out) const {
+Base::ArbitraryFunction<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Function &func,
+                                                                Base::ArbitraryFunction<Real,Real> &out) const {
     assert(out.isGPUFriendly());
 
     const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU&>(getSpace());
@@ -66,8 +66,8 @@ Base::FunctionArbitrary<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Func
     return out;
 }
 
-FunctionArbitrary &FunctionArbitraryGPU::Laplacian(FunctionArbitrary &outFunc) const {
-    if(laplacianType == FunctionArbitrary::LaplacianType::RadialSymmetry2D) throw "GPU RadialSymmetry2D laplacian not implemented.";
+ArbitraryFunction &FunctionArbitraryGPU::Laplacian(ArbitraryFunction &outFunc) const {
+    if(laplacianType == ArbitraryFunction::LaplacianType::RadialSymmetry2D) throw "GPU RadialSymmetry2D laplacian not implemented.";
 
     // cast(out, FunctionArbitraryGPU&, outFunc);
 

@@ -13,11 +13,11 @@
 
 namespace RtoR {
     class EnergyCalculator {
-        RtoR::FunctionArbitrary *_oEnergyDensityFunc = static_cast<RtoR::FunctionArbitrary *>(Allocator::getInstance().newFunctionArbitrary());
+        RtoR::ArbitraryFunction *_oEnergyDensityFunc = static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
     public:
-        const RtoR::FunctionArbitrary &computeEnergyDensity(const RtoR::FieldState &field);
+        const RtoR::ArbitraryFunction &computeEnergyDensity(const RtoR::FieldState &field);
 
-        const RtoR::FunctionArbitrary &getFunc() { return *_oEnergyDensityFunc; };
+        const RtoR::ArbitraryFunction &getFunc() { return *_oEnergyDensityFunc; };
 
         Real integrate();
 

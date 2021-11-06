@@ -2,7 +2,7 @@
 #define OUTPUTINFO_H
 
 #include "FieldStateOutputInterface.h"
-#include <Phys/Space/DiscreteSpace.h>
+#include <Phys/Space/Impl/DiscreteSpace.h>
 
 
 typedef std::unique_ptr<FStateOutputInterface*> FieldDataPtr;

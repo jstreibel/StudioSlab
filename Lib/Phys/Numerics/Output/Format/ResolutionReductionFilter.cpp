@@ -4,8 +4,8 @@
 
 #include "ResolutionReductionFilter.h"
 
-#include "Phys/Space/DiscreteSpace.h"
-#include "Phys/Space/DiscreteSpaceCPU.h"
+#include "Phys/Space/Impl/DiscreteSpace.h"
+#include "Phys/Space/Impl/DiscreteSpaceCPU.h"
 
 ResolutionReductionFilter::ResolutionReductionFilter(DimensionMetaData newDim) : newDim(std::move(newDim)) {
 

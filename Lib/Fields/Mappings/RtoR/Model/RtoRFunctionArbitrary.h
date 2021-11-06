@@ -7,7 +7,7 @@
 
 #include "RtoRFunction.h"
 
-#include <Phys/Function/FunctionArbitrary.h>
+#include <Phys/Function/ArbitraryFunction.h>
 
 #include <Studios/Controller/Interface/CommonParameters.h>
 #include <Common/Typedefs.h>
@@ -15,18 +15,18 @@
 
 namespace RtoR {
 
-    class FunctionArbitrary : public Base::FunctionArbitrary<Real, Real> {
+    class ArbitraryFunction : public Base::ArbitraryFunction<Real, Real> {
     public:
         enum LaplacianType {
             Standard1D,
             RadialSymmetry2D,
         };
     public:
-        FunctionArbitrary(const FunctionArbitrary &toCopy);
-        FunctionArbitrary(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);
+        ArbitraryFunction(const ArbitraryFunction &toCopy);
+        ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);
 
     public:
-        virtual FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const = 0;
+        virtual ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const = 0;
 
     public:
         Real mapIntToPos(PosInt i) const;

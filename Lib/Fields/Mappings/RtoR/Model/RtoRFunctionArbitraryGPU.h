@@ -10,14 +10,14 @@
 
 namespace RtoR {
 #if USE_CUDA == true
-    class FunctionArbitraryGPU : public FunctionArbitrary {
+    class FunctionArbitraryGPU : public ArbitraryFunction {
     public:
         FunctionArbitraryGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType);
 
         /*! This function operates on the host and then transfers information to device. It's not efficient. */
-        Base::FunctionArbitrary<Real,Real> &Apply(const Function &func, Base::FunctionArbitrary<Real, Real> &out) const override;
-        Base::FunctionArbitrary<Real, Real> &Set(const MyBase &func) override;
-        FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const override;
+        Base::ArbitraryFunction<Real,Real> &Apply(const Function &func, Base::ArbitraryFunction<Real, Real> &out) const override;
+        Base::ArbitraryFunction<Real, Real> &Set(const MyBase &func) override;
+        ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const override;
     };
 #endif
 }

@@ -15,6 +15,6 @@ Function *AbsFunction::Clone() const {
     return new AbsFunction;
 }
 
-Function::FunctionPtr AbsFunction::diff(int n) const {
-    return Function<Real, Real>::FunctionPtr(new SignumFunction);
+Function::Pointer AbsFunction::diff(int n) const {
+    return Function<Real, Real>::Pointer(new SignumFunction);
 }

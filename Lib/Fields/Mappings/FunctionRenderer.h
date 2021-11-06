@@ -18,7 +18,7 @@ namespace RtoR {
 
     class FunctionRenderer {
     public:
-        static void renderFunction(const RtoR::FunctionArbitrary &func, Color c, bool filled, Real scale = 1.0);
+        static void renderFunction(const RtoR::ArbitraryFunction &func, Color c, bool filled, Real scale = 1.0);
         static void renderFunction(const RtoR::Function &func, Color c, bool filled, Real xMin, Real xMax, PosInt resolution, Real scale = 1.0);
         static void renderFunction(const R2toR::Function &func, Real xMin, Real yMin, Real L, PosInt nLines, PosInt linesRes, Real scale = 1.0);
 

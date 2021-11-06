@@ -9,7 +9,7 @@
 #include <Phys/Numerics/Output/Util/FieldStateOutputInterface.h>
 #include <Phys/Numerics/Output/Util/ByteData.h>
 
-#include <Phys/Space/DiscreteSpace.h>
+#include <Phys/Space/Impl/DiscreteSpace.h>
 
 
 class OutputFormatterBase {

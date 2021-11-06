@@ -8,30 +8,30 @@
 
 using namespace RtoR;
 
-FunctionArbitrary::FunctionArbitrary(const FunctionArbitrary &toCopy)
-    : FunctionArbitrary::FunctionArbitrary(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, laplacianType){
+ArbitraryFunction::ArbitraryFunction(const ArbitraryFunction &toCopy)
+    : ArbitraryFunction::ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, laplacianType){
     throw "FunctionArbitrary::FunctionArbitrary(const FunctionArbitrary &toCopy) not implemented.";
 }
 
-FunctionArbitrary::FunctionArbitrary(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
-    : Base::FunctionArbitrary<Real, Real>(DimensionMetaData({N}), (xMax-xMin)/Real(N), dev), N(N),
+ArbitraryFunction::ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
+    : Base::ArbitraryFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
       xMin(xMin), xMax(xMax), laplacianType(laplacianType)
 {
 
 }
 
-auto FunctionArbitrary::mapIntToPos(PosInt i) const -> Real {
+auto ArbitraryFunction::mapIntToPos(PosInt i) const -> Real {
     const floatt L = xMax-xMin;
     const Real h_2 = .5*getSpace().geth();
     return (L * Real(i)/Real(N-1) + xMin) + h_2;
 }
 
-auto FunctionArbitrary::mapPosToInt(Real x) const -> PosInt {
+auto ArbitraryFunction::mapPosToInt(Real x) const -> PosInt {
     const Real h = getSpace().geth();
     return PosInt((x-xMin)/h);
 }
 
-Real FunctionArbitrary::operator()(Real x) const {
+Real ArbitraryFunction::operator()(Real x) const {
     const floatt L = xMax-xMin;
 
     // TODO: fazer essa conversao um pouco mais consciente.

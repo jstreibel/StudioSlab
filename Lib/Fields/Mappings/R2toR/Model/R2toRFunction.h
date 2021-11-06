@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORFUNCTION_H
 #define V_SHAPE_R2TORFUNCTION_H
 
-#include "Phys/Function/FunctionsBase.h"
+#include "Phys/Function/Function.h"
 
 namespace R2toR {
     typedef Base::Functions<Real>::Function2D Function;

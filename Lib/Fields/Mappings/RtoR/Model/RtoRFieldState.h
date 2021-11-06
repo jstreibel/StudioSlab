@@ -10,11 +10,11 @@
 
 namespace RtoR {
 
-    class FieldState : public Base::FieldState<FunctionArbitrary> {
+    class FieldState : public Base::FieldState<ArbitraryFunction> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
-        FieldState(FunctionArbitrary *phi, FunctionArbitrary *dPhiDt) : Base::FieldState<FunctionArbitrary>(phi, dPhiDt) {}
+        FieldState(ArbitraryFunction *phi, ArbitraryFunction *dPhiDt) : Base::FieldState<ArbitraryFunction>(phi, dPhiDt) {}
 
     public:
         void outputPhi(std::ostream &out, String separator) const override {
@@ -34,8 +34,8 @@ namespace RtoR {
         }
 
         FStateOutputInterface *Copy(PosInt N) const override {
-            return new FieldState(dynamic_cast<FunctionArbitrary*>(phi->CloneWithSize(N)),
-                                  dynamic_cast<FunctionArbitrary*>(dPhiDt->CloneWithSize(N)));
+            return new FieldState(dynamic_cast<ArbitraryFunction*>(phi->CloneWithSize(N)),
+                                  dynamic_cast<ArbitraryFunction*>(dPhiDt->CloneWithSize(N)));
         }
     };
 }

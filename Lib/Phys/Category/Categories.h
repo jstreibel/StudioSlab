@@ -5,8 +5,10 @@
 #ifndef V_SHAPE_MATHTYPES_H
 #define V_SHAPE_MATHTYPES_H
 
+#include "Category.h"
+
 #include "Common/Utils.h"
-#include "NativeFunctions.h"
+#include "Phys/Toolset/NativeFunctions.h"
 
 // NaN: uncomment one of the following 3 methods of defining a global NaN
 // you can test by verifying that (NaN != NaN) is true
@@ -16,10 +18,6 @@ static const Real NaN = std::numeric_limits<Real>::quiet_NaN();
 //Doub NaN = sqrt(-1.);
 
 typedef Pair<Real, Real> RealPair;
-
-class Category {
-
-};
 
 class Real1D : public Category {
 public:

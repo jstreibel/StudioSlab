@@ -15,7 +15,7 @@ using namespace RtoR;
 
 //
 FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
-    : FunctionArbitrary(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
+    : ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
 
     auto &toCopyX = toCopy.getSpace().getHostData(true);
 
@@ -24,7 +24,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
 }
 
 RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
-    : FunctionArbitrary(N, xLeft, xRight, device::CPU, laplacianType){
+    : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType){
 
 }
 
@@ -47,7 +47,7 @@ Base::Function<Real, Real> *FunctionArbitraryCPU::Clone() const {
     return new FunctionArbitraryCPU(*this);
 }
 
-Base::FunctionArbitrary<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Base::ArbitraryFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
     const VecFloat &X = getSpace().getX();
@@ -60,8 +60,8 @@ Base::FunctionArbitrary<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt 
     return &newFunc;
 }
 
-Base::FunctionArbitrary<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
-                                                                 Base::FunctionArbitrary<Real, Real> &out) const {
+Base::ArbitraryFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
+                                                                 Base::ArbitraryFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
     auto &outX = outSpace.getX();
     const auto &myX = getSpace().getX();
@@ -72,7 +72,7 @@ Base::FunctionArbitrary<Real, Real> &FunctionArbitraryCPU::Apply(const Function 
     return out;
 }
 
-FunctionArbitrary &FunctionArbitraryCPU::Laplacian(FunctionArbitrary &out) const {
+ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const {
 
     if(laplacianType == RadialSymmetry2D)
     {

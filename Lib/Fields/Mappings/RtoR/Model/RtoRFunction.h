@@ -7,7 +7,7 @@
 #include <Common/Typedefs.h>
 
 #include <Phys/Toolset/CoreNativeTypes.h>
-#include <Phys/Function/FunctionsBase.h>
+#include <Phys/Function/CommonFunctions.h>
 
 namespace RtoR {
     typedef Base::Functions<Real>::Function1D Function;
