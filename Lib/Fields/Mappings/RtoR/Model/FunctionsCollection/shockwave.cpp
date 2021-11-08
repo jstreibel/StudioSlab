@@ -1,6 +1,6 @@
 #include "shockwave.h"
 
-#include <Phys/Category/Categories.h>
+#include <Phys/Formalism/Categories.h>
 
 
 RtoR::ShockwavePhi::ShockwavePhi(Real h) : h(h) { }

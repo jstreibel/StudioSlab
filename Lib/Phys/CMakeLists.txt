@@ -7,14 +7,27 @@ set (PHYS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
 set ( TOOLSET_SOURCES
 		Numerics/Allocator.cpp
 		Toolset/Device.cpp
-		Category/Categories.cpp
+		Formalism/Categories.cpp
 		)
 
 set ( SPACE_SOURCES
 		Space/Impl/DiscreteSpace.cpp
 		Space/Impl/DiscreteSpaceCPU.cpp
 		Space/Impl/DiscreteSpaceGPU.cu
-		Space/Space.cpp Space/Space.h Space/Measure.cpp Space/Measure.h Space/HyperCube/AAHyperCube.cpp Space/HyperCube/AAHyperCube.h Category/Category.cpp Category/Category.h Function/AllBaseFunctions.h)
+		Space/Space.cpp Space/Space.h
+		Space/Measure.cpp Space/Measure.h
+		Space/HyperCube/AAHyperCube.cpp
+		Space/HyperCube/AAHyperCube.h
+		Function/AllBaseFunctions.h
+		)
+
+set ( EXPERIMENTAL_SOURCES
+		Formalism/Category.cpp
+		Formalism/Category.h
+
+		Formalism/Graph.cpp Formalism/Graph.h
+		Formalism/Set.cpp Formalism/Set.h
+		Formalism/MathObject.cpp Formalism/MathObject.h)
 
 set ( NUMERICS_SOURCES
 		Numerics/Program/Integrator.cpp
@@ -57,11 +70,14 @@ set ( THERMO_SOURCES
 
 		Thermal/Utils/ViewerUtils.cpp
 
-		Function/SummableFunction.h Function/CommonFunctions.h)
+		Function/SummableFunction.h
+		Function/CommonFunctions.h
+		)
 
 add_library(${PHYS_BASE_LIB_NAME} STATIC
 		${TOOLSET_SOURCES}
 		${SPACE_SOURCES}
+		${EXPERIMENTAL_SOURCES}
 		${NUMERICS_SOURCES}
 		${THERMO_SOURCES}
 		)

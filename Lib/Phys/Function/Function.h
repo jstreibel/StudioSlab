@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FUNCTIONSBASE_H
 #define V_SHAPE_FUNCTIONSBASE_H
 
-#include "Phys/Category/Categories.h"
+#include "Phys/Formalism/Categories.h"
 #include "Phys/Space/Space.h"
 
 #include <Common/Typedefs.h>
