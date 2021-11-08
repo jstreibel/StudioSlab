@@ -16,6 +16,8 @@ struct MathObject {
 };
 
 
+
+
 /**
  * A Link is a Mathematical object that links two things (aka C++ objects) A and B.
  * @tparam A
@@ -32,6 +34,7 @@ struct Link {
 /**
  * An Arrow is a Link with direction between two Mathematical Objects.
  */
+ /*
 template <class A, class B>
 struct Arrow : private Link<A, B> {
 public:
@@ -48,6 +51,8 @@ public:
  *
  * @tparam ObjectIPointTo
  */
+
+ /*
 #include "Set.h"
 // Some forwards:
 template<class ObjectIPointTo> struct MOWA; // A MOWA is Mathematical Object With Arrows/
@@ -71,12 +76,13 @@ private:
  * linked MOWA).
  *
  * I'll call it a MOWALink
- */
+ *//*
 class MOWALink;
 
 class MOWALink : MOWA<MOWALink> {
 
 };
+ */
 
 
 #endif //STUDIOSLAB_MATHOBJECT_H
