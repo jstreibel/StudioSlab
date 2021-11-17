@@ -6,14 +6,14 @@
 #define STUDIOSLAB_MATHOBJECT_H
 
 
+#include "Information.h"
+
 /*
  * TODO: where do the mathematical formalism of my interest meet C++?
  */
 
 
-struct MathObject {
-
-};
+typedef Information MathObject; // A math object is information
 
 
 

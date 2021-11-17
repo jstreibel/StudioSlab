@@ -27,7 +27,7 @@ set ( EXPERIMENTAL_SOURCES
 
 		Formalism/Graph.cpp Formalism/Graph.h
 		Formalism/Set.cpp Formalism/Set.h
-		Formalism/MathObject.cpp Formalism/MathObject.h)
+		Formalism/MathObject.cpp Formalism/MathObject.h Formalism/Information.cpp Formalism/Information.h)
 
 set ( NUMERICS_SOURCES
 		Numerics/Program/Integrator.cpp
