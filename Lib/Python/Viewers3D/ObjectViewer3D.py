@@ -11,7 +11,7 @@ from numpy import eye, float32, array, matrix, dot
 
 import imgui
 
-from .. import PySLibDir
+from Studios.Lib.PySLib import PySLibDir
 
 from PySLib.Viewers3D import ObjectInstance
 
