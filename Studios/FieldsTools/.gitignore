@@ -1,0 +1,10 @@
+.ccls-cache
+temp
+*.so 
+*__pycache__* 
+*.cxx 
+*.pyc
+*.ipynb_checkpoints
+sim/cmake-build-debug
+.idea
+DataAnalysis/.idea

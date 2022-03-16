@@ -1,0 +1,30 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+from sys import argv
+from ast import literal_eval as lit_eval
+from numpy import linspace
+from matplotlib import pyplot
+
+fileName = argv[1]
+
+snapshotDict = None
+with open(fileName) as file:
+    for line in file:
+        snapshotDict = lit_eval(line.strip('# '))
+
+    for key in snapshotDict:
+        print(str(key) + ": ", end='')
+        if key not in ('phi', 'dphidt'):
+            print(snapshotDict[key])
+        else:
+            print("...")
+
+N = snapshotDict['N']
+dx = snapshotDict['L']/N
+xLeft = snapshotDict['xLeft']
+L = snapshotDict['L']
+
+x = linspace(xLeft, xLeft+L, N)
+pyplot.plot(x, snapshotDict['phi'])
+pyplot.show()

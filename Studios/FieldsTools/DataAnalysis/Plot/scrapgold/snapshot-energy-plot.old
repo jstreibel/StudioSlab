@@ -1,0 +1,298 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import glob
+from multiprocessing import Pool
+from numpy import asarray, unique, linspace, zeros, full
+from numpy import sqrt
+from utils import fmt, printThere, asciiGrayScale
+from ast import literal_eval as lit_eval
+import shutil
+from Fitting import Region
+from open_sim import OpenSimData
+import plot_single
+import os
+from matplotlib import pyplot
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--files', '-f', help="Filename(s). Default is all .oscs files in folder.", nargs='*', default='./*.oscs')
+parser.add_argument('--threads', '-t', help='Number of threads to use. Default is 1.', type=int, default=1)
+parser.add_argument('--n_stride', '-n', help='\'n\' stride determines if we jump over files (and how much we jump) in the u (or V) direction.', type=int, default=1)
+parser.add_argument('--m_stride', '-m', help='\'m\' stride determines if we jump over files (and how much we jump) in the \\alpha (or phase) direction.', type=int, default=1)
+
+parser.add_argument('--ext', help="Output plot file extension. Defaults to .pdf. Can be anything supported by "
+                                  "matplotlib.", type=str, default='pdf')
+parser.add_argument('--saveDebugGraph1', '-p1', help='Save to png file a full image of plot with integration region.',
+                    action='store_true')
+parser.add_argument('--saveDebugGraph2', '-p2', help='Save to png file a graph of indefitine integral of energy on x axis.',
+                    action='store_true')
+parser.add_argument('--saveDebugGraph3', '-p3', help='Save to png file a graph showing full sim energy along time.',
+                    action='store_true')
+parser.add_argument('--showResult', '-s', help='Show result.',
+                    action='store_true')
+
+parser.add_argument('--region', help="Region to plot. Must be 4-tuple representing (xmin, xmax, ymin, ymax). Example --region=(-3,3,0,4)", nargs=4, type=float)
+
+parser.add_argument('--integration_time', '-it', help='Moment in time to perform energy integration.', type=float, default=3.)
+parser.add_argument('--noradtreshold', '-nr', help='No radiation treshold (percentage).', type=float, default=-1000.)
+parser.add_argument('--logeps', '-le', help="When using log scale, formula is sign(phi)*log(abs(phi)/eps + 1), where epsilon determines the amount of detail near 0 (zero) to reveal. Smaller epsilon reveals more detail. Default is 1.e-6.", type=float, default=1.e0)
+
+
+args = parser.parse_args()
+
+theParametersMap = None
+
+fileFormats = ("snapshot-gen-+-v1={v1}-v2={v2}-a1={a1}-a2={a2}-l=1.000000-V={V}--N={N}-t=2.9999.oscs", )
+fileformat = fileFormats[0]
+
+sh_rows, sh_columns = shutil.get_terminal_size()
+
+
+def extractParametersMapFromFileNames(files):
+    theMap = {}
+    for fileName in files:
+        if fileName[-5:] != '.oscs':
+            print("Unknown file type", fileName)
+            continue
+
+        fileName = fileName[:-5]
+
+        fileNameArgs = fileName.replace('./', '').replace('snapshot-gen-+-', '').replace('--', '-').split('-')
+        print(fileNameArgs)
+
+        for arg in fileNameArgs:
+            keyval = arg.split('=')
+            print(keyval)
+            key, val = arg.split('=')
+            val = float(val)
+            key = 'u' if key == 'V' else 'alpha' if key == 'ph' else key
+
+            if key in theMap:
+                theMap[key].append(val)
+            else:
+                theMap[key] = [val, ]
+    for key in theMap:
+        theMap[key] = unique(asarray(theMap[key]))
+
+    return theMap
+
+
+def calcEnergy(a1, a2):
+    global fileformat
+    fileName = fileformat.replace('{a1}', fmt(a1,6)).replace('{a2}', fmt(a2,6))
+
+    if not os.path.isfile("./" + fileName): raise Exception(fileName + " is not a file.")
+    simData = OpenSimData(fileName)
+
+    approxOscWidth = 1.*sqrt(1.-u*u)  # pode variar com a velocidade da borda, que nao esta contemplada aqui.
+    slack = 0.5*approxOscWidth
+    xMin = -t*u-slack
+    xMax = xMin + approxOscWidth + 2.*slack
+
+    E = simData.integrateEnergyInterval(xMin, xMax)
+    E_numTot = .5*simData.getTotalEnergy(t) # metade porque consideramos sempre apenas um oscillon.
+
+    if args.saveDebugGraph1:
+        tMax = t + 0.5
+        region = Region(xMin, xMax, t, tMax, -u)
+        plot_single.plot(simData, draw_box=region, annotations="V=u,phase=\\alpha", verbose=False)
+
+    if args.saveDebugGraph2: #
+        x_v = simData.getXDiscrete()
+        E_v = simData.getEnergyIndefiniteIntegral(t)
+
+        E_analytic = 2./(24.*sqrt(1.-u*u))
+        E_analytic_v = full(E_v.shape, E_analytic)
+        E_max = max(E_v.max(), E_analytic)
+        pyplot.plot(x_v, E_v, label='Integral indefinida da energia ($const=0$)')
+        pyplot.plot((x_v[0], 0), (E, E), label='Energia numerica entre $x_{min}$ e $x_{max}$.')
+        pyplot.plot((0, x_v[-1]), (E_numTot, E_numTot), label='Energia numerica total de metade do espaco.')
+        pyplot.plot(x_v, E_analytic_v, label='Energia analitica $E=\\frac{1}{24\\sqrt{(1-u^2)}}$')
+        pyplot.plot((xMin, xMin), (0., E_max), label='$x_{min}$')
+        pyplot.plot((xMax, xMax), (0., E_max), label='$x_{max}$')
+        pyplot.legend()
+
+        outputFileName = "E_integral-u=" + fmt(u, 5) + "-alpha=" + fmt(alpha, 5) + ".png"
+        pyplot.savefig(outputFileName, bbox_inches='tight', dpi=300)
+        pyplot.close()
+
+    if args.saveDebugGraph3: # Plot energy along time
+        E_analytic = 2./(24.*sqrt(1.-u*u))
+        times = linspace(0., t, 100)
+        E_v = asarray([simData.getTotalEnergy(t_) for t_ in times])
+        E_analytic_v = full(E_v.shape, E_analytic)
+
+        pyplot.plot(times, 100.*E_v/E_analytic_v)
+        outputFileName = "E_tot-u=" + fmt(u, 5) + "-alpha=" + fmt(alpha, 5) + ".png"
+        pyplot.savefig(outputFileName, bbox_inches='tight', dpi=300)
+        pyplot.close()
+
+    return E, E_numTot
+
+
+def doCase(argsTuple):
+    a1, a2, i, j = argsTuple
+
+    E_nominal = 1./(24.*sqrt(1.-u*u))
+    E_num, E_numTot = calcEnergy(a1, a2)
+
+    if 1:
+        normEnergy = E_num/E_numTot
+        gsacsii = asciiGrayScale(normEnergy)
+        w, h = sh_columns-2, sh_rows-2
+        n, m = shape
+
+        printThere(int(1 + (i+.5)*w/n), int(1 + (j+.5)*h/m), gsacsii, True)
+
+    return E_nominal, E_num, E_numTot, i, j
+
+
+def doAllCases(paramsList):
+    global args
+
+    if args.threads > 1: return Pool(args.threads).map(doCase, paramsList)
+    else:
+        result = []
+        for arguments in paramsList: result.append(doCase(arguments))
+        return result
+
+
+def buildGridToPlot(result):
+    nominalGrid = zeros(shape)
+    energyTotalGrid = zeros(shape)
+    energyGrid = zeros(shape)
+
+    for (E_nom, E_num, E_numTot, i, j) in result:
+        nominalGrid[i][j] = E_nom
+        energyTotalGrid[i][j] = E_numTot
+        energyGrid[i][j] = E_num
+
+    return energyGrid, energyTotalGrid, nominalGrid
+
+
+def plotImage(result, outputFileName):
+    energyGrid, energyTotalGrid, nominalGrid = buildGridToPlot(result)
+
+    if energyGrid.shape[0] == 1 or energyGrid.shape[1] == 1:
+        print("% energia radiada")
+        print(1.-energyGrid/energyTotalGrid)
+        return
+
+    fig = pyplot.figure()
+    ax = pyplot.axes()
+
+    extent = alpha_v.min(), alpha_v.max(), u_v.min(), u_v.max()
+    cmap = ('viridis', 'afmhot', 'cividis', 'inferno', 'magma', 'plasma', 'PuBu_r', 'copper')[3]
+
+    # theGrid = (1.-(energyGrid/nominalGrid))*100.  # calculo original
+    # theGrid = (1.-(energyTotalGrid/nominalGrid))*100.  # porcentagem de erro numerico na energia
+    # theGrid = ((energyTotalGrid - energyGrid)/nominalGrid)*100.  # calculo subtraindo o erro
+    # theGrid = (1.-energyGrid/energyTotalGrid)*100.  # calculo considerando apenas a energia total
+    theGrid = 1.-energyGrid/energyTotalGrid
+
+    theGrid *= 100.
+
+    eps = args.logeps
+    func = (lambda x: plot_single.log_abs(x, eps), lambda x: x)[0]
+    invFunc = (lambda x: plot_single.log_abs_inv(x, eps), lambda x: 1. / x)[0]
+    theGrid = func(theGrid)
+
+    im = ax.imshow(theGrid, origin='lower', extent=extent, cmap=cmap)#, interpolation='quadric')
+
+    region = args.region
+    if region is None: region = extent
+    ax.set_xlim(region[0], region[1])
+    ax.set_ylim(region[2], region[3])
+
+    cbar = plot_single.generateLinearizedColorbar(ax, fig, im, theGrid.min(), theGrid.max(), func, invFunc)
+    cbar.ax.set_yticklabels([l.get_text()+"%" for l in cbar.ax.get_yticklabels()])
+
+    ax.set_xlabel("$\\alpha$")
+    ax.set_ylabel("$V$")
+
+    fig.savefig(outputFileName, bbox_inches='tight', dpi=300)
+
+
+if __name__ == "__main__":
+    results = []
+
+    ''' Aqui abaixo fazemos a abertura dos arquivos ou devida geracao dos dados para serem
+        plotados, de acordo com a extensao dos arquivos. Esta tudo muito instavel e longe de ser 
+        uma versao final mais robusta.'''
+    if args.files[0][-5:] == '.data':
+        multipleResults = len(args.files) > 1
+
+        for filename in args.files:
+            with open(filename) as file:
+                file.readline()  # COMENTARIO NO CABECALHO
+
+                v, N, r = lit_eval(file.readline())
+                shape = lit_eval(file.readline())
+
+                u_v = asarray(lit_eval(file.readline()))
+                alpha_v = asarray(lit_eval(file.readline()))
+
+                results.append((lit_eval(file.readline()), v))
+    elif args.files[0][-5:] == '.oscs':
+        print(args.files)
+        files = glob.glob(args.files)
+        files.sort()
+
+        theParametersMap = extractParametersMapFromFileNames(files)
+
+        a1_v = theParametersMap['a1']
+        a2_v = theParametersMap['a2']
+
+        print(theParametersMap)
+        v1, v2, l, V, N, t = theParametersMap['v1'][0], theParametersMap['v2'][0], theParametersMap['l'][0], \
+                             theParametersMap['u'][0], theParametersMap['N'][0], theParametersMap['t'][0]
+
+        fileformat = fileformat.replace('{v1}', fmt(v1, 6)) \
+                               .replace('{v2}', fmt(v2, 6)) \
+                               .replace('{l}', fmt(l, 6)) \
+                               .replace('{V}', fmt(V, 6)) \
+                               .replace('{N}', str(N)) \
+                               .replace('{t}', fmt(t, 4))
+
+        n_stride = args.n_stride
+        m_stride = args.m_stride
+
+        variableParamList = [(a1_v[int(i * n_stride)], a2_v[int(j * m_stride)], i, j) \
+                             for i in range(int(len(a1_v)/n_stride)) for j in range(int(len(a2_v)/m_stride))]
+
+        shape = (int(len(a1_v)/n_stride), int(len(a2_v)/m_stride))
+
+        os.system('clear')
+        result = doAllCases(variableParamList)
+        results.append(result)
+
+        with open('rad-u=' + fmt(V, 5) + '.data', 'w') as output:
+            ''
+            output.write('# (v1, v2, l, V, N, t) ; shape ; a1_v ; a2_v ; (E_nominal, E_numeric, E_numericTotal i, j) \n')
+
+            v1, v2, l, V, N, t = theParametersMap['v1'][0], theParametersMap['v2'][0], theParametersMap['l'][0], \
+                                 theParametersMap['u'][0], theParametersMap['N'][0], theParametersMap['t'][0]
+            output.write('(' + v1 + "," + v2 + ',' + l + ',' + V + ',' + N + ',' + t + ')\n')
+            output.write('(' + str(shape[0]) + ',' + str(shape[1]) + ')\n')
+
+            output.write("(")
+            for a1 in a1_v: output.write(fmt(a1,5) + ",")
+            output.write(")\n")
+
+            output.write("(")
+            for a2 in a2_v: output.write(fmt(a2,5) + ",")
+            output.write(")\n")
+
+            output.write('[')
+            for (E_nom, E_num, E_numTot, i, j) in result:
+                output.write("(" + str(E_nom) + "," + str(E_num) + "," + str(E_numTot) + "," + str(i) + "," + str(j) + "),")
+            output.write(']')
+
+    ''' Aqui, apos abertos / gerados os resultados, fazemos o plot deles. '''
+    for (result, v) in results:
+        outputFileName = "rad-v=" + fmt(v, 5) + "." + args.ext
+        plotImage(result, outputFileName)
+        if len(results) > 1: print("Done outputing " + outputFileName)
+
+    if args.showResult: pyplot.show()

@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import EnergyPlotting
+
+if __name__ == '__main__':
+    parser = EnergyPlotting.GET_PLOTTING_ARGUMENTS()
+    EnergyPlotting.PlotEnergyMapFromUserInput(parser)

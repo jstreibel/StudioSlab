@@ -1,0 +1,339 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+import glob
+from multiprocessing import Pool
+from numpy import asarray, unique, linspace, outer, ones, zeros, full
+from numpy import sqrt
+from utils import fmt, printThere, asciiGrayScale
+from ast import literal_eval as lit_eval
+import shutil
+from Fitting import Region
+from open_sim import SimData
+import plot_single
+import os
+from matplotlib import pyplot
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--files', '-f', help="Filename(s). Default is all .osc files in folder.", nargs='*', default='./*.osc')
+parser.add_argument('--threads', '-t', help='Number of threads to use. Default is 1.', type=int, default=1)
+parser.add_argument('--n_stride', '-n', help='\'n\' stride determines if we jump over files (and how much we jump) in the u (or V) direction.', type=int, default=1)
+parser.add_argument('--m_stride', '-m', help='\'m\' stride determines if we jump over files (and how much we jump) in the \\alpha (or phase) direction.', type=int, default=1)
+
+parser.add_argument('--ext', help="File extension. Defaults to .pdf. Can be anything supported by matplotlib.", type=str, default='pdf')
+parser.add_argument('--saveDebugGraph1', '-p1', help='Save to png file a full image of plot with integration region.', \
+                    action='store_true')
+parser.add_argument('--saveDebugGraph2', '-p2', help='Save to png file a graph of indefitine integral of energy on x axis.', \
+                    action='store_true')
+parser.add_argument('--saveDebugGraph3', '-p3', help='Save to png file a graph showing full sim energy along time.', \
+                    action='store_true')
+parser.add_argument('--showResult', '-s', help='Show result.', \
+                    action='store_true')
+
+parser.add_argument('--region', help="Region to plot. Must be 4-tuple representing (xmin, xmax, ymin, ymax). Example --region=(-3,3,0,4)", nargs=4, type=float)
+
+parser.add_argument('--integration_time', '-it', help='Moment in time to perform energy integration.', type=float, default=3.)
+parser.add_argument('--noradtreshold', '-nr', help='No radiation treshold (percentage).', type=float, default=-1000.)
+parser.add_argument('--logeps', '-le', help="When using log scale, formula is sign(phi)*log(abs(phi)/eps + 1), where epsilon determines the amount of detail near 0 (zero) to reveal. Smaller epsilon reveals more detail. Default is 1.e-6.", type=float, default=1.e0)
+
+
+args = parser.parse_args()
+
+theMap = None
+
+fileFormats = ("v={v}-V={u}-ph={alpha}-N={N}-r={r}.osc", )
+fileformat = fileFormats[0]
+
+sh_rows, sh_columns = shutil.get_terminal_size()
+
+def generateMap(files):
+    theMap = {}
+    for filename in files:
+        if filename[-4:] != '.osc': print("Unknown file type", filename) ; continue
+
+        filename = filename[:-4]
+
+        fileNameArgs = filename.replace('./', '').split('-')
+
+        for arg in fileNameArgs:
+            key, val = arg.split('=')
+            val = float(val)
+            key = 'u' if key == 'V' else 'alpha' if key == 'ph' else key
+
+            if key in theMap: theMap[key].append(val)
+            else: theMap[key] = [val,]
+    for key in theMap: theMap[key] = unique(asarray(theMap[key]))
+
+    return theMap
+
+
+def calcEnergy(u, alpha, integrationTime):
+    global fileformat
+    filename = fileformat.replace('{u}', fmt(u,5)).replace('{alpha}', fmt(alpha,5))
+
+    if not os.path.isfile("./" + filename): raise Exception(filename + "is not a file."); return -1.0
+    simData = SimData(filename)
+
+    oscWidth = 1.*sqrt(1.-u*u)
+    slack = 0.5*oscWidth
+    t = integrationTime
+    xMin = -t*u-slack
+    xMax = xMin + oscWidth + 2.*slack
+
+    E = simData.integrateEnergyInterval(t, xMin, xMax)
+    E_numTot = .5*simData.getTotalEnergy(t) # metade porque consideramos sempre apenas um oscillon.
+
+    if args.saveDebugGraph1:
+        tMax = t + 0.5
+        region = Region(xMin, xMax, t, tMax, -u)
+        plot_single.plot(simData, draw_box=region, annotations="V=u,phase=\\alpha", verbose=False)
+
+    if args.saveDebugGraph2: #
+        x_v = simData.getXDiscrete()
+        E_v = simData.getEnergyIndefiniteIntegral(t)
+
+        E_analytic = 2./(24.*sqrt(1.-u*u))
+        E_analytic_v = full(E_v.shape, E_analytic)
+        E_max = max(E_v.max(), E_analytic)
+        pyplot.plot(x_v, E_v, label='Integral indefinida da energia ($const=0$)')
+        pyplot.plot((x_v[0], 0), (E, E), label='Energia numerica entre $x_{min}$ e $x_{max}$.')
+        pyplot.plot((0, x_v[-1]), (E_numTot, E_numTot), label='Energia numerica total de metade do espaco.')
+        pyplot.plot(x_v, E_analytic_v, label='Energia analitica $E=\\frac{1}{24\\sqrt{(1-u^2)}}$')
+        pyplot.plot((xMin, xMin), (0., E_max), label='$x_{min}$')
+        pyplot.plot((xMax, xMax), (0., E_max), label='$x_{max}$')
+        pyplot.legend()
+
+        outputFileName = "E_integral-u=" + fmt(u, 5) + "-alpha=" + fmt(alpha, 5) + ".png"
+        pyplot.savefig(outputFileName, bbox_inches='tight', dpi=300)
+        pyplot.close()
+
+    if args.saveDebugGraph3: # Plot energy along time
+        E_analytic = 2./(24.*sqrt(1.-u*u))
+        times = linspace(0., t, 100)
+        E_v = asarray([simData.getTotalEnergy(t_) for t_ in times])
+        E_analytic_v = full(E_v.shape, E_analytic)
+
+        pyplot.plot(times, 100.*E_v/E_analytic_v)
+        outputFileName = "E_tot-u=" + fmt(u, 5) + "-alpha=" + fmt(alpha, 5) + ".png"
+        pyplot.savefig(outputFileName, bbox_inches='tight', dpi=300)
+        pyplot.close()
+
+    return E, E_numTot
+
+def doFile(argsTuple):
+    u, alpha, i, j = argsTuple
+
+    E_nominal = 1./(24.*sqrt(1.-u*u))
+    E_num, E_numTot = calcEnergy(u, alpha, args.integration_time)
+
+    if 1:
+        normEnergy = E_num/E_numTot
+        gsacsii = asciiGrayScale(normEnergy)
+        w, h = sh_columns-2, sh_rows-2
+        n, m = shape
+
+        printThere(int(1 + (i+.5)*w/n), int(1 + (j+.5)*h/m), gsacsii, True)
+
+    return E_nominal, E_num, E_numTot, i, j
+
+
+def doAll(uAlphaList):
+    global args
+
+    if args.threads > 1: return Pool(args.threads).map(doFile, uAlphaList)
+    else:
+        result = []
+        for arguments in uAlphaList: result.append(doFile(arguments))
+        return result
+
+
+def buildGrid(result):
+    nominalGrid = zeros(shape)
+    energyTotalGrid = zeros(shape)
+    energyGrid = zeros(shape)
+
+    for (E_nom, E_num, E_numTot, i, j) in result:
+        nominalGrid[i][j] = E_nom
+        energyTotalGrid[i][j] = E_numTot
+        energyGrid[i][j] = E_num
+
+    return energyGrid, energyTotalGrid, nominalGrid
+
+
+def markNoRad(result, thresholdPerc):
+    u_vals = []
+    alpha_vals = []
+
+    for (E_nom, E_num, E_numTot, i, j) in result:
+        E_radPerc = (1.-E_num/E_numTot)*100
+        if E_radPerc < thresholdPerc:
+            u = u_v[i]
+            alpha = alpha_v[j]
+
+            u_vals.append(u)
+            alpha_vals.append(alpha)
+
+    return asarray(u_vals), asarray(alpha_vals)
+
+
+def plotMeshGrid(result):
+    from mpl_toolkits.mplot3d import Axes3D
+
+    # Get lighting object for shading surface plots.
+    from matplotlib.colors import LightSource
+
+    # Get colormaps to use with lighting object.
+    from matplotlib import cm
+
+    energyGrid, energyTotalGrid, nominalGrid = buildGrid(result)
+
+    theGrid = 1. - energyGrid/energyTotalGrid
+
+    fig = pyplot.figure()
+    ax = Axes3D(fig)
+    if 1:
+        # Create an instance of a LightSource and use it to illuminate the surface.
+        light = LightSource(90, 45)
+        illuminated_surface = light.shade(theGrid, cmap=cm.coolwarm)
+
+        n, m = shape
+        uGrid = outer(linspace(u_v.min(), u_v.max(), n), ones(m))
+        alphaGrid = outer(linspace(alpha_v.min(), alpha_v.max(), m), ones(n)).T
+
+        ax.plot_surface(uGrid, alphaGrid, theGrid, rstride=1, cstride=1,
+                        linewidth=0, antialiased=True, facecolors=illuminated_surface)
+
+    else:
+        stride = int(1*shape[0]/len(u_v))
+        ax.plot_surface(uGrid, alphaGrid, theGrid, cmap='afmhot', edgecolor='k',
+                        linewidth=0.1, rstride=stride, cstride=stride)
+
+    zmin = theGrid.min()*1
+    zmax = theGrid.max()*1
+    ax.set_zlim(zmin, zmax)
+
+    ax.set_xlabel("$u$")
+    ax.set_ylabel("$\\alpha$")
+    ax.set_zlabel("$E$")
+
+
+def plotImage(result, outputFileName):
+    energyGrid, energyTotalGrid, nominalGrid = buildGrid(result)
+
+    if energyGrid.shape[0] == 1 or energyGrid.shape[1] == 1:
+        print("% energia radiada")
+        print(1.-energyGrid/energyTotalGrid)
+        return
+
+    fig = pyplot.figure()
+    ax = pyplot.axes()
+
+    extent = alpha_v.min(), alpha_v.max(), u_v.min(), u_v.max()
+    cmap = ('viridis', 'afmhot', 'cividis', 'inferno', 'magma', 'plasma', 'PuBu_r', 'copper')[3]
+
+    # theGrid = (1.-(energyGrid/nominalGrid))*100.  # calculo original
+    # theGrid = (1.-(energyTotalGrid/nominalGrid))*100.  # porcentagem de erro numerico na energia
+    # theGrid = ((energyTotalGrid - energyGrid)/nominalGrid)*100.  # calculo subtraindo o erro
+    # theGrid = (1.-energyGrid/energyTotalGrid)*100.  # calculo considerando apenas a energia total
+    theGrid = 1.-energyGrid/energyTotalGrid
+
+    u, alpha = markNoRad(result, args.noradtreshold)
+
+    eps = args.logeps
+    func = (lambda x: plot_single.log_abs(x, eps), lambda x: x)[0]
+    invFunc = (lambda x: plot_single.log_abs_inv(x, eps), lambda x: 1. / x)[0]
+    theGrid = func(theGrid)
+
+    im = ax.imshow(theGrid, origin='lower', extent=extent, cmap=cmap)#, interpolation='quadric')
+    region = args.region
+    if region is None: region = extent
+
+    ax.set_xlim(region[0], region[1])
+    ax.set_ylim(region[2], region[3])
+
+    ax.scatter(alpha, u, marker='+')
+
+    cbar = plot_single.generateLinearizedColorbar(ax, fig, im, theGrid.min(), theGrid.max(), func, invFunc)
+    cbar.ax.set_yticklabels([l.get_text()+"%" for l in cbar.ax.get_yticklabels()])
+
+    ax.set_xlabel("$\\alpha$")
+    ax.set_ylabel("$u$")
+
+    fig.savefig(outputFileName, bbox_inches='tight', dpi=300)
+
+if __name__ == "__main__":
+    results = []
+
+    if args.files[0][-5:] == '.data':
+        multipleResults = len(args.files) > 1
+
+        for filename in args.files:
+            with open(filename) as file:
+                file.readline()  # COMENTARIO NO CABECALHO
+
+                v, N, r = lit_eval(file.readline())
+                shape = lit_eval(file.readline())
+
+                u_v = asarray(lit_eval(file.readline()))
+                alpha_v = asarray(lit_eval(file.readline()))
+
+                results.append((lit_eval(file.readline()), v))
+
+    else:
+        files = glob.glob(args.files)
+        files.sort()
+
+        theMap = generateMap(files)
+
+        u_v = theMap['u']
+        alpha_v = theMap['alpha']
+
+        v, N, r = theMap['v'][0], int(theMap['N'][0]), theMap['r'][0]
+
+        fileformat = fileformat \
+            .replace('{v}', fmt(v, 5)) \
+            .replace('{N}', str(N)) \
+            .replace('{r}', fmt(r, 5))
+
+        n_stride = args.n_stride
+        m_stride = args.m_stride
+
+        uAlphaList = [(u_v[int(i*n_stride)], alpha_v[int(j*m_stride)], i, j) \
+                      for i in range(int(len(u_v)/n_stride)) for j in range(int(len(alpha_v)/m_stride))]
+
+        shape = (int(len(u_v)/n_stride), int(len(alpha_v)/m_stride))
+
+        os.system('clear')
+        result = doAll(uAlphaList)
+        results.append((result, v))
+
+        with open('rad-v=' + fmt(v, 5) + '.data', 'w') as output:
+            output.write('# (v, N, r) ; shape ; u_v ; alpha_v ; (E_nominal, E_numeric, E_numericTotal i, j) \n')
+
+            v, N, r = str(theMap['v'][0]), str(int(theMap['N'][0])), str(theMap['r'][0])
+            output.write('(' + v + "," + N + ',' + r + ')\n')
+            output.write('(' + str(shape[0]) + ',' + str(shape[1]) + ')\n')
+
+            output.write("(")
+            for u in u_v: output.write(fmt(u,5) + ",")
+            output.write(")\n")
+
+            output.write("(")
+            for alpha in alpha_v: output.write(fmt(alpha,5) + ",")
+            output.write(")\n")
+
+            output.write('[')
+            for (E_nom, E_num, E_numTot, i, j) in result:
+                output.write("(" + str(E_nom) + "," + str(E_num) + "," + str(E_numTot) + "," + str(i) + "," + str(j) + "),")
+            output.write(']')
+
+    for (result, v) in results:
+        if 0:
+            plotMeshGrid(result)
+        else:
+            outputFileName = "rad-v=" + fmt(v, 5) + "." + args.ext
+            plotImage(result, outputFileName)
+            if len(results) > 1: print("Done outputing " + outputFileName)
+
+    if args.showResult: pyplot.show()

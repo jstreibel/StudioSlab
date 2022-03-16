@@ -76,7 +76,7 @@ void InterfaceSelector::setup(int argc, const char **argv) {
 
 }
 
-void InterfaceSelector::registerCandidate(Interface *interface) {
+void InterfaceSelector::registerOption(Interface *interface) {
     candidates.push_back(interface);
 
     StringStream simsHelp;

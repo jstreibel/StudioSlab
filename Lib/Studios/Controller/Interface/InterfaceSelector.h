@@ -21,7 +21,7 @@ class InterfaceSelector : Interface {
 public:
     static auto getInstance() -> InterfaceSelector &;
 
-    void registerCandidate(Interface *interface);
+    void registerOption(Interface *interface);
 
     void setup(int argc, const char **argv);
     auto getCurrentCandidate() const -> Interface *;

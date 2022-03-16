@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true">
+    <generated>
+      <config projectName="molekul-play" targetName="dynamic" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="true">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" CONFIG_NAME="Debug" BUILD_OPTIONS="-j 8" ENABLED="true" />
+      <configuration PROFILE_NAME="Release" CONFIG_NAME="Release" BUILD_OPTIONS="-j 8" ENABLED="true" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="83cd74cd-ea73-4ab3-a177-9f4582c6ac0e" name="Default Changelist" comment="REPRODUCE ERROR. Just run simulation as it is for a while. Simulation almost solid. Hash space working (almost good).">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/Hash/FixedSizeMoleculeContainer.h" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/Hash/FixedSizeMoleculeContainer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/Hash/HashParams.h" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/Hash/HashParams.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/Hash/MoleculeSpaceHash.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/Hash/MoleculeSpaceHash.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/Hash/MoleculeSpaceHash.h" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/Hash/MoleculeSpaceHash.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/NewtonMechanics.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/NewtonMechanics.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Hamiltonians/NewtonMechanicsParams.h" beforeDir="false" afterPath="$PROJECT_DIR$/Hamiltonians/NewtonMechanicsParams.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/IO/IOParams.h" beforeDir="false" afterPath="$PROJECT_DIR$/IO/IOParams.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/SimParams.h" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/SimParams.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Simulation/Simulation.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Simulation/Simulation.cpp" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Release" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/molekul.play.iml" />
+        <option value="$PROJECT_DIR$/.idea/misc.xml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1QkXCdsnbnADSmioT7IPXj1OWA9" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="cf.first.check.clang-format" value="false" />
+    <property name="cidr.known.project.marker" value="true" />
+    <property name="cmake.loaded.for.project" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../OpenGLStudies" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Hamiltonians/Lennard-Jones" />
+      <recent name="$PROJECT_DIR$/io" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/Hamiltonians/SoftDisk" />
+      <recent name="$PROJECT_DIR$/Hamiltonians/Hash" />
+      <recent name="$PROJECT_DIR$/Simulation" />
+      <recent name="$PROJECT_DIR$/IO" />
+      <recent name="$PROJECT_DIR$/Hamiltonians/GPU" />
+    </key>
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Dynamic" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="molekul-play" TARGET_NAME="dynamic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="molekul-play" RUN_TARGET_NAME="dynamic">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="83cd74cd-ea73-4ab3-a177-9f4582c6ac0e" name="Default Changelist" comment="" />
+      <created>1563739893832</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1563739893832</updated>
+      <workItem from="1563739894962" duration="696000" />
+      <workItem from="1563740598550" duration="20000" />
+      <workItem from="1563740625795" duration="5517000" />
+      <workItem from="1563797109358" duration="26000" />
+      <workItem from="1568315442353" duration="5831000" />
+      <workItem from="1568653637286" duration="95000" />
+      <workItem from="1586309752215" duration="99000" />
+      <workItem from="1586462506074" duration="5055000" />
+      <workItem from="1586567525308" duration="6960000" />
+      <workItem from="1586635101248" duration="4626000" />
+      <workItem from="1586730412285" duration="4100000" />
+      <workItem from="1588989817436" duration="1116000" />
+      <workItem from="1589060439174" duration="157000" />
+      <workItem from="1589060601431" duration="4905000" />
+      <workItem from="1589137246496" duration="1036000" />
+      <workItem from="1589147353094" duration="10777000" />
+      <workItem from="1589168538720" duration="899000" />
+      <workItem from="1589226273313" duration="2505000" />
+      <workItem from="1589231501541" duration="11067000" />
+      <workItem from="1589309478065" duration="21002000" />
+      <workItem from="1589403414377" duration="10901000" />
+      <workItem from="1589487542805" duration="623000" />
+      <workItem from="1589488173000" duration="2711000" />
+      <workItem from="1589574627071" duration="3057000" />
+      <workItem from="1589674674315" duration="9906000" />
+      <workItem from="1589755777142" duration="12672000" />
+      <workItem from="1589909549958" duration="11404000" />
+      <workItem from="1590010687309" duration="4878000" />
+      <workItem from="1591222427372" duration="574000" />
+      <workItem from="1614641553719" duration="36000" />
+      <workItem from="1614642090532" duration="133000" />
+      <workItem from="1617761923995" duration="51000" />
+      <workItem from="1617762714025" duration="1283000" />
+      <workItem from="1621177267765" duration="32000" />
+      <workItem from="1628173567886" duration="36449000" />
+      <workItem from="1628261939468" duration="4000" />
+      <workItem from="1628282334030" duration="1309000" />
+      <workItem from="1628351365326" duration="18000" />
+      <workItem from="1628381807651" duration="166000" />
+      <workItem from="1628391248322" duration="2270000" />
+      <workItem from="1628432828816" duration="9000" />
+      <workItem from="1628606062529" duration="2037000" />
+      <workItem from="1628629329744" duration="12028000" />
+      <workItem from="1628703651013" duration="6000" />
+      <workItem from="1628713366004" duration="3579000" />
+    </task>
+    <task id="LOCAL-00001" summary="It is no longer a game and now it is back to being a physical simulation.">
+      <created>1628174752388</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1628174752388</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Solid working soft-disk simulation.">
+      <created>1628175919808</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1628175919808</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Renamed a few things and/or moved &amp; organized stuff a bit.">
+      <created>1628180688389</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1628180688389</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Separated main Newton mechanics in a abstract class.">
+      <created>1628186980932</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1628186980932</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Implemented Lennard Jones potential (also visualizing it per molecule) and corrected cutoff calculations.">
+      <created>1628199454318</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1628199454318</updated>
+    </task>
+    <task id="LOCAL-00006" summary="All is running under velocity Verlet now.">
+      <created>1628205594228</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1628205594228</updated>
+    </task>
+    <task id="LOCAL-00007" summary="Simulation solid.">
+      <created>1628213820829</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1628213820829</updated>
+    </task>
+    <task id="LOCAL-00008" summary="REPRODUCE ERROR. Just run simulation as it is for a while. Simulation almost solid. Hash space working (almost good).">
+      <created>1628637490196</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1628637490196</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
+    <servers />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="It is no longer a game and now it is back to being a physical simulation." />
+    <MESSAGE value="Solid working soft-disk simulation." />
+    <MESSAGE value="Renamed a few things and/or moved &amp; organized stuff a bit." />
+    <MESSAGE value="Separated main Newton mechanics in a abstract class." />
+    <MESSAGE value="Implemented Lennard Jones potential (also visualizing it per molecule) and corrected cutoff calculations." />
+    <MESSAGE value="All is running under velocity Verlet now." />
+    <MESSAGE value="Simulation solid." />
+    <MESSAGE value="REPRODUCE ERROR. Just run simulation as it is for a while. Simulation almost solid. Hash space working (almost good)." />
+    <option name="LAST_COMMIT_MESSAGE" value="REPRODUCE ERROR. Just run simulation as it is for a while. Simulation almost solid. Hash space working (almost good)." />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeRunConfiguration">
+        <watch expression="triples.size()" language="ObjectiveC" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

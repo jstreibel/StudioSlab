@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 10 19:19:17 2018
+
+@author: johnny
+"""
+
+import subprocess
+import os
+isfile = os.path.isfile
+from numpy import unique, linspace
+import time
+from datetime import timedelta
+import argparse
+
+import utils
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--T', help="Total simulation time per simulation.", type=float, default=3.5)
+parser.add_argument('--L', help="Simulation width.", type=float, default=7.0)
+parser.add_argument('--N', help="Simulation resolution.", type=int, default=2**12)
+parser.add_argument('--inittime', help="Simulation inital time (should be negativa).", type=float, default=0)
+parser.add_argument('--outN', help="Simulation output resolution.", type=int, default=1024)
+parser.add_argument('--v', help="Sweep v in n steps (vmin, vmax, steps). Example \'--v 0.2 0.4 10\' will sweep \'v\' from 0.2 to 0.4 in 10 steps.", nargs=3, type=float, default=(0, 0, 1))
+parser.add_argument('--V', help="Sweep V in n steps. Same as for \'v\'.", nargs=3, type=float, default=(0.5, 0.5, 1))
+parser.add_argument('--alpha', help="Sweep alpha in n steps. Same as for \'v\'.", nargs=3, type=float, default=(0, 0, 1))
+parser.add_argument('--r', help="Sweep r in n steps. Same as for \'v\'.", nargs=3, type=float, default=(0.1, 0.1, 1))
+parser.add_argument('--dist', "-d", help="Initial distance.", type=float, default=0)
+parser.add_argument('--maxprocs', help="Maximum number if parallel running programs.", type=int, default=7)
+parser.add_argument('--usegpu', '-g', help="Use GPUS when available. All others processes no GPU. ***experimental***", action='store_true')
+parser.add_argument('--treedir', '-t', help="Put files in tree directory structure.", action='store_true')
+parser.add_argument('--asym', '-a', help="Run anti-symmetric initial field configuration..", action='store_true')
+
+args = parser.parse_args()
+
+
+MAX_PROCS = args.maxprocs
+USE_GPU = args.usegpu
+gpu_occupation_PID=[0,0]
+
+T = args.T
+L = args.L
+N = args.N
+inittime = args.inittime
+outN = args.outN
+
+vmin, vmax, vsteps = args.v
+vsteps = int(vsteps)
+Vmin, Vmax, Vsteps = args.V
+Vsteps = int(Vsteps)
+phmin, phmax, phsteps = args.alpha
+phsteps = int(phsteps)
+rmin, rmax, rsteps = args.r
+simlist = []
+
+f = '{:.5f}'.format
+treedir = args.treedir
+for ph in unique(linspace(phmin, phmax, phsteps)):
+	for v in unique(linspace(vmin, vmax, vsteps)):
+		for V in unique(linspace(Vmin, Vmax, Vsteps)):
+			for r in unique(linspace(rmin, rmax, rsteps)):
+
+				filename = ""
+				if treedir:
+					workdir = './v=' + f(v) + '/V=' + f(V) + '/ph=' + f(ph) + '/'
+					if not os.path.exists(workdir):
+						os.makedirs(workdir)
+					filename = workdir + 'N=' + str(N) + '-r=' + f(r) + '.osc'
+				else:
+					filename = './v=' + f(v) + '-V=' + f(V) + '-ph=' + f(ph) + '-' + 'N=' + str(N) + '-r=' + f(r) + '.osc'
+
+				arglist = ["v-shape", '--T='+f(T), '--L='+f(L), '--N='+str(N), '--r='+f(r), '--outN='+str(outN), '--v='+f(v) , '--V='+f(V), '--phase='+f(ph), '--out='+filename, '--threads=1', '--d='+f(args.dist), '--inittime='+f(inittime)]
+				if args.asym:
+					arglist.append("--asym")
+				siminfo = (v, V, ph, r)
+				simlist.append((arglist, filename, siminfo))
+
+proctuples = []
+deadprocs = []
+total = len(simlist)
+totaltime = 0.0
+n = 0
+while len(simlist) or not (len(deadprocs) == total):
+	while not len(proctuples) == MAX_PROCS and len(simlist):
+		sim = simlist.pop()
+		siminfo = utils.yellow('v=%.5f V=%.5f ph=%.5f r=%.5f' %  (sim[2]))
+		print(total-len(simlist), '/', total, ' STARTED with', siminfo, end='. ')
+
+		fileOscExists = isfile(sim[1]) and os.stat(sim[1]).st_size > 1000
+		filePngExists = isfile(sim[1] + '.png')
+		if filePngExists:
+			print(utils.okfail('The .png file already exists.', True))
+			continue
+		if fileOscExists:
+			print(utils.okfail('The .osc file already exists. File size: ' + str(os.stat(sim[1]).st_size), True))
+			continue
+
+		program_call = sim[0]
+		dev=0
+		if USE_GPU:
+			if gpu_occupation_PID[0] == 0:
+				program_call.append("--dev=1")
+				dev=1
+			elif gpu_occupation_PID[1] == 0:
+				program_call.append("--dev=2")
+				dev=2
+
+		proc = subprocess.Popen(program_call, stdout=subprocess.DEVNULL)
+		proctuples.append((proc, time.time()))
+
+		print('PID', proc.pid, end=". ")
+
+		if USE_GPU:
+			if dev != 0:
+				gpu_occupation_PID[dev-1] = proc.pid
+				print("(GPU " + str(dev-1) + ")", end=". ")
+			else:
+				print("(CPU)", end=". ")
+
+		print("")
+
+	for proct in proctuples:
+		proc = proct[0]
+		poll = proc.poll()
+		if proc.returncode is not None:
+			eltime = time.time() - proct[1]
+			totaltime += eltime
+			n += 1
+			deadprocs.append((proc, eltime))
+			proctuples.remove(proct)
+			retcodestring = utils.okfail('return code ' + str(proc.returncode), proc.returncode)
+			avgstring = utils.blue('Avg ' + f(totaltime/n))
+			expectedstring = utils.Bblue('expected ~' + str(timedelta(seconds=(totaltime/n)*(len(simlist)/MAX_PROCS))))
+
+			if USE_GPU:
+				if gpu_occupation_PID[0] == proc.pid:
+					gpu_occupation_PID[0] = 0
+				elif gpu_occupation_PID[1] == proc.pid:
+					gpu_occupation_PID[1] = 0
+
+			print('FINISHED', proc.pid, retcodestring,
+				  'approx. elapsed time', f(eltime), 'sec.' , avgstring,
+				  expectedstring)
+
+	time.sleep(.1)
+
+print('\n\nAll done.')

@@ -1,0 +1,281 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+from glob import glob
+from multiprocessing import Pool
+
+from Fitting import OscillonFitting, Region, Params
+import open_sim
+import utils
+from numpy import sqrt, mean, linspace, asarray
+
+from matplotlib import pyplot, gridspec, rcParams
+import plot_single
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--files', '-f', help="Filename(s). Default is all files in folder.", \
+					type=str, default='./*.osc')
+parser.add_argument('--outputFilename', '-o', help="Output filename. Default is 'fitOutput.fit'.", \
+					type=str, default='fitOutput.fit')
+parser.add_argument('--T0', '-T', help="Time of sim to start fit.", type=float, default=2)
+parser.add_argument('--dT', '-d', help="Time interval to fit.", type=float, default=2)
+parser.add_argument('--nSteps', '-n', help="Time steps in interval dT to fit.", type=int, default=25)
+
+parser.add_argument('--showFit', '-s', help='Show fit result and comparissons of each file.', \
+					action='store_true')
+parser.add_argument('--outputPng', '-p', help='Output fit result and comparissons of each file.', \
+					action='store_true')
+parser.add_argument('--threads', '-t', help='Number of threads to use. Default is 1.', type=int, default=1)
+
+args = parser.parse_args()
+
+n = args.nSteps
+if n < 1: raise Exception("Argument 'nSteps' should be > 0.")
+
+tMin = float(args.T0)
+tMax = tMin + float(args.dT)
+
+fill = utils.fillSpaces
+
+def checarCoerenciaComDadosDaSimulacao(simData, args):
+	tMin = float(args.T0)
+	tMax = tMin + float(args.dT)
+	tLim = simData['T']
+
+	if tLim < tMax:
+		fmt = utils.fmtFunc(4)
+		raise Exception("Max sim time is " + fmt(tLim) + ". T0 = " + fmt(tMin) + " and tMax = T0 + dT = " + fmt(tMax) + ".")
+
+	return True
+
+def outputCabecalho(output):
+	print("*******************************************************************************")
+
+	output.write(fill('T0'))
+
+	for p in Params.getNames():
+		output.write(fill(p + '_{in}'))
+
+	for p in Params.getNames():
+		output.write(fill(p + '_{out}'))
+
+	output.write(fill("E_{num}"))
+
+	output.write(fill("n_{iter}"))
+	output.write("\n")
+
+def EfetuarFit(filename):
+	global pyplot
+
+	# print("Now doing '", filename, "'.", sep='', end='', flush=True)
+
+	simData = open_sim.SimData(filename)
+	oscFitt = OscillonFitting(simData)
+
+	checarCoerenciaComDadosDaSimulacao(simData, args)
+
+	V, d,  l = simData.getItems(('V', 'd', 'l'))
+	invGamma = sqrt(1.-V*V)
+	oscWidth = invGamma
+	slack = 0.5*oscWidth
+	xMin = 0.5*d - tMin*V - slack
+	xMax = xMin + oscWidth + 2.*slack
+
+	skew = True
+	region = Region(xMin, xMax, tMin, tMax, u=-simData['V'], skew=skew)
+	initGuess = Params(alpha=simData['phase'], v=simData['v'],
+					   V=-V, l=simData['l'], d=simData['d'])
+
+	# Obs.: os limites de V, abaixo, podem dar problema se V<=-1 ou V>=1...
+	VMin = -V*1.1
+	VMax = -V*0.9
+
+	VAbsAllowed = .999
+	if VMin < -VAbsAllowed: VMin = -VAbsAllowed
+	if VMax >  VAbsAllowed: VMax =  VAbsAllowed
+
+	bounds = (0., 1.), (-1.,1.), (-VMin, VMax), (l*0.9, l*1.1), (d-l*.5,d+l*.5)
+
+	result, n_iter = oscFitt.fitRegion(region, n, initGuess, bounds)
+
+	tRange = linspace(region.tMin, region.tMax, n)
+	E_num_v = []
+	for t in tRange:
+		xMin, xMax = region.getXLims(t)
+		E_num_v.append(simData.integrateEnergyInterval(t, xMin, xMax))
+
+	E_num = asarray(mean(E_num_v))
+
+	outputString = "" + utils.fmtExp(tMin) + initGuess.toString() + \
+						result.toString() + fill(utils.fmtExp(E_num)) + fill(str(n_iter)) + "\n"
+
+	if args.showFit or args.outputPng:
+		#pyplot.cla()
+
+		analyticDataFromResult = oscFitt.getAnalyticDataFromComputation(result)
+		numericData = oscFitt.getNumericalDataFromComputation()
+		analyticDataFromInitGuess = oscFitt.getAnalyticDataFromComputation(initGuess)
+		fullAnalyticInitGuess = oscFitt.getAnalyticData(params=initGuess, \
+										region=Region(-simData['L']*.5, simData['L']*.5, 0.0, simData['T'], u=0, skew=skew), \
+										tRange=linspace(0., simData['T'], 500),
+										N=1000)
+		fullAnalyticFit = oscFitt.getAnalyticData(params=result, \
+										region=Region(-simData['L']*.5, simData['L']*.5, 0.0, simData['T'], u=0, skew=skew), \
+										tRange=linspace(0., simData['T'], 500),
+										N=1000)
+
+		epsilon = 1.e-6
+		scaleFunc = (plot_single.log_abs, lambda phi, eps: phi)[1]
+		analyticDataFromResult = scaleFunc(analyticDataFromResult, epsilon)
+		numericData = scaleFunc(numericData, epsilon)
+		analyticDataFromInitGuess = scaleFunc(analyticDataFromInitGuess, epsilon)
+
+
+		fig = pyplot.figure(figsize=(10, 5))
+		big_grid = gridspec.GridSpec(3, 2, wspace=0.2, hspace=0.2)
+		small_grid = gridspec.GridSpecFromSubplotSpec(1, 4, subplot_spec=big_grid[3], wspace=0, hspace=1.0)
+
+		vmin = numericData.min()
+		vmax = numericData.max()
+
+		tPoints = [(t, t) for t in tRange]
+		xPoint = (xMin, xMax)
+
+		imgWidthInches = 10
+		fontsize = 7
+		fontsize_ticks = 4
+
+		rcParams.update({'font.size': fontsize})
+
+		ax = pyplot.Subplot(fig, small_grid[1])
+		im01 = ax.imshow(analyticDataFromResult, extent=region, origin='lower',
+								interpolation='quadric', vmin=vmin, vmax=vmax)
+		ax.set_title('$\\phi_{fit}(\\Omega)$')
+		#fig.colorbar(im01, ax=ax)
+		fig.add_subplot(ax)
+		ax.set_yticklabels([])
+		ax.set_ylabel('')
+
+		ax = pyplot.Subplot(fig, small_grid[2])
+		im10 = ax.imshow(numericData, extent=region, origin='lower',
+								interpolation='quadric', vmin=vmin, vmax=vmax)
+		for tPoint in tPoints:
+			ax.plot(xPoint, tPoint, linewidth = 0.5, alpha=0.2, color='k')
+		ax.set_title('$\\phi_{num}(\\Omega)$')
+		#fig.colorbar(im10, ax=ax)
+		fig.add_subplot(ax)
+		ax.set_yticklabels([])
+		ax.set_ylabel('')
+
+		ax = pyplot.Subplot(fig, small_grid[3])
+		delta_phi = analyticDataFromResult-numericData
+		delta_phi = scaleFunc(delta_phi, epsilon)
+		im11 = ax.imshow(delta_phi, extent=region,
+								origin='lower', interpolation='quadric', vmin=vmin, vmax=vmax)
+		ax.set_title('$\\phi_{fit}-\\phi_{num}$')
+		#fig.colorbar(im11, ax=ax)
+		fig.add_subplot(ax)
+		ax.set_yticklabels([])
+		ax.set_ylabel('')
+
+		ax = pyplot.Subplot(fig, small_grid[0])
+		im00 = ax.imshow(analyticDataFromInitGuess, extent=region, origin='lower',
+								interpolation='quadric', vmin=vmin, vmax=vmax)
+		ax.set_title('$\\phi_{guess}(\\Omega)$')
+		#fig.colorbar(im00, ax=ax)
+		fig.add_subplot(ax)
+
+		dict = simData.getMetaData()
+
+		if 1: # FULL SIM
+			ax = pyplot.Subplot(fig, big_grid[0])
+			plot_single.plot(dict, saveToFile=False,
+						showResult=False, imgWidthInches=imgWidthInches, dpi=150, closeAfterUse=False,
+						showLog=True, cmap='BrBG', fig_ax=(fig, ax),
+						annotations="phase=\\alpha,V,v", annotationColor='k',
+						annotationPosition=(0.05,0.05), fontsize=fontsize, fontsize_ticks=fontsize_ticks)
+			ax.add_patch(region.getPlotPolygon(forceSkew=True, color='y'))
+			ax.add_patch(region.getPlotPolygon(forceSkew=False))
+			ax.set_title("Dados numericos")
+			fig.add_subplot(ax)
+
+		# Abaixo fazemos uma gambiarra para conseguir plotar o oscillon analitico.
+		# Basicamente, colocamos no dicionario aquilo que nos convem e mandamos plotar.
+		dict['phi'] = fullAnalyticInitGuess
+		dict['outresX'] = fullAnalyticInitGuess.shape[0]
+		dict['outresT'] = fullAnalyticInitGuess.shape[1]
+		dict['d'] = initGuess._d
+		ax = pyplot.Subplot(fig, big_grid[1])
+		plot_single.plot(dict, saveToFile=False,
+					showResult=False, imgWidthInches=imgWidthInches, dpi=150, closeAfterUse=False,
+					showLog=True, cmap='BrBG', fig_ax=(fig, ax), fontsize=fontsize, fontsize_ticks=fontsize_ticks)
+		ax.add_patch(region.getPlotPolygon(forceSkew=True, color='y'))
+		ax.add_patch(region.getPlotPolygon(forceSkew=False))
+		ax.set_title("Oscillon incidente (chute inicial)")
+		fig.add_subplot(ax)
+
+		dict['phi'] = fullAnalyticFit
+		dict['outresX'] = fullAnalyticFit.shape[0]
+		dict['outresT'] = fullAnalyticFit.shape[1]
+		dict['d'] = initGuess._d
+		ax = pyplot.Subplot(fig, big_grid[2])
+		fig, ax, pyplot = plot_single.plot(dict, saveToFile=False,
+					showResult=False, imgWidthInches=imgWidthInches, dpi=150, closeAfterUse=False,
+					showLog=True, cmap='BrBG', fig_ax=(fig, ax), fontsize=fontsize, fontsize_ticks=fontsize_ticks)
+		ax.add_patch(region.getPlotPolygon(forceSkew=True, color='y'))
+		ax.add_patch(region.getPlotPolygon(forceSkew=False))
+		ax.set_title("Fitting")
+		fig.add_subplot(ax)
+
+		l_fit, V_fit = result['l'], result['V']
+		E_fit = l_fit**3. / (24.*sqrt(1.-V_fit**2))
+		E_analytic = l**3. / (24.*sqrt(1.-V**2))
+		ax = pyplot.Subplot(fig, big_grid[4])
+		ax.plot(tRange, E_num_v, label ="$E_{num}$")
+		ax.plot((tMin, tMax), (E_fit, E_fit), label="$E_{fit}$")
+		ax.plot((tMin, tMax), (E_analytic, E_analytic), label="$E_{analytic}$")
+		ax.set_title("$E(t), x\\in\\Omega$ ")
+		ax.set_ylim(E_analytic/1.25, E_analytic*1.25)
+		ax.legend()
+		fig.add_subplot(ax)
+
+		ax = pyplot.Subplot(fig, big_grid[5])
+		ax.set_title("Fitting")
+		fig.add_subplot(ax)
+
+		if args.outputPng:
+			outputFileName = filename.rstrip('.osc') + '.fitOutput.png'
+			fig.savefig(outputFileName, bbox_inches='tight', dpi=150)
+			print("Saved file to", utils.OKBLUE + utils.BOLD + outputFileName + utils.ENDC)
+
+		if args.showFit:
+			pyplot.show()
+
+		pyplot.close()
+
+	return outputString
+
+if __name__ == '__main__':
+	files = glob(args.files)
+	files.sort()
+
+	outstring = ""
+	if(args.threads > 1):
+		p = Pool(args.threads)
+		out = p.map(EfetuarFit, files)
+
+		for s in out:
+			outstring += s
+
+	else:
+		for file in files:
+			outstring += EfetuarFit((file))
+
+	print("Done fitting all.")
+	output = open(args.outputFilename, 'w')
+	print("Saving fit data to " + output.name + "...")
+	outputCabecalho(output)
+	output.write(outstring)
+	output.close()
+	print("Done!")

@@ -7,6 +7,7 @@
 
 #include <boost/multiprecision/float128.hpp>
 #include <boost/math/special_functions/expint.hpp>
+#include <map>
 
 namespace ThermoUtils {
     extern std::map<double, double> eT_Onsager_by_T;

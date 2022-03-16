@@ -1,0 +1,162 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 10 19:19:17 2018
+
+@author: johnny
+"""
+
+import subprocess
+import os
+isfile = os.path.isfile
+from numpy import unique, linspace, power, arange, asarray
+import time
+from datetime import timedelta
+import argparse
+
+import utils
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--T', help="Total simulation time per simulation.", type=float, default=1.0)
+parser.add_argument('--L', help="Simulation width.", type=float, default=2.0)
+parser.add_argument('--N', help="Simulation resolution in format 'start end steps'. " + \
+                                "For format 'start stepsize steps' add flag --useStepsizeN.", type=int, nargs="+", default=[2**12,2**12,1])
+parser.add_argument('--useStepsizeN', '-s', help="Use stepsize format for --N parameters.", action='store_true')
+parser.add_argument('--dissDist', help="Dissipation distance from borders.", type=float, default=0.5)
+parser.add_argument('--dissParam', help="Dissipation constant.", type=float, default=100.0)
+parser.add_argument('--outN', help="Simulation output resolution.", type=int, default=1024)
+parser.add_argument('--usePertPotential', '-p', help="Use perturbed potential.", action='store_true')
+parser.add_argument('--Ndigits', help="Filename N total digits. Defaults to 5. Use negative values in order to choose automatically as len(max(NRange)).", type=int, default=5)
+parser.add_argument('--eps', help="Sweep perturbation epsilon in n steps (eps_min, eps_max, steps). Example \'--eps 0.2 1.5 10\' will sweep \'eps\' from 0.2 to 1.5 in 10 steps.", nargs=3, type=float, default=(1, 1, 1))
+parser.add_argument('--lam', help="Sweep scale factor lambda in n steps (l_min, l_max, steps).", nargs=3, type=float, default=(1, 1, 1))
+parser.add_argument('--epslog', '-el', help="Use log scale to step between values of epsilon.", action='store_true')
+
+parser.add_argument('--r', help="Sweep r in n steps. Same as for \'v\'.", nargs=3, type=float, default=(0.1, 0.1, 1))
+parser.add_argument('--maxprocs', help="Maximum number of parallel running programs.", type=int, default=7)
+parser.add_argument('--usegpu', '-g', help="Use GPUS when available. All others processes no GPU. ***experimental***", action='store_true')
+
+
+args = parser.parse_args()
+
+MAX_PROCS = args.maxprocs
+
+if len(args.N) == 1: args.N = args.N[0], args.N[0], 1
+assert(len(args.N) == 3 or len(args.N == 1))
+
+T = args.T
+L = args.L
+NMin, NMax, NSteps = args.N
+outN = args.outN
+
+dissDist = args.dissDist
+dissParam = args.dissParam
+
+epsMin, epsMax, epsSteps = args.eps
+epsSteps = int(epsSteps)
+lamMin, lamMax, lamSteps = args.lam
+epsSteps = int(lamSteps)
+rMin, rMax, rSteps = args.r
+rSteps = int(rSteps)
+simlist = []
+
+rangeFunc = lambda a, b, n: unique(linspace(a, b, n))
+if args.epslog:
+    rangeFunc = lambda a, b, n: a * power((b/a)**(1./n), arange(n))
+
+if not args.useStepsizeN:
+    if NMax > NMin: NRange = range(NMin, NMax, int((NMax-NMin)/NSteps))
+    else: NRange = (NMax,)
+else:
+    NStart, NStep, Nn = args.N
+    NRange = NStart + NStep*asarray(range(Nn))
+NRange = asarray(NRange)
+
+f = '{:.5f}'.format
+if args.Ndigits < 0: fi = ("{:0" + str(len(str(NRange.max()))) + "d}").format
+else: fi = ("{:0" + str(args.Ndigits) + "d}").format
+
+rRange = unique(linspace(rMin, rMax, rSteps))
+epsRange = rangeFunc(epsMin, epsMax, epsSteps)
+lamRange = rangeFunc(lamMin, lamMax, lamSteps)
+
+print(utils.OKGREEN + "Will be doing " + utils.WARNING)
+print("\t===> N:", NRange)
+print("\t===> r:", rRange)
+print("\t===> epsilon:", epsRange)
+print("\t===> lambda:", lamRange, utils.ENDC)
+
+for N in NRange:
+    for r in rRange:
+        for eps in epsRange:
+            for lam in lamRange:
+                filename = ""
+                if eps<10:
+                    filename += './eps=0' + f(eps)
+                else:
+                    filename += './eps=' + f(eps)
+                if lam < 10:
+                    filename += '-lam=0' + f(lam)
+                else:
+                    filename += '-lam=' + f(lam)
+                arglist = ["v-shape-diss", '--sim=1', '--eps='+f(eps) , '--l='+f(lam), '--t='+f(T), '--L='+f(L), \
+                           '--N='+str(N), '--dissDist='+f(dissDist), '--dissParam='+f(dissParam), '--r='+f(r), '--outN='+fi(outN),
+                           '--out=' + filename]
+
+                if args.usePertPotential:
+                    arglist.append("--pert")
+
+                siminfo = (eps, r, N)
+                simlist.append((arglist, filename, siminfo))
+
+proctuples = []
+deadprocs = []
+total = len(simlist)
+totaltime = 0.0
+n = 0
+while len(simlist) or not (len(deadprocs) == total):
+    while not len(proctuples) == MAX_PROCS and len(simlist):
+        sim = simlist.pop()
+        siminfo = utils.yellow('eps=%.5f r=%.5f N=%i' %  (sim[2]))
+        print(total-len(simlist), '/', total, ' STARTED with', siminfo, end='. ')
+
+        fileOscExists = isfile(sim[1]) and os.stat(sim[1]).st_size > 0
+        filePngExists = isfile(sim[1] + '.png')
+        if filePngExists:
+            print(utils.okfail('The .png file already exists.', True))
+            continue
+        if fileOscExists:
+            print(utils.okfail('The .osc file already exists.', True))
+            continue
+
+        program_call = sim[0]
+
+        proc = subprocess.Popen(program_call, stdout=subprocess.PIPE)
+        #proc = subprocess.Popen(program_call, stdout=subprocess.DEVNULL)
+        proctuples.append((proc, time.time()))
+
+        print('PID ', proc.pid, ". ", sep="")
+
+    for proct in proctuples:
+        proc = proct[0]
+        poll = proc.poll()
+        if proc.returncode is not None:
+            eltime = time.time() - proct[1]
+            totaltime += eltime
+            n += 1
+            deadprocs.append((proc, eltime))
+            proctuples.remove(proct)
+            retcodestring = utils.okfail('return code ' + str(proc.returncode), proc.returncode)
+            avgstring = utils.blue('Avg ' + f(totaltime/n))
+            expectedstring = utils.Bblue('expected ~' + str(timedelta(seconds=(totaltime/n)*(len(simlist)/MAX_PROCS))))
+
+            if proc.returncode != 0:
+                print("ERROR. Here's stdout from proc: ")
+                print(proc.communicate()[0].decode("utf-8"))
+
+            print('FINISHED', proc.pid, retcodestring,
+                  'approx. elapsed time', f(eltime), 'sec.' , avgstring,
+                  expectedstring)
+
+    time.sleep(.1)
+
+print('\n\nAll done.')

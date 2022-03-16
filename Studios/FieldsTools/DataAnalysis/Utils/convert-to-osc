@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Jun 11 20:47:43 2018
+
+@author: joao
+"""
+
+from sys import argv
+from glob import glob
+from numpy import asarray, savetxt
+from time import time
+from os.path import isfile
+
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--files', help="Filename(s). Default is all files in folder.", \
+                    type=str, default='./*')
+
+args = parser.parse_args()
+
+filenames = args.files
+
+files = glob(filenames)
+
+
+def open_sim_csv(filename):
+    with open(filename) as file:
+        param_keys = [val for val in file.readline().replace(' ', '').strip('#').strip().split('|')]
+        param_vals= [float(val) for val in file.readline().split()]
+        L, T = file.readline().split()
+        phi = [[float(digit) for digit in line.split()] for line in file]
+        phi = asarray(phi)
+
+    dictionary = dict(zip(param_keys, param_vals))
+    dictionary.update({'L': L, 'T': T, 'phi': phi, 'filename': filename})
+
+    return dictionary
+
+
+def open_sim_osc(filename):
+    with open(filename) as file:
+        param_keys = [val for val in file.readline().replace(' ', '').strip('#').strip().split('|')]
+        param_vals= [float(val) for val in file.readline().split()]
+        phi = [[float(digit) for digit in line.split()] for line in file]
+        phi = asarray(phi)
+
+    dictionary = dict(zip(param_keys, param_vals))
+    dictionary.update({'phi': phi, 'filename': filename})
+
+    return dictionary
+
+
+def save_sim(filename, sim):
+    firstline = '# '
+    secondline = ''
+
+    blackList = ['phi', 'filename']
+    for key in sim:
+        if not key in blackList:
+            firstline += key + ' | '
+            secondline += str(sim[key]) + ' '
+
+    firstline.rstrip(' ').rstrip('|')
+
+    #lines = [array2string(val).lstrip('[').rstrip(']') for val in sim['phi']]
+    with open(filename, 'w') as file:
+        file.write(firstline + '\n')
+        file.write(secondline + '\n')
+
+        savetxt(file, sim['phi'], fmt='%1.3e')
+
+
+def treatOSC(sim ,file):
+    keys = 'N,timesteps,h,dT,L,T,v,V,phase,d,r,outresX,outresT'.split(',')
+
+    deals = {'outresX': sim['phi'].shape[1], \
+             'outresT': sim['phi'].shape[0]}
+
+    for k in keys:
+        if not k in sim:
+            print('Key \'', k, '\' not in params.')
+
+            if k in deals:
+                sim[k] = deals[k]
+                print('    Dealt with!')
+            else:
+                print('    No rule to deal with...')
+
+    return sim
+
+
+def treatCSV(sim, file):
+    spl = file.lstrip('.').lstrip('/').lstrip('sym-').rstrip('.array.csv') \
+        .replace(')', '').replace('(', '').split('-')
+
+    isOutRes = True
+    for i in spl:
+        if i.count('='):
+            key, val = i.split('=')
+            sim[key] = val
+
+        elif i.count('x'):
+            X, T = i.split('x')
+            if isOutRes:
+                sim['outresX'] = X
+                sim['outresT'] = T
+                isOutRes = False
+
+        sim['r'] = float(sim['dT'])/float(sim['h'])
+
+    if not 'phase' in sim:
+        sim['phase'] = 0
+
+    return sim
+
+totalTime = 0
+n = 0
+for f in files:
+    print('Doing', f)
+    if f[-5] == '_' or isfile(f.rstrip('.osc') + '_.osc'):
+        print('   ... no need.')
+        continue
+
+    t0 = time()
+
+    filename = ''
+    sim = None
+    if f[-4:] == '.osc':
+        print('Oscfile')
+        sim = open_sim_osc(f)
+        sim = treatOSC(sim, f)
+        filename = f.rstrip('.osc') + '_.osc'
+    elif f[-4:] == '.csv':
+        print('Csvfile')
+        sim = open_sim_csv(f)
+        sim = treatCSV(sim, f)
+        filename = f.rstrip('.csv') + '.osc'
+    else:
+        continue
+
+    save_sim(filename, sim)
+    print('Saved file \"', filename, '\"')
+    tf = time()
+    n += 1
+    totalTime += tf-t0
+    print(n, '/', len(files), '   expected time:', totalTime/n * (len(files)-n))
