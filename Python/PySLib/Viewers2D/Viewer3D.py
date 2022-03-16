@@ -1,6 +1,6 @@
 from .Grid import Grid
 
-from Tools.Primitives import Plane
+from ..Tools.Primitives import Plane
 
 import glumpy.gloo
 from glumpy import gl, gloo, glm

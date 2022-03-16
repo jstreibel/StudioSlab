@@ -101,7 +101,7 @@ def Plane(size=(1.0, 1.0), n=(2, 2), uv_repeat=(1, 1)):
     vertices = vertices.ravel()
     indices = np.array(I, dtype=itype).ravel()
     return vertices.view(gloo.VertexBuffer), indices.view(gloo.IndexBuffer)
+
+
 import numpy as np
-
-
 from glumpy import gloo, data

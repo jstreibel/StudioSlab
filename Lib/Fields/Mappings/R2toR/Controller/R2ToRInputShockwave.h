@@ -6,7 +6,8 @@
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
 #include <View/Graphic/OutputOpenGL.h>
-#include "Apps/Simulations/BCInterface.h"
+
+#include <Fields/Mappings/BCInterface.h>
 
 namespace R2toR {
 

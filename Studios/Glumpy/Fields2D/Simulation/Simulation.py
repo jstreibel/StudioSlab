@@ -1,5 +1,5 @@
 from glumpy import gl
-from PySLib.SurfaceSlab import Slab, FieldProgram
+from PySLib.Tools.SurfaceSlab import Slab, FieldProgram
 import imgui
 
 class Simulation(object):

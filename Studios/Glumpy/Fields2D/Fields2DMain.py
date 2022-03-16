@@ -40,7 +40,8 @@ window.attach(vp)
 ui = Viewer3D.UI()
 ui._vertPhiScale = 0.01
 ui._vertDPhidtScale = 0.001
-viewer3D = Viewer3D(viewport=vp, GridDim=GridDim, SpaceDim=SpaceDim, MeshSubdivs=MeshSubdivs, ui=ui)
+viewer3D = Viewer3D(viewport=vp, GridDim=(GridDim, GridDim), SpaceDim=(SpaceDim, SpaceDim),
+                    MeshSubdivs=(MeshSubdivs, MeshSubdivs), ui=ui)
 
 
 sim = Simulation.Simulation(dt, GridDim=(GridDim, GridDim), SpaceDim=(SpaceDim, SpaceDim))
