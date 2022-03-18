@@ -14,11 +14,11 @@ def _open_old(file, line1, verbose):
     #H = (grad[0]**2 + grad[1]**2 + np.abs(phi)) + 1.e-6
     dictionary = dict(zip(param_keys, param_vals))
     if verbose:
-        for ting in dictionary:
-            print(ting, "=", dictionary[ting])
+        for ting, value in dictionary.items():
+            print(ting, "=", value)
     dictionary.update({'phi': phi, 'filename': file.name})
 
-    if not 'initTime' in dictionary:
+    if 'initTime' not in dictionary:
         dictionary['initTime'] = 0.
 
     return dictionary

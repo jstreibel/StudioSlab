@@ -5,7 +5,7 @@ from numpy import asarray, gradient, abs as np_abs, array
 
 from ast import literal_eval as lit_eval
 
-from .SimData_old import SimData_old
+from SimData_old import SimData_old
 
 
 class SnapshotData(object):

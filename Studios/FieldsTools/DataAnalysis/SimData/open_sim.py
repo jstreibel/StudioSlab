@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from .SimData_old import SimData_old
-from .SimData import SimData
-from .SnapshotData import SnapshotData
+from SimData_old import SimData_old
+from SimData import SimData
+from SnapshotData import SnapshotData
 
 from numpy import asarray, linspace, gradient, mean, abs as np_abs, array, sqrt
 from os.path import isfile

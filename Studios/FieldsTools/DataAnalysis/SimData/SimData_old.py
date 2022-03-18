@@ -4,7 +4,7 @@ from numpy import asarray, double, linspace, gradient, amax, mean, heaviside, ab
 from ast import literal_eval as lit_eval
 from os.path import isfile
 
-from .DataUtils import _extract_timestamps, _open_sim_data, _open_old
+from DataUtils import _extract_timestamps, _open_sim_data, _open_old
 
 from Utils import utils
 

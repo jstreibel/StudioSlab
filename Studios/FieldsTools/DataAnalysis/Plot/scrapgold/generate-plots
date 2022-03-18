@@ -3,10 +3,10 @@
 # -*- coding: utf-8 -*-
 
 import argparse
-import utils
+from  Utils import utils
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--files', help="Filename(s). Default is all files in folder.", nargs='*', default='./*.osc')
+parser.add_argument('--files', help="Filename(s). Default is all files in folder.", nargs='*', default='./*.osc*')
 parser.add_argument('--threads', '-t', help='Number of threads to use. Default is 1.', type=int, default=1)
 
 parser.add_argument('--region', help="Region to plot. Must be 4-tuple representing (xmin, xmax, ymin, ymax). Example "
@@ -96,8 +96,8 @@ else:
 # ******************************************************************************
 # ******************************************************************************
 import plot_single
-import open_sim
-import fit_shockwave
+from SimData import open_sim
+from Fitting import fit_shockwave
 from os.path import isfile
 from os import remove
 from time import time
@@ -136,7 +136,8 @@ def doFile(file):
 
     try:
         #sim_result = open_sim.open_sim(file)
-        sim_result = open_sim.SimData(file)
+        #sim_result = open_sim.SimData(file)
+        sim_result = open_sim.OpenSimData(file)
 
         fit_params = None
         if args.fit:

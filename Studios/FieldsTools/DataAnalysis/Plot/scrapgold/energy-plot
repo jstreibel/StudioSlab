@@ -6,7 +6,7 @@ import glob
 from multiprocessing import Pool
 from numpy import asarray, unique, linspace, outer, ones, zeros, full
 from numpy import sqrt
-from utils import fmt, printThere, asciiGrayScale
+from Utils.utils import fmt, printThere, asciiGrayScale
 from ast import literal_eval as lit_eval
 import shutil
 from Fitting import Region

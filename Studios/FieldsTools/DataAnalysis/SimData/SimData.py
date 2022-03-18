@@ -38,6 +38,11 @@ class SimData(object):
     def Data(self):
         return self._fieldData
 
+    def __getitem__(self, item):
+        if item == 'phi': return self.Data
+
+        return self._metaData[item]
+
 
     def _testFileAndRetrieveMetadata(self, filename):
         if not isfile(filename):
