@@ -14,6 +14,8 @@ public:
     auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
     auto operator()(const Real &out) const -> ByteData override;
 
+    auto isBinary() const -> bool override;
+
     auto getFormatDescription() const -> String override;
 
 private:

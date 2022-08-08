@@ -6,7 +6,7 @@ import argparse
 from  Utils import utils
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--files', help="Filename(s). Default is all files in folder.", nargs='*', default='./*.osc*')
+parser.add_argument('--files', help="Filename(s). Default is all files in folder.", nargs='*', default='./*.oscb')
 parser.add_argument('--threads', '-t', help='Number of threads to use. Default is 1.', type=int, default=1)
 
 parser.add_argument('--region', help="Region to plot. Must be 4-tuple representing (xmin, xmax, ymin, ymax). Example "
@@ -126,7 +126,7 @@ def doFile(file):
     print()
     print(utils.OKBLUE+"Started"+utils.BOLD, files.index(file)+1, "/", size,
           utils.ENDC, file, ': ')
-    outputFileName = args.outf + '/' + file.rstrip('.osc') + args.nameappend + outputExtension
+    outputFileName = args.outf + '/' + file.rstrip('.oscb') + args.nameappend + outputExtension
     if isfile(outputFileName):
         if not args.regen and not args.showresult:
             print(utils.OKGREEN + "already built." + utils.ENDC)
@@ -148,14 +148,14 @@ def doFile(file):
             fit_params['lwidth'] = args.lwidth
             fit_params['fitlinescolor'] = args.fitlinescolor
 
-        plot_single.plot(sim_result, fit_params, args=args, showLog = not args.linear, logEpsilon=args.logeps, \
-                         showResult=args.showresult, show_colorbar=args.showcolorbar, extension = outputExtension, \
+        plot_single.plot(sim_result, fit_params, args=args, showLog = not args.linear, logEpsilon=args.logeps,
+                         showResult=args.showresult, show_colorbar=args.showcolorbar, extension = outputExtension,
                          fontsize=args.fontsize, fontsize_ticks=args.fontsizeticks, dpi=args.dpi, imgWidthInches=args.width,
                          region=args.region, annotationPosition=args.apos,
                          annotations=args.annotate, annotationColor=args.acolor, outputFileName=outputFileName,
                          xlabel=args.xlabel, ylabel=args.ylabel, cmap=args.cmap, showZeros=False,
-                         showBorderLightCone=False, showBorderConeVertex=False, showEnergyDens=args.fieldvalueenergy, \
-                         valueRange=(args.rangemode, args.vmin, args.vmax), noframe=args.noframe, labelroom=args.labelroom, \
+                         showBorderLightCone=False, showBorderConeVertex=False, showEnergyDens=args.fieldvalueenergy,
+                         valueRange=(args.rangemode, args.vmin, args.vmax), noframe=args.noframe, labelroom=args.labelroom,
                          draw_box=args.draw_box)
 
         if args.showhistory:

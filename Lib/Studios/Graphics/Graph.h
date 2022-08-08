@@ -6,10 +6,11 @@
 #define V_SHAPE_GRAPH_H
 
 
-#include "Studios/Graphics/Tools/plotting-utils.h"
+#include "Studios/Graphics/PlottingUtils.h"
+#include "Studios/Graphics/WindowManagement/Artist.h"
 
-#include <RtoR/Model/RtoRFunction.h>
-#include <View/OpenGL/Tools/Artist.h>
+#include <Fields/Mappings/RtoR/Model/RtoRFunction.h>
+
 
 
 class Graph : public Artist {

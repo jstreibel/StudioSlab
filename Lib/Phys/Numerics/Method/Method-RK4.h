@@ -18,10 +18,10 @@
 #include <omp.h>
 
 template<int NUM_THREADS, class FIELD_STATE_TYPE>
-class StepperRK : public Method{
+class StepperRK4 : public Method{
 public:
 
-    StepperRK(const void *dPhi_)
+    StepperRK4(const void *dPhi_)
         : Method(), H(*(Base::Equation<FIELD_STATE_TYPE>*) Allocator::getInstance().getSystemSolver()),
           dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
           _phi((FIELD_STATE_TYPE*)Allocator::getInstance().newFieldState()),
@@ -35,7 +35,7 @@ public:
         dPhi->apply(*_phi, 0.0);
     }
 
-    ~StepperRK(){
+    ~StepperRK4(){
         delete &H;
 
         delete _phi;

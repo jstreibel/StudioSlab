@@ -37,15 +37,15 @@ target_link_libraries ( Tests.app	${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
 
 
 add_executable (Fields-RtoR-PeriodicBC Fields/MainRtoRPeriodicBC.cpp ${SOURCES}  )
-add_compile_definitions(TARGET Fields-RtoR-PeriodicBC PERIODIC_BC=true) # isso define um macro de preprocessador
+add_compile_definitions(TARGET Fields-RtoR-PeriodicBC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-PeriodicBC ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )
 
 
 # ************************************************************************************************************
 
 
-add_executable ( Fields-R2toR Fields/MainR2toR.cpp)
-target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
+#add_executable ( Fields-R2toR Fields/MainR2toR.cpp)
+#target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
 ##set_property(TARGET fieldsR2toR PROPERTY CUDA_ARCHITECTURES 61)
 
 

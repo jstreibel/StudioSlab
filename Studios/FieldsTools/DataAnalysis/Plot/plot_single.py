@@ -29,7 +29,6 @@ def log_abs_inv(phi_t, epsilon):
     phi = phi_t
     return epsilon * (np.exp(np.abs(phi)) - 1) * np.sign(phi)
 
-
 # class LogAbs(colors.Normalize):
 #    def __init__(self, epsilon, vmin, vmax):
 #        self.epsilon = epsilon
@@ -47,157 +46,10 @@ def log_abs_inv(phi_t, epsilon):
 #
 #        return np.ma.masked_array(normval)
 
-def getZeros(V, v, alpha, tStart, tEnd, n=0, subdivs=256):
-    gamma = 1. / np.sqrt(1. - v * v)
-
-    def ab(t):
-        if t >= -1. and t < -.5:
-            return 1., 1.
-        elif t >= -.5 and t < 0:
-            return -1., 0.
-        elif t >= 0 and t < .5:
-            return 1., 0.
-        elif t >= .5 and t < 1.:
-            return -1., 1.
-        return None
-
-    a, b = ab(t)
-    x_0 = gamma / (1. + a(t) * v * V) * ((1. - V * V) * (1. + v * b) + alpha * (V + v * a))
-    B = gamma / (2. * v) * (2. * alpha + n / (gamma * gamma)) - x_0(alpha)
-
-    return np.linspace(tStart, tEnd, subdivs) / V + B  # literalmente t/V + B^n (\alpha)
-
-
-def showVertex(sim_result, ax, threshold=1.e-5):
-    V = sim_result['V']
-    t_ = np.sqrt((1. - V) / (1. + V))
-    x_ = -t_
-
-    # vertice analitico
-    ax.scatter(x_, t_, marker='+', s=1.0, c='b')
-
-    phi = sim_result['phi']
-    m, n = phi.shape  # (m linhas, n colunas)
-
-    n = sim_result['outresX']
-    m = sim_result['outresT']
-    t0 = sim_result['initTime']
-    tf = sim_result['T']
-    L = sim_result['L']
-    dot_i = int((t_ - t0) / (tf - t0) * m)
-    dot_j = int((x_ + L / 2.) / L * n)
-
-    delta_x = 0.1
-    delta_t = 0.1
-    n_f = delta_x / L * n
-    m_f = delta_t / (tf - t0) * m
-    n_ = int(n_f)
-    m_ = int(m_f)
-    offset_x = int(m_f / 2)
-    offset_t = int(n_f / 2)
-    arr = np.empty([m_, n_])
-    for i in range(m_):
-        for j in range(n_):
-            arr[i, j] = phi[dot_i + i - offset_x, dot_j + j - offset_t]
-
-    arrOriginal = log_abs(arr, 1.e-6)
-    for i in range(m_):
-        for j in range(n_):
-            if np.abs(arr[i, j]) < threshold:
-                arr[i, j] = 0
-            else:
-                arr[i, j] = 1.
-
-    arr = np.abs(grad(arr, 1)[1])
-
-    e = (x_ - delta_x / 2, x_ + delta_x / 2, t_ - delta_t / 2, t_ + delta_t / 2)
-    x__ = []
-    t__ = []
-    pts = []
-    hPixelSize = .5 * delta_x / n_f  # isso eh pra ser igual a delta_t/m_f
-    for i in range(1, m_ - 1):
-        for j in range(1, n_ - 1):
-            if arr[i, j] > 0:
-                if arr[i + 1, j] == 0 and arr[i - 1, j] == 0 and arr[i, j + 1] == 0 and arr[i, j - 1] == 0:
-                    arr[i, j] = 0
-                else:
-                    _x = float(i) / m_f * delta_x - e[0] - delta_x + hPixelSize
-                    _t = float(j) / n_f * delta_t - e[2] - delta_t + hPixelSize
-                    x__.append(_x)
-                    t__.append(_t)
-                    pts.append((_x, _t))
-    x__ = np.asarray(x__)
-    t__ = np.asarray(t__)
-    pts = np.asarray(pts)
-
-    class Vfit(object):
-        def __init__(self, pointSet):
-            self.pointSet = pointSet
-            self._tries = []
-
-        def V(self, x, x_0, a, b):
-            return a * np.abs(x - x_0) + b
-
-        def __call__(self, params):
-            pts = self.pointSet
-            x_0, b = params
-            a = -V
-
-            val = 0.
-            for p in pts:
-                x, t = p
-                Vt = self.V(x, x_0, a, b)
-                dif = t - Vt
-                val += dif * dif
-
-            self._tries.append(params)
-            return val
-
-    func = Vfit(pts)
-    initGuess = (-x_, -t_)  # x_0, b
-    bounds = (-x_ - delta_x / 2, -x_ + delta_x / 2), (-t_ - delta_t / 2, -t_ + delta_t / 2)
-    methods = 'Nelder-Mead', 'Powell'
-    result = optimize.minimize(func, initGuess, bounds=bounds)
-    x_0, b = result.x
-    a = -V
-    V_ = lambda x, x_0, a, b: a * np.abs(x - x_0) + b
-
-    if 0:  # mostrar resultado do fit
-        Vt = np.linspace(e[2], e[3], 100)
-        Vx = V_(Vt, x_0, a, b)
-        ax.scatter(Vx, Vt, marker=',', s=1.0, c='r')
-    if 0:  # mostrar todas as tentativas de encontrar parametros do 'V(x)'
-        # Vt = np.linspace(e[2], e[3], 100)
-        Vt = np.linspace(0.25, 0.75, 100)
-        for try_ in func._tries:
-            x_0, b = try_
-            Vx = V_(Vt, x_0, a, b)
-            ax.scatter(Vx, Vt, marker=',', s=1.0, c='r', alpha=0.2)
-
-    im = ax.imshow(arrOriginal, extent=e, origin='lower', interpolation='none')
-    if 0:  # mostrar o "V" da borda analitico (a` partir de $\sqrt{1-V}/\sqrt{1+V})$
-        V_ = lambda x, x_0, a, b: a * np.abs(x - x_0) + b
-        Vt = np.linspace(e[2], e[3], 100)
-        Vx = V_(Vt, x_0=-x_, a=-V, b=-t_)
-        ax.scatter(Vx, Vt, marker='+', s=1.0, c='g')
-
-    if 0:  # mostrar os pontos inferidos da imagem
-        ax.scatter(t__, x__, marker='+', s=1.0, c='k')
-
-    if 1:  # mostrar ponto analitico
-        ax.scatter(b, x_0, marker='+', s=1.0, c='b')
-        f = open("numeric.txt", "a+")
-        f5 = '{:.7f}'.format
-        f10 = '{:.10f}'.format
-        sep = "  "
-        linetext = f5(V) + sep + f10(b) + sep + f10(x_0) + "\n"
-        f.write(linetext)
-        f.close()
-
 
 def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=None):
     from mpl_toolkits.axes_grid1 import make_axes_locatable
-    from utils import round_sd
+    from Utils.utils import round_sd
 
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='5%', pad=0.05)  # colocar o colorbar a direita e do tamanho certinho.
@@ -250,13 +102,13 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
     return cbar
 
 
-def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6, showResult=False, \
-         show_colorbar=False, extension='.png', fontsize=10, fontsize_ticks=8, dpi=300, \
-         imgWidthInches=5, region=None, annotationPosition=(0.25, 0.25), \
+def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6, showResult=False,
+         show_colorbar=False, extension='.png', fontsize=10, fontsize_ticks=8, dpi=300,
+         imgWidthInches=5, region=None, annotationPosition=(0.25, 0.25),
          annotations=None, annotationColor='k', outputFileName=None, xlabel='$x$', ylabel='$t$',
          saveToFile=True, closeAfterUse=True, cmap=None, showZeros=False,
          showBorderLightCone=False, showBorderConeVertex=False, showEnergyDens=False,
-         valueRange=(0, 0., 0.), noframe=False, labelroom=False, draw_box=None, fig_ax=None, \
+         valueRange=(0, 0., 0.), noframe=False, labelroom=False, draw_box=None, fig_ax=None,
          folded=False, verbose=True):
     if args is not None:
         ''' Aqui vamos colocando tudo o que for novo. '''
@@ -272,18 +124,19 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
 
     rcParams.update({'font.size': fontsize})
 
-    sr = sim_result
+    simData = sim_result
 
-    xLeft, L, T, initT = sr['xLeft'], sr['L'], sr['T'], sr['initTime']
+    xLeft, L, totalTime, initialTime = simData['xLeft'], simData['L'], simData['T'], simData['initTime']
     phi = None
     if region is None:
-        phi = sr['phi']
+        phi = simData.Phi
     else:
         # NOTA 1
         # O que era feito anteriormente era plotar tudo (todo o extent)  e depois so salvar a regiao (region).
         # Agora, o que fazemos eh fazer de tudo uma coisa so. Nao sei no que pode dar...
-        phi = sr.getRegion(region[0], region[1], region[2], region[3])
+        phi = simData.getRegion(region[0], region[1], region[2], region[3])
     if 0: print("Region full resolution is " + str(phi.shape[1]) + "x" + str(phi.shape[0]))
+
 
     fontsize_small = fontsize_ticks
 
@@ -301,8 +154,8 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
         phi = eta_bar(phi, 2)
 
     if showEnergyDens:
-        nx, nt = sr.getItems(('outresX', 'outresT'))
-        h1, h2 = T / nt, L / nx
+        nx, nt = simData.getItems(('outresX', 'outresT'))
+        h1, h2 = totalTime / nt, L / nx
         ddt = lambda phi: np.gradient(phi, h1, axis=0)
         ddx = lambda phi: np.gradient(phi, h2, axis=1)
         dphidt = ddt(phi)
@@ -328,7 +181,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
             V = VPert(phi)
 
         phi = .5 * dphidt ** 2 + .5 * dphidx ** 2 + V
-        sim_result['phi'] = phi
+        #sim_result['phi'] = phi
 
     if fig_ax is None:
         fig_ax = pyplot.subplots()
@@ -341,7 +194,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
 
     if region is None:
         # extent = -L*0.5, L*0.5, initT, T
-        extent = xLeft, xLeft + L, initT, T
+        extent = xLeft, xLeft + L, initialTime, totalTime
         region = extent
     else:
         extent = region  # Vide 'NOTA 1' acima
@@ -399,9 +252,9 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
     # a regiao de dissipacao de energia e colocamos informacao extra no nome do
     # arquivo (sobre o interval de tempo sendo mostrado, ja que eh comum nesses
     # casos nao mostrarmos tudo).
-    if 'eps' in sr:
-        eps = sr['eps']
-        l = sr['l']
+    if 'eps' in simData:
+        eps = simData['eps']
+        l = simData['l']
         if showSelfSimilar:
             if eps > 0.5:
                 v_0 = 1. / eps - 1.
@@ -422,15 +275,15 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
             # Limite superior da auto-similar, lado direito
             ax.plot((-x_0, -x_0 - v_0 * t__), (0, t__), linewidth=0.5, color=annotationColor, linestyle='dashed')
 
-        if 'is_dissipating' in sr:
-            is_diss = int(sr['is_dissipating'])
+        if 'is_dissipating' in simData:
+            is_diss = int(simData['is_dissipating'])
             if is_diss == 1:
-                dist = sr['dissD']
+                dist = simData['dissD']
                 xLeft, xRight = -L / 2.0 + dist, L / 2.0 - dist
                 xMin, xMax = region[:2]
-                if xLeft > xMin: ax.plot((xLeft, xLeft), (0, T), linewidth=0.5, color=annotationColor,
+                if xLeft > xMin: ax.plot((xLeft, xLeft), (0, totalTime), linewidth=0.5, color=annotationColor,
                                          linestyle='dashed')
-                if xRight < xMax: ax.plot((xRight, xRight), (0, T), linewidth=0.5, color=annotationColor,
+                if xRight < xMax: ax.plot((xRight, xRight), (0, totalTime), linewidth=0.5, color=annotationColor,
                                           linestyle='dashed')
 
     if show_colorbar:
@@ -492,7 +345,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
         ax.xaxis.set_major_locator(pyplot.MultipleLocator(np.floor(100 * 8 / 60 * np.ceil(L)) / 100.0))
         # ax.xaxis.set_major_locator(pyplot.MaxNLocator(6))
         ax.xaxis.set_label_coords(1.0, -0.04)
-        ax.yaxis.set_major_locator(pyplot.MultipleLocator(np.floor(100 * 8 / 30 * np.ceil(T)) / 100.0))
+        ax.yaxis.set_major_locator(pyplot.MultipleLocator(np.floor(100 * 8 / 30 * np.ceil(totalTime)) / 100.0))
         ax.yaxis.set_label_coords(-0.04, 0.95)
 
     if 0:
@@ -510,7 +363,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
             xsi = np.arange(-L / 2, L / 2, L / 100)
             tau = fit_shockwave.tau_k(xsi, ak) + T0
 
-            idxs = np.argwhere(tau <= T)
+            idxs = np.argwhere(tau <= totalTime)
             xsi = xsi[idxs]
             tau = tau[idxs]
             fitLinesColor = fit_params['fitlinescolor']
@@ -528,7 +381,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
 
     if saveToFile:
         if outputFileName is None:
-            outputFileName = sr['filename'].rstrip('.osc') + extension
+            outputFileName = simData['filename'].rstrip('.osc') + extension
         bbox = 'tight'
         if noframe:
             bbox = None

@@ -45,3 +45,7 @@ auto CustomStringSeparatedSOF::operator()(const Real &out) const -> ByteData {
 
     return data;
 }
+
+bool CustomStringSeparatedSOF::isBinary() const {
+    return false;
+}

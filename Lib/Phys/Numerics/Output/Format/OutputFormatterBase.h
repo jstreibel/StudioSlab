@@ -20,6 +20,8 @@ public:
 
     virtual auto operator() (const Real &out) const -> ByteData = 0;
 
+    virtual auto isBinary() const -> bool = 0;
+
     virtual auto getFormatDescription() const -> String = 0;
 };
 

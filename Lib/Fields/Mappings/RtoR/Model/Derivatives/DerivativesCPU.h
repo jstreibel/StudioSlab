@@ -7,7 +7,7 @@
 
 namespace RtoR {
 
-    class DerivativeCPU {
+class DerivativeCPU : public RtoR::Function {
     public:
         explicit DerivativeCPU(const ArbitraryFunction &in);
 
@@ -20,7 +20,9 @@ namespace RtoR {
 
         auto d2fdx2_v(VecFloat_O &out) -> VecFloat &;
 
-    private:
+        Real operator()(Real x) const override;
+
+private:
 
         auto dfdx(PosInt X) const -> Real;
         auto d2fdx2(PosInt X) const -> Real;

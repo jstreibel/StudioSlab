@@ -4,11 +4,11 @@ from numpy import asarray, double, linspace, gradient, amax, mean, heaviside, ab
 from ast import literal_eval as lit_eval
 from os.path import isfile
 
-from DataUtils import _extract_timestamps, _open_sim_data, _open_old
+from DataUtils_depr import _extract_timestamps, _open_sim_data, _open_old
 
 from Utils import utils
 
-class SimData_old(object):
+class SimData_depr(object):
     """Raw access to oscillon simulation data. Note that full simulation
     data is not loaded until requested."""
     def __init__(self, filename, resolution_x='full'):
@@ -16,7 +16,7 @@ class SimData_old(object):
             print("File not found \'" + filename + "\'")
             raise FileNotFoundError
 
-        super(SimData_old, self).__init__()
+        super(SimData_depr, self).__init__()
         self._filename = filename
 
         line1 = getline(filename, 1)
@@ -307,7 +307,7 @@ class SimData_old(object):
         dphidx = gradient(phi, dx)
         dphidt = self.getTimeDerivative(t)
 
-        V = SimData_old.VPert(phi) if usePerturbedPotential else np_abs(phi)
+        V = SimData_depr.VPert(phi) if usePerturbedPotential else np_abs(phi)
 
         return .5*dphidt**2 + .5*dphidx**2 + V
 

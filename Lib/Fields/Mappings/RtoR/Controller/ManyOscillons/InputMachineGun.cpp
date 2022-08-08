@@ -17,7 +17,7 @@ auto RtoR::InputMachineGun::getBoundary() const -> const void * {
     RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
     auto scaleBig = 1.0;
-    auto scaleSmall = 0.1;
+    auto scaleSmall = 0.25;
 
     auto BigOne = AnalyticOscillon(.0, -scaleBig, scaleBig, 0, *v1, 0, false, false);
     initCondPhi += BigOne;

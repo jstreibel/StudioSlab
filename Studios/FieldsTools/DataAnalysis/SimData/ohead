@@ -4,28 +4,12 @@
 # PRINT OSC HEADER
 
 import sys
-
-
-def isfloat(ting):
-    try:
-        float(ting)
-        return True
-    except ValueError:
-        return False
-
-    return False
-
+from open_sim import ShowHeaderOfOscFile
 
 if __name__ == '__main__':
 
     filename = sys.argv[1]
 
-    print(filename)
+    ShowHeaderOfOscFile(filename)
 
-    with open(filename) as file:
-        param_keys = [val for val in file.readline().replace(' ', '').strip('#').strip().split('|')]
-        param_vals= [float(val) if isfloat(val) else val for val in file.readline().split()]
 
-    dictionary = dict(zip(param_keys, param_vals))
-    for ting in dictionary:
-        print(ting, "=", dictionary[ting])

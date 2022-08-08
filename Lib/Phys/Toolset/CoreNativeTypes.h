@@ -5,13 +5,16 @@
 #ifndef STUDIOSLAB_NATIVEREALNUMBER_H
 #define STUDIOSLAB_NATIVEREALNUMBER_H
 
+#include <memory>
 #include <cstdint>
+#include <assert.h>
 
 #ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
-#include <boost/multiprecision/float128.hpp>
-#define FLOAT128 boost::multiprecision::float128
-#else
-#define FLOAT128 double
+//#include <memory>
+//#include <boost/multiprecision/float128.hpp>
+//#define FLOAT128 boost::multiprecision::float128
+//#else
+//#define FLOAT128 double
 #endif
 
 #define FLOAT64 double
@@ -21,7 +24,7 @@ typedef FLOAT64 floatt;
 
 typedef floatt Real;
 
-typedef size_t PosInt;
+typedef std::size_t PosInt;
 typedef int_least64_t BigInt;
 
 #include <vector>

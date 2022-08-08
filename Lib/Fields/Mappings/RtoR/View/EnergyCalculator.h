@@ -13,15 +13,28 @@
 
 namespace RtoR {
     class EnergyCalculator {
-        RtoR::ArbitraryFunction *_oEnergyDensityFunc = static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+        RtoR::ArbitraryFunction *_oEnergyDensityFunc =
+                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+        RtoR::ArbitraryFunction *_oKinetic =
+                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+        RtoR::ArbitraryFunction *_oGradient =
+                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+        RtoR::ArbitraryFunction *_oPotential =
+                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
     public:
-        const RtoR::ArbitraryFunction &computeEnergyDensity(const RtoR::FieldState &field);
+        const RtoR::ArbitraryFunction &computeDensities(const RtoR::FieldState &field);
 
-        const RtoR::ArbitraryFunction &getFunc() { return *_oEnergyDensityFunc; };
+        const RtoR::ArbitraryFunction &getFunc() const { return *_oEnergyDensityFunc; };
+        const RtoR::ArbitraryFunction &getKinetic() const { return *_oKinetic; };
+        const RtoR::ArbitraryFunction &getGradient() const { return *_oGradient; };
+        const RtoR::ArbitraryFunction &getPotential() const { return *_oPotential; };
 
-        Real integrate();
+        Real integrateEnergy();
+        Real integrateKinetic();
+        Real integrateGradient();
+        Real integratePotential();
 
-        Real integrate(Real xmin, Real xmax);
+        Real integrateEnergy(Real xmin, Real xmax);
     };
 }
 

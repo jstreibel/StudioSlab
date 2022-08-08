@@ -5,6 +5,7 @@
 #include "OutputStructureBuilderRtoR.h"
 
 #include "../View/Graphics/RtoROutputOpenGL.h"
+#include "../View/Graphics/RtoROutGlStatistic.h"
 
 
 
@@ -49,6 +50,7 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         const double Tf=p.gett();
 
         OutputFormatterBase *outputFilter = new BinarySOF;
+        //OutputFormatterBase *outputFilter = new CustomStringSeparatedSOF;
 
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}));
 
@@ -56,6 +58,8 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         const Real Np = *outputResolution;
         const Real r = Allocator::getInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
+
+        outputFileName += String("-N=") + ToString(N, 0);
 
         OutputChannel *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
                                                      outputFileName, outputFilter);
@@ -76,15 +80,18 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
         const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
 
-        Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
+        //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
+        Base::OutputOpenGL *outputOpenGL = new RtoR::OutGLStatistic();
 
         glutBackend->setOpenGLOutput(outputOpenGL);
         // outGL->output(dummyInfo); // stop flicker?
         outputManager->addOutputChannel(outputOpenGL);
     }
     else
-        /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
-         * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
+        /* O objetivo de relacionar o numero de passos para
+         * o Console Monitor com o do file output eh para que
+         * ambos possam ficar sincronizados e o integrador
+         * possa rodar diversos passos antes de fazer o output. */
         addConsoleMonitor(*outputManager, fileOutputStepsInterval>0 ? fileOutputStepsInterval*25 : int(p.getn()/40));
 
     return outputManager;

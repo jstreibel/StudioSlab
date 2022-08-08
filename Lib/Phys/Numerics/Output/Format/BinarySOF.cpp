@@ -37,3 +37,7 @@ auto BinarySOF::operator()(const Real &out) const -> ByteData {
 
     return data;
 }
+
+bool BinarySOF::isBinary() const {
+    return true;
+}

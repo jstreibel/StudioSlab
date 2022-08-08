@@ -3,6 +3,7 @@
 #include "DiscreteSpace.h"
 
 #include "DiscreteSpaceCPU.h"
+#include <assert.h>
 
 // Created by joao on 11/10/2019.
 
@@ -63,7 +64,7 @@ const VecFloat &DiscreteSpace::getHostData(bool sync) const {
 }
 
 VecFloat &DiscreteSpace::getHostData(bool syncWithServer) {
-    if(sync) syncHost();
+    if(syncWithServer) syncHost();
 
     return X;
 }

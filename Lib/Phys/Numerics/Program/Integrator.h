@@ -10,7 +10,7 @@
 #include "Phys/Numerics/Equation/BoundaryConditions.h"
 
 #include "Phys/Numerics/Method/Method.h"
-#include "Phys/Numerics/Method/Method-RK.h"
+#include "Phys/Numerics/Method/Method-RK4.h"
 
 #include <Studios/Backend/Program.h>
 #include <Studios/Tools/BenchmarkHistogram.h>
@@ -18,7 +18,7 @@
 
 #define GENERATE_FOR_NTHREADS(N) \
 case (N): \
-stepper = new StepperRK<N, FIELD_STATE_TYPE>(dPhi); \
+stepper = new StepperRK4<N, FIELD_STATE_TYPE>(dPhi); \
 break;
 
 

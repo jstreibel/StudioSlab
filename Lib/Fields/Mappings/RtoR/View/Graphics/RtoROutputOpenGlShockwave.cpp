@@ -6,7 +6,6 @@
 
 #include <Fields/Mappings/FunctionRenderer.h>
 
-#include "../../Model/FunctionsCollection/AnalyticShockwave1D.h"
 #include "../../Model/FunctionsCollection/QuasiShockwave.h"
 
 #include <Studios/Backend/GLUT/GLUTBackend.h>
@@ -66,12 +65,12 @@ void RtoR::OutputOpenGLShockwave::draw() {
         auto surfaceEnergy = .0;
         auto innerEnergy = .0;
         if (t < eps) {
-            surfaceEnergy = energyCalculator.integrate(-eps + v * t, eps - v * t);
+            surfaceEnergy = energyCalculator.integrateEnergy(-eps + v * t, eps - v * t);
             innerEnergy = 0;
         } else {
-            surfaceEnergy = energyCalculator.integrate(-eps + v * t, eps - t) +
-                            energyCalculator.integrate(-eps + t, eps - v * t);
-            innerEnergy = energyCalculator.integrate(eps + v * t, -eps - v * t);;
+            surfaceEnergy = energyCalculator.integrateEnergy(-eps + v * t, eps - t) +
+                            energyCalculator.integrateEnergy(-eps + t, eps - v * t);
+            innerEnergy = energyCalculator.integrateEnergy(eps + v * t, -eps - v * t);;
         }
 
         if(GLUTBackend::GetInstance()->isRunning())

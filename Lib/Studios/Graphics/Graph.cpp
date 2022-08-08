@@ -5,8 +5,9 @@
 #include "Graph.h"
 
 #include <Common/Workaround/StringStream.h>
+
 #include "Studios/Graphics/WindowManagement/Window.h"
-#include "FunctionRenderer.h"
+#include "Fields/Mappings/FunctionRenderer.h"
 
 
 #define TITLE_FONT FONT9

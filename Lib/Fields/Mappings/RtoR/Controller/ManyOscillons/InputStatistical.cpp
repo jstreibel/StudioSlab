@@ -8,6 +8,8 @@
 
 #include "../../Model/RtoRBoundaryCondition.h"
 
+#include <Phys/Numerics/Allocator.h>
+
 #include <math.h>
 #include "RandUtils.h"
 #include "InputStatistical.h"
@@ -31,9 +33,9 @@ auto RtoR::InputStatistical::getDetailedDescription() -> String {
 }
 
 auto RtoR::InputStatistical::getBoundary() const -> const void * {
-    //auto L = vm["L"].as<double>(); // not good bc 'L' is not my parameter.
-    auto L = 20.;
-    std::cout << "Warning: statistical IC are using fixed artifical L=" << L << "value.";
+    auto L = Allocator::getInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
+    auto xLeft = Allocator::getInstance().getNumericParams().getxLeft();
+    //auto L = 20.;
 
     auto oscLength = L / *n;
     auto oscEnergy = *E / *n;
@@ -48,7 +50,7 @@ auto RtoR::InputStatistical::getBoundary() const -> const void * {
 
     const auto ONE_plus = 1.+1.e-10;
     for(int i=0; i<*n; i++){
-        auto tx = -L/2 + ONE_plus*double(i)*(oscLength) + osc_eps;
+        auto tx = xLeft + ONE_plus*double(i)*(oscLength) + osc_eps;
 
         auto s = RandUtils::RandInt()%2?1.:-1.;
 

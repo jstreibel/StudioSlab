@@ -5,7 +5,7 @@ from numpy import asarray, gradient, abs as np_abs, array
 
 from ast import literal_eval as lit_eval
 
-from SimData_old import SimData_old
+#from SimData_old import SimData_old
 
 
 class SnapshotData(object):
@@ -40,7 +40,8 @@ class SnapshotData(object):
         dphidx = gradient(phi, dx)
         dphidt = self['dphidt']
 
-        V = SimData_old.VPert(phi) if self['pert'] else np_abs(phi)
+        #V = SimData_old.VPert(phi) if self['pert'] else np_abs(phi)
+        V = np_abs(phi)
         return .5*dphidt**2 + .5*dphidx**2 + V
 
     def getNLims(self, x0, x1):

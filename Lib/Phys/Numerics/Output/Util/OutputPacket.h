@@ -3,7 +3,7 @@
 
 #include "FieldStateOutputInterface.h"
 #include <Phys/Space/Impl/DiscreteSpace.h>
-
+#include <memory>
 
 typedef std::unique_ptr<FStateOutputInterface*> FieldDataPtr;
 

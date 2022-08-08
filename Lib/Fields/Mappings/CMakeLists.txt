@@ -33,15 +33,20 @@ set ( RTOR_SOURCES
 		RtoR/Core/RtoRModelAllocator.cpp
 
 		RtoR/Controller/RtoRBCInterface.cpp
+
 		RtoR/Controller/SingleFormations/input-perturbed.cpp
-		RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
 		RtoR/Controller/SingleFormations/input-shockwave.cpp
+		RtoR/Controller/SingleFormations/InputSingleOscillon.cpp
+
+		RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
 		RtoR/Controller/InteractingFormations/input-general-oscillons.cpp
+
 		RtoR/Controller/ManyOscillons/InputManyOscillons.cpp
 		RtoR/Controller/ManyOscillons/InputMachineGun.cpp
 		RtoR/Controller/ManyOscillons/InputStatistical.cpp
+		RtoR/Controller/ManyOscillons/InputRandomEnergyOverDotPhi.cpp
 		RtoR/Controller/ManyOscillons/RandUtils.cpp
-		RtoR/Controller/SingleFormations/InputSingleOscillon.cpp
+
 
 		RtoR/Model/FunctionsCollection/analytic-breather.cpp
 		RtoR/Model/FunctionsCollection/shockwave.cpp
@@ -51,6 +56,7 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/AbsPerturbedFunction.cpp
 		RtoR/Model/FunctionsCollection/NoiseFunction.cpp
 		RtoR/Model/FunctionsCollection/QuasiShockwave.cpp
+
 		RtoR/Model/RtoRFunctionArbitrary.cpp
 		RtoR/Model/RtoRFunctionArbitraryCPU.cpp
 		RtoR/Model/Derivatives/DerivativesCPU.cpp
@@ -62,6 +68,9 @@ set ( RTOR_SOURCES
 		RtoR/View/Graphics/RtoROutputOpenGlShockwave.cpp
 		RtoR/View/Graphics/RtoROutputOpenGL.cpp
 		RtoR/View/EnergyCalculator.cpp
+
+		RtoR/View/Graphics/RtoROutGlStatistic.cpp
+		RtoR/View/Graphics/RtoROutGlStatistic.h
 		)
 
 
@@ -96,15 +105,19 @@ set ( MAPS_LINKS
 		Slab-Studios-App
 		Slab-Studios-Backend
 		Slab-Studios-Controller
-		Slab-Studios-CoreMath
+		Slab-Phys
 		Slab-Studios-Graphics
 		Slab-Studios-Tools
 		)
 
 set ( MAPS_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
 
-add_library( ${MAPS_LIB_NAME} STATIC ${RTOR_SOURCES} )
+add_library( ${MAPS_LIB_NAME} STATIC ${RTOR_SOURCES})
 target_link_libraries( ${MAPS_LIB_NAME} ${MAPS_LINKS})
+
+# add_library(${MAPS_LIB_NAME}-Periodic STATIC ${RTOR_SOURCES})
+# target_link_libraries( ${MAPS_LIB_NAME}-Periodic ${MAPS_LINKS})
+# add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic PERIODIC_BC=true ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
 
 add_library(${MAPS_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
@@ -112,6 +125,6 @@ set_property(TARGET ${MAPS_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
 
 add_library(${MAPS_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PERIODIC_BC=true ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PERIODIC_BC ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
 set_property( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
 

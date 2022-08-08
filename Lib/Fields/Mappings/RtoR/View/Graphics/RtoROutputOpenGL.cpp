@@ -61,14 +61,15 @@ void RtoR::OutputOpenGL::draw() {
         initialize(xMin, xMax, -0.08, 0.08);
     }
 
+    addVolatileStat(std::string("t = ") + std::to_string(getLastT()));
 
     // *************************** ENERGY *********************************
-    totalEnergyGraph.DrawAxes();
-    FunctionRenderer::renderFunction(energyHistory, Color(.9f, .5f, .0f, .9),
-                                     false, energyHistory.xMin, energyHistory.xMax, energyHistory.X.size());
-
-    addVolatileStat(std::string("E: ") + std::to_string(energyTotal));
-    addVolatileStat(std::string("E.size(): ") + std::to_string(energyHistory.X.size()));
+    //totalEnergyGraph.DrawAxes();
+    //FunctionRenderer::renderFunction(energyHistory, Color(.9f, .5f, .0f, .9),
+    //                                 false, energyHistory.xMin, energyHistory.xMax, energyHistory.X.size());
+//
+    //addVolatileStat(std::string("E: ") + std::to_string(energyTotal));
+    //addVolatileStat(std::string("E.size(): ") + std::to_string(energyHistory.X.size()));
 
 
     // *************************** FIELD ***********************************
@@ -81,7 +82,7 @@ void RtoR::OutputOpenGL::draw() {
         FunctionRenderer::renderFunction(fieldState.getPhi(), colorPhi, true);
     }
 
-    if(showDPhiDt){
+    if(showKineticEnergy){
         const Color colorDPhiDt = Color(.4f, .4f, .2f, .5f);
         FunctionRenderer::renderFunction(fieldState.getDPhiDt(), colorDPhiDt, true);
     }
@@ -106,35 +107,35 @@ void RtoR::OutputOpenGL::draw() {
 
 
     // *************************** PHASE SPACE *****************************
-    phaseSpaceGraph.DrawAxes();
-
-    auto &Q = fieldState.getPhi().getSpace().getX(),
-         &P = fieldState.getDPhiDt().getSpace().getX();
-
-    #define sign(x) ((x)<0?-1.:1.)
-    auto rq = .0;
-    auto rp = .0;
-    for(auto &q : Q) rq+=q;
-    for(auto &p : P) rp+=p;
-    rq = (rq/Q.size());
-    rp = (rp/P.size());
-
-    static std::vector<std::pair<double, double>> points;
-    points.emplace_back(rq, rp);
-
-    glPointSize(2);
-    glColor4f(1,1,1,0.4f);
-    glBegin(GL_POINTS);
-    for(auto &point : points) glVertex2f(point.first, point.second);
-    glEnd();
+    //phaseSpaceGraph.DrawAxes();
+//
+    //auto &Q = fieldState.getPhi().getSpace().getX(),
+    //     &P = fieldState.getDPhiDt().getSpace().getX();
+//
+    //#define sign(x) ((x)<0?-1.:1.)
+    //auto rq = .0;
+    //auto rp = .0;
+    //for(auto &q : Q) rq+=q;
+    //for(auto &p : P) rp+=p;
+    //rq = (rq/Q.size());
+    //rp = (rp/P.size());
+//
+    //static std::vector<std::pair<double, double>> points;
+    //points.emplace_back(rq, rp);
+//
+    //glPointSize(2);
+    //glColor4f(1,1,1,0.4f);
+    //glBegin(GL_POINTS);
+    //for(auto &point : points) glVertex2f(point.first, point.second);
+    //glEnd();
 
 }
 
 void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 
     const RtoR::FieldState &fieldState = *outInfo.getFieldData<RtoR::FieldState>();
-    energyCalculator.computeEnergyDensity(fieldState);
-    energyTotal = energyCalculator.integrate();
+    energyCalculator.computeDensities(fieldState);
+    energyTotal = energyCalculator.integrateEnergy();
 
     if(energyHistory.X.size() == 0) {
         // Isso eh necessario pra evitar bugs estranhos. Sorry.
@@ -178,14 +179,14 @@ void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
             showPhi = !showPhi;
             break;
         case '2':
-            showDPhiDt = !showDPhiDt;
+            showKineticEnergy = !showKineticEnergy;
             break;
         case '3':
             showEnergyDensity = !showEnergyDensity;
             std::cout << "Important: energy density is computing with the signum potential only." << std::endl;
             break;
-        case '4':
-            showAnalyticSolution = !showAnalyticSolution;
+        case '5':
+            showGradientEnergy = !showGradientEnergy;
             break;
         default:
             break;

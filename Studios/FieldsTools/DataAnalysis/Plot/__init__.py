@@ -1,1 +1,2 @@
-from . import scrapgold
+from .scrapgold import *
+from . import *

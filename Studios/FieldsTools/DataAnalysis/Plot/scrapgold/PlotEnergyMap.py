@@ -2,7 +2,7 @@ import argparse
 import glob
 from numpy import asarray, unique, linspace, zeros, full, sqrt
 from ast import literal_eval as lit_eval
-from Plot.scrapgold import plot_single
+#from Plot.scrapgold import plot_single
 from matplotlib import pyplot
 
 from Utils import utils

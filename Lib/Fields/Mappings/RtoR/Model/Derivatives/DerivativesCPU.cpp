@@ -10,7 +10,10 @@
 using namespace RtoR;
 
 DerivativeCPU::DerivativeCPU(const ArbitraryFunction &in)
-    : f_(&in.getSpace().getX()), h(in.getSpace().geth()), invh(1./h), invhsqr(1./(h*h)), N(in.getSpace().getTotalDiscreteSites()) { }
+: f_(&in.getSpace().getX()), h(in.getSpace().geth()), invh(1./h), invhsqr(1./(h*h)),
+  N(in.getSpace().getTotalDiscreteSites())
+{
+}
 
 auto DerivativeCPU::dfdx_3s(PosInt X) const -> Real {
     const size_t &i = X;
@@ -26,7 +29,7 @@ auto DerivativeCPU::d2fdx2_3s(PosInt X) const -> Real {
     const size_t &i = X;
     const VecFloat &f = *f_;
 
-    #if PERIODIC_BC
+    #ifdef PERIODIC_BC
     auto LEFT=i-1, RIGHT=i+1, CENTER=i;
     if (i == 0) { LEFT=N-1; }
     else if (i == N - 1) RIGHT=0;
@@ -75,4 +78,8 @@ auto DerivativeCPU::d2fdx2_v(VecFloat_O &d2fdx2_O) -> VecFloat & {
         d2fdx2_O[n] = d2fdx2(n);
 
     return d2fdx2_O;
+}
+
+Real DerivativeCPU::operator()(Real x) const {
+    throw "DerivativeCPU::operator() not implemented.";
 }

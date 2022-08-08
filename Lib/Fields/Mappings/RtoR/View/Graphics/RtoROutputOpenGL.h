@@ -60,7 +60,8 @@ namespace RtoR {
         Real energyTotal;
 
         bool showPhi = true;
-        bool showDPhiDt = false;
+        bool showKineticEnergy = false;
+        bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
 

@@ -9,7 +9,7 @@
 
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()  {
-    WindowTreeBuilder treeBuilder(0, 0, 800, 600);
+    WindowTreeBuilder treeBuilder(0, 0, 1500, 1500);
 
     Window *window = nullptr;
 

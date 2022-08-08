@@ -28,6 +28,15 @@ RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRig
 
 }
 
+auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
+    assert(vec.size() == getSpace().getX().size());
+
+    for(int i=0; i<vec.size(); ++i)
+        this->getSpace().getX()[i] = vec[i];
+
+    return *this;
+}
+
 FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
     assert(!function.isDiscrete());
     const floatt L = xMax - xMin;
@@ -38,12 +47,11 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
 
         X[n] = function(x);
     }
-    
+
     return *this;
 }
 
 Base::Function<Real, Real> *FunctionArbitraryCPU::Clone() const {
-    throw "Dafuk";
     return new FunctionArbitraryCPU(*this);
 }
 
@@ -107,6 +115,7 @@ ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const
 
     return out;
 }
+
 
 
 #pragma clang diagnostic pop

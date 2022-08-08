@@ -34,6 +34,15 @@ namespace RtoR {
         }
     };
 
+    class Square : public Function {
+    public:
+        Square() = default;
+
+        Real operator()(Real x) const override {
+            return x*x;
+        }
+    };
+
 }
 
 
