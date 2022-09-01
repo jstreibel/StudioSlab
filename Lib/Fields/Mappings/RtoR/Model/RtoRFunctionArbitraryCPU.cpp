@@ -38,7 +38,6 @@ auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
 }
 
 FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
-    assert(!function.isDiscrete());
     const floatt L = xMax - xMin;
     VecFloat &X = getSpace().getX();
 
@@ -116,6 +115,15 @@ ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const
     return out;
 }
 
+Real FunctionArbitraryCPU::integrate() const {
+
+    auto sum = .0;
+    for(const auto &v : this->getSpace().getX())
+        sum += v;
+
+    auto dx = (this->xMax - this->xMin) / this->N;
+    return sum*dx;
+}
 
 
 #pragma clang diagnostic pop

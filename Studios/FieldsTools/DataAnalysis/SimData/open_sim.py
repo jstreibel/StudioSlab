@@ -11,12 +11,15 @@ def OpenSimData(fileName):
         raise FileNotFoundError
 
     if fileName[-4:] == '.osc':
+        print("Filetype ASCII.")
         from SimData_depr import SimData_depr
         return SimData_depr(fileName)
     elif fileName[-5:] == '.oscb':
+        print("Filetype binary.")
         from SimData import SimData
         return SimData(fileName)
     elif fileName[-5:] == '.oscs':
+        print("Filetype snapshot.")
         from SnapshotData import SnapshotData
         return SnapshotData(fileName)
 

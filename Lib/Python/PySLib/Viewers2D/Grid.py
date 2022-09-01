@@ -219,7 +219,6 @@ class Grid:
     def draw_menu(self):
         xmin, xmax = self.xlims
 
-        imgui.separator()
         imgui.text("Base grid")
         changed, (xmin, xmax) = imgui.slider_float2("x limits", xmin, xmax, -2, 2)
         if changed:

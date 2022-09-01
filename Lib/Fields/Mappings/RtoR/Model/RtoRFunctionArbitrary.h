@@ -21,6 +21,7 @@ namespace RtoR {
             Standard1D,
             RadialSymmetry2D,
         };
+
     public:
         ArbitraryFunction(const ArbitraryFunction &toCopy);
         ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);

@@ -5,9 +5,12 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGL_H
 #define V_SHAPE_RTOROUTPUTOPENGL_H
 
-#include "../EnergyCalculator.h"
+#include "Fields/Mappings/RtoR/Calc/EnergyCalculator.h"
 #include "../../Model/RtoRFuncArbResizable.h"
+#include "Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
 
+#include "Fields/Mappings/RtoR/View/Graphics/Artists/Graph.h"
+#include "Studios/Graphics/Artists/StatsDisplay.h"
 #include <Studios/Graphics/ARCHIVE/deprecated/graph_depr.h>
 #include <Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h>
 
@@ -18,7 +21,7 @@ namespace RtoR {
     public:
         OutputOpenGL(double xMin, double xMax, double phiMin, double phiMax);
 
-        OutputOpenGL() = default;
+        OutputOpenGL();;
 
         void initialize(double xMin, double xMax, double phiMin, double phiMax);
 
@@ -35,8 +38,8 @@ namespace RtoR {
         void notifyReshape(int width, int height) override;
 
     protected:
-        auto getPhiMax() const -> double { return fieldsGraph.yMax; }
-        auto getPhiMin() const -> double { return fieldsGraph.yMin; }
+        auto getPhiMax() const -> double { return mFieldsGraph.yMax; }
+        auto getPhiMin() const -> double { return mFieldsGraph.yMin; }
 
         void setPhiMax(const double newPhiMax) {
             phiMaxAnim->animateToValue(newPhiMax);
@@ -51,13 +54,24 @@ namespace RtoR {
         Animation *xMinAnim;
         Animation *xMaxAnim;
 
-        Graph_depr fieldsGraph;
+        WindowPanel *panel;
 
-        Graph_depr totalEnergyGraph;
-        Graph_depr phaseSpaceGraph;
+        Graph mFieldsGraph;
+        Graph mTotalEnergyGraph;
+
+        StatsDisplay stats;
+
         EnergyCalculator energyCalculator;
-        FuncArbResizable energyHistory;
+        FuncArbResizable UHistory;
+        FuncArbResizable KHistory;
+        FuncArbResizable WHistory;
+        FuncArbResizable VHistory;
         Real energyTotal;
+
+        const Color U_color = {.9f, .5f, .0f, .9};
+        const Color K_color = {1,0,0};
+        const Color W_color = {0.5,1,0.5};
+        const Color V_color = {.5f, .5f, 1.0f};
 
         bool showPhi = true;
         bool showKineticEnergy = false;

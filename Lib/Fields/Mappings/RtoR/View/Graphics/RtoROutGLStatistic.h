@@ -14,6 +14,14 @@ namespace RtoR {
         explicit OutGLStatistic( );
         void draw() override;
 
+    private:
+        FuncArbResizable temperature1History;
+        FuncArbResizable temperature2History;
+        FuncArbResizable temperature3History;
+
+        Graph *mTemperaturesGraph;
+        Graph *mHistogramsGraph;
+        Graph *mHistogramsGraph2;
 
     };
 

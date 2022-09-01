@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "../Model/RtoRFunctionArbitrary.h"
-#include "../Model/RtoRFieldState.h"
+#include "Fields/Mappings/RtoR/Model/RtoRFunctionArbitrary.h"
+#include "Fields/Mappings/RtoR/Model/RtoRFieldState.h"
 
-#include <Phys/Numerics/Allocator.h>
+#include "Phys/Numerics/Allocator.h"
 
 
 namespace RtoR {
@@ -24,7 +24,7 @@ namespace RtoR {
     public:
         const RtoR::ArbitraryFunction &computeDensities(const RtoR::FieldState &field);
 
-        const RtoR::ArbitraryFunction &getFunc() const { return *_oEnergyDensityFunc; };
+        const RtoR::ArbitraryFunction &getEnergy() const { return *_oEnergyDensityFunc; };
         const RtoR::ArbitraryFunction &getKinetic() const { return *_oKinetic; };
         const RtoR::ArbitraryFunction &getGradient() const { return *_oGradient; };
         const RtoR::ArbitraryFunction &getPotential() const { return *_oPotential; };

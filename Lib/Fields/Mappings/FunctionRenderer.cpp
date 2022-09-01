@@ -21,6 +21,9 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Color c,
     const double dx = (xMax-xMin) / double(resolution);
     const double xBegin = xMin;
     const double xEnd = xMax;
+
+    if(dx == .0) return;
+
     if(filled)
     {
         glColor4f(c.r, c.g, c.b, c.a/3.0);
@@ -47,7 +50,8 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Color c,
     glBegin(GL_LINE_STRIP);
     {
         for(double x=xBegin; x<xEnd; x+=dx){
-            glVertex2d(x, scale*func(x));
+            auto y = func(x);
+            glVertex2d(x, scale*y);
         }
     }
     glEnd();

@@ -4,7 +4,7 @@
 
 #include "Graph.h"
 
-#include <Common/Workaround/StringStream.h>
+#include "Common/Workaround/StringStream.h"
 
 #include "Studios/Graphics/WindowManagement/Window.h"
 #include "Fields/Mappings/FunctionRenderer.h"
@@ -13,8 +13,6 @@
 #define TITLE_FONT FONT9
 #define TICK_FONT FONT9
 
-
-Graph::Graph() = default;
 
 
 Graph::Graph(double xMin, double xMax, double yMin, double yMax, String title, bool filled, int samples)
@@ -35,7 +33,8 @@ void Graph::draw(const Window *window) {
         const double xTraLeft  = -deltaX*0.07;
         const double xTraRight = +deltaX*0.02;
 
-        glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
+        glOrtho(xMin+xTraLeft, xMax+xTraRight,
+                (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
     }
 
     _drawAxes(window->w, window->h);
@@ -67,7 +66,7 @@ void Graph::_drawAxes(int winW, int winH) {
     }
 
     __drawXAxis(winW, winH);
-    __drawYAxis(winW, winH);
+    //__drawYAxis(winW, winH);
 
     if(!labels.empty()){
         const double Sx = (xMax-xMin) / winW;
@@ -123,7 +122,8 @@ void Graph::__drawXAxis(int winW, int winH) {
     const double hTick = inPixelsTimes2 * (xMax-xMin) / winW;
     (void)hTick;
 
-    const double xspacing = (xMax-xMin) / 10.0;
+    double xspacing = (xMax-xMin) / 10.0;
+    if(xspacing == .0) xspacing = 1.0;
 
     //if(drawXLabels)
     {
@@ -144,7 +144,7 @@ void Graph::__drawXAxis(int winW, int winH) {
         }
     }
 
-    //if(drawXTicks)
+    if(1)
     {
         glBegin(GL_LINES);
         {
@@ -214,6 +214,14 @@ void Graph::__drawYAxis(int winW, int winH) {
     }
     glEnd();
     glPopAttrib();
+}
+
+void Graph::addFunction(const RtoR::Function *func, Color color) {
+    mFunctions.emplace_back(FuncColorPair{func, color});
+}
+
+void Graph::clearFunctions() {
+    mFunctions.clear();
 }
 
 

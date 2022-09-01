@@ -70,10 +70,14 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     if(key == 27) glutLeaveMainLoop();
     else if(key == ' ') me->programIsRunning = !me->programIsRunning;
     else if(key == '=' || key == '+'){
-        me->steps++;
+        me->steps += 10;
     }
     else if(key == '-'){
-        if(me->steps > 1) me->steps--;
+        if(me->steps > 1) {
+            me->steps -= 10;
+
+            if (me->steps <= 0) me->steps = 1;
+        }
     }
     /*else if(key == ']'){
         program->step(1);
@@ -104,7 +108,6 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
     auto *outGL = GLUTBackend::GetInstance()->outGL;
 
     outGL->notifyKeyboardSpecial(key, x, y);
-
 }
 
 void GLUTBackend::mouseButton(int button, int dir, int x, int y)
@@ -133,9 +136,9 @@ void GLUTBackend::render()
     GLUTBackend *gb = GLUTBackend::GetInstance();
     auto *outGL = gb->outGL;
 
-    StringStream cycles;
-    cycles << "Stepping " << gb->steps << "/cycle." << std::endl;
-    outGL->addVolatileStat(cycles.str());
+    //StringStream cycles;
+    //cycles << "Stepping " << gb->steps << "/cycle." << std::endl;
+    //outGL->addVolatileStat(cycles.str());
 
     assert(outGL != nullptr);
 

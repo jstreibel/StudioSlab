@@ -108,7 +108,11 @@ class SimData(object):
 
             bufferSize = outresT * self._totalBytesPerInstant
 
-            assert(getsize(self._filename) == (self._headerSizeInBytes+bufferSize))
+            if getsize(self._filename) != (self._headerSizeInBytes+bufferSize):
+                print(self._filename + " assertion error: " + str(getsize(self._filename)) + "!=" + str(self._headerSizeInBytes+bufferSize))
+
+                assert(getsize(self._filename) == (self._headerSizeInBytes+bufferSize))
+
 
             buffer = file.read(bufferSize)
 
@@ -370,7 +374,7 @@ class SimData(object):
 
     def getRegion(self, XMin, XMax, TMin, TMax):
         p = self._metaData
-        n = ((TMax-TMin)/p['t'])*p['outresT']
+        n = int(((TMax-TMin)/p['t'])*p['outresT'])
 
         region = [self.getInstant(T, XMin, XMax) for T in linspace(TMin, TMax, n)]
         return asarray(region)

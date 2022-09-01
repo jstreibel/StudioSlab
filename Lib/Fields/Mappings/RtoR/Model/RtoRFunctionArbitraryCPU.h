@@ -11,7 +11,8 @@ namespace RtoR {
     class FunctionArbitraryCPU : public ArbitraryFunction {
     public:
         FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
-        FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, ArbitraryFunction::LaplacianType laplacianType);
+        FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
+                             ArbitraryFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
 
         [[nodiscard]] auto Clone() const -> Base::Function<Real, Real> * override;
 
@@ -23,6 +24,8 @@ namespace RtoR {
         auto Apply(const MyBase &func, Base::ArbitraryFunction<Real, Real> &out) const -> Base::ArbitraryFunction<Real, Real> & override;
 
         auto Laplacian(ArbitraryFunction &outFunc) const -> ArbitraryFunction & override;
+
+        Real integrate() const override;
 
     };
 }

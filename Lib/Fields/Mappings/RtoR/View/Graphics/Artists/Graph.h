@@ -7,16 +7,17 @@
 
 
 #include "Studios/Graphics/PlottingUtils.h"
-#include "Studios/Graphics/WindowManagement/Artist.h"
+#include "Studios/Graphics/Artists/Artist.h"
 
-#include <Fields/Mappings/RtoR/Model/RtoRFunction.h>
+#include "Fields/Mappings/RtoR/Model/RtoRFunction.h"
 
 
 
 class Graph : public Artist {
-    std::vector<std::pair<const RtoR::Function*, Color>> mFunctions;
+    typedef std::pair<const RtoR::Function*, Color> FuncColorPair;
 
-    double xMin=-1, xMax=1, yMin=-1, yMax=1;
+    std::vector<FuncColorPair> mFunctions;
+
     String title = "";
     bool filled = false;
     int samples = 512;
@@ -26,10 +27,12 @@ class Graph : public Artist {
     void _drawAxes(int winW, int winH);
     void __drawXAxis(int winW, int winH);
     void __drawYAxis(int winW, int winH);
-public:
 
-    Graph();
-    Graph(double xMin, double xMax, double yMin, double yMax,
+
+public:
+    double xMin, xMax, yMin, yMax;
+
+    Graph(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
                String title = "", bool filled = false, int samples = 512);
 
     /*!
@@ -37,12 +40,15 @@ public:
      */
     void draw(const Window *window) override;
 
+    void addFunction(const RtoR::Function* func, Color color);
+    void clearFunctions();
 
-public:
+
     void addLabel(Label *label)
     {
         labels.push_back(label);
     }
+
 private:
     std::vector<Label*> labels;
 

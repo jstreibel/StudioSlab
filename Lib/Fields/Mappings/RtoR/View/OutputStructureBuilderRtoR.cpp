@@ -5,7 +5,7 @@
 #include "OutputStructureBuilderRtoR.h"
 
 #include "../View/Graphics/RtoROutputOpenGL.h"
-#include "../View/Graphics/RtoROutGlStatistic.h"
+#include "../View/Graphics/RtoROutGLStatistic.h"
 
 
 

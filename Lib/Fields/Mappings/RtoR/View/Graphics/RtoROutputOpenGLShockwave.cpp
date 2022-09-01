@@ -2,7 +2,7 @@
 // Created by joao on 15/07/2021.
 //
 
-#include "RtoROutputOpenGlShockwave.h"
+#include "RtoROutputOpenGLShockwave.h"
 
 #include <Fields/Mappings/FunctionRenderer.h>
 
@@ -76,27 +76,27 @@ void RtoR::OutputOpenGLShockwave::draw() {
         if(GLUTBackend::GetInstance()->isRunning())
         {
             surfaceEnergyHistory.insertBack(surfaceEnergy);
-            surfaceEnergyHistory.xMax = totalEnergyGraph.xMax;
+            surfaceEnergyHistory.xMax = mTotalEnergyGraph.xMax;
             innerEnergyHistory.insertBack(innerEnergy);
-            innerEnergyHistory.xMax = totalEnergyGraph.xMax;
+            innerEnergyHistory.xMax = mTotalEnergyGraph.xMax;
 
-            totalEnergyGraph.yMax = max(energyHistory.getYMax(), surfaceEnergyHistory.getYMax());
-            totalEnergyGraph.yMin = min(innerEnergyHistory.getYMin(), surfaceEnergyHistory.getYMax());
+            mTotalEnergyGraph.yMax = max(UHistory.getYMax(), surfaceEnergyHistory.getYMax());
+            mTotalEnergyGraph.yMin = min(innerEnergyHistory.getYMin(), surfaceEnergyHistory.getYMax());
         }
 
-        addVolatileStat(std::string("E_surf=") + std::to_string(surfaceEnergy));
-        addVolatileStat(std::string("E_in=") + std::to_string(innerEnergy));
-        addVolatileStat(std::string("E_tot=E_surf+E_in=") + std::to_string(surfaceEnergy+innerEnergy));
+        //addVolatileStat(std::string("E_surf=") + std::to_string(surfaceEnergy));
+        //addVolatileStat(std::string("E_in=") + std::to_string(innerEnergy));
+        //addVolatileStat(std::string("E_tot=E_surf+E_in=") + std::to_string(surfaceEnergy+innerEnergy));
 
-        addVolatileStat(std::string("a=") + std::to_string(2*a0));
-        addVolatileStat(std::string("eps=") + std::to_string(eps));
-        addVolatileStat(std::string("t_c=a/eps=") + std::to_string(2*a0/eps));
+        //addVolatileStat(std::string("a=") + std::to_string(2*a0));
+        //addVolatileStat(std::string("eps=") + std::to_string(eps));
+        //addVolatileStat(std::string("t_c=a/eps=") + std::to_string(2*a0/eps));
     }
 
-    totalEnergyGraph.BindWindow(false);
+    //mTotalEnergyGraph.BindWindow(false);
     FunctionRenderer::renderFunction(surfaceEnergyHistory, Color(.9f, .5f, .0f, .9),
-                                     false, energyHistory.xMin, energyHistory.xMax, surfaceEnergyHistory.X.size());
+                                     false, UHistory.xMin, UHistory.xMax, surfaceEnergyHistory.X.size());
     FunctionRenderer::renderFunction(innerEnergyHistory, Color(.9f, .5f, .0f, .9),
-                                     false, energyHistory.xMin, energyHistory.xMax, innerEnergyHistory.X.size());
+                                     false, UHistory.xMin, UHistory.xMax, innerEnergyHistory.X.size());
 }
 

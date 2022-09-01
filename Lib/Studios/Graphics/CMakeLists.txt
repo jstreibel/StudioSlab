@@ -3,7 +3,7 @@ set( GRAPHICS_SOURCES
 		ARCHIVE/NotHere/OutputOpenGL.cpp
 		ARCHIVE/deprecated/graph_depr.cpp
 
-		Graph.cpp
+		Artists/StatsDisplay.cpp
 		PlottingUtils.cpp
 
 

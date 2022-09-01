@@ -33,7 +33,6 @@ namespace Base {
 
         virtual auto getWindowSizeHint() -> IntPair;
 
-        void addVolatileStat(const String& stat) { stats.push_back(stat); }
 
     protected:
         int windowWidth, windowHeight;
@@ -46,13 +45,10 @@ namespace Base {
     protected:
         void SetWindow(double x, double y, double width, double height, const char *title = "") const;
 
-        void renderStats();
         std::vector<String> stats;
 
         double winXoffset = 4;
         double winYoffset = 4;
-        float statsWindowWidth = 600;
-        float statsWindowHeight = 620;
 
 
     public:

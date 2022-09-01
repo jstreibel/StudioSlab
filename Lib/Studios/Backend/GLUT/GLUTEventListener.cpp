@@ -37,7 +37,6 @@ auto Base::GLUTEventListener::finishFrameAndRender() -> bool {
 
         if (needDraw())
             draw();
-        renderStats();
     }
     glPopMatrix();
 
@@ -77,48 +76,6 @@ void Base::GLUTEventListener::SetWindow(double x, double y, double width, double
         glVertex2f( p,-p);
     }
     glEnd();
-}
-
-
-void Base::GLUTEventListener::renderStats()
-{
-    SetWindow(0, 0, statsWindowWidth, statsWindowHeight);
-
-    glLineWidth(1);
-
-    float scaleX = 2.f/statsWindowWidth, scaleY = 2.f*2.f/float(windowHeight);
-    glScalef(scaleX, scaleY, 1);
-    glTranslatef(-statsWindowWidth/2., windowHeight/4., 0);
-
-    glBegin(GL_LINES);
-    {
-        const float s = 20;
-        glVertex2f(-s, 0);
-        glVertex2f(s, 0);
-
-        glVertex2f(0, -s);
-        glVertex2f(0, s);
-    }
-    glEnd();
-
-
-    {
-        const int cursorx = 14;
-        const float fontHeight = 54;
-        float delta = fontHeight;
-        auto font = FONT9;
-
-        auto colorTone = char(0.9*255);
-        glColor3b(colorTone, colorTone, colorTone);
-
-        for(auto stat : stats){
-            delta += fontHeight;
-            write(cursorx, -delta, stat, font);
-        }
-        stats.clear();
-    }
-    //glPopMatrix();
-
 }
 
 void Base::GLUTEventListener::notifyReshape(int width, int height) {

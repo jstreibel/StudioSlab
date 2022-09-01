@@ -39,9 +39,14 @@ Real ArbitraryFunction::operator()(Real x) const {
 
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.
+
+    if(n<0 || n>N-1) return .0;
+
     n = n<0?0:n>N-1?N-1:n;
     assert(n>=0 && n<N);
 
     return getSpace().getX()[n];
 }
+
+
 

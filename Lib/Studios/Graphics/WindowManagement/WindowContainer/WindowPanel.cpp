@@ -16,6 +16,8 @@ void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth
         assertConsistency();
     }
 
+    assert(columns.size() > 0);
+
     auto *column = &columns.back();
 
     column->emplace_back(window);

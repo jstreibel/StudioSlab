@@ -19,13 +19,13 @@ def getTerminalSize():
 ascii_gs = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`\'. "
 
 def asciiGrayScale(normVal):
-	len_ags = len(ascii_gs)
-	i = int(normVal*(len_ags-1))
+    len_ags = len(ascii_gs)
+    i = int(normVal*(len_ags-1))
 
-	if i < 0: return "__UNDERFLOW__"
-	elif i > len_ags-1: return "__OVERFLOW__"
+    if i < 0: return "__UNDERFLOW__"
+    elif i > len_ags-1: return "__OVERFLOW__"
 
-	return str(ascii_gs[i])
+    return str(ascii_gs[i])
 
 def isIterable(p_object):
     try:
@@ -111,7 +111,7 @@ def fmt(x: float, n=2) -> str:
 #	The 4 is the number of digits after the decimal point.
 
 def fmtExp(x):
-	return "{:+11.3e}".format(x)
+    return "{:+11.3e}".format(x)
 
 def fmtFunc(n):
     return ('{:.'+str(n)+'f}').format

@@ -22,11 +22,9 @@ else()
 endif()
 
 
-set ( COMMON_SOURCES FunctionRenderer.cpp BCInterface.cpp )
-
-
 set ( RTOR_SOURCES
-		${COMMON_SOURCES}
+		FunctionRenderer.cpp
+		BCInterface.cpp
 
 		RtoR/App/FieldsApp-RtoR.cpp
 
@@ -65,12 +63,15 @@ set ( RTOR_SOURCES
 
 		RtoR/View/OutputStructureBuilderRtoR.cpp
 		RtoR/View/RtoROutputHistoryToFile.cpp
-		RtoR/View/Graphics/RtoROutputOpenGlShockwave.cpp
+		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
 		RtoR/View/Graphics/RtoROutputOpenGL.cpp
-		RtoR/View/EnergyCalculator.cpp
+		RtoR/View/Graphics/Artists/Graph.cpp
 
-		RtoR/View/Graphics/RtoROutGlStatistic.cpp
-		RtoR/View/Graphics/RtoROutGlStatistic.h
+		RtoR/Calc/EnergyCalculator.cpp
+		RtoR/Calc/Histogram.cpp
+
+		RtoR/View/Graphics/RtoROutGLStatistic.cpp
+		RtoR/View/Graphics/RtoROutGLStatistic.h
 		)
 
 

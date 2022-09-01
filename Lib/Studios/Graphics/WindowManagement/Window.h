@@ -7,7 +7,7 @@
 
 
 #include <vector>
-#include "Artist.h"
+#include "Studios/Graphics/Artists/Artist.h"
 
 class Window {
 public:

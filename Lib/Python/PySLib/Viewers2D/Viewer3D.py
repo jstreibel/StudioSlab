@@ -151,12 +151,12 @@ class Viewer3D(object):
             if imgui.button("Cycle lighting"):
                 self.cycleLighting()
 
-            changed, value = imgui.slider_float('vert.phi.scale', self._vertPhiScale, 1.e-2, 30.e0)
+            changed, value = imgui.slider_float('vert.phi.scale', self._vertPhiScale, 3.e-2, 10.e0)
             if changed:
                 self._vertPhiScale = value
                 self.program['phiScale'] = value
 
-            changed, value = imgui.slider_float('vert.dphidt.scale', self._vertDPhidtScale, 1.e-3, 3.e0)
+            changed, value = imgui.slider_float('vert.dphidt.scale', self._vertDPhidtScale, 3.e-3, 1.e0)
             if changed:
                 self._vertDPhidtScale = value
                 self.program['dPhidtScale'] = value
@@ -291,7 +291,12 @@ class Viewer3D(object):
         imgui.text("Mesh {}x{} subdivisions".format(tess[0], tess[1]))
         imgui.text("{:.2f} FPS".format(clock.get_fps()))
 
+        imgui.dummy(.0, 20)
+
         self._UI.draw_menu()
+
+        imgui.dummy(.0, 20)
+
         self.grid.draw_menu()
 
         imgui.end()

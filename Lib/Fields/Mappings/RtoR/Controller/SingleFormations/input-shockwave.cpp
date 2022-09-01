@@ -8,7 +8,7 @@
 #include "../../Model/FunctionsCollection/NullFunction.h"
 #include "../../Model/FunctionsCollection/RegularDiracDelta.h"
 
-#include "../../View/Graphics/RtoROutputOpenGlShockwave.h"
+#include "../../View/Graphics/RtoROutputOpenGLShockwave.h"
 
 #include <Common/Workaround/StringStream.h>
 

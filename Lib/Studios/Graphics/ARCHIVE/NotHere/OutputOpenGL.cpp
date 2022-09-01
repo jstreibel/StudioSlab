@@ -28,6 +28,7 @@ bool OutputOpenGL::needDraw() const {
 }
 
 void OutputOpenGL::draw() {
+    /*
     char buffer[128];
 
     const NumericParams &p = Allocator::getInstance().getNumericParams();
@@ -50,6 +51,7 @@ void OutputOpenGL::draw() {
 
     sprintf(buffer, "steps = %i", (int)lastInfo.getSteps());
     addVolatileStat(buffer);
+     */
 
     //sprintf(buffer, "<time/step> = %d microsecond/step", (int)GLUTBackend::getSingleton()->getProgram().getHistogram().getAverage());
     //addVolatileStat(buffer);

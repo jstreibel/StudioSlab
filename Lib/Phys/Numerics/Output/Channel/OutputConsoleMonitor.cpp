@@ -21,16 +21,27 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
 
 void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 {
-    const double percCompl = abs(outputInfo.getT()/maxT);
 
-    size_t outputResT = Allocator::getInstance().getNumericParams().getn();
+    auto &params = Allocator::getInstance().getNumericParams();
+    auto n = params.getn();
 
-    std::cout << steppingChar << "[";
-    const size_t n = outputResT/size_t(nStepsBetweenRecordings);
-    const size_t curr = outputInfo.getSteps()/size_t(nStepsBetweenRecordings);
+    std::cout << steppingChar << "Step " << outputInfo.getSteps() << "/" << n << "   ---   " <<
+                 " Sim time " << outputInfo.getT() << "/" << maxT << "               " << std::flush;
 
-    size_t i=0;
-    for(; i<curr; ++i) std::cout << ".";
-    for(size_t j=i; j<n; ++j) std::cout << " ";
-    std::cout << "] " << std::setprecision(3) << percCompl*100 << "%     " << std::flush;
+
+
+    if(0) {
+        const double percCompl = abs(outputInfo.getT()/maxT);
+
+        size_t outputResT = Allocator::getInstance().getNumericParams().getn();
+
+        std::cout << steppingChar << "[";
+        const size_t n = outputResT / size_t(nStepsBetweenRecordings);
+        const size_t curr = outputInfo.getSteps() / size_t(nStepsBetweenRecordings);
+
+        size_t i = 0;
+        for (; i < curr; ++i) std::cout << ".";
+        for (size_t j = i; j < n; ++j) std::cout << " ";
+        std::cout << "] " << std::setprecision(3) << percCompl * 100 << "%     " << std::flush;
+    }
 }
