@@ -29,30 +29,28 @@ void main() {
     float o_Phi;
     float o_dPhidt;
 
-    float r = length(v_position);
+    {
+        float r = length(v_position);
 
-    if(r>t && r<t+0.1){
-        o_Phi = 0.01;
-        o_dPhidt = .0;
-    } else {
-        {
+        if(r<t){
             o_Phi = i_Phi + i_dPhidt*dt;
-        }
-
-        {
-            float ddx = phiW.r + phiE.r;
-            float ddy = phiN.r + phiS.r;
-            float laplacian = invhsqr*((ddx + ddy) - 4.*i_Phi);
-
-            float dUdPhi = sign(i_Phi);
-            //float dUdPhi = i_Phi;
-            //float dUdPhi = sin(i_Phi);
-            //float dUdPhi = 0;
-
-            o_dPhidt = i_dPhidt + (laplacian - dUdPhi)*dt;
+        } else {
+            o_Phi = 0.01;
         }
     }
 
+    {
+        float ddx = phiW.r + phiE.r;
+        float ddy = phiN.r + phiS.r;
+        float laplacian = invhsqr*((ddx + ddy) - 4.*i_Phi);
+
+        float dUdPhi = sign(i_Phi);
+        //float dUdPhi = i_Phi;
+        //float dUdPhi = sin(i_Phi);
+        //float dUdPhi = 0;
+
+        o_dPhidt = i_dPhidt + (laplacian - dUdPhi)*dt;
+    }
 
     fragColor.rg = vec2(o_Phi, o_dPhidt);
 }

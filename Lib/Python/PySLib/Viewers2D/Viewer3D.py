@@ -151,12 +151,12 @@ class Viewer3D(object):
             if imgui.button("Cycle lighting"):
                 self.cycleLighting()
 
-            changed, value = imgui.slider_float('vert.phi.scale', self._vertPhiScale, 3.e-2, 10.e0)
+            changed, value = imgui.slider_float('vert.phi.scale', self._vertPhiScale, 1.e-2, 3e1)
             if changed:
                 self._vertPhiScale = value
                 self.program['phiScale'] = value
 
-            changed, value = imgui.slider_float('vert.dphidt.scale', self._vertDPhidtScale, 3.e-3, 1.e0)
+            changed, value = imgui.slider_float('vert.dphidt.scale', self._vertDPhidtScale, 1.e-3, 3e0)
             if changed:
                 self._vertDPhidtScale = value
                 self.program['dPhidtScale'] = value
