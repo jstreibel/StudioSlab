@@ -20,6 +20,9 @@ class WindowPanel : public Window {
 
 public:
     void addWindow(Window *window, bool newColumn=false, float newColumnWidth=-1);
+
+    void reshape(int w, int h) override;
+
     void arrangeWindows();
     void setColumnRelativeWidth(int column, float relWidth);
 

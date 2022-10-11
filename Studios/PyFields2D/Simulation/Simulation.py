@@ -2,8 +2,9 @@ from glumpy import gl
 from PySLib.Tools.SurfaceSlab import Slab, FieldProgram
 import imgui
 
+
 class Simulation(object):
-    def __init__(self, dt: float, GridDim=(512,512), SpaceDim=(4,4)) -> None:
+    def __init__(self, dt: float, GridDim=(512, 512), SpaceDim=(4, 4)) -> None:
         super().__init__()
 
         self._GridDim = GridDim
@@ -13,8 +14,8 @@ class Simulation(object):
 
         self.field = Slab(GridWidth, GridHeight, 2)
 
-        self.SimStepper = FieldProgram("StepSim_SWInduzida.frag", -SpaceDim[0] * .5, SpaceDim[0] * .5,
-                                                -SpaceDim[0] *.5, SpaceDim[0]* .5, shaderDir='./Simulation/')
+        self.SimStepper = FieldProgram("StepSim.frag", -SpaceDim[0] * .5, SpaceDim[0] * .5,
+                                       -SpaceDim[0] * .5, SpaceDim[0] * .5, shaderDir='./Simulation/')
 
         h = SpaceDim[0] / GridWidth
         self.SimStepper['drTex'] = 1. / GridWidth
@@ -27,14 +28,14 @@ class Simulation(object):
 
         self.runSim = False
 
-    def applyInitConditions(self, DiracDelta_eps = 0.1, DiracDelta_a = 1e1):
+    def applyInitConditions(self, DiracDelta_eps=0.1, DiracDelta_a=1e1):
         GridWidth, GridHeight = self._GridDim
         gl.glViewport(0, 0, GridWidth, GridHeight)
 
         SpaceWidth, SpaceHeight = self._SpaceDim
         InitCond = FieldProgram("IC.frag", -SpaceWidth * .5, SpaceWidth * .5,
-                                                -SpaceHeight *.5, SpaceHeight* .5,
-                                                shaderDir='./Simulation/')
+                                -SpaceHeight * .5, SpaceHeight * .5,
+                                shaderDir='./Simulation/')
 
         InitCond["eps"] = DiracDelta_eps
         InitCond["a"] = DiracDelta_a
@@ -62,7 +63,7 @@ class Simulation(object):
             field.Output.activate()
 
             SimStepper['dt'] = dt
-            SimStepper['t'] = dt*self._stepCounter
+            SimStepper['t'] = dt * self._stepCounter
 
             SimStepper['field'] = field.Input.texture
             SimStepper['field'].interpolation = gl.GL_NEAREST
@@ -73,7 +74,7 @@ class Simulation(object):
             field.Output.deactivate()
             field.swap()
 
-        self._elTime = dt*self._stepCounter
+        self._elTime = dt * self._stepCounter
 
     def _step(self, Phi, SimStepper, dt):
         pass
@@ -88,7 +89,7 @@ class Simulation(object):
 
     @property
     def elTime(self) -> float:
-        return self._stepCounter*self._dt
+        return self._stepCounter * self._dt
 
     def draw_menu(self):
         imgui.begin('Simulation')
@@ -120,4 +121,3 @@ class Simulation(object):
         imgui.text("step = {}".format(self._stepCounter))
 
         imgui.end()
-

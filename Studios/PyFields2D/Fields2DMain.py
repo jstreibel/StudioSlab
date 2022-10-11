@@ -12,15 +12,15 @@ WindowWidth = int(1920*1.8)
 WindowHeight = int(1080*1.8)
 
 GridDim = 2 ** 10
-SpaceDim = 4
-MeshSubdivs = 2 ** 8
+SpaceDim = 1.5
+MeshSubdivs = 2 ** 10
 
-DiracDelta_E = .0
-DiracDelta_eps = .0
+#DiracDelta_E = .0
+#DiracDelta_eps = .0
 #DiracDelta_E = 2500.0  # do artigo
 #DiracDelta_eps = 0.1   # do artigo
-#DiracDelta_E = 0.001 # ~oscillon
-#DiracDelta_eps = 0.2 # ~oscillon
+DiracDelta_E = 0.0002 # ~oscillon
+DiracDelta_eps = 0.5 # ~oscillon
 
 DiracDelta_a = sqrt((4. / 3.) * pi * (DiracDelta_eps ** 2) * DiracDelta_E)
 
@@ -34,7 +34,6 @@ dt = r * h
 app.use("glfw_imgui")  # Required for ImGui integration
 window = app.Window(width=WindowWidth, height=WindowHeight,
                     color=(0.30, 0.30, 0.35, 1.00))
-
 
 
 vp = GlViewport((WindowWidth, WindowHeight))
@@ -52,7 +51,7 @@ sim.applyInitConditions(DiracDelta_eps, DiracDelta_a)
 
 imgui = window.imgui
 io = imgui.get_io()
-font_scaling_factor = 1
+font_scaling_factor = 1.5
 #font_size_in_pixels = 30
 #font  = io.fonts.add_font_from_file_ttf(
 #        "../../Resources/Fonts/Roboto-Regular.ttf", font_size_in_pixels * font_scaling_factor,
@@ -76,7 +75,7 @@ def on_draw(frame_dt):
     imgui.new_frame()
 
     if imgui.begin_main_menu_bar():
-        if imgui.begin_menu("File", True):
+        if imgui.begin_menu("Sys", True):
             clicked, selected = imgui.menu_item("Quit", 'Esc', False, True)
             if clicked:
                 exit(0)

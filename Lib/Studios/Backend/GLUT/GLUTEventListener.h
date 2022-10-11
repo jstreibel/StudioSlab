@@ -6,7 +6,7 @@
 #define V_SHAPE_OPENGLARTISTBASE_H
 
 
-#include <Studios/Graphics/animation.h>
+#include <Studios/Graphics/Animation.h>
 
 #include <Common/Typedefs.h>
 #include <Common/Utils.h>

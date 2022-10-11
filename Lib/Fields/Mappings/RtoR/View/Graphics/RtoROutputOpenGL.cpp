@@ -180,10 +180,11 @@ void RtoR::OutputOpenGL::notifyReshape(int width, int height) {
     windowWidth = width;
     windowHeight = height;
 
-    panel->w = width;
-    panel->h = height;
-
-    panel->arrangeWindows();
+    panel->reshape(width, height);
+    //panel->w = width;
+    //panel->h = height;
+//
+    //panel->arrangeWindows();
 }
 
 void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {

@@ -34,7 +34,8 @@ namespace Base {
             }
         };
 
-        virtual ArbitraryFunction *CloneWithSize(PosInt N) const {throw "ModelBase::FunctionArbitrary::Clone() not implemented.";}
+        virtual ArbitraryFunction *CloneWithSize(PosInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
+                                                                        " not implemented.";}
         virtual ArbitraryFunction &Set(const MyBase &func) = 0;
         virtual ArbitraryFunction &SetArb(const ArbitraryFunction &func){
             space->setToValue(func.getSpace());
@@ -45,7 +46,7 @@ namespace Base {
         ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; }
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
-        virtual ArbitraryFunction &Apply(const Function<TargetSpaceType,TargetSpaceType> &func, ArbitraryFunction &out) const = 0;
+        virtual ArbitraryFunction &Apply(const Function<TargetSpaceType, TargetSpaceType> &func, ArbitraryFunction &out) const = 0;
 
         auto Add(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi) -> ArbitraryFunction<PosSpaceType, TargetSpaceType> & override {
             space->Add(*toi.space);

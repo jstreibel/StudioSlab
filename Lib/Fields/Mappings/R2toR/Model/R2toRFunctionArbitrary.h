@@ -6,10 +6,9 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
 #include "R2toRFunction.h"
-#include "Phys/DiffMath/Util/ArithmeticOpsInterface.h"
-#include "Studios/Math/Core/FunctionArbitrary.h"
-#include "Studios/Math/Maps/R2toR/Model/Util/EXPOSE_BASE.h"
 #include "Studios/Controller/Interface/CommonParameters.h"
+#include "Phys/Toolset/Device.h"
+#include "Phys/Function/ArbitraryFunction.h"
 
 
 namespace R2toR {
@@ -20,9 +19,9 @@ namespace R2toR {
         const Real xMin, xMax, yMin, yMax;
     };
 
-    class FunctionArbitrary : public Base::FunctionArbitrary<Real2D,Real> {
-    EXPOSE_BASE(Function)
-        typedef Base::FunctionArbitrary <Real2D, Real> FunctionArbitraryBase;
+    class FunctionArbitrary : public Base::ArbitraryFunction<Real2D,Real> {
+    //EXPOSE_BASE(Function)
+        typedef Base::ArbitraryFunction <Real2D, Real> FunctionArbitraryBase;
 
     public:
         FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
@@ -31,7 +30,7 @@ namespace R2toR {
 
         Real diff(int n, Real2D x) const override;
 
-        FunctionPtr diff(int n) const override;
+        Pointer diff(int n) const override;
 
     public:
         virtual FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const = 0;

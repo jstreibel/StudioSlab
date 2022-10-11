@@ -9,9 +9,8 @@
 #include "../../Model/RtoRFuncArbResizable.h"
 #include "Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
 
-#include "Fields/Mappings/RtoR/View/Graphics/Artists/Graph.h"
+#include "Artists/GraphRtoR.h"
 #include "Studios/Graphics/Artists/StatsDisplay.h"
-#include <Studios/Graphics/ARCHIVE/deprecated/graph_depr.h>
 #include <Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h>
 
 namespace RtoR {
@@ -56,8 +55,8 @@ namespace RtoR {
 
         WindowPanel *panel;
 
-        Graph mFieldsGraph;
-        Graph mTotalEnergyGraph;
+        GraphRtoR mFieldsGraph;
+        GraphRtoR mTotalEnergyGraph;
 
         StatsDisplay stats;
 

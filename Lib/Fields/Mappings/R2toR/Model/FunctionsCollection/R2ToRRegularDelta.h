@@ -5,11 +5,10 @@
 #ifndef V_SHAPE_R2TORREGULARDELTA_H
 #define V_SHAPE_R2TORREGULARDELTA_H
 
-#include "Studios/Math/Maps/R2toR/Model/R2toRFunction.h"
-#include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "../R2toRFunction.h"
 
 namespace R2toR {
-    class R2toRRegularDelta : public R2toR::Function {
+    struct R2toRRegularDelta : public R2toR::Function {
     private:
         Real eps, a;
     public:

@@ -32,7 +32,7 @@ private:
     bool _mouseMiddle = false;
     bool _mouseRight  = false;
 
-    GLint vpW, vpH;
+    GLint vpW=100, vpH=100;
 
     glm::mat4x4 modelview = glm::mat4x4(1,0,0,0,
                                         0,1,0,0,

@@ -18,6 +18,8 @@ public:
 
     void setupViewport(bool decorate=true, bool clear=true) const;
 
+    virtual void reshape(int w, int h);
+
     int w, h, x, y;
 
     std::vector<Artist*> content;

@@ -1,10 +1,11 @@
 //
 
 #include "DimensionReductionFilter.h"
-#include "Model/DiscreteSpace/DiscreteSpaceCPU.h"
-#include "Studios/Math/Maps/R2toR/Model/R2toRFunctionArbitrary.h"
-#include "Studios/Math/Maps/R2toR/Model/FieldState.h"
 
+#include <Phys/Space/Impl/DiscreteSpaceCPU.h>
+
+#include "Fields/Mappings/R2toR/Model/R2toRFunctionArbitrary.h"
+#include "Fields/Mappings/R2toR/Model/FieldState.h"
 
 
 //

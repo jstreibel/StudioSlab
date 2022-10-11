@@ -6,8 +6,8 @@
 #define V_SHAPE_R2TORINPUTSHOCKWAVEATT0_H
 
 
-#include <View/Graphic/OutputOpenGL.h>
-#include "Apps/Simulations/BCInterface.h"
+//#include <View/Graphic/OutputOpenGL.h>
+//#include "Apps/Simulations/BCInterface.h"
 
 namespace R2toR {
 
@@ -17,6 +17,7 @@ namespace R2toR {
         Real e=0.;
         Real t0=0;
     public:
+
         void YoureTheChosenOne(CLVariablesMap &vm) override;
 
         auto getOutputs(bool usingOpenGLBackend) const -> std::vector<OutputChannel *> override;
@@ -24,7 +25,7 @@ namespace R2toR {
         auto getGeneralDescription() const -> std::string override;
 
     private:
-        Base::OutputOpenGL *outGL;
+        //Base::OutputOpenGL *outGL;
         std::vector<OutputChannel *> myOutputs;
     };
 

@@ -6,14 +6,14 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARYCPU_H
 
 #include "R2toRFunctionArbitrary.h"
-#include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
+#include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
 
 namespace R2toR {
     class FunctionArbitraryCPU : public FunctionArbitrary {
     public:
         FunctionArbitraryCPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
 
-        [[nodiscard]] Base::FunctionArbitrary<Real2D, Real> *CloneWithSize(PosInt N) const override;
+        [[nodiscard]] Base::ArbitraryFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
         FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const override;
 
@@ -21,11 +21,12 @@ namespace R2toR {
 
         Real &At(PosInt n, PosInt m);
 
-        FunctionArbitraryBase &Set(const Function &func) override;
 
-        Base::FunctionArbitrary<Real2D, Real> &SetArb(const Base::FunctionArbitrary<Real2D, Real> &function) override;
+        FunctionArbitraryCPU &Set(const R2toR::Function &func) override;
 
-        FunctionArbitraryBase &Apply(const RtoR::Function &func, FunctionArbitraryBase &out) const override;
+
+        ArbitraryFunction <Real2D, Real> &
+        Apply(const Function<Real, Real> &func, ArbitraryFunction <Real2D, Real> &out) const override;
     };
 }
 

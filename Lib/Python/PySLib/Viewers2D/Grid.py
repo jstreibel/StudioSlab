@@ -9,13 +9,11 @@ from glumpy.graphics.collections import SegmentCollection
 import imgui
 
 
-
 class Grid:
     def reset(self):
         self.transform.theta = 0
         self.transform.phi = 0
         self.transform.zoom = 16.5
-
 
     def __init__(self, windowEventDispatcher, baseTransform=None, title=""):
         self.viewport = Viewport()
@@ -49,7 +47,6 @@ class Grid:
 
         self.doDrawGrid = False
 
-
     def _regenerate(self):
         if self.labels is None:
             self.labels = GlyphCollection(transform=self.transform, viewport=self.viewport)
@@ -62,7 +59,6 @@ class Grid:
             while len(self.ticks):
                 del self.ticks[0]
 
-
         self._generateLabels()
 
         self._generateFrame()
@@ -72,7 +68,6 @@ class Grid:
         self._generateMajorTicks()
 
         self._generateMinorTicks()
-
 
     def _generateLabels(self):
         labels = self.labels
@@ -97,7 +92,6 @@ class Grid:
                       scale=2 * scale, direction=(1, 0, 0),
                       anchor_x="center", anchor_y="center")
 
-
     def _generateFrame(self):
         xmin, xmax = self.xlims
         ymin, ymax = self.ylims
@@ -107,7 +101,6 @@ class Grid:
         P0 = [(xmin, ymin, z), (xmin, ymax, z), (xmax, ymax, z), (xmax, ymin, z)]
         P1 = [(xmin, ymax, z), (xmax, ymax, z), (xmax, ymin, z), (xmin, ymin, z)]
         ticks.append(P0, P1, linewidth=2)
-
 
     def _generateGrids(self):
         xmax, xmin = self.xlims
@@ -136,7 +129,6 @@ class Grid:
         P1[:, 1] = np.linspace(ymin, ymax, n)[1:-1]
         P1[:, 2] = z
         ticks.append(P0, P1, linewidth=1, color=(0, 0, 0, .25))
-
 
     def _generateMajorTicks(self):
         xmax, xmin = self.xlims
@@ -204,17 +196,16 @@ class Grid:
         P1[:, 0] = xmax - 0.0125 * (xmax - xmin)
         ticks.append(P0, P1, linewidth=1)
 
-
     def draw(self):
-        if not self.doDrawGrid: return
+        if not self.doDrawGrid:
+            return
 
         w, h = self.WinSize
         gl.glViewport(0, 0, w, h)
 
-        #self.window.clear()
+        # self.window.clear()
         self.labels.draw()
         self.ticks.draw()
-
 
     def draw_menu(self):
         xmin, xmax = self.xlims
@@ -226,8 +217,8 @@ class Grid:
             self._regenerate()
 
         pressed, value = imgui.checkbox("Draw base grid", self.doDrawGrid)
-        if pressed: self.doDrawGrid = value
-
+        if pressed:
+            self.doDrawGrid = value
 
     def on_resize(self, w, h):
         self.WinSize = w, h

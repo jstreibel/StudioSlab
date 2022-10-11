@@ -27,8 +27,10 @@ namespace RtoR2 {
 
         StraightLine &operator=(const StraightLine &rhs);
 
-        Real2D getx0() const {return x0;}
-        Real2D getr() const {return r;}
+        Real2D getx0() const {return this->x0;}
+        Real2D getr() const {return this->r;}
+
+        Real length() const {return this->getr().norm();}
     private:
         Real2D x0, r;
     };

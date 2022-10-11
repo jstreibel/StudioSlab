@@ -3,68 +3,43 @@
 //
 
 #include "SimulationsAppR2ToR.h"
+#include "Studios/Controller/Interface/InterfaceSelector.h"
+#include "Phys/Numerics/Program/Integrator.h"
+#include "Fields/Mappings/R2toR/Model/FieldState.h"
+#include "Studios/Backend/Backend.h"
 
 
-#include <Apps/Simulations/OutputStructureBuilders/OutputStructureBuilderBase.h>
-#include <Lib/Fields/Maps/RtoR/View/OutputStructureBuilderRtoR.h>
-#include <Studios/Math/Maps/R2toR/View/OutputStructureBuilderR2ToR.h>
+#include <Phys/Numerics/Output/OutputStructureBuilderBase.h>
 
-#include "Controller/Console/CommandLineInterfaceDefinitions.h"
+#include <Fields/Mappings/RtoR/View/OutputStructureBuilderRtoR.h>
+#include <Fields/Mappings/R2toR/View/OutputStructureBuilderR2ToR.h>
 
-#include <Studios/Math/Integrator/Integrator.h>
-#include "Core/Util/Workaround/StringStream.h"
+#include <Fields/Mappings/R2toR/Core/Allocator_R2toR.h>
 
-#include "Apps/Backend/GLUTBackend.h"
-#include "Apps/Backend/ConsoleBackend.h"
-#include "Studios/Math/Device.h"
 
 
 SimulationsAppR2toR::SimulationsAppR2toR(int argc, const char **argv)
-        : SimulationsApp(argc, argv)
+        : AppBase(argc, argv)
 {
-    CLOptionsDescription options = _buildFullCommandLineOptions(); // essa funcao depende de o boundaryConditionsInput estar devidamente inicializado.
+    Allocator_R2toR::Choose();
 
-    namespace po = boost::program_options;
-    po::store(po::parse_command_line(argc, argv, options), vm);
-
+    AppBase::parseCLArgs();
 }
 
 auto SimulationsAppR2toR::run() -> int {
-    boundaryConditionsInput->YoureTheChosenOne(vm);
-    std::cout << "Sim: " << boundaryConditionsInput->getGeneralDescription() << std::endl;
+    auto *bcInput = dynamic_cast<Base::BCInterface*>(InterfaceSelector::getInstance().getCurrentCandidate());
 
+    const auto *boundaryConditions = bcInput->getBoundary();
+    auto *output = bcInput->buildOutputManager();
 
-    NumericParams p(vm);
-    Device dev(vm);
-    Allocator::Initialize(p, dev, vm, boundaryConditionsInput->getModelParams());
+    auto *integrator = NumericalIntegration::New<R2toR::FieldState>(boundaryConditions, output);
 
-
-    bool useOpenGLBackend = vm.count("gl") != 0;
-    if (useOpenGLBackend) backend = GLUTBackend::GetInstance();
-    else backend = ConsoleBackend::getSingleton();
-
-
-    OutputManager output;
-    OutputStructureBuilderR2toR outputBuilder;
-    outputBuilder.build(output, boundaryConditionsInput->getInterfaceParametersMap(), vm, useOpenGLBackend);
-
-
-    auto *_integrator = new NumericalIntegration(boundaryConditionsInput->getBoundary(), &output);
-    this->integrator = _integrator;
-
-
-    // BACKEND NAO EH DELETADO! Ele eh um singleton.
+    auto backend = Backend::GetInstance();
     backend->run(integrator);
-
-    output.notifyIntegrationFinished(_integrator->getOutputInfo());
+    Backend::Destroy();
 
     delete integrator;
-    GLUTBackend::Destroy();
-    delete boundaryConditionsInput;
 
     return 0;
 }
 
-auto SimulationsAppR2toR::getCommandLineOptions() -> CLOptionsDescription {
-    return CLOptionsDescription();
-}

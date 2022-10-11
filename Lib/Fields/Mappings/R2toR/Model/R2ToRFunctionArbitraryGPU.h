@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARYGPU_H
 
 #include "R2toRFunctionArbitrary.h"
-#include "Phys/DiffMath/Util/device-config.h"
+
 
 namespace R2toR {
 
@@ -17,18 +17,18 @@ namespace R2toR {
         FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const override;
 
         [[nodiscard]] Function<Real2D, Real> *Clone() const override;
-        [[nodiscard]] Base::FunctionArbitrary<Real2D, Real> *CloneWithSize(PosInt N) const override;
+        [[nodiscard]] Base::ArbitraryFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
-        FunctionArbitraryBase &Set(const MyBase &func) override;
-        FunctionArbitraryBase &SetArb(const FunctionArbitraryBase &func) override;
-        FunctionArbitraryBase &Apply(const Function<Real, Real> &func, FunctionArbitraryBase &out) const override;
+        ArbitraryFunction &Set(const MyBase &func) override;
+        ArbitraryFunction &SetArb(const ArbitraryFunction &func) override;
+        ArbitraryFunction &Apply(const Function<Real, Real> &func, ArbitraryFunction &out) const override;
 
-        FunctionArbitraryBase &Add(const FunctionArbitraryBase & toi) override;
-        FunctionArbitraryBase &StoreAddition(const FunctionArbitraryBase &toi1,
-                                             const FunctionArbitraryBase & toi2) override;
-        FunctionArbitraryBase &StoreSubtraction(const FunctionArbitraryBase &aoi1,
-                                                const FunctionArbitraryBase& aoi2) override;
-        FunctionArbitraryBase &Multiply(floatt a) override;
+        ArbitraryFunction &Add(const ArbitraryFunction & toi) override;
+        ArbitraryFunction &StoreAddition(const ArbitraryFunction &toi1,
+                                             const ArbitraryFunction & toi2) override;
+        ArbitraryFunction &StoreSubtraction(const ArbitraryFunction &aoi1,
+                                                const ArbitraryFunction& aoi2) override;
+        ArbitraryFunction &Multiply(floatt a) override;
 
         Real At(PosInt n, PosInt m) const override;
         Real &At(PosInt n, PosInt m) override;

@@ -4,7 +4,6 @@
 
 #include "RtoROutGLStatistic.h"
 
-#include "../../../FunctionRenderer.h"
 #include "Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
 
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
@@ -32,7 +31,7 @@ RtoR::OutGLStatistic::OutGLStatistic() {
     temperature2History = FuncArbResizable(0, 0.1);
     temperature3History = FuncArbResizable(0, 0.1);
 
-    mTemperaturesGraph = new Graph(0, 2, 0, 0.01, "Temperaturas");
+    mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
     mTemperaturesGraph->addFunction(&temperature1History, T1_color);
     mTemperaturesGraph->addFunction(&temperature2History, T2_color);
     mTemperaturesGraph->addFunction(&temperature3History, T3_color);
@@ -43,11 +42,11 @@ RtoR::OutGLStatistic::OutGLStatistic() {
     initialize(xLeft, xRight, -0.08, 0.08);
 
 
-    mHistogramsGraph = new Graph(0, 1, 0, 5e2, "", true);
+    mHistogramsGraph = new GraphRtoR(0, 1, 0, 5e2, "", true);
     window = new Window; window->addArtist(mHistogramsGraph);
     panel->addWindow(window, true, 0.2);
 
-    mHistogramsGraph2 = new Graph(0, 1, 0, 5e2, "Histogramas", true);
+    mHistogramsGraph2 = new GraphRtoR(0, 1, 0, 5e2, "Histogramas", true);
     window = new Window; window->addArtist(mHistogramsGraph2);
     panel->addWindow(window);
 

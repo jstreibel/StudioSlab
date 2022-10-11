@@ -1,7 +1,6 @@
 //
 
 #include "R2toRFunctionArbitrary.h"
-#include "Phys/DiffMath/Util/MathTypes.h"
 
 //
 // Created by joao on 30/09/2019.
@@ -65,7 +64,7 @@ Real R2toR::FunctionArbitrary::diff(int dim, Real2D x) const {
     } else throw "Tidak bagus diff.";
 }
 
-Base::Function<Real2D, Real>::FunctionPtr R2toR::FunctionArbitrary::diff(int n) const {
-    throw "Not implemented Base::Function<Real2D, Real>::FunctionPtr R2toR::FunctionArbitrary::diff(int n) const";
+Base::Function<Real2D, Real>::Pointer R2toR::FunctionArbitrary::diff(int n) const {
+    throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
     return Function::diff(n);
 }

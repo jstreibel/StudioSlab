@@ -1,4 +1,3 @@
-#include <Studios/Backend/GLUT/GLUTBackend.h>
 #include "OutputOpenGL.h"
 
 #include <Phys/Numerics/Allocator.h>

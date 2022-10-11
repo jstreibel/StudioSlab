@@ -7,7 +7,7 @@
 Real R2toR::R2toRRegularDelta::operator()(Real2D x) const {
     const float r = x.norm();
 
-    if(r < eps) return a*(3./(pi*eps*eps)) * (1. - r/eps);
+    if(r < eps) return a*(3./(std::numbers::pi*eps*eps)) * (1. - r/eps);
 
     return .0;
 }

@@ -7,11 +7,8 @@
 #include "../Model/RtoRFunctionArbitraryGPU.h"
 #include "../Model/RtoRSystemGordonGPU.h"
 
-#include "../Model/RtoRFieldState.h"
 #include "../Model/RtoRFunctionArbitraryCPU.h"
 #include "../Model/FunctionsCollection/AbsFunction.h"
-#include "../Model/FunctionsCollection/AbsPerturbedFunction.h"
-#include "../Model/FunctionsCollection/IntegerPowerFunctions.h"
 
 #include <Phys/DifferentialEquations/2nd-Order/Equation_LorentzCovariant-2ndOrder.h>
 

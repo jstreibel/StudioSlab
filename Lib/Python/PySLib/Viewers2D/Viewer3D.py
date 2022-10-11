@@ -4,7 +4,7 @@ from ..Tools.Primitives import Plane
 
 import glumpy.gloo
 from glumpy import gl, gloo, glm
-from glumpy.transforms import TrackballPan, Position
+from glumpy.transforms import TrackballPan, Position, Trackball
 from glumpy.app import clock, Viewport
 from glumpy.geometry import primitives, parametric
 import imgui
@@ -228,9 +228,9 @@ class Viewer3D(object):
         self.fieldPlaneProgram['dr_tex'] = 1./GridDim[0], 1./GridDim[1]
         self.fieldPlaneProgram['dr'] = SpaceDim[0]/GridDim[0], SpaceDim[1]/GridDim[1]
 
-        trackball = TrackballPan(Position('v_position'), znear=0.1, zfar=500, distance=5)
+        trackball = Trackball(Position('v_position'), znear=0.1, zfar=500, distance=5)
+        #trackball = TrackballPan(Position('v_position'), znear=0.1, zfar=500, distance=5)
         self.fieldPlaneProgram['transform'] = trackball
-
 
         self.viewport.attach(self.fieldPlaneProgram['transform'])
 
@@ -279,7 +279,7 @@ class Viewer3D(object):
 
         # self._planeProg.draw(gl.GL_TRIANGLES, self._plane[1])
 
-        gl.glDisable(gl.GL_DEPTH_TEST)
+        # gl.glDisable(gl.GL_DEPTH_TEST)
 
         self.grid.draw()
 

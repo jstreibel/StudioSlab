@@ -59,3 +59,12 @@ void Window::setupViewport(bool decorate, bool clear) const {
 void Window::addArtist(Artist *pArtist) {
     content.emplace_back(pArtist);
 }
+
+void Window::reshape(int w, int h) {
+    this->w = w;
+    this->h = h;
+
+    for(auto artist : content)
+        artist->reshape(w, h);
+
+}

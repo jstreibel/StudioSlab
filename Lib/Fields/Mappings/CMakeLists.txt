@@ -11,7 +11,9 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 			RtoR/Model/RtoRSystemGordonGPU.cu
 
-			# R2toR/Model/R2ToRFunctionArbitraryGPU.cu
+			R2toR/Model/Derivatives/DerivativesGPU.cu
+			R2toR/Model/R2ToRFunctionArbitraryGPU.cu
+
 			)
 
 	message(STATUS "Maps CUDA support is ENABLED")
@@ -65,7 +67,7 @@ set ( RTOR_SOURCES
 		RtoR/View/RtoROutputHistoryToFile.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
 		RtoR/View/Graphics/RtoROutputOpenGL.cpp
-		RtoR/View/Graphics/Artists/Graph.cpp
+		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 
 		RtoR/Calc/EnergyCalculator.cpp
 		RtoR/Calc/Histogram.cpp
@@ -76,30 +78,44 @@ set ( RTOR_SOURCES
 
 
 set ( R2TOR_SOURCES
-		Maps/R2toR/Model/R2toRFunctionArbitrary.cpp
-		Maps/R2toR/Model/R2toRFunctionArbitraryCPU.cpp
+		FunctionRenderer.cpp
+		BCInterface.cpp
 
-		R2toR/Controller/R2ToRInputRadialShockwave.cpp
+		RtoR/Model/FunctionsCollection/AbsFunction.cpp
+		RtoR/View/Graphics/Artists/GraphRtoR.cpp
+
+		R2toR/Model/R2toRFunctionArbitrary.cpp
+		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
+
+		R2toR/Controller/R2ToRBCInterface.cpp
+		# R2toR/Controller/R2ToRInputRadialShockwave.cpp
 		R2toR/Controller/R2ToRInputShockwave.cpp
-		R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
+		# R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
+
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
 		R2toR/Model/FunctionsCollection/R2ToRRegularDelta.cpp
+		R2toR/Model/FunctionsCollection/GrowingHole.cpp
 		R2toR/Model/Transform.cpp
 		R2toR/Model/Util/Interpolator.cpp
 		R2toR/Model/R2toRFunctionArbitrary.cpp
 		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
-		R2toR/Model/R2ToRBoundaryCondition.cpp
+		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
+		R2toR/Model/BoundaryConditions/GrowingHoleBoundaryCondition.cpp
+
+		R2toR/View/Artists/GraphR2ToR.cpp
+		R2toR/View/Artists/GraphR2Section.cpp
 		R2toR/View/Filters/DimensionReductionFilter.cpp
 		R2toR/View/R2toROutputOpenGLShockwave.cpp
 		R2toR/View/R2toROutputOpenGLGeneric.cpp
 		R2toR/View/R2ToROutputOpenGlShockwaveAtT0.cpp
-		R2toR/View/OutputShockwaveZeros.cpp
+		# R2toR/View/OutputShockwaveZeros.cpp
 		R2toR/View/OutputStructureBuilderR2ToR.cpp
-		../Mappings/R2toR/SimulationsAppR2ToR.cpp
+
+		R2toR/App/SimulationsAppR2ToR.cpp
 
 		RtoR2/StraightLine.cpp
 
-		R2toR/Model/Builder/R2ToRModelBuilder.cpp
+		R2toR/Core/Allocator_R2toR.cpp
 		)
 
 set ( MAPS_LINKS
@@ -111,21 +127,28 @@ set ( MAPS_LINKS
 		Slab-Studios-Tools
 		)
 
-set ( MAPS_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
+# |R |--> |R
 
-add_library( ${MAPS_LIB_NAME} STATIC ${RTOR_SOURCES})
-target_link_libraries( ${MAPS_LIB_NAME} ${MAPS_LINKS})
+set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
 
-# add_library(${MAPS_LIB_NAME}-Periodic STATIC ${RTOR_SOURCES})
-# target_link_libraries( ${MAPS_LIB_NAME}-Periodic ${MAPS_LINKS})
-# add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic PERIODIC_BC=true ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+add_library( ${MAPS_RtoR_LIB_NAME} STATIC ${RTOR_SOURCES})
+target_link_libraries( ${MAPS_RtoR_LIB_NAME} ${MAPS_LINKS})
 
-add_library(${MAPS_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${MAPS_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property(TARGET ${MAPS_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
+add_library(${MAPS_RtoR_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${MAPS_RtoR_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${MAPS_RtoR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
 
-add_library(${MAPS_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${MAPS_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-add_compile_definitions( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PERIODIC_BC ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
-set_property( TARGET ${MAPS_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
+add_library(${MAPS_RtoR_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+add_compile_definitions( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PERIODIC_BC ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+set_property( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
 
+
+# |R² |--> |R
+
+set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
+
+
+add_library(${MAPS_R2toR_LIB_NAME}_GPU STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${MAPS_R2toR_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${MAPS_R2toR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)

@@ -31,12 +31,7 @@ void main() {
 
     {
         float r = length(v_position);
-
-        if(r<t){
-            o_Phi = i_Phi + i_dPhidt*dt;
-        } else {
-            o_Phi = 0.01;
-        }
+        o_Phi = i_Phi + i_dPhidt*dt;
     }
 
     {

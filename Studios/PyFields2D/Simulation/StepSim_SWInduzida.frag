@@ -31,7 +31,7 @@ void main() {
 
     float r = length(v_position);
 
-    if(r>t && r<t+0.1){
+    if(r>t){
         o_Phi = 0.01;
         o_dPhidt = .0;
     } else {

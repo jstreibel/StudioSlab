@@ -11,7 +11,7 @@ class Allocator
 protected:
 
     Allocator();
-    static void Instantiate(Allocator *builder);
+    static void Instantiate(Allocator *allocator);
 
 public:
 

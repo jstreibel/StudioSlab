@@ -11,7 +11,7 @@
 
 void StatsDisplay::addVolatileStat(const String &stat, const Color color)
 {
-    stats.push_back({stat, color});
+    stats.emplace_back(stat, color);
 }
 
 void StatsDisplay::draw(const Window *window) {
@@ -34,7 +34,8 @@ void StatsDisplay::draw(const Window *window) {
         for(auto stat : stats){
             auto color = stat.second;
             glColor3f(color.r, color.g, color.b);
-            write(cursorx, -delta, stat.first, font);
+            std::string text = stat.first;
+            write(cursorx, -delta, text, font);
             delta += lineHeight;
         }
         stats.clear();

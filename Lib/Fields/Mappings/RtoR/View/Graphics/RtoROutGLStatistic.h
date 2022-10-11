@@ -19,9 +19,9 @@ namespace RtoR {
         FuncArbResizable temperature2History;
         FuncArbResizable temperature3History;
 
-        Graph *mTemperaturesGraph;
-        Graph *mHistogramsGraph;
-        Graph *mHistogramsGraph2;
+        GraphRtoR *mTemperaturesGraph;
+        GraphRtoR *mHistogramsGraph;
+        GraphRtoR *mHistogramsGraph2;
 
     };
 

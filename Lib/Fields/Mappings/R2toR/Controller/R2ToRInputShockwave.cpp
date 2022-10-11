@@ -3,29 +3,45 @@
 //
 
 #include "R2ToRInputShockwave.h"
-#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
-#include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
-#include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Studios/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Studios/Math/Maps/R2toR/Model/R2ToRBoundaryCondition.h"
-#include "Studios/Math/Maps/R2toR/View/R2toROutputOpenGLShockwave.h"
-#include "Studios/Math/Maps/R2toR/View/OutputShockwaveZeros.h"
 
+#include "Common/Utils.h"
+
+#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+
+#include "Phys/Formalism/Categories.h"
+
+#include "Fields/Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Fields/Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Fields/Mappings/R2toR/View/OutputShockwaveZeros.h"
+#include "Fields/Mappings/R2toR/Model/Transform.h"
+#include "Fields/Mappings/RtoR2/StraightLine.h"
+#include "Fields/Mappings/R2toR/View/R2toROutputOpenGLShockwave.h"
+#include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+
+const auto pi = 3.1415926535897932384626;
 
 using namespace R2toR;
 
+R2toRInputShockwave::R2toRInputShockwave()
+                                         : R2toRBCInterface("(2+1)-dim signum-Gordon "
+                                                            "shockwave.", "sw") {
+
+
+    addParameters({&eps, &theta, &E, &e, &t0});
+}
+
 auto R2toRInputShockwave::getBoundary() const -> const void * {
-    E = vm["E"].as<double>();
-    eps = vm["epsilon"].as<double>();
+    auto E = *this->E;
+    auto eps = *this->eps;
     const double a = sqrt((4./3)*pi*eps*eps*E);
 
-    let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction(*new RtoR::NullFunction), e, theta);
+    let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, *e, *theta);
     //auto *dPhiDt0 = new FunctionAzimuthalSymmetry(new RtoRMap::RegularDiracDelta(a, a), sqrt(3./M_PI),e, theta);
     let *dPhiDt0 = new R2toR::R2toRRegularDelta(eps, a);
 
     let *initCond = new BoundaryCondition(phi0, dPhiDt0);
-    dPhi = initCond;
+    auto dPhi = initCond;
 
     if(0) // Output da energia nominal.
     {
@@ -45,51 +61,33 @@ auto R2toRInputShockwave::getBoundary() const -> const void * {
         }
     }
 
-    modelParams.mapping = Allocator::ModelParams::R2toRMap;
+    //auto *outGLShockwave = new OutputOpenGLShockwave(getParameters());
+    //outGL = outGLShockwave;
 
-    auto *outGLShockwave = new OutputOpenGLShockwave(getParameters());
-    outGL = outGLShockwave;
+    //RtoR2::StraightLine section1, section2;
+    //{
+    //    //const Real rMin = ModelBuilder::getInstance().getParams().getxLeft();
+    //    //const Real rMax = rMin + ModelBuilder::getInstance().getParams().getL();
+    //    const Real rMin = -5;
+    //    const Real rMax =  5;
+    //    const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
+    //    Real theta = 0.0;
 
-    RtoR2::StraightLine section1, section2;
-    {
-        //const Real rMin = ModelBuilder::getInstance().getParams().getxLeft();
-        //const Real rMax = rMin + ModelBuilder::getInstance().getParams().getL();
-        const Real rMin = -5;
-        const Real rMax =  5;
-        const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
-        Real theta = 0.0;
+    //    Rotation R;
+    //    R = Rotation(theta + .5 * M_PI);
+    //    section1 = RtoR2::StraightLine(R * x0, R * xf);
+    //    R = Rotation(theta);
+    //    section2 = RtoR2::StraightLine(R * x0, R * xf);
+    //}
+    //outGLShockwave->addSection(section1, "Section1");// String("theta = ") + std::to_string(theta) + "rad");
+    //outGLShockwave->addSection(section2, "Section2");// String("theta = ") + std::to_string(theta) + "rad");
 
-        Rotation R;
-        R = Rotation(theta + .5 * M_PI);
-        section1 = RtoR2::StraightLine(R * x0, R * xf);
-        R = Rotation(theta);
-        section2 = RtoR2::StraightLine(R * x0, R * xf);
-    }
-    outGLShockwave->addSection(section1, "Section1");// String("theta = ") + std::to_string(theta) + "rad");
-    outGLShockwave->addSection(section2, "Section2");// String("theta = ") + std::to_string(theta) + "rad");
+    //if(vm["outputzeros"].as<bool>()){
+    //    letc N = GET("N", size_t);
+    //    letc outRes = 1024;
+    //    OutputChannel *zerosOut = new R2toR::OutputShockwaveZeros((int)N, (int)(outRes>N?N:outRes));
+    //    myOutputs.push_back(zerosOut);
+    //}
 
-    if(vm["outputzeros"].as<bool>()){
-        letc N = GET("N", size_t);
-        letc outRes = 1024;
-        OutputChannel *zerosOut = new R2toR::OutputShockwaveZeros((int)N, (int)(outRes>N?N:outRes));
-        myOutputs.push_back(zerosOut);
-    }
+    return dPhi;
 }
-
-auto R2toRInputShockwave::getParameters() const -> UserParamMap {
-    return {{"sw_E",     new DoubleParameter(E, "E", "Shockwave simulation total energy parameter.")},
-            {"sw_eps",   new DoubleParameter(eps, "epsilon", "Shockwave simulation delta \'width\' parameter.")},
-            {"output_zeros", new BoolParameter(false, "outputzeros", "Should output to file the zeros of the shockwave?")}};
-}
-
-auto R2toRInputShockwave::getGeneralDescription() const -> String {
-    return String("2-d shockwave starting at t=0.");
-}
-
-auto R2toRInputShockwave::getOutputs(bool usingOpenGLBackend) const -> std::vector<OutputChannel *> {
-    auto outputs = myOutputs;
-    if (usingOpenGLBackend) { outputs.push_back(outGL); }
-
-    return outputs;
-}
-

@@ -99,6 +99,8 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
 
     //glLineWidth(1.5);
 
+    auto length = section.length();
+
     if(filled)
     {
         glColor4f(c.r, c.g, c.b, c.a/3.0);

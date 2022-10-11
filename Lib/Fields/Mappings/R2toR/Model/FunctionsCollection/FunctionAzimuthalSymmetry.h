@@ -6,17 +6,17 @@
 #define V_SHAPE_FUNCTIONAZIMUTHALSYMMETRY_H
 
 
-#include "Studios/Math/Maps/R2toR/Model/R2toRFunction.h"
-#include "Lib/Fields/Maps/RtoR/Model/RtoRFunction.h"
+#include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
+#include "Fields/Mappings/RtoR/Model/RtoRFunction.h"
 #include <cmath>
-#include <Studios/Math/Maps/R2toR/Model/Transform.h>
+#include <Fields/Mappings/R2toR/Model/Transform.h>
 
 
 namespace R2toR {
 
     class FunctionAzimuthalSymmetry : public Function {
     public:
-        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef, Real eccentricity=0., Real angle=0.,
+        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1.0, Real eccentricity=0., Real angle=0.,
                                   bool keepBaseFunction=true)
             : baseFunction(*baseFunction), c(coef), theta(angle), a(1./sqrt(1.-eccentricity*eccentricity)), keepBaseFunction(keepBaseFunction)
                {};

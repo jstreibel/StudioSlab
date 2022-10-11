@@ -5,29 +5,24 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include <View/Graphic/OutputOpenGL.h>
-
 #include <Fields/Mappings/BCInterface.h>
+
+#include "Phys/Toolset/CoreNativeTypes.h"
+#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+#include "R2ToRBCInterface.h"
 
 namespace R2toR {
 
-    class R2toRInputShockwave : public Base::BCInterface {
+    class R2toRInputShockwave : public R2toRBCInterface {
     private:
-        Real eps=1.;
-        Real theta=0.;
-        Real E=1.;
-        Real e=0.;
-        Real t0=0;
+        DoubleParameter eps   =DoubleParameter{1., "eps", "Quasi-shockwave 'epsilon' parameter."};
+        DoubleParameter theta =DoubleParameter{0., "theta", "Ellipse rotation."};
+        DoubleParameter E     =DoubleParameter{1., "E", "Total energy."};
+        DoubleParameter e     =DoubleParameter{0., "e", "Eccentricity."};
+        DoubleParameter t0    =DoubleParameter{0., "t0", "Initial time."};
     public:
-        auto getBoundary() const -> const void * override = 0;
-
-        auto getOutputs(bool usingOpenGLBackend) const -> std::vector<OutputChannel *> override;
-
-        auto getGeneralDescription() const -> std::string override;
-
-    private:
-        Base::OutputOpenGL *outGL;
-        std::vector<OutputChannel *> myOutputs;
+        R2toRInputShockwave();
+        auto getBoundary() const -> const void * override;
     };
 
 }

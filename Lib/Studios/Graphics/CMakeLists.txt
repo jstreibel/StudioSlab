@@ -1,11 +1,13 @@
 
 set( GRAPHICS_SOURCES
-		ARCHIVE/NotHere/OutputOpenGL.cpp
-		ARCHIVE/deprecated/graph_depr.cpp
+		PlottingUtils.cpp
+		Animation.cpp
+		PlottingUtils.cpp
+		ZoomPanRotate.cpp
+
 
 		Artists/StatsDisplay.cpp
-		PlottingUtils.cpp
-
+		Artists/Graph.cpp
 
 		WindowManagement/Window.cpp
 		WindowManagement/WindowStyles.cpp
@@ -14,17 +16,15 @@ set( GRAPHICS_SOURCES
 		WindowManagement/WindowTree/NodeWindow.cpp
 		WindowManagement/WindowTree/WindowTreeBuilder.cpp
 
+		ARCHIVE/NotHere/OutputOpenGL.cpp
+
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp
 
-		animation.cpp
-		PlottingUtils.cpp
-		ZoomPanRotate.cpp
 		)
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Graphics
 		Slab-Common
-		Slab-Studios-Backend
-		#Slab-Studios-CoreMath
+		#Slab-Studios-Backend
 		)

@@ -12,10 +12,10 @@ Allocator::Allocator() = default;
     // if(p.getN()%dev.get_nThreads() != 0) throw "N%nThreads must be 0."; }
 
 
-void Allocator::Instantiate(Allocator *builder) {
+void Allocator::Instantiate(Allocator *allocator) {
     if(Allocator::mySingleInstance != nullptr) throw "ModelBuilder initialized already.";
 
-    Allocator::mySingleInstance = builder;
+    Allocator::mySingleInstance = allocator;
 }
 
 auto Allocator::getInstance() -> Allocator &

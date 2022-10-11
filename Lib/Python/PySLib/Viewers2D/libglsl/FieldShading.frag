@@ -188,9 +188,9 @@ void main()
 
     // Light cone **********************************
     {
-        //float eps = 0.005;
-        //if(r > t-eps && r <= t)
-        //    color = 0.5*color;
+        float eps = 0.005;
+        if(r > t-eps && r <= t)
+            color = 0.5*color;
     }
 
 
@@ -208,8 +208,8 @@ void main()
 
 
     // Plane section *******************************
-    //color = computeLine(x/2, vec4(1, 0.549, 0., 1), color, 1, 4, 3);
-    //if(x>0) color.a = 0.2;
+    color = computeLine(y/2, vec4(1, 0.549, 0., 1), color, 1, 4, 3);
+    //if(y>0) color.a = 0.0;
 
 
     // Lighting ************************************

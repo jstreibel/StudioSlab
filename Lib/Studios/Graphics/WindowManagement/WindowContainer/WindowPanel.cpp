@@ -72,8 +72,10 @@ void WindowPanel::arrangeWindows() {
 
             window->x = computedPositions[i];
             window->y = y;
-            window->w = computedWidths[i];
-            window->h = dy;
+            auto w = computedWidths[i];
+            auto h = dy;
+
+            window->reshape(w, h);
 
             ++j;
         }
@@ -124,6 +126,12 @@ void WindowPanel::assertConsistency() const {
         return;
 
     throw "Inconsistent column widths.";
+}
+
+void WindowPanel::reshape(int w, int h) {
+    Window::reshape(w, h);
+
+    arrangeWindows();
 }
 
 

@@ -44,20 +44,20 @@ target_link_libraries (Fields-RtoR-PeriodicBC ${SlabLibs} Slab-Fields-Maps-RtoR-
 # ************************************************************************************************************
 
 
-#add_executable ( Fields-R2toR Fields/MainR2toR.cpp)
-#target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
-##set_property(TARGET fieldsR2toR PROPERTY CUDA_ARCHITECTURES 61)
+add_executable ( Fields-R2toR Fields/MainR2toR.cpp)
+target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
+set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 
 
 # ************************************************************************************************************
 
 
-add_executable ( Thermo-XY XY/main.cpp XY/XYApp.cpp)
-target_link_libraries( Thermo-XY
-		Slab-Phys
-		Slab-Studios-Backend
-		Slab-Studios-Controller
-		Slab-Studios-App )
+# add_executable ( Thermo-XY XY/main.cpp XY/XYApp.cpp)
+# target_link_libraries( Thermo-XY
+# 		Slab-Phys
+# 		Slab-Studios-Backend
+# 		Slab-Studios-Controller
+# 		Slab-Studios-App )
 
 
 # ************************************************************************************************************

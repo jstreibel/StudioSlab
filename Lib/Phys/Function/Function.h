@@ -60,20 +60,22 @@ namespace Base {
         /*! Get derivative in dimension 'n' at point 'x'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.
          * @param x: the location to get differentiation. */
-        virtual OutputCategory diff(int n, InputCategory x) const { throw "Function::diff(n, x) not implemented."; };
+        virtual OutputCategory diff(int n, InputCategory x) const { throw "Function::diff(n, x) not implemented."; }
+
+        virtual bool domainContainsPoint(InputCategory x) const {return true;}
 
         /*!
          * Integrates the function through all of its domain.
          * @return The value of the integral.
          */
-        virtual OutputCategory integrate() const { throw "Function::integrate not implemented."; };
+        virtual OutputCategory integrate() const { throw "Function::integrate not implemented."; }
 
-        virtual Function *Clone() const { throw "Function::Clone() not implemented."; };
+        virtual Function *Clone() const { throw "Function::Clone() not implemented."; }
 
         virtual bool isDiscrete() const { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
-        const GPUFriendly &getGPUFriendlyVersion() const { return myGPUFriendlyVersion; };
+        const GPUFriendly &getGPUFriendlyVersion() const { return myGPUFriendlyVersion; }
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 

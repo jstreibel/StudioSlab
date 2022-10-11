@@ -5,6 +5,8 @@
 
 #include "R2toRFunctionArbitraryCPU.h"
 
+#include <Common/OMPUtils.h>
+
 using namespace R2toR;
 
 #define USE_DISCRETE_LAPLACE_KERNEL_BIG true
@@ -16,7 +18,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, PosInt M, Real xMin, Real y
 
 }
 
-Base::FunctionArbitrary<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Base::ArbitraryFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     assert(M==N); // (por enquanto so vai funcionar assim.
 
     FunctionArbitraryCPU &myClone = *new FunctionArbitraryCPU(outN, outN, xMin, yMin, h);;
@@ -80,7 +82,7 @@ FunctionArbitrary &FunctionArbitraryCPU::Laplacian(FunctionArbitrary &outFunc) c
     return outFunc;
 }
 
-Base::FunctionArbitrary<Real2D, Real> &FunctionArbitraryCPU::Set(const Function &func) {
+FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
     const Real L1 = xMax-xMin;
     const Real L2 = yMax-yMin;
 
@@ -88,25 +90,31 @@ Base::FunctionArbitrary<Real2D, Real> &FunctionArbitraryCPU::Set(const Function 
     for(PosInt n=begin; n<end; n++)
         for(PosInt m=0; m<M; m++) {
             Real2D x = {L1 * n / (N - 1) + xMin, L2 * m / (M - 1) + yMin};
+
+            if(!func.domainContainsPoint(x)) continue;
+
             this->At(n, m) = func(x);
         }
 
     return *this;
 }
 
-Base::FunctionArbitrary<Real2D, Real> &FunctionArbitraryCPU::SetArb(const Base::FunctionArbitrary<Real2D, Real> &function) {
-    cast(func, const FunctionArbitrary&, function)
 
-    OMP_GET_BEGIN_END(begin, end, N)
-    for(PosInt n=begin; n<end; n++)
-        for(PosInt m=0; m<M; m++)
-            At(n, m) = func.At(n,m);
+//Base::ArbitraryFunction<Real2D, Real> &FunctionArbitraryCPU::SetArb(
+//        const Base::ArbitraryFunction<Real2D, Real> &function) {
+//    cast(func, const ArbitraryFunction&, function)
+//
+//    OMP_GET_BEGIN_END(begin, end, N)
+//    for(PosInt n=begin; n<end; n++)
+//        for(PosInt m=0; m<M; m++)
+//            At(n, m) = func.At(n,m);
+//
+//    return *this;
+//}
 
-    return *this;
-}
 
-Base::FunctionArbitrary<Real2D, Real> &
-FunctionArbitraryCPU::Apply(const RtoR::Function &func, FunctionArbitraryBase &out) const {
+Base::ArbitraryFunction<Real2D, Real> &FunctionArbitraryCPU::Apply(const Function<Real, Real> &func,
+                                                                   Base::ArbitraryFunction<Real2D, Real> &out) const {
     cast(fOut, FunctionArbitrary&, out)
 
     OMP_GET_BEGIN_END(begin, end, N)

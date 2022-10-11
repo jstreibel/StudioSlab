@@ -21,7 +21,7 @@
 
 #define DEFAULT_FONT FONT6
 
-void write(float x, float y, String str,
+void write(float x, float y, std::string str,
            void *font = DEFAULT_FONT);
 
 #endif //STUDIOSLAB_GLUTDEFS_H

@@ -5,11 +5,13 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
-#include "Studios/Math/Maps/RtoR2/StraightLine.h"
-
 #include <Studios/Graphics/ZoomPanRotate.h>
-#include <Phys/DiffMath/Util/MathTypes.h>
-#include <Studios/Graphics/NotHere/OutputOpenGL.h>
+#include "Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h"
+#include "Artists/GraphR2ToR.h"
+#include "Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
+#include "Studios/Graphics/Artists/StatsDisplay.h"
+#include "Fields/Mappings/RtoR/View/Graphics/Artists/GraphRtoR.h"
+#include "Fields/Mappings/R2toR/View/Artists/GraphR2Section.h"
 
 namespace R2toR {
     class OutputOpenGL : public Base::OutputOpenGL {
@@ -31,11 +33,14 @@ namespace R2toR {
         IntPair getWindowSizeHint() override;
 
     private:
-        ZoomPanRotate zpr;
+        WindowPanel *panel;
+        StatsDisplay stats;
+
         bool showAnalytic = true;
 
         Real xMin, xMax, yMin, yMax, phiMin, phiMax;
-        Graph phiGraph, dPhiGraph;
+        GraphR2toR mPhiGraph;
+        GraphR2Section mSectionGraph;
 
     };
 

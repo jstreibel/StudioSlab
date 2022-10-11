@@ -6,30 +6,28 @@
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVEATT0_H
 
 
-#include <View/Graphic/Tools/ZoomPanRotate.h>
-#include <Studios/Math/Maps/R2toR/View/R2toROutputOpenGLGeneric.h>
-#include "Model/MathTypes.h"
-#include "View/Graphic/OutputOpenGL.h"
-#include "Studios/Math/Maps/RtoR2/StraightLine.h"
 #include "R2toROutputOpenGLShockwave.h"
+#include "Studios/Graphics/ZoomPanRotate.h"
+#include "Studios/Graphics/Artists/Graph.h"
+#include "Fields/Mappings/RtoR2/StraightLine.h"
 
 
 namespace R2toR {
 
     class OutputOpenGLShockwaveAt_t0 : public Base::OutputOpenGL {
     public:
-        OutputOpenGLShockwaveAt_t0(UserParamMap userParamMap);
+        OutputOpenGLShockwaveAt_t0();
 
         void draw() override;
-        void reshape(int width, int height) override;
+        void notifyReshape(int width, int height) override;
 
-        void notifyGLUTMouseButton(int button, int dir, int x, int y) override;
+        void notifyMouseButton(int button, int dir, int x, int y) override;
 
-        void notifyGLUTMouseMotion(int x, int y) override;
+        void notifyMouseMotion(int x, int y) override;
 
-        void notifyGLUTKeyboardSpecial(int key, int x, int y) override;
+        void notifyKeyboardSpecial(int key, int x, int y) override;
 
-        void notifyGLUTKeyboard(unsigned char key, int x, int y) override;
+        void notifyKeyboard(unsigned char key, int x, int y) override;
 
         IntPair getWindowSizeHint() override;
 
@@ -41,10 +39,9 @@ namespace R2toR {
         bool showDPhidt = false;
 
         Real xMin, xMax, yMin, yMax, phiMin, phiMax;
-        UserParamMap userParamMap;
-        Graph phiGraph, dPhiGraph;
+        GraphR2toR phiGraph, dPhiGraph;
 
-        std::vector<Base::SectionPair> sections;
+        //std::vector<Base::SectionPair> sections;
 
         void _outputSnapshot();
     };

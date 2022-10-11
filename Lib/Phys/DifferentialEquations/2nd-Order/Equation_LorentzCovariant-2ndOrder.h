@@ -13,7 +13,7 @@ namespace Base {
     template <class FieldState>
     class Equation_LorentzCovariant_2ndOrder : public Base::Equation<FieldState> {
     private:
-        typedef Base::Function<FType(FunctionType::InCategory),FType(FunctionType::OutCategory)> TargetToTargetFunction;
+        typedef Base::Function<FType(FunctionType::OutCategory),FType(FunctionType::OutCategory)> TargetToTargetFunction;
     public:
     explicit Equation_LorentzCovariant_2ndOrder(TargetToTargetFunction &potential)
             : temp1(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),

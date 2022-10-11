@@ -5,11 +5,14 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERR2TOR_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERR2TOR_H
 
-#include "Apps/Simulations/OutputStructureBuilders/OutputStructureBuilderBase.h"
+#include <Phys/Numerics/Output/OutputStructureBuilderBase.h>
+#include <Phys/Numerics/Output/OutputManager.h>
 
 class OutputStructureBuilderR2toR : public OutputStructureBuilderBase {
 public:
-    auto build() -> OutputManager* override;
+
+
+    auto build(String outputFileName) -> OutputManager* override;
 
 
 };
