@@ -64,7 +64,7 @@ public:
             {
                 const Real t = (steps+i)*dt;
 
-                dPhi->apply(*_phi, t);
+                dPhi->apply(phi, t);
 
                 H(phi, k1, t, dt2);
                 #pragma omp barrier

@@ -12,7 +12,7 @@ namespace Base {
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \
         CLASS_NAME() : Function(this) {}                                 \
-        void ApplyTo(const DeviceVector &in, DeviceVector &out) const override;
+        void GPUApply(const DeviceVector &in, DeviceVector &out) const override;
 #else
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \
@@ -25,7 +25,7 @@ namespace Base {
     class GPUFriendly {
     public:
 #if USE_CUDA == true
-        virtual void ApplyTo(const DeviceVector &in, DeviceVector &out) const = 0;
+        virtual void GPUApply(const DeviceVector &in, DeviceVector &out) const = 0;
 #else
 #endif
     };

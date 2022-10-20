@@ -61,7 +61,7 @@ Base::ArbitraryFunction<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Func
     const Base::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
     //cast(outFunc, FunctionArbitraryGPU&, out);
 
-    funcGPU.ApplyTo(XDev, outXDev);
+    funcGPU.GPUApply(XDev, outXDev);
 
     return out;
 }

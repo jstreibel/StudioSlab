@@ -16,8 +16,8 @@ namespace R2toR {
 
     class FunctionAzimuthalSymmetry : public Function {
     public:
-        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1.0, Real eccentricity=0., Real angle=0.,
-                                  bool keepBaseFunction=true)
+        FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1, Real eccentricity=0,
+                                  Real angle=0, bool keepBaseFunction=true)
             : baseFunction(*baseFunction), c(coef), theta(angle), a(1./sqrt(1.-eccentricity*eccentricity)), keepBaseFunction(keepBaseFunction)
                {};
         ~FunctionAzimuthalSymmetry(){ if(keepBaseFunction) delete &baseFunction; }

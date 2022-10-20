@@ -12,7 +12,7 @@ namespace Base {
     template<class FUNCTION>
     class BoundaryConditions {
     public:
-        virtual void apply(FUNCTION &function, Real t) const = 0;
+        virtual void apply(FUNCTION &toFunction, Real t) const = 0;
     };
 }
 

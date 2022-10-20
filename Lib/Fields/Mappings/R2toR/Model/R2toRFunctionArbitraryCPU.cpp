@@ -113,8 +113,9 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
 //}
 
 
-Base::ArbitraryFunction<Real2D, Real> &FunctionArbitraryCPU::Apply(const Function<Real, Real> &func,
-                                                                   Base::ArbitraryFunction<Real2D, Real> &out) const {
+Base::ArbitraryFunction<Real2D, Real> &
+FunctionArbitraryCPU::Apply(const Function<Real, Real> &func,
+                            Base::ArbitraryFunction<Real2D, Real> &out) const {
     cast(fOut, FunctionArbitrary&, out)
 
     OMP_GET_BEGIN_END(begin, end, N)

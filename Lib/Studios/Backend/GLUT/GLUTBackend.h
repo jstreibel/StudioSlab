@@ -35,7 +35,7 @@ private:
 	Program *program = nullptr;
     Base::GLUTEventListener *outGL = nullptr;
 
-    int steps = 10;
+    int steps = 1;
 
     bool programIsRunning = false;
 

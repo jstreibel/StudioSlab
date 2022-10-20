@@ -36,28 +36,22 @@ Base::ArbitraryFunction<Real2D, Real> *R2toR::FunctionArbitraryGPU::CloneWithSiz
 }
 
 Real R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) const {
-    FunctionArbitraryGPU& me = const_cast<FunctionArbitraryGPU&>(*this);
-
-    if (!hostIsUpdated){
-        thrust::copy(XDev.begin(), XDev.end(), XHost.begin());
-        me.hostIsUpdated = true;
-    }
+    const_cast<FunctionArbitraryGPU&>(*this).updateHost();
 
     //PrintDensityThere(n, m, 20*XHost[n+m*N]);
     return XHost[n+m*N];
 }
 
 Real &R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) {
-    if (!hostIsUpdated){
-        thrust::copy(XDev.begin(), XDev.end(), XHost.begin());
-        hostIsUpdated = true;
-    }
+    updateHost();
 
     return XHost[n+m*N];
 }
 
 Base::ArbitraryFunction<Real2D, Real> &
 R2toR::FunctionArbitraryGPU::Set(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+    //updateHost();
+
     const floatt Lx = xMax - xMin;
     const floatt Ly = yMax - yMin;
     for (PosInt n = 0; n < N; n++) {
@@ -67,15 +61,15 @@ R2toR::FunctionArbitraryGPU::Set(const Base::ArbitraryFunction<Real2D, Real>::My
 
             const Real2D r = {x, y};
 
-            if(!func.domainContainsPoint(r)) continue;
+            if(!func.domainContainsPoint(r))
+                continue;
 
             XHost[n+m*N] = func(r);
         }
     }
 
-    thrust::copy(XHost.begin(), XHost.end(), XDev.begin());
+    updateDevice();
 
-    hostIsUpdated = true;
     return *this;
 }
 
@@ -85,7 +79,7 @@ R2toR::FunctionArbitraryGPU::SetArb(const Base::ArbitraryFunction<Real2D, Real> 
     auto &in = toFunc.XDev;
     thrust::copy(in.begin(), in.end(), XDev.begin());
 
-    hostIsUpdated = false;
+    hostIsSyncd = false;
 
     return *this;
 }
@@ -93,19 +87,19 @@ R2toR::FunctionArbitraryGPU::SetArb(const Base::ArbitraryFunction<Real2D, Real> 
 Base::ArbitraryFunction<Real2D, Real> &
         R2toR::FunctionArbitraryGPU::Apply(const Base::Function<Real, Real> &func,
                                            Base::ArbitraryFunction<Real2D, Real> &out) const {
-    assert(out.isGPUFriendly());
+    assert(func.isGPUFriendly());
 
     const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU&>(getSpace());
     auto &outSpace = dynamic_cast<DiscreteSpaceGPU&>(out.getSpace());
 
     auto& XHost = mySpace.getHostData(false);
-    auto& XDev = mySpace.getXDev();
-    auto& outXDev = outSpace.getXDev();
+    auto& inX = mySpace.getXDev();
+    auto& outX = outSpace.getXDev();
 
     const Base::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
     //cast(outFunc, FunctionArbitraryGPU&, out);
 
-    funcGPU.ApplyTo(XDev, outXDev);
+    funcGPU.GPUApply(inX, outX);
 
     return out;
 }
@@ -120,7 +114,7 @@ R2toR::FunctionArbitraryGPU::Add(const Base::ArbitraryFunction<Real2D, Real> &to
                       out.begin(), out.begin(),
                       thrust::plus<Real>());
 
-    hostIsUpdated = false;
+    hostIsSyncd = false;
 
     return *this;
 }
@@ -139,7 +133,7 @@ R2toR::FunctionArbitraryGPU::StoreAddition(const Base::ArbitraryFunction<Real2D,
                       out.begin(),
                       thrust::plus<Real>());
 
-    hostIsUpdated = false;
+    hostIsSyncd = false;
 
     return *this;
 }
@@ -158,7 +152,7 @@ R2toR::FunctionArbitraryGPU::StoreSubtraction(const Base::ArbitraryFunction<Real
                       out.begin(),
                       thrust::minus<Real>());
 
-    hostIsUpdated = false;
+    hostIsSyncd = false;
 
     return *this;
 }
@@ -172,7 +166,25 @@ Base::ArbitraryFunction<Real2D, Real> &R2toR::FunctionArbitraryGPU::Multiply(flo
                       out.begin(),
                       thrust::multiplies<Real>());
 
-    hostIsUpdated = false;
+    hostIsSyncd = false;
 
     return *this;
+}
+
+void FunctionArbitraryGPU::updateHost() {
+    if (!hostIsSyncd){
+        thrust::copy(XDev.begin(), XDev.end(), XHost.begin());
+        hostIsSyncd = true;
+    }
+}
+
+void FunctionArbitraryGPU::updateDevice() {
+    if(!hostIsSyncd) {
+        thrust::copy(XHost.begin(), XHost.end(), XDev.begin());
+        hostIsSyncd = true;
+    }
+}
+
+inline bool FunctionArbitraryGPU::isSyncd() const {
+    return hostIsSyncd;
 }

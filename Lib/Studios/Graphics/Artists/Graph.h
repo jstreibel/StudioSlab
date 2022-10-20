@@ -76,7 +76,6 @@ template<class FunctionType>
 Graph<FunctionType>::Graph(double xMin, double xMax, double yMin, double yMax, String title, bool filled, int samples)
         : xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax), title(title), filled(filled), samples(samples)
 {
-
 }
 
 template<class FunctionType>
@@ -115,17 +114,22 @@ void Graph<FunctionType>::_drawAxes(int winW, int winH) {
     {
         deltaY = yMax-yMin;
 
+
         while(markStart > yMin)
             markStart-=yspacing;
         while(markStart < (yMin-yspacing))
             markStart+=yspacing;
 
-        if(deltaY/yspacing < 5) yspacing *= 0.5;
-        if(deltaY/yspacing > 10) yspacing *= 2.0;
+        //markStart = yMin + yspacing;
+
+        yspacing = deltaY/10;
+
+        //if(deltaY/yspacing < 5) yspacing *= 0.5;
+        //if(deltaY/yspacing > 10) yspacing *= 2.0;
     }
 
     __drawXAxis(winW, winH);
-    //__drawYAxis(winW, winH);
+    __drawYAxis(winW, winH);
 
     if(!labels.empty()){
         const double Sx = (xMax-xMin) / winW;

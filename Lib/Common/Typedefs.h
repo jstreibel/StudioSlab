@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_TYPES_H
 #define STUDIOSLAB_TYPES_H
 
+#include "DeviceConfig.h"
 #include "STDLibInclude.h"
 
 typedef size_t PosInt;

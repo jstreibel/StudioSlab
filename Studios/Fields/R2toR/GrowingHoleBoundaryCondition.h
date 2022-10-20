@@ -9,16 +9,25 @@
 #include "Phys/Numerics/Equation/BoundaryConditions.h"
 #include "Fields/Mappings/R2toR/Model/FieldState.h"
 
+#include "Fields/Mappings/R2toR/Model/FunctionsCollection/GrowingHole.h"
+
+
 namespace R2toR {
 
     class GrowingHoleBoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
         Real height;
     public:
-        GrowingHoleBoundaryCondition(Real height = 1.);
+        GrowingHoleBoundaryCondition(Real height = 1.) : height(height) { }
 
-        void apply(FieldState &function, Real t) const override;
+        void apply(FieldState &function, Real t) const override{
+            GrowingHole hole(height, t);
+            GrowingHole vel(.0, t);
 
+            function.setPhi(hole);
+            function.setDPhiDt(vel);
+        }
     };
 }
+
 
 #endif //STUDIOSLAB_GROWINGHOLEBOUNDARYCONDITION_H

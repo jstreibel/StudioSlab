@@ -2,7 +2,7 @@
 // Created by joao on 23/09/2019.
 //
 
-#ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
+#ifndef V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
 #include <Studios/Graphics/ZoomPanRotate.h>
@@ -32,7 +32,7 @@ namespace R2toR {
 
         IntPair getWindowSizeHint() override;
 
-    private:
+    protected:
         WindowPanel *panel;
         StatsDisplay stats;
 
@@ -47,4 +47,4 @@ namespace R2toR {
 }
 
 
-#endif //V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
+#endif //V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H

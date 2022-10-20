@@ -33,10 +33,15 @@ namespace R2toR {
         Real At(PosInt n, PosInt m) const override;
         Real &At(PosInt n, PosInt m) override;
 
+        void updateHost();
+        void updateDevice();
+        bool isSyncd() const;
+
     private:
-        bool hostIsUpdated = false;
-        VecFloat &XHost;
-        DeviceVector &XDev;
+        bool hostIsSyncd = false;
+        // TODO: Nao usar mais esses, e sim o do this->space.
+        //VecFloat &XHost;
+        //DeviceVector &XDev;
 
     };
 

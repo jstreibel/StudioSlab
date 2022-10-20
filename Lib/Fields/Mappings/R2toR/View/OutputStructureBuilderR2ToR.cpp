@@ -3,16 +3,20 @@
 //
 
 #include "OutputStructureBuilderR2ToR.h"
+
 #include "Phys/Numerics/Program/NumericParams.h"
 #include "Phys/Numerics/Allocator.h"
-#include "Fields/Mappings/RtoR2/StraightLine.h"
 #include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
-#include "Fields/Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
 #include "Phys/Numerics/Output/Channel/OutputHistoryToFile.h"
+
+#include "Fields/Mappings/RtoR2/StraightLine.h"
+#include "Fields/Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
+
 #include "Studios/Backend/GLUT/GLUTBackend.h"
 #include "Studios/Backend/Console/ConsoleBackend.h"
+
 #include "R2toROutputOpenGLGeneric.h"
 
 OutputManager*
@@ -56,7 +60,8 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 
         OutputFormatterBase *outputFilter = new BinarySOF;
 
-        SpaceFilterBase *spaceFilter = new DimensionReductionFilter(Allocator::getInstance().getNumericParams().getN(), section1);
+        SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
+                Allocator::getInstance().getNumericParams().getN(), section1);
 
         const auto N = (Real) Allocator::getInstance().getNumericParams().getN();
         const Real Np = outputResolutionX;
@@ -78,16 +83,10 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
         std::cout << std::endl << "Outputting OpenGL" << std::endl;
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
-        const double phiMin = -0.25;
-        const double phiMax = 0.25;
-        const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+        auto glOut = this->buildOpenGLOutput();
 
-        auto *outputOpenGL = new R2toR::OutputOpenGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
-
-        glutBackend->setOpenGLOutput(outputOpenGL);
-        // outGL->output(dummyInfo); // stop flicker?
-        outputManager->addOutputChannel(outputOpenGL);
+        glutBackend->setOpenGLOutput(glOut);
+        outputManager->addOutputChannel(glOut);
     }
     else {
         /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
@@ -99,10 +98,13 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     return outputManager;
 }
 
-//void OutputStructureBuilderR2toR::_addSpecificCommandLineOptions(CLOptionsDescription &options) {
-//    options.add_options()("noOut,o", "Don't output history to file.")
-//            ("output_binary,b", "Output history data in binary getFormatDescription")
-//            ("out", po::value<String>()->default_value(""), "Filename of history and/or snapshot output (will differ by extension).")
-//            ("outN", po::value<int>()->default_value(512), "Output X resolution of history output.")
-//            ("avg", "Flag to take average of region when outputting history.");
-//}
+auto OutputStructureBuilderR2toR::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
+    const double phiMin = -0.25;
+    const double phiMax = 0.25;
+    const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
+    const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+
+    return new R2toR::OutputOpenGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
+}
+
+

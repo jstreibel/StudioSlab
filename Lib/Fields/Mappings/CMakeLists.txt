@@ -100,7 +100,6 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRFunctionArbitrary.cpp
 		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
 		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
-		R2toR/Model/BoundaryConditions/GrowingHoleBoundaryCondition.cpp
 
 		R2toR/View/Artists/GraphR2ToR.cpp
 		R2toR/View/Artists/GraphR2Section.cpp
