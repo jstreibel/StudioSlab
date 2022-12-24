@@ -13,7 +13,7 @@ class Grid:
     def reset(self):
         self.transform.theta = 0
         self.transform.phi = 0
-        self.transform.zoom = 16.5
+        self.transform.zoom = 1 #16.5
 
     def __init__(self, windowEventDispatcher, baseTransform=None, title=""):
         self.viewport = Viewport()

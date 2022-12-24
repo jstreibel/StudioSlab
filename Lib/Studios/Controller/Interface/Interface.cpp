@@ -58,7 +58,8 @@ auto Interface::toString() const -> String {
         ss << param->getCommandLineArgName(true) << "=" << param->valueToString() << "-";
 
     auto str = ss.str();
-    str.pop_back(); // remove trailing '-'
+    if(!parameters.empty())
+        str.pop_back(); // remove trailing '-'
 
     return str;
 }

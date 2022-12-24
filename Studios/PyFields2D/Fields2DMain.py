@@ -11,16 +11,18 @@ from Simulation import Simulation
 WindowWidth = int(1920*1.8)
 WindowHeight = int(1080*1.8)
 
-GridDim = 2 ** 10
-SpaceDim = 1.5
-MeshSubdivs = 2 ** 10
+GridDim = 2 ** 9
+SpaceDim = 20
+MeshSubdivs = 2 ** 9
 
 #DiracDelta_E = .0
 #DiracDelta_eps = .0
-#DiracDelta_E = 2500.0  # do artigo
-#DiracDelta_eps = 0.1   # do artigo
-DiracDelta_E = 0.0002 # ~oscillon
-DiracDelta_eps = 0.5 # ~oscillon
+DiracDelta_E = 2500.0  # do artigo
+DiracDelta_eps = 0.1   # do artigo
+#DiracDelta_E = 250.0
+#DiracDelta_eps = 0.2
+#DiracDelta_E = 0.0002 # ~oscillon
+#DiracDelta_eps = 0.5 # ~oscillon
 
 DiracDelta_a = sqrt((4. / 3.) * pi * (DiracDelta_eps ** 2) * DiracDelta_E)
 
@@ -32,8 +34,9 @@ dt = r * h
 
 
 app.use("glfw_imgui")  # Required for ImGui integration
+bg_color = [(1,1,1,1), (0.30, 0.30, 0.35, 1.00)][0]
 window = app.Window(width=WindowWidth, height=WindowHeight,
-                    color=(0.30, 0.30, 0.35, 1.00))
+                    color=bg_color)
 
 
 vp = GlViewport((WindowWidth, WindowHeight))

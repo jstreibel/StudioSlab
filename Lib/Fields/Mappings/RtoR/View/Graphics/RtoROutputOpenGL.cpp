@@ -115,7 +115,8 @@ void RtoR::OutputOpenGL::draw() {
     if(showKineticEnergy){
         const Color colorKinetic = K_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
+        // mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
+        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic);
     }
 
     if(showGradientEnergy) {

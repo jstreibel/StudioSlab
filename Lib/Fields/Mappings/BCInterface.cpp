@@ -16,6 +16,10 @@ auto Base::BCInterface::getOutputStructureBuilder() -> Interface * {
 }
 
 String Base::BCInterface::toString() const {
-    return prefix + "-" + Interface::toString();
+    auto strParams = Interface::toString();
+
+    auto str = prefix + "-" + strParams;
+
+    return str;
 }
 

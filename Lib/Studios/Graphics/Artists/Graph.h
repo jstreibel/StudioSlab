@@ -18,7 +18,7 @@
 #define TITLE_FONT FONT9
 #endif
 #ifndef TICK_FONT
-#define TICK_FONT FONT9
+#define TICK_FONT FONT6
 #endif
 
 

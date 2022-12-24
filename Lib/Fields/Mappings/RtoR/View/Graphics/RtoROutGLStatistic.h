@@ -22,6 +22,8 @@ namespace RtoR {
         GraphRtoR *mTemperaturesGraph;
         GraphRtoR *mHistogramsGraph;
         GraphRtoR *mHistogramsGraph2;
+        GraphRtoR *mHistogramsGraph3;
+        GraphRtoR *mHistogramsGraph4;
 
     };
 

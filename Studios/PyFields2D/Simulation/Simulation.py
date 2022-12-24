@@ -45,7 +45,7 @@ class Simulation(object):
         self.field.Input.deactivate()
 
     def stepSim(self, dt):
-        if not self.runSim:
+        if not self.runSim or dt*self._stepCounter==9.9:
             return
 
         GridWidth, GridHeight = self._GridDim

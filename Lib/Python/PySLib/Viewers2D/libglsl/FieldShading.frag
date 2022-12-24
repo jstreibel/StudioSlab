@@ -208,7 +208,7 @@ void main()
 
 
     // Plane section *******************************
-    color = computeLine(y/2, vec4(1, 0.549, 0., 1), color, 1, 4, 3);
+    //color = computeLine(y/2, vec4(1, 0.549, 0., 1), color, 1, 4, 3);
     //if(y>0) color.a = 0.0;
 
 

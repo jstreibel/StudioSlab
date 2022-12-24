@@ -7,7 +7,7 @@
 
 #include <Fields/Mappings/R2toR/View/OutputStructureBuilderR2ToR.h>
 
-#include "GrowingHoleGLOutput.h"
+#include "GrowingHole/GrowingHoleGLOutput.h"
 #include "Phys/Numerics/Allocator.h"
 
 

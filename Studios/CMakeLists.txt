@@ -44,8 +44,7 @@ target_link_libraries (Fields-RtoR-PeriodicBC ${SlabLibs} Slab-Fields-Maps-RtoR-
 # ************************************************************************************************************
 
 
-add_executable ( Fields-R2toR Fields/MainR2toR.cpp
-							Fields/R2toR/GrowingHoleInput.cpp)
+add_executable ( Fields-R2toR Fields/MainR2toR.cpp )
 target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
 set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 

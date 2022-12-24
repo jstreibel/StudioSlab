@@ -97,13 +97,13 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
                                            bool filled, PosInt resolution, Real scale) {
     const double ds = 1. / double(resolution);
 
-    //glLineWidth(1.5);
+    glLineWidth(3);
 
     auto length = section.length();
 
     if(filled)
     {
-        glColor4f(c.r, c.g, c.b, c.a/3.0);
+        glColor4f(c.r, c.g, c.b, c.a/2.0);
         glBegin(GL_QUADS);
         {
             for(double s=0.; s<=1.; s+=ds){

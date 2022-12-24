@@ -40,8 +40,8 @@ namespace R2toR {
     private:
         bool hostIsSyncd = false;
         // TODO: Nao usar mais esses, e sim o do this->space.
-        //VecFloat &XHost;
-        //DeviceVector &XDev;
+        VecFloat &XHost;
+        DeviceVector &XDev;
 
     };
 

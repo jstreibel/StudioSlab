@@ -39,6 +39,7 @@ Real R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) const {
     const_cast<FunctionArbitraryGPU&>(*this).updateHost();
 
     //PrintDensityThere(n, m, 20*XHost[n+m*N]);
+
     return XHost[n+m*N];
 }
 

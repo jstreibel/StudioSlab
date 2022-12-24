@@ -24,7 +24,7 @@ GLUTBackend::GLUTBackend() : Backend(this)
     //glutInitWindowSize(w, h);
     glutInitWindowPosition(0, 0);
     glutCreateWindow("Pendulum");
-    glutFullScreen();
+    //glutFullScreen();
     glutDisplayFunc(GLUTBackend::render);
     glutReshapeFunc(GLUTBackend::reshape);
     glutKeyboardFunc(GLUTBackend::keyboard);

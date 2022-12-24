@@ -42,12 +42,20 @@ RtoR::OutGLStatistic::OutGLStatistic() {
     initialize(xLeft, xRight, -0.08, 0.08);
 
 
-    mHistogramsGraph = new GraphRtoR(0, 1, 0, 5e2, "", true);
+    mHistogramsGraph = new GraphRtoR(0, 1, 0, 2e3, "V", true);
     window = new Window; window->addArtist(mHistogramsGraph);
     panel->addWindow(window, true, 0.2);
 
-    mHistogramsGraph2 = new GraphRtoR(0, 1, 0, 5e2, "Histogramas", true);
+    mHistogramsGraph2 = new GraphRtoR(0, 1, 0, 1.2e3, "K", true);
     window = new Window; window->addArtist(mHistogramsGraph2);
+    panel->addWindow(window);
+
+    mHistogramsGraph3 = new GraphRtoR(0, 1, 0, 1.2e3, "(dphi/dx)^2", true);
+    window = new Window; window->addArtist(mHistogramsGraph3);
+    panel->addWindow(window);
+
+    mHistogramsGraph4 = new GraphRtoR(0, 1, 0, 2.5e2, "U", true);
+    window = new Window; window->addArtist(mHistogramsGraph4);
     panel->addWindow(window);
 
 
@@ -65,6 +73,9 @@ void RtoR::OutGLStatistic::draw() {
 
     mHistogramsGraph->clearFunctions();
     mHistogramsGraph2->clearFunctions();
+    mHistogramsGraph3->clearFunctions();
+    mHistogramsGraph4->clearFunctions();
+
 
     Function* func = nullptr;
 
@@ -74,25 +85,28 @@ void RtoR::OutGLStatistic::draw() {
     histogram.Compute(energyCalculator.getKinetic(), nbins);
     func = histogram.asPDFFunction();
     mHistogramsGraph2->addFunction(func, K_color);
-
     mHistogramsGraph2->xMax = histogram.xMax;
     mHistogramsGraph2->xMin = histogram.xMin;
 
-    //histogram.Compute(energyCalculator.getGradient(), nbins);
-    //func = histogram.asPDFFunction();
-    //mHistogramsGraph2->addFunction(func, W_color);
+    histogram.Compute(energyCalculator.getGradient(), nbins);
+    func = histogram.asPDFFunction();
+    mHistogramsGraph3->addFunction(func, W_color);
+    mHistogramsGraph3->xMax = histogram.xMax;
+    mHistogramsGraph3->xMin = histogram.xMin;
 
 
     histogram.Compute(energyCalculator.getPotential(), nbins);
     func = histogram.asPDFFunction();
     mHistogramsGraph->addFunction(func, V_color);
-
-    histogram.Compute(energyCalculator.getEnergy(), nbins);
     mHistogramsGraph->xMin = histogram.xMin;
     mHistogramsGraph->xMax = histogram.xMax;
+
+    histogram.Compute(energyCalculator.getEnergy(), nbins);
+    mHistogramsGraph4->xMin = histogram.xMin;
+    mHistogramsGraph4->xMax = histogram.xMax;
     func = histogram.asPDFFunction();
 
-    mHistogramsGraph->addFunction(func, U_color);
+    mHistogramsGraph4->addFunction(func, U_color);
 
 
 
