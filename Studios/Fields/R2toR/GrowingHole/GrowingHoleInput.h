@@ -14,7 +14,7 @@ const auto pi = 3.1415926535897932384626;
 
 namespace R2toR {
     class InputGrowingHole : public R2toRBCInterface {
-        DoubleParameter height=DoubleParameter{0.1, "height,h", "Discontinuity value."};
+        DoubleParameter height=DoubleParameter{2./30, "height,h", "Discontinuity value."};
 
     public:
         InputGrowingHole() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",

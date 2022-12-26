@@ -46,22 +46,29 @@ namespace Base {
         ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; }
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
-        virtual ArbitraryFunction &Apply(const Function<TargetSpaceType, TargetSpaceType> &func, ArbitraryFunction &out) const = 0;
+        virtual ArbitraryFunction &Apply(const Function<TargetSpaceType, TargetSpaceType> &func,
+                                         ArbitraryFunction &out) const = 0;
 
-        auto Add(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi) -> ArbitraryFunction<PosSpaceType, TargetSpaceType> & override {
+        auto Add(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi) ->
+        ArbitraryFunction<PosSpaceType, TargetSpaceType> & override {
             space->Add(*toi.space);
             return *this;
         }
+
         auto StoreAddition(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi1,
-                      const ArbitraryFunction <PosSpaceType, TargetSpaceType> & toi2) -> ArbitraryFunction<PosSpaceType, TargetSpaceType> & override{
+                      const ArbitraryFunction <PosSpaceType, TargetSpaceType> & toi2) ->
+                      ArbitraryFunction<PosSpaceType, TargetSpaceType> & override{
             space->StoreAddition(*toi1.space, *toi2.space);
             return *this;
         }
+
         auto StoreSubtraction(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &aoi1,
-                         const ArbitraryFunction<PosSpaceType, TargetSpaceType> & aoi2) -> ArbitraryFunction<PosSpaceType, TargetSpaceType> & override{
+                         const ArbitraryFunction<PosSpaceType, TargetSpaceType> & aoi2) ->
+                         ArbitraryFunction<PosSpaceType, TargetSpaceType> & override{
             space->StoreSubtraction(*aoi1.space, *aoi2.space);
             return *this;
         }
+
         ArbitraryFunction<PosSpaceType, TargetSpaceType> &Multiply(floatt a) override {
             space->Multiply(a);
             return *this;

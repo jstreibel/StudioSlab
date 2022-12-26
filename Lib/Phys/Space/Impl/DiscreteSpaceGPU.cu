@@ -52,11 +52,11 @@ DiscreteSpace &DiscreteSpaceGPU::StoreAddition(const DiscreteSpace &toi1, const 
 }
 
 DiscreteSpace &DiscreteSpaceGPU::StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) {
-    cast(func1, const DiscreteSpaceGPU&, aoi1);
-    cast(func2, const DiscreteSpaceGPU&, aoi2);
-    auto &in1 = func1.XDev;
-    auto &in2 = func2.XDev;
-    auto &out = XDev;
+    cast(space1, const DiscreteSpaceGPU&, aoi1);
+    cast(space2, const DiscreteSpaceGPU&, aoi2);
+    auto &in1 = space1.getXDev();
+    auto &in2 = space2.getXDev();
+    auto &out = this->getXDev();
 
     thrust::transform(in1.begin(), in1.end(),
                       in2.begin(),
@@ -88,6 +88,12 @@ void DiscreteSpaceGPU::syncHost() const {
         thrust::copy(XDev.begin(), XDev.end(), XHost.begin());
         me.hostIsUpdated = true;
     }
+}
+
+void DiscreteSpaceGPU::upload() {
+    //DiscreteSpaceGPU &me = *const_cast<DiscreteSpaceGPU*>(this); // cheating!!!
+    thrust::copy(XHost.begin(), XHost.end(), XDev.begin());
+    this->hostIsUpdated = true;
 }
 
 void DiscreteSpaceGPU::setToValue(const DiscreteSpace &inSpace) {

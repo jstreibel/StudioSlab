@@ -70,6 +70,7 @@ VecFloat &DiscreteSpace::getHostData(bool syncWithServer) {
 }
 
 void DiscreteSpace::syncHost() const { }
+void DiscreteSpace::upload() { }
 
 const VecFloat &DiscreteSpace::getX() const {
     return getHostData(true);
@@ -84,3 +85,4 @@ VecFloat &DiscreteSpace::getX() {
 Real DiscreteSpace::geth() const {
     return h;
 }
+

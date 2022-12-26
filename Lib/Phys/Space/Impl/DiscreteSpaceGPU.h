@@ -9,7 +9,7 @@
 #include <Common/DeviceConfig.h>
 
 
-#if USE_CUDA
+#if USE_CUDA || defined(__NVCC__) || defined(__CUDACC__)
 class DiscreteSpaceGPU : public DiscreteSpace {
 public:
     DiscreteSpaceGPU(DimensionMetaData dim, Real h);
@@ -32,6 +32,7 @@ public:
 
 protected:
     void syncHost() const override;
+    void upload() override;
 
 private:
     bool hostIsUpdated = false;

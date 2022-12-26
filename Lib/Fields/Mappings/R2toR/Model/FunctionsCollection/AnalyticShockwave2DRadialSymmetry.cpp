@@ -4,6 +4,11 @@
 
 #include "AnalyticShockwave2DRadialSymmetry.h"
 
+
+//RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(Real a0) : a0(a0) {
+//
+//}
+
 Real RtoR::AnalyticShockwave2DRadialSymmetry::W_k(PosInt k, Real z) const {
     if(k>=quant) return .0;
     if(z>.0) return .0;
@@ -38,6 +43,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetry::operator()(Real r) const {
 
     return sum;
 }
+
 
 
 Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(PosInt k, Real z) const {

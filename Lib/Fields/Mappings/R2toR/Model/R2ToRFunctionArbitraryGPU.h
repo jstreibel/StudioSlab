@@ -16,8 +16,8 @@ namespace R2toR {
 
         FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const override;
 
-        [[nodiscard]] Function<Real2D, Real> *Clone() const override;
-        [[nodiscard]] Base::ArbitraryFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
+        Function<Real2D, Real> *Clone() const override;
+        Base::ArbitraryFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
         ArbitraryFunction &Set(const MyBase &func) override;
         ArbitraryFunction &SetArb(const ArbitraryFunction &func) override;
@@ -32,16 +32,6 @@ namespace R2toR {
 
         Real At(PosInt n, PosInt m) const override;
         Real &At(PosInt n, PosInt m) override;
-
-        void updateHost();
-        void updateDevice();
-        bool isSyncd() const;
-
-    private:
-        bool hostIsSyncd = false;
-        // TODO: Nao usar mais esses, e sim o do this->space.
-        VecFloat &XHost;
-        DeviceVector &XDev;
 
     };
 

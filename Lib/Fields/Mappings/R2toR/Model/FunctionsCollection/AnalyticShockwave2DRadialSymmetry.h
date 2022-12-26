@@ -28,7 +28,7 @@ namespace RtoR {
         Real theta_k(PosInt k, Real z) const;
 
     public:
-        //AnalyticShockwave2DRadialSymmetry(Real a0 = 1.0);
+        // explicit AnalyticShockwave2DRadialSymmetry(Real a0 = 1.0);
 
         Real gett()const{return t;}
         void sett(Real t){this->t = t;}

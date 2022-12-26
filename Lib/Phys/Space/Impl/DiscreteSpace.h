@@ -53,6 +53,7 @@ public:
 public:
     /*! Sync host with server information. */
     virtual void syncHost() const;
+    virtual void upload();
 
 protected:
     const DimensionMetaData dim;

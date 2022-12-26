@@ -17,7 +17,7 @@ namespace R2toR {
     class GrowingHoleBoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
         Real height;
     public:
-        GrowingHoleBoundaryCondition(Real height = 1.) : height(height) { }
+        GrowingHoleBoundaryCondition(Real height = 2/3.) : height(height) { }
 
         void apply(FieldState &function, Real t) const override{
             GrowingHole hole(height, t);
