@@ -56,3 +56,32 @@ void OutputOpenGL::draw() {
     //addVolatileStat(buffer);
 }
 
+bool OutputOpenGL::finishFrameAndRender() {
+        for(auto *anim : animations) anim->step(frameTimer.getElTime());
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        glPushMatrix();
+        {
+            {
+                glEnable(GL_BLEND);
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+                glEnable(GL_POINT_SMOOTH);
+                glEnable(GL_LINE_SMOOTH);
+            }
+
+            if (needDraw())
+                draw();
+        }
+        glPopMatrix();
+
+        frameTimer.reset();
+        return true;
+    }
+
+void OutputOpenGL::notifyRender() {
+    GLUTEventListener::notifyRender();
+
+    finishFrameAndRender();
+}
+

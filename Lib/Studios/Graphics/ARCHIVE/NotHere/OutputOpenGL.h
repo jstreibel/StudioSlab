@@ -22,9 +22,14 @@ namespace Base {
     // ********************* From OutputBase ********************* //
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
         auto description() const -> String override { return "OpenGL output"; }
+
+        void notifyRender() override;
+
     protected:
         void _out(const OutputPacket &outInfo) override;
     // ********************* END OutputBase ********************** //
+
+    bool finishFrameAndRender();
 
 
     // ********************* From OpenGLArtistBase *************** //
@@ -32,9 +37,17 @@ namespace Base {
     virtual void draw() override;
     // ********************* END OpenGLArtistBase **************** //
 
+    public:
+        void addAnimation(Animation *animation) {animations.push_back(animation); }
+
+    private:
+        std::vector<Animation*> animations;
+
 
     protected:
         double lastT; // essa variavel precisa existir para ficar aparecendo na tela.
+
+        int windowWidth, windowHeight;
     };
 }
 

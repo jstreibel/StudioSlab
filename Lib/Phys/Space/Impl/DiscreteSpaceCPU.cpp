@@ -76,7 +76,7 @@ void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
 }
 
 DiscreteSpace &DiscreteSpaceCPU::StoreMultiplication(const DiscreteSpace &space1, const Real a) {
-    assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites() && getTotalDiscreteSites() == space2.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
+    assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
     auto &f1Vec = space1.getX();
     auto N = getTotalDiscreteSites();

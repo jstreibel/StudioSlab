@@ -24,29 +24,35 @@ auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() const -> const void* {
 
     VecFloat p(N);
 
-    double E_rand=.0;
-    for(int i=0; i<N; ++i) {
-        auto p_i = RandUtils::random01() - .5;
+    if(0) {
+        double E_rand = .0;
+        for (int i = 0; i < N; ++i) {
+            auto p_i = RandUtils::random01() - .5;
 
-        p[i] = p_i;
-        E_rand += p_i*p_i;
+            p[i] = p_i;
+            E_rand += p_i * p_i;
+        }
+
+        E_rand *= .5 * h;
+
+        auto _E =
+                *E / .75; // dividido por .75 porque o sistema acaba perdendo 25% de energia na termalizacao.
+        auto r = sqrt(_E / E_rand);
+        for (auto &p_i: p) p_i *= r;
+
+        E_rand = .0;
+        for (auto &p_i: p) E_rand += p_i * p_i;
+        E_rand *= .5 * h;
+
+        auto phi = NullFunction();
+        dotPhi->Set(p);
+
+        // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
+
+        return new BoundaryCondition(NullFunction().Clone(), dotPhi->Clone());
+
+    } else {
+        return new BoundaryCondition(NullFunction().Clone(), NullFunction().Clone());
     }
-
-    E_rand*=.5*h;
-
-    auto _E = *E/.75; // dividido por .75 porque o sistema acaba perdendo 25% de energia na termalizacao.
-    auto r = sqrt(_E/E_rand);
-    for(auto &p_i : p) p_i *= r;
-
-    E_rand = .0;
-    for(auto &p_i : p) E_rand += p_i * p_i;
-    E_rand *= .5*h;
-
-    auto phi = NullFunction();
-    dotPhi->Set(p);
-
-    // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
-
-    return new BoundaryCondition(NullFunction().Clone(), dotPhi->Clone());
 }
 

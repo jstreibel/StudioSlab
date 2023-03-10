@@ -25,37 +25,22 @@ namespace Base {
         virtual void notifyMouseButton(int button, int dir, int x, int y) {};
         virtual void notifyMouseMotion(int x, int y) {};
 
-        virtual void notifyReshape(int width, int height);
+        virtual void notifyReshape(int width, int height) {};
 
-        virtual void notifyRender() {finishFrameAndRender();};
-        auto finishFrameAndRender() -> bool;
+        virtual void notifyRender() {/*finishFrameAndRender();*/};
 
 
         virtual auto getWindowSizeHint() -> IntPair;
 
 
     protected:
-        int windowWidth, windowHeight;
-
         virtual auto needDraw() const -> bool;
         virtual void draw() = 0;
 
         Timer frameTimer = Timer(false);
 
     protected:
-        void SetWindow(double x, double y, double width, double height, const char *title = "") const;
-
         std::vector<String> stats;
-
-        double winXoffset = 4;
-        double winYoffset = 4;
-
-
-    public:
-        void addAnimation(Animation *animation) {animations.push_back(animation); }
-
-    private:
-        std::vector<Animation*> animations;
 
     };
 }
