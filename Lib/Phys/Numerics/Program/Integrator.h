@@ -65,8 +65,6 @@ public:
         return instance;
     }
 
-
-
     ~NumericalIntegration();
 
     void step(PosInt nSteps = 1) override;

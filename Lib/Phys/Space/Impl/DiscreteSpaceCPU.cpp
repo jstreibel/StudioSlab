@@ -22,6 +22,17 @@ DiscreteSpace &DiscreteSpaceCPU::Add(const DiscreteSpace &func) {
     return *this;
 }
 
+DiscreteSpace &DiscreteSpaceCPU::Subtract(const DiscreteSpace &func) {
+    assert(getTotalDiscreteSites() == func.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
+
+    auto &fVec = func.getX();
+    auto N = getTotalDiscreteSites();
+
+    OMP_PARALLEL_FOR(n, N)
+        X[n] -= fVec[n];
+
+    return *this;}
+
 DiscreteSpace &DiscreteSpaceCPU::StoreAddition(const DiscreteSpace &space1, const DiscreteSpace &space2) {
     assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites() && getTotalDiscreteSites() == space2.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
@@ -63,3 +74,16 @@ void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
     OMP_PARALLEL_FOR(n, N)
         X[n] = fVec[n];
 }
+
+DiscreteSpace &DiscreteSpaceCPU::StoreMultiplication(const DiscreteSpace &space1, const Real a) {
+    assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites() && getTotalDiscreteSites() == space2.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
+
+    auto &f1Vec = space1.getX();
+    auto N = getTotalDiscreteSites();
+
+    OMP_PARALLEL_FOR(n, N)
+        X[n] = f1Vec[n] * a;
+
+    return *this;
+}
+

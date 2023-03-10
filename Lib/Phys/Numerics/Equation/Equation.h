@@ -17,6 +17,10 @@ namespace Base {
         FIELD_STATE_TYPE &operator()(const FIELD_STATE_TYPE &in, FIELD_STATE_TYPE &out, Real t, Real dt) {
             return this->dtF(in, out, t, dt);
         }
+
+        virtual void startStep(Real t, Real dt) {};
+        virtual void finishStep(Real t, Real dt) {};
+
     };
 }
 

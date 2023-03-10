@@ -17,9 +17,13 @@ public:
 
     DiscreteSpace &Add(const DiscreteSpace &toi) override;
 
+    DiscreteSpace &Subtract(const DiscreteSpace &toi) override;
+
     DiscreteSpace &StoreAddition(const DiscreteSpace &toi1, const DiscreteSpace &toi2) override;
 
     DiscreteSpace &StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) override;
+
+    DiscreteSpace &StoreMultiplication(const DiscreteSpace &aoi1, const Real a) override;
 
     DiscreteSpace &Multiply(floatt a) override;
 

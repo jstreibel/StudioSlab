@@ -24,7 +24,7 @@ int main(int argc, const char **argv) {
 
     selector.setup(argc, argv);
 
-    auto prog = SimulationsAppRtoR(argc, argv);
+    auto prog = SimulationsAppRtoR(argc, argv, true);
 
     return SafetyNet::jump(prog);
 }

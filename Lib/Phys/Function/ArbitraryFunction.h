@@ -45,6 +45,16 @@ namespace Base {
 
         ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; }
 
+        //ArbitraryFunction& operator+=(const ArbitraryFunction& rhs);
+        //ArbitraryFunction& operator-=(const ArbitraryFunction& rhs);
+        //ArbitraryFunction& operator*=(const ArbitraryFunction& rhs);
+        //
+        //friend ArbitraryFunction& operator+(ArbitraryFunction& lhs, const ArbitraryFunction& rhs);
+        //friend ArbitraryFunction& operator-(ArbitraryFunction& lhs, const ArbitraryFunction& rhs);
+
+
+
+
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
         virtual ArbitraryFunction &Apply(const Function<TargetSpaceType, TargetSpaceType> &func,
                                          ArbitraryFunction &out) const = 0;
@@ -52,6 +62,12 @@ namespace Base {
         auto Add(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi) ->
         ArbitraryFunction<PosSpaceType, TargetSpaceType> & override {
             space->Add(*toi.space);
+            return *this;
+        }
+
+        auto Subtract(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &toi) ->
+        ArbitraryFunction<PosSpaceType, TargetSpaceType> & override {
+            space->Subtract(*toi.space);
             return *this;
         }
 
@@ -66,6 +82,13 @@ namespace Base {
                          const ArbitraryFunction<PosSpaceType, TargetSpaceType> & aoi2) ->
                          ArbitraryFunction<PosSpaceType, TargetSpaceType> & override{
             space->StoreSubtraction(*aoi1.space, *aoi2.space);
+            return *this;
+        }
+
+        ArbitraryFunction<PosSpaceType, TargetSpaceType> &
+        StoreMultiplication(const ArbitraryFunction<PosSpaceType, TargetSpaceType> &aoi1,
+                            const Real a) override {
+            space->StoreMultiplication(*aoi1.space, a);
             return *this;
         }
 

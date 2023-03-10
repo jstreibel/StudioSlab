@@ -33,6 +33,21 @@ DiscreteSpace &DiscreteSpaceGPU::Add(const DiscreteSpace &inSpace) {
     return *this;
 }
 
+DiscreteSpace &DiscreteSpaceGPU::Subtract(const DiscreteSpace &inSpace) {
+    auto &inSpaceGPU = dynamic_cast<const DiscreteSpaceGPU &>(inSpace);
+
+    auto &in = inSpaceGPU.XDev;
+    auto &out = XDev;
+
+    thrust::transform(in.begin(), in.end(),
+                      out.begin(), out.begin(),
+                      thrust::minus<Real>());
+
+    hostIsUpdated = false;
+
+    return *this;
+}
+
 DiscreteSpace &DiscreteSpaceGPU::StoreAddition(const DiscreteSpace &toi1, const DiscreteSpace &toi2) {
     cast(func1, const DiscreteSpaceGPU&, toi1);
     cast(func2, const DiscreteSpaceGPU&, toi2);
@@ -62,6 +77,21 @@ DiscreteSpace &DiscreteSpaceGPU::StoreSubtraction(const DiscreteSpace &aoi1, con
                       in2.begin(),
                       out.begin(),
                       thrust::minus<Real>());
+
+    hostIsUpdated = false;
+
+    return *this;
+}
+
+DiscreteSpace &DiscreteSpaceGPU::StoreMultiplication(const DiscreteSpace &aoi1, const Real a) {
+    cast(space1, const DiscreteSpaceGPU&, aoi1);
+    auto &in1 = space1.getXDev();
+    auto &out = this->getXDev();
+
+    thrust::transform(in1.begin(), in1.end(),
+                      thrust::make_constant_iterator(a),
+                      out.begin(),
+                      thrust::multiplies<Real>());
 
     hostIsUpdated = false;
 
@@ -114,3 +144,6 @@ const DeviceVector &DiscreteSpaceGPU::getXDev() const {
 void DiscreteSpaceGPU::notifyHostIsUpdated() {
     hostIsUpdated = true;
 }
+
+
+

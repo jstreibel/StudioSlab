@@ -11,16 +11,16 @@
 namespace Base {
 
     template <class FieldState>
-    class Equation_LorentzCovariant_2ndOrder : public Base::Equation<FieldState> {
+    class Lorentz_2ndOrder : public Base::Equation<FieldState> {
     private:
         typedef Base::Function<FType(FunctionType::OutCategory),FType(FunctionType::OutCategory)> TargetToTargetFunction;
     public:
-    explicit Equation_LorentzCovariant_2ndOrder(TargetToTargetFunction &potential)
+    explicit Lorentz_2ndOrder(TargetToTargetFunction &potential)
             : temp1(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
               temp2(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
               V(potential), dVDPhi(*potential.diff(0).release()) {   }
 
-    ~Equation_LorentzCovariant_2ndOrder() override {
+    ~Lorentz_2ndOrder() override {
         delete &temp1;
         delete &temp2;
         delete &V;
@@ -50,7 +50,7 @@ namespace Base {
 
     static bool isDissipating() { return false; }
 
-    private:
+    protected:
         FType(FunctionArbitraryType) &temp1, &temp2;
         TargetToTargetFunction &V;
         TargetToTargetFunction &dVDPhi;

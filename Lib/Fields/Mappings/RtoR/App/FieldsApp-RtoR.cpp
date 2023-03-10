@@ -5,6 +5,7 @@
 #include "FieldsApp-RtoR.h"
 #include "../Model/RtoRFieldState.h"
 #include "../Core/RtoRModelAllocator.h"
+#include "../Core/RtoRModelAllocator_Langevin.h"
 #include "Fields/Mappings/BCInterface.h"
 
 #include <Studios/Backend/Backend.h>
@@ -15,10 +16,13 @@
 
 
 
-SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv)
+SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, bool thermalHamiltonian)
         : AppBase(argc, argv)
 {
-    RtoRModelAllocator::Choose();
+    if(thermalHamiltonian)
+        RtoRModelAllocator_Langevin::Choose();
+    else
+        RtoRModelAllocator::Choose();
 
     AppBase::parseCLArgs();
 }
@@ -39,14 +43,3 @@ auto SimulationsAppRtoR::run() -> int {
 
     return 0;
 }
-
-//auto SimulationsAppRtoR::getCommandLineOptions() -> CLOptionsDescription {
-//    po::options_description desc("Options for simulation output structure.");
-//
-//    //TODO: colocar sub-menus aqui
-//    desc.add_options()("gl,g", "Use OpenGL backend.");
-//
-//    auto xtra = OutputStructureBuilderRtoR::getCommandLineOptions();
-//
-//    return desc;
-//}

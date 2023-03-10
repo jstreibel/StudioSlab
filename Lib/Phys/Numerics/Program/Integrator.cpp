@@ -8,8 +8,8 @@ NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outp
       steps(0)
 { }
 
-NumericalIntegration::~NumericalIntegration() = default;
-// {    // std::cout << histogram;     }
+NumericalIntegration::~NumericalIntegration()
+{    std::cout << histogram;     }
 
 void NumericalIntegration::step(PosInt nSteps) {
     histogram.startMeasure();

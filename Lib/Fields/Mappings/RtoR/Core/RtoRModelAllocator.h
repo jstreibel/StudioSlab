@@ -9,11 +9,12 @@
 #include <Phys/Numerics/Allocator.h>
 
 class RtoRModelAllocator : public Allocator {
+
+protected:
     RtoRModelAllocator();
 
 public:
     static auto Choose() -> RtoRModelAllocator*;
-    static void Init();
 
     auto newFunctionArbitrary() -> void * override;
     auto newFieldState() -> void * override;

@@ -10,7 +10,7 @@
 
 class SimulationsAppRtoR : public AppBase {
 public:
-    SimulationsAppRtoR(int argc, const char **argv);
+    SimulationsAppRtoR(int argc, const char **argv, bool thermalHamiltonian=false);
 
     auto run() -> int override;
 

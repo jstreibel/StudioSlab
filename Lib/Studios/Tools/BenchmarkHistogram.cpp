@@ -48,7 +48,7 @@ auto BenchmarkHistogram::getAverage() const -> double {
 }
 
 void BenchmarkHistogram::printHistogram(std::ostream &out) const {
-    if(1) {
+    if(0) {
         int C = C0;
         for (auto val : histogram) {
             out << std::endl << C << " - " << (C += I) << ": ";
@@ -58,7 +58,7 @@ void BenchmarkHistogram::printHistogram(std::ostream &out) const {
     } else {
         const double avg = getAverage();
 
-        std::cout << "Average time is " << avg << " microseconds/step" << std::endl;
+        std::cout << "Histogram measured average time: " << avg << " microseconds/step" << std::endl;
     }
 }
 

@@ -18,6 +18,8 @@ namespace R2toR {
     public:
         LeadingDeltaBoundaryCondition(Real height = 2/3.) : height(height) { }
 
+
+
         void apply(FieldState &function, Real t) const override{
             GrowingHole hole(height, t);
             GrowingHole vel(.0, t);

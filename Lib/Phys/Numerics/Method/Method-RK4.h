@@ -58,12 +58,12 @@ public:
         FIELD_STATE_TYPE &k4 = *_k4;
         FIELD_STATE_TYPE &phiTemp = *_phiTemp;
 
-        #pragma omp parallel num_threads(NUM_THREADS)
+        for(size_t i=0; i<n_steps; ++i)
         {
-            for(size_t i=0; i<n_steps; ++i)
+            const Real t = (steps+i)*dt;
+            H.startStep(t, dt);
+            #pragma omp parallel num_threads(NUM_THREADS)
             {
-                const Real t = (steps+i)*dt;
-
                 dPhi->apply(phi, t);
 
                 H(phi, k1, t, dt2);
@@ -93,6 +93,8 @@ public:
                 phi+=phiTemp;
                 #pragma omp barrier
             }
+
+            H.finishStep(t, dt);
         }
         steps+=n_steps;
     }

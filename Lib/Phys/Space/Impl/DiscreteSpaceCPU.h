@@ -14,9 +14,13 @@ public:
 
     auto Add(const DiscreteSpace &toi) -> DiscreteSpace & override;
 
+    auto Subtract(const DiscreteSpace &toi) -> DiscreteSpace & override;
+
     auto StoreAddition(const DiscreteSpace &space1, const DiscreteSpace &space2) -> DiscreteSpace & override;
 
     auto StoreSubtraction(const DiscreteSpace &space1, const DiscreteSpace &space2) -> DiscreteSpace & override;
+
+    DiscreteSpace &StoreMultiplication(const DiscreteSpace &aoi1, const Real a) override;
 
     auto Multiply(floatt a) -> DiscreteSpace & override;
 

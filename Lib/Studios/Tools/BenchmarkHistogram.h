@@ -17,7 +17,7 @@ typedef boost::timer::cpu_times CPUTimes;
 
 class BenchmarkHistogram {
 public:
-    explicit BenchmarkHistogram(int firstClass=100, int lastClass=150100, int nClasses=10000);
+    explicit BenchmarkHistogram(int firstClass=100, int lastClass=150100, int nClasses=100);
     ~BenchmarkHistogram();
     void startMeasure();
     void storeMeasure(int nSteps=1);

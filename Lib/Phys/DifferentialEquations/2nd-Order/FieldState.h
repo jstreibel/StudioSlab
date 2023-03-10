@@ -31,6 +31,14 @@ namespace Base {
 
             return *this;
         }
+
+        FieldState &Subtract(const FieldState<ArbitraryFunctionType> &fieldState) override {
+            phi->Subtract(fieldState.getPhi());
+            dPhiDt->Subtract(fieldState.getDPhiDt());
+
+            return *this;
+        }
+
         FieldState &StoreAddition(const FieldState &fieldState1, const FieldState &fieldState2) override {
             phi->StoreAddition(fieldState1.getPhi(), fieldState2.getPhi());
             dPhiDt->StoreAddition(fieldState1.getDPhiDt(), fieldState2.getDPhiDt());
@@ -47,6 +55,14 @@ namespace Base {
                                                                const FieldState &aoi2) override {
             phi->StoreSubtraction(aoi1.getPhi(), aoi2.getPhi());
             dPhiDt->StoreSubtraction(aoi1.getDPhiDt(), aoi2.getDPhiDt());
+
+            return *this;
+        }
+
+        FieldState<ArbitraryFunctionType> &
+        StoreMultiplication(const FieldState<ArbitraryFunctionType> &aoi1, const Real a) override {
+            phi->StoreMultiplication(aoi1.getPhi(), a);
+            dPhiDt->StoreMultiplication(aoi1.getDPhiDt(), a);
 
             return *this;
         }

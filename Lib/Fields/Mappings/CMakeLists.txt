@@ -31,6 +31,7 @@ set ( RTOR_SOURCES
 		RtoR/App/FieldsApp-RtoR.cpp
 
 		RtoR/Core/RtoRModelAllocator.cpp
+		RtoR/Core/RtoRModelAllocator_Langevin.cpp
 
 		RtoR/Controller/RtoRBCInterface.cpp
 

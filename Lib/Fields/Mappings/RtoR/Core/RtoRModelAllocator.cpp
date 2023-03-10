@@ -10,7 +10,7 @@
 #include "../Model/RtoRFunctionArbitraryCPU.h"
 #include "../Model/FunctionsCollection/AbsFunction.h"
 
-#include <Phys/DifferentialEquations/2nd-Order/Equation_LorentzCovariant-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h>
 
 
 RtoRModelAllocator::RtoRModelAllocator() = default;
@@ -24,18 +24,18 @@ auto RtoRModelAllocator::Choose() -> RtoRModelAllocator* {
     return me;
 }
 
-void RtoRModelAllocator::Init() {
-    auto &me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());
-
-    // me.potential = vm.count("pert") ? VShapePerturbed : VShape;
-
-    // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).
-    if(me.dev.getDevice()==device::GPU){
-        if(!isPOT(me.numericParams.getN())) throw "N must be pot for GPU sim.";
-    }
-
-    if(me.numericParams.getN()%me.dev.get_nThreads() != 0) throw "N%nThreads must be 0.";
-}
+//void RtoRModelAllocator::Init() {
+//    auto &me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());
+//
+//    // me.potential = vm.count("pert") ? VShapePerturbed : VShape;
+//
+//    // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).
+//    if(me.dev.getDevice()==device::GPU){
+//        if(!isPOT(me.numericParams.getN())) throw "N must be pot for GPU sim.";
+//    }
+//
+//    if(me.numericParams.getN()%me.dev.get_nThreads() != 0) throw "N%nThreads must be 0.";
+//}
 
 auto RtoRModelAllocator::newFunctionArbitrary() -> void * {
     const size_t N = numericParams.getN();
@@ -69,17 +69,5 @@ auto RtoRModelAllocator::getSystemSolver() -> void * {
 
     RtoR::Function *thePotential = new RtoR::AbsFunction;
 
-    //auto &vm = *(this->vm);
-    //switch (potential) {
-    //    case VShape:
-    //        thePotential = new RtoR::AbsFunction;
-    //        break;
-    //    case VShapePerturbed:
-    //        thePotential = new RtoR::AbsPerturbedFunction(vm["nfold"].as<int>());
-    //        break;
-    //    default:
-    //        thePotential = new RtoR::HarmonicPotential();
-    //}
-
-    return new Base::Equation_LorentzCovariant_2ndOrder<RtoR::FieldState>(*thePotential);
+    return new Base::Lorentz_2ndOrder<RtoR::FieldState>(*thePotential);
 }
