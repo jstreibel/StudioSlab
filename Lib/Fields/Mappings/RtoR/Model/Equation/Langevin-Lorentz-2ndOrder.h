@@ -29,11 +29,13 @@ namespace RtoR {
 
     class LorentzLangevin_2ndOrder : public LorentzInvariant {
 
+
+
         ArbitraryFunction &langevinImpulses;
         ArbitraryFunction &scaledImpulses;
 
         Real T=0.01;
-        Real eta = 1.0;
+        Real alpha = 1.0;
     public:
 
         explicit LorentzLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential),
@@ -73,13 +75,16 @@ namespace RtoR {
             {
                 scaledImpulses.StoreMultiplication(langevinImpulses, sqrt(2*T/dt));
 
-                auto &laplacian = iPhi.Laplacian(temp1);
-                auto &dV = iPhi.Apply(dVDPhi, temp2);
+                iPhi.Laplacian(laplacian); // Laplaciano do phi de input tem seu laplaciano
+                                           // calculado e o resultado vai pra dentro do temp1,
+                                           // que por sua vez eh retornado;
+                iPhi.Apply(dVDPhi, dV);
 
-                oDPhi.StoreSubtraction(laplacian, dV);
+                oDPhi.StoreSubtraction(laplacian, dV);  // agora temp1 e temp2 estao liberados;
+
+
 
                 oDPhi -= scaledImpulses;
-
                 oDPhi -= iDPhi;
 
                 oDPhi *= dt;

@@ -6,6 +6,7 @@
 #include "../Model/RtoRFieldState.h"
 #include "../Core/RtoRModelAllocator.h"
 #include "../Core/RtoRModelAllocator_Langevin.h"
+#include "../Core/RtoRModelAllocator_Montecarlo.h"
 #include "Fields/Mappings/BCInterface.h"
 
 #include <Studios/Backend/Backend.h>
@@ -16,13 +17,19 @@
 
 
 
-SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, bool thermalHamiltonian)
+SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration integration)
         : AppBase(argc, argv)
 {
-    if(thermalHamiltonian)
-        RtoRModelAllocator_Langevin::Choose();
-    else
-        RtoRModelAllocator::Choose();
+    switch (integration) {
+        case Integration::langevin:
+            RtoRModelAllocator_Langevin::Choose();
+            break;
+        case Integration::montecarlo:
+            RtoRModelAllocator_Montecarlo::Choose();
+            break;
+        default:
+            RtoRModelAllocator::Choose();
+    }
 
     AppBase::parseCLArgs();
 }

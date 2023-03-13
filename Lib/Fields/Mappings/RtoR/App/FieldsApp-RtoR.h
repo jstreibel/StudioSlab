@@ -10,7 +10,9 @@
 
 class SimulationsAppRtoR : public AppBase {
 public:
-    SimulationsAppRtoR(int argc, const char **argv, bool thermalHamiltonian=false);
+    enum Integration {regular, langevin, montecarlo};
+
+    SimulationsAppRtoR(int argc, const char **argv, Integration integration=regular);
 
     auto run() -> int override;
 

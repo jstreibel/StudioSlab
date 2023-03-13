@@ -13,11 +13,6 @@
 
 
 
-RtoRModelAllocator_Langevin::RtoRModelAllocator_Langevin() {
-
-}
-
-
 auto RtoRModelAllocator_Langevin::Choose() -> RtoRModelAllocator_Langevin* {
     auto *me = new RtoRModelAllocator_Langevin;
 

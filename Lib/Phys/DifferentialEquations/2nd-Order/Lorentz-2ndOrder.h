@@ -16,13 +16,13 @@ namespace Base {
         typedef Base::Function<FType(FunctionType::OutCategory),FType(FunctionType::OutCategory)> TargetToTargetFunction;
     public:
     explicit Lorentz_2ndOrder(TargetToTargetFunction &potential)
-            : temp1(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
-              temp2(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
+            : laplacian(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
+              dV(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
               V(potential), dVDPhi(*potential.diff(0).release()) {   }
 
     ~Lorentz_2ndOrder() override {
-        delete &temp1;
-        delete &temp2;
+        delete &laplacian;
+        delete &dV;
         delete &V;
         delete &dVDPhi;
     }
@@ -38,8 +38,8 @@ namespace Base {
 
         // Eq 2
         {
-            auto &laplacian = iPhi.Laplacian(temp1);
-            auto &dV = iPhi.Apply(dVDPhi, temp2);
+            iPhi.Laplacian(laplacian);
+            iPhi.Apply(dVDPhi, dV);
 
             oDPhi.StoreSubtraction(laplacian, dV) *= dt;
         }
@@ -51,7 +51,7 @@ namespace Base {
     static bool isDissipating() { return false; }
 
     protected:
-        FType(FunctionArbitraryType) &temp1, &temp2;
+        FType(FunctionArbitraryType) &laplacian, &dV;
         TargetToTargetFunction &V;
         TargetToTargetFunction &dVDPhi;
     };

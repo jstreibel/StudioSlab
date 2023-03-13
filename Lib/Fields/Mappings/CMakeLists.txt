@@ -32,6 +32,7 @@ set ( RTOR_SOURCES
 
 		RtoR/Core/RtoRModelAllocator.cpp
 		RtoR/Core/RtoRModelAllocator_Langevin.cpp
+		RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
 
 		RtoR/Controller/RtoRBCInterface.cpp
 

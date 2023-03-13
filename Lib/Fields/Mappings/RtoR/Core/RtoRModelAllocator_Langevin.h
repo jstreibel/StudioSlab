@@ -9,7 +9,7 @@
 #include "RtoRModelAllocator.h"
 
 class RtoRModelAllocator_Langevin : public RtoRModelAllocator {
-    RtoRModelAllocator_Langevin();
+    RtoRModelAllocator_Langevin() = default;
 
 public:
     static auto Choose() -> RtoRModelAllocator_Langevin*;
