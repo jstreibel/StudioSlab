@@ -43,7 +43,7 @@ namespace Base {
             return *this;
         }
 
-        ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; }
+        ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; return *this; }
 
         //ArbitraryFunction& operator+=(const ArbitraryFunction& rhs);
         //ArbitraryFunction& operator-=(const ArbitraryFunction& rhs);

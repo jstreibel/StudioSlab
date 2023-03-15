@@ -11,6 +11,8 @@
 #include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputMachineGun.h>
 #include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputStatistical.h>
 #include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputRandomEnergyOverDotPhi.h>
+#include <Fields/Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h>
+
 
 
 int main(int argc, const char **argv) {
@@ -21,6 +23,8 @@ int main(int argc, const char **argv) {
     /* sim 1 */selector.registerOption(new RtoR::InputMachineGun);
     /* sim 2 */selector.registerOption(new RtoR::InputManyOscillons);
     /* sim 3 */selector.registerOption(new RtoR::InputRandomEnergyOverDotPhi);
+    /* sim 4 */selector.registerOption(new RtoR::InputSingleOscillon);
+
 
     selector.setup(argc, argv);
 

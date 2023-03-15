@@ -18,7 +18,7 @@
 
 
 SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration integration)
-        : AppBase(argc, argv)
+        : AppBase(argc, argv), integration(integration)
 {
     switch (integration) {
         case Integration::langevin:
@@ -40,7 +40,10 @@ auto SimulationsAppRtoR::run() -> int {
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();
 
-    auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output);
+
+    auto numericMethod = integration==Integration::montecarlo ? NumericalIntegration::Euler
+                                                              : NumericalIntegration::RK4;
+    auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output, numericMethod);
 
     auto backend = Backend::GetInstance();
     backend->run(integrator);

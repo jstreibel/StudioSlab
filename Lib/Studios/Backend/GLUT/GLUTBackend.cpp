@@ -66,6 +66,7 @@ void GLUTBackend::run(Program *program)
 void GLUTBackend::keyboard(unsigned char key, int x, int y)
 {
     GLUTBackend *me = GLUTBackend::GetInstance();
+    Program *program = me->program;
 
     if(key == 27) glutLeaveMainLoop();
     else if(key == ' ') me->programIsRunning = !me->programIsRunning;
@@ -79,12 +80,12 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
             if (me->steps <= 0) me->steps = 1;
         }
     }
-    /*else if(key == ']'){
+    else if(key == 13){ // Enter
         program->step(1);
     }
-    else if(key == '}'){
-        program->step(20);
-    }*/
+    //else if(key == '}'){
+    //    program->step(20);
+    //}
     else if(key == 'h'){
         //std::cout << me->program->getHistogram();
         /*
@@ -106,6 +107,7 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
 void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
     auto *outGL = GLUTBackend::GetInstance()->outGL;
+
 
     outGL->notifyKeyboardSpecial(key, x, y);
 }

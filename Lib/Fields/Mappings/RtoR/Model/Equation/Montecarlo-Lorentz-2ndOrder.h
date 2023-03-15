@@ -22,21 +22,10 @@ namespace RtoR {
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
-
-
-
-        ArbitraryFunction &langevinImpulses;
-        ArbitraryFunction &scaledImpulses;
-
         Real T=0.01;
-        Real alpha = 1.0;
-    public:
 
-        explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential),
-                                                                      langevinImpulses(*(ArbitraryFunction*)Allocator::
-                                                                      getInstance().newFunctionArbitrary()),
-                                                                      scaledImpulses(*(ArbitraryFunction*)Allocator::
-                                                                      getInstance().newFunctionArbitrary()) { }
+    public:
+        explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential) { }
 
         void startStep(Real t, Real dt) override{
             Equation::startStep(t, dt);
@@ -45,27 +34,20 @@ namespace RtoR {
         void setTemperature(Real value) {T = value;}
 
         FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
-            const ArbitraryFunction &iPhi = fieldStateIn.getPhi();
-            const ArbitraryFunction &iDPhi = fieldStateIn.getDPhiDt();
-            ArbitraryFunction &oPhi = fieldStateOut.getPhi();
-            ArbitraryFunction &oDPhi = fieldStateOut.getDPhiDt();
+            const auto &iPhi = fieldStateIn.getPhi();
+            const auto &iDPhi = fieldStateIn.getDPhiDt();
+            auto &oPhi = fieldStateOut.getPhi();
+            auto &oDPhi = fieldStateOut.getDPhiDt();
 
             // Eq 1
             {   oPhi.SetArb(iDPhi) *= dt;   }
 
             // Eq 2
             {
-                iPhi.Laplacian(laplacian); // Laplaciano do phi de input tem seu laplaciano
-                // calculado e o resultado vai pra dentro do temp1,
-                // que por sua vez eh retornado;
+                iPhi.Laplacian(laplacian);
                 iPhi.Apply(dVDPhi, dV);
 
-                oDPhi.StoreSubtraction(laplacian, dV);  // agora temp1 e temp2 estao liberados;
-
-                oDPhi -= iDPhi;
-
-                oDPhi *= dt;
-
+                oDPhi.StoreSubtraction(laplacian, dV) *= dt;
             }
 
             return fieldStateOut;
