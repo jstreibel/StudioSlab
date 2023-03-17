@@ -6,12 +6,15 @@
 #define FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 
 #include <Phys/Numerics/Output/OutputStructureBuilderBase.h>
+#include "Fields/Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
 class OutputStructureBuilderRtoR : public OutputStructureBuilderBase {
 public:
     OutputStructureBuilderRtoR();
 
     auto build(String outputFileName) -> OutputManager * override;
+
+    virtual auto buildOpenGLOutput() -> RtoR::OutputOpenGL*;
 };
 
 

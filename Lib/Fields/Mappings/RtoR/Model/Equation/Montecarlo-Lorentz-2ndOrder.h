@@ -11,6 +11,9 @@
 
 #include "../RtoRFieldState.h"
 
+#include "Phys/Thermal/Utils/RandUtils.h"
+#include "Phys/Thermal/Utils/ThermoUtils.h"
+
 
 #define FType(a) typename FieldState::a
 
@@ -22,35 +25,66 @@ namespace RtoR {
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
-        Real T=0.01;
+        Real T=1.e6;
+        unsigned accepted = 0;
 
+        double deltaE(VecFloat_I &phi, const int site, const double newVal, const double h){
+            const auto N = phi.size();
+
+            const auto C = phi[site];
+            const auto L = site-1<0  ? phi[N-1] : phi[site-1];
+            const auto R = site+1>=N ? phi[0]   : phi[site+1];
+
+            const auto v = newVal;
+
+            return (1/h) * (C-v) * (v - L + C - R) + h*(V(C) - V(v));
+        }
+
+        bool shouldAccept(double deltaE){
+            if(deltaE<0) return true;
+
+            const double r = RandUtils::random01();
+
+            const double z = ThermoUtils::BoltzmannWeight(T, deltaE);
+
+            return (r<z);
+        }
     public:
         explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential) { }
 
         void startStep(Real t, Real dt) override{
             Equation::startStep(t, dt);
+            accepted = 0;
         }
 
         void setTemperature(Real value) {T = value;}
+        Real getTemperature() { return T; }
 
-        FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
-            const auto &iPhi = fieldStateIn.getPhi();
-            const auto &iDPhi = fieldStateIn.getDPhiDt();
-            auto &oPhi = fieldStateOut.getPhi();
-            auto &oDPhi = fieldStateOut.getDPhiDt();
 
-            // Eq 1
-            {   oPhi.SetArb(iDPhi) *= dt;   }
+        FieldState &dtF(const FieldState &null, FieldState &fieldState, Real t, Real dt) override {
+            auto &phi = fieldState.getPhi();
+            auto &dPhidt = fieldState.getDPhiDt();
 
-            // Eq 2
-            {
-                iPhi.Laplacian(laplacian);
-                iPhi.Apply(dVDPhi, dV);
+            auto N = phi.N;
+            auto h = phi.getSpace().geth();
+            auto &X = phi.getSpace().getX();
 
-                oDPhi.StoreSubtraction(laplacian, dV) *= dt;
+            for (int ssf = 0; ssf < N; ++ssf) {
+                // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
+                const int i = RandUtils::RandInt() % N;
+                const Real v = X[i];
+                const Real newVal = v + RandUtils::random(-.1,.1);
+
+                const double deltaE = this->deltaE(X, i, newVal, h);
+
+                if (shouldAccept(deltaE)) {
+                    X[i] = newVal;
+                    accepted++;
+                }
             }
 
-            return fieldStateOut;
+
+            return fieldState;
         }
 
     };

@@ -1,8 +1,0 @@
-//
-// Created by joao on 3/13/23.
-//
-
-#ifndef STUDIOSLAB_MONTECARLOBC_H
-#define STUDIOSLAB_MONTECARLOBC_H
-
-#endif //STUDIOSLAB_MONTECARLOBC_H

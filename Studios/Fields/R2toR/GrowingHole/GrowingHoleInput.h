@@ -7,7 +7,7 @@
 
 #include "Fields/Mappings/R2toR/Controller/R2ToRBCInterface.h"
 
-#include "../OutputBuilder.h"
+#include "OutputBuilder.h"
 #include "GrowingHoleBoundaryCondition.h"
 
 const auto pi = 3.1415926535897932384626;

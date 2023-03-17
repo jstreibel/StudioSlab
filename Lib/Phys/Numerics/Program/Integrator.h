@@ -11,7 +11,7 @@
 
 #include "Phys/Numerics/Method/Method.h"
 #include "Phys/Numerics/Method/Method-RK4.h"
-#include "Phys/Numerics/Method/Method-Euler.h"
+#include "Phys/Numerics/Method/Method-MCBase.h"
 
 #include <Studios/Backend/Program.h>
 #include <Studios/Tools/BenchmarkHistogram.h>
@@ -31,7 +31,7 @@ class NumericalIntegration : public Program {
     NumericalIntegration(const void *dPhi, OutputManager *outputManager);
 
 public:
-    enum Methods {Euler, RK4};
+    enum Methods {Montecarlo, RK4};
 
     template <class FIELD_STATE_TYPE>
     static NumericalIntegration* New(const void *dPhi, OutputManager *outputManager, Methods theMethod=RK4)
@@ -63,24 +63,24 @@ public:
                 default:
                     throw "Number of threads must be between 1 and 16 inclusive.";
             }
-        } else if(theMethod==Euler) {
+        } else if(theMethod == Montecarlo) {
             switch (numThreads) {
-                GENERATE_FOR_NTHREADS(StepperEuler, 1);
-                GENERATE_FOR_NTHREADS(StepperEuler, 2);
-                GENERATE_FOR_NTHREADS(StepperEuler, 3);
-                GENERATE_FOR_NTHREADS(StepperEuler, 4);
-                GENERATE_FOR_NTHREADS(StepperEuler, 5);
-                GENERATE_FOR_NTHREADS(StepperEuler, 6);
-                GENERATE_FOR_NTHREADS(StepperEuler, 7);
-                GENERATE_FOR_NTHREADS(StepperEuler, 8);
-                GENERATE_FOR_NTHREADS(StepperEuler, 9);
-                GENERATE_FOR_NTHREADS(StepperEuler, 10);
-                GENERATE_FOR_NTHREADS(StepperEuler, 11);
-                GENERATE_FOR_NTHREADS(StepperEuler, 12);
-                GENERATE_FOR_NTHREADS(StepperEuler, 13);
-                GENERATE_FOR_NTHREADS(StepperEuler, 14);
-                GENERATE_FOR_NTHREADS(StepperEuler, 15);
-                GENERATE_FOR_NTHREADS(StepperEuler, 16);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 1);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 2);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 3);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 4);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 5);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 6);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 7);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 8);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 9);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 10);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 11);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 12);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 13);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 14);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 15);
+                GENERATE_FOR_NTHREADS(StepperMontecarlo, 16);
                 default:
                     throw "Number of threads must be between 1 and 16 inclusive.";
             }

@@ -44,7 +44,11 @@ target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} Slab-Fields-Maps-RtoR-Per
 # ************************************************************************************************************
 
 
-add_executable (Fields-Montecarlo Fields/Montecarlo1+1/MontecarloMain.cpp ${SOURCES}  )
+add_executable (Fields-Montecarlo
+		Fields/Montecarlo1+1/MontecarloMain.cpp
+		Fields/Montecarlo1+1/Montecarlo.cpp
+		Fields/Montecarlo1+1/RtoROutGLMontecarlo.cpp
+		${SOURCES}  )
 add_compile_definitions(TARGET Fields-Montecarlo PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )
 

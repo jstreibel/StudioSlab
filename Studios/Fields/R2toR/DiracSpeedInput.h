@@ -7,7 +7,7 @@
 
 #include <Fields/Mappings/R2toR/Controller/R2ToRBCInterface.h>
 
-#include "OutputBuilder.h"
+#include "GrowingHole/OutputBuilder.h"
 #include "GrowingHole/GrowingHoleBoundaryCondition.h"
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"

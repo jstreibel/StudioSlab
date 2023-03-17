@@ -81,7 +81,7 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
 
         //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
-        Base::OutputOpenGL *outputOpenGL = new RtoR::OutGLStatistic();
+        Base::OutputOpenGL *outputOpenGL = buildOpenGLOutput();
 
         glutBackend->setOpenGLOutput(outputOpenGL);
         // outGL->output(dummyInfo); // stop flicker?
@@ -95,4 +95,8 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         addConsoleMonitor(*outputManager, fileOutputStepsInterval>0 ? fileOutputStepsInterval*25 : int(p.getn()/40));
 
     return outputManager;
+}
+
+auto OutputStructureBuilderRtoR::buildOpenGLOutput() -> RtoR::OutputOpenGL * {
+    return new RtoR::OutGLStatistic();
 }

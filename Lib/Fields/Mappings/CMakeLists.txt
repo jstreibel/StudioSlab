@@ -28,11 +28,14 @@ set ( RTOR_SOURCES
 		FunctionRenderer.cpp
 		BCInterface.cpp
 
+
 		RtoR/App/FieldsApp-RtoR.cpp
+
 
 		RtoR/Core/RtoRModelAllocator.cpp
 		RtoR/Core/RtoRModelAllocator_Langevin.cpp
 		RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
+
 
 		RtoR/Controller/RtoRBCInterface.cpp
 
@@ -43,11 +46,10 @@ set ( RTOR_SOURCES
 		RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
 		RtoR/Controller/InteractingFormations/input-general-oscillons.cpp
 
-		RtoR/Controller/ManyOscillons/InputManyOscillons.cpp
-		RtoR/Controller/ManyOscillons/InputMachineGun.cpp
-		RtoR/Controller/ManyOscillons/InputStatistical.cpp
-		RtoR/Controller/ManyOscillons/InputRandomEnergyOverDotPhi.cpp
-		RtoR/Controller/ManyOscillons/RandUtils.cpp
+		RtoR/Controller/ThermalStudies/InputManyOscillons.cpp
+		RtoR/Controller/ThermalStudies/InputMachineGun.cpp
+		RtoR/Controller/ThermalStudies/InputStatistical.cpp
+		RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.cpp
 
 
 		RtoR/Model/FunctionsCollection/analytic-breather.cpp
@@ -65,17 +67,20 @@ set ( RTOR_SOURCES
 		RtoR/Model/RtoRBoundaryCondition.cpp
 		RtoR/Model/RtoRFuncArbResizable.cpp
 
+
 		RtoR/View/OutputStructureBuilderRtoR.cpp
 		RtoR/View/RtoROutputHistoryToFile.cpp
+
+		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
 		RtoR/View/Graphics/RtoROutputOpenGL.cpp
-		RtoR/View/Graphics/Artists/GraphRtoR.cpp
+		RtoR/View/Graphics/RtoROutGLStatistic.cpp
+		RtoR/View/Graphics/RtoROutGLStatistic.h
+
 
 		RtoR/Calc/EnergyCalculator.cpp
 		RtoR/Calc/Histogram.cpp
 
-		RtoR/View/Graphics/RtoROutGLStatistic.cpp
-		RtoR/View/Graphics/RtoROutGLStatistic.h
 		)
 
 
@@ -141,7 +146,8 @@ set_property(TARGET ${MAPS_RtoR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
 
 add_library(${MAPS_RtoR_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-add_compile_definitions( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PERIODIC_BC ) # this line is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+# the line below is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
+add_compile_definitions( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PERIODIC_BC )
 set_property( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
 
 

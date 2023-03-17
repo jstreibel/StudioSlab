@@ -8,6 +8,8 @@
 namespace RandUtils {
     double random01();
 
+    double random(double a, double b);
+
     int RandInt();
 }
 

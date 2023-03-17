@@ -4,27 +4,20 @@
 
 #include <Studios/App/CrashPad.h>
 #include <Studios/Controller/Interface/InterfaceSelector.h>
-
 #include <Fields/Mappings/RtoR/App/FieldsApp-RtoR.h>
 
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputManyOscillons.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputMachineGun.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputStatistical.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputRandomEnergyOverDotPhi.h>
-#include <Fields/Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h>
+#include <Fields/Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h>
+
+#include "Montecarlo.h"
+
+
 
 
 
 int main(int argc, const char **argv) {
 
     auto &selector = InterfaceSelector::getInstance();
-
-    /* sim 0 */selector.registerOption(new RtoR::InputStatistical);
-    /* sim 1 */selector.registerOption(new RtoR::InputMachineGun);
-    /* sim 2 */selector.registerOption(new RtoR::InputManyOscillons);
-    /* sim 3 */selector.registerOption(new RtoR::InputRandomEnergyOverDotPhi);
-    /* sim 4 */selector.registerOption(new RtoR::InputSingleOscillon);
-
+    /* Sim 0 */ selector.registerOption(new Montecarlo::Input);
 
     selector.setup(argc, argv);
 

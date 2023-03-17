@@ -22,7 +22,8 @@ GLUTBackend::GLUTBackend() : Backend(this)
 
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     //glutInitWindowSize(w, h);
-    glutInitWindowPosition(0, 0);
+    glutInitWindowPosition(10, 10);
+    glutInitWindowSize(800, 450);
     glutCreateWindow("Pendulum");
     //glutFullScreen();
     glutDisplayFunc(GLUTBackend::render);
@@ -44,7 +45,13 @@ void GLUTBackend::setOpenGLOutput(Base::GLUTEventListener *outputOpenGL) {
 
     IntPair size = outGL->getWindowSizeHint();
 
-    glutReshapeWindow(size.first, size.second);
+    if(size.first == -1 || size.second == -1) {
+        std::cout << "/nWarning: using default window size fullscreen.";
+        size = {800, 450};
+        glutFullScreen();
+    } else {
+        glutReshapeWindow(size.first, size.second);
+    }
 }
 
 auto GLUTBackend::GetInstance() -> GLUTBackend *{

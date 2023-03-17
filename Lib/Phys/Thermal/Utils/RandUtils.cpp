@@ -17,6 +17,10 @@ namespace RandUtils {
         return realRandGen(mt);
     }
 
+    double random(double a, double b){
+        return (b-a)*random01() + a;
+    }
+
     int RandInt() {
         return uintRandGen(mt);
     }

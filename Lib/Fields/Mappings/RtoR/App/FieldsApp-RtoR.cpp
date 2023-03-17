@@ -41,7 +41,7 @@ auto SimulationsAppRtoR::run() -> int {
     auto *output = bcInput->buildOutputManager();
 
 
-    auto numericMethod = integration==Integration::montecarlo ? NumericalIntegration::Euler
+    auto numericMethod = integration==Integration::montecarlo ? NumericalIntegration::Montecarlo
                                                               : NumericalIntegration::RK4;
     auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output, numericMethod);
 
