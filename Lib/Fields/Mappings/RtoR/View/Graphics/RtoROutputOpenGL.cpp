@@ -57,7 +57,7 @@ void RtoR::OutputOpenGL::initialize(double xMin, double xMax, double phiMin, dou
     auto samples = (int)Allocator::getInstance().getNumericParams().getN();
     this->mFieldsGraph = {xMin, xMax, -0.1*phiMax, phiMax, "|phi|", true, samples};
     window = new Window; window->addArtist(&this->mFieldsGraph);
-    panel->addWindow(window, true, 0.6);
+    panel->addWindow(window, true, 0.8);
 
 
 

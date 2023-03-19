@@ -33,6 +33,9 @@ namespace Base {
                     throw "Unknown device in instantiation of FunctionArbitrary.";
             }
         };
+        ~ArbitraryFunction(){
+            delete space;
+        }
 
         virtual ArbitraryFunction *CloneWithSize(PosInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
                                                                         " not implemented.";}

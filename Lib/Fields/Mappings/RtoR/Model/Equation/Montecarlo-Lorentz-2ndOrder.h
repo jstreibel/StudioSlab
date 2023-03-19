@@ -10,6 +10,7 @@
 #include "Phys/Numerics/Allocator.h"
 
 #include "../RtoRFieldState.h"
+#include "../RtoRFunctionArbitraryCPU.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
 #include "Phys/Thermal/Utils/ThermoUtils.h"
@@ -25,19 +26,44 @@ namespace RtoR {
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
-        Real T=1.e6;
+        Real T=1.e-3;
         unsigned accepted = 0;
 
-        double deltaE(VecFloat_I &phi, const int site, const double newVal, const double h){
-            const auto N = phi.size();
+        double E(const ArbitraryFunction &phi){
+            const auto h = phi.getSpace().geth();
+            const auto inv_2h = .5/h;
+            const auto &X = phi.getSpace().getX();
+            const auto &N = phi.N;
 
-            const auto C = phi[site];
-            const auto L = site-1<0  ? phi[N-1] : phi[site-1];
-            const auto R = site+1>=N ? phi[0]   : phi[site+1];
+            double E_h = .0;
+            for(auto i=0; i<N; ++i){
+                const auto &x_left = X[i==0   ? N-1 : i-1];
+                const auto &x = X[i];
+                const auto &x_right = X[i==N-1 ?   0 : i+1];
 
-            const auto v = newVal;
+                const auto dx = (x_right-x_left)*inv_2h;
+                const auto absx = abs(x);
 
-            return (1/h) * (C-v) * (v - L + C - R) + h*(V(C) - V(v));
+                E_h += .5*dx*dx + V(x);
+            }
+
+            return h*E_h;
+        }
+
+        double deltaE(ArbitraryFunction &phi, const int site, const double newVal, const double h){
+            FunctionArbitraryCPU phiNew(phi);
+
+            phiNew.getSpace().getX()[site] = newVal;
+
+            const auto deltaE = E(phiNew) - E(phi);
+
+
+            //const auto N = phi.size();
+            //const auto C = phi[site];
+            //const auto L = site-1<0  ? phi[N-1] : phi[site-1];
+            //const auto R = site+1>=N ? phi[0]   : phi[site+1];
+            //const auto v = newVal;
+            //return (1/h) * (C-v) * (v - L + C - R) + h*(V(C) - V(v));
         }
 
         bool shouldAccept(double deltaE){
@@ -72,10 +98,11 @@ namespace RtoR {
             for (int ssf = 0; ssf < N; ++ssf) {
                 // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
                 const int i = RandUtils::RandInt() % N;
-                const Real v = X[i];
-                const Real newVal = v + RandUtils::random(-.1,.1);
 
-                const double deltaE = this->deltaE(X, i, newVal, h);
+                const Real v = X[i];
+                const Real newVal = v + RandUtils::random(-.5,.5);
+
+                const double deltaE = this->deltaE(phi, i, newVal, h);
 
                 if (shouldAccept(deltaE)) {
                     X[i] = newVal;

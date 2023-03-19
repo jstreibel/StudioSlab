@@ -11,6 +11,7 @@ namespace RtoR {
     class FunctionArbitraryCPU : public ArbitraryFunction {
     public:
         FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
+        FunctionArbitraryCPU(const ArbitraryFunction& toCopy);
         FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
                              ArbitraryFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
 

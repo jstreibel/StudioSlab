@@ -23,6 +23,15 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
         getSpace().getX()[n] = toCopyX[n];
 }
 
+FunctionArbitraryCPU::FunctionArbitraryCPU(const ArbitraryFunction& toCopy)
+    : ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.getLaplacianType()) {
+
+    auto &toCopyX = toCopy.getSpace().getHostData(true);
+
+    for(PosInt n=0; n<N; n++)
+        getSpace().getX()[n] = toCopyX[n];
+}
+
 RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
     : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType){
 

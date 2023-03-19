@@ -27,41 +27,41 @@ namespace Montecarlo {
 
         Window *window = nullptr;
 
-        temperature1History = RtoR::FuncArbResizable(0, 0.1);
-        temperature2History = RtoR::FuncArbResizable(0, 0.1);
-        temperature3History = RtoR::FuncArbResizable(0, 0.1);
-
-        mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
-        mTemperaturesGraph->addFunction(&temperature1History, T1_color);
-        mTemperaturesGraph->addFunction(&temperature2History, T2_color);
-        mTemperaturesGraph->addFunction(&temperature3History, T3_color);
-        window = new Window;
-        window->addArtist(mTemperaturesGraph);
-        panel->addWindow(window);
+        //temperature1History = RtoR::FuncArbResizable(0, 0.1);
+        //temperature2History = RtoR::FuncArbResizable(0, 0.1);
+        //temperature3History = RtoR::FuncArbResizable(0, 0.1);
+//
+        //mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
+        //mTemperaturesGraph->addFunction(&temperature1History, T1_color);
+        //mTemperaturesGraph->addFunction(&temperature2History, T2_color);
+        //mTemperaturesGraph->addFunction(&temperature3History, T3_color);
+        //window = new Window;
+        //window->addArtist(mTemperaturesGraph);
+        //panel->addWindow(window);
 
 
         initialize(xLeft, xRight, -0.08, 0.08);
 
 
-        mHistogramsGraph = new GraphRtoR(0, 1, 0, 2e3, "V", true);
-        window = new Window;
-        window->addArtist(mHistogramsGraph);
-        panel->addWindow(window, true, 0.2);
-
-        mHistogramsGraph2 = new GraphRtoR(0, 1, 0, 1.2e3, "K", true);
-        window = new Window;
-        window->addArtist(mHistogramsGraph2);
-        panel->addWindow(window);
-
-        mHistogramsGraph3 = new GraphRtoR(0, 1, 0, 1.2e3, "(dphi/dx)^2", true);
-        window = new Window;
-        window->addArtist(mHistogramsGraph3);
-        panel->addWindow(window);
-
-        mHistogramsGraph4 = new GraphRtoR(0, 1, 0, 2.5e2, "U", true);
-        window = new Window;
-        window->addArtist(mHistogramsGraph4);
-        panel->addWindow(window);
+        //mHistogramsGraph = new GraphRtoR(0, 1, 0, 2e3, "V", true);
+        //window = new Window;
+        //window->addArtist(mHistogramsGraph);
+        //panel->addWindow(window, true, 0.2);
+//
+        //mHistogramsGraph2 = new GraphRtoR(0, 1, 0, 1.2e3, "K", true);
+        //window = new Window;
+        //window->addArtist(mHistogramsGraph2);
+        //panel->addWindow(window);
+//
+        //mHistogramsGraph3 = new GraphRtoR(0, 1, 0, 1.2e3, "(dphi/dx)^2", true);
+        //window = new Window;
+        //window->addArtist(mHistogramsGraph3);
+        //panel->addWindow(window);
+//
+        //mHistogramsGraph4 = new GraphRtoR(0, 1, 0, 2.5e2, "U", true);
+        //window = new Window;
+        //window->addArtist(mHistogramsGraph4);
+        //panel->addWindow(window);
 
 
         panel->arrangeWindows();
@@ -74,44 +74,44 @@ namespace Montecarlo {
         std::ostringstream ss;
 
         // *************************** Histograms *****************************
-        Histogram histogram;
-
-        mHistogramsGraph->clearFunctions();
-        mHistogramsGraph2->clearFunctions();
-        mHistogramsGraph3->clearFunctions();
-        mHistogramsGraph4->clearFunctions();
-
-
-        RtoR::Function *func = nullptr;
-
-        auto nbins = 100;
-
-
-        histogram.Compute(energyCalculator.getKinetic(), nbins);
-        func = histogram.asPDFFunction();
-        mHistogramsGraph2->addFunction(func, K_color);
-        mHistogramsGraph2->xMax = histogram.xMax;
-        mHistogramsGraph2->xMin = histogram.xMin;
-
-        histogram.Compute(energyCalculator.getGradient(), nbins);
-        func = histogram.asPDFFunction();
-        mHistogramsGraph3->addFunction(func, W_color);
-        mHistogramsGraph3->xMax = histogram.xMax;
-        mHistogramsGraph3->xMin = histogram.xMin;
-
-
-        histogram.Compute(energyCalculator.getPotential(), nbins);
-        func = histogram.asPDFFunction();
-        mHistogramsGraph->addFunction(func, V_color);
-        mHistogramsGraph->xMin = histogram.xMin;
-        mHistogramsGraph->xMax = histogram.xMax;
-
-        histogram.Compute(energyCalculator.getEnergy(), nbins);
-        mHistogramsGraph4->xMin = histogram.xMin;
-        mHistogramsGraph4->xMax = histogram.xMax;
-        func = histogram.asPDFFunction();
-
-        mHistogramsGraph4->addFunction(func, U_color);
+        //Histogram histogram;
+//
+        //mHistogramsGraph->clearFunctions();
+        //mHistogramsGraph2->clearFunctions();
+        //mHistogramsGraph3->clearFunctions();
+        //mHistogramsGraph4->clearFunctions();
+//
+//
+        //RtoR::Function *func = nullptr;
+//
+        //auto nbins = 100;
+//
+//
+        //histogram.Compute(energyCalculator.getKinetic(), nbins);
+        //func = histogram.asPDFFunction();
+        //mHistogramsGraph2->addFunction(func, K_color);
+        //mHistogramsGraph2->xMax = histogram.xMax;
+        //mHistogramsGraph2->xMin = histogram.xMin;
+//
+        //histogram.Compute(energyCalculator.getGradient(), nbins);
+        //func = histogram.asPDFFunction();
+        //mHistogramsGraph3->addFunction(func, W_color);
+        //mHistogramsGraph3->xMax = histogram.xMax;
+        //mHistogramsGraph3->xMin = histogram.xMin;
+//
+//
+        //histogram.Compute(energyCalculator.getPotential(), nbins);
+        //func = histogram.asPDFFunction();
+        //mHistogramsGraph->addFunction(func, V_color);
+        //mHistogramsGraph->xMin = histogram.xMin;
+        //mHistogramsGraph->xMax = histogram.xMax;
+//
+        //histogram.Compute(energyCalculator.getEnergy(), nbins);
+        //mHistogramsGraph4->xMin = histogram.xMin;
+        //mHistogramsGraph4->xMax = histogram.xMax;
+        //func = histogram.asPDFFunction();
+//
+        //mHistogramsGraph4->addFunction(func, U_color);
 
 
 
@@ -162,21 +162,21 @@ namespace Montecarlo {
         ss << "tau** = barphi + w = " << (barϕ + 2 * W / L);
         stats.addVolatileStat(ss.str(), T3_color);
 
-        temperature1History.insertBack(tau);
-        temperature2History.insertBack(tau_indirect);
-        temperature3History.insertBack(barϕ + 2 * W / L);
-
-        auto t = lastInfo.getT();
-        mTemperaturesGraph->xMax = t;
-        temperature1History.xMax = mTemperaturesGraph->xMax;
-        temperature2History.xMax = mTemperaturesGraph->xMax;
-        temperature3History.xMax = mTemperaturesGraph->xMax;
-
-        auto a = temperature1History.getYMax(),
-                b = temperature2History.getYMax(),
-                c = temperature3History.getYMax();
-
-        mTemperaturesGraph->yMax = max(a, max(b, c));
+        //temperature1History.insertBack(tau);
+        //temperature2History.insertBack(tau_indirect);
+        //temperature3History.insertBack(barϕ + 2 * W / L);
+//
+        //auto t = lastInfo.getT();
+        //mTemperaturesGraph->xMax = t;
+        //temperature1History.xMax = mTemperaturesGraph->xMax;
+        //temperature2History.xMax = mTemperaturesGraph->xMax;
+        //temperature3History.xMax = mTemperaturesGraph->xMax;
+//
+        //auto a = temperature1History.getYMax(),
+        //        b = temperature2History.getYMax(),
+        //        c = temperature3History.getYMax();
+//
+        //mTemperaturesGraph->yMax = max(a, max(b, c));
 
         RtoR::OutputOpenGL::draw();
 

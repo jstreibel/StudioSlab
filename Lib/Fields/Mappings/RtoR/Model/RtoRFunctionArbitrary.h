@@ -28,6 +28,7 @@ namespace RtoR {
 
     public:
         virtual ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const = 0;
+        LaplacianType getLaplacianType() const { return laplacianType; }
 
     public:
         Real mapIntToPos(PosInt i) const;
