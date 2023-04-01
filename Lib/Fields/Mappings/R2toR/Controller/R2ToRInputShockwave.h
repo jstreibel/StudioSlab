@@ -7,7 +7,7 @@
 
 #include <Fields/Mappings/BCInterface.h>
 
-#include "Phys/Toolset/CoreNativeTypes.h"
+#include "Common/CoreNativeTypes.h"
 #include "Phys/Numerics/Output/Channel/OutputChannel.h"
 #include "R2ToRBCInterface.h"
 

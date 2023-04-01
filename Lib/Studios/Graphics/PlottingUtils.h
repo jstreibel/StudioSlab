@@ -114,7 +114,8 @@ public:
         glEnd();
         */
 
-        write(x+hTick,  y+vTick, this->getText(), GLUT_BITMAP_TIMES_ROMAN_24);
+        throw "Not implemented";
+        //write(x+hTick,  y+vTick, this->getText(), GLUT_BITMAP_TIMES_ROMAN_24);
     }
 
     const char *getText() const { return annotation->get(); }

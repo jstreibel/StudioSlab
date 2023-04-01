@@ -7,10 +7,10 @@
 
 #include <Fields/Mappings/RtoR/App/FieldsApp-RtoR.h>
 
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputManyOscillons.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputMachineGun.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputStatistical.h>
-#include <Fields/Mappings/RtoR/Controller/ManyOscillons/InputRandomEnergyOverDotPhi.h>
+#include <Fields/Mappings/RtoR/Controller/ThermalStudies/InputManyOscillons.h>
+#include <Fields/Mappings/RtoR/Controller/ThermalStudies/InputMachineGun.h>
+#include <Fields/Mappings/RtoR/Controller/ThermalStudies/InputStatistical.h>
+#include <Fields/Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h>
 
 
 int main(int argc, const char **argv) {
@@ -24,7 +24,7 @@ int main(int argc, const char **argv) {
 
     selector.setup(argc, argv);
 
-    auto prog = SimulationsAppRtoR(argc, argv, true);
+    auto prog = SimulationsAppRtoR(argc, argv);
 
     return SafetyNet::jump(prog);
 }

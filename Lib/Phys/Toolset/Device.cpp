@@ -1,5 +1,9 @@
+
+
 #include <Studios/Controller/Interface/InterfaceManager.h>
 #include "Device.h"
+
+#include "Common/Utils.h"
 
 
 
@@ -36,11 +40,12 @@ void Device::setup(CLVariablesMap vm) {
     } else if (dev == GPU) {
 #if USE_CUDA
         int devCount;
-        cudaGetDeviceCount(&devCount);
+        cudaError err;
+
+        cew(cudaGetDeviceCount(&devCount));
         std::cout << "GPU " << dev_n << "/" << devCount << std::endl;
 
-        cudaError err = cudaSetDevice(dev_n - 1);
-        if (err != cudaError::cudaSuccess) throw (String("CUDA error ") + std::to_string(err)).c_str();
+        cew(cudaSetDevice(dev_n - 1));
 
         if (*nThreads > 1) {
             std::cout << "Ignoring n_threads argument (using GPU)." << std::endl;

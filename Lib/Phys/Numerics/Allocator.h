@@ -17,6 +17,11 @@ public:
 
     static auto getInstance() -> Allocator &;
 
+	template <class ARB_FUNC_TYPE>
+	static ARB_FUNC_TYPE* NewFunctionArbitrary() {
+		return (ARB_FUNC_TYPE*)getInstance().newFunctionArbitrary();
+	}
+
     virtual auto newFunctionArbitrary() -> void * = 0;
 	virtual auto newFieldState() -> void * = 0;
     virtual auto getSystemSolver() -> void * = 0;

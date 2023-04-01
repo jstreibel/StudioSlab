@@ -23,7 +23,8 @@ SimulationsAppR2toR::SimulationsAppR2toR(int argc, const char **argv)
 {
     Allocator_R2toR::Choose();
 
-    AppBase::parseCLArgs();
+    //AppBase::parseCLArgs();
+    parseCLArgs();
 }
 
 auto SimulationsAppR2toR::run() -> int {

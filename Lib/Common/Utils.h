@@ -30,6 +30,15 @@ auto GetDensityChar(float dens) -> char;
 
 void PrintDensityThere(int x, int y, float dens);
 
+#if USE_CUDA
+
+#include <driver_types.h>
+
+// cw stands for cuda error wrapper
+void cew(cudaError err);
+
+#endif // USE_CUDA
+
 template <typename T>
 std::string ToString(const T a_value, const int n = 2)
 {

@@ -6,7 +6,7 @@
 
 #include <Common/Typedefs.h>
 
-#include <Phys/Toolset/CoreNativeTypes.h>
+#include "Common/CoreNativeTypes.h"
 #include <Phys/Function/CommonFunctions.h>
 
 namespace RtoR {

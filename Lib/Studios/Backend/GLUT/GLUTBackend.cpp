@@ -18,12 +18,12 @@ GLUTBackend::GLUTBackend() : Backend(this)
     int dummy = 0;
     glutInit(&dummy, nullptr);
 
-    w = 800, h = 600;
+    w = 800, h = 450;
 
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     //glutInitWindowSize(w, h);
-    glutInitWindowPosition(10, 10);
-    glutInitWindowSize(800, 450);
+    glutInitWindowPosition(200, 200);
+    glutInitWindowSize(w, h);
     glutCreateWindow("Pendulum");
     //glutFullScreen();
     glutDisplayFunc(GLUTBackend::render);

@@ -97,7 +97,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
                                            bool filled, PosInt resolution, Real scale) {
     const double ds = 1. / double(resolution);
 
-    glLineWidth(3);
+    glLineWidth(1.8);
 
     auto length = section.length();
 

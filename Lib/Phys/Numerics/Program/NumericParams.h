@@ -11,7 +11,7 @@
 #include <Studios/Controller/Interface/Interface.h>
 #include <Studios/Controller/Interface/CommonParameters.h>
 #include <Common/Typedefs.h>
-#include <Phys/Toolset/CoreNativeTypes.h>
+#include "Common/CoreNativeTypes.h"
 
 /* DEFAULTS */
 

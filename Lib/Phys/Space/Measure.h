@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MEASURE_H
 
 
-#include <Phys/Toolset/CoreNativeTypes.h>
+#include "Common/CoreNativeTypes.h"
 
 class Measure {
     std::vector<Real> linearValues;

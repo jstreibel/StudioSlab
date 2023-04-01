@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ARITHMETICOPSINTERFACE_H
 #define V_SHAPE_ARITHMETICOPSINTERFACE_H
 
-#include "Phys/Toolset/CoreNativeTypes.h"
+#include "Common/CoreNativeTypes.h"
 
 /** Arithmetical Operations Interface */
 

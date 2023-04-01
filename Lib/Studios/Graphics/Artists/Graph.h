@@ -10,28 +10,24 @@
 #include "Studios/Graphics/Artists/Artist.h"
 
 #include "Common/Workaround/StringStream.h"
+#include "Common/BinaryToInt.h"
 
 #include "Studios/Graphics/WindowManagement/Window.h"
 
-
-#ifndef TITLE_FONT
-#define TITLE_FONT FONT9
-#endif
-#ifndef TICK_FONT
-#define TICK_FONT FONT6
-#endif
-
+#include "Studios/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Studios/Graphics/OpenGL/Utils.h"
 
 
 template<class FunctionType>
 class Graph : public Artist {
-    typedef std::pair<const FunctionType*, Color> FuncColorPair;
+    typedef std::tuple<const FunctionType*, Color, String> FunctionTriple;
 
-    std::vector<FuncColorPair> mFunctions;
 
-    void _drawAxes(int winW, int winH);
-    void __drawXAxis(int winW, int winH);
-    void __drawYAxis(int winW, int winH);
+    std::vector<FunctionTriple> mFunctions;
+
+    void _drawAxes(const Window *win);
+    void __drawXAxis(const Window *win);
+    void __drawYAxis(const Window *win);
 
 protected:
     String title = "";
@@ -53,7 +49,7 @@ public:
      */
     void draw(const Window *window) override;
 
-    void addFunction(const FunctionType* func, Color color={1,1,1,1});
+    void addFunction(const FunctionType* func, Color color=ColorScheme::defaultGraphColor, String name="");
     void clearFunctions();
 
     void addLabel(Label *label)
@@ -78,11 +74,15 @@ Graph<FunctionType>::Graph(double xMin, double xMax, double yMin, double yMax, S
 {
 }
 
+void auxRectDraw(int i, Color color, String label, const Window *window);
+
 template<class FunctionType>
 void Graph<FunctionType>::draw(const Window *window) {
     glMatrixMode(GL_MODELVIEW);
 
-    write(-0.95, 0.85, title, TITLE_FONT);
+    auto &tf = ColorScheme::graphTitleFont;
+    glColor4f(tf.r, tf.g, tf.b, tf.a);
+    writeOrtho(window, {xMin, xMax, yMin, yMax}, 3, -0.95, 0.85, title, FONT_STROKE_ROMAN);
 
     {
         const double deltaX = xMax-xMin;
@@ -94,11 +94,16 @@ void Graph<FunctionType>::draw(const Window *window) {
                 (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
     }
 
-    _drawAxes(window->w, window->h);
+    _drawAxes(window);
 
-    for(auto &pair : mFunctions){
-        auto &func = *pair.first;
-        auto color = pair.second;
+
+    int i=0;
+    for(auto &triple : mFunctions){
+        auto &func = *std::get<0>(triple);
+        auto color = std::get<1>(triple);
+        auto label = std::get<2>(triple);
+
+        auxRectDraw(i++, color, label, window);
 
         this->_renderFunction(&func, color);
     }
@@ -107,7 +112,7 @@ void Graph<FunctionType>::draw(const Window *window) {
 }
 
 template<class FunctionType>
-void Graph<FunctionType>::_drawAxes(int winW, int winH) {
+void Graph<FunctionType>::_drawAxes(const Window *win) {
     double deltaY;
     double markStart = yMax;
 
@@ -120,106 +125,68 @@ void Graph<FunctionType>::_drawAxes(int winW, int winH) {
         while(markStart < (yMin-yspacing))
             markStart+=yspacing;
 
-        //markStart = yMin + yspacing;
-
         yspacing = deltaY/10;
-
-        //if(deltaY/yspacing < 5) yspacing *= 0.5;
-        //if(deltaY/yspacing > 10) yspacing *= 2.0;
     }
 
-    __drawXAxis(winW, winH);
-    __drawYAxis(winW, winH);
+    glLineWidth(1.0);
+
+    __drawXAxis(win);
+    __drawYAxis(win);
 
     if(!labels.empty()){
-        const double Sx = (xMax-xMin) / winW;
-        const double Sy = (yMax-yMin) / winH;
+        const double Sx = (xMax-xMin) / win->w;
+        const double Sy = (yMax-yMin) / win->h;
         const double Tx = xMin;
         const double Ty = yMin;
 
         for(size_t i=0; i<labels.size(); ++i){
             labels[i]->draw(Sx, Sy, Tx, Ty);
         }
-
-        /*
-        const double inPixelsTimes2 = 15;
-        const double vTick = inPixelsTimes2 * Sy;
-        const double hTick = inPixelsTimes2 * Sx;
-        glColor3f(0,0,0);
-        glBegin(GL_LINES);
-        for(size_t i=0; i<labels.size(); ++i){
-            const Label *l = labels[i];
-            const Point2D &loc = l->pos;
-
-            double x = loc.x, y = loc.y;
-            if(l->isPosAbsolute){
-                x = (x+xMin)*Sx;
-                y = (y+yMin)*Sy;
-            }
-
-            glVertex2f(x, y);
-            glVertex2f(x+hTick, y+vTick);
-        }
-        glEnd();
-
-        for(size_t i=0; i<labels.size(); ++i){
-            const Label *l = labels[i];
-            const Point2D &loc = l->pos;
-
-            double x = loc.x, y = loc.y;
-            if(l->isPosAbsolute){
-                x = (x+xMin)*Sx;
-                y = (y+yMin)*Sy;
-            }
-
-            write(x+hTick, y+vTick, l->getText());
-        }
-        */
-
     }
 }
 
 template<class FunctionType>
-void Graph<FunctionType>::__drawXAxis(int winW, int winH) {
+void Graph<FunctionType>::__drawXAxis(const Window *win) {
     const double inPixelsTimes2 = 5;
-    const double vTick = inPixelsTimes2 * (yMax-yMin) / winH;
-    const double hTick = inPixelsTimes2 * (xMax-xMin) / winW;
+    const double vTick = inPixelsTimes2 * (yMax-yMin) / win->h;
+    const double hTick = inPixelsTimes2 * (xMax-xMin) / win->w;
     (void)hTick;
+
+    auto &gtf = ColorScheme::graphTicksFont;
 
     double xspacing = (xMax-xMin) / 10.0;
     if(xspacing == .0) xspacing = 1.0;
 
-    //if(drawXLabels)
     {
-        const double yloc = -yspacing*0.20;
-        for(double mark = 0; mark<=xMax*1.0001; mark+=xspacing)
-        {
+        glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
+
+        const double yloc = -yspacing*0.356;
+        for (double mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            glColor4f(.4f, .4f, 0.5f, 0.6f);
-            write(mark-xspacing/18.0, yloc, buffer, TICK_FONT);
+            writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
-        for(double mark = 0; mark>=xMin*1.0001; mark-=xspacing)
-        {
+        for (double mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            glColor4f(.4f, .4f, 0.5f, 0.6f);
-            write(mark-xspacing/18.0, yloc, buffer, TICK_FONT);
+            writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
     }
 
     if(1)
     {
+        auto &ac = ColorScheme::axisColor;
+        auto &tc = ColorScheme::tickColor;
         glBegin(GL_LINES);
         {
             //glPopAttrib();
 
-            glColor3f(.9f, .9f, .9f);
+            glColor4f(ac.r, ac.g, ac.b, ac.a);
 
             glVertex3d(xMin, 0, 0);
             glVertex3d(xMax, 0, 0);
 
-            glColor4f(.0f, .0f, 0.0f, 1.0f);
+            glColor4f(tc.r, tc.g, tc.b, tc.a);
 
             for(double mark = 0; mark<=xMax; mark+=xspacing){
                 glVertex3d(mark, -vTick, 0);
@@ -235,7 +202,7 @@ void Graph<FunctionType>::__drawXAxis(int winW, int winH) {
 }
 
 template<class FunctionType>
-void Graph<FunctionType>::__drawYAxis(int winW, int winH) {
+void Graph<FunctionType>::__drawYAxis(const Window *win) {
     const double deltaY = yMax-yMin;
     const double deltaX = xMax-xMin;
     const double xloc = xMin-deltaX*0.05;
@@ -245,7 +212,8 @@ void Graph<FunctionType>::__drawYAxis(int winW, int winH) {
     StringStream buffer;
     //buffer << std::scientific << std::setprecision(2);
 
-    //if(drawYLabels)
+    auto &gtf = ColorScheme::graphTicksFont;
+    glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
         for(double mark = markStart; mark<=yMax; mark+=yspacing)
         {
@@ -254,25 +222,31 @@ void Graph<FunctionType>::__drawYAxis(int winW, int winH) {
                 buffer << mark;
             else
                 buffer << "0";
-            glColor4f(.4f, .4f, 0.5f, 0.6f);
-            write(float(xloc), float(mark), buffer.str().c_str(), TICK_FONT);
+            writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark), buffer.str().c_str(), TICK_FONT);
         }
     }
+
 
     glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_LINE_SMOOTH);
     glEnable(GL_LINE_STIPPLE);
+    glLineStipple(2, 0x2727);
+    glLineStipple(2, 0x1249);
+    glLineStipple(2, 0x1111);
+
     glBegin(GL_LINES);
     {
-        glColor4f(.8f, .8f, 1.0f, 0.7f);
+        auto &ac = ColorScheme::axisColor;
+        auto &tc = ColorScheme::tickColor;
 
-        glLineStipple(2, 0x00FF);
+        glColor4f(tc.r, tc.g, tc.b, tc.a);
+
         for(double mark = markStart; mark<=yMax; mark+=yspacing ){
             glVertex3d(xMin, mark, 0);
             glVertex3d(xMax, mark, 0);
         }
 
-        glColor3f(.9f, .9f, .9f);
+        glColor4f(ac.r, ac.g, ac.b, ac.a);
 
         glVertex3d(xMin, 0, 0);
         glVertex3d(xMax, 0, 0);
@@ -282,8 +256,8 @@ void Graph<FunctionType>::__drawYAxis(int winW, int winH) {
 }
 
 template<class FunctionType>
-void Graph<FunctionType>::addFunction(const FunctionType *func, Color color) {
-    mFunctions.emplace_back(FuncColorPair{func, color});
+void Graph<FunctionType>::addFunction(const FunctionType *func, Color color, String name) {
+    mFunctions.emplace_back(FunctionTriple{func, color, name});
 }
 
 template<class FunctionType>

@@ -27,3 +27,17 @@ char GetDensityChar(float dens){
 void PrintDensityThere(int x, int y, float dens) {
     PrintThere(x, y, "%c", GetDensityChar(dens));
 }
+
+#if USE_CUDA
+
+#include <cuda_runtime.h>
+void cew(cudaError err){
+
+    auto errStr = cudaGetErrorString(err);
+
+    auto errMsg = std::string("CUDA error ") + std::string(errStr);
+    
+    if (err != cudaError::cudaSuccess) throw errMsg.c_str();
+}
+
+#endif // USE_CUDA

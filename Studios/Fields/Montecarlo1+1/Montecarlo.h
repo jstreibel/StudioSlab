@@ -37,6 +37,7 @@ namespace Montecarlo {
 
     public:
         Input()
+
         : RtoRBCInterface("Input of initial field data for Montecarlo simulation.", "Montecarlo",
                           new Montecarlo::OutputBuilder()) { addParameters({&T, &E, &n}); }
 

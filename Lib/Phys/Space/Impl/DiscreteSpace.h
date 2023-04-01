@@ -6,7 +6,7 @@
 #define V_SHAPE_DISCRETESPACE_H
 
 
-#include "Phys/Toolset/CoreNativeTypes.h"
+#include "Common/CoreNativeTypes.h"
 #include "ArithmeticOperationInterface.h"
 
 struct DimensionMetaData {

@@ -50,12 +50,17 @@ namespace RtoR {
             return h*E_h;
         }
 
+        ArbitraryFunction *temp;
         double deltaE(ArbitraryFunction &phi, const int site, const double newVal, const double h){
-            FunctionArbitraryCPU phiNew(phi);
+            ArbitraryFunction &phiNew = *temp;
+
+            phiNew.SetArb(phi);
 
             phiNew.getSpace().getX()[site] = newVal;
 
             const auto deltaE = E(phiNew) - E(phi);
+
+            return deltaE;
 
 
             //const auto N = phi.size();
@@ -76,7 +81,8 @@ namespace RtoR {
             return (r<z);
         }
     public:
-        explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential) { }
+        explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential)
+            : LorentzInvariant(potential), temp(Allocator::NewFunctionArbitrary<ArbitraryFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             Equation::startStep(t, dt);

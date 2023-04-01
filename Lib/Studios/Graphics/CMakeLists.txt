@@ -7,7 +7,7 @@ set( GRAPHICS_SOURCES
 
 
 		Artists/StatsDisplay.cpp
-		Artists/Graph.cpp
+		Artists/StylesAndColorSchemes.cpp
 
 		WindowManagement/Window.cpp
 		WindowManagement/WindowStyles.cpp
@@ -21,10 +21,10 @@ set( GRAPHICS_SOURCES
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp
 
-		)
+		OpenGL/Utils.cpp Artists/Graph.cpp)
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Graphics
 		Slab-Common
-		#Slab-Studios-Backend
+		Slab-Studios-Backend
 		)

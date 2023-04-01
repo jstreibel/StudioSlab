@@ -26,7 +26,7 @@ void StatsDisplay::draw(const Window *window) {
         const int cursorx = 14;
         const float lineHeight = 18;
         float delta = lineHeight;
-        auto font = FONT9;
+        auto font = FONT_BITMAP_9;
 
         auto colorTone = char(0.9*255);
         glColor3b(colorTone, colorTone, colorTone);
@@ -35,7 +35,7 @@ void StatsDisplay::draw(const Window *window) {
             auto color = stat.second;
             glColor3f(color.r, color.g, color.b);
             std::string text = stat.first;
-            write(cursorx, -delta, text, font);
+            writeBitmap(window, cursorx, -delta, text, font);
             delta += lineHeight;
         }
         stats.clear();

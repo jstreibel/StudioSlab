@@ -3,6 +3,7 @@
 //
 
 #include "Window.h"
+#include "Studios/Graphics/Artists/StylesAndColorSchemes.h"
 
 #include <GL/gl.h>
 
@@ -15,10 +16,12 @@ void Window::draw(bool decorated, bool clear) const {
 }
 
 void Window::_clear() const {
+
+    auto &bg = ColorScheme::background;
+
     glBegin(GL_QUADS);
     {
-
-        glColor4d(0.1, 0.1, 0.1, 1.0);
+        glColor4d(bg.r, bg.g, bg.b, bg.a);
         glVertex2f(-p, -p);
         glVertex2f(-p, p);
         glVertex2f(p, p);

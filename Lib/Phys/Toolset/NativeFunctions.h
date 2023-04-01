@@ -1,7 +1,7 @@
 #ifndef MATHUTIL_H
 #define MATHUTIL_H
 
-#include "CoreNativeTypes.h"
+#include "Common/CoreNativeTypes.h"
 
 #include <Common/Typedefs.h>
 

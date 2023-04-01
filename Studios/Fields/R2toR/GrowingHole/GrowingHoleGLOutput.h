@@ -26,6 +26,7 @@ namespace R2toR {
             const Real L = Allocator::getInstance().getNumericParams().getL();
             const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
 
+            auto dt = Allocator::getInstance().getNumericParams().getdt();
             stats.addVolatileStat(std::string("t = ") + std::to_string(getLastT()));
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
@@ -34,10 +35,10 @@ namespace R2toR {
             auto &phi = fState.getPhi();
 
             mSectionGraph.clearFunctions();
-            mSectionGraph.addFunction(&phi, {0.2,0.8,0.2});
-            RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave; radialShockwave.sett(t);
+            mSectionGraph.addFunction(&phi, ColorScheme::graph1a, "Numeric");
+            RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave; radialShockwave.sett(t-dt);
             FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1,0,0, false);
-            mSectionGraph.addFunction(&shockwave, {0.5,0.5,1});
+            mSectionGraph.addFunction(&shockwave, ColorScheme::graph1b, "Analytic");
 
             panel->draw(true, true);
         }
