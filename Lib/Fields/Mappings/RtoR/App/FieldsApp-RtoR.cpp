@@ -8,6 +8,7 @@
 #include "../Core/RtoRModelAllocator_Langevin.h"
 #include "../Core/RtoRModelAllocator_Montecarlo.h"
 #include "Fields/Mappings/BCInterface.h"
+#include "Studios/Backend/GLUT/GLUTBackend.h"
 
 #include <Studios/Backend/Backend.h>
 
@@ -29,6 +30,8 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration 
             break;
         default:
             RtoRModelAllocator::Choose();
+
+            RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential::free);
     }
 
     AppBase::parseCLArgs();
@@ -46,6 +49,11 @@ auto SimulationsAppRtoR::run() -> int {
     auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output, numericMethod);
 
     auto backend = Backend::GetInstance();
+
+    if (backend->backendName == "GLUT backend") {
+        GLUTBackend::GetInstance()->setStepsPerFrame(80);
+    }
+
     backend->run(integrator);
     Backend::Destroy();
 

@@ -24,10 +24,10 @@ void writeOrtho(const Window *window, Rect region, float fontScale, float x, flo
     auto regionRatio = w/(double)h;
     auto windowRatio = window->w/(double)window->h;
 
-    auto baseScale = w*1.e-4;
+    auto baseScale = h*2.5e-4;
 
-    auto xScale = fontScale*baseScale,
-         yScale = fontScale*baseScale*windowRatio/regionRatio;
+    auto xScale = fontScale*baseScale*regionRatio/windowRatio,
+         yScale = fontScale*baseScale;
 
     glMatrixMode(GL_MODELVIEW);
 

@@ -15,9 +15,17 @@ set ( SlabLibs
 
 # ************************************************************************************************************
 
+add_executable ( Signals-RtoR Fields/SignalProcess/SignalMain.cpp Fields/SignalProcess/Signal.cpp
+		Fields/SignalProcess/JackServer.cpp Fields/SignalProcess/JackServer.h)
+target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Fields-Maps-RtoR_GPU jack )
+#set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 
-add_executable ( Fields-RtoR Fields/MainRtoR.cpp)
-target_link_libraries ( Fields-RtoR	${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
+
+# ************************************************************************************************************
+
+
+add_executable ( Fields-RtoR Fields/RtoRPureSG/MainRtoR.cpp)
+target_link_libraries ( Fields-RtoR ${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
 #set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 
 
@@ -36,7 +44,7 @@ target_link_libraries ( Tests.app	${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
 # ************************************************************************************************************
 
 
-add_executable (Fields-RtoR-Thermal Fields/MainRtoRThermal.cpp ${SOURCES}  )
+add_executable (Fields-RtoR-Thermal Fields/RtoRThermalSG/MainRtoRThermal.cpp ${SOURCES}  )
 add_compile_definitions(TARGET Fields-RtoR-Thermal PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )
 
@@ -55,7 +63,7 @@ target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Perio
 # ************************************************************************************************************
 
 
-add_executable ( Fields-R2toR Fields/MainR2toR.cpp )
+add_executable ( Fields-R2toR Fields/R2toR/MainR2toR.cpp)
 target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
 set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 

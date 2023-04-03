@@ -13,7 +13,7 @@ private:
 public:
     OutputConsoleMonitor(const int n_steps, bool doCarrierReturn);
 
-    virtual String description() const {return "console monitor output";}
+    virtual String getDescription() const {return "console monitor output";}
 
 public:
     virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation);

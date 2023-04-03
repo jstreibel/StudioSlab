@@ -39,7 +39,7 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
     else ConsoleBackend::getSingleton();
 
 
-    const NumericParams &p = Allocator::getInstance().getNumericParams();
+    const NumericParams &p = Numerics::Allocator::getInstance().getNumericParams();
 
     auto *outputManager = new OutputManager;
 
@@ -54,9 +54,9 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
 
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}));
 
-        const auto N = (Real) Allocator::getInstance().getNumericParams().getN();
+        const auto N = (Real) Numerics::Allocator::getInstance().getNumericParams().getN();
         const Real Np = *outputResolution;
-        const Real r = Allocator::getInstance().getNumericParams().getr();
+        const Real r = Numerics::Allocator::getInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
         outputFileName += String("-N=") + ToString(N, 0);
@@ -77,8 +77,8 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
 
         const double phiMin = -0.08;
         const double phiMax = 0.08;
-        const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+        const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+        const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
         //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
         Base::OutputOpenGL *outputOpenGL = buildOpenGLOutput();

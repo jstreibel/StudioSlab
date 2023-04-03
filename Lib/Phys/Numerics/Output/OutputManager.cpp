@@ -4,13 +4,13 @@
 #include <Phys/Numerics/Allocator.h>
 
 
-OutputManager::OutputManager() : maxSteps(Allocator::getInstance().getNumericParams().getn()) { }
+OutputManager::OutputManager() : maxSteps(Numerics::Allocator::getInstance().getNumericParams().getn()) { }
 
 OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
 void OutputManager::output(OutputPacket &infoVolatile)
 {
-    const double t = infoVolatile.getT();
+    const double t = infoVolatile.getSimTime();
     const size_t steps = infoVolatile.getSteps();
 
     for(auto *out : outputs)
@@ -43,8 +43,8 @@ void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOut
 
     for(auto output : myOutputs)
     {
-        std::cout << "\nFinishing " << output->description() << ". ";
+        std::cout << "\nFinishing " << output->getDescription() << ". ";
         if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-            std::cout << "Error while finishing " << output->description() << "...";
+            std::cout << "Error while finishing " << output->getDescription() << "...";
     }
 }

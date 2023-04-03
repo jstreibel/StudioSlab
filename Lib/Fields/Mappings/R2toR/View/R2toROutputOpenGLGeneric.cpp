@@ -44,7 +44,7 @@ void R2toR::OutputOpenGL::draw() {
     const Real L = Allocator::getInstance().getNumericParams().getL();
     const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
 
-    stats.addVolatileStat(std::string("t = ") + std::to_string(getLastT()));
+    stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
     stats.addVolatileStat(std::string("L = ") + std::to_string(L));
     stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 

@@ -11,7 +11,7 @@ class Program {
 public:
     virtual ~Program() = default;
 
-    virtual void step(PosInt nSteps=1) = 0;
+    virtual void step(PosInt nSteps=1, void *args= nullptr) = 0;
 
     /**
      * This is an alternative to calling step at every frame.

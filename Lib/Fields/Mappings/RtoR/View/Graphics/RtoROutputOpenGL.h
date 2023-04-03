@@ -56,16 +56,17 @@ namespace RtoR {
         WindowPanel *panel;
 
         GraphRtoR mFieldsGraph;
-        GraphRtoR mTotalEnergyGraph;
+
+        //GraphRtoR mTotalEnergyGraph;
 
         StatsDisplay stats;
 
         EnergyCalculator energyCalculator;
-        FuncArbResizable UHistory;
-        FuncArbResizable KHistory;
-        FuncArbResizable WHistory;
-        FuncArbResizable VHistory;
-        Real energyTotal;
+        //FuncArbResizable UHistory;
+        //FuncArbResizable KHistory;
+        //FuncArbResizable WHistory;
+        //FuncArbResizable VHistory;
+        //Real energyTotal;
 
         const Color U_color = {.9f, .5f, .0f, .9};
         const Color K_color = {1,0,0};
@@ -84,7 +85,8 @@ namespace RtoR {
 
         double phiMax;
         double phiMin;
-        bool showAnalyticSolution = false;
+
+        //bool showAnalyticSolution = false;
     };
 
 }

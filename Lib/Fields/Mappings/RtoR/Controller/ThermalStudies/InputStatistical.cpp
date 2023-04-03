@@ -33,8 +33,8 @@ auto RtoR::InputStatistical::getDetailedDescription() -> String {
 }
 
 auto RtoR::InputStatistical::getBoundary() const -> const void * {
-    auto L = Allocator::getInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
-    auto xLeft = Allocator::getInstance().getNumericParams().getxLeft();
+    auto L = Numerics::Allocator::getInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
+    auto xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
     //auto L = 20.;
 
     auto oscLength = L / *n;

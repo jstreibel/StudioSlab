@@ -23,7 +23,7 @@ public:
 
     void registerOption(Interface *interface);
 
-    void setup(int argc, const char **argv);
+    void preParse(int argc, const char **argv);
     auto getCurrentCandidate() const -> Interface *;
 
 };

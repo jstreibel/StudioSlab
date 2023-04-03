@@ -9,6 +9,7 @@
 
 #include "../Model/RtoRFunctionArbitraryCPU.h"
 #include "../Model/FunctionsCollection/AbsFunction.h"
+#include "../Model/FunctionsCollection/NullFunction.h"
 
 #include <Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h>
 
@@ -67,7 +68,18 @@ auto RtoRModelAllocator::getSystemSolver() -> void * {
     }
 #endif
 
-    RtoR::Function *thePotential = new RtoR::AbsFunction;
+    RtoR::Function *thePotential;
+    //if(potential == V) thePotential = new RtoR::AbsFunction;
+    //else if(potential == free)
+        thePotential = new RtoR::NullFunction;
+    //else throw "Other potentials not implemented";
 
     return new Base::Lorentz_2ndOrder<RtoR::FieldState>(*thePotential);
+}
+
+void RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential pot, std::vector<Real> params) {
+    auto me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());
+    if(&me == nullptr) throw "Bad cast.";
+
+    me.potential = pot;
 }

@@ -8,10 +8,8 @@ class Backend
 protected:
 
     static Backend *myInstance;
-    explicit Backend(Backend *instance);
+    explicit Backend(Backend *instance, String name);
     virtual ~Backend();
-
-protected:
 
 public:
     static auto GetInstance() -> Backend *;
@@ -19,6 +17,8 @@ public:
     static void Destroy();
 
     virtual void run(Program *integrator) = 0;
+
+    const String backendName;
 };
 
 #endif // BACKEND_H

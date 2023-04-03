@@ -1,6 +1,6 @@
 #include "ConsoleBackend.h"
 
-ConsoleBackend::ConsoleBackend() : Backend(this) {
+ConsoleBackend::ConsoleBackend() : Backend(this, "Console backend") {
     /*
     if(Parse(argc, argv, p) == ERROR_IN_COMMAND_LINE){
         std::cout << "Error in cmd line." << std::endl;

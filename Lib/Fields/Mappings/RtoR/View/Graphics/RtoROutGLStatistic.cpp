@@ -22,8 +22,8 @@ const Color T3_color = Color(1, 1, 0);
 
 
 RtoR::OutGLStatistic::OutGLStatistic() {
-    const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-    const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+    const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
     Window *window = nullptr;
 
@@ -112,17 +112,17 @@ void RtoR::OutGLStatistic::draw() {
 
     // *************************** MY BEAUTY *****************************
 
-    auto N = (Real)Allocator::getInstance().getNumericParams().getN();
-    auto h = Allocator::getInstance().getNumericParams().geth();
-    auto L = Allocator::getInstance().getNumericParams().getL();
+    auto N = (Real)Numerics::Allocator::getInstance().getNumericParams().getN();
+    auto h = Numerics::Allocator::getInstance().getNumericParams().geth();
+    auto L = Numerics::Allocator::getInstance().getNumericParams().getL();
 
-    auto u = energyTotal/L;
+    //auto u = energyTotal/L;
     auto barϕ = energyCalculator.integratePotential() / L;
     auto K = energyCalculator.integrateKinetic();
     auto W = energyCalculator.integrateGradient();
 
     auto tau = 2*K/L;
-    auto tau_indirect = u - .5*barϕ;
+    //auto tau_indirect = u - .5*barϕ;
 
 
     stats.addVolatileStat(String("N = ") + std::to_string((int)N));
@@ -131,21 +131,21 @@ void RtoR::OutGLStatistic::draw() {
     stats.addVolatileStat(String("h = ") + std::to_string(h));
     stats.addVolatileStat(String(""));
 
-    ss.str(""); ss << "U = " << energyTotal;    stats.addVolatileStat(ss.str(), U_color);
+    //ss.str(""); ss << "U = " << energyTotal;    stats.addVolatileStat(ss.str(), U_color);
     ss.str(""); ss << "K = " << K;            stats.addVolatileStat(ss.str(), K_color);
     ss.str(""); ss << "W = " << W;            stats.addVolatileStat(ss.str(), W_color);
     ss.str(""); ss << "V = " << barϕ*L;      stats.addVolatileStat(ss.str(), V_color);
     stats.addVolatileStat("");
-    ss.str(""); ss << "u = U/L = " << u;        stats.addVolatileStat(ss.str(), U_color);
+    //ss.str(""); ss << "u = U/L = " << u;        stats.addVolatileStat(ss.str(), U_color);
     ss.str(""); ss << "tau = <dotphi^2> = 2K/L = " << tau;      stats.addVolatileStat(ss.str(), T1_color);
-    ss.str(""); ss << "tau* = u - barphi/2 = " << tau_indirect; stats.addVolatileStat(ss.str(), T2_color);
+    //ss.str(""); ss << "tau* = u - barphi/2 = " << tau_indirect; stats.addVolatileStat(ss.str(), T2_color);
     ss.str(""); ss << "tau** = barphi + w = " << (barϕ+2*W/L);    stats.addVolatileStat(ss.str(), T3_color);
 
     temperature1History.insertBack(tau);
-    temperature2History.insertBack(tau_indirect);
+    //temperature2History.insertBack(tau_indirect);
     temperature3History.insertBack(barϕ + 2*W / L);
 
-    auto t = lastInfo.getT();
+    auto t = lastInfo.getSimTime();
     mTemperaturesGraph->xMax = t;
     temperature1History.xMax = mTemperaturesGraph->xMax;
     temperature2History.xMax = mTemperaturesGraph->xMax;

@@ -28,8 +28,6 @@ public:
 
     ~OutputHistoryToFile() override;
 
-    auto description() const -> String override {return "full history output";}
-
 
 private:
 

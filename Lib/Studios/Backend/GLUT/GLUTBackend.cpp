@@ -11,7 +11,7 @@ GLUTBackend *GLUTBackend::glutBackend = nullptr;
 #define FORCE_FPS 60
 const double FRAME_TIME = 1.0/double(FORCE_FPS);
 
-GLUTBackend::GLUTBackend() : Backend(this)
+GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 {
     assert(GLUTBackend::glutBackend == nullptr);
 
@@ -176,7 +176,11 @@ void GLUTBackend::idleCall()
 
 
     if(gb->programIsRunning){
-        program->step(gb->steps);
+        int dummy = 1;
+        int *dummy_ptr = &dummy;
+        // dummy_ptr = nullptr;
+
+        program->step(gb->steps, dummy_ptr);
     }
 }
 

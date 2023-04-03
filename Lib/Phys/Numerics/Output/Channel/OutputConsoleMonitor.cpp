@@ -3,7 +3,7 @@
 #include <Phys/Numerics/Allocator.h>
 
 OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps, bool doCarrierReturn)
-    : OutputChannel(n_steps), timer(), maxT(Allocator::getInstance().getNumericParams().gett()),
+    : OutputChannel("Console monitor output", n_steps), timer(), maxT(Numerics::Allocator::getInstance().getNumericParams().gett()),
       steppingChar(doCarrierReturn ? '\r' : '\n')
 {
     timer.resume();
@@ -13,7 +13,7 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
 {
 	// Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
     OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
-                                      Allocator::getInstance().getNumericParams().getn(), maxT);
+                                          Numerics::Allocator::getInstance().getNumericParams().getn(), maxT);
 
     this->_out(dummyInfo);
     return true;
@@ -22,18 +22,18 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
 void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 {
 
-    auto &params = Allocator::getInstance().getNumericParams();
+    auto &params = Numerics::Allocator::getInstance().getNumericParams();
     auto n = params.getn();
 
     std::cout << steppingChar << "Step " << outputInfo.getSteps() << "/" << n << "   ---   " <<
-                 " Sim time " << outputInfo.getT() << "/" << maxT << "               " << std::flush;
+              " Sim time " << outputInfo.getSimTime() << "/" << maxT << "               " << std::flush;
 
 
 
     if(0) {
-        const double percCompl = abs(outputInfo.getT()/maxT);
+        const double percCompl = abs(outputInfo.getSimTime() / maxT);
 
-        size_t outputResT = Allocator::getInstance().getNumericParams().getn();
+        size_t outputResT = Numerics::Allocator::getInstance().getNumericParams().getn();
 
         std::cout << steppingChar << "[";
         const size_t n = outputResT / size_t(nStepsBetweenRecordings);

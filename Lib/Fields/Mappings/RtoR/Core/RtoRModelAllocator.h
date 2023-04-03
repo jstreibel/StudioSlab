@@ -7,18 +7,24 @@
 
 
 #include <Phys/Numerics/Allocator.h>
+#include "Fields/Mappings/RtoR/Model/RtoRFunction.h"
 
-class RtoRModelAllocator : public Allocator {
+class RtoRModelAllocator : public Numerics::Allocator {
 
 protected:
     RtoRModelAllocator();
 
 public:
+    enum Potential {V, KleinGordon, free, null} potential = V;
+
     static auto Choose() -> RtoRModelAllocator*;
+
+    static void SetPotential(Potential pot, std::vector<Real> params = {});
 
     auto newFunctionArbitrary() -> void * override;
     auto newFieldState() -> void * override;
     auto getSystemSolver() -> void * override;
+
 
 };
 

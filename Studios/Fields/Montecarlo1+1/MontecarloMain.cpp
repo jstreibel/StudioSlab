@@ -19,7 +19,7 @@ int main(int argc, const char **argv) {
     auto &selector = InterfaceSelector::getInstance();
     /* Sim 0 */ selector.registerOption(new Montecarlo::Input);
 
-    selector.setup(argc, argv);
+    selector.preParse(argc, argv);
 
     auto prog = SimulationsAppRtoR(argc, argv, SimulationsAppRtoR::Integration::montecarlo);
 

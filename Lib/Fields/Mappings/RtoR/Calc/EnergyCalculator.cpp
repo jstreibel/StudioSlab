@@ -51,7 +51,7 @@ auto RtoR::EnergyCalculator::integrateEnergy() -> Real
     for(const auto &e : E_v)
         E += e;
 
-    Real dx = Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
     return E*dx;
 }
 
@@ -61,7 +61,7 @@ auto RtoR::EnergyCalculator::integrateEnergy(Real xmin, Real xmax) -> Real {
     auto &func = *_oEnergyDensityFunc;
 
     VecFloat &E_v = _oEnergyDensityFunc->getSpace().getX();
-    Real dx = Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
 
     PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 
@@ -81,7 +81,7 @@ Real RtoR::EnergyCalculator::integrateKinetic() {
     for(const auto &k : K_v)
         K += k;
 
-    Real dx = Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
     return K*dx;
 }
 
@@ -92,7 +92,7 @@ Real RtoR::EnergyCalculator::integrateGradient() {
     for(const auto &grad : Grad_v)
         Grad += grad;
 
-    Real dx = Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
     return Grad*dx;
 }
 
@@ -103,6 +103,6 @@ Real RtoR::EnergyCalculator::integratePotential() {
     for(const auto &pot : Pot_v)
         Pot += pot;
 
-    Real dx = Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
     return Pot*dx;
 }

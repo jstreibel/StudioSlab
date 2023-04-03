@@ -19,9 +19,13 @@ namespace Base {
         ~OutputOpenGL() override;
 
 
+    // ********************* From GLUTEventListener ************** //
+
+    // ********************* End GLUTEventListener ************** //
+
+
     // ********************* From OutputBase ********************* //
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
-        auto description() const -> String override { return "OpenGL output"; }
 
         void notifyRender() override;
 
@@ -35,6 +39,7 @@ namespace Base {
     // ********************* From OpenGLArtistBase *************** //
     auto needDraw() const -> bool override;
     virtual void draw() override;
+
     // ********************* END OpenGLArtistBase **************** //
 
     public:

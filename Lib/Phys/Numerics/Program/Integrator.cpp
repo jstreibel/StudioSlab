@@ -4,21 +4,36 @@
 
 NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager)
     : outputManager(outputManager),
-      dt(Allocator::getInstance().getNumericParams().getdt()),
+      dt(Numerics::Allocator::getInstance().getNumericParams().getdt()),
       steps(0)
 { }
 
 NumericalIntegration::~NumericalIntegration()
 {    std::cout << histogram;     }
 
-void NumericalIntegration::step(PosInt nSteps) {
-    histogram.startMeasure();
-    stepper->step(dt, nSteps);
-    histogram.storeMeasure(nSteps);
+void NumericalIntegration::step(PosInt nSteps, void *args) {
+    bool activeSteps = args!= nullptr;
 
-    steps += nSteps;
+    if(activeSteps) {
+        for(auto i=0; i<nSteps; ++i){
+            histogram.startMeasure();
+            stepper->step(dt, 1);
+            histogram.storeMeasure(nSteps);
 
-    output();
+            steps++;
+
+            output();
+        }
+    } else {
+        histogram.startMeasure();
+        stepper->step(dt, nSteps);
+        histogram.storeMeasure(nSteps);
+
+        steps += nSteps;
+
+        output();
+    }
+
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){
@@ -31,7 +46,7 @@ OutputPacket NumericalIntegration::getOutputInfo(){
 
 void NumericalIntegration::runFullIntegration()
 {
-    size_t n = Allocator::getInstance().getNumericParams().getn();
+    size_t n = Numerics::Allocator::getInstance().getNumericParams().getn();
 
     while(steps < n){
         const size_t nStepsUntilNextOutput = outputManager->computeNStepsToNextOutput(steps);

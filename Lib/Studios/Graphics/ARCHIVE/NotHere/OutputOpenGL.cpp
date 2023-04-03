@@ -6,7 +6,7 @@
 using namespace Base;
 
 OutputOpenGL::OutputOpenGL()
-    : OutputChannel(1), lastT(0.0)
+    : OutputChannel("OpenGL output", 80), lastT(0.0)
 {
     finishFrameAndRender();
 }

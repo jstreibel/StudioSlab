@@ -15,8 +15,9 @@ class OutputChannel {
 public:
     virtual ~OutputChannel() = default;
 
-    virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool = 0;
-    virtual auto description() const -> String = 0;
+    virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
+    auto getDescription() const -> String;
+    auto getName() const -> String;
 
     virtual auto computeNextRecStep() -> size_t;
 
@@ -38,14 +39,16 @@ protected:
     OutputPacket lastInfo;
 
 
+    String name, description;
 public:
 
-    explicit OutputChannel(int nStepsInterval = 1);
+    explicit OutputChannel(String name="", int nStepsInterval = 1, String description="");
 
-    auto getLastT() -> double;
+    auto getLastSimTime() -> double;
     auto getNSteps() const -> int;
 
     void output(const OutputPacket &outInfo);
+
 
 };
 

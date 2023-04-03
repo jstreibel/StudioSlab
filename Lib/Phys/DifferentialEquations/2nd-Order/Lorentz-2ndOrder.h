@@ -16,8 +16,8 @@ namespace Base {
         typedef Base::Function<FType(FunctionType::OutCategory),FType(FunctionType::OutCategory)> TargetToTargetFunction;
     public:
     explicit Lorentz_2ndOrder(TargetToTargetFunction &potential)
-            : laplacian(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
-              dV(*(FType(FunctionArbitraryType)*)Allocator::getInstance().newFunctionArbitrary()),
+            : laplacian(*(FType(FunctionArbitraryType)*)Numerics::Allocator::getInstance().newFunctionArbitrary()),
+              dV(*(FType(FunctionArbitraryType)*)Numerics::Allocator::getInstance().newFunctionArbitrary()),
               V(potential), dVDPhi(*potential.diff(0).release()) {   }
 
     ~Lorentz_2ndOrder() override {

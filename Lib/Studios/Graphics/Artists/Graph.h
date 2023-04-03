@@ -42,12 +42,14 @@ public:
     double xMin, xMax, yMin, yMax;
 
     Graph(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
-               String title = "", bool filled = false, int samples = 512);
+               String title = "no_title", bool filled = false, int samples = 512);
 
     /*!
      * Draw presumes OpenGL model view matrix is identity.
      */
     void draw(const Window *window) override;
+
+    void setupOrtho();
 
     void addFunction(const FunctionType* func, Color color=ColorScheme::defaultGraphColor, String name="");
     void clearFunctions();
@@ -77,22 +79,28 @@ Graph<FunctionType>::Graph(double xMin, double xMax, double yMin, double yMax, S
 void auxRectDraw(int i, Color color, String label, const Window *window);
 
 template<class FunctionType>
+void Graph<FunctionType>::setupOrtho()
+{
+    glMatrixMode(GL_PROJECTION);
+    const double deltaX = xMax-xMin;
+    const double deltaY = yMax-yMin;
+    const double xTraLeft  = -deltaX*0.07;
+    const double xTraRight = +deltaX*0.02;
+
+    glOrtho(xMin+xTraLeft, xMax+xTraRight,
+    (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
+}
+
+template<class FunctionType>
 void Graph<FunctionType>::draw(const Window *window) {
+
+    setupOrtho();
+
     glMatrixMode(GL_MODELVIEW);
 
     auto &tf = ColorScheme::graphTitleFont;
     glColor4f(tf.r, tf.g, tf.b, tf.a);
-    writeOrtho(window, {xMin, xMax, yMin, yMax}, 3, -0.95, 0.85, title, FONT_STROKE_ROMAN);
-
-    {
-        const double deltaX = xMax-xMin;
-        const double deltaY = yMax-yMin;
-        const double xTraLeft  = -deltaX*0.07;
-        const double xTraRight = +deltaX*0.02;
-
-        glOrtho(xMin+xTraLeft, xMax+xTraRight,
-                (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
-    }
+    //writeOrtho(window, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
 
     _drawAxes(window);
 

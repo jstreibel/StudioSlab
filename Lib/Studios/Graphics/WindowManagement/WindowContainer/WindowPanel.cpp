@@ -125,7 +125,7 @@ void WindowPanel::assertConsistency() const {
     if(resWidth<1-freeWidths*epsilon)
         return;
 
-    throw "Inconsistent column widths.";
+    throw "Inconsistent colusmn widths.";
 }
 
 void WindowPanel::reshape(int w, int h) {

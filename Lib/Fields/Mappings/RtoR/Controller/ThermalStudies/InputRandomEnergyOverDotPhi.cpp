@@ -16,7 +16,7 @@ RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()
 }
 
 auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() const -> const void* {
-    auto &allocator = Allocator::getInstance();
+    auto &allocator = Numerics::Allocator::getInstance();
 
     auto N = allocator.getNumericParams().getN();
     auto h = allocator.getNumericParams().geth();

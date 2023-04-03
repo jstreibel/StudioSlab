@@ -7,7 +7,7 @@
 const long long unsigned int ONE_GB = 1073741824;
 
 OutputHistory::OutputHistory(size_t recordStepsInterval, SpaceFilterBase *filter, double tEnd_)
-    : OutputChannel(int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
+    : OutputChannel("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
     // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
@@ -22,7 +22,7 @@ auto OutputHistory::getUtilMemLoadBytes() const -> long long unsigned int
     // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
     //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
     //  Em outras palavras: o calculo abaixo esta errado.
-    return count * Allocator::getInstance().getNumericParams().getN() * sizeof(double);
+    return count * Numerics::Allocator::getInstance().getNumericParams().getN() * sizeof(double);
 }
 
 auto OutputHistory::shouldOutput(double t, long unsigned timestep) -> bool{
@@ -43,7 +43,7 @@ void OutputHistory::_out(const OutputPacket &outInfo)
     }
 
     spaceDataHistory.emplace_back(spaceFilter(outInfo));
-    tHistory.push_back(outInfo.getT());
+    tHistory.push_back(outInfo.getSimTime());
 
     ++count;
 }
@@ -54,7 +54,7 @@ auto OutputHistory::notifyIntegrationHasFinished(const OutputPacket &theVeryLast
 }
 
 auto OutputHistory::renderMetaDataAsPythonDictionary() const -> String {
-    Allocator &builder = Allocator::getInstance();
+    Numerics::Allocator &builder = Numerics::Allocator::getInstance();
 
     std::ostringstream oss;
 

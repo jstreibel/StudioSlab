@@ -20,7 +20,7 @@ RtoR::OutputOpenGL::OutputOpenGL() : panel(new WindowPanel) { }
 
 RtoR::OutputOpenGL::OutputOpenGL(const double xMin, const double xMax,
                                  const double phiMin, const double phiMax)
-                                 : panel(new WindowPanel)
+                                 : panel(new WindowPanel), mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
 {
     initialize(xMin, xMax, phiMin, phiMax);
 }
@@ -40,46 +40,46 @@ void RtoR::OutputOpenGL::initialize(double xMin, double xMax, double phiMin, dou
     Window *window = nullptr;
 
 
-    this->mTotalEnergyGraph = {0, Allocator::getInstance().getNumericParams().gett(), 0, 1,
-                               "U, K, W, |phi|, W+|phi|", true};
-    this->mTotalEnergyGraph.addFunction(&UHistory, U_color);
-    this->mTotalEnergyGraph.addFunction(&KHistory, K_color);
-    this->mTotalEnergyGraph.addFunction(&WHistory, W_color);
-    this->mTotalEnergyGraph.addFunction(&VHistory, V_color);
+    //this->mTotalEnergyGraph = {0, Allocator::getInstance().getNumericParams().gett(), 0, 1,
+    //                           "U, K, W, |phi|, W+|phi|", true};
+    //this->mTotalEnergyGraph.addFunction(&UHistory, U_color);
+    //this->mTotalEnergyGraph.addFunction(&KHistory, K_color);
+    //this->mTotalEnergyGraph.addFunction(&WHistory, W_color);
+    //this->mTotalEnergyGraph.addFunction(&VHistory, V_color);
 
-    window = new Window; window->addArtist(&this->mTotalEnergyGraph);
-    panel->addWindow(window);
+    //window = new Window; window->addArtist(&this->mTotalEnergyGraph);
+    //panel->addWindow(window);
 
 
     window = new Window; window->addArtist(&this->stats);
     panel->addWindow(window);
 
-    auto samples = (int)Allocator::getInstance().getNumericParams().getN();
-    this->mFieldsGraph = {xMin, xMax, -0.1*phiMax, phiMax, "|phi|", true, samples};
+    auto samples = (int)Numerics::Allocator::getInstance().getNumericParams().getN();
+    this->mFieldsGraph = {xMin, xMax, -0.1*phiMax, phiMax, "AAA", true, samples};
     window = new Window; window->addArtist(&this->mFieldsGraph);
-    panel->addWindow(window, true, 0.8);
+    panel->addWindow(window, true, 0.7);
 
 
 
-
-    phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, 120);
-    phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, 120);
+    const auto faktor = 2000;
+    phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
+    phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
     addAnimation(phiMaxAnim);
     addAnimation(phiMinAnim);
 
-    xMinAnim = new Animation(&mFieldsGraph.xMin, mFieldsGraph.xMin, 120);
-    xMaxAnim = new Animation(&mFieldsGraph.xMax, mFieldsGraph.xMax, 120);
+    xMinAnim = new Animation(&mFieldsGraph.xMin, mFieldsGraph.xMin, faktor);
+    xMaxAnim = new Animation(&mFieldsGraph.xMax, mFieldsGraph.xMax, faktor);
     addAnimation(xMinAnim);
     addAnimation(xMaxAnim);
 
-    UHistory.xMin = 0;
-    UHistory.xMax = Allocator::getInstance().getNumericParams().gett();
-    KHistory.xMin = 0;
-    KHistory.xMax = Allocator::getInstance().getNumericParams().gett();
-    WHistory.xMin = 0;
-    WHistory.xMax = Allocator::getInstance().getNumericParams().gett();
-    VHistory.xMin = 0;
-    VHistory.xMax = Allocator::getInstance().getNumericParams().gett();
+    //UHistory.xMin = 0;
+    //UHistory.xMax = Allocator::getInstance().getNumericParams().gett();
+    //KHistory.xMin = 0;
+    //KHistory.xMax = Allocator::getInstance().getNumericParams().gett();
+    //WHistory.xMin = 0;
+    //WHistory.xMax = Allocator::getInstance().getNumericParams().gett();
+    //VHistory.xMin = 0;
+    //VHistory.xMax = Allocator::getInstance().getNumericParams().gett();
 
 
     isInitialized = true;
@@ -87,7 +87,7 @@ void RtoR::OutputOpenGL::initialize(double xMin, double xMax, double phiMin, dou
 
 void RtoR::OutputOpenGL::draw() {
     if(!isInitialized) {
-        const auto &p = Allocator::getInstance().getNumericParams();
+        const auto &p = Numerics::Allocator::getInstance().getNumericParams();
         auto xMin = p.getxLeft();
         auto xMax = xMin + p.getL();
 
@@ -96,7 +96,12 @@ void RtoR::OutputOpenGL::draw() {
 
 
     stats.addVolatileStat("");
-    stats.addVolatileStat(std::string("t = ") + std::to_string(getLastT()));
+    stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
+    static size_t lastStep = 0;
+    stats.addVolatileStat(std::string("step ") + std::to_string(lastInfo.getSteps()));
+    stats.addVolatileStat(std::string("delta step: ") + std::to_string(lastInfo.getSteps() - lastStep));
+    lastStep = lastInfo.getSteps();
+
 
 
     // *************************** FIELD ***********************************
@@ -109,25 +114,25 @@ void RtoR::OutputOpenGL::draw() {
     if(showPhi){
         const Color colorPhi = V_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi);
+        mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");
     }
 
     if(showKineticEnergy){
         const Color colorKinetic = K_color;
 
         // mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
-        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic);
+        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
     }
 
     if(showGradientEnergy) {
         const Color colorGradient = W_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient);
+        mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient, "grad^2");
     }
 
     if(showEnergyDensity){
         const Color color = U_color;
-        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color);
+        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color, "E");
     }
 
     panel->draw(true, true);
@@ -139,39 +144,39 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
     const RtoR::FieldState &fieldState = *outInfo.getFieldData<RtoR::FieldState>();
     energyCalculator.computeDensities(fieldState);
 
-    auto U = energyCalculator.integrateEnergy();
-    auto K = energyCalculator.integrateKinetic();
-    auto W = energyCalculator.integrateGradient();
-    auto V = energyCalculator.integratePotential();
-
-    energyTotal = U;
-
-    if(UHistory.X.size() == 0) {
-        // Isso eh necessario pra evitar bugs estranhos. Sorry.
-        const double k = 1-1.e-5;
-        UHistory.insertBack(U * k);
-        UHistory.insertBack(U / k);
-    }
-
-    UHistory.insertBack(U);
-    KHistory.insertBack(K);
-    WHistory.insertBack(W);
-    VHistory.insertBack(V);
-
-    auto xMax = outInfo.getT();
-
-    auto yMin = min(UHistory.getYMin(), min(KHistory.getYMin(), min(WHistory.getYMin(), VHistory.getYMin())));
-    auto yMax = max(UHistory.getYMax(), min(KHistory.getYMax(), min(WHistory.getYMax(), VHistory.getYMax())));
-
-    mTotalEnergyGraph.yMax = yMax;
-    mTotalEnergyGraph.yMin = yMin;
-
-    mTotalEnergyGraph.xMax = xMax;
-
-    UHistory.xMax = xMax;
-    KHistory.xMax = xMax;
-    WHistory.xMax = xMax;
-    VHistory.xMax = xMax;
+    //auto U = energyCalculator.integrateEnergy();
+    //auto K = energyCalculator.integrateKinetic();
+    //auto W = energyCalculator.integrateGradient();
+    //auto V = energyCalculator.integratePotential();
+//
+    //energyTotal = U;
+//
+    //if(UHistory.X.size() == 0) {
+    //    // Isso eh necessario pra evitar bugs estranhos. Sorry.
+    //    const double k = 1-1.e-5;
+    //    UHistory.insertBack(U * k);
+    //    UHistory.insertBack(U / k);
+    //}
+//
+    //UHistory.insertBack(U);
+    //KHistory.insertBack(K);
+    //WHistory.insertBack(W);
+    //VHistory.insertBack(V);
+//
+    //auto xMax = outInfo.getT();
+//
+    //auto yMin = min(UHistory.getYMin(), min(KHistory.getYMin(), min(WHistory.getYMin(), VHistory.getYMin())));
+    //auto yMax = max(UHistory.getYMax(), min(KHistory.getYMax(), min(WHistory.getYMax(), VHistory.getYMax())));
+//
+    //mTotalEnergyGraph.yMax = yMax;
+    //mTotalEnergyGraph.yMin = yMin;
+//
+    //mTotalEnergyGraph.xMax = xMax;
+//
+    //UHistory.xMax = xMax;
+    //KHistory.xMax = xMax;
+    //WHistory.xMax = xMax;
+    //VHistory.xMax = xMax;
 
     Base::OutputOpenGL::_out(outInfo);
 }

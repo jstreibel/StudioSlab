@@ -24,7 +24,7 @@ namespace R2toR {
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
-        auto description() const -> String override;
+        auto getDescription() const -> String override;
 
     protected:
         void _out(const OutputPacket &OutputInfo) override;

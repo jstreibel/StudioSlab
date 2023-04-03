@@ -15,6 +15,8 @@ public:
     auto build(String outputFileName) -> OutputManager * override;
 
     virtual auto buildOpenGLOutput() -> RtoR::OutputOpenGL*;
+
+
 };
 
 

@@ -7,7 +7,7 @@
 
 #include <Studios/Controller/Nuklear/_nuklear_sfml.hpp>
 
-SFMLNuklearBackend::SFMLNuklearBackend() : Backend(this) {
+SFMLNuklearBackend::SFMLNuklearBackend() : Backend(this, "SFML+Nuklear backend") {
 
     window = new sf::RenderWindow(
             sf::VideoMode(1920, 1080),

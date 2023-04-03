@@ -38,7 +38,7 @@ public:
     {
         auto *instance = new NumericalIntegration(dPhi, outputManager);
 
-        const unsigned int numThreads = Allocator::getInstance().getDevice().get_nThreads();
+        const unsigned int numThreads = Numerics::Allocator::getInstance().getDevice().get_nThreads();
 
         Method *stepper = nullptr;
 
@@ -94,7 +94,7 @@ public:
 
     ~NumericalIntegration();
 
-    void step(PosInt nSteps = 1) override;
+    void step(PosInt nSteps = 1, void *args= nullptr) override;
 
     OutputPacket getOutputInfo();
 

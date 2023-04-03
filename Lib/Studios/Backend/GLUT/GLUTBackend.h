@@ -31,11 +31,13 @@ public:
 
     auto isRunning() const -> bool {return programIsRunning;}
 
+	void setStepsPerFrame(size_t spf){ this->steps = spf; }
+
 private:
 	Program *program = nullptr;
     Base::GLUTEventListener *outGL = nullptr;
 
-    int steps = 1;
+    int steps = 20;
 
     bool programIsRunning = false;
 

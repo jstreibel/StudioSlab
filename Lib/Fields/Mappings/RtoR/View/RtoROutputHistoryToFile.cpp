@@ -19,6 +19,8 @@ RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilter
                                                  outFileName(std::move(outputFileName)),
                                                  outputFormatter(*(new BinarySOF()))
 {
+    this->name = "Full (1+1) history output";
+
     file.open(outFileName, std::ios::out);
 
     if(!file) throw "Erro: nao abriu arquivo.";

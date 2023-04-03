@@ -73,7 +73,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 }
 
 void OutputHistoryToFile::_printHeaderToFile() {
-    Allocator &builder = Allocator::getInstance();
+    Numerics::Allocator &builder = Numerics::Allocator::getInstance();
 
     std::ostringstream oss;
 

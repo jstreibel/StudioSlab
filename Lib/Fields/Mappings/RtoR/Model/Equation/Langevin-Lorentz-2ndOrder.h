@@ -39,9 +39,9 @@ namespace RtoR {
     public:
 
         explicit LorentzLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential),
-                                                                      langevinImpulses(*(ArbitraryFunction*)Allocator::
+                                                                      langevinImpulses(*(ArbitraryFunction*)Numerics::Allocator::
                                                                       getInstance().newFunctionArbitrary()),
-                                                                      scaledImpulses(*(ArbitraryFunction*)Allocator::
+                                                                      scaledImpulses(*(ArbitraryFunction*)Numerics::Allocator::
                                                                       getInstance().newFunctionArbitrary()) { }
 
         void startStep(Real t, Real dt) override{

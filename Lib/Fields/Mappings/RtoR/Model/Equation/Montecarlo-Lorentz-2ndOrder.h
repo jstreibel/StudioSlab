@@ -82,7 +82,7 @@ namespace RtoR {
         }
     public:
         explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential)
-            : LorentzInvariant(potential), temp(Allocator::NewFunctionArbitrary<ArbitraryFunction>()) { }
+            : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<ArbitraryFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             Equation::startStep(t, dt);

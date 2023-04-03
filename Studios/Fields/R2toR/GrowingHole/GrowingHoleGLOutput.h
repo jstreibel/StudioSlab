@@ -22,12 +22,12 @@ namespace R2toR {
             if(!lastInfo.hasValidData()) return;
 
             std::stringstream ss;
-            const Real t = lastInfo.getT();
+            const Real t = lastInfo.getSimTime();
             const Real L = Allocator::getInstance().getNumericParams().getL();
             const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
 
             auto dt = Allocator::getInstance().getNumericParams().getdt();
-            stats.addVolatileStat(std::string("t = ") + std::to_string(getLastT()));
+            stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 

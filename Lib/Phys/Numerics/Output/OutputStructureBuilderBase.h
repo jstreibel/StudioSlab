@@ -15,11 +15,6 @@ class OutputStructureBuilderBase: public Interface {
     DoubleParameter snapshotTime = {-1.0, "snapshotTime,t", "Force snapshot to be taken at some time prior to end (after will result in no output."};
 
 protected:
-    //enum TheBackend {
-    //    Console=0,
-    //    OpenGL=1
-    //} theBackend;
-
     BoolParameter noHistory = {false, "noOut,o", "Don't output history to file."};
     IntegerParameter outputResolution = {512, "outN", "Output resolution of space dimension in history output."};
     BoolParameter useOpenGL = BoolParameter{false, "gl,g", "Should output to OpenGL"};

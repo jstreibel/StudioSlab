@@ -14,13 +14,13 @@
 namespace RtoR {
     class EnergyCalculator {
         RtoR::ArbitraryFunction *_oEnergyDensityFunc =
-                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
         RtoR::ArbitraryFunction *_oKinetic =
-                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
         RtoR::ArbitraryFunction *_oGradient =
-                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
         RtoR::ArbitraryFunction *_oPotential =
-                static_cast<RtoR::ArbitraryFunction *>(Allocator::getInstance().newFunctionArbitrary());
+                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
     public:
         const RtoR::ArbitraryFunction &computeDensities(const RtoR::FieldState &field);
 

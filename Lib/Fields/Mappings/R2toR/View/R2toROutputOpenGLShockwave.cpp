@@ -421,7 +421,7 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
     const auto &phi = field->getPhi();
 
     const auto t0 = 0;
-    const auto t = lastInfo.getT();
+    const auto t = lastInfo.getSimTime();
     const auto xMin = phi.getDomain().xMin;
     const auto yMin = phi.getDomain().yMin;
     const auto L = phi.getDomain().getLx();

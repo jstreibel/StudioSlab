@@ -2,7 +2,7 @@
 
 Backend *Backend::myInstance = nullptr;
 
-Backend::Backend(Backend *instance)
+Backend::Backend(Backend *instance, String name) : backendName(name)
 {
     if(Backend::myInstance != nullptr) throw "Backend already initialized";
 

@@ -37,7 +37,7 @@ auto InterfaceSelector::getCurrentCandidate() const -> Interface * {
     return me.candidates[simType];
 }
 
-void InterfaceSelector::setup(int argc, const char **argv) {
+void InterfaceSelector::preParse(int argc, const char **argv) {
     typedef std::string str;
 
     const str simStr("--sim");

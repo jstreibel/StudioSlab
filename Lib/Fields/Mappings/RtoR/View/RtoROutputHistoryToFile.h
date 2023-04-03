@@ -23,7 +23,6 @@ namespace RtoR {
 
         ~OutputHistoryToFile() override;
 
-        auto description() const -> String override {return "full (1+1) history output";}
     };
 }
 
