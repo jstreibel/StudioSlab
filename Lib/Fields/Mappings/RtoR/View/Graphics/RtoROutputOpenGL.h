@@ -10,7 +10,6 @@
 #include "Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
 
 #include "Artists/GraphRtoR.h"
-#include "Studios/Graphics/Artists/StatsDisplay.h"
 #include <Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h>
 
 namespace RtoR {
@@ -33,9 +32,6 @@ namespace RtoR {
         void notifyKeyboardSpecial(int key, int x, int y) override;
         void notifyMouseButton(int button, int dir, int x, int y) override;
 
-    public:
-        void notifyReshape(int width, int height) override;
-
     protected:
         auto getPhiMax() const -> double { return mFieldsGraph.yMax; }
         auto getPhiMin() const -> double { return mFieldsGraph.yMin; }
@@ -53,13 +49,9 @@ namespace RtoR {
         Animation *xMinAnim;
         Animation *xMaxAnim;
 
-        WindowPanel *panel;
-
         GraphRtoR mFieldsGraph;
 
         //GraphRtoR mTotalEnergyGraph;
-
-        StatsDisplay stats;
 
         EnergyCalculator energyCalculator;
         //FuncArbResizable UHistory;
@@ -77,8 +69,6 @@ namespace RtoR {
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
-
-
 
     protected:
         double xMin, xMax;

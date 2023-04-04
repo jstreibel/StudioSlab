@@ -40,7 +40,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     std::cout << "Initialized GLUTBackend." << std::endl;
 }
 
-void GLUTBackend::setOpenGLOutput(Base::GLUTEventListener *outputOpenGL) {
+void GLUTBackend::setOpenGLOutput(Base::OutputOpenGL *outputOpenGL) {
     this->outGL = outputOpenGL;
 
     IntPair size = outGL->getWindowSizeHint();
@@ -145,15 +145,10 @@ void GLUTBackend::render()
     GLUTBackend *gb = GLUTBackend::GetInstance();
     auto *outGL = gb->outGL;
 
-    //StringStream cycles;
-    //cycles << "Stepping " << gb->steps << "/cycle." << std::endl;
-    //outGL->addVolatileStat(cycles.str());
-
     assert(outGL != nullptr);
 
-    if(!gb->programIsRunning){
-        outGL->notifyRender();
-    }
+    outGL->addStat(ToString(gb->steps) + " sim steps per cycle.");
+    outGL->notifyRender();
 
     glutSwapBuffers();
     glutPostRedisplay();

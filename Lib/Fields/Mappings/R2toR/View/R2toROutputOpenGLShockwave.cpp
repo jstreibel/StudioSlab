@@ -19,7 +19,7 @@ R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave()
 }
 
 void R2toR::OutputOpenGLShockwave::draw() {
-    if(!lastInfo.hasValidData()) return;
+    if(!lastData.hasValidData()) return;
 
     //const Real E_input = ((ParameterTemplate<double>*)userParamMap["sw_E"])->val;
     //const Real eps = ((ParameterTemplate<double>*)userParamMap["sw_eps"])->val;
@@ -417,11 +417,11 @@ void R2toR::OutputOpenGLShockwave::notifyMouseMotion(int x, int y) {
 
 
 void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
-    const auto *field = this->lastInfo.getFieldData<R2toR::FieldState>();
+    const auto *field = this->lastData.getFieldData<R2toR::FieldState>();
     const auto &phi = field->getPhi();
 
     const auto t0 = 0;
-    const auto t = lastInfo.getSimTime();
+    const auto t = lastData.getSimTime();
     const auto xMin = phi.getDomain().xMin;
     const auto yMin = phi.getDomain().yMin;
     const auto L = phi.getDomain().getLx();

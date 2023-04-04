@@ -7,7 +7,7 @@
 class OutputConsoleMonitor : public OutputChannel
 {
 private:
-    Timer timer;
+    Timer timer = Timer();
     const double maxT;
     char steppingChar;
 public:

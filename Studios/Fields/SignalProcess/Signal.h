@@ -6,6 +6,7 @@
 #define STUDIOSLAB_SIGNAL_H
 
 
+#include <jack/types.h>
 #include "Fields/Mappings/RtoR/Controller/RtoRBCInterface.h"
 
 #include "Fields/Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
@@ -65,6 +66,10 @@ namespace RtoR {
 
         class BoundaryCondition : public Base::BoundaryConditions<RtoR::FieldState> {
             Real T, A;
+            mutable jack_default_audio_sample_t *currentBuffer = nullptr;
+            mutable size_t currentBufferLocation = 0;
+            mutable size_t bufferSize = 0;
+            mutable size_t bufferNumber = 0;
 
         public:
             BoundaryCondition(double T, double A);;

@@ -8,19 +8,13 @@
 
 #include <Phys/Numerics/Output/OutputManager.h>
 
-#include <boost/timer/timer.hpp>
-
 
 
 Real RtoR::Signal::xInitDampCutoff_normalized;
 Real RtoR::Signal::dampFactor;
 std::vector<std::pair<Real,Real>> damps;
 Real jackProbeLocation=0;
-
-typedef boost::timer::cpu_timer CPUTimer;
-typedef boost::timer::cpu_times CPUTimes;
-
-
+size_t lastBufferDumpedSamplesCount = 0;
 
 
 /***
@@ -62,37 +56,37 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
 
 }
 void RtoR::Signal::OutGL::draw() {
-    static auto timer = CPUTimer();
     static size_t lastStep = 0;
 
-    timer.stop();
-    double interval = timer.elapsed().wall*1e-6; // nsec -> milisec
-    auto deltaSteps = lastInfo.getSteps() - lastStep;
+    auto deltaSteps = lastData.getSteps() - lastStep;
+    auto interval = frameTimer.getElTimeMSec();
     auto stepsPerSecond = 1e3*deltaSteps/interval;
 
     stats.addVolatileStat("");
 
+    stats.addVolatileStat(String("t = ") + ToString(getLastSimTime()));
+    stats.addVolatileStat(String("step ") + ToString(lastData.getSteps()));
     stats.addVolatileStat(ToString(interval, 2) + "ms since last draw");
-    stats.addVolatileStat(ToString(stepsPerSecond, 2) + "steps/sec");
-    stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
-    stats.addVolatileStat(std::string("step ") + std::to_string(lastInfo.getSteps()));
-    stats.addVolatileStat(std::string("delta step: ") + std::to_string(deltaSteps));
+    stats.addVolatileStat(ToString(stepsPerSecond, 0) + " steps/sec");
+    stats.addVolatileStat(String("Steps between draw: ") + ToString(deltaSteps));
 
     auto jackServer = JackServer::GetInstance();
     Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
 
-    stats.addVolatileStat(String("samples/nframes: ")
+    stats.addVolatileStat(String("Processed samples/nframes: ")
                        + ToString(jackServer->getLastOutputProcessedSamples()) + "/"
                        + ToString(jackServer->getnframes()), samplingStatusColor);
-    stats.addVolatileStat(String("In buffer updates: "
+    stats.addVolatileStat(String("Sampled input ")
+                       + ToString(lastBufferDumpedSamplesCount));
+    stats.addVolatileStat(String("Input buffer updates: "
                        + ToString(jackServer->getInputBufferUpdateCount())));
 
-    lastStep = lastInfo.getSteps();
+    lastStep = lastData.getSteps();
 
 
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastInfo.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
     if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     mFieldsGraph.clearFunctions();
@@ -142,8 +136,6 @@ void RtoR::Signal::OutGL::draw() {
         glVertex2d(jackProbeLocation, phiMax);
         glEnd();
     }
-
-    timer = CPUTimer();
 }
 auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
     return {3200, 1200}; }
@@ -222,6 +214,16 @@ RtoR::Signal::BoundaryCondition::BoundaryCondition(double T, double A) : T(T), A
 
 }
 void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) const {
+    auto jackServer = JackServer::GetInstance();
+
+    if(bufferNumber < jackServer->getInputBufferUpdateCount()){
+        currentBuffer = jackServer->getInputBuffer();
+        bufferSize = jackServer->getInputBufferSize();
+        bufferNumber = jackServer->getInputBufferUpdateCount();
+        lastBufferDumpedSamplesCount = currentBufferLocation;
+        currentBufferLocation=0;
+    }
+
     if(t==0.0){
         function.setPhi(NullFunction());
         function.setDPhiDt(NullFunction());
@@ -233,7 +235,7 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
     auto &vec_dphidt = function.getDPhiDt().getSpace().getX();
 
 
-    if (t < T && 0) {
+    if (t < T || 1) {
         auto omega = 2 * M_PI / T;
         auto val = A * sin(omega * t);
         auto dval = A * omega * cos(omega * t);
@@ -241,16 +243,19 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
         vec_phi[0] = val;
         vec_dphidt[0] = dval;
     } else {
-        vec_phi[0] = 0;
-        vec_dphidt[0] = 0;
+        static auto lastSample = .0f;
+
+        auto loc=currentBufferLocation;
+        auto sLast = lastSample,
+             sNew = currentBuffer[loc];
+        auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
+        vec_phi[0] = sNew;
+        vec_dphidt[0] = (sNew-sLast)/dt;
+
+        lastSample = sNew;
+        currentBufferLocation+=8;
     }
 
-    static auto lastSample = .0;
-    auto sample = JackServer::GetInstance()->getInputBuffer();
-    const auto s1 = 5e0*(double)sample[0], s2 = lastSample;
-    vec_phi[0] = lastSample;
-    vec_dphidt[0] = s2-s1;
-    lastSample = s1;
 
 
 

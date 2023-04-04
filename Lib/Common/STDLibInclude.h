@@ -14,6 +14,7 @@
 
 #include <cmath>
 //#include <complex>
+#include <algorithm>
 #include <ctime>
 #include <fstream>
 #include <iomanip>
@@ -30,6 +31,13 @@
 
 
 typedef std::string String;
+
+namespace Common {
+    template<typename T>
+    bool contains(const std::vector<T> &vec, const T &val) {
+        return std::find(vec.begin(), vec.end(), val) != vec.end();
+    }
+}
 
 
 #if 0 // abaixo uma tentativa que falhou e fica ai para posteridade.

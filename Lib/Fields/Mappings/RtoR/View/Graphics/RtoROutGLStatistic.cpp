@@ -63,7 +63,7 @@ RtoR::OutGLStatistic::OutGLStatistic() {
 }
 
 void RtoR::OutGLStatistic::draw() {
-    const RtoR::FieldState &fieldState = *lastInfo.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
     if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     std::ostringstream ss;
@@ -145,7 +145,7 @@ void RtoR::OutGLStatistic::draw() {
     //temperature2History.insertBack(tau_indirect);
     temperature3History.insertBack(barϕ + 2*W / L);
 
-    auto t = lastInfo.getSimTime();
+    auto t = lastData.getSimTime();
     mTemperaturesGraph->xMax = t;
     temperature1History.xMax = mTemperaturesGraph->xMax;
     temperature2History.xMax = mTemperaturesGraph->xMax;

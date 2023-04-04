@@ -1,21 +1,22 @@
+
+
 #include "OutputOpenGL.h"
+
 
 #include <Phys/Numerics/Allocator.h>
 
 
 using namespace Base;
 
-OutputOpenGL::OutputOpenGL()
-    : OutputChannel("OpenGL output", 80), lastT(0.0)
+OutputOpenGL::OutputOpenGL() : OutputChannel("OpenGL output", 80), lastT(0.0), panel(new WindowPanel)
 {
-    finishFrameAndRender();
+
 }
 
 OutputOpenGL::~OutputOpenGL() = default;
 
-void OutputOpenGL::_out(const OutputPacket &outInfo)
-{
-    this->finishFrameAndRender();
+void OutputOpenGL::_out(const OutputPacket &outInfo){
+    // Do nothing
 }
 
 auto OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
@@ -23,7 +24,7 @@ auto OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastO
 }
 
 bool OutputOpenGL::needDraw() const {
-    return lastInfo.getSpaceData().first != nullptr;
+    return lastData.getSpaceData().first != nullptr;
 }
 
 void OutputOpenGL::draw() {
@@ -57,31 +58,43 @@ void OutputOpenGL::draw() {
 }
 
 bool OutputOpenGL::finishFrameAndRender() {
-        for(auto *anim : animations) anim->step(frameTimer.getElTime());
+    for(auto *anim : animations) anim->step(frameTimer.getElTimeMSec()*1.e-3);
 
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glPushMatrix();
+    glPushMatrix();
+    {
         {
-            {
-                glEnable(GL_BLEND);
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                glEnable(GL_POINT_SMOOTH);
-                glEnable(GL_LINE_SMOOTH);
-            }
-
-            if (needDraw())
-                draw();
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            glEnable(GL_POINT_SMOOTH);
+            glEnable(GL_LINE_SMOOTH);
         }
-        glPopMatrix();
 
-        frameTimer.reset();
-        return true;
+        draw();
     }
+    glPopMatrix();
+
+    frameTimer.reset();
+    return true;
+}
 
 void OutputOpenGL::notifyRender() {
     GLUTEventListener::notifyRender();
 
     finishFrameAndRender();
+}
+
+IntPair OutputOpenGL::getWindowSizeHint() {
+    return {1200, 600};
+}
+
+void OutputOpenGL::notifyReshape(int width, int height) {
+    GLUTEventListener::notifyReshape(width, height);
+
+    osWindowWidth = width;
+    osWindowHeight = height;
+
+    panel->reshape(width, height);
 }
 

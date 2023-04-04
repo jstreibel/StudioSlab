@@ -23,7 +23,7 @@ R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0()
 }
 
 void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
-    if(!lastInfo.hasValidData()) return;
+    if(!lastData.hasValidData()) return;
 
     //const Real t0 = ((ParameterTemplate<double>*)userParamMap["sw_t0"])->val;
     //const Real t = lastInfo.getT();
@@ -138,8 +138,8 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
 void R2toR::OutputOpenGLShockwaveAt_t0::notifyReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
 
-    windowWidth = width;
-    windowHeight = height;
+    osWindowWidth = width;
+    osWindowHeight = height;
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
     //Real phiGraphY = 0;

@@ -35,6 +35,9 @@ void OutputManager::addOutputChannel(OutputChannel *out, bool keepTrack)
 {
     outputs.push_back(out);
     if(keepTrack) myOutputs.push_back(out);
+
+    std::cout << "Output manager added \"" << out->getName() << "\" output channel. Updates "
+                 "every " << out->getNSteps() << " sim steps." << std::endl;
 }
 
 void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {

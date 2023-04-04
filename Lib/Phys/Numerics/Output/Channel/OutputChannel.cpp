@@ -9,12 +9,12 @@ OutputChannel::OutputChannel(String name, int nStepsInterval, String description
 : nStepsBetweenRecordings(nStepsInterval), name(name), description(description) {      }
 
 
-auto OutputChannel::getLastSimTime() -> double { return lastInfo.getSimTime(); }
+auto OutputChannel::getLastSimTime() -> double { return lastData.getSimTime(); }
 
 auto OutputChannel::getNSteps() const -> int { return nStepsBetweenRecordings; }
 
 auto OutputChannel::computeNextRecStep() -> size_t {
-    const size_t lastStep = lastInfo.getSteps();
+    const size_t lastStep = lastData.getSteps();
 
     return lastStep+size_t(nStepsBetweenRecordings);
 }
@@ -31,9 +31,9 @@ auto OutputChannel::shouldOutput(const double t, const long unsigned timestep) -
     throw "Boundary not implemented.";
 }
 
-void OutputChannel::output(const OutputPacket &outInfo){
-    _out(outInfo);
-    lastInfo = outInfo;
+void OutputChannel::output(const OutputPacket &outData){
+    _out(outData);
+    lastData = outData;
 }
 
 auto OutputChannel::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {}

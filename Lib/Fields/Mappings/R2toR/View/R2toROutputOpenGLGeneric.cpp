@@ -35,7 +35,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 }
 
 void R2toR::OutputOpenGL::draw() {
-    if(!lastInfo.hasValidData()) return;
+    if(!lastData.hasValidData()) return;
 
     stats.addVolatileStat("O hai");
 
@@ -48,7 +48,7 @@ void R2toR::OutputOpenGL::draw() {
     stats.addVolatileStat(std::string("L = ") + std::to_string(L));
     stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 
-    const R2toR::FieldState& fState = *lastInfo.getFieldData<R2toR::FieldState>();
+    const R2toR::FieldState& fState = *lastData.getFieldData<R2toR::FieldState>();
     auto &phi = fState.getPhi();
     auto &dPhi = fState.getDPhiDt();
 

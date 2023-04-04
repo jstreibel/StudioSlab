@@ -3,10 +3,11 @@
 #include <Phys/Numerics/Allocator.h>
 
 OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps, bool doCarrierReturn)
-    : OutputChannel("Console monitor output", n_steps), timer(), maxT(Numerics::Allocator::getInstance().getNumericParams().gett()),
+    : OutputChannel("Console monitor output", n_steps),
+      maxT(Numerics::Allocator::getInstance().getNumericParams().gett()),
       steppingChar(doCarrierReturn ? '\r' : '\n')
 {
-    timer.resume();
+
 }
 
 bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation)

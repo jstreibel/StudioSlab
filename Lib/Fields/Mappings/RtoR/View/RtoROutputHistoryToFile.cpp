@@ -39,7 +39,7 @@ void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
     if(integrationIsFinished){
         _printHeaderToFile();
 
-        auto shouldNotDump = !lastInfo.hasValidData();
+        auto shouldNotDump = !lastData.hasValidData();
         if(shouldNotDump) {
             file.close();
             return;
@@ -47,13 +47,12 @@ void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
     }
 
     Timer timer;
-    timer.resume();
 
     std::cout << std::setprecision(3);
     std::cout << std::endl;
 
     for(size_t Ti=0; Ti<count; Ti++) {
-        if(timer.getElTime() > 1) {
+        if(timer.getElTimeMSec()*1e-3 > 1) {
             timer.reset();
             std::cout << "\rFlushing " << (double)Ti/double(count)*100.0 << "%    " << std::flush;
         }

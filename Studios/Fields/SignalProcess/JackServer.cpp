@@ -3,6 +3,8 @@
 //
 
 #include "JackServer.h"
+#include "Common/STDLibInclude.h"
+#include "Common/Utils.h"
 #include <iostream>
 #include <cmath>
 #include <csignal>
@@ -10,6 +12,8 @@
 
 JackServer *jack = nullptr;
 
+
+float testWaveFreq = 1.0;
 
 
 void error(const char *msg){ std::cout << "Jack error: \"" << msg << "\"" << std::endl; }
@@ -35,14 +39,18 @@ int processJack(jack_nframes_t nframes, void *arg){
     jack_default_audio_sample_t *out =
             (jack_default_audio_sample_t *) jack_port_get_buffer(output_processed_port, nframes);
 
-    auto ds = 1./nframes;
     auto nsamples = processedSamples.size();
-    for (int i = 0; i < nframes; ++i) {
-        auto j = i*ds*nsamples;
-        out[i] = (jack_default_audio_sample_t) processedSamples[j];
+    if(nsamples) {
+        auto ds = 1. / nframes;
+        for (int i = 0; i < nframes; ++i) {
+            const auto s = i * ds;
+            auto j = s * nsamples;
+
+            out[i] = (jack_default_audio_sample_t) processedSamples[j];
+        }
     }
 
-    jack->lastOutputProcessedSamples = processedSamples.size();
+    jack->lastOutputProcessedSamples = nsamples;
     processedSamples.clear();
 
     return 0;
@@ -55,14 +63,17 @@ JackServer::JackServer() {
     jack_set_error_function(error);
     JackStatus status;
 
-    client = jack_client_open("Signals through fields", JackNullOption, &status);
+    client = jack_client_open("Signals through fields ~~~~~~~~~~~", JackNullOption, &status);
+
+    auto testPortName = (ToString(testWaveFreq) + "Hz test wave").c_str();
 
     output_processed_port =
             jack_port_register(client, "Propagated", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     output_bypass_port =
             jack_port_register(client, "Bypass", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     output_440Hz_test_port =
-            jack_port_register(client, "440Hz test wave", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+            jack_port_register(client, testPortName,
+                               JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     input_port =
             jack_port_register(client, "In", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 
@@ -79,21 +90,27 @@ JackServer::JackServer() {
     if(ports == nullptr)
         throw "Jack error 3";
 
-    /*
-    if(ports[0] != nullptr) jack_connect(client, jack_port_name(output_port), ports[0]);
-    if(ports[1] != nullptr) jack_connect(client, jack_port_name(output_port), ports[1]);
-     */
+    std::vector<String> connect_to_processed_output = {"spectrum_analyzer_x1:in0",
+                                                       "Built-in Audio Analog Stereo:playback_FL",
+                                                       "Built-in Audio Analog Stereo:playback_FR"};
+
+    std::vector<String> connect_to_input =     {/*"C-1U Digital Stereo (IEC958):capture_FL",
+                                                "C-1U Digital Stereo (IEC958):capture_FR",
+                                                testPortName*/};
+
 
     std::cout << "Jack ports:";
     for(auto i=0; ports[i] != nullptr; i++){
         std::cout << "\n\t" << ports[i];
 
-        if(std::string(ports[i]) == "spectrum_analyzer_x1:in0")
-            jack_connect(client, jack_port_name(output_processed_port), ports[i]);
+        auto port = String(ports[i]);
 
-        if(std::string(ports[i]) == "C-1U Digital Stereo (IEC958):capture_FL" ||
-           std::string(ports[i]) == "C-1U Digital Stereo (IEC958):capture_FR")
-            jack_connect(client, ports[i], jack_port_name(input_port));
+        if(Common::contains(connect_to_processed_output, port))
+            jack_connect(client, jack_port_name(output_processed_port), port.c_str());
+
+        if(Common::contains(connect_to_input, port))
+            jack_connect(client, port.c_str(), jack_port_name(input_port));
+
     }
     std::cout << std::endl;
 
@@ -153,10 +170,10 @@ void testJack(jack_nframes_t nframes){
     const int sample_rate = 48000;
 
     // Frequency of the sine wave in Hz
-    const float frequency = 440.0;
+    const float frequency = testWaveFreq;
 
     // Amplitude of the sine wave
-    const float amplitude = 0.1;
+    const float amplitude = 1;
 
     // Calculate the number of samples per cycle of the sine wave
     float samples_per_cycle = sample_rate / frequency;

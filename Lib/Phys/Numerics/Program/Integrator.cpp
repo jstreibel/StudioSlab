@@ -1,12 +1,38 @@
+
+
+
 #include "Integrator.h"
 
-// #include "Maps/RtoR/Model/RtoRFieldState.h"
+#include <sched.h>
+#include <sstream>
+
+#define ATTEMP_REALTIME false
 
 NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager)
     : outputManager(outputManager),
       dt(Numerics::Allocator::getInstance().getNumericParams().getdt()),
       steps(0)
-{ }
+{
+#if ATTEMP_REALTIME
+    {
+        // Declare a sched_param struct to hold the scheduling parameters.
+        sched_param param;
+
+        // Set the priority value in the sched_param struct.
+        param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+
+        // Set the scheduling policy and priority of the current process.
+        int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+        if (ret == -1) {
+            std::cout << "Error setting realtime scheduling: " << std::strerror(errno) << std::endl;
+        } else {
+            std::cout << "Program running with realtime priority." << std::endl;
+        }
+
+    }
+#endif
+
+}
 
 NumericalIntegration::~NumericalIntegration()
 {    std::cout << histogram;     }

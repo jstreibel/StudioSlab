@@ -3,6 +3,7 @@
 
 #include "GLUTEventListener.h"
 #include "Studios/Backend/Backend.h"
+#include "Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h"
 
 class GLUTBackend : public Backend
 {
@@ -15,7 +16,7 @@ class GLUTBackend : public Backend
 public:
     static GLUTBackend *GetInstance();
 
-    void setOpenGLOutput(Base::GLUTEventListener *outputOpenGL);
+    void setOpenGLOutput(Base::OutputOpenGL *outputOpenGL);
 
 
     void run(Program *) override;
@@ -35,7 +36,7 @@ public:
 
 private:
 	Program *program = nullptr;
-    Base::GLUTEventListener *outGL = nullptr;
+    Base::OutputOpenGL *outGL = nullptr;
 
     int steps = 20;
 

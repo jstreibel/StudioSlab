@@ -2,9 +2,11 @@
 #define OUTPUTOPENGL_H
 
 #include <Phys/Numerics/Output/Channel/OutputChannel.h>
-#include <Studios/Backend/GLUT/GLUTEventListener.h>
 
-#include <GL/glut.h>
+#include <Studios/Backend/GLUT/GLUTEventListener.h>
+#include <Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h>
+#include <Studios/Graphics/Artists/StatsDisplay.h>
+
 // STD includes
 #include <iostream>
 #include <vector>
@@ -13,46 +15,48 @@ namespace Base {
 
     #define isOutputOpenGL(output) (dynamic_cast<Base::OutputOpenGL*>(output) != nullptr)
 
-    class OutputOpenGL : public OutputChannel, public GLUTEventListener{
+    class OutputOpenGL : public OutputChannel, public GLUTEventListener {
     public:
         OutputOpenGL();
         ~OutputOpenGL() override;
 
+        auto needDraw() const -> bool;
+        virtual void draw();
+        virtual IntPair getWindowSizeHint();
+
 
     // ********************* From GLUTEventListener ************** //
+        void notifyRender() final override;
 
+        void notifyReshape(int width, int height) override;
     // ********************* End GLUTEventListener ************** //
-
-
-    // ********************* From OutputBase ********************* //
+    // ********************* From OutputChannel ********************* //
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
-
-        void notifyRender() override;
-
     protected:
         void _out(const OutputPacket &outInfo) override;
     // ********************* END OutputBase ********************** //
 
-    bool finishFrameAndRender();
-
-
-    // ********************* From OpenGLArtistBase *************** //
-    auto needDraw() const -> bool override;
-    virtual void draw() override;
-
-    // ********************* END OpenGLArtistBase **************** //
 
     public:
         void addAnimation(Animation *animation) {animations.push_back(animation); }
+        void addStat(const String& stat, const Color color = {1, 1, 1}) {
+            stats.addVolatileStat(stat, color);
+        }
 
     private:
+        bool finishFrameAndRender();
         std::vector<Animation*> animations;
 
 
     protected:
         double lastT; // essa variavel precisa existir para ficar aparecendo na tela.
 
-        int windowWidth, windowHeight;
+        int osWindowWidth, osWindowHeight;
+
+        Timer frameTimer = Timer();
+
+        WindowPanel *panel;
+        StatsDisplay stats;
     };
 }
 

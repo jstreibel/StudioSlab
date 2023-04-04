@@ -36,7 +36,7 @@ public:
 protected:
 
     int nStepsBetweenRecordings; // numero de passos entre uma gravacao e outra.
-    OutputPacket lastInfo;
+    OutputPacket lastData;
 
 
     String name, description;
@@ -47,7 +47,7 @@ public:
     auto getLastSimTime() -> double;
     auto getNSteps() const -> int;
 
-    void output(const OutputPacket &outInfo);
+    void output(const OutputPacket &outData);
 
 
 };

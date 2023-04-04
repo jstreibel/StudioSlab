@@ -19,6 +19,7 @@ public:
     void addVolatileStat(const String& stat, const Color color = {1, 1, 1});
     void draw(const Window *window) override;
 
+
 };
 
 

@@ -17,7 +17,7 @@ namespace Base {
 
     class GLUTEventListener {
     public:
-        GLUTEventListener();
+        GLUTEventListener() = default;
         virtual ~GLUTEventListener() = default;
 
         virtual void notifyKeyboard(unsigned char key, int x, int y) {};
@@ -29,18 +29,8 @@ namespace Base {
 
         virtual void notifyRender() {/*finishFrameAndRender();*/};
 
-
-        virtual auto getWindowSizeHint() -> IntPair;
-
-
     protected:
-        virtual auto needDraw() const -> bool;
-        virtual void draw() = 0;
-
-        Timer frameTimer = Timer(false);
-
-    protected:
-        std::vector<String> stats;
+        //std::vector<String> stats;
 
     };
 }

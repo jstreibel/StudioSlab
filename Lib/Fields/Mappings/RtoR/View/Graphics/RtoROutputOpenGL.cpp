@@ -16,11 +16,11 @@
 #define min(a, b) ((a)<(b)?(a):(b))
 
 
-RtoR::OutputOpenGL::OutputOpenGL() : panel(new WindowPanel) { }
+RtoR::OutputOpenGL::OutputOpenGL() = default;
 
 RtoR::OutputOpenGL::OutputOpenGL(const double xMin, const double xMax,
                                  const double phiMin, const double phiMax)
-                                 : panel(new WindowPanel), mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
+                                 : mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
 {
     initialize(xMin, xMax, phiMin, phiMax);
 }
@@ -61,7 +61,7 @@ void RtoR::OutputOpenGL::initialize(double xMin, double xMax, double phiMin, dou
 
 
 
-    const auto faktor = 2000;
+    const auto faktor = 1000;
     phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
     phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
     addAnimation(phiMaxAnim);
@@ -98,15 +98,15 @@ void RtoR::OutputOpenGL::draw() {
     stats.addVolatileStat("");
     stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
     static size_t lastStep = 0;
-    stats.addVolatileStat(std::string("step ") + std::to_string(lastInfo.getSteps()));
-    stats.addVolatileStat(std::string("delta step: ") + std::to_string(lastInfo.getSteps() - lastStep));
-    lastStep = lastInfo.getSteps();
+    stats.addVolatileStat(std::string("step ") + std::to_string(lastData.getSteps()));
+    stats.addVolatileStat(std::string("delta step: ") + std::to_string(lastData.getSteps() - lastStep));
+    lastStep = lastData.getSteps();
 
 
 
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastInfo.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
     if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     mFieldsGraph.clearFunctions();
@@ -182,17 +182,6 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 }
 
 
-void RtoR::OutputOpenGL::notifyReshape(int width, int height) {
-    windowWidth = width;
-    windowHeight = height;
-
-    panel->reshape(width, height);
-    //panel->w = width;
-    //panel->h = height;
-//
-    //panel->arrangeWindows();
-}
-
 void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 
     switch(key)
@@ -214,7 +203,6 @@ void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
             break;
     }
 
-    finishFrameAndRender();
 }
 
 void RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
@@ -256,8 +244,6 @@ void RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
         default:
             break;
     }
-
-    finishFrameAndRender();
 }
 
 void RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
@@ -270,8 +256,6 @@ void RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
         setPhiMax(getPhiMax()*(1/faktor));
         setPhiMin(getPhiMin()*(1/faktor));
     }
-
-    finishFrameAndRender();
 }
 
 

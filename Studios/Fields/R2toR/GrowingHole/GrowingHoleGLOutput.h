@@ -19,10 +19,10 @@ namespace R2toR {
                 : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) {   }
 
         void draw() override {
-            if(!lastInfo.hasValidData()) return;
+            if(!lastData.hasValidData()) return;
 
             std::stringstream ss;
-            const Real t = lastInfo.getSimTime();
+            const Real t = lastData.getSimTime();
             const Real L = Allocator::getInstance().getNumericParams().getL();
             const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
 
@@ -31,7 +31,7 @@ namespace R2toR {
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 
-            const R2toR::FieldState& fState = *lastInfo.getFieldData<R2toR::FieldState>();
+            const R2toR::FieldState& fState = *lastData.getFieldData<R2toR::FieldState>();
             auto &phi = fState.getPhi();
 
             mSectionGraph.clearFunctions();
