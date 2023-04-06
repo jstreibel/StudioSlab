@@ -16,7 +16,7 @@ set ( SlabLibs
 # ************************************************************************************************************
 
 add_executable ( Signals-RtoR Fields/SignalProcess/SignalMain.cpp Fields/SignalProcess/Signal.cpp
-		Fields/SignalProcess/JackServer.cpp Fields/SignalProcess/JackServer.h Fields/SignalProcess/OutGL.cpp Fields/SignalProcess/OutGL.h)
+		Fields/SignalProcess/JackServer.cpp Fields/SignalProcess/JackServer.h Fields/SignalProcess/OutGL.cpp)
 target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Fields-Maps-RtoR_GPU jack )
 #set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 

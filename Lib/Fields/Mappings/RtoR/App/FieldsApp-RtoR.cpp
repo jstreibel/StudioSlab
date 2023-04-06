@@ -30,8 +30,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration 
             break;
         default:
             RtoRModelAllocator::Choose();
-
-            RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential::free);
+            RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential::V);
     }
 
     AppBase::parseCLArgs();

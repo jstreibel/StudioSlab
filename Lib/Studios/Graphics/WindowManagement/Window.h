@@ -21,6 +21,8 @@ public:
     virtual void reshape(int w, int h);
 
     int w, h, x, y;
+    double winXoffset = 2;
+    double winYoffset = 2;
 
     std::vector<Artist*> content;
 
@@ -31,8 +33,6 @@ private:
     void _decorate() const;
 
     static constexpr double p = 0.999;
-    double winXoffset = 2;
-    double winYoffset = 2;
 
 };
 

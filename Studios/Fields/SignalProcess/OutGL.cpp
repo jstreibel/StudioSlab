@@ -4,8 +4,10 @@
 
 #include "Signal.h"
 #include "JackServer.h"
+
 #include "Phys/Thermal/Utils/RandUtils.h"
 #include "Studios/Tools/Resample.h"
+#include "3rdParty/imgui/imgui.h"
 
 #include <Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>
 
@@ -14,6 +16,7 @@ extern Real RtoR::Signal::xInitDampCutoff_normalized;
 extern Real RtoR::Signal::dampFactor;
 extern std::vector<std::pair<Real,Real>> damps;
 extern Real jackProbeLocation;
+extern Real t0;
 
 /***
  *    ________                             ________ .____
@@ -252,4 +255,10 @@ void RtoR::Signal::OutGL::draw() {
 }
 auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
     return {2600, 1700}; }
+
+void RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
+    GLUTEventListener::notifyKeyboard(key, x, y);
+
+    if(key == 13) t0 = lastData.getSimTime();
+}
 

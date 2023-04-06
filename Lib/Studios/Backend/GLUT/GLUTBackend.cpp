@@ -1,10 +1,15 @@
 #include "GLUTBackend.h"
 
 #include <Common/Workaround/StringStream.h>
+#include <Common/ResourcesFolder.h>
 
-#include <GL/freeglut.h>
+#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/imgui/backends/imgui_impl_glut.h"
+#include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
+
+#include <GL/glut.h>
 #include <cassert>
-
+#include <filesystem>
 
 GLUTBackend *GLUTBackend::glutBackend = nullptr;
 
@@ -38,6 +43,64 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
 
     std::cout << "Initialized GLUTBackend." << std::endl;
+
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+    //ImGui::StyleColorsLight();
+
+    // Setup Platform/Renderer backends
+    // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
+    ImGui_ImplGLUT_Init();
+    ImGui_ImplOpenGL3_Init();
+
+    // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
+    // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
+    // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
+    // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
+    // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
+    if(0) ImGui_ImplGLUT_InstallFuncs();
+
+
+    if(0) {
+        ImFontAtlas *atlas = io.Fonts;
+
+        auto fontName = ResourcesFolder + "Fonts/imgui/Karla-Regular.ttf";
+        if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
+
+        auto font = atlas->AddFontFromFileTTF(fontName.c_str(), 18.0f, NULL, atlas->GetGlyphRangesDefault());
+        IM_ASSERT(font != NULL);
+        unsigned char *pixels;
+        int width, height;
+        atlas->GetTexDataAsRGBA32(&pixels, &width, &height);
+
+        GLuint texture_id;
+        glGenTextures(1, &texture_id);
+        glBindTexture(GL_TEXTURE_2D, texture_id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+        atlas->TexID = (void *) (intptr_t) texture_id;
+
+        ImGui::PushFont(font);
+
+        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
+        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
+        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
+        //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+    }
+
+    ImGui::GetStyle().ScaleAllSizes(1.5);
+    ImGui::GetIO().FontGlobalScale = 1.5;
+
+
+    std::cout << "Initialized Imgui." << std::endl;
 }
 
 void GLUTBackend::setOpenGLOutput(Base::OutputOpenGL *outputOpenGL) {
@@ -61,7 +124,12 @@ auto GLUTBackend::GetInstance() -> GLUTBackend *{
     return GLUTBackend::glutBackend;
 }
 
-GLUTBackend::~GLUTBackend() = default;
+GLUTBackend::~GLUTBackend() {
+    // Cleanup
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGLUT_Shutdown();
+    ImGui::DestroyContext();
+};
 
 void GLUTBackend::run(Program *program)
 {
@@ -77,34 +145,31 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
 
     if(key == 27) glutLeaveMainLoop();
     else if(key == ' ') me->programIsRunning = !me->programIsRunning;
-    else if(key == '=' || key == '+'){
-        me->steps += 10;
+    else if(key == '='){
+        me->steps += 1;
+    }
+    else if(key == '+'){
+        me->steps *= 1.1;
     }
     else if(key == '-'){
         if(me->steps > 1) {
-            me->steps -= 10;
+            me->steps -= 1;
 
             if (me->steps <= 0) me->steps = 1;
         }
     }
-    else if(key == 13){ // Enter
+    else if(key == '_'){
+        if(me->steps > 1) {
+            me->steps /= 1.1;
+
+            if (me->steps <= 0) me->steps = 1;
+        }
+    }
+    else if(key == '['){
         program->step(1);
     }
-    //else if(key == '}'){
-    //    program->step(20);
-    //}
-    else if(key == 'h'){
-        //std::cout << me->program->getHistogram();
-        /*
-            if(sim == nullptr) return;
-            // snapshot
-            std::ostringstream buffer;
-            buffer.setf(ios::fixed,ios::floatfield);
-            buffer.precision(4);
-            buffer << sim->getInfoString();
-
-            OutputSnapshot::doOutput(sim->getOutputInfo(), buffer.str().c_str(), 4);
-            */
+    else if(key == '{'){
+        program->step(20);
     }
     else {
         GLUTBackend::GetInstance()->outGL->notifyKeyboard(key, x, y);
@@ -115,25 +180,43 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
     auto *outGL = GLUTBackend::GetInstance()->outGL;
 
-
     outGL->notifyKeyboardSpecial(key, x, y);
 }
 
 void GLUTBackend::mouseButton(int button, int dir, int x, int y)
 {
+    //if(ImGui::GetIO().WantCaptureMouse)
+    {
+        ImGui_ImplGLUT_MouseFunc(button, dir, x, y);
+        return;
+    }
+
+
     GLUTBackend *gb = GLUTBackend::GetInstance();
     auto *outGL = gb->outGL;
 
     outGL->notifyMouseButton(button, dir, x, y);
+
+
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-
+    //if(ImGui::GetIO().WantCaptureMouse)
+    {
+        ImGui_ImplGLUT_MotionFunc(x, y);
+        return;
+    }
 }
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
+    //if(ImGui::GetIO().WantCaptureMouse)
+    {
+        ImGui_ImplGLUT_MotionFunc(x, y);
+        return;
+    }
+
     auto *outGL = GLUTBackend::GetInstance()->outGL;
     outGL->notifyMouseMotion(x, y);
 }
@@ -145,8 +228,16 @@ void GLUTBackend::render()
 
     assert(outGL != nullptr);
 
+    ImGui_ImplOpenGL3_NewFrame();
+    ImGui_ImplGLUT_NewFrame();
+
     outGL->addStat(ToString(gb->steps) + " sim steps per cycle.");
     outGL->notifyRender();
+
+    ImGui::Render();
+    //ImGuiIO& io = ImGui::GetIO();
+
+    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     glutSwapBuffers();
     glutPostRedisplay();
@@ -179,6 +270,9 @@ void GLUTBackend::idleCall()
 
 void GLUTBackend::reshape(int w, int h)
 {
+    ImGuiIO& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2((float)w, (float)h);
+
     GLUTBackend::GetInstance()->w = w;
     GLUTBackend::GetInstance()->h = h;
 
@@ -187,5 +281,7 @@ void GLUTBackend::reshape(int w, int h)
 
     if(outGL != nullptr)
         outGL->notifyReshape(w, h);
+
+    glutPostRedisplay();
 }
 

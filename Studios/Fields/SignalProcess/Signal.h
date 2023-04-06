@@ -49,6 +49,8 @@ namespace RtoR {
             OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
             void draw() override;
             auto getWindowSizeHint() -> IntPair override;
+
+            void notifyKeyboard(unsigned char key, int x, int y) override;
         };
 
 

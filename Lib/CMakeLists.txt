@@ -18,9 +18,11 @@ else()
 	message(STATUS "StudioSlab CUDA support is DISABLED")
 endif()
 
-include_directories(./)
+include_directories(./ ./3rdParty/imgui /usr/include/freetype2/)
 
 # in order of dependency:
+add_subdirectory(3rdParty)
+
 add_subdirectory(Common)
 add_subdirectory(Studios)
 

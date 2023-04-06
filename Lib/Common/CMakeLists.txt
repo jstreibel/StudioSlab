@@ -5,7 +5,7 @@ set ( UTIL_SOURCES
 		Printing.cpp
 		Utils.cpp
 		BinaryToInt.cpp
-		)
+		ResourcesFolder.h)
 
 add_library(${STUDIOSLAB_BASE_LIB_NAME}-Common STATIC ${UTIL_SOURCES})
 target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}-Common omp )
