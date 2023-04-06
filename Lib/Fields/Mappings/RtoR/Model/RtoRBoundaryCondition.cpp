@@ -7,8 +7,6 @@
 
 using namespace RtoR;
 
-#define USE_PERIODIC_BC
-
 
 RtoR::BoundaryCondition::BoundaryCondition(Function *initialPhiCondition,
                                            Function *initialdPhiDtCondition,

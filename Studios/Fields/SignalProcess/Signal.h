@@ -33,7 +33,18 @@ namespace RtoR {
 
 
         class OutGL : public RtoR::OutputOpenGL {
-            Window *graphWindow;
+            Window *fieldWindow;
+
+            Window *signalBufferWindow;
+            GraphRtoR signalBufferGraph;
+            Window *signalFullWindow;
+            GraphRtoR signalFullGraph;
+
+            bool gotNewData = true;
+        protected:
+
+            std::vector<Real> probingData;
+            void _out(const OutputPacket &outInfo) override;
         public:
             OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
             void draw() override;
@@ -65,20 +76,20 @@ namespace RtoR {
 
 
         class BoundaryCondition : public Base::BoundaryConditions<RtoR::FieldState> {
-            Real T, A;
+            Real f, A;
             mutable jack_default_audio_sample_t *currentBuffer = nullptr;
             mutable size_t currentBufferLocation = 0;
             mutable size_t bufferSize = 0;
             mutable size_t bufferNumber = 0;
 
         public:
-            BoundaryCondition(double T, double A);;
+            BoundaryCondition(double f, double A);;
             void apply(FieldState &function, Real t) const override;
         };
 
 
         class CLI : public RtoRBCInterface {
-            DoubleParameter period =      DoubleParameter{1, "period", "The period of the driving force (=omega/2pi)"};
+            DoubleParameter freq =      DoubleParameter{1, "freq", "The freq of the driving force"};
             DoubleParameter amplitude =   DoubleParameter{1, "amplitude", "The amplitude of the driving force"};
             DoubleParameter damping =     DoubleParameter{1.5e-3, "damping", "The damping factor at the right hand region of the field"};
             DoubleParameter dampPercent = DoubleParameter{.2, "damp_percent", "Percentage (in the range 0..1) of space to use for damping"};

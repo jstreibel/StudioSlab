@@ -125,8 +125,6 @@ void GLUTBackend::mouseButton(int button, int dir, int x, int y)
     auto *outGL = gb->outGL;
 
     outGL->notifyMouseButton(button, dir, x, y);
-
-    glutPostRedisplay();
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)

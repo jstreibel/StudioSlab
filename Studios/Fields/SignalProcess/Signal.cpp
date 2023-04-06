@@ -15,130 +15,8 @@ Real RtoR::Signal::dampFactor;
 std::vector<std::pair<Real,Real>> damps;
 Real jackProbeLocation=0;
 size_t lastBufferDumpedSamplesCount = 0;
+Real t0 = 5;
 
-
-/***
- *    ________                             ________ .____
- *    \_____  \  ______    ____    ____   /  _____/ |    |
- *     /   |   \ \____ \ _/ __ \  /    \ /   \  ___ |    |
- *    /    |    \|  |_> >\  ___/ |   |  \\    \_\  \|    |___
- *    \_______  /|   __/  \___  >|___|  / \______  /|_______ \
- *            \/ |__|         \/      \/         \/         \/
- */
-RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
-        : RtoR::OutputOpenGL() {
-    RtoR::OutputOpenGL::xMax = xMax;
-    RtoR::OutputOpenGL::xMin = xMin;
-    RtoR::OutputOpenGL::phiMax = phiMax;
-    RtoR::OutputOpenGL::phiMin = phiMin;
-
-    Window *window = nullptr;
-
-    window = new Window; window->addArtist(&this->stats);
-    panel->addWindow(window);
-
-    auto samples = (int)Numerics::Allocator::getInstance().getNumericParams().getN();
-    this->mFieldsGraph = {xMin, xMax, phiMin, phiMax, "AAA", true, samples};
-    window = new Window; window->addArtist(&this->mFieldsGraph);
-    panel->addWindow(window, true, 0.85);
-    this->graphWindow = window;
-
-    const auto faktor = 120;
-    phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
-    phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
-    addAnimation(phiMaxAnim);
-    addAnimation(phiMinAnim);
-
-    xMinAnim = new Animation(&mFieldsGraph.xMin, mFieldsGraph.xMin, faktor);
-    xMaxAnim = new Animation(&mFieldsGraph.xMax, mFieldsGraph.xMax, faktor);
-    addAnimation(xMinAnim);
-    addAnimation(xMaxAnim);
-
-}
-void RtoR::Signal::OutGL::draw() {
-    static size_t lastStep = 0;
-
-    auto deltaSteps = lastData.getSteps() - lastStep;
-    auto interval = frameTimer.getElTimeMSec();
-    auto stepsPerSecond = 1e3*deltaSteps/interval;
-
-    stats.addVolatileStat("");
-
-    stats.addVolatileStat(String("t = ") + ToString(getLastSimTime()));
-    stats.addVolatileStat(String("step ") + ToString(lastData.getSteps()));
-    stats.addVolatileStat(ToString(interval, 2) + "ms since last draw");
-    stats.addVolatileStat(ToString(stepsPerSecond, 0) + " steps/sec");
-    stats.addVolatileStat(String("Steps between draw: ") + ToString(deltaSteps));
-
-    auto jackServer = JackServer::GetInstance();
-    Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
-
-    stats.addVolatileStat(String("Processed samples/nframes: ")
-                       + ToString(jackServer->getLastOutputProcessedSamples()) + "/"
-                       + ToString(jackServer->getnframes()), samplingStatusColor);
-    stats.addVolatileStat(String("Sampled input ")
-                       + ToString(lastBufferDumpedSamplesCount));
-    stats.addVolatileStat(String("Input buffer updates: "
-                       + ToString(jackServer->getInputBufferUpdateCount())));
-
-    lastStep = lastData.getSteps();
-
-
-    // *************************** FIELD ***********************************
-    //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
-    if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
-
-    mFieldsGraph.clearFunctions();
-
-    if(showPhi){
-        const Color colorPhi = V_color;
-
-        //mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");
-        auto &phi = fieldState.getPhi();
-        mFieldsGraph.addFunction(&phi, colorPhi, "phi");
-    }
-
-    if(showKineticEnergy){
-        const Color colorKinetic = K_color;
-
-        // mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
-        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
-    }
-
-    if(showGradientEnergy) {
-        const Color colorGradient = W_color;
-
-        mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient, "grad^2");
-    }
-
-    if(showEnergyDensity){
-        const Color color = U_color;
-        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color, "E");
-    }
-
-    panel->draw(true, true);
-
-    {
-        graphWindow->setupViewport(false, false);
-        mFieldsGraph.setupOrtho();
-        glColor4f(1,0,0,1);
-
-        glBegin(GL_LINE_STRIP);
-        for (auto &p : damps) {
-            glVertex2d(p.first, 1e2*p.second);
-        }
-        glEnd();
-
-        glColor4f(0,1,0,1);
-        glBegin(GL_LINES);
-        glVertex2d(jackProbeLocation, phiMin);
-        glVertex2d(jackProbeLocation, phiMax);
-        glEnd();
-    }
-}
-auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
-    return {3200, 1200}; }
 
 
 
@@ -210,9 +88,7 @@ OutputManager *RtoR::Signal::OutputBuilder::build(String outputFileName) {
  *     |______  / \____/ |____/ |___|  /\____ | (____  / |__|    / ____|        \___  > \____/ |___|  /\____ | |__| |__|  |__| \____/ |___|  /
  *            \/                     \/      \/      \/          \/                 \/              \/      \/                             \/
  */
-RtoR::Signal::BoundaryCondition::BoundaryCondition(double T, double A) : T(T), A(A) {
-
-}
+RtoR::Signal::BoundaryCondition::BoundaryCondition(double f, double A) : f(f), A(A) { }
 void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) const {
     auto jackServer = JackServer::GetInstance();
 
@@ -235,14 +111,24 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
     auto &vec_dphidt = function.getDPhiDt().getSpace().getX();
 
 
-    if (t < T || 1) {
-        auto omega = 2 * M_PI / T;
-        auto val = A * sin(omega * t);
-        auto dval = A * omega * cos(omega * t);
+    auto _t = t-t0;
+    if(0) {
+        static auto wallclock = Timer();
+        auto wallt = wallclock.getElTime_sec();
+        _t = wallt;
+    }
+    auto omega = 2 * M_PI * f;
+    auto alpha = 1;
+    if(_t>0)
+    {
+        auto val = A*sin(omega*_t)*exp(-alpha*_t);
+        auto dval = A*omega*cos(omega*_t)*exp(-alpha*_t) - alpha*A*sin(omega*_t)*exp(-alpha*_t);
 
         vec_phi[0] = val;
         vec_dphidt[0] = dval;
-    } else {
+    }
+
+    if(0) {
         static auto lastSample = .0f;
 
         auto loc=currentBufferLocation;
@@ -305,12 +191,12 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
  *            \/         \/
  */
 RtoR::Signal::CLI::CLI() : RtoRBCInterface("(1+1)-d Signal studies platform.", "gh", new OutputBuilder) {
-    addParameters({&period, &amplitude, &damping, &dampPercent}); }
+    addParameters({&freq, &amplitude, &damping, &dampPercent}); }
 auto RtoR::Signal::CLI::getBoundary() const -> const void * {
-    const double T = *period;
+    const double f = *freq;
     const double A = *amplitude;
 
     dampFactor = *damping;
     xInitDampCutoff_normalized = 1-*dampPercent;
 
-    return new RtoR::Signal::BoundaryCondition(T, A); }
+    return new RtoR::Signal::BoundaryCondition(f, A); }

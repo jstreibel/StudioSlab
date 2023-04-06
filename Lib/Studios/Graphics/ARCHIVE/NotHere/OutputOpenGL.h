@@ -49,8 +49,6 @@ namespace Base {
 
 
     protected:
-        double lastT; // essa variavel precisa existir para ficar aparecendo na tela.
-
         int osWindowWidth, osWindowHeight;
 
         Timer frameTimer = Timer();

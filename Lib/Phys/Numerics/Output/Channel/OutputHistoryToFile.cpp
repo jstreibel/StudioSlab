@@ -51,7 +51,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
     std::cout << std::endl;
 
     for(size_t Ti=0; Ti<count; Ti++) {
-        if(timer.getElTimeMSec()*1e-3 > 1) {
+        if(timer.getElTime_sec() > 1) {
             timer.reset();
             std::cout << "\rFlushing " << (double)Ti/double(count)*100.0 << "%    " << std::flush;
         }

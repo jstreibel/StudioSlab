@@ -43,7 +43,7 @@ Real ArbitraryFunction::operator()(Real x) const {
     if(n<0 || n>N-1) return .0;
 
     n = n<0?0:n>N-1?N-1:n;
-    assert(n>=0 && n<N);
+    //assert(n>=0 && n<N);
 
     return getSpace().getX()[n];
 }

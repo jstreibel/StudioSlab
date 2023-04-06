@@ -2,13 +2,18 @@
 // Created by joao on 4/2/23.
 //
 
+
+
 #include "JackServer.h"
+
 #include "Common/STDLibInclude.h"
 #include "Common/Utils.h"
+#include "Studios/Tools/Resample.h"
+
 #include <iostream>
 #include <cmath>
-#include <csignal>
 #include <cstring>
+
 
 JackServer *jack = nullptr;
 
@@ -16,45 +21,42 @@ JackServer *jack = nullptr;
 float testWaveFreq = 1.0;
 
 
+
 void error(const char *msg){ std::cout << "Jack error: \"" << msg << "\"" << std::endl; }
+
+
 
 void testJack(jack_nframes_t nframes);
 void bypassJack(jack_nframes_t nframes);
 
+void outputProbedData(jack_nframes_t nframes);
+
 int processJack(jack_nframes_t nframes, void *arg){
+    jack->dataMutex.lock();
     jack->updateInputBuffer(nframes);
 
     bypassJack(nframes);
     testJack(nframes);
 
+    outputProbedData(nframes);
 
-    // PROCESS
     auto &processedSamples = jack->dataToOutput;
-    jack->samplingFlag = (nframes > processedSamples.size()) ? JackServer::UnderSampled :
-                         (nframes < processedSamples.size()) ? JackServer::OverSampled :
-                                                      JackServer::EvenSampled ;
+    const auto nsamples = processedSamples.size();
+    jack->samplingFlag = (nframes > nsamples) ? JackServer::UnderSampled :
+                         (nframes < nsamples) ? JackServer::OverSampled :
+                                                JackServer::EvenSampled ;
 
-    auto output_processed_port = jack->getOutputPort();
+    jack->totalLastOutputProcessedSamples = nsamples;
 
-    jack_default_audio_sample_t *out =
-            (jack_default_audio_sample_t *) jack_port_get_buffer(output_processed_port, nframes);
-
-    auto nsamples = processedSamples.size();
-    if(nsamples) {
-        auto ds = 1. / nframes;
-        for (int i = 0; i < nframes; ++i) {
-            const auto s = i * ds;
-            auto j = s * nsamples;
-
-            out[i] = (jack_default_audio_sample_t) processedSamples[j];
-        }
-    }
-
-    jack->lastOutputProcessedSamples = nsamples;
+    jack->lastOutputData = processedSamples;
     processedSamples.clear();
+
+    jack->dataMutex.unlock();
 
     return 0;
 }
+
+
 
 
 JackServer::JackServer() {
@@ -65,14 +67,14 @@ JackServer::JackServer() {
 
     client = jack_client_open("Signals through fields ~~~~~~~~~~~", JackNullOption, &status);
 
-    auto testPortName = (ToString(testWaveFreq) + "Hz test wave").c_str();
+    auto testPortName = ToString(testWaveFreq) + "Hz test wave";
 
     output_processed_port =
-            jack_port_register(client, "Propagated", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+            jack_port_register(client, "Probed", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     output_bypass_port =
             jack_port_register(client, "Bypass", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     output_440Hz_test_port =
-            jack_port_register(client, testPortName,
+            jack_port_register(client, testPortName.c_str(),
                                JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
     input_port =
             jack_port_register(client, "In", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
@@ -90,9 +92,9 @@ JackServer::JackServer() {
     if(ports == nullptr)
         throw "Jack error 3";
 
-    std::vector<String> connect_to_processed_output = {"spectrum_analyzer_x1:in0",
-                                                       "Built-in Audio Analog Stereo:playback_FL",
-                                                       "Built-in Audio Analog Stereo:playback_FR"};
+    std::vector<String> connect_to_processed_output = {"spectrum_analyzer_x1:in0"/*,
+                                                       /*"Built-in Audio Analog Stereo:playback_FL",
+                                                       "Built-in Audio Analog Stereo:playback_FR"*/};
 
     std::vector<String> connect_to_input =     {/*"C-1U Digital Stereo (IEC958):capture_FL",
                                                 "C-1U Digital Stereo (IEC958):capture_FR",
@@ -156,7 +158,11 @@ jack_port_t *JackServer::getOutputPort() {
     return output_processed_port;
 }
 
-void JackServer::operator<<(Real value) { dataToOutput.emplace_back(value); }
+void JackServer::operator<<(Real value) {
+    dataMutex.lock();
+    dataToOutput.emplace_back(value);
+    dataMutex.unlock();
+}
 
 
 
@@ -211,4 +217,37 @@ void bypassJack(jack_nframes_t nframes){
 }
 
 
+std::vector<float> VecDoubToVecFloat(std::vector<double> &doubles){
+    const auto N = doubles.size();
+    std::vector<float> floats(N);
 
+    for(auto i=0; i<N; i++)
+        floats[i] = doubles[i];
+
+    return floats;
+}
+
+void outputProbedData(jack_nframes_t nframes) {
+    auto probedSamples_floats = VecDoubToVecFloat(jack->dataToOutput);
+
+    auto output_processed_port = jack->getOutputPort();
+    auto *out = (jack_default_audio_sample_t *) jack_port_get_buffer(output_processed_port, nframes);
+
+    const auto nsamples = probedSamples_floats.size();
+
+    if (nsamples) {
+        if (1) {
+            auto to_out = Studios::Utils::resample(probedSamples_floats, nframes);
+
+            std::copy(to_out.begin(), to_out.end(), out);
+        } else {
+            auto ds = 1. / nframes;
+            for (int i = 0; i < nframes; ++i) {
+                const auto s = i * ds;
+                auto j = int(s * nsamples);
+
+                out[i] = (jack_default_audio_sample_t) probedSamples_floats[j];
+            }
+        }
+    }
+}

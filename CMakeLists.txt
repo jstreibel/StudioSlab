@@ -1,6 +1,8 @@
 project(StudioSlab)
 cmake_minimum_required(VERSION 3.19.2)
 
+set ( CMAKE_CXX_STANDARD 20 )
+
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)

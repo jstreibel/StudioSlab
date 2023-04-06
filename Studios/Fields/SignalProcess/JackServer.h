@@ -29,7 +29,9 @@ class JackServer {
     size_t totalInputBufferUpdates = 0;
 
     std::vector<Real> dataToOutput;
-    int lastOutputProcessedSamples, nframes_jack;
+    std::vector<Real> lastOutputData;
+    std::mutex dataMutex;
+    int totalLastOutputProcessedSamples, nframes_jack;
     enum SamplingFlags {UnderSampled, OverSampled, EvenSampled} samplingFlag = EvenSampled;
 
     JackServer();
@@ -39,7 +41,10 @@ class JackServer {
 public:
     static JackServer* GetInstance();
 
-    size_t getInputBufferUpdateCount() {return totalInputBufferUpdates; };
+    size_t getInputBufferUpdateCount() { return totalInputBufferUpdates; };
+
+    std::vector<Real> &getDataToOutput() { return dataToOutput; }
+    std::vector<Real> &getLastOutputData() { return lastOutputData; }
 
     int getInputBufferSize();
     jack_default_audio_sample_t *getInputBuffer();
@@ -48,13 +53,14 @@ public:
 
     void operator << (Real value);
 
-    int getLastOutputProcessedSamples() const {return lastOutputProcessedSamples; }
+    int getLastOutputProcessedSamples() const {return totalLastOutputProcessedSamples; }
     jack_nframes_t getnframes() const {return nframes_jack; }
     bool isSubSampled() {return samplingFlag == UnderSampled; }
 
     friend int processJack(jack_nframes_t nframes, void *arg);
     friend void testJack(jack_nframes_t nframes);
     friend void bypassJack(jack_nframes_t nframes);
+    friend void outputProbedData(jack_nframes_t nframes);
 
 
 };

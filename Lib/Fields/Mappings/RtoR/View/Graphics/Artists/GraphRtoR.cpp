@@ -9,6 +9,6 @@ GraphRtoR::GraphRtoR(double xMin, double xMax, double yMin, double yMax, String 
                                           filled, samples) {}
 
 void GraphRtoR::_renderFunction(const RtoR::Function *func, Color color) {
-    RtoR::FunctionRenderer::renderFunction(*func, color, filled, xMin, xMax, samples);
+      RtoR::FunctionRenderer::renderFunction(*func, color, filled, xMin, xMax, samples);
 }
 

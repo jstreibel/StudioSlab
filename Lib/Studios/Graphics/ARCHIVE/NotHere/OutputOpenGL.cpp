@@ -8,7 +8,7 @@
 
 using namespace Base;
 
-OutputOpenGL::OutputOpenGL() : OutputChannel("OpenGL output", 80), lastT(0.0), panel(new WindowPanel)
+OutputOpenGL::OutputOpenGL() : OutputChannel("OpenGL output", 80), panel(new WindowPanel)
 {
 
 }
@@ -58,7 +58,7 @@ void OutputOpenGL::draw() {
 }
 
 bool OutputOpenGL::finishFrameAndRender() {
-    for(auto *anim : animations) anim->step(frameTimer.getElTimeMSec()*1.e-3);
+    for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
