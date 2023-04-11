@@ -10,19 +10,24 @@
 #include "GrowingHoleGLOutput.h"
 #include "Phys/Numerics/Allocator.h"
 
+namespace R2toR {
+    namespace GrowingHole {
 
-class OutputBuilder : public OutputStructureBuilderR2toR {
-protected:
-    auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
-        const double phiMin = -.5;
-        const double phiMax = 1;
+        class OutputBuilder : public OutputStructureBuilderR2toR {
+        protected:
+            auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
+                const double phiMin = -.5;
+                const double phiMax = 1;
 
-        const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+                const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+                const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
-        return new R2toR::GrowingHoleOutGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
+                return new R2toR::GrowingHoleOutGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
+            }
+        };
     }
-};
+}
+
 
 
 

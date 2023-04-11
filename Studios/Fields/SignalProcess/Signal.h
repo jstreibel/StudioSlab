@@ -10,7 +10,6 @@
 #include "Fields/Mappings/RtoR/Controller/RtoRBCInterface.h"
 
 #include "Fields/Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
-#include "Fields/Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
 #include "Fields/Mappings/RtoR/Model/RtoRFieldState.h"
 
@@ -30,28 +29,6 @@ namespace RtoR {
     namespace Signal {
         extern Real xInitDampCutoff_normalized;
         extern Real dampFactor;
-
-
-        class OutGL : public RtoR::OutputOpenGL {
-            Window *fieldWindow;
-
-            Window *signalBufferWindow;
-            GraphRtoR signalBufferGraph;
-            Window *signalFullWindow;
-            GraphRtoR signalFullGraph;
-
-            bool gotNewData = true;
-        protected:
-
-            std::vector<Real> probingData;
-            void _out(const OutputPacket &outInfo) override;
-        public:
-            OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
-            void draw() override;
-            auto getWindowSizeHint() -> IntPair override;
-
-            void notifyKeyboard(unsigned char key, int x, int y) override;
-        };
 
 
         class JackOutput : public OutputChannel {

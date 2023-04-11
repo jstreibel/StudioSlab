@@ -13,23 +13,25 @@
 const auto pi = 3.1415926535897932384626;
 
 namespace R2toR {
-    class InputGrowingHole : public R2toRBCInterface {
-        DoubleParameter height=DoubleParameter{2./30, "height,h", "Discontinuity value."};
+    namespace GrowingHole {
 
-    public:
-        InputGrowingHole() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",
-                                              new OutputBuilder)
-        {
-            addParameters({&height});
-        }
+        class Input : public R2toRBCInterface {
+            DoubleParameter height = DoubleParameter{2. / 30, "height,h", "Discontinuity value."};
+
+        public:
+            Input() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",
+                                                  new OutputBuilder) {
+                addParameters({&height});
+            }
 
 
-        auto getBoundary() const -> const void * override{
-            const double a = *this->height; // Eh isso mesmo? Não era h = 2a/3??
+            auto getBoundary() const -> const void * override {
+                const double a = *this->height; // Eh isso mesmo? Não era h = 2a/3??
 
-            return new GrowingHoleBoundaryCondition(a);
-        }
-    };
+                return new GrowingHoleBoundaryCondition(a);
+            }
+        };
+    }
 }
 
 

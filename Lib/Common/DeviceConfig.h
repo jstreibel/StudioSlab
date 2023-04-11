@@ -1,12 +1,6 @@
 #ifndef DEVICECONFIG_H
 #define DEVICECONFIG_H
 
-#if USE_CUDA == true
-#include <thrust/host_vector.h>
-#include <thrust/device_vector.h>
-#include <thrust/execution_policy.h>
-#endif
-
 enum device {
     CPU = 1,
     GPU = 2,
@@ -17,7 +11,13 @@ enum device {
 
 typedef double Real;
 
+
 #if USE_CUDA == true
+#define __forceinline__ __inline__ __attribute__((always_inline))
+#include <thrust/host_vector.h>
+#include <thrust/device_vector.h>
+#include <thrust/execution_policy.h>
+
 #if GPU_DEBUG
 typedef thrust::HostVector<Real> DeviceVector;
 #else

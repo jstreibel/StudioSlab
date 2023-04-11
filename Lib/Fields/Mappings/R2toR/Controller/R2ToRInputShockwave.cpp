@@ -12,10 +12,6 @@
 
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Fields/Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
-#include "Fields/Mappings/R2toR/View/OutputShockwaveZeros.h"
-#include "Fields/Mappings/R2toR/Model/Transform.h"
-#include "Fields/Mappings/RtoR2/StraightLine.h"
-#include "Fields/Mappings/R2toR/View/R2toROutputOpenGLShockwave.h"
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 

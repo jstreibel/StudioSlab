@@ -17,7 +17,7 @@ namespace Base {
 
     class OutputOpenGL : public OutputChannel, public GLUTEventListener {
     public:
-        OutputOpenGL();
+        OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=80);
         ~OutputOpenGL() override;
 
         auto needDraw() const -> bool;

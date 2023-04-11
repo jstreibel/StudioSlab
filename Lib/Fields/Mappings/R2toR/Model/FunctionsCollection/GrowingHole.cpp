@@ -4,11 +4,13 @@
 
 #include "GrowingHole.h"
 
-GrowingHole::GrowingHole(Real height, Real t) : t(t), height(height) {
+using namespace R2toR;
+
+GrowingHoleFunc::GrowingHoleFunc(Real height, Real t) : t(t), height(height) {
 
 }
 
-Real GrowingHole::operator()(Real2D x) const {
+Real GrowingHoleFunc::operator()(Real2D x) const {
     auto r = x.norm();
 
     assert(r>=t);
@@ -17,10 +19,10 @@ Real GrowingHole::operator()(Real2D x) const {
 }
 
 
-void GrowingHole::setTime(Real t) {
+void GrowingHoleFunc::setTime(Real t) {
     this->t = t;
 }
 
-bool GrowingHole::domainContainsPoint(Real2D x) const {
+bool GrowingHoleFunc::domainContainsPoint(Real2D x) const {
     return x.norm() >= t;
 }

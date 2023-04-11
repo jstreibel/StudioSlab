@@ -29,7 +29,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     else ConsoleBackend::getSingleton();
 
 
-    const NumericParams &p = Allocator::getInstance().getNumericParams();
+    const NumericParams &p = Numerics::Allocator::getInstance().getNumericParams();
 
     auto *outputManager = new OutputManager;
 
@@ -37,8 +37,8 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     RtoR2::StraightLine section1, section2;
     {
         const Real sqrt2 = sqrt(2.);
-        const Real rMin = Allocator::getInstance().getNumericParams().getxLeft();
-        const Real rMax = rMin + Allocator::getInstance().getNumericParams().getL();
+        const Real rMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+        const Real rMax = rMin + Numerics::Allocator::getInstance().getNumericParams().getL();
         const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
         Real theta = 0.0;
@@ -61,11 +61,11 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
         OutputFormatterBase *outputFilter = new BinarySOF;
 
         SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
-                Allocator::getInstance().getNumericParams().getN(), section1);
+                Numerics::Allocator::getInstance().getNumericParams().getN(), section1);
 
-        const auto N = (Real) Allocator::getInstance().getNumericParams().getN();
+        const auto N = (Real) Numerics::Allocator::getInstance().getNumericParams().getN();
         const Real Np = outputResolutionX;
-        const Real r = Allocator::getInstance().getNumericParams().getr();
+        const Real r = Numerics::Allocator::getInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
         auto fileName = outputFileName + "-N=" + ToString(N, 0);
@@ -101,8 +101,8 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 auto OutputStructureBuilderR2toR::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
     const double phiMin = -0.25;
     const double phiMax = 0.25;
-    const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-    const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+    const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
     return new R2toR::OutputOpenGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
 }

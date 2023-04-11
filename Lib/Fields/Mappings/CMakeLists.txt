@@ -8,15 +8,19 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
 			RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			RtoR/Model/FunctionsCollection/SignumFunction.cu
 			RtoR/Model/RtoRSystemGordonGPU.cu
+
+			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
 			R2toR/Model/Derivatives/DerivativesGPU.cu
 			R2toR/Model/R2ToRFunctionArbitraryGPU.cu
 
 			)
 
-	message(STATUS "Maps CUDA support is ENABLED")
+	# set_source_files_properties(${CUDA_SOURCES} PROPERTIES COMPILE_FLAGS "-DBOOST_NO_EXCEPTIONS")
+	# set_source_files_properties(${CUDA_SOURCES} PROPERTIES COMPILE_FLAGS "-DBOOST_EXCEPTION_DISABLE")
+
+	message(STATUS "Maps CUDA support is ENABLED.")
 else()
 	add_compile_definitions(USE_CUDA=false)
 
@@ -122,7 +126,7 @@ set ( R2TOR_SOURCES
 		RtoR2/StraightLine.cpp
 
 		R2toR/Core/Allocator_R2toR.cpp
-		)
+		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
 set ( MAPS_LINKS
 		Slab-Studios-App
@@ -142,12 +146,12 @@ target_link_libraries( ${MAPS_RtoR_LIB_NAME} ${MAPS_LINKS})
 
 add_library(${MAPS_RtoR_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_RtoR_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property(TARGET ${MAPS_RtoR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
+set_property( TARGET ${MAPS_RtoR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
 
 add_library(${MAPS_RtoR_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
 # the line below is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
-add_compile_definitions( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PERIODIC_BC )
+target_compile_definitions( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PUBLIC PERIODIC_BC )
 set_property( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
 
 

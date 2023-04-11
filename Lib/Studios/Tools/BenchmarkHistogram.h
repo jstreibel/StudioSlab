@@ -22,18 +22,21 @@ public:
     void startMeasure();
     void storeMeasure(int nSteps=1);
 
-    auto getAverage() const -> double;
+    auto getAverage() const -> boost::timer::nanosecond_type;
 
     void printHistogram(std::ostream &out = std::cout) const;
     friend std::ostream& operator<<(std::ostream& os, const BenchmarkHistogram& hist);
 
 private:
+    bool firstMeasure = true;
+
     CPUTimer timer;
 
     int count=0;
     const int C0,I,VLast;
     const double invI;
     std::vector<int> histogram;
+    std::vector<boost::timer::nanosecond_type> measures;
 };
 
 

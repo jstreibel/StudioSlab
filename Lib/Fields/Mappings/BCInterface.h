@@ -20,7 +20,7 @@ namespace Base {
 
         virtual auto buildOutputManager() -> OutputManager * = 0;
 
-        auto getOutputStructureBuilder() -> Interface *;
+        auto getOutputStructureBuilder() -> OutputStructureBuilderBase *;
 
         auto toString() const -> String override;
     };

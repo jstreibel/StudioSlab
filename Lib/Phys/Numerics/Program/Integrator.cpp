@@ -67,7 +67,7 @@ OutputPacket NumericalIntegration::getOutputInfo(){
      * Isso eh feito para que, quando o campo eh integrado na GPU, ele possa
      * ser trazido de la. Quando integrado na CPU, isso nao acontece.
      */
-    return OutputPacket(stepper->getFieldState(), stepper->getSpaces(), steps, getT());;
+    return OutputPacket(stepper->getFieldState(), stepper->getSpaces(), steps, getSimulationTime());;
 }
 
 void NumericalIntegration::runFullIntegration()
@@ -93,7 +93,7 @@ void NumericalIntegration::output(){
 
 size_t NumericalIntegration::getSteps() const { return steps; }
 
-floatt NumericalIntegration::getT() { return floatt(getSteps()) * dt; }
+floatt NumericalIntegration::getSimulationTime() { return floatt(getSteps()) * dt; }
 
 const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
     return histogram;

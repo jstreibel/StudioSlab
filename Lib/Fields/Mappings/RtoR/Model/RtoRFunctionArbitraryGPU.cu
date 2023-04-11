@@ -1,14 +1,14 @@
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "hicpp-use-auto" // Don't warn use auto.
-#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast" // Don't warn use dynamic_cast
+//#pragma clang diagnostic push
+//#pragma ide diagnostic ignored "hicpp-use-auto" // Don't warn use auto.
+//#pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast" // Don't warn use dynamic_cast
 //
 
 #include "RtoRFunctionArbitraryGPU.h"
-#include "Derivatives/DerivativesGPU.h"
 
+#include "Derivatives/DerivativesGPU.h"
 #include <Phys/Function/GPUFriendly.h>
 
-#include <thrust/iterator/constant_iterator.h>
+// #include <thrust/iterator/constant_iterator.h>
 
 // Created by joao on 17/09/2019.
 
@@ -82,4 +82,4 @@ ArbitraryFunction &FunctionArbitraryGPU::Laplacian(ArbitraryFunction &outFunc) c
     return outFunc;
 }
 
-#pragma clang diagnostic pop
+//#pragma clang diagnostic pop

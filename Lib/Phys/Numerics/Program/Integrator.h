@@ -105,7 +105,7 @@ public:
 
 public:
     size_t getSteps() const;
-    Real getT();
+    Real getSimulationTime();
 
 private:
     Real dt;

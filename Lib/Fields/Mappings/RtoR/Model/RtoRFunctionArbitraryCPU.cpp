@@ -37,6 +37,12 @@ RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRig
 
 }
 
+FunctionArbitraryCPU::FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
+                                           ArbitraryFunction::LaplacianType laplacianType)
+                                           : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType) {
+    getSpace().getX() = data;
+}
+
 auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
     assert(vec.size() == getSpace().getX().size());
 
@@ -79,6 +85,7 @@ Base::ArbitraryFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt 
 Base::ArbitraryFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
                                                                  Base::ArbitraryFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
+
     auto &outX = outSpace.getX();
     const auto &myX = getSpace().getX();
 
@@ -133,6 +140,7 @@ Real FunctionArbitraryCPU::integrate() const {
     auto dx = (this->xMax - this->xMin) / this->N;
     return sum*dx;
 }
+
 
 
 #pragma clang diagnostic pop

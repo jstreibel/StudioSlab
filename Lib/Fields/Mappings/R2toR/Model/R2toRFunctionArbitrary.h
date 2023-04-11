@@ -5,11 +5,9 @@
 #ifndef V_SHAPE_R2TORFUNCTIONARBITRARY_H
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
-#include "R2toRFunction.h"
-#include "Studios/Controller/Interface/CommonParameters.h"
-#include "Phys/Toolset/Device.h"
 #include "Phys/Function/ArbitraryFunction.h"
 
+#include "R2toRFunction.h"
 
 namespace R2toR {
     class Domain {

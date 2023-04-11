@@ -9,7 +9,7 @@
 #include "Phys/Numerics/Allocator.h"
 
 
-class Allocator_R2toR : public Allocator {
+class Allocator_R2toR : public Numerics::Allocator {
 public:
     Allocator_R2toR();
 

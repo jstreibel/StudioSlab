@@ -8,7 +8,8 @@
 
 using namespace Base;
 
-OutputOpenGL::OutputOpenGL() : OutputChannel("OpenGL output", 80), panel(new WindowPanel)
+OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
+    : OutputChannel("OpenGL output", stepsBetweenDraws), panel(new WindowPanel)
 {
 
 }

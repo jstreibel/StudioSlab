@@ -10,11 +10,7 @@
 #include <assert.h>
 
 #ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
-//#include <memory>
-//#include <boost/multiprecision/float128.hpp>
-//#define FLOAT128 boost::multiprecision::float128
-//#else
-//#define FLOAT128 double
+
 #endif
 
 #define FLOAT64 double

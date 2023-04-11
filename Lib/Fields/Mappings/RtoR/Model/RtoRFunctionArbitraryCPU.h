@@ -14,6 +14,8 @@ namespace RtoR {
         FunctionArbitraryCPU(const ArbitraryFunction& toCopy);
         FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
                              ArbitraryFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
+        FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
+                             ArbitraryFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
 
         [[nodiscard]] auto Clone() const -> Base::Function<Real, Real> * override;
 

@@ -5,6 +5,7 @@
 #include "BenchmarkHistogram.h"
 
 #include <cmath>
+#include <cassert>
 
 
 // #define nClasses (1 + (lastClass-firstClass) / classInterval) // +1 pra sobras
@@ -25,9 +26,15 @@ void BenchmarkHistogram::startMeasure() {
 }
 
 void BenchmarkHistogram::storeMeasure(int nSteps) {
+    if(firstMeasure) { firstMeasure=false; return; }
+
     timer.stop();
 
-    int V = timer.elapsed().wall/(1000*nSteps); // ns -> \mu s
+    const auto measure = timer.elapsed().wall/nSteps;
+
+    measures.push_back(measure);
+
+    int V = measure/1000; // ns -> \mu s
 
     if(V<C0 || V>VLast) return;
     int i = int(floorf((V-C0)*invI));
@@ -35,16 +42,17 @@ void BenchmarkHistogram::storeMeasure(int nSteps) {
     count++;
 }
 
-auto BenchmarkHistogram::getAverage() const -> double {
-    double sum=0.;
-    for(size_t i=0; i<histogram.size(); i++){
+auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
+    assert(count == measures.size());
+
+    boost::timer::nanosecond_type sum=0.;
+    if(0) for (size_t i=0; i<histogram.size(); i++) {
         const auto C=double(i*I+C0);
         sum += C*histogram[i];
     }
+    else for(auto v : measures) sum += v;
 
-    const double avg = sum / count;
-
-    return avg;
+    return sum / count;
 }
 
 void BenchmarkHistogram::printHistogram(std::ostream &out) const {
@@ -56,9 +64,9 @@ void BenchmarkHistogram::printHistogram(std::ostream &out) const {
                 out << char(219);
         }
     } else {
-        const double avg = getAverage();
+        const auto avg = long(getAverage()*1e-3);
 
-        std::cout << "Histogram measured average time: " << avg << " microseconds/step" << std::endl;
+        std::cout << "Histogram measured average time: " << avg << " mu-sec/step" << std::endl;
     }
 }
 

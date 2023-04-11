@@ -14,19 +14,22 @@
 
 namespace R2toR {
 
-    class GrowingHoleBoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
-        Real height;
-    public:
-        GrowingHoleBoundaryCondition(Real height = 2/3.) : height(height) { }
+    namespace GrowingHole {
 
-        void apply(FieldState &function, Real t) const override{
-            GrowingHole hole(height, t);
-            GrowingHole vel(.0, t);
+        class GrowingHoleBoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
+            Real height;
+        public:
+            GrowingHoleBoundaryCondition(Real height = 2 / 3.) : height(height) {}
 
-            function.setPhi(hole);
-            function.setDPhiDt(vel);
-        }
-    };
+            void apply(FieldState &function, Real t) const override {
+                GrowingHoleFunc hole(height, t);
+                GrowingHoleFunc vel(.0, t);
+
+                function.setPhi(hole);
+                function.setDPhiDt(vel);
+            }
+        };
+    }
 }
 
 

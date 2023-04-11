@@ -26,7 +26,6 @@ void StatsDisplay::draw(const Window *window) {
 
     bool closable=false;
 
-
     ImGui::Begin("Stats", &closable,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar);

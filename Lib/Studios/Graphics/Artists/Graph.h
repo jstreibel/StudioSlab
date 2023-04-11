@@ -29,6 +29,50 @@ class Graph : public Artist {
     void __drawXAxis(const Window *win);
     void __drawYAxis(const Window *win);
 
+    void __rectDraw(int i, Color color, String label, const Window *window){
+        glMatrixMode(GL_PROJECTION);
+        glPushMatrix();
+        glLoadIdentity();
+        glOrtho(0, 1, 0, 1, -1, 1);
+
+        glMatrixMode(GL_MODELVIEW);
+        glPushMatrix();
+        glLoadIdentity();
+
+        auto dx = .080,
+             dy = -.060;
+        auto xGap = 0.015,
+             yGap = -.025;
+        auto xMin = .100,
+             xMax = xMin+dx,
+             yMin = .975+(yGap+dy)*float(i),
+             yMax = yMin+dy;
+
+        glColor4f(color.r, color.g, color.b, .5*color.a);
+
+        glRectd(xMin,yMin,xMax,yMax);
+
+        glColor4f(color.r, color.g, color.b, color.a);
+        glLineWidth(2);
+        glBegin(GL_LINE_LOOP);
+
+        glVertex2f(xMin, yMin);
+        glVertex2f(xMax, yMin);
+        glVertex2f(xMax, yMax);
+        glVertex2f(xMin, yMax);
+
+        glEnd();
+
+        auto c = ColorScheme::graphTitleFont;
+        glColor4f(c.r,c.g,c.b,c.a);
+        writeOrtho(window, Rect{0,1,0,1}, 1, xMax+xGap, .5*(yMax+yMin), label);
+
+        glPopMatrix();
+//
+        glMatrixMode(GL_PROJECTION);
+        glPopMatrix();
+    }
+
 protected:
     String title = "";
     bool filled = false;
@@ -76,7 +120,6 @@ Graph<FunctionType>::Graph(double xMin, double xMax, double yMin, double yMax, S
 {
 }
 
-void auxRectDraw(int i, Color color, String label, const Window *window);
 
 template<class FunctionType>
 void Graph<FunctionType>::setupOrtho()
@@ -104,18 +147,16 @@ void Graph<FunctionType>::draw(const Window *window) {
 
     _drawAxes(window);
 
-
     int i=0;
     for(auto &triple : mFunctions){
         auto &func = *std::get<0>(triple);
         auto color = std::get<1>(triple);
         auto label = std::get<2>(triple);
 
-        auxRectDraw(i++, color, label, window);
+        __rectDraw(i++, color, label, window);
 
         this->_renderFunction(&func, color);
     }
-
 
 }
 

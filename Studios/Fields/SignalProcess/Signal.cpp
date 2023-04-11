@@ -5,6 +5,7 @@
 #include "Signal.h"
 
 #include "JackServer.h"
+#include "OutGL.h"
 
 #include <Phys/Numerics/Output/OutputManager.h>
 
@@ -12,7 +13,7 @@
 
 Real RtoR::Signal::xInitDampCutoff_normalized;
 Real RtoR::Signal::dampFactor;
-std::vector<std::pair<Real,Real>> damps;
+std::vector<Real> damps;
 Real jackProbeLocation=0;
 size_t lastBufferDumpedSamplesCount = 0;
 Real t0 = 5;
@@ -171,7 +172,7 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
             phi -= 0.1 * phi * factor;
             dphi -= dphi * factor;
 
-            damps.push_back({x, factor});
+            damps.push_back(factor);
         }
     }
 

@@ -5,12 +5,12 @@
 
 #include <Common/Typedefs.h>
 
-#ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
-#include <boost/multiprecision/float128.hpp>
-#define FLOAT128 boost::multiprecision::float128
-#else
-#define FLOAT128 double
-#endif
+//#ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
+//#include <boost/multiprecision/float128.hpp>
+//#define FLOAT128 boost::multiprecision::float128
+//#else
+//#define FLOAT128 double
+//#endif
 
 inline bool isPOT(const unsigned long n){
     return (n != 0) && ((n & (n - 1)) == 0);

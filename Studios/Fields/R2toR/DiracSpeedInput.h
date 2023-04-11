@@ -21,7 +21,7 @@ namespace R2toR {
 
     public:
         InputDiracSpeed() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",
-                                              new OutputBuilder) { addParameters({&E, &eps}); }
+                                              new GrowingHole::OutputBuilder) { addParameters({&E, &eps}); }
 
         auto getBoundary() const -> const void * override{
             auto E = *this->E;

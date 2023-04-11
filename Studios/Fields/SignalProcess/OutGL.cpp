@@ -3,6 +3,7 @@
 //
 
 #include "Signal.h"
+#include "OutGL.h"
 #include "JackServer.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
@@ -12,11 +13,72 @@
 #include <Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>
 
 extern size_t lastBufferDumpedSamplesCount;
-extern Real RtoR::Signal::xInitDampCutoff_normalized;
-extern Real RtoR::Signal::dampFactor;
-extern std::vector<std::pair<Real,Real>> damps;
+extern std::vector<Real> damps;
 extern Real jackProbeLocation;
 extern Real t0;
+Real __t=0;
+
+
+
+void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
+    Window::draw(decorated, clear);
+
+    float w = float(this->w) - (float)2*this->winXoffset,
+            h = float(this->h) - (float)2*this->winYoffset;
+    float x = this->x+this->winXoffset;
+    float y = this->y+this->winYoffset;
+
+    bool closable=false;
+
+    auto flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoTitleBar;
+
+    ImGui::Begin("Jack control", &closable, flags);
+    ImGui::SetWindowPos(ImVec2{x, y});
+    ImGui::SetWindowSize(ImVec2{w, h});
+
+
+
+
+    if (ImGui::Button("Generate pulse"))
+    {
+        t0 = __t;
+    }
+
+
+
+    static bool isRecording = false;
+
+    if (ImGui::Button("Rec", {120, 60}))
+        isRecording = JackServer::GetInstance()->toggleRecording();
+
+    ImVec4 color = isRecording ? ImVec4(1.0f, 0.0f, 0.0f, 1.0f) : ImVec4(0.2f, .0f, .0f, 1.0f);
+
+    // Draw the circle
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    ImVec2 center = ImGui::GetItemRectMax();
+
+    float radius = 25;
+    center.x = w - 2*radius;
+    center.y -= .5*ImGui::GetItemRectSize().y;
+    drawList->AddCircleFilled(center, radius, ImColor(color));
+
+    // Change button color
+    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0));
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));
+
+    // Draw the button
+    ImGui::Button("##", ImVec2(radius * 2, radius * 2));
+
+    // Restore button color
+    ImGui::PopStyleColor(3);
+
+
+
+
+    ImGui::End();
+}
+
 
 /***
  *    ________                             ________ .____
@@ -39,6 +101,7 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
 
     window = new Window; window->addArtist(&this->stats);
     panel->addWindow(window);
+    panel->addWindow(&jackControlWindow);
 
     {
         auto samples = (int) Numerics::Allocator::getInstance().getNumericParams().getN();
@@ -65,9 +128,15 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
         this->signalFullWindow = window;
     }
 
+    {
+        this->fullRecordingGraph = GraphRtoR(0, 1, -1.2, 1.2, "Rec", true, 2000);
+        fullRecordingWindow.addArtist(&fullRecordingGraph);
+        panel->addWindow(&fullRecordingWindow);
+    }
 
 
-    const auto faktor = 120;
+
+    const auto faktor = 10;
     phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
     phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
     addAnimation(phiMaxAnim);
@@ -83,9 +152,59 @@ void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
     // OutputOpenGL::_out(outInfo);
 
     auto field = outInfo.getFieldData<RtoR::FieldState>();
+    __t = outInfo.getSimTime();
     probingData.push_back(field->getPhi()(jackProbeLocation));
     gotNewData = true;
+
+    if(!outInfo.getSteps()%100) {
+        auto newField =
+                static_cast<RtoR::ArbitraryFunction *>
+                (outInfo.getFieldData<RtoR::FieldState>()->getPhi().Clone());
+        history.push_back(newField);
+    }
 }
+
+#include <SOIL/SOIL.h>
+
+void renderMatrix(const std::vector<std::vector<double>>& matrix)
+{
+    // Get the size of the matrix
+    int width = matrix.size();
+    int height = matrix[0].size();
+
+    // Convert the matrix to an array of floats
+    std::vector<float> data(width * height * 4, 0.0f);
+    for (int i = 0; i < width; i++) {
+        for (int j = 0; j < height; j++) {
+            int index = (i * height + j) * 4;
+            data[index] = static_cast<float>(matrix[i][j]);
+            data[index + 1] = static_cast<float>(matrix[i][j]);
+            data[index + 2] = static_cast<float>(matrix[i][j]);
+            data[index + 3] = 1.0f;
+        }
+    }
+
+    // Create a new texture using SOIL
+    GLuint textureID = SOIL_create_OGL_texture(
+            reinterpret_cast<unsigned char*>(data.data()),
+            width, height, 4, SOIL_CREATE_NEW_ID,
+            SOIL_FLAG_MIPMAPS | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT);
+
+    // Bind the texture
+    glBindTexture(GL_TEXTURE_2D, textureID);
+
+    // Render the quad
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.0f, -1.0f);
+    glTexCoord2f(1.0f, 0.0f); glVertex2f(1.0f, -1.0f);
+    glTexCoord2f(1.0f, 1.0f); glVertex2f(1.0f, 1.0f);
+    glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.0f, 1.0f);
+    glEnd();
+
+    // Delete the texture
+    glDeleteTextures(1, &textureID);
+}
+
 void RtoR::Signal::OutGL::draw() {
     static size_t lastStep = 0;
 
@@ -120,6 +239,30 @@ void RtoR::Signal::OutGL::draw() {
                           + ToString(lastBufferDumpedSamplesCount));
     stats.addVolatileStat(String("Input buffer updates: "
                                  + ToString(jackServer->getInputBufferUpdateCount())));
+
+
+    // *************************** RECORDING *******************************
+    {
+        static RtoR::FunctionArbitraryCPU *func = nullptr;
+
+        std::vector<float> rec_f = JackServer::GetInstance()->getRecording();
+        VecFloat rec(rec_f.begin(), rec_f.end());
+        auto recTime =  rec.size()/48000.;
+
+        if(rec.size()){
+            if(func != nullptr) delete func;
+
+            func = new RtoR::FunctionArbitraryCPU(rec, .0, recTime);
+
+            fullRecordingGraph.clearFunctions();
+            fullRecordingGraph.addFunction(func);
+            fullRecordingGraph.xMax = recTime;
+
+            stats.addVolatileStat(String("Recorded samples: ") + ToString(func->N));
+        }
+
+    }
+
 
     // *************************** SIGNAL TESTS ****************************
     if(1) {
@@ -234,21 +377,21 @@ void RtoR::Signal::OutGL::draw() {
     panel->draw(true, true);
 
     {
-        fieldWindow->setupViewport(false, false);
+        //auto L = Numerics::Allocator::getInstance().getNumericParams().getL();
+        //static RtoR::FunctionArbitraryCPU* func = nullptr; if(func) delete func;
+        //func = new RtoR::FunctionArbitraryCPU(damps, xInitDampCutoff_normalized*L, xMax);
+//
+        //mFieldsGraph.addFunction(func, Color(1,0,0,1));
+        fieldWindow->setupViewport(false, true);
         mFieldsGraph.setupOrtho();
-        glColor4f(1, 0, 0, 1);
+//
+        //glColor4f(0, 1, 0, 1);
+        //glBegin(GL_LINES);
+        //glVertex2d(jackProbeLocation, phiMin);
+        //glVertex2d(jackProbeLocation, phiMax);
+        //glEnd();
 
-        glBegin(GL_LINE_STRIP);
-        for (auto &p: damps) {
-            glVertex2d(p.first, 1e2 * p.second);
-        }
-        glEnd();
-
-        glColor4f(0, 1, 0, 1);
-        glBegin(GL_LINES);
-        glVertex2d(jackProbeLocation, phiMin);
-        glVertex2d(jackProbeLocation, phiMax);
-        glEnd();
+        renderMatrix(getHistoryMatrixData());
     }
 
 
@@ -262,3 +405,13 @@ void RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == 13) t0 = lastData.getSimTime();
 }
 
+std::vector<std::vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
+    auto M = history.size();
+
+    std::vector<std::vector<Real>> outputData(M);
+    for (int i=0; i<M; ++i) outputData[i] = history[i]->getSpace().getX();
+
+    return outputData;
+}
+
+\

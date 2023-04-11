@@ -11,7 +11,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 
 	include_directories(/opt/cuda/include)
 
-	message(STATUS "StudioSlab CUDA support is ENABLED")
+	message(STATUS "StudioSlab CUDA support is ENABLED."  )
 else()
 	add_compile_definitions(USE_CUDA=false)
 

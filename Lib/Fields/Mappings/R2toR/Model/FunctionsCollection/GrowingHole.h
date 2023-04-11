@@ -8,17 +8,21 @@
 
 #include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
 
-class GrowingHole : public R2toR::Function {
-    Real t;
-    Real height;
-public:
-    GrowingHole(Real height=1, Real t=.0);
+namespace R2toR {
+    class GrowingHoleFunc : public R2toR::Function {
+        Real t;
+        Real height;
+    public:
+        GrowingHoleFunc(Real height = 1, Real t = .0);
 
-    void setTime(Real t);
-    Real operator()(Real2D x) const override;
+        void setTime(Real t);
 
-    bool domainContainsPoint(Real2D x) const override;
-};
+        Real operator()(Real2D x) const override;
+
+        bool domainContainsPoint(Real2D x) const override;
+    };
+
+}
 
 
 #endif //STUDIOSLAB_GROWINGHOLE_H

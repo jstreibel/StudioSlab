@@ -23,3 +23,7 @@ void GraphR2Section::addSection(RtoR2::StraightLine *section, Color color) {
     sections.emplace_back(std::pair{section, color});
 }
 
+void GraphR2Section::__drawLabel() {
+
+}
+

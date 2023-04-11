@@ -47,6 +47,9 @@ namespace RtoR {
             }
         }
 
+        void setTranslation(Real _tx) { tx = _tx; }
+        Real getTranslation() const { return tx; }
+
         auto operator()(Real x) const -> Real override {
             x-=tx;
 
@@ -59,7 +62,7 @@ namespace RtoR {
         double (*delta)(double, double);
 
         const Real a, eps;
-        const Real tx;
+        Real tx;
 
         const Regularization reg;
     };

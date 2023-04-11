@@ -7,14 +7,14 @@
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 
-#include <GL/glut.h>
+#include <GL/freeglut.h>
 #include <cassert>
 #include <filesystem>
 
 GLUTBackend *GLUTBackend::glutBackend = nullptr;
 
-#define FORCE_FPS 60
-const double FRAME_TIME = 1.0/double(FORCE_FPS);
+//#define FORCE_FPS 60
+//const double FRAME_TIME = 1.0/double(FORCE_FPS);
 
 GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 {

@@ -25,7 +25,7 @@ class JackServer {
 
     const int buffer_size = 2048;
     jack_default_audio_sample_t* input_buffer = new jack_default_audio_sample_t[buffer_size];
-    bool inputBufferIsUpdated = false;
+    std::vector<jack_default_audio_sample_t> recordedInput = std::vector<jack_default_audio_sample_t>(0);
     size_t totalInputBufferUpdates = 0;
 
     std::vector<Real> dataToOutput;
@@ -36,7 +36,9 @@ class JackServer {
 
     JackServer();
 
-    void updateInputBuffer(jack_nframes_t nframes);
+    void recordInputBuffer(jack_nframes_t nframes);
+
+    bool isRecordingInput = false;
 
 public:
     static JackServer* GetInstance();
@@ -63,6 +65,9 @@ public:
     friend void outputProbedData(jack_nframes_t nframes);
 
 
+    bool toggleRecording();
+
+    std::vector<float> getRecording();
 };
 
 

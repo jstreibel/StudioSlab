@@ -11,7 +11,7 @@ Base::BCInterface::BCInterface(String generalDescription, OutputStructureBuilder
     if(selfRegister) InterfaceSelector::getInstance().registerOption(this);
 }
 
-auto Base::BCInterface::getOutputStructureBuilder() -> Interface * {
+auto Base::BCInterface::getOutputStructureBuilder() -> OutputStructureBuilderBase * {
     return outputStructureBuilder;
 }
 

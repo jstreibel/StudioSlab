@@ -24,7 +24,7 @@ namespace ColorSchemeDark {
 
     extern Color defaultGraphColor;
 
-    extern Color graph1a, graph1b;
+    extern std::vector<Color> graphs;
 }
 
 namespace ColorSchemeBWDark {
@@ -36,7 +36,7 @@ namespace ColorSchemeBWDark {
 
     extern Color defaultGraphColor;
 
-    extern Color graph1a, graph1b;
+    extern Color graph1a, graph1b, graph1c;
 }
 
 namespace ColorSchemeTest {
@@ -48,6 +48,6 @@ namespace ColorSchemeTest {
                  graphTitleFont;
 }
 
-namespace ColorScheme = ColorSchemeBWDark;
+namespace ColorScheme = ColorSchemeDark;
 
 #endif //STUDIOSLAB_STYLESANDCOLORSCHEMES_H

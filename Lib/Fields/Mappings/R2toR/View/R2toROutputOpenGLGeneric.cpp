@@ -9,7 +9,7 @@
 
 
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-                                  : Base::OutputOpenGL(), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
+                                  : Base::OutputOpenGL("R2 -> R OpenGL output", 10), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
                                     phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel),
                                     mSectionGraph(0, 1, phiMin, phiMax, "", true, 2000)
 {
@@ -17,9 +17,9 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 
     Window *window = nullptr;
 
-    window = new Window;
+    //window = new Window;
     //window->addArtist(&mPhiGraph);
-    panel->addWindow(window);
+    //panel->addWindow(window);
 
     window = new Window;
     window->addArtist(&stats);
@@ -27,7 +27,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 
     window = new Window;
     window->addArtist(&mSectionGraph);
-    panel->addWindow(window, true, 0.8);
+    panel->addWindow(window, true, 0.88);
 
     auto line = new RtoR2::StraightLine(Rotation::ByAngle(M_PI_4) * RtoR2::StraightLine({0, yMin},{0, yMax}));
     mSectionGraph.addSection(line, Color(1,0,0,1));
@@ -41,8 +41,8 @@ void R2toR::OutputOpenGL::draw() {
 
     std::stringstream ss;
     const Real t0 = 0;
-    const Real L = Allocator::getInstance().getNumericParams().getL();
-    const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
+    const Real L = Numerics::Allocator::getInstance().getNumericParams().getL();
+    const Real xMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
 
     stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
     stats.addVolatileStat(std::string("L = ") + std::to_string(L));

@@ -36,7 +36,8 @@ void OutputChannel::output(const OutputPacket &outData){
     lastData = outData;
 }
 
-auto OutputChannel::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {}
+auto OutputChannel::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+    return true; }
 
 auto OutputChannel::getDescription() const -> String { return description; }
 auto OutputChannel::getName() const -> String { return name; }

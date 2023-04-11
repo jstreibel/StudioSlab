@@ -4,13 +4,9 @@
 
 #include "RtoROutGLStatistic.h"
 
-#include "Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
-
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
 #include "Fields/Mappings/RtoR/Calc/Histogram.h"
-
-#include <boost/histogram.hpp>
 
 #include <sstream>
 

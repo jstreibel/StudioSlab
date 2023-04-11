@@ -31,14 +31,19 @@ void bypassJack(jack_nframes_t nframes);
 
 void outputProbedData(jack_nframes_t nframes);
 
+void recordInput();
+
 int processJack(jack_nframes_t nframes, void *arg){
     jack->dataMutex.lock();
-    jack->updateInputBuffer(nframes);
 
     bypassJack(nframes);
     testJack(nframes);
 
     outputProbedData(nframes);
+
+    if(jack->isRecordingInput){
+        jack->recordInputBuffer(nframes);
+    }
 
     auto &processedSamples = jack->dataToOutput;
     const auto nsamples = processedSamples.size();
@@ -55,8 +60,6 @@ int processJack(jack_nframes_t nframes, void *arg){
 
     return 0;
 }
-
-
 
 
 JackServer::JackServer() {
@@ -96,8 +99,8 @@ JackServer::JackServer() {
                                                        /*"Built-in Audio Analog Stereo:playback_FL",
                                                        "Built-in Audio Analog Stereo:playback_FR"*/};
 
-    std::vector<String> connect_to_input =     {/*"C-1U Digital Stereo (IEC958):capture_FL",
-                                                "C-1U Digital Stereo (IEC958):capture_FR",
+    std::vector<String> connect_to_input =     {"C-1U Digital Stereo (IEC958):capture_FL",
+                                                "C-1U Digital Stereo (IEC958):capture_FR"/*,
                                                 testPortName*/};
 
 
@@ -135,16 +138,28 @@ int JackServer::getInputBufferSize() {
     return buffer_size;
 }
 
-void JackServer::updateInputBuffer(jack_nframes_t nframes) {
-    assert(nframes<=buffer_size);
-
-    this->nframes_jack = nframes;
-
+void JackServer::recordInputBuffer(jack_nframes_t nframes) {
     auto jack_input_buffer = (jack_default_audio_sample_t*) jack_port_get_buffer(getInputPort(), nframes);
     memcpy(input_buffer, jack_input_buffer, sizeof(jack_default_audio_sample_t) * nframes);
 
+    std::vector<jack_default_audio_sample_t> in(input_buffer, input_buffer + nframes);
+    recordedInput.insert(recordedInput.end(), in.begin(), in.end());
+
     totalInputBufferUpdates++;
 }
+
+bool JackServer::toggleRecording() {
+    isRecordingInput = !isRecordingInput;
+
+    std::cout << "Jack server is " << (isRecordingInput?"":"not ") << "recording input." << std::endl;
+
+    return isRecordingInput;
+}
+
+std::vector<float> JackServer::getRecording() {
+    return recordedInput;
+}
+
 
 jack_default_audio_sample_t *JackServer::getInputBuffer() {
     return input_buffer;
@@ -251,3 +266,4 @@ void outputProbedData(jack_nframes_t nframes) {
         }
     }
 }
+

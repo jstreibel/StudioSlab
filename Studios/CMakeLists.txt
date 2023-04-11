@@ -16,8 +16,8 @@ set ( SlabLibs
 # ************************************************************************************************************
 
 add_executable ( Signals-RtoR Fields/SignalProcess/SignalMain.cpp Fields/SignalProcess/Signal.cpp
-		Fields/SignalProcess/JackServer.cpp Fields/SignalProcess/JackServer.h Fields/SignalProcess/OutGL.cpp)
-target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Fields-Maps-RtoR_GPU jack )
+		Fields/SignalProcess/JackServer.cpp Fields/SignalProcess/JackServer.h Fields/SignalProcess/OutGL.cpp Fields/SignalProcess/OutGL.h)
+target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Fields-Maps-RtoR_GPU jack SOIL )
 #set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 
 
@@ -45,7 +45,7 @@ target_link_libraries ( Tests.app	${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
 
 
 add_executable (Fields-RtoR-Thermal Fields/RtoRThermalSG/MainRtoRThermal.cpp ${SOURCES}  )
-add_compile_definitions(TARGET Fields-RtoR-Thermal PERIODIC_BC ) # isso define um macro de preprocessador
+target_compile_definitions( Fields-RtoR-Thermal PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )
 
 
@@ -56,14 +56,14 @@ add_executable (Fields-Montecarlo
 		Fields/Montecarlo1+1/MontecarloMain.cpp
 		Fields/Montecarlo1+1/RtoROutGLMontecarlo.cpp
 		${SOURCES}  )
-add_compile_definitions(TARGET Fields-Montecarlo PERIODIC_BC ) # isso define um macro de preprocessador
+target_compile_definitions( Fields-Montecarlo PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )
 
 
 # ************************************************************************************************************
 
 
-add_executable ( Fields-R2toR Fields/R2toR/MainR2toR.cpp)
+add_executable ( Fields-R2toR Fields/R2toR/MainR2toR.cpp Fields/R2toR/LeadingDelta/LeadingDelta.cpp)
 target_link_libraries ( Fields-R2toR Slab-Fields-Maps-R2toR_GPU )
 set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 

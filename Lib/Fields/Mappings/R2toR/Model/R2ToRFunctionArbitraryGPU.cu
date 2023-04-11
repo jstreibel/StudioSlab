@@ -1,14 +1,15 @@
 
 
-#include <thrust/iterator/constant_iterator.h>
+
 #include "R2ToRFunctionArbitraryGPU.h"
+
 #include "Fields/Mappings/R2toR/Model/Derivatives/DerivativesGPU.h"
+#include <Phys/Function/GPUFriendly.h>
 
 
 
 using namespace R2toR;
 
-#include <Phys/Function/GPUFriendly.h>
 
 
 FunctionArbitraryGPU::FunctionArbitraryGPU(PosInt N, Real sMin, Real h)

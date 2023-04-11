@@ -23,10 +23,10 @@ namespace R2toR {
 
             std::stringstream ss;
             const Real t = lastData.getSimTime();
-            const Real L = Allocator::getInstance().getNumericParams().getL();
-            const Real xMin = Allocator::getInstance().getNumericParams().getxLeft();
+            const Real L = Numerics::Allocator::getInstance().getNumericParams().getL();
+            const Real xMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
 
-            auto dt = Allocator::getInstance().getNumericParams().getdt();
+            auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
             stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
@@ -35,10 +35,10 @@ namespace R2toR {
             auto &phi = fState.getPhi();
 
             mSectionGraph.clearFunctions();
-            mSectionGraph.addFunction(&phi, ColorScheme::graph1a, "Numeric");
+            mSectionGraph.addFunction(&phi, ColorScheme::graphs[0], "Numeric");
             RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave; radialShockwave.sett(t-dt);
             FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1,0,0, false);
-            mSectionGraph.addFunction(&shockwave, ColorScheme::graph1b, "Analytic");
+            mSectionGraph.addFunction(&shockwave, ColorScheme::graphs[1], "Analytic");
 
             panel->draw(true, true);
         }
