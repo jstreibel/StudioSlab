@@ -44,7 +44,7 @@ public:
         return {p1.x+p2.x, p1.y+p2.y};
     }
 
-    float norm() {
+    Real norm() const {
         return sqrt(x*x + y*y);
     }
 };

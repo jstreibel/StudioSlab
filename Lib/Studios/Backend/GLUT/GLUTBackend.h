@@ -23,9 +23,12 @@ public:
 
     static void keyboard(unsigned char key, int x, int y);
     static void keyboardSpecial(int key, int x, int y);
+
     static void mouseButton(int button, int dir, int x, int y);
     static void mousePassiveMotion(int x, int y);
+    static void mouseWheel(int wheel, int direction, int x, int y);
     static void mouseMotion(int x, int y);
+
     static void render();
     static void idleCall();
     static void reshape(int w, int h);

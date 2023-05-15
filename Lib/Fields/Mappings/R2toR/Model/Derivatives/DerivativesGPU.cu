@@ -22,6 +22,12 @@ struct Laplacian2D {
 
     __host__ __device__
     inline double operator()(const thrust::tuple<double, double, double, double, double>& d) const {
+        // Kernel
+        //  1  / 0  1  0 \
+        // --- | 1  4  1 |
+        //  h² \ 0  1  0 /
+
+        // Campo
         // / x00 x01 x02 \    /     x01     \    /   N   \
         // | x10 x11 x12 |    | x10 x11 x12 |    | W C E |
         // \ x20 x21 x22 /    \     x21     /    \   S   /

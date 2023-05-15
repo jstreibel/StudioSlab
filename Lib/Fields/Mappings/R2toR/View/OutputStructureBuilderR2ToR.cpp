@@ -44,9 +44,9 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
         Real theta = 0.0;
 
         Rotation R;
-        R = Rotation(theta + .5 * M_PI);
-        section1 = RtoR2::StraightLine(R * x0, R * xf);
         R = Rotation(theta);
+        section1 = RtoR2::StraightLine(R * x0, R * xf, rMin, rMax);
+        R = Rotation(theta + .5 * M_PI);
         section2 = RtoR2::StraightLine(R * x0, R * xf);
     }
 

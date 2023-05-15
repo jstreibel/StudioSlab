@@ -19,8 +19,8 @@ namespace RtoR {
 
             const double invEps = 1. / eps;
 
-            if (x > -eps && x <= .0) return invEps * (1. + invEps * x);
-            else if (x > .0 && x < eps) return invEps * (1. - invEps * x);
+            if      (x > -eps && x <= .0)   return invEps * (1. + invEps * x);
+            else if (x > .0   && x <   eps) return invEps * (1. - invEps * x);
 
             return 0.;
         }

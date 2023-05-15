@@ -43,7 +43,7 @@ void Window::_decorate() const {
 }
 
 void Window::setupViewport(bool decorate, bool clear) const {
-    glMatrixMode(GL_VIEWPORT);
+    glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     glViewport(x + winXoffset, y + winYoffset,

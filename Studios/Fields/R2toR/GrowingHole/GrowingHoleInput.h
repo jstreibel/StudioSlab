@@ -16,7 +16,7 @@ namespace R2toR {
     namespace GrowingHole {
 
         class Input : public R2toRBCInterface {
-            DoubleParameter height = DoubleParameter{2. / 30, "height,h", "Discontinuity value."};
+            DoubleParameter height = DoubleParameter{2. / 3, "height,h", "Discontinuity value."};
 
         public:
             Input() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",

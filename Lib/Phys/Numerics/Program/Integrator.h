@@ -105,11 +105,13 @@ public:
 
 public:
     size_t getSteps() const;
-    Real getSimulationTime();
+    inline Real getSimulationTime();
+    void doForceOverStepping();
 
 private:
     Real dt;
     PosInt steps;
+    bool forceOverStepping = false;
 
     BenchmarkHistogram histogram;
 

@@ -3,10 +3,11 @@
 
 #include "Integrator.h"
 
+#define ATTEMP_REALTIME false
+#if ATTEMP_REALTIME
 #include <sched.h>
 #include <sstream>
-
-#define ATTEMP_REALTIME false
+#endif
 
 NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager)
     : outputManager(outputManager),
@@ -38,13 +39,16 @@ NumericalIntegration::~NumericalIntegration()
 {    std::cout << histogram;     }
 
 void NumericalIntegration::step(PosInt nSteps, void *args) {
+    const auto &p = Numerics::Allocator::getInstance().getNumericParams();
+    if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
+
     bool activeSteps = args!= nullptr;
 
     if(activeSteps) {
         for(auto i=0; i<nSteps; ++i){
             histogram.startMeasure();
             stepper->step(dt, 1);
-            histogram.storeMeasure(nSteps);
+            histogram.storeMeasure(1);
 
             steps++;
 
@@ -59,6 +63,7 @@ void NumericalIntegration::step(PosInt nSteps, void *args) {
 
         output();
     }
+
 
 }
 
@@ -93,8 +98,10 @@ void NumericalIntegration::output(){
 
 size_t NumericalIntegration::getSteps() const { return steps; }
 
-floatt NumericalIntegration::getSimulationTime() { return floatt(getSteps()) * dt; }
+inline floatt NumericalIntegration::getSimulationTime() { return floatt(getSteps()) * dt; }
 
 const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
     return histogram;
 }
+
+void NumericalIntegration::doForceOverStepping() {forceOverStepping = true; }

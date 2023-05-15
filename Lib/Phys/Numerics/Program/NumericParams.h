@@ -35,8 +35,8 @@ private:
 
 	IntegerParameter N = IntegerParameter{1024, "N", "Discretization of space dimensions. Has to be POT for GPU"};
     DoubleParameter L = DoubleParameter{10., "L", "Space length"};
-    DoubleParameter xLeft = DoubleParameter{-5., "xLeft", "Left border of simulation space"};
-    DoubleParameter t =  DoubleParameter{5., "t", "Total simulation time"};
+    DoubleParameter xCenter = DoubleParameter{.0, "xCenter", "Center of simulation space"};
+    DoubleParameter t =  DoubleParameter{5., "t", "Max simulation time."};
     DoubleParameter r = DoubleParameter{.1, "r", "dt/h"};
 
     PosInt n;

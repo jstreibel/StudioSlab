@@ -95,29 +95,31 @@ void RtoR::FunctionRenderer::renderFunction(const R2toR::Function &func, Real xM
 
 void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section, Color c,
                                            bool filled, PosInt resolution, Real scale) {
-    const double ds = 1. / double(resolution);
+    const auto ds = section.getDeltaS() / double(resolution);
+    //const auto ds = 1 / double(resolution);
+    const auto sMin = section.getSMin(), sMax = section.getSMax();
+    //const Real sMin = 0, sMax = 1;
 
     glLineWidth(1.8);
 
-    auto length = section.length();
 
     if(filled)
     {
         glColor4f(c.r, c.g, c.b, c.a/2.0);
         glBegin(GL_QUADS);
         {
-            for(double s=0.; s<=1.; s+=ds){
-                const double sMin = s;
-                const double sMax = s+ds;
+            for(double s=sMin; s<=sMax; s+=ds){
+                const double sLeft = s;
+                const double sRight = s+ds;
 
                 const double yMin = 0,
-                             yMax1 = func(section(sMin)),
-                             yMax2 = func(section(sMax));
+                             yMax1 = func(section(sLeft)),
+                             yMax2 = func(section(sRight));
 
-                glVertex2d(sMin, scale*yMin);
-                glVertex2d(sMin, scale*yMax1);
-                glVertex2d(sMax, scale*yMax2);
-                glVertex2d(sMax, scale*yMin);
+                glVertex2d(sLeft, scale*yMin);
+                glVertex2d(sLeft, scale*yMax1);
+                glVertex2d(sRight, scale*yMax2);
+                glVertex2d(sRight, scale*yMin);
             }
         }
         glEnd();
@@ -126,22 +128,22 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
     glColor4f(c.r, c.g, c.b, c.a);
     glBegin(GL_LINE_STRIP);
     {
-        for(double s=.0; s<=1.; s+=ds)
+        for(double s=sMin; s<=sMax; s+=ds)
             glVertex2d(s, scale*func(section(s)));
     }
     glEnd();
 
     // ****************** TESTE *********************
-    glBegin(GL_LINES);
-    {
-        const Real H= 20;
-        glVertex2d(0, -H);
-        glVertex2d(0,  H);
-
-        glVertex2d(   1, -H);
-        glVertex2d(   1,  H);
-    }
-    glEnd();
+    //glBegin(GL_LINES);
+    //{
+    //    const Real H= 20;
+    //    glVertex2d(0, -H);
+    //    glVertex2d(0,  H);
+//
+    //    glVertex2d(   1, -H);
+    //    glVertex2d(   1,  H);
+    //}
+    //glEnd();
 }
 
 void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Color c, bool filled, Real xMin, Real xMax,

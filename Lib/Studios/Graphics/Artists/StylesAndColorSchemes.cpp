@@ -34,8 +34,27 @@ namespace ColorSchemeBWDark {
 
     Color defaultGraphColor = {.9,.9,.9,1};
 
-    Color graph1a = {.5,.5,.5,1};
-    Color graph1b = {1,1,1,1};
+    Color graph1a = {1,1,1,1};
+    Color graph1b = {.75,.75,.75,1};
+
+    std::vector<Color> graphs = {graph1a, graph1b, {.5,.5,.5,1}, {.25,.25,.25,1}};
+}
+
+namespace ColorSchemePrint {
+
+    Color graphTitleFont = {0,0,0,1};
+    Color graphTicksFont = {0,0,0,0.75};
+    Color background = {1,1,1,1};
+
+    Color axisColor = {0,0,0,1};
+    Color tickColor = {.2,.2,.2,1};
+
+    Color defaultGraphColor = {.1,.1,.1,1};
+
+    Color graph1a = {0,0,0,1};
+    Color graph1b = {.25,.25,.25,1};
+
+    std::vector<Color> graphs = {graph1a, graph1b, {.5,.5,.5,1}, {.75,.75,.75,1}};
 }
 
 namespace ColorSchemeTest {

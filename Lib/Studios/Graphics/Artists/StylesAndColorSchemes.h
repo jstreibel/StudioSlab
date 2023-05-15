@@ -36,7 +36,19 @@ namespace ColorSchemeBWDark {
 
     extern Color defaultGraphColor;
 
-    extern Color graph1a, graph1b, graph1c;
+    extern std::vector<Color> graphs;
+}
+
+namespace ColorSchemePrint {
+    extern Color background,
+            graphTicksFont,
+            axisColor,
+            tickColor,
+            graphTitleFont;
+
+    extern Color defaultGraphColor;
+
+    extern std::vector<Color> graphs;
 }
 
 namespace ColorSchemeTest {

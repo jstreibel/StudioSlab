@@ -6,6 +6,7 @@
 #include "3rdParty/imgui/imgui.h"
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
+#include "Phys/Numerics/Program/Integrator.h"
 
 #include <GL/freeglut.h>
 #include <cassert>
@@ -31,13 +32,19 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     glutInitWindowSize(w, h);
     glutCreateWindow("Pendulum");
     //glutFullScreen();
+
     glutDisplayFunc(GLUTBackend::render);
     glutReshapeFunc(GLUTBackend::reshape);
+
     glutKeyboardFunc(GLUTBackend::keyboard);
+    glutSpecialFunc(GLUTBackend::keyboardSpecial);
+
     glutMouseFunc(GLUTBackend::mouseButton);
+    glutMouseWheelFunc(GLUTBackend::mouseWheel);
     glutPassiveMotionFunc(GLUTBackend::mousePassiveMotion);
     glutMotionFunc(GLUTBackend::mouseMotion);
-    glutSpecialFunc(GLUTBackend::keyboardSpecial);
+
+
     glutIdleFunc(GLUTBackend::idleCall);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
@@ -131,9 +138,9 @@ GLUTBackend::~GLUTBackend() {
     ImGui::DestroyContext();
 };
 
-void GLUTBackend::run(Program *program)
+void GLUTBackend::run(Program *pProgram)
 {
-    this->program = program;
+    this->program = pProgram;
 
     glutMainLoop();
 }
@@ -165,6 +172,9 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
             if (me->steps <= 0) me->steps = 1;
         }
     }
+    else if(key == 'f'){
+        dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
+    }
     else if(key == '['){
         program->step(1);
     }
@@ -185,7 +195,7 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
 
 void GLUTBackend::mouseButton(int button, int dir, int x, int y)
 {
-    //if(ImGui::GetIO().WantCaptureMouse)
+    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MouseFunc(button, dir, x, y);
         return;
@@ -198,6 +208,13 @@ void GLUTBackend::mouseButton(int button, int dir, int x, int y)
     outGL->notifyMouseButton(button, dir, x, y);
 
 
+}
+
+void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
+    GLUTBackend *gb = GLUTBackend::GetInstance();
+    auto *outGL = gb->outGL;
+
+    outGL->notifyMouseWheel(wheel, direction, x, y);
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
@@ -258,8 +275,7 @@ void GLUTBackend::idleCall()
         lastErr = err;
     }
 
-
-    if(gb->programIsRunning){
+    if(gb->isRunning()){
         int dummy = 1;
         int *dummy_ptr = &dummy;
         // dummy_ptr = nullptr;

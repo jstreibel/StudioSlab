@@ -5,7 +5,7 @@
 NumericParams::NumericParams()
     : Interface("Core simulation parameters")
 {
-    addParameters({&N, &L, &xLeft, &t, &r});
+    addParameters({&N, &L, &xCenter, &t, &r});
 }
 
 //NumericParams::NumericParams(const boost::program_options::variables_map& vm)
@@ -16,7 +16,7 @@ NumericParams::NumericParams()
 
 auto NumericParams::getN() const -> size_t { return N.value(); }
 auto NumericParams::getL() const -> floatt { return L.value(); }
-auto NumericParams::getxLeft() const -> floatt { return xLeft.value(); }
+auto NumericParams::getxLeft() const -> floatt { return *xCenter - *L*.5; }
 auto NumericParams::gett() const -> floatt { return  t.value(); }
 auto NumericParams::getr() const -> floatt { return r.value(); }
 auto NumericParams::getn() const -> size_t {

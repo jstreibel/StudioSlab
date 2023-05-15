@@ -64,9 +64,9 @@ void BenchmarkHistogram::printHistogram(std::ostream &out) const {
                 out << char(219);
         }
     } else {
-        const auto avg = long(getAverage()*1e-3);
+        const auto avg = long(getAverage()*1e-6);
 
-        std::cout << "Histogram measured average time: " << avg << " mu-sec/step" << std::endl;
+        std::cout << "Histogram measured average time: " << avg << " ms/step" << std::endl;
     }
 }
 

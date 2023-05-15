@@ -43,6 +43,10 @@ namespace R2toR {
             panel->draw(true, true);
         }
 
+        IntPair getWindowSizeHint() override {
+            return {3200, 1350};
+        }
+
 
     };
 

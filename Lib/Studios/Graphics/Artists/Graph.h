@@ -124,14 +124,14 @@ Graph<FunctionType>::Graph(double xMin, double xMax, double yMin, double yMax, S
 template<class FunctionType>
 void Graph<FunctionType>::setupOrtho()
 {
-    glMatrixMode(GL_PROJECTION);
     const double deltaX = xMax-xMin;
     const double deltaY = yMax-yMin;
     const double xTraLeft  = -deltaX*0.07;
     const double xTraRight = +deltaX*0.02;
 
-    glOrtho(xMin+xTraLeft, xMax+xTraRight,
-    (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
 }
 
 template<class FunctionType>
@@ -139,7 +139,7 @@ void Graph<FunctionType>::draw(const Window *window) {
 
     setupOrtho();
 
-    glMatrixMode(GL_MODELVIEW);
+    //glMatrixMode(GL_MODELVIEW);
 
     auto &tf = ColorScheme::graphTitleFont;
     glColor4f(tf.r, tf.g, tf.b, tf.a);
@@ -201,13 +201,13 @@ void Graph<FunctionType>::__drawXAxis(const Window *win) {
     const double hTick = inPixelsTimes2 * (xMax-xMin) / win->w;
     (void)hTick;
 
-    auto &gtf = ColorScheme::graphTicksFont;
+    auto &gtfColor = ColorScheme::graphTicksFont;
 
     double xspacing = (xMax-xMin) / 10.0;
     if(xspacing == .0) xspacing = 1.0;
 
     {
-        glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
+        glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         const double yloc = -yspacing*0.356;
         for (double mark = 0; mark <= xMax * 1.0001; mark += xspacing) {

@@ -28,7 +28,7 @@ void StatsDisplay::draw(const Window *window) {
 
     ImGui::Begin("Stats", &closable,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                 ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar);
+                 ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
     ImGui::SetWindowPos(ImVec2{x, y});
     ImGui::SetWindowSize(ImVec2{w, h});
     for (auto stat: stats) {

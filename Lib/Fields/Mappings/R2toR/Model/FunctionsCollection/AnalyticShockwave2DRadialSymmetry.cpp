@@ -44,6 +44,16 @@ Real RtoR::AnalyticShockwave2DRadialSymmetry::operator()(Real r) const {
     return sum;
 }
 
+RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(Real a0) {
+    for(auto i=0; i<quant; ++i) {
+        auto &a = a_k[i];
+        auto &beta = beta_k[i];
+        a *= a0;
+
+
+
+    }
+}
 
 
 Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(PosInt k, Real z) const {
