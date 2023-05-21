@@ -3,12 +3,12 @@ cmake_minimum_required(VERSION 3.19.2)
 
 set ( CMAKE_CXX_STANDARD 20 )
 
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/bin)
 
 include_directories(Lib /usr/include/vtk)
-link_directories(Slab/lib)
+link_directories(Build/lib)
 
 add_subdirectory(Lib/)
 add_subdirectory(Studios)
