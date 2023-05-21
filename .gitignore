@@ -41,6 +41,10 @@ venv
 Build/
 Lib/Docs/
 
+*__pycache__*
+
+*~
+
 /Notebooks/.Entidades.autosave.xopp
 /Lib/Python/PySLib/.idea/.gitignore
 /Studios/PyFields2D/.idea/.gitignore
