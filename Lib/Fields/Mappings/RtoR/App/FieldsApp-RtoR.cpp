@@ -8,11 +8,11 @@
 #include "../Core/RtoRModelAllocator_Langevin.h"
 #include "../Core/RtoRModelAllocator_Montecarlo.h"
 #include "Fields/Mappings/BCInterface.h"
-#include "Studios/Backend/GLUT/GLUTBackend.h"
+#include "Base/Backend/GLUT/GLUTBackend.h"
 
-#include <Studios/Backend/Backend.h>
+#include <Base/Backend/Backend.h>
 
-#include <Studios/Controller/Interface/InterfaceSelector.h>
+#include <Base/Controller/Interface/InterfaceSelector.h>
 
 #include <Phys/Numerics/Program/Integrator.h>
 

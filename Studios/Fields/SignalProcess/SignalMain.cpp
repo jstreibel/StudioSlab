@@ -2,13 +2,13 @@
 // Created by joao on 4/1/23.
 //
 
-#include "Studios/App/CrashPad.h"
+#include "Base/App/CrashPad.h"
 
-#include "Studios/Controller/Interface/InterfaceSelector.h"
+#include "Base/Controller/Interface/InterfaceSelector.h"
 #include "Fields/Mappings/RtoR/App/FieldsApp-RtoR.h"
 
 #include "Signal.h"
-#include "Studios/Backend/GLUT/GLUTBackend.h"
+#include "Base/Backend/GLUT/GLUTBackend.h"
 
 auto main(int argc, const char **argv) -> int {
 

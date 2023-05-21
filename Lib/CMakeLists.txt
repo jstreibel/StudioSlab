@@ -24,7 +24,7 @@ include_directories(./ ./3rdParty/imgui /usr/include/freetype2/)
 add_subdirectory(3rdParty)
 
 add_subdirectory(Common)
-add_subdirectory(Studios)
+add_subdirectory(Base)
 
 add_subdirectory(Phys)
 add_subdirectory(Fields)

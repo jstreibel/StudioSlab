@@ -13,8 +13,8 @@
 #include "Phys/Numerics/Method/Method-RK4.h"
 #include "Phys/Numerics/Method/Method-MCBase.h"
 
-#include <Studios/Backend/Program.h>
-#include <Studios/Tools/BenchmarkHistogram.h>
+#include <Base/Backend/Program.h>
+#include <Base/Tools/BenchmarkHistogram.h>
 
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \

@@ -5,8 +5,8 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERBASE_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERBASE_H
 
-#include "Studios/Controller/Interface/Interface.h"
-#include "Studios/Controller/Interface/CommonParameters.h"
+#include "Base/Controller/Interface/Interface.h"
+#include "Base/Controller/Interface/CommonParameters.h"
 
 class OutputManager;
 

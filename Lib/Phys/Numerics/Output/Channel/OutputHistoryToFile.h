@@ -2,7 +2,7 @@
 #define OUTPUTFILE1D_H
 
 #include "OutputHistory.h"
-#include "Studios/Controller/Interface/CommonParameters.h"
+#include "Base/Controller/Interface/CommonParameters.h"
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 

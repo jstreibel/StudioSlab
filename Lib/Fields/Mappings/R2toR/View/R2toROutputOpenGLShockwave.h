@@ -5,12 +5,12 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "Studios/Graphics/ARCHIVE/NotHere/OutputOpenGL.h"
-#include "Studios/Graphics/ZoomPanRotate.h"
-#include "Studios/Graphics/Artists/Graph.h"
+#include "Base/Graphics/ARCHIVE/NotHere/OutputOpenGL.h"
+#include "Base/Graphics/ZoomPanRotate.h"
+#include "Base/Graphics/Artists/Graph.h"
 #include "Fields/Mappings/R2toR/View/Artists/GraphR2ToR.h"
 
-#include <Studios/Graphics/ARCHIVE/deprecated/GraphCollections.h>
+#include <Base/Graphics/ARCHIVE/deprecated/GraphCollections.h>
 
 namespace R2toR {
     class OutputOpenGLShockwave : public Base::OutputOpenGL {

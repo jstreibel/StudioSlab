@@ -19,11 +19,11 @@ include_directories(../Studios/Lib/StudiosLib)
 
 add_executable(xy
 
-		../../../Lib/Studios/Controller/Nuklear/NuklearImplementation.cpp
+		../../../Lib/Base/Controller/Nuklear/NuklearImplementation.cpp
 
 		../../XY/main.cpp
 
-		BasicSim.h ../../../Lib/Studios/Controller/Nuklear/NuklearSFML.h)
+		BasicSim.h ../../../Lib/Base/Controller/Nuklear/NuklearSFML.h)
 
 target_link_libraries(xy Slab-Phys-CoreThermo Slab-Studios-Controller )
 

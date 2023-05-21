@@ -8,7 +8,7 @@
 
 #include "../../Model/FunctionsCollection/QuasiShockwave.h"
 
-#include <Studios/Backend/GLUT/GLUTBackend.h>
+#include <Base/Backend/GLUT/GLUTBackend.h>
 
 #define max(a,b) (a>b?a:b)
 #define min(a,b) (a<b?a:b)

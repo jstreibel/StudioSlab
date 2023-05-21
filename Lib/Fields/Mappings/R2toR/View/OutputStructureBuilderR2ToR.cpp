@@ -14,8 +14,8 @@
 #include "Fields/Mappings/RtoR2/StraightLine.h"
 #include "Fields/Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
 
-#include "Studios/Backend/GLUT/GLUTBackend.h"
-#include "Studios/Backend/Console/ConsoleBackend.h"
+#include "Base/Backend/GLUT/GLUTBackend.h"
+#include "Base/Backend/Console/ConsoleBackend.h"
 
 #include "R2toROutputOpenGLGeneric.h"
 

@@ -9,7 +9,7 @@
 #include "Phys/Thermal/Utils/ThermoUtils.h"
 #include "../Tools/GraphAndAverageCalc.h"
 #include "../ViewControlBase.h"
-#include <Studios/Controller/Nuklear/NuklearSFML.h>
+#include <Base/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
 

@@ -8,7 +8,7 @@
 
 #include "Common/STDLibInclude.h"
 #include "Common/Utils.h"
-#include "Studios/Tools/Resample.h"
+#include "Base/Tools/Resample.h"
 
 #include <iostream>
 #include <cmath>

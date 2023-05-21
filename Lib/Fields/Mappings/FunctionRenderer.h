@@ -11,7 +11,7 @@
 #include "R2toR/Model/R2toRFunction.h"
 #include "RtoR2/StraightLine.h"
 
-#include "Studios/Graphics/PlottingUtils.h"
+#include "Base/Graphics/PlottingUtils.h"
 
 
 namespace RtoR {

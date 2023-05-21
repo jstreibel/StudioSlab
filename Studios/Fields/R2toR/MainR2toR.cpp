@@ -2,9 +2,9 @@
 // Created by joao on 10/8/21.
 //
 
-#include "Studios/App/CrashPad.h"
+#include "Base/App/CrashPad.h"
 
-#include "Studios/Controller/Interface/InterfaceSelector.h"
+#include "Base/Controller/Interface/InterfaceSelector.h"
 
 #include "Fields/Mappings/R2toR/Controller/R2ToRInputShockwave.h"
 #include "GrowingHole/GrowingHoleInput.h"

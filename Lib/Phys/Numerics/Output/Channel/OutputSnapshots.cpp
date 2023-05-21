@@ -7,7 +7,7 @@
 #include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
 
 #include <Common/Workaround/StringStream.h>
-#include <Studios/Controller/Interface/InterfaceManager.h>
+#include <Base/Controller/Interface/InterfaceManager.h>
 
 
 OutputSnapshot::OutputSnapshot(const String &customFileDescription, const size_t T_fileNamePrecision)

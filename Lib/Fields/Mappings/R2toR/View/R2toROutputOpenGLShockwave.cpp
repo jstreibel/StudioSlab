@@ -3,8 +3,8 @@
 
 #include "Fields/Mappings/R2toR/Model/FieldState.h"
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Studios/Graphics/PlottingUtils.h"
-#include "Studios/Graphics/Artists/Graph.h"
+#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Artists/Graph.h"
 #include "Fields/Mappings/RtoR2/StraightLine.h"
 #include "Phys/Numerics/Allocator.h"
 #include "Fields/Mappings/FunctionRenderer.h"

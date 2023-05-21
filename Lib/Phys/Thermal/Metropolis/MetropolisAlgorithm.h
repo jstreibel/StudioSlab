@@ -9,7 +9,7 @@
 #include "Phys/Thermal/Utils/ThermoUtils.h"
 #include "../IO/SingleSim/SingleSimViewController.h"
 
-#include "Studios/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
+#include "Base/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 
 
 typedef std::vector<ThermoUtils::Real> RealVector;

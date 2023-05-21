@@ -2,7 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include <Studios/Controller/Interface/InterfaceSelector.h>
+#include <Base/Controller/Interface/InterfaceSelector.h>
 #include "BCInterface.h"
 
 Base::BCInterface::BCInterface(String generalDescription, OutputStructureBuilderBase* osb, String prefix, bool selfRegister)

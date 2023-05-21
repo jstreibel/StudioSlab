@@ -20,8 +20,8 @@
 #include <Phys/Numerics/Output/Channel/OutputConsoleMonitor.h>
 
 
-#include <Studios/Backend/GLUT/GLUTBackend.h>
-#include <Studios/Backend/Console/ConsoleBackend.h>
+#include <Base/Backend/GLUT/GLUTBackend.h>
+#include <Base/Backend/Console/ConsoleBackend.h>
 
 
 

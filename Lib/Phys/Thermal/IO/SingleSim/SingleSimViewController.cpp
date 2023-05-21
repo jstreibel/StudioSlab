@@ -5,8 +5,8 @@
 #include "SingleSimViewController.h"
 
 #include "../../Utils/ViewerUtils.h"
-#include <Studios/Graphics/Colors.h>
-#include <Studios/Controller/Nuklear/NuklearSFML.h>
+#include <Base/Graphics/Colors.h>
+#include <Base/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
 #include <ostream>

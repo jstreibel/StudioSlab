@@ -7,7 +7,7 @@
 
 
 #include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
-#include "Studios/Graphics/Artists/Graph.h"
+#include "Base/Graphics/Artists/Graph.h"
 #include "Fields/Mappings/RtoR2/ParametricCurve.h"
 #include "Fields/Mappings/RtoR2/StraightLine.h"
 
