@@ -43,6 +43,7 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Channel/OutputConsoleMonitor.cpp
 		Numerics/Output/Channel/OutputHistory.cpp
 		Numerics/Output/Channel/OutputHistoryToFile.cpp
+		Numerics/Output/Channel/OutputSnapshots.cpp
 
 		Numerics/Output/Format/BinarySOF.cpp
 		Numerics/Output/Format/CustomStringSeparatedSOF.cpp

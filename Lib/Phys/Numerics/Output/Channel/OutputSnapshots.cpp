@@ -11,7 +11,7 @@
 
 
 OutputSnapshot::OutputSnapshot(const String &customFileDescription, const size_t T_fileNamePrecision)
-        : OutputChannel(1), customFileDescription(customFileDescription),
+        : OutputChannel("Snapshot output", 1), customFileDescription(customFileDescription),
           T_fileNamePrecision(T_fileNamePrecision)
 { }
 
@@ -29,7 +29,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
     filePhiNameStream.oStream.setf(std::ios::fixed, std::ios::floatfield);
     filePhiNameStream.oStream.precision(T_fileNamePrecision);
 
-    const double t = outInfo.getT();
+    const double t = outInfo.getSimTime ();
 
     if(customFileDescription != "")
         filePhiNameStream << customFileDescription;
@@ -41,7 +41,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
     std::cout.precision(4);
 
     String fileName = filePhiNameStream.str();
-    std::cout << "\nSaving snapshot for t = " << outInfo.getT() << " in \'" << fileName << "\'... " << std::flush;
+    std::cout << "\nSaving snapshot for t = " << t << " in \'" << fileName << "\'... " << std::flush;
     _outputToFile(outInfo.getSpaceData(), t, fileName);
 }
 
@@ -80,10 +80,6 @@ size_t OutputSnapshot::computeNextRecStep() {
     for(auto step : snapSteps) if(step < smallest) smallest = step;
 
     return smallest;
-}
-
-String OutputSnapshot::description() const {
-    return String("snapshots of arbitrary time");
 }
 
 bool OutputSnapshot::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {

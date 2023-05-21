@@ -16,7 +16,7 @@ def OpenSimData(fileName):
         return SimData_depr(fileName)
     elif fileName[-5:] == '.oscb':
         print("Filetype binary.")
-        from SimData import SimData
+        from DataAnalysis.SimData import SimData
         return SimData(fileName)
     elif fileName[-5:] == '.oscs':
         print("Filetype snapshot.")

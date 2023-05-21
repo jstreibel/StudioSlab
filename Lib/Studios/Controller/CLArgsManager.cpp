@@ -40,7 +40,7 @@ void CLArgsManager::Parse(int argc, const char **argv) {
 
     if(vm.count("help")){
         allOptions.print(std::cout);
-        exit(1);
+        exit(0);
     }
 }
 

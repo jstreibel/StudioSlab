@@ -13,8 +13,6 @@ private:
 public:
     OutputSnapshot(const String &customFileDescription = "", const size_t fileNamePrecision = 4);
 
-    String description() const override;
-
     ~OutputSnapshot();
 
     void addSnapshotStep(const size_t snapshotStep);

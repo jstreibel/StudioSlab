@@ -60,6 +60,6 @@ namespace ColorSchemeTest {
                  graphTitleFont;
 }
 
-namespace ColorScheme = ColorSchemeDark;
+namespace ColorScheme = ColorSchemePrint;
 
 #endif //STUDIOSLAB_STYLESANDCOLORSCHEMES_H

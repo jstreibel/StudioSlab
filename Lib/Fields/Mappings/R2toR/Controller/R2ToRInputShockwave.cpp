@@ -32,6 +32,8 @@ auto R2toRInputShockwave::getBoundary() const -> const void * {
     auto eps = *this->eps;
     const double a = sqrt((4./3)*pi*eps*eps*E);
 
+    std::cout << "\nShockwave 'a' parameter = " << a << std::endl;
+
     let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, *e, *theta);
     //auto *dPhiDt0 = new FunctionAzimuthalSymmetry(new RtoRMap::RegularDiracDelta(a, a), sqrt(3./M_PI),e, theta);
     let *dPhiDt0 = new R2toR::R2toRRegularDelta(eps, a);

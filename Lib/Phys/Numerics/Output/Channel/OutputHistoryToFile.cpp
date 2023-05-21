@@ -36,7 +36,7 @@ OutputHistoryToFile::~OutputHistoryToFile() {
 
 void OutputHistoryToFile::_dump(bool integrationIsFinished) {
     if(integrationIsFinished){
-        _printHeaderToFile();
+        _printHeaderToFile({"phi"});
 
         auto shouldNotDump = !lastData.hasValidData();
         if(shouldNotDump) {
@@ -60,10 +60,10 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
         const auto &fieldPair = spaceDataHistory[Ti];
         const DiscreteSpace &phiOut = *fieldPair.first;
-        const DiscreteSpace &ddtPhiOut = *fieldPair.second;
+        //const DiscreteSpace &ddtPhiOut = *fieldPair.second;
 
         file << outputFormatter(phiOut);
-        file << outputFormatter(ddtPhiOut);
+        //file << outputFormatter(ddtPhiOut);
     }
 
     file.flush();
@@ -71,7 +71,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
     std::cout << "\rFlushing " << "100%    " << std::endl;
 }
 
-void OutputHistoryToFile::_printHeaderToFile() {
+void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
     Numerics::Allocator &builder = Numerics::Allocator::getInstance();
 
     std::ostringstream oss;
@@ -86,8 +86,18 @@ void OutputHistoryToFile::_printHeaderToFile() {
 
 
     oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
-    oss << R"(, "data_channels": 2)";
-    oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
+    if(0) {
+        oss << R"(, "data_channels": 2)";
+        oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
+    } else {
+        assert(channelNames.size() != 0);
+
+        oss << R"(, "data_channels": )" << channelNames.size();
+        oss << R"str(, "data_channel_names": ()str";
+        for(auto name : channelNames)
+            oss << "\"" << name << "\", ";
+        oss << ") ";
+    }
 
     oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEnrties() << "}" << std::endl;
 

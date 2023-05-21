@@ -31,7 +31,7 @@ public:
 
 private:
 
-    void _printHeaderToFile();
+    void _printHeaderToFile(std::vector<std::string> channelNames);
     void _dump(bool integrationIsFinished) override;
 
 public:

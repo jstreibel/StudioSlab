@@ -1,6 +1,8 @@
 from glumpy import app
 from glumpy.app import Viewport as GlViewport
 
+import imgui
+
 from numpy import pi, sqrt
 
 from PySLib.Viewers2D import Viewer3D
@@ -12,7 +14,7 @@ WindowWidth = int(1920*1.8)
 WindowHeight = int(1080*1.8)
 
 GridDim = 2 ** 9
-SpaceDim = 20
+SpaceDim = 10
 MeshSubdivs = 2 ** 9
 
 #DiracDelta_E = .0
@@ -42,27 +44,15 @@ window = app.Window(width=WindowWidth, height=WindowHeight,
 vp = GlViewport((WindowWidth, WindowHeight))
 window.attach(vp)
 ui = Viewer3D.UI()
-ui._vertPhiScale = 0.01
-ui._vertDPhidtScale = 0.001
+ui._vertPhiScale = 1.00
+ui._vertDPhidtScale = 0.1
 viewer3D = Viewer3D(viewport=vp, GridDim=(GridDim, GridDim), SpaceDim=(SpaceDim, SpaceDim),
                     MeshSubdivs=(MeshSubdivs, MeshSubdivs), ui=ui)
 
 
+
 sim = Simulation.Simulation(dt, GridDim=(GridDim, GridDim), SpaceDim=(SpaceDim, SpaceDim))
 sim.applyInitConditions(DiracDelta_eps, DiracDelta_a)
-
-
-imgui = window.imgui
-io = imgui.get_io()
-font_scaling_factor = 1.5
-#font_size_in_pixels = 30
-#font  = io.fonts.add_font_from_file_ttf(
-#        "../../Resources/Fonts/Roboto-Regular.ttf", font_size_in_pixels * font_scaling_factor,
-#        io.fonts.get_glyph_ranges_latin())
-io.font_global_scale = font_scaling_factor
-#window.imguiRenderer.refresh_font_texture()
-#imgui.push_font(font)
-
 
 @window.event
 def on_draw(frame_dt):
@@ -75,6 +65,31 @@ def on_draw(frame_dt):
     viewer3D.draw(sim.PhiValue)
     #textureViewer.draw(sim.PhiValue)
 
+    DrawImgui()
+
+
+@window.event
+def on_key_press(symbol, modifiers):
+    if symbol == ord(' '):
+        sim.runSim = not sim.runSim
+
+
+def InitImgui():
+    global font
+
+    #imgui = window.imgui
+    #io = imgui.get_io()
+    #font_scaling_factor = 1.5
+    #font_size_in_pixels = 30
+    #font = io.fonts.add_font_from_file_ttf(
+    #    "../../Resources/Fonts/Roboto-Regular.ttf", font_size_in_pixels * font_scaling_factor,
+    #    io.fonts.get_glyph_ranges_latin())
+    #io.font_global_scale = font_scaling_factor
+    #window.imguiRenderer.refresh_font_texture()
+    #imgui.push_font(font)
+
+
+def DrawImgui():
     imgui.new_frame()
 
     if imgui.begin_main_menu_bar():
@@ -83,9 +98,7 @@ def on_draw(frame_dt):
             if clicked:
                 exit(0)
             imgui.end_menu()
-
         imgui.end_main_menu_bar()
-
     viewer3D.draw_menu()
     sim.draw_menu()
 
@@ -93,11 +106,6 @@ def on_draw(frame_dt):
 
     imgui.render()
 
-
-@window.event
-def on_key_press(symbol, modifiers):
-    if symbol == ord(' '):
-        sim.runSim = not sim.runSim
-
+InitImgui()
 
 app.run()

@@ -6,7 +6,7 @@ import numpy as np
 
 from numpy import asarray, double, linspace, gradient, amax, mean, heaviside, abs as np_abs, zeros, array
 
-from Utils import utils
+from PySLib.Tools import Utils
 
 
 class SimData(object):
@@ -40,8 +40,9 @@ class SimData(object):
         if item == 'T':
             print("Trying to access SimData metadata key 'T'. Assuming it is time.")
             item = 't'
-
-        if item == 'initTime' and 'initTime' not in self._metaData:
+        elif item == 'xLeft' and 'xLeft' not in self._metaData:
+            return self._metaData['xCenter'] - .5*self._metaData['L']
+        elif item == 'initTime' and 'initTime' not in self._metaData:
             return 0.0
 
         return self._metaData[item]
@@ -123,7 +124,7 @@ class SimData(object):
 
         timeStamps = numericData[:,0]
 
-        # TODO esse 2 do outresX*2 eh por causa do numero de canais?? Obs.: N+1 because there's timestamps included in file.
+        # Obs.: N+1 because there's timestamps included in file.
         numericData = numericData[:,1:outresX*self._totalChannels+1]
 
         self._timeStamps = timeStamps

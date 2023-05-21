@@ -14,6 +14,13 @@
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Phys/Numerics/Allocator.h"
 
+//#define USE_VTK true
+
+#if USE_VTK
+#include <vtkSmartPointer.h>
+#include <vtkRenderWindowInteractor.h>
+#endif
+
 namespace R2toR {
 
     namespace LeadingDelta {
@@ -101,9 +108,11 @@ namespace R2toR {
 
 
         class OutGL : public R2toR::OutputOpenGL {
+#if USE_VTK
+            vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
+#endif
         public:
-            OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-                    : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) {}
+            OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 
             void draw() override;
 
@@ -139,7 +148,7 @@ namespace R2toR {
         class OutputBuilder : public OutputStructureBuilderR2toR {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
-                const double phiMin = -.5;
+                const double phiMin = -.2;
                 const double phiMax = 1.;
 
                 const auto &p = Numerics::Allocator::getInstance().getNumericParams();

@@ -19,9 +19,9 @@ int main(int argc, const char **argv) {
     try {
         auto &im = InterfaceSelector::getInstance();
 
-        /* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
+        ///* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
+        /* sim 0 */ im.registerOption(new R2toR::InputDiracSpeed());
         /* sim 1 */ im.registerOption(new R2toR::GrowingHole::Input());
-        /* sim 2 */ im.registerOption(new R2toR::InputDiracSpeed());
         /* sim 2 */ im.registerOption(new R2toR::LeadingDelta::Input());
 
 
@@ -34,9 +34,11 @@ int main(int argc, const char **argv) {
 
         return SafetyNet::jump(prog);
 
-    }
-
-    catch (const char *e) {
+    } catch (const char *e) {
+        std::cout << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
+                  << e << "\033[0m" << ", application will now exit" << std::endl;
+        return -1;
+    } catch (const std::string e) {
         std::cout << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
                   << e << "\033[0m" << ", application will now exit" << std::endl;
         return -1;

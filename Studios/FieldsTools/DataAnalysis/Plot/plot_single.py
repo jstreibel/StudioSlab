@@ -6,9 +6,9 @@ from matplotlib.widgets import Slider  # , Button, RadioButtons
 
 import scipy.optimize as optimize
 
-from Fitting import fit_shockwave
+#from DataAnalysis.Fitting import fit_shockwave
 # from fitting import Region
-from Utils import utils
+from PySLib.Tools import Utils
 
 f = '{:.2e}'.format
 ff = '{:.2f}'.format
@@ -49,7 +49,7 @@ def log_abs_inv(phi_t, epsilon):
 
 def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=None):
     from mpl_toolkits.axes_grid1 import make_axes_locatable
-    from Utils.utils import round_sd
+    from DataAnalysis.Utils.utils import round_sd
 
     divider = make_axes_locatable(ax)
     cax = divider.append_axes('right', size='5%', pad=0.05)  # colocar o colorbar a direita e do tamanho certinho.
@@ -126,7 +126,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
 
     simData = sim_result
 
-    xLeft, L, totalTime, initialTime = simData['xLeft'], simData['L'], simData['T'], simData['initTime']
+    xLeft, L, totalTime, initialTime = simData['xLeft'], simData['L'], simData['t'], simData['initTime']
     phi = None
     if region is None:
         phi = simData.Phi
@@ -252,7 +252,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
     # a regiao de dissipacao de energia e colocamos informacao extra no nome do
     # arquivo (sobre o interval de tempo sendo mostrado, ja que eh comum nesses
     # casos nao mostrarmos tudo).
-    if 'eps' in simData:
+    if 'eps' in simData and 0:
         eps = simData['eps']
         l = simData['l']
         if showSelfSimilar:
@@ -386,7 +386,7 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
         if noframe:
             bbox = None
         fig.savefig(outputFileName, bbox_inches=bbox, dpi=dpi)
-        if verbose: print("Saved file to", utils.OKBLUE + utils.BOLD + outputFileName + utils.ENDC)
+        if verbose: print("Saved file to", Utils.OKBLUE + Utils.BOLD + outputFileName + Utils.ENDC)
 
     if showResult:
         pyplot.show()

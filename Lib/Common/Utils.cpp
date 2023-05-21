@@ -37,7 +37,7 @@ void cew(cudaError err){
 
     auto errMsg = std::string("CUDA error ") + std::string(errStr);
     
-    if (err != cudaError::cudaSuccess) throw errMsg.c_str();
+    if (err != cudaError::cudaSuccess) throw errMsg;
 }
 
 #endif // USE_CUDA

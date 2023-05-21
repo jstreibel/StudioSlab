@@ -1,1 +1,2 @@
-from . import AnalyticSolutions, Calculators, Fitting, Fractals, Launchers, Plot, SimData, Utils
+from . import AnalyticSolutions, Calculators, Fitting, Launchers, Plot, SimData
+#from . import Fractals

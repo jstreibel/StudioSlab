@@ -24,11 +24,14 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
     R2toR::FunctionArbitrary &f = outputInfo.getFieldData<R2toR::FieldState>()->getPhi();
 
     const R2toR::Domain domain = f.getDomain();
-    const Real h = domain.getLx()/N;
+    const auto L = domain.getLx();
+    const Real h = L/N;
+    const auto ds = line.getDeltaS();
+    const auto sMin = line.getSMin();
     DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(), h);
 
     for(PosInt i=0; i<N; i++){
-        const Real s = Real(i)/N; // parametro da reta.
+        const Real s = sMin + ds*Real(i)/N; // parametro da reta.
         newPhi->getX()[i] = f(line(s));
     }
 

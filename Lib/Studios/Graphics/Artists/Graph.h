@@ -153,7 +153,7 @@ void Graph<FunctionType>::draw(const Window *window) {
         auto color = std::get<1>(triple);
         auto label = std::get<2>(triple);
 
-        __rectDraw(i++, color, label, window);
+        if(label != "") __rectDraw(i++, color, label, window);
 
         this->_renderFunction(&func, color);
     }

@@ -8,10 +8,65 @@
 
 #include "3rdParty/imgui/imgui.h"
 
+#if USE_VTK
+#include <vtkAutoInit.h>
+VTK_MODULE_INIT(vtkRenderingOpenGL2)
+VTK_MODULE_INIT(vtkInteractionStyle)
+
+#include <vtkRenderWindow.h>
+#include <vtkRenderWindowInteractor.h>
+#include <vtkRenderer.h>
+#include <vtkSmartPointer.h>
+#include <vtkSphereSource.h>
+#include <vtkPolyDataMapper.h>
+#include <vtkActor.h>
+#include <vtkInteractorStyleTrackballCamera.h>
+#include <vtkOpenGLRenderWindow.h>
+#endif
+
 namespace R2toR {
     namespace LeadingDelta {
         SpecialRingDelta *ringDelta1 = nullptr;
     }
+}
+
+R2toR::LeadingDelta::OutGL::OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
+        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) {
+
+#if USE_VTK
+    // Create VTK objects
+    vtkSmartPointer<vtkSphereSource> sphereSource = vtkSmartPointer<vtkSphereSource>::New();
+    sphereSource->SetRadius(1.0);
+    sphereSource->Update();
+
+    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+    mapper->SetInputConnection(sphereSource->GetOutputPort());
+
+    vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+    actor->SetMapper(mapper);
+
+    vtkSmartPointer<vtkRenderer> renderer = vtkSmartPointer<vtkRenderer>::New();
+    renderer->AddActor(actor);
+
+    vtkSmartPointer<vtkRenderWindow> renderWindow = vtkSmartPointer<vtkRenderWindow>::New();
+
+    // Set the existing GLUT window's ID and context to VTK
+    renderWindow->SetWindowInfo(
+            glutGetWindow());
+
+    renderWindow->AddRenderer(renderer);
+
+    // Set up interactor style
+    vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor =
+            vtkSmartPointer<vtkRenderWindowInteractor>::New();
+    vtkSmartPointer<vtkInteractorStyleTrackballCamera> interactorStyle =
+            vtkSmartPointer<vtkInteractorStyleTrackballCamera>::New();
+    renderWindowInteractor->SetRenderWindow(renderWindow);
+    renderWindowInteractor->SetInteractorStyle(interactorStyle);
+
+    renderWindowInteractor->Initialize();
+#endif
+
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
@@ -61,11 +116,16 @@ void R2toR::LeadingDelta::OutGL::draw() {
     }
 
     panel->draw(true, true);
+
+#if USE_VTK
+    renderWindowInteractor->Render();
+#endif
 }
 
 IntPair R2toR::LeadingDelta::OutGL::getWindowSizeHint() {
     // 1280 540
     return {3200, 1350};
 }
+
 
 

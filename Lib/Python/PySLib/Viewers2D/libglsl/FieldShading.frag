@@ -188,7 +188,7 @@ void main()
 
     // Light cone **********************************
     {
-        float eps = 0.005;
+        float eps = 0.05;
         if(r > t-eps && r <= t)
             color = 0.5*color;
     }

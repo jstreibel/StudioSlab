@@ -99,7 +99,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 }
 
 auto OutputStructureBuilderR2toR::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-    const double phiMin = -0.25;
+    const double phiMin = -0.125;
     const double phiMax = 0.25;
     const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
     const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();

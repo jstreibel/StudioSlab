@@ -145,7 +145,7 @@ void R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 }
 
 IntPair R2toR::OutputOpenGL::getWindowSizeHint() {
-    return {1200, 800};
+    return {3200, 1350};
 }
 
 void R2toR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {

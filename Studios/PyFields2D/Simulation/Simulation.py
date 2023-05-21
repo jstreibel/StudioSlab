@@ -14,7 +14,8 @@ class Simulation(object):
 
         self.field = Slab(GridWidth, GridHeight, 2)
 
-        self.SimStepper = FieldProgram("StepSim.frag", -SpaceDim[0] * .5, SpaceDim[0] * .5,
+        fragShader = ("StepSim.frag", "StepSim_SWInduzida.frag")[1]
+        self.SimStepper = FieldProgram(fragShader, -SpaceDim[0] * .5, SpaceDim[0] * .5,
                                        -SpaceDim[0] * .5, SpaceDim[0] * .5, shaderDir='./Simulation/')
 
         h = SpaceDim[0] / GridWidth

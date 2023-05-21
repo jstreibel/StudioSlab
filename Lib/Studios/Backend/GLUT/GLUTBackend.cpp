@@ -247,6 +247,7 @@ void GLUTBackend::render()
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
+    ImGui::NewFrame();
 
     outGL->addStat(ToString(gb->steps) + " sim steps per cycle.");
     outGL->notifyRender();

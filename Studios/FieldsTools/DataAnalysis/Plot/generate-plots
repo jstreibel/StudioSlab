@@ -1,9 +1,12 @@
-#!/bin/python
+#!/usr/bin/env python3
 
 # -*- coding: utf-8 -*-
 
-import argparse
-from  Utils import utils
+import argparse, sys
+
+sys.path.insert(0, '/home/joao/Developer/StudioSlab/Lib/Python/')
+
+from PySLib.Tools import Utils
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--files', help="Filename(s). Default is all files in folder.", nargs='*', default='./*.oscb')
@@ -65,10 +68,10 @@ parser.add_argument('--rangemode', '-m', help="Range mode:\n" +
                                               "\t1: symmetric based on min;\n"
                                               "\t2: symmetric based on max;\n"
                                               "\t3: manual (set with options --vmin and --vmax);", type=int, default=0)
-parser.add_argument('--vmin', help='Minimum value of field, in scale. ' + utils.WARNING + 'Must properly set '
-                                                    '--rangemode argument!.' + utils.ENDC, type=float, default=-1.)
-parser.add_argument('--vmax', help='Maximum value of field, in scale. ' + utils.WARNING + 'Must properly set '
-                                                    '--rangemode argument!.' + utils.ENDC, type=float, default= 1.)
+parser.add_argument('--vmin', help='Minimum value of field, in scale. ' + Utils.WARNING + 'Must properly set '
+                                                    '--rangemode argument!.' + Utils.ENDC, type=float, default=-1.)
+parser.add_argument('--vmax', help='Maximum value of field, in scale. ' + Utils.WARNING + 'Must properly set '
+                                                    '--rangemode argument!.' + Utils.ENDC, type=float, default= 1.)
 
 parser.add_argument('--nameappend', help='Append string to output name.', type=str, default='')
 parser.add_argument('--outf', help='Output folder. Default is ./', type=str, default='./')
@@ -96,8 +99,8 @@ else:
 # ******************************************************************************
 # ******************************************************************************
 import plot_single
-from SimData import open_sim
-from Fitting import fit_shockwave
+from DataAnalysis.SimData import open_sim
+from DataAnalysis.Fitting import fit_shockwave
 from os.path import isfile
 from os import remove
 from time import time
@@ -124,12 +127,12 @@ def doFile(file):
     global size, n, totalTime
     t0 = time()
     print()
-    print(utils.OKBLUE+"Started"+utils.BOLD, files.index(file)+1, "/", size,
-          utils.ENDC, file, ': ')
+    print(Utils.OKBLUE+"Started"+Utils.BOLD, files.index(file)+1, "/", size,
+          Utils.ENDC, file, ': ')
     outputFileName = args.outf + '/' + file.rstrip('.oscb') + args.nameappend + outputExtension
     if isfile(outputFileName):
         if not args.regen and not args.showresult:
-            print(utils.OKGREEN + "already built." + utils.ENDC)
+            print(Utils.OKGREEN + "already built." + Utils.ENDC)
             return
     else:
         print()
@@ -165,14 +168,14 @@ def doFile(file):
             print("Cleaning up.")
             remove(file)
     except Exception as e:
-        print(utils.WARNING + format_exc() + utils.ENDC)
+        print(Utils.WARNING + format_exc() + Utils.ENDC)
 
     tf = time()
     totalTime += (tf-t0)
     n+=1
 
-    print(utils.OKGREEN+"Ended"+utils.BOLD, files.index(file)+1, "/", size,
-          utils.ENDC)
+    print(Utils.OKGREEN+"Ended"+Utils.BOLD, files.index(file)+1, "/", size,
+          Utils.ENDC)
 
     print('El. time:', tf-t0, '   total time:', totalTime)
     print('Total expected time to completion:', (totalTime/n * (len(files)-n)) / args.threads )
