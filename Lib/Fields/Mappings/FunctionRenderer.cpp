@@ -105,16 +105,19 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
 
     if(filled)
     {
-        glColor4f(c.r, c.g, c.b, c.a/2.0);
+        glColor4f(c.r, c.g, c.b, c.a*.5);
         glBegin(GL_QUADS);
         {
             for(double s=sMin; s<=sMax; s+=ds){
                 const double sLeft = s;
                 const double sRight = s+ds;
 
+                auto pt1 = section(sLeft),
+                     pt2 = section(sRight);
+
                 const double yMin = 0,
-                             yMax1 = func(section(sLeft)),
-                             yMax2 = func(section(sRight));
+                             yMax1 = func(pt1),
+                             yMax2 = func(pt2);
 
                 glVertex2d(sLeft, scale*yMin);
                 glVertex2d(sLeft, scale*yMax1);

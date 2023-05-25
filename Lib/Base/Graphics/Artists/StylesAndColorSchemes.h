@@ -14,52 +14,26 @@
 #define TICK_FONT FONT_STROKE_ROMAN
 #endif
 
-namespace ColorSchemeDark {
+namespace Styles {
 
-    extern Color background,
-                 graphTicksFont,
-                 axisColor,
-                 tickColor,
-                 graphTitleFont;
+    void Init();
 
-    extern Color defaultGraphColor;
+    struct ColorScheme {
+        ColorScheme(Color background, Color graphTicksFont, Color graphTitleFont, Color axisColor,
+                    Color majorTickColor, std::vector<Color> plotColors);
 
-    extern std::vector<Color> graphs;
+        Color background;
+        Color graphTicksFont;
+        Color graphTitleFont;
+        Color axisColor;
+        Color majorTickColor;
+
+        std::vector<Color> plotColors;
+    };
+
+    typedef std::shared_ptr<Styles::ColorScheme> ColorScheme_ptr;
+
+    ColorScheme_ptr GetColorScheme();
 }
-
-namespace ColorSchemeBWDark {
-    extern Color background,
-            graphTicksFont,
-            axisColor,
-            tickColor,
-            graphTitleFont;
-
-    extern Color defaultGraphColor;
-
-    extern std::vector<Color> graphs;
-}
-
-namespace ColorSchemePrint {
-    extern Color background,
-            graphTicksFont,
-            axisColor,
-            tickColor,
-            graphTitleFont;
-
-    extern Color defaultGraphColor;
-
-    extern std::vector<Color> graphs;
-}
-
-namespace ColorSchemeTest {
-
-    extern Color background,
-                 graphTicksFont,
-                 axisColor,
-                 tickColor,
-                 graphTitleFont;
-}
-
-namespace ColorScheme = ColorSchemePrint;
 
 #endif //STUDIOSLAB_STYLESANDCOLORSCHEMES_H

@@ -18,9 +18,9 @@ namespace R2toR {
     public:
         FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1, Real eccentricity=0,
                                   Real angle=0, bool keepBaseFunction=true)
-            : baseFunction(*baseFunction), c(coef), theta(angle), a(1./sqrt(1.-eccentricity*eccentricity)), keepBaseFunction(keepBaseFunction)
+            : radialFunction(*baseFunction), c(coef), theta(angle), a(1. / sqrt(1. - eccentricity * eccentricity)), keepBaseFunction(keepBaseFunction)
                {};
-        ~FunctionAzimuthalSymmetry(){ if(keepBaseFunction) delete &baseFunction; }
+        ~FunctionAzimuthalSymmetry(){ if(keepBaseFunction) delete &radialFunction; }
 
         Real operator()(Real2D x) const override {
             Rotation T(theta);
@@ -28,17 +28,22 @@ namespace R2toR {
             Tx.x /= a;
             const Real r = sqrt(Tx.x*Tx.x + Tx.y*Tx.y);
 
-            return c*baseFunction(r);
+            return c * radialFunction(r);
         };
 
-        const RtoR::Function &getBaseFunction() const { return baseFunction; }
+        const RtoR::Function &getRadialFunction() const { return radialFunction; }
+
+        String myName() const override {
+            return "2d azimuthal-symmetric";
+        }
+
 
     private:
         const Real c;
         const Real a;
         const Real theta;
         const bool keepBaseFunction;
-        const RtoR::Function &baseFunction;
+        const RtoR::Function &radialFunction;
     };
 
 }

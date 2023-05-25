@@ -73,6 +73,10 @@ auto ParameterTemplate<Type>::operator*() const -> Type {
     return val;
 }
 
+template<class Type>
+ParameterTemplate<Type>::operator ParameterTemplate *() {
+    return this;
+}
 
 
 template class ParameterTemplate<int>;

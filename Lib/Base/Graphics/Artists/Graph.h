@@ -17,9 +17,12 @@
 #include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 
+#include <memory>
+
 
 template<class FunctionType>
 class Graph : public Artist {
+    typedef std::unique_ptr<const FunctionType> FunctionPtr;
     typedef std::tuple<const FunctionType*, Color, String> FunctionTriple;
 
 
@@ -63,7 +66,7 @@ class Graph : public Artist {
 
         glEnd();
 
-        auto c = ColorScheme::graphTitleFont;
+        auto c = Styles::GetColorScheme()->graphTitleFont;
         glColor4f(c.r,c.g,c.b,c.a);
         writeOrtho(window, Rect{0,1,0,1}, 1, xMax+xGap, .5*(yMax+yMin), label);
 
@@ -95,7 +98,7 @@ public:
 
     void setupOrtho();
 
-    void addFunction(const FunctionType* func, Color color=ColorScheme::defaultGraphColor, String name="");
+    void addFunction(const FunctionType* func, Color color=Styles::GetColorScheme()->plotColors[0], String name="");
     void clearFunctions();
 
     void addLabel(Label *label)
@@ -141,7 +144,7 @@ void Graph<FunctionType>::draw(const Window *window) {
 
     //glMatrixMode(GL_MODELVIEW);
 
-    auto &tf = ColorScheme::graphTitleFont;
+    auto &tf = Styles::GetColorScheme()->graphTitleFont;
     glColor4f(tf.r, tf.g, tf.b, tf.a);
     //writeOrtho(window, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
 
@@ -201,7 +204,7 @@ void Graph<FunctionType>::__drawXAxis(const Window *win) {
     const double hTick = inPixelsTimes2 * (xMax-xMin) / win->w;
     (void)hTick;
 
-    auto &gtfColor = ColorScheme::graphTicksFont;
+    auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
 
     double xspacing = (xMax-xMin) / 10.0;
     if(xspacing == .0) xspacing = 1.0;
@@ -224,8 +227,8 @@ void Graph<FunctionType>::__drawXAxis(const Window *win) {
 
     if(1)
     {
-        auto &ac = ColorScheme::axisColor;
-        auto &tc = ColorScheme::tickColor;
+        auto &ac = Styles::GetColorScheme()->axisColor;
+        auto &tc = Styles::GetColorScheme()->majorTickColor;
         glBegin(GL_LINES);
         {
             //glPopAttrib();
@@ -261,7 +264,7 @@ void Graph<FunctionType>::__drawYAxis(const Window *win) {
     StringStream buffer;
     //buffer << std::scientific << std::setprecision(2);
 
-    auto &gtf = ColorScheme::graphTicksFont;
+    auto &gtf = Styles::GetColorScheme()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
         for(double mark = markStart; mark<=yMax; mark+=yspacing)
@@ -285,8 +288,8 @@ void Graph<FunctionType>::__drawYAxis(const Window *win) {
 
     glBegin(GL_LINES);
     {
-        auto &ac = ColorScheme::axisColor;
-        auto &tc = ColorScheme::tickColor;
+        auto &ac = Styles::GetColorScheme()->axisColor;
+        auto &tc = Styles::GetColorScheme()->majorTickColor;
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 

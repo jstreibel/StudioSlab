@@ -9,6 +9,7 @@
 #include "Base/Controller/CLArgsManager.h"
 
 #include "Base/Controller/Interface/InterfaceManager.h"
+#include "Common/Utils.h"
 
 #include <Common/Workaround/StringStream.h>
 
@@ -32,7 +33,7 @@ auto InterfaceSelector::getCurrentCandidate() const -> Interface * {
     const int simType = currentSelection;
 
     InterfaceSelector &me = InterfaceSelector::getInstance();
-    if(simType > me.candidates.size() - 1) throw (String("Unknown sim type: ") + std::to_string(simType)).c_str();
+    if(simType > me.candidates.size() - 1) throw String("Unknown sim type: ") + ToString(simType);
 
     return me.candidates[simType];
 }

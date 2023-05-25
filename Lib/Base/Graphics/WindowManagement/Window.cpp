@@ -17,7 +17,7 @@ void Window::draw(bool decorated, bool clear) const {
 
 void Window::_clear() const {
 
-    auto &bg = ColorScheme::background;
+    auto &bg = Styles::GetColorScheme()->background;
 
     glBegin(GL_QUADS);
     {

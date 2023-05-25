@@ -40,11 +40,13 @@ void cew(cudaError err);
 #endif // USE_CUDA
 
 template <typename T>
-std::string ToString(const T a_value, const int n = 2)
+std::string ToString(const T a_value, const int n = 2, bool useScientificNotation=false)
 {
+    auto base = useScientificNotation ? std::scientific : std::fixed;
     std::ostringstream out;
     out.precision(n);
-    out << std::fixed << a_value;
+    out << base << a_value;
+
     return out.str();
 }
 

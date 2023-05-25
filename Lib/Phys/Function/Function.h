@@ -79,6 +79,8 @@ namespace Base {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
+        virtual String myName() const { return "unnamed"; }
+
     };
 }
 

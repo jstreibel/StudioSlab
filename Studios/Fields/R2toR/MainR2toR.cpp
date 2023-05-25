@@ -20,9 +20,9 @@ int main(int argc, const char **argv) {
         auto &im = InterfaceSelector::getInstance();
 
         ///* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
-        /* sim 0 */ im.registerOption(new R2toR::InputDiracSpeed());
-        /* sim 1 */ im.registerOption(new R2toR::GrowingHole::Input());
-        /* sim 2 */ im.registerOption(new R2toR::LeadingDelta::Input());
+        /* sim 0 */ im.registerOption( new R2toR :: DiracSpeed   :: Input( ) );
+        /* sim 1 */ im.registerOption( new R2toR :: GrowingHole  :: Input( ) );
+        /* sim 2 */ im.registerOption( new R2toR :: LeadingDelta :: Input( ) );
 
 
         // /* sim 1 */im.registerCandidate(new R2toR::R2toRInputShockwaveAt_t0);

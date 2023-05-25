@@ -7,6 +7,7 @@
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 #include "Phys/Numerics/Program/Integrator.h"
+#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 
 #include <GL/freeglut.h>
 #include <cassert>
@@ -106,6 +107,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     ImGui::GetStyle().ScaleAllSizes(1.5);
     ImGui::GetIO().FontGlobalScale = 1.5;
 
+    Styles::Init();
 
     std::cout << "Initialized Imgui." << std::endl;
 }

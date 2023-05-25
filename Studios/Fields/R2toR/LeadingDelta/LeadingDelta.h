@@ -63,7 +63,7 @@ namespace R2toR {
             void setRadius(Real _radius) override {
                 SpecialRingDelta::setRadius(_radius);
 
-                const auto &func = static_cast<const RtoR::RegularDiracDelta&>(this->getBaseFunction());
+                const auto &func = static_cast<const RtoR::RegularDiracDelta&>(this->getRadialFunction());
                 auto &delta = const_cast<RtoR::RegularDiracDelta&>(func);
                 delta.setTranslation(radius);
             }
@@ -104,6 +104,7 @@ namespace R2toR {
 
 
         extern SpecialRingDelta *ringDelta1;
+        extern Real ring_tf;
 
 
 
@@ -111,6 +112,9 @@ namespace R2toR {
 #if USE_VTK
             vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
 #endif
+        protected:
+            //void _out(const OutputPacket &outInfo) override;
+
         public:
             OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 
@@ -123,10 +127,13 @@ namespace R2toR {
 
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
             SpecialRingDelta &ringDelta;
+            Real tf;
 
         public:
-            explicit BoundaryCondition(SpecialRingDelta &ringDelta) : ringDelta(ringDelta) {
+            explicit BoundaryCondition(SpecialRingDelta &ringDelta, Real tf=-1) : ringDelta(ringDelta), tf(tf)
+            {
                 ringDelta1 = &ringDelta;
+                ring_tf = tf;
             }
 
 
@@ -137,11 +144,11 @@ namespace R2toR {
 
                     function.setPhi(fullNull);
                     function.setDPhiDt(fullNull);
+                } else if (t<tf || tf<0){
+                    const_cast<SpecialRingDelta&>(ringDelta).setRadius(t);
+
+                    function.setDPhiDt(ringDelta);
                 }
-
-                const_cast<SpecialRingDelta&>(ringDelta).setRadius(t);
-
-                function.setDPhiDt(ringDelta);
             }
         };
 
@@ -155,7 +162,7 @@ namespace R2toR {
                 const Real L = p.getL();
                 const Real xLeft = p.getxLeft();
                 const Real xRight = xLeft + L;
-                const auto dx = L*2.5/10;
+                const auto dx = 0; // L*2.5/10;
 
                 return new OutGL(xLeft-dx, xRight+dx, xLeft-dx, xRight+dx, phiMin, phiMax);
             }
@@ -164,10 +171,13 @@ namespace R2toR {
         class Input : public R2toRBCInterface {
             DoubleParameter a = DoubleParameter(0.1, "a", "The height of regularized delta;");
             DoubleParameter eps = DoubleParameter(0.1, "eps", "Half the base width of regularized delta;");
+            DoubleParameter deltaDuration = DoubleParameter(-1, "duration", "The duration of regularized "
+                                                                              "delta. Negative values mean "
+                                                                              "forever;");
 
         public:
             Input() : R2toRBCInterface("(2+1)-d Shockwave as trail of a driving delta.",
-                                       "ldd", new OutputBuilder) { addParameters({&a, &eps}); }
+                                       "ldd", new OutputBuilder) { addParameters({a, eps, deltaDuration}); }
 
             auto getBoundary() const -> const void * override {
                 SpecialRingDelta *delta = nullptr;
@@ -175,7 +185,7 @@ namespace R2toR {
                 if (0) delta = new AzimuthDelta(*eps, *a);
                 else   delta = new ZDelta(*eps, *a);
 
-                return new BoundaryCondition(*delta);
+                return new BoundaryCondition(*delta, *deltaDuration);
             }
         };
     }

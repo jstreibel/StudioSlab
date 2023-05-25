@@ -18,6 +18,8 @@ namespace std{
 
 template <class Type>
 class ParameterTemplate : public Parameter {
+    Type val;
+
 public:
     typedef Type MyType;
 
@@ -35,16 +37,13 @@ public:
 
     auto operator*() -> Type&;
     auto operator*() const -> Type;
-
-private:
-    Type val;
+    operator ParameterTemplate*();
 };
 
-
-typedef ParameterTemplate<int> IntegerParameter;
-typedef ParameterTemplate<double> DoubleParameter;
-typedef ParameterTemplate<String> StringParameter;
-typedef ParameterTemplate<bool> BoolParameter;
+typedef ParameterTemplate < int    > IntegerParameter;
+typedef ParameterTemplate < double > DoubleParameter;
+typedef ParameterTemplate < String > StringParameter;
+typedef ParameterTemplate < bool   > BoolParameter;
 
 
 
