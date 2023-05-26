@@ -42,9 +42,10 @@ void ParameterTemplate<Type>::setValue(const void *pVoid) {
 }
 
 template<class Type>
-const void *ParameterTemplate<Type>::getValue() const {
-    return &val;
-}
+void ParameterTemplate<Type>::setValue(Type value) { this->val = value; }
+
+template<class Type>
+const void *ParameterTemplate<Type>::getValue() const { return &val;    }
 
 template<class Type>
 void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
@@ -71,6 +72,11 @@ auto ParameterTemplate<Type>::operator*() -> Type & {
 template<class Type>
 auto ParameterTemplate<Type>::operator*() const -> Type {
     return val;
+}
+
+template<class Type>
+void ParameterTemplate<Type>::operator=(Type rhs) {
+    this->setValue(rhs);
 }
 
 template<class Type>

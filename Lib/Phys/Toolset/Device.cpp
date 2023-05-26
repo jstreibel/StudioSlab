@@ -25,6 +25,11 @@ auto Device::getDevice() const -> const device {
 void Device::setup(CLVariablesMap vm) {
     Interface::setup(vm);
 
+    std::cout << std::endl;
+    for(auto p : vm)
+        std::cout << "\n" << p.first;
+    std::cout << std::endl;
+
 #if USE_CUDA
     unsigned int dev_n = *deviceChoice;
 #else

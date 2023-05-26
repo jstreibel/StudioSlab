@@ -79,7 +79,9 @@ namespace R2toR {
             RtoR::RegularDiracDelta delta;
 
         public:
-            ZDelta(Real eps, Real height) : SpecialRingDelta(eps, height), delta(eps, height) { }
+            ZDelta(Real eps, Real height)
+            : SpecialRingDelta(eps, height),
+              delta(eps, height, RtoR::RegularDiracDelta::Regularization::Triangle) { }
 
             [[nodiscard]] bool domainContainsPoint(Real2D x) const override {
                 const auto eps2 = .5*eps;
@@ -113,7 +115,7 @@ namespace R2toR {
             vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
 #endif
         protected:
-            //void _out(const OutputPacket &outInfo) override;
+            void _out(const OutputPacket &outInfo) override;
 
         public:
             OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
@@ -171,9 +173,9 @@ namespace R2toR {
         class Input : public R2toRBCInterface {
             DoubleParameter a = DoubleParameter(0.1, "a", "The height of regularized delta;");
             DoubleParameter eps = DoubleParameter(0.1, "eps", "Half the base width of regularized delta;");
-            DoubleParameter deltaDuration = DoubleParameter(-1, "duration", "The duration of regularized "
-                                                                              "delta. Negative values mean "
-                                                                              "forever;");
+            DoubleParameter deltaDuration = DoubleParameter(-1, "delta_duration", "The duration of "
+                                                                                  "regularized delta. Negative "
+                                                                                  "values mean forever;");
 
         public:
             Input() : R2toRBCInterface("(2+1)-d Shockwave as trail of a driving delta.",

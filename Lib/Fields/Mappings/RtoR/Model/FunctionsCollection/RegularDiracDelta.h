@@ -32,17 +32,22 @@ namespace RtoR {
         }
 
         enum Regularization {
-            Gaussian = 0,
-            Triangle = 1
+            Gaussian  = 0,
+            Triangle  = 1,
+            Rectangle = 2
         };
 
-        RegularDiracDelta(Real eps, Real a, Regularization reg=Triangle, Real tx=0) : a(a), eps(eps), tx(tx), reg(reg) {
+        RegularDiracDelta(Real eps, Real a, Regularization reg=Triangle, Real tx=0)
+         : a(a), eps(eps), tx(tx), reg(reg) {
             switch (reg) {
                 case Gaussian:
                     delta = RegularDiracDelta::deltaGauss;
                     break;
                 case Triangle:
                     delta = RegularDiracDelta::deltaTri;
+                    break;
+                case Rectangle:
+                    delta = RegularDiracDelta::deltaRect;
                     break;
             }
         }

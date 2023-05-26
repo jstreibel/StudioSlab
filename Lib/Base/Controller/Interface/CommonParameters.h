@@ -32,13 +32,24 @@ public:
     void setValueFrom(VariableValue var) override;
 
     void setValue(const void *pVoid) override;
+    void setValue(Type value);
     auto getValue() const -> const void * override;
     auto value() const -> Type;
 
     auto operator*() -> Type&;
     auto operator*() const -> Type;
+
+    friend auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> p2) -> Type;
+
+    void operator=(const Type rhs);
     operator ParameterTemplate*();
 };
+
+template <class Type>
+auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> p2) -> Type {
+    return p1.val * p2.val;
+}
+
 
 typedef ParameterTemplate < int    > IntegerParameter;
 typedef ParameterTemplate < double > DoubleParameter;

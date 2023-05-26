@@ -133,13 +133,14 @@ void R2toR::LeadingDelta::OutGL::draw() {
         mSectionGraph.addFunction(&shockwave, Styles::GetColorScheme()->plotColors[2], "Analytic");
     }
 
-    stats.addVolatileStat("");
-    for(auto &interface : InterfaceManager::getInstance().getInterfaces()) {
-        stats.addVolatileStat(interface->getGeneralDescription());
-        for(auto &param : interface->getParameters()) {
-            stats.addVolatileStat(String("    ") + param->getDescription());
+    if(0) {
+        stats.addVolatileStat("");
+        for (auto &interface: InterfaceManager::getInstance().getInterfaces()) {
+            stats.addVolatileStat(interface->getGeneralDescription());
+            for (auto &param: interface->getParameters()) {
+                stats.addVolatileStat(String("    ") + param->getDescription());
+            }
         }
-
     }
 
 
@@ -156,10 +157,9 @@ IntPair R2toR::LeadingDelta::OutGL::getWindowSizeHint() {
     // return {1920, 800};
 }
 
-//void R2toR::LeadingDelta::OutGL::_out(const OutputPacket &outInfo) {
-//    OutputOpenGL::_out(outInfo);
-//
-//}
+void R2toR::LeadingDelta::OutGL::_out(const OutputPacket &outInfo) {
+    OutputOpenGL::_out(outInfo);
+}
 
 
 

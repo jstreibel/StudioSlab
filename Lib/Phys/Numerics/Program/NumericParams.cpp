@@ -5,7 +5,7 @@
 NumericParams::NumericParams()
     : Interface("Core simulation parameters")
 {
-    addParameters({&N, &L, &xCenter, &t, &r});
+    addParameters({N, L, xCenter, t, r, dimMode, noL, h});
 }
 
 //NumericParams::NumericParams(const boost::program_options::variables_map& vm)
@@ -23,7 +23,7 @@ auto NumericParams::getn() const -> size_t {
     return n;
 }
 auto NumericParams::geth() const -> floatt {
-    return h;
+    return *h;
 }
 auto NumericParams::getdt() const -> floatt {
     return dt;
@@ -32,8 +32,21 @@ auto NumericParams::getdt() const -> floatt {
 void NumericParams::setup(CLVariablesMap vm) {
     Interface::setup(vm);
 
-    h = *L / *N;
-    dt = *r * h;
+    switch (*dimMode) {
+        case 0:
+            h = *L / *N;
+            break;
+        case 1:
+            L = *h * *N;
+            break;
+        case 2:
+            *N = *L / *h;
+            break;
+    }
+
+    if(*t < 0) t = *L * .5;
+
+    dt = *r * *h;
     n = PosInt(*t / dt);
 }
 
