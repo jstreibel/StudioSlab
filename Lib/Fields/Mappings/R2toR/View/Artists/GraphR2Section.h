@@ -19,7 +19,7 @@ public:
     void addSection(RtoR2::StraightLine *section, Color color);
 
 protected:
-    void _renderFunction(const R2toR::Function *func, Color color) override;
+    void _renderFunction(const R2toR::Function *func, Styles::PlotStyle style) override;
     void __drawLabel();
 
 private:

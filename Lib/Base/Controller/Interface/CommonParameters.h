@@ -39,8 +39,6 @@ public:
     auto operator*() -> Type&;
     auto operator*() const -> Type;
 
-    friend auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> p2) -> Type;
-
     void operator=(const Type rhs);
     operator ParameterTemplate*();
 };

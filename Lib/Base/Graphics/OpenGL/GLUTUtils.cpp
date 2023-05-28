@@ -4,7 +4,7 @@
 
 #include "GLUTUtils.h"
 
-#include "../../Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/WindowManagement/Window.h"
 
 void write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
 {

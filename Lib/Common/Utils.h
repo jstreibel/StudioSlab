@@ -22,6 +22,9 @@ if(&NAME == nullptr) throw "Bad cast.";
 #define letcp const auto*
 #define letr auto&
 #define letcr const auto&
+#define fix const auto
+#define pt auto *
+#define look const auto *
 
 
 void PrintThere(int x, int y, const char *format, ...);

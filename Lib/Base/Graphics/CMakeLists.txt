@@ -2,9 +2,7 @@
 set( GRAPHICS_SOURCES
 		PlottingUtils.cpp
 		Animation.cpp
-		PlottingUtils.cpp
 		ZoomPanRotate.cpp
-
 
 		Artists/StatsDisplay.cpp
 		Artists/StylesAndColorSchemes.cpp
@@ -21,10 +19,12 @@ set( GRAPHICS_SOURCES
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp
 
-		OpenGL/Utils.cpp Artists/Graph.cpp)
+		OpenGL/Utils.cpp
+		Artists/Graph.cpp
+		)
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Graphics
 		Slab-Common
-		Slab-Studios-Backend
+		freeimage
 		)

@@ -2,6 +2,7 @@
 
 #include <Phys/Numerics/Allocator.h>
 #include "FunctionRenderer.h"
+#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 
 
 //
@@ -93,18 +94,19 @@ void RtoR::FunctionRenderer::renderFunction(const R2toR::Function &func, Real xM
     }
 }
 
-void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section, Color c,
-                                           bool filled, PosInt resolution, Real scale) {
+void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section,
+                                           Styles::PlotStyle style, PosInt resolution, Real scale) {
     const auto ds = section.getDeltaS() / double(resolution);
     //const auto ds = 1 / double(resolution);
     const auto sMin = section.getSMin(), sMax = section.getSMax();
     //const Real sMin = 0, sMax = 1;
 
-    glLineWidth(1.8);
+    glLineWidth(style.lineWidth);
 
-
-    if(filled)
+    if(style.filled)
     {
+        auto c = style.fillColor;
+
         glColor4f(c.r, c.g, c.b, c.a*.5);
         glBegin(GL_QUADS);
         {
@@ -128,7 +130,15 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
         glEnd();
     }
 
+    auto c = style.lineColor;
     glColor4f(c.r, c.g, c.b, c.a);
+
+    if(style.trace != Styles::Solid){
+        glDisable(GL_LINE_SMOOTH);
+        glEnable(GL_LINE_STIPPLE);
+        glLineStipple(style.stippleFactor, style.stipplePattern);
+    } else glEnable(GL_LINE_SMOOTH);
+
     glBegin(GL_LINE_STRIP);
     {
         for(double s=sMin; s<=sMax; s+=ds)

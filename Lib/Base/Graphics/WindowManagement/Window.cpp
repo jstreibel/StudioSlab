@@ -43,6 +43,9 @@ void Window::_decorate() const {
 }
 
 void Window::setupViewport(bool decorate, bool clear) const {
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 

@@ -10,7 +10,7 @@ GraphR2toR::GraphR2toR(double xMin, double xMax, double yMin, double yMax, Strin
 
 }
 
-void GraphR2toR::_renderFunction(const R2toR::Function *func, Color color) {
+void GraphR2toR::_renderFunction(const R2toR::Function *func, Styles::PlotStyle style) {
     glEnable(GL_DEPTH_TEST);
     //phiGraph.BindWindow();
     glMatrixMode(GL_MODELVIEW);

@@ -1,7 +1,7 @@
 #ifndef PLOTTINGUTILS_H
 #define PLOTTINGUTILS_H
 
-#include <Base/Backend/GLUT/GLUTUtils.h>
+#include "Base/Graphics/OpenGL/GLUTUtils.h"
 
 #include <Common/STDLibInclude.h>
 
@@ -11,7 +11,19 @@ class Color
 {
 public:
     Color(float r, float g, float b, float a=1) : r(r), g(g), b(b), a(a) {}
+    Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
+    Color(const Color &c) : r(c.r), g(c.g), b(c.b), a(c.a) { };
     float r, g, b, a;
+
+    Color rgb() const { return Color(r, g, b, -1); }
+
+    bool operator==(const Color &rhs) const {
+        static float eps = 1.e-4;
+        return r > rhs.r-eps  && r < rhs.r+eps &&
+               g > rhs.g-eps  && g < rhs.g+eps &&
+               b > rhs.b-eps  && b < rhs.b+eps &&
+               a > rhs.a-eps  && a < rhs.a+eps;
+    }
 };
 
 struct Point2D

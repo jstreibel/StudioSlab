@@ -8,6 +8,7 @@
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 #include "Phys/Numerics/Program/Integrator.h"
 #include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/OpenGL/Utils.h"
 
 #include <GL/freeglut.h>
 #include <cassert>
@@ -152,36 +153,48 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     GLUTBackend *me = GLUTBackend::GetInstance();
     Program *program = me->program;
 
-    if(key == 27) glutLeaveMainLoop();
-    else if(key == ' ') me->programIsRunning = !me->programIsRunning;
-    else if(key == '='){
+    if(key == 27) {
+        glutLeaveMainLoop();
+    } else if(key == ' ') {
+        me->programIsRunning = !me->programIsRunning;
+    } else if(key == '=') {
         me->steps += 1;
-    }
-    else if(key == '+'){
+
+        std::cout << "\nStepping " << me->steps << " per cycle.";
+    } else if(key == '+') {
         me->steps *= 1.1;
-    }
-    else if(key == '-'){
+
+        std::cout << "\nStepping " << me->steps << " per cycle.";
+    } else if(key == '-') {
         if(me->steps > 1) {
             me->steps -= 1;
 
             if (me->steps <= 0) me->steps = 1;
+
+            std::cout << "\nStepping " << me->steps << " per cycle.";
         }
-    }
-    else if(key == '_'){
+    } else if(key == '_') {
         if(me->steps > 1) {
             me->steps /= 1.1;
 
             if (me->steps <= 0) me->steps = 1;
         }
-    }
-    else if(key == 'f'){
+    } else if(key == 'f') {
         dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
-    }
-    else if(key == '['){
+    } else if(key == '[') {
         program->step(1);
-    }
-    else if(key == '{'){
+    } else if(key == '{') {
         program->step(20);
+    } else if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
+        fix w = me->w;
+        fix h = me->h;
+        fix channels = 4;
+
+        std::vector<uint8_t> pixels(w*h*channels);
+
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+
+        OpenGLUtils::outputToPNG(pixels, w, h, channels*8, "beautiful_graphy-graph.png");
     }
     else {
         GLUTBackend::GetInstance()->outGL->notifyKeyboard(key, x, y);

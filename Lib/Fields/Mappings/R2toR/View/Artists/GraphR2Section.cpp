@@ -9,13 +9,13 @@
 GraphR2Section::GraphR2Section(double xMin, double xMax, double yMin, double yMax, String title, bool filled,
                                int samples) : Graph(xMin, xMax, yMin, yMax, title, filled, samples) {}
 
-void GraphR2Section::_renderFunction(const R2toR::Function *func, Color color) {
+void GraphR2Section::_renderFunction(const R2toR::Function *func, Styles::PlotStyle style) {
 
     for(auto pair : sections) {
         auto section = pair.first;
         //auto color = pair.second;
 
-        RtoR::FunctionRenderer::renderSection(*func, *section, color, filled, samples);
+        RtoR::FunctionRenderer::renderSection(*func, *section, style, samples);
     }
 }
 

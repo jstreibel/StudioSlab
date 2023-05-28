@@ -19,7 +19,7 @@ public:
     void reshape(int w, int h) override;
 
 protected:
-    void _renderFunction(const R2toR::Function *func, Color color) override;
+    void _renderFunction(const R2toR::Function *func, Styles::PlotStyle style) override;
 
 private:
     ZoomPanRotate zpr;

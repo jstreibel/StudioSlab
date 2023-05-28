@@ -35,10 +35,10 @@ namespace R2toR {
             auto &phi = fState.getPhi();
 
             mSectionGraph.clearFunctions();
-            mSectionGraph.addFunction(&phi, Styles::GetColorScheme()->plotColors[0], "Numeric");
+            mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
             RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave; radialShockwave.sett(t-dt);
             FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1,0,0, false);
-            mSectionGraph.addFunction(&shockwave, Styles::GetColorScheme()->plotColors[1], "Analytic");
+            mSectionGraph.addFunction(&shockwave, "Analytic", Styles::GetColorScheme()->funcPlotStyles[1]);
 
             panel->draw(true, true);
         }

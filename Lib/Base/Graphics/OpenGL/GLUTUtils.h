@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_GLUTDEFS_H
 #define STUDIOSLAB_GLUTDEFS_H
 
-#include "../../Graphics/Artists/Rect.h"
+#include "Base/Graphics/Artists/Rect.h"
 
-#include <Common/STDLibInclude.h>
+#include "Common/STDLibInclude.h"
 
 #include <GL/freeglut.h>
 

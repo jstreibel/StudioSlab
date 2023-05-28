@@ -12,6 +12,7 @@
 #include "RtoR2/StraightLine.h"
 
 #include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 
 
 namespace RtoR {
@@ -27,7 +28,7 @@ namespace RtoR {
 
 
         static void renderSection(           const R2toR::Function &func, const RtoR2::StraightLine &section,
-                                             Color c, bool filled, PosInt resolution, Real scale=1.0);
+                                             Styles::PlotStyle style, PosInt resolution, Real scale=1.0);
         static void renderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, PosInt resolution);
         static void renderVerticalSection(   const R2toR::Function &func, Color c, bool filled,

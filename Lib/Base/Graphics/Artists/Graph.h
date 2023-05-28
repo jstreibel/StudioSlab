@@ -23,7 +23,10 @@
 template<class FunctionType>
 class Graph : public Artist {
     typedef std::unique_ptr<const FunctionType> FunctionPtr;
-    typedef std::tuple<const FunctionType*, Color, String> FunctionTriple;
+    typedef std::tuple<const FunctionType*, Styles::PlotStyle, String> FunctionTriple;
+    static auto GetFunction ( FunctionTriple triple ) { return std::get<0>(triple); };
+    static auto GetStyle    ( FunctionTriple triple ) { return std::get<1>(triple); };
+    static auto GetName     ( FunctionTriple triple ) { return std::get<2>(triple); };
 
 
     std::vector<FunctionTriple> mFunctions;
@@ -32,7 +35,7 @@ class Graph : public Artist {
     void __drawXAxis(const Window *win);
     void __drawYAxis(const Window *win);
 
-    void __rectDraw(int i, Color color, String label, const Window *window){
+    void __rectDraw(int i, const Styles::PlotStyle &style, String label, const Window *window){
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
@@ -51,20 +54,42 @@ class Graph : public Artist {
              yMin = .975+(yGap+dy)*float(i),
              yMax = yMin+dy;
 
-        glColor4f(color.r, color.g, color.b, .5*color.a);
+        if(style.filled) {
+            auto color = style.fillColor;
+            glColor4f(color.r, color.g, color.b, .5 * color.a);
 
-        glRectd(xMin,yMin,xMax,yMax);
+            glRectd(xMin, yMin, xMax, yMax);
+        }
 
-        glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(2);
-        glBegin(GL_LINE_LOOP);
+        {
+            auto color = style.lineColor;
 
-        glVertex2f(xMin, yMin);
-        glVertex2f(xMax, yMin);
-        glVertex2f(xMax, yMax);
-        glVertex2f(xMin, yMax);
+            glColor4f(color.r, color.g, color.b, color.a);
+            glLineWidth(style.lineWidth);
 
-        glEnd();
+            if (style.trace != Styles::Solid) {
+                glDisable(GL_LINE_SMOOTH);
+                glEnable(GL_LINE_STIPPLE);
+                glLineStipple(style.stippleFactor, style.stipplePattern);
+            } else {
+                glEnable(GL_LINE_SMOOTH);
+                glDisable(GL_LINE_STIPPLE);
+            }
+
+            glBegin(GL_LINE_LOOP);
+
+            glVertex2f(xMin, yMin);
+            glVertex2f(xMax, yMin);
+            glVertex2f(xMax, yMax);
+            glVertex2f(xMin, yMax);
+
+            glEnd();
+
+        }
+
+        glEnable(GL_LINE_SMOOTH);
+        glDisable(GL_LINE_STIPPLE);
+        glLineWidth(1.5);
 
         auto c = Styles::GetColorScheme()->graphTitleFont;
         glColor4f(c.r,c.g,c.b,c.a);
@@ -98,7 +123,7 @@ public:
 
     void setupOrtho();
 
-    void addFunction(const FunctionType* func, Color color=Styles::GetColorScheme()->plotColors[0], String name="");
+    void addFunction(const FunctionType* func, String name="", Styles::PlotStyle style=Styles::GetColorScheme()->funcPlotStyles[0]);
     void clearFunctions();
 
     void addLabel(Label *label)
@@ -111,7 +136,7 @@ private:
 
 protected:
 
-    virtual void _renderFunction(const FunctionType *func, Color color) = 0;
+    virtual void _renderFunction(const FunctionType *func, Styles::PlotStyle color) = 0;
 
 };
 
@@ -152,13 +177,13 @@ void Graph<FunctionType>::draw(const Window *window) {
 
     int i=0;
     for(auto &triple : mFunctions){
-        auto &func = *std::get<0>(triple);
-        auto color = std::get<1>(triple);
-        auto label = std::get<2>(triple);
+        auto &func = *GetFunction(triple);
+        auto style = GetStyle(triple);
+        auto label = GetName(triple);
 
-        if(label != "") __rectDraw(i++, color, label, window);
+        if(label != "") __rectDraw(i++, style, label, window);
 
-        this->_renderFunction(&func, color);
+        this->_renderFunction(&func, style);
     }
 
 }
@@ -199,6 +224,9 @@ void Graph<FunctionType>::_drawAxes(const Window *win) {
 
 template<class FunctionType>
 void Graph<FunctionType>::__drawXAxis(const Window *win) {
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+
     const double inPixelsTimes2 = 5;
     const double vTick = inPixelsTimes2 * (yMax-yMin) / win->h;
     const double hTick = inPixelsTimes2 * (xMax-xMin) / win->w;
@@ -255,6 +283,9 @@ void Graph<FunctionType>::__drawXAxis(const Window *win) {
 
 template<class FunctionType>
 void Graph<FunctionType>::__drawYAxis(const Window *win) {
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+
     const double deltaY = yMax-yMin;
     const double deltaX = xMax-xMin;
     const double xloc = xMin-deltaX*0.05;
@@ -308,8 +339,8 @@ void Graph<FunctionType>::__drawYAxis(const Window *win) {
 }
 
 template<class FunctionType>
-void Graph<FunctionType>::addFunction(const FunctionType *func, Color color, String name) {
-    mFunctions.emplace_back(FunctionTriple{func, color, name});
+void Graph<FunctionType>::addFunction(const FunctionType *func, String name, Styles::PlotStyle style) {
+    mFunctions.emplace_back(FunctionTriple{func, style, name});
 }
 
 template<class FunctionType>

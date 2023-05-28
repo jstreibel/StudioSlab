@@ -111,16 +111,16 @@ void R2toR::LeadingDelta::OutGL::draw() {
     ImGui::End();
 
     if(numeric)
-        mSectionGraph.addFunction(&phi, Styles::GetColorScheme()->plotColors[0], "Numeric");
+        mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
 
     stats.addVolatileStat(String("Ring radius: ") + ToString(rd.getRadius()));
     if(deltaRing) {
         R2toR::Function *func = nullptr;
         stats.addVolatileStat(String("ring_tf = ") + ToString(ring_tf));
         if(ring_tf>t || ring_tf < 0)
-            mSectionGraph.addFunction(&rd, Styles::GetColorScheme()->plotColors[1], "Ring delta");
+            mSectionGraph.addFunction(&rd, "Ring delta", Styles::GetColorScheme()->funcPlotStyles[1]);
         else
-            mSectionGraph.addFunction(&nullFunc, Styles::GetColorScheme()->plotColors[1], "Ring delta");
+            mSectionGraph.addFunction(&nullFunc, "Ring delta", Styles::GetColorScheme()->funcPlotStyles[1]);
     }
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
@@ -130,7 +130,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
     if(analytic){
 
-        mSectionGraph.addFunction(&shockwave, Styles::GetColorScheme()->plotColors[2], "Analytic");
+        mSectionGraph.addFunction(&shockwave, "Analytic", Styles::GetColorScheme()->funcPlotStyles[2]);
     }
 
     if(0) {

@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_BINARYTOINT_H
 #define STUDIOSLAB_BINARYTOINT_H
 
-#include <bitset>
+#include <string>
 
-
-unsigned long long binaryToUInt(std::string binary);
+unsigned BinaryToUInt(std::string binary, char zero='0', char one='1');
+unsigned short BinaryToUShort(std::string binary, char zero='0', char one='1');
 
 #endif //STUDIOSLAB_BINARYTOINT_H

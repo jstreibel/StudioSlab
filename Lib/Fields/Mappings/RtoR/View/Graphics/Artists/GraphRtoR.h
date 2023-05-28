@@ -17,7 +17,7 @@ public:
 
 protected:
 
-    void _renderFunction(const RtoR::Function *func, Color color) override;
+    void _renderFunction(const RtoR::Function *func, Styles::PlotStyle style) override;
 };
 
 

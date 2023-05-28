@@ -5,8 +5,8 @@ set( BACKEND_SOURCE
 set( GRAPHIC_BACKEND_SOURCE
 		GLUT/GLUTBackend.cpp
 		GLUT/GLUTEventListener.cpp
-		GLUT/GLUTUtils.h
-		GLUT/GLUTUtils.cpp
+		../Graphics/OpenGL/GLUTUtils.h
+		../Graphics/OpenGL/GLUTUtils.cpp
 
 		SFML-Nuklear/SFML-Nuklear-Backend.cpp
 		SFML-Nuklear/SFMLListener.cpp
@@ -20,6 +20,7 @@ add_library(${STUDIOS_LIB_BASE_NAME}-Backend ${BACKEND_SOURCE} ${GRAPHIC_BACKEND
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Backend
 		Slab-3rdParty-Imgui
 		Slab-Common
+		Slab-Studios-Graphics
 
 		glut
 

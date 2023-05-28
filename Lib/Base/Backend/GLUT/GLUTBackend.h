@@ -41,7 +41,7 @@ private:
 	Program *program = nullptr;
     Base::OutputOpenGL *outGL = nullptr;
 
-    int steps = 1;
+    int steps = 50;
 
     bool programIsRunning = false;
 
