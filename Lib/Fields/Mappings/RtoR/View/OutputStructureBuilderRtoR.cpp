@@ -31,11 +31,11 @@ OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : OutputStructureBuilde
 
 auto
 OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
-    const auto shouldOutputOpenGL = *useOpenGL;
-    const auto shouldOutputHistory = ! *noHistory;
+    const auto shouldOutputOpenGL = *OpenGLMonitor;
+    const auto shouldOutputHistory = ! *noHistoryToFile;
 
 
-    if(*useOpenGL) GLUTBackend::GetInstance();
+    if(*OpenGLMonitor) GLUTBackend::GetInstance();
     else ConsoleBackend::getSingleton();
 
 

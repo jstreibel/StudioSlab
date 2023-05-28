@@ -12,7 +12,9 @@
 OutputStructureBuilderBase::OutputStructureBuilderBase(String generalDescription)
     : Interface(generalDescription, true)
 {
-    addParameters({&noHistory, &outputResolution, &useOpenGL, /*&takeSnapshot, &snapshotTime, */ });
+    addParameters({noHistoryToFile, outputResolution,
+                   OpenGLMonitor, OpenGLMonitor_startPaused,OpenGLMonitor_stepsPerIdleCall
+                   /*&takeSnapshot, &snapshotTime, */ });
 }
 
 

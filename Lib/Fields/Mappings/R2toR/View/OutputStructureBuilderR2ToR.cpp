@@ -21,11 +21,11 @@
 
 OutputManager*
 OutputStructureBuilderR2toR::build(String outputFileName) {
-    const auto shouldOutputOpenGL = *useOpenGL;
-    const auto shouldOutputHistory = ! *noHistory;
+    const auto shouldOutputOpenGL = *OpenGLMonitor;
+    const auto shouldTrackHistory = ! *noHistoryToFile;
 
 
-    if(*useOpenGL) GLUTBackend::GetInstance();
+    if(*OpenGLMonitor) GLUTBackend::GetInstance();
     else ConsoleBackend::getSingleton();
 
 
@@ -53,7 +53,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 
     ///********************************************************************************************/
     int fileOutputStepsInterval = -1;
-    if(shouldOutputHistory)
+    if(shouldTrackHistory)
     {
         const double t=p.gett();
         const PosInt outputResolutionX = *outputResolution;
@@ -82,8 +82,12 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     if(shouldOutputOpenGL) {
         std::cout << std::endl << "Outputting OpenGL" << std::endl;
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
+        if(*OpenGLMonitor_startPaused) glutBackend->pause();
+        else glutBackend->resume();
+        glutBackend->setStepsPerFrame(*OpenGLMonitor_stepsPerIdleCall);
 
         auto glOut = this->buildOpenGLOutput();
+
 
         glutBackend->setOpenGLOutput(glOut);
         outputManager->addOutputChannel(glOut);

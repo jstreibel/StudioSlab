@@ -34,6 +34,8 @@ public:
     static void reshape(int w, int h);
 
     auto isRunning() const -> bool {return programIsRunning;}
+	void pause()  { programIsRunning = false; }
+	void resume() { programIsRunning = true; }
 
 	void setStepsPerFrame(size_t spf){ this->steps = spf; }
 
