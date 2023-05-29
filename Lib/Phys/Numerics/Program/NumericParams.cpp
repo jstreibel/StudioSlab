@@ -50,3 +50,7 @@ void NumericParams::setup(CLVariablesMap vm) {
     n = PosInt(*t / dt);
 }
 
+void NumericParams::sett(Real tMax) {
+    t.setValue(tMax);
+}
+

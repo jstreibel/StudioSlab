@@ -1,4 +1,4 @@
-#include "OutputHistory.h"
+#include "HistoryKeeper.h"
 
 #include "Phys/Numerics/Allocator.h"
 
@@ -6,18 +6,18 @@
 
 const long long unsigned int ONE_GB = 1073741824;
 
-OutputHistory::OutputHistory(size_t recordStepsInterval, SpaceFilterBase *filter, double tEnd_)
+HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter, double tEnd_)
     : OutputChannel("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
     // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
 }
 
-OutputHistory::~OutputHistory() {
+HistoryKeeper::~HistoryKeeper() {
     delete &spaceFilter;
 }
 
-auto OutputHistory::getUtilMemLoadBytes() const -> long long unsigned int
+auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int
 {
     // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
     //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
@@ -25,13 +25,13 @@ auto OutputHistory::getUtilMemLoadBytes() const -> long long unsigned int
     return count * Numerics::Allocator::getInstance().getNumericParams().getN() * sizeof(double);
 }
 
-auto OutputHistory::shouldOutput(double t, long unsigned timestep) -> bool{
+auto HistoryKeeper::shouldOutput(double t, long unsigned timestep) -> bool{
     const bool should = (/*t >= tStart && */t <= tEnd) && OutputChannel::shouldOutput(t, timestep);
 
     return should;
 }
 
-void OutputHistory::_out(const OutputPacket &outInfo)
+void HistoryKeeper::_out(const OutputPacket &outInfo)
 {
     if(getUtilMemLoadBytes() > 4*ONE_GB){
         std::cout << "\n\nDumping mem... " << std::flush;
@@ -48,12 +48,12 @@ void OutputHistory::_out(const OutputPacket &outInfo)
     ++count;
 }
 
-auto OutputHistory::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
     _dump(true);
     return true;
 }
 
-auto OutputHistory::renderMetaDataAsPythonDictionary() const -> String {
+auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> String {
     Numerics::Allocator &builder = Numerics::Allocator::getInstance();
 
     std::ostringstream oss;
@@ -71,5 +71,3 @@ auto OutputHistory::renderMetaDataAsPythonDictionary() const -> String {
 
     return oss.str();
 }
-
-//void OutputHistory::_dump(){ }

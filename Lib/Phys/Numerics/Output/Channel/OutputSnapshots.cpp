@@ -26,8 +26,8 @@ void OutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
 void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customFileDescription,
                               const size_t T_fileNamePrecision) {
     StringStream filePhiNameStream;
-    filePhiNameStream.oStream.setf(std::ios::fixed, std::ios::floatfield);
-    filePhiNameStream.oStream.precision(T_fileNamePrecision);
+    filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
+    filePhiNameStream.precision(T_fileNamePrecision);
 
     const double t = outInfo.getSimTime ();
 

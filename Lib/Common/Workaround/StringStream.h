@@ -7,6 +7,7 @@
 
 #include "Common/STDLibInclude.h"
 
+/*
 class StringStream{
 public:
 
@@ -26,6 +27,6 @@ public:
     }
 
     std::ostringstream oStream;
-};
+};*/
 
 #endif

@@ -9,6 +9,8 @@
 
 #include "Common/STDLibInclude.h"
 
+#include "Utils.h"
+
 #include <GL/freeglut.h>
 
 #define FONT_BITMAP_1 GLUT_STROKE_ROMAN
@@ -31,14 +33,19 @@
 
 class Window;
 
+namespace GLUTUtils {
 
-void write(const Window *window, float fontScale, float x, float y, std::string str,
-           void *font = FONT_STROKE_DEFAULT);
+    void write(const Window *window, float fontScale, float x, float y, std::string str,
+               void *font = FONT_STROKE_DEFAULT);
 
-void writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
-           void *font = FONT_STROKE_DEFAULT);
+    void writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
+                    void *font = FONT_STROKE_DEFAULT);
 
-void writeBitmap(const Window *window, float x, float y, std::string str,
-           void *font = FONT_BITMAP_DEFAULT);
+    void writeBitmap(const Window *window, float x, float y, std::string str,
+                     void *font = FONT_BITMAP_DEFAULT);
+
+    OpenGLUtils::FrameBuffer getFrameBuffer();
+
+}
 
 #endif //STUDIOSLAB_GLUTDEFS_H

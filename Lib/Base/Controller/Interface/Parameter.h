@@ -28,6 +28,10 @@ public:
 
     bool operator<(const Parameter *rhs);
 
+    bool operator==(String name) const;
+
+    bool operator!=(const Parameter &rhs) const;
+
 protected:
     String commandLineArgName, description;
 };

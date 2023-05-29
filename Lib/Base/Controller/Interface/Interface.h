@@ -35,6 +35,14 @@ public:
 
     virtual auto toString() const -> String;
     virtual void setup(CLVariablesMap vm);
+
+    virtual bool operator==(const Interface &rhs) const;
+    virtual bool operator==(String val) const;
+
+
+    virtual bool operator!=(const Interface &rhs) const;
+
+
 };
 
 

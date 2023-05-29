@@ -47,8 +47,13 @@ void Interface::addSubInterface(Interface *subInterface) {
 auto Interface::getGeneralDescription() const -> String { return description; }
 
 auto Interface::getParameter(String key) const -> Parameter * {
-    throw "Not implemented";
-    //return parameters[key];
+    auto compareFunc = [key](const Parameter *parameter) {
+        return parameter->operator==(key);
+    };
+
+    auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);
+
+    return *result;
 }
 
 auto Interface::toString() const -> String {
@@ -76,6 +81,19 @@ void Interface::setup(CLVariablesMap vm) {
         std::cout << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << std::endl;
         throw exception;
     }
+}
+
+bool Interface::operator==(const Interface &rhs) const {
+    return std::tie(description, parameters, subInterfaces) ==
+           std::tie(rhs.description, rhs.parameters, rhs.subInterfaces);
+}
+
+bool Interface::operator==(String str) const {
+    return description == str;
+}
+
+bool Interface::operator!=(const Interface &rhs) const {
+    return !(rhs == *this);
 }
 
 

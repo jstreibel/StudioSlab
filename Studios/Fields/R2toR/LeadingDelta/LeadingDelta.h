@@ -123,6 +123,8 @@ namespace R2toR {
             void draw() override;
 
             IntPair getWindowSizeHint() override;
+
+            void notifyKeyboard(unsigned char key, int x, int y) override;
         };
 
 
@@ -182,6 +184,11 @@ namespace R2toR {
                                        "ldd", new OutputBuilder) { addParameters({a, eps, deltaDuration}); }
 
             auto getBoundary() const -> const void * override {
+                auto &p = const_cast<NumericParams&>(Numerics::Allocator::getInstance().getNumericParams());
+                const Real L = p.getL();
+
+                p.sett(L*.5 - *eps *2);
+
                 SpecialRingDelta *delta = nullptr;
 
                 if (0) delta = new AzimuthDelta(*eps, *a);

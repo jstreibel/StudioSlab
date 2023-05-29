@@ -6,7 +6,7 @@
 
 #define M_GUESS 1024 //1048576 // 1024*1024
 
-class OutputHistory : public OutputChannel
+class HistoryKeeper : public OutputChannel
 {
 private:
     /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,
@@ -15,8 +15,8 @@ private:
     void _out(const OutputPacket &outInfo) final;
 
 public:
-    OutputHistory(size_t nStepsInterval, SpaceFilterBase *filter, double tEnd);
-    ~OutputHistory() override;
+    HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, double tEnd);
+    ~HistoryKeeper() override;
 
     [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
     auto shouldOutput(double t, long unsigned timestep) -> bool override;

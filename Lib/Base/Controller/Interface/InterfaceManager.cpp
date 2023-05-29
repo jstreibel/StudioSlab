@@ -57,3 +57,30 @@ auto InterfaceManager::renderAsPythonDictionaryEnrties() -> String {
 
     return ss.str();
 }
+
+auto InterfaceManager::renderParametersToString(StrVector params, String separator) const -> String {
+    StringStream ss;
+
+    for(auto *interface : interfaces) {
+        auto parameters = interface->getParameters();
+        for(const auto *parameter : parameters) {
+            auto name = parameter->getCommandLineArgName(true);
+
+            if(Common::Contains(params, name))
+                ss << name << "=" << parameter->valueToString() << separator;
+        }
+    }
+
+    auto str = ss.str();
+
+    return str.ends_with(separator) ? str.substr(0, str.length()-separator.length()) : str;
+}
+
+auto InterfaceManager::getInterface(const char *target) -> const Interface* {
+    auto compFunc = [target](Interface* anInterface) { return anInterface->operator==(target); };
+
+    auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );
+
+    return *it;
+}
+

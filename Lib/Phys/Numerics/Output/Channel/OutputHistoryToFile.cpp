@@ -12,7 +12,7 @@ const String extension = ".osc";
 
 OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                          String outputFileName, OutputFormatterBase *outputFormatter)
-    : OutputHistory(stepsInterval, spaceFilter, endT),
+    : HistoryKeeper(stepsInterval, spaceFilter, endT),
       outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
       outputFormatter(*outputFormatter)
 {

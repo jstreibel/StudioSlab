@@ -10,6 +10,7 @@
 #include "Fields/Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
 
 class R2toRBCInterface : public Base::BCInterface {
+    String name;
 public:
     explicit R2toRBCInterface(String generalDescription,
                               String name = "",
@@ -17,6 +18,10 @@ public:
                               bool selfRegister=false);
 
     auto buildOutputManager() -> OutputManager * override;
+
+    bool operator==(const Interface &rhs) const override;
+
+    bool operator==(String val) const override;
 };
 
 

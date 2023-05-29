@@ -59,6 +59,8 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+    //io.FontAllowUserScaling = true;
+    //io.FontGlobalScale = 1;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -77,11 +79,27 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     if(0) ImGui_ImplGLUT_InstallFuncs();
 
 
-    if(0) {
-        ImFontAtlas *atlas = io.Fonts;
+    if(1) {
+        StrVector fonts = {"imgui/Cousine-Regular.ttf",
+                           "imgui/DroidSans.ttf",
+                           "imgui/Karla-Regular.ttf",
+                           "imgui/ProggyClean.ttf",
+                           "imgui/ProggyTiny.ttf",
+                           "imgui/Roboto-Medium.ttf",
 
-        auto fontName = ResourcesFolder + "Fonts/imgui/Karla-Regular.ttf";
+                           "EBGaramond-VariableFont_wght.ttf",
+                           "FontAwesome-Solid.ttf",
+                           "Inconsolata-Regular.ttf",
+
+                           "Roboto-Regular.ttf",
+                           "times-new-roman-14.ttf",
+                           };
+        auto fontName = ResourcesFolder + "Fonts/" + fonts[5];
+
         if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
+
+        /*
+        ImFontAtlas *atlas = io.Fonts;
 
         auto font = atlas->AddFontFromFileTTF(fontName.c_str(), 18.0f, NULL, atlas->GetGlyphRangesDefault());
         IM_ASSERT(font != NULL);
@@ -98,11 +116,20 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
         atlas->TexID = (void *) (intptr_t) texture_id;
 
         ImGui::PushFont(font);
+         */
 
+        ImFontConfig imFontConfig;
+        imFontConfig.OversampleH = 3;
+        imFontConfig.OversampleV = 3;
+
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 24.0f, &imFontConfig);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
         //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
+        io.FontDefault = font;
+
+        //ImGui::PushFont(font);
     }
 
     ImGui::GetStyle().ScaleAllSizes(1.5);
@@ -185,17 +212,11 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
         program->step(1);
     } else if(key == '{') {
         program->step(20);
-    } else if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
-        fix w = me->w;
-        fix h = me->h;
-        fix channels = 4;
+    } /*else if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
+        auto buffer = GLUTUtils::getFrameBuffer();
 
-        std::vector<uint8_t> pixels(w*h*channels);
-
-        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
-
-        OpenGLUtils::outputToPNG(pixels, w, h, channels*8, "beautiful_graphy-graph.png");
-    }
+        OpenGLUtils::outputToPNG(buffer, "beautiful_graphy-graph.png");
+    } */
     else {
         GLUTBackend::GetInstance()->outGL->notifyKeyboard(key, x, y);
     }

@@ -5,7 +5,8 @@
 #include <Base/Controller/Interface/InterfaceSelector.h>
 #include "BCInterface.h"
 
-Base::BCInterface::BCInterface(String generalDescription, OutputStructureBuilderBase* osb, String prefix, bool selfRegister)
+Base::BCInterface::BCInterface(String generalDescription, OutputStructureBuilderBase* osb,
+                               String prefix, bool selfRegister)
  : Interface(generalDescription, true), outputStructureBuilder(osb), prefix(prefix)
 {
     if(selfRegister) InterfaceSelector::getInstance().registerOption(this);

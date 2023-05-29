@@ -7,7 +7,7 @@
 R2toRBCInterface::R2toRBCInterface(String generalDescription, String name,
                                    OutputStructureBuilderBase *outputStructureBuilder, bool selfRegister)
                                    : Base::BCInterface(generalDescription, outputStructureBuilder,
-                                                       "R2toR-" + name, selfRegister)
+                                                       "R2toR-" + name, selfRegister), name(name)
 {
     addSubInterface(outputStructureBuilder);
 }
@@ -15,6 +15,18 @@ R2toRBCInterface::R2toRBCInterface(String generalDescription, String name,
 auto R2toRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
     return outputStructureBuilder->build(outputFileName);
+}
+
+bool R2toRBCInterface::operator==(const Interface &rhs) const {
+    auto other = dynamic_cast<const R2toRBCInterface*>(&rhs);
+
+    if(other == nullptr) return Interface::operator==(rhs);
+
+    return this->name == other->name;
+}
+
+bool R2toRBCInterface::operator==(String val) const {
+    return name == val;
 }
 
 

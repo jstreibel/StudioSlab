@@ -24,11 +24,11 @@ RtoR2::StraightLine &RtoR2::StraightLine::operator=(const RtoR2::StraightLine &r
     return *this;
 }
 
-RtoR2::StraightLine RtoR2::operator*(const Transform &T, const RtoR2::StraightLine &line) {
-    Real2D _x0 = line.x0;
-    Real2D xf = line.x0 + line.r;
+RtoR2::StraightLine operator*(const Transform &T, const RtoR2::StraightLine &line) {
+    Real2D x0 = line.getx0();
+    Real2D xf = x0 + line.getr();
 
-    return {T*_x0, T*xf, line.getSMin(), line.getSMax()};
+    return {T*x0, T*xf, line.getSMin(), line.getSMax()};
 }
 
 

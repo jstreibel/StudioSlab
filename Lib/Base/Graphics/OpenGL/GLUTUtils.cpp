@@ -6,7 +6,7 @@
 
 #include "Base/Graphics/WindowManagement/Window.h"
 
-void write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
+void GLUTUtils::write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
 {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -17,7 +17,7 @@ void write(const Window *win, const float fontScale, const float x, const float 
     glPopMatrix();
 }
 
-void writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
+void GLUTUtils::writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
                 void *font) {
     const auto w = region.xMax-region.xMin;
     const auto h = region.yMax-region.yMin;
@@ -44,7 +44,19 @@ void writeOrtho(const Window *window, Rect region, float fontScale, float x, flo
     }
 }
 
-void writeBitmap(const Window *window, float x, float y, std::string str, void *font){
+void GLUTUtils::writeBitmap(const Window *window, float x, float y, std::string str, void *font){
     glRasterPos2f(x, y);
     for(char c : str) glutBitmapCharacter(font, c);
+}
+
+OpenGLUtils::FrameBuffer GLUTUtils::getFrameBuffer() {
+    const auto w = glutGet(GLUT_WINDOW_WIDTH);
+    const auto h = glutGet(GLUT_WINDOW_HEIGHT);
+    const auto channels = OpenGLUtils::FrameBuffer::channels;
+
+    std::vector<OpenGLUtils::FrameBuffer::DataType> pixels(w*h*channels);
+
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+
+    return {w, h, pixels};
 }

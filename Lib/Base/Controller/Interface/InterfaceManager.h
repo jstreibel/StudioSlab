@@ -24,6 +24,9 @@ public:
 
     auto renderAsPythonDictionaryEnrties() -> String;
 
+    auto renderParametersToString(StrVector params, String separator) const -> String;
+
+    auto getInterface(const char *string) -> const Interface*;
 };
 
 

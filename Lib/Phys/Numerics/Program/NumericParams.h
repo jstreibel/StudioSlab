@@ -27,7 +27,8 @@ struct NumericParams : Interface {
     auto geth() const -> Real;
     auto getdt() const -> Real;
 
-private:
+    void sett(Real tMax);
+
 public:
 	void setup(CLVariablesMap vm) override;
 
@@ -37,7 +38,8 @@ private:
 													 "Has to be POT for GPU"};
     DoubleParameter L = DoubleParameter{10., "L", "Space length"};
     DoubleParameter xCenter = DoubleParameter{.0, "xCenter", "Center of simulation space"};
-    DoubleParameter t =  DoubleParameter{-1, "t,t", "Max simulation time. If left negative, defaults to L/2"};
+    DoubleParameter t =  DoubleParameter{-1, "t,t", "Max simulation time. If left negative, defaults to L/2. "
+													"Note that this value can be overriden by simulation."};
 
 	IntegerParameter dimMode = IntegerParameter{0, "mode,m", "Method to compute space measure:"
 															 "\n\t0: h=L/N (option --h is ignored)"

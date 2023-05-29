@@ -15,7 +15,7 @@ const int HEADER_SIZE_BYTES = 2048;
 
 RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                                String  outputFileName)
-                                               : OutputHistory(stepsInterval, spaceFilter, endT),
+                                               : HistoryKeeper(stepsInterval, spaceFilter, endT),
                                                  outFileName(std::move(outputFileName)),
                                                  outputFormatter(*(new BinarySOF()))
 {

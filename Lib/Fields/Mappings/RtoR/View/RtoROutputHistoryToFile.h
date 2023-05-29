@@ -5,11 +5,11 @@
 #ifndef FIELDS_RTOROUTPUTHISTORYTOFILE_H
 #define FIELDS_RTOROUTPUTHISTORYTOFILE_H
 
-#include <Phys/Numerics/Output/Channel/OutputHistory.h>
+#include <Phys/Numerics/Output/Channel/HistoryKeeper.h>
 #include <Phys/Numerics/Output/Format/OutputFormatterBase.h>
 
 namespace RtoR {
-    class OutputHistoryToFile : public OutputHistory {
+    class OutputHistoryToFile : public HistoryKeeper {
         void _dump(bool integrationIsFinished) override;
         void _printHeaderToFile();
 

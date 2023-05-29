@@ -31,11 +31,20 @@
 
 
 typedef std::string String;
+typedef std::stringstream StringStream;
+typedef std::vector<String> StrVector;
 
 namespace Common {
     template<typename T>
     bool contains(const std::vector<T> &vec, const T &val) {
         return std::find(vec.begin(), vec.end(), val) != vec.end();
+    }
+
+    StrVector splitString(const String& input, char delimiter);
+
+    template<typename T>
+    bool Contains(std::vector<T> vec, T element) {
+        return std::find(vec.begin(), vec.end(), element) != vec.end();
     }
 }
 

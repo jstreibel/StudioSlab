@@ -93,7 +93,7 @@ class Graph : public Artist {
 
         auto c = Styles::GetColorScheme()->graphTitleFont;
         glColor4f(c.r,c.g,c.b,c.a);
-        writeOrtho(window, Rect{0,1,0,1}, 1, xMax+xGap, .5*(yMax+yMin), label);
+        GLUTUtils::writeOrtho(window, Rect{0,1,0,1}, 1, xMax+xGap, .5*(yMax+yMin), label);
 
         glPopMatrix();
 //
@@ -244,12 +244,12 @@ void Graph<FunctionType>::__drawXAxis(const Window *win) {
         for (double mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
         for (double mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
     }
 
@@ -305,7 +305,7 @@ void Graph<FunctionType>::__drawYAxis(const Window *win) {
                 buffer << mark;
             else
                 buffer << "0";
-            writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark), buffer.str().c_str(), TICK_FONT);
+            GLUTUtils::writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark), buffer.str().c_str(), TICK_FONT);
         }
     }
 

@@ -27,6 +27,11 @@ void Parameter::setDescription(String newDescription) {
     this->description = newDescription;
 }
 
+bool Parameter::operator==(String name) const {
+    return Common::splitString(commandLineArgName, ',')[0] == name;
+}
+
+
 std::ostream & operator << (std::ostream &out, const Parameter &b)
 {
     out << b.valueToString();

@@ -1,7 +1,7 @@
 #ifndef OUTPUTFILE1D_H
 #define OUTPUTFILE1D_H
 
-#include "OutputHistory.h"
+#include "HistoryKeeper.h"
 #include "Base/Controller/Interface/CommonParameters.h"
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
@@ -10,7 +10,7 @@
         indicating header size. */
 const int HEADER_SIZE_BYTES = 2048;
 
-class OutputHistoryToFile : public OutputHistory {
+class OutputHistoryToFile : public HistoryKeeper {
 
     const String outFileName;
     std::ofstream file;

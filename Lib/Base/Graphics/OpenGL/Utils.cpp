@@ -28,10 +28,15 @@ void OpenGLUtils::drawOrthoNormalized(Rect rect) {
     glPopMatrix();
 }
 
-bool OpenGLUtils::outputToPNG(std::vector<uint8_t> pixelData, int width, int height, int bitspp,
+bool OpenGLUtils::outputToPNG(OpenGLUtils::FrameBuffer buffer,
                               std::string fileName)
 {
-    FIBITMAP *image = FreeImage_Allocate(width, height, bitspp);
+    const auto w = buffer.w, h = buffer.h;
+    const auto bpp = buffer.getBitsPerPixel();
+    const auto pixelData = buffer.getPixelData();
+    const auto dataSize = w*h*bpp/8;
+
+    FIBITMAP *image = FreeImage_Allocate(w, h, bpp);
     if (!image) {
         std::cerr << "Failed to allocate image!" << std::endl;
         return false;
@@ -39,7 +44,7 @@ bool OpenGLUtils::outputToPNG(std::vector<uint8_t> pixelData, int width, int hei
 
 
     BYTE* bits = FreeImage_GetBits(image);
-    memcpy(bits, &pixelData[0], width * height * bitspp / 8);
+    memcpy(bits, pixelData, dataSize);
 
 
     bool success = FreeImage_Save(FIF_PNG, image, fileName.c_str(), PNG_DEFAULT);

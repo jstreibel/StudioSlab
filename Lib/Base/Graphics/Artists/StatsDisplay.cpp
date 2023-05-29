@@ -59,7 +59,7 @@ void StatsDisplay::draw(const Window *window) {
                 auto color = stat.second;
                 glColor3f(color.r, color.g, color.b);
                 std::string text = stat.first;
-                writeBitmap(window, cursorx, -delta, text, font);
+                GLUTUtils::writeBitmap(window, cursorx, -delta, text, font);
                 delta += lineHeight;
             }
         }

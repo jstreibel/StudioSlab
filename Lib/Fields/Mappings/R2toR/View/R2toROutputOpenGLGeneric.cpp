@@ -12,7 +12,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     : Base::OutputOpenGL("R2 -> R OpenGL output", 10), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
       phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel),
       mSectionGraph(xMin, xMax, phiMin, phiMax, "", true,
-                    Numerics::Allocator::getInstance().getNumericParams().getN()*2)
+                    Numerics::Allocator::getInstance().getNumericParams().getN()*3)
 {
     Window *window = nullptr;
 
