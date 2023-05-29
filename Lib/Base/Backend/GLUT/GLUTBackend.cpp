@@ -55,6 +55,8 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
 
     // Setup Dear ImGui context
+    // Themes: https://github.com/ocornut/imgui/issues/707
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -118,11 +120,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
         ImGui::PushFont(font);
          */
 
-        ImFontConfig imFontConfig;
-        imFontConfig.OversampleH = 3;
-        imFontConfig.OversampleV = 3;
-
-        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 24.0f, &imFontConfig);
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 20.0f);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
         //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
@@ -133,7 +131,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     }
 
     ImGui::GetStyle().ScaleAllSizes(1.5);
-    ImGui::GetIO().FontGlobalScale = 1.5;
+    ImGui::GetIO().FontGlobalScale = 1;
 
     Styles::Init();
 

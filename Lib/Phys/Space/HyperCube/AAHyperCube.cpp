@@ -13,8 +13,8 @@ AAHyperCube::~AAHyperCube() {
     delete measure;
 }
 
-const Measure *AAHyperCube::getMeasure() const {
-    return measure;
+const Measure AAHyperCube::getMeasure() const {
+    return *measure;
 }
 
 auto AAHyperCube::getSide() const -> const Real {

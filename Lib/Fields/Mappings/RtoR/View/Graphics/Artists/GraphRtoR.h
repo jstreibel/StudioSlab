@@ -6,11 +6,11 @@
 #define STUDIOSLAB_GRAPH2D_H
 
 
-#include "Base/Graphics/Artists/Graph.h"
+#include "Phys/Graph/FunctionGraph.h"
 #include "Fields/Mappings/FunctionRenderer.h"
 
 
-class GraphRtoR : public Graph<RtoR::Function> {
+class GraphRtoR : public FunctionGraph<RtoR::Function> {
 public:
     GraphRtoR(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
           String title = "", bool filled = false, int samples = 512);

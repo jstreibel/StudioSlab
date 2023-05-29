@@ -12,7 +12,7 @@
  *      Graph inherits Set
  *
  */
-class Graph {
+class FunctionGraph {
 
 };
 

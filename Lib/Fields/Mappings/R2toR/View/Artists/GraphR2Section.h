@@ -7,11 +7,11 @@
 
 
 #include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
-#include "Base/Graphics/Artists/Graph.h"
+#include "Phys/Graph/FunctionGraph.h"
 #include "Fields/Mappings/RtoR2/ParametricCurve.h"
 #include "Fields/Mappings/RtoR2/StraightLine.h"
 
-class GraphR2Section : public Graph<R2toR::Function> {
+class GraphR2Section : public FunctionGraph<R2toR::Function> {
 public:
     explicit GraphR2Section(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
                             String title = "", bool filled = false, int samples = 512);

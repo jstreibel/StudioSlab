@@ -17,7 +17,7 @@ public:
     AAHyperCube(PosInt dim, Real L);
     ~AAHyperCube();
 
-    [[nodiscard]] auto getMeasure() const -> const Measure * override;
+    [[nodiscard]] auto getMeasure() const -> const Measure override;
     auto getSide() const -> const Real;
 
 };

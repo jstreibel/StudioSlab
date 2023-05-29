@@ -11,7 +11,7 @@ class Space {
 public:
     explicit Space(PosInt dim);
 
-    virtual auto getMeasure() const -> const Measure* = 0;
+    virtual auto getMeasure() const -> const Measure = 0;
 
     const PosInt dim;
 };

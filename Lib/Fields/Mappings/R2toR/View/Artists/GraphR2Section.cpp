@@ -7,7 +7,7 @@
 
 
 GraphR2Section::GraphR2Section(double xMin, double xMax, double yMin, double yMax, String title, bool filled,
-                               int samples) : Graph(xMin, xMax, yMin, yMax, title, filled, samples) {}
+                               int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {}
 
 void GraphR2Section::_renderFunction(const R2toR::Function *func, Styles::PlotStyle style) {
 

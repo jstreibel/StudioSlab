@@ -19,7 +19,8 @@ set ( SPACE_SOURCES
 		Space/HyperCube/AAHyperCube.cpp
 		Space/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
-		)
+		Space/Impl/PointSet.cpp Space/Impl/PointSet.h Space/Point.cpp Space/Point.h)
+
 
 set ( EXPERIMENTAL_SOURCES
 		Formalism/Category.cpp
@@ -31,6 +32,12 @@ set ( EXPERIMENTAL_SOURCES
 		Formalism/MathObject.h
 		Formalism/Information.cpp
 		Formalism/Information.h)
+
+
+set ( GRAPH_SOURCES
+		Graph/PointSetGraph.cpp
+		)
+
 
 set ( NUMERICS_SOURCES
 		Numerics/Program/Integrator.cpp
@@ -76,11 +83,13 @@ set ( THERMO_SOURCES
 
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
-		)
+		Function/FunctionProduct.h)
+
 
 add_library(${PHYS_BASE_LIB_NAME} STATIC
 		${TOOLSET_SOURCES}
 		${SPACE_SOURCES}
+		${GRAPH_SOURCES}
 		${EXPERIMENTAL_SOURCES}
 		${NUMERICS_SOURCES}
 		${THERMO_SOURCES}

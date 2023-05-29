@@ -7,11 +7,11 @@
 
 
 #include "Fields/Mappings/R2toR/Model/R2toRFunction.h"
-#include "Base/Graphics/Artists/Graph.h"
+#include "Phys/Graph/FunctionGraph.h"
 #include "Base/Graphics/ZoomPanRotate.h"
 
 
-class GraphR2toR : public Graph<R2toR::Function> {
+class GraphR2toR : public FunctionGraph<R2toR::Function> {
 public:
     GraphR2toR(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
                String title = "", bool filled = false, int samples = 512);

@@ -33,8 +33,8 @@ namespace RtoR {
         void notifyMouseButton(int button, int dir, int x, int y) override;
 
     protected:
-        auto getPhiMax() const -> double { return mFieldsGraph.yMax; }
-        auto getPhiMin() const -> double { return mFieldsGraph.yMin; }
+        auto getPhiMax() const -> double { return mFieldsGraph.get_yMax(); }
+        auto getPhiMin() const -> double { return mFieldsGraph.get_yMin(); }
 
         void setPhiMax(const double newPhiMax) {
             phiMaxAnim->animateToValue(newPhiMax);

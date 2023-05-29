@@ -6,7 +6,7 @@
 #include "Fields/Mappings/FunctionRenderer.h"
 
 GraphR2toR::GraphR2toR(double xMin, double xMax, double yMin, double yMax, String title, bool filled,
-                       int samples) : Graph(xMin, xMax, yMin, yMax, title, filled, samples) {
+                       int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {
 
 }
 

@@ -20,13 +20,20 @@ namespace Base {
 
     template<class InputCategory, class OutputCategory>
     class Function {
-        Space *positionSpace;
-    protected:
-        const GPUFriendly &myGPUFriendlyVersion;
     public:
+        typedef std::unique_ptr<Function<InputCategory, OutputCategory> > Pointer;
+
+        typedef Function<InputCategory, OutputCategory> Type;
+        typedef InputCategory InCategory;
+        typedef OutputCategory OutCategory;
+
         const bool discrete;
 
+        Space *positionSpace;
+
     protected:
+        const GPUFriendly &myGPUFriendlyVersion;
+
         /** If the function derived from this class has a GPUFriendly version, then it should provide it at instantiation
          * time, because a single copy of this function must be kept and be provided when needed. */
         explicit Function(const GPUFriendly *gpuFriendlyVersion = nullptr,
@@ -39,16 +46,7 @@ namespace Base {
                           discrete(toCopy.discrete)
                           {     }
 
-
     public:
-        /**
-         *
-         */
-        typedef std::unique_ptr<Function<InputCategory, OutputCategory> > Pointer;
-        typedef Function<InputCategory, OutputCategory> Type;
-        typedef InputCategory InCategory;
-        typedef OutputCategory OutCategory;
-
         virtual ~Function() = default;
 
         virtual OutputCategory operator()(InputCategory x) const = 0;

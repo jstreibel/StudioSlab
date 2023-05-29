@@ -9,10 +9,10 @@
 #include "Common/CoreNativeTypes.h"
 
 class Measure {
-    std::vector<Real> linearValues;
+    VecFloat linearValues;
 
 public:
-    Measure(std::vector<Real> linearValues);
+    Measure(VecFloat linearValues);
 
     Real operator*();
 };

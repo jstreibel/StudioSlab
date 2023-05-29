@@ -7,6 +7,8 @@
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 
+#include "Phys/Function/FunctionScale.h"
+
 #include "3rdParty/imgui/imgui.h"
 
 
@@ -19,7 +21,14 @@ namespace R2toR {
 }
 
 R2toR::LeadingDelta::OutGL::OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) { }
+        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax), mEnergyGraph("Energy") {
+
+    auto window = new Window;
+    energyData = Spaces::PointSet::New();
+    mEnergyGraph.addPointSet(energyData, Styles::GetColorScheme()->funcPlotStyles[0], "Energy");
+    window->addArtist(&mEnergyGraph);
+    panel->addWindow(window, true);
+}
 
 void R2toR::LeadingDelta::OutGL::draw() {
     if (!lastData.hasValidData()) return;
@@ -47,6 +56,11 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(String("N² = ")    + ToString(N*N));
     stats.addVolatileStat(String("h² = ")    + ToString(L*L/(N*N), 4, true));
     stats.addVolatileStat(String(""));
+
+
+
+
+
     const R2toR::FieldState &fState = *lastData.getFieldData<R2toR::FieldState>();
     auto &phi = fState.getPhi();
 
@@ -72,13 +86,19 @@ void R2toR::LeadingDelta::OutGL::draw() {
         mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
 
     stats.addVolatileStat(String("Ring radius: ") + ToString(rd.getRadius()));
+
+    auto rdScaledDown = Base::Scale(rd, eps*1.2);
     if(deltaRing) {
         R2toR::Function *func = nullptr;
         stats.addVolatileStat(String("ring_tf = ") + ToString(ring_tf));
+
+        auto name = String("Ring delta x") + ToString(eps*1.2, 2, true);
+
+
         if(ring_tf>t || ring_tf < 0)
-            mSectionGraph.addFunction(&rd, "Ring delta", Styles::GetColorScheme()->funcPlotStyles[1]);
+            mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
         else
-            mSectionGraph.addFunction(&nullFunc, "Ring delta", Styles::GetColorScheme()->funcPlotStyles[1]);
+            mSectionGraph.addFunction(&nullFunc, name, Styles::GetColorScheme()->funcPlotStyles[1]);
     }
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao

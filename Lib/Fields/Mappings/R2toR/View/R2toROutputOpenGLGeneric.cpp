@@ -26,7 +26,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 
     window = new Window;
     window->addArtist(&mSectionGraph);
-    panel->addWindow(window, true, 0.88);
+    panel->addWindow(window, true, 0.60);
 
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Color(1,0,0,1));

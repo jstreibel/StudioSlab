@@ -7,7 +7,7 @@
 
 #include "Base/Graphics/ARCHIVE/NotHere/OutputOpenGL.h"
 #include "Base/Graphics/ZoomPanRotate.h"
-#include "Base/Graphics/Artists/Graph.h"
+#include "Phys/Graph/FunctionGraph.h"
 #include "Fields/Mappings/R2toR/View/Artists/GraphR2ToR.h"
 
 #include <Base/Graphics/ARCHIVE/deprecated/GraphCollections.h>

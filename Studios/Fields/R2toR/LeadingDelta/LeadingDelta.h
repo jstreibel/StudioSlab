@@ -13,6 +13,7 @@
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Phys/Numerics/Allocator.h"
+#include "Phys/Graph/PointSetGraph.h"
 
 //#define USE_VTK true
 
@@ -99,7 +100,9 @@ namespace R2toR {
 
                 const auto z = Z(r,t);
 
-                return delta(z);
+                const auto d = delta(z);
+
+                return d; //abs(z)>eps ? d : d + delta(-z);
             }
         };
 
@@ -114,6 +117,10 @@ namespace R2toR {
 #if USE_VTK
             vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
 #endif
+
+            Spaces::PointSet::Ptr energyData;
+            Phys::Graphing::PointSetGraph mEnergyGraph;
+
         protected:
             void _out(const OutputPacket &outInfo) override;
 
@@ -160,7 +167,7 @@ namespace R2toR {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
                 const double phiMin = -.2;
-                const double phiMax = 1.;
+                const double phiMax =  .8;
 
                 const auto &p = Numerics::Allocator::getInstance().getNumericParams();
                 const Real L = p.getL();
