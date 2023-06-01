@@ -5,12 +5,12 @@
 #ifndef GROWING_HOLE_GL_OUTPUT
 #define GROWING_HOLE_GL_OUTPUT
 
-#include "Fields/Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
+#include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
 #include "Phys/Numerics/Allocator.h"
-#include "Fields/Mappings/R2toR/Model/FieldState.h"
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 namespace R2toR {
     class GrowingHoleOutGL : public R2toR::OutputOpenGL {

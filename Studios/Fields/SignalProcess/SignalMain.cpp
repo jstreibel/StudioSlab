@@ -5,7 +5,7 @@
 #include "Base/App/CrashPad.h"
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
-#include "Fields/Mappings/RtoR/App/FieldsApp-RtoR.h"
+#include "Mappings/RtoR/App/FieldsApp-RtoR.h"
 
 #include "Signal.h"
 #include "Base/Backend/GLUT/GLUTBackend.h"

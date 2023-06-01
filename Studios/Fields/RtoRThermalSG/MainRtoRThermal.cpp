@@ -5,12 +5,12 @@
 #include "Studios/App/CrashPad.h"
 #include "Studios/Controller/Interface/InterfaceSelector.h"
 
-#include "Fields/Mappings/RtoR/App/FieldsApp-RtoR.h"
+#include "Mappings/RtoR/App/FieldsApp-RtoR.h"
 
-#include "Fields/Mappings/RtoR/Controller/ThermalStudies/InputManyOscillons.h"
-#include "Fields/Mappings/RtoR/Controller/ThermalStudies/InputMachineGun.h"
-#include "Fields/Mappings/RtoR/Controller/ThermalStudies/InputStatistical.h"
-#include "Fields/Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
+#include "Mappings/RtoR/Controller/ThermalStudies/InputManyOscillons.h"
+#include "Mappings/RtoR/Controller/ThermalStudies/InputMachineGun.h"
+#include "Mappings/RtoR/Controller/ThermalStudies/InputStatistical.h"
+#include "Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
 
 
 int main(int argc, const char **argv) {

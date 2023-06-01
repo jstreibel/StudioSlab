@@ -5,13 +5,13 @@
 #ifndef STUDIOSLAB_LEADINGDELTA_H
 #define STUDIOSLAB_LEADINGDELTA_H
 
-#include <Fields/Mappings/R2toR/Controller/R2ToRBCInterface.h>
+#include <Mappings/R2toR/Controller/R2ToRBCInterface.h>
 
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
-#include "Fields/Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/Graph/PointSetGraph.h"
 

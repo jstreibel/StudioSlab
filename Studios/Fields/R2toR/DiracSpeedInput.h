@@ -5,13 +5,13 @@
 #ifndef STUDIOSLAB_DIRACSPEEDINPUT_H
 #define STUDIOSLAB_DIRACSPEEDINPUT_H
 
-#include <Fields/Mappings/R2toR/Controller/R2ToRBCInterface.h>
+#include <Mappings/R2toR/Controller/R2ToRBCInterface.h>
 
 #include "GrowingHole/OutputBuilder.h"
 #include "GrowingHole/GrowingHoleBoundaryCondition.h"
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
-#include "Fields/Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 
 
 namespace R2toR {

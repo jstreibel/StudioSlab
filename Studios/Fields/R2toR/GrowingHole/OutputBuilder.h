@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OUTPUTBUILDER_H
 #define STUDIOSLAB_OUTPUTBUILDER_H
 
-#include "Fields/Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
+#include "Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
 
 #include "GrowingHoleGLOutput.h"
 #include "Phys/Numerics/Allocator.h"

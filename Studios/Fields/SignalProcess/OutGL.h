@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OUTGL_H
 #define STUDIOSLAB_OUTGL_H
 
-#include "Fields/Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
 namespace RtoR {
 

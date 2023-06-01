@@ -6,14 +6,14 @@
 #define STUDIOSLAB_MONTECARLO_H
 
 
-#include "Fields/Mappings/RtoR/Controller/RtoRBCInterface.h"
+#include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
 #include "RtoROutGLMontecarlo.h"
 
-#include "Fields/Mappings/RtoR/Model/RtoRFunction.h"
-#include "Fields/Mappings/RtoR/Model/RtoRBoundaryCondition.h"
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/RtoR/Model/RtoRFunction.h"
+#include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
 #include "Phys/Numerics/Allocator.h"

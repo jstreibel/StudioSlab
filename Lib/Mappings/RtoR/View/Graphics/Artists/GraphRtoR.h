@@ -1,0 +1,24 @@
+//
+// Created by joao on 9/22/22.
+//
+
+#ifndef STUDIOSLAB_GRAPH2D_H
+#define STUDIOSLAB_GRAPH2D_H
+
+
+#include "Phys/Graph/FunctionGraph.h"
+#include "Mappings/FunctionRenderer.h"
+
+
+class GraphRtoR : public FunctionGraph<RtoR::Function> {
+public:
+    GraphRtoR(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
+          String title = "", bool filled = false, int samples = 512);
+
+protected:
+
+    void _renderFunction(const RtoR::Function *func, Styles::PlotStyle style) override;
+};
+
+
+#endif //STUDIOSLAB_GRAPH2D_H

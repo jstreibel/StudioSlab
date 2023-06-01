@@ -7,14 +7,14 @@
 
 
 #include <jack/types.h>
-#include "Fields/Mappings/RtoR/Controller/RtoRBCInterface.h"
+#include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
-#include "Fields/Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
+#include "Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
 
-#include "Fields/Mappings/RtoR/Model/RtoRFieldState.h"
+#include "Mappings/RtoR/Model/RtoRFieldState.h"
 
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 
 #include "Phys/Numerics/Allocator.h"

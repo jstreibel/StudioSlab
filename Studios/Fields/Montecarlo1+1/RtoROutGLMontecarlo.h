@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTOROUTGLMONTECARLO_H
 
 
-#include "Fields/Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
 namespace Montecarlo {
     class OutGL : public RtoR::OutputOpenGL {

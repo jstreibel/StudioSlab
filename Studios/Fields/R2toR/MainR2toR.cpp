@@ -6,12 +6,12 @@
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
 
-#include "Fields/Mappings/R2toR/Controller/R2ToRInputShockwave.h"
+#include "Mappings/R2toR/Controller/R2ToRInputShockwave.h"
 #include "GrowingHole/GrowingHoleInput.h"
 #include "DiracSpeedInput.h"
 #include "LeadingDelta/LeadingDelta.h"
 
-#include "Fields/Mappings/R2toR/App/SimulationsAppR2ToR.h"
+#include "Mappings/R2toR/App/SimulationsAppR2ToR.h"
 
 
 int main(int argc, const char **argv) {

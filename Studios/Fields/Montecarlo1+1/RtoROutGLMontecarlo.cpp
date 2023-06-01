@@ -5,9 +5,9 @@
 #include "RtoROutGLMontecarlo.h"
 
 
-#include "Fields/Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include "Fields/Mappings/RtoR/Calc/Histogram.h"
+#include "Mappings/RtoR/Calc/Histogram.h"
 
 
 #include <sstream>

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GROWINGHOLEINPUT_H
 #define STUDIOSLAB_GROWINGHOLEINPUT_H
 
-#include "Fields/Mappings/R2toR/Controller/R2ToRBCInterface.h"
+#include "Mappings/R2toR/Controller/R2ToRBCInterface.h"
 
 #include "OutputBuilder.h"
 #include "GrowingHoleBoundaryCondition.h"

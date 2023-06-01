@@ -10,7 +10,7 @@
 #include "Common/UtilsCollection/Resample.h"
 #include "3rdParty/imgui/imgui.h"
 
-#include <Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>
+#include <Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>
 
 extern size_t lastBufferDumpedSamplesCount;
 extern std::vector<Real> damps;

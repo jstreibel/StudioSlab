@@ -6,7 +6,7 @@
 #define STUDIOSLAB_ENERGY_H
 
 #include "Phys/Functional/Functional.h"
-#include "Fields/Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/FieldState.h"
 
 
 namespace Phys {

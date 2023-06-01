@@ -16,7 +16,7 @@
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 
-#include "Fields/Mappings/RtoR2/ParametricCurve.h"
+#include "Mappings/RtoR2/ParametricCurve.h"
 
 #include <memory>
 

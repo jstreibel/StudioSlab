@@ -7,9 +7,9 @@
 
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Fields/Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/FieldState.h"
 
-#include "Fields/Mappings/R2toR/Model/FunctionsCollection/GrowingHole.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/GrowingHole.h"
 
 
 namespace R2toR {
