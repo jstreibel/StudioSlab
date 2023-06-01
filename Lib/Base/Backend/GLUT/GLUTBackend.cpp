@@ -6,6 +6,8 @@
 #include "3rdParty/imgui/imgui.h"
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
+#include "3rdParty/ImGuiColorsSetup.h"
+
 #include "Phys/Numerics/Program/Integrator.h"
 #include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
@@ -26,7 +28,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     int dummy = 0;
     glutInit(&dummy, nullptr);
 
-    w = 800, h = 450;
+    w = 3200, h = 1350;
 
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     //glutInitWindowSize(w, h);
@@ -59,14 +61,14 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+    ImGuiIO& io = ImGui::GetIO();
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.FontAllowUserScaling = true;
-    //io.FontGlobalScale = 1;
 
     // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    //ImGui::StyleColorsDark();
+    ImGui::StyleColorsLight();
+    SetupImGuiColors_BlackAndWhite();
 
     // Setup Platform/Renderer backends
     // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
@@ -100,31 +102,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
         if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
 
-        /*
-        ImFontAtlas *atlas = io.Fonts;
-
-        auto font = atlas->AddFontFromFileTTF(fontName.c_str(), 18.0f, NULL, atlas->GetGlyphRangesDefault());
-        IM_ASSERT(font != NULL);
-        unsigned char *pixels;
-        int width, height;
-        atlas->GetTexDataAsRGBA32(&pixels, &width, &height);
-
-        GLuint texture_id;
-        glGenTextures(1, &texture_id);
-        glBindTexture(GL_TEXTURE_2D, texture_id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-        atlas->TexID = (void *) (intptr_t) texture_id;
-
-        ImGui::PushFont(font);
-         */
-
         auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 20.0f);
-        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/DroidSans.ttf", 16.0f);
-        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Roboto-Medium.ttf", 16.0f);
-        //io.Fonts->AddFontFromFileTTF("../../misc/fonts/Cousine-Regular.ttf", 15.0f);
-        //ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
         io.FontDefault = font;
 
         //ImGui::PushFont(font);
@@ -204,7 +182,10 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
 
             if (me->steps <= 0) me->steps = 1;
         }
-    } else if(key == 'f') {
+    } else if(key == 'd') {
+        me->showDemo = !me->showDemo;
+    }
+    else if(key == 'f') {
         dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
     } else if(key == '[') {
         program->step(1);
@@ -262,7 +243,7 @@ void GLUTBackend::mousePassiveMotion(int x, int y)
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
-    //if(ImGui::GetIO().WantCaptureMouse)
+    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
         return;
@@ -282,6 +263,7 @@ void GLUTBackend::render()
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
     ImGui::NewFrame();
+    if(gb->showDemo) ImGui::ShowDemoWindow();
 
     outGL->addStat(ToString(gb->steps) + " sim steps per cycle.");
     outGL->notifyRender();

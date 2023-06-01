@@ -34,6 +34,11 @@ set ( EXPERIMENTAL_SOURCES
 		Formalism/Information.h)
 
 
+set ( DIFFEQS_SOURCES
+		DifferentialEquations/2nd-Order/Energy.cpp
+		)
+
+
 set ( GRAPH_SOURCES
 		Graph/PointSetGraph.cpp
 		)
@@ -92,6 +97,7 @@ add_library(${PHYS_BASE_LIB_NAME} STATIC
 		${GRAPH_SOURCES}
 		${EXPERIMENTAL_SOURCES}
 		${NUMERICS_SOURCES}
+		${DIFFEQS_SOURCES}
 		${THERMO_SOURCES}
 		)
 

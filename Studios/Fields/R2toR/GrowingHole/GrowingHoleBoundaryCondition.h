@@ -6,7 +6,7 @@
 #define STUDIOSLAB_GROWINGHOLEBOUNDARYCONDITION_H
 
 
-#include "Phys/Numerics/Equation/BoundaryConditions.h"
+#include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Fields/Mappings/R2toR/Model/FieldState.h"
 
 #include "Fields/Mappings/R2toR/Model/FunctionsCollection/GrowingHole.h"

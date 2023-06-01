@@ -20,6 +20,13 @@ class WindowPanel : public Window {
 
 public:
     void addWindow(Window *window, bool newColumn=false, float newColumnWidth=-1);
+    /**
+     * Add window to column columnId.
+     * @param window the window being added.
+     * @param columnId zero-based index of column.
+     * @return true if success, false otherwise.
+     */
+    bool addWindowToColumn(Window *window, int columnId);
 
     void reshape(int w, int h) override;
 

@@ -6,16 +6,18 @@
 #define STUDIOSLAB_GRAPH_H
 
 
-#include "Base/Graphics/PlottingUtils.h"
-#include "Base/Graphics/Artists/Artist.h"
-
 #include "Common/Workaround/StringStream.h"
 #include "Common/BinaryToInt.h"
+
+#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Artists/Artist.h"
 
 #include "Base/Graphics/WindowManagement/Window.h"
 
 #include "Base/Graphics/Artists/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
+
+#include "Fields/Mappings/RtoR2/ParametricCurve.h"
 
 #include <memory>
 
@@ -25,7 +27,13 @@ namespace Base {
     namespace Graphics {
 
         class Graph2D : public Artist {
+            typedef std::tuple<RtoR2::ParametricCurve::Ptr, Styles::PlotStyle, String> CurveTriple;
+            static auto GetCurve    ( CurveTriple triple ) { return std::get<0>(triple); };
+            static auto GetStyle    ( CurveTriple triple ) { return std::get<1>(triple); };
+            static auto GetName     ( CurveTriple triple ) { return std::get<2>(triple); };
+
             std::vector<Label*> labels;
+            std::vector<CurveTriple> curves;
 
             Graph2D() = default;
 
@@ -42,7 +50,11 @@ namespace Base {
             void __drawXAxis(const Window *win);
             void __drawYAxis(const Window *win);
 
-            void _labelDraw(int i, const Styles::PlotStyle &style, String label, const Window *window);
+            void __computeSpacings();
+
+            void _nameLabelDraw(int i, const Styles::PlotStyle &style, String label, const Window *window);
+
+            void _drawCurves(const Window *win);
 
         public:
             Graph2D(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
@@ -53,6 +65,9 @@ namespace Base {
             void setupOrtho();
 
             void addLabel(Label *label);
+            void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, String name);
+
+            void clearCurves();
 
             Real get_yMin() const;
             Real get_yMax() const;

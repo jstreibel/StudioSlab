@@ -24,6 +24,9 @@ namespace Phys {
 
             PointSets mPointSets;
 
+            void _reviewGraphRanges();
+
+            void _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
         public:
             PointSetGraph(const String &title);
 
@@ -31,8 +34,6 @@ namespace Phys {
 
             void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, String setName);
 
-            void
-            _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
         };
 
     }

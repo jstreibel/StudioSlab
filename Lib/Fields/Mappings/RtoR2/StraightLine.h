@@ -15,9 +15,17 @@ namespace RtoR2 {
         Real2D x0, r;
 
     public:
+        typedef std::shared_ptr<StraightLine> Ptr;
+
         StraightLine() = default;
         StraightLine(Real2D x0, Real2D xf, Real sMin=0, Real sMax=1);
         StraightLine(const StraightLine& line);
+
+        Spaces::PointSet::Ptr getAsPointSet() const override;
+
+        static Ptr New(Real2D x0, Real2D xf);
+
+
 
         Real2D operator()(Real s) const override;
 

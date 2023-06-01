@@ -114,24 +114,22 @@ namespace R2toR {
 
 
         class OutGL : public R2toR::OutputOpenGL {
-#if USE_VTK
-            vtkSmartPointer<vtkRenderWindowInteractor> renderWindowInteractor;
-#endif
-
-            Spaces::PointSet::Ptr energyData;
+            Spaces::PointSet::Ptr numericEnergyData;
+            Spaces::PointSet::Ptr analyticEnergyData;
             Phys::Graphing::PointSetGraph mEnergyGraph;
 
+            Spaces::PointSet::Ptr energyRatioData;
+            Phys::Graphing::PointSetGraph mEnergyRatioGraph;
+
         protected:
-            void _out(const OutputPacket &outInfo) override;
+            auto _out(const OutputPacket &outInfo) -> void override;
 
         public:
             OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 
-            void draw() override;
-
-            IntPair getWindowSizeHint() override;
-
-            void notifyKeyboard(unsigned char key, int x, int y) override;
+            auto draw() -> void override;
+            auto getWindowSizeHint() -> IntPair override;
+            auto notifyKeyboard(unsigned char key, int x, int y) -> void override;
         };
 
 

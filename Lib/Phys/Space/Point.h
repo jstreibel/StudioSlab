@@ -8,13 +8,11 @@
 
 #include "Common/CoreNativeTypes.h"
 
+#include "Phys/Formalism/Categories.h"
+
 namespace Spaces {
 
-    struct Point2D {
-        Point2D() = default;
-
-        Real x, y;
-    };
+    typedef Real2D Point2D;
 
     typedef std::vector<Point2D> Point2DVec;
 }

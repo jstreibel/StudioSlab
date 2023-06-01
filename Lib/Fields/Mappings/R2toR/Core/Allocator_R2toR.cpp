@@ -10,7 +10,7 @@
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include <Phys/Numerics/Program/NumericParams.h>
-#include <Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/GordonSystem.h>
 
 Allocator_R2toR::Allocator_R2toR() = default;
 //{
@@ -51,7 +51,7 @@ auto Allocator_R2toR::newFieldState() -> void * {
 
 auto Allocator_R2toR::getSystemSolver() -> void * {
     RtoR::Function *thePotential = new RtoR::AbsFunction;
-    return new Base::Lorentz_2ndOrder<R2toR::FieldState>(*thePotential);
+    return new Phys::Gordon::GordonSystem<R2toR::FieldState>(*thePotential);
 }
 
 

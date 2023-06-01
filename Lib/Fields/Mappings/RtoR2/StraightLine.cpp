@@ -31,4 +31,14 @@ RtoR2::StraightLine operator*(const Transform &T, const RtoR2::StraightLine &lin
     return {T*x0, T*xf, line.getSMin(), line.getSMax()};
 }
 
+Spaces::PointSet::Ptr RtoR2::StraightLine::getAsPointSet() const {
+    auto set = Spaces::PointSet({x0, x0+r});
+
+    return std::make_unique<Spaces::PointSet>(set);
+}
+
+RtoR2::StraightLine::Ptr RtoR2::StraightLine::New(Real2D x0, Real2D xf) {
+    return Ptr(new RtoR2::StraightLine(x0, xf));
+}
+
 

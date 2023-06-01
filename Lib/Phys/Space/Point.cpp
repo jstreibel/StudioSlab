@@ -3,3 +3,5 @@
 //
 
 #include "Point.h"
+
+//Spaces::Point2D::Point2D(Real x, Real y) : x(x), y(y) { }

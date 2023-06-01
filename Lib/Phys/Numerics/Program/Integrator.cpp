@@ -42,7 +42,7 @@ void NumericalIntegration::step(PosInt nSteps, void *args) {
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
-    bool activeSteps = args!= nullptr;
+    bool activeSteps = args != nullptr;
 
     if(activeSteps) {
         for(auto i=0; i<nSteps; ++i){
@@ -68,10 +68,6 @@ void NumericalIntegration::step(PosInt nSteps, void *args) {
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){
-    /* Aqui pegamos o campo toda santa vez que queremos fazer output dele.
-     * Isso eh feito para que, quando o campo eh integrado na GPU, ele possa
-     * ser trazido de la. Quando integrado na CPU, isso nao acontece.
-     */
     return OutputPacket(stepper->getFieldState(), stepper->getSpaces(), steps, getSimulationTime());;
 }
 

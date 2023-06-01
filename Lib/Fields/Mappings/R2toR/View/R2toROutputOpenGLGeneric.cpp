@@ -9,7 +9,7 @@
 
 
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-    : Base::OutputOpenGL("R2 -> R OpenGL output", 10), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
+    : Base::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
       phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel),
       mSectionGraph(xMin, xMax, phiMin, phiMax, "", true,
                     Numerics::Allocator::getInstance().getNumericParams().getN()*3)
@@ -26,7 +26,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 
     window = new Window;
     window->addArtist(&mSectionGraph);
-    panel->addWindow(window, true, 0.60);
+    panel->addWindow(window, true, 0.80);
 
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Color(1,0,0,1));

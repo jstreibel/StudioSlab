@@ -6,9 +6,16 @@
 #define V_SHAPE_PARAMETRICCURVE_H
 
 #include "Phys/Function/Function.h"
+#include "Phys/Space/Impl/PointSet.h"
+
+#include <memory>
 
 namespace RtoR2 {
     class ParametricCurve : public Base::Function<Real, Real2D> {
+    public:
+        typedef std::shared_ptr<ParametricCurve> Ptr;
+
+        virtual Spaces::PointSet::Ptr getAsPointSet() const { throw "Not implemented."; };
 
     };
 }

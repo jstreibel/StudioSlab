@@ -11,8 +11,9 @@ R2toR::FunctionArbitrary::FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real 
 Real R2toR::FunctionArbitrary::operator()(Real2D x) const {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
-    int n = int((N-1)*(x.x-xMin)/Lx);
-    int m = int((M-1)*(x.y-yMin)/Ly);
+    const Real dx = h*.5;
+    int n = int((N-1) * (dx+x.x-xMin)/Lx);
+    int m = int((M-1) * (dx+x.y-yMin)/Ly);
 
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.

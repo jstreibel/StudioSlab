@@ -12,6 +12,7 @@ class GLUTBackend : public Backend
     ~GLUTBackend() override;
 
     int w, h;
+	bool showDemo = false;
 
 public:
     static GLUTBackend *GetInstance();

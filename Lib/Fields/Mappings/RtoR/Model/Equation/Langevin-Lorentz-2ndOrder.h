@@ -1,7 +1,7 @@
 #ifndef HamiltonLangevinCPU_H
 #define HamiltonLangevinCPU_H
 
-#include "Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 #include "Phys/Numerics/Allocator.h"
 
@@ -24,7 +24,7 @@ namespace RtoR {
         return sign*r;
     }
 
-    typedef Base::Lorentz_2ndOrder<RtoR::FieldState> LorentzInvariant;
+    typedef Base::Gordon<RtoR::FieldState> LorentzInvariant;
 
 
     class LorentzLangevin_2ndOrder : public LorentzInvariant {
@@ -45,7 +45,7 @@ namespace RtoR {
                                                                       getInstance().newFunctionArbitrary()) { }
 
         void startStep(Real t, Real dt) override{
-            Equation::startStep(t, dt);
+            DifferentialEquation::startStep(t, dt);
 
             ComputeLangevin();
         }

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 #define STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 
-#include "Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 #include "Phys/Numerics/Allocator.h"
 
@@ -22,7 +22,7 @@
 
 namespace RtoR {
 
-    typedef Base::Lorentz_2ndOrder<RtoR::FieldState> LorentzInvariant;
+    typedef Base::GordonSystem<RtoR::FieldState> LorentzInvariant;
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
@@ -85,7 +85,7 @@ namespace RtoR {
             : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<ArbitraryFunction>()) { }
 
         void startStep(Real t, Real dt) override{
-            Equation::startStep(t, dt);
+            DifferentialEquation::startStep(t, dt);
             accepted = 0;
         }
 

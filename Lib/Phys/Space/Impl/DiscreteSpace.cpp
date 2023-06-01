@@ -21,6 +21,8 @@ DiscreteSpace::DiscreteSpace(DimensionMetaData dim, Real h) : dim(dim), X(dim.co
 
 }
 
+DiscreteSpace::~DiscreteSpace() { }
+
 DiscreteSpaceCPU *DiscreteSpace::hostCopy(PosInt maxResolution) const {
     PosInt maxDim = 0;
     for(auto N : dim.getN()) maxDim = std::max(maxDim, N);
@@ -73,7 +75,9 @@ void DiscreteSpace::syncHost() const { }
 void DiscreteSpace::upload() { }
 
 const VecFloat &DiscreteSpace::getX() const {
-    return getHostData(true);
+    const auto doSync = true;
+
+    return getHostData(doSync);
 }
 
 VecFloat &DiscreteSpace::getX() {
@@ -85,4 +89,6 @@ VecFloat &DiscreteSpace::getX() {
 Real DiscreteSpace::geth() const {
     return h;
 }
+
+
 

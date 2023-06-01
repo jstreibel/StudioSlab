@@ -36,6 +36,9 @@ class DiscreteSpaceCPU;
 class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
 public:
     DiscreteSpace(DimensionMetaData dim, Real h);
+
+    virtual ~DiscreteSpace();
+
     DiscreteSpaceCPU *hostCopy(PosInt maxResolution) const;
 
     PosInt getTotalDiscreteSites() const;

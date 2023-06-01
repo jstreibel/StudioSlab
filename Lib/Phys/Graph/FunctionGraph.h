@@ -71,7 +71,7 @@ void FunctionGraph<FunctionType>::draw(const Window *window) {
         auto style = GetStyle(triple);
         auto label = GetName(triple);
 
-        if(label != "") _labelDraw(i++, style, label, window);
+        if(label != "") _nameLabelDraw(i++, style, label, window);
 
         this->_renderFunction(&func, style);
     }

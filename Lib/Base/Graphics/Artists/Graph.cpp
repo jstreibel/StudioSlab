@@ -11,22 +11,10 @@ Base::Graphics::Graph2D::Graph2D(double xMin, double xMax, double yMin, double y
                                    filled(filled), samples(samples) {       }
 
 void Base::Graphics::Graph2D::_drawAxes(const Window *win) {
-    double deltaY;
-    double markStart = yMax;
-
-    {
-        deltaY = yMax-yMin;
-
-
-        while(markStart > yMin)
-            markStart-=yspacing;
-        while(markStart < (yMin-yspacing))
-            markStart+=yspacing;
-
-        yspacing = deltaY/10;
-    }
 
     glLineWidth(1.0);
+
+    __computeSpacings();
 
     __drawXAxis(win);
     __drawYAxis(win);
@@ -41,6 +29,21 @@ void Base::Graphics::Graph2D::_drawAxes(const Window *win) {
             labels[i]->draw(Sx, Sy, Tx, Ty);
         }
     }
+}
+
+void Base::Graphics::Graph2D::__computeSpacings() {
+    double deltaY;
+    double markStart = yMax;
+
+    deltaY = yMax-yMin;
+
+
+    while(markStart > yMin)
+        markStart-=yspacing;
+    while(markStart < (yMin-yspacing))
+        markStart+=yspacing;
+
+    yspacing = deltaY/10;
 }
 
 void Base::Graphics::Graph2D::__drawXAxis(const Window *win) {
@@ -111,6 +114,8 @@ void Base::Graphics::Graph2D::__drawYAxis(const Window *win) {
     const double deltaX = xMax-xMin;
     const double xloc = xMin-deltaX*0.05;
 
+    // double magnitude = std::log10(std::abs(deltaY));
+
     auto markStart = yMin;
 
     StringStream buffer;
@@ -126,7 +131,8 @@ void Base::Graphics::Graph2D::__drawYAxis(const Window *win) {
                 buffer << mark;
             else
                 buffer << "0";
-            GLUTUtils::writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark), buffer.str().c_str(), TICK_FONT);
+            GLUTUtils::writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark),
+                                  buffer.str().c_str(), TICK_FONT);
         }
     }
 
@@ -171,6 +177,8 @@ void Base::Graphics::Graph2D::draw(const Window *window) {
 
     _drawAxes(window);
 
+    _drawCurves(window);
+
 }
 
 void Base::Graphics::Graph2D::setupOrtho() {
@@ -184,8 +192,8 @@ void Base::Graphics::Graph2D::setupOrtho() {
     glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
 }
 
-void Base::Graphics::Graph2D::_labelDraw(int i, const Styles::PlotStyle &style, String label,
-                                         const Window *window) {
+void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &style, String label,
+                                             const Window *window) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -260,4 +268,50 @@ Real Base::Graphics::Graph2D::get_yMin() const {
 Real Base::Graphics::Graph2D::get_yMax() const {
     return yMax;
 }
+
+void
+Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, String name) {
+    CurveTriple triple = {curve, style, name};
+    curves.emplace_back(triple);
+}
+
+void Base::Graphics::Graph2D::_drawCurves(const Window *win) {
+    for(auto curveTriple : curves) {
+        auto curve = GetCurve(curveTriple);
+        auto pointSet = curve.get()->getAsPointSet();
+        auto points = pointSet.get()->getPoints();
+
+        if(points.size()<2) continue;
+
+        auto style = GetStyle(curveTriple);
+        auto name  = GetName(curveTriple);
+
+        auto color = style.lineColor;
+
+        glColor4f(color.r, color.g, color.b, color.a);
+        glLineWidth(style.lineWidth);
+
+        if (style.trace != Styles::Solid) {
+            glDisable(GL_LINE_SMOOTH);
+            glEnable(GL_LINE_STIPPLE);
+            glLineStipple(style.stippleFactor, style.stipplePattern);
+        } else {
+            glEnable(GL_LINE_SMOOTH);
+            glDisable(GL_LINE_STIPPLE);
+        }
+
+        glBegin(GL_LINE_STRIP);
+        {
+            for(const auto &p : points)
+                glVertex2d(p.x, p.y);
+        }
+        glEnd();
+    }
+}
+
+void Base::Graphics::Graph2D::clearCurves() {
+    curves.clear();
+}
+
+
 

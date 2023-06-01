@@ -19,10 +19,12 @@ void StatsDisplay::addVolatileStat(const String &stat, const Color color)
 }
 
 void StatsDisplay::draw(const Window *window) {
+    auto  displayHeight = ImGui::GetIO().DisplaySize.y;
+
     float w = float(window->w) - (float)2*window->winXoffset,
           h = float(window->h) - (float)2*window->winYoffset;
     float x = window->x+window->winXoffset;
-    float y = window->y+window->winYoffset;
+    float y = displayHeight - (h + window->y + window->winYoffset);
 
     bool closable=false;
 
@@ -36,7 +38,8 @@ void StatsDisplay::draw(const Window *window) {
         const auto text = stat.first.c_str();
         const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
-        ImGui::TextColored(color, text);
+        //ImGui::TextColored(color, text);
+        ImGui::Text(text);
     }
     ImGui::End();
 

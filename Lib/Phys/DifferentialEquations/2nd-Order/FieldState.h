@@ -20,7 +20,7 @@ namespace Base {
         using FunctionType = typename ArbitraryFunctionType::Type;
         using FunctionArbitraryType = ArbitraryFunctionType;
 
-        ~FieldState() {
+        virtual ~FieldState() {
             delete phi;
             delete dPhiDt;
         }

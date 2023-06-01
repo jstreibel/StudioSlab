@@ -52,7 +52,7 @@ auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
     }
     else for(auto v : measures) sum += v;
 
-    return sum / count;
+    return count > 0 ? sum / count : 0;
 }
 
 void BenchmarkHistogram::printHistogram(std::ostream &out) const {

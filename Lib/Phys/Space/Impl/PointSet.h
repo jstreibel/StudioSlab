@@ -14,10 +14,11 @@ namespace Spaces {
 
     class PointSet : public Space {
         Point2DVec points;
-        Point2D max, min;
+        Point2D max={.0,.0}, min={.0,.0};
 
     public:
         PointSet();
+        PointSet(const Point2DVec points);
 
         typedef std::shared_ptr<PointSet> Ptr;
         static Ptr New();

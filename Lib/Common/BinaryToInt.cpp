@@ -18,8 +18,6 @@ unsigned BinaryToUInt(std::string binary, char zero, char one) {
     if(zero != '0') binary = replace(binary, zero, '0');
     if(one  != '1') binary = replace(binary, one,  '1');
 
-    std::cout << binary << std::endl;
-
     std::bitset<32>  x(binary);
 
     return x.to_ullong();

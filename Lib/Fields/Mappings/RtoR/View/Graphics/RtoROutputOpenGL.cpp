@@ -4,7 +4,7 @@
 
 #include "../../Model/FunctionsCollection/AnalyticShockwave1D.h"
 
-#include <Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/GordonSystem.h>
 
 #include "../../../FunctionRenderer.h"
 #include "Fields/Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"

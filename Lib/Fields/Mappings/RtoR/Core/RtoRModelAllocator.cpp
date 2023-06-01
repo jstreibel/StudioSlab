@@ -11,7 +11,7 @@
 #include "../Model/FunctionsCollection/AbsFunction.h"
 #include "../Model/FunctionsCollection/NullFunction.h"
 
-#include <Phys/DifferentialEquations/2nd-Order/Lorentz-2ndOrder.h>
+#include <Phys/DifferentialEquations/2nd-Order/GordonSystem.h>
 
 
 RtoRModelAllocator::RtoRModelAllocator() = default;
@@ -74,7 +74,7 @@ auto RtoRModelAllocator::getSystemSolver() -> void * {
         thePotential = new RtoR::NullFunction;
     //else throw "Other potentials not implemented";
 
-    return new Base::Lorentz_2ndOrder<RtoR::FieldState>(*thePotential);
+    return new Base::GordonSystem<RtoR::FieldState>(*thePotential);
 }
 
 void RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential pot, std::vector<Real> params) {

@@ -9,12 +9,12 @@
 
 #include <Common/Workaround/ABIDef.h>
 
-#include <Phys/Numerics/Equation/Equation.h>
+#include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include <Common/DeviceConfig.h>
 
 namespace RtoR {
 
-    class SystemGordonGPU : Base::Equation<FieldState> {
+    class SystemGordonGPU : Base::DifferentialEquation<FieldState> {
     public:
         SystemGordonGPU(PosInt N);
         FieldState &dtF(const FieldState &in, FieldState &out, Real t, Real dt) override;

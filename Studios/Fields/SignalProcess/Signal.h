@@ -18,7 +18,7 @@
 
 
 #include "Phys/Numerics/Allocator.h"
-#include "Phys/Numerics/Equation/BoundaryConditions.h"
+#include "Phys/DifferentialEquations/BoundaryConditions.h"
 
 
 

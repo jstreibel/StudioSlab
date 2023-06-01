@@ -9,8 +9,8 @@
 
 #include "Method.h"
 
-#include "Phys/Numerics/Equation/BoundaryConditions.h"
-#include "Phys/Numerics/Equation/Equation.h"
+#include "Phys/DifferentialEquations/BoundaryConditions.h"
+#include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include "Phys/Numerics/Allocator.h"
 
 #include <cstring> // contains memcpy
@@ -21,7 +21,7 @@ class StepperMontecarlo : public Method{
 public:
 
     StepperMontecarlo(const void *dPhi_)
-            : Method(), H(*(Base::Equation<FIELD_STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
+            : Method(), H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
               dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
               _phi((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
               _phiTemp((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()) {
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    Base::Equation<FIELD_STATE_TYPE> &H;
+    Base::DifferentialEquation<FIELD_STATE_TYPE> &H;
 
     const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
 

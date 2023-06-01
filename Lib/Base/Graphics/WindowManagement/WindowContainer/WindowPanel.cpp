@@ -23,6 +23,15 @@ void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth
     column->emplace_back(window);
 }
 
+bool WindowPanel::addWindowToColumn(Window *window, int columnId) {
+    if(columns.size()-1 < columnId) return false;
+
+    auto *column = &columns[columnId];
+    column->emplace_back(window);
+
+    return true;
+}
+
 void WindowPanel::arrangeWindows() {
     assertConsistency();
 
@@ -133,6 +142,7 @@ void WindowPanel::reshape(int w, int h) {
 
     arrangeWindows();
 }
+
 
 
 

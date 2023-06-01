@@ -5,9 +5,9 @@
 
 #include "Phys/Numerics/Output/OutputManager.h"
 
-#include "Phys/Numerics/Equation/Equation.h"
+#include "Phys/DifferentialEquations/DifferentialEquation.h"
 
-#include "Phys/Numerics/Equation/BoundaryConditions.h"
+#include "Phys/DifferentialEquations/BoundaryConditions.h"
 
 #include "Phys/Numerics/Method/Method.h"
 #include "Phys/Numerics/Method/Method-RK4.h"

@@ -1,16 +1,16 @@
 #ifndef HAMILTON_H
 #define HAMILTON_H
 
-#include <Common/Typedefs.h>
+#include "Common/Typedefs.h"
 
 
 namespace Base {
     template<class FIELD_STATE_TYPE>
-    class Equation {
+    class DifferentialEquation {
     public:
-        Equation() {}
+        DifferentialEquation() {}
 
-        virtual ~Equation() {}
+        virtual ~DifferentialEquation() {}
 
         virtual FIELD_STATE_TYPE &dtF(const FIELD_STATE_TYPE &in, FIELD_STATE_TYPE &out, Real t, Real dt) = 0;
 

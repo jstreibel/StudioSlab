@@ -33,7 +33,7 @@ namespace Base {
                     throw "Unknown device in instantiation of FunctionArbitrary.";
             }
         };
-        ~ArbitraryFunction(){
+        virtual ~ArbitraryFunction(){
             delete space;
         }
 
