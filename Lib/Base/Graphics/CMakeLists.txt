@@ -14,7 +14,7 @@ set( GRAPHICS_SOURCES
 		WindowManagement/WindowTree/NodeWindow.cpp
 		WindowManagement/WindowTree/WindowTreeBuilder.cpp
 
-		ARCHIVE/NotHere/OutputOpenGL.cpp
+		WindowManagement/OutputOpenGL.cpp
 
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp

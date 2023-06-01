@@ -1,13 +1,11 @@
 #ifndef OUTPUTOPENGL_H
 #define OUTPUTOPENGL_H
 
-#include <Phys/Numerics/Output/Channel/OutputChannel.h>
+#include "Phys/Numerics/Output/Channel/OutputChannel.h"
 
-#include <Base/Backend/GLUT/GLUTEventListener.h>
-#include <Base/Graphics/WindowManagement/WindowContainer/WindowPanel.h>
-#include <Base/Graphics/Artists/StatsDisplay.h>
+#include "Window.h"
+#include "Base/Graphics/Artists/StatsDisplay.h"
 
-// STD includes
 #include <iostream>
 #include <vector>
 
@@ -15,17 +13,18 @@ namespace Base {
 
     #define isOutputOpenGL(output) (dynamic_cast<Base::OutputOpenGL*>(output) != nullptr)
 
-    class OutputOpenGL : public OutputChannel, public GLUTEventListener {
+    class OutputOpenGL : public OutputChannel, public Window {
+    protected:
+        void draw() override;
+
     public:
         OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
-        ~OutputOpenGL() override;
 
-        virtual void draw();
-        virtual IntPair getWindowSizeHint();
 
-    // ********************* From GLUTEventListener ************** //
+
+    // ********************* From Window ************** //
         void notifyRender() final override;
-    // ********************* End GLUTEventListener ************** //
+    // ********************* End Window ************** //
 
 
     // ********************* From OutputChannel ********************* //

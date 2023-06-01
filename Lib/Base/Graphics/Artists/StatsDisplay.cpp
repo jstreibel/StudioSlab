@@ -12,14 +12,19 @@
 #include <GL/gl.h>
 
 
+StatsDisplay::StatsDisplay() : Window( ) {
+    setClear(false);
+    setDecorate(false);
+}
+
 
 void StatsDisplay::addVolatileStat(const String &stat, const Color color)
 {
     stats.emplace_back(stat, color);
 }
 
-void StatsDisplay::draw(bool decorated, bool clear) {
-    Window::draw(false, false);
+void StatsDisplay::draw() {
+    Window::draw();
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
@@ -72,3 +77,4 @@ void StatsDisplay::draw(bool decorated, bool clear) {
 
     stats.clear();
 }
+

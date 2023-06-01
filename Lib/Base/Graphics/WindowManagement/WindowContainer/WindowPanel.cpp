@@ -35,7 +35,6 @@ bool WindowPanel::addWindowToColumn(Window *window, int columnId) {
 void WindowPanel::arrangeWindows() {
     assertConsistency();
 
-
     auto m = columns.size();
 
 
@@ -78,8 +77,8 @@ void WindowPanel::arrangeWindows() {
         for(auto window : column){
             auto y = this->y + j*dy;
 
-            window->x = computedPositions[i];
-            window->y = y;
+            window->setx(computedPositions[i]);
+            window->sety(y);
             auto w = computedWidths[i];
             auto h = dy;
 
@@ -98,7 +97,7 @@ void WindowPanel::setColumnRelativeWidth(int column, float relWidth) {
     assertConsistency();
 }
 
-void WindowPanel::draw(bool decorated, bool clear) {
+void WindowPanel::draw() {
     for(auto &column : columns)
         for(auto window : column)
             window->draw();
@@ -141,7 +140,7 @@ void WindowPanel::notifyMousePassiveMotion(int x, int y) {
 
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->hit(x,y)) win->notifyMousePassiveMotion(x,y);
+            if(win->doesHit(x, y)) win->notifyMousePassiveMotion(x, y);
 
 }
 
@@ -150,7 +149,7 @@ void WindowPanel::notifyMouseMotion(int x, int y) {
 
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->hit(x,y)) win->notifyMousePassiveMotion(x,y);
+            if(win->doesHit(x, y)) win->notifyMousePassiveMotion(x, y);
 }
 
 void WindowPanel::notifyReshape(int newWinW, int newWinH) {

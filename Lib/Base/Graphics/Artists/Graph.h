@@ -60,7 +60,7 @@ namespace Base {
             Graph2D(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
                   String title = "no_title", bool filled = false, int samples = 512);
 
-            void draw(bool decorated, bool clear) override;
+            void draw() override;
 
             void setupOrtho();
 

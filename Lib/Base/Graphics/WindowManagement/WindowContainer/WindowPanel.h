@@ -32,7 +32,7 @@ public:
 
     void notifyMouseMotion(int x, int y)        override;
     void notifyMousePassiveMotion(int x, int y) override;
-    void draw(bool decorated, bool clear)       override;
+    void draw()       override;
 
     void arrangeWindows();
     void setColumnRelativeWidth(int column, float relWidth);

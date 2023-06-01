@@ -1,2 +1,0 @@
-OutputOpenGL
-    Because it is derived from a very specific class which is the Integrator class.

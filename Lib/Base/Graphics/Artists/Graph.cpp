@@ -298,8 +298,8 @@ void Base::Graphics::Graph2D::clearCurves() {
     curves.clear();
 }
 
-void Base::Graphics::Graph2D::draw(bool decorated, bool clear) {
-    Window::draw(decorated, clear);
+void Base::Graphics::Graph2D::draw() {
+    Window::draw();
 
     setupOrtho();
 

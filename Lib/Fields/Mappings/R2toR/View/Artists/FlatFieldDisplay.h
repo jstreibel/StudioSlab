@@ -11,7 +11,7 @@ namespace R2toR {
     namespace Graphics {
         class FlatFieldDisplay : public Window {
         public:
-            void draw(bool decorated, bool clear) override;
+            void draw() override;
         };
     }
 }

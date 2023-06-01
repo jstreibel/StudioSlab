@@ -113,12 +113,11 @@ void Phys::Graphing::PointSetGraph::_reviewGraphRanges() {
     }
 }
 
-void Phys::Graphing::PointSetGraph::draw(bool decorated, bool clear) {
-    Graph2D::draw(decorated, clear);
-
+void Phys::Graphing::PointSetGraph::draw()
+{
     _reviewGraphRanges();
 
-    Graph2D::draw(decorated, clear);
+    Graph2D::draw();
 
     int i=0;
     for(auto &triple : mPointSets){

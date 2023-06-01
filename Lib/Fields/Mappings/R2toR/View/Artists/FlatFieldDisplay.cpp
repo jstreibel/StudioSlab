@@ -4,6 +4,6 @@
 
 #include "FlatFieldDisplay.h"
 
-void R2toR::Graphics::FlatFieldDisplay::draw(bool decorated, bool clear) {
-    Window::draw(decorated, clear);
+void R2toR::Graphics::FlatFieldDisplay::draw() {
+    Window::draw();
 }

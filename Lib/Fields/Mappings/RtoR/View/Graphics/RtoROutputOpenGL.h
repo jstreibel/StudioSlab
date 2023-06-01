@@ -10,7 +10,7 @@
 #include "Base/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
 
 #include "Artists/GraphRtoR.h"
-#include <Base/Graphics/ARCHIVE/NotHere/OutputOpenGL.h>
+#include "Base/Graphics/WindowManagement/OutputOpenGL.h"
 
 namespace RtoR {
 

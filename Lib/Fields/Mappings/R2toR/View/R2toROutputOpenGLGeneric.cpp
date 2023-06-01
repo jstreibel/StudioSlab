@@ -96,7 +96,7 @@ void R2toR::OutputOpenGL::draw() {
     //glLoadMatrixf(zpr.getModelview());
     //RtoR::FunctionRenderer::renderFunction(dPhi, xMin, xMin, xMax - xMin, 100, 100);
 
-    panel->draw(true, true);
+    panel->draw();
 }
 
 void R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {

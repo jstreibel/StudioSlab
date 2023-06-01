@@ -21,13 +21,14 @@ void NodeWindow::addSubWindow(Window *subWindow) {
 
     if(nodeSub != nullptr) nodeSub->parent = this;
 
+    subWindow->setClear(false);
     children.emplace_back(subWindow);
 }
 
 void NodeWindow::arrange() {
     auto n = children.size();
 
-    auto childWidth = w;
+    auto childWidth  = w;
     auto childHeight = h;
 
     auto dx = childWidth/n;
@@ -44,22 +45,21 @@ void NodeWindow::arrange() {
     for(auto i=0; i<n; ++i){
         auto child = children[i];
 
-        child->x = x + i*dx;
-        child->y = y + i*dy;
-
-        child->w = childWidth;
-        child->h = childHeight;
+        child->setx(x + i*dx);
+        child->sety(y + i*dy);
+        child->setw(childWidth);
+        child->seth(childHeight);
 
         auto cast = dynamic_cast<NodeWindow*>(child);
         if(cast != nullptr) cast->arrange();
     }
 }
 
-void NodeWindow::draw(bool decorated, bool clear) {
-    Window::draw(false, clear);
+void NodeWindow::draw() {
+    Window::draw( );
 
     for(auto win : children)
-        win->draw(decorated, false);
+        win->draw();
 }
 
 

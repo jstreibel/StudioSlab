@@ -28,7 +28,7 @@ public:
     void arrange();
 
 
-    void draw(bool decorated=true, bool clear=true) override;
+    void draw() override;
 
 
 private:
