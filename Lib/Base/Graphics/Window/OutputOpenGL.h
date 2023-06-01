@@ -36,7 +36,7 @@ namespace Base {
 
     public:
         void addAnimation(Animation *animation) {animations.push_back(animation); }
-        void addStat(const String& stat, const Color color = {1, 1, 1}) {
+        void addStat(const String& stat, const Styles::Color color = {1, 1, 1}) {
             stats.addVolatileStat(stat, color);
         }
 

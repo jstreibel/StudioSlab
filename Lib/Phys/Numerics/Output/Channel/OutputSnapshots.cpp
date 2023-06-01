@@ -6,7 +6,6 @@
 
 #include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
 
-#include <Common/Workaround/StringStream.h>
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 

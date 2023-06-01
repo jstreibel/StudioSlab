@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_BOUNDARYCONDITIONS_H
 #define V_SHAPE_BOUNDARYCONDITIONS_H
 
-#include "Common/Typedefs.h"
+#include "Common/Types.h"
 
 
 namespace Base {

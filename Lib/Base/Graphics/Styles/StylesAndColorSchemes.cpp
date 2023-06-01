@@ -3,27 +3,26 @@
 //
 
 #include "StylesAndColorSchemes.h"
-#include "Common/BinaryToInt.h"
+#include "Common/Utils.h"
 #include <memory>
-
 
 Styles::ColorScheme_ptr current;
 
 void SetSchemeDark () {
-    Color graphTitleFont =  {1,1,1,1};
-    Color graphTicksFont =  {1,1,1,.8};
-    Color background =      {0,0,0,1};
+    Styles::Color graphTitleFont =  {1,1,1,1};
+    Styles::Color graphTicksFont =  {1,1,1,.8};
+    Styles::Color background =      {0,0,0,1};
 
-    Color axisColor =       {1,1,1,1};
-    Color tickColor =       {1,1,1,1};
+    Styles::Color axisColor =       {1,1,1,1};
+    Styles::Color tickColor =       {1,1,1,1};
 
-    Color graph1a =         {.65,.65,.99,1};
-    Color graph1b =         {.8,.2,.2, 1};
-    Color graph1c =         {.2,.8,.2, 1};
+    Styles::Color graph1a =         {.65,.65,.99,1};
+    Styles::Color graph1b =         {.8,.2,.2, 1};
+    Styles::Color graph1c =         {.2,.8,.2, 1};
 
-    Color graph1a_fill =    graph1a; graph1a_fill.a = .35;
-    Color graph1b_fill =    graph1b; graph1b_fill.a = .15;
-    Color graph1c_fill =    graph1c; graph1c_fill.a = .15;
+    Styles::Color graph1a_fill =    graph1a; graph1a_fill.a = .35;
+    Styles::Color graph1b_fill =    graph1b; graph1b_fill.a = .15;
+    Styles::Color graph1c_fill =    graph1c; graph1c_fill.a = .15;
 
     std::vector<Styles::PlotStyle> graphs = {
             {graph1a,       Styles::Trace::Solid, true, graph1a_fill, 2.5},
@@ -34,6 +33,7 @@ void SetSchemeDark () {
 }
 
 void SetSchemeBWDark () {
+    using namespace Styles;
 
     Color graphTitleFont = {1,1,1,1};
     Color graphTicksFont = {1,1,1,0.75};
@@ -58,6 +58,7 @@ void SetSchemeBWDark () {
 }
 
 void SetSchemePrint () {
+    using namespace Styles;
 
     Color graphTitleFont = {0,0,0,1};
     Color graphTicksFont = {0,0,0,0.75};
@@ -84,6 +85,7 @@ void SetSchemePrint () {
 }
 
 void SetSchemeLight () {
+    using namespace Styles;
 
     Color graphTitleFont = {0,0,0,1};
     Color graphTicksFont = {0,0,0,0.75};
@@ -106,6 +108,7 @@ void SetSchemeLight () {
 }
 
 void SetSchemeTest () {
+    using namespace Styles;
 
     Color graphTitleFont = {1.f, .4f, 1.f, 0.6f};
     Color graphTicksFont = {1.f, .0f, 0.f, 1.0f};
@@ -165,11 +168,11 @@ Styles::PlotStyle::PlotStyle(Color color, Styles::Trace trace, bool filled,
             stippleFactor = 2;
             break;
         case Dashed:
-            stipplePattern = BinaryToUInt(" o o o o o o o o", 'o', ' ');
+            stipplePattern = Common::BinaryToUInt(" o o o o o o o o", 'o', ' ');
             stippleFactor = 10;
             break;
         case DotDashed:
-            stipplePattern = BinaryToUInt("o  ooo  o  ooo  ", 'o', ' ');
+            stipplePattern = Common::BinaryToUInt("o  ooo  o  ooo  ", 'o', ' ');
             stippleFactor = 2;
             break;
     }

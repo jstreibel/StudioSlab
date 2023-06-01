@@ -8,7 +8,7 @@
 #include "Phys/Formalism/Categories.h"
 #include "Phys/Space/Space.h"
 
-#include <Common/Typedefs.h>
+#include <Common/Types.h>
 
 //#include "View/Util/FStateOutputInterface.h"
 

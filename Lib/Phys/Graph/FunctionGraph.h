@@ -9,8 +9,7 @@
 #include "Base/Graphics/PlottingUtils.h"
 #include "Base/Graphics/Artists/Artist.h"
 
-#include "Common/Workaround/StringStream.h"
-#include "Common/BinaryToInt.h"
+#include "Common/Utils.h"
 
 #include "Base/Graphics/Window/Window.h"
 

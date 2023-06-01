@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MEASURE_H
 
 
-#include "Common/CoreNativeTypes.h"
+#include "Common/Types.h"
 
 class Measure {
     VecFloat linearValues;

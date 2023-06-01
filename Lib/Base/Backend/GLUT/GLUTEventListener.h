@@ -8,7 +8,7 @@
 
 #include <Base/Graphics/Animation.h>
 
-#include <Common/Typedefs.h>
+#include <Common/Types.h>
 #include <Common/Utils.h>
 #include <Common/Timer.h>
 

@@ -5,7 +5,6 @@
 #include "DiscreteSpaceGPU.h"
 
 #include <Common/Utils.h>
-#include <Common/Workaround/ABIDef.h>
 
 #include <thrust/iterator/constant_iterator.h>
 

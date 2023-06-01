@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FUNCTIONAL_H
 #define STUDIOSLAB_FUNCTIONAL_H
 
-#include "Common/CoreNativeTypes.h"
+#include "Common/Types.h"
 
 namespace Phys {
     namespace Functionals {

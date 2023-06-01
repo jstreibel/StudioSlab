@@ -10,7 +10,7 @@
 #include <Phys/Function/ArbitraryFunction.h>
 
 //#include <Base/Controller/Interface/CommonParameters.h>
-#include <Common/Typedefs.h>
+#include <Common/Types.h>
 
 
 namespace RtoR {

@@ -4,7 +4,6 @@
 
 #include "SignumFunction.h"
 
-#include <Common/Workaround/ABIDef.h>
 #include <Common/DeviceConfig.h>
 
 

@@ -4,6 +4,8 @@
 
 #include "Parameter.h"
 
+#include "Common/Utils.h"
+
 
 
 Parameter::Parameter(const String& commandLineArgName, const String& description)

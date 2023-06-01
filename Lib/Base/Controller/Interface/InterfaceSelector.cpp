@@ -11,8 +11,6 @@
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Utils.h"
 
-#include <Common/Workaround/StringStream.h>
-
 
 InterfaceSelector::InterfaceSelector() : Interface("Available boundary conditions")
 {

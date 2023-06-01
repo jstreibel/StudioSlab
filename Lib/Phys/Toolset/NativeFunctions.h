@@ -1,9 +1,9 @@
 #ifndef MATHUTIL_H
 #define MATHUTIL_H
 
-#include "Common/CoreNativeTypes.h"
+#include "Common/NativeTypes.h"
 
-#include <Common/Typedefs.h>
+#include <Common/Types.h>
 
 //#ifndef __CUDACC__ // se estiver sendo compilado pelo nvcc
 //#include <boost/multiprecision/float128.hpp>

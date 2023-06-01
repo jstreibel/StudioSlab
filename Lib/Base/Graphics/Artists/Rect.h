@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RECT_H
 #define STUDIOSLAB_RECT_H
 
-#include <Common/CoreNativeTypes.h>
+#include <Common/Types.h>
 
 struct Rect {
     Real xMin, xMax, yMin, yMax;

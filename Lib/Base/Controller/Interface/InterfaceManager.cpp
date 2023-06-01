@@ -2,8 +2,9 @@
 // Created by joao on 10/17/21.
 //
 
-#include <Common/Workaround/StringStream.h>
 #include "InterfaceManager.h"
+
+#include "Common/Utils.h"
 
 InterfaceManager *InterfaceManager::instance = nullptr;
 

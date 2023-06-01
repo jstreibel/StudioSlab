@@ -7,8 +7,6 @@
 
 #include "../RtoRFunction.h"
 
-#include <Common/Workaround/ABIDef.h>
-
 #include <Phys/Function/GPUFriendly.h>
 
 namespace RtoR {

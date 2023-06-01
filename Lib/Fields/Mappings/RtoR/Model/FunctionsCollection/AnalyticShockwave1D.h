@@ -6,7 +6,7 @@
 #define V_SHAPE_ANALYTICSHOCKWAVE1D_H
 
 
-#include "Common/CoreNativeTypes.h"
+#include "Common/NativeTypes.h"
 
 #include "../RtoRFunction.h"
 

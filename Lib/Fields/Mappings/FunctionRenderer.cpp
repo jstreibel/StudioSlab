@@ -8,7 +8,7 @@
 //
 // Created by joao on 27/09/2019.
 
-void RtoR::FunctionRenderer::renderFunction(const RtoR::ArbitraryFunction &func, Color c, bool filled, Real scale){
+void RtoR::FunctionRenderer::renderFunction(const RtoR::ArbitraryFunction &func, Styles::Color c, bool filled, Real scale){
     auto &params = Numerics::Allocator::getInstance().getNumericParams();
 
     const Real xMin = params.getxLeft(),
@@ -18,7 +18,7 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::ArbitraryFunction &func,
     renderFunction(func, c, filled, xMin, xMax, N, scale);
 }
 
-void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Color c, bool filled, Real xMin, Real xMax, PosInt resolution, Real scale) {
+void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax, PosInt resolution, Real scale) {
     const double dx = (xMax-xMin) / double(resolution);
     const double xBegin = xMin;
     const double xEnd = xMax;
@@ -159,7 +159,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
     //glEnd();
 }
 
-void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Color c, bool filled, Real xMin, Real xMax,
+void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax,
                                                      PosInt resolution) {
     const double dx = (xMax-xMin) / double(resolution);
     const double xBegin = xMin;
@@ -196,7 +196,7 @@ void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func
     glEnd();
 }
 
-void RtoR::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Color c, bool filled, Real yMin, Real yMax,
+void RtoR::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real yMin, Real yMax,
                                                    PosInt resolution) {
     const double dy = (yMax - yMin) / double(resolution);
     const double yBegin = yMin;

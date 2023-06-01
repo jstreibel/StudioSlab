@@ -19,7 +19,7 @@ void GraphR2Section::_renderFunction(const R2toR::Function *func, Styles::PlotSt
     }
 }
 
-void GraphR2Section::addSection(RtoR2::StraightLine *section, Color color) {
+void GraphR2Section::addSection(RtoR2::StraightLine *section, Styles::Color color) {
     sections.emplace_back(std::pair{section, color});
 }
 

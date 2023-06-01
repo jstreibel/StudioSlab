@@ -60,10 +60,10 @@ namespace RtoR {
         //FuncArbResizable VHistory;
         //Real energyTotal;
 
-        const Color U_color = {.9f, .5f, .0f, .9};
-        const Color K_color = {1,0,0};
-        const Color W_color = {0.5,1,0.5};
-        const Color V_color = {.5f, .5f, 1.0f};
+        const Styles::Color U_color = {.9f, .5f, .0f, .9};
+        const Styles::Color K_color = {1,0,0};
+        const Styles::Color W_color = {0.5,1,0.5};
+        const Styles::Color V_color = {.5f, .5f, 1.0f};
 
         bool showPhi = true;
         bool showKineticEnergy = false;

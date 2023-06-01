@@ -6,11 +6,10 @@
 #define STUDIOSLAB_GRAPH_H
 
 
-#include "Common/Workaround/StringStream.h"
-#include "Common/BinaryToInt.h"
+#include "Common/Utils.h"
 
 #include "Base/Graphics/PlottingUtils.h"
-#include "Base/Graphics/Artists/Artist.h"
+#include "Base/Graphics/Artists/Label.h"
 
 #include "Base/Graphics/Window/Window.h"
 

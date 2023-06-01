@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OMPUTILS_H
 #define STUDIOSLAB_OMPUTILS_H
 
-#include "Typedefs.h"
+#include "Types.h"
 
 IntPair getBeginAndEndForThreadedFor(int N);
 

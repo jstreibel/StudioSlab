@@ -1,7 +1,6 @@
 #include "GLUTBackend.h"
 
-#include <Common/Workaround/StringStream.h>
-#include <Common/ResourcesFolder.h>
+#include <Common/Resources.h>
 
 #include "3rdParty/imgui/imgui.h"
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
@@ -84,21 +83,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
 
     if(1) {
-        StrVector fonts = {"imgui/Cousine-Regular.ttf",
-                           "imgui/DroidSans.ttf",
-                           "imgui/Karla-Regular.ttf",
-                           "imgui/ProggyClean.ttf",
-                           "imgui/ProggyTiny.ttf",
-                           "imgui/Roboto-Medium.ttf",
-
-                           "EBGaramond-VariableFont_wght.ttf",
-                           "FontAwesome-Solid.ttf",
-                           "Inconsolata-Regular.ttf",
-
-                           "Roboto-Regular.ttf",
-                           "times-new-roman-14.ttf",
-                           };
-        auto fontName = ResourcesFolder + "Fonts/" + fonts[5];
+        auto fontName = Resources::fontFileName(5);
 
         if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
 

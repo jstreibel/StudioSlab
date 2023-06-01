@@ -7,9 +7,17 @@
 
 #include "DeviceConfig.h"
 #include "STDLibInclude.h"
+#include "NativeTypes.h"
 
-typedef size_t PosInt;
+typedef floatt Real;
+
+typedef std::size_t PosInt;
 typedef int_least64_t BigInt;
+
+typedef std::vector<Real> VecFloat;
+typedef const VecFloat VecFloat_I;
+typedef VecFloat VecFloat_O;
+typedef VecFloat VecFloat_IO;
 
 template<class T1, class T2>
 struct Pair {
@@ -19,5 +27,11 @@ struct Pair {
 
 typedef Pair<int, int> IntPair;
 typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> DiscreteSpacePair;
+
+typedef std::string String;
+typedef std::stringstream StringStream;
+typedef std::vector<String> StrVector;
+
+
 
 #endif //STUDIOSLAB_TYPES_H

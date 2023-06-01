@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_UTILS_H
 #define V_SHAPE_UTILS_H
 
-#include "STDLibInclude.h"
+#include "Types.h"
 
 #ifdef NDEBUG // Release
 #define cast(NAME, TO_TYPE, OBJECT) \
@@ -27,11 +27,31 @@ if(&NAME == nullptr) throw "Bad cast.";
 #define look const auto *
 
 
-void PrintThere(int x, int y, const char *format, ...);
+namespace Common {
 
-auto GetDensityChar(float dens) -> char;
+    void PrintThere(int x, int y, const char *format, ...);
 
-void PrintDensityThere(int x, int y, float dens);
+    auto GetDensityChar(float dens) -> char;
+
+    void PrintDensityThere(int x, int y, float dens);
+
+    template<typename T>
+    bool contains(const std::vector<T> &vec, const T &val) {
+        return std::find(vec.begin(), vec.end(), val) != vec.end();
+    }
+
+    StrVector splitString(const String& input, char delimiter);
+
+    template<typename T>
+    bool Contains(std::vector<T> vec, T element) {
+        return std::find(vec.begin(), vec.end(), element) != vec.end();
+    }
+
+    unsigned BinaryToUInt(std::string binary, char zero='0', char one='1');
+    unsigned short BinaryToUShort(std::string binary, char zero='0', char one='1');
+
+}
+
 
 #if USE_CUDA
 

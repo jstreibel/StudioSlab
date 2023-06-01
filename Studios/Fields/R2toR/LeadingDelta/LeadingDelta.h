@@ -15,12 +15,6 @@
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/Graph/PointSetGraph.h"
 
-//#define USE_VTK true
-
-#if USE_VTK
-#include <vtkSmartPointer.h>
-#include <vtkRenderWindowInteractor.h>
-#endif
 
 namespace R2toR {
 

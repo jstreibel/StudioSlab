@@ -1,6 +1,5 @@
 
 set( GRAPHICS_SOURCES
-		PlottingUtils.cpp
 		Animation.cpp
 		ZoomPanRotate.cpp
 

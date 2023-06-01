@@ -7,8 +7,6 @@
 
 #include "RtoRFieldState.h"
 
-#include <Common/Workaround/ABIDef.h>
-
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include <Common/DeviceConfig.h>
 

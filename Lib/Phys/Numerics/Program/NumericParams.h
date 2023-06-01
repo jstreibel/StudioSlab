@@ -10,8 +10,8 @@
 
 #include <Base/Controller/Interface/Interface.h>
 #include <Base/Controller/Interface/CommonParameters.h>
-#include <Common/Typedefs.h>
-#include "Common/CoreNativeTypes.h"
+#include <Common/Types.h>
+#include "Common/NativeTypes.h"
 
 /* DEFAULTS */
 

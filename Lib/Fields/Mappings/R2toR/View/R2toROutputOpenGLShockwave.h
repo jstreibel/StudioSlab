@@ -9,10 +9,11 @@
 #include "Base/Graphics/ZoomPanRotate.h"
 #include "Phys/Graph/FunctionGraph.h"
 #include "Fields/Mappings/R2toR/View/Artists/GraphR2ToR.h"
+#include "Fields/Mappings/RtoR2/StraightLine.h"
 
-#include <Base/Graphics/ARCHIVE/deprecated/GraphCollections.h>
 
 namespace R2toR {
+
     class OutputOpenGLShockwave : public Base::OutputOpenGL {
     public:
         OutputOpenGLShockwave();

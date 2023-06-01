@@ -5,7 +5,7 @@
 #include "SingleSimViewController.h"
 
 #include "../../Utils/ViewerUtils.h"
-#include <Base/Graphics/Colors.h>
+#include "Base/Graphics/Styles/Colors.h"
 #include <Base/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
@@ -303,7 +303,7 @@ namespace ThermoOutput {
                     val -= floor(val);
                     val *= 360.0;
 
-                    auto rgb = Colors::hsv2rgb({static_cast<double>(val), 1, 1});
+                    auto rgb = Styles::hsv2rgb({static_cast<double>(val), 1, 1});
                     auto color = sf::Color(rgb.r * 255., rgb.g * 255., rgb.b * 255.);
 
                     XYThetaBitmap.setPixel(i, j, color);

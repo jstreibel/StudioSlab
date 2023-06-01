@@ -22,7 +22,7 @@ add_executable(StudiosLib
 		colormap/map.hpp
 		colormap/palettes.hpp
 		colormap/pixmap.hpp
-		../../../Lib/Base/Graphics/Colors.h
+		../../../Lib/Base/Graphics/Styles/Colors.h
 		../../../Lib/Base/Graphics/SFML/Graph.cpp
 		../../../Lib/Base/Graphics/SFML/Graph.h
 		../../../Lib/Phys/Thermal/Utils/RandUtils.cpp
