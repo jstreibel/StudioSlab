@@ -4,7 +4,7 @@
 
 #include "StatsDisplay.h"
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 #include "Base/Graphics/OpenGL/GLUTUtils.h"
 
 #include "imgui.h"

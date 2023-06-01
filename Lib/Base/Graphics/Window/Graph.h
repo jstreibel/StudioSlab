@@ -12,9 +12,9 @@
 #include "Base/Graphics/PlottingUtils.h"
 #include "Base/Graphics/Artists/Artist.h"
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 
 #include "Fields/Mappings/RtoR2/ParametricCurve.h"

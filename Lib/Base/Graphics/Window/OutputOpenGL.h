@@ -4,7 +4,7 @@
 #include "Phys/Numerics/Output/Channel/OutputChannel.h"
 
 #include "Window.h"
-#include "Base/Graphics/Artists/StatsDisplay.h"
+#include "StatsDisplay.h"
 
 #include <iostream>
 #include <vector>

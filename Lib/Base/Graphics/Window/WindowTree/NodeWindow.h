@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_NODEWINDOW_H
 #define V_SHAPE_NODEWINDOW_H
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
 #include <vector>
 

@@ -8,7 +8,7 @@
 #define V_SHAPE_WINDOWTREEBUILDER_H
 
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 #include "NodeWindow.h"
 
 class WindowTreeBuilder {

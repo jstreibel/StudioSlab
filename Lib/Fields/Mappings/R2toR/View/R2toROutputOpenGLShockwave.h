@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "Base/Graphics/WindowManagement/OutputOpenGL.h"
+#include "Base/Graphics/Window/OutputOpenGL.h"
 #include "Base/Graphics/ZoomPanRotate.h"
 #include "Phys/Graph/FunctionGraph.h"
 #include "Fields/Mappings/R2toR/View/Artists/GraphR2ToR.h"

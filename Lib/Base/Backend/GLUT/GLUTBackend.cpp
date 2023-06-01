@@ -9,7 +9,7 @@
 #include "3rdParty/ImGuiColorsSetup.h"
 
 #include "Phys/Numerics/Program/Integrator.h"
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 
 #include <GL/freeglut.h>

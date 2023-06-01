@@ -2,7 +2,7 @@
 
 #include <Phys/Numerics/Allocator.h>
 #include "FunctionRenderer.h"
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 
 
 //

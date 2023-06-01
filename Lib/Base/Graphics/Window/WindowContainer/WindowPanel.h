@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOWPANEL_H
 
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
 
 typedef std::vector<Window*> WindowColumn;

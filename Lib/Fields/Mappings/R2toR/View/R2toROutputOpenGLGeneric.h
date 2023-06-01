@@ -6,10 +6,10 @@
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
 #include <Base/Graphics/ZoomPanRotate.h>
-#include "Base/Graphics/WindowManagement/OutputOpenGL.h"
+#include "Base/Graphics/Window/OutputOpenGL.h"
 #include "Artists/GraphR2ToR.h"
-#include "Base/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
-#include "Base/Graphics/Artists/StatsDisplay.h"
+#include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Base/Graphics/Window/StatsDisplay.h"
 #include "Fields/Mappings/RtoR/View/Graphics/Artists/GraphRtoR.h"
 #include "Fields/Mappings/R2toR/View/Artists/GraphR2Section.h"
 

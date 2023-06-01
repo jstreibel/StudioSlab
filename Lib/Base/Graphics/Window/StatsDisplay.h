@@ -7,9 +7,9 @@
 
 
 #include "Base/Graphics/PlottingUtils.h"
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
-#include <Common/Typedefs.h>
+#include "Common/Typedefs.h"
 
 
 class StatsDisplay : public Window {

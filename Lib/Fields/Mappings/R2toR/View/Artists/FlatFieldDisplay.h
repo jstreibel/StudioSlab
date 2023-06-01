@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FLATFIELDDISPLAY_H
 #define STUDIOSLAB_FLATFIELDDISPLAY_H
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
 namespace R2toR {
     namespace Graphics {

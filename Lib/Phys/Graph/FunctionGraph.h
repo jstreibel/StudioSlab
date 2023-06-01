@@ -12,11 +12,11 @@
 #include "Common/Workaround/StringStream.h"
 #include "Common/BinaryToInt.h"
 
-#include "Base/Graphics/WindowManagement/Window.h"
+#include "Base/Graphics/Window/Window.h"
 
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
-#include "Base/Graphics/Artists/Graph.h"
+#include "Base/Graphics/Window/Graph.h"
 
 #include <memory>
 

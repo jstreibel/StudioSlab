@@ -3,7 +3,7 @@
 //
 
 #include "Window.h"
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/GLUTUtils.h"
 
 #include <GL/gl.h>

@@ -12,7 +12,7 @@
 #include "RtoR2/StraightLine.h"
 
 #include "Base/Graphics/PlottingUtils.h"
-#include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 
 
 namespace RtoR {

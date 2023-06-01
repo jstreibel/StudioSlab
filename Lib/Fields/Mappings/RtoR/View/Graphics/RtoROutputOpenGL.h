@@ -7,10 +7,10 @@
 
 #include "Fields/Mappings/RtoR/Calc/EnergyCalculator.h"
 #include "../../Model/RtoRFuncArbResizable.h"
-#include "Base/Graphics/WindowManagement/WindowContainer/WindowPanel.h"
+#include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
 
 #include "Artists/GraphRtoR.h"
-#include "Base/Graphics/WindowManagement/OutputOpenGL.h"
+#include "Base/Graphics/Window/OutputOpenGL.h"
 
 namespace RtoR {
 
