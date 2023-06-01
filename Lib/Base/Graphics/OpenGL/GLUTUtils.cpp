@@ -60,3 +60,11 @@ OpenGLUtils::FrameBuffer GLUTUtils::getFrameBuffer() {
 
     return {w, h, pixels};
 }
+
+int GLUTUtils::getScreenWidth() {
+    return glutGet(GLUT_WINDOW_WIDTH);
+}
+
+int GLUTUtils::getScreenHeight() {
+    return glutGet(GLUT_WINDOW_HEIGHT);
+}

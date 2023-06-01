@@ -130,6 +130,10 @@ namespace R2toR {
             auto draw() -> void override;
             auto getWindowSizeHint() -> IntPair override;
             auto notifyKeyboard(unsigned char key, int x, int y) -> void override;
+
+            void notifyMousePassiveMotion(int x, int y) override;
+
+            void notifyMouseMotion(int x, int y) override;
         };
 
 

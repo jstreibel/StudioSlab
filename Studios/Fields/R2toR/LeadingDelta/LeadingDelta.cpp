@@ -203,5 +203,17 @@ void R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
     }
 }
 
+void R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
+    OutputOpenGL::notifyMouseMotion(x, y);
+
+    if(panel->hit(x,y)) panel->notifyMouseMotion(x, y);
+}
+
+void R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
+    GLUTEventListener::notifyMousePassiveMotion(x, y);
+
+    if(panel->hit(x,y)) panel->notifyMousePassiveMotion(x, y);
+}
+
 
 

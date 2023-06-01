@@ -4,6 +4,7 @@
 
 #include "Window.h"
 #include "Base/Graphics/Artists/StylesAndColorSchemes.h"
+#include "Base/Graphics/OpenGL/GLUTUtils.h"
 
 #include <GL/gl.h>
 
@@ -33,7 +34,9 @@ void Window::_clear() const {
 void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
-        glColor3d(1, 1, 1);
+        if(gotHit)  glColor3d(1, 0, 0);
+        else        glColor3d(1, 1, 1);
+
         glVertex2f(-p, -p);
         glVertex2f(-p, p);
         glVertex2f(p, p);
@@ -73,4 +76,11 @@ void Window::reshape(int w, int h) {
     for(auto artist : content)
         artist->reshape(w, h);
 
+}
+
+auto Window::hit(int _x, int _y) const -> bool {
+    auto hScreen = GLUTUtils::getScreenHeight();
+
+    const_cast<bool&>(gotHit) = _x > x && _x < x+w && hScreen-_y > y && hScreen-_y < y+h;
+    return gotHit;
 }

@@ -38,6 +38,10 @@ public:
     float computeReservedWidth() const;
     int countFreeWidths() const;
     void assertConsistency() const;
+
+    void notifyMouseMotion(int x, int y) override;
+
+    void notifyMousePassiveMotion(int x, int y) override;
 };
 
 

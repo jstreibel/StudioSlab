@@ -24,15 +24,12 @@ namespace Base {
         virtual void notifyKeyboardSpecial(int key, int x, int y)             {};
         virtual void notifyMouseButton(int button, int dir, int x, int y)     {};
         virtual void notifyMouseMotion(int x, int y)                          {};
+        virtual void notifyMousePassiveMotion(int x, int y)                   {};
         virtual void notifyMouseWheel(int wheel, int direction, int x, int y) {};
 
-        virtual void notifyReshape(int width, int height) {};
+        virtual void notifyReshape(int width, int height)                     {};
 
-        virtual void notifyRender() {/*finishFrameAndRender();*/};
-
-    protected:
-        //std::vector<String> stats;
-
+        virtual void notifyRender()                                           {};
     };
 }
 

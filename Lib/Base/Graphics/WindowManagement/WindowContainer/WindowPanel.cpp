@@ -143,6 +143,23 @@ void WindowPanel::reshape(int w, int h) {
     arrangeWindows();
 }
 
+void WindowPanel::notifyMousePassiveMotion(int x, int y) {
+    GLUTEventListener::notifyMousePassiveMotion(x, y);
+
+    for(auto &col : columns)
+        for(auto &win : col)
+            if(win->hit(x,y)) win->notifyMousePassiveMotion(x,y);
+
+}
+
+void WindowPanel::notifyMouseMotion(int x, int y) {
+    GLUTEventListener::notifyMouseMotion(x, y);
+
+    for(auto &col : columns)
+        for(auto &win : col)
+            if(win->hit(x,y)) win->notifyMousePassiveMotion(x,y);
+}
+
 
 
 

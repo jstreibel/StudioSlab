@@ -8,8 +8,9 @@
 
 #include <vector>
 #include "Base/Graphics/Artists/Artist.h"
+#include "Base/Backend/GLUT/GLUTEventListener.h"
 
-class Window {
+class Window : public Base::GLUTEventListener {
 public:
 
     Window(int x=0, int y=0, int w=100, int h=100);
@@ -27,6 +28,10 @@ public:
     std::vector<Artist*> content;
 
     void addArtist(Artist *pArtist);
+
+    auto hit(int x, int y) const -> bool;
+
+    bool gotHit = false;
 
 private:
     void _clear() const;

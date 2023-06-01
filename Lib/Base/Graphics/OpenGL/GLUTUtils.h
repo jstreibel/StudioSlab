@@ -46,6 +46,10 @@ namespace GLUTUtils {
 
     OpenGLUtils::FrameBuffer getFrameBuffer();
 
+    int getScreenWidth();
+
+    int getScreenHeight();
+
 }
 
 #endif //STUDIOSLAB_GLUTDEFS_H

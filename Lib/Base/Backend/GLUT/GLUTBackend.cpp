@@ -234,11 +234,14 @@ void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-    //if(ImGui::GetIO().WantCaptureMouse)
+    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
         return;
     }
+
+    auto *outGL = GLUTBackend::GetInstance()->outGL;
+    outGL->notifyMousePassiveMotion(x, y);
 }
 
 void GLUTBackend::mouseMotion(int x, int y)
