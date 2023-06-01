@@ -30,7 +30,7 @@ namespace Phys {
         public:
             PointSetGraph(const String &title);
 
-            void draw(const Window *window) override;
+            void draw(bool decorated, bool clear) override;
 
             void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, String setName);
 

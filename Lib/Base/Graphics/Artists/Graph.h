@@ -26,7 +26,7 @@ namespace Base {
 
     namespace Graphics {
 
-        class Graph2D : public Artist {
+        class Graph2D : public Window {
             typedef std::tuple<RtoR2::ParametricCurve::Ptr, Styles::PlotStyle, String> CurveTriple;
             static auto GetCurve    ( CurveTriple triple ) { return std::get<0>(triple); };
             static auto GetStyle    ( CurveTriple triple ) { return std::get<1>(triple); };
@@ -46,21 +46,21 @@ namespace Base {
             int samples = 512;
 
 
-            void _drawAxes(const Window *win);
-            void __drawXAxis(const Window *win);
-            void __drawYAxis(const Window *win);
+            void _drawAxes();
+            void __drawXAxis();
+            void __drawYAxis();
 
             void __computeSpacings();
 
             void _nameLabelDraw(int i, const Styles::PlotStyle &style, String label, const Window *window);
 
-            void _drawCurves(const Window *win);
+            void _drawCurves();
 
         public:
             Graph2D(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
                   String title = "no_title", bool filled = false, int samples = 512);
 
-            void draw(const Window *window) override;
+            void draw(bool decorated, bool clear) override;
 
             void setupOrtho();
 

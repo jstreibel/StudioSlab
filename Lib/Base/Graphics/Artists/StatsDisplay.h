@@ -6,18 +6,19 @@
 #define STUDIOSLAB_STATSDISPLAY_H
 
 
-#include "Artist.h"
 #include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/WindowManagement/Window.h"
 
 #include <Common/Typedefs.h>
 
 
-class StatsDisplay : public Artist {
+class StatsDisplay : public Window {
     std::vector<std::pair<String, Color>> stats;
 
 public:
     void addVolatileStat(const String& stat, const Color color = {1, 1, 1});
-    void draw(const Window *window) override;
+
+    void draw(bool decorated=false, bool clear=false) override;
 
 
 };

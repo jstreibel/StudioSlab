@@ -55,7 +55,7 @@ void NodeWindow::arrange() {
     }
 }
 
-void NodeWindow::draw(bool decorated, bool clear) const {
+void NodeWindow::draw(bool decorated, bool clear) {
     Window::draw(false, clear);
 
     for(auto win : children)

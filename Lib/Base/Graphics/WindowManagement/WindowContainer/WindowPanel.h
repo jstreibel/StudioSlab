@@ -28,20 +28,19 @@ public:
      */
     bool addWindowToColumn(Window *window, int columnId);
 
-    void reshape(int w, int h) override;
+    void notifyReshape(int newWinW, int newWinH) override;
+
+    void notifyMouseMotion(int x, int y)        override;
+    void notifyMousePassiveMotion(int x, int y) override;
+    void draw(bool decorated, bool clear)       override;
 
     void arrangeWindows();
     void setColumnRelativeWidth(int column, float relWidth);
 
-    void draw(bool decorated, bool clear) const override;
+    float computeReservedWidth()    const;
+    int countFreeWidths()           const;
+    void assertConsistency()        const;
 
-    float computeReservedWidth() const;
-    int countFreeWidths() const;
-    void assertConsistency() const;
-
-    void notifyMouseMotion(int x, int y) override;
-
-    void notifyMousePassiveMotion(int x, int y) override;
 };
 
 

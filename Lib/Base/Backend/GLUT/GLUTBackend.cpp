@@ -316,7 +316,7 @@ void GLUTBackend::reshape(int w, int h)
     auto *outGL = gb->outGL;
 
     if(outGL != nullptr)
-        outGL->notifyReshape(w, h);
+        outGL->notifyScreenReshape(w, h);
 
     glutPostRedisplay();
 }

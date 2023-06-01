@@ -274,7 +274,7 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //}
 }
 
-void R2toR::OutputOpenGLShockwave::notifyReshape(int width, int height) {
+void R2toR::OutputOpenGLShockwave::notifyScreenReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //windowWidth = width;

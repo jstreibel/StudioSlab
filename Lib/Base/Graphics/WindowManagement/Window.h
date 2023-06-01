@@ -11,15 +11,15 @@
 #include "Base/Backend/GLUT/GLUTEventListener.h"
 
 class Window : public Base::GLUTEventListener {
+
 public:
 
     Window(int x=0, int y=0, int w=100, int h=100);
 
-    virtual void draw(bool decorated=true, bool clear=true) const;
+    virtual void draw(bool decorated=true, bool clear=true);
 
-    void setupViewport(bool decorate=true, bool clear=true) const;
-
-    virtual void reshape(int w, int h);
+    void notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
+    virtual void notifyReshape(int newWinW, int newWinH);
 
     int w, h, x, y;
     double winXoffset = 2;
@@ -36,6 +36,7 @@ public:
 private:
     void _clear() const;
     void _decorate() const;
+    void _setupViewport(bool decorate=true, bool clear=true) const;
 
     static constexpr double p = 0.999;
 

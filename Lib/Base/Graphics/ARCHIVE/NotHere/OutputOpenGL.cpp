@@ -9,7 +9,7 @@
 using namespace Base;
 
 OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
-    : OutputChannel("OpenGL output", stepsBetweenDraws), panel(new WindowPanel)
+    : OutputChannel("OpenGL output", stepsBetweenDraws)
 {
 
 }
@@ -22,10 +22,6 @@ void OutputOpenGL::_out(const OutputPacket &outInfo){
 
 auto OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
     return finishFrameAndRender();
-}
-
-bool OutputOpenGL::needDraw() const {
-    return lastData.getSpaceData().first != nullptr;
 }
 
 void OutputOpenGL::draw() {
@@ -91,12 +87,4 @@ IntPair OutputOpenGL::getWindowSizeHint() {
     return {1200, 600};
 }
 
-void OutputOpenGL::notifyReshape(int width, int height) {
-    GLUTEventListener::notifyReshape(width, height);
-
-    osWindowWidth = width;
-    osWindowHeight = height;
-
-    panel->reshape(width, height);
-}
 

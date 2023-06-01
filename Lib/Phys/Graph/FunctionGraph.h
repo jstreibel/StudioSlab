@@ -40,7 +40,7 @@ public:
     /*!
      * Draw presumes OpenGL model view matrix is identity.
      */
-    void draw(const Window *window) override;
+    void draw(bool decorated, bool clear) override;
 
     void addFunction(const FunctionType* func, String name="",
                      Styles::PlotStyle style=Styles::GetColorScheme()->funcPlotStyles[0]);
@@ -62,8 +62,8 @@ FunctionGraph<FunctionType>::FunctionGraph(double xMin, double xMax, double yMin
 
 
 template<class FunctionType>
-void FunctionGraph<FunctionType>::draw(const Window *window) {
-    Graph2D::draw(window);
+void FunctionGraph<FunctionType>::draw(bool decorated, bool clear) {
+    Graph2D::draw(decorated, clear);
 
     int i=0;
     for(auto &triple : mFunctions){
@@ -71,7 +71,7 @@ void FunctionGraph<FunctionType>::draw(const Window *window) {
         auto style = GetStyle(triple);
         auto label = GetName(triple);
 
-        if(label != "") _nameLabelDraw(i++, style, label, window);
+        if(label != "") _nameLabelDraw(i++, style, label, this);
 
         this->_renderFunction(&func, style);
     }

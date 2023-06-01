@@ -10,8 +10,8 @@
 
 Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
 
-void Window::draw(bool decorated, bool clear) const {
-    setupViewport(decorated, clear);
+void Window::draw(bool decorated, bool clear) {
+    _setupViewport(decorated, clear);
 
     for(auto artist : content) artist->draw(this);
 }
@@ -45,7 +45,7 @@ void Window::_decorate() const {
     glEnd();
 }
 
-void Window::setupViewport(bool decorate, bool clear) const {
+void Window::_setupViewport(bool decorate, bool clear) const {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
@@ -69,18 +69,27 @@ void Window::addArtist(Artist *pArtist) {
     content.emplace_back(pArtist);
 }
 
-void Window::reshape(int w, int h) {
-    this->w = w;
-    this->h = h;
-
-    for(auto artist : content)
-        artist->reshape(w, h);
-
-}
-
 auto Window::hit(int _x, int _y) const -> bool {
     auto hScreen = GLUTUtils::getScreenHeight();
 
     const_cast<bool&>(gotHit) = _x > x && _x < x+w && hScreen-_y > y && hScreen-_y < y+h;
     return gotHit;
+}
+
+void Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
+    GLUTEventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
+
+    this->w = newScreenWidth;
+    this->h = newScreenHeight;
+
+    for(auto artist : content)
+        artist->reshape(w, h);
+}
+
+void Window::notifyReshape(int newWinW, int newWinH) {
+    this->w = newWinW;
+    this->h = newWinH;
+
+    for(auto artist : content)
+        artist->reshape(w, h);
 }

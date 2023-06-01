@@ -10,18 +10,18 @@ Base::Graphics::Graph2D::Graph2D(double xMin, double xMax, double yMin, double y
                                  : xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax), title(title),
                                    filled(filled), samples(samples) {       }
 
-void Base::Graphics::Graph2D::_drawAxes(const Window *win) {
+void Base::Graphics::Graph2D::_drawAxes() {
 
     glLineWidth(1.0);
 
     __computeSpacings();
 
-    __drawXAxis(win);
-    __drawYAxis(win);
+    __drawXAxis();
+    __drawYAxis();
 
     if(!labels.empty()){
-        const double Sx = (xMax-xMin) / win->w;
-        const double Sy = (yMax-yMin) / win->h;
+        const double Sx = (xMax-xMin) / w;
+        const double Sy = (yMax-yMin) / h;
         const double Tx = xMin;
         const double Ty = yMin;
 
@@ -46,13 +46,13 @@ void Base::Graphics::Graph2D::__computeSpacings() {
     yspacing = deltaY/10;
 }
 
-void Base::Graphics::Graph2D::__drawXAxis(const Window *win) {
+void Base::Graphics::Graph2D::__drawXAxis() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
     const double inPixelsTimes2 = 5;
-    const double vTick = inPixelsTimes2 * (yMax-yMin) / win->h;
-    const double hTick = inPixelsTimes2 * (xMax-xMin) / win->w;
+    const double vTick = inPixelsTimes2 * (yMax-yMin) / h;
+    const double hTick = inPixelsTimes2 * (xMax-xMin) / w;
     (void)hTick;
 
     auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
@@ -67,12 +67,12 @@ void Base::Graphics::Graph2D::__drawXAxis(const Window *win) {
         for (double mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
         for (double mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(win, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
     }
 
@@ -106,7 +106,7 @@ void Base::Graphics::Graph2D::__drawXAxis(const Window *win) {
 
 }
 
-void Base::Graphics::Graph2D::__drawYAxis(const Window *win) {
+void Base::Graphics::Graph2D::__drawYAxis() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
@@ -131,7 +131,7 @@ void Base::Graphics::Graph2D::__drawYAxis(const Window *win) {
                 buffer << mark;
             else
                 buffer << "0";
-            GLUTUtils::writeOrtho(win, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark),
+            GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark),
                                   buffer.str().c_str(), TICK_FONT);
         }
     }
@@ -163,21 +163,6 @@ void Base::Graphics::Graph2D::__drawYAxis(const Window *win) {
     }
     glEnd();
     glPopAttrib();
-
-}
-
-void Base::Graphics::Graph2D::draw(const Window *window) {
-    setupOrtho();
-
-    //glMatrixMode(GL_MODELVIEW);
-
-    auto &tf = Styles::GetColorScheme()->graphTitleFont;
-    glColor4f(tf.r, tf.g, tf.b, tf.a);
-    //writeOrtho(window, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
-
-    _drawAxes(window);
-
-    _drawCurves(window);
 
 }
 
@@ -275,7 +260,7 @@ Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
     curves.emplace_back(triple);
 }
 
-void Base::Graphics::Graph2D::_drawCurves(const Window *win) {
+void Base::Graphics::Graph2D::_drawCurves() {
     for(auto curveTriple : curves) {
         auto curve = GetCurve(curveTriple);
         auto pointSet = curve.get()->getAsPointSet();
@@ -311,6 +296,22 @@ void Base::Graphics::Graph2D::_drawCurves(const Window *win) {
 
 void Base::Graphics::Graph2D::clearCurves() {
     curves.clear();
+}
+
+void Base::Graphics::Graph2D::draw(bool decorated, bool clear) {
+    Window::draw(decorated, clear);
+
+    setupOrtho();
+
+    //glMatrixMode(GL_MODELVIEW);
+
+    auto &tf = Styles::GetColorScheme()->graphTitleFont;
+    glColor4f(tf.r, tf.g, tf.b, tf.a);
+    //writeOrtho(window, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
+
+    _drawAxes();
+
+    _drawCurves();
 }
 
 

@@ -135,11 +135,8 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     //}
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyReshape(int width, int height) {
+void R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
-
-    osWindowWidth = width;
-    osWindowHeight = height;
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
     //Real phiGraphY = 0;

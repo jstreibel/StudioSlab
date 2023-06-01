@@ -20,13 +20,8 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     //window->addArtist(&mPhiGraph);
     //panel->addWindow(window);
 
-    window = new Window;
-    window->addArtist(&stats);
-    panel->addWindow(window);
-
-    window = new Window;
-    window->addArtist(&mSectionGraph);
-    panel->addWindow(window, true, 0.80);
+    panel->addWindow(&stats);
+    panel->addWindow(&mSectionGraph, true, 0.80);
 
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Color(1,0,0,1));
@@ -104,8 +99,8 @@ void R2toR::OutputOpenGL::draw() {
     panel->draw(true, true);
 }
 
-void R2toR::OutputOpenGL::notifyReshape(int width, int height) {
-    Base::GLUTEventListener::notifyReshape(width, height);
+void R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
+    Base::GLUTEventListener::notifyScreenReshape(width, height);
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
@@ -113,7 +108,7 @@ void R2toR::OutputOpenGL::notifyReshape(int width, int height) {
     //dPhiGraph =    Graph(statsWindowWidth, 0,        minSize, minSize/2, 1.1*xMin, 1.1*xMax, 1.1*yMin, 1.1*yMax);
     //zpr.zprReshape(phiGraph.winX, phiGraph.winY, phiGraph.winW, phiGraph.winH);
 
-    panel->reshape(width, height);
+    panel->notifyReshape(width, height);
 }
 
 void R2toR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {

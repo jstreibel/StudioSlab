@@ -20,16 +20,14 @@ namespace Base {
         OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
         ~OutputOpenGL() override;
 
-        auto needDraw() const -> bool;
         virtual void draw();
         virtual IntPair getWindowSizeHint();
 
-
     // ********************* From GLUTEventListener ************** //
         void notifyRender() final override;
-
-        void notifyReshape(int width, int height) override;
     // ********************* End GLUTEventListener ************** //
+
+
     // ********************* From OutputChannel ********************* //
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
     protected:
@@ -47,13 +45,8 @@ namespace Base {
         bool finishFrameAndRender();
         std::vector<Animation*> animations;
 
-
     protected:
-        int osWindowWidth, osWindowHeight;
-
         Timer frameTimer = Timer();
-
-        WindowPanel *panel;
         StatsDisplay stats;
     };
 }

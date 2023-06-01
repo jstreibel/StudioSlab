@@ -25,20 +25,16 @@ R2toR::LeadingDelta::OutGL::OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
         : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax),
         mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio") {
 
-    auto window = new Window;
     energyRatioData = Spaces::PointSet::New();
     mEnergyRatioGraph.addPointSet(energyRatioData,  Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
-    window->addArtist(&mEnergyRatioGraph);
-    panel->addWindowToColumn(window, 0);
+    panel->addWindowToColumn(&mEnergyRatioGraph, 0);
 
-    window = new Window;
     numericEnergyData = Spaces::PointSet::New();
     analyticEnergyData = Spaces::PointSet::New();
     mEnergyGraph.addPointSet(numericEnergyData,  Styles::GetColorScheme()->funcPlotStyles[0], "Numeric energy");
     mEnergyGraph.addPointSet(analyticEnergyData, Styles::GetColorScheme()->funcPlotStyles[1], "Analytic energy");
-    window->addArtist(&mEnergyGraph);
-    panel->addWindowToColumn(window, 0);
+    panel->addWindowToColumn(&mEnergyGraph, 0);
 
 }
 

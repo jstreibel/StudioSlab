@@ -20,16 +20,17 @@ namespace Base {
         GLUTEventListener() = default;
         virtual ~GLUTEventListener() = default;
 
-        virtual void notifyKeyboard(unsigned char key, int x, int y)          {};
-        virtual void notifyKeyboardSpecial(int key, int x, int y)             {};
-        virtual void notifyMouseButton(int button, int dir, int x, int y)     {};
-        virtual void notifyMouseMotion(int x, int y)                          {};
-        virtual void notifyMousePassiveMotion(int x, int y)                   {};
-        virtual void notifyMouseWheel(int wheel, int direction, int x, int y) {};
+        virtual void notifyKeyboard(unsigned char key, int x, int y)              {};
+        virtual void notifyKeyboardSpecial(int key, int x, int y)                 {};
 
-        virtual void notifyReshape(int width, int height)                     {};
+        virtual void notifyMouseButton(int button, int dir, int x, int y)         {};
+        virtual void notifyMouseMotion(int x, int y)                              {};
+        virtual void notifyMousePassiveMotion(int x, int y)                       {};
+        virtual void notifyMouseWheel(int wheel, int direction, int x, int y)     {};
 
-        virtual void notifyRender()                                           {};
+        virtual void notifyScreenReshape(int newScreenWidth, int newScreenHeight) {};
+
+        virtual void notifyRender()                                               {};
     };
 }
 

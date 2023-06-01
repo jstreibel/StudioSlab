@@ -69,7 +69,6 @@ void WindowPanel::arrangeWindows() {
         x += computedWidths[i];
     }
 
-
     auto i=0;
     for(auto &column : columns){
         auto n = column.size();
@@ -84,7 +83,7 @@ void WindowPanel::arrangeWindows() {
             auto w = computedWidths[i];
             auto h = dy;
 
-            window->reshape(w, h);
+            window->notifyReshape(w, h);
 
             ++j;
         }
@@ -99,7 +98,7 @@ void WindowPanel::setColumnRelativeWidth(int column, float relWidth) {
     assertConsistency();
 }
 
-void WindowPanel::draw(bool decorated, bool clear) const {
+void WindowPanel::draw(bool decorated, bool clear) {
     for(auto &column : columns)
         for(auto window : column)
             window->draw();
@@ -137,12 +136,6 @@ void WindowPanel::assertConsistency() const {
     throw "Inconsistent colusmn widths.";
 }
 
-void WindowPanel::reshape(int w, int h) {
-    Window::reshape(w, h);
-
-    arrangeWindows();
-}
-
 void WindowPanel::notifyMousePassiveMotion(int x, int y) {
     GLUTEventListener::notifyMousePassiveMotion(x, y);
 
@@ -158,6 +151,12 @@ void WindowPanel::notifyMouseMotion(int x, int y) {
     for(auto &col : columns)
         for(auto &win : col)
             if(win->hit(x,y)) win->notifyMousePassiveMotion(x,y);
+}
+
+void WindowPanel::notifyReshape(int newWinW, int newWinH) {
+    Window::notifyReshape(newWinW, newWinH);
+
+    arrangeWindows();
 }
 
 

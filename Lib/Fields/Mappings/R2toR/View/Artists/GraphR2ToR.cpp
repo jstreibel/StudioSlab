@@ -22,9 +22,9 @@ void GraphR2toR::_renderFunction(const R2toR::Function *func, Styles::PlotStyle 
     //zpr.popModelViewMatrix();
 }
 
-void GraphR2toR::reshape(int w, int h) {
-    Artist::reshape(w, h);
+void GraphR2toR::notifyReshape(int newWinW, int newWinH) {
+    Window::notifyReshape(newWinW, newWinH);
 
-    zpr.zprReshape(0, 0, 1800, 1200);
+    zpr.zprReshape(x, y, w, h);
 }
 

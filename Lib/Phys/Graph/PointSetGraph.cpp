@@ -11,23 +11,6 @@ My::PointSetGraph::PointSetGraph(const String &title)
 
 }
 
-void My::PointSetGraph::draw(const Window *window) {
-    _reviewGraphRanges();
-
-    Graph2D::draw(window);
-
-    int i=0;
-    for(auto &triple : mPointSets){
-        auto &func = *GetPointSet(triple);
-        auto style = GetStyle(triple);
-        auto label = GetName(triple);
-
-        if(label != "") _nameLabelDraw(i++, style, label, window);
-
-        this->_renderPointSet(func, style);
-    }
-}
-
 void My::PointSetGraph::addPointSet(Spaces::PointSet::Ptr pointSet,
                                     Styles::PlotStyle style, String setName) {
     auto triple = PointSetTriple{pointSet, style, setName};
@@ -127,6 +110,25 @@ void Phys::Graphing::PointSetGraph::_reviewGraphRanges() {
         xMin -= dx;
         yMax += dy;
         yMin -= dy;
+    }
+}
+
+void Phys::Graphing::PointSetGraph::draw(bool decorated, bool clear) {
+    Graph2D::draw(decorated, clear);
+
+    _reviewGraphRanges();
+
+    Graph2D::draw(decorated, clear);
+
+    int i=0;
+    for(auto &triple : mPointSets){
+        auto &func = *GetPointSet(triple);
+        auto style = GetStyle(triple);
+        auto label = GetName(triple);
+
+        if(label != "") _nameLabelDraw(i++, style, label, this);
+
+        this->_renderPointSet(func, style);
     }
 }
 

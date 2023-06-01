@@ -382,7 +382,7 @@ void RtoR::Signal::OutGL::draw() {
         //func = new RtoR::FunctionArbitraryCPU(damps, xInitDampCutoff_normalized*L, xMax);
 //
         //mFieldsGraph.addFunction(func, Color(1,0,0,1));
-        fieldWindow->setupViewport(false, true);
+        fieldWindow->_setupViewport(false, true);
         mFieldsGraph.setupOrtho();
 //
         //glColor4f(0, 1, 0, 1);

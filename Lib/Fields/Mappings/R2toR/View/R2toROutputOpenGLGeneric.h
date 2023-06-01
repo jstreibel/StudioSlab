@@ -20,7 +20,7 @@ namespace R2toR {
 
 
         void draw() override;
-        void notifyReshape(int width, int height) override;
+        void notifyScreenReshape(int width, int height) override;
 
         void notifyMouseButton(int button, int dir, int x, int y) override;
 

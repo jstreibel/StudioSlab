@@ -18,21 +18,23 @@ void StatsDisplay::addVolatileStat(const String &stat, const Color color)
     stats.emplace_back(stat, color);
 }
 
-void StatsDisplay::draw(const Window *window) {
+void StatsDisplay::draw(bool decorated, bool clear) {
+    Window::draw(false, false);
+
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    float w = float(window->w) - (float)2*window->winXoffset,
-          h = float(window->h) - (float)2*window->winYoffset;
-    float x = window->x+window->winXoffset;
-    float y = displayHeight - (h + window->y + window->winYoffset);
+    float w_ = float(w) - (float)2*winXoffset,
+            h_ = float(h) - (float)2*winYoffset;
+    float x_ = x+winXoffset;
+    float y_ = displayHeight - (h_ + y + winYoffset);
 
     bool closable=false;
 
     ImGui::Begin("Stats", &closable,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
-    ImGui::SetWindowPos(ImVec2{x, y});
-    ImGui::SetWindowSize(ImVec2{w, h});
+    ImGui::SetWindowPos(ImVec2{x_, y_});
+    ImGui::SetWindowSize(ImVec2{w_, h_});
     for (auto stat: stats) {
         const auto c = stat.second;
         const auto text = stat.first.c_str();
@@ -62,7 +64,7 @@ void StatsDisplay::draw(const Window *window) {
                 auto color = stat.second;
                 glColor3f(color.r, color.g, color.b);
                 std::string text = stat.first;
-                GLUTUtils::writeBitmap(window, cursorx, -delta, text, font);
+                GLUTUtils::writeBitmap(this, cursorx, -delta, text, font);
                 delta += lineHeight;
             }
         }
