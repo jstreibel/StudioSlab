@@ -10,7 +10,6 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(GLUT)
 find_package(OpenGL)
 
-
 include_directories (
 		./
 		../

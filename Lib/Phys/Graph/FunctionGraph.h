@@ -6,7 +6,7 @@
 #define V_SHAPE_GRAPH_H
 
 
-#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Utils.h"
 #include "Base/Graphics/Artists/Artist.h"
 
 #include "Common/Utils.h"

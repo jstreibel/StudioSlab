@@ -6,7 +6,7 @@
 #define STUDIOSLAB_STATSDISPLAY_H
 
 
-#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Utils.h"
 #include "Base/Graphics/Window/Window.h"
 
 #include "Common/Types.h"

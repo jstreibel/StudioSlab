@@ -1,6 +1,6 @@
 
 set ( SlabLibs
-		Slab-Common
+		Slab-Utils
 
 		Slab-Studios-App
 		Slab-Studios-Backend
@@ -63,15 +63,9 @@ target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Perio
 # ************************************************************************************************************
 
 
-
-# Find VTK package
-#find_package(VTK REQUIRED)
-find_package(VTK)
-
 add_executable ( Fields-R2toR Fields/R2toR/MainR2toR.cpp Fields/R2toR/LeadingDelta/LeadingDelta.cpp)
 target_link_libraries ( Fields-R2toR
 		Slab-Fields-Maps-R2toR_GPU
-		${VTK_LIBRARIES}
 		)
 
 set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)

@@ -129,12 +129,12 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
 set ( MAPS_LINKS
-		Slab-Studios-App
-		Slab-Studios-Backend
-		Slab-Studios-Controller
+		Slab-Base-App
+		Slab-Base-Backend
+		Slab-Base-Controller
+		Slab-Base-Graphics
+		Slab-Utils
 		Slab-Phys
-		Slab-Studios-Graphics
-		Slab-Studios-Tools
 		)
 
 # |R |--> |R

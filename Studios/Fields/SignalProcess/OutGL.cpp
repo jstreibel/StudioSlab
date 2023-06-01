@@ -7,7 +7,7 @@
 #include "JackServer.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
-#include "Base/Tools/Resample.h"
+#include "Common/UtilsCollection/Resample.h"
 #include "3rdParty/imgui/imgui.h"
 
 #include <Fields/Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>

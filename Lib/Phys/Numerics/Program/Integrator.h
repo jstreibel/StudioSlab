@@ -14,7 +14,7 @@
 #include "Phys/Numerics/Method/Method-MCBase.h"
 
 #include <Base/Backend/Program.h>
-#include <Base/Tools/BenchmarkHistogram.h>
+#include "Common/UtilsCollection/BenchmarkHistogram.h"
 
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \

@@ -29,26 +29,23 @@ if(&NAME == nullptr) throw "Bad cast.";
 
 namespace Common {
 
-    void PrintThere(int x, int y, const char *format, ...);
-
-    auto GetDensityChar(float dens) -> char;
-
-    void PrintDensityThere(int x, int y, float dens);
+    void                    PrintThere(int x, int y, const char *format, ...);
+    auto                    GetDensityChar(float dens) -> char;
+    void                    PrintDensityThere(int x, int y, float dens);
 
     template<typename T>
-    bool contains(const std::vector<T> &vec, const T &val) {
+    bool                    contains(const std::vector<T> &vec, const T &val) {
         return std::find(vec.begin(), vec.end(), val) != vec.end();
     }
-
-    StrVector splitString(const String& input, char delimiter);
-
     template<typename T>
-    bool Contains(std::vector<T> vec, T element) {
+    bool                    Contains(std::vector<T> vec, T element) {
         return std::find(vec.begin(), vec.end(), element) != vec.end();
     }
 
-    unsigned BinaryToUInt(std::string binary, char zero='0', char one='1');
-    unsigned short BinaryToUShort(std::string binary, char zero='0', char one='1');
+    StrVector               splitString(const String& input, char delimiter);
+
+    unsigned                BinaryToUInt(std::string binary, char zero='0', char one='1');
+    unsigned short          BinaryToUShort(std::string binary, char zero='0', char one='1');
 
 }
 

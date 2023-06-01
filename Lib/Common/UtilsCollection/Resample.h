@@ -7,10 +7,6 @@
 
 #include <vector>
 
-
-
-
-
 #include <vector>
 #include <libresample.h>
 

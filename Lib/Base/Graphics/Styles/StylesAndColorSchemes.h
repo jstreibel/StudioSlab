@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_STYLESANDCOLORSCHEMES_H
 #define STUDIOSLAB_STYLESANDCOLORSCHEMES_H
 
-#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Utils.h"
 
 #ifndef TITLE_FONT
 #define TITLE_FONT FONT_BITMAP_9

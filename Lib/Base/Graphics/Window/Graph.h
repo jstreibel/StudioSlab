@@ -8,7 +8,7 @@
 
 #include "Common/Utils.h"
 
-#include "Base/Graphics/PlottingUtils.h"
+#include "Base/Graphics/Utils.h"
 #include "Base/Graphics/Artists/Label.h"
 
 #include "Base/Graphics/Window/Window.h"
