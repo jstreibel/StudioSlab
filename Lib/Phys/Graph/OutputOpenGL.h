@@ -3,8 +3,8 @@
 
 #include "Phys/Numerics/Output/Channel/OutputChannel.h"
 
-#include "Window.h"
-#include "StatsDisplay.h"
+#include "Base/Graphics/Window/Window.h"
+#include "Base/Graphics/Window/StatsDisplay.h"
 
 #include <iostream>
 #include <vector>

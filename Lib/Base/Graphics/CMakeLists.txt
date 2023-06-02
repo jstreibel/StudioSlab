@@ -13,13 +13,13 @@ set( GRAPHICS_SOURCES
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp
 
-		Window/OutputOpenGL.cpp
+		../../Phys/Graph/OutputOpenGL.cpp
 
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp
 
 		OpenGL/Utils.cpp
-		Window/Graph.cpp Window/Graph.h)
+		../../Phys/Graph/Graph.cpp ../../Phys/Graph/Graph.h)
 
 add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Graphics

@@ -7,6 +7,7 @@
 
 #include "Phys/Formalism/Categories.h"
 #include "Phys/Space/Space.h"
+#include "Phys/Space/Impl/PointSet.h"
 
 #include <Common/Types.h>
 
@@ -78,6 +79,8 @@ namespace Base {
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
         virtual String myName() const { return "unnamed"; }
+
+        virtual Spaces::PointSet::Ptr renderPointSet(InputCategory dx) { throw "Not implemented."; };
 
     };
 }

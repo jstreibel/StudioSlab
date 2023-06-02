@@ -15,7 +15,7 @@
 
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
-#include "Base/Graphics/Window/Graph.h"
+#include "Graph.h"
 
 #include <memory>
 

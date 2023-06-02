@@ -3,7 +3,7 @@
 
 #include "GLUTEventListener.h"
 #include "Base/Backend/Backend.h"
-#include "Base/Graphics/Window/OutputOpenGL.h"
+#include "Phys/Graph/OutputOpenGL.h"
 
 class GLUTBackend : public Backend
 {

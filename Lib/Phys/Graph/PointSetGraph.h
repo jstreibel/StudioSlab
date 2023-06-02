@@ -6,7 +6,7 @@
 #define STUDIOSLAB_POINTSETGRAPH_H
 
 
-#include "Base/Graphics/Window/Graph.h"
+#include "Graph.h"
 #include "Phys/Space/Impl/PointSet.h"
 
 namespace Phys {
