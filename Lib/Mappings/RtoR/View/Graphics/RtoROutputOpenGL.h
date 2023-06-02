@@ -14,7 +14,7 @@
 
 namespace RtoR {
 
-    class OutputOpenGL : public Base::OutputOpenGL {
+    class OutputOpenGL : public Graphics::OutputOpenGL {
         bool isInitialized = false;
     public:
         OutputOpenGL(double xMin, double xMax, double phiMin, double phiMax);

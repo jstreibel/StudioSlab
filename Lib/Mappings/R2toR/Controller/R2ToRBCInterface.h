@@ -6,15 +6,15 @@
 #define STUDIOSLAB_R2TORBCINTERFACE_H
 
 
-#include "Mappings/BCInterface.h"
+#include "Mappings/BCBuilder.h"
 #include "Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
 
-class R2toRBCInterface : public Base::BCInterface {
+class R2toRBCInterface : public Base::BCBuilder {
     String name;
 public:
     explicit R2toRBCInterface(String generalDescription,
                               String name = "",
-                              OutputStructureBuilderBase *outputStructureBuilder = new OutputStructureBuilderR2toR,
+                              Numerics::OutputSystem::StructureBuilder *outputStructureBuilder = new OutputStructureBuilderR2toR,
                               bool selfRegister=false);
 
     auto buildOutputManager() -> OutputManager * override;

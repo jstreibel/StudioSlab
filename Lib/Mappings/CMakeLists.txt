@@ -51,7 +51,7 @@ endif()
 
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
-		BCInterface.cpp
+		BCBuilder.cpp
 
 
 		RtoR/App/FieldsApp-RtoR.cpp
@@ -111,7 +111,7 @@ set ( RTOR_SOURCES
 
 set ( R2TOR_SOURCES
 		FunctionRenderer.cpp
-		BCInterface.cpp
+		BCBuilder.cpp
 
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 		RtoR/View/Graphics/Artists/GraphRtoR.cpp

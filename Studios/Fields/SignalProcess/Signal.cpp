@@ -6,6 +6,7 @@
 
 #include "JackServer.h"
 #include "OutGL.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 #include <Phys/Numerics/Output/OutputManager.h>
 
@@ -30,7 +31,7 @@ Real t0 = 5;
  *    \________|(____  / \___  >|__|_ \      \____|__  /|____/ \____ | |__| \____/
  *                   \/      \/      \/              \/             \/
  */
-RtoR::Signal::JackOutput::JackOutput() : OutputChannel("Jack output", 1) {
+RtoR::Signal::JackOutput::JackOutput() : Numerics::OutputSystem::Plug("Jack output", 1) {
     JackServer::GetInstance();
 
     auto params = Numerics::Allocator::getInstance().getNumericParams();
@@ -47,7 +48,7 @@ void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
     *JackServer::GetInstance() << measure;
 }
 bool RtoR::Signal::JackOutput::shouldOutput(double t, unsigned long timestep) {
-    return OutputChannel::shouldOutput(t, timestep);
+    return Plug::shouldOutput(t, timestep);
 }
 
 

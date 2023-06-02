@@ -1,9 +1,10 @@
 #include "OutputConsoleMonitor.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 #include <Phys/Numerics/Allocator.h>
 
 OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps, bool doCarrierReturn)
-    : OutputChannel("Console monitor output", n_steps),
+    : Plug("Console monitor output", n_steps),
       maxT(Numerics::Allocator::getInstance().getNumericParams().gett()),
       steppingChar(doCarrierReturn ? '\r' : '\n')
 {

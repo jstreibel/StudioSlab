@@ -15,8 +15,6 @@ namespace RtoR2 {
     public:
         typedef std::shared_ptr<ParametricCurve> Ptr;
 
-        virtual Spaces::PointSet::Ptr getAsPointSet() const { throw "Not implemented."; };
-
     };
 }
 

@@ -6,7 +6,6 @@
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
 
-#include "Mappings/R2toR/Controller/R2ToRInputShockwave.h"
 #include "GrowingHole/GrowingHoleInput.h"
 #include "DiracSpeedInput.h"
 #include "LeadingDelta/LeadingDelta.h"
@@ -29,6 +28,8 @@ int main(int argc, const char **argv) {
         // /* sim 2 */im.registerCandidate(new R2toR::R2toRInputRadialShockwave);
 
         im.preParse(argc, argv);
+
+        auto selection = im.getCurrentCandidate();
 
         auto prog = SimulationsAppR2toR(argc, argv);
 

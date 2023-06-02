@@ -21,7 +21,8 @@ namespace RtoR2 {
         StraightLine(Real2D x0, Real2D xf, Real sMin=0, Real sMax=1);
         StraightLine(const StraightLine& line);
 
-        Spaces::PointSet::Ptr getAsPointSet() const override;
+
+        Spaces::PointSet::Ptr renderPointSet(PointSetRenderingOptions options) override;
 
         static Ptr New(Real2D x0, Real2D xf);
 

@@ -9,7 +9,7 @@
 #include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
-#include "Phys/Numerics/Output/Channel/OutputHistoryToFile.h"
+#include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 
 #include "Mappings/RtoR2/StraightLine.h"
 #include "Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
@@ -18,6 +18,8 @@
 #include "Base/Backend/Console/ConsoleBackend.h"
 
 #include "R2toROutputOpenGLGeneric.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 OutputManager*
 OutputStructureBuilderR2toR::build(String outputFileName) {
@@ -70,7 +72,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 
         auto fileName = outputFileName + "-N=" + ToString(N, 0);
 
-        OutputChannel *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
+        Numerics::OutputSystem::Plug *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
 
         fileOutputStepsInterval = out->getNSteps();
         outputManager->addOutputChannel(out);

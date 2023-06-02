@@ -6,19 +6,19 @@
 #define V_SHAPE_OPENGLARTISTBASE_H
 
 
-#include <Base/Graphics/Animation.h>
+#include "Base/Graphics/Animation.h"
 
-#include <Common/Types.h>
-#include <Common/Utils.h>
-#include <Common/Timer.h>
+#include "Common/Types.h"
+#include "Common/Utils.h"
+#include "Common/Timer.h"
 
 
 namespace Base {
 
-    class GLUTEventListener {
+    class EventListener {
     public:
-        GLUTEventListener() = default;
-        virtual ~GLUTEventListener() = default;
+        EventListener() = default;
+        virtual ~EventListener() = default;
 
         virtual void notifyKeyboard(unsigned char key, int x, int y)              {};
         virtual void notifyKeyboardSpecial(int key, int x, int y)                 {};

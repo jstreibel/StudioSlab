@@ -13,7 +13,7 @@
 #include <filesystem>
 
 R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave()
-                                  : Base::OutputOpenGL()
+                                  : Graphics::OutputOpenGL()
 {
     std::cout << "Initialized R2toRMap::OutputOpenGL." << std::endl;
 }

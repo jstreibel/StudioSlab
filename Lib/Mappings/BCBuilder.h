@@ -1,7 +1,7 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Phys/Numerics/Output/OutputStructureBuilderBase.h"
+#include "Phys/Numerics/Output/StructureBuilder.h"
 #include "Base/Controller/Interface/Interface.h"
 
 namespace Base {
@@ -9,18 +9,19 @@ namespace Base {
     /** Boundary conditions interface
      *
      */
-    class BCInterface : public Interface {
+    class BCBuilder : public Interface {
     protected:
-        OutputStructureBuilderBase *outputStructureBuilder;
+        Numerics::OutputSystem::StructureBuilder *outputStructureBuilder;
         String prefix = "";
+
+        explicit BCBuilder(String generalDescription, Numerics::OutputSystem::StructureBuilder* osb, String prefix="", bool selfRegister=false);
     public:
-        explicit BCInterface(String generalDescription, OutputStructureBuilderBase* osb, String prefix="", bool selfRegister=false);
 
         virtual auto getBoundary() const -> const void * = 0;
 
         virtual auto buildOutputManager() -> OutputManager * = 0;
 
-        auto getOutputStructureBuilder() -> OutputStructureBuilderBase *;
+        auto getOutputStructureBuilder() -> Numerics::OutputSystem::StructureBuilder *;
 
         auto toString() const -> String override;
     };

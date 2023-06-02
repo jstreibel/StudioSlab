@@ -2,16 +2,18 @@
 #define OUTPUTMANAGER_H
 
 
-#include "Mappings/BCInterface.h"
-#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+#include "Mappings/BCBuilder.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 
 class OutputManager {
 
 protected:
 
-	std::vector<OutputChannel*> outputs;
-	std::vector<OutputChannel*> myOutputs;
+	std::vector<Numerics::OutputSystem::Plug*> outputs;
+	std::vector<Numerics::OutputSystem::Plug*> myOutputs;
 
 
 public:
@@ -33,7 +35,7 @@ public:
     auto computeNStepsToNextOutput(PosInt currStep) -> PosInt;
 
     /****** INPUT/OUTPUT ******/
-    void addOutputChannel(OutputChannel *out, bool keepTrack = true);
+    void addOutputChannel(Numerics::OutputSystem::Plug *out, bool keepTrack = true);
 
 
 private:

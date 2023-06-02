@@ -77,7 +77,7 @@ auto Window::doesHit(int _x, int _y) const -> bool {
 }
 
 void Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-    GLUTEventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
+    EventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
 
     this->w = newScreenWidth;
     this->h = newScreenHeight;

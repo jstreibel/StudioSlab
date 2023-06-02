@@ -1,9 +1,9 @@
 #ifndef OUTPUTSNAPSHOTS1D_H
 #define OUTPUTSNAPSHOTS1D_H
 
-#include "OutputChannel.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
-class OutputSnapshot : public OutputChannel {
+class OutputSnapshot : public Numerics::OutputSystem::Plug {
 
 private:
     std::vector<size_t> snapSteps;

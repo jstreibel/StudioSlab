@@ -3,20 +3,20 @@
 //
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
-#include "BCInterface.h"
+#include "BCBuilder.h"
 
-Base::BCInterface::BCInterface(String generalDescription, OutputStructureBuilderBase* osb,
-                               String prefix, bool selfRegister)
+Base::BCBuilder::BCBuilder(String generalDescription, Numerics::OutputSystem::StructureBuilder* osb,
+                           String prefix, bool selfRegister)
  : Interface(generalDescription, true), outputStructureBuilder(osb), prefix(prefix)
 {
     if(selfRegister) InterfaceSelector::getInstance().registerOption(this);
 }
 
-auto Base::BCInterface::getOutputStructureBuilder() -> OutputStructureBuilderBase * {
+auto Base::BCBuilder::getOutputStructureBuilder() -> Numerics::OutputSystem::StructureBuilder * {
     return outputStructureBuilder;
 }
 
-String Base::BCInterface::toString() const {
+String Base::BCBuilder::toString() const {
     auto strParams = Interface::toString();
 
     auto str = prefix + "-" + strParams;

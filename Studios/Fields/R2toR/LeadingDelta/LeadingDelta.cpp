@@ -206,7 +206,7 @@ void R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
 }
 
 void R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
-    GLUTEventListener::notifyMousePassiveMotion(x, y);
+    EventListener::notifyMousePassiveMotion(x, y);
 
     if(panel->doesHit(x, y)) panel->notifyMousePassiveMotion(x, y);
 }

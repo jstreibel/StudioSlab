@@ -49,13 +49,13 @@ set ( NUMERICS_SOURCES
 		Numerics/Program/NumericParams.cpp
 
 		Numerics/Output/OutputManager.cpp
-		Numerics/Output/OutputStructureBuilderBase.cpp
+		Numerics/Output/StructureBuilder.cpp
 
-		Numerics/Output/Channel/OutputChannel.cpp
-		Numerics/Output/Channel/OutputConsoleMonitor.cpp
-		Numerics/Output/Channel/HistoryKeeper.cpp
-		Numerics/Output/Channel/OutputHistoryToFile.cpp
-		Numerics/Output/Channel/OutputSnapshots.cpp
+		Numerics/Output/Plugs/Plug.cpp
+		Numerics/Output/Plugs/OutputConsoleMonitor.cpp
+		Numerics/Output/Plugs/HistoryKeeper.cpp
+		Numerics/Output/Plugs/OutputHistoryToFile.cpp
+		Numerics/Output/Plugs/OutputSnapshots.cpp
 
 		Numerics/Output/Format/BinarySOF.cpp
 		Numerics/Output/Format/CustomStringSeparatedSOF.cpp

@@ -8,9 +8,9 @@
 
 #include <vector>
 #include "Base/Graphics/Artists/Artist.h"
-#include "Base/Backend/GLUT/GLUTEventListener.h"
+#include "Base/Backend/Events/EventListener.h"
 
-class Window : public Base::GLUTEventListener {
+class Window : public Base::EventListener {
     std::vector<Artist*> content;
 
 public:

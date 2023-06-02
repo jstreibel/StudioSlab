@@ -8,6 +8,8 @@
 #include <Base/Controller/Interface/Interface.h>
 
 class AppBase : protected Interface {
+
+
 protected:
     AppBase(int argc, const char *argv[]);
 

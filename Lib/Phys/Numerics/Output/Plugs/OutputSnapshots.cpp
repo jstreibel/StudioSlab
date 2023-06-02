@@ -5,12 +5,13 @@
 #include "OutputSnapshots.h"
 
 #include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 
 OutputSnapshot::OutputSnapshot(const String &customFileDescription, const size_t T_fileNamePrecision)
-        : OutputChannel("Snapshot output", 1), customFileDescription(customFileDescription),
+        : Numerics::OutputSystem::Plug("Snapshot output", 1), customFileDescription(customFileDescription),
           T_fileNamePrecision(T_fileNamePrecision)
 { }
 

@@ -14,7 +14,7 @@
 #include "Mappings/R2toR/View/Artists/GraphR2Section.h"
 
 namespace R2toR {
-    class OutputOpenGL : public Base::OutputOpenGL {
+    class OutputOpenGL : public Graphics::OutputOpenGL {
     public:
         OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 

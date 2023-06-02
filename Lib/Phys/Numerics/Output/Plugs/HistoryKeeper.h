@@ -1,12 +1,12 @@
 #ifndef OUTPUTHISTORY_H
 #define OUTPUTHISTORY_H
 
-#include "OutputChannel.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
 
 #define M_GUESS 1024 //1048576 // 1024*1024
 
-class HistoryKeeper : public OutputChannel
+class HistoryKeeper : public Numerics::OutputSystem::Plug
 {
 private:
     /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,

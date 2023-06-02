@@ -1,7 +1,7 @@
 #ifndef GLUTBACKEND_H
 #define GLUTBACKEND_H
 
-#include "GLUTEventListener.h"
+#include "Base/Backend/Events/EventListener.h"
 #include "Base/Backend/Backend.h"
 #include "Phys/Graph/OutputOpenGL.h"
 
@@ -17,7 +17,7 @@ class GLUTBackend : public Backend
 public:
     static GLUTBackend *GetInstance();
 
-    void setOpenGLOutput(Base::OutputOpenGL *outputOpenGL);
+    void setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL);
 
 
     void run(Program *) override;
@@ -42,7 +42,7 @@ public:
 
 private:
 	Program *program = nullptr;
-    Base::OutputOpenGL *outGL = nullptr;
+    Graphics::OutputOpenGL *outGL = nullptr;
 
     int steps = 50;
 

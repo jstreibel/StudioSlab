@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include "Mappings/BCInterface.h"
+#include "Mappings/BCBuilder.h"
 
 #include "Common/NativeTypes.h"
-#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 #include "R2ToRBCInterface.h"
 
 namespace R2toR {

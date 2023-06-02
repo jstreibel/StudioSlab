@@ -9,7 +9,7 @@
 
 
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-    : Base::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
+    : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
       phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel),
       mSectionGraph(xMin, xMax, phiMin, phiMax, "", true,
                     Numerics::Allocator::getInstance().getNumericParams().getN()*3)
@@ -100,7 +100,7 @@ void R2toR::OutputOpenGL::draw() {
 }
 
 void R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
-    Base::GLUTEventListener::notifyScreenReshape(width, height);
+    Base::EventListener::notifyScreenReshape(width, height);
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));

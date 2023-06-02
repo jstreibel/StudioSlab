@@ -400,7 +400,7 @@ auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
     return {2600, 1700}; }
 
 void RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
-    GLUTEventListener::notifyKeyboard(key, x, y);
+    EventListener::notifyKeyboard(key, x, y);
 
     if(key == 13) t0 = lastData.getSimTime();
 }

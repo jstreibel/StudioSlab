@@ -9,7 +9,7 @@
 #include "Base/Backend/Backend.h"
 
 
-#include "Phys/Numerics/Output/OutputStructureBuilderBase.h"
+#include "Phys/Numerics/Output/StructureBuilder.h"
 
 #include "Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
 #include "Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
@@ -28,7 +28,7 @@ SimulationsAppR2toR::SimulationsAppR2toR(int argc, const char **argv)
 }
 
 auto SimulationsAppR2toR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCInterface*>(InterfaceSelector::getInstance().getCurrentCandidate());
+    auto *bcInput = dynamic_cast<Base::BCBuilder*>(InterfaceSelector::getInstance().getCurrentCandidate());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();

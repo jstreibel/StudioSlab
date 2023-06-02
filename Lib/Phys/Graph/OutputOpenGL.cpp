@@ -4,20 +4,22 @@
 
 
 #include "Phys/Numerics/Allocator.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 
 using namespace Base;
 
-OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
-    : OutputChannel("OpenGL output", stepsBetweenDraws) { }
+Graphics::OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
+    : Numerics::OutputSystem::Plug("OpenGL output", stepsBetweenDraws) { }
 
-void OutputOpenGL::_out(const OutputPacket &outInfo){ /* Do nothing */ }
+void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo){ /* Do nothing */ }
 
-auto OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+auto Graphics::OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
     return finishFrameAndRender();
 }
 
-bool OutputOpenGL::finishFrameAndRender() {
+bool Graphics::OutputOpenGL::finishFrameAndRender() {
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -40,13 +42,13 @@ bool OutputOpenGL::finishFrameAndRender() {
     return true;
 }
 
-void OutputOpenGL::notifyRender() {
+void Graphics::OutputOpenGL::notifyRender() {
     Window::notifyRender();
 
     finishFrameAndRender();
 }
 
-void OutputOpenGL::draw() {
+void Graphics::OutputOpenGL::draw() {
     Window::draw();
 }
 

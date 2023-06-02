@@ -1,19 +1,18 @@
 #ifndef OUTPUTOPENGL_H
 #define OUTPUTOPENGL_H
 
-#include "Phys/Numerics/Output/Channel/OutputChannel.h"
-
 #include "Base/Graphics/Window/Window.h"
 #include "Base/Graphics/Window/StatsDisplay.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 #include <iostream>
 #include <vector>
 
-namespace Base {
+namespace Graphics {
 
     #define isOutputOpenGL(output) (dynamic_cast<Base::OutputOpenGL*>(output) != nullptr)
 
-    class OutputOpenGL : public OutputChannel, public Window {
+    class OutputOpenGL : public Numerics::OutputSystem::Plug, public Window {
     protected:
         void draw() override;
 

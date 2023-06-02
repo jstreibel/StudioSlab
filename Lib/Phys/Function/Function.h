@@ -80,7 +80,26 @@ namespace Base {
 
         virtual String myName() const { return "unnamed"; }
 
-        virtual Spaces::PointSet::Ptr renderPointSet(InputCategory dx) { throw "Not implemented."; };
+        struct PointSetRenderingOptions {
+            PointSetRenderingOptions()                        : hint(UseChoiceResolution)            {}
+            PointSetRenderingOptions(const InputCategory &dx) : hint(UseCustomResolution_dx), dx(dx) {};
+            PointSetRenderingOptions(PosInt n)                : hint(UseCustomResolution_n),  n(n)   {};
+
+
+            const enum Hint {
+                UseChoiceResolution,
+                UseCustomResolution_dx,
+                UseCustomResolution_n,
+            } hint = UseChoiceResolution;
+
+            InputCategory dx;
+            PosInt n;
+        };
+
+        virtual Spaces::PointSet::Ptr
+        renderPointSet(PointSetRenderingOptions options = PointSetRenderingOptions()) {
+            throw "Not implemented.";
+        };
 
     };
 }

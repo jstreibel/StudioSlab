@@ -4,7 +4,7 @@ set( BACKEND_SOURCE
 
 set( GRAPHIC_BACKEND_SOURCE
 		GLUT/GLUTBackend.cpp
-		GLUT/GLUTEventListener.cpp
+		Events/EventListener.cpp
 		../Graphics/OpenGL/GLUTUtils.h
 		../Graphics/OpenGL/GLUTUtils.cpp
 

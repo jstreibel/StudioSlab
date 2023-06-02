@@ -5,8 +5,8 @@
 #include "R2ToRBCInterface.h"
 
 R2toRBCInterface::R2toRBCInterface(String generalDescription, String name,
-                                   OutputStructureBuilderBase *outputStructureBuilder, bool selfRegister)
-                                   : Base::BCInterface(generalDescription, outputStructureBuilder,
+                                   Numerics::OutputSystem::StructureBuilder *outputStructureBuilder, bool selfRegister)
+                                   : Base::BCBuilder(generalDescription, outputStructureBuilder,
                                                        "R2toR-" + name, selfRegister), name(name)
 {
     addSubInterface(outputStructureBuilder);

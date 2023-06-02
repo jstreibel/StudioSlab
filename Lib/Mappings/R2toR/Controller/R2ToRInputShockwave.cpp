@@ -6,7 +6,7 @@
 
 #include "Common/Utils.h"
 
-#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 #include "Phys/Formalism/Categories.h"
 

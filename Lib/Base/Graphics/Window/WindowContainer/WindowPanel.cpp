@@ -136,7 +136,7 @@ void WindowPanel::assertConsistency() const {
 }
 
 void WindowPanel::notifyMousePassiveMotion(int x, int y) {
-    GLUTEventListener::notifyMousePassiveMotion(x, y);
+    EventListener::notifyMousePassiveMotion(x, y);
 
     for(auto &col : columns)
         for(auto &win : col)
@@ -145,7 +145,7 @@ void WindowPanel::notifyMousePassiveMotion(int x, int y) {
 }
 
 void WindowPanel::notifyMouseMotion(int x, int y) {
-    GLUTEventListener::notifyMouseMotion(x, y);
+    EventListener::notifyMouseMotion(x, y);
 
     for(auto &col : columns)
         for(auto &win : col)

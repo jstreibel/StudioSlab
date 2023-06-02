@@ -14,7 +14,7 @@
 
 
 R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0()
-        : Base::OutputOpenGL()
+        : Graphics::OutputOpenGL()
 
 {
     yMax=1;yMin=-1;

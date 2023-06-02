@@ -263,7 +263,7 @@ Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
 void Base::Graphics::Graph2D::_drawCurves() {
     for(auto curveTriple : curves) {
         auto curve = GetCurve(curveTriple);
-        auto pointSet = curve.get()->getAsPointSet();
+        auto pointSet = curve.get()->renderPointSet();
         auto points = pointSet.get()->getPoints();
 
         if(points.size()<2) continue;

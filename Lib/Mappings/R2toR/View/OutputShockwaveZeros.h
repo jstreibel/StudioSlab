@@ -6,7 +6,7 @@
 #define V_SHAPE_OUTPUTSHOCKWAVEZEROS_H
 
 
-#include "Phys/Numerics/Output/Channel/OutputChannel.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 #include <fstream>
 
 

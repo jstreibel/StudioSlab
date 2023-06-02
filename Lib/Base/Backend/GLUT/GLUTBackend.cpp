@@ -101,7 +101,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     std::cout << "Initialized Imgui." << std::endl;
 }
 
-void GLUTBackend::setOpenGLOutput(Base::OutputOpenGL *outputOpenGL) {
+void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
     this->outGL = outputOpenGL;
 
     IntPair size = outGL->getWindowSizeHint();

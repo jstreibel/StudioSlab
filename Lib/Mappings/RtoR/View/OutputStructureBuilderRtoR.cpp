@@ -16,16 +16,16 @@
 #include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
 #include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"
 
-#include "Phys/Numerics/Output/Channel/OutputHistoryToFile.h"
-#include "Phys/Numerics/Output/Channel/OutputConsoleMonitor.h"
+#include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
+#include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Backend/Console/ConsoleBackend.h"
+#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 
-
-OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : OutputStructureBuilderBase() {
+OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : StructureBuilder() {
 
 }
 
@@ -61,8 +61,8 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
 
         outputFileName += String("-N=") + ToString(N, 0);
 
-        OutputChannel *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
-                                                     outputFileName, outputFilter);
+        Numerics::OutputSystem::Plug *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
+                                                                    outputFileName, outputFilter);
         fileOutputStepsInterval = out->getNSteps();
         outputManager->addOutputChannel(out);
     }
