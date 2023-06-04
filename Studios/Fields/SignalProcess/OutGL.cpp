@@ -399,7 +399,7 @@ void RtoR::Signal::OutGL::draw() {
 auto RtoR::Signal::OutGL::getWindowSizeHint() -> IntPair {
     return {2600, 1700}; }
 
-void RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
     EventListener::notifyKeyboard(key, x, y);
 
     if(key == 13) t0 = lastData.getSimTime();

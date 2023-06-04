@@ -15,12 +15,15 @@ set( GRAPHIC_BACKEND_SOURCE
 set( CONSOLE_BACKEND_SOURCE
 		Console/ConsoleBackend.cpp)
 
-add_library(${STUDIOS_LIB_BASE_NAME}-Backend ${BACKEND_SOURCE} ${GRAPHIC_BACKEND_SOURCE} ${CONSOLE_BACKEND_SOURCE})
 
-target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Backend
+set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Backend )
+
+add_library(${LIB_LOCAL_NAME} ${BACKEND_SOURCE} ${GRAPHIC_BACKEND_SOURCE} ${CONSOLE_BACKEND_SOURCE})
+
+target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-3rdParty-Imgui
-		Slab-Common
-		Slab-Studios-Graphics
+		Slab-Utils
+		Slab-Base-Graphics
 
 		glut
 
@@ -32,3 +35,5 @@ target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Backend
 		sfml-system
 
 		)
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

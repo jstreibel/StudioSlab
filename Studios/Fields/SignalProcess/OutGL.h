@@ -45,7 +45,7 @@ namespace RtoR {
 
             auto getWindowSizeHint() -> IntPair override;
 
-            void notifyKeyboard(unsigned char key, int x, int y) override;
+            bool notifyKeyboard(unsigned char key, int x, int y) override;
         };
     }
 }

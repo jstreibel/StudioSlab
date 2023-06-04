@@ -123,11 +123,11 @@ namespace R2toR {
 
             auto draw() -> void override;
             auto getWindowSizeHint() -> IntPair override;
-            auto notifyKeyboard(unsigned char key, int x, int y) -> void override;
+            auto notifyKeyboard(unsigned char key, int x, int y) -> bool override;
 
-            void notifyMousePassiveMotion(int x, int y) override;
+            bool notifyMousePassiveMotion(int x, int y) override;
 
-            void notifyMouseMotion(int x, int y) override;
+            bool notifyMouseMotion(int x, int y) override;
         };
 
 
@@ -163,7 +163,7 @@ namespace R2toR {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
                 const double phiMin = -.2;
-                const double phiMax =  .8;
+                const double phiMax =  1.2;
 
                 const auto &p = Numerics::Allocator::getInstance().getNumericParams();
                 const Real L = p.getL();

@@ -4,6 +4,7 @@
 
 #include <iostream>
 #include "ZoomPanRotate.h"
+#include <glm/gtc/type_ptr.hpp>
 
 ZoomPanRotate::ZoomPanRotate() = default;
 

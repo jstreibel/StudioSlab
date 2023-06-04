@@ -19,10 +19,12 @@ namespace Graphics {
     public:
         OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
 
+        typedef std::shared_ptr<OutputOpenGL> Ptr;
+
 
 
     // ********************* From Window ************** //
-        void notifyRender() final override;
+    bool notifyRender() final override;
     // ********************* End Window ************** //
 
 

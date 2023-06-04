@@ -78,7 +78,6 @@ void R2toR::LeadingDelta::OutGL::draw() {
     if(button) radiusDelta = -(float)epsilon;
     if(step != lastStep)
     {
-
         Phys::Gordon::Energy energy;
         auto E_radius = t + radiusDelta;
         auto E = energy.computeRadial(fState, E_radius); // energy[fState];
@@ -94,10 +93,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
             mSectionGraph.clearCurves();
             mSectionGraph.addCurve(RtoR2::StraightLine::New({R, -10}, {R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 4),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
                                    "");
             mSectionGraph.addCurve(RtoR2::StraightLine::New({-R, -10}, {-R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 4),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
                                    "");
         }
 
@@ -131,7 +130,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     stats.addVolatileStat(String("Ring radius: ") + ToString(rd.getRadius()));
 
-    auto scale = eps*1.2;
+    auto scale = eps*1.8;
     auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
         R2toR::Function *func = nullptr;
@@ -183,7 +182,9 @@ void R2toR::LeadingDelta::OutGL::_out(const OutputPacket &outInfo) {
     OutputOpenGL::_out(outInfo);
 }
 
-void R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
+    if(EventListener::notifyKeyboard(key, x, y)) return true;
+
     if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
         auto buffer = GLUTUtils::getFrameBuffer();
 
@@ -194,21 +195,27 @@ void R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
         std::cout << fileName << std::endl;
 
         OpenGLUtils::outputToPNG(buffer, fileName);
-    } else {
-        OutputOpenGL::notifyKeyboard(key, x, y);
+
+        return true;
     }
+
+    return OutputOpenGL::notifyKeyboard(key, x, y);
 }
 
-void R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
+bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
     OutputOpenGL::notifyMouseMotion(x, y);
 
-    if(panel->doesHit(x, y)) panel->notifyMouseMotion(x, y);
+    if(panel->doesHit(x, y)) return panel->notifyMouseMotion(x, y);
+
+    return false;
 }
 
-void R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
-    EventListener::notifyMousePassiveMotion(x, y);
+bool R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
+    if(EventListener::notifyMousePassiveMotion(x, y)) return true;
 
-    if(panel->doesHit(x, y)) panel->notifyMousePassiveMotion(x, y);
+    if(panel->doesHit(x, y)) return panel->notifyMousePassiveMotion(x, y);
+
+    return false;
 }
 
 

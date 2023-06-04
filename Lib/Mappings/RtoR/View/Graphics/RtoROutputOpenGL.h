@@ -28,9 +28,9 @@ namespace RtoR {
         void _out(const OutputPacket &outInfo) override;
 
     private:
-        void notifyKeyboard(unsigned char key, int x, int y) override;
-        void notifyKeyboardSpecial(int key, int x, int y) override;
-        void notifyMouseButton(int button, int dir, int x, int y) override;
+        bool notifyKeyboard(unsigned char key, int x, int y) override;
+        bool notifyKeyboardSpecial(int key, int x, int y) override;
+        bool notifyMouseButton(int button, int dir, int x, int y) override;
 
     protected:
         auto getPhiMax() const -> double { return mFieldsGraph.get_yMax(); }

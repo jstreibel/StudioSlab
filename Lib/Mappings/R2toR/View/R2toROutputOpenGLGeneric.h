@@ -17,29 +17,23 @@ namespace R2toR {
     class OutputOpenGL : public Graphics::OutputOpenGL {
     public:
         OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
+        ~OutputOpenGL();
 
 
         void draw() override;
-        void notifyScreenReshape(int width, int height) override;
+        bool notifyScreenReshape(int width, int height) override;
 
-        void notifyMouseButton(int button, int dir, int x, int y) override;
-
-        void notifyMouseMotion(int x, int y) override;
-
-        void notifyKeyboardSpecial(int key, int x, int y) override;
-
-        void notifyKeyboard(unsigned char key, int x, int y) override;
+        bool notifyKeyboard(unsigned char key, int x, int y) override;
 
         IntPair getWindowSizeHint() override;
 
     protected:
         WindowPanel *panel;
-        StatsDisplay stats;
 
         bool showAnalytic = true;
 
         Real xMin, xMax, yMin, yMax, phiMin, phiMax;
-        GraphR2toR mPhiGraph;
+        //GraphR2toR mPhiGraph;
         GraphR2Section mSectionGraph;
 
     };

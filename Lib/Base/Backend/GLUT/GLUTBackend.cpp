@@ -101,7 +101,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
     std::cout << "Initialized Imgui." << std::endl;
 }
 
-void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
+/*void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
     this->outGL = outputOpenGL;
 
     IntPair size = outGL->getWindowSizeHint();
@@ -113,7 +113,7 @@ void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
     } else {
         glutReshapeWindow(size.first, size.second);
     }
-}
+}*/
 
 auto GLUTBackend::GetInstance() -> GLUTBackend *{
     if(GLUTBackend::glutBackend == nullptr)
@@ -182,15 +182,17 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
         OpenGLUtils::outputToPNG(buffer, "beautiful_graphy-graph.png");
     } */
     else {
-        GLUTBackend::GetInstance()->outGL->notifyKeyboard(key, x, y);
+        auto *gb = GLUTBackend::GetInstance();
+        for(auto &win : gb->windows)
+            win->notifyKeyboard(key, x, y);
     }
 }
 
 void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
-    auto *outGL = GLUTBackend::GetInstance()->outGL;
-
-    outGL->notifyKeyboardSpecial(key, x, y);
+    auto *gb = GLUTBackend::GetInstance();
+    for(auto &win : gb->windows)
+        win->notifyKeyboardSpecial(key, x, y);
 }
 
 void GLUTBackend::mouseButton(int button, int dir, int x, int y)
@@ -201,60 +203,56 @@ void GLUTBackend::mouseButton(int button, int dir, int x, int y)
         return;
     }
 
-
-    GLUTBackend *gb = GLUTBackend::GetInstance();
-    auto *outGL = gb->outGL;
-
-    outGL->notifyMouseButton(button, dir, x, y);
-
+    auto *gb = GLUTBackend::GetInstance();
+    for(auto &win : gb->windows)
+        win->notifyMouseButton(button, dir, x, y);
 
 }
 
 void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
-    GLUTBackend *gb = GLUTBackend::GetInstance();
-    auto *outGL = gb->outGL;
-
-    outGL->notifyMouseWheel(wheel, direction, x, y);
+    auto *gb = GLUTBackend::GetInstance();
+    for(auto &win : gb->windows)
+        win->notifyMouseWheel(wheel, direction, x, y);
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
-        return;
+        // if(ImGui::GetIO().WantCaptureMouse) return;
     }
 
-    auto *outGL = GLUTBackend::GetInstance()->outGL;
-    outGL->notifyMousePassiveMotion(x, y);
+    auto *gb = GLUTBackend::GetInstance();
+    for(auto &win : gb->windows)
+        win->notifyMousePassiveMotion(x, y);
 }
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
-    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
-        return;
+        // if(ImGui::GetIO().WantCaptureMouse) return;
     }
 
-    auto *outGL = GLUTBackend::GetInstance()->outGL;
-    outGL->notifyMouseMotion(x, y);
+    auto *gb = GLUTBackend::GetInstance();
+    for(auto &win : gb->windows)
+        win->notifyMouseMotion(x, y);
 }
 
 void GLUTBackend::render()
 {
     GLUTBackend *gb = GLUTBackend::GetInstance();
-    auto *outGL = gb->outGL;
-
-    assert(outGL != nullptr);
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
     ImGui::NewFrame();
     if(gb->showDemo) ImGui::ShowDemoWindow();
 
-    outGL->addStat(ToString(gb->steps) + " sim steps per cycle.");
-    outGL->notifyRender();
+    for(auto &win : gb->windows) {
+        //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
+        win->notifyRender();
+    }
+
 
     ImGui::Render();
     //ImGuiIO& io = ImGui::GetIO();
@@ -298,11 +296,26 @@ void GLUTBackend::reshape(int w, int h)
     GLUTBackend::GetInstance()->h = h;
 
     GLUTBackend *gb = GLUTBackend::GetInstance();
-    auto *outGL = gb->outGL;
 
-    if(outGL != nullptr)
-        outGL->notifyScreenReshape(w, h);
+    for(auto &win : gb->windows)
+        win->notifyScreenReshape(w, h);
 
     glutPostRedisplay();
+}
+
+void GLUTBackend::addWindow(Window::Ptr window) {
+    // this->outGL = outputOpenGL;
+
+    //IntPair size = outGL->getWindowSizeHint();
+    //
+    //if(size.first == -1 || size.second == -1) {
+    //    std::cout << "/nWarning: using default window size fullscreen.";
+    //    size = {800, 450};
+    //    glutFullScreen();
+    //} else {
+    //    glutReshapeWindow(size.first, size.second);
+    //}
+
+    windows.emplace_back(window);
 }
 

@@ -17,7 +17,8 @@ class GLUTBackend : public Backend
 public:
     static GLUTBackend *GetInstance();
 
-    void setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL);
+	void addWindow(Window::Ptr window);
+    //void setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL);
 
 
     void run(Program *) override;
@@ -42,7 +43,8 @@ public:
 
 private:
 	Program *program = nullptr;
-    Graphics::OutputOpenGL *outGL = nullptr;
+	std::vector<Window::Ptr> windows;
+    //Graphics::OutputOpenGL *outGL = nullptr;
 
     int steps = 50;
 

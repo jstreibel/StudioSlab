@@ -16,21 +16,28 @@
 namespace Base {
 
     class EventListener {
+        std::vector<EventListener*> unmanagedDelegateResponders;
+
+    protected:
+        const bool allowsDelegateResponders;
+        void addResponder(EventListener *responder);
+        bool hasResponders() const;
+
     public:
-        EventListener() = default;
+        EventListener(bool allowDelegateResponders = false);;
         virtual ~EventListener() = default;
 
-        virtual void notifyKeyboard(unsigned char key, int x, int y)              {};
-        virtual void notifyKeyboardSpecial(int key, int x, int y)                 {};
+        virtual bool notifyKeyboard(unsigned char key, int x, int y);
+        virtual bool notifyKeyboardSpecial(int key, int x, int y);
 
-        virtual void notifyMouseButton(int button, int dir, int x, int y)         {};
-        virtual void notifyMouseMotion(int x, int y)                              {};
-        virtual void notifyMousePassiveMotion(int x, int y)                       {};
-        virtual void notifyMouseWheel(int wheel, int direction, int x, int y)     {};
+        virtual bool notifyMouseButton(int button, int dir, int x, int y);
+        virtual bool notifyMouseMotion(int x, int y);
+        virtual bool notifyMousePassiveMotion(int x, int y);
+        virtual bool notifyMouseWheel(int wheel, int direction, int x, int y);
 
-        virtual void notifyScreenReshape(int newScreenWidth, int newScreenHeight) {};
+        virtual bool notifyScreenReshape(int newScreenWidth, int newScreenHeight);
 
-        virtual void notifyRender()                                               {};
+        virtual bool notifyRender();
     };
 }
 

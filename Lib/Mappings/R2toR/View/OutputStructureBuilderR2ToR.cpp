@@ -88,11 +88,11 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
         else glutBackend->resume();
         glutBackend->setStepsPerFrame(*OpenGLMonitor_stepsPerIdleCall);
 
-        auto glOut = this->buildOpenGLOutput();
+        auto glOut = Graphics::OutputOpenGL::Ptr(this->buildOpenGLOutput());
 
 
-        glutBackend->setOpenGLOutput(glOut);
-        outputManager->addOutputChannel(glOut);
+        glutBackend->addWindow(glOut);
+        outputManager->addOutputChannel(glOut.get(), false);
     }
     else {
         /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que

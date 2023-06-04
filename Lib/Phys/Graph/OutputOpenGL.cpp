@@ -42,7 +42,7 @@ bool Graphics::OutputOpenGL::finishFrameAndRender() {
     return true;
 }
 
-void Graphics::OutputOpenGL::notifyRender() {
+bool Graphics::OutputOpenGL::notifyRender() {
     Window::notifyRender();
 
     finishFrameAndRender();

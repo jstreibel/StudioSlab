@@ -135,7 +135,7 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     //}
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int height) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
@@ -181,7 +181,7 @@ void R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int heigh
     //}
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboardSpecial(int key, int x, int y) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboardSpecial(int key, int x, int y) {
     letc angle = 2.5e-3 * M_PI;
     if(key == GLUT_KEY_RIGHT) {
         Rotation T(-angle);
@@ -198,33 +198,39 @@ void R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboardSpecial(int key, int x, in
     }
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboard(unsigned char key, int x, int y) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == '2'){
         showAnalytic = !showAnalytic;
-        return;
+        return true;
     }
     else if(key == ']'){
         yMin *= 1.1;
         yMax *= 1.1;
+        return true;
     }
     else if(key == '['){
         yMin /= 1.1;
         yMax /= 1.1;
+        return true;
     }
     else if(key == '}'){
         yMin *= 1.5;
         yMax *= 1.5;
+        return true;
     }
     else if(key == '{'){
         yMin /= 1.5;
         yMax /= 1.5;
+        return true;
     }
     else if(key == 'd'){
         showDPhidt = !showDPhidt;
+        return true;
         //reshape(windowWidth, windowHeight);
     } else if(key == 13) { // enter
         // save snapshot to file
         this->_outputSnapshot();
+        return true;
     }
 
     //for(auto& sec : sections){
@@ -242,6 +248,8 @@ void R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboard(unsigned char key, int x,
     //        graph.yMax = yMax;
     //    }
     //}
+
+    return false;
 }
 
 IntPair R2toR::OutputOpenGLShockwaveAt_t0::getWindowSizeHint() {
@@ -262,11 +270,11 @@ void R2toR::OutputOpenGLShockwaveAt_t0::addSection(const RtoR2::StraightLine &se
 
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseButton(int button, int dir, int x, int y) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseButton(int button, int dir, int x, int y) {
     zpr.zprMouseButton(button, dir, x, y);
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseMotion(int x, int y) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseMotion(int x, int y) {
     zpr.zprMouseMotion(x, y);
 }
 

@@ -17,6 +17,8 @@ namespace Numerics {
         public:
             virtual ~Plug() = default;
 
+            std::shared_ptr<Plug> Ptr;
+
             virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
             auto getDescription() const -> String;
             auto getName() const -> String;

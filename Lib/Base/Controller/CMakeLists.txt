@@ -15,9 +15,13 @@ set ( NUKLEAR_SOURCES
 		Nuklear/NuklearImplementation.cpp
 		)
 
-add_library(${STUDIOS_LIB_BASE_NAME}-Controller STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} ${NUKLEAR_SOURCES})
+set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Controller )
 
-target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Controller
+add_library(${LIB_LOCAL_NAME} STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} ${NUKLEAR_SOURCES})
+
+target_link_libraries(${LIB_LOCAL_NAME}
 		boost_program_options
-		Slab-Common
+		Slab-Utils
 		)
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

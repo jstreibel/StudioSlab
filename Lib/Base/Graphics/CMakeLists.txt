@@ -21,8 +21,13 @@ set( GRAPHICS_SOURCES
 		OpenGL/Utils.cpp
 		../../Phys/Graph/Graph.cpp ../../Phys/Graph/Graph.h)
 
-add_library(${STUDIOS_LIB_BASE_NAME}-Graphics STATIC ${GRAPHICS_SOURCES})
-target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Graphics
-		Slab-Common
+
+set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Graphics )
+
+add_library(${LIB_LOCAL_NAME} STATIC ${GRAPHICS_SOURCES})
+target_link_libraries(${LIB_LOCAL_NAME}
+		Slab-Utils
 		freeimage
 		)
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

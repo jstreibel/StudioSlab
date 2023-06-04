@@ -3,12 +3,13 @@
 //
 
 #include <cassert>
-#include <iostream>
 #include "WindowPanel.h"
 
 
 
 void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth) {
+    std::cout << "New column? " << std::endl;
+
     if(newColumn){
         columns.emplace_back(WindowColumn());
         widths.emplace_back(newColumnWidth);
@@ -16,7 +17,9 @@ void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth
         assertConsistency();
     }
 
+    std::cout << "Col. size ";
     assert(columns.size() > 0);
+    std::cout << "ok. " << std::endl;
 
     auto *column = &columns.back();
 
@@ -135,21 +138,26 @@ void WindowPanel::assertConsistency() const {
     throw "Inconsistent colusmn widths.";
 }
 
-void WindowPanel::notifyMousePassiveMotion(int x, int y) {
-    EventListener::notifyMousePassiveMotion(x, y);
+bool WindowPanel::notifyMousePassiveMotion(int x, int y) {
+    assert(!allowsDelegateResponders);
 
+    auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) win->notifyMousePassiveMotion(x, y);
+            if(win->doesHit(x, y)) responded = win->notifyMousePassiveMotion(x, y);
 
+    return responded;
 }
 
-void WindowPanel::notifyMouseMotion(int x, int y) {
-    EventListener::notifyMouseMotion(x, y);
+bool WindowPanel::notifyMouseMotion(int x, int y) {
+    assert(!allowsDelegateResponders);
 
+    auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) win->notifyMousePassiveMotion(x, y);
+            if(win->doesHit(x, y)) responded = win->notifyMouseMotion(x, y);
+
+    return responded;
 }
 
 void WindowPanel::notifyReshape(int newWinW, int newWinH) {

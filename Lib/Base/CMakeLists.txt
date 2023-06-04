@@ -10,3 +10,15 @@ add_subdirectory(Backend)
 add_subdirectory(App)
 add_subdirectory(Graphics)
 
+
+set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME} )
+
+add_library(${LIB_LOCAL_NAME} STATIC Base.cpp)
+target_link_libraries(${LIB_LOCAL_NAME}
+		Slab-Base-Controller
+		Slab-Base-Backend
+		Slab-Base-App
+		Slab-Base-Graphics
+		)
+
+message(NOTICE "Wrapped all Base libs into single library " ${LIB_LOCAL_NAME})

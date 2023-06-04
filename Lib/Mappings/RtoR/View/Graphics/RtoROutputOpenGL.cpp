@@ -182,7 +182,7 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 }
 
 
-void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 
     switch(key)
     {
@@ -205,7 +205,7 @@ void RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 
 }
 
-void RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
+bool RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
     const double kDown = 3.8;
     const double kUp = 1/kDown;
 
@@ -246,7 +246,7 @@ void RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
     }
 }
 
-void RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
+bool RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
     const double faktor = 1.5;
     if(button == 3 && dir == 0){
         setPhiMax(getPhiMax()*faktor);

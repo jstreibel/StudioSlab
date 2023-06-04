@@ -16,5 +16,9 @@ set ( UTIL_SOURCES
 
 		)
 
-add_library(${STUDIOSLAB_BASE_LIB_NAME}-Utils STATIC ${UTIL_SOURCES})
-target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}-Utils omp resample boost_timer )
+set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
+
+add_library(${LIB_LOCAL_NAME} STATIC ${UTIL_SOURCES})
+target_link_libraries(${LIB_LOCAL_NAME} omp resample boost_timer )
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

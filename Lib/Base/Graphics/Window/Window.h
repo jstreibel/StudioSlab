@@ -6,14 +6,17 @@
 #define V_SHAPE_WINDOW_H
 
 
-#include <vector>
 #include "Base/Graphics/Artists/Artist.h"
 #include "Base/Backend/Events/EventListener.h"
+
+#include <vector>
+#include <memory>
 
 class Window : public Base::EventListener {
     std::vector<Artist*> content;
 
 public:
+    typedef std::shared_ptr<Window> Ptr;
 
     Window(int x=0, int y=0, int w=100, int h=100);
 
@@ -23,21 +26,21 @@ public:
     virtual void notifyReshape(int newWinW, int newWinH);
     virtual IntPair getWindowSizeHint();
 
-    void notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
+    bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
 
     void setDecorate(bool _decorate);
     void setClear(bool _clear);
 
-    auto doesHit(int x, int y) const -> bool;
+    auto doesHit(int xMouse, int yMouse) const -> bool;
 
     int getx() const { return x; }
     int gety() const { return y; }
     int getw() const { return w; }
     int geth() const { return h; }
-    void setx(int x) { this->x = x; }
-    void sety(int y) { this->y = y; }
-    void setw(int w) { this->w = w; }
-    void seth(int h) { this->h = h; }
+    void setx(int _x) { this->x = _x; }
+    void sety(int _y) { this->y = _y; }
+    void setw(int _w) { this->w = _w; }
+    void seth(int _h) { this->h = _h; }
 
 protected:
     int w, h, x, y;

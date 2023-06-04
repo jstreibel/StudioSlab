@@ -10,11 +10,11 @@
 
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
     : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
-      phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel),
+      phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel()),
       mSectionGraph(xMin, xMax, phiMin, phiMax, "", true,
                     Numerics::Allocator::getInstance().getNumericParams().getN()*3)
 {
-    Window *window = nullptr;
+    // Window *window = nullptr;
 
     //window = new Window;
     //window->addArtist(&mPhiGraph);
@@ -26,6 +26,10 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Styles::Color(1,0,0,1));
 
+}
+
+R2toR::OutputOpenGL::~OutputOpenGL() {
+    // delete panel;
 }
 
 void R2toR::OutputOpenGL::draw() {
@@ -59,8 +63,8 @@ void R2toR::OutputOpenGL::draw() {
     //glMatrixMode(GL_MODELVIEW);
     //glLoadMatrixf(zpr.getModelview());
 
-    mPhiGraph.clearFunctions();
-    mPhiGraph.addFunction(&phi);
+    // mPhiGraph.clearFunctions();
+    // mPhiGraph.addFunction(&phi);
 
     mSectionGraph.clearFunctions();
     mSectionGraph.addFunction(&phi);
@@ -99,8 +103,8 @@ void R2toR::OutputOpenGL::draw() {
     panel->draw();
 }
 
-void R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
-    Base::EventListener::notifyScreenReshape(width, height);
+bool R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
+    if(Base::EventListener::notifyScreenReshape(width, height)) return true;
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
@@ -109,42 +113,42 @@ void R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
     //zpr.zprReshape(phiGraph.winX, phiGraph.winY, phiGraph.winW, phiGraph.winH);
 
     panel->notifyReshape(width, height);
+
+    return true;
 }
 
-void R2toR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
-}
-
-void R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == '2'){
         showAnalytic = !showAnalytic;
-        return;
+        return true;
     }
     else if(key == ']'){
         yMin *= 1.1;
         yMax *= 1.1;
+        return true;
     }
     else if(key == '['){
         yMin /= 1.1;
         yMax /= 1.1;
+        return true;
     }
     else if(key == '}'){
         yMin *= 1.5;
         yMax *= 1.5;
+        return true;
     }
     else if(key == '{'){
         yMin /= 1.5;
         yMax /= 1.5;
+        return true;
     }
+
+    return false;
 }
 
 IntPair R2toR::OutputOpenGL::getWindowSizeHint() {
     return {3200, 1350};
 }
 
-void R2toR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
-    //zpr.zprMouseButton(button, dir, x, y);
-}
 
-void R2toR::OutputOpenGL::notifyMouseMotion(int x, int y) {
-    //zpr.zprMouseMotion(x, y);
-}
+

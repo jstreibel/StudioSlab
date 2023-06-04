@@ -1,9 +1,6 @@
 #TODO MAKE POSSIBLE TO COMPILE WITHOUT GPU ( RLY? IN 2021? )
 
 
-set (PHYS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
-
-
 set ( TOOLSET_SOURCES
 		Numerics/Allocator.cpp
 		Toolset/Device.cpp
@@ -91,7 +88,10 @@ set ( THERMO_SOURCES
 		Function/FunctionProduct.h)
 
 
-add_library(${PHYS_BASE_LIB_NAME} STATIC
+
+set (LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
+
+add_library(${LIB_LOCAL_NAME} STATIC
 		${TOOLSET_SOURCES}
 		${SPACE_SOURCES}
 		${GRAPH_SOURCES}
@@ -101,13 +101,16 @@ add_library(${PHYS_BASE_LIB_NAME} STATIC
 		${THERMO_SOURCES}
 		)
 
-target_link_libraries(${PHYS_BASE_LIB_NAME}
-		Slab-Common
-		Slab-Studios-Backend
-		Slab-Studios-Controller
+
+target_link_libraries(${LIB_LOCAL_NAME}
+		Slab-Utils
+		Slab-Base-Backend
+		Slab-Base-Controller
 		)
 
-set_property(TARGET ${PHYS_BASE_LIB_NAME} PROPERTY CUDA_ARCHITECTURES 61)
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 
 # add_library( ${PHYS_BASE_LIB_NAME}-CoreThermo STATIC ${THERMO_SOURCES} )

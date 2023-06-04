@@ -19,15 +19,15 @@ namespace R2toR {
         OutputOpenGLShockwaveAt_t0();
 
         void draw() override;
-        void notifyScreenReshape(int width, int height) override;
+        bool notifyScreenReshape(int width, int height) override;
 
-        void notifyMouseButton(int button, int dir, int x, int y) override;
+        bool notifyMouseButton(int button, int dir, int x, int y) override;
 
-        void notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y) override;
 
-        void notifyKeyboardSpecial(int key, int x, int y) override;
+        bool notifyKeyboardSpecial(int key, int x, int y) override;
 
-        void notifyKeyboard(unsigned char key, int x, int y) override;
+        bool notifyKeyboard(unsigned char key, int x, int y) override;
 
         IntPair getWindowSizeHint() override;
 

@@ -150,10 +150,7 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
 set ( MAPS_LINKS
-		Slab-Base-App
-		Slab-Base-Backend
-		Slab-Base-Controller
-		Slab-Base-Graphics
+		Slab-Base
 		Slab-Utils
 		Slab-Phys
 		)
@@ -162,25 +159,41 @@ set ( MAPS_LINKS
 
 set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
 
-add_library( ${MAPS_RtoR_LIB_NAME} STATIC ${RTOR_SOURCES})
-target_link_libraries( ${MAPS_RtoR_LIB_NAME} ${MAPS_LINKS})
+set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME} )
 
-add_library(${MAPS_RtoR_LIB_NAME}_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${MAPS_RtoR_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property( TARGET ${MAPS_RtoR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
+add_library( ${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS})
 
-add_library(${MAPS_RtoR_LIB_NAME}-Periodic_GPU STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+
+
+set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
+
+add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+
+
+set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}-Periodic_GPU )
+
+add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 # the line below is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
-target_compile_definitions( ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PUBLIC PERIODIC_BC )
-set_property( TARGET ${MAPS_RtoR_LIB_NAME}-Periodic_GPU PROPERTY CUDA_ARCHITECTURES 61 )
+target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
+
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 
 # |R² |--> |R
 
 set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
+set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
+add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
-add_library(${MAPS_R2toR_LIB_NAME}_GPU STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${MAPS_R2toR_LIB_NAME}_GPU ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property(TARGET ${MAPS_R2toR_LIB_NAME}_GPU PROPERTY CUDA_ARCHITECTURES 61)
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

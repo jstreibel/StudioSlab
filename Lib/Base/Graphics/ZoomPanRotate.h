@@ -5,11 +5,12 @@
 #ifndef V_SHAPE_ZOOMPANROTATE_H
 #define V_SHAPE_ZOOMPANROTATE_H
 
+#include "Base/Backend/Events/EventListener.h"
+
 #include <GL/glut.h>
 #include <glm/mat4x4.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
-class ZoomPanRotate {
+class ZoomPanRotate : public Base::EventListener {
 public:
     ZoomPanRotate();
 

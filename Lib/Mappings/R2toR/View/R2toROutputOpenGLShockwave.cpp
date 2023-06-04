@@ -274,7 +274,7 @@ void R2toR::OutputOpenGLShockwave::draw() {
     //}
 }
 
-void R2toR::OutputOpenGLShockwave::notifyScreenReshape(int width, int height) {
+bool R2toR::OutputOpenGLShockwave::notifyScreenReshape(int width, int height) {
     //ModelBase::OutputOpenGL::reshape(width, height);
 
     //windowWidth = width;
@@ -323,7 +323,7 @@ void R2toR::OutputOpenGLShockwave::notifyScreenReshape(int width, int height) {
     //}
 }
 
-void R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) {
+bool R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) {
     const Real angle = 2.5e-3 * M_PI;
     if(key == GLUT_KEY_RIGHT) {
         Rotation T(-angle);
@@ -340,7 +340,7 @@ void R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) 
     }
 }
 
-void R2toR::OutputOpenGLShockwave::notifyKeyboard(unsigned char key, int x, int y) {
+bool R2toR::OutputOpenGLShockwave::notifyKeyboard(unsigned char key, int x, int y) {
     //if(key == '2'){
     //    showAnalytic = !showAnalytic;
     //    return;
@@ -406,11 +406,11 @@ void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section
 
 }
 
-void R2toR::OutputOpenGLShockwave::notifyMouseButton(int button, int dir, int x, int y) {
+bool R2toR::OutputOpenGLShockwave::notifyMouseButton(int button, int dir, int x, int y) {
     zpr.zprMouseButton(button, dir, x, y);
 }
 
-void R2toR::OutputOpenGLShockwave::notifyMouseMotion(int x, int y) {
+bool R2toR::OutputOpenGLShockwave::notifyMouseMotion(int x, int y) {
     zpr.zprMouseMotion(x, y);
 }
 

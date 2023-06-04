@@ -69,14 +69,14 @@ void Window::addArtist(Artist *pArtist) {
     content.emplace_back(pArtist);
 }
 
-auto Window::doesHit(int _x, int _y) const -> bool {
+auto Window::doesHit(int xMouse, int yMouse) const -> bool {
     auto hScreen = GLUTUtils::getScreenHeight();
 
-    const_cast<bool&>(gotHit) = x > x && x < x + w && hScreen - y > y && hScreen - y < y + h;
+    const_cast<bool&>(gotHit) = xMouse > x && xMouse < x + w && hScreen - yMouse > y && hScreen - yMouse < y + h;
     return gotHit;
 }
 
-void Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
+bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     EventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
 
     this->w = newScreenWidth;
@@ -84,6 +84,9 @@ void Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
 
     for(auto artist : content)
         artist->reshape(w, h);
+
+
+    return true;
 }
 
 void Window::notifyReshape(int newWinW, int newWinH) {
