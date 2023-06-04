@@ -29,7 +29,7 @@ int main(int argc, const char **argv) {
 
         im.preParse(argc, argv);
 
-        auto selection = im.getCurrentCandidate();
+        // auto selection = im.getCurrentCandidate();
 
         auto prog = SimulationsAppR2toR(argc, argv);
 

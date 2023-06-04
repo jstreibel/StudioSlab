@@ -321,6 +321,8 @@ bool R2toR::OutputOpenGLShockwave::notifyScreenReshape(int width, int height) {
 //
     //    y-=secGraphHeight;
     //}
+
+    return true;
 }
 
 bool R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) {
@@ -338,6 +340,8 @@ bool R2toR::OutputOpenGLShockwave::notifyKeyboardSpecial(int key, int x, int y) 
         //    line = T*line;
         //}
     }
+
+    return false;
 }
 
 bool R2toR::OutputOpenGLShockwave::notifyKeyboard(unsigned char key, int x, int y) {
@@ -386,6 +390,8 @@ bool R2toR::OutputOpenGLShockwave::notifyKeyboard(unsigned char key, int x, int 
     //        graph.yMax = yMax;
     //    }
     //}
+
+    return false;
 }
 
 IntPair R2toR::OutputOpenGLShockwave::getWindowSizeHint() {
@@ -393,8 +399,8 @@ IntPair R2toR::OutputOpenGLShockwave::getWindowSizeHint() {
 }
 
 void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section, String name) {
-    const Real rangeField = 0.15;
-    const Real rangeDdtField = 1.5;
+    // const Real rangeField = 0.15;
+    // const Real rangeDdtField = 1.5;
 
     //const Color color = Base::colors[sections.size()];
 
@@ -408,6 +414,8 @@ void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section
 
 bool R2toR::OutputOpenGLShockwave::notifyMouseButton(int button, int dir, int x, int y) {
     zpr.zprMouseButton(button, dir, x, y);
+
+    return true;
 }
 
 bool R2toR::OutputOpenGLShockwave::notifyMouseMotion(int x, int y) {

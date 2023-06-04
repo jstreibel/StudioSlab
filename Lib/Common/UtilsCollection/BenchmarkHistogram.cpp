@@ -43,7 +43,7 @@ void BenchmarkHistogram::storeMeasure(int nSteps) {
 }
 
 auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
-    assert(count == measures.size());
+    if(count != measures.size()) std::cout << "Benchmark inconsistency: " << count << " != " << measures.size();
 
     boost::timer::nanosecond_type sum=0.;
     if(0) for (size_t i=0; i<histogram.size(); i++) {

@@ -45,12 +45,10 @@ Real Phys::Gordon::Energy::operator[](const R2toR::FieldState &function) const {
 Real Phys::Gordon::Energy::computeRadial(const R2toR::FieldState &function, Real upToRadius) {
     const auto &phi = function.getPhi();
     const auto &dphidt = function.getDPhiDt();
-    const auto &phiSpace = phi.getSpace();
-    const auto &dphidtSpace = dphidt.getSpace();
 
     assert(phi.getN() == phi.getM());
 
-    auto h = phiSpace.geth();
+    auto h = phi.getSpace().geth();
     auto inv_2h = .5/h;
     auto h2 = h*h;
     auto N_ = phi.getN();
@@ -88,12 +86,12 @@ Real Phys::Gordon::Energy::computeRadial(const R2toR::FieldState &function, Real
             auto dx = inv_2h*( E-W );
             auto dy = inv_2h*( N-S );
 
-            K += .5*p*p*h2;
-            D += .5*(dx*dx + dy*dy)*h2;
-            V += fabs(C)*h2;
+            K += p*p;
+            D += dx*dx + dy*dy;
+            V += fabs(C);
         }
     }
 
-    return K+D+V;
+    return (.5*(K+D)+V)*h2;
 }
 

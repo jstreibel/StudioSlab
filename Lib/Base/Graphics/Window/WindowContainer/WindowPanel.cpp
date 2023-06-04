@@ -8,8 +8,6 @@
 
 
 void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth) {
-    std::cout << "New column? " << std::endl;
-
     if(newColumn){
         columns.emplace_back(WindowColumn());
         widths.emplace_back(newColumnWidth);
@@ -17,9 +15,7 @@ void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth
         assertConsistency();
     }
 
-    std::cout << "Col. size ";
     assert(columns.size() > 0);
-    std::cout << "ok. " << std::endl;
 
     auto *column = &columns.back();
 

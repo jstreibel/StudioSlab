@@ -71,19 +71,21 @@ void R2toR::LeadingDelta::OutGL::draw() {
     const R2toR::FieldState &fState = *lastData.getFieldData<R2toR::FieldState>();
     static auto lastStep=0;
     ImGui::Begin("Energy compute");
-    static auto radiusDelta = -1.f*(float)epsilon;
+    static auto energyIntegrationRadius = -1.f * (float)epsilon;
+    static auto lastE = .0;
+    static auto lastAnalyticE = .0;
 
-    ImGui::DragFloat("Radius delta", &radiusDelta, (float)epsilon*.0025f, -1.5f*epsilon, 1.5f*epsilon, "%.2e");
+    ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float)epsilon * .0025f, -1.5f * epsilon, 1.5f * epsilon, "%.2e");
     auto button = ImGui::Button("Reset");
-    if(button) radiusDelta = -(float)epsilon;
+    if(button) energyIntegrationRadius = -(float)epsilon;
     if(step != lastStep)
     {
         Phys::Gordon::Energy energy;
-        auto E_radius = t + radiusDelta;
+        auto E_radius = t + energyIntegrationRadius;
         auto E = energy.computeRadial(fState, E_radius); // energy[fState];
         numericEnergyData->addPoint({t, E});
         const auto a0 = 2. / 3;
-        auto analyticEnergy = a0 * M_PI * t * t;
+        auto analyticEnergy = 2* a0 * M_PI * t * t;
         analyticEnergyData->addPoint({t, analyticEnergy});
 
         if(analyticEnergy != 0) energyRatioData->addPoint({t, E/analyticEnergy});
@@ -94,16 +96,25 @@ void R2toR::LeadingDelta::OutGL::draw() {
             mSectionGraph.clearCurves();
             mSectionGraph.addCurve(RtoR2::StraightLine::New({R, -10}, {R, 10}),
                                    Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
-                                   "");
+                                   "Numeric wave inside limits");
             mSectionGraph.addCurve(RtoR2::StraightLine::New({-R, -10}, {-R, 10}),
                                    Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
                                    "");
         }
 
+        lastE = E;
+        lastAnalyticE = analyticEnergy;
+
+
         lastStep = step;
 
     }
     ImGui::End();
+
+    stats.addVolatileStat(String("E_num = ")    + ToString(lastE, 2, true));
+    stats.addVolatileStat(String("E_an = ")    + ToString(lastAnalyticE, 2, true));
+    stats.addVolatileStat(String("E_num/E_an = ")    + ToString(lastE/lastAnalyticE , 2, true));
+    stats.addVolatileStat(String(""));
 
     auto &phi = fState.getPhi();
 
@@ -191,8 +202,6 @@ bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
         auto fileName = String("signum Gordon (2+1 leading-delta) ");
         fileName += InterfaceManager::getInstance().renderParametersToString({"N", "L", "eps", "h"}, "  ");
         fileName += ".png";
-
-        std::cout << fileName << std::endl;
 
         OpenGLUtils::outputToPNG(buffer, fileName);
 

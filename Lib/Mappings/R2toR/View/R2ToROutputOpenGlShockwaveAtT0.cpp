@@ -6,10 +6,7 @@
 
 #include <filesystem>
 #include "Mappings/R2toR/Model/Transform.h"
-#include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "R2toROutputOpenGLShockwave.h"
-#include "Mappings/R2toR/Model/FieldState.h"
 #include "Mappings/FunctionRenderer.h"
 
 
@@ -179,23 +176,27 @@ bool R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int heigh
 //
     //    y-=secGraphHeight;
     //}
+
+    return true;
 }
 
 bool R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboardSpecial(int key, int x, int y) {
-    letc angle = 2.5e-3 * M_PI;
+    //letc angle = 2.5e-3 * M_PI;
     if(key == GLUT_KEY_RIGHT) {
-        Rotation T(-angle);
+        //Rotation T(-angle);
         //for (auto &section : sections) {
         //    RtoR2::StraightLine &line = getLine(section);
         //    line = T * line;
         //}
     } else if(key == GLUT_KEY_LEFT){
-        Rotation T(angle);
+        //Rotation T(angle);
         //for(auto &section : sections){
         //    RtoR2::StraightLine &line = getLine(section);
         //    line = T*line;
         //}
     }
+
+    return true;
 }
 
 bool R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboard(unsigned char key, int x, int y) {
@@ -256,26 +257,16 @@ IntPair R2toR::OutputOpenGLShockwaveAt_t0::getWindowSizeHint() {
     return {1600, 1000};
 }
 
-void R2toR::OutputOpenGLShockwaveAt_t0::addSection(const RtoR2::StraightLine &section, String name) {
-    letc rangeField = 0.15;
-    const Real rangeDdtField = 1.5;
-
-    //const Color color = Base::colors[sections.size()];
-
-    //Graph fieldGraph = Graph(phiGraph.winX + phiGraph.winW, .0,
-    //                         windowWidth - statsWindowWidth, windowHeight, .0, 1., -rangeField, rangeField, name + " \\phi");
-    //Graph ddtFieldGraph = Graph(phiGraph.winX + phiGraph.winW, .0,
-    //                            windowWidth - statsWindowWidth, windowHeight, .0, 1., -rangeDdtField, rangeDdtField, name + " D_t \\phi");
-    //sections.emplace_back(Base::GraphPair(fieldGraph, ddtFieldGraph), Base::LineAndColor(section, color));
-
-}
-
 bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseButton(int button, int dir, int x, int y) {
     zpr.zprMouseButton(button, dir, x, y);
+
+    return true;
 }
 
 bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseMotion(int x, int y) {
     zpr.zprMouseMotion(x, y);
+
+    return true;
 }
 
 void R2toR::OutputOpenGLShockwaveAt_t0::_outputSnapshot() {

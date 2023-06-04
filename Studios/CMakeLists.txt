@@ -66,7 +66,10 @@ target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Perio
 
 add_executable ( Fields-R2toR Fields/R2toR/MainR2toR.cpp Fields/R2toR/LeadingDelta/LeadingDelta.cpp)
 target_link_libraries ( Fields-R2toR
-		Slab-Base
+		Slab-Base-Controller
+		Slab-Base-Backend
+		Slab-Base-App
+		Slab-Base-Graphics
 		Slab-Fields-Maps-R2toR_GPU
 		)
 

@@ -150,7 +150,11 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
 set ( MAPS_LINKS
-		Slab-Base
+		Slab-Base-Controller
+		Slab-Base-Backend
+		Slab-Base-App
+		Slab-Base-Graphics
+
 		Slab-Utils
 		Slab-Phys
 		)
