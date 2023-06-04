@@ -3,6 +3,7 @@
 //
 
 #include "Graph.h"
+#include "imgui.h"
 
 
 Base::Graphics::Graph2D::Graph2D(double xMin, double xMax, double yMin, double yMax, String title,
@@ -32,18 +33,37 @@ void Base::Graphics::Graph2D::_drawAxes() {
 }
 
 void Base::Graphics::Graph2D::__computeSpacings() {
-    double deltaY;
-    double markStart = yMax;
+    double deltaY = yMax-yMin;
 
-    deltaY = yMax-yMin;
+    //yspacing = floor(log10(deltaY));
+    const auto theLog = log10(deltaY);
+    auto spacing = pow(10., floor(theLog) - 1.);
+    auto theRest = theLog - floor(theLog);
+    // auto theRestRebuilt = pow(10., theRest);
+    auto multiplier = floor(pow(10., theRest));
+    //auto logYMin = log10(abs(yMin));
+    //auto newMin = floor(logYMin);
+    //ImGui::Begin("Spacings");
+    //ImGui::Text("%s", this->title.c_str());
+    //ImGui::Text("deltaY = %f", deltaY);
+    //ImGui::Text("theLog = %f", theLog);
+    //ImGui::Text("yspacing = %f", multiplier*spacing);
+    //ImGui::Text("yMin = %f", yMin);
+    //ImGui::Text("logYMin = %f", logYMin);
+    //ImGui::Text("newMin = %f", newMin);
+    ////ImGui::Text("theRest = %f", theRest );
+    ////ImGui::Text("theRestRebuilt = %f", theRestRebuilt );
+    //ImGui::Separator();
+    //ImGui::End();
 
 
-    while(markStart > yMin)
-        markStart-=yspacing;
-    while(markStart < (yMin-yspacing))
-        markStart+=yspacing;
+    //while(markStart > yMin)
+    //    markStart-=yspacing;
+    //while(markStart < (yMin-yspacing))
+    //    markStart+=yspacing;
 
-    yspacing = deltaY/10;
+    // yspacing = deltaY/10;
+    yspacing = multiplier * spacing;
 }
 
 void Base::Graphics::Graph2D::__drawXAxis() {
@@ -119,7 +139,6 @@ void Base::Graphics::Graph2D::__drawYAxis() {
     auto markStart = yMin;
 
     StringStream buffer;
-    //buffer << std::scientific << std::setprecision(2);
 
     auto &gtf = Styles::GetColorScheme()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
@@ -127,10 +146,10 @@ void Base::Graphics::Graph2D::__drawYAxis() {
         for(double mark = markStart; mark<=yMax; mark+=yspacing)
         {
             buffer.str("");
-            if(fabs(mark) > deltaY*1.e-15)
-                buffer << mark;
-            else
-                buffer << "0";
+            auto numRegion = log10(deltaY);
+            buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)
+                   << (numRegion< -1 ? std::scientific : std::fixed)
+                   << mark;
             GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark),
                                   buffer.str().c_str(), TICK_FONT);
         }
