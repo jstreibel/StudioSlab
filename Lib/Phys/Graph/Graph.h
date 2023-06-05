@@ -39,6 +39,7 @@ namespace Base {
         protected:
             double xMin, xMax, yMin, yMax;
             double yspacing = 1.e-5;
+            double xspacing = 1.e-5;
 
             String title = "";
             bool filled = false;

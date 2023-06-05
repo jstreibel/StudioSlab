@@ -33,37 +33,27 @@ void Base::Graphics::Graph2D::_drawAxes() {
 }
 
 void Base::Graphics::Graph2D::__computeSpacings() {
-    double deltaY = yMax-yMin;
+    {
+        const double deltaY = yMax - yMin;
 
-    //yspacing = floor(log10(deltaY));
-    const auto theLog = log10(deltaY);
-    auto spacing = pow(10., floor(theLog) - 1.);
-    auto theRest = theLog - floor(theLog);
-    // auto theRestRebuilt = pow(10., theRest);
-    auto multiplier = floor(pow(10., theRest));
-    //auto logYMin = log10(abs(yMin));
-    //auto newMin = floor(logYMin);
-    //ImGui::Begin("Spacings");
-    //ImGui::Text("%s", this->title.c_str());
-    //ImGui::Text("deltaY = %f", deltaY);
-    //ImGui::Text("theLog = %f", theLog);
-    //ImGui::Text("yspacing = %f", multiplier*spacing);
-    //ImGui::Text("yMin = %f", yMin);
-    //ImGui::Text("logYMin = %f", logYMin);
-    //ImGui::Text("newMin = %f", newMin);
-    ////ImGui::Text("theRest = %f", theRest );
-    ////ImGui::Text("theRestRebuilt = %f", theRestRebuilt );
-    //ImGui::Separator();
-    //ImGui::End();
+        const auto theLog = log10(deltaY);
+        const auto spacing = pow(10., floor(theLog) - 1.);
+        const auto theRest = theLog - floor(theLog);
+        const auto multiplier = floor(pow(10., theRest));
 
+        yspacing = multiplier * spacing;
+    }
 
-    //while(markStart > yMin)
-    //    markStart-=yspacing;
-    //while(markStart < (yMin-yspacing))
-    //    markStart+=yspacing;
+    {
+        const auto deltaX = xMax - xMin;
 
-    // yspacing = deltaY/10;
-    yspacing = multiplier * spacing;
+        const auto theLog = log10(deltaX);
+        const auto spacing = pow(10., floor(theLog) - 1.);
+        const auto theRest = theLog - floor(theLog);
+        const auto multiplier = floor(pow(10., theRest));
+
+        xspacing = multiplier * spacing;
+    }
 }
 
 void Base::Graphics::Graph2D::__drawXAxis() {
@@ -76,9 +66,6 @@ void Base::Graphics::Graph2D::__drawXAxis() {
     (void)hTick;
 
     auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
-
-    double xspacing = (xMax-xMin) / 10.0;
-    if(xspacing == .0) xspacing = 1.0;
 
     {
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
@@ -102,8 +89,6 @@ void Base::Graphics::Graph2D::__drawXAxis() {
         auto &tc = Styles::GetColorScheme()->majorTickColor;
         glBegin(GL_LINES);
         {
-            //glPopAttrib();
-
             glColor4f(ac.r, ac.g, ac.b, ac.a);
 
             glVertex3d(xMin, 0, 0);
@@ -132,25 +117,21 @@ void Base::Graphics::Graph2D::__drawYAxis() {
 
     const double deltaY = yMax-yMin;
     const double deltaX = xMax-xMin;
-    const double xloc = xMin-deltaX*0.05;
-
-    // double magnitude = std::log10(std::abs(deltaY));
-
-    auto markStart = yMin;
+    const double xMarkingsLabels = xMin - deltaX * 0.05;
 
     StringStream buffer;
 
     auto &gtf = Styles::GetColorScheme()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
-        for(double mark = markStart; mark<=yMax; mark+=yspacing)
+        for(double mark = yMin; mark<=yMax; mark+=yspacing)
         {
             buffer.str("");
             auto numRegion = log10(deltaY);
             buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)
                    << (numRegion< -1 ? std::scientific : std::fixed)
                    << mark;
-            GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xloc), float(mark),
+            GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xMarkingsLabels), float(mark),
                                   buffer.str().c_str(), TICK_FONT);
         }
     }
@@ -170,7 +151,7 @@ void Base::Graphics::Graph2D::__drawYAxis() {
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 
-        for(double mark = markStart; mark<=yMax; mark+=yspacing ){
+        for(double mark = yMin; mark<=yMax; mark+=yspacing ){
             glVertex3d(xMin, mark, 0);
             glVertex3d(xMax, mark, 0);
         }

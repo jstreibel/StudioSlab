@@ -46,6 +46,8 @@ bool Graphics::OutputOpenGL::notifyRender() {
     Window::notifyRender();
 
     finishFrameAndRender();
+
+    return true;
 }
 
 void Graphics::OutputOpenGL::draw() {
