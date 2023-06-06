@@ -162,6 +162,17 @@ void WindowPanel::notifyReshape(int newWinW, int newWinH) {
     arrangeWindows();
 }
 
+bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
+    assert(!allowsDelegateResponders);
+
+    auto responded = false;
+    for(auto &col : columns)
+        for(auto &win : col)
+            if(win->doesHit(x, y)) responded = win->notifyMouseButton(button, dir, x, y);
+
+    return responded;
+}
+
 
 
 

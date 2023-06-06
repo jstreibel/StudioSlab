@@ -305,13 +305,46 @@ void Base::Graphics::Graph2D::draw() {
 
     //glMatrixMode(GL_MODELVIEW);
 
-    auto &tf = Styles::GetColorScheme()->graphTitleFont;
-    glColor4f(tf.r, tf.g, tf.b, tf.a);
-    //writeOrtho(window, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
+    if(0)
+    {
+        auto &tf = Styles::GetColorScheme()->graphTitleFont;
+        glColor4f(tf.r, tf.g, tf.b, tf.a);
+        GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
+    }
 
     _drawAxes();
 
     _drawCurves();
+
+    {
+        auto popupName = String("win_") + title + String("_popup");
+
+        if(savePopupOn) {
+            ImGui::OpenPopup(popupName.c_str());
+            savePopupOn = false;
+        }
+
+        if (ImGui::BeginPopup(popupName.c_str())){
+            if(ImGui::MenuItem("Save graph")) {
+                OpenGLUtils::outputToPNG(this, "chookity_pumpa.png", 1000, 1000);
+            }
+
+            ImGui::EndPopup();
+        }
+    }
+}
+
+bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
+    if(0) std::cout << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << std::endl;
+
+
+    if(button == 2 && dir == 0){
+        savePopupOn = true;
+
+        return true;
+    }
+
+    return EventListener::notifyMouseButton(button, dir, x, y);
 }
 
 

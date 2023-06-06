@@ -5,7 +5,7 @@
 NumericParams::NumericParams()
     : Interface("Core simulation parameters")
 {
-    addParameters({N, L, xCenter, t, r, dimMode, noL, h});
+    addParameters({N, L, xCenter, t, r, dimMode, h});
 }
 
 //NumericParams::NumericParams(const boost::program_options::variables_map& vm)
@@ -14,11 +14,11 @@ NumericParams::NumericParams()
 //      t(GET("t", double)), r(GET("r", double)), h(L/double(N)), dt(r*h) {   }
 
 
-auto NumericParams::getN() const -> size_t { return N.value(); }
-auto NumericParams::getL() const -> floatt { return L.value(); }
+auto NumericParams::getN() const -> size_t { return N.getValue(); }
+auto NumericParams::getL() const -> floatt { return L.getValue(); }
 auto NumericParams::getxLeft() const -> floatt { return *xCenter - *L*.5; }
-auto NumericParams::gett() const -> floatt { return  t.value(); }
-auto NumericParams::getr() const -> floatt { return r.value(); }
+auto NumericParams::gett() const -> floatt { return t.getValue(); }
+auto NumericParams::getr() const -> floatt { return r.getValue(); }
 auto NumericParams::getn() const -> size_t {
     return n;
 }
@@ -48,6 +48,12 @@ void NumericParams::setup(CLVariablesMap vm) {
 
     dt = *r * *h;
     n = PosInt(*t / dt);
+
+    std::cout << "Numeric parameters are\n";
+
+    for(auto &p : this->getParameters())
+        std::cout << "\t" << std::left << std::setw(10) << p->getCommandLineArgName(true) << ": " << p << std::endl;
+
 }
 
 void NumericParams::sett(Real tMax) {

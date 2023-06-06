@@ -6,7 +6,7 @@
 #define STUDIOSLAB_OPENGLUTILS_H
 
 #include "../Artists/Rect.h"
-
+#include "Base/Graphics/Window/Window.h"
 #include <GL/gl.h>
 
 namespace OpenGLUtils {
@@ -34,6 +34,8 @@ namespace OpenGLUtils {
     void drawOrthoNormalized(Rect rect);
 
     bool outputToPNG(FrameBuffer buffer, std::string fileName);
+
+    bool outputToPNG(Window *window, std::string fileName, int width, int height);
 
     void piccolos();
 }

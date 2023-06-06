@@ -1,9 +1,11 @@
-
-set( STUDIOSLAB_CUDA_SUPPORT ON )
+option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
 
 set( STUDIOSLAB_BASE_LIB_NAME Slab )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
+	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
+	set( CMAKE_CUDA_ARCHITECTURES 61 )
+
 	enable_language( CUDA )
 	find_package(CUDA)
 

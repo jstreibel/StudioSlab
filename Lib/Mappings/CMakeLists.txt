@@ -10,22 +10,9 @@ find_package(OpenGL)
 include_directories (
 		../FieldMaps
 		..
-		#${CMAKE_SOURCE_DIR}
-		#${CMAKE_CURRENT_BINARY_DIR}
-		#${PWD}
 )
 
-
-#add_library(Fields-Core STATIC ${SOURCES})
-# target_link_libraries (Fields GL glut boost_program_options boost_timer)
-#set_property(TARGET Fields-Core PROPERTY CUDA_ARCHITECTURES 61)
-
 if( STUDIOSLAB_CUDA_SUPPORT )
-	enable_language( CUDA )
-
-	add_compile_definitions(USE_CUDA=true) # define um macro de preprocessador, very useful
-
-	include_directories(/opt/cuda/include)
 	set ( CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
 			RtoR/Model/RtoRFunctionArbitraryGPU.cu
@@ -37,9 +24,6 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			R2toR/Model/R2ToRFunctionArbitraryGPU.cu
 
 			)
-
-	# set_source_files_properties(${CUDA_SOURCES} PROPERTIES COMPILE_FLAGS "-DBOOST_NO_EXCEPTIONS")
-	# set_source_files_properties(${CUDA_SOURCES} PROPERTIES COMPILE_FLAGS "-DBOOST_EXCEPTION_DISABLE")
 
 	message(STATUS "Maps CUDA support is ENABLED.")
 else()

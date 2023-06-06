@@ -16,6 +16,6 @@ InputPerturbations::InputPerturbations()
 auto InputPerturbations::getBoundary() const -> const void *
 {
     return new RtoR::BoundaryCondition(new RtoR::NullFunction,
-                                       new RtoR::PerturbedOscillonTimeDerivative(l.value(),
-                                                                                 eps.value()));
+                                       new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
+                                                                                 eps.getValue()));
 }

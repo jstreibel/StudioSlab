@@ -36,6 +36,8 @@ namespace Base {
 
             Graph2D() = default;
 
+            bool savePopupOn = false;
+
         protected:
             double xMin, xMax, yMin, yMax;
             double yspacing = 1.e-5;
@@ -71,6 +73,8 @@ namespace Base {
 
             Real get_yMin() const;
             Real get_yMax() const;
+
+            bool notifyMouseButton(int button, int dir, int x, int y) override;
 
         };
 

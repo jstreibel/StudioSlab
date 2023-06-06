@@ -39,8 +39,7 @@ public:
     int geth() const { return h; }
     void setx(int _x) { this->x = _x; }
     void sety(int _y) { this->y = _y; }
-    void setw(int _w) { this->w = _w; }
-    void seth(int _h) { this->h = _h; }
+    void setSize(int _w, int _h) { this->notifyReshape(_w, _h); }
 
 protected:
     int w, h, x, y;

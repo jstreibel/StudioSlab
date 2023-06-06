@@ -23,9 +23,9 @@ auto InputShockwave::getBoundary() const -> const void *
 {
     //deltaType = vm["delta"].as<unsigned int>();
 
-    auto a = 2*a0.value();
+    auto a = 2* a0.getValue();
 
-    const Real eps = a*a / (3*E.value());
+    const Real eps = a*a / (3* E.getValue());
     std::cout << "Shockwave eps = " << eps << std::endl;
 
     AnalyticShockwave1D shockwave1D(1);

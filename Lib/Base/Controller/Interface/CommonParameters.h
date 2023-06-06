@@ -33,8 +33,8 @@ public:
 
     void setValue(const void *pVoid) override;
     void setValue(Type value);
-    auto getValue() const -> const void * override;
-    auto value() const -> Type;
+    auto getValueVoid() const -> const void * override;
+    auto getValue() const -> Type;
 
     auto operator*() -> Type&;
     auto operator*() const -> Type;

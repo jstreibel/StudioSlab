@@ -26,6 +26,7 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Base-Graphics
 
 		glut
+		GLEW
 
 		GL
 		OpenGL

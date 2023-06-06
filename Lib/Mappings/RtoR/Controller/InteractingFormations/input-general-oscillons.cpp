@@ -20,10 +20,10 @@ InputGeneralOscillons::InputGeneralOscillons()
 
 auto InputGeneralOscillons::getBoundary() const -> const void *
 {
-    AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.value(), V.value(), alpha1.value(),
+    AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.getValue(), V.getValue(), alpha1.getValue(),
                                                  false, false);
-    AnalyticOscillon oscLeft  = AnalyticOscillon(0.0, v2.value(), V.value(), alpha2.value(),
-                                                 true, mirror.value());
+    AnalyticOscillon oscLeft  = AnalyticOscillon(0.0, v2.getValue(), V.getValue(), alpha2.getValue(),
+                                                 true, mirror.getValue());
 
     auto initCondPhi = oscRight + oscLeft;
     auto initCondDPhiDt = oscRight.swap() + oscLeft.swap();

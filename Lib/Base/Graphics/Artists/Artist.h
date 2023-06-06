@@ -9,7 +9,7 @@ class Window;
 
 class Artist {
 public:
-    virtual void draw(const Window *window) = 0;
+    virtual void draw(const Window *window) const = 0;
 
     virtual void reshape(int w, int h) {};
 };

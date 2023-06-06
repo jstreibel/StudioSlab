@@ -44,7 +44,7 @@ template<class Type>
 void ParameterTemplate<Type>::setValue(Type value) { this->val = value; }
 
 template<class Type>
-const void *ParameterTemplate<Type>::getValue() const { return &val;    }
+const void *ParameterTemplate<Type>::getValueVoid() const { return &val;    }
 
 template<class Type>
 void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
@@ -59,7 +59,7 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
 }
 
 template<class Type>
-auto ParameterTemplate<Type>::value() const -> Type {
+auto ParameterTemplate<Type>::getValue() const -> Type {
     return val;
 }
 

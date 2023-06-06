@@ -50,7 +50,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     const auto h = p.geth();
 
     const auto ldd = InterfaceManager::getInstance().getInterface("ldd");
-    const auto epsilon = *(Real*)ldd->getParameter("eps")->getValue();
+    const auto epsilon = *(Real*) ldd->getParameter("eps")->getValueVoid();
 
     auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
     stats.addVolatileStat(String("t = ")     + ToString(t,         4));
@@ -225,6 +225,12 @@ bool R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
     if(panel->doesHit(x, y)) return panel->notifyMousePassiveMotion(x, y);
 
     return false;
+}
+
+bool R2toR::LeadingDelta::OutGL::notifyMouseButton(int button, int dir, int x, int y) {
+    panel->notifyMouseButton(button, dir, x, y);
+
+    return EventListener::notifyMouseButton(button, dir, x, y);
 }
 
 

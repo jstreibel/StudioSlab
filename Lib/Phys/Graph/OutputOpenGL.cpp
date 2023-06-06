@@ -1,10 +1,11 @@
 
 
+#include <GL/gl.h>
+#include <GL/glext.h>
 #include "OutputOpenGL.h"
 
 
 #include "Phys/Numerics/Allocator.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 
 

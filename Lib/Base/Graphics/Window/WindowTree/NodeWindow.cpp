@@ -47,8 +47,7 @@ void NodeWindow::arrange() {
 
         child->setx(x + i*dx);
         child->sety(y + i*dy);
-        child->setw(childWidth);
-        child->seth(childHeight);
+        child->setSize(childWidth, childHeight);
 
         auto cast = dynamic_cast<NodeWindow*>(child);
         if(cast != nullptr) cast->arrange();

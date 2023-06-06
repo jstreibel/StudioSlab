@@ -49,14 +49,14 @@ void GLUTUtils::writeBitmap(const Window *window, float x, float y, std::string 
     for(char c : str) glutBitmapCharacter(font, c);
 }
 
-OpenGLUtils::FrameBuffer GLUTUtils::getFrameBuffer() {
-    const auto w = glutGet(GLUT_WINDOW_WIDTH);
-    const auto h = glutGet(GLUT_WINDOW_HEIGHT);
+OpenGLUtils::FrameBuffer GLUTUtils::getFrameBuffer(int x, int y, int w_, int h_) {
+    const auto w = w_<0 ? glutGet(GLUT_WINDOW_WIDTH)  : w_;
+    const auto h = h_<0 ? glutGet(GLUT_WINDOW_HEIGHT) : h_;
     const auto channels = OpenGLUtils::FrameBuffer::channels;
 
     std::vector<OpenGLUtils::FrameBuffer::DataType> pixels(w*h*channels);
 
-    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     return {w, h, pixels};
 }

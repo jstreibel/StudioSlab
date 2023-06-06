@@ -1,3 +1,6 @@
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+
 #include "GLUTBackend.h"
 
 #include <Common/Resources.h>
@@ -11,7 +14,6 @@
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 
-#include <GL/freeglut.h>
 #include <cassert>
 #include <filesystem>
 
@@ -20,8 +22,7 @@ GLUTBackend *GLUTBackend::glutBackend = nullptr;
 //#define FORCE_FPS 60
 //const double FRAME_TIME = 1.0/double(FORCE_FPS);
 
-GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
-{
+GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     assert(GLUTBackend::glutBackend == nullptr);
 
     int dummy = 0;
@@ -29,12 +30,27 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
     w = 3200, h = 1350;
 
-    glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
+    glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     //glutInitWindowSize(w, h);
     glutInitWindowPosition(200, 200);
     glutInitWindowSize(w, h);
-    glutCreateWindow("Pendulum");
     //glutFullScreen();
+
+    int winHandle = glutCreateWindow("Pendulum");
+
+    // GLEW init:
+    {
+            GLenum initStatus = glewInit();
+        if (GLEW_OK != initStatus) {
+            char buffer[1024];
+            sprintf(buffer, "Error: %s\n", glewGetErrorString(initStatus));
+            throw String(buffer);
+        } else {
+            char buffer[1024];
+            sprintf(buffer, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
+            std::cout << buffer << std::endl;
+        }
+    }
 
     glutDisplayFunc(GLUTBackend::render);
     glutReshapeFunc(GLUTBackend::reshape);
@@ -50,9 +66,10 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend")
 
     glutIdleFunc(GLUTBackend::idleCall);
 
-    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE,GLUT_ACTION_CONTINUE_EXECUTION);
+    glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
-    std::cout << "Initialized GLUTBackend." << std::endl;
+
+    std::cout << "Initialized GLUTBackend. Current window: " << winHandle << std::endl;
 
 
     // Setup Dear ImGui context

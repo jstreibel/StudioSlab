@@ -18,10 +18,10 @@ auto InputSymmetricOscillon::getBoundary() const -> const void *
     RtoR::FunctionSummable &initCondPhi = *(new RtoR::FunctionSummable),
                          &initCondDPhiDt = *(new RtoR::FunctionSummable);
 
-    RtoR::AnalyticOscillon oscRight = RtoR::AnalyticOscillon(0.0, v.value(), V.value(), alpha.value(),
+    RtoR::AnalyticOscillon oscRight = RtoR::AnalyticOscillon(0.0, v.getValue(), V.getValue(), alpha.getValue(),
                                                              false, false);
-    RtoR::AnalyticOscillon oscLeft  = RtoR::AnalyticOscillon(0.0, v.value(), V.value(), alpha.value(),
-                                                             true, isAntiSymmetric.value());
+    RtoR::AnalyticOscillon oscLeft  = RtoR::AnalyticOscillon(0.0, v.getValue(), V.getValue(), alpha.getValue(),
+                                                             true, isAntiSymmetric.getValue());
 
     initCondPhi += oscRight+oscLeft;
     initCondDPhiDt += oscRight.swap() + oscLeft.swap();

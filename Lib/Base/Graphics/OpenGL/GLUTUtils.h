@@ -44,7 +44,7 @@ namespace GLUTUtils {
     void writeBitmap(const Window *window, float x, float y, std::string str,
                      void *font = FONT_BITMAP_DEFAULT);
 
-    OpenGLUtils::FrameBuffer getFrameBuffer();
+    OpenGLUtils::FrameBuffer getFrameBuffer(int x=0, int y=0, int w=-1, int h=-1);
 
     int getScreenWidth();
 

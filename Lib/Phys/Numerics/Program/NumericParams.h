@@ -47,10 +47,7 @@ private:
 															 "\n\t2: N=L/h (option --N is ignored)"
 															 "\nNote that mode 2 is not too safe if N is "
 															 "not Natural number."};
-	BoolParameter noL = BoolParameter{false, "noL", "h is defined as L/N. If you want to, "
-													"instead, compute L from h as h*N then "
-													"set this flag and use option 'h' to "
-													"set the value of h."};
+
 	DoubleParameter h =  DoubleParameter{0.009765625, "h", "Cell 1-measure. Defaults to L/N. This value is "
 														   "ignored unless '--noL' flag is set, in which case "
 														   "L will be ignored and computed from h."};

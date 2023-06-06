@@ -41,6 +41,9 @@ public:
 
     bool notifyMouseMotion(int x, int y)        override;
     bool notifyMousePassiveMotion(int x, int y) override;
+
+    bool notifyMouseButton(int button, int dir, int x, int y) override;
+
     void draw()       override;
 
 
