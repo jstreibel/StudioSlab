@@ -108,6 +108,9 @@ namespace R2toR {
 
 
         class OutGL : public R2toR::OutputOpenGL {
+            Spaces::PointSet::Ptr totalEnergyData;
+            Phys::Graphing::PointSetGraph mTotalEnergyGraph;
+
             Spaces::PointSet::Ptr numericEnergyData;
             Spaces::PointSet::Ptr analyticEnergyData;
             Phys::Graphing::PointSetGraph mEnergyGraph;
@@ -163,8 +166,8 @@ namespace R2toR {
         class OutputBuilder : public OutputStructureBuilderR2toR {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
-                const double phiMin = -.2;
-                const double phiMax =  1.2;
+                const Real phiMin = -.2;
+                const Real phiMax =  1.2;
 
                 const auto &p = Numerics::Allocator::getInstance().getNumericParams();
                 const Real L = p.getL();
@@ -177,9 +180,9 @@ namespace R2toR {
         };
 
         class Input : public R2toRBCInterface {
-            DoubleParameter a = DoubleParameter(0.1, "a", "The height of regularized delta;");
-            DoubleParameter eps = DoubleParameter(0.1, "eps", "Half the base width of regularized delta;");
-            DoubleParameter deltaDuration = DoubleParameter(-1, "delta_duration", "The duration of "
+            RealParameter a = RealParameter(0.1, "a", "The height of regularized delta;");
+            RealParameter eps = RealParameter(0.1, "eps", "Half the base width of regularized delta;");
+            RealParameter deltaDuration = RealParameter(-1, "delta_duration", "The duration of "
                                                                                   "regularized delta. Negative "
                                                                                   "values mean forever;");
 

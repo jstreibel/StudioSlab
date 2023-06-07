@@ -23,8 +23,8 @@ Base::ArbitraryFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosIn
 
     FunctionArbitraryCPU &myClone = *new FunctionArbitraryCPU(outN, outN, xMin, yMin, h);;
 
-    const double incX_d = N / double(outN);
-    const double incY_d = M / double(outN);
+    const Real incX_d = N / Real(outN);
+    const Real incY_d = M / Real(outN);
     for(PosInt n=0; n<outN; n++){
         for(PosInt m=0; m<outN; m++){
             const PosInt myn = n*incX_d;

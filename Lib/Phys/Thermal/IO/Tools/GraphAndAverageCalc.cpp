@@ -124,7 +124,7 @@ void GraphAndAverageCalc::manipulationOfParametersHasHappened(double previousPar
 
     if(avgAbs) avg = fabs(avg);
     avgSubgraph->addPoint(previousParameterValue, avg, sf::Color(255,255,255,128));
-    const double sigma2 = sigmaFactor*(avg2-avg*avg);
+    const Real sigma2 = sigmaFactor*(avg2-avg*avg);
     sigmaSubgraph->addPoint(previousParameterValue, sigma2, sf::Color(255,255,255,128));
 
     //sigmaSubgraph

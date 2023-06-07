@@ -21,7 +21,7 @@ auto RtoR::InputManyOscillons::getBoundary() const -> const void * {
 
     auto scale = L/n;
     for(int i=0; i<n; i++){
-        auto tx = -10. + 1.1*double(i)*scale;
+        auto tx = -10. + 1.1*Real(i)*scale;
 
         AnalyticOscillon oscRight = AnalyticOscillon(.0, tx, scale, 0.9999, 0.7, 0.132487, false, false);
         AnalyticOscillon oscLeft  = AnalyticOscillon(.0, -tx, scale, .53, .7, 0.9324265, true, false);

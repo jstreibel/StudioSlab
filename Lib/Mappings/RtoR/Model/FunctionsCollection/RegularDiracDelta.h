@@ -10,14 +10,14 @@
 namespace RtoR {
     class RegularDiracDelta : public Function {
     public:
-        static auto deltaGauss(double x, double eps) -> double {
+        static auto deltaGauss(Real x, Real eps) -> Real {
             return 1. / sqrt(4 * M_PI * eps) * exp(-x * x / (4 * eps));
         }
 
-        static auto deltaTri(double x, double eps) -> double {
+        static auto deltaTri(Real x, Real eps) -> Real {
             //a = 2. * sqrt(M_PI * a); // mudanca do epsilon para ficar parecido com Gaussiana, conforme artigo
 
-            const double invEps = 1. / eps;
+            const Real invEps = 1. / eps;
 
             if      (x > -eps && x <= .0)   return invEps * (1. + invEps * x);
             else if (x > .0   && x <   eps) return invEps * (1. - invEps * x);
@@ -25,7 +25,7 @@ namespace RtoR {
             return 0.;
         }
 
-        static auto deltaRect(double x, double eps) -> double {
+        static auto deltaRect(Real x, Real eps) -> Real {
             if (x > -eps && x < eps) return 1. / (2. * eps);
 
             return 0.;
@@ -64,7 +64,7 @@ namespace RtoR {
         auto Clone() const -> Function<Real, Real> * override { return new RegularDiracDelta(eps, a, reg, tx); }
 
     private:
-        double (*delta)(double, double);
+        Real (*delta)(Real, Real);
 
         const Real a, eps;
         Real tx;

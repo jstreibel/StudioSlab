@@ -5,9 +5,9 @@ typedef thrust::device_vector<int> Indices;
 typedef Indices::iterator IndexIterator;
 typedef thrust::permutation_iterator<ElementIterator, IndexIterator> ElementPermutationIterator;
 
-typedef thrust::tuple<double, double, double> Triple;
+typedef thrust::tuple<Real, Real, Real> Triple;
 
-typedef thrust::tuple<double, double, double, double> Quadruple;
+typedef thrust::tuple<Real, Real, Real, Real> Quadruple;
 
 
 Indices next;
@@ -17,11 +17,11 @@ Indices prev;
 //*******************************************************************************
 struct Laplacian2D {
     int N, M;
-    double invhsqr;
-    Laplacian2D(int N, int M, double h) : N(N), M(M), invhsqr(1./(h*h)) {}
+    Real invhsqr;
+    Laplacian2D(int N, int M, Real h) : N(N), M(M), invhsqr(1./(h*h)) {}
 
     __host__ __device__
-    inline double operator()(const thrust::tuple<double, double, double, double, double>& d) const {
+    inline Real operator()(const thrust::tuple<Real, Real, Real, Real, Real>& d) const {
         // Kernel
         //  1  / 0  1  0 \
         // --- | 1  4  1 |
@@ -31,14 +31,14 @@ struct Laplacian2D {
         // / x00 x01 x02 \    /     x01     \    /   N   \
         // | x10 x11 x12 |    | x10 x11 x12 |    | W C E |
         // \ x20 x21 x22 /    \     x21     /    \   S   /
-        const double x01 = d.get<0>();
-        const double x10 = d.get<1>();
-        const double x11 = d.get<2>();
-        const double x12 = d.get<3>();
-        const double x21 = d.get<4>();
+        const Real x01 = d.get<0>();
+        const Real x10 = d.get<1>();
+        const Real x11 = d.get<2>();
+        const Real x12 = d.get<3>();
+        const Real x21 = d.get<4>();
 
-        const double vx = x10 + x12;
-        const double vy = x01 + x21;
+        const Real vx = x10 + x12;
+        const Real vy = x01 + x21;
 
         return invhsqr * ((vx + vy) - 4.*x11);
     }
@@ -46,7 +46,7 @@ struct Laplacian2D {
 
 __host__ DeviceVector &d2dx2(const DeviceVector &in,
                              DeviceVector &out,
-                             const double h, const size_t N, const size_t M)
+                             const Real h, const size_t N, const size_t M)
                              {
     (void)M;
 

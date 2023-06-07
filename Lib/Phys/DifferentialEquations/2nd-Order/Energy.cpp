@@ -9,7 +9,6 @@ Real Phys::Gordon::Energy::operator[](const R2toR::FieldState &function) const {
     const auto &phi = function.getPhi();
     const auto &dphidt = function.getDPhiDt();
     const auto &phiSpace = phi.getSpace();
-    const auto &dphidtSpace = dphidt.getSpace();
 
     auto h = phiSpace.geth();
     auto inv_2h = .5/h;

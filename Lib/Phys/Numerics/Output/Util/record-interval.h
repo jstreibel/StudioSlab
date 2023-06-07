@@ -2,27 +2,28 @@
 #define RECORDINTERVAL_H
 
 #include "Common/STDLibInclude.h"
+#include "Common/Types.h"
 
 struct RecordInterval{
-	RecordInterval(const double beginT, const double endT, const double x);
+	RecordInterval(const Real beginT, const Real endT, const Real x);
 
-	double deltaT() const;
+	Real deltaT() const;
 
-	const double beginT, endT;
-	const double x;
+	const Real beginT, endT;
+	const Real x;
 
-	void add(double f, double t);
+	void add(Real f, Real t);
 
-	bool contains(const double T) const;
+	bool contains(const Real T) const;
 
-	const double & operator() (const double &t);
+	const Real & operator() (const Real &t);
 
-	const std::vector<double> &getFVals() const;
-	const std::vector<double> &getTVals() const;
+	const std::vector<Real> &getFVals() const;
+	const std::vector<Real> &getTVals() const;
 
 private:
-    std::vector<double> fVals;
-    std::vector<double> tVals;
+    std::vector<Real> fVals;
+    std::vector<Real> tVals;
 
 public:
 	typedef std::vector<RecordInterval>::iterator Iterator;

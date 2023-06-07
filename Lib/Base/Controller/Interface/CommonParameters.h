@@ -50,7 +50,7 @@ auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> 
 
 
 typedef ParameterTemplate < int    > IntegerParameter;
-typedef ParameterTemplate < double > DoubleParameter;
+typedef ParameterTemplate < Real > RealParameter;
 typedef ParameterTemplate < String > StringParameter;
 typedef ParameterTemplate < bool   > BoolParameter;
 

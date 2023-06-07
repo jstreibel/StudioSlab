@@ -73,7 +73,7 @@ Base::ArbitraryFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt 
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
     const VecFloat &X = getSpace().getX();
-    const double inc_d = N / double(outN);
+    const Real inc_d = N / Real(outN);
 
     DiscreteSpace &newSpace = newFunc.getSpace();
     for(PosInt i=0; i<outN; i++)

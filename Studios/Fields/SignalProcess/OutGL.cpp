@@ -166,7 +166,7 @@ void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
 
 #include <SOIL/SOIL.h>
 
-void renderMatrix(const std::vector<std::vector<double>>& matrix)
+void renderMatrix(const std::vector<std::vector<Real>>& matrix)
 {
     // Get the size of the matrix
     int width = matrix.size();

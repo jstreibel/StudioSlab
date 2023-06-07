@@ -53,7 +53,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
     for(size_t Ti=0; Ti<count; Ti++) {
         if(timer.getElTime_sec() > 1) {
             timer.reset();
-            std::cout << "\rFlushing " << (double)Ti/double(count)*100.0 << "%    " << std::flush;
+            std::cout << "\rFlushing " << (Real)Ti/Real(count)*100.0 << "%    " << std::flush;
         }
 
         file << outputFormatter(tHistory[int(Ti)]);

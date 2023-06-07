@@ -6,12 +6,14 @@ NumericParams::NumericParams()
     : Interface("Core simulation parameters")
 {
     addParameters({N, L, xCenter, t, r, dimMode, h});
+
+    std::cout << "Integration type is " << sizeof(Real)*8 << " bits." << std::endl;
 }
 
 //NumericParams::NumericParams(const boost::program_options::variables_map& vm)
-//    : N(GET("N", size_t)), L(GET("L", double)),
-//      xLeft(GET_FALLBACK("xLeft", double, -.5*L)),
-//      t(GET("t", double)), r(GET("r", double)), h(L/double(N)), dt(r*h) {   }
+//    : N(GET("N", size_t)), L(GET("L", Real)),
+//      xLeft(GET_FALLBACK("xLeft", Real, -.5*L)),
+//      t(GET("t", Real)), r(GET("r", Real)), h(L/Real(N)), dt(r*h) {   }
 
 
 auto NumericParams::getN() const -> size_t { return N.getValue(); }

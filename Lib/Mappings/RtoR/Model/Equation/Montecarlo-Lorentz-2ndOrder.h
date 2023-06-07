@@ -29,13 +29,13 @@ namespace RtoR {
         Real T=1.e-3;
         unsigned accepted = 0;
 
-        double E(const ArbitraryFunction &phi){
+        Real E(const ArbitraryFunction &phi){
             const auto h = phi.getSpace().geth();
             const auto inv_2h = .5/h;
             const auto &X = phi.getSpace().getX();
             const auto &N = phi.N;
 
-            double E_h = .0;
+            Real E_h = .0;
             for(auto i=0; i<N; ++i){
                 const auto &x_left = X[i==0   ? N-1 : i-1];
                 const auto &x = X[i];
@@ -51,7 +51,7 @@ namespace RtoR {
         }
 
         ArbitraryFunction *temp;
-        double deltaE(ArbitraryFunction &phi, const int site, const double newVal, const double h){
+        Real deltaE(ArbitraryFunction &phi, const int site, const Real newVal, const Real h){
             ArbitraryFunction &phiNew = *temp;
 
             phiNew.SetArb(phi);
@@ -71,12 +71,12 @@ namespace RtoR {
             //return (1/h) * (C-v) * (v - L + C - R) + h*(V(C) - V(v));
         }
 
-        bool shouldAccept(double deltaE){
+        bool shouldAccept(Real deltaE){
             if(deltaE<0) return true;
 
-            const double r = RandUtils::random01();
+            const Real r = RandUtils::random01();
 
-            const double z = ThermoUtils::BoltzmannWeight(T, deltaE);
+            const Real z = ThermoUtils::BoltzmannWeight(T, deltaE);
 
             return (r<z);
         }
@@ -108,7 +108,7 @@ namespace RtoR {
                 const Real v = X[i];
                 const Real newVal = v + RandUtils::random(-.5,.5);
 
-                const double deltaE = this->deltaE(phi, i, newVal, h);
+                const Real deltaE = this->deltaE(phi, i, newVal, h);
 
                 if (shouldAccept(deltaE)) {
                     X[i] = newVal;

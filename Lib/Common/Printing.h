@@ -5,13 +5,14 @@
 #ifndef V_SHAPE_PRINTING_H
 #define V_SHAPE_PRINTING_H
 
+#include "Types.h"
 
 namespace Printing {
     auto getDPI() -> int;
-    auto getTextWidthInches() -> double;
+    auto getTextWidthInches() -> Real;
 
-    auto getTotalHorizontalDots(double proportionOfTextWidth) -> int;
-    auto getTotalVerticalDots(double proportionOfTextWidth) -> int;
+    auto getTotalHorizontalDots(Real proportionOfTextWidth) -> int;
+    auto getTotalVerticalDots(Real proportionOfTextWidth) -> int;
 }
 
 

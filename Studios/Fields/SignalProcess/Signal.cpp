@@ -47,7 +47,7 @@ void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
 
     *JackServer::GetInstance() << measure;
 }
-bool RtoR::Signal::JackOutput::shouldOutput(double t, unsigned long timestep) {
+bool RtoR::Signal::JackOutput::shouldOutput(Real t, unsigned long timestep) {
     return Plug::shouldOutput(t, timestep);
 }
 
@@ -62,8 +62,8 @@ bool RtoR::Signal::JackOutput::shouldOutput(double t, unsigned long timestep) {
  *            \/               |__|                            \/                       \/      \/
  */
 auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::OutputOpenGL * {
-    const double phiMin = -1.4;
-    const double phiMax = -phiMin;
+    const Real phiMin = -1.4;
+    const Real phiMax = -phiMin;
 
     const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
     const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
@@ -90,7 +90,7 @@ OutputManager *RtoR::Signal::OutputBuilder::build(String outputFileName) {
  *     |______  / \____/ |____/ |___|  /\____ | (____  / |__|    / ____|        \___  > \____/ |___|  /\____ | |__| |__|  |__| \____/ |___|  /
  *            \/                     \/      \/      \/          \/                 \/              \/      \/                             \/
  */
-RtoR::Signal::BoundaryCondition::BoundaryCondition(double f, double A) : f(f), A(A) { }
+RtoR::Signal::BoundaryCondition::BoundaryCondition(Real f, Real A) : f(f), A(A) { }
 void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) const {
     auto jackServer = JackServer::GetInstance();
 
@@ -195,8 +195,8 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
 RtoR::Signal::CLI::CLI() : RtoRBCInterface("(1+1)-d Signal studies platform.", "gh", new OutputBuilder) {
     addParameters({&freq, &amplitude, &damping, &dampPercent}); }
 auto RtoR::Signal::CLI::getBoundary() const -> const void * {
-    const double f = *freq;
-    const double A = *amplitude;
+    const Real f = *freq;
+    const Real A = *amplitude;
 
     dampFactor = *damping;
     xInitDampCutoff_normalized = 1-*dampPercent;

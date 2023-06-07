@@ -192,8 +192,8 @@ namespace ThermoOutput {
         ++MCStep;
 
         auto N = L * L;
-        ThermoUtils::Real mag_ferro = .0, mag_para = .0;
-        ThermoUtils::Real e = .0;
+        Real mag_ferro = .0, mag_para = .0;
+        Real e = .0;
         int i=0;
         for (auto sim : simulations) {
             auto calc = sim.first;

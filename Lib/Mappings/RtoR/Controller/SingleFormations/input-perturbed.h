@@ -7,8 +7,8 @@
 namespace RtoR {
 
     class InputPerturbations : public RtoRBCInterface {
-        DoubleParameter l   = DoubleParameter{1., "l", "Initial condition scale factor."};
-        DoubleParameter eps = DoubleParameter{1., "a", "Perturbation value. a=1 means no perturbation."};
+        RealParameter l   = RealParameter{1., "l", "Initial condition scale factor."};
+        RealParameter eps = RealParameter{1., "a", "Perturbation value. a=1 means no perturbation."};
 
     public:
         InputPerturbations();

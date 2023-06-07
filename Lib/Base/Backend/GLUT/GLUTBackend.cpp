@@ -20,7 +20,7 @@
 GLUTBackend *GLUTBackend::glutBackend = nullptr;
 
 //#define FORCE_FPS 60
-//const double FRAME_TIME = 1.0/double(FORCE_FPS);
+//const Real FRAME_TIME = 1.0/Real(FORCE_FPS);
 
 GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     assert(GLUTBackend::glutBackend == nullptr);

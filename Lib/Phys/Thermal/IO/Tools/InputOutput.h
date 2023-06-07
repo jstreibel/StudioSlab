@@ -21,12 +21,12 @@ namespace ThermoOutput {
 
         const int accepted=0, rejected=0;
 
-        OutputData(int mcTotalSteps, int mcStep, int transientSize, XYNetwork &S, ThermoUtils::Real h,
+        OutputData(int mcTotalSteps, int mcStep, int transientSize, XYNetwork &S, Real h,
                    int acceptedCount=0, int rejectedCount=0)
             : mcTotalSteps(mcTotalSteps), mcStep(mcStep), transientSize(transientSize), S(S),
               accepted(acceptedCount), rejected(rejectedCount)
         {
-            ThermoUtils::Real E = S.E(h), M = S.M();
+            Real E = S.E(h), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -35,8 +35,8 @@ namespace ThermoOutput {
             m2=M*M/N;
         }
 
-        OutputData(const XYNetwork &S, ThermoUtils::Real h) : mcTotalSteps(-1), mcStep(-1), transientSize(-1), S(S){
-            ThermoUtils::Real E = S.E(double(h)), M = S.M();
+        OutputData(const XYNetwork &S, Real h) : mcTotalSteps(-1), mcStep(-1), transientSize(-1), S(S){
+            Real E = S.E(double(h)), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -45,16 +45,16 @@ namespace ThermoOutput {
             m2=m*m;
         }
 
-        ThermoUtils::Real e, m, e2, m2, N;
+        Real e, m, e2, m2, N;
     };
 
 
 // Tambem conhecido como parametros termodinamicos
     struct SystemParams {
-        SystemParams(ThermoUtils::Real &T, ThermoUtils::Real &h, ThermoUtils::Real &δ, bool &shouldRun, bool &shouldOverrelax)
+        SystemParams(Real &T, Real &h, Real &δ, bool &shouldRun, bool &shouldOverrelax)
                 : T(T), h(h), δ(δ), shouldRun(shouldRun), shouldOverrelax(shouldOverrelax) {}
 
-        ThermoUtils::Real &T, &h, &δ;
+        Real &T, &h, &δ;
         bool &shouldRun;
         bool &shouldOverrelax;
     };

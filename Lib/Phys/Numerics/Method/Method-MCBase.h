@@ -36,7 +36,7 @@ public:
         delete _phiTemp;
     }
 
-    void step(const double &dt, const size_t n_steps) override {
+    void step(const Real &dt, const size_t n_steps) override {
 
         auto &phi = *_phi;
         FIELD_STATE_TYPE *null = nullptr;

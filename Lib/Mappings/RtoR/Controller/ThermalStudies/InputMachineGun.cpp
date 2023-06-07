@@ -24,7 +24,7 @@ auto RtoR::InputMachineGun::getBoundary() const -> const void * {
     initCondDPhiDt += BigOne.swap();
 
     for(int i=0; i<*n; i++){
-        auto tx = double(i)*.2;
+        auto tx = Real(i)*.2;
 
         auto tiny = AnalyticOscillon(.0, tx, scaleSmall, 0, .75, 0.2634, false, false);
 

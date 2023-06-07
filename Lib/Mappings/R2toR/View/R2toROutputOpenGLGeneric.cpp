@@ -11,7 +11,7 @@
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
     : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
       phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel()),
-      mSectionGraph(xMin, xMax, phiMin, phiMax, "", true,
+      mSectionGraph(xMin, xMax, phiMin, phiMax, "Sections", true,
                     Numerics::Allocator::getInstance().getNumericParams().getN()*3)
 {
     // Window *window = nullptr;

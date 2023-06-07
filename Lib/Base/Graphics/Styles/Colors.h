@@ -25,15 +25,15 @@ namespace Styles {
     };
 
     typedef struct {
-        double r;       // a fraction between 0 and 1
-        double g;       // a fraction between 0 and 1
-        double b;       // a fraction between 0 and 1
+        Real r;       // a fraction between 0 and 1
+        Real g;       // a fraction between 0 and 1
+        Real b;       // a fraction between 0 and 1
     } rgb;
 
     typedef struct {
-        double h;       // angle in degrees
-        double s;       // a fraction between 0 and 1
-        double v;       // a fraction between 0 and 1
+        Real h;       // angle in degrees
+        Real s;       // a fraction between 0 and 1
+        Real v;       // a fraction between 0 and 1
     } hsv;
 
     static hsv   rgb2hsv(rgb in);
@@ -42,7 +42,7 @@ namespace Styles {
     hsv rgb2hsv(rgb in)
     {
         hsv         out;
-        double      min, max, delta;
+        Real      min, max, delta;
 
         min = in.r < in.g ? in.r : in.g;
         min = min  < in.b ? min  : in.b;
@@ -86,7 +86,7 @@ namespace Styles {
 
     rgb hsv2rgb(hsv in)
     {
-        double      hh, p, q, t, ff;
+        Real      hh, p, q, t, ff;
         long        i;
         rgb         out;
 

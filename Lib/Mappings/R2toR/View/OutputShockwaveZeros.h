@@ -16,10 +16,10 @@ namespace R2toR {
     private:
         std::fstream file;
         int outputResolution;
-        double t0;
+        Real t0;
 
     public:
-        OutputShockwaveZeros(int N, int outputResolution, double t0=0);
+        OutputShockwaveZeros(int N, int outputResolution, Real t0=0);
         ~OutputShockwaveZeros() override;
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;

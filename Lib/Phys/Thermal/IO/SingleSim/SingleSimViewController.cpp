@@ -245,7 +245,7 @@ namespace ThermoOutput {
         auto t_total = upToMCStep - t0;
         auto tCorrMax_local = fmin(t_total, t_max);
 
-        std::vector<double> c(tCorrMax_local);
+        std::vector<Real> c(tCorrMax_local);
 
         for (auto t=0; t < tCorrMax_local; ++t){
             auto corr = .0;
@@ -303,7 +303,7 @@ namespace ThermoOutput {
                     val -= floor(val);
                     val *= 360.0;
 
-                    auto rgb = Styles::hsv2rgb({static_cast<double>(val), 1, 1});
+                    auto rgb = Styles::hsv2rgb({static_cast<Real>(val), 1, 1});
                     auto color = sf::Color(rgb.r * 255., rgb.g * 255., rgb.b * 255.);
 
                     XYThetaBitmap.setPixel(i, j, color);
@@ -478,7 +478,7 @@ namespace ThermoOutput {
             return;
         }
 
-        double dT = (T_max-T_min)/totalSamples;
+        Real dT = (T_max-T_min)/totalSamples;
         if((data.mcStep % ((transientToSamplesRatio+1 )*data.transientSize)) == 0){
             auto lastT = params.T;
             params.T += dT;
@@ -524,7 +524,7 @@ namespace ThermoOutput {
         nk_sfml_render(NK_ANTI_ALIASING_ON, MaxVertexMemory, MaxElementMemory);
     }
 
-    void SingleSimViewController::__manipulationOfParametersHasHappened(double last_T, double last_h, double N) {
+    void SingleSimViewController::__manipulationOfParametersHasHappened(Real last_T, Real last_h, Real N) {
         //mag_t_View->manipulationOfParametersHasHappened(last_T, N/last_T);
         //en_t_View->manipulationOfParametersHasHappened(last_T, N/(last_T*last_T));
     }
@@ -546,7 +546,7 @@ namespace ThermoOutput {
 
             myfile.open(fileLoc + fileName + ".dat");
             myfile << "# History output\n# t    T(t)    h(t)    e(t)    m(t)\n";
-            std::pair<double, double> T, h, e, m;
+            std::pair<Real, double> T, h, e, m;
             for (auto data : boost::combine(T_t, h_t, en_t, mag_t)) {
                 boost::tie(T, h, e, m) = data;
                 const auto t = T.first; // ou h.first ou e.first ou m.first. Eles devem (!) todos retornar a mesma coisa.

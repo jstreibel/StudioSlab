@@ -16,7 +16,7 @@
 using namespace R2toR;
 
 void R2toRInputShockwaveAt_t0::YoureTheChosenOne(CLVariablesMap &vm) {
-    t0 = vm["t0"].as<double>();
+    t0 = vm["t0"].as<Real>();
 
     const auto derivative_dt = 1.e-7;
     auto sw = new RtoR::AnalyticShockwave2DRadialSymmetry;

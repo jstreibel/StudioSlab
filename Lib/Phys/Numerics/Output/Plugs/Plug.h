@@ -34,7 +34,7 @@ namespace Numerics {
              * above.
              * @return
              */
-            virtual auto shouldOutput(double t, long unsigned timestep) -> bool;
+            virtual auto shouldOutput(Real t, long unsigned timestep) -> bool;
 
 
         protected:
@@ -48,7 +48,7 @@ namespace Numerics {
 
             explicit Plug(String name="", int nStepsInterval = 1, String description="");
 
-            auto getLastSimTime() -> double;
+            auto getLastSimTime() -> Real;
             auto getNSteps() const -> int;
 
             void output(const OutputPacket &outData);

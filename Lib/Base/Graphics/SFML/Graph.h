@@ -50,9 +50,9 @@ namespace Graphing {
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     public:
-        virtual void manipulationOfParametersHasHappened(double previousParamValue, double sigmaFactor);
+        virtual void manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor);
 
-        std::vector<std::pair<double, double>> getData() const;
+        std::vector<std::pair<Real, Real>> getData() const;
     };
 }
 

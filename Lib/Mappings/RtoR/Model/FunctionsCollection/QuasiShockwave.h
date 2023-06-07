@@ -10,24 +10,24 @@
 
 namespace RtoR {
     class QuasiShockwave : public Function {
-        auto ϕ_1L(double x) const -> double;
-        auto ϕ_2L(double x) const -> double;
-        auto ϕ_3L(double x) const -> double;
+        auto ϕ_1L(Real x) const -> Real;
+        auto ϕ_2L(Real x) const -> Real;
+        auto ϕ_3L(Real x) const -> Real;
 
-        auto ϕ_1C(double x) const -> double;
-        auto ϕ_2C(double x) const -> double;
+        auto ϕ_1C(Real x) const -> Real;
+        auto ϕ_2C(Real x) const -> Real;
 
-        auto ϕ_1R(double x) const -> double;
-        auto ϕ_2R(double x) const -> double;
-        auto ϕ_3R(double x) const -> double;
+        auto ϕ_1R(Real x) const -> Real;
+        auto ϕ_2R(Real x) const -> Real;
+        auto ϕ_3R(Real x) const -> Real;
 
-        double a0, E, a, ε;
+        Real a0, E, a, ε;
 
-        double t=0;
+        Real t=0;
     public:
-        QuasiShockwave(double a0, double E, double t=0);
+        QuasiShockwave(Real a0, Real E, Real t=0);
 
-        void sett(double t){ this->t = t; }
+        void sett(Real t){ this->t = t; }
         Real operator()(Real x) const override;
     };
 }

@@ -9,7 +9,7 @@ Numerics::OutputSystem::Plug::Plug(String name, int nStepsInterval, String descr
 : nStepsBetweenRecordings(nStepsInterval), name(name), description(description) {      }
 
 
-auto Numerics::OutputSystem::Plug::getLastSimTime() -> double { return lastData.getSimTime(); }
+auto Numerics::OutputSystem::Plug::getLastSimTime() -> Real { return lastData.getSimTime(); }
 
 auto Numerics::OutputSystem::Plug::getNSteps() const -> int { return nStepsBetweenRecordings; }
 
@@ -19,7 +19,7 @@ auto Numerics::OutputSystem::Plug::computeNextRecStep() -> size_t {
     return lastStep+size_t(nStepsBetweenRecordings);
 }
 
-auto Numerics::OutputSystem::Plug::shouldOutput(const double t, const long unsigned timestep) -> bool {
+auto Numerics::OutputSystem::Plug::shouldOutput(const Real t, const long unsigned timestep) -> bool {
 
 #if SHOULD_OUTPUT___MODE == INT_BASED
     (void)t;

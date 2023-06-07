@@ -8,12 +8,12 @@
 #include <bitset>
 #include <vector>
 
+#include "Common/Types.h"
+
 #include "Base/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 #include "Phys/Thermal/Utils/ThermoUtils.h"
 
-typedef std::vector<ThermoUtils::Real> StateType;
-
-using ThermoUtils::Real;
+typedef std::vector<Real> StateType;
 
 class XYNetwork {
     StateType ThetaField;

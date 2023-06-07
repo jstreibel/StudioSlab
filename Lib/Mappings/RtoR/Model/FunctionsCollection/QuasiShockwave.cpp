@@ -8,9 +8,9 @@
 using namespace RtoR;
 
 
-QuasiShockwave::QuasiShockwave(double a0, double E, double t) : a0(a0), E(E), a(2*a0), ε(a*a/(3*E)), t(t){ }
+QuasiShockwave::QuasiShockwave(Real a0, Real E, Real t) : a0(a0), E(E), a(2*a0), ε(a*a/(3*E)), t(t){ }
 
-auto QuasiShockwave::ϕ_1L(double x) const -> double {
+auto QuasiShockwave::ϕ_1L(Real x) const -> Real {
     auto domain = ((x > -ε + t) && (x < -t) && (t < ε / 2)) * 1;
 
     auto ϕ = a / (ε*ε) * (x + ε) * t - t*t / 2;
@@ -18,7 +18,7 @@ auto QuasiShockwave::ϕ_1L(double x) const -> double {
     return ϕ;
 }
 
-auto QuasiShockwave::ϕ_2L(double x) const -> double {
+auto QuasiShockwave::ϕ_2L(Real x) const -> Real {
     auto v = -1 + ε*ε / a;
 
     auto arg = (x + ε - v * t);
@@ -27,7 +27,7 @@ auto QuasiShockwave::ϕ_2L(double x) const -> double {
     return ϕ;
 }
 
-auto QuasiShockwave::ϕ_3L(double x) const -> double {
+auto QuasiShockwave::ϕ_3L(Real x) const -> Real {
     auto v = -1 + ε*ε/a;
 
     auto arg1 = x + t;
@@ -40,7 +40,7 @@ auto QuasiShockwave::ϕ_3L(double x) const -> double {
 }
 
 
-auto QuasiShockwave::ϕ_1C(double x) const -> double {
+auto QuasiShockwave::ϕ_1C(Real x) const -> Real {
     auto v = -1 + ε*ε/a;
 
     auto ϕ = 1. / (1 + v) * (ε * t - (x*x + t*t) / 2) - t*t / 2;
@@ -48,7 +48,7 @@ auto QuasiShockwave::ϕ_1C(double x) const -> double {
     return ϕ;
 }
 
-auto QuasiShockwave::ϕ_2C(double x) const -> double {
+auto QuasiShockwave::ϕ_2C(Real x) const -> Real {
     auto v = -1 + ε*ε / a;
     auto b = -v * t*t + 2 * ε * t - 2 * a;
 
@@ -62,15 +62,15 @@ auto QuasiShockwave::ϕ_2C(double x) const -> double {
 
 
 
-auto QuasiShockwave::ϕ_1R(double x) const -> double {
+auto QuasiShockwave::ϕ_1R(Real x) const -> Real {
     return ϕ_1L(-x);
 }
 
-auto QuasiShockwave::ϕ_2R(double x) const -> double {
+auto QuasiShockwave::ϕ_2R(Real x) const -> Real {
     return ϕ_2L(-x);
 }
 
-auto QuasiShockwave::ϕ_3R(double x) const -> double {
+auto QuasiShockwave::ϕ_3R(Real x) const -> Real {
     return ϕ_3L(-x);
 }
 

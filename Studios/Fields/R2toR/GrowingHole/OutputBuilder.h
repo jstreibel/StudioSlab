@@ -16,8 +16,8 @@ namespace R2toR {
         class OutputBuilder : public OutputStructureBuilderR2toR {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
-                const double phiMin = -.5;
-                const double phiMax = 1;
+                const Real phiMin = -.5;
+                const Real phiMax = 1;
 
                 const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
                 const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();

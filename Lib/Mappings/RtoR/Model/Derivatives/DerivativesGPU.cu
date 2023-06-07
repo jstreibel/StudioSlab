@@ -11,25 +11,25 @@ typedef thrust::device_vector<int> Indices;
 typedef Indices::iterator IndexIterator;
 typedef thrust::permutation_iterator<ElementIterator, IndexIterator> ElementPermutationIterator;
 
-typedef thrust::tuple<double,
-double,
-double> Triple;
+typedef thrust::tuple<Real,
+Real,
+Real> Triple;
 
-typedef thrust::tuple<double,
-double,
-double,
-double> Quadruple;
+typedef thrust::tuple<Real,
+Real,
+Real,
+Real> Quadruple;
 
 
 struct Laplacian1D {
-    const double invhsqr;
-    explicit Laplacian1D(double h) : invhsqr(1./(h*h)) {}
+    const Real invhsqr;
+    explicit Laplacian1D(Real h) : invhsqr(1./(h*h)) {}
 
     __host__ __device__
-    inline double operator()(const Triple& d) const {
-        const double W = d.get<0>();
-        const double C = d.get<1>();
-        const double E = d.get<2>();
+    inline Real operator()(const Triple& d) const {
+        const Real W = d.get<0>();
+        const Real C = d.get<1>();
+        const Real E = d.get<2>();
 
         return invhsqr * ((W + E) - 2.*C);
     }
@@ -42,7 +42,7 @@ Indices prev;
 
 __host__ DeviceVector &d2dx2(const DeviceVector &in_const,
                              DeviceVector &out,
-                             const double h, const size_t N)
+                             const Real h, const size_t N)
                              {
     // TODO
     // 1. assert N is Po2

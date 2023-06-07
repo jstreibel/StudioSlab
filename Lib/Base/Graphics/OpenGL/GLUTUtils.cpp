@@ -21,8 +21,8 @@ void GLUTUtils::writeOrtho(const Window *window, Rect region, float fontScale, f
                 void *font) {
     const auto w = region.xMax-region.xMin;
     const auto h = region.yMax-region.yMin;
-    auto regionRatio = w/(double)h;
-    auto windowRatio = window->getw()/(double)window->geth();
+    auto regionRatio = w/(Real)h;
+    auto windowRatio = window->getw()/(Real)window->geth();
 
     auto baseScale = h*2.5e-4;
 

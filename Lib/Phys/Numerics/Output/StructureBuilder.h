@@ -17,8 +17,8 @@ namespace Numerics {
 
         class StructureBuilder : public Interface {
             BoolParameter takeSnapshot = {false, "snapshot,s", "Take a snapshot of simulation at the end."};
-            DoubleParameter snapshotTime = {-1.0, "snapshotTime,t",
-                                            "Force snapshot to be taken at some time prior to end (after will result in no output."};
+            RealParameter snapshotTime = {-1.0, "snapshotTime,t",
+                                          "Force snapshot to be taken at some time prior to end (after will result in no output."};
 
         protected:
             BoolParameter noHistoryToFile = {false, "no_history_to_file,o", "Don't output history to file."};

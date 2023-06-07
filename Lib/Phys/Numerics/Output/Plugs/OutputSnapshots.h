@@ -23,10 +23,10 @@ public:
     size_t computeNextRecStep() override;
 
 protected:
-    static void _outputToFile(DiscreteSpacePair spaceData, double t, const String &fileName);
+    static void _outputToFile(DiscreteSpacePair spaceData, Real t, const String &fileName);
 
 protected:
-    virtual bool shouldOutput(const double t, const long unsigned timeStep);
+    virtual bool shouldOutput(const Real t, const long unsigned timeStep);
 
     virtual void _out(const OutputPacket &outInfo){
         OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);

@@ -11,7 +11,7 @@
 
 #include "../COMPILE_CONFIG.h"
 
-typedef std::vector<ThermoUtils::Real> RealVector;
+typedef std::vector<Real> RealVector;
 
 class IsingMonteCarloCalculator {
 
@@ -36,12 +36,12 @@ public:
     Dynamic aDynamic;
     Sweeping sweeping;
 private:
-    ThermoUtils::Real T;
-    ThermoUtils::Real h;
+    Real T;
+    Real h;
 
     IsingNetwork S;
 
-    static bool __shouldAccept(ThermoUtils::Real deltaE) ;
+    static bool __shouldAccept(Real deltaE) ;
 
 
     void __MCStepMetropolis();
@@ -50,12 +50,12 @@ private:
     void _shake(double h);
 public:
 
-    explicit IsingMonteCarloCalculator(int L, ThermoUtils::Real T, ThermoUtils::Real h, ThermoOutput::ViewControlBase *viewer, InitialConditions ic, Dynamic dynamic, Sweeping sweeping);
+    explicit IsingMonteCarloCalculator(int L, Real T, Real h, ThermoOutput::ViewControlBase *viewer, InitialConditions ic, Dynamic dynamic, Sweeping sweeping);
 
     ~IsingMonteCarloCalculator() = default;
 
-    void set_T(ThermoUtils::Real T);
-    void set_h(ThermoUtils::Real h);
+    void set_T(Real T);
+    void set_h(Real h);
     void MCStep();
     void Simulate(int MCSteps, int transientSize);
 

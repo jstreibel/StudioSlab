@@ -7,7 +7,7 @@ public:
     virtual ~Method() = default;
 
 public:
-    virtual void step(const double &dt, size_t n_steps) = 0;
+    virtual void step(const Real &dt, size_t n_steps) = 0;
     virtual auto getFieldState() const -> const void* = 0;
     virtual auto getSpaces() const -> DiscreteSpacePair = 0;
 };

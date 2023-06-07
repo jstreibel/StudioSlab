@@ -30,7 +30,7 @@ R2toRInputShockwave::R2toRInputShockwave()
 auto R2toRInputShockwave::getBoundary() const -> const void * {
     auto E = *this->E;
     auto eps = *this->eps;
-    const double a = sqrt((4./3)*pi*eps*eps*E);
+    const Real a = sqrt((4./3)*pi*eps*eps*E);
 
     std::cout << "\nShockwave 'a' parameter = " << a << std::endl;
 

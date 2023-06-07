@@ -35,7 +35,7 @@ namespace ThermoOutput {
         Graph *m_t_view;
         Graph *T_t_view;
 
-        std::vector<ThermoUtils::Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
+        std::vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
         typedef std::pair<IsingMonteCarloCalculator *, sf::Texture *> ModelViewDataPair;
 

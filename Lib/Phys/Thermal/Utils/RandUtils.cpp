@@ -9,15 +9,15 @@
 
 namespace RandUtils {
     std::mt19937 mt(2);
-    std::uniform_real_distribution<double> realRandGen(0, 1);
+    std::uniform_real_distribution<Real> realRandGen(0, 1);
 
     std::uniform_int_distribution<unsigned int> uintRandGen(0, INT32_MAX);
 
-    double random01() {
+    Real random01() {
         return realRandGen(mt);
     }
 
-    double random(double a, double b){
+    Real random(Real a, Real b){
         return (b-a)*random01() + a;
     }
 

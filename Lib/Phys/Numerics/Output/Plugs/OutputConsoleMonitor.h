@@ -8,7 +8,7 @@ class OutputConsoleMonitor : public Numerics::OutputSystem::Plug
 {
 private:
     Timer timer = Timer();
-    const double maxT;
+    const Real maxT;
     char steppingChar;
 public:
     OutputConsoleMonitor(const int n_steps, bool doCarrierReturn);

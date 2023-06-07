@@ -7,6 +7,8 @@
 
 //#include "../Util/Workaround/ABIDef.h"
 
+#include "Common/Types.h"
+
 #include <boost/timer/timer.hpp>
 #include <vector>
 #include <iostream>
@@ -34,7 +36,7 @@ private:
 
     int count=0;
     const int C0,I,VLast;
-    const double invI;
+    const Real invI;
     std::vector<int> histogram;
     std::vector<boost::timer::nanosecond_type> measures;
 };

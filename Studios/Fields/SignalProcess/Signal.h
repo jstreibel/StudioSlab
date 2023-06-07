@@ -36,7 +36,7 @@ namespace RtoR {
         public:
             JackOutput();
 
-            auto shouldOutput(double t, unsigned long timestep) -> bool override;
+            auto shouldOutput(Real t, unsigned long timestep) -> bool override;
 
         private:
 
@@ -62,16 +62,16 @@ namespace RtoR {
             mutable size_t bufferNumber = 0;
 
         public:
-            BoundaryCondition(double f, double A);;
+            BoundaryCondition(Real f, Real A);;
             void apply(FieldState &function, Real t) const override;
         };
 
 
         class CLI : public RtoRBCInterface {
-            DoubleParameter freq =      DoubleParameter{1, "freq", "The freq of the driving force"};
-            DoubleParameter amplitude =   DoubleParameter{1, "amplitude", "The amplitude of the driving force"};
-            DoubleParameter damping =     DoubleParameter{1.5e-3, "damping", "The damping factor at the right hand region of the field"};
-            DoubleParameter dampPercent = DoubleParameter{.2, "damp_percent", "Percentage (in the range 0..1) of space to use for damping"};
+            RealParameter freq =      RealParameter{1, "freq", "The freq of the driving force"};
+            RealParameter amplitude =   RealParameter{1, "amplitude", "The amplitude of the driving force"};
+            RealParameter damping =     RealParameter{1.5e-3, "damping", "The damping factor at the right hand region of the field"};
+            RealParameter dampPercent = RealParameter{.2, "damp_percent", "Percentage (in the range 0..1) of space to use for damping"};
         public:
             CLI();
             auto getBoundary() const -> const void * override;

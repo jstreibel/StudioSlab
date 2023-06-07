@@ -19,10 +19,10 @@ namespace ThermoOutput {
 
         const IsingNetwork &S;
 
-        OutputData(int mcTotalSteps, int mcStep, int transientSize, IsingNetwork &S, ThermoUtils::Real h)
+        OutputData(int mcTotalSteps, int mcStep, int transientSize, IsingNetwork &S, Real h)
             : mcTotalSteps(mcTotalSteps), mcStep(mcStep), transientSize(transientSize), S(S)
         {
-            ThermoUtils::Real E = S.E(h), M = S.M();
+            Real E = S.E(h), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -31,8 +31,8 @@ namespace ThermoOutput {
             m2=M*M/N;
         }
 
-        OutputData(const IsingNetwork &S, ThermoUtils::Real h) : mcTotalSteps(-1), mcStep(-1), transientSize(-1), S(S){
-            ThermoUtils::Real E = S.E(double(h)), M = S.M();
+        OutputData(const IsingNetwork &S, Real h) : mcTotalSteps(-1), mcStep(-1), transientSize(-1), S(S){
+            Real E = S.E(double(h)), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -41,16 +41,16 @@ namespace ThermoOutput {
             m2=m*m;
         }
 
-        ThermoUtils::Real e, m, e2, m2, N;
+        Real e, m, e2, m2, N;
     };
 
 
 // Tambem conhecido como parametros termodinamicos
     struct SystemParams {
-        SystemParams(ThermoUtils::Real &T, ThermoUtils::Real &h, bool &shouldRun)
+        SystemParams(Real &T, Real &h, bool &shouldRun)
                 : T(T), h(h), shouldRun(shouldRun) {}
 
-        ThermoUtils::Real &T, &h;
+        Real &T, &h;
         bool &shouldRun;
     };
 }

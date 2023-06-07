@@ -47,7 +47,7 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
     int fileOutputStepsInterval = -1;
     if(shouldOutputHistory)
     {
-        const double Tf=p.gett();
+        const Real Tf=p.gett();
 
         OutputFormatterBase *outputFilter = new BinarySOF;
         //OutputFormatterBase *outputFilter = new CustomStringSeparatedSOF;
@@ -75,8 +75,8 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
 
-        const double phiMin = -0.08;
-        const double phiMax = 0.08;
+        const Real phiMin = -0.08;
+        const Real phiMax = 0.08;
         const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
         const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 

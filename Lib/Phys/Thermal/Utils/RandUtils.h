@@ -5,10 +5,12 @@
 #ifndef ISING_RANDUTILS_H
 #define ISING_RANDUTILS_H
 
-namespace RandUtils {
-    double random01();
+#include "Common/Types.h"
 
-    double random(double a, double b);
+namespace RandUtils {
+    Real random01();
+
+    Real random(Real a, Real b);
 
     int RandInt();
 }

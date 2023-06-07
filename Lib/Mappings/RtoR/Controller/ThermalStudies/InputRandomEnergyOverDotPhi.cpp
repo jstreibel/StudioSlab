@@ -25,7 +25,7 @@ auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() const -> const void* {
     VecFloat p(N);
 
     if(1) {
-        double E_rand = .0;
+        Real E_rand = .0;
         for (int i = 0; i < N; ++i) {
             auto p_i = RandUtils::random01() - .5;
 

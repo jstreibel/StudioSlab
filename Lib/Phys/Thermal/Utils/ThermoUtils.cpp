@@ -2,13 +2,14 @@
 // Created by joao on 16/05/2021.
 //
 
+
 #include "ThermoUtils.h"
 
 #include <cmath>
 
 namespace ThermoUtils {
                                                 // T                e_T
-    std::map<double, double> eT_Onsager_by_T = {{1.0, -1.997160204112251   },
+    std::map<Real, Real> eT_Onsager_by_T = {{1.0, -1.997160204112251   },
                                                 {1.5, -1.951116573078377   },
                                                 {1.8, -1.859303805725896   },
                                                 {2.0, -1.745564575312553   }};

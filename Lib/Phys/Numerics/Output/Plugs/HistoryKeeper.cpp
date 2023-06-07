@@ -7,7 +7,7 @@
 
 const long long unsigned int ONE_GB = 1073741824;
 
-HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter, double tEnd_)
+HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
     : Numerics::OutputSystem::Plug("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
@@ -23,10 +23,10 @@ auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int
     // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
     //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
     //  Em outras palavras: o calculo abaixo esta errado.
-    return count * Numerics::Allocator::getInstance().getNumericParams().getN() * sizeof(double);
+    return count * Numerics::Allocator::getInstance().getNumericParams().getN() * sizeof(Real);
 }
 
-auto HistoryKeeper::shouldOutput(double t, long unsigned timestep) -> bool{
+auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
     const bool should = (/*t >= tStart && */t <= tEnd) && Numerics::OutputSystem::Plug::shouldOutput(t, timestep);
 
     return should;

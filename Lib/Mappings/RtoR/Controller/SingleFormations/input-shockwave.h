@@ -11,8 +11,8 @@ namespace RtoR {
         auto _getDeltaTypeAsString() const -> String;
 
         unsigned int deltaType = 1;
-        DoubleParameter a0 = DoubleParameter(1., "a0", "Shockwave discontinuity value.");
-        DoubleParameter E = DoubleParameter(1., "E", "Shockwave simulation initial (and total) energy.");
+        RealParameter a0 = RealParameter(1., "a0", "Shockwave discontinuity value.");
+        RealParameter E = RealParameter(1., "E", "Shockwave simulation initial (and total) energy.");
 
     public:
         InputShockwave();

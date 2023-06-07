@@ -10,6 +10,18 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/bin)
 include_directories(Lib /usr/include/vtk)
 link_directories(Build/lib)
 
+
+option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
+
+if( STUDIOSLAB_USE_SINGLE_PRECISION )
+	message(NOTICE "-- StudioSlab is using FP32")
+	add_compile_definitions( STUDIOSLAB_USE_FP32=true )
+else ()
+	message(NOTICE "-- StudioSlab is using IEEE FP64")
+    add_compile_definitions( STUDIOSLAB_USE_FP32=false )
+endif ()
+
+
 add_subdirectory(Lib/)
 add_subdirectory(Studios)
 

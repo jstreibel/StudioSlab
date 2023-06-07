@@ -5,10 +5,11 @@
 #include "Resample.h"
 
 
+
 std::vector<float> Studios::Utils::resample(std::vector<float> in, int output_size) {
     auto fs_in = in.size();
     const int fs_out = output_size;
-    auto factor = fs_out/(double)fs_in;
+    auto factor = fs_out/(float)fs_in;
     std::vector<float> out(fs_out);
 
     void *resample_context = resample_open(1, factor, factor);

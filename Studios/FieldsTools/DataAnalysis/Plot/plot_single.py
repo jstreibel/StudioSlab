@@ -1,13 +1,15 @@
-import matplotlib.pyplot as pyplot
-from matplotlib import rcParams, colors
 
 import numpy as np
+
+import matplotlib.pyplot as pyplot
 from matplotlib.widgets import Slider  # , Button, RadioButtons
+from matplotlib import rcParams, colors
 
 import scipy.optimize as optimize
 
 #from DataAnalysis.Fitting import fit_shockwave
 # from fitting import Region
+from DataAnalysis.SimData import SimData
 from PySLib.Tools import Utils
 
 f = '{:.2e}'.format
@@ -102,7 +104,7 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
     return cbar
 
 
-def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6, showResult=False,
+def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6, showResult=False,
          show_colorbar=False, extension='.png', fontsize=10, fontsize_ticks=8, dpi=300,
          imgWidthInches=5, region=None, annotationPosition=(0.25, 0.25),
          annotations=None, annotationColor='k', outputFileName=None, xlabel='$x$', ylabel='$t$',
@@ -234,6 +236,8 @@ def plot(sim_result, fit_params=None, args=None, showLog=True, logEpsilon=1.e-6,
     else:
         im = ax.imshow(field, extent=extent, cmap=cmap, origin='lower', interpolation='quadric',
                        vmin=vmin, vmax=vmax)
+
+    if sim_result[""]
 
     if draw_box is not None:
         if type(draw_box) in (tuple, list):

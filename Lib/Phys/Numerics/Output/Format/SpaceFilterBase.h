@@ -11,6 +11,8 @@
 
 class SpaceFilterBase {
 public:
+    virtual ~SpaceFilterBase() {};
+
     /*!
      * The filter operator.
      * @param space input DiscreteSpace to be filtered.

@@ -29,7 +29,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
     filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
     filePhiNameStream.precision(T_fileNamePrecision);
 
-    const double t = outInfo.getSimTime ();
+    const Real t = outInfo.getSimTime ();
 
     if(customFileDescription != "")
         filePhiNameStream << customFileDescription;
@@ -45,7 +45,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
     _outputToFile(outInfo.getSpaceData(), t, fileName);
 }
 
-void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, double t, const String &fileName) {
+void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const String &fileName) {
     std::ofstream file;
     file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
@@ -68,7 +68,7 @@ void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, double t, const 
     }
 }
 
-bool OutputSnapshot::shouldOutput(const double, const long unsigned timeStep) {
+bool OutputSnapshot::shouldOutput(const Real, const long unsigned timeStep) {
     for(const size_t step : snapSteps)
         if(step == timeStep) return true;
 

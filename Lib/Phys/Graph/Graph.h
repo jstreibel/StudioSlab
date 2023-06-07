@@ -39,9 +39,9 @@ namespace Base {
             bool savePopupOn = false;
 
         protected:
-            double xMin, xMax, yMin, yMax;
-            double yspacing = 1.e-5;
-            double xspacing = 1.e-5;
+            Real xMin, xMax, yMin, yMax;
+            Real yspacing = 1.e-5;
+            Real xspacing = 1.e-5;
 
             String title = "";
             bool filled = false;
@@ -59,7 +59,7 @@ namespace Base {
             void _drawCurves();
 
         public:
-            Graph2D(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
+            Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                   String title = "no_title", bool filled = false, int samples = 512);
 
             void draw() override;

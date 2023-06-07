@@ -4,6 +4,8 @@
 
 #include "BenchmarkHistogram.h"
 
+#include "Common/Types.h"
+
 #include <cmath>
 #include <cassert>
 
@@ -47,7 +49,7 @@ auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
 
     boost::timer::nanosecond_type sum=0.;
     if(0) for (size_t i=0; i<histogram.size(); i++) {
-        const auto C=double(i*I+C0);
+        const auto C=Real(i*I+C0);
         sum += C*histogram[i];
     }
     else for(auto v : measures) sum += v;

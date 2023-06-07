@@ -9,7 +9,7 @@
 
 namespace RtoR {
     class InputRandomEnergyOverDotPhi : public RtoRBCInterface {
-        DoubleParameter E = DoubleParameter{1./24, "E", "Total energy over space."};
+        RealParameter E = RealParameter{1. / 24, "E", "Total energy over space."};
 
     public:
         InputRandomEnergyOverDotPhi();

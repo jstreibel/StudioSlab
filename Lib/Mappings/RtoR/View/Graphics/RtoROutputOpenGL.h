@@ -17,11 +17,11 @@ namespace RtoR {
     class OutputOpenGL : public Graphics::OutputOpenGL {
         bool isInitialized = false;
     public:
-        OutputOpenGL(double xMin, double xMax, double phiMin, double phiMax);
+        OutputOpenGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
 
         OutputOpenGL();;
 
-        void initialize(double xMin, double xMax, double phiMin, double phiMax);
+        void initialize(Real xMin, Real xMax, Real phiMin, Real phiMax);
 
     protected:
         void draw() override;
@@ -33,14 +33,14 @@ namespace RtoR {
         bool notifyMouseButton(int button, int dir, int x, int y) override;
 
     protected:
-        auto getPhiMax() const -> double { return mFieldsGraph.get_yMax(); }
-        auto getPhiMin() const -> double { return mFieldsGraph.get_yMin(); }
+        auto getPhiMax() const -> Real { return mFieldsGraph.get_yMax(); }
+        auto getPhiMin() const -> Real { return mFieldsGraph.get_yMin(); }
 
-        void setPhiMax(const double newPhiMax) {
+        void setPhiMax(const Real newPhiMax) {
             phiMaxAnim->animateToValue(newPhiMax);
         }
 
-        void setPhiMin(const double newPhiMin) {
+        void setPhiMin(const Real newPhiMin) {
             phiMinAnim->animateToValue(newPhiMin);
         }
 
@@ -71,10 +71,10 @@ namespace RtoR {
         bool showEnergyDensity = false;
 
     protected:
-        double xMin, xMax;
+        Real xMin, xMax;
 
-        double phiMax;
-        double phiMin;
+        Real phiMax;
+        Real phiMin;
 
         //bool showAnalyticSolution = false;
     };

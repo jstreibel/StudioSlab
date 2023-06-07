@@ -31,8 +31,8 @@ namespace Montecarlo {
 
 
     class Input : public RtoRBCInterface {
-        DoubleParameter T = DoubleParameter(1.e4, "Temperature,T", "System temperature");
-        DoubleParameter E = DoubleParameter{1., "E", "System energy"};
+        RealParameter T = RealParameter(1.e4, "Temperature,T", "System temperature");
+        RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 
     public:
@@ -61,7 +61,7 @@ namespace Montecarlo {
 
             const auto ONE_plus = 1.+1.e-10;
             for(int i=0; i<*n; i++){
-                auto tx = xLeft + ONE_plus*double(i)*(oscLength) + osc_eps;
+                auto tx = xLeft + ONE_plus*Real(i)*(oscLength) + osc_eps;
 
                 auto s = RandUtils::RandInt()%2?1.:-1.;
 

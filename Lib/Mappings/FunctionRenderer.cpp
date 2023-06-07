@@ -19,9 +19,9 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::ArbitraryFunction &func,
 }
 
 void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax, PosInt resolution, Real scale) {
-    const double dx = (xMax-xMin) / double(resolution);
-    const double xBegin = xMin;
-    const double xEnd = xMax;
+    const Real dx = (xMax-xMin) / Real(resolution);
+    const Real xBegin = xMin;
+    const Real xEnd = xMax;
 
     if(dx == .0) return;
 
@@ -30,11 +30,11 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::
         glColor4f(c.r, c.g, c.b, c.a/3.0);
         glBegin(GL_QUADS);
         {
-            for(double x=xBegin; x<xEnd; x+=dx){
-                const double xmin = x;
-                const double xmax = x+dx;
+            for(Real x=xBegin; x<xEnd; x+=dx){
+                const Real xmin = x;
+                const Real xmax = x+dx;
 
-                const double ymin = 0,
+                const Real ymin = 0,
                         ymax1 = scale*func(xmin),
                         ymax2 = scale*func(xmax);
 
@@ -50,7 +50,7 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::
     glColor4f(c.r, c.g, c.b, c.a);
     glBegin(GL_LINE_STRIP);
     {
-        for(double x=xBegin; x<xEnd; x+=dx){
+        for(Real x=xBegin; x<xEnd; x+=dx){
             auto y = func(x);
             glVertex2d(x, scale*y);
         }
@@ -96,8 +96,8 @@ void RtoR::FunctionRenderer::renderFunction(const R2toR::Function &func, Real xM
 
 void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section,
                                            Styles::PlotStyle style, PosInt resolution, Real scale) {
-    const auto ds = section.getDeltaS() / double(resolution);
-    //const auto ds = 1 / double(resolution);
+    const auto ds = section.getDeltaS() / Real(resolution);
+    //const auto ds = 1 / Real(resolution);
     const auto sMin = section.getSMin(), sMax = section.getSMax();
     //const Real sMin = 0, sMax = 1;
 
@@ -110,14 +110,14 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
         glColor4f(c.r, c.g, c.b, c.a*.5);
         glBegin(GL_QUADS);
         {
-            for(double s=sMin; s<=sMax; s+=ds){
-                const double sLeft = s;
-                const double sRight = s+ds;
+            for(Real s=sMin; s<=sMax; s+=ds){
+                const Real sLeft = s;
+                const Real sRight = s+ds;
 
                 auto pt1 = section(sLeft),
                      pt2 = section(sRight);
 
-                const double yMin = 0,
+                const Real yMin = 0,
                              yMax1 = func(pt1),
                              yMax2 = func(pt2);
 
@@ -141,7 +141,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
 
     glBegin(GL_LINE_STRIP);
     {
-        for(double s=sMin; s<=sMax; s+=ds)
+        for(Real s=sMin; s<=sMax; s+=ds)
             glVertex2d(s, scale*func(section(s)));
     }
     glEnd();
@@ -161,19 +161,19 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
 
 void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax,
                                                      PosInt resolution) {
-    const double dx = (xMax-xMin) / double(resolution);
-    const double xBegin = xMin;
-    const double xEnd = xMax;
+    const Real dx = (xMax-xMin) / Real(resolution);
+    const Real xBegin = xMin;
+    const Real xEnd = xMax;
     if(filled)
     {
         glColor4f(c.r, c.g, c.b, c.a/3.0);
         glBegin(GL_QUADS);
         {
-            for(double x=xBegin; x<xEnd; x+=dx){
-                const double xmin = x;
-                const double xmax = x+dx;
+            for(Real x=xBegin; x<xEnd; x+=dx){
+                const Real xmin = x;
+                const Real xmax = x+dx;
 
-                const double ymin = 0,
+                const Real ymin = 0,
                         ymax1 = func({xmin, 0.0}),
                         ymax2 = func({xmax, 0.0});
 
@@ -189,7 +189,7 @@ void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func
     glColor4f(c.r, c.g, c.b, c.a);
     glBegin(GL_LINE_STRIP);
     {
-        for(double x=xBegin; x<xEnd; x+=dx){
+        for(Real x=xBegin; x<xEnd; x+=dx){
             glVertex2d(x, func({x,0.}));
         }
     }
@@ -198,19 +198,19 @@ void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func
 
 void RtoR::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real yMin, Real yMax,
                                                    PosInt resolution) {
-    const double dy = (yMax - yMin) / double(resolution);
-    const double yBegin = yMin;
-    const double yEnd = yMax;
+    const Real dy = (yMax - yMin) / Real(resolution);
+    const Real yBegin = yMin;
+    const Real yEnd = yMax;
     if(filled)
     {
         glColor4f(c.r, c.g, c.b, c.a/3.0);
         glBegin(GL_QUADS);
         {
-            for(double y=yBegin; y < yEnd; y+=dy){
-                const double xmin = y;
-                const double xmax = y + dy;
+            for(Real y=yBegin; y < yEnd; y+=dy){
+                const Real xmin = y;
+                const Real xmax = y + dy;
 
-                const double ymin = 0,
+                const Real ymin = 0,
                         ymax1 = func({0., xmin}),
                         ymax2 = func({0., xmax});
 
@@ -226,7 +226,7 @@ void RtoR::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, 
     glColor4f(c.r, c.g, c.b, c.a);
     glBegin(GL_LINE_STRIP);
     {
-        for(double y=yBegin; y < yEnd; y+=dy)
+        for(Real y=yBegin; y < yEnd; y+=dy)
             glVertex2d(y, func({0.,y}));
 
     }

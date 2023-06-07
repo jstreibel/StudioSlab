@@ -232,7 +232,7 @@ void bypassJack(jack_nframes_t nframes){
 }
 
 
-std::vector<float> VecDoubToVecFloat(std::vector<double> &doubles){
+std::vector<float> VecDoubToVecFloat(std::vector<Real> &doubles){
     const auto N = doubles.size();
     std::vector<float> floats(N);
 

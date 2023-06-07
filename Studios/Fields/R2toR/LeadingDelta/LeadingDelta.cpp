@@ -22,13 +22,15 @@ namespace R2toR {
 }
 
 R2toR::LeadingDelta::OutGL::OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax),
+        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax), mTotalEnergyGraph("Total energy"),
         mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio") {
+
 
     energyRatioData = Spaces::PointSet::New();
     mEnergyRatioGraph.addPointSet(energyRatioData,  Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
     panel->addWindowToColumn(&mEnergyRatioGraph, 0);
+
 
     numericEnergyData = Spaces::PointSet::New();
     analyticEnergyData = Spaces::PointSet::New();
@@ -36,6 +38,11 @@ R2toR::LeadingDelta::OutGL::OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     mEnergyGraph.addPointSet(analyticEnergyData, Styles::GetColorScheme()->funcPlotStyles[1], "Analytic energy");
     panel->addWindowToColumn(&mEnergyGraph, 0);
 
+
+    totalEnergyData = Spaces::PointSet::New();
+    mTotalEnergyGraph.addPointSet(totalEnergyData,  Styles::GetColorScheme()->funcPlotStyles[0],
+                                  "Total analytic energy");
+    panel->addWindowToColumn(&mTotalEnergyGraph, 0);
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
@@ -71,11 +78,12 @@ void R2toR::LeadingDelta::OutGL::draw() {
     const R2toR::FieldState &fState = *lastData.getFieldData<R2toR::FieldState>();
     static auto lastStep=0;
     ImGui::Begin("Energy compute");
-    static auto energyIntegrationRadius = -1.f * (float)epsilon;
+    static auto energyIntegrationRadius = -(float)epsilon;
     static auto lastE = .0;
     static auto lastAnalyticE = .0;
+    auto totalE = .0;
 
-    ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float)epsilon * .0025f, -1.5f * epsilon, 1.5f * epsilon, "%.2e");
+    ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float)epsilon * 1e-3f, -2.0f * epsilon, 2.0f * epsilon, "%.2e");
     auto button = ImGui::Button("Reset");
     if(button) energyIntegrationRadius = -(float)epsilon;
     if(step != lastStep)
@@ -84,11 +92,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
         auto E_radius = t + energyIntegrationRadius;
         auto E = energy.computeRadial(fState, E_radius); // energy[fState];
         numericEnergyData->addPoint({t, E});
-        const auto a0 = 2. / 3;
-        auto analyticEnergy = 2* a0 * M_PI * t * t;
-        analyticEnergyData->addPoint({t, analyticEnergy});
+        auto analyticEnergy = (2./3.) * M_PI * t * t;
+        analyticEnergyData->addPoint({t, (Real)analyticEnergy});
 
-        if(analyticEnergy != 0) energyRatioData->addPoint({t, E/analyticEnergy});
+        if(analyticEnergy != 0) energyRatioData->addPoint({t, E/(Real)analyticEnergy});
 
         {
             const auto R = E_radius;
@@ -102,15 +109,18 @@ void R2toR::LeadingDelta::OutGL::draw() {
                                    "");
         }
 
+        totalE = energy[fState];
+        totalEnergyData->addPoint({t, totalE});
+
         lastE = E;
         lastAnalyticE = analyticEnergy;
-
 
         lastStep = step;
 
     }
     ImGui::End();
 
+    stats.addVolatileStat(String("E_tot = ")    + ToString(totalE, 2, true));
     stats.addVolatileStat(String("E_num = ")    + ToString(lastE, 2, true));
     stats.addVolatileStat(String("E_an = ")    + ToString(lastAnalyticE, 2, true));
     stats.addVolatileStat(String("E_num/E_an = ")    + ToString(lastE/lastAnalyticE , 2, true));
@@ -158,7 +168,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
     // panel->draw
     RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
-    radialShockwave.sett(t - dt - double(timeOffset));
+    radialShockwave.sett(t - dt - Real(timeOffset));
     FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
     if(analytic){
 
@@ -177,10 +187,6 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
 
     panel->draw();
-
-#if USE_VTK
-    renderWindowInteractor->Render();
-#endif
 }
 
 IntPair R2toR::LeadingDelta::OutGL::getWindowSizeHint() {

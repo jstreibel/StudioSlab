@@ -78,6 +78,8 @@ void NumericalIntegration::runFullIntegration()
     while(steps < n){
         const size_t nStepsUntilNextOutput = outputManager->computeNStepsToNextOutput(steps);
 
+        if(nStepsUntilNextOutput == 0) break;
+
         step(nStepsUntilNextOutput);
     }
 

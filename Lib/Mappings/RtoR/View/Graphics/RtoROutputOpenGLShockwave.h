@@ -10,13 +10,13 @@
 
 namespace RtoR {
     class OutputOpenGLShockwave : public RtoR::OutputOpenGL {
-        double a0, E;
+        Real a0, E;
 
         FuncArbResizable surfaceEnergyHistory;
         FuncArbResizable innerEnergyHistory;
 
     public:
-        explicit OutputOpenGLShockwave(double a0=1, double E=1);
+        explicit OutputOpenGLShockwave(Real a0=1, Real E=1);
         void draw() override;
 
     };

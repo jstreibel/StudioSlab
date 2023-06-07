@@ -1,6 +1,8 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
+#include "Common/Types.h"
+
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -10,21 +12,21 @@ class Animation
 public:
     Animation() {}
 
-    Animation(double *var, double newVar, double faktor = 120.);
+    Animation(Real *var, Real newVar, Real faktor = 120.);
 
-    void step(const double dt);
+    void step(const Real dt);
 
-    void animateToValue(double newVar);
+    void animateToValue(Real newVar);
 
-    double getVar() const;
-    double getNewVar() const;
-
-private:
-    double *var;
-    double targetValue;
+    Real getVar() const;
+    Real getNewVar() const;
 
 private:
-    double faktor;
+    Real *var;
+    Real targetValue;
+
+private:
+    Real faktor;
 
 };
 

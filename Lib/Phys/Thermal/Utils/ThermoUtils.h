@@ -5,14 +5,14 @@
 #ifndef ISING_THERMOUTILS_H
 #define ISING_THERMOUTILS_H
 
+#include "Common/Types.h"
+
 #include <boost/multiprecision/float128.hpp>
 #include <boost/math/special_functions/expint.hpp>
 #include <map>
 
 namespace ThermoUtils {
-    extern std::map<double, double> eT_Onsager_by_T;
-
-    typedef long double Real;
+    extern std::map<Real, Real> eT_Onsager_by_T;
 
     Real BoltzmannWeight_betaE(Real betaE);
     Real BoltzmannWeight(Real T, Real E);

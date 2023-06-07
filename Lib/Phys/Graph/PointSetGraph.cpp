@@ -33,10 +33,10 @@ void My::PointSetGraph::_renderPointSet(const Spaces::PointSet &pSet,
                 auto pLeft = pts[i];
                 auto pRite = pts[i + 1];
 
-                const double xmin = pLeft.x;
-                const double xmax = pRite.x;
+                const Real xmin = pLeft.x;
+                const Real xmax = pRite.x;
 
-                const double ymin = 0,
+                const Real ymin = 0,
                         ymax1 = pLeft.y,
                         ymax2 = pRite.y;
 

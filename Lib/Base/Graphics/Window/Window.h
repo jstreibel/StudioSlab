@@ -44,8 +44,8 @@ public:
 protected:
     int w, h, x, y;
 
-    double winXoffset = 2;
-    double winYoffset = 2;
+    Real winXoffset = 2;
+    Real winYoffset = 2;
 
     bool gotHit = false;
 
@@ -58,7 +58,7 @@ private:
     void _decorate() const;
     void _setupViewport() const;
 
-    static constexpr double p = 0.999;
+    static constexpr Real p = 0.999;
 
 };
 

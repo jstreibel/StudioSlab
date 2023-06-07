@@ -4,9 +4,10 @@
 
 #include "Graph.h"
 #include "imgui.h"
+#include "Common/Printing.h"
 
 
-Base::Graphics::Graph2D::Graph2D(double xMin, double xMax, double yMin, double yMax, String title,
+Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, String title,
                                  bool filled, int samples)
                                  : xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax), title(title),
                                    filled(filled), samples(samples) {       }
@@ -21,10 +22,10 @@ void Base::Graphics::Graph2D::_drawAxes() {
     __drawYAxis();
 
     if(!labels.empty()){
-        const double Sx = (xMax-xMin) / w;
-        const double Sy = (yMax-yMin) / h;
-        const double Tx = xMin;
-        const double Ty = yMin;
+        const Real Sx = (xMax-xMin) / w;
+        const Real Sy = (yMax-yMin) / h;
+        const Real Tx = xMin;
+        const Real Ty = yMin;
 
         for(size_t i=0; i<labels.size(); ++i){
             labels[i]->draw(Sx, Sy, Tx, Ty);
@@ -34,7 +35,7 @@ void Base::Graphics::Graph2D::_drawAxes() {
 
 void Base::Graphics::Graph2D::__computeSpacings() {
     {
-        const double deltaY = yMax - yMin;
+        const Real deltaY = yMax - yMin;
 
         const auto theLog = log10(deltaY);
         const auto spacing = pow(10., floor(theLog) - 1.);
@@ -60,9 +61,9 @@ void Base::Graphics::Graph2D::__drawXAxis() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
-    const double inPixelsTimes2 = 5;
-    const double vTick = inPixelsTimes2 * (yMax-yMin) / h;
-    const double hTick = inPixelsTimes2 * (xMax-xMin) / w;
+    const Real inPixelsTimes2 = 5;
+    const Real vTick = inPixelsTimes2 * (yMax-yMin) / h;
+    const Real hTick = inPixelsTimes2 * (xMax-xMin) / w;
     (void)hTick;
 
     auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
@@ -70,13 +71,13 @@ void Base::Graphics::Graph2D::__drawXAxis() {
     {
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
-        const double yloc = -yspacing*0.356;
-        for (double mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
+        const Real yloc = -yspacing*0.356;
+        for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
             GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
-        for (double mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
+        for (Real mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
             GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
@@ -96,11 +97,11 @@ void Base::Graphics::Graph2D::__drawXAxis() {
 
             glColor4f(tc.r, tc.g, tc.b, tc.a);
 
-            for(double mark = 0; mark<=xMax; mark+=xspacing){
+            for(Real mark = 0; mark<=xMax; mark+=xspacing){
                 glVertex3d(mark, -vTick, 0);
                 glVertex3d(mark, +vTick, 0);
             }
-            for(double mark = 0; mark>=xMin; mark-=xspacing){
+            for(Real mark = 0; mark>=xMin; mark-=xspacing){
                 glVertex3d(mark, -vTick, 0);
                 glVertex3d(mark, +vTick, 0);
             }
@@ -115,16 +116,16 @@ void Base::Graphics::Graph2D::__drawYAxis() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
-    const double deltaY = yMax-yMin;
-    const double deltaX = xMax-xMin;
-    const double xMarkingsLabels = xMin - deltaX * 0.05;
+    const Real deltaY = yMax-yMin;
+    const Real deltaX = xMax-xMin;
+    const Real xMarkingsLabels = xMin - deltaX * 0.05;
 
     StringStream buffer;
 
     auto &gtf = Styles::GetColorScheme()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
-        for(double mark = yMin; mark<=yMax; mark+=yspacing)
+        for(Real mark = yMin; mark<=yMax; mark+=yspacing)
         {
             buffer.str("");
             auto numRegion = log10(deltaY);
@@ -151,7 +152,7 @@ void Base::Graphics::Graph2D::__drawYAxis() {
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 
-        for(double mark = yMin; mark<=yMax; mark+=yspacing ){
+        for(Real mark = yMin; mark<=yMax; mark+=yspacing ){
             glVertex3d(xMin, mark, 0);
             glVertex3d(xMax, mark, 0);
         }
@@ -167,10 +168,10 @@ void Base::Graphics::Graph2D::__drawYAxis() {
 }
 
 void Base::Graphics::Graph2D::setupOrtho() {
-    const double deltaX = xMax-xMin;
-    const double deltaY = yMax-yMin;
-    const double xTraLeft  = -deltaX*0.07;
-    const double xTraRight = +deltaX*0.02;
+    const Real deltaX = xMax-xMin;
+    const Real deltaY = yMax-yMin;
+    const Real xTraLeft  = -deltaX*0.07;
+    const Real xTraRight = +deltaX*0.02;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -326,7 +327,9 @@ void Base::Graphics::Graph2D::draw() {
 
         if (ImGui::BeginPopup(popupName.c_str())){
             if(ImGui::MenuItem("Save graph")) {
-                OpenGLUtils::outputToPNG(this, "chookity_pumpa.png", 1000, 1000);
+                auto w = Printing::getTotalHorizontalDots(.5);
+                auto h = w*.5;
+                OpenGLUtils::outputToPNG(this, "chookity_pumpa.png", w, h);
             }
 
             ImGui::EndPopup();

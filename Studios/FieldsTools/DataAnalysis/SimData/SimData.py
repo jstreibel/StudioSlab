@@ -38,7 +38,8 @@ class SimData(object):
         if item == 'phi': return self.Data
 
         if item == 'T':
-            print("Trying to access SimData metadata key 'T'. Assuming it is time.")
+            print("Trying to access SimData metadata key 'T'. Assuming it is time. This is deprecated and in the future"
+                  "it will refer to Temperature.")
             item = 't'
         elif item == 'xLeft' and 'xLeft' not in self._metaData:
             return self._metaData['xCenter'] - .5*self._metaData['L']

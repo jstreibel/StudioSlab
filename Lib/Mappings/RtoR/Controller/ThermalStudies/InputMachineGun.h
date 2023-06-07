@@ -10,7 +10,7 @@
 
 namespace RtoR {
     class InputMachineGun  : public RtoRBCInterface {
-        DoubleParameter v1 = DoubleParameter{0.5, "v1", "Left oscillon's border speed."};
+        RealParameter v1 = RealParameter{0.5, "v1", "Left oscillon's border speed."};
         IntegerParameter n = IntegerParameter{10, "n", "Number of shooting tiny oscillons."};
 
     public:

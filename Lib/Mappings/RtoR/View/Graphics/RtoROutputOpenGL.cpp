@@ -18,14 +18,14 @@
 
 RtoR::OutputOpenGL::OutputOpenGL() = default;
 
-RtoR::OutputOpenGL::OutputOpenGL(const double xMin, const double xMax,
-                                 const double phiMin, const double phiMax)
+RtoR::OutputOpenGL::OutputOpenGL(const Real xMin, const Real xMax,
+                                 const Real phiMin, const Real phiMax)
                                  : mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
 {
     initialize(xMin, xMax, phiMin, phiMax);
 }
 
-void RtoR::OutputOpenGL::initialize(double xMin, double xMax, double phiMin, double phiMax) {
+void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
     if(isInitialized) return;
 
     {
@@ -153,7 +153,7 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 //
     //if(UHistory.X.size() == 0) {
     //    // Isso eh necessario pra evitar bugs estranhos. Sorry.
-    //    const double k = 1-1.e-5;
+    //    const Real k = 1-1.e-5;
     //    UHistory.insertBack(U * k);
     //    UHistory.insertBack(U / k);
     //}
@@ -206,8 +206,8 @@ bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 }
 
 bool RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
-    const double kDown = 3.8;
-    const double kUp = 1/kDown;
+    const Real kDown = 3.8;
+    const Real kUp = 1/kDown;
 
     const auto delta = (mFieldsGraph.xMax - mFieldsGraph.xMin);
     const auto center = .5*(mFieldsGraph.xMax + mFieldsGraph.xMin);
@@ -247,7 +247,7 @@ bool RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
 }
 
 bool RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
-    const double faktor = 1.5;
+    const Real faktor = 1.5;
     if(button == 3 && dir == 0){
         setPhiMax(getPhiMax()*faktor);
         setPhiMin(getPhiMin()*faktor);

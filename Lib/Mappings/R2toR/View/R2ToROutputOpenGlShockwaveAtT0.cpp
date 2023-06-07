@@ -22,7 +22,7 @@ R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0()
 void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     if(!lastData.hasValidData()) return;
 
-    //const Real t0 = ((ParameterTemplate<double>*)userParamMap["sw_t0"])->val;
+    //const Real t0 = ((ParameterTemplate<Real>*)userParamMap["sw_t0"])->val;
     //const Real t = lastInfo.getT();
 //
     //const R2toR::FieldState& fState = *lastInfo.getFieldData<R2toR::FieldState>();
@@ -273,7 +273,7 @@ void R2toR::OutputOpenGLShockwaveAt_t0::_outputSnapshot() {
     //letc *field = this->lastInfo.getFieldData<R2toR::FieldState>();
     //letc &phi = field->getPhi();
 //
-    ////letc t0 = ((ParameterTemplate<double>*)userParamMap["sw_t0"])->val;
+    ////letc t0 = ((ParameterTemplate<Real>*)userParamMap["sw_t0"])->val;
     //letc t = lastInfo.getT();
     //letc xMin = phi.getDomain().xMin;
     //letc yMin = phi.getDomain().yMin;

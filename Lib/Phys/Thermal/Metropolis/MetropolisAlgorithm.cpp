@@ -17,14 +17,14 @@
 #include "Base/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 
 
-ThermoUtils::Real avg(const RealVector &v) {
-    const ThermoUtils::Real zero = 0.0;
-    const ThermoUtils::Real N = v.size();
+Real avg(const RealVector &v) {
+    const Real zero = 0.0;
+    const Real N = v.size();
     return std::accumulate(v.begin(),  v.end(),  zero)/N;
 }
 
 
-MetropolisAlgorithm::MetropolisAlgorithm(int L, ThermoUtils::Real T, ThermoUtils::Real h,
+MetropolisAlgorithm::MetropolisAlgorithm(int L, Real T, Real h,
                                                      ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
                                                      Dynamic dynamic, Sweeping sweeping)
 : S(L), T(T), h(h), ic(ic), aDynamic(dynamic), vcOutput(viewer), sweeping(sweeping) {
@@ -54,7 +54,7 @@ void MetropolisAlgorithm::_shake(double h) {
 }
 
 
-inline bool MetropolisAlgorithm::__shouldAccept(const ThermoUtils::Real deltaE) {
+inline bool MetropolisAlgorithm::__shouldAccept(const Real deltaE) {
     if(deltaE<0) return true;
 
     const double r = RandUtils::random01();
@@ -146,14 +146,14 @@ void MetropolisAlgorithm::Simulate(int MCSteps, int transientSize) {
     const auto Nd = double(N);
 
 #if OUTPUT_MODE IS _CONSOLE_OUTPUT
-    std::vector<ThermoUtils::Real> e, m, e2, m2, m4, Cv, Xi;
+    std::vector<Real> e, m, e2, m2, m4, Cv, Xi;
 
     for (int mcStep = 0; mcStep<MCSteps; ++mcStep) {
         if(mcStep < transientSize) continue; // descarta o transiente
 
         MCStep(T, h, N);
 
-        ThermoUtils::Real E = S.E((double)h),
+        Real E = S.E((double)h),
                           M = S.M();
 
         const auto _e = E/Nd, _m=M/Nd;
@@ -195,18 +195,18 @@ MetropolisAlgorithm::_outputDataToConsole(const RealVector &e, const RealVector 
          m2_av= avg(m2),
          m4_av= avg(m4);
 
-    auto Cv = (e2_av-e_av*e_av)*N/(T*T),
+    Real Cv = (e2_av-e_av*e_av)*N/(T*T),
          Xi = (m2_av-m_av*m_av)*N/T,
          B = .5*(3-m4_av/(m2_av*m2_av));
 
     std::cout << e_av << " " << e2_av << " " << m_av << " " << m2_av << " " << m4_av << " " << Cv << " " << Xi << " " << B << "\n";
 }
 
-void MetropolisAlgorithm::set_T(ThermoUtils::Real T) {
+void MetropolisAlgorithm::set_T(Real T) {
     this->T = T;
 }
 
-void MetropolisAlgorithm::set_h(ThermoUtils::Real h) {
+void MetropolisAlgorithm::set_h(Real h) {
     this->h = h;
 }
 

@@ -21,8 +21,8 @@ R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave()
 void R2toR::OutputOpenGLShockwave::draw() {
     if(!lastData.hasValidData()) return;
 
-    //const Real E_input = ((ParameterTemplate<double>*)userParamMap["sw_E"])->val;
-    //const Real eps = ((ParameterTemplate<double>*)userParamMap["sw_eps"])->val;
+    //const Real E_input = ((ParameterTemplate<Real>*)userParamMap["sw_E"])->val;
+    //const Real eps = ((ParameterTemplate<Real>*)userParamMap["sw_eps"])->val;
     //const Real a = sqrt((4./3)*pi*eps*eps*E_input);
     //const Real t = lastInfo.getT();
     //const Real L = Allocator::getInstance().getNumericParams().getL();
@@ -469,7 +469,7 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
         const auto textWidthInches = 6.46;
         const auto figWidthInches = textWidthInches/3;
         const auto N = 200*textWidthInches;
-        const auto dh = L/N;
+        const auto dh = (Real)L/N;
 
         std::string ssFileName = sFileName + (count > 1 ? "-" + std::to_string(count) : "") + "-fullSnapshot.dat";
 

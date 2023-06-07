@@ -11,7 +11,7 @@ using namespace R2toR;
 
 typedef R2toR::FunctionArbitrary Func;
 
-OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, double t0) : outputResolution(outputResolution), t0(t0)
+OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, Real t0) : outputResolution(outputResolution), t0(t0)
 {
     std::string sFileName = "./swzeros";
 
@@ -48,7 +48,7 @@ OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, double t
     */
 
     letc NPoints = outputResolution;
-    const auto _nStepsBetweenRecordings = int((double(N)/NPoints)/a);
+    const auto _nStepsBetweenRecordings = int((Real(N)/NPoints)/a);
     this->nStepsBetweenRecordings = _nStepsBetweenRecordings > 0 ? _nStepsBetweenRecordings : 1;
 }
 

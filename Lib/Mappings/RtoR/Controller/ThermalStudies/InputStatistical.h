@@ -9,7 +9,7 @@
 
 namespace RtoR {
     class InputStatistical  : public RtoRBCInterface {
-        DoubleParameter E = DoubleParameter{1., "E", "System energy"};
+        RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 
     public:

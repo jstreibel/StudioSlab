@@ -21,10 +21,10 @@ public:
     const float* getModelview();
 
 private:
-    double xAngle =.0, zAngle =.0, scale=1., yScale=1.;
+    Real xAngle =.0, zAngle =.0, scale=1., yScale=1.;
 
     /* ORTHO PROJECTION */
-    double _left   = 0.0;
+    Real _left   = 0.0;
 
     int  _mouseX      = 0;
     int  _mouseY      = 0;

@@ -50,7 +50,7 @@ namespace ThermoOutput {
 
         sf::Clock timer;
         virtual void _runIOProgram(SystemParams &params, OutputData &data);
-        void __manipulationOfParametersHasHappened(double newValue, double lastValue, double N);
+        void __manipulationOfParametersHasHappened(Real newValue, Real lastValue, Real N);
 
 
         void _drawEverything(SystemParams &params, OutputData &data);

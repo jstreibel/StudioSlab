@@ -33,7 +33,7 @@ class FunctionGraph : public Base::Graphics::Graph2D {
 
 public:
 
-    FunctionGraph(double xMin=-1, double xMax=1, double yMin=-1, double yMax=1,
+    FunctionGraph(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                   String title = "no_title", bool filled = false, int samples = 512);
 
     /*!
@@ -55,7 +55,7 @@ protected:
 
 
 template<class FunctionType>
-FunctionGraph<FunctionType>::FunctionGraph(double xMin, double xMax, double yMin, double yMax, String title, bool filled, int samples)
+FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, String title, bool filled, int samples)
         : Base::Graphics::Graph2D(xMin, xMax, yMin, yMax, title, filled, samples) {   }
 
 

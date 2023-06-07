@@ -46,7 +46,7 @@ public:
         delete _phiTemp;
     }
 
-    void step(const double &dt, const size_t n_steps) override {
+    void step(const Real &dt, const size_t n_steps) override {
         const Real dt2=0.5*dt;
         const Real dt6 = dt/6.0; (void)dt6;
         const Real inv6 = 1.0/6.0;

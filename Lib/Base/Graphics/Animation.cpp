@@ -1,21 +1,21 @@
 #include "Animation.h"
 
-Animation::Animation(double *var, double newVar, double faktor)
+Animation::Animation(Real *var, Real newVar, Real faktor)
         : var(var), targetValue(newVar), faktor(faktor)
 {    }
 
-void Animation::step(const double dt) {
-    const double a = faktor*dt;
-    const double deltaVar = targetValue - (*var);
+void Animation::step(const Real dt) {
+    const Real a = faktor*dt;
+    const Real deltaVar = targetValue - (*var);
 
     *var += a*deltaVar;
 }
 
-void Animation::animateToValue(double newVar) {
+void Animation::animateToValue(Real newVar) {
     this->targetValue = newVar;
 }
 
-double Animation::getVar() const { return *var; }
+Real Animation::getVar() const { return *var; }
 
-double Animation::getNewVar() const { return targetValue; }
+Real Animation::getNewVar() const { return targetValue; }
 

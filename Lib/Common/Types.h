@@ -6,8 +6,8 @@
 #define STUDIOSLAB_TYPES_H
 
 #include "DeviceConfig.h"
-#include "STDLibInclude.h"
 #include "NativeTypes.h"
+#include "STDLibInclude.h"
 
 typedef floatt Real;
 

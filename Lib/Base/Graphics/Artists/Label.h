@@ -33,7 +33,7 @@ private:
 
 struct VariableLabelSource : public LabelSource {
 public:
-    VariableLabelSource(String varName, const double *source)
+    VariableLabelSource(String varName, const Real *source)
             : varName(varName), source(source)
     {
         tempBuffer.setf(std::ios::fixed,std::ios::floatfield);
@@ -54,7 +54,7 @@ private:
     char text[256];
 
     String varName;
-    const double *source;
+    const Real *source;
 
 };
 
@@ -74,11 +74,11 @@ protected:
                        const double pixelW, const double pixelH) = 0;
                        */
 public:
-    void draw(const double Sx, const double Sy, const double Tx, const double Ty) const {
-        const double vTick = Sy;
-        const double hTick = Sx;
+    void draw(const Real Sx, const Real Sy, const Real Tx, const Real Ty) const {
+        const Real vTick = Sy;
+        const Real hTick = Sx;
 
-        double x = pos.x, y = pos.y;
+        Real x = pos.x, y = pos.y;
         if(this->isPosAbsolute){
             x = x*Sx + Tx;
             y = y*Sy + Ty;

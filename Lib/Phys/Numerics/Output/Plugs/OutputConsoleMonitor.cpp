@@ -33,7 +33,7 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 
 
     if(0) {
-        const double percCompl = abs(outputInfo.getSimTime() / maxT);
+        const Real percCompl = abs(outputInfo.getSimTime() / maxT);
 
         size_t outputResT = Numerics::Allocator::getInstance().getNumericParams().getn();
 

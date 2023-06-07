@@ -11,7 +11,7 @@ OutputManager::~OutputManager() = default; // No need to destroy output objects 
 
 void OutputManager::output(OutputPacket &infoVolatile)
 {
-    const double t = infoVolatile.getSimTime();
+    const Real t = infoVolatile.getSimTime();
     const size_t steps = infoVolatile.getSteps();
 
     for(auto *out : outputs)

@@ -16,7 +16,7 @@ namespace R2toR {
     namespace GrowingHole {
 
         class Input : public R2toRBCInterface {
-            DoubleParameter height = DoubleParameter{2. / 3, "height,h", "Discontinuity value."};
+            RealParameter height = RealParameter{2. / 3, "height,h", "Discontinuity value."};
 
         public:
             Input() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",
@@ -26,7 +26,7 @@ namespace R2toR {
 
 
             auto getBoundary() const -> const void * override {
-                const double a = *this->height; // Eh isso mesmo? Não era h = 2a/3??
+                const Real a = *this->height; // Eh isso mesmo? Não era h = 2a/3??
 
                 return new GrowingHoleBoundaryCondition(a);
             }

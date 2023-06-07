@@ -85,7 +85,7 @@ ParameterTemplate<Type>::operator ParameterTemplate *() {
 
 
 template class ParameterTemplate<int>;
-template class ParameterTemplate<double>;
+template class ParameterTemplate<Real>;
 template class ParameterTemplate<String>;
 template class ParameterTemplate<bool>;
 

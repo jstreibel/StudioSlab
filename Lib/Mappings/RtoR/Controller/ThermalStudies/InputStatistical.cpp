@@ -50,7 +50,7 @@ auto RtoR::InputStatistical::getBoundary() const -> const void * {
 
     const auto ONE_plus = 1.+1.e-10;
     for(int i=0; i<*n; i++){
-        auto tx = xLeft + ONE_plus*double(i)*(oscLength) + osc_eps;
+        auto tx = xLeft + ONE_plus*Real(i)*(oscLength) + osc_eps;
 
         auto s = RandUtils::RandInt()%2?1.:-1.;
 

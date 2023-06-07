@@ -57,7 +57,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     int fileOutputStepsInterval = -1;
     if(shouldTrackHistory)
     {
-        const double t=p.gett();
+        const Real t=p.gett();
         const PosInt outputResolutionX = *outputResolution;
 
         OutputFormatterBase *outputFilter = new BinarySOF;
@@ -105,8 +105,8 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
 }
 
 auto OutputStructureBuilderR2toR::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-    const double phiMin = -0.125;
-    const double phiMax = 0.25;
+    const Real phiMin = -0.125;
+    const Real phiMax = 0.25;
     const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
     const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 

@@ -50,7 +50,7 @@ RtoR::Function *Histogram::asPDFFunction() const {
 
     assert(F.size() == bins.size() && bins.size() == nBins);
 
-    auto N=double(count);
+    auto N=Real(count);
     auto normFactor = N*binWidth;
 
     for(auto i=0; i<nBins; ++i)

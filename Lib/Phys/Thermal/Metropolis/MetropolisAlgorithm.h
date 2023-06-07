@@ -12,7 +12,7 @@
 #include "Base/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 
 
-typedef std::vector<ThermoUtils::Real> RealVector;
+typedef std::vector<Real> RealVector;
 
 
 class MetropolisAlgorithm {
@@ -41,17 +41,17 @@ public:
     bool shouldOverrelax = false;
 
 private:
-    ThermoUtils::Real T;
-    ThermoUtils::Real h;
+    Real T;
+    Real h;
 
-    ThermoUtils::Real δ=2*M_PI;
+    Real δ=2*M_PI;
 
     /** Total single-spin change accepted during last MCStep.  */
     int _totalAcceptedSSCLastMCStep=0;
 
     XYNetwork S;
 
-    bool __shouldAccept(ThermoUtils::Real deltaE) ;
+    bool __shouldAccept(Real deltaE) ;
 
 
     void __MCStepMetropolis();
@@ -60,14 +60,14 @@ private:
     void _shake(double h);
 public:
 
-    explicit MetropolisAlgorithm(int L, ThermoUtils::Real T, ThermoUtils::Real h,
+    explicit MetropolisAlgorithm(int L, Real T, Real h,
                                  ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
                                  Dynamic dynamic, Sweeping sweeping);
 
     ~MetropolisAlgorithm() = default;
 
-    void set_T(ThermoUtils::Real T);
-    void set_h(ThermoUtils::Real h);
+    void set_T(Real T);
+    void set_h(Real h);
     void MCStep();
     void Simulate(int MCSteps, int transientSize);
 

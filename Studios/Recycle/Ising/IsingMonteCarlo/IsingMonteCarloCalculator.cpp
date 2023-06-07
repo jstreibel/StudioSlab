@@ -17,14 +17,14 @@
 #include "../COMPILE_CONFIG.h"
 
 
-ThermoUtils::Real avg(const RealVector &v) {
-    const ThermoUtils::Real zero = 0.0;
-    const ThermoUtils::Real N = v.size();
+Real avg(const RealVector &v) {
+    const Real zero = 0.0;
+    const Real N = v.size();
     return std::accumulate(v.begin(),  v.end(),  zero)/N;
 }
 
 
-IsingMonteCarloCalculator::IsingMonteCarloCalculator(int L, ThermoUtils::Real T, ThermoUtils::Real h,
+IsingMonteCarloCalculator::IsingMonteCarloCalculator(int L, Real T, Real h,
                                                      ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
                                                      Dynamic dynamic, Sweeping sweeping)
 : S(L), T(T), h(h), ic(ic), aDynamic(dynamic), vcOutput(viewer), sweeping(sweeping) {
@@ -53,7 +53,7 @@ void IsingMonteCarloCalculator::_shake(double h) {
 }
 
 
-inline bool IsingMonteCarloCalculator::__shouldAccept(const ThermoUtils::Real deltaE) {
+inline bool IsingMonteCarloCalculator::__shouldAccept(const Real deltaE) {
     if(deltaE<0) return true;
 
     const double r = RandUtils::random01();
@@ -61,7 +61,7 @@ inline bool IsingMonteCarloCalculator::__shouldAccept(const ThermoUtils::Real de
     #if USE_LOOKUP_TABLE_FOR_DELTA_E == true
     const double z = ThermoUtils::BoltzmannWeightDeltaE_h0(deltaE);
     #else
-    const double z = ThermoUtils::BoltzmannWeight((ThermoUtils::Real)T, (ThermoUtils::Real)deltaE);
+    const double z = ThermoUtils::BoltzmannWeight((Real)T, (Real)deltaE);
     #endif
 
     return (r<z);
@@ -126,14 +126,14 @@ void IsingMonteCarloCalculator::Simulate(int MCSteps, int transientSize) {
     const auto Nd = double(N);
 
 #if OUTPUT_MODE IS CONSOLE_OUTPUT
-    std::vector<ThermoUtils::Real> e, m, e2, m2, m4, Cv, Xi;
+    std::vector<Real> e, m, e2, m2, m4, Cv, Xi;
 
     for (int mcStep = 0; mcStep<MCSteps; ++mcStep) {
         if(mcStep < transientSize) continue; // descarta o transiente
 
         MCStep(T, h, N);
 
-        ThermoUtils::Real E = S.E((double)h),
+        Real E = S.E((double)h),
                           M = S.M();
 
         const auto _e = E/Nd, _m=M/Nd;
@@ -181,12 +181,12 @@ IsingMonteCarloCalculator::_outputDataToConsole(const RealVector &e, const RealV
     std::cout << e_av << " " << e2_av << " " << m_av << " " << m2_av << " " << m4_av << " " << Cv << " " << Xi << " " << B << "\n";
 }
 
-void IsingMonteCarloCalculator::set_T(ThermoUtils::Real T) {
+void IsingMonteCarloCalculator::set_T(Real T) {
     this->T = T;
     ThermoUtils::GenerateBoltzmannWeightLookUpTable(T);
 }
 
-void IsingMonteCarloCalculator::set_h(ThermoUtils::Real h) {
+void IsingMonteCarloCalculator::set_h(Real h) {
     this->h = h;
 }
 

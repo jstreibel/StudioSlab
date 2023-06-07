@@ -15,11 +15,11 @@ private:
     void _out(const OutputPacket &outInfo) final;
 
 public:
-    HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, double tEnd);
+    HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
     ~HistoryKeeper() override;
 
     [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
-    auto shouldOutput(double t, long unsigned timestep) -> bool override;
+    auto shouldOutput(Real t, long unsigned timestep) -> bool override;
 
     auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
@@ -27,7 +27,7 @@ public:
 protected:
     SpaceFilterBase &spaceFilter;
 
-    const double tEnd;
+    const Real tEnd;
 
     std::vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
     VecFloat tHistory;

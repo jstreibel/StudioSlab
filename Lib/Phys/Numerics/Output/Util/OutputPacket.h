@@ -42,7 +42,7 @@ public:
      */
     [[nodiscard]] inline DiscreteSpacePair getSpaceData() const {return spaceData;}
     [[nodiscard]] inline size_t getSteps() const {return currStep;}
-    [[nodiscard]] inline double getSimTime() const {return t;}
+    [[nodiscard]] inline Real getSimTime() const {return t;}
 
 private:
     const void *fieldData;
@@ -51,7 +51,7 @@ private:
      */
     DiscreteSpacePair spaceData;
     size_t currStep;
-    double t;
+    Real t;
 };
 
 #endif // OUTPUTINFO_H

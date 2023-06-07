@@ -158,12 +158,12 @@ void Graph::addVerticalDashedLine(float x, int dashCount, sf::Color color) {
     }
 }
 
-void Graph::manipulationOfParametersHasHappened(double previousParamValue, double sigmaFactor) {
+void Graph::manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor) {
     // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
 }
 
-std::vector<std::pair<double,double>> Graph::getData() const {
-    std::vector<std::pair<double,double>> data(theData.getVertexCount());
+std::vector<std::pair<Real,Real>> Graph::getData() const {
+    std::vector<std::pair<Real,Real>> data(theData.getVertexCount());
     for(int i=0; i<theData.getVertexCount(); i++){
         auto iData = theData[i].position;
         data[i] = {iData.x, iData.y};
