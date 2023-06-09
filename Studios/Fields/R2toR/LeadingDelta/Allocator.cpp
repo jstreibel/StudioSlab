@@ -5,21 +5,21 @@
 #include "Allocator.h"
 #include "DrivenEquation.h"
 
-R2toR::LeadingDelta::Allocator::Allocator(Real ϵ, Real W₀, Real tₘₐₓ)
-    : Core::BasicAllocator("Driven-δ allocator ℝ² ↦ ℝ"), ϵ(ϵ), W₀(W₀), tₘₐₓ(tₘₐₓ) {
+R2toR::LeadingDelta::Allocator::Allocator(R2toR::Function::Ptr drivingFunction)
+    : Core::BasicAllocator(String("Non-homogenous eq. allocator ℝ² ↦ ℝ with '") + drivingFunction->myName()
+                            + "' driving force"),
+      drivingFunction(drivingFunction) {
 
 }
 
 auto R2toR::LeadingDelta::Allocator::getSystemSolver() -> void * {
-    return new DrivenEquation(ϵ, W₀, tₘₐₓ);
+    return new DrivenEquation(drivingFunction);
 }
 
-auto R2toR::LeadingDelta::Allocator::Choose(Real ϵ, Real W₀, Real tₘₐₓ) -> Core::BasicAllocator * {
-    auto *me = new LeadingDelta::Allocator(ϵ, W₀, tₘₐₓ);
+auto R2toR::LeadingDelta::Allocator::Choose(R2toR::Function::Ptr drivingFunction) -> void {
+    auto *me = new LeadingDelta::Allocator(drivingFunction);
 
     Numerics::Allocator::Instantiate(me);
-
-    return me;
 }
 
 

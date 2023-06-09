@@ -14,7 +14,7 @@
 
 InterfaceSelector::InterfaceSelector(String name) : Interface(name)
 {
-    addParameters({&selection});
+    addParameters({selection});
 };
 
 
@@ -31,7 +31,7 @@ auto InterfaceSelector::getInstance() -> InterfaceSelector & {
     return *mySingleInstance;
 }
 
-auto InterfaceSelector::getCurrentCandidate() const -> Interface * {
+auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
     if(currentSelection > candidates.size() - 1)
         throw String("Unknown sim type: ") + ToString(currentSelection);
 
@@ -61,20 +61,20 @@ auto InterfaceSelector::preParse(int argc, const char **argv) -> const Interface
         }
     }
 
-    auto *sim = getCurrentCandidate();
+    auto sim = getCurrentCandidate();
 
     auto &interfaceManager = InterfaceManager::getInstance();
 
     interfaceManager.registerInterface(sim);
 
     auto subInterfaces = sim->getSubInterfaces();
-    for(auto *subInterface : subInterfaces)
+    for(auto subInterface : subInterfaces)
         interfaceManager.registerInterface(subInterface);
 
     return *this;
 }
 
-void InterfaceSelector::registerOption(Interface *interface) {
+void InterfaceSelector::registerOption(Interface::Ptr interface) {
     candidates.push_back(interface);
 
     StringStream simsHelp;
@@ -83,6 +83,6 @@ void InterfaceSelector::registerOption(Interface *interface) {
     for(int i=0; i < candidates.size(); i++)
         simsHelp << i << ". " << candidates[i]->getGeneralDescription() << "\n";
 
-    selection.setDescription(simsHelp.str());
+    selection->setDescription(simsHelp.str());
 }
 

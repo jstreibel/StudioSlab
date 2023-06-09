@@ -5,49 +5,49 @@
 #include "Interface.h"
 #include "InterfaceManager.h"
 
-Interface::Interface(/*std::initializer_list<Parameter*> parametersList, */const String& generalDescription, bool doNotRegisterInterface)
+Interface::Interface(const String& generalDescription, bool dontRegisterInterface)
 : description(generalDescription)
 {
-    if(!doNotRegisterInterface)
-        InterfaceManager::getInstance().registerInterface(this);
+    if(!dontRegisterInterface)
+        InterfaceManager::getInstance().registerInterface(me.lock());
 }
 
-auto Interface::getParameters() const -> std::vector<const Parameter *> {
-    std::vector<const Parameter *> constParameters;
+auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
+    std::vector<Parameter::ConstPtr> constParameters;
 
     std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
 
     return constParameters;
 }
 
-auto Interface::getSubInterfaces() const -> std::vector<Interface*> {
-    std::vector<Interface*> interfaces;
+auto Interface::getSubInterfaces() const -> std::vector<Interface::Ptr> {
+    std::vector<Interface::Ptr> interfaces;
 
     std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
 
     return interfaces;
 }
 
-void Interface::addParameter(Parameter *parameter) {
+void Interface::addParameter(Parameter::Ptr parameter) {
     if(!parameters.insert(parameter).second) throw "Error while inserting parameter in interface.";
 
     //std::cout << "Parameter \"" << parameter->getCommandLineArgName() << "\" registered to interface \""
     //          << description << "\".\n";
 }
 
-void Interface::addParameters(std::initializer_list<Parameter*> parametersList) {
-    for(auto *param : parametersList)
+void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
+    for(auto param : parametersList)
         addParameter(param);
 }
 
-void Interface::addSubInterface(Interface *subInterface) {
+void Interface::addSubInterface(Interface::Ptr subInterface) {
     if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
 }
 
 auto Interface::getGeneralDescription() const -> String { return description; }
 
-auto Interface::getParameter(String key) const -> Parameter * {
-    auto compareFunc = [key](const Parameter *parameter) {
+auto Interface::getParameter(String key) const -> Parameter::Ptr {
+    auto compareFunc = [key](Parameter::Ptr parameter) {
         return parameter->operator==(key);
     };
 
@@ -71,7 +71,7 @@ auto Interface::toString() const -> String {
 
 void Interface::setup(CLVariablesMap vm) {
     try {
-        for (auto *param : parameters) {
+        for (auto param : parameters) {
             auto key = param->getCommandLineArgName(true);
             auto val = vm[key];
 
@@ -94,6 +94,10 @@ bool Interface::operator==(String str) const {
 
 bool Interface::operator!=(const Interface &rhs) const {
     return !(rhs == *this);
+}
+
+Interface::~Interface() {
+
 }
 
 

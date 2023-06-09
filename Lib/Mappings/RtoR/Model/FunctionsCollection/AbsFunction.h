@@ -12,7 +12,7 @@ namespace RtoR {
     public:
         Real operator()(Real x) const override;
 
-        Pointer diff(int n) const override;
+        Ptr diff(int n) const override;
 
         [[nodiscard]] Function<Real, Real> *Clone() const override;
     };

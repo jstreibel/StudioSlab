@@ -5,13 +5,12 @@
 #ifndef STUDIOSLAB_LEADINGDELTA_H
 #define STUDIOSLAB_LEADINGDELTA_H
 
+
+
 #include <Mappings/R2toR/Controller/R2ToR_SimulationBuilder.h>
-
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
-#include "Phys/Numerics/Allocator.h"
-#include "Phys/Graph/PointSetGraph.h"
 
-
+#include "Monitor.h"
 #include "RingDelta.h"
 #include "DrivenEquation.h"
 #include "Allocator.h"
@@ -26,40 +25,12 @@ namespace R2toR {
 
 
 
-        class OutGL : public R2toR::OutputOpenGL {
-            Spaces::PointSet::Ptr totalEnergyData;
-            Phys::Graphing::PointSetGraph mTotalEnergyGraph;
-
-            Spaces::PointSet::Ptr numericEnergyData;
-            Spaces::PointSet::Ptr analyticEnergyData;
-            Phys::Graphing::PointSetGraph mEnergyGraph;
-
-            Spaces::PointSet::Ptr energyRatioData;
-            Phys::Graphing::PointSetGraph mEnergyRatioGraph;
-
-        protected:
-            auto _out(const OutputPacket &outInfo) -> void override;
-        public:
-            OutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
-            auto draw() -> void override;
-            auto getWindowSizeHint() -> IntPair override;
-            auto notifyKeyboard(unsigned char key, int x, int y) -> bool override;
-            bool notifyMousePassiveMotion(int x, int y)                  override;
-            bool notifyMouseMotion       (int x, int y)                  override;
-            bool notifyMouseButton(int button, int dir, int x, int y)    override;
-        };
-
-
-
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
-            SpecialRingDelta &ringDelta;
+            SpecialRingDelta::Ptr ringDelta;
             Real tf;
         public:
-            explicit BoundaryCondition(SpecialRingDelta &ringDelta, Real tf=-1) : ringDelta(ringDelta), tf(tf)
-            {
-                ringDelta1 = &ringDelta;
-                ring_tf = tf;
-            }
+            explicit BoundaryCondition(SpecialRingDelta::Ptr ringDelta = nullptr, Real tf=-1)
+            : ringDelta(ringDelta), tf(tf) { }
             void apply(FieldState &function, Real t) const override {
                 if (t == 0) {
                     RtoR::NullFunction nullFunction;
@@ -67,17 +38,14 @@ namespace R2toR {
 
                     function.setPhi(fullNull);
                     function.setDPhiDt(fullNull);
-                }
-            #if false
-                else if (t<tf || tf<0){
-                    const_cast<SpecialRingDelta&>(ringDelta).setRadius(t);
+                } else if (ringDelta != nullptr && (t<tf || tf<0)) {
+                    auto &srd = const_cast<SpecialRingDelta&>(*ringDelta);
+                    srd.setRadius(t);
 
                     auto &dφdt = function.getDPhiDt();
 
-
-                    function.setDPhiDt(ringDelta);
+                    function.setDPhiDt(*ringDelta);
                 }
-            #endif
             }
         };
 
@@ -105,28 +73,41 @@ namespace R2toR {
             RealParameter deltaDuration = RealParameter(-1, "delta_duration", "The duration of "
                                                                                   "regularized delta. Negative "
                                                                                   "values mean forever;");
+
+            SpecialRingDelta::Ptr drivingFunc;
+
         public:
             Builder() : SimulationBuilder("(2+1)-d Shockwave as trail of a driving delta.",
-                                          "ldd", new OutputBuilder) { addParameters({W_0, eps, deltaDuration}); }
-            auto getBoundary() const -> const void * override {
+                                          "ldd", new OutputBuilder) {
+                addParameters({W_0, eps, deltaDuration});
+            }
+
+            void setup(CLVariablesMap vm) override {
+                Interface::setup(vm);
+
                 auto &p = const_cast<NumericParams&>(Numerics::Allocator::getInstance().getNumericParams());
                 const Real L = p.getL();
                 const Real dt = p.getdt();
 
                 p.sett(L*.5 - *eps *2);
 
-                SpecialRingDelta *delta = nullptr;
-
                 const auto C_2 = *W_0 / 2.0; // this is C_n from our 2023 shockwave paper, with n=2.
 
-                if (0)     delta = new AzimuthDelta(*eps, C_2);
-                else       delta = new Delta_r(*eps, C_2, dt);
+                if (0)     drivingFunc = std::make_shared<AzimuthDelta>(*eps, C_2);
+                else       drivingFunc = std::make_shared<Delta_r>(*eps, C_2, dt);
+            }
 
-                return new BoundaryCondition(*delta, *deltaDuration);
+            auto getBoundary() const -> const void * override {
+
+
+                return new BoundaryCondition(drivingFunc);
             }
 
             auto registerAllocator() const -> void override {
-                LeadingDelta::Allocator::Choose(*eps, *W_0, *deltaDuration);
+                auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
+                Function::Ptr 𝒻 = std::make_unique<Delta_r>(*eps, *W_0, dt);
+
+                LeadingDelta::Allocator::Choose(𝒻);
             }
         };
     }

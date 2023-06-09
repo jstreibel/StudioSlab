@@ -12,9 +12,9 @@ class InterfaceSelector : Interface {
     static InterfaceSelector *mySingleInstance;
 
     int currentSelection = 0;
-    std::vector<Interface*> candidates;
+    std::vector<Interface::Ptr> candidates;
 
-    IntegerParameter selection{0, "sim", "Sim type selection"};
+    IntegerParameter::Ptr selection = std::make_shared<IntegerParameter>(0, "sim", "Sim type selection");
 
 public:
     InterfaceSelector(String selectorName);
@@ -25,10 +25,10 @@ public:
      */
     static auto getInstance() -> InterfaceSelector &;
 
-    void registerOption(Interface *interface);
+    void registerOption(Interface::Ptr interface);
 
     auto preParse(int argc, const char **argv) -> const InterfaceSelector&;
-    auto getCurrentCandidate() const -> Interface *;
+    auto getCurrentCandidate() const -> Interface::Ptr;
 
 };
 

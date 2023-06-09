@@ -23,7 +23,7 @@ namespace Base {
 
         Scale(const Scale &toCopy) : Scale(toCopy.A, toCopy.scale) { }
 
-        friend MyBase::Pointer operator*(const MyBase &a, Real scale) {
+        friend MyBase::Ptr operator*(const MyBase &a, Real scale) {
             return std::make_unique(a, scale);
         }
 

@@ -23,6 +23,11 @@ class ParameterTemplate : public Parameter {
 public:
     typedef Type MyType;
 
+    typedef std::shared_ptr<ParameterTemplate> Ptr;
+    static Ptr New(Type val, const String& argName, const String& descr){
+        return std::make_unique<ParameterTemplate>(val, argName, descr);
+    }
+
     ParameterTemplate(Type val, const String& argName, const String& descr);
     ~ParameterTemplate();
 
@@ -37,7 +42,7 @@ public:
     auto getValue() const -> Type;
 
     auto operator*() -> Type&;
-    auto operator*() const -> Type;
+    auto operator*() const -> const Type&;
 
     void operator=(const Type rhs);
     operator ParameterTemplate*();

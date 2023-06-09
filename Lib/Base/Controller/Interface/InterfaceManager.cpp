@@ -14,7 +14,7 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
     return *instance;
 }
 
-void InterfaceManager::registerInterface(Interface *anInterface) {
+void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
     //std::cout << "\nRegistering interface \"" << anInterface->getGeneralDescription() << "\"... ";
     interfaces.emplace_back(anInterface);
 
@@ -29,8 +29,8 @@ void InterfaceManager::registerInterface(Interface *anInterface) {
     //std::cout << std::endl;
 }
 
-auto InterfaceManager::getInterfaces() -> std::vector<const Interface *> {
-    std::vector<const Interface*> V(interfaces.size());
+auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
+    std::vector<Interface::ConstPtr> V(interfaces.size());
 
     std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
@@ -38,7 +38,7 @@ auto InterfaceManager::getInterfaces() -> std::vector<const Interface *> {
 }
 
 void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
-    for(auto *interface : interfaces){
+    for(auto interface : interfaces){
         // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
         // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
@@ -50,9 +50,9 @@ auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
     //for(letcr p : modelMTMap) stringStream << "\"" << p.first << "\": " << p.second << ", ";
 
     StringStream ss;
-    for(auto *interface : interfaces) {
+    for(auto interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto *parameter : parameters)
+        for(const auto parameter : parameters)
             ss << "\"" << parameter->getCommandLineArgName(true) << "\": " << parameter->valueToString() << ", ";
     }
 
@@ -62,9 +62,9 @@ auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
 auto InterfaceManager::renderParametersToString(StrVector params, String separator) const -> String {
     StringStream ss;
 
-    for(auto *interface : interfaces) {
+    for(auto interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto *parameter : parameters) {
+        for(const auto parameter : parameters) {
             auto name = parameter->getCommandLineArgName(true);
 
             if(Common::Contains(params, name))
@@ -77,8 +77,8 @@ auto InterfaceManager::renderParametersToString(StrVector params, String separat
     return str.ends_with(separator) ? str.substr(0, str.length()-separator.length()) : str;
 }
 
-auto InterfaceManager::getInterface(const char *target) -> const Interface* {
-    auto compFunc = [target](Interface* anInterface) { return anInterface->operator==(target); };
+auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr {
+    auto compFunc = [target](Interface::ConstPtr anInterface) { return anInterface->operator==(target); };
 
     auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );
 

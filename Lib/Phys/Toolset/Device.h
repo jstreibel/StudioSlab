@@ -11,7 +11,7 @@ class Device : public Interface
 public:
     Device();
 
-    auto get_nThreads() const -> unsigned int {return *nThreads;}
+    auto get_nThreads() const -> unsigned int {return **nThreads;}
 
     bool operator == (const int &RHS) const { return this->dev == RHS; }
     bool operator != (const int &RHS) const { return this->dev != RHS; }
@@ -21,11 +21,11 @@ public:
 
 private:
     device dev = device::CPU;
-    IntegerParameter deviceChoice{0, "dev", "Device on which to run simulation.\n"
+    IntegerParameter::Ptr deviceChoice = IntegerParameter::New(0, "dev", "Device on which to run simulation.\n"
                                                        "\t0: CPU \n"
                                                        "\t1: GPU 0 \n"
-                                                       "\t2: GPU 1 "};
-    IntegerParameter nThreads{1, "threads,n", "Number of threads, in case of CPU usage."};
+                                                       "\t2: GPU 1 ");
+    IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "threads,n", "Number of threads, in case of CPU usage.");
 };
 
 #endif // DEVICE_H

@@ -18,12 +18,11 @@ namespace R2toR {
         typedef Phys::Gordon::GordonSystem<FieldState> DiffEq;
 
         class DrivenEquation : public DiffEq {
-            SpecialRingDelta *ringDelta;
-            FunctionArbitrary & δᵣ;
+            R2toR::Function::Ptr drivingForce;
+            FunctionArbitrary &f;
 
-            const Real tMax;
         public:
-            explicit DrivenEquation(Real ϵ, Real W₀, Real tₘₐₓ);
+            explicit DrivenEquation(R2toR::Function::Ptr drivingForce);
 
             auto dtF(const FieldState &in, FieldState &out, Real t, Real dt) -> FieldState & override;
         };

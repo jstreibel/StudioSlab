@@ -12,9 +12,9 @@ Device::Device() : Interface("Device options")
     addParameters(
     {
 #if USE_CUDA
-        &deviceChoice,
+        deviceChoice,
 #endif
-        &nThreads});
+        nThreads});
 };
 
 
@@ -26,7 +26,7 @@ void Device::setup(CLVariablesMap vm) {
     Interface::setup(vm);
 
 #if USE_CUDA
-    unsigned int dev_n = *deviceChoice;
+    unsigned int dev_n = **deviceChoice;
 #else
     unsigned int dev_n = 0;
 #endif
@@ -36,7 +36,7 @@ void Device::setup(CLVariablesMap vm) {
     if (dev == UNKNOWN) {
         throw (String("Unkown device ") + std::to_string(dev_n) + String(".")).c_str();
     } else if (dev == CPU) {
-        std::cout << "CPU " << *nThreads << " thread" << (*nThreads > 1 ? "s.\n" : ".\n");
+        std::cout << "CPU " << *nThreads << " thread" << (**nThreads > 1 ? "s.\n" : ".\n");
     } else if (dev == GPU) {
 #if USE_CUDA
         int devCount;
@@ -47,7 +47,7 @@ void Device::setup(CLVariablesMap vm) {
 
         cew(cudaSetDevice(dev_n - 1));
 
-        if (*nThreads > 1) {
+        if (**nThreads > 1) {
             std::cout << "Ignoring n_threads argument (using GPU)." << std::endl;
             *nThreads = 1;
         }

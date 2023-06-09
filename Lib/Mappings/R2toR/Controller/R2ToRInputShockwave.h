@@ -15,11 +15,11 @@ namespace R2toR {
 
     class R2toRInputShockwave : public SimulationBuilder {
     private:
-        RealParameter eps   =RealParameter{1., "eps", "Quasi-shockwave 'epsilon' parameter."};
-        RealParameter theta =RealParameter{0., "theta", "Ellipse rotation."};
-        RealParameter E     =RealParameter{1., "E", "Total energy."};
-        RealParameter e     =RealParameter{0., "e", "Eccentricity."};
-        RealParameter t0    =RealParameter{0., "t0", "Initial time."};
+        RealParameter::Ptr eps   = RealParameter::New(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
+        RealParameter::Ptr theta = RealParameter::New(0., "theta", "Ellipse rotation.");
+        RealParameter::Ptr E     = RealParameter::New(1., "E", "Total energy.");
+        RealParameter::Ptr e     = RealParameter::New(0., "e", "Eccentricity.");
+        RealParameter::Ptr t0    = RealParameter::New(0., "t0", "Initial time.");
     public:
         R2toRInputShockwave();
         auto getBoundary() const -> const void * override;

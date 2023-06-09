@@ -23,7 +23,7 @@ namespace Phys {
                     *(FType(FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
                       dV_out(*(FType(
                               FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
-                      V(potential), dVDPhi(*potential.diff(0).release()) {}
+                      V(potential), dVDPhi(potential.diff(0)) {}
 
             ~GordonSystem() override {
                 delete &laplacian;
@@ -46,7 +46,7 @@ namespace Phys {
                 // Eq 2
                 {
                     iPhi.Laplacian(laplacian);
-                    iPhi.Apply(dVDPhi, dV_out);
+                    iPhi.Apply(*dVDPhi, dV_out);
 
                     oDPhi.StoreSubtraction(laplacian, dV_out) *= dt;
                 }
@@ -59,7 +59,7 @@ namespace Phys {
         protected:
             FType(FunctionArbitraryType) &laplacian, &dV_out;
             TargetToTargetFunction &V;
-            TargetToTargetFunction &dVDPhi;
+            TargetToTargetFunction::Ptr dVDPhi;
         };
 
     }

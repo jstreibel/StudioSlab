@@ -69,7 +69,7 @@ auto ParameterTemplate<Type>::operator*() -> Type & {
 }
 
 template<class Type>
-auto ParameterTemplate<Type>::operator*() const -> Type {
+auto ParameterTemplate<Type>::operator*() const -> const Type& {
     return val;
 }
 

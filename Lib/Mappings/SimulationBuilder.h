@@ -8,10 +8,10 @@ namespace Base {
 
     class SimulationBuilder : public Interface {
     protected:
-        Numerics::OutputSystem::Builder *outputSystemBuilder;
+        Numerics::OutputSystem::Builder::Ptr outputSystemBuilder;
         String prefix = "";
 
-        explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder* osb,
+        explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
                                    String prefix="", bool selfRegister=false);
     public:
         typedef std::shared_ptr<SimulationBuilder> Ptr;

@@ -12,15 +12,11 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        DrivenEquation::DrivenEquation(Real eps, Real W_0, Real tMax)
-            : GordonSystem(*(new RtoR::AbsFunction)),
-              δᵣ(*(FunctionArbitrary*)Numerics::Allocator::getInstance().newFunctionArbitrary()),
-              tMax(tMax)
+        DrivenEquation::DrivenEquation(R2toR::Function::Ptr drivingForce)
+            : GordonSystem(*(new RtoR::AbsFunction)), drivingForce(drivingForce),
+              f(*(FunctionArbitrary*)Numerics::Allocator::getInstance().newFunctionArbitrary())
         {
             std::cout << "Integrating driven equation" << std::endl;
-
-            auto δt = Numerics::Allocator::getInstance().getNumericParams().getdt();;
-            ringDelta = new Delta_r(eps, .5*W_0, δt);
         }
 
         auto DrivenEquation::dtF(const FieldState &in, FieldState &out, Real t, Real δt) -> FieldState & {
@@ -47,14 +43,16 @@ namespace R2toR {
                 // z=¼(r²-t²)
                 // δ(z)𝕕z = r/t δ(r-t)𝕕r
 
-                δᵣ = *ringDelta;
+                auto &dVdϕ = *dVDPhi;
+                auto &dVdϕₒᵤₜ = dV_out;
+                f = *drivingForce;
 
                 ϕᵢₙ.Laplacian(laplacian);
-                ϕᵢₙ.Apply(dVDPhi, dV_out);
+                ϕᵢₙ.Apply(dVdϕ, dVdϕₒᵤₜ);
 
-                𝜕φ𝜕tₒᵤₜ.StoreSubtraction(laplacian, dV_out);
+                𝜕φ𝜕tₒᵤₜ.StoreSubtraction(laplacian, dVdϕₒᵤₜ);
 
-                𝜕φ𝜕tₒᵤₜ.Add(δᵣ) *= δt;
+                𝜕φ𝜕tₒᵤₜ.Add(f) *= δt;
             }
 
             return out;

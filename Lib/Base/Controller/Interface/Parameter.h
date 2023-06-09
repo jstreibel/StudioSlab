@@ -10,8 +10,13 @@
 #include <Common/Types.h>
 
 class Parameter {
+protected:
+    String commandLineArgName, description;
 
 public:
+    typedef std::shared_ptr<Parameter> Ptr;
+    typedef std::shared_ptr<const Parameter> ConstPtr;
+
     Parameter(const String& commandLineArgName, const String& description);
 
     virtual auto getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & = 0;
@@ -32,8 +37,6 @@ public:
 
     bool operator!=(const Parameter &rhs) const;
 
-protected:
-    String commandLineArgName, description;
 };
 
 std::ostream & operator << (std::ostream &out, const Parameter &b);

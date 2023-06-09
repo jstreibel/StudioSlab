@@ -22,6 +22,8 @@ namespace R2toR {
             const Real eps, a;
             Real radius;
         public:
+            typedef std::shared_ptr<SpecialRingDelta> Ptr;
+
             auto getEps   ()                   const -> Real;
             auto getA     ()                   const -> Real;
             auto getRadius()                   const -> Real;

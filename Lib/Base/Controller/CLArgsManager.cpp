@@ -30,7 +30,7 @@ void CLArgsManager::Parse(int argc, const char **argv) {
     allOptions.add(general);
 
     auto interfaces = InterfaceManager::getInstance().getInterfaces();
-    for(const auto *interface : interfaces)
+    for(const auto interface : interfaces)
         allOptions.add(BuildOptionsDescription(*interface));
 
     CLVariablesMap vm;
@@ -51,7 +51,7 @@ auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface) -> CLO
     po::options_description desc(description);
     po::options_description_easy_init options = desc.add_options();
 
-    for(const auto* p : paramMap){
+    for(const auto p : paramMap){
         const String &paramName = p->getCommandLineArgName();
 
         options = p->getOptionDescription(options);

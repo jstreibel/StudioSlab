@@ -9,7 +9,6 @@
 
 class AppBase : protected Interface {
 
-
 protected:
     AppBase(int argc, const char *argv[]);
 
@@ -18,6 +17,8 @@ protected:
     const char **argv;
 
     void parseCLArgs();
+
+
 
 public:
     virtual int run() = 0;

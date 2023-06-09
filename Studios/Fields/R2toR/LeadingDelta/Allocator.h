@@ -6,17 +6,19 @@
 #define STUDIOSLAB_ALLOCATOR_H
 
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
+#include "Mappings/R2toR/Model/R2toRFunction.h"
 
 namespace R2toR {
     namespace LeadingDelta {
         class Allocator : public R2toR::Core::BasicAllocator {
-            Real ϵ, W₀, tₘₐₓ;
+            R2toR::Function::Ptr drivingFunction;
+
         public:
-            Allocator(Real ϵ, Real W₀, Real tₘₐₓ);
+            Allocator(R2toR::Function::Ptr drivingFunction);
 
             auto getSystemSolver() -> void * override;
 
-            static auto Choose(Real ϵ, Real W₀, Real tₘₐₓ) -> Core::BasicAllocator *;
+            static auto Choose(R2toR::Function::Ptr drivingFunction) -> void;
         };
 
     }

@@ -65,7 +65,7 @@ Real R2toR::FunctionArbitrary::diff(int dim, Real2D x) const {
     } else throw "Tidak bagus diff.";
 }
 
-Base::Function<Real2D, Real>::Pointer R2toR::FunctionArbitrary::diff(int n) const {
+Base::Function<Real2D, Real>::Ptr R2toR::FunctionArbitrary::diff(int n) const {
     throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
     return Function::diff(n);
 }

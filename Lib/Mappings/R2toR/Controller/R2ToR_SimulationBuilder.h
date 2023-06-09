@@ -10,13 +10,15 @@
 #include "Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
 
 namespace R2toR {
+    typedef Numerics::OutputSystem::Builder::Ptr BuilderBasePtr;
+
     class SimulationBuilder : public Base::SimulationBuilder {
         String name;
 
     public:
         explicit SimulationBuilder(String generalDescription,
                                    String name = "",
-                                   Numerics::OutputSystem::Builder *outputStructureBuilder = new OutputSystem::Builder,
+                                   BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputSystem::Builder),
                                    bool selfRegister=false);
 
         auto buildOutputManager() -> OutputManager * override;

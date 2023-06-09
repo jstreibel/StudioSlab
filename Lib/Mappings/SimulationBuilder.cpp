@@ -5,7 +5,7 @@
 #include "Base/Controller/Interface/InterfaceSelector.h"
 #include "SimulationBuilder.h"
 
-Base::SimulationBuilder::SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder* osb,
+Base::SimulationBuilder::SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
                                            String prefix, bool selfRegister)
  : Interface(generalDescription, true), outputSystemBuilder(osb), prefix(prefix)
 {

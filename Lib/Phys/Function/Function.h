@@ -22,7 +22,7 @@ namespace Base {
     template<class InputCategory, class OutputCategory>
     class Function {
     public:
-        typedef std::unique_ptr<Function<InputCategory, OutputCategory> > Pointer;
+        typedef std::shared_ptr<Function<InputCategory, OutputCategory>> Ptr;
 
         typedef Function<InputCategory, OutputCategory> Type;
         typedef InputCategory InCategory;
@@ -54,7 +54,7 @@ namespace Base {
 
         /*! Get derivative in dimension 'n'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.*/
-        virtual Pointer diff(int n) const { throw "Function::diff(n) not implemented."; };
+        virtual Ptr diff(int n) const { throw "Function::diff(n) not implemented."; };
 
         /*! Get derivative in dimension 'n' at point 'x'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.
