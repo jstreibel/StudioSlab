@@ -34,10 +34,10 @@ public:
 
 private:
 
-	IntegerParameter N = IntegerParameter{1024, "N", "Discretization of space dimensions. "
+	IntegerParameter N = IntegerParameter{1024, "N,N", "Discretization of space dimensions. "
 													 "Has to be POT for GPU"};
-    RealParameter L = RealParameter{10., "L", "Space length"};
-    RealParameter xCenter = RealParameter{.0, "xCenter", "Center of simulation space"};
+    RealParameter L = RealParameter{10., "L,L", "Space length"};
+    RealParameter xCenter = RealParameter{.0, "xCenter,c", "Center of simulation space"};
     RealParameter t =  RealParameter{-1, "t,t", "Max simulation time. If left negative, defaults to L/2. "
 													"Note that this value can be overriden by simulation."};
 
@@ -48,10 +48,10 @@ private:
 															 "\nNote that mode 2 is not too safe if N is "
 															 "not Natural number."};
 
-	RealParameter h =  RealParameter{0.009765625, "h", "Cell 1-measure. Defaults to L/N. This value is "
+	RealParameter h =  RealParameter{0.009765625, "h,h", "Cell 1-measure. Defaults to L/N. This value is "
 														   "ignored unless '--noL' flag is set, in which case "
 														   "L will be ignored and computed from h."};
-    RealParameter r = RealParameter{.1, "r", "dt/h"};
+    RealParameter r = RealParameter{.1, "r,r", "dt/h"};
 
     PosInt n;
 	Real dt;

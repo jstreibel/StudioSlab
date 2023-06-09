@@ -67,7 +67,7 @@ auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> String {
     oss << R"(, "data_channels": 2)";
     oss << R"str(, "data_channel_names": ("phi", "ddtphi"), )str";
 
-    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEnrties();
+    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries();
     oss << "}" << std::endl;
 
     return oss.str();

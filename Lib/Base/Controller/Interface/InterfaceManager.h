@@ -22,7 +22,7 @@ public:
 
     void feedInterfaces(CLVariablesMap vm);
 
-    auto renderAsPythonDictionaryEnrties() -> String;
+    auto renderAsPythonDictionaryEntries() -> String;
 
     auto renderParametersToString(StrVector params, String separator) const -> String;
 

@@ -2,7 +2,7 @@
 #define OUTPUTMANAGER_H
 
 
-#include "Mappings/BCBuilder.h"
+#include "Mappings/SimulationBuilder.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 #include "Plugs/Plug.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"

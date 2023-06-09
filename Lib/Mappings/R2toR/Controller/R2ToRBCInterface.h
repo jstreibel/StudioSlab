@@ -6,10 +6,10 @@
 #define STUDIOSLAB_R2TORBCINTERFACE_H
 
 
-#include "Mappings/BCBuilder.h"
+#include "Mappings/SimulationBuilder.h"
 #include "Mappings/R2toR/View/OutputStructureBuilderR2ToR.h"
 
-class R2toRBCInterface : public Base::BCBuilder {
+class R2toRBCInterface : public Base::SimulationBuilder {
     String name;
 public:
     explicit R2toRBCInterface(String generalDescription,

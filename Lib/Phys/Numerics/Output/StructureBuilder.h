@@ -24,10 +24,12 @@ namespace Numerics {
             BoolParameter noHistoryToFile = {false, "no_history_to_file,o", "Don't output history to file."};
             IntegerParameter outputResolution = {512, "outN",
                                                  "Output resolution of space dimension in history output."};
-            BoolParameter OpenGLMonitor = {false, "gl,g", "Monitor simulation using OpenGL output."};
-            BoolParameter OpenGLMonitor_startPaused = {false, "gl_paused,p", "Start OpenGL monitor paused."};
+            BoolParameter VisualMonitor = {false, "visual_monitor,g", "Monitor simulation visually."};
+            BoolParameter VisualMonitor_startPaused = {false, "visual_monitor_paused,p", "Start visual monitored "
+                                                                             "simulation paused."};
             IntegerParameter OpenGLMonitor_stepsPerIdleCall = {1, "steps_per_idle_call,s",
-                                                               "Simulatoin steps per GLUT idle call."};
+                                                               "Simulation steps between visual monitor "
+                                                               "updates call."};
 
             explicit StructureBuilder(String generalDescription = "Simulation output structure");
 

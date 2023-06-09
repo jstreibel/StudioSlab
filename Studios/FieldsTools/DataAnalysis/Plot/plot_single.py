@@ -68,6 +68,7 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
         linTicks = np.concatenate((arr1, arr2))
     else:
         linTicks = np.arange(linTicksMin, linTicksMax, linTicksStep)
+
     ticks = func(linTicks)
 
     # THE COLORBAR
@@ -89,12 +90,13 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
 
         def cutoffVal(yticks):
             ''' Este valor determina se usamos notacao cientifica ou ponto. '''
-            vals = np.asarray([round_sd(v * (vmax_lin - vmin_lin) + vmin_lin, 2) for v in yticks])
+            vals = np.asarray([round_sd(v * (vmax_lin - vmin_lin) + vmin_lin, 3) for v in yticks])
             lvals = np.log10(np.abs(vals))
             vals[np.argmin(lvals)] = 0.0
             return vals
 
-        labels = cutoffVal(cbar.ax.get_yticks())
+        yticks = cbar.ax.get_yticks()
+        labels = cutoffVal(yticks)
         cbar.ax.set_yticklabels(labels)
         if fontsize is not None:
             cbar.ax.tick_params(labelsize=fontsize)
@@ -134,7 +136,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         phi = simData.Phi
     else:
         # NOTA 1
-        # O que era feito anteriormente era plotar tudo (todo o extent)  e depois so salvar a regiao (region).
+        # O que era feito anteriormente era plotar tudo (toudo o extent)  e depois so salvar a regiao (region).
         # Agora, o que fazemos eh fazer de tudo uma coisa so. Nao sei no que pode dar...
         phi = simData.getRegion(region[0], region[1], region[2], region[3])
     if 0: print("Region full resolution is " + str(phi.shape[1]) + "x" + str(phi.shape[0]))
@@ -192,7 +194,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
     pyplot.xlabel(xlabel)
     pyplot.ylabel(ylabel, rotation=0)
 
-    field = phi
+    field = phi # nova variavel pra ser "trabalhada", e phi segue intocado caso necessario seja utiliza-lo.
 
     if region is None:
         # extent = -L*0.5, L*0.5, initT, T
@@ -237,7 +239,24 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         im = ax.imshow(field, extent=extent, cmap=cmap, origin='lower', interpolation='quadric',
                        vmin=vmin, vmax=vmax)
 
-    if sim_result[""]
+    if "delta_duration" in sim_result:
+        delta_duration = sim_result["delta_duration"]
+        t0 = delta_duration
+        t = sim_result["t"]
+        eps = sim_result["eps"]
+
+        print("delta_duration:", delta_duration)
+        print("t:", t)
+        print("eps:", eps)
+
+        if delta_duration > 0 and delta_duration < t:
+            remaining_t = t-t0
+
+            ax.plot((-t0+eps, -t0+eps + remaining_t), (t0, t), color='r', linewidth=.1)
+            ax.plot((-t0-eps, -t0-eps + remaining_t), (t0, t), color='r', linewidth=.1)
+
+            ax.plot((t0 + eps, t0 + eps - remaining_t), (t0, t), color='r', linewidth=.1)
+            ax.plot((t0 - eps, t0 - eps - remaining_t), (t0, t), color='r', linewidth=.1)
 
     if draw_box is not None:
         if type(draw_box) in (tuple, list):

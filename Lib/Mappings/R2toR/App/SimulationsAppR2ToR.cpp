@@ -8,7 +8,6 @@
 #include "Mappings/R2toR/Model/FieldState.h"
 #include "Base/Backend/Backend.h"
 
-
 #include "Phys/Numerics/Output/StructureBuilder.h"
 
 #include "Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
@@ -18,28 +17,26 @@
 
 
 
-SimulationsAppR2toR::SimulationsAppR2toR(int argc, const char **argv)
-        : AppBase(argc, argv)
+R2toR::App::Simulations::Simulations(int argc, const char **argv, Base::SimulationBuilder::Ptr simBuilder)
+        : AppBase(argc, argv), builder(simBuilder)
 {
     Allocator_R2toR::Choose();
 
-    //AppBase::parseCLArgs();
     parseCLArgs();
 }
 
-auto SimulationsAppR2toR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCBuilder*>(InterfaceSelector::getInstance().getCurrentCandidate());
+auto R2toR::App::Simulations::run() -> int {
+    auto boundaryConditions = builder->getBoundary();
+    auto output             = builder->buildOutputManager();
 
-    const auto *boundaryConditions = bcInput->getBoundary();
-    auto *output = bcInput->buildOutputManager();
+    auto *program            = NumericalIntegration::New<R2toR::FieldState>(boundaryConditions, output);
 
-    auto *integrator = NumericalIntegration::New<R2toR::FieldState>(boundaryConditions, output);
+    auto backend             = Backend::GetInstance();
 
-    auto backend = Backend::GetInstance();
-    backend->run(integrator);
+    backend->run(program);
     Backend::Destroy();
 
-    delete integrator;
+    delete program;
 
     return 0;
 }

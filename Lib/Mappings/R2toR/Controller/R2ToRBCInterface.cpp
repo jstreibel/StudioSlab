@@ -6,7 +6,7 @@
 
 R2toRBCInterface::R2toRBCInterface(String generalDescription, String name,
                                    Numerics::OutputSystem::StructureBuilder *outputStructureBuilder, bool selfRegister)
-                                   : Base::BCBuilder(generalDescription, outputStructureBuilder,
+                                   : Base::SimulationBuilder(generalDescription, outputStructureBuilder,
                                                        "R2toR-" + name, selfRegister), name(name)
 {
     addSubInterface(outputStructureBuilder);

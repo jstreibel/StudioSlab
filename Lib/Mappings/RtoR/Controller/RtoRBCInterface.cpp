@@ -11,7 +11,7 @@ RtoRBCInterface::RtoRBCInterface(String generalDescription,
                                  String name,
                                  OutputStructureBuilderBase *outputStructureBuilder,
                                  bool selfRegister)
-    : BCBuilder(std::move(generalDescription), outputStructureBuilder,
+    : SimulationBuilder(std::move(generalDescription), outputStructureBuilder,
                   "RtoR-" + name, selfRegister)
 {
     addSubInterface(outputStructureBuilder);

@@ -9,8 +9,6 @@
 #include "CommonParameters.h"
 
 class InterfaceSelector : Interface {
-
-    InterfaceSelector();
     static InterfaceSelector *mySingleInstance;
 
     int currentSelection = 0;
@@ -19,11 +17,17 @@ class InterfaceSelector : Interface {
     IntegerParameter selection{0, "sim", "Sim type selection"};
 
 public:
+    InterfaceSelector(String selectorName);
+
+    /**
+     * This is left here for compatibility reasons.
+     * @return
+     */
     static auto getInstance() -> InterfaceSelector &;
 
     void registerOption(Interface *interface);
 
-    void preParse(int argc, const char **argv);
+    auto preParse(int argc, const char **argv) -> const InterfaceSelector&;
     auto getCurrentCandidate() const -> Interface *;
 
 };

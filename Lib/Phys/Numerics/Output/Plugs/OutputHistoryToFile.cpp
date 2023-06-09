@@ -99,7 +99,7 @@ void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNam
         oss << ") ";
     }
 
-    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEnrties() << "}" << std::endl;
+    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
     const auto &s = oss.str();
 

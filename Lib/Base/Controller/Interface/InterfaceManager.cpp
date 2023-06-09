@@ -46,7 +46,7 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
     }
 }
 
-auto InterfaceManager::renderAsPythonDictionaryEnrties() -> String {
+auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
     //for(letcr p : modelMTMap) stringStream << "\"" << p.first << "\": " << p.second << ", ";
 
     StringStream ss;

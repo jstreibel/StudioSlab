@@ -6,16 +6,14 @@
 
 namespace Base {
 
-    /** Boundary conditions interface
-     *
-     */
-    class BCBuilder : public Interface {
+    class SimulationBuilder : public Interface {
     protected:
         Numerics::OutputSystem::StructureBuilder *outputStructureBuilder;
         String prefix = "";
 
-        explicit BCBuilder(String generalDescription, Numerics::OutputSystem::StructureBuilder* osb, String prefix="", bool selfRegister=false);
+        explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::StructureBuilder* osb, String prefix="", bool selfRegister=false);
     public:
+        typedef std::shared_ptr<SimulationBuilder> Ptr;
 
         virtual auto getBoundary() const -> const void * = 0;
 

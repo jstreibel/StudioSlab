@@ -32,6 +32,10 @@ int SafetyNet::jump(AppBase &prog){
         << e << "\033[0m" << ", application will now exit" << std::endl;
         return -2;
     }
+    catch (boost::wrapexcept<boost::program_options::unknown_option> &e) {
+        std::cout << "Option \"\\033[91m\\033[1m\"\"" << e.get_option_name() << "\" error: " << e.what()
+                  << "\033[0m. \n" << std::endl;
+    }
     catch (boost::program_options::error &e) {
         showHelp(prog);
         std::cout << "Error parsing command line: \"" << e.what() << "\" " << std::endl;

@@ -7,9 +7,9 @@
 
 #include "Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
 
-#include "Mappings/BCBuilder.h"
+#include "Mappings/SimulationBuilder.h"
 
-class RtoRBCInterface : public Base::BCBuilder {
+class RtoRBCInterface : public Base::SimulationBuilder {
 public:
     explicit RtoRBCInterface(String generalDescription,
                              String name = "",

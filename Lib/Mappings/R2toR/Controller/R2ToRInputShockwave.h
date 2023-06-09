@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include "Mappings/BCBuilder.h"
+#include "Mappings/SimulationBuilder.h"
 
 #include "Common/NativeTypes.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"

@@ -36,7 +36,7 @@ def ShowHeaderOfOscFile(fileName):
         value_type = type(value)
         value = str(value)
 
-        print("{:<25}: {:>75}    {}".format(key, value, value_type))
+        print("{:<25}: {:>25}    {}".format(key, value, value_type))
 
     from SimData import SimData
 

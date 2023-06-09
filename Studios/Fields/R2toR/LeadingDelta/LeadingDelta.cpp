@@ -77,19 +77,25 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     const R2toR::FieldState &fState = *lastData.getFieldData<R2toR::FieldState>();
     static auto lastStep=0;
-    ImGui::Begin("Energy compute");
-    static auto energyIntegrationRadius = -(float)epsilon;
+    static auto energyIntegrationRadius = (float)(-epsilon);
     static auto lastE = .0;
     static auto lastAnalyticE = .0;
     auto totalE = .0;
 
-    ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float)epsilon * 1e-3f, -2.0f * epsilon, 2.0f * epsilon, "%.2e");
-    auto button = ImGui::Button("Reset");
-    if(button) energyIntegrationRadius = -(float)epsilon;
+    if(0) {
+        ImGui::Begin("Energy compute");
+        ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float) epsilon * 1e-3f,
+                         -2.0f * epsilon, 2.0f * epsilon, "%.2e");
+
+        if(ImGui::Button("Reset")) energyIntegrationRadius = -(float)epsilon;
+
+        ImGui::End();
+    }
+
     if(step != lastStep)
     {
         Phys::Gordon::Energy energy;
-        auto E_radius = t + energyIntegrationRadius;
+        auto E_radius = t+energyIntegrationRadius;
         auto E = energy.computeRadial(fState, E_radius); // energy[fState];
         numericEnergyData->addPoint({t, E});
         auto analyticEnergy = (2./3.) * M_PI * t * t;
@@ -118,7 +124,6 @@ void R2toR::LeadingDelta::OutGL::draw() {
         lastStep = step;
 
     }
-    ImGui::End();
 
     stats.addVolatileStat(String("E_tot = ")    + ToString(totalE, 2, true));
     stats.addVolatileStat(String("E_num = ")    + ToString(lastE, 2, true));
@@ -151,7 +156,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     stats.addVolatileStat(String("Ring radius: ") + ToString(rd.getRadius()));
 
-    auto scale = eps*1.8;
+    auto scale = eps*10;
     auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
         R2toR::Function *func = nullptr;

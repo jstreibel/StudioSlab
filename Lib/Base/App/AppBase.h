@@ -13,7 +13,7 @@ class AppBase : protected Interface {
 protected:
     AppBase(int argc, const char *argv[]);
 
-    // TODO colocar argc argv em um std::vector<String> args.
+    StrVector args;
     const int argc;
     const char **argv;
 

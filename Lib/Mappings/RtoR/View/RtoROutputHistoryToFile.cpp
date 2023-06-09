@@ -91,7 +91,7 @@ void RtoR::OutputHistoryToFile::_printHeaderToFile() {
     oss << R"(, "data_channels": 2)";
     oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
 
-    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEnrties() << "}" << std::endl;
+    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
     const auto &s = oss.str();
 

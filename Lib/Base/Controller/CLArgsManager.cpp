@@ -24,7 +24,7 @@ void CLArgsManager::ShowHelp() {
 void CLArgsManager::Parse(int argc, const char **argv) {
     po::options_description general("Get help");
 
-    general.add_options()("help,h", "Help.");
+    general.add_options()("help", "Help.");
 
     po::options_description allOptions;
     allOptions.add(general);

@@ -16,22 +16,22 @@
 int main(int argc, const char **argv) {
 
     try {
-        auto &im = InterfaceSelector::getInstance();
+        InterfaceSelector selector("Available simulations");
 
         ///* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
-        /* sim 0 */ im.registerOption( new R2toR :: DiracSpeed   :: Input( ) );
-        /* sim 1 */ im.registerOption( new R2toR :: GrowingHole  :: Input( ) );
-        /* sim 2 */ im.registerOption( new R2toR :: LeadingDelta :: Input( ) );
+        /* sim 0 */ selector.registerOption( new R2toR :: DiracSpeed   :: Input( ) );
+        /* sim 1 */ selector.registerOption( new R2toR :: GrowingHole  :: Input( ) );
+        /* sim 2 */ selector.registerOption( new R2toR :: LeadingDelta :: Input( ) );
 
 
         // /* sim 1 */im.registerCandidate(new R2toR::R2toRInputShockwaveAt_t0);
         // /* sim 2 */im.registerCandidate(new R2toR::R2toRInputRadialShockwave);
 
-        im.preParse(argc, argv);
+        auto inputRaw = selector.preParse(argc, argv).getCurrentCandidate();
+        auto input    = dynamic_cast<Base::SimulationBuilder*>(inputRaw);
+        auto inputPtr = Base::SimulationBuilder::Ptr(input);
 
-        // auto selection = im.getCurrentCandidate();
-
-        auto prog = SimulationsAppR2toR(argc, argv);
+        auto prog = R2toR::App::Simulations(argc, argv, inputPtr);
 
         return SafetyNet::jump(prog);
 

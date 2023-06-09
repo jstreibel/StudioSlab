@@ -59,6 +59,9 @@ void NumericParams::setup(CLVariablesMap vm) {
 }
 
 void NumericParams::sett(Real tMax) {
+    std::cout << "Warning! '--" << t.getCommandLineArgName(true) << "' argument being ignored and set to "
+              << tMax << ";" << std::endl;
+
     t.setValue(tMax);
 }
 

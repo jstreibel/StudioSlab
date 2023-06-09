@@ -12,7 +12,7 @@
 #include "Common/Utils.h"
 
 
-InterfaceSelector::InterfaceSelector() : Interface("Available boundary conditions")
+InterfaceSelector::InterfaceSelector(String name) : Interface(name)
 {
     addParameters({&selection});
 };
@@ -22,21 +22,19 @@ InterfaceSelector *InterfaceSelector::mySingleInstance = nullptr;
 
 
 auto InterfaceSelector::getInstance() -> InterfaceSelector & {
-    if (mySingleInstance == nullptr) mySingleInstance = new InterfaceSelector;
+    if (mySingleInstance == nullptr) mySingleInstance = new InterfaceSelector("Available boundary conditions");
 
     return *mySingleInstance;
 }
 
 auto InterfaceSelector::getCurrentCandidate() const -> Interface * {
-    const int simType = currentSelection;
+    if(currentSelection > candidates.size() - 1)
+        throw String("Unknown sim type: ") + ToString(currentSelection);
 
-    InterfaceSelector &me = InterfaceSelector::getInstance();
-    if(simType > me.candidates.size() - 1) throw String("Unknown sim type: ") + ToString(simType);
-
-    return me.candidates[simType];
+    return candidates[currentSelection];
 }
 
-void InterfaceSelector::preParse(int argc, const char **argv) {
+auto InterfaceSelector::preParse(int argc, const char **argv) -> const InterfaceSelector& {
     typedef std::string str;
 
     const str simStr("--sim");
@@ -64,15 +62,12 @@ void InterfaceSelector::preParse(int argc, const char **argv) {
     auto &interfaceManager = InterfaceManager::getInstance();
 
     interfaceManager.registerInterface(sim);
-    // TODO this class should work with a more general Interface instead of BCInterface
-
-    //throw "This below needs a proper solution";
-    //interfaceManager.registerInterface(sim->getOutputStructureBuilder());
 
     auto subInterfaces = sim->getSubInterfaces();
     for(auto *subInterface : subInterfaces)
         interfaceManager.registerInterface(subInterface);
 
+    return *this;
 }
 
 void InterfaceSelector::registerOption(Interface *interface) {

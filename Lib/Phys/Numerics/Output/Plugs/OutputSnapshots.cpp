@@ -56,7 +56,7 @@ void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const St
         FStateOutputInterface::fDataOutType = FStateOutputInterface::PhiAndDPhiDt;
 
         CustomStringSeparatedSOF formatter(", ");
-        file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEnrties() /*<< ", " */ << "\"t\": " << t
+        file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() /*<< ", " */ << "\"t\": " << t
              << ", \"phi\": (" << formatter(*spaceData.first) << ")"
              << ", \"dPhiDt\": (" << formatter(*spaceData.second) << ")}";
 

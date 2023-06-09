@@ -37,7 +37,7 @@ void StatsDisplay::draw() {
 
     ImGui::Begin("Stats", &closable,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                 ImGuiWindowFlags_NoInputs | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
     ImGui::SetWindowPos(ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
     for (auto stat: stats) {
@@ -46,7 +46,7 @@ void StatsDisplay::draw() {
         const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
         //ImGui::TextColored(color, text);
-        ImGui::Text(text);
+        ImGui::Text(text, nullptr);
     }
     ImGui::End();
 

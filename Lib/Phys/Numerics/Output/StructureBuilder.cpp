@@ -15,7 +15,7 @@ Numerics::OutputSystem::StructureBuilder::StructureBuilder(String generalDescrip
     : Interface(generalDescription, true)
 {
     addParameters({noHistoryToFile, outputResolution,
-                   OpenGLMonitor, OpenGLMonitor_startPaused,OpenGLMonitor_stepsPerIdleCall
+                   VisualMonitor, VisualMonitor_startPaused, OpenGLMonitor_stepsPerIdleCall
                    /*&takeSnapshot, &snapshotTime, */ });
 }
 

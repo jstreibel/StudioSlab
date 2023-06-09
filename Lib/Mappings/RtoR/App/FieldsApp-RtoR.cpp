@@ -7,7 +7,7 @@
 #include "Mappings/RtoR/Core/RtoRModelAllocator.h"
 #include "Mappings/RtoR/Core/RtoRModelAllocator_Langevin.h"
 #include "Mappings/RtoR/Core/RtoRModelAllocator_Montecarlo.h"
-#include "Mappings/BCBuilder.h"
+#include "Mappings/SimulationBuilder.h"
 #include "Base/Backend/GLUT/GLUTBackend.h"
 
 #include "Base/Backend/Backend.h"
@@ -37,7 +37,7 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration 
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::BCBuilder*>(InterfaceSelector::getInstance().getCurrentCandidate());
+    auto *bcInput = dynamic_cast<Base::SimulationBuilder*>(InterfaceSelector::getInstance().getCurrentCandidate());
 
     const auto *boundaryConditions = bcInput->getBoundary();
     auto *output = bcInput->buildOutputManager();
