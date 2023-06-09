@@ -1,27 +1,26 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Phys/Numerics/Output/StructureBuilder.h"
+#include "Phys/Numerics/Output/Builder.h"
 #include "Base/Controller/Interface/Interface.h"
 
 namespace Base {
 
     class SimulationBuilder : public Interface {
     protected:
-        Numerics::OutputSystem::StructureBuilder *outputStructureBuilder;
+        Numerics::OutputSystem::Builder *outputSystemBuilder;
         String prefix = "";
 
-        explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::StructureBuilder* osb, String prefix="", bool selfRegister=false);
+        explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder* osb,
+                                   String prefix="", bool selfRegister=false);
     public:
         typedef std::shared_ptr<SimulationBuilder> Ptr;
 
-        virtual auto getBoundary() const -> const void * = 0;
+        virtual auto getBoundary()        const -> const void * = 0;
+        virtual auto buildOutputManager()       -> OutputManager * = 0;
+        virtual auto registerAllocator()  const -> void;;
 
-        virtual auto buildOutputManager() -> OutputManager * = 0;
-
-        auto getOutputStructureBuilder() -> Numerics::OutputSystem::StructureBuilder *;
-
-        auto toString() const -> String override;
+        auto toString()                   const -> String override;
     };
 
 }

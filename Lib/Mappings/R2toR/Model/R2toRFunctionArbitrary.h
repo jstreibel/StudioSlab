@@ -25,6 +25,7 @@ namespace R2toR {
         FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
 
         Real operator()(Real2D x) const override;
+        void operator=(const MyBase &func);
 
         Real diff(int n, Real2D x) const override;
 

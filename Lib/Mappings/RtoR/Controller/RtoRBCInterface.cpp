@@ -19,6 +19,6 @@ RtoRBCInterface::RtoRBCInterface(String generalDescription,
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
-    return outputStructureBuilder->build(outputFileName);
+    return outputSystemBuilder->build(outputFileName);
 }
 

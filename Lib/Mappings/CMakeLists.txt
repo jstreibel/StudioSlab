@@ -35,7 +35,7 @@ endif()
 
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
-		BCBuilder.cpp
+		SimulationBuilder.cpp
 
 
 		RtoR/App/FieldsApp-RtoR.cpp
@@ -95,7 +95,7 @@ set ( RTOR_SOURCES
 
 set ( R2TOR_SOURCES
 		FunctionRenderer.cpp
-		BCBuilder.cpp
+		SimulationBuilder.cpp
 
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 		RtoR/View/Graphics/Artists/GraphRtoR.cpp
@@ -103,7 +103,7 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRFunctionArbitrary.cpp
 		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
 
-		R2toR/Controller/R2ToRBCInterface.cpp
+		R2toR/Controller/R2ToR_SimulationBuilder.cpp
 		# R2toR/Controller/R2ToRInputRadialShockwave.cpp
 		R2toR/Controller/R2ToRInputShockwave.cpp
 		# R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
@@ -130,7 +130,7 @@ set ( R2TOR_SOURCES
 
 		RtoR2/StraightLine.cpp
 
-		R2toR/Core/Allocator_R2toR.cpp
+		R2toR/Core/R2toR_Allocator.cpp
 		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
 set ( MAPS_LINKS

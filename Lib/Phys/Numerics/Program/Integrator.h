@@ -24,11 +24,19 @@ break;
 
 
 class NumericalIntegration : public Program {
+    Real dt;
+    PosInt steps;
+    bool forceOverStepping = false;
+
+    BenchmarkHistogram histogram;
 
     Method *stepper;
     OutputManager *outputManager;
 
     NumericalIntegration(const void *dPhi, OutputManager *outputManager);
+
+    void output();
+    OutputPacket getOutputInfo();
 
 public:
     enum Methods {Montecarlo, RK4};
@@ -86,6 +94,7 @@ public:
             }
         } else throw "Unknown integration method.";
 
+
         instance->stepper = stepper;
         instance->output(); // output do estado inicial
 
@@ -95,25 +104,12 @@ public:
     ~NumericalIntegration();
 
     void step(PosInt nSteps = 1, void *args= nullptr) override;
+    auto getSteps() const -> size_t;
+    inline auto getSimulationTime() -> Real;
+    auto doForceOverStepping() -> void;
+    auto runFullIntegration() -> void override;
 
-    OutputPacket getOutputInfo();
-
-public:
-    void runFullIntegration() override;
-    void output();
-    const BenchmarkHistogram& getHistogram() const;
-
-public:
-    size_t getSteps() const;
-    inline Real getSimulationTime();
-    void doForceOverStepping();
-
-private:
-    Real dt;
-    PosInt steps;
-    bool forceOverStepping = false;
-
-    BenchmarkHistogram histogram;
+    auto getHistogram() const -> const BenchmarkHistogram&;
 
 };
 

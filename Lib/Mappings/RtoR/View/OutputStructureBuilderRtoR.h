@@ -5,10 +5,10 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 
-#include "Phys/Numerics/Output/StructureBuilder.h"
+#include "Phys/Numerics/Output/Builder.h"
 #include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
 
-class OutputStructureBuilderRtoR : public Numerics::OutputSystem::StructureBuilder {
+class OutputStructureBuilderRtoR : public Numerics::OutputSystem::Builder {
 public:
     OutputStructureBuilderRtoR();
 

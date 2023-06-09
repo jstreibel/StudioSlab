@@ -15,7 +15,7 @@ namespace Numerics {
 
     namespace OutputSystem {
 
-        class StructureBuilder : public Interface {
+        class Builder : public Interface {
             BoolParameter takeSnapshot = {false, "snapshot,s", "Take a snapshot of simulation at the end."};
             RealParameter snapshotTime = {-1.0, "snapshotTime,t",
                                           "Force snapshot to be taken at some time prior to end (after will result in no output."};
@@ -31,7 +31,7 @@ namespace Numerics {
                                                                "Simulation steps between visual monitor "
                                                                "updates call."};
 
-            explicit StructureBuilder(String generalDescription = "Simulation output structure");
+            explicit Builder(String generalDescription = "Simulation output structure");
 
             // void buildCommon(OutputManager &outputManager);
             static void addConsoleMonitor(OutputManager &outputManager, int nSteps);

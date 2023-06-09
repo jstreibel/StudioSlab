@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_DIRACSPEEDINPUT_H
 #define STUDIOSLAB_DIRACSPEEDINPUT_H
 
-#include <Mappings/R2toR/Controller/R2ToRBCInterface.h>
+#include <Mappings/R2toR/Controller/R2ToR_SimulationBuilder.h>
 
 #include "GrowingHole/OutputBuilder.h"
 #include "GrowingHole/GrowingHoleBoundaryCondition.h"
@@ -16,13 +16,13 @@
 
 namespace R2toR {
     namespace DiracSpeed {
-        class Input : public R2toRBCInterface {
+        class Builder : public SimulationBuilder {
             RealParameter eps = RealParameter{1., "eps", "Quasi-shockwave 'epsilon' parameter."};
             RealParameter E = RealParameter{1., "E", "Total energy."};
 
         public:
-            Input() : R2toRBCInterface("(2+1)-d Shockwave as a growing hole.", "gh",
-                                                 new GrowingHole::OutputBuilder) {
+            Builder() : SimulationBuilder("(2+1)-d Shockwave as a growing hole.", "gh",
+                                          new GrowingHole::OutputBuilder) {
                 addParameters({&E, &eps});
             }
 

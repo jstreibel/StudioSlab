@@ -10,8 +10,9 @@ namespace Numerics {
 		static Allocator *mySingleInstance;
 
 	protected:
+		const String name;
 
-		Allocator();
+		Allocator(String name);
 
 		static void Instantiate(Allocator *allocator);
 

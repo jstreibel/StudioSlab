@@ -9,11 +9,11 @@
 
 #include "Common/NativeTypes.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
-#include "R2ToRBCInterface.h"
+#include "R2ToR_SimulationBuilder.h"
 
 namespace R2toR {
 
-    class R2toRInputShockwave : public R2toRBCInterface {
+    class R2toRInputShockwave : public SimulationBuilder {
     private:
         RealParameter eps   =RealParameter{1., "eps", "Quasi-shockwave 'epsilon' parameter."};
         RealParameter theta =RealParameter{0., "theta", "Ellipse rotation."};

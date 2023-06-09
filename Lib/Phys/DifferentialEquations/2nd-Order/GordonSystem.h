@@ -14,20 +14,20 @@ namespace Phys {
 
         template<class FieldState>
         class GordonSystem : public Base::DifferentialEquation<FieldState> {
-        private:
+        protected:
             typedef Base::Function<FType(FunctionType::OutCategory),
                     FType(FunctionType::OutCategory)> TargetToTargetFunction;
         public:
             explicit GordonSystem(TargetToTargetFunction &potential)
                     : laplacian(
                     *(FType(FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
-                      dV(*(FType(
+                      dV_out(*(FType(
                               FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
                       V(potential), dVDPhi(*potential.diff(0).release()) {}
 
             ~GordonSystem() override {
                 delete &laplacian;
-                delete &dV;
+                delete &dV_out;
                 delete &V;
                 delete &dVDPhi;
             }
@@ -46,9 +46,9 @@ namespace Phys {
                 // Eq 2
                 {
                     iPhi.Laplacian(laplacian);
-                    iPhi.Apply(dVDPhi, dV);
+                    iPhi.Apply(dVDPhi, dV_out);
 
-                    oDPhi.StoreSubtraction(laplacian, dV) *= dt;
+                    oDPhi.StoreSubtraction(laplacian, dV_out) *= dt;
                 }
 
                 return fieldStateOut;
@@ -57,7 +57,7 @@ namespace Phys {
             static bool isDissipating() { return false; }
 
         protected:
-            FType(FunctionArbitraryType) &laplacian, &dV;
+            FType(FunctionArbitraryType) &laplacian, &dV_out;
             TargetToTargetFunction &V;
             TargetToTargetFunction &dVDPhi;
         };

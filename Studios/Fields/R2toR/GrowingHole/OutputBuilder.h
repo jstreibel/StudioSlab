@@ -13,7 +13,7 @@
 namespace R2toR {
     namespace GrowingHole {
 
-        class OutputBuilder : public OutputStructureBuilderR2toR {
+        class OutputBuilder : public R2toR::OutputSystem::Builder {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
                 const Real phiMin = -.5;

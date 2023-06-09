@@ -4,14 +4,14 @@
 
 // #include <RtoR/View/OutputSnapshots.h>
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-#include "StructureBuilder.h"
+#include "Builder.h"
 
 #include "OutputManager.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 
 
-Numerics::OutputSystem::StructureBuilder::StructureBuilder(String generalDescription)
+Numerics::OutputSystem::Builder::Builder(String generalDescription)
     : Interface(generalDescription, true)
 {
     addParameters({noHistoryToFile, outputResolution,
@@ -20,7 +20,7 @@ Numerics::OutputSystem::StructureBuilder::StructureBuilder(String generalDescrip
 }
 
 
-void Numerics::OutputSystem::StructureBuilder::addConsoleMonitor(OutputManager &outputManager, int nSteps) {
+void Numerics::OutputSystem::Builder::addConsoleMonitor(OutputManager &outputManager, int nSteps) {
     Plug *out = new OutputConsoleMonitor(nSteps, true);
     outputManager.addOutputChannel(out);
 }

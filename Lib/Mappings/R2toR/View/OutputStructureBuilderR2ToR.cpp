@@ -22,7 +22,7 @@
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 
 OutputManager*
-OutputStructureBuilderR2toR::build(String outputFileName) {
+R2toR::OutputSystem::Builder::build(String outputFileName) {
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldTrackHistory = ! *noHistoryToFile;
 
@@ -104,7 +104,7 @@ OutputStructureBuilderR2toR::build(String outputFileName) {
     return outputManager;
 }
 
-auto OutputStructureBuilderR2toR::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
+auto R2toR::OutputSystem::Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
     const Real phiMin = -0.125;
     const Real phiMax = 0.25;
     const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();

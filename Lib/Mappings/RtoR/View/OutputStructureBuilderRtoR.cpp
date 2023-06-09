@@ -25,7 +25,7 @@
 #include "Phys/Numerics/Output/Plugs/Plug.h"
 
 
-OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : StructureBuilder() {
+OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : Builder() {
 
 }
 

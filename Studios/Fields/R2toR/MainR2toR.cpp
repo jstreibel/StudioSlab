@@ -19,9 +19,9 @@ int main(int argc, const char **argv) {
         InterfaceSelector selector("Available simulations");
 
         ///* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
-        /* sim 0 */ selector.registerOption( new R2toR :: DiracSpeed   :: Input( ) );
-        /* sim 1 */ selector.registerOption( new R2toR :: GrowingHole  :: Input( ) );
-        /* sim 2 */ selector.registerOption( new R2toR :: LeadingDelta :: Input( ) );
+        /* sim 0 */ selector.registerOption( new R2toR :: DiracSpeed   :: Builder( ) );
+        /* sim 1 */ selector.registerOption( new R2toR :: GrowingHole  :: Builder( ) );
+        /* sim 2 */ selector.registerOption( new R2toR :: LeadingDelta :: Builder( ) );
 
 
         // /* sim 1 */im.registerCandidate(new R2toR::R2toRInputShockwaveAt_t0);

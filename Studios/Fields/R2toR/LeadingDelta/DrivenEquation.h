@@ -6,29 +6,29 @@
 #define STUDIOSLAB_DRIVENEQUATION_H
 
 #include "Mappings/R2toR/Model/FieldState.h"
-#include "Mappings/R2toR/Core/Allocator_R2toR.h"
+#include "Mappings/R2toR/Core/R2toR_Allocator.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
-
-
+#include "RingDelta.h"
 
 namespace R2toR {
 
-    typedef Phys::Gordon::GordonSystem<FieldState> DiffEq;
+    namespace LeadingDelta {
 
+        typedef Phys::Gordon::GordonSystem<FieldState> DiffEq;
 
-    class DrivenEquation : public DiffEq {
-    public:
-        explicit DrivenEquation();
+        class DrivenEquation : public DiffEq {
+            SpecialRingDelta *ringDelta;
+            FunctionArbitrary & δᵣ;
 
-        auto dtF(const FieldState &in, FieldState &out, Real t, Real dt) -> FieldState & override;
-    };
+            const Real tMax;
+        public:
+            explicit DrivenEquation(Real ϵ, Real W₀, Real tₘₐₓ);
 
+            auto dtF(const FieldState &in, FieldState &out, Real t, Real dt) -> FieldState & override;
+        };
 
-    class DrivenEqAllocator : public Allocator_R2toR {
-    public:
-        auto getSystemSolver() -> void * override;
-    };
+    }
 
 }
 

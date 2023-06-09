@@ -5,18 +5,23 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERR2TOR_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERR2TOR_H
 
-#include "Phys/Numerics/Output/StructureBuilder.h"
+#include "Phys/Numerics/Output/Builder.h"
 #include "Phys/Numerics/Output/OutputManager.h"
 #include "R2toROutputOpenGLGeneric.h"
 
-class OutputStructureBuilderR2toR : public Numerics::OutputSystem::StructureBuilder {
-public:
-    auto build(String outputFileName) -> OutputManager* override;
 
-protected:
-    virtual auto buildOpenGLOutput() -> R2toR::OutputOpenGL*;
+namespace R2toR {
+    namespace OutputSystem {
+        class Builder : public Numerics::OutputSystem::Builder {
+        public:
+            auto build(String outputFileName) -> OutputManager* override;
 
-};
+        protected:
+            virtual auto buildOpenGLOutput() -> OutputOpenGL*;
+
+        };
+    }
+}
 
 
 #endif //FIELDS_OUTPUTSTRUCTUREBUILDERR2TOR_H

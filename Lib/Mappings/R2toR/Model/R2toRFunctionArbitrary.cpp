@@ -69,3 +69,7 @@ Base::Function<Real2D, Real>::Pointer R2toR::FunctionArbitrary::diff(int n) cons
     throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
     return Function::diff(n);
 }
+
+void R2toR::FunctionArbitrary::operator=(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+    this->Set(func);
+}

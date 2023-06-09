@@ -5,7 +5,7 @@ namespace Numerics {
 
     Allocator *Allocator::mySingleInstance = nullptr;
 
-    Allocator::Allocator() = default;
+    Allocator::Allocator(String name) : name(name) { };
     //ModelBuilder::ModelBuilder() {
     // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).
     // if(dev.getDevice()==device::GPU)
@@ -16,6 +16,8 @@ namespace Numerics {
 
     void Allocator::Instantiate(Allocator *allocator) {
         if (Allocator::mySingleInstance != nullptr) throw "ModelBuilder initialized already.";
+
+        std::cout << "Allocator instantiated: " << allocator->name << std::endl;
 
         Allocator::mySingleInstance = allocator;
     }

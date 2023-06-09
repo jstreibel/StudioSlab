@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_LEADINGDELTA_H
 #define STUDIOSLAB_LEADINGDELTA_H
 
-#include <Mappings/R2toR/Controller/R2ToRBCInterface.h>
+#include <Mappings/R2toR/Controller/R2ToR_SimulationBuilder.h>
 
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 #include "Phys/Numerics/Allocator.h"
@@ -14,6 +14,7 @@
 
 #include "RingDelta.h"
 #include "DrivenEquation.h"
+#include "Allocator.h"
 
 
 namespace R2toR {
@@ -66,7 +67,9 @@ namespace R2toR {
 
                     function.setPhi(fullNull);
                     function.setDPhiDt(fullNull);
-                } else if (t<tf || tf<0){
+                }
+            #if false
+                else if (t<tf || tf<0){
                     const_cast<SpecialRingDelta&>(ringDelta).setRadius(t);
 
                     auto &dφdt = function.getDPhiDt();
@@ -74,10 +77,11 @@ namespace R2toR {
 
                     function.setDPhiDt(ringDelta);
                 }
+            #endif
             }
         };
 
-        class OutputBuilder : public OutputStructureBuilderR2toR {
+        class OutputBuilder : public R2toR::OutputSystem::Builder {
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override {
                 const Real phiMin = -.2;
@@ -93,7 +97,7 @@ namespace R2toR {
             }
         };
 
-        class Input : public R2toRBCInterface {
+        class Builder : public SimulationBuilder {
             RealParameter W_0 = RealParameter(0.1, "W_0,W", "The height of corresponding analytic shockwave, "
                                                             "which determines scale of the delta as "
                                                             "C_n=(n-1)/2 W(0) with n=2.");
@@ -102,8 +106,8 @@ namespace R2toR {
                                                                                   "regularized delta. Negative "
                                                                                   "values mean forever;");
         public:
-            Input() : R2toRBCInterface("(2+1)-d Shockwave as trail of a driving delta.",
-                                       "ldd", new OutputBuilder) { addParameters({W_0, eps, deltaDuration}); }
+            Builder() : SimulationBuilder("(2+1)-d Shockwave as trail of a driving delta.",
+                                          "ldd", new OutputBuilder) { addParameters({W_0, eps, deltaDuration}); }
             auto getBoundary() const -> const void * override {
                 auto &p = const_cast<NumericParams&>(Numerics::Allocator::getInstance().getNumericParams());
                 const Real L = p.getL();
@@ -119,6 +123,10 @@ namespace R2toR {
                 else       delta = new Delta_r(*eps, C_2, dt);
 
                 return new BoundaryCondition(*delta, *deltaDuration);
+            }
+
+            auto registerAllocator() const -> void override {
+                LeadingDelta::Allocator::Choose(*eps, *W_0, *deltaDuration);
             }
         };
     }

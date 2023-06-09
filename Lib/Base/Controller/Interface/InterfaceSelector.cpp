@@ -22,7 +22,11 @@ InterfaceSelector *InterfaceSelector::mySingleInstance = nullptr;
 
 
 auto InterfaceSelector::getInstance() -> InterfaceSelector & {
-    if (mySingleInstance == nullptr) mySingleInstance = new InterfaceSelector("Available boundary conditions");
+    if (mySingleInstance == nullptr) {
+        mySingleInstance = new InterfaceSelector("Available boundary conditions");
+        std::cout << "WARNING: InterfaceSelector is no longer to be used as singleton! This feature is "
+                     "deprecated and will be removed very soon." << std::endl;
+    }
 
     return *mySingleInstance;
 }

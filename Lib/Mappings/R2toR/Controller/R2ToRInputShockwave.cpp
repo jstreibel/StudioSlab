@@ -14,13 +14,14 @@
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "R2ToR_SimulationBuilder.h"
 
 const auto pi = 3.1415926535897932384626;
 
 using namespace R2toR;
 
 R2toRInputShockwave::R2toRInputShockwave()
-                                         : R2toRBCInterface("(2+1)-dim signum-Gordon "
+                                         : SimulationBuilder("(2+1)-dim signum-Gordon "
                                                             "shockwave.", "sw") {
 
 
