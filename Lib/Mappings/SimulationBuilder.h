@@ -6,13 +6,14 @@
 
 namespace Base {
 
-    class SimulationBuilder : public Interface {
+    class SimulationBuilder : public InterfaceOwner {
     protected:
         Numerics::OutputSystem::Builder::Ptr outputSystemBuilder;
         String prefix = "";
 
         explicit SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
-                                   String prefix="", bool selfRegister=false);
+                                   String prefix="");
+
     public:
         typedef std::shared_ptr<SimulationBuilder> Ptr;
 
@@ -20,7 +21,7 @@ namespace Base {
         virtual auto buildOutputManager()       -> OutputManager * = 0;
         virtual auto registerAllocator()  const -> void;;
 
-        auto toString()                   const -> String override;
+        auto toString()                   const -> String;
     };
 
 }

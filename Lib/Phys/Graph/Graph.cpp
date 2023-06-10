@@ -5,6 +5,7 @@
 #include "Graph.h"
 #include "imgui.h"
 #include "Common/Printing.h"
+#include "Common/Log/Log.h"
 
 
 Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, String title,
@@ -338,7 +339,7 @@ void Base::Graphics::Graph2D::draw() {
 }
 
 bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
-    if(0) std::cout << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << std::endl;
+    if(0) Log::Debug() << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << Log::Flush;
 
 
     if(button == 2 && dir == 0){

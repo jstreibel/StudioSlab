@@ -13,6 +13,7 @@
 #include "Phys/Numerics/Program/Integrator.h"
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
+#include "Common/Log/Log.h"
 
 #include <cassert>
 #include <filesystem>
@@ -43,12 +44,12 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
             GLenum initStatus = glewInit();
         if (GLEW_OK != initStatus) {
             char buffer[1024];
-            sprintf(buffer, "Error: %s\n", glewGetErrorString(initStatus));
+            sprintf(buffer, "Error: %s", glewGetErrorString(initStatus));
             throw String(buffer);
         } else {
             char buffer[1024];
-            sprintf(buffer, "Using GLEW %s\n", glewGetString(GLEW_VERSION));
-            std::cout << buffer << std::endl;
+            sprintf(buffer, "Using GLEW %s", glewGetString(GLEW_VERSION));
+            Log::Info() << buffer << Log::Flush;
         }
     }
 
@@ -69,7 +70,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
 
-    std::cout << "Initialized GLUTBackend. Current window: " << winHandle << std::endl;
+    Log::Info() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
 
 
     // Setup Dear ImGui context
@@ -115,7 +116,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
 
     Styles::Init();
 
-    std::cout << "Initialized Imgui." << std::endl;
+    Log::Info() << "Initialized Imgui." << Log::Flush;
 }
 
 /*void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
@@ -165,18 +166,18 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     } else if(key == '=') {
         me->steps += 1;
 
-        std::cout << "\nStepping " << me->steps << " per cycle.";
+        Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
     } else if(key == '+') {
         me->steps *= 1.1;
 
-        std::cout << "\nStepping " << me->steps << " per cycle.";
+        Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
     } else if(key == '-') {
         if(me->steps > 1) {
             me->steps -= 1;
 
             if (me->steps <= 0) me->steps = 1;
 
-            std::cout << "\nStepping " << me->steps << " per cycle.";
+            Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
         }
     } else if(key == '_') {
         if(me->steps > 1) {
@@ -291,7 +292,7 @@ void GLUTBackend::idleCall()
     while((err = glGetError()) != GL_NO_ERROR){
         if(lastErr == err) continue;
 
-        std::cout << "OpenGL error " << err << std::endl;
+        Log::Warning() << "OpenGL error " << err << Log::Flush;
         lastErr = err;
     }
 

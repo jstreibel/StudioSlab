@@ -3,13 +3,20 @@
 //
 
 #include "Interface.h"
+#include "InterfaceOwner.h"
 #include "InterfaceManager.h"
+#include "Common/Utils.h"
+#include "Common/Log/Log.h"
 
-Interface::Interface(const String& generalDescription, bool dontRegisterInterface)
-: description(generalDescription)
-{
-    if(!dontRegisterInterface)
-        InterfaceManager::getInstance().registerInterface(me.lock());
+Interface::Interface(const String& name, InterfaceOwner *owner, int priority)
+    : owner(owner), priority(priority) {
+
+    auto tokens = Common::SplitString(name, delimiter, 2);
+    this->name = tokens[0];
+    this->descr = tokens.size() > 1 ? tokens[1] : this->descr;
+
+    if(owner != nullptr) addListener(owner);
+    else Log::Note() << "Registering un-owned interface '" << name << "'" << Log::Flush;
 }
 
 auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
@@ -29,13 +36,19 @@ auto Interface::getSubInterfaces() const -> std::vector<Interface::Ptr> {
 }
 
 void Interface::addParameter(Parameter::Ptr parameter) {
-    if(!parameters.insert(parameter).second) throw "Error while inserting parameter in interface.";
+    auto insertionSuccessful = parameters.insert(parameter).second;
 
-    //std::cout << "Parameter \"" << parameter->getCommandLineArgName() << "\" registered to interface \""
-    //          << description << "\".\n";
+    if(!insertionSuccessful){
+        throw "Error while inserting parameter in interface.";
+    }
+
+    Log::Debug() << "Parameter \"" << parameter->getCommandLineArgName() << "\" registered to interface \""
+                 << getName() << "\".";
 }
 
 void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
+
+
     for(auto param : parametersList)
         addParameter(param);
 }
@@ -44,7 +57,7 @@ void Interface::addSubInterface(Interface::Ptr subInterface) {
     if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
 }
 
-auto Interface::getGeneralDescription() const -> String { return description; }
+auto Interface::getGeneralDescription() const -> String { return descr; }
 
 auto Interface::getParameter(String key) const -> Parameter::Ptr {
     auto compareFunc = [key](Parameter::Ptr parameter) {
@@ -77,19 +90,23 @@ void Interface::setup(CLVariablesMap vm) {
 
             param->setValueFrom(val);
         }
+
+        for(auto listener : listeners)
+            listener->notifyCLArgsSetupFinished();
+
     } catch (boost::bad_any_cast &exception) {
-        std::cout << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << std::endl;
+        Log::Error() << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << Log::Flush;
         throw exception;
     }
 }
 
 bool Interface::operator==(const Interface &rhs) const {
-    return std::tie(description, parameters, subInterfaces) ==
-           std::tie(rhs.description, rhs.parameters, rhs.subInterfaces);
+    return std::tie(name, parameters, subInterfaces) ==
+           std::tie(rhs.name, rhs.parameters, rhs.subInterfaces);
 }
 
 bool Interface::operator==(String str) const {
-    return description == str;
+    return name == str;
 }
 
 bool Interface::operator!=(const Interface &rhs) const {
@@ -99,6 +116,27 @@ bool Interface::operator!=(const Interface &rhs) const {
 Interface::~Interface() {
 
 }
+
+Interface::Ptr Interface::New(String name, InterfaceOwner *owner, int priority) {
+    return Interface::Ptr(new Interface(name, owner, priority));
+}
+
+auto Interface::addListener(InterfaceListener *newListener) -> void {
+    listeners.emplace_back(newListener);
+}
+
+auto Interface::getOwner() const -> InterfaceOwner * {
+    return owner;
+}
+
+auto Interface::getName() const -> const String & {
+    return name;
+}
+
+bool Interface::operator<(const Interface &other) const {
+    return priority < other.priority;
+}
+
 
 
 

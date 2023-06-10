@@ -2,11 +2,12 @@
 
 #include "RtoROutputOpenGL.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
+#include "Common/Log/Log.h"
 
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 #include "Mappings/FunctionRenderer.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 //
 // Created by joao on 23/09/2019.
@@ -197,7 +198,7 @@ bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
             break;
         case '4':
             showEnergyDensity = !showEnergyDensity;
-            std::cout << "Important: energy density is computing with the signum potential only." << std::endl;
+            Log::Important() << "Important: energy density is computing with the signum potential only." << std::endl;
             break;
         default:
             break;

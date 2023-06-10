@@ -6,9 +6,10 @@
 #define V_SHAPE_COMMANDLINEINPUTMANAGER_H
 
 #include "Interface.h"
+#include "InterfaceOwner.h"
 #include "CommonParameters.h"
 
-class InterfaceSelector : Interface {
+class InterfaceSelector : public InterfaceOwner {
     static InterfaceSelector *mySingleInstance;
 
     int currentSelection = 0;
@@ -27,7 +28,7 @@ public:
 
     void registerOption(Interface::Ptr interface);
 
-    auto preParse(int argc, const char **argv) -> const InterfaceSelector&;
+    auto preParse(int argc, const char **argv, bool registerInInterfaceManager=true) -> const InterfaceSelector&;
     auto getCurrentCandidate() const -> Interface::Ptr;
 
 };

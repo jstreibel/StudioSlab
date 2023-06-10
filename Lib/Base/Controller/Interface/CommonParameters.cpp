@@ -4,6 +4,7 @@
 
 #include "Common/STDLibInclude.h"
 #include "CommonParameters.h"
+#include "Common/Log/Log.h"
 
 #include <utility>
 #include <typeinfo>
@@ -52,8 +53,8 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
     } catch (boost::bad_any_cast &exception) {
-        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from program_options::variable_value";
-        std::cout << msg << ". Type is " << typeid(Type).name() << std::endl;
+        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from program_options::variable_value. Type is " + typeid(Type).name();
+        Log::Error() << msg << Log::Flush;
         throw exception;
     }
 }

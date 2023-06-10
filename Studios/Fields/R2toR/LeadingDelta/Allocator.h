@@ -11,14 +11,14 @@
 namespace R2toR {
     namespace LeadingDelta {
         class Allocator : public R2toR::Core::BasicAllocator {
-            R2toR::Function::Ptr drivingFunction;
+            Function::Ptr drivingFunction;
+            Allocator();
 
         public:
-            Allocator(R2toR::Function::Ptr drivingFunction);
+            static auto Choose()   -> Allocator*;
 
             auto getSystemSolver() -> void * override;
-
-            static auto Choose(R2toR::Function::Ptr drivingFunction) -> void;
+            auto setDrivingFunction(Function::Ptr drivingFunction) -> void;
         };
 
     }

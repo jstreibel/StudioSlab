@@ -2,6 +2,7 @@
 
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Common/Log/Log.h"
 
 #include <Base/Controller/Interface/InterfaceManager.h>
 
@@ -35,12 +36,12 @@ auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
 void HistoryKeeper::_out(const OutputPacket &outInfo)
 {
     if(getUtilMemLoadBytes() > 4*ONE_GB){
-        std::cout << "\n\nDumping mem... " << std::flush;
+        Log::Critical() << "Dumping "<< (getUtilMemLoadBytes()*4e-6) << "GB of data." << Log::Flush;
         this->_dump(false);
         countTotal += count;
         count = 0;
         spaceDataHistory.clear(); // TODO compute total liberated memory from this history
-        std::cout << "Done!" << std::endl;
+        Log::Success() << "Memory dump successful." << Log::Flush;
     }
 
     spaceDataHistory.emplace_back(spaceFilter(outInfo));

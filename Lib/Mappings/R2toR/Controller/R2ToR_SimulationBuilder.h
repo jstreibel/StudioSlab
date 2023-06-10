@@ -13,22 +13,13 @@ namespace R2toR {
     typedef Numerics::OutputSystem::Builder::Ptr BuilderBasePtr;
 
     class SimulationBuilder : public Base::SimulationBuilder {
-        String name;
 
     public:
-        explicit SimulationBuilder(String generalDescription,
-                                   String name = "",
-                                   BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputSystem::Builder),
-                                   bool selfRegister=false);
+        explicit SimulationBuilder(String name,
+                          BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputSystem::Builder));
+        auto buildOutputManager()         -> OutputManager *  override;
+        auto registerAllocator ()   const -> void             override;
 
-        auto buildOutputManager() -> OutputManager * override;
-
-        auto registerAllocator() const -> void override;
-
-
-        bool operator==(const Interface &rhs) const override;
-
-        bool operator==(String val) const override;
     };
 }
 

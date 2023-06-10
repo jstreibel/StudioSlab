@@ -15,25 +15,24 @@
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "R2ToR_SimulationBuilder.h"
+#include "Common/Log/Log.h"
 
 const auto pi = 3.1415926535897932384626;
 
 using namespace R2toR;
 
-R2toRInputShockwave::R2toRInputShockwave() : SimulationBuilder("(2+1)-dim signum-Gordon shockwave.", "sw") {
+R2toRInputShockwave::R2toRInputShockwave() : SimulationBuilder("sw,(2+1)-dim signum-Gordon shockwave.") {
 
 
-    addParameters({&eps, &theta, &E, &e, &t0});
+    interface->addParameters({eps, theta, E, e, t0});
 }
 
 auto R2toRInputShockwave::getBoundary() const -> const void * {
-    auto E = *this->E;
-    auto eps = *this->eps;
+    auto E = **this->E;
+    auto eps = **this->eps;
     const Real a = sqrt((4./3)*pi*eps*eps*E);
 
-    std::cout << "\nShockwave 'a' parameter = " << a << std::endl;
-
-    let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, *e, *theta);
+    let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, **e, **theta);
     //auto *dPhiDt0 = new FunctionAzimuthalSymmetry(new RtoRMap::RegularDiracDelta(a, a), sqrt(3./M_PI),e, theta);
     let *dPhiDt0 = new R2toR::R2toRRegularDelta(eps, a);
 
@@ -54,7 +53,7 @@ auto R2toRInputShockwave::getBoundary() const -> const void * {
                 }
             }
             E *= .5 * h * h;
-            std::cout << "\nCartesianas: E = " << E << std::endl;
+            Log::Info() << "\nCartesianas: E = " << E << Log::Flush;
         }
     }
 

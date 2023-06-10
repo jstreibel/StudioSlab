@@ -4,17 +4,18 @@
 #include "Device.h"
 
 #include "Common/Utils.h"
+#include "Common/Log/Log.h"
 
 
-
-Device::Device() : Interface("Device options")
+Device::Device() : InterfaceOwner("Device options", 10, true)
 {
-    addParameters(
+    interface->addParameters(
     {
 #if USE_CUDA
         deviceChoice,
 #endif
-        nThreads});
+        nThreads
+    });
 };
 
 
@@ -22,9 +23,8 @@ auto Device::getDevice() const -> const device {
     return dev;
 }
 
-void Device::setup(CLVariablesMap vm) {
-    Interface::setup(vm);
-
+void Device::notifyCLArgsSetupFinished() {
+    InterfaceOwner::notifyCLArgsSetupFinished();
 #if USE_CUDA
     unsigned int dev_n = **deviceChoice;
 #else
@@ -36,19 +36,23 @@ void Device::setup(CLVariablesMap vm) {
     if (dev == UNKNOWN) {
         throw (String("Unkown device ") + std::to_string(dev_n) + String(".")).c_str();
     } else if (dev == CPU) {
-        std::cout << "CPU " << *nThreads << " thread" << (**nThreads > 1 ? "s.\n" : ".\n");
+        Log::Info() << "Running on CPU @ " << *nThreads << " thread"
+                    << (**nThreads > 1 ? "s.\n" : ".\n") << Log::Flush;
     } else if (dev == GPU) {
 #if USE_CUDA
         int devCount;
         cudaError err;
 
         cew(cudaGetDeviceCount(&devCount));
-        std::cout << "GPU " << dev_n << "/" << devCount << std::endl;
+        cudaDeviceProp props;
+        cudaGetDeviceProperties_v2(&props, dev_n);
 
         cew(cudaSetDevice(dev_n - 1));
 
+        Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << props.name << Log::Flush;
+
         if (**nThreads > 1) {
-            std::cout << "Ignoring n_threads argument (using GPU)." << std::endl;
+            Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
             *nThreads = 1;
         }
 #else

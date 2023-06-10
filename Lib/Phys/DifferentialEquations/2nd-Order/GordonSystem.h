@@ -29,7 +29,6 @@ namespace Phys {
                 delete &laplacian;
                 delete &dV_out;
                 delete &V;
-                delete &dVDPhi;
             }
 
 

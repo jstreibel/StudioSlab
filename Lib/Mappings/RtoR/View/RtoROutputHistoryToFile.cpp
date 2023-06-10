@@ -10,6 +10,7 @@
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
+#include "Common/Log/Log.h"
 
 const int HEADER_SIZE_BYTES = 2048;
 
@@ -23,9 +24,9 @@ RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilter
 
     file.open(outFileName, std::ios::out);
 
-    if(!file) throw "Erro: nao abriu arquivo.";
+    if(!file) throw "OutputHistoryToFile: nao abriu arquivo.";
 
-    std::cout << "O resultado sera salvo em \'" << outFileName << "\'. " << std::endl;
+    Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
 
     file << String(HEADER_SIZE_BYTES-1, ' ') << '\n';
 }
@@ -48,13 +49,10 @@ void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
     Timer timer;
 
-    std::cout << std::setprecision(3);
-    std::cout << std::endl;
-
     for(size_t Ti=0; Ti<count; Ti++) {
         if(timer.getElTime_sec() > 1) {
             timer.reset();
-            std::cout << "\rFlushing " << (Real)Ti/Real(count)*100.0 << "%    " << std::flush;
+            Log::Info() << std::setprecision(3) << "Flushing " << (Real)Ti/Real(count)*100.0 << "%" << Log::Flush;
         }
 
         file << outputFormatter(tHistory[int(Ti)]);
@@ -69,7 +67,7 @@ void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
     file.flush();
 
-    std::cout << "\rFlushing " << "100%    " << std::endl;
+    Log::Success() << "Flushed " << "100%" << Log::Flush;
 }
 
 

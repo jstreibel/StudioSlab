@@ -31,9 +31,6 @@ protected:
     virtual void _out(const OutputPacket &outInfo){
         OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
     }
-
-public:
-    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation);
 };
 
 #endif // OUTPUTSNAPSHOTS1D_H

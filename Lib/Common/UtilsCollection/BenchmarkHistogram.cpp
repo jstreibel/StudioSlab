@@ -5,6 +5,7 @@
 #include "BenchmarkHistogram.h"
 
 #include "Common/Types.h"
+#include "Common/Log/Log.h"
 
 #include <cmath>
 #include <cassert>
@@ -15,8 +16,9 @@
 
 BenchmarkHistogram::BenchmarkHistogram(int firstClass, int lastClass, int nClasses)
 : C0(firstClass), VLast(lastClass+classInterval-1), I(classInterval), invI(1./classInterval), histogram(nClasses) {
-    std::cout << "Benchmark histogram started with " << histogram.size() << " classes "
-                                                                       "of width " << classInterval << " each." << std::endl;
+
+    Log::Info() << "Benchmark histogram started with " << histogram.size()
+                << " classes of width " << classInterval << " each." << Log::Flush;
 }
 
 BenchmarkHistogram::~BenchmarkHistogram() {
@@ -45,7 +47,7 @@ void BenchmarkHistogram::storeMeasure(int nSteps) {
 }
 
 auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
-    if(count != measures.size()) std::cout << "Benchmark inconsistency: " << count << " != " << measures.size();
+    if(count != measures.size()) Log::Warning() << "Benchmark inconsistency: " << count << " != " << measures.size() << Log::Flush;
 
     boost::timer::nanosecond_type sum=0.;
     if(0) for (size_t i=0; i<histogram.size(); i++) {
@@ -68,7 +70,7 @@ void BenchmarkHistogram::printHistogram(std::ostream &out) const {
     } else {
         const auto avg = long(getAverage()*1e-3);
 
-        std::cout << "\nHistogram measured average time: " << avg << " μs/step" << std::endl;
+        Log::Info() << "\nHistogram measured average time: " << avg << " μs/step." << Log::Flush;
     }
 }
 

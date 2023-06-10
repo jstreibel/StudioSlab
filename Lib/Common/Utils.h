@@ -42,7 +42,14 @@ namespace Common {
         return std::find(vec.begin(), vec.end(), element) != vec.end();
     }
 
-    StrVector               splitString(const String& input, char delimiter);
+    /**
+     * Splits a string in 'maxTokens' tokens, separated by 'delimiter', starting from beginning of string.
+     * @param s The string to be separated in tokens.
+     * @param delimiter The delimiter to use.
+     * @param maxTokens The maximum number of tokens to separate the string. Negative values mean no limit.
+     * @return A vector containing all the separated strings.
+     */
+    StrVector               SplitString(const String& s, const String &delimiter, unsigned int maxTokens=(unsigned)-1);
 
     unsigned                BinaryToUInt(std::string binary, char zero='0', char one='1');
     unsigned short          BinaryToUShort(std::string binary, char zero='0', char one='1');

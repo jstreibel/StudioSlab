@@ -1,6 +1,7 @@
 
 #include "OutputManager.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Common/Log/Log.h"
 
 #include <Phys/Numerics/Allocator.h>
 
@@ -37,18 +38,19 @@ void OutputManager::addOutputChannel(Numerics::OutputSystem::Plug *out, bool kee
     outputs.push_back(out);
     if(keepTrack) myOutputs.push_back(out);
 
-    std::cout << "Output manager added \"" << out->getName() << "\" output channel. Updates "
-                 "every " << out->getNSteps() << " sim steps." << std::endl;
+    Log::Info() << "Output manager added \"" << out->getName() << "\" output channel. Updates "
+                   "every " << out->getNSteps() << " sim steps." << Log::Flush;
 }
 
 void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
-    std::cout << std::endl << std::endl << "Simulation finished. Total time steps: "
-         << theVeryLastOutputInformation.getSteps();
+    Log::Success() << "Simulation finished. Total time steps: "
+                   << theVeryLastOutputInformation.getSteps() << Log::Flush;
 
     for(auto output : myOutputs)
     {
-        std::cout << "\nFinishing " << output->getDescription() << ". ";
         if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-            std::cout << "Error while finishing " << output->getDescription() << "...";
+            Log::Error() << "Error while finishing " << output->getDescription() << "..." << Log::Flush;
+
+        Log::Info() << "Finished output channel '" << output->getDescription() << "'." << Log::Flush;
     }
 }

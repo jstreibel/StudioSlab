@@ -6,6 +6,7 @@
 
 #include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Common/Log/Log.h"
 
 #include <Base/Controller/Interface/InterfaceManager.h>
 
@@ -20,7 +21,7 @@ OutputSnapshot::~OutputSnapshot() = default;
 void OutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
     snapSteps.push_back(snapshotStep);
 
-    std::cout << "A snapshot will be taken at the step " << snapshotStep << std::endl;
+    Log::Attention() << "A snapshot will be taken at the step " << snapshotStep << Log::Flush;
 }
 
 void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customFileDescription,
@@ -37,12 +38,14 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
         filePhiNameStream << "./snapshot-t=" << t;
     filePhiNameStream  << ".oscs";
 
-    std::cout.setf(std::ios::fixed, std::ios::floatfield);
-    std::cout.precision(4);
-
     String fileName = filePhiNameStream.str();
-    std::cout << "\nSaving snapshot for t = " << t << " in \'" << fileName << "\'... " << std::flush;
+    auto &log = Log::Info();
+    log.setf(std::ios::fixed, std::ios::floatfield);
+    log.precision(4);
+
+    log << "Saving snapshot for t = " << t << " in \'" << fileName << "\'... " << Log::Flush;
     _outputToFile(outInfo.getSpaceData(), t, fileName);
+    Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
 }
 
 void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const String &fileName) {
@@ -51,6 +54,7 @@ void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const St
 
     try {
         file.open(fileName);
+        Log::Note() << "Opened file \"" << fileName << "\"" << Log::Flush;
 
         FStateOutputInterface::format = FStateOutputInterface::PythonDictionaryEntry;
         FStateOutputInterface::fDataOutType = FStateOutputInterface::PhiAndDPhiDt;
@@ -61,11 +65,13 @@ void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const St
              << ", \"dPhiDt\": (" << formatter(*spaceData.second) << ")}";
 
         file.flush();
-        file.close();
     } catch (std::system_error& e) {
-        std::cout << "Error: " << e.code().message() << "." << std::endl;
-        file.close();
+        Log::Error() << "File not saved. std::system_error::code().message(): "
+                        "\"" << e.code().message() << "\"." << Log::Flush;
     }
+
+    file.close();
+    Log::Note() << "Closed file \"" << fileName << "\"" << Log::Flush;
 }
 
 bool OutputSnapshot::shouldOutput(const Real, const long unsigned timeStep) {
@@ -82,8 +88,4 @@ size_t OutputSnapshot::computeNextRecStep() {
     return smallest;
 }
 
-bool OutputSnapshot::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
-    std::cout << "The very last step: " << theVeryLastOutputInformation.getSteps() << std::endl;
-    return true;
-}
 

@@ -5,7 +5,7 @@
 #ifndef FIELDS_OUTPUTSTRUCTUREBUILDERBASE_H
 #define FIELDS_OUTPUTSTRUCTUREBUILDERBASE_H
 
-#include "Base/Controller/Interface/Interface.h"
+#include "Base/Controller/Interface/InterfaceOwner.h"
 #include "Base/Controller/Interface/CommonParameters.h"
 
 class OutputManager;
@@ -15,12 +15,12 @@ namespace Numerics {
 
     namespace OutputSystem {
 
-        class Builder : public Interface {
+        class Builder : public InterfaceOwner {
+        protected:
             BoolParameter::Ptr takeSnapshot                         = BoolParameter::New(false, "snapshot,s", "Take a snapshot of simulation at the end.");
             RealParameter::Ptr snapshotTime                         = RealParameter::New(-1.0, "snapshotTime,t",
                                           "Force snapshot to be taken at some time prior to end (after will result in no output.");
 
-        protected:
             BoolParameter::Ptr noHistoryToFile                      = BoolParameter::New(false, "no_history_to_file,o", "Don't output history to file.");
             IntegerParameter::Ptr outputResolution                  = IntegerParameter::New(512, "outN",
                                                  "Output resolution of space dimension in history output.");

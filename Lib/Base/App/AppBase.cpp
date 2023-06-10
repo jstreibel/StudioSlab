@@ -6,10 +6,14 @@
 
 #include <Base/Controller/CLArgsManager.h>
 
+#include "Base/Controller/Interface/InterfaceManager.h"
+
+
 AppBase::AppBase(int argc, const char **argv)
-    : Interface("App"), argc(argc), argv(argv) {
+    : InterfaceOwner("App", 100, true), argc(argc), argv(argv) {
 
     for(auto i=0; i<argc; ++i) args.emplace_back(String(argv[i]));
+
 }
 
 void AppBase::parseCLArgs() {

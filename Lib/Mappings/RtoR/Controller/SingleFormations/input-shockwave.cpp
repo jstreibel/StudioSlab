@@ -26,7 +26,6 @@ auto InputShockwave::getBoundary() const -> const void *
     auto a = 2* a0.getValue();
 
     const Real eps = a*a / (3* E.getValue());
-    std::cout << "Shockwave eps = " << eps << std::endl;
 
     AnalyticShockwave1D shockwave1D(1);
 

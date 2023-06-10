@@ -4,7 +4,7 @@ set ( INTERFACE_SOURCES
 		Interface/CommonParameters.cpp
 		Interface/Interface.cpp
 		Interface/InterfaceManager.cpp
-		)
+		Interface/InterfaceOwner.cpp Interface/InterfaceOwner.h)
 
 set ( CONSOLE_SOURCES
 		Interface/InterfaceSelector.cpp

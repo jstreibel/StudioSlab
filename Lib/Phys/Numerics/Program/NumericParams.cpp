@@ -1,13 +1,13 @@
 #include <Base/Controller/Interface/InterfaceManager.h>
 #include "NumericParams.h"
+#include "Common/Log/Log.h"
 
 
-NumericParams::NumericParams()
-    : Interface("Core simulation parameters")
+NumericParams::NumericParams(): InterfaceOwner("Core simulation parameters", 10, true)
 {
-    addParameters({N, L, xCenter, t, r, dimMode, h});
+    interface->addParameters({N, L, xCenter, t, r, dimMode, h});
 
-    std::cout << "Integration type is " << sizeof(Real)*8 << " bits." << std::endl;
+    Log::Info() << "Integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 }
 
 //NumericParams::NumericParams(const boost::program_options::variables_map& vm)
@@ -31,8 +31,15 @@ auto NumericParams::getdt() const -> floatt {
     return dt;
 }
 
-void NumericParams::setup(CLVariablesMap vm) {
-    Interface::setup(vm);
+void NumericParams::sett(Real tMax) const {
+    Log::Attention() << "Command line argument '--" << t->getCommandLineArgName(true) << "' "
+                     << "being ignored and set to " << tMax << ";" << Log::Flush;
+
+    t->setValue(tMax);
+}
+
+void NumericParams::notifyCLArgsSetupFinished() {
+    InterfaceOwner::notifyCLArgsSetupFinished();
 
     switch (**dimMode) {
         case 0:
@@ -50,18 +57,5 @@ void NumericParams::setup(CLVariablesMap vm) {
 
     dt = **r * **h;
     n = PosInt(**t / dt);
-
-    std::cout << "Numeric parameters are\n";
-
-    for(auto &p : this->getParameters())
-        std::cout << "\t" << std::left << std::setw(10) << p->getCommandLineArgName(true) << ": " << p << std::endl;
-
-}
-
-void NumericParams::sett(Real tMax) {
-    std::cout << "Warning! '--" << t->getCommandLineArgName(true) << "' argument being ignored and set to "
-              << tMax << ";" << std::endl;
-
-    t->setValue(tMax);
 }
 

@@ -4,22 +4,30 @@
 
 #include "Allocator.h"
 #include "DrivenEquation.h"
+#include "Common/Log/Log.h"
 
-R2toR::LeadingDelta::Allocator::Allocator(R2toR::Function::Ptr drivingFunction)
-    : Core::BasicAllocator(String("Non-homogenous eq. allocator ℝ² ↦ ℝ with '") + drivingFunction->myName()
-                            + "' driving force"),
-      drivingFunction(drivingFunction) {
 
-}
+R2toR::LeadingDelta::Allocator::Allocator()
+    : R2toR::Core::BasicAllocator(String("2ⁿᵈ order non-homogenous eq. ℝ² ↦ ℝ with "
+                                         "(yet unspecified) driving force.")) { }
 
 auto R2toR::LeadingDelta::Allocator::getSystemSolver() -> void * {
     return new DrivenEquation(drivingFunction);
 }
 
-auto R2toR::LeadingDelta::Allocator::Choose(R2toR::Function::Ptr drivingFunction) -> void {
-    auto *me = new LeadingDelta::Allocator(drivingFunction);
+auto R2toR::LeadingDelta::Allocator::Choose() -> Allocator* {
+    auto *me = new LeadingDelta::Allocator();
 
     Numerics::Allocator::Instantiate(me);
+
+    return me;
+}
+
+auto R2toR::LeadingDelta::Allocator::setDrivingFunction(Function::Ptr drivingFunction) -> void {
+    Log::Note() << "LeadingDelta::Allocator: setting up driving " <<
+                   "function: '" << drivingFunction->myName() << "'" << Log::Flush;
+
+    this->drivingFunction = drivingFunction;
 }
 
 

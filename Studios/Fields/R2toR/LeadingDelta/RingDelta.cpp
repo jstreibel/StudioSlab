@@ -76,7 +76,7 @@ namespace R2toR {
             return (r/t) * delta(r-t);;
         }
 
-
+        String Delta_r::myName() const { return "ring Dirac-δ"; }
     }
 }
 

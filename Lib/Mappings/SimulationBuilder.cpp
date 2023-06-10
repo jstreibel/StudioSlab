@@ -3,17 +3,19 @@
 //
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
+#include "Base/Controller/Interface/InterfaceManager.h"
 #include "SimulationBuilder.h"
+#include "Common/Log/Log.h"
 
 Base::SimulationBuilder::SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
-                                           String prefix, bool selfRegister)
- : Interface(generalDescription, true), outputSystemBuilder(osb), prefix(prefix)
-{
-    if(selfRegister) InterfaceSelector::getInstance().registerOption(this);
+                                           String prefix)
+ : InterfaceOwner(generalDescription, 10, false), outputSystemBuilder(osb), prefix(prefix){
+    Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
+                << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 
 String Base::SimulationBuilder::toString() const {
-    auto strParams = Interface::toString();
+    auto strParams = interface->toString();
 
     auto str = prefix + "-" + strParams;
 
@@ -21,5 +23,7 @@ String Base::SimulationBuilder::toString() const {
 }
 
 auto Base::SimulationBuilder::registerAllocator() const -> void {
-    std::cout << "Warning: SimulationBuilder should be registering the Allocator." << std::endl; }
+    Log::Warning() << "SimulationBuilder is not registering the Allocator." << Log::Flush;
+}
+
 

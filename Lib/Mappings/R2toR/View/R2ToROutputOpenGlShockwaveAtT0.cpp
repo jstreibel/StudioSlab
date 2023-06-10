@@ -11,12 +11,10 @@
 
 
 R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0()
-        : Graphics::OutputOpenGL()
+        : Graphics::OutputOpenGL("ℝ² ↦ ℝ shockwave at t₀ graphic monitor.")
 
 {
-    yMax=1;yMin=-1;
 
-    std::cout << "Initialized R2toR::OutputOpenGLShockwaveAt_t0." << std::endl;
 }
 
 void R2toR::OutputOpenGLShockwaveAt_t0::draw() {

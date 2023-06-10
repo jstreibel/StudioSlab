@@ -17,8 +17,7 @@ auto CLArgsManager::GetInstance() -> CLArgsManager * {
 }
 
 void CLArgsManager::ShowHelp() {
-    std::cout << "Show help not implemented";
-    throw        "Show help not implemented";
+    throw "Show help not implemented";
 }
 
 void CLArgsManager::Parse(int argc, const char **argv) {

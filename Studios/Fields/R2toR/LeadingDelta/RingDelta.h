@@ -47,7 +47,7 @@ namespace R2toR {
 
         class Delta_r : public SpecialRingDelta {
             RtoR::RegularDiracDelta delta;
-            const Real dt;
+            Real dt;
         public:
             /**
              * Constructor
@@ -59,6 +59,8 @@ namespace R2toR {
             Delta_r(Real eps, Real height, Real dt);
             auto domainContainsPoint(Real2D x) const -> bool override;
             auto operator()         (Real2D x) const -> Real override;
+
+            String myName() const override;
         };
     }
 }

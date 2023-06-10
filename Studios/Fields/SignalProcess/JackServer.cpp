@@ -9,6 +9,7 @@
 #include "Common/STDLibInclude.h"
 #include "Common/Utils.h"
 #include "Common/UtilsCollection/Resample.h"
+#include "Common/Log/Log.h"
 
 #include <iostream>
 #include <cmath>
@@ -22,7 +23,9 @@ float testWaveFreq = 1.0;
 
 
 
-void error(const char *msg){ std::cout << "Jack error: \"" << msg << "\"" << std::endl; }
+void error(const char *msg){
+    Log::Error() << "JackServer: \"" << msg << "\"" << Log::Flush;
+}
 
 
 
@@ -83,8 +86,8 @@ JackServer::JackServer() {
             jack_port_register(client, "In", JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
 
     if(client!=nullptr && output_processed_port != nullptr && input_port != nullptr)
-        std::cout << "Jack client and output port started successfully @"
-                  << jack_get_sample_rate(client) << "samples/sec" << std::endl;
+        Log::Info() << "Jack client and output port started successfully @"
+                  << jack_get_sample_rate(client) << "samples/sec" << Log::Flush;
     else
         throw "Jack error 1";
 
@@ -103,21 +106,25 @@ JackServer::JackServer() {
                                                 "C-1U Digital Stereo (IEC958):capture_FR"/*,
                                                 testPortName*/};
 
-
-    std::cout << "Jack ports:";
     for(auto i=0; ports[i] != nullptr; i++){
-        std::cout << "\n\t" << ports[i];
+        Log::Note() << "JackServer identified port " << ports[i] << Log::Flush;
 
         auto port = String(ports[i]);
 
-        if(Common::contains(connect_to_processed_output, port))
-            jack_connect(client, jack_port_name(output_processed_port), port.c_str());
+        if(Common::contains(connect_to_processed_output, port)) {
+            auto portName = jack_port_name(output_processed_port);
+            jack_connect(client, portName, port.c_str());
+            Log::Info() << "JackServer connected local output '" << portName << "' to '" << port << "' input." << Log::Flush;
+        }
 
-        if(Common::contains(connect_to_input, port))
-            jack_connect(client, port.c_str(), jack_port_name(input_port));
+        if(Common::contains(connect_to_input, port)) {
+            auto portName = jack_port_name(input_port);
+            jack_connect(client, port.c_str(), portName);
+
+            Log::Info() << "JackServer connected source '" << portName << "' to local '" << port << "' port." << Log::Flush;
+        }
 
     }
-    std::cout << std::endl;
 
     jack_free(ports);
 
@@ -151,7 +158,7 @@ void JackServer::recordInputBuffer(jack_nframes_t nframes) {
 bool JackServer::toggleRecording() {
     isRecordingInput = !isRecordingInput;
 
-    std::cout << "Jack server is " << (isRecordingInput?"":"not ") << "recording input." << std::endl;
+    Log::Attention() << "JackServer is " << (isRecordingInput?"":"not ") << "recording input." << Log::Flush;
 
     return isRecordingInput;
 }

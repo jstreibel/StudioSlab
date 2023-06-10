@@ -8,14 +8,14 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include <Base/Controller/Interface/Interface.h>
+#include <Base/Controller/Interface/InterfaceOwner.h>
 #include <Base/Controller/Interface/CommonParameters.h>
 #include <Common/Types.h>
 #include "Common/NativeTypes.h"
 
 /* DEFAULTS */
 
-struct NumericParams : Interface {
+struct NumericParams : public InterfaceOwner {
 	NumericParams();
 
     auto getn() const -> PosInt;
@@ -27,12 +27,7 @@ struct NumericParams : Interface {
     auto geth() const -> Real;
     auto getdt() const -> Real;
 
-    void sett(Real tMax);
-
-public:
-	void setup(CLVariablesMap vm) override;
-
-private:
+    void sett(Real tMax) const;
 
 	IntegerParameter::Ptr 	N       = IntegerParameter  ::New(1024, "N,N", "Discretization of space dimensions. "
 													 "Has to be POT for GPU");
@@ -55,6 +50,9 @@ private:
 
     PosInt n;
 	Real dt;
+
+public:
+	auto notifyCLArgsSetupFinished() -> void override;
 
 } __attribute__((aligned(64)));
 

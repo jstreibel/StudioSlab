@@ -1,11 +1,14 @@
 #include "Allocator.h"
+#include "Common/Log/Log.h"
 
 
 namespace Numerics {
 
     Allocator *Allocator::mySingleInstance = nullptr;
 
-    Allocator::Allocator(String name) : name(name) { };
+    Allocator::Allocator(String name) : name(name) {
+        Log::Info() << "Allocator instantiated: " << name << Log::Flush;
+    };
     //ModelBuilder::ModelBuilder() {
     // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).
     // if(dev.getDevice()==device::GPU)
@@ -16,8 +19,6 @@ namespace Numerics {
 
     void Allocator::Instantiate(Allocator *allocator) {
         if (Allocator::mySingleInstance != nullptr) throw "ModelBuilder initialized already.";
-
-        std::cout << "Allocator instantiated: " << allocator->name << std::endl;
 
         Allocator::mySingleInstance = allocator;
     }

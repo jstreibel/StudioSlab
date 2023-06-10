@@ -5,6 +5,7 @@
 #include "InterfaceManager.h"
 
 #include "Common/Utils.h"
+#include "Common/Log/Log.h"
 
 InterfaceManager *InterfaceManager::instance = nullptr;
 
@@ -15,18 +16,12 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
 }
 
 void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
-    //std::cout << "\nRegistering interface \"" << anInterface->getGeneralDescription() << "\"... ";
+    auto size = anInterface->parameters.size();
+
+    Log::Info() << "InterfaceManager registering interface \"" << anInterface->getName() << "\" [ "
+                << "priority " << anInterface->priority << " ]" << Log::Flush;
+
     interfaces.emplace_back(anInterface);
-
-    //auto size = anInterface->parameters.size();
-    //std::cout << "Registered with " << size << " parameters" << (size?":":".");
-
-    //for(auto *p : anInterface->parameters) {
-    //    std::cout << "\n\t" << p->getCommandLineArgName() << ": " << std::flush;
-    //    std::cout << p->valueToString() << std::flush;
-    //}
-
-    //std::cout << std::endl;
 }
 
 auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
@@ -38,12 +33,19 @@ auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
 }
 
 void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
+    Log::Info() << "InterfaceManager started feeding interfaces." << Log::Flush;
+
+    auto comp = [](const Interface::Ptr& a, const Interface::Ptr& b) { return *a < *b; };
+    std::sort(interfaces.begin(), interfaces.end(), comp);
+
     for(auto interface : interfaces){
         // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
         // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
         interface->setup(vm);
     }
+
+    Log::Info() << "InterfaceManager finished feeding interfaces." << Log::Flush;
 }
 
 auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
@@ -84,4 +86,12 @@ auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr {
 
     return *it;
 }
+
+//auto InterfaceManager::NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr {
+//    auto newInterface = Interface::Ptr(new Interface(name, owner));
+//
+//    getInstance().registerInterface(newInterface);
+//
+//    return newInterface;
+//}
 

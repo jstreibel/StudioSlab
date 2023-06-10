@@ -11,7 +11,9 @@
 
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
-R2toR::Core::BasicAllocator::BasicAllocator(String name) : Numerics::Allocator(name) { };
+R2toR::Core::BasicAllocator::BasicAllocator(String name) : Numerics::Allocator(name) {
+
+};
 //{
 //    // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).
 //    if(dev.getDevice()==device::GPU)

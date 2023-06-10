@@ -7,10 +7,11 @@
 #include "Base/Controller/Interface/InterfaceSelector.h"
 
 #include "GrowingHole/GrowingHoleInput.h"
-#include "DiracSpeedInput.h"
+#include "DiracSpeed/DiracSpeedInput.h"
 #include "LeadingDelta/LeadingDelta.h"
 
 #include "Mappings/R2toR/App/SimulationsAppR2ToR.h"
+#include "Common/Log/Log.h"
 
 
 int main(int argc, const char **argv) {
@@ -18,17 +19,16 @@ int main(int argc, const char **argv) {
     try {
         InterfaceSelector selector("Available simulations");
 
-        ///* sim 0 */ im.registerOption(new R2toR::R2toRInputShockwave());
-        /* sim 0 */ selector.registerOption( new R2toR :: DiracSpeed   :: Builder( ) );
-        /* sim 1 */ selector.registerOption( new R2toR :: GrowingHole  :: Builder( ) );
-        /* sim 2 */ selector.registerOption( new R2toR :: LeadingDelta :: Builder( ) );
+        auto option1 = new R2toR :: DiracSpeed   :: Builder( );
+        auto option2 = new R2toR :: GrowingHole  :: Builder( );
+        auto option3 = new R2toR :: LeadingDelta :: Builder( );
 
+        /* sim 0 */ selector.registerOption( option1->getInterface() );
+        /* sim 1 */ selector.registerOption( option2->getInterface() );
+        /* sim 2 */ selector.registerOption( option3->getInterface() );
 
-        // /* sim 1 */im.registerCandidate(new R2toR::R2toRInputShockwaveAt_t0);
-        // /* sim 2 */im.registerCandidate(new R2toR::R2toRInputRadialShockwave);
-
-        auto inputRaw = selector.preParse(argc, argv).getCurrentCandidate();
-        auto input    = dynamic_cast<Base::SimulationBuilder*>(inputRaw);
+        auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
+        auto input    = dynamic_cast<Base::SimulationBuilder*>(selectedInterface->getOwner());
         auto inputPtr = Base::SimulationBuilder::Ptr(input);
 
         auto prog = R2toR::App::Simulations(argc, argv, inputPtr);
@@ -36,12 +36,12 @@ int main(int argc, const char **argv) {
         return SafetyNet::jump(prog);
 
     } catch (const char *e) {
-        std::cout << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
-                  << e << "\033[0m" << ", application will now exit" << std::endl;
+        Log::ErrorFatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
+                  << e << "\033[0m" << "\", application will now exit." << Log::Flush;
         return -1;
     } catch (const std::string e) {
-        std::cout << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
-                  << e << "\033[0m" << ", application will now exit" << std::endl;
+        Log::ErrorFatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
+                  << e << "\033[0m" << "\", application will now exit." << Log::Flush;
         return -1;
     }
 

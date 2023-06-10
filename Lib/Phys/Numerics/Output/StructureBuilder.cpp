@@ -12,16 +12,16 @@
 
 
 Numerics::OutputSystem::Builder::Builder(String generalDescription)
-    : Interface(generalDescription, true)
+    : InterfaceOwner(generalDescription, 9, false)
 {
-    addParameters({noHistoryToFile, outputResolution,
-                   VisualMonitor, VisualMonitor_startPaused, OpenGLMonitor_stepsPerIdleCall
-                   /*&takeSnapshot, &snapshotTime, */ });
+    interface->addParameters({noHistoryToFile, outputResolution,
+                              VisualMonitor, VisualMonitor_startPaused, OpenGLMonitor_stepsPerIdleCall
+                              /*&takeSnapshot, &snapshotTime, */ });
 }
 
 
 void Numerics::OutputSystem::Builder::addConsoleMonitor(OutputManager &outputManager, int nSteps) {
-    Plug *out = new OutputConsoleMonitor(nSteps, true);
+    Plug *out = new OutputConsoleMonitor(nSteps);
     outputManager.addOutputChannel(out);
 }
 

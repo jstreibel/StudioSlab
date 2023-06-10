@@ -5,9 +5,9 @@
 #ifndef V_SHAPE_APPBASE_H
 #define V_SHAPE_APPBASE_H
 
-#include <Base/Controller/Interface/Interface.h>
+#include <Base/Controller/Interface/InterfaceOwner.h>
 
-class AppBase : protected Interface {
+class AppBase : public InterfaceOwner {
 
 protected:
     AppBase(int argc, const char *argv[]);
@@ -17,8 +17,6 @@ protected:
     const char **argv;
 
     void parseCLArgs();
-
-
 
 public:
     virtual int run() = 0;

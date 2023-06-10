@@ -7,12 +7,15 @@
 
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Common/Log/Log.h"
 
 
 using namespace Base;
 
 Graphics::OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
-    : Numerics::OutputSystem::Plug("OpenGL output", stepsBetweenDraws) { }
+    : Numerics::OutputSystem::Plug("OpenGL output", stepsBetweenDraws) {
+    Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
+}
 
 void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo){ /* Do nothing */ }
 

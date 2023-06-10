@@ -1,4 +1,5 @@
 #include "OutputHistoryToFile.h"
+#include "Common/Log/Log.h"
 
 
 #include <Phys/Numerics/Allocator.h>
@@ -20,9 +21,12 @@ OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *
 
     file.open(outFileName, flags);
 
-    if(!file) throw "Erro: nao abriu arquivo.";
+    if(!file){
+        Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
+        throw "OutputHistoryToFile couldn't open file.";
+    }
 
-    std::cout << "Sim history data file is \'" << outFileName << "\'. " << std::endl;
+    Log::Info() << "Sim history data file is \'" << outFileName << "\'. " << Log::Flush;
 
     String spaces(HEADER_SIZE_BYTES-1, ' ');
 
@@ -47,13 +51,10 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
     Timer timer;
 
-    std::cout << std::setprecision(3);
-    std::cout << std::endl;
-
     for(size_t Ti=0; Ti<count; Ti++) {
         if(timer.getElTime_sec() > 1) {
             timer.reset();
-            std::cout << "\rFlushing " << (Real)Ti/Real(count)*100.0 << "%    " << std::flush;
+            Log::Info() << std::setprecision(3) << "Flushing " << (Real)Ti/Real(count)*100.0 << "%    " << Log::Flush;
         }
 
         file << outputFormatter(tHistory[int(Ti)]);
@@ -68,7 +69,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 
     file.flush();
 
-    std::cout << "\rFlushing " << "100%    " << std::endl;
+    Log::Success() << "Flushed " << "100% " << Log::Flush;
 }
 
 void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {

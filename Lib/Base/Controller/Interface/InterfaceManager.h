@@ -17,9 +17,11 @@ class InterfaceManager {
 public:
     static auto getInstance() -> InterfaceManager &;
 
-    void registerInterface(Interface::Ptr anInterface);
+    // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
+    void registerInterface(Interface::Ptr anInterface);
     auto getInterfaces() -> std::vector<Interface::ConstPtr>;
+    auto getInterface(const char *string) -> Interface::ConstPtr;
 
     void feedInterfaces(CLVariablesMap vm);
 
@@ -27,7 +29,6 @@ public:
 
     auto renderParametersToString(StrVector params, String separator) const -> String;
 
-    auto getInterface(const char *string) -> Interface::ConstPtr;
 };
 
 

@@ -30,7 +30,7 @@ void Parameter::setDescription(String newDescription) {
 }
 
 bool Parameter::operator==(String name) const {
-    return Common::splitString(commandLineArgName, ',')[0] == name;
+    return Common::SplitString(commandLineArgName, ",")[0] == name;
 }
 
 

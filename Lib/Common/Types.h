@@ -9,15 +9,15 @@
 #include "NativeTypes.h"
 #include "STDLibInclude.h"
 
-typedef floatt Real;
+typedef floatt              Real;
 
-typedef std::size_t PosInt;
-typedef int_least64_t BigInt;
+typedef std::size_t         PosInt;
+typedef int_least64_t       BigInt;
 
-typedef std::vector<Real> VecFloat;
-typedef const VecFloat VecFloat_I;
-typedef VecFloat VecFloat_O;
-typedef VecFloat VecFloat_IO;
+typedef std::vector<Real>   VecFloat;
+typedef const VecFloat      VecFloat_I;
+typedef VecFloat            VecFloat_O;
+typedef VecFloat            VecFloat_IO;
 
 template<class T1, class T2>
 struct Pair {
@@ -25,11 +25,12 @@ struct Pair {
     T2 second;
 };
 
-typedef Pair<int, int> IntPair;
+typedef Pair<int, int>      IntPair;
 typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> DiscreteSpacePair;
 
-typedef std::string String;
-typedef std::stringstream StringStream;
+typedef std::ostream        OStream;
+typedef std::string         String;
+typedef std::stringstream   StringStream;
 typedef std::vector<String> StrVector;
 
 

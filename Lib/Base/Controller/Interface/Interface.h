@@ -10,47 +10,66 @@
 #include <set>
 
 class InterfaceManager;
+class InterfaceOwner;
+class InterfaceListener { public: virtual auto notifyCLArgsSetupFinished()-> void = 0; };
 
-class Interface {
+class Interface final {
+    const int priority;
+
 public:
     typedef std::shared_ptr<Interface> Ptr;
-    typedef std::weak_ptr<Interface> WeakPtr;
     typedef std::shared_ptr<const Interface> ConstPtr;
 
-protected:
-    WeakPtr me; // This guy is the way to self-registry.
+private:
+    Interface(const String& generalDescription, InterfaceOwner *owner, int priority);
 
     friend InterfaceManager;
-    String description;
+    friend InterfaceOwner;
 
+    InterfaceOwner *owner = nullptr;
+
+    String name;
+    String descr="<empty>";
+    const String delimiter=",";
+
+    std::vector<InterfaceListener*> listeners;
 
     std::set<Parameter::Ptr> parameters;
-    void addParameter(Parameter::Ptr parameter);
-    void addParameters(std::initializer_list<Parameter::Ptr> parameters);
-
     std::set<Ptr> subInterfaces;
-    void addSubInterface(Ptr subInterface);
 
 public:
+    /**
+     * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
+     * be done manually through InterfaceManager::registerInterface(...) method.
+     * @param name The name of the interface being created. Use ',' as a separator to add a description to
+     * the interface. For example name="Render options,Some rendering options for the user."
+     * @param owner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
+     * @return an std::shared_ptr to an Interface.
+     */
+    static Ptr New(String name, InterfaceOwner *owner, int priority);
 
-    Interface(const String& generalDescription, bool dontRegisterInterface=false);
     ~Interface();
 
     auto getGeneralDescription() const -> String;
 
-    auto getParameters() const -> std::vector<Parameter::ConstPtr>;
-    auto getParameter(String key) const -> Parameter::Ptr;
+    void addSubInterface(Ptr subInterface);
+    auto addListener(InterfaceListener*) -> void;
+    void addParameter(Parameter::Ptr parameter);
+    void addParameters(std::initializer_list<Parameter::Ptr> parameters);
 
     auto getSubInterfaces() const -> std::vector<Interface::Ptr>;
+    auto getParameters() const -> std::vector<Parameter::ConstPtr>;
+    auto getParameter(String key) const -> Parameter::Ptr;
+    auto getOwner() const -> InterfaceOwner*;
 
-    virtual auto toString() const -> String;
-    virtual void setup(CLVariablesMap vm);
+    auto getName() const -> const String&;
+    auto toString() const -> String;
+    void setup(CLVariablesMap vm);
 
-    virtual bool operator==(const Interface &rhs) const;
-    virtual bool operator==(String val) const;
-
-
-    virtual bool operator!=(const Interface &rhs) const;
+    bool operator==(const Interface &rhs) const;
+    bool operator==(String val) const;
+    bool operator!=(const Interface &rhs) const;
+    bool operator< (const Interface& other) const;
 
 
 };

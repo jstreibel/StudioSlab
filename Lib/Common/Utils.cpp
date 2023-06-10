@@ -28,6 +28,49 @@ void Common::PrintDensityThere(int x, int y, float dens) {
     PrintThere(x, y, "%c", GetDensityChar(dens));
 }
 
+#include <bitset>
+#include <algorithm>
+
+String Replace(std::string str, char oldChar, char newChar) {
+    std::replace(str.begin(), str.end(), oldChar, newChar);
+
+    return str;
+}
+
+#include <string>
+#include <vector>
+
+StrVector Common::SplitString(const String &s, const String &delimiter, unsigned int maxTokens)
+{
+    StrVector tokens;
+    size_t start = 0;
+    size_t end = s.find(delimiter);
+    int tokenCount = 0;
+
+    while (end != std::string::npos)
+    {
+        tokens.push_back(s.substr(start, end - start));
+        tokenCount++;
+
+        if (tokenCount >= maxTokens - 1) {
+            start = end + delimiter.length();
+            auto lastToken = s.substr(start, std::string::npos);
+            tokens.push_back(lastToken);
+            break;
+        }
+
+        start = end + delimiter.length();
+        end = s.find(delimiter, start);
+    }
+
+    if (tokens.size() < maxTokens) {
+        tokens.push_back(s.substr(start, std::string::npos));
+    }
+
+    return tokens;
+}
+
+/*
 StrVector Common::splitString(const String &input, char delimiter) {
     StrVector tokens;
     std::size_t start = 0;
@@ -45,21 +88,11 @@ StrVector Common::splitString(const String &input, char delimiter) {
     tokens.push_back(lastToken);
 
     return tokens;
-}
-
-#include <bitset>
-#include <iostream>
-#include <algorithm>
-
-std::string replace(std::string str, char oldChar, char newChar) {
-    std::replace(str.begin(), str.end(), oldChar, newChar);
-
-    return str;
-}
+}*/
 
 unsigned Common::BinaryToUInt(std::string binary, char zero, char one) {
-    if(zero != '0') binary = replace(binary, zero, '0');
-    if(one  != '1') binary = replace(binary, one,  '1');
+    if(zero != '0') binary = Replace(binary, zero, '0');
+    if(one  != '1') binary = Replace(binary, one, '1');
 
     std::bitset<32>  x(binary);
 
@@ -67,8 +100,8 @@ unsigned Common::BinaryToUInt(std::string binary, char zero, char one) {
 }
 
 unsigned short Common::BinaryToUShort(std::string binary, char zero, char one){
-    if(zero != '0') binary = replace(binary, zero, '0');
-    if(one  != '1') binary = replace(binary, one,  '1');
+    if(zero != '0') binary = Replace(binary, zero, '0');
+    if(one  != '1') binary = Replace(binary, one, '1');
 
     std::bitset<16>  x(binary);
 

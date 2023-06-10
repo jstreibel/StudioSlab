@@ -6,6 +6,7 @@
 
 #include "DrivenEquation.h"
 #include "Phys/Numerics/Allocator.h"
+#include "Common/Log/Log.h"
 
 namespace R2toR {
 
@@ -16,7 +17,11 @@ namespace R2toR {
             : GordonSystem(*(new RtoR::AbsFunction)), drivingForce(drivingForce),
               f(*(FunctionArbitrary*)Numerics::Allocator::getInstance().newFunctionArbitrary())
         {
-            std::cout << "Integrating driven equation" << std::endl;
+            if(drivingForce == nullptr) {
+                Log::Error() << "Driving force must be !=nullptr." << Log::Flush;
+                throw "Error allocating driven equation solver.";
+            }
+            Log::Info() << "Driven equation solver allocated. Driving force '" << drivingForce->myName() << "'." << Log::Flush;
         }
 
         auto DrivenEquation::dtF(const FieldState &in, FieldState &out, Real t, Real δt) -> FieldState & {

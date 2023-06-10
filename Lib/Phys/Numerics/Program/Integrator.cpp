@@ -2,6 +2,7 @@
 
 
 #include "Integrator.h"
+#include "Common/Log/Log.h"
 
 #define ATTEMP_REALTIME false
 #if ATTEMP_REALTIME
@@ -25,9 +26,9 @@ NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outp
         // Set the scheduling policy and priority of the current process.
         int ret = sched_setscheduler(0, SCHED_FIFO, &param);
         if (ret == -1) {
-            std::cout << "Error setting realtime scheduling: " << std::strerror(errno) << std::endl;
+            Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
         } else {
-            std::cout << "Program running with realtime priority." << std::endl;
+            Log::Info() << "Program running with realtime priority." << Log::Flush;
         }
 
     }
@@ -36,7 +37,10 @@ NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outp
 }
 
 NumericalIntegration::~NumericalIntegration()
-{    std::cout << histogram;     }
+{
+    Log::Note() << "Histogram finishing. Final output:" << Log::Flush;
+    std::cout << histogram;
+}
 
 void NumericalIntegration::step(PosInt nSteps, void *args) {
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();

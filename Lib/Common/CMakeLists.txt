@@ -12,7 +12,7 @@ set ( UTIL_SOURCES
 		UtilsCollection/BenchmarkHistogram.cpp
 		UtilsCollection/Resample.cpp
 
-		)
+		Log/Log.cpp Log/Log.h)
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
 

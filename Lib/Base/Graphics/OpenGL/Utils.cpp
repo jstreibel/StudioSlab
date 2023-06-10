@@ -6,6 +6,7 @@
 
 #include "GLUTUtils.h"
 #include "Utils.h"
+#include "Common/Log/Log.h"
 #include <FreeImagePlus.h>
 
 #include <cstring>
@@ -50,8 +51,8 @@ bool OpenGLUtils::outputToPNG(OpenGLUtils::FrameBuffer buffer,
 
     bool success = FreeImage_Save(FIF_PNG, image, fileName.c_str(), PNG_DEFAULT);
     if (!success)
-        std::cerr << "Failed to save the image." << std::endl;
-    else std::cout << "Image \"" << fileName << "\" saved successfully!" << std::endl;
+        Log::Error() << "Failed to save the image." << Log::Flush;
+    else Log::Success() << "Image \"" << fileName << "\" saved successfully!" << Log::Flush;
 
     FreeImage_Unload(image);
 
@@ -81,7 +82,7 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
     // Check..
     auto retVal = true;
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "ERROR outputting png: Framebuffer is not complete!" << std::endl;
+        Log::Error() << "Outputting png: Framebuffer is not complete!" << Log::Flush;
 
         retVal = false;
     } else {

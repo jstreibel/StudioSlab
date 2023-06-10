@@ -71,7 +71,6 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
 
     /********************************************************************************************/
     if(shouldOutputOpenGL) {
-        std::cout << std::endl << "Outputting OpenGL" << std::endl;
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
 

@@ -9,9 +9,8 @@ class OutputConsoleMonitor : public Numerics::OutputSystem::Plug
 private:
     Timer timer = Timer();
     const Real maxT;
-    char steppingChar;
 public:
-    OutputConsoleMonitor(const int n_steps, bool doCarrierReturn);
+    OutputConsoleMonitor(const int n_steps);
 
     virtual String getDescription() const {return "console monitor output";}
 

@@ -9,6 +9,7 @@
 
 #include "Signal.h"
 #include "Base/Backend/GLUT/GLUTBackend.h"
+#include "Common/Log/Log.h"
 
 auto main(int argc, const char **argv) -> int {
 
@@ -24,7 +25,7 @@ auto main(int argc, const char **argv) -> int {
         return SafetyNet::jump(*prog);
     }
     catch(const char *msg){
-        std::cout << "Exception: " << msg << std::endl;
+        Log::ErrorFatal() << "Exception: " << msg << std::endl;
         return 2;
     }
 }

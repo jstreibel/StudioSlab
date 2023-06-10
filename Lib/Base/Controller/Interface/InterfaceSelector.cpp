@@ -10,11 +10,12 @@
 
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Utils.h"
+#include "Common/Log/Log.h"
 
 
-InterfaceSelector::InterfaceSelector(String name) : Interface(name)
+InterfaceSelector::InterfaceSelector(String name) : InterfaceOwner(name, -1, true)
 {
-    addParameters({selection});
+    interface->addParameters({selection});
 };
 
 
@@ -24,8 +25,8 @@ InterfaceSelector *InterfaceSelector::mySingleInstance = nullptr;
 auto InterfaceSelector::getInstance() -> InterfaceSelector & {
     if (mySingleInstance == nullptr) {
         mySingleInstance = new InterfaceSelector("Available boundary conditions");
-        std::cout << "WARNING: InterfaceSelector is no longer to be used as singleton! This feature is "
-                     "deprecated and will be removed very soon." << std::endl;
+        Log::Warning() << "InterfaceSelector is no longer to be used as singleton! This feature is "
+                     "deprecated and will be removed very soon." << Log::Flush;
     }
 
     return *mySingleInstance;
@@ -38,7 +39,7 @@ auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
     return candidates[currentSelection];
 }
 
-auto InterfaceSelector::preParse(int argc, const char **argv) -> const InterfaceSelector& {
+auto InterfaceSelector::preParse(int argc, const char **argv, bool registerInInterfaceManager) -> const InterfaceSelector& {
     typedef std::string str;
 
     const str simStr("--sim");
@@ -61,15 +62,17 @@ auto InterfaceSelector::preParse(int argc, const char **argv) -> const Interface
         }
     }
 
-    auto sim = getCurrentCandidate();
+    if(registerInInterfaceManager) {
+        auto selection = getCurrentCandidate();
 
-    auto &interfaceManager = InterfaceManager::getInstance();
+        auto &interfaceManager = InterfaceManager::getInstance();
 
-    interfaceManager.registerInterface(sim);
+        interfaceManager.registerInterface(selection);
 
-    auto subInterfaces = sim->getSubInterfaces();
-    for(auto subInterface : subInterfaces)
-        interfaceManager.registerInterface(subInterface);
+        auto subInterfaces = selection->getSubInterfaces();
+        for (auto subInterface: subInterfaces)
+            interfaceManager.registerInterface(subInterface);
+    }
 
     return *this;
 }

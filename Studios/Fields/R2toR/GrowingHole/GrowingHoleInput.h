@@ -16,17 +16,17 @@ namespace R2toR {
     namespace GrowingHole {
 
         class Builder : public SimulationBuilder {
-            RealParameter height = RealParameter{2. / 3, "height,h", "Discontinuity value."};
+            RealParameter::Ptr height = RealParameter::New(2. / 3, "height,h", "Discontinuity value.");
 
         public:
-            Builder() : SimulationBuilder("(2+1)-d Shockwave as a growing hole.", "gh",
-                                          new OutputBuilder) {
-                addParameters({&height});
+            Builder() : SimulationBuilder("gh,(2+1)-d Shockwave as a growing hole.",
+                                          BuilderBasePtr(new OutputBuilder)) {
+                interface->addParameters({height});
             }
 
 
             auto getBoundary() const -> const void * override {
-                const Real a = *this->height; // Eh isso mesmo? Não era h = 2a/3??
+                const Real a = **this->height; // Eh isso mesmo? Não era h = 2a/3??
 
                 return new GrowingHoleBoundaryCondition(a);
             }

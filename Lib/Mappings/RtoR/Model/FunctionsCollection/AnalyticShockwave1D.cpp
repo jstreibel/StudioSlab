@@ -55,17 +55,6 @@ RtoR::AnalyticShockwave1D::AnalyticShockwave1D(Real a0) {
         zk.push_back(z);
     }
 
-    if(0) {
-        std::cout << "xk = [";
-        for (auto x : xk) std::cout << x << ", ";
-        std::cout << "]" << std::endl;
-        std::cout << "ak = [";
-        for (auto a : ak) std::cout << a << ", ";
-        std::cout << "]" << std::endl;
-        std::cout << "zk = [";
-        for (auto z : zk) std::cout << z << ", ";
-        std::cout << "]" << std::endl;
-    }
 }
 
 Real RtoR::AnalyticShockwave1D::Wk(Real z, int k) const {

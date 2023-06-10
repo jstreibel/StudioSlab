@@ -1,12 +1,12 @@
 #include "OutputConsoleMonitor.h"
 #include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Common/Log/Log.h"
 
 #include <Phys/Numerics/Allocator.h>
 
-OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps, bool doCarrierReturn)
+OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps)
     : Plug("Console monitor output", n_steps),
-      maxT(Numerics::Allocator::getInstance().getNumericParams().gett()),
-      steppingChar(doCarrierReturn ? '\r' : '\n')
+      maxT(Numerics::Allocator::getInstance().getNumericParams().gett())
 {
 
 }
@@ -27,23 +27,7 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
     auto &params = Numerics::Allocator::getInstance().getNumericParams();
     auto n = params.getn();
 
-    std::cout << steppingChar << "Step " << outputInfo.getSteps() << "/" << n << "   ---   " <<
-              " Sim time " << outputInfo.getSimTime() << "/" << maxT << "               " << std::flush;
+    Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << "; "
+                << "Sim time " << outputInfo.getSimTime() << "/" << maxT << Log::Flush;
 
-
-
-    if(0) {
-        const Real percCompl = abs(outputInfo.getSimTime() / maxT);
-
-        size_t outputResT = Numerics::Allocator::getInstance().getNumericParams().getn();
-
-        std::cout << steppingChar << "[";
-        const size_t n = outputResT / size_t(nStepsBetweenRecordings);
-        const size_t curr = outputInfo.getSteps() / size_t(nStepsBetweenRecordings);
-
-        size_t i = 0;
-        for (; i < curr; ++i) std::cout << ".";
-        for (size_t j = i; j < n; ++j) std::cout << " ";
-        std::cout << "] " << std::setprecision(3) << percCompl * 100 << "%     " << std::flush;
-    }
 }

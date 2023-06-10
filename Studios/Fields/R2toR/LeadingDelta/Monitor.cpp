@@ -13,7 +13,10 @@
 #include "Phys/DifferentialEquations/2nd-Order/Energy.h"
 
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Phys/Function/FunctionScale.h"
 
+R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 
 R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
@@ -153,14 +156,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
     auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
         R2toR::Function *func = nullptr;
-        stats.addVolatileStat(String("ring_tf = ") + ToString(ring_tf));
 
         auto name = String("Ring delta x") + ToString(scale, 2, true);
 
-        if(ring_tf>t || ring_tf < 0)
-            mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
-        else
-            mSectionGraph.addFunction(&nullFunc, name, Styles::GetColorScheme()->funcPlotStyles[1]);
+        mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
     }
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
