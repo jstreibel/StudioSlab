@@ -11,7 +11,6 @@ R2toR::SimulationBuilder::SimulationBuilder(String name, BuilderBasePtr outputSt
     interface->addSubInterface(outputStructureBuilder->getInterface());
 }
 
-
 auto R2toR::SimulationBuilder::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
     return outputSystemBuilder->build(outputFileName);

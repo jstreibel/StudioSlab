@@ -36,7 +36,7 @@ RtoR2::StraightLine::Ptr RtoR2::StraightLine::New(Real2D x0, Real2D xf) {
 }
 
 Spaces::PointSet::Ptr
-RtoR2::StraightLine::renderPointSet(Base::Function<Real, Real2D>::PointSetRenderingOptions options) {
+RtoR2::StraightLine::renderToPointSet(RenderingOptions options) {
     auto set = Spaces::PointSet({x0, x0+r});
 
     return std::make_unique<Spaces::PointSet>(set);

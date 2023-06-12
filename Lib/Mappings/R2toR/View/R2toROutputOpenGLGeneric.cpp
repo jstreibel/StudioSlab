@@ -146,9 +146,6 @@ bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     return false;
 }
 
-IntPair R2toR::OutputOpenGL::getWindowSizeHint() {
-    return {3200, 1350};
-}
 
 
 

@@ -25,15 +25,12 @@ namespace R2toR {
             Spaces::PointSet::Ptr energyRatioData;
             Phys::Graphing::PointSetGraph mEnergyRatioGraph;
 
-        protected:
-            auto _out(const OutputPacket &outInfo) -> void override;
+            GraphR2Section mSpeedsGraph;
 
         public:
             OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 
             auto draw() -> void override;
-
-            auto getWindowSizeHint() -> IntPair override;
 
             auto notifyKeyboard(unsigned char key, int x, int y) -> bool override;
 

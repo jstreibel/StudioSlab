@@ -11,11 +11,14 @@ class InterfaceOwner : public InterfaceListener {
 protected:
     Interface::Ptr interface;
 
+    InterfaceOwner();
 public:
-    InterfaceOwner(String interfaceName, int priotity, bool doRegister);
+    InterfaceOwner(bool IKnowIMustCallLateStart);
+    InterfaceOwner(String interfaceName, int priotity=10000, bool doRegister=true);
+
+    void LateStart(String interfaceName, int priotity=10000, bool doRegister=true);
 
     auto getInterface() -> Interface::Ptr;
-
     auto notifyCLArgsSetupFinished() -> void override;
 };
 

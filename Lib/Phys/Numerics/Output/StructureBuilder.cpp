@@ -12,7 +12,7 @@
 
 
 Numerics::OutputSystem::Builder::Builder(String generalDescription)
-    : InterfaceOwner(generalDescription, 9, false)
+    : InterfaceOwner(generalDescription, 100, false)
 {
     interface->addParameters({noHistoryToFile, outputResolution,
                               VisualMonitor, VisualMonitor_startPaused, OpenGLMonitor_stepsPerIdleCall

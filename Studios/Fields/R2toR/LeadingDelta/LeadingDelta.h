@@ -20,15 +20,15 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        extern SpecialRingDelta::Ptr ringDelta1;
+        extern RingDelta::Ptr ringDelta1;
 
 
 
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
-            SpecialRingDelta::Ptr ringDelta;
+            RingDelta::Ptr ringDelta;
             Real tf;
         public:
-            explicit BoundaryCondition(SpecialRingDelta::Ptr ringDelta = nullptr, Real tf=-1);
+            explicit BoundaryCondition(RingDelta::Ptr ringDelta = nullptr, Real tf=-1);
             void apply(FieldState &function, Real t) const override;
         };
 
@@ -51,7 +51,7 @@ namespace R2toR {
             RealParameter::Ptr      deltaDuration    = RealParameter::New(-1, "delta_duration",
                                                             "The duration of regularized delta. Negative "
                                                             "values mean forever;");
-            SpecialRingDelta::Ptr drivingFunc;
+            RingDelta::Ptr drivingFunc;
 
         public:
             Builder();

@@ -8,7 +8,7 @@
 #include "Common/Utils.h"
 #include "Common/Log/Log.h"
 
-Interface::Interface(const String& name, InterfaceOwner *owner, int priority)
+Interface::Interface(String name, InterfaceOwner *owner, int priority)
     : owner(owner), priority(priority) {
 
     auto tokens = Common::SplitString(name, delimiter, 2);
@@ -57,11 +57,14 @@ void Interface::addSubInterface(Interface::Ptr subInterface) {
     if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
 }
 
-auto Interface::getGeneralDescription() const -> String { return descr; }
+auto Interface::getGeneralDescription() const -> String {
+
+    return descr!="<empty>" ? descr : "";
+}
 
 auto Interface::getParameter(String key) const -> Parameter::Ptr {
     auto compareFunc = [key](Parameter::Ptr parameter) {
-        return parameter->operator==(key);
+        return *parameter == key;
     };
 
     auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);

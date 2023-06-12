@@ -11,6 +11,8 @@
 namespace R2toR {
     namespace LeadingDelta {
         class Allocator : public R2toR::Core::BasicAllocator {
+            static Allocator *me;
+
             Function::Ptr drivingFunction;
             Allocator();
 

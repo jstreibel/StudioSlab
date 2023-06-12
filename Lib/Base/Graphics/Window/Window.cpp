@@ -34,8 +34,8 @@ void Window::_clear() const {
 void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
-        if(gotHit)  glColor3d(1, 0, 0);
-        else        glColor3d(1, 1, 1);
+        if(gotHit)  glColor4d(1, 1, 1, .9);
+        else        glColor4d(1, 1, 1, 1);
 
         glVertex2f(-p, -p);
         glVertex2f(-p, p);

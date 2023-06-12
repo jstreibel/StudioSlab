@@ -140,3 +140,35 @@ Base::ArbitraryFunction<Real2D, Real> &R2toR::FunctionArbitraryGPU::Multiply(flo
 
     return *this;
 }
+
+Base::ArbitraryFunction<Real2D, Real> &
+FunctionArbitraryGPU::operator+=(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+    auto &space = getSpace();
+
+    auto &XHost = space.getHostData(true);
+
+    //auto dFunc = func.renderToDiscreteFunction({N});
+
+    const floatt Lx = xMax - xMin;
+    const floatt Ly = yMax - yMin;
+    for (PosInt n = 0; n < N; n++) {
+        for (PosInt m = 0; m < M; m++) {
+            const floatt x = Lx * n / (N - 1) + xMin;
+            const floatt y = Ly * m / (M - 1) + yMin;
+
+            const Real2D r = {x, y};
+
+            if(!func.domainContainsPoint(r))
+                continue;
+
+            XHost[n+m*N] += func(r);
+        }
+    }
+
+    space.upload();
+
+    return *this;
+
+
+    return ArbitraryFunction::operator+=(func);
+}

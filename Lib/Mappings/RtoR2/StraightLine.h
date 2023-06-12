@@ -22,7 +22,7 @@ namespace RtoR2 {
         StraightLine(const StraightLine& line);
 
 
-        Spaces::PointSet::Ptr renderPointSet(PointSetRenderingOptions options) override;
+        Spaces::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
 
         static Ptr New(Real2D x0, Real2D xf);
 

@@ -29,8 +29,8 @@ void Parameter::setDescription(String newDescription) {
     this->description = newDescription;
 }
 
-bool Parameter::operator==(String name) const {
-    return Common::SplitString(commandLineArgName, ",")[0] == name;
+bool Parameter::operator==(String str) const {
+    return Common::SplitString(commandLineArgName, ",")[0] == str;
 }
 
 

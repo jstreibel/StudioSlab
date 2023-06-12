@@ -17,38 +17,20 @@ namespace R2toR {
 
 
 
-        class SpecialRingDelta : public Function {
+        class RingDelta : public Function {
         protected:
-            const Real eps, a;
+            const Real eps, a, dt;
             Real radius;
         public:
-            typedef std::shared_ptr<SpecialRingDelta> Ptr;
+            typedef std::shared_ptr<RingDelta> Ptr;
 
             auto getEps   ()                   const -> Real;
             auto getA     ()                   const -> Real;
             auto getRadius()                   const -> Real;
-            virtual auto setRadius(Real _radius)     -> void;
+            auto setRadius(Real _radius)             -> void;
             auto domainContainsPoint(Real2D x) const -> bool override;
+            auto myName()                      const -> String;
 
-            SpecialRingDelta(Real eps, Real a);
-
-        };
-
-
-
-        class AzimuthDelta : public SpecialRingDelta, public FunctionAzimuthalSymmetry {
-        public:
-            AzimuthDelta(Real eps, Real height);
-            auto setRadius(Real _radius)    -> void override;
-            auto operator()(Real2D x) const -> Real override;
-        };
-
-
-
-        class Delta_r : public SpecialRingDelta {
-            RtoR::RegularDiracDelta delta;
-            Real dt;
-        public:
             /**
              * Constructor
              * @param eps the delta 'ϵ' parameter;
@@ -56,12 +38,11 @@ namespace R2toR {
              * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
              * is the actual simulation timestep.
              */
-            Delta_r(Real eps, Real height, Real dt);
-            auto domainContainsPoint(Real2D x) const -> bool override;
-            auto operator()         (Real2D x) const -> Real override;
+            RingDelta(Real eps, Real a, Real dt);
+            auto operator()(Real2D x) const -> Real override;
 
-            String myName() const override;
         };
+
     }
 }
 

@@ -34,10 +34,23 @@ inline Real UnitStep(const Real x, const Real eps=0){
     return x < eps ? 0 : 1;
 }
 
-inline Real delta(const Real x, const Real eps=1.e-5){
-    const floatt delta = .5/eps;
+inline auto deltaGauss(Real x, Real eps) -> Real {
+    return 1. / sqrt(4 * M_PI * eps) * exp(-x * x / (4 * eps));
+}
 
-    return ABS(x) <= eps ? delta : 0;
+inline Real deltaTri(const Real x, const Real eps=1.e-5){
+    const Real invEps = 1. / eps;
+
+    if      (x > -eps && x <= .0)   return invEps * (1. + invEps * x);
+    else if (x > .0   && x <   eps) return invEps * (1. - invEps * x);
+
+    return 0.;
+}
+
+inline auto deltaRect(Real x, Real eps) -> Real {
+    if (x > -eps && x < eps) return 1. / (2. * eps);
+
+    return 0.;
 }
 
 inline Real sqr(const Real x){ return x*x; }

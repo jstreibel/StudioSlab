@@ -25,8 +25,6 @@ namespace R2toR {
 
         bool notifyKeyboard(unsigned char key, int x, int y) override;
 
-        IntPair getWindowSizeHint() override;
-
     protected:
         WindowPanel *panel;
 

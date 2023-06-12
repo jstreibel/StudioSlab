@@ -21,7 +21,7 @@ public:
     typedef std::shared_ptr<const Interface> ConstPtr;
 
 private:
-    Interface(const String& generalDescription, InterfaceOwner *owner, int priority);
+    Interface(String generalDescription, InterfaceOwner *owner, int priority);
 
     friend InterfaceManager;
     friend InterfaceOwner;

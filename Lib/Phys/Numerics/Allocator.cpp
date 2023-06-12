@@ -7,7 +7,7 @@ namespace Numerics {
     Allocator *Allocator::mySingleInstance = nullptr;
 
     Allocator::Allocator(String name) : name(name) {
-        Log::Info() << "Allocator instantiated: " << name << Log::Flush;
+        Log::Attention() << "Allocator instantiated " << Log::ForegroundGreen << Log::BoldFace << name << Log::Flush;
     };
     //ModelBuilder::ModelBuilder() {
     // TODO verificar se aqui precisa ser POT ou apenas divisivel pelo numero de threads na CPU (ou algo do tipo).

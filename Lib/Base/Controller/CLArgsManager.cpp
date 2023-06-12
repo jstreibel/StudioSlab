@@ -44,11 +44,12 @@ void CLArgsManager::Parse(int argc, const char **argv) {
 }
 
 auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface) -> CLOptionsDescription {
-    auto description = anInterface.getGeneralDescription();
+    auto desc = anInterface.getGeneralDescription();
+    auto name = anInterface.getName() + (desc!=""? String(" (")+desc+")" : "") ;
     auto paramMap = anInterface.getParameters();
 
-    po::options_description desc(description);
-    po::options_description_easy_init options = desc.add_options();
+    po::options_description optDesc(name);
+    po::options_description_easy_init options = optDesc.add_options();
 
     for(const auto p : paramMap){
         const String &paramName = p->getCommandLineArgName();
@@ -56,5 +57,5 @@ auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface) -> CLO
         options = p->getOptionDescription(options);
     }
 
-    return desc;
+    return optDesc;
 }

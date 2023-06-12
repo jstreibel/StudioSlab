@@ -33,10 +33,21 @@ auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
 }
 
 void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
-    Log::Info() << "InterfaceManager started feeding interfaces." << Log::Flush;
+    Log::Attention() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
     auto comp = [](const Interface::Ptr& a, const Interface::Ptr& b) { return *a < *b; };
     std::sort(interfaces.begin(), interfaces.end(), comp);
+
+    auto &log = Log::Debug();
+    log << "[priority] Interface";
+    for(auto interface : interfaces){
+
+        log << "\n\t\t\t[" << interface->priority << "] " << interface->getName();
+
+        if(!interface->subInterfaces.empty())
+            log << "\t\t---> Contains " << interface->subInterfaces.size() << " sub-interfaces.";
+    }
+    log << Log::Flush;
 
     for(auto interface : interfaces){
         // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
@@ -83,6 +94,9 @@ auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr {
     auto compFunc = [target](Interface::ConstPtr anInterface) { return anInterface->operator==(target); };
 
     auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );
+
+    if(it == interfaces.end())
+        Log::WarningImportant() << "InterfaceManager could not find Interface " << Log::ForegroundCyan << target << Log::Flush;
 
     return *it;
 }

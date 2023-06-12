@@ -8,15 +8,33 @@
 
 #include "Common/Types.h"
 #include "Common/Utils.h"
+#include "Common/Timer.h"
 
-class Log : public StringStream {
+#include "Base/Controller/Interface/CommonParameters.h"
+#include "Base/Controller/Interface/InterfaceOwner.h"
+
+class Log : public InterfaceOwner
+{
     static Log *myInstance;
 
+    BoolParameter::Ptr logDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");
+    BoolParameter::Ptr logNotes = BoolParameter::New(false, "log_notes", "Show note messages.");
+    BoolParameter::Ptr verbose = BoolParameter::New(false, "verbose,vv", "Show note and debug messages.");
+
     Log();
+
+    String prefix();
+    String postfix();
+
     static auto GetSingleton() -> Log&;
 
-    OStream &myStream;
+    OStream *mainStream  = &std::cout;       bool manageMainStream  = false;
+    OStream *notesStream = new StringStream; bool manageNotesStream = true;
+    OStream *debugStream = new StringStream; bool manageDebugStream = true;
 
+    Timer timer;
+
+public:
     constexpr const static String ForegroundBlack   = "\033[0;30m";
     constexpr const static String ForegroundRed     = "\033[0;31m";
     constexpr const static String ForegroundGreen   = "\033[0;32m";
@@ -52,12 +70,8 @@ class Log : public StringStream {
     const static String ErrorColor;
     const static String ErrorFatalColor;
 
-    static String prefix;
-    static String postfix;
-
     constexpr const static char Return = '\r';
 
-public:
     static auto Info             ()                  -> OStream&;
     static auto Note             ()                  -> OStream&;
     static auto Attention        ()                  -> OStream&;
@@ -86,6 +100,8 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const FlushClass& flush);
 
     static auto FlushAll() -> void;
+
+    auto notifyCLArgsSetupFinished() -> void override;
 
 };
 

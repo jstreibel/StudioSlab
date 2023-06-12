@@ -9,7 +9,7 @@
 
 Log* Log::myInstance = nullptr;
 const String Log::InfoColor =             Log::ResetFormatting + Log::ForegroundCyan;
-const String Log::NoteColor =             Log::ResetFormatting + Log::ForegroundBlue;
+const String Log::NoteColor =             Log::ResetFormatting + Log::ForegroundWhite;
 const String Log::AttentionColor =        Log::ResetFormatting + Log::ForegroundMagenta;
 const String Log::CriticalColor =         Log::ResetFormatting + Log::BoldFace + Log::ForegroundMagenta;
 const String Log::DebugColor =            Log::ResetFormatting + Log::Italic + Log::ForegroundMagenta;
@@ -19,45 +19,43 @@ const String Log::WarningImportantColor = Log::ResetFormatting + Log::Foreground
 const String Log::ErrorColor =            Log::ResetFormatting + Log::ForegroundRed;
 const String Log::ErrorFatalColor =       Log::ResetFormatting + Log::BoldFace + Log::ForegroundRed;
 
-String Log::prefix;
-String Log::postfix;
-
 const Log::FlushClass Log::Flush;
 
-Log::Log() : myStream(std::cout) {
-    StringStream ss;
-
-    ss << "\n" << ResetFormatting << " [";
-    prefix = ss.str();
-
-    ss.str("");
-    ss << ResetFormatting << "]  ";
-    postfix = ss.str();
-
-
-}
+Log::Log() : InterfaceOwner (true) { };
 
 auto Log::GetSingleton() -> Log & {
     if(Log::myInstance == nullptr) {
-        Log::myInstance = new Log;
+        auto me = new Log;
+        Log::myInstance = me;
 
         Log::Note() << "Logging system initiated." << Log::Flush;
+
+        me->LateStart("Log Manager", -10);
+        me->interface->addParameters({me->logDebug, me->logNotes, me->verbose});
     }
 
     return *Log::myInstance;
 }
 
+inline String Log::prefix(){
+    return String("\n") + ResetFormatting + ToString(timer.getElTime_msec()) + "ms  [ ";
+};
 
-OStream &Log::Info()                { auto &stream = Log::GetSingleton().myStream; stream << prefix << InfoColor                << "Info"      << postfix; return stream; }
-OStream &Log::Note()                { auto &stream = Log::GetSingleton().myStream; stream << prefix << NoteColor                << "Note"      << postfix; return stream; }
-OStream &Log::Attention()           { auto &stream = Log::GetSingleton().myStream; stream << prefix << AttentionColor           << "Attention" << postfix; return stream; }
-OStream &Log::Critical()            { auto &stream = Log::GetSingleton().myStream; stream << prefix << CriticalColor            << "Critical"  << postfix; return stream; }
-OStream &Log::Debug()               { auto &stream = Log::GetSingleton().myStream; stream << prefix << DebugColor               << "Debug"     << postfix; return stream; }
-OStream &Log::Success()             { auto &stream = Log::GetSingleton().myStream; stream << prefix << SuccessColor             << "Success"   << postfix; return stream; }
-OStream &Log::Warning()             { auto &stream = Log::GetSingleton().myStream; stream << prefix << WarningColor             << "Warning"   << postfix; return stream; }
-OStream &Log::WarningImportant()    { auto &stream = Log::GetSingleton().myStream; stream << prefix << WarningImportantColor    << "Warning!"  << postfix; return stream; }
-OStream &Log::Error()               { auto &stream = Log::GetSingleton().myStream; stream << prefix << ErrorColor               << "Error"     << postfix; return stream; }
-OStream &Log::ErrorFatal()          { auto &stream = Log::GetSingleton().myStream; stream << prefix << ErrorFatalColor          << "Crash"     << postfix; return stream; }
+inline String Log::postfix(){
+    return ResetFormatting + " ]  ";
+};
+
+
+OStream &Log::Info()                { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << InfoColor             << "INFO"      << me.postfix(); return stream; }
+OStream &Log::Note()                { auto me = Log::GetSingleton(); auto &stream = *me.notesStream; stream <<  me.prefix() << NoteColor             << "note"      << me.postfix(); return stream; }
+OStream &Log::Attention()           { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << AttentionColor        << "Attention" << me.postfix(); return stream; }
+OStream &Log::Critical()            { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << CriticalColor         << "Critical"  << me.postfix(); return stream; }
+OStream &Log::Debug()               { auto me = Log::GetSingleton(); auto &stream = *me.debugStream; stream <<  me.prefix() << DebugColor            << "Debug"     << me.postfix(); return stream; }
+OStream &Log::Success()             { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << SuccessColor          << "Success"   << me.postfix(); return stream; }
+OStream &Log::Warning()             { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << WarningColor          << "Warning"   << me.postfix(); return stream; }
+OStream &Log::WarningImportant()    { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << WarningImportantColor << "Warning!"  << me.postfix(); return stream; }
+OStream &Log::Error()               { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << ErrorColor            << "Error"     << me.postfix(); return stream; }
+OStream &Log::ErrorFatal()          { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream <<  me.prefix() << ErrorFatalColor       << "Crash"     << me.postfix(); return stream; }
 
 auto Log::Info(const String &str) -> void {
     Info() << str << Log::Flush;
@@ -100,12 +98,46 @@ auto Log::ErrorFatal(const String &str) -> void {
 }
 
 auto Log::FlushAll() -> void {
-    Log::GetSingleton().myStream << Log::Flush;
+    *Log::GetSingleton().mainStream << Log::Flush;
 }
 
 std::ostream &operator<<(std::ostream &os, const Log::FlushClass &flush) {
     os.flush();
     return os;
+}
+
+void Log::notifyCLArgsSetupFinished() {
+    InterfaceOwner::notifyCLArgsSetupFinished();
+
+
+
+    if(**logDebug || **verbose){
+        std::cout << ForegroundBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
+
+        *mainStream << debugStream->rdbuf();
+        if(manageDebugStream)
+            delete debugStream;
+
+        manageDebugStream = false;
+        debugStream = &std::cout;
+
+        std::cout << ForegroundBlue << BoldFace << "\n\n --- END LATE DEBUG MESSAGES --- \n";
+    }
+
+    if(**logNotes || **verbose){
+        std::cout << ForegroundBlue << BoldFace << "\n\n --- SOME LATE NOTES MESSAGES --- \n";
+        *mainStream << notesStream->rdbuf();
+
+        if(manageNotesStream)
+            delete notesStream;
+
+        manageNotesStream = false;
+        notesStream = &std::cout;
+
+        std::cout << ForegroundBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
+    }
+
+
 }
 
 void Log::FlushClass::operator()() const {

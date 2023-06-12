@@ -9,7 +9,7 @@
 
 Base::SimulationBuilder::SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
                                            String prefix)
- : InterfaceOwner(generalDescription, 10, false), outputSystemBuilder(osb), prefix(prefix){
+ : InterfaceOwner(generalDescription, 100, false), outputSystemBuilder(osb), prefix(prefix){
     Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
@@ -23,7 +23,7 @@ String Base::SimulationBuilder::toString() const {
 }
 
 auto Base::SimulationBuilder::registerAllocator() const -> void {
-    Log::Warning() << "SimulationBuilder is not registering the Allocator." << Log::Flush;
+    Log::WarningImportant("SimulationBuilder is not registering the Allocator.");
 }
 
 

@@ -29,15 +29,15 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     int dummy = 0;
     glutInit(&dummy, nullptr);
 
-    w = 3200, h = 1350;
+    w = 3830, h = 1350;
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     //glutInitWindowSize(w, h);
-    glutInitWindowPosition(200, 200);
+    glutInitWindowPosition(4, 200);
     glutInitWindowSize(w, h);
-    //glutFullScreen();
-
     int winHandle = glutCreateWindow("Pendulum");
+
+    glutFullScreen();
 
     // GLEW init:
     {
@@ -84,7 +84,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
 
     // Setup Dear ImGui style
     //ImGui::StyleColorsDark();
-    ImGui::StyleColorsLight();
+    //ImGui::StyleColorsLight();
     SetupImGuiColors_BlackAndWhite();
 
     // Setup Platform/Renderer backends
@@ -105,7 +105,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
 
         if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
 
-        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 20.0f);
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 22.0f);
         io.FontDefault = font;
 
         //ImGui::PushFont(font);

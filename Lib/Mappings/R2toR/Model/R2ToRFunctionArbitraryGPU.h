@@ -30,6 +30,8 @@ namespace R2toR {
                                                 const ArbitraryFunction& aoi2) override;
         ArbitraryFunction &Multiply(floatt a) override;
 
+        ArbitraryFunction <Real2D, Real> &operator+=(const MyBase &func) override;
+
         Real At(PosInt n, PosInt m) const override;
         Real &At(PosInt n, PosInt m) override;
 

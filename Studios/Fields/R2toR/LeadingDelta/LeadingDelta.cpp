@@ -5,16 +5,16 @@
 
 #include "LeadingDelta.h"
 
-
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 namespace R2toR {
     namespace LeadingDelta {
-        SpecialRingDelta::Ptr ringDelta1;
+        RingDelta::Ptr ringDelta1;
 
 
 
 
-        BoundaryCondition::BoundaryCondition(SpecialRingDelta::Ptr ringDelta, Real tf)
+        BoundaryCondition::BoundaryCondition(RingDelta::Ptr ringDelta, Real tf)
                 : ringDelta(ringDelta), tf(tf) { }
         void BoundaryCondition::apply(FieldState &function, Real t) const {
             const bool applies = t<tf || tf<0;
@@ -28,11 +28,11 @@ namespace R2toR {
                 function.setPhi(fullNull);
                 function.setDPhiDt(fullNull);
             } else if (should) {
-                auto &srd = const_cast<SpecialRingDelta&>(*ringDelta);
-                srd.setRadius(t);
+                //auto &srd = const_cast<SpecialRingDelta&>(*ringDelta);
+                ringDelta->setRadius(t);
 
-                auto &dφdt = function.getDPhiDt();
-                dφdt = *ringDelta;
+                // auto &dφdt = function.getDPhiDt();
+                // dφdt = *ringDelta;
 
                 // function.setDPhiDt();
             }
@@ -57,7 +57,7 @@ namespace R2toR {
 
 
 
-        Builder::Builder() : SimulationBuilder("ldd,(2+1)-d Shockwave as trail of a driving delta.",
+        Builder::Builder() : SimulationBuilder("Leading Delta,simulation builder for (2+1)-d signum-Gordon shockwave as the trail of a driving delta.",
                                                BuilderBasePtr(new LeadingDelta::OutputBuilder)) {
             interface->addParameters({W_0, eps, deltaDuration});
         }
@@ -68,19 +68,15 @@ namespace R2toR {
             const Real L = p.getL();
             const Real dt = p.getdt();
 
-            p.sett(L*.5 - **eps *2);
-
+            p.sett(L*.5 - **eps);
             const auto C_2 = **W_0 / 2.0; // this is C_n from our 2023 shockwave paper, with n=2.
 
-            if (0)     drivingFunc = std::make_shared<AzimuthDelta>(**eps, C_2);
-            else       drivingFunc = std::make_shared<Delta_r>(**eps, C_2, dt);
-
+            drivingFunc = std::make_shared<RingDelta>(**eps, C_2, dt);
             ringDelta1 = drivingFunc;
+            LeadingDelta::Allocator::Choose()->setDrivingFunction(drivingFunc);
         }
         auto Builder::getBoundary()            const -> const void * { return new BoundaryCondition(drivingFunc); }
-        auto Builder::registerAllocator()      const -> void {
-            LeadingDelta::Allocator::Choose();
-        }
+        auto Builder::registerAllocator()      const ->       void   { LeadingDelta::Allocator::Choose();         }
     }
 }
 

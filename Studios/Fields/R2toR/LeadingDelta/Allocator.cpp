@@ -6,6 +6,9 @@
 #include "DrivenEquation.h"
 #include "Common/Log/Log.h"
 
+namespace Here = R2toR::LeadingDelta;
+
+Here::Allocator* Here::Allocator::me = nullptr;
 
 R2toR::LeadingDelta::Allocator::Allocator()
     : R2toR::Core::BasicAllocator(String("2ⁿᵈ order non-homogenous eq. ℝ² ↦ ℝ with "
@@ -16,16 +19,18 @@ auto R2toR::LeadingDelta::Allocator::getSystemSolver() -> void * {
 }
 
 auto R2toR::LeadingDelta::Allocator::Choose() -> Allocator* {
-    auto *me = new LeadingDelta::Allocator();
-
-    Numerics::Allocator::Instantiate(me);
+    if(me == nullptr) {
+        me = new LeadingDelta::Allocator();
+        Numerics::Allocator::Instantiate(me);
+    }
 
     return me;
+
 }
 
 auto R2toR::LeadingDelta::Allocator::setDrivingFunction(Function::Ptr drivingFunction) -> void {
-    Log::Note() << "LeadingDelta::Allocator: setting up driving " <<
-                   "function: '" << drivingFunction->myName() << "'" << Log::Flush;
+    Log::Info() << "LeadingDelta::Allocator setting up driving function: "
+                << Log::ForegroundGreen << drivingFunction->myName() << Log::Flush;
 
     this->drivingFunction = drivingFunction;
 }

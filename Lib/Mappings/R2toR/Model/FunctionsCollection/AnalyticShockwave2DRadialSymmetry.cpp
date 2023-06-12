@@ -60,7 +60,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(PosInt k, Rea
     if(k>=quant) return .0;
     if(z>.0) return .0;
 
-    const Real c = 0.666666666666666;
+    constexpr const Real c = 2/3.;
 
     if(k==0) return c;
 

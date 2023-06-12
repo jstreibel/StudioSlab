@@ -9,6 +9,8 @@
 
 class Space {
 public:
+    typedef std::shared_ptr<Space> Ptr;
+
     explicit Space(PosInt dim);
 
     virtual auto getMeasure() const -> const Measure = 0;

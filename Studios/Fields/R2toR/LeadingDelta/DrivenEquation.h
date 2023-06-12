@@ -19,7 +19,6 @@ namespace R2toR {
 
         class DrivenEquation : public DiffEq {
             R2toR::Function::Ptr drivingForce;
-            FunctionArbitrary &f;
 
         public:
             explicit DrivenEquation(R2toR::Function::Ptr drivingForce);

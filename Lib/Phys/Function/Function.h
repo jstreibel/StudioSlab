@@ -18,6 +18,8 @@ namespace Base {
 
     class GPUFriendly;
 
+    template<class InputCategory, class OutputCategory>
+    class ArbitraryFunction;
 
     template<class InputCategory, class OutputCategory>
     class Function {
@@ -29,8 +31,6 @@ namespace Base {
         typedef OutputCategory OutCategory;
 
         const bool discrete;
-
-        Space *positionSpace;
 
     protected:
         const GPUFriendly &myGPUFriendlyVersion;
@@ -80,10 +80,10 @@ namespace Base {
 
         virtual String myName() const { return "unnamed"; }
 
-        struct PointSetRenderingOptions {
-            PointSetRenderingOptions()                        : hint(UseChoiceResolution)            {}
-            PointSetRenderingOptions(const InputCategory &dx) : hint(UseCustomResolution_dx), dx(dx) {};
-            PointSetRenderingOptions(PosInt n)                : hint(UseCustomResolution_n),  n(n)   {};
+        struct RenderingOptions {
+            RenderingOptions()                        : hint(UseChoiceResolution)            {}
+            RenderingOptions(const InputCategory &dx) : hint(UseCustomResolution_dx), dx(dx) {};
+            RenderingOptions(PosInt n)                : hint(UseCustomResolution_n), n(n)   {};
 
 
             const enum Hint {
@@ -97,8 +97,13 @@ namespace Base {
         };
 
         virtual Spaces::PointSet::Ptr
-        renderPointSet(PointSetRenderingOptions options = PointSetRenderingOptions()) {
+        renderToPointSet(RenderingOptions options = RenderingOptions()) {
             throw "Not implemented.";
+        };
+
+        virtual std::shared_ptr<ArbitraryFunction<InputCategory, OutputCategory>>
+        renderToDiscreteFunction(RenderingOptions options) const {
+            throw String("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
         };
 
     };

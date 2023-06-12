@@ -33,7 +33,7 @@ struct NumericParams : public InterfaceOwner {
 													 "Has to be POT for GPU");
     RealParameter::Ptr      L       = RealParameter     ::New(10., "L,L", "Space length");
     RealParameter::Ptr      xCenter = RealParameter     ::New(.0, "xCenter,c", "Center of simulation space");
-    RealParameter::Ptr      t       =  RealParameter    ::New(-1, "t,t", "Max simulation time. If left negative, defaults to L/2. "
+    RealParameter::Ptr      t       = RealParameter     ::New(-1, "t,t", "Max simulation time. If left negative, defaults to L/2. "
 													"Note that this value can be overriden by simulation.");
 
 	IntegerParameter::Ptr   dimMode = IntegerParameter  ::New(0, "mode,m", "Method to compute space measure:"

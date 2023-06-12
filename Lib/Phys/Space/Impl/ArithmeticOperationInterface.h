@@ -17,11 +17,8 @@ namespace Utils {
         virtual OPS_TYPE &Subtract(const OPS_TYPE &toi) = 0;
 
         virtual OPS_TYPE &StoreAddition(const OPS_TYPE &toi1, const OPS_TYPE &toi2) = 0;
-
         virtual OPS_TYPE &StoreSubtraction(const OPS_TYPE &aoi1, const OPS_TYPE &aoi2) = 0;
-
         virtual OPS_TYPE &StoreMultiplication(const OPS_TYPE &aoi1, const Real a) = 0;
-
         virtual OPS_TYPE &Multiply(Real a) = 0;
 
         OPS_TYPE &operator+=(const OPS_TYPE &aoi) { return this->Add(aoi); }

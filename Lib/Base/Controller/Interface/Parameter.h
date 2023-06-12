@@ -33,7 +33,7 @@ public:
 
     bool operator<(const Parameter *rhs);
 
-    bool operator==(String name) const;
+    bool operator==(String str) const;
 
     bool operator!=(const Parameter &rhs) const;
 

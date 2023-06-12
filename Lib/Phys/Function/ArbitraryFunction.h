@@ -16,9 +16,11 @@ namespace Base {
 
     class ArbitraryFunction : public Function<PosSpaceType, TargetSpaceType>,
                               public Utils::ArithmeticOpsInterface<ArbitraryFunction<PosSpaceType, TargetSpaceType>> {
+
     public:
         typedef Function<PosSpaceType, TargetSpaceType> MyBase;
-    public:
+        typename std::shared_ptr<ArbitraryFunction<PosSpaceType,TargetSpaceType>> Ptr;
+
         ArbitraryFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true) {
             switch(dev){
                 case device::CPU:
@@ -48,6 +50,8 @@ namespace Base {
 
         // virtual ArbitraryFunction &operator=(const MyBase &func) { (*this) = func; return *this; }
         virtual ArbitraryFunction &operator=(const ArbitraryFunction &func) { this->SetArb(func); return *this; }
+
+        virtual ArbitraryFunction &operator+=(const MyBase &func) { throw "ArbitraryFunction operator += not implemented"; };
 
         //ArbitraryFunction& operator-=(const ArbitraryFunction& rhs);
         //ArbitraryFunction& operator*=(const ArbitraryFunction& rhs);

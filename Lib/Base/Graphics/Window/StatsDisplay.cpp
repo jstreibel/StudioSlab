@@ -28,25 +28,31 @@ void StatsDisplay::draw() {
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    float w_ = float(w) - (float)2*winXoffset,
-            h_ = float(h) - (float)2*winYoffset;
-    float x_ = x+winXoffset;
-    float y_ = displayHeight - (h_ + y + winYoffset);
+    const float w_ = float(w) - (float)2*winXoffset,
+                h_ = float(h) - (float)2*winYoffset;
+    const float x_ = x+winXoffset,
+                y_ = displayHeight - (h_ + y + winYoffset);
+
+    const float hSpacing = 20.0f;
 
     bool closable=false;
 
     ImGui::Begin("Stats", &closable,
                  ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
-    ImGui::SetWindowPos(ImVec2{x_, y_});
+    ImGui::SetWindowPos( ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
+    auto i=0;
     for (auto stat: stats) {
         const auto c = stat.second;
-        const auto text = stat.first.c_str();
-        const auto color = ImVec4(c.r, c.g, c.b, c.a);
+        const auto text = stat.first;
+        //const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
-        //ImGui::TextColored(color, text);
-        ImGui::Text(text, nullptr);
+        if(text=="<\\br>"){ /*ImGui::Text(text);*/ ImGui::Separator(); i=0; continue; }
+
+        if(i++%2)ImGui::SameLine(w/2.-hSpacing);
+
+        ImGui::Text(text.c_str(), nullptr);
     }
     ImGui::End();
 

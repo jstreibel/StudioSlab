@@ -16,6 +16,8 @@ namespace R2toR {
 
     class FunctionAzimuthalSymmetry : public Function {
     public:
+        typedef std::shared_ptr<FunctionAzimuthalSymmetry> Ptr;
+
         FunctionAzimuthalSymmetry(const RtoR::Function *baseFunction, Real coef=1, Real eccentricity=0,
                                   Real angle=0, bool keepBaseFunction=true)
             : radialFunction(*baseFunction), c(coef), theta(angle), a(1. / sqrt(1. - eccentricity * eccentricity)), keepBaseFunction(keepBaseFunction)

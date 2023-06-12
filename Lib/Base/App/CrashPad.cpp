@@ -24,17 +24,17 @@ int SafetyNet::jump(AppBase &prog){
         return prog.run();
     }
     catch (const char *e) {
-        Log::ErrorFatal() << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
+        Log::ErrorFatal() << "Exception: " << "\033[91m\033[1m"
         << e << "\033[0m" << ", application will now exit" << Log::Flush;
         return -1;
     }
     catch (String &e) {
-        Log::ErrorFatal() << "\n\nUnhandled Exception reached the top of main: " << "\033[91m\033[1m"
+        Log::ErrorFatal() << "Exception reached the top of main: " << "\033[91m\033[1m"
         << e << "\033[0m" << ", application will now exit" << Log::Flush;
         return -2;
     }
     catch (boost::wrapexcept<boost::program_options::unknown_option> &e) {
-        Log::ErrorFatal() << "Option \"\\033[91m\\033[1m\"\"" << e.get_option_name() << "\" error: " << e.what()
+        Log::ErrorFatal() << "Unknown option \"\\033[91m\\033[1m\"\"" << e.get_option_name() << "\" error: " << e.what()
                   << "\033[0m. \n" << Log::Flush;
     }
     catch (boost::program_options::error &e) {
@@ -45,24 +45,24 @@ int SafetyNet::jump(AppBase &prog){
     }
     catch (boost::bad_any_cast &e) {
         showHelp(prog);
-        Log::ErrorFatal() << "\n\nUnhandled boost::bad_any_cast reached the top of main: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m. \n" << Log::Flush;
+        Log::ErrorFatal() << "Exception boost::bad_any_cast: " << "\033[91m\033[1m"
+        << e.what() << "\033[0m." << Log::Flush;
 
         return -4;
     }
     catch (std::bad_cast &e) {
         showHelp(prog);
-        Log::ErrorFatal() << "\n\nUnhandled std::bad_cast reached the top of main: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m. \n" << Log::Flush;
+        Log::ErrorFatal() << "Exception std::bad_cast: " << "\033[91m\033[1m"
+        << e.what() << "\033[0m." << Log::Flush;
         return -5;
     }
     catch (std::exception &e) {
-        Log::ErrorFatal() << "\n\nUnhandled std::exception reached the top of main: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m, application will now exit. \n" << Log::Flush;
+        Log::ErrorFatal() << "Exception std::exceptionn: " << "\033[91m\033[1m"
+        << e.what() << "\033[0m, application will now exit." << Log::Flush;
         return -6;
     }
     catch (...) {
-        Log::ErrorFatal() << "\n\nUnknown exception reached the top of main. \n" << Log::Flush;
+        Log::ErrorFatal() << "Unknown exception reached the top of main." << Log::Flush;
         return -7;
     }
 

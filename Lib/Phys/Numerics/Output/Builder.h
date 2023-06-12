@@ -31,7 +31,7 @@ namespace Numerics {
                                                                "Simulation steps between visual monitor "
                                                                "updates call.");
 
-            explicit Builder(String generalDescription = "Simulation output structure");
+            explicit Builder(String generalDescription = "Output System Builder,the builder that plugs output channels (Plugs) to the output socket of the Integrator Program");
 
             // void buildCommon(OutputManager &outputManager);
             static void addConsoleMonitor(OutputManager &outputManager, int nSteps);

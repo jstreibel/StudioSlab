@@ -10,6 +10,7 @@ namespace Numerics {
 		static Allocator *mySingleInstance;
 
 	protected:
+
 		const String name;
 
 		Allocator(String name);

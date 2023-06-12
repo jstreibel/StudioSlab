@@ -2,7 +2,7 @@
 // Created by joao on 10/8/21.
 //
 
-#include "SimulationsAppR2ToR.h"
+#include "R2toR App.h"
 #include "Base/Controller/Interface/InterfaceSelector.h"
 #include "Phys/Numerics/Program/Integrator.h"
 #include "Mappings/R2toR/Model/FieldState.h"
@@ -14,12 +14,14 @@
 R2toR::App::Simulations::Simulations(int argc, const char **argv, Base::SimulationBuilder::Ptr simBuilder)
         : AppBase(argc, argv), builder(simBuilder)
 {
+    // Allocator precisa ser registrado aqui, para montar esquema de opções de linha de comando pro usuário
     builder->registerAllocator();
 
     parseCLArgs();
 }
 
 auto R2toR::App::Simulations::run() -> int {
+
     auto boundaryConditions = builder->getBoundary();
     auto output             = builder->buildOutputManager();
 

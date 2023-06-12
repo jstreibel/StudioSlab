@@ -29,7 +29,7 @@ namespace R2toR {
 
         Real diff(int n, Real2D x) const override;
 
-        Ptr diff(int n) const override;
+        MyBase::Ptr diff(int n) const override;
 
     public:
         virtual FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const = 0;

@@ -126,7 +126,7 @@ set ( R2TOR_SOURCES
 		# R2toR/View/OutputShockwaveZeros.cpp
 		R2toR/View/OutputStructureBuilderR2ToR.cpp
 
-		R2toR/App/SimulationsAppR2ToR.cpp
+		"R2toR/App/R2toR App.cpp"
 
 		RtoR2/StraightLine.cpp
 
