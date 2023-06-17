@@ -1,0 +1,10 @@
+
+name = "Fields"
+#CairoMakie = "13f3f980-e62b-5c42-98c6-ff1f3baf88f0"
+#DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+#LoopVectorization = "bdcacae8-1622-11e9-2a5c-532679323890"
+
+CairoMakie = "0.19"
+DifferentialEquations = "7.7"
+LoopVectorization = "0.12"
+CUDA = "4.3"
