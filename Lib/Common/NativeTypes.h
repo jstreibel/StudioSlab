@@ -24,7 +24,7 @@ typedef FLOAT32 floatt;
 #else
 typedef FLOAT64 floatt;
 #ifdef __CUDACC__
-#pragma message "Using FP64 (nvcc)"
+// #pragma message "Using FP64 (nvcc)"
 #endif
 #endif
 

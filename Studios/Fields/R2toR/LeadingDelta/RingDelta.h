@@ -15,7 +15,7 @@
 namespace R2toR {
     namespace LeadingDelta {
 
-
+        typedef Base::ArbitraryFunction<Real2D, Real> ArbFunc;
 
         class RingDelta : public Function {
         protected:
@@ -41,6 +41,7 @@ namespace R2toR {
             RingDelta(Real eps, Real a, Real dt);
             auto operator()(Real2D x) const -> Real override;
 
+            bool renderToDiscreteFunction(ArbFunc *toFunc) const override;
         };
 
     }

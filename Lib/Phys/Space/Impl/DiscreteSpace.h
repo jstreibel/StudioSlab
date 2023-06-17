@@ -42,8 +42,10 @@ public:
     DiscreteSpaceCPU *hostCopy(PosInt maxResolution) const;
 
     PosInt getTotalDiscreteSites() const;
-    const VecFloat &getHostData(bool syncWithServer=false) const;
-    VecFloat& getHostData(bool syncWithServer=false);
+    auto getHostData(bool syncWithServer=false) const -> const VecFloat&;
+    auto getHostData(bool syncWithServer=false)       ->       VecFloat&;
+    virtual auto getDeviceData()                        const -> const DeviceVector& { throw "trying to access device data on host Space"; };
+    virtual auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };
 
     const DimensionMetaData& getDim() const { return dim; }
     const VecFloat& getX() const;

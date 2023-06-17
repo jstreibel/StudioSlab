@@ -3,7 +3,7 @@
 //
 
 #include "RingDelta.h"
-
+#include "Mappings/R2toR/Model/R2ToRFunctionArbitraryGPU.h"
 
 namespace R2toR {
     namespace LeadingDelta {
@@ -27,7 +27,10 @@ namespace R2toR {
 
             return deltaTri(x.norm()-radius, eps);
         }
+        bool R2toR::LeadingDelta::RingDelta::renderToDiscreteFunction(Base::ArbitraryFunction<Real2D, Real> *toFunc) const {
+            // DeviceVector toRender = toFunc->getSpace().getDeviceData();
 
+            return true;
+        }
     }
 }
-

@@ -18,10 +18,14 @@ namespace R2toR {
     };
 
     class FunctionArbitrary : public Base::ArbitraryFunction<Real2D,Real> {
-    //EXPOSE_BASE(Function)
-        typedef Base::ArbitraryFunction <Real2D, Real> FunctionArbitraryBase;
+    protected:
+        const PosInt N;
+        const PosInt M;
+        const Real xMin, xMax, yMin, yMax, h;
 
     public:
+        typedef Base::ArbitraryFunction <Real2D, Real> FunctionArbitraryBase;
+
         FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
 
         Real operator()(Real2D x) const override;
@@ -31,7 +35,6 @@ namespace R2toR {
 
         MyBase::Ptr diff(int n) const override;
 
-    public:
         virtual FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const = 0;
         virtual Real At(PosInt n, PosInt m) const = 0;
         virtual Real &At(PosInt n, PosInt m) = 0;
@@ -41,10 +44,6 @@ namespace R2toR {
 
         Domain getDomain() const;
 
-    protected:
-        const PosInt N;
-        const PosInt M;
-        const Real xMin, xMax, yMin, yMax, h;
     };
 }
 

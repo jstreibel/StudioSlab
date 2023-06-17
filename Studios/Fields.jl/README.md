@@ -1,6 +1,6 @@
-# Compactons.jl
+# Fields.jl
 
-Simulations for interacting compactons in scalar field theories with non-analytical (V-shaped) potentials.
+Simulations for 2+2 scalar field theory with non-analytical (V-shaped) potential.
 
 ## Prequisites
 

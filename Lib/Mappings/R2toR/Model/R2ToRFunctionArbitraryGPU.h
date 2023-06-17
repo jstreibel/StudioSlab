@@ -11,8 +11,12 @@
 namespace R2toR {
 
     class FunctionArbitraryGPU : public R2toR::FunctionArbitrary {
+        FunctionArbitraryGPU *helper= nullptr;
+
     public:
         FunctionArbitraryGPU(PosInt N, Real sMin, Real h);
+
+        ~FunctionArbitraryGPU();
 
         FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const override;
 

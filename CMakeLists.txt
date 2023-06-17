@@ -11,7 +11,27 @@ include_directories(Lib /usr/include/vtk)
 link_directories(Build/lib)
 
 
+option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
+
+if( STUDIOSLAB_CUDA_SUPPORT )
+	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
+	set( CMAKE_CUDA_ARCHITECTURES 61 )
+
+	enable_language( CUDA )
+	find_package(CUDA)
+
+	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
+
+	include_directories(/opt/cuda/include)
+
+	message(STATUS "StudioSlab CUDA support is ENABLED."  )
+else()
+	add_compile_definitions(USE_CUDA=false)
+
+	message(STATUS "StudioSlab CUDA support is DISABLED")
+endif()
+
 
 if( STUDIOSLAB_USE_SINGLE_PRECISION )
 	message(NOTICE "-- StudioSlab is using FP32")

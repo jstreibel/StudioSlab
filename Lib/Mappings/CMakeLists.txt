@@ -143,7 +143,7 @@ set ( MAPS_LINKS
 		Slab-Phys
 		)
 
-# |R |--> |R
+# ℝ ↦ ℝ
 
 set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
 
@@ -175,7 +175,7 @@ set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 
-# |R² |--> |R
+# ℝ² ↦ ℝ
 
 set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )

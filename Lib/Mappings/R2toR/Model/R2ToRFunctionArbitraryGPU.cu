@@ -18,6 +18,10 @@ FunctionArbitraryGPU::FunctionArbitraryGPU(PosInt N, Real sMin, Real h)
 
 }
 
+FunctionArbitraryGPU::~FunctionArbitraryGPU() {
+    if(helper != nullptr) delete helper;
+}
+
 R2toR::FunctionArbitrary &R2toR::FunctionArbitraryGPU::Laplacian(R2toR::FunctionArbitrary &outFunc) const {
     // assert(getSpace().isCompatible(outFunc.getSpace()))
 
@@ -143,32 +147,39 @@ Base::ArbitraryFunction<Real2D, Real> &R2toR::FunctionArbitraryGPU::Multiply(flo
 
 Base::ArbitraryFunction<Real2D, Real> &
 FunctionArbitraryGPU::operator+=(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
-    auto &space = getSpace();
 
-    auto &XHost = space.getHostData(true);
 
-    //auto dFunc = func.renderToDiscreteFunction({N});
+    if(helper==nullptr) helper = new FunctionArbitraryGPU(N, xMin, h);
 
-    const floatt Lx = xMax - xMin;
-    const floatt Ly = yMax - yMin;
-    for (PosInt n = 0; n < N; n++) {
-        for (PosInt m = 0; m < M; m++) {
-            const floatt x = Lx * n / (N - 1) + xMin;
-            const floatt y = Ly * m / (M - 1) + yMin;
+    bool renderingOk = func.renderToDiscreteFunction(helper);
+    if(renderingOk) this->Add(*helper);
+    else {
+        auto &space = getSpace();
+        auto &XHost = space.getHostData(true);
 
-            const Real2D r = {x, y};
+        const floatt Lx = xMax - xMin;
+        const floatt Ly = yMax - yMin;
 
-            if(!func.domainContainsPoint(r))
-                continue;
+        for (PosInt n = 0; n < N; n++) {
+            for (PosInt m = 0; m < M; m++) {
+                const floatt x = Lx * n / (N - 1) + xMin;
+                const floatt y = Ly * m / (M - 1) + yMin;
 
-            XHost[n+m*N] += func(r);
+                const Real2D r = {x, y};
+
+                if (!func.domainContainsPoint(r))
+                    continue;
+
+                XHost[n + m * N] += func(r);
+            }
         }
+
+        space.upload();
     }
 
-    space.upload();
-
     return *this;
-
-
-    return ArbitraryFunction::operator+=(func);
 }
+
+
+
+

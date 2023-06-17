@@ -19,7 +19,7 @@ namespace Base {
 
     public:
         typedef Function<PosSpaceType, TargetSpaceType> MyBase;
-        typename std::shared_ptr<ArbitraryFunction<PosSpaceType,TargetSpaceType>> Ptr;
+        typedef std::shared_ptr<ArbitraryFunction<PosSpaceType,TargetSpaceType>> Ptr;
 
         ArbitraryFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true) {
             switch(dev){

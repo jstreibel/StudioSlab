@@ -101,8 +101,8 @@ namespace Base {
             throw "Not implemented.";
         };
 
-        virtual std::shared_ptr<ArbitraryFunction<InputCategory, OutputCategory>>
-        renderToDiscreteFunction(RenderingOptions options) const {
+        virtual bool
+        renderToDiscreteFunction(ArbitraryFunction<InputCategory, OutputCategory> *toFunc) const {
             throw String("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
         };
 
