@@ -1,8 +1,6 @@
 using DifferentialEquations, CUDA
 using Fields
 
-include("src/laplacian.jl")
-
 
 # Parameters
 L = 2;
@@ -12,6 +10,7 @@ tmax = 1.125;
 dx = L/(N-1);
 
 x = 0.0:dx:L;
+t = 0.0:dx/10:tmax
 x₀ = L/2;
 
 
@@ -24,28 +23,8 @@ u₀ = CuArray(uₕₒₛₜ);
 ∇²ϕ  = CuArray(zero(x));
 
 
-# Equation
-function fieldeq!(uₜ, u, (N, dx, ∇²ϕ), t)
-     # φ  = ϕₜ
-     # φₜ = ∇²ϕ - sign(ϕ)
-     
-     ϕ  = @views u[1:N]
-     ϕₜ = @views u[N+1:2N]
-
-     compute_laplacian!(∇²ϕ, ϕ, dx, N)
-
-     φ  = ϕₜ
-     φₜ = ∇²ϕ - sign.(ϕ)
-
-     uₜ[1:N] = φ
-     uₜ[N+1:2N] = φₜ
- 
-     nothing
-end
-
-
 # Problem
-prob = ODEProblem(fieldeq!, u₀, (0.0, tmax), (N, dx, ∇²ϕ))
+prob = ODEProblem(signumGordon!, u₀, (0.0, tmax), (N, dx, ∇²ϕ))
 
 
 # Solve

@@ -1,21 +1,24 @@
 import CUDA
 
-export fieldeq!, gethamiltonian, getenergy
+export signumGordon!, gethamiltonian, getenergy
 
-include("laplacian.jl")
+include("./Laplacians.jl")
 
-function ∇²(ϕ, dx, ∇²ϕ)
-    for i in 2:length(x)-1
-        ∇²ϕ[i] = (ϕ[i+1] + ϕ[i-1] - 2ϕ[i]) / dx^2
-    end
-end
 
-function fieldeq!(φₜₜ, φₜ, φ, (N, dx), t)
-    # ∇².(φ, dx, @views ∇²φ)
+function signumGordon!(uₜ, u, (N, dx, ∇²ϕ), t)    
+    ϕ  = @views u[1:N]
+    ϕₜ = @views u[N+1:2N]
 
-    # φₜₜ = ∇²φ - sign.(φ)
-    
-    # φₜₜ = .- sign.(φ)
+    compute_∇²_1d!(∇²ϕ, ϕ, dx)
+
+    # Eq. system
+    # φ ≡ ϕₜ
+    φ  = ϕₜ
+    φₜ = ∇²ϕ - sign.(ϕ)
+
+    # Output
+    uₜ[1:N] = φ
+    uₜ[N+1:2N] = φₜ
 
     nothing
 end
