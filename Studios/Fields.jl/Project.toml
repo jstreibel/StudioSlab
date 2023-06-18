@@ -2,12 +2,14 @@ name = "Fields"
 authors = ["Joao Saldanha Streibel <jstreibel@gmail.com>"]
 
 [deps]
+Blink = "ad839575-38b3-5650-b840-f874b8c74a25"
 CUDA = "052768ef-5323-5732-b1bb-66c8b64840ba"
-DiffEqOperators = "9fdde737-9c7f-55bf-ade8-46b3f136cc48"
+Cthulhu = "f68482b8-f384-11e8-15f7-abe071a5a75f"
 DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
 GR = "28b8d3ca-fb5f-59d9-8090-bfdbd6d07a71"
-LoopVectorization = "bdcacae8-1622-11e9-2a5c-532679323890"
-Revise = "295af30f-e4ad-537b-8983-00126c2a3abe"
+Interact = "c601a237-2ae4-5e1e-952c-7a85b0c7eef1"
+PlotlyJS = "f0f68f2c-4968-5e81-91da-67840de0976a"
+WebIO = "0f1e0344-ec1d-5b48-a673-e5cf874b6c29"
 
 [extras]
 CPUSummary = "2a0fbf3d-bb9c-48f3-b0a9-814d99fd7ab9"

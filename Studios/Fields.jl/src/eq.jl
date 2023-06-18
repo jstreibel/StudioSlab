@@ -2,10 +2,8 @@ import CUDA
 
 export signumGordon!, gethamiltonian, getenergy
 
-include("./Laplacians.jl")
 
-
-function signumGordon!(uₜ, u, (N, dx, ∇²ϕ), t)    
+function signumGordon!(uₜ, u, (N, dx, ∇²ϕ), t)
     ϕ  = @views u[1:N]
     ϕₜ = @views u[N+1:2N]
 
