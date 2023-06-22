@@ -81,7 +81,7 @@ namespace Base {
         ArbitraryFunctionType &getDPhiDt() { return *dPhiDt; }
         ArbitraryFunctionType &getDPhiDt() const { return *dPhiDt; }
 
-        void outputPhi(std::ostream &out, String separator) const override {
+        void outputPhi(OStream &out, String separator) const override {
             DiscreteSpace &space = phi->getSpace();
 
             const PosInt N = space.getTotalDiscreteSites();
@@ -91,7 +91,7 @@ namespace Base {
                 out << vec[n] << separator;
         }
 
-        void outputdPhiDt(std::ostream &out, String separator) const override {
+        void outputdPhiDt(OStream &out, String separator) const override {
             DiscreteSpace &space = dPhiDt->getSpace();
             const PosInt N = space.getTotalDiscreteSites();
             const VecFloat &vec = space.getHostData(true);

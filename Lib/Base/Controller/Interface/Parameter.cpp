@@ -34,13 +34,13 @@ bool Parameter::operator==(String str) const {
 }
 
 
-std::ostream & operator << (std::ostream &out, const Parameter &b)
+OStream & operator << (OStream &out, const Parameter &b)
 {
     out << b.valueToString();
     return out;
 }
 
-std::ostream & operator << (std::ostream &out, const Parameter *b)
+OStream & operator << (OStream &out, const Parameter *b)
 {
     out << b->valueToString();
     return out;

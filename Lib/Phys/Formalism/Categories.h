@@ -49,7 +49,7 @@ public:
     }
 };
 
-std::ostream& operator<< (std::ostream& stream, const Real2D& x);
+OStream& operator<< (OStream& stream, const Real2D& x);
 
 class Real3D : public Category{
 public:

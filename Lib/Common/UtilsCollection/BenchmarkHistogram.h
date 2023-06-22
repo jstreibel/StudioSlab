@@ -26,8 +26,8 @@ public:
 
     auto getAverage() const -> boost::timer::nanosecond_type;
 
-    void printHistogram(std::ostream &out = std::cout) const;
-    friend std::ostream& operator<<(std::ostream& os, const BenchmarkHistogram& hist);
+    void printHistogram(OStream &out = std::cout) const;
+    friend OStream& operator<<(OStream& os, const BenchmarkHistogram& hist);
 
 private:
     bool firstMeasure = true;

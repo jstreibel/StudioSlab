@@ -101,7 +101,7 @@ auto Log::FlushAll() -> void {
     *Log::GetSingleton().mainStream << Log::Flush;
 }
 
-std::ostream &operator<<(std::ostream &os, const Log::FlushClass &flush) {
+OStream &operator<<(OStream &os, const Log::FlushClass &flush) {
     os.flush();
     return os;
 }

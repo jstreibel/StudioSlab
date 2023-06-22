@@ -59,7 +59,7 @@ auto BenchmarkHistogram::getAverage() const -> boost::timer::nanosecond_type {
     return count > 0 ? sum / count : 0;
 }
 
-void BenchmarkHistogram::printHistogram(std::ostream &out) const {
+void BenchmarkHistogram::printHistogram(OStream &out) const {
     if(0) {
         int C = C0;
         for (auto val : histogram) {
@@ -74,7 +74,7 @@ void BenchmarkHistogram::printHistogram(std::ostream &out) const {
     }
 }
 
-std::ostream &operator<<(std::ostream &os, const BenchmarkHistogram &hist) {
+OStream &operator<<(OStream &os, const BenchmarkHistogram &hist) {
 
     hist.printHistogram(os);
 

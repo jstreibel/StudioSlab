@@ -5,9 +5,7 @@
 #ifndef FIELDS_BYTEDATA_H
 #define FIELDS_BYTEDATA_H
 
-
-#include <vector>
-#include <ostream>
+#include "Common/Types.h"
 
 typedef std::vector<char> ByteData;
 
@@ -21,6 +19,6 @@ union ByteDataConvertHelperUnion {
 
 typedef std::vector<char> ByteData;
 
-auto operator<< (std::ostream& stream, const ByteData &byteData) -> std::ostream&;
+auto operator<< (OStream& stream, const ByteData &byteData) -> OStream&;
 
 #endif //FIELDS_BYTEDATA_H

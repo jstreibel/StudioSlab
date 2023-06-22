@@ -5,6 +5,7 @@
 #ifndef V_SHAPE_STDLIBINCLUDE_H
 #define V_SHAPE_STDLIBINCLUDE_H
 
+#include "Workaround/ABIDef.h"
 
 #include <cstdarg>
 #include <cstdio>

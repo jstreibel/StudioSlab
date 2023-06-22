@@ -4,7 +4,7 @@
 
 #include "ByteData.h"
 
-auto operator<< (std::ostream& stream, const ByteData &byteData) -> std::ostream&{
+auto operator<< (OStream& stream, const ByteData &byteData) -> OStream&{
     for(auto c : byteData) stream << c;
 
     return stream;

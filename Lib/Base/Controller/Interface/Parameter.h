@@ -39,7 +39,7 @@ public:
 
 };
 
-std::ostream & operator << (std::ostream &out, const Parameter &b);
-std::ostream & operator << (std::ostream &out, const Parameter *b);
+OStream & operator << (OStream &out, const Parameter &b);
+OStream & operator << (OStream &out, const Parameter *b);
 
 #endif //FIELDS_PARAMETERBASE_H

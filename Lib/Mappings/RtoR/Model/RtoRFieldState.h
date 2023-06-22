@@ -17,7 +17,7 @@ namespace RtoR {
         FieldState(ArbitraryFunction *phi, ArbitraryFunction *dPhiDt) : Base::FieldState<ArbitraryFunction>(phi, dPhiDt) {}
 
     public:
-        void outputPhi(std::ostream &out, String separator) const override {
+        void outputPhi(OStream &out, String separator) const override {
             const VecFloat &vPhi = getPhi().getSpace().getX();
             const PosInt N = vPhi.size();
 
@@ -25,7 +25,7 @@ namespace RtoR {
                 out << vPhi[n] << separator;
         }
 
-        void outputdPhiDt(std::ostream &out, String separator) const override {
+        void outputdPhiDt(OStream &out, String separator) const override {
             const VecFloat &vDPhiDt = getDPhiDt().getSpace().getX();
             const PosInt N = vDPhiDt.size();
 

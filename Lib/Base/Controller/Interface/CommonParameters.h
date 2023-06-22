@@ -1,13 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-//#include <chrono>
 #include "Parameter.h"
-// #include "ParameterUtils.h"
-
-//#include "Core/Util/Workaround/STDLibInclude.h"
-//#include "Controller/Console/CommandLineInterfaceDefinitions.h"
-
 
 // We extend the std namespace to make sure to_string method also works (the way we want) with strings and bools.
 namespace std{

@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_NATIVEREALNUMBER_H
 #define STUDIOSLAB_NATIVEREALNUMBER_H
 
+#include "Workaround/ABIDef.h"
+
 #include <memory>
 #include <cstdint>
 #include <assert.h>

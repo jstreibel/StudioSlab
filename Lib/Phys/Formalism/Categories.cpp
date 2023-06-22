@@ -4,6 +4,6 @@
 
 #include "Categories.h"
 
-std::ostream& operator<< (std::ostream& stream, const Real2D& x) {
+OStream& operator<< (OStream& stream, const Real2D& x) {
     return stream << "(" << x.x << "," << x.y << ")";
 }

@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_TYPES_H
 #define STUDIOSLAB_TYPES_H
 
+#include "Workaround/ABIDef.h"
+
 #include "DeviceConfig.h"
 #include "NativeTypes.h"
 #include "STDLibInclude.h"
@@ -28,11 +30,11 @@ struct Pair {
 typedef Pair<int, int>      IntPair;
 typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> DiscreteSpacePair;
 
+template<class T>
+typename std::vector<T>     Vector;
 typedef std::ostream        OStream;
 typedef std::string         String;
 typedef std::stringstream   StringStream;
 typedef std::vector<String> StrVector;
-
-
 
 #endif //STUDIOSLAB_TYPES_H

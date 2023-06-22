@@ -6,10 +6,6 @@
 #include "CommonParameters.h"
 #include "Common/Log/Log.h"
 
-#include <utility>
-#include <typeinfo>
-
-
 auto std::to_string(String str) -> String { return String("\"") + str + String("\""); }
 auto std::to_string(bool val) -> String {        return val ? "True" : "False"; }
 
@@ -28,12 +24,12 @@ auto ParameterTemplate<Type>::valueToString() const -> std::string {
 
 template<class Type>
 auto ParameterTemplate<Type>::getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & {
-    return base(commandLineArgName.c_str(), po::value<Type>()->default_value(val), description.c_str());
+    return base(commandLineArgName.c_str(), CLOptions::value<Type>()->default_value(val), description.c_str());
 }
 
 template<>
 auto ParameterTemplate<bool>::getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & {
-    return base(commandLineArgName.c_str(), po::bool_switch(), description.c_str());
+    return base(commandLineArgName.c_str(), CLOptions::bool_switch(), description.c_str());
 }
 
 template<class Type>

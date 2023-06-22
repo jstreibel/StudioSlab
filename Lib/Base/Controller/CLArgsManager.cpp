@@ -3,8 +3,8 @@
 //
 
 #include "CLArgsManager.h"
-#include "Base/Controller/CLDefs.h"
-#include "Base/Controller/Interface/InterfaceManager.h"
+#include "CLDefs.h"
+#include "Interface/InterfaceManager.h"
 
 CLArgsManager* CLArgsManager::singleton = nullptr;
 
@@ -21,11 +21,11 @@ void CLArgsManager::ShowHelp() {
 }
 
 void CLArgsManager::Parse(int argc, const char **argv) {
-    po::options_description general("Get help");
+    CLOptionsDescription general("Get help");
 
     general.add_options()("help", "Help.");
 
-    po::options_description allOptions;
+    CLOptionsDescription allOptions;
     allOptions.add(general);
 
     auto interfaces = InterfaceManager::getInstance().getInterfaces();
@@ -33,7 +33,7 @@ void CLArgsManager::Parse(int argc, const char **argv) {
         allOptions.add(BuildOptionsDescription(*interface));
 
     CLVariablesMap vm;
-    boost::program_options::store(po::parse_command_line(argc, argv, allOptions), vm);
+    CLOptions::store(CLOptions::parse_command_line(argc, argv, allOptions), vm);
 
     InterfaceManager::getInstance().feedInterfaces(vm);
 
@@ -48,8 +48,8 @@ auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface) -> CLO
     auto name = anInterface.getName() + (desc!=""? String(" (")+desc+")" : "") ;
     auto paramMap = anInterface.getParameters();
 
-    po::options_description optDesc(name);
-    po::options_description_easy_init options = optDesc.add_options();
+    CLOptionsDescription optDesc(name);
+    CLODEasyInit options = optDesc.add_options();
 
     for(const auto p : paramMap){
         const String &paramName = p->getCommandLineArgName();

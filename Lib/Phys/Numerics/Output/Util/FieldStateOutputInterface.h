@@ -21,11 +21,11 @@ public:
         PhiAndDPhiDt
     } fDataOutType;
 
-    virtual void outputPhi(std::ostream &out, String separator) const { throw "FStateOutputInterface::outputPhi(...) Not implemented."; }
-    virtual void outputdPhiDt(std::ostream &out, String separator) const { throw "FStateOutputInterface::outputDPhiDt(...) not implemented."; }
+    virtual void outputPhi(OStream &out, String separator) const { throw "FStateOutputInterface::outputPhi(...) Not implemented."; }
+    virtual void outputdPhiDt(OStream &out, String separator) const { throw "FStateOutputInterface::outputDPhiDt(...) not implemented."; }
     virtual FStateOutputInterface* Copy(PosInt N) const = 0;
 
-    friend std::ostream& operator<< (std::ostream& stream, const FStateOutputInterface& oStreamReady) {
+    friend OStream& operator<< (OStream& stream, const FStateOutputInterface& oStreamReady) {
         String sep = format == SpaceSeparated ? " " : ", ";
 
         if(format == PythonDictionaryEntry) stream << "\"phi\": (";

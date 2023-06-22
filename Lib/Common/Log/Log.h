@@ -97,7 +97,7 @@ public:
     class FlushClass { public: void operator()() const; };
     friend FlushClass;
     static const FlushClass Flush;
-    friend std::ostream& operator<<(std::ostream& os, const FlushClass& flush);
+    friend OStream& operator<<(OStream& os, const FlushClass& flush);
 
     static auto FlushAll() -> void;
 
