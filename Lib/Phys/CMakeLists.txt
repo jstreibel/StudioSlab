@@ -1,5 +1,3 @@
-#TODO MAKE POSSIBLE TO COMPILE WITHOUT GPU ( RLY? IN 2021? )
-
 
 set ( TOOLSET_SOURCES
 		Numerics/Allocator.cpp
@@ -108,6 +106,7 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Base-Controller
 		)
 
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

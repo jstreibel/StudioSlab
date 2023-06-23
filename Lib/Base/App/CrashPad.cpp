@@ -8,7 +8,7 @@
 #include <Common/STDLibInclude.h>
 #include <Base/Controller/CLArgsManager.h>
 
-#include <boost/program_options.hpp>
+#include <cxxopts.hpp>
 
 
 void showHelp(AppBase &prog)
@@ -29,41 +29,46 @@ int SafetyNet::jump(AppBase &prog){
         return -1;
     }
     catch (String &e) {
-        Log::ErrorFatal() << "Exception reached the top of main: " << "\033[91m\033[1m"
+        Log::ErrorFatal() << "Exception: " << "\033[91m\033[1m"
         << e << "\033[0m" << ", application will now exit" << Log::Flush;
         return -2;
     }
-    catch (boost::wrapexcept<boost::program_options::unknown_option> &e) {
-        Log::ErrorFatal() << "Unknown option \"\\033[91m\\033[1m\"\"" << e.get_option_name() << "\" error: " << e.what()
-                  << "\033[0m. \n" << Log::Flush;
+    catch (cxxopts::exceptions::invalid_option_syntax e) {
+        Log::ErrorFatal() << "Invalid option syntax: \"\\033[91m\\033[1m" << e.what()
+                          << "\033[0m\"." << Log::Flush;
+        return -3;
     }
-    catch (boost::program_options::error &e) {
+    catch (cxxopts::exceptions::no_such_option &e) {
+        Log::ErrorFatal() << "No such option: \"\\033[91m\\033[1m" << e.what()
+                          << "\033[0m\"." << Log::Flush;
+        return -4;
+    }
+    catch (cxxopts::exceptions::incorrect_argument_type &e) {
+        Log::ErrorFatal() << "Incorrect argument type: \"\\033[91m\\033[1m" << e.what()
+                          << "\033[0m\"." << Log::Flush;
+        return -5;
+    }
+    catch (cxxopts::exceptions::exception &e) {
         showHelp(prog);
         Log::ErrorFatal() << "Error parsing command line: \"" << e.what() << "\" " << Log::Flush;
 
-        return -3;
-    }
-    catch (boost::bad_any_cast &e) {
-        showHelp(prog);
-        Log::ErrorFatal() << "Exception boost::bad_any_cast: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m." << Log::Flush;
-
-        return -4;
+        return -6;
     }
     catch (std::bad_cast &e) {
         showHelp(prog);
         Log::ErrorFatal() << "Exception std::bad_cast: " << "\033[91m\033[1m"
         << e.what() << "\033[0m." << Log::Flush;
-        return -5;
+
+        return -7;
     }
     catch (std::exception &e) {
         Log::ErrorFatal() << "Exception std::exceptionn: " << "\033[91m\033[1m"
         << e.what() << "\033[0m, application will now exit." << Log::Flush;
-        return -6;
+        return -8;
     }
     catch (...) {
         Log::ErrorFatal() << "Unknown exception reached the top of main." << Log::Flush;
-        return -7;
+        return -9;
     }
 
     throw "Dafuk...";

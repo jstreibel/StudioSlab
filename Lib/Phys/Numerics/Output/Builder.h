@@ -17,17 +17,17 @@ namespace Numerics {
 
         class Builder : public InterfaceOwner {
         protected:
-            BoolParameter::Ptr takeSnapshot                         = BoolParameter::New(false, "snapshot,s", "Take a snapshot of simulation at the end.");
-            RealParameter::Ptr snapshotTime                         = RealParameter::New(-1.0, "snapshotTime,t",
+            BoolParameter::Ptr takeSnapshot                         = BoolParameter::New(false, "s,snapshot", "Take a snapshot of simulation at the end.");
+            RealParameter::Ptr snapshotTime                         = RealParameter::New(-1.0, "ss,snapshotTime",
                                           "Force snapshot to be taken at some time prior to end (after will result in no output.");
 
-            BoolParameter::Ptr noHistoryToFile                      = BoolParameter::New(false, "no_history_to_file,o", "Don't output history to file.");
+            BoolParameter::Ptr noHistoryToFile                      = BoolParameter::New(false, "o,no_history_to_file", "Don't output history to file.");
             IntegerParameter::Ptr outputResolution                  = IntegerParameter::New(512, "outN",
                                                  "Output resolution of space dimension in history output.");
-            BoolParameter::Ptr VisualMonitor                        = BoolParameter::New(false, "visual_monitor,g", "Monitor simulation visually.");
-            BoolParameter::Ptr VisualMonitor_startPaused            = BoolParameter::New(false, "visual_monitor_paused,p", "Start visual monitored "
+            BoolParameter::Ptr VisualMonitor                        = BoolParameter::New(false, "g,visual_monitor", "Monitor simulation visually.");
+            BoolParameter::Ptr VisualMonitor_startPaused            = BoolParameter::New(false, "p,visual_monitor_paused", "Start visual monitored "
                                                                              "simulation paused.");
-            IntegerParameter::Ptr OpenGLMonitor_stepsPerIdleCall    = IntegerParameter::New(1, "steps_per_idle_call,s",
+            IntegerParameter::Ptr OpenGLMonitor_stepsPerIdleCall    = IntegerParameter::New(1, "s,steps_per_idle_call",
                                                                "Simulation steps between visual monitor "
                                                                "updates call.");
 

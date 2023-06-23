@@ -17,7 +17,7 @@ public:
     static void ShowHelp();
     static void Parse(int argc, const char **argv);
 
-    static auto BuildOptionsDescription(const Interface &anInterface) -> CLOptionsDescription;
+    static auto BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void;
 
 };
 

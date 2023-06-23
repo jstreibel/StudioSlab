@@ -8,10 +8,10 @@ set ( SlabLibs
 		Slab-Base-Graphics
 
 		Slab-Phys
-
-		#Slab-Studios-Graphics
-		#Slab-Studios-Tools
 		)
+
+
+include_directories(../Lib)
 
 
 # ************************************************************************************************************
@@ -78,7 +78,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			Fields/R2toR/LeadingDelta/DrivenEquation.cpp
 			Fields/R2toR/LeadingDelta/Allocator.cpp
 			Fields/R2toR/LeadingDelta/Monitor.cpp
-			#Fields/R2toR/LeadingDelta/RingDelta.cu
+			Fields/R2toR/LeadingDelta/RingDelta.cu
 			)
 	target_link_libraries ( Fields-R2toR
 			Slab-Base-Controller
@@ -88,6 +88,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			Slab-Fields-Maps-R2toR_GPU
 			)
 
+	set_property(TARGET Fields-R2toR PROPERTY CUDA_STANDARD_REQUIRED 20)
 	set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 
 	message(NOTICE "Added executable Fields-R2toR")

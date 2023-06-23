@@ -19,7 +19,7 @@ class Log : public InterfaceOwner
 
     BoolParameter::Ptr logDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");
     BoolParameter::Ptr logNotes = BoolParameter::New(false, "log_notes", "Show note messages.");
-    BoolParameter::Ptr verbose = BoolParameter::New(false, "verbose,vv", "Show note and debug messages.");
+    BoolParameter::Ptr verbose = BoolParameter::New(false, "v,verbose", "Show note and debug messages.");
 
     Log();
 
@@ -35,40 +35,40 @@ class Log : public InterfaceOwner
     Timer timer;
 
 public:
-    constexpr const static String ForegroundBlack   = "\033[0;30m";
-    constexpr const static String ForegroundRed     = "\033[0;31m";
-    constexpr const static String ForegroundGreen   = "\033[0;32m";
-    constexpr const static String ForegroundYellow  = "\033[0;33m";
-    constexpr const static String ForegroundBlue    = "\033[0;34m";
-    constexpr const static String ForegroundMagenta = "\033[0;35m";
-    constexpr const static String ForegroundCyan    = "\033[0;36m";
-    constexpr const static String ForegroundWhite   = "\033[0;37m";
+    const static String ForegroundBlack;
+    const static String ForegroundRed;
+    const static String ForegroundGreen;
+    const static String ForegroundYellow;
+    const static String ForegroundBlue;
+    const static String ForegroundMagenta;
+    const static String ForegroundCyan;
+    const static String ForegroundWhite;
 
-    constexpr const static String BackgroundBlack   = "\033[0;40m" ;
-    constexpr const static String BackgroundRed     = "\033[0;41m" ;
-    constexpr const static String BackgroundGreen   = "\033[0;42m" ;
-    constexpr const static String BackgroundYellow  = "\033[0;43m";
-    constexpr const static String BackgroundBlue    = "\033[0;44m" ;
-    constexpr const static String BackgroundMagenta = "\033[0;45m";
-    constexpr const static String BackgroundCyan    = "\033[0;46m" ;
-    constexpr const static String BackgroundWhite   = "\033[0;47m" ;
+    const static String BackgroundBlack;
+    const static String BackgroundRed;
+    const static String BackgroundGreen;
+    const static String BackgroundYellow;
+    const static String BackgroundBlue;
+    const static String BackgroundMagenta;
+    const static String BackgroundCyan;
+    const static String BackgroundWhite;
 
-    constexpr const static String ResetFormatting   = "\033[0m";
+    const static String ResetFormatting;
 
-    constexpr const static String BoldFace          = "\033[1m";
-    constexpr const static String Italic            = "\033[3m"; // Might not work
-    constexpr const static String Underscore        = "\033[4m"; // Might not work
+    const static String BoldFace;
+    const static String Italic;     // Might not work
+    const static String Underscore; // Might not work
 
-    const static String InfoColor;
-    const static String NoteColor;
-    const static String SuccessColor;
-    const static String AttentionColor;
-    const static String CriticalColor;
-    const static String DebugColor;
-    const static String WarningColor;
-    const static String WarningImportantColor;
-    const static String ErrorColor;
-    const static String ErrorFatalColor;
+    const static String InfoFormat;
+    const static String NoteFormat;
+    const static String SuccessFormat;
+    const static String AttentionFormat;
+    const static String CriticalFormat;
+    const static String DebugFormat;
+    const static String WarningFormat;
+    const static String WarningImportantFormat;
+    const static String ErrorFormat;
+    const static String ErrorFatalFormat;
 
     constexpr const static char Return = '\r';
 

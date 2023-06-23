@@ -7,9 +7,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Build/bin)
 
-include_directories(Lib /usr/include/vtk)
 link_directories(Build/lib)
-
 
 option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
@@ -24,6 +22,8 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
 
 	include_directories(/opt/cuda/include)
+
+	add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 
 	message(STATUS "StudioSlab CUDA support is ENABLED."  )
 else()
@@ -43,9 +43,8 @@ endif ()
 
 
 add_subdirectory(Lib/)
-add_subdirectory(Studios)
+add_subdirectory(Studios/)
 
-#add_dependencies(Fields-RtoR Studios Fields-Map-RtoR Fields-Core )
 
 SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fopenmp")
 SET(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fopenmp")

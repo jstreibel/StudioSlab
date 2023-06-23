@@ -42,7 +42,7 @@ namespace R2toR {
 
 
         class Builder : public SimulationBuilder {
-            RealParameter::Ptr      W_0              = RealParameter::New(0.1, "W_0,W",
+            RealParameter::Ptr      W_0              = RealParameter::New(0.1, "W,W_0",
                                                             "The height of corresponding analytic shockwave, "
                                                             "which determines scale of the delta as "
                                                             "C_n=(n-1)/2 W(0) with n=2.");

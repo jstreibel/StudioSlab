@@ -5,7 +5,20 @@
 #ifndef V_SHAPE_COMMANDLINEGENERAL_H
 #define V_SHAPE_COMMANDLINEGENERAL_H
 
-#include "Common/Workaround/ABIDef.h"
+
+#define USE_CXXOPTS
+
+
+#ifdef USE_CXXOPTS
+#include <cxxopts.hpp>
+
+namespace CLOptions = cxxopts;
+using CLVariablesMap = cxxopts::ParseResult;
+using CLOptionsDescription = cxxopts::Options;
+using CLODEasyInit = cxxopts::OptionAdder;
+using VariableValue = cxxopts::OptionValue;
+
+#else
 
 #include <boost/program_options.hpp>
 
@@ -18,6 +31,8 @@ typedef CLOptions::variables_map                 CLVariablesMap;
 typedef CLOptions::options_description           CLOptionsDescription;
 typedef CLOptions::options_description_easy_init CLODEasyInit;
 typedef CLOptions::variable_value                VariableValue;
+
+#endif
 
 #define GET(key, type) (vm[key].as<type>())
 #define GET_FALLBACK(key, type, default) (vm.count(key) ? GET(key, type) : default)

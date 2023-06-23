@@ -7,10 +7,7 @@ find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(GLUT)
 find_package(OpenGL)
 
-include_directories (
-		../FieldMaps
-		..
-)
+include_directories (..)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( CUDA_SOURCES
@@ -133,6 +130,7 @@ set ( R2TOR_SOURCES
 		R2toR/Core/R2toR_Allocator.cpp
 		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
 
+
 set ( MAPS_LINKS
 		Slab-Base-Controller
 		Slab-Base-Backend
@@ -159,6 +157,7 @@ set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
@@ -170,6 +169,7 @@ add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 # the line below is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
 target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
@@ -182,6 +182,7 @@ set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

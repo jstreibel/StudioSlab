@@ -42,8 +42,8 @@ void Interface::addParameter(Parameter::Ptr parameter) {
         throw "Error while inserting parameter in interface.";
     }
 
-    Log::Debug() << "Parameter \"" << parameter->getCommandLineArgName() << "\" registered to interface \""
-                 << getName() << "\".";
+    auto name = String("\"") + parameter->getCommandLineArgName() + "\"";
+    Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName() << "\".";
 }
 
 void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
@@ -97,7 +97,7 @@ void Interface::setup(CLVariablesMap vm) {
         for(auto listener : listeners)
             listener->notifyCLArgsSetupFinished();
 
-    } catch (boost::bad_any_cast &exception) {
+    } catch (cxxopts::exceptions::exception &exception) {
         Log::Error() << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << Log::Flush;
         throw exception;
     }

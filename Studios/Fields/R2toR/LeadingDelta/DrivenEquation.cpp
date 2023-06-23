@@ -20,7 +20,8 @@ namespace R2toR {
                 Log::Error() << "DrivenEquation solver's driving force must be != nullptr." << Log::Flush;
                 throw "Error allocating driven equation solver.";
             }
-            Log::Info() << "Driven equation solver allocated. Driving force '" << drivingForce->myName() << "'." << Log::Flush;
+            Log::Note() << "Driven equation solver allocated. Driving force '"
+                                    << drivingForce->myName() << "'." << Log::Flush;
         }
 
         auto DrivenEquation::dtF(const FieldState &in, FieldState &out, Real t, Real δt) -> FieldState & {

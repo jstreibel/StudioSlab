@@ -19,7 +19,7 @@ public:
 
     Parameter(const String& commandLineArgName, const String& description);
 
-    virtual auto getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & = 0;
+    virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
 
     virtual auto valueToString() const -> String = 0;
 

@@ -23,13 +23,14 @@ auto ParameterTemplate<Type>::valueToString() const -> std::string {
 }
 
 template<class Type>
-auto ParameterTemplate<Type>::getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & {
-    return base(commandLineArgName.c_str(), CLOptions::value<Type>()->default_value(val), description.c_str());
+auto ParameterTemplate<Type>::addToOptionsGroup(CLODEasyInit &add) const -> void {
+    auto value = CLOptions::value<Type>()->default_value(ToString(val));
+    add(commandLineArgName, description, value);
 }
 
 template<>
-auto ParameterTemplate<bool>::getOptionDescription(CLODEasyInit &base) const -> CLODEasyInit & {
-    return base(commandLineArgName.c_str(), CLOptions::bool_switch(), description.c_str());
+auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
+    add(commandLineArgName, description, CLOptions::value<bool>());
 }
 
 template<class Type>
@@ -48,8 +49,8 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
     try {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
-    } catch (boost::bad_any_cast &exception) {
-        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from program_options::variable_value. Type is " + typeid(Type).name();
+    } catch (cxxopts::exceptions::parsing &exception) {
+        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from command line input. Type is " + typeid(Type).name();
         Log::Error() << msg << Log::Flush;
         throw exception;
     }

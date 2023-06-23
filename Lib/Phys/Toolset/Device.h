@@ -15,7 +15,7 @@ class Device : public InterfaceOwner
                                                                          "\t0: CPU \n"
                                                                          "\t1: GPU 0 \n"
                                                                          "\t2: GPU 1 ");
-    IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "threads,n", "Number of threads, in case of CPU usage.");
+    IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "th,threads", "Number of threads, in case of CPU usage.");
 
 public:
     Device();

@@ -26,7 +26,7 @@ public:
     ~ParameterTemplate();
 
     auto valueToString() const -> String override;
-    auto getOptionDescription(CLODEasyInit& base) const -> CLODEasyInit & override;
+    auto addToOptionsGroup(CLODEasyInit& base) const -> void;
 
     void setValueFrom(VariableValue var) override;
 

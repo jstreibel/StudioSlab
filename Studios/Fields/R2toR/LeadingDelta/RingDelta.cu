@@ -1,7 +1,7 @@
 
 
-//#include "RingDelta.h"
-// #include "Mappings/R2toR/Model/R2ToRFunctionArbitraryGPU.h"
+#include "RingDelta.h"
+#include "Mappings/R2toR/Model/R2ToRFunctionArbitraryGPU.h"
 
 
 
