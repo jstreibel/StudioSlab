@@ -13,11 +13,11 @@ DiscreteSpaceCPU::DiscreteSpaceCPU(DimensionMetaData dim, Real h) : DiscreteSpac
 DiscreteSpace &DiscreteSpaceCPU::Add(const DiscreteSpace &func) {
     assert(getTotalDiscreteSites() == func.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
-    auto &fVec = func.getX();
+    auto &fVec = func.getHostData();
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] += fVec[n];
+        data[n] += fVec[n];
 
     return *this;
 }
@@ -25,22 +25,22 @@ DiscreteSpace &DiscreteSpaceCPU::Add(const DiscreteSpace &func) {
 DiscreteSpace &DiscreteSpaceCPU::Subtract(const DiscreteSpace &func) {
     assert(getTotalDiscreteSites() == func.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
-    auto &fVec = func.getX();
+    auto &fVec = func.getHostData();
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] -= fVec[n];
+        data[n] -= fVec[n];
 
     return *this;}
 
 DiscreteSpace &DiscreteSpaceCPU::StoreAddition(const DiscreteSpace &space1, const DiscreteSpace &space2) {
     assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites() && getTotalDiscreteSites() == space2.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
-    auto &f1Vec = space1.getX(), &f2Vec = space2.getX();
+    auto &f1Vec = space1.getHostData(), &f2Vec = space2.getHostData();
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] = f1Vec[n] + f2Vec[n];
+        data[n] = f1Vec[n] + f2Vec[n];
 
     return *this;
 }
@@ -48,11 +48,11 @@ DiscreteSpace &DiscreteSpaceCPU::StoreAddition(const DiscreteSpace &space1, cons
 DiscreteSpace &DiscreteSpaceCPU::StoreSubtraction(const DiscreteSpace &space1, const DiscreteSpace &space2) {
     assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites() && getTotalDiscreteSites() == space2.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
-    auto &f1Vec = space1.getX(), &f2Vec = space2.getX();
+    auto &f1Vec = space1.getHostData(), &f2Vec = space2.getHostData();
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] = f1Vec[n] - f2Vec[n];
+        data[n] = f1Vec[n] - f2Vec[n];
 
     return *this;
 }
@@ -61,14 +61,14 @@ DiscreteSpace &DiscreteSpaceCPU::Multiply(floatt a) {
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] *= a;
+        data[n] *= a;
 
     return *this;
 }
 
 void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
-    VecFloat &X = getX();
-    const VecFloat &fVec = inSpace.getX();
+    VecFloat &X = getHostData();
+    const VecFloat &fVec = inSpace.getHostData();
     const PosInt N = inSpace.getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
@@ -78,11 +78,11 @@ void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
 DiscreteSpace &DiscreteSpaceCPU::StoreMultiplication(const DiscreteSpace &space1, const Real a) {
     assert(getTotalDiscreteSites() == space1.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.
 
-    auto &f1Vec = space1.getX();
+    auto &f1Vec = space1.getHostData();
     auto N = getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
-        X[n] = f1Vec[n] * a;
+        data[n] = f1Vec[n] * a;
 
     return *this;
 }

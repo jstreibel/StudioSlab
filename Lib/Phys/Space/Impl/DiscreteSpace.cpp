@@ -17,7 +17,7 @@ PosInt DimensionMetaData::computeFullDiscreteSize() const {
     return size;
 }
 
-DiscreteSpace::DiscreteSpace(DimensionMetaData dim, Real h) : dim(dim), X(dim.computeFullDiscreteSize()), h(h) {
+DiscreteSpace::DiscreteSpace(DimensionMetaData dim, Real h) : dim(dim), data(dim.computeFullDiscreteSize()), h(h) {
 
 }
 
@@ -34,8 +34,8 @@ DiscreteSpaceCPU *DiscreteSpace::hostCopy(PosInt maxResolution) const {
     DimensionMetaData newDim(N);
     DiscreteSpaceCPU *theCopy = new DiscreteSpaceCPU(newDim, h/r);
 
-    const VecFloat& X = getX();
-    VecFloat &reducedX = theCopy->getX();
+    const VecFloat& X = getHostData();
+    VecFloat &reducedX = theCopy->getHostData();
     if(newDim.getNDim() == 1)
         for(PosInt i = 0; i<dim[0]; i++)
             reducedX[r*i] = X[i];
@@ -55,40 +55,18 @@ DiscreteSpaceCPU *DiscreteSpace::hostCopy(PosInt maxResolution) const {
 }
 
 PosInt DiscreteSpace::getTotalDiscreteSites() const {
-    assert(X.size() == dim.computeFullDiscreteSize());
-    return X.size();
+    assert(data.size() == dim.computeFullDiscreteSize());
+    return data.size();
 }
 
-const VecFloat &DiscreteSpace::getHostData(bool sync) const {
-    if(sync) syncHost();
-
-    return X;
-}
-
-VecFloat &DiscreteSpace::getHostData(bool syncWithServer) {
-    if(syncWithServer) syncHost();
-
-    return X;
-}
 
 void DiscreteSpace::syncHost() const { }
 void DiscreteSpace::upload() { }
 
-const VecFloat &DiscreteSpace::getX() const {
-    const auto doSync = true;
+const VecFloat &DiscreteSpace::getHostData(bool sync) const { if(sync) syncHost(); return data; }
+VecFloat       &DiscreteSpace::getHostData(bool sync)       { if(sync) syncHost(); return data; }
 
-    return getHostData(doSync);
-}
-
-VecFloat &DiscreteSpace::getX() {
-    syncHost();
-
-    return X;
-}
-
-Real DiscreteSpace::geth() const {
-    return h;
-}
+Real DiscreteSpace::geth() const { return h; }
 
 
 

@@ -14,15 +14,15 @@ auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> 
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();
 
-    VecFloat &e = _oEnergyDensityFunc->getSpace().getX();
-    VecFloat &k = _oKinetic->getSpace().getX();
-    VecFloat &grad = _oGradient->getSpace().getX();
-    VecFloat &v = _oPotential->getSpace().getX();
+    VecFloat &e = _oEnergyDensityFunc->getSpace().getHostData();
+    VecFloat &k = _oKinetic->getSpace().getHostData();
+    VecFloat &grad = _oGradient->getSpace().getHostData();
+    VecFloat &v = _oPotential->getSpace().getHostData();
 
     const floatt h = phiSpace.geth();
     const floatt inv2h = .5/h;
-    auto &X = phiSpace.getX();
-    auto &dXdt = ddtPhiSpace.getX();
+    auto &X = phiSpace.getHostData();
+    auto &dXdt = ddtPhiSpace.getHostData();
     const int N = X.size();
     {
         for (int i = 0; i < N; i++) {
@@ -45,7 +45,7 @@ auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> 
 
 auto RtoR::EnergyCalculator::integrateEnergy() -> Real
 {
-    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getX();
+    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
     Real E=0;
 
     for(const auto &e : E_v)
@@ -60,7 +60,7 @@ auto RtoR::EnergyCalculator::integrateEnergy() -> Real
 auto RtoR::EnergyCalculator::integrateEnergy(Real xmin, Real xmax) -> Real {
     auto &func = *_oEnergyDensityFunc;
 
-    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getX();
+    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
     Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
 
     PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
@@ -75,7 +75,7 @@ auto RtoR::EnergyCalculator::integrateEnergy(Real xmin, Real xmax) -> Real {
 }
 
 Real RtoR::EnergyCalculator::integrateKinetic() {
-    VecFloat &K_v = _oKinetic->getSpace().getX();
+    VecFloat &K_v = _oKinetic->getSpace().getHostData();
     Real K=0;
 
     for(const auto &k : K_v)
@@ -86,7 +86,7 @@ Real RtoR::EnergyCalculator::integrateKinetic() {
 }
 
 Real RtoR::EnergyCalculator::integrateGradient() {
-    VecFloat &Grad_v = _oGradient->getSpace().getX();
+    VecFloat &Grad_v = _oGradient->getSpace().getHostData();
     Real Grad=0;
 
     for(const auto &grad : Grad_v)
@@ -97,7 +97,7 @@ Real RtoR::EnergyCalculator::integrateGradient() {
 }
 
 Real RtoR::EnergyCalculator::integratePotential() {
-    VecFloat &Pot_v = _oPotential->getSpace().getX();
+    VecFloat &Pot_v = _oPotential->getSpace().getHostData();
     Real Pot=0;
 
     for(const auto &pot : Pot_v)

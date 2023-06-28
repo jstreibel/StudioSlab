@@ -6,11 +6,11 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include <Studios/Backend/GLUT/GLUTEventListener.h>
-#include <Studios/Graphics/WindowManagement/WindowContainer/WindowPanel.h>
+#include <Base/Backend/Events/EventListener.h>
+#include <Base/Graphics/Window/WindowContainer/WindowPanel.h>
 
 
-class WindowPanelTest : public Base::GLUTEventListener {
+class WindowPanelTest : public Window {
     WindowPanel *panel;
 
 public:

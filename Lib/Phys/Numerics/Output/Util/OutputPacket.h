@@ -8,6 +8,14 @@
 typedef std::unique_ptr<FStateOutputInterface*> FieldDataPtr;
 
 class OutputPacket{
+    const void *fieldData;
+    /*!
+     * This is the field space data. It is not owned by this class, and nobody down the line should worry about this.
+     */
+    DiscreteSpacePair spaceData;
+    size_t currStep;
+    Real t;
+
 public:
     OutputPacket() : spaceData(DiscreteSpacePair(nullptr, nullptr)), currStep(0), t(0) {
     }
@@ -22,10 +30,10 @@ public:
      * @param oi The OutputInfo to copy.
      * @return LHS of equality.
      */
-    OutputPacket &operator=(const OutputPacket &oi){
+    OutputPacket &operator=(const OutputPacket &oi) {
         fieldData = oi.fieldData;
         spaceData = oi.spaceData;
-        currStep = oi.currStep;
+        currStep  = oi.currStep;
         t = oi.t;
 
         return *this;
@@ -40,18 +48,10 @@ public:
      * @return The field state data, of whichever model is being integrated. Note that this pointer should not be
      * disposed of since it is properly owned somewhere upstream.
      */
-    [[nodiscard]] inline DiscreteSpacePair getSpaceData() const {return spaceData;}
-    [[nodiscard]] inline size_t getSteps() const {return currStep;}
-    [[nodiscard]] inline Real getSimTime() const {return t;}
+    inline DiscreteSpacePair getSpaceData() const {return spaceData;}
+    inline size_t getSteps() const {return currStep;}
+    inline Real getSimTime() const {return t;}
 
-private:
-    const void *fieldData;
-    /*!
-     * This is the field space data. It is not owned by this class, and nobody down the line should worry about this.
-     */
-    DiscreteSpacePair spaceData;
-    size_t currStep;
-    Real t;
 };
 
 #endif // OUTPUTINFO_H

@@ -54,7 +54,7 @@ namespace RtoR {
             auto &space = langevinImpulses.getSpace();
             assert(space.getDim().getNDim() == 1);
 
-            auto &X = space.getX();
+            auto &X = space.getHostData();
 
             for (auto &x : X)
                 x = xi();

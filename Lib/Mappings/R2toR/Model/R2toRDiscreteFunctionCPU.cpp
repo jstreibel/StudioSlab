@@ -3,7 +3,7 @@
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
 //
 
-#include "R2toRFunctionArbitraryCPU.h"
+#include "R2toRDiscreteFunctionCPU.h"
 
 #include "Common/OMPUtils.h"
 
@@ -14,11 +14,11 @@ using namespace R2toR;
 //
 // Created by joao on 19/09/19.
 FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h)
-    : FunctionArbitrary(N, M, xMin, yMin, h, device::CPU) {
+    : DiscreteFunction(N, M, xMin, yMin, h, device::CPU) {
 
 }
 
-Base::ArbitraryFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Base::DiscreteFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     assert(M==N); // (por enquanto so vai funcionar assim.
 
     FunctionArbitraryCPU &myClone = *new FunctionArbitraryCPU(outN, outN, xMin, yMin, h);;
@@ -38,15 +38,15 @@ Base::ArbitraryFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosIn
 
 Real FunctionArbitraryCPU::At(PosInt n, PosInt m) const {
     assert(n + m*N < N*M);
-    return getSpace().getX()[n+m*N];
+    return getSpace().getHostData()[n + m * N];
 }
 
 Real &FunctionArbitraryCPU::At(PosInt n, PosInt m) {
     assert(n + m*N < N*M);
-    return getSpace().getX()[n+m*N];
+    return getSpace().getHostData()[n + m * N];
 }
 
-FunctionArbitrary &FunctionArbitraryCPU::Laplacian(FunctionArbitrary &outFunc) const {
+DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &outFunc) const {
     const Real invhsqr = 1./(h*h);
 
     /*for(PosInt n=0; n<N; n++){
@@ -113,10 +113,10 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
 //}
 
 
-Base::ArbitraryFunction<Real2D, Real> &
+Base::DiscreteFunction<Real2D, Real> &
 FunctionArbitraryCPU::Apply(const Function<Real, Real> &func,
-                            Base::ArbitraryFunction<Real2D, Real> &out) const {
-    cast(fOut, FunctionArbitrary&, out)
+                            Base::DiscreteFunction<Real2D, Real> &out) const {
+    cast(fOut, DiscreteFunction &, out)
 
     OMP_GET_BEGIN_END(begin, end, N)
     for(PosInt n=begin; n<end; n++)

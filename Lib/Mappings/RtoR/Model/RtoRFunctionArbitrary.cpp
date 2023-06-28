@@ -14,7 +14,7 @@ ArbitraryFunction::ArbitraryFunction(const ArbitraryFunction &toCopy)
 }
 
 ArbitraryFunction::ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
-    : Base::ArbitraryFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
+    : Base::DiscreteFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
       xMin(xMin), xMax(xMax), laplacianType(laplacianType)
 {
 
@@ -45,7 +45,7 @@ Real ArbitraryFunction::operator()(Real x) const {
     n = n<0?0:n>N-1?N-1:n;
     //assert(n>=0 && n<N);
 
-    return getSpace().getX()[n];
+    return getSpace().getHostData()[n];
 }
 
 

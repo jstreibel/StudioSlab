@@ -4,7 +4,7 @@ export signumGordon_δ_2d!, signumGordon_2d!
 function signumGordon_δ_2d!(uₜ::CuArray{Float64, 3}, u::CuArray{Float64, 3}, (N, h, ∇²ϕ, δ, ε, xₘᵢₙ, α), t)
     ϕ  = @views u[:,:,1]
     ϕₜ = @views u[:,:,2]
-    
+        
     compute_∇²_2d!(∇²ϕ, ϕ, h)
     δ = δ_ring!(δ, t, ε, N, xₘᵢₙ, h, α)
     
@@ -17,6 +17,9 @@ function signumGordon_δ_2d!(uₜ::CuArray{Float64, 3}, u::CuArray{Float64, 3}, 
     # Output
     uₜ[:,:,1] = φ
     uₜ[:,:,2] = φₜ
+    
+    println(typeof(uₜ))
+    println(length(uₜ))
 
     nothing
 end

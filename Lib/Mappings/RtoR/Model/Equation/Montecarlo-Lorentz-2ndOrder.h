@@ -32,7 +32,7 @@ namespace RtoR {
         Real E(const ArbitraryFunction &phi){
             const auto h = phi.getSpace().geth();
             const auto inv_2h = .5/h;
-            const auto &X = phi.getSpace().getX();
+            const auto &X = phi.getSpace().getHostData();
             const auto &N = phi.N;
 
             Real E_h = .0;
@@ -56,7 +56,7 @@ namespace RtoR {
 
             phiNew.SetArb(phi);
 
-            phiNew.getSpace().getX()[site] = newVal;
+            phiNew.getSpace().getHostData()[site] = newVal;
 
             const auto deltaE = E(phiNew) - E(phi);
 
@@ -99,7 +99,7 @@ namespace RtoR {
 
             auto N = phi.N;
             auto h = phi.getSpace().geth();
-            auto &X = phi.getSpace().getX();
+            auto &X = phi.getSpace().getHostData();
 
             for (int ssf = 0; ssf < N; ++ssf) {
                 // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L

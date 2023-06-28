@@ -1,7 +1,7 @@
 
 
 
-#include "R2ToRFunctionArbitraryGPU.h"
+#include "R2toRDiscreteFunctionGPU.h"
 
 #include "Mappings/R2toR/Model/Derivatives/DerivativesGPU.h"
 #include "Phys/Function/GPUFriendly.h"
@@ -13,7 +13,7 @@ using namespace R2toR;
 
 
 FunctionArbitraryGPU::FunctionArbitraryGPU(PosInt N, Real sMin, Real h)
-    : FunctionArbitrary(N, N, sMin, sMin, h, device::GPU)//, XHost(*new VecFloat(N*N)), XDev(*new DeviceVector(N * N))
+    : DiscreteFunction(N, N, sMin, sMin, h, device::GPU)//, XHost(*new VecFloat(N*N)), XDev(*new DeviceVector(N * N))
 {
 
 }
@@ -22,13 +22,13 @@ FunctionArbitraryGPU::~FunctionArbitraryGPU() {
     if(helper != nullptr) delete helper;
 }
 
-R2toR::FunctionArbitrary &R2toR::FunctionArbitraryGPU::Laplacian(R2toR::FunctionArbitrary &outFunc) const {
+R2toR::DiscreteFunction &R2toR::FunctionArbitraryGPU::Laplacian(R2toR::DiscreteFunction &outFunc) const {
     // assert(getSpace().isCompatible(outFunc.getSpace()))
 
     cast(inSpace, const DiscreteSpaceGPU&, getSpace())
     cast(outSpace, DiscreteSpaceGPU&, outFunc.getSpace())
 
-    d2dx2(inSpace.getXDev(), outSpace.getXDev(), inSpace.geth(), N, M);
+    d2dx2(inSpace.getDeviceData(), outSpace.getDeviceData(), inSpace.geth(), N, M);
 
     return outFunc;
 }
@@ -39,12 +39,12 @@ Base::Function<Real2D, Real> *R2toR::FunctionArbitraryGPU::Clone() const {
     throw "R2toRMap::FunctionArbitraryGPU::Clone() not implemented";
 }
 
-Base::ArbitraryFunction<Real2D, Real> *R2toR::FunctionArbitraryGPU::CloneWithSize(PosInt N) const {
+Base::DiscreteFunction<Real2D, Real> *R2toR::FunctionArbitraryGPU::CloneWithSize(PosInt N) const {
     throw "R2toRMap::FunctionArbitraryGPU::Clone(unsigned int) not implemented.";
 }
 
 Real R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) const {
-    return getSpace().getX()[n+m*N];
+    return getSpace().getHostData()[n + m * N];
 
     // const_cast<FunctionArbitraryGPU&>(*this).updateHost();
 
@@ -54,15 +54,18 @@ Real R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) const {
 }
 
 Real &R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) {
-    return getSpace().getX()[n+m*N];
+    return getSpace().getHostData()[n + m * N];
 
     //updateHost();
 
     //return XHost[n+m*N];
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-R2toR::FunctionArbitraryGPU::Set(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+DiscreteFunction &
+R2toR::FunctionArbitraryGPU::Set(const MyBase &func) {
+    if(func.isDiscrete()) {
+        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(func);
+    }
 
     auto &space = getSpace();
 
@@ -91,23 +94,22 @@ R2toR::FunctionArbitraryGPU::Set(const Base::ArbitraryFunction<Real2D, Real>::My
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-R2toR::FunctionArbitraryGPU::SetArb(const Base::ArbitraryFunction<Real2D, Real> &func) {
+DiscreteFunction &
+R2toR::FunctionArbitraryGPU::SetArb(const Base::DiscreteFunction<Real2D, Real> &func) {
     getSpace().setToValue(func.getSpace());
 
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-        R2toR::FunctionArbitraryGPU::Apply(const Base::Function<Real, Real> &func,
-                                           Base::ArbitraryFunction<Real2D, Real> &out) const {
+Base::DiscreteFunction<Real2D, Real> &FunctionArbitraryGPU::Apply(const Function<Real, Real> &func,
+                                                                  Base::DiscreteFunction<Real2D, Real> &out) const {
     assert(func.isGPUFriendly());
 
     const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU&>(getSpace());
     auto &outSpace = dynamic_cast<DiscreteSpaceGPU&>(out.getSpace());
 
-    auto& inX = mySpace.getXDev();
-    auto& outX = outSpace.getXDev();
+    auto& inX = mySpace.getDeviceData();
+    auto& outX = outSpace.getDeviceData();
 
     const Base::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
 
@@ -116,37 +118,37 @@ Base::ArbitraryFunction<Real2D, Real> &
     return out;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-R2toR::FunctionArbitraryGPU::Add(const Base::ArbitraryFunction<Real2D, Real> &toi) {
+DiscreteFunction&
+R2toR::FunctionArbitraryGPU::Add(const R2toR::DiscrBase &toi) {
     getSpace().Add(toi.getSpace());
 
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-R2toR::FunctionArbitraryGPU::StoreAddition(const Base::ArbitraryFunction<Real2D, Real> &toi1,
-                                           const Base::ArbitraryFunction<Real2D, Real> &toi2) {
+DiscreteFunction &
+R2toR::FunctionArbitraryGPU::StoreAddition(const R2toR::DiscrBase &toi1,
+                                           const R2toR::DiscrBase &toi2) {
     getSpace().StoreAddition(toi1.getSpace(), toi2.getSpace());
 
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-R2toR::FunctionArbitraryGPU::StoreSubtraction(const Base::ArbitraryFunction<Real2D, Real> &aoi1,
-                                              const Base::ArbitraryFunction<Real2D, Real> &aoi2) {
+DiscreteFunction &
+R2toR::FunctionArbitraryGPU::StoreSubtraction(const R2toR::DiscrBase &aoi1,
+                                              const R2toR::DiscrBase &aoi2) {
     getSpace().StoreSubtraction(aoi1.getSpace(), aoi2.getSpace());
 
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &R2toR::FunctionArbitraryGPU::Multiply(floatt a) {
+DiscreteFunction &R2toR::FunctionArbitraryGPU::Multiply(floatt a) {
     getSpace().Multiply(a);
 
     return *this;
 }
 
-Base::ArbitraryFunction<Real2D, Real> &
-FunctionArbitraryGPU::operator+=(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+R2toR::DiscrBase &
+FunctionArbitraryGPU::operator +=(const MyBase &func) {
 
 
     if(helper==nullptr) helper = new FunctionArbitraryGPU(N, xMin, h);
@@ -179,7 +181,6 @@ FunctionArbitraryGPU::operator+=(const Base::ArbitraryFunction<Real2D, Real>::My
 
     return *this;
 }
-
 
 
 

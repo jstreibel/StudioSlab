@@ -8,6 +8,6 @@
 #include "Function.h"
 #include "SummableFunction.h"
 #include "CommonFunctions.h"
-#include "ArbitraryFunction.h"
+#include "DiscreteFunction.h"
 
 #endif //STUDIOSLAB_ALLBASEFUNCTIONS_H

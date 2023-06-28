@@ -6,12 +6,12 @@
 #define V_SHAPE_FIELDSTATER2TOR_H
 
 #include "Phys/DifferentialEquations/2nd-Order/FieldState.h"
-#include "R2toRFunctionArbitrary.h"
+#include "R2toRDiscreteFunction.h"
 
 namespace R2toR {
-    class FieldState : public Base::FieldState<FunctionArbitrary> {
+    class FieldState : public Base::FieldState<DiscreteFunction> {
     public:
-        FieldState(FunctionArbitrary *phi, FunctionArbitrary *dPhiDt) : Base::FieldState<FunctionArbitrary>(phi, dPhiDt)
+        FieldState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::FieldState<DiscreteFunction>(phi, dPhiDt)
         {
         }
 

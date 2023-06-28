@@ -6,7 +6,7 @@
 #define V_SHAPE_TESTSAPP_H
 
 
-#include <Studios/App/AppBase.h>
+#include <Base/App/AppBase.h>
 
 
 class TestsApp : public AppBase {

@@ -74,11 +74,11 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	add_executable ( Fields-R2toR
 			Fields/R2toR/MainR2toR.cpp
 			Fields/R2toR/LeadingDelta/LeadingDelta.cpp
-			Fields/R2toR/LeadingDelta/RingDelta.cpp
+			Fields/R2toR/LeadingDelta/RingDeltaFunc.cpp
 			Fields/R2toR/LeadingDelta/DrivenEquation.cpp
 			Fields/R2toR/LeadingDelta/Allocator.cpp
 			Fields/R2toR/LeadingDelta/Monitor.cpp
-			Fields/R2toR/LeadingDelta/RingDelta.cu
+			Fields/R2toR/LeadingDelta/RingDeltaFunc.cu
 			)
 	target_link_libraries ( Fields-R2toR
 			Slab-Base-Controller

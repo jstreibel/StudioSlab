@@ -7,7 +7,7 @@
 
 #include "RtoRFunction.h"
 
-#include "Phys/Function/ArbitraryFunction.h"
+#include "Phys/Function/DiscreteFunction.h"
 
 //#include <Base/Controller/Interface/CommonParameters.h>
 #include "Common/Types.h"
@@ -15,7 +15,7 @@
 
 namespace RtoR {
 
-    class ArbitraryFunction : public Base::ArbitraryFunction<Real, Real> {
+    class ArbitraryFunction : public Base::DiscreteFunction<Real, Real> {
     public:
         enum LaplacianType {
             Standard1D,

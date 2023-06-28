@@ -10,7 +10,6 @@ GraphR2Section::GraphR2Section(Real xMin, Real xMax, Real yMin, Real yMax, Strin
                                int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {}
 
 void GraphR2Section::_renderFunction(const R2toR::Function *func, Styles::PlotStyle style) {
-
     for(auto pair : sections) {
         auto section = pair.first;
         //auto color = pair.second;

@@ -20,7 +20,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
     auto &toCopyX = toCopy.getSpace().getHostData(true);
 
     for(PosInt n=0; n<N; n++)
-        getSpace().getX()[n] = toCopyX[n];
+        getSpace().getHostData()[n] = toCopyX[n];
 }
 
 FunctionArbitraryCPU::FunctionArbitraryCPU(const ArbitraryFunction& toCopy)
@@ -29,7 +29,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const ArbitraryFunction& toCopy)
     auto &toCopyX = toCopy.getSpace().getHostData(true);
 
     for(PosInt n=0; n<N; n++)
-        getSpace().getX()[n] = toCopyX[n];
+        getSpace().getHostData()[n] = toCopyX[n];
 }
 
 RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
@@ -38,23 +38,23 @@ RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRig
 }
 
 FunctionArbitraryCPU::FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
-                                           ArbitraryFunction::LaplacianType laplacianType)
+                                           DiscreteFunction::LaplacianType laplacianType)
                                            : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType) {
-    getSpace().getX() = data;
+    getSpace().getHostData() = data;
 }
 
 auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
-    assert(vec.size() == getSpace().getX().size());
+    assert(vec.size() == getSpace().getHostData().size());
 
     for(int i=0; i<vec.size(); ++i)
-        this->getSpace().getX()[i] = vec[i];
+        this->getSpace().getHostData()[i] = vec[i];
 
     return *this;
 }
 
 FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
     const floatt L = xMax - xMin;
-    VecFloat &X = getSpace().getX();
+    VecFloat &X = getSpace().getHostData();
 
     OMP_PARALLEL_FOR(n, N){
         const floatt x = L * n / (N - 1) + xMin;
@@ -69,25 +69,25 @@ Base::Function<Real, Real> *FunctionArbitraryCPU::Clone() const {
     return new FunctionArbitraryCPU(*this);
 }
 
-Base::ArbitraryFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Base::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
-    const VecFloat &X = getSpace().getX();
+    const VecFloat &X = getSpace().getHostData();
     const Real inc_d = N / Real(outN);
 
     DiscreteSpace &newSpace = newFunc.getSpace();
     for(PosInt i=0; i<outN; i++)
-        newSpace.getX()[i] = X[int(i*inc_d)];;
+        newSpace.getHostData()[i] = X[int(i * inc_d)];;
 
     return &newFunc;
 }
 
-Base::ArbitraryFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
-                                                                 Base::ArbitraryFunction<Real, Real> &out) const {
+Base::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
+                                                                Base::DiscreteFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
 
-    auto &outX = outSpace.getX();
-    const auto &myX = getSpace().getX();
+    auto &outX = outSpace.getHostData();
+    const auto &myX = getSpace().getHostData();
 
     OMP_PARALLEL_FOR(n, N)
         outX[n] = func(myX[n]);
@@ -99,9 +99,9 @@ ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const
 
     if(laplacianType == RadialSymmetry2D)
     {
-        auto &outX = out.getSpace().getX();
-        const auto &myX = getSpace().getX();
-        const auto &f = this->getSpace().getX();
+        auto &outX = out.getSpace().getHostData();
+        const auto &myX = getSpace().getHostData();
+        const auto &f = this->getSpace().getHostData();
         const Real invh = 1./getSpace().geth();
         const Real invh_2 = 1./(2.*getSpace().geth());
         const Real invhsqr = invh*invh;
@@ -125,7 +125,7 @@ ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const
     else if(laplacianType == Standard1D)
     {
         DerivativeCPU deriv(*this);
-        deriv.d2fdx2_v(out.getSpace().getX());
+        deriv.d2fdx2_v(out.getSpace().getHostData());
     }
 
     return out;
@@ -134,7 +134,7 @@ ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const
 Real FunctionArbitraryCPU::integrate() const {
 
     auto sum = .0;
-    for(const auto &v : this->getSpace().getX())
+    for(const auto &v : this->getSpace().getHostData())
         sum += v;
 
     auto dx = (this->xMax - this->xMin) / this->N;

@@ -44,10 +44,10 @@ FieldState &SystemGordonGPU::dtF(const FieldState &in, FieldState &out, Real t, 
     auto& sOutPhi = dynamic_cast<DiscreteSpaceGPU&>(outPhi.getSpace());
     auto& sOutDPhiDt = dynamic_cast<DiscreteSpaceGPU&>(outDPhiDt.getSpace());
 
-    const DeviceVector& vInPhi = sInPhi.getXDev();
-    const DeviceVector& vInDPhiDt = sInDPhiDt.getXDev();
-    DeviceVector & vOutPhi = sOutPhi.getXDev();
-    DeviceVector & vOutDPhiDt = sOutDPhiDt.getXDev();
+    const DeviceVector& vInPhi = sInPhi.getDeviceData();
+    const DeviceVector& vInDPhiDt = sInDPhiDt.getDeviceData();
+    DeviceVector & vOutPhi = sOutPhi.getDeviceData();
+    DeviceVector & vOutDPhiDt = sOutDPhiDt.getDeviceData();
 
     {
         thrust::transform(vInDPhiDt.begin(), vInDPhiDt.end(),

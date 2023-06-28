@@ -15,9 +15,9 @@ namespace RtoR {
 
         /*! This function operates on the host and then transfers information to device. Therefore, it is
          * not efficient. */
-        Base::ArbitraryFunction<Real,Real> &Apply(const Function &func,
-                                                  Base::ArbitraryFunction<Real, Real> &out) const override;
-        Base::ArbitraryFunction<Real, Real> &Set(const MyBase &func) override;
+        Base::DiscreteFunction<Real,Real> &Apply(const Function &func,
+                                                 Base::DiscreteFunction<Real, Real> &out) const override;
+        Base::DiscreteFunction<Real, Real> &Set(const MyBase &func) override;
         ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const override;
     };
 #endif

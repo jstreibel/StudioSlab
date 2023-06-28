@@ -36,21 +36,22 @@ class DiscreteSpaceCPU;
 class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
 public:
     DiscreteSpace(DimensionMetaData dim, Real h);
-
     virtual ~DiscreteSpace();
-
-    DiscreteSpaceCPU *hostCopy(PosInt maxResolution) const;
-
-    PosInt getTotalDiscreteSites() const;
-    auto getHostData(bool syncWithServer=false) const -> const VecFloat&;
-    auto getHostData(bool syncWithServer=false)       ->       VecFloat&;
-    virtual auto getDeviceData()                        const -> const DeviceVector& { throw "trying to access device data on host Space"; };
-    virtual auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };
+    auto hostCopy(PosInt maxResolution) const -> DiscreteSpaceCPU *;
 
     const DimensionMetaData& getDim() const { return dim; }
-    const VecFloat& getX() const;
-    VecFloat& getX();
-    Real geth() const;
+
+    PosInt getTotalDiscreteSites() const;
+
+    virtual
+    auto getDeviceData()                        const -> const DeviceVector& { throw "trying to access device data on host Space"; };
+    virtual
+    auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };
+
+    auto getHostData(bool sync=false)           const -> const VecFloat&;
+    auto getHostData(bool sync=false)                 ->       VecFloat&;
+
+    auto geth() const ->       Real;
 
     // TODO colocar essa aqui no operator =
     virtual void setToValue(const DiscreteSpace &param) = 0;
@@ -62,7 +63,7 @@ public:
 
 protected:
     const DimensionMetaData dim;
-    VecFloat X;
+    VecFloat data;
     const Real h;
 };
 

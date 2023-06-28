@@ -15,7 +15,7 @@ void Histogram::Compute(const RtoR::ArbitraryFunction &func, int nBins) {
 
     this->nBins = nBins;
 
-    auto &F = func.getSpace().getX();
+    auto &F = func.getSpace().getHostData();
 
     auto max = F[0];
     auto min = F[0];
@@ -46,7 +46,7 @@ void Histogram::Compute(const RtoR::ArbitraryFunction &func, int nBins) {
 RtoR::Function *Histogram::asPDFFunction() const {
     auto *func = new RtoR::FunctionArbitraryCPU(bins.size(), xMin, xMax);
 
-    auto &F = func->getSpace().getX();
+    auto &F = func->getSpace().getHostData();
 
     assert(F.size() == bins.size() && bins.size() == nBins);
 

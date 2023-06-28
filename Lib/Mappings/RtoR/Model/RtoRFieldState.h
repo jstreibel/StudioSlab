@@ -18,7 +18,7 @@ namespace RtoR {
 
     public:
         void outputPhi(OStream &out, String separator) const override {
-            const VecFloat &vPhi = getPhi().getSpace().getX();
+            const VecFloat &vPhi = getPhi().getSpace().getHostData();
             const PosInt N = vPhi.size();
 
             for(PosInt n=0; n<N; n++)
@@ -26,7 +26,7 @@ namespace RtoR {
         }
 
         void outputdPhiDt(OStream &out, String separator) const override {
-            const VecFloat &vDPhiDt = getDPhiDt().getSpace().getX();
+            const VecFloat &vDPhiDt = getDPhiDt().getSpace().getHostData();
             const PosInt N = vDPhiDt.size();
 
             for(PosInt n=0; n<N; n++)

@@ -4,7 +4,7 @@
 
 #include "Phys/Space/Impl/DiscreteSpaceCPU.h"
 
-#include "Mappings/R2toR/Model/R2toRFunctionArbitrary.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Mappings/R2toR/Model/FieldState.h"
 
 
@@ -21,7 +21,7 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
 
     if(phiSpace.getDim().getNDim() != 2) throw "Is rong.";
 
-    R2toR::FunctionArbitrary &f = outputInfo.getFieldData<R2toR::FieldState>()->getPhi();
+    R2toR::DiscreteFunction &f = outputInfo.getFieldData<R2toR::FieldState>()->getPhi();
 
     const R2toR::Domain domain = f.getDomain();
     const auto L = domain.getLx();
@@ -32,7 +32,7 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
 
     for(PosInt i=0; i<N; i++){
         const Real s = sMin + ds*Real(i)/N; // parametro da reta.
-        newPhi->getX()[i] = f(line(s));
+        newPhi->getHostData()[i] = f(line(s));
     }
 
     return {newPhi, nullptr};

@@ -14,7 +14,11 @@ namespace R2toR {
 
 
         DrivenEquation::DrivenEquation(R2toR::Function::Ptr drivingForce)
-            : GordonSystem(*(new RtoR::AbsFunction)), drivingForce(drivingForce)
+            : GordonSystem(*(new RtoR::AbsFunction))
+            , drivingForce(drivingForce)
+            , drivingForceRendered(Numerics::Allocator::getInstance().getNumericParams().getN(),
+                                   Numerics::Allocator::getInstance().getNumericParams().getxLeft(),
+                                   Numerics::Allocator::getInstance().getNumericParams().geth())
         {
             if(drivingForce == nullptr) {
                 Log::Error() << "DrivenEquation solver's driving force must be != nullptr." << Log::Flush;
@@ -48,7 +52,6 @@ namespace R2toR {
                 // z=¼(r²-t²)
                 // δ(z)𝕕z = r/t δ(r-t)𝕕r
 
-                auto &f = *drivingForce;
 
                 auto &dVdϕ = *dVDPhi;
                 auto &dVdϕₒᵤₜ = dV_out;
@@ -58,7 +61,11 @@ namespace R2toR {
 
                 𝜕φ𝜕tₒᵤₜ.StoreSubtraction(laplacian, dVdϕₒᵤₜ);
 
-                (𝜕φ𝜕tₒᵤₜ+=f) *= δt;
+                // auto &δ = drivingForceRendered;
+                // drivingForce->renderToDiscreteFunction(&δ);
+                // 𝜕φ𝜕tₒᵤₜ.Add(δ);
+
+                𝜕φ𝜕tₒᵤₜ *= δt;
             }
 
             return out;

@@ -15,22 +15,18 @@ public:
     DiscreteSpaceGPU(DimensionMetaData dim, Real h);
     ~DiscreteSpaceGPU();
 
-    DiscreteSpace &Add(const DiscreteSpace &toi) override;
+    auto Add      (const DiscreteSpace &toi) -> DiscreteSpace & override;
+    auto Subtract (const DiscreteSpace &toi) -> DiscreteSpace & override;
+    auto Multiply (floatt a)                 -> DiscreteSpace & override;
 
-    DiscreteSpace &Subtract(const DiscreteSpace &toi) override;
+    auto StoreAddition       (const DiscreteSpace &toi1, const DiscreteSpace &toi2) -> DiscreteSpace & override;
+    auto StoreSubtraction    (const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) -> DiscreteSpace & override;
+    auto StoreMultiplication (const DiscreteSpace &aoi1, const Real a)              -> DiscreteSpace & override;
 
-    DiscreteSpace &StoreAddition(const DiscreteSpace &toi1, const DiscreteSpace &toi2) override;
+    auto setToValue(const DiscreteSpace &param) -> void override;
 
-    DiscreteSpace &StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) override;
-
-    DiscreteSpace &StoreMultiplication(const DiscreteSpace &aoi1, const Real a) override;
-
-    DiscreteSpace &Multiply(floatt a) override;
-
-    void setToValue(const DiscreteSpace &param) override;
-
-    DeviceVector &getXDev();
-    const DeviceVector &getXDev() const;
+    auto getDeviceData()       ->       DeviceVector & override;
+    auto getDeviceData() const -> const DeviceVector & override;
 
     void notifyHostIsUpdated();
 
@@ -40,7 +36,7 @@ protected:
 
 private:
     bool hostIsUpdated = false;
-    VecFloat &XHost = X;
+    VecFloat &XHost = data;
     DeviceVector &XDev;
 };
 #else

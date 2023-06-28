@@ -109,8 +109,8 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) 
         return;
     }
 
-    auto &vec_phi = function.getPhi().getSpace().getX();
-    auto &vec_dphidt = function.getDPhiDt().getSpace().getX();
+    auto &vec_phi = function.getPhi().getSpace().getHostData();
+    auto &vec_dphidt = function.getDPhiDt().getSpace().getHostData();
 
 
     auto _t = t-t0;

@@ -15,7 +15,7 @@ class DerivativeCPU : public RtoR::Function {
             assert(vec.getSpace().getTotalDiscreteSites() == N);
             assert(vec.getSpace().geth() == h);
 
-            f_ = &vec.getSpace().getX();
+            f_ = &vec.getSpace().getHostData();
         }
 
         auto d2fdx2_v(VecFloat_O &out) -> VecFloat &;

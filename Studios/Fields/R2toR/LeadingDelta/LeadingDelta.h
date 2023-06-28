@@ -11,7 +11,7 @@
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 
 #include "Monitor.h"
-#include "RingDelta.h"
+#include "RingDeltaFunc.h"
 #include "DrivenEquation.h"
 #include "Allocator.h"
 
@@ -20,23 +20,28 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        extern RingDelta::Ptr ringDelta1;
+        extern RingDeltaFunc::Ptr ringDelta1;
 
 
 
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
-            RingDelta::Ptr ringDelta;
+            RingDeltaFunc::Ptr ringDelta;
             Real tf;
         public:
-            explicit BoundaryCondition(RingDelta::Ptr ringDelta = nullptr, Real tf=-1);
+            explicit BoundaryCondition(RingDeltaFunc::Ptr ringDelta = nullptr, Real tf=-1);
             void apply(FieldState &function, Real t) const override;
         };
 
 
 
         class OutputBuilder : public R2toR::OutputSystem::Builder {
+            RealParameter::Ptr phiMinPlot = RealParameter::New(-0.2, "min", "Graphic monitor min phi");
+            RealParameter::Ptr phiMaxPlot = RealParameter::New( 0.2, "max", "Graphic monitor max phi");
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override;
+
+        public:
+            OutputBuilder();
         };
 
 
@@ -51,7 +56,8 @@ namespace R2toR {
             RealParameter::Ptr      deltaDuration    = RealParameter::New(-1, "delta_duration",
                                                             "The duration of regularized delta. Negative "
                                                             "values mean forever;");
-            RingDelta::Ptr drivingFunc;
+            RingDeltaFunc::Ptr drivingFunc;
+            BoundaryCondition boundaries;
 
         public:
             Builder();

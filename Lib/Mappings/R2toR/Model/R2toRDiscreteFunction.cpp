@@ -1,14 +1,14 @@
 //
 
-#include "R2toRFunctionArbitrary.h"
+#include "R2toRDiscreteFunction.h"
 
 //
 // Created by joao on 30/09/2019.
-R2toR::FunctionArbitrary::FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
-        : FunctionArbitraryBase(DimensionMetaData({N, M}), h, dev),
+R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
+        : DiscreteFunctionBase(DimensionMetaData({N, M}), h, dev),
           N(N), M(M), xMin(xMin), xMax(xMin+N*h), yMin(yMin), yMax(yMin+M*h), h(h) { }
 
-Real R2toR::FunctionArbitrary::operator()(Real2D x) const {
+Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
     const Real dx = h*.5;
@@ -33,19 +33,19 @@ Real R2toR::FunctionArbitrary::operator()(Real2D x) const {
     return At(n,m);
 }
 
-PosInt R2toR::FunctionArbitrary::getN() const {
+PosInt R2toR::DiscreteFunction::getN() const {
     return N;
 }
 
-PosInt R2toR::FunctionArbitrary::getM() const {
+PosInt R2toR::DiscreteFunction::getM() const {
     return M;
 }
 
-R2toR::Domain R2toR::FunctionArbitrary::getDomain() const {
+R2toR::Domain R2toR::DiscreteFunction::getDomain() const {
     return {xMin, xMax, yMin, yMax};
 }
 
-Real R2toR::FunctionArbitrary::diff(int dim, Real2D x) const {
+Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
     int n = int((N-1)*(x.x-xMin)/Lx);
@@ -54,7 +54,7 @@ Real R2toR::FunctionArbitrary::diff(int dim, Real2D x) const {
     if(n<1 || n>N-1 || m<1 || m>M-1) return .0;
 
     getSpace().syncHost();
-    auto& X = getSpace().getX();
+    auto& X = getSpace().getHostData();
     int j = n + m*N;
 
     const Real inv2h = .5/h;
@@ -65,11 +65,11 @@ Real R2toR::FunctionArbitrary::diff(int dim, Real2D x) const {
     } else throw "Tidak bagus diff.";
 }
 
-Base::Function<Real2D, Real>::Ptr R2toR::FunctionArbitrary::diff(int n) const {
+Base::Function<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
     return Function::diff(n);
 }
 
-void R2toR::FunctionArbitrary::operator=(const Base::ArbitraryFunction<Real2D, Real>::MyBase &func) {
+void R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real>::MyBase &func) {
     this->Set(func);
 }

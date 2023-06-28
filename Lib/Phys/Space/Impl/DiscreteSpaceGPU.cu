@@ -20,8 +20,8 @@ DiscreteSpaceGPU::~DiscreteSpaceGPU() {
 DiscreteSpace &DiscreteSpaceGPU::Add(const DiscreteSpace &inSpace) {
     auto& inSpaceGPU = dynamic_cast<const DiscreteSpaceGPU&>(inSpace);
 
-    auto &in = inSpaceGPU.XDev;
-    auto &out = XDev;
+    const auto &in = inSpace.getDeviceData();
+    auto &out = this->getDeviceData();
 
     thrust::transform(in.begin(), in.end(),
                       out.begin(), out.begin(),
@@ -68,9 +68,9 @@ DiscreteSpace &DiscreteSpaceGPU::StoreAddition(const DiscreteSpace &toi1, const 
 DiscreteSpace &DiscreteSpaceGPU::StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) {
     cast(space1, const DiscreteSpaceGPU&, aoi1);
     cast(space2, const DiscreteSpaceGPU&, aoi2);
-    auto &in1 = space1.getXDev();
-    auto &in2 = space2.getXDev();
-    auto &out = this->getXDev();
+    auto &in1 = space1.getDeviceData();
+    auto &in2 = space2.getDeviceData();
+    auto &out = this->getDeviceData();
 
     thrust::transform(in1.begin(), in1.end(),
                       in2.begin(),
@@ -84,8 +84,8 @@ DiscreteSpace &DiscreteSpaceGPU::StoreSubtraction(const DiscreteSpace &aoi1, con
 
 DiscreteSpace &DiscreteSpaceGPU::StoreMultiplication(const DiscreteSpace &aoi1, const Real a) {
     cast(space1, const DiscreteSpaceGPU&, aoi1);
-    auto &in1 = space1.getXDev();
-    auto &out = this->getXDev();
+    auto &in1 = space1.getDeviceData();
+    auto &out = this->getDeviceData();
 
     thrust::transform(in1.begin(), in1.end(),
                       thrust::make_constant_iterator(a),
@@ -126,17 +126,17 @@ void DiscreteSpaceGPU::upload() {
 }
 
 void DiscreteSpaceGPU::setToValue(const DiscreteSpace &inSpace) {
-    auto &in = dynamic_cast<const DiscreteSpaceGPU&>(inSpace).getXDev();
+    auto &in = dynamic_cast<const DiscreteSpaceGPU &>(inSpace).getDeviceData();
     thrust::copy(in.begin(), in.end(), XDev.begin());
 
     hostIsUpdated = false;
 }
 
-DeviceVector &DiscreteSpaceGPU::getXDev() {
+DeviceVector &DiscreteSpaceGPU::getDeviceData() {
     return XDev;
 }
 
-const DeviceVector &DiscreteSpaceGPU::getXDev() const {
+const DeviceVector &DiscreteSpaceGPU::getDeviceData() const {
     return XDev;
 }
 

@@ -6,10 +6,11 @@
 #define STUDIOSLAB_DRIVENEQUATION_H
 
 #include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
-#include "RingDelta.h"
+#include "RingDeltaFunc.h"
 
 namespace R2toR {
 
@@ -19,6 +20,7 @@ namespace R2toR {
 
         class DrivenEquation : public DiffEq {
             R2toR::Function::Ptr drivingForce;
+            R2toR::FunctionArbitraryGPU drivingForceRendered;
 
         public:
             explicit DrivenEquation(R2toR::Function::Ptr drivingForce);

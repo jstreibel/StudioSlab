@@ -21,7 +21,7 @@ R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
         : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax), drivingFunction(drivingFunction),
-          mTotalEnergyGraph("Total energy"), mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio"), mSpeedsGraph(xMin, xMax, phiMin, phiMax) {
+          mTotalEnergyGraph("Total energy"), mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio"), mSpeedsGraph(xMin, xMax, phiMin*100, phiMax*100, "", false, Numerics::Allocator::getInstance().getNumericParams().getN()*3) {
     energyRatioData = Spaces::PointSet::New();
     mEnergyRatioGraph.addPointSet(energyRatioData,  Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
@@ -48,16 +48,24 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
 void R2toR::LeadingDelta::OutGL::draw() {
     if (!lastData.hasValidData()) return;
 
-    std::stringstream ss;
-    auto &p = Numerics::Allocator::getInstance().getNumericParams();
-    const auto t = lastData.getSimTime();
-    const auto step = lastData.getSteps();
+    auto &rd = *R2toR::LeadingDelta::ringDelta1;
+
+    const auto t       =  rd.getRadius();
+    const auto step    =  lastData.getSteps();
+    const auto &fState = *lastData.getFieldData<R2toR::FieldState>();
+
+    const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     const auto L = p.getL();
     const auto N = p.getN();
     const auto h = p.geth();
 
-    const auto ldd = InterfaceManager::getInstance().getInterface("Leading Delta");
-    const auto epsilon = *(Real*) ldd->getParameter("eps")->getValueVoid();
+    const auto ldInterface = InterfaceManager::getInstance().getInterface("Leading Delta");
+    const auto epsilon = *(Real*) ldInterface->getParameter("eps")->getValueVoid();
+
+    static auto lastStep=0;
+    static auto energyIntegrationRadius = (float)(-epsilon);
+    static auto lastE = .0;
+    static auto lastAnalyticE = .0;
 
     auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
     stats.addVolatileStat(String("t = ")     + ToString(t,         4));
@@ -74,12 +82,6 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(String("h² = ")    + ToString(L*L/(N*N), 4, true));
     stats.addVolatileStat(String("<\\br>"));
 
-
-    const R2toR::FieldState &fState = *lastData.getFieldData<R2toR::FieldState>();
-    static auto lastStep=0;
-    static auto energyIntegrationRadius = (float)(-epsilon);
-    static auto lastE = .0;
-    static auto lastAnalyticE = .0;
     auto totalE = .0;
 
     if(0) {
@@ -96,7 +98,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     {
         Phys::Gordon::Energy energy;
         auto E_radius = t+energyIntegrationRadius;
-        auto E = energy.computeRadial(fState, E_radius); // energy[fState];
+        auto E = energy.computeRadial(fState, E_radius);
         numericEnergyData->addPoint({t, E});
         auto analyticEnergy = (2./3.) * M_PI * t * t;
         analyticEnergyData->addPoint({t, (Real)analyticEnergy});
@@ -130,13 +132,11 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(String("E_an = ")    + ToString(lastAnalyticE, 2, true));
     stats.addVolatileStat(String("E_num/E_an = ")    + ToString(lastE/lastAnalyticE , 2, true));
 
-    auto &phi = fState.getPhi();
-    auto &dphidt = fState.getDPhiDt();
+    auto &phi = fState.getPhi();       phi   .getSpace().syncHost();
+    auto &dphidt = fState.getDPhiDt(); dphidt.getSpace().syncHost();
 
     mSectionGraph.clearFunctions();
-    mSpeedsGraph.clearFunctions();
-
-    auto &rd = *R2toR::LeadingDelta::ringDelta1;
+    mSpeedsGraph .clearFunctions();
 
     static auto numeric = true;
     static auto deltaRing = true;
@@ -167,8 +167,6 @@ void R2toR::LeadingDelta::OutGL::draw() {
     auto scale = eps;
     auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
-        R2toR::Function *func = nullptr;
-
         auto name = String("Ring delta x") + ToString(scale, 2, true);
 
         mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
@@ -179,20 +177,17 @@ void R2toR::LeadingDelta::OutGL::draw() {
     RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
     radialShockwave.sett(t - dt - Real(timeOffset));
     FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
-    if(analytic){
-
+    if(analytic)
         mSectionGraph.addFunction(&shockwave, "Analytic", Styles::GetColorScheme()->funcPlotStyles[2]);
-    }
 
     if(numericSpeed)
         mSpeedsGraph.addFunction(&dphidt, "Numeric speed", Styles::GetColorScheme()->funcPlotStyles[0]);
 
-    RtoR::AnalyticShockwave2DRadialSymmetry ddtRadialShockwave;
+    RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
     ddtRadialShockwave.sett(t - dt - Real(timeOffset));
-    FunctionAzimuthalSymmetry ddtShockwave(&radialShockwave, 1, 0, 0, false);
-    if(analyticSpeed) {
-        mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetColorScheme()->funcPlotStyles[1]);
-    }
+    FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
+    if(analyticSpeed)
+        mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetColorScheme()->funcPlotStyles[2]);
 
     panel->draw();
 }

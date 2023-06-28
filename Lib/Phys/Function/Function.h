@@ -19,7 +19,7 @@ namespace Base {
     class GPUFriendly;
 
     template<class InputCategory, class OutputCategory>
-    class ArbitraryFunction;
+    class DiscreteFunction;
 
     template<class InputCategory, class OutputCategory>
     class Function {
@@ -61,17 +61,15 @@ namespace Base {
          * @param x: the location to get differentiation. */
         virtual OutputCategory diff(int n, InputCategory x) const { throw "Function::diff(n, x) not implemented."; }
 
-        virtual bool domainContainsPoint(InputCategory x) const {return true;}
+        virtual auto domainContainsPoint(InputCategory x) const -> bool {return true;}
 
         /*!
          * Integrates the function through all of its domain.
          * @return The value of the integral.
          */
-        virtual OutputCategory integrate() const { throw "Function::integrate not implemented."; }
-
-        virtual Function *Clone() const { throw "Function::Clone() not implemented."; }
-
-        virtual bool isDiscrete() const { return discrete; }
+        virtual auto integrate()    const -> OutputCategory { throw "Function::integrate not implemented."; }
+        virtual auto Clone()        const -> Function *     { throw "Function::Clone() not implemented."; }
+        virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
         const GPUFriendly &getGPUFriendlyVersion() const { return myGPUFriendlyVersion; }
@@ -80,6 +78,7 @@ namespace Base {
 
         virtual String myName() const { return "unnamed"; }
 
+        // RENDERING
         struct RenderingOptions {
             RenderingOptions()                        : hint(UseChoiceResolution)            {}
             RenderingOptions(const InputCategory &dx) : hint(UseCustomResolution_dx), dx(dx) {};
@@ -102,7 +101,7 @@ namespace Base {
         };
 
         virtual bool
-        renderToDiscreteFunction(ArbitraryFunction<InputCategory, OutputCategory> *toFunc) const {
+        renderToDiscreteFunction(DiscreteFunction<InputCategory, OutputCategory> *toFunc) const {
             throw String("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
         };
 

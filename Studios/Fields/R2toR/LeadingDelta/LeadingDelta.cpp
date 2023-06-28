@@ -5,17 +5,13 @@
 
 #include "LeadingDelta.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-
 namespace R2toR {
     namespace LeadingDelta {
-        RingDelta::Ptr ringDelta1;
+        RingDeltaFunc::Ptr ringDelta1;
 
-
-
-
-        BoundaryCondition::BoundaryCondition(RingDelta::Ptr ringDelta, Real tf)
-                : ringDelta(ringDelta), tf(tf) { }
+        BoundaryCondition::BoundaryCondition(RingDeltaFunc::Ptr ringDelta, Real tf)
+                : ringDelta(ringDelta)
+                , tf(tf) { }
         void BoundaryCondition::apply(FieldState &function, Real t) const {
             const bool applies = t<tf || tf<0;
             const bool exist = ringDelta != nullptr;
@@ -28,13 +24,10 @@ namespace R2toR {
                 function.setPhi(fullNull);
                 function.setDPhiDt(fullNull);
             } else if (should) {
-                //auto &srd = const_cast<SpecialRingDelta&>(*ringDelta);
                 ringDelta->setRadius(t);
 
-                // auto &dφdt = function.getDPhiDt();
-                // dφdt = *ringDelta;
-
-                // function.setDPhiDt();
+                auto &ϕₜ = function.getDPhiDt();
+                ringDelta->renderToDiscreteFunction(&ϕₜ);
             }
         }
 
@@ -42,8 +35,8 @@ namespace R2toR {
 
 
         auto OutputBuilder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-            const Real phiMin = -.2;
-            const Real phiMax =  1.2;
+            const Real phiMin = **phiMinPlot;
+            const Real phiMax = **phiMaxPlot;
 
             const auto &p = Numerics::Allocator::getInstance().getNumericParams();
             const Real L = p.getL();
@@ -54,24 +47,27 @@ namespace R2toR {
             return new OutGL(ringDelta1, xLeft-dx, xRight+dx, xLeft-dx, xRight+dx, phiMin, phiMax);
         }
 
-
+        OutputBuilder::OutputBuilder() {
+            interface->addParameters({phiMinPlot, phiMaxPlot});
+        }
 
 
         Builder::Builder() : SimulationBuilder("Leading Delta,simulation builder for (2+1)-d signum-Gordon shockwave as the trail of a driving delta.",
                                                BuilderBasePtr(new LeadingDelta::OutputBuilder)) {
             interface->addParameters({W_0, eps, deltaDuration});
         }
-        auto Builder::notifyCLArgsSetupFinished()    -> void {
+        auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
 
             auto &p = const_cast<NumericParams&>(Numerics::Allocator::getInstance().getNumericParams());
             const Real L = p.getL();
             const Real dt = p.getdt();
+            const auto W₀ = **W_0;
+            const auto C₂ = 2 * W₀ / 2.0; // this is C_n from our 2023 shockwave paper, with n=2.
 
             p.sett(L*.5 - **eps);
-            const auto C_2 = **W_0 / 2.0; // this is C_n from our 2023 shockwave paper, with n=2.
 
-            drivingFunc = std::make_shared<RingDelta>(**eps, C_2, dt);
+            drivingFunc = std::make_shared<RingDeltaFunc>(**eps, C₂, dt);
             ringDelta1 = drivingFunc;
             LeadingDelta::Allocator::Choose()->setDrivingFunction(drivingFunc);
         }

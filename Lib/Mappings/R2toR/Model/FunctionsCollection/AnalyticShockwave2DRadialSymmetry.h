@@ -55,7 +55,7 @@ namespace RtoR {
         Real theta_k(PosInt k, Real z) const;
 
     public:
-        AnalyticShockwave2DRadialSymmetryTimeDerivative() {throw "I'm not working.";}
+        AnalyticShockwave2DRadialSymmetryTimeDerivative() {throw "Analytic shockwave time derivative: I'm not working.";}
 
         void sett(Real t){this->t = t;}
         Real operator()(Real r) const override;

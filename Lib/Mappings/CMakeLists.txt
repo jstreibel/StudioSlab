@@ -18,7 +18,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
 			R2toR/Model/Derivatives/DerivativesGPU.cu
-			R2toR/Model/R2ToRFunctionArbitraryGPU.cu
+			R2toR/Model/R2toRDiscreteFunctionGPU.cu
 
 			)
 
@@ -97,8 +97,8 @@ set ( R2TOR_SOURCES
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 
-		R2toR/Model/R2toRFunctionArbitrary.cpp
-		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
+		R2toR/Model/R2toRDiscreteFunction.cpp
+		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 
 		R2toR/Controller/R2ToR_SimulationBuilder.cpp
 		# R2toR/Controller/R2ToRInputRadialShockwave.cpp
@@ -110,8 +110,8 @@ set ( R2TOR_SOURCES
 		R2toR/Model/FunctionsCollection/GrowingHole.cpp
 		R2toR/Model/Transform.cpp
 		R2toR/Model/Util/Interpolator.cpp
-		R2toR/Model/R2toRFunctionArbitrary.cpp
-		R2toR/Model/R2toRFunctionArbitraryCPU.cpp
+		R2toR/Model/R2toRDiscreteFunction.cpp
+		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
 
 		R2toR/View/Artists/GraphR2ToR.cpp

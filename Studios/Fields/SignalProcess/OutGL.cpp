@@ -277,7 +277,7 @@ void RtoR::Signal::OutGL::draw() {
             signalBufferGraph.clearFunctions();
 
             func1 = new RtoR::FunctionArbitraryCPU(probed.size(), .0, intervalSec);
-            auto &F1 = func1->getSpace().getX();
+            auto &F1 = func1->getSpace().getHostData();
 
             for (int i = 0; i < probed.size(); i++) F1[i] = probed[i];
 
@@ -293,7 +293,7 @@ void RtoR::Signal::OutGL::draw() {
 
             auto t = lastData.getSimTime();
             func2 = new RtoR::FunctionArbitraryCPU(pdsize, 0, t);
-            auto &F2 = func2->getSpace().getX();
+            auto &F2 = func2->getSpace().getHostData();
 
             for (int i = 0; i < pdsize; i++) F2[i] = probingData[i];
 
@@ -312,9 +312,9 @@ void RtoR::Signal::OutGL::draw() {
         static bool started = false;
 
         if(!started){
-            auto &F = func.getSpace().getX();
-            auto &FMore = funcMore.getSpace().getX();
-            auto &FLess = funcLess.getSpace().getX();
+            auto &F = func.getSpace().getHostData();
+            auto &FMore = funcMore.getSpace().getHostData();
+            auto &FLess = funcLess.getSpace().getHostData();
 
             for(auto &f : F) f = RandUtils::random(0.25,.7);
 
@@ -409,7 +409,7 @@ std::vector<std::vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
     auto M = history.size();
 
     std::vector<std::vector<Real>> outputData(M);
-    for (int i=0; i<M; ++i) outputData[i] = history[i]->getSpace().getX();
+    for (int i=0; i<M; ++i) outputData[i] = history[i]->getSpace().getHostData();
 
     return outputData;
 }

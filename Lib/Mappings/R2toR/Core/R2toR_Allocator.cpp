@@ -4,8 +4,8 @@
 
 #include "R2toR_Allocator.h"
 
-#include "Mappings/R2toR/Model/R2toRFunctionArbitraryCPU.h"
-#include "Mappings/R2toR/Model/R2ToRFunctionArbitraryGPU.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "Mappings/R2toR/Model/FieldState.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
@@ -46,8 +46,8 @@ auto R2toR::Core::BasicAllocator::newFunctionArbitrary() -> void * {
 }
 
 auto R2toR::Core::BasicAllocator::newFieldState() -> void * {
-    return new R2toR::FieldState((R2toR::FunctionArbitrary*)this->newFunctionArbitrary(),
-                                 (R2toR::FunctionArbitrary*)this->newFunctionArbitrary());
+    return new R2toR::FieldState((R2toR::DiscreteFunction*)this->newFunctionArbitrary(),
+                                 (R2toR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
 auto R2toR::Core::BasicAllocator::getSystemSolver() -> void * {

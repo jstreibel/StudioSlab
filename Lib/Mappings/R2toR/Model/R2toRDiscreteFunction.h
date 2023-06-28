@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORFUNCTIONARBITRARY_H
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
-#include "Phys/Function/ArbitraryFunction.h"
+#include "Phys/Function/DiscreteFunction.h"
 
 #include "R2toRFunction.h"
 
@@ -17,16 +17,19 @@ namespace R2toR {
         const Real xMin, xMax, yMin, yMax;
     };
 
-    class FunctionArbitrary : public Base::ArbitraryFunction<Real2D,Real> {
+    typedef Base::Function<Real, Real> FuncBase;
+    typedef Base::DiscreteFunction<Real2D, Real> DiscrBase;
+
+    class DiscreteFunction : public Base::DiscreteFunction<Real2D,Real> {
     protected:
         const PosInt N;
         const PosInt M;
         const Real xMin, xMax, yMin, yMax, h;
 
     public:
-        typedef Base::ArbitraryFunction <Real2D, Real> FunctionArbitraryBase;
+        typedef Base::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
 
-        FunctionArbitrary(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
+        DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
 
         Real operator()(Real2D x) const override;
         void operator=(const MyBase &func);
@@ -35,7 +38,7 @@ namespace R2toR {
 
         MyBase::Ptr diff(int n) const override;
 
-        virtual FunctionArbitrary &Laplacian(FunctionArbitrary &outFunc) const = 0;
+        virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;
         virtual Real At(PosInt n, PosInt m) const = 0;
         virtual Real &At(PosInt n, PosInt m) = 0;
 
