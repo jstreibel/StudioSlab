@@ -116,8 +116,8 @@ auto Log::Warning(const String &str) -> void {
     Info() << str << Log::Flush;
 }
 
-auto Log::WarningImportant(const String &str) -> void {
-    Warning() << str << Log::Flush;
+auto Log::WarningImportant(const String &str) -> OStream& {
+    return Warning() << str << Log::Flush;
 }
 
 auto Log::Error(const String &str) -> void {

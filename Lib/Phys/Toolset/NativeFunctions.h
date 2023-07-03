@@ -34,21 +34,21 @@ inline Real UnitStep(const Real x, const Real eps=0){
     return x < eps ? 0 : 1;
 }
 
-inline auto deltaGauss(Real x, Real eps) -> Real {
+__device__ __host__ inline auto deltaGauss(Real x, Real eps) -> Real {
     return 1. / sqrt(4 * M_PI * eps) * exp(-x * x / (4 * eps));
 }
 
-inline Real deltaTri(const Real x, const Real eps=1.e-5){
+__device__ __host__ inline Real deltaTri(const Real x, const Real eps=1.e-5){
     const Real invEps = 1. / eps;
+    const Real absx = std::abs(x);
 
-    if      (x > -eps && x <= .0)   return invEps * (1. + invEps * x);
-    else if (x > .0   && x <   eps) return invEps * (1. - invEps * x);
+    if (absx < eps) return invEps * (1. - invEps * absx);
 
     return 0.;
 }
 
-inline auto deltaRect(Real x, Real eps) -> Real {
-    if (x > -eps && x < eps) return 1. / (2. * eps);
+__device__ __host__ inline auto deltaRect(Real x, Real eps) -> Real {
+    if (std::abs(x) < eps) return .5 / eps;
 
     return 0.;
 }

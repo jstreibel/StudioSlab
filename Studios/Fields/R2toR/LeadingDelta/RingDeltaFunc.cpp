@@ -9,7 +9,8 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        RingDeltaFunc::RingDeltaFunc(Real eps, Real a, Real dt) : eps(eps), a(a), dt(dt), radius(0) {}
+        RingDeltaFunc::RingDeltaFunc(Real eps, Real a, Real dt) : eps(eps), a(a), dt(dt), radius(0) {
+        }
 
         auto RingDeltaFunc::getEps()                      const -> Real   { return eps;       }
         auto RingDeltaFunc::getA()                        const -> Real   { return a;         }
@@ -21,11 +22,10 @@ namespace R2toR {
         auto RingDeltaFunc::myName()                      const -> String { return "ring Dirac-δ"; }
 
         auto RingDeltaFunc::operator()         (Real2D x) const -> Real   {
-            //const auto r = x.norm();
-            //const auto t = radius+dt; // t appears in denominator so can't be zero.
-            //return (r/t) * deltaTri(r-t, eps);
+            const auto r = x.norm();
+            const auto t = radius;
 
-            return deltaTri(x.norm()-radius, eps);
+            return delta(r-t, eps);
         }
 
     }

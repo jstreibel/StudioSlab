@@ -26,7 +26,7 @@ public:
     ~ParameterTemplate();
 
     auto valueToString() const -> String override;
-    auto addToOptionsGroup(CLODEasyInit& base) const -> void;
+    auto addToOptionsGroup(CLODEasyInit& base) const -> void override;
 
     void setValueFrom(VariableValue var) override;
 
@@ -38,15 +38,17 @@ public:
     auto operator*() -> Type&;
     auto operator*() const -> const Type&;
 
-    void operator=(const Type rhs);
-    operator ParameterTemplate*();
+    operator Type() const;
+
+    auto operator=(const Type &rhs) -> ParameterTemplate&;
+    auto operator=(Type &rhs) -> ParameterTemplate&;
+
 };
 
 template <class Type>
 auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> p2) -> Type {
     return p1.val * p2.val;
 }
-
 
 typedef ParameterTemplate < int    > IntegerParameter;
 typedef ParameterTemplate < Real > RealParameter;

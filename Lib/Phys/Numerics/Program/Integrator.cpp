@@ -38,11 +38,15 @@ NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outp
 
 NumericalIntegration::~NumericalIntegration()
 {
-    Log::Note() << "Histogram finishing. Final output:" << Log::Flush;
-    std::cout << histogram;
+    Log::Note() << "Avg. integration time:" << Log::Flush;
+    std::cout << simTimeHistogram;
+
+    Log::Note() << "Avg. non-integration time:" << Log::Flush;
+    std::cout << nonSimTimeHistogram;
 }
 
 void NumericalIntegration::step(PosInt nSteps, void *args) {
+    nonSimTimeHistogram.storeMeasure();
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
@@ -50,25 +54,25 @@ void NumericalIntegration::step(PosInt nSteps, void *args) {
 
     if(activeSteps) {
         for(auto i=0; i<nSteps; ++i){
-            histogram.startMeasure();
+            simTimeHistogram.startMeasure();
             stepper->step(dt, 1);
-            histogram.storeMeasure(1);
+            simTimeHistogram.storeMeasure(1);
 
             steps++;
 
             output();
         }
     } else {
-        histogram.startMeasure();
+        simTimeHistogram.startMeasure();
         stepper->step(dt, nSteps);
-        histogram.storeMeasure(nSteps);
+        simTimeHistogram.storeMeasure(nSteps);
 
         steps += nSteps;
 
         output();
     }
 
-
+    nonSimTimeHistogram.startMeasure();
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){
@@ -103,7 +107,7 @@ size_t NumericalIntegration::getSteps() const { return steps; }
 inline floatt NumericalIntegration::getSimulationTime() { return floatt(getSteps()) * dt; }
 
 const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
-    return histogram;
+    return simTimeHistogram;
 }
 
 void NumericalIntegration::doForceOverStepping() {forceOverStepping = true; }

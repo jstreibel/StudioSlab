@@ -90,7 +90,7 @@ public:
     static auto Debug            (const String& str) -> void;
     static auto Success          (const String& str) -> void;
     static auto Warning          (const String& str) -> void;
-    static auto WarningImportant (const String& str) -> void;
+    static auto WarningImportant (const String& str) -> OStream&;
     static auto Error            (const String& str) -> void;
     static auto ErrorFatal       (const String& str) -> void;
 

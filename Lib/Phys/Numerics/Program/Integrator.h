@@ -28,7 +28,8 @@ class NumericalIntegration : public Program {
     PosInt steps;
     bool forceOverStepping = false;
 
-    BenchmarkHistogram histogram;
+    BenchmarkHistogram simTimeHistogram;
+    BenchmarkHistogram nonSimTimeHistogram;
 
     Method *stepper;
     OutputManager *outputManager;

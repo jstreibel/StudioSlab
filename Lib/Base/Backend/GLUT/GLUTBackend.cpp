@@ -166,24 +166,24 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     } else if(key == '=') {
         me->steps += 1;
 
-        Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
+        //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
     } else if(key == '+') {
         me->steps *= 1.1;
 
-        Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
+        //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
     } else if(key == '-') {
         if(me->steps > 1) {
             me->steps -= 1;
 
             if (me->steps <= 0) me->steps = 1;
 
-            Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
+            //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
         }
     } else if(key == '_') {
         if(me->steps > 1) {
             me->steps /= 1.1;
 
-            if (me->steps <= 0) me->steps = 1;
+            //if (me->steps <= 0) me->steps = 1;
         }
     } else if(key == 'd') {
         me->showDemo = !me->showDemo;

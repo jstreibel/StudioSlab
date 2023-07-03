@@ -13,6 +13,8 @@
 #include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
+#define delta(r, eps) deltaTri(r, eps)
+
 namespace R2toR {
     namespace LeadingDelta {
 
@@ -22,6 +24,7 @@ namespace R2toR {
         protected:
             const Real eps, a, dt;
             Real radius;
+
         public:
             typedef std::shared_ptr<RingDeltaFunc> Ptr;
 

@@ -72,15 +72,21 @@ auto ParameterTemplate<Type>::operator*() const -> const Type& {
 }
 
 template<class Type>
-void ParameterTemplate<Type>::operator=(Type rhs) {
-    this->setValue(rhs);
+ParameterTemplate<Type>::operator Type() const {
+    return val;
 }
 
 template<class Type>
-ParameterTemplate<Type>::operator ParameterTemplate *() {
-    return this;
+auto ParameterTemplate<Type>::operator=(const Type &rhs) -> ParameterTemplate & {
+    val = rhs;
+    return *this;
 }
 
+template<class Type>
+auto ParameterTemplate<Type>::operator=(Type &rhs) -> ParameterTemplate & {
+    val = rhs;
+    return *this;
+}
 
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;

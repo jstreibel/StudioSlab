@@ -17,19 +17,19 @@
 #include <cstring> // contains memcpy
 #include <omp.h>
 
-template<int NUM_THREADS, class FIELD_STATE_TYPE>
+template<int NUM_THREADS, class STATE_TYPE>
 class StepperRK4 : public Method{
 public:
 
     StepperRK4(const void *dPhi_)
-        : Method(), H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
-          dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
-          _phi((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k1((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k2((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k3((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k4((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _phiTemp((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()) {
+        : Method(), H(*(Base::DifferentialEquation<STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
+          dPhi((const Base::BoundaryConditions<STATE_TYPE>*)dPhi_),
+          _phi((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
+          _k1((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
+          _k2((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
+          _k3((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
+          _k4((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
+          _phiTemp((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()) {
 
         // TODO aplicar isso a cada iteracao.
         dPhi->apply(*_phi, 0.0);
@@ -51,12 +51,12 @@ public:
         const Real dt6 = dt/6.0; (void)dt6;
         const Real inv6 = 1.0/6.0;
 
-        FIELD_STATE_TYPE &phi = *_phi;
-        FIELD_STATE_TYPE &k1 = *_k1;
-        FIELD_STATE_TYPE &k2 = *_k2;
-        FIELD_STATE_TYPE &k3 = *_k3;
-        FIELD_STATE_TYPE &k4 = *_k4;
-        FIELD_STATE_TYPE &phiTemp = *_phiTemp;
+        STATE_TYPE &phi = *_phi;
+        STATE_TYPE &k1 = *_k1;
+        STATE_TYPE &k2 = *_k2;
+        STATE_TYPE &k3 = *_k3;
+        STATE_TYPE &k4 = *_k4;
+        STATE_TYPE &phiTemp = *_phiTemp;
 
         for(size_t i=0; i<n_steps; ++i)
         {
@@ -105,13 +105,13 @@ public:
     }
 
 private:
-    Base::DifferentialEquation<FIELD_STATE_TYPE> &H;
+    Base::DifferentialEquation<STATE_TYPE> &H;
 
-    const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
+    const Base::BoundaryConditions<STATE_TYPE> *dPhi;
 
-    FIELD_STATE_TYPE *_phi;
-    FIELD_STATE_TYPE *_k1, *_k2, *_k3, *_k4;
-    FIELD_STATE_TYPE *_phiTemp;
+    STATE_TYPE *_phi;
+    STATE_TYPE *_k1, *_k2, *_k3, *_k4;
+    STATE_TYPE *_phiTemp;
 
     int steps = 0;
 

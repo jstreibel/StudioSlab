@@ -11,15 +11,12 @@
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 
-#include "Mappings/RtoR2/StraightLine.h"
 #include "Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Backend/Console/ConsoleBackend.h"
 
 #include "R2toROutputOpenGLGeneric.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
 
 OutputManager*
 R2toR::OutputSystem::Builder::build(String outputFileName) {
@@ -83,7 +80,7 @@ R2toR::OutputSystem::Builder::build(String outputFileName) {
     ///********************************************************************************************/
     if(shouldOutputOpenGL) {
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
-        if(*VisualMonitor_startPaused) glutBackend->pause();
+        if((*VisualMonitor_startPaused)) glutBackend->pause();
         else glutBackend->resume();
         glutBackend->setStepsPerFrame(**OpenGLMonitor_stepsPerIdleCall);
 

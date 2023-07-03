@@ -22,13 +22,14 @@ struct RingDeltaGPU
     typedef Real argument_type;
     typedef Real result_type;
 
-    const double eps, a_eps, eps_1, t;
+    const double eps, a, a_eps, eps_1, t;
     const double rMin, step;
     const int N;
     const double *data;
 
     RingDeltaGPU(double a, double eps, double t, double rMin, double step, double N, double *data)
     : eps(eps)
+    , a(a)
     , a_eps(a/eps)
     , eps_1(1./eps)
     , t(t)
@@ -45,7 +46,8 @@ struct RingDeltaGPU
         double r = sqrt(x*x + y*y);
         double absarg = abs(r-t);
 
-        if(absarg < eps) return a_eps * (1-absarg*eps_1);
+        // if(absarg < eps) return a_eps * (1-absarg*eps_1);
+        if(absarg < eps) return a * delta(absarg, eps);
 
         return data[idx];
     }
@@ -53,6 +55,7 @@ struct RingDeltaGPU
 
 
 bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::DiscreteFunction<Real2D, Real> *toFunc) const {
+
 
     auto &outputSpace = toFunc->getSpace();
     const auto N = outputSpace.getDim().getN(0);

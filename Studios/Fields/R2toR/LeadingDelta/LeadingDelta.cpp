@@ -63,7 +63,7 @@ namespace R2toR {
             const Real L = p.getL();
             const Real dt = p.getdt();
             const auto W₀ = **W_0;
-            const auto C₂ = 2 * W₀ / 2.0; // this is C_n from our 2023 shockwave paper, with n=2.
+            const auto C₂ = W₀; // this is C_n from our 2023 shockwave paper, with n=2.
 
             p.sett(L*.5 - **eps);
 
