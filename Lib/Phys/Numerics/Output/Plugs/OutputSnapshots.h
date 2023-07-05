@@ -1,9 +1,9 @@
 #ifndef OUTPUTSNAPSHOTS1D_H
 #define OUTPUTSNAPSHOTS1D_H
 
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
-class OutputSnapshot : public Numerics::OutputSystem::Plug {
+class OutputSnapshot : public Numerics::OutputSystem::Socket {
 
 private:
     std::vector<size_t> snapSteps;

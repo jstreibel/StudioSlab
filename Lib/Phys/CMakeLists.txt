@@ -46,7 +46,7 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/OutputManager.cpp
 		Numerics/Output/StructureBuilder.cpp
 
-		Numerics/Output/Plugs/Plug.cpp
+		Numerics/Output/Plugs/Socket.cpp
 		Numerics/Output/Plugs/OutputConsoleMonitor.cpp
 		Numerics/Output/Plugs/HistoryKeeper.cpp
 		Numerics/Output/Plugs/OutputHistoryToFile.cpp

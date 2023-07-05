@@ -20,29 +20,52 @@ R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 
 R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-        : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax), drivingFunction(drivingFunction),
-          mTotalEnergyGraph("Total energy"), mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio"), mSpeedsGraph(xMin, xMax, phiMin*100, phiMax*100, "", false, Numerics::Allocator::getInstance().getNumericParams().getN()*3) {
+: R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax)
+, drivingFunction(drivingFunction)
+, mTotalEnergyGraph("Total energy")
+, mEnergyGraph("Energy")
+, mEnergyRatioGraph("Energy ratio")
+, mSpeedsGraph(xMin,
+               xMax,
+               phiMin*100,
+               phiMax*100,
+               "",
+               false,
+               Numerics::Allocator::getInstance().getNumericParams().getN()*3)
+, mEnergyDensityGraph(xMin, xMax)
+{
     energyRatioData = Spaces::PointSet::New();
-    mEnergyRatioGraph.addPointSet(energyRatioData,  Styles::GetColorScheme()->funcPlotStyles[0],
+    mEnergyRatioGraph.addPointSet(energyRatioData,
+                                  Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
     panel->addWindowToColumn(&mEnergyRatioGraph, 0);
 
 
     numericEnergyData = Spaces::PointSet::New();
     analyticEnergyData = Spaces::PointSet::New();
-    mEnergyGraph.addPointSet(numericEnergyData,  Styles::GetColorScheme()->funcPlotStyles[0], "Numeric energy");
-    mEnergyGraph.addPointSet(analyticEnergyData, Styles::GetColorScheme()->funcPlotStyles[1], "Analytic energy");
+    mEnergyGraph.addPointSet(numericEnergyData,
+                             Styles::GetColorScheme()->funcPlotStyles[0],
+                             "Numeric energy");
+    mEnergyGraph.addPointSet(analyticEnergyData,
+                             Styles::GetColorScheme()->funcPlotStyles[1],
+                             "Analytic energy");
     panel->addWindowToColumn(&mEnergyGraph, 0);
 
 
     totalEnergyData = Spaces::PointSet::New();
-    mTotalEnergyGraph.addPointSet(totalEnergyData,  Styles::GetColorScheme()->funcPlotStyles[0],
+    mTotalEnergyGraph.addPointSet(totalEnergyData,
+                                  Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Total analytic energy");
     panel->addWindowToColumn(&mTotalEnergyGraph, 0);
 
-    auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
+    auto line = new RtoR2::StraightLine({0, yMin},
+                                        {0, yMax},
+                                        yMin,
+                                        yMax);
     mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
     panel->addWindow(&mSpeedsGraph);
+
+
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
@@ -50,9 +73,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     auto &rd = *R2toR::LeadingDelta::ringDelta1;
 
-    const auto t       =  rd.getRadius();
-    const auto step    =  lastData.getSteps();
-    const auto &fState = *lastData.getFieldData<R2toR::FieldState>();
+    const auto radius =  rd.getRadius();
 
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     const auto L = p.getL();
@@ -70,12 +91,14 @@ void R2toR::LeadingDelta::OutGL::draw() {
     auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
     stats.addVolatileStat(String("t = ")     + ToString(t,         4));
     stats.addVolatileStat(String("step = ")  + ToString(step));
+    stats.addVolatileStat(String("nSteps = ")  + ToString(nSteps));
     stats.addVolatileStat(String("<\\br>"));
     stats.addVolatileStat(String("L = ")     + ToString(L));
     stats.addVolatileStat(String("N = ")     + ToString(N));
     stats.addVolatileStat(String("h = ")     + ToString(h,         4, true));
     stats.addVolatileStat(String("eps = ")   + ToString(epsilon,   4, true));
     stats.addVolatileStat(String("eps/h = ") + ToString(epsilon/h, 4));
+    stats.addVolatileStat(String("eps/L = ") + ToString(epsilon/L, 6));
     stats.addVolatileStat(String("<\\br>"));
     stats.addVolatileStat(String("L² = ")    + ToString(L*L));
     stats.addVolatileStat(String("N² = ")    + ToString(N*N));
@@ -98,7 +121,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     {
         Phys::Gordon::Energy energy;
         auto E_radius = t+energyIntegrationRadius;
-        auto E = energy.computeRadial(fState, E_radius);
+        auto E = energy.computeRadial(eqState, E_radius);
         numericEnergyData->addPoint({t, E});
         auto analyticEnergy = (2./3.) * M_PI * t * t;
         analyticEnergyData->addPoint({t, (Real)analyticEnergy});
@@ -117,7 +140,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
                                    "");
         }
 
-        totalE = energy[fState];
+        totalE = energy[eqState];
         totalEnergyData->addPoint({t, totalE});
 
         lastE = E;
@@ -127,13 +150,13 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     }
 
-    stats.addVolatileStat(String("E_tot = ")    + ToString(totalE, 2, true));
-    stats.addVolatileStat(String("E_num = ")    + ToString(lastE, 2, true));
-    stats.addVolatileStat(String("E_an = ")    + ToString(lastAnalyticE, 2, true));
-    stats.addVolatileStat(String("E_num/E_an = ")    + ToString(lastE/lastAnalyticE , 2, true));
+    stats.addVolatileStat(String("E_tot = ")        + ToString(totalE,               2, true));
+    stats.addVolatileStat(String("E_num = ")        + ToString(lastE,                2, true));
+    stats.addVolatileStat(String("E_an = ")         + ToString(lastAnalyticE,        2, true));
+    stats.addVolatileStat(String("E_num/E_an = ")   + ToString(lastE/lastAnalyticE , 2, true));
 
-    auto &phi = fState.getPhi();       phi   .getSpace().syncHost();
-    auto &dphidt = fState.getDPhiDt(); dphidt.getSpace().syncHost();
+    auto &phi = eqState.getPhi();       phi   .getSpace().syncHost();
+    auto &dphidt = eqState.getDPhiDt(); dphidt.getSpace().syncHost();
 
     mSectionGraph.clearFunctions();
     mSpeedsGraph .clearFunctions();
@@ -177,11 +200,15 @@ void R2toR::LeadingDelta::OutGL::draw() {
     RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
     radialShockwave.sett(t - dt - Real(timeOffset));
     FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
-    if(analytic)
-        mSectionGraph.addFunction(&shockwave, "Analytic", Styles::GetColorScheme()->funcPlotStyles[2]);
+    if(analytic)     mSectionGraph.addFunction(
+            &shockwave,
+            "Analytic",
+            Styles::GetColorScheme()->funcPlotStyles[2]);
 
-    if(numericSpeed)
-        mSpeedsGraph.addFunction(&dphidt, "Numeric speed", Styles::GetColorScheme()->funcPlotStyles[0]);
+    if(numericSpeed) mSpeedsGraph .addFunction(
+            &dphidt,
+            "Numeric speed",
+            Styles::GetColorScheme()->funcPlotStyles[0]);
 
     RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
     ddtRadialShockwave.sett(t - dt - Real(timeOffset));
@@ -230,5 +257,11 @@ bool R2toR::LeadingDelta::OutGL::notifyMouseButton(int button, int dir, int x, i
     panel->notifyMouseButton(button, dir, x, y);
 
     return EventListener::notifyMouseButton(button, dir, x, y);
+}
+
+bool R2toR::LeadingDelta::OutGL::notifyMouseWheel(int wheel, int direction, int x, int y) {
+    panel->notifyMouseWheel(wheel, direction, x, y);
+
+    return EventListener::notifyMouseWheel(wheel, direction, x, y);
 }
 

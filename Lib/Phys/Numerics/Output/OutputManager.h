@@ -3,17 +3,17 @@
 
 
 #include "Mappings/SimulationBuilder.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
-#include "Plugs/Plug.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Plugs/Socket.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
 class OutputManager {
 
 protected:
 
-	std::vector<Numerics::OutputSystem::Plug*> outputs;
-	std::vector<Numerics::OutputSystem::Plug*> myOutputs;
+	std::vector<Numerics::OutputSystem::Socket*> outputs;
+	std::vector<Numerics::OutputSystem::Socket*> myOutputs;
 
 
 public:
@@ -35,7 +35,7 @@ public:
     auto computeNStepsToNextOutput(PosInt currStep) -> PosInt;
 
     /****** INPUT/OUTPUT ******/
-    void addOutputChannel(Numerics::OutputSystem::Plug *out, bool keepTrack = true);
+    void addOutputChannel(Numerics::OutputSystem::Socket *out, bool keepTrack = true);
 
 
 private:

@@ -26,6 +26,8 @@ namespace R2toR {
             Phys::Graphing::PointSetGraph mEnergyRatioGraph;
 
             GraphR2Section mSpeedsGraph;
+            GraphR2Section mEnergyDensityGraph;
+
 
         public:
             OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
@@ -34,10 +36,10 @@ namespace R2toR {
 
             auto notifyKeyboard(unsigned char key, int x, int y) -> bool override;
 
+            bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+
             bool notifyMousePassiveMotion(int x, int y) override;
-
             bool notifyMouseMotion(int x, int y) override;
-
             bool notifyMouseButton(int button, int dir, int x, int y) override;
         };
     }

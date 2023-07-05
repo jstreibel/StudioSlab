@@ -22,7 +22,7 @@
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Backend/Console/ConsoleBackend.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
 OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : Builder() {
@@ -61,9 +61,9 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
 
         outputFileName += String("-N=") + ToString(N, 0);
 
-        Numerics::OutputSystem::Plug *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
-                                                                    outputFileName, outputFilter);
-        fileOutputStepsInterval = out->getNSteps();
+        Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
+                                                                      outputFileName, outputFilter);
+        fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
     }
     /********************************************************************************************/

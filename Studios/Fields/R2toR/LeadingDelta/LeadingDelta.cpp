@@ -12,7 +12,7 @@ namespace R2toR {
         BoundaryCondition::BoundaryCondition(RingDeltaFunc::Ptr ringDelta, Real tf)
                 : ringDelta(ringDelta)
                 , tf(tf) { }
-        void BoundaryCondition::apply(FieldState &function, Real t) const {
+        void BoundaryCondition::apply(EquationState &function, Real t) const {
             const bool applies = t<tf || tf<0;
             const bool exist = ringDelta != nullptr;
             const bool should = applies && exist;

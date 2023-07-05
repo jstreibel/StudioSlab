@@ -12,55 +12,55 @@
 
 namespace Base {
 
-    template<class ArbitraryFunctionType>
-    class FieldState : public Utils::ArithmeticOpsInterface<FieldState<ArbitraryFunctionType>>, public FStateOutputInterface {
+    template<class EqCategory>
+    class EquationState : public Utils::ArithmeticOpsInterface<EquationState<EqCategory>>, public FStateOutputInterface {
     public:
-        FieldState(ArbitraryFunctionType *phi, ArbitraryFunctionType *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
+        EquationState(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
 
-        using FunctionType = typename ArbitraryFunctionType::Type;
-        using FunctionArbitraryType = ArbitraryFunctionType;
+        using FunctionType = typename EqCategory::Type;
+        using FunctionArbitraryType = EqCategory;
 
-        virtual ~FieldState() {
+        virtual ~EquationState() {
             delete phi;
             delete dPhiDt;
         }
 
-        FieldState &Add(const FieldState &fieldState) override {
+        EquationState &Add(const EquationState &fieldState) override {
             phi->Add(fieldState.getPhi());
             dPhiDt->Add(fieldState.getDPhiDt());
 
             return *this;
         }
 
-        FieldState &Subtract(const FieldState<ArbitraryFunctionType> &fieldState) override {
+        EquationState &Subtract(const EquationState<EqCategory> &fieldState) override {
             phi->Subtract(fieldState.getPhi());
             dPhiDt->Subtract(fieldState.getDPhiDt());
 
             return *this;
         }
 
-        FieldState &StoreAddition(const FieldState &fieldState1, const FieldState &fieldState2) override {
+        EquationState &StoreAddition(const EquationState &fieldState1, const EquationState &fieldState2) override {
             phi->StoreAddition(fieldState1.getPhi(), fieldState2.getPhi());
             dPhiDt->StoreAddition(fieldState1.getDPhiDt(), fieldState2.getDPhiDt());
 
             return *this;
         }
-        FieldState &Multiply(floatt a) override {
+        EquationState &Multiply(floatt a) override {
             phi->Multiply(a);
             dPhiDt->Multiply(a);
 
             return *this;
         }
-        FieldState<ArbitraryFunctionType> &StoreSubtraction(const FieldState &aoi1,
-                                                               const FieldState &aoi2) override {
+        EquationState<EqCategory> &StoreSubtraction(const EquationState &aoi1,
+                                                    const EquationState &aoi2) override {
             phi->StoreSubtraction(aoi1.getPhi(), aoi2.getPhi());
             dPhiDt->StoreSubtraction(aoi1.getDPhiDt(), aoi2.getDPhiDt());
 
             return *this;
         }
 
-        FieldState<ArbitraryFunctionType> &
-        StoreMultiplication(const FieldState<ArbitraryFunctionType> &aoi1, const Real a) override {
+        EquationState<EqCategory> &
+        StoreMultiplication(const EquationState<EqCategory> &aoi1, const Real a) override {
             phi->StoreMultiplication(aoi1.getPhi(), a);
             dPhiDt->StoreMultiplication(aoi1.getDPhiDt(), a);
 
@@ -68,18 +68,18 @@ namespace Base {
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
-        void setPhi(const typename ArbitraryFunctionType::Type &function) {
+        void setPhi(const typename EqCategory::Type &function) {
             phi->Set(function);
         }
         /*! Basicamente utilizado por BoundaryConditions */
-        void setDPhiDt(const typename ArbitraryFunctionType::Type &function) {
+        void setDPhiDt(const typename EqCategory::Type &function) {
             dPhiDt->Set(function);
         }
 
-        ArbitraryFunctionType &getPhi() { return *phi; }
-        ArbitraryFunctionType &getPhi() const { return *phi; }
-        ArbitraryFunctionType &getDPhiDt() { return *dPhiDt; }
-        ArbitraryFunctionType &getDPhiDt() const { return *dPhiDt; }
+        EqCategory &getPhi() { return *phi; }
+        EqCategory &getPhi() const { return *phi; }
+        EqCategory &getDPhiDt() { return *dPhiDt; }
+        EqCategory &getDPhiDt() const { return *dPhiDt; }
 
         void outputPhi(OStream &out, String separator) const override {
             DiscreteSpace &space = phi->getSpace();
@@ -101,8 +101,8 @@ namespace Base {
         }
 
     protected:
-        ArbitraryFunctionType *phi;
-        ArbitraryFunctionType *dPhiDt;
+        EqCategory *phi;
+        EqCategory *dPhiDt;
     };
 }
 

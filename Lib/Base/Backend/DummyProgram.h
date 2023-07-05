@@ -9,7 +9,7 @@
 
 class DummyProgram : public Program {
 public:
-    void step(PosInt nSteps, void *args= nullptr) override {
+    void cycle(PosInt nSteps, void *args= nullptr) override {
 
     }
 

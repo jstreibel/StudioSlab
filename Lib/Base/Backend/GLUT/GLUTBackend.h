@@ -5,6 +5,8 @@
 #include "Base/Backend/Backend.h"
 #include "Phys/Graph/OutputOpenGL.h"
 
+#include "../Events/MouseState.h"
+
 class GLUTBackend : public Backend
 {
     static GLUTBackend *glutBackend;
@@ -13,13 +15,19 @@ class GLUTBackend : public Backend
 
     int w, h;
 	bool showDemo = false;
+	bool programIsRunning = false;
+
+	MouseState lastMouseState;
+	MouseState mouseState;
+
+	Program *program = nullptr;
+	std::vector<Window::Ptr> windows;
+	std::vector<Numerics::OutputSystem::Socket*> sockets;
 
 public:
     static GLUTBackend *GetInstance();
 
 	void addWindow(Window::Ptr window);
-    //void setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL);
-
 
     void run(Program *) override;
 
@@ -35,20 +43,11 @@ public:
     static void idleCall();
     static void reshape(int w, int h);
 
+	auto getMouseState() const -> const MouseState&;
+
     auto isRunning() const -> bool {return programIsRunning;}
 	void pause()  { programIsRunning = false; }
 	void resume() { programIsRunning = true; }
-
-	void setStepsPerFrame(size_t spf){ this->steps = spf; }
-
-private:
-	Program *program = nullptr;
-	std::vector<Window::Ptr> windows;
-    //Graphics::OutputOpenGL *outGL = nullptr;
-
-    int steps = 50;
-
-    bool programIsRunning = false;
 
 };
 

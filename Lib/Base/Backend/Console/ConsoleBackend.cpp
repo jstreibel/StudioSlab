@@ -20,5 +20,5 @@ ConsoleBackend *ConsoleBackend::getSingleton()
 }
 
 void ConsoleBackend::run(Program *integrator) {
-    integrator->runFullIntegration();
+    integrator->cycle(Program::CycleOptions::cycleCycleUntilFinished);
 }

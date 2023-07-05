@@ -24,7 +24,7 @@ namespace Base {
         bool hasResponders() const;
 
     public:
-        EventListener(bool allowDelegateResponders = false);;
+        EventListener(bool allowDelegateResponders = false);
         virtual ~EventListener() = default;
 
         virtual bool notifyKeyboard(unsigned char key, int x, int y);

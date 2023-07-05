@@ -4,14 +4,18 @@
 //#include "Mappings/R2toR/Model/Transform.h"
 //#include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 //#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Phys/Numerics/Allocator.h"
 
 
 R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-    : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1), xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax),
-      phiMin(phiMin), phiMax(phiMax), panel(new WindowPanel()),
-      mSectionGraph(xMin, xMax, phiMin, phiMax, "Sections", true,
+    : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1)
+    , eqState(*Numerics::Allocator::NewFieldState<R2toR::EquationState>())
+    , xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax)
+    , phiMin(phiMin), phiMax(phiMax)
+    , panel(new WindowPanel())
+    , mSectionGraph(xMin, xMax, phiMin, phiMax,
+                    "Sections", true,
                     Numerics::Allocator::getInstance().getNumericParams().getN()*3)
 {
     // Window *window = nullptr;
@@ -46,59 +50,12 @@ void R2toR::OutputOpenGL::draw() {
     stats.addVolatileStat(std::string("L = ") + std::to_string(L));
     stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 
-    const R2toR::FieldState& fState = *lastData.getFieldData<R2toR::FieldState>();
+    const R2toR::EquationState& fState = *lastData.getEqStateData<R2toR::EquationState>();
     auto &phi = fState.getPhi();
     auto &dPhi = fState.getDPhiDt();
 
-    //glDisable(GL_LINE_STIPPLE);
-
-
-    // *************************************************************************************************
-    // ********** SECOES *******************************************************************************
-
-    // *************************************************************************************************
-    // ********** CAMPO INTEIRO ************************************************************************
-    //glEnable(GL_DEPTH_TEST);
-    //phiGraph.BindWindow();
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadMatrixf(zpr.getModelview());
-
-    // mPhiGraph.clearFunctions();
-    // mPhiGraph.addFunction(&phi);
-
     mSectionGraph.clearFunctions();
     mSectionGraph.addFunction(&phi);
-
-
-    //RtoRMap::FunctionRenderer::renderFunction(phi, xMin, xMin, xMax - xMin, phi.getN());
-    //RtoR::FunctionRenderer::renderFunction(phi, xMin, xMin, xMax - xMin, 100, 100);
-    //zpr.popModelViewMatrix();
-    // Secoes sobre o campo inteiro
-
-    /*
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(1, 0xAAAA);
-    glColor4d(.0, .0, .0, .5);
-    glLineWidth(5);
-    glBegin(GL_LINES);
-    {
-        glVertex2d(-2, 0);
-        glVertex2d(2, 0);
-    }
-    glEnd();
-
-    glBegin(GL_POINTS);
-    {
-        glVertex2d(.0, .0);
-    }
-    glEnd();
-    glDisable(GL_LINE_STIPPLE);
-    */
-
-    //dPhiGraph.BindWindow();
-    //glMatrixMode(GL_MODELVIEW);
-    //glLoadMatrixf(zpr.getModelview());
-    //RtoR::FunctionRenderer::renderFunction(dPhi, xMin, xMin, xMax - xMin, 100, 100);
 
     panel->draw();
 }
@@ -143,7 +100,13 @@ bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
         return true;
     }
 
-    return false;
+    return Graphics::OutputOpenGL::notifyKeyboard(key, x, y);
+}
+
+void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo) {
+    Graphics::OutputOpenGL::_out(outInfo);
+
+    eqState = *outInfo.getEqStateData<R2toR::EquationState>();
 }
 
 

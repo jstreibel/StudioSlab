@@ -12,9 +12,22 @@
 #include "Base/Graphics/Window/StatsDisplay.h"
 #include "Mappings/RtoR/View/Graphics/Artists/GraphRtoR.h"
 #include "Mappings/R2toR/View/Artists/GraphR2Section.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 
 namespace R2toR {
     class OutputOpenGL : public Graphics::OutputOpenGL {
+    protected:
+        R2toR::EquationState &eqState;
+        WindowPanel *panel;
+
+        bool showAnalytic = true;
+
+        Real xMin, xMax, yMin, yMax, phiMin, phiMax;
+        //GraphR2toR mPhiGraph;
+        GraphR2Section mSectionGraph;
+
+        void _out(const OutputPacket &outInfo) override;
+
     public:
         OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
         ~OutputOpenGL();
@@ -24,16 +37,6 @@ namespace R2toR {
         bool notifyScreenReshape(int width, int height) override;
 
         bool notifyKeyboard(unsigned char key, int x, int y) override;
-
-    protected:
-        WindowPanel *panel;
-
-        bool showAnalytic = true;
-
-        Real xMin, xMax, yMin, yMax, phiMin, phiMax;
-        //GraphR2toR mPhiGraph;
-        GraphR2Section mSectionGraph;
-
     };
 
 }

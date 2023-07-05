@@ -39,6 +39,10 @@ class NumericalIntegration : public Program {
     void output();
     OutputPacket getOutputInfo();
 
+    auto _cycle(size_t nCycles) -> void;
+    auto _runFullIntegration()  -> void;
+    auto _cycleUntilOutput()    -> bool;
+
 public:
     enum Methods {Montecarlo, RK4};
 
@@ -104,11 +108,11 @@ public:
 
     ~NumericalIntegration();
 
-    void step(PosInt nSteps = 1, void *args= nullptr) override;
+    void cycle(CycleOptions) override;
+
     auto getSteps() const -> size_t;
-    inline auto getSimulationTime() -> Real;
+    auto getSimulationTime() -> Real;
     auto doForceOverStepping() -> void;
-    auto runFullIntegration() -> void override;
 
     auto getHistogram() const -> const BenchmarkHistogram&;
 

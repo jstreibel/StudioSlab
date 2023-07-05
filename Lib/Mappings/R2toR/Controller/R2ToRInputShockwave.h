@@ -8,7 +8,7 @@
 #include "Mappings/SimulationBuilder.h"
 
 #include "Common/NativeTypes.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "R2ToR_SimulationBuilder.h"
 
 namespace R2toR {

@@ -107,7 +107,7 @@ void RtoR::OutputOpenGL::draw() {
 
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
     if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     mFieldsGraph.clearFunctions();
@@ -142,7 +142,7 @@ void RtoR::OutputOpenGL::draw() {
 
 void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
 
-    const RtoR::FieldState &fieldState = *outInfo.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *outInfo.getEqStateData<RtoR::FieldState>();
     energyCalculator.computeDensities(fieldState);
 
     //auto U = energyCalculator.integrateEnergy();

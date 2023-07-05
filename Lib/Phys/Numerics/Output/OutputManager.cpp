@@ -1,6 +1,6 @@
 
 #include "OutputManager.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
 #include <Phys/Numerics/Allocator.h>
@@ -15,8 +15,11 @@ void OutputManager::output(OutputPacket &infoVolatile)
     const Real t = infoVolatile.getSimTime();
     const size_t steps = infoVolatile.getSteps();
 
-    for(auto *out : outputs)
-        if(out->shouldOutput(t, steps)) out->output(infoVolatile);
+    for(auto *out : outputs) {
+        auto shouldOutput = out->shouldOutput(t, steps);
+        if (shouldOutput)
+            out->output(infoVolatile);
+    }
 
 }
 
@@ -33,13 +36,13 @@ auto OutputManager::computeNStepsToNextOutput(PosInt currStep) -> PosInt
     return nSteps-currStep;
 }
 
-void OutputManager::addOutputChannel(Numerics::OutputSystem::Plug *out, bool keepTrack)
+void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool keepTrack)
 {
     outputs.push_back(out);
     if(keepTrack) myOutputs.push_back(out);
 
     Log::Info() << "Output manager added \"" << out->getName() << "\" output channel. Updates "
-                   "every " << out->getNSteps() << " sim steps." << Log::Flush;
+                   "every " << out->getnSteps() << " sim steps." << Log::Flush;
 }
 
 void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {

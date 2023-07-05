@@ -90,7 +90,7 @@ void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
  */
 RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
         : RtoR::OutputOpenGL() {
-    nStepsBetweenRecordings = 1;
+    nSteps = 1;
 
     RtoR::OutputOpenGL::xMax = xMax;
     RtoR::OutputOpenGL::xMin = xMin;
@@ -151,7 +151,7 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
 void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
     // OutputOpenGL::_out(outInfo);
 
-    auto field = outInfo.getFieldData<RtoR::FieldState>();
+    auto field = outInfo.getEqStateData<RtoR::FieldState>();
     __t = outInfo.getSimTime();
     probingData.push_back(field->getPhi()(jackProbeLocation));
     gotNewData = true;
@@ -159,7 +159,7 @@ void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
     if(!outInfo.getSteps()%100) {
         auto newField =
                 static_cast<RtoR::ArbitraryFunction *>
-                (outInfo.getFieldData<RtoR::FieldState>()->getPhi().Clone());
+                (outInfo.getEqStateData<RtoR::FieldState>()->getPhi().Clone());
         history.push_back(newField);
     }
 }
@@ -340,7 +340,7 @@ void RtoR::Signal::OutGL::draw() {
     // *************************** FIELD ***********************************
     if(gotNewData || 1)
     {
-        const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
+        const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
         if (&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
         mFieldsGraph.clearFunctions();

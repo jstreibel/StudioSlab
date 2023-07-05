@@ -1,7 +1,7 @@
 //
 
 
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Base/Graphics/Utils.h"
 #include "Phys/Graph/FunctionGraph.h"
@@ -425,7 +425,7 @@ bool R2toR::OutputOpenGLShockwave::notifyMouseMotion(int x, int y) {
 
 
 void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
-    const auto *field = this->lastData.getFieldData<R2toR::FieldState>();
+    const auto *field = this->lastData.getEqStateData<R2toR::EquationState>();
     const auto &phi = field->getPhi();
 
     const auto t0 = 0;

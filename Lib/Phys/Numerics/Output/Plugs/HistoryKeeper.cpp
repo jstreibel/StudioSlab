@@ -1,7 +1,7 @@
 #include "HistoryKeeper.h"
 
 #include "Phys/Numerics/Allocator.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
 #include <Base/Controller/Interface/InterfaceManager.h>
@@ -9,7 +9,7 @@
 const long long unsigned int ONE_GB = 1073741824;
 
 HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
-    : Numerics::OutputSystem::Plug("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
+    : Numerics::OutputSystem::Socket("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
     // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
@@ -28,7 +28,7 @@ auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int
 }
 
 auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
-    const bool should = (/*t >= tStart && */t <= tEnd) && Numerics::OutputSystem::Plug::shouldOutput(t, timestep);
+    const bool should = (/*t >= tStart && */t <= tEnd) && Numerics::OutputSystem::Socket::shouldOutput(t, timestep);
 
     return should;
 }

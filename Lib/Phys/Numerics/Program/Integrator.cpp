@@ -45,31 +45,21 @@ NumericalIntegration::~NumericalIntegration()
     std::cout << nonSimTimeHistogram;
 }
 
-void NumericalIntegration::step(PosInt nSteps, void *args) {
+void NumericalIntegration::cycle(CycleOptions options) {
     nonSimTimeHistogram.storeMeasure();
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
-    bool activeSteps = args != nullptr;
-
-    if(activeSteps) {
-        for(auto i=0; i<nSteps; ++i){
-            simTimeHistogram.startMeasure();
-            stepper->step(dt, 1);
-            simTimeHistogram.storeMeasure(1);
-
-            steps++;
-
-            output();
-        }
-    } else {
-        simTimeHistogram.startMeasure();
-        stepper->step(dt, nSteps);
-        simTimeHistogram.storeMeasure(nSteps);
-
-        steps += nSteps;
-
-        output();
+    switch (options.cycleOption){
+        case CycleOptions::Cycle_nCycles:
+            _cycle(options.nCycles);
+            break;
+        case CycleOptions::CycleUntilOutput:
+            _cycleUntilOutput();
+            break;
+        case CycleOptions::cycleCycleUntilFinished:
+            _runFullIntegration();
+            break;
     }
 
     nonSimTimeHistogram.startMeasure();
@@ -79,22 +69,36 @@ OutputPacket NumericalIntegration::getOutputInfo(){
     return OutputPacket(stepper->getFieldState(), stepper->getSpaces(), steps, getSimulationTime());;
 }
 
-void NumericalIntegration::runFullIntegration()
+void NumericalIntegration::_cycle(size_t nCycles) {
+    simTimeHistogram.startMeasure();
+    stepper->step(dt, nCycles);
+    simTimeHistogram.storeMeasure(nCycles);
+
+    steps += nCycles;
+
+    output();
+}
+
+void NumericalIntegration::_runFullIntegration()
 {
     size_t n = Numerics::Allocator::getInstance().getNumericParams().getn();
 
-    while(steps < n){
-        const size_t nStepsUntilNextOutput = outputManager->computeNStepsToNextOutput(steps);
+    while(steps < n && _cycleUntilOutput());
 
-        if(nStepsUntilNextOutput == 0) break;
-
-        step(nStepsUntilNextOutput);
-    }
-
-    // Para cumprir com os steps quebrados:
-    if(steps < n) step(n-steps);
+    // Para cumprir com os steps quebrados faltantes:
+    if(steps < n) cycle(n - steps);
 
     outputManager->notifyIntegrationFinished(getOutputInfo());
+}
+
+bool NumericalIntegration::_cycleUntilOutput() {
+    size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
+
+    if(nCyclesToNextOutput == 0) return false;
+
+    _cycle(nCyclesToNextOutput);
+
+    return true;
 }
 
 void NumericalIntegration::output(){

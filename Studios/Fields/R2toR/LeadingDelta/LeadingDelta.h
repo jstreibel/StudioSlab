@@ -24,12 +24,12 @@ namespace R2toR {
 
 
 
-        class BoundaryCondition : public Base::BoundaryConditions<R2toR::FieldState> {
+        class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
             RingDeltaFunc::Ptr ringDelta;
             Real tf;
         public:
             explicit BoundaryCondition(RingDeltaFunc::Ptr ringDelta = nullptr, Real tf=-1);
-            void apply(FieldState &function, Real t) const override;
+            void apply(EquationState &function, Real t) const override;
         };
 
 

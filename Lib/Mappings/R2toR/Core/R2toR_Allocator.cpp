@@ -6,7 +6,7 @@
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
@@ -46,13 +46,13 @@ auto R2toR::Core::BasicAllocator::newFunctionArbitrary() -> void * {
 }
 
 auto R2toR::Core::BasicAllocator::newFieldState() -> void * {
-    return new R2toR::FieldState((R2toR::DiscreteFunction*)this->newFunctionArbitrary(),
-                                 (R2toR::DiscreteFunction*)this->newFunctionArbitrary());
+    return new R2toR::EquationState((R2toR::DiscreteFunction*)this->newFunctionArbitrary(),
+                                    (R2toR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
 auto R2toR::Core::BasicAllocator::getSystemSolver() -> void * {
     RtoR::Function *thePotential = new RtoR::AbsFunction;
-    return new Phys::Gordon::GordonSystem<R2toR::FieldState>(*thePotential);
+    return new Phys::Gordon::GordonSystem<R2toR::EquationState>(*thePotential);
 }
 
 

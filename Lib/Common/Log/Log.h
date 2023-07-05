@@ -83,16 +83,16 @@ public:
     static auto Error            ()                  -> OStream&;
     static auto ErrorFatal       ()                  -> OStream&;
 
-    static auto Info             (const String& str) -> void;
-    static auto Note             (const String& str) -> void;
-    static auto Attention        (const String& str) -> void;
-    static auto Critical         (const String& str) -> void;
-    static auto Debug            (const String& str) -> void;
-    static auto Success          (const String& str) -> void;
-    static auto Warning          (const String& str) -> void;
+    static auto Info             (const String& str) -> OStream&;
+    static auto Note             (const String& str) -> OStream&;
+    static auto Attention        (const String& str) -> OStream&;
+    static auto Critical         (const String& str) -> OStream&;
+    static auto Debug            (const String& str) -> OStream&;
+    static auto Success          (const String& str) -> OStream&;
+    static auto Warning          (const String& str) -> OStream&;
     static auto WarningImportant (const String& str) -> OStream&;
-    static auto Error            (const String& str) -> void;
-    static auto ErrorFatal       (const String& str) -> void;
+    static auto Error            (const String& str) -> OStream&;
+    static auto ErrorFatal       (const String& str) -> OStream&;
 
     class FlushClass { public: void operator()() const; };
     friend FlushClass;

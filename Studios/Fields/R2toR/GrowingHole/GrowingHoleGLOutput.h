@@ -8,7 +8,7 @@
 #include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
 #include "Phys/Numerics/Allocator.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
@@ -31,7 +31,7 @@ namespace R2toR {
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));
 
-            const R2toR::FieldState& fState = *lastData.getFieldData<R2toR::FieldState>();
+            const R2toR::EquationState& fState = *lastData.getEqStateData<R2toR::EquationState>();
             auto &phi = fState.getPhi();
 
             mSectionGraph.clearFunctions();

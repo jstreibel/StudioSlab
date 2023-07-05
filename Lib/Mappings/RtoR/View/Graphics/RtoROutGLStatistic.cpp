@@ -59,7 +59,7 @@ RtoR::OutGLStatistic::OutGLStatistic() {
 }
 
 void RtoR::OutGLStatistic::draw() {
-    const RtoR::FieldState &fieldState = *lastData.getFieldData<RtoR::FieldState>();
+    const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
     if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     std::ostringstream ss;

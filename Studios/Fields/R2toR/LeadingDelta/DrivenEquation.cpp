@@ -28,7 +28,7 @@ namespace R2toR {
                                     << drivingForce->myName() << "'." << Log::Flush;
         }
 
-        auto DrivenEquation::dtF(const FieldState &in, FieldState &out, Real t, Real δt) -> FieldState & {
+        auto DrivenEquation::dtF(const EquationState &in, EquationState &out, Real t, Real δt) -> EquationState & {
             // φ = dϕ/dt
 
             const

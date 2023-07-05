@@ -7,8 +7,8 @@
 #include "Builder.h"
 
 #include "OutputManager.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
 Numerics::OutputSystem::Builder::Builder(String generalDescription)
@@ -21,7 +21,7 @@ Numerics::OutputSystem::Builder::Builder(String generalDescription)
 
 
 void Numerics::OutputSystem::Builder::addConsoleMonitor(OutputManager &outputManager, int nSteps) {
-    Plug *out = new OutputConsoleMonitor(nSteps);
+    Socket *out = new OutputConsoleMonitor(nSteps);
     outputManager.addOutputChannel(out);
 }
 

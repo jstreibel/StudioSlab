@@ -163,37 +163,15 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
         glutLeaveMainLoop();
     } else if(key == ' ') {
         me->programIsRunning = !me->programIsRunning;
-    } else if(key == '=') {
-        me->steps += 1;
-
-        //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
-    } else if(key == '+') {
-        me->steps *= 1.1;
-
-        //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
-    } else if(key == '-') {
-        if(me->steps > 1) {
-            me->steps -= 1;
-
-            if (me->steps <= 0) me->steps = 1;
-
-            //Log::Note() << "Stepping " << me->steps << " per cycle." << Log::Flush;
-        }
-    } else if(key == '_') {
-        if(me->steps > 1) {
-            me->steps /= 1.1;
-
-            //if (me->steps <= 0) me->steps = 1;
-        }
     } else if(key == 'd') {
         me->showDemo = !me->showDemo;
     }
     else if(key == 'f') {
         dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
     } else if(key == '[') {
-        program->step(1);
+        program->cycle(1);
     } else if(key == '{') {
-        program->step(20);
+        program->cycle(20);
     } /*else if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
         auto buffer = GLUTUtils::getFrameBuffer();
 
@@ -213,17 +191,28 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
         win->notifyKeyboardSpecial(key, x, y);
 }
 
-void GLUTBackend::mouseButton(int button, int dir, int x, int y)
+void GLUTBackend::mouseButton(int button, int state, int x, int y)
 {
+    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+
+    mouseState.dx = x-mouseState.x;
+    mouseState.dy = y-mouseState.y;
+    mouseState.x = x;
+    mouseState.y = y;
+    if      (button == GLUT_LEFT_BUTTON)   mouseState.left   = (state == GLUT_DOWN);
+    else if (button == GLUT_MIDDLE_BUTTON) mouseState.center = (state == GLUT_DOWN);
+    else if (button == GLUT_RIGHT_BUTTON)  mouseState.right  = (state == GLUT_DOWN);
+
     if(ImGui::GetIO().WantCaptureMouse)
     {
-        ImGui_ImplGLUT_MouseFunc(button, dir, x, y);
+        ImGui_ImplGLUT_MouseFunc(button, state, x, y);
         return;
     }
 
     auto *gb = GLUTBackend::GetInstance();
     for(auto &win : gb->windows)
-        win->notifyMouseButton(button, dir, x, y);
+        win->notifyMouseButton(button, state, x, y);
+
 
 }
 
@@ -235,6 +224,12 @@ void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
+    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+    mouseState.dx = x-mouseState.x;
+    mouseState.dy = y-mouseState.y;
+    mouseState.x = x;
+    mouseState.y = y;
+
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
         // if(ImGui::GetIO().WantCaptureMouse) return;
@@ -247,6 +242,12 @@ void GLUTBackend::mousePassiveMotion(int x, int y)
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
+    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+    mouseState.dx = x-mouseState.x;
+    mouseState.dy = y-mouseState.y;
+    mouseState.x = x;
+    mouseState.y = y;
+
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
         // if(ImGui::GetIO().WantCaptureMouse) return;
@@ -297,11 +298,7 @@ void GLUTBackend::idleCall()
     }
 
     if(gb->isRunning()){
-        int dummy = 1;
-        int *dummy_ptr = &dummy;
-        // dummy_ptr = nullptr;
-
-        program->step(gb->steps, dummy_ptr);
+        program->cycle(Program::CycleOptions::CycleUntilOutput);
     }
 }
 
@@ -334,6 +331,15 @@ void GLUTBackend::addWindow(Window::Ptr window) {
     //    glutReshapeWindow(size.first, size.second);
     //}
 
+    try {
+        auto socket = dynamic_cast<Numerics::OutputSystem::Socket*>(window.get());
+        sockets.emplace_back(socket);
+    } catch (std::bad_cast &) { }
+
     windows.emplace_back(window);
+}
+
+auto GLUTBackend::getMouseState() const -> const MouseState& {
+    return mouseState;
 }
 

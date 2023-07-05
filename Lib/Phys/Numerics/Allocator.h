@@ -21,6 +21,9 @@ namespace Numerics {
 
 		static auto getInstance() -> Allocator &;
 
+		template<typename StateType>
+		static auto NewFieldState() -> StateType*;
+
 		template<class ARB_FUNC_TYPE>
 		static ARB_FUNC_TYPE *NewFunctionArbitrary() {
 			return (ARB_FUNC_TYPE *) getInstance().newFunctionArbitrary();
@@ -43,6 +46,13 @@ namespace Numerics {
 
 	};
 
+
+	template<typename StateType>
+	auto Allocator::NewFieldState() -> StateType * {
+		auto &me = Allocator::getInstance();
+
+		return (StateType*)me.newFieldState();
+	}
 }
 
 #endif // FIELDBUILDER_H

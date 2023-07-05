@@ -44,15 +44,15 @@ void NumericParams::notifyCLArgsSetupFinished() {
     switch (**dimMode) {
         case 0:
             *h = **L / **N;
-            Log::WarningImportant("Option --mode=0 => h = L/N = ") << *h;
+            Log::Attention("Option --mode=0 => h = L/N = ") << *h;
             break;
         case 1:
             *L = **h * **N;
-            Log::WarningImportant("Option --mode=1 => L = h*N = ") << *L;
+            Log::Attention("Option --mode=1 => L = h*N = ") << *L;
             break;
         case 2:
             *N = int(ceil( **L / **h));
-            Log::WarningImportant("Option --mode=2 => N = ceil(h*N) = ") << *N;
+            Log::Attention("Option --mode=2 => N = ceil(h*N) = ") << *N;
             break;
     }
 

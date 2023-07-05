@@ -5,7 +5,7 @@
 #include "R2toR App.h"
 #include "Base/Controller/Interface/InterfaceSelector.h"
 #include "Phys/Numerics/Program/Integrator.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Base/Backend/Backend.h"
 
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
@@ -25,12 +25,12 @@ auto R2toR::App::Simulations::run() -> int {
     auto boundaryConditions = builder->getBoundary();
     auto output             = builder->buildOutputManager();
 
-    auto program            = NumericalIntegration::New<R2toR::FieldState>(boundaryConditions, output);
+    auto program            = NumericalIntegration::New<R2toR::EquationState>(boundaryConditions, output);
     auto backend            = Backend::GetInstance();
 
     backend->run(program);
-    Backend::Destroy();
 
+    Backend::Destroy();
     delete program;
 
     return 0;

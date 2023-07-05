@@ -11,7 +11,7 @@ R2toR::BoundaryCondition::BoundaryCondition(R2toR::Function *initialPhiCondition
                                               initialdPhiDtCondition(initialdPhiDtCondition){
 }
 
-void R2toR::BoundaryCondition::apply(FieldState &fieldState, Real t) const {
+void R2toR::BoundaryCondition::apply(EquationState &fieldState, Real t) const {
     if(t == 0.0){
         fieldState.setPhi(*initialPhiCondition);
         fieldState.setDPhiDt(*initialdPhiDtCondition);

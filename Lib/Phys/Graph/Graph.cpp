@@ -7,6 +7,8 @@
 #include "Common/Printing.h"
 #include "Common/Log/Log.h"
 
+#include "Base/Backend/GLUT/GLUTBackend.h"
+
 
 Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, String title,
                                  bool filled, int samples)
@@ -342,7 +344,7 @@ bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
     if(0) Log::Debug() << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << Log::Flush;
 
 
-    if(button == 2 && dir == 0){
+    if(button == 2 && dir == 1){
         savePopupOn = true;
 
         return true;
@@ -351,5 +353,62 @@ bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
     return EventListener::notifyMouseButton(button, dir, x, y);
 }
 
+bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
+    auto elRet = EventListener::notifyMouseMotion(x, y);
 
+    auto& mouseState = GLUTBackend::GetInstance()->getMouseState();
+
+    if(mouseState.left)
+    {
+        const Real dxClampd = - mouseState.dx / (Real)w;
+        const Real dyClampd = mouseState.dy / (Real)h;
+        const Real wGraph = xMax-xMin;
+        const Real hGraph = yMax-yMin;
+        const Real dxGraph = wGraph * dxClampd;
+        const Real dyGraph = hGraph * dyClampd;
+
+        xMin += dxGraph;
+        xMax += dxGraph;
+        yMin += dyGraph;
+        yMax += dyGraph;
+    }
+    if(mouseState.center)
+    {
+        constexpr const Real factor = 0.01;
+        const Real dx = 1+factor*mouseState.dx;
+        const Real dy = 1+factor*mouseState.dy;
+
+        const Real x0 = .5*(xMax+xMin);
+        const Real y0 = .5*(yMax+yMin);
+        const Real hw = .5*(xMax-xMin)*dx;
+        const Real hh = .5*(yMax-yMin)*dy;
+
+        xMin = x0 - hw;
+        xMax = x0 + hw;
+        yMin = y0 - hh;
+        yMax = y0 + hh;
+
+    }
+
+    return elRet;
+}
+
+bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
+    EventListener::notifyMouseWheel(wheel, direction, x, y);
+
+    constexpr const Real factor = 1.1;
+    const Real d = pow(factor, direction);
+
+    const Real x0 = .5*(xMax+xMin);
+    const Real y0 = .5*(yMax+yMin);
+    const Real hw = .5*(xMax-xMin)*d;
+    const Real hh = .5*(yMax-yMin)*d;
+
+    xMin = x0 - hw;
+    xMax = x0 + hw;
+    // yMin = y0 - hh;
+    // yMax = y0 + hh;
+
+    return true;
+}
 

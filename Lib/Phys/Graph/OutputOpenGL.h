@@ -3,36 +3,41 @@
 
 #include "Base/Graphics/Window/Window.h"
 #include "Base/Graphics/Window/StatsDisplay.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
 #include <iostream>
 #include <vector>
 
 namespace Graphics {
 
-    #define isOutputOpenGL(output) (dynamic_cast<Base::OutputOpenGL*>(output) != nullptr)
+    class OutputOpenGL : public Numerics::OutputSystem::Socket, public Window {
+        bool finishFrameAndRender();
+        std::vector<Animation*> animations;
 
-    class OutputOpenGL : public Numerics::OutputSystem::Plug, public Window {
     protected:
+        Timer frameTimer = Timer();
+        StatsDisplay stats;
         void draw() override;
 
-    public:
-        OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
+        Real t;
+        size_t step;
 
+    public:
         typedef std::shared_ptr<OutputOpenGL> Ptr;
 
+        OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
+
+        // ********************* From EventListener ************** //
+        bool notifyRender() final override;
+        bool notifyKeyboard(unsigned char key, int x, int y) override;
+        // ********************* End EventListener *************** //
 
 
-    // ********************* From Window ************** //
-    bool notifyRender() final override;
-    // ********************* End Window ************** //
-
-
-    // ********************* From OutputChannel ********************* //
+        // ********************* From Socket ********************* //
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
     protected:
         void _out(const OutputPacket &outInfo) override;
-    // ********************* END OutputBase ********************** //
+        // ********************* END Socket ********************** //
 
 
     public:
@@ -41,13 +46,6 @@ namespace Graphics {
             stats.addVolatileStat(stat, color);
         }
 
-    private:
-        bool finishFrameAndRender();
-        std::vector<Animation*> animations;
-
-    protected:
-        Timer frameTimer = Timer();
-        StatsDisplay stats;
     };
 }
 

@@ -67,13 +67,13 @@ inline String Log::prefix(){
     auto time = timer.getElTime_msec();
 
     ss << String("\n") << ResetFormatting  << std::setw(10) << ToString(timer.getElTime_msec())
-       << "ms  [  ";
+       << "ms  [ ";
 
     return ss.str();
 };
 
 inline String Log::postfix(){
-    return ResetFormatting + "  ]  ";
+    return ResetFormatting + " ]  ";
 };
 
 
@@ -88,45 +88,16 @@ OStream &Log::WarningImportant()    { auto me = Log::GetSingleton(); auto &strea
 OStream &Log::Error()               { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
 OStream &Log::ErrorFatal()          { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash"     << me.postfix(); return stream; }
 
-auto Log::Info(const String &str) -> void {
-    Info() << str << Log::Flush;
-}
-
-auto Log::Note(const String &str) -> void {
-    Note() << str << Log::Flush;
-}
-
-auto Log::Attention(const String &str) -> void {
-    Attention() << str << Log::Flush;
-}
-
-auto Log::Critical(const String &str) -> void {
-    Critical() << str << Log::Flush;
-}
-
-auto Log::Debug(const String &str) -> void {
-    Debug() << str << Log::Flush;
-}
-
-auto Log::Success(const String &str) -> void {
-    Success() << str << Log::Flush;
-}
-
-auto Log::Warning(const String &str) -> void {
-    Info() << str << Log::Flush;
-}
-
-auto Log::WarningImportant(const String &str) -> OStream& {
-    return Warning() << str << Log::Flush;
-}
-
-auto Log::Error(const String &str) -> void {
-    Error() << str << Log::Flush;
-}
-
-auto Log::ErrorFatal(const String &str) -> void {
-    ErrorFatal() << str << Log::Flush;
-}
+auto Log::Info             (const String &str) -> OStream& { return Info()       << str << Log::Flush;}
+auto Log::Note             (const String &str) -> OStream& { return Note()       << str << Log::Flush;}
+auto Log::Attention        (const String &str) -> OStream& { return Attention()  << str << Log::Flush;}
+auto Log::Critical         (const String &str) -> OStream& { return Critical()   << str << Log::Flush;}
+auto Log::Debug            (const String &str) -> OStream& { return Debug()      << str << Log::Flush;}
+auto Log::Success          (const String &str) -> OStream& { return Success()    << str << Log::Flush;}
+auto Log::Warning          (const String &str) -> OStream& { return Info()       << str << Log::Flush;}
+auto Log::WarningImportant (const String &str) -> OStream& { return Warning()    << str << Log::Flush;}
+auto Log::Error            (const String &str) -> OStream& { return Error()      << str << Log::Flush;}
+auto Log::ErrorFatal       (const String &str) -> OStream& { return ErrorFatal() << str << Log::Flush;}
 
 auto Log::FlushAll() -> void {
     *Log::GetSingleton().mainStream << Log::Flush;

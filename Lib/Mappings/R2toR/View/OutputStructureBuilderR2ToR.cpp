@@ -69,9 +69,9 @@ R2toR::OutputSystem::Builder::build(String outputFileName) {
 
         auto fileName = outputFileName + "-N=" + ToString(N, 0);
 
-        Numerics::OutputSystem::Plug *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
+        Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
 
-        fileOutputStepsInterval = out->getNSteps();
+        fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
     }
     ///********************************************************************************************/
@@ -82,10 +82,9 @@ R2toR::OutputSystem::Builder::build(String outputFileName) {
         GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
         if((*VisualMonitor_startPaused)) glutBackend->pause();
         else glutBackend->resume();
-        glutBackend->setStepsPerFrame(**OpenGLMonitor_stepsPerIdleCall);
 
         auto glOut = Graphics::OutputOpenGL::Ptr(this->buildOpenGLOutput());
-
+        glOut->setnSteps(**OpenGLMonitor_stepsPerIdleCall);
 
         glutBackend->addWindow(glOut);
         outputManager->addOutputChannel(glOut.get(), false);

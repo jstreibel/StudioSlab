@@ -5,13 +5,13 @@
 #ifndef V_SHAPE_FIELDSTATER2TOR_H
 #define V_SHAPE_FIELDSTATER2TOR_H
 
-#include "Phys/DifferentialEquations/2nd-Order/FieldState.h"
+#include "Phys/DifferentialEquations/2nd-Order/EquationState.h"
 #include "R2toRDiscreteFunction.h"
 
 namespace R2toR {
-    class FieldState : public Base::FieldState<DiscreteFunction> {
+    class EquationState : public Base::EquationState<DiscreteFunction> {
     public:
-        FieldState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::FieldState<DiscreteFunction>(phi, dPhiDt)
+        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationState<DiscreteFunction>(phi, dPhiDt)
         {
         }
 

@@ -10,14 +10,14 @@
 
 namespace Numerics {
     namespace OutputSystem {
-        class Plug {
-
+        class Socket {
             virtual void _out(const OutputPacket &outputPacket) = 0;
+            int nextRecStep = -1;
 
         public:
-            virtual ~Plug() = default;
+            virtual ~Socket() = default;
 
-            std::shared_ptr<Plug> Ptr;
+            std::shared_ptr<Socket> Ptr;
 
             virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
             auto getDescription() const -> String;
@@ -39,17 +39,18 @@ namespace Numerics {
 
         protected:
 
-            int nStepsBetweenRecordings; // numero de passos entre uma gravacao e outra.
+            int nSteps; // Number of steps between recordings.
             OutputPacket lastData;
 
 
             String name, description;
         public:
 
-            explicit Plug(String name="", int nStepsInterval = 1, String description="");
+            explicit Socket(String name="", int nStepsInterval = 1, String description="");
 
-            auto getLastSimTime() -> Real;
-            auto getNSteps() const -> int;
+            auto getLastSimTime()      -> Real;
+            auto getnSteps()     const -> int;
+            auto setnSteps(int nSteps) -> void;
 
             void output(const OutputPacket &outData);
 
@@ -58,6 +59,6 @@ namespace Numerics {
     }
 }
 
-typedef std::vector<Numerics::OutputSystem::Plug*> OutputCollection;
+typedef std::vector<Numerics::OutputSystem::Socket*> OutputCollection;
 
 #endif

@@ -5,7 +5,7 @@
 
 #include "Phys/Thermal/Utils/RandUtils.cpp"
 
-Real Phys::Gordon::Energy::operator[](const R2toR::FieldState &function) const {
+Real Phys::Gordon::Energy::operator[](const R2toR::EquationState &function) const {
     const auto &phi = function.getPhi();
     const auto &dphidt = function.getDPhiDt();
     const auto &phiSpace = phi.getSpace();
@@ -41,7 +41,7 @@ Real Phys::Gordon::Energy::operator[](const R2toR::FieldState &function) const {
     return K+D+V;
 }
 
-Real Phys::Gordon::Energy::computeRadial(const R2toR::FieldState &function, Real upToRadius) {
+Real Phys::Gordon::Energy::computeRadial(const R2toR::EquationState &function, Real upToRadius) {
     const auto &phi = function.getPhi();
     const auto &dphidt = function.getDPhiDt();
 

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_DRIVENEQUATION_H
 #define STUDIOSLAB_DRIVENEQUATION_H
 
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
@@ -16,7 +16,7 @@ namespace R2toR {
 
     namespace LeadingDelta {
 
-        typedef Phys::Gordon::GordonSystem<FieldState> DiffEq;
+        typedef Phys::Gordon::GordonSystem<EquationState> DiffEq;
 
         class DrivenEquation : public DiffEq {
             R2toR::Function::Ptr drivingForce;
@@ -25,7 +25,7 @@ namespace R2toR {
         public:
             explicit DrivenEquation(R2toR::Function::Ptr drivingForce);
 
-            auto dtF(const FieldState &in, FieldState &out, Real t, Real dt) -> FieldState & override;
+            auto dtF(const EquationState &in, EquationState &out, Real t, Real dt) -> EquationState & override;
         };
 
     }

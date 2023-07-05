@@ -5,7 +5,7 @@
 #include "Phys/Space/Impl/DiscreteSpaceCPU.h"
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 
 
 //
@@ -21,7 +21,7 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
 
     if(phiSpace.getDim().getNDim() != 2) throw "Is rong.";
 
-    R2toR::DiscreteFunction &f = outputInfo.getFieldData<R2toR::FieldState>()->getPhi();
+    R2toR::DiscreteFunction &f = outputInfo.getEqStateData<R2toR::EquationState>()->getPhi();
 
     const R2toR::Domain domain = f.getDomain();
     const auto L = domain.getLx();

@@ -75,7 +75,9 @@ namespace Base {
             Real get_yMax() const;
 
             bool notifyMouseButton(int button, int dir, int x, int y) override;
+            bool notifyMouseMotion(int x, int y) override;
 
+            bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
         };
 
     }

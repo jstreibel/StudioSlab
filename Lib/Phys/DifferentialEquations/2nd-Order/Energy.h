@@ -6,20 +6,20 @@
 #define STUDIOSLAB_ENERGY_H
 
 #include "Phys/Functional/Functional.h"
-#include "Mappings/R2toR/Model/FieldState.h"
+#include "Mappings/R2toR/Model/EquationState.h"
 
 
 namespace Phys {
 
     namespace Gordon {
-        typedef Functionals::Functional<const R2toR::FieldState> Functional;
+        typedef Functionals::Functional<const R2toR::EquationState> Functional;
 
         class Energy : public Functional {
 
         public:
-            Real computeRadial(const R2toR::FieldState &function, Real upToRadius);
+            Real computeRadial(const R2toR::EquationState &function, Real upToRadius);
 
-            Real operator[](const R2toR::FieldState &function) const override;
+            Real operator[](const R2toR::EquationState &function) const override;
         };
 
     }

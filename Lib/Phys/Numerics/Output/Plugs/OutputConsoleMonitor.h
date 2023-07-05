@@ -1,10 +1,10 @@
 #ifndef OUTPUTCONSOLEMONITOR_H
 #define OUTPUTCONSOLEMONITOR_H
 
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include <Common/Timer.h>
 
-class OutputConsoleMonitor : public Numerics::OutputSystem::Plug
+class OutputConsoleMonitor : public Numerics::OutputSystem::Socket
 {
 private:
     Timer timer = Timer();

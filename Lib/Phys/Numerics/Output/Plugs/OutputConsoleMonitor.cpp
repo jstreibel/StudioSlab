@@ -1,11 +1,11 @@
 #include "OutputConsoleMonitor.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
 #include <Phys/Numerics/Allocator.h>
 
 OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps)
-    : Plug("Console monitor output", n_steps),
+    : Socket("Console monitor output", n_steps),
       maxT(Numerics::Allocator::getInstance().getNumericParams().gett())
 {
 

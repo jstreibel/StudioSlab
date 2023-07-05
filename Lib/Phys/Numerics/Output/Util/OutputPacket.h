@@ -42,7 +42,7 @@ public:
     bool hasValidData() { return spaceData.first != nullptr && spaceData.second != nullptr && fieldData != nullptr; }
 
     template<class FieldStateType>
-    [[nodiscard]] const FieldStateType* getFieldData() const {return (FieldStateType*)fieldData; }
+    [[nodiscard]] const FieldStateType* getEqStateData() const {return (FieldStateType*)fieldData; }
     /*!
      * Get the actual field state data.
      * @return The field state data, of whichever model is being integrated. Note that this pointer should not be

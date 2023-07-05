@@ -173,6 +173,17 @@ bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
     return responded;
 }
 
+bool WindowPanel::notifyMouseWheel(int wheel, int direction, int x, int y) {
+    assert(!allowsDelegateResponders);
+
+    auto responded = false;
+    for(auto &col : columns)
+        for(auto &win : col)
+            if(win->doesHit(x, y)) responded = win->notifyMouseWheel(wheel, direction, x, y);
+
+    return responded;
+}
+
 
 
 

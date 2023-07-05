@@ -19,7 +19,7 @@
 
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Phys/Numerics/Output/Plugs/Plug.h"
+#include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
 const auto pi = 3.1415926535897932384626;
@@ -31,7 +31,7 @@ namespace RtoR {
         extern Real dampFactor;
 
 
-        class JackOutput : public Numerics::OutputSystem::Plug {
+        class JackOutput : public Numerics::OutputSystem::Socket {
 
         public:
             JackOutput();
