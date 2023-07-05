@@ -144,5 +144,9 @@ void DiscreteSpaceGPU::notifyHostIsUpdated() {
     hostIsUpdated = true;
 }
 
+bool DiscreteSpaceGPU::dataOnGPU() const {
+    return true;
+}
+
 
 

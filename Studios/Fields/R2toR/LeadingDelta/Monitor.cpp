@@ -121,7 +121,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     {
         Phys::Gordon::Energy energy;
         auto E_radius = t+energyIntegrationRadius;
-        auto E = energy.computeRadial(eqState, E_radius);
+        auto E = energy.computeRadial_method2(eqState, E_radius);
         numericEnergyData->addPoint({t, E});
         auto analyticEnergy = (2./3.) * M_PI * t * t;
         analyticEnergyData->addPoint({t, (Real)analyticEnergy});

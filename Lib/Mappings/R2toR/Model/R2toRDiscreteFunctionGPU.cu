@@ -63,11 +63,12 @@ Real &R2toR::FunctionArbitraryGPU::At(PosInt n, PosInt m) {
 
 DiscreteFunction &
 R2toR::FunctionArbitraryGPU::Set(const MyBase &func) {
+    auto &space = getSpace();
+
     if(func.isDiscrete()) {
         auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(func);
+        return SetArb(discreteFunc);
     }
-
-    auto &space = getSpace();
 
     space.syncHost();
 

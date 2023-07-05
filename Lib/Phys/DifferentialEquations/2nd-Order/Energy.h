@@ -17,7 +17,8 @@ namespace Phys {
         class Energy : public Functional {
 
         public:
-            Real computeRadial(const R2toR::EquationState &function, Real upToRadius);
+            Real computeRadial_method1(const R2toR::EquationState &function, Real upToRadius);
+            Real computeRadial_method2(const R2toR::EquationState &function, Real upToRadius);
 
             Real operator[](const R2toR::EquationState &function) const override;
         };

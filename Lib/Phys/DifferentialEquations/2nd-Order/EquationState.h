@@ -12,6 +12,10 @@
 
 namespace Base {
 
+    /**
+     * State representing 2nd order equation state.
+     * @tparam EqCategory Usually some DiscreteFunction type.
+     */
     template<class EqCategory>
     class EquationState : public Utils::ArithmeticOpsInterface<EquationState<EqCategory>>, public FStateOutputInterface {
     public:
@@ -31,14 +35,12 @@ namespace Base {
 
             return *this;
         }
-
         EquationState &Subtract(const EquationState<EqCategory> &fieldState) override {
             phi->Subtract(fieldState.getPhi());
             dPhiDt->Subtract(fieldState.getDPhiDt());
 
             return *this;
         }
-
         EquationState &StoreAddition(const EquationState &fieldState1, const EquationState &fieldState2) override {
             phi->StoreAddition(fieldState1.getPhi(), fieldState2.getPhi());
             dPhiDt->StoreAddition(fieldState1.getDPhiDt(), fieldState2.getDPhiDt());
@@ -51,16 +53,15 @@ namespace Base {
 
             return *this;
         }
-        EquationState<EqCategory> &StoreSubtraction(const EquationState &aoi1,
-                                                    const EquationState &aoi2) override {
+        EquationState<EqCategory> &
+                StoreSubtraction(const EquationState &aoi1, const EquationState &aoi2) override {
             phi->StoreSubtraction(aoi1.getPhi(), aoi2.getPhi());
             dPhiDt->StoreSubtraction(aoi1.getDPhiDt(), aoi2.getDPhiDt());
 
             return *this;
         }
-
         EquationState<EqCategory> &
-        StoreMultiplication(const EquationState<EqCategory> &aoi1, const Real a) override {
+                StoreMultiplication(const EquationState<EqCategory> &aoi1, const Real a) override {
             phi->StoreMultiplication(aoi1.getPhi(), a);
             dPhiDt->StoreMultiplication(aoi1.getDPhiDt(), a);
 

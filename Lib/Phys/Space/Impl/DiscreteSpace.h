@@ -44,6 +44,8 @@ public:
     PosInt getTotalDiscreteSites() const;
 
     virtual
+    auto dataOnGPU() const -> bool { return false; }
+    virtual
     auto getDeviceData()                        const -> const DeviceVector& { throw "trying to access device data on host Space"; };
     virtual
     auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };

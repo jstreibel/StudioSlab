@@ -41,7 +41,53 @@ Real Phys::Gordon::Energy::operator[](const R2toR::EquationState &function) cons
     return K+D+V;
 }
 
-Real Phys::Gordon::Energy::computeRadial(const R2toR::EquationState &function, Real upToRadius) {
+Real Phys::Gordon::Energy::computeRadial_method1(const R2toR::EquationState &function, Real upToRadius) {
+    const auto &phi = function.getPhi();
+    const auto &dphidt = function.getDPhiDt();
+    const auto &phiSpace = phi.getSpace();
+
+    auto h = phiSpace.geth();
+    auto inv_2h = .5/h;
+    auto h2 = h*h;
+    auto N1 = phi.getN();
+    auto N2 = phi.getM();
+
+    const auto R = upToRadius;
+    const auto nRadius    = R/h;
+    const auto nRadiusSqr = nRadius*nRadius;
+    const auto iCenter    = N1/2 + N1%2;
+    const auto jCenter    = N2/2 + N2%2;
+
+    auto K = .0;
+    auto D = .0;
+    auto V = .0;
+
+    for(auto i=1; i<N1-1; ++i){
+        for(auto j=1; j<N2-1; ++j){
+            const auto i_c = i-iCenter;
+            const auto j_c = j-jCenter;
+            if((i_c*i_c + j_c*j_c) > nRadiusSqr) continue;
+
+            auto C = phi.   At(i  , j  );
+            auto N = phi.   At(i  , j-1);
+            auto S = phi.   At(i  , j+1);
+            auto E = phi.   At(i+1, j  );
+            auto W = phi.   At(i-1, j  );
+            auto p = dphidt.At(i,j);
+
+            auto dx = inv_2h*( E-W );
+            auto dy = inv_2h*( N-S );
+
+            K += .5*p*p*h2;
+            D += .5*(dx*dx + dy*dy)*h2;
+            V += fabs(C)*h2;
+        }
+    }
+
+    return K+D+V;
+}
+
+Real Phys::Gordon::Energy::computeRadial_method2(const R2toR::EquationState &function, Real upToRadius) {
     const auto &phi = function.getPhi();
     const auto &dphidt = function.getDPhiDt();
 
@@ -93,4 +139,3 @@ Real Phys::Gordon::Energy::computeRadial(const R2toR::EquationState &function, R
 
     return (.5*(K+D)+V)*h2;
 }
-

@@ -25,6 +25,8 @@ public:
 
     auto setToValue(const DiscreteSpace &param) -> void override;
 
+    auto dataOnGPU() const -> bool override;
+
     auto getDeviceData()       ->       DeviceVector & override;
     auto getDeviceData() const -> const DeviceVector & override;
 

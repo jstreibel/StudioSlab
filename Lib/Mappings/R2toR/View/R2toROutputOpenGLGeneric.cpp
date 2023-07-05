@@ -106,7 +106,11 @@ bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo) {
     Graphics::OutputOpenGL::_out(outInfo);
 
-    eqState = *outInfo.getEqStateData<R2toR::EquationState>();
+    auto &state = *outInfo.getEqStateData<R2toR::EquationState>();
+
+    eqState.setPhi(     state.getPhi());
+    eqState.setDPhiDt(  state.getDPhiDt());
+
 }
 
 
