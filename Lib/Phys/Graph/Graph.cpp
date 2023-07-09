@@ -399,7 +399,7 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     EventListener::notifyMouseWheel(wheel, direction, x, y);
 
     constexpr const Real factor = 1.1;
-    const Real d = pow(factor, direction);
+    const Real d = pow(factor, -direction);
 
     if(GUIBackend::GetInstance().getMouseState().rightPressed) {
         const Real x0 = .5 * (xMax + xMin);
@@ -409,8 +409,8 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     } else {
         const Real y0 = .5 * (yMax + yMin);
         const Real hh = .5 * (yMax - yMin) * d;
-        yMin = y0 + hh;
-        yMax = y0 - hh;
+        yMin = y0 - hh;
+        yMax = y0 + hh;
     }
 
     return true;
