@@ -3,14 +3,12 @@
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 
-#include <Common/Workaround/StringStream.h>
-
 using namespace RtoR;
 
 InputSymmetricOscillon::InputSymmetricOscillon()
 : RtoRBCInterface("Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
 {
-    addParameters({&v, &V, &alpha, &isAntiSymmetric});
+    interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
 }
 
 auto InputSymmetricOscillon::getBoundary() const -> const void *

@@ -11,7 +11,7 @@ Histogram::Histogram() {
 
 }
 
-void Histogram::Compute(const RtoR::ArbitraryFunction &func, int nBins) {
+void Histogram::Compute(const RtoR::DiscreteFunction &func, int nBins) {
 
     this->nBins = nBins;
 

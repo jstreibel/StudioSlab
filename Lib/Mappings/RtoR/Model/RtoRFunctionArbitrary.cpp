@@ -8,30 +8,30 @@
 
 using namespace RtoR;
 
-ArbitraryFunction::ArbitraryFunction(const ArbitraryFunction &toCopy)
-    : ArbitraryFunction::ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, laplacianType){
-    throw "FunctionArbitrary::FunctionArbitrary(const FunctionArbitrary &toCopy) not implemented.";
+DiscreteFunction::DiscreteFunction(const DiscreteFunction &toCopy)
+    : DiscreteFunction::DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, laplacianType){
+    throw "DiscreteFunction::DiscreteFunction(const FunctionArbitrary &toCopy) not implemented.";
 }
 
-ArbitraryFunction::ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
+DiscreteFunction::DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
     : Base::DiscreteFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
       xMin(xMin), xMax(xMax), laplacianType(laplacianType)
 {
 
 }
 
-auto ArbitraryFunction::mapIntToPos(PosInt i) const -> Real {
+auto DiscreteFunction::mapIntToPos(PosInt i) const -> Real {
     const floatt L = xMax-xMin;
     const Real h_2 = .5*getSpace().geth();
     return (L * Real(i)/Real(N-1) + xMin) + h_2;
 }
 
-auto ArbitraryFunction::mapPosToInt(Real x) const -> PosInt {
+auto DiscreteFunction::mapPosToInt(Real x) const -> PosInt {
     const Real h = getSpace().geth();
     return PosInt((x-xMin)/h);
 }
 
-Real ArbitraryFunction::operator()(Real x) const {
+Real DiscreteFunction::operator()(Real x) const {
     const floatt L = xMax-xMin;
 
     // TODO: fazer essa conversao um pouco mais consciente.

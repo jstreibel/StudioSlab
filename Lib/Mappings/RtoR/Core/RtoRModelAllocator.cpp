@@ -14,16 +14,7 @@
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 
-RtoRModelAllocator::RtoRModelAllocator() = default;
-
-
-auto RtoRModelAllocator::Choose() -> RtoRModelAllocator* {
-    auto *me = new RtoRModelAllocator;
-
-    Allocator::Instantiate(me);
-
-    return me;
-}
+RtoRModelAllocator::RtoRModelAllocator() : Numerics::Allocator("ℝ ↦ ℝ general") { };
 
 //void RtoRModelAllocator::Init() {
 //    auto &me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());
@@ -44,19 +35,19 @@ auto RtoRModelAllocator::newFunctionArbitrary() -> void * {
     const floatt xRight = xLeft + numericParams.getL();
 
     if(dev==CPU)
-        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::ArbitraryFunction::Standard1D);
+        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
 
 #if USE_CUDA
     else if(dev==GPU)
-        return new RtoR::FunctionArbitraryGPU(N, xLeft, xRight, RtoR::ArbitraryFunction::Standard1D);
+        return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
 #endif
 
     throw "Error while instantiating Field: device not recognized.";
 }
 
 auto RtoRModelAllocator::newFieldState() -> void * {
-    return new RtoR::FieldState((RtoR::ArbitraryFunction*)this->newFunctionArbitrary(),
-                                (RtoR::ArbitraryFunction*)this->newFunctionArbitrary());
+    return new RtoR::FieldState((RtoR::DiscreteFunction*)this->newFunctionArbitrary(),
+                                (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
 auto RtoRModelAllocator::getSystemSolver() -> void * {
@@ -74,12 +65,11 @@ auto RtoRModelAllocator::getSystemSolver() -> void * {
         thePotential = new RtoR::NullFunction;
     //else throw "Other potentials not implemented";
 
-    return new Base::GordonSystem<RtoR::FieldState>(*thePotential);
+    return new Phys::Gordon::GordonSystem<RtoR::FieldState>(*thePotential);
 }
 
 void RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential pot, std::vector<Real> params) {
-    auto me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());
-    if(&me == nullptr) throw "Bad cast.";
+    auto &me = Allocator::GetInstanceSuper<RtoRModelAllocator>();
 
     me.potential = pot;
 }

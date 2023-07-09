@@ -15,7 +15,7 @@ using namespace RtoR;
 
 //
 FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
-    : ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
+    : DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
 
     auto &toCopyX = toCopy.getSpace().getHostData(true);
 
@@ -23,8 +23,8 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
         getSpace().getHostData()[n] = toCopyX[n];
 }
 
-FunctionArbitraryCPU::FunctionArbitraryCPU(const ArbitraryFunction& toCopy)
-    : ArbitraryFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.getLaplacianType()) {
+FunctionArbitraryCPU::FunctionArbitraryCPU(const DiscreteFunction& toCopy)
+    : DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.getLaplacianType()) {
 
     auto &toCopyX = toCopy.getSpace().getHostData(true);
 
@@ -33,13 +33,13 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const ArbitraryFunction& toCopy)
 }
 
 RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
-    : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType){
+    : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType){
 
 }
 
 FunctionArbitraryCPU::FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
                                            DiscreteFunction::LaplacianType laplacianType)
-                                           : ArbitraryFunction(N, xLeft, xRight, device::CPU, laplacianType) {
+                                           : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType) {
     getSpace().getHostData() = data;
 }
 
@@ -95,7 +95,7 @@ Base::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &
     return out;
 }
 
-ArbitraryFunction &FunctionArbitraryCPU::Laplacian(ArbitraryFunction &out) const {
+DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &out) const {
 
     if(laplacianType == RadialSymmetry2D)
     {

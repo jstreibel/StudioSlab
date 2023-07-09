@@ -30,6 +30,13 @@ struct Pair {
 typedef Pair<int, int>      IntPair;
 typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> DiscreteSpacePair;
 
+
+template<typename T>
+std::shared_ptr<T> DummyPtr(T &instance) {
+    return std::shared_ptr<T>(&instance, [](T*){});
+}
+
+
 template<class T>
 typename std::vector<T>     Vector;
 typedef std::ostream        OStream;

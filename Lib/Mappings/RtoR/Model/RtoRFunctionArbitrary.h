@@ -15,7 +15,7 @@
 
 namespace RtoR {
 
-    class ArbitraryFunction : public Base::DiscreteFunction<Real, Real> {
+    class DiscreteFunction : public Base::DiscreteFunction<Real, Real> {
     public:
         enum LaplacianType {
             Standard1D,
@@ -23,11 +23,11 @@ namespace RtoR {
         };
 
     public:
-        ArbitraryFunction(const ArbitraryFunction &toCopy);
-        ArbitraryFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);
+        DiscreteFunction(const DiscreteFunction &toCopy);
+        DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);
 
     public:
-        virtual ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const = 0;
+        virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;
         LaplacianType getLaplacianType() const { return laplacianType; }
 
     public:

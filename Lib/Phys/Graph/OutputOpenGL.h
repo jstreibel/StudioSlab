@@ -1,7 +1,7 @@
 #ifndef OUTPUTOPENGL_H
 #define OUTPUTOPENGL_H
 
-#include "Base/Graphics/Window/Window.h"
+#include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Base/Graphics/Window/StatsDisplay.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 
@@ -15,6 +15,7 @@ namespace Graphics {
         std::vector<Animation*> animations;
 
     protected:
+        WindowPanel panel;
         Timer frameTimer = Timer();
         StatsDisplay stats;
         void draw() override;

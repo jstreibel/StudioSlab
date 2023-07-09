@@ -9,16 +9,16 @@
 
 namespace RtoR {
 #if USE_CUDA == true
-    class FunctionArbitraryGPU : public ArbitraryFunction {
+    class DiscreteFunctionGPU : public DiscreteFunction {
     public:
-        FunctionArbitraryGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType);
+        DiscreteFunctionGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType);
 
         /*! This function operates on the host and then transfers information to device. Therefore, it is
          * not efficient. */
         Base::DiscreteFunction<Real,Real> &Apply(const Function &func,
                                                  Base::DiscreteFunction<Real, Real> &out) const override;
         Base::DiscreteFunction<Real, Real> &Set(const MyBase &func) override;
-        ArbitraryFunction &Laplacian(ArbitraryFunction &outFunc) const override;
+        DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const override;
     };
 #endif
 }

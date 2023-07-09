@@ -34,13 +34,13 @@ namespace Base {
             return *this;
         }
 
-        typename MyBase::Pointer diff(int n) const override {
+        typename MyBase::Ptr diff(int n) const override {
             auto *myDiff = new SummableFunction;
 
             for (auto *func : funcs)
                 (*myDiff) += *(func->diff(n));
 
-            return typename MyBase::Pointer(myDiff);
+            return typename MyBase::Ptr(myDiff);
         }
 
         OutputCategory operator()(InputCategory x) const override {

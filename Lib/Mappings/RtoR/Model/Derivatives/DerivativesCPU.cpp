@@ -9,7 +9,7 @@
 
 using namespace RtoR;
 
-DerivativeCPU::DerivativeCPU(const ArbitraryFunction &in)
+DerivativeCPU::DerivativeCPU(const DiscreteFunction &in)
 : f_(&in.getSpace().getHostData()), h(in.getSpace().geth()), invh(1. / h), invhsqr(1. / (h * h)),
   N(in.getSpace().getTotalDiscreteSites())
 {

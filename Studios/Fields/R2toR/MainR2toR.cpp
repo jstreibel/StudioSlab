@@ -36,11 +36,11 @@ int main(int argc, const char **argv) {
         return SafetyNet::jump(prog);
 
     } catch (const char *e) {
-        Log::ErrorFatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
+        Log::Fatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
                   << e << "\033[0m" << "\", application will now exit." << Log::Flush;
         return -1;
     } catch (const std::string e) {
-        Log::ErrorFatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
+        Log::Fatal() << "Exception reached the top of main: \"" << "\033[91m\033[1m"
                   << e << "\033[0m" << "\", application will now exit." << Log::Flush;
         return -1;
     }

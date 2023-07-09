@@ -29,18 +29,6 @@ RtoR::OutputOpenGL::OutputOpenGL(const Real xMin, const Real xMax,
 void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
     if(isInitialized) return;
 
-    {
-        this->xMin = xMin;
-        this->xMax = xMax;
-
-        this->phiMin = phiMin;
-        this->phiMax = phiMax;
-    }
-
-
-    Window *window = nullptr;
-
-
     //this->mTotalEnergyGraph = {0, Allocator::getInstance().getNumericParams().gett(), 0, 1,
     //                           "U, K, W, |phi|, W+|phi|", true};
     //this->mTotalEnergyGraph.addFunction(&UHistory, U_color);
@@ -51,27 +39,11 @@ void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiM
     //window = new Window; window->addArtist(&this->mTotalEnergyGraph);
     //panel->addWindow(window);
 
+    panel.addWindow(&this->stats);
 
-    window = new Window; window->addArtist(&this->stats);
-    panel->addWindow(window);
-
-    auto samples = (int)Numerics::Allocator::getInstance().getNumericParams().getN();
-    this->mFieldsGraph = {xMin, xMax, -0.1*phiMax, phiMax, "AAA", true, samples};
-    window = new Window; window->addArtist(&this->mFieldsGraph);
-    panel->addWindow(window, true, 0.7);
-
-
-
-    const auto faktor = 1000;
-    phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
-    phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
-    addAnimation(phiMaxAnim);
-    addAnimation(phiMinAnim);
-
-    xMinAnim = new Animation(&mFieldsGraph.xMin, mFieldsGraph.xMin, faktor);
-    xMaxAnim = new Animation(&mFieldsGraph.xMax, mFieldsGraph.xMax, faktor);
-    addAnimation(xMinAnim);
-    addAnimation(xMaxAnim);
+    auto samples = (int)Numerics::Allocator::GetInstance().getNumericParams().getN();
+    // mFieldsGraph = new GraphRtoR{xMin, xMax, -0.1*phiMax, phiMax, "AAA", true, samples};
+    panel.addWindow(&mFieldsGraph, true, 0.7);
 
     //UHistory.xMin = 0;
     //UHistory.xMax = Allocator::getInstance().getNumericParams().gett();
@@ -88,7 +60,7 @@ void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiM
 
 void RtoR::OutputOpenGL::draw() {
     if(!isInitialized) {
-        const auto &p = Numerics::Allocator::getInstance().getNumericParams();
+        const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
         auto xMin = p.getxLeft();
         auto xMax = xMin + p.getL();
 
@@ -108,35 +80,38 @@ void RtoR::OutputOpenGL::draw() {
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
     const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
-    if(&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
     mFieldsGraph.clearFunctions();
 
     if(showPhi){
-        const Color colorPhi = V_color;
+        const Styles::Color colorPhi = V_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");
+        mFieldsGraph.addFunction(&energyCalculator.getPotential(), "|phi|",
+                                  Styles::GetColorScheme()->funcPlotStyles[0]);
     }
 
     if(showKineticEnergy){
-        const Color colorKinetic = K_color;
+        const Styles::Color colorKinetic = K_color;
 
         // mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
-        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
+        mFieldsGraph.addFunction(&fieldState.getDPhiDt(), "K",
+                                  Styles::GetColorScheme()->funcPlotStyles[1]);
     }
 
     if(showGradientEnergy) {
-        const Color colorGradient = W_color;
+        const Styles::Color colorGradient = W_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient, "grad^2");
+        mFieldsGraph.addFunction(&energyCalculator.getGradient(), "grad^2",
+                                  Styles::GetColorScheme()->funcPlotStyles[2]);
     }
 
-    if(showEnergyDensity){
-        const Color color = U_color;
-        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color, "E");
+    if(showEnergyDensity && 0){
+        const Styles::Color color = U_color;
+        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), "E",
+                                  Styles::GetColorScheme()->funcPlotStyles[3]);
     }
 
-    panel->draw(true, true);
+    panel.draw();
 
 }
 
@@ -179,7 +154,7 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
     //WHistory.xMax = xMax;
     //VHistory.xMax = xMax;
 
-    Base::OutputOpenGL::_out(outInfo);
+    Graphics::OutputOpenGL::_out(outInfo);
 }
 
 
@@ -198,7 +173,7 @@ bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
             break;
         case '4':
             showEnergyDensity = !showEnergyDensity;
-            Log::Important() << "Important: energy density is computing with the signum potential only." << std::endl;
+            Log::Attention() << "Important: energy density is computing with the signum potential only." << std::endl;
             break;
         default:
             break;
@@ -206,58 +181,9 @@ bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
 
 }
 
-bool RtoR::OutputOpenGL::notifyKeyboardSpecial(int key, int x, int y) {
-    const Real kDown = 3.8;
-    const Real kUp = 1/kDown;
-
-    const auto delta = (mFieldsGraph.xMax - mFieldsGraph.xMin);
-    const auto center = .5*(mFieldsGraph.xMax + mFieldsGraph.xMin);
-    const auto k = .2;
 
 
-    switch(key) {
-        case GLUT_KEY_PAGE_UP:
-            setPhiMax(getPhiMax() * kUp);
-            setPhiMin(getPhiMin() * kUp);
-            break;
-        case GLUT_KEY_PAGE_DOWN:
-            setPhiMax(getPhiMax() * kDown);
-            setPhiMin(getPhiMin() * kDown);
-            break;
 
-        case GLUT_KEY_UP:
-            xMaxAnim->animateToValue(center+k*delta);
-            xMinAnim->animateToValue(center-k*delta);
-            break;
-        case GLUT_KEY_DOWN:
-            xMaxAnim->animateToValue(center+(1.+k)*delta);
-            xMinAnim->animateToValue(center-(1.+k)*delta);
-            break;
-        case GLUT_KEY_LEFT:
-            xMaxAnim->animateToValue(mFieldsGraph.xMax-k*delta);
-            xMinAnim->animateToValue(mFieldsGraph.xMin-k*delta);
-            break;
-        case GLUT_KEY_RIGHT:
-            xMaxAnim->animateToValue(mFieldsGraph.xMax+k*delta);
-            xMinAnim->animateToValue(mFieldsGraph.xMin+k*delta);
-            break;
-
-        default:
-            break;
-    }
-}
-
-bool RtoR::OutputOpenGL::notifyMouseButton(int button, int dir, int x, int y) {
-    const Real faktor = 1.5;
-    if(button == 3 && dir == 0){
-        setPhiMax(getPhiMax()*faktor);
-        setPhiMin(getPhiMin()*faktor);
-    }
-    else if(button == 4 && dir == 0){
-        setPhiMax(getPhiMax()*(1/faktor));
-        setPhiMin(getPhiMin()*(1/faktor));
-    }
-}
 
 
 

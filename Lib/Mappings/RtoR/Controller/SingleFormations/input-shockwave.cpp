@@ -10,13 +10,11 @@
 
 #include "Mappings/RtoR/View/Graphics/RtoROutputOpenGLShockwave.h"
 
-#include <Common/Workaround/StringStream.h>
-
 
 using namespace RtoR;
 
 InputShockwave::InputShockwave() : RtoRBCInterface("Shockwave in 1-dim") {
-    addParameters({&a0, &E});
+    interface->addParameters({&a0, &E});
 }
 
 auto InputShockwave::getBoundary() const -> const void *

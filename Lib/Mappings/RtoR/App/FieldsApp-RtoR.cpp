@@ -17,10 +17,12 @@
 #include "Phys/Numerics/Program/Integrator.h"
 
 
-
-SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration integration)
-        : AppBase(argc, argv), integration(integration)
+SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Base::SimulationBuilder::Ptr simBuilder)
+        : AppBase(argc, argv), simBuilder(simBuilder)
 {
+    simBuilder->registerAllocator();
+
+    /*
     switch (integration) {
         case Integration::langevin:
             RtoRModelAllocator_Langevin::Choose();
@@ -32,31 +34,25 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Integration 
             RtoRModelAllocator::Choose();
             RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential::V);
     }
+     */
 
     AppBase::parseCLArgs();
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    auto *bcInput = dynamic_cast<Base::SimulationBuilder*>(InterfaceSelector::getInstance().getCurrentCandidate());
-
-    const auto *boundaryConditions = bcInput->getBoundary();
-    auto *output = bcInput->buildOutputManager();
-
+    const auto *boundaryConditions = simBuilder->getBoundary();
+    auto *output = simBuilder->buildOutputManager();
 
     auto numericMethod = integration==Integration::montecarlo ? NumericalIntegration::Montecarlo
                                                               : NumericalIntegration::RK4;
-    auto *integrator = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output, numericMethod);
 
-    auto backend = Backend::GetInstance();
+    auto program = NumericalIntegration::New<RtoR::FieldState>(boundaryConditions, output, numericMethod);
 
-    if (backend->backendName == "GLUT backend") {
-        GLUTBackend::GetInstance()->setStepsPerFrame(80);
-    }
+    Backend &backend = Backend::GetInstance();
 
-    backend->run(integrator);
+    backend.run(program);
+
     Backend::Destroy();
-
-    delete integrator;
 
     return 0;
 }

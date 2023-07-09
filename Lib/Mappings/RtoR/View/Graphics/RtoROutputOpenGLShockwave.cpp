@@ -15,10 +15,10 @@
 
 RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(Real a0, Real E) : a0(a0), E(E) {
     surfaceEnergyHistory.xMin = 0;
-    surfaceEnergyHistory.xMax = Numerics::Allocator::getInstance().getNumericParams().gett();
+    surfaceEnergyHistory.xMax = Numerics::Allocator::GetInstance().getNumericParams().gett();
 
     innerEnergyHistory.xMin = 0;
-    innerEnergyHistory.xMax = Numerics::Allocator::getInstance().getNumericParams().gett();
+    innerEnergyHistory.xMax = Numerics::Allocator::GetInstance().getNumericParams().gett();
 
 }
 
@@ -41,26 +41,6 @@ void RtoR::OutputOpenGLShockwave::draw() {
         const auto v = -1 + eps*eps/(2*a0);
 
         const auto t = getLastSimTime();
-
-
-        {
-            glColor4f(.2, .4, .8, .85);
-
-            glBegin(GL_LINES);
-            glVertex2d(eps - t, getPhiMin());
-            glVertex2d(eps - t, getPhiMax());
-            glVertex2d(-eps + v * t, getPhiMin());
-            glVertex2d(-eps + v * t, getPhiMax());
-
-            glVertex2d(-eps + t, getPhiMin());
-            glVertex2d(-eps + t, getPhiMax());
-            glVertex2d(eps - v * t, getPhiMin());
-            glVertex2d(eps - v * t, getPhiMax());
-            glEnd();
-
-
-        }
-
 
         //auto surfaceEnergy = .0;
         //auto innerEnergy = .0;

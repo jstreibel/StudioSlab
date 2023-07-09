@@ -13,7 +13,8 @@ namespace Numerics {
 		Allocator(Str name);
 
 	public:
-		template<typename StateType>
+
+        template<typename StateType>
 		static auto NewFieldState() -> StateType*;
 
 		template<class ARB_FUNC_TYPE>

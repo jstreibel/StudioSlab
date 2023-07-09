@@ -7,13 +7,11 @@
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 
-#include <Common/Workaround/StringStream.h>
-
 using namespace RtoR;
 
 InputSingleOscillon::InputSingleOscillon() : RtoRBCInterface("Single oscillon")
 {
-    addParameters({&v, &V, &alpha, &lambda, &mirror});
+    interface->addParameters({v, V, alpha, lambda, mirror});
 }
 
 auto InputSingleOscillon::getBoundary() const -> const void * {

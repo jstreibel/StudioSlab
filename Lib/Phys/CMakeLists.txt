@@ -30,7 +30,7 @@ set ( EXPERIMENTAL_SOURCES
 
 
 set ( DIFFEQS_SOURCES
-		DifferentialEquations/2nd-Order/Energy.cpp
+		#DifferentialEquations/2nd-Order/Energy.cpp
 		)
 
 

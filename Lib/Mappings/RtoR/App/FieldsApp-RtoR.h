@@ -7,14 +7,14 @@
 
 
 #include "Base/App/AppBase.h"
+#include "Mappings/SimulationBuilder.h"
 
 class SimulationsAppRtoR : public AppBase {
+    Base::SimulationBuilder::Ptr simBuilder;
 public:
     enum Integration {regular, langevin, montecarlo} integration;
 
-
-
-    SimulationsAppRtoR(int argc, const char **argv, Integration integration=regular);
+    SimulationsAppRtoR(int argc, const char **argv, Base::SimulationBuilder::Ptr simBuilder);
 
     auto run() -> int override;
 

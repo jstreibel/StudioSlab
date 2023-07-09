@@ -4,12 +4,12 @@
 
 #include "EnergyCalculator.h"
 
-#ifdef PERIODIC_BC
+//#ifdef PERIODIC_BC
 #define LEFT(i)  ((i)>0?(i)-1:N-1)
 #define RIGHT(i) ((i)<N-1?(i)+1:0)
-#endif
+//#endif
 
-auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> const RtoR::ArbitraryFunction &{
+auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> const RtoR::DiscreteFunction &{
     auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();
@@ -51,7 +51,7 @@ auto RtoR::EnergyCalculator::integrateEnergy() -> Real
     for(const auto &e : E_v)
         E += e;
 
-    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
     return E*dx;
 }
 
@@ -61,7 +61,7 @@ auto RtoR::EnergyCalculator::integrateEnergy(Real xmin, Real xmax) -> Real {
     auto &func = *_oEnergyDensityFunc;
 
     VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
-    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
 
     PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 
@@ -81,7 +81,7 @@ Real RtoR::EnergyCalculator::integrateKinetic() {
     for(const auto &k : K_v)
         K += k;
 
-    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
     return K*dx;
 }
 
@@ -92,7 +92,7 @@ Real RtoR::EnergyCalculator::integrateGradient() {
     for(const auto &grad : Grad_v)
         Grad += grad;
 
-    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
     return Grad*dx;
 }
 
@@ -103,6 +103,6 @@ Real RtoR::EnergyCalculator::integratePotential() {
     for(const auto &pot : Pot_v)
         Pot += pot;
 
-    Real dx = Numerics::Allocator::getInstance().getNumericParams().geth();
+    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
     return Pot*dx;
 }

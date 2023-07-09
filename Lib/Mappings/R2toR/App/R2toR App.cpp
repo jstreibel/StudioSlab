@@ -31,7 +31,6 @@ auto R2toR::App::Simulations::run() -> int {
     backend.run(program);
 
     Backend::Destroy();
-    delete program;
 
     return 0;
 }

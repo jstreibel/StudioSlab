@@ -10,7 +10,7 @@ using namespace RtoR;
 InputPerturbations::InputPerturbations()
 : RtoRBCInterface("Perturbed oscillon in its reference frame")
 {
-    addParameters({&l, &eps});
+    interface->addParameters({&l, &eps});
 };
 
 auto InputPerturbations::getBoundary() const -> const void *

@@ -15,6 +15,8 @@ namespace Base {
                                    Str prefix="");
 
     public:
+        virtual ~SimulationBuilder() {}
+
         typedef std::shared_ptr<SimulationBuilder> Ptr;
 
         virtual auto getBoundary()        const -> const void * = 0;

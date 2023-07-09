@@ -15,7 +15,7 @@ protected:
     RtoRModelAllocator();
 
 public:
-    enum Potential {V, KleinGordon, free, null} potential = V;
+    enum Potential {V, KleinGordon, Free, Null} potential = V;
 
     static auto Choose() -> RtoRModelAllocator*;
 

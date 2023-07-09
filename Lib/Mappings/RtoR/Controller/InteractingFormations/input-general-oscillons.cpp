@@ -7,15 +7,13 @@
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 
-#include <Common/Workaround/StringStream.h>
-
 using namespace RtoR;
 
 
 InputGeneralOscillons::InputGeneralOscillons()
 : RtoRBCInterface("General scattering of any two oscillons.")
 {
-    addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
+    interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
 }
 
 auto InputGeneralOscillons::getBoundary() const -> const void *

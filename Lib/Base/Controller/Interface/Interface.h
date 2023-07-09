@@ -56,6 +56,7 @@ public:
     auto addListener(InterfaceListener*) -> void;
     void addParameter(Parameter::Ptr parameter);
     void addParameters(std::initializer_list<Parameter::Ptr> parameters);
+    void addParameters(std::initializer_list<Parameter*> parameters);
 
     auto getSubInterfaces() const -> std::vector<Interface::Ptr>;
     auto getParameters() const -> std::vector<Parameter::ConstPtr>;

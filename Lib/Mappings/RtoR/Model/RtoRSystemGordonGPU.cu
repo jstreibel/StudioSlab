@@ -34,10 +34,10 @@ struct GPUHamiltonianStepper
 };
 
 FieldState &SystemGordonGPU::dtF(const FieldState &in, FieldState &out, Real t, Real dt) {
-    cast(inPhi, const FunctionArbitraryGPU&, in.getPhi());
-    cast(inDPhiDt, const FunctionArbitraryGPU&, in.getDPhiDt());
-    cast(outPhi, FunctionArbitraryGPU&, out.getPhi());
-    cast(outDPhiDt, FunctionArbitraryGPU&, out.getDPhiDt());
+    cast(inPhi, const DiscreteFunctionGPU&, in.getPhi());
+    cast(inDPhiDt, const DiscreteFunctionGPU&, in.getDPhiDt());
+    cast(outPhi, DiscreteFunctionGPU&, out.getPhi());
+    cast(outDPhiDt, DiscreteFunctionGPU&, out.getDPhiDt());
 
     const auto& sInPhi = dynamic_cast<const DiscreteSpaceGPU&>(inPhi.getSpace());
     const auto& sInDPhiDt = dynamic_cast<const DiscreteSpaceGPU&>(inDPhiDt.getSpace());

@@ -24,25 +24,25 @@ namespace RtoR {
         return sign*r;
     }
 
-    typedef Base::Gordon<RtoR::FieldState> LorentzInvariant;
+    typedef Phys::Gordon::GordonSystem<RtoR::FieldState> LorentzInvariant;
 
 
     class LorentzLangevin_2ndOrder : public LorentzInvariant {
 
 
 
-        ArbitraryFunction &langevinImpulses;
-        ArbitraryFunction &scaledImpulses;
+        DiscreteFunction &langevinImpulses;
+        DiscreteFunction &scaledImpulses;
 
         Real T=0.01;
         Real alpha = 1.0;
     public:
 
         explicit LorentzLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential),
-                                                                      langevinImpulses(*(ArbitraryFunction*)Numerics::Allocator::
-                                                                      getInstance().newFunctionArbitrary()),
-                                                                      scaledImpulses(*(ArbitraryFunction*)Numerics::Allocator::
-                                                                      getInstance().newFunctionArbitrary()) { }
+                                                                      langevinImpulses(*(DiscreteFunction*)Numerics::Allocator::
+                                                                      GetInstance().newFunctionArbitrary()),
+                                                                      scaledImpulses(*(DiscreteFunction*)Numerics::Allocator::
+                                                                      GetInstance().newFunctionArbitrary()) { }
 
         void startStep(Real t, Real dt) override{
             DifferentialEquation::startStep(t, dt);
@@ -63,10 +63,10 @@ namespace RtoR {
         void setTemperature(Real value) {T = value;}
 
         FieldState &dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
-            const ArbitraryFunction &iPhi = fieldStateIn.getPhi();
-            const ArbitraryFunction &iDPhi = fieldStateIn.getDPhiDt();
-            ArbitraryFunction &oPhi = fieldStateOut.getPhi();
-            ArbitraryFunction &oDPhi = fieldStateOut.getDPhiDt();
+            const DiscreteFunction &iPhi = fieldStateIn.getPhi();
+            const DiscreteFunction &iDPhi = fieldStateIn.getDPhiDt();
+            DiscreteFunction &oPhi = fieldStateOut.getPhi();
+            DiscreteFunction &oDPhi = fieldStateOut.getDPhiDt();
 
             // Eq 1
             {   oPhi.SetArb(iDPhi) *= dt;   }
@@ -78,9 +78,9 @@ namespace RtoR {
                 iPhi.Laplacian(laplacian); // Laplaciano do phi de input tem seu laplaciano
                                            // calculado e o resultado vai pra dentro do temp1,
                                            // que por sua vez eh retornado;
-                iPhi.Apply(dVDPhi, dV);
+                iPhi.Apply(*dVDPhi, dV_out);
 
-                oDPhi.StoreSubtraction(laplacian, dV);  // agora temp1 e temp2 estao liberados;
+                oDPhi.StoreSubtraction(laplacian, dV_out);  // agora temp1 e temp2 estao liberados;
 
 
 
@@ -95,6 +95,7 @@ namespace RtoR {
         }
 
     };
+
 
 }
 

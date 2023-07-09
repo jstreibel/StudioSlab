@@ -9,7 +9,7 @@
 
 
 RtoR::InputMachineGun::InputMachineGun() : RtoRBCInterface("Machinegun scattering") {
-    addParameters({&v1, &n});
+    interface->addParameters({&v1, &n});
 
 }
 

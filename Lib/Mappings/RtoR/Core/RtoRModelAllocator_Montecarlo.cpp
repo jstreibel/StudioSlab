@@ -12,18 +12,6 @@
 #include "Mappings/RtoR/Model/Equation/Montecarlo-Lorentz-2ndOrder.h"
 
 
-
-
-
-auto RtoRModelAllocator_Montecarlo::Choose() -> RtoRModelAllocator_Montecarlo* {
-    auto *me = new RtoRModelAllocator_Montecarlo;
-
-    Allocator::Instantiate(me);
-
-    return me;
-}
-
-
 auto RtoRModelAllocator_Montecarlo::getSystemSolver() -> void * {
 #if USE_CUDA == true
     if(this->getDevice().getDevice() == device::GPU)

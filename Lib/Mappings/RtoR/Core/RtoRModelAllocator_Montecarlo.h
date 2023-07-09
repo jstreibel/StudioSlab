@@ -12,8 +12,6 @@ class RtoRModelAllocator_Montecarlo : public RtoRModelAllocator {
     RtoRModelAllocator_Montecarlo() = default;
 
 public:
-    static auto Choose() -> RtoRModelAllocator_Montecarlo*;
-
     auto getSystemSolver() -> void * override;
 
 };

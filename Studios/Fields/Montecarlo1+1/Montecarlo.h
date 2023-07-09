@@ -39,13 +39,16 @@ namespace Montecarlo {
         Input()
 
         : RtoRBCInterface("Input of initial field data for Montecarlo simulation.", "Montecarlo",
-                          new Montecarlo::OutputBuilder()) { addParameters({&T, &E, &n}); }
+                          BuilderBasePtr(new Montecarlo::OutputBuilder()))
+        {
+            interface->addParameters({&T, &E, &n});
+        }
 
     private:
         auto getBoundary() const -> const void * override{
 
-            auto L = Allocator::getInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
-            auto xLeft = Allocator::getInstance().getNumericParams().getxLeft();
+            auto L = Numerics::Allocator::GetInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
+            auto xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
             //auto L = 20.;
 
             auto oscLength = L / *n;

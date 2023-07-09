@@ -13,15 +13,6 @@
 
 
 
-auto RtoRModelAllocator_Langevin::Choose() -> RtoRModelAllocator_Langevin* {
-    auto *me = new RtoRModelAllocator_Langevin;
-
-    Allocator::Instantiate(me);
-
-    return me;
-}
-
-
 auto RtoRModelAllocator_Langevin::getSystemSolver() -> void * {
 #if USE_CUDA == true
     if(this->getDevice().getDevice() == device::GPU)

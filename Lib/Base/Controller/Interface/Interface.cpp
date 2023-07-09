@@ -47,11 +47,15 @@ void Interface::addParameter(Parameter::Ptr parameter) {
 }
 
 void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
-
-
     for(auto param : parametersList)
         addParameter(param);
 }
+
+void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
+    for(auto param : parametersList)
+        addParameter(DummyPtr(*param));
+}
+
 
 void Interface::addSubInterface(Interface::Ptr subInterface) {
     if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
@@ -139,6 +143,7 @@ auto Interface::getName() const -> const Str & {
 bool Interface::operator<(const Interface &other) const {
     return priority < other.priority;
 }
+
 
 
 

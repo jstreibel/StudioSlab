@@ -18,7 +18,7 @@
 RtoR::InputStatistical::InputStatistical()
 : RtoRBCInterface("Energy and density of oscillons statistical input.")
 {
-    addParameters({&E, &n});
+    interface->addParameters({&E, &n});
 }
 
 auto RtoR::InputStatistical::getDetailedDescription() -> Str {
@@ -33,8 +33,8 @@ auto RtoR::InputStatistical::getDetailedDescription() -> Str {
 }
 
 auto RtoR::InputStatistical::getBoundary() const -> const void * {
-    auto L = Numerics::Allocator::getInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
-    auto xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    auto L = Numerics::Allocator::GetInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
+    auto xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
     //auto L = 20.;
 
     auto oscLength = L / *n;

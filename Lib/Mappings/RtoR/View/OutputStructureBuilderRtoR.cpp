@@ -35,11 +35,10 @@ OutputStructureBuilderRtoR::build(Str outputFileName) -> OutputManager * {
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
 
-    if(*VisualMonitor) GLUTBackend::GetInstance();
-    else ConsoleBackend::getSingleton();
+    if(*VisualMonitor) Backend::Initialize<GLUTBackend>();
+    else Backend::Initialize<ConsoleBackend>();
 
-
-    const NumericParams &p = Numerics::Allocator::getInstance().getNumericParams();
+    const NumericParams &p = Numerics::Allocator::GetInstance().getNumericParams();
 
     auto *outputManager = new OutputManager;
 
@@ -54,9 +53,9 @@ OutputStructureBuilderRtoR::build(Str outputFileName) -> OutputManager * {
 
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}));
 
-        const auto N = (Real) Numerics::Allocator::getInstance().getNumericParams().getN();
+        const auto N = (Real) Numerics::Allocator::GetInstance().getNumericParams().getN();
         const Real Np = *outputResolution;
-        const Real r = Numerics::Allocator::getInstance().getNumericParams().getr();
+        const Real r = Numerics::Allocator::GetInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
         outputFileName += Str("-N=") + ToStr(N, 0);
@@ -71,18 +70,17 @@ OutputStructureBuilderRtoR::build(Str outputFileName) -> OutputManager * {
 
     /********************************************************************************************/
     if(shouldOutputOpenGL) {
-        GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
+        auto &glutBackend = Backend::GetInstanceSuper<GLUTBackend>(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
 
         const Real phiMin = -0.08;
         const Real phiMax = 0.08;
-        const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
+        const Real xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+        const Real xRight = xLeft + Numerics::Allocator::GetInstance().getNumericParams().getL();
 
         //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
-        Base::OutputOpenGL *outputOpenGL = buildOpenGLOutput();
-
-        glutBackend->setOpenGLOutput(outputOpenGL);
+        auto outputOpenGL = buildOpenGLOutput();
+        glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
         // outGL->output(dummyInfo); // stop flicker?
         outputManager->addOutputChannel(outputOpenGL);
     }

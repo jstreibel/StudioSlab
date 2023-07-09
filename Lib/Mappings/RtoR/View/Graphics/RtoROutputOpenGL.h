@@ -18,8 +18,7 @@ namespace RtoR {
         bool isInitialized = false;
     public:
         OutputOpenGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
-
-        OutputOpenGL();;
+        OutputOpenGL();
 
         void initialize(Real xMin, Real xMax, Real phiMin, Real phiMax);
 
@@ -29,26 +28,8 @@ namespace RtoR {
 
     private:
         bool notifyKeyboard(unsigned char key, int x, int y) override;
-        bool notifyKeyboardSpecial(int key, int x, int y) override;
-        bool notifyMouseButton(int button, int dir, int x, int y) override;
 
     protected:
-        auto getPhiMax() const -> Real { return mFieldsGraph.get_yMax(); }
-        auto getPhiMin() const -> Real { return mFieldsGraph.get_yMin(); }
-
-        void setPhiMax(const Real newPhiMax) {
-            phiMaxAnim->animateToValue(newPhiMax);
-        }
-
-        void setPhiMin(const Real newPhiMin) {
-            phiMinAnim->animateToValue(newPhiMin);
-        }
-
-        Animation *phiMinAnim;
-        Animation *phiMaxAnim;
-        Animation *xMinAnim;
-        Animation *xMaxAnim;
-
         GraphRtoR mFieldsGraph;
 
         //GraphRtoR mTotalEnergyGraph;
@@ -69,12 +50,6 @@ namespace RtoR {
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
-
-    protected:
-        Real xMin, xMax;
-
-        Real phiMax;
-        Real phiMin;
 
         //bool showAnalyticSolution = false;
     };

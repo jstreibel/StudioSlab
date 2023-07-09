@@ -7,14 +7,10 @@
 #include <utility>
 
 
-RtoRBCInterface::RtoRBCInterface(Str generalDescription,
-                                 Str name,
-                                 OutputStructureBuilderBase *outputStructureBuilder,
-                                 bool selfRegister)
-    : SimulationBuilder(std::move(generalDescription), outputStructureBuilder,
-                  "RtoR-" + name, selfRegister)
+RtoRBCInterface::RtoRBCInterface(Str generalDescription, Str name, BuilderBasePtr outputStructureBuilder)
+: SimulationBuilder(generalDescription, outputStructureBuilder, "RtoR-" + name)
 {
-    addSubInterface(outputStructureBuilder);
+    interface->addSubInterface(outputStructureBuilder->getInterface());
 }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {

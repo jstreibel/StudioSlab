@@ -19,7 +19,7 @@ namespace RtoR {
 
     class FunctionRenderer {
     public:
-        static void renderFunction(          const RtoR::ArbitraryFunction &func, Styles::Color c, bool filled,
+        static void renderFunction(          const RtoR::DiscreteFunction &func, Styles::Color c, bool filled,
                                              Real scale = 1.0);
         static void renderFunction(          const RtoR::Function &func, Styles::Color c, bool filled,
                                              Real xMin, Real xMax, PosInt resolution, Real scale = 1.0);

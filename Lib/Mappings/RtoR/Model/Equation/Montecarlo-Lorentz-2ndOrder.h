@@ -22,14 +22,14 @@
 
 namespace RtoR {
 
-    typedef Base::GordonSystem<RtoR::FieldState> LorentzInvariant;
+    typedef Phys::Gordon::GordonSystem<RtoR::FieldState> LorentzInvariant;
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
         Real T=1.e-3;
         unsigned accepted = 0;
 
-        Real E(const ArbitraryFunction &phi){
+        Real E(const DiscreteFunction &phi){
             const auto h = phi.getSpace().geth();
             const auto inv_2h = .5/h;
             const auto &X = phi.getSpace().getHostData();
@@ -50,9 +50,9 @@ namespace RtoR {
             return h*E_h;
         }
 
-        ArbitraryFunction *temp;
-        Real deltaE(ArbitraryFunction &phi, const int site, const Real newVal, const Real h){
-            ArbitraryFunction &phiNew = *temp;
+        DiscreteFunction *temp;
+        Real deltaE(DiscreteFunction &phi, const int site, const Real newVal, const Real h){
+            DiscreteFunction &phiNew = *temp;
 
             phiNew.SetArb(phi);
 
@@ -82,7 +82,7 @@ namespace RtoR {
         }
     public:
         explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential)
-            : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<ArbitraryFunction>()) { }
+            : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<DiscreteFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             DifferentialEquation::startStep(t, dt);

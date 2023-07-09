@@ -12,7 +12,7 @@ class Histogram {
 public:
     Histogram();
 
-    void Compute(const RtoR::ArbitraryFunction &func, int nBins = 100);
+    void Compute(const RtoR::DiscreteFunction &func, int nBins = 100);
 
     RtoR::Function* asPDFFunction() const;
 

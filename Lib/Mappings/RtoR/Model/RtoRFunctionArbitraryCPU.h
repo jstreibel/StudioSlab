@@ -8,10 +8,10 @@
 #include "RtoRFunctionArbitrary.h"
 
 namespace RtoR {
-    class FunctionArbitraryCPU : public ArbitraryFunction {
+    class FunctionArbitraryCPU : public DiscreteFunction {
     public:
         FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
-        FunctionArbitraryCPU(const ArbitraryFunction& toCopy);
+        FunctionArbitraryCPU(const DiscreteFunction& toCopy);
         FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
         FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
@@ -28,7 +28,7 @@ namespace RtoR {
                    Base::DiscreteFunction<Real, Real> &out)
                    const -> Base::DiscreteFunction<Real, Real> & override;
 
-        auto Laplacian(ArbitraryFunction &outFunc) const -> ArbitraryFunction & override;
+        auto Laplacian(DiscreteFunction &outFunc) const -> DiscreteFunction & override;
 
         Real integrate() const override;
 

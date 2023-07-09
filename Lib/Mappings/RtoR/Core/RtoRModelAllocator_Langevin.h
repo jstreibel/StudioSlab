@@ -12,7 +12,6 @@ class RtoRModelAllocator_Langevin : public RtoRModelAllocator {
     RtoRModelAllocator_Langevin() = default;
 
 public:
-    static auto Choose() -> RtoRModelAllocator_Langevin*;
 
     auto getSystemSolver() -> void * override;
 

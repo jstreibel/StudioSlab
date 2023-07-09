@@ -12,11 +12,11 @@
 RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()
 : RtoRBCInterface("Energy density over time-derivative of field.")
 {
-    addParameters({&E});
+    interface->addParameters({&E});
 }
 
 auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() const -> const void* {
-    auto &allocator = Numerics::Allocator::getInstance();
+    auto &allocator = Numerics::Allocator::GetInstance();
 
     auto N = allocator.getNumericParams().getN();
     auto h = allocator.getNumericParams().geth();

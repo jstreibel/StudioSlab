@@ -14,12 +14,12 @@
 
 using namespace RtoR;
 
-FunctionArbitraryGPU::FunctionArbitraryGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType)
-    : ArbitraryFunction(N, xMin, xMax, device::GPU, laplacianType) {
+DiscreteFunctionGPU::DiscreteFunctionGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType)
+    : DiscreteFunction(N, xMin, xMax, device::GPU, laplacianType) {
 
 }
 
-Base::DiscreteFunction<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Function &func) {
+Base::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Function &func) {
     DiscreteSpaceGPU &spaceGPU = dynamic_cast<DiscreteSpaceGPU&>(getSpace());
 
     auto& XHost = spaceGPU.getHostData(false);
@@ -38,16 +38,16 @@ Base::DiscreteFunction<Real, Real> &FunctionArbitraryGPU::Set(const RtoR::Functi
 
         return *this;
     } else {
-        cast(inFunc, const RtoR::ArbitraryFunction&, func);
+        cast(inFunc, const RtoR::DiscreteFunction&, func);
         return Set(inFunc);
     }
 
-    throw "Liberals have won, if you see this exception.";
+    throw "Leftism has won, if you see this exception.";
 }
 
 
 
-Base::DiscreteFunction<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Function &func,
+Base::DiscreteFunction<Real,Real> &DiscreteFunctionGPU::Apply(const RtoR::Function &func,
                                                                Base::DiscreteFunction<Real,Real> &out) const {
     assert(out.isGPUFriendly());
 
@@ -66,8 +66,8 @@ Base::DiscreteFunction<Real,Real> &FunctionArbitraryGPU::Apply(const RtoR::Funct
     return out;
 }
 
-ArbitraryFunction &FunctionArbitraryGPU::Laplacian(ArbitraryFunction &outFunc) const {
-    if(laplacianType == ArbitraryFunction::RadialSymmetry2D) throw "GPU RadialSymmetry2D laplacian not implemented.";
+DiscreteFunction &DiscreteFunctionGPU::Laplacian(DiscreteFunction &outFunc) const {
+    if(laplacianType == DiscreteFunction::RadialSymmetry2D) throw "GPU RadialSymmetry2D laplacian not implemented.";
 
     // cast(out, FunctionArbitraryGPU&, outFunc);
 

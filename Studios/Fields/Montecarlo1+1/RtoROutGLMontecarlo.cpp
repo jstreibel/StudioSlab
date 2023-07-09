@@ -15,15 +15,15 @@
 
 #define max(a, b) ((a)>(b)?(a):(b))
 
-const Color T1_color = Color(0, 1, 0);
-const Color T2_color = Color(1, 0.45, 1);
-const Color T3_color = Color(1, 1, 0);
+const Styles::Color T1_color = Styles::Color(0, 1, 0);
+const Styles::Color T2_color = Styles::Color(1, 0.45, 1);
+const Styles::Color T3_color = Styles::Color(1, 1, 0);
 
 namespace Montecarlo {
 
     OutGL::OutGL() {
-        const Real xLeft = Allocator::getInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Allocator::getInstance().getNumericParams().getL();
+        const Real xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+        const Real xRight = xLeft + Numerics::Allocator::GetInstance().getNumericParams().getL();
 
         Window *window = nullptr;
 
@@ -62,14 +62,10 @@ namespace Montecarlo {
         //window = new Window;
         //window->addArtist(mHistogramsGraph4);
         //panel->addWindow(window);
-
-
-        panel->arrangeWindows();
     }
 
     void OutGL::draw() {
         const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
-        if (&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
         std::ostringstream ss;
 
@@ -117,10 +113,11 @@ namespace Montecarlo {
 
         // *************************** MY BEAUTY *****************************
 
-        auto N = (Real) Allocator::getInstance().getNumericParams().getN();
-        auto h = Allocator::getInstance().getNumericParams().geth();
-        auto L = Allocator::getInstance().getNumericParams().getL();
+        auto N = (Real) Numerics::Allocator::GetInstance().getNumericParams().getN();
+        auto h = Numerics::Allocator::GetInstance().getNumericParams().geth();
+        auto L = Numerics::Allocator::GetInstance().getNumericParams().getL();
 
+        auto energyTotal = 0.0;
         auto u = energyTotal / L;
         auto barϕ = energyCalculator.integratePotential() / L;
         auto K = energyCalculator.integrateKinetic();

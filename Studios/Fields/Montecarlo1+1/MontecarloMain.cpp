@@ -16,12 +16,9 @@
 
 int main(int argc, const char **argv) {
 
-    auto &selector = InterfaceSelector::getInstance();
-    /* Sim 0 */ selector.registerOption(new Montecarlo::Input);
+    auto montecarlo = Montecarlo::Input::Ptr(new Montecarlo::Input);
 
-    selector.preParse(argc, argv);
-
-    auto prog = SimulationsAppRtoR(argc, argv, SimulationsAppRtoR::Integration::montecarlo);
+    SimulationsAppRtoR prog(argc, argv,  montecarlo);
 
     return SafetyNet::jump(prog);
 }

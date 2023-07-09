@@ -9,9 +9,9 @@ namespace RtoR {
 
 class DerivativeCPU : public RtoR::Function {
     public:
-        explicit DerivativeCPU(const ArbitraryFunction &in);
+        explicit DerivativeCPU(const DiscreteFunction &in);
 
-        void changeFunc(const ArbitraryFunction &vec) {
+        void changeFunc(const DiscreteFunction &vec) {
             assert(vec.getSpace().getTotalDiscreteSites() == N);
             assert(vec.getSpace().geth() == h);
 

@@ -13,21 +13,21 @@
 
 namespace RtoR {
     class EnergyCalculator {
-        RtoR::ArbitraryFunction *_oEnergyDensityFunc =
-                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
-        RtoR::ArbitraryFunction *_oKinetic =
-                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
-        RtoR::ArbitraryFunction *_oGradient =
-                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
-        RtoR::ArbitraryFunction *_oPotential =
-                static_cast<RtoR::ArbitraryFunction *>(Numerics::Allocator::getInstance().newFunctionArbitrary());
+        RtoR::DiscreteFunction *_oEnergyDensityFunc =
+                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
+        RtoR::DiscreteFunction *_oKinetic =
+                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
+        RtoR::DiscreteFunction *_oGradient =
+                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
+        RtoR::DiscreteFunction *_oPotential =
+                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
     public:
-        const RtoR::ArbitraryFunction &computeDensities(const RtoR::FieldState &field);
+        const RtoR::DiscreteFunction &computeDensities(const RtoR::FieldState &field);
 
-        const RtoR::ArbitraryFunction &getEnergy() const { return *_oEnergyDensityFunc; };
-        const RtoR::ArbitraryFunction &getKinetic() const { return *_oKinetic; };
-        const RtoR::ArbitraryFunction &getGradient() const { return *_oGradient; };
-        const RtoR::ArbitraryFunction &getPotential() const { return *_oPotential; };
+        const RtoR::DiscreteFunction &getEnergy() const { return *_oEnergyDensityFunc; };
+        const RtoR::DiscreteFunction &getKinetic() const { return *_oKinetic; };
+        const RtoR::DiscreteFunction &getGradient() const { return *_oGradient; };
+        const RtoR::DiscreteFunction &getPotential() const { return *_oPotential; };
 
         Real integrateEnergy();
         Real integrateKinetic();

@@ -25,7 +25,7 @@ auto main(int argc, const char **argv) -> int {
         return SafetyNet::jump(*prog);
     }
     catch(const char *msg){
-        Log::ErrorFatal() << "Exception: " << msg << std::endl;
+        Log::Fatal() << "Exception: " << msg << std::endl;
         return 2;
     }
 }
