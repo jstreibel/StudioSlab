@@ -7,13 +7,18 @@
 
 #include "Types.h"
 #include "IsAbstract.h"
+// #include "Common/Log/Log.h"
 
 template <typename T, bool Abstract=false>
 class Singleton {
+    const Str name;
+
 protected:
     static T* singleInstance;
 
-    Singleton() = default;
+    Singleton(Str name) : name(name) {
+        // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+    };
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
     virtual ~Singleton() {}
@@ -40,10 +45,8 @@ T* Singleton<T, Abstract>::singleInstance = nullptr;
 
 template <typename T>
 class DerivableSingleton : public Singleton<T, true> {
-    const Str name;
-
 protected:
-    DerivableSingleton(Str name) : Singleton<T,true>(), name(name) {}
+    DerivableSingleton(Str name) : Singleton<T,true>(name) {}
 public:
 
     template< typename ToSuper >

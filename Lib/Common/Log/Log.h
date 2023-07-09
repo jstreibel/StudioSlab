@@ -14,6 +14,7 @@
 #include "Base/Controller/Interface/InterfaceOwner.h"
 #include "Common/Singleton.h"
 
+
 class Log : public Singleton<Log>, InterfaceOwner
 {
     static Log *myInstance;

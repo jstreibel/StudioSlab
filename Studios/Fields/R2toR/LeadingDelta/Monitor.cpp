@@ -93,6 +93,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(Str("step = ") + ToStr(step));
     stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
     stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
+    stats.addVolatileStat(Str("FPS: ") + ToStr(1/(elTime*1e-3)));
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));

@@ -46,7 +46,7 @@ const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::Fo
 
 const Log::FlushClass Log::Flush;
 
-Log::Log() : InterfaceOwner (true) { };
+Log::Log() : Singleton<Log>("Log"), InterfaceOwner (true) { };
 
 auto Log::GetSingleton() -> Log & {
     if(Singleton::singleInstance == nullptr) {
