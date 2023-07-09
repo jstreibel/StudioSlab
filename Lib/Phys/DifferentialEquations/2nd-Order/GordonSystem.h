@@ -20,9 +20,9 @@ namespace Phys {
         public:
             explicit GordonSystem(TargetToTargetFunction &potential)
                     : laplacian(
-                    *(FType(FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
+                    *(FType(FunctionArbitraryType) *) Numerics::Allocator::GetInstance().newFunctionArbitrary()),
                       dV_out(*(FType(
-                              FunctionArbitraryType) *) Numerics::Allocator::getInstance().newFunctionArbitrary()),
+                              FunctionArbitraryType) *) Numerics::Allocator::GetInstance().newFunctionArbitrary()),
                       V(potential), dVDPhi(potential.diff(0)) {}
 
             ~GordonSystem() override {

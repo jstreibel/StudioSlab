@@ -22,14 +22,6 @@ R2toR::Core::BasicAllocator::BasicAllocator(Str name) : Numerics::Allocator(name
 //    if(p.getN()%dev.get_nThreads() != 0) throw "N%nThreads must be 0.";
 //}
 
-auto R2toR::Core::BasicAllocator::Choose() -> R2toR::Core::BasicAllocator * {
-    auto *me = new R2toR::Core::BasicAllocator;
-
-    BasicAllocator::Instantiate(me);
-
-    return me;
-}
-
 auto R2toR::Core::BasicAllocator::newFunctionArbitrary() -> void * {
     const size_t N = numericParams.getN();
     const floatt xLeft = numericParams.getxLeft();

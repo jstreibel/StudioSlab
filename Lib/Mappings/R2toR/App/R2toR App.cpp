@@ -26,7 +26,7 @@ auto R2toR::App::Simulations::run() -> int {
     auto output             = builder->buildOutputManager();
 
     auto program            = NumericalIntegration::New<R2toR::EquationState>(boundaryConditions, output);
-    Backend &backend        = Backend::GetInstance<Backend>();
+    Backend &backend        = Backend::GetInstance();
 
     backend.run(program);
 

@@ -12,7 +12,7 @@
 
 NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager)
     : outputManager(outputManager),
-      dt(Numerics::Allocator::getInstance().getNumericParams().getdt()),
+      dt(Numerics::Allocator::GetInstance().getNumericParams().getdt()),
       steps(0)
 {
 #if ATTEMP_REALTIME
@@ -47,7 +47,7 @@ NumericalIntegration::~NumericalIntegration()
 
 void NumericalIntegration::cycle(CycleOptions options) {
     nonSimTimeHistogram.storeMeasure();
-    const auto &p = Numerics::Allocator::getInstance().getNumericParams();
+    const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
     switch (options.cycleOption){
@@ -81,7 +81,7 @@ void NumericalIntegration::_cycle(size_t nCycles) {
 
 void NumericalIntegration::_runFullIntegration()
 {
-    size_t n = Numerics::Allocator::getInstance().getNumericParams().getn();
+    size_t n = Numerics::Allocator::GetInstance().getNumericParams().getn();
 
     while(steps < n && _cycleUntilOutput());
 

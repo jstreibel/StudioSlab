@@ -24,7 +24,7 @@ auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int
     // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
     //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
     //  Em outras palavras: o calculo abaixo esta errado.
-    return count * Numerics::Allocator::getInstance().getNumericParams().getN() * sizeof(Real);
+    return count * Numerics::Allocator::GetInstance().getNumericParams().getN() * sizeof(Real);
 }
 
 auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
@@ -56,7 +56,7 @@ auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLast
 }
 
 auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
-    Numerics::Allocator &builder = Numerics::Allocator::getInstance();
+    Numerics::Allocator &builder = Numerics::Allocator::GetInstance();
 
     std::ostringstream oss;
 

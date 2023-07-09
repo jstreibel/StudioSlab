@@ -16,8 +16,6 @@ namespace R2toR {
         public:
             BasicAllocator(Str name = "Basic allocator ℝ² ↦ ℝ");
 
-            static auto Choose()        -> BasicAllocator*;
-
             auto newFunctionArbitrary() -> void * override;
             auto newFieldState()        -> void * override;
             auto getSystemSolver()      -> void * override;

@@ -13,5 +13,5 @@ auto GUIBackend::addWindow(Window::Ptr window) -> void {
 }
 
 GUIBackend &GUIBackend::GetInstance() {
-    return DerivableSingleton::GetInstance<GUIBackend>();
+    return DerivableSingleton::GetInstanceSuper<GUIBackend>();
 }

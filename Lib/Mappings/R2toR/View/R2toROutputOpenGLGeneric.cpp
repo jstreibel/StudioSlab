@@ -16,7 +16,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     , panel(new WindowPanel())
     , mSectionGraph(xMin, xMax, phiMin, phiMax,
                     "Sections", true,
-                    Numerics::Allocator::getInstance().getNumericParams().getN()*3)
+                    Numerics::Allocator::GetInstance().getNumericParams().getN()*3)
 {
     // Window *window = nullptr;
 
@@ -43,8 +43,8 @@ void R2toR::OutputOpenGL::draw() {
 
     std::stringstream ss;
     const Real t0 = 0;
-    const Real L = Numerics::Allocator::getInstance().getNumericParams().getL();
-    const Real xMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    const Real L = Numerics::Allocator::GetInstance().getNumericParams().getL();
+    const Real xMin = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
 
     stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
     stats.addVolatileStat(std::string("L = ") + std::to_string(L));

@@ -3,10 +3,7 @@
 
 
 namespace Numerics {
-
-    Allocator *Allocator::mySingleInstance = nullptr;
-
-    Allocator::Allocator(Str name) : name(name) {
+    Allocator::Allocator(Str name) : DerivableSingleton<Allocator>(name) {
         Log::Attention() << "Allocator instantiated " << Log::ForegroundGreen << Log::BoldFace << name << Log::Flush;
     };
     //ModelBuilder::ModelBuilder() {
@@ -15,20 +12,6 @@ namespace Numerics {
     //     if(!isPOT(numericParams.getN())) throw "N must be pot for GPU sim.";
 
     // if(p.getN()%dev.get_nThreads() != 0) throw "N%nThreads must be 0."; }
-
-
-    void Allocator::Instantiate(Allocator *allocator) {
-        if (Allocator::mySingleInstance != nullptr) throw "ModelBuilder initialized already.";
-
-        Allocator::mySingleInstance = allocator;
-    }
-
-    auto Allocator::getInstance() -> Allocator & {
-        if (mySingleInstance == nullptr)
-            throw "ModelBuilder::GetInstance called before Allocator is initialized.";
-
-        return *mySingleInstance;
-    }
 
     //po::options_description Allocator::getCommandLineOptions()
     //{

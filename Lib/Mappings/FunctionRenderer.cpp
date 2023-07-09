@@ -9,7 +9,7 @@
 // Created by joao on 27/09/2019.
 
 void RtoR::FunctionRenderer::renderFunction(const RtoR::ArbitraryFunction &func, Styles::Color c, bool filled, Real scale){
-    auto &params = Numerics::Allocator::getInstance().getNumericParams();
+    auto &params = Numerics::Allocator::GetInstance().getNumericParams();
 
     const Real xMin = params.getxLeft(),
                xMax = xMin + params.getL();

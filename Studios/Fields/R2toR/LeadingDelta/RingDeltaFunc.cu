@@ -60,7 +60,7 @@ bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::Discrete
     auto &outputSpace = toFunc->getSpace();
     const auto N = outputSpace.getDim().getN(0);
     const auto h = outputSpace.geth();
-    const auto xMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    const auto xMin = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
 
     thrust::counting_iterator<int> sequence_begin(0);
     thrust::counting_iterator<int> sequence_end(N * N);

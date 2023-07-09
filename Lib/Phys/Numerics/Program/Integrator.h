@@ -51,7 +51,7 @@ public:
     {
         auto *instance = new NumericalIntegration(dPhi, outputManager);
 
-        const unsigned int numThreads = Numerics::Allocator::getInstance().getDevice().get_nThreads();
+        const unsigned int numThreads = Numerics::Allocator::GetInstance().getDevice().get_nThreads();
 
         Method *stepper = nullptr;
 

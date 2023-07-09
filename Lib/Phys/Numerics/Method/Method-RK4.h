@@ -22,14 +22,14 @@ class StepperRK4 : public Method{
 public:
 
     StepperRK4(const void *dPhi_)
-        : Method(), H(*(Base::DifferentialEquation<STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
+        : Method(), H(*(Base::DifferentialEquation<STATE_TYPE>*) Numerics::Allocator::GetInstance().getSystemSolver()),
           dPhi((const Base::BoundaryConditions<STATE_TYPE>*)dPhi_),
-          _phi((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k1((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k2((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k3((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _k4((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-          _phiTemp((STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()) {
+          _phi((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+          _k1((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+          _k2((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+          _k3((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+          _k4((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+          _phiTemp((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()) {
 
         // TODO aplicar isso a cada iteracao.
         dPhi->apply(*_phi, 0.0);

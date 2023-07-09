@@ -17,7 +17,7 @@ auto R2toR::SimulationBuilder::buildOutputManager() -> OutputManager * {
 }
 
 void R2toR::SimulationBuilder::registerAllocator() const {
-    Core::BasicAllocator::Choose();
+    Numerics::Allocator::Initialize<Core::BasicAllocator>();
 }
 
 

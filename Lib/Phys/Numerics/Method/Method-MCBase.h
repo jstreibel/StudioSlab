@@ -21,10 +21,10 @@ class StepperMontecarlo : public Method{
 public:
 
     StepperMontecarlo(const void *dPhi_)
-            : Method(), H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) Numerics::Allocator::getInstance().getSystemSolver()),
+            : Method(), H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) Numerics::Allocator::GetInstance().getSystemSolver()),
               dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
-              _phi((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()),
-              _phiTemp((FIELD_STATE_TYPE*)Numerics::Allocator::getInstance().newFieldState()) {
+              _phi((FIELD_STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
+              _phiTemp((FIELD_STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()) {
 
         dPhi->apply(*_phi, 0.0);
     }

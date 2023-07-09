@@ -8,7 +8,7 @@
 #include "Types.h"
 #include "IsAbstract.h"
 
-template <typename T>
+template <typename T, bool Abstract=false>
 class Singleton {
 protected:
     static T* singleInstance;
@@ -20,8 +20,7 @@ protected:
 
 public:
     static T& GetInstance() {
-        constexpr const auto notAbstract = !IsAbstract<T>::value;
-        #if notAbstract
+        #if Abstract
         if(Singleton::singleInstance == nullptr) singleInstance = new T();
         #endif
 
@@ -36,27 +35,27 @@ public:
 
 };
 
-template <typename T>
-T* Singleton<T>::singleInstance = nullptr;
+template <typename T, bool Abstract>
+T* Singleton<T, Abstract>::singleInstance = nullptr;
 
 template <typename T>
-class DerivableSingleton : public Singleton<T> {
+class DerivableSingleton : public Singleton<T, true> {
     const Str name;
 
 protected:
-    DerivableSingleton(Str name) : Singleton<T>(), name(name) {}
+    DerivableSingleton(Str name) : Singleton<T,true>(), name(name) {}
 public:
 
     template< typename ToSuper >
     static void Initialize() {
-        if(Singleton<T>::singleInstance != nullptr) throw "Singleton already initialized.";
+        if(Singleton<T,true>::singleInstance != nullptr) throw "Singleton already initialized.";
 
-        Singleton<T>::singleInstance = new ToSuper();
+        Singleton<T,true>::singleInstance = new ToSuper();
     }
 
     template< typename ToSuper >
-    static ToSuper& GetInstance() {
-        auto &me = Singleton<T>::GetInstance();
+    static ToSuper& GetInstanceSuper() {
+        auto &me = Singleton<T,true>::GetInstance();
 
         return dynamic_cast<ToSuper&>(me);
     }

@@ -3,30 +3,22 @@
 
 #include "Phys/Numerics/Program/NumericParams.h"
 #include "Phys/Toolset/Device.h"
+#include "Common/Singleton.h"
 
 namespace Numerics {
 
-	class Allocator {
-		static Allocator *mySingleInstance;
+	class Allocator : public DerivableSingleton<Allocator>{
 
 	protected:
-
-		const Str name;
-
 		Allocator(Str name);
 
-		static void Instantiate(Allocator *allocator);
-
 	public:
-
-		static auto getInstance() -> Allocator &;
-
 		template<typename StateType>
 		static auto NewFieldState() -> StateType*;
 
 		template<class ARB_FUNC_TYPE>
 		static ARB_FUNC_TYPE *NewFunctionArbitrary() {
-			return (ARB_FUNC_TYPE *) getInstance().newFunctionArbitrary();
+			return (ARB_FUNC_TYPE *) Singleton::GetInstance().newFunctionArbitrary();
 		}
 
 		virtual auto newFunctionArbitrary() -> void * = 0;
@@ -49,7 +41,7 @@ namespace Numerics {
 
 	template<typename StateType>
 	auto Allocator::NewFieldState() -> StateType * {
-		auto &me = Allocator::getInstance();
+		auto &me = Singleton::GetInstance();
 
 		return (StateType*)me.newFieldState();
 	}

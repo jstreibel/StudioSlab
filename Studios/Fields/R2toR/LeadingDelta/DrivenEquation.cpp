@@ -16,9 +16,9 @@ namespace R2toR {
         DrivenEquation::DrivenEquation(R2toR::Function::Ptr drivingForce)
             : GordonSystem(*(new RtoR::AbsFunction))
             , drivingForce(drivingForce)
-            , drivingForceRendered(Numerics::Allocator::getInstance().getNumericParams().getN(),
-                                   Numerics::Allocator::getInstance().getNumericParams().getxLeft(),
-                                   Numerics::Allocator::getInstance().getNumericParams().geth())
+            , drivingForceRendered(Numerics::Allocator::GetInstance().getNumericParams().getN(),
+                                   Numerics::Allocator::GetInstance().getNumericParams().getxLeft(),
+                                   Numerics::Allocator::GetInstance().getNumericParams().geth())
         {
             if(drivingForce == nullptr) {
                 Log::Error() << "DrivenEquation solver's driving force must be != nullptr." << Log::Flush;

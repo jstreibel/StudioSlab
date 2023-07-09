@@ -23,10 +23,10 @@ namespace R2toR {
 
             std::stringstream ss;
             const Real t = lastData.getSimTime();
-            const Real L = Numerics::Allocator::getInstance().getNumericParams().getL();
-            const Real xMin = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+            const Real L = Numerics::Allocator::GetInstance().getNumericParams().getL();
+            const Real xMin = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
 
-            auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
+            auto dt = Numerics::Allocator::GetInstance().getNumericParams().getdt();
             stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));

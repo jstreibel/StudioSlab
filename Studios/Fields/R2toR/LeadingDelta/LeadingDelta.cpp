@@ -38,7 +38,7 @@ namespace R2toR {
             const Real phiMin = **phiMinPlot;
             const Real phiMax = **phiMaxPlot;
 
-            const auto &p = Numerics::Allocator::getInstance().getNumericParams();
+            const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
             const Real L = p.getL();
             const Real xLeft = p.getxLeft();
             const Real xRight = xLeft + L;
@@ -59,7 +59,7 @@ namespace R2toR {
         auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
 
-            auto &p = const_cast<NumericParams&>(Numerics::Allocator::getInstance().getNumericParams());
+            auto &p = const_cast<NumericParams&>(Numerics::Allocator::GetInstance().getNumericParams());
             const Real L = p.getL();
             const Real dt = p.getdt();
             const auto W₀ = **W_0;
@@ -69,10 +69,10 @@ namespace R2toR {
 
             drivingFunc = std::make_shared<RingDeltaFunc>(**eps, C₂, dt);
             ringDelta1 = drivingFunc;
-            LeadingDelta::Allocator::Choose()->setDrivingFunction(drivingFunc);
+            Allocator::GetInstanceSuper<LeadingDelta::Allocator>().setDrivingFunction(drivingFunc);
         }
         auto Builder::getBoundary()            const -> const void * { return new BoundaryCondition(drivingFunc); }
-        auto Builder::registerAllocator()      const ->       void   { LeadingDelta::Allocator::Choose();         }
+        auto Builder::registerAllocator()      const ->       void   { Allocator::Initialize<LeadingDelta::Allocator>(); }
     }
 }
 

@@ -31,7 +31,7 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
                phiMax*100,
                "",
                false,
-               Numerics::Allocator::getInstance().getNumericParams().getN()*3)
+               Numerics::Allocator::GetInstance().getNumericParams().getN()*3)
 , mEnergyDensityGraph(xMin, xMax)
 {
     energyRatioData = Spaces::PointSet::New();
@@ -75,7 +75,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     auto &rd = *R2toR::LeadingDelta::ringDelta1;
 
-    const auto &p = Numerics::Allocator::getInstance().getNumericParams();
+    const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
     const auto L = p.getL();
     const auto N = p.getN();
     const auto h = p.geth();
@@ -88,7 +88,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     static auto lastE = .0;
     static auto lastAnalyticE = .0;
 
-    auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
+    auto dt = Numerics::Allocator::GetInstance().getNumericParams().getdt();
     stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step));
     stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));

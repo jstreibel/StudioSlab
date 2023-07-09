@@ -147,7 +147,7 @@ void GLUTBackend::run(Program *pProgram)
 
 void GLUTBackend::keyboard(unsigned char key, int x, int y)
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
 
     if(key == 27) {
@@ -171,14 +171,14 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
 
 void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     for(auto &win : me.windows)
         win->notifyKeyboardSpecial(key, x, y);
 }
 
 void GLUTBackend::mouseButton(int button, int state, int x, int y)
 {
-    auto &mouseState = Backend::GetInstance<GLUTBackend>().mouseState;
+    auto &mouseState = GetInstanceSuper<GLUTBackend>().mouseState;
 
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
@@ -193,7 +193,7 @@ void GLUTBackend::mouseButton(int button, int state, int x, int y)
         ImGui_ImplGLUT_MouseFunc(button, state, x, y);
     }
 
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     for(auto &win : me.windows)
         win->notifyMouseButton(button, state, x, y);
 
@@ -201,14 +201,14 @@ void GLUTBackend::mouseButton(int button, int state, int x, int y)
 }
 
 void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     for(auto &win : me.windows)
         win->notifyMouseWheel(wheel, direction, x, y);
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     auto &mouseState = me.mouseState;
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
@@ -227,7 +227,7 @@ void GLUTBackend::mousePassiveMotion(int x, int y)
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     auto &mouseState = me.mouseState;
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
@@ -246,7 +246,7 @@ void GLUTBackend::mouseMotion(int x, int y)
 
 void GLUTBackend::render()
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
@@ -270,7 +270,7 @@ void GLUTBackend::render()
 
 void GLUTBackend::idleCall()
 {
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
 
 
@@ -293,7 +293,7 @@ void GLUTBackend::reshape(int w, int h)
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)w, (float)h);
 
-    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
 
     me.w = w;
     me.h = h;

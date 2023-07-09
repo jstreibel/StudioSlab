@@ -73,7 +73,7 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 }
 
 void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
-    Numerics::Allocator &builder = Numerics::Allocator::getInstance();
+    Numerics::Allocator &builder = Numerics::Allocator::GetInstance();
 
     std::ostringstream oss;
 

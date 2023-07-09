@@ -6,7 +6,7 @@
 #include <Phys/Numerics/Allocator.h>
 
 
-OutputManager::OutputManager() : maxSteps(Numerics::Allocator::getInstance().getNumericParams().getn()) { }
+OutputManager::OutputManager() : maxSteps(Numerics::Allocator::GetInstance().getNumericParams().getn()) { }
 
 OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 

@@ -19,8 +19,8 @@ namespace R2toR {
                 const Real phiMin = -.5;
                 const Real phiMax = 1;
 
-                const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
-                const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
+                const Real xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+                const Real xRight = xLeft + Numerics::Allocator::GetInstance().getNumericParams().getL();
 
                 return new R2toR::GrowingHoleOutGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
             }
