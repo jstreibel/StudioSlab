@@ -11,9 +11,8 @@ class InterfaceOwner : public InterfaceListener {
 protected:
     Interface::Ptr interface;
 
-    InterfaceOwner();
 public:
-    InterfaceOwner(bool IKnowIMustCallLateStart);
+    InterfaceOwner(bool IKnowIMustCallLateStart=false);
     InterfaceOwner(Str interfaceName, int priotity=10000, bool doRegister=true);
 
     void LateStart(Str interfaceName, int priotity=10000, bool doRegister=true);

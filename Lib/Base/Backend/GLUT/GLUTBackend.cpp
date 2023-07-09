@@ -22,7 +22,7 @@
 //const Real FRAME_TIME = 1.0/Real(FORCE_FPS);
 
 GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
-    assert(GLUTBackend::glutBackend == nullptr);
+    assert(Backend::singleInstance == nullptr);
 
     int dummy = 0;
     glutInit(&dummy, nullptr);

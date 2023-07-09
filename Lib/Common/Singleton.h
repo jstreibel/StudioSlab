@@ -32,6 +32,8 @@ public:
         if (singleInstance == nullptr) delete singleInstance;
         singleInstance = nullptr;
     }
+
+
 };
 
 template <typename T>

@@ -8,6 +8,7 @@
 #define GET_CLASS_NAME(obj) typeid(obj).name()
 
 Log* Log::myInstance = nullptr;
+
 const Str Log::ForegroundBlack   = "\033[0;30m";
 const Str Log::ForegroundRed     = "\033[0;31m";
 const Str Log::ForegroundGreen   = "\033[0;32m";
@@ -48,9 +49,10 @@ const Log::FlushClass Log::Flush;
 Log::Log() : InterfaceOwner (true) { };
 
 auto Log::GetSingleton() -> Log & {
-    if(Log::myInstance == nullptr) {
+    if(Singleton::singleInstance == nullptr) {
         auto me = new Log;
         Log::myInstance = me;
+        Singleton::singleInstance = Log::myInstance;
 
         Log::Note() << "Logging system initiated." << Log::Flush;
 
@@ -77,16 +79,16 @@ inline Str Log::postfix(){
 };
 
 
-OStream &Log::Info()                { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << InfoFormat              << "INFO"      << me.postfix(); return stream; }
-OStream &Log::Note()                { auto me = Log::GetSingleton(); auto &stream = *me.notesStream; stream << me.prefix() << NoteFormat              << "note"      << me.postfix(); return stream; }
-OStream &Log::Attention()           { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << AttentionFormat         << "Attention" << me.postfix(); return stream; }
-OStream &Log::Critical()            { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << CriticalFormat          << "Critical"  << me.postfix(); return stream; }
-OStream &Log::Debug()               { auto me = Log::GetSingleton(); auto &stream = *me.debugStream; stream << me.prefix() << DebugFormat             << "Debug"     << me.postfix(); return stream; }
-OStream &Log::Success()             { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << SuccessFormat           << "Success"   << me.postfix(); return stream; }
-OStream &Log::Warning()             { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningFormat           << "Warning"   << me.postfix(); return stream; }
-OStream &Log::WarningImportant()    { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningImportantFormat  << "Warning!"  << me.postfix(); return stream; }
-OStream &Log::Error()               { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
-OStream &Log::ErrorFatal()          { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash"     << me.postfix(); return stream; }
+OStream &Log::Info()                { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << InfoFormat              << "INFO"      << me.postfix(); return stream; }
+OStream &Log::Note()                { auto &me = Log::GetSingleton(); auto &stream = *me.notesStream; stream << me.prefix() << NoteFormat              << "note"      << me.postfix(); return stream; }
+OStream &Log::Attention()           { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << AttentionFormat         << "Attention" << me.postfix(); return stream; }
+OStream &Log::Critical()            { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << CriticalFormat          << "Critical"  << me.postfix(); return stream; }
+OStream &Log::Debug()               { auto &me = Log::GetSingleton(); auto &stream = *me.debugStream; stream << me.prefix() << DebugFormat             << "Debug"     << me.postfix(); return stream; }
+OStream &Log::Success()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << SuccessFormat           << "Success"   << me.postfix(); return stream; }
+OStream &Log::Warning()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningFormat           << "Warning"   << me.postfix(); return stream; }
+OStream &Log::WarningImportant()    { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningImportantFormat  << "Warning!"  << me.postfix(); return stream; }
+OStream &Log::Error()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
+OStream &Log::ErrorFatal()          { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash"     << me.postfix(); return stream; }
 
 auto Log::Info             (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
 auto Log::Note             (const Str &str) -> OStream& { return Note() << str << Log::Flush;}

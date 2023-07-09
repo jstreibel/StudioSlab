@@ -12,8 +12,9 @@
 
 #include "Base/Controller/Interface/CommonParameters.h"
 #include "Base/Controller/Interface/InterfaceOwner.h"
+#include "Common/Singleton.h"
 
-class Log : public InterfaceOwner
+class Log : public Singleton<Log>, InterfaceOwner
 {
     static Log *myInstance;
 
@@ -26,8 +27,6 @@ class Log : public InterfaceOwner
     Str prefix();
     Str postfix();
 
-    static auto GetSingleton() -> Log&;
-
     OStream *mainStream  = &std::cout;       bool manageMainStream  = false;
     OStream *notesStream = new StringStream; bool manageNotesStream = true;
     OStream *debugStream = new StringStream; bool manageDebugStream = true;
@@ -35,6 +34,8 @@ class Log : public InterfaceOwner
     Timer timer;
 
 public:
+    static auto GetSingleton() -> Log &;
+
     const static Str ForegroundBlack;
     const static Str ForegroundRed;
     const static Str ForegroundGreen;
@@ -72,16 +73,16 @@ public:
 
     constexpr const static char Return = '\r';
 
-    static auto Info             ()                  -> OStream&;
-    static auto Note             ()                  -> OStream&;
-    static auto Attention        ()                  -> OStream&;
-    static auto Critical         ()                  -> OStream&;
-    static auto Debug            ()                  -> OStream&;
-    static auto Success          ()                  -> OStream&;
-    static auto Warning          ()                  -> OStream&;
-    static auto WarningImportant ()                  -> OStream&;
-    static auto Error            ()                  -> OStream&;
-    static auto ErrorFatal       ()                  -> OStream&;
+    static auto Info             ()               -> OStream&;
+    static auto Note             ()               -> OStream&;
+    static auto Attention        ()               -> OStream&;
+    static auto Critical         ()               -> OStream&;
+    static auto Debug            ()               -> OStream&;
+    static auto Success          ()               -> OStream&;
+    static auto Warning          ()               -> OStream&;
+    static auto WarningImportant ()               -> OStream&;
+    static auto Error            ()               -> OStream&;
+    static auto ErrorFatal       ()               -> OStream&;
 
     static auto Info             (const Str& str) -> OStream&;
     static auto Note             (const Str& str) -> OStream&;
