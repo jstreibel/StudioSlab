@@ -6,13 +6,13 @@
 
 namespace My = Phys::Graphing;
 
-My::PointSetGraph::PointSetGraph(const String &title)
+My::PointSetGraph::PointSetGraph(const Str &title)
     : Graph2D(0, 0.1, 0, 0.1, title, true, 10) {
 
 }
 
 void My::PointSetGraph::addPointSet(Spaces::PointSet::Ptr pointSet,
-                                    Styles::PlotStyle style, String setName) {
+                                    Styles::PlotStyle style, Str setName) {
     auto triple = PointSetTriple{pointSet, style, setName};
     mPointSets.emplace_back(triple);
 }

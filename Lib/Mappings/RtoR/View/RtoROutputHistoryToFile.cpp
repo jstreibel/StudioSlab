@@ -15,7 +15,7 @@
 const int HEADER_SIZE_BYTES = 2048;
 
 RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
-                                               String  outputFileName)
+                                               Str  outputFileName)
                                                : HistoryKeeper(stepsInterval, spaceFilter, endT),
                                                  outFileName(std::move(outputFileName)),
                                                  outputFormatter(*(new BinarySOF()))
@@ -28,7 +28,7 @@ RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilter
 
     Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
 
-    file << String(HEADER_SIZE_BYTES-1, ' ') << '\n';
+    file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
 }
 
 RtoR::OutputHistoryToFile::~OutputHistoryToFile() {
@@ -81,7 +81,7 @@ void RtoR::OutputHistoryToFile::_printHeaderToFile() {
 
 
     DimensionMetaData recDim = spaceFilter.getOutputDim();
-    String dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
+    Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
     for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
 
 

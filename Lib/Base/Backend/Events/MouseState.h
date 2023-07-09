@@ -6,10 +6,15 @@
 #define STUDIOSLAB_MOUSESTATE_H
 
 struct MouseState {
-    int x, y;
-    int dx, dy;
+    int x=0,
+        y=0;
 
-    bool left, center, right;
+    int dx=0,
+        dy=0;
+
+    bool leftPressed   = false,
+         centerPressed = false,
+         rightPressed  = false;
 };
 
 #endif //STUDIOSLAB_MOUSESTATE_H

@@ -20,8 +20,8 @@ namespace Numerics {
             std::shared_ptr<Socket> Ptr;
 
             virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
-            auto getDescription() const -> String;
-            auto getName() const -> String;
+            auto getDescription() const -> Str;
+            auto getName() const -> Str;
 
             virtual auto computeNextRecStep() -> size_t;
 
@@ -43,10 +43,10 @@ namespace Numerics {
             OutputPacket lastData;
 
 
-            String name, description;
+            Str name, description;
         public:
 
-            explicit Socket(String name="", int nStepsInterval = 1, String description="");
+            explicit Socket(Str name="", int nStepsInterval = 1, Str description="");
 
             auto getLastSimTime()      -> Real;
             auto getnSteps()     const -> int;

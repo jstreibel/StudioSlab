@@ -277,7 +277,7 @@ void R2toR::OutputOpenGLShockwaveAt_t0::_outputSnapshot() {
     //letc yMin = phi.getDomain().yMin;
     //letc L = phi.getDomain().getLx();
 //
-    ////std::string sFileName = "./file-t0="+ToString(t0) + "-t=" + ToString(t);
+    ////std::string sFileName = "./file-t0="+ToString(t0) + "-t=" + ToStr(t);
     //int count=0;
     //do count++; while(std::filesystem::exists(sFileName + (count>1?"-"+std::to_string(count):"") + ".dat"));
 //

@@ -33,7 +33,7 @@ auto InputShockwave::getBoundary() const -> const void *
                                              new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(deltaType)));
 }
 
-auto InputShockwave::_getDeltaTypeAsString() const -> String
+auto InputShockwave::_getDeltaTypeAsString() const -> Str
 {
     return (deltaType == 0 ? "gauss" : (deltaType == 1 ? "tri" : "unknown"));
 }

@@ -33,8 +33,8 @@ typedef std::pair<const class DiscreteSpace*, const class DiscreteSpace*> Discre
 template<class T>
 typename std::vector<T>     Vector;
 typedef std::ostream        OStream;
-typedef std::string         String;
+typedef std::string         Str;
 typedef std::stringstream   StringStream;
-typedef std::vector<String> StrVector;
+typedef std::vector<Str> StrVector;
 
 #endif //STUDIOSLAB_TYPES_H

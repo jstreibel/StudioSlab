@@ -59,7 +59,7 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
     Log::Info() << "InterfaceManager finished feeding interfaces." << Log::Flush;
 }
 
-auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
+auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {
     //for(letcr p : modelMTMap) stringStream << "\"" << p.first << "\": " << p.second << ", ";
 
     StringStream ss;
@@ -72,7 +72,7 @@ auto InterfaceManager::renderAsPythonDictionaryEntries() -> String {
     return ss.str();
 }
 
-auto InterfaceManager::renderParametersToString(StrVector params, String separator) const -> String {
+auto InterfaceManager::renderParametersToString(StrVector params, Str separator) const -> Str {
     StringStream ss;
 
     for(auto interface : interfaces) {

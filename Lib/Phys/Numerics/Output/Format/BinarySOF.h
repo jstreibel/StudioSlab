@@ -21,7 +21,7 @@ public:
 
     auto isBinary() const -> bool override;
 
-    auto getFormatDescription() const -> String override;
+    auto getFormatDescription() const -> Str override;
 
 private:
     const std::string sep;

@@ -12,7 +12,7 @@ const int HEADER_SIZE_BYTES = 2048;
 
 class OutputHistoryToFile : public HistoryKeeper {
 
-    const String outFileName;
+    const Str outFileName;
     std::ofstream file;
 
     /*! I manage this. */
@@ -23,7 +23,7 @@ class OutputHistoryToFile : public HistoryKeeper {
 public:
 
     OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter,
-                        Real endT, String  outputFileName,
+                        Real endT, Str  outputFileName,
                         OutputFormatterBase *outputFormatter = new BinarySOF());
 
     ~OutputHistoryToFile() override;

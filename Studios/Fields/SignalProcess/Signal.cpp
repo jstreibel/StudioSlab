@@ -69,7 +69,7 @@ auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::OutputOpenGL * {
     const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
     return new RtoR::Signal::OutGL (xLeft, xRight, phiMin, phiMax); }
-OutputManager *RtoR::Signal::OutputBuilder::build(String outputFileName) {
+OutputManager *RtoR::Signal::OutputBuilder::build(Str outputFileName) {
     auto *builder = OutputStructureBuilderRtoR::build(outputFileName);
 
     JackOutput *jack = new JackOutput();

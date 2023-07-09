@@ -26,7 +26,7 @@ namespace Resources {
                              "Roboto-Regular.ttf",
                              "times-new-roman-14.ttf",};
 
-    String fontFileName(int index);
+    Str fontFileName(int index);
 
 }
 

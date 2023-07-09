@@ -11,7 +11,7 @@ namespace Here = R2toR::LeadingDelta;
 Here::Allocator* Here::Allocator::me = nullptr;
 
 R2toR::LeadingDelta::Allocator::Allocator()
-    : R2toR::Core::BasicAllocator(String("2ⁿᵈ order non-homogenous eq. ℝ² ↦ ℝ with "
+    : R2toR::Core::BasicAllocator(Str("2ⁿᵈ order non-homogenous eq. ℝ² ↦ ℝ with "
                                          "(yet unspecified) driving force.")) { }
 
 auto R2toR::LeadingDelta::Allocator::getSystemSolver() -> void * {

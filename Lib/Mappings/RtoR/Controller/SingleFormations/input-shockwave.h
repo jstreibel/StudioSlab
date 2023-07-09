@@ -8,7 +8,7 @@
 namespace RtoR {
     class InputShockwave : public RtoRBCInterface {
     private:
-        auto _getDeltaTypeAsString() const -> String;
+        auto _getDeltaTypeAsString() const -> Str;
 
         unsigned int deltaType = 1;
         RealParameter a0 = RealParameter(1., "a0", "Shockwave discontinuity value.");

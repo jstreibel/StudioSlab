@@ -4,7 +4,7 @@
 
 #include "GraphRtoR.h"
 
-GraphRtoR::GraphRtoR(Real xMin, Real xMax, Real yMin, Real yMax, String title, bool filled,
+GraphRtoR::GraphRtoR(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
                      int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title,
                                                   filled, samples) {}
 

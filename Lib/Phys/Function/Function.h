@@ -76,7 +76,7 @@ namespace Base {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
-        virtual String myName() const { return "unnamed"; }
+        virtual Str myName() const { return "unnamed"; }
 
         // RENDERING
         struct RenderingOptions {
@@ -102,7 +102,7 @@ namespace Base {
 
         virtual bool
         renderToDiscreteFunction(DiscreteFunction<InputCategory, OutputCategory> *toFunc) const {
-            throw String("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
+            throw Str("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
         };
 
     };

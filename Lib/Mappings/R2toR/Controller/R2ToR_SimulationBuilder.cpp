@@ -5,7 +5,7 @@
 #include "R2ToR_SimulationBuilder.h"
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
 
-R2toR::SimulationBuilder::SimulationBuilder(String name, BuilderBasePtr outputStructureBuilder)
+R2toR::SimulationBuilder::SimulationBuilder(Str name, BuilderBasePtr outputStructureBuilder)
     : Base::SimulationBuilder(name, outputStructureBuilder, "R2toR-" + name)
 {
     interface->addSubInterface(outputStructureBuilder->getInterface());

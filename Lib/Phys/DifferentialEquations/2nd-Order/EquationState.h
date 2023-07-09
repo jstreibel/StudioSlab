@@ -82,7 +82,7 @@ namespace Base {
         EqCategory &getDPhiDt() { return *dPhiDt; }
         EqCategory &getDPhiDt() const { return *dPhiDt; }
 
-        void outputPhi(OStream &out, String separator) const override {
+        void outputPhi(OStream &out, Str separator) const override {
             DiscreteSpace &space = phi->getSpace();
 
             const PosInt N = space.getTotalDiscreteSites();
@@ -92,7 +92,7 @@ namespace Base {
                 out << vec[n] << separator;
         }
 
-        void outputdPhiDt(OStream &out, String separator) const override {
+        void outputdPhiDt(OStream &out, Str separator) const override {
             DiscreteSpace &space = dPhiDt->getSpace();
             const PosInt N = space.getTotalDiscreteSites();
             const VecFloat &vec = space.getHostData(true);

@@ -5,8 +5,8 @@
 
 // We extend the std namespace to make sure to_string method also works (the way we want) with strings and bools.
 namespace std{
-    auto to_string(std::string str) -> String;
-    auto to_string(bool val) -> String;
+    auto to_string(std::string str) -> Str;
+    auto to_string(bool val) -> Str;
 }
 
 
@@ -18,14 +18,14 @@ public:
     typedef Type MyType;
 
     typedef std::shared_ptr<ParameterTemplate> Ptr;
-    static Ptr New(Type val, const String& argName, const String& descr){
+    static Ptr New(Type val, const Str& argName, const Str& descr){
         return std::make_unique<ParameterTemplate>(val, argName, descr);
     }
 
-    ParameterTemplate(Type val, const String& argName, const String& descr);
+    ParameterTemplate(Type val, const Str& argName, const Str& descr);
     ~ParameterTemplate();
 
-    auto valueToString() const -> String override;
+    auto valueToString() const -> Str override;
     auto addToOptionsGroup(CLODEasyInit& base) const -> void override;
 
     void setValueFrom(VariableValue var) override;
@@ -52,7 +52,7 @@ auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> 
 
 typedef ParameterTemplate < int    > IntegerParameter;
 typedef ParameterTemplate < Real > RealParameter;
-typedef ParameterTemplate < String > StringParameter;
+typedef ParameterTemplate < Str > StringParameter;
 typedef ParameterTemplate < bool   > BoolParameter;
 
 

@@ -21,8 +21,8 @@ RtoR::InputStatistical::InputStatistical()
     addParameters({&E, &n});
 }
 
-auto RtoR::InputStatistical::getDetailedDescription() -> String {
-    return String("Fractality in the signum-Gordon field theory."
+auto RtoR::InputStatistical::getDetailedDescription() -> Str {
+    return Str("Fractality in the signum-Gordon field theory."
                   ""
                   "Oscillons are a very degenerate solution."
                   "The degeneracy could be an indication of how stable an oscillon could be: if it is very degenerate, "

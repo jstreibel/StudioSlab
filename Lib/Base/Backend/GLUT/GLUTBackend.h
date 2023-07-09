@@ -2,14 +2,15 @@
 #define GLUTBACKEND_H
 
 #include "Base/Backend/Events/EventListener.h"
-#include "Base/Backend/Backend.h"
+#include "Base/Backend/GUIBackend.h"
 #include "Phys/Graph/OutputOpenGL.h"
 
-#include "../Events/MouseState.h"
 
-class GLUTBackend : public Backend
+
+class GLUTBackend : public GUIBackend
 {
-    static GLUTBackend *glutBackend;
+	friend DerivableSingleton;
+
     GLUTBackend();
     ~GLUTBackend() override;
 
@@ -17,16 +18,10 @@ class GLUTBackend : public Backend
 	bool showDemo = false;
 	bool programIsRunning = false;
 
-	MouseState lastMouseState;
-	MouseState mouseState;
-
 	Program *program = nullptr;
-	std::vector<Window::Ptr> windows;
 	std::vector<Numerics::OutputSystem::Socket*> sockets;
 
 public:
-    static GLUTBackend *GetInstance();
-
 	void addWindow(Window::Ptr window);
 
     void run(Program *) override;
@@ -43,11 +38,9 @@ public:
     static void idleCall();
     static void reshape(int w, int h);
 
-	auto getMouseState() const -> const MouseState&;
-
     auto isRunning() const -> bool {return programIsRunning;}
-	void pause()  { programIsRunning = false; }
-	void resume() { programIsRunning = true; }
+	void pause()  override { programIsRunning = false; }
+	void resume() override { programIsRunning = true; }
 
 };
 

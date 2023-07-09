@@ -12,7 +12,7 @@
 AppBase::AppBase(int argc, const char **argv)
     : InterfaceOwner("App", 100, true), argc(argc), argv(argv) {
 
-    for(auto i=0; i<argc; ++i) args.emplace_back(String(argv[i]));
+    for(auto i=0; i<argc; ++i) args.emplace_back(Str(argv[i]));
 
 }
 

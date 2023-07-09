@@ -14,9 +14,9 @@ protected:
     InterfaceOwner();
 public:
     InterfaceOwner(bool IKnowIMustCallLateStart);
-    InterfaceOwner(String interfaceName, int priotity=10000, bool doRegister=true);
+    InterfaceOwner(Str interfaceName, int priotity=10000, bool doRegister=true);
 
-    void LateStart(String interfaceName, int priotity=10000, bool doRegister=true);
+    void LateStart(Str interfaceName, int priotity=10000, bool doRegister=true);
 
     auto getInterface() -> Interface::Ptr;
     auto notifyCLArgsSetupFinished() -> void override;

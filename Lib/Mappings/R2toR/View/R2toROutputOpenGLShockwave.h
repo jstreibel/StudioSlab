@@ -31,7 +31,7 @@ namespace R2toR {
 
         IntPair getWindowSizeHint() override;
 
-        void addSection(const RtoR2::StraightLine &section, String name);
+        void addSection(const RtoR2::StraightLine &section, Str name);
 
     private:
         ZoomPanRotate zpr;

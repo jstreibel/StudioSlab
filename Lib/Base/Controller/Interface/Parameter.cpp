@@ -8,28 +8,28 @@
 
 
 
-Parameter::Parameter(const String& commandLineArgName, const String& description)
+Parameter::Parameter(const Str& commandLineArgName, const Str& description)
     : commandLineArgName(commandLineArgName), description(description)
 {
 }
 
-auto Parameter::getCommandLineArgName(bool clean) const -> String {
+auto Parameter::getCommandLineArgName(bool clean) const -> Str {
     const auto s = commandLineArgName;
     const auto separator = ',';
 
     return clean ? s.substr(0, s.find(separator)) : s;
 }
-auto Parameter::getDescription() const -> String {return description; }
+auto Parameter::getDescription() const -> Str {return description; }
 
 bool Parameter::operator<(const Parameter *rhs) {
     return commandLineArgName < rhs->commandLineArgName;
 }
 
-void Parameter::setDescription(String newDescription) {
+void Parameter::setDescription(Str newDescription) {
     this->description = newDescription;
 }
 
-bool Parameter::operator==(String str) const {
+bool Parameter::operator==(Str str) const {
     return Common::SplitString(commandLineArgName, ",")[0] == str;
 }
 

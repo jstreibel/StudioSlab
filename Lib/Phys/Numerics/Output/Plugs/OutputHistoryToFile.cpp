@@ -9,10 +9,10 @@
 
 #include <utility>
 
-const String extension = ".osc";
+const Str extension = ".osc";
 
 OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
-                                         String outputFileName, OutputFormatterBase *outputFormatter)
+                                         Str outputFileName, OutputFormatterBase *outputFormatter)
     : HistoryKeeper(stepsInterval, spaceFilter, endT),
       outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
       outputFormatter(*outputFormatter)
@@ -28,7 +28,7 @@ OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *
 
     Log::Info() << "Sim history data file is \'" << outFileName << "\'. " << Log::Flush;
 
-    String spaces(HEADER_SIZE_BYTES-1, ' ');
+    Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
     file << spaces << '\n';
 }
@@ -82,7 +82,7 @@ void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNam
 
 
     DimensionMetaData recDim = spaceFilter.getOutputDim();
-    String dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
+    Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
     for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
 
 

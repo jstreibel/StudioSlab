@@ -26,7 +26,7 @@ namespace Base {
     namespace Graphics {
 
         class Graph2D : public Window {
-            typedef std::tuple<RtoR2::ParametricCurve::Ptr, Styles::PlotStyle, String> CurveTriple;
+            typedef std::tuple<RtoR2::ParametricCurve::Ptr, Styles::PlotStyle, Str> CurveTriple;
             static auto GetCurve    ( CurveTriple triple ) { return std::get<0>(triple); };
             static auto GetStyle    ( CurveTriple triple ) { return std::get<1>(triple); };
             static auto GetName     ( CurveTriple triple ) { return std::get<2>(triple); };
@@ -43,7 +43,7 @@ namespace Base {
             Real yspacing = 1.e-5;
             Real xspacing = 1.e-5;
 
-            String title = "";
+            Str title = "";
             bool filled = false;
             int samples = 512;
 
@@ -54,20 +54,20 @@ namespace Base {
 
             void __computeSpacings();
 
-            void _nameLabelDraw(int i, const Styles::PlotStyle &style, String label, const Window *window);
+            void _nameLabelDraw(int i, const Styles::PlotStyle &style, Str label, const Window *window);
 
             void _drawCurves();
 
         public:
             Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
-                  String title = "no_title", bool filled = false, int samples = 512);
+                    Str title = "no_title", bool filled = false, int samples = 512);
 
             void draw() override;
 
             void setupOrtho();
 
             void addLabel(Label *label);
-            void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, String name);
+            void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name);
 
             void clearCurves();
 

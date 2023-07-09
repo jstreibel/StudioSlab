@@ -7,14 +7,14 @@
 #include "SimulationBuilder.h"
 #include "Common/Log/Log.h"
 
-Base::SimulationBuilder::SimulationBuilder(String generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
-                                           String prefix)
+Base::SimulationBuilder::SimulationBuilder(Str generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
+                                           Str prefix)
  : InterfaceOwner(generalDescription, 100, false), outputSystemBuilder(osb), prefix(prefix){
     Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 
-String Base::SimulationBuilder::toString() const {
+Str Base::SimulationBuilder::toString() const {
     auto strParams = interface->toString();
 
     auto str = prefix + "-" + strParams;

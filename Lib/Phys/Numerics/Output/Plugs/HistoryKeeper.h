@@ -23,7 +23,7 @@ public:
 
     auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
-    auto renderMetaDataAsPythonDictionary() const -> String;
+    auto renderMetaDataAsPythonDictionary() const -> Str;
 protected:
     SpaceFilterBase &spaceFilter;
 

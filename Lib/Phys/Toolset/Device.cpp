@@ -34,7 +34,7 @@ void Device::notifyCLArgsSetupFinished() {
     this->dev = dev_n == 0 ? CPU : (dev_n == 1 || dev_n == 2 ? GPU : UNKNOWN);
 
     if (dev == UNKNOWN) {
-        throw (String("Unkown device ") + std::to_string(dev_n) + String(".")).c_str();
+        throw (Str("Unkown device ") + std::to_string(dev_n) + Str(".")).c_str();
     } else if (dev == CPU) {
         Log::Info() << "Running on CPU @ " << *nThreads << " thread"
                     << (**nThreads > 1 ? "s.\n" : ".\n") << Log::Flush;

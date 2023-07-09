@@ -31,7 +31,7 @@ void Common::PrintDensityThere(int x, int y, float dens) {
 #include <bitset>
 #include <algorithm>
 
-String Replace(std::string str, char oldChar, char newChar) {
+Str Replace(std::string str, char oldChar, char newChar) {
     std::replace(str.begin(), str.end(), oldChar, newChar);
 
     return str;
@@ -40,7 +40,7 @@ String Replace(std::string str, char oldChar, char newChar) {
 #include <string>
 #include <vector>
 
-StrVector Common::SplitString(const String &s, const String &delimiter, unsigned int maxTokens)
+StrVector Common::SplitString(const Str &s, const Str &delimiter, unsigned int maxTokens)
 {
     StrVector tokens;
     size_t start = 0;

@@ -9,8 +9,8 @@
 
 CustomStringSeparatedSOF::CustomStringSeparatedSOF(std::string sep) : sep(std::move(sep)) { }
 
-auto CustomStringSeparatedSOF::getFormatDescription() const -> String {
-    return String("text");
+auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
+    return Str("text");
 }
 
 auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> ByteData {

@@ -14,7 +14,7 @@ namespace Phys {
 
         class PointSetGraph : public Base::Graphics::Graph2D {
 
-            typedef std::tuple<Spaces::PointSet::Ptr, Styles::PlotStyle, String> PointSetTriple;
+            typedef std::tuple<Spaces::PointSet::Ptr, Styles::PlotStyle, Str> PointSetTriple;
             static auto GetPointSet ( PointSetTriple triple ) { return std::get<0>(triple); };
             static auto GetStyle    ( PointSetTriple triple ) { return std::get<1>(triple); };
             static auto GetName     ( PointSetTriple triple ) { return std::get<2>(triple); };
@@ -28,11 +28,11 @@ namespace Phys {
 
             void _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
         public:
-            PointSetGraph(const String &title);
+            PointSetGraph(const Str &title);
 
             void draw() override;
 
-            void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, String setName);
+            void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, Str setName);
 
         };
 

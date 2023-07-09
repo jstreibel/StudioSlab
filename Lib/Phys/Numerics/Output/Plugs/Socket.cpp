@@ -5,8 +5,8 @@
 #include "Socket.h"
 
 
-Numerics::OutputSystem::Socket::Socket(String name, int nStepsInterval, String description)
-: nSteps(nStepsInterval), name(name), description(description), nextRecStep(nStepsInterval) {      }
+Numerics::OutputSystem::Socket::Socket(Str name, int nStepsInterval, Str description)
+: nSteps(nStepsInterval), name(name), description(description), nextRecStep(1) {      }
 
 
 auto Numerics::OutputSystem::Socket::getLastSimTime()  -> Real { return lastData.getSimTime(); }
@@ -49,8 +49,8 @@ void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
 auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
     return true; }
 
-auto Numerics::OutputSystem::Socket::getDescription() const -> String { return description; }
-auto Numerics::OutputSystem::Socket::getName() const -> String { return name; }
+auto Numerics::OutputSystem::Socket::getDescription() const -> Str { return description; }
+auto Numerics::OutputSystem::Socket::getName() const -> Str { return name; }
 
 
 

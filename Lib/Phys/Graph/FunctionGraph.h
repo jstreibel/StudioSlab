@@ -23,7 +23,7 @@
 template<class FunctionType>
 class FunctionGraph : public Base::Graphics::Graph2D {
     typedef std::unique_ptr<const FunctionType> FunctionPtr;
-    typedef std::tuple<const FunctionType*, Styles::PlotStyle, String> FunctionTriple;
+    typedef std::tuple<const FunctionType*, Styles::PlotStyle, Str> FunctionTriple;
     static auto GetFunction ( FunctionTriple triple ) { return std::get<0>(triple); };
     static auto GetStyle    ( FunctionTriple triple ) { return std::get<1>(triple); };
     static auto GetName     ( FunctionTriple triple ) { return std::get<2>(triple); };
@@ -34,14 +34,14 @@ class FunctionGraph : public Base::Graphics::Graph2D {
 public:
 
     FunctionGraph(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
-                  String title = "no_title", bool filled = false, int samples = 512);
+                  Str title = "no_title", bool filled = false, int samples = 512);
 
     /*!
      * Draw presumes OpenGL model view matrix is identity.
      */
     void draw() override;
 
-    void addFunction(const FunctionType* func, String name="",
+    void addFunction(const FunctionType* func, Str name="",
                      Styles::PlotStyle style=Styles::GetColorScheme()->funcPlotStyles[0]);
 
     void clearFunctions();
@@ -55,7 +55,7 @@ protected:
 
 
 template<class FunctionType>
-FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, String title, bool filled, int samples)
+FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled, int samples)
         : Base::Graphics::Graph2D(xMin, xMax, yMin, yMax, title, filled, samples) {   }
 
 
@@ -78,7 +78,7 @@ void FunctionGraph<FunctionType>::draw() {
 }
 
 template<class FunctionType>
-void FunctionGraph<FunctionType>::addFunction(const FunctionType *func, String name, Styles::PlotStyle style) {
+void FunctionGraph<FunctionType>::addFunction(const FunctionType *func, Str name, Styles::PlotStyle style) {
     mFunctions.emplace_back(FunctionTriple{func, style, name});
 }
 

@@ -13,7 +13,7 @@
 #include "Common/Log/Log.h"
 
 
-InterfaceSelector::InterfaceSelector(String name) : InterfaceOwner(name, -1, true)
+InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name, -1, true)
 {
     interface->addParameters({selection});
 };
@@ -34,7 +34,7 @@ auto InterfaceSelector::getInstance() -> InterfaceSelector & {
 
 auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
     if(currentSelection > candidates.size() - 1)
-        throw String("Unknown sim type: ") + ToString(currentSelection);
+        throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
     return candidates[currentSelection];
 }

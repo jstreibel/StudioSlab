@@ -19,7 +19,7 @@ namespace R2toR {
         auto RingDeltaFunc::getRadius()                   const -> Real   { return radius;    }
 
         auto RingDeltaFunc::domainContainsPoint(Real2D x) const -> bool   { return std::abs(x.norm() - radius + dt) < eps; }
-        auto RingDeltaFunc::myName()                      const -> String { return "ring Dirac-δ"; }
+        auto RingDeltaFunc::myName()                      const -> Str { return "ring Dirac-δ"; }
 
         auto RingDeltaFunc::operator()         (Real2D x) const -> Real   {
             const auto r = x.norm();

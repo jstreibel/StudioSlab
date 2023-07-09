@@ -28,7 +28,7 @@ int SafetyNet::jump(AppBase &prog){
         << e << "\033[0m" << ", application will now exit" << Log::Flush;
         return -1;
     }
-    catch (String &e) {
+    catch (Str &e) {
         Log::ErrorFatal() << "Exception: " << "\033[91m\033[1m"
         << e << "\033[0m" << ", application will now exit" << Log::Flush;
         return -2;

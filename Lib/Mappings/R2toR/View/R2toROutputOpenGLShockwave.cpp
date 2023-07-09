@@ -396,7 +396,7 @@ IntPair R2toR::OutputOpenGLShockwave::getWindowSizeHint() {
     return {1600, 1000};
 }
 
-void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section, String name) {
+void R2toR::OutputOpenGLShockwave::addSection(const RtoR2::StraightLine &section, Str name) {
     // const Real rangeField = 0.15;
     // const Real rangeDdtField = 1.5;
 
@@ -434,7 +434,7 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
     const auto yMin = phi.getDomain().yMin;
     const auto L = phi.getDomain().getLx();
 
-    std::string sFileName = "./file-t0="+ToString(t0) + "-t=" + ToString(t);
+    std::string sFileName = "./file-t0=" + ToStr(t0) + "-t=" + ToStr(t);
     int count=0;
     do count++; while(std::filesystem::exists(sFileName + (count>1?"-"+std::to_string(count):"") + ".dat"));
 

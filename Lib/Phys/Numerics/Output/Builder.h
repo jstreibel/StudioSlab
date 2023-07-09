@@ -31,7 +31,7 @@ namespace Numerics {
                                                                "Simulation steps between visual monitor "
                                                                "updates call.");
 
-            explicit Builder(String generalDescription = "Output System Builder,the builder that plugs output channels (Plugs) to the output socket of the Integrator Program");
+            explicit Builder(Str generalDescription = "Output System Builder,the builder that plugs output channels (Plugs) to the output socket of the Integrator Program");
 
             // void buildCommon(OutputManager &outputManager);
             static void addConsoleMonitor(OutputManager &outputManager, int nSteps);
@@ -39,7 +39,7 @@ namespace Numerics {
         public:
             typedef std::shared_ptr<Builder> Ptr;
 
-            virtual auto build(String outputFileName) -> OutputManager * = 0;
+            virtual auto build(Str outputFileName) -> OutputManager * = 0;
         };
 
     }

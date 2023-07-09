@@ -4,6 +4,6 @@
 
 #include "Resources.h"
 
-String Resources::fontFileName(int index) {
+Str Resources::fontFileName(int index) {
     return FontsFolder + fonts[index];
 }

@@ -11,8 +11,8 @@
 
 class RtoRBCInterface : public Base::SimulationBuilder {
 public:
-    explicit RtoRBCInterface(String generalDescription,
-                             String name = "",
+    explicit RtoRBCInterface(Str generalDescription,
+                             Str name = "",
                              OutputStructureBuilderBase *outputStructureBuilder =  new OutputStructureBuilderRtoR,
                              bool selfRegister=false);
 

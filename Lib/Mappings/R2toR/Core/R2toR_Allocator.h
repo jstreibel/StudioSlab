@@ -14,7 +14,7 @@ namespace R2toR {
     namespace Core {
         class BasicAllocator : public Numerics::Allocator {
         public:
-            BasicAllocator(String name = "Basic allocator ℝ² ↦ ℝ");
+            BasicAllocator(Str name = "Basic allocator ℝ² ↦ ℝ");
 
             static auto Choose()        -> BasicAllocator*;
 

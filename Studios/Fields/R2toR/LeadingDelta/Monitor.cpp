@@ -69,11 +69,11 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
-    if (!lastData.hasValidData()) return;
+    static auto timer = Timer();
+    auto elTime = timer.getElTime_msec();
+    timer = Timer();
 
     auto &rd = *R2toR::LeadingDelta::ringDelta1;
-
-    const auto radius =  rd.getRadius();
 
     const auto &p = Numerics::Allocator::getInstance().getNumericParams();
     const auto L = p.getL();
@@ -89,25 +89,26 @@ void R2toR::LeadingDelta::OutGL::draw() {
     static auto lastAnalyticE = .0;
 
     auto dt = Numerics::Allocator::getInstance().getNumericParams().getdt();
-    stats.addVolatileStat(String("t = ")     + ToString(t,         4));
-    stats.addVolatileStat(String("step = ")  + ToString(step));
-    stats.addVolatileStat(String("nSteps = ")  + ToString(nSteps));
-    stats.addVolatileStat(String("<\\br>"));
-    stats.addVolatileStat(String("L = ")     + ToString(L));
-    stats.addVolatileStat(String("N = ")     + ToString(N));
-    stats.addVolatileStat(String("h = ")     + ToString(h,         4, true));
-    stats.addVolatileStat(String("eps = ")   + ToString(epsilon,   4, true));
-    stats.addVolatileStat(String("eps/h = ") + ToString(epsilon/h, 4));
-    stats.addVolatileStat(String("eps/L = ") + ToString(epsilon/L, 6));
-    stats.addVolatileStat(String("<\\br>"));
-    stats.addVolatileStat(String("L² = ")    + ToString(L*L));
-    stats.addVolatileStat(String("N² = ")    + ToString(N*N));
-    stats.addVolatileStat(String("h² = ")    + ToString(L*L/(N*N), 4, true));
-    stats.addVolatileStat(String("<\\br>"));
+    stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
+    stats.addVolatileStat(Str("step = ") + ToStr(step));
+    stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
+    stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
+    stats.addVolatileStat(Str("<\\br>"));
+    stats.addVolatileStat(Str("L = ") + ToStr(L));
+    stats.addVolatileStat(Str("N = ") + ToStr(N));
+    stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
+    stats.addVolatileStat(Str("eps = ") + ToStr(epsilon, 4, true));
+    stats.addVolatileStat(Str("eps/h = ") + ToStr(epsilon / h, 4));
+    stats.addVolatileStat(Str("eps/L = ") + ToStr(epsilon / L, 6));
+    stats.addVolatileStat(Str("<\\br>"));
+    stats.addVolatileStat(Str("L² = ") + ToStr(L * L));
+    stats.addVolatileStat(Str("N² = ") + ToStr(N * N));
+    stats.addVolatileStat(Str("h² = ") + ToStr(L * L / (N * N), 4, true));
+    stats.addVolatileStat(Str("<\\br>"));
 
     auto totalE = .0;
 
-    if(0) {
+    if(1) {
         ImGui::Begin("Energy compute");
         ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float) epsilon * 1e-3f,
                          -2.0f * epsilon, 2.0f * epsilon, "%.2e");
@@ -150,10 +151,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     }
 
-    stats.addVolatileStat(String("E_tot = ")        + ToString(totalE,               2, true));
-    stats.addVolatileStat(String("E_num = ")        + ToString(lastE,                2, true));
-    stats.addVolatileStat(String("E_an = ")         + ToString(lastAnalyticE,        2, true));
-    stats.addVolatileStat(String("E_num/E_an = ")   + ToString(lastE/lastAnalyticE , 2, true));
+    stats.addVolatileStat(Str("E_tot = ") + ToStr(totalE, 2, true));
+    stats.addVolatileStat(Str("E_num = ") + ToStr(lastE, 2, true));
+    stats.addVolatileStat(Str("E_an = ") + ToStr(lastAnalyticE, 2, true));
+    stats.addVolatileStat(Str("E_num/E_an = ") + ToStr(lastE / lastAnalyticE, 2, true));
 
     auto &phi = eqState.getPhi();       phi   .getSpace().syncHost();
     auto &dphidt = eqState.getDPhiDt(); dphidt.getSpace().syncHost();
@@ -185,12 +186,12 @@ void R2toR::LeadingDelta::OutGL::draw() {
     if(numeric)
         mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
 
-    stats.addVolatileStat(String("Ring radius: ") + ToString(rd.getRadius()));
+    stats.addVolatileStat(Str("Ring radius: ") + ToStr(rd.getRadius()));
 
     auto scale = eps;
     auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
-        auto name = String("Ring delta x") + ToString(scale, 2, true);
+        auto name = Str("Ring delta x") + ToStr(scale, 2, true);
 
         mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
     }
@@ -225,9 +226,9 @@ bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
     if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
         auto buffer = GLUTUtils::getFrameBuffer();
 
-        auto fileName = String("signum Gordon (2+1 leading-delta) ");
-        fileName += InterfaceManager::getInstance().renderParametersToString({"N", "L", "eps", "h"}, "  ");
-        fileName += ".png";
+        auto fileName = Str("signum Gordon (2+1 leading-delta) ");
+        fileName += InterfaceManager::getInstance().renderParametersToString({"N", "L", "eps", "h"}, " ");
+        fileName += Str(" t=") + ToStr(t) + " (step " + ToStr(step) + ").png";
 
         OpenGLUtils::outputToPNG(buffer, fileName);
 

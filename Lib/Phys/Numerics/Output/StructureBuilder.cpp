@@ -11,7 +11,7 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
-Numerics::OutputSystem::Builder::Builder(String generalDescription)
+Numerics::OutputSystem::Builder::Builder(Str generalDescription)
     : InterfaceOwner(generalDescription, 100, false)
 {
     interface->addParameters({noHistoryToFile, outputResolution,

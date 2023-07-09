@@ -47,7 +47,7 @@ namespace RtoR {
         class OutputBuilder : public OutputStructureBuilderRtoR {
         protected:
         public:
-            auto build(String outputFileName) -> OutputManager * override;
+            auto build(Str outputFileName) -> OutputManager * override;
 
         protected:
             auto buildOpenGLOutput() -> RtoR::OutputOpenGL * override;

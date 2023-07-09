@@ -35,7 +35,7 @@ namespace R2toR {
 
         const RtoR::Function &getRadialFunction() const { return radialFunction; }
 
-        String myName() const override {
+        Str myName() const override {
             return "2d azimuthal-symmetric";
         }
 

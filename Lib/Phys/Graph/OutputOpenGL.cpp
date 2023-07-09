@@ -12,7 +12,7 @@
 
 using namespace Base;
 
-Graphics::OutputOpenGL::OutputOpenGL(String channelName, int stepsBetweenDraws)
+Graphics::OutputOpenGL::OutputOpenGL(Str channelName, int stepsBetweenDraws)
     : Numerics::OutputSystem::Socket("OpenGL output", stepsBetweenDraws) {
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }

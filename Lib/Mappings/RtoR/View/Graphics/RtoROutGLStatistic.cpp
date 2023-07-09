@@ -121,11 +121,11 @@ void RtoR::OutGLStatistic::draw() {
     //auto tau_indirect = u - .5*barϕ;
 
 
-    stats.addVolatileStat(String("N = ") + std::to_string((int)N));
-    stats.addVolatileStat(String("L = ") + std::to_string(L));
-    stats.addVolatileStat(String("h = L/N = ") + std::to_string(L/N));
-    stats.addVolatileStat(String("h = ") + std::to_string(h));
-    stats.addVolatileStat(String(""));
+    stats.addVolatileStat(Str("N = ") + std::to_string((int)N));
+    stats.addVolatileStat(Str("L = ") + std::to_string(L));
+    stats.addVolatileStat(Str("h = L/N = ") + std::to_string(L / N));
+    stats.addVolatileStat(Str("h = ") + std::to_string(h));
+    stats.addVolatileStat(Str(""));
 
     //ss.str(""); ss << "U = " << energyTotal;    stats.addVolatileStat(ss.str(), U_color);
     ss.str(""); ss << "K = " << K;            stats.addVolatileStat(ss.str(), K_color);

@@ -8,40 +8,40 @@
 #define GET_CLASS_NAME(obj) typeid(obj).name()
 
 Log* Log::myInstance = nullptr;
-const String Log::ForegroundBlack   = "\033[0;30m";
-const String Log::ForegroundRed     = "\033[0;31m";
-const String Log::ForegroundGreen   = "\033[0;32m";
-const String Log::ForegroundYellow  = "\033[0;33m";
-const String Log::ForegroundBlue    = "\033[0;34m";
-const String Log::ForegroundMagenta = "\033[0;35m";
-const String Log::ForegroundCyan    = "\033[0;36m";
-const String Log::ForegroundWhite   = "\033[0;37m";
+const Str Log::ForegroundBlack   = "\033[0;30m";
+const Str Log::ForegroundRed     = "\033[0;31m";
+const Str Log::ForegroundGreen   = "\033[0;32m";
+const Str Log::ForegroundYellow  = "\033[0;33m";
+const Str Log::ForegroundBlue    = "\033[0;34m";
+const Str Log::ForegroundMagenta = "\033[0;35m";
+const Str Log::ForegroundCyan    = "\033[0;36m";
+const Str Log::ForegroundWhite   = "\033[0;37m";
 
-const String Log::BackgroundBlack   = "\033[0;40m" ;
-const String Log::BackgroundRed     = "\033[0;41m" ;
-const String Log::BackgroundGreen   = "\033[0;42m" ;
-const String Log::BackgroundYellow  = "\033[0;43m";
-const String Log::BackgroundBlue    = "\033[0;44m" ;
-const String Log::BackgroundMagenta = "\033[0;45m";
-const String Log::BackgroundCyan    = "\033[0;46m" ;
-const String Log::BackgroundWhite   = "\033[0;47m" ;
+const Str Log::BackgroundBlack   = "\033[0;40m" ;
+const Str Log::BackgroundRed     = "\033[0;41m" ;
+const Str Log::BackgroundGreen   = "\033[0;42m" ;
+const Str Log::BackgroundYellow  = "\033[0;43m";
+const Str Log::BackgroundBlue    = "\033[0;44m" ;
+const Str Log::BackgroundMagenta = "\033[0;45m";
+const Str Log::BackgroundCyan    = "\033[0;46m" ;
+const Str Log::BackgroundWhite   = "\033[0;47m" ;
 
-const String Log::ResetFormatting   = "\033[0m";
+const Str Log::ResetFormatting   = "\033[0m";
 
-const String Log::BoldFace          = "\033[1m";
-const String Log::Italic            = "\033[3m"; // Might not work
-const String Log::Underscore        = "\033[4m"; // Might not work
+const Str Log::BoldFace          = "\033[1m";
+const Str Log::Italic            = "\033[3m"; // Might not work
+const Str Log::Underscore        = "\033[4m"; // Might not work
 
-const String Log::InfoFormat = Log::ResetFormatting + Log::ForegroundCyan;
-const String Log::NoteFormat = Log::ResetFormatting + Log::ForegroundWhite;
-const String Log::AttentionFormat = Log::ResetFormatting + Log::ForegroundMagenta;
-const String Log::CriticalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundMagenta;
-const String Log::DebugFormat = Log::ResetFormatting + Log::Italic + Log::ForegroundMagenta;
-const String Log::SuccessFormat = Log::ResetFormatting + Log::ForegroundGreen;
-const String Log::WarningFormat = Log::ResetFormatting + Log::ForegroundYellow;
-const String Log::WarningImportantFormat = Log::ResetFormatting + Log::ForegroundBlack + Log::BackgroundMagenta;
-const String Log::ErrorFormat = Log::ResetFormatting + Log::ForegroundRed;
-const String Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundRed;
+const Str Log::InfoFormat = Log::ResetFormatting + Log::ForegroundCyan;
+const Str Log::NoteFormat = Log::ResetFormatting + Log::ForegroundWhite;
+const Str Log::AttentionFormat = Log::ResetFormatting + Log::ForegroundMagenta;
+const Str Log::CriticalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundMagenta;
+const Str Log::DebugFormat = Log::ResetFormatting + Log::Italic + Log::ForegroundMagenta;
+const Str Log::SuccessFormat = Log::ResetFormatting + Log::ForegroundGreen;
+const Str Log::WarningFormat = Log::ResetFormatting + Log::ForegroundYellow;
+const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::ForegroundBlack + Log::BackgroundMagenta;
+const Str Log::ErrorFormat = Log::ResetFormatting + Log::ForegroundRed;
+const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundRed;
 
 const Log::FlushClass Log::Flush;
 
@@ -61,18 +61,18 @@ auto Log::GetSingleton() -> Log & {
     return *Log::myInstance;
 }
 
-inline String Log::prefix(){
+inline Str Log::prefix(){
     StringStream ss;
 
     auto time = timer.getElTime_msec();
 
-    ss << String("\n") << ResetFormatting  << std::setw(10) << ToString(timer.getElTime_msec())
+    ss << Str("\n") << ResetFormatting << std::setw(10) << ToStr(timer.getElTime_msec())
        << "ms  [ ";
 
     return ss.str();
 };
 
-inline String Log::postfix(){
+inline Str Log::postfix(){
     return ResetFormatting + " ]  ";
 };
 
@@ -88,16 +88,16 @@ OStream &Log::WarningImportant()    { auto me = Log::GetSingleton(); auto &strea
 OStream &Log::Error()               { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
 OStream &Log::ErrorFatal()          { auto me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash"     << me.postfix(); return stream; }
 
-auto Log::Info             (const String &str) -> OStream& { return Info()       << str << Log::Flush;}
-auto Log::Note             (const String &str) -> OStream& { return Note()       << str << Log::Flush;}
-auto Log::Attention        (const String &str) -> OStream& { return Attention()  << str << Log::Flush;}
-auto Log::Critical         (const String &str) -> OStream& { return Critical()   << str << Log::Flush;}
-auto Log::Debug            (const String &str) -> OStream& { return Debug()      << str << Log::Flush;}
-auto Log::Success          (const String &str) -> OStream& { return Success()    << str << Log::Flush;}
-auto Log::Warning          (const String &str) -> OStream& { return Info()       << str << Log::Flush;}
-auto Log::WarningImportant (const String &str) -> OStream& { return Warning()    << str << Log::Flush;}
-auto Log::Error            (const String &str) -> OStream& { return Error()      << str << Log::Flush;}
-auto Log::ErrorFatal       (const String &str) -> OStream& { return ErrorFatal() << str << Log::Flush;}
+auto Log::Info             (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
+auto Log::Note             (const Str &str) -> OStream& { return Note() << str << Log::Flush;}
+auto Log::Attention        (const Str &str) -> OStream& { return Attention() << str << Log::Flush;}
+auto Log::Critical         (const Str &str) -> OStream& { return Critical() << str << Log::Flush;}
+auto Log::Debug            (const Str &str) -> OStream& { return Debug() << str << Log::Flush;}
+auto Log::Success          (const Str &str) -> OStream& { return Success() << str << Log::Flush;}
+auto Log::Warning          (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
+auto Log::WarningImportant (const Str &str) -> OStream& { return Warning() << str << Log::Flush;}
+auto Log::Error            (const Str &str) -> OStream& { return Error() << str << Log::Flush;}
+auto Log::ErrorFatal       (const Str &str) -> OStream& { return ErrorFatal() << str << Log::Flush;}
 
 auto Log::FlushAll() -> void {
     *Log::GetSingleton().mainStream << Log::Flush;

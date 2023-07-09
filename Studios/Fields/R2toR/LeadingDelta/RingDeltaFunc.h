@@ -33,7 +33,7 @@ namespace R2toR {
             auto getRadius()                   const -> Real;
             auto setRadius(Real _radius)             -> void;
             auto domainContainsPoint(Real2D x) const -> bool   override;
-            auto myName()                      const -> String override ;
+            auto myName()                      const -> Str override ;
 
             /**
              * Constructor

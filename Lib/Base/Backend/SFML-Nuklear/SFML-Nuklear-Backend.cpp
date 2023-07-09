@@ -7,7 +7,7 @@
 
 #include <Base/Controller/Nuklear/_nuklear_sfml.hpp>
 
-SFMLNuklearBackend::SFMLNuklearBackend() : Backend(this, "SFML+Nuklear backend") {
+SFMLNuklearBackend::SFMLNuklearBackend() : Backend("SFML+Nuklear backend") {
 
     window = new sf::RenderWindow(
             sf::VideoMode(1920, 1080),
@@ -77,11 +77,4 @@ void SFMLNuklearBackend::_render() {
     }
 
     window->display();
-}
-
-SFMLNuklearBackend *SFMLNuklearBackend::GetInstance() {
-    if(Backend::myInstance == nullptr)
-        Backend::myInstance = new SFMLNuklearBackend();
-
-    return dynamic_cast<SFMLNuklearBackend *>(Backend::myInstance);
 }

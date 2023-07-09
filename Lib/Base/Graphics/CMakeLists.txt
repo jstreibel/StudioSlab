@@ -3,15 +3,16 @@ set( GRAPHICS_SOURCES
 		Animation.cpp
 		ZoomPanRotate.cpp
 
-		Window/StatsDisplay.cpp
 		Styles/StylesAndColorSchemes.cpp
 
+		Window/StatsDisplay.cpp
 		Window/Window.cpp
 		Window/WindowStyles.cpp
-
 		Window/WindowContainer/WindowPanel.cpp
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp
+
+		SFML/Graph.cpp
 
 		../../Phys/Graph/OutputOpenGL.cpp
 
@@ -19,7 +20,8 @@ set( GRAPHICS_SOURCES
 		#GraphCollections.cpp
 
 		OpenGL/Utils.cpp
-		../../Phys/Graph/Graph.cpp ../../Phys/Graph/Graph.h)
+		../../Phys/Graph/Graph.cpp
+		../../Phys/Graph/Graph.h)
 
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Graphics )

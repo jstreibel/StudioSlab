@@ -16,7 +16,7 @@ namespace RtoR {
         InputStatistical();
 
         auto getBoundary() const -> const void * override;
-        static auto getDetailedDescription() -> String;
+        static auto getDetailedDescription() -> Str;
     };
 }
 

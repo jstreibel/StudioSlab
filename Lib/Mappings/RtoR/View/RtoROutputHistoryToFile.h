@@ -13,13 +13,13 @@ namespace RtoR {
         void _dump(bool integrationIsFinished) override;
         void _printHeaderToFile();
 
-        const String outFileName;
+        const Str outFileName;
         std::ofstream file;
 
         OutputFormatterBase &outputFormatter;
 
     public:
-        OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT, String  outputFileName);
+        OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT, Str  outputFileName);
 
         ~OutputHistoryToFile() override;
 

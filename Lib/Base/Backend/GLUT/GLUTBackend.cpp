@@ -18,12 +18,10 @@
 #include <cassert>
 #include <filesystem>
 
-GLUTBackend *GLUTBackend::glutBackend = nullptr;
-
 //#define FORCE_FPS 60
 //const Real FRAME_TIME = 1.0/Real(FORCE_FPS);
 
-GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
+GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     assert(GLUTBackend::glutBackend == nullptr);
 
     int dummy = 0;
@@ -45,7 +43,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
         if (GLEW_OK != initStatus) {
             char buffer[1024];
             sprintf(buffer, "Error: %s", glewGetErrorString(initStatus));
-            throw String(buffer);
+            throw Str(buffer);
         } else {
             char buffer[1024];
             sprintf(buffer, "Using GLEW %s", glewGetString(GLEW_VERSION));
@@ -103,7 +101,7 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     if(1) {
         auto fontName = Resources::fontFileName(5);
 
-        if (!std::filesystem::exists(fontName)) throw String("Font ") + fontName + " does not exist.";
+        if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
 
         auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 22.0f);
         io.FontDefault = font;
@@ -133,13 +131,6 @@ GLUTBackend::GLUTBackend() : Backend(this, "GLUT backend") {
     }
 }*/
 
-auto GLUTBackend::GetInstance() -> GLUTBackend *{
-    if(GLUTBackend::glutBackend == nullptr)
-        GLUTBackend::glutBackend = new GLUTBackend();
-
-    return GLUTBackend::glutBackend;
-}
-
 GLUTBackend::~GLUTBackend() {
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
@@ -156,15 +147,15 @@ void GLUTBackend::run(Program *pProgram)
 
 void GLUTBackend::keyboard(unsigned char key, int x, int y)
 {
-    GLUTBackend *me = GLUTBackend::GetInstance();
-    Program *program = me->program;
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    Program *program = me.program;
 
     if(key == 27) {
         glutLeaveMainLoop();
     } else if(key == ' ') {
-        me->programIsRunning = !me->programIsRunning;
+        me.programIsRunning = !me.programIsRunning;
     } else if(key == 'd') {
-        me->showDemo = !me->showDemo;
+        me.showDemo = !me.showDemo;
     }
     else if(key == 'f') {
         dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
@@ -172,102 +163,97 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
         program->cycle(1);
     } else if(key == '{') {
         program->cycle(20);
-    } /*else if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
-        auto buffer = GLUTUtils::getFrameBuffer();
-
-        OpenGLUtils::outputToPNG(buffer, "beautiful_graphy-graph.png");
-    } */
-    else {
-        auto *gb = GLUTBackend::GetInstance();
-        for(auto &win : gb->windows)
+    } else {
+        for(auto &win : me.windows)
             win->notifyKeyboard(key, x, y);
     }
 }
 
 void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
-    auto *gb = GLUTBackend::GetInstance();
-    for(auto &win : gb->windows)
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    for(auto &win : me.windows)
         win->notifyKeyboardSpecial(key, x, y);
 }
 
 void GLUTBackend::mouseButton(int button, int state, int x, int y)
 {
-    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+    auto &mouseState = Backend::GetInstance<GLUTBackend>().mouseState;
 
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
     mouseState.x = x;
     mouseState.y = y;
-    if      (button == GLUT_LEFT_BUTTON)   mouseState.left   = (state == GLUT_DOWN);
-    else if (button == GLUT_MIDDLE_BUTTON) mouseState.center = (state == GLUT_DOWN);
-    else if (button == GLUT_RIGHT_BUTTON)  mouseState.right  = (state == GLUT_DOWN);
+    if      (button == GLUT_LEFT_BUTTON)   mouseState.leftPressed   = (state == GLUT_DOWN);
+    else if (button == GLUT_MIDDLE_BUTTON) mouseState.centerPressed = (state == GLUT_DOWN);
+    else if (button == GLUT_RIGHT_BUTTON)  mouseState.rightPressed  = (state == GLUT_DOWN);
 
-    if(ImGui::GetIO().WantCaptureMouse)
+    // if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MouseFunc(button, state, x, y);
-        return;
     }
 
-    auto *gb = GLUTBackend::GetInstance();
-    for(auto &win : gb->windows)
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    for(auto &win : me.windows)
         win->notifyMouseButton(button, state, x, y);
 
 
 }
 
 void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
-    auto *gb = GLUTBackend::GetInstance();
-    for(auto &win : gb->windows)
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    for(auto &win : me.windows)
         win->notifyMouseWheel(wheel, direction, x, y);
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    auto &mouseState = me.mouseState;
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
     mouseState.x = x;
     mouseState.y = y;
 
+    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
-        // if(ImGui::GetIO().WantCaptureMouse) return;
+        return;
     }
 
-    auto *gb = GLUTBackend::GetInstance();
-    for(auto &win : gb->windows)
+    for(auto &win : me.windows)
         win->notifyMousePassiveMotion(x, y);
 }
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
-    auto &mouseState = GLUTBackend::GetInstance()->mouseState;
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    auto &mouseState = me.mouseState;
     mouseState.dx = x-mouseState.x;
     mouseState.dy = y-mouseState.y;
     mouseState.x = x;
     mouseState.y = y;
 
+    if(ImGui::GetIO().WantCaptureMouse)
     {
         ImGui_ImplGLUT_MotionFunc(x, y);
-        // if(ImGui::GetIO().WantCaptureMouse) return;
+        return;
     }
 
-    auto *gb = GLUTBackend::GetInstance();
-    for(auto &win : gb->windows)
+    for(auto &win : me.windows)
         win->notifyMouseMotion(x, y);
 }
 
 void GLUTBackend::render()
 {
-    GLUTBackend *gb = GLUTBackend::GetInstance();
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
 
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGLUT_NewFrame();
     ImGui::NewFrame();
-    if(gb->showDemo) ImGui::ShowDemoWindow();
+    if(me.showDemo) ImGui::ShowDemoWindow();
 
-    for(auto &win : gb->windows) {
+    for(auto &win : me.windows) {
         //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
         win->notifyRender();
     }
@@ -284,8 +270,8 @@ void GLUTBackend::render()
 
 void GLUTBackend::idleCall()
 {
-    GLUTBackend *gb = GLUTBackend::GetInstance();
-    Program *program = gb->program;
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
+    Program *program = me.program;
 
 
     GLenum err;
@@ -297,7 +283,7 @@ void GLUTBackend::idleCall()
         lastErr = err;
     }
 
-    if(gb->isRunning()){
+    if(me.isRunning()){
         program->cycle(Program::CycleOptions::CycleUntilOutput);
     }
 }
@@ -307,12 +293,12 @@ void GLUTBackend::reshape(int w, int h)
     ImGuiIO& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)w, (float)h);
 
-    GLUTBackend::GetInstance()->w = w;
-    GLUTBackend::GetInstance()->h = h;
+    GLUTBackend &me = Backend::GetInstance<GLUTBackend>();
 
-    GLUTBackend *gb = GLUTBackend::GetInstance();
+    me.w = w;
+    me.h = h;
 
-    for(auto &win : gb->windows)
+    for(auto &win : me.windows)
         win->notifyScreenReshape(w, h);
 
     glutPostRedisplay();
@@ -336,10 +322,7 @@ void GLUTBackend::addWindow(Window::Ptr window) {
         sockets.emplace_back(socket);
     } catch (std::bad_cast &) { }
 
-    windows.emplace_back(window);
+    GUIBackend::addWindow(window);
 }
 
-auto GLUTBackend::getMouseState() const -> const MouseState& {
-    return mouseState;
-}
 

@@ -49,7 +49,7 @@ namespace Common {
      * @param maxTokens The maximum number of tokens to separate the string. Negative values mean no limit.
      * @return A vector containing all the separated strings.
      */
-    StrVector               SplitString(const String& s, const String &delimiter, unsigned int maxTokens=(unsigned)-1);
+    StrVector               SplitString(const Str& s, const Str &delimiter, unsigned int maxTokens=(unsigned)-1);
 
     unsigned                BinaryToUInt(std::string binary, char zero='0', char one='1');
     unsigned short          BinaryToUShort(std::string binary, char zero='0', char one='1');
@@ -67,7 +67,7 @@ void cew(cudaError err);
 #endif // USE_CUDA
 
 template <typename T>
-String ToString(const T a_value, const int n = 2, bool useScientificNotation=false)
+Str ToStr(const T a_value, const int n = 2, bool useScientificNotation= false)
 {
     auto base = useScientificNotation ? std::scientific : std::fixed;
     std::ostringstream out;

@@ -6,12 +6,12 @@
 #include "CommonParameters.h"
 #include "Common/Log/Log.h"
 
-auto std::to_string(String str) -> String { return String("\"") + str + String("\""); }
-auto std::to_string(bool val) -> String {        return val ? "True" : "False"; }
+auto std::to_string(Str str) -> Str { return Str("\"") + str + Str("\""); }
+auto std::to_string(bool val) -> Str {        return val ? "True" : "False"; }
 
 
 template<class Type>
-ParameterTemplate<Type>::ParameterTemplate(Type val, const String& argName, const String& descr)
+ParameterTemplate<Type>::ParameterTemplate(Type val, const Str& argName, const Str& descr)
     : Parameter(argName, descr), val(val) {}
 
 template<class Type>
@@ -24,7 +24,7 @@ auto ParameterTemplate<Type>::valueToString() const -> std::string {
 
 template<class Type>
 auto ParameterTemplate<Type>::addToOptionsGroup(CLODEasyInit &add) const -> void {
-    auto value = CLOptions::value<Type>()->default_value(ToString(val));
+    auto value = CLOptions::value<Type>()->default_value(ToStr(val));
     add(commandLineArgName, description, value);
 }
 
@@ -50,7 +50,7 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
     } catch (cxxopts::exceptions::parsing &exception) {
-        auto msg = String("Parameter '") + commandLineArgName + "' failed conversion from command line input. Type is " + typeid(Type).name();
+        auto msg = Str("Parameter '") + commandLineArgName + "' failed conversion from command line input. Type is " + typeid(Type).name();
         Log::Error() << msg << Log::Flush;
         throw exception;
     }
@@ -90,6 +90,6 @@ auto ParameterTemplate<Type>::operator=(Type &rhs) -> ParameterTemplate & {
 
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;
-template class ParameterTemplate<String>;
+template class ParameterTemplate<Str>;
 template class ParameterTemplate<bool>;
 

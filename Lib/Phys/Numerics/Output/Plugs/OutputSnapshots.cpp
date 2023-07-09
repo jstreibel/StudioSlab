@@ -11,7 +11,7 @@
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 
-OutputSnapshot::OutputSnapshot(const String &customFileDescription, const size_t T_fileNamePrecision)
+OutputSnapshot::OutputSnapshot(const Str &customFileDescription, const size_t T_fileNamePrecision)
         : Numerics::OutputSystem::Socket("Snapshot output", 1), customFileDescription(customFileDescription),
           T_fileNamePrecision(T_fileNamePrecision)
 { }
@@ -24,7 +24,7 @@ void OutputSnapshot::addSnapshotStep(const size_t snapshotStep) {
     Log::Attention() << "A snapshot will be taken at the step " << snapshotStep << Log::Flush;
 }
 
-void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customFileDescription,
+void OutputSnapshot::doOutput(const OutputPacket &outInfo, const Str &customFileDescription,
                               const size_t T_fileNamePrecision) {
     StringStream filePhiNameStream;
     filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
@@ -38,7 +38,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
         filePhiNameStream << "./snapshot-t=" << t;
     filePhiNameStream  << ".oscs";
 
-    String fileName = filePhiNameStream.str();
+    Str fileName = filePhiNameStream.str();
     auto &log = Log::Info();
     log.setf(std::ios::fixed, std::ios::floatfield);
     log.precision(4);
@@ -48,7 +48,7 @@ void OutputSnapshot::doOutput(const OutputPacket &outInfo, const String &customF
     Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
 }
 
-void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const String &fileName) {
+void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName) {
     std::ofstream file;
     file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 

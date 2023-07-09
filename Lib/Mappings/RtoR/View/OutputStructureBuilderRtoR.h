@@ -12,7 +12,7 @@ class OutputStructureBuilderRtoR : public Numerics::OutputSystem::Builder {
 public:
     OutputStructureBuilderRtoR();
 
-    auto build(String outputFileName) -> OutputManager * override;
+    auto build(Str outputFileName) -> OutputManager * override;
 
     virtual auto buildOpenGLOutput() -> RtoR::OutputOpenGL*;
 

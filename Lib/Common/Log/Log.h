@@ -23,8 +23,8 @@ class Log : public InterfaceOwner
 
     Log();
 
-    String prefix();
-    String postfix();
+    Str prefix();
+    Str postfix();
 
     static auto GetSingleton() -> Log&;
 
@@ -35,40 +35,40 @@ class Log : public InterfaceOwner
     Timer timer;
 
 public:
-    const static String ForegroundBlack;
-    const static String ForegroundRed;
-    const static String ForegroundGreen;
-    const static String ForegroundYellow;
-    const static String ForegroundBlue;
-    const static String ForegroundMagenta;
-    const static String ForegroundCyan;
-    const static String ForegroundWhite;
+    const static Str ForegroundBlack;
+    const static Str ForegroundRed;
+    const static Str ForegroundGreen;
+    const static Str ForegroundYellow;
+    const static Str ForegroundBlue;
+    const static Str ForegroundMagenta;
+    const static Str ForegroundCyan;
+    const static Str ForegroundWhite;
 
-    const static String BackgroundBlack;
-    const static String BackgroundRed;
-    const static String BackgroundGreen;
-    const static String BackgroundYellow;
-    const static String BackgroundBlue;
-    const static String BackgroundMagenta;
-    const static String BackgroundCyan;
-    const static String BackgroundWhite;
+    const static Str BackgroundBlack;
+    const static Str BackgroundRed;
+    const static Str BackgroundGreen;
+    const static Str BackgroundYellow;
+    const static Str BackgroundBlue;
+    const static Str BackgroundMagenta;
+    const static Str BackgroundCyan;
+    const static Str BackgroundWhite;
 
-    const static String ResetFormatting;
+    const static Str ResetFormatting;
 
-    const static String BoldFace;
-    const static String Italic;     // Might not work
-    const static String Underscore; // Might not work
+    const static Str BoldFace;
+    const static Str Italic;     // Might not work
+    const static Str Underscore; // Might not work
 
-    const static String InfoFormat;
-    const static String NoteFormat;
-    const static String SuccessFormat;
-    const static String AttentionFormat;
-    const static String CriticalFormat;
-    const static String DebugFormat;
-    const static String WarningFormat;
-    const static String WarningImportantFormat;
-    const static String ErrorFormat;
-    const static String ErrorFatalFormat;
+    const static Str InfoFormat;
+    const static Str NoteFormat;
+    const static Str SuccessFormat;
+    const static Str AttentionFormat;
+    const static Str CriticalFormat;
+    const static Str DebugFormat;
+    const static Str WarningFormat;
+    const static Str WarningImportantFormat;
+    const static Str ErrorFormat;
+    const static Str ErrorFatalFormat;
 
     constexpr const static char Return = '\r';
 
@@ -83,16 +83,16 @@ public:
     static auto Error            ()                  -> OStream&;
     static auto ErrorFatal       ()                  -> OStream&;
 
-    static auto Info             (const String& str) -> OStream&;
-    static auto Note             (const String& str) -> OStream&;
-    static auto Attention        (const String& str) -> OStream&;
-    static auto Critical         (const String& str) -> OStream&;
-    static auto Debug            (const String& str) -> OStream&;
-    static auto Success          (const String& str) -> OStream&;
-    static auto Warning          (const String& str) -> OStream&;
-    static auto WarningImportant (const String& str) -> OStream&;
-    static auto Error            (const String& str) -> OStream&;
-    static auto ErrorFatal       (const String& str) -> OStream&;
+    static auto Info             (const Str& str) -> OStream&;
+    static auto Note             (const Str& str) -> OStream&;
+    static auto Attention        (const Str& str) -> OStream&;
+    static auto Critical         (const Str& str) -> OStream&;
+    static auto Debug            (const Str& str) -> OStream&;
+    static auto Success          (const Str& str) -> OStream&;
+    static auto Warning          (const Str& str) -> OStream&;
+    static auto WarningImportant (const Str& str) -> OStream&;
+    static auto Error            (const Str& str) -> OStream&;
+    static auto ErrorFatal       (const Str& str) -> OStream&;
 
     class FlushClass { public: void operator()() const; };
     friend FlushClass;

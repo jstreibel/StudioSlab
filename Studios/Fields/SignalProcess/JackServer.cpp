@@ -73,7 +73,7 @@ JackServer::JackServer() {
 
     client = jack_client_open("Signals through fields ~~~~~~~~~~~", JackNullOption, &status);
 
-    auto testPortName = ToString(testWaveFreq) + "Hz test wave";
+    auto testPortName = ToStr(testWaveFreq) + "Hz test wave";
 
     output_processed_port =
             jack_port_register(client, "Probed", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
@@ -98,18 +98,18 @@ JackServer::JackServer() {
     if(ports == nullptr)
         throw "Jack error 3";
 
-    std::vector<String> connect_to_processed_output = {"spectrum_analyzer_x1:in0"/*,
+    std::vector<Str> connect_to_processed_output = {"spectrum_analyzer_x1:in0"/*,
                                                        /*"Built-in Audio Analog Stereo:playback_FL",
                                                        "Built-in Audio Analog Stereo:playback_FR"*/};
 
-    std::vector<String> connect_to_input =     {"C-1U Digital Stereo (IEC958):capture_FL",
-                                                "C-1U Digital Stereo (IEC958):capture_FR"/*,
+    std::vector<Str> connect_to_input =     {"C-1U Digital Stereo (IEC958):capture_FL",
+                                             "C-1U Digital Stereo (IEC958):capture_FR"/*,
                                                 testPortName*/};
 
     for(auto i=0; ports[i] != nullptr; i++){
         Log::Note() << "JackServer identified port " << ports[i] << Log::Flush;
 
-        auto port = String(ports[i]);
+        auto port = Str(ports[i]);
 
         if(Common::contains(connect_to_processed_output, port)) {
             auto portName = jack_port_name(output_processed_port);

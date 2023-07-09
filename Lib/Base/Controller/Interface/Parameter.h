@@ -11,29 +11,29 @@
 
 class Parameter {
 protected:
-    String commandLineArgName, description;
+    Str commandLineArgName, description;
 
 public:
     typedef std::shared_ptr<Parameter> Ptr;
     typedef std::shared_ptr<const Parameter> ConstPtr;
 
-    Parameter(const String& commandLineArgName, const String& description);
+    Parameter(const Str& commandLineArgName, const Str& description);
 
     virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
 
-    virtual auto valueToString() const -> String = 0;
+    virtual auto valueToString() const -> Str = 0;
 
     virtual void setValueFrom(VariableValue var) = 0;
     virtual void setValue(const void*) = 0;
     virtual auto getValueVoid() const -> const void* = 0;
 
-    auto getCommandLineArgName(bool clean=false) const -> String;
-    auto getDescription() const -> String;
-    void setDescription(String newDescription);
+    auto getCommandLineArgName(bool clean=false) const -> Str;
+    auto getDescription() const -> Str;
+    void setDescription(Str newDescription);
 
     bool operator<(const Parameter *rhs);
 
-    bool operator==(String str) const;
+    bool operator==(Str str) const;
 
     bool operator!=(const Parameter &rhs) const;
 

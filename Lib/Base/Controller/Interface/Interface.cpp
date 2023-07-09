@@ -8,7 +8,7 @@
 #include "Common/Utils.h"
 #include "Common/Log/Log.h"
 
-Interface::Interface(String name, InterfaceOwner *owner, int priority)
+Interface::Interface(Str name, InterfaceOwner *owner, int priority)
     : owner(owner), priority(priority) {
 
     auto tokens = Common::SplitString(name, delimiter, 2);
@@ -42,7 +42,7 @@ void Interface::addParameter(Parameter::Ptr parameter) {
         throw "Error while inserting parameter in interface.";
     }
 
-    auto name = String("\"") + parameter->getCommandLineArgName() + "\"";
+    auto name = Str("\"") + parameter->getCommandLineArgName() + "\"";
     Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName() << "\".";
 }
 
@@ -57,12 +57,12 @@ void Interface::addSubInterface(Interface::Ptr subInterface) {
     if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
 }
 
-auto Interface::getGeneralDescription() const -> String {
+auto Interface::getGeneralDescription() const -> Str {
 
     return descr!="<empty>" ? descr : "";
 }
 
-auto Interface::getParameter(String key) const -> Parameter::Ptr {
+auto Interface::getParameter(Str key) const -> Parameter::Ptr {
     auto compareFunc = [key](Parameter::Ptr parameter) {
         return *parameter == key;
     };
@@ -72,7 +72,7 @@ auto Interface::getParameter(String key) const -> Parameter::Ptr {
     return *result;
 }
 
-auto Interface::toString() const -> String {
+auto Interface::toString() const -> Str {
     std::stringstream ss;
 
     for(auto param : parameters)
@@ -108,7 +108,7 @@ bool Interface::operator==(const Interface &rhs) const {
            std::tie(rhs.name, rhs.parameters, rhs.subInterfaces);
 }
 
-bool Interface::operator==(String str) const {
+bool Interface::operator==(Str str) const {
     return name == str;
 }
 
@@ -120,7 +120,7 @@ Interface::~Interface() {
 
 }
 
-Interface::Ptr Interface::New(String name, InterfaceOwner *owner, int priority) {
+Interface::Ptr Interface::New(Str name, InterfaceOwner *owner, int priority) {
     return Interface::Ptr(new Interface(name, owner, priority));
 }
 
@@ -132,7 +132,7 @@ auto Interface::getOwner() const -> InterfaceOwner * {
     return owner;
 }
 
-auto Interface::getName() const -> const String & {
+auto Interface::getName() const -> const Str & {
     return name;
 }
 

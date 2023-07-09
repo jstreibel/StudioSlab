@@ -2,23 +2,16 @@
 #define BACKEND_H
 
 #include "Program.h"
+#include "Common/Singleton.h"
+#include "Events/MouseState.h"
 
-class Backend
+class Backend : public DerivableSingleton<Backend>
 {
 protected:
-
-    static Backend *myInstance;
-    explicit Backend(Backend *instance, String name);
-    virtual ~Backend();
-
+    Backend(Str name) : DerivableSingleton(name) {}
 public:
-    static auto GetInstance() -> Backend *;
+    virtual void run(Program *) = 0;
 
-    static void Destroy();
-
-    virtual void run(Program *integrator) = 0;
-
-    const String backendName;
 };
 
 #endif // BACKEND_H

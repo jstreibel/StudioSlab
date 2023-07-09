@@ -55,7 +55,7 @@ auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLast
     return true;
 }
 
-auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> String {
+auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
     Numerics::Allocator &builder = Numerics::Allocator::getInstance();
 
     std::ostringstream oss;
@@ -63,7 +63,7 @@ auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> String {
     oss << R"({, "outresT": " << (countTotal+count))";
 
     DimensionMetaData recDim = spaceFilter.getOutputDim();
-    String dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
+    Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
     for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
     oss << R"(, "data_channels": 2)";
     oss << R"str(, "data_channel_names": ("phi", "ddtphi"), )str";

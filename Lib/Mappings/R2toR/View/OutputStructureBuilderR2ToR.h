@@ -14,7 +14,7 @@ namespace R2toR {
     namespace OutputSystem {
         class Builder : public Numerics::OutputSystem::Builder {
         public:
-            auto build(String outputFileName) -> OutputManager* override;
+            auto build(Str outputFileName) -> OutputManager* override;
 
         protected:
             virtual auto buildOpenGLOutput() -> OutputOpenGL*;

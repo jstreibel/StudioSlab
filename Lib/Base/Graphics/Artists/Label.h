@@ -24,16 +24,16 @@ struct LabelSource : public Artist {
 
 struct StringLabelSource : public LabelSource {
 public:
-    StringLabelSource(String annotation) : annotation(annotation) {}
+    StringLabelSource(Str annotation) : annotation(annotation) {}
     const char* get() { return annotation.c_str(); }
 
 private:
-    String annotation;
+    Str annotation;
 } __attribute__((aligned(32)));
 
 struct VariableLabelSource : public LabelSource {
 public:
-    VariableLabelSource(String varName, const Real *source)
+    VariableLabelSource(Str varName, const Real *source)
             : varName(varName), source(source)
     {
         tempBuffer.setf(std::ios::fixed,std::ios::floatfield);
@@ -50,10 +50,10 @@ public:
     }
 private:
     std::ostringstream tempBuffer;
-    String str;
+    Str str;
     char text[256];
 
-    String varName;
+    Str varName;
     const Real *source;
 
 };

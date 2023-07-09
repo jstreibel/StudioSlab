@@ -30,7 +30,7 @@ OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : Builder() {
 }
 
 auto
-OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
+OutputStructureBuilderRtoR::build(Str outputFileName) -> OutputManager * {
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
@@ -59,7 +59,7 @@ OutputStructureBuilderRtoR::build(String outputFileName) -> OutputManager * {
         const Real r = Numerics::Allocator::getInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
-        outputFileName += String("-N=") + ToString(N, 0);
+        outputFileName += Str("-N=") + ToStr(N, 0);
 
         Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(stepsInterval, spaceFilter, Tf,
                                                                       outputFileName, outputFilter);

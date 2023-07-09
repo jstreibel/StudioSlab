@@ -11,7 +11,7 @@
 
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
-R2toR::Core::BasicAllocator::BasicAllocator(String name) : Numerics::Allocator(name) {
+R2toR::Core::BasicAllocator::BasicAllocator(Str name) : Numerics::Allocator(name) {
 
 };
 //{

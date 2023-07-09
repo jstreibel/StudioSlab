@@ -7,8 +7,8 @@
 #include <utility>
 
 
-RtoRBCInterface::RtoRBCInterface(String generalDescription,
-                                 String name,
+RtoRBCInterface::RtoRBCInterface(Str generalDescription,
+                                 Str name,
                                  OutputStructureBuilderBase *outputStructureBuilder,
                                  bool selfRegister)
     : SimulationBuilder(std::move(generalDescription), outputStructureBuilder,

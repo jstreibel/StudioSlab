@@ -5,7 +5,7 @@
 #include "GraphR2ToR.h"
 #include "Mappings/FunctionRenderer.h"
 
-GraphR2toR::GraphR2toR(Real xMin, Real xMax, Real yMin, Real yMax, String title, bool filled,
+GraphR2toR::GraphR2toR(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
                        int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {
     EventListener::addResponder(&zpr);
 }

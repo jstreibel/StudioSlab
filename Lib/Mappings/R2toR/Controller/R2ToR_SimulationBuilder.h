@@ -15,8 +15,8 @@ namespace R2toR {
     class SimulationBuilder : public Base::SimulationBuilder {
 
     public:
-        explicit SimulationBuilder(String name,
-                          BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputSystem::Builder));
+        explicit SimulationBuilder(Str name,
+                                   BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputSystem::Builder));
         auto buildOutputManager()         -> OutputManager *  override;
         auto registerAllocator ()   const -> void             override;
 

@@ -25,7 +25,7 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OutputOpenGL> Ptr;
 
-        OutputOpenGL(String channelName="OpenGL output", int stepsBetweenDraws=1);
+        OutputOpenGL(Str channelName="OpenGL output", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
         bool notifyRender() final override;
@@ -42,7 +42,7 @@ namespace Graphics {
 
     public:
         void addAnimation(Animation *animation) {animations.push_back(animation); }
-        void addStat(const String& stat, const Styles::Color color = {1, 1, 1}) {
+        void addStat(const Str& stat, const Styles::Color color = {1, 1, 1}) {
             stats.addVolatileStat(stat, color);
         }
 

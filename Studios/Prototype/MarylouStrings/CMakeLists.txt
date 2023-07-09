@@ -3,18 +3,36 @@ project(MarylouStrings)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(MY_LIBS_DIR "../../StudiosLib")
-include_directories(${MY_LIBS_DIR})
+set(LIBDIR ../../../Lib)
+include_directories($LIBDIR)
+
+find_package( SFML COMPONENTS graphics window system )
+find_package( OpenGL )
+find_package( GLEW )
 
 set(EXTERNAL_SRC
-        ${MY_LIBS_DIR}/sfml-utils/Graph.cpp)
+		${LIBDIR}/Base/Controller/Nuklear/NuklearImplementation.cpp
+		${LIBDIR}/Base/Graphics/SFML/Graph.cpp)
 
 add_executable(MarylouStrings
-        Integrator.cpp              Integrator.h
-        NuklearImplementation.cpp
-        main.cpp
-        NuklearInclude.h
-        ${EXTERNAL_SRC}
-        )
+        Integrator.cpp
+		main.cpp
+		${EXTERNAL_SRC} )
 
-target_link_libraries(MarylouStrings sfml-graphics sfml-window sfml-system OpenGL)
+target_link_libraries(MarylouStrings
+		Slab-Utils
+		Slab-Base
+
+		sfml-window
+		sfml-graphics
+		sfml-system
+
+		GLEW
+		OpenGL
+		GL
+
+
+		)
+
+
+message(NOTICE "Added executable MarylouStrings")

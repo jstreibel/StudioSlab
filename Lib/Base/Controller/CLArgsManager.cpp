@@ -44,7 +44,7 @@ void CLArgsManager::Parse(int argc, const char **argv) {
 
 auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void {
     auto desc = anInterface.getGeneralDescription();
-    auto name = anInterface.getName() + (desc!="" ? String(" (")+desc+")" : "") ;
+    auto name = anInterface.getName() + (desc!="" ? Str(" (") + desc + ")" : "") ;
 
     auto group = opts.add_options(name);
 

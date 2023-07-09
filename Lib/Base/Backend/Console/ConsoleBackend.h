@@ -5,14 +5,12 @@
 
 class ConsoleBackend : public Backend
 {
+    friend DerivableSingleton;
+protected:
     ConsoleBackend();
-public:
-    static ConsoleBackend *getSingleton();
 
-    // Backend interface
 public:
     virtual void run(Program *integrator);
-
 };
 
 #endif // CONSOLEBACKEND_H

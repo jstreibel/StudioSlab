@@ -21,16 +21,16 @@ public:
     typedef std::shared_ptr<const Interface> ConstPtr;
 
 private:
-    Interface(String generalDescription, InterfaceOwner *owner, int priority);
+    Interface(Str generalDescription, InterfaceOwner *owner, int priority);
 
     friend InterfaceManager;
     friend InterfaceOwner;
 
     InterfaceOwner *owner = nullptr;
 
-    String name;
-    String descr="<empty>";
-    const String delimiter=",";
+    Str name;
+    Str descr="<empty>";
+    const Str delimiter=",";
 
     std::vector<InterfaceListener*> listeners;
 
@@ -46,11 +46,11 @@ public:
      * @param owner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
      * @return an std::shared_ptr to an Interface.
      */
-    static Ptr New(String name, InterfaceOwner *owner, int priority);
+    static Ptr New(Str name, InterfaceOwner *owner, int priority);
 
     ~Interface();
 
-    auto getGeneralDescription() const -> String;
+    auto getGeneralDescription() const -> Str;
 
     void addSubInterface(Ptr subInterface);
     auto addListener(InterfaceListener*) -> void;
@@ -59,15 +59,15 @@ public:
 
     auto getSubInterfaces() const -> std::vector<Interface::Ptr>;
     auto getParameters() const -> std::vector<Parameter::ConstPtr>;
-    auto getParameter(String key) const -> Parameter::Ptr;
+    auto getParameter(Str key) const -> Parameter::Ptr;
     auto getOwner() const -> InterfaceOwner*;
 
-    auto getName() const -> const String&;
-    auto toString() const -> String;
+    auto getName() const -> const Str&;
+    auto toString() const -> Str;
     void setup(CLVariablesMap vm);
 
     bool operator==(const Interface &rhs) const;
-    bool operator==(String val) const;
+    bool operator==(Str val) const;
     bool operator!=(const Interface &rhs) const;
     bool operator< (const Interface& other) const;
 

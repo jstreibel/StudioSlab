@@ -10,7 +10,7 @@
 #include "Base/Backend/GLUT/GLUTBackend.h"
 
 
-Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, String title,
+Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str title,
                                  bool filled, int samples)
                                  : xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax), title(title),
                                    filled(filled), samples(samples) {       }
@@ -181,7 +181,7 @@ void Base::Graphics::Graph2D::setupOrtho() {
     glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
 }
 
-void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &style, String label,
+void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &style, Str label,
                                              const Window *window) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -259,7 +259,7 @@ Real Base::Graphics::Graph2D::get_yMax() const {
 }
 
 void
-Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, String name) {
+Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
     CurveTriple triple = {curve, style, name};
     curves.emplace_back(triple);
 }
@@ -321,7 +321,7 @@ void Base::Graphics::Graph2D::draw() {
     _drawCurves();
 
     {
-        auto popupName = String("win_") + title + String("_popup");
+        auto popupName = Str("win_") + title + Str("_popup");
 
         if(savePopupOn) {
             ImGui::OpenPopup(popupName.c_str());
@@ -343,9 +343,11 @@ void Base::Graphics::Graph2D::draw() {
 bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
     if(0) Log::Debug() << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << Log::Flush;
 
+    static auto time = Timer();
 
-    if(button == 2 && dir == 1){
-        savePopupOn = true;
+    if(button == 2){
+        if(dir == 0) time.reset();
+        else if(dir == 1 && time.getElTime_msec() < 200) savePopupOn = true;
 
         return true;
     }
@@ -356,9 +358,9 @@ bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
 bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     auto elRet = EventListener::notifyMouseMotion(x, y);
 
-    auto& mouseState = GLUTBackend::GetInstance()->getMouseState();
+    auto& mouseState = GUIBackend::GetInstance().getMouseState();
 
-    if(mouseState.left)
+    if(mouseState.leftPressed)
     {
         const Real dxClampd = - mouseState.dx / (Real)w;
         const Real dyClampd = mouseState.dy / (Real)h;
@@ -372,7 +374,7 @@ bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
         yMin += dyGraph;
         yMax += dyGraph;
     }
-    if(mouseState.center)
+    if(mouseState.centerPressed)
     {
         constexpr const Real factor = 0.01;
         const Real dx = 1+factor*mouseState.dx;
@@ -399,15 +401,17 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     constexpr const Real factor = 1.1;
     const Real d = pow(factor, direction);
 
-    const Real x0 = .5*(xMax+xMin);
-    const Real y0 = .5*(yMax+yMin);
-    const Real hw = .5*(xMax-xMin)*d;
-    const Real hh = .5*(yMax-yMin)*d;
-
-    xMin = x0 - hw;
-    xMax = x0 + hw;
-    // yMin = y0 - hh;
-    // yMax = y0 + hh;
+    if(GUIBackend::GetInstance().getMouseState().rightPressed) {
+        const Real x0 = .5 * (xMax + xMin);
+        const Real hw = .5 * (xMax - xMin) * d;
+        xMin = x0 - hw;
+        xMax = x0 + hw;
+    } else {
+        const Real y0 = .5 * (yMax + yMin);
+        const Real hh = .5 * (yMax - yMin) * d;
+        yMin = y0 + hh;
+        yMax = y0 - hh;
+    }
 
     return true;
 }

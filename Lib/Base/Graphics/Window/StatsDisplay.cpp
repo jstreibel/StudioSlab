@@ -18,7 +18,7 @@ StatsDisplay::StatsDisplay() : Window( ) {
 }
 
 
-void StatsDisplay::addVolatileStat(const String &stat, const Styles::Color color)
+void StatsDisplay::addVolatileStat(const Str &stat, const Styles::Color color)
 {
     stats.emplace_back(stat, color);
 }

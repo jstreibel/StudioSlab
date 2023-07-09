@@ -219,26 +219,26 @@ void RtoR::Signal::OutGL::draw() {
     auto stepsPerSecond = 1e3*deltaSteps/interval;
 
     stats.addVolatileStat("Rendering:");
-    stats.addVolatileStat(String("Steps between calls to draw: ") + ToString(deltaSteps));
-    stats.addVolatileStat(ToString(interval, 2) + "ms since last draw");
+    stats.addVolatileStat(Str("Steps between calls to draw: ") + ToStr(deltaSteps));
+    stats.addVolatileStat(ToStr(interval, 2) + "ms since last draw");
     stats.addVolatileStat("");
     stats.addVolatileStat("Integration:");
-    stats.addVolatileStat(ToString(stepsPerSecond, stepsPerSecond<2?10:0) + " steps/sec");
-    stats.addVolatileStat(String("t = ") + ToString(getLastSimTime()));
-    stats.addVolatileStat(String("step ") + ToString(lastData.getSteps()));
+    stats.addVolatileStat(ToStr(stepsPerSecond, stepsPerSecond < 2 ? 10 : 0) + " steps/sec");
+    stats.addVolatileStat(Str("t = ") + ToStr(getLastSimTime()));
+    stats.addVolatileStat(Str("step ") + ToStr(lastData.getSteps()));
     stats.addVolatileStat("");
 
     auto jackServer = JackServer::GetInstance();
     Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
 
     stats.addVolatileStat("Jack I/O:");
-    stats.addVolatileStat(String("Probed samples/nframes: ")
-                          + ToString(jackServer->getLastOutputProcessedSamples()) + "/"
-                          + ToString(jackServer->getnframes()), samplingStatusColor);
-    stats.addVolatileStat(String("Sampled input ")
-                          + ToString(lastBufferDumpedSamplesCount));
-    stats.addVolatileStat(String("Input buffer updates: "
-                                 + ToString(jackServer->getInputBufferUpdateCount())));
+    stats.addVolatileStat(Str("Probed samples/nframes: ")
+                          + ToStr(jackServer->getLastOutputProcessedSamples()) + "/"
+                          + ToStr(jackServer->getnframes()), samplingStatusColor);
+    stats.addVolatileStat(Str("Sampled input ")
+                          + ToStr(lastBufferDumpedSamplesCount));
+    stats.addVolatileStat(Str("Input buffer updates: "
+                              + ToStr(jackServer->getInputBufferUpdateCount())));
 
 
     // *************************** RECORDING *******************************
@@ -258,7 +258,7 @@ void RtoR::Signal::OutGL::draw() {
             fullRecordingGraph.addFunction(func);
             fullRecordingGraph.xMax = recTime;
 
-            stats.addVolatileStat(String("Recorded samples: ") + ToString(func->N));
+            stats.addVolatileStat(Str("Recorded samples: ") + ToStr(func->N));
         }
 
     }

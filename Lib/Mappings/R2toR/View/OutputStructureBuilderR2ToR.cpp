@@ -19,13 +19,13 @@
 #include "R2toROutputOpenGLGeneric.h"
 
 OutputManager*
-R2toR::OutputSystem::Builder::build(String outputFileName) {
+R2toR::OutputSystem::Builder::build(Str outputFileName) {
     const auto shouldOutputOpenGL = **VisualMonitor;
     const auto shouldTrackHistory = ! **noHistoryToFile;
 
 
-    if(**VisualMonitor) GLUTBackend::GetInstance();
-    else ConsoleBackend::getSingleton();
+    if(**VisualMonitor) Backend::Initialize<GLUTBackend>();
+    else Backend::Initialize<ConsoleBackend>();
 
 
     const NumericParams &p = Numerics::Allocator::getInstance().getNumericParams();
@@ -67,7 +67,7 @@ R2toR::OutputSystem::Builder::build(String outputFileName) {
         const Real r = Numerics::Allocator::getInstance().getNumericParams().getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
-        auto fileName = outputFileName + "-N=" + ToString(N, 0);
+        auto fileName = outputFileName + "-N=" + ToStr(N, 0);
 
         Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
 
@@ -79,14 +79,14 @@ R2toR::OutputSystem::Builder::build(String outputFileName) {
 
     ///********************************************************************************************/
     if(shouldOutputOpenGL) {
-        GLUTBackend *glutBackend = GLUTBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
-        if((*VisualMonitor_startPaused)) glutBackend->pause();
-        else glutBackend->resume();
+        GUIBackend &backend = GUIBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
+        if((*VisualMonitor_startPaused)) backend.pause();
+        else backend.resume();
 
         auto glOut = Graphics::OutputOpenGL::Ptr(this->buildOpenGLOutput());
         glOut->setnSteps(**OpenGLMonitor_stepsPerIdleCall);
 
-        glutBackend->addWindow(glOut);
+        backend.addWindow(glOut);
         outputManager->addOutputChannel(glOut.get(), false);
     }
     else {

@@ -6,7 +6,7 @@ namespace Numerics {
 
     Allocator *Allocator::mySingleInstance = nullptr;
 
-    Allocator::Allocator(String name) : name(name) {
+    Allocator::Allocator(Str name) : name(name) {
         Log::Attention() << "Allocator instantiated " << Log::ForegroundGreen << Log::BoldFace << name << Log::Flush;
     };
     //ModelBuilder::ModelBuilder() {

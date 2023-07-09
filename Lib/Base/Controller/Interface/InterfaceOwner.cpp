@@ -11,11 +11,11 @@ InterfaceOwner::InterfaceOwner(bool IKnowIMustCallLateStart) {
     if(!IKnowIMustCallLateStart) Log::WarningImportant("Remember to call LateStart!");
 }
 
-InterfaceOwner::InterfaceOwner(String interfaceName, int priority, bool doRegister){
+InterfaceOwner::InterfaceOwner(Str interfaceName, int priority, bool doRegister){
     LateStart(interfaceName, priority, doRegister);
 }
 
-void InterfaceOwner::LateStart(String interfaceName, int priority, bool doRegister) {
+void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister) {
     interface = Interface::New(interfaceName, this, priority);
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);

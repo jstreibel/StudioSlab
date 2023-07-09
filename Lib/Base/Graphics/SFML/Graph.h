@@ -9,6 +9,8 @@
 #include <SFML/Graphics/Font.hpp>
 #include <vector>
 
+#include <Common/Types.h>
+
 
 namespace Graphing {
     class Graph : public sf::Drawable {

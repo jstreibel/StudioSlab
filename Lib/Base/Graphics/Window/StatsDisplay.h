@@ -13,12 +13,12 @@
 
 
 class StatsDisplay : public Window {
-    std::vector<std::pair<String, Styles::Color>> stats;
+    std::vector<std::pair<Str, Styles::Color>> stats;
 
 public:
     explicit StatsDisplay( );
 
-    void addVolatileStat(const String& stat, const Styles::Color color = {1, 1, 1});
+    void addVolatileStat(const Str& stat, const Styles::Color color = {1, 1, 1});
 
     void draw() override;
 

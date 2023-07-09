@@ -18,7 +18,7 @@ class InterfaceSelector : public InterfaceOwner {
     IntegerParameter::Ptr selection = std::make_shared<IntegerParameter>(0, "sim", "Sim type selection");
 
 public:
-    InterfaceSelector(String selectorName);
+    InterfaceSelector(Str selectorName);
 
     /**
      * This is left here for compatibility reasons.

@@ -7,8 +7,8 @@
 
 BinarySOF::BinarySOF() = default;;
 
-auto BinarySOF::getFormatDescription() const -> String {
-    return String("fp32");
+auto BinarySOF::getFormatDescription() const -> Str {
+    return Str("fp32");
 }
 
 auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> ByteData {

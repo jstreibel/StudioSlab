@@ -11,9 +11,9 @@ namespace Numerics {
 
 	protected:
 
-		const String name;
+		const Str name;
 
-		Allocator(String name);
+		Allocator(Str name);
 
 		static void Instantiate(Allocator *allocator);
 

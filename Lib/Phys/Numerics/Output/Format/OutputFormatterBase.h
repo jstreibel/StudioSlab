@@ -22,7 +22,7 @@ public:
 
     virtual auto isBinary() const -> bool = 0;
 
-    virtual auto getFormatDescription() const -> String = 0;
+    virtual auto getFormatDescription() const -> Str = 0;
 };
 
 
