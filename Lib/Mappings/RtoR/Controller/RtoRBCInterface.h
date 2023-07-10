@@ -13,9 +13,12 @@ class RtoRBCInterface : public Base::SimulationBuilder {
 public:
     typedef Numerics::OutputSystem::Builder::Ptr BuilderBasePtr;
 
-    explicit RtoRBCInterface(Str generalDescription,
-                             Str name = "",
-                             BuilderBasePtr outputStructureBuilder = BuilderBasePtr(new OutputStructureBuilderRtoR));
+    explicit RtoRBCInterface(Str name,
+                             Str generalDescription);
+
+    explicit RtoRBCInterface(Str name,
+                             Str generalDescription,
+                             BuilderBasePtr outputStructureBuilder);
 
     auto buildOutputManager() -> OutputManager * override;
 

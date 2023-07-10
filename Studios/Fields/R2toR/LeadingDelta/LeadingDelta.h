@@ -47,13 +47,13 @@ namespace R2toR {
 
 
         class Builder : public SimulationBuilder {
-            RealParameter::Ptr      W_0              = RealParameter::New(0.1, "W,W_0",
+            RealParameter      W_0              = RealParameter(0.1, "W,W_0",
                                                             "The height of corresponding analytic shockwave, "
                                                             "which determines scale of the delta as "
                                                             "C_n=(n-1)/2 W(0) with n=2.");
-            RealParameter::Ptr      eps              = RealParameter::New(0.1, "eps",
+            RealParameter      eps              = RealParameter(0.1, "eps",
                                                             "Half the base width of regularized delta;");
-            RealParameter::Ptr      deltaDuration    = RealParameter::New(-1, "delta_duration",
+            RealParameter      deltaDuration    = RealParameter(-1, "delta_duration",
                                                             "The duration of regularized delta. Negative "
                                                             "values mean forever;");
             RingDeltaFunc::Ptr drivingFunc;

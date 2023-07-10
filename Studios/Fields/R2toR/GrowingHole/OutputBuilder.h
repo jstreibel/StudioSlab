@@ -24,6 +24,9 @@ namespace R2toR {
 
                 return new R2toR::GrowingHoleOutGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
             }
+
+        public:
+            OutputBuilder() : Builder("GH output builder", "Growing hole output system builder") {}
         };
     }
 }

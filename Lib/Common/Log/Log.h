@@ -14,6 +14,7 @@
 #include "Base/Controller/Interface/InterfaceOwner.h"
 #include "Common/Singleton.h"
 
+#define FORCE_VERBOSE false
 
 class Log : public Singleton<Log>, InterfaceOwner
 {
@@ -28,9 +29,14 @@ class Log : public Singleton<Log>, InterfaceOwner
     Str prefix();
     Str postfix();
 
-    OStream *mainStream  = &std::cout;       bool manageMainStream  = false;
+    OStream *mainStream  = &std::cout; bool manageMainStream  = false;
+#if FORCE_VERBOSE
+    OStream *notesStream = &std::cout; bool manageNotesStream = false;
+    OStream *debugStream = &std::cout; bool manageDebugStream = false;
+#else
     OStream *notesStream = new StringStream; bool manageNotesStream = true;
     OStream *debugStream = new StringStream; bool manageDebugStream = true;
+#endif
 
     Timer timer;
 

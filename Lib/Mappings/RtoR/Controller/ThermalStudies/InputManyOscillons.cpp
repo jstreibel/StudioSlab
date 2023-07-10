@@ -7,8 +7,9 @@
 #include "InputManyOscillons.h"
 
 
-RtoR::InputManyOscillons::InputManyOscillons() : RtoRBCInterface("General scattering of "
-                                                                 "many oscillons.") {
+RtoR::InputManyOscillons::InputManyOscillons()
+: RtoRBCInterface("Many oscillons", "General scattering of many oscillons.")
+{
 
 }
 

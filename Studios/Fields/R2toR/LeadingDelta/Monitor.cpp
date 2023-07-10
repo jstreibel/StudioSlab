@@ -10,7 +10,7 @@
 
 #include "Phys/Numerics/Allocator.h"
 #include "Phys/Function/FunctionScale.h"
-#include "Phys/DifferentialEquations/2nd-Order/Energy.h"
+#include "Mappings/R2toR/Model/Energy.h"
 
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
@@ -80,7 +80,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     const auto N = p.getN();
     const auto h = p.geth();
 
-    const auto ldInterface = InterfaceManager::getInstance().getInterface("Leading Delta");
+    const auto ldInterface = InterfaceManager::getInstance().getInterface("R2toR-Leading Delta");
     const auto epsilon = *(Real*) ldInterface->getParameter("eps")->getValueVoid();
 
     static auto lastStep=0;

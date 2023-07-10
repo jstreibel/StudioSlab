@@ -23,19 +23,18 @@ namespace R2toR {
             RealParameter::Ptr E =   RealParameter::New(1., "E", "Total energy.");
 
         public:
-            Builder() : SimulationBuilder("ds,(2+1)-d shockwave-like formation from an initial dirac-delta "
+            Builder() : SimulationBuilder("DiracSpeed",
+                                          "(2+1)-d shockwave-like formation from an initial dirac-delta "
                                           "field time-derivative profile.",
                                           BuilderBasePtr(new GrowingHole::OutputBuilder)) {
                 interface->addParameters({E, eps});
             }
 
             auto getBoundary() const -> const void * override {
-                auto E = **this->E;
-                auto eps = **this->eps;
-                const Real a = sqrt((4. / 3) * pi * eps * eps * E);
+                const Real a = sqrt((4. / 3) * pi * (*eps) * (*eps) * (*E));
 
                 let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction);
-                let *dPhiDt0 = new R2toR::R2toRRegularDelta(eps, a);
+                let *dPhiDt0 = new R2toR::R2toRRegularDelta(*eps, a);
 
                 return new BoundaryCondition(phi0, dPhiDt0);
             }

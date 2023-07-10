@@ -11,8 +11,7 @@ namespace Base {
         Numerics::OutputSystem::Builder::Ptr outputSystemBuilder;
         Str prefix = "";
 
-        explicit SimulationBuilder(Str generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
-                                   Str prefix="");
+        explicit SimulationBuilder(Str name, Str generalDescription, Numerics::OutputSystem::Builder::Ptr osb);
 
     public:
         virtual ~SimulationBuilder() {}
@@ -21,7 +20,7 @@ namespace Base {
 
         virtual auto getBoundary()        const -> const void * = 0;
         virtual auto buildOutputManager()       -> OutputManager * = 0;
-        virtual auto registerAllocator()  const -> void;;
+        virtual auto registerAllocator()  const -> void = 0;
 
         auto toString()                   const -> Str;
     };

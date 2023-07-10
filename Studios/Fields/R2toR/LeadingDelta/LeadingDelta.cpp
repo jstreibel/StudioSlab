@@ -47,14 +47,14 @@ namespace R2toR {
             return new OutGL(ringDelta1, xLeft-dx, xRight+dx, xLeft-dx, xRight+dx, phiMin, phiMax);
         }
 
-        OutputBuilder::OutputBuilder() {
+        OutputBuilder::OutputBuilder() : R2toR::OutputSystem::Builder("Leading-delta", "Leading delta output builder")  {
             interface->addParameters({phiMinPlot, phiMaxPlot});
         }
 
 
-        Builder::Builder() : SimulationBuilder("Leading Delta,simulation builder for (2+1)-d signum-Gordon shockwave as the trail of a driving delta.",
+        Builder::Builder() : SimulationBuilder("Leading Delta", "simulation builder for (2+1)-d signum-Gordon shockwave as the trail of a driving delta.",
                                                BuilderBasePtr(new LeadingDelta::OutputBuilder)) {
-            interface->addParameters({W_0, eps, deltaDuration});
+            interface->addParameters({&W_0, &eps, &deltaDuration});
         }
         auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
@@ -62,12 +62,12 @@ namespace R2toR {
             auto &p = const_cast<NumericParams&>(Numerics::Allocator::GetInstance().getNumericParams());
             const Real L = p.getL();
             const Real dt = p.getdt();
-            const auto W₀ = **W_0;
+            const auto W₀ = *W_0;
             const auto C₂ = W₀; // this is C_n from our 2023 shockwave paper, with n=2.
 
-            p.sett(L*.5 - **eps);
+            p.sett(L*.5 - *eps);
 
-            drivingFunc = std::make_shared<RingDeltaFunc>(**eps, C₂, dt);
+            drivingFunc = std::make_shared<RingDeltaFunc>(*eps, C₂, dt);
             ringDelta1 = drivingFunc;
             Allocator::GetInstanceSuper<LeadingDelta::Allocator>().setDrivingFunction(drivingFunc);
         }

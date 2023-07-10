@@ -6,7 +6,7 @@
 using namespace RtoR;
 
 InputSymmetricOscillon::InputSymmetricOscillon()
-: RtoRBCInterface("Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
+: RtoRBCInterface("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
 {
     interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
 }

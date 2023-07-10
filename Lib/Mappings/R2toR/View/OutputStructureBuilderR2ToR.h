@@ -14,6 +14,8 @@ namespace R2toR {
     namespace OutputSystem {
         class Builder : public Numerics::OutputSystem::Builder {
         public:
+            Builder(Str name, Str description);
+
             auto build(Str outputFileName) -> OutputManager* override;
 
         protected:

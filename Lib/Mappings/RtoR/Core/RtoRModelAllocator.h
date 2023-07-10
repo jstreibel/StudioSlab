@@ -12,12 +12,10 @@
 class RtoRModelAllocator : public Numerics::Allocator {
 
 protected:
-    RtoRModelAllocator();
+    RtoRModelAllocator(Str name/*= "ℝ ↦ ℝ general" */);
 
 public:
     enum Potential {V, KleinGordon, Free, Null} potential = V;
-
-    static auto Choose() -> RtoRModelAllocator*;
 
     static void SetPotential(Potential pot, std::vector<Real> params = {});
 

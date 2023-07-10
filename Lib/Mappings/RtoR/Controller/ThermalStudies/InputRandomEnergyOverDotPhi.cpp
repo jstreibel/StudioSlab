@@ -10,7 +10,7 @@
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 
 RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()
-: RtoRBCInterface("Energy density over time-derivative of field.")
+: RtoRBCInterface("Random dphipt", "Energy density over time-derivative of field")
 {
     interface->addParameters({&E});
 }

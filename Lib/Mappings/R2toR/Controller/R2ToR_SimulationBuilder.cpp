@@ -5,11 +5,16 @@
 #include "R2ToR_SimulationBuilder.h"
 #include "Mappings/R2toR/Core/R2toR_Allocator.h"
 
-R2toR::SimulationBuilder::SimulationBuilder(Str name, BuilderBasePtr outputStructureBuilder)
-    : Base::SimulationBuilder(name, outputStructureBuilder, "R2toR-" + name)
-{
-    interface->addSubInterface(outputStructureBuilder->getInterface());
+R2toR::SimulationBuilder::SimulationBuilder(Str name, Str descr)
+: R2toR::SimulationBuilder(name, descr, BuilderBasePtr(new OutputSystem::Builder(name, descr))) {
+
 }
+
+R2toR::SimulationBuilder::SimulationBuilder(Str name, Str descr, BuilderBasePtr outputStructureBuilder)
+    : Base::SimulationBuilder("R2toR-" + name, descr, outputStructureBuilder)
+{ }
+
+
 
 auto R2toR::SimulationBuilder::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
@@ -19,5 +24,7 @@ auto R2toR::SimulationBuilder::buildOutputManager() -> OutputManager * {
 void R2toR::SimulationBuilder::registerAllocator() const {
     Numerics::Allocator::Initialize<Core::BasicAllocator>();
 }
+
+
 
 

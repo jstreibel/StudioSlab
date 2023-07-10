@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 
 
-RtoR::InputMachineGun::InputMachineGun() : RtoRBCInterface("Machinegun scattering") {
+RtoR::InputMachineGun::InputMachineGun() : RtoRBCInterface("Machinegun", "Machinegun scattering") {
     interface->addParameters({&v1, &n});
 
 }

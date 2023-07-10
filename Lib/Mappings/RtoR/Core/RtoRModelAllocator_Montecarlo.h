@@ -9,9 +9,8 @@
 #include "RtoRModelAllocator.h"
 
 class RtoRModelAllocator_Montecarlo : public RtoRModelAllocator {
-    RtoRModelAllocator_Montecarlo() = default;
-
 public:
+    RtoRModelAllocator_Montecarlo();
     auto getSystemSolver() -> void * override;
 
 };

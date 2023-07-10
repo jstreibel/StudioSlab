@@ -38,7 +38,11 @@ namespace Common {
         return std::find(vec.begin(), vec.end(), val) != vec.end();
     }
     template<typename T>
-    bool                    Contains(std::vector<T> vec, T element) {
+    bool                    Contains(std::vector<T> vec, const T &element) {
+        return std::find(vec.begin(), vec.end(), element) != vec.end();
+    }
+    template<typename T>
+    bool                    Contains(std::set<T> vec, const T &element) {
         return std::find(vec.begin(), vec.end(), element) != vec.end();
     }
 

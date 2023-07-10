@@ -19,7 +19,7 @@ namespace R2toR {
             RealParameter::Ptr height = RealParameter::New(2. / 3, "h,height", "Discontinuity value.");
 
         public:
-            Builder() : SimulationBuilder("gh,(2+1)-d Shockwave as a growing hole.",
+            Builder() : SimulationBuilder("GH", "(2+1)-d Shockwave as a growing hole",
                                           BuilderBasePtr(new OutputBuilder)) {
                 interface->addParameters({height});
             }

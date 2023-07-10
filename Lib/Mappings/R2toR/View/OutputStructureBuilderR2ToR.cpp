@@ -18,13 +18,16 @@
 
 #include "R2toROutputOpenGLGeneric.h"
 
+R2toR::OutputSystem::Builder::Builder(Str name, Str description) : Numerics::OutputSystem::Builder(name, description) {
+}
+
 OutputManager*
 R2toR::OutputSystem::Builder::build(Str outputFileName) {
-    const auto shouldOutputOpenGL = **VisualMonitor;
-    const auto shouldTrackHistory = ! **noHistoryToFile;
+    const auto shouldOutputOpenGL = *VisualMonitor;
+    const auto shouldTrackHistory = ! *noHistoryToFile;
 
 
-    if(**VisualMonitor) Backend::Initialize<GLUTBackend>();
+    if(*VisualMonitor) Backend::Initialize<GLUTBackend>();
     else Backend::Initialize<ConsoleBackend>();
 
 
@@ -55,7 +58,7 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
     if(shouldTrackHistory)
     {
         const Real t=p.gett();
-        const PosInt outputResolutionX = **outputResolution;
+        const PosInt outputResolutionX = *outputResolution;
 
         OutputFormatterBase *outputFilter = new BinarySOF;
 
@@ -84,7 +87,7 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
         else backend.resume();
 
         auto glOut = Graphics::OutputOpenGL::Ptr(this->buildOpenGLOutput());
-        glOut->setnSteps(**OpenGLMonitor_stepsPerIdleCall);
+        glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
         backend.addWindow(glOut);
         outputManager->addOutputChannel(glOut.get(), false);
@@ -107,5 +110,7 @@ auto R2toR::OutputSystem::Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * 
 
     return new R2toR::OutputOpenGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
 }
+
+
 
 

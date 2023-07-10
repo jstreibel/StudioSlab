@@ -17,6 +17,8 @@ Interface::Interface(Str name, InterfaceOwner *owner, int priority)
 
     if(owner != nullptr) addListener(owner);
     else Log::Note() << "Registering un-owned interface '" << name << "'" << Log::Flush;
+
+    Log::Info() << "Interface '" << Log::ForegroundGreen << name << Log::ResetFormatting << "' created." << Log::Flush;
 }
 
 auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
@@ -58,7 +60,14 @@ void Interface::addParameters(std::initializer_list<Parameter *> parametersList)
 
 
 void Interface::addSubInterface(Interface::Ptr subInterface) {
-    if(!subInterfaces.insert(subInterface).second) throw "Error while inserting sub-interface in interface.";
+    if(Common::Contains(subInterfaces, subInterface))
+        throw Str("Error while inserting sub-interface '") + subInterface->getName()
+            + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
+
+    if(!subInterfaces.insert(subInterface).second){
+        throw Str("Error while inserting sub-interface '") + subInterface->getName()
+              + Str("' in interface '") + this->getName() + Str("': not specified");
+    }
 }
 
 auto Interface::getGeneralDescription() const -> Str {

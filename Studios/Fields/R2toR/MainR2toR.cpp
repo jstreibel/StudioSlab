@@ -29,9 +29,8 @@ int main(int argc, const char **argv) {
 
         auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
         auto input    = dynamic_cast<Base::SimulationBuilder*>(selectedInterface->getOwner());
-        auto inputPtr = Base::SimulationBuilder::Ptr(input);
 
-        auto prog = R2toR::App::Simulations(argc, argv, inputPtr);
+        auto prog = R2toR::App::Simulations(argc, argv, Base::SimulationBuilder::Ptr(input));
 
         return SafetyNet::jump(prog);
 

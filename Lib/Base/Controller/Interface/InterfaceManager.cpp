@@ -22,6 +22,10 @@ void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
                 << "priority " << anInterface->priority << " ]" << Log::Flush;
 
     interfaces.emplace_back(anInterface);
+
+    auto subInterfaces = anInterface->getSubInterfaces();
+    for (auto subInterface: subInterfaces)
+        registerInterface(subInterface);
 }
 
 auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {

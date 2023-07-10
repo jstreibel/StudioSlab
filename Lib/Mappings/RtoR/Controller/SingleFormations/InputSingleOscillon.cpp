@@ -9,7 +9,7 @@
 
 using namespace RtoR;
 
-InputSingleOscillon::InputSingleOscillon() : RtoRBCInterface("Single oscillon")
+InputSingleOscillon::InputSingleOscillon() : RtoRBCInterface("Oscillon 1d", "Single 1+1 dim oscillon")
 {
     interface->addParameters({v, V, alpha, lambda, mirror});
 }

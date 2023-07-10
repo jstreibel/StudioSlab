@@ -7,9 +7,12 @@
 #include "SimulationBuilder.h"
 #include "Common/Log/Log.h"
 
-Base::SimulationBuilder::SimulationBuilder(Str generalDescription, Numerics::OutputSystem::Builder::Ptr osb,
-                                           Str prefix)
- : InterfaceOwner(generalDescription, 100, false), outputSystemBuilder(osb), prefix(prefix){
+Base::SimulationBuilder::SimulationBuilder(Str name, Str generalDescription, Numerics::OutputSystem::Builder::Ptr osb)
+: InterfaceOwner(name, 100, false)
+, outputSystemBuilder(osb)
+, prefix(name)
+{
+    interface->addSubInterface(osb->getInterface());
     Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
@@ -20,10 +23,6 @@ Str Base::SimulationBuilder::toString() const {
     auto str = prefix + "-" + strParams;
 
     return str;
-}
-
-auto Base::SimulationBuilder::registerAllocator() const -> void {
-    Log::WarningImportant("SimulationBuilder is not registering the Allocator.");
 }
 
 

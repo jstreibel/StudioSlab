@@ -29,11 +29,6 @@ set ( EXPERIMENTAL_SOURCES
 		Formalism/Information.h)
 
 
-set ( DIFFEQS_SOURCES
-		#DifferentialEquations/2nd-Order/Energy.cpp
-		)
-
-
 set ( GRAPH_SOURCES
 		Graph/PointSetGraph.cpp
 		)

@@ -25,7 +25,7 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
-OutputStructureBuilderRtoR::OutputStructureBuilderRtoR() : Builder() {
+OutputStructureBuilderRtoR::OutputStructureBuilderRtoR(Str name, Str descr) : Builder(name, descr) {
 
 }
 

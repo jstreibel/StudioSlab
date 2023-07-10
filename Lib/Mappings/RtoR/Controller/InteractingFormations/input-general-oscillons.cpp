@@ -11,7 +11,7 @@ using namespace RtoR;
 
 
 InputGeneralOscillons::InputGeneralOscillons()
-: RtoRBCInterface("General scattering of any two oscillons.")
+: RtoRBCInterface("Scattering", "General scattering of any two oscillons.")
 {
     interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
 }

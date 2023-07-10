@@ -7,14 +7,22 @@
 #include <utility>
 
 
-RtoRBCInterface::RtoRBCInterface(Str generalDescription, Str name, BuilderBasePtr outputStructureBuilder)
-: SimulationBuilder(generalDescription, outputStructureBuilder, "RtoR-" + name)
+RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription)
+: RtoRBCInterface(name, generalDescription,  BuilderBasePtr(new OutputStructureBuilderRtoR(name, generalDescription)))
 {
-    interface->addSubInterface(outputStructureBuilder->getInterface());
+
+}
+
+RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription,
+                                 RtoRBCInterface::BuilderBasePtr outputStructureBuilder)
+: SimulationBuilder("RtoR-" + name, generalDescription,  outputStructureBuilder)
+{
+
 }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
     return outputSystemBuilder->build(outputFileName);
 }
+
 

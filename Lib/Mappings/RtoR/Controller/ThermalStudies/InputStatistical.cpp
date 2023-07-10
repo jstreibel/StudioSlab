@@ -16,7 +16,7 @@
 
 
 RtoR::InputStatistical::InputStatistical()
-: RtoRBCInterface("Energy and density of oscillons statistical input.")
+: RtoRBCInterface("Statistical", "Energy and density of oscillons statistical input")
 {
     interface->addParameters({&E, &n});
 }

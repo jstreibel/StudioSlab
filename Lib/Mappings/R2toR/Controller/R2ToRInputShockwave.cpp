@@ -21,20 +21,18 @@ const auto pi = 3.1415926535897932384626;
 
 using namespace R2toR;
 
-R2toRInputShockwave::R2toRInputShockwave() : SimulationBuilder("sw,(2+1)-dim signum-Gordon shockwave.") {
+R2toRInputShockwave::R2toRInputShockwave() : SimulationBuilder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {
 
 
     interface->addParameters({eps, theta, E, e, t0});
 }
 
 auto R2toRInputShockwave::getBoundary() const -> const void * {
-    auto E = **this->E;
-    auto eps = **this->eps;
-    const Real a = sqrt((4./3)*pi*eps*eps*E);
+    const Real a = sqrt((4./3)*pi*(*eps)*(*eps)*(*E));
 
     let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, **e, **theta);
     //auto *dPhiDt0 = new FunctionAzimuthalSymmetry(new RtoRMap::RegularDiracDelta(a, a), sqrt(3./M_PI),e, theta);
-    let *dPhiDt0 = new R2toR::R2toRRegularDelta(eps, a);
+    let *dPhiDt0 = new R2toR::R2toRRegularDelta(*eps, a);
 
     let *initCond = new BoundaryCondition(phi0, dPhiDt0);
     auto dPhi = initCond;
@@ -44,9 +42,9 @@ auto R2toRInputShockwave::getBoundary() const -> const void * {
         {
             Real E = 0.0;
             Real N = 4096;
-            const Real h = 2. * eps / N;
-            for (Real x = -eps; x <= eps; x += h) {
-                for (Real y = -eps; y <= eps; y += h) {
+            const Real h = 2. * (*eps) / N;
+            for (Real x = -(*eps); x <= (*eps); x += h) {
+                for (Real y = -(*eps); y <= (*eps); y += h) {
                     Real2D r = {x, y};
                     const Real val = (*dPhiDt0)(r);
                     E += val * val;

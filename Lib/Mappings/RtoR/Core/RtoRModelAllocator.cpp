@@ -14,7 +14,7 @@
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 
-RtoRModelAllocator::RtoRModelAllocator() : Numerics::Allocator("ℝ ↦ ℝ general") { };
+RtoRModelAllocator::RtoRModelAllocator(Str name) : Numerics::Allocator(name) { };
 
 //void RtoRModelAllocator::Init() {
 //    auto &me = dynamic_cast<RtoRModelAllocator&>(RtoRModelAllocator::getInstance());

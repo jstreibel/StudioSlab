@@ -19,7 +19,7 @@ void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister)
     interface = Interface::New(interfaceName, this, priority);
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
-    else Log::Note() << "Interface \"" << interface->getName() << "\" will NOT be immediately registered in InterfaceManager." << Log::Flush;
+    else Log::Attention() << "Interface \"" << interface->getName() << "\" will NOT be immediately registered in InterfaceManager." << Log::Flush;
 }
 
 void InterfaceOwner::notifyCLArgsSetupFinished() {

@@ -11,11 +11,11 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 
 
-Numerics::OutputSystem::Builder::Builder(Str generalDescription)
-    : InterfaceOwner(generalDescription, 100, false)
+Numerics::OutputSystem::Builder::Builder(Str name, Str generalDescription)
+    : InterfaceOwner(name, 100, false)
 {
-    interface->addParameters({noHistoryToFile, outputResolution,
-                              VisualMonitor, VisualMonitor_startPaused, OpenGLMonitor_stepsPerIdleCall
+    interface->addParameters({&noHistoryToFile, &outputResolution,
+                              &VisualMonitor, &VisualMonitor_startPaused, &OpenGLMonitor_stepsPerIdleCall
                               /*&takeSnapshot, &snapshotTime, */ });
 }
 

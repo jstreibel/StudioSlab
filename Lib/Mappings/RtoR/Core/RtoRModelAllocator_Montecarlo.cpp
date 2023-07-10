@@ -12,6 +12,9 @@
 #include "Mappings/RtoR/Model/Equation/Montecarlo-Lorentz-2ndOrder.h"
 
 
+RtoRModelAllocator_Montecarlo::RtoRModelAllocator_Montecarlo()
+: RtoRModelAllocator("ℝ ↦ ℝ montecarlo") { }
+
 auto RtoRModelAllocator_Montecarlo::getSystemSolver() -> void * {
 #if USE_CUDA == true
     if(this->getDevice().getDevice() == device::GPU)
@@ -22,3 +25,4 @@ auto RtoRModelAllocator_Montecarlo::getSystemSolver() -> void * {
 
     return new RtoR::MontecarloLangevin_2ndOrder(*thePotential);
 }
+

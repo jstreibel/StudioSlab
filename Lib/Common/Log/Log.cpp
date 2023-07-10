@@ -114,7 +114,7 @@ void Log::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
 
 
-
+    #if !FORCE_VERBOSE
     if(**logDebug || **verbose){
         std::cout << ForegroundBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
 
@@ -140,6 +140,7 @@ void Log::notifyCLArgsSetupFinished() {
 
         std::cout << ForegroundBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
     }
+    #endif
 
 
 }

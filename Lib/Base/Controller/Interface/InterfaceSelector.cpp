@@ -62,20 +62,16 @@ auto InterfaceSelector::preParse(int argc, const char **argv, bool registerInInt
         }
     }
 
-    auto selection = getCurrentCandidate();
+    auto currSelection = getCurrentCandidate();
     Log::Info() << "InterfaceSelector '" << interface->getName() << "' has pre-parsed its options. Selection is '"
-                << selection->getName() << "'." << Log::Flush;
+                << currSelection->getName() << "'." << Log::Flush;
 
     if(registerInInterfaceManager) {
         Log::Note("InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
         auto &interfaceManager = InterfaceManager::getInstance();
 
-        interfaceManager.registerInterface(selection);
-
-        auto subInterfaces = selection->getSubInterfaces();
-        for (auto subInterface: subInterfaces)
-            interfaceManager.registerInterface(subInterface);
+        interfaceManager.registerInterface(currSelection);
     }
 
     return *this;

@@ -8,7 +8,7 @@
 using namespace RtoR;
 
 InputPerturbations::InputPerturbations()
-: RtoRBCInterface("Perturbed oscillon in its reference frame")
+: RtoRBCInterface("Perturbations", "Perturbed oscillon in its reference frame")
 {
     interface->addParameters({&l, &eps});
 };

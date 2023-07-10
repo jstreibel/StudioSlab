@@ -10,7 +10,7 @@
 
 class OutputStructureBuilderRtoR : public Numerics::OutputSystem::Builder {
 public:
-    OutputStructureBuilderRtoR();
+    OutputStructureBuilderRtoR(Str name="General R to R", Str descr="General R to R output system builder");
 
     auto build(Str outputFileName) -> OutputManager * override;
 

@@ -17,6 +17,7 @@
 
 #include "Phys/Thermal/Utils/RandUtils.h"
 #include "Phys/Numerics/Allocator.h"
+#include "Mappings/RtoR/Core/RtoRModelAllocator_Montecarlo.h"
 
 
 namespace Montecarlo {
@@ -26,6 +27,8 @@ namespace Montecarlo {
     class OutputBuilder : public OutputStructureBuilderRtoR {
     protected:
         auto buildOpenGLOutput() -> RtoR::OutputOpenGL * override { return new Montecarlo::OutGL( ); }
+    public:
+        OutputBuilder() : OutputStructureBuilderRtoR("Montecarlo output builder", "R to R monetcarlo sim") {}
     };
 
 
@@ -37,8 +40,7 @@ namespace Montecarlo {
 
     public:
         Input()
-
-        : RtoRBCInterface("Input of initial field data for Montecarlo simulation.", "Montecarlo",
+        : RtoRBCInterface("Montecarlo builder", "Simulation builder for 1+1 dim Montecarlo simulation.",
                           BuilderBasePtr(new Montecarlo::OutputBuilder()))
         {
             interface->addParameters({&T, &E, &n});
@@ -75,6 +77,10 @@ namespace Montecarlo {
 
         }
 
+    public:
+        auto registerAllocator() const -> void override {
+            Numerics::Allocator::Initialize<RtoRModelAllocator_Montecarlo>();
+        }
     };
 
 

@@ -13,7 +13,7 @@
 
 using namespace RtoR;
 
-InputShockwave::InputShockwave() : RtoRBCInterface("Shockwave in 1-dim") {
+InputShockwave::InputShockwave() : RtoRBCInterface("1d shockwave", "Shockwave in 1-dim") {
     interface->addParameters({&a0, &E});
 }
 

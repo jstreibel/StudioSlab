@@ -164,21 +164,22 @@ bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     {
         case '1':
             showPhi = !showPhi;
-            break;
+            return true;
         case '2':
             showKineticEnergy = !showKineticEnergy;
-            break;
+            return true;
         case '3':
             showGradientEnergy = !showGradientEnergy;
-            break;
+            return true;
         case '4':
             showEnergyDensity = !showEnergyDensity;
             Log::Attention() << "Important: energy density is computing with the signum potential only." << std::endl;
-            break;
+            return true;
         default:
             break;
     }
 
+    return Graphics::OutputOpenGL::notifyKeyboard(key, x, y);
 }
 
 

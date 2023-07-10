@@ -105,6 +105,7 @@ set ( R2TOR_SOURCES
 		R2toR/Controller/R2ToRInputShockwave.cpp
 		# R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
 
+		R2toR/Model/Energy.cpp
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
 		R2toR/Model/FunctionsCollection/R2ToRRegularDelta.cpp
 		R2toR/Model/FunctionsCollection/GrowingHole.cpp
