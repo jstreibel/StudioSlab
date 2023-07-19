@@ -41,7 +41,7 @@ message(NOTICE "Added executable Fields-RtoR-Thermal")
 
 add_executable (Fields-Montecarlo
 		Montecarlo1+1/MontecarloMain.cpp
-		Montecarlo1+1/RtoROutGLMontecarlo.cpp
+		Montecarlo1+1/Monitor.cpp
 		${SOURCES}  )
 target_compile_definitions( Fields-Montecarlo PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Fields-Maps-RtoR-Periodic_GPU )

@@ -37,7 +37,7 @@ void Device::notifyCLArgsSetupFinished() {
         throw (Str("Unkown device ") + std::to_string(dev_n) + Str(".")).c_str();
     } else if (dev == CPU) {
         Log::Info() << "Running on CPU @ " << *nThreads << " thread"
-                    << (**nThreads > 1 ? "s.\n" : ".\n") << Log::Flush;
+                    << (**nThreads > 1 ? "s." : ".") << Log::Flush;
     } else if (dev == GPU) {
 #if USE_CUDA
         int devCount;

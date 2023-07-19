@@ -40,7 +40,7 @@ namespace R2toR {
             FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1,0,0, false);
             mSectionGraph.addFunction(&shockwave, "Analytic", Styles::GetColorScheme()->funcPlotStyles[1]);
 
-            panel->draw();
+            panel.draw();
         }
 
         IntPair getWindowSizeHint() override {

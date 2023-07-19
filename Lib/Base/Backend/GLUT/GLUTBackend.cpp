@@ -253,10 +253,14 @@ void GLUTBackend::render()
     ImGui::NewFrame();
     if(me.showDemo) ImGui::ShowDemoWindow();
 
+    static auto timer = Timer();
+
     for(auto &win : me.windows) {
         //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
-        win->notifyRender();
+        auto elapsed = timer.getElTime_msec();
+        win->notifyRender(elapsed);
     }
+    timer.reset();
 
 
     ImGui::Render();

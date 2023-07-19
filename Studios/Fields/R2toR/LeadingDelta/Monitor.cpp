@@ -38,7 +38,7 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
     mEnergyRatioGraph.addPointSet(energyRatioData,
                                   Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
-    panel->addWindowToColumn(&mEnergyRatioGraph, 0);
+    panel.addWindowToColumn(&mEnergyRatioGraph, 0);
 
 
     numericEnergyData = Spaces::PointSet::New();
@@ -49,21 +49,21 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
     mEnergyGraph.addPointSet(analyticEnergyData,
                              Styles::GetColorScheme()->funcPlotStyles[1],
                              "Analytic energy");
-    panel->addWindowToColumn(&mEnergyGraph, 0);
+    panel.addWindowToColumn(&mEnergyGraph, 0);
 
 
     totalEnergyData = Spaces::PointSet::New();
     mTotalEnergyGraph.addPointSet(totalEnergyData,
                                   Styles::GetColorScheme()->funcPlotStyles[0],
                                   "Total analytic energy");
-    panel->addWindowToColumn(&mTotalEnergyGraph, 0);
+    panel.addWindowToColumn(&mTotalEnergyGraph, 0);
 
     auto line = new RtoR2::StraightLine({0, yMin},
                                         {0, yMax},
                                         yMin,
                                         yMax);
     mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
-    panel->addWindow(&mSpeedsGraph);
+    panel.addWindow(&mSpeedsGraph);
 
 
 }
@@ -218,7 +218,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     if(analyticSpeed)
         mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetColorScheme()->funcPlotStyles[2]);
 
-    panel->draw();
+    panel.draw();
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
@@ -242,7 +242,7 @@ bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
 bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
     OutputOpenGL::notifyMouseMotion(x, y);
 
-    if(panel->doesHit(x, y)) return panel->notifyMouseMotion(x, y);
+    if(panel.doesHit(x, y)) return panel.notifyMouseMotion(x, y);
 
     return false;
 }
@@ -250,19 +250,19 @@ bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
 bool R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
     if(EventListener::notifyMousePassiveMotion(x, y)) return true;
 
-    if(panel->doesHit(x, y)) return panel->notifyMousePassiveMotion(x, y);
+    if(panel.doesHit(x, y)) return panel.notifyMousePassiveMotion(x, y);
 
     return false;
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMouseButton(int button, int dir, int x, int y) {
-    panel->notifyMouseButton(button, dir, x, y);
+    panel.notifyMouseButton(button, dir, x, y);
 
     return EventListener::notifyMouseButton(button, dir, x, y);
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMouseWheel(int wheel, int direction, int x, int y) {
-    panel->notifyMouseWheel(wheel, direction, x, y);
+    panel.notifyMouseWheel(wheel, direction, x, y);
 
     return EventListener::notifyMouseWheel(wheel, direction, x, y);
 }

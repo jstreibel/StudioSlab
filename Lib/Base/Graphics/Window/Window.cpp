@@ -79,12 +79,12 @@ auto Window::doesHit(int xMouse, int yMouse) const -> bool {
 bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     EventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
 
+
     this->w = newScreenWidth;
     this->h = newScreenHeight;
 
     for(auto artist : content)
         artist->reshape(w, h);
-
 
     return true;
 }

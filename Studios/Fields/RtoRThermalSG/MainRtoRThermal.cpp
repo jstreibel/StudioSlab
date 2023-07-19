@@ -2,8 +2,8 @@
 // Created by joao on 27/09/2021.
 //
 
-#include "Studios/App/CrashPad.h"
-#include "Studios/Controller/Interface/InterfaceSelector.h"
+#include "Base/App/CrashPad.h"
+#include "Base/Controller/Interface/InterfaceSelector.h"
 
 #include "Mappings/RtoR/App/FieldsApp-RtoR.h"
 
@@ -15,16 +15,20 @@
 
 int main(int argc, const char **argv) {
 
-    auto &selector = InterfaceSelector::getInstance();
+    InterfaceSelector selector("Dynamic thermal");
+    std::vector<RtoRBCInterface*>
+    options = { new RtoR::InputStatistical,
+                new RtoR::InputMachineGun,
+                new RtoR::InputManyOscillons,
+                new RtoR::InputRandomEnergyOverDotPhi };
 
-    /* sim 0 */selector.registerOption(new RtoR::InputStatistical);
-    /* sim 1 */selector.registerOption(new RtoR::InputMachineGun);
-    /* sim 2 */selector.registerOption(new RtoR::InputManyOscillons);
-    /* sim 3 */selector.registerOption(new RtoR::InputRandomEnergyOverDotPhi);
+    for(auto &opt : options)
+        selector.registerOption(opt->getInterface());
 
-    selector.preParse(argc, argv);
+    auto selection = dynamic_cast<RtoRBCInterface*>(
+            selector.preParse(argc, argv).getCurrentCandidate()->getOwner());
 
-    auto prog = SimulationsAppRtoR(argc, argv);
+    auto prog = SimulationsAppRtoR(argc, argv, RtoRBCInterface::Ptr(selection));
 
     return SafetyNet::jump(prog);
 }

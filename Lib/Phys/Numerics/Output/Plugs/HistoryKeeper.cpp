@@ -33,7 +33,7 @@ auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
     return should;
 }
 
-void HistoryKeeper::_out(const OutputPacket &outInfo)
+void HistoryKeeper::_out(const OutputPacket &outInfo, const NumericParams &params)
 {
     if(getUtilMemLoadBytes() > 4*ONE_GB){
         Log::Critical() << "Dumping "<< (getUtilMemLoadBytes()*4e-6) << "GB of data." << Log::Flush;
@@ -50,7 +50,7 @@ void HistoryKeeper::_out(const OutputPacket &outInfo)
     ++count;
 }
 
-auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
     _dump(true);
     return true;
 }

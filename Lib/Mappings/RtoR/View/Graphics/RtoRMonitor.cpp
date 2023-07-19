@@ -1,6 +1,6 @@
 //
 
-#include "RtoROutputOpenGL.h"
+#include "RtoRMonitor.h"
 
 #include "Common/Log/Log.h"
 
@@ -17,16 +17,16 @@
 #define min(a, b) ((a)<(b)?(a):(b))
 
 
-RtoR::OutputOpenGL::OutputOpenGL() = default;
+RtoR::Monitor::Monitor() = default;
 
-RtoR::OutputOpenGL::OutputOpenGL(const Real xMin, const Real xMax,
-                                 const Real phiMin, const Real phiMax)
+RtoR::Monitor::Monitor(const Real xMin, const Real xMax,
+                       const Real phiMin, const Real phiMax)
                                  : mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
 {
     initialize(xMin, xMax, phiMin, phiMax);
 }
 
-void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
+void RtoR::Monitor::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
     if(isInitialized) return;
 
     //this->mTotalEnergyGraph = {0, Allocator::getInstance().getNumericParams().gett(), 0, 1,
@@ -43,7 +43,7 @@ void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiM
 
     auto samples = (int)Numerics::Allocator::GetInstance().getNumericParams().getN();
     // mFieldsGraph = new GraphRtoR{xMin, xMax, -0.1*phiMax, phiMax, "AAA", true, samples};
-    panel.addWindow(&mFieldsGraph, true, 0.7);
+    panel.addWindow(&mFieldsGraph, true, 0.70);
 
     //UHistory.xMin = 0;
     //UHistory.xMax = Allocator::getInstance().getNumericParams().gett();
@@ -58,7 +58,7 @@ void RtoR::OutputOpenGL::initialize(Real xMin, Real xMax, Real phiMin, Real phiM
     isInitialized = true;
 }
 
-void RtoR::OutputOpenGL::draw() {
+void RtoR::Monitor::draw() {
     if(!isInitialized) {
         const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
         auto xMin = p.getxLeft();
@@ -115,7 +115,7 @@ void RtoR::OutputOpenGL::draw() {
 
 }
 
-void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
+void RtoR::Monitor::_out(const OutputPacket &outInfo, const NumericParams &params) {
 
     const RtoR::FieldState &fieldState = *outInfo.getEqStateData<RtoR::FieldState>();
     energyCalculator.computeDensities(fieldState);
@@ -154,11 +154,11 @@ void RtoR::OutputOpenGL::_out(const OutputPacket &outInfo) {
     //WHistory.xMax = xMax;
     //VHistory.xMax = xMax;
 
-    Graphics::OutputOpenGL::_out(outInfo);
+    Graphics::OutputOpenGL::_out(outInfo, params);
 }
 
 
-bool RtoR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
+bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
 
     switch(key)
     {

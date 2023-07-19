@@ -68,14 +68,14 @@ inline Str Log::prefix(){
 
     auto time = timer.getElTime_msec();
 
-    ss << Str("\n") << ResetFormatting << std::setw(10) << ToStr(timer.getElTime_msec())
-       << "ms  [ ";
+    ss << Str("\n") << ResetFormatting << std::setw(10) << ToStr(time)
+       << "ms [ ";
 
     return ss.str();
 };
 
 inline Str Log::postfix(){
-    return ResetFormatting + " ]  ";
+    return ResetFormatting + " ] ";
 };
 
 
@@ -129,7 +129,7 @@ void Log::notifyCLArgsSetupFinished() {
     }
 
     if(**logNotes || **verbose){
-        std::cout << ForegroundBlue << BoldFace << "\n\n --- SOME LATE NOTES MESSAGES --- \n";
+        std::cout << ForegroundBlue << BoldFace << ((**logDebug||**verbose) ? "" : "\n") << "\n --- SOME LATE NOTES MESSAGES --- \n";
         *mainStream << notesStream->rdbuf();
 
         if(manageNotesStream)

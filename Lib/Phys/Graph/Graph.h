@@ -71,6 +71,14 @@ namespace Base {
 
             void clearCurves();
 
+            auto getLimits() const -> Rect;
+            auto setLimits(Rect limits) -> void;
+            void set_xMin(Real);
+            void set_xMax(Real);
+            void set_yMin(Real);
+            void set_yMax(Real);
+            Real get_xMin() const;
+            Real get_xMax() const;
             Real get_yMin() const;
             Real get_yMax() const;
 

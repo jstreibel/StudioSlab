@@ -51,6 +51,8 @@ struct NumericParams : public InterfaceOwner {
 	Real dt;
 
 public:
+	NumericParams(const NumericParams&);
+
 	auto notifyCLArgsSetupFinished() -> void override;
 
 } __attribute__((aligned(64)));

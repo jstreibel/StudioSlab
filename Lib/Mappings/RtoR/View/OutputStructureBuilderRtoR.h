@@ -6,7 +6,7 @@
 #define FIELDS_OUTPUTSTRUCTUREBUILDERRTOR_H
 
 #include "Phys/Numerics/Output/Builder.h"
-#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
 
 class OutputStructureBuilderRtoR : public Numerics::OutputSystem::Builder {
 public:
@@ -14,7 +14,7 @@ public:
 
     auto build(Str outputFileName) -> OutputManager * override;
 
-    virtual auto buildOpenGLOutput() -> RtoR::OutputOpenGL*;
+    virtual auto buildOpenGLOutput() -> RtoR::Monitor*;
 
 
 };

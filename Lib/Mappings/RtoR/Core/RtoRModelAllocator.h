@@ -10,9 +10,9 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 class RtoRModelAllocator : public Numerics::Allocator {
-
+    ALLOW_CONSTRUCTION
 protected:
-    RtoRModelAllocator(Str name/*= "ℝ ↦ ℝ general" */);
+    RtoRModelAllocator(Str name = "ℝ ↦ ℝ general");
 
 public:
     enum Potential {V, KleinGordon, Free, Null} potential = V;

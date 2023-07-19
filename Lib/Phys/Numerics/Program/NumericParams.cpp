@@ -10,11 +10,16 @@ NumericParams::NumericParams(): InterfaceOwner("Numeric Parameters,The core para
     Log::Info() << "Integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 }
 
-//NumericParams::NumericParams(const boost::program_options::variables_map& vm)
-//    : N(GET("N", size_t)), L(GET("L", Real)),
-//      xLeft(GET_FALLBACK("xLeft", Real, -.5*L)),
-//      t(GET("t", Real)), r(GET("r", Real)), h(L/Real(N)), dt(r*h) {   }
+NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
+    N = p.N;
+    L = p.L;
+    t = p.t;
+    r = p.r;
+    h = p.h;
 
+    xCenter = p.xCenter;
+    dimMode = p.dimMode;
+}
 
 auto NumericParams::getN() const -> size_t { return **N; }
 auto NumericParams::getL() const -> floatt { return **L; }
@@ -61,4 +66,6 @@ void NumericParams::notifyCLArgsSetupFinished() {
     dt = **r * **h;
     n = PosInt(**t / dt);
 }
+
+
 

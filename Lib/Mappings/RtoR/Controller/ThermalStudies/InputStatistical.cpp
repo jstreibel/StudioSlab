@@ -24,7 +24,7 @@ RtoR::InputStatistical::InputStatistical()
 auto RtoR::InputStatistical::getDetailedDescription() -> Str {
     return Str("Fractality in the signum-Gordon field theory."
                   ""
-                  "Oscillons are a very degenerate solution."
+                  "Oscillons are a very degenerate solution to the 1+1 dimensional signum-Gordon equation."
                   "The degeneracy could be an indication of how stable an oscillon could be: if it is very degenerate, "
                   "then a whole lot of different configurations could remain analitically stable, and a whole lot more "
                   "quasi-exact solutions could remain quasi-stable for even longer times. It could (see Arodz, Klimas "

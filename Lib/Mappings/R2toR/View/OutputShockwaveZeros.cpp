@@ -70,7 +70,7 @@ let OutputShockwaveZeros::description() const -> String {
     return "output of the zeros of the shockwave, together with the zeros of the (expected) numerical shockwave";
 }
 
-void OutputShockwaveZeros::_out(const OutputPacket &OutputInfo) {
+void OutputShockwaveZeros::_out(const OutputPacket &OutputInfo, const NumericParams &params) {
 
     let &phi = OutputInfo.getFieldData<R2toR::FieldState>()->getPhi();
     let &dphidt = OutputInfo.getFieldData<R2toR::FieldState>()->getDPhiDt();

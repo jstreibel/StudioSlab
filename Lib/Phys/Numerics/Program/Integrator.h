@@ -19,7 +19,7 @@
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
 case (N): \
-stepper = new STEPPER_TYPE<N, FIELD_STATE_TYPE>(dPhi); \
+stepper = new STEPPER_TYPE<N, EqStateType>(dPhi); \
 break;
 
 
@@ -34,7 +34,7 @@ class NumericalIntegration : public Program {
     Method *stepper;
     OutputManager *outputManager;
 
-    NumericalIntegration(const void *dPhi, OutputManager *outputManager);
+    NumericalIntegration(OutputManager *outputManager);
 
     void output();
     OutputPacket getOutputInfo();
@@ -46,10 +46,10 @@ class NumericalIntegration : public Program {
 public:
     enum Methods {Montecarlo, RK4};
 
-    template <class FIELD_STATE_TYPE>
+    template <class EqStateType>
     static NumericalIntegration* New(const void *dPhi, OutputManager *outputManager, Methods theMethod=RK4)
     {
-        auto *instance = new NumericalIntegration(dPhi, outputManager);
+        auto *instance = new NumericalIntegration(outputManager);
 
         const unsigned int numThreads = Numerics::Allocator::GetInstance().getDevice().get_nThreads();
 

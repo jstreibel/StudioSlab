@@ -2,16 +2,16 @@
 // Created by joao on 3/16/23.
 //
 
-#ifndef STUDIOSLAB_RTOROUTGLMONTECARLO_H
-#define STUDIOSLAB_RTOROUTGLMONTECARLO_H
+#ifndef STUDIOSLAB_MONITOR_H
+#define STUDIOSLAB_MONITOR_H
 
 
-#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
 
 namespace Montecarlo {
-    class OutGL : public RtoR::OutputOpenGL {
+    class Monitor : public RtoR::Monitor {
         public:
-        explicit OutGL( );
+        explicit Monitor( );
         void draw() override;
 
     private:
@@ -29,4 +29,4 @@ namespace Montecarlo {
 }
 
 
-#endif //STUDIOSLAB_RTOROUTGLMONTECARLO_H
+#endif //STUDIOSLAB_MONITOR_H

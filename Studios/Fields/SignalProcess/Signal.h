@@ -50,7 +50,7 @@ namespace RtoR {
             auto build(Str outputFileName) -> OutputManager * override;
 
         protected:
-            auto buildOpenGLOutput() -> RtoR::OutputOpenGL * override;
+            auto buildOpenGLOutput() -> RtoR::Monitor * override;
         };
 
 

@@ -10,8 +10,6 @@
 #include "CommonParameters.h"
 
 class InterfaceSelector : public InterfaceOwner {
-    static InterfaceSelector *mySingleInstance;
-
     int currentSelection = 0;
     std::vector<Interface::Ptr> candidates;
 
@@ -19,12 +17,6 @@ class InterfaceSelector : public InterfaceOwner {
 
 public:
     InterfaceSelector(Str selectorName);
-
-    /**
-     * This is left here for compatibility reasons.
-     * @return
-     */
-    static auto getInstance() -> InterfaceSelector &;
 
     void registerOption(Interface::Ptr interface);
 

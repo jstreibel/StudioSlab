@@ -10,7 +10,7 @@
 #include <sstream>
 #endif
 
-NumericalIntegration::NumericalIntegration(const void *dPhi, OutputManager *outputManager)
+NumericalIntegration::NumericalIntegration(OutputManager *outputManager)
     : outputManager(outputManager),
       dt(Numerics::Allocator::GetInstance().getNumericParams().getdt()),
       steps(0)
@@ -81,14 +81,15 @@ void NumericalIntegration::_cycle(size_t nCycles) {
 
 void NumericalIntegration::_runFullIntegration()
 {
-    size_t n = Numerics::Allocator::GetInstance().getNumericParams().getn();
+    auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    size_t n = p.getn();
 
     while(steps < n && _cycleUntilOutput());
 
     // Para cumprir com os steps quebrados faltantes:
     if(steps < n) cycle(n - steps);
 
-    outputManager->notifyIntegrationFinished(getOutputInfo());
+    outputManager->notifyIntegrationFinished(getOutputInfo(), p);
 }
 
 bool NumericalIntegration::_cycleUntilOutput() {

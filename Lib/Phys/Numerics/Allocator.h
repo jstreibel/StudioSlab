@@ -10,6 +10,7 @@ namespace Numerics {
 	class Allocator : public DerivableSingleton<Allocator>{
 
 	protected:
+		#define ALLOW_CONSTRUCTION friend DerivableSingleton<Allocator>;
 		Allocator(Str name);
 
 	public:

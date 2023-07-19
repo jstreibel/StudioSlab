@@ -3,6 +3,7 @@
 //
 
 #include "Socket.h"
+#include "Phys/Numerics/Program/NumericParams.h"
 
 
 Numerics::OutputSystem::Socket::Socket(Str name, int nStepsInterval, Str description)
@@ -15,6 +16,7 @@ auto Numerics::OutputSystem::Socket::getnSteps() const -> int { return nSteps; }
 
 auto Numerics::OutputSystem::Socket::setnSteps(int n)  -> void {
     nSteps = n>=1 ? n : 1;
+    computeNextRecStep();
 }
 
 auto Numerics::OutputSystem::Socket::computeNextRecStep() -> size_t {
@@ -41,12 +43,13 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
     throw "Boundary not implemented.";
 }
 
-void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
-    _out(outData);
+void Numerics::OutputSystem::Socket::output(const OutputPacket &outData, const NumericParams &p){
+    _out(outData, p);
     lastData = outData;
+    params = p;
 }
 
-auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
     return true; }
 
 auto Numerics::OutputSystem::Socket::getDescription() const -> Str { return description; }

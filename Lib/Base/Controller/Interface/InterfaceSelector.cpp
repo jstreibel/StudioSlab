@@ -18,20 +18,6 @@ InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name, -1, true)
     interface->addParameters({selection});
 };
 
-
-InterfaceSelector *InterfaceSelector::mySingleInstance = nullptr;
-
-
-auto InterfaceSelector::getInstance() -> InterfaceSelector & {
-    if (mySingleInstance == nullptr) {
-        mySingleInstance = new InterfaceSelector("Available boundary conditions");
-        Log::Warning() << "InterfaceSelector is no longer to be used as singleton! This feature is "
-                     "deprecated and will be removed very soon." << Log::Flush;
-    }
-
-    return *mySingleInstance;
-}
-
 auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
     if(currentSelection > candidates.size() - 1)
         throw Str("Unknown sim type: ") + ToStr(currentSelection);

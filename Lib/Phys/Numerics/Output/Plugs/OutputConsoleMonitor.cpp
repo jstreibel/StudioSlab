@@ -11,20 +11,18 @@ OutputConsoleMonitor::OutputConsoleMonitor(const int n_steps)
 
 }
 
-bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation)
+bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params)
 {
 	// Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
     OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
                                           Numerics::Allocator::GetInstance().getNumericParams().getn(), maxT);
 
-    this->_out(dummyInfo);
+    this->_out(dummyInfo, params);
     return true;
 }
 
-void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
+void OutputConsoleMonitor::_out(const OutputPacket &outputInfo, const NumericParams &params)
 {
-
-    auto &params = Numerics::Allocator::GetInstance().getNumericParams();
     auto n = params.getn();
 
     Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << "; "

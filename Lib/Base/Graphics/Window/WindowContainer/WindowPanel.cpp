@@ -131,12 +131,15 @@ void WindowPanel::assertConsistency() const {
     if(resWidth<1-freeWidths*epsilon)
         return;
 
-    throw "Inconsistent colusmn widths.";
+    StringStream ss;
+    ss << "Inconsistent column widths: ";
+    for(auto w : widths) ss << (w==-1 ? Str("free") : ToStr(w)) << "; ";
+
+
+    throw ss.str();
 }
 
 bool WindowPanel::notifyMousePassiveMotion(int x, int y) {
-    assert(!allowsDelegateResponders);
-
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
@@ -146,8 +149,6 @@ bool WindowPanel::notifyMousePassiveMotion(int x, int y) {
 }
 
 bool WindowPanel::notifyMouseMotion(int x, int y) {
-    assert(!allowsDelegateResponders);
-
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
@@ -163,8 +164,6 @@ void WindowPanel::notifyReshape(int newWinW, int newWinH) {
 }
 
 bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
-    assert(!allowsDelegateResponders);
-
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
@@ -174,8 +173,6 @@ bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
 }
 
 bool WindowPanel::notifyMouseWheel(int wheel, int direction, int x, int y) {
-    assert(!allowsDelegateResponders);
-
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
@@ -183,6 +180,8 @@ bool WindowPanel::notifyMouseWheel(int wheel, int direction, int x, int y) {
 
     return responded;
 }
+
+
 
 
 

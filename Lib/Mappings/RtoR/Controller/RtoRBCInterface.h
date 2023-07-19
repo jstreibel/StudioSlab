@@ -22,6 +22,8 @@ public:
 
     auto buildOutputManager() -> OutputManager * override;
 
+    auto registerAllocator() const -> void override;
+
 
 };
 

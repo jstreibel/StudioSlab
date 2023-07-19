@@ -5,11 +5,11 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_RTOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "RtoROutputOpenGL.h"
+#include "RtoRMonitor.h"
 
 
 namespace RtoR {
-    class OutputOpenGLShockwave : public RtoR::OutputOpenGL {
+    class OutputOpenGLShockwave : public RtoR::Monitor {
         Real a0, E;
 
         FuncArbResizable surfaceEnergyHistory;

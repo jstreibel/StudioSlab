@@ -29,7 +29,7 @@ public:
 	 */
     void output(OutputPacket &infoVolatile);
 
-    void notifyIntegrationFinished(const OutputPacket &info);
+    void notifyIntegrationFinished(const OutputPacket &info, const NumericParams &params);
 
     /****** QUERY ******/
     auto computeNStepsToNextOutput(PosInt currStep) -> PosInt;

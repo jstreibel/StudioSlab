@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OUTGL_H
 #define STUDIOSLAB_OUTGL_H
 
-#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
 
 namespace RtoR {
 
@@ -16,7 +16,7 @@ namespace RtoR {
             void draw(bool decorated, bool clear) const override;
         };
 
-        class OutGL : public RtoR::OutputOpenGL {
+        class OutGL : public RtoR::Monitor {
             Window *fieldWindow;
 
             Window *signalBufferWindow;
@@ -36,7 +36,7 @@ namespace RtoR {
 
             std::vector <Real> probingData;
 
-            void _out(const OutputPacket &outInfo) override;
+            void _out(const OutputPacket &outInfo, const NumericParams &params) override;
 
         public:
             OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax);

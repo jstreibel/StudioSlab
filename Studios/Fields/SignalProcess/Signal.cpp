@@ -61,7 +61,7 @@ bool RtoR::Signal::JackOutput::shouldOutput(Real t, unsigned long timestep) {
  *    \_______  /|____/  |__|  |   __/ |____/  |__|        |___  /|____/ |__||____/\____ |  \___  > |__|
  *            \/               |__|                            \/                       \/      \/
  */
-auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::OutputOpenGL * {
+auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
     const Real phiMin = -1.4;
     const Real phiMax = -phiMin;
 

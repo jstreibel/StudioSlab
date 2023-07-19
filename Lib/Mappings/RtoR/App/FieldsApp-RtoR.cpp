@@ -18,20 +18,6 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Base::Simula
 {
     simBuilder->registerAllocator();
 
-    /*
-    switch (integration) {
-        case Integration::langevin:
-            RtoRModelAllocator_Langevin::Choose();
-            break;
-        case Integration::montecarlo:
-            RtoRModelAllocator_Montecarlo::Choose();
-            break;
-        default:
-            RtoRModelAllocator::Choose();
-            RtoRModelAllocator::SetPotential(RtoRModelAllocator::Potential::V);
-    }
-     */
-
     AppBase::parseCLArgs();
 }
 

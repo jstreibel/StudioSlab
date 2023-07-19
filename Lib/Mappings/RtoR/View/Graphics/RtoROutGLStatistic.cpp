@@ -144,6 +144,6 @@ void RtoR::OutGLStatistic::draw() {
 
     // mTemperaturesGraph->yMax = max(a, max(b,c));
 
-    RtoR::OutputOpenGL::draw();
+    RtoR::Monitor::draw();
 
 }

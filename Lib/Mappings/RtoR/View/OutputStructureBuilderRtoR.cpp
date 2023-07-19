@@ -4,7 +4,7 @@
 
 #include "OutputStructureBuilderRtoR.h"
 
-#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGL.h"
+#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
 #include "Mappings/RtoR/View/Graphics/RtoROutGLStatistic.h"
 
 
@@ -94,6 +94,6 @@ OutputStructureBuilderRtoR::build(Str outputFileName) -> OutputManager * {
     return outputManager;
 }
 
-auto OutputStructureBuilderRtoR::buildOpenGLOutput() -> RtoR::OutputOpenGL * {
+auto OutputStructureBuilderRtoR::buildOpenGLOutput() -> RtoR::Monitor * {
     return new RtoR::OutGLStatistic();
 }

@@ -13,7 +13,6 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     , eqState(*Numerics::Allocator::NewFieldState<R2toR::EquationState>())
     , xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax)
     , phiMin(phiMin), phiMax(phiMax)
-    , panel(new WindowPanel())
     , mSectionGraph(xMin, xMax, phiMin, phiMax,
                     "Sections", true,
                     Numerics::Allocator::GetInstance().getNumericParams().getN()*3)
@@ -24,8 +23,8 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
     //window->addArtist(&mPhiGraph);
     //panel->addWindow(window);
 
-    panel->addWindow(&stats);
-    panel->addWindow(&mSectionGraph, true, 0.80);
+    panel.addWindow(&stats);
+    panel.addWindow(&mSectionGraph, true, 0.80);
 
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Styles::Color(1,0,0,1));
@@ -57,21 +56,7 @@ void R2toR::OutputOpenGL::draw() {
     mSectionGraph.clearFunctions();
     mSectionGraph.addFunction(&phi);
 
-    panel->draw();
-}
-
-bool R2toR::OutputOpenGL::notifyScreenReshape(int width, int height) {
-    if(Base::EventListener::notifyScreenReshape(width, height)) return true;
-    //ModelBase::OutputOpenGL::reshape(width, height);
-
-    //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
-    //phiGraph =     Graph(statsWindowWidth, height/2, minSize, minSize/2, 1.1*xMin, 1.1*xMax, 1.1*yMin, 1.1*yMax);
-    //dPhiGraph =    Graph(statsWindowWidth, 0,        minSize, minSize/2, 1.1*xMin, 1.1*xMax, 1.1*yMin, 1.1*yMax);
-    //zpr.zprReshape(phiGraph.winX, phiGraph.winY, phiGraph.winW, phiGraph.winH);
-
-    panel->notifyReshape(width, height);
-
-    return true;
+    panel.draw();
 }
 
 bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
@@ -103,8 +88,8 @@ bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     return Graphics::OutputOpenGL::notifyKeyboard(key, x, y);
 }
 
-void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo) {
-    Graphics::OutputOpenGL::_out(outInfo);
+void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo, const NumericParams &params) {
+    Graphics::OutputOpenGL::_out(outInfo, params);
 
     auto &state = *outInfo.getEqStateData<R2toR::EquationState>();
 

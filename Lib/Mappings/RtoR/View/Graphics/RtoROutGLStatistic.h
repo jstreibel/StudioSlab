@@ -5,11 +5,11 @@
 #ifndef STUDIOSLAB_RTOROUTGLSTATISTIC_H
 #define STUDIOSLAB_RTOROUTGLSTATISTIC_H
 
-#include "RtoROutputOpenGL.h"
+#include "RtoRMonitor.h"
 
 namespace RtoR {
 
-    class OutGLStatistic : public RtoR::OutputOpenGL {
+    class OutGLStatistic : public RtoR::Monitor {
     public:
         explicit OutGLStatistic( );
         void draw() override;

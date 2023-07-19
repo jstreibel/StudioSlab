@@ -19,12 +19,11 @@ namespace Base {
         std::vector<EventListener*> unmanagedDelegateResponders;
 
     protected:
-        const bool allowsDelegateResponders;
         void addResponder(EventListener *responder);
         bool hasResponders() const;
 
     public:
-        EventListener(bool allowDelegateResponders = false);
+        EventListener();
         virtual ~EventListener() = default;
 
         virtual bool notifyKeyboard(unsigned char key, int x, int y);
@@ -37,7 +36,7 @@ namespace Base {
 
         virtual bool notifyScreenReshape(int newScreenWidth, int newScreenHeight);
 
-        virtual bool notifyRender();
+        virtual bool notifyRender(float elTime_msec);
     };
 }
 

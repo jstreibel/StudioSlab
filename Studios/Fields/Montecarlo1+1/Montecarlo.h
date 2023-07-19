@@ -8,7 +8,7 @@
 
 #include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
-#include "RtoROutGLMontecarlo.h"
+#include "Monitor.h"
 
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
@@ -26,7 +26,7 @@ namespace Montecarlo {
 
     class OutputBuilder : public OutputStructureBuilderRtoR {
     protected:
-        auto buildOpenGLOutput() -> RtoR::OutputOpenGL * override { return new Montecarlo::OutGL( ); }
+        auto buildOpenGLOutput() -> RtoR::Monitor * override { return new Montecarlo::Monitor( ); }
     public:
         OutputBuilder() : OutputStructureBuilderRtoR("Montecarlo output builder", "R to R monetcarlo sim") {}
     };
@@ -34,7 +34,7 @@ namespace Montecarlo {
 
 
     class Input : public RtoRBCInterface {
-        RealParameter T = RealParameter(1.e4, "Temperature,T", "System temperature");
+        RealParameter T = RealParameter(1.e1, "Temperature,T", "System temperature");
         RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 

@@ -89,13 +89,13 @@ void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
  *            \/ |__|         \/      \/         \/         \/
  */
 RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
-        : RtoR::OutputOpenGL() {
+        : RtoR::Monitor() {
     nSteps = 1;
 
-    RtoR::OutputOpenGL::xMax = xMax;
-    RtoR::OutputOpenGL::xMin = xMin;
-    RtoR::OutputOpenGL::phiMax = phiMax;
-    RtoR::OutputOpenGL::phiMin = phiMin;
+    RtoR::Monitor::xMax = xMax;
+    RtoR::Monitor::xMin = xMin;
+    RtoR::Monitor::phiMax = phiMax;
+    RtoR::Monitor::phiMin = phiMin;
 
     Window *window = nullptr;
 
@@ -148,7 +148,7 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
     addAnimation(xMaxAnim);
 
 }
-void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
+void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo, const NumericParams &params) {
     // OutputOpenGL::_out(outInfo);
 
     auto field = outInfo.getEqStateData<RtoR::FieldState>();

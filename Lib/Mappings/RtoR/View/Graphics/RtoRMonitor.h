@@ -14,17 +14,17 @@
 
 namespace RtoR {
 
-    class OutputOpenGL : public Graphics::OutputOpenGL {
+    class Monitor : public Graphics::OutputOpenGL {
         bool isInitialized = false;
     public:
-        OutputOpenGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
-        OutputOpenGL();
+        Monitor(Real xMin, Real xMax, Real phiMin, Real phiMax);
+        Monitor();
 
         void initialize(Real xMin, Real xMax, Real phiMin, Real phiMax);
 
     protected:
         void draw() override;
-        void _out(const OutputPacket &outInfo) override;
+        void _out(const OutputPacket &outInfo, const NumericParams &params) override;
 
     private:
         bool notifyKeyboard(unsigned char key, int x, int y) override;

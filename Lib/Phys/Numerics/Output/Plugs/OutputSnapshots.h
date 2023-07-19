@@ -28,7 +28,7 @@ protected:
 protected:
     virtual bool shouldOutput(const Real t, const long unsigned timeStep);
 
-    virtual void _out(const OutputPacket &outInfo){
+    virtual void _out(const OutputPacket &outInfo, const NumericParams &params){
         OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
     }
 };

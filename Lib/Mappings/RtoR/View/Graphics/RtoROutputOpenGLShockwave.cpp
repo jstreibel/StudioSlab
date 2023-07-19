@@ -23,7 +23,7 @@ RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(Real a0, Real E) : a0(a0), E(
 }
 
 void RtoR::OutputOpenGLShockwave::draw() {
-    OutputOpenGL::draw();
+    Monitor::draw();
 
     //if(showAnalyticSolution){
     //    const Real t = lastInfo.getT();

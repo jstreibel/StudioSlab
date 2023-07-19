@@ -2,6 +2,7 @@
 #define OUTPUT_H
 
 #include "Phys/Numerics/Output/Util/OutputPacket.h"
+#include "Phys/Numerics/Program/NumericParams.h"
 
 #define INT_BASED 1
 #define FLOAT_BASED 2
@@ -11,15 +12,23 @@
 namespace Numerics {
     namespace OutputSystem {
         class Socket {
-            virtual void _out(const OutputPacket &outputPacket) = 0;
             int nextRecStep = -1;
+            int nSteps; // Number of steps between recordings.
+
+        protected:
+            OutputPacket lastData;
+            NumericParams params;
+            Str name, description;
+
+            virtual auto _out(const OutputPacket&, const NumericParams &) -> void = 0;
 
         public:
+            explicit Socket(Str name="", int nStepsInterval = 1, Str description="");
             virtual ~Socket() = default;
 
             std::shared_ptr<Socket> Ptr;
 
-            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
+            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool;;
             auto getDescription() const -> Str;
             auto getName() const -> Str;
 
@@ -36,24 +45,11 @@ namespace Numerics {
              */
             virtual auto shouldOutput(Real t, long unsigned timestep) -> bool;
 
-
-        protected:
-
-            int nSteps; // Number of steps between recordings.
-            OutputPacket lastData;
-
-
-            Str name, description;
-        public:
-
-            explicit Socket(Str name="", int nStepsInterval = 1, Str description="");
-
             auto getLastSimTime()      -> Real;
             auto getnSteps()     const -> int;
             auto setnSteps(int nSteps) -> void;
 
-            void output(const OutputPacket &outData);
-
+            void output(const OutputPacket &outData, const NumericParams &params);
 
         };
     }

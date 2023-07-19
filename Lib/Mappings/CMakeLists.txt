@@ -79,7 +79,7 @@ set ( RTOR_SOURCES
 
 		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
-		RtoR/View/Graphics/RtoROutputOpenGL.cpp
+		RtoR/View/Graphics/RtoRMonitor.cpp
 		RtoR/View/Graphics/RtoROutGLStatistic.cpp
 		RtoR/View/Graphics/RtoROutGLStatistic.h
 
@@ -158,7 +158,7 @@ set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
@@ -168,9 +168,8 @@ set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}-Periodic_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
-# the line below is generating the following <command-line>: warning: ISO C++11 requires whitespace after the macro name
 target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
-set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
@@ -183,7 +182,7 @@ set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
-set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
-set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
+set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

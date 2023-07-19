@@ -3,6 +3,7 @@
 //
 
 #include "RtoRBCInterface.h"
+#include "Mappings/RtoR/Core/RtoRModelAllocator.h"
 
 #include <utility>
 
@@ -23,6 +24,10 @@ RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription,
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
     return outputSystemBuilder->build(outputFileName);
+}
+
+void RtoRBCInterface::registerAllocator() const {
+    Numerics::Allocator::Initialize<RtoRModelAllocator>();
 }
 
 

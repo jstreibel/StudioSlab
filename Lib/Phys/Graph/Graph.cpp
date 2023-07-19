@@ -9,6 +9,15 @@
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 
+#define MARK                                                                                    \
+    {                                                                                           \
+    buffer.str("");                                                                             \
+    auto numRegion = log10(deltaY);                                                             \
+    buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                  \
+           << (numRegion< -1 ? std::scientific : std::fixed) << mark;                           \
+    GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xMarkingsLabels), float(mark),  \
+            buffer.str().c_str(), TICK_FONT);                                                   \
+    }
 
 Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str title,
                                  bool filled, int samples)
@@ -128,15 +137,11 @@ void Base::Graphics::Graph2D::__drawYAxis() {
     auto &gtf = Styles::GetColorScheme()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
-        for(Real mark = yMin; mark<=yMax; mark+=yspacing)
-        {
-            buffer.str("");
-            auto numRegion = log10(deltaY);
-            buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)
-                   << (numRegion< -1 ? std::scientific : std::fixed)
-                   << mark;
-            GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xMarkingsLabels), float(mark),
-                                  buffer.str().c_str(), TICK_FONT);
+        if(yMin < 0 && yMax > 0) {
+            for(Real mark = 0; mark>=yMin; mark-=yspacing)         MARK
+            for(Real mark = yspacing; mark<=yMax; mark+=yspacing)  MARK
+        } else {
+            for (Real mark = yMin; mark <= yMax; mark += yspacing) MARK
         }
     }
 
@@ -155,9 +160,20 @@ void Base::Graphics::Graph2D::__drawYAxis() {
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 
-        for(Real mark = yMin; mark<=yMax; mark+=yspacing ){
-            glVertex3d(xMin, mark, 0);
-            glVertex3d(xMax, mark, 0);
+        if(yMin < 0 && yMax > 0) {
+            for(Real mark = 0; mark>=yMin; mark-=yspacing) {
+                glVertex3d(xMin, mark, 0);
+                glVertex3d(xMax, mark, 0);
+            }
+            for(Real mark = yspacing; mark<=yMax; mark+=yspacing) {
+                glVertex3d(xMin, mark, 0);
+                glVertex3d(xMax, mark, 0);
+            }
+        } else {
+            for (Real mark = yMin; mark <= yMax; mark += yspacing) {
+                glVertex3d(xMin, mark, 0);
+                glVertex3d(xMax, mark, 0);
+            }
         }
 
         glColor4f(ac.r, ac.g, ac.b, ac.a);
@@ -250,13 +266,25 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &sty
 
 void Base::Graphics::Graph2D::addLabel(Label *label) { labels.push_back(label); }
 
-Real Base::Graphics::Graph2D::get_yMin() const {
-    return yMin;
+Rect Base::Graphics::Graph2D::getLimits() const {
+    return Rect(xMin, xMax, yMin, yMax);
 }
 
-Real Base::Graphics::Graph2D::get_yMax() const {
-    return yMax;
+auto Base::Graphics::Graph2D::setLimits(Rect lims) -> void {
+    xMin = lims.xMin;
+    xMax = lims.xMax;
+    yMin = lims.yMin;
+    yMax = lims.yMax;
 }
+
+void Base::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
+void Base::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
+void Base::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
+void Base::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
+Real Base::Graphics::Graph2D::get_xMin() const { return xMin; }
+Real Base::Graphics::Graph2D::get_xMax() const { return xMax; }
+Real Base::Graphics::Graph2D::get_yMin() const { return yMin; }
+Real Base::Graphics::Graph2D::get_yMax() const { return yMax; }
 
 void
 Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
@@ -415,4 +443,7 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
 
     return true;
 }
+
+
+
 

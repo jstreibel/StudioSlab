@@ -13,16 +13,18 @@
 using namespace Base;
 
 Graphics::OutputOpenGL::OutputOpenGL(Str channelName, int stepsBetweenDraws)
-    : Numerics::OutputSystem::Socket("OpenGL output", stepsBetweenDraws) {
+    : Numerics::OutputSystem::Socket("OpenGL output", stepsBetweenDraws), Window() {
+    EventListener::addResponder(&panel);
+
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }
 
-void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo){
+void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo, const NumericParams &params){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 }
 
-auto Graphics::OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+auto Graphics::OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
     return finishFrameAndRender();
 }
 
@@ -49,8 +51,8 @@ bool Graphics::OutputOpenGL::finishFrameAndRender() {
     return true;
 }
 
-bool Graphics::OutputOpenGL::notifyRender() {
-    Window::notifyRender();
+bool Graphics::OutputOpenGL::notifyRender(float elTime_msec) {
+    Window::notifyRender(elTime_msec);
 
     finishFrameAndRender();
 
@@ -81,6 +83,19 @@ bool Graphics::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     }
 
     return EventListener::notifyKeyboard(key, x, y);
+}
+
+void Graphics::OutputOpenGL::notifyReshape(int newWinW, int newWinH) {
+    Window::notifyReshape(newWinW, newWinH);
+
+    panel.notifyReshape(newWinW, newWinH);
+}
+
+bool Graphics::OutputOpenGL::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
+    panel.notifyScreenReshape(newScreenWidth, newScreenHeight);
+    panel.notifyReshape(newScreenWidth, newScreenHeight);
+
+    return Window::notifyScreenReshape(newScreenWidth, newScreenHeight);
 }
 
 
