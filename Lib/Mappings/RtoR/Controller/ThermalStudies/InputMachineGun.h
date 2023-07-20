@@ -15,7 +15,7 @@ namespace RtoR {
 
     public:
         InputMachineGun();
-        auto getBoundary() const -> const void * override;
+        auto getBoundary() -> void * override;
     };
 }
 

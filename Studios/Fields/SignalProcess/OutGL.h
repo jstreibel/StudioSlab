@@ -39,7 +39,7 @@ namespace RtoR {
             void _out(const OutputPacket &outInfo, const NumericParams &params) override;
 
         public:
-            OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax);
+            OutGL(const NumericParams &params, Real phiMin, Real phiMax);
 
             void draw() override;
 

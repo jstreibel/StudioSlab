@@ -32,34 +32,15 @@ namespace R2toR {
         }
 
 
-
-
-        auto OutputBuilder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-            const Real phiMin = **phiMinPlot;
-            const Real phiMax = **phiMaxPlot;
-
-            const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
-            const Real L = p.getL();
-            const Real xLeft = p.getxLeft();
-            const Real xRight = xLeft + L;
-            const auto dx = 0; // L*2.5/10;
-
-            return new OutGL(ringDelta1, xLeft-dx, xRight+dx, xLeft-dx, xRight+dx, phiMin, phiMax);
-        }
-
-        OutputBuilder::OutputBuilder() : R2toR::OutputSystem::Builder("Leading-delta", "Leading delta output builder")  {
-            interface->addParameters({phiMinPlot, phiMaxPlot});
-        }
-
-
-        Builder::Builder() : SimulationBuilder("Leading Delta", "simulation builder for (2+1)-d signum-Gordon shockwave as the trail of a driving delta.",
-                                               BuilderBasePtr(new LeadingDelta::OutputBuilder)) {
+        Builder::Builder() : R2toR::Simulation::Builder("Leading Delta", "simulation builder for (2+1)-d "
+                                                                         "signum-Gordon shockwave as the "
+                                                                         "trail of a driving delta.") {
             interface->addParameters({&W_0, &eps, &deltaDuration});
         }
         auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
 
-            auto &p = const_cast<NumericParams&>(Numerics::Allocator::GetInstance().getNumericParams());
+            auto &p = numericParams;
             const Real L = p.getL();
             const Real dt = p.getdt();
             const auto W₀ = *W_0;
@@ -69,10 +50,18 @@ namespace R2toR {
 
             drivingFunc = std::make_shared<RingDeltaFunc>(*eps, C₂, dt);
             ringDelta1 = drivingFunc;
-            Allocator::GetInstanceSuper<LeadingDelta::Allocator>().setDrivingFunction(drivingFunc);
         }
-        auto Builder::getBoundary()            const -> const void * { return new BoundaryCondition(drivingFunc); }
-        auto Builder::registerAllocator()      const ->       void   { Allocator::Initialize<LeadingDelta::Allocator>(); }
+        auto Builder::getBoundary() -> void * {
+            return new BoundaryCondition(drivingFunc);
+        }
+
+        auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
+            return new OutGL(numericParams, ringDelta1, -0.5, 1);
+        }
+
+        auto Builder::getSystemSolver() -> void * {
+            return new DrivenEquation(*this, drivingFunc);
+        }
     }
 }
 

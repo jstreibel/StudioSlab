@@ -12,7 +12,7 @@
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/Numerics/Allocator.h"
+#include "Phys/Numerics/Builder.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
@@ -21,19 +21,17 @@ template<int NUM_THREADS, class STATE_TYPE>
 class StepperRK4 : public Method{
 public:
 
-    StepperRK4(const void *dPhi_)
-        : Method(), H(*(Base::DifferentialEquation<STATE_TYPE>*) Numerics::Allocator::GetInstance().getSystemSolver()),
-          dPhi((const Base::BoundaryConditions<STATE_TYPE>*)dPhi_),
-          _phi((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k1((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k2((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k3((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k4((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _phiTemp((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()) {
-
-        // TODO aplicar isso a cada iteracao.
-        dPhi->apply(*_phi, 0.0);
-    }
+    StepperRK4(Base::Simulation::Builder &builder)
+    : Method()
+    , H       (*(      Base::DifferentialEquation<STATE_TYPE>*) builder.getSystemSolver() )
+    , dPhi    ( (const Base::BoundaryConditions  <STATE_TYPE>*) builder.getBoundary() )
+    , _phi    ( builder.NewFieldState<STATE_TYPE*>() )
+    , _k1     ( builder.NewFieldState<STATE_TYPE*>() )
+    , _k2     ( builder.NewFieldState<STATE_TYPE*>() )
+    , _k3     ( builder.NewFieldState<STATE_TYPE*>() )
+    , _k4     ( builder.NewFieldState<STATE_TYPE*>() )
+    , _phiTemp( builder.NewFieldState<STATE_TYPE*>() )
+    { }
 
     ~StepperRK4(){
         delete &H;

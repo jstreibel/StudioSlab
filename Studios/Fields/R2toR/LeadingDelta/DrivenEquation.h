@@ -7,7 +7,6 @@
 
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
-#include "Mappings/R2toR/Core/R2toR_Allocator.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 #include "RingDeltaFunc.h"
@@ -23,7 +22,7 @@ namespace R2toR {
             R2toR::FunctionArbitraryGPU drivingForceRendered;
 
         public:
-            explicit DrivenEquation(R2toR::Function::Ptr drivingForce);
+            explicit DrivenEquation(Base::Simulation::Builder &builder, R2toR::Function::Ptr drivingForce);
 
             auto dtF(const EquationState &in, EquationState &out, Real t, Real dt) -> EquationState & override;
         };

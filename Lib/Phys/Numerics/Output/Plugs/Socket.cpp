@@ -3,11 +3,10 @@
 //
 
 #include "Socket.h"
-#include "Phys/Numerics/Program/NumericParams.h"
 
 
-Numerics::OutputSystem::Socket::Socket(Str name, int nStepsInterval, Str description)
-: nSteps(nStepsInterval), name(name), description(description), nextRecStep(1) {      }
+Numerics::OutputSystem::Socket::Socket(const NumericParams &params, Str name, int nStepsInterval, Str description)
+: nSteps(nStepsInterval), params(params), name(name), description(description), nextRecStep(1) {      }
 
 
 auto Numerics::OutputSystem::Socket::getLastSimTime()  -> Real { return lastData.getSimTime(); }
@@ -46,7 +45,6 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
 void Numerics::OutputSystem::Socket::output(const OutputPacket &outData, const NumericParams &p){
     _out(outData, p);
     lastData = outData;
-    params = p;
 }
 
 auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {

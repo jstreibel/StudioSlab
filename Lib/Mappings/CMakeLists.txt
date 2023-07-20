@@ -32,15 +32,12 @@ endif()
 
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
-		SimulationBuilder.cpp
-
 
 		RtoR/App/FieldsApp-RtoR.cpp
 
-
-		RtoR/Core/RtoRModelAllocator.cpp
-		RtoR/Core/RtoRModelAllocator_Langevin.cpp
-		RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
+		#RtoR/Core/RtoRModelAllocator.cpp
+		#RtoR/Core/RtoRModelAllocator_Langevin.cpp
+		#RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
 
 
 		RtoR/Controller/RtoRBCInterface.cpp
@@ -74,7 +71,7 @@ set ( RTOR_SOURCES
 		RtoR/Model/RtoRFuncArbResizable.cpp
 
 
-		RtoR/View/OutputStructureBuilderRtoR.cpp
+		#RtoR/View/OutputStructureBuilderRtoR.cpp
 		RtoR/View/RtoROutputHistoryToFile.cpp
 
 		RtoR/View/Graphics/Artists/GraphRtoR.cpp
@@ -92,18 +89,18 @@ set ( RTOR_SOURCES
 
 set ( R2TOR_SOURCES
 		FunctionRenderer.cpp
-		SimulationBuilder.cpp
+
+		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
-		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 
-		R2toR/Controller/R2ToR_SimulationBuilder.cpp
-		# R2toR/Controller/R2ToRInputRadialShockwave.cpp
+		#R2toR/Controller/R2ToR_SimulationBuilder.cpp
+		#R2toR/Controller/R2ToRInputRadialShockwave.cpp
 		R2toR/Controller/R2ToRInputShockwave.cpp
-		# R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
+		#R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
 
 		R2toR/Model/Energy.cpp
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
@@ -121,15 +118,19 @@ set ( R2TOR_SOURCES
 		R2toR/View/R2toROutputOpenGLShockwave.cpp
 		R2toR/View/R2toROutputOpenGLGeneric.cpp
 		R2toR/View/R2ToROutputOpenGlShockwaveAtT0.cpp
-		# R2toR/View/OutputShockwaveZeros.cpp
-		R2toR/View/OutputStructureBuilderR2ToR.cpp
+		#R2toR/View/OutputShockwaveZeros.cpp
+		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 
 		"R2toR/App/R2toR App.cpp"
 
 		RtoR2/StraightLine.cpp
 
-		R2toR/Core/R2toR_Allocator.cpp
-		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
+		#R2toR/Core/R2toR_Allocator.cpp
+		R2toR/View/Artists/FlatFieldDisplay.cpp
+		R2toR/View/Artists/FlatFieldDisplay.h
+
+		R2toR/Controller/R2ToRSimBuilder.cpp
+		R2toR/Controller/R2ToRSimBuilder.h)
 
 
 set ( MAPS_LINKS

@@ -6,19 +6,20 @@
 #define FIELDS_SIMULATIONSAPPR2TOR_H
 
 #include "Base/App/AppBase.h"
-#include "Mappings/SimulationBuilder.h"
+#include "Phys/Numerics/Builder.h"
+
 
 
 namespace R2toR {
     namespace App {
 
         class Simulations : public AppBase {
-            Base::SimulationBuilder::Ptr builder;
+            Base::Simulation::Builder::Ptr builder;
 
         public:
 
 
-            Simulations(int argc, const char **argv, Base::SimulationBuilder::Ptr bcBuilder);
+            Simulations(int argc, const char **argv, Base::Simulation::Builder::Ptr bcBuilder);
 
             auto run() -> int override;
         };

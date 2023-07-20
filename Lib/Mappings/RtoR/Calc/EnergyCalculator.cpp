@@ -9,6 +9,16 @@
 #define RIGHT(i) ((i)<N-1?(i)+1:0)
 //#endif
 
+RtoR::EnergyCalculator::EnergyCalculator(Base::Simulation::Builder &builder)
+: builder(builder)
+, _oEnergyDensityFunc(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oKinetic          (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oGradient         (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oPotential        (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+{
+
+}
+
 auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> const RtoR::DiscreteFunction &{
     auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
     auto &phiSpace = phi.getSpace(),
@@ -51,7 +61,7 @@ auto RtoR::EnergyCalculator::integrateEnergy() -> Real
     for(const auto &e : E_v)
         E += e;
 
-    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
+    Real dx = builder.getNumericParams().geth();
     return E*dx;
 }
 
@@ -61,7 +71,7 @@ auto RtoR::EnergyCalculator::integrateEnergy(Real xmin, Real xmax) -> Real {
     auto &func = *_oEnergyDensityFunc;
 
     VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
-    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
+    Real dx = builder.getNumericParams().geth();
 
     PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 
@@ -81,7 +91,7 @@ Real RtoR::EnergyCalculator::integrateKinetic() {
     for(const auto &k : K_v)
         K += k;
 
-    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
+    Real dx = builder.getNumericParams().geth();
     return K*dx;
 }
 
@@ -92,7 +102,7 @@ Real RtoR::EnergyCalculator::integrateGradient() {
     for(const auto &grad : Grad_v)
         Grad += grad;
 
-    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
+    Real dx = builder.getNumericParams().geth();
     return Grad*dx;
 }
 
@@ -103,6 +113,6 @@ Real RtoR::EnergyCalculator::integratePotential() {
     for(const auto &pot : Pot_v)
         Pot += pot;
 
-    Real dx = Numerics::Allocator::GetInstance().getNumericParams().geth();
+    Real dx = builder.getNumericParams().geth();
     return Pot*dx;
 }

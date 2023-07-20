@@ -2,8 +2,7 @@
 
 #include "RingDeltaFunc.h"
 #include "Phys/Function/DiscreteFunction.h"
-#include "Allocator.h"
-
+#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 struct IsRingDeltaDomain
 {
@@ -55,12 +54,12 @@ struct RingDeltaGPU
 
 
 bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::DiscreteFunction<Real2D, Real> *toFunc) const {
-
+    auto &func = *static_cast<R2toR::DiscreteFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();
     const auto N = outputSpace.getDim().getN(0);
     const auto h = outputSpace.geth();
-    const auto xMin = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+    const auto xMin = func.getDomain().xMin;
 
     thrust::counting_iterator<int> sequence_begin(0);
     thrust::counting_iterator<int> sequence_end(N * N);

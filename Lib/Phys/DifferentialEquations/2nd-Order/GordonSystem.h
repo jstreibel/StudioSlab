@@ -3,7 +3,8 @@
 
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 
-#include "Phys/Numerics/Allocator.h"
+#include "Phys/Numerics/Builder.h"
+
 
 
 #define FType(a) typename FieldState::a
@@ -18,11 +19,9 @@ namespace Phys {
             typedef Base::Function<FType(FunctionType::OutCategory),
                     FType(FunctionType::OutCategory)> TargetToTargetFunction;
         public:
-            explicit GordonSystem(TargetToTargetFunction &potential)
-                    : laplacian(
-                    *(FType(FunctionArbitraryType) *) Numerics::Allocator::GetInstance().newFunctionArbitrary()),
-                      dV_out(*(FType(
-                              FunctionArbitraryType) *) Numerics::Allocator::GetInstance().newFunctionArbitrary()),
+            explicit GordonSystem(Base::Simulation::Builder &builder, TargetToTargetFunction &potential)
+                    : laplacian(*builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
+                      dV_out(   *builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
                       V(potential), dVDPhi(potential.diff(0)) {}
 
             ~GordonSystem() override {

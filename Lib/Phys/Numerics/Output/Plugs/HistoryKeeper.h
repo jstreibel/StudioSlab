@@ -15,7 +15,7 @@ private:
     void _out(const OutputPacket &outInfo, const NumericParams &params) final;
 
 public:
-    HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
+    HistoryKeeper(const NumericParams &params, size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
     ~HistoryKeeper() override;
 
     [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;

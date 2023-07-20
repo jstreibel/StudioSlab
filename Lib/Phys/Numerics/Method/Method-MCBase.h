@@ -11,7 +11,6 @@
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/Numerics/Allocator.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
@@ -20,12 +19,12 @@ template<int NUM_THREADS, class FIELD_STATE_TYPE>
 class StepperMontecarlo : public Method{
 public:
 
-    StepperMontecarlo(const void *dPhi_)
-            : Method(), H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) Numerics::Allocator::GetInstance().getSystemSolver()),
-              dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)dPhi_),
-              _phi((FIELD_STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-              _phiTemp((FIELD_STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()) {
-
+    StepperMontecarlo(Base::Simulation::Builder &builder)
+    : Method()
+    , H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) builder.getSystemSolver())
+    , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
+    , _phi(    (FIELD_STATE_TYPE*)builder.newFieldState())
+    , _phiTemp((FIELD_STATE_TYPE*)builder.newFieldState()) {
         dPhi->apply(*_phi, 0.0);
     }
 

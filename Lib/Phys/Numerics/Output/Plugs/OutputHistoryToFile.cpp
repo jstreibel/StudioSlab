@@ -1,8 +1,6 @@
 #include "OutputHistoryToFile.h"
 #include "Common/Log/Log.h"
 
-
-#include <Phys/Numerics/Allocator.h>
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 #include <Common/Timer.h>
@@ -11,9 +9,9 @@
 
 const Str extension = ".osc";
 
-OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
+OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                          Str outputFileName, OutputFormatterBase *outputFormatter)
-    : HistoryKeeper(stepsInterval, spaceFilter, endT),
+    : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
       outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
       outputFormatter(*outputFormatter)
 {
@@ -73,8 +71,6 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 }
 
 void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
-    Numerics::Allocator &builder = Numerics::Allocator::GetInstance();
-
     std::ostringstream oss;
 
 

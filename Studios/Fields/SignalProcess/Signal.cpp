@@ -31,16 +31,16 @@ Real t0 = 5;
  *    \________|(____  / \___  >|__|_ \      \____|__  /|____/ \____ | |__| \____/
  *                   \/      \/      \/              \/             \/
  */
-RtoR::Signal::JackOutput::JackOutput() : Numerics::OutputSystem::Socket("Jack output", 1) {
+RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
+: Numerics::OutputSystem::Socket(params, "Jack output", 1) {
     JackServer::GetInstance();
 
-    auto params = Numerics::Allocator::getInstance().getNumericParams();
     auto delta = xInitDampCutoff_normalized*params.getL();
     auto xLeft = params.getxLeft();
 
     jackProbeLocation = xLeft+delta;
 }
-void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
+void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket, const NumericParams &params) {
     Function &field = outputPacket.getEqStateData<RtoR::FieldState>()->getPhi();
 
     auto measure = field(jackProbeLocation);
@@ -50,7 +50,6 @@ void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
 bool RtoR::Signal::JackOutput::shouldOutput(Real t, unsigned long timestep) {
     return Socket::shouldOutput(t, timestep);
 }
-
 
 
 /***
@@ -202,3 +201,13 @@ auto RtoR::Signal::CLI::getBoundary() const -> const void * {
     xInitDampCutoff_normalized = 1-*dampPercent;
 
     return new RtoR::Signal::BoundaryCondition(f, A); }
+
+RtoR::Monitor *RtoR::Signal::CLI::buildOpenGLOutput() {
+    const Real phiMin = -1.4;
+    const Real phiMax = -phiMin;
+
+    const Real xLeft = numericParams.getxLeft();
+    const Real xRight = numericParams.getxMax();
+
+    return new RtoR::Signal::OutGL(numericParams, phiMin, phiMax);
+}

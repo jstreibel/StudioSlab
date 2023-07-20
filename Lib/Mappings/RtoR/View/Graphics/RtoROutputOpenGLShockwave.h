@@ -16,7 +16,7 @@ namespace RtoR {
         FuncArbResizable innerEnergyHistory;
 
     public:
-        explicit OutputOpenGLShockwave(Real a0=1, Real E=1);
+        explicit OutputOpenGLShockwave(const NumericParams &params, Real a0=1, Real E=1);
         void draw() override;
 
     };

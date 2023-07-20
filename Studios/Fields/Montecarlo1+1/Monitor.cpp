@@ -21,10 +21,7 @@ const Styles::Color T3_color = Styles::Color(1, 1, 0);
 
 namespace Montecarlo {
 
-    Monitor::Monitor() : RtoR::Monitor() {
-        const Real xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
-        const Real xRight = xLeft + Numerics::Allocator::GetInstance().getNumericParams().getL();
-
+    Monitor::Monitor(const NumericParams &params) : RtoR::Monitor(params, -10, 10) {
         temperature1History = RtoR::FuncArbResizable(0, 0.1);
         temperature2History = RtoR::FuncArbResizable(0, 0.1);
         temperature3History = RtoR::FuncArbResizable(0, 0.1);
@@ -35,7 +32,7 @@ namespace Montecarlo {
         mTemperaturesGraph->addFunction(&temperature3History, "T_3", Styles::GetColorScheme()->funcPlotStyles[2]);
         panel.addWindow(mTemperaturesGraph);
 
-        initialize(xLeft, xRight, -0.08, 0.08);
+        initialize();
 
         mHistogramsGraph = new GraphRtoR(0, 1, 0, 2e3, "V", true);
         panel.addWindow(mHistogramsGraph, true);
@@ -66,6 +63,7 @@ namespace Montecarlo {
 
         auto nbins = 100;
 
+        /*
 
         histogram.Compute(energyCalculator.getKinetic(), nbins);
         func = histogram.asPDFFunction();
@@ -155,6 +153,7 @@ namespace Montecarlo {
              c = temperature3History.getYMax();
 
         mTemperaturesGraph->set_yMax(max(a, max(b, c)));
+         */
 
         RtoR::Monitor::draw();
     }

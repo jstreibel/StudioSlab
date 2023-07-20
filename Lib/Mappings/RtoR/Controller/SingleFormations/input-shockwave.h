@@ -17,7 +17,7 @@ namespace RtoR {
     public:
         InputShockwave();
 
-        auto getBoundary() const -> const void * override;
+        auto getBoundary() -> void * override;
 
         auto getOutputs(bool usingOpenGLBackend) const -> OutputCollection;
 

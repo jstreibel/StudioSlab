@@ -7,7 +7,6 @@
 
 #include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
-#include "Phys/Numerics/Allocator.h"
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
@@ -15,18 +14,18 @@
 namespace R2toR {
     class GrowingHoleOutGL : public R2toR::OutputOpenGL {
     public:
-        GrowingHoleOutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-                : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) {   }
+        GrowingHoleOutGL(const NumericParams &params, Real phiMin, Real phiMax)
+                : R2toR::OutputOpenGL(params, phiMin, phiMax) {   }
 
         void draw() override {
             if(!lastData.hasValidData()) return;
 
             std::stringstream ss;
             const Real t = lastData.getSimTime();
-            const Real L = Numerics::Allocator::GetInstance().getNumericParams().getL();
-            const Real xMin = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+            const Real L = params.getL();
+            const Real xMin = params.getxLeft();
 
-            auto dt = Numerics::Allocator::GetInstance().getNumericParams().getdt();
+            auto dt = params.getdt();
             stats.addVolatileStat(std::string("t = ") + std::to_string(getLastSimTime()));
             stats.addVolatileStat(std::string("L = ") + std::to_string(L));
             stats.addVolatileStat(std::string("xMin = ") + std::to_string(xMin));

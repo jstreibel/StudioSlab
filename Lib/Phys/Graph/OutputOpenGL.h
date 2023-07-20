@@ -26,7 +26,7 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OutputOpenGL> Ptr;
 
-        OutputOpenGL(Str channelName="OpenGL output", int stepsBetweenDraws=1);
+        OutputOpenGL(const NumericParams &params, Str channelName="OpenGL output", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
         bool notifyRender(float elTime_msec) final override;

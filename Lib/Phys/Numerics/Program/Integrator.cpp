@@ -10,31 +10,7 @@
 #include <sstream>
 #endif
 
-NumericalIntegration::NumericalIntegration(OutputManager *outputManager)
-    : outputManager(outputManager),
-      dt(Numerics::Allocator::GetInstance().getNumericParams().getdt()),
-      steps(0)
-{
-#if ATTEMP_REALTIME
-    {
-        // Declare a sched_param struct to hold the scheduling parameters.
-        sched_param param;
 
-        // Set the priority value in the sched_param struct.
-        param.sched_priority = sched_get_priority_max(SCHED_FIFO);
-
-        // Set the scheduling policy and priority of the current process.
-        int ret = sched_setscheduler(0, SCHED_FIFO, &param);
-        if (ret == -1) {
-            Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
-        } else {
-            Log::Info() << "Program running with realtime priority." << Log::Flush;
-        }
-
-    }
-#endif
-
-}
 
 NumericalIntegration::~NumericalIntegration()
 {
@@ -47,7 +23,7 @@ NumericalIntegration::~NumericalIntegration()
 
 void NumericalIntegration::cycle(CycleOptions options) {
     nonSimTimeHistogram.storeMeasure();
-    const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    const auto &p = simBuilder.getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
     switch (options.cycleOption){
@@ -81,7 +57,7 @@ void NumericalIntegration::_cycle(size_t nCycles) {
 
 void NumericalIntegration::_runFullIntegration()
 {
-    auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    auto &p = simBuilder.getNumericParams();
     size_t n = p.getn();
 
     while(steps < n && _cycleUntilOutput());

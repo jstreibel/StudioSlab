@@ -14,7 +14,7 @@ InputSingleOscillon::InputSingleOscillon() : RtoRBCInterface("Oscillon 1d", "Sin
     interface->addParameters({v, V, alpha, lambda, mirror});
 }
 
-auto InputSingleOscillon::getBoundary() const -> const void * {
+auto InputSingleOscillon::getBoundary() -> void * {
     AnalyticOscillon oscillon = AnalyticOscillon(0.0, *v, *V, *alpha, false, false);
 
     auto initCondPhi = oscillon;

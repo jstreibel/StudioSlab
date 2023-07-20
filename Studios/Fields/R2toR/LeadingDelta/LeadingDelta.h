@@ -7,14 +7,12 @@
 
 
 
-#include <Mappings/R2toR/Controller/R2ToR_SimulationBuilder.h>
+#include <Mappings/R2toR/Controller/R2ToRSimBuilder.h>
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 
 #include "Monitor.h"
 #include "RingDeltaFunc.h"
 #include "DrivenEquation.h"
-#include "Allocator.h"
-
 
 namespace R2toR {
     namespace LeadingDelta {
@@ -33,20 +31,7 @@ namespace R2toR {
         };
 
 
-
-        class OutputBuilder : public R2toR::OutputSystem::Builder {
-            RealParameter::Ptr phiMinPlot = RealParameter::New(-0.2, "min", "Graphic monitor min phi");
-            RealParameter::Ptr phiMaxPlot = RealParameter::New( 0.2, "max", "Graphic monitor max phi");
-        protected:
-            auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override;
-
-        public:
-            OutputBuilder();
-        };
-
-
-
-        class Builder : public SimulationBuilder {
+        class Builder : public R2toR::Simulation::Builder {
             RealParameter      W_0              = RealParameter(0.1, "W,W_0",
                                                             "The height of corresponding analytic shockwave, "
                                                             "which determines scale of the delta as "
@@ -59,11 +44,17 @@ namespace R2toR {
             RingDeltaFunc::Ptr drivingFunc;
             BoundaryCondition boundaries;
 
+        protected:
+            auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override;
+
         public:
             Builder();
+
             auto notifyCLArgsSetupFinished()               -> void         override;
-            auto getBoundary()          const -> const void * override;
-            auto registerAllocator()    const -> void         override;
+            auto getBoundary()          -> void * override;
+
+            auto getSystemSolver() -> void * override;
+
         };
     }
 }

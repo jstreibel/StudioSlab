@@ -30,7 +30,7 @@ namespace R2toR {
 
 
         public:
-            OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
+            OutGL(const NumericParams &params, R2toR::Function::Ptr drivingFunction, Real phiMin, Real phiMax);
 
             auto draw() -> void override;
 

@@ -1,12 +1,8 @@
 
 #include "OutputManager.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
-#include <Phys/Numerics/Allocator.h>
-
-
-OutputManager::OutputManager() : maxSteps(Numerics::Allocator::GetInstance().getNumericParams().getn()) { }
+OutputManager::OutputManager(const NumericParams &params) : params(params), maxSteps(params.getn()) { }
 
 OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
@@ -18,7 +14,7 @@ void OutputManager::output(OutputPacket &infoVolatile)
     for(auto *out : outputs) {
         auto shouldOutput = out->shouldOutput(t, steps);
         if (shouldOutput)
-            out->output(infoVolatile, Numerics::Allocator::GetInstance().getNumericParams());
+            out->output(infoVolatile, params);
     }
 
 }

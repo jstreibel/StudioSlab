@@ -9,15 +9,11 @@
 #include <jack/types.h>
 #include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
-#include "Mappings/RtoR/View/OutputStructureBuilderRtoR.h"
-
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
 
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-
-#include "Phys/Numerics/Allocator.h"
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 
@@ -32,15 +28,12 @@ namespace RtoR {
 
 
         class JackOutput : public Numerics::OutputSystem::Socket {
+            auto _out(const OutputPacket &packet, const NumericParams &params) -> void override;
 
         public:
-            JackOutput();
-
+            JackOutput(const NumericParams &params);
             auto shouldOutput(Real t, unsigned long timestep) -> bool override;
 
-        private:
-
-            void _out(const OutputPacket &outputPacket) override;
         };
 
 
@@ -75,6 +68,9 @@ namespace RtoR {
         public:
             CLI();
             auto getBoundary() const -> const void * override;
+
+        protected:
+            auto buildOpenGLOutput() -> RtoR::Monitor * override;
         };
 
 

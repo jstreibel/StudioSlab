@@ -3,7 +3,6 @@
 //
 
 #include "Histogram.h"
-#include "Phys/Numerics/Allocator.h"
 
 #define bin(v) int(floor(((v)-xMin)/binWidth))
 

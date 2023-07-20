@@ -13,7 +13,7 @@ RtoR::InputManyOscillons::InputManyOscillons()
 
 }
 
-auto RtoR::InputManyOscillons::getBoundary() const -> const void * {
+auto RtoR::InputManyOscillons::getBoundary() -> void * {
     auto n = 100;
 
     auto L = 20.0;

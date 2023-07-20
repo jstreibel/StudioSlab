@@ -17,23 +17,17 @@
 namespace R2toR {
     class OutputOpenGL : public Graphics::OutputOpenGL {
     protected:
-        R2toR::EquationState &eqState;
-
         bool showAnalytic = true;
 
-        Real xMin, xMax, yMin, yMax, phiMin, phiMax;
+        Real phiMin, phiMax;
         GraphR2Section mSectionGraph;
 
-        void _out(const OutputPacket &outInfo, const NumericParams &params) override;
-
     public:
-        OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
+        OutputOpenGL(const NumericParams &params, Real phiMin, Real phiMax);
         ~OutputOpenGL();
 
 
         void draw() override;
-
-        bool notifyKeyboard(unsigned char key, int x, int y) override;
     };
 
 }

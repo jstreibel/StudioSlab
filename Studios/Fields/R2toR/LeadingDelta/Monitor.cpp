@@ -8,7 +8,6 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 
-#include "Phys/Numerics/Allocator.h"
 #include "Phys/Function/FunctionScale.h"
 #include "Mappings/R2toR/Model/Energy.h"
 
@@ -16,11 +15,15 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Phys/Function/FunctionScale.h"
 
+#define xMin params.getxLeft()
+#define xMax params.getxMax()
+
 R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 
-R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-: R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax)
+R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params,
+                                  R2toR::Function::Ptr drivingFunction, Real phiMin, Real phiMax)
+: R2toR::OutputOpenGL(params, phiMin, phiMax)
 , drivingFunction(drivingFunction)
 , mTotalEnergyGraph("Total energy")
 , mEnergyGraph("Energy")
@@ -31,7 +34,7 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
                phiMax*100,
                "",
                false,
-               Numerics::Allocator::GetInstance().getNumericParams().getN()*3)
+               params.getN()*3)
 , mEnergyDensityGraph(xMin, xMax)
 {
     energyRatioData = Spaces::PointSet::New();
@@ -58,10 +61,10 @@ R2toR::LeadingDelta::OutGL::OutGL(R2toR::Function::Ptr drivingFunction, Real xMi
                                   "Total analytic energy");
     panel.addWindowToColumn(&mTotalEnergyGraph, 0);
 
-    auto line = new RtoR2::StraightLine({0, yMin},
-                                        {0, yMax},
-                                        yMin,
-                                        yMax);
+    auto line = new RtoR2::StraightLine({0, xMin},
+                                        {0, xMax},
+                                        xMin,
+                                        xMax);
     mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
     panel.addWindow(&mSpeedsGraph);
 
@@ -75,7 +78,9 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     auto &rd = *R2toR::LeadingDelta::ringDelta1;
 
-    const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    auto &eqState = *lastData.getEqStateData<R2toR::EquationState>();
+
+    const auto &p = params;
     const auto L = p.getL();
     const auto N = p.getN();
     const auto h = p.geth();
@@ -88,11 +93,11 @@ void R2toR::LeadingDelta::OutGL::draw() {
     static auto lastE = .0;
     static auto lastAnalyticE = .0;
 
-    auto dt = Numerics::Allocator::GetInstance().getNumericParams().getdt();
+    auto dt = params.getdt();
     stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step));
-    stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
-    stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
+    //stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
+    //stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
     stats.addVolatileStat(Str("FPS: ") + ToStr(1/(elTime*1e-3)));
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));

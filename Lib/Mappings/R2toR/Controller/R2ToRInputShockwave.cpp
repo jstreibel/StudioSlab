@@ -4,30 +4,23 @@
 
 #include "R2ToRInputShockwave.h"
 
-#include "Common/Utils.h"
-
-#include "Phys/Numerics/Output/Plugs/Socket.h"
-
-#include "Phys/Formalism/Categories.h"
-
 #include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "R2ToR_SimulationBuilder.h"
-#include "Common/Log/Log.h"
 
 const auto pi = 3.1415926535897932384626;
 
 using namespace R2toR;
 
-R2toRInputShockwave::R2toRInputShockwave() : SimulationBuilder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {
+R2toRInputShockwave::R2toRInputShockwave()
+: R2toR::Simulation::Builder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {
 
 
     interface->addParameters({eps, theta, E, e, t0});
 }
 
-auto R2toRInputShockwave::getBoundary() const -> const void * {
+auto R2toRInputShockwave::getBoundary() -> void * {
     const Real a = sqrt((4./3)*pi*(*eps)*(*eps)*(*E));
 
     let *phi0 = new FunctionAzimuthalSymmetry(new RtoR::NullFunction, 1.0, **e, **theta);
@@ -39,20 +32,20 @@ auto R2toRInputShockwave::getBoundary() const -> const void * {
 
     if(0) // Output da energia nominal.
     {
-        {
-            Real E = 0.0;
-            Real N = 4096;
-            const Real h = 2. * (*eps) / N;
-            for (Real x = -(*eps); x <= (*eps); x += h) {
-                for (Real y = -(*eps); y <= (*eps); y += h) {
-                    Real2D r = {x, y};
-                    const Real val = (*dPhiDt0)(r);
-                    E += val * val;
-                }
-            }
-            E *= .5 * h * h;
-            Log::Info() << "\nCartesianas: E = " << E << Log::Flush;
-        }
+        //{
+        //    Real E = 0.0;
+        //    Real N = 4096;
+        //    const Real h = 2. * (*eps) / N;
+        //    for (Real x = -(*eps); x <= (*eps); x += h) {
+        //        for (Real y = -(*eps); y <= (*eps); y += h) {
+        //            Real2D r = {x, y};
+        //            const Real val = (*dPhiDt0)(r);
+        //            E += val * val;
+        //        }
+        //    }
+        //    E *= .5 * h * h;
+        //    Log::Info() << "\nCartesianas: E = " << E << Log::Flush;
+        //}
     }
 
     //auto *outGLShockwave = new OutputOpenGLShockwave(getParameters());

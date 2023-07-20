@@ -22,6 +22,7 @@ struct NumericParams : public InterfaceOwner {
     auto getN() const -> PosInt;
     auto getL() const -> Real;
     auto getxLeft() const -> Real;
+	auto getxMax() const -> Real;
     auto gett() const -> Real;
     auto getr() const -> Real;
     auto geth() const -> Real;
@@ -51,7 +52,7 @@ struct NumericParams : public InterfaceOwner {
 	Real dt;
 
 public:
-	NumericParams(const NumericParams&);
+	NumericParams(const NumericParams&) = delete;
 
 	auto notifyCLArgsSetupFinished() -> void override;
 

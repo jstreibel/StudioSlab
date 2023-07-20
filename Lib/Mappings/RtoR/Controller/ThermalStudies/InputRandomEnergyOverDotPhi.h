@@ -14,7 +14,7 @@ namespace RtoR {
     public:
         InputRandomEnergyOverDotPhi();
 
-        auto getBoundary() const -> const void * override;
+        auto getBoundary() -> void * override;
     };
 
 }

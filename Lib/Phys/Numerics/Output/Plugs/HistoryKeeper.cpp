@@ -1,6 +1,5 @@
 #include "HistoryKeeper.h"
 
-#include "Phys/Numerics/Allocator.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
@@ -8,8 +7,8 @@
 
 const long long unsigned int ONE_GB = 1073741824;
 
-HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
-    : Numerics::OutputSystem::Socket("History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
+HistoryKeeper::HistoryKeeper(const NumericParams &params, size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
+    : Numerics::OutputSystem::Socket(params, "History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
     // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
@@ -24,7 +23,7 @@ auto HistoryKeeper::getUtilMemLoadBytes() const -> long long unsigned int
     // TODO fazer esse calculo baseado no tamanho de cada instante de tempo do campo, e contemplando o modelo de fato
     //  em que estamos trabalhando (1d, 2d, escalar, SU(2), etc.).
     //  Em outras palavras: o calculo abaixo esta errado.
-    return count * Numerics::Allocator::GetInstance().getNumericParams().getN() * sizeof(Real);
+    return count * params.getN() * sizeof(Real);
 }
 
 auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
@@ -56,8 +55,6 @@ auto HistoryKeeper::notifyIntegrationHasFinished(const OutputPacket &theVeryLast
 }
 
 auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
-    Numerics::Allocator &builder = Numerics::Allocator::GetInstance();
-
     std::ostringstream oss;
 
     oss << R"({, "outresT": " << (countTotal+count))";

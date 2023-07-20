@@ -1,6 +1,6 @@
 
 set ( TOOLSET_SOURCES
-		Numerics/Allocator.cpp
+		# Numerics/Allocator.cpp
 		Toolset/Device.cpp
 		Formalism/Categories.cpp
 		)
@@ -35,11 +35,13 @@ set ( GRAPH_SOURCES
 
 
 set ( NUMERICS_SOURCES
+		Numerics/Builder.cpp
+
+
 		Numerics/Program/Integrator.cpp
 		Numerics/Program/NumericParams.cpp
 
 		Numerics/Output/OutputManager.cpp
-		Numerics/Output/StructureBuilder.cpp
 
 		Numerics/Output/Plugs/Socket.cpp
 		Numerics/Output/Plugs/OutputConsoleMonitor.cpp

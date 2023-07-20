@@ -105,13 +105,9 @@ namespace Base {
             return *this;
         }
 
-        const DiscreteSpace& getSpace() const {
-            return *space;
-        }
+        auto getSpace()       ->       DiscreteSpace& { return *space; }
+        auto getSpace() const -> const DiscreteSpace& { return *space; }
 
-        DiscreteSpace& getSpace() {
-            return *space;
-        }
 
     private:
         DiscreteSpace *space;

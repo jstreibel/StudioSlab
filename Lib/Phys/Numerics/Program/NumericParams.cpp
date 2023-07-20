@@ -10,6 +10,7 @@ NumericParams::NumericParams(): InterfaceOwner("Numeric Parameters,The core para
     Log::Info() << "Integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 }
 
+/*
 NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
     N = p.N;
     L = p.L;
@@ -19,11 +20,12 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
 
     xCenter = p.xCenter;
     dimMode = p.dimMode;
-}
+}*/
 
 auto NumericParams::getN() const -> size_t { return **N; }
 auto NumericParams::getL() const -> floatt { return **L; }
 auto NumericParams::getxLeft() const -> floatt { return **xCenter - **L*.5; }
+auto NumericParams::getxMax()  const -> floatt { return **xCenter + **L*.5; }
 auto NumericParams::gett() const -> floatt { return **t; }
 auto NumericParams::getr() const -> floatt { return **r; }
 auto NumericParams::getn() const -> size_t {

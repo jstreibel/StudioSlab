@@ -13,12 +13,15 @@
 #define max(a,b) (a>b?a:b)
 #define min(a,b) (a<b?a:b)
 
-RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(Real a0, Real E) : a0(a0), E(E) {
+RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericParams &params, Real a0, Real E)
+: RtoR::Monitor(params, -a0/2, 3*a0/2)
+, a0(a0)
+, E(E) {
     surfaceEnergyHistory.xMin = 0;
-    surfaceEnergyHistory.xMax = Numerics::Allocator::GetInstance().getNumericParams().gett();
+    surfaceEnergyHistory.xMax = params.gett();
 
     innerEnergyHistory.xMin = 0;
-    innerEnergyHistory.xMax = Numerics::Allocator::GetInstance().getNumericParams().gett();
+    innerEnergyHistory.xMax = params.gett();
 
 }
 

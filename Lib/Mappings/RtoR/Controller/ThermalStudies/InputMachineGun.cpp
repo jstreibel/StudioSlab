@@ -13,7 +13,7 @@ RtoR::InputMachineGun::InputMachineGun() : RtoRBCInterface("Machinegun", "Machin
 
 }
 
-auto RtoR::InputMachineGun::getBoundary() const -> const void * {
+auto RtoR::InputMachineGun::getBoundary() -> void * {
     RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
     auto scaleBig = 1.0;

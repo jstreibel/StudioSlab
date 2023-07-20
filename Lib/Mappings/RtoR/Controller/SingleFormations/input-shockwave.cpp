@@ -17,7 +17,7 @@ InputShockwave::InputShockwave() : RtoRBCInterface("1d shockwave", "Shockwave in
     interface->addParameters({&a0, &E});
 }
 
-auto InputShockwave::getBoundary() const -> const void *
+auto InputShockwave::getBoundary() -> void *
 {
     //deltaType = vm["delta"].as<unsigned int>();
 
@@ -39,7 +39,7 @@ auto InputShockwave::_getDeltaTypeAsString() const -> Str
 OutputCollection InputShockwave::getOutputs(bool usingOpenGLBackend) const {
     RtoR::OutputOpenGLShockwave *oglout = nullptr;
     if(usingOpenGLBackend){
-        return {new RtoR::OutputOpenGLShockwave(*a0 /2, *E)};
+        return {new RtoR::OutputOpenGLShockwave(numericParams, *a0 /2, *E)};
     }
 
     return {};

@@ -1,19 +1,15 @@
 
 
 #include <GL/gl.h>
-#include <GL/glext.h>
 #include "OutputOpenGL.h"
 
-
-#include "Phys/Numerics/Allocator.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
 
 using namespace Base;
 
-Graphics::OutputOpenGL::OutputOpenGL(Str channelName, int stepsBetweenDraws)
-    : Numerics::OutputSystem::Socket("OpenGL output", stepsBetweenDraws), Window() {
+Graphics::OutputOpenGL::OutputOpenGL(const NumericParams &params, Str channelName, int stepsBetweenDraws)
+    : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;

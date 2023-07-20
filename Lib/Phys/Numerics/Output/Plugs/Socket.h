@@ -17,13 +17,13 @@ namespace Numerics {
 
         protected:
             OutputPacket lastData;
-            NumericParams params;
+            const NumericParams &params;
             Str name, description;
 
             virtual auto _out(const OutputPacket&, const NumericParams &) -> void = 0;
 
         public:
-            explicit Socket(Str name="", int nStepsInterval = 1, Str description="");
+            explicit Socket(const NumericParams &, Str name="", int nStepsInterval = 1, Str description="");
             virtual ~Socket() = default;
 
             std::shared_ptr<Socket> Ptr;

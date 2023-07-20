@@ -11,7 +11,7 @@ private:
 
     size_t T_fileNamePrecision;
 public:
-    OutputSnapshot(const Str &customFileDescription = "", const size_t fileNamePrecision = 4);
+    OutputSnapshot(const NumericParams &params, const Str &customFileDescription = "", const size_t fileNamePrecision = 4);
 
     ~OutputSnapshot();
 
