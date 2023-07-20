@@ -5,7 +5,7 @@
 #include "Base/Controller/Interface/InterfaceSelector.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Log/Log.h"
-#include "Builder.h"
+#include "VoidBuilder.h"
 #include "Phys/Numerics/Method/Method-RK4.h"
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
@@ -15,7 +15,7 @@ break;
 
 #define DONT_REGISTER false
 
-Base::Simulation::Builder::Builder(Str name, Str generalDescription)
+Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription)
 : InterfaceOwner(name, 100, DONT_REGISTER)
 , numericParams(DONT_REGISTER)
 , dev(DONT_REGISTER)
@@ -32,15 +32,15 @@ Base::Simulation::Builder::Builder(Str name, Str generalDescription)
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 
-auto Base::Simulation::Builder::getNumericParams() const -> const NumericParams & {
+auto Base::Simulation::VoidBuilder::getNumericParams() const -> const NumericParams & {
     return numericParams;
 }
 
-auto Base::Simulation::Builder::getDevice() const -> const Device & {
+auto Base::Simulation::VoidBuilder::getDevice() const -> const Device & {
     return dev;
 }
 
-Str Base::Simulation::Builder::toString() const {
+Str Base::Simulation::VoidBuilder::toString() const {
     auto strParams = interface->toString();
 
     auto str = prefix + "-" + strParams;
@@ -48,7 +48,7 @@ Str Base::Simulation::Builder::toString() const {
     return str;
 }
 
-auto Base::Simulation::Builder::buildStepper() -> Method * {
+auto Base::Simulation::VoidBuilder::buildStepper() -> Method * {
     /*
         if(theMethod==RK4){
             switch (numThreads) {
@@ -97,7 +97,3 @@ auto Base::Simulation::Builder::buildStepper() -> Method * {
 
     throw "Bad builder";
 }
-
-
-
-

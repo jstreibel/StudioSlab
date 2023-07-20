@@ -12,10 +12,10 @@
 
 namespace RtoR {
 
-    class SystemGordonGPU : Base::DifferentialEquation<FieldState> {
+    class SystemGordonGPU : Base::DifferentialEquation<EquationState> {
     public:
         SystemGordonGPU(PosInt N);
-        FieldState &dtF(const FieldState &in, FieldState &out, Real t, Real dt) override;
+        EquationState &dtF(const EquationState &in, EquationState &out, Real t, Real dt) override;
 
     private:
         DeviceVector temp;

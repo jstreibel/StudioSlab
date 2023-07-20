@@ -4,7 +4,7 @@
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 
 #define FType(a) typename FieldState::a

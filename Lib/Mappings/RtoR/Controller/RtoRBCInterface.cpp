@@ -29,7 +29,7 @@
 
 
 RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription)
-: Builder("RtoR-" + name, generalDescription) { }
+: VoidBuilder("RtoR-" + name, generalDescription) { }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->toString();
@@ -112,8 +112,8 @@ void *RtoRBCInterface::newFunctionArbitrary() {
 }
 
 void *RtoRBCInterface::newFieldState() {
-    return new RtoR::FieldState((RtoR::DiscreteFunction*)this->newFunctionArbitrary(),
-                                (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
+    return new RtoR::EquationState((RtoR::DiscreteFunction*)this->newFunctionArbitrary(),
+                                   (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
 void *RtoRBCInterface::getSystemSolver() {
@@ -131,7 +131,7 @@ void *RtoRBCInterface::getSystemSolver() {
     thePotential = new RtoR::NullFunction;
     //else throw "Other potentials not implemented";
 
-    return new Phys::Gordon::GordonSystem<RtoR::FieldState>(*this, *thePotential);
+    return new Phys::Gordon::GordonSystem<RtoR::EquationState>(*this, *thePotential);
 }
 
 auto RtoRBCInterface::buildOpenGLOutput() -> RtoR::Monitor * {

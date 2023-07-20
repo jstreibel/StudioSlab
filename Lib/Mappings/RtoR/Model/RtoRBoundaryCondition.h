@@ -12,7 +12,7 @@
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 
 namespace RtoR {
-    class BoundaryCondition : public Base::BoundaryConditions<RtoR::FieldState> {
+    class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
     public:
         BoundaryCondition(Function *initialPhiCondition,
                           Function *initialdPhiDtCondition,
@@ -23,7 +23,7 @@ namespace RtoR {
 
         ~BoundaryCondition();
 
-        void apply(FieldState &fieldState, Real t) const override;
+        void apply(EquationState &fieldState, Real t) const override;
 
     private:
         Function *initialPhiCondition;

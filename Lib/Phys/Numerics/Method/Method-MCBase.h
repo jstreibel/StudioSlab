@@ -19,7 +19,7 @@ template<int NUM_THREADS, class FIELD_STATE_TYPE>
 class StepperMontecarlo : public Method{
 public:
 
-    StepperMontecarlo(Base::Simulation::Builder &builder)
+    StepperMontecarlo(Base::Simulation::VoidBuilder &builder)
     : Method()
     , H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) builder.getSystemSolver())
     , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())

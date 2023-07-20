@@ -50,7 +50,7 @@ RtoR::OutGLStatistic::OutGLStatistic() : RtoR::Monitor(params, -1, 1) {
 }
 
 void RtoR::OutGLStatistic::draw() {
-    const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
+    const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
 
     std::ostringstream ss;
 

@@ -35,8 +35,8 @@ set ( GRAPH_SOURCES
 
 
 set ( NUMERICS_SOURCES
-		Numerics/Builder.cpp
-
+		Numerics/VoidBuilder.cpp
+		Numerics/Builder.h
 
 		Numerics/Program/Integrator.cpp
 		Numerics/Program/NumericParams.cpp

@@ -12,7 +12,7 @@
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
@@ -21,7 +21,7 @@ template<int NUM_THREADS, class STATE_TYPE>
 class StepperRK4 : public Method{
 public:
 
-    StepperRK4(Base::Simulation::Builder &builder)
+    StepperRK4(Base::Simulation::VoidBuilder &builder)
     : Method()
     , H       (*(      Base::DifferentialEquation<STATE_TYPE>*) builder.getSystemSolver() )
     , dPhi    ( (const Base::BoundaryConditions  <STATE_TYPE>*) builder.getBoundary() )

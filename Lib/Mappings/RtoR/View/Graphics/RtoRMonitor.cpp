@@ -72,7 +72,7 @@ void RtoR::Monitor::draw() {
 
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
+    const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
 
     mFieldsGraph.clearFunctions();
 
@@ -110,7 +110,7 @@ void RtoR::Monitor::draw() {
 
 void RtoR::Monitor::_out(const OutputPacket &outInfo, const NumericParams &params) {
 
-    const RtoR::FieldState &fieldState = *outInfo.getEqStateData<RtoR::FieldState>();
+    const RtoR::EquationState &fieldState = *outInfo.getEqStateData<RtoR::EquationState>();
     // energyCalculator.computeDensities(fieldState);
 
     //auto U = energyCalculator.integrateEnergy();

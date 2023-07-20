@@ -5,16 +5,18 @@
 
 
 namespace Base {
-    template<class FIELD_STATE_TYPE>
+    template<typename EqStateType>
     class DifferentialEquation {
     public:
+
+
         DifferentialEquation() {}
 
         virtual ~DifferentialEquation() {}
 
-        virtual FIELD_STATE_TYPE &dtF(const FIELD_STATE_TYPE &in, FIELD_STATE_TYPE &out, Real t, Real dt) = 0;
+        virtual EqStateType &dtF(const EqStateType &in, EqStateType &out, Real t, Real dt) = 0;
 
-        FIELD_STATE_TYPE &operator()(const FIELD_STATE_TYPE &in, FIELD_STATE_TYPE &out, Real t, Real dt) {
+        EqStateType &operator()(const EqStateType &in, EqStateType &out, Real t, Real dt) {
             return this->dtF(in, out, t, dt);
         }
 

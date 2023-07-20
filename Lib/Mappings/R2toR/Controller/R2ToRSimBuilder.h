@@ -8,8 +8,13 @@
 #include "Phys/Numerics/Builder.h"
 #include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
+#include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Mappings/R2toR/Model/EquationSolver.h"
+#include "Mappings/R2toR/Model/EquationState.h"
+
 namespace R2toR::Simulation {
-    class Builder : public Base::Simulation::Builder {
+    class Builder : public BuilderMap(R2toR) {
         Str name = "";
 
     protected:
@@ -20,9 +25,9 @@ namespace R2toR::Simulation {
 
         auto buildOutputManager()       -> OutputManager * override;
 
-        auto newFunctionArbitrary()     -> void * override;
-        auto newFieldState()            -> void * override;
-        auto getSystemSolver()          -> void * override;
+        auto newFunctionArbitrary()     -> R2toR::DiscreteFunction * override;
+        auto newFieldState()            -> R2toR::EquationState    * override;
+        auto getEquationSolver()        -> R2toR::EquationSolver   * override;
     };
 }
 

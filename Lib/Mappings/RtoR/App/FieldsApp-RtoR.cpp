@@ -4,14 +4,14 @@
 
 #include "FieldsApp-RtoR.h"
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 #include "Base/Backend/GLUT/GLUTBackend.h"
 
 #include "Phys/Numerics/Program/Integrator.h"
 
 
 
-SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Base::Simulation::Builder::Ptr simBuilder)
+SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder)
         : AppBase(argc, argv), simBuilder(simBuilder)
 {
     AppBase::parseCLArgs();
@@ -22,7 +22,7 @@ auto SimulationsAppRtoR::run() -> int {
     auto *output = simBuilder->buildOutputManager();
 
     // auto program = new NumericalIntegration<RtoR::FieldState>(*simBuilder.get());
-    RtoR::FieldState *fstate = nullptr;
+    RtoR::EquationState *fstate = nullptr;
     auto program = new NumericalIntegration(*simBuilder.get(), fstate);
 
     Backend &backend = Backend::GetInstance();

@@ -47,7 +47,7 @@ namespace RtoR {
         };
 
 
-        class BoundaryCondition : public Base::BoundaryConditions<RtoR::FieldState> {
+        class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
             Real f, A;
             mutable jack_default_audio_sample_t *currentBuffer = nullptr;
             mutable size_t currentBufferLocation = 0;
@@ -56,7 +56,7 @@ namespace RtoR {
 
         public:
             BoundaryCondition(Real f, Real A);;
-            void apply(FieldState &function, Real t) const override;
+            void apply(EquationState &function, Real t) const override;
         };
 
 

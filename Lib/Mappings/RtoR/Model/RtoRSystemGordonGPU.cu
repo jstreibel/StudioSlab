@@ -33,7 +33,7 @@ struct GPUHamiltonianStepper
     }
 };
 
-FieldState &SystemGordonGPU::dtF(const FieldState &in, FieldState &out, Real t, Real dt) {
+EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out, Real t, Real dt) {
     cast(inPhi, const DiscreteFunctionGPU&, in.getPhi());
     cast(inDPhiDt, const DiscreteFunctionGPU&, in.getDPhiDt());
     cast(outPhi, DiscreteFunctionGPU&, out.getPhi());

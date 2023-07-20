@@ -28,8 +28,8 @@ auto main(int argc, const char **argv) -> int {
     selector.preParse(argc, argv);
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<Base::Simulation::Builder*>(selectedInterface->getOwner());
-    auto inputPtr = Base::Simulation::Builder::Ptr(input);
+    auto input    = dynamic_cast<Base::Simulation::VoidBuilder*>(selectedInterface->getOwner());
+    auto inputPtr = Base::Simulation::VoidBuilder::Ptr(input);
 
     auto prog = SimulationsAppRtoR(argc, argv);
 

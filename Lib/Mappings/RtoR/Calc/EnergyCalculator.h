@@ -7,11 +7,11 @@
 
 #include "Mappings/RtoR/Model/RtoRFunctionArbitrary.h"
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 namespace RtoR {
     class EnergyCalculator {
-        Base::Simulation::Builder &builder;
+        Base::Simulation::VoidBuilder &builder;
 
         RtoR::DiscreteFunction *_oEnergyDensityFunc;
         RtoR::DiscreteFunction *_oKinetic;
@@ -19,9 +19,9 @@ namespace RtoR {
         RtoR::DiscreteFunction *_oPotential;
 
     public:
-        EnergyCalculator(Base::Simulation::Builder &builder);
+        EnergyCalculator(Base::Simulation::VoidBuilder &builder);
 
-        const RtoR::DiscreteFunction &computeDensities(const RtoR::FieldState &field);
+        const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
 
         const RtoR::DiscreteFunction &getEnergy() const { return *_oEnergyDensityFunc; };
         const RtoR::DiscreteFunction &getKinetic() const { return *_oKinetic; };

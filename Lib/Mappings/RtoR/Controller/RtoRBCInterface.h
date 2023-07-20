@@ -5,10 +5,10 @@
 #ifndef FIELDS_RTORBCINTERFACE_H
 #define FIELDS_RTORBCINTERFACE_H
 
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 #include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
 
-class RtoRBCInterface : public Base::Simulation::Builder {
+class RtoRBCInterface : public Base::Simulation::VoidBuilder {
 protected:
     virtual auto buildOpenGLOutput() -> RtoR::Monitor*;
 

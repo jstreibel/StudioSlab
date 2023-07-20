@@ -25,7 +25,7 @@ class NumericalIntegration : public Program {
     BenchmarkHistogram simTimeHistogram;
     BenchmarkHistogram nonSimTimeHistogram;
 
-    Base::Simulation::Builder &simBuilder;
+    Base::Simulation::VoidBuilder &simBuilder;
     Method *stepper;
     OutputManager *outputManager;
 
@@ -38,7 +38,7 @@ class NumericalIntegration : public Program {
 
 public:
     template<typename Mapping>
-    NumericalIntegration(Base::Simulation::Builder &simBuilder, Mapping *map)
+    NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder, Mapping *map)
             : simBuilder(simBuilder)
             , stepper(simBuilder.buildStepper())
             , outputManager(simBuilder.buildOutputManager()),

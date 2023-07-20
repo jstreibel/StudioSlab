@@ -7,12 +7,12 @@
 
 
 #include "Base/App/AppBase.h"
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 class SimulationsAppRtoR : public AppBase {
-    Base::Simulation::Builder::Ptr simBuilder;
+    Base::Simulation::VoidBuilder::Ptr simBuilder;
 public:
-    SimulationsAppRtoR(int argc, const char **argv, Base::Simulation::Builder::Ptr simBuilder);
+    SimulationsAppRtoR(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder);
 
     auto run() -> int override;
 

@@ -12,7 +12,7 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        DrivenEquation::DrivenEquation(Base::Simulation::Builder &builder, R2toR::Function::Ptr drivingForce)
+        DrivenEquation::DrivenEquation(Base::Simulation::VoidBuilder &builder, R2toR::Function::Ptr drivingForce)
             : GordonSystem(builder, *(new RtoR::AbsFunction))
             , drivingForce(drivingForce)
             , drivingForceRendered(builder.getNumericParams().getN(),

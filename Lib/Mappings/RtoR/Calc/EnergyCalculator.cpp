@@ -9,7 +9,7 @@
 #define RIGHT(i) ((i)<N-1?(i)+1:0)
 //#endif
 
-RtoR::EnergyCalculator::EnergyCalculator(Base::Simulation::Builder &builder)
+RtoR::EnergyCalculator::EnergyCalculator(Base::Simulation::VoidBuilder &builder)
 : builder(builder)
 , _oEnergyDensityFunc(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
 , _oKinetic          (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
@@ -19,7 +19,7 @@ RtoR::EnergyCalculator::EnergyCalculator(Base::Simulation::Builder &builder)
 
 }
 
-auto RtoR::EnergyCalculator::computeDensities(const RtoR::FieldState &field) -> const RtoR::DiscreteFunction &{
+auto RtoR::EnergyCalculator::computeDensities(const RtoR::EquationState &field) -> const RtoR::DiscreteFunction &{
     auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();

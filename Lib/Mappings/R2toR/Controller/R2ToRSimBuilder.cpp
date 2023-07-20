@@ -21,7 +21,7 @@
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
 R2toR::Simulation::Builder::Builder(Str name, Str description)
-: Base::Simulation::Builder(name, description) {
+: BuilderMap(R2toR)(name, description) {
 
 }
 
@@ -106,7 +106,7 @@ OutputManager *R2toR::Simulation::Builder::buildOutputManager() {
 
 }
 
-void *R2toR::Simulation::Builder::newFunctionArbitrary() {
+R2toR::DiscreteFunction *R2toR::Simulation::Builder::newFunctionArbitrary() {
     const size_t N = numericParams.getN();
     const floatt xLeft = numericParams.getxLeft();
 
@@ -121,12 +121,12 @@ void *R2toR::Simulation::Builder::newFunctionArbitrary() {
     throw "Error while instantiating Field: device not recognized.";
 }
 
-void *R2toR::Simulation::Builder::newFieldState() {
+R2toR::EquationState *R2toR::Simulation::Builder::newFieldState() {
     return new R2toR::EquationState((R2toR::DiscreteFunction*)this->newFunctionArbitrary(),
                                     (R2toR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
-void *R2toR::Simulation::Builder::getSystemSolver() {
+R2toR::EquationSolver *R2toR::Simulation::Builder::getEquationSolver() {
     RtoR::Function *thePotential = new RtoR::AbsFunction;
     return new Phys::Gordon::GordonSystem<R2toR::EquationState>(*this, *thePotential);
 }

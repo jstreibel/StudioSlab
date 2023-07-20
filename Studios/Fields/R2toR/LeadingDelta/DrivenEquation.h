@@ -22,7 +22,7 @@ namespace R2toR {
             R2toR::FunctionArbitraryGPU drivingForceRendered;
 
         public:
-            explicit DrivenEquation(Base::Simulation::Builder &builder, R2toR::Function::Ptr drivingForce);
+            explicit DrivenEquation(Base::Simulation::VoidBuilder &builder, R2toR::Function::Ptr drivingForce);
 
             auto dtF(const EquationState &in, EquationState &out, Real t, Real dt) -> EquationState & override;
         };

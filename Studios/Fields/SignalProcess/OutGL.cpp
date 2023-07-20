@@ -151,7 +151,7 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
 void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo, const NumericParams &params) {
     // OutputOpenGL::_out(outInfo);
 
-    auto field = outInfo.getEqStateData<RtoR::FieldState>();
+    auto field = outInfo.getEqStateData<RtoR::EquationState>();
     __t = outInfo.getSimTime();
     probingData.push_back(field->getPhi()(jackProbeLocation));
     gotNewData = true;
@@ -159,7 +159,7 @@ void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo, const NumericParams 
     if(!outInfo.getSteps()%100) {
         auto newField =
                 static_cast<RtoR::ArbitraryFunction *>
-                (outInfo.getEqStateData<RtoR::FieldState>()->getPhi().Clone());
+                (outInfo.getEqStateData<RtoR::EquationState>()->getPhi().Clone());
         history.push_back(newField);
     }
 }
@@ -340,7 +340,7 @@ void RtoR::Signal::OutGL::draw() {
     // *************************** FIELD ***********************************
     if(gotNewData || 1)
     {
-        const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
+        const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
         if (&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
         mFieldsGraph.clearFunctions();

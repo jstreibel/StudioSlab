@@ -3,7 +3,7 @@
 
 #include "Phys/DifferentialEquations/DifferentialEquation.h"
 
-#include "Phys/Numerics/Builder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 
 
@@ -19,7 +19,7 @@ namespace Phys {
             typedef Base::Function<FType(FunctionType::OutCategory),
                     FType(FunctionType::OutCategory)> TargetToTargetFunction;
         public:
-            explicit GordonSystem(Base::Simulation::Builder &builder, TargetToTargetFunction &potential)
+            explicit GordonSystem(NumericParams &params, TargetToTargetFunction &potential)
                     : laplacian(*builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
                       dV_out(   *builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
                       V(potential), dVDPhi(potential.diff(0)) {}

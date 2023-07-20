@@ -9,7 +9,7 @@
 #include "Base/Backend/Backend.h"
 
 
-R2toR::App::Simulations::Simulations(int argc, const char **argv, Base::Simulation::Builder::Ptr simBuilder)
+R2toR::App::Simulations::Simulations(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder)
         : AppBase(argc, argv), builder(simBuilder)
 {
     parseCLArgs();

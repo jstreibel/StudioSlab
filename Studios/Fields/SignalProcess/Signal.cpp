@@ -41,7 +41,7 @@ RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
     jackProbeLocation = xLeft+delta;
 }
 void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket, const NumericParams &params) {
-    Function &field = outputPacket.getEqStateData<RtoR::FieldState>()->getPhi();
+    Function &field = outputPacket.getEqStateData<RtoR::EquationState>()->getPhi();
 
     auto measure = field(jackProbeLocation);
 
@@ -90,7 +90,7 @@ OutputManager *RtoR::Signal::OutputBuilder::build(Str outputFileName) {
  *            \/                     \/      \/      \/          \/                 \/              \/      \/                             \/
  */
 RtoR::Signal::BoundaryCondition::BoundaryCondition(Real f, Real A) : f(f), A(A) { }
-void RtoR::Signal::BoundaryCondition::apply(RtoR::FieldState &function, Real t) const {
+void RtoR::Signal::BoundaryCondition::apply(RtoR::EquationState &function, Real t) const {
     auto jackServer = JackServer::GetInstance();
 
     if(bufferNumber < jackServer->getInputBufferUpdateCount()){
