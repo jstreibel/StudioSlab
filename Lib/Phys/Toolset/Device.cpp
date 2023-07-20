@@ -7,7 +7,7 @@
 #include "Common/Log/Log.h"
 
 
-Device::Device() : InterfaceOwner("Device options", 10, true)
+Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)
 {
     interface->addParameters(
     {

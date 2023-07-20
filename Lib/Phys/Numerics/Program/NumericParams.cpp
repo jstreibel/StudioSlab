@@ -3,7 +3,7 @@
 #include "Common/Log/Log.h"
 
 
-NumericParams::NumericParams(): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, true)
+NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
 {
     interface->addParameters({N, L, xCenter, t, r, dimMode, h});
 

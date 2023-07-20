@@ -13,13 +13,20 @@ case (N): \
 stepper = new STEPPER_TYPE<N, EqStateType>(dPhi); \
 break;
 
+#define DONT_REGISTER false
+
 Base::Simulation::Builder::Builder(Str name, Str generalDescription)
-: InterfaceOwner(name, 100, false)
+: InterfaceOwner(name, 100, DONT_REGISTER)
+, numericParams(DONT_REGISTER)
+, dev(DONT_REGISTER)
 , prefix(name)
 {
     interface->addParameters({&noHistoryToFile, &outputResolution,
                               &VisualMonitor, &VisualMonitor_startPaused, &OpenGLMonitor_stepsPerIdleCall
                                      /*&takeSnapshot, &snapshotTime, */ });
+
+    interface->addSubInterface(numericParams.getInterface());
+    interface->addSubInterface(dev.getInterface());
 
     Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
@@ -87,6 +94,8 @@ auto Base::Simulation::Builder::buildStepper() -> Method * {
             }
         } else throw "Unknown integration method.";
          */
+
+    throw "Bad builder";
 }
 
 

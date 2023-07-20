@@ -18,7 +18,7 @@ class Device : public InterfaceOwner
     IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "th,threads", "Number of threads, in case of CPU usage.");
 
 public:
-    Device();
+    Device(bool doRegister=true);
 
     auto get_nThreads() const -> unsigned int {return **nThreads;}
 

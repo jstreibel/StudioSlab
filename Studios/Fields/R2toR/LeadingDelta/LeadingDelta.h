@@ -41,6 +41,10 @@ namespace R2toR {
             RealParameter      deltaDuration    = RealParameter(-1, "delta_duration",
                                                             "The duration of regularized delta. Negative "
                                                             "values mean forever;");
+
+            RealParameter      phiMin           = RealParameter(-1, "min", "Graphic display initial phi minimum value.");
+            RealParameter      phiMax           = RealParameter(+1, "max", "Graphic display initial phi maximum value.");
+
             RingDeltaFunc::Ptr drivingFunc;
             BoundaryCondition boundaries;
 
@@ -50,10 +54,10 @@ namespace R2toR {
         public:
             Builder();
 
-            auto notifyCLArgsSetupFinished()               -> void         override;
-            auto getBoundary()          -> void * override;
+            auto notifyCLArgsSetupFinished() -> void   override;
+            auto getBoundary()               -> void * override;
 
-            auto getSystemSolver() -> void * override;
+            auto getSystemSolver()           -> void * override;
 
         };
     }

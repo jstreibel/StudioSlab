@@ -15,21 +15,7 @@
 
 /* DEFAULTS */
 
-struct NumericParams : public InterfaceOwner {
-	NumericParams();
-
-    auto getn() const -> PosInt;
-    auto getN() const -> PosInt;
-    auto getL() const -> Real;
-    auto getxLeft() const -> Real;
-	auto getxMax() const -> Real;
-    auto gett() const -> Real;
-    auto getr() const -> Real;
-    auto geth() const -> Real;
-    auto getdt() const -> Real;
-
-    void sett(Real tMax) const;
-
+class NumericParams : public InterfaceOwner {
 	IntegerParameter::Ptr 	N       = IntegerParameter  ::New(1024, "N", "Discretization of space dimensions. "
 													 "Has to be POT for GPU");
     RealParameter::Ptr      L       = RealParameter     ::New(10., "L", "Space length");
@@ -52,11 +38,24 @@ struct NumericParams : public InterfaceOwner {
 	Real dt;
 
 public:
+	NumericParams(bool doRegister=true);
 	NumericParams(const NumericParams&) = delete;
+
+    auto getn() const -> PosInt;
+    auto getN() const -> PosInt;
+    auto getL() const -> Real;
+    auto getxLeft() const -> Real;
+	auto getxMax() const -> Real;
+    auto gett() const -> Real;
+    auto getr() const -> Real;
+    auto geth() const -> Real;
+    auto getdt() const -> Real;
+
+    void sett(Real tMax) const;
 
 	auto notifyCLArgsSetupFinished() -> void override;
 
-} __attribute__((aligned(64)));
+};
 
 #endif /* PARAMS_H_ */
 

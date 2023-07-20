@@ -16,8 +16,6 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
 }
 
 void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
-    auto size = anInterface->parameters.size();
-
     Log::Info() << "InterfaceManager registering interface \"" << anInterface->getName() << "\" [ "
                 << "priority " << anInterface->priority << " ]" << Log::Flush;
 
