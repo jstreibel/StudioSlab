@@ -8,13 +8,13 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AbsFunction : public Function {
+    class AbsFunction : public FunctionT {
     public:
         Real operator()(Real x) const override;
 
         Ptr diff(int n) const override;
 
-        [[nodiscard]] Function<Real, Real> *Clone() const override;
+        [[nodiscard]] FunctionT<Real, Real> *Clone() const override;
     };
 }
 

@@ -1,7 +1,7 @@
 #ifndef STEPPER_H
 #define STEPPER_H
 
-class Method{
+class Method {
 public:
     Method() = default;
     virtual ~Method() = default;

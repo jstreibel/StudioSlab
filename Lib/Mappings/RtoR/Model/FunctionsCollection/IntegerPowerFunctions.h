@@ -9,15 +9,15 @@
 
 
 namespace RtoR {
-    class HarmonicDerivative : public Function {
+    class HarmonicDerivative : public FunctionT {
     public:
         HarmonicDerivative() = default;
         Real operator()(Real x) const override { return x; }
 
-        Function<Real, Real> *Clone() const override { return new HarmonicDerivative(); }
+        FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(); }
     };
 
-    class HarmonicPotential : public Function {
+    class HarmonicPotential : public FunctionT {
     public:
         HarmonicPotential() = default;
 
@@ -29,12 +29,12 @@ namespace RtoR {
             return Ptr(new HarmonicDerivative());
         }
 
-        Function<Real, Real> *Clone() const override {
+        FunctionT<Real, Real> *Clone() const override {
             return new HarmonicPotential();
         }
     };
 
-    class Square : public Function {
+    class Square : public FunctionT {
     public:
         Square() = default;
 

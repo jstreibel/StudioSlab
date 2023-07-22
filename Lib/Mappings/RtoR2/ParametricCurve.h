@@ -11,7 +11,7 @@
 #include <memory>
 
 namespace RtoR2 {
-    class ParametricCurve : public Base::Function<Real, Real2D> {
+    class ParametricCurve : public Base::FunctionT<Real, Real2D> {
     public:
         typedef std::shared_ptr<ParametricCurve> Ptr;
 

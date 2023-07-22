@@ -5,7 +5,7 @@
 
 #include "Phys/Numerics/Output/OutputManager.h"
 
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 

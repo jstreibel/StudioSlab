@@ -10,7 +10,7 @@
 #include "Phys/Toolset/NativeFunctions.h"
 
 namespace RtoR {
-    class RegularDiracDelta : public Function {
+    class RegularDiracDelta : public FunctionT {
     public:
 
         enum Regularization {
@@ -43,7 +43,7 @@ namespace RtoR {
             return a * delta(x, eps);
         }
 
-        auto Clone() const -> Function<Real, Real> * override { return new RegularDiracDelta(eps, a, reg, tx); }
+        auto Clone() const -> FunctionT<Real, Real> * override { return new RegularDiracDelta(eps, a, reg, tx); }
 
     private:
         Real (*delta)(Real, Real);

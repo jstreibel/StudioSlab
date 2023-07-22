@@ -15,7 +15,7 @@
 
 #include "Mappings/RtoR/View/Graphics/RtoROutGLStatistic.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/OutputManager.h"
@@ -131,7 +131,7 @@ void *RtoRBCInterface::getSystemSolver() {
     thePotential = new RtoR::NullFunction;
     //else throw "Other potentials not implemented";
 
-    return new Phys::Gordon::GordonSystem<RtoR::EquationState>(*this, *thePotential);
+    return new Phys::Gordon::GordonSolverT<RtoR::EquationState>(*this, *thePotential);
 }
 
 auto RtoRBCInterface::buildOpenGLOutput() -> RtoR::Monitor * {

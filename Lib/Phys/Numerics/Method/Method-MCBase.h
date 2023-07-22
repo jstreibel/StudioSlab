@@ -10,7 +10,7 @@
 #include "Method.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
@@ -21,7 +21,7 @@ public:
 
     StepperMontecarlo(Base::Simulation::VoidBuilder &builder)
     : Method()
-    , H(*(Base::DifferentialEquation<FIELD_STATE_TYPE>*) builder.getSystemSolver())
+    , H(*(Base::EquationSolverT<FIELD_STATE_TYPE>*) builder.getSystemSolver())
     , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
     , _phi(    (FIELD_STATE_TYPE*)builder.newFieldState())
     , _phiTemp((FIELD_STATE_TYPE*)builder.newFieldState()) {
@@ -60,7 +60,7 @@ public:
     }
 
 private:
-    Base::DifferentialEquation<FIELD_STATE_TYPE> &H;
+    Base::EquationSolverT<FIELD_STATE_TYPE> &H;
 
     const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
 

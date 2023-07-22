@@ -114,7 +114,7 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
 
 
 Base::DiscreteFunction<Real2D, Real> &
-FunctionArbitraryCPU::Apply(const Function<Real, Real> &func,
+FunctionArbitraryCPU::Apply(const FunctionT<Real, Real> &func,
                             Base::DiscreteFunction<Real2D, Real> &out) const {
     cast(fOut, DiscreteFunction &, out)
 

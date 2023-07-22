@@ -10,7 +10,7 @@
 #include "RtoRFunction.h"
 
 namespace RtoR {
-    class FuncArbResizable : public Base::Function<Real, Real> {
+    class FuncArbResizable : public Base::FunctionT<Real, Real> {
         Real yMin=1, yMax=-1;
     public:
         auto getYMin() const -> Real;

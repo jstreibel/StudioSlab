@@ -7,12 +7,12 @@
 
 #include "RtoRFieldState.h"
 
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
 #include "Common/DeviceConfig.h"
 
 namespace RtoR {
 
-    class SystemGordonGPU : Base::DifferentialEquation<EquationState> {
+    class SystemGordonGPU : Base::EquationSolverT<EquationState> {
     public:
         SystemGordonGPU(PosInt N);
         EquationState &dtF(const EquationState &in, EquationState &out, Real t, Real dt) override;

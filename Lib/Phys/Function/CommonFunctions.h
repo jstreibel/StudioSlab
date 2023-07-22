@@ -12,13 +12,13 @@ namespace Base {
 
     template<class OutputCategory>
     struct Functions {
-        typedef Function<Real, OutputCategory> Function1D;
+        typedef FunctionT<Real, OutputCategory> Function1D;
         typedef SummableFunction<Real, OutputCategory> Function1DSummable;
 
-        typedef Function<Real2D, OutputCategory> Function2D;
+        typedef FunctionT<Real2D, OutputCategory> Function2D;
         typedef SummableFunction<Real, OutputCategory> Function2DSummable;
 
-        typedef Function<Real3D, OutputCategory> Function3D;
+        typedef FunctionT<Real3D, OutputCategory> Function3D;
         // typedef Function<SU2<3>, OutputCategory> Function3D;
         // etc.
     };

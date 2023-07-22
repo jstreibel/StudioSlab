@@ -14,7 +14,7 @@
 
 namespace R2toR {
 
-    class FunctionAzimuthalSymmetry : public Function {
+    class FunctionAzimuthalSymmetry : public FunctionT {
     public:
         typedef std::shared_ptr<FunctionAzimuthalSymmetry> Ptr;
 

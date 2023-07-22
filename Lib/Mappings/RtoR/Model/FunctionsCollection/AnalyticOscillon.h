@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AnalyticOscillon : public Function {
+    class AnalyticOscillon : public FunctionT {
     public:
         enum Bit {
             phi, dPhiDt
@@ -21,7 +21,7 @@ namespace RtoR {
 
         Real operator()(Real x) const override;
 
-        Function<Real, Real> *Clone() const override;
+        FunctionT<Real, Real> *Clone() const override;
 
         AnalyticOscillon &swap();
 

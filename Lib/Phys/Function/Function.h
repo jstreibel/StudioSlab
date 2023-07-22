@@ -21,12 +21,17 @@ namespace Base {
     template<class InputCategory, class OutputCategory>
     class DiscreteFunction;
 
-    template<class InputCategory, class OutputCategory>
     class Function {
     public:
-        typedef std::shared_ptr<Function<InputCategory, OutputCategory>> Ptr;
+        virtual Category& operator()(Category&){ };
+    };
 
-        typedef Function<InputCategory, OutputCategory> Type;
+    template<class InputCategory, class OutputCategory>
+    class FunctionT : public Function {
+    public:
+        typedef std::shared_ptr<FunctionT<InputCategory, OutputCategory>> Ptr;
+
+        typedef FunctionT<InputCategory, OutputCategory> Type;
         typedef InputCategory InCategory;
         typedef OutputCategory OutCategory;
 
@@ -37,18 +42,18 @@ namespace Base {
 
         /** If the function derived from this class has a GPUFriendly version, then it should provide it at instantiation
          * time, because a single copy of this function must be kept and be provided when needed. */
-        explicit Function(const GPUFriendly *gpuFriendlyVersion = nullptr,
-                          bool isDiscrete = false)
+        explicit FunctionT(const GPUFriendly *gpuFriendlyVersion = nullptr,
+                           bool isDiscrete = false)
                           : myGPUFriendlyVersion(*gpuFriendlyVersion), discrete(isDiscrete)
                           {     }
 
-        Function(const Function &toCopy)
+        FunctionT(const FunctionT &toCopy)
                           : myGPUFriendlyVersion(toCopy.getGPUFriendlyVersion()),
                           discrete(toCopy.discrete)
                           {     }
 
     public:
-        virtual ~Function() = default;
+        virtual ~FunctionT() = default;
 
         virtual OutputCategory operator()(InputCategory x) const = 0;
 
@@ -68,7 +73,7 @@ namespace Base {
          * @return The value of the integral.
          */
         virtual auto integrate()    const -> OutputCategory { throw "Function::integrate not implemented."; }
-        virtual auto Clone()        const -> Function *     { throw "Function::Clone() not implemented."; }
+        virtual auto Clone()        const -> FunctionT *     { throw "Function::Clone() not implemented."; }
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */

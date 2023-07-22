@@ -12,7 +12,7 @@
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 #include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
@@ -20,12 +20,12 @@
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
-R2toR::Simulation::Builder::Builder(Str name, Str description)
-: BuilderMap(R2toR)(name, description) {
+R2toR::Simulation::GordonBuilder::GordonBuilder(Str name, Str description)
+: Base::Simulation::Builder<R2toR::EquationSolver>(name, description) {
 
 }
 
-OutputManager *R2toR::Simulation::Builder::buildOutputManager() {
+OutputManager *R2toR::Simulation::GordonBuilder::buildOutputManager() {
     auto outputFileName = this->toString();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
@@ -106,7 +106,7 @@ OutputManager *R2toR::Simulation::Builder::buildOutputManager() {
 
 }
 
-R2toR::DiscreteFunction *R2toR::Simulation::Builder::newFunctionArbitrary() {
+void *R2toR::Simulation::GordonBuilder::newFunctionArbitrary() {
     const size_t N = numericParams.getN();
     const floatt xLeft = numericParams.getxLeft();
 
@@ -121,14 +121,18 @@ R2toR::DiscreteFunction *R2toR::Simulation::Builder::newFunctionArbitrary() {
     throw "Error while instantiating Field: device not recognized.";
 }
 
-R2toR::EquationState *R2toR::Simulation::Builder::newFieldState() {
+void *R2toR::Simulation::GordonBuilder::getInitialState() {
     return new R2toR::EquationState((R2toR::DiscreteFunction*)this->newFunctionArbitrary(),
                                     (R2toR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
-R2toR::EquationSolver *R2toR::Simulation::Builder::getEquationSolver() {
+void *R2toR::Simulation::GordonBuilder::getEquationSolver() {
     RtoR::Function *thePotential = new RtoR::AbsFunction;
-    return new Phys::Gordon::GordonSystem<R2toR::EquationState>(*this, *thePotential);
+
+    // return new Phys::Gordon::GordonSystem<R2toR::EquationState>(*this, *thePotential);
+    auto solver = new Phys::Gordon::GordonSolverT<EqState>(*getInitialState(), *thePotential);
+
+    return
 }
 
 auto R2toR::Simulation::Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

@@ -17,7 +17,7 @@ namespace R2toR {
         const Real xMin, xMax, yMin, yMax;
     };
 
-    typedef Base::Function<Real, Real> FuncBase;
+    typedef Base::FunctionT<Real, Real> FuncBase;
     typedef Base::DiscreteFunction<Real2D, Real> DiscrBase;
 
     class DiscreteFunction : public Base::DiscreteFunction<Real2D,Real> {

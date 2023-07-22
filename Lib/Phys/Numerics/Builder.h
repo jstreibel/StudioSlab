@@ -12,15 +12,14 @@
 
 #include "Base/Controller/Interface/Interface.h"
 #include "Base/Controller/Interface/InterfaceOwner.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Phys/DifferentialEquations/BoundaryConditions.h"
 
 #define BUILDER_IMPL
 
-#define BuilderMap(Mapping) Base::Simulation::Builder<Mapping::BoundaryCondition, Mapping::DiscreteFunction, Mapping::EquationState>
-
 namespace Base::Simulation {
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
+    template<typename EquationSolverType>
     class Builder : public InterfaceOwner {
     protected:
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
@@ -46,16 +45,21 @@ namespace Base::Simulation {
         Device dev;
 
     public:
-        virtual ~Builder() {}
-
         typedef std::shared_ptr<Builder> Ptr;
 
-        virtual auto getBoundary()                -> BCType * = 0;
-        virtual auto buildOutputManager()         -> OutputManager              * = 0;
+        using EqSolver          = EquationSolverType;
+        using EqState           = EqSolver::EqState;
+        using BoundaryCondition = Base::BoundaryConditions<EqState>;
+        // using DiscrFunc = EqSolver::DiscreteFunctionType;
 
-        virtual auto newFunctionArbitrary()       -> DiscrFuncType  * = 0;
-        virtual auto newFieldState()              -> EqStateType     * = 0;
-        virtual auto getEquationSolver()          -> Base::DifferentialEquation<EqStateType> * = 0;
+        virtual ~Builder() {}
+
+        virtual auto buildOutputManager()         -> OutputManager * = 0;
+
+        virtual auto getBoundary()                -> BoundaryCondition * = 0;
+        virtual auto getInitialState()            -> EqState       * = 0;
+        virtual auto getEquationSolver()          -> EqSolver      * = 0;
+        // virtual auto newFunctionArbitrary()       -> DiscrFuncType  * = 0;
 
         virtual auto getMethod()                  -> Method*;
 
@@ -83,8 +87,8 @@ break;
 
 namespace Base::Simulation {
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
-    Builder<BCType, DiscrFuncType, EqStateType>::Builder(Str name, Str generalDescription)
+    template<typename SolverType>
+    Builder<SolverType>::Builder(Str name, Str generalDescription)
             : InterfaceOwner(name, 100, DONT_REGISTER)
             , numericParams(DONT_REGISTER)
             , dev(DONT_REGISTER)
@@ -101,18 +105,18 @@ namespace Base::Simulation {
                     << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
     }
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
-    auto Builder<BCType, DiscrFuncType, EqStateType>::getNumericParams() const -> const NumericParams & {
+    template<typename SolverType>
+    auto Builder<SolverType>::getNumericParams() const -> const NumericParams & {
         return numericParams;
     }
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
-    auto Builder<BCType, DiscrFuncType, EqStateType>::getDevice() const -> const Device & {
+    template<typename SolverType>
+    auto Builder<SolverType>::getDevice() const -> const Device & {
         return dev;
     }
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
-    auto Builder<BCType, DiscrFuncType, EqStateType>::toString() const -> Str {
+    template<typename SolverType>
+    auto Builder<SolverType>::toString() const -> Str {
         auto strParams = interface->toString();
 
         auto str = prefix + "-" + strParams;
@@ -120,8 +124,8 @@ namespace Base::Simulation {
         return str;
     }
 
-    template<typename BCType, typename DiscrFuncType, typename EqStateType>
-    auto Builder<BCType, DiscrFuncType, EqStateType>::getMethod() -> Method * {
+    template<typename SolverType>
+    auto Builder<SolverType>::getMethod() -> Method * {
         /*
             if(theMethod==RK4){
                 switch (numThreads) {

@@ -13,7 +13,7 @@ namespace R2toR {
 
 
         DrivenEquation::DrivenEquation(Base::Simulation::VoidBuilder &builder, R2toR::Function::Ptr drivingForce)
-            : GordonSystem(builder, *(new RtoR::AbsFunction))
+            : GordonSolverT(builder, *(new RtoR::AbsFunction))
             , drivingForce(drivingForce)
             , drivingForceRendered(builder.getNumericParams().getN(),
                                    builder.getNumericParams().getxLeft(),

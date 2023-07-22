@@ -5,16 +5,16 @@
 #ifndef V_SHAPE_FIELDSTATERTOR_H
 #define V_SHAPE_FIELDSTATERTOR_H
 
-#include "Phys/DifferentialEquations/2nd-Order/EquationState.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonStateT.h"
 #include "RtoRFunctionArbitrary.h"
 
 namespace RtoR {
 
-    class EquationState : public Base::EquationState<DiscreteFunction> {
+    class EquationState : public Base::EquationStateT<DiscreteFunction> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationState<DiscreteFunction>(phi, dPhiDt) {}
+        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationStateT<DiscreteFunction>(phi, dPhiDt) {}
 
     public:
         void outputPhi(OStream &out, Str separator) const override {

@@ -11,7 +11,7 @@
 #include "Method.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
 #include "Phys/Numerics/VoidBuilder.h"
 
 #include <cstring> // contains memcpy
@@ -23,7 +23,7 @@ public:
 
     StepperRK4(Base::Simulation::VoidBuilder &builder)
     : Method()
-    , H       (*(      Base::DifferentialEquation<STATE_TYPE>*) builder.getSystemSolver() )
+    , H       (*(      Base::EquationSolverT<STATE_TYPE>*) builder.getSystemSolver() )
     , dPhi    ( (const Base::BoundaryConditions  <STATE_TYPE>*) builder.getBoundary() )
     , _phi    ( builder.NewFieldState<STATE_TYPE*>() )
     , _k1     ( builder.NewFieldState<STATE_TYPE*>() )
@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    Base::DifferentialEquation<STATE_TYPE> &H;
+    Base::EquationSolverT<STATE_TYPE> &H;
 
     const Base::BoundaryConditions<STATE_TYPE> *dPhi;
 

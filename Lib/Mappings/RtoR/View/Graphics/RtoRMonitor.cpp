@@ -4,7 +4,7 @@
 
 #include "Common/Log/Log.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/FunctionRenderer.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"

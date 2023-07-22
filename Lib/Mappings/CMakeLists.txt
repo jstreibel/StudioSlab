@@ -99,7 +99,7 @@ set ( R2TOR_SOURCES
 
 		#R2toR/Controller/R2ToR_SimulationBuilder.cpp
 		#R2toR/Controller/R2ToRInputRadialShockwave.cpp
-		R2toR/Controller/R2ToRInputShockwave.cpp
+		R2toR/Controller/__archive__/R2ToRInputShockwave.cpp
 		#R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
 
 		R2toR/Model/Energy.cpp

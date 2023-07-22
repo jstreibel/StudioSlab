@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 #define STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
 #include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"

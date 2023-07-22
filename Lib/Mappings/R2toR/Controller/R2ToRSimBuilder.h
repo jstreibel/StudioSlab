@@ -14,7 +14,7 @@
 #include "Mappings/R2toR/Model/EquationState.h"
 
 namespace R2toR::Simulation {
-    class Builder : public BuilderMap(R2toR) {
+class Builder : public Base::Simulation::VoidBuilder {
         Str name = "";
 
     protected:
@@ -25,9 +25,9 @@ namespace R2toR::Simulation {
 
         auto buildOutputManager()       -> OutputManager * override;
 
-        auto newFunctionArbitrary()     -> R2toR::DiscreteFunction * override;
-        auto newFieldState()            -> R2toR::EquationState    * override;
-        auto getEquationSolver()        -> R2toR::EquationSolver   * override;
+        auto newFunctionArbitrary()     -> void * override;
+        auto newFieldState()          -> void * override;
+        auto getSystemSolver()        -> void * override;
     };
 }
 

@@ -11,9 +11,9 @@
 namespace Base {
 
     template<class InputCategory, class OutputCategory>
-    class SummableFunction : public Function<InputCategory, OutputCategory> {
+    class SummableFunction : public FunctionT<InputCategory, OutputCategory> {
     private:
-        typedef Function<InputCategory, OutputCategory> MyBase;
+        typedef FunctionT<InputCategory, OutputCategory> MyBase;
 
     public:
         SummableFunction() = default;
@@ -27,7 +27,7 @@ namespace Base {
             (*this += func1) += func2;
         }
 
-        Function<InputCategory, OutputCategory> *Clone() const override { return new SummableFunction(*this); }
+        FunctionT<InputCategory, OutputCategory> *Clone() const override { return new SummableFunction(*this); }
 
         SummableFunction &operator+=(const MyBase &func) {
             funcs.push_back(func.Clone());
@@ -59,8 +59,8 @@ namespace Base {
 
     template<class InCategory, class OutCategory>
     SummableFunction<InCategory, OutCategory>
-    operator+(const Function<InCategory, OutCategory> &func1,
-              const Function<InCategory, OutCategory> &func2) {
+    operator+(const FunctionT<InCategory, OutCategory> &func1,
+              const FunctionT<InCategory, OutCategory> &func2) {
         return SummableFunction<InCategory, OutCategory>(func1, func2);
     }
 

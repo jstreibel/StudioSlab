@@ -56,7 +56,8 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/ByteData.cpp
 		Numerics/Output/Util/FieldStateOutputInterface.cpp
 		Numerics/Output/Util/record-interval.cpp
-		)
+		DifferentialEquations/EquationState.h
+		DifferentialEquations/2nd-Order/GordonState.h DifferentialEquations/2nd-Order/GordonSystem.cpp DifferentialEquations/2nd-Order/GordonSystem.h)
 
 
 set ( THERMO_SOURCES

@@ -7,15 +7,15 @@
 
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 #include "RingDeltaFunc.h"
 
 namespace R2toR {
 
     namespace LeadingDelta {
 
-        typedef Phys::Gordon::GordonSystem<EquationState> DiffEq;
+        typedef Phys::Gordon::GordonSolverT<EquationState> DiffEq;
 
         class DrivenEquation : public DiffEq {
             R2toR::Function::Ptr drivingForce;

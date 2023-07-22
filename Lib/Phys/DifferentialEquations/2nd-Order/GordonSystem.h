@@ -1,68 +1,38 @@
-#ifndef HamiltonCPU_H
-#define HamiltonCPU_H
+//
+// Created by joao on 7/21/23.
+//
 
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#ifndef STUDIOSLAB_GORDONSYSTEM_H
+#define STUDIOSLAB_GORDONSYSTEM_H
 
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "GordonState.h"
 
+namespace Phys::Gordon {
 
+    class GordonSystem : public Base::EquationSolver {
+        typedef Simulation::EquationState SubState;
+    protected:
+        const GordonState &phi_0;
+        SubState &laplacian, &dV_out;
+        Base::Function dVDPhi;
 
-#define FType(a) typename FieldState::a
+    public:
+        GordonSystem(const NumericParams &params) : Base::EquationSolver(params) {
 
-namespace Phys {
+        }
 
-    namespace Gordon {
+        virtual EqState &applyBC(EqState &fieldStateOut, Real t, Real dt) {
+            if(t==0) fieldStateOut.set(phi_0);
 
-        template<class FieldState>
-        class GordonSystem : public Base::DifferentialEquation<FieldState> {
-        protected:
-            typedef Base::Function<FType(FunctionType::OutCategory),
-                    FType(FunctionType::OutCategory)> TargetToTargetFunction;
-        public:
-            explicit GordonSystem(NumericParams &params, TargetToTargetFunction &potential)
-                    : laplacian(*builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
-                      dV_out(   *builder.NewFunctionArbitrary<FType(FunctionArbitraryType)>()),
-                      V(potential), dVDPhi(potential.diff(0)) {}
+            return fieldStateOut;
+        }
 
-            ~GordonSystem() override {
-                delete &laplacian;
-                delete &dV_out;
-                delete &V;
-            }
-
-
-            FieldState &
-            dtF(const FieldState &fieldStateIn, FieldState &fieldStateOut, Real t, Real dt) override {
-                const auto &iPhi = fieldStateIn.getPhi();
-                const auto &iDPhi = fieldStateIn.getDPhiDt();
-                auto &oPhi = fieldStateOut.getPhi();
-                auto &oDPhi = fieldStateOut.getDPhiDt();
-
-                // Eq 1
-                { oPhi.SetArb(iDPhi) *= dt; }
-
-                // Eq 2
-                {
-                    iPhi.Laplacian(laplacian);
-                    iPhi.Apply(*dVDPhi, dV_out);
-
-                    oDPhi.StoreSubtraction(laplacian, dV_out) *= dt;
-                }
-
-                return fieldStateOut;
-            }
-
-            static bool isDissipating() { return false; }
-
-        protected:
-            FType(FunctionArbitraryType) &laplacian, &dV_out;
-            TargetToTargetFunction &V;
-            TargetToTargetFunction::Ptr dVDPhi;
-        };
-
-    }
+        EqState &dtF(const EqState &in, EqState &out, Real t, Real dt) override {
+            return <#initializer#>;
+        }
+    };
 
 }
 
-
-#endif // HamiltonCPU_H
+#endif //STUDIOSLAB_GORDONSYSTEM_H

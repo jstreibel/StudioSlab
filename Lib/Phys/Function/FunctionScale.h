@@ -10,15 +10,15 @@
 namespace Base {
 
     template<class InputCategory, class OutputCategory>
-    class Scale : public Function<InputCategory, OutputCategory> {
-        typedef Function<InputCategory, OutputCategory> MyBase;
+    class Scale : public FunctionT<InputCategory, OutputCategory> {
+        typedef FunctionT<InputCategory, OutputCategory> MyBase;
 
         const MyBase &A;
         Real scale;
 
     public:
         Scale(const MyBase &a, Real scale)
-                : Function<InputCategory, OutputCategory>(&a.getGPUFriendlyVersion(), a.isDiscrete()),
+                : FunctionT<InputCategory, OutputCategory>(&a.getGPUFriendlyVersion(), a.isDiscrete()),
                   A(a), scale(scale) { }
 
         Scale(const Scale &toCopy) : Scale(toCopy.A, toCopy.scale) { }

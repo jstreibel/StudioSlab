@@ -15,11 +15,11 @@ namespace Base {
 
 
     template<class PosSpaceType, class TargetSpaceType>
-    class DiscreteFunction : public Function<PosSpaceType, TargetSpaceType>,
+    class DiscreteFunction : public FunctionT<PosSpaceType, TargetSpaceType>,
                              public Utils::ArithmeticOpsInterface<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
 
     public:
-        typedef Function<PosSpaceType, TargetSpaceType> MyBase;
+        typedef FunctionT<PosSpaceType, TargetSpaceType> MyBase;
         typedef std::shared_ptr<DiscreteFunction<PosSpaceType,TargetSpaceType>> Ptr;
 
         DiscreteFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true) {
@@ -64,7 +64,7 @@ namespace Base {
 
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
-        virtual DiscreteFunction &Apply(const Function<TargetSpaceType, TargetSpaceType> &func,
+        virtual DiscreteFunction &Apply(const FunctionT<TargetSpaceType, TargetSpaceType> &func,
                                         DiscreteFunction &out) const = 0;
 
         auto Add(const DiscreteFunction<PosSpaceType, TargetSpaceType> &toi) ->

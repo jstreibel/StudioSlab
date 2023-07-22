@@ -24,7 +24,7 @@ namespace Utils {
         OPS_TYPE &operator+=(const OPS_TYPE &aoi) { return this->Add(aoi); }
         OPS_TYPE &operator-=(const OPS_TYPE &aoi) { return this->Subtract(aoi); }
 
-        OPS_TYPE &operator*=(Real a) { return this->Multiply(a); }
+        virtual OPS_TYPE &operator*=(Real a) { return this->Multiply(a); }
 
 
     };

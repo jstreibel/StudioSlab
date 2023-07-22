@@ -35,7 +35,7 @@ R2toR::DiscreteFunction &R2toR::FunctionArbitraryGPU::Laplacian(R2toR::DiscreteF
 
 //
 // Created by joao on 27/09/2019.
-Base::Function<Real2D, Real> *R2toR::FunctionArbitraryGPU::Clone() const {
+Base::FunctionT<Real2D, Real> *R2toR::FunctionArbitraryGPU::Clone() const {
     throw "R2toRMap::FunctionArbitraryGPU::Clone() not implemented";
 }
 
@@ -102,7 +102,7 @@ R2toR::FunctionArbitraryGPU::SetArb(const Base::DiscreteFunction<Real2D, Real> &
     return *this;
 }
 
-Base::DiscreteFunction<Real2D, Real> &FunctionArbitraryGPU::Apply(const Function<Real, Real> &func,
+Base::DiscreteFunction<Real2D, Real> &FunctionArbitraryGPU::Apply(const FunctionT<Real, Real> &func,
                                                                   Base::DiscreteFunction<Real2D, Real> &out) const {
     assert(func.isGPUFriendly());
 

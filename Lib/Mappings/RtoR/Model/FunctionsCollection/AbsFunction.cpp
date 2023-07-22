@@ -16,5 +16,5 @@ Function *AbsFunction::Clone() const {
 }
 
 Function::Ptr AbsFunction::diff(int n) const {
-    return Function<Real, Real>::Ptr(new SignumFunction);
+    return FunctionT<Real, Real>::Ptr(new SignumFunction);
 }

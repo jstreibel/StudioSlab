@@ -1,7 +1,7 @@
 #ifndef HamiltonLangevinCPU_H
 #define HamiltonLangevinCPU_H
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
 #include "Phys/Numerics/VoidBuilder.h"

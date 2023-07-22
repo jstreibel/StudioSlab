@@ -9,7 +9,7 @@
 
 #include "Common/NativeTypes.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
-#include "R2ToRSimBuilder.h"
+#include "Mappings/R2toR/Controller/R2ToRSimBuilder.h"
 
 namespace R2toR {
 
