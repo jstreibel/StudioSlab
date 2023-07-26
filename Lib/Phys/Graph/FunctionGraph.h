@@ -70,7 +70,7 @@ void FunctionGraph<FunctionType>::draw() {
         auto style = GetStyle(triple);
         auto label = GetName(triple);
 
-        if(label != "") _nameLabelDraw(i++, style, label, this);
+        if(label != "") _nameLabelDraw(i++, 0, style, label, this);
 
         this->_renderFunction(&func, style);
     }

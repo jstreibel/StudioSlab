@@ -57,6 +57,7 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
     cax = divider.append_axes('right', size='5%', pad=0.05)  # colocar o colorbar a direita e do tamanho certinho.
 
     vmin_lin, vmax_lin = invFunc(np.asarray((vmin, vmax)))
+    print("Generating colorbar with vmin vmax =", vmin, vmax)
     boundaries = [func(v) for v in np.linspace(vmin_lin, vmax_lin, 1000)]
 
     linTicksMin, linTicksMax, linTicksStep = round_sd(vmin_lin * 1.5), \
@@ -221,6 +222,8 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         vmin = log_abs(valueRange[1], logEpsilon)
         vmax = log_abs(valueRange[2], logEpsilon)
 
+    print("Computed ( vmin vmax ) = (", vmin, vmax, "), with mode", valueRange[0])
+
     if 0:  # COOL SHADING!!!
         from matplotlib.colors import LightSource
         ls = LightSource(azdeg=15, altdeg=15)
@@ -244,6 +247,9 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         t0 = delta_duration
         t = sim_result["t"]
         eps = sim_result["eps"]
+        xMin = sim_result["xCenter"] - sim_result["L"] / 2
+        xMax = sim_result["xCenter"] + sim_result["L"] / 2
+
 
         print("delta_duration:", delta_duration)
         print("t:", t)
@@ -251,6 +257,8 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
 
         if delta_duration > 0 and delta_duration < t:
             remaining_t = t-t0
+
+            ax.plot((xMin, xMax), (t0, t0), color='k', linewidth=.5)
 
             ax.plot((-t0+eps, -t0+eps + remaining_t), (t0, t), color='r', linewidth=.1)
             ax.plot((-t0-eps, -t0-eps + remaining_t), (t0, t), color='r', linewidth=.1)

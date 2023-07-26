@@ -10,15 +10,13 @@ private:
     Timer timer = Timer();
     const Real maxT;
 public:
-    OutputConsoleMonitor(const int n_steps);
-
-    virtual Str getDescription() const {return "console monitor output";}
+    OutputConsoleMonitor(const NumericParams &params, const int n_steps);
 
 public:
-    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params);
+    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
 
 protected:
-    virtual void _out(const OutputPacket &outputInfo, const NumericParams &params);
+    virtual void _out(const OutputPacket &outputInfo) override;
 };
 
 #endif // OUTPUTCONSOLEMONITOR_H

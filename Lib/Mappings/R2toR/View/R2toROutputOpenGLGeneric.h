@@ -24,10 +24,10 @@ namespace R2toR {
         Real xMin, xMax, yMin, yMax, phiMin, phiMax;
         GraphR2Section mSectionGraph;
 
-        void _out(const OutputPacket &outInfo, const NumericParams &params) override;
+        void _out(const OutputPacket &outInfo) override;
 
     public:
-        OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
+        OutputOpenGL(const NumericParams &params, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
         ~OutputOpenGL();
 
 

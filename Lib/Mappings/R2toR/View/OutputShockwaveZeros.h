@@ -26,7 +26,7 @@ namespace R2toR {
 
 
     protected:
-        void _out(const OutputPacket &OutputInfo, const NumericParams &params) override;
+        void _out(const OutputPacket &OutputInfo"") override;
     };
 
 }

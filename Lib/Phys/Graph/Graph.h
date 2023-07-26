@@ -54,7 +54,7 @@ namespace Base {
 
             void __computeSpacings();
 
-            void _nameLabelDraw(int i, const Styles::PlotStyle &style, Str label, const Window *window);
+            void _nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label, const Window *window);
 
             void _drawCurves();
 

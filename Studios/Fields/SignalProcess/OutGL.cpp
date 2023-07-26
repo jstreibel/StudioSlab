@@ -148,7 +148,7 @@ RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
     addAnimation(xMaxAnim);
 
 }
-void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo, const NumericParams &params) {
+void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo"") {
     // OutputOpenGL::_out(outInfo);
 
     auto field = outInfo.getEqStateData<RtoR::FieldState>();

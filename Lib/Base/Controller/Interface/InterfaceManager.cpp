@@ -70,7 +70,7 @@ auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {
     for(auto interface : interfaces) {
         auto parameters = interface->getParameters();
         for(const auto parameter : parameters)
-            ss << "\"" << parameter->getCommandLineArgName(true) << "\": " << parameter->valueToString() << ", ";
+            ss << "\"" << parameter->getCLName(true) << "\": " << parameter->valueToString() << ", ";
     }
 
     return ss.str();
@@ -82,7 +82,7 @@ auto InterfaceManager::renderParametersToString(StrVector params, Str separator)
     for(auto interface : interfaces) {
         auto parameters = interface->getParameters();
         for(const auto parameter : parameters) {
-            auto name = parameter->getCommandLineArgName(true);
+            auto name = parameter->getCLName();
 
             if(Common::Contains(params, name))
                 ss << name << "=" << parameter->valueToString() << separator;
@@ -94,7 +94,7 @@ auto InterfaceManager::renderParametersToString(StrVector params, Str separator)
     return str.ends_with(separator) ? str.substr(0, str.length()-separator.length()) : str;
 }
 
-auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr {
+auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr   {
     auto compFunc = [target](Interface::ConstPtr anInterface) { return anInterface->operator==(target); };
 
     auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );

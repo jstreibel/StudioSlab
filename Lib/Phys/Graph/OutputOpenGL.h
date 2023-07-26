@@ -26,7 +26,7 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OutputOpenGL> Ptr;
 
-        OutputOpenGL(Str channelName="OpenGL output", int stepsBetweenDraws=1);
+        OutputOpenGL(const NumericParams &params, Str channelName="OpenGL output", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
         bool notifyRender(float elTime_msec) final override;
@@ -37,9 +37,9 @@ namespace Graphics {
 
 
         // ********************* From Socket ********************* //
-        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool override;
+        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
     protected:
-        void _out(const OutputPacket &outInfo, const NumericParams &params) override;
+        void _out(const OutputPacket &outInfo) override;
         // ********************* END Socket ********************** //
 
 

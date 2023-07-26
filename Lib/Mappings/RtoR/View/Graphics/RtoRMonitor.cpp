@@ -115,7 +115,7 @@ void RtoR::Monitor::draw() {
 
 }
 
-void RtoR::Monitor::_out(const OutputPacket &outInfo, const NumericParams &params) {
+void RtoR::Monitor::_out(const OutputPacket &outInfo"") {
 
     const RtoR::FieldState &fieldState = *outInfo.getEqStateData<RtoR::FieldState>();
     energyCalculator.computeDensities(fieldState);

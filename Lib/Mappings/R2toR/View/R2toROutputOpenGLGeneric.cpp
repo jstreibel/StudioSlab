@@ -8,14 +8,14 @@
 #include "Phys/Numerics/Allocator.h"
 
 
-R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-    : Graphics::OutputOpenGL("R2 -> R OpenGL output", 1)
+R2toR::OutputOpenGL::OutputOpenGL(const NumericParams &params, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
+    : Graphics::OutputOpenGL(params, "R2 -> R OpenGL output", 1)
     , eqState(*Numerics::Allocator::NewFieldState<R2toR::EquationState>())
     , xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax)
     , phiMin(phiMin), phiMax(phiMax)
     , mSectionGraph(xMin, xMax, phiMin, phiMax,
                     "Sections", true,
-                    Numerics::Allocator::GetInstance().getNumericParams().getN()*3)
+                    Numerics::Allocator::GetInstance().getNumericParams().getN())
 {
     // Window *window = nullptr;
 
@@ -32,7 +32,7 @@ R2toR::OutputOpenGL::OutputOpenGL(Real xMin, Real xMax, Real yMin, Real yMax, Re
 }
 
 R2toR::OutputOpenGL::~OutputOpenGL() {
-    // delete panel;
+
 }
 
 void R2toR::OutputOpenGL::draw() {
@@ -88,8 +88,8 @@ bool R2toR::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     return Graphics::OutputOpenGL::notifyKeyboard(key, x, y);
 }
 
-void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo, const NumericParams &params) {
-    Graphics::OutputOpenGL::_out(outInfo, params);
+void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo) {
+    Graphics::OutputOpenGL::_out(outInfo);
 
     auto &state = *outInfo.getEqStateData<R2toR::EquationState>();
 
@@ -97,7 +97,4 @@ void R2toR::OutputOpenGL::_out(const OutputPacket &outInfo, const NumericParams 
     eqState.setDPhiDt(  state.getDPhiDt());
 
 }
-
-
-
 

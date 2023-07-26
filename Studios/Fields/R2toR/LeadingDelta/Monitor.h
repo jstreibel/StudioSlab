@@ -28,9 +28,18 @@ namespace R2toR {
             GraphR2Section mSpeedsGraph;
             GraphR2Section mEnergyDensityGraph;
 
+            int lastStep=0;
+            bool showEnergyIntegrationLimits = false;
+            float energyIntegrationRadiusDelta = 0.f;// (float)(-epsilon);
+            Real totalE = .0;
+            Real lastE = .0;
+            Real lastAnalyticE = .0;
+
+        protected:
+            void _out(const OutputPacket &outInfo) override;
 
         public:
-            OutGL(R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
+            OutGL(const NumericParams &params, R2toR::Function::Ptr drivingFunction, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax);
 
             auto draw() -> void override;
 

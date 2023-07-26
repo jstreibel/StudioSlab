@@ -4,10 +4,12 @@
 
 #include "Graph.h"
 #include "imgui.h"
+
 #include "Common/Printing.h"
 #include "Common/Log/Log.h"
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
+#include "Base/Controller/Interface/InterfaceManager.h"
 
 #define MARK                                                                                    \
     {                                                                                           \
@@ -197,7 +199,7 @@ void Base::Graphics::Graph2D::setupOrtho() {
     glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
 }
 
-void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &style, Str label,
+void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label,
                                              const Window *window) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -209,13 +211,14 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &sty
     glLoadIdentity();
 
     auto dx = .080,
-            dy = -.060;
+         dy = -.060;
     auto xGap = 0.015,
-            yGap = -.025;
-    auto xMin = .100,
-            xMax = xMin+dx,
-            yMin = .975+(yGap+dy)*float(i),
-            yMax = yMin+dy;
+         yGap = -.025;
+    auto colWidth = 0.5;
+    auto xMin = .100+(colWidth+xGap+dx)*float(j),
+         xMax = xMin+dx,
+         yMin = .975+(yGap+dy)*float(i),
+         yMax = yMin+dy;
 
     if(style.filled) {
         auto color = style.fillColor;
@@ -239,14 +242,19 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, const Styles::PlotStyle &sty
             glDisable(GL_LINE_STIPPLE);
         }
 
-        glBegin(GL_LINE_LOOP);
-
-        glVertex2f(xMin, yMin);
-        glVertex2f(xMax, yMin);
-        glVertex2f(xMax, yMax);
-        glVertex2f(xMin, yMax);
-
-        glEnd();
+        if(style.filled) {
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(xMin, yMin);
+            glVertex2f(xMax, yMin);
+            glVertex2f(xMax, yMax);
+            glVertex2f(xMin, yMax);
+            glEnd();
+        } else {
+            glBegin(GL_LINES);
+            glVertex2f(xMin, .5*(yMin+yMax));
+            glVertex2f(xMax, .5*(yMin+yMax));
+            glEnd();
+        }
 
     }
 
@@ -293,6 +301,7 @@ Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
 }
 
 void Base::Graphics::Graph2D::_drawCurves() {
+    auto i=0;
     for(auto curveTriple : curves) {
         auto curve = GetCurve(curveTriple);
         auto pointSet = curve.get()->renderToPointSet();
@@ -302,6 +311,8 @@ void Base::Graphics::Graph2D::_drawCurves() {
 
         auto style = GetStyle(curveTriple);
         auto name  = GetName(curveTriple);
+
+        _nameLabelDraw(i, 1, style, name, this);
 
         auto color = style.lineColor;
 
@@ -360,7 +371,8 @@ void Base::Graphics::Graph2D::draw() {
             if(ImGui::MenuItem("Save graph")) {
                 auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w*.5;
-                OpenGLUtils::outputToPNG(this, "chookity_pumpa.png", w, h);
+                auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
+                OpenGLUtils::outputToPNG(this, fileName, w, h);
             }
 
             ImGui::EndPopup();
@@ -413,8 +425,8 @@ bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
         const Real hw = .5*(xMax-xMin)*dx;
         const Real hh = .5*(yMax-yMin)*dy;
 
-        xMin = x0 - hw;
-        xMax = x0 + hw;
+        xMin = x0 + hw;
+        xMax = x0 - hw;
         yMin = y0 - hh;
         yMax = y0 + hh;
 

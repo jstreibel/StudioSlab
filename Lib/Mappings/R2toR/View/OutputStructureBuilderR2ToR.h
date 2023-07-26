@@ -13,6 +13,7 @@
 namespace R2toR {
     namespace OutputSystem {
         class Builder : public Numerics::OutputSystem::Builder {
+            Numerics::OutputSystem::Socket* _buildLastVTK();
         public:
             Builder(Str name, Str description);
 

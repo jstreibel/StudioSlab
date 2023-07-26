@@ -12,19 +12,19 @@
 
 using namespace Base;
 
-Graphics::OutputOpenGL::OutputOpenGL(Str channelName, int stepsBetweenDraws)
-    : Numerics::OutputSystem::Socket("OpenGL output", stepsBetweenDraws), Window() {
+Graphics::OutputOpenGL::OutputOpenGL(const NumericParams &params, Str channelName, int stepsBetweenDraws)
+    : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }
 
-void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo, const NumericParams &params){
+void Graphics::OutputOpenGL::_out(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 }
 
-auto Graphics::OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
+auto Graphics::OutputOpenGL::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
     return finishFrameAndRender();
 }
 
@@ -66,19 +66,15 @@ void Graphics::OutputOpenGL::draw() {
 bool Graphics::OutputOpenGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == '=') {
         setnSteps(getnSteps()+1);
-        Log::Debug("nSteps=") << getnSteps();
         return true;
     } else if(key == '+') {
         setnSteps(getnSteps()*1.1);
-        Log::Debug("nSteps=") << getnSteps();
         return true;
     } else if(key == '-') {
         setnSteps(getnSteps()-1);
-        Log::Debug("nSteps=") << getnSteps();
         return true;
     } else if(key == '_') {
         setnSteps(getnSteps()/1.1);
-        Log::Debug("nSteps=") << getnSteps();
         return true;
     }
 

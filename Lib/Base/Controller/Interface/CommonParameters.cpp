@@ -25,12 +25,12 @@ auto ParameterTemplate<Type>::valueToString() const -> std::string {
 template<class Type>
 auto ParameterTemplate<Type>::addToOptionsGroup(CLODEasyInit &add) const -> void {
     auto value = CLOptions::value<Type>()->default_value(ToStr(val));
-    add(commandLineArgName, description, value);
+    add(fullCLName, description, value);
 }
 
 template<>
 auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
-    add(commandLineArgName, description, CLOptions::value<bool>());
+    add(fullCLName, description, CLOptions::value<bool>());
 }
 
 template<class Type>
@@ -50,7 +50,7 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
     } catch (cxxopts::exceptions::parsing &exception) {
-        auto msg = Str("Parameter '") + commandLineArgName + "' failed conversion from command line input. Type is " + typeid(Type).name();
+        auto msg = Str("Parameter '") + fullCLName + "' failed conversion from command line input. Type is " + typeid(Type).name();
         Log::Error() << msg << Log::Flush;
         throw exception;
     }

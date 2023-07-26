@@ -22,8 +22,8 @@ class OutputHistoryToFile : public HistoryKeeper {
 
 public:
 
-    OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter,
-                        Real endT, Str  outputFileName,
+    OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter,
+                        Str  outputFileName,
                         OutputFormatterBase *outputFormatter = new BinarySOF());
 
     ~OutputHistoryToFile() override;

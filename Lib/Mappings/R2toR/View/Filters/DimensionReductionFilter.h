@@ -22,7 +22,7 @@ public:
 
 private:
     const RtoR2::StraightLine line;
-    const PosInt N;
+    const PosInt N_low;
 };
 
 

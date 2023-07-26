@@ -117,20 +117,6 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     Log::Info() << "Initialized Imgui." << Log::Flush;
 }
 
-/*void GLUTBackend::setOpenGLOutput(Graphics::OutputOpenGL *outputOpenGL) {
-    this->outGL = outputOpenGL;
-
-    IntPair size = outGL->getWindowSizeHint();
-
-    if(size.first == -1 || size.second == -1) {
-        std::cout << "/nWarning: using default window size fullscreen.";
-        size = {800, 450};
-        glutFullScreen();
-    } else {
-        glutReshapeWindow(size.first, size.second);
-    }
-}*/
-
 GLUTBackend::~GLUTBackend() {
     // Cleanup
     ImGui_ImplOpenGL3_Shutdown();
@@ -160,9 +146,8 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     else if(key == 'f') {
         dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
     } else if(key == '[') {
-        program->cycle(1);
-    } else if(key == '{') {
-        program->cycle(20);
+        Log::Info("GLUTBackend ") << "forcing cycle until next output;" << Log::Flush;
+        program->cycle(Program::CycleOptions::CycleUntilOutput);
     } else {
         for(auto &win : me.windows)
             win->notifyKeyboard(key, x, y);

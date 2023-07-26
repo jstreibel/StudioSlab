@@ -23,7 +23,7 @@ if(&NAME == nullptr) throw "Bad cast.";
 #define letr auto&
 #define letcr const auto&
 #define fix const auto
-#define pt auto *
+//#define pt auto *
 #define look const auto *
 
 

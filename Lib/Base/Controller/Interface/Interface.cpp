@@ -44,7 +44,7 @@ void Interface::addParameter(Parameter::Ptr parameter) {
         throw "Error while inserting parameter in interface.";
     }
 
-    auto name = Str("\"") + parameter->getCommandLineArgName() + "\"";
+    auto name = Str("\"") + parameter->getFullCLName() + "\"";
     Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName() << "\".";
 }
 
@@ -89,7 +89,7 @@ auto Interface::toString() const -> Str {
     std::stringstream ss;
 
     for(auto param : parameters)
-        ss << param->getCommandLineArgName(true) << "=" << param->valueToString() << "-";
+        ss << param->getCLName(true) << "=" << param->valueToString() << "-";
 
     auto str = ss.str();
     if(!parameters.empty())
@@ -101,7 +101,7 @@ auto Interface::toString() const -> Str {
 void Interface::setup(CLVariablesMap vm) {
     try {
         for (auto param : parameters) {
-            auto key = param->getCommandLineArgName(true);
+            auto key = param->getCLName(true);
             auto val = vm[key];
 
             param->setValueFrom(val);

@@ -27,7 +27,7 @@ void InterfaceOwner::notifyCLArgsSetupFinished() {
                 << "has been setup from command-line with the following values:" << Log::Flush;
 
     for(auto &param : interface->getParameters())
-        Log::Note() << "\t\t--" << std::left << std::setw(20) << param->getCommandLineArgName(true) << ": " << param->valueToString() << Log::Flush;
+        Log::Note() << "\t\t--" << std::left << std::setw(20) << param->getCLName(true) << ": " << param->valueToString() << Log::Flush;
 }
 
 auto InterfaceOwner::getInterface() -> Interface::Ptr {

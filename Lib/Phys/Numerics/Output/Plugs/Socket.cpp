@@ -6,8 +6,11 @@
 #include "Phys/Numerics/Program/NumericParams.h"
 
 
-Numerics::OutputSystem::Socket::Socket(Str name, int nStepsInterval, Str description)
-: nSteps(nStepsInterval), name(name), description(description), nextRecStep(1) {      }
+Numerics::OutputSystem::Socket::Socket(const NumericParams & params, Str name, int nStepsInterval, Str description)
+: params(params)
+, name(name)
+, nSteps(nStepsInterval>0?nStepsInterval:params.getn())
+, description(description), nextRecStep(1) {      }
 
 
 auto Numerics::OutputSystem::Socket::getLastSimTime()  -> Real { return lastData.getSimTime(); }
@@ -43,13 +46,12 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
     throw "Boundary not implemented.";
 }
 
-void Numerics::OutputSystem::Socket::output(const OutputPacket &outData, const NumericParams &p){
-    _out(outData, p);
+void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
+    _out(outData);
     lastData = outData;
-    params = p;
 }
 
-auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
+auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
     return true; }
 
 auto Numerics::OutputSystem::Socket::getDescription() const -> Str { return description; }

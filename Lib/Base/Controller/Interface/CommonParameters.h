@@ -46,14 +46,14 @@ public:
 };
 
 template <class Type>
-auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> p2) -> Type {
+auto operator*(const ParameterTemplate<Type> &p1, const ParameterTemplate<Type> &p2) -> Type {
     return p1.val * p2.val;
 }
 
-typedef ParameterTemplate < int    > IntegerParameter;
+typedef ParameterTemplate < int  > IntegerParameter;
 typedef ParameterTemplate < Real > RealParameter;
-typedef ParameterTemplate < Str > StringParameter;
-typedef ParameterTemplate < bool   > BoolParameter;
+typedef ParameterTemplate < Str  > StringParameter;
+typedef ParameterTemplate < bool > BoolParameter;
 
 
 

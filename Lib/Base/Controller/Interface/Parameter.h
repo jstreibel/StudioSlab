@@ -11,7 +11,7 @@
 
 class Parameter {
 protected:
-    Str commandLineArgName, description;
+    Str shortCLName, longCLName, fullCLName, description;
 
 public:
     typedef std::shared_ptr<Parameter> Ptr;
@@ -27,7 +27,8 @@ public:
     virtual void setValue(const void*) = 0;
     virtual auto getValueVoid() const -> const void* = 0;
 
-    auto getCommandLineArgName(bool clean=false) const -> Str;
+    auto getFullCLName() const -> Str;
+    auto getCLName(bool longNameIfPresent=false) const -> Str;
     auto getDescription() const -> Str;
     void setDescription(Str newDescription);
 

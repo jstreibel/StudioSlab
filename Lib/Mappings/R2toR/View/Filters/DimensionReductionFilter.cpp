@@ -6,38 +6,67 @@
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Mappings/R2toR/Model/EquationState.h"
+#include "Common/Log/Log.h"
 
 
 //
 // Created by joao on 15/10/2019.
 DimensionReductionFilter::DimensionReductionFilter(PosInt resolution, RtoR2::StraightLine alongLine)
-    : line(alongLine), N(resolution) {
+    : line(alongLine), N_low(resolution) {
 
 }
 
 DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outputInfo) {
-    const DiscreteSpace &phiSpace = *outputInfo.getSpaceData().first;
-    const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
-
-    if(phiSpace.getDim().getNDim() != 2) throw "Is rong.";
-
     R2toR::DiscreteFunction &f = outputInfo.getEqStateData<R2toR::EquationState>()->getPhi();
+    // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
+
+    if(f.getSpace().getDim().getNDim() != 2) throw "Is rong.";
+
+    f.getSpace().syncHost();
 
     const R2toR::Domain domain = f.getDomain();
     const auto L = domain.getLx();
-    const Real h = L/N;
-    const auto ds = line.getDeltaS();
+    const Real h_low = L / N_low;
+    const auto delta_s = line.getDeltaS();
     const auto sMin = line.getSMin();
-    DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(), h);
+    DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(), h_low);
+    auto &data = newPhi->getHostData();
 
-    for(PosInt i=0; i<N; i++){
-        const Real s = sMin + ds*Real(i)/N; // parametro da reta.
-        newPhi->getHostData()[i] = f(line(s));
+    if(0) {
+        const auto eps = 0.05;
+        auto is = outputInfo.getSimTime() > L / 2 - eps && outputInfo.getSimTime() < L / 2 + eps;
+        if (is) {
+            Log::Debug("@t=") << outputInfo.getSimTime() << Log::Flush;
+
+            auto N_ = 32;
+            auto dx = L / N_;
+
+            auto c = 0;
+            for (Real y = -L / 2; y < L / 2; y += dx) {
+                std::cout << std::endl << ++c << (c < 10 ? "   " : "  ");
+                for (Real x = -L / 2; x < L / 2; x += dx) {
+                    {
+                        Real2D r = {x, y};
+                        auto val = f(r);
+                        Common::GetDensityChar(100 * f(r));
+                        std::cout << val << " ";
+                    }
+
+                }
+            }
+        }
+    }
+
+    for(PosInt i=0; i < N_low; i++){
+        const Real s = sMin + delta_s * Real(i) / N_low; // parametro da reta.
+        const auto x = line(s);
+
+        data[i] = f(x);
     }
 
     return {newPhi, nullptr};
 }
 
 DimensionMetaData DimensionReductionFilter::getOutputDim() const {
-    return DimensionMetaData({N});
+    return DimensionMetaData({N_low});
 }

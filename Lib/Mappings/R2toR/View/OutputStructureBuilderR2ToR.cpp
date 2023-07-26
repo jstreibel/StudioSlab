@@ -17,6 +17,8 @@
 #include "Base/Backend/Console/ConsoleBackend.h"
 
 #include "R2toROutputOpenGLGeneric.h"
+#include "Common/Log/Log.h"
+#include "LastOutputVtkVisualizer.h"
 
 R2toR::OutputSystem::Builder::Builder(Str name, Str description) : Numerics::OutputSystem::Builder(name, description) {
 }
@@ -35,6 +37,8 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
 
     auto *outputManager = new OutputManager;
 
+    auto lastViz = _buildLastVTK();
+    outputManager->addOutputChannel(lastViz, true);
 
     RtoR2::StraightLine section1, section2;
     {
@@ -48,6 +52,9 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
         Rotation R;
         R = Rotation(theta);
         section1 = RtoR2::StraightLine(R * x0, R * xf, rMin, rMax);
+        Log::Info("R2toR::OutputSystem::Builder ")
+            << "setting up dimension reduction filter from 2D to 1D for history keeping. "
+               "Reduction is concatenating points " << x0 << " to " << xf;
         R = Rotation(theta + .5 * M_PI);
         section2 = RtoR2::StraightLine(R * x0, R * xf);
     }
@@ -57,7 +64,6 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
     int fileOutputStepsInterval = -1;
     if(shouldTrackHistory)
     {
-        const Real t=p.gett();
         const PosInt outputResolutionX = *outputResolution;
 
         OutputFormatterBase *outputFilter = new BinarySOF;
@@ -72,7 +78,7 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
 
         auto fileName = outputFileName + "-N=" + ToStr(N, 0);
 
-        Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(stepsInterval, spaceFilter, t, fileName, outputFilter);
+        Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(p, stepsInterval, spaceFilter, fileName, outputFilter);
 
         fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
@@ -105,10 +111,17 @@ R2toR::OutputSystem::Builder::build(Str outputFileName) {
 auto R2toR::OutputSystem::Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
     const Real phiMin = -0.125;
     const Real phiMax = 0.25;
-    const Real xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+    auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    const Real xLeft = p.getxLeft();
     const Real xRight = xLeft + Numerics::Allocator::GetInstance().getNumericParams().getL();
 
-    return new R2toR::OutputOpenGL(xLeft, xRight, xLeft, xRight, phiMin, phiMax);
+    return new R2toR::OutputOpenGL(p, xLeft, xRight, xLeft, xRight, phiMin, phiMax);
+}
+
+auto R2toR::OutputSystem::Builder::_buildLastVTK() -> Numerics::OutputSystem::Socket* {
+    const NumericParams &p = Numerics::Allocator::GetInstance().getNumericParams();
+    const int outres = outputResolution;
+    return new R2toR::LastOutputVTKVisualizer(p, outres);
 }
 
 

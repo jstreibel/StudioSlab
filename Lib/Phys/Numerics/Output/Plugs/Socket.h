@@ -17,18 +17,25 @@ namespace Numerics {
 
         protected:
             OutputPacket lastData;
-            NumericParams params;
+            const NumericParams &params;
             Str name, description;
 
-            virtual auto _out(const OutputPacket&, const NumericParams &) -> void = 0;
+            virtual auto _out(const OutputPacket&) -> void = 0;
 
         public:
-            explicit Socket(Str name="", int nStepsInterval = 1, Str description="");
+            /**
+             * Constructor for output Socket.
+             * @param numericParams The simulation numeric parameters.
+             * @param name The socket name.
+             * @param nStepsInterval Interval, in simulation steps, to output to socket. If <1, then it will only be called when simulation is finished.
+             * @param description The socket descriptino.
+             */
+            explicit Socket(const NumericParams &numericParams, Str name="", int nStepsInterval = 1, Str description="");
             virtual ~Socket() = default;
 
             std::shared_ptr<Socket> Ptr;
 
-            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool;;
+            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
             auto getDescription() const -> Str;
             auto getName() const -> Str;
 
@@ -49,7 +56,7 @@ namespace Numerics {
             auto getnSteps()     const -> int;
             auto setnSteps(int nSteps) -> void;
 
-            void output(const OutputPacket &outData, const NumericParams &params);
+            void output(const OutputPacket &outData);
 
         };
     }

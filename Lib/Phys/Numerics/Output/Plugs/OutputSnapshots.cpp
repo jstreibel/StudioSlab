@@ -11,8 +11,8 @@
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 
-OutputSnapshot::OutputSnapshot(const Str &customFileDescription, const size_t T_fileNamePrecision)
-        : Numerics::OutputSystem::Socket("Snapshot output", 1), customFileDescription(customFileDescription),
+OutputSnapshot::OutputSnapshot(const NumericParams &params, const Str &customFileDescription, const size_t T_fileNamePrecision)
+        : Numerics::OutputSystem::Socket(params, "Snapshot output", 1), customFileDescription(customFileDescription),
           T_fileNamePrecision(T_fileNamePrecision)
 { }
 

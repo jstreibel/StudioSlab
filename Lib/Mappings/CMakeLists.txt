@@ -6,6 +6,10 @@ find_package(OpenMP)
 find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(GLUT)
 find_package(OpenGL)
+find_package(VTK)
+
+include(${VTK_USE_FILE})
+message(STATUS "VTK INCLUDES: ${VTK_USE_FILE}")
 
 include_directories (..)
 
@@ -129,7 +133,7 @@ set ( R2TOR_SOURCES
 		RtoR2/StraightLine.cpp
 
 		R2toR/Core/R2toR_Allocator.cpp
-		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h)
+		R2toR/View/Artists/FlatFieldDisplay.cpp R2toR/View/Artists/FlatFieldDisplay.h R2toR/View/LastOutputVtkVisualizer.cpp R2toR/View/LastOutputVtkVisualizer.h)
 
 
 set ( MAPS_LINKS
@@ -181,7 +185,7 @@ set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 

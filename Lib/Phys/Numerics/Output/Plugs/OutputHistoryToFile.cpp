@@ -11,9 +11,9 @@
 
 const Str extension = ".osc";
 
-OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
+OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter,
                                          Str outputFileName, OutputFormatterBase *outputFormatter)
-    : HistoryKeeper(stepsInterval, spaceFilter, endT),
+    : HistoryKeeper(params, stepsInterval, spaceFilter),
       outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
       outputFormatter(*outputFormatter)
 {
@@ -73,13 +73,9 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 }
 
 void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
-    Numerics::Allocator &builder = Numerics::Allocator::GetInstance();
-
     std::ostringstream oss;
 
-
     oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
-
 
     DimensionMetaData recDim = spaceFilter.getOutputDim();
     Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";

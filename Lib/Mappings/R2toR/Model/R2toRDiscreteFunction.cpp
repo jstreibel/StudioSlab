@@ -11,9 +11,9 @@ R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yM
 Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
-    const Real dx = h*.5;
-    int n = int((N-1) * (dx+x.x-xMin)/Lx);
-    int m = int((M-1) * (dx+x.y-yMin)/Ly);
+    const Real d = h;
+    int n = int((N-1) * (d+x.x-xMin)/Lx);
+    int m = int((M-1) * (d+x.y-yMin)/Ly);
 
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.

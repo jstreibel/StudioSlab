@@ -9,20 +9,26 @@
 
 
 Parameter::Parameter(const Str& commandLineArgName, const Str& description)
-    : commandLineArgName(commandLineArgName), description(description)
+    : fullCLName(commandLineArgName), description(description)
 {
+    auto split = Common::SplitString(fullCLName, ",", 2);
+    shortCLName = split[0];
+    longCLName = split.size()>1 ? split[1] : "";
 }
 
-auto Parameter::getCommandLineArgName(bool clean) const -> Str {
-    const auto s = commandLineArgName;
-    const auto separator = ',';
-
-    return clean ? s.substr(0, s.find(separator)) : s;
+auto Parameter::getFullCLName() const -> Str {
+    return fullCLName;
 }
+
+auto Parameter::getCLName(bool longNameIfPresent) const -> Str {
+
+    return (longNameIfPresent && longCLName!="") ? longCLName : shortCLName;
+}
+
 auto Parameter::getDescription() const -> Str {return description; }
 
 bool Parameter::operator<(const Parameter *rhs) {
-    return commandLineArgName < rhs->commandLineArgName;
+    return fullCLName < rhs->fullCLName;
 }
 
 void Parameter::setDescription(Str newDescription) {
@@ -30,7 +36,7 @@ void Parameter::setDescription(Str newDescription) {
 }
 
 bool Parameter::operator==(Str str) const {
-    return Common::SplitString(commandLineArgName, ",")[0] == str;
+    return Common::SplitString(fullCLName, ",")[0] == str;
 }
 
 

@@ -89,7 +89,7 @@ void NumericalIntegration::_runFullIntegration()
     // Para cumprir com os steps quebrados faltantes:
     if(steps < n) cycle(n - steps);
 
-    outputManager->notifyIntegrationFinished(getOutputInfo(), p);
+    outputManager->notifyIntegrationFinished(getOutputInfo());
 }
 
 bool NumericalIntegration::_cycleUntilOutput() {

@@ -15,8 +15,8 @@
 namespace R2toR {
     class GrowingHoleOutGL : public R2toR::OutputOpenGL {
     public:
-        GrowingHoleOutGL(Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-                : R2toR::OutputOpenGL(xMin, xMax, yMin, yMax, phiMin, phiMax) {   }
+        GrowingHoleOutGL(const NumericParams &params, Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
+                : R2toR::OutputOpenGL(params, xMin, xMax, yMin, yMax, phiMin, phiMax) {   }
 
         void draw() override {
             if(!lastData.hasValidData()) return;

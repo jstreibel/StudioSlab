@@ -9,6 +9,7 @@
 #include "OutputManager.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Phys/Numerics/Allocator.h"
 
 
 Numerics::OutputSystem::Builder::Builder(Str name, Str generalDescription)
@@ -21,7 +22,8 @@ Numerics::OutputSystem::Builder::Builder(Str name, Str generalDescription)
 
 
 void Numerics::OutputSystem::Builder::addConsoleMonitor(OutputManager &outputManager, int nSteps) {
-    Socket *out = new OutputConsoleMonitor(nSteps);
+    auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    Socket *out = new OutputConsoleMonitor(p, nSteps);
     outputManager.addOutputChannel(out);
 }
 

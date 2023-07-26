@@ -27,7 +27,7 @@ public:
 
     auto renderAsPythonDictionaryEntries() -> Str;
 
-    auto renderParametersToString(StrVector params, Str separator) const -> Str;
+    auto renderParametersToString(StrVector params, Str separator=" ") const -> Str;
 
 };
 

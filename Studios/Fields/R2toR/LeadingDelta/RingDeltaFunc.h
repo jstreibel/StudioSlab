@@ -13,7 +13,7 @@
 #include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
-#define delta(r, eps) deltaTri(r, eps)
+#define delta(r, eps) deltaRect(r, eps)
 
 namespace R2toR {
     namespace LeadingDelta {
@@ -22,7 +22,7 @@ namespace R2toR {
 
         class RingDeltaFunc : public Function {
         protected:
-            const Real eps, a, dt;
+            Real eps, a, dt;
             Real radius;
 
         public:
@@ -30,10 +30,11 @@ namespace R2toR {
 
             auto getEps   ()                   const -> Real;
             auto getA     ()                   const -> Real;
+            auto setA     (Real a)                   -> void;
             auto getRadius()                   const -> Real;
             auto setRadius(Real _radius)             -> void;
-            auto domainContainsPoint(Real2D x) const -> bool   override;
-            auto myName()                      const -> Str override ;
+            auto domainContainsPoint(Real2D x) const -> bool override;
+            auto myName()                      const -> Str  override ;
 
             /**
              * Constructor
