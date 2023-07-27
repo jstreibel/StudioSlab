@@ -7,8 +7,8 @@
 
 #include "Mappings/R2toR/Controller/R2ToRSimBuilder.h"
 
-#include "../GrowingHole/GrowingHoleBoundaryCondition.h"
-#include "../GrowingHole/GrowingHoleInput.h"
+#include "../../GrowingHole/GrowingHoleBoundaryCondition.h"
+#include "../../GrowingHole/GrowingHoleInput.h"
 
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
