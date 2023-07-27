@@ -1,6 +1,8 @@
 #ifndef STEPPER_H
 #define STEPPER_H
 
+#include "Common/Types.h"
+
 class Method {
 public:
     Method() = default;

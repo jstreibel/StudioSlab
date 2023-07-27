@@ -31,8 +31,6 @@ namespace Phys::Gordon {
             delete dPhiDt;
         }
 
-
-
         GordonStateT &Add(const GordonStateT &fieldState) override {
             phi->Add(fieldState.getPhi());
             dPhiDt->Add(fieldState.getDPhiDt());

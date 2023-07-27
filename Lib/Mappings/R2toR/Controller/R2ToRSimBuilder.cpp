@@ -20,6 +20,8 @@
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 namespace R2toR {
 
@@ -123,16 +125,11 @@ namespace R2toR {
         throw "Error while instantiating Field: device not recognized.";
     }
 
-    void *Builder::getInitialState() {
-        return new R2toR::EquationState((R2toR::DiscreteFunction *) this->newFunctionArbitrary(),
-                                        (R2toR::DiscreteFunction *) this->newFunctionArbitrary());
-    }
-
     void *Builder::getEquationSolver() {
         auto thePotential = new RtoR::AbsFunction;
-        auto phi0 = (R2toR::EquationState*)getInitialState();
+        auto dphi = (R2toR::BoundaryCondition*)getBoundary();
 
-        return new Phys::Gordon::GordonSolverT<R2toR::EquationState>(numericParams, *phi0, *thePotential);
+        return new Phys::Gordon::GordonSolverT<R2toR::EquationState>(numericParams, *dphi, *thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
@@ -140,10 +137,59 @@ namespace R2toR {
     }
 
     auto Builder::newFieldState() -> void * {
-        return nullptr;
+        auto u   = (R2toR::DiscreteFunction*)newFunctionArbitrary();
+        auto du  = (R2toR::DiscreteFunction*)newFunctionArbitrary();
+
+        return new R2toR::EquationState(u, du);
     }
 
-    auto Builder::getSystemSolver() -> void * {
+#define GENERATE_METHOD(METHOD, N) \
+    case (N): \
+    method = new METHOD<N, typename R2toR::EquationState>(solver); \
+    break;
+
+#define GENERATE_ALL(METHOD) \
+        GENERATE_METHOD(StepperRK4, 1);  \
+        GENERATE_METHOD(StepperRK4, 2);  \
+        GENERATE_METHOD(StepperRK4, 3);  \
+        GENERATE_METHOD(StepperRK4, 4);  \
+        GENERATE_METHOD(StepperRK4, 5);  \
+        GENERATE_METHOD(StepperRK4, 6);  \
+        GENERATE_METHOD(StepperRK4, 7);  \
+        GENERATE_METHOD(StepperRK4, 8);  \
+        GENERATE_METHOD(StepperRK4, 9);  \
+        GENERATE_METHOD(StepperRK4, 10); \
+        GENERATE_METHOD(StepperRK4, 11); \
+        GENERATE_METHOD(StepperRK4, 12); \
+        GENERATE_METHOD(StepperRK4, 13); \
+        GENERATE_METHOD(StepperRK4, 14); \
+        GENERATE_METHOD(StepperRK4, 15); \
+        GENERATE_METHOD(StepperRK4, 16);
+
+    Method *Builder::buildStepper() {
+        Method *method;
+
+        auto &solver = *(R2toR::EquationSolver*)getEquationSolver();
+
+        switch (dev.get_nThreads()) {
+            GENERATE_ALL(StepperRK4);
+            default:
+                throw "Number of threads must be between 1 and 16 inclusive.";
+        }
+
+        return method;
+    }
+
+    void *Builder::getInitialState() {
+        RtoR::NullFunction nullFunction;
+        R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
+
+        auto &u_0 = *(R2toR::EquationState*)newFieldState();
+
+        u_0.setPhi(fullNull);
+        u_0.setDPhiDt(fullNull);
+
+        return &u_0;
         return nullptr;
     }
 };

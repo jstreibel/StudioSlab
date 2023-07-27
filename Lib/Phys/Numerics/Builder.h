@@ -51,7 +51,6 @@ namespace Base::Simulation {
         using EqSolver          = EquationSolverType;
         using EqState           = EqSolver::EqState;
         using BoundaryCondition = Base::BoundaryConditions<EqState>;
-        // using DiscrFunc = EqSolver::DiscreteFunctionType;
 
         virtual ~Builder() {}
 
@@ -60,7 +59,6 @@ namespace Base::Simulation {
         virtual auto getBoundary()                -> BoundaryCondition * = 0;
         virtual auto getInitialState()            -> EqState       * = 0;
         virtual auto getEquationSolver()          -> EqSolver      * = 0;
-        // virtual auto newFunctionArbitrary()       -> DiscrFuncType  * = 0;
 
         virtual auto getMethod()                  -> Method*;
 
@@ -122,64 +120,43 @@ namespace Base::Simulation {
 
     #define GENERATE_FOR_NTHREADS(METHOD, N) \
     case (N): \
-    method = new METHOD<N, typename SolverType::EqState>(p, u_0); \
+    method = new METHOD<N, typename SolverType::EqState>(solver, u_0); \
     break;
+
+    #define GENERATE(METHOD) \
+        GENERATE_FOR_NTHREADS(StepperRK4, 1);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 2);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 3);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 4);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 5);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 6);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 7);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 8);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 9);  \
+        GENERATE_FOR_NTHREADS(StepperRK4, 10); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 11); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 12); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 13); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 14); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 15); \
+        GENERATE_FOR_NTHREADS(StepperRK4, 16);
 
     template<typename SolverType>
     auto Builder<SolverType>::getMethod() -> Method * {
-        Method *method = nullptr;
+        Method *method;
 
-        // if(theMethod==RK4)
         {
-            auto &p = numericParams;
             auto &u_0 = *getInitialState();
             auto &solver = *getEquationSolver();
 
             switch (dev.get_nThreads()) {
-                GENERATE_FOR_NTHREADS(StepperRK4, 1);
-                GENERATE_FOR_NTHREADS(StepperRK4, 2);
-                GENERATE_FOR_NTHREADS(StepperRK4, 3);
-                GENERATE_FOR_NTHREADS(StepperRK4, 4);
-                GENERATE_FOR_NTHREADS(StepperRK4, 5);
-                GENERATE_FOR_NTHREADS(StepperRK4, 6);
-                GENERATE_FOR_NTHREADS(StepperRK4, 7);
-                GENERATE_FOR_NTHREADS(StepperRK4, 8);
-                GENERATE_FOR_NTHREADS(StepperRK4, 9);
-                GENERATE_FOR_NTHREADS(StepperRK4, 10);
-                GENERATE_FOR_NTHREADS(StepperRK4, 11);
-                GENERATE_FOR_NTHREADS(StepperRK4, 12);
-                GENERATE_FOR_NTHREADS(StepperRK4, 13);
-                GENERATE_FOR_NTHREADS(StepperRK4, 14);
-                GENERATE_FOR_NTHREADS(StepperRK4, 15);
-                GENERATE_FOR_NTHREADS(StepperRK4, 16);
+                GENERATE(StepperRK4);
                 default:
                     throw "Number of threads must be between 1 and 16 inclusive.";
             }
         }
-        // else if(theMethod == Montecarlo) {
-        //     switch (numThreads) {
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 1);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 2);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 3);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 4);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 5);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 6);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 7);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 8);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 9);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 10);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 11);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 12);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 13);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 14);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 15);
-        //         GENERATE_FOR_NTHREADS(StepperMontecarlo, 16);
-        //         default:
-        //             throw "Number of threads must be between 1 and 16 inclusive.";
-        //     }
-        // } else throw "Unknown integration method.";
 
-        throw "Bad builder";
+        return method;
     }
 }
 

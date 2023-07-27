@@ -6,9 +6,11 @@
 
 
 R2toR::BoundaryCondition::BoundaryCondition(R2toR::Function *initialPhiCondition,
-                                            R2toR::Function *initialdPhiDtCondition)
-                                            : initialPhiCondition(initialPhiCondition),
-                                              initialdPhiDtCondition(initialdPhiDtCondition){
+                                            R2toR::Function *initialdPhiDtCondition,
+                                            R2toR::EquationState *prototype)
+                                            : Base::BoundaryConditions<R2toR::EquationState>(*prototype)
+                                            , initialPhiCondition(initialPhiCondition)
+                                            , initialdPhiDtCondition(initialdPhiDtCondition){
 }
 
 void R2toR::BoundaryCondition::apply(EquationState &fieldState, Real t) const {

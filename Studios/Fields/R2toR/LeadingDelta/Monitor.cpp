@@ -72,6 +72,8 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params,
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
+    if(!lastData.hasValidData()) return;
+
     static auto timer = Timer();
     auto elTime = timer.getElTime_msec();
     timer = Timer();
@@ -85,7 +87,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     const auto N = p.getN();
     const auto h = p.geth();
 
-    const auto ldInterface = InterfaceManager::getInstance().getInterface("R2toR-Leading Delta");
+    const auto ldInterface = InterfaceManager::getInstance().getInterface("Leading Delta");
     const auto epsilon = *(Real*) ldInterface->getParameter("eps")->getValueVoid();
 
     static auto lastStep=0;

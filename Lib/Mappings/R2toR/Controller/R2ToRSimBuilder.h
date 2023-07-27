@@ -27,11 +27,12 @@ namespace R2toR {
 
             auto newFunctionArbitrary() -> void * override;
             auto newFieldState()        -> void * override;
-            auto getSystemSolver()      -> void * override;
+            auto getEquationSolver()    -> void * override;
 
-            auto getInitialState()      -> void *;
-            auto getEquationSolver()    -> void *;
-        };
+        auto getInitialState() -> void * override;
+
+        auto buildStepper() -> Method * override;
+    };
 }
 
 

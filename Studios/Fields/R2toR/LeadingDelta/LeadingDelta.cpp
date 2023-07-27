@@ -9,13 +9,16 @@ namespace R2toR {
     namespace LeadingDelta {
         RingDeltaFunc::Ptr ringDelta1;
 
-        BoundaryCondition::BoundaryCondition(RingDeltaFunc::Ptr ringDelta, Real tf)
-                : ringDelta(ringDelta)
-                , tf(tf) { }
+        BoundaryCondition::BoundaryCondition(const R2toR::EquationState *prototype, RingDeltaFunc::Ptr ringDelta, Real tf)
+        : Base::BoundaryConditions<R2toR::EquationState>(*prototype)
+        , ringDelta(ringDelta)
+        , tf(tf) { }
         void BoundaryCondition::apply(EquationState &function, Real t) const {
             const bool applies = t<tf || tf<0;
             const bool exist = ringDelta != nullptr;
             const bool should = applies && exist;
+
+            Log::Debug() << "Applying BC" << Log::Flush;
 
             if (t == 0) {
                 RtoR::NullFunction nullFunction;
@@ -51,13 +54,16 @@ namespace R2toR {
             drivingFunc = std::make_shared<RingDeltaFunc>(*eps, C₂, dt);
             ringDelta1 = drivingFunc;
         }
+
         auto Builder::getBoundary() -> void * {
-            return new BoundaryCondition(drivingFunc);
+            auto eqState = (R2toR::EquationState*)newFieldState();
+            return new BoundaryCondition(eqState, drivingFunc);
         }
 
         auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
             return new OutGL(numericParams, ringDelta1, *phiMin, *phiMax);
         }
+
 
     }
 }

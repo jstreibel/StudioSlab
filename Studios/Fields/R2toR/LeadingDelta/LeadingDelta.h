@@ -7,12 +7,11 @@
 
 
 
-#include <Mappings/R2toR/Controller/R2ToRSimBuilder.h>
+#include "Mappings/R2toR/Controller/R2ToRSimBuilder.h"
 #include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
 
 #include "Monitor.h"
 #include "RingDeltaFunc.h"
-#include "DrivenEquation.h"
 
 namespace R2toR {
     namespace LeadingDelta {
@@ -25,7 +24,7 @@ namespace R2toR {
             RingDeltaFunc::Ptr ringDelta;
             Real tf;
         public:
-            explicit BoundaryCondition(RingDeltaFunc::Ptr ringDelta = nullptr, Real tf=-1);
+            explicit BoundaryCondition(const R2toR::EquationState *prototype, RingDeltaFunc::Ptr ringDelta = nullptr, Real tf=-1);
             void apply(EquationState &function, Real t) const override;
         };
 
@@ -45,7 +44,6 @@ namespace R2toR {
             RealParameter      phiMax           = RealParameter(+1, "max", "Graphic display initial phi maximum value.");
 
             RingDeltaFunc::Ptr drivingFunc;
-            BoundaryCondition boundaries;
 
         protected:
             auto buildOpenGLOutput() -> R2toR::OutputOpenGL * override;
@@ -54,7 +52,9 @@ namespace R2toR {
             Builder();
 
             auto notifyCLArgsSetupFinished() -> void   override;
+
             auto getBoundary()               -> void * override;
+
 
         };
     }

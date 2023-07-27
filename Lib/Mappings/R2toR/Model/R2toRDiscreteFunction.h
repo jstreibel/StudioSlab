@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
 #include "Phys/Function/DiscreteFunction.h"
-
+#include "Phys/Numerics/Program/NumericParams.h"
 #include "R2toRFunction.h"
 
 namespace R2toR {
@@ -30,6 +30,8 @@ namespace R2toR {
         typedef Base::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
 
         DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
+        DiscreteFunction(const NumericParams &, device);
+
 
         Real operator()(Real2D x) const override;
         void operator=(const MyBase &func);

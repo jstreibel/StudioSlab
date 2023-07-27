@@ -36,7 +36,7 @@ R2toR::DiscreteFunction &R2toR::FunctionArbitraryGPU::Laplacian(R2toR::DiscreteF
 //
 // Created by joao on 27/09/2019.
 Base::FunctionT<Real2D, Real> *R2toR::FunctionArbitraryGPU::Clone() const {
-    throw "R2toRMap::FunctionArbitraryGPU::Clone() not implemented";
+    return new FunctionArbitraryGPU(N, xMin, h);
 }
 
 Base::DiscreteFunction<Real2D, Real> *R2toR::FunctionArbitraryGPU::CloneWithSize(PosInt N) const {

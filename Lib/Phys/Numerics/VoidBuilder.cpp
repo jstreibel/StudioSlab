@@ -48,10 +48,14 @@ Str Base::Simulation::VoidBuilder::toString() const {
     return str;
 }
 
+/*
 auto Base::Simulation::VoidBuilder::buildStepper() -> Method * {
-    /*
-        if(theMethod==RK4){
-            switch (numThreads) {
+        // if(theMethod==RK4)
+        {
+            auto &u_0 = *getInitialState();
+            auto &solver = *getEquationSolver();
+
+            switch (dev.get_nThreads()) {
                 GENERATE_FOR_NTHREADS(StepperRK4, 1);
                 GENERATE_FOR_NTHREADS(StepperRK4, 2);
                 GENERATE_FOR_NTHREADS(StepperRK4, 3);
@@ -93,7 +97,9 @@ auto Base::Simulation::VoidBuilder::buildStepper() -> Method * {
                     throw "Number of threads must be between 1 and 16 inclusive.";
             }
         } else throw "Unknown integration method.";
-         */
 
-    throw "Bad builder";
+
+    throw "Bad VoidBuilder";
 }
+*/
+

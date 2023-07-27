@@ -11,10 +11,15 @@
 namespace Base {
     template<typename EqStateType>
     class BoundaryConditions {
+        const EqStateType &prototype;
     public:
         using EqState = EqStateType;
 
-        virtual void apply(EqStateType &toFunction, Real t) const = 0;
+        BoundaryConditions(const EqState &prototype) : prototype(prototype) {};
+
+        EqState *newEqState() const { return prototype.clone(); }
+
+        virtual void apply(EqState &toFunction, Real t) const = 0;
     };
 }
 

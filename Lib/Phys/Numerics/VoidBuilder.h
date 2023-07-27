@@ -37,18 +37,20 @@ namespace Base {
             Device dev;
 
         public:
-            virtual ~VoidBuilder() {}
-
             typedef std::shared_ptr<VoidBuilder> Ptr;
 
-            virtual auto getBoundary()                -> void *    = 0;
+            virtual ~VoidBuilder() {}
+
             virtual auto buildOutputManager()         -> OutputManager * = 0;
+
+            virtual auto getBoundary()                -> void * = 0;
+            virtual auto getInitialState()            -> void * = 0;
+            virtual auto getEquationSolver()          -> void * = 0;
 
             virtual auto newFunctionArbitrary()       -> void * = 0;
             virtual auto newFieldState()              -> void * = 0;
-            virtual auto getSystemSolver()            -> void * = 0;
 
-            virtual auto buildStepper() -> Method*;
+            virtual auto buildStepper()               -> Method* = 0;
 
             template<typename StateType>  auto NewFieldState()        -> StateType*;
             template<class ARB_FUNC_TYPE> auto NewFunctionArbitrary() -> ARB_FUNC_TYPE *;

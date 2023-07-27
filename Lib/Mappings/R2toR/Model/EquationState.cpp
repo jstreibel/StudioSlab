@@ -5,7 +5,8 @@
 #include "EquationState.h"
 
 auto R2toR::EquationState::clone() const -> R2toR::EquationState * {
-    throw "Not cloning. IMPORTANTE: clonar isso de acordo com device";
-    //phi->
-    // return new phi;
+    auto *clone1 = dynamic_cast<R2toR::DiscreteFunction*>(phi->Clone());
+    auto *clone2 = dynamic_cast<R2toR::DiscreteFunction*>(phi->Clone());
+
+    return new R2toR::EquationState(clone1, clone2);
 }
