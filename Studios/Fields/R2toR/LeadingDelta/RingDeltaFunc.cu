@@ -40,7 +40,7 @@ struct RingThetaGPU
 
         double r = sqrt(x*x + y*y);
 
-        if(r-t > 0) return a;
+        if(r-t >= -dx) return a;
 
         return data[idx];
     }

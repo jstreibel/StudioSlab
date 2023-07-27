@@ -53,7 +53,7 @@ namespace R2toR {
     }
 
     bool showB(const NumericParams &params, const OutputPacket packet, int outN) {
-        auto zPassiveScale = 4.0;
+        auto zPassiveScale = 1.5;
         double zMin=10., zMax=-10.;
 
         // Create a vtkPoints object and reserve space for N*N points
