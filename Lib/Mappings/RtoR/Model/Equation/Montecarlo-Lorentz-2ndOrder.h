@@ -5,9 +5,7 @@
 #ifndef STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 #define STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
-
-#include "Phys/Numerics/Allocator.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
 #include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
@@ -81,7 +79,7 @@ namespace RtoR {
             return (r<z);
         }
     public:
-        explicit MontecarloLangevin_2ndOrder(RtoR::Function &potential)
+        explicit MontecarloLangevin_2ndOrder(Base::Simulation::Builder &builder, RtoR::Function &potential)
             : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<DiscreteFunction>()) { }
 
         void startStep(Real t, Real dt) override{

@@ -9,10 +9,17 @@
 
 
 namespace Base {
-    template<class FUNCTION>
+    template<typename EqStateType>
     class BoundaryConditions {
+        const EqStateType &prototype;
     public:
-        virtual void apply(FUNCTION &toFunction, Real t) const = 0;
+        using EqState = EqStateType;
+
+        BoundaryConditions(const EqState &prototype) : prototype(prototype) {};
+
+        EqState *newEqState() const { return prototype.clone(); }
+
+        virtual void apply(EqState &toFunction, Real t) const = 0;
     };
 }
 

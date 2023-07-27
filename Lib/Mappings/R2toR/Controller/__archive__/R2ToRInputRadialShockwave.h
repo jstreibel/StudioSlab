@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORINPUTRADIALSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTRADIALSHOCKWAVE_H
 
-#include "Mappings/SimulationBuilder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 namespace R2toR {
     class R2toRInputRadialShockwave : public Base::BCInterface {

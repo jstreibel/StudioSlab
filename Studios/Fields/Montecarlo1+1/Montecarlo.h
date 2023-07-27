@@ -16,41 +16,29 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
-#include "Phys/Numerics/Allocator.h"
-#include "Mappings/RtoR/Core/RtoRModelAllocator_Montecarlo.h"
 
 
 namespace Montecarlo {
-
-
-
-    class OutputBuilder : public OutputStructureBuilderRtoR {
-    protected:
-        auto buildOpenGLOutput() -> RtoR::Monitor * override { return new Montecarlo::Monitor( ); }
-    public:
-        OutputBuilder() : OutputStructureBuilderRtoR("Montecarlo output builder", "R to R monetcarlo sim") {}
-    };
-
-
 
     class Input : public RtoRBCInterface {
         RealParameter T = RealParameter(1.e1, "Temperature,T", "System temperature");
         RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 
+    protected:
+        auto buildOpenGLOutput() -> RtoR::Monitor * override { return new Montecarlo::Monitor(numericParams); }
+
     public:
         Input()
-        : RtoRBCInterface("Montecarlo builder", "Simulation builder for 1+1 dim Montecarlo simulation.",
-                          BuilderBasePtr(new Montecarlo::OutputBuilder()))
+        : RtoRBCInterface("Montecarlo builder", "Simulation builder for 1+1 dim Montecarlo simulation.")
         {
             interface->addParameters({&T, &E, &n});
         }
 
-    private:
-        auto getBoundary() const -> const void * override{
+        auto getBoundary() -> void * override{
 
-            auto L = Numerics::Allocator::GetInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
-            auto xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+            auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
+            auto xLeft = numericParams.getxLeft();
             //auto L = 20.;
 
             auto oscLength = L / *n;
@@ -77,10 +65,6 @@ namespace Montecarlo {
 
         }
 
-    public:
-        auto registerAllocator() const -> void override {
-            Numerics::Allocator::Initialize<RtoRModelAllocator_Montecarlo>();
-        }
     };
 
 

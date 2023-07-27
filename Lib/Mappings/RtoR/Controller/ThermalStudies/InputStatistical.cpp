@@ -8,8 +8,6 @@
 
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 
-#include "Phys/Numerics/Allocator.h"
-
 #include <math.h>
 #include "InputStatistical.h"
 #include "Phys/Thermal/Utils/RandUtils.h"
@@ -32,9 +30,9 @@ auto RtoR::InputStatistical::getDetailedDescription() -> Str {
                   "on a bath of small oscillons (some sort of thermal equilibrium) could find subsidy to remain stable.");
 }
 
-auto RtoR::InputStatistical::getBoundary() const -> const void * {
-    auto L = Numerics::Allocator::GetInstance().getNumericParams().getL(); // not good bc 'L' is not my parameter.
-    auto xLeft = Numerics::Allocator::GetInstance().getNumericParams().getxLeft();
+auto RtoR::InputStatistical::getBoundary() -> void * {
+    auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
+    auto xLeft = numericParams.getxLeft();
     //auto L = 20.;
 
     auto oscLength = L / *n;

@@ -1,7 +1,9 @@
 #ifndef STEPPER_H
 #define STEPPER_H
 
-class Method{
+#include "Common/Types.h"
+
+class Method {
 public:
     Method() = default;
     virtual ~Method() = default;

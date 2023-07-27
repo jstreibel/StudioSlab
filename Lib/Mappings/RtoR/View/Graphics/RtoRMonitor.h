@@ -17,10 +17,9 @@ namespace RtoR {
     class Monitor : public Graphics::OutputOpenGL {
         bool isInitialized = false;
     public:
-        Monitor(Real xMin, Real xMax, Real phiMin, Real phiMax);
-        Monitor();
+        Monitor(const NumericParams &params, Real phiMin, Real phiMax);
 
-        void initialize(Real xMin, Real xMax, Real phiMin, Real phiMax);
+        void initialize();
 
     protected:
         void draw() override;
@@ -34,7 +33,7 @@ namespace RtoR {
 
         //GraphRtoR mTotalEnergyGraph;
 
-        EnergyCalculator energyCalculator;
+        //EnergyCalculator energyCalculator;
         //FuncArbResizable UHistory;
         //FuncArbResizable KHistory;
         //FuncArbResizable WHistory;

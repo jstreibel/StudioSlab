@@ -6,17 +6,15 @@
 
 #include "Common/Timer.h"
 
-#include "Phys/Numerics/Allocator.h"
-#include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Log/Log.h"
 
 const int HEADER_SIZE_BYTES = 2048;
 
-RtoR::OutputHistoryToFile::OutputHistoryToFile(PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
+RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                                Str  outputFileName)
-                                               : HistoryKeeper(stepsInterval, spaceFilter, endT),
+                                               : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
                                                  outFileName(std::move(outputFileName)),
                                                  outputFormatter(*(new BinarySOF()))
 {

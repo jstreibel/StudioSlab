@@ -1,12 +1,8 @@
 
 #include "OutputManager.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
-#include <Phys/Numerics/Allocator.h>
-
-
-OutputManager::OutputManager() : maxSteps(Numerics::Allocator::GetInstance().getNumericParams().getn()) { }
+OutputManager::OutputManager(const NumericParams &params) : params(params), maxSteps(params.getn()) { }
 
 OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
@@ -18,7 +14,7 @@ void OutputManager::output(OutputPacket &infoVolatile)
     for(auto *out : outputs) {
         auto shouldOutput = out->shouldOutput(t, steps);
         if (shouldOutput)
-            out->output(infoVolatile);
+            out->output(infoVolatile, params);
     }
 
 }
@@ -45,15 +41,15 @@ void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool k
                    "every " << out->getnSteps() << " sim steps." << Log::Flush;
 }
 
-void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
+void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) {
     Log::Success() << "Simulation finished. Total time steps: "
                    << theVeryLastOutputInformation.getSteps() << Log::Flush;
 
     for(auto output : myOutputs)
     {
-        if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-            Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
+        if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation, params))
+            Log::Error() << "Error while finishing " << output->getDescription() << "..." << Log::Flush;
 
-        Log::Info() << "Finished output channel '" << output->getName() << "'." << Log::Flush;
+        Log::Info() << "Finished output channel '" << output->getDescription() << "'." << Log::Flush;
     }
 }

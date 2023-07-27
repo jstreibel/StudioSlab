@@ -11,29 +11,28 @@
 #include "Method.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/Numerics/Allocator.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
 
 template<int NUM_THREADS, class STATE_TYPE>
-class StepperRK4 : public Method{
+class StepperRK4 : public Method {
 public:
+    typedef Slab::EquationSolverT<STATE_TYPE>    SolverType;
+    typedef Base::BoundaryConditions<STATE_TYPE> BCType;
 
-    StepperRK4(const void *dPhi_)
-        : Method(), H(*(Base::DifferentialEquation<STATE_TYPE>*) Numerics::Allocator::GetInstance().getSystemSolver()),
-          dPhi((const Base::BoundaryConditions<STATE_TYPE>*)dPhi_),
-          _phi((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k1((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k2((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k3((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _k4((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()),
-          _phiTemp((STATE_TYPE*)Numerics::Allocator::GetInstance().newFieldState()) {
-
-        // TODO aplicar isso a cada iteracao.
-        dPhi->apply(*_phi, 0.0);
-    }
+    StepperRK4(SolverType &solver)
+    : Method()
+    , H       ( solver )
+    , _phi    ( solver.NewEqState() )
+    , _k1     ( solver.NewEqState() )
+    , _k2     ( solver.NewEqState() )
+    , _k3     ( solver.NewEqState() )
+    , _k4     ( solver.NewEqState() )
+    , _phiTemp( solver.NewEqState() )
+    { }
 
     ~StepperRK4(){
         delete &H;
@@ -64,7 +63,8 @@ public:
             H.startStep(t, dt);
             #pragma omp parallel num_threads(NUM_THREADS)
             {
-                dPhi->apply(phi, t);
+                H.applyBC(phi, t, dt);
+                #pragma omp barrier
 
                 H(phi, k1, t, dt2);
                 #pragma omp barrier
@@ -105,9 +105,7 @@ public:
     }
 
 private:
-    Base::DifferentialEquation<STATE_TYPE> &H;
-
-    const Base::BoundaryConditions<STATE_TYPE> *dPhi;
+    Slab::EquationSolverT<STATE_TYPE> &H;
 
     STATE_TYPE *_phi;
     STATE_TYPE *_k1, *_k2, *_k3, *_k4;

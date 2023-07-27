@@ -4,7 +4,7 @@
 
 #include "Common/Log/Log.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/FunctionRenderer.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
@@ -17,16 +17,14 @@
 #define min(a, b) ((a)<(b)?(a):(b))
 
 
-RtoR::Monitor::Monitor() = default;
-
-RtoR::Monitor::Monitor(const Real xMin, const Real xMax,
-                       const Real phiMin, const Real phiMax)
-                                 : mFieldsGraph(xMin, xMax, phiMin, phiMax, "Fields")
+RtoR::Monitor::Monitor(const NumericParams &params, const Real phiMin, const Real phiMax)
+: Graphics::OutputOpenGL(params, "R->R general monitor")
+, mFieldsGraph(params.getxLeft(), params.getxMax(), phiMin, phiMax, "Fields")
 {
-    initialize(xMin, xMax, phiMin, phiMax);
+    initialize();
 }
 
-void RtoR::Monitor::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
+void RtoR::Monitor::initialize() {
     if(isInitialized) return;
 
     //this->mTotalEnergyGraph = {0, Allocator::getInstance().getNumericParams().gett(), 0, 1,
@@ -41,7 +39,7 @@ void RtoR::Monitor::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
 
     panel.addWindow(&this->stats);
 
-    auto samples = (int)Numerics::Allocator::GetInstance().getNumericParams().getN();
+    auto samples = (int)params.getN();
     // mFieldsGraph = new GraphRtoR{xMin, xMax, -0.1*phiMax, phiMax, "AAA", true, samples};
     panel.addWindow(&mFieldsGraph, true, 0.70);
 
@@ -59,13 +57,8 @@ void RtoR::Monitor::initialize(Real xMin, Real xMax, Real phiMin, Real phiMax) {
 }
 
 void RtoR::Monitor::draw() {
-    if(!isInitialized) {
-        const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
-        auto xMin = p.getxLeft();
-        auto xMax = xMin + p.getL();
-
-        initialize(xMin, xMax, -0.08, 0.08);
-    }
+    if(!isInitialized)
+        initialize();
 
 
     stats.addVolatileStat("");
@@ -79,15 +72,15 @@ void RtoR::Monitor::draw() {
 
     // *************************** FIELD ***********************************
     //mFieldsGraph.draw();
-    const RtoR::FieldState &fieldState = *lastData.getEqStateData<RtoR::FieldState>();
+    const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
 
     mFieldsGraph.clearFunctions();
 
     if(showPhi){
         const Styles::Color colorPhi = V_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getPotential(), "|phi|",
-                                  Styles::GetColorScheme()->funcPlotStyles[0]);
+        //mFieldsGraph.addFunction(&energyCalculator.getPotential(), "|phi|",
+        //                          Styles::GetColorScheme()->funcPlotStyles[0]);
     }
 
     if(showKineticEnergy){
@@ -101,14 +94,14 @@ void RtoR::Monitor::draw() {
     if(showGradientEnergy) {
         const Styles::Color colorGradient = W_color;
 
-        mFieldsGraph.addFunction(&energyCalculator.getGradient(), "grad^2",
-                                  Styles::GetColorScheme()->funcPlotStyles[2]);
+        //mFieldsGraph.addFunction(&energyCalculator.getGradient(), "grad^2",
+        //                          Styles::GetColorScheme()->funcPlotStyles[2]);
     }
 
     if(showEnergyDensity && 0){
         const Styles::Color color = U_color;
-        mFieldsGraph.addFunction(&energyCalculator.getEnergy(), "E",
-                                  Styles::GetColorScheme()->funcPlotStyles[3]);
+        //mFieldsGraph.addFunction(&energyCalculator.getEnergy(), "E",
+        //                          Styles::GetColorScheme()->funcPlotStyles[3]);
     }
 
     panel.draw();
@@ -117,8 +110,8 @@ void RtoR::Monitor::draw() {
 
 void RtoR::Monitor::_out(const OutputPacket &outInfo"") {
 
-    const RtoR::FieldState &fieldState = *outInfo.getEqStateData<RtoR::FieldState>();
-    energyCalculator.computeDensities(fieldState);
+    const RtoR::EquationState &fieldState = *outInfo.getEqStateData<RtoR::EquationState>();
+    // energyCalculator.computeDensities(fieldState);
 
     //auto U = energyCalculator.integrateEnergy();
     //auto K = energyCalculator.integrateKinetic();

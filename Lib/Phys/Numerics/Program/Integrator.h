@@ -5,7 +5,7 @@
 
 #include "Phys/Numerics/Output/OutputManager.h"
 
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 
@@ -17,12 +17,6 @@
 #include "Common/UtilsCollection/BenchmarkHistogram.h"
 
 
-#define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
-case (N): \
-stepper = new STEPPER_TYPE<N, EqStateType>(dPhi); \
-break;
-
-
 class NumericalIntegration : public Program {
     Real dt;
     PosInt steps;
@@ -31,10 +25,9 @@ class NumericalIntegration : public Program {
     BenchmarkHistogram simTimeHistogram;
     BenchmarkHistogram nonSimTimeHistogram;
 
+    Base::Simulation::VoidBuilder &simBuilder;
     Method *stepper;
     OutputManager *outputManager;
-
-    NumericalIntegration(OutputManager *outputManager);
 
     void output();
     OutputPacket getOutputInfo();
@@ -44,66 +37,33 @@ class NumericalIntegration : public Program {
     auto _cycleUntilOutput()    -> bool;
 
 public:
-    enum Methods {Montecarlo, RK4};
-
-    template <class EqStateType>
-    static NumericalIntegration* New(const void *dPhi, OutputManager *outputManager, Methods theMethod=RK4)
+    template<typename Mapping>
+    NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder, Mapping *map)
+            : simBuilder(simBuilder)
+            , stepper(simBuilder.buildStepper())
+            , outputManager(simBuilder.buildOutputManager()),
+              dt(simBuilder.getNumericParams().getdt()),
+              steps(0)
     {
-        auto *instance = new NumericalIntegration(outputManager);
+        #if ATTEMP_REALTIME
+        {
+            // Declare a sched_param struct to hold the scheduling parameters.
+            sched_param param;
 
-        const unsigned int numThreads = Numerics::Allocator::GetInstance().getDevice().get_nThreads();
+            // Set the priority value in the sched_param struct.
+            param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-        Method *stepper = nullptr;
-
-        if(theMethod==RK4){
-            switch (numThreads) {
-                GENERATE_FOR_NTHREADS(StepperRK4, 1);
-                GENERATE_FOR_NTHREADS(StepperRK4, 2);
-                GENERATE_FOR_NTHREADS(StepperRK4, 3);
-                GENERATE_FOR_NTHREADS(StepperRK4, 4);
-                GENERATE_FOR_NTHREADS(StepperRK4, 5);
-                GENERATE_FOR_NTHREADS(StepperRK4, 6);
-                GENERATE_FOR_NTHREADS(StepperRK4, 7);
-                GENERATE_FOR_NTHREADS(StepperRK4, 8);
-                GENERATE_FOR_NTHREADS(StepperRK4, 9);
-                GENERATE_FOR_NTHREADS(StepperRK4, 10);
-                GENERATE_FOR_NTHREADS(StepperRK4, 11);
-                GENERATE_FOR_NTHREADS(StepperRK4, 12);
-                GENERATE_FOR_NTHREADS(StepperRK4, 13);
-                GENERATE_FOR_NTHREADS(StepperRK4, 14);
-                GENERATE_FOR_NTHREADS(StepperRK4, 15);
-                GENERATE_FOR_NTHREADS(StepperRK4, 16);
-                default:
-                    throw "Number of threads must be between 1 and 16 inclusive.";
+            // Set the scheduling policy and priority of the current process.
+            int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+            if (ret == -1) {
+                Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+            } else {
+                Log::Info() << "Program running with realtime priority." << Log::Flush;
             }
-        } else if(theMethod == Montecarlo) {
-            switch (numThreads) {
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 1);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 2);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 3);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 4);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 5);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 6);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 7);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 8);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 9);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 10);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 11);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 12);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 13);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 14);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 15);
-                GENERATE_FOR_NTHREADS(StepperMontecarlo, 16);
-                default:
-                    throw "Number of threads must be between 1 and 16 inclusive.";
-            }
-        } else throw "Unknown integration method.";
+        }
+        #endif
 
-
-        instance->stepper = stepper;
-        instance->output(); // output do estado inicial
-
-        return instance;
+        this->output();
     }
 
     ~NumericalIntegration();

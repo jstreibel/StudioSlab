@@ -9,7 +9,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class QuasiShockwave : public Function {
+    class QuasiShockwave : public FunctionT {
         auto ϕ_1L(Real x) const -> Real;
         auto ϕ_2L(Real x) const -> Real;
         auto ϕ_3L(Real x) const -> Real;

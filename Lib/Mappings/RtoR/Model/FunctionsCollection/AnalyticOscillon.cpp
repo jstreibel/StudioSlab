@@ -56,7 +56,7 @@ auto AnalyticOscillon::operator()(Real x) const -> Real {
     return s1*l*l*psi(t0/l, (s2*x-x0)/l, v, -u);
 }
 
-auto AnalyticOscillon::Clone() const -> Function * {
+auto AnalyticOscillon::Clone() const -> FunctionT * {
     return new AnalyticOscillon(*this);
 }
 

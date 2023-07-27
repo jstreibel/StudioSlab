@@ -3,7 +3,6 @@
 //
 
 #include "InputRandomEnergyOverDotPhi.h"
-#include "Phys/Numerics/Allocator.h"
 #include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Phys/Thermal/Utils/RandUtils.h"
@@ -15,12 +14,10 @@ RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()
     interface->addParameters({&E});
 }
 
-auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() const -> const void* {
-    auto &allocator = Numerics::Allocator::GetInstance();
-
-    auto N = allocator.getNumericParams().getN();
-    auto h = allocator.getNumericParams().geth();
-    auto dotPhi = (RtoR::FunctionArbitraryCPU*)allocator.newFunctionArbitrary();
+auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() -> void* {
+    auto N = numericParams.getN();
+    auto h = numericParams.geth();
+    auto dotPhi = (RtoR::FunctionArbitraryCPU*)newFunctionArbitrary();
 
     VecFloat p(N);
 

@@ -5,8 +5,16 @@
 //
 // Created by joao on 30/09/2019.
 R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
-        : DiscreteFunctionBase(DimensionMetaData({N, M}), h, dev),
-          N(N), M(M), xMin(xMin), xMax(xMin+N*h), yMin(yMin), yMax(yMin+M*h), h(h) { }
+: DiscreteFunctionBase(DimensionMetaData({N, M}), h, dev)
+, N(N), M(M)
+, xMin(xMin), xMax(xMin+N*h)
+, yMin(yMin), yMax(yMin+M*h)
+, h(h)
+{ }
+
+R2toR::DiscreteFunction::DiscreteFunction(const NumericParams &p, device dev)
+: R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxLeft(), p.getxLeft(), p.geth(), dev)
+{ }
 
 Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     const Real Lx = xMax-xMin;
@@ -65,9 +73,9 @@ Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
     } else throw "Tidak bagus diff.";
 }
 
-Base::Function<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
+Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
-    return Function::diff(n);
+    return FunctionT::diff(n);
 }
 
 void R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real>::MyBase &func) {

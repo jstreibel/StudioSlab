@@ -1,6 +1,5 @@
 //
 
-#include "Phys/Numerics/Allocator.h"
 #include "FunctionRenderer.h"
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 
@@ -9,11 +8,9 @@
 // Created by joao on 27/09/2019.
 
 void RtoR::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &func, Styles::Color c, bool filled, Real scale){
-    auto &params = Numerics::Allocator::GetInstance().getNumericParams();
-
-    const Real xMin = params.getxLeft(),
-               xMax = xMin + params.getL();
-    const int N = params.getN();
+    const Real xMin = func.xMin,
+               xMax = func.xMax;
+    const int N = func.N;
 
     renderFunction(func, c, filled, xMin, xMax, N, scale);
 }

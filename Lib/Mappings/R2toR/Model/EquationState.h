@@ -5,13 +5,14 @@
 #ifndef V_SHAPE_FIELDSTATER2TOR_H
 #define V_SHAPE_FIELDSTATER2TOR_H
 
-#include "Phys/DifferentialEquations/2nd-Order/EquationState.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonStateT.h"
 #include "R2toRDiscreteFunction.h"
 
 namespace R2toR {
-    class EquationState : public Base::EquationState<DiscreteFunction> {
+    class EquationState : public Phys::Gordon::GordonStateT<DiscreteFunction> {
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationState<DiscreteFunction>(phi, dPhiDt)
+        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
+        : Phys::Gordon::GordonStateT<DiscreteFunction>(phi, dPhiDt)
         {
         }
 
@@ -19,7 +20,10 @@ namespace R2toR {
             throw "Not implemented";
             return nullptr;
         }
+
+        auto clone() const -> EquationState *;
     };
+
 }
 
 

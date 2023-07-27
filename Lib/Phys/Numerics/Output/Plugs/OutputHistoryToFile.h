@@ -23,7 +23,7 @@ class OutputHistoryToFile : public HistoryKeeper {
 public:
 
     OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter,
-                        Str  outputFileName,
+                        Real endT, Str  outputFileName,
                         OutputFormatterBase *outputFormatter = new BinarySOF());
 
     ~OutputHistoryToFile() override;

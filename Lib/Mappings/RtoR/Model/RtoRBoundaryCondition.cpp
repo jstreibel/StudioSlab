@@ -23,7 +23,7 @@ RtoR::BoundaryCondition::BoundaryCondition(Function *initialPhiCondition,
 
 }
 
-void RtoR::BoundaryCondition::apply(FieldState &fieldState, const floatt t) const {
+void RtoR::BoundaryCondition::apply(EquationState &fieldState, const floatt t) const {
     if(t == 0.0){
         fieldState.setPhi(*initialPhiCondition);
         fieldState.setDPhiDt(*initialdPhiDtCondition);

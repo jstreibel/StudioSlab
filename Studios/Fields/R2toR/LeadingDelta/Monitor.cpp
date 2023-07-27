@@ -8,7 +8,6 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 
-#include "Phys/Numerics/Allocator.h"
 #include "Phys/Function/FunctionScale.h"
 #include "Mappings/R2toR/Model/Energy.h"
 
@@ -16,12 +15,15 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Phys/Function/FunctionScale.h"
 
+#define xMin params.getxLeft()
+#define xMax params.getxMax()
+
 R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 
-R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params, R2toR::Function::Ptr drivingFunction,
-                                  Real xMin, Real xMax, Real yMin, Real yMax, Real phiMin, Real phiMax)
-: R2toR::OutputOpenGL(params, xMin, xMax, yMin, yMax, phiMin, phiMax)
+R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params,
+                                  R2toR::Function::Ptr drivingFunction, Real phiMin, Real phiMax)
+: R2toR::OutputOpenGL(params, phiMin, phiMax)
 , drivingFunction(drivingFunction)
 , mTotalEnergyGraph("Total energy")
 , mEnergyGraph("Energy")
@@ -32,113 +34,72 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params, R2toR::Function::
                phiMax*100,
                "",
                false,
-               Numerics::Allocator::GetInstance().getNumericParams().getN())
+               params.getN()*3)
 , mEnergyDensityGraph(xMin, xMax)
 {
-    {
-        energyRatioData = Spaces::PointSet::New();
-        mEnergyRatioGraph.addPointSet(energyRatioData,
-                                      Styles::GetColorScheme()->funcPlotStyles[0],
-                                      "Numeric/analytic energy");
-        auto line = RtoR2::StraightLine::New({0, 1},
-                                             {Numerics::Allocator::GetInstance().getNumericParams().gett(),
-                                              1});
-        auto style = Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2);
-        mEnergyRatioGraph.addCurve(line, style, "Target=1.0");
-        panel.addWindowToColumn(&mEnergyRatioGraph, 0);
-    }
-
-    {
-        numericEnergyData = Spaces::PointSet::New();
-        analyticEnergyData = Spaces::PointSet::New();
-        mEnergyGraph.addPointSet(numericEnergyData,
-                                 Styles::GetColorScheme()->funcPlotStyles[0],
-                                 "Numeric energy");
-        mEnergyGraph.addPointSet(analyticEnergyData,
-                                 Styles::GetColorScheme()->funcPlotStyles[2],
-                                 "Analytic energy");
-        panel.addWindowToColumn(&mEnergyGraph, 0);
-    }
-
-    {
-        totalEnergyData = Spaces::PointSet::New();
-        mTotalEnergyGraph.addPointSet(totalEnergyData,
-                                      Styles::GetColorScheme()->funcPlotStyles[0],
-                                      "Total analytic energy");
-        panel.addWindowToColumn(&mTotalEnergyGraph, 0);
-
-        auto line = new RtoR2::StraightLine({0, yMin},
-                                            {0, yMax},
-                                            yMin,
-                                            yMax);
-        mSpeedsGraph.addSection(line, Styles::Color(1, 0, 0, 1));
-        panel.addWindow(&mSpeedsGraph);
-    }
+    energyRatioData = Spaces::PointSet::New();
+    mEnergyRatioGraph.addPointSet(energyRatioData,
+                                  Styles::GetColorScheme()->funcPlotStyles[0],
+                                  "Numeric/analytic energy");
+    panel.addWindowToColumn(&mEnergyRatioGraph, 0);
 
 
-}
+    numericEnergyData = Spaces::PointSet::New();
+    analyticEnergyData = Spaces::PointSet::New();
+    mEnergyGraph.addPointSet(numericEnergyData,
+                             Styles::GetColorScheme()->funcPlotStyles[0],
+                             "Numeric energy");
+    mEnergyGraph.addPointSet(analyticEnergyData,
+                             Styles::GetColorScheme()->funcPlotStyles[1],
+                             "Analytic energy");
+    panel.addWindowToColumn(&mEnergyGraph, 0);
 
-void R2toR::LeadingDelta::OutGL::_out(const OutputPacket &outInfo) {
-    OutputOpenGL::_out(outInfo);
 
-    Phys::Gordon::Energy energy;
-    auto delta = -(getnSteps())*params.getdt();
-    auto E_radius = delta + t + energyIntegrationRadiusDelta;
-    auto E = energy.computeRadial_method2(eqState, E_radius);
-    numericEnergyData->addPoint({t, E});
-    auto analyticEnergy = (2./3.) * M_PI * t * t;
-    analyticEnergyData->addPoint({t, (Real)analyticEnergy});
+    totalEnergyData = Spaces::PointSet::New();
+    mTotalEnergyGraph.addPointSet(totalEnergyData,
+                                  Styles::GetColorScheme()->funcPlotStyles[0],
+                                  "Total analytic energy");
+    panel.addWindowToColumn(&mTotalEnergyGraph, 0);
 
-    if(analyticEnergy != 0) energyRatioData->addPoint({t, E/(Real)analyticEnergy});
+    auto line = new RtoR2::StraightLine({0, xMin},
+                                        {0, xMax},
+                                        xMin,
+                                        xMax);
+    mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
+    panel.addWindow(&mSpeedsGraph);
 
-    if(showEnergyIntegrationLimits)
-    {
-        const auto R = E_radius;
 
-        mSectionGraph.clearCurves();
-        mSpeedsGraph.clearCurves();
-
-        auto line1 = RtoR2::StraightLine::New({R, -10}, {R, 10});
-        auto line2 = RtoR2::StraightLine::New({-R, -10}, {-R, 10});
-        auto style = Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2);
-
-        mSectionGraph.addCurve(line1, style, "Numeric wave inside limits");
-        mSectionGraph.addCurve(line2, style, "");
-
-        mSpeedsGraph.addCurve(line1, style, "Numeric wave inside limits");
-        mSpeedsGraph.addCurve(line2, style, "");
-
-    }
-
-    totalE = energy[eqState];
-    totalEnergyData->addPoint({t, totalE});
-
-    lastE = E;
-    lastAnalyticE = analyticEnergy;
-
-    lastStep = step;
 }
 
 void R2toR::LeadingDelta::OutGL::draw() {
+    if(!lastData.hasValidData()) return;
+
     static auto timer = Timer();
     auto elTime = timer.getElTime_msec();
     timer = Timer();
 
     auto &rd = *R2toR::LeadingDelta::ringDelta1;
 
-    const auto &p = Numerics::Allocator::GetInstance().getNumericParams();
+    auto &eqState = *lastData.getEqStateData<R2toR::EquationState>();
+
+    const auto &p = params;
     const auto L = p.getL();
     const auto N = p.getN();
     const auto h = p.geth();
 
-    const auto ldInterface = InterfaceManager::getInstance().getInterface("R2toR-Leading Delta");
+    const auto ldInterface = InterfaceManager::getInstance().getInterface("Leading Delta");
     const auto epsilon = *(Real*) ldInterface->getParameter("eps")->getValueVoid();
 
-    auto dt = Numerics::Allocator::GetInstance().getNumericParams().getdt();
+    static auto lastStep=0;
+    static auto energyIntegrationRadius = (float)(-epsilon);
+    static auto lastE = .0;
+    static auto lastAnalyticE = .0;
+
+    auto dt = params.getdt();
     stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step));
-    stats.addVolatileStat(Str("steps/frame = ") + ToStr(getnSteps()));
-    stats.addVolatileStat(Str("steps/sec: ") + ToStr(getnSteps()/(elTime*1e-3)));
+    //stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
+    //stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
     stats.addVolatileStat(Str("FPS: ") + ToStr(1/(elTime*1e-3)));
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
@@ -153,15 +114,49 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(Str("h² = ") + ToStr(L * L / (N * N), 4, true));
     stats.addVolatileStat(Str("<\\br>"));
 
+    auto totalE = .0;
+
     if(1) {
         ImGui::Begin("Energy compute");
-        ImGui::Checkbox("Show energy integration limits", &showEnergyIntegrationLimits);
-        ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadiusDelta, (float) epsilon * 1e-3f,
-                         -2.0f * epsilon, 2.0f * epsilon, "%.4f");
+        ImGui::DragFloat("Energy integration radius: ", &energyIntegrationRadius, (float) epsilon * 1e-3f,
+                         -2.0f * epsilon, 2.0f * epsilon, "%.2e");
 
-        if(ImGui::Button("Reset")) energyIntegrationRadiusDelta = -(float)epsilon;
+        if(ImGui::Button("Reset")) energyIntegrationRadius = -(float)epsilon;
 
         ImGui::End();
+    }
+
+    if(step != lastStep)
+    {
+        Phys::Gordon::Energy energy;
+        auto E_radius = t+energyIntegrationRadius;
+        auto E = energy.computeRadial_method2(eqState, E_radius);
+        numericEnergyData->addPoint({t, E});
+        auto analyticEnergy = (2./3.) * M_PI * t * t;
+        analyticEnergyData->addPoint({t, (Real)analyticEnergy});
+
+        if(analyticEnergy != 0) energyRatioData->addPoint({t, E/(Real)analyticEnergy});
+
+        {
+            const auto R = E_radius;
+
+            mSectionGraph.clearCurves();
+            mSectionGraph.addCurve(RtoR2::StraightLine::New({R, -10}, {R, 10}),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
+                                   "Numeric wave inside limits");
+            mSectionGraph.addCurve(RtoR2::StraightLine::New({-R, -10}, {-R, 10}),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
+                                   "");
+        }
+
+        totalE = energy[eqState];
+        totalEnergyData->addPoint({t, totalE});
+
+        lastE = E;
+        lastAnalyticE = analyticEnergy;
+
+        lastStep = step;
+
     }
 
     stats.addVolatileStat(Str("E_tot = ") + ToStr(totalE, 2, true));
@@ -175,42 +170,38 @@ void R2toR::LeadingDelta::OutGL::draw() {
     mSectionGraph.clearFunctions();
     mSpeedsGraph .clearFunctions();
 
-    static auto showNumeric = true;
-    static auto showDeltaRing = true;
-    static auto showAnalytic = true;
-    static auto showNumericSpeed = true;
-    static auto showAnalyticSpeed = true;
+    static auto numeric = true;
+    static auto deltaRing = true;
+    static auto analytic = true;
+    static auto numericSpeed = true;
+    static auto analyticSpeed = true;
     static auto timeOffset = .0f;
     static auto a = rd.getA();
     static auto eps = rd.getEps();
 
     ImGui::Begin("Render");
     ImGui::SeparatorText("phi");
-    ImGui::Checkbox("Show numeric", &showNumeric);
-    ImGui::Checkbox("Show delta ring", &showDeltaRing);
-    ImGui::Checkbox("Show analytic", &showAnalytic);
+    ImGui::Checkbox("Show numeric", &numeric);
+    ImGui::Checkbox("Show delta ring", &deltaRing);
+    ImGui::Checkbox("Show analytic", &analytic);
     ImGui::SameLine();
     ImGui::SliderFloat("t_offset", &timeOffset, -eps, eps, "%.3f");
     ImGui::SeparatorText("dphi/dt");
-    ImGui::Checkbox("Show numeric speed", &showNumericSpeed);
-    ImGui::Checkbox("Show analytic speed", &showAnalyticSpeed);
+    ImGui::Checkbox("Show numeric speed", &numericSpeed);
+    ImGui::Checkbox("Show analytic speed", &analyticSpeed);
     ImGui::End();
 
-    if(showNumeric)
+    if(numeric)
         mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
 
     stats.addVolatileStat(Str("Ring radius: ") + ToStr(rd.getRadius()));
-    stats.addVolatileStat(Str("Ring height: ") + ToStr(rd.getA()));
 
-    if(showDeltaRing) {
-        if(false) {
-            auto scale = 1;
-            auto rdScaledDown = Base::Scale(rd, scale);
-            auto name = Str("Ring delta x") + ToStr(scale, 2, true);
-            mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
-        } else {
-            mSectionGraph.addFunction(&rd, "W(0) lift", Styles::GetColorScheme()->funcPlotStyles[1]);
-        }
+    auto scale = eps;
+    auto rdScaledDown = Base::Scale(rd, scale);
+    if(deltaRing) {
+        auto name = Str("Ring delta x") + ToStr(scale, 2, true);
+
+        mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetColorScheme()->funcPlotStyles[1]);
     }
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
@@ -218,12 +209,12 @@ void R2toR::LeadingDelta::OutGL::draw() {
     RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
     radialShockwave.sett(t - dt - Real(timeOffset));
     FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
-    if(showAnalytic)     mSectionGraph.addFunction(
+    if(analytic)     mSectionGraph.addFunction(
             &shockwave,
             "Analytic",
             Styles::GetColorScheme()->funcPlotStyles[2]);
 
-    if(showNumericSpeed) mSpeedsGraph .addFunction(
+    if(numericSpeed) mSpeedsGraph .addFunction(
             &dphidt,
             "Numeric speed",
             Styles::GetColorScheme()->funcPlotStyles[0]);
@@ -231,7 +222,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
     ddtRadialShockwave.sett(t - dt - Real(timeOffset));
     FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
-    if(showAnalyticSpeed)
+    if(analyticSpeed)
         mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetColorScheme()->funcPlotStyles[2]);
 
     panel.draw();
@@ -240,7 +231,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(EventListener::notifyKeyboard(key, x, y)) return true;
 
-    if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') ) ---> CTRL+p
+    if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
         auto buffer = GLUTUtils::getFrameBuffer();
 
         auto fileName = Str("signum Gordon (2+1 leading-delta) ");

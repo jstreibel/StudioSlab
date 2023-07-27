@@ -11,7 +11,7 @@ InputSymmetricOscillon::InputSymmetricOscillon()
     interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
 }
 
-auto InputSymmetricOscillon::getBoundary() const -> const void *
+auto InputSymmetricOscillon::getBoundary() -> void *
 {
     RtoR::FunctionSummable &initCondPhi = *(new RtoR::FunctionSummable),
                          &initCondDPhiDt = *(new RtoR::FunctionSummable);

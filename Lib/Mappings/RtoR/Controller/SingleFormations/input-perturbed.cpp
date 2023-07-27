@@ -13,7 +13,7 @@ InputPerturbations::InputPerturbations()
     interface->addParameters({&l, &eps});
 };
 
-auto InputPerturbations::getBoundary() const -> const void *
+auto InputPerturbations::getBoundary() -> void *
 {
     return new RtoR::BoundaryCondition(new RtoR::NullFunction,
                                        new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),

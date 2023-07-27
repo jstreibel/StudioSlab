@@ -2,26 +2,24 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Common/Log/Log.h"
 
-#include <Phys/Numerics/Allocator.h>
-
 OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const int n_steps)
     : Socket(params, "Console monitor output", n_steps),
-      maxT(Numerics::Allocator::GetInstance().getNumericParams().gett())
+      maxT(params.gett())
 {
 
 }
 
-bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation)
+bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params)
 {
 	// Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
     OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
-                                          Numerics::Allocator::GetInstance().getNumericParams().getn(), maxT);
+                                          params.getn(), maxT);
 
-    this->_out(dummyInfo);
+    this->_out(dummyInfo, params);
     return true;
 }
 
-void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
+void OutputConsoleMonitor::_out(const OutputPacket &outputInfo, const NumericParams &params)
 {
     auto n = params.getn();
 

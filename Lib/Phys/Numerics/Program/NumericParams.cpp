@@ -3,31 +3,33 @@
 #include "Common/Log/Log.h"
 
 
-NumericParams::NumericParams(): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, true)
+NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
 {
     interface->addParameters({N, L, xCenter, t, r, dimMode, h});
 
     Log::Info() << "Integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 }
 
-//NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
-//    N = p.N;
-//    L = p.L;
-//    t = p.t;
-//    r = p.r;
-//    h = p.h;
-//
-//    xCenter = p.xCenter;
-//    dimMode = p.dimMode;
-//}
+/*
+NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
+    N = p.N;
+    L = p.L;
+    t = p.t;
+    r = p.r;
+    h = p.h;
+
+    xCenter = p.xCenter;
+    dimMode = p.dimMode;
+}*/
 
 auto NumericParams::getN() const -> size_t { return **N; }
 auto NumericParams::getL() const -> floatt { return **L; }
 auto NumericParams::getxLeft() const -> floatt { return **xCenter - **L*.5; }
+auto NumericParams::getxMax()  const -> floatt { return **xCenter + **L*.5; }
 auto NumericParams::gett() const -> floatt { return **t; }
 auto NumericParams::getr() const -> floatt { return **r; }
 auto NumericParams::getn() const -> size_t {
-    return PosInt(**t / dt);
+    return n;
 }
 auto NumericParams::geth() const -> floatt {
     return **h;
@@ -37,7 +39,7 @@ auto NumericParams::getdt() const -> floatt {
 }
 
 void NumericParams::sett(Real tMax) const {
-    Log::Attention() << "Command line argument '" << t->getFullCLName() << "' "
+    Log::Attention() << "Command line argument '--" << t->getCommandLineArgName(true) << "' "
                      << "being ignored and set to " << tMax << ";" << Log::Flush;
 
     t->setValue(tMax);
@@ -61,13 +63,10 @@ void NumericParams::notifyCLArgsSetupFinished() {
             break;
     }
 
-    if(**t < 0){
-        *t = **L * .5;
-        Log::Attention() << "Command line argument '" << t->getFullCLName() << "' is <0, so it is "
-                    << "being ignored and set to L/2=" << *t << ";" << Log::Flush;
-    }
+    if(**t < 0) *t = **L * .5;
 
     dt = **r * **h;
+    n = PosInt(**t / dt);
 }
 
 

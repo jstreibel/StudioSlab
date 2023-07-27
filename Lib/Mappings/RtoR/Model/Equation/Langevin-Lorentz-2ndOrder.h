@@ -1,11 +1,10 @@
 #ifndef HamiltonLangevinCPU_H
 #define HamiltonLangevinCPU_H
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
-
-#include "Phys/Numerics/Allocator.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 
 #define FType(a) typename FieldState::a
@@ -38,11 +37,10 @@ namespace RtoR {
         Real alpha = 1.0;
     public:
 
-        explicit LorentzLangevin_2ndOrder(RtoR::Function &potential): LorentzInvariant(potential),
-                                                                      langevinImpulses(*(DiscreteFunction*)Numerics::Allocator::
-                                                                      GetInstance().newFunctionArbitrary()),
-                                                                      scaledImpulses(*(DiscreteFunction*)Numerics::Allocator::
-                                                                      GetInstance().newFunctionArbitrary()) { }
+        explicit LorentzLangevin_2ndOrder(Base::Simulation::Builder &builder, RtoR::Function &potential)
+        : LorentzInvariant(potential)
+        , langevinImpulses(*builder.NewFunctionArbitrary<DiscreteFunction>())
+        , scaledImpulses(  *builder.NewFunctionArbitrary<DiscreteFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             DifferentialEquation::startStep(t, dt);
@@ -81,8 +79,6 @@ namespace RtoR {
                 iPhi.Apply(*dVDPhi, dV_out);
 
                 oDPhi.StoreSubtraction(laplacian, dV_out);  // agora temp1 e temp2 estao liberados;
-
-
 
                 oDPhi -= scaledImpulses;
                 oDPhi -= iDPhi;

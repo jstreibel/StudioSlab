@@ -19,7 +19,6 @@ namespace R2toR {
 
         auto Laplacian        (DiscreteFunction &outFunc)            const -> DiscreteFunction & override;
 
-
         auto Clone()                                                 const -> Type             * override;
         auto CloneWithSize    (PosInt N)                             const -> DiscrBase        * override;
 

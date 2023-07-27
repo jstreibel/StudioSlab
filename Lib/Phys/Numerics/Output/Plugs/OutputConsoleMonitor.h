@@ -12,11 +12,13 @@ private:
 public:
     OutputConsoleMonitor(const NumericParams &params, const int n_steps);
 
+    virtual Str getDescription() const {return "console monitor output";}
+
 public:
-    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
+    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params);
 
 protected:
-    virtual void _out(const OutputPacket &outputInfo) override;
+    virtual void _out(const OutputPacket &outputInfo, const NumericParams &params);
 };
 
 #endif // OUTPUTCONSOLEMONITOR_H

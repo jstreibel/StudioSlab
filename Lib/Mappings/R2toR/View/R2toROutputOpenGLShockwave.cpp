@@ -6,8 +6,6 @@
 #include "Base/Graphics/Utils.h"
 #include "Phys/Graph/FunctionGraph.h"
 #include "Mappings/RtoR2/StraightLine.h"
-#include "Phys/Numerics/Allocator.h"
-#include "Mappings/FunctionRenderer.h"
 #include "R2toROutputOpenGLShockwave.h"
 
 #include <filesystem>

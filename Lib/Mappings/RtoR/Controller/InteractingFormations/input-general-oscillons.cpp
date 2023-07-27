@@ -16,7 +16,7 @@ InputGeneralOscillons::InputGeneralOscillons()
     interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
 }
 
-auto InputGeneralOscillons::getBoundary() const -> const void *
+auto InputGeneralOscillons::getBoundary() -> void *
 {
     AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.getValue(), V.getValue(), alpha1.getValue(),
                                                  false, false);

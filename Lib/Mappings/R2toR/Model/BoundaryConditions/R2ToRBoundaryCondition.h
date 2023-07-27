@@ -14,7 +14,8 @@ namespace R2toR {
     class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
     public:
         BoundaryCondition(Function *initialPhiCondition,
-                          Function *initialdPhiDtCondition);
+                          Function *initialdPhiDtCondition,
+                          R2toR::EquationState *prototype);
 
         void apply(EquationState &fieldState, Real t) const override;
 

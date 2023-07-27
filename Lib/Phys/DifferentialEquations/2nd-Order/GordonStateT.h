@@ -10,62 +10,69 @@
 
 #include <Phys/Numerics/Output/Util/FieldStateOutputInterface.h>
 
-namespace Base {
+namespace Phys::Gordon {
 
     /**
      * State representing 2nd order equation state.
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
     template<class EqCategory>
-    class EquationState : public Utils::ArithmeticOpsInterface<EquationState<EqCategory>>, public FStateOutputInterface {
+    class GordonStateT : public Utils::ArithmeticOpsInterface<GordonStateT<EqCategory>>, public FStateOutputInterface {
     public:
-        EquationState(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
-
+        typedef EqCategory SubStateType;
         using FunctionType = typename EqCategory::Type;
         using FunctionArbitraryType = EqCategory;
 
-        virtual ~EquationState() {
+        GordonStateT(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
+        GordonStateT(const GordonStateT& state)
+        : GordonStateT(new EqCategory(state.phi), new EqCategory(state.dPhiDt)) {};
+        virtual ~GordonStateT() {
             delete phi;
             delete dPhiDt;
         }
 
-        EquationState &Add(const EquationState &fieldState) override {
+        GordonStateT &Add(const GordonStateT &fieldState) override {
             phi->Add(fieldState.getPhi());
             dPhiDt->Add(fieldState.getDPhiDt());
 
             return *this;
         }
-        EquationState &Subtract(const EquationState<EqCategory> &fieldState) override {
+        GordonStateT &Subtract(const GordonStateT<EqCategory> &fieldState) override {
             phi->Subtract(fieldState.getPhi());
             dPhiDt->Subtract(fieldState.getDPhiDt());
 
             return *this;
         }
-        EquationState &StoreAddition(const EquationState &fieldState1, const EquationState &fieldState2) override {
+        GordonStateT &StoreAddition(const GordonStateT &fieldState1, const GordonStateT &fieldState2) override {
             phi->StoreAddition(fieldState1.getPhi(), fieldState2.getPhi());
             dPhiDt->StoreAddition(fieldState1.getDPhiDt(), fieldState2.getDPhiDt());
 
             return *this;
         }
-        EquationState &Multiply(floatt a) override {
+        GordonStateT &Multiply(floatt a) override {
             phi->Multiply(a);
             dPhiDt->Multiply(a);
 
             return *this;
         }
-        EquationState<EqCategory> &
-                StoreSubtraction(const EquationState &aoi1, const EquationState &aoi2) override {
+        GordonStateT<EqCategory> &
+                StoreSubtraction(const GordonStateT &aoi1, const GordonStateT &aoi2) override {
             phi->StoreSubtraction(aoi1.getPhi(), aoi2.getPhi());
             dPhiDt->StoreSubtraction(aoi1.getDPhiDt(), aoi2.getDPhiDt());
 
             return *this;
         }
-        EquationState<EqCategory> &
-                StoreMultiplication(const EquationState<EqCategory> &aoi1, const Real a) override {
+        GordonStateT<EqCategory> &
+                StoreMultiplication(const GordonStateT<EqCategory> &aoi1, const Real a) override {
             phi->StoreMultiplication(aoi1.getPhi(), a);
             dPhiDt->StoreMultiplication(aoi1.getDPhiDt(), a);
 
             return *this;
+        }
+
+        void set(const GordonStateT &val) {
+            setPhi(val.getPhi());
+            setDPhiDt(val.getDPhiDt());
         }
 
         /*! Basicamente utilizado por BoundaryConditions */

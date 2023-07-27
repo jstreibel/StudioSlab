@@ -10,14 +10,14 @@
 namespace Base {
 
         template<class InputCategory, class OutputCategory>
-        class Product : public Function<InputCategory, OutputCategory> {
-            typedef Function<InputCategory, OutputCategory> MyBase;
+        class Product : public FunctionT<InputCategory, OutputCategory> {
+            typedef FunctionT<InputCategory, OutputCategory> MyBase;
 
             const MyBase &A, &B;
 
         public:
             Product(MyBase &a, MyBase &b)
-                : Function<InputCategory, OutputCategory>(nullptr, false), A(a), B(b) { }
+                : FunctionT<InputCategory, OutputCategory>(nullptr, false), A(a), B(b) { }
 
             Product(const Product &toCopy) : Product(toCopy.A, toCopy.B) { }
 

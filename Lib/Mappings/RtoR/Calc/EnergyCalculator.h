@@ -7,22 +7,21 @@
 
 #include "Mappings/RtoR/Model/RtoRFunctionArbitrary.h"
 #include "Mappings/RtoR/Model/RtoRFieldState.h"
-
-#include "Phys/Numerics/Allocator.h"
-
+#include "Phys/Numerics/VoidBuilder.h"
 
 namespace RtoR {
     class EnergyCalculator {
-        RtoR::DiscreteFunction *_oEnergyDensityFunc =
-                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
-        RtoR::DiscreteFunction *_oKinetic =
-                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
-        RtoR::DiscreteFunction *_oGradient =
-                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
-        RtoR::DiscreteFunction *_oPotential =
-                static_cast<RtoR::DiscreteFunction *>(Numerics::Allocator::GetInstance().newFunctionArbitrary());
+        Base::Simulation::VoidBuilder &builder;
+
+        RtoR::DiscreteFunction *_oEnergyDensityFunc;
+        RtoR::DiscreteFunction *_oKinetic;
+        RtoR::DiscreteFunction *_oGradient;
+        RtoR::DiscreteFunction *_oPotential;
+
     public:
-        const RtoR::DiscreteFunction &computeDensities(const RtoR::FieldState &field);
+        EnergyCalculator(Base::Simulation::VoidBuilder &builder);
+
+        const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
 
         const RtoR::DiscreteFunction &getEnergy() const { return *_oEnergyDensityFunc; };
         const RtoR::DiscreteFunction &getKinetic() const { return *_oKinetic; };

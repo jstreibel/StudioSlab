@@ -20,7 +20,7 @@ namespace R2toR {
 
         typedef Base::DiscreteFunction<Real2D, Real> ArbFunc;
 
-        class RingDeltaFunc : public Function {
+        class RingDeltaFunc : public R2toR::Function {
         protected:
             Real eps, a, dt;
             Real radius;

@@ -10,7 +10,7 @@
 #define BASE_NS 2
 
 namespace RtoR {
-    class AbsPerturbedDiffFunction : public Function {
+    class AbsPerturbedDiffFunction : public FunctionT {
     public:
         explicit AbsPerturbedDiffFunction(PosInt Ns = BASE_NS);
 
@@ -18,13 +18,13 @@ namespace RtoR {
 
         Ptr diff(int n) const override;
 
-        Function<Real, Real> *Clone() const override;
+        FunctionT<Real, Real> *Clone() const override;
 
     private:
         const PosInt Ns;
     };
 
-    class AbsPerturbedFunction : public Function {
+    class AbsPerturbedFunction : public FunctionT {
     public:
         explicit AbsPerturbedFunction(PosInt Ns = BASE_NS);
 
@@ -32,7 +32,7 @@ namespace RtoR {
 
         Ptr diff(int n) const override;
 
-        Function<Real, Real> *Clone() const override;
+        FunctionT<Real, Real> *Clone() const override;
 
     public:
         Real Fold(floatt eta, const int Ns);

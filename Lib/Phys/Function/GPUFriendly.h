@@ -11,7 +11,7 @@ namespace Base {
 #if USE_CUDA == true
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \
-        CLASS_NAME() : Function(this) {}                                 \
+        CLASS_NAME() : FunctionT(this) {}                                 \
         void GPUApply(const DeviceVector &in, DeviceVector &out) const override;
 #else
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
@@ -20,7 +20,7 @@ namespace Base {
 #endif
 
     template<class PosSpaceType, class TargetSpaceType>
-    class Function;
+    class FunctionT;
 
     class GPUFriendly {
     public:

@@ -5,15 +5,15 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include "Mappings/SimulationBuilder.h"
+#include "Phys/Numerics/VoidBuilder.h"
 
 #include "Common/NativeTypes.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
-#include "R2ToR_SimulationBuilder.h"
+#include "Mappings/R2toR/Controller/R2ToRSimBuilder.h"
 
 namespace R2toR {
 
-    class R2toRInputShockwave : public SimulationBuilder {
+    class R2toRInputShockwave : public R2toR::Builder {
     private:
         RealParameter::Ptr eps   = RealParameter::New(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
         RealParameter::Ptr theta = RealParameter::New(0., "theta", "Ellipse rotation.");
@@ -22,7 +22,7 @@ namespace R2toR {
         RealParameter::Ptr t0    = RealParameter::New(0., "t0", "Initial time.");
     public:
         R2toRInputShockwave();
-        auto getBoundary() const -> const void * override;
+        auto getBoundary() -> void * override;
     };
 
 }

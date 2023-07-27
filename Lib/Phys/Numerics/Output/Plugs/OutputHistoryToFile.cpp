@@ -1,8 +1,6 @@
 #include "OutputHistoryToFile.h"
 #include "Common/Log/Log.h"
 
-
-#include <Phys/Numerics/Allocator.h>
 #include <Base/Controller/Interface/InterfaceManager.h>
 
 #include <Common/Timer.h>
@@ -11,9 +9,9 @@
 
 const Str extension = ".osc";
 
-OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter,
+OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                          Str outputFileName, OutputFormatterBase *outputFormatter)
-    : HistoryKeeper(params, stepsInterval, spaceFilter),
+    : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
       outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
       outputFormatter(*outputFormatter)
 {
@@ -75,7 +73,9 @@ void OutputHistoryToFile::_dump(bool integrationIsFinished) {
 void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
     std::ostringstream oss;
 
+
     oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
+
 
     DimensionMetaData recDim = spaceFilter.getOutputDim();
     Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";

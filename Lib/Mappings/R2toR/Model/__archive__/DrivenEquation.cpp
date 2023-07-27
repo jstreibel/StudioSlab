@@ -5,7 +5,6 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "DrivenEquation.h"
-#include "Phys/Numerics/Allocator.h"
 #include "Common/Log/Log.h"
 
 namespace R2toR {
@@ -13,12 +12,12 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        DrivenEquation::DrivenEquation(R2toR::Function::Ptr drivingForce)
-            : GordonSystem(*(new RtoR::AbsFunction))
+        DrivenEquation::DrivenEquation(const NumericParams &params, R2toR::Function::Ptr drivingForce)
+            : GordonSolverT(params, *(new RtoR::AbsFunction))
             , drivingForce(drivingForce)
-            , drivingForceRendered(Numerics::Allocator::GetInstance().getNumericParams().getN(),
-                                   Numerics::Allocator::GetInstance().getNumericParams().getxLeft(),
-                                   Numerics::Allocator::GetInstance().getNumericParams().geth())
+            , drivingForceRendered(builder.getNumericParams().getN(),
+                                   builder.getNumericParams().getxLeft(),
+                                   builder.getNumericParams().geth())
         {
             if(drivingForce == nullptr) {
                 Log::Error() << "DrivenEquation solver's driving force must be != nullptr." << Log::Flush;
@@ -52,7 +51,8 @@ namespace R2toR {
                 // z=¼(r²-t²)
                 // δ(z)𝕕z = r/t δ(r-t)𝕕r
 
-
+                drivingForce->renderToDiscreteFunction(&drivingForceRendered);
+                auto &δ = drivingForceRendered;
                 auto &dVdϕ = *dVDPhi;
                 auto &dVdϕₒᵤₜ = dV_out;
 
@@ -60,10 +60,7 @@ namespace R2toR {
                 ϕᵢₙ.Apply(dVdϕ, dVdϕₒᵤₜ);
 
                 𝜕φ𝜕tₒᵤₜ.StoreSubtraction(laplacian, dVdϕₒᵤₜ);
-
-                // auto &δ = drivingForceRendered;
-                // drivingForce->renderToDiscreteFunction(&δ);
-                // 𝜕φ𝜕tₒᵤₜ.Add(δ);
+                𝜕φ𝜕tₒᵤₜ.Add(δ);
 
                 𝜕φ𝜕tₒᵤₜ *= δt;
             }

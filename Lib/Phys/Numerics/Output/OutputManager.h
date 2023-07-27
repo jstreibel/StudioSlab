@@ -1,12 +1,7 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-
-#include "Mappings/SimulationBuilder.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Plugs/Socket.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
-
 
 class OutputManager {
 
@@ -15,10 +10,11 @@ protected:
 	std::vector<Numerics::OutputSystem::Socket*> outputs;
 	std::vector<Numerics::OutputSystem::Socket*> myOutputs;
 
+	const NumericParams &params;
 
 public:
 
-    OutputManager();
+    OutputManager(const NumericParams &params);
 	~OutputManager();
 
 	/**

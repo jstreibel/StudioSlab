@@ -52,7 +52,7 @@ auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
     return *this;
 }
 
-FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
+FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
     const floatt L = xMax - xMin;
     VecFloat &X = getSpace().getHostData();
 
@@ -65,7 +65,7 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const Function & function) {
     return *this;
 }
 
-Base::Function<Real, Real> *FunctionArbitraryCPU::Clone() const {
+Base::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
     return new FunctionArbitraryCPU(*this);
 }
 
@@ -82,7 +82,7 @@ Base::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt o
     return &newFunc;
 }
 
-Base::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const Function &func,
+Base::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const FunctionT &func,
                                                                 Base::DiscreteFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
 

@@ -10,7 +10,7 @@
 #include "Phys/Function/GPUFriendly.h"
 
 namespace RtoR {
-    class SignumFunction : public Function, Base::GPUFriendly {
+    class SignumFunction : public RtoR::Function, Base::GPUFriendly {
 
         MAKE_GPU_FRIENDLY(SignumFunction)
 
@@ -18,7 +18,7 @@ namespace RtoR {
             return SIGN(x);
         }
 
-        Function<Real, Real> *Clone() const override {
+        RtoR::Function *Clone() const override {
             return new SignumFunction;
         }
     };

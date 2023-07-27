@@ -7,23 +7,22 @@
 
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
-#include "Mappings/R2toR/Core/R2toR_Allocator.h"
-#include "Phys/DifferentialEquations/DifferentialEquation.h"
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
-#include "RingDeltaFunc.h"
+#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
+#include "../../../../../Studios/Fields/R2toR/LeadingDelta/RingDeltaFunc.h"
 
 namespace R2toR {
 
     namespace LeadingDelta {
 
-        typedef Phys::Gordon::GordonSystem<EquationState> DiffEq;
+        typedef Phys::Gordon::GordonSolverT<EquationState> DiffEq;
 
         class DrivenEquation : public DiffEq {
             R2toR::Function::Ptr drivingForce;
             R2toR::FunctionArbitraryGPU drivingForceRendered;
 
         public:
-            explicit DrivenEquation(R2toR::Function::Ptr drivingForce);
+            explicit DrivenEquation(Base::Simulation::VoidBuilder &builder, R2toR::Function::Ptr drivingForce);
 
             auto dtF(const EquationState &in, EquationState &out, Real t, Real dt) -> EquationState & override;
         };
