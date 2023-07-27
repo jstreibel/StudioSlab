@@ -17,12 +17,12 @@
 
 namespace R2toR {
     namespace DiracSpeed {
-    class Builder : public R2toR::Simulation::Builder {
+    class Builder : public R2toR::Builder {
             RealParameter::Ptr eps = RealParameter::New(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
             RealParameter::Ptr E =   RealParameter::New(1., "E", "Total energy.");
 
         public:
-            Builder() : Simulation::Builder("DiracSpeed",
+            Builder() : R2toR::Builder("DiracSpeed",
                                           "(2+1)-d shockwave-like formation from an initial dirac-delta "
                                           "field time-derivative profile.") {
                 interface->addParameters({E, eps});

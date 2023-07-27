@@ -9,7 +9,7 @@
 #include "Phys/DifferentialEquations/EquationSolver.h"
 
 namespace R2toR {
-    typedef Base::EquationSolverT<R2toR::EquationState> EquationSolver;
+    typedef Slab::EquationSolverT<R2toR::EquationState> EquationSolver;
 }
 
 #endif //STUDIOSLAB_EQUATIONSOLVER_H

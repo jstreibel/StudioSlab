@@ -21,7 +21,7 @@ public:
 
     StepperMontecarlo(Base::Simulation::VoidBuilder &builder)
     : Method()
-    , H(*(Base::EquationSolverT<FIELD_STATE_TYPE>*) builder.getSystemSolver())
+    , H(*(Slab::EquationSolverT<FIELD_STATE_TYPE>*) builder.getSystemSolver())
     , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
     , _phi(    (FIELD_STATE_TYPE*)builder.newFieldState())
     , _phiTemp((FIELD_STATE_TYPE*)builder.newFieldState()) {
@@ -60,7 +60,7 @@ public:
     }
 
 private:
-    Base::EquationSolverT<FIELD_STATE_TYPE> &H;
+    Slab::EquationSolverT<FIELD_STATE_TYPE> &H;
 
     const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
 

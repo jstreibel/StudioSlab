@@ -19,15 +19,19 @@ namespace Phys::Gordon {
     template<class EqCategory>
     class GordonStateT : public Utils::ArithmeticOpsInterface<GordonStateT<EqCategory>>, public FStateOutputInterface {
     public:
-        GordonStateT(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
-
+        typedef EqCategory SubStateType;
         using FunctionType = typename EqCategory::Type;
         using FunctionArbitraryType = EqCategory;
 
+        GordonStateT(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
+        GordonStateT(const GordonStateT& state)
+        : GordonStateT(new EqCategory(state.phi), new EqCategory(state.dPhiDt)) {};
         virtual ~GordonStateT() {
             delete phi;
             delete dPhiDt;
         }
+
+
 
         GordonStateT &Add(const GordonStateT &fieldState) override {
             phi->Add(fieldState.getPhi());
@@ -70,7 +74,7 @@ namespace Phys::Gordon {
 
         void set(const GordonStateT &val) {
             setPhi(val.getPhi());
-            setDPhiDt(val.setDPhiDt());
+            setDPhiDt(val.getDPhiDt());
         }
 
         /*! Basicamente utilizado por BoundaryConditions */

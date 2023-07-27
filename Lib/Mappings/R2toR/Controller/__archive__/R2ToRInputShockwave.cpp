@@ -14,7 +14,7 @@ const auto pi = 3.1415926535897932384626;
 using namespace R2toR;
 
 R2toRInputShockwave::R2toRInputShockwave()
-: R2toR::Simulation::Builder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {
+: R2toR::Builder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {
 
 
     interface->addParameters({eps, theta, E, e, t0});

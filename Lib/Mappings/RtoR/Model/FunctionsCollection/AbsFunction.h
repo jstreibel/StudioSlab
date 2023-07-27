@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AbsFunction : public FunctionT {
+    class AbsFunction : public RtoR::Function {
     public:
         Real operator()(Real x) const override;
 

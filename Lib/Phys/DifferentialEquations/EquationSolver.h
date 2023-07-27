@@ -5,7 +5,7 @@
 #include "EquationState.h"
 #include "Phys/Numerics/Program/NumericParams.h"
 
-namespace Base {
+namespace Slab {
 
     template<typename EquationStateType>
     class EquationSolverT {
@@ -13,14 +13,13 @@ namespace Base {
 
     protected:
         const NumericParams &params;
-        virtual EqState& applyBC(EqState &fieldStateOut, Real t, Real dt) = 0;
-        virtual EqState& dtF(const EqState &in, EqState &out, Real t, Real dt) = 0;
 
     public:
-
         EquationSolverT(const NumericParams &params) : params(params) {}
-
         virtual ~EquationSolverT() {}
+
+        virtual EqState& applyBC(EqState &fieldStateOut, Real t, Real dt) = 0;
+        virtual EqState& dtF(const EqState &in, EqState &out, Real t, Real dt) = 0;
 
         virtual void startStep (Real t, Real dt) {};
         virtual void finishStep(Real t, Real dt) {};

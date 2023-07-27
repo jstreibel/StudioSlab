@@ -10,11 +10,12 @@
 
 namespace RtoR {
 
-    class EquationState : public Base::EquationStateT<DiscreteFunction> {
+    class EquationState : public Phys::Gordon::GordonStateT<RtoR::DiscreteFunction> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationStateT<DiscreteFunction>(phi, dPhiDt) {}
+        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
+        : Phys::Gordon::GordonStateT<DiscreteFunction>(phi, dPhiDt) {}
 
     public:
         void outputPhi(OStream &out, Str separator) const override {

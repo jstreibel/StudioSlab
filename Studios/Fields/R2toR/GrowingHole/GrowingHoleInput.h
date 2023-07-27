@@ -15,11 +15,11 @@ const auto pi = 3.1415926535897932384626;
 namespace R2toR {
     namespace GrowingHole {
 
-        class Builder : public R2toR::Simulation::Builder {
+        class Builder : public R2toR::Builder {
             RealParameter::Ptr height = RealParameter::New(2. / 3, "h,height", "Discontinuity value.");
 
         public:
-            Builder() : R2toR::Simulation::Builder("GH", "(2+1)-d Shockwave as a growing hole") {
+            Builder() : R2toR::Builder("GH", "(2+1)-d Shockwave as a growing hole") {
                 interface->addParameters({height});
             }
 

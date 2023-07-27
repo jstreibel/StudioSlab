@@ -9,9 +9,10 @@
 #include "R2toRDiscreteFunction.h"
 
 namespace R2toR {
-    class EquationState : public Base::EquationStateT<DiscreteFunction> {
+    class EquationState : public Phys::Gordon::GordonStateT<DiscreteFunction> {
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt) : Base::EquationStateT<DiscreteFunction>(phi, dPhiDt)
+        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
+        : Phys::Gordon::GordonStateT<DiscreteFunction>(phi, dPhiDt)
         {
         }
 

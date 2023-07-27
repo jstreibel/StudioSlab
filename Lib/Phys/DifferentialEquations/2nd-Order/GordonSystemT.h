@@ -6,24 +6,25 @@
 #include "Phys/Numerics/Builder.h"
 
 
-#define FType(a) typename EqState::a
+#define CLONE(func) dynamic_cast<DiscrFuncType&>(*(func.Clone()))
 
 namespace Phys {
 
     namespace Gordon {
 
         template<class EqState>
-        class GordonSolverT : public Base::EquationSolverT<EqState> {
-        protected:
-            typedef Base::FunctionT<
-                    FType(FunctionType::OutCategory),
-                    FType(FunctionType::OutCategory)>
-                    TargetToTargetFunction;
+        class GordonSolverT : public Slab::EquationSolverT<EqState> {
         public:
-            explicit GordonSolverT(const EqState &phi_0, TargetToTargetFunction &potential)
-            : phi_0(phi_0)
-            , laplacian(*phi_0.getPhi().Clone())
-            , dV_out(   *phi_0.getPhi().Clone())
+            typedef Base::FunctionT<Real, Real>     PotentialFunc;
+            typedef EqState::SubStateType           DiscrFuncType;
+
+            explicit GordonSolverT(const NumericParams &params,
+                                   const EqState &phi_0,
+                                   PotentialFunc &potential)
+            : Slab::EquationSolverT<EqState>(params)
+            , u_0(phi_0)
+            , laplacian(CLONE(phi_0.getPhi()))
+            , dV_out(   CLONE(phi_0.getPhi()))
             , V(potential)
             , dVDPhi(potential.diff(0))
             {    }
@@ -35,7 +36,7 @@ namespace Phys {
             }
 
             virtual EqState &applyBC(EqState &fieldStateOut, Real t, Real dt) {
-                if(t==0) fieldStateOut.set(phi_0);
+                if(t==0) fieldStateOut.set(u_0);
 
                 return fieldStateOut;
             }
@@ -66,11 +67,13 @@ namespace Phys {
             static bool isDissipating() { return false; }
 
         protected:
-            const EqState &phi_0;
-            FType(FunctionArbitraryType) &laplacian, &dV_out;
-            TargetToTargetFunction &V;
-            TargetToTargetFunction::Ptr dVDPhi;
+            const EqState &u_0;
+            DiscrFuncType &laplacian, &dV_out;
+            PotentialFunc &V;
+            PotentialFunc::Ptr dVDPhi;
         };
+
+}
 
 }
 

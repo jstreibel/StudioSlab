@@ -23,7 +23,7 @@ public:
 
     StepperRK4(Base::Simulation::VoidBuilder &builder)
     : Method()
-    , H       (*(      Base::EquationSolverT<STATE_TYPE>*) builder.getSystemSolver() )
+    , H       (*(      Slab::EquationSolverT<STATE_TYPE>*) builder.getSystemSolver() )
     , dPhi    ( (const Base::BoundaryConditions  <STATE_TYPE>*) builder.getBoundary() )
     , _phi    ( builder.NewFieldState<STATE_TYPE*>() )
     , _k1     ( builder.NewFieldState<STATE_TYPE*>() )
@@ -103,7 +103,7 @@ public:
     }
 
 private:
-    Base::EquationSolverT<STATE_TYPE> &H;
+    Slab::EquationSolverT<STATE_TYPE> &H;
 
     const Base::BoundaryConditions<STATE_TYPE> *dPhi;
 

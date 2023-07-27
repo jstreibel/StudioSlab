@@ -23,7 +23,7 @@ namespace Base {
 
     class Function {
     public:
-        virtual Category& operator()(Category&){ };
+        virtual Category& operator()(Category&){ throw "Function::operator() not implemented."; };
     };
 
     template<class InputCategory, class OutputCategory>

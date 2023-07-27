@@ -13,7 +13,9 @@
 using namespace RtoR;
 
 
-SystemGordonGPU::SystemGordonGPU(PosInt N) : temp(N) { }
+SystemGordonGPU::SystemGordonGPU(const NumericParams &params)
+: Phys::Gordon::GordonSolverT<EquationState>(params)
+, temp(params.getN()) { }
 
 struct GPUHamiltonianStepper
 {

@@ -13,7 +13,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
 			RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			RtoR/Model/RtoRSystemGordonGPU.cu
+			#RtoR/Model/RtoRSystemGordonGPU.cu
 
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 

@@ -31,7 +31,7 @@ namespace R2toR {
         };
 
 
-        class Builder : public R2toR::Simulation::Builder {
+        class Builder : public R2toR::Builder {
             RealParameter      W_0              = RealParameter(0.1, "W,W_0",
                                                             "The height of corresponding analytic shockwave, "
                                                             "which determines scale of the delta as "
@@ -57,7 +57,7 @@ namespace R2toR {
             auto notifyCLArgsSetupFinished() -> void   override;
             auto getBoundary()               -> void * override;
 
-            auto getSystemSolver()           -> void * override;
+            // auto getSystemSolver()           -> void * override;
 
         };
     }

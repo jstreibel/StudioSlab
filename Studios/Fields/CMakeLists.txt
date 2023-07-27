@@ -57,7 +57,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			R2toR/MainR2toR.cpp
 			R2toR/LeadingDelta/LeadingDelta.cpp
 			R2toR/LeadingDelta/RingDeltaFunc.cpp
-			R2toR/LeadingDelta/DrivenEquation.cpp
+			#R2toR/LeadingDelta/DrivenEquation.cpp
 			#R2toR/LeadingDelta/Allocator.cpp
 			R2toR/LeadingDelta/Monitor.cpp
 			R2toR/LeadingDelta/RingDeltaFunc.cu

@@ -9,7 +9,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AnalyticShockwave2DRadialSymmetry : public FunctionT {
+class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         Real t=0.;
 
         const PosInt quant = 40;
@@ -36,7 +36,7 @@ namespace RtoR {
     };
 
 
-    class AnalyticShockwave2DRadialSymmetryTimeDerivative : public FunctionT {
+    class AnalyticShockwave2DRadialSymmetryTimeDerivative : public RtoR::Function {
         Real t=0.;
 
         const PosInt quant = 40;
@@ -61,7 +61,7 @@ namespace RtoR {
         Real operator()(Real r) const override;
     };
 
-    class AnalyticShockwave2DRadialSymmetryTimeDerivativeB : public FunctionT {
+    class AnalyticShockwave2DRadialSymmetryTimeDerivativeB : public RtoR::Function {
         Real dt;
         AnalyticShockwave2DRadialSymmetry shockwave1, shockwave2;
 

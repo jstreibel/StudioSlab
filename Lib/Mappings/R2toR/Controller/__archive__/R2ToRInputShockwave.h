@@ -13,7 +13,7 @@
 
 namespace R2toR {
 
-    class R2toRInputShockwave : public R2toR::Simulation::Builder {
+    class R2toRInputShockwave : public R2toR::Builder {
     private:
         RealParameter::Ptr eps   = RealParameter::New(1., "eps", "Quasi-shockwave 'epsilon' parameter.");
         RealParameter::Ptr theta = RealParameter::New(0., "theta", "Ellipse rotation.");

@@ -9,12 +9,13 @@
 
 #include "Phys/DifferentialEquations/EquationSolver.h"
 #include "Common/DeviceConfig.h"
+#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
 
 namespace RtoR {
 
-    class SystemGordonGPU : Base::EquationSolverT<EquationState> {
+    class SystemGordonGPU : Phys::Gordon::GordonSolverT<EquationState> {
     public:
-        SystemGordonGPU(PosInt N);
+        SystemGordonGPU(const NumericParams &params);
         EquationState &dtF(const EquationState &in, EquationState &out, Real t, Real dt) override;
 
     private:

@@ -13,22 +13,25 @@
 #include "Mappings/R2toR/Model/EquationSolver.h"
 #include "Mappings/R2toR/Model/EquationState.h"
 
-namespace R2toR::Simulation {
-class Builder : public Base::Simulation::VoidBuilder {
-        Str name = "";
+namespace R2toR {
+    class Builder : public Base::Simulation::VoidBuilder {
+            Str name = "";
 
-    protected:
-        virtual auto buildOpenGLOutput() -> R2toR::OutputOpenGL*;
+        protected:
+            virtual auto buildOpenGLOutput() -> R2toR::OutputOpenGL*;
 
-    public:
-        Builder(Str name, Str description);
+        public:
+            Builder(Str name, Str description);
 
-        auto buildOutputManager()       -> OutputManager * override;
+            auto buildOutputManager()   -> OutputManager * override;
 
-        auto newFunctionArbitrary()     -> void * override;
-        auto newFieldState()          -> void * override;
-        auto getSystemSolver()        -> void * override;
-    };
+            auto newFunctionArbitrary() -> void * override;
+            auto newFieldState()        -> void * override;
+            auto getSystemSolver()      -> void * override;
+
+            auto getInitialState()      -> void *;
+            auto getEquationSolver()    -> void *;
+        };
 }
 
 

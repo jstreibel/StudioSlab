@@ -17,6 +17,8 @@ namespace Simulation {
         typedef std::shared_ptr<const EquationState> ConstPtr;
 
         virtual EquationState *clone() const = 0;
+
+        virtual void set(const EquationState&) = 0;
     };
 }
 
