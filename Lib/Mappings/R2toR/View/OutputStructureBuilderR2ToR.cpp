@@ -120,8 +120,7 @@ auto R2toR::OutputSystem::Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * 
 
 auto R2toR::OutputSystem::Builder::_buildLastVTK() -> Numerics::OutputSystem::Socket* {
     const NumericParams &p = Numerics::Allocator::GetInstance().getNumericParams();
-    const int outres = outputResolution;
-    return new R2toR::LastOutputVTKVisualizer(p, outres);
+    return new R2toR::LastOutputVTKVisualizer(p, p.getN());
 }
 
 

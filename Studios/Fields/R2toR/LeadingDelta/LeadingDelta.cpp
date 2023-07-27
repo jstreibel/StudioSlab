@@ -32,21 +32,14 @@ namespace R2toR {
                     ringDelta->setRadius(t);
                     ringDelta->renderToDiscreteFunction(&ϕₜ);
                 } else {
-                    const auto eps = ringDelta->getEps();
-                    const auto radius = t + 0.9*eps;
+                    const auto radius = t;
 
                     ringDelta->setRadius(radius);
                     ringDelta->renderToDiscreteFunction(&ϕ);
 
                     auto a = ringDelta->getA();
                     ringDelta->setA(0);
-
-                    ringDelta->setRadius(radius+2*eps);
-                    ringDelta->renderToDiscreteFunction(&ϕ);
-                    ringDelta->setRadius(radius);
-
                     ringDelta->renderToDiscreteFunction(&ϕₜ);
-
                     ringDelta->setA(a);
                 }
             }
@@ -84,12 +77,10 @@ namespace R2toR {
             const Real L = p.getL();
             const Real dt = p.getdt();
             const Real ϵ = *eps;
-            const auto W₀ = *W_0;
-            auto a = W₀;
+            auto a = *W_0;
 
-            if(!*deltaOperatesOnSpeed) a *= 2*ϵ; // TODO isso eh gambiarra, pq nao eh de fato uma delta que opera no campo.
-
-            p.sett(L*.5 - 10*ϵ);
+            // if(!*deltaOperatesOnSpeed) a *= 2*ϵ; // TODO isso eh gambiarra, pq nao eh de fato uma delta que opera no campo.
+            // p.sett(L/2 - ϵ);
 
             drivingFunc = std::make_shared<RingDeltaFunc>(ϵ, a, dt);
             ringDelta1 = drivingFunc;
