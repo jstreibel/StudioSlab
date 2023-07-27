@@ -38,7 +38,7 @@ namespace R2toR {
         Builder::Builder() : R2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
                                                                          "signum-Gordon shockwave as the "
                                                                          "trail of a driving delta.") {
-            interface->addParameters({&W_0, &eps, &deltaDuration, &phiMin, &phiMax});
+            interface->addParameters({&W_0, &eps, &deltaDuration});
         }
         auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
@@ -61,7 +61,7 @@ namespace R2toR {
         }
 
         auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
-            return new OutGL(numericParams, ringDelta1, *phiMin, *phiMax);
+            return new OutGL(numericParams, ringDelta1, -1, 1);
         }
 
 

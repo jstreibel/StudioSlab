@@ -40,9 +40,6 @@ namespace R2toR {
                                                             "The duration of regularized delta. Negative "
                                                             "values mean forever;");
 
-            RealParameter      phiMin           = RealParameter(-1, "min", "Graphic display initial phi minimum value.");
-            RealParameter      phiMax           = RealParameter(+1, "max", "Graphic display initial phi maximum value.");
-
             RingDeltaFunc::Ptr drivingFunc;
 
         protected:
