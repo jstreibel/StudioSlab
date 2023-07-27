@@ -130,7 +130,7 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.h
 
 		R2toR/Controller/R2ToRSimBuilder.cpp
-		R2toR/Controller/R2ToRSimBuilder.h R2toR/Model/EquationSolver.h)
+		R2toR/Controller/R2ToRSimBuilder.h R2toR/Model/EquationSolver.h R2toR/Model/EquationState.cpp)
 
 
 set ( MAPS_LINKS

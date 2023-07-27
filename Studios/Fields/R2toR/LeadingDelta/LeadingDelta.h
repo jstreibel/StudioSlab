@@ -21,7 +21,6 @@ namespace R2toR {
         extern RingDeltaFunc::Ptr ringDelta1;
 
 
-
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
             RingDeltaFunc::Ptr ringDelta;
             Real tf;
@@ -56,8 +55,6 @@ namespace R2toR {
 
             auto notifyCLArgsSetupFinished() -> void   override;
             auto getBoundary()               -> void * override;
-
-            // auto getSystemSolver()           -> void * override;
 
         };
     }

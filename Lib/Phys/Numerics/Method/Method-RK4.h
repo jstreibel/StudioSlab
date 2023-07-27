@@ -18,19 +18,21 @@
 #include <omp.h>
 
 template<int NUM_THREADS, class STATE_TYPE>
-class StepperRK4 : public Method{
+class StepperRK4 : public Method {
 public:
+    typedef Slab::EquationSolverT<STATE_TYPE>    SolverType;
+    typedef Base::BoundaryConditions<STATE_TYPE> BCType;
 
-    StepperRK4(Base::Simulation::VoidBuilder &builder)
+    StepperRK4(SolverType &solver, const BCType &boundaryCond)
     : Method()
-    , H       (*(      Slab::EquationSolverT<STATE_TYPE>*) builder.getSystemSolver() )
-    , dPhi    ( (const Base::BoundaryConditions  <STATE_TYPE>*) builder.getBoundary() )
-    , _phi    ( builder.NewFieldState<STATE_TYPE*>() )
-    , _k1     ( builder.NewFieldState<STATE_TYPE*>() )
-    , _k2     ( builder.NewFieldState<STATE_TYPE*>() )
-    , _k3     ( builder.NewFieldState<STATE_TYPE*>() )
-    , _k4     ( builder.NewFieldState<STATE_TYPE*>() )
-    , _phiTemp( builder.NewFieldState<STATE_TYPE*>() )
+    , H       (solver)
+    , dPhi    (boundaryCond)
+    , _phi    ( solver.NewEqState() )
+    , _k1     ( solver.NewEqState() )
+    , _k2     ( solver.NewEqState() )
+    , _k3     ( solver.NewEqState() )
+    , _k4     ( solver.NewEqState() )
+    , _phiTemp( solver.NewEqState() )
     { }
 
     ~StepperRK4(){

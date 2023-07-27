@@ -21,7 +21,7 @@ namespace Phys::Gordon {
         //Base::Function dVDPhi;
 
     public:
-        GordonSystem(const NumericParams &params) : Slab::EquationSolver(params) {
+        GordonSystem(const NumericParams &params, const EqState &u_0) : Slab::EquationSolver(params, u_0) {
 
         }
 

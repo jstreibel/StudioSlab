@@ -20,7 +20,10 @@ namespace R2toR {
             throw "Not implemented";
             return nullptr;
         }
+
+        auto clone() const -> EquationState *;
     };
+
 }
 
 

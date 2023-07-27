@@ -19,12 +19,11 @@ namespace Phys {
             typedef EqState::SubStateType           DiscrFuncType;
 
             explicit GordonSolverT(const NumericParams &params,
-                                   const EqState &phi_0,
+                                   const EqState &u_0,
                                    PotentialFunc &potential)
-            : Slab::EquationSolverT<EqState>(params)
-            , u_0(phi_0)
-            , laplacian(CLONE(phi_0.getPhi()))
-            , dV_out(   CLONE(phi_0.getPhi()))
+            : Slab::EquationSolverT<EqState>(params, u_0)
+            , laplacian(CLONE(u_0.getPhi()))
+            , dV_out(   CLONE(u_0.getPhi()))
             , V(potential)
             , dVDPhi(potential.diff(0))
             {    }
@@ -35,8 +34,10 @@ namespace Phys {
                 delete &V;
             }
 
-            virtual EqState &applyBC(EqState &fieldStateOut, Real t, Real dt) {
-                if(t==0) fieldStateOut.set(u_0);
+            auto NewEqState() const -> EqState * override { return this->u_0.clone(); }
+
+            virtual EqState &applyBC(EqState &fieldStateOut, Real t, Real dt) override {
+                if(t==0) fieldStateOut.set(this->u_0);
 
                 return fieldStateOut;
             }
@@ -67,7 +68,6 @@ namespace Phys {
             static bool isDissipating() { return false; }
 
         protected:
-            const EqState &u_0;
             DiscrFuncType &laplacian, &dV_out;
             PotentialFunc &V;
             PotentialFunc::Ptr dVDPhi;

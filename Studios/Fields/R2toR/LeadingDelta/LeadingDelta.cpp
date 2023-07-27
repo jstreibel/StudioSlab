@@ -59,9 +59,6 @@ namespace R2toR {
             return new OutGL(numericParams, ringDelta1, *phiMin, *phiMax);
         }
 
-        // auto Builder::getSystemSolver() -> void * {
-        //     return new DrivenEquation(*this, drivingFunc);
-        // }
     }
 }
 
