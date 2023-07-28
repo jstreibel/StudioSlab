@@ -42,13 +42,14 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
     throw "Boundary not implemented.";
 }
 
-void Numerics::OutputSystem::Socket::output(const OutputPacket &outData, const NumericParams &p){
-    _out(outData, p);
+void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
+    _out(outData);
     lastData = outData;
 }
 
-auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool {
-    return true; }
+auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+    return true;
+}
 
 auto Numerics::OutputSystem::Socket::getDescription() const -> Str { return description; }
 auto Numerics::OutputSystem::Socket::getName() const -> Str { return name; }

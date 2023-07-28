@@ -78,6 +78,9 @@ Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     return FunctionT::diff(n);
 }
 
-void R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real>::MyBase &func) {
+Base::DiscreteFunction<Real2D, Real> &
+R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real> &func) {
     this->Set(func);
+
+    return *this;
 }

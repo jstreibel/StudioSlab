@@ -39,7 +39,7 @@ auto NumericParams::getdt() const -> floatt {
 }
 
 void NumericParams::sett(Real tMax) const {
-    Log::Attention() << "Command line argument '--" << t->getCommandLineArgName(true) << "' "
+    Log::Attention() << "Command line argument '" << t->getCLName(true) << "' "
                      << "being ignored and set to " << tMax << ";" << Log::Flush;
 
     t->setValue(tMax);

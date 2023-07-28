@@ -15,10 +15,10 @@ public:
     virtual Str getDescription() const {return "console monitor output";}
 
 public:
-    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params);
+    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation);
 
 protected:
-    virtual void _out(const OutputPacket &outputInfo, const NumericParams &params);
+    virtual void _out(const OutputPacket &outputInfo);
 };
 
 #endif // OUTPUTCONSOLEMONITOR_H

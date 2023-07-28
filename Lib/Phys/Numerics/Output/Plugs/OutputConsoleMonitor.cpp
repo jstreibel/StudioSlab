@@ -9,17 +9,17 @@ OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const in
 
 }
 
-bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params)
+bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation)
 {
 	// Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
     OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
                                           params.getn(), maxT);
 
-    this->_out(dummyInfo, params);
+    this->_out(dummyInfo);
     return true;
 }
 
-void OutputConsoleMonitor::_out(const OutputPacket &outputInfo, const NumericParams &params)
+void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 {
     auto n = params.getn();
 

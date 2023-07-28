@@ -4,21 +4,22 @@
 
 
 #include "LeadingDelta.h"
+#include "Monitor.h"
 
 namespace R2toR {
     namespace LeadingDelta {
         RingDeltaFunc::Ptr ringDelta1;
 
-        BoundaryCondition::BoundaryCondition(const R2toR::EquationState *prototype, RingDeltaFunc::Ptr ringDelta, Real tf)
-        : Base::BoundaryConditions<R2toR::EquationState>(*prototype)
-        , ringDelta(ringDelta)
-        , tf(tf) { }
+        BoundaryCondition::BoundaryCondition(const R2toR::EquationState *prototype,
+                                             RingDeltaFunc::Ptr ringDelta,
+                                             Real tf,
+                                             bool deltaOperatesOnSpeed)
+                : Base::BoundaryConditions<R2toR::EquationState>(*prototype)
+                , ringDelta(ringDelta)
+                , tf(tf)
+                , deltaSpeedOp(deltaOperatesOnSpeed) { }
         void BoundaryCondition::apply(EquationState &function, Real t) const {
-            const bool applies = t<tf || tf<0;
-            const bool exist = ringDelta != nullptr;
-            const bool should = applies && exist;
-
-            Log::Debug() << "Applying BC" << Log::Flush;
+            const bool applyDelta = t<tf || tf<0;
 
             if (t == 0) {
                 RtoR::NullFunction nullFunction;
@@ -26,11 +27,24 @@ namespace R2toR {
 
                 function.setPhi(fullNull);
                 function.setDPhiDt(fullNull);
-            } else if (should) {
-                ringDelta->setRadius(t);
-
+            } else if (applyDelta) {
+                auto &ϕ =  function.getPhi();
                 auto &ϕₜ = function.getDPhiDt();
-                ringDelta->renderToDiscreteFunction(&ϕₜ);
+
+                if(deltaSpeedOp) {
+                    ringDelta->setRadius(t);
+                    ringDelta->renderToDiscreteFunction(&ϕₜ);
+                } else {
+                    const auto radius = t;
+
+                    ringDelta->setRadius(radius);
+                    ringDelta->renderToDiscreteFunction(&ϕ);
+
+                    auto a = ringDelta->getA();
+                    ringDelta->setA(0);
+                    ringDelta->renderToDiscreteFunction(&ϕₜ);
+                    ringDelta->setA(a);
+                }
             }
         }
 

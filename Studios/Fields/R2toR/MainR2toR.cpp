@@ -9,7 +9,6 @@
 #include "LeadingDelta/LeadingDelta.h"
 
 #include "Mappings/R2toR/App/R2toR App.h"
-#include "Common/Log/Log.h"
 
 
 int main(int argc, const char **argv) {

@@ -23,8 +23,11 @@ namespace R2toR {
         class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
             RingDeltaFunc::Ptr ringDelta;
             Real tf;
+            bool deltaSpeedOp;
         public:
-            explicit BoundaryCondition(const R2toR::EquationState *prototype, RingDeltaFunc::Ptr ringDelta = nullptr, Real tf=-1);
+            explicit BoundaryCondition(const R2toR::EquationState *prototype,
+                                       RingDeltaFunc::Ptr ringDelta = nullptr,
+                                       Real tf=-1, bool deltaOperatesOnSpeed=false);
             void apply(EquationState &function, Real t) const override;
         };
 

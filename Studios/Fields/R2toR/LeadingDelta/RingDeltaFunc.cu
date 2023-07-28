@@ -15,6 +15,36 @@ struct IsRingDeltaDomain
     }
 };
 
+struct RingThetaGPU
+{
+    typedef Real argument_type;
+    typedef Real result_type;
+
+    const double a, t;
+    const double rMin, dx;
+    const int N;
+    const double *data;
+
+    RingThetaGPU(double a, double t, double rMin, double dx, double N, double *data)
+            : a(a)
+            , t(t)
+            , rMin(rMin)
+            , dx(dx)
+            , N(N)
+            , data(data)
+    {           }
+
+    __device__ Real operator()(int idx) {
+        double x = rMin + (idx % N) * dx;
+        double y = rMin + (idx / N) * dx;
+
+        double r = sqrt(x*x + y*y);
+
+        if(r-t > -dx) return a;
+
+        return data[idx];
+    }
+};
 
 struct RingDeltaGPU
 {
@@ -54,7 +84,7 @@ struct RingDeltaGPU
 
 
 bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::DiscreteFunction<Real2D, Real> *toFunc) const {
-    auto &func = *static_cast<R2toR::DiscreteFunction*>(toFunc);
+    auto &func = *dynamic_cast<R2toR::DiscreteFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();
     const auto N = outputSpace.getDim().getN(0);
@@ -66,8 +96,11 @@ bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::Discrete
 
     DeviceVector &deviceData = outputSpace.getDeviceData();
 
-    thrust::transform(sequence_begin, sequence_end, deviceData.begin(),
-                      RingDeltaGPU(a, eps, radius, xMin, h, N, thrust::raw_pointer_cast(deviceData.data())));
+    auto data = thrust::raw_pointer_cast(deviceData.data());
+    // auto gpuFunc = RingDeltaGPU(a, eps, radius, xMin, h, N, data);
+    auto gpuFunc = RingThetaGPU(a, radius, xMin, h, N, data);
+
+    thrust::transform(sequence_begin, sequence_end, deviceData.begin(), gpuFunc);
 
     //thrust::tran
 

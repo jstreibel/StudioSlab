@@ -14,7 +14,7 @@ void OutputManager::output(OutputPacket &infoVolatile)
     for(auto *out : outputs) {
         auto shouldOutput = out->shouldOutput(t, steps);
         if (shouldOutput)
-            out->output(infoVolatile, params);
+            out->output(infoVolatile);
     }
 
 }
@@ -41,13 +41,13 @@ void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool k
                    "every " << out->getnSteps() << " sim steps." << Log::Flush;
 }
 
-void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) {
+void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
     Log::Success() << "Simulation finished. Total time steps: "
                    << theVeryLastOutputInformation.getSteps() << Log::Flush;
 
     for(auto output : myOutputs)
     {
-        if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation, params))
+        if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
             Log::Error() << "Error while finishing " << output->getDescription() << "..." << Log::Flush;
 
         Log::Info() << "Finished output channel '" << output->getDescription() << "'." << Log::Flush;

@@ -20,7 +20,7 @@ namespace Numerics {
             const NumericParams &params;
             Str name, description;
 
-            virtual auto _out(const OutputPacket&, const NumericParams &) -> void = 0;
+            virtual auto _out(const OutputPacket&) -> void = 0;
 
         public:
             explicit Socket(const NumericParams &, Str name="", int nStepsInterval = 1, Str description="");
@@ -28,7 +28,7 @@ namespace Numerics {
 
             std::shared_ptr<Socket> Ptr;
 
-            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation, const NumericParams &params) -> bool;;
+            virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
             auto getDescription() const -> Str;
             auto getName() const -> Str;
 
@@ -49,7 +49,7 @@ namespace Numerics {
             auto getnSteps()     const -> int;
             auto setnSteps(int nSteps) -> void;
 
-            void output(const OutputPacket &outData, const NumericParams &params);
+            void output(const OutputPacket &outData);
 
         };
     }
