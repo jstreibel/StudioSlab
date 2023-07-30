@@ -47,17 +47,23 @@ namespace Base {
             virtual auto getInitialState()            -> void * = 0;
             virtual auto getEquationSolver()          -> void * = 0;
 
-            virtual auto newFunctionArbitrary()       -> void * = 0;
-            virtual auto newFieldState()              -> void * = 0;
+            virtual
+            auto newFunctionArbitrary()       -> void * = 0;
+            template<class ARB_FUNC_TYPE>
+            auto NewFunctionArbitrary()       -> ARB_FUNC_TYPE *;
+
+            virtual
+            auto newFieldState()              -> void * = 0;
+            template<typename StateType>
+            auto NewFieldState()              -> StateType*;
 
             virtual auto buildStepper()               -> Method* = 0;
 
-            template<typename StateType>  auto NewFieldState()        -> StateType*;
-            template<class ARB_FUNC_TYPE> auto NewFunctionArbitrary() -> ARB_FUNC_TYPE *;
+            virtual auto buildFileName()        const -> Str;
+
 
             auto getNumericParams()             const -> const NumericParams &;
             auto getDevice()                    const -> const Device &;
-            auto toString()                     const -> Str;
         };
 
         template<typename StateType>

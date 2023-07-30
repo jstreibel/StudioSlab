@@ -97,12 +97,16 @@ bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::Discrete
     DeviceVector &deviceData = outputSpace.getDeviceData();
 
     auto data = thrust::raw_pointer_cast(deviceData.data());
-    // auto gpuFunc = RingDeltaGPU(a, eps, radius, xMin, h, N, data);
-    auto gpuFunc = RingThetaGPU(a, radius, xMin, h, N, data);
-
-    thrust::transform(sequence_begin, sequence_end, deviceData.begin(), gpuFunc);
-
-    //thrust::tran
+    if(asTheta)
+        thrust::transform(sequence_begin,
+                          sequence_end,
+                          deviceData.begin(),
+                          RingThetaGPU(a, radius, xMin, h, N, data));
+    else
+        thrust::transform(sequence_begin,
+                          sequence_end,
+                          deviceData.begin(),
+                          RingDeltaGPU(a, eps, radius, xMin, h, N, data));
 
     return true;
 }

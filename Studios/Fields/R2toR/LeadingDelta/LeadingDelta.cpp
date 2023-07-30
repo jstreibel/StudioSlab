@@ -27,7 +27,12 @@ namespace R2toR {
 
                 function.setPhi(fullNull);
                 function.setDPhiDt(fullNull);
-            } else if (applyDelta) {
+            } else {
+                if(!applyDelta) {
+                    auto a = ringDelta->getA();
+                    ringDelta->setA(a*0.991);
+                }
+
                 auto &ϕ =  function.getPhi();
                 auto &ϕₜ = function.getDPhiDt();
 
@@ -35,15 +40,35 @@ namespace R2toR {
                     ringDelta->setRadius(t);
                     ringDelta->renderToDiscreteFunction(&ϕₜ);
                 } else {
-                    const auto radius = t;
 
-                    ringDelta->setRadius(radius);
-                    ringDelta->renderToDiscreteFunction(&ϕ);
+                    if(false) {
+                        const auto radius = t;
 
-                    auto a = ringDelta->getA();
-                    ringDelta->setA(0);
-                    ringDelta->renderToDiscreteFunction(&ϕₜ);
-                    ringDelta->setA(a);
+                        ringDelta->setRadius(radius);
+                        ringDelta->renderToDiscreteFunction(&ϕ);
+
+                        auto a = ringDelta->getA();
+                        ringDelta->setA(0);
+                        ringDelta->renderToDiscreteFunction(&ϕₜ);
+                        ringDelta->setA(a);
+                    } else {
+                        const auto eps = ringDelta->getEps();
+                        const auto radius = t;
+
+                        ringDelta->setRadius(radius);
+                        ringDelta->renderToDiscreteFunction(&ϕ);
+
+                        auto a = ringDelta->getA();
+                        ringDelta->setA(0);
+
+                        ringDelta->setRadius(radius + eps);
+                        ringDelta->renderToDiscreteFunction(&ϕ);
+                        ringDelta->setRadius(radius);
+
+                        ringDelta->renderToDiscreteFunction(&ϕₜ);
+
+                        ringDelta->setA(a);
+                    }
                 }
             }
         }
@@ -61,21 +86,29 @@ namespace R2toR {
             const Real L = p.getL();
             const Real dt = p.getdt();
             const auto W₀ = *W_0;
-            const auto C₂ = W₀; // this is C_n from our 2023 shockwave paper, with n=2.
+            auto coef = W₀;
 
-            p.sett(L*.5 - *eps);
+            bool asTheta = deltaDuration<.0;
+            if(!asTheta) coef *= 2*eps;
 
-            drivingFunc = std::make_shared<RingDeltaFunc>(*eps, C₂, dt);
+            // p.sett(L*.5 - eps);
+            drivingFunc = std::make_shared<RingDeltaFunc>(*eps, coef, dt, asTheta);
             ringDelta1 = drivingFunc;
         }
 
         auto Builder::getBoundary() -> void * {
             auto eqState = (R2toR::EquationState*)newFieldState();
-            return new BoundaryCondition(eqState, drivingFunc);
+            return new BoundaryCondition(eqState, drivingFunc, deltaDuration, false);
         }
 
         auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
             return new OutGL(numericParams, ringDelta1, -1, 1);
+        }
+
+        Str Builder::buildFileName() const {
+            auto fname = VoidBuilder::buildFileName();
+
+            return fname + " " + interface->toString({"W", "eps", "delta_duration"});
         }
 
 

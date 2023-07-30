@@ -28,7 +28,7 @@ namespace RtoR {
 
 
         class JackOutput : public Numerics::OutputSystem::Socket {
-            auto _out(const OutputPacket &packet, const NumericParams &params) -> void override;
+            auto _out(const OutputPacket &packet) -> void override;
 
         public:
             JackOutput(const NumericParams &params);

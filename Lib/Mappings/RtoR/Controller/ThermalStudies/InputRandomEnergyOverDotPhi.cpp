@@ -21,6 +21,8 @@ auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() -> void* {
 
     VecFloat p(N);
 
+    auto proto = (RtoR::EquationState*)newFieldState();
+
     if(1) {
         Real E_rand = .0;
         for (int i = 0; i < N; ++i) {
@@ -46,10 +48,10 @@ auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() -> void* {
 
         // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
 
-        return new BoundaryCondition(NullFunction().Clone(), dotPhi->Clone());
+        return new BoundaryCondition(*proto, NullFunction().Clone(), dotPhi->Clone());
 
     } else {
-        return new BoundaryCondition(NullFunction().Clone(), NullFunction().Clone());
+        return new BoundaryCondition(*proto, NullFunction().Clone(), NullFunction().Clone());
     }
 }
 

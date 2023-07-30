@@ -6,6 +6,10 @@ find_package(OpenMP)
 find_package(Boost COMPONENTS program_options REQUIRED)
 find_package(GLUT)
 find_package(OpenGL)
+find_package(VTK)
+
+include(${VTK_USE_FILE})
+message(STATUS "VTK INCLUDES: ${VTK_USE_FILE}")
 
 include_directories (..)
 
@@ -13,7 +17,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
 			RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			#RtoR/Model/RtoRSystemGordonGPU.cu
+			RtoR/Model/RtoRSystemGordonGPU.cu
 
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
@@ -84,13 +88,12 @@ set ( RTOR_SOURCES
 		RtoR/Calc/EnergyCalculator.cpp
 		RtoR/Calc/Histogram.cpp
 
-		)
+		RtoR/Model/RtoRFieldState.cpp)
 
 
 set ( R2TOR_SOURCES
 		FunctionRenderer.cpp
 
-		RtoR/View/Graphics/Artists/GraphRtoR.cpp
 
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 
@@ -112,9 +115,13 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
 
+		RtoR/View/Graphics/Artists/GraphRtoR.cpp
+
+
 		R2toR/View/Artists/GraphR2ToR.cpp
 		R2toR/View/Artists/GraphR2Section.cpp
 		R2toR/View/Filters/DimensionReductionFilter.cpp
+		R2toR/View/LastOutputVtkVisualizer.cpp
 		R2toR/View/R2toROutputOpenGLShockwave.cpp
 		R2toR/View/R2toROutputOpenGLGeneric.cpp
 		R2toR/View/R2ToROutputOpenGlShockwaveAtT0.cpp
@@ -182,7 +189,7 @@ set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
-target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 

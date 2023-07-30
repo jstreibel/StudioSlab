@@ -15,7 +15,10 @@ namespace RtoR {
 
     class SystemGordonGPU : Phys::Gordon::GordonSolverT<EquationState> {
     public:
-        SystemGordonGPU(const NumericParams &params);
+        SystemGordonGPU(const NumericParams &params,
+                        MyBase::EqBoundaryCondition &du,
+                        PotentialFunc &potential);
+
         EquationState &dtF(const EquationState &in, EquationState &out, Real t, Real dt) override;
 
     private:

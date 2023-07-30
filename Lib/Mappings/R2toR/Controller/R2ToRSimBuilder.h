@@ -29,9 +29,9 @@ namespace R2toR {
             auto newFieldState()        -> void * override;
             auto getEquationSolver()    -> void * override;
 
-        auto getInitialState() -> void * override;
+            auto getInitialState()      -> void * override;
 
-        auto buildStepper() -> Method * override;
+            auto buildStepper()         -> Method * override;
     };
 }
 

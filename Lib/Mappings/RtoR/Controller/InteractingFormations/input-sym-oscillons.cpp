@@ -24,6 +24,7 @@ auto InputSymmetricOscillon::getBoundary() -> void *
     initCondPhi += oscRight+oscLeft;
     initCondDPhiDt += oscRight.swap() + oscLeft.swap();
 
-    return new RtoR::BoundaryCondition(&initCondPhi, &initCondDPhiDt);
+    auto proto = (RtoR::EquationState*)newFieldState();
+    return new RtoR::BoundaryCondition(*proto, &initCondPhi, &initCondDPhiDt);
 }
 

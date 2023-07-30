@@ -20,5 +20,7 @@ auto InputSingleOscillon::getBoundary() -> void * {
     auto initCondPhi = oscillon;
     auto initCondDPhiDt = oscillon.swap();
 
-    return new BoundaryCondition(initCondPhi.Clone(), initCondDPhiDt.Clone());
+    auto proto = (RtoR::EquationState*)newFieldState();
+
+    return new BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
 }

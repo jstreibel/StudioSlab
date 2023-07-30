@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class NoiseFunction : public FunctionT {
+    class NoiseFunction : public RtoR::Function {
         Real min, max;
 
     public:

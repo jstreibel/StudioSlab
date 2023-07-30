@@ -11,65 +11,54 @@
 #include <cxxopts.hpp>
 
 
-void showHelp(AppBase &prog)
+void none() {};
+
+void showHelp()
 {
-    CLArgsManager::ShowHelp();
+    if(true) none();
+    else CLArgsManager::ShowHelp();
 }
 
 
-int SafetyNet::jump(AppBase &prog){
+AppBase *prog = nullptr;
+
+int runProg(int, const char**) {
+    return prog->run();
+}
+
+Str FORMAT;
+
+#define LogException(description, what, exitFunc)                                       \
+    { Log::Fatal() << description << ": \"" << FORMAT << what << Log::ResetFormatting   \
+                   << "\". Application will now exit." << Log::Flush;                    \
+      exitFunc();                                                                       \
+      return EXIT_FAILURE; }
+
+int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, const char *argv[]) {
+    try {
+        FORMAT = Log::BackgroundRed + Log::BoldFace;
+        return pFunction(argc, argv);
+    }
+    catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
+    catch (Str &e)                                          LogException("Exception (std::string)",  e,        none)
+    catch (cxxopts::exceptions::invalid_option_syntax e)    LogException("Invalid option syntax",    e.what(), showHelp)
+    catch (cxxopts::exceptions::no_such_option &e)          LogException("No such option",           e.what(), showHelp)
+    catch (cxxopts::exceptions::option_already_exists &e)   LogException("Option already exists",    e.what(), showHelp)
+    catch (cxxopts::exceptions::incorrect_argument_type &e) LogException("Incorrect argument type",  e.what(), showHelp)
+    catch (std::bad_cast &e)                                LogException("Bad cast",                 e.what(), none)
+    catch (cxxopts::exceptions::exception &e)               LogException("Parsing exception",        e.what(), none)
+    catch (std::exception &e)                               LogException("Exception std::exception", e.what(), none)
+    catch (...)                                             LogException("Unknown exception",        "...",    none)
+
+    throw "Impossible.";
+}
+
+
+int SafetyNet::jump(AppBase &program){
     // if (GPU_DEBUG) std::cout << "\033[1m\033[93mGPU IS IN DEBUG MODE => NO GPU.\033[0m" << std::endl;
 
-    try {
-        return prog.run();
-    }
-    catch (const char *e) {
-        Log::Fatal() << "Exception: " << "\033[91m\033[1m"
-        << e << "\033[0m" << ", application will now exit" << Log::Flush;
-        return -1;
-    }
-    catch (Str &e) {
-        Log::Fatal() << "Exception: " << "\033[91m\033[1m"
-        << e << "\033[0m" << ", application will now exit" << Log::Flush;
-        return -2;
-    }
-    catch (cxxopts::exceptions::invalid_option_syntax e) {
-        Log::Fatal() << "Invalid option syntax: \"\\033[91m\\033[1m" << e.what()
-                          << "\033[0m\"." << Log::Flush;
-        return -3;
-    }
-    catch (cxxopts::exceptions::no_such_option &e) {
-        Log::Fatal() << "No such option: \"\\033[91m\\033[1m" << e.what()
-                          << "\033[0m\"." << Log::Flush;
-        return -4;
-    }
-    catch (cxxopts::exceptions::incorrect_argument_type &e) {
-        Log::Fatal() << "Incorrect argument type: \"\\033[91m\\033[1m" << e.what()
-                          << "\033[0m\"." << Log::Flush;
-        return -5;
-    }
-    catch (cxxopts::exceptions::exception &e) {
-        showHelp(prog);
-        Log::Fatal() << "Error parsing command line: \"" << e.what() << "\" " << Log::Flush;
+    prog = &program;
 
-        return -6;
-    }
-    catch (std::bad_cast &e) {
-        showHelp(prog);
-        Log::Fatal() << "Exception std::bad_cast: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m." << Log::Flush;
-
-        return -7;
-    }
-    catch (std::exception &e) {
-        Log::Fatal() << "Exception std::exceptionn: " << "\033[91m\033[1m"
-        << e.what() << "\033[0m, application will now exit." << Log::Flush;
-        return -8;
-    }
-    catch (...) {
-        Log::Fatal() << "Unknown exception reached the top of main." << Log::Flush;
-        return -9;
-    }
-
-    throw "Dafuk...";
+    return jump(runProg, 0, nullptr);
 }
+

@@ -12,27 +12,24 @@
 #include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/RtoR/Model/EquationSolver.h"
+#include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 
 #include "Mappings/RtoR/View/Graphics/RtoROutGLStatistic.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
+#include "Mappings/R2toR/Model/EquationSolver.h"
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
-#include "Phys/Numerics/Output/OutputManager.h"
-#include "Phys/Numerics/Output/Format/CustomStringSeparatedSOF.h"
 #include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
-
-#include <utility>
 
 
 RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription)
 : VoidBuilder("RtoR-" + name, generalDescription) { }
 
 auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
-    auto outputFileName = this->toString();
+    auto outputFileName = this->buildFileName();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldOutputHistory = ! *noHistoryToFile;
@@ -116,26 +113,69 @@ void *RtoRBCInterface::newFieldState() {
                                    (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
-void *RtoRBCInterface::getSystemSolver() {
+void *RtoRBCInterface::getEquationSolver() {
+    auto thePotential = new RtoR::AbsFunction;
+    auto dphi = (RtoR::BoundaryCondition*)getBoundary();
+
 #if USE_CUDA == true
     if(dev == device::GPU) {
         //if(potential != VShape) throw "Only signum potential implemented in GPU.";
 
-        return new RtoR::SystemGordonGPU(numericParams.getN());
+        return new RtoR::SystemGordonGPU(numericParams, *dphi, *thePotential);
     }
 #endif
 
-    RtoR::Function *thePotential;
-    //if(potential == V) thePotential = new RtoR::AbsFunction;
-    //else if(potential == free)
-    thePotential = new RtoR::NullFunction;
-    //else throw "Other potentials not implemented";
-
-    return new Phys::Gordon::GordonSolverT<RtoR::EquationState>(*this, *thePotential);
+    return new Phys::Gordon::GordonSolverT<RtoR::EquationState>(numericParams, *dphi, *thePotential);
 }
 
 auto RtoRBCInterface::buildOpenGLOutput() -> RtoR::Monitor * {
-    return new RtoR::OutGLStatistic();
+    return new RtoR::OutGLStatistic(numericParams);
+}
+
+auto RtoRBCInterface::getInitialState() -> void * {
+    auto &u_0 = *(RtoR::EquationState*)newFieldState();
+
+    u_0.setPhi(RtoR::NullFunction());
+    u_0.setDPhiDt(RtoR::NullFunction());
+
+    return &u_0;
+}
+
+#define GENERATE_METHOD(METHOD, N) \
+    case (N): \
+    method = new METHOD<N, typename RtoR::EquationState>(solver); \
+    break;
+
+#define GENERATE_ALL(METHOD) \
+        GENERATE_METHOD(StepperRK4, 1);  \
+        GENERATE_METHOD(StepperRK4, 2);  \
+        GENERATE_METHOD(StepperRK4, 3);  \
+        GENERATE_METHOD(StepperRK4, 4);  \
+        GENERATE_METHOD(StepperRK4, 5);  \
+        GENERATE_METHOD(StepperRK4, 6);  \
+        GENERATE_METHOD(StepperRK4, 7);  \
+        GENERATE_METHOD(StepperRK4, 8);  \
+        GENERATE_METHOD(StepperRK4, 9);  \
+        GENERATE_METHOD(StepperRK4, 10); \
+        GENERATE_METHOD(StepperRK4, 11); \
+        GENERATE_METHOD(StepperRK4, 12); \
+        GENERATE_METHOD(StepperRK4, 13); \
+        GENERATE_METHOD(StepperRK4, 14); \
+        GENERATE_METHOD(StepperRK4, 15); \
+        GENERATE_METHOD(StepperRK4, 16);
+
+auto RtoRBCInterface::buildStepper() -> Method * {
+    Method *method;
+
+    auto &solver = *(RtoR::EquationSolver*)getEquationSolver();
+
+    switch (dev.get_nThreads()) {
+        GENERATE_ALL(StepperRK4);
+        default:
+            throw "Number of threads must be between 1 and 16 inclusive.";
+    }
+
+    return method;
 }
 
 

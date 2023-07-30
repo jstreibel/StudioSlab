@@ -37,8 +37,7 @@ class NumericalIntegration : public Program {
     auto _cycleUntilOutput()    -> bool;
 
 public:
-    template<typename Mapping>
-    NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder, Mapping *map)
+    NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder)
             : simBuilder(simBuilder)
             , stepper(simBuilder.buildStepper())
             , outputManager(simBuilder.buildOutputManager()),

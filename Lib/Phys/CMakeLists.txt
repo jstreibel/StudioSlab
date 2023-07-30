@@ -14,7 +14,10 @@ set ( SPACE_SOURCES
 		Space/HyperCube/AAHyperCube.cpp
 		Space/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
-		Space/Impl/PointSet.cpp Space/Impl/PointSet.h Space/Point.cpp Space/Point.h)
+		Space/Impl/PointSet.cpp
+		Space/Impl/PointSet.h
+		Space/Point.cpp
+		Space/Point.h)
 
 
 set ( EXPERIMENTAL_SOURCES
@@ -30,7 +33,9 @@ set ( EXPERIMENTAL_SOURCES
 
 
 set ( GRAPH_SOURCES
+		Graph/Graph.cpp
 		Graph/PointSetGraph.cpp
+		Graph/OutputOpenGL.cpp
 		)
 
 

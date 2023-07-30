@@ -18,12 +18,8 @@ SimulationsAppRtoR::SimulationsAppRtoR(int argc, const char **argv, Base::Simula
 }
 
 auto SimulationsAppRtoR::run() -> int {
-    const auto *boundaryConditions = simBuilder->getBoundary();
-    auto *output = simBuilder->buildOutputManager();
-
     // auto program = new NumericalIntegration<RtoR::FieldState>(*simBuilder.get());
-    RtoR::EquationState *fstate = nullptr;
-    auto program = new NumericalIntegration(*simBuilder.get(), fstate);
+    auto program = new NumericalIntegration(*simBuilder.get());
 
     Backend &backend = Backend::GetInstance();
 

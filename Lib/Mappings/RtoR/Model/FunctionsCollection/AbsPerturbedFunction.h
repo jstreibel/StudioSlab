@@ -10,7 +10,7 @@
 #define BASE_NS 2
 
 namespace RtoR {
-    class AbsPerturbedDiffFunction : public FunctionT {
+    class AbsPerturbedDiffFunction : public RtoR::Function {
     public:
         explicit AbsPerturbedDiffFunction(PosInt Ns = BASE_NS);
 
@@ -24,7 +24,7 @@ namespace RtoR {
         const PosInt Ns;
     };
 
-    class AbsPerturbedFunction : public FunctionT {
+    class AbsPerturbedFunction : public RtoR::Function {
     public:
         explicit AbsPerturbedFunction(PosInt Ns = BASE_NS);
 

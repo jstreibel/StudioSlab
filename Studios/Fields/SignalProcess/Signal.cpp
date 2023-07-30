@@ -40,7 +40,7 @@ RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
 
     jackProbeLocation = xLeft+delta;
 }
-void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket, const NumericParams &params) {
+void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
     Function &field = outputPacket.getEqStateData<RtoR::EquationState>()->getPhi();
 
     auto measure = field(jackProbeLocation);

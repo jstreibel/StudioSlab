@@ -11,7 +11,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AnalyticShockwave1D : public FunctionT {
+    class AnalyticShockwave1D : public RtoR::Function {
         std::vector<Real> xk;
         std::vector<Real> ak;
         std::vector<Real> zk;

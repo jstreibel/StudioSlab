@@ -71,11 +71,11 @@ void cew(cudaError err);
 #endif // USE_CUDA
 
 template <typename T>
-Str ToStr(const T a_value, const int n = 2, bool useScientificNotation= false)
+Str ToStr(const T a_value, const int decimal_places = 2, bool useScientificNotation= false)
 {
     auto base = useScientificNotation ? std::scientific : std::fixed;
     std::ostringstream out;
-    out.precision(n);
+    out.precision(decimal_places);
     out << base << a_value;
 
     return out.str();

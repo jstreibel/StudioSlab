@@ -38,6 +38,8 @@ namespace RtoR {
             return new EquationState(dynamic_cast<DiscreteFunction*>(phi->CloneWithSize(N)),
                                      dynamic_cast<DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
         }
+
+        auto clone() const -> EquationState *;
     };
 }
 

@@ -9,10 +9,12 @@ namespace R2toR {
     namespace LeadingDelta {
 
 
-        RingDeltaFunc::RingDeltaFunc(Real eps, Real a, Real dt) : eps(eps), a(a), dt(dt), radius(0) {
-        }
+        RingDeltaFunc::RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta)
+        : eps(eps), a(a), dt(dt), radius(0), asTheta(asTheta) {  }
 
         auto RingDeltaFunc::getEps()                      const -> Real   { return eps;       }
+        auto RingDeltaFunc::setEps(Real _eps)                   -> void   { eps = _eps;       }
+
         auto RingDeltaFunc::getA()                        const -> Real   { return a;         }
         auto RingDeltaFunc::setA(Real _a)                        -> void  { a = _a;           }
 

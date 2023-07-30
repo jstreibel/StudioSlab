@@ -23,7 +23,7 @@ namespace RtoR {
 
     protected:
         void draw() override;
-        void _out(const OutputPacket &outInfo"") override;
+        void _out(const OutputPacket &outInfo) override;
 
     private:
         bool notifyKeyboard(unsigned char key, int x, int y) override;

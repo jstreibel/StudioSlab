@@ -10,7 +10,7 @@
 #include "Phys/Numerics/VoidBuilder.h"
 
 class SimulationsAppRtoR : public AppBase {
-    Base::Simulation::VoidBuilder::Ptr simBuilder;
+    Base::Simulation::VoidBuilder::Ptr imBuilder;
 public:
     SimulationsAppRtoR(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder);
 

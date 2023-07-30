@@ -108,7 +108,7 @@ void RtoR::Monitor::draw() {
 
 }
 
-void RtoR::Monitor::_out(const OutputPacket &outInfo"") {
+void RtoR::Monitor::_out(const OutputPacket &outInfo) {
 
     const RtoR::EquationState &fieldState = *outInfo.getEqStateData<RtoR::EquationState>();
     // energyCalculator.computeDensities(fieldState);
@@ -147,7 +147,7 @@ void RtoR::Monitor::_out(const OutputPacket &outInfo"") {
     //WHistory.xMax = xMax;
     //VHistory.xMax = xMax;
 
-    Graphics::OutputOpenGL::_out(outInfo, params);
+    Graphics::OutputOpenGL::_out(outInfo);
 }
 
 

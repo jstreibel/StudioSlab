@@ -26,8 +26,8 @@ namespace R2toR {
             bool deltaSpeedOp;
         public:
             explicit BoundaryCondition(const R2toR::EquationState *prototype,
-                                       RingDeltaFunc::Ptr ringDelta = nullptr,
-                                       Real tf=-1, bool deltaOperatesOnSpeed=false);
+                                       RingDeltaFunc::Ptr ringDelta,
+                                       Real tf, bool deltaOperatesOnSpeed);
             void apply(EquationState &function, Real t) const override;
         };
 
@@ -54,6 +54,8 @@ namespace R2toR {
             auto notifyCLArgsSetupFinished() -> void   override;
 
             auto getBoundary()               -> void * override;
+
+            auto buildFileName() const -> Str override;
 
 
         };

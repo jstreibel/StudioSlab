@@ -4,7 +4,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class ShockwavePhi : public FunctionT {
+    class ShockwavePhi : public RtoR::Function {
     public:
         ShockwavePhi(Real h);
 
@@ -14,7 +14,7 @@ namespace RtoR {
         Real h;
     };
 
-    class ShockwaveDPhiDt : public FunctionT {
+    class ShockwaveDPhiDt : public RtoR::Function {
     public:
         ShockwaveDPhiDt(Real h);
 

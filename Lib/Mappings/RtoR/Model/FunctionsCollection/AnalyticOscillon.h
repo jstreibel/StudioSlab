@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class AnalyticOscillon : public FunctionT {
+    class AnalyticOscillon : public RtoR::Function {
     public:
         enum Bit {
             phi, dPhiDt

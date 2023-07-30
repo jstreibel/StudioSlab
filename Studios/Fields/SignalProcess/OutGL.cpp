@@ -20,8 +20,8 @@ Real __t=0;
 
 
 
-void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
-    Window::draw(decorated, clear);
+void RtoR::Signal::JackControl::draw( ) {
+    Window::draw( );
 
     float w = float(this->w) - (float)2*this->winXoffset,
             h = float(this->h) - (float)2*this->winYoffset;
@@ -35,8 +35,6 @@ void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
     ImGui::Begin("Jack control", &closable, flags);
     ImGui::SetWindowPos(ImVec2{x, y});
     ImGui::SetWindowSize(ImVec2{w, h});
-
-
 
 
     if (ImGui::Button("Generate pulse"))
@@ -88,67 +86,35 @@ void RtoR::Signal::JackControl::draw(bool decorated, bool clear) const {
  *    \_______  /|   __/  \___  >|___|  / \______  /|_______ \
  *            \/ |__|         \/      \/         \/         \/
  */
-RtoR::Signal::OutGL::OutGL(Real xMin, Real xMax, Real phiMin, Real phiMax)
-        : RtoR::Monitor() {
-    nSteps = 1;
+RtoR::Signal::OutGL::OutGL(const NumericParams &params, Real phiMin, Real phiMax)
+        : RtoR::Monitor(params, phiMin, phiMax) {
 
-    RtoR::Monitor::xMax = xMax;
-    RtoR::Monitor::xMin = xMin;
-    RtoR::Monitor::phiMax = phiMax;
-    RtoR::Monitor::phiMin = phiMin;
-
-    Window *window = nullptr;
-
-    window = new Window; window->addArtist(&this->stats);
-    panel->addWindow(window);
-    panel->addWindow(&jackControlWindow);
+    panel.addWindow(&jackControlWindow);
 
     {
-        auto samples = (int) Numerics::Allocator::getInstance().getNumericParams().getN();
-        this->mFieldsGraph = {xMin, xMax, phiMin, phiMax, "AAA", true, samples};
-        window = new Window;
-        window->addArtist(&this->mFieldsGraph);
-        panel->addWindow(window, true, 0.85);
-        this->fieldWindow = window;
+        auto &p = params;
+
+        auto samples = (int) p.getN();
+        mFieldsGraph = {p.getxLeft(), p.getxMax(), phiMin, phiMax, "AAA", true, samples};
+        panel.addWindow(&mFieldsGraph, true, 0.85);
     }
 
     {
         this->signalBufferGraph = GraphRtoR(0, 10, -1, 1, "Signal buffer", true, 2000);
-        window = new Window;
-        window->addArtist(&this->signalBufferGraph);
-        panel->addWindow(window);
-        this->signalBufferWindow = window;
+        panel.addWindow(&this->signalBufferGraph);
     }
 
     {
         this->signalFullGraph = GraphRtoR(0, 1, -1.2, 1.2, "Signal", true, 2000);
-        window = new Window;
-        window->addArtist(&this->signalFullGraph);
-        panel->addWindow(window);
-        this->signalFullWindow = window;
+        panel.addWindow(&this->signalFullGraph);
     }
 
     {
         this->fullRecordingGraph = GraphRtoR(0, 1, -1.2, 1.2, "Rec", true, 2000);
-        fullRecordingWindow.addArtist(&fullRecordingGraph);
-        panel->addWindow(&fullRecordingWindow);
+        panel.addWindow(&fullRecordingGraph);
     }
-
-
-
-    const auto faktor = 10;
-    phiMinAnim = new Animation(&mFieldsGraph.yMin, mFieldsGraph.yMin, faktor);
-    phiMaxAnim = new Animation(&mFieldsGraph.yMax, mFieldsGraph.yMax, faktor);
-    addAnimation(phiMaxAnim);
-    addAnimation(phiMinAnim);
-
-    xMinAnim = new Animation(&mFieldsGraph.xMin, mFieldsGraph.xMin, faktor);
-    xMaxAnim = new Animation(&mFieldsGraph.xMax, mFieldsGraph.xMax, faktor);
-    addAnimation(xMinAnim);
-    addAnimation(xMaxAnim);
-
 }
-void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo"") {
+void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
     // OutputOpenGL::_out(outInfo);
 
     auto field = outInfo.getEqStateData<RtoR::EquationState>();
@@ -158,7 +124,7 @@ void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo"") {
 
     if(!outInfo.getSteps()%100) {
         auto newField =
-                static_cast<RtoR::ArbitraryFunction *>
+                static_cast<RtoR::DiscreteFunction *>
                 (outInfo.getEqStateData<RtoR::EquationState>()->getPhi().Clone());
         history.push_back(newField);
     }
@@ -229,7 +195,7 @@ void RtoR::Signal::OutGL::draw() {
     stats.addVolatileStat("");
 
     auto jackServer = JackServer::GetInstance();
-    Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
+    Styles::Color samplingStatusColor = jackServer->isSubSampled()?Styles::Color{1,0,0,1}:Styles::Color{0,1,0,1};
 
     stats.addVolatileStat("Jack I/O:");
     stats.addVolatileStat(Str("Probed samples/nframes: ")
@@ -256,7 +222,7 @@ void RtoR::Signal::OutGL::draw() {
 
             fullRecordingGraph.clearFunctions();
             fullRecordingGraph.addFunction(func);
-            fullRecordingGraph.xMax = recTime;
+            fullRecordingGraph.set_xMax(recTime);
 
             stats.addVolatileStat(Str("Recorded samples: ") + ToStr(func->N));
         }
@@ -281,7 +247,7 @@ void RtoR::Signal::OutGL::draw() {
 
             for (int i = 0; i < probed.size(); i++) F1[i] = probed[i];
 
-            signalBufferGraph.xMax = intervalSec;
+            signalBufferGraph.set_xMax(intervalSec);
             signalBufferGraph.addFunction(func1);
         }
 
@@ -297,8 +263,8 @@ void RtoR::Signal::OutGL::draw() {
 
             for (int i = 0; i < pdsize; i++) F2[i] = probingData[i];
 
-            signalFullGraph.xMax = t > 1 ? t : 1;
-            signalFullGraph.xMin = t > 1 ? t-1 : 0;
+            signalFullGraph.set_xMax(t > 1 ? t : 1);
+            signalFullGraph.set_xMin(t > 1 ? t-1 : 0);
             signalFullGraph.addFunction(func2);
         }
     }
@@ -333,7 +299,7 @@ void RtoR::Signal::OutGL::draw() {
         }
         signalBufferGraph.clearFunctions();
         signalBufferGraph.addFunction(&func);
-        signalBufferGraph.addFunction(&funcMore, Color(0, 1, 0, 1));
+        // signalBufferGraph.addFunction(&funcMore, Styles::Color(0, 1, 0, 1));
         //signalGraph.addFunction(&funcLess, Color(.3,.3,1,1));
     }
 
@@ -341,40 +307,39 @@ void RtoR::Signal::OutGL::draw() {
     if(gotNewData || 1)
     {
         const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
-        if (&fieldState == nullptr) throw "Fieldstate data doesn't seem to be RtoRMap.";
 
         mFieldsGraph.clearFunctions();
 
         if (showPhi) {
-            const Color colorPhi = V_color;
-
-            //mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");
-            auto &phi = fieldState.getPhi();
-            mFieldsGraph.addFunction(&phi, colorPhi, "phi");
+            // const Color colorPhi = V_color;
+//
+            // //mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");
+            // auto &phi = fieldState.getPhi();
+            // mFieldsGraph.addFunction(&phi, colorPhi, "phi");
         }
 
         if (showKineticEnergy) {
-            const Color colorKinetic = K_color;
-
-            // mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
-            mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
+            //const Color colorKinetic = K_color;
+//
+            //// mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
+            //mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
         }
 
         if (showGradientEnergy) {
-            const Color colorGradient = W_color;
-
-            mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient, "grad^2");
+            // const Color colorGradient = W_color;
+//
+            // mFieldsGraph.addFunction(&energyCalculator.getGradient(), colorGradient, "grad^2");
         }
 
         if (showEnergyDensity) {
-            const Color color = U_color;
-            mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color, "E");
+            //const Color color = U_color;
+            //mFieldsGraph.addFunction(&energyCalculator.getEnergy(), color, "E");
         }
 
         gotNewData = false;
     }
 
-    panel->draw(true, true);
+    panel.draw();
 
     {
         //auto L = Numerics::Allocator::getInstance().getNumericParams().getL();
@@ -382,8 +347,6 @@ void RtoR::Signal::OutGL::draw() {
         //func = new RtoR::FunctionArbitraryCPU(damps, xInitDampCutoff_normalized*L, xMax);
 //
         //mFieldsGraph.addFunction(func, Color(1,0,0,1));
-        fieldWindow->_setupViewport(false, true);
-        mFieldsGraph.setupOrtho();
 //
         //glColor4f(0, 1, 0, 1);
         //glBegin(GL_LINES);
@@ -413,5 +376,3 @@ std::vector<std::vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
 
     return outputData;
 }
-
-\

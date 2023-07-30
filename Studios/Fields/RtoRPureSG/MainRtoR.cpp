@@ -10,7 +10,7 @@
 #include "Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
 #include "Mappings/RtoR/App/FieldsApp-RtoR.h"
 
-auto main(int argc, const char **argv) -> int {
+int run(int argc, const char **argv) {
     InterfaceSelector selector("Simulation builder selector");
 
     auto option1 = new RtoR::InputSymmetricOscillon();
@@ -25,15 +25,17 @@ auto main(int argc, const char **argv) -> int {
     /* sim 3 */selector.registerOption(option4->getInterface());
     /* sim 4 */selector.registerOption(option5->getInterface());
 
-    selector.preParse(argc, argv);
-
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
     auto input    = dynamic_cast<Base::Simulation::VoidBuilder*>(selectedInterface->getOwner());
     auto inputPtr = Base::Simulation::VoidBuilder::Ptr(input);
 
-    auto prog = SimulationsAppRtoR(argc, argv);
+    auto prog = SimulationsAppRtoR(argc, argv, inputPtr);
 
-    return SafetyNet::jump(prog);
+    return prog.run();
+}
+
+auto main(int argc, const char **argv) -> int {
+    return SafetyNet::jump(run, argc, argv);
 }
 
 

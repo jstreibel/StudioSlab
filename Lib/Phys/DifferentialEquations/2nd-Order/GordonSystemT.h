@@ -14,8 +14,8 @@ namespace Phys {
 
         template<class EqState>
         class GordonSolverT : public Slab::EquationSolverT<EqState> {
-            using MyBase = Slab::EquationSolverT<EqState>;
         public:
+            using MyBase = Slab::EquationSolverT<EqState>;
             typedef Base::FunctionT<Real, Real>     PotentialFunc;
             typedef EqState::SubStateType           DiscrFuncType;
 

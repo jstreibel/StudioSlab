@@ -11,7 +11,7 @@ namespace RtoR {
 
     class OutGLStatistic : public RtoR::Monitor {
     public:
-        explicit OutGLStatistic( );
+        explicit OutGLStatistic(const NumericParams &);
         void draw() override;
 
     private:

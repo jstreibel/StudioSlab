@@ -13,7 +13,8 @@
 // Created by joao on 15/10/2019.
 DimensionReductionFilter::DimensionReductionFilter(PosInt resolution, RtoR2::StraightLine alongLine)
     : line(alongLine), N_low(resolution) {
-
+    Log::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
+    << " to " << (alongLine.getx0() + alongLine.getr()) << Log::Flush;
 }
 
 DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outputInfo) {

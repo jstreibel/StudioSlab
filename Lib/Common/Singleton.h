@@ -11,13 +11,12 @@
 
 template <typename T, bool Abstract=false>
 class Singleton {
-    const Str name;
-
 protected:
+    const Str name;
     static T* singleInstance;
 
     Singleton(Str name) : name(name) {
-        // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+         // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
     };
     Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
@@ -51,7 +50,8 @@ public:
 
     template< typename ToSuper >
     static void Initialize() {
-        if(Singleton<T,true>::singleInstance != nullptr) throw "Singleton already initialized.";
+        if(Singleton<T,true>::singleInstance != nullptr)
+            throw Str("Singleton '") + Singleton<T,true>::singleInstance->name + "' already initialized.";
 
         Singleton<T,true>::singleInstance = new ToSuper();
     }

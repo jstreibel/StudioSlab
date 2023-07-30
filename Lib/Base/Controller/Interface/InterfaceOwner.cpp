@@ -30,8 +30,11 @@ void InterfaceOwner::notifyCLArgsSetupFinished() {
         Log::Note() << "\t\t--" << std::left << std::setw(20) << param->getCLName(true) << ": " << param->valueToString() << Log::Flush;
 }
 
-auto InterfaceOwner::getInterface() -> Interface::Ptr {
+auto InterfaceOwner::getInterface()       -> Interface::Ptr {
     return interface;
 }
 
+auto InterfaceOwner::getInterface() const -> Interface::Ptr {
+    return interface;
+}
 

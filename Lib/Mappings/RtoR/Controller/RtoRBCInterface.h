@@ -19,12 +19,12 @@ public:
     auto buildOutputManager()   -> OutputManager * override;
 
     auto newFunctionArbitrary() -> void * override;
-
     auto newFieldState()        -> void * override;
+    auto getEquationSolver()    -> void * override;
 
-    auto getSystemSolver()      -> void * override;
+    auto getInitialState()      -> void * override;
 
-
+    auto buildStepper()         -> Method * override;
 };
 
 

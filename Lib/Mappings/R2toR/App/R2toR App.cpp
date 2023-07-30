@@ -16,9 +16,7 @@ R2toR::App::Simulations::Simulations(int argc, const char **argv, Base::Simulati
 }
 
 auto R2toR::App::Simulations::run() -> int {
-
-    R2toR::EquationState *fstate = nullptr;
-    auto program            = new NumericalIntegration(*builder.get(), fstate);
+    auto program            = new NumericalIntegration(*builder.get());
     Backend &backend        = Backend::GetInstance();
 
     backend.run(program);

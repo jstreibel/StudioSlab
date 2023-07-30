@@ -22,6 +22,7 @@
 #include "Phys/DifferentialEquations/2nd-Order/GordonSystem.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Mappings/R2toR/View/LastOutputVtkVisualizer.h"
 
 namespace R2toR {
 
@@ -30,31 +31,26 @@ namespace R2toR {
     }
 
     OutputManager *Builder::buildOutputManager() {
-        auto outputFileName = this->toString();
-
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
-
 
         if (*VisualMonitor) Backend::Initialize<GLUTBackend>();
         else Backend::Initialize<ConsoleBackend>();
 
         auto *outputManager = new OutputManager(numericParams);
 
-        RtoR2::StraightLine section1, section2;
+        outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
+
+        RtoR2::StraightLine section;
+        auto angleDegrees = 22.5;
         {
-            const Real sqrt2 = sqrt(2.);
             const Real rMin = numericParams.getxLeft();
             const Real rMax = numericParams.getxMax();
             const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
-            Real theta = 0.0;
-
             Rotation R;
-            R = Rotation(theta);
-            section1 = RtoR2::StraightLine(R * x0, R * xf, rMin, rMax);
-            R = Rotation(theta + .5 * M_PI);
-            section2 = RtoR2::StraightLine(R * x0, R * xf);
+            R = Rotation(M_PI*angleDegrees/180);
+            section = RtoR2::StraightLine(R * x0, R * xf);
         }
 
 
@@ -67,17 +63,17 @@ namespace R2toR {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
             SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
-                    numericParams.getN(), section1);
+                    outputResolutionX, section);
 
             const auto N = (Real) numericParams.getN();
             const Real Np = outputResolutionX;
             const Real r = numericParams.getr();
             const auto stepsInterval = PosInt(N / (Np * r));
 
-            auto fileName = outputFileName + "-N=" + ToStr(N, 0);
+            auto outputFileName = this->buildFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
             Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(numericParams, stepsInterval,
-                                                                          spaceFilter, t, fileName,
+                                                                          spaceFilter, t, outputFileName,
                                                                           outputFilter);
 
             fileOutputStepsInterval = out->getnSteps();
@@ -190,6 +186,5 @@ namespace R2toR {
         u_0.setDPhiDt(fullNull);
 
         return &u_0;
-        return nullptr;
     }
 };

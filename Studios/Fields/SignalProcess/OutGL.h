@@ -13,15 +13,11 @@ namespace RtoR {
 
         class JackControl : public Window {
         public:
-            void draw(bool decorated, bool clear) const override;
+            void draw() override;
         };
 
         class OutGL : public RtoR::Monitor {
-            Window *fieldWindow;
-
-            Window *signalBufferWindow;
             GraphRtoR signalBufferGraph;
-            Window *signalFullWindow;
             GraphRtoR signalFullGraph;
             JackControl jackControlWindow;
 
@@ -31,12 +27,12 @@ namespace RtoR {
             bool gotNewData = true;
 
             std::vector<std::vector<Real>> getHistoryMatrixData();
-            std::vector<RtoR::ArbitraryFunction*> history;
+            std::vector<RtoR::DiscreteFunction*> history;
         protected:
 
             std::vector <Real> probingData;
 
-            void _out(const OutputPacket &outInfo"") override;
+            void _out(const OutputPacket &outInfo) override;
 
         public:
             OutGL(const NumericParams &params, Real phiMin, Real phiMax);

@@ -8,7 +8,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
-    class PerturbedOscillonTimeDerivative : public FunctionT {
+class PerturbedOscillonTimeDerivative : public RtoR::Function {
     public:
         PerturbedOscillonTimeDerivative(Real l, Real eps) : l(l), eps(eps) {}
 

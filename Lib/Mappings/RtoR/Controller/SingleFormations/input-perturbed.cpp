@@ -15,7 +15,8 @@ InputPerturbations::InputPerturbations()
 
 auto InputPerturbations::getBoundary() -> void *
 {
-    return new RtoR::BoundaryCondition(new RtoR::NullFunction,
+    auto proto = (RtoR::EquationState*)newFieldState();
+    return new RtoR::BoundaryCondition(*proto, new RtoR::NullFunction,
                                        new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
                                                                                  eps.getValue()));
 }

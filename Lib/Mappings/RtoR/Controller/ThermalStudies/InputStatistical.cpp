@@ -55,5 +55,6 @@ auto RtoR::InputStatistical::getBoundary() -> void * {
         dPhidt0 += RtoR::RegularDiracDelta(osc_eps, s*a, RegularDiracDelta::Triangle, tx);
     }
 
-    return new BoundaryCondition(NullFunction().Clone(), dPhidt0.Clone());
+    auto proto = (RtoR::EquationState*)newFieldState();
+    return new BoundaryCondition(*proto, NullFunction().Clone(), dPhidt0.Clone());
 }

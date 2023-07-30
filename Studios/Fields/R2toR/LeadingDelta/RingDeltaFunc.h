@@ -24,11 +24,13 @@ namespace R2toR {
         protected:
             Real eps, a, dt;
             Real radius;
+            bool asTheta;
 
         public:
             typedef std::shared_ptr<RingDeltaFunc> Ptr;
 
             auto getEps   ()                   const -> Real;
+            auto setEps   (Real eps)                 -> void;
             auto getA     ()                   const -> Real;
             auto setA     (Real a)                   -> void;
             auto getRadius()                   const -> Real;
@@ -43,7 +45,7 @@ namespace R2toR {
              * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
              * is the actual simulation timestep.
              */
-            RingDeltaFunc(Real eps, Real a, Real dt);
+            RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta);
             auto operator()(Real2D x) const -> Real override;
 
             bool renderToDiscreteFunction(ArbFunc *toFunc) const override;

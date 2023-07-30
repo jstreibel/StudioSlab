@@ -21,9 +21,43 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
 
 void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 {
+    static std::vector<Real> measures;
+    static Timer timer;
+    auto elTime = timer.getElTime_sec();
+
     auto n = params.getn();
+    auto currn = outputInfo.getSteps();
+    static auto lastn = currn;
 
-    Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << "; "
-                << "Sim time " << outputInfo.getSimTime() << "/" << maxT << Log::Flush;
+    auto t = outputInfo.getSimTime();
+    Log::Info() << Log::Flush;
+    Log::Info() << (100*t/maxT) << "% done" << Log::Flush;
+    Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Log::Flush;
+    Log::Info() << "t = " << t << "/" << maxT << Log::Flush;
 
+    auto stepsPerSec = 0.0;
+    auto expectedFinish = NAN;
+    if(lastn != currn){
+        measures.emplace_back(elTime);
+
+        auto avg = 0.0;
+        const auto MAX_AVG_SAMPLES = 10;
+        auto count = measures.size();
+        auto countMin = count > MAX_AVG_SAMPLES ? count-MAX_AVG_SAMPLES : 0;
+        auto total = count-countMin;
+        for(int index=countMin; index<count; index++) avg += measures[index];
+        avg /= total;
+
+        stepsPerSec = (currn-lastn)/avg;
+
+        expectedFinish = (n-currn)/stepsPerSec;
+
+        Log::Info() << "Avg "<< stepsPerSec << " steps/s in last " << total << " measures" << Log::Flush;
+        Log::Info() << "El time since last step: " << elTime << "s" << Log::Flush;
+        Log::Info() << "Expected finish in " << Log::ForegroundBlue << int(expectedFinish)/60 << "m " << int(expectedFinish)%60 << "s" << Log::Flush;
+    }
+
+    lastn = currn;
+
+    timer.reset();
 }

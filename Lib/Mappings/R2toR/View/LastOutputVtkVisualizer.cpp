@@ -34,10 +34,14 @@
 #include <vtkStructuredGridGeometryFilter.h>
 
 #include <vtkCubeAxesActor.h>
+#include <vtkColorTransferFunction.h>
+#include <vtkSliderWidget.h>
+#include <vtkSliderRepresentation.h>
 
 #define vtkPtrNew(ofClass) vtkSmartPointer<ofClass>::New()
 
 namespace R2toR {
+
     LastOutputVTKVisualizer::LastOutputVTKVisualizer(const NumericParams &params, int outN)
     : Numerics::OutputSystem::Socket(params, "LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
     , outN(outN) {
@@ -52,8 +56,18 @@ namespace R2toR {
         return showB(params, lastOut, outN);
     }
 
+    Real logAbs(Real val, Real eps){
+        const auto sign = (val>.0?1.0:-1.0);
+        return log(abs(val)/eps + 1)*sign;
+    }
+
+    Real logAbs_inv(Real val, Real eps){
+        const auto sign = (val>.0?1.0:-1.0);
+        return eps * (exp(abs(val)) - 1.0) * sign;
+    }
+
     bool showB(const NumericParams &params, const OutputPacket packet, int outN) {
-        auto zPassiveScale = 1.5;
+        auto zPassiveScale = 2.5;
         double zMin=10., zMax=-10.;
 
         // Create a vtkPoints object and reserve space for N*N points
@@ -84,9 +98,13 @@ namespace R2toR {
                 if(height<zMin) zMin = height;
                 if(height>zMax) zMax = height;
 
-                points->InsertNextPoint(x, y, zPassiveScale*height);
+                points->InsertNextPoint(x, y, -zPassiveScale*height);
                 if(col==0) continue;
-                heights->InsertNextValue(height);
+
+                const auto eps = 1e-2;
+                auto logHeight = logAbs(height, eps);
+
+                heights->InsertNextValue(logHeight);
             }
         }
 
@@ -150,6 +168,20 @@ namespace R2toR {
         // Create a scalar bar
         auto scalarBar = vtkPtrNew(vtkScalarBarActor);
         {
+            using namespace std;
+
+            auto BrBG = vector{vector{0.32941176470588235, 0.18823529411764706, 0.0196078431372549},
+                               vector{0.9572472126105345,  0.9599384851980008,  0.9595540176855056},
+                               vector{0.0,                 0.23529411764705882, 0.18823529411764706}};
+
+            auto lut = vtkPtrNew(vtkColorTransferFunction);
+            auto zLims = 1.5*(abs(zMax) > abs(zMin) ? zMax : zMin);
+            lut->AddRGBPoint(zLims, BrBG[0][0], BrBG[0][1], BrBG[0][2]);
+            lut->AddRGBPoint(0.0, BrBG[1][0], BrBG[1][1], BrBG[1][2]);
+            lut->AddRGBPoint(-zLims, BrBG[2][0], BrBG[2][1], BrBG[2][2]);
+
+            mapper->SetLookupTable(lut);
+
             scalarBar->SetLookupTable(mapper->GetLookupTable());
             scalarBar->SetWidth(0.1);
             scalarBar->SetHeight(0.8);

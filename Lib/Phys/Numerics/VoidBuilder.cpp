@@ -40,10 +40,11 @@ auto Base::Simulation::VoidBuilder::getDevice() const -> const Device & {
     return dev;
 }
 
-Str Base::Simulation::VoidBuilder::toString() const {
-    auto strParams = interface->toString();
+Str Base::Simulation::VoidBuilder::buildFileName() const {
+    const auto SEPARATOR = " ";
+    auto strParams = numericParams.getInterface()->toString({"L", "N"}, SEPARATOR);
 
-    auto str = prefix + "-" + strParams;
+    auto str = prefix + SEPARATOR + strParams;
 
     return str;
 }

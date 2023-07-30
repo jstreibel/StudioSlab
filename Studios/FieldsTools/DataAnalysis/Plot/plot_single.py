@@ -260,11 +260,11 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
 
             ax.plot((xMin, xMax), (t0, t0), color='k', linewidth=.5)
 
-            ax.plot((-t0+eps, -t0+eps + remaining_t), (t0, t), color='r', linewidth=.1)
-            ax.plot((-t0-eps, -t0-eps + remaining_t), (t0, t), color='r', linewidth=.1)
+            ax.plot((-t0+eps, +eps), (t0, 2*t0), color='r', linewidth=.1)
+            ax.plot((-t0-eps, -eps), (t0, 2*t0), color='r', linewidth=.1)
 
-            ax.plot((t0 + eps, t0 + eps - remaining_t), (t0, t), color='r', linewidth=.1)
-            ax.plot((t0 - eps, t0 - eps - remaining_t), (t0, t), color='r', linewidth=.1)
+            ax.plot((t0 + eps, +eps), (t0, 2*t0), color='r', linewidth=.1)
+            ax.plot((t0 - eps, -eps), (t0, 2*t0), color='r', linewidth=.1)
 
     if draw_box is not None:
         if type(draw_box) in (tuple, list):
@@ -320,6 +320,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
     if show_colorbar:
         linearize_cmap = showLog
         if linearize_cmap:
+            print("Compuing log_abs(phi) with epsilon =", logEpsilon)
             func = lambda x: log_abs(x, logEpsilon)
             invFunc = lambda x: log_abs_inv(x, logEpsilon)
             generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize_small)

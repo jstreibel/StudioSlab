@@ -42,6 +42,7 @@ public:
 
     auto operator=(const Type &rhs) -> ParameterTemplate&;
     auto operator=(Type &rhs) -> ParameterTemplate&;
+    auto operator<(const Type &rhs) -> bool;
 
 };
 

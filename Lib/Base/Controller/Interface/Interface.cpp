@@ -85,15 +85,20 @@ auto Interface::getParameter(Str key) const -> Parameter::Ptr {
     return *result;
 }
 
-auto Interface::toString() const -> Str {
+auto Interface::toString(StrVector paramNames, Str separator) const -> Str {
     std::stringstream ss;
 
-    for(auto param : parameters)
-        ss << param->getCLName(true) << "=" << param->valueToString() << "-";
+    for(auto param : parameters) {
+        auto nameShort = param->getCLName(false);
+        auto nameLong  = param->getCLName(true);
+
+        if(Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) || paramNames.empty())
+            ss << param->getCLName(true) << "=" << param->valueToString() << separator;
+    }
 
     auto str = ss.str();
     if(!parameters.empty())
-        str.pop_back(); // remove trailing '-'
+        for(int i=0; i<separator.size(); i++) str.pop_back(); // remove trailing sparator
 
     return str;
 }

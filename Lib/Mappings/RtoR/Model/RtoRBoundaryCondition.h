@@ -14,7 +14,8 @@
 namespace RtoR {
     class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
     public:
-        BoundaryCondition(Function *initialPhiCondition,
+        BoundaryCondition(const RtoR::EquationState &prototype,
+                          Function *initialPhiCondition,
                           Function *initialdPhiDtCondition,
                           Function *leftPhiBoundaryCondition = nullptr,
                           Function *leftdPhiDtBoundaryCondition = nullptr,

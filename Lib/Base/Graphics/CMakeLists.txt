@@ -14,14 +14,12 @@ set( GRAPHICS_SOURCES
 
 		SFML/Graph.cpp
 
-		../../Phys/Graph/OutputOpenGL.cpp
-
 		#FunctionRenderer.cpp
 		#GraphCollections.cpp
 
 		OpenGL/Utils.cpp
-		../../Phys/Graph/Graph.cpp
-		../../Phys/Graph/Graph.h)
+		OpenGL/GLUTUtils.cpp
+		)
 
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Graphics )

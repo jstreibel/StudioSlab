@@ -88,6 +88,11 @@ auto ParameterTemplate<Type>::operator=(Type &rhs) -> ParameterTemplate & {
     return *this;
 }
 
+template<class Type>
+auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
+    return val < rhs;
+}
+
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;
 template class ParameterTemplate<Str>;

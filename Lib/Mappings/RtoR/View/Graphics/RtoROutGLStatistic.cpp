@@ -17,7 +17,7 @@ const Styles::Color T2_color = Styles::Color(1, 0.45, 1);
 const Styles::Color T3_color = Styles::Color(1, 1, 0);
 
 
-RtoR::OutGLStatistic::OutGLStatistic() : RtoR::Monitor(params, -1, 1) {
+RtoR::OutGLStatistic::OutGLStatistic(const NumericParams &params1) : RtoR::Monitor(params1, -1, 1) {
     const Real xLeft = params.getxLeft();
     const Real xRight = params.getxMax();
 

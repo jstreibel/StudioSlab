@@ -18,6 +18,7 @@ public:
     void LateStart(Str interfaceName, int priotity=10000, bool doRegister=true);
 
     auto getInterface() -> Interface::Ptr;
+    auto getInterface() const -> Interface::Ptr;
     auto notifyCLArgsSetupFinished() -> void override;
 };
 

@@ -8,20 +8,21 @@
 using namespace RtoR;
 
 
-RtoR::BoundaryCondition::BoundaryCondition(Function *initialPhiCondition,
+RtoR::BoundaryCondition::BoundaryCondition(const RtoR::EquationState &prototype,
+                                           Function *initialPhiCondition,
                                            Function *initialdPhiDtCondition,
                                            Function *leftPhiBoundaryCondition,
                                            Function *leftdPhiDtBoundaryCondition,
                                            Function *rightPhiBoundaryCondition,
                                            Function *rightdPhiDtBoundaryCondition)
-                                                    : initialPhiCondition(initialPhiCondition),
-                                                      leftPhiBoundaryCondition(leftPhiBoundaryCondition),
-                                                      rightPhiBoundaryCondition(rightPhiBoundaryCondition),
-                                                      initialdPhiDtCondition(initialdPhiDtCondition),
-                                                      leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition),
-                                                      rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition){
-
-}
+: Base::BoundaryConditions<RtoR::EquationState>(prototype)
+, initialPhiCondition(initialPhiCondition)
+, leftPhiBoundaryCondition(leftPhiBoundaryCondition)
+, rightPhiBoundaryCondition(rightPhiBoundaryCondition)
+, initialdPhiDtCondition(initialdPhiDtCondition)
+, leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition)
+, rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition)
+{   }
 
 void RtoR::BoundaryCondition::apply(EquationState &fieldState, const floatt t) const {
     if(t == 0.0){
