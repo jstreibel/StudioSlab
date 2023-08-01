@@ -22,21 +22,16 @@
 #include <vtkLookupTable.h>
 #include <vtkPoints.h>
 #include <vtkPointData.h>
-#include <vtkPolyData.h>
 #include <vtkCellData.h>
 #include <vtkPolyDataMapper.h>
 #include <vtkScalarBarActor.h>
-#include <vtkDelaunay2D.h>
 #include <vtkOrientationMarkerWidget.h>
 #include <vtkStructuredGrid.h>
 #include <vtkTransform.h>
-#include <vtkTransformPolyDataFilter.h>
 #include <vtkStructuredGridGeometryFilter.h>
 
 #include <vtkCubeAxesActor.h>
 #include <vtkColorTransferFunction.h>
-#include <vtkSliderWidget.h>
-#include <vtkSliderRepresentation.h>
 
 #define vtkPtrNew(ofClass) vtkSmartPointer<ofClass>::New()
 
@@ -67,8 +62,9 @@ namespace R2toR {
     }
 
     bool showB(const NumericParams &params, const OutputPacket packet, int outN) {
-        auto zPassiveScale = 2.5;
+        auto zPassiveScale = 2.0;
         double zMin=10., zMax=-10.;
+        const auto eps_log = 7.5e-2;
 
         // Create a vtkPoints object and reserve space for N*N points
         auto points = vtkPtrNew(vtkPoints);
@@ -98,11 +94,10 @@ namespace R2toR {
                 if(height<zMin) zMin = height;
                 if(height>zMax) zMax = height;
 
-                points->InsertNextPoint(x, y, -zPassiveScale*height);
+                points->InsertNextPoint(x, y, zPassiveScale*height);
                 if(col==0) continue;
 
-                const auto eps = 1e-2;
-                auto logHeight = logAbs(height, eps);
+                auto logHeight = logAbs(height, eps_log);
 
                 heights->InsertNextValue(logHeight);
             }
@@ -117,9 +112,7 @@ namespace R2toR {
 
             geometryFilter->SetInputData(structuredGrid);
             geometryFilter->Update();
-
         }
-
 
         auto mapper = vtkPtrNew(vtkPolyDataMapper);
         mapper->SetInputConnection(geometryFilter->GetOutputPort());
@@ -133,9 +126,9 @@ namespace R2toR {
         {
             // Create a cube axes actor
             cubeAxes->SetBounds(geometryFilter->GetOutput()->GetBounds());
-            cubeAxes->DrawXGridlinesOn();
-            cubeAxes->DrawYGridlinesOn();;
-            cubeAxes->DrawZGridlinesOn();
+            cubeAxes->DrawXGridlinesOff();
+            cubeAxes->DrawYGridlinesOff();;
+            cubeAxes->DrawZGridlinesOff();
             cubeAxes->SetZTitle("phi");
 
             Log::Info("z (min,max) = (") << zMin << "," << zMax << ")" << Log::Flush;
@@ -170,15 +163,15 @@ namespace R2toR {
         {
             using namespace std;
 
-            auto BrBG = vector{vector{0.32941176470588235, 0.18823529411764706, 0.0196078431372549},
+            auto BrBG = vector{vector{0.0,                 0.23529411764705882, 0.18823529411764706},
                                vector{0.9572472126105345,  0.9599384851980008,  0.9595540176855056},
-                               vector{0.0,                 0.23529411764705882, 0.18823529411764706}};
+                               vector{0.32941176470588235, 0.18823529411764706, 0.0196078431372549}};
 
             auto lut = vtkPtrNew(vtkColorTransferFunction);
-            auto zLims = 1.5*(abs(zMax) > abs(zMin) ? zMax : zMin);
-            lut->AddRGBPoint(zLims, BrBG[0][0], BrBG[0][1], BrBG[0][2]);
-            lut->AddRGBPoint(0.0, BrBG[1][0], BrBG[1][1], BrBG[1][2]);
-            lut->AddRGBPoint(-zLims, BrBG[2][0], BrBG[2][1], BrBG[2][2]);
+            auto zLims = max(abs(zMax), abs(zMin));
+            lut->AddRGBPoint(-zLims, BrBG[0][0], BrBG[0][1], BrBG[0][2]);
+            lut->AddRGBPoint(   0.0, BrBG[1][0], BrBG[1][1], BrBG[1][2]);
+            lut->AddRGBPoint(+zLims, BrBG[2][0], BrBG[2][1], BrBG[2][2]);
 
             mapper->SetLookupTable(lut);
 

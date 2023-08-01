@@ -40,6 +40,9 @@ set ( GRAPH_SOURCES
 
 
 set ( NUMERICS_SOURCES
+		App.cpp
+		App.h
+
 		Numerics/VoidBuilder.cpp
 		Numerics/Builder.h
 
@@ -62,7 +65,11 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/FieldStateOutputInterface.cpp
 		Numerics/Output/Util/record-interval.cpp
 		DifferentialEquations/EquationState.h
-		DifferentialEquations/2nd-Order/GordonState.h DifferentialEquations/2nd-Order/GordonSystem.cpp DifferentialEquations/2nd-Order/GordonSystem.h)
+		DifferentialEquations/2nd-Order/GordonState.h
+		DifferentialEquations/2nd-Order/GordonSystem.cpp
+		DifferentialEquations/2nd-Order/GordonSystem.h
+
+		)
 
 
 set ( THERMO_SOURCES

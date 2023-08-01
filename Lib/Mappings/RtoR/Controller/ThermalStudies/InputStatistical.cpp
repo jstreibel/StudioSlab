@@ -12,7 +12,6 @@
 #include "InputStatistical.h"
 #include "Phys/Thermal/Utils/RandUtils.h"
 
-
 RtoR::InputStatistical::InputStatistical()
 : RtoRBCInterface("Statistical", "Energy and density of oscillons statistical input")
 {

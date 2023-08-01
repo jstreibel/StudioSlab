@@ -16,6 +16,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
+#include "RtoRBuilder.h"
 
 
 namespace Montecarlo {

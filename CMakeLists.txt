@@ -34,10 +34,10 @@ endif()
 
 
 if( STUDIOSLAB_USE_SINGLE_PRECISION )
-	message(NOTICE "-- StudioSlab is using FP32")
+	message(STATUS "StudioSlab is using FP32")
 	add_compile_definitions( STUDIOSLAB_USE_FP32=true )
 else ()
-	message(NOTICE "-- StudioSlab is using IEEE FP64")
+	message(STATUS "StudioSlab is using IEEE FP64")
     add_compile_definitions( STUDIOSLAB_USE_FP32=false )
 endif ()
 

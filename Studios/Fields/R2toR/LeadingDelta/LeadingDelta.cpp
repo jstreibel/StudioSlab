@@ -40,8 +40,9 @@ namespace R2toR {
                     ringDelta->setRadius(t);
                     ringDelta->renderToDiscreteFunction(&ϕₜ);
                 } else {
+                    const bool AS_THETA = false;
 
-                    if(false) {
+                    if(AS_THETA) {
                         const auto radius = t;
 
                         ringDelta->setRadius(radius);

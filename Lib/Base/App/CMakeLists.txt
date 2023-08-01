@@ -1,5 +1,7 @@
 
-set ( APP_SOURCES CrashPad.cpp AppBase.cpp)
+set ( APP_SOURCES
+		CrashPad.cpp
+		AppBase.cpp)
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-App )
 

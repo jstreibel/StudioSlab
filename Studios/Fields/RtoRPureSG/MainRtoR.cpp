@@ -8,7 +8,8 @@
 #include "Mappings/RtoR/Controller/SingleFormations/input-perturbed.h"
 #include "Mappings/RtoR/Controller/SingleFormations/input-shockwave.h"
 #include "Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
-#include "Mappings/RtoR/App/FieldsApp-RtoR.h"
+
+#include "Phys/App.h"
 
 int run(int argc, const char **argv) {
     InterfaceSelector selector("Simulation builder selector");
@@ -29,7 +30,7 @@ int run(int argc, const char **argv) {
     auto input    = dynamic_cast<Base::Simulation::VoidBuilder*>(selectedInterface->getOwner());
     auto inputPtr = Base::Simulation::VoidBuilder::Ptr(input);
 
-    auto prog = SimulationsAppRtoR(argc, argv, inputPtr);
+    auto prog = Simulation::App(argc, argv, inputPtr);
 
     return prog.run();
 }

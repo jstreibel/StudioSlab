@@ -16,6 +16,7 @@
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "RtoRBuilder.h"
 
 
 const auto pi = 3.1415926535897932384626;

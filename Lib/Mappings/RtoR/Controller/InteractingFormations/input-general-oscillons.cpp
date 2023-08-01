@@ -6,6 +6,7 @@
 
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
+#include "../RtoRBuilder.h"
 
 using namespace RtoR;
 

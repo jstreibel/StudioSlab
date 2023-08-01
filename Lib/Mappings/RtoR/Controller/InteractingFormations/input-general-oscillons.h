@@ -6,6 +6,7 @@
 #define V_SHAPE_INPUT_GENERAL_OSCILLONS_H
 
 #include "Mappings/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBuilder.h"
 
 namespace RtoR {
 

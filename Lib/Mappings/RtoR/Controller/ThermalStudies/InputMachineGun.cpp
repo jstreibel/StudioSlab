@@ -7,7 +7,6 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 
-
 RtoR::InputMachineGun::InputMachineGun() : RtoRBCInterface("Machinegun", "Machinegun scattering") {
     interface->addParameters({&v1, &n});
 

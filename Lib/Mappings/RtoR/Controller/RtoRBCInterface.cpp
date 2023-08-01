@@ -23,12 +23,13 @@
 #include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "RtoRBuilder.h"
 
 
-RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription)
+RtoR::RtoRBCInterface::RtoRBCInterface(Str name, Str generalDescription)
 : VoidBuilder("RtoR-" + name, generalDescription) { }
 
-auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
+auto RtoR::RtoRBCInterface::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->buildFileName();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
@@ -92,7 +93,7 @@ auto RtoRBCInterface::buildOutputManager() -> OutputManager * {
 
 }
 
-void *RtoRBCInterface::newFunctionArbitrary() {
+void *RtoR::RtoRBCInterface::newFunctionArbitrary() {
     const size_t N = numericParams.getN();
     const floatt xLeft = numericParams.getxLeft();
     const floatt xRight = xLeft + numericParams.getL();
@@ -108,12 +109,12 @@ void *RtoRBCInterface::newFunctionArbitrary() {
     throw "Error while instantiating Field: device not recognized.";
 }
 
-void *RtoRBCInterface::newFieldState() {
+void *RtoR::RtoRBCInterface::newFieldState() {
     return new RtoR::EquationState((RtoR::DiscreteFunction*)this->newFunctionArbitrary(),
                                    (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
-void *RtoRBCInterface::getEquationSolver() {
+void *RtoR::RtoRBCInterface::getEquationSolver() {
     auto thePotential = new RtoR::AbsFunction;
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
@@ -128,11 +129,11 @@ void *RtoRBCInterface::getEquationSolver() {
     return new Phys::Gordon::GordonSolverT<RtoR::EquationState>(numericParams, *dphi, *thePotential);
 }
 
-auto RtoRBCInterface::buildOpenGLOutput() -> RtoR::Monitor * {
+auto RtoR::RtoRBCInterface::buildOpenGLOutput() -> RtoR::Monitor * {
     return new RtoR::OutGLStatistic(numericParams);
 }
 
-auto RtoRBCInterface::getInitialState() -> void * {
+auto RtoR::RtoRBCInterface::getInitialState() -> void * {
     auto &u_0 = *(RtoR::EquationState*)newFieldState();
 
     u_0.setPhi(RtoR::NullFunction());
@@ -164,7 +165,7 @@ auto RtoRBCInterface::getInitialState() -> void * {
         GENERATE_METHOD(StepperRK4, 15); \
         GENERATE_METHOD(StepperRK4, 16);
 
-auto RtoRBCInterface::buildStepper() -> Method * {
+auto RtoR::RtoRBCInterface::buildStepper() -> Method * {
     Method *method;
 
     auto &solver = *(RtoR::EquationSolver*)getEquationSolver();

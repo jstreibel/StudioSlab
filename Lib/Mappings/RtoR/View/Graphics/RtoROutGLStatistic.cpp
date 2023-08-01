@@ -18,11 +18,6 @@ const Styles::Color T3_color = Styles::Color(1, 1, 0);
 
 
 RtoR::OutGLStatistic::OutGLStatistic(const NumericParams &params1) : RtoR::Monitor(params1, -1, 1) {
-    const Real xLeft = params.getxLeft();
-    const Real xRight = params.getxMax();
-
-    Window *window = nullptr;
-
     temperature1History = FuncArbResizable(0, 0.1);
     temperature2History = FuncArbResizable(0, 0.1);
     temperature3History = FuncArbResizable(0, 0.1);
@@ -31,8 +26,7 @@ RtoR::OutGLStatistic::OutGLStatistic(const NumericParams &params1) : RtoR::Monit
     mTemperaturesGraph->addFunction(&temperature1History, "T1", Styles::GetColorScheme()->funcPlotStyles[0]);
     mTemperaturesGraph->addFunction(&temperature2History, "T2", Styles::GetColorScheme()->funcPlotStyles[1]);
     mTemperaturesGraph->addFunction(&temperature3History, "T4", Styles::GetColorScheme()->funcPlotStyles[2]);
-    //window = new Window; window->addArtist(mTemperaturesGraph);
-    panel.addWindow(window);
+    panel.addWindow(mTemperaturesGraph);
 
     initialize();
 

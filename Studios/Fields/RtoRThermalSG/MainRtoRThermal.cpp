@@ -11,6 +11,7 @@
 #include "Mappings/RtoR/Controller/ThermalStudies/InputMachineGun.h"
 #include "Mappings/RtoR/Controller/ThermalStudies/InputStatistical.h"
 #include "Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
+#include "RtoRBuilder.h"
 
 
 int main(int argc, const char **argv) {

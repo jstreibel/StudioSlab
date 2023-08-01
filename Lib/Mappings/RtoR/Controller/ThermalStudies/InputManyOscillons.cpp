@@ -5,6 +5,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
 #include "InputManyOscillons.h"
+#include "../RtoRBuilder.h"
 
 
 RtoR::InputManyOscillons::InputManyOscillons()

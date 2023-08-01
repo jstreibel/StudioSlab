@@ -57,7 +57,7 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
     cax = divider.append_axes('right', size='5%', pad=0.05)  # colocar o colorbar a direita e do tamanho certinho.
 
     vmin_lin, vmax_lin = invFunc(np.asarray((vmin, vmax)))
-    print("Generating colorbar with vmin vmax =", vmin, vmax)
+    print("Generating colorbar with vmin_lin vmax_lin =", vmin_lin, vmax_lin)
     boundaries = [func(v) for v in np.linspace(vmin_lin, vmax_lin, 1000)]
 
     linTicksMin, linTicksMax, linTicksStep = round_sd(vmin_lin * 1.5), \
@@ -94,6 +94,9 @@ def generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize=
             vals = np.asarray([round_sd(v * (vmax_lin - vmin_lin) + vmin_lin, 3) for v in yticks])
             lvals = np.log10(np.abs(vals))
             vals[np.argmin(lvals)] = 0.0
+
+            vals = np.asarray([round_sd(invFunc(v),2) for v in yticks])
+
             return vals
 
         yticks = cbar.ax.get_yticks()
@@ -203,12 +206,14 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         region = extent
     else:
         extent = region  # Vide 'NOTA 1' acima
-    vmin, vmax = None, None
 
     # Mostrar os valores do campo em escala log. A barra de cor segue linear (trabalhoso...).
     if showLog:
+        print("Computing field log scale")
         field = log_abs(field, logEpsilon)
 
+    vmin, vmax = None, None
+    print("Field max min =", phi.max(), phi.min())
     if valueRange[0] == 0:  # auto
         vmin = field.min()
         vmax = field.max()
@@ -283,7 +288,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
     # a regiao de dissipacao de energia e colocamos informacao extra no nome do
     # arquivo (sobre o interval de tempo sendo mostrado, ja que eh comum nesses
     # casos nao mostrarmos tudo).
-    if 'eps' in simData and 0:
+    if False and 'eps' in simData:
         eps = simData['eps']
         l = simData['l']
         if showSelfSimilar:
@@ -320,7 +325,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
     if show_colorbar:
         linearize_cmap = showLog
         if linearize_cmap:
-            print("Compuing log_abs(phi) with epsilon =", logEpsilon)
+            print("Computing log_abs(phi) colorbar with epsilon =", logEpsilon)
             func = lambda x: log_abs(x, logEpsilon)
             invFunc = lambda x: log_abs_inv(x, logEpsilon)
             generateLinearizedColorbar(ax, fig, im, vmin, vmax, func, invFunc, fontsize_small)

@@ -1,5 +1,5 @@
 
-set(FIELDS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Fields)
+set(FIELDS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Maps)
 
 set ( OpenGL_GL_PREFERENCE GLVND )
 find_package(OpenMP)
@@ -37,12 +37,9 @@ endif()
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
 
-		RtoR/App/FieldsApp-RtoR.cpp
-
 		#RtoR/Core/RtoRModelAllocator.cpp
 		#RtoR/Core/RtoRModelAllocator_Langevin.cpp
 		#RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
-
 
 		RtoR/Controller/RtoRBCInterface.cpp
 
@@ -128,8 +125,6 @@ set ( R2TOR_SOURCES
 		#R2toR/View/OutputShockwaveZeros.cpp
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 
-		"R2toR/App/R2toR App.cpp"
-
 		RtoR2/StraightLine.cpp
 
 		#R2toR/Core/R2toR_Allocator.cpp
@@ -152,7 +147,7 @@ set ( MAPS_LINKS
 
 # ℝ ↦ ℝ
 
-set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-RtoR)
+set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-RtoR)
 
 set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME} )
 
@@ -185,7 +180,7 @@ message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 # ℝ² ↦ ℝ
 
-set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-Maps-R2toR)
+set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})

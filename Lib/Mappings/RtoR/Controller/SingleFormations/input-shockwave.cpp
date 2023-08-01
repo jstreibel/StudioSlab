@@ -9,6 +9,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 
 #include "Mappings/RtoR/View/Graphics/RtoROutputOpenGLShockwave.h"
+#include "../RtoRBuilder.h"
 
 
 using namespace RtoR;
@@ -25,7 +26,7 @@ auto InputShockwave::getBoundary() -> void *
 
     const Real eps = a*a / (3* E.getValue());
 
-    AnalyticShockwave1D shockwave1D(1);
+    AnalyticShockwave1D shockwave1D(a0);
     auto proto = (RtoR::EquationState*)newFieldState();
     return new RtoR::BoundaryCondition(*proto, new RtoR::NullFunction,
                                              new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(deltaType)));

@@ -4,6 +4,7 @@
 #include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
 #include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "../RtoRBuilder.h"
 
 namespace RtoR {
     class InputShockwave : public RtoRBCInterface {

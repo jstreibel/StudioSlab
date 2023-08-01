@@ -2,6 +2,7 @@
 #define SIMPERTURBED_H
 
 #include "Mappings/RtoR/Controller/RtoRBCInterface.h"
+#include "../RtoRBuilder.h"
 
 
 namespace RtoR {
