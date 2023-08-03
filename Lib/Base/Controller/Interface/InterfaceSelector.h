@@ -13,8 +13,9 @@ class InterfaceSelector : public InterfaceOwner {
     int currentSelection = 0;
     std::vector<Interface::Ptr> candidates;
 
-    IntegerParameter::Ptr selection = std::make_shared<IntegerParameter>(0, "sim", "Sim type selection");
+    IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
 
+    auto generateHelpDescription() -> void;
 public:
     InterfaceSelector(Str selectorName);
 

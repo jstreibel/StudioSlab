@@ -78,9 +78,9 @@ bool NumericalIntegration::_cycleUntilOutput() {
     return true;
 }
 
-void NumericalIntegration::output(){
+void NumericalIntegration::output(bool force){
     OutputPacket info = getOutputInfo();
-    outputManager->output(info);
+    outputManager->output(info, force);
 }
 
 size_t NumericalIntegration::getSteps() const { return steps; }

@@ -73,7 +73,7 @@ namespace Base {
          * @return The value of the integral.
          */
         virtual auto integrate()    const -> OutputCategory { throw "Function::integrate not implemented."; }
-        virtual auto Clone()        const -> FunctionT *     { throw "Function::Clone() not implemented."; }
+        virtual auto Clone()        const -> FunctionT *     { throw Str("Function::Clone() of function '") + myName() + "' not implemented."; }
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */

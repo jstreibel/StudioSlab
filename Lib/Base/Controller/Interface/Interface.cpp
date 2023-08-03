@@ -16,9 +16,9 @@ Interface::Interface(Str name, InterfaceOwner *owner, int priority)
     this->descr = tokens.size() > 1 ? tokens[1] : this->descr;
 
     if(owner != nullptr) addListener(owner);
-    else Log::Note() << "Registering un-owned interface '" << name << "'" << Log::Flush;
 
-    Log::Info() << "Interface '" << Log::ForegroundGreen << name << Log::ResetFormatting << "' created." << Log::Flush;
+    Log::Info() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. "
+    << (owner != nullptr ? "Is" : "Is NOT") << " owned." << Log::Flush;
 }
 
 auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {

@@ -16,14 +16,14 @@ namespace R2toR {
             R2toR::Function::Ptr drivingFunction;
 
             Spaces::PointSet::Ptr totalEnergyData;
-            Phys::Graphing::PointSetGraph mTotalEnergyGraph;
+            Fields::Graphing::PointSetGraph mTotalEnergyGraph;
 
             Spaces::PointSet::Ptr numericEnergyData;
             Spaces::PointSet::Ptr analyticEnergyData;
-            Phys::Graphing::PointSetGraph mEnergyGraph;
+            Fields::Graphing::PointSetGraph mEnergyGraph;
 
             Spaces::PointSet::Ptr energyRatioData;
-            Phys::Graphing::PointSetGraph mEnergyRatioGraph;
+            Fields::Graphing::PointSetGraph mEnergyRatioGraph;
 
             GraphR2Section mSpeedsGraph;
             GraphR2Section mEnergyDensityGraph;

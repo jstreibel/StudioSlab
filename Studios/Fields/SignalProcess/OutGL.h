@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OUTGL_H
 #define STUDIOSLAB_OUTGL_H
 
-#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/RtoRMonitor.h"
 
 namespace RtoR {
 

@@ -12,6 +12,13 @@ Spaces::PointSet::PointSet(const Spaces::Point2DVec points) : PointSet() {
     for(const auto &p : points) addPoint(p);
 }
 
+Spaces::PointSet::PointSet(const Spaces::PointSet &pointSet)
+: Space(2)
+, points(pointSet.points)
+, max(pointSet.max)
+, min(pointSet.min)
+{   }
+
 Spaces::PointSet::Ptr Spaces::PointSet::New() {
     return std::make_shared<PointSet>(PointSet());
 }
@@ -42,7 +49,13 @@ void Spaces::PointSet::addPoint(const Spaces::Point2D &point) {
     points.emplace_back(point);
 }
 
+void Spaces::PointSet::setPoints(Spaces::Point2DVec newPoints) {
+    this->points = newPoints;
+}
+
 const Spaces::Point2DVec &Spaces::PointSet::getPoints() const { return points; }
+
+
 
 
 

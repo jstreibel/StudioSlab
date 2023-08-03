@@ -1,3 +1,4 @@
+
 # ************************************************************************************************************
 
 
@@ -18,7 +19,15 @@ message(NOTICE "Added executable Signals-RtoR")
 
 
 add_executable ( Fields-RtoR
-		RtoRPureSG/MainRtoR.cpp)
+		RtoRPureSG/MainRtoR.cpp
+
+		RtoRPureSG/SingleFormations/input-perturbed.cpp
+		RtoRPureSG/SingleFormations/input-shockwave.cpp
+		RtoRPureSG/SingleFormations/InputSingleOscillon.cpp
+
+		RtoRPureSG/InteractingFormations/input-sym-oscillons.cpp
+		RtoRPureSG/InteractingFormations/input-general-oscillons.cpp
+)
 target_link_libraries ( Fields-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU )
 #set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 
@@ -29,9 +38,18 @@ message(NOTICE "Added executable Fields-RtoR")
 
 
 add_executable (Fields-RtoR-Thermal
-		RtoRThermalSG/MainRtoRThermal.cpp ${SOURCES}  )
+		RtoRThermalSG/MainRtoRThermal.cpp
+
+		RtoRThermalSG/ThermalMonitor.cpp
+		RtoRThermalSG/ThermalMonitor.h
+
+		RtoRThermalSG/ThermalStudies/InputManyOscillons.cpp
+		RtoRThermalSG/ThermalStudies/InputMachineGun.cpp
+		RtoRThermalSG/ThermalStudies/InputStatistical.cpp
+		RtoRThermalSG/ThermalStudies/InputRandomEnergyOverDotPhi.cpp
+		)
 target_compile_definitions( Fields-RtoR-Thermal PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
-target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} Slab-Maps-RtoR-Periodic_GPU )
+target_link_libraries (Fields-RtoR-Thermal Slab-Models Slab-Maps-RtoR-Periodic_GPU )
 
 message(NOTICE "Added executable Fields-RtoR-Thermal")
 

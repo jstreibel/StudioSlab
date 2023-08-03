@@ -9,7 +9,7 @@
 #include "Graph.h"
 #include "Phys/Space/Impl/PointSet.h"
 
-namespace Phys {
+namespace Fields {
     namespace Graphing {
 
         class PointSetGraph : public Base::Graphics::Graph2D {

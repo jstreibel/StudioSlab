@@ -7,7 +7,7 @@
 
 // TODO these #includes below shouldn't be THIS far from this file
 #include "Mappings/RtoR/Model/RtoRFunction.h"
-#include "Mappings/RtoR/Model/RtoRFunctionArbitrary.h"
+#include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
 #include "Mappings/R2toR/Model/R2toRFunction.h"
 #include "Mappings/RtoR2/StraightLine.h"
 

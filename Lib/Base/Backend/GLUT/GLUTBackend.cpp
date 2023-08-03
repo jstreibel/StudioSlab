@@ -27,15 +27,15 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     int dummy = 0;
     glutInit(&dummy, nullptr);
 
-    w = 3830, h = 1350;
+    w = 3200, h = 1600;
 
     glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH);
     //glutInitWindowSize(w, h);
-    glutInitWindowPosition(4, 200);
+    glutInitWindowPosition(40, 200);
     glutInitWindowSize(w, h);
     int winHandle = glutCreateWindow("Pendulum");
 
-    glutFullScreen();
+    if(false) glutFullScreen();
 
     // GLEW init:
     {
@@ -68,7 +68,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
 
-    Log::Info() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
+    Log::Critical() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
 
 
     // Setup Dear ImGui context
@@ -81,9 +81,9 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
     // Setup Dear ImGui style
-    //ImGui::StyleColorsDark();
+    ImGui::StyleColorsDark();
     //ImGui::StyleColorsLight();
-    SetupImGuiColors_BlackAndWhite();
+    //SetupImGuiColors_BlackAndWhite();
 
     // Setup Platform/Renderer backends
     // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().

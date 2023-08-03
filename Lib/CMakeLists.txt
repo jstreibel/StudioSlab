@@ -12,4 +12,6 @@ add_subdirectory(Base)
 add_subdirectory(Phys)
 add_subdirectory(Mappings)
 
+add_subdirectory(Models)
+
 # add_dependencies(Fields Studios)

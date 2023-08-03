@@ -32,7 +32,9 @@ public:
     , _k3     ( solver.NewEqState() )
     , _k4     ( solver.NewEqState() )
     , _phiTemp( solver.NewEqState() )
-    { }
+    {
+        H.applyBC(*_phi, .0, .0);
+    }
 
     ~StepperRK4(){
         delete &H;

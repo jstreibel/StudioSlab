@@ -3,7 +3,7 @@
 
 #include "Base/Backend/Events/EventListener.h"
 #include "Base/Backend/GUIBackend.h"
-#include "Phys/Graph/OutputOpenGL.h"
+#include "Phys/Graph/Monitor.h"
 
 
 

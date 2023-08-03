@@ -5,14 +5,14 @@
 #ifndef V_SHAPE_FIELDSTATER2TOR_H
 #define V_SHAPE_FIELDSTATER2TOR_H
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonStateT.h"
+#include "Models/KleinGordon/KGState.h"
 #include "R2toRDiscreteFunction.h"
 
 namespace R2toR {
-    class EquationState : public Phys::Gordon::GordonStateT<DiscreteFunction> {
+    class EquationState : public Fields::KleinGordon::KGState<DiscreteFunction> {
     public:
         EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
-        : Phys::Gordon::GordonStateT<DiscreteFunction>(phi, dPhiDt)
+        : Fields::KleinGordon::KGState<DiscreteFunction>(phi, dPhiDt)
         {
         }
 

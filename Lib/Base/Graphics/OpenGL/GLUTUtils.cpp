@@ -31,7 +31,7 @@ void GLUTUtils::writeOrtho(const Window *window, Rect region, float fontScale, f
 
     glMatrixMode(GL_MODELVIEW);
 
-    for(int i=0;i<3;++i) {
+    for(int i=0;i<1;++i) {
         glPushMatrix();
 
 

@@ -5,33 +5,34 @@
 #include "Base/App/CrashPad.h"
 #include "Base/Controller/Interface/InterfaceSelector.h"
 
-#include "Mappings/RtoR/App/FieldsApp-RtoR.h"
+#include "Phys/App.h"
 
-#include "Mappings/RtoR/Controller/ThermalStudies/InputManyOscillons.h"
-#include "Mappings/RtoR/Controller/ThermalStudies/InputMachineGun.h"
-#include "Mappings/RtoR/Controller/ThermalStudies/InputStatistical.h"
-#include "Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
-#include "RtoRBuilder.h"
+#include "ThermalStudies/InputManyOscillons.h"
+#include "ThermalStudies/InputMachineGun.h"
+#include "ThermalStudies/InputStatistical.h"
+#include "ThermalStudies/InputRandomEnergyOverDotPhi.h"
 
-
-int main(int argc, const char **argv) {
-
+int run(int argc, const char **argv){
     InterfaceSelector selector("Dynamic thermal");
-    std::vector<RtoRBCInterface*>
-    options = { new RtoR::InputStatistical,
-                new RtoR::InputMachineGun,
-                new RtoR::InputManyOscillons,
-                new RtoR::InputRandomEnergyOverDotPhi };
+    std::vector<RtoR::Builder*>
+            options = { new RtoR::InputStatistical,
+                        new RtoR::InputMachineGun,
+                        new RtoR::InputManyOscillons,
+                        new RtoR::InputRandomEnergyOverDotPhi };
 
     for(auto &opt : options)
         selector.registerOption(opt->getInterface());
 
-    auto selection = dynamic_cast<RtoRBCInterface*>(
+    auto selection = dynamic_cast<RtoR::Builder*>(
             selector.preParse(argc, argv).getCurrentCandidate()->getOwner());
 
-    auto prog = SimulationsAppRtoR(argc, argv, RtoRBCInterface::Ptr(selection));
+    auto prog = Simulation::App(argc, argv, RtoR::Builder::Ptr(selection));
 
-    return SafetyNet::jump(prog);
+    return prog.run();
+}
+
+int main(int argc, const char **argv) {
+    return SafetyNet::jump(run, argc, argv);
 }
 
 

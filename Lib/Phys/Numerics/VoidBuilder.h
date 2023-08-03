@@ -42,10 +42,14 @@ namespace Base {
             virtual ~VoidBuilder() {}
 
             virtual auto buildOutputManager()         -> OutputManager * = 0;
+            virtual auto buildEquationSolver()        -> void * = 0;
+            virtual auto buildStepper()               -> Method* = 0;
+
+            virtual auto suggestFileName()      const -> Str;
 
             virtual auto getBoundary()                -> void * = 0;
             virtual auto getInitialState()            -> void * = 0;
-            virtual auto getEquationSolver()          -> void * = 0;
+
 
             virtual
             auto newFunctionArbitrary()       -> void * = 0;
@@ -56,11 +60,6 @@ namespace Base {
             auto newFieldState()              -> void * = 0;
             template<typename StateType>
             auto NewFieldState()              -> StateType*;
-
-            virtual auto buildStepper()               -> Method* = 0;
-
-            virtual auto buildFileName()        const -> Str;
-
 
             auto getNumericParams()             const -> const NumericParams &;
             auto getDevice()                    const -> const Device &;

@@ -19,6 +19,7 @@ namespace Spaces {
     public:
         PointSet();
         PointSet(const Point2DVec points);
+        PointSet(const PointSet& pointSet);
 
         typedef std::shared_ptr<PointSet> Ptr;
         static Ptr New();
@@ -29,6 +30,7 @@ namespace Spaces {
         auto getMin() const -> Point2D;
 
         void addPoint(const Point2D &point);
+        void setPoints(Point2DVec points);
 
         const Point2DVec& getPoints() const;
 

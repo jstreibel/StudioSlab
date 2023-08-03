@@ -3,11 +3,11 @@
 #include "Base/App/CrashPad.h"
 #include "Base/Controller/Interface/InterfaceSelector.h"
 
-#include "Mappings/RtoR/Controller/InteractingFormations/input-sym-oscillons.h"
-#include "Mappings/RtoR/Controller/InteractingFormations/input-general-oscillons.h"
-#include "Mappings/RtoR/Controller/SingleFormations/input-perturbed.h"
-#include "Mappings/RtoR/Controller/SingleFormations/input-shockwave.h"
-#include "Mappings/RtoR/Controller/SingleFormations/InputSingleOscillon.h"
+#include "InteractingFormations/input-sym-oscillons.h"
+#include "InteractingFormations/input-general-oscillons.h"
+#include "SingleFormations/input-perturbed.h"
+#include "SingleFormations/input-shockwave.h"
+#include "SingleFormations/InputSingleOscillon.h"
 
 #include "Phys/App.h"
 

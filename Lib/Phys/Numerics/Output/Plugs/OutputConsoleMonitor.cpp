@@ -54,7 +54,7 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 
         Log::Info() << "Avg "<< stepsPerSec << " steps/s in last " << total << " measures" << Log::Flush;
         Log::Info() << "El time since last step: " << elTime << "s" << Log::Flush;
-        Log::Info() << "Expected finish in " << Log::ForegroundBlue << int(expectedFinish)/60 << "m " << int(expectedFinish)%60 << "s" << Log::Flush;
+        Log::Info() << "Expected finish in " << Log::FGBlue << int(expectedFinish) / 60 << "m " << int(expectedFinish) % 60 << "s" << Log::Flush;
     }
 
     lastn = currn;

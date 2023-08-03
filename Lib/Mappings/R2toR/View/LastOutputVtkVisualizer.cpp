@@ -78,7 +78,7 @@ namespace R2toR {
             phi.getSpace().syncHost();
 
             auto L = params.getL();
-            auto xMin = params.getxLeft();
+            auto xMin = params.getxMin();
             auto dx = L/(double)outN;
 
             // Fill the points and heights with data from your matrix

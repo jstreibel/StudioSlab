@@ -23,7 +23,7 @@ public:
 	 *
 	 * @param infoVolatile the information to output.
 	 */
-    void output(OutputPacket &infoVolatile);
+    void output(OutputPacket &infoVolatile, bool force=false);
 
     void notifyIntegrationFinished(const OutputPacket &info);
 

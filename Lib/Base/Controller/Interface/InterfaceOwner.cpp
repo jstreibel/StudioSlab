@@ -19,11 +19,11 @@ void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister)
     interface = Interface::New(interfaceName, this, priority);
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
-    else Log::Attention() << "Interface \"" << interface->getName() << "\" will NOT be immediately registered in InterfaceManager." << Log::Flush;
+    else Log::Debug() << "InterfaceOwner: interface \"" << interface->getName() << "\" will NOT immediately register to InterfaceManager." << Log::Flush;
 }
 
 void InterfaceOwner::notifyCLArgsSetupFinished() {
-    Log::Note() << "Interface " << Log::ForegroundCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting << " (priority " << interface->priority << ") "
+    Log::Note() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting << " (priority " << interface->priority << ") "
                 << "has been setup from command-line with the following values:" << Log::Flush;
 
     for(auto &param : interface->getParameters())

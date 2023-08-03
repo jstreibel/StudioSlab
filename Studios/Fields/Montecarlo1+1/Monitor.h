@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MONITOR_H
 
 
-#include "Mappings/RtoR/View/Graphics/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/RtoRMonitor.h"
 
 namespace Montecarlo {
     class Monitor : public RtoR::Monitor {
@@ -15,9 +15,9 @@ namespace Montecarlo {
         void draw() override;
 
     private:
-        RtoR::FuncArbResizable temperature1History;
-        RtoR::FuncArbResizable temperature2History;
-        RtoR::FuncArbResizable temperature3History;
+        RtoR::ResizableDiscreteFunction temperature1History;
+        RtoR::ResizableDiscreteFunction temperature2History;
+        RtoR::ResizableDiscreteFunction temperature3History;
 
         GraphRtoR *mTemperaturesGraph;
         GraphRtoR *mHistogramsGraph;

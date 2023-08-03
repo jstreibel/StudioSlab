@@ -6,16 +6,14 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "Base/Controller/CLArgsManager.h"
-
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Utils.h"
 #include "Common/Log/Log.h"
 
 
-InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name, -1, true)
+InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name + " interface selector", -1, true)
 {
-    interface->addParameters({selection});
+    interface->addParameters({&selection});
 };
 
 auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
@@ -49,16 +47,18 @@ auto InterfaceSelector::preParse(int argc, const char **argv, bool registerInInt
     }
 
     auto currSelection = getCurrentCandidate();
-    Log::Info() << "InterfaceSelector '" << interface->getName() << "' has pre-parsed its options. Selection is '"
+    Log::Critical() << "InterfaceSelector '" << interface->getName() << "' has pre-parsed its options. Selection is '"
                 << currSelection->getName() << "'." << Log::Flush;
 
     if(registerInInterfaceManager) {
-        Log::Note("InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
+        Log::Info("InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
         auto &interfaceManager = InterfaceManager::getInstance();
 
         interfaceManager.registerInterface(currSelection);
     }
+
+    generateHelpDescription();
 
     return *this;
 }
@@ -66,12 +66,22 @@ auto InterfaceSelector::preParse(int argc, const char **argv, bool registerInInt
 void InterfaceSelector::registerOption(Interface::Ptr interface) {
     candidates.push_back(interface);
 
+    generateHelpDescription();
+}
+
+auto InterfaceSelector::generateHelpDescription() -> void {
     StringStream simsHelp;
     simsHelp << "Sim types:\n";
 
-    for(int i=0; i < candidates.size(); i++)
-        simsHelp << i << ". " << candidates[i]->getGeneralDescription() << "\n";
+    auto curr = getCurrentCandidate();
+    for(int i=0; i < candidates.size(); i++) {
+        auto cand = candidates[i];
+        if(*cand == *curr) simsHelp << Log::BoldFace << Log::FGBlue;
+        simsHelp << i << ". " << cand->getName();
+        if(*cand == *curr) simsHelp << Log::ResetFormatting;
+        simsHelp << "\n";
+    }
 
-    selection->setDescription(simsHelp.str());
+    selection.setDescription(simsHelp.str());
 }
 

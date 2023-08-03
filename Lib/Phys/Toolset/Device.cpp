@@ -9,6 +9,8 @@
 
 Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)
 {
+    Log::Info() << "Device integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
+
     interface->addParameters(
     {
 #if USE_CUDA

@@ -37,7 +37,7 @@ RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
     JackServer::GetInstance();
 
     auto delta = xInitDampCutoff_normalized*params.getL();
-    auto xLeft = params.getxLeft();
+    auto xLeft = params.getxMin();
 
     jackProbeLocation = xLeft+delta;
 }
@@ -65,7 +65,7 @@ auto RtoR::Signal::OutputBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
     const Real phiMin = -1.4;
     const Real phiMax = -phiMin;
 
-    const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxLeft();
+    const Real xLeft = Numerics::Allocator::getInstance().getNumericParams().getxMin();
     const Real xRight = xLeft + Numerics::Allocator::getInstance().getNumericParams().getL();
 
     return new RtoR::Signal::OutGL (xLeft, xRight, phiMin, phiMax); }
@@ -153,7 +153,7 @@ void RtoR::Signal::BoundaryCondition::apply(RtoR::EquationState &function, Real 
 
         auto &params = Numerics::Allocator::getInstance().getNumericParams();
         auto L = params.getL();
-        auto xLeft = params.getxLeft();
+        auto xLeft = params.getxMin();
         auto N = function.getPhi().getSpace().getDim().getN(0);
         auto delta = L * (1 - xInitDampCutoff_normalized);
         auto xInit = xLeft + xInitDampCutoff_normalized * L;
@@ -207,7 +207,7 @@ RtoR::Monitor *RtoR::Signal::CLI::buildOpenGLOutput() {
     const Real phiMin = -1.4;
     const Real phiMax = -phiMin;
 
-    const Real xLeft = numericParams.getxLeft();
+    const Real xLeft = numericParams.getxMin();
     const Real xRight = numericParams.getxMax();
 
     return new RtoR::Signal::OutGL(numericParams, phiMin, phiMax);

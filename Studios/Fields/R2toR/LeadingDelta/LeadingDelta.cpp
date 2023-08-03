@@ -106,8 +106,8 @@ namespace R2toR {
             return new OutGL(numericParams, ringDelta1, -1, 1);
         }
 
-        Str Builder::buildFileName() const {
-            auto fname = VoidBuilder::buildFileName();
+        Str Builder::suggestFileName() const {
+            auto fname = VoidBuilder::suggestFileName();
 
             return fname + " " + interface->toString({"W", "eps", "delta_duration"});
         }

@@ -2,7 +2,7 @@
 #define DERIVATIVES_H
 
 
-#include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
+#include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 
 namespace RtoR {

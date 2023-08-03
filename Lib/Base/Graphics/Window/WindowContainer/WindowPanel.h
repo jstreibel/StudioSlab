@@ -19,7 +19,6 @@ class WindowPanel : public Window {
     std::vector<float> widths = {-1};
 
     void arrangeWindows();
-    void setColumnRelativeWidth(int column, float relWidth);
 
     float computeReservedWidth()    const;
     int countFreeWidths()           const;
@@ -36,6 +35,8 @@ public:
      * @return true if success, false otherwise.
      */
     bool addWindowToColumn(Window *window, int columnId);
+
+    void setColumnRelativeWidth(int column, float relWidth);
 
     void notifyReshape(int newWinW, int newWinH) override;
 

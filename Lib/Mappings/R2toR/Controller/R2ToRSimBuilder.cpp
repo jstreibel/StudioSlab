@@ -12,7 +12,7 @@
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
+#include "Models/KleinGordon/KGSolver.h"
 #include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
@@ -44,7 +44,7 @@ namespace R2toR {
         RtoR2::StraightLine section;
         auto angleDegrees = 22.5;
         {
-            const Real rMin = numericParams.getxLeft();
+            const Real rMin = numericParams.getxMin();
             const Real rMax = numericParams.getxMax();
             const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
@@ -70,7 +70,7 @@ namespace R2toR {
             const Real r = numericParams.getr();
             const auto stepsInterval = PosInt(N / (Np * r));
 
-            auto outputFileName = this->buildFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
+            auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
             Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(numericParams, stepsInterval,
                                                                           spaceFilter, t, outputFileName,
@@ -88,7 +88,7 @@ namespace R2toR {
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 
-            auto glOut = Graphics::OutputOpenGL::Ptr(this->buildOpenGLOutput());
+            auto glOut = Graphics::Monitor::Ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
             backend.addWindow(glOut);
@@ -108,7 +108,7 @@ namespace R2toR {
 
     void *Builder::newFunctionArbitrary() {
         const size_t N = numericParams.getN();
-        const floatt xLeft = numericParams.getxLeft();
+        const floatt xLeft = numericParams.getxMin();
 
         if (dev == CPU)
             return new R2toR::FunctionArbitraryCPU(N, N, xLeft, xLeft, numericParams.geth());
@@ -121,11 +121,11 @@ namespace R2toR {
         throw "Error while instantiating Field: device not recognized.";
     }
 
-    void *Builder::getEquationSolver() {
+    void *Builder::buildEquationSolver() {
         auto thePotential = new RtoR::AbsFunction;
         auto dphi = (R2toR::BoundaryCondition*)getBoundary();
 
-        return new Phys::Gordon::GordonSolverT<R2toR::EquationState>(numericParams, *dphi, *thePotential);
+        return new Fields::KleinGordon::Solver<R2toR::EquationState>(numericParams, *dphi, *thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
@@ -165,7 +165,7 @@ namespace R2toR {
     Method *Builder::buildStepper() {
         Method *method;
 
-        auto &solver = *(R2toR::EquationSolver*)getEquationSolver();
+        auto &solver = *(R2toR::EquationSolver*) buildEquationSolver();
 
         switch (dev.get_nThreads()) {
             GENERATE_ALL(StepperRK4);

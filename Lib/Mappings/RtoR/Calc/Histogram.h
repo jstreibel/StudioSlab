@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_HISTOGRAM_H
 #define STUDIOSLAB_HISTOGRAM_H
 
-#include "Mappings/RtoR/Model/RtoRFunctionArbitrary.h"
-#include "Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h"
+#include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 class Histogram {
 public:
@@ -15,9 +15,10 @@ public:
     void Compute(const RtoR::DiscreteFunction &func, int nBins = 100);
 
     RtoR::Function* asPDFFunction() const;
+    auto asPointSet() const -> Spaces::PointSet;
 
     int nBins;
-    Real xMax, xMin;
+    Real vMax, vMin;
     Real binWidth;
 
 private:

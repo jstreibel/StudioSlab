@@ -53,6 +53,7 @@ public:
         if(Singleton<T,true>::singleInstance != nullptr)
             throw Str("Singleton '") + Singleton<T,true>::singleInstance->name + "' already initialized.";
 
+
         Singleton<T,true>::singleInstance = new ToSuper();
     }
 

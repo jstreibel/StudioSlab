@@ -16,12 +16,18 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
 }
 
 void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
-    Log::Info() << "InterfaceManager registering interface \"" << anInterface->getName() << "\" [ "
-                << "priority " << anInterface->priority << " ]" << Log::Flush;
+    auto &log = Log::Info();
+    log << "InterfaceManager registering interface \"" << anInterface->getName() << "\" [ "
+                << "priority " << anInterface->priority << " ]";
 
     interfaces.emplace_back(anInterface);
 
     auto subInterfaces = anInterface->getSubInterfaces();
+    if(!subInterfaces.empty())
+        for (auto subInterface: subInterfaces)
+            log << "\n\t\t\t\tHas sub-interface: " << subInterface->getName();
+    log << Log::Flush;
+
     for (auto subInterface: subInterfaces)
         registerInterface(subInterface);
 }
@@ -35,7 +41,7 @@ auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
 }
 
 void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
-    Log::Attention() << "InterfaceManager started feeding interfaces." << Log::Flush;
+    Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
     auto comp = [](const Interface::Ptr& a, const Interface::Ptr& b) { return *a < *b; };
     std::sort(interfaces.begin(), interfaces.end(), comp);
@@ -98,7 +104,7 @@ auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr  
     auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );
 
     if(it == interfaces.end())
-        Log::WarningImportant() << "InterfaceManager could not find Interface " << Log::ForegroundCyan << target << Log::Flush;
+        Log::WarningImportant() << "InterfaceManager could not find Interface " << Log::FGCyan << target << Log::Flush;
 
     return *it;
 }

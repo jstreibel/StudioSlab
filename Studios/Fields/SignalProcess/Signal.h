@@ -7,16 +7,15 @@
 
 
 #include <jack/types.h>
-#include "Mappings/RtoR/Controller/RtoRBCInterface.h"
 
-#include "Mappings/RtoR/Model/RtoRFieldState.h"
+#include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
-#include "RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 
 const auto pi = 3.1415926535897932384626;

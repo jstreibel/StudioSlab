@@ -4,7 +4,7 @@
 
 #include "Histogram.h"
 
-#define bin(v) int(floor(((v)-xMin)/binWidth))
+#define bin(v) int(floor(((v)-vMin)/binWidth))
 
 Histogram::Histogram() {
 
@@ -25,12 +25,12 @@ void Histogram::Compute(const RtoR::DiscreteFunction &func, int nBins) {
 
     if(max == min) max = min+0.1;
 
-    xMax = max;
-    xMin = min;
+    vMax = max;
+    vMin = min;
 
-    if(xMax == xMin) return;
+    if(vMax == vMin) return;
 
-    binWidth = (xMax - xMin) / Real(nBins);
+    binWidth = (vMax - vMin) / Real(nBins);
 
     bins.clear();
     bins.resize(nBins, 0);
@@ -43,7 +43,7 @@ void Histogram::Compute(const RtoR::DiscreteFunction &func, int nBins) {
 }
 
 RtoR::Function *Histogram::asPDFFunction() const {
-    auto *func = new RtoR::FunctionArbitraryCPU(bins.size(), xMin, xMax);
+    auto *func = new RtoR::FunctionArbitraryCPU(bins.size(), vMin, vMax);
 
     auto &F = func->getSpace().getHostData();
 
@@ -56,6 +56,27 @@ RtoR::Function *Histogram::asPDFFunction() const {
         F[i] = bins[i]/normFactor;
 
     return func;
+}
+
+auto Histogram::asPointSet() const -> Spaces::PointSet {
+    const auto N=Real(count);
+    const auto w = binWidth;
+    const auto normFactor = N*w;
+
+    Spaces::Point2DVec points;
+
+    points.push_back({vMin, 0});
+
+    for(auto i=0; i<nBins; ++i) {
+        auto x = vMin + i*w;
+        auto y = bins[i] / normFactor;
+
+        points.push_back({x, y});
+        points.push_back({x+w, y});
+        points.push_back({x+w, 0});
+    }
+
+    return Spaces::PointSet(points);
 }
 
 

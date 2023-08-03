@@ -13,7 +13,7 @@ R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yM
 { }
 
 R2toR::DiscreteFunction::DiscreteFunction(const NumericParams &p, device dev)
-: R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxLeft(), p.getxLeft(), p.geth(), dev)
+: R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), dev)
 { }
 
 Real R2toR::DiscreteFunction::operator()(Real2D x) const {

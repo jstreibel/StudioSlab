@@ -16,8 +16,7 @@ include_directories (..)
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
-			RtoR/Model/RtoRFunctionArbitraryGPU.cu
-			RtoR/Model/RtoRSystemGordonGPU.cu
+			RtoR/Model/RtoRDiscreteFunctionGPU.cu
 
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
@@ -37,25 +36,6 @@ endif()
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
 
-		#RtoR/Core/RtoRModelAllocator.cpp
-		#RtoR/Core/RtoRModelAllocator_Langevin.cpp
-		#RtoR/Core/RtoRModelAllocator_Montecarlo.cpp
-
-		RtoR/Controller/RtoRBCInterface.cpp
-
-		RtoR/Controller/SingleFormations/input-perturbed.cpp
-		RtoR/Controller/SingleFormations/input-shockwave.cpp
-		RtoR/Controller/SingleFormations/InputSingleOscillon.cpp
-
-		RtoR/Controller/InteractingFormations/input-sym-oscillons.cpp
-		RtoR/Controller/InteractingFormations/input-general-oscillons.cpp
-
-		RtoR/Controller/ThermalStudies/InputManyOscillons.cpp
-		RtoR/Controller/ThermalStudies/InputMachineGun.cpp
-		RtoR/Controller/ThermalStudies/InputStatistical.cpp
-		RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.cpp
-
-
 		RtoR/Model/FunctionsCollection/analytic-breather.cpp
 		RtoR/Model/FunctionsCollection/shockwave.cpp
 		RtoR/Model/FunctionsCollection/AnalyticShockwave1D.cpp
@@ -65,27 +45,20 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/NoiseFunction.cpp
 		RtoR/Model/FunctionsCollection/QuasiShockwave.cpp
 
-		RtoR/Model/RtoRFunctionArbitrary.cpp
-		RtoR/Model/RtoRFunctionArbitraryCPU.cpp
+		RtoR/Model/RtoRDiscreteFunction.cpp
+		RtoR/Model/RtoRDiscreteFunctionCPU.cpp
 		RtoR/Model/Derivatives/DerivativesCPU.cpp
-		RtoR/Model/RtoRBoundaryCondition.cpp
-		RtoR/Model/RtoRFuncArbResizable.cpp
 
+		RtoR/Model/RtoRResizableDiscreteFunction.cpp
 
-		#RtoR/View/OutputStructureBuilderRtoR.cpp
 		RtoR/View/RtoROutputHistoryToFile.cpp
 
-		RtoR/View/Graphics/Artists/GraphRtoR.cpp
+		RtoR/View/Graphics/GraphRtoR.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
-		RtoR/View/Graphics/RtoRMonitor.cpp
-		RtoR/View/Graphics/RtoROutGLStatistic.cpp
-		RtoR/View/Graphics/RtoROutGLStatistic.h
 
-
-		RtoR/Calc/EnergyCalculator.cpp
 		RtoR/Calc/Histogram.cpp
 
-		RtoR/Model/RtoRFieldState.cpp)
+		)
 
 
 set ( R2TOR_SOURCES
@@ -97,11 +70,6 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 
-		#R2toR/Controller/R2ToR_SimulationBuilder.cpp
-		#R2toR/Controller/R2ToRInputRadialShockwave.cpp
-		#R2toR/Controller/__archive__/R2ToRInputShockwave.cpp
-		#R2toR/Controller/R2ToRInputShockwaveAtT0.cpp
-
 		R2toR/Model/Energy.cpp
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
 		R2toR/Model/FunctionsCollection/R2ToRRegularDelta.cpp
@@ -112,7 +80,7 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
 
-		RtoR/View/Graphics/Artists/GraphRtoR.cpp
+		RtoR/View/Graphics/GraphRtoR.cpp
 
 
 		R2toR/View/Artists/GraphR2ToR.cpp
@@ -127,12 +95,13 @@ set ( R2TOR_SOURCES
 
 		RtoR2/StraightLine.cpp
 
-		#R2toR/Core/R2toR_Allocator.cpp
 		R2toR/View/Artists/FlatFieldDisplay.cpp
 		R2toR/View/Artists/FlatFieldDisplay.h
 
 		R2toR/Controller/R2ToRSimBuilder.cpp
-		R2toR/Controller/R2ToRSimBuilder.h R2toR/Model/EquationSolver.h R2toR/Model/EquationState.cpp)
+		R2toR/Controller/R2ToRSimBuilder.h
+		R2toR/Model/EquationSolver.h
+		R2toR/Model/EquationState.cpp)
 
 
 set ( MAPS_LINKS

@@ -18,11 +18,18 @@ namespace Base {
     class DiscreteFunction : public FunctionT<PosSpaceType, TargetSpaceType>,
                              public Utils::ArithmeticOpsInterface<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
 
+        DiscreteSpace *space;
+
+    protected:
+        device dev;
+
     public:
         typedef FunctionT<PosSpaceType, TargetSpaceType> MyBase;
         typedef std::shared_ptr<DiscreteFunction<PosSpaceType,TargetSpaceType>> Ptr;
 
-        DiscreteFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true) {
+        Str myName() const override { return "general discrete"; }
+
+        DiscreteFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true), dev(dev) {
             switch(dev){
                 case device::CPU:
                     space = new DiscreteSpaceCPU(dim, h);
@@ -107,10 +114,6 @@ namespace Base {
 
         auto getSpace()       ->       DiscreteSpace& { return *space; }
         auto getSpace() const -> const DiscreteSpace& { return *space; }
-
-
-    private:
-        DiscreteSpace *space;
 
     };
 

@@ -55,7 +55,7 @@ namespace R2toR {
 
             auto getBoundary()               -> void * override;
 
-            auto buildFileName() const -> Str override;
+            auto suggestFileName() const -> Str override;
 
 
         };

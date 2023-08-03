@@ -8,7 +8,7 @@
 #include "Mappings/R2toR/Model/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "Phys/DifferentialEquations/EquationSolver.h"
-#include "Phys/DifferentialEquations/2nd-Order/GordonSystemT.h"
+#include "Models/KleinGordon/KGSolver.h"
 #include "../../../../../Studios/Fields/R2toR/LeadingDelta/RingDeltaFunc.h"
 
 namespace R2toR {

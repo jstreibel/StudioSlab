@@ -14,7 +14,7 @@
 #include "Base/Controller/Interface/InterfaceOwner.h"
 #include "Common/Singleton.h"
 
-#define FORCE_VERBOSE true
+#define FORCE_VERBOSE false
 
 class Log : public Singleton<Log>, InterfaceOwner
 {
@@ -43,23 +43,27 @@ class Log : public Singleton<Log>, InterfaceOwner
 public:
     static auto GetSingleton() -> Log &;
 
-    const static Str ForegroundBlack;
-    const static Str ForegroundRed;
-    const static Str ForegroundGreen;
-    const static Str ForegroundYellow;
-    const static Str ForegroundBlue;
-    const static Str ForegroundMagenta;
-    const static Str ForegroundCyan;
-    const static Str ForegroundWhite;
+    const static Str StartFormat;
+    const static Str SepFormat;
+    const static Str EndFormat;
 
-    const static Str BackgroundBlack;
-    const static Str BackgroundRed;
-    const static Str BackgroundGreen;
-    const static Str BackgroundYellow;
-    const static Str BackgroundBlue;
-    const static Str BackgroundMagenta;
-    const static Str BackgroundCyan;
-    const static Str BackgroundWhite;
+    const static Str FGBlack;
+    const static Str FGRed;
+    const static Str FGGreen;
+    const static Str FGYellow;
+    const static Str FGBlue;
+    const static Str FGMagenta;
+    const static Str FGCyan;
+    const static Str FGWhite;
+
+    const static Str BGBlack;
+    const static Str BGRed;
+    const static Str BGGreen;
+    const static Str BGYellow;
+    const static Str BGBlue;
+    const static Str BGMagenta;
+    const static Str BGCyan;
+    const static Str BGWhite;
 
     const static Str ResetFormatting;
 

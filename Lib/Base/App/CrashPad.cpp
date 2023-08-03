@@ -36,7 +36,7 @@ Str FORMAT;
 
 int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, const char *argv[]) {
     try {
-        FORMAT = Log::BackgroundRed + Log::BoldFace;
+        FORMAT = Log::BGRed + Log::BoldFace;
         return pFunction(argc, argv);
     }
     catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
@@ -51,14 +51,5 @@ int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, con
     catch (...)                                             LogException("Unknown exception",        "...",    none)
 
     throw "Impossible.";
-}
-
-
-int SafetyNet::jump(AppBase &program){
-    // if (GPU_DEBUG) std::cout << "\033[1m\033[93mGPU IS IN DEBUG MODE => NO GPU.\033[0m" << std::endl;
-
-    prog = &program;
-
-    return jump(runProg, 0, nullptr);
 }
 

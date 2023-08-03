@@ -9,9 +9,9 @@
 #include "Mappings/R2toR/Model/EquationState.h"
 
 
-namespace Phys {
+namespace Fields {
 
-    namespace Gordon {
+    namespace KleinGordon {
         typedef Functionals::Functional<const R2toR::EquationState> Functional;
 
         class Energy : public Functional {

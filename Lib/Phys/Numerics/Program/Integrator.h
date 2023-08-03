@@ -16,6 +16,7 @@
 #include <Base/Backend/Program.h>
 #include "Common/UtilsCollection/BenchmarkHistogram.h"
 
+const auto FORCE_INITIAL_OUTPUT = true;
 
 class NumericalIntegration : public Program {
     Real dt;
@@ -29,7 +30,7 @@ class NumericalIntegration : public Program {
     Method *stepper;
     OutputManager *outputManager;
 
-    void output();
+    void output(bool force=false);
     OutputPacket getOutputInfo();
 
     auto _cycle(size_t nCycles) -> void;
@@ -62,7 +63,7 @@ public:
         }
         #endif
 
-        this->output();
+        this->output(FORCE_INITIAL_OUTPUT);
     }
 
     ~NumericalIntegration();

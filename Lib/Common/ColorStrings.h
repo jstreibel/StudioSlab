@@ -1,0 +1,10 @@
+//
+// Created by joao on 8/1/23.
+//
+
+#ifndef STUDIOSLAB_COLORSTRINGS_H
+#define STUDIOSLAB_COLORSTRINGS_H
+
+
+
+#endif //STUDIOSLAB_COLORSTRINGS_H

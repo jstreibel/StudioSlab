@@ -11,6 +11,7 @@
 namespace Simulation {
     class App : public AppBase {
         Base::Simulation::VoidBuilder::Ptr builder;
+
     public:
         App(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder);
 

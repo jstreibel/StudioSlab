@@ -9,7 +9,6 @@
 
 
 namespace SafetyNet {
-    int jump(AppBase &program);
     int jump(int (*callback)(int, const char**), int argc, const char *argv[]);
 }
 

@@ -4,7 +4,7 @@
 
 #include "PointSetGraph.h"
 
-namespace My = Phys::Graphing;
+namespace My = Fields::Graphing;
 
 My::PointSetGraph::PointSetGraph(const Str &title)
     : Graph2D(0, 0.1, 0, 0.1, title, true, 10) {
@@ -73,9 +73,7 @@ void My::PointSetGraph::_renderPointSet(const Spaces::PointSet &pSet,
 
 }
 
-void Phys::Graphing::PointSetGraph::_reviewGraphRanges() {
-    const auto dMin = .1;
-
+void Fields::Graphing::PointSetGraph::_reviewGraphRanges() {
     if(mPointSets.size() != 0)
     {
 
@@ -97,9 +95,11 @@ void Phys::Graphing::PointSetGraph::_reviewGraphRanges() {
         if (min.y < yMin) yMin = min.y;
     }
 
-    // Give an extra 10% room each side.
-    if(1)
+    // Give an extra 100*dMin% room each side.
+    if(false)
     {
+        const auto dMin = .1;
+
         auto dx = dMin * (xMax - xMin);
         auto dy = dMin * (yMax - yMin);
 
@@ -113,7 +113,7 @@ void Phys::Graphing::PointSetGraph::_reviewGraphRanges() {
     }
 }
 
-void Phys::Graphing::PointSetGraph::draw()
+void Fields::Graphing::PointSetGraph::draw()
 {
     _reviewGraphRanges();
 

@@ -9,23 +9,27 @@
 
 Log* Log::myInstance = nullptr;
 
-const Str Log::ForegroundBlack   = "\033[0;30m";
-const Str Log::ForegroundRed     = "\033[0;31m";
-const Str Log::ForegroundGreen   = "\033[0;32m";
-const Str Log::ForegroundYellow  = "\033[0;33m";
-const Str Log::ForegroundBlue    = "\033[0;34m";
-const Str Log::ForegroundMagenta = "\033[0;35m";
-const Str Log::ForegroundCyan    = "\033[0;36m";
-const Str Log::ForegroundWhite   = "\033[0;37m";
+const Str Log::StartFormat = "\033[";
+const Str Log::SepFormat = ";";
+const Str Log::EndFormat = "m";
 
-const Str Log::BackgroundBlack   = "\033[0;40m" ;
-const Str Log::BackgroundRed     = "\033[0;41m" ;
-const Str Log::BackgroundGreen   = "\033[0;42m" ;
-const Str Log::BackgroundYellow  = "\033[0;43m";
-const Str Log::BackgroundBlue    = "\033[0;44m" ;
-const Str Log::BackgroundMagenta = "\033[0;45m";
-const Str Log::BackgroundCyan    = "\033[0;46m" ;
-const Str Log::BackgroundWhite   = "\033[0;47m" ;
+const Str Log::FGBlack   = "\033[30m";
+const Str Log::FGRed     = "\033[31m";
+const Str Log::FGGreen   = "\033[32m";
+const Str Log::FGYellow  = "\033[33m";
+const Str Log::FGBlue    = "\033[34m";
+const Str Log::FGMagenta = "\033[35m";
+const Str Log::FGCyan    = "\033[36m";
+const Str Log::FGWhite   = "\033[37m";
+
+const Str Log::BGBlack   = "\033[40m" ;
+const Str Log::BGRed     = "\033[41m" ;
+const Str Log::BGGreen   = "\033[42m" ;
+const Str Log::BGYellow  = "\033[43m";
+const Str Log::BGBlue    = "\033[44m" ;
+const Str Log::BGMagenta = "\033[45m";
+const Str Log::BGCyan    = "\033[46m" ;
+const Str Log::BGWhite   = "\033[47m" ;
 
 const Str Log::ResetFormatting   = "\033[0m";
 
@@ -33,16 +37,16 @@ const Str Log::BoldFace          = "\033[1m";
 const Str Log::Italic            = "\033[3m"; // Might not work
 const Str Log::Underscore        = "\033[4m"; // Might not work
 
-const Str Log::InfoFormat = Log::ResetFormatting + Log::ForegroundCyan;
-const Str Log::NoteFormat = Log::ResetFormatting + Log::ForegroundWhite;
-const Str Log::AttentionFormat = Log::ResetFormatting + Log::ForegroundMagenta;
-const Str Log::CriticalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundMagenta;
-const Str Log::DebugFormat = Log::ResetFormatting + Log::Italic + Log::ForegroundMagenta;
-const Str Log::SuccessFormat = Log::ResetFormatting + Log::ForegroundGreen;
-const Str Log::WarningFormat = Log::ResetFormatting + Log::ForegroundYellow;
-const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::ForegroundBlack + Log::BackgroundMagenta;
-const Str Log::ErrorFormat = Log::ResetFormatting + Log::ForegroundRed;
-const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::ForegroundRed;
+const Str Log::InfoFormat = Log::ResetFormatting + Log::FGCyan;
+const Str Log::NoteFormat = Log::ResetFormatting + Log::FGWhite;
+const Str Log::AttentionFormat = Log::ResetFormatting + Log::FGMagenta;
+const Str Log::CriticalFormat = Log::ResetFormatting + Log::BoldFace + Log::BGMagenta ;
+const Str Log::DebugFormat = Log::ResetFormatting + Log::Italic + Log::FGMagenta;
+const Str Log::SuccessFormat = Log::ResetFormatting + Log::FGGreen;
+const Str Log::WarningFormat = Log::ResetFormatting + Log::FGYellow;
+const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::FGBlack + Log::BGMagenta;
+const Str Log::ErrorFormat = Log::ResetFormatting + Log::FGRed;
+const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::FGRed;
 
 const Log::FlushClass Log::Flush;
 
@@ -88,7 +92,7 @@ OStream &Log::Success()             { auto &me = Log::GetSingleton(); auto &stre
 OStream &Log::Warning()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningFormat           << "Warning"   << me.postfix(); return stream; }
 OStream &Log::WarningImportant()    { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningImportantFormat  << "Warning!"  << me.postfix(); return stream; }
 OStream &Log::Error()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
-OStream &Log::Fatal()          { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat << "Crash" << me.postfix(); return stream; }
+OStream &Log::Fatal()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash" << me.postfix(); return stream; }
 
 auto Log::Info             (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
 auto Log::Note             (const Str &str) -> OStream& { return Note() << str << Log::Flush;}
@@ -116,7 +120,7 @@ void Log::notifyCLArgsSetupFinished() {
 
     #if !FORCE_VERBOSE
     if(**logDebug || **verbose){
-        std::cout << ForegroundBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
+        std::cout << FGBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
 
         *mainStream << debugStream->rdbuf();
         if(manageDebugStream)
@@ -125,11 +129,11 @@ void Log::notifyCLArgsSetupFinished() {
         manageDebugStream = false;
         debugStream = &std::cout;
 
-        std::cout << ForegroundBlue << BoldFace << "\n\n --- END LATE DEBUG MESSAGES --- \n";
+        std::cout << FGBlue << BoldFace << "\n\n --- END LATE DEBUG MESSAGES --- \n";
     }
 
     if(**logNotes || **verbose){
-        std::cout << ForegroundBlue << BoldFace << ((**logDebug||**verbose) ? "" : "\n") << "\n --- SOME LATE NOTES MESSAGES --- \n";
+        std::cout << FGBlue << BoldFace << ((**logDebug || **verbose) ? "" : "\n") << "\n --- SOME LATE NOTES MESSAGES --- \n";
         *mainStream << notesStream->rdbuf();
 
         if(manageNotesStream)
@@ -138,7 +142,7 @@ void Log::notifyCLArgsSetupFinished() {
         manageNotesStream = false;
         notesStream = &std::cout;
 
-        std::cout << ForegroundBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
+        std::cout << FGBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
     }
     #endif
 

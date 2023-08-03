@@ -6,8 +6,6 @@
 NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
 {
     interface->addParameters({N, L, xCenter, t, r, dimMode, h});
-
-    Log::Info() << "Integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 }
 
 /*
@@ -24,7 +22,7 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
 
 auto NumericParams::getN() const -> size_t { return **N; }
 auto NumericParams::getL() const -> floatt { return **L; }
-auto NumericParams::getxLeft() const -> floatt { return **xCenter - **L*.5; }
+auto NumericParams::getxMin() const -> floatt { return **xCenter - **L * .5; }
 auto NumericParams::getxMax()  const -> floatt { return **xCenter + **L*.5; }
 auto NumericParams::gett() const -> floatt { return **t; }
 auto NumericParams::getr() const -> floatt { return **r; }

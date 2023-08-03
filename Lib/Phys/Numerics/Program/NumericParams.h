@@ -44,7 +44,7 @@ public:
     auto getn() const -> PosInt;
     auto getN() const -> PosInt;
     auto getL() const -> Real;
-    auto getxLeft() const -> Real;
+    auto getxMin() const -> Real;
 	auto getxMax() const -> Real;
     auto gett() const -> Real;
     auto getr() const -> Real;

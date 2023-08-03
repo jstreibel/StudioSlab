@@ -4,17 +4,11 @@
 
 #include "RtoROutputOpenGLShockwave.h"
 
-#include "Mappings/FunctionRenderer.h"
-
-#include "Mappings/RtoR/Model/FunctionsCollection/QuasiShockwave.h"
-
-#include "Base/Backend/GLUT/GLUTBackend.h"
-
 #define max(a,b) (a>b?a:b)
 #define min(a,b) (a<b?a:b)
 
-RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericParams &params, Real a0, Real E)
-: RtoR::Monitor(params, -a0/2, 3*a0/2)
+RtoR::ShockwaveMonitor::ShockwaveMonitor(const NumericParams &params, KGEnergy &hamiltonian, Real a0, Real E)
+: RtoR::Monitor(params, hamiltonian, -a0/2, 3*a0/2)
 , a0(a0)
 , E(E) {
     surfaceEnergyHistory.xMin = 0;
@@ -25,7 +19,7 @@ RtoR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericParams &params, 
 
 }
 
-void RtoR::OutputOpenGLShockwave::draw() {
+void RtoR::ShockwaveMonitor::draw() {
     Monitor::draw();
 
     //if(showAnalyticSolution){

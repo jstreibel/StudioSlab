@@ -15,7 +15,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Phys/Function/FunctionScale.h"
 
-#define xMin params.getxLeft()
+#define xMin params.getxMin()
 #define xMax params.getxMax()
 
 R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
@@ -128,7 +128,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     if(step != lastStep)
     {
-        Phys::Gordon::Energy energy;
+        Fields::KleinGordon::Energy energy;
         auto E_radius = t+energyIntegrationRadius;
         auto E = energy.computeRadial_method2(eqState, E_radius);
         numericEnergyData->addPoint({t, E});
@@ -243,11 +243,11 @@ bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
         return true;
     }
 
-    return OutputOpenGL::notifyKeyboard(key, x, y);
+    return Monitor::notifyKeyboard(key, x, y);
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
-    OutputOpenGL::notifyMouseMotion(x, y);
+    Monitor::notifyMouseMotion(x, y);
 
     if(panel.doesHit(x, y)) return panel.notifyMouseMotion(x, y);
 

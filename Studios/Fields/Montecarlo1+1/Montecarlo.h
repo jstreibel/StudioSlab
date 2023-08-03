@@ -5,18 +5,15 @@
 #ifndef STUDIOSLAB_MONTECARLO_H
 #define STUDIOSLAB_MONTECARLO_H
 
-
-#include "Mappings/RtoR/Controller/RtoRBCInterface.h"
-
 #include "Monitor.h"
 
 #include "Mappings/RtoR/Model/RtoRFunction.h"
-#include "Mappings/RtoR/Model/RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/Thermal/Utils/RandUtils.h"
-#include "RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 
 namespace Montecarlo {
@@ -39,7 +36,7 @@ namespace Montecarlo {
         auto getBoundary() -> void * override{
 
             auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
-            auto xLeft = numericParams.getxLeft();
+            auto xLeft = numericParams.getxMin();
             //auto L = 20.;
 
             auto oscLength = L / *n;

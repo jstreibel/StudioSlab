@@ -35,8 +35,7 @@ set ( EXPERIMENTAL_SOURCES
 set ( GRAPH_SOURCES
 		Graph/Graph.cpp
 		Graph/PointSetGraph.cpp
-		Graph/OutputOpenGL.cpp
-		)
+		Graph/Monitor.cpp)
 
 
 set ( NUMERICS_SOURCES
@@ -64,10 +63,9 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/ByteData.cpp
 		Numerics/Output/Util/FieldStateOutputInterface.cpp
 		Numerics/Output/Util/record-interval.cpp
+
 		DifferentialEquations/EquationState.h
-		DifferentialEquations/2nd-Order/GordonState.h
-		DifferentialEquations/2nd-Order/GordonSystem.cpp
-		DifferentialEquations/2nd-Order/GordonSystem.h
+		../Models/KleinGordon/KGSolver.h
 
 		)
 

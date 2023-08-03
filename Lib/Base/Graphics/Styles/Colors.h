@@ -13,6 +13,36 @@ namespace Styles {
         Color(const Color &c) : r(c.r), g(c.g), b(c.b), a(c.a) { };
         float r, g, b, a;
 
+        static Color FromHex(Str hex){
+            const auto size = hex.length();
+
+            if((size!=7 && size!=9) || hex[0] != '#')
+                throw Str("Wrong hex color format ") + hex;
+
+            unsigned int rr, gg, bb, aa=255;
+            std::stringstream ss;
+            ss << std::hex << hex.substr(1, 2);
+            ss >> rr;
+            ss.clear();
+            ss << std::hex << hex.substr(3, 2);
+            ss >> gg;
+            ss.clear();
+            ss << std::hex << hex.substr(5, 2);
+            ss >> bb;
+            if(size==9){
+                ss.clear();
+                ss << std::hex << hex.substr(7, 2);
+                ss >> aa;
+            }
+
+            auto r = static_cast<float>(rr) / 255.0f;
+            auto g = static_cast<float>(gg) / 255.0f;
+            auto b = static_cast<float>(bb) / 255.0f;
+            auto a = static_cast<float>(aa) / 255.0f;
+
+            return Color(r, g, b, a);
+        }
+
         Color rgb() const { return Color(r, g, b, -1); }
 
         bool operator==(const Color &rhs) const {

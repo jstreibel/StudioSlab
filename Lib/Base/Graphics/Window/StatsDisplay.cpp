@@ -50,7 +50,7 @@ void StatsDisplay::draw() {
 
         if(text=="<\\br>"){ /*ImGui::Text(text);*/ ImGui::Separator(); i=0; continue; }
 
-        if(i++%2)ImGui::SameLine(w/2.-hSpacing);
+        if(i++%2 && w_ > 500) ImGui::SameLine(w/2.-hSpacing);
 
         ImGui::Text(text.c_str(), nullptr);
     }

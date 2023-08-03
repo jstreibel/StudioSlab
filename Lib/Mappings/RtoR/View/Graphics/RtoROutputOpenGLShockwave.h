@@ -5,18 +5,18 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_RTOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/RtoRMonitor.h"
 
 
 namespace RtoR {
-    class OutputOpenGLShockwave : public RtoR::Monitor {
+    class ShockwaveMonitor : public RtoR::Monitor {
         Real a0, E;
 
-        FuncArbResizable surfaceEnergyHistory;
-        FuncArbResizable innerEnergyHistory;
+        ResizableDiscreteFunction surfaceEnergyHistory;
+        ResizableDiscreteFunction innerEnergyHistory;
 
     public:
-        explicit OutputOpenGLShockwave(const NumericParams &params, Real a0=1, Real E=1);
+        explicit ShockwaveMonitor(const NumericParams &params, KGEnergy &hamiltonian, Real a0=1, Real E=1);
         void draw() override;
 
     };

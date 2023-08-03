@@ -7,7 +7,7 @@
 
 #include "Common/Types.h"
 
-namespace Phys {
+namespace Fields {
     namespace Functionals {
 
         template < class FunctionType >

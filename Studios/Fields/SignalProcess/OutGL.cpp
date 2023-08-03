@@ -10,7 +10,7 @@
 #include "Common/UtilsCollection/Resample.h"
 #include "3rdParty/imgui/imgui.h"
 
-#include <Mappings/RtoR/Model/RtoRFunctionArbitraryCPU.h>
+#include <Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h>
 
 extern size_t lastBufferDumpedSamplesCount;
 extern std::vector<Real> damps;
@@ -95,7 +95,7 @@ RtoR::Signal::OutGL::OutGL(const NumericParams &params, Real phiMin, Real phiMax
         auto &p = params;
 
         auto samples = (int) p.getN();
-        mFieldsGraph = {p.getxLeft(), p.getxMax(), phiMin, phiMax, "AAA", true, samples};
+        mFieldsGraph = {p.getxMin(), p.getxMax(), phiMin, phiMax, "AAA", true, samples};
         panel.addWindow(&mFieldsGraph, true, 0.85);
     }
 

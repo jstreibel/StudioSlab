@@ -22,9 +22,9 @@ const Styles::Color T3_color = Styles::Color(1, 1, 0);
 namespace Montecarlo {
 
     Monitor::Monitor(const NumericParams &params) : RtoR::Monitor(params, -10, 10) {
-        temperature1History = RtoR::FuncArbResizable(0, 0.1);
-        temperature2History = RtoR::FuncArbResizable(0, 0.1);
-        temperature3History = RtoR::FuncArbResizable(0, 0.1);
+        temperature1History = RtoR::ResizableDiscreteFunction(0, 0.1);
+        temperature2History = RtoR::ResizableDiscreteFunction(0, 0.1);
+        temperature3History = RtoR::ResizableDiscreteFunction(0, 0.1);
 //
         mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
         mTemperaturesGraph->addFunction(&temperature1History, "T_1", Styles::GetColorScheme()->funcPlotStyles[0]);
