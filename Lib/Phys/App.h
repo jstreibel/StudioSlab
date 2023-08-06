@@ -2,7 +2,7 @@
 // Created by joao on 7/30/23.
 //
 
-#ifndef STUDIOSLAB_APP_H
+#ifndef STUDIOSLAB_MOLDYNAPP_H
 #define STUDIOSLAB_APP_H
 
 #include "Base/App/AppBase.h"
@@ -20,4 +20,4 @@ namespace Simulation {
     };
 }
 
-#endif //STUDIOSLAB_APP_H
+#endif //STUDIOSLAB_MOLDYNAPP_H

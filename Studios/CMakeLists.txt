@@ -15,10 +15,11 @@ set ( SlabLibs
 
 include_directories(../Lib)
 
-add_subdirectory(MolecularDynamics_standalone)
-add_subdirectory(Prototype)
+add_subdirectory(MolecularDynamics)
 add_subdirectory(Fields)
+add_subdirectory(MolecularDynamics_standalone)
 add_subdirectory(Tests)
+add_subdirectory(Prototype)
 
 
 

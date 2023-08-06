@@ -37,8 +37,8 @@ set (SOURCES
 
 add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
 
-add_executable ( MolDynamic ${SOURCES} )
-target_link_libraries ( MolDynamic
+add_executable ( MolDynamic_standalone ${SOURCES} )
+target_link_libraries ( MolDynamic_standalone
 		sfml-graphics
 		boost_random
 )

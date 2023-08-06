@@ -51,7 +51,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	# set(CUDA_DIR /opt/cuda)
 
 	#set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
-	# include_directories(/opt/cuda/include)
+	include_directories(/opt/cuda/include)
 
 	set( CMAKE_CUDA_ARCHITECTURES 72 )
 
