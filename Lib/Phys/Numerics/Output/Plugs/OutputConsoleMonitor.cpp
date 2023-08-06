@@ -1,6 +1,6 @@
 #include "OutputConsoleMonitor.h"
 #include "Phys/Numerics/Output/Plugs/Socket.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const int n_steps)
     : Socket(params, "Console monitor output", n_steps),

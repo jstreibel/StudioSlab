@@ -15,7 +15,7 @@
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
 
-#include "Mappings/R2toR/Model/EquationSolver.h"
+#include "Models/KleinGordon/R2toR/EquationSolver.h"
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"

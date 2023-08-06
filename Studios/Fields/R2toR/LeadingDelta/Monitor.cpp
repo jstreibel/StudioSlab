@@ -191,13 +191,12 @@ void R2toR::LeadingDelta::OutGL::draw() {
     ImGui::Checkbox("Show analytic speed", &analyticSpeed);
     ImGui::End();
 
-    if(numeric)
-        mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
+    if(numeric) mSectionGraph.addFunction(&phi, "Numeric", Styles::GetColorScheme()->funcPlotStyles[0]);
 
     stats.addVolatileStat(Str("Ring radius: ") + ToStr(rd.getRadius()));
 
     auto scale = eps;
-    auto rdScaledDown = Base::Scale(rd, scale);
+    static auto rdScaledDown = Base::Scale(rd, scale);
     if(deltaRing) {
         auto name = Str("Ring delta x") + ToStr(scale, 2, true);
 
@@ -206,9 +205,9 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
     // panel->draw
-    RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
+    static RtoR::AnalyticShockwave2DRadialSymmetry radialShockwave;
     radialShockwave.sett(t - dt - Real(timeOffset));
-    FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
+    static FunctionAzimuthalSymmetry shockwave(&radialShockwave, 1, 0, 0, false);
     if(analytic)     mSectionGraph.addFunction(
             &shockwave,
             "Analytic",
@@ -219,13 +218,11 @@ void R2toR::LeadingDelta::OutGL::draw() {
             "Numeric speed",
             Styles::GetColorScheme()->funcPlotStyles[0]);
 
-    RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
+    static RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
     ddtRadialShockwave.sett(t - dt - Real(timeOffset));
-    FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
+    static FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
     if(analyticSpeed)
         mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetColorScheme()->funcPlotStyles[2]);
-
-    panel.draw();
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {

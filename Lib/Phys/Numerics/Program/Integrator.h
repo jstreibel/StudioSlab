@@ -14,7 +14,7 @@
 #include "Phys/Numerics/Method/Method-MCBase.h"
 
 #include <Base/Backend/Program.h>
-#include "Common/UtilsCollection/BenchmarkHistogram.h"
+#include "Base/Tools/BenchmarkHistogram.h"
 
 const auto FORCE_INITIAL_OUTPUT = true;
 

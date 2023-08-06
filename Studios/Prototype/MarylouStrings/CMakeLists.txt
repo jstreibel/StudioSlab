@@ -6,10 +6,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(LIBDIR ../../../Lib)
 include_directories($LIBDIR)
 
-find_package( SFML COMPONENTS graphics window system )
-find_package( OpenGL )
-find_package( GLEW )
-
 set(EXTERNAL_SRC
 		${LIBDIR}/Base/Controller/Nuklear/NuklearImplementation.cpp
 		${LIBDIR}/Base/Graphics/SFML/Graph.cpp)

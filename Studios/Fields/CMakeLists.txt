@@ -47,7 +47,7 @@ add_executable (Fields-RtoR-Thermal
 		RtoRThermalSG/ThermalStudies/InputMachineGun.cpp
 		RtoRThermalSG/ThermalStudies/InputStatistical.cpp
 		RtoRThermalSG/ThermalStudies/InputRandomEnergyOverDotPhi.cpp
-		)
+		RtoRThermalSG/ThermalStudies/ThermalBuilder.cpp RtoRThermalSG/ThermalStudies/ThermalBuilder.h)
 target_compile_definitions( Fields-RtoR-Thermal PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-Thermal Slab-Models Slab-Maps-RtoR-Periodic_GPU )
 
@@ -87,6 +87,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			Slab-Base-Graphics
 			Slab-Phys
 			Slab-Maps-R2toR_GPU
+			Slab-Models
 			)
 
 	set_property(TARGET Fields-R2toR PROPERTY CUDA_STANDARD_REQUIRED 20)

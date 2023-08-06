@@ -7,10 +7,15 @@
 #include <Base/App/CrashPad.h>
 
 
-int main(int argc, const char **argv) {
+int run(int argc, const char **argv){
     AppBase *prog = new TestsApp(argc, argv);
 
-    return SafetyNet::jump(*prog);
+    return prog->run();
+}
+
+
+int main(int argc, const char **argv) {
+    return SafetyNet::jump(run, argc, argv);
 }
 
 

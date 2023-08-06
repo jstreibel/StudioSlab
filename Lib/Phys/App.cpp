@@ -6,7 +6,7 @@
 
 #include "Base/Controller/Interface/InterfaceSelector.h"
 #include "Phys/Numerics/Program/Integrator.h"
-#include "Mappings/R2toR/Model/EquationState.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Base/Backend/Backend.h"
 
 Simulation::App::App(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder)

@@ -43,6 +43,8 @@ namespace Styles {
             return Color(r, g, b, a);
         }
 
+        std::vector<Real> toVector() { return {r, g, b}; }
+
         Color rgb() const { return Color(r, g, b, -1); }
 
         bool operator==(const Color &rhs) const {

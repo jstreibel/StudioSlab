@@ -74,7 +74,7 @@ namespace Base::Simulation {
 #ifdef BUILDER_IMPL
 
 #include "Base/Controller/Interface/InterfaceManager.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 #include "Phys/Numerics/Method/Method-RK4.h"
 
 #define DONT_REGISTER false

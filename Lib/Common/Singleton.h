@@ -7,7 +7,7 @@
 
 #include "Types.h"
 #include "IsAbstract.h"
-// #include "Common/Log/Log.h"
+// #include "Base/Tools/Log.h"
 
 template <typename T, bool Abstract=false>
 class Singleton {

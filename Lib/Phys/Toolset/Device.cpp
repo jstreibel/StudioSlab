@@ -4,7 +4,7 @@
 #include "Device.h"
 
 #include "Common/Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 
 Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)

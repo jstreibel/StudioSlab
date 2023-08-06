@@ -6,7 +6,7 @@
 #include "imgui.h"
 
 #include "Common/Printing.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Controller/Interface/InterfaceManager.h"

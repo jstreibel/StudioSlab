@@ -6,7 +6,7 @@
 
 #include "GLUTUtils.h"
 #include "Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 #include <FreeImagePlus.h>
 
 #include <cstring>

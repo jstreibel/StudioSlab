@@ -13,7 +13,7 @@
 #include "Phys/Numerics/Program/Integrator.h"
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 #include <cassert>
 #include <filesystem>

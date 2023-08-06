@@ -5,7 +5,7 @@
 #include "InterfaceManager.h"
 
 #include "Common/Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 InterfaceManager *InterfaceManager::instance = nullptr;
 

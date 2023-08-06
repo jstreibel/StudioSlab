@@ -2,7 +2,7 @@
 
 #include "RtoRMonitor.h"
 
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
 
@@ -21,14 +21,14 @@ RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
 , mEnergyGraph("Energy")
 {
-    panel.addWindow(&mFieldsGraph, true, 0.80);
-
     auto sty = Styles::GetColorScheme()->funcPlotStyles.begin();
     mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty, "E");
     mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, "K");
     mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, "grad");
     mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, "V");
-    panel.addWindow(&mEnergyGraph, true);
+    panel.addWindow(&mEnergyGraph);
+
+    panel.addWindow(&mFieldsGraph, true, 0.80);
 }
 
 void RtoR::Monitor::draw() {

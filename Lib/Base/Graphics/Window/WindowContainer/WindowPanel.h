@@ -18,7 +18,6 @@ class WindowPanel : public Window {
     WindowColumns columns = WindowColumns(1);
     std::vector<float> widths = {-1};
 
-    void arrangeWindows();
 
     float computeReservedWidth()    const;
     int countFreeWidths()           const;
@@ -38,16 +37,17 @@ public:
 
     void setColumnRelativeWidth(int column, float relWidth);
 
-    void notifyReshape(int newWinW, int newWinH) override;
+    void arrangeWindows();
 
-    bool notifyMouseMotion(int x, int y)        override;
-    bool notifyMousePassiveMotion(int x, int y) override;
-    bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
-    bool notifyMouseButton(int button, int dir, int x, int y) override;
 
     void draw()       override;
 
 
+    void notifyReshape(int newWinW, int newWinH) override;
+    bool notifyMouseMotion(int x, int y)        override;
+    bool notifyMousePassiveMotion(int x, int y) override;
+    bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+    bool notifyMouseButton(int button, int dir, int x, int y) override;
 };
 
 

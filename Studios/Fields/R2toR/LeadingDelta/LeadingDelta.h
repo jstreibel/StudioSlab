@@ -7,8 +7,8 @@
 
 
 
-#include "Mappings/R2toR/Controller/R2ToRSimBuilder.h"
-#include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Models/KleinGordon/R2toR/R2toRBuilder.h"
+#include "Models/KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.h"
 
 #include "Monitor.h"
 #include "RingDeltaFunc.h"

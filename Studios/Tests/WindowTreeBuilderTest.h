@@ -6,11 +6,11 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include <Studios/Backend/GLUT/GLUTEventListener.h>
-#include <Studios/Graphics/WindowManagement/WindowTree/NodeWindow.h>
+#include "Base/Backend/Events/EventListener.h"
+#include "Base/Graphics/Window/WindowTree/NodeWindow.h"
 //#include <Studios/Graphics/deprecated/Graph_depr.h>
 
-class WindowTreeBuilderTest : public Base::GLUTEventListener {
+class WindowTreeBuilderTest : public Window {
     //Graph_depr graph;
 
     NodeWindow *main;
@@ -18,7 +18,6 @@ public:
     WindowTreeBuilderTest();
     void draw() override;
 
-    // void notifyReshape(int width, int height) override;
     void notifyReshape(int width, int height) override;
 
 };

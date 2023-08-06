@@ -9,11 +9,7 @@
 
 class DummyProgram : public Program {
 public:
-    void cycle(PosInt nSteps, void *args= nullptr) override {
-
-    }
-
-    void runFullIntegration() override {
+    void cycle(CycleOptions options) override {
 
     }
 };

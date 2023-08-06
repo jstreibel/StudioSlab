@@ -4,6 +4,6 @@ add_executable ( Tests
 		WindowPanelTest.cpp
 		WindowTreeBuilderTest.cpp)
 
-target_link_libraries ( Tests	${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
+target_link_libraries ( Tests ${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
 
 message(NOTICE "Added executable Tests")

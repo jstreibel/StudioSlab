@@ -6,7 +6,7 @@
 #define STUDIOSLAB_ENERGY_H
 
 #include "Phys/Functional/Functional.h"
-#include "Mappings/R2toR/Model/EquationState.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
 
 
 namespace Fields {

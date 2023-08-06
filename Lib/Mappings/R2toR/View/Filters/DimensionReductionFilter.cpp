@@ -5,8 +5,8 @@
 #include "Phys/Space/Impl/DiscreteSpaceCPU.h"
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Mappings/R2toR/Model/EquationState.h"
-#include "Common/Log/Log.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
+#include "Base/Tools/Log.h"
 
 
 //

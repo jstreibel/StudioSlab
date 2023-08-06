@@ -1,4 +1,5 @@
 set ( MODELS_SOURCES
+		KleinGordon/KGBuilder.h
 		KleinGordon/KGSolver.h
 		KleinGordon/KGState.h
 		KleinGordon/KG-Langevin.h
@@ -13,7 +14,14 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/RtoRMonitor.cpp
 
 		KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu
-		KleinGordon/KGBuilder.h)
+
+		KleinGordon/R2toR/R2toRBuilder.cpp
+		KleinGordon/R2toR/R2toRBuilder.h
+
+		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
+		KleinGordon/R2toR/EquationSolver.h
+		KleinGordon/R2toR/EquationState.cpp
+		)
 
 
 
@@ -26,5 +34,10 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Base-Backend
 		Slab-Base-Controller
+		Slab-Maps-RtoR
+		Slab-Maps-RtoR_GPU
+		Slab-Maps-RtoR-Periodic_GPU
+		Slab-Maps-R2toR_GPU
+
 		Slab-Phys
 		)

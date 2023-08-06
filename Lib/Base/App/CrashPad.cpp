@@ -3,7 +3,7 @@
 //
 
 #include "CrashPad.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 #include <Common/STDLibInclude.h>
 #include <Base/Controller/CLArgsManager.h>

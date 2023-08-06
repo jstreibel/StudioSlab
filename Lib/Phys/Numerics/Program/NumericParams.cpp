@@ -1,6 +1,6 @@
 #include <Base/Controller/Interface/InterfaceManager.h>
 #include "NumericParams.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 
 NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)

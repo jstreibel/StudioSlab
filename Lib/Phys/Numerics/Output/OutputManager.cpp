@@ -1,6 +1,6 @@
 
 #include "OutputManager.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 OutputManager::OutputManager(const NumericParams &params) : params(params), maxSteps(params.getn()) { }
 

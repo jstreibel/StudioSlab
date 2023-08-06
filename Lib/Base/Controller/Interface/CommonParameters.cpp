@@ -4,7 +4,7 @@
 
 #include "Common/STDLibInclude.h"
 #include "CommonParameters.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 auto std::to_string(Str str) -> Str { return Str("\"") + str + Str("\""); }
 auto std::to_string(bool val) -> Str {        return val ? "True" : "False"; }

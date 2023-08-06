@@ -1,7 +1,7 @@
 //
 
 
-#include "Mappings/R2toR/Model/EquationState.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Base/Graphics/Utils.h"
 #include "Phys/Graph/FunctionGraph.h"

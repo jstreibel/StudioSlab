@@ -1,8 +1,6 @@
 //
 
 #include "R2toROutputOpenGLGeneric.h"
-#include "Mappings/R2toR/Model/EquationState.h"
-
 
 R2toR::OutputOpenGL::OutputOpenGL(const NumericParams &params, Real phiMin, Real phiMax)
     : Graphics::Monitor(params, "R2 -> R OpenGL output", 1)
@@ -11,13 +9,6 @@ R2toR::OutputOpenGL::OutputOpenGL(const NumericParams &params, Real phiMin, Real
                     "Sections", true,
                     params.getN()*3)
 {
-    // Window *window = nullptr;
-
-    //window = new Window;
-    //window->addArtist(&mPhiGraph);
-    //panel->addWindow(window);
-
-    panel.addWindow(&stats);
     panel.addWindow(&mSectionGraph, true, 0.80);
 
     auto yMin = params.getxMin(),
@@ -39,9 +30,7 @@ void R2toR::OutputOpenGL::draw() {
     auto &phi = fState.getPhi();
 
     mSectionGraph.clearFunctions();
-    mSectionGraph.addFunction(&phi);
-
-    panel.draw();
+    // mSectionGraph.addFunction(&phi);
 }
 
 

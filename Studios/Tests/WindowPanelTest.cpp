@@ -5,7 +5,7 @@
 
 #include "WindowPanelTest.h"
 
-#include <Studios/Graphics/WindowManagement/Window.h>
+#include "Base/Graphics/Window/Window.h"
 //#include <Studios/Graphics/Graph.h>
 
 
@@ -47,12 +47,11 @@ WindowPanelTest::WindowPanelTest() : panel(new WindowPanel) {
 
 
 void WindowPanelTest::draw() {
-    panel->draw(true, true);
+    panel->draw();
 }
 
 void WindowPanelTest::notifyReshape(int width, int height) {
-    panel->w = width;
-    panel->h = height;
+    panel->setSize(width, height);
 
     panel->arrangeWindows();
 }

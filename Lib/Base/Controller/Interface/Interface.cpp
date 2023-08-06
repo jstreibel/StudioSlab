@@ -6,7 +6,7 @@
 #include "InterfaceOwner.h"
 #include "InterfaceManager.h"
 #include "Common/Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 Interface::Interface(Str name, InterfaceOwner *owner, int priority)
     : owner(owner), priority(priority) {

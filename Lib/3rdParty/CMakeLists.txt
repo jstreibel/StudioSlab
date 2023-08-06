@@ -14,15 +14,5 @@ set ( IMGUI_SOURCE
 
 		imgui/misc/freetype/imgui_freetype.cpp)
 
-
-
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE})
 target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype)
-
-
-
-#target_link_libraries(${STUDIOS_LIB_BASE_NAME}-Tools
-#		resample
-#		boost_timer
-#		Slab-Common
-#		)

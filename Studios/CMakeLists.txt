@@ -6,6 +6,8 @@ set ( SlabLibs
 		Slab-Base-Backend
 		Slab-Base-Controller
 		Slab-Base-Graphics
+		Slab-Base-Tools
+
 
 		Slab-Phys
 		)
@@ -13,6 +15,7 @@ set ( SlabLibs
 
 include_directories(../Lib)
 
+add_subdirectory(MolecularDynamics)
 add_subdirectory(Prototype)
 add_subdirectory(Fields)
 add_subdirectory(Tests)

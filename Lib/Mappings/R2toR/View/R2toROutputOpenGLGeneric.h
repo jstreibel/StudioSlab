@@ -12,13 +12,11 @@
 #include "Base/Graphics/Window/StatsDisplay.h"
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Mappings/R2toR/View/Artists/GraphR2Section.h"
-#include "Mappings/R2toR/Model/EquationState.h"
+#include "Models/KleinGordon/R2toR/EquationState.h"
 
 namespace R2toR {
     class OutputOpenGL : public Graphics::Monitor {
     protected:
-        bool showAnalytic = true;
-
         Real phiMin, phiMax;
         GraphR2Section mSectionGraph;
 

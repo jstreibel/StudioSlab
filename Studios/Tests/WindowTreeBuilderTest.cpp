@@ -4,7 +4,7 @@
 
 #include "WindowTreeBuilderTest.h"
 
-#include <Studios/Graphics/WindowManagement/WindowTree/WindowTreeBuilder.h>
+#include "Base/Graphics/Window/WindowTree/WindowTreeBuilder.h"
 //#include <Studios/Graphics/Graph.h>
 
 
@@ -42,16 +42,8 @@ void WindowTreeBuilderTest::draw() {
 }
 
 void WindowTreeBuilderTest::notifyReshape(int width, int height) {
-    GLUTEventListener::notifyReshape(width, height);
+    Window::notifyReshape(width, height);
+    main->setSize(width,  height);
+
+    main->arrange();
 }
-
-//void WindowTreeBuilderTest::reshape(int width, int height) {
-//    OpenGLCanvasBase::reshape(width, height);
-//
-//    main->w = width;
-//    main->h = height;
-//
-//    main->arrange();
-//
-//}
-

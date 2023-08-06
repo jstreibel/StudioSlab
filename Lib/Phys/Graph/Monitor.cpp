@@ -5,7 +5,7 @@
 #include <GL/gl.h>
 #include "Monitor.h"
 
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 
 using namespace Base;

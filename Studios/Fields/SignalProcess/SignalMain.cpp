@@ -9,7 +9,7 @@
 
 #include "Signal.h"
 #include "Base/Backend/GLUT/GLUTBackend.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 auto main(int argc, const char **argv) -> int {
 

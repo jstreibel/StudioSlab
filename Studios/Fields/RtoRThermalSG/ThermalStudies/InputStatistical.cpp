@@ -32,7 +32,6 @@ auto RtoR::InputStatistical::getDetailedDescription() -> Str {
 auto RtoR::InputStatistical::getBoundary() -> void * {
     auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
     auto xLeft = numericParams.getxMin();
-    //auto L = 20.;
 
     auto oscLength = L / *n;
     auto oscEnergy = *E / *n;

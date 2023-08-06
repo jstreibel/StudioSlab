@@ -8,7 +8,7 @@
 
 #include "Phys/Numerics/Output/Format/BinarySOF.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 const int HEADER_SIZE_BYTES = 2048;
 

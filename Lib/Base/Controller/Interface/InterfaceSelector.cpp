@@ -8,7 +8,7 @@
 
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Common/Utils.h"
-#include "Common/Log/Log.h"
+#include "Base/Tools/Log.h"
 
 
 InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name + " interface selector", -1, true)

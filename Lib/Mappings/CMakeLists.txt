@@ -1,20 +1,10 @@
 
 set(FIELDS_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Maps)
 
-set ( OpenGL_GL_PREFERENCE GLVND )
-find_package(OpenMP)
-find_package(Boost COMPONENTS program_options REQUIRED)
-find_package(GLUT)
-find_package(OpenGL)
-find_package(VTK)
-
-include(${VTK_USE_FILE})
-message(STATUS "VTK INCLUDES: ${VTK_USE_FILE}")
-
 include_directories (..)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-	set ( CUDA_SOURCES
+	set ( MAPS_CUDA_SOURCES
 			RtoR/Model/Derivatives/DerivativesGPU.cu
 			RtoR/Model/RtoRDiscreteFunctionGPU.cu
 
@@ -78,7 +68,6 @@ set ( R2TOR_SOURCES
 		R2toR/Model/Util/Interpolator.cpp
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
-		R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.cpp
 
 		RtoR/View/Graphics/GraphRtoR.cpp
 
@@ -98,10 +87,7 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.cpp
 		R2toR/View/Artists/FlatFieldDisplay.h
 
-		R2toR/Controller/R2ToRSimBuilder.cpp
-		R2toR/Controller/R2ToRSimBuilder.h
-		R2toR/Model/EquationSolver.h
-		R2toR/Model/EquationState.cpp)
+		)
 
 
 set ( MAPS_LINKS
@@ -128,7 +114,7 @@ message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
 
-add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
@@ -138,7 +124,7 @@ message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}-Periodic_GPU )
 
-add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${CUDA_SOURCES})
+add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
@@ -152,7 +138,7 @@ message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
-add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${CUDA_SOURCES})
+add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )

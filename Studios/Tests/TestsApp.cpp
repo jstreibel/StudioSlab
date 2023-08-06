@@ -20,11 +20,11 @@ int TestsApp::run() {
 
     auto pDummyProgram = new DummyProgram;
 
-    auto backend = GLUTBackend::GetInstance();
+    auto &backend = GLUTBackend::GetInstance();
 
-    backend->addWindow(view);
+    backend.addWindow(view);
 
-    backend->run(pDummyProgram);
+    backend.run(pDummyProgram);
 
     return 0;
 }
