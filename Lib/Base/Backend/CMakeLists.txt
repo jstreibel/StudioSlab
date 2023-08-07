@@ -1,18 +1,16 @@
 
 
 set( GRAPHIC_BACKEND_SOURCE
-		GLUT/GLUTBackend.cpp
-		VTK/VTKBackend.cpp
+		GLUT/GLUTBackend.h 						GLUT/GLUTBackend.cpp
+		VTK/VTKBackend.h						VTK/VTKBackend.cpp
 
-		#SFML-Nuklear/SFML-Nuklear-Backend.cpp
-		#SFML-Nuklear/SFMLListener.cpp
+		SFML-Nuklear/SFML-Nuklear-Backend.h		SFML-Nuklear/SFML-Nuklear-Backend.cpp
+		SFML-Nuklear/SFMLListener.cpp
 
-		Events/EventListener.cpp
+		Events/EventListener.h					Events/EventListener.cpp
 
-		#../Graphics/OpenGL/GLUTUtils.h
-		#../Graphics/OpenGL/GLUTUtils.cpp
-
-		GUIBackend.cpp)
+		GUIBackend.h							GUIBackend.cpp
+)
 
 set( CONSOLE_BACKEND_SOURCE
 		Console/ConsoleBackend.cpp)

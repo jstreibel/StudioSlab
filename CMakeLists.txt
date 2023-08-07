@@ -72,7 +72,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
 	include_directories(/opt/cuda/include)
 
-	set( CMAKE_CUDA_ARCHITECTURES 72 )
+	set( CMAKE_CUDA_ARCHITECTURES 61 )
 
 	enable_language( CUDA )
 	find_package( CUDA REQUIRED )

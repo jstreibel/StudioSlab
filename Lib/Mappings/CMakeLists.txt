@@ -75,12 +75,12 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/GraphR2ToR.cpp
 		R2toR/View/Artists/GraphR2Section.cpp
 		R2toR/View/Filters/DimensionReductionFilter.cpp
-		R2toR/View/LastOutputVtkVisualizer.cpp
 		R2toR/View/R2toROutputOpenGLShockwave.cpp
 		R2toR/View/R2toROutputOpenGLGeneric.cpp
 		R2toR/View/R2ToROutputOpenGlShockwaveAtT0.cpp
 		#R2toR/View/OutputShockwaveZeros.cpp
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
+		#R2toR/View/LastOutputVtkVisualizer.cpp	R2toR/View/LastOutputVtkVisualizer.h
 
 		RtoR2/StraightLine.cpp
 
@@ -117,7 +117,7 @@ set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
 add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
-set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 72 )
+#set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 72 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
@@ -128,7 +128,7 @@ add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
-set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
+#set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
@@ -141,6 +141,6 @@ set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
-set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
+#set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

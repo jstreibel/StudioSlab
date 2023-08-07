@@ -10,7 +10,7 @@ add_executable ( Signals-RtoR
 		SignalProcess/OutGL.cpp
 		SignalProcess/OutGL.h)
 target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU jack SOIL )
-#set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
+# set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
 
 message(NOTICE "Added executable Signals-RtoR")
 
@@ -30,7 +30,7 @@ add_executable ( Fields-RtoR
 		RtoRPureSG/InteractingFormations/input-general-oscillons.cpp
 )
 target_link_libraries ( Fields-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU )
-#set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
+#set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)
 
 message(NOTICE "Added executable Fields-RtoR")
 
@@ -92,7 +92,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			)
 
 	set_property(TARGET Fields-R2toR PROPERTY CUDA_STANDARD_REQUIRED 20)
-	set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
+	#set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)
 
 	message(NOTICE "Added executable Fields-R2toR")
 else()

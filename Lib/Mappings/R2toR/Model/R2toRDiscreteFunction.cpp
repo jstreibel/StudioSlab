@@ -84,3 +84,7 @@ R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real> &f
 
     return *this;
 }
+
+Str R2toR::DiscreteFunction::myName() const {
+    return Base::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev==GPU ? "GPU" : "CPU");
+}

@@ -2,35 +2,29 @@
 // Created by joao on 7/19/19.
 //
 
-#include "Common/STDLibInclude.h"
 #include "CommonParameters.h"
-#include "Base/Tools/Log.h"
 
-auto std::to_string(Str str) -> Str { return Str("\"") + str + Str("\""); }
-auto std::to_string(bool val) -> Str {        return val ? "True" : "False"; }
+// template<>
+// auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
+//     add(fullCLName, description, CLOptions::value<bool>());
+// }
 
-
-template<class Type>
-ParameterTemplate<Type>::ParameterTemplate(Type val, const Str& argName, const Str& descr)
-    : Parameter(argName, descr), val(val) {}
+#ifndef PARAMETER_TEMPLATE_SOURCE_ON_HEADER
+#include "Common/STDLibInclude.h"
+#include "Common/Utils.h"
 
 template<class Type>
 ParameterTemplate<Type>::~ParameterTemplate() = default;
 
 template<class Type>
 auto ParameterTemplate<Type>::valueToString() const -> std::string {
-	return std::to_string(val);
+	return ToStr(val);
 }
 
 template<class Type>
 auto ParameterTemplate<Type>::addToOptionsGroup(CLODEasyInit &add) const -> void {
     auto value = CLOptions::value<Type>()->default_value(ToStr(val));
     add(fullCLName, description, value);
-}
-
-template<>
-auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
-    add(fullCLName, description, CLOptions::value<bool>());
 }
 
 template<class Type>
@@ -50,9 +44,11 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
         this->val = var.as<Type>();
         // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
     } catch (cxxopts::exceptions::parsing &exception) {
-        auto msg = Str("Parameter '") + fullCLName + "' failed conversion from command line input. Type is " + typeid(Type).name();
-        Log::Error() << msg << Log::Flush;
-        throw exception;
+        auto msg = Str("Parameter '") + fullCLName + "' "
+             + "failed conversion from command line input. Type is " + typeid(Type).name()
+             + ". Exception what(): " + exception.what();
+
+        throw msg;
     }
 }
 
@@ -93,8 +89,9 @@ auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
     return val < rhs;
 }
 
+#endif
+
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;
 template class ParameterTemplate<Str>;
 template class ParameterTemplate<bool>;
-

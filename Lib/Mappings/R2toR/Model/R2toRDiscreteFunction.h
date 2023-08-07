@@ -38,6 +38,7 @@ namespace R2toR {
         Base::DiscreteFunction<Real2D, Real> &
         operator=(const Base::DiscreteFunction<Real2D, Real> &func) override;
 
+        Str myName() const override;
 
         Real diff(int n, Real2D x) const override;
 

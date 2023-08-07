@@ -26,8 +26,7 @@
 namespace R2toR {
 
     Builder::Builder(Str name, Str description)
-            : Base::Simulation::VoidBuilder(name, description) {
-    }
+            : Base::Simulation::VoidBuilder(name, description) {    }
 
     OutputManager *Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
@@ -38,7 +37,7 @@ namespace R2toR {
 
         auto *outputManager = new OutputManager(numericParams);
 
-        outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
+        // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
         RtoR2::StraightLine section;
         auto angleDegrees = 22.5;

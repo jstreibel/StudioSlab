@@ -99,7 +99,7 @@ namespace R2toR {
 
         auto Builder::getBoundary() -> void * {
             auto eqState = (R2toR::EquationState*)newFieldState();
-            return new BoundaryCondition(eqState, drivingFunc, deltaDuration, false);
+            return new BoundaryCondition(eqState, drivingFunc, *deltaDuration, false);
         }
 
         auto Builder::buildOpenGLOutput() -> OutputOpenGL * {

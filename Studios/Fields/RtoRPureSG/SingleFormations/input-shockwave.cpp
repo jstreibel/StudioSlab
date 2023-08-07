@@ -26,7 +26,7 @@ auto InputShockwave::getBoundary() -> void *
 
     const Real eps = a*a / (3* E.getValue());
 
-    AnalyticShockwave1D shockwave1D(a0);
+    AnalyticShockwave1D shockwave1D(*a0);
     auto proto = (RtoR::EquationState*)newFieldState();
     return new RtoR::BoundaryCondition(*proto, new RtoR::NullFunction,
                                              new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(deltaType)));

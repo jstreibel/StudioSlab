@@ -1,10 +1,10 @@
 
 set ( INTERFACE_SOURCES
-		Interface/Parameter.cpp
-		Interface/CommonParameters.cpp
-		Interface/Interface.cpp
-		Interface/InterfaceManager.cpp
-		Interface/InterfaceOwner.cpp Interface/InterfaceOwner.h)
+		Interface/Parameter.cpp				Interface/Parameter.h
+		Interface/CommonParameters.cpp		Interface/CommonParameters.h
+		Interface/Interface.cpp				Interface/Interface.h
+		Interface/InterfaceManager.cpp		Interface/InterfaceManager.h
+		Interface/InterfaceOwner.cpp		Interface/InterfaceOwner.h)
 
 set ( CONSOLE_SOURCES
 		Interface/InterfaceSelector.cpp

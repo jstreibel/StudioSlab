@@ -21,7 +21,7 @@ Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegiste
 };
 
 
-auto Device::getDevice() const -> const device {
+auto Device::getDevice() const -> device {
     return dev;
 }
 
@@ -47,18 +47,18 @@ void Device::notifyCLArgsSetupFinished() {
 
         cew(cudaGetDeviceCount(&devCount));
         cudaDeviceProp props;
-        cudaGetDeviceProperties_v2(&props, dev_n);
+        cudaGetDeviceProperties(&props, (int)dev_n);
 
         cew(cudaSetDevice(dev_n - 1));
 
-        Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << props.name << Log::Flush;
+        Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << Log::Flush;
 
         if (**nThreads > 1) {
             Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
             *nThreads = 1;
         }
 #else
-        throw "Code was not compiled with GPU support. And this exception should have never "
+        throw "Code was not compiled with GPU support. And this exception should never "
               "in a logical universe have happened.";
 #endif
     }

@@ -46,14 +46,14 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
     auto comp = [](const Interface::Ptr& a, const Interface::Ptr& b) { return *a < *b; };
     std::sort(interfaces.begin(), interfaces.end(), comp);
 
-    auto &log = Log::Debug();
+    auto &log = Log::Info();
     log << "[priority] Interface";
     for(auto interface : interfaces){
 
-        log << "\n\t\t\t[" << interface->priority << "] " << interface->getName();
+        log << "\n\t\t\t\t\t  [" << interface->priority << "] " << interface->getName();
 
         if(!interface->subInterfaces.empty())
-            log << "\t\t---> Contains " << interface->subInterfaces.size() << " sub-interfaces.";
+            log << "\t\t\t\t---> Contains " << interface->subInterfaces.size() << " sub-interfaces.";
     }
     log << Log::Flush;
 
@@ -64,7 +64,7 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
         interface->setup(vm);
     }
 
-    Log::Info() << "InterfaceManager finished feeding interfaces." << Log::Flush;
+    Log::Success() << "InterfaceManager finished feeding interfaces." << Log::Flush;
 }
 
 auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {

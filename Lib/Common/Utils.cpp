@@ -108,16 +108,18 @@ unsigned short Common::BinaryToUShort(std::string binary, char zero, char one){
     return x.to_ulong();
 }
 
-#if USE_CUDA
+Str ToStr(const double &a_value, const int &decimal_places, bool useScientificNotation) {
+    auto base = useScientificNotation ? std::scientific : std::fixed;
+    std::ostringstream out;
+    out.precision(decimal_places);
+    out << base << a_value;
 
-#include <cuda_runtime.h>
-void cew(cudaError err){
-
-    auto errStr = cudaGetErrorString(err);
-
-    auto errMsg = std::string("CUDA error ") + std::string(errStr);
-    
-    if (err != cudaError::cudaSuccess) throw errMsg;
+    return out.str();
 }
 
-#endif // USE_CUDA
+Str ToStr(bool value)       { return value ? "True" : "False"; }
+
+Str ToStr(const Str &str)   { return Str("\"") + str + Str("\""); }
+
+
+

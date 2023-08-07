@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Slab" pattern="file[StudioSlab]:Lib//*||file:CMakeLists.txt||file[StudioSlab]:Resources//*" />
+</component>

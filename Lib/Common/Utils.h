@@ -70,16 +70,13 @@ void cew(cudaError err);
 
 #endif // USE_CUDA
 
-template <typename T>
-Str ToStr(const T a_value, const int decimal_places = 2, bool useScientificNotation= false)
-{
-    auto base = useScientificNotation ? std::scientific : std::fixed;
-    std::ostringstream out;
-    out.precision(decimal_places);
-    out << base << a_value;
+Str ToStr(const double &a_value, const int &decimal_places = 2, bool useScientificNotation= false);
 
-    return out.str();
-}
+template <typename T>
+Str ToStr(const T &a_value){ return std::to_string(a_value); }
+Str ToStr(bool value);
+Str ToStr(const Str& str);
+
 
 
 #endif //V_SHAPE_UTILS_H

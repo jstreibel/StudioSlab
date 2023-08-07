@@ -12,7 +12,6 @@
 #include <cstdint>
 
 #include <cmath>
-//#include <complex>
 #include <algorithm>
 #include <ctime>
 #include <fstream>
@@ -28,9 +27,10 @@
 #include <variant>
 #include <vector>
 
+//#include <complex>
 
-
-#if 0 // abaixo uma tentativa que falhou e fica ai para posteridade.
+// abaixo uma tentativa que falhou e fica ai para posteridade.
+#ifdef REMIND_ME_OF_AN_INTERSTING_FAILED_ATTEMPT_THAT_SHOULD_REMAIN_IN_MEMORY
 // Se a linguagem for C++17, usamos stdlib. Se nao, usamos boost.
 #if __cplusplus == 201703L // ver https://stackoverflow.com/questions/2324658/how-to-determine-the-version-of-the-c-standard-used-by-the-compiler
 #include <variant>

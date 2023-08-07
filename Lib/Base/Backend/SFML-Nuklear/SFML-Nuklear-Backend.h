@@ -20,12 +20,11 @@ class SFMLNuklearBackend : public Backend {
 
     bool running=true;
 
-    SFMLNuklearBackend();
-
     std::vector<SFMLListener*> listeners;
 
+
 public:
-    static SFMLNuklearBackend *GetInstance();
+    SFMLNuklearBackend();
 
     void run(Program *integrator) override;
 
