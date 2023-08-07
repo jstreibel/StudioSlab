@@ -32,17 +32,3 @@ auto InputShockwave::getBoundary() -> void *
                                              new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(deltaType)));
 }
 
-auto InputShockwave::_getDeltaTypeAsString() const -> Str
-{
-    return (deltaType == 0 ? "gauss" : (deltaType == 1 ? "tri" : "unknown"));
-}
-
-OutputCollection InputShockwave::getOutputs(bool usingOpenGLBackend) const {
-    RtoR::ShockwaveMonitor *oglout = nullptr;
-    if(usingOpenGLBackend){
-        return {new RtoR::ShockwaveMonitor(numericParams, *a0 / 2, *E)};
-    }
-
-    return {};
-}
-

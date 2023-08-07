@@ -17,6 +17,7 @@ message(NOTICE "Added executable Signals-RtoR")
 
 # ************************************************************************************************************
 
+message(NOTICE "SlabLibs: ${SlabLibs}")
 
 add_executable ( Fields-RtoR
 		RtoRPureSG/MainRtoR.cpp

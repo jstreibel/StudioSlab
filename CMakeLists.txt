@@ -9,7 +9,7 @@ option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles
 
 
 
-project(StudioSlab CXX)
+project(StudioSlab CXX C )
 
 set ( CMAKE_CXX_STANDARD 20 )
 
@@ -23,9 +23,28 @@ find_package( GLEW )
 find_package( GLUT )
 find_package( OpenGL )
 #find_package(Boost COMPONENTS program_options)
-find_package(VTK)
-include(${VTK_USE_FILE})
+
+set( CMAKE_PREFIX_PATH /usr/share/cmake/Modules)
+find_package( VTK COMPONENTS
+		CommonColor
+		CommonComputationalGeometry
+		CommonCore
+		CommonDataModel
+		CommonExecutionModel
+		CommonMath
+		CommonMisc
+		CommonSystem
+		CommonTransforms
+		FiltersCore
+		FiltersGeneral
+		FiltersSources
+		ImagingCore
+		InteractionStyle
+		RenderingCore
+		#RenderingOpenGL
+)
 message(STATUS "VTK includes: ${VTK_USE_FILE}")
+message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
 
 if(CMAKE_BUILD_TYPE STREQUAL Release)
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
@@ -48,9 +67,9 @@ endif()
 
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-	# set(CUDA_DIR /opt/cuda)
+	set(CUDA_DIR /opt/cuda)
 
-	#set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
+	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
 	include_directories(/opt/cuda/include)
 
 	set( CMAKE_CUDA_ARCHITECTURES 72 )

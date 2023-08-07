@@ -22,7 +22,7 @@ class Log : public Singleton<Log>, InterfaceOwner
 
     BoolParameter::Ptr logDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");
     BoolParameter::Ptr logNotes = BoolParameter::New(false, "log_notes", "Show note messages.");
-    BoolParameter::Ptr verbose = BoolParameter::New(false, "v,verbose", "Show note and debug messages.");
+    BoolParameter::Ptr verbose = BoolParameter::New(false, "vv,verbose", "Show note and debug messages.");
 
     Log();
 

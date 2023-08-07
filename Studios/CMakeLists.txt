@@ -8,8 +8,9 @@ set ( SlabLibs
 		Slab-Base-Graphics
 		Slab-Base-Tools
 
-
 		Slab-Phys
+
+		Slab-Models
 		)
 
 

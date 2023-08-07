@@ -11,7 +11,7 @@ using namespace Graphing;
 
 
 Graph::Graph(sf::IntRect subWindow, sf::Vector2f rMin, sf::Vector2f rMax,
-              std::string xAxisLabel, std::string yAxisLabel, sf::PrimitiveType primitiveType)
+              const Str xAxisLabel, const Str yAxisLabel, sf::PrimitiveType primitiveType)
 : theData(primitiveType), scale(scale), rMin(rMin), rMax(rMax) {
     setPlacing(subWindow);
 

@@ -7,7 +7,6 @@
 namespace RtoR {
     class InputShockwave : public Builder {
     private:
-        auto _getDeltaTypeAsString() const -> Str;
 
         unsigned int deltaType = 1;
         RealParameter a0 = RealParameter(1., "a0", "Shockwave discontinuity value.");
@@ -17,8 +16,6 @@ namespace RtoR {
         InputShockwave();
 
         auto getBoundary() -> void * override;
-
-        auto getOutputs(bool usingOpenGLBackend) const -> OutputCollection;
 
     };
 }

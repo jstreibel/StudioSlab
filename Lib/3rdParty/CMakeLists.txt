@@ -1,5 +1,3 @@
-cmake_minimum_required ( VERSION 3.14 FATAL_ERROR )
-
 set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
 set ( IMGUI_SOURCE
@@ -13,6 +11,11 @@ set ( IMGUI_SOURCE
 		imgui/backends/imgui_impl_opengl3.cpp
 
 		imgui/misc/freetype/imgui_freetype.cpp)
+
+set ( RESAMPLE_SOURCE
+		libresample/include/*
+		libresample/src/*
+)
 
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE})
 target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype)
