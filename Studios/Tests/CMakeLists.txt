@@ -1,3 +1,5 @@
+add_subdirectory(CompatibilityTests)
+
 add_executable ( Tests
 		TestsMain.cpp
 		TestsApp.cpp

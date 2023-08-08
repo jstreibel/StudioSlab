@@ -8,7 +8,6 @@ set ( TOOLSET_SOURCES
 set ( SPACE_SOURCES
 		Space/Impl/DiscreteSpace.cpp
 		Space/Impl/DiscreteSpaceCPU.cpp
-		Space/Impl/DiscreteSpaceGPU.cu
 		Space/Space.cpp Space/Space.h
 		Space/Measure.cpp Space/Measure.h
 		Space/HyperCube/AAHyperCube.cpp
@@ -19,6 +18,11 @@ set ( SPACE_SOURCES
 		Space/Point.cpp
 		Space/Point.h)
 
+if( STUDIOSLAB_CUDA_SUPPORT )
+set ( SPACE_SOURCES_CUDA
+		Space/Impl/DiscreteSpaceGPU.cu
+)
+endif ()
 
 set ( EXPERIMENTAL_SOURCES
 		Formalism/Category.cpp
@@ -99,6 +103,7 @@ set (LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
 add_library(${LIB_LOCAL_NAME} STATIC
 		${TOOLSET_SOURCES}
 		${SPACE_SOURCES}
+		${SPACE_SOURCES_CUDA}
 		${GRAPH_SOURCES}
 		${EXPERIMENTAL_SOURCES}
 		${NUMERICS_SOURCES}

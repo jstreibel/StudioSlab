@@ -13,8 +13,6 @@ set ( MODELS_SOURCES
 
 		KleinGordon/RtoR/RtoRMonitor.cpp
 
-		KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu
-
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
 
@@ -23,11 +21,13 @@ set ( MODELS_SOURCES
 		KleinGordon/R2toR/EquationState.cpp
 		)
 
-
+if( STUDIOSLAB_CUDA_SUPPORT )
+	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu )
+endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Models )
 
-add_library( ${LIB_LOCAL_NAME} STATIC ${MODELS_SOURCES} )
+add_library( ${LIB_LOCAL_NAME} STATIC ${MODELS_SOURCES} ${MODELS_SOURCES_CUDA} )
 
 
 target_link_libraries(${LIB_LOCAL_NAME}

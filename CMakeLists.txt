@@ -77,7 +77,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	enable_language( CUDA )
 	find_package( CUDA REQUIRED )
 
-	add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
+	add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
 	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA libraries are ${CUDA_LIBRARIES}"  )

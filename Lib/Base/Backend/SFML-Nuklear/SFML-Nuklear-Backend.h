@@ -7,9 +7,9 @@
 
 #include "../Backend.h"
 #include "SFMLListener.h"
+#include "Base/Controller/Nuklear/NuklearSFML.h"
 
 #include <SFML/Graphics.hpp>
-#include <Base/Controller/Nuklear/NuklearSFML.h>
 
 class SFMLNuklearBackend : public Backend {
     sf::RenderWindow *window;

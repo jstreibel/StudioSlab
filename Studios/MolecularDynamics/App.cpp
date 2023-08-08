@@ -11,7 +11,7 @@
 MolecularDynamics::App::App(int argc, const char **argv) : AppBase(argc, argv) {
     Backend::Initialize<SFMLNuklearBackend>();
 
-    CLArgsManager::GetInstance()->Parse(argc, argv);
+    CLArgsManager::Parse(argc, argv);
 }
 
 int MolecularDynamics::App::run() {

@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="CUDA code only" pattern="file:Lib//*cu||file:Lib//*cuh||file:Studios//*cu||file:Studios//*cuh" />
+</component>
