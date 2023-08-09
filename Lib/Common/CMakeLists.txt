@@ -10,6 +10,7 @@ set ( UTIL_SOURCES
 		ColorStrings.h
 		CUDAUtils.h
 		CUDAUtils.cpp
+        Types.cpp
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

@@ -9,7 +9,7 @@
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 
-#include "Phys/Numerics/Method/Method.h"
+#include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Method/Method-RK4.h"
 #include "Phys/Numerics/Method/Method-MCBase.h"
 
@@ -27,7 +27,7 @@ class NumericalIntegration : public Program {
     BenchmarkHistogram nonSimTimeHistogram;
 
     Base::Simulation::VoidBuilder &simBuilder;
-    Method *stepper;
+    Stepper *stepper;
     OutputManager *outputManager;
 
     void output(bool force=false);
@@ -66,7 +66,7 @@ public:
         this->output(FORCE_INITIAL_OUTPUT);
     }
 
-    ~NumericalIntegration();
+    ~NumericalIntegration() override;
 
     void cycle(CycleOptions) override;
 

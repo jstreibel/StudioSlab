@@ -3,7 +3,7 @@
 
 #include "Phys/Toolset/Device.h"
 #include "Phys/Numerics/Program/NumericParams.h"
-#include "Phys/Numerics/Method/Method.h"
+#include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Output/OutputManager.h"
 
 #include "Base/Controller/Interface/Interface.h"
@@ -29,7 +29,7 @@ namespace Base {
             IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(1, "s,steps_per_idle_call",
                                                                                   "Simulation steps between visual monitor updates call.");
 
-            Str prefix = "";
+            Str prefix;
 
             explicit VoidBuilder(Str name, Str generalDescription);
 
@@ -39,11 +39,11 @@ namespace Base {
         public:
             typedef std::shared_ptr<VoidBuilder> Ptr;
 
-            virtual ~VoidBuilder() {}
+            virtual ~VoidBuilder() = default;
 
             virtual auto buildOutputManager()         -> OutputManager * = 0;
             virtual auto buildEquationSolver()        -> void * = 0;
-            virtual auto buildStepper()               -> Method* = 0;
+            virtual auto buildStepper()               -> Stepper* = 0;
 
             virtual auto suggestFileName()      const -> Str;
 

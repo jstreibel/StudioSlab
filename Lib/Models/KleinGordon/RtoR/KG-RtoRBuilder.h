@@ -19,7 +19,7 @@ namespace RtoR {
 
         auto buildOutputManager()   -> OutputManager * override;
         auto buildEquationSolver()  -> void * override;
-        auto buildStepper()         -> Method * override;
+        auto buildStepper()         -> Stepper * override;
 
         void *getHamiltonian() override;
 

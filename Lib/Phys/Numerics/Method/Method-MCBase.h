@@ -7,7 +7,7 @@
 
 #endif //STUDIOSLAB_METHOD_EULER_H
 
-#include "Method.h"
+#include "Stepper.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/DifferentialEquations/EquationSolver.h"
@@ -16,11 +16,11 @@
 #include <omp.h>
 
 template<int NUM_THREADS, class FIELD_STATE_TYPE>
-class StepperMontecarlo : public Method{
+class StepperMontecarlo : public Stepper{
 public:
 
     StepperMontecarlo(Base::Simulation::VoidBuilder &builder)
-    : Method()
+    : Stepper()
     , H(*(Slab::EquationSolverT<FIELD_STATE_TYPE>*) builder.buildEquationSolver())
     , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
     , _phi(    (FIELD_STATE_TYPE*)builder.newFieldState())
@@ -54,7 +54,7 @@ public:
         steps+=n_steps;
     }
 
-    [[nodiscard]] const void* getFieldState() const override { return _phi; }
+    [[nodiscard]] const void* getCurrentState() const override { return _phi; }
     [[nodiscard]] DiscreteSpacePair getSpaces() const override {
         return DiscreteSpacePair(&_phi->getPhi().getSpace(), &_phi->getDPhiDt().getSpace());
     }

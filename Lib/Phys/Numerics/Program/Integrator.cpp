@@ -42,7 +42,7 @@ void NumericalIntegration::cycle(CycleOptions options) {
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){
-    return OutputPacket(stepper->getFieldState(), stepper->getSpaces(), steps, getSimulationTime());;
+    return OutputPacket(stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime());;
 }
 
 void NumericalIntegration::_cycle(size_t nCycles) {

@@ -3,14 +3,14 @@
 
 #include "Common/Types.h"
 
-class Method {
+class Stepper {
 public:
-    Method() = default;
-    virtual ~Method() = default;
+    Stepper() = default;
+    virtual ~Stepper() = default;
 
 public:
     virtual void step(const Real &dt, size_t n_steps) = 0;
-    virtual auto getFieldState() const -> const void* = 0;
+    virtual auto getCurrentState() const -> const void* = 0;
     virtual auto getSpaces() const -> DiscreteSpacePair = 0;
 };
 

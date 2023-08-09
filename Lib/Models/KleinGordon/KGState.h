@@ -17,7 +17,7 @@ namespace Fields::KleinGordon {
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
     template<class EqCategory>
-    class KGState : public Utils::ArithmeticOpsInterface<KGState<EqCategory>>, public FStateOutputInterface {
+    class KGState : public Utils::ArithmeticOpsInterface<KGState<EqCategory>>, public EqStateOutputInterface {
     public:
         typedef EqCategory SubStateType;
         using FunctionType = typename EqCategory::Type;

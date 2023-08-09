@@ -16,7 +16,7 @@ namespace R2toR {
         {
         }
 
-        FStateOutputInterface *Copy(PosInt N) const override {
+        EqStateOutputInterface *Copy(PosInt N) const override {
             throw "Not implemented";
             return nullptr;
         }

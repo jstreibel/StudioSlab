@@ -11,7 +11,7 @@
 
 #include <Common/Types.h>
 
-//#include "View/Util/FStateOutputInterface.h"
+//#include "View/Util/EqStateOutputInterface.h"
 
 namespace Base {
 

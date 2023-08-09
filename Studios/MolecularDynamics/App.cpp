@@ -3,19 +3,20 @@
 //
 
 #include "App.h"
-#include "Base/Tools/Log.h"
-#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+
 #include "Base/Controller/CLArgsManager.h"
+#include "Phys/Numerics/Program/Integrator.h"
 
-
-MolecularDynamics::App::App(int argc, const char **argv) : AppBase(argc, argv) {
-    Backend::Initialize<SFMLNuklearBackend>();
-
+MolecularDynamics::App::App(int argc, const char **argv)
+: AppBase(argc, argv), backend(Backend::Initialize<SFMLNuklearBackend>()) {
     CLArgsManager::Parse(argc, argv);
 }
 
 int MolecularDynamics::App::run() {
+    NumericalIntegration integrator(builder);
 
-    return 0;
+    backend.run(&integrator);
+
+    return true;
 }
 

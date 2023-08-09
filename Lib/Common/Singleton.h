@@ -49,12 +49,14 @@ protected:
 public:
 
     template< typename ToSuper >
-    static void Initialize() {
+    static ToSuper& Initialize() {
         if(Singleton<T,true>::singleInstance != nullptr)
             throw Str("Singleton '") + Singleton<T,true>::singleInstance->name + "' already initialized.";
 
 
         Singleton<T,true>::singleInstance = new ToSuper();
+
+        return reinterpret_cast<ToSuper&>(*Singleton<T, true>::singleInstance);
     }
 
     template< typename ToSuper >

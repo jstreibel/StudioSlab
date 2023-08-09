@@ -9,7 +9,7 @@
 
 #include <ostream>
 
-class FStateOutputInterface {
+class EqStateOutputInterface {
 public:
     static enum Formats {
         SpaceSeparated,
@@ -21,11 +21,11 @@ public:
         PhiAndDPhiDt
     } fDataOutType;
 
-    virtual void outputPhi(OStream &out, Str separator) const { throw "FStateOutputInterface::outputPhi(...) Not implemented."; }
-    virtual void outputdPhiDt(OStream &out, Str separator) const { throw "FStateOutputInterface::outputDPhiDt(...) not implemented."; }
-    virtual FStateOutputInterface* Copy(PosInt N) const = 0;
+    virtual void outputPhi(OStream &out, Str separator) const { throw "EqStateOutputInterface::outputPhi(...) Not implemented."; }
+    virtual void outputdPhiDt(OStream &out, Str separator) const { throw "EqStateOutputInterface::outputDPhiDt(...) not implemented."; }
+    virtual EqStateOutputInterface* Copy(PosInt N) const = 0;
 
-    friend OStream& operator<< (OStream& stream, const FStateOutputInterface& oStreamReady) {
+    friend OStream& operator<< (OStream& stream, const EqStateOutputInterface& oStreamReady) {
         Str sep = format == SpaceSeparated ? " " : ", ";
 
         if(format == PythonDictionaryEntry) stream << "\"phi\": (";

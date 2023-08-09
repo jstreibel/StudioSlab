@@ -34,7 +34,7 @@ namespace RtoR {
                 out << vDPhiDt[n] << separator;
         }
 
-        FStateOutputInterface *Copy(PosInt N) const override {
+        EqStateOutputInterface *Copy(PosInt N) const override {
             return new EquationState(dynamic_cast<DiscreteFunction*>(phi->CloneWithSize(N)),
                                      dynamic_cast<DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
         }

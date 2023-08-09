@@ -31,7 +31,7 @@ namespace R2toR {
 
             auto getInitialState()      -> void * override;
 
-            auto buildStepper()         -> Method * override;
+            auto buildStepper()         -> Stepper * override;
     };
 }
 

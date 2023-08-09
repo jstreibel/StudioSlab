@@ -7,7 +7,7 @@
 
 #include "Phys/Toolset/Device.h"
 #include "Phys/Numerics/Program/NumericParams.h"
-#include "Phys/Numerics/Method/Method.h"
+#include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Output/OutputManager.h"
 
 #include "Base/Controller/Interface/Interface.h"
@@ -60,7 +60,7 @@ namespace Base::Simulation {
         virtual auto getInitialState()            -> EqState       * = 0;
         virtual auto getEquationSolver()          -> EqSolver      * = 0;
 
-        virtual auto getMethod()                  -> Method*;
+        virtual auto getMethod()                  -> Stepper*;
 
         auto getNumericParams()             const -> const NumericParams &;
         auto getDevice()                    const -> const Device &;
@@ -142,8 +142,8 @@ namespace Base::Simulation {
         GENERATE_FOR_NTHREADS(StepperRK4, 16);
 
     template<typename SolverType>
-    auto Builder<SolverType>::getMethod() -> Method * {
-        Method *method;
+    auto Builder<SolverType>::getMethod() -> Stepper * {
+        Stepper *method;
 
         {
             auto &u_0 = *getInitialState();

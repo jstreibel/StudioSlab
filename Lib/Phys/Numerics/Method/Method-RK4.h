@@ -8,7 +8,7 @@
 #ifndef STEPPER_RK_H
 #define STEPPER_RK_H
 
-#include "Method.h"
+#include "Stepper.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
 #include "Phys/DifferentialEquations/EquationSolver.h"
@@ -18,13 +18,13 @@
 #include <omp.h>
 
 template<int NUM_THREADS, class STATE_TYPE>
-class StepperRK4 : public Method {
+class StepperRK4 : public Stepper {
 public:
     typedef Slab::EquationSolverT<STATE_TYPE>    SolverType;
     typedef Base::BoundaryConditions<STATE_TYPE> BCType;
 
     StepperRK4(SolverType &solver)
-    : Method()
+    : Stepper()
     , H       ( solver )
     , _phi    ( solver.NewEqState() )
     , _k1     ( solver.NewEqState() )
@@ -101,7 +101,7 @@ public:
         steps+=n_steps;
     }
 
-    [[nodiscard]] const void* getFieldState() const override { return _phi; }
+    [[nodiscard]] const void* getCurrentState() const override { return _phi; }
     [[nodiscard]] DiscreteSpacePair getSpaces() const override {
         return DiscreteSpacePair(&_phi->getPhi().getSpace(), &_phi->getDPhiDt().getSpace());
     }

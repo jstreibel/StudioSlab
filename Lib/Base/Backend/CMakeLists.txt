@@ -31,7 +31,7 @@ target_link_libraries( ${LIB_LOCAL_NAME}
 		GL
 		OpenGL
 
-		# sfml-graphics
+		sfml-graphics
 		# sfml-window
 		# sfml-system
 

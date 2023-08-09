@@ -8,7 +8,6 @@ option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles
 
 
 
-
 project(StudioSlab CXX C )
 
 set ( CMAKE_CXX_STANDARD 20 )
@@ -22,7 +21,6 @@ set ( OpenGL_GL_PREFERENCE GLVND )
 find_package( GLEW )
 find_package( GLUT )
 find_package( OpenGL )
-#find_package(Boost COMPONENTS program_options)
 
 set( CMAKE_PREFIX_PATH /usr/share/cmake/Modules)
 find_package( VTK COMPONENTS
@@ -46,14 +44,6 @@ find_package( VTK COMPONENTS
 message(STATUS "VTK includes: ${VTK_USE_FILE}")
 message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
 
-if(CMAKE_BUILD_TYPE STREQUAL Release)
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
-	message(STATUS "Using -O3 flag")
-else()
-	message(STATUS "Not using -O3 flag")
-endif()
-
 
 if( STUDIOSLAB_OMP_SUPPORT )
 	find_package(OpenMP REQUIRED)
@@ -72,15 +62,12 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
 	include_directories(/opt/cuda/include)
 
-	set( CMAKE_CUDA_ARCHITECTURES 61 )
-
 	enable_language( CUDA )
-	find_package( CUDA REQUIRED )
 
-	add_definitions(-D_GLIBCXX_USE_CXX11_ABI=1)
+	set(CMAKE_CUDA_ARCHITECTURES 61)
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
-	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA libraries are ${CUDA_LIBRARIES}"  )
+	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA architectures is ${CMAKE_CUDA_ARCHITECTURES}"  )
 else()
 	add_compile_definitions(USE_CUDA=false)
 	message(STATUS "StudioSlab CUDA support is DISABLED")
@@ -104,6 +91,14 @@ else ()
 	message(STATUS "StudioSlab is using IEEE FP64")
     add_compile_definitions( STUDIOSLAB_USE_FP32=false )
 endif ()
+
+if(CMAKE_BUILD_TYPE STREQUAL Release)
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
+	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
+	message(STATUS "Using -O3 flag")
+else()
+	message(STATUS "Not using -O3 flag")
+endif()
 
 
 link_directories(Build/lib)

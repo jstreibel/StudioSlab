@@ -4,5 +4,5 @@
 
 #include "FieldStateOutputInterface.h"
 
-FStateOutputInterface::Formats FStateOutputInterface::format = SpaceSeparated;
-FStateOutputInterface::FieldDataOutputTypes FStateOutputInterface::fDataOutType = Phi;
+EqStateOutputInterface::Formats EqStateOutputInterface::format = SpaceSeparated;
+EqStateOutputInterface::FieldDataOutputTypes EqStateOutputInterface::fDataOutType = Phi;

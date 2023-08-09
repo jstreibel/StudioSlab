@@ -163,8 +163,8 @@ auto RtoR::Builder::getInitialState() -> void * {
         GENERATE_METHOD(StepperRK4, 15); \
         GENERATE_METHOD(StepperRK4, 16);
 
-auto RtoR::Builder::buildStepper() -> Method * {
-    Method *method;
+auto RtoR::Builder::buildStepper() -> Stepper * {
+    Stepper *method;
 
     auto &solver = *(RtoR::EquationSolver*) buildEquationSolver();
 

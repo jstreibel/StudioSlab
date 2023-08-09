@@ -56,8 +56,8 @@ void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const St
         file.open(fileName);
         Log::Note() << "Opened file \"" << fileName << "\"" << Log::Flush;
 
-        FStateOutputInterface::format = FStateOutputInterface::PythonDictionaryEntry;
-        FStateOutputInterface::fDataOutType = FStateOutputInterface::PhiAndDPhiDt;
+        EqStateOutputInterface::format = EqStateOutputInterface::PythonDictionaryEntry;
+        EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
 
         CustomStringSeparatedSOF formatter(", ");
         file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() /*<< ", " */ << "\"t\": " << t

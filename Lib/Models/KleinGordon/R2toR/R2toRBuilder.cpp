@@ -160,8 +160,8 @@ namespace R2toR {
         GENERATE_METHOD(StepperRK4, 15); \
         GENERATE_METHOD(StepperRK4, 16);
 
-    Method *Builder::buildStepper() {
-        Method *method;
+    Stepper *Builder::buildStepper() {
+        Stepper *method;
 
         auto &solver = *(R2toR::EquationSolver*) buildEquationSolver();
 

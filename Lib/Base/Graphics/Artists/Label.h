@@ -8,14 +8,6 @@
 #include "Common/Types.h"
 #include "Artist.h"
 
-struct Point2D
-{
-    Point2D(float x, float y) : x(x), y(y) {}
-
-    float x, y;
-} __attribute__((aligned(8)));
-
-
 struct LabelSource : public Artist {
     virtual ~LabelSource() {}
 
