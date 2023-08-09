@@ -1,6 +1,5 @@
 
 #include "LennardJones.h"
-#include "IO/UserInput.h"
 #include "LennardJonesParams.h"
 #include "Hamiltonians/NewtonMechanicsParams.h"
 

@@ -122,9 +122,12 @@ void Log::notifyCLArgsSetupFinished() {
     if(**logDebug || **verbose){
         std::cout << FGBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
 
-        *mainStream << debugStream->rdbuf();
-        if(manageDebugStream)
-            delete debugStream;
+        if(debugStream->good()){
+            StringStream ss; ss << debugStream->rdbuf();
+            *mainStream << ss.str();
+        }
+
+        if(manageDebugStream) delete debugStream;
 
         manageDebugStream = false;
         debugStream = &std::cout;
@@ -134,10 +137,13 @@ void Log::notifyCLArgsSetupFinished() {
 
     if(**logNotes || **verbose){
         std::cout << FGBlue << BoldFace << ((**logDebug || **verbose) ? "" : "\n") << "\n --- SOME LATE NOTES MESSAGES --- \n";
-        *mainStream << notesStream->rdbuf();
 
-        if(manageNotesStream)
-            delete notesStream;
+        if(notesStream->good()){
+            StringStream ss; ss << notesStream->rdbuf();
+            *mainStream << ss.str();
+        }
+
+        if(manageNotesStream)    delete        notesStream;
 
         manageNotesStream = false;
         notesStream = &std::cout;

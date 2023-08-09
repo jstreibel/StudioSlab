@@ -25,8 +25,8 @@ add_executable(StudiosLib
 		../../../Lib/Base/Graphics/Styles/Colors.h
 		../../../Lib/Base/Graphics/SFML/Graph.cpp
 		../../../Lib/Base/Graphics/SFML/Graph.h
-		../../../Lib/Phys/Thermal/Utils/RandUtils.cpp
-		../../../Lib/Phys/Thermal/Utils/RandUtils.h
+        ../../../Lib/Common/RandUtils.cpp
+        ../../../Lib/Common/RandUtils.h
 		../../../Lib/Phys/Thermal/Utils/ThermoUtils.cpp
 		../../../Lib/Phys/Thermal/Utils/ThermoUtils.h
 		../../../Lib/Base/Graphics/OpenGL/glad.c

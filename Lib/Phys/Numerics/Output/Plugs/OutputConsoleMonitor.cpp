@@ -2,8 +2,8 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Base/Tools/Log.h"
 
-OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const int n_steps)
-    : Socket(params, "Console monitor output", n_steps),
+OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const int n_steps_between_calls)
+    : Socket(params, "Console monitor output", n_steps_between_calls),
       maxT(params.gett())
 {
 
@@ -41,7 +41,7 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
         measures.emplace_back(elTime);
 
         auto avg = 0.0;
-        const auto MAX_AVG_SAMPLES = 10;
+        const auto MAX_AVG_SAMPLES = 20;
         auto count = measures.size();
         auto countMin = count > MAX_AVG_SAMPLES ? count-MAX_AVG_SAMPLES : 0;
         auto total = count-countMin;

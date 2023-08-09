@@ -29,6 +29,8 @@ set (SOURCES
 		Hamiltonians/NewtonMechanics.cpp
 		Hamiltonians/NewtonMechanics.h
 		Hamiltonians/NewtonMechanicsParams.h
+        Monitor.cpp
+        Monitor.h
 )
 
 add_executable ( MolDynamic ${SOURCES} )

@@ -7,6 +7,7 @@
 #include <Base/Controller/CLArgsManager.h>
 
 #include "Base/Controller/Interface/InterfaceManager.h"
+#include "Base/Tools/Log.h"
 
 
 AppBase::AppBase(int argc, const char **argv)
@@ -16,8 +17,13 @@ AppBase::AppBase(int argc, const char **argv)
 
 }
 
+AppBase::~AppBase() {
+    Log::Info() << Common::getClassName(this) << " destroyed" << Log::Flush;
+}
+
 void AppBase::parseCLArgs() {
     CLArgsManager::Parse(argc, argv);
 }
+
 
 

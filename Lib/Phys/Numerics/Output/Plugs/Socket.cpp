@@ -30,11 +30,14 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
 
 #if SHOULD_OUTPUT___MODE == INT_BASED
     (void)t;
-    bool should = nextRecStep==timestep;
 
-    nextRecStep += nSteps;
+    if(nextRecStep>timestep)
+        return false;
 
-    return should;
+    nextRecStep = timestep + nSteps;
+
+    return true;
+
 #elif SHOULD_OUTPUT___MODE == FLOAT_BASED
     return abs(T-lastT) > abs(recDT);
 #endif

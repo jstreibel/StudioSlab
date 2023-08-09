@@ -4,6 +4,7 @@
 #include "Device.h"
 
 #include "Common/Utils.h"
+#include "Common/CUDAUtils.h"
 #include "Base/Tools/Log.h"
 
 

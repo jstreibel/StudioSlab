@@ -1,16 +1,18 @@
 
 
 set ( UTIL_SOURCES
-		OMPUtils.cpp
-		Printing.cpp
-		Utils.cpp
-		Resources.cpp
-		UtilsCollection/Resample.cpp
+		OMPUtils.cpp	OMPUtils.h
+		Printing.cpp	Printing.h
+		Utils.cpp		Utils.h
+		RandUtils.cpp	RandUtils.h
+
+		Resources.cpp	Resources.h
+
+		UtilsCollection/Resample.cpp	UtilsCollection/Resample.h
 
 		ColorStrings.h
-		CUDAUtils.h
-		CUDAUtils.cpp
-        Types.cpp
+		CUDAUtils.cpp	CUDAUtils.h
+        Types.cpp		Types.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

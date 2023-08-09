@@ -1,7 +1,6 @@
 
 #include "SoftDisk.h"
 #include "Hamiltonians/Hash/MoleculeSpaceHash.h"
-#include "Simulation/SimParams.h"
 #include "SoftDiskParams.h"
 
 #include <math.h>

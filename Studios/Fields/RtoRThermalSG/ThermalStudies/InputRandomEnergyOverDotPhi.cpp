@@ -5,7 +5,7 @@
 #include "InputRandomEnergyOverDotPhi.h"
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Phys/Thermal/Utils/RandUtils.h"
+#include "Common/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()

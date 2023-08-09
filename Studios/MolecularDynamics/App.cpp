@@ -4,6 +4,7 @@
 
 #include "App.h"
 
+#include "Base/Tools/Log.h"
 #include "Base/Controller/CLArgsManager.h"
 #include "Phys/Numerics/Program/Integrator.h"
 
@@ -16,6 +17,8 @@ int MolecularDynamics::App::run() {
     NumericalIntegration integrator(builder);
 
     backend.run(&integrator);
+
+    Log::Info() << "MolecularDynamics finished." << Log::Flush;
 
     return true;
 }

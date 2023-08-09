@@ -15,7 +15,7 @@ break;
 
 #define DONT_REGISTER false
 
-Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription)
+Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, bool doRegister)
 : InterfaceOwner(name, 100, DONT_REGISTER)
 , numericParams(DONT_REGISTER)
 , dev(DONT_REGISTER)
@@ -27,6 +27,10 @@ Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription)
 
     interface->addSubInterface(numericParams.getInterface());
     interface->addSubInterface(dev.getInterface());
+
+    if(doRegister){
+        InterfaceManager::getInstance().registerInterface(interface);
+    }
 
     Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;

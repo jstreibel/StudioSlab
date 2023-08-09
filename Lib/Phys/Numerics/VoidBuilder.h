@@ -31,7 +31,7 @@ namespace Base {
 
             Str prefix;
 
-            explicit VoidBuilder(Str name, Str generalDescription);
+            explicit VoidBuilder(Str name, Str generalDescription, bool doRegister = false);
 
             NumericParams numericParams;
             Device dev;
@@ -39,6 +39,7 @@ namespace Base {
         public:
             typedef std::shared_ptr<VoidBuilder> Ptr;
 
+            VoidBuilder() = delete;
             virtual ~VoidBuilder() = default;
 
             virtual auto buildOutputManager()         -> OutputManager * = 0;

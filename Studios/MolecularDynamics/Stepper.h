@@ -8,16 +8,25 @@
 #include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Program/NumericParams.h"
 
+#include "Hamiltonians/Lennard-Jones/LennardJones.h"
+
 namespace MolecularDynamics {
 
     class VerletStepper : public Stepper {
+    public:
+        typedef std::pair<PointContainer &, PointContainer &> State;
+
+    private:
         LennardJones physModelMolDynamic;
         PointContainer q, p;
+        State state;
+        Count currStep=0;
 
     public:
+
         VerletStepper(NumericParams &params);
 
-        void step(const Real &dt, size_t n_steps) override;
+        void step(const Real &dt, Count n_steps) override;
 
         auto getCurrentState() const -> const void * override;
 

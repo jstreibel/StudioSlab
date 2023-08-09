@@ -11,6 +11,7 @@ class AppBase : public InterfaceOwner {
 
 protected:
     AppBase(int argc, const char *argv[]);
+    virtual ~AppBase();
 
     StrVector args;
     const int argc;

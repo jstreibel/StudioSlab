@@ -1,7 +1,6 @@
 #include "Langevin.h"
 
 #include "SoftDiskParams.h"
-#include "Simulation/SimParams.h"
 
 #define FRANDOM (random()/(RAND_MAX+1.0))
 

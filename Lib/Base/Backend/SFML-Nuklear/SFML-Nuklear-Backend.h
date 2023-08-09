@@ -16,7 +16,7 @@ class SFMLNuklearBackend : public Backend {
     sf::Font font;
     sf::Text text;
 
-    nk_context *nkContext = nullptr;
+    nk_context nkContext;
 
     bool running=true;
 
@@ -26,9 +26,7 @@ class SFMLNuklearBackend : public Backend {
 public:
     SFMLNuklearBackend();
 
-    void run(Program *integrator) override;
-
-    void _runPrograms();
+    void run(Program *program) override;
 
     void _treatEvents();
 

@@ -74,7 +74,6 @@ set ( NUMERICS_SOURCES
 
 
 set ( THERMO_SOURCES
-		Thermal/Utils/RandUtils.cpp
 		Thermal/Utils/ThermoUtils.cpp
 		Thermal/SpinNetwork.cpp
 

@@ -2,14 +2,24 @@
 // Created by joao on 8/08/23.
 //
 
+#include "Stepper.h"
+
 #include "Builder.h"
+
+#include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+
+#define DO_REGISTER true
 
 namespace MolecularDynamics {
     Builder::Builder()
-    : VoidBuilder("Molecular Dynamics", "Builder for 2-d molecular dynamics simulations") {}
+    : VoidBuilder("Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DO_REGISTER) {}
 
     OutputManager *Builder::buildOutputManager() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
+        auto outputManager = new OutputManager(numericParams);
+
+        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, 20));
+
+        return outputManager;
     }
 
     void *Builder::buildEquationSolver() {
@@ -17,7 +27,7 @@ namespace MolecularDynamics {
     }
 
     Stepper *Builder::buildStepper() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
+        return new MolecularDynamics::VerletStepper(numericParams);
     }
 
     void *Builder::getBoundary() {

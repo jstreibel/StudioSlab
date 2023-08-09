@@ -10,7 +10,7 @@ private:
     Timer timer = Timer();
     const Real maxT;
 public:
-    OutputConsoleMonitor(const NumericParams &params, const int n_steps);
+    OutputConsoleMonitor(const NumericParams &params, const int n_steps_between_calls);
 
     virtual Str getDescription() const {return "console monitor output";}
 

@@ -6,6 +6,8 @@
 #define V_SHAPE_UTILS_H
 
 #include "Types.h"
+#include <typeinfo>
+#include <cxxabi.h>
 
 #ifdef NDEBUG // Release
 #define cast(NAME, TO_TYPE, OBJECT) \
@@ -28,6 +30,19 @@ if(&NAME == nullptr) throw "Bad cast.";
 
 
 namespace Common {
+
+    template<class Class>
+    Str getClassName(Class *thisClass){
+        int status;
+        char* demangled_name = abi::__cxa_demangle(typeid(*thisClass).name(), 0, 0, &status);
+
+        Str returnString(demangled_name);
+
+        if(status != 0)
+            returnString = "<error demangling name>";
+
+        return returnString;
+    }
 
     void                    PrintThere(int x, int y, const char *format, ...);
     auto                    GetDensityChar(float dens) -> char;

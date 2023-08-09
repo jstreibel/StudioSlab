@@ -5,7 +5,7 @@
 #include "InputManyOscillons.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Phys/Thermal/Utils/RandUtils.h"
+#include "Common/RandUtils.h"
 #include "../ThermalMonitor.h"
 
 

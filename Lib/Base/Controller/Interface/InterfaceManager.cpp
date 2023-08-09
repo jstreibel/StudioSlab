@@ -17,7 +17,7 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
 
 void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
     auto &log = Log::Info();
-    log << "InterfaceManager registering interface \"" << anInterface->getName() << "\" [ "
+    log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName() << Log::ResetFormatting << "\" [ "
                 << "priority " << anInterface->priority << " ]";
 
     interfaces.emplace_back(anInterface);
