@@ -23,7 +23,7 @@ class NumericParams : public InterfaceOwner {
     RealParameter::Ptr      t       = RealParameter     ::New(-1, "t", "Max simulation time. If left negative, defaults to L/2. "
 													"Note that this value can be overriden by simulation.");
 
-	IntegerParameter::Ptr   dimMode = IntegerParameter  ::New(0, "m,mode", "Method to compute space measure:"
+	IntegerParameter::Ptr   dimMode = IntegerParameter  ::New(0, "m,dimensions_mode", "Method to compute space measures:"
 															 "\n\t0: h=L/N (option --h is ignored)"
 															 "\n\t1: L=h*N (option --L is ignored)"
 															 "\n\t2: N=L/h (option --N is ignored)"
@@ -32,10 +32,11 @@ class NumericParams : public InterfaceOwner {
 
 	RealParameter::Ptr      h       =  RealParameter    ::New(0.009765625, "h", "Cell 1-measure. Defaults to L/N. This value is "
 														   "ignored unless '--mode' is properly set.");
-    RealParameter::Ptr      r       =  RealParameter    ::New(.1, "r", "dt/h");
+
+    RealParameter::Ptr      dt       =  RealParameter    ::New(-1, "dt", "Timestep parameter. If negative value, then it"
+                                                                         "is set to dt=h/10.");
 
     PosInt n;
-	Real dt;
 
 public:
 	NumericParams(bool doRegister=true);

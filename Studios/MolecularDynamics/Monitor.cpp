@@ -16,7 +16,11 @@ namespace MolecularDynamics {
     Monitor::Monitor(const NumericParams &params)
     : Numerics::OutputSystem::Socket(params, "Particle dynamics monitor", 10)
     , Window()
-    , renderWindow(Backend::GetInstanceSuper<SFMLNuklearBackend>().getRenderWindow()) {
+    , renderWindow(Backend::GetInstanceSuper<SFMLNuklearBackend>().getRenderWindow())
+    , molShapes(2*params.getN())
+    , molShape(CUTOFF_RADIUS, 36)
+    , molTexture()
+    {
         sf::Color skyBlue(135, 206, 235, 32);
         sf::Color someRed(235, 206, 135, 32);
 
@@ -25,7 +29,7 @@ namespace MolecularDynamics {
 
         {
             sf::Image molImg;
-            const int texDim = 512;
+            const int texDim = 256;
 
             std::pair<double, double> nearestZero = {1.e3, .0},
                     smallest    = {.0,   .0},
@@ -92,6 +96,7 @@ namespace MolecularDynamics {
         auto v_p = state->second;
 
         const auto L = (float)params.getL(), O = .0f;;
+        const auto N = params.getN();
 
         const auto L_bitMore = (float)L * 1.2f;
         sf::Color bg(0 , 0, 0);
@@ -148,7 +153,7 @@ namespace MolecularDynamics {
                     renderWindow.draw(moleculeShape);
                 }
             }
-            // renderWindow.draw(&molShapes[0], N_MOLS, sf::Lines);
+            renderWindow.draw(&molShapes[0], N, sf::Lines);
         }
 
 
@@ -172,6 +177,9 @@ namespace MolecularDynamics {
             sf::CircleShape molRadius(CUTOFF_RADIUS);
             molRadius.setPosition(-.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 2 * CUTOFF_RADIUS);
             renderWindow.draw(molRadius);
+
+            molShape.setPosition( -.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 5 * CUTOFF_RADIUS);
+            renderWindow.draw(molShape);
         }
     }
 

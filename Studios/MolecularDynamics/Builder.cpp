@@ -20,7 +20,7 @@ namespace MolecularDynamics {
     OutputManager *Builder::buildOutputManager() {
         auto outputManager = new OutputManager(numericParams);
 
-        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, numericParams.getn()/10));
+        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, numericParams.getn()/5));
 
         auto monitor = new MolecularDynamics::Monitor(numericParams);
         Backend::GetInstanceSuper<GUIBackend>().addWindow(std::shared_ptr<Window>(monitor));
