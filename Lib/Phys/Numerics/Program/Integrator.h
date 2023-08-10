@@ -24,7 +24,6 @@ class NumericalIntegration : public Program {
     bool forceOverStepping = false;
 
     BenchmarkHistogram simTimeHistogram;
-    BenchmarkHistogram nonSimTimeHistogram;
 
     Base::Simulation::VoidBuilder &simBuilder;
     Stepper *stepper;

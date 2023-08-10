@@ -3,58 +3,59 @@
 //
 
 #include <sstream>
+
 #include "NewtonMechanics.h"
-#include "NewtonMechanicsParams.h"
 #include "Hash/HashParams.h"
+#include "Particle.h"
+#include "Base/Tools/Log.h"
 
 
 #define USE_NEW_EXPERIMENTAL_IMPLEMENTATION false
+#define DISSIPATION_FACTOR 0.0
 
+namespace MolecularDynamics {
 
-NewtonMechanics::NewtonMechanics() : dissipation(DISSIPATION_FACTOR),
-                                    spaceHash(HASH_SUBDIVS, Real(SPACE_L)),
-                                    flippedSides(new bool[N_MOLS]) {
-    if(spaceHash.totalLength() != SPACE_L){
-        std::ostringstream ss;
+NewtonMechanics::NewtonMechanics(const NumericParams &p)
+: dissipation(DISSIPATION_FACTOR)
+, spaceHash(HASH_SUBDIVS, Real(p.getL()))
+, params(p)
+, flippedSides(new bool[p.getN()]) {
+    const auto L = params.getL();
+    const auto N = params.getN();
 
-        ss << "Hashspace inconsistency. Hashspace total width is " << spaceHash.totalLength()
-           << " while sim space is " << SPACE_L;
+    if(spaceHash.totalLength() != L){
+        Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is " << spaceHash.totalLength()
+           << " while sim space is " << L;
 
-        std::cout << ss.str();
-
-        throw ss.str().c_str();
+        throw "Hashspace inconsistency";
 
     } else if(spaceHash.l <= CUTOFF_RADIUS) {
-        std::ostringstream ss;
+        Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
+           << " while molecule cutoff radius is " << CUTOFF_RADIUS << Log::Flush;
 
-        ss << "Hashspace inconsistency. Hashspace box length is " << spaceHash.l
-           << " while molecule cutoff radius is " << CUTOFF_RADIUS;
-
-        std::cout << ss.str();
-        throw ss.str().c_str();
+        throw "Hashspace inconsistency";
     }
 
-    for(auto i=0; i<N_MOLS; ++i)
+    for(auto i=0; i<N; ++i)
         flippedSides[i] = false;
 }
 
-NewtonMechanics::~NewtonMechanics() {
-    // TODO delete bools
-    // delete [] flippedSides;
-}
+NewtonMechanics::~NewtonMechanics() = default;
 
 
 void NewtonMechanics::applyBoundaryConditions(PointContainer & v_q) {
-    const Real hw = SPACE_L * .5;
+    const auto L = params.getL();
+
+    const Real hw = L * .5;
     int i = 0;
     for (auto &q : v_q) {
         if (q.x < -hw || q.x >= hw) {
-            q.x -= SPACE_L* floor(q.x/SPACE_L + .5);
+            q.x -= L* floor(q.x/L + .5);
             flippedSides[i] = true;
         }
 
         if (q.y < -hw || q.y >= hw) {
-            q.y -= SPACE_L* floor(q.y/SPACE_L + .5);;
+            q.y -= L* floor(q.y/L + .5);;
             flippedSides[i] = true;
         }
 
@@ -130,7 +131,7 @@ NewtonMechanics::operator()(const PointContainer &v_q, const PointContainer &v_p
         }
     }
 
-    #elif USE_NEW_EXPERIMENTAL_IMPLEMENTATION && false
+    #elif USE_NEW_EXPERIMENTAL_IMPLEMENTATION && false // NOT SO EXPERIMENTAL
 
     // u_2 (molecule pair potential)
     for (int i = 0; i < spaceHash.n; ++i) {
@@ -202,7 +203,6 @@ NewtonMechanics::operator()(const PointContainer &v_q, const PointContainer &v_p
 
     #else
 
-    // Interaction between molecules within the same container
     {
         assert(v_q.size() == v_p.size() && v_q.size() == v_dpdt.size());
         auto N = v_q.size();
@@ -226,4 +226,4 @@ NewtonMechanics::operator()(const PointContainer &v_q, const PointContainer &v_p
     #endif
 }
 
-
+}

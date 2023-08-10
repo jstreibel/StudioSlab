@@ -11,6 +11,7 @@
 
 MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
 : Stepper()
+, physModelMolDynamic(params)
 , q(params.getN())
 , p(params.getN())
 , state(q,p)

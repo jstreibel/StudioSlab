@@ -5,7 +5,9 @@
 #ifndef MOLEKUL_PLAY_SOFTDISKPARAMS_H
 #define MOLEKUL_PLAY_SOFTDISKPARAMS_H
 
-#include "Hamiltonians/NewtonMechanicsParams.h"
+#include "Particle.h"
+
+#include "Common/Types.h"
 
 
 // PARA FORMAR CLUSTERS:
@@ -19,7 +21,6 @@
 #define ε 1.0
 #define σ CUTOFF_RADIUS // raio da interacao
 #define ALPHA 2 // expoente do potencial (quanto maior, mais soft)
-
 
 const Real Temperature = 0; //10e-2;
 

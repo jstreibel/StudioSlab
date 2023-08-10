@@ -80,17 +80,6 @@ namespace MolecularDynamics {
         //molShape.setOutlineThickness(0.05);
         //molShape.setOutlineColor(skyBlue);
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
-
-        /*
-        for(sf::Vertex *track : moleculesHistory) {
-            for (int i = 0; i < MOLS_HISTORY_SIZE; i++) {
-                const float factor = (float(i + 1) / MOLS_HISTORY_SIZE);
-                const auto val = sf::Uint8(128 * factor);
-                track[i] = sf::Vertex({0, 0},
-                                      {255, 255, 255, val});
-            }
-        }
-         */
     }
 
     void Monitor::_out(const OutputPacket &packet) {    }
@@ -102,22 +91,17 @@ namespace MolecularDynamics {
         auto v_q = state->first;
         auto v_p = state->second;
 
-        const double l = SPACE_L * 1.2;
+        const auto L = (float)params.getL(), O = .0f;;
+
+        const auto L_bitMore = (float)L * 1.2f;
         sf::Color bg(0 , 0, 0);
         sf::Color skyBlue(135, 206, 235, 32);
 
-        const float ratio = renderWindow.getSize().x / float(renderWindow.getSize().y);
-        renderWindow.setView(sf::View(sf::Vector2f(.0, .0), sf::Vector2f(l*ratio, -l)));
+        const float ratio = (float)renderWindow.getSize().x / (float)renderWindow.getSize().y;
+        renderWindow.setView(sf::View(sf::Vector2f(.0, .0), sf::Vector2f(L_bitMore*ratio, -L_bitMore)));
         renderWindow.clear(bg);
 
         sf::Shape &moleculeShape = molShape;
-        //float radius = 0.06;
-        //sf::CircleShape moleculeShape = sf::CircleShape(radius, 8);
-        //moleculeShape.setOrigin(radius, radius);
-        //moleculeShape.setFillColor(sf::Color(255, 255, 255, 100));
-
-        const float L = SPACE_L, O = 0;
-
 
         // Hash grid
         {
@@ -128,11 +112,12 @@ namespace MolecularDynamics {
             std::vector<sf::Vertex> subdivs;
 
             for(auto i=1; i<HASH_SUBDIVS; ++i){
-                subdivs.emplace_back(sf::Vertex(base + sf::Vector2f{0, i*l}, cor));
-                subdivs.emplace_back(sf::Vertex(base + sf::Vector2f{L, i*l}, cor));
+                auto il = float(i)*l;
+                subdivs.emplace_back(base + sf::Vector2f{0, il}, cor);
+                subdivs.emplace_back(base + sf::Vector2f{L, il}, cor);
 
-                subdivs.emplace_back(sf::Vertex(base + sf::Vector2f{i*l, 0}, cor));
-                subdivs.emplace_back(sf::Vertex(base + sf::Vector2f{i*l, L}, cor));
+                subdivs.emplace_back(base + sf::Vector2f{il, 0}, cor);
+                subdivs.emplace_back(base + sf::Vector2f{il, L}, cor);
             }
 
             renderWindow.draw(&subdivs[0], subdivs.size(), sf::Lines);
@@ -142,18 +127,18 @@ namespace MolecularDynamics {
         // Particles
         {
             sf::Vector2f offsets[9] = {{-L, -L},
-                                       {O,  -L},
-                                       {L,  -L},
-                                       {-L, O},
-                                       {O,  O},
-                                       {L,  O},
-                                       {-L, L},
-                                       {O,  L},
-                                       {L,  L}};
+                                       { O, -L},
+                                       { L, -L},
+                                       {-L,  O},
+                                       { O,  O},
+                                       { L,  O},
+                                       {-L,  L},
+                                       { O,  L},
+                                       { L,  L}};
             for (auto &q : v_q) {
                 int c = 0;
                 for (auto &o : offsets) {
-                    moleculeShape.setPosition(sf::Vector2f(q.x, q.y) + o);
+                    moleculeShape.setPosition(sf::Vector2f((float)q.x, (float)q.y) + o);
                     if (c == 4)
                         moleculeShape.setFillColor(sf::Color(255, 255, 255, 100));
                     else
@@ -172,11 +157,11 @@ namespace MolecularDynamics {
             sf::Color rosaChoqueDaNina(255, 20, 147);
             sf::Color cor = rosaChoqueDaNina;
             sf::Vertex box[] = {
-                    sf::Vertex(sf::Vector2f(-.5 * SPACE_L, .5 * SPACE_L), cor),
-                    sf::Vertex(sf::Vector2f(.5 * SPACE_L, .5 * SPACE_L), cor),
-                    sf::Vertex(sf::Vector2f(.5 * SPACE_L, -.5 * SPACE_L), cor),
-                    sf::Vertex(sf::Vector2f(-.5 * SPACE_L, -.5 * SPACE_L), cor),
-                    sf::Vertex(sf::Vector2f(-.5 * SPACE_L, .5 * SPACE_L), cor)
+                    sf::Vertex(sf::Vector2f(-.5f * L,  .5f * L), cor),
+                    sf::Vertex(sf::Vector2f( .5f * L,  .5f * L), cor),
+                    sf::Vertex(sf::Vector2f( .5f * L, -.5f * L), cor),
+                    sf::Vertex(sf::Vector2f(-.5f * L, -.5f * L), cor),
+                    sf::Vertex(sf::Vector2f(-.5f * L,  .5f * L), cor)
             };
             renderWindow.draw(box, 5, sf::LineStrip);
         }
@@ -185,7 +170,7 @@ namespace MolecularDynamics {
         // Big circle indicating the interaction cutoff radius
         {
             sf::CircleShape molRadius(CUTOFF_RADIUS);
-            molRadius.setPosition(-.5 * L - 3 * CUTOFF_RADIUS, .5 * L - 2 * CUTOFF_RADIUS);
+            molRadius.setPosition(-.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 2 * CUTOFF_RADIUS);
             renderWindow.draw(molRadius);
         }
     }

@@ -14,15 +14,10 @@
 
 NumericalIntegration::~NumericalIntegration()
 {
-    Log::Note() << "Avg. integration time:" << Log::Flush;
-    std::cout << simTimeHistogram;
-
-    Log::Note() << "Avg. non-integration time:" << Log::Flush;
-    std::cout << nonSimTimeHistogram;
+    Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
 }
 
 void NumericalIntegration::cycle(CycleOptions options) {
-    nonSimTimeHistogram.storeMeasure();
     const auto &p = simBuilder.getNumericParams();
     if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
 
@@ -37,8 +32,6 @@ void NumericalIntegration::cycle(CycleOptions options) {
             _runFullIntegration();
             break;
     }
-
-    nonSimTimeHistogram.startMeasure();
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){

@@ -79,8 +79,9 @@ void SFMLNuklearBackend::_render() {
         l->render(window);
     }
 
-    for(auto win : windows)
+    for(auto win : windows) {
         win->draw();
+    }
 
     window->display();
 }

@@ -3,20 +3,26 @@
 
 
 #include "Hamiltonians/NewtonMechanics.h"
+#include "Phys/Numerics/Program/NumericParams.h"
 
+namespace MolecularDynamics {
 
-class LennardJones : public NewtonMechanics {
-public:
-    LennardJones() = default;
+    class LennardJones : public NewtonMechanics {
+        const Real L;
 
-    static Real U(Real r);
+    protected:
+        Real U(const Point2D &q1, const Point2D &q2) override;
 
-protected:
+        Point2D mdUdr(const Point2D &q1, const Point2D &q2) override;
 
-    Real U(const Point2D &q1, const Point2D &q2) override;
-    Point2D mdUdr (const Point2D &q1, const Point2D &q2) override;
-};
+    public:
+        LennardJones(const NumericParams &);
 
+        static Real U(Real r);
+
+    };
+
+}
 
 
 

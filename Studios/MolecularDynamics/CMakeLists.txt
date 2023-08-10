@@ -28,8 +28,7 @@ set (SOURCES
 
 		Hamiltonians/NewtonMechanics.cpp
 		Hamiltonians/NewtonMechanics.h
-		Hamiltonians/NewtonMechanicsParams.h
-        Monitor.cpp
+		Monitor.cpp
         Monitor.h
 )
 

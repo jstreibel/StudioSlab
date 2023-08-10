@@ -5,34 +5,43 @@
 #ifndef MOLEKUL_PLAY_NEWTONMECHANICS_H
 #define MOLEKUL_PLAY_NEWTONMECHANICS_H
 
-
-#include "Hamiltonians/Types.h"
 #include "Hamiltonians/Hash/MoleculeSpaceHash.h"
 
-
-class NewtonMechanics {
-public:
-    NewtonMechanics();
-    ~NewtonMechanics();
-
-    Real computeEnergy(const PointContainer &v_q, PointContainer &v_p);
-
-    void operator() ( const PointContainer & q ,
-                      const PointContainer & p ,
-                      PointContainer & dpdt , double /* t */);
+#include "Common/Types.h"
+#include "Phys/Numerics/Program/NumericParams.h"
 
 
-    bool *flippedSides;
-    Real dissipation;
+namespace MolecularDynamics {
 
-protected:
-    virtual void applyBoundaryConditions(PointContainer & v_q);
-    virtual Real U(const Point2D &q1, const Point2D &q2) { return 0; };
-    virtual Point2D mdUdr (const Point2D &q1, const Point2D &q2) = 0;
+    class NewtonMechanics {
+        MoleculeSpaceHash spaceHash;
+    protected:
+        const NumericParams &params;
 
-private:
-    MoleculeSpaceHash spaceHash;
-};
+        virtual void applyBoundaryConditions(PointContainer &v_q);
 
+        virtual Real U(const Point2D &q1, const Point2D &q2) { return 0; };
+
+        virtual Point2D mdUdr(const Point2D &q1, const Point2D &q2) = 0;
+
+    public:
+        NewtonMechanics(const NumericParams &);
+
+        ~NewtonMechanics();
+
+        Real computeEnergy(const PointContainer &v_q, PointContainer &v_p);
+
+        void operator()(const PointContainer &q,
+                        const PointContainer &p,
+                        PointContainer &dpdt, double /* t */);
+
+
+        // TODO: delete these bools
+        bool *flippedSides;
+        Real dissipation;
+
+    };
+
+}
 
 #endif //MOLEKUL_PLAY_NEWTONMECHANICS_H

@@ -1,24 +1,29 @@
 #ifndef LANGEVIN_H
 #define LANGEVIN_H
 
-#include "Hamiltonians/Types.h"
 #include "SoftDiskParams.h"
 #include "../NewtonMechanics.h"
+#include "../../Particle.h"
 
-class Langevin : public NewtonMechanics
-{
-public:
-    Langevin(Real dt, Real T=Temperature);
+#include "Common/Types.h"
 
-    void operator() (const MoleculeContainer &m, MoleculeContainer &dmdt, const Real /* t */ );
+namespace MolecularDynamics {
+    class Langevin : public NewtonMechanics {
+    public:
+        Langevin(const NumericParams&, Real T = Temperature);
 
-private:
-    Real U(const Point2D &q1, const Point2D &q2);
-    Point2D mdUdr (const Point2D &q1, const Point2D &q2);
-    Point2D xi();
+        void operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, const Real /* t */);
 
-private:
-    Real T, dt;
-};
+    private:
+        Real U(const Point2D &q1, const Point2D &q2);
+
+        Point2D mdUdr(const Point2D &q1, const Point2D &q2);
+
+        Point2D xi();
+
+    private:
+        Real T, dt;
+    };
+}
 
 #endif // LANGEVIN_H

@@ -1,7 +1,7 @@
 
 #include "LennardJones.h"
 #include "LennardJonesParams.h"
-#include "Hamiltonians/NewtonMechanicsParams.h"
+#include "Particle.h"
 
 #include <cmath>
 
@@ -11,21 +11,25 @@
 #define POW13(A) (POW12(A)*A)
 
 
-inline Point2D LennardJones::mdUdr(const Point2D &q1, const Point2D &q2) {
+MolecularDynamics::LennardJones::LennardJones(const NumericParams &p) : NewtonMechanics(p), L(p.getL()) {
+
+}
+
+inline Point2D MolecularDynamics::LennardJones::mdUdr(const Point2D &q1, const Point2D &q2) {
     Real sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
     Real distSqr;
 
     const Point2D points[] = {
             q2 - q1,
-            Point2D(q2.x - SPACE_L, q2.y) - q1,
-            Point2D(q2.x + SPACE_L, q2.y) - q1,
-            Point2D(q2.x, q2.y - SPACE_L) - q1,
-            Point2D(q2.x, q2.y + SPACE_L) - q1,
+            Point2D(q2.x - L, q2.y) - q1,
+            Point2D(q2.x + L, q2.y) - q1,
+            Point2D(q2.x, q2.y - L) - q1,
+            Point2D(q2.x, q2.y + L) - q1,
 
-            Point2D(q2.x - SPACE_L, q2.y - SPACE_L) - q1,
-            Point2D(q2.x - SPACE_L, q2.y + SPACE_L) - q1,
-            Point2D(q2.x + SPACE_L, q2.y - SPACE_L) - q1,
-            Point2D(q2.x + SPACE_L, q2.y + SPACE_L) - q1
+            Point2D(q2.x - L, q2.y - L) - q1,
+            Point2D(q2.x - L, q2.y + L) - q1,
+            Point2D(q2.x + L, q2.y - L) - q1,
+            Point2D(q2.x + L, q2.y + L) - q1
     };
 
     Point2D resultForce = {.0, .0};
@@ -47,27 +51,28 @@ inline Point2D LennardJones::mdUdr(const Point2D &q1, const Point2D &q2) {
     return resultForce;
 }
 
-Real LennardJones::U(Real r) {
+Real MolecularDynamics::LennardJones::U(Real r) {
     auto inv_n = σ / r;
     return 4. * ε * (POW12(inv_n) - POW6(inv_n));
 }
 
-Real LennardJones::U(const Point2D &q1, const Point2D &q2) {
+Real MolecularDynamics::LennardJones::U(const Point2D &q1, const Point2D &q2) {
     const Real SIGMA_SQR = σ * σ;
     Real distSqr;
+    const auto L = params.getL();
 
     const Point2D points[] = {
             q2 - q1,
 
-            Point2D(q2.x - SPACE_L, q2.y) - q1,
-            Point2D(q2.x + SPACE_L, q2.y) - q1,
-            Point2D(q2.x, q2.y - SPACE_L) - q1,
-            Point2D(q2.x, q2.y + SPACE_L) - q1,
+            Point2D(q2.x - L, q2.y) - q1,
+            Point2D(q2.x + L, q2.y) - q1,
+            Point2D(q2.x, q2.y - L) - q1,
+            Point2D(q2.x, q2.y + L) - q1,
 
-            Point2D(q2.x - SPACE_L, q2.y - SPACE_L) - q1,
-            Point2D(q2.x - SPACE_L, q2.y + SPACE_L) - q1,
-            Point2D(q2.x + SPACE_L, q2.y - SPACE_L) - q1,
-            Point2D(q2.x + SPACE_L, q2.y + SPACE_L) - q1
+            Point2D(q2.x - L, q2.y - L) - q1,
+            Point2D(q2.x - L, q2.y + L) - q1,
+            Point2D(q2.x + L, q2.y - L) - q1,
+            Point2D(q2.x + L, q2.y + L) - q1
     };
 
     for (auto r : points) {
@@ -82,3 +87,7 @@ Real LennardJones::U(const Point2D &q1, const Point2D &q2) {
 
     return 0.0;
 }
+
+
+
+
