@@ -2,7 +2,7 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Base/Tools/Log.h"
 
-OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const int n_steps_between_calls)
+OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const Count n_steps_between_calls)
     : Socket(params, "Console monitor output", n_steps_between_calls),
       maxT(params.gett())
 {

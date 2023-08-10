@@ -26,6 +26,8 @@ void StatsDisplay::addVolatileStat(const Str &stat, const Styles::Color color)
 void StatsDisplay::draw() {
     Window::draw();
 
+    /*
+     *
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
     const float w_ = float(w) - (float)2*winXoffset,
@@ -48,7 +50,7 @@ void StatsDisplay::draw() {
         const auto text = stat.first;
         //const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
-        if(text=="<\\br>"){ /*ImGui::Text(text);*/ ImGui::Separator(); i=0; continue; }
+        if(text=="<\\br>"){ ImGui::Separator(); i=0; continue; }
 
         if(i++%2 && w_ > 500) ImGui::SameLine(w/2.-hSpacing);
 
@@ -82,5 +84,6 @@ void StatsDisplay::draw() {
     }
 
     stats.clear();
+    */
 }
 

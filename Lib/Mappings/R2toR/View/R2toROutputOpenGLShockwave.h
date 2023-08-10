@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "Phys/Graph/Monitor.h"
+#include "Phys/Graph/OpenGLMonitor.h"
 #include "Base/Graphics/ZoomPanRotate.h"
 #include "Phys/Graph/FunctionGraph.h"
 #include "Mappings/R2toR/View/Artists/GraphR2ToR.h"
@@ -14,7 +14,7 @@
 
 namespace R2toR {
 
-    class OutputOpenGLShockwave : public Graphics::Monitor {
+    class OutputOpenGLShockwave : public Graphics::OpenGLMonitor {
     public:
         OutputOpenGLShockwave(const NumericParams &params);
 

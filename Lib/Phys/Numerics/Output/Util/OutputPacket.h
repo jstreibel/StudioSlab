@@ -7,7 +7,7 @@
 
 typedef std::unique_ptr<EqStateOutputInterface*> FieldDataPtr;
 
-class OutputPacket{
+class OutputPacket {
     const void *fieldData;
     /*!
      * This is the field space data. It is not owned by this class, and nobody down the line should worry about this.

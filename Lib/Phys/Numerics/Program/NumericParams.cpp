@@ -26,7 +26,7 @@ auto NumericParams::getxMin() const -> floatt { return **xCenter - **L * .5; }
 auto NumericParams::getxMax()  const -> floatt { return **xCenter + **L*.5; }
 auto NumericParams::gett() const -> floatt { return **t; }
 auto NumericParams::getr() const -> floatt { return **r; }
-auto NumericParams::getn() const -> size_t {
+auto NumericParams::getn() const -> Count {
     return n;
 }
 auto NumericParams::geth() const -> floatt {

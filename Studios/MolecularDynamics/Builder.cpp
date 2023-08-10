@@ -2,10 +2,13 @@
 // Created by joao on 8/08/23.
 //
 
+
 #include "Stepper.h"
+#include "Monitor.h"
 
 #include "Builder.h"
 
+#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
 #define DO_REGISTER true
@@ -17,7 +20,11 @@ namespace MolecularDynamics {
     OutputManager *Builder::buildOutputManager() {
         auto outputManager = new OutputManager(numericParams);
 
-        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, 20));
+        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, numericParams.getn()/10));
+
+        auto monitor = new MolecularDynamics::Monitor(numericParams);
+        Backend::GetInstanceSuper<GUIBackend>().addWindow(std::shared_ptr<Window>(monitor));
+        outputManager->addOutputChannel(monitor);
 
         return outputManager;
     }

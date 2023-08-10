@@ -10,12 +10,12 @@
 #include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
 
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
-#include "Phys/Graph/Monitor.h"
+#include "Phys/Graph/OpenGLMonitor.h"
 #include "Phys/Graph/PointSetGraph.h"
 
 namespace RtoR {
 
-    class Monitor : public Graphics::Monitor {
+    class Monitor : public Graphics::OpenGLMonitor {
         bool notifyKeyboard(unsigned char key, int x, int y) override;
 
     protected:

@@ -240,11 +240,11 @@ bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y)
         return true;
     }
 
-    return Monitor::notifyKeyboard(key, x, y);
+    return OpenGLMonitor::notifyKeyboard(key, x, y);
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
-    Monitor::notifyMouseMotion(x, y);
+    OpenGLMonitor::notifyMouseMotion(x, y);
 
     if(panel.doesHit(x, y)) return panel.notifyMouseMotion(x, y);
 

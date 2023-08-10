@@ -39,7 +39,7 @@ set ( EXPERIMENTAL_SOURCES
 set ( GRAPH_SOURCES
 		Graph/Graph.cpp
 		Graph/PointSetGraph.cpp
-		Graph/Monitor.cpp)
+        Graph/OpenGLMonitor.cpp)
 
 
 set ( NUMERICS_SOURCES

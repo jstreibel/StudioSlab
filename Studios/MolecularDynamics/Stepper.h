@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_STEPPER_H
 #define STUDIOSLAB_STEPPER_H
 
+#include "Particle.h"
+
 #include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Program/NumericParams.h"
 
@@ -14,7 +16,6 @@ namespace MolecularDynamics {
 
     class VerletStepper : public Stepper {
     public:
-        typedef std::pair<PointContainer &, PointContainer &> State;
 
     private:
         LennardJones physModelMolDynamic;

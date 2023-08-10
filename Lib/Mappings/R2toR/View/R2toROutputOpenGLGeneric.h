@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
 #include "Base/Graphics/ZoomPanRotate.h"
-#include "Phys/Graph/Monitor.h"
+#include "Phys/Graph/OpenGLMonitor.h"
 #include "Mappings/R2toR/View/Artists/GraphR2ToR.h"
 #include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Base/Graphics/Window/StatsDisplay.h"
@@ -15,7 +15,7 @@
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 namespace R2toR {
-    class OutputOpenGL : public Graphics::Monitor {
+    class OutputOpenGL : public Graphics::OpenGLMonitor {
     protected:
         Real phiMin, phiMax;
         GraphR2Section mSectionGraph;

@@ -7,11 +7,14 @@
 
 #include <Base/Controller/Nuklear/_nuklear_sfml.hpp>
 
-SFMLNuklearBackend::SFMLNuklearBackend() : Backend("SFML+Nuklear backend") {
+SFMLNuklearBackend::SFMLNuklearBackend() : GUIBackend("SFML+Nuklear backend") {
 
     window = new sf::RenderWindow(
             sf::VideoMode(1920, 1080),
             "SFML Window");
+
+    window->setFramerateLimit(0);
+    window->setPosition(sf::Vector2i(250, 250));
 
     nk_init_default(&nkContext, nullptr);
 }
@@ -21,7 +24,8 @@ void SFMLNuklearBackend::run(Program *program) {
     sf::Clock timer; timer.restart();
     while(running){
 
-        program->cycle(Program::CycleOptions(1));
+        if(!paused)
+            program->cycle(Program::CycleOptions(1));
 
 #if LIMIT_SIM_SPEED == false
         constexpr const auto frameInterval = _FRAME_INTERVAL_MSEC;
@@ -75,5 +79,20 @@ void SFMLNuklearBackend::_render() {
         l->render(window);
     }
 
+    for(auto win : windows)
+        win->draw();
+
     window->display();
+}
+
+auto SFMLNuklearBackend::getRenderWindow() -> sf::RenderWindow & {
+    return *window;
+}
+
+void SFMLNuklearBackend::pause() {
+    paused = true;
+}
+
+void SFMLNuklearBackend::resume() {
+    paused = false;
 }

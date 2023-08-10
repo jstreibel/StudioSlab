@@ -10,7 +10,7 @@
 
 namespace Graphics {
 
-    class Monitor : public Numerics::OutputSystem::Socket, public Window {
+    class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
         std::vector<Animation*> animations;
 
         void writeStats();
@@ -21,14 +21,14 @@ namespace Graphics {
         Timer frameTimer = Timer();
         StatsDisplay stats;
 
-        Real t;
-        size_t step;
+        Real t=.0;
+        size_t step=0;
 
 
     public:
-        typedef std::shared_ptr<Monitor> Ptr;
+        typedef std::shared_ptr<OpenGLMonitor> Ptr;
 
-        Monitor(const NumericParams &params, Str channelName="OpenGL monitor", int stepsBetweenDraws=1);
+        OpenGLMonitor(const NumericParams &params, Str channelName="OpenGL monitor", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
         bool notifyRender(float elTime_msec) final override;

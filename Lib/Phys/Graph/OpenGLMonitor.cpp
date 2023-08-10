@@ -3,14 +3,14 @@
 //
 
 #include <GL/gl.h>
-#include "Monitor.h"
+#include "OpenGLMonitor.h"
 
 #include "Base/Tools/Log.h"
 
 
 using namespace Base;
 
-Graphics::Monitor::Monitor(const NumericParams &params, Str channelName, int stepsBetweenDraws)
+Graphics::OpenGLMonitor::OpenGLMonitor(const NumericParams &params, Str channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
@@ -19,16 +19,16 @@ Graphics::Monitor::Monitor(const NumericParams &params, Str channelName, int ste
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }
 
-void Graphics::Monitor::_out(const OutputPacket &outInfo){
+void Graphics::OpenGLMonitor::_out(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 }
 
-auto Graphics::Monitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
+auto Graphics::OpenGLMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
     return finishFrameAndRender();
 }
 
-void Graphics::Monitor::writeStats() {
+void Graphics::OpenGLMonitor::writeStats() {
     static auto timer = Timer();
     auto elTime = timer.getElTime_msec();
     timer = Timer();
@@ -55,7 +55,7 @@ void Graphics::Monitor::writeStats() {
     lastStep = lastData.getSteps();
 }
 
-bool Graphics::Monitor::finishFrameAndRender() {
+bool Graphics::OpenGLMonitor::finishFrameAndRender() {
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -81,7 +81,7 @@ bool Graphics::Monitor::finishFrameAndRender() {
     return true;
 }
 
-bool Graphics::Monitor::notifyRender(float elTime_msec) {
+bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
     Window::notifyRender(elTime_msec);
 
     finishFrameAndRender();
@@ -89,7 +89,7 @@ bool Graphics::Monitor::notifyRender(float elTime_msec) {
     return true;
 }
 
-bool Graphics::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
+bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == '=') {
         setnSteps(getnSteps()+1);
         return true;
@@ -107,13 +107,13 @@ bool Graphics::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
     return EventListener::notifyKeyboard(key, x, y);
 }
 
-void Graphics::Monitor::notifyReshape(int newWinW, int newWinH) {
+void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
     panel.notifyReshape(newWinW, newWinH);
 }
 
-bool Graphics::Monitor::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
+bool Graphics::OpenGLMonitor::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     panel.notifyScreenReshape(newScreenWidth, newScreenHeight);
     panel.notifyReshape(newScreenWidth, newScreenHeight);
 

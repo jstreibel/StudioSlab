@@ -6,8 +6,8 @@
 
 #include "Stepper.h"
 #include "Common/RandUtils.h"
+#include "Particle.h"
 
-#define CUTOFF_RADIUS 4
 
 MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
 : Stepper()

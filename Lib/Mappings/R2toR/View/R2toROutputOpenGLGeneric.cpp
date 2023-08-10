@@ -3,7 +3,7 @@
 #include "R2toROutputOpenGLGeneric.h"
 
 R2toR::OutputOpenGL::OutputOpenGL(const NumericParams &params, Real phiMin, Real phiMax)
-    : Graphics::Monitor(params, "R2 -> R OpenGL output", 1)
+    : Graphics::OpenGLMonitor(params, "R2 -> R OpenGL output", 1)
     , phiMin(phiMin), phiMax(phiMax)
     , mSectionGraph(params.getxMin(), params.getxMax(), phiMin, phiMax,
                     "Sections", true,
@@ -24,7 +24,7 @@ R2toR::OutputOpenGL::~OutputOpenGL() {
 }
 
 void R2toR::OutputOpenGL::draw() {
-    Graphics::Monitor::draw();
+    Graphics::OpenGLMonitor::draw();
 
     const R2toR::EquationState& fState = *lastData.getEqStateData<R2toR::EquationState>();
     auto &phi = fState.getPhi();

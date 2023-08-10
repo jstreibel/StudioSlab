@@ -16,7 +16,7 @@
 
 RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
                        const Real phiMin, const Real phiMax)
-: Graphics::Monitor(params, "ℝ ↦ ℝ general graphic monitor")
+: Graphics::OpenGLMonitor(params, "ℝ ↦ ℝ general graphic monitor")
 , hamiltonian(hamiltonian)
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
 , mEnergyGraph("Energy")
@@ -94,7 +94,7 @@ void RtoR::Monitor::_out(const OutputPacket &outInfo) {
 
     mEnergyGraph.set_xMax(xMax);
 
-    Graphics::Monitor::_out(outInfo);
+    Graphics::OpenGLMonitor::_out(outInfo);
 }
 
 bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
@@ -118,7 +118,7 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
             break;
     }
 
-    return Graphics::Monitor::notifyKeyboard(key, x, y);
+    return Graphics::OpenGLMonitor::notifyKeyboard(key, x, y);
 }
 
 

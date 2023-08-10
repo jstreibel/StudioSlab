@@ -7,7 +7,10 @@
 
 #include "Common/Types.h"
 
+#define CUTOFF_RADIUS 4
+
 // Used for Verlet
+typedef std::pair<PointContainer &, PointContainer &> State;
 typedef std::pair<PointContainer, PointContainer> VerletMoleculeContainer;
 
 // Used for RK4
