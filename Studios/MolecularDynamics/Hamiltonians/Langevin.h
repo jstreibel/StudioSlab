@@ -14,6 +14,8 @@ namespace MolecularDynamics {
 
     public:
         Langevin(const NumericParams&, Real Temperature);
+
+        void setTemperature(Real T);
     };
 }
 

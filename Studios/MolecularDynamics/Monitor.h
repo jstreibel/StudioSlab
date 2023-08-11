@@ -26,7 +26,12 @@ namespace MolecularDynamics {
 
         // std::vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
     public:
-        Monitor(const NumericParams &params);
+        enum Model {
+            LennardJones,
+            SoftDisk
+        };
+
+        Monitor(const NumericParams &params, Model model);
 
         void draw() override;
 

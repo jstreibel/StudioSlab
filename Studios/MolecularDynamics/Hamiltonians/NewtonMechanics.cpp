@@ -277,4 +277,8 @@ namespace MolecularDynamics {
         return flippedSides;
     }
 
+    auto NewtonMechanics::setDissipation(Real k) -> void {
+        dissipation = k;
+    }
+
 }

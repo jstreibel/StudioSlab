@@ -41,6 +41,8 @@ namespace MolecularDynamics {
 
         ~NewtonMechanics();
 
+        auto setDissipation(Real k) -> void;
+
         Real computeEnergy(const PointContainer &v_q, PointContainer &v_p);
 
         // For velocity Verlet stepper

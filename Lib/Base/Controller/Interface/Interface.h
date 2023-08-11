@@ -16,13 +16,6 @@ class InterfaceListener { public: virtual auto notifyCLArgsSetupFinished()-> voi
 class Interface final {
     const int priority;
 
-public:
-    typedef std::shared_ptr<Interface> Ptr;
-    typedef std::shared_ptr<const Interface> ConstPtr;
-
-private:
-    Interface(Str name, InterfaceOwner *owner, int priority);
-
     friend InterfaceManager;
     friend InterfaceOwner;
 
@@ -34,10 +27,17 @@ private:
 
     std::vector<InterfaceListener*> listeners;
 
+public:
+    typedef std::shared_ptr<Interface> Ptr;
+    typedef std::shared_ptr<const Interface> ConstPtr;
+
+private:
     std::set<Parameter::Ptr> parameters;
     std::set<Ptr> subInterfaces;
 
 public:
+    Interface(Str name, InterfaceOwner *owner, int priority);
+
     /**
      * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
      * be done manually through InterfaceManager::registerInterface(...) method.

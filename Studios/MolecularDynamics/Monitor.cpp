@@ -6,15 +6,20 @@
 
 #include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Particle.h"
+
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
 #include "Hamiltonians/Lennard-Jones/LennardJones.h"
+
+#include "Hamiltonians/SoftDisk/SoftDisk.h"
+
 #include "Base/Tools/Log.h"
 
 namespace MolecularDynamics {
 
 #define SHOW_DOT false
+#define SHOW_RADIUS true
 
-    Monitor::Monitor(const NumericParams &params)
+    Monitor::Monitor(const NumericParams &params, Model model)
     : Numerics::OutputSystem::Socket(params, "Particle dynamics monitor", 10)
     , Window()
     , renderWindow(Backend::GetInstanceSuper<SFMLNuklearBackend>().getRenderWindow())
@@ -43,16 +48,19 @@ namespace MolecularDynamics {
                     const double y = 2.*(j/double(texDim) - .5);
                     const double r = sqrt(x*x + y*y)*CUTOFF_RADIUS;
 
-                    if(r>=0.96*CUTOFF_RADIUS)
+                    if(r>=0.98*CUTOFF_RADIUS && SHOW_RADIUS && false)
                         molImg.setPixel(i, j, sf::Color(0, 255, 0, 255));
                     else if(r < 0.5*1.12*σ && SHOW_DOT)
                         molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
                     else if(!SHOW_DOT){
-                        const auto U = LennardJones::U(r);
+                        Real U;
+                        Real factor;
+
+                        if     (model == Model::LennardJones){ U = LennardJones::U(r); factor = U/ε; }
+                        else if(model == Model::SoftDisk)    { U = SoftDisk::    U(r); factor = U; }
 
                         auto alpha = 255.0;
                         auto color = posColor;
-                        auto factor = U/ε;
 
                         if(U<0){
                             color = negColor;
@@ -80,8 +88,12 @@ namespace MolecularDynamics {
         }
 
         molShape.setTexture(&molTexture);
-        //molShape.setOutlineThickness(0.05);
-        //molShape.setOutlineColor(skyBlue);
+        if(SHOW_RADIUS) {
+            molShape.setOutlineThickness(0.1);
+            auto color = skyBlue;
+            color.a = 50;
+            molShape.setOutlineColor(color);
+        }
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
@@ -172,13 +184,14 @@ namespace MolecularDynamics {
 
 
         // Big circle indicating the interaction cutoff radius
+        if(0)
         {
             sf::CircleShape molRadius(CUTOFF_RADIUS);
             molRadius.setPosition(-.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 2 * CUTOFF_RADIUS);
             renderWindow.draw(molRadius);
 
-            molShape.setPosition( -.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 5 * CUTOFF_RADIUS);
-            renderWindow.draw(molShape);
+            // molShape.setPosition( -.5f * L - 3 * CUTOFF_RADIUS, .5f * L - 5 * CUTOFF_RADIUS);
+            // renderWindow.draw(molShape);
         }
     }
 

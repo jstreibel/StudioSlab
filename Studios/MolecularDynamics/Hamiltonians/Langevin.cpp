@@ -20,6 +20,10 @@ namespace MolecularDynamics {
         return alpha * xi();
     }
 
+    void Langevin::setTemperature(Real temperature) {
+        T = temperature;
+    }
+
 
     // Reference (equilibrium) implementation:
     /*

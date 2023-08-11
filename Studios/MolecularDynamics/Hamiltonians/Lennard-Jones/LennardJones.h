@@ -1,11 +1,11 @@
 ﻿#ifndef LENNARD_JONES_H
 #define LENNARD_JONES_H
 
-#include "Hamiltonians/NewtonMechanics.h"
+#include "Hamiltonians/Langevin.h"
 
 namespace MolecularDynamics {
 
-    class LennardJones : public NewtonMechanics {
+    class LennardJones : public Langevin {
         const Real L;
 
     protected:
@@ -17,7 +17,6 @@ namespace MolecularDynamics {
         LennardJones(const NumericParams &);
 
         static Real U(Real r);
-
     };
 
 }

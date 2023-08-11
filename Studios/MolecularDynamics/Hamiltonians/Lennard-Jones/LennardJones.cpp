@@ -11,7 +11,7 @@
 #define POW13(A) (POW12(A)*A)
 
 
-MolecularDynamics::LennardJones::LennardJones(const NumericParams &p) : NewtonMechanics(p), L(p.getL()) {
+MolecularDynamics::LennardJones::LennardJones(const NumericParams &p) : Langevin(p, 0), L(p.getL()) {
 
 }
 

@@ -79,4 +79,13 @@ namespace MolecularDynamics {
 
         return 0.0;
     }
+
+    Real SoftDisk::U(Real r) {
+
+        if( r > σ) return .0;
+
+        const DoubleAccess arg = {1 - r / σ};
+
+        return ε / ALPHA * pow(arg.val, ALPHA) * arg.isPositive();
+    }
 }
