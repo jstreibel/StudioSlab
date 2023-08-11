@@ -2,34 +2,26 @@ include_directories( ./ )
 
 set (SOURCES
 		main.cpp
-		App.cpp
-		App.h
-		Builder.cpp
-		Builder.h
-        Stepper.cpp
-		Stepper.h
-        Particle.cpp
-        Particle.h
+		App.h			App.cpp
+		Builder.h		Builder.cpp
+		Stepper.h 		Stepper.cpp
+        Particle.h 		Particle.cpp
+		Monitor.h		Monitor.cpp
 
-		Hamiltonians/SoftDisk/SoftDisk.cpp
-		Hamiltonians/SoftDisk/Langevin.cpp
+		Hamiltonians/NewtonMechanics.h					Hamiltonians/NewtonMechanics.cpp
+
+		Hamiltonians/SoftDisk/SoftDisk.h				Hamiltonians/SoftDisk/SoftDisk.cpp
+		Hamiltonians/Langevin.h 						Hamiltonians/Langevin.cpp
 		Hamiltonians/SoftDisk/SoftDiskParams.h
 
-		Hamiltonians/Lennard-Jones/LennardJones.cpp
+		Hamiltonians/Lennard-Jones/LennardJones.h		Hamiltonians/Lennard-Jones/LennardJones.cpp
+
+		Hamiltonians/Hash/MoleculeSpaceHash.h			Hamiltonians/Hash/MoleculeSpaceHash.cpp
+		Hamiltonians/Hash/FixedSizeMoleculeContainer.h	Hamiltonians/Hash/FixedSizeMoleculeContainer.cpp
+		Hamiltonians/Hash/HashParams.h
 
 		#Hamiltonians/GPU/nbody-gpu.cpp
 		#Hamiltonians/GPU/nbody.cu
-
-		Hamiltonians/Hash/MoleculeSpaceHash.cpp
-		Hamiltonians/Hash/MoleculeSpaceHash.h
-		Hamiltonians/Hash/FixedSizeMoleculeContainer.cpp
-		Hamiltonians/Hash/FixedSizeMoleculeContainer.h
-		Hamiltonians/Hash/HashParams.h
-
-		Hamiltonians/NewtonMechanics.cpp
-		Hamiltonians/NewtonMechanics.h
-		Monitor.cpp
-        Monitor.h
 )
 
 add_executable ( MolDynamic ${SOURCES} )

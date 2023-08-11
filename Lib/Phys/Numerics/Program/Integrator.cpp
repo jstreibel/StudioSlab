@@ -19,7 +19,7 @@ NumericalIntegration::~NumericalIntegration()
 
 void NumericalIntegration::cycle(CycleOptions options) {
     const auto &p = simBuilder.getNumericParams();
-    if(getSimulationTime() >= p.gett() && !forceOverStepping) return;
+    if(getSimulationTime() >= p.gett() && !simBuilder.getNumericParams().shouldForceOverstepping()) return;
 
     switch (options.cycleOption){
         case CycleOptions::Cycle_nCycles:
@@ -84,4 +84,6 @@ const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
     return simTimeHistogram;
 }
 
-void NumericalIntegration::doForceOverStepping() {forceOverStepping = true; }
+void NumericalIntegration::doForceOverStepping() {
+    Log::Error("NumericalIntegration") << " doForceOverstepping function is deactivated and won't respond.";
+}

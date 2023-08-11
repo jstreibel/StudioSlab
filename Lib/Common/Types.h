@@ -15,6 +15,13 @@ typedef unsigned long       PosInt;
 typedef std::size_t         Count;
 typedef int_least64_t       BigInt;
 
+#define let     auto
+#define OUT auto&
+#define IN  const auto&
+#define GET auto&
+#define fix     const auto
+#define look    const auto *
+
 typedef std::vector<Real>   VecFloat;
 typedef const VecFloat      VecFloat_I;
 typedef VecFloat            VecFloat_O;
@@ -70,11 +77,15 @@ struct Point2D {
     //
     //Point2D operator - () const { return Point2D(-x,-y); }
 
+    void operator += (const Point2D &p) { x+=p.x; y+=p.y; }
+    void operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
+
     inline Real lengthSqr() const { return x * x + y * y;}
     inline Real length( ) const { return sqrt(lengthSqr());}
 
     Real x, y;
 };
+
 Point2D operator + (const Point2D &a, const Point2D &b);
 Point2D operator - (const Point2D &a, const Point2D &b);
 Point2D operator * (const Real &a, const Point2D &p);

@@ -2,23 +2,25 @@
 // Created by joao on 8/08/23.
 //
 
-#ifndef STUDIOSLAB_STEPPER_H
-#define STUDIOSLAB_STEPPER_H
+#ifndef MOLDYN_VERLET_STEPPER_H
+#define MOLDYN_VERLET_STEPPER_H
+
+#include "Hamiltonians/SoftDisk/SoftDisk.h"
+#include "Hamiltonians/Lennard-Jones/LennardJones.h"
 
 #include "Particle.h"
 
 #include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Program/NumericParams.h"
 
-#include "Hamiltonians/Lennard-Jones/LennardJones.h"
 
 namespace MolecularDynamics {
 
     class VerletStepper : public Stepper {
-    public:
+        LennardJones lennardJones;
+        SoftDisk softDisk;
 
-    private:
-        LennardJones physModelMolDynamic;
+        MoleculeContainer molecules;
         PointContainer q, p;
         State state;
         Count currStep=0;
@@ -36,4 +38,4 @@ namespace MolecularDynamics {
 
 }
 
-#endif //STUDIOSLAB_STEPPER_H
+#endif //MOLDYN_VERLET_STEPPER_H

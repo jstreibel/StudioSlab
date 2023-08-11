@@ -10,6 +10,7 @@
 
 #include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Base/Tools/Log.h"
 
 #define DO_REGISTER true
 
@@ -51,6 +52,14 @@ namespace MolecularDynamics {
 
     void *Builder::newFieldState() {
         throw Str(__PRETTY_FUNCTION__) + " not implemented.";
+    }
+
+    void Builder::notifyCLArgsSetupFinished() {
+        InterfaceOwner::notifyCLArgsSetupFinished();
+
+        Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
+
+        numericParams.sett(-1);
     }
 
 } // MolecularDynamics

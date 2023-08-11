@@ -8,16 +8,17 @@
 #include "Common/RandUtils.h"
 #include "Particle.h"
 
+const Real Temperature = 1e-3;
 
 MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
 : Stepper()
-, physModelMolDynamic(params)
+, lennardJones(params)
+, softDisk(params, Temperature)
+, molecules(params.getN())
 , q(params.getN())
 , p(params.getN())
 , state(q,p)
 {
-
-
     const Count N = params.getN();
     const Real L = params.getL();
 
@@ -50,17 +51,29 @@ MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
             _p = {.0, .0};
         }
     }
+
+    for(Count i=0; i<params.getN(); ++i){
+        auto &m = molecules[i];
+
+        m = {q[i], p[i]};
+    }
 }
 
 void MolecularDynamics::VerletStepper::step(const Real &dt, Count n_steps) {
     static boost::numeric::odeint::velocity_verlet<PointContainer> stepperVerlet;
 
     for(auto i=0; i<n_steps; ++i) {
-        currStep++;
-        const auto t = dt * currStep;
+        const auto t = dt * (Real)currStep;
 
-        auto molecules = std::make_pair(std::ref(q), std::ref(p));
-        stepperVerlet.do_step(physModelMolDynamic, molecules, t, dt);
+        auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
+
+        if(0) {
+            stepperVerlet.do_step(lennardJones, pointPairMolecules, t, dt);
+        } else {
+            stepperVerlet.do_step(softDisk, pointPairMolecules, t, dt);
+        }
+
+        ++currStep;
     }
 }
 

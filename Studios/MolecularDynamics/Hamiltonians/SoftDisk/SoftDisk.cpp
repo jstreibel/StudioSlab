@@ -7,7 +7,11 @@
 
 namespace MolecularDynamics {
 
-    inline Point2D SoftDisk::mdUdr(const Point2D &q1, const Point2D &q2) {
+    SoftDisk::SoftDisk(const NumericParams &p, Real T) : Langevin(p, T) {
+
+    }
+
+    inline Point2D SoftDisk::dUdr(const Point2D &q1, const Point2D &q2) {
         const Real SIGMA_SQR = σ * σ;
         Real normSqr;
 
@@ -75,5 +79,4 @@ namespace MolecularDynamics {
 
         return 0.0;
     }
-
 }

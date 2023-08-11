@@ -15,7 +15,7 @@ MolecularDynamics::LennardJones::LennardJones(const NumericParams &p) : NewtonMe
 
 }
 
-inline Point2D MolecularDynamics::LennardJones::mdUdr(const Point2D &q1, const Point2D &q2) {
+inline Point2D MolecularDynamics::LennardJones::dUdr(const Point2D &q1, const Point2D &q2) {
     Real sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
     Real distSqr;
 

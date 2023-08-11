@@ -28,6 +28,8 @@ namespace MolecularDynamics {
 
         auto newFieldState() -> void * override;
 
+        auto notifyCLArgsSetupFinished() -> void override;
+
     };
 
 } // MolecularDynamics

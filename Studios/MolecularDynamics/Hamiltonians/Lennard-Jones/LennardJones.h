@@ -1,9 +1,7 @@
-﻿#ifndef MOLDYN_H
-#define MOLDYN_H
-
+﻿#ifndef LENNARD_JONES_H
+#define LENNARD_JONES_H
 
 #include "Hamiltonians/NewtonMechanics.h"
-#include "Phys/Numerics/Program/NumericParams.h"
 
 namespace MolecularDynamics {
 
@@ -13,7 +11,7 @@ namespace MolecularDynamics {
     protected:
         Real U(const Point2D &q1, const Point2D &q2) override;
 
-        Point2D mdUdr(const Point2D &q1, const Point2D &q2) override;
+        Point2D dUdr(const Point2D &q1, const Point2D &q2) override;
 
     public:
         LennardJones(const NumericParams &);
@@ -26,4 +24,4 @@ namespace MolecularDynamics {
 
 
 
-#endif // MOLDYN_H
+#endif // LENNARD_JONES_H

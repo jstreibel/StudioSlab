@@ -1,20 +1,21 @@
-﻿#ifndef MOLDYN_H
-#define MOLDYN_H
+﻿#ifndef SOFT_DISK_H
+#define SOFT_DISK_H
 
-#include "Hamiltonians/NewtonMechanics.h"
+#include "Hamiltonians/Langevin.h"
 #include "Common/Types.h"
 
 namespace MolecularDynamics {
-    class SoftDisk : public NewtonMechanics {
+
+    class SoftDisk : public Langevin {
     public:
-        SoftDisk() = default;
+        SoftDisk(const NumericParams &p, Real T);
 
     protected:
         Real U(const Point2D &q1, const Point2D &q2) override;
 
-        Point2D mdUdr(const Point2D &q1, const Point2D &q2) override;
+        Point2D dUdr(const Point2D &q1, const Point2D &q2) override;
     };
 
 }
 
-#endif // MOLDYN_H
+#endif // SOFT_DISK_H

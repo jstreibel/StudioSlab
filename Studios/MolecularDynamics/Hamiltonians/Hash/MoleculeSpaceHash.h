@@ -8,22 +8,28 @@
 #include "FixedSizeMoleculeContainer.h"
 
 
-class MoleculeSpaceHash {
-public:
-    MoleculeSpaceHash(int linSubdivs, Real L);
-    void ComputeHash(const PointContainer &v_q, const PointContainer &v_p, PointContainer &dpdt);
+namespace MolecularDynamics {
 
-    Real totalLength() const;
+    class MoleculeSpaceHash {
+    public:
+        MoleculeSpaceHash(int linSubdivs, Real L);
 
-    FixedSizeMoleculeContainer &get(int i, int j);
-    std::vector<FixedSizeMoleculeContainer::VerletPointTriple*> gather(int i, int j);
+        void ComputeHash(const PointContainer &v_q, const PointContainer &v_p, PointContainer &dpdt);
+
+        Real totalLength() const;
+
+        FixedSizeMoleculeContainer &get(int i, int j);
+
+        std::vector<FixedSizeMoleculeContainer::VerletPointTriple *> gather(int i, int j);
 
 
-    const int n;
-    const Real L, l;
-    std::vector<FixedSizeMoleculeContainer> hashSpace;
+        const int n;
+        const Real L, l;
+        std::vector<FixedSizeMoleculeContainer> hashSpace;
 
-};
+    };
+
+}
 
 
 #endif //MOLEKUL_PLAY_MOLECULESPACEHASH_H

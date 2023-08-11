@@ -18,17 +18,6 @@ TO_TYPE NAME = dynamic_cast<TO_TYPE>(OBJECT); \
 if(&NAME == nullptr) throw "Bad cast.";
 #endif
 
-
-#define let auto
-#define letc const auto
-#define letcp const auto*
-#define letr auto&
-#define letcr const auto&
-#define fix const auto
-//#define pt auto *
-#define look const auto *
-
-
 namespace Common {
 
     template<class Class>

@@ -5,7 +5,7 @@
 
 NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
 {
-    interface->addParameters({N, L, xCenter, t, dt, dimMode, h});
+    interface->addParameters({N, L, xCenter, t, forceOverstepping, dt, dimMode, h});
 }
 
 /*
@@ -43,6 +43,8 @@ void NumericParams::sett(Real tMax) const {
     t->setValue(tMax);
 }
 
+bool NumericParams::shouldForceOverstepping() const { return **forceOverstepping; }
+
 void NumericParams::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
 
@@ -65,6 +67,10 @@ void NumericParams::notifyCLArgsSetupFinished() {
         *t = **L * .5;
         Log::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
     }
+
+    if(**forceOverstepping)
+        Log::Attention("NumericParams") << ": flag '" << forceOverstepping->getCLName(true)
+        << "' is set to active: simulation time limit will be ignored.";
 
     if(*dt<0) {
         **dt = **h/10.0;

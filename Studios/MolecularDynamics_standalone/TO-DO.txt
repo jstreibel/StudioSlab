@@ -1,4 +1,0 @@
-( ) Fazer a simulacao poder trocar de um metodo para outro de forma simples. Por exemplo, de RK4 pra Verlet; de equilibrio termico para dinamica molecular / Langevin, etc.
-( ) Rodar na GPU
-( ) Rodar multithread na CPU
-( ) Fazer um render decente

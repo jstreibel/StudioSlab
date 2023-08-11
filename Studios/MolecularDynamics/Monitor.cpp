@@ -8,6 +8,7 @@
 #include "Particle.h"
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
 #include "Hamiltonians/Lennard-Jones/LennardJones.h"
+#include "Base/Tools/Log.h"
 
 namespace MolecularDynamics {
 
@@ -21,8 +22,8 @@ namespace MolecularDynamics {
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()
     {
-        sf::Color skyBlue(135, 206, 235, 32);
-        sf::Color someRed(235, 206, 135, 32);
+        sf::Color skyBlue(135, 206, 235, 255);
+        sf::Color someRed(235, 206, 135, 255);
 
         auto negColor = skyBlue;
         auto posColor = someRed;
@@ -42,8 +43,8 @@ namespace MolecularDynamics {
                     const double y = 2.*(j/double(texDim) - .5);
                     const double r = sqrt(x*x + y*y)*CUTOFF_RADIUS;
 
-                    if(r>=CUTOFF_RADIUS)
-                        molImg.setPixel(i, j, sf::Color(0, 255, 0, 0));
+                    if(r>=0.96*CUTOFF_RADIUS)
+                        molImg.setPixel(i, j, sf::Color(0, 255, 0, 255));
                     else if(r < 0.5*1.12*σ && SHOW_DOT)
                         molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
                     else if(!SHOW_DOT){
@@ -53,12 +54,9 @@ namespace MolecularDynamics {
                         auto color = posColor;
                         auto factor = U/ε;
 
-                        // if(i==texDim/2 && j>=texDim/2) std::cout << "\nU(" << r << ")/eps=" << factor;
-
                         if(U<0){
                             color = negColor;
-                            //factor = log10(1-9*factor);
-                            alpha *= -factor;
+                            alpha *= factor;
                         }  else {
                             alpha *= (factor>1?1.0:factor);
                         }
@@ -74,9 +72,10 @@ namespace MolecularDynamics {
                 }
             }
 
-            std::cout << "\nNearest zero: " << nearestZero.first << " @ r=" << nearestZero.second
-                      << "\nSmallest: " << smallest.first << " @ r=" << smallest.second
-                      << "\nLargest: " << largest.first << " @ r=" << largest.second << std::endl;
+            Log::Info("ParticleDynamics::Monitor: ")
+                      << "\n\t\t\t\t\tNearest zero " << nearestZero.first << " @ r=" << nearestZero.second
+                      << "\n\t\t\t\t\tSmallest     " << smallest.first << " @ r=" << smallest.second
+                      << "\n\t\t\t\t\tLargest      " << largest.first << " @ r=" << largest.second;
             molTexture.loadFromImage(molImg);
         }
 
