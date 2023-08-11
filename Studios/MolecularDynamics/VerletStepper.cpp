@@ -4,17 +4,14 @@
 
 #include <boost/numeric/odeint.hpp>
 
-#include "Stepper.h"
+#include "VerletStepper.h"
 #include "Common/RandUtils.h"
 #include "Particle.h"
 
-const Real Temperature = 1e-3;
-
-MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
+template<class Model>
+MolecularDynamics::VerletStepper<Model>::VerletStepper(NumericParams &params, Model mechModel)
 : Stepper()
-, lennardJones(params)
-, softDisk(params, Temperature)
-, molecules(params.getN())
+, mechanicsModel(mechModel)
 , q(params.getN())
 , p(params.getN())
 , state(q,p)
@@ -51,37 +48,30 @@ MolecularDynamics::VerletStepper::VerletStepper(NumericParams &params)
             _p = {.0, .0};
         }
     }
-
-    for(Count i=0; i<params.getN(); ++i){
-        auto &m = molecules[i];
-
-        m = {q[i], p[i]};
-    }
 }
 
-void MolecularDynamics::VerletStepper::step(const Real &dt, Count n_steps) {
+template<class Model>
+void MolecularDynamics::VerletStepper<Model>::step(const Real &dt, Count n_steps) {
     static boost::numeric::odeint::velocity_verlet<PointContainer> stepperVerlet;
+
+    auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
 
     for(auto i=0; i<n_steps; ++i) {
         const auto t = dt * (Real)currStep;
 
-        auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
-
-        if(0) {
-            stepperVerlet.do_step(lennardJones, pointPairMolecules, t, dt);
-        } else {
-            stepperVerlet.do_step(softDisk, pointPairMolecules, t, dt);
-        }
+        stepperVerlet.do_step(mechanicsModel, pointPairMolecules, t, dt);
 
         ++currStep;
     }
 }
 
-const void *MolecularDynamics::VerletStepper::getCurrentState() const {
+template<class Model>
+const void *MolecularDynamics::VerletStepper<Model>::getCurrentState() const {
     return &state;
 }
 
-DiscreteSpacePair MolecularDynamics::VerletStepper::getSpaces() const {
-    return DiscreteSpacePair();
+template<class Model>
+DiscreteSpacePair MolecularDynamics::VerletStepper<Model>::getSpaces() const {
+    return {};
 }
 

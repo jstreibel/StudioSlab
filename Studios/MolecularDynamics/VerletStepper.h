@@ -5,29 +5,24 @@
 #ifndef MOLDYN_VERLET_STEPPER_H
 #define MOLDYN_VERLET_STEPPER_H
 
-#include "Hamiltonians/SoftDisk/SoftDisk.h"
-#include "Hamiltonians/Lennard-Jones/LennardJones.h"
-
 #include "Particle.h"
 
 #include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Program/NumericParams.h"
 
-
 namespace MolecularDynamics {
 
+    template<class NewtonMechanicsModel>
     class VerletStepper : public Stepper {
-        LennardJones lennardJones;
-        SoftDisk softDisk;
+        NewtonMechanicsModel mechanicsModel;
 
-        MoleculeContainer molecules;
         PointContainer q, p;
         State state;
         Count currStep=0;
 
     public:
 
-        VerletStepper(NumericParams &params);
+        explicit VerletStepper(NumericParams &params, NewtonMechanicsModel mechModel);
 
         void step(const Real &dt, Count n_steps) override;
 

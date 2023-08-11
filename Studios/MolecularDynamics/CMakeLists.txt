@@ -4,7 +4,7 @@ set (SOURCES
 		main.cpp
 		App.h			App.cpp
 		Builder.h		Builder.cpp
-		Stepper.h 		Stepper.cpp
+        VerletStepper.h VerletStepper.cpp
         Particle.h 		Particle.cpp
 		Monitor.h		Monitor.cpp
 

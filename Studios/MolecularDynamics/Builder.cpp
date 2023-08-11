@@ -3,20 +3,29 @@
 //
 
 
-#include "Stepper.h"
-#include "Monitor.h"
+#include "VerletStepper.cpp"
+#include "VerletStepper.h"
 
+#include "Hamiltonians/Lennard-Jones/LennardJones.h"
+#include "Hamiltonians/SoftDisk/SoftDisk.h"
+
+#include "Monitor.h"
 #include "Builder.h"
 
 #include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Base/Tools/Log.h"
 
+
 #define DO_REGISTER true
+
+const Real Temperature = 1e-3;
 
 namespace MolecularDynamics {
     Builder::Builder()
-    : VoidBuilder("Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DO_REGISTER) {}
+    : VoidBuilder("Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DO_REGISTER) {
+
+    }
 
     OutputManager *Builder::buildOutputManager() {
         auto outputManager = new OutputManager(numericParams);
@@ -35,7 +44,10 @@ namespace MolecularDynamics {
     }
 
     Stepper *Builder::buildStepper() {
-        return new MolecularDynamics::VerletStepper(numericParams);
+        if(true)
+            return new MolecularDynamics::VerletStepper<LennardJones>(numericParams, LennardJones(numericParams));
+        else
+            return new MolecularDynamics::VerletStepper<SoftDisk>(numericParams, SoftDisk(numericParams, Temperature));
     }
 
     void *Builder::getBoundary() {

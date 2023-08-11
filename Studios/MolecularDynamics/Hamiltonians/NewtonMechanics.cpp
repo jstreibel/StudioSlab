@@ -11,29 +11,32 @@
 
 
 #define USE_NEW_EXPERIMENTAL_IMPLEMENTATION false
-#define DISSIPATION_FACTOR 1e-2
+#define DISSIPATION_FACTOR 1e-3
 
 namespace MolecularDynamics {
 
     NewtonMechanics::NewtonMechanics(const NumericParams &p)
     : dissipation(DISSIPATION_FACTOR)
-    , spaceHash(HASH_SUBDIVS, Real(p.getL()))
+    , spaceHash(HASH_SUBDIVS, p.getL())
     , params(p)
     , flippedSides(new bool[p.getN()]) {
         const auto L = params.getL();
         const auto N = params.getN();
 
-        if(spaceHash.totalLength() != L){
-            Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is " << spaceHash.totalLength()
-               << " while sim space is " << L;
+        if(USE_NEW_EXPERIMENTAL_IMPLEMENTATION) {
+            if (spaceHash.totalLength() != L) {
+                Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
+                             << spaceHash.totalLength()
+                             << " while sim space is " << L;
 
-            throw "Hashspace inconsistency";
+                throw "Hashspace inconsistency";
 
-        } else if(spaceHash.l <= CUTOFF_RADIUS) {
-            Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
-               << " while molecule cutoff radius is " << CUTOFF_RADIUS << Log::Flush;
+            } else if (spaceHash.l <= CUTOFF_RADIUS) {
+                Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
+                             << " while molecule cutoff radius is " << CUTOFF_RADIUS << Log::Flush;
 
-            throw "Hashspace inconsistency";
+                throw "Hashspace inconsistency";
+            }
         }
 
         for(auto i=0; i<N; ++i)
