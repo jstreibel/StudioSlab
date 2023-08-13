@@ -19,7 +19,7 @@ namespace Fields {
             using PotentialFunc = Base::FunctionT<Real, Real>;
             typedef EqState::SubStateType           DiscrFuncType;
 
-            explicit Solver(const NumericParams &params,
+            Solver(const NumericParams &params,
                             MyBase::EqBoundaryCondition &du,
                             PotentialFunc &potential)
             : Slab::EquationSolverT<EqState>(params, du)
@@ -34,18 +34,18 @@ namespace Fields {
             }
 
             EqState &
-            dtF(const EqState &fieldStateIn, EqState &fieldStateOut, Real t, Real dt) override {
+            dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override {
                 if(laplacian == nullptr){
                     assert(dV_out == nullptr);
 
-                    laplacian = (DiscrFuncType*)fieldStateIn.getPhi().Clone();
-                    dV_out    = (DiscrFuncType*)fieldStateIn.getPhi().Clone();
+                    laplacian = (DiscrFuncType*)stateIn.getPhi().Clone();
+                    dV_out    = (DiscrFuncType*)stateIn.getPhi().Clone();
                 }
 
-                const auto &iPhi = fieldStateIn.getPhi();
-                const auto &iDPhi = fieldStateIn.getDPhiDt();
-                auto &oPhi = fieldStateOut.getPhi();
-                auto &oDPhi = fieldStateOut.getDPhiDt();
+                const auto &iPhi = stateIn.getPhi();
+                const auto &iDPhi = stateIn.getDPhiDt();
+                auto &oPhi = stateOut.getPhi();
+                auto &oDPhi = stateOut.getDPhiDt();
 
                 // Eq 1
                 { oPhi.SetArb(iDPhi) *= dt; }
@@ -58,7 +58,7 @@ namespace Fields {
                     oDPhi.StoreSubtraction(*laplacian, *dV_out) *= dt;
                 }
 
-                return fieldStateOut;
+                return stateOut;
             }
 
             static bool isDissipating() { return false; }
@@ -67,7 +67,7 @@ namespace Fields {
             DiscrFuncType *laplacian = nullptr
                         , *dV_out    = nullptr;
             PotentialFunc &V;
-            PotentialFunc::Ptr dVDPhi;
+            PotentialFunc::Ptr dVDPhi= nullptr;
         };
 
 }

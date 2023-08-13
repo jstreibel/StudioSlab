@@ -25,8 +25,8 @@ namespace MolecularDynamics {
     }
 
 
-    // Reference (equilibrium) implementation:
     /*
+    // Reference equilibrium implementation (no dp/dt ⟺ equilibrium ⟺ very high dissipation factor ):
     void Langevin::operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, const Real t ) {
         const Real alpha = sqrt(2 * T / dt);
 

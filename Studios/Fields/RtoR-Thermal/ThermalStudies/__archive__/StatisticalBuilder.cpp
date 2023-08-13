@@ -9,16 +9,16 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 #include <math.h>
-#include "InputStatistical.h"
+#include "StatisticalBuilder.h"
 #include "Common/RandUtils.h"
 
-RtoR::InputStatistical::InputStatistical()
+RtoR::StatisticalBuilder::StatisticalBuilder()
 : Builder("Statistical", "Energy and density of oscillons statistical input")
 {
     interface->addParameters({&E, &n});
 }
 
-auto RtoR::InputStatistical::getDetailedDescription() -> Str {
+auto RtoR::StatisticalBuilder::getDetailedDescription() -> Str {
     return Str("Fractality in the signum-Gordon field theory."
                   ""
                   "Oscillons are a very degenerate solution to the 1+1 dimensional signum-Gordon equation."
@@ -29,7 +29,7 @@ auto RtoR::InputStatistical::getDetailedDescription() -> Str {
                   "on a bath of small oscillons (some sort of thermal equilibrium) could find subsidy to remain stable.");
 }
 
-auto RtoR::InputStatistical::getBoundary() -> void * {
+auto RtoR::StatisticalBuilder::getBoundary() -> void * {
     auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
     auto xLeft = numericParams.getxMin();
 

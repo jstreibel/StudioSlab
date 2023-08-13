@@ -10,11 +10,10 @@
 #include "Base/Tools/Log.h"
 
 
-AppBase::AppBase(int argc, const char **argv)
-    : InterfaceOwner("App", 100, true), argc(argc), argv(argv) {
+AppBase::AppBase(int argc, const char **argv, bool doRegister)
+    : InterfaceOwner("App", 100, doRegister) {
 
-    for(auto i=0; i<argc; ++i) args.emplace_back(Str(argv[i]));
-
+    CLArgsManager::Initialize(argc, argv);
 }
 
 AppBase::~AppBase() {
@@ -22,7 +21,7 @@ AppBase::~AppBase() {
 }
 
 void AppBase::parseCLArgs() {
-    CLArgsManager::Parse(argc, argv);
+    CLArgsManager::Parse();
 }
 
 

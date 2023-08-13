@@ -1,23 +1,17 @@
 
 #include "XYApp.h"
 
-#include "../Recycle/xy/BasicSim.h"
+#include "Base/App/CrashPad.h"
 
-#include <Studios/App/CrashPad.h>
+
+int run(int argc, const char *argv[]) {
+    auto app = new XY::App(argc, argv);
+
+    return app->run();
+}
+
 
 int main(int argc, const char *argv[]) {
-
-    if(1){
-        auto app = new XYApp(argc, argv);
-
-        SafetyNet::jump(*app);
-
-        return 0;
-    }
-
-    try {
-        return RunBasicSim(argc, argv);
-    } catch (const char *msg){
-        std::cout << "Exception: \"" << msg << "\". Terminating";
-    }
+    //return run(argc, argv);
+    return SafetyNet::jump(run, argc, argv);
 }

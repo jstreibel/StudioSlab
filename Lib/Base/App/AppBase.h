@@ -10,12 +10,8 @@
 class AppBase : public InterfaceOwner {
 
 protected:
-    AppBase(int argc, const char *argv[]);
+    AppBase(int argc, const char *argv[], bool doRegister=true);
     virtual ~AppBase();
-
-    StrVector args;
-    const int argc;
-    const char **argv;
 
     void parseCLArgs();
 

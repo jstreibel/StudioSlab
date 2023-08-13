@@ -7,11 +7,12 @@
 
 #include "Common/Types.h"
 
-#include "../../Model/XYNetwork.h"
+#include "Base/Controller/Nuklear/NuklearSFML.h"
 #include "Phys/Thermal/Utils/ThermoUtils.h"
+
+#include "../../Model/XYNetwork.h"
 #include "../Tools/GraphAndAverageCalc.h"
 #include "../ViewControlBase.h"
-#include <Base/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
 
@@ -40,15 +41,15 @@ namespace ThermoOutput {
         GraphAndAverageCalc *mag_t_View,
                             *en_t_View;
 
-        Graph *corr_t_View,
-              *T_t_View,
-              *h_t_View,
-              *accepted_t_View,
-              *mag_T_View,
-              *en_T_View,
-              *chi_T_View,
-              *C_v_View,
-              *histeresisView;
+        Graph *corr_t_View      = nullptr,
+              *T_t_View         = nullptr,
+              *h_t_View         = nullptr,
+              *accepted_t_View  = nullptr,
+              *mag_T_View       = nullptr,
+              *en_T_View        = nullptr,
+              *chi_T_View       = nullptr,
+              *C_v_View         = nullptr,
+              *histeresisView   = nullptr;
 
         int MCSteps;
         int transientSize;

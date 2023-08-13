@@ -47,10 +47,6 @@ namespace MolecularDynamics {
         return outputManager;
     }
 
-    void *Builder::buildEquationSolver() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
-    }
-
     Stepper *Builder::buildStepper() {
         fix T = *temperature;
         fix k = *dissipation;
@@ -69,6 +65,10 @@ namespace MolecularDynamics {
         }
 
         throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
+    }
+
+    void *Builder::buildEquationSolver() {
+        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
     }
 
     void *Builder::getBoundary() {

@@ -17,6 +17,7 @@ set ( SlabLibs
 include_directories(../Lib)
 
 add_subdirectory(MolecularDynamics)
+add_subdirectory(XY)
 add_subdirectory(Fields)
 add_subdirectory(Tests)
 add_subdirectory(Prototype)

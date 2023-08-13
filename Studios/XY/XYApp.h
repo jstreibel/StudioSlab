@@ -5,27 +5,27 @@
 #ifndef STUDIOSLAB_XYAPP_H
 #define STUDIOSLAB_XYAPP_H
 
-#include <Studios/App/AppBase.h>
+#include "Base/App/AppBase.h"
+#include "Base/Controller/Interface/CommonParameters.h"
 
-#include <Studios/Controller/Interface/CommonParameters.h>
-#include <Studios/Controller/Interface/Interface.h>
+namespace XY {
 
-class XYApp : public AppBase {
+    class App : public AppBase {
 
-    IntegerParameter L = {20, "sqrtN", "Sqrt of number of sites"};
-    IntegerParameter TSteps = {75, "TSteps", "Temperature steps between TMax and TMin"};
-    IntegerParameter MCSteps = {7000, "MCS,s", "Total Monte Carlo steps to simulate"};
-    IntegerParameter transient = {1000, "transient", "Transient guess to reach equilibrium"};
-    DoubleParameter T = {1.0, "T,T", "Temperature"};
+        IntegerParameter N = {20, "N,sqrtN", "Sqrt of number of sites"};
+        IntegerParameter MCSteps = {7000, "S,MCS", "Total Monte Carlo steps to simulate"};
+        IntegerParameter transient = {1000, "transient", "Transient guess to reach equilibrium"};
+        RealParameter T = {1.0, "T,temperature", "Temperature"};
 
-public:
+    public:
 
-    XYApp(int argc, const char **argv);
+        App(int argc, const char **argv);
 
-    int run() override;
+        int run() override;
 
-};
+    };
 
+}
 
 
 #endif //STUDIOSLAB_XYAPP_H

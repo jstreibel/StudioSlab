@@ -60,6 +60,16 @@ private:
     void _shake(double h);
 public:
 
+    /**
+     *
+     * @param L
+     * @param T
+     * @param h external magnetic field (not implemented)
+     * @param viewer
+     * @param ic
+     * @param dynamic
+     * @param sweeping
+     */
     explicit MetropolisAlgorithm(int L, Real T, Real h,
                                  ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
                                  Dynamic dynamic, Sweeping sweeping);

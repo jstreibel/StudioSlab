@@ -7,7 +7,6 @@
 #include <iostream>
 #include <iomanip>
 
-
 XYNetwork::XYNetwork(int L) : L(L), N(L*L), ThetaField(L * L) {
 
 }
@@ -48,6 +47,7 @@ Real XYNetwork::E(Real h) const {
 
             soma -= cos(th-th_east) + cos(th-th_south);
         }
+
     return soma;
 }
 
@@ -83,7 +83,7 @@ Real XYNetwork::ssrDeltaE(int i, int j, Real h, Real delta) const {
          thE = theta(i + 1, j),
          thW = theta(i - 1, j);
 
-    #define deltaE_viz(th_viz) cos(thC-(th_viz)) - cos(thC-(th_viz) + delta)
+    #define deltaE_viz(th_viz) (cos(thC-(th_viz)) - cos(thC-(th_viz) + delta))
 
     auto vizN_deltaE = deltaE_viz(thN),
          vizS_deltaE = deltaE_viz(thS),

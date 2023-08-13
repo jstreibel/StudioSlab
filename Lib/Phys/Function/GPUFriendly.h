@@ -16,7 +16,7 @@ namespace Base {
 #else
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \
-        CLASS_NAME() : Function(nullptr) {}
+        CLASS_NAME() : FunctionT(nullptr) {}
 #endif
 
     template<class PosSpaceType, class TargetSpaceType>

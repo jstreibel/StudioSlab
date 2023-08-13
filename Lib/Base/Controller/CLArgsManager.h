@@ -11,11 +11,19 @@
 class CLArgsManager {
     static CLArgsManager *singleton;
 
+    int argc;
+    const char **argv;
+
+    CLArgsManager() = delete;
+    CLArgsManager(int argc, const char **argv);
+
 public:
+    static auto Initialize(int argc, const char **argv) -> CLArgsManager *;
+
     static auto GetInstance() -> CLArgsManager *;
 
     static void ShowHelp();
-    static void Parse(int argc, const char **argv);
+    static void Parse();
 
     static auto BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void;
 

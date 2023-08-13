@@ -18,7 +18,7 @@ InterfaceOwner::InterfaceOwner(Str interfaceName, int priority, bool doRegister)
 void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister) {
     interface = Interface::New(interfaceName, this, priority);
 
-    if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
+    if(doRegister) registerToManager();
     else Log::Debug() << Common::getClassName(this) << ": interface \"" << interface->getName() << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
 }
 
@@ -33,6 +33,12 @@ void InterfaceOwner::notifyCLArgsSetupFinished() {
     info << Log::Flush;
 }
 
+auto InterfaceOwner::registerToManager() const -> void {
+    assert(interface != nullptr);
+
+    InterfaceManager::getInstance().registerInterface(interface);
+}
+
 auto InterfaceOwner::getInterface()       -> Interface::Ptr {
     return interface;
 }
@@ -40,4 +46,6 @@ auto InterfaceOwner::getInterface()       -> Interface::Ptr {
 auto InterfaceOwner::getInterface() const -> Interface::Ptr {
     return interface;
 }
+
+
 

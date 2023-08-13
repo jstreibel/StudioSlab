@@ -2,19 +2,19 @@
 // Created by joao on 7/25/22.
 //
 
-#include "InputRandomEnergyOverDotPhi.h"
+#include "RandomEnergyOverDotPhiBuilder.h"
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Common/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
-RtoR::InputRandomEnergyOverDotPhi::InputRandomEnergyOverDotPhi()
+RtoR::RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
 : Builder("Random dphipt", "Energy density over time-derivative of field")
 {
     interface->addParameters({&E});
 }
 
-auto RtoR::InputRandomEnergyOverDotPhi::getBoundary() -> void* {
+auto RtoR::RandomEnergyOverDotPhiBuilder::getBoundary() -> void* {
     auto N = numericParams.getN();
     auto h = numericParams.geth();
     auto dotPhi = (RtoR::FunctionArbitraryCPU*)newFunctionArbitrary();

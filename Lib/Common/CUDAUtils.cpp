@@ -6,6 +6,7 @@
 
 #include "Types.h"
 
+#if USE_CUDA
 void cew(cudaError err){
 
     auto errStr = cudaGetErrorString(err);
@@ -14,3 +15,4 @@ void cew(cudaError err){
 
     if (err != cudaError::cudaSuccess) throw errMsg;
 }
+#endif

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 
 # "Reproduce CUDA incompatibility with latest g++"
-set( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR  ON )
+set( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR  OFF )
 
 message( NOTICE "Compatibility test error reproduction is ${REPRODUCE_CUDA_INCOMPATIBILITY_ERROR}")
 

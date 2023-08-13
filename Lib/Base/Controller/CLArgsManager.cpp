@@ -8,10 +8,20 @@
 
 CLArgsManager* CLArgsManager::singleton = nullptr;
 
+CLArgsManager::CLArgsManager(int argc, const char **argv)
+: argc(argc), argv(argv) {
+
+}
+
+auto CLArgsManager::Initialize(int argc, const char **argv) -> CLArgsManager * {
+    if(singleton != nullptr) throw Str("CLArgsManager has already been initialized!");
+
+    CLArgsManager::singleton = new CLArgsManager(argc, argv);
+    return CLArgsManager::GetInstance();
+}
 
 auto CLArgsManager::GetInstance() -> CLArgsManager * {
-    if(singleton == nullptr)
-        singleton = new CLArgsManager;
+    if(singleton == nullptr) throw Str("CLArgsManager has not been initialized!");
 
     return singleton;
 }
@@ -20,7 +30,7 @@ void CLArgsManager::ShowHelp() {
     throw "Show help not implemented";
 }
 
-void CLArgsManager::Parse(int argc, const char **argv) {
+void CLArgsManager::Parse() {
     CLOptionsDescription allOptions("Pendulum");
 
     allOptions.add_options("General")("help", "Print this help.");
@@ -32,7 +42,10 @@ void CLArgsManager::Parse(int argc, const char **argv) {
         allOptions.add_options();
     }
 
-    auto result = allOptions.parse(argc, argv);
+    fix argc = CLArgsManager::GetInstance()->argc;
+    fix argv = CLArgsManager::GetInstance()->argv;
+
+    let result = allOptions.parse(argc, argv);
 
     InterfaceManager::getInstance().feedInterfaces(result);
 
@@ -52,3 +65,6 @@ auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface, CLOpti
     for(const auto p : paramMap)
         p->addToOptionsGroup(group);
 }
+
+
+

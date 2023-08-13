@@ -8,11 +8,11 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 namespace RtoR {
-    class InputManyOscillons  : public Builder {
+    class ManyOscillonsBuilder  : public Builder {
 
         IntegerParameter nOscillons = IntegerParameter(100, "n_osc", "Number of oscillons distributed.");
     public:
-        InputManyOscillons();
+        ManyOscillonsBuilder();
         auto getBoundary() -> void * override;
 
     protected:

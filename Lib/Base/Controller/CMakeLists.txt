@@ -13,6 +13,7 @@ set ( CONSOLE_SOURCES
 
 set ( NUKLEAR_SOURCES
 		Nuklear/NuklearImplementation.cpp
+		Nuklear/NuklearSFML.h
 		)
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Controller )

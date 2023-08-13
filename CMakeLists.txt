@@ -57,14 +57,14 @@ endif()
 
 
 if( STUDIOSLAB_CUDA_SUPPORT )
+	set(CMAKE_CUDA_ARCHITECTURES 61)
+
+	enable_language( CUDA )
+
 	set(CUDA_DIR /opt/cuda)
 
 	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
 	include_directories(/opt/cuda/include)
-
-	enable_language( CUDA )
-
-	set(CMAKE_CUDA_ARCHITECTURES 61)
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
 	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA architectures is ${CMAKE_CUDA_ARCHITECTURES}"  )

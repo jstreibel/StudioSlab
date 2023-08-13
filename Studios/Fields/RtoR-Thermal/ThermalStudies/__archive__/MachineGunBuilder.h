@@ -9,12 +9,12 @@
 
 
 namespace RtoR {
-    class InputMachineGun  : public Builder {
+    class MachineGunBuilder  : public Builder {
         RealParameter v1 = RealParameter{0.5, "v1", "Left oscillon's border speed."};
         IntegerParameter n = IntegerParameter{10, "n", "Number of shooting tiny oscillons."};
 
     public:
-        InputMachineGun();
+        MachineGunBuilder();
         auto getBoundary() -> void * override;
     };
 }

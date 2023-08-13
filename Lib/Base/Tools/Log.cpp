@@ -37,16 +37,16 @@ const Str Log::BoldFace          = "\033[1m";
 const Str Log::Italic            = "\033[3m"; // Might not work
 const Str Log::Underscore        = "\033[4m"; // Might not work
 
-const Str Log::InfoFormat = Log::ResetFormatting + Log::FGCyan;
-const Str Log::NoteFormat = Log::ResetFormatting + Log::FGWhite;
-const Str Log::AttentionFormat = Log::ResetFormatting + Log::FGMagenta;
-const Str Log::CriticalFormat = Log::ResetFormatting + Log::BoldFace + Log::BGMagenta ;
-const Str Log::DebugFormat = Log::ResetFormatting + Log::Italic + Log::FGMagenta;
-const Str Log::SuccessFormat = Log::ResetFormatting + Log::FGGreen;
-const Str Log::WarningFormat = Log::ResetFormatting + Log::FGYellow;
-const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::FGBlack + Log::BGMagenta;
-const Str Log::ErrorFormat = Log::ResetFormatting + Log::FGRed;
-const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::BoldFace + Log::FGRed;
+const Str Log::InfoFormat =             Log::ResetFormatting + Log::FGCyan;
+const Str Log::NoteFormat =             Log::ResetFormatting + Log::FGWhite;
+const Str Log::AttentionFormat =        Log::ResetFormatting + Log::FGMagenta;
+const Str Log::CriticalFormat =         Log::ResetFormatting                  + Log::BGMagenta + Log::BoldFace  ;
+const Str Log::DebugFormat =            Log::ResetFormatting + Log::FGMagenta                  + Log::Italic ;
+const Str Log::SuccessFormat =          Log::ResetFormatting + Log::FGGreen                    + Log::BoldFace ;
+const Str Log::WarningFormat =          Log::ResetFormatting + Log::FGYellow;
+const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::FGBlack   + Log::BGMagenta;
+const Str Log::ErrorFormat =            Log::ResetFormatting + Log::FGRed;
+const Str Log::ErrorFatalFormat =       Log::ResetFormatting + Log::FGRed                      + Log::BoldFace;
 
 const Log::FlushClass Log::Flush;
 

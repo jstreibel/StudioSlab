@@ -6,13 +6,16 @@
 
 #include "../../Utils/ViewerUtils.h"
 #include "Base/Graphics/Styles/Colors.h"
-#include <Base/Controller/Nuklear/NuklearSFML.h>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/OpenGL.hpp>
+#include "Base/Controller/Nuklear/NuklearSFML.h"
+
 #include <ostream>
 #include <fstream>
 #include <boost/range/combine.hpp>
 #include <iostream>
+
 
 
 #define COMPUTE_AVERAGES false
@@ -407,7 +410,7 @@ namespace ThermoOutput {
         }
         nk_input_end(nkContext);
 
-
+        //nk_clear(nkContext);
         if(nk_begin(nkContext, "Manips",
                     nk_rect(isingSpriteSize+ 2 * _border, isingSpriteSize, _graphsWidth, _graphsHeight),
                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_TITLE)){
@@ -508,13 +511,14 @@ namespace ThermoOutput {
         window.draw(text);
 
 
-        window.draw(*mag_t_View);
-        window.draw(*en_t_View);
-        window.draw(*corr_t_View);
-        window.draw(*T_t_View);
-        window.draw(*h_t_View);
+        // window.draw(*mag_t_View);
+        // window.draw(*en_t_View);
+        // window.draw(*corr_t_View);
+        // window.draw(*T_t_View);
+        // window.draw(*h_t_View);
 
-        window.draw(*accepted_t_View);
+        // window.draw(*accepted_t_View);
+
         //window.draw(*histeresisView);
         //window.draw(*mag_T_View);
         //window.draw(*en_T_View);

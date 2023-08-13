@@ -81,7 +81,7 @@ set ( THERMO_SOURCES
 
 		Thermal/Model/XYNetwork.cpp
 
-		Thermal/IO/SingleSim/SingleSimViewController.cpp
+		Thermal/IO/SingleSim/SingleSimViewController.h		Thermal/IO/SingleSim/SingleSimViewController.cpp
 
 		Thermal/IO/ManyHistories/QuenchViewController.cpp
 		Thermal/IO/ManyHistories/HistoryViewController.cpp

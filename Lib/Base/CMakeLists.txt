@@ -29,6 +29,6 @@ if ( WRAP_BASE_LIB )
 			Slab-Base-Tools
     		)
 
-    message(NOTICE "Wrapped all Base libs into single library " ${LIB_LOCAL_NAME})
+    message(NOTICE "Wrapping all Base libs into single library " ${LIB_LOCAL_NAME})
 
 endif()

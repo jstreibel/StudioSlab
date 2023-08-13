@@ -2,17 +2,17 @@
 // Created by joao on 04/04/2020.
 //
 
-#include "InputMachineGun.h"
+#include "MachineGunBuilder.h"
 
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
-RtoR::InputMachineGun::InputMachineGun() : Builder("Machinegun", "Machinegun scattering") {
+RtoR::MachineGunBuilder::MachineGunBuilder() : Builder("Machinegun", "Machinegun scattering") {
     interface->addParameters({&v1, &n});
 
 }
 
-auto RtoR::InputMachineGun::getBoundary() -> void * {
+auto RtoR::MachineGunBuilder::getBoundary() -> void * {
     RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
     auto scaleBig = 1.0;

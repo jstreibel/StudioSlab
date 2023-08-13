@@ -13,6 +13,12 @@
 
 #endif
 
+#if USE_CUDA
+#define DEVICES __device__ __host__
+#else
+#define DEVICES
+#endif
+
 #define FLOAT64 double
 #define FLOAT32 float
 

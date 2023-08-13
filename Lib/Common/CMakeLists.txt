@@ -11,9 +11,13 @@ set ( UTIL_SOURCES
 		UtilsCollection/Resample.cpp	UtilsCollection/Resample.h
 
 		ColorStrings.h
-		CUDAUtils.cpp	CUDAUtils.h
         Types.cpp		Types.h
 )
+
+if( STUDIOSLAB_CUDA_SUPPORT )
+	set(UTIL_SOURCES ${UTIL_SOURCES}
+			CUDAUtils.cpp	CUDAUtils.h)
+endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
 

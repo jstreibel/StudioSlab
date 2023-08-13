@@ -2,20 +2,20 @@
 // Created by joao on 04/04/2020.
 //
 
-#include "InputManyOscillons.h"
+#include "ManyOscillonsBuilder.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Common/RandUtils.h"
-#include "../ThermalMonitor.h"
+#include "../../ThermalMonitor.h"
 
 
-RtoR::InputManyOscillons::InputManyOscillons()
+RtoR::ManyOscillonsBuilder::ManyOscillonsBuilder()
 : Builder("Many oscillons", "General scattering of many oscillons.")
 {
     interface->addParameters({&nOscillons});
 }
 
-auto RtoR::InputManyOscillons::getBoundary() -> void * {
+auto RtoR::ManyOscillonsBuilder::getBoundary() -> void * {
     int n = nOscillons;
     auto L = numericParams.getL();
     auto xMin = numericParams.getxMin();
@@ -38,6 +38,6 @@ auto RtoR::InputManyOscillons::getBoundary() -> void * {
     return new BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
 }
 
-RtoR::Monitor *RtoR::InputManyOscillons::buildOpenGLOutput() {
+RtoR::Monitor *RtoR::ManyOscillonsBuilder::buildOpenGLOutput() {
     return new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
 }

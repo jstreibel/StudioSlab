@@ -19,7 +19,9 @@ set ( MODELS_SOURCES
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
 		KleinGordon/R2toR/EquationSolver.h
 		KleinGordon/R2toR/EquationState.cpp
-		)
+        LangevinKleinGordon/LangevinKGSolver.cpp
+        LangevinKleinGordon/LangevinKGSolver.h
+)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu )

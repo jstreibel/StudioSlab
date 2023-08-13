@@ -20,14 +20,14 @@ message(NOTICE "Added executable Signals-RtoR")
 message(NOTICE "SlabLibs: ${SlabLibs}")
 
 add_executable ( Fields-RtoR
-		RtoRPureSG/MainRtoR.cpp
+		RtoR-PureSG/MainRtoR.cpp
 
-		RtoRPureSG/SingleFormations/input-perturbed.cpp
-		RtoRPureSG/SingleFormations/input-shockwave.cpp
-		RtoRPureSG/SingleFormations/InputSingleOscillon.cpp
+		RtoR-PureSG/SingleFormations/input-perturbed.cpp
+		RtoR-PureSG/SingleFormations/input-shockwave.cpp
+		RtoR-PureSG/SingleFormations/InputSingleOscillon.cpp
 
-		RtoRPureSG/InteractingFormations/input-sym-oscillons.cpp
-		RtoRPureSG/InteractingFormations/input-general-oscillons.cpp
+		RtoR-PureSG/InteractingFormations/input-sym-oscillons.cpp
+		RtoR-PureSG/InteractingFormations/input-general-oscillons.cpp
 )
 target_link_libraries ( Fields-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU )
 #set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)
@@ -39,16 +39,16 @@ message(NOTICE "Added executable Fields-RtoR")
 
 
 add_executable (Fields-RtoR-Thermal
-		RtoRThermalSG/MainRtoRThermal.cpp
+		RtoR-Thermal/MainRtoRThermal.cpp
 
-		RtoRThermalSG/ThermalMonitor.cpp
-		RtoRThermalSG/ThermalMonitor.h
+		RtoR-Thermal/ThermalMonitor.cpp
+		RtoR-Thermal/ThermalMonitor.h
 
-		RtoRThermalSG/ThermalStudies/InputManyOscillons.cpp
-		RtoRThermalSG/ThermalStudies/InputMachineGun.cpp
-		RtoRThermalSG/ThermalStudies/InputStatistical.cpp
-		RtoRThermalSG/ThermalStudies/InputRandomEnergyOverDotPhi.cpp
-		RtoRThermalSG/ThermalStudies/ThermalBuilder.cpp RtoRThermalSG/ThermalStudies/ThermalBuilder.h)
+		RtoR-Thermal/ThermalStudies/__archive__/ManyOscillonsBuilder.cpp
+		RtoR-Thermal/ThermalStudies/__archive__/MachineGunBuilder.cpp
+		RtoR-Thermal/ThermalStudies/__archive__/StatisticalBuilder.cpp
+		RtoR-Thermal/ThermalStudies/__archive__/RandomEnergyOverDotPhiBuilder.cpp
+		RtoR-Thermal/ThermalStudies/ThermalBuilder.cpp RtoR-Thermal/ThermalStudies/ThermalBuilder.h)
 target_compile_definitions( Fields-RtoR-Thermal PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-Thermal Slab-Models Slab-Maps-RtoR-Periodic_GPU )
 
