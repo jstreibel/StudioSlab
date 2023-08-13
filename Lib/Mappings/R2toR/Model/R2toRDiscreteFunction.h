@@ -35,8 +35,8 @@ namespace R2toR {
 
         Real operator()(Real2D x) const override;
 
-        Base::DiscreteFunction<Real2D, Real> &
-        operator=(const Base::DiscreteFunction<Real2D, Real> &func) override;
+        // Base::DiscreteFunction<Real2D, Real> &
+        // operator=(const Base::DiscreteFunction<Real2D, Real> &func) override;
 
         Str myName() const override;
 

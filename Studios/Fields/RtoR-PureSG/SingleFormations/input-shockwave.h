@@ -5,7 +5,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 namespace RtoR {
-    class InputShockwave : public Builder {
+    class InputShockwave : public KGBuilder {
     private:
 
         unsigned int deltaType = 1;

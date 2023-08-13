@@ -7,7 +7,7 @@
 using namespace RtoR;
 
 InputPerturbations::InputPerturbations()
-: Builder("Perturbations", "Perturbed oscillon in its reference frame")
+: KGBuilder("Perturbations", "Perturbed oscillon in its reference frame")
 {
     interface->addParameters({&l, &eps});
 };

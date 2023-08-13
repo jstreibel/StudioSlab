@@ -56,18 +56,15 @@ namespace Base {
             return *this;
         }
 
-//         virtual DiscreteFunction &operator=(const MyBase &func) { (*this) = func; return *this; }
-        virtual DiscreteFunction &operator=(const DiscreteFunction &func) { this->SetArb(func); return *this; }
-
-        virtual DiscreteFunction &operator+=(const MyBase &func) { throw "ArbitraryFunction operator += not implemented"; };
+        virtual DiscreteFunction &operator=(const MyBase &func) { this->Set(func); return *this; }
+        // virtual DiscreteFunction &operator=(const DiscreteFunction &func) { this->SetArb(func); return *this; }
+        // virtual DiscreteFunction &operator*(const Real &val) { this->Multiply(val); return *this; }
+        virtual DiscreteFunction &operator+=(const MyBase &func) { throw Str("ArbitraryFunction operator += not implemented"); };
 
         //ArbitraryFunction& operator-=(const ArbitraryFunction& rhs);
         //ArbitraryFunction& operator*=(const ArbitraryFunction& rhs);
-        //
         //friend ArbitraryFunction& operator+(ArbitraryFunction& lhs, const ArbitraryFunction& rhs);
         //friend ArbitraryFunction& operator-(ArbitraryFunction& lhs, const ArbitraryFunction& rhs);
-
-
 
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
@@ -116,7 +113,6 @@ namespace Base {
         auto getSpace() const -> const DiscreteSpace& { return *space; }
 
     };
-
 }
 
 

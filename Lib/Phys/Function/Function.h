@@ -59,7 +59,7 @@ namespace Base {
 
         /*! Get derivative in dimension 'n'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.*/
-        virtual Ptr diff(int n) const { throw "Function::diff(n) not implemented."; };
+        virtual Ptr diff(int n) const { throw Common::getClassName(this) + "::" + __FUNCTION__ + " is not implemented."; };
 
         /*! Get derivative in dimension 'n' at point 'x'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.

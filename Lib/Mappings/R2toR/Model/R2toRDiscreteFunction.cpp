@@ -78,12 +78,12 @@ Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     return FunctionT::diff(n);
 }
 
-Base::DiscreteFunction<Real2D, Real> &
-R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real> &func) {
-    this->Set(func);
-
-    return *this;
-}
+// Base::DiscreteFunction<Real2D, Real> &
+// R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real> &func) {
+//     this->Set(func);
+//
+//     return *this;
+// }
 
 Str R2toR::DiscreteFunction::myName() const {
     return Base::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev==GPU ? "GPU" : "CPU");

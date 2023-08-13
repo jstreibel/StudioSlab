@@ -7,7 +7,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
-RtoR::MachineGunBuilder::MachineGunBuilder() : Builder("Machinegun", "Machinegun scattering") {
+RtoR::MachineGunBuilder::MachineGunBuilder() : RtoR::Thermal::Builder("Machinegun", "Machinegun scattering") {
     interface->addParameters({&v1, &n});
 
 }

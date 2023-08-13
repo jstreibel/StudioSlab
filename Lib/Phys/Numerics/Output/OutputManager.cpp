@@ -22,10 +22,14 @@ void OutputManager::output(OutputPacket &infoVolatile, bool force)
 
 auto OutputManager::computeNStepsToNextOutput(PosInt currStep) -> PosInt
 {
-    size_t nSteps = maxSteps;
+    fix forceOverstepping = params.shouldForceOverstepping();
+
+    Count nSteps = forceOverstepping ? HUGE_NUMBER : maxSteps;
+
 
     for(auto &output : outputs){
         const size_t nextRecStep = output->computeNextRecStep();
+
         if(nextRecStep < nSteps) nSteps = nextRecStep;
     }
 

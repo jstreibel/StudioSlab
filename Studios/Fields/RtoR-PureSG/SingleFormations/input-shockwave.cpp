@@ -14,7 +14,7 @@
 
 using namespace RtoR;
 
-InputShockwave::InputShockwave() : Builder("1d shockwave", "Shockwave in 1-dim") {
+InputShockwave::InputShockwave() : KGBuilder("1d shockwave", "Shockwave in 1-dim") {
     interface->addParameters({&a0, &E});
 }
 

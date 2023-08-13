@@ -5,10 +5,10 @@
 #ifndef STUDIOSLAB_RANDOMENERGYOVERDOTPHIBUILDER_H
 #define STUDIOSLAB_RANDOMENERGYOVERDOTPHIBUILDER_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../ThermalBuilder.h"
 
 namespace RtoR {
-    class RandomEnergyOverDotPhiBuilder : public Builder {
+    class RandomEnergyOverDotPhiBuilder : public RtoR::Thermal::Builder {
         RealParameter E = RealParameter{1. / 24, "E", "Total energy over space."};
 
     public:

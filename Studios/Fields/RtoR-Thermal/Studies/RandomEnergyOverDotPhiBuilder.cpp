@@ -9,7 +9,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 RtoR::RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
-: Builder("Random dphipt", "Energy density over time-derivative of field")
+: RtoR::Thermal::Builder("Random dphipt", "Energy density over time-derivative of field")
 {
     interface->addParameters({&E});
 }

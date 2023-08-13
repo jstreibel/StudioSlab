@@ -13,7 +13,7 @@
 #include "Common/RandUtils.h"
 
 RtoR::StatisticalBuilder::StatisticalBuilder()
-: Builder("Statistical", "Energy and density of oscillons statistical input")
+: RtoR::Thermal::Builder("Statistical", "Energy and density of oscillons statistical input")
 {
     interface->addParameters({&E, &n});
 }

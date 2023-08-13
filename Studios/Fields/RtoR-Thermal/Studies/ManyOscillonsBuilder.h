@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_INPUTMANYOSCILLONS_H
 #define V_SHAPE_INPUTMANYOSCILLONS_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../ThermalBuilder.h"
 
 namespace RtoR {
-    class ManyOscillonsBuilder  : public Builder {
+class ManyOscillonsBuilder  : public RtoR::Thermal::Builder {
 
         IntegerParameter nOscillons = IntegerParameter(100, "n_osc", "Number of oscillons distributed.");
     public:

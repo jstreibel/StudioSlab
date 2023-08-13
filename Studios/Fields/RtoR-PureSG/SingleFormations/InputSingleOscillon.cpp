@@ -9,7 +9,7 @@
 
 using namespace RtoR;
 
-InputSingleOscillon::InputSingleOscillon() : Builder("Oscillon 1d", "Single 1+1 dim oscillon")
+InputSingleOscillon::InputSingleOscillon() : KGBuilder("Oscillon 1d", "Single 1+1 dim oscillon")
 {
     interface->addParameters({&v, &V, &alpha, &lambda, &mirror});
 }

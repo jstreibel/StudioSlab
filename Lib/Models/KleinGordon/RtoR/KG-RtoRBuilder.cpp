@@ -23,10 +23,10 @@
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
 
-RtoR::Builder::Builder(Str name, Str generalDescription)
-: Fields::KleinGordon::KGBuilder("RtoR-" + name, generalDescription) { }
+RtoR::KGBuilder::KGBuilder(Str name, Str generalDescription, bool doRegister)
+: Fields::KleinGordon::KGBuilder("RtoR-" + name, generalDescription, doRegister) { }
 
-auto RtoR::Builder::buildOutputManager() -> OutputManager * {
+auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->suggestFileName();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
@@ -90,7 +90,7 @@ auto RtoR::Builder::buildOutputManager() -> OutputManager * {
 
 }
 
-void *RtoR::Builder::newFunctionArbitrary() {
+void *RtoR::KGBuilder::newFunctionArbitrary() {
     const size_t N = numericParams.getN();
     const floatt xLeft = numericParams.getxMin();
     const floatt xRight = xLeft + numericParams.getL();
@@ -106,12 +106,12 @@ void *RtoR::Builder::newFunctionArbitrary() {
     throw "Error while instantiating Field: device not recognized.";
 }
 
-void *RtoR::Builder::newFieldState() {
+void *RtoR::KGBuilder::newFieldState() {
     return new RtoR::EquationState((RtoR::DiscreteFunction*)this->newFunctionArbitrary(),
                                    (RtoR::DiscreteFunction*)this->newFunctionArbitrary());
 }
 
-void *RtoR::Builder::buildEquationSolver() {
+void *RtoR::KGBuilder::buildEquationSolver() {
     auto thePotential = new RtoR::AbsFunction;
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
@@ -126,12 +126,12 @@ void *RtoR::Builder::buildEquationSolver() {
     return new Fields::KleinGordon::Solver<RtoR::EquationState>(numericParams, *dphi, *thePotential);
 }
 
-auto RtoR::Builder::buildOpenGLOutput() -> RtoR::Monitor * {
+auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
     //return new RtoR::OutGLStatistic(numericParams);
     return new RtoR::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
 }
 
-auto RtoR::Builder::getInitialState() -> void * {
+auto RtoR::KGBuilder::getInitialState() -> void * {
     auto &u_0 = *(RtoR::EquationState*)newFieldState();
 
     u_0.setPhi(RtoR::NullFunction());
@@ -163,10 +163,10 @@ auto RtoR::Builder::getInitialState() -> void * {
         GENERATE_METHOD(StepperRK4, 15); \
         GENERATE_METHOD(StepperRK4, 16);
 
-auto RtoR::Builder::buildStepper() -> Stepper * {
+auto RtoR::KGBuilder::buildStepper() -> Stepper * {
     Stepper *method;
 
-    auto &solver = *(RtoR::EquationSolver*) buildEquationSolver();
+    auto &solver = *(RtoR::KGSolver*) buildEquationSolver();
 
     switch (dev.get_nThreads()) {
         GENERATE_ALL(StepperRK4);
@@ -177,7 +177,7 @@ auto RtoR::Builder::buildStepper() -> Stepper * {
     return method;
 }
 
-void *RtoR::Builder::getHamiltonian() {
+void *RtoR::KGBuilder::getHamiltonian() {
     return new KGEnergy(*this);
 }
 

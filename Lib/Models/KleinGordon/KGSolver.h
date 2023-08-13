@@ -4,6 +4,7 @@
 #include "Phys/DifferentialEquations/EquationSolver.h"
 
 #include "Phys/Numerics/Builder.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/SignumFunction.h"
 
 
 #define CLONE(func) dynamic_cast<DiscrFuncType&>(*(func.Clone()))
@@ -17,6 +18,7 @@ namespace Fields {
         public:
             using MyBase = Slab::EquationSolverT<EqState>;
             using PotentialFunc = Base::FunctionT<Real, Real>;
+
             typedef EqState::SubStateType           DiscrFuncType;
 
             Solver(const NumericParams &params,
@@ -28,18 +30,18 @@ namespace Fields {
             {    }
 
             ~Solver() override {
-                delete laplacian;
-                delete dV_out;
+                delete temp1;
+                delete temp2;
                 delete &V;
             }
 
             EqState &
             dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override {
-                if(laplacian == nullptr){
-                    assert(dV_out == nullptr);
+                if(temp1 == nullptr){
+                    assert(temp2 == nullptr);
 
-                    laplacian = (DiscrFuncType*)stateIn.getPhi().Clone();
-                    dV_out    = (DiscrFuncType*)stateIn.getPhi().Clone();
+                    temp1 = (DiscrFuncType*)stateIn.getPhi().Clone();
+                    temp2    = (DiscrFuncType*)stateIn.getPhi().Clone();
                 }
 
                 const auto &iPhi = stateIn.getPhi();
@@ -52,10 +54,13 @@ namespace Fields {
 
                 // Eq 2
                 {
-                    iPhi.Laplacian(*laplacian);
-                    iPhi.Apply(*dVDPhi, *dV_out);
+                    GET laplacian = *temp1;
+                    GET dVdphi_out = *temp2;
 
-                    oDPhi.StoreSubtraction(*laplacian, *dV_out) *= dt;
+                    iPhi.Laplacian(laplacian);
+                    iPhi.Apply(*dVDPhi, dVdphi_out);
+
+                    oDPhi.StoreSubtraction(*temp1, *temp2) *= dt;
                 }
 
                 return stateOut;
@@ -64,8 +69,8 @@ namespace Fields {
             static bool isDissipating() { return false; }
 
         protected:
-            DiscrFuncType *laplacian = nullptr
-                        , *dV_out    = nullptr;
+            DiscrFuncType *temp1 = nullptr
+                        , *temp2 = nullptr;
             PotentialFunc &V;
             PotentialFunc::Ptr dVDPhi= nullptr;
         };

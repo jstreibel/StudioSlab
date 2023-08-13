@@ -75,12 +75,12 @@ namespace RtoR {
             {
                 scaledImpulses.StoreMultiplication(langevinImpulses, sqrt(2*T/dt));
 
-                iPhi.Laplacian(*laplacian); // Laplaciano do phi de input tem seu laplaciano
+                iPhi.Laplacian(*temp1); // Laplaciano do phi de input tem seu laplaciano
                                            // calculado e o resultado vai pra dentro do temp1,
                                            // que por sua vez eh retornado;
-                iPhi.Apply(*dVDPhi, dV_out);
+                iPhi.Apply(*dVDPhi, temp2);
 
-                oDPhi.StoreSubtraction(*laplacian, *dV_out);  // agora temp1 e temp2 estao liberados;
+                oDPhi.StoreSubtraction(*temp1, *temp2);  // agora temp1 e temp2 estao liberados;
 
                 oDPhi -= scaledImpulses;
                 oDPhi -= iDPhi;

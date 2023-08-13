@@ -41,6 +41,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericParams &params1, KGEnergy &hamilton
 }
 
 void RtoR::Thermal::Monitor::draw() {
+
     const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
 
     std::ostringstream ss;

@@ -6,7 +6,7 @@
 using namespace RtoR;
 
 InputSymmetricOscillon::InputSymmetricOscillon()
-: Builder("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
+: KGBuilder("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
 {
     interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
 }

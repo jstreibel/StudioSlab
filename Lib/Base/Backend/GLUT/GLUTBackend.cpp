@@ -259,7 +259,7 @@ void GLUTBackend::render()
 
 void GLUTBackend::idleCall()
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
+    GET me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
 
 

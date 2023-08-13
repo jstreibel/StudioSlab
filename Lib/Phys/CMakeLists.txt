@@ -5,6 +5,18 @@ set ( TOOLSET_SOURCES
 		Formalism/Categories.cpp
 		)
 
+set ( FUNCTION_SOURCES
+		Function/AllBaseFunctions.h
+		Function/CommonFunctions.h
+		Function/DiscreteFunction.h
+		Function/FunctionProduct.h
+		Function/FunctionScale.h
+		Function/GPUFriendly.h
+		Function/SummableFunction.h
+)
+
+
+
 set ( SPACE_SOURCES
 		Space/Impl/DiscreteSpace.cpp
 		Space/Impl/DiscreteSpaceCPU.cpp
@@ -101,6 +113,7 @@ set (LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Phys)
 
 add_library(${LIB_LOCAL_NAME} STATIC
 		${TOOLSET_SOURCES}
+		${FUNCTION_SOURCES}
 		${SPACE_SOURCES}
 		${SPACE_SOURCES_CUDA}
 		${GRAPH_SOURCES}

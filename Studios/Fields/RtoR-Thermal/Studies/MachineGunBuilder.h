@@ -5,11 +5,11 @@
 #ifndef V_SHAPE_INPUTMACHINEGUN_H
 #define V_SHAPE_INPUTMACHINEGUN_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../ThermalBuilder.h"
 
 
 namespace RtoR {
-    class MachineGunBuilder  : public Builder {
+    class MachineGunBuilder  : public RtoR::Thermal::Builder {
         RealParameter v1 = RealParameter{0.5, "v1", "Left oscillon's border speed."};
         IntegerParameter n = IntegerParameter{10, "n", "Number of shooting tiny oscillons."};
 

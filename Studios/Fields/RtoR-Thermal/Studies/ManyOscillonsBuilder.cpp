@@ -6,17 +6,17 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Common/RandUtils.h"
-#include "../../ThermalMonitor.h"
+#include "../ThermalMonitor.h"
 
 
 RtoR::ManyOscillonsBuilder::ManyOscillonsBuilder()
-: Builder("Many oscillons", "General scattering of many oscillons.")
+: RtoR::Thermal::Builder("Many oscillons", "General scattering of many oscillons.")
 {
     interface->addParameters({&nOscillons});
 }
 
 auto RtoR::ManyOscillonsBuilder::getBoundary() -> void * {
-    int n = nOscillons;
+    int n = *nOscillons;
     auto L = numericParams.getL();
     auto xMin = numericParams.getxMin();
 

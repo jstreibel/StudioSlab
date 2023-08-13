@@ -7,14 +7,14 @@
 
 #include "Phys/App.h"
 
-#include "ThermalStudies/__archive__/ManyOscillonsBuilder.h"
-#include "ThermalStudies/__archive__/MachineGunBuilder.h"
-#include "ThermalStudies/__archive__/StatisticalBuilder.h"
-#include "ThermalStudies/__archive__/RandomEnergyOverDotPhiBuilder.h"
+#include "Studies/ManyOscillonsBuilder.h"
+#include "Studies/MachineGunBuilder.h"
+#include "Studies/StatisticalBuilder.h"
+#include "Studies/RandomEnergyOverDotPhiBuilder.h"
 
 int run(int argc, const char **argv){
     InterfaceSelector selector("Dynamic thermal");
-    std::vector<RtoR::Builder*>
+    std::vector<RtoR::KGBuilder*>
             options = { new RtoR::StatisticalBuilder,
                         new RtoR::MachineGunBuilder,
                         new RtoR::ManyOscillonsBuilder,
@@ -23,10 +23,10 @@ int run(int argc, const char **argv){
     for(auto &opt : options)
         selector.registerOption(opt->getInterface());
 
-    auto selection = dynamic_cast<RtoR::Builder*>(
+    auto selection = dynamic_cast<RtoR::KGBuilder*>(
             selector.preParse(argc, argv).getCurrentCandidate()->getOwner());
 
-    auto prog = Simulation::App(argc, argv, RtoR::Builder::Ptr(selection));
+    auto prog = Simulation::App(argc, argv, RtoR::KGBuilder::Ptr(selection));
 
     return prog.run();
 }

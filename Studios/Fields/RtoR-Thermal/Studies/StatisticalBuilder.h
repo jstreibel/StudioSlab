@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_INPUTSTATISTICAL_H
 #define V_SHAPE_INPUTSTATISTICAL_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../ThermalBuilder.h"
 
 namespace RtoR {
-    class StatisticalBuilder  : public Builder {
+    class StatisticalBuilder  : public RtoR::Thermal::Builder {
         RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 

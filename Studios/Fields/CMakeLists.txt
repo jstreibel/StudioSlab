@@ -41,14 +41,14 @@ message(NOTICE "Added executable Fields-RtoR")
 add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/MainRtoRThermal.cpp
 
-		RtoR-Thermal/ThermalMonitor.cpp
-		RtoR-Thermal/ThermalMonitor.h
+		RtoR-Thermal/ThermalBuilder.h							RtoR-Thermal/ThermalBuilder.cpp
+		RtoR-Thermal/ThermalMonitor.h							RtoR-Thermal/ThermalMonitor.cpp
 
-		RtoR-Thermal/ThermalStudies/__archive__/ManyOscillonsBuilder.cpp
-		RtoR-Thermal/ThermalStudies/__archive__/MachineGunBuilder.cpp
-		RtoR-Thermal/ThermalStudies/__archive__/StatisticalBuilder.cpp
-		RtoR-Thermal/ThermalStudies/__archive__/RandomEnergyOverDotPhiBuilder.cpp
-		RtoR-Thermal/ThermalStudies/ThermalBuilder.cpp RtoR-Thermal/ThermalStudies/ThermalBuilder.h)
+		RtoR-Thermal/Studies/ManyOscillonsBuilder.h				RtoR-Thermal/Studies/ManyOscillonsBuilder.cpp
+		RtoR-Thermal/Studies/MachineGunBuilder.h				RtoR-Thermal/Studies/MachineGunBuilder.cpp
+		RtoR-Thermal/Studies/StatisticalBuilder.h				RtoR-Thermal/Studies/StatisticalBuilder.cpp
+		RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.h	RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.cpp
+		)
 target_compile_definitions( Fields-RtoR-Thermal PUBLIC PERIODIC_BC ) # isso define um macro de preprocessador
 target_link_libraries (Fields-RtoR-Thermal Slab-Models Slab-Maps-RtoR-Periodic_GPU )
 

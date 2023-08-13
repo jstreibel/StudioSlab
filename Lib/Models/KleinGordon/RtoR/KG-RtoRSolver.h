@@ -10,7 +10,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace RtoR {
-    typedef Fields::KleinGordon::Solver<RtoR::EquationState> EquationSolver;
+    typedef Fields::KleinGordon::Solver<RtoR::EquationState> KGSolver;
 }
 
 #endif //STUDIOSLAB_KG_RTORSOLVER_H

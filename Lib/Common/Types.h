@@ -22,6 +22,8 @@ typedef int_least64_t       BigInt;
 #define fix     const auto
 #define look    const auto *
 
+fix HUGE_NUMBER = ((unsigned long long)0)-1;
+
 typedef std::vector<Real>   VecFloat;
 typedef const VecFloat      VecFloat_I;
 typedef VecFloat            VecFloat_O;

@@ -12,7 +12,7 @@ using namespace RtoR;
 
 
 InputGeneralOscillons::InputGeneralOscillons()
-: Builder("Scattering", "General scattering of any two oscillons.")
+: KGBuilder("Scattering", "General scattering of any two oscillons.")
 {
     interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
 }

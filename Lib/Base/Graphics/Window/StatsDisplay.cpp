@@ -26,8 +26,6 @@ void StatsDisplay::addVolatileStat(const Str &stat, const Styles::Color color)
 void StatsDisplay::draw() {
     Window::draw();
 
-    /*
-     *
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
     const float w_ = float(w) - (float)2*winXoffset,
@@ -84,6 +82,5 @@ void StatsDisplay::draw() {
     }
 
     stats.clear();
-    */
 }
 

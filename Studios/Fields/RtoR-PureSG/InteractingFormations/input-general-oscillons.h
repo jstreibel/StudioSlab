@@ -9,7 +9,7 @@
 
 namespace RtoR {
 
-    class InputGeneralOscillons : public Builder {
+    class InputGeneralOscillons : public KGBuilder {
         RealParameter v1     = RealParameter{.0, "v1", "Left oscillon's border speed."};
         RealParameter v2     = RealParameter{.0, "v2", "Right oscillon's border speed."};
         RealParameter alpha1 = RealParameter{.0, "a1", "Left oscillon's phase (alpha)."};

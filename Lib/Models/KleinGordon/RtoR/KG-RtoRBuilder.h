@@ -9,13 +9,14 @@
 #include "../KGBuilder.h"
 
 namespace RtoR {
-    class Builder : public Fields::KleinGordon::KGBuilder {
+    class KGBuilder : public Fields::KleinGordon::KGBuilder {
     protected:
         virtual auto buildOpenGLOutput() -> Monitor*;
 
     public:
-        explicit Builder(Str name,
-                         Str generalDescription);
+        explicit KGBuilder(Str name,
+                           Str generalDescription,
+                           bool doRegister=false);
 
         auto buildOutputManager()   -> OutputManager * override;
         auto buildEquationSolver()  -> void * override;
