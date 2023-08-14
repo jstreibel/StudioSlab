@@ -172,7 +172,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
         if 1:
             V = np.abs(phi)  # Nonperturbed potential
         else:
-            if verbose: print(utils.WARNING + "USANDO POTENCIAL PERTURBADO PARA CALCULAR ENERGIA." + utils.ENDC)
+            if verbose: print(Utils.WARNING + "USANDO POTENCIAL PERTURBADO PARA CALCULAR ENERGIA." + Utils.ENDC)
 
             def VPert(eta):
                 UnitStep = lambda arg: np.heaviside(arg, 0.5)
@@ -368,7 +368,7 @@ def plot(sim_result: SimData, fit_params=None, args=None, showLog=True, logEpsil
                         val_s = val.split('e')
                         val = val_s[0] + "\\times 10^{" + val_s[1] + "}"
                 else:
-                    print(utils.FAIL + "Can't annotate \'" + a[0] + "\': key not found in sim file." + utils.ENDC)
+                    print(Utils.FAIL + "Can't annotate \'" + a[0] + "\': key not found in sim file." + Utils.ENDC)
                     continue
                 symbol = a[0]
                 if len(a) > 1:

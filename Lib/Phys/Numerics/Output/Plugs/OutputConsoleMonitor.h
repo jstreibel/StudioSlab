@@ -9,13 +9,12 @@ class OutputConsoleMonitor : public Numerics::OutputSystem::Socket
 private:
     Timer timer = Timer();
     const Real maxT;
-public:
-    OutputConsoleMonitor(const NumericParams &params, const Count n_steps_between_calls);
-
-    virtual Str getDescription() const {return "console monitor output";}
 
 public:
-    virtual bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation);
+    OutputConsoleMonitor(const NumericParams &params, Count n_steps_between_calls);
+
+public:
+    bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
 
 protected:
     virtual void _out(const OutputPacket &outputInfo);

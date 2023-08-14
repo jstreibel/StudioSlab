@@ -22,7 +22,6 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
 void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
 {
     static std::vector<Real> measures;
-    static Timer timer;
     auto elTime = timer.getElTime_sec();
 
     auto n = params.getn();
@@ -35,9 +34,10 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
     Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Log::Flush;
     Log::Info() << "t = " << t << "/" << maxT << Log::Flush;
 
-    auto stepsPerSec = 0.0;
     auto expectedFinish = NAN;
     if(lastn != currn){
+        Real stepsPerSec;
+
         measures.emplace_back(elTime);
 
         auto avg = 0.0;
@@ -55,9 +55,13 @@ void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
         Log::Info() << "Avg "<< stepsPerSec << " steps/s in last " << total << " measures" << Log::Flush;
         Log::Info() << "El time since last step: " << elTime << "s" << Log::Flush;
         Log::Info() << "Expected finish in " << Log::FGBlue << int(expectedFinish) / 60 << "m " << int(expectedFinish) % 60 << "s" << Log::Flush;
+
+        this->setnSteps(stepsPerSec);
     }
 
     lastn = currn;
 
     timer.reset();
 }
+
+

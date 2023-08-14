@@ -17,6 +17,9 @@ namespace RtoR::Thermal {
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
         auto buildEquationSolver() -> void * override;
+
+        auto suggestFileName() const -> Str override;
+
     };
 }
 

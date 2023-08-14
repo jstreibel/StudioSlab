@@ -7,6 +7,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 #define DONT_SELF_REGISTER false
+#define SHORT_NAME false
 
 namespace RtoR::Thermal {
 
@@ -24,5 +25,13 @@ namespace RtoR::Thermal {
         solver->setDissipationCoefficient(*dissipation);
 
         return solver;
+    }
+
+    Str Builder::suggestFileName() const {
+        auto str = VoidBuilder::suggestFileName();
+
+        auto extra = interface->toString({"T", "k"}, " ", SHORT_NAME);
+
+        return str + " " + extra;
     }
 }

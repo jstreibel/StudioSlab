@@ -97,7 +97,7 @@ if(CMAKE_BUILD_TYPE STREQUAL Release)
 	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
 	message(STATUS "Using -O3 flag")
 else()
-	message(STATUS "Not using -O3 flag")
+	message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
 

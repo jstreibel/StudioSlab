@@ -26,6 +26,8 @@ public:
     bool operator != (const int &RHS) const { return this->dev != RHS; }
     auto getDevice() const -> device;
 
+
+
 };
 
 #endif // DEVICE_H

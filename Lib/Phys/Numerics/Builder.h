@@ -118,45 +118,12 @@ namespace Base::Simulation {
         return str;
     }
 
-    #define GENERATE_FOR_NTHREADS(METHOD, N) \
-    case (N): \
-    method = new METHOD<N, typename SolverType::EqState>(solver, u_0); \
-    break;
-
-    #define GENERATE(METHOD) \
-        GENERATE_FOR_NTHREADS(StepperRK4, 1);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 2);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 3);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 4);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 5);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 6);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 7);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 8);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 9);  \
-        GENERATE_FOR_NTHREADS(StepperRK4, 10); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 11); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 12); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 13); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 14); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 15); \
-        GENERATE_FOR_NTHREADS(StepperRK4, 16);
-
     template<typename SolverType>
     auto Builder<SolverType>::getMethod() -> Stepper * {
-        Stepper *method;
+        auto &u_0 = *getInitialState();
+        auto &solver = *getEquationSolver();
 
-        {
-            auto &u_0 = *getInitialState();
-            auto &solver = *getEquationSolver();
-
-            switch (dev.get_nThreads()) {
-                GENERATE(StepperRK4);
-                default:
-                    throw "Number of threads must be between 1 and 16 inclusive.";
-            }
-        }
-
-        return method;
+        return new StepperRK4<typename SolverType::EqState>(solver, u_0);
     }
 }
 

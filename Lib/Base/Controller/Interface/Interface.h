@@ -64,7 +64,7 @@ public:
     auto getOwner() const -> InterfaceOwner*;
 
     auto getName() const -> const Str&;
-    auto toString(StrVector paramNames={}, Str separator=" ") const -> Str;
+    auto toString(StrVector paramNames={}, Str separator=" ", bool longName=true) const -> Str;
     void setup(CLVariablesMap vm);
 
     bool operator==(const Interface &rhs) const;

@@ -17,7 +17,7 @@
 #include <cstring> // contains memcpy
 #include <omp.h>
 
-template<int NUM_THREADS, class STATE_TYPE>
+template<class STATE_TYPE>
 class StepperRK4 : public Stepper {
 public:
     typedef Slab::EquationSolverT<STATE_TYPE>    SolverType;
@@ -63,7 +63,8 @@ public:
         {
             const Real t = (steps+i)*dt;
             H.startStep(t, dt);
-            #pragma omp parallel num_threads(NUM_THREADS)
+
+            #pragma omp parallel
             {
                 H.applyBC(phi, t, dt);
                 #pragma omp barrier

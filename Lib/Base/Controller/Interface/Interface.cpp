@@ -86,7 +86,7 @@ auto Interface::getParameter(Str key) const -> Parameter::Ptr {
     return *result;
 }
 
-auto Interface::toString(StrVector paramNames, Str separator) const -> Str {
+auto Interface::toString(StrVector paramNames, Str separator, bool longName) const -> Str {
     std::stringstream ss;
 
     for(auto param : parameters) {
@@ -94,7 +94,7 @@ auto Interface::toString(StrVector paramNames, Str separator) const -> Str {
         auto nameLong  = param->getCLName(true);
 
         if(Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) || paramNames.empty())
-            ss << param->getCLName(true) << "=" << param->valueToString() << separator;
+            ss << param->getCLName(longName) << "=" << param->valueToString() << separator;
     }
 
     auto str = ss.str();

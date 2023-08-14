@@ -32,7 +32,6 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
-
     if(*VisualMonitor) Backend::Initialize<GLUTBackend>();
     else Backend::Initialize<ConsoleBackend>();
 
@@ -56,7 +55,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
         const Real r = p.getr();
         const auto stepsInterval = PosInt(N/(Np*r));
 
-        outputFileName += Str("-N=") + ToStr(N, 0);
+        if(0) outputFileName += Str("-N=") + ToStr(N, 0);
 
         Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(numericParams, stepsInterval, spaceFilter, Tf,
                                                                       outputFileName, outputFilter);
@@ -140,41 +139,10 @@ auto RtoR::KGBuilder::getInitialState() -> void * {
     return &u_0;
 }
 
-#define GENERATE_METHOD(METHOD, N) \
-    case (N): \
-    method = new METHOD<N, typename RtoR::EquationState>(solver); \
-    break;
-
-#define GENERATE_ALL(METHOD) \
-        GENERATE_METHOD(StepperRK4, 1);  \
-        GENERATE_METHOD(StepperRK4, 2);  \
-        GENERATE_METHOD(StepperRK4, 3);  \
-        GENERATE_METHOD(StepperRK4, 4);  \
-        GENERATE_METHOD(StepperRK4, 5);  \
-        GENERATE_METHOD(StepperRK4, 6);  \
-        GENERATE_METHOD(StepperRK4, 7);  \
-        GENERATE_METHOD(StepperRK4, 8);  \
-        GENERATE_METHOD(StepperRK4, 9);  \
-        GENERATE_METHOD(StepperRK4, 10); \
-        GENERATE_METHOD(StepperRK4, 11); \
-        GENERATE_METHOD(StepperRK4, 12); \
-        GENERATE_METHOD(StepperRK4, 13); \
-        GENERATE_METHOD(StepperRK4, 14); \
-        GENERATE_METHOD(StepperRK4, 15); \
-        GENERATE_METHOD(StepperRK4, 16);
-
 auto RtoR::KGBuilder::buildStepper() -> Stepper * {
-    Stepper *method;
-
     auto &solver = *(RtoR::KGSolver*) buildEquationSolver();
 
-    switch (dev.get_nThreads()) {
-        GENERATE_ALL(StepperRK4);
-        default:
-            throw "Number of threads must be between 1 and 16 inclusive.";
-    }
-
-    return method;
+    return new StepperRK4<typename RtoR::EquationState>(solver);
 }
 
 void *RtoR::KGBuilder::getHamiltonian() {

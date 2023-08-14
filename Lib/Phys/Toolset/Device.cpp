@@ -1,6 +1,7 @@
 
 
 #include <Base/Controller/Interface/InterfaceManager.h>
+#include <omp.h>
 #include "Device.h"
 
 #include "Common/Utils.h"
@@ -28,6 +29,7 @@ auto Device::getDevice() const -> device {
 
 void Device::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
+
 #if USE_CUDA
     unsigned int dev_n = **deviceChoice;
 #else
@@ -39,8 +41,11 @@ void Device::notifyCLArgsSetupFinished() {
     if (dev == UNKNOWN) {
         throw (Str("Unkown device ") + std::to_string(dev_n) + Str(".")).c_str();
     } else if (dev == CPU) {
+        omp_set_num_threads(**nThreads);
+
         Log::Info() << "Running on CPU @ " << *nThreads << " thread"
                     << (**nThreads > 1 ? "s." : ".") << Log::Flush;
+
     } else if (dev == GPU) {
 #if USE_CUDA
         int devCount;
