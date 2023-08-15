@@ -23,7 +23,7 @@ namespace RtoR {
 
         const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
 
-        const RtoR::DiscreteFunction &getEnergy() const { return *_oEnergyDensityFunc; };
+        const RtoR::DiscreteFunction &getEnergyDensity() const { return *_oEnergyDensityFunc; };
         const RtoR::DiscreteFunction &getKinetic() const { return *_oKinetic; };
         const RtoR::DiscreteFunction &getGradient() const { return *_oGradient; };
         const RtoR::DiscreteFunction &getPotential() const { return *_oPotential; };

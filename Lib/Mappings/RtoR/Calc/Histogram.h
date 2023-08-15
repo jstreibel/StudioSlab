@@ -15,6 +15,8 @@ public:
     void Compute(const RtoR::DiscreteFunction &func, int nBins = 100);
 
     RtoR::Function* asPDFFunction() const;
+
+    auto renderToPointSet(Spaces::PointSet &pointSet) const -> Spaces::PointSet;
     auto asPointSet() const -> Spaces::PointSet;
 
     int nBins;

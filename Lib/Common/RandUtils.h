@@ -13,6 +13,9 @@ namespace RandUtils {
     Real random(Real a, Real b);
 
     int RandInt();
+
+    double gaussianNoise(Real mean=0.0, Real standard_deviation=1.0);
+
 }
 
 namespace LostAndFound {

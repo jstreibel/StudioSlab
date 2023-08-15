@@ -3,6 +3,7 @@
 //
 
 #include "ThermalBuilder.h"
+#include "ThermalMonitor.h"
 #include "Models/LangevinKleinGordon/LangevinKGSolver.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
@@ -34,4 +35,8 @@ namespace RtoR::Thermal {
 
         return str + " " + extra;
     }
+}
+
+RtoR::Monitor *RtoR::Thermal::Builder::buildOpenGLOutput() {
+    return new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
 }

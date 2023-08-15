@@ -83,8 +83,8 @@ inline Str Log::postfix(){
 };
 
 
-OStream &Log::Info()                { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << InfoFormat              << "INFO"      << me.postfix(); return stream; }
-OStream &Log::Note()                { auto &me = Log::GetSingleton(); auto &stream = *me.notesStream; stream << me.prefix() << NoteFormat              << "note"      << me.postfix(); return stream; }
+OStream &Log::Info()                { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << InfoFormat              << "Info"      << me.postfix(); return stream; }
+OStream &Log::Note()                { auto &me = Log::GetSingleton(); auto &stream = *me.notesStream; stream << me.prefix() << NoteFormat              << "Note"      << me.postfix(); return stream; }
 OStream &Log::Attention()           { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << AttentionFormat         << "Attention" << me.postfix(); return stream; }
 OStream &Log::Critical()            { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << CriticalFormat          << "Critical"  << me.postfix(); return stream; }
 OStream &Log::Debug()               { auto &me = Log::GetSingleton(); auto &stream = *me.debugStream; stream << me.prefix() << DebugFormat             << "Debug"     << me.postfix(); return stream; }

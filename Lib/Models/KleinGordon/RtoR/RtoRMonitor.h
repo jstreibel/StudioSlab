@@ -42,7 +42,11 @@ namespace RtoR {
         void _out(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const NumericParams &params, KGEnergy &hamiltonian, Real phiMin=-1, Real phiMax=1);
+        Monitor(const NumericParams &params,
+                KGEnergy &hamiltonian,
+                Real phiMin=-1,
+                Real phiMax=1,
+                Str name = "general graphic monitor");
 
     };
 

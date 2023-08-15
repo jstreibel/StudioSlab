@@ -59,6 +59,11 @@ RtoR::Function *Histogram::asPDFFunction() const {
 }
 
 auto Histogram::asPointSet() const -> Spaces::PointSet {
+    Spaces::PointSet pointSet;
+    return renderToPointSet(pointSet);
+}
+
+auto Histogram::renderToPointSet(Spaces::PointSet &pointSet) const -> Spaces::PointSet {
     const auto N=Real(count);
     const auto w = binWidth;
     const auto normFactor = N*w;
@@ -76,7 +81,7 @@ auto Histogram::asPointSet() const -> Spaces::PointSet {
         points.push_back({x+w, 0});
     }
 
-    return Spaces::PointSet(points);
+    return pointSet = Spaces::PointSet(points);
 }
 
 

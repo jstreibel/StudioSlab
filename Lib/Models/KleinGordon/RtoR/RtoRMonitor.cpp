@@ -15,8 +15,8 @@
 
 
 RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
-                       const Real phiMin, const Real phiMax)
-: Graphics::OpenGLMonitor(params, "ℝ ↦ ℝ general graphic monitor")
+                       const Real phiMin, const Real phiMax, Str name)
+: Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , hamiltonian(hamiltonian)
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
 , mEnergyGraph("Energy")
@@ -54,7 +54,7 @@ void RtoR::Monitor::draw() {
     }
 
     if(showEnergyDensity){
-        mFieldsGraph.addFunction(&hamiltonian.getEnergy(), "E", U_style);
+        mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(), "E", U_style);
     }
 }
 

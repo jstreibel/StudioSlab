@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ℝ↦ℝ thermal" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="--dev 0 --force_overstepping -og -t-1 -T 1e-1 -k 1e-1 --th 4" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Fields-RtoR-Thermal" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Fields-RtoR-Thermal">
+  <configuration default="false" name="ℝ↦ℝ thermal" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="--dev 0 --force_overstepping -og -t-1 -T 0.1 -k 1.0 --th 4 -N 8192" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Fields-RtoR-Thermal" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Fields-RtoR-Thermal">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

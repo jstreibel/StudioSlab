@@ -24,6 +24,13 @@ namespace RandUtils {
     int RandInt() {
         return uintRandGen(mt);
     }
+
+    double gaussianNoise(double mean, double standard_deviation) {
+        static std::mt19937 generator(1);
+        std::normal_distribution<double> distribution(mean, standard_deviation);
+
+        return distribution(generator);
+    }
 }
 
 

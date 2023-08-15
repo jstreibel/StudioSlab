@@ -6,8 +6,8 @@
 
 namespace My = Fields::Graphing;
 
-My::PointSetGraph::PointSetGraph(const Str &title)
-    : Graph2D(0, 0.1, 0, 0.1, title, true, 10) {
+My::PointSetGraph::PointSetGraph(const Str &title, bool autoReviewGraphRanges)
+    : Graph2D(0, 0.1, 0, 0.1, title, true, 10), autoReviewGraphRanges(autoReviewGraphRanges) {
 
 }
 
@@ -73,7 +73,7 @@ void My::PointSetGraph::_renderPointSet(const Spaces::PointSet &pSet,
 
 }
 
-void Fields::Graphing::PointSetGraph::_reviewGraphRanges() {
+void Fields::Graphing::PointSetGraph::reviewGraphRanges() {
     if(mPointSets.size() != 0)
     {
 
@@ -96,9 +96,9 @@ void Fields::Graphing::PointSetGraph::_reviewGraphRanges() {
     }
 
     // Give an extra 100*dMin% room each side.
-    if(false)
+    if(true)
     {
-        const auto dMin = .1;
+        const auto dMin = .025;
 
         auto dx = dMin * (xMax - xMin);
         auto dy = dMin * (yMax - yMin);
@@ -115,7 +115,7 @@ void Fields::Graphing::PointSetGraph::_reviewGraphRanges() {
 
 void Fields::Graphing::PointSetGraph::draw()
 {
-    _reviewGraphRanges();
+    if(autoReviewGraphRanges) reviewGraphRanges();
 
     Graph2D::draw();
 

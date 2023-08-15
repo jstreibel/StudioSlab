@@ -24,12 +24,13 @@ namespace Fields {
 
             PointSets mPointSets;
 
-            void _reviewGraphRanges();
+            bool autoReviewGraphRanges;
 
             void _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
         public:
-            PointSetGraph(const Str &title);
+            PointSetGraph(const Str &title, bool autoReviewGraphRanges=true);
 
+            void reviewGraphRanges();
             void draw() override;
 
             void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, Str setName);

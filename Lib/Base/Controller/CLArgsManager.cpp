@@ -5,6 +5,7 @@
 #include "CLArgsManager.h"
 #include "CLDefs.h"
 #include "Interface/InterfaceManager.h"
+#include "Base/Tools/Log.h"
 
 CLArgsManager* CLArgsManager::singleton = nullptr;
 
@@ -31,10 +32,11 @@ void CLArgsManager::ShowHelp() {
 }
 
 void CLArgsManager::Parse() {
+    Log::Critical() << "CLArgsManager started parsing command line options." << Log::Flush;
+
     CLOptionsDescription allOptions("Pendulum");
 
     allOptions.add_options("General")("help", "Print this help.");
-    // allOptions.add_options(general);
 
     auto interfaces = InterfaceManager::getInstance().getInterfaces();
     for(const auto interface : interfaces) {
@@ -53,6 +55,8 @@ void CLArgsManager::Parse() {
         std::cout << allOptions.help();
         exit(0);
     }
+
+    Log::Success() << "CLArgsManager finished parsing command line options." << Log::Flush;
 }
 
 auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void {

@@ -16,6 +16,11 @@ namespace RtoR::Thermal {
     public:
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
+    protected:
+        auto buildOpenGLOutput() -> Monitor * override;
+
+    public:
+
         auto buildEquationSolver() -> void * override;
 
         auto suggestFileName() const -> Str override;

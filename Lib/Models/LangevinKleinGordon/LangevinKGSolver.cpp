@@ -4,16 +4,23 @@
 
 #include "LangevinKGSolver.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Common/RandUtils.h"
 
 Real xi() {
+    /*
     const Real z = FRANDOM;
 
     const Real r = sqrt(-2.0 * log(1.0 - z));
+    // cheat?
+    // const Real r = sqrt(-log(1.0 - z));
 
     static Real signs[] = {-1,1};
     const Real sign = signs[random()%2];
 
     return sign*r;
+     */
+
+    return RandUtils::gaussianNoise(.0, 1.0);
 }
 
 void RtoR::LangevinKGSolver::startStep(Real t, Real dt) {
@@ -36,10 +43,6 @@ void RtoR::LangevinKGSolver::ComputeImpulses() {
     space.upload();
 }
 
-void RtoR::LangevinKGSolver::setTemperature(Real value) {T = value;}
-
-void RtoR::LangevinKGSolver::setDissipationCoefficient(Real value) {k = value;}
-
 RtoR::EquationState &
 RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationState &stateOut, Real t, Real dt) {
     if (langevinImpulses == nullptr) {
@@ -51,14 +54,18 @@ RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationSt
         scaledImpulses->Set(RtoR::NullFunction());
     }
 
+    #pragma omp barrier
+
     stateOut = RtoR::KGSolver::dtF(stateIn, stateOut, t, dt);
+
+    #pragma omp barrier
 
     {
         IN pi  = stateIn.getDPhiDt();
         OUT dissipation = *temp1;
-        dissipation.StoreMultiplication(pi, -k);
+        dissipation.StoreMultiplication(pi, -γ);
 
-        fix alpha = sqrt(2 * T / dt);
+        fix alpha = sqrt(2 * T * γ / dt);
         scaledImpulses->StoreMultiplication(*langevinImpulses, alpha);
 
         OUT F = stateOut.getDPhiDt();
@@ -70,4 +77,8 @@ RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationSt
 
     return stateOut;
 }
+
+void RtoR::LangevinKGSolver::setTemperature(Real value) {T = value;}
+
+void RtoR::LangevinKGSolver::setDissipationCoefficient(Real value) {γ = value;}
 

@@ -43,6 +43,7 @@ namespace Fields {
                     temp1 = (DiscrFuncType*)stateIn.getPhi().Clone();
                     temp2    = (DiscrFuncType*)stateIn.getPhi().Clone();
                 }
+                #pragma omp barrier
 
                 const auto &iPhi = stateIn.getPhi();
                 const auto &iDPhi = stateIn.getDPhiDt();

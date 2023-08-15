@@ -17,15 +17,23 @@ namespace RtoR {
             void draw() override;
 
         private:
+
             Spaces::PointSet temperature1HistoryData;
             Spaces::PointSet temperature2HistoryData;
             Spaces::PointSet temperature3HistoryData;
 
             Fields::Graphing::PointSetGraph mTemperaturesGraph;
-            Fields::Graphing::PointSetGraph mHistogramsGraph1;
-            Fields::Graphing::PointSetGraph mHistogramsGraph2;
-            Fields::Graphing::PointSetGraph mHistogramsGraph3;
-            Fields::Graphing::PointSetGraph mHistogramsGraph4;
+
+
+            Spaces::PointSet histogramKData;
+            Spaces::PointSet histogramGradData;
+            Spaces::PointSet histogramVData;
+            Spaces::PointSet histogramEData;
+
+            Fields::Graphing::PointSetGraph mHistogramsGraphK;
+            Fields::Graphing::PointSetGraph mHistogramsGraphGrad;
+            Fields::Graphing::PointSetGraph mHistogramsGraphV;
+            Fields::Graphing::PointSetGraph mHistogramsGraphE;
 
         };
     }

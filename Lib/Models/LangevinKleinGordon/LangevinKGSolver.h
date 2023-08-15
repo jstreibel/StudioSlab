@@ -28,7 +28,8 @@ namespace RtoR {
         DiscreteFunction *scaledImpulses   = nullptr;
 
         Real T=.0;
-        Real k=.0;
+        Real γ=.0;
+
     public:
         explicit LangevinKGSolver(const NumericParams &numericParams, RtoR::KGSolver::MyBase::EqBoundaryCondition &boundary)
         : RtoR::KGSolver(numericParams, boundary, *(new RtoR::AbsFunction())) { }

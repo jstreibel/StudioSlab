@@ -80,13 +80,13 @@ auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {
     return ss.str();
 }
 
-auto InterfaceManager::renderParametersToString(StrVector params, Str separator) const -> Str {
+auto InterfaceManager::renderParametersToString(StrVector params, Str separator, bool longName) const -> Str {
     StringStream ss;
 
     for(auto interface : interfaces) {
         auto parameters = interface->getParameters();
         for(const auto parameter : parameters) {
-            auto name = parameter->getCLName();
+            auto name = parameter->getCLName(longName);
 
             if(Common::Contains(params, name))
                 ss << name << "=" << parameter->valueToString() << separator;
@@ -107,6 +107,22 @@ auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr  
         Log::WarningImportant() << "InterfaceManager could not find Interface " << Log::FGCyan << target << Log::Flush;
 
     return *it;
+}
+
+auto InterfaceManager::getParametersValues(StrVector params) const -> std::vector<std::pair<Str,Str>> {
+    std::vector<std::pair<Str,Str>> values;
+
+    for(auto interface : interfaces) {
+        auto parameters = interface->getParameters();
+        for(const auto parameter : parameters) {
+            auto name = parameter->getCLName();
+
+            if(Common::Contains(params, name))
+                values.emplace_back(name, parameter->valueToString());
+        }
+    }
+
+    return values;
 }
 
 //auto InterfaceManager::NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr {
