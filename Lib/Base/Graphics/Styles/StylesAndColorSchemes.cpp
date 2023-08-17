@@ -17,6 +17,18 @@
 
 Styles::ColorScheme_ptr current;
 
+void SetSchemeDark1();
+void SetSchemeDark2();
+void SetSchemeDark3();
+
+void Styles::Init() {
+    //SetSchemeDark();
+    SetSchemeDark3();
+    //SetSchemePrint();
+    //SetSchemeLight2();
+}
+
+
 void SetSchemeDark1 () {
     Styles::Color graphTitleFont =  {1,1,1,1};
     Styles::Color graphTicksFont =  {1,1,1,.8};
@@ -69,8 +81,8 @@ void SetSchemeDark3 () {
     Styles::Color graphTicksFont =  {1,1,1,.8};
     Styles::Color background =      {0.05,0.05,0.08,1};
 
-    Styles::Color axisColor =       {.95,.99,.95,1};
-    Styles::Color tickColor =       {.25,.35,.35,1};
+    Styles::Color axisColor =       {1,1,1,.25};
+    Styles::Color tickColor =       {1,1,1,.25};
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
@@ -210,14 +222,6 @@ void SetSchemeTest () {
 
 }
 
-
-void Styles::Init() {
-    //SetSchemeDark();
-    SetSchemeDark3();
-    //SetSchemePrint();
-    //SetSchemeLight2();
-}
-
 Styles::ColorScheme_ptr Styles::GetColorScheme() {
     return current;
 }
@@ -258,3 +262,9 @@ Styles::PlotStyle::PlotStyle(Color color, Styles::Trace trace, bool filled,
             break;
     }
 }
+
+Styles::PlotStyle Styles::PlotStyle::permuteColors(bool odd) {
+
+    return Styles::PlotStyle(lineColor.permute(odd), trace, filled, fillColor.permute(odd), lineWidth);
+}
+

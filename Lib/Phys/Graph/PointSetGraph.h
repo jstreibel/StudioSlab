@@ -14,13 +14,14 @@ namespace Fields {
 
         class PointSetGraph : public Base::Graphics::Graph2D {
 
-            typedef std::tuple<Spaces::PointSet::Ptr, Styles::PlotStyle, Str> PointSetTriple;
-            static auto GetPointSet ( PointSetTriple triple ) { return std::get<0>(triple); };
-            static auto GetStyle    ( PointSetTriple triple ) { return std::get<1>(triple); };
-            static auto GetName     ( PointSetTriple triple ) { return std::get<2>(triple); };
+            struct PointSetMetadata {
+                Spaces::PointSet::Ptr data;
+                Styles::PlotStyle plotStyle;
+                Str name;
+                bool affectsGraphRanges=true;
+            };
 
-
-            typedef std::vector<PointSetTriple> PointSets;
+            typedef std::vector<PointSetMetadata> PointSets;
 
             PointSets mPointSets;
 
@@ -28,12 +29,15 @@ namespace Fields {
 
             void _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
         public:
-            PointSetGraph(const Str &title, bool autoReviewGraphRanges=true);
+            explicit PointSetGraph(const Str &title, bool autoReviewGraphRanges=true);
 
             void reviewGraphRanges();
             void draw() override;
 
-            void addPointSet(Spaces::PointSet::Ptr pointSet, Styles::PlotStyle style, Str setName);
+            void addPointSet(Spaces::PointSet::Ptr pointSet,
+                             Styles::PlotStyle style,
+                             Str setName,
+                             bool affectsGraphRanges=true);
 
         };
 

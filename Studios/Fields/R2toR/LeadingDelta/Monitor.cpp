@@ -6,14 +6,11 @@
 #include "LeadingDelta.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "Base/Controller/Interface/InterfaceManager.h"
 
 #include "Phys/Function/FunctionScale.h"
 #include "Mappings/R2toR/Model/Energy.h"
 
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Phys/Function/FunctionScale.h"
 
 #define xMin params.getxMin()
 #define xMax params.getxMax()

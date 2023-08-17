@@ -5,6 +5,7 @@
 #include "LangevinKGSolver.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Common/RandUtils.h"
+#include "Common/OMPUtils.h"
 
 Real xi() {
     /*
@@ -30,15 +31,18 @@ void RtoR::LangevinKGSolver::startStep(Real t, Real dt) {
 }
 
 void RtoR::LangevinKGSolver::ComputeImpulses() {
-    if(langevinImpulses == nullptr) return;
+    if (langevinImpulses == nullptr) return;
 
     auto &space = langevinImpulses->getSpace();
     assert(space.getDim().getNDim() == 1);
 
     auto &X = space.getHostData();
 
-    for (auto &x: X)
+    OMP_PARALLEL_FOR(i, X.size()) {
+        auto &x = X[i];
+
         x = xi();
+    }
 
     space.upload();
 }
@@ -49,7 +53,7 @@ RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationSt
         assert(scaledImpulses == nullptr);
 
         langevinImpulses = (EqState::SubStateType *) stateIn.getPhi().Clone();
-        scaledImpulses = (EqState::SubStateType *) stateIn.getPhi().Clone();
+        scaledImpulses   = (EqState::SubStateType *) stateIn.getPhi().Clone();
 
         scaledImpulses->Set(RtoR::NullFunction());
     }
@@ -65,7 +69,8 @@ RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationSt
         OUT dissipation = *temp1;
         dissipation.StoreMultiplication(pi, -γ);
 
-        fix alpha = sqrt(2 * T * γ / dt);
+        fix h = params.geth();
+        fix alpha = sqrt(2 * T * γ  / dt);
         scaledImpulses->StoreMultiplication(*langevinImpulses, alpha);
 
         OUT F = stateOut.getDPhiDt();

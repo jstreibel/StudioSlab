@@ -13,7 +13,7 @@
 namespace RtoR::Thermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister) : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
-        interface->addParameters({&temperature, &dissipation});
+        interface->addParameters({&temperature, &dissipation, &transientGuess});
 
         if(doRegister) registerToManager();
     }
@@ -38,5 +38,7 @@ namespace RtoR::Thermal {
 }
 
 RtoR::Monitor *RtoR::Thermal::Builder::buildOpenGLOutput() {
-    return new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
+    auto monitor = new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
+    monitor->setTransientGuess(*transientGuess);
+    return monitor;
 }

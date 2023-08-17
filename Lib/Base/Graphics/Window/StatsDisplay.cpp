@@ -46,13 +46,13 @@ void StatsDisplay::draw() {
     for (auto stat: stats) {
         const auto c = stat.second;
         const auto text = stat.first;
-        //const auto color = ImVec4(c.r, c.g, c.b, c.a);
+        const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
         if(text=="<\\br>"){ ImGui::Separator(); i=0; continue; }
 
         if(i++%2 && w_ > 500) ImGui::SameLine(w/2.-hSpacing);
 
-        ImGui::Text(text.c_str(), nullptr);
+        ImGui::TextColored(color, text.c_str(), nullptr);
     }
     ImGui::End();
 

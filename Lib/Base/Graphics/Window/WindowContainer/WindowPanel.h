@@ -35,6 +35,11 @@ public:
      */
     bool addWindowToColumn(Window *window, int columnId);
 
+    /**
+     * Set the the relative width of a column.
+     * @param column Column index, zero-based.
+     * @param relWidth The relative width of the column. Negative value means a free width.
+     */
     void setColumnRelativeWidth(int column, float relWidth);
 
     void arrangeWindows();

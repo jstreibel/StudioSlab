@@ -133,7 +133,13 @@ void GLUTBackend::run(Program *pProgram)
 
 void GLUTBackend::keyboard(unsigned char key, int x, int y)
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
+    {
+        ImGui_ImplGLUT_KeyboardFunc(key, x, y);
+        if(ImGui::GetIO().WantCaptureKeyboard)
+            return;
+    }
+
+    auto &me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
 
     if(key == 27) {
@@ -156,102 +162,132 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
 
 void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
+    {
+        ImGui_ImplGLUT_SpecialFunc(key, x, y);
+        if(ImGui::GetIO().WantCaptureKeyboard)
+            return;
+    }
+
+    auto &me = GetInstanceSuper<GLUTBackend>();
     for(auto &win : me.windows)
         win->notifyKeyboardSpecial(key, x, y);
 }
 
 void GLUTBackend::mouseButton(int button, int state, int x, int y)
 {
-    auto &mouseState = GetInstanceSuper<GLUTBackend>().mouseState;
-
-    mouseState.dx = x-mouseState.x;
-    mouseState.dy = y-mouseState.y;
-    mouseState.x = x;
-    mouseState.y = y;
-    if      (button == GLUT_LEFT_BUTTON)   mouseState.leftPressed   = (state == GLUT_DOWN);
-    else if (button == GLUT_MIDDLE_BUTTON) mouseState.centerPressed = (state == GLUT_DOWN);
-    else if (button == GLUT_RIGHT_BUTTON)  mouseState.rightPressed  = (state == GLUT_DOWN);
-
-    // if(ImGui::GetIO().WantCaptureMouse)
     {
-        ImGui_ImplGLUT_MouseFunc(button, state, x, y);
+        auto &mouseState = GetInstanceSuper<GLUTBackend>().mouseState;
+
+        mouseState.dx = x - mouseState.x;
+        mouseState.dy = y - mouseState.y;
+        mouseState.x = x;
+        mouseState.y = y;
+        if (button == GLUT_LEFT_BUTTON) mouseState.leftPressed = (state == GLUT_DOWN);
+        else if (button == GLUT_MIDDLE_BUTTON) mouseState.centerPressed = (state == GLUT_DOWN);
+        else if (button == GLUT_RIGHT_BUTTON) mouseState.rightPressed = (state == GLUT_DOWN);
     }
 
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
-    for(auto &win : me.windows)
-        win->notifyMouseButton(button, state, x, y);
+    {
+        ImGui_ImplGLUT_MouseFunc(button, state, x, y);
+        if(ImGui::GetIO().WantCaptureMouse)
+            return;
+    }
 
-
+    {
+        auto &me = GetInstanceSuper<GLUTBackend>();
+        for (auto &win: me.windows)
+            win->notifyMouseButton(button, state, x, y);
+    }
 }
 
 void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
-    for(auto &win : me.windows)
-        win->notifyMouseWheel(wheel, direction, x, y);
+    {
+        ImGui_ImplGLUT_MouseWheelFunc(wheel, direction, x, y);
+        if (ImGui::GetIO().WantCaptureMouse)
+            return;
+    }
+
+    {
+        auto &me = GetInstanceSuper<GLUTBackend>();
+        for (auto &win: me.windows)
+            win->notifyMouseWheel(wheel, direction, x, y);
+    }
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
-    auto &mouseState = me.mouseState;
-    mouseState.dx = x-mouseState.x;
-    mouseState.dy = y-mouseState.y;
-    mouseState.x = x;
-    mouseState.y = y;
+    auto &me = GetInstanceSuper<GLUTBackend>();
 
-    if(ImGui::GetIO().WantCaptureMouse)
     {
-        ImGui_ImplGLUT_MotionFunc(x, y);
-        return;
+        auto &mouseState = me.mouseState;
+        mouseState.dx = x - mouseState.x;
+        mouseState.dy = y - mouseState.y;
+        mouseState.x = x;
+        mouseState.y = y;
     }
 
-    for(auto &win : me.windows)
-        win->notifyMousePassiveMotion(x, y);
+    {
+        ImGui_ImplGLUT_MotionFunc(x, y);
+        if(ImGui::GetIO().WantCaptureMouse)
+            return;
+    }
+
+    {
+        for (auto &win: me.windows)
+            win->notifyMousePassiveMotion(x, y);
+    }
 }
 
 void GLUTBackend::mouseMotion(int x, int y)
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
-    auto &mouseState = me.mouseState;
-    mouseState.dx = x-mouseState.x;
-    mouseState.dy = y-mouseState.y;
-    mouseState.x = x;
-    mouseState.y = y;
-
-    if(ImGui::GetIO().WantCaptureMouse)
+    auto &me = GetInstanceSuper<GLUTBackend>();
     {
-        ImGui_ImplGLUT_MotionFunc(x, y);
-        return;
+        auto &mouseState = me.mouseState;
+        mouseState.dx = x - mouseState.x;
+        mouseState.dy = y - mouseState.y;
+        mouseState.x = x;
+        mouseState.y = y;
     }
 
-    for(auto &win : me.windows)
-        win->notifyMouseMotion(x, y);
+    {
+        ImGui_ImplGLUT_MotionFunc(x, y);
+        if(ImGui::GetIO().WantCaptureMouse)
+            return;
+    }
+
+    {
+        for (auto &win: me.windows)
+            win->notifyMouseMotion(x, y);
+    }
 }
 
 void GLUTBackend::render()
 {
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
+    auto &me = GetInstanceSuper<GLUTBackend>();
 
-    ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGLUT_NewFrame();
-    ImGui::NewFrame();
-    if(me.showDemo) ImGui::ShowDemoWindow();
+    {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGLUT_NewFrame();
+        ImGui::NewFrame();
+        if (me.showDemo) ImGui::ShowDemoWindow();
+    }
 
     static auto timer = Timer();
 
-    for(auto &win : me.windows) {
-        //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
-        auto elapsed = timer.getElTime_msec();
-        win->notifyRender(elapsed);
+    {
+        for (auto &win: me.windows) {
+            //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
+            auto elapsed = timer.getElTime_msec();
+            win->notifyRender((float)elapsed);
+        }
+        timer.reset();
     }
-    timer.reset();
 
-
-    ImGui::Render();
-    //ImGuiIO& io = ImGui::GetIO();
-
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    {
+        ImGui::Render();
+        //ImGuiIO& io = ImGui::GetIO();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
 
     glutSwapBuffers();
     glutPostRedisplay();
@@ -261,7 +297,6 @@ void GLUTBackend::idleCall()
 {
     GET me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
-
 
     GLenum err;
     static GLenum lastErr = 0;
@@ -279,10 +314,12 @@ void GLUTBackend::idleCall()
 
 void GLUTBackend::reshape(int w, int h)
 {
-    ImGuiIO& io = ImGui::GetIO();
-    io.DisplaySize = ImVec2((float)w, (float)h);
+    {
+        ImGuiIO &io = ImGui::GetIO();
+        io.DisplaySize = ImVec2((float) w, (float) h);
+    }
 
-    GLUTBackend &me = GetInstanceSuper<GLUTBackend>();
+    auto &me = GetInstanceSuper<GLUTBackend>();
 
     me.w = w;
     me.h = h;

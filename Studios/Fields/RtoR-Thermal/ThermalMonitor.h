@@ -11,10 +11,14 @@ namespace RtoR {
     namespace Thermal {
 
         class Monitor : public RtoR::Monitor {
+            Real transientGuess = -1.0;
+
         public:
             explicit Monitor(const NumericParams &, KGEnergy &hamiltonian);
 
             void draw() override;
+
+            void setTransientGuess(Real guess);
 
         private:
 

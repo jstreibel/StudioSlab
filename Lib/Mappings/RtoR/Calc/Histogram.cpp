@@ -3,16 +3,17 @@
 //
 
 #include "Histogram.h"
+#include "Base/Tools/Log.h"
 
-#define bin(v) int(floor(((v)-vMin)/binWidth))
+#define bin(v) int( round ( (v-vMin)/binWidth ) )
 
 Histogram::Histogram() {
 
 }
 
-void Histogram::Compute(const RtoR::DiscreteFunction &func, int nBins) {
+void Histogram::Compute(const RtoR::DiscreteFunction &func, int _nBins) {
 
-    this->nBins = nBins;
+    this->nBins = _nBins;
 
     auto &F = func.getSpace().getHostData();
 
@@ -30,16 +31,14 @@ void Histogram::Compute(const RtoR::DiscreteFunction &func, int nBins) {
 
     if(vMax == vMin) return;
 
-    binWidth = (vMax - vMin) / Real(nBins);
+    binWidth = (vMax - vMin) / Real(nBins-1);
 
     bins.clear();
     bins.resize(nBins, 0);
     count=F.size();
 
-    for(auto &v : F) {
+    for(auto &v : F)
         bins[bin(v)]++;
-    }
-
 }
 
 RtoR::Function *Histogram::asPDFFunction() const {
@@ -58,30 +57,54 @@ RtoR::Function *Histogram::asPDFFunction() const {
     return func;
 }
 
-auto Histogram::asPointSet() const -> Spaces::PointSet {
+auto Histogram::asPDFPointSet(bool beautiful) const -> Spaces::PointSet {
     Spaces::PointSet pointSet;
-    return renderToPointSet(pointSet);
+    return renderPDFToPointSet(pointSet, beautiful);
 }
 
-auto Histogram::renderToPointSet(Spaces::PointSet &pointSet) const -> Spaces::PointSet {
+auto Histogram::renderPDFToPointSet(Spaces::PointSet &pointSet, bool beautiful) const -> Spaces::PointSet {
     const auto N=Real(count);
     const auto w = binWidth;
     const auto normFactor = N*w;
 
     Spaces::Point2DVec points;
 
-    points.push_back({vMin, 0});
+    if(beautiful) points.emplace_back(vMin, 0);
+
+    static Count debugCount;
+    static Count debugCount_last=0;
+    debugCount = 0;
 
     for(auto i=0; i<nBins; ++i) {
-        auto x = vMin + i*w;
-        auto y = bins[i] / normFactor;
+        auto nHere = bins[i];
 
-        points.push_back({x, y});
-        points.push_back({x+w, y});
-        points.push_back({x+w, 0});
+        auto x = vMin + i*w;
+        auto y = (Real)nHere / normFactor;
+
+        points.emplace_back(x, y);
+        if(beautiful) {
+            points.emplace_back(x + w, y);
+            points.emplace_back(x + w, 0);
+        }
+
+        debugCount += nHere;
     }
 
+    if(debugCount != debugCount_last && debugCount_last!=0)
+        Log::Info("Histogram counting error: ") << debugCount << Log::Flush;
+
+    debugCount_last = debugCount;
+
     return pointSet = Spaces::PointSet(points);
+}
+
+auto Histogram::integrate() const -> Real {
+    let sum=.0;
+
+    for(fix density : bins)
+        sum += density;
+
+    return sum / (double)count;
 }
 
 

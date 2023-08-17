@@ -13,19 +13,24 @@
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
 
+#define CHOOSE_ENERGY_LABEL(A, a) (showEnergyHistoryAsDensities ? (a) : (A))
 
 RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
-                       const Real phiMin, const Real phiMax, Str name)
+                       const Real phiMin, const Real phiMax, Str name, bool showEnergyHistoryAsDensities)
 : Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
+, showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , hamiltonian(hamiltonian)
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
 , mEnergyGraph("Energy")
 {
     auto sty = Styles::GetColorScheme()->funcPlotStyles.begin();
-    mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty, "E");
-    mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, "K");
-    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, "grad");
-    mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, "V");
+
+
+    mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "u"));
+    mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "k"));
+    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("Grad^2", "grad^2"));
+    mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, CHOOSE_ENERGY_LABEL("V", "v"));
+
     panel.addWindow(&mEnergyGraph);
 
     panel.addWindow(&mFieldsGraph, true, 0.80);
@@ -39,8 +44,8 @@ void RtoR::Monitor::draw() {
     hamiltonian.computeDensities(fieldState);
 
     if(showPhi){
-        //mFieldsGraph.addFunction(&hamiltonian.getPotential(), "|phi|", V_style);
-        mFieldsGraph.addFunction(&fieldState.getPhi(), "phi", V_style);
+        mFieldsGraph.addFunction(&hamiltonian.getPotential(), "|phi|", V_style);
+        //mFieldsGraph.addFunction(&fieldState.getPhi(), "phi", V_style);
     }
 
     if(showKineticEnergy){
@@ -79,10 +84,13 @@ void RtoR::Monitor::_out(const OutputPacket &outInfo) {
     //    UHistory.insertBack(U / k);
     //}
 
-    UHistoryData.addPoint({t, U});
-    KHistoryData.addPoint({t, K});
-    WHistoryData.addPoint({t, W});
-    VHistoryData.addPoint({t, V});
+    auto factor = 1.0;
+    if(showEnergyHistoryAsDensities) factor = 1./params.getL();
+
+    UHistoryData.addPoint({t, U*factor});
+    KHistoryData.addPoint({t, K*factor});
+    WHistoryData.addPoint({t, W*factor});
+    VHistoryData.addPoint({t, V*factor});
 
     auto xMax = t;
 

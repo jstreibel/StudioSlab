@@ -6,9 +6,9 @@
 #include <sstream>
 #include "util.h"
 
+/*
 void checkOpenGLDebugExtension ()
 {
-    /*
     int NumberOfExtensions;
     glGetIntegerv(GL_NUM_EXTENSIONS, &NumberOfExtensions);
     for(int i=0; i<NumberOfExtensions; i++) {
@@ -21,10 +21,10 @@ void checkOpenGLDebugExtension ()
                     "glDebugMessageCallbackARB");
         }
     }
-     */
 
     throw "checkOpenGLDebugExtension not implemented.";
 }
+*/
 
 bool fileExists (const std::string& name) {
     std::ifstream f(name.c_str());

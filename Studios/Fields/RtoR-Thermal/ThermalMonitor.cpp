@@ -4,6 +4,8 @@
 
 #include "ThermalMonitor.h"
 
+#include "3rdParty/imgui/imgui.h"
+
 #include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 #include "Mappings/RtoR/Calc/Histogram.h"
 
@@ -16,67 +18,75 @@
 auto max(auto a, auto b) { return ((a)>(b)?(a):(b)); }
 auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 
-const Styles::Color T1_color = Styles::Color(0, 1, 0);
-const Styles::Color T2_color = Styles::Color(1, 0.45, 1);
-const Styles::Color T3_color = Styles::Color(1, 1, 0);
-
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_OF_GRAPH_LIMITS false
+#define SHOW_ENERGY_HISTORY_AS_DENSITIES true
+#define HISTOGRAM_SHOULD_BE_PRETTY false
 
 RtoR::Thermal::Monitor::Monitor(const NumericParams &params1, KGEnergy &hamiltonian)
-: RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor")
+: RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
 , mTemperaturesGraph("T")
 , mHistogramsGraphK("k histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphV("v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphE("e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 {
-    panel.setColumnRelativeWidth(1, 0.60);
-    panel.setColumnRelativeWidth(0, 0.10);
+    panel.setColumnRelativeWidth(1, -1);
+    panel.setColumnRelativeWidth(0, 0.2);
 
-    auto sty = Styles::GetColorScheme()->funcPlotStyles;
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), sty[0], "T_1");
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), sty[1], "T = 2<K>/L");
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), sty[2], "T_3");
-    panel.addWindow(&mTemperaturesGraph, ADD_NEW_COLUMN);
+    auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+    mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
+    mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
+    mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "T_3");
+    panel.addWindowToColumn(&mTemperaturesGraph, 0);
 
-    mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), Styles::GetColorScheme()->funcPlotStyles[0], "K");
-    mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), Styles::GetColorScheme()->funcPlotStyles[1], "grad");
-    mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), Styles::GetColorScheme()->funcPlotStyles[2], "V");
-    mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), Styles::GetColorScheme()->funcPlotStyles[3], "E");
+    style = Styles::GetColorScheme()->funcPlotStyles.begin();
+    mHistogramsGraphE.addPointSet(DummyPtr(histogramEData),       *style++, "E");
+    mHistogramsGraphK.addPointSet(DummyPtr(histogramKData),       *style++, "K");
+    mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
+    mHistogramsGraphV.addPointSet(DummyPtr(histogramVData),       *style++, "V");
 
-    panel.addWindow(&mHistogramsGraphK);
-    panel.addWindow(&mHistogramsGraphGrad);
-    panel.addWindow(&mHistogramsGraphV);
-    panel.addWindow(&mHistogramsGraphE);
+    auto *histogramsPanel = new WindowPanel();
+    histogramsPanel->addWindow(&mHistogramsGraphV);
+    histogramsPanel->addWindow(&mHistogramsGraphGrad);
+    histogramsPanel->addWindow(&mHistogramsGraphK, ADD_NEW_COLUMN);
+    histogramsPanel->addWindow(&mHistogramsGraphE);
+
+    panel.addWindow(histogramsPanel);
+
 }
 
 void RtoR::Thermal::Monitor::draw() {
-
-    const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
-
-    std::ostringstream ss;
-
 
 
     // *************************** Histograms *****************************
     {
         Histogram histogram;
-        auto nbins = 100;
+        static auto nbins = 200;
+        static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
+
+        if(ImGui::Begin("Probability density functions")){
+            ImGui::SliderInt("n bins", &nbins, 10, 2000);
+            ImGui::Checkbox("Pretty bars", &pretty);
+        }
+        ImGui::End();
+
 
         histogram.Compute(hamiltonian.getKinetic(), nbins);
-        histogramKData = histogram.asPointSet();
+        histogramKData = histogram.asPDFPointSet(pretty);
+        stats.addVolatileStat("<\\br>");
+        stats.addVolatileStat(Str("Energy distribution integral: ") + ToStr(histogram.integrate()));
 
         histogram.Compute(hamiltonian.getGradient(), nbins);
-        histogramGradData = histogram.asPointSet();
+        histogramGradData = histogram.asPDFPointSet(pretty);
 
         histogram.Compute(hamiltonian.getPotential(), nbins);
-        histogramVData = histogram.asPointSet();
+        histogramVData = histogram.asPDFPointSet(pretty);
 
         histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
-        histogramEData = histogram.asPointSet();
+        histogramEData = histogram.asPDFPointSet(pretty);
 
-        if(step<5000){
+        if(t<transientGuess || transientGuess<0){
             mHistogramsGraphK.reviewGraphRanges();
             mHistogramsGraphGrad.reviewGraphRanges();
             mHistogramsGraphV.reviewGraphRanges();
@@ -84,34 +94,36 @@ void RtoR::Thermal::Monitor::draw() {
         }
     }
 
-
-
     // *************************** MY BEAUTY *****************************
     auto L =       params.getL();
 
     auto U = hamiltonian.integrateEnergy();
     auto u = U/L;
-    auto barϕ = hamiltonian.integratePotential() / L;
     auto K = hamiltonian.integrateKinetic();
+    auto V = hamiltonian.integratePotential();
     auto W = hamiltonian.integrateGradient();
+    auto barϕ = V / L;
 
     auto tau = 2*K/L;
     auto tau_indirect = u - .5*barϕ;
 
     stats.addVolatileStat("<\\br>");
-    for(auto p : InterfaceManager::getInstance().getParametersValues({"T", "k"}) )
+    for(auto p : InterfaceManager::getInstance().getParametersValues({"T", "k", "i"}) )
         stats.addVolatileStat(p.first + " = " + p.second);
 
+    std::ostringstream ss;
+    auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
     stats.addVolatileStat("<\\br>");
-    ss.str(""); ss << "U = " << U;            stats.addVolatileStat(ss.str());
-    ss.str(""); ss << "K = " << K;            stats.addVolatileStat(ss.str());
-    ss.str(""); ss << "W = " << W;            stats.addVolatileStat(ss.str());
-    ss.str(""); ss << "V = " << barϕ*L;       stats.addVolatileStat(ss.str());
-    stats.addVolatileStat("");
-    ss.str(""); ss << "u = U/L = " << u;        stats.addVolatileStat(ss.str());
-    ss.str(""); ss << "tau = <dotphi^2> = 2K/L = " << tau;      stats.addVolatileStat(ss.str(), T1_color);
-    ss.str(""); ss << "tau* = u - barphi/2 = " << tau_indirect; stats.addVolatileStat(ss.str(), T2_color);
-    ss.str(""); ss << "tau** = barphi + w = " << (barϕ+2*W/L);    stats.addVolatileStat(ss.str(), T3_color);
+    stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+    stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+    stats.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+    stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+    stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+
+    style = Styles::GetColorScheme()->funcPlotStyles.begin();
+    stats.addVolatileStat(Str("tau = <dotphi^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
+    stats.addVolatileStat(Str("tau* = u - barphi/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
+    stats.addVolatileStat(Str("tau** = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
 
     temperature1HistoryData.addPoint({t, tau});
     temperature2HistoryData.addPoint({t, tau_indirect});
@@ -121,4 +133,16 @@ void RtoR::Thermal::Monitor::draw() {
 
     RtoR::Monitor::draw();
 
+}
+
+void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
+    transientGuess = guess;
+
+    static auto line = Spaces::PointSet::New();
+    line->clear();
+    line->addPoint({guess, -1.0});
+    line->addPoint({guess, 1.e7 });
+
+    mEnergyGraph      .addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
+    mTemperaturesGraph.addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
 }

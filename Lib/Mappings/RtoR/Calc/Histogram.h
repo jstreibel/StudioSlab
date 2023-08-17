@@ -16,8 +16,10 @@ public:
 
     RtoR::Function* asPDFFunction() const;
 
-    auto renderToPointSet(Spaces::PointSet &pointSet) const -> Spaces::PointSet;
-    auto asPointSet() const -> Spaces::PointSet;
+    auto asPDFPointSet(bool beautiful=true) const -> Spaces::PointSet;
+    auto renderPDFToPointSet(Spaces::PointSet &pointSet, bool beautiful=true) const -> Spaces::PointSet;
+
+    auto integrate() const -> Real;
 
     int nBins;
     Real vMax, vMin;

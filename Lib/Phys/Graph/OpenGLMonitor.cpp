@@ -10,6 +10,8 @@
 
 using namespace Base;
 
+#define CLEAR_BUFFERS false
+
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericParams &params, Str channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
@@ -38,19 +40,25 @@ void Graphics::OpenGLMonitor::writeStats() {
     const auto N = p.getN();
     const auto h = p.geth();
 
-    static auto lastStep=0;
+    static Count lastStep=0;
     auto dt = params.getdt();
+
+    fix FPS = 1e3/elTime;
 
     stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
     stats.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
-    stats.addVolatileStat(Str("Steps/frame: ") + std::to_string(lastData.getSteps() - lastStep));
-    stats.addVolatileStat(Str("Steps/sec: ") + ToStr(getnSteps()/(elTime*1e-3)));
-    stats.addVolatileStat(Str("FPS: ") + ToStr(1/(elTime*1e-3)));
+    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(lastData.getSteps() - lastStep));
+    stats.addVolatileStat(Str("Steps/sec: ") + ToStr(getnSteps()/(elTime*1e-3), 0));
+    stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(FPS, 0));
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));
     stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
+
+    fix minFPS = 58, maxFPS = 59;
+    if     ( FPS >= maxFPS ) setnSteps(getnSteps()+1);
+    else if( FPS <= minFPS ) setnSteps(getnSteps()-1);
 
     lastStep = lastData.getSteps();
 }
@@ -58,7 +66,7 @@ void Graphics::OpenGLMonitor::writeStats() {
 bool Graphics::OpenGLMonitor::finishFrameAndRender() {
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    if(CLEAR_BUFFERS) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
     {
@@ -71,6 +79,7 @@ bool Graphics::OpenGLMonitor::finishFrameAndRender() {
         }
 
         assert(lastData.hasValidData());
+
         writeStats();
         draw();
         panel.draw();

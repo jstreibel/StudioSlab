@@ -31,6 +31,8 @@ namespace Styles {
     struct PlotStyle {
         PlotStyle(Color color, Trace trace=Solid, bool filled=true, Color lineFill=Nil, float lineWidth=1.3);
 
+        PlotStyle permuteColors(bool odd=false);
+
         Color lineColor;
         Trace trace;
         bool filled;

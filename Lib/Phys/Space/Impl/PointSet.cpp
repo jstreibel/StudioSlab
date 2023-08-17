@@ -38,15 +38,14 @@ auto Spaces::PointSet::getMin() const -> Spaces::Point2D {
 void Spaces::PointSet::addPoint(const Spaces::Point2D &point) {
     if( points.empty() ){ min=point; max=point; }
 
-    auto a = point.x;
-
     if     ( point.x > max.x ) max.x = point.x;
     else if( point.x < min.x ) min.x = point.x;
 
     if     ( point.y > max.y ) max.y = point.y;
     else if( point.y < min.y ) min.y = point.y;
 
-    points.emplace_back(point);
+    auto p = point;
+    points.emplace_back(p);
 }
 
 void Spaces::PointSet::setPoints(Spaces::Point2DVec newPoints) {
@@ -54,6 +53,10 @@ void Spaces::PointSet::setPoints(Spaces::Point2DVec newPoints) {
 }
 
 const Spaces::Point2DVec &Spaces::PointSet::getPoints() const { return points; }
+
+void Spaces::PointSet::clear() {
+    points.clear();
+}
 
 
 

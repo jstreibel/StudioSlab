@@ -10,8 +10,16 @@ namespace Styles {
     public:
         Color(float r, float g, float b, float a=1) : r(r), g(g), b(b), a(a) {}
         Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
-        Color(const Color &c) : r(c.r), g(c.g), b(c.b), a(c.a) { };
+        Color(const Color &c) = default;
+
         float r, g, b, a;
+
+        Color permute(bool odd=false) const {
+            if(odd) return {g, r, b, a};
+
+            else return {b, r, g, a};
+        }
+
 
         static Color FromHex(Str hex){
             const auto size = hex.length();
@@ -45,7 +53,9 @@ namespace Styles {
 
         std::vector<Real> toVector() { return {r, g, b}; }
 
-        Color rgb() const { return Color(r, g, b, -1); }
+        Color rgb() const { return {r, g, b, -1}; }
+
+
 
         bool operator==(const Color &rhs) const {
             static float eps = 1.e-4;

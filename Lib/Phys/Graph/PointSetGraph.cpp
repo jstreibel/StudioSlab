@@ -4,6 +4,8 @@
 
 #include "PointSetGraph.h"
 
+#include <utility>
+
 namespace My = Fields::Graphing;
 
 My::PointSetGraph::PointSetGraph(const Str &title, bool autoReviewGraphRanges)
@@ -12,9 +14,12 @@ My::PointSetGraph::PointSetGraph(const Str &title, bool autoReviewGraphRanges)
 }
 
 void My::PointSetGraph::addPointSet(Spaces::PointSet::Ptr pointSet,
-                                    Styles::PlotStyle style, Str setName) {
-    auto triple = PointSetTriple{pointSet, style, setName};
-    mPointSets.emplace_back(triple);
+                                    Styles::PlotStyle style,
+                                    Str setName,
+                                    bool affectsGraphRanges) {
+    auto metaData = PointSetMetadata{std::move(pointSet), std::move(style), std::move(setName), affectsGraphRanges};
+
+    mPointSets.emplace_back(metaData);
 }
 
 void My::PointSetGraph::_renderPointSet(const Spaces::PointSet &pSet,
@@ -74,10 +79,10 @@ void My::PointSetGraph::_renderPointSet(const Spaces::PointSet &pSet,
 }
 
 void Fields::Graphing::PointSetGraph::reviewGraphRanges() {
-    if(mPointSets.size() != 0)
+    if(!mPointSets.empty())
     {
 
-        auto referencePointSet = GetPointSet(mPointSets[0]);
+        auto referencePointSet = mPointSets[0].data;
 
         xMax = referencePointSet->getMax().x;
         xMin = referencePointSet->getMin().x;
@@ -86,8 +91,10 @@ void Fields::Graphing::PointSetGraph::reviewGraphRanges() {
     }
 
     for (auto &set: mPointSets) {
-        auto max = GetPointSet(set)->getMax();
-        auto min = GetPointSet(set)->getMin();
+        if(!set.affectsGraphRanges) continue;
+
+        auto max = set.data->getMax();
+        auto min = set.data->getMin();
 
         if (max.x > xMax) xMax = max.x;
         if (min.x < xMin) xMin = min.x;
@@ -120,12 +127,12 @@ void Fields::Graphing::PointSetGraph::draw()
     Graph2D::draw();
 
     int i=0;
-    for(auto &triple : mPointSets){
-        auto &func = *GetPointSet(triple);
-        auto style = GetStyle(triple);
-        auto label = GetName(triple);
+    for(auto &ptSet : mPointSets){
+        auto &func = *ptSet.data;
+        auto style = ptSet.plotStyle;
+        auto label = ptSet.name;
 
-        if(label != "") _nameLabelDraw(i++, 0, style, label, this);
+        if(!label.empty()) _nameLabelDraw(i++, 0, style, label, this);
 
         this->_renderPointSet(func, style);
     }

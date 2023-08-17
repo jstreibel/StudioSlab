@@ -32,7 +32,13 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
-    if(*VisualMonitor) Backend::Initialize<GLUTBackend>();
+    if(*VisualMonitor){
+        auto &backend = Backend::Initialize<GLUTBackend>();
+
+        if(*VisualMonitor_startPaused) backend.pause();
+        else backend.resume();
+
+    }
     else Backend::Initialize<ConsoleBackend>();
 
     const NumericParams &p = numericParams;
@@ -71,6 +77,9 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
         auto outputOpenGL = buildOpenGLOutput();
+
+        outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
+
         glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
         // outGL->output(dummyInfo); // stop flicker?
         outputManager->addOutputChannel(outputOpenGL);

@@ -18,6 +18,7 @@ namespace RtoR {
     class Monitor : public Graphics::OpenGLMonitor {
         bool notifyKeyboard(unsigned char key, int x, int y) override;
 
+        bool showEnergyHistoryAsDensities;
     protected:
         KGEnergy &hamiltonian;
         GraphRtoR mFieldsGraph;
@@ -46,7 +47,8 @@ namespace RtoR {
                 KGEnergy &hamiltonian,
                 Real phiMin=-1,
                 Real phiMax=1,
-                Str name = "general graphic monitor");
+                Str name = "general graphic monitor",
+                bool showEnergyHistoryAsDensities=false);
 
     };
 
