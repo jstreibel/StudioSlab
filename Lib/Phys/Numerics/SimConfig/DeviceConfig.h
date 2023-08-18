@@ -1,12 +1,12 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include <Common/DeviceConfig.h>
+#include "Common/DeviceConfig.h"
 
-#include <Base/Controller/Interface/InterfaceOwner.h>
-#include <Base/Controller/Interface/CommonParameters.h>
+#include "Base/Controller/Interface/InterfaceOwner.h"
+#include "Base/Controller/Interface/CommonParameters.h"
 
-class Device : public InterfaceOwner
+class DeviceConfig : public InterfaceOwner
 {
     auto notifyCLArgsSetupFinished() -> void override;
 
@@ -18,7 +18,7 @@ class Device : public InterfaceOwner
     IntegerParameter::Ptr nThreads = IntegerParameter::New(1, "th,threads", "Number of threads, in case of CPU usage.");
 
 public:
-    Device(bool doRegister=true);
+    DeviceConfig(bool doRegister=true);
 
     auto get_nThreads() const -> unsigned int {return **nThreads;}
 

@@ -15,7 +15,7 @@
 
 namespace MolecularDynamics {
 
-    NewtonMechanics::NewtonMechanics(const NumericParams &p)
+    NewtonMechanics::NewtonMechanics(const NumericConfig &p)
     : dissipation(DISSIPATION_FACTOR)
     , spaceHash(HASH_SUBDIVS, p.getL())
     , params(p)

@@ -31,12 +31,12 @@ namespace MolecularDynamics {
             SoftDisk
         };
 
-        Monitor(const NumericParams &params, Model model);
+        Monitor(const NumericConfig &params, Model model);
 
         void draw() override;
 
     protected:
-        auto _out(const OutputPacket &packet) -> void override;
+        auto handleOutput(const OutputPacket &packet) -> void override;
     };
 
 } // MolecularDynamics

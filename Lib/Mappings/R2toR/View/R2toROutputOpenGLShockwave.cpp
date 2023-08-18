@@ -10,7 +10,7 @@
 
 #include <filesystem>
 
-R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericParams &params)
+R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericConfig &params)
                                   : Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ signum-Gordon shockwave graphic monitor")
 {}
 

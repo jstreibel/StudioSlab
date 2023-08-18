@@ -48,7 +48,7 @@ __host__ DeviceVector &d2dx2(const DeviceVector &in,
                              DeviceVector &out,
                              const Real h, const size_t N, const size_t M)
                              {
-    (void)M;
+    assert(M==N);
 
     // TODO
     // 1. assert N and M are Po2

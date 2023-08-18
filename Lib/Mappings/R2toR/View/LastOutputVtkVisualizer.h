@@ -12,10 +12,10 @@ namespace R2toR {
     class LastOutputVTKVisualizer : public Numerics::OutputSystem::Socket {
         int outN;
     protected:
-        auto _out(const OutputPacket &packet) -> void override {};
+        auto handleOutput(const OutputPacket &packet) -> void override {};
 
     public:
-        LastOutputVTKVisualizer(const NumericParams &params, int outN=256);
+        LastOutputVTKVisualizer(const NumericConfig &params, int outN=256);
 
         auto notifyIntegrationHasFinished(const OutputPacket &) -> bool override;
 

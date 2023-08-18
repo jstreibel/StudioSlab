@@ -21,7 +21,7 @@ namespace Fields {
 
             typedef EqState::SubStateType           DiscrFuncType;
 
-            Solver(const NumericParams &params,
+            Solver(const NumericConfig &params,
                             MyBase::EqBoundaryCondition &du,
                             PotentialFunc &potential)
             : Slab::EquationSolverT<EqState>(params, du)

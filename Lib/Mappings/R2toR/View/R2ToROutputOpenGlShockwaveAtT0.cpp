@@ -10,7 +10,7 @@
 #include "Mappings/FunctionRenderer.h"
 
 
-R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0(const NumericParams &params)
+R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0(const NumericConfig &params)
         : Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ shockwave at t₀ graphic monitor.")
 
 {

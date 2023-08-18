@@ -21,6 +21,7 @@
 #include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"
 #include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "SimHistory.h"
 
 
 RtoR::KGBuilder::KGBuilder(Str name, Str generalDescription, bool doRegister)
@@ -41,18 +42,18 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     }
     else Backend::Initialize<ConsoleBackend>();
 
-    const NumericParams &p = numericParams;
+    const NumericConfig &p = simulationConfig.numericConfig;
 
-    auto *outputManager = new OutputManager(numericParams);
+    auto *outputManager = new OutputManager(simulationConfig.numericConfig);
 
     /********************************************************************************************/
     int fileOutputStepsInterval = -1;
+    Numerics::OutputSystem::Socket *out = nullptr;
     if(shouldOutputHistory)
     {
         const Real Tf=p.gett();
 
         OutputFormatterBase *outputFilter = new BinarySOF;
-        //OutputFormatterBase *outputFilter = new CustomStringSeparatedSOF;
 
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}));
 
@@ -63,8 +64,8 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         if(0) outputFileName += Str("-N=") + ToStr(N, 0);
 
-        Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(numericParams, stepsInterval, spaceFilter, Tf,
-                                                                      outputFileName, outputFilter);
+        out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval, spaceFilter, Tf,
+                                      outputFileName, outputFilter);
         fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
     }
@@ -75,14 +76,24 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     if(shouldOutputOpenGL) {
         auto &glutBackend = Backend::GetInstanceSuper<GLUTBackend>(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
-        //Base::OutputOpenGL *outputOpenGL = new RtoR::OutputOpenGL(xLeft, xRight, phiMin, phiMax);
         auto outputOpenGL = buildOpenGLOutput();
 
         outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
         glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
-        // outGL->output(dummyInfo); // stop flicker?
         outputManager->addOutputChannel(outputOpenGL);
+
+        const auto t = p.gett();
+        if(t>0)
+        {
+            const auto L = p.getL();
+            const auto Nₒᵤₜ = *outputResolution;
+            const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
+            auto simHistory = new SimHistory(simulationConfig, nₒᵤₜ, Nₒᵤₜ);
+
+            outputManager->addOutputChannel(simHistory);
+            outputOpenGL->setSimulationHistory(DummyPtr(simHistory->getData()));
+        }
     }
     else
         /* O objetivo de relacionar o numero de passos para
@@ -90,20 +101,20 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
          * ambos possam ficar sincronizados e o integrador
          * possa rodar diversos passos antes de fazer o output. */
         outputManager->addOutputChannel(
-                new OutputConsoleMonitor(numericParams, fileOutputStepsInterval>0
-                                                        ? fileOutputStepsInterval*25
-                                                        : int(p.getn()/40)));
+                new OutputConsoleMonitor(simulationConfig.numericConfig, fileOutputStepsInterval > 0
+                                                      ? fileOutputStepsInterval*25
+                                                      : int(p.getn()/40)));
 
     return outputManager;
 
 }
 
 void *RtoR::KGBuilder::newFunctionArbitrary() {
-    const size_t N = numericParams.getN();
-    const floatt xLeft = numericParams.getxMin();
-    const floatt xRight = xLeft + numericParams.getL();
+    const size_t N = simulationConfig.numericConfig.getN();
+    const floatt xLeft = simulationConfig.numericConfig.getxMin();
+    const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
 
-    if(dev==CPU)
+    if(simulationConfig.dev==CPU)
         return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
 
 #if USE_CUDA
@@ -131,12 +142,12 @@ void *RtoR::KGBuilder::buildEquationSolver() {
     }
 #endif
 
-    return new Fields::KleinGordon::Solver<RtoR::EquationState>(numericParams, *dphi, *thePotential);
+    return new Fields::KleinGordon::Solver<RtoR::EquationState>(simulationConfig.numericConfig, *dphi, *thePotential);
 }
 
 auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
     //return new RtoR::OutGLStatistic(numericParams);
-    return new RtoR::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
+    return new RtoR::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
 }
 
 auto RtoR::KGBuilder::getInitialState() -> void * {

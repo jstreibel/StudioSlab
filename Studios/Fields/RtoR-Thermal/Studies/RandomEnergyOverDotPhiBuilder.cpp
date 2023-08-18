@@ -15,8 +15,8 @@ RtoR::RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
 }
 
 auto RtoR::RandomEnergyOverDotPhiBuilder::getBoundary() -> void* {
-    auto N = numericParams.getN();
-    auto h = numericParams.geth();
+    auto N = simulationConfig.numericConfig.getN();
+    auto h = simulationConfig.numericConfig.geth();
     auto dotPhi = (RtoR::FunctionArbitraryCPU*)newFunctionArbitrary();
 
     VecFloat p(N);

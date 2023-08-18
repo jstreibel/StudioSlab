@@ -13,7 +13,7 @@ namespace MolecularDynamics {
         Point2D dUdr(const Point2D &q1, const Point2D &q2) override;
 
     public:
-        SoftDisk(const NumericParams &p, Real T);
+        SoftDisk(const NumericConfig &p, Real T);
 
         static Real U(Real r);
     };

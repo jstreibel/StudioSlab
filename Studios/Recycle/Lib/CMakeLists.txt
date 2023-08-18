@@ -29,7 +29,5 @@ add_executable(StudiosLib
         ../../../Lib/Common/RandUtils.h
 		../../../Lib/Phys/Thermal/Utils/ThermoUtils.cpp
 		../../../Lib/Phys/Thermal/Utils/ThermoUtils.h
-		../../../Lib/Base/Graphics/OpenGL/glad.c
-		../../../Lib/Base/Graphics/OpenGL/glad.h
-		../../Lib/Studios/Controller/Nuklear/nuklear.h
+        ../../Lib/Studios/Controller/Nuklear/nuklear.h
 		../../../Lib/Base/Controller/Nuklear/_nuklear_sfml.hpp)

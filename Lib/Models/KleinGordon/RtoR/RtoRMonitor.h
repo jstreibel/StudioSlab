@@ -12,6 +12,7 @@
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Phys/Graph/OpenGLMonitor.h"
 #include "Phys/Graph/PointSetGraph.h"
+#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace RtoR {
 
@@ -22,6 +23,7 @@ namespace RtoR {
     protected:
         KGEnergy &hamiltonian;
         GraphRtoR mFieldsGraph;
+        GraphRtoR mHistoryGraph;
 
         Spaces::PointSet UHistoryData;
         Spaces::PointSet KHistoryData;
@@ -39,17 +41,20 @@ namespace RtoR {
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
+        std::shared_ptr<const R2toR::Function> simulationHistory = nullptr;
+
         void draw() override;
-        void _out(const OutputPacket &outInfo) override;
+        void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const NumericParams &params,
+        Monitor(const NumericConfig &params,
                 KGEnergy &hamiltonian,
                 Real phiMin=-1,
                 Real phiMax=1,
                 Str name = "general graphic monitor",
                 bool showEnergyHistoryAsDensities=false);
 
+        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
     };
 
 }

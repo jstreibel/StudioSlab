@@ -9,9 +9,9 @@
 #include "R2toRFunction.h"
 
 namespace R2toR {
-    class FunctionArbitraryCPU : public DiscreteFunction {
+    class DiscreteFunction_CPU : public DiscreteFunction {
     public:
-        FunctionArbitraryCPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
+        DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
 
         [[nodiscard]] Base::DiscreteFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
@@ -21,7 +21,7 @@ namespace R2toR {
 
         Real &At(PosInt n, PosInt m);
 
-        FunctionArbitraryCPU &Set(const R2toR::Function &func) override;
+        DiscreteFunction_CPU &Set(const R2toR::Function &func) override;
 
 
         auto Apply(const FuncBase &func, DiscrBase &out) const -> DiscrBase & override;

@@ -12,7 +12,7 @@ using namespace Base;
 
 #define CLEAR_BUFFERS false
 
-Graphics::OpenGLMonitor::OpenGLMonitor(const NumericParams &params, Str channelName, int stepsBetweenDraws)
+Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, Str channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
@@ -21,7 +21,7 @@ Graphics::OpenGLMonitor::OpenGLMonitor(const NumericParams &params, Str channelN
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }
 
-void Graphics::OpenGLMonitor::_out(const OutputPacket &outInfo){
+void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 }

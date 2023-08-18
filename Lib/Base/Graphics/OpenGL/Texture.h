@@ -1,0 +1,31 @@
+//
+// Created by joao on 18/08/23.
+//
+
+#ifndef STUDIOSLAB_TEXTURE_H
+#define STUDIOSLAB_TEXTURE_H
+
+#include "GL/gl.h"
+#include "Common/Types.h"
+#include "Base/Graphics/Styles/Colors.h"
+
+namespace OpenGL {
+
+    class Texture {
+        GLuint texture = 0;
+        ByteData *data;
+
+        GLsizei w, h;
+    public:
+        Texture(GLsizei width, GLsizei height);
+
+        void setColor(int i, int j, Styles::Color color);
+        void upload();
+
+        GLsizei getWidth() const;
+        GLsizei getHeight() const;
+    };
+
+} // OpenGL
+
+#endif //STUDIOSLAB_TEXTURE_H

@@ -35,15 +35,15 @@ namespace R2toR {
         if (*VisualMonitor) Backend::Initialize<GLUTBackend>();
         else Backend::Initialize<ConsoleBackend>();
 
-        auto *outputManager = new OutputManager(numericParams);
+        auto *outputManager = new OutputManager(simulationConfig.numericConfig);
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
         RtoR2::StraightLine section;
         auto angleDegrees = 22.5;
         {
-            const Real rMin = numericParams.getxMin();
-            const Real rMax = numericParams.getxMax();
+            const Real rMin = simulationConfig.numericConfig.getxMin();
+            const Real rMax = simulationConfig.numericConfig.getxMax();
             const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
             Rotation R;
@@ -55,7 +55,7 @@ namespace R2toR {
         ///********************************************************************************************/
         int fileOutputStepsInterval = -1;
         if (shouldTrackHistory) {
-            const Real t = numericParams.gett();
+            const Real t = simulationConfig.numericConfig.gett();
             const PosInt outputResolutionX = *outputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
@@ -63,14 +63,14 @@ namespace R2toR {
             SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
                     outputResolutionX, section);
 
-            const auto N = (Real) numericParams.getN();
+            const auto N = (Real) simulationConfig.numericConfig.getN();
             const Real Np = outputResolutionX;
-            const Real r = numericParams.getr();
+            const Real r = simulationConfig.numericConfig.getr();
             const auto stepsInterval = PosInt(N / (Np * r));
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(numericParams, stepsInterval,
+            Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval,
                                                                           spaceFilter, t, outputFileName,
                                                                           outputFilter);
 
@@ -95,9 +95,9 @@ namespace R2toR {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             outputManager->addOutputChannel(
-                    new OutputConsoleMonitor(numericParams, fileOutputStepsInterval > 0
+                    new OutputConsoleMonitor(simulationConfig.numericConfig, fileOutputStepsInterval > 0
                                                             ? fileOutputStepsInterval * 25
-                                                            : int(numericParams.getn() / 40)));
+                                                            : int(simulationConfig.numericConfig.getn() / 40)));
         }
 
         return outputManager;
@@ -105,11 +105,11 @@ namespace R2toR {
     }
 
     void *Builder::newFunctionArbitrary() {
-        const size_t N = numericParams.getN();
-        const floatt xLeft = numericParams.getxMin();
+        const size_t N = simulationConfig.numericConfig.getN();
+        const floatt xLeft = simulationConfig.numericConfig.getxMin();
 
-        if (dev == CPU)
-            return new R2toR::FunctionArbitraryCPU(N, N, xLeft, xLeft, numericParams.geth());
+        if (simulationConfig.dev == CPU)
+            return new R2toR::DiscreteFunction_CPU(N, N, xLeft, xLeft, simulationConfig.numericConfig.geth());
 
 #if USE_CUDA
         else if (dev == GPU)
@@ -123,11 +123,11 @@ namespace R2toR {
         auto thePotential = new RtoR::AbsFunction;
         auto dphi = (R2toR::BoundaryCondition*)getBoundary();
 
-        return new Fields::KleinGordon::Solver<R2toR::EquationState>(numericParams, *dphi, *thePotential);
+        return new Fields::KleinGordon::Solver<R2toR::EquationState>(simulationConfig.numericConfig, *dphi, *thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-        return new R2toR::OutputOpenGL(numericParams, -1, 1);
+        return new R2toR::OutputOpenGL(simulationConfig.numericConfig, -1, 1);
     }
 
     auto Builder::newFieldState() -> void * {

@@ -7,7 +7,7 @@
 
 namespace MolecularDynamics {
 
-    SoftDisk::SoftDisk(const NumericParams &p, Real T) : Langevin(p, T) {
+    SoftDisk::SoftDisk(const NumericConfig &p, Real T) : Langevin(p, T) {
 
     }
 

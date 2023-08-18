@@ -7,11 +7,11 @@ set ( MODELS_SOURCES
 
 		KleinGordon/RtoR/KG-RtoRBuilder.cpp
 		KleinGordon/RtoR/KG-RtoREnergyCalculator.cpp
-
 		KleinGordon/RtoR/KG-RtoREquationState.cpp
 		KleinGordon/RtoR/KG-RtoRBoundaryCondition.cpp
-
 		KleinGordon/RtoR/RtoRMonitor.cpp
+		KleinGordon/RtoR/SimHistory.cpp
+		KleinGordon/RtoR/SimHistory.h
 
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h

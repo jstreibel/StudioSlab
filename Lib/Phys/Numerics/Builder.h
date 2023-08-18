@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_BUILDER_H
 #define STUDIOSLAB_BUILDER_H
 
-#include "Phys/Toolset/Device.h"
-#include "Phys/Numerics/Program/NumericParams.h"
+#include "Phys/Numerics/SimConfig/DeviceConfig.h"
+#include "Phys/Numerics/SimConfig/NumericConfig.h"
 #include "Phys/Numerics/Method/Stepper.h"
 #include "Phys/Numerics/Output/OutputManager.h"
 
@@ -42,8 +42,8 @@ namespace Base::Simulation {
 
         explicit Builder(Str name, Str generalDescription);
 
-        NumericParams numericParams;
-        Device dev;
+        NumericConfig numericParams;
+        DeviceConfig dev;
 
     public:
         typedef std::shared_ptr<Builder> Ptr;
@@ -62,8 +62,8 @@ namespace Base::Simulation {
 
         virtual auto getMethod()                  -> Stepper*;
 
-        auto getNumericParams()             const -> const NumericParams &;
-        auto getDevice()                    const -> const Device &;
+        auto getNumericParams()             const -> const NumericConfig &;
+        auto getDevice()                    const -> const DeviceConfig &;
         auto toString()                     const -> Str;
     };
 
@@ -100,12 +100,12 @@ namespace Base::Simulation {
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::getNumericParams() const -> const NumericParams & {
+    auto Builder<SolverType>::getNumericParams() const -> const NumericConfig & {
         return numericParams;
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::getDevice() const -> const Device & {
+    auto Builder<SolverType>::getDevice() const -> const DeviceConfig & {
         return dev;
     }
 

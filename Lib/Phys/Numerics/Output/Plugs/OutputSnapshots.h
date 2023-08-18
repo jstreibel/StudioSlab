@@ -11,7 +11,7 @@ private:
 
     size_t T_fileNamePrecision;
 public:
-    OutputSnapshot(const NumericParams &params, const Str &customFileDescription = "", const size_t fileNamePrecision = 4);
+    OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "", const size_t fileNamePrecision = 4);
 
     ~OutputSnapshot();
 
@@ -28,7 +28,7 @@ protected:
 protected:
     virtual bool shouldOutput(const Real t, const long unsigned timeStep) override;
 
-    virtual void _out(const OutputPacket &outInfo) override {
+    virtual void handleOutput(const OutputPacket &outInfo) override {
         OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
     }
 };

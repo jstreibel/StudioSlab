@@ -23,7 +23,7 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
 
-RtoR::Thermal::Monitor::Monitor(const NumericParams &params1, KGEnergy &hamiltonian)
+RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
 : RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
 , mTemperaturesGraph("T")
 , mHistogramsGraphK("k histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)

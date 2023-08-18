@@ -8,7 +8,7 @@
 #include "Particle.h"
 #include "Hamiltonians/Hash/MoleculeSpaceHash.h"
 
-#include "Phys/Numerics/Program/NumericParams.h"
+#include "Phys/Numerics/SimConfig/NumericConfig.h"
 
 
 namespace MolecularDynamics {
@@ -20,7 +20,7 @@ namespace MolecularDynamics {
         Real dissipation;
 
     protected:
-        const NumericParams &params;
+        const NumericConfig &params;
 
         virtual void applyBoundaryConditions(PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
@@ -37,7 +37,7 @@ namespace MolecularDynamics {
         virtual Point2D F_nh(Real t) { return {0,0}; }
 
     public:
-        explicit NewtonMechanics(const NumericParams &);
+        explicit NewtonMechanics(const NumericConfig &);
 
         ~NewtonMechanics();
 

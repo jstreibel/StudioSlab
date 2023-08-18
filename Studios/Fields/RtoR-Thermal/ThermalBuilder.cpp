@@ -12,7 +12,8 @@
 
 namespace RtoR::Thermal {
 
-    Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister) : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
+    Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
+    : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
         interface->addParameters({&temperature, &dissipation, &transientGuess});
 
         if(doRegister) registerToManager();
@@ -21,7 +22,7 @@ namespace RtoR::Thermal {
     auto Builder::buildEquationSolver() -> void * {
         GET bc = *(RtoR::BoundaryCondition*)getBoundary();
 
-        auto solver = new RtoR::LangevinKGSolver(numericParams, bc);
+        auto solver = new RtoR::LangevinKGSolver(simulationConfig.numericConfig, bc);
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 
@@ -38,7 +39,7 @@ namespace RtoR::Thermal {
 }
 
 RtoR::Monitor *RtoR::Thermal::Builder::buildOpenGLOutput() {
-    auto monitor = new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
+    auto monitor = new RtoR::Thermal::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
     monitor->setTransientGuess(*transientGuess);
     return monitor;
 }

@@ -11,7 +11,7 @@
 namespace Montecarlo {
     class Monitor : public RtoR::Monitor {
         public:
-        explicit Monitor(const NumericParams &params);
+        explicit Monitor(const NumericConfig &params);
         void draw() override;
 
     private:

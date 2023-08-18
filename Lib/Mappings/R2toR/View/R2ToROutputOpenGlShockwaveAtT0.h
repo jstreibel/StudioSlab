@@ -16,7 +16,7 @@ namespace R2toR {
 
     class OutputOpenGLShockwaveAt_t0 : public Graphics::OpenGLMonitor {
     public:
-        OutputOpenGLShockwaveAt_t0(const NumericParams &params);
+        OutputOpenGLShockwaveAt_t0(const NumericConfig &params);
 
         void draw() override;
         bool notifyScreenReshape(int width, int height) override;

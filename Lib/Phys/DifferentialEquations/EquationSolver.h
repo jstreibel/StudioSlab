@@ -3,7 +3,7 @@
 
 #include "Common/Types.h"
 #include "EquationState.h"
-#include "Phys/Numerics/Program/NumericParams.h"
+#include "Phys/Numerics/SimConfig/NumericConfig.h"
 #include "BoundaryConditions.h"
 
 namespace Slab {
@@ -14,11 +14,11 @@ namespace Slab {
         using EqState = EquationStateType;
         using EqBoundaryCondition = Base::BoundaryConditions<EqState>;
     protected:
-        const NumericParams &params;
+        const NumericConfig &params;
         Base::BoundaryConditions<EqState> &du;
 
     public:
-        EquationSolverT(const NumericParams &params, EqBoundaryCondition &du)
+        EquationSolverT(const NumericConfig &params, EqBoundaryCondition &du)
         : params(params), du(du) {}
         virtual ~EquationSolverT() {}
 
@@ -47,7 +47,7 @@ namespace Slab {
     public:
         using EqBoundaryCondition = Base::BoundaryConditions<Simulation::EquationState>;
 
-        EquationSolver(const NumericParams &params, EqBoundaryCondition &du)
+        EquationSolver(const NumericConfig &params, EqBoundaryCondition &du)
         : EquationSolverT(params, du) {};
 
     };

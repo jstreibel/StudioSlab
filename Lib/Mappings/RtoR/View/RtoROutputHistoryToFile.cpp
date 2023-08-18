@@ -12,7 +12,7 @@
 
 const int HEADER_SIZE_BYTES = 2048;
 
-RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
+RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                                Str  outputFileName)
                                                : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
                                                  outFileName(std::move(outputFileName)),

@@ -13,15 +13,15 @@ using namespace R2toR;
 
 //
 // Created by joao on 19/09/19.
-FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h)
+DiscreteFunction_CPU::DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h)
     : DiscreteFunction(N, M, xMin, yMin, h, device::CPU) {
 
 }
 
-Base::DiscreteFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Base::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt outN) const {
     assert(M==N); // (por enquanto so vai funcionar assim.
 
-    FunctionArbitraryCPU &myClone = *new FunctionArbitraryCPU(outN, outN, xMin, yMin, h);;
+    DiscreteFunction_CPU &myClone = *new DiscreteFunction_CPU(outN, outN, xMin, yMin, h);;
 
     const Real incX_d = N / Real(outN);
     const Real incY_d = M / Real(outN);
@@ -36,17 +36,17 @@ Base::DiscreteFunction<Real2D, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt
     return &myClone;
 }
 
-Real FunctionArbitraryCPU::At(PosInt n, PosInt m) const {
+Real DiscreteFunction_CPU::At(PosInt n, PosInt m) const {
     assert(n + m*N < N*M);
     return getSpace().getHostData()[n + m * N];
 }
 
-Real &FunctionArbitraryCPU::At(PosInt n, PosInt m) {
+Real &DiscreteFunction_CPU::At(PosInt n, PosInt m) {
     assert(n + m*N < N*M);
     return getSpace().getHostData()[n + m * N];
 }
 
-DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &outFunc) const {
+DiscreteFunction &DiscreteFunction_CPU::Laplacian(DiscreteFunction &outFunc) const {
     const Real invhsqr = 1./(h*h);
 
     /*for(PosInt n=0; n<N; n++){
@@ -82,7 +82,7 @@ DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &outFunc) con
     return outFunc;
 }
 
-FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
+DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const R2toR::Function &func) {
     const Real L1 = xMax-xMin;
     const Real L2 = yMax-yMin;
 
@@ -114,7 +114,7 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const R2toR::Function &func) {
 
 
 Base::DiscreteFunction<Real2D, Real> &
-FunctionArbitraryCPU::Apply(const FunctionT<Real, Real> &func,
+DiscreteFunction_CPU::Apply(const FunctionT<Real, Real> &func,
                             Base::DiscreteFunction<Real2D, Real> &out) const {
     cast(fOut, DiscreteFunction &, out)
 

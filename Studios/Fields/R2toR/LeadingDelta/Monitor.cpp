@@ -18,7 +18,7 @@
 R2toR::FunctionAzimuthalSymmetry nullFunc(new RtoR::NullFunction);
 
 
-R2toR::LeadingDelta::OutGL::OutGL(const NumericParams &params,
+R2toR::LeadingDelta::OutGL::OutGL(const NumericConfig &params,
                                   R2toR::Function::Ptr drivingFunction, Real phiMin, Real phiMax)
 : R2toR::OutputOpenGL(params, phiMin, phiMax)
 , drivingFunction(drivingFunction)

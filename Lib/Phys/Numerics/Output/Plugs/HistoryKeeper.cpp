@@ -7,7 +7,7 @@
 
 const long long unsigned int ONE_GB = 1073741824;
 
-HistoryKeeper::HistoryKeeper(const NumericParams &params, size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
+HistoryKeeper::HistoryKeeper(const NumericConfig &params, size_t recordStepsInterval, SpaceFilterBase *filter, Real tEnd_)
     : Numerics::OutputSystem::Socket(params, "History output", int(recordStepsInterval)), spaceFilter(*filter), tEnd(tEnd_),
       count(0), countTotal(0)
 {
@@ -32,7 +32,7 @@ auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool{
     return should;
 }
 
-void HistoryKeeper::_out(const OutputPacket &outInfo)
+void HistoryKeeper::handleOutput(const OutputPacket &packet)
 {
     if(getUtilMemLoadBytes() > 4*ONE_GB){
         Log::Critical() << "Dumping "<< (getUtilMemLoadBytes()*4e-6) << "GB of data." << Log::Flush;
@@ -43,8 +43,8 @@ void HistoryKeeper::_out(const OutputPacket &outInfo)
         Log::Success() << "Memory dump successful." << Log::Flush;
     }
 
-    spaceDataHistory.emplace_back(spaceFilter(outInfo));
-    tHistory.push_back(outInfo.getSimTime());
+    spaceDataHistory.emplace_back(spaceFilter(packet));
+    tHistory.push_back(packet.getSimTime());
 
     ++count;
 }

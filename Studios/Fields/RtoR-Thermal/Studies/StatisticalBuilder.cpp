@@ -2,7 +2,7 @@
 // Created by joao on 04/04/2020.
 //
 
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
@@ -30,8 +30,8 @@ auto RtoR::StatisticalBuilder::getDetailedDescription() -> Str {
 }
 
 auto RtoR::StatisticalBuilder::getBoundary() -> void * {
-    auto L = numericParams.getL(); // not good bc 'L' is not my parameter.
-    auto xLeft = numericParams.getxMin();
+    auto L = simulationConfig.numericConfig.getL(); // not good bc 'L' is not my parameter.
+    auto xLeft = simulationConfig.numericConfig.getxMin();
 
     auto oscLength = L / *n;
     auto oscEnergy = *E / *n;

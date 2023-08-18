@@ -2,9 +2,12 @@
 
 #include "RtoRMonitor.h"
 
+#include <utility>
+
+#include "3rdParty/imgui/imgui.h"
 #include "Base/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Section1D.h"
 
 //
 // Created by joao on 23/09/2019.
@@ -15,13 +18,14 @@
 
 #define CHOOSE_ENERGY_LABEL(A, a) (showEnergyHistoryAsDensities ? (a) : (A))
 
-RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
+RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                        const Real phiMin, const Real phiMax, Str name, bool showEnergyHistoryAsDensities)
 : Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , hamiltonian(hamiltonian)
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
 , mEnergyGraph("Energy")
+, mHistoryGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
 {
     auto sty = Styles::GetColorScheme()->funcPlotStyles.begin();
 
@@ -34,9 +38,31 @@ RtoR::Monitor::Monitor(const NumericParams &params, KGEnergy &hamiltonian,
     panel.addWindow(&mEnergyGraph);
 
     panel.addWindow(&mFieldsGraph, true, 0.80);
+    panel.addWindow(&mHistoryGraph);
 }
 
 void RtoR::Monitor::draw() {
+
+    // *************************** HISTORY *********************************
+    {
+        static auto t = .0f;
+        if(ImGui::Begin("History")){
+            ImGui::SliderFloat("t", &t, .0f, (float)lastData.getSimTime());
+        }
+        ImGui::End();
+
+        auto xMax = params.getxMax();
+        auto xMin = params.getxMin();
+
+        static auto section = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
+        static auto sectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
+
+        section = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
+        mHistoryGraph.clearFunctions();
+        mHistoryGraph.addFunction(&sectionFunc, "History");
+    }
+
+
     // *************************** FIELD ***********************************
     const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
 
@@ -63,7 +89,7 @@ void RtoR::Monitor::draw() {
     }
 }
 
-void RtoR::Monitor::_out(const OutputPacket &outInfo) {
+void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
     const auto t = outInfo.getSimTime();
 
     const RtoR::EquationState &fieldState = *outInfo.getEqStateData<RtoR::EquationState>();
@@ -102,7 +128,7 @@ void RtoR::Monitor::_out(const OutputPacket &outInfo) {
 
     mEnergyGraph.set_xMax(xMax);
 
-    Graphics::OpenGLMonitor::_out(outInfo);
+    Graphics::OpenGLMonitor::handleOutput(outInfo);
 }
 
 bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
@@ -127,6 +153,10 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
     }
 
     return Graphics::OpenGLMonitor::notifyKeyboard(key, x, y);
+}
+
+void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
+    simulationHistory = std::move(simHistory);
 }
 
 

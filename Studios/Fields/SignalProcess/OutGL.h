@@ -32,10 +32,10 @@ namespace RtoR {
 
             std::vector <Real> probingData;
 
-            void _out(const OutputPacket &outInfo) override;
+            void handleOutput(const OutputPacket &outInfo) override;
 
         public:
-            OutGL(const NumericParams &params, Real phiMin, Real phiMax);
+            OutGL(const NumericConfig &params, Real phiMin, Real phiMax);
 
             void draw() override;
 

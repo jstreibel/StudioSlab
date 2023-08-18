@@ -8,14 +8,14 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include <Base/Controller/Interface/InterfaceOwner.h>
-#include <Base/Controller/Interface/CommonParameters.h>
-#include <Common/Types.h>
+#include "Base/Controller/Interface/InterfaceOwner.h"
+#include "Base/Controller/Interface/CommonParameters.h"
+#include "Common/Types.h"
 #include "Common/NativeTypes.h"
 
 /* DEFAULTS */
 
-class NumericParams : public InterfaceOwner {
+class NumericConfig : public InterfaceOwner {
 	IntegerParameter::Ptr 	N       = IntegerParameter  ::New(1024, "N", "Discretization of space dimensions. "
 													 "Has to be POT for GPU");
     RealParameter::Ptr      L       = RealParameter     ::New(10., "L", "Space length");
@@ -40,8 +40,8 @@ class NumericParams : public InterfaceOwner {
     PosInt n;
 
 public:
-	NumericParams(bool doRegister=true);
-	NumericParams(const NumericParams&) = delete;
+	NumericConfig(bool doRegister=true);
+	NumericConfig(const NumericConfig&) = delete;
 
     auto getn()                    const -> PosInt;
     auto getN()                    const -> PosInt;

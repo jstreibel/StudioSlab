@@ -7,7 +7,7 @@
 #define max(a,b) (a>b?a:b)
 #define min(a,b) (a<b?a:b)
 
-RtoR::ShockwaveMonitor::ShockwaveMonitor(const NumericParams &params, KGEnergy &hamiltonian, Real a0, Real E)
+RtoR::ShockwaveMonitor::ShockwaveMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Real a0, Real E)
 : RtoR::Monitor(params, hamiltonian, -a0/2, 3*a0/2)
 , a0(a0)
 , E(E) {

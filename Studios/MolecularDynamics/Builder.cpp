@@ -33,14 +33,14 @@ namespace MolecularDynamics {
     }
 
     OutputManager *Builder::buildOutputManager() {
-        auto outputManager = new OutputManager(numericParams);
+        auto outputManager = new OutputManager(numericConfig);
 
-        outputManager->addOutputChannel(new OutputConsoleMonitor(numericParams, numericParams.getn()/5));
+        outputManager->addOutputChannel(new OutputConsoleMonitor(numericConfig, numericConfig.getn() / 5));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
-        auto monitor = new MolecularDynamics::Monitor(numericParams, simModel);
+        auto monitor = new MolecularDynamics::Monitor(numericConfig, simModel);
         Backend::GetInstanceSuper<GUIBackend>().addWindow(std::shared_ptr<Window>(monitor));
         outputManager->addOutputChannel(monitor);
 
@@ -52,16 +52,16 @@ namespace MolecularDynamics {
         fix k = *dissipation;
 
         if (*model == 0) {
-            LennardJones lj(numericParams);
+            LennardJones lj(numericConfig);
             lj.setDissipation(k);
             lj.setTemperature(T);
-            return new MolecularDynamics::VerletStepper<LennardJones>(numericParams, lj);
+            return new MolecularDynamics::VerletStepper<LennardJones>(numericConfig, lj);
         }
         if (*model == 1) {
-            SoftDisk sd(numericParams, 0);
+            SoftDisk sd(numericConfig, 0);
             sd.setDissipation(k);
             sd.setTemperature(T);
-            return new MolecularDynamics::VerletStepper<SoftDisk>(numericParams, sd);
+            return new MolecularDynamics::VerletStepper<SoftDisk>(numericConfig, sd);
         }
 
         throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
@@ -92,7 +92,7 @@ namespace MolecularDynamics {
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
-        numericParams.sett(-1);
+        numericConfig.sett(-1);
     }
 
 } // MolecularDynamics

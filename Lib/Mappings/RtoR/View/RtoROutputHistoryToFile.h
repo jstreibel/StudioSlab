@@ -19,7 +19,7 @@ namespace RtoR {
         OutputFormatterBase &outputFormatter;
 
     public:
-        OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT, Str  outputFileName);
+        OutputHistoryToFile(const NumericConfig &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT, Str  outputFileName);
 
         ~OutputHistoryToFile() override;
 

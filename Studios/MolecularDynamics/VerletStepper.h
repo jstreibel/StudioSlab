@@ -8,7 +8,7 @@
 #include "Particle.h"
 
 #include "Phys/Numerics/Method/Stepper.h"
-#include "Phys/Numerics/Program/NumericParams.h"
+#include "Phys/Numerics/SimConfig/NumericConfig.h"
 
 namespace MolecularDynamics {
 
@@ -22,7 +22,7 @@ namespace MolecularDynamics {
 
     public:
 
-        explicit VerletStepper(NumericParams &params, NewtonMechanicsModel mechModel);
+        explicit VerletStepper(NumericConfig &params, NewtonMechanicsModel mechModel);
 
         void step(const Real &dt, Count n_steps) override;
 

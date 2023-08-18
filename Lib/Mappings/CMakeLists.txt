@@ -26,14 +26,14 @@ endif()
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
 
-		RtoR/Model/FunctionsCollection/analytic-breather.cpp
-		RtoR/Model/FunctionsCollection/shockwave.cpp
-		RtoR/Model/FunctionsCollection/AnalyticShockwave1D.cpp
-		RtoR/Model/FunctionsCollection/AnalyticOscillon.cpp
+        RtoR/Model/FunctionsCollection/Oscillons/analytic-breather.cpp
+		RtoR/Model/FunctionsCollection/Shockwave/shockwave.cpp
+		RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.cpp
+        RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.cpp
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 		RtoR/Model/FunctionsCollection/AbsPerturbedFunction.cpp
 		RtoR/Model/FunctionsCollection/NoiseFunction.cpp
-		RtoR/Model/FunctionsCollection/QuasiShockwave.cpp
+		RtoR/Model/FunctionsCollection/Shockwave/QuasiShockwave.cpp
 
 		RtoR/Model/RtoRDiscreteFunction.cpp
 		RtoR/Model/RtoRDiscreteFunctionCPU.cpp
@@ -47,8 +47,10 @@ set ( RTOR_SOURCES
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
 
 		RtoR/Calc/Histogram.cpp
+		RtoR/Model/FunctionsCollection/Section1D.cpp
+		RtoR/Model/FunctionsCollection/Section1D.h
 
-		)
+)
 
 
 set ( R2TOR_SOURCES
@@ -86,8 +88,10 @@ set ( R2TOR_SOURCES
 
 		R2toR/View/Artists/FlatFieldDisplay.cpp
 		R2toR/View/Artists/FlatFieldDisplay.h
+		RtoR/Model/FunctionsCollection/Section1D.cpp
+		RtoR/Model/FunctionsCollection/Section1D.h
 
-		)
+)
 
 
 set ( MAPS_LINKS

@@ -2,7 +2,7 @@
 
 #include "R2toROutputOpenGLGeneric.h"
 
-R2toR::OutputOpenGL::OutputOpenGL(const NumericParams &params, Real phiMin, Real phiMax)
+R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params, Real phiMin, Real phiMax)
     : Graphics::OpenGLMonitor(params, "R2 -> R OpenGL output", 1)
     , phiMin(phiMin), phiMax(phiMax)
     , mSectionGraph(params.getxMin(), params.getxMax(), phiMin, phiMax,

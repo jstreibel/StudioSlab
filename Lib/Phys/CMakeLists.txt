@@ -1,7 +1,7 @@
 
 set ( TOOLSET_SOURCES
 		# Numerics/Allocator.cpp
-		Toolset/Device.cpp
+		Numerics/SimConfig/DeviceConfig.cpp
 		Formalism/Categories.cpp
 		)
 
@@ -62,7 +62,7 @@ set ( NUMERICS_SOURCES
 		Numerics/Builder.h
 
 		Numerics/Program/Integrator.cpp
-		Numerics/Program/NumericParams.cpp
+		Numerics/SimConfig/NumericConfig.cpp
 
 		Numerics/Output/OutputManager.cpp
 
@@ -81,8 +81,9 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/record-interval.cpp
 
 		DifferentialEquations/EquationState.h
-
-		)
+		Numerics/SimConfig/SimulationConfig.cpp
+		Numerics/SimConfig/SimulationConfig.h
+)
 
 
 set ( THERMO_SOURCES

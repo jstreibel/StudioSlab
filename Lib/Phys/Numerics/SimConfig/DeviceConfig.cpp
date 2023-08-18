@@ -1,15 +1,15 @@
 
 
-#include <Base/Controller/Interface/InterfaceManager.h>
+#include "Base/Controller/Interface/InterfaceManager.h"
 #include <omp.h>
-#include "Device.h"
+#include "DeviceConfig.h"
 
 #include "Common/Utils.h"
 #include "Common/CUDAUtils.h"
 #include "Base/Tools/Log.h"
 
 
-Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)
+DeviceConfig::DeviceConfig(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)
 {
     Log::Info() << "Device integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 
@@ -23,11 +23,11 @@ Device::Device(bool doRegister) : InterfaceOwner("Device options", 10, doRegiste
 };
 
 
-auto Device::getDevice() const -> device {
+auto DeviceConfig::getDevice() const -> device {
     return dev;
 }
 
-void Device::notifyCLArgsSetupFinished() {
+void DeviceConfig::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
 
 #if USE_CUDA

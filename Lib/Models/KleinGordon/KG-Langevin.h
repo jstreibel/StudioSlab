@@ -32,7 +32,7 @@ namespace RtoR {
         Real T=0.01;
         Real alpha = 1.0;
     public:
-        LorentzLangevin_2ndOrder(const NumericParams &params, EqBoundaryCondition &du,
+        LorentzLangevin_2ndOrder(const NumericConfig &params, EqBoundaryCondition &du,
                                  KGSolver::PotentialFunc &potential, DiscreteFunction &langevinImpulses,
                                  DiscreteFunction &scaledImpulses) : Solver(params, du, potential),
                                                                      langevinImpulses(langevinImpulses),

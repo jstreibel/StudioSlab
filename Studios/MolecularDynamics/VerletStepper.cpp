@@ -9,7 +9,7 @@
 #include "Particle.h"
 
 template<class Model>
-MolecularDynamics::VerletStepper<Model>::VerletStepper(NumericParams &params, Model mechModel)
+MolecularDynamics::VerletStepper<Model>::VerletStepper(NumericConfig &params, Model mechModel)
 : Stepper()
 , mechanicsModel(mechModel)
 , q(params.getN())

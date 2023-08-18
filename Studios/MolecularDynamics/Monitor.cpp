@@ -19,7 +19,7 @@ namespace MolecularDynamics {
 #define SHOW_DOT false
 #define SHOW_RADIUS true
 
-    Monitor::Monitor(const NumericParams &params, Model model)
+    Monitor::Monitor(const NumericConfig &params, Model model)
     : Numerics::OutputSystem::Socket(params, "Particle dynamics monitor", 10)
     , Window()
     , renderWindow(Backend::GetInstanceSuper<SFMLNuklearBackend>().getRenderWindow())
@@ -97,7 +97,7 @@ namespace MolecularDynamics {
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
-    void Monitor::_out(const OutputPacket &packet) {    }
+    void Monitor::handleOutput(const OutputPacket &packet) {    }
 
     void Monitor::draw() {
         // Window::draw();

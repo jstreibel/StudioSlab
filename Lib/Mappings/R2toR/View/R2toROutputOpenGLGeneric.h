@@ -21,7 +21,7 @@ namespace R2toR {
         GraphR2Section mSectionGraph;
 
     public:
-        OutputOpenGL(const NumericParams &params, Real phiMin, Real phiMax);
+        OutputOpenGL(const NumericConfig &params, Real phiMin, Real phiMax);
         ~OutputOpenGL();
 
 

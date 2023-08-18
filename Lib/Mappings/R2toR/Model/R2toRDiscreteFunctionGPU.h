@@ -8,14 +8,16 @@
 #include "R2toRDiscreteFunction.h"
 
 
+#if USE_CUDA
 namespace R2toR {
 
-    class FunctionArbitraryGPU : public R2toR::DiscreteFunction {
-        FunctionArbitraryGPU *helper= nullptr;
+    class DiscreteFunction_GPU : public R2toR::DiscreteFunction {
+        DiscreteFunction_GPU *helper= nullptr;
 
     public:
-        FunctionArbitraryGPU(PosInt N, Real sMin, Real h);
-        ~FunctionArbitraryGPU();
+        DiscreteFunction_GPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
+        DiscreteFunction_GPU(PosInt N, Real sMin, Real h);
+        ~DiscreteFunction_GPU() override;
 
         auto Laplacian        (DiscreteFunction &outFunc)            const -> DiscreteFunction & override;
 
@@ -40,5 +42,6 @@ namespace R2toR {
     };
 
 }
+#endif
 
 #endif //V_SHAPE_R2TORFUNCTIONARBITRARYGPU_H

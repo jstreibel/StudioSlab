@@ -1,7 +1,7 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
-#include "NumericParams.h"
+#include "Phys/Numerics/SimConfig/NumericConfig.h"
 
 #include "Phys/Numerics/Output/OutputManager.h"
 

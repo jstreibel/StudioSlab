@@ -1,9 +1,9 @@
-#include <Base/Controller/Interface/InterfaceManager.h>
-#include "NumericParams.h"
+#include "Base/Controller/Interface/InterfaceManager.h"
+#include "NumericConfig.h"
 #include "Base/Tools/Log.h"
 
 
-NumericParams::NumericParams(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
+NumericConfig::NumericConfig(bool doRegister): InterfaceOwner("Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister)
 {
     interface->addParameters({N, L, xCenter, t, forceOverstepping, dt, dimMode, h});
 }
@@ -20,32 +20,32 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
     dimMode = p.dimMode;
 }*/
 
-auto NumericParams::getN() const -> size_t { return **N; }
-auto NumericParams::getL() const -> floatt { return **L; }
-auto NumericParams::getxMin() const -> floatt { return **xCenter - **L * .5; }
-auto NumericParams::getxMax()  const -> floatt { return **xCenter + **L*.5; }
-auto NumericParams::gett() const -> floatt { return **t; }
-auto NumericParams::getr() const -> floatt { return **dt/ **h; }
-auto NumericParams::getn() const -> Count {
+auto NumericConfig::getN() const -> size_t { return **N; }
+auto NumericConfig::getL() const -> floatt { return **L; }
+auto NumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
+auto NumericConfig::getxMax()  const -> floatt { return **xCenter + **L * .5; }
+auto NumericConfig::gett() const -> floatt { return **t; }
+auto NumericConfig::getr() const -> floatt { return **dt / **h; }
+auto NumericConfig::getn() const -> Count {
     return n;
 }
-auto NumericParams::geth() const -> floatt {
+auto NumericConfig::geth() const -> floatt {
     return **h;
 }
-auto NumericParams::getdt() const -> floatt {
+auto NumericConfig::getdt() const -> floatt {
     return **dt;
 }
 
-void NumericParams::sett(Real tMax) const {
+void NumericConfig::sett(Real tMax) const {
     Log::Attention() << "Command line argument '" << t->getCLName(true) << "' "
                      << "being ignored and set to " << tMax << ";" << Log::Flush;
 
     t->setValue(tMax);
 }
 
-bool NumericParams::shouldForceOverstepping() const { return **forceOverstepping; }
+bool NumericConfig::shouldForceOverstepping() const { return **forceOverstepping; }
 
-void NumericParams::notifyCLArgsSetupFinished() {
+void NumericConfig::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
 
     switch (**dimMode) {

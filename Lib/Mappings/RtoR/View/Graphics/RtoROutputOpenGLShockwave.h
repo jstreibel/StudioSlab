@@ -16,7 +16,7 @@ namespace RtoR {
         ResizableDiscreteFunction innerEnergyHistory;
 
     public:
-        explicit ShockwaveMonitor(const NumericParams &params, KGEnergy &hamiltonian, Real a0=1, Real E=1);
+        explicit ShockwaveMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Real a0=1, Real E=1);
         void draw() override;
 
     };

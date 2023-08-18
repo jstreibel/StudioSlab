@@ -83,7 +83,7 @@ namespace R2toR {
         auto Builder::notifyCLArgsSetupFinished()    ->       void {
             InterfaceOwner::notifyCLArgsSetupFinished();
 
-            auto &p = numericParams;
+            auto &p = numericConfig;
             const Real L = p.getL();
             const Real dt = p.getdt();
             const auto W₀ = *W_0;
@@ -103,7 +103,7 @@ namespace R2toR {
         }
 
         auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
-            return new OutGL(numericParams, ringDelta1, -1, 1);
+            return new OutGL(numericConfig, ringDelta1, -1, 1);
         }
 
         Str Builder::suggestFileName() const {

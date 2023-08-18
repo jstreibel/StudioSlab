@@ -2,7 +2,7 @@
 
 #include "input-shockwave.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticShockwave1D.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"

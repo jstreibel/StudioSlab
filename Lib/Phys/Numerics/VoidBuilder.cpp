@@ -15,18 +15,18 @@ break;
 
 #define DONT_REGISTER false
 
+
 Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, bool doRegister)
 : InterfaceOwner(name, 100, DONT_REGISTER)
-, numericParams(DONT_REGISTER)
-, dev(DONT_REGISTER)
+, simulationConfig(DONT_REGISTER)
 , prefix(name)
 {
     interface->addParameters({&noHistoryToFile, &outputResolution,
                               &VisualMonitor, &VisualMonitor_startPaused, &OpenGLMonitor_stepsPerIdleCall
                                      /*&takeSnapshot, &snapshotTime, */ });
 
-    interface->addSubInterface(numericParams.getInterface());
-    interface->addSubInterface(dev.getInterface());
+    interface->addSubInterface(simulationConfig.numericConfig.getInterface());
+    interface->addSubInterface(simulationConfig.dev.getInterface());
 
     if(doRegister){
         InterfaceManager::getInstance().registerInterface(interface);
@@ -36,19 +36,20 @@ Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, boo
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 
-auto Base::Simulation::VoidBuilder::getNumericParams() const -> const NumericParams & {
-    return numericParams;
+auto Base::Simulation::VoidBuilder::getNumericParams() const -> const NumericConfig & {
+    return simulationConfig.numericConfig;
 }
 
-auto Base::Simulation::VoidBuilder::getDevice() const -> const Device & {
-    return dev;
+auto Base::Simulation::VoidBuilder::getDevice() const -> const DeviceConfig & {
+    return simulationConfig.dev;
 }
 
 Str Base::Simulation::VoidBuilder::suggestFileName() const {
     const auto SEPARATOR = " ";
-    auto strParams = numericParams.getInterface()->toString({"L", "N"}, SEPARATOR);
+    auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
 
     auto str = prefix + SEPARATOR + strParams;
 
     return str;
 }
+

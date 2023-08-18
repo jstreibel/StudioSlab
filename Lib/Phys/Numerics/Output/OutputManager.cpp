@@ -2,7 +2,7 @@
 #include "OutputManager.h"
 #include "Base/Tools/Log.h"
 
-OutputManager::OutputManager(const NumericParams &params) : params(params), maxSteps(params.getn()) { }
+OutputManager::OutputManager(const NumericConfig &params) : params(params), maxSteps(params.getn()) { }
 
 OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 

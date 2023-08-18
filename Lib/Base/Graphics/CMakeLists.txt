@@ -19,8 +19,10 @@ set( GRAPHICS_SOURCES
 
 		OpenGL/Utils.cpp
 		OpenGL/GLUTUtils.cpp
+        OpenGL/Texture.cpp
+        OpenGL/Texture.h
 
-		)
+)
 
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Graphics )

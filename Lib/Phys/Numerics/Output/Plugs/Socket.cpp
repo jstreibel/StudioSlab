@@ -5,7 +5,7 @@
 #include "Socket.h"
 
 
-Numerics::OutputSystem::Socket::Socket(const NumericParams &params, Str name, int nStepsInterval, Str description)
+Numerics::OutputSystem::Socket::Socket(const NumericConfig &params, Str name, int nStepsInterval, Str description)
 : nSteps(nStepsInterval), params(params), name(name), description(description), nextRecStep(1) {      }
 
 
@@ -46,7 +46,7 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
 }
 
 void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
-    _out(outData);
+    handleOutput(outData);
     lastData = outData;
 }
 

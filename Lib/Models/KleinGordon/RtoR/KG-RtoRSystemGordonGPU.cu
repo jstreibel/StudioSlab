@@ -13,7 +13,7 @@
 using namespace RtoR;
 
 
-SystemGordonGPU::SystemGordonGPU(const NumericParams &params,
+SystemGordonGPU::SystemGordonGPU(const NumericConfig &params,
                                  MyBase::EqBoundaryCondition &du,
                                  PotentialFunc &potential)
 : Fields::KleinGordon::Solver<EquationState>(params, du, potential)

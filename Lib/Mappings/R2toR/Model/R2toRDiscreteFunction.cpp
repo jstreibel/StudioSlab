@@ -7,12 +7,12 @@
 R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
 : DiscreteFunctionBase(DimensionMetaData({N, M}), h, dev)
 , N(N), M(M)
-, xMin(xMin), xMax(xMin+N*h)
-, yMin(yMin), yMax(yMin+M*h)
+, xMin(xMin), xMax(xMin+(Real)N*h)
+, yMin(yMin), yMax(yMin+(Real)M*h)
 , h(h)
 { }
 
-R2toR::DiscreteFunction::DiscreteFunction(const NumericParams &p, device dev)
+R2toR::DiscreteFunction::DiscreteFunction(const NumericConfig &p, device dev)
 : R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), dev)
 { }
 
@@ -26,10 +26,7 @@ Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.
 
-    if(n<0) return NaN;
-    else if(n>N-1) return NaN;
-    if(m<0) return NaN;
-    else if(m>M-1) return NaN;
+    if(n<0 || m<0 || n>N-1 || m>M-1) return NaN;
 
     /*
     n = n<0?0:n>N-1?N-1:n;
@@ -41,17 +38,21 @@ Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     return At(n,m);
 }
 
-PosInt R2toR::DiscreteFunction::getN() const {
-    return N;
+auto R2toR::DiscreteFunction::operator()(Real2D x) -> Real& {
+    const Real Lx = xMax-xMin;
+    const Real Ly = yMax-yMin;
+    const Real d = h;
+    int n = int(Real(N-1) * (d+x.x-xMin)/Lx);
+    int m = int(Real(M-1) * (d+x.y-yMin)/Ly);
+
+    return At(n,m);
 }
 
-PosInt R2toR::DiscreteFunction::getM() const {
-    return M;
-}
+PosInt R2toR::DiscreteFunction::getN() const { return N; }
 
-R2toR::Domain R2toR::DiscreteFunction::getDomain() const {
-    return {xMin, xMax, yMin, yMax};
-}
+PosInt R2toR::DiscreteFunction::getM() const { return M; }
+
+R2toR::Domain R2toR::DiscreteFunction::getDomain() const { return {xMin, xMax, yMin, yMax}; }
 
 Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
     const Real Lx = xMax-xMin;
@@ -78,13 +79,5 @@ Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     return FunctionT::diff(n);
 }
 
-// Base::DiscreteFunction<Real2D, Real> &
-// R2toR::DiscreteFunction::operator=(const Base::DiscreteFunction<Real2D, Real> &func) {
-//     this->Set(func);
-//
-//     return *this;
-// }
-
-Str R2toR::DiscreteFunction::myName() const {
-    return Base::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev==GPU ? "GPU" : "CPU");
-}
+Str R2toR::DiscreteFunction::myName() const
+{ return Base::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev==GPU ? "GPU" : "CPU"); }

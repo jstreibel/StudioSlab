@@ -30,6 +30,7 @@ namespace Base {
     class FunctionT : public Function {
     public:
         typedef std::shared_ptr<FunctionT<InputCategory, OutputCategory>> Ptr;
+        typedef std::shared_ptr<const FunctionT<InputCategory, OutputCategory>> ConstPtr;
 
         typedef FunctionT<InputCategory, OutputCategory> Type;
         typedef InputCategory InCategory;

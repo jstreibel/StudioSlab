@@ -2,7 +2,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/PerturbedOscillonTimeDerivative.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
 
 using namespace RtoR;
 

@@ -15,7 +15,7 @@ namespace RtoR {
 
     class SystemGordonGPU : Fields::KleinGordon::Solver<EquationState> {
     public:
-        SystemGordonGPU(const NumericParams &params,
+        SystemGordonGPU(const NumericConfig &params,
                         MyBase::EqBoundaryCondition &du,
                         PotentialFunc &potential);
 

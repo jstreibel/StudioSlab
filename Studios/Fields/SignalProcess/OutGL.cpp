@@ -86,7 +86,7 @@ void RtoR::Signal::JackControl::draw( ) {
  *    \_______  /|   __/  \___  >|___|  / \______  /|_______ \
  *            \/ |__|         \/      \/         \/         \/
  */
-RtoR::Signal::OutGL::OutGL(const NumericParams &params, Real phiMin, Real phiMax)
+RtoR::Signal::OutGL::OutGL(const NumericConfig &params, Real phiMin, Real phiMax)
         : RtoR::Monitor(params, phiMin, phiMax) {
 
     panel.addWindow(&jackControlWindow);
@@ -114,18 +114,18 @@ RtoR::Signal::OutGL::OutGL(const NumericParams &params, Real phiMin, Real phiMax
         panel.addWindow(&fullRecordingGraph);
     }
 }
-void RtoR::Signal::OutGL::_out(const OutputPacket &outInfo) {
+void RtoR::Signal::OutGL::handleOutput(const OutputPacket &packet) {
     // OutputOpenGL::_out(outInfo);
 
-    auto field = outInfo.getEqStateData<RtoR::EquationState>();
-    __t = outInfo.getSimTime();
+    auto field = packet.getEqStateData<RtoR::EquationState>();
+    __t = packet.getSimTime();
     probingData.push_back(field->getPhi()(jackProbeLocation));
     gotNewData = true;
 
-    if(!outInfo.getSteps()%100) {
+    if(!packet.getSteps() % 100) {
         auto newField =
                 static_cast<RtoR::DiscreteFunction *>
-                (outInfo.getEqStateData<RtoR::EquationState>()->getPhi().Clone());
+                (packet.getEqStateData<RtoR::EquationState>()->getPhi().Clone());
         history.push_back(newField);
     }
 }

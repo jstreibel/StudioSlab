@@ -3,7 +3,7 @@
 //
 
 #include "ManyOscillonsBuilder.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Common/RandUtils.h"
 #include "../ThermalMonitor.h"
@@ -17,8 +17,8 @@ RtoR::ManyOscillonsBuilder::ManyOscillonsBuilder()
 
 auto RtoR::ManyOscillonsBuilder::getBoundary() -> void * {
     int n = *nOscillons;
-    auto L = numericParams.getL();
-    auto xMin = numericParams.getxMin();
+    auto L = simulationConfig.numericConfig.getL();
+    auto xMin = simulationConfig.numericConfig.getxMin();
 
     RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
@@ -39,5 +39,5 @@ auto RtoR::ManyOscillonsBuilder::getBoundary() -> void * {
 }
 
 RtoR::Monitor *RtoR::ManyOscillonsBuilder::buildOpenGLOutput() {
-    return new RtoR::Thermal::Monitor(numericParams, *(KGEnergy*)getHamiltonian());
+    return new RtoR::Thermal::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
 }

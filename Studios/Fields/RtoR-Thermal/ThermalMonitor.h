@@ -14,7 +14,7 @@ namespace RtoR {
             Real transientGuess = -1.0;
 
         public:
-            explicit Monitor(const NumericParams &, KGEnergy &hamiltonian);
+            explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
 
             void draw() override;
 

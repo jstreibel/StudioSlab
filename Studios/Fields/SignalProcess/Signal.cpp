@@ -32,7 +32,7 @@ Real t0 = 5;
  *    \________|(____  / \___  >|__|_ \      \____|__  /|____/ \____ | |__| \____/
  *                   \/      \/      \/              \/             \/
  */
-RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
+RtoR::Signal::JackOutput::JackOutput(const NumericConfig &params)
 : Numerics::OutputSystem::Socket(params, "Jack output", 1) {
     JackServer::GetInstance();
 
@@ -41,8 +41,8 @@ RtoR::Signal::JackOutput::JackOutput(const NumericParams &params)
 
     jackProbeLocation = xLeft+delta;
 }
-void RtoR::Signal::JackOutput::_out(const OutputPacket &outputPacket) {
-    Function &field = outputPacket.getEqStateData<RtoR::EquationState>()->getPhi();
+void RtoR::Signal::JackOutput::handleOutput(const OutputPacket &packet) {
+    Function &field = packet.getEqStateData<RtoR::EquationState>()->getPhi();
 
     auto measure = field(jackProbeLocation);
 

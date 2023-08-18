@@ -10,11 +10,11 @@ protected:
 	std::vector<Numerics::OutputSystem::Socket*> outputs;
 	std::vector<Numerics::OutputSystem::Socket*> myOutputs;
 
-	const NumericParams &params;
+	const NumericConfig &params;
 
 public:
 
-    OutputManager(const NumericParams &params);
+    OutputManager(const NumericConfig &params);
 	~OutputManager();
 
 	/**

@@ -8,16 +8,18 @@
 #include <utility>
 
 const Str extension = ".osc";
+#define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
-OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
-                                         Str outputFileName, OutputFormatterBase *outputFormatter)
-    : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
-      outFileName(std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))),
-      outputFormatter(*outputFormatter)
+OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
+                                         PosInt stepsInterval,
+                                         SpaceFilterBase *spaceFilter,
+                                         Real endT,
+                                         const Str& outputFileName, OutputFormatterBase *outputFormatter)
+                                         : HistoryKeeper(params, stepsInterval, spaceFilter, endT)
+                                         , outFileName(outputFilename)
+                                         , outputFormatter(*outputFormatter)
 {
-    auto flags = std::ios::out;
-
-    file.open(outFileName, flags);
+    file.open(outFileName, std::ios::out);
 
     if(!file){
         Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
@@ -25,7 +27,6 @@ OutputHistoryToFile::OutputHistoryToFile(const NumericParams &params, PosInt ste
     }
 
     Log::Info() << "Sim history data file is \'" << outFileName << "\'. " << Log::Flush;
-
     Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
     file << spaces << '\n';

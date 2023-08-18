@@ -11,13 +11,13 @@ private:
     const Real maxT;
 
 public:
-    OutputConsoleMonitor(const NumericParams &params, Count n_steps_between_calls);
+    OutputConsoleMonitor(const NumericConfig &params, Count n_steps_between_calls);
 
 public:
     bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
 
 protected:
-    virtual void _out(const OutputPacket &outputInfo);
+    virtual void handleOutput(const OutputPacket &outputInfo);
 };
 
 #endif // OUTPUTCONSOLEMONITOR_H

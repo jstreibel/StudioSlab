@@ -13,7 +13,7 @@ namespace MolecularDynamics {
         static Point2D xi();
 
     public:
-        Langevin(const NumericParams&, Real Temperature);
+        Langevin(const NumericConfig&, Real Temperature);
 
         void setTemperature(Real T);
     };

@@ -2,7 +2,7 @@
 #include "Phys/Numerics/Output/Plugs/Socket.h"
 #include "Base/Tools/Log.h"
 
-OutputConsoleMonitor::OutputConsoleMonitor(const NumericParams &params, const Count n_steps_between_calls)
+OutputConsoleMonitor::OutputConsoleMonitor(const NumericConfig &params, const Count n_steps_between_calls)
     : Socket(params, "Console monitor output", n_steps_between_calls),
       maxT(params.gett())
 {
@@ -15,11 +15,11 @@ bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theV
     OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
                                           params.getn(), maxT);
 
-    this->_out(dummyInfo);
+    this->handleOutput(dummyInfo);
     return true;
 }
 
-void OutputConsoleMonitor::_out(const OutputPacket &outputInfo)
+void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo)
 {
     static std::vector<Real> measures;
     auto elTime = timer.getElTime_sec();

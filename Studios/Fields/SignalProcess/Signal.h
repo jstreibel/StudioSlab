@@ -10,7 +10,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/AnalyticOscillon.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Phys/DifferentialEquations/BoundaryConditions.h"
@@ -28,10 +28,10 @@ namespace RtoR {
 
 
         class JackOutput : public Numerics::OutputSystem::Socket {
-            auto _out(const OutputPacket &packet) -> void override;
+            auto handleOutput(const OutputPacket &packet) -> void override;
 
         public:
-            JackOutput(const NumericParams &params);
+            JackOutput(const NumericConfig &params);
             auto shouldOutput(Real t, unsigned long timestep) -> bool override;
 
         };

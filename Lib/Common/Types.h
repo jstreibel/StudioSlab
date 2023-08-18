@@ -11,8 +11,11 @@
 
 typedef floatt              Real;
 
+typedef unsigned char       Byte;
+typedef unsigned char*      ByteData;
 typedef unsigned long       PosInt;
 typedef std::size_t         Count;
+typedef std::size_t         Resolution;
 typedef int_least64_t       BigInt;
 
 #define let     auto
