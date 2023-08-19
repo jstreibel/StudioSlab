@@ -14,16 +14,24 @@ namespace OpenGL {
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        data = (ByteData*)malloc(w*h*4);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+        float borderColor[] = { 0.15f, 0.15f, 0.15f, 0.5f }; // Red, for example
+        glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+
+
+        data = (ByteData)malloc(w*h*4);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     }
 
     void Texture::setColor(int i, int j, Styles::Color color) {
-        auto *texel = data[i*4 + (j*4)*w];
+        fix index = i*4 + j*w*4;
+        ByteData texel = &data[index];
 
         texel[R] = (Byte)(255*color.r);
         texel[G] = (Byte)(255*color.g);
@@ -31,9 +39,19 @@ namespace OpenGL {
         texel[A] = (Byte)(255*color.a);
     }
 
-    void Texture::upload() {
+    void Texture::upload(PosInt row0, Count nRows) {
         glBindTexture(GL_TEXTURE_2D, texture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+        if(row0==0 && nRows==0)
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        else {
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, row0, w, nRows, GL_RGBA, GL_UNSIGNED_BYTE, &data[row0 * w * 4]);
+        }
+
+    }
+
+    void Texture::setData(ByteData newData) {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, newData);
     }
 
     GLsizei Texture::getWidth() const {
@@ -43,4 +61,6 @@ namespace OpenGL {
     GLsizei Texture::getHeight() const {
         return h;
     }
+
+
 } // OpenGL

@@ -7,18 +7,19 @@
 
 #include "Common/Types.h"
 
-typedef std::vector<char> ByteData;
+namespace Numerics {
+    typedef std::vector<char> ByteData;
 
-template<typename TYPE>
-union ByteDataConvertHelperUnion {
-    explicit ByteDataConvertHelperUnion(TYPE value) : value(value) { }
+    template<typename TYPE>
+    union ByteDataConvertHelperUnion {
+        explicit ByteDataConvertHelperUnion(TYPE value) : value(value) {}
 
-    char data[sizeof(TYPE)];
-    TYPE value;
-};
+        char data[sizeof(TYPE)];
+        TYPE value;
+    };
 
-typedef std::vector<char> ByteData;
+}
 
-auto operator<< (OStream& stream, const ByteData &byteData) -> OStream&;
+auto operator<< (OStream& stream, const Numerics::ByteData &byteData) -> OStream&;
 
 #endif //FIELDS_BYTEDATA_H

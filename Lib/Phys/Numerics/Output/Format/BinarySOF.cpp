@@ -11,14 +11,14 @@ auto BinarySOF::getFormatDescription() const -> Str {
     return Str("fp32");
 }
 
-auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
+auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData {
     const auto &space = fOut;
     const VecFloat& X = fOut.getHostData(true);
 
-    ByteData data(X.size()*typeSize);
+    Numerics::ByteData data(X.size()*typeSize);
 
     for(int i=0; i<X.size(); ++i) {
-        auto helper = ByteDataConvertHelperUnion((float) X[i]);
+        auto helper = Numerics::ByteDataConvertHelperUnion((float) X[i]);
         for (int j = 0; j < typeSize; ++j) {
             data[i * typeSize + j] = helper.data[j];
         }
@@ -27,12 +27,12 @@ auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
     return data;
 }
 
-auto BinarySOF::operator()(const Real &out) const -> ByteData {
-    ByteDataConvertHelperUnion<float> byteData((float)out);
+auto BinarySOF::operator()(const Real &out) const -> Numerics::ByteData {
+    Numerics::ByteDataConvertHelperUnion<float> byteData((float)out);
 
 
     const int size = sizeof(float);
-    ByteData data(size);
+    Numerics::ByteData data(size);
     for(auto i=0; i<size; ++i) data[i] = byteData.data[i];
 
     return data;

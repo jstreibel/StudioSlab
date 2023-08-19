@@ -16,9 +16,9 @@ class OutputFormatterBase {
 public:
     virtual ~OutputFormatterBase() = default;
 
-    virtual auto operator() (const DiscreteSpace &fOut) const -> ByteData = 0;
+    virtual auto operator() (const DiscreteSpace &fOut) const -> Numerics::ByteData = 0;
 
-    virtual auto operator() (const Real &out) const -> ByteData = 0;
+    virtual auto operator() (const Real &out) const -> Numerics::ByteData = 0;
 
     virtual auto isBinary() const -> bool = 0;
 

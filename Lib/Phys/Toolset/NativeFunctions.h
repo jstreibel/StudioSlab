@@ -55,6 +55,16 @@ DEVICES inline auto deltaRect(Real x, Real eps) -> Real {
     return 0.;
 }
 
+DEVICES inline Real logAbs(Real val, Real eps){
+    const auto sign = (val>.0?1.0:-1.0);
+    return log(std::abs(val)/eps + 1)*sign;
+}
+
+DEVICES inline Real logAbs_inv(Real val, Real eps){
+    const auto sign = (val>.0?1.0:-1.0);
+    return eps * (exp(std::abs(val)) - 1.0) * sign;
+}
+
 inline Real sqr(const Real x){ return x*x; }
 
 #endif // MATHUTIL_H

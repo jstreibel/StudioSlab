@@ -54,9 +54,21 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 
     panel.addWindow(histogramsPanel);
 
+    panel.addWindow(&mFullHistoryDisplay, ADD_NEW_COLUMN);
 }
 
 void RtoR::Thermal::Monitor::draw() {
+
+    // *************************** Full history ***************************
+    static bool isSetup = false;
+    if( simulationHistory != nullptr ) {
+        if( not isSetup ) {
+            mFullHistoryDisplay.setup(simulationHistory);
+            isSetup = true;
+        }
+
+        mFullHistoryDisplay.set_t(t);
+    }
 
 
     // *************************** Histograms *****************************

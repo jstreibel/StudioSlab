@@ -13,7 +13,7 @@ auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
     return Str("text");
 }
 
-auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
+auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData {
     const auto &space = fOut;
 
     const VecFloat& X = space.getHostData(true);
@@ -26,21 +26,21 @@ auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> By
     oss << std::endl;
 
     const auto &s = oss.str();
-    ByteData data(s.size());
+    Numerics::ByteData data(s.size());
 
     std::copy(s.begin(), s.end(), data.begin());
 
     return data;
 }
 
-auto CustomStringSeparatedSOF::operator()(const Real &out) const -> ByteData {
+auto CustomStringSeparatedSOF::operator()(const Real &out) const -> Numerics::ByteData {
     std::ostringstream oss;
 
     oss << out << sep;
 
     auto s = oss.str();
 
-    ByteData data(s.size());
+    Numerics::ByteData data(s.size());
     std::copy(s.begin(), s.end(), data.begin());
 
     return data;

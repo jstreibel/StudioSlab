@@ -34,7 +34,7 @@ namespace Base {
             std::vector<Label*> labels;
             std::vector<CurveTriple> curves;
 
-            Graph2D() = default;
+            // Graph2D() = default;
 
             bool savePopupOn = false;
 

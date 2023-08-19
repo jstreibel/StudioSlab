@@ -49,6 +49,8 @@ set ( RTOR_SOURCES
 		RtoR/Calc/Histogram.cpp
 		RtoR/Model/FunctionsCollection/Section1D.cpp
 		RtoR/Model/FunctionsCollection/Section1D.h
+        RtoR/View/Graphics/HistoryDisplay.cpp
+        RtoR/View/Graphics/HistoryDisplay.h
 
 )
 

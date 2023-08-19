@@ -28,7 +28,7 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OpenGLMonitor> Ptr;
 
-        OpenGLMonitor(const NumericConfig &params, Str channelName="OpenGL monitor", int stepsBetweenDraws=1);
+        OpenGLMonitor(const NumericConfig &params, const Str& channelName="OpenGL monitor", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
         bool notifyRender(float elTime_msec) final override;

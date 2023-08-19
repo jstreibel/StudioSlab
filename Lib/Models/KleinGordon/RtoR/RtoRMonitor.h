@@ -25,6 +25,9 @@ namespace RtoR {
         GraphRtoR mFieldsGraph;
         GraphRtoR mHistoryGraph;
 
+        std::shared_ptr<const R2toR::Function>
+                  simulationHistory = nullptr;
+
         Spaces::PointSet UHistoryData;
         Spaces::PointSet KHistoryData;
         Spaces::PointSet WHistoryData;
@@ -41,7 +44,6 @@ namespace RtoR {
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
-        std::shared_ptr<const R2toR::Function> simulationHistory = nullptr;
 
         void draw() override;
         void handleOutput(const OutputPacket &outInfo) override;

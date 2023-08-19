@@ -15,9 +15,9 @@ public:
 
     explicit BinarySOF();
 
-    auto operator()(const Real &out) const -> ByteData override;
+    auto operator()(const Real &out) const -> Numerics::ByteData override;
 
-    auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
+    auto operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData override;
 
     auto isBinary() const -> bool override;
 

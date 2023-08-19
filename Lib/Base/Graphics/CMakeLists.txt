@@ -21,6 +21,9 @@ set( GRAPHICS_SOURCES
 		OpenGL/GLUTUtils.cpp
         OpenGL/Texture.cpp
         OpenGL/Texture.h
+		Styles/ColorMap.h
+		Styles/ColorMap.cpp
+        Styles/Colors.cpp
 
 )
 

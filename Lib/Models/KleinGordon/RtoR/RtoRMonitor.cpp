@@ -54,7 +54,7 @@ void RtoR::Monitor::draw() {
         auto xMax = params.getxMax();
         auto xMin = params.getxMin();
 
-        static auto section = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
+        static auto section     = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
         static auto sectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
 
         section = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
@@ -69,24 +69,17 @@ void RtoR::Monitor::draw() {
     mFieldsGraph.clearFunctions();
     hamiltonian.computeDensities(fieldState);
 
-    if(showPhi){
+    if(showPhi)
         mFieldsGraph.addFunction(&hamiltonian.getPotential(), "|phi|", V_style);
-        //mFieldsGraph.addFunction(&fieldState.getPhi(), "phi", V_style);
-    }
 
-    if(showKineticEnergy){
+    if(showKineticEnergy)
         mFieldsGraph.addFunction(&hamiltonian.getKinetic(), "K", K_style);
-        //mFieldsGraph.addFunction(&fieldState.getDPhiDt(), "K",
-        //                          Styles::GetColorScheme()->funcPlotStyles[1]);
-    }
 
-    if(showGradientEnergy) {
+    if(showGradientEnergy)
         mFieldsGraph.addFunction(&hamiltonian.getGradient(), "grad^2", W_style);
-    }
 
-    if(showEnergyDensity){
+    if(showEnergyDensity)
         mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(), "E", U_style);
-    }
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {

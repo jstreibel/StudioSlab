@@ -6,43 +6,48 @@
 #define STUDIOSLAB_THERMALMONITOR_H
 
 #include "Models/KleinGordon/RtoR/RtoRMonitor.h"
-
-namespace RtoR {
-    namespace Thermal {
-
-        class Monitor : public RtoR::Monitor {
-            Real transientGuess = -1.0;
-
-        public:
-            explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
-
-            void draw() override;
-
-            void setTransientGuess(Real guess);
-
-        private:
-
-            Spaces::PointSet temperature1HistoryData;
-            Spaces::PointSet temperature2HistoryData;
-            Spaces::PointSet temperature3HistoryData;
-
-            Fields::Graphing::PointSetGraph mTemperaturesGraph;
+#include "Mappings/R2toR/View/Artists/FlatFieldDisplay.h"
+#include "Mappings/RtoR/View/Graphics/HistoryDisplay.h"
 
 
-            Spaces::PointSet histogramKData;
-            Spaces::PointSet histogramGradData;
-            Spaces::PointSet histogramVData;
-            Spaces::PointSet histogramEData;
+namespace RtoR::Thermal {
 
-            Fields::Graphing::PointSetGraph mHistogramsGraphK;
-            Fields::Graphing::PointSetGraph mHistogramsGraphGrad;
-            Fields::Graphing::PointSetGraph mHistogramsGraphV;
-            Fields::Graphing::PointSetGraph mHistogramsGraphE;
+    class Monitor : public RtoR::Monitor {
+        Real transientGuess = -1.0;
 
-        };
-    }
+    public:
+        explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
 
+        void draw() override;
+
+        void setTransientGuess(Real guess);
+
+
+
+
+    private:
+
+        Spaces::PointSet temperature1HistoryData;
+        Spaces::PointSet temperature2HistoryData;
+        Spaces::PointSet temperature3HistoryData;
+
+        Fields::Graphing::PointSetGraph mTemperaturesGraph;
+
+        Spaces::PointSet histogramKData;
+        Spaces::PointSet histogramGradData;
+        Spaces::PointSet histogramVData;
+        Spaces::PointSet histogramEData;
+
+        Fields::Graphing::PointSetGraph mHistogramsGraphK;
+        Fields::Graphing::PointSetGraph mHistogramsGraphGrad;
+        Fields::Graphing::PointSetGraph mHistogramsGraphV;
+        Fields::Graphing::PointSetGraph mHistogramsGraphE;
+
+        RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
+    };
 }
+
+
 
 
 #endif //STUDIOSLAB_THERMALMONITOR_H

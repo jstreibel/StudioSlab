@@ -2,68 +2,33 @@
 // Created by joao on 19/09/2021.
 //
 
+#ifndef SLAB_COLOR_H
+#define SLAB_COLOR_H
+
 #include <cmath>
+#include "Common/Types.h"
 
 namespace Styles {
     class Color
     {
     public:
-        Color(float r, float g, float b, float a=1) : r(r), g(g), b(b), a(a) {}
-        Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
+        Color(float r=.0f, float g=.0f, float b=.0f, float a=1.);
+        Color(Color rgb, float a);
         Color(const Color &c) = default;
 
         float r, g, b, a;
 
-        Color permute(bool odd=false) const {
-            if(odd) return {g, r, b, a};
+        Color permute(bool odd=false) const;
+        Color inverse(bool invertAlpha=false) const;
 
-            else return {b, r, g, a};
-        }
+        static Color FromBytes(Byte r, Byte g, Byte b, Byte a=0xff);
+        static Color FromHex(Str hex);
 
+        std::vector<Real> toVector();
 
-        static Color FromHex(Str hex){
-            const auto size = hex.length();
+        Color rgb() const;
 
-            if((size!=7 && size!=9) || hex[0] != '#')
-                throw Str("Wrong hex color format ") + hex;
-
-            unsigned int rr, gg, bb, aa=255;
-            std::stringstream ss;
-            ss << std::hex << hex.substr(1, 2);
-            ss >> rr;
-            ss.clear();
-            ss << std::hex << hex.substr(3, 2);
-            ss >> gg;
-            ss.clear();
-            ss << std::hex << hex.substr(5, 2);
-            ss >> bb;
-            if(size==9){
-                ss.clear();
-                ss << std::hex << hex.substr(7, 2);
-                ss >> aa;
-            }
-
-            auto r = static_cast<float>(rr) / 255.0f;
-            auto g = static_cast<float>(gg) / 255.0f;
-            auto b = static_cast<float>(bb) / 255.0f;
-            auto a = static_cast<float>(aa) / 255.0f;
-
-            return Color(r, g, b, a);
-        }
-
-        std::vector<Real> toVector() { return {r, g, b}; }
-
-        Color rgb() const { return {r, g, b, -1}; }
-
-
-
-        bool operator==(const Color &rhs) const {
-            static float eps = 1.e-4;
-            return r > rhs.r-eps  && r < rhs.r+eps &&
-                   g > rhs.g-eps  && g < rhs.g+eps &&
-                   b > rhs.b-eps  && b < rhs.b+eps &&
-                   a > rhs.a-eps  && a < rhs.a+eps;
-        }
+        bool operator==(const Color &rhs) const;
     };
 
     typedef struct {
@@ -184,3 +149,5 @@ namespace Styles {
         return out;
     }
 }
+
+#endif

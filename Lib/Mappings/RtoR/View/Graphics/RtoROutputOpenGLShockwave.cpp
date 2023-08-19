@@ -20,7 +20,7 @@ RtoR::ShockwaveMonitor::ShockwaveMonitor(const NumericConfig &params, KGEnergy &
 }
 
 void RtoR::ShockwaveMonitor::draw() {
-    OpenGLMonitor::draw();
+    RtoR::Monitor::draw();
 
     //if(showAnalyticSolution){
     //    const Real t = lastInfo.getT();

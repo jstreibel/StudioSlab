@@ -10,10 +10,11 @@
 
 using namespace Base;
 
-#define CLEAR_BUFFERS false
+#define AUTO_ADJUST_SAMPLES_PER_SECOND false
 
-Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, Str channelName, int stepsBetweenDraws)
-        : Numerics::OutputSystem::Socket(params, "OpenGL output", stepsBetweenDraws), Window() {
+
+Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
+        : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
     panel.addWindow(&stats);
@@ -27,7 +28,8 @@ void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
 }
 
 auto Graphics::OpenGLMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
-    return finishFrameAndRender();
+    // return finishFrameAndRender();
+    return true;
 }
 
 void Graphics::OpenGLMonitor::writeStats() {
@@ -43,30 +45,55 @@ void Graphics::OpenGLMonitor::writeStats() {
     static Count lastStep=0;
     auto dt = params.getdt();
 
-    fix FPS = 1e3/elTime;
+    auto avgFPS = 0.0;
+    auto avgSPS = 0.0;
+    fix SPs = lastData.getSteps() - lastStep;
+    {
+        fix FPS = 1e3/elTime;
+        fix SPS = getnSteps()/(elTime*1e-3);
+
+        static std::vector<Real> FPSmeasures;
+        static std::vector<Real> SPSmeasures; // steps per second
+
+        fix MAX_AVG_SAMPLES = 200UL;
+
+        FPSmeasures.emplace_back(FPS);
+        SPSmeasures.emplace_back(SPS);
+
+        fix count = FPSmeasures.size();
+        fix countMin = count > MAX_AVG_SAMPLES ? count-MAX_AVG_SAMPLES : 0;
+        fix total = count-countMin;
+
+        for(auto index=countMin; index<count; index++) {
+            avgFPS += FPSmeasures[index];
+            avgSPS += SPSmeasures[index];
+        }
+        avgFPS /= (Real)total;
+        avgSPS /= (Real)total;
+
+        if(AUTO_ADJUST_SAMPLES_PER_SECOND) {
+            fix minFPS = 58, maxFPS = 59;
+            if      (avgFPS >= maxFPS) setnSteps(getnSteps() + 1);
+            else if (avgFPS <= minFPS) setnSteps(getnSteps() - 1);
+        }
+    }
 
     stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
     stats.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
-    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(lastData.getSteps() - lastStep));
-    stats.addVolatileStat(Str("Steps/sec: ") + ToStr(getnSteps()/(elTime*1e-3), 0));
-    stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(FPS, 0));
+    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(SPs));
+    stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
+    stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));
     stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
-
-    fix minFPS = 58, maxFPS = 59;
-    if     ( FPS >= maxFPS ) setnSteps(getnSteps()+1);
-    else if( FPS <= minFPS ) setnSteps(getnSteps()-1);
 
     lastStep = lastData.getSteps();
 }
 
 bool Graphics::OpenGLMonitor::finishFrameAndRender() {
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
-
-    if(CLEAR_BUFFERS) glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     glPushMatrix();
     {

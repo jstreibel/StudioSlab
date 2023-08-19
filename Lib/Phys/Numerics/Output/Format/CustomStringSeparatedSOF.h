@@ -11,8 +11,8 @@ class CustomStringSeparatedSOF : public OutputFormatterBase {
 public:
     explicit CustomStringSeparatedSOF(std::string sep = " ");
 
-    auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
-    auto operator()(const Real &out) const -> ByteData override;
+    auto operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData override;
+    auto operator()(const Real &out) const -> Numerics::ByteData override;
 
     auto isBinary() const -> bool override;
 

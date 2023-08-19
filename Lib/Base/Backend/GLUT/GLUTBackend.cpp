@@ -35,7 +35,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     glutInitWindowSize(w, h);
     int winHandle = glutCreateWindow("Pendulum");
 
-    if(false) glutFullScreen();
+    if(true) glutFullScreen();
 
     // GLEW init:
     {
@@ -314,6 +314,8 @@ void GLUTBackend::idleCall()
 
 void GLUTBackend::reshape(int w, int h)
 {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     {
         ImGuiIO &io = ImGui::GetIO();
         io.DisplaySize = ImVec2((float) w, (float) h);
@@ -331,18 +333,6 @@ void GLUTBackend::reshape(int w, int h)
 }
 
 void GLUTBackend::addWindow(Window::Ptr window) {
-    // this->outGL = outputOpenGL;
-
-    //IntPair size = outGL->getWindowSizeHint();
-    //
-    //if(size.first == -1 || size.second == -1) {
-    //    std::cout << "/nWarning: using default window size fullscreen.";
-    //    size = {800, 450};
-    //    glutFullScreen();
-    //} else {
-    //    glutReshapeWindow(size.first, size.second);
-    //}
-
     try {
         auto socket = dynamic_cast<Numerics::OutputSystem::Socket*>(window.get());
         sockets.emplace_back(socket);

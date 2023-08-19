@@ -13,14 +13,16 @@ namespace OpenGL {
 
     class Texture {
         GLuint texture = 0;
-        ByteData *data;
+        ByteData data;
 
         GLsizei w, h;
     public:
         Texture(GLsizei width, GLsizei height);
 
         void setColor(int i, int j, Styles::Color color);
-        void upload();
+        void setData(ByteData data);
+
+        void upload(PosInt row=0, Count nRows=0);
 
         GLsizei getWidth() const;
         GLsizei getHeight() const;

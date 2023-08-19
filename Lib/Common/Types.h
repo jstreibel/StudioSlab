@@ -13,6 +13,7 @@ typedef floatt              Real;
 
 typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
+typedef long                Int;
 typedef unsigned long       PosInt;
 typedef std::size_t         Count;
 typedef std::size_t         Resolution;
