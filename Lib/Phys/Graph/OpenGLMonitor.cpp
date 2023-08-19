@@ -50,12 +50,12 @@ void Graphics::OpenGLMonitor::writeStats() {
     fix SPs = lastData.getSteps() - lastStep;
     {
         fix FPS = 1e3/elTime;
-        fix SPS = getnSteps()/(elTime*1e-3);
+        fix SPS = SPs/(elTime*1e-3);
 
         static std::vector<Real> FPSmeasures;
         static std::vector<Real> SPSmeasures; // steps per second
 
-        fix MAX_AVG_SAMPLES = 200UL;
+        fix MAX_AVG_SAMPLES = 60UL;
 
         FPSmeasures.emplace_back(FPS);
         SPSmeasures.emplace_back(SPS);

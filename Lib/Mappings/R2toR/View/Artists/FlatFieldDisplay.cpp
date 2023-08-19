@@ -24,10 +24,13 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
     auto domain = discreteFunc.getDomain();
-    set_xMin(domain.xMin);
-    set_xMax(domain.xMax);
-    set_yMin(domain.yMin);
-    set_yMax(domain.yMax);
+    fix Δx = domain.xMax-domain.xMin;
+    fix Δy = domain.yMax-domain.yMin;
+    fix fraction = 0.2;
+    set_xMin(domain.xMin - Δx*fraction);
+    set_xMax(domain.xMax + Δx*fraction);
+    set_yMin(domain.yMin - Δy*fraction);
+    set_yMax(domain.yMax + Δy*fraction);
 
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();

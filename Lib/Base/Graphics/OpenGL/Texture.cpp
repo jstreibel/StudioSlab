@@ -19,10 +19,8 @@ namespace OpenGL {
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-        float borderColor[] = { 0.15f, 0.15f, 0.15f, 0.5f }; // Red, for example
+        float borderColor[] = { 0.f, 1.f, 0.f, 1.0f };
         glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
-
 
         data = (ByteData)malloc(w*h*4);
 

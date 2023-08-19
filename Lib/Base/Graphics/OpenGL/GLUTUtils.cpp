@@ -19,29 +19,27 @@ void GLUTUtils::write(const Window *win, const float fontScale, const float x, c
 
 void GLUTUtils::writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
                 void *font) {
-    const auto w = region.xMax-region.xMin;
-    const auto h = region.yMax-region.yMin;
-    auto regionRatio = w/(Real)h;
-    auto windowRatio = window->getw()/(Real)window->geth();
+    fix w = region.xMax-region.xMin;
+    fix h = region.yMax-region.yMin;
+    fix regionRatio = w/(Real)h;
+    fix windowRatio = window->getw()/(Real)window->geth();
 
-    auto baseScale = h*2.5e-4;
+    fix baseScale = h*2.0e-4;
 
-    auto xScale = fontScale*baseScale*regionRatio/windowRatio,
-         yScale = fontScale*baseScale;
+    fix importantRatio = regionRatio/windowRatio;
+
+    fix xScale = fontScale*baseScale*importantRatio,
+        yScale = fontScale*baseScale;
 
     glMatrixMode(GL_MODELVIEW);
 
-    for(int i=0;i<1;++i) {
-        glPushMatrix();
-
-
-        glTranslatef(x, y, 0);
-        glScalef(xScale, yScale, 1);
-
+    glPushMatrix();
+    glLoadIdentity();
+    glTranslatef(x, y, 0);
+    glScalef(xScale, yScale, 1);
+    for(int i=0;i<1;++i)
         glutStrokeString(font, (unsigned char *) str.c_str());
-
-        glPopMatrix();
-    }
+    glPopMatrix();
 }
 
 void GLUTUtils::writeBitmap(const Window *window, float x, float y, std::string str, void *font){

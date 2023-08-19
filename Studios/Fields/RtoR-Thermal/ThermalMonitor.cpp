@@ -31,9 +31,6 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 , mHistogramsGraphV("v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphE("e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 {
-    panel.setColumnRelativeWidth(1, -1);
-    panel.setColumnRelativeWidth(0, 0.2);
-
     auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
     mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
     mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
@@ -55,6 +52,10 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
     panel.addWindow(histogramsPanel);
 
     panel.addWindow(&mFullHistoryDisplay, ADD_NEW_COLUMN);
+
+    panel.setColumnRelativeWidth(1,-1.0);
+    panel.setColumnRelativeWidth(0, 0.2);
+    panel.setColumnRelativeWidth(2, 0.2);
 }
 
 void RtoR::Thermal::Monitor::draw() {
