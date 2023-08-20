@@ -22,6 +22,8 @@ public:
 
     void draw() override;
 
+    void begin() const;
+    void end() const;
 
 };
 

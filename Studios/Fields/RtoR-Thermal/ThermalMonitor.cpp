@@ -85,17 +85,25 @@ void RtoR::Thermal::Monitor::draw() {
         static auto nbins = 200;
         static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
-        if(ImGui::Begin("Probability density functions")){
+        stats.begin();
+        // if(ImGui::Begin("Probability density functions"))
+        {
+            ImGui::BeginTabBar("Hello");
+
+            ImGui::BeginTabItem("Binny");
             ImGui::SliderInt("n bins", &nbins, 10, 2000);
             ImGui::Checkbox("Pretty bars", &pretty);
+            ImGui::EndTabItem();
+
+            ImGui::EndTabBar();
+
         }
-        ImGui::End();
+        // ImGui::End();
+        stats.end();
 
 
         histogram.Compute(hamiltonian.getKinetic(), nbins);
         histogramKData = histogram.asPDFPointSet(pretty);
-        stats.addVolatileStat("<\\br>");
-        stats.addVolatileStat(Str("Energy distribution integral: ") + ToStr(histogram.integrate()));
 
         histogram.Compute(hamiltonian.getGradient(), nbins);
         histogramGradData = histogram.asPDFPointSet(pretty);

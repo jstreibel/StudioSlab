@@ -17,7 +17,7 @@
     auto numRegion = log10(deltaY);                                                             \
     buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                  \
            << (numRegion< -1 ? std::scientific : std::fixed) << mark;                           \
-    GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, 1, float(xMarkingsLabels), float(mark),  \
+    GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, fontScale, float(xMarkingsLabels), float(mark),  \
             buffer.str().c_str(), TICK_FONT);                                                   \
     }
 
@@ -89,12 +89,12 @@ void Base::Graphics::Graph2D::__drawXAxis() {
         for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
         for (Real mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 1, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
         }
     }
 
@@ -264,7 +264,7 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotSty
 
     auto c = Styles::GetColorScheme()->graphTitleFont;
     glColor4f(c.r,c.g,c.b,c.a);
-    GLUTUtils::writeOrtho(window, Rect{0,1,0,1}, 1, xMax+xGap, .5*(yMax+yMin), label);
+    GLUTUtils::writeOrtho(window, Rect{0,1,0,1}, fontScale, xMax+xGap, .5*(yMax+yMin), label);
 
     glPopMatrix();
 //
@@ -352,7 +352,7 @@ void Base::Graphics::Graph2D::draw() {
     {
         auto &tf = Styles::GetColorScheme()->graphTitleFont;
         glColor4f(tf.r, tf.g, tf.b, tf.a);
-        GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, 2, -0.95, 0.85, title, FONT_STROKE_ROMAN);
+        GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale*2., -0.95, 0.85, title, FONT_STROKE_ROMAN);
     }
 
     _drawAxes();

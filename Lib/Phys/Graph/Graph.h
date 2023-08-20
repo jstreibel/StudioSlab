@@ -43,6 +43,8 @@ namespace Base {
             Real yspacing = 1.e-5;
             Real xspacing = 1.e-5;
 
+            Real fontScale = 1.0;
+
             Str title;
             bool filled = false;
             int samples = 512;

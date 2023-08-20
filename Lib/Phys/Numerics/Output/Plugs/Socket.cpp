@@ -26,34 +26,16 @@ auto Numerics::OutputSystem::Socket::computeNextRecStep(PosInt currStep) -> size
     fix n = (Real)intervalStepsBetweenOutputs;
     fix m = (Real)(currStep+1);
 
-    if(true) nextRecStep = (int)(n*std::ceil(m/n));
+    assert(m>0 && n>0);
 
-    // Log::Debug() << name << " --> nextRecStep = " << nextRecStep << Log::Flush;
-
-    return nextRecStep > 0 ? nextRecStep : intervalStepsBetweenOutputs;
+    return (int)(n*std::ceil(m/n));
 }
 
 auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsigned timestep) -> bool {
-
-#if SHOULD_OUTPUT___MODE == INT_BASED
     (void)t;
 
-    if(true){
-        // Log::Debug() << name << "::shouldOutput --> timestep = " << timestep << " --> nextRecStep = " << nextRecStep << Log::Flush;
-        return ! (timestep%intervalStepsBetweenOutputs);
-    }
-    else
-    {
-        Log::Debug() << name << "::shouldOutput --> timestep = " << timestep << " --> nextRecStep = " << nextRecStep << Log::Flush;
-
-        if (nextRecStep > timestep)
-            return false;
-
-        nextRecStep = (int) timestep + intervalStepsBetweenOutputs;
-
-        return true;
-    }
-
+#if SHOULD_OUTPUT___MODE == INT_BASED
+    return ! (timestep%intervalStepsBetweenOutputs);
 #elif SHOULD_OUTPUT___MODE == FLOAT_BASED
     return abs(T-lastT) > abs(recDT);
 #endif

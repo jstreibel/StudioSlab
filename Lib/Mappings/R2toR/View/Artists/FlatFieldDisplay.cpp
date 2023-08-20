@@ -23,19 +23,33 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
-    fix ratio = Window::getw()/Window::geth();
+    fix ratio = Window::getw()/(Real)Window::geth();
 
     auto domain = discreteFunc.getDomain();
-    fix Δx = domain.xMax-domain.xMin;
-    fix Δy = domain.yMax-domain.yMin;
+
+    fix dom_xMin = domain.xMin;
+    fix dom_xMax = domain.xMax;
+    fix dom_yMin = domain.yMin;
+    fix dom_yMax = domain.yMax;
+
     fix fraction = 0.2;
-    set_xMin(domain.xMin - Δx*fraction);
-    set_xMax(domain.xMax + Δx*fraction);
-    set_yMin(domain.yMin - Δy*fraction);
-    set_yMax(domain.yMax + Δy*fraction);
+    fix Δx = dom_xMax-dom_xMin;
+    fix Δy = dom_yMax-dom_yMin;
+
+    let _xMin = dom_xMin - Δx*fraction;
+    let _xMax = dom_xMin + Δx*(1+fraction);
+    let _yMin = dom_yMin - Δy*fraction;
+    let _yMax = dom_yMin + Δy*(1+fraction);
+
+    set_xMin(_xMin);
+    set_xMax(_xMax);
+    set_yMin(_yMin*ratio);
+    set_yMax(_yMax*ratio);
 
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
+
+    fontScale = .35;
 
     texture = new OpenGL::Texture((int)xRes, (int)yRes);
 
@@ -103,5 +117,24 @@ Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
     static auto cMap = Styles::ColorMaps["BrBG"];
 
     return cMap.mapValue(logAbs(val, 0.1), -.2, .2);
+}
+
+bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(int wheel, int direction, int x, int y) {
+    constexpr const Real factor = 1.1;
+    const Real d = pow(factor, -direction);
+
+    {
+        const Real x0 = .5 * (xMax + xMin);
+        const Real hw = .5 * (xMax - xMin) * d;
+        xMin = x0 - hw;
+        xMax = x0 + hw;
+
+        const Real y0 = .5 * (yMax + yMin);
+        const Real hh = .5 * (yMax - yMin) * d;
+        yMin = y0 - hh;
+        yMax = y0 + hh;
+    }
+
+    return true;
 }
 

@@ -31,7 +31,9 @@ class FlatFieldDisplay : public Base::Graphics::Graph2D {
         void invalidateBuffer();
 
         void repopulateBuffer();
-    };
+
+    bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+};
 }
 
 

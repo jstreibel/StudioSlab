@@ -35,11 +35,8 @@ void StatsDisplay::draw() {
 
     const float hSpacing = 20.0f;
 
-    bool closable=false;
+    begin();
 
-    ImGui::Begin("Stats", &closable,
-                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
     ImGui::SetWindowPos( ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
     auto i=0;
@@ -54,7 +51,8 @@ void StatsDisplay::draw() {
 
         ImGui::TextColored(color, text.c_str(), nullptr);
     }
-    ImGui::End();
+
+    end();
 
     if(0) {
         float scaleX = 2.f / w, scaleY = 2.f * 2.f / h;
@@ -82,5 +80,17 @@ void StatsDisplay::draw() {
     }
 
     stats.clear();
+}
+
+void StatsDisplay::begin() const {
+    bool closable=false;
+
+    ImGui::Begin("Stats", &closable,
+                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+}
+
+void StatsDisplay::end() const {
+    ImGui::End();
 }
 
