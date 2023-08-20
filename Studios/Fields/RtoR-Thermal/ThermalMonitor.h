@@ -15,6 +15,12 @@ namespace RtoR::Thermal {
     class Monitor : public RtoR::Monitor {
         Real transientGuess = -1.0;
 
+        Real u;
+
+        Real barϕ;
+        Real tau;
+        Real tau_indirect;
+
     public:
         explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
 
@@ -22,7 +28,8 @@ namespace RtoR::Thermal {
 
         void setTransientGuess(Real guess);
 
-
+    protected:
+        void handleOutput(const OutputPacket &outInfo) override;
 
 
     private:

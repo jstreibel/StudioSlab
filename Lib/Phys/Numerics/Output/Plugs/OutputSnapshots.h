@@ -20,7 +20,7 @@ public:
     static void doOutput(const OutputPacket &outInfo, const Str& customFileDescription = "",
                          const size_t T_fileNamePrecision = 4);
 
-    size_t computeNextRecStep() override;
+    size_t computeNextRecStep(PosInt currStep) override;
 
 protected:
     static void _outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName);

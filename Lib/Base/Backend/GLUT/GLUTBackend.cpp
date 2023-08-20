@@ -133,6 +133,10 @@ void GLUTBackend::run(Program *pProgram)
 
 void GLUTBackend::keyboard(unsigned char key, int x, int y)
 {
+    if(key == 27) {
+        glutLeaveMainLoop();
+    }
+
     {
         ImGui_ImplGLUT_KeyboardFunc(key, x, y);
         if(ImGui::GetIO().WantCaptureKeyboard)
@@ -142,9 +146,7 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     auto &me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
 
-    if(key == 27) {
-        glutLeaveMainLoop();
-    } else if(key == ' ') {
+    if(key == ' ') {
         me.programIsRunning = !me.programIsRunning;
     } else if(key == 'd') {
         me.showDemo = !me.showDemo;

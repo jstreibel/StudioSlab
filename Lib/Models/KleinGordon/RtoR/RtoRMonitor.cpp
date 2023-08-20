@@ -44,6 +44,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 void RtoR::Monitor::draw() {
 
     // *************************** HISTORY *********************************
+    if(simulationHistory != nullptr)
     {
         static auto t = .0f;
         if(ImGui::Begin("History")){
@@ -89,19 +90,10 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
 
     hamiltonian.computeDensities(fieldState);
 
-    auto U = hamiltonian.integrateEnergy();
-    auto K = hamiltonian.integrateKinetic();
-    auto W = hamiltonian.integrateGradient();
-    auto V = hamiltonian.integratePotential();
-
-    //energyTotal = U;
-
-    //if(UHistory.X.size() == 0) {
-    //    // Isso eh necessario pra evitar bugs estranhos. Sorry.
-    //    const Real k = 1-1.e-5;
-    //    UHistory.insertBack(U * k);
-    //    UHistory.insertBack(U / k);
-    //}
+    U = hamiltonian.integrateEnergy();
+    K = hamiltonian.integrateKinetic();
+    W = hamiltonian.integrateGradient();
+    V = hamiltonian.integratePotential();
 
     auto factor = 1.0;
     if(showEnergyHistoryAsDensities) factor = 1./params.getL();

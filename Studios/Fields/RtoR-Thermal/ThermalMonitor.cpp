@@ -18,10 +18,14 @@
 auto max(auto a, auto b) { return ((a)>(b)?(a):(b)); }
 auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 
+// Don't touch these:
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_OF_GRAPH_LIMITS false
+
+// Ok to touch these:
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
+
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
 : RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
@@ -68,7 +72,10 @@ void RtoR::Thermal::Monitor::draw() {
             isSetup = true;
         }
 
-        mFullHistoryDisplay.set_t(t);
+        static Real stepMod, lastStepMod=0;
+        stepMod = step%(this->getnSteps()*100);
+        if(stepMod < lastStepMod) mFullHistoryDisplay.set_t(t);
+        lastStepMod = stepMod;
     }
 
 
@@ -108,21 +115,14 @@ void RtoR::Thermal::Monitor::draw() {
     }
 
     // *************************** MY BEAUTY *****************************
-    auto L =       params.getL();
-
-    auto U = hamiltonian.integrateEnergy();
-    auto u = U/L;
-    auto K = hamiltonian.integrateKinetic();
-    auto V = hamiltonian.integratePotential();
-    auto W = hamiltonian.integrateGradient();
-    auto barϕ = V / L;
-
-    auto tau = 2*K/L;
-    auto tau_indirect = u - .5*barϕ;
+    auto L = params.getL();
 
     stats.addVolatileStat("<\\br>");
-    for(auto p : InterfaceManager::getInstance().getParametersValues({"T", "k", "i"}) )
-        stats.addVolatileStat(p.first + " = " + p.second);
+    for(const auto& p : InterfaceManager::getInstance().getParametersValues({"T", "k", "i"}) ) {
+        auto name = p.first;
+        if(name == "i") name = "transient";
+        stats.addVolatileStat(name + " = " + p.second);
+    }
 
     std::ostringstream ss;
     auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
@@ -138,14 +138,9 @@ void RtoR::Thermal::Monitor::draw() {
     stats.addVolatileStat(Str("tau* = u - barphi/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
     stats.addVolatileStat(Str("tau** = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
 
-    temperature1HistoryData.addPoint({t, tau});
-    temperature2HistoryData.addPoint({t, tau_indirect});
-    temperature3HistoryData.addPoint({t, barϕ + 2*W / L});
-
     mTemperaturesGraph.set_xMax(t);
 
     RtoR::Monitor::draw();
-
 }
 
 void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
@@ -158,4 +153,19 @@ void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
 
     mEnergyGraph      .addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
     mTemperaturesGraph.addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
+}
+
+void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {
+    RtoR::Monitor::handleOutput(outInfo);
+
+    auto L =       params.getL();
+
+    u            = U/L;
+    barϕ         = V / L;
+    tau          = 2*K/L;
+    tau_indirect = u - .5*barϕ;
+
+    temperature1HistoryData.addPoint({t, tau});
+    temperature2HistoryData.addPoint({t, tau_indirect});
+    temperature3HistoryData.addPoint({t, barϕ + 2*W / L});
 }

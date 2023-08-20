@@ -3,27 +3,34 @@
 //
 
 #include "Socket.h"
+#include "Base/Tools/Log.h"
 
 
 Numerics::OutputSystem::Socket::Socket(const NumericConfig &params, Str name, int nStepsInterval, Str description)
-: nSteps(nStepsInterval), params(params), name(name), description(description), nextRecStep(1) {      }
+: intervalStepsBetweenOutputs(nStepsInterval), params(params), name(name), description(description), nextRecStep(1) {      }
 
 
 auto Numerics::OutputSystem::Socket::getLastSimTime()  -> Real { return lastData.getSimTime(); }
 
-auto Numerics::OutputSystem::Socket::getnSteps() const -> int { return nSteps; }
+auto Numerics::OutputSystem::Socket::getnSteps() const -> int { return intervalStepsBetweenOutputs; }
 
 auto Numerics::OutputSystem::Socket::setnSteps(int n)  -> void {
-    nSteps = n>=1 ? n : 1;
-    computeNextRecStep();
+    intervalStepsBetweenOutputs = n >= 1 ? n : 1;
+
+    // Log::Debug() << Log::FGGreen << "Socket::setnSteps(" << n << ")" << Log::Flush;
+
+    // computeNextRecStep();
 }
 
-auto Numerics::OutputSystem::Socket::computeNextRecStep() -> size_t {
-    const size_t lastStep = lastData.getSteps();
+auto Numerics::OutputSystem::Socket::computeNextRecStep(PosInt currStep) -> size_t {
+    fix n = (Real)intervalStepsBetweenOutputs;
+    fix m = (Real)(currStep+1);
 
-    nextRecStep = lastStep+size_t(nSteps);
+    if(true) nextRecStep = (int)(n*std::ceil(m/n));
 
-    return nextRecStep;
+    // Log::Debug() << name << " --> nextRecStep = " << nextRecStep << Log::Flush;
+
+    return nextRecStep > 0 ? nextRecStep : intervalStepsBetweenOutputs;
 }
 
 auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsigned timestep) -> bool {
@@ -31,12 +38,21 @@ auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsig
 #if SHOULD_OUTPUT___MODE == INT_BASED
     (void)t;
 
-    if(nextRecStep>timestep)
-        return false;
+    if(true){
+        // Log::Debug() << name << "::shouldOutput --> timestep = " << timestep << " --> nextRecStep = " << nextRecStep << Log::Flush;
+        return ! (timestep%intervalStepsBetweenOutputs);
+    }
+    else
+    {
+        Log::Debug() << name << "::shouldOutput --> timestep = " << timestep << " --> nextRecStep = " << nextRecStep << Log::Flush;
 
-    nextRecStep = timestep + nSteps;
+        if (nextRecStep > timestep)
+            return false;
 
-    return true;
+        nextRecStep = (int) timestep + intervalStepsBetweenOutputs;
+
+        return true;
+    }
 
 #elif SHOULD_OUTPUT___MODE == FLOAT_BASED
     return abs(T-lastT) > abs(recDT);

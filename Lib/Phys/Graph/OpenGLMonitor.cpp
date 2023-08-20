@@ -47,17 +47,22 @@ void Graphics::OpenGLMonitor::writeStats() {
 
     auto avgFPS = 0.0;
     auto avgSPS = 0.0;
-    fix SPs = lastData.getSteps() - lastStep;
+    auto avgSPs = 0.0;
     {
-        fix FPS = 1e3/elTime;
-        fix SPS = SPs/(elTime*1e-3);
+        fix currStep = step;
+
+        fix FPS = 1e3/elTime;           // Frames/samples per second
+        fix SPs = currStep - lastStep;  // Steps per frame/sample
+        fix SPS = (Real)SPs*FPS;        // Steps per second
 
         static std::vector<Real> FPSmeasures;
+        static std::vector<Real> SPsmeasures; // steps per sample
         static std::vector<Real> SPSmeasures; // steps per second
 
-        fix MAX_AVG_SAMPLES = 60UL;
+        fix MAX_AVG_SAMPLES = 10UL;
 
         FPSmeasures.emplace_back(FPS);
+        SPsmeasures.emplace_back(SPs);
         SPSmeasures.emplace_back(SPS);
 
         fix count = FPSmeasures.size();
@@ -66,9 +71,11 @@ void Graphics::OpenGLMonitor::writeStats() {
 
         for(auto index=countMin; index<count; index++) {
             avgFPS += FPSmeasures[index];
+            avgSPs += SPsmeasures[index];
             avgSPS += SPSmeasures[index];
         }
         avgFPS /= (Real)total;
+        avgSPs /= (Real)total;
         avgSPS /= (Real)total;
 
         if(AUTO_ADJUST_SAMPLES_PER_SECOND) {
@@ -81,7 +88,7 @@ void Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
     stats.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
-    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(SPs));
+    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
     stats.addVolatileStat(Str("<\\br>"));
@@ -89,7 +96,7 @@ void Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("N = ") + ToStr(N));
     stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
 
-    lastStep = lastData.getSteps();
+    lastStep = step;
 }
 
 bool Graphics::OpenGLMonitor::finishFrameAndRender() {
@@ -126,18 +133,34 @@ bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
 }
 
 bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
-    if(key == '=') {
-        setnSteps(getnSteps()+1);
-        return true;
-    } else if(key == '+') {
-        setnSteps(getnSteps()*1.1);
-        return true;
-    } else if(key == '-') {
-        setnSteps(getnSteps()-1);
-        return true;
-    } else if(key == '_') {
-        setnSteps(getnSteps()/1.1);
-        return true;
+    static fix baseNSteps = getnSteps();
+    static let multiplier = 1;
+
+    if(true) {
+        if (key == '=') {
+            multiplier++;
+            setnSteps(baseNSteps * multiplier);
+            return true;
+        } else if (key == '-') {
+            if (multiplier > 1) multiplier--;
+            setnSteps(baseNSteps * multiplier);
+        }
+    } else {
+        if (key == '=') {
+            setnSteps(getnSteps() + 1);
+            return true;
+        } else if (key == '+') {
+            auto nSteps = getnSteps();
+            if (nSteps >= 10) setnSteps((int) (nSteps * 1.1));
+            else setnSteps(10);
+            return true;
+        } else if (key == '-') {
+            setnSteps(getnSteps() - 1);
+            return true;
+        } else if (key == '_') {
+            setnSteps(getnSteps() / 1.1);
+            return true;
+        }
     }
 
     return EventListener::notifyKeyboard(key, x, y);

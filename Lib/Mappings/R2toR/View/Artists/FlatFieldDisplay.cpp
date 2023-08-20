@@ -23,6 +23,8 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
+    fix ratio = Window::getw()/Window::geth();
+
     auto domain = discreteFunc.getDomain();
     fix Δx = domain.xMax-domain.xMin;
     fix Δy = domain.yMax-domain.yMin;
@@ -43,6 +45,8 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
     Base::Graphics::Graph2D::draw();
+
+    if(func == nullptr) return;
 
     if(!validBuffer) {
         repopulateBuffer();

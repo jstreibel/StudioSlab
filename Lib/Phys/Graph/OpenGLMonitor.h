@@ -28,10 +28,10 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OpenGLMonitor> Ptr;
 
-        OpenGLMonitor(const NumericConfig &params, const Str& channelName="OpenGL monitor", int stepsBetweenDraws=1);
+        explicit OpenGLMonitor(const NumericConfig &params, const Str& channelName="OpenGL monitor", int stepsBetweenDraws=1);
 
         // ********************* From EventListener ************** //
-        bool notifyRender(float elTime_msec) final override;
+        bool notifyRender(float elTime_msec) final ;
         bool notifyKeyboard(unsigned char key, int x, int y) override;
         void notifyReshape(int newWinW, int newWinH) override;
         bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;

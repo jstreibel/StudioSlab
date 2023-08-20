@@ -13,7 +13,7 @@
 namespace Numerics::OutputSystem {
     class Socket {
         int nextRecStep = -1;
-        int nSteps; // Number of steps between recordings.
+        int intervalStepsBetweenOutputs; // Number of steps between recordings.
 
     protected:
         OutputPacket lastData;
@@ -32,7 +32,7 @@ namespace Numerics::OutputSystem {
         auto getDescription() const -> Str;
         auto getName() const -> Str;
 
-        virtual auto computeNextRecStep() -> size_t;
+        virtual auto computeNextRecStep(PosInt currStep) -> size_t;
 
         /*!
          * This function allows child classes to give additional info on whether info should be output, or completely

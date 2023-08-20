@@ -64,6 +64,10 @@ void NumericalIntegration::_runFullIntegration()
 bool NumericalIntegration::_cycleUntilOutput() {
     size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
 
+    if(nCyclesToNextOutput > 50000){
+        Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
+    }
+
     if(nCyclesToNextOutput == 0) return false;
 
     _cycle(nCyclesToNextOutput);

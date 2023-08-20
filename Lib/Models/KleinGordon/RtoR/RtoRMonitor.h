@@ -17,10 +17,16 @@
 namespace RtoR {
 
     class Monitor : public Graphics::OpenGLMonitor {
+        bool showEnergyHistoryAsDensities;
+
         bool notifyKeyboard(unsigned char key, int x, int y) override;
 
-        bool showEnergyHistoryAsDensities;
     protected:
+
+        Real U;
+        Real K;
+        Real V;
+        Real W;
         KGEnergy &hamiltonian;
         GraphRtoR mFieldsGraph;
         GraphRtoR mHistoryGraph;
@@ -45,8 +51,9 @@ namespace RtoR {
         bool showEnergyDensity = false;
 
 
-        void draw() override;
-        void handleOutput(const OutputPacket &outInfo) override;
+        virtual void draw() override;
+
+        virtual void handleOutput(const OutputPacket &outInfo) override;
 
     public:
         Monitor(const NumericConfig &params,
