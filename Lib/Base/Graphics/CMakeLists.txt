@@ -24,6 +24,10 @@ set( GRAPHICS_SOURCES
 		Styles/ColorMap.h
 		Styles/ColorMap.cpp
         Styles/Colors.cpp
+		Window/WindowContainer/WindowRow.cpp
+		Window/WindowContainer/WindowRow.h
+		Window/WindowContainer/WindowColumn.cpp
+		Window/WindowContainer/WindowColumn.h
 
 )
 

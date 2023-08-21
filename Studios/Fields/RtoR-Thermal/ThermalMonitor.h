@@ -21,19 +21,6 @@ namespace RtoR::Thermal {
         Real tau;
         Real tau_indirect;
 
-    public:
-        explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
-
-        void draw() override;
-
-        void setTransientGuess(Real guess);
-
-    protected:
-        void handleOutput(const OutputPacket &outInfo) override;
-
-
-    private:
-
         Spaces::PointSet temperature1HistoryData;
         Spaces::PointSet temperature2HistoryData;
         Spaces::PointSet temperature3HistoryData;
@@ -50,7 +37,22 @@ namespace RtoR::Thermal {
         Fields::Graphing::PointSetGraph mHistogramsGraphV;
         Fields::Graphing::PointSetGraph mHistogramsGraphE;
 
+        GraphRtoR mCorrelationGraph;
         RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
+
+    protected:
+        void handleOutput(const OutputPacket &outInfo) override;
+
+    public:
+        explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
+
+        void draw() override;
+
+        void setTransientGuess(Real guess);
+
+
+
+
     };
 }
 

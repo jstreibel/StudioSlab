@@ -45,10 +45,13 @@ void Graphics::OpenGLMonitor::writeStats() {
     static Count lastStep=0;
     auto dt = params.getdt();
 
-    auto avgFPS = 0.0;
-    auto avgSPS = 0.0;
-    auto avgSPs = 0.0;
+    auto avgFPS = -1.0;
+    auto avgSPS = -1.0; // avoid division by zero
+    auto avgSPs = -1.0;
+    if(step>0)
     {
+        fix MAX_AVG_SAMPLES = 5*60UL;
+
         fix currStep = step;
 
         fix FPS = 1e3/elTime;           // Frames/samples per second
@@ -58,8 +61,6 @@ void Graphics::OpenGLMonitor::writeStats() {
         static std::vector<Real> FPSmeasures;
         static std::vector<Real> SPsmeasures; // steps per sample
         static std::vector<Real> SPSmeasures; // steps per second
-
-        fix MAX_AVG_SAMPLES = 10UL;
 
         FPSmeasures.emplace_back(FPS);
         SPsmeasures.emplace_back(SPs);
@@ -85,12 +86,19 @@ void Graphics::OpenGLMonitor::writeStats() {
         }
     }
 
+    fix stepsToFinish = params.getn() - step;
+    fix timeToFinish = stepsToFinish/(int)avgSPS;
+    fix timeMin = timeToFinish/60;
+    fix timeSec = timeToFinish%60;
+
     stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
     stats.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
+    stats.addVolatileStat("");
     stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
+    stats.addVolatileStat(Str("Finish in ") + (timeMin<10?"0":"") + ToStr(timeMin) + "m" + (timeSec<10?"0":"") + ToStr(timeSec) + "s");
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));

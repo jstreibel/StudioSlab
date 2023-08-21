@@ -2,6 +2,11 @@
 // Created by joao on 17/05/2021.
 //
 
+#include <ostream>
+#include <fstream>
+#include <boost/range/combine.hpp>
+#include <iostream>
+
 #include "SingleSimViewController.h"
 
 #include "../../Utils/ViewerUtils.h"
@@ -9,12 +14,10 @@
 
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "Base/Controller/Nuklear/NuklearSFML.h"
 
-#include <ostream>
-#include <fstream>
-#include <boost/range/combine.hpp>
-#include <iostream>
+#include "Common/Utils.h"
+#include "Base/Controller/Nuklear/NuklearSFML.h"
+#include "Phys/Toolset/NativeFunctions.h"
 
 
 
@@ -27,17 +30,18 @@ namespace ThermoOutput {
     const int WinW=3840, WinH=2160;
     auto style=sf::Style::Fullscreen;
 #else
-    const int WinW=1980, WinH=1080;
+    const int WinW=2700, WinH=2000;
     auto style=sf::Style::Default;
 #endif
     // View
     const int Cols = 3;
     const int Rows = 5;
-    const int fontSize = 20;
+    const int fontSize = 28;
     const float _border = 1.2f*fontSize;
     const float isingSpriteSize = (WinH- 3 * _border) / 2; //2l + 3b = H => 2l = H-3b => l = (H-3b)/2
     const int _graphsWidth = (WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
     const int _graphsHeight = (WinH- (Rows+1) * _border) / Rows;
+    Real GAP = 15.0;
 
     // user input parameters to manip T and h.
     const float delta = .01;
@@ -306,8 +310,10 @@ namespace ThermoOutput {
                     val -= floor(val);
                     val *= 360.0;
 
-                    auto rgb = Styles::hsv2rgb({static_cast<Real>(val), 1, 1});
-                    auto color = sf::Color(rgb.r * 255., rgb.g * 255., rgb.b * 255.);
+                    auto rgbColor = Styles::hsv2rgb({static_cast<Real>(val), 1, 1});
+                    auto color = sf::Color(rgbColor.r * 255., rgbColor.g * 255., rgbColor.b * 255.);
+
+                    if(val>(360.0-.5*GAP) || val<(.5*GAP)){ color.r*=0; color.g*=0; color.b*=0; }
 
                     XYThetaBitmap.setPixel(i, j, color);
                 }

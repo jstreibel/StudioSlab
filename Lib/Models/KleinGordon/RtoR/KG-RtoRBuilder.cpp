@@ -78,10 +78,8 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         auto outputOpenGL = buildOpenGLOutput();
 
-        outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
-
-        glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
-        outputManager->addOutputChannel(outputOpenGL);
+        if(*OpenGLMonitor_stepsPerIdleCall > 0)
+            outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
         const auto t = p.gett();
         if(t>0)
@@ -93,7 +91,13 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
             outputManager->addOutputChannel(simHistory);
             outputOpenGL->setSimulationHistory(DummyPtr(simHistory->getData()));
+
+            if(*OpenGLMonitor_stepsPerIdleCall <= 0)
+                outputOpenGL->setnSteps(simHistory->getnSteps());
         }
+
+        glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
+        outputManager->addOutputChannel(outputOpenGL);
     }
     else
         /* O objetivo de relacionar o numero de passos para

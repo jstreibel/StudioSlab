@@ -11,6 +11,7 @@
 
 #include "Base/Controller/Interface/InterfaceManager.h"
 #include "Base/Tools/Log.h"
+#include "Base/Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <sstream>
 #include <array>
@@ -21,10 +22,12 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 // Don't touch these:
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_OF_GRAPH_LIMITS false
+#define ODD_PERMUTATION true
 
 // Ok to touch these:
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
+#define UPDATE_HISTORY_EVERY_STEP true
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
@@ -34,6 +37,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphV("v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphE("e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
+, mCorrelationGraph()
 {
     auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
     mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
@@ -55,7 +59,11 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 
     panel.addWindow(histogramsPanel);
 
-    panel.addWindow(&mFullHistoryDisplay, ADD_NEW_COLUMN);
+    auto windowColumn = new WindowColumn;
+    windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
+    windowColumn->addWindow(DummyPtr(mCorrelationGraph), 0.2);
+
+    panel.addWindow(windowColumn, ADD_NEW_COLUMN);
 
     panel.setColumnRelativeWidth(1,-1.0);
     panel.setColumnRelativeWidth(0, 0.2);
@@ -67,14 +75,27 @@ void RtoR::Thermal::Monitor::draw() {
     // *************************** Full history ***************************
     static bool isSetup = false;
     if( simulationHistory != nullptr ) {
+        auto L = params.getL();
+        auto _xMin = params.getxMin() - 0.1*L;
+        auto _xMax = params.getxMax() + 0.1*L;
+
+        static RtoR2::StraightLine straightLine;
+
+        straightLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
+
         if( not isSetup ) {
             mFullHistoryDisplay.setup(simulationHistory);
+
+            auto style = Styles::GetColorScheme()->funcPlotStyles[2].permuteColors();
+            style.lineWidth = 3;
+            mFullHistoryDisplay.addCurve(DummyPtr(straightLine), style, "t_history");
+
             isSetup = true;
         }
 
         static Real stepMod, lastStepMod=0;
-        stepMod = step%(this->getnSteps()*100);
-        if(stepMod < lastStepMod) mFullHistoryDisplay.set_t(t);
+        stepMod = (Real)(step%(this->getnSteps()*100));
+        if(stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
         lastStepMod = stepMod;
     }
 
@@ -86,19 +107,11 @@ void RtoR::Thermal::Monitor::draw() {
         static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
         stats.begin();
-        // if(ImGui::Begin("Probability density functions"))
+        if(ImGui::CollapsingHeader("Probability density functions"))
         {
-            ImGui::BeginTabBar("Hello");
-
-            ImGui::BeginTabItem("Binny");
             ImGui::SliderInt("n bins", &nbins, 10, 2000);
             ImGui::Checkbox("Pretty bars", &pretty);
-            ImGui::EndTabItem();
-
-            ImGui::EndTabBar();
-
         }
-        // ImGui::End();
         stats.end();
 
 

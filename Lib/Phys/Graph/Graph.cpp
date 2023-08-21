@@ -274,6 +274,8 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotSty
 
 void Base::Graphics::Graph2D::addLabel(Label *label) { labels.push_back(label); }
 
+auto Base::Graphics::Graph2D::setResolution(Resolution samples_) -> void { this->samples = samples_; }
+
 Rect Base::Graphics::Graph2D::getLimits() const {
     return Rect(xMin, xMax, yMin, yMax);
 }
@@ -425,8 +427,8 @@ bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
         const Real hw = .5*(xMax-xMin)*dx;
         const Real hh = .5*(yMax-yMin)*dy;
 
-        xMin = x0 + hw;
-        xMax = x0 - hw;
+        xMin = x0 - hw;
+        xMax = x0 + hw;
         yMin = y0 - hh;
         yMax = y0 + hh;
 
@@ -455,6 +457,7 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
 
     return true;
 }
+
 
 
 

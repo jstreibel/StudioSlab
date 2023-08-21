@@ -7,7 +7,7 @@
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Base/Tools/Log.h"
 
-#define min(a, b) ((a)<(b)?(a):(b));
+#define min(a, b) ((a)<(b)?(a):(b))
 
 void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     static Count nextRow = 0;
@@ -17,18 +17,22 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
-    const auto n = discreteFunc.getM();
-    const auto t₀ = discreteFunc.getDomain().yMin;
-    const auto tₘₐₓ = discreteFunc.getDomain().yMax;
-    const auto t = min(t_, tₘₐₓ);
+    fix n = discreteFunc.getM();
+    fix t₀ = discreteFunc.getDomain().yMin;
+    fix tₘₐₓ = discreteFunc.getDomain().yMax;
+    fix t = min(t_, tₘₐₓ);
+    fix dt = tₘₐₓ/(double)n;
 
-    auto upToRow = min((Count)( n * (t-t₀)/(tₘₐₓ-t₀)), n-1);
+
+    auto upToRow = (Count)( Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
+
+    assert(upToRow < n);
 
     const auto N = discreteFunc.getN();
     for(auto i=0; i<N; ++i){
         for(auto j=nextRow; j<=upToRow; ++j){
             auto val = discreteFunc.At(i, j);
-            texture->setColor(i,j, computeColor(val).inverse());
+            texture->setColor(i,j, computeColor(val));
         }
     }
 

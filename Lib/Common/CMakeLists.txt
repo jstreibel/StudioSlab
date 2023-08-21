@@ -16,7 +16,9 @@ set ( UTIL_SOURCES
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
-			CUDAUtils.cpp	CUDAUtils.h)
+			CUDAUtils.cpp	CUDAUtils.h
+            SharedPointer.cpp
+            SharedPointer.h)
 endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

@@ -9,8 +9,8 @@
 #include "Base/Graphics/Window/Window.h"
 
 
-typedef std::vector<Window*> WindowColumn;
-typedef std::vector<WindowColumn> WindowColumns;
+typedef std::vector<Window*> WinCol;
+typedef std::vector<WinCol> WindowColumns;
 
 
 

@@ -20,6 +20,8 @@ if(&NAME == nullptr) throw "Bad cast.";
 
 namespace Common {
 
+    bool areEqual(const Real &lhs, const Real &rhs, const Real eps=1.e-5);
+
     template<class Class>
     Str getClassName(Class *thisClass){
         int status;

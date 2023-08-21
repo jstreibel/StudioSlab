@@ -10,32 +10,44 @@
 
 #include "Phys/Graph/Graph.h"
 #include "Mappings/R2toR/Model/R2toRFunction.h"
+#include "Base/Graphics/Styles/ColorMap.h"
 
 namespace R2toR::Graphics {
-class FlatFieldDisplay : public Base::Graphics::Graph2D {
-        bool validBuffer = false;
+    class FlatFieldDisplay : public Base::Graphics::Graph2D {
+            bool validBuffer = false;
 
-    protected:
-        R2toR::Function::ConstPtr func    = nullptr;
-        OpenGL::Texture*          texture = nullptr;
+            Styles::ColorMap cMap = Styles::ColorMaps["BrBG"];
+            bool logScale = true;
+            Real cMap_epsArg = 0.1;
+            Real cMap_min = -.2;
+            Real cMap_max =  .2;
 
-        Styles::Color computeColor(Real val) const;
-    public:
-        FlatFieldDisplay(Str title="Full 2D") : Base::Graphics::Graph2D(-1,1,-1,1,title) {};
-        explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
 
-        void setup(R2toR::Function::ConstPtr function);
+        protected:
+            R2toR::Function::ConstPtr func    = nullptr;
+            OpenGL::Texture*          texture = nullptr;
 
-        virtual void draw() override;
+            Styles::Color computeColor(Real val) const;
 
-        void invalidateBuffer();
+            void computeGraphRanges();
+        public:
+            FlatFieldDisplay(Str title="Full 2D") : Base::Graphics::Graph2D(-1,1,-1,1,title) {};
+            explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
 
-        void repopulateBuffer();
+            void setup(R2toR::Function::ConstPtr function);
 
-    bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
-};
+            virtual void draw() override;
+
+            void invalidateBuffer();
+
+            void repopulateBuffer();
+
+            bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+
+            void notifyReshape(int newWinW, int newWinH) override;
+
+        bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
+    };
 }
-
-
 
 #endif //STUDIOSLAB_FLATFIELDDISPLAY_H

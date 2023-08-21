@@ -33,6 +33,8 @@ typedef const VecFloat      VecFloat_I;
 typedef VecFloat            VecFloat_O;
 typedef VecFloat            VecFloat_IO;
 
+typedef std::vector<int>    IntVector;
+
 template<class T1, class T2>
 struct Pair {
     T1 first;

@@ -50,6 +50,8 @@ namespace RtoR {
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
+        float t_history = .0f;
+        int step_history = 0;
 
         virtual void draw() override;
 

@@ -11,6 +11,7 @@
 #endif
 
 #include "KG-RtoREquationState.h"
+#include "Base/Tools/Log.h"
 
 
 SimHistory::SimHistory(const Base::Simulation::SimulationConfig &simConfig,
@@ -30,10 +31,15 @@ SimHistory::SimHistory(const Base::Simulation::SimulationConfig &simConfig,
     } else
     #endif
     {
+        auto sizeMB = Real(spaceResolution*timeResolution*sizeof(Real))/(1024*1024.);
+
+        Log::Critical() << name << " is about to allocate " << sizeMB
+                        << "MB of data to store full " << spaceResolution << 'x' << timeResolution << "x8 bytes simulation history." << Log::Flush;
         fieldData = new R2toR::DiscreteFunction_CPU(spaceResolution,
                                                     timeResolution,
                                                     params.getxMin(),
                                                     0.0, hp);
+        Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
 }
 

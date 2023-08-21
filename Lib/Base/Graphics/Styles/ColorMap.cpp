@@ -52,17 +52,17 @@ namespace Styles {
         }
 
         Real interval = 1.0 / static_cast<double>(colors.size() - 1);
-        size_t index = static_cast<size_t>(clampedValue / interval);
-        Real t = (clampedValue - index * interval) / interval;
+        auto index = static_cast<size_t>(clampedValue / interval);
+        Real t = (clampedValue - (Real)index * interval) / interval;
 
         const Color& color1 = colors[index];
         const Color& color2 = colors[index + 1];
 
         Color result;
-        result.r = color1.r + (color2.r - color1.r) * t;
-        result.g = color1.g + (color2.g - color1.g) * t;
-        result.b = color1.b + (color2.b - color1.b) * t;
-        result.a = color1.a + (color2.a - color1.a) * t;
+        result.r = color1.r + (color2.r - color1.r) * (float)t;
+        result.g = color1.g + (color2.g - color1.g) * (float)t;
+        result.b = color1.b + (color2.b - color1.b) * (float)t;
+        result.a = color1.a + (color2.a - color1.a) * (float)t;
 
         return result;
     }

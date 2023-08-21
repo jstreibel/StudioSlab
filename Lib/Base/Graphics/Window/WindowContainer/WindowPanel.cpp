@@ -9,7 +9,7 @@
 
 void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth) {
     if(newColumn){
-        columns.emplace_back(WindowColumn());
+        columns.emplace_back(WinCol());
         widths.emplace_back(newColumnWidth);
 
         assertConsistency();
@@ -35,7 +35,6 @@ void WindowPanel::arrangeWindows() {
     assertConsistency();
 
     auto m = columns.size();
-
 
     std::vector<int> computedWidths(m);
     auto freeWidths = countFreeWidths();

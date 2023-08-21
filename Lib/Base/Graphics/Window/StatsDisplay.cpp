@@ -39,17 +39,25 @@ void StatsDisplay::draw() {
 
     ImGui::SetWindowPos( ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
-    auto i=0;
-    for (auto stat: stats) {
-        const auto c = stat.second;
-        const auto text = stat.first;
-        const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
-        if(text=="<\\br>"){ ImGui::Separator(); i=0; continue; }
+    if(ImGui::CollapsingHeader("Stats", ImGuiTreeNodeFlags_DefaultOpen)) {
 
-        if(i++%2 && w_ > 500) ImGui::SameLine(w/2.-hSpacing);
+        auto i = 0;
+        for (auto stat: stats) {
+            const auto c = stat.second;
+            const auto text = stat.first;
+            const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
-        ImGui::TextColored(color, text.c_str(), nullptr);
+            if (text == "<\\br>") {
+                ImGui::Separator();
+                i = 0;
+                continue;
+            }
+
+            if (i++ % 2 && w_ > 500) ImGui::SameLine(w / 2. - hSpacing);
+
+            ImGui::TextColored(color, text.c_str(), nullptr);
+        }
     }
 
     end();

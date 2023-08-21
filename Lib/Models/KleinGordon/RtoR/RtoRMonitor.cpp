@@ -46,19 +46,23 @@ void RtoR::Monitor::draw() {
     // *************************** HISTORY *********************************
     if(simulationHistory != nullptr)
     {
-        static auto t = .0f;
-        if(ImGui::Begin("History")){
-            ImGui::SliderFloat("t", &t, .0f, (float)lastData.getSimTime());
+        stats.begin();
+        if(ImGui::CollapsingHeader("History")){
+            if(ImGui::SliderFloat("t", &t_history, .0f, (float)getLastSimTime()))
+                step_history = (int)(t_history/(float)params.gett() * (float)params.getn());
+
+            if(ImGui::SliderInt("step", &step_history, 0, (int)lastData.getSteps()))
+                t_history = (float)(step_history/(Real)params.getn() * params.gett());
         }
-        ImGui::End();
+        stats.end();
 
         auto xMax = params.getxMax();
         auto xMin = params.getxMin();
 
-        static auto section     = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
+        static auto section     = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
         static auto sectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
 
-        section = RtoR2::StraightLine({xMin, t}, {xMax, t}, xMin, xMax);
+        section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
         mHistoryGraph.clearFunctions();
         mHistoryGraph.addFunction(&sectionFunc, "History");
     }
@@ -141,6 +145,7 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
 }
 
 void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
+    mHistoryGraph.setResolution(simHistory->getN());
     simulationHistory = std::move(simHistory);
 }
 

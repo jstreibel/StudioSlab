@@ -34,8 +34,6 @@ namespace Base {
             std::vector<Label*> labels;
             std::vector<CurveTriple> curves;
 
-            // Graph2D() = default;
-
             bool savePopupOn = false;
 
         protected:
@@ -73,6 +71,7 @@ namespace Base {
 
             void clearCurves();
 
+            auto setResolution(Resolution samples) -> void;
             auto getLimits() const -> Rect;
             auto setLimits(Rect limits) -> void;
             void set_xMin(Real);

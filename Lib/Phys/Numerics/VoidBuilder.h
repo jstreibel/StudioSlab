@@ -23,8 +23,8 @@ namespace Base::Simulation {
 
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused", "Start visual monitored "
                                                                                                              "simulation paused.");
-        IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(1, "s,steps_per_idle_call",
-                                                                              "Simulation steps between visual monitor updates call.");
+        IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(-1, "s,steps_per_idle_call",
+                                                                              "Simulation steps between visual monitor updates call. Leave negative for auto.");
 
         SimulationConfig simulationConfig;
 

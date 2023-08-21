@@ -10,7 +10,10 @@
 
 namespace RtoR::Graphics {
 
-    class HistoryDisplay : public R2toR::Graphics::FlatFieldDisplay { public: void set_t(Real t); };
+    class HistoryDisplay : public R2toR::Graphics::FlatFieldDisplay {
+    public:
+        void set_t(Real t);
+    };
 
 }
 
