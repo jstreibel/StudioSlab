@@ -28,6 +28,9 @@ namespace Base {
 
     template<class InputCategory, class OutputCategory>
     class FunctionT : public Function {
+        bool discrete;
+        const GPUFriendly *myGPUFriendlyVersion;
+
     public:
         typedef std::shared_ptr<FunctionT<InputCategory, OutputCategory>> Ptr;
         typedef std::shared_ptr<const FunctionT<InputCategory, OutputCategory>> ConstPtr;
@@ -36,16 +39,14 @@ namespace Base {
         typedef InputCategory InCategory;
         typedef OutputCategory OutCategory;
 
-        const bool discrete;
 
     protected:
-        const GPUFriendly &myGPUFriendlyVersion;
 
         /** If the function derived from this class has a GPUFriendly version, then it should provide it at instantiation
          * time, because a single copy of this function must be kept and be provided when needed. */
         explicit FunctionT(const GPUFriendly *gpuFriendlyVersion = nullptr,
                            bool isDiscrete = false)
-                          : myGPUFriendlyVersion(*gpuFriendlyVersion), discrete(isDiscrete)
+                          : myGPUFriendlyVersion(gpuFriendlyVersion), discrete(isDiscrete)
                           {     }
 
         FunctionT(const FunctionT &toCopy)
@@ -78,7 +79,7 @@ namespace Base {
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
-        const GPUFriendly &getGPUFriendlyVersion() const { return myGPUFriendlyVersion; }
+        const GPUFriendly &getGPUFriendlyVersion() const { return *myGPUFriendlyVersion; }
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 

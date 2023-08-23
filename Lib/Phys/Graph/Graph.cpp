@@ -274,7 +274,9 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotSty
 
 void Base::Graphics::Graph2D::addLabel(Label *label) { labels.push_back(label); }
 
-auto Base::Graphics::Graph2D::setResolution(Resolution samples_) -> void { this->samples = samples_; }
+auto Base::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
+
+auto Base::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
 
 Rect Base::Graphics::Graph2D::getLimits() const {
     return Rect(xMin, xMax, yMin, yMax);
@@ -304,7 +306,7 @@ Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
 
 void Base::Graphics::Graph2D::_drawCurves() {
     auto i=0;
-    for(auto curveTriple : curves) {
+    for(IN curveTriple : curves) {
         auto curve = GetCurve(curveTriple);
         auto pointSet = curve.get()->renderToPointSet();
         auto points = pointSet.get()->getPoints();
@@ -457,6 +459,8 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
 
     return true;
 }
+
+
 
 
 

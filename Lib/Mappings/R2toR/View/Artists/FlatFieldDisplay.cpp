@@ -121,10 +121,10 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
         auto domain = dynamic_cast<const R2toR::DiscreteFunction&>(*func).getDomain();
 
-        glTexCoord2f(ti, ti); glVertex2f(domain.xMin, domain.yMin);
-        glTexCoord2f(tf, ti); glVertex2f(domain.xMax, domain.yMin);
-        glTexCoord2f(tf, tf); glVertex2f(domain.xMax, domain.yMax);
-        glTexCoord2f(ti, tf); glVertex2f(domain.xMin, domain.yMax);
+        glTexCoord2f(ti, ti); glVertex2d(domain.xMin, domain.yMin);
+        glTexCoord2f(tf, ti); glVertex2d(domain.xMax, domain.yMin);
+        glTexCoord2f(tf, tf); glVertex2d(domain.xMax, domain.yMax);
+        glTexCoord2f(ti, tf); glVertex2d(domain.xMin, domain.yMax);
     }
     glEnd();
 
@@ -205,17 +205,16 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     fix dom_yMin = domain.yMin;
     fix dom_yMax = domain.yMax;
 
-    fix fraction = 0.2;
     fix Δx = dom_xMax-dom_xMin;
     fix Δy = dom_yMax-dom_yMin;
 
     fix windowRatio = Window::geth()/(Real)Window::getw();
     fix fieldRatio = Δy/Δx;
 
-    let _xMin = dom_xMin - Δx*fraction;
-    let _xMax = dom_xMin + Δx*(1+fraction);
-    let _yMin = dom_yMin - Δy*fraction;
-    let _yMax = dom_yMin + Δy*(1+fraction);
+    let _xMin = dom_xMin;
+    let _xMax = dom_xMin + Δx;
+    let _yMin = dom_yMin;
+    let _yMax = dom_yMin + Δy;
 
     set_xMin(_xMin);
     set_xMax(_xMax);

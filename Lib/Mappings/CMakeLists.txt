@@ -51,8 +51,8 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/Section1D.h
         RtoR/View/Graphics/HistoryDisplay.cpp
         RtoR/View/Graphics/HistoryDisplay.h
-        RtoR/Calc/CorrelationCalc.cpp
-        RtoR/Calc/CorrelationCalc.h
+        RtoR/Calc/CorrelationCalculator.cpp
+        RtoR/Calc/CorrelationCalculator.h
 
 )
 
@@ -94,6 +94,10 @@ set ( R2TOR_SOURCES
 		R2toR/View/Artists/FlatFieldDisplay.h
 		RtoR/Model/FunctionsCollection/Section1D.cpp
 		RtoR/Model/FunctionsCollection/Section1D.h
+		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
+		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h
+        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
+        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h
 
 )
 

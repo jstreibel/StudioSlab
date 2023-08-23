@@ -41,7 +41,7 @@ namespace ThermoOutput {
     const float isingSpriteSize = (WinH- 3 * _border) / 2; //2l + 3b = H => 2l = H-3b => l = (H-3b)/2
     const int _graphsWidth = (WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
     const int _graphsHeight = (WinH- (Rows+1) * _border) / Rows;
-    Real GAP = 15.0;
+    Real GAP = 15.0; // in degrees, used to view the Dirac strings between field twists.
 
     // user input parameters to manip T and h.
     const float delta = .01;

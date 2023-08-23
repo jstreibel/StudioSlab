@@ -93,8 +93,8 @@ void RtoR::FunctionRenderer::renderFunction(const R2toR::Function &func, Real xM
 
 void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section,
                                            Styles::PlotStyle style, PosInt resolution, Real scale) {
-    const auto ds = section.getDeltaS() / Real(resolution);
-    const auto sMin = section.getSMin(), sMax = section.getSMax();
+    const auto ds = section.getΔs() / Real(resolution);
+    const auto sMin = section.get_sMin(), sMax = section.get_sMax();
 
     glLineWidth(style.lineWidth);
 

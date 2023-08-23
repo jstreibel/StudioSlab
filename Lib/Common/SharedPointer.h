@@ -14,7 +14,7 @@ private:
 
 public:
     // Constructor
-    SharedPointer(T* p = nullptr);
+    explicit SharedPointer(T* p = nullptr);
 
     // Copy constructor
     SharedPointer(const SharedPointer& other);
@@ -33,8 +33,13 @@ public:
 
     T& operator* () const;
     T* operator->() const;
+
+
 };
 
+template <typename T>
+inline bool operator==(const SharedPointer<T>& a, nullptr_t) noexcept
+{ return !a; }
 
 template<typename T>
 SharedPointer<T>::SharedPointer(T *p) {

@@ -19,6 +19,9 @@ if(&NAME == nullptr) throw "Bad cast.";
 #endif
 
 namespace Common {
+    const Real infty = std::numeric_limits<Real>::infinity();
+
+    double periodic_space(double x, double xMin, double xMax);
 
     bool areEqual(const Real &lhs, const Real &rhs, const Real eps=1.e-5);
 

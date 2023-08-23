@@ -11,8 +11,7 @@
 namespace RtoR2 {
 
     class StraightLine : public ParametricCurve {
-        Real sMin, sMax;
-        Real2D x0, r;
+        Real2D x0={0,0}, r={0,0};
 
     public:
         typedef std::shared_ptr<StraightLine> Ptr;
@@ -26,17 +25,12 @@ namespace RtoR2 {
 
         static Ptr New(Real2D x0, Real2D xf);
 
-
-
         Real2D operator()(Real s) const override;
 
         friend StraightLine operator*(const Transform &T, const StraightLine &line);
 
         StraightLine &operator=(const StraightLine &rhs);
 
-        Real getDeltaS() const {return sMax-sMin;}
-        Real getSMin() const {return sMin;}
-        Real getSMax() const {return sMax;}
         Real2D getx0() const {return this->x0;}
         Real2D getr() const {return this->r;}
 

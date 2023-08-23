@@ -39,6 +39,7 @@ SimHistory::SimHistory(const Base::Simulation::SimulationConfig &simConfig,
                                                     timeResolution,
                                                     params.getxMin(),
                                                     0.0, hp);
+
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
 }

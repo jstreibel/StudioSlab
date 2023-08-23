@@ -21,8 +21,6 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     fix t₀ = discreteFunc.getDomain().yMin;
     fix tₘₐₓ = discreteFunc.getDomain().yMax;
     fix t = min(t_, tₘₐₓ);
-    fix dt = tₘₐₓ/(double)n;
-
 
     auto upToRow = (Count)( Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
 
@@ -45,4 +43,8 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
 
     nextRow = upToRow+1;
     lastUpdatedTime = t_;
+
+    // static auto source = LabelSource();
+    // static auto label = new Label
+    // addLabel();
 }

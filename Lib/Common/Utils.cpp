@@ -4,6 +4,8 @@
 
 #include "Utils.h"
 
+#include <cmath>
+
 void Common::PrintThere(int x, int y, const char *format, ...)
 {
     va_list args;
@@ -106,6 +108,11 @@ unsigned short Common::BinaryToUShort(std::string binary, char zero, char one){
     std::bitset<16>  x(binary);
 
     return x.to_ulong();
+}
+
+double Common::periodic_space(double x, double xMin, double xMax) {
+    fix Δx = xMax - xMin;
+    return xMin + std::fmod(x - xMin, Δx);
 }
 
 bool Common::areEqual(const Real &lhs, const Real &rhs, const Real eps) {

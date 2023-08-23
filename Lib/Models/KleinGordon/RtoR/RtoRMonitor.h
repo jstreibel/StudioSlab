@@ -31,7 +31,7 @@ namespace RtoR {
         GraphRtoR mFieldsGraph;
         GraphRtoR mHistoryGraph;
 
-        std::shared_ptr<const R2toR::Function>
+        std::shared_ptr<const R2toR::DiscreteFunction>
                   simulationHistory = nullptr;
 
         Spaces::PointSet UHistoryData;
@@ -65,7 +65,7 @@ namespace RtoR {
                 Str name = "general graphic monitor",
                 bool showEnergyHistoryAsDensities=false);
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
+        virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
     };
 
 }

@@ -2,6 +2,14 @@
 
 #include "R2toRDiscreteFunction.h"
 
+// don't touch:
+#define PERIODIC 1
+#define OD_NAN 2
+#define OD_ZERO 3
+
+// ok touch:
+#define OFF_DOMAIN_BEHAVIOR PERIODIC
+
 //
 // Created by joao on 30/09/2019.
 R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
@@ -26,14 +34,16 @@ Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.
 
+    #if OFF_DOMAIN_BEHAVIOR == OD_NAN
     if(n<0 || m<0 || n>N-1 || m>M-1) return NaN;
-
-    /*
-    n = n<0?0:n>N-1?N-1:n;
-    assert(n>=0 && n<N);
-    m = m<0?0:m>M-1?M-1:m;
-    assert(m>=0 && m<M);
-     */
+    #elif OFF_DOMAIN_BEHAVIOR == OD_ZERO
+    if(n<0 || m<0 || n>N-1 || m>M-1) return OD_ZERO;
+    #elif OFF_DOMAIN_BEHAVIOR == PERIODIC
+    if (n < 0) n = N - abs(n) % N;
+    else if (n > N - 1) n = n % N;
+    if (m < 0) m = M - abs(m) % M;
+    else if (m > M - 1) m = m % M;
+    #endif
 
     return At(n,m);
 }

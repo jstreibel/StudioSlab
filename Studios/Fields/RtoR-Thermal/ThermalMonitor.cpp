@@ -23,51 +23,64 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_OF_GRAPH_LIMITS false
 #define ODD_PERMUTATION true
+#define SAMPLE_COUNT(n) (n)
 
 // Ok to touch these:
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
 #define UPDATE_HISTORY_EVERY_STEP true
+#define GOOD_ENOUGH_NUMBER_OF_SAMPLES 250
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
 : RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
 , mTemperaturesGraph("T")
-, mHistogramsGraphK("k histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
+, mHistogramsGraphK(   "k histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
-, mHistogramsGraphV("v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
-, mHistogramsGraphE("e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
-, mCorrelationGraph()
+, mHistogramsGraphV(   "v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
+, mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
+, mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(512))
 {
-    auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
-    mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "T_3");
-    panel.addWindowToColumn(&mTemperaturesGraph, 0);
+    {
+        auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "T_3");
+        panel.addWindowToColumn(&mTemperaturesGraph, 0);
+    }
 
-    style = Styles::GetColorScheme()->funcPlotStyles.begin();
-    mHistogramsGraphE.addPointSet(DummyPtr(histogramEData),       *style++, "E");
-    mHistogramsGraphK.addPointSet(DummyPtr(histogramKData),       *style++, "K");
-    mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
-    mHistogramsGraphV.addPointSet(DummyPtr(histogramVData),       *style++, "V");
+    {
+        auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+        mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
+        mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
+        mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
+        mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), *style++, "V");
 
-    auto *histogramsPanel = new WindowPanel();
-    histogramsPanel->addWindow(&mHistogramsGraphV);
-    histogramsPanel->addWindow(&mHistogramsGraphGrad);
-    histogramsPanel->addWindow(&mHistogramsGraphK, ADD_NEW_COLUMN);
-    histogramsPanel->addWindow(&mHistogramsGraphE);
 
-    panel.addWindow(histogramsPanel);
+        auto *histogramsPanel = new WindowPanel();
+        histogramsPanel->addWindow(&mHistogramsGraphV);
+        histogramsPanel->addWindow(&mHistogramsGraphGrad);
+        histogramsPanel->addWindow(&mHistogramsGraphK, ADD_NEW_COLUMN);
+        histogramsPanel->addWindow(&mHistogramsGraphE);
 
-    auto windowColumn = new WindowColumn;
-    windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
-    windowColumn->addWindow(DummyPtr(mCorrelationGraph), 0.2);
+        panel.addWindow(histogramsPanel);
+    }
 
-    panel.addWindow(windowColumn, ADD_NEW_COLUMN);
+    {
+        auto style = Styles::GetColorScheme()->funcPlotStyles[2].permuteColors();
+        style.lineWidth = 3;
+        mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
+
+        auto windowColumn = new WindowColumn;
+        windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
+        windowColumn->addWindow(DummyPtr(mCorrelationGraph), 0.4);
+
+        panel.addWindow(windowColumn, ADD_NEW_COLUMN);
+    }
 
     panel.setColumnRelativeWidth(1,-1.0);
     panel.setColumnRelativeWidth(0, 0.2);
-    panel.setColumnRelativeWidth(2, 0.2);
+    panel.setColumnRelativeWidth(2, 0.4);
 }
 
 void RtoR::Thermal::Monitor::draw() {
@@ -79,16 +92,10 @@ void RtoR::Thermal::Monitor::draw() {
         auto _xMin = params.getxMin() - 0.1*L;
         auto _xMax = params.getxMax() + 0.1*L;
 
-        static RtoR2::StraightLine straightLine;
-
-        straightLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
+        auto currTimeLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
 
         if( not isSetup ) {
             mFullHistoryDisplay.setup(simulationHistory);
-
-            auto style = Styles::GetColorScheme()->funcPlotStyles[2].permuteColors();
-            style.lineWidth = 3;
-            mFullHistoryDisplay.addCurve(DummyPtr(straightLine), style, "t_history");
 
             isSetup = true;
         }
@@ -97,7 +104,30 @@ void RtoR::Thermal::Monitor::draw() {
         stepMod = (Real)(step%(this->getnSteps()*100));
         if(stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
         lastStepMod = stepMod;
+
     }
+
+    // *************************** Correlation graph **********************
+    static auto last_t_history = 0.0;
+    if(simulationHistory != nullptr) {
+        stats.begin();
+        if (ImGui::CollapsingHeader("Correlation graph")) {
+            ImGui::Text("Space correlation @ t=%f", t_history);
+
+            auto nSamples = (int)sampler->get_nSamples();
+            if(ImGui::SliderInt("samples", &nSamples, 10, (int)simulationHistory->getN()))
+                sampler->set_nSamples(nSamples);
+
+            auto graphResolution = (int)mCorrelationGraph.getResolution();
+            if(ImGui::SliderInt("graph resolution", &graphResolution, 10, 1000))
+                mCorrelationGraph.setResolution(graphResolution);
+        }
+        stats.end();
+        if (t_history != last_t_history)
+            corrSampleLine = RtoR2::StraightLine({params.getxMin(), t_history}, {params.getxMax(), t_history});
+    }
+    last_t_history = t_history;
+
 
 
     // *************************** Histograms *****************************
@@ -189,4 +219,34 @@ void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {
     temperature1HistoryData.addPoint({t, tau});
     temperature2HistoryData.addPoint({t, tau_indirect});
     temperature3HistoryData.addPoint({t, barϕ + 2*W / L});
+}
+
+void RtoR::Thermal::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory) {
+    RtoR::Monitor::setSimulationHistory(simulationHistory);
+
+    if(sampler == nullptr){
+        fix xMin = params.getxMin();
+        fix xMax = params.getxMax();
+        corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
+        sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
+
+        sampler->set_nSamples(GOOD_ENOUGH_NUMBER_OF_SAMPLES);
+    }
+
+    mCorrelationFunction.setBaseFunction(simulationHistory);
+    mCorrelationFunction.setSampler(sampler);
+
+    fix L = params.getL();
+    auto spaceCorrelationMap = new RtoR2::StraightLine({0, 0}, {L, 0}, 0, L);
+
+    auto func2D = DummyPtr(mCorrelationFunction);
+    auto func2Dto1DMap = RtoR2::ParametricCurve::Ptr(spaceCorrelationMap);
+    auto section = new RtoR::Section1D(func2D, func2Dto1DMap);
+    mSpaceCorrelation = RtoR::Section1D::Ptr(section);
+
+    auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+    //style.filled = false; // faster (way faster in this case, because CorrelationFunction is slow to compute each value.
+    mCorrelationGraph.addFunction(mSpaceCorrelation.get(), "Space correlation", style);
+    mCorrelationGraph.setLimits({-0.05*L, L*(.5+0.05), -.5, 1});
+    mCorrelationGraph.setScale(2.5e3);
 }

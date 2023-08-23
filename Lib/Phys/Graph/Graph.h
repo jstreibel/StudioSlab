@@ -71,6 +71,7 @@ namespace Base {
 
             void clearCurves();
 
+            auto getResolution() const -> Resolution;
             auto setResolution(Resolution samples) -> void;
             auto getLimits() const -> Rect;
             auto setLimits(Rect limits) -> void;

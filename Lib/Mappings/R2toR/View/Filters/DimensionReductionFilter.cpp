@@ -28,8 +28,8 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
     const R2toR::Domain domain = f.getDomain();
     const auto L = domain.getLx();
     const Real h_low = L / N_low;
-    const auto delta_s = line.getDeltaS();
-    const auto sMin = line.getSMin();
+    const auto delta_s = line.getΔs();
+    const auto sMin = line.get_sMin();
     DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(), h_low);
     auto &data = newPhi->getHostData();
 

@@ -45,9 +45,9 @@ void Graphics::OpenGLMonitor::writeStats() {
     static Count lastStep=0;
     auto dt = params.getdt();
 
-    auto avgFPS = -1.0;
-    auto avgSPS = -1.0; // avoid division by zero
-    auto avgSPs = -1.0;
+    auto avgFPS = .0;
+    auto avgSPS = .0; // avoid division by zero
+    auto avgSPs = .0;
     if(step>0)
     {
         fix MAX_AVG_SAMPLES = 5*60UL;
@@ -85,6 +85,8 @@ void Graphics::OpenGLMonitor::writeStats() {
             else if (avgFPS <= minFPS) setnSteps(getnSteps() - 1);
         }
     }
+
+    if(avgSPS==0.0) avgSPS = 1;
 
     fix stepsToFinish = params.getn() - step;
     fix timeToFinish = stepsToFinish/(int)avgSPS;
