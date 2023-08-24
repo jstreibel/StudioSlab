@@ -5,7 +5,6 @@
 #ifndef STUDIOSLAB_MONITOR_H
 #define STUDIOSLAB_MONITOR_H
 
-#include "Phys/Graph/PointSetGraph.h"
 #include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
 namespace R2toR {
@@ -16,14 +15,14 @@ namespace R2toR {
             R2toR::Function::Ptr drivingFunction;
 
             Spaces::PointSet::Ptr totalEnergyData;
-            Fields::Graphing::PointSetGraph mTotalEnergyGraph;
+            Base::Graphics::Graph2D mTotalEnergyGraph;
 
             Spaces::PointSet::Ptr numericEnergyData;
             Spaces::PointSet::Ptr analyticEnergyData;
-            Fields::Graphing::PointSetGraph mEnergyGraph;
+            Base::Graphics::Graph2D mEnergyGraph;
 
             Spaces::PointSet::Ptr energyRatioData;
-            Fields::Graphing::PointSetGraph mEnergyRatioGraph;
+            Base::Graphics::Graph2D mEnergyRatioGraph;
 
             GraphR2Section mSpeedsGraph;
             GraphR2Section mEnergyDensityGraph;

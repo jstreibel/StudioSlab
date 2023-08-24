@@ -18,7 +18,7 @@ namespace Spaces {
 
     public:
         PointSet();
-        PointSet(const Point2DVec points);
+        explicit PointSet(const Point2DVec& points);
         PointSet(const PointSet& pointSet);
 
         typedef std::shared_ptr<PointSet> Ptr;

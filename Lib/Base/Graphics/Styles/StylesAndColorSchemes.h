@@ -18,28 +18,31 @@ namespace Styles {
 
     void Init();
 
-    enum Trace {
-        Solid,
-        Dotted,
-        Dashed,
-        DotDashed
+    enum Primitive {
+        SolidLine,
+        DottedLine,
+        DashedLine,
+        DotDashedLine,
+
+        Point
     };
 
     const Color Nil = Color(-1,-1,-1,-1);
 
 
     struct PlotStyle {
-        PlotStyle(Color color, Trace trace=Solid, bool filled=true, Color lineFill=Nil, float lineWidth=1.3);
+        explicit PlotStyle(Color color, Primitive primitive=SolidLine, bool filled=true, Color lineFill=Nil, float lineWidth=1.3);
 
         PlotStyle permuteColors(bool odd=false);
 
         Color lineColor;
-        Trace trace;
+        Primitive primitive;
         bool filled;
         Color fillColor;
-        float lineWidth;
+        float thickness;
 
-        unsigned stippleFactor, stipplePattern;
+        GLint stippleFactor;
+        GLshort stipplePattern;
     };
 
     struct StyleScheme {
@@ -57,7 +60,7 @@ namespace Styles {
 
     typedef std::shared_ptr<Styles::StyleScheme> ColorScheme_ptr;
 
-    ColorScheme_ptr NewScheme(StyleScheme scheme);
+    ColorScheme_ptr NewScheme(const StyleScheme& scheme);
 
     ColorScheme_ptr GetColorScheme();
 }

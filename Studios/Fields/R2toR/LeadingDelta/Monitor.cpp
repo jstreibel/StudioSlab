@@ -139,10 +139,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
             mSectionGraph.clearCurves();
             mSectionGraph.addCurve(RtoR2::StraightLine::New({R, -10}, {R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashedLine, false, Styles::Nil, 2),
                                    "Numeric wave inside limits");
             mSectionGraph.addCurve(RtoR2::StraightLine::New({-R, -10}, {-R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashed, false, Styles::Nil, 2),
+                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashedLine, false, Styles::Nil, 2),
                                    "");
         }
 

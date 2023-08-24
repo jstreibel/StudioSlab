@@ -8,7 +8,7 @@
 
 Spaces::PointSet::PointSet() : Space(2) { }
 
-Spaces::PointSet::PointSet(const Spaces::Point2DVec points) : PointSet() {
+Spaces::PointSet::PointSet(const Spaces::Point2DVec& points) : PointSet() {
     for(const auto &p : points) addPoint(p);
 }
 

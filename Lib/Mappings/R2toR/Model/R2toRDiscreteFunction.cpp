@@ -52,8 +52,8 @@ auto R2toR::DiscreteFunction::operator()(Real2D x) -> Real& {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
     const Real d = h;
-    int n = int(Real(N-1) * (d+x.x-xMin)/Lx);
-    int m = int(Real(M-1) * (d+x.y-yMin)/Ly);
+    int n = int(floor(Real(N-1) * (d+x.x-xMin)/Lx));
+    int m = int(floor(Real(M-1) * (d+x.y-yMin)/Ly));
 
     return At(n,m);
 }

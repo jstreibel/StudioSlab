@@ -38,6 +38,7 @@ Base::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt
 
 Real DiscreteFunction_CPU::At(PosInt n, PosInt m) const {
     assert(n + m*N < N*M);
+
     return getSpace().getHostData()[n + m * N];
 }
 

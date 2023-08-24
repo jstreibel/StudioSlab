@@ -104,12 +104,12 @@ namespace Base {
 
         virtual Spaces::PointSet::Ptr
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
-            throw "Not implemented.";
+            throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
         virtual bool
         renderToDiscreteFunction(DiscreteFunction<InputCategory, OutputCategory> *toFunc) const {
-            throw Str("Function '") + myName() + "' method renderToDiscreteFunction not implemented.";
+            throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
     };

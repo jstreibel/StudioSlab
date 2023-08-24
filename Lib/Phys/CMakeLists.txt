@@ -1,8 +1,7 @@
 
 set ( TOOLSET_SOURCES
-		# Numerics/Allocator.cpp
-		Numerics/SimConfig/DeviceConfig.cpp
-		Formalism/Categories.cpp
+		Toolset/Constants.h
+		Toolset/NativeFunctions.h
 		)
 
 set ( FUNCTION_SOURCES
@@ -31,9 +30,7 @@ set ( SPACE_SOURCES
 		Space/Point.h)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-set ( SPACE_SOURCES_CUDA
-		Space/Impl/DiscreteSpaceGPU.cu
-)
+set ( SPACE_SOURCES_CUDA Space/Impl/DiscreteSpaceGPU.cu )
 endif ()
 
 set ( EXPERIMENTAL_SOURCES
@@ -45,12 +42,14 @@ set ( EXPERIMENTAL_SOURCES
 		Formalism/MathObject.cpp
 		Formalism/MathObject.h
 		Formalism/Information.cpp
-		Formalism/Information.h)
+		Formalism/Information.h
+
+		Formalism/Categories.cpp
+)
 
 
 set ( GRAPH_SOURCES
 		Graph/Graph.cpp
-		Graph/PointSetGraph.cpp
         Graph/OpenGLMonitor.cpp)
 
 
@@ -63,6 +62,9 @@ set ( NUMERICS_SOURCES
 
 		Numerics/Program/Integrator.cpp
 		Numerics/SimConfig/NumericConfig.cpp
+		Numerics/SimConfig/DeviceConfig.cpp
+		Numerics/SimConfig/SimulationConfig.cpp
+		Numerics/SimConfig/SimulationConfig.h
 
 		Numerics/Output/OutputManager.cpp
 
@@ -81,8 +83,6 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/record-interval.cpp
 
 		DifferentialEquations/EquationState.h
-		Numerics/SimConfig/SimulationConfig.cpp
-		Numerics/SimConfig/SimulationConfig.h
 )
 
 

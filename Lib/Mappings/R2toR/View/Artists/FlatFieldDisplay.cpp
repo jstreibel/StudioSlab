@@ -10,7 +10,11 @@
 
 #include <utility>
 
-
+#define drawFlatField(offset) \
+glTexCoord2d(ti, ti); glVertex2d(domain.xMin+(offset), domain.yMin); \
+glTexCoord2d(tf, ti); glVertex2d(domain.xMax+(offset), domain.yMin); \
+glTexCoord2d(tf, tf); glVertex2d(domain.xMax+(offset), domain.yMax); \
+glTexCoord2d(ti, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
 
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function)
 {
@@ -38,6 +42,10 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 }
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
+    Window::draw();
+
+    setupOrtho();
+
     Base::Graphics::Graph2D::draw();
 
     if(func == nullptr) return;
@@ -111,20 +119,26 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     }
 
     glEnable(GL_TEXTURE_2D);
-    glColor4d(1,1,1,1);
     glBegin(GL_QUADS);
     {
-        auto p = .95f;
+        auto pixelSizeInTexCoord = 1./texture->getWidth();
 
-        auto ti = 0.f;
-        auto tf = 1.f;
+        auto ti = 0.0 + pixelSizeInTexCoord;
+        auto tf = 1.0;// - pixelSizeInTexCoord;
 
         auto domain = dynamic_cast<const R2toR::DiscreteFunction&>(*func).getDomain();
 
-        glTexCoord2f(ti, ti); glVertex2d(domain.xMin, domain.yMin);
-        glTexCoord2f(tf, ti); glVertex2d(domain.xMax, domain.yMin);
-        glTexCoord2f(tf, tf); glVertex2d(domain.xMax, domain.yMax);
-        glTexCoord2f(ti, tf); glVertex2d(domain.xMin, domain.yMax);
+        fix fieldWidth = domain.xMax-domain.xMin;
+        glColor4d(1,1,1,1);
+        drawFlatField(0.0);
+
+        glColor4d(1,1,1,0.85);
+        for(int i=1; i<=2; i++) {
+            drawFlatField( i*fieldWidth);
+            drawFlatField(-i*fieldWidth);
+        }
+
+
     }
     glEnd();
 
@@ -132,6 +146,8 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
     _drawAxes();
     _drawCurves();
+    _drawPointSets();
+    _drawGUI();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() {

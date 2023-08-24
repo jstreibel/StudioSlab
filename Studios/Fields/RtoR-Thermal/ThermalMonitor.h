@@ -17,27 +17,27 @@ namespace RtoR::Thermal {
     class Monitor : public RtoR::Monitor {
         Real transientGuess = -1.0;
 
-        Real u;
+        Real u=.0;
 
-        Real barϕ;
-        Real tau;
-        Real tau_indirect;
+        Real barϕ=.0;
+        Real tau=.0;
+        Real tau_indirect=.0;
 
         Spaces::PointSet temperature1HistoryData;
         Spaces::PointSet temperature2HistoryData;
         Spaces::PointSet temperature3HistoryData;
 
-        Fields::Graphing::PointSetGraph mTemperaturesGraph;
+        Base::Graphics::Graph2D mTemperaturesGraph;
 
         Spaces::PointSet histogramKData;
         Spaces::PointSet histogramGradData;
         Spaces::PointSet histogramVData;
         Spaces::PointSet histogramEData;
 
-        Fields::Graphing::PointSetGraph mHistogramsGraphK;
-        Fields::Graphing::PointSetGraph mHistogramsGraphGrad;
-        Fields::Graphing::PointSetGraph mHistogramsGraphV;
-        Fields::Graphing::PointSetGraph mHistogramsGraphE;
+        Base::Graphics::Graph2D mHistogramsGraphK;
+        Base::Graphics::Graph2D mHistogramsGraphGrad;
+        Base::Graphics::Graph2D mHistogramsGraphV;
+        Base::Graphics::Graph2D mHistogramsGraphE;
 
         RtoR2::StraightLine corrSampleLine;
         std::shared_ptr<R2toR::Sampler> sampler;

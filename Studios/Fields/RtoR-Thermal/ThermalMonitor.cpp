@@ -29,7 +29,8 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
 #define UPDATE_HISTORY_EVERY_STEP true
-#define GOOD_ENOUGH_NUMBER_OF_SAMPLES 250
+#define GOOD_ENOUGH_NUMBER_OF_SAMPLES 300
+#define MAX_SAMPLES 20000
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
@@ -39,14 +40,21 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphV(   "v histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
 , mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_OF_GRAPH_LIMITS)
-, mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(512))
+, mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(150))
 {
     {
         auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "T_3");
         panel.addWindowToColumn(&mTemperaturesGraph, 0);
+
+        auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
+        auto pts = Spaces::Point2DVec({{-.1,T},{params.gett()+.1,T}});
+        auto Tstyle = (*style++).permuteColors();
+        Tstyle.filled = false;
+        mTemperaturesGraph.addPointSet(std::make_shared<Spaces::PointSet>(pts), Tstyle, "T (nominal)");
     }
 
     {
@@ -68,7 +76,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 
     {
         auto style = Styles::GetColorScheme()->funcPlotStyles[2].permuteColors();
-        style.lineWidth = 3;
+        style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
 
         auto windowColumn = new WindowColumn;
@@ -87,6 +95,8 @@ void RtoR::Thermal::Monitor::draw() {
 
     // *************************** Full history ***************************
     static bool isSetup = false;
+    bool updateSamples = false;
+
     if( simulationHistory != nullptr ) {
         auto L = params.getL();
         auto _xMin = params.getxMin() - 0.1*L;
@@ -98,14 +108,16 @@ void RtoR::Thermal::Monitor::draw() {
             mFullHistoryDisplay.setup(simulationHistory);
 
             isSetup = true;
+
+            updateSamples = true;
         }
 
         static Real stepMod, lastStepMod=0;
         stepMod = (Real)(step%(this->getnSteps()*100));
         if(stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
         lastStepMod = stepMod;
-
     }
+
 
     // *************************** Correlation graph **********************
     static auto last_t_history = 0.0;
@@ -115,19 +127,54 @@ void RtoR::Thermal::Monitor::draw() {
             ImGui::Text("Space correlation @ t=%f", t_history);
 
             auto nSamples = (int)sampler->get_nSamples();
-            if(ImGui::SliderInt("samples", &nSamples, 10, (int)simulationHistory->getN()))
+            if(ImGui::SliderInt("samples", &nSamples, 10, MAX_SAMPLES)) {
                 sampler->set_nSamples(nSamples);
+                updateSamples = true;
+            }
 
             auto graphResolution = (int)mCorrelationGraph.getResolution();
             if(ImGui::SliderInt("graph resolution", &graphResolution, 10, 1000))
                 mCorrelationGraph.setResolution(graphResolution);
         }
         stats.end();
+
         if (t_history != last_t_history)
-            corrSampleLine = RtoR2::StraightLine({params.getxMin(), t_history}, {params.getxMax(), t_history});
+        {
+            {
+                corrSampleLine = RtoR2::StraightLine({params.getxMin(), t_history}, {params.getxMax(), t_history});
+            }
+
+            {
+                fix xMin = params.getxMin();
+                fix xMax = params.getxMax();
+                fix t_ = params.gett();
+                fix Δt = t_ * 0.1;
+                fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
+                fix br = Real2D{xMax, min(t_history + Δt, t_)};
+
+                fix nSamples = sampler->get_nSamples();
+                sampler = std::make_shared<R2toR::RandomSampler>(tl, br, nSamples);
+
+                mCorrelationFunction.setSampler(sampler);
+
+                mCorrelationFunction.renderToPointSet()
+
+                updateSamples = true;
+            }
+
+        }
+
+        if(updateSamples)
+        {
+            auto style = Styles::GetColorScheme()->funcPlotStyles[0];
+            style.primitive = Styles::Point;
+            style.thickness = 3;
+            auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
+            mFullHistoryDisplay.clearPointSets();
+            mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", false);
+        }
     }
     last_t_history = t_history;
-
 
 
     // *************************** Histograms *****************************
@@ -227,8 +274,19 @@ void RtoR::Thermal::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::D
     if(sampler == nullptr){
         fix xMin = params.getxMin();
         fix xMax = params.getxMax();
-        corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
-        sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
+
+        if(false)
+        {
+            corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
+            sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
+        } else {
+            fix t_ = params.gett();
+            fix Δt = t_*0.1;
+            fix tl = Real2D{xMin, max(t_history-Δt, 0.0)};
+            fix br = Real2D{xMax, min(t_history+Δt, t_)};
+
+            sampler = std::make_shared<R2toR::RandomSampler>(tl, br, GOOD_ENOUGH_NUMBER_OF_SAMPLES);
+        }
 
         sampler->set_nSamples(GOOD_ENOUGH_NUMBER_OF_SAMPLES);
     }
@@ -237,11 +295,8 @@ void RtoR::Thermal::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::D
     mCorrelationFunction.setSampler(sampler);
 
     fix L = params.getL();
-    auto spaceCorrelationMap = new RtoR2::StraightLine({0, 0}, {L, 0}, 0, L);
-
-    auto func2D = DummyPtr(mCorrelationFunction);
-    auto func2Dto1DMap = RtoR2::ParametricCurve::Ptr(spaceCorrelationMap);
-    auto section = new RtoR::Section1D(func2D, func2Dto1DMap);
+    auto func2Dto1DMap = RtoR2::ParametricCurve::Ptr(new RtoR2::StraightLine({0, 0}, {L, 0}, 0, L));
+    auto section = new RtoR::Section1D(DummyPtr(mCorrelationFunction), func2Dto1DMap);
     mSpaceCorrelation = RtoR::Section1D::Ptr(section);
 
     auto style = Styles::GetColorScheme()->funcPlotStyles[1];

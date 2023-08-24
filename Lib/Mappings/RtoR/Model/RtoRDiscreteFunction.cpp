@@ -38,7 +38,7 @@ Real DiscreteFunction::operator()(Real x) const {
     const floatt L = xMax-xMin;
 
     // TODO: fazer essa conversao um pouco mais consciente.
-    int n = int((N-1)*(x-xMin)/L);
+    int n = int(floor((N-1)*(x-xMin)/L));
 
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.

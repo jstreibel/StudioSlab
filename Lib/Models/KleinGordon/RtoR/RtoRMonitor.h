@@ -11,7 +11,6 @@
 
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Phys/Graph/OpenGLMonitor.h"
-#include "Phys/Graph/PointSetGraph.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace RtoR {
@@ -38,7 +37,7 @@ namespace RtoR {
         Spaces::PointSet KHistoryData;
         Spaces::PointSet WHistoryData;
         Spaces::PointSet VHistoryData;
-        Fields::Graphing::PointSetGraph mEnergyGraph;
+        Base::Graphics::Graph2D mEnergyGraph;
 
         const Styles::PlotStyle U_style = Styles::GetColorScheme()->funcPlotStyles[0];
         const Styles::PlotStyle K_style = Styles::GetColorScheme()->funcPlotStyles[1];

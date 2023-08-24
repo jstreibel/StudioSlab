@@ -3,6 +3,8 @@
 //
 
 #include "Graph.h"
+
+#include <utility>
 #include "imgui.h"
 
 #include "Common/Printing.h"
@@ -11,20 +13,30 @@
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
 
-#define MARK                                                                                    \
-    {                                                                                           \
-    buffer.str("");                                                                             \
-    auto numRegion = log10(deltaY);                                                             \
-    buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                  \
-           << (numRegion< -1 ? std::scientific : std::fixed) << mark;                           \
+#define MARK                                                                                            \
+    {                                                                                                   \
+    buffer.str("");                                                                                     \
+    auto numRegion = log10(deltaY);                                                                     \
+    buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                          \
+           << (numRegion< -1 ? std::scientific : std::fixed) << mark;                                   \
     GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, fontScale, float(xMarkingsLabels), float(mark),  \
-            buffer.str().c_str(), TICK_FONT);                                                   \
+            buffer.str().c_str(), TICK_FONT);                                                           \
     }
 
-Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str title,
-                                 bool filled, int samples)
-                                 : xMin(xMin), xMax(xMax), yMin(yMin), yMax(yMax), title(title),
-                                   filled(filled), samples(samples) {       }
+Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled, int samples)
+: xMin(xMin)
+, xMax(xMax)
+, yMin(yMin)
+, yMax(yMax)
+, title(std::move(title))
+, filled(filled)
+, samples(samples)
+{  }
+
+Base::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
+: title(std::move(title)), autoReviewGraphRanges(autoReviewGraphLimits) {
+
+}
 
 void Base::Graphics::Graph2D::_drawAxes() {
 
@@ -231,9 +243,9 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotSty
         auto color = style.lineColor;
 
         glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(style.lineWidth);
+        glLineWidth(style.thickness);
 
-        if (style.trace != Styles::Solid) {
+        if (style.primitive != Styles::SolidLine) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
@@ -299,31 +311,178 @@ Real Base::Graphics::Graph2D::get_yMin() const { return yMin; }
 Real Base::Graphics::Graph2D::get_yMax() const { return yMax; }
 
 void
+Base::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
+                                    Styles::PlotStyle style,
+                                    Str setName,
+                                    bool affectsGraphRanges) {
+    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName), affectsGraphRanges};
+
+    mPointSets.emplace_back(metaData);
+}
+
+void
 Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
-    CurveTriple triple = {curve, style, name};
-    curves.emplace_back(triple);
+    CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
+    curves.emplace_back(curveMetadata);
+}
+
+void Base::Graphics::Graph2D::reviewGraphRanges() {
+    if(!mPointSets.empty())
+    {
+        auto referencePointSet = mPointSets[0].data;
+
+        xMax = referencePointSet->getMax().x;
+        xMin = referencePointSet->getMin().x;
+        yMax = referencePointSet->getMax().y;
+        yMin = referencePointSet->getMin().y;
+
+        for (auto &set: mPointSets) {
+            if(!set.affectsGraphRanges) continue;
+
+            auto max = set.data->getMax();
+            auto min = set.data->getMin();
+
+            if (max.x > xMax) xMax = max.x;
+            if (min.x < xMin) xMin = min.x;
+            if (max.y > yMax) yMax = max.y;
+            if (min.y < yMin) yMin = min.y;
+        }
+
+        // Give an extra 100*dMin% room each side.
+        if(true)
+        {
+            const auto dMin = .025;
+
+            auto dx = dMin * (xMax - xMin);
+            auto dy = dMin * (yMax - yMin);
+
+            if(dx == 0) dx = dMin;
+            if(dy == 0) dy = dMin;
+
+            xMax += dx;
+            xMin -= dx;
+            yMax += dy;
+            yMin -= dy;
+        }
+    }
+}
+
+
+void
+Base::Graphics::Graph2D::_renderPointSet(const Spaces::PointSet &pSet,
+                                        Styles::PlotStyle style) const noexcept {
+    auto pts = pSet.getPoints();
+
+    if(style.filled && !(style.primitive==Styles::Point))
+    {
+        const auto color = style.fillColor;
+
+        glColor4f(color.r, color.g, color.b, color.a);
+        glBegin(GL_QUADS);
+        {
+            auto iMax = pts.size()-1;
+            for(auto i=0; i<iMax; ++i){
+                auto pLeft = pts[i];
+                auto pRite = pts[i + 1];
+
+                const Real xmin = pLeft.x;
+                const Real xmax = pRite.x;
+
+                const Real ymin = 0,
+                        ymax1 = pLeft.y,
+                        ymax2 = pRite.y;
+
+                glVertex2d(xmin, ymin);
+                glVertex2d(xmin, ymax1);
+                glVertex2d(xmax, ymax2);
+                glVertex2d(xmax, ymin);
+            }
+        }
+        glEnd();
+    }
+
+    {
+        glLineWidth(style.thickness);
+
+        auto color = style.lineColor;
+        glColor4f(color.r, color.g, color.b, color.a);
+
+        if(style.primitive != Styles::SolidLine){
+            glDisable(GL_LINE_SMOOTH);
+            glEnable(GL_LINE_STIPPLE);
+            glLineStipple(style.stippleFactor, style.stipplePattern);
+        } else glEnable(GL_LINE_SMOOTH);
+
+        auto primitive = GL_LINE_STRIP;
+        if(style.primitive==Styles::Point){
+            primitive = GL_POINTS;
+            glEnable(GL_POINT_SMOOTH);
+            glPointSize(style.thickness);
+        }
+
+        glBegin(primitive);
+        {
+            for(auto p : pts)
+                glVertex2d(p.x, p.y);
+        }
+        glEnd();
+
+    }
+}
+
+void Base::Graphics::Graph2D::_drawGUI() {
+    auto popupName = Str("win_") + title + Str("_popup");
+
+    if(savePopupOn) {
+        ImGui::OpenPopup(popupName.c_str());
+        savePopupOn = false;
+    }
+
+    if (ImGui::BeginPopup(popupName.c_str())){
+        if(ImGui::MenuItem("Save graph")) {
+            auto w = Printing::getTotalHorizontalDots(.5);
+            auto h = w*.5;
+            auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
+            OpenGLUtils::outputToPNG(this, fileName, w, (int)h);
+        }
+
+        ImGui::EndPopup();
+    }
+}
+
+void Base::Graphics::Graph2D::_drawPointSets() {
+    int i=0;
+    for(auto &ptSet : mPointSets){
+        auto &func = *ptSet.data;
+        auto style = ptSet.plotStyle;
+        auto label = ptSet.name;
+
+        if(!label.empty()) _nameLabelDraw(i++, 0, style, label, this);
+
+        this->_renderPointSet(func, style);
+    }
 }
 
 void Base::Graphics::Graph2D::_drawCurves() {
     auto i=0;
-    for(IN curveTriple : curves) {
-        auto curve = GetCurve(curveTriple);
+    for(IN curveData : curves) {
+        auto curve = curveData.curve;
         auto pointSet = curve.get()->renderToPointSet();
         auto points = pointSet.get()->getPoints();
 
         if(points.size()<2) continue;
 
-        auto style = GetStyle(curveTriple);
-        auto name  = GetName(curveTriple);
+        auto style = curveData.style;
+        auto name  = curveData.name;
 
         _nameLabelDraw(i, 1, style, name, this);
 
         auto color = style.lineColor;
 
         glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(style.lineWidth);
+        glLineWidth(style.thickness);
 
-        if (style.trace != Styles::Solid) {
+        if (style.primitive != Styles::SolidLine) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
@@ -332,13 +491,20 @@ void Base::Graphics::Graph2D::_drawCurves() {
             glDisable(GL_LINE_STIPPLE);
         }
 
-        glBegin(GL_LINE_STRIP);
+        auto primitive = GL_LINE_STRIP;
+        if(style.primitive==Styles::Point) primitive = GL_POINTS;
+
+        glBegin(primitive);
         {
             for(const auto &p : points)
                 glVertex2d(p.x, p.y);
         }
         glEnd();
     }
+}
+
+void Base::Graphics::Graph2D::clearPointSets() {
+    mPointSets.clear();
 }
 
 void Base::Graphics::Graph2D::clearCurves() {
@@ -348,45 +514,21 @@ void Base::Graphics::Graph2D::clearCurves() {
 void Base::Graphics::Graph2D::draw() {
     Window::draw();
 
+    if(autoReviewGraphRanges)
+        reviewGraphRanges();
+
     setupOrtho();
-
-    //glMatrixMode(GL_MODELVIEW);
-
-    if(0)
-    {
-        auto &tf = Styles::GetColorScheme()->graphTitleFont;
-        glColor4f(tf.r, tf.g, tf.b, tf.a);
-        GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale*2., -0.95, 0.85, title, FONT_STROKE_ROMAN);
-    }
 
     _drawAxes();
 
+    _drawPointSets();
+
     _drawCurves();
 
-    {
-        auto popupName = Str("win_") + title + Str("_popup");
-
-        if(savePopupOn) {
-            ImGui::OpenPopup(popupName.c_str());
-            savePopupOn = false;
-        }
-
-        if (ImGui::BeginPopup(popupName.c_str())){
-            if(ImGui::MenuItem("Save graph")) {
-                auto w = Printing::getTotalHorizontalDots(.5);
-                auto h = w*.5;
-                auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
-                OpenGLUtils::outputToPNG(this, fileName, w, h);
-            }
-
-            ImGui::EndPopup();
-        }
-    }
+    _drawGUI();
 }
 
 bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
-    if(0) Log::Debug() << "Window \"" << this->title << "\" mouse " << (dir==0 ? "clicked" : "released") << " button " << button << Log::Flush;
-
     static auto time = Timer();
 
     if(button == 2){
@@ -459,6 +601,10 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
 
     return true;
 }
+
+
+
+
 
 
 

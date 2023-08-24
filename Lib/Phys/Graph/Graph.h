@@ -26,15 +26,32 @@ namespace Base {
     namespace Graphics {
 
         class Graph2D : public Window {
-            typedef std::tuple<RtoR2::ParametricCurve::Ptr, Styles::PlotStyle, Str> CurveTriple;
-            static auto GetCurve    ( CurveTriple triple ) { return std::get<0>(triple); };
-            static auto GetStyle    ( CurveTriple triple ) { return std::get<1>(triple); };
-            static auto GetName     ( CurveTriple triple ) { return std::get<2>(triple); };
+            // ************************ POINT SET **************************************
+            struct PointSetMetadata {
+                Spaces::PointSet::Ptr data;
+                Styles::PlotStyle plotStyle;
+                Str name;
+                bool affectsGraphRanges=true;
+            };
+
+            typedef std::vector<PointSetMetadata> PointSets;
+            PointSets mPointSets;
+
+            void _renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
+
+
+            // ************************ CURVES *****************************************
+            struct CurveMetadata{
+                RtoR2::ParametricCurve::Ptr curve;
+                Styles::PlotStyle style;
+                Str name;
+            };
 
             std::vector<Label*> labels;
-            std::vector<CurveTriple> curves;
+            std::vector<CurveMetadata> curves;
 
             bool savePopupOn = false;
+            bool autoReviewGraphRanges=false;
 
         protected:
             Real xMin, xMax, yMin, yMax;
@@ -45,7 +62,7 @@ namespace Base {
 
             Str title;
             bool filled = false;
-            int samples = 512;
+            Resolution samples = 512;
 
 
             void _drawAxes();
@@ -56,20 +73,31 @@ namespace Base {
 
             void _nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label, const Window *window);
 
+            void _drawGUI();
+            void _drawPointSets();
             void _drawCurves();
 
         public:
-            Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
+            explicit Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                     Str title = "no_title", bool filled = false, int samples = 512);
+
+            explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
             void draw() override;
 
             void setupOrtho();
 
             void addLabel(Label *label);
+            void addPointSet(Spaces::PointSet::Ptr pointSet,
+                             Styles::PlotStyle style,
+                             Str setName,
+                             bool affectsGraphRanges=true);
             void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name);
 
+            void clearPointSets();
             void clearCurves();
+
+            void reviewGraphRanges();
 
             auto getResolution() const -> Resolution;
             auto setResolution(Resolution samples) -> void;

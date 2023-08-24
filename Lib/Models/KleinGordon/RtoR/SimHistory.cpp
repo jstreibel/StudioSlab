@@ -62,7 +62,7 @@ void SimHistory::handleOutput(const OutputPacket &packet) {
 
         fix t = packet.getSimTime();
 
-        for(auto x=xMin+.5*dx; x<xMax; x+=dx)
+        for(auto x=xMin; x<xMax; x+=dx)
             to({x, t}) = from(x);
     }
 

@@ -62,7 +62,6 @@ typedef std::vector<Str> StrVector;
 #include <iostream>
 #include <cmath>
 
-
 union DoubleAccess {
     double val;
     char bytes[8];
@@ -72,7 +71,6 @@ union DoubleAccess {
 
     }
 };
-
 
 struct Point2D {
     Point2D() = default;

@@ -16,7 +16,7 @@ R2toR::CorrelationFunction::CorrelationFunction(R2toR::Function::ConstPtr baseFu
 Real R2toR::CorrelationFunction::operator()(Real2D x) const {
     if(baseFunction == nullptr) return 0;
 
-    auto samples = sampler->generateSamples();
+    auto samples = sampler->getSamples();
 
     IN func = *baseFunction;
 

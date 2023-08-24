@@ -86,10 +86,10 @@ void Graphics::OpenGLMonitor::writeStats() {
         }
     }
 
-    if(avgSPS==0.0) avgSPS = 1;
+    if(avgSPS==0.0) avgSPS = 0;
 
     fix stepsToFinish = params.getn() - step;
-    fix timeToFinish = stepsToFinish/(int)avgSPS;
+    fix timeToFinish = (int)(avgSPS==0.0 ? INFINITY : stepsToFinish/(int)avgSPS);
     fix timeMin = timeToFinish/60;
     fix timeSec = timeToFinish%60;
 

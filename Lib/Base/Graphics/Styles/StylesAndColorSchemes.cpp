@@ -5,6 +5,7 @@
 #include "StylesAndColorSchemes.h"
 #include "Common/Utils.h"
 #include <memory>
+#include <utility>
 
 // Rainbow
 // Red: #FF0000
@@ -46,9 +47,9 @@ void SetSchemeDark1 () {
     Styles::Color graph1c_fill =    graph1c; graph1c_fill.a = .15;
 
     std::vector<Styles::PlotStyle> graphs = {
-            {graph1a,       Styles::Trace::Solid, true, graph1a_fill, 2.5},
-            {graph1b,       Styles::Trace::Solid, true, graph1b_fill, 1},
-            {graph1c,       Styles::Trace::Solid, true, graph1c_fill, 1}};
+            Styles::PlotStyle{graph1a, Styles::Primitive::SolidLine, true, graph1a_fill, 2.5},
+            Styles::PlotStyle{graph1b, Styles::Primitive::SolidLine, true, graph1b_fill, 1.0},
+            Styles::PlotStyle{graph1c, Styles::Primitive::SolidLine, true, graph1c_fill, 1.0}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
 }
@@ -63,14 +64,14 @@ void SetSchemeDark2 () {
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
-            {Styles::Color::FromHex("#004c6d"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#1d617f"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#347691"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#498ca3"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#5fa2b5"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#76b9c7"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#8ed0da"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#a7e7ec"), Styles::Trace::Solid}
+            Styles::PlotStyle{Styles::Color::FromHex("#004c6d"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#1d617f"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#347691"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#498ca3"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#5fa2b5"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#76b9c7"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#8ed0da"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#a7e7ec"), Styles::Primitive::SolidLine}
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
@@ -86,14 +87,14 @@ void SetSchemeDark3 () {
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
-            {Styles::Color::FromHex("#003f5c"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#2f4b7c"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#665191"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#a05195"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#d45087"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#f95d6a"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#ff7c43"), Styles::Trace::Solid},
-            {Styles::Color::FromHex("#ffa600"), Styles::Trace::Solid}
+            Styles::PlotStyle{Styles::Color::FromHex("#003f5c"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#2f4b7c"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#665191"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#a05195"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#d45087"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#f95d6a"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#ff7c43"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#ffa600"), Styles::Primitive::SolidLine}
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
@@ -116,10 +117,10 @@ void SetSchemeBWDark () {
     Color graph1c = {.5,.5,.5,1};
 
     std::vector<Styles::PlotStyle> graphs = {
-            {graph1a,          Styles::Trace::Solid},
-            {graph1b,          Styles::Trace::Solid},
-            {graph1c,          Styles::Trace::Solid},
-            {{.25,.25,.25,1},  Styles::Trace::Solid}};
+            Styles::PlotStyle{graph1a,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1b,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1c,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{{.25,.25,.25,1},  Styles::Primitive::SolidLine}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
 }
@@ -144,9 +145,9 @@ void SetSchemePrint () {
     Color graph1c_fill = {graph1c.rgb(), .25};
 
     std::vector<Styles::PlotStyle> graphs = {
-            {graph1a,          Styles::Trace::Solid,  true, graph1a_fill, 3},
-            {graph1b,          Styles::Trace::Solid, true, graph1b_fill, 1},
-            {graph1c,          Styles::Trace::Dashed,  true, graph1c_fill, 3}};
+            Styles::PlotStyle{graph1a, Styles::Primitive::SolidLine, true, graph1a_fill, 3},
+            Styles::PlotStyle{graph1b, Styles::Primitive::SolidLine, true, graph1b_fill, 1},
+            Styles::PlotStyle{graph1c, Styles::Primitive::DashedLine, true, graph1c_fill, 3}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
 }
@@ -166,10 +167,10 @@ void SetSchemeLight1 () {
     Color graph1c = {.6,.3,.25,1};
 
     std::vector<Styles::PlotStyle> graphs = {
-            {graph1a,          Styles::Trace::Solid},
-            {graph1b,          Styles::Trace::Solid},
-            {graph1c,          Styles::Trace::Solid},
-            {{.25,.25,.25,1},  Styles::Trace::Solid}};
+            Styles::PlotStyle{graph1a,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1b,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1c,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{{.25,.25,.25,1},  Styles::Primitive::SolidLine}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
 }
@@ -185,14 +186,14 @@ void SetSchemeLight2 () {
     Color tickColor = {.2,.2,.2,1};
 
     std::vector<Styles::PlotStyle> graphs = {
-            {Color::FromHex("#003f5c"),          Styles::Trace::Solid},
-            {Color::FromHex("#2f4b7c"),          Styles::Trace::Solid},
-            {Color::FromHex("#665191"),          Styles::Trace::Solid},
-            {Color::FromHex("#a05195"),          Styles::Trace::Solid},
-            {Color::FromHex("#d45087"),          Styles::Trace::Solid},
-            {Color::FromHex("#f95d6a"),          Styles::Trace::Solid},
-            {Color::FromHex("#ff7c43"),          Styles::Trace::Solid},
-            {Color::FromHex("#ffa600"),          Styles::Trace::Solid},
+            Styles::PlotStyle{Color::FromHex("#003f5c"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#2f4b7c"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#665191"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#a05195"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#d45087"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#f95d6a"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#ff7c43"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#ffa600"),          Styles::Primitive::SolidLine},
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
@@ -213,10 +214,10 @@ void SetSchemeTest () {
     Color graph1c = {.751,.75,.75,1};
 
     std::vector<Styles::PlotStyle> graphs = {
-            {graph1a,          Styles::Trace::Solid},
-            {graph1b,          Styles::Trace::Solid},
-            {graph1c,          Styles::Trace::Solid},
-            {{.25,.25,.25,1},  Styles::Trace::Solid}};
+            Styles::PlotStyle{graph1a,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1b,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{graph1c,          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{{.25,.25,.25,1},  Styles::Primitive::SolidLine}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
 
@@ -226,18 +227,18 @@ Styles::ColorScheme_ptr Styles::GetColorScheme() {
     return current;
 }
 
-Styles::ColorScheme_ptr Styles::NewScheme(Styles::StyleScheme scheme) {
+Styles::ColorScheme_ptr Styles::NewScheme(const Styles::StyleScheme& scheme) {
     { return std::make_shared<Styles::StyleScheme>(scheme); }
 }
 
 Styles::StyleScheme::StyleScheme(Color background, Color graphTicksFont, Color graphTitleFont,
                                  Color axisColor, Color majorTickColor, std::vector<PlotStyle> plotStyles)
         : background(background), graphTicksFont(graphTicksFont), graphTitleFont(graphTitleFont),
-          axisColor(axisColor), majorTickColor(majorTickColor), funcPlotStyles(plotStyles) {}
+          axisColor(axisColor), majorTickColor(majorTickColor), funcPlotStyles(std::move(plotStyles)) {}
 
-Styles::PlotStyle::PlotStyle(Color color, Styles::Trace trace, bool filled,
+Styles::PlotStyle::PlotStyle(Color color, Styles::Primitive primitive, bool filled,
                              Color lineFill, float lineWidth)
-        : lineColor(color), trace(trace), filled(filled), fillColor(lineFill), lineWidth(lineWidth) {
+        : lineColor(color), primitive(primitive), filled(filled), fillColor(lineFill), thickness(lineWidth) {
     if(filled && lineFill==Nil) {
         this->fillColor = color;
         this->fillColor.a *= .25;
@@ -245,19 +246,19 @@ Styles::PlotStyle::PlotStyle(Color color, Styles::Trace trace, bool filled,
 
     stippleFactor = 1;
 
-    switch (trace) {
-        case Solid:
+    switch (primitive) {
+        case SolidLine:
             break;
-        case Dotted:
+        case DottedLine:
             stipplePattern = 0x1111; //BinaryToUInt("o   o   o   o   ", 'o', ' ');
             stippleFactor = 2;
             break;
-        case Dashed:
-            stipplePattern = Common::BinaryToUInt(" o o o o o o o o", 'o', ' ');
+        case DashedLine:
+            stipplePattern = (GLshort)Common::BinaryToUInt(" o o o o o o o o", 'o', ' ');
             stippleFactor = 10;
             break;
-        case DotDashed:
-            stipplePattern = Common::BinaryToUInt("o  ooo  o  ooo  ", 'o', ' ');
+        case DotDashedLine:
+            stipplePattern = (GLshort)Common::BinaryToUInt("o  ooo  o  ooo  ", 'o', ' ');
             stippleFactor = 2;
             break;
     }
@@ -265,6 +266,6 @@ Styles::PlotStyle::PlotStyle(Color color, Styles::Trace trace, bool filled,
 
 Styles::PlotStyle Styles::PlotStyle::permuteColors(bool odd) {
 
-    return Styles::PlotStyle(lineColor.permute(odd), trace, filled, fillColor.permute(odd), lineWidth);
+    return Styles::PlotStyle(lineColor.permute(odd), primitive, filled, fillColor.permute(odd), thickness);
 }
 

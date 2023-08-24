@@ -96,7 +96,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
     const auto ds = section.getΔs() / Real(resolution);
     const auto sMin = section.get_sMin(), sMax = section.get_sMax();
 
-    glLineWidth(style.lineWidth);
+    glLineWidth(style.thickness);
 
     if(style.filled)
     {
@@ -128,7 +128,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
     auto c = style.lineColor;
     glColor4f(c.r, c.g, c.b, c.a);
 
-    if(style.trace != Styles::Solid){
+    if(style.primitive != Styles::SolidLine){
         glDisable(GL_LINE_SMOOTH);
         glEnable(GL_LINE_STIPPLE);
         glLineStipple(style.stippleFactor, style.stipplePattern);
