@@ -19,13 +19,21 @@ NumericalIntegration::~NumericalIntegration()
 
 bool NumericalIntegration::cycle(CycleOptions options) {
     const auto &p = simBuilder.getNumericParams();
-    if(getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()) return false;
+
+    if(getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()){
+        if(!integrationFinished){
+            outputManager->notifyIntegrationFinished(getOutputInfo());
+            integrationFinished = true;
+        }
+
+        return false;
+    }
 
     switch (options.cycleOption){
         case CycleOptions::Cycle_nCycles:
             return _cycle(options.nCycles);
         case CycleOptions::CycleUntilOutput:
-            return _cycleUntilOutput();
+            return _cycleUntilOutputOrFinish();
         case CycleOptions::cycleCycleUntilFinished:
             return _runFullIntegration();
     }
@@ -39,14 +47,16 @@ OutputPacket NumericalIntegration::getOutputInfo(){
 
 bool NumericalIntegration::_cycle(size_t nCycles) {
 
-
     simTimeHistogram.startMeasure();
     stepper->step(dt, nCycles);
     simTimeHistogram.storeMeasure((int)nCycles);
 
     steps += nCycles;
 
-    output();
+    static fix maxSteps = simBuilder.getNumericParams().getn();
+    fix forceOutput = steps >= maxSteps;
+
+    output(forceOutput);
 
     return true;
 }
@@ -56,7 +66,7 @@ bool NumericalIntegration::_runFullIntegration()
     auto &p = simBuilder.getNumericParams();
     size_t n = p.getn();
 
-    while(steps < n && _cycleUntilOutput());
+    while(steps < n && _cycleUntilOutputOrFinish());
 
     // Para cumprir com os steps quebrados faltantes:
     if(steps < n) _cycle(n - steps);
@@ -66,15 +76,17 @@ bool NumericalIntegration::_runFullIntegration()
     return true;
 }
 
-bool NumericalIntegration::_cycleUntilOutput() {
-
+bool NumericalIntegration::_cycleUntilOutputOrFinish() {
     size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
 
     if (nCyclesToNextOutput > 50000) {
         Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
     }
 
-    if (nCyclesToNextOutput == 0) return false;
+    if (nCyclesToNextOutput == 0) {
+        Log::WarningImportant() << "No more cycles to next output" << Log::Flush;
+        return false;
+    }
 
     _cycle(nCyclesToNextOutput);
 

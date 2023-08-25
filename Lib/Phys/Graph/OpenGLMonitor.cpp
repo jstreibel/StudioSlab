@@ -13,6 +13,8 @@ using namespace Base;
 
 #define AUTO_ADJUST_SAMPLES_PER_SECOND true
 #define MAX_AVG_SAMPLES (60UL)
+#define MIN_FPS 24
+#define MAX_FPS 30
 
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
@@ -83,18 +85,16 @@ void Graphics::OpenGLMonitor::writeStats() {
         if(AUTO_ADJUST_SAMPLES_PER_SECOND) {
             static Count counter = 0;
             static fix baseNSteps = getnSteps();
-            static let multiplier = 1;
+            // static let multiplier = 1;
             static fix modVal = Common::max(baseNSteps/5, 1);
 
             if(!(++counter%modVal))
             {
-                fix minFPS = 57, maxFPS = 58;
-
-                if      (FPS >= maxFPS) {
+                if      (FPS >= MAX_FPS) {
                     // setnSteps(baseNSteps * ++multiplier);
-                    setnSteps(getnSteps()+1);
+                    setnSteps(getnSteps()+2*(int)ceil(FPS/MAX_FPS));
                 }
-                else if (FPS <= minFPS){
+                else if (FPS <= MIN_FPS){
                     // --multiplier;
                     // if(multiplier<=0) multiplier = 1;
                     // setnSteps(baseNSteps*multiplier);

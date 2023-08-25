@@ -310,8 +310,9 @@ void GLUTBackend::idleCall()
     }
 
     auto stillRunning = true;
-    while(!me.isPaused() && !me.renderingRequested() && stillRunning)
+    while(!me.isPaused() && !me.renderingRequested() && stillRunning) {
         stillRunning = program->cycle(Program::CycleOptions::CycleUntilOutput);
+    }
 }
 
 void GLUTBackend::reshape(int w, int h)

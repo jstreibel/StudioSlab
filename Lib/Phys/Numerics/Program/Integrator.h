@@ -22,6 +22,7 @@ class NumericalIntegration : public Program {
     Real dt;
     PosInt steps;
     bool forceOverStepping = false;
+    bool integrationFinished = false;
 
     BenchmarkHistogram simTimeHistogram;
 
@@ -34,7 +35,7 @@ class NumericalIntegration : public Program {
 
     auto _cycle(size_t nCycles) -> bool;
     auto _runFullIntegration()  -> bool;
-    auto _cycleUntilOutput()    -> bool;
+    auto _cycleUntilOutputOrFinish()    -> bool;
 
 public:
     NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder)
