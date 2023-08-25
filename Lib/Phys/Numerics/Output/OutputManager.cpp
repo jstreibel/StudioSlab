@@ -33,9 +33,7 @@ auto OutputManager::computeNStepsToNextOutput(PosInt currStep) -> PosInt
         if(nextRecStep < nSteps) nSteps = nextRecStep;
     }
 
-    // Log::Debug("OutputManager nSteps=") << nSteps << " currStep=" << currStep << Log::Flush;
-
-    return nSteps<currStep ? 1 : nSteps-currStep;;
+    return nSteps<currStep ? 1 : nSteps-currStep;
 }
 
 void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool keepTrack)

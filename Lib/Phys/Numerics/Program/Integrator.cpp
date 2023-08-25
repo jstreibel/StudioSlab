@@ -17,38 +17,41 @@ NumericalIntegration::~NumericalIntegration()
     Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
 }
 
-void NumericalIntegration::cycle(CycleOptions options) {
+bool NumericalIntegration::cycle(CycleOptions options) {
     const auto &p = simBuilder.getNumericParams();
-    if(getSimulationTime() >= p.gett() && !simBuilder.getNumericParams().shouldForceOverstepping()) return;
+    if(getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()) return false;
 
     switch (options.cycleOption){
         case CycleOptions::Cycle_nCycles:
-            _cycle(options.nCycles);
-            break;
+            return _cycle(options.nCycles);
         case CycleOptions::CycleUntilOutput:
-            _cycleUntilOutput();
-            break;
+            return _cycleUntilOutput();
         case CycleOptions::cycleCycleUntilFinished:
-            _runFullIntegration();
-            break;
+            return _runFullIntegration();
     }
+
+    return false;
 }
 
 OutputPacket NumericalIntegration::getOutputInfo(){
-    return OutputPacket(stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime());;
+    return {stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime()};
 }
 
-void NumericalIntegration::_cycle(size_t nCycles) {
+bool NumericalIntegration::_cycle(size_t nCycles) {
+
+
     simTimeHistogram.startMeasure();
     stepper->step(dt, nCycles);
-    simTimeHistogram.storeMeasure(nCycles);
+    simTimeHistogram.storeMeasure((int)nCycles);
 
     steps += nCycles;
 
     output();
+
+    return true;
 }
 
-void NumericalIntegration::_runFullIntegration()
+bool NumericalIntegration::_runFullIntegration()
 {
     auto &p = simBuilder.getNumericParams();
     size_t n = p.getn();
@@ -56,19 +59,22 @@ void NumericalIntegration::_runFullIntegration()
     while(steps < n && _cycleUntilOutput());
 
     // Para cumprir com os steps quebrados faltantes:
-    if(steps < n) cycle(n - steps);
+    if(steps < n) _cycle(n - steps);
 
     outputManager->notifyIntegrationFinished(getOutputInfo());
+
+    return true;
 }
 
 bool NumericalIntegration::_cycleUntilOutput() {
+
     size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
 
-    if(nCyclesToNextOutput > 50000){
+    if (nCyclesToNextOutput > 50000) {
         Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
     }
 
-    if(nCyclesToNextOutput == 0) return false;
+    if (nCyclesToNextOutput == 0) return false;
 
     _cycle(nCyclesToNextOutput);
 
@@ -82,7 +88,7 @@ void NumericalIntegration::output(bool force){
 
 size_t NumericalIntegration::getSteps() const { return steps; }
 
-inline floatt NumericalIntegration::getSimulationTime() { return floatt(getSteps()) * dt; }
+inline floatt NumericalIntegration::getSimulationTime() const { return floatt(getSteps()) * dt; }
 
 const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
     return simTimeHistogram;

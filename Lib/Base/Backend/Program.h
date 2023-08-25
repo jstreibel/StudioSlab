@@ -29,7 +29,7 @@ public:
 
     virtual ~Program() = default;
 
-    virtual void cycle(CycleOptions options) = 0;
+    virtual bool cycle(CycleOptions options) = 0;
 };
 
 #endif //V_SHAPE_PROGRAM_H

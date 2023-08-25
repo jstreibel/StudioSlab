@@ -14,10 +14,9 @@ namespace RandUtils {
 
     Real random(Real a, Real b);
 
-    int RandInt();
+    unsigned RandInt();
 
-    double gaussianNoise(Real mean=0.0, Real standard_deviation=1.0);
-
+    double gaussianNoise(Real mean=0.0, Real standard_deviation=1.0, bool reSeed=false, int seed=1);
 }
 
 namespace LostAndFound {

@@ -19,11 +19,16 @@ if(&NAME == nullptr) throw "Bad cast.";
 #endif
 
 namespace Common {
+    template<typename T>
+    inline T max(const T &a, const T &b){ return a>b ? a : b; };
+    template<typename T>
+    inline T min(const T &a, const T &b){ return a<b ? a : b; };
+
     const Real infty = std::numeric_limits<Real>::infinity();
 
     double periodic_space(double x, double xMin, double xMax);
 
-    bool areEqual(const Real &lhs, const Real &rhs, const Real eps=1.e-5);
+    bool areEqual(const Real &lhs, const Real &rhs, Real eps=1.e-5);
 
     template<class Class>
     Str getClassName(Class *thisClass){

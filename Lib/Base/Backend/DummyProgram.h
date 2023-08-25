@@ -9,7 +9,7 @@
 
 class DummyProgram : public Program {
 public:
-    void cycle(CycleOptions options) override {
+    bool cycle(CycleOptions options) override {
 
     }
 };

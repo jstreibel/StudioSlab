@@ -16,12 +16,17 @@ protected:
     MouseState mouseState;
     std::vector<Window::Ptr> windows;
 
+    bool mustRender = true;
+    bool renderingRequested();
+
 public:
     virtual auto addWindow(Window::Ptr window) -> void;
 
     auto getMouseState() const -> const MouseState&;
     virtual auto pause() -> void = 0;
     virtual auto resume() -> void = 0;
+
+    auto requestRender() -> void;
 
     static GUIBackend& GetInstance();
 

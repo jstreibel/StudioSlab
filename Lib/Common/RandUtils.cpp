@@ -17,20 +17,16 @@ namespace RandUtils {
         mt.seed(s);
     }
 
-    Real random01() {
-        return realRandGen(mt);
-    }
+    Real random01() { return realRandGen(mt); }
 
-    Real random(Real a, Real b){
-        return (b-a)*random01() + a;
-    }
+    Real random(Real a, Real b){ return (b-a)*random01() + a; }
 
-    int RandInt() {
-        return uintRandGen(mt);
-    }
+    unsigned RandInt() { return uintRandGen(mt); }
 
-    double gaussianNoise(double mean, double standard_deviation) {
-        static std::mt19937 generator(1);
+    double gaussianNoise(double mean, double standard_deviation, bool reSeed, int seed) {
+        static std::mt19937 generator(seed);
+        if(reSeed) generator.seed(seed);
+
         std::normal_distribution<double> distribution(mean, standard_deviation);
 
         return distribution(generator);
@@ -42,7 +38,7 @@ namespace RandUtils {
 namespace LostAndFound {
     void imprimeBinario(uint64_t a) {
         for (int i = 63; i >= 0; --i) {
-            int val = (a & (1 << i)) >> i;
+            uint64_t val = (a & (1 << i)) >> i;
             std::cout << val;
         }
     }

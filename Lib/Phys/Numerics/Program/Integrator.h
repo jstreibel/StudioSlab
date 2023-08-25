@@ -32,8 +32,8 @@ class NumericalIntegration : public Program {
     void output(bool force=false);
     OutputPacket getOutputInfo();
 
-    auto _cycle(size_t nCycles) -> void;
-    auto _runFullIntegration()  -> void;
+    auto _cycle(size_t nCycles) -> bool;
+    auto _runFullIntegration()  -> bool;
     auto _cycleUntilOutput()    -> bool;
 
 public:
@@ -67,10 +67,10 @@ public:
 
     ~NumericalIntegration() override;
 
-    void cycle(CycleOptions) override;
+    bool cycle(CycleOptions options) override;
 
     auto getSteps() const -> size_t;
-    auto getSimulationTime() -> Real;
+    auto getSimulationTime() const -> Real;
     auto doForceOverStepping() -> void;
 
     auto getHistogram() const -> const BenchmarkHistogram&;

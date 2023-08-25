@@ -309,9 +309,9 @@ void GLUTBackend::idleCall()
         lastErr = err;
     }
 
-    if(me.isRunning()){
-        program->cycle(Program::CycleOptions::CycleUntilOutput);
-    }
+    auto stillRunning = true;
+    while(!me.isPaused() && !me.renderingRequested() && stillRunning)
+        stillRunning = program->cycle(Program::CycleOptions::CycleUntilOutput);
 }
 
 void GLUTBackend::reshape(int w, int h)

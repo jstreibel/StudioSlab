@@ -16,19 +16,18 @@ auto Numerics::OutputSystem::Socket::getnSteps() const -> int { return intervalS
 
 auto Numerics::OutputSystem::Socket::setnSteps(int n)  -> void {
     intervalStepsBetweenOutputs = n >= 1 ? n : 1;
-
-    // Log::Debug() << Log::FGGreen << "Socket::setnSteps(" << n << ")" << Log::Flush;
-
-    // computeNextRecStep();
 }
 
 auto Numerics::OutputSystem::Socket::computeNextRecStep(PosInt currStep) -> size_t {
+    if (nextRecStep > currStep)
+        return nextRecStep;
+
     fix n = (Real)intervalStepsBetweenOutputs;
     fix m = (Real)(currStep+1);
 
-    assert(m>0 && n>0);
+    nextRecStep = (int)(n*std::ceil(m/n));
 
-    return (int)(n*std::ceil(m/n));
+    return nextRecStep;
 }
 
 auto Numerics::OutputSystem::Socket::shouldOutput(const Real t, const long unsigned timestep) -> bool {

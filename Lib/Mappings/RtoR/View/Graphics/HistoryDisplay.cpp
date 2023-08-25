@@ -36,10 +36,12 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
 
     fix totalRows = upToRow-nextRow+1;
     texture->upload(nextRow, totalRows);
-    Log::Note("Texture uploading from row ") << nextRow << " up to row " << upToRow
-                                                         << " a total of " << totalRows
-                                                         << " rows @ t=" << t
-                                                         << " with Δt=" << (t-lastUpdatedTime) << Log::Flush;
+
+    if(false)
+        Log::Note("Texture uploading from row ") << nextRow << " up to row " << upToRow
+                                                             << " a total of " << totalRows
+                                                             << " rows @ t=" << t
+                                                             << " with Δt=" << (t-lastUpdatedTime) << Log::Flush;
 
     nextRow = upToRow+1;
     lastUpdatedTime = t_;

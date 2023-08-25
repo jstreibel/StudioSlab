@@ -15,3 +15,13 @@ auto GUIBackend::addWindow(Window::Ptr window) -> void {
 GUIBackend &GUIBackend::GetInstance() {
     return DerivableSingleton::GetInstanceSuper<GUIBackend>();
 }
+
+bool GUIBackend::renderingRequested() {
+    auto has = mustRender;
+    mustRender = false;
+    return has;
+}
+
+auto GUIBackend::requestRender() -> void {
+    mustRender = true;
+}

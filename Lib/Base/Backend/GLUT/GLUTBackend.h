@@ -38,7 +38,7 @@ public:
     static void idleCall();
     static void reshape(int w, int h);
 
-    auto isRunning() const -> bool {return programIsRunning;}
+    auto isPaused() const -> bool {return !programIsRunning;}
 	void pause()  override { programIsRunning = false; }
 	void resume() override { programIsRunning = true; }
 

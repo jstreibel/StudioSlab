@@ -6,12 +6,13 @@
 #include "OpenGLMonitor.h"
 
 #include "Base/Tools/Log.h"
+#include "Base/Backend/GUIBackend.h"
 
 
 using namespace Base;
 
-#define AUTO_ADJUST_SAMPLES_PER_SECOND false
-
+#define AUTO_ADJUST_SAMPLES_PER_SECOND true
+#define MAX_AVG_SAMPLES (60UL)
 
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
@@ -25,6 +26,8 @@ Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& c
 void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
+
+    GUIBackend::GetInstance().requestRender();
 }
 
 auto Graphics::OpenGLMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
@@ -45,19 +48,17 @@ void Graphics::OpenGLMonitor::writeStats() {
     static Count lastStep=0;
     auto dt = params.getdt();
 
+    fix currStep = step;
+
+    fix FPS = 1e3/elTime;           // Frames/samples per second
+    fix SPs = currStep - lastStep;  // Steps per frame/sample
+    fix SPS = (Real)SPs*FPS;        // Steps per second
+
     auto avgFPS = .0;
     auto avgSPS = .0; // avoid division by zero
     auto avgSPs = .0;
     if(step>0)
     {
-        fix MAX_AVG_SAMPLES = 5*60UL;
-
-        fix currStep = step;
-
-        fix FPS = 1e3/elTime;           // Frames/samples per second
-        fix SPs = currStep - lastStep;  // Steps per frame/sample
-        fix SPS = (Real)SPs*FPS;        // Steps per second
-
         static std::vector<Real> FPSmeasures;
         static std::vector<Real> SPsmeasures; // steps per sample
         static std::vector<Real> SPSmeasures; // steps per second
@@ -80,16 +81,31 @@ void Graphics::OpenGLMonitor::writeStats() {
         avgSPS /= (Real)total;
 
         if(AUTO_ADJUST_SAMPLES_PER_SECOND) {
-            fix minFPS = 58, maxFPS = 59;
-            if      (avgFPS >= maxFPS) setnSteps(getnSteps() + 1);
-            else if (avgFPS <= minFPS) setnSteps(getnSteps() - 1);
+            static Count counter = 0;
+            static fix baseNSteps = getnSteps();
+            static let multiplier = 1;
+            static fix modVal = Common::max(baseNSteps/5, 1);
+
+            if(!(++counter%modVal))
+            {
+                fix minFPS = 57, maxFPS = 58;
+
+                if      (FPS >= maxFPS) {
+                    // setnSteps(baseNSteps * ++multiplier);
+                    setnSteps(getnSteps()+1);
+                }
+                else if (FPS <= minFPS){
+                    // --multiplier;
+                    // if(multiplier<=0) multiplier = 1;
+                    // setnSteps(baseNSteps*multiplier);
+                    setnSteps(getnSteps()-1);
+                }
+            }
         }
     }
 
-    if(avgSPS==0.0) avgSPS = 0;
-
     fix stepsToFinish = params.getn() - step;
-    fix timeToFinish = (int)(avgSPS==0.0 ? INFINITY : stepsToFinish/(int)avgSPS);
+    fix timeToFinish = (int)(avgSPS==0.0 ? 0 : stepsToFinish/(int)avgSPS);
     fix timeMin = timeToFinish/60;
     fix timeSec = timeToFinish%60;
 
@@ -150,7 +166,6 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
         if (key == '=') {
             multiplier++;
             setnSteps(baseNSteps * multiplier);
-            return true;
         } else if (key == '-') {
             if (multiplier > 1) multiplier--;
             setnSteps(baseNSteps * multiplier);
