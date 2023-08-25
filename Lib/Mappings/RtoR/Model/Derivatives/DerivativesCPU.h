@@ -18,7 +18,7 @@ class DerivativeCPU : public RtoR::Function {
             f_ = &vec.getSpace().getHostData();
         }
 
-        auto d2fdx2_v(VecFloat_O &out) -> VecFloat &;
+        auto d2fdx2_v(VecFloat_O &out) -> RealVector &;
 
         Real operator()(Real x) const override;
 
@@ -33,7 +33,7 @@ private:
         auto d2fdx2_3s(PosInt X) const -> Real;
         auto d2fdx2_5s(PosInt X) const -> Real;
 
-        const VecFloat *f_;
+        const RealVector *f_;
         const Real h, invh, invhsqr, inv12 = 1.0 / 12.0;
         const PosInt N;
     };

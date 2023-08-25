@@ -21,7 +21,7 @@ namespace RtoR {
 
         [[nodiscard]] auto CloneWithSize(PosInt N) const -> Base::DiscreteFunction<Real, Real> * override;
 
-        auto Set(const VecFloat &vec) -> FunctionArbitraryCPU &;
+        auto Set(const RealVector &vec) -> FunctionArbitraryCPU &;
         auto Set(const FunctionT &func) -> FunctionArbitraryCPU & override;
 
         auto Apply(const MyBase &func,

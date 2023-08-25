@@ -8,6 +8,8 @@
 #include "Common/Types.h"
 
 namespace RandUtils {
+    void seed(int s);
+
     Real random01();
 
     Real random(Real a, Real b);

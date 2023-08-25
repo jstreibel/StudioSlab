@@ -93,7 +93,7 @@ namespace Fields::KleinGordon {
             DiscreteSpace &space = phi->getSpace();
 
             const PosInt N = space.getTotalDiscreteSites();
-            const VecFloat &vec = space.getHostData(true);
+            const RealVector &vec = space.getHostData(true);
 
             for(PosInt n=0; n<N; n++)
                 out << vec[n] << separator;
@@ -102,7 +102,7 @@ namespace Fields::KleinGordon {
         void outputdPhiDt(OStream &out, Str separator) const override {
             DiscreteSpace &space = dPhiDt->getSpace();
             const PosInt N = space.getTotalDiscreteSites();
-            const VecFloat &vec = space.getHostData(true);
+            const RealVector &vec = space.getHostData(true);
 
             for(PosInt n=0; n<N; n++)
                 out << vec[n] << separator;

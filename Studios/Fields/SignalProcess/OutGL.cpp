@@ -212,7 +212,7 @@ void RtoR::Signal::OutGL::draw() {
         static RtoR::FunctionArbitraryCPU *func = nullptr;
 
         std::vector<float> rec_f = JackServer::GetInstance()->getRecording();
-        VecFloat rec(rec_f.begin(), rec_f.end());
+        RealVector rec(rec_f.begin(), rec_f.end());
         auto recTime =  rec.size()/48000.;
 
         if(rec.size()){

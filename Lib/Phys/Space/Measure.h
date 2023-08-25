@@ -9,10 +9,10 @@
 #include "Common/Types.h"
 
 class Measure {
-    VecFloat linearValues;
+    RealVector linearValues;
 
 public:
-    Measure(VecFloat linearValues);
+    Measure(RealVector linearValues);
 
     Real operator*();
 };

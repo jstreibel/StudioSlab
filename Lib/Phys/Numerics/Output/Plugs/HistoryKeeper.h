@@ -20,7 +20,7 @@ protected:
     const Real tEnd;
 
     std::vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
-    VecFloat tHistory;
+    RealVector tHistory;
     size_t count;
     size_t countTotal;
 

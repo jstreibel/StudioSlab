@@ -7,6 +7,22 @@
 //
 // Created by joao on 27/09/2019.
 
+
+
+auto RtoR::FunctionRenderer::toPointSet(const RtoR::Function &func, Real xMin, Real xMax, PosInt resolution, Real scale) -> Spaces::PointSet::Ptr {
+    fix Δx = xMax-xMin;
+    fix dx = Δx/(Real)resolution;
+
+    std::vector<Real2D> pts(resolution);
+
+    for(auto i=0; i<resolution; ++i){
+        fix x = xMin + Real(i)*dx;
+        pts[i] = {x, func(x)};
+    }
+
+    return std::make_shared<Spaces::PointSet>(pts);
+}
+
 void RtoR::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &func, Styles::Color c, bool filled, Real scale){
     const Real xMin = func.xMin,
                xMax = func.xMax;

@@ -28,10 +28,10 @@ typedef int_least64_t       BigInt;
 
 fix HUGE_NUMBER = ((unsigned long long)0)-1;
 
-typedef std::vector<Real>   VecFloat;
-typedef const VecFloat      VecFloat_I;
-typedef VecFloat            VecFloat_O;
-typedef VecFloat            VecFloat_IO;
+typedef std::vector<Real>   RealVector;
+typedef const RealVector      VecFloat_I;
+typedef RealVector            VecFloat_O;
+typedef RealVector            VecFloat_IO;
 
 typedef std::vector<int>    IntVector;
 

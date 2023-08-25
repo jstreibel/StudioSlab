@@ -61,6 +61,8 @@ namespace R2toR {
     R2Vec RandomSampler::generateSamples() {
         using namespace RandUtils;
 
+        seed(1);
+
         auto samples = R2toR::R2Vec(get_nSamples());
         for(OUT s : samples) s = {random(xMin, xMax), random(yMin, yMax)};
 

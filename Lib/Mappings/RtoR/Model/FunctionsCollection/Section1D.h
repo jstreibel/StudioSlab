@@ -21,6 +21,8 @@ namespace RtoR {
         Section1D(R2toR::Function::ConstPtr function, RtoR2::ParametricCurve::ConstPtr curve);
 
         Real operator()(Real x) const override;
+
+        Spaces::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
     };
 }
 

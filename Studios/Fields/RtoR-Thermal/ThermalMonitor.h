@@ -23,6 +23,8 @@ namespace RtoR::Thermal {
         Real tau=.0;
         Real tau_indirect=.0;
 
+        Real Δt = 0.0;
+
         Spaces::PointSet temperature1HistoryData;
         Spaces::PointSet temperature2HistoryData;
         Spaces::PointSet temperature3HistoryData;

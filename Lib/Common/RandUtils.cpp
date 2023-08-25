@@ -13,6 +13,10 @@ namespace RandUtils {
 
     std::uniform_int_distribution<unsigned int> uintRandGen(0, INT32_MAX);
 
+    void seed(int s) {
+        mt.seed(s);
+    }
+
     Real random01() {
         return realRandGen(mt);
     }
@@ -31,6 +35,7 @@ namespace RandUtils {
 
         return distribution(generator);
     }
+
 }
 
 

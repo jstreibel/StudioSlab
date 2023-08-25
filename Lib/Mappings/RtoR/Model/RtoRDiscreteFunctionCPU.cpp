@@ -43,7 +43,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRi
     getSpace().getHostData() = data;
 }
 
-auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
+auto FunctionArbitraryCPU::Set(const RealVector &vec) -> FunctionArbitraryCPU & {
     assert(vec.size() == getSpace().getHostData().size());
 
     for(int i=0; i<vec.size(); ++i)
@@ -54,7 +54,7 @@ auto FunctionArbitraryCPU::Set(const VecFloat &vec) -> FunctionArbitraryCPU & {
 
 FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
     const floatt L = xMax - xMin;
-    VecFloat &X = getSpace().getHostData();
+    RealVector &X = getSpace().getHostData();
 
     OMP_PARALLEL_FOR(n, N){
         const floatt x = L * n / (N - 1) + xMin;
@@ -72,7 +72,7 @@ Base::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
 Base::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
-    const VecFloat &X = getSpace().getHostData();
+    const RealVector &X = getSpace().getHostData();
     const Real inc_d = N / Real(outN);
 
     DiscreteSpace &newSpace = newFunc.getSpace();

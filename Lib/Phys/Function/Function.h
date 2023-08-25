@@ -87,9 +87,29 @@ namespace Base {
 
         // RENDERING
         struct RenderingOptions {
-            RenderingOptions()                        : hint(UseChoiceResolution)            {}
-            RenderingOptions(const InputCategory &dx) : hint(UseCustomResolution_dx), dx(dx) {};
-            RenderingOptions(PosInt n)                : hint(UseCustomResolution_n), n(n)   {};
+            RenderingOptions()
+            : hint(UseChoiceResolution)
+            { }
+
+            RenderingOptions(const InputCategory &dx,
+                             const InputCategory &xMin,
+                             const InputCategory &xMax)
+            : hint(UseCustomResolution_dx)
+            , dx(dx)
+            , n((xMax-xMin)/dx)
+            , xMin(xMin)
+            , xMax(xMax)
+            { }
+
+            RenderingOptions(PosInt n,
+                             const InputCategory &xMin,
+                             const InputCategory &xMax)
+            : hint(UseCustomResolution_n)
+            , dx((xMax-xMin)/n)
+            , n(n)
+            , xMin(xMin)
+            , xMax(xMax)
+            { }
 
 
             const enum Hint {
@@ -99,7 +119,8 @@ namespace Base {
             } hint = UseChoiceResolution;
 
             InputCategory dx;
-            PosInt n;
+            PosInt n{};
+            InputCategory xMin, xMax;
         };
 
         virtual Spaces::PointSet::Ptr

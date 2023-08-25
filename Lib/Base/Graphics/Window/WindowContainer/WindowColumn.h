@@ -10,7 +10,7 @@
 
 class WindowColumn : public Window {
     std::vector<Window::Ptr> windows;
-    VecFloat heights;
+    RealVector heights;
 
     bool assertConsistency() const;
 public:

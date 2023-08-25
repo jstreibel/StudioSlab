@@ -24,10 +24,10 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();
 
-    VecFloat &e = _oEnergyDensityFunc->getSpace().getHostData();
-    VecFloat &k = _oKinetic->getSpace().getHostData();
-    VecFloat &grad = _oGradient->getSpace().getHostData();
-    VecFloat &v = _oPotential->getSpace().getHostData();
+    RealVector &e = _oEnergyDensityFunc->getSpace().getHostData();
+    RealVector &k = _oKinetic->getSpace().getHostData();
+    RealVector &grad = _oGradient->getSpace().getHostData();
+    RealVector &v = _oPotential->getSpace().getHostData();
 
     const floatt h = phiSpace.geth();
     const floatt inv2h = .5/h;
@@ -55,7 +55,7 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
 
 auto RtoR::KGEnergy::integrateEnergy() -> Real
 {
-    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
+    RealVector &E_v = _oEnergyDensityFunc->getSpace().getHostData();
     Real E=0;
 
     for(const auto &e : E_v)
@@ -70,7 +70,7 @@ auto RtoR::KGEnergy::integrateEnergy() -> Real
 auto RtoR::KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
     auto &func = *_oEnergyDensityFunc;
 
-    VecFloat &E_v = _oEnergyDensityFunc->getSpace().getHostData();
+    RealVector &E_v = _oEnergyDensityFunc->getSpace().getHostData();
     Real dx = builder.getNumericParams().geth();
 
     PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
@@ -85,7 +85,7 @@ auto RtoR::KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
 }
 
 Real RtoR::KGEnergy::integrateKinetic() {
-    VecFloat &K_v = _oKinetic->getSpace().getHostData();
+    RealVector &K_v = _oKinetic->getSpace().getHostData();
     Real K=0;
 
     for(const auto &k : K_v)
@@ -96,7 +96,7 @@ Real RtoR::KGEnergy::integrateKinetic() {
 }
 
 Real RtoR::KGEnergy::integrateGradient() {
-    VecFloat &Grad_v = _oGradient->getSpace().getHostData();
+    RealVector &Grad_v = _oGradient->getSpace().getHostData();
     Real Grad=0;
 
     for(const auto &grad : Grad_v)
@@ -107,7 +107,7 @@ Real RtoR::KGEnergy::integrateGradient() {
 }
 
 Real RtoR::KGEnergy::integratePotential() {
-    VecFloat &Pot_v = _oPotential->getSpace().getHostData();
+    RealVector &Pot_v = _oPotential->getSpace().getHostData();
     Real Pot=0;
 
     for(const auto &pot : Pot_v)

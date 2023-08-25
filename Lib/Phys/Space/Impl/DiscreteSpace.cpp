@@ -34,8 +34,8 @@ DiscreteSpaceCPU *DiscreteSpace::hostCopy(PosInt maxResolution) const {
     DimensionMetaData newDim(N);
     DiscreteSpaceCPU *theCopy = new DiscreteSpaceCPU(newDim, h/r);
 
-    const VecFloat& X = getHostData();
-    VecFloat &reducedX = theCopy->getHostData();
+    const RealVector& X = getHostData();
+    RealVector &reducedX = theCopy->getHostData();
     if(newDim.getNDim() == 1)
         for(PosInt i = 0; i<dim[0]; i++)
             reducedX[r*i] = X[i];
@@ -63,8 +63,8 @@ PosInt DiscreteSpace::getTotalDiscreteSites() const {
 void DiscreteSpace::syncHost() const { }
 void DiscreteSpace::upload() { }
 
-const VecFloat &DiscreteSpace::getHostData(bool sync) const { if(sync) syncHost(); return data; }
-VecFloat       &DiscreteSpace::getHostData(bool sync)       { if(sync) syncHost(); return data; }
+const RealVector &DiscreteSpace::getHostData(bool sync) const { if(sync) syncHost(); return data; }
+RealVector       &DiscreteSpace::getHostData(bool sync)       { if(sync) syncHost(); return data; }
 
 Real DiscreteSpace::geth() const { return h; }
 

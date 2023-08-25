@@ -27,7 +27,7 @@ public:
 
 private:
     unsigned long count;
-    VecFloat bins;
+    RealVector bins;
 
 };
 

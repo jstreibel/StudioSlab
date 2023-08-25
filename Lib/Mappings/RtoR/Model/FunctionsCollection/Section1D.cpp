@@ -3,6 +3,7 @@
 //
 
 #include "Section1D.h"
+#include "Mappings/FunctionRenderer.h"
 #include <utility>
 
 RtoR::Section1D::Section1D(R2toR::Function::ConstPtr function, RtoR2::ParametricCurve::ConstPtr curve)
@@ -18,6 +19,10 @@ Real RtoR::Section1D::operator()(Real x) const {
     const auto &func = *function;
 
     return func(c(x));
+}
+
+Spaces::PointSet::Ptr RtoR::Section1D::renderToPointSet(Base::FunctionT<Real, Real>::RenderingOptions options) {
+    return RtoR::FunctionRenderer::toPointSet(*this, options.xMin, options.xMax, options.n);
 }
 
 

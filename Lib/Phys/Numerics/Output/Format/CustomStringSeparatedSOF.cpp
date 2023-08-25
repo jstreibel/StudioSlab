@@ -16,7 +16,7 @@ auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
 auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData {
     const auto &space = fOut;
 
-    const VecFloat& X = space.getHostData(true);
+    const RealVector& X = space.getHostData(true);
 
     std::ostringstream oss;
 

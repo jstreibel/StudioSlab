@@ -10,7 +10,7 @@
 
 class WindowRow : public Window {
     std::vector<Window::Ptr> windows;
-    VecFloat widths;
+    RealVector widths;
 
     bool assertConsistency() const;
 public:

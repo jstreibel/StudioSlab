@@ -12,7 +12,7 @@
 
 class SimHistory : public Numerics::OutputSystem::Socket {
     R2toR::DiscreteFunction *fieldData;
-    VecFloat timestamps;
+    RealVector timestamps;
     bool dataIsOnGPU;
 
     auto handleOutput(const OutputPacket &packet) -> void override;
