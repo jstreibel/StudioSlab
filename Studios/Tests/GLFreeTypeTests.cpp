@@ -25,78 +25,39 @@ void add_text_to_buffer( vertex_buffer_t * buffer, texture_font_t * font,
                const char * text, const vec4 * color, vec2 * pen );
 
 GLFreeTypeTests::GLFreeTypeTests() {
-    {
-        size_t i;
-        texture_font_t *font = 0;
-        atlas = texture_atlas_new(512, 512, 1);
-        const char *filename = "/home/joao/Developer/StudioSlab/Resources/Fonts/rougier/Vera.ttf";
-        const char *text = "A Quick Brown Fox Jumps Over The Lazy Dog 0123456789";
-        buffer = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
-        vec2 pen = {{5, 400}};
-        vec4 black = {{1, 1, 1, 1}};
-        for (i = 7; i < 27; ++i) {
-            font = texture_font_new_from_file(atlas, i, filename);
-            pen.x = 5;
-            pen.y -= font->height;
-            texture_font_load_glyphs(font, text);
-            add_text_to_buffer(buffer, font, text, &black, &pen);
-            texture_font_delete(font);
-        }
-
-        glGenTextures(1, &atlas->id);
-        glBindTexture(GL_TEXTURE_2D, atlas->id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlas->width, atlas->height,
-                     0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
-
-        shader = shader_load((shaderDir + "v3f-t2f-c4f.vert").c_str(),
-                             (shaderDir + "v3f-t2f-c4f.frag").c_str());
-
-        mat4_set_identity(&projection);
-        mat4_set_identity(&model);
-        mat4_set_identity(&view);
-    }
-
-    /*
-    fontData.init(Resources::fontFileName(6).c_str(), 40);
-
     // Text to be printed
     const char *text = "A Quick Brown Fox Jumps Over The Lazy Dog 0123456789";
     // Texture atlas to store individual glyphs
-    atlas = texture_atlas_new( 512, 512, 1 );
+    atlas = texture_atlas_new(512, 512, 1);
     // Build a new texture font from its description and size
-    texture_font_t *font = texture_font_new_from_file( atlas, 28, Resources::fontFileName(6).c_str() );
+    texture_font_t *font = texture_font_new_from_file(atlas, 28, Resources::fontFileName(6).c_str());
     // Build a new vertex buffer (position, texture & color)
-    buffer = vertex_buffer_new( "v3i:t2f:c4f" );
+    buffer = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
     // Where to start printing on screen
-    vec2 pen = {0,0};
+    vec2 pen = {20, 20};
     // Text color
-    vec4 white = {1,1,1,1};
+    vec4 white = {1, 1, 1, 1};
     // Add text to the buffer
-    add_text_to_buffer( buffer, font, text, &white, &pen );
+    add_text_to_buffer(buffer, font, text, &white, &pen);
 
     texture_font_delete(font);
 
-    glGenTextures( 1, &atlas->id );
-    glBindTexture( GL_TEXTURE_2D, atlas->id );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
-    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexImage2D( GL_TEXTURE_2D, 0, GL_RED, atlas->width, atlas->height,
-                  0, GL_RED, GL_UNSIGNED_BYTE, atlas->data );
+    glGenTextures(1, &atlas->id);
+    glBindTexture(GL_TEXTURE_2D, atlas->id);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, atlas->width, atlas->height,
+                 0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
 
 
     shader = shader_load((shaderDir + "v3f-t2f-c4f.vert").c_str(),
                          (shaderDir + "v3f-t2f-c4f.frag").c_str());
 
-    mat4_set_identity( &projection );
-    mat4_set_identity( &model );
-    mat4_set_identity( &view );
-     */
+    mat4_set_identity(&projection);
+    mat4_set_identity(&model);
+    mat4_set_identity(&view);
 }
 
 GLFreeTypeTests::~GLFreeTypeTests() {
@@ -163,7 +124,6 @@ bool GLFreeTypeTests::notifyScreenReshape(int newScreenWidth, int newScreenHeigh
 
     auto vp = getViewport();
     mat4_set_orthographic( &projection, 0, (float)vp.w(),  0, (float)vp.h(),   -1, 1);
-  //mat4_set_orthographic( &projection, 0, newScreenWidth, 0, newScreenHeight, -1, 1);
 
     return true;
 }

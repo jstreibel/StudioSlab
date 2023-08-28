@@ -28,6 +28,7 @@ namespace Resources {
 
                              "EBGaramond-VariableFont_wght.ttf",        // 10
                              "FontAwesome-Solid.ttf",                   // 11
+
                              "Inconsolata-Regular.ttf",                 // 12
 
                              "Roboto-Regular.ttf",                      // 13
