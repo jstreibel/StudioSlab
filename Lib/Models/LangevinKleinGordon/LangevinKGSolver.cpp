@@ -24,8 +24,8 @@ Real xi() {
     return RandUtils::gaussianNoise(.0, 1.0);
 }
 
-void RtoR::LangevinKGSolver::startStep(Real t, Real dt) {
-    RtoR::KGSolver ::startStep(t, dt);
+void RtoR::LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
+    RtoR::KGSolver::startStep(stateIn, t, dt);
 
     ComputeImpulses();
 }

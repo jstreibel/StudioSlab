@@ -14,12 +14,15 @@
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Base/Graphics/OpenGL/Utils.h"
 #include "Base/Tools/Log.h"
+#include "3rdParty/glfreetype/TextRenderer.hpp"
 
 #include <cassert>
 #include <filesystem>
 
 //#define FORCE_FPS 60
 //const Real FRAME_TIME = 1.0/Real(FORCE_FPS);
+
+#define FULLSCREEN false
 
 GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     assert(Backend::singleInstance == nullptr);
@@ -35,7 +38,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     glutInitWindowSize(w, h);
     int winHandle = glutCreateWindow("Pendulum");
 
-    if(true) glutFullScreen();
+    if(FULLSCREEN) glutFullScreen();
 
     // GLEW init:
     {
@@ -68,7 +71,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
 
-    Log::Critical() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
+    Log::Success() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
 
 
     // Setup Dear ImGui context
@@ -85,6 +88,27 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     //ImGui::StyleColorsLight();
     //SetupImGuiColors_BlackAndWhite();
 
+    {
+        ImGui::GetStyle().WindowPadding = {20, 10};
+        ImGui::GetStyle().FramePadding = ImVec2(12.0f,6.0f);
+        ImGui::GetStyle().CellPadding = {9, 5};
+        ImGui::GetStyle().ItemSpacing = ImVec2(17.0f,8.0f);
+        ImGui::GetStyle().ItemInnerSpacing = {16, 8};
+        ImGui::GetStyle().IndentSpacing = 30;
+        ImGui::GetStyle().ScrollbarSize = 18;
+        ImGui::GetStyle().GrabMinSize = 18;
+
+        ImGui::GetStyle().WindowBorderSize = 1.0f;
+        ImGui::GetStyle().FrameBorderSize = 0.0f;
+
+        ImGui::GetStyle().WindowRounding = 4.0f;
+        ImGui::GetStyle().ChildRounding = 5.0f;
+        ImGui::GetStyle().FrameRounding = 5.0f;
+        ImGui::GetStyle().ScrollbarRounding = 3.0f;
+        ImGui::GetStyle().GrabRounding = 4.0f;
+        ImGui::GetStyle().TabRounding = 5;
+    }
+
     // Setup Platform/Renderer backends
     // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
     ImGui_ImplGLUT_Init();
@@ -99,12 +123,46 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
 
 
     if(1) {
-        auto fontName = Resources::fontFileName(5);
+        fix FONT_INDEX = 9;
+
+        static const ImWchar ranges[] =
+                {
+                       0x0020, 0x007F, // Basic Latin
+                       0x0391, 0x03C9, // Greek
+                       0x2200, 0x22FF, // Mathematical operators
+                       0x2A00, 0x2AFF, // Supplemental mathematical operators
+                       // too big: 0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
+                       0x00B0, 0x00BF, // Superscript / subscript
+                       0x03D0, 0x03F6,
+                       0x2070, 0x209F, // Superscript / subscript
+                       0,
+                };
+
+        ImFontGlyphRangesBuilder glyphRangesBuilder;
+        glyphRangesBuilder.AddRanges(ranges);
+        if(0) for(ImWchar c: {0x00b2, 0x00b3, 0x00b9}) glyphRangesBuilder.AddChar(c);
+        static ImVector<ImWchar> vRanges;
+        glyphRangesBuilder.BuildRanges(&vRanges);
+
+        auto &log = Log::Info() << "ImGui loading glyph ranges: ";
+        int i=0;
+        for(auto &v : vRanges){
+            if(v==0) break;
+            log << std::hex << v << (++i%2?"-":" ");
+        }
+        log << std::dec << Log::Flush;
+
+        ImGuiIO& io = ImGui::GetIO();
+        auto fontName = Resources::fontFileName(FONT_INDEX);
 
         if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
 
-        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 22.0f);
+        ImFontConfig fontConfig;
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 26.0f, &fontConfig, &vRanges[0]);
+
         io.FontDefault = font;
+
+        Log::Info() << "ImGui using font '" << Resources::fonts[FONT_INDEX] << "'." << Log::Flush;
 
         //ImGui::PushFont(font);
     }
@@ -209,11 +267,9 @@ void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
             return;
     }
 
-    {
-        auto &me = GetInstanceSuper<GLUTBackend>();
-        for (auto &win: me.windows)
-            win->notifyMouseWheel(wheel, direction, x, y);
-    }
+    auto &me = GetInstanceSuper<GLUTBackend>();
+    for (auto &win: me.windows)
+        win->notifyMouseWheel(wheel, direction, x, y);
 }
 
 void GLUTBackend::mousePassiveMotion(int x, int y)
@@ -278,7 +334,6 @@ void GLUTBackend::render()
 
     {
         for (auto &win: me.windows) {
-            //win->addStat(ToString(gb->steps) + " sim steps per cycle.");
             auto elapsed = timer.getElTime_msec();
             win->notifyRender((float)elapsed);
         }
@@ -287,7 +342,6 @@ void GLUTBackend::render()
 
     {
         ImGui::Render();
-        //ImGuiIO& io = ImGui::GetIO();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 

@@ -19,6 +19,8 @@ if(&NAME == nullptr) throw "Bad cast.";
 #endif
 
 namespace Common {
+    Str GetPWD();
+
     template<typename T>
     inline T max(const T &a, const T &b){ return a>b ? a : b; };
     template<typename T>

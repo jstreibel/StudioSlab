@@ -12,7 +12,7 @@
 #include <cstring>
 #include <iostream>
 
-void OpenGLUtils::drawOrthoNormalized(Rect rect) {
+void OpenGLUtils::drawOrthoNormalized(RectR rect) {
     // TODO ultra-provisório
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();

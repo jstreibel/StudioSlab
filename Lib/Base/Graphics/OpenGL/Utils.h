@@ -31,7 +31,7 @@ namespace OpenGLUtils {
         const void *getPixelData() const { return &pixels[0]; };
     };
 
-    void drawOrthoNormalized(Rect rect);
+    void drawOrthoNormalized(RectR rect);
 
     bool outputToPNG(FrameBuffer buffer, std::string fileName);
 

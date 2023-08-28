@@ -12,6 +12,8 @@
 
 #include "Base/Backend/GLUT/GLUTBackend.h"
 #include "Base/Controller/Interface/InterfaceManager.h"
+#include "3rdParty/glfreetype/TextRenderer.hpp"
+#include "Common/Resources.h"
 
 #define MARK                                                                                            \
     {                                                                                                   \
@@ -95,6 +97,20 @@ void Base::Graphics::Graph2D::__drawXAxis() {
     auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
 
     {
+
+
+
+
+        static glfreetype::font_data fontData;
+        static auto initd = false;
+        if(!initd) {
+            fontData.init(Resources::fontFileName(11).c_str(), 30);
+            initd = true;
+        }
+        glfreetype::print(fontData, 0.1, 0.1, "Hello, frikin world!!");
+
+
+
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         const Real yloc = -yspacing*0.356;
@@ -102,6 +118,7 @@ void Base::Graphics::Graph2D::__drawXAxis() {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
             GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
+            // glfreetype::print(fontData, mark - xspacing / 18.0, yloc, "Hello, frikin world!!");
         }
         for (Real mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
@@ -276,7 +293,7 @@ void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotSty
 
     auto c = Styles::GetColorScheme()->graphTitleFont;
     glColor4f(c.r,c.g,c.b,c.a);
-    GLUTUtils::writeOrtho(window, Rect{0,1,0,1}, fontScale, xMax+xGap, .5*(yMax+yMin), label);
+    GLUTUtils::writeOrtho(window, RectR{0,1,0,1}, fontScale, xMax+xGap, .5*(yMax+yMin), label);
 
     glPopMatrix();
 //
@@ -290,11 +307,11 @@ auto Base::Graphics::Graph2D::getResolution() const -> Resolution        { retur
 
 auto Base::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
 
-Rect Base::Graphics::Graph2D::getLimits() const {
-    return Rect(xMin, xMax, yMin, yMax);
+RectR Base::Graphics::Graph2D::getLimits() const {
+    return RectR(xMin, xMax, yMin, yMax);
 }
 
-auto Base::Graphics::Graph2D::setLimits(Rect lims) -> void {
+auto Base::Graphics::Graph2D::setLimits(RectR lims) -> void {
     xMin = lims.xMin;
     xMax = lims.xMax;
     yMin = lims.yMin;

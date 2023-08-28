@@ -17,7 +17,7 @@ void GLUTUtils::write(const Window *win, const float fontScale, const float x, c
     glPopMatrix();
 }
 
-void GLUTUtils::writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
+void GLUTUtils::writeOrtho(const Window *window, RectR region, float fontScale, float x, float y, std::string str,
                 void *font) {
     fix w = region.xMax-region.xMin;
     fix h = region.yMax-region.yMin;

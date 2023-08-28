@@ -29,6 +29,10 @@ namespace OpenGL {
 
         data = (ByteData)malloc(w*h*4);
 
+        IntVector maxTextureSize(2);
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize[0]);
+        Log::ErrorFatal() << "Max texture size: " << maxTextureSize[0] << "x" << maxTextureSize[1] << Log::Flush;
+
         fix sizeMB = w*h*4/(1024*1024.);
         Log::Critical() << "OpenGL::Texture is allocating " << sizeMB << "MB of GPU texture data to upload history to." << Log::Flush;
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);

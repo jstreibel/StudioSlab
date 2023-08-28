@@ -101,8 +101,8 @@ namespace Base {
 
             auto getResolution() const -> Resolution;
             auto setResolution(Resolution samples) -> void;
-            auto getLimits() const -> Rect;
-            auto setLimits(Rect limits) -> void;
+            auto getLimits() const -> RectR;
+            auto setLimits(RectR limits) -> void;
             void set_xMin(Real);
             void set_xMax(Real);
             void set_yMin(Real);

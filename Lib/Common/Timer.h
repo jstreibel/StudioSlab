@@ -20,6 +20,9 @@ public:
     Real getElTime_musec() const { return timer.elapsed().wall*1e-3; }
     Real getElTime_nsec() const { return timer.elapsed().wall; }
 
+    void stop() { timer.stop(); }
+    void resume() { timer.resume(); }
+
 private:
     CPUTimer timer = CPUTimer();
 };

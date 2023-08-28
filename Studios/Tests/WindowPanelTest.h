@@ -2,8 +2,8 @@
 // Created by joao on 30/08/2021.
 //
 
-#ifndef V_SHAPE_WINDOWTREEBUILDERTEST_H
-#define V_SHAPE_WINDOWTREEBUILDERTEST_H
+#ifndef V_SHAPE_WINDOWPANELTEST_H
+#define V_SHAPE_WINDOWPANELTEST_H
 
 
 #include <Base/Backend/Events/EventListener.h>
@@ -22,4 +22,4 @@ public:
 };
 
 
-#endif //V_SHAPE_WINDOWTREEBUILDERTEST_H
+#endif //V_SHAPE_WINDOWPANELTEST_H

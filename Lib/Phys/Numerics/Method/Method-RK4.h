@@ -62,10 +62,12 @@ public:
         for(size_t i=0; i<n_steps; ++i)
         {
             const Real t = (steps+i)*dt;
-            H.startStep(t, dt);
 
             #pragma omp parallel
             {
+                H.startStep(phi, t, dt);
+                #pragma omp barrier
+
                 H.applyBC(phi, t, dt);
                 #pragma omp barrier
 
@@ -95,9 +97,10 @@ public:
                 phiTemp.StoreAddition(k1, k2)*=inv6;
                 phi+=phiTemp;
                 #pragma omp barrier
-            }
 
-            H.finishStep(t, dt);
+                H.finishStep(phi, t, dt);
+                #pragma omp barrier
+            }
         }
         steps+=n_steps;
     }

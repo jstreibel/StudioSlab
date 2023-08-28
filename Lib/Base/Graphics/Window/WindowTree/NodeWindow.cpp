@@ -55,7 +55,7 @@ void NodeWindow::arrange() {
 }
 
 void NodeWindow::draw() {
-    Window::draw( );
+    if(children.empty()) Window::draw( );
 
     for(auto win : children)
         win->draw();

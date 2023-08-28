@@ -39,7 +39,6 @@ namespace Graphics {
 
 
         // ********************* From Socket ********************* //
-        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
     protected:
         void handleOutput(const OutputPacket &outInfo) override;
         // ********************* END Socket ********************** //

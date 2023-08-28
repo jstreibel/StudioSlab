@@ -22,6 +22,7 @@ add_library(${LIB_LOCAL_NAME} ${GRAPHIC_BACKEND_SOURCE} ${CONSOLE_BACKEND_SOURCE
 
 target_link_libraries( ${LIB_LOCAL_NAME}
 		Slab-3rdParty-Imgui
+		Slab-3rdParty-GLFreetype
 		Slab-Utils
 		Slab-Base-Graphics
 

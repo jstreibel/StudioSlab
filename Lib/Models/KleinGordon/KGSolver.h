@@ -35,16 +35,19 @@ namespace Fields {
                 delete &V;
             }
 
-            EqState &
-            dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override {
+            void startStep(const EqState &in, Real t, Real dt) override {
+                MyBase::startStep(in, t, dt);
+
                 if(temp1 == nullptr){
                     assert(temp2 == nullptr);
 
-                    temp1 = (DiscrFuncType*)stateIn.getPhi().Clone();
-                    temp2    = (DiscrFuncType*)stateIn.getPhi().Clone();
+                    temp1 = (DiscrFuncType*)in.getPhi().Clone();
+                    temp2    = (DiscrFuncType*)in.getPhi().Clone();
                 }
-                #pragma omp barrier
+            }
 
+            EqState &
+            dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override {
                 const auto &iPhi = stateIn.getPhi();
                 const auto &iDPhi = stateIn.getDPhiDt();
                 auto &oPhi = stateOut.getPhi();

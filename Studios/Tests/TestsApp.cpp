@@ -5,26 +5,32 @@
 #include "TestsApp.h"
 
 #include "WindowPanelTest.h"
-//#include "WindowTreeBuilderTest.h"
+#include "WindowTreeBuilderTest.h"
+#include "GLFreeTypeTests.h"
 
 #include <Base/Backend/GLUT/GLUTBackend.h>
 #include <Base/Backend/DummyProgram.h>
 
+#define DONT_REGISTER false
 
-TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv) {}
+TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv, DONT_REGISTER) {
+    Backend::Initialize<GLUTBackend>();
+
+    AppBase::registerToManager();
+}
 
 
 int TestsApp::run() {
-    //auto view = WindowTreeBuilderTest();
-    auto view = std::shared_ptr<WindowPanelTest>();
-
-    auto pDummyProgram = new DummyProgram;
+    Window *test;
+    if(false)      test = new WindowTreeBuilderTest;
+    else if(false) test = new WindowPanelTest;
+    else test = new GLFreeTypeTests;
 
     auto &backend = GLUTBackend::GetInstance();
 
-    backend.addWindow(view);
+    backend.addWindow(Window::Ptr(test));
 
-    backend.run(pDummyProgram);
+    backend.run(new DummyProgram);
 
     return 0;
 }

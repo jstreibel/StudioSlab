@@ -92,7 +92,7 @@ OStream &Log::Success()             { auto &me = Log::GetSingleton(); auto &stre
 OStream &Log::Warning()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningFormat           << "Warning"   << me.postfix(); return stream; }
 OStream &Log::WarningImportant()    { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningImportantFormat  << "Warning!"  << me.postfix(); return stream; }
 OStream &Log::Error()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
-OStream &Log::Fatal()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash" << me.postfix(); return stream; }
+OStream &Log::ErrorFatal()          { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash" << me.postfix(); return stream; }
 
 auto Log::Info             (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
 auto Log::Note             (const Str &str) -> OStream& { return Note() << str << Log::Flush;}
@@ -103,7 +103,7 @@ auto Log::Success          (const Str &str) -> OStream& { return Success() << st
 auto Log::Warning          (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
 auto Log::WarningImportant (const Str &str) -> OStream& { return Warning() << str << Log::Flush;}
 auto Log::Error            (const Str &str) -> OStream& { return Error() << str << Log::Flush;}
-auto Log::ErrorFatal       (const Str &str) -> OStream& { return Fatal() << str << Log::Flush;}
+auto Log::ErrorFatal       (const Str &str) -> OStream& { return ErrorFatal() << str << Log::Flush;}
 
 auto Log::FlushAll() -> void {
     *Log::GetSingleton().mainStream << Log::Flush;

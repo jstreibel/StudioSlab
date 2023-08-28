@@ -29,8 +29,8 @@ namespace Slab {
         virtual EqState& applyBC(EqState &state, Real t, Real dt);
         virtual EqState& dtF(const EqState &in, EqState &out, Real t, Real dt) = 0;
 
-        virtual void startStep (Real t, Real dt) {};
-        virtual void finishStep(Real t, Real dt) {};
+        virtual void startStep (const EqState &in, Real t, Real dt) {};
+        virtual void finishStep(const EqState &in, Real t, Real dt) {};
 
         EqState &operator()(const EqState &in, EqState &out, Real t, Real dt) {
             return this->dtF(in, out, t, dt);

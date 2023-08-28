@@ -34,7 +34,7 @@ namespace RtoR {
         explicit LangevinKGSolver(const NumericConfig &numericParams, RtoR::KGSolver::MyBase::EqBoundaryCondition &boundary)
         : RtoR::KGSolver(numericParams, boundary, *(new RtoR::AbsFunction())) { }
 
-        void startStep(Real t, Real dt) override;
+        void startStep(const EqState &stateIn, Real t, Real dt) override;
 
         void ComputeImpulses();
 

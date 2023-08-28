@@ -4,8 +4,10 @@ add_executable ( Tests
 		TestsMain.cpp
 		TestsApp.cpp
 		WindowPanelTest.cpp
-		WindowTreeBuilderTest.cpp)
+		WindowTreeBuilderTest.cpp
+		GLFreeTypeTests.cpp
+		GLFreeTypeTests.h)
 
-target_link_libraries ( Tests ${SlabLibs} Slab-Fields-Maps-RtoR_GPU )
+target_link_libraries ( Tests ${SlabLibs} Slab-Maps-RtoR_GPU freetype-gl )
 
 message(NOTICE "Added executable Tests")

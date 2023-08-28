@@ -1,12 +1,11 @@
 #pragma once
-#include <OpenGL/gl.h>
+#include <GL/gl.h>
 #include <string>
 #include <vector>
+
 namespace glfreetype {
 
-    // NEHE tutorial
-
-    // This Holds All Of The Information Related To Any
+    // This Holds All The Information Related To Any
     // FreeType Font That We Want To Create. 
     struct font_data {
         float h;                      // Holds The Height Of The Font.

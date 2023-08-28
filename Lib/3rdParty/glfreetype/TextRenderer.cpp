@@ -1,4 +1,4 @@
-#include "glfreetype/TextRenderer.hpp"
+#include "TextRenderer.hpp"
 
 #include <ft2build.h>
 #include <freetype/freetype.h>
@@ -6,8 +6,8 @@
 #include <freetype/ftoutln.h>
 #include <freetype/fttrigon.h>
 #include FT_FREETYPE_H
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
 #include <iostream>
 #include <string>

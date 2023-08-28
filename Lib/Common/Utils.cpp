@@ -119,6 +119,10 @@ bool Common::areEqual(const Real &lhs, const Real &rhs, const Real eps) {
     return std::abs(lhs-rhs) < eps;
 }
 
+
+#include <filesystem>
+Str Common::GetPWD() { return std::filesystem::current_path(); }
+
 Str ToStr(const double &a_value, const int &decimal_places, bool useScientificNotation) {
     auto base = useScientificNotation ? std::scientific : std::fixed;
     std::ostringstream out;

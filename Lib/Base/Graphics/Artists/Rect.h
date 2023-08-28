@@ -7,8 +7,15 @@
 
 #include <Common/Types.h>
 
+template<typename T>
 struct Rect {
-    Real xMin, xMax, yMin, yMax;
+    T xMin, xMax, yMin, yMax;
+
+    T w() const {return xMax-xMin; }
+    T h() const {return yMax-yMin; }
 };
+
+typedef Rect<int> RectI;
+typedef Rect<Real> RectR;
 
 #endif //STUDIOSLAB_RECT_H

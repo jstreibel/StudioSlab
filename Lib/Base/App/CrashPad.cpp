@@ -29,7 +29,7 @@ int runProg(int, const char**) {
 Str FORMAT;
 
 #define LogException(description, what, exitFunc)                                       \
-    { Log::Fatal() << description << ": \"" << FORMAT << what << Log::ResetFormatting   \
+    { Log::ErrorFatal() << description << ": \"" << FORMAT << what << Log::ResetFormatting   \
                    << "\". Application will now exit." << Log::Flush;                    \
       exitFunc();                                                                       \
       return EXIT_FAILURE; }

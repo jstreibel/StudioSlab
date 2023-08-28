@@ -4,6 +4,9 @@ set( GRAPHICS_SOURCES
 		ZoomPanRotate.cpp
 
 		Styles/StylesAndColorSchemes.cpp
+		Styles/ColorMap.h
+		Styles/ColorMap.cpp
+        Styles/Colors.cpp
 
 		Window/StatsDisplay.cpp
 		Window/Window.cpp
@@ -12,22 +15,18 @@ set( GRAPHICS_SOURCES
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp
 
-		SFML/Graph.cpp
-
-		#FunctionRenderer.cpp
-		#GraphCollections.cpp
-
-		OpenGL/Utils.cpp
-		OpenGL/GLUTUtils.cpp
-        OpenGL/Texture.cpp
-        OpenGL/Texture.h
-		Styles/ColorMap.h
-		Styles/ColorMap.cpp
-        Styles/Colors.cpp
 		Window/WindowContainer/WindowRow.cpp
 		Window/WindowContainer/WindowRow.h
 		Window/WindowContainer/WindowColumn.cpp
 		Window/WindowContainer/WindowColumn.h
+
+		SFML/Graph.cpp
+
+		OpenGL/Utils.h			OpenGL/Utils.cpp
+		OpenGL/GLUTUtils.h  	OpenGL/GLUTUtils.cpp
+		OpenGL/Texture.h		OpenGL/Texture.cpp
+		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
+		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
 
 )
 

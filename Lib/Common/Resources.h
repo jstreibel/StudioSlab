@@ -12,19 +12,28 @@ namespace Resources {
     const auto Folder = std::string("/home/joao/Developer/StudioSlab/Resources/");
     const auto FontsFolder = Folder + "Fonts/";
 
-    const StrVector fonts = {"imgui/Cousine-Regular.ttf",
-                             "imgui/DroidSans.ttf",
-                             "imgui/Karla-Regular.ttf",
-                             "imgui/ProggyClean.ttf",
-                             "imgui/ProggyTiny.ttf",
-                             "imgui/Roboto-Medium.ttf",
+    const StrVector fonts = {"imgui/Cousine-Regular.ttf",               //  0
+                             "imgui/DroidSans.ttf",                     //  1
+                             "imgui/Karla-Regular.ttf",                 //  2
+                             "imgui/ProggyClean.ttf",                   //  3
+                             "imgui/ProggyTiny.ttf",                    //  4
+                             "imgui/Roboto-Medium.ttf",                 //  5
 
-                             "EBGaramond-VariableFont_wght.ttf",
-                             "FontAwesome-Solid.ttf",
-                             "Inconsolata-Regular.ttf",
+                             "LatinModern/lmroman10-regular.otf",       //  6
+                             "LatinModern/lmromancaps10-regular.otf",   //  7
 
-                             "Roboto-Regular.ttf",
-                             "times-new-roman-14.ttf",};
+                             "Lucida/LSANS.TTF",                        //  8
+
+                             "JuliaMono/JuliaMono-Regular.ttf",         //  9
+
+                             "EBGaramond-VariableFont_wght.ttf",        // 10
+                             "FontAwesome-Solid.ttf",                   // 11
+                             "Inconsolata-Regular.ttf",                 // 12
+
+                             "Roboto-Regular.ttf",                      // 13
+                             "times-new-roman-14.ttf",                  // 14
+                             "Simplex.ttf"                              // 15
+                             };
 
     Str fontFileName(int index);
 

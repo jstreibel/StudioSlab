@@ -12,7 +12,7 @@
 using namespace Base;
 
 #define AUTO_ADJUST_SAMPLES_PER_SECOND true
-#define MAX_AVG_SAMPLES (60UL)
+#define MAX_AVG_SAMPLES (8*60UL)
 #define MIN_FPS 24
 #define MAX_FPS 30
 
@@ -32,12 +32,11 @@ void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     GUIBackend::GetInstance().requestRender();
 }
 
-auto Graphics::OpenGLMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformationOStream) -> bool {
-    // return finishFrameAndRender();
-    return true;
-}
-
 void Graphics::OpenGLMonitor::writeStats() {
+    static bool hasFinished = false;
+    hasFinished = !(lastData.getSteps()<params.getn());
+
+
     static auto timer = Timer();
     auto elTime = timer.getElTime_msec();
     timer = Timer();
@@ -82,7 +81,7 @@ void Graphics::OpenGLMonitor::writeStats() {
         avgSPs /= (Real)total;
         avgSPS /= (Real)total;
 
-        if(AUTO_ADJUST_SAMPLES_PER_SECOND) {
+        if(AUTO_ADJUST_SAMPLES_PER_SECOND && !hasFinished) {
             static Count counter = 0;
             static fix baseNSteps = getnSteps();
             // static let multiplier = 1;
@@ -106,8 +105,17 @@ void Graphics::OpenGLMonitor::writeStats() {
 
     fix stepsToFinish = params.getn() - step;
     fix timeToFinish = (int)(avgSPS==0.0 ? 0 : stepsToFinish/(int)avgSPS);
-    fix timeMin = timeToFinish/60;
-    fix timeSec = timeToFinish%60;
+    fix remainingTimeMin = timeToFinish / 60;
+    fix remainingTimeSec = timeToFinish % 60;
+
+    static auto totalTime = Timer();
+
+    if(hasFinished) totalTime.stop();
+
+    fix totalTimeIn_msec = (int)totalTime.getElTime_msec();
+    fix totalTimeMSecs = (totalTimeIn_msec%1000);
+    fix totalTimeSecs = (totalTimeIn_msec/1000)%60;
+    fix totalTimeMins = (totalTimeIn_msec/1000)/60;
 
     stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
@@ -116,7 +124,11 @@ void Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
-    stats.addVolatileStat(Str("Finish in ") + (timeMin<10?"0":"") + ToStr(timeMin) + "m" + (timeSec<10?"0":"") + ToStr(timeSec) + "s");
+    stats.addVolatileStat(Str("Finish in ") + (remainingTimeMin < 10 ? "0" : "") + ToStr(remainingTimeMin) + "m" + (remainingTimeSec < 10 ? "0" : "") + ToStr(remainingTimeSec) + "s");
+    fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";
+    fix elTimeSecs_str = (totalTimeSecs < 10 ? "0" : "") + ToStr(totalTimeSecs) + "s";
+    fix elTimeMSecs_str = Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
+    stats.addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
     stats.addVolatileStat(Str("<\\br>"));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));

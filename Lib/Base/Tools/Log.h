@@ -93,7 +93,7 @@ public:
     static auto Warning          ()               -> OStream&;
     static auto WarningImportant ()               -> OStream&;
     static auto Error            ()               -> OStream&;
-    static auto Fatal       ()               -> OStream&;
+    static auto ErrorFatal       ()               -> OStream&;
 
     static auto Info             (const Str& str) -> OStream&;
     static auto Note             (const Str& str) -> OStream&;

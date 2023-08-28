@@ -48,6 +48,7 @@ void Numerics::OutputSystem::Socket::output(const OutputPacket &outData){
 }
 
 auto Numerics::OutputSystem::Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
+    lastData = theVeryLastOutputInformation;
     return true;
 }
 

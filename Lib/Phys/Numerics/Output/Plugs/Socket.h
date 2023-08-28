@@ -28,7 +28,7 @@ namespace Numerics::OutputSystem {
 
         std::shared_ptr<Socket> Ptr;
 
-        virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;;
+        virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;
         auto getDescription() const -> Str;
         auto getName() const -> Str;
 

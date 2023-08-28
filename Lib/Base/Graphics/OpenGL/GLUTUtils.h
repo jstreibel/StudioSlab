@@ -38,7 +38,7 @@ namespace GLUTUtils {
     void write(const Window *window, float fontScale, float x, float y, std::string str,
                void *font = FONT_STROKE_DEFAULT);
 
-    void writeOrtho(const Window *window, Rect region, float fontScale, float x, float y, std::string str,
+    void writeOrtho(const Window *window, RectR region, float fontScale, float x, float y, std::string str,
                     void *font = FONT_STROKE_DEFAULT);
 
     void writeBitmap(const Window *window, float x, float y, std::string str,

@@ -47,9 +47,9 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
     {
         auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
 
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "T_1");
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "T = 2<K>/L");
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "T_3");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ = 2<K>/L = ");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ = ");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
         panel.addWindowToColumn(&mTemperaturesGraph, 0);
 
         auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
@@ -143,8 +143,9 @@ void RtoR::Thermal::Monitor::draw() {
                 updateSamples = true;
             }
 
+            fix Δt_max = params.gett() - transientGuess;
             auto Dt = (float)Δt;
-            if(ImGui::SliderFloat("sampling range (Delta t)", &Dt, (float)tMax*1e-2f, (float)tMax*2.5e-1f)) {
+            if(ImGui::SliderFloat("sampling range (Delta t)", &Dt, (float)tMax/simulationHistory->getM(), Δt_max)) {
                 Δt = Dt;
                 sampler->invalidateSamples();
                 updateSamples = true;
@@ -242,9 +243,9 @@ void RtoR::Thermal::Monitor::draw() {
     stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
     style = Styles::GetColorScheme()->funcPlotStyles.begin();
-    stats.addVolatileStat(Str("tau = <dotphi^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("tau* = u - barphi/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("tau** = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
+    stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
+    stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
+    stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
 
     mTemperaturesGraph.set_xMax(t);
 

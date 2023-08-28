@@ -41,7 +41,7 @@ void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool k
     outputs.push_back(out);
     if(keepTrack) myOutputs.push_back(out);
 
-    Log::Info() << "Output manager added \"" << out->getName() << "\" output channel. Updates "
+    Log::Info() << "Output manager added '" << out->getName() << "' output channel. Updates "
                 << "every " << out->getnSteps() << " sim steps." << Log::Flush;
 }
 
@@ -52,8 +52,10 @@ void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOut
     for(auto output : myOutputs)
     {
         if(!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-            Log::Error() << "Error while finishing " << output->getDescription() << "..." << Log::Flush;
+            Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
 
-        Log::Info() << "Finished output channel '" << output->getDescription() << "'." << Log::Flush;
+        Log::Info() << "Finished output channel '" << output->getName() << "'." << Log::Flush;
     }
+
+
 }

@@ -26,8 +26,6 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()  {
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
     window = new Window();
-    //auto graph = new Graph();
-    //window->addArtist(graph);
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
     window = new Window();
@@ -46,4 +44,10 @@ void WindowTreeBuilderTest::notifyReshape(int width, int height) {
     main->setSize(width,  height);
 
     main->arrange();
+}
+
+bool WindowTreeBuilderTest::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
+    notifyReshape(newScreenWidth, newScreenHeight);
+
+    return true;
 }

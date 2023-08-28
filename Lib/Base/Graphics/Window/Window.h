@@ -8,6 +8,7 @@
 
 #include "Base/Graphics/Artists/Artist.h"
 #include "Base/Backend/Events/EventListener.h"
+#include "Base/Graphics/Artists/Rect.h"
 
 #include <vector>
 #include <memory>
@@ -28,11 +29,14 @@ public:
 
     bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
 
+    bool notifyRender(float elTime_msec) override;
+
     void setDecorate(bool _decorate);
     void setClear(bool _clear);
 
     auto doesHit(int xMouse, int yMouse) const -> bool;
 
+    RectI getViewport() const;
     int getx() const { return x; }
     int gety() const { return y; }
     int getw() const { return w; }
@@ -41,11 +45,13 @@ public:
     void sety(int _y) { this->y = _y; }
     void setSize(int _w, int _h) { this->notifyReshape(_w, _h); }
 
+
+
 protected:
     int w, h, x, y;
 
-    Real winXoffset = 2;
-    Real winYoffset = 2;
+    int winXoffset = 2;
+    int winYoffset = 2;
 
     bool gotHit = false;
 

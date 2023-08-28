@@ -2,15 +2,19 @@
 // Created by joao on 20/04/2021.
 //
 
+#include <GL/glew.h>
+#include <GL/gl.h>
+
 #include "Window.h"
 #include "Base/Graphics/Styles/StylesAndColorSchemes.h"
-#include "Base/Graphics/OpenGL/GLUTUtils.h"
+// #include "Base/Graphics/OpenGL/GLUTUtils.h"
 
-#include <GL/gl.h>
 
 Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
 
 void Window::draw() {
+    glUseProgram( 0 );
+
     _setupViewport();
 
     for(auto artist : content) artist->draw(this);
@@ -51,17 +55,18 @@ void Window::_setupViewport() const {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
-    glViewport(x + winXoffset, y + winYoffset,
-               w-2*winXoffset, h-2*winYoffset);
+    auto vp = getViewport();
+    // glViewport(x + winXoffset, y + winYoffset, w - 2 * winXoffset, h - 2 * winYoffset);
+    glViewport(vp.xMin, vp.yMin, vp.w(), vp.h());
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    if(clear)
+    if (clear)
         this->_clear();
-
-    if(decorate)
+    if (decorate)
         this->_decorate();
+
 }
 
 void Window::addArtist(Artist *pArtist) {
@@ -101,3 +106,18 @@ IntPair Window::getWindowSizeHint() { return {-1, -1}; }
 void Window::setDecorate(bool _decorate) { this->decorate = _decorate; }
 
 void Window::setClear(bool _clear) { this->clear = _clear; }
+
+bool Window::notifyRender(float elTime_msec) {
+    this->draw();
+
+    return EventListener::notifyRender(elTime_msec);
+}
+
+RectI Window::getViewport() const {
+    auto _x = x + winXoffset,
+         _y = y + winYoffset,
+         _w = w - 2 * winXoffset,
+         _h = h - 2 * winYoffset;
+
+    return {_x, _x+_w, _y, _y+_h};
+}

@@ -1,5 +1,15 @@
 set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
+
+add_subdirectory(freetype-gl)
+
+
+set ( RESAMPLE_SOURCE
+		libresample/include/*
+		libresample/src/*
+)
+
+
 set ( IMGUI_SOURCE
 		imgui/imgui.cpp
 		imgui/imgui_draw.cpp
@@ -12,10 +22,15 @@ set ( IMGUI_SOURCE
 
 		imgui/misc/freetype/imgui_freetype.cpp)
 
-set ( RESAMPLE_SOURCE
-		libresample/include/*
-		libresample/src/*
-)
-
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE})
-target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype)
+target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype GLU)
+message(NOTICE "Added library ${THIRDPARTY_LIB_BASE_NAME}-Imgui" )
+
+
+set ( GLFREETYPE_SOURCE
+		glfreetype/TextRenderer.hpp
+		glfreetype/TextRenderer.cpp )
+
+add_library(${THIRDPARTY_LIB_BASE_NAME}-GLFreetype STATIC ${GLFREETYPE_SOURCE})
+target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-GLFreetype freetype)
+message(NOTICE "Added library ${THIRDPARTY_LIB_BASE_NAME}-GLFreetype" )
