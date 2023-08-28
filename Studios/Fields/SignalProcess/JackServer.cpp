@@ -6,9 +6,9 @@
 
 #include "JackServer.h"
 
-#include "Common/STDLibInclude.h"
-#include "Common/Utils.h"
-#include "Common/UtilsCollection/Resample.h"
+#include "Utils/STDLibInclude.h"
+#include "Utils/Utils.h"
+#include "Utils/UtilsCollection/Resample.h"
 #include "Core/Tools/Log.h"
 
 #include <iostream>

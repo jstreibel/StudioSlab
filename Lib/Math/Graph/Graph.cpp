@@ -7,13 +7,13 @@
 #include <utility>
 #include "imgui.h"
 
-#include "Common/Printing.h"
+#include "Utils/Printing.h"
 #include "Core/Tools/Log.h"
 
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
-#include "Common/Resources.h"
+#include "Utils/Resources.h"
 
 #define MARK                                                                                            \
     {                                                                                                   \

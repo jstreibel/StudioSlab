@@ -1,8 +1,8 @@
 #ifndef DERIVATIVESGPU_CUH
 #define DERIVATIVESGPU_CUH
 
-#include "Common/DeviceConfig.h"
-#include "Common/Types.h"
+#include "Utils/DeviceConfig.h"
+#include "Utils/Types.h"
 
 #include <cuda_runtime_api.h>
 #include <cuda_runtime.h>

@@ -4,7 +4,7 @@
 
 #include "SignumFunction.h"
 
-#include "Common/DeviceConfig.h"
+#include "Utils/DeviceConfig.h"
 
 
 struct Sign{

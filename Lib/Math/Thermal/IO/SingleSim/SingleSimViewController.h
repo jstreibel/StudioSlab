@@ -5,7 +5,7 @@
 #ifndef ISING_SINGLESIMVIEWCONTROLLER_H
 #define ISING_SINGLESIMVIEWCONTROLLER_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #include "Core/Controller/Nuklear/NuklearSFML.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"

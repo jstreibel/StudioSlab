@@ -9,7 +9,7 @@
 #include "Core/Graphics/Utils.h"
 #include "Core/Graphics/Window/Window.h"
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 
 class StatsDisplay : public Window {

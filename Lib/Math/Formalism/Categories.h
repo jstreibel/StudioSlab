@@ -7,7 +7,7 @@
 
 #include "Category.h"
 
-#include "Common/Utils.h"
+#include "Utils/Utils.h"
 #include "Math/Toolset/NativeFunctions.h"
 
 // NaN: uncomment one of the following 3 methods of defining a global NaN

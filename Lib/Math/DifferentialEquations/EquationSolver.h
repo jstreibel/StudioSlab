@@ -1,7 +1,7 @@
 #ifndef HAMILTON_H
 #define HAMILTON_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "EquationState.h"
 #include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "BoundaryConditions.h"

@@ -7,7 +7,7 @@
 #include "RtoRDiscreteFunctionCPU.h"
 #include "Mappings/RtoR/Model/Derivatives/DerivativesCPU.h"
 
-#include "Common/OMPUtils.h"
+#include "Utils/OMPUtils.h"
 
 // Created by joao on 17/09/2019.
 

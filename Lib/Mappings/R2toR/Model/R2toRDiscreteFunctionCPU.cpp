@@ -5,7 +5,7 @@
 
 #include "R2toRDiscreteFunctionCPU.h"
 
-#include "Common/OMPUtils.h"
+#include "Utils/OMPUtils.h"
 
 using namespace R2toR;
 

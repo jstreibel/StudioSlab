@@ -5,9 +5,9 @@
 #ifndef V_SHAPE_R2TORFUNCTION_H
 #define V_SHAPE_R2TORFUNCTION_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 #include "Math/Function/CommonFunctions.h"
 
 namespace R2toR {

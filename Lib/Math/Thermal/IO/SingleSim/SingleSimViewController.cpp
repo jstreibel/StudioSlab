@@ -15,7 +15,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 
-#include "Common/Utils.h"
+#include "Utils/Utils.h"
 #include "Core/Controller/Nuklear/NuklearSFML.h"
 #include "Math/Toolset/NativeFunctions.h"
 

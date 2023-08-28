@@ -2,7 +2,7 @@
 #define BACKEND_H
 
 #include "Program.h"
-#include "Common/Singleton.h"
+#include "Utils/Singleton.h"
 #include "Events/MouseState.h"
 #include "Core/Controller/Interface/InterfaceOwner.h"
 

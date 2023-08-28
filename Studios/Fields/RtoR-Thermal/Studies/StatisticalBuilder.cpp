@@ -10,7 +10,7 @@
 
 #include <math.h>
 #include "StatisticalBuilder.h"
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 
 RtoR::StatisticalBuilder::StatisticalBuilder()
 : RtoR::Thermal::Builder("Statistical", "Energy and density of oscillons statistical input")

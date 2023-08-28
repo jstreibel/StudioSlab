@@ -4,7 +4,7 @@
 
 #include "MetropolisAlgorithm.h"
 
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"
 
 #include <cmath>

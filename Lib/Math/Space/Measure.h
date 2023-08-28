@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MEASURE_H
 
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 class Measure {
     RealVector linearValues;

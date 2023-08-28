@@ -1,7 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include "Common/DeviceConfig.h"
+#include "Utils/DeviceConfig.h"
 
 #include "Core/Controller/Interface/InterfaceOwner.h"
 #include "Core/Controller/Interface/CommonParameters.h"

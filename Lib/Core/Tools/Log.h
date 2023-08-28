@@ -6,13 +6,13 @@
 #define STUDIOSLAB_LOG_H
 
 
-#include "Common/Types.h"
-#include "Common/Utils.h"
-#include "Common/Timer.h"
+#include "Utils/Types.h"
+#include "Utils/Utils.h"
+#include "Utils/Timer.h"
 
 #include "Core/Controller/Interface/CommonParameters.h"
 #include "Core/Controller/Interface/InterfaceOwner.h"
-#include "Common/Singleton.h"
+#include "Utils/Singleton.h"
 
 #define FORCE_VERBOSE false
 

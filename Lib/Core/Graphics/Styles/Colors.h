@@ -6,7 +6,7 @@
 #define SLAB_COLOR_H
 
 #include <cmath>
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace Styles {
     class Color

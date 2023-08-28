@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_PARTICLE_H
 #define STUDIOSLAB_PARTICLE_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #define CUTOFF_RADIUS 4
 

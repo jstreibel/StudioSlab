@@ -5,7 +5,7 @@
 #include <boost/numeric/odeint.hpp>
 
 #include "VerletStepper.h"
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 #include "Particle.h"
 
 template<class Model>

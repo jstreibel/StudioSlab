@@ -8,7 +8,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
 #include "Math/DifferentialEquations/EquationSolver.h"
-#include "Common/DeviceConfig.h"
+#include "Utils/DeviceConfig.h"
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace RtoR {

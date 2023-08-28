@@ -6,7 +6,7 @@
 #define STUDIOSLAB_POINT_H
 
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 
 #include "Math/Formalism/Categories.h"
 

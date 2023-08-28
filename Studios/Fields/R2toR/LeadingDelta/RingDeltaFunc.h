@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RINGDELTAFUNC_H
 #define STUDIOSLAB_RINGDELTAFUNC_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"

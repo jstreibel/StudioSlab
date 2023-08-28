@@ -3,7 +3,7 @@
 //
 #include "Energy.h"
 
-#include "Common/RandUtils.cpp"
+#include "Utils/RandUtils.cpp"
 
 Real Fields::KleinGordon::Energy::operator[](const R2toR::EquationState &function) const {
     const auto &phi = function.getPhi();

@@ -4,7 +4,7 @@
 
 #include "BenchmarkHistogram.h"
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "Core/Tools/Log.h"
 
 #include <cmath>

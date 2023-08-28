@@ -5,34 +5,36 @@
 #ifndef STUDIOSLAB_LABEL_H
 #define STUDIOSLAB_LABEL_H
 
-#include "Common/Types.h"
+#include <utility>
+
+#include "Utils/Types.h"
 #include "Artist.h"
 
 struct LabelSource : public Artist {
-    virtual ~LabelSource() {}
+    virtual ~LabelSource() = default;
 
     virtual const char* get() = 0;
 };
 
 struct StringLabelSource : public LabelSource {
 public:
-    StringLabelSource(Str annotation) : annotation(annotation) {}
-    const char* get() { return annotation.c_str(); }
+    explicit StringLabelSource(Str annotation) : annotation(std::move(annotation)) {}
+    const char* get() override { return annotation.c_str(); }
 
 private:
     Str annotation;
-} __attribute__((aligned(32)));
+};
 
 struct VariableLabelSource : public LabelSource {
 public:
     VariableLabelSource(Str varName, const Real *source)
-            : varName(varName), source(source)
+            : varName(std::move(varName)), source(source)
     {
         tempBuffer.setf(std::ios::fixed,std::ios::floatfield);
         tempBuffer.precision(6);
     }
 
-    const char* get() {
+    const char* get() override {
         tempBuffer.str("");
         tempBuffer << varName << " = " << *source;
 
@@ -43,7 +45,7 @@ public:
 private:
     std::ostringstream tempBuffer;
     Str str;
-    char text[256];
+    char text[256]{};
 
     Str varName;
     const Real *source;

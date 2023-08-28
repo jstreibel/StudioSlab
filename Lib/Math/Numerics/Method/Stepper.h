@@ -1,7 +1,7 @@
 #ifndef STEPPER_H
 #define STEPPER_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 class Stepper {
 public:

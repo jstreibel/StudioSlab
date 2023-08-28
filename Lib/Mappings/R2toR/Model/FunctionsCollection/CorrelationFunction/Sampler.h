@@ -8,7 +8,7 @@
 
 #include <vector>
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "Math/Formalism/Categories.h"
 #include "Mappings/RtoR2/ParametricCurve.h"
 

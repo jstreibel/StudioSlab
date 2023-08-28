@@ -3,7 +3,7 @@
 
 #include "NewtonMechanics.h"
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace MolecularDynamics {
     class Langevin : public NewtonMechanics {

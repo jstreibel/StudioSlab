@@ -5,7 +5,7 @@
 #ifndef FIELDS_BYTEDATA_H
 #define FIELDS_BYTEDATA_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace Numerics {
     typedef std::vector<char> ByteData;

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_GRAPH_H
 
 
-#include "Common/Utils.h"
+#include "Utils/Utils.h"
 
 #include "Core/Graphics/Utils.h"
 #include "Core/Graphics/Artists/Label.h"

@@ -5,7 +5,7 @@
 #ifndef ISING_RANDUTILS_H
 #define ISING_RANDUTILS_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace RandUtils {
     void seed(int s);

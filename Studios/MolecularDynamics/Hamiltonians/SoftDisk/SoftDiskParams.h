@@ -7,7 +7,7 @@
 
 #include "Particle.h"
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 
 // PARA FORMAR CLUSTERS:

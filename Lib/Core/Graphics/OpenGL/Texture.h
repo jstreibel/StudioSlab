@@ -6,7 +6,7 @@
 #define STUDIOSLAB_TEXTURE_H
 
 #include "GL/gl.h"
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "Core/Graphics/Styles/Colors.h"
 
 namespace OpenGL {

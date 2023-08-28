@@ -59,8 +59,8 @@ auto operator*(const TypeB &val, const ParameterTemplate<TypeA> &p) -> TypeB { r
 
 #ifdef PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
-#include "Common/STDLibInclude.h"
-#include "Common/Utils.h"
+#include "Utils/STDLibInclude.h"
+#include "Utils/Utils.h"
 
 template<class Type>
 ParameterTemplate<Type>::~ParameterTemplate() = default;

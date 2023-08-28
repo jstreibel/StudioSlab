@@ -5,7 +5,7 @@
 #ifndef MOLEKUL_PLAY_FIXEDSIZEMOLECULECONTAINER_H
 #define MOLEKUL_PLAY_FIXEDSIZEMOLECULECONTAINER_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "HashParams.h"
 
 

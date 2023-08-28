@@ -6,7 +6,7 @@
 #define STUDIOSLAB_JACKSERVER_H
 
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 
 
 #include <jack/jack.h>

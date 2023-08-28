@@ -2,7 +2,7 @@
 #define SOFT_DISK_H
 
 #include "Hamiltonians/Langevin.h"
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace MolecularDynamics {
 

@@ -4,8 +4,8 @@
 
 #include "LangevinKGSolver.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Common/RandUtils.h"
-#include "Common/OMPUtils.h"
+#include "Utils/RandUtils.h"
+#include "Utils/OMPUtils.h"
 
 Real xi() {
     /*

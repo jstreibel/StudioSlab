@@ -6,8 +6,8 @@
 #include "OutGL.h"
 #include "JackServer.h"
 
-#include "Common/RandUtils.h"
-#include "Common/UtilsCollection/Resample.h"
+#include "Utils/RandUtils.h"
+#include "Utils/UtilsCollection/Resample.h"
 #include "3rdParty/imgui/imgui.h"
 
 #include <Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h>

@@ -10,7 +10,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"
 
 

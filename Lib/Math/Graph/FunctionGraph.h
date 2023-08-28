@@ -9,7 +9,7 @@
 #include "Core/Graphics/Utils.h"
 #include "Core/Graphics/Artists/Artist.h"
 
-#include "Common/Utils.h"
+#include "Utils/Utils.h"
 
 #include "Core/Graphics/Window/Window.h"
 

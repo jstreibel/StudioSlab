@@ -8,7 +8,7 @@
 #include <vector>
 #include <map>
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "Colors.h"
 
 namespace Styles {

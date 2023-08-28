@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ARITHMETICOPSINTERFACE_H
 #define V_SHAPE_ARITHMETICOPSINTERFACE_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 /** Arithmetical Operations Interface */
 

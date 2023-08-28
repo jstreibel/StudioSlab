@@ -5,7 +5,7 @@
 #include <GL/glew.h>
 #include "GLFreeTypeTests.h"
 
-#include "Common/Resources.h"
+#include "Utils/Resources.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "3rdParty/freetype-gl/freetype-gl.h"
 #include "Core/Tools/Log.h"

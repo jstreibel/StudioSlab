@@ -2,7 +2,7 @@
 
 #include "DerivativesCPU.h"
 
-#include "Common/OMPUtils.h"
+#include "Utils/OMPUtils.h"
 
 //
 // Created by joao on 09/09/2019.

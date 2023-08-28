@@ -4,9 +4,9 @@
 
 #ifndef V_SHAPE_FUNCTIONRTOR_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 #include "Math/Function/CommonFunctions.h"
 
 namespace RtoR {

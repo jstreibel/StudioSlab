@@ -7,7 +7,7 @@
 
 #include "Math/Numerics/VoidBuilder.h"
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/R2toR/R2toRBuilder.h"
 

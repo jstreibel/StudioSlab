@@ -12,7 +12,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 

@@ -5,7 +5,7 @@
 #include "RandomEnergyOverDotPhiBuilder.h"
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Common/RandUtils.h"
+#include "Utils/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 RtoR::RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()

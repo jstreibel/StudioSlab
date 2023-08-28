@@ -6,7 +6,7 @@
 #define STUDIOSLAB_EQUATIONSTATE_H
 
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 #include "Math/Space/Impl/ArithmeticOperationInterface.h"
 
 namespace Simulation {

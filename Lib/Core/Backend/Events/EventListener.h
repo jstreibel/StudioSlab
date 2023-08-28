@@ -8,9 +8,9 @@
 
 #include "Core/Graphics/Animation.h"
 
-#include "Common/Types.h"
-#include "Common/Utils.h"
-#include "Common/Timer.h"
+#include "Utils/Types.h"
+#include "Utils/Utils.h"
+#include "Utils/Timer.h"
 
 
 namespace Base {

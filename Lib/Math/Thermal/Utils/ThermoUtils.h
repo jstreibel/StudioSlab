@@ -5,7 +5,7 @@
 #ifndef ISING_THERMOUTILS_H
 #define ISING_THERMOUTILS_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #include <boost/multiprecision/float128.hpp>
 #include <boost/math/special_functions/expint.hpp>

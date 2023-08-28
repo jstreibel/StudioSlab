@@ -1,7 +1,7 @@
 #ifndef ANALYTIC_BREATHER_H
 #define ANALYTIC_BREATHER_H
 
-#include "Common/NativeTypes.h"
+#include "Utils/NativeTypes.h"
 
 /* (* A static breather *) */
 floatt getPhiValue(floatt t, floatt x, floatt v);

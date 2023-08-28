@@ -5,7 +5,7 @@
 #include "Interface.h"
 #include "InterfaceOwner.h"
 #include "InterfaceManager.h"
-#include "Common/Utils.h"
+#include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
 Interface::Interface(Str name, InterfaceOwner *owner, int priority)

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FUNCTIONAL_H
 #define STUDIOSLAB_FUNCTIONAL_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 namespace Fields {
     namespace Functionals {

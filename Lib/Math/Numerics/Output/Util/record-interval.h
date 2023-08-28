@@ -1,8 +1,8 @@
 #ifndef RECORDINTERVAL_H
 #define RECORDINTERVAL_H
 
-#include "Common/STDLibInclude.h"
-#include "Common/Types.h"
+#include "Utils/STDLibInclude.h"
+#include "Utils/Types.h"
 
 struct RecordInterval{
 	RecordInterval(const Real beginT, const Real endT, const Real x);

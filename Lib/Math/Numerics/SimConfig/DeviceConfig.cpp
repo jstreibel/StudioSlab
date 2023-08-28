@@ -4,8 +4,8 @@
 #include <omp.h>
 #include "DeviceConfig.h"
 
-#include "Common/Utils.h"
-#include "Common/CUDAUtils.h"
+#include "Utils/Utils.h"
+#include "Utils/CUDAUtils.h"
 #include "Core/Tools/Log.h"
 
 

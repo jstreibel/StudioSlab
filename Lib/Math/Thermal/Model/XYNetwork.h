@@ -8,7 +8,7 @@
 #include <bitset>
 #include <vector>
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #include "Core/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"

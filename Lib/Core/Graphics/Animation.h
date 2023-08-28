@@ -1,7 +1,7 @@
 #ifndef ANIMATION_H
 #define ANIMATION_H
 
-#include "Common/Types.h"
+#include "Utils/Types.h"
 
 #include <iostream>
 #include <vector>
