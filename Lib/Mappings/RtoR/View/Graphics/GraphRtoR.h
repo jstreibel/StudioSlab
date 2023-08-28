@@ -6,7 +6,7 @@
 #define STUDIOSLAB_GRAPH2D_H
 
 
-#include "Phys/Graph/FunctionGraph.h"
+#include "Math/Graph/FunctionGraph.h"
 #include "Mappings/FunctionRenderer.h"
 
 

@@ -7,7 +7,7 @@
 
 #include "3rdParty/imgui/imgui.h"
 
-#include "Phys/Function/FunctionScale.h"
+#include "Math/Function/FunctionScale.h"
 #include "Mappings/R2toR/Model/Energy.h"
 
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"

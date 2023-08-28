@@ -9,7 +9,7 @@
 #include <vector>
 
 #include "Common/Types.h"
-#include "Phys/Formalism/Categories.h"
+#include "Math/Formalism/Categories.h"
 #include "Mappings/RtoR2/ParametricCurve.h"
 
 

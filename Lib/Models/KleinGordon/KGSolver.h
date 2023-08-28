@@ -1,9 +1,9 @@
 #ifndef HamiltonCPU_H
 #define HamiltonCPU_H
 
-#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 
-#include "Phys/Numerics/Builder.h"
+#include "Math/Numerics/Builder.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/SignumFunction.h"
 
 

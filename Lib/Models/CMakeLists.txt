@@ -34,12 +34,12 @@ add_library( ${LIB_LOCAL_NAME} STATIC ${MODELS_SOURCES} ${MODELS_SOURCES_CUDA} )
 
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
-		Slab-Base-Backend
-		Slab-Base-Controller
+		Slab-Core-Backend
+		Slab-Core-Controller
 		Slab-Maps-RtoR
 		Slab-Maps-RtoR_GPU
 		Slab-Maps-RtoR-Periodic_GPU
 		Slab-Maps-R2toR_GPU
 
-		Slab-Phys
+		Slab-Math
 		)

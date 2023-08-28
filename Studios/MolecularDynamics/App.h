@@ -6,9 +6,9 @@
 #define STUDIOSLAB_APP_H
 
 
-#include "Base/App/AppBase.h"
+#include "Core/App/AppBase.h"
 #include "Builder.h"
-#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 
 namespace MolecularDynamics {
     class App : public AppBase {

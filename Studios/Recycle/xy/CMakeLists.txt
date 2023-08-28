@@ -25,7 +25,7 @@ add_executable(xy
 
 		BasicSim.h ../../../Lib/Base/Controller/Nuklear/NuklearSFML.h)
 
-target_link_libraries(xy Slab-Phys-CoreThermo Slab-Studios-Controller )
+target_link_libraries(xy Slab-Math-CoreThermo Slab-Studios-Controller )
 
 #add_custom_command(TARGET Ising
 #		POST_BUILD

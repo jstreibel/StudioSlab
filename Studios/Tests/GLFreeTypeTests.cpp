@@ -8,9 +8,9 @@
 #include "Common/Resources.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "3rdParty/freetype-gl/freetype-gl.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 #include "3rdParty/freetype-gl/vertex-buffer.h"
-#include "Base/Graphics/OpenGL/rougier/shader.h"
+#include "Core/Graphics/OpenGL/rougier/shader.h"
 
 const Str shaderDir = "/home/joao/Developer/StudioSlab/Studios/Tests/shaders/";
 

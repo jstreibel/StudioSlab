@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_LASTOUTPUTVTKVISUALIZER_H
 #define STUDIOSLAB_LASTOUTPUTVTKVISUALIZER_H
 
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 
 namespace R2toR {
 

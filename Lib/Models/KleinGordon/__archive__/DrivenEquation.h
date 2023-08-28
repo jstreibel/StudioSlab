@@ -7,7 +7,7 @@
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
-#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "../../../../Studios/Fields/R2toR/LeadingDelta/RingDeltaFunc.h"
 

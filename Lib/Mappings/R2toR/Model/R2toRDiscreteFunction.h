@@ -5,8 +5,8 @@
 #ifndef V_SHAPE_R2TORFUNCTIONARBITRARY_H
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
-#include "Phys/Function/DiscreteFunction.h"
-#include "Phys/Numerics/SimConfig/NumericConfig.h"
+#include "Math/Function/DiscreteFunction.h"
+#include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "R2toRFunction.h"
 
 namespace R2toR {

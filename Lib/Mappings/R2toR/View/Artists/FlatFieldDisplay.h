@@ -5,12 +5,12 @@
 #ifndef STUDIOSLAB_FLATFIELDDISPLAY_H
 #define STUDIOSLAB_FLATFIELDDISPLAY_H
 
-#include "Base/Graphics/Window/Window.h"
-#include "Base/Graphics/OpenGL/Texture.h"
+#include "Core/Graphics/Window/Window.h"
+#include "Core/Graphics/OpenGL/Texture.h"
 
-#include "Phys/Graph/Graph.h"
+#include "Math/Graph/Graph.h"
 #include "Mappings/R2toR/Model/R2toRFunction.h"
-#include "Base/Graphics/Styles/ColorMap.h"
+#include "Core/Graphics/Styles/ColorMap.h"
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Base::Graphics::Graph2D {

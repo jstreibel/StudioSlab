@@ -6,7 +6,7 @@
 #define STUDIOSLAB_EQUATIONSOLVER_H
 
 #include "EquationState.h"
-#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace R2toR {

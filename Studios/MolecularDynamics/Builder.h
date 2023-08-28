@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_BUILDER_H
 #define STUDIOSLAB_BUILDER_H
 
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Math/Numerics/VoidBuilder.h"
 
 namespace MolecularDynamics {
 

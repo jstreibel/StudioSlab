@@ -2,8 +2,8 @@
 // Created by joao on 3/12/23.
 //
 
-#include <Base/App/CrashPad.h>
-#include <Base/Controller/Interface/InterfaceManager.h>
+#include <Core/App/CrashPad.h>
+#include <Core/Controller/Interface/InterfaceManager.h>
 
 #include "Mappings/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
 

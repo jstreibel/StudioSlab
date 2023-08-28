@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Math/Numerics/VoidBuilder.h"
 
 #include "Common/NativeTypes.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/R2toR/R2toRBuilder.h"
 
 namespace R2toR {

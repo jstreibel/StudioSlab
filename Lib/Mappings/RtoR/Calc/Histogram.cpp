@@ -3,7 +3,7 @@
 //
 
 #include "Histogram.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 #define bin(v) int( round ( (v-vMin)/binWidth ) )
 

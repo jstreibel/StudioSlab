@@ -11,8 +11,8 @@
 #include "Mappings/R2toR/Model/R2toRFunction.h"
 #include "Mappings/RtoR2/StraightLine.h"
 
-#include "Base/Graphics/Utils.h"
-#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
+#include "Core/Graphics/Utils.h"
+#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 
 
 namespace RtoR {

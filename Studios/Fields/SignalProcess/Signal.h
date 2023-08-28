@@ -13,8 +13,8 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Phys/DifferentialEquations/BoundaryConditions.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/DifferentialEquations/BoundaryConditions.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 

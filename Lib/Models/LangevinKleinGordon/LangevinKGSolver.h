@@ -11,7 +11,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRSolver.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Math/Numerics/VoidBuilder.h"
 
 #include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"

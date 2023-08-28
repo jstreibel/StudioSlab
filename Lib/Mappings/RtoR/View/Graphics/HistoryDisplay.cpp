@@ -5,7 +5,7 @@
 #include "HistoryDisplay.h"
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 #define min(a, b) ((a)<(b)?(a):(b))
 

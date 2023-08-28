@@ -7,7 +7,7 @@
 
 #include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
 #include "KG-RtoREquationState.h"
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Math/Numerics/VoidBuilder.h"
 
 namespace RtoR {
     class KGEnergy {

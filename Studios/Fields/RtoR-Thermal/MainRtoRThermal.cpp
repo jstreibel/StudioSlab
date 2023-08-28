@@ -2,10 +2,10 @@
 // Created by joao on 27/09/2021.
 //
 
-#include "Base/App/CrashPad.h"
-#include "Base/Controller/Interface/InterfaceSelector.h"
+#include "Core/App/CrashPad.h"
+#include "Core/Controller/Interface/InterfaceSelector.h"
 
-#include "Phys/App.h"
+#include "Math/App.h"
 
 #include "Studies/ManyOscillonsBuilder.h"
 #include "Studies/MachineGunBuilder.h"

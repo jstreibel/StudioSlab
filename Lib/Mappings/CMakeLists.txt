@@ -103,13 +103,13 @@ set ( R2TOR_SOURCES
 
 
 set ( MAPS_LINKS
-		Slab-Base-Controller
-		Slab-Base-Backend
-		Slab-Base-App
-		Slab-Base-Graphics
+		Slab-Core-Controller
+		Slab-Core-Backend
+		Slab-Core-App
+		Slab-Core-Graphics
 
 		Slab-Utils
-		Slab-Phys
+		Slab-Math
 		)
 
 # ℝ ↦ ℝ

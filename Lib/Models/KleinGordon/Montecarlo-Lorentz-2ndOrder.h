@@ -11,7 +11,7 @@
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 #include "Common/RandUtils.h"
-#include "Phys/Thermal/Utils/ThermoUtils.h"
+#include "Math/Thermal/Utils/ThermoUtils.h"
 
 
 #define FType(a) typename FieldState::a

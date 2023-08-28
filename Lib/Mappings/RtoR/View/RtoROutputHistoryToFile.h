@@ -5,8 +5,8 @@
 #ifndef FIELDS_RTOROUTPUTHISTORYTOFILE_H
 #define FIELDS_RTOROUTPUTHISTORYTOFILE_H
 
-#include "Phys/Numerics/Output/Plugs/HistoryKeeper.h"
-#include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
+#include "Math/Numerics/Output/Plugs/HistoryKeeper.h"
+#include "Math/Numerics/Output/Format/OutputFormatterBase.h"
 
 namespace RtoR {
     class OutputHistoryToFile : public HistoryKeeper {

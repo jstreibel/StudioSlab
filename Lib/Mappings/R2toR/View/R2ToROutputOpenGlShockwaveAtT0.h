@@ -7,8 +7,8 @@
 
 
 #include "R2toROutputOpenGLShockwave.h"
-#include "Base/Graphics/ZoomPanRotate.h"
-#include "Phys/Graph/FunctionGraph.h"
+#include "Core/Graphics/ZoomPanRotate.h"
+#include "Math/Graph/FunctionGraph.h"
 #include "Mappings/RtoR2/StraightLine.h"
 
 

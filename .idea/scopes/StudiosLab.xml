@@ -1,3 +1,3 @@
 <component name="DependencyValidationManager">
-  <scope name="StudiosLab" pattern="file[StudioSlab]:Lib//*||file[StudioSlab]:Notebooks//*||file[StudioSlab]:Resources//*||file[StudioSlab]:Studios//*||file:CMakeLists.txt" />
+  <scope name="StudiosLab" pattern="file[StudioSlab]:Lib//*&amp;&amp;!file[StudioSlab]:Lib//3rdParty//*||file[StudioSlab]:Notebooks//*||file[StudioSlab]:Resources//*||file[StudioSlab]:Studios//*||file:CMakeLists.txt" />
 </component>

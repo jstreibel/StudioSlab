@@ -1,7 +1,7 @@
 
 
 #include "RingDeltaFunc.h"
-#include "Phys/Function/DiscreteFunction.h"
+#include "Math/Function/DiscreteFunction.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 struct IsRingDeltaDomain

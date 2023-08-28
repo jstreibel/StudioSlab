@@ -5,11 +5,11 @@
 #ifndef V_SHAPE_RTORSYSTEMGORDONRADIALSYMMETRY_H
 #define V_SHAPE_RTORSYSTEMGORDONRADIALSYMMETRY_H
 
-#include <Base/Math/System/System.h>
-#include <Base/Math/Core/FunctionsBase.h>
+#include <Core/Math/System/System.h>
+#include <Core/Math/Core/FunctionsBase.h>
 #include "RtoRSystemGordonRadialSymmetry.h"
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFieldState.h"
-#include "Base/Math/Allocator.h"
+#include "Core/Math/Allocator.h"
 
 namespace RtoR {
     class SystemGordonRadialSymmetry : public Base::System<RtoR::FieldState> {

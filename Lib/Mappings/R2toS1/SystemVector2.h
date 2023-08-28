@@ -1,10 +1,10 @@
 #ifndef HamiltonCPU_H
 #define HamiltonCPU_H
 
-#include "Base/Math/System/System.h"
+#include "Core/Math/System/System.h"
 #include "R2toS1FieldState.h"
 
-#include "Base/Math/Allocator.h"
+#include "Core/Math/Allocator.h"
 
 
 #define FType(a) typename FieldState::a

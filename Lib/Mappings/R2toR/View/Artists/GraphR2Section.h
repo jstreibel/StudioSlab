@@ -7,7 +7,7 @@
 
 
 #include "Mappings/R2toR/Model/R2toRFunction.h"
-#include "Phys/Graph/FunctionGraph.h"
+#include "Math/Graph/FunctionGraph.h"
 #include "Mappings/RtoR2/ParametricCurve.h"
 #include "Mappings/RtoR2/StraightLine.h"
 

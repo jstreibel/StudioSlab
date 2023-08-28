@@ -4,7 +4,7 @@
 
 #include "FlatFieldDisplay.h"
 
-#include "Base/Graphics/Styles/ColorMap.h"
+#include "Core/Graphics/Styles/ColorMap.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "imgui.h"
 

@@ -7,9 +7,9 @@
 
 #include "RtoRFunction.h"
 
-#include "Phys/Function/DiscreteFunction.h"
+#include "Math/Function/DiscreteFunction.h"
 
-//#include <Base/Controller/Interface/CommonParameters.h>
+//#include <Core/Controller/Interface/CommonParameters.h>
 #include "Common/Types.h"
 
 

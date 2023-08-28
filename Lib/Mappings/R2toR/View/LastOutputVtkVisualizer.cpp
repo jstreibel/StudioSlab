@@ -3,9 +3,9 @@
 //
 
 #include "LastOutputVtkVisualizer.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
-#include "Base/Graphics/Styles/Colors.h"
+#include "Core/Graphics/Styles/Colors.h"
 
 
 #include <vtkSmartPointer.h>

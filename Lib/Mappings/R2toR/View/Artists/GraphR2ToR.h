@@ -7,8 +7,8 @@
 
 
 #include "Mappings/R2toR/Model/R2toRFunction.h"
-#include "Phys/Graph/FunctionGraph.h"
-#include "Base/Graphics/ZoomPanRotate.h"
+#include "Math/Graph/FunctionGraph.h"
+#include "Core/Graphics/ZoomPanRotate.h"
 
 
 class GraphR2toR : public FunctionGraph<R2toR::Function> {

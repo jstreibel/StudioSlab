@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORBOUNDARYCONDITION_H
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
-#include "Phys/DifferentialEquations/BoundaryConditions.h"
+#include "Math/DifferentialEquations/BoundaryConditions.h"
 
 
 namespace R2toR {

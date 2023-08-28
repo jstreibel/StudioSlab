@@ -1,7 +1,7 @@
 //
 
 #include "FunctionRenderer.h"
-#include "Base/Graphics/Styles/StylesAndColorSchemes.h"
+#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 
 
 //

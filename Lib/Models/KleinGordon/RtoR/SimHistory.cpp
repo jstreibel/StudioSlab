@@ -11,7 +11,7 @@
 #endif
 
 #include "KG-RtoREquationState.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 
 SimHistory::SimHistory(const Base::Simulation::SimulationConfig &simConfig,

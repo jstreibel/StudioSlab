@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TOS1FIELDSTATE_H
 #define V_SHAPE_R2TOS1FIELDSTATE_H
 
-#include "Base/Math/Maps/R2toR/Model/FieldState.h"
+#include "Core/Math/Maps/R2toR/Model/FieldState.h"
 
 namespace R2toS1 {
     typedef R2toR::FieldState FieldState;

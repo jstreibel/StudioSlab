@@ -6,7 +6,7 @@
 #include "RtoRDiscreteFunctionGPU.h"
 
 #include "Mappings/RtoR/Model/Derivatives/DerivativesGPU.h"
-#include "Phys/Function/GPUFriendly.h"
+#include "Math/Function/GPUFriendly.h"
 
 // #include <thrust/iterator/constant_iterator.h>
 

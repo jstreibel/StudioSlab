@@ -2,15 +2,15 @@
 // Created by joao on 23/03/2021.
 //
 
-#include <Base/Math/Maps/R2toR/View/OutputShockwaveZeros.h>
+#include <Core/Math/Maps/R2toR/View/OutputShockwaveZeros.h>
 #include "R2ToRInputShockwaveAtT0.h"
-#include "Base/Math/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Base/Math/Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Core/Math/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Core/Math/Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Base/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Base/Math/Maps/R2toR/Model/R2ToRBoundaryCondition.h"
-#include "Base/Math/Maps/R2toR/View/R2ToROutputOpenGlShockwaveAtT0.h"
+#include "Core/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Core/Math/Maps/R2toR/Model/R2ToRBoundaryCondition.h"
+#include "Core/Math/Maps/R2toR/View/R2ToROutputOpenGlShockwaveAtT0.h"
 
 
 using namespace R2toR;

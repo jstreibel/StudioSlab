@@ -6,7 +6,7 @@
 #define V_SHAPE_DIMENSIONREDUCTIONFILTER_H
 
 
-#include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
+#include "Math/Numerics/Output/Format/SpaceFilterBase.h"
 #include "Mappings/RtoR2/StraightLine.h"
 
 class DimensionReductionFilter : public SpaceFilterBase {

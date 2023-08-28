@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_R2TORBUILDER_H
 #define STUDIOSLAB_R2TORBUILDER_H
 
-#include "Phys/Numerics/Builder.h"
+#include "Math/Numerics/Builder.h"
 #include "Mappings/R2toR/View/R2toROutputOpenGLGeneric.h"
 
 #include "Models/KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.h"

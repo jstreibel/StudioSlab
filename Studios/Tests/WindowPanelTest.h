@@ -6,8 +6,8 @@
 #define V_SHAPE_WINDOWPANELTEST_H
 
 
-#include <Base/Backend/Events/EventListener.h>
-#include <Base/Graphics/Window/WindowContainer/WindowPanel.h>
+#include <Core/Backend/Events/EventListener.h>
+#include <Core/Graphics/Window/WindowContainer/WindowPanel.h>
 
 
 class WindowPanelTest : public Window {

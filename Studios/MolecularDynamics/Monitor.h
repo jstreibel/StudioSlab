@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_MONITOR_H
 #define STUDIOSLAB_MONITOR_H
 
-#include "Base/Graphics/Window/Window.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Core/Graphics/Window/Window.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/CircleShape.hpp>

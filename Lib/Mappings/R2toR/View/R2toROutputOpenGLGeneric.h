@@ -5,11 +5,11 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 #define V_SHAPE_R2TOROUTPUTOPENGLGENERIC_H
 
-#include "Base/Graphics/ZoomPanRotate.h"
-#include "Phys/Graph/OpenGLMonitor.h"
+#include "Core/Graphics/ZoomPanRotate.h"
+#include "Math/Graph/OpenGLMonitor.h"
 #include "Mappings/R2toR/View/Artists/GraphR2ToR.h"
-#include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Base/Graphics/Window/StatsDisplay.h"
+#include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Core/Graphics/Window/StatsDisplay.h"
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Mappings/R2toR/View/Artists/GraphR2Section.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"

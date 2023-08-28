@@ -4,8 +4,8 @@
 
 #include "R2toRBuilder.h"
 
-#include "Base/Backend/GLUT/GLUTBackend.h"
-#include "Base/Backend/Console/ConsoleBackend.h"
+#include "Core/Backend/GLUT/GLUTBackend.h"
+#include "Core/Backend/Console/ConsoleBackend.h"
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
@@ -13,12 +13,12 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Models/KleinGordon/KGSolver.h"
-#include "Phys/Numerics/Output/Format/OutputFormatterBase.h"
-#include "Phys/Numerics/Output/Format/BinarySOF.h"
-#include "Phys/Numerics/Output/Format/SpaceFilterBase.h"
+#include "Math/Numerics/Output/Format/OutputFormatterBase.h"
+#include "Math/Numerics/Output/Format/BinarySOF.h"
+#include "Math/Numerics/Output/Format/SpaceFilterBase.h"
 #include "Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
-#include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
-#include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
+#include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Mappings/R2toR/View/LastOutputVtkVisualizer.h"

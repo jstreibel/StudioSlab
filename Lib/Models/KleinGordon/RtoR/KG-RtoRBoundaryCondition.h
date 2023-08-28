@@ -9,7 +9,7 @@
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Phys/DifferentialEquations/BoundaryConditions.h"
+#include "Math/DifferentialEquations/BoundaryConditions.h"
 
 namespace RtoR {
     class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {

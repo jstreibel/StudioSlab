@@ -7,7 +7,7 @@
 
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
-#include "Phys/Toolset/NativeFunctions.h"
+#include "Math/Toolset/NativeFunctions.h"
 
 namespace RtoR {
     class RegularDiracDelta : public RtoR::Function {

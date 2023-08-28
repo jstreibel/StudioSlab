@@ -7,8 +7,8 @@ set(LIBDIR ../../../Lib)
 include_directories($LIBDIR)
 
 set(EXTERNAL_SRC
-		${LIBDIR}/Base/Controller/Nuklear/NuklearImplementation.cpp
-		${LIBDIR}/Base/Graphics/SFML/Graph.cpp)
+		${LIBDIR}/Core/Controller/Nuklear/NuklearImplementation.cpp
+		${LIBDIR}/Core/Graphics/SFML/Graph.cpp)
 
 add_executable(MarylouStrings
         Integrator.cpp
@@ -17,7 +17,7 @@ add_executable(MarylouStrings
 
 target_link_libraries(MarylouStrings
 		Slab-Utils
-		Slab-Base
+		Slab-Core
 
 		sfml-window
 		sfml-graphics

@@ -6,10 +6,10 @@
 
 #include "JackServer.h"
 #include "OutGL.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 #include "RtoRBuilder.h"
 
-#include <Phys/Numerics/Output/OutputManager.h>
+#include <Math/Numerics/Output/OutputManager.h>
 
 
 

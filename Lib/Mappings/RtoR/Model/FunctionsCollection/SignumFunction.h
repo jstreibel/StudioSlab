@@ -7,7 +7,7 @@
 
 #include "Mappings/RtoR/Model/RtoRFunction.h"
 
-#include "Phys/Function/GPUFriendly.h"
+#include "Math/Function/GPUFriendly.h"
 
 namespace RtoR {
     class SignumFunction : public RtoR::Function, Base::GPUFriendly {

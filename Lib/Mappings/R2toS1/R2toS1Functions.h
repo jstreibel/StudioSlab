@@ -5,9 +5,9 @@
 #ifndef V_SHAPE_R2TOS1FUNCTIONS_H
 #define V_SHAPE_R2TOS1FUNCTIONS_H
 
-#include "Base/Math/Maps/R2toR/Model/R2toRFunction.h"
-#include "Base/Math/Maps/R2toR/Model/R2toRFunctionArbitrary.h"
-#include "Base/Math/Maps/R2toR/Model/R2toRFunctionArbitraryCPU.h"
+#include "Core/Math/Maps/R2toR/Model/R2toRFunction.h"
+#include "Core/Math/Maps/R2toR/Model/R2toRFunctionArbitrary.h"
+#include "Core/Math/Maps/R2toR/Model/R2toRFunctionArbitraryCPU.h"
 
 namespace R2toS1 {
     typedef R2toR::Function Function;

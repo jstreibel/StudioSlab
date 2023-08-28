@@ -7,8 +7,8 @@
 
 #include "Particle.h"
 
-#include "Phys/Numerics/Method/Stepper.h"
-#include "Phys/Numerics/SimConfig/NumericConfig.h"
+#include "Math/Numerics/Method/Stepper.h"
+#include "Math/Numerics/SimConfig/NumericConfig.h"
 
 namespace MolecularDynamics {
 

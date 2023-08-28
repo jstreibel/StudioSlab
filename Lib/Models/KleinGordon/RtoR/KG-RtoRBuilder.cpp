@@ -4,8 +4,8 @@
 
 #include "KG-RtoRBuilder.h"
 
-#include "Base/Backend/GLUT/GLUTBackend.h"
-#include "Base/Backend/Console/ConsoleBackend.h"
+#include "Core/Backend/GLUT/GLUTBackend.h"
+#include "Core/Backend/Console/ConsoleBackend.h"
 
 #include "Mappings/RtoR/Model/RtoRDiscreteFunctionGPU.h"
 #include "KG-RtoRSystemGordonGPU.h"
@@ -17,10 +17,10 @@
 
 #include "Models/KleinGordon/R2toR/EquationSolver.h"
 
-#include "Phys/Numerics/Output/Format/BinarySOF.h"
-#include "Phys/Numerics/Output/Format/ResolutionReductionFilter.h"
-#include "Phys/Numerics/Output/Plugs/OutputHistoryToFile.h"
-#include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Math/Numerics/Output/Format/BinarySOF.h"
+#include "Math/Numerics/Output/Format/ResolutionReductionFilter.h"
+#include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
+#include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "SimHistory.h"
 
 

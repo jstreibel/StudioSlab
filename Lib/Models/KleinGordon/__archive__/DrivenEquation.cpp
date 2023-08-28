@@ -5,7 +5,7 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "DrivenEquation.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 namespace R2toR {
 

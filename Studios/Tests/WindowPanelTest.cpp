@@ -5,7 +5,7 @@
 
 #include "WindowPanelTest.h"
 
-#include "Base/Graphics/Window/Window.h"
+#include "Core/Graphics/Window/Window.h"
 //#include <Studios/Graphics/Graph.h>
 
 

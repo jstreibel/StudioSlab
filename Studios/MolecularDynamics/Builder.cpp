@@ -12,11 +12,11 @@
 #include "Monitor.h"
 #include "Builder.h"
 
-#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
-#include "Base/Controller/Interface/InterfaceManager.h"
+#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Controller/Interface/InterfaceManager.h"
 
-#include "Phys/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-#include "Base/Tools/Log.h"
+#include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Core/Tools/Log.h"
 
 
 #define DO_REGISTER true

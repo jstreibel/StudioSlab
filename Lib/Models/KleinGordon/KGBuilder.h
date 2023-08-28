@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KGBUILDER_H
 #define STUDIOSLAB_KGBUILDER_H
 
-#include "Phys/Numerics/VoidBuilder.h"
+#include "Math/Numerics/VoidBuilder.h"
 
 namespace Fields::KleinGordon {
 

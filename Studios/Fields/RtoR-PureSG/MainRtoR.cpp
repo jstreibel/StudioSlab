@@ -1,7 +1,7 @@
 
 
-#include "Base/App/CrashPad.h"
-#include "Base/Controller/Interface/InterfaceSelector.h"
+#include "Core/App/CrashPad.h"
+#include "Core/Controller/Interface/InterfaceSelector.h"
 
 #include "InteractingFormations/input-sym-oscillons.h"
 #include "InteractingFormations/input-general-oscillons.h"
@@ -9,7 +9,7 @@
 #include "SingleFormations/input-shockwave.h"
 #include "SingleFormations/InputSingleOscillon.h"
 
-#include "Phys/App.h"
+#include "Math/App.h"
 
 int run(int argc, const char **argv) {
     InterfaceSelector selector("Simulation builder selector");

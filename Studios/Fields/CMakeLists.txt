@@ -82,11 +82,11 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			R2toR/LeadingDelta/RingDeltaFunc.cu
 			)
 	target_link_libraries ( Fields-R2toR
-			Slab-Base-Controller
-			Slab-Base-Backend
-			Slab-Base-App
-			Slab-Base-Graphics
-			Slab-Phys
+			Slab-Core-Controller
+			Slab-Core-Backend
+			Slab-Core-App
+			Slab-Core-Graphics
+			Slab-Math
 			Slab-Maps-R2toR_GPU
 			Slab-Models
 			)

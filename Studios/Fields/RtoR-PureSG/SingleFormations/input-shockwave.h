@@ -1,7 +1,7 @@
 #ifndef SIMSHOCKWAVE_H
 #define SIMSHOCKWAVE_H
 
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 namespace RtoR {

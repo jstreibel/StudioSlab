@@ -9,9 +9,9 @@
 #include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 #include "Mappings/RtoR/Calc/Histogram.h"
 
-#include "Base/Controller/Interface/InterfaceManager.h"
-#include "Base/Tools/Log.h"
-#include "Base/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Tools/Log.h"
+#include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <sstream>
 #include <array>

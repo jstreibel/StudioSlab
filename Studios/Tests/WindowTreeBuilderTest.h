@@ -6,8 +6,8 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include "Base/Backend/Events/EventListener.h"
-#include "Base/Graphics/Window/WindowTree/NodeWindow.h"
+#include "Core/Backend/Events/EventListener.h"
+#include "Core/Graphics/Window/WindowTree/NodeWindow.h"
 //#include <Studios/Graphics/deprecated/Graph_depr.h>
 
 class WindowTreeBuilderTest : public Window {

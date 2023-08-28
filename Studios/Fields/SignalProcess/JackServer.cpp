@@ -9,7 +9,7 @@
 #include "Common/STDLibInclude.h"
 #include "Common/Utils.h"
 #include "Common/UtilsCollection/Resample.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 #include <iostream>
 #include <cmath>

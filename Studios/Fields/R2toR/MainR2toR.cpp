@@ -2,11 +2,11 @@
 // Created by joao on 10/8/21.
 //
 
-#include "Base/App/CrashPad.h"
-#include "Base/Controller/Interface/InterfaceSelector.h"
+#include "Core/App/CrashPad.h"
+#include "Core/Controller/Interface/InterfaceSelector.h"
 #include "LeadingDelta/LeadingDelta.h"
 
-#include "Phys/App.h"
+#include "Math/App.h"
 
 int run(int argc, const char **argv) {
     auto input = new R2toR :: LeadingDelta :: Builder( );

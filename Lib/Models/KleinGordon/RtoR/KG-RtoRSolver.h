@@ -6,7 +6,7 @@
 #define STUDIOSLAB_KG_RTORSOLVER_H
 
 #include "KG-RtoREquationState.h"
-#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace RtoR {

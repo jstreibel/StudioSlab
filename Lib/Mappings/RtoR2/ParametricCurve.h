@@ -5,8 +5,8 @@
 #ifndef V_SHAPE_PARAMETRICCURVE_H
 #define V_SHAPE_PARAMETRICCURVE_H
 
-#include "Phys/Function/Function.h"
-#include "Phys/Space/Impl/PointSet.h"
+#include "Math/Function/Function.h"
+#include "Math/Space/Impl/PointSet.h"
 
 #include <memory>
 

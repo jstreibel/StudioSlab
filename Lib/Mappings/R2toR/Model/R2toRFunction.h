@@ -8,7 +8,7 @@
 #include "Common/Types.h"
 
 #include "Common/NativeTypes.h"
-#include "Phys/Function/CommonFunctions.h"
+#include "Math/Function/CommonFunctions.h"
 
 namespace R2toR {
     typedef Base::Functions<Real>::Function2D Function;

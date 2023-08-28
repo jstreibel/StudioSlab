@@ -4,7 +4,7 @@
 #include "R2toRDiscreteFunctionGPU.h"
 
 #include "Mappings/R2toR/Model/Derivatives/DerivativesGPU.h"
-#include "Phys/Function/GPUFriendly.h"
+#include "Math/Function/GPUFriendly.h"
 
 
 

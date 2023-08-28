@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_ENERGY_H
 #define STUDIOSLAB_ENERGY_H
 
-#include "Phys/Functional/Functional.h"
+#include "Math/Functional/Functional.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 

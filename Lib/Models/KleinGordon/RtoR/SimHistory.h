@@ -6,8 +6,8 @@
 #define STUDIOSLAB_SIMHISTORY_H
 
 
-#include "Phys/Numerics/SimConfig/SimulationConfig.h"
-#include "Phys/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/SimConfig/SimulationConfig.h"
+#include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 class SimHistory : public Numerics::OutputSystem::Socket {

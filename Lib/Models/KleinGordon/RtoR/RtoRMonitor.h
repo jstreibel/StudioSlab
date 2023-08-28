@@ -7,10 +7,10 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Mappings/RtoR/Model/RtoRResizableDiscreteFunction.h"
-#include "Base/Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
 
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
-#include "Phys/Graph/OpenGLMonitor.h"
+#include "Math/Graph/OpenGLMonitor.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace RtoR {

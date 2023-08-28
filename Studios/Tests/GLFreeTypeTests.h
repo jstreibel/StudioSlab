@@ -7,7 +7,7 @@
 
 #include <GL/glew.h>
 
-#include "Base/Graphics/Window/Window.h"
+#include "Core/Graphics/Window/Window.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "3rdParty/freetype-gl/vertex-buffer.h"
 #include "3rdParty/freetype-gl/texture-atlas.h"

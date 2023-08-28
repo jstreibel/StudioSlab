@@ -7,7 +7,7 @@
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Lib/Fields/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Base/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Core/Math/Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 
 #include "Lib/Fields/Maps/RtoR/Model/RtoRBoundaryCondition.h"
 

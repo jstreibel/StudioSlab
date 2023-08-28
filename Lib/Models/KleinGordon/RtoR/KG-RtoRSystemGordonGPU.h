@@ -7,7 +7,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Phys/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 #include "Common/DeviceConfig.h"
 #include "Models/KleinGordon/KGSolver.h"
 

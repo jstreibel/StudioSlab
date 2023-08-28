@@ -5,7 +5,7 @@
 #include "AnalyticOscillon.h"
 
 #include "analytic-breather.h"
-#include "Phys/Formalism/Categories.h"
+#include "Math/Formalism/Categories.h"
 #include <cmath>
 
 using namespace RtoR;

@@ -2,11 +2,11 @@
 
 #include "DimensionReductionFilter.h"
 
-#include "Phys/Space/Impl/DiscreteSpaceCPU.h"
+#include "Math/Space/Impl/DiscreteSpaceCPU.h"
 
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 
 //

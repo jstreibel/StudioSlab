@@ -8,7 +8,7 @@
 #include "Particle.h"
 #include "Hamiltonians/Hash/MoleculeSpaceHash.h"
 
-#include "Phys/Numerics/SimConfig/NumericConfig.h"
+#include "Math/Numerics/SimConfig/NumericConfig.h"
 
 
 namespace MolecularDynamics {

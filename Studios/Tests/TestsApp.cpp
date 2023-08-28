@@ -8,8 +8,8 @@
 #include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
 
-#include <Base/Backend/GLUT/GLUTBackend.h>
-#include <Base/Backend/DummyProgram.h>
+#include <Core/Backend/GLUT/GLUTBackend.h>
+#include <Core/Backend/DummyProgram.h>
 
 #define DONT_REGISTER false
 

@@ -3,8 +3,8 @@
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Base/Graphics/Utils.h"
-#include "Phys/Graph/FunctionGraph.h"
+#include "Core/Graphics/Utils.h"
+#include "Math/Graph/FunctionGraph.h"
 #include "Mappings/RtoR2/StraightLine.h"
 #include "R2toROutputOpenGLShockwave.h"
 

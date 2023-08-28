@@ -9,9 +9,9 @@
 #include <vector>
 #include "Common/Types.h"
 
-#include "Base/App/AppBase.h"
-#include "Base/Controller/Nuklear/NuklearSFML.h"
-#include "Base/Graphics/SFML/Graph.h"
+#include "Core/App/AppBase.h"
+#include "Core/Controller/Nuklear/NuklearSFML.h"
+#include "Core/Graphics/SFML/Graph.h"
 
 #include <boost/numeric/odeint.hpp>
 

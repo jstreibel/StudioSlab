@@ -5,10 +5,10 @@
 #ifndef V_SHAPE_FIELDSTATE_H
 #define V_SHAPE_FIELDSTATE_H
 
-#include "Phys/Space/Impl/ArithmeticOperationInterface.h"
-#include "Phys/Space/Impl/DiscreteSpace.h"
+#include "Math/Space/Impl/ArithmeticOperationInterface.h"
+#include "Math/Space/Impl/DiscreteSpace.h"
 
-#include "Phys/Numerics/Output/Util/FieldStateOutputInterface.h"
+#include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
 
 namespace Fields::KleinGordon {
 

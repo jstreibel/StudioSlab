@@ -4,7 +4,7 @@
 
 #include "Monitor.h"
 
-#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
@@ -12,7 +12,7 @@
 
 #include "Hamiltonians/SoftDisk/SoftDisk.h"
 
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 namespace MolecularDynamics {
 

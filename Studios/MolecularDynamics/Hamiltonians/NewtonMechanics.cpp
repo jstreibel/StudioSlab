@@ -7,7 +7,7 @@
 #include "NewtonMechanics.h"
 #include "Hash/HashParams.h"
 #include "Particle.h"
-#include "Base/Tools/Log.h"
+#include "Core/Tools/Log.h"
 
 
 #define USE_NEW_EXPERIMENTAL_IMPLEMENTATION false

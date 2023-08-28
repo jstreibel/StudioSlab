@@ -3,12 +3,12 @@
 //
 
 #include "XYApp.h"
-#include "Base/Backend/GUIBackend.h"
+#include "Core/Backend/GUIBackend.h"
 
-#include "Base/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 
-#include <Phys/Thermal/IO/SingleSim/SingleSimViewController.h>
-#include <Phys/Thermal/Metropolis/MetropolisAlgorithm.h>
+#include <Math/Thermal/IO/SingleSim/SingleSimViewController.h>
+#include <Math/Thermal/Metropolis/MetropolisAlgorithm.h>
 
 #define DONT_SELF_REGISTER false
 
