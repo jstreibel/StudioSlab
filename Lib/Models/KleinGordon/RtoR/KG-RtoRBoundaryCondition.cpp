@@ -15,7 +15,7 @@ RtoR::BoundaryCondition::BoundaryCondition(const RtoR::EquationState &prototype,
                                            Function *leftdPhiDtBoundaryCondition,
                                            Function *rightPhiBoundaryCondition,
                                            Function *rightdPhiDtBoundaryCondition)
-: Base::BoundaryConditions<RtoR::EquationState>(prototype)
+: Core::BoundaryConditions<RtoR::EquationState>(prototype)
 , initialPhiCondition(initialPhiCondition)
 , leftPhiBoundaryCondition(leftPhiBoundaryCondition)
 , rightPhiBoundaryCondition(rightPhiBoundaryCondition)

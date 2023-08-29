@@ -31,6 +31,9 @@ namespace Styles {
         bool operator==(const Color &rhs) const;
     };
 
+    extern Color White;
+    extern Color Black;
+
     typedef struct {
         Real r;       // a fraction between 0 and 1
         Real g;       // a fraction between 0 and 1
@@ -89,7 +92,6 @@ namespace Styles {
 
         return out;
     }
-
 
     rgb hsv2rgb(hsv in)
     {

@@ -29,17 +29,17 @@ namespace RtoR::Thermal {
         Spaces::PointSet temperature2HistoryData;
         Spaces::PointSet temperature3HistoryData;
 
-        Base::Graphics::Graph2D mTemperaturesGraph;
+        Core::Graphics::Graph2D mTemperaturesGraph;
 
         Spaces::PointSet histogramKData;
         Spaces::PointSet histogramGradData;
         Spaces::PointSet histogramVData;
         Spaces::PointSet histogramEData;
 
-        Base::Graphics::Graph2D mHistogramsGraphK;
-        Base::Graphics::Graph2D mHistogramsGraphGrad;
-        Base::Graphics::Graph2D mHistogramsGraphV;
-        Base::Graphics::Graph2D mHistogramsGraphE;
+        Core::Graphics::Graph2D mHistogramsGraphK;
+        Core::Graphics::Graph2D mHistogramsGraphGrad;
+        Core::Graphics::Graph2D mHistogramsGraphV;
+        Core::Graphics::Graph2D mHistogramsGraphE;
 
         RtoR2::StraightLine corrSampleLine;
         std::shared_ptr<R2toR::Sampler> sampler;

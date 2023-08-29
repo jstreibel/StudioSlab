@@ -84,10 +84,10 @@ Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
     } else throw "Tidak bagus diff.";
 }
 
-Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
+Core::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
     throw "R2toR::FunctionArbitrary::diff(int n) not implemented";
     return FunctionT::diff(n);
 }
 
 Str R2toR::DiscreteFunction::myName() const
-{ return Base::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev==GPU ? "GPU" : "CPU"); }
+{ return Core::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev == GPU ? "GPU" : "CPU"); }

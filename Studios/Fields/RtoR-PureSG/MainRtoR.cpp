@@ -27,8 +27,8 @@ int run(int argc, const char **argv) {
     /* sim 4 */selector.registerOption(option5->getInterface());
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<Base::Simulation::VoidBuilder*>(selectedInterface->getOwner());
-    auto inputPtr = Base::Simulation::VoidBuilder::Ptr(input);
+    auto input    = dynamic_cast<Core::Simulation::VoidBuilder*>(selectedInterface->getOwner());
+    auto inputPtr = Core::Simulation::VoidBuilder::Ptr(input);
 
     auto prog = Simulation::App(argc, argv, inputPtr);
 

@@ -65,11 +65,11 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
     return *this;
 }
 
-Base::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
+Core::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
     return new FunctionArbitraryCPU(*this);
 }
 
-Base::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
+Core::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
     const RealVector &X = getSpace().getHostData();
@@ -82,8 +82,8 @@ Base::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt o
     return &newFunc;
 }
 
-Base::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const FunctionT &func,
-                                                                Base::DiscreteFunction<Real, Real> &out) const {
+Core::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const FunctionT &func,
+                                                                Core::DiscreteFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
 
     auto &outX = outSpace.getHostData();

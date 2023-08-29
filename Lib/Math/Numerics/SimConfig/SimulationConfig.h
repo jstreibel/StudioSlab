@@ -8,7 +8,7 @@
 #include "DeviceConfig.h"
 #include "NumericConfig.h"
 
-namespace Base::Simulation {
+namespace Core::Simulation {
 
     struct SimulationConfig {
         explicit SimulationConfig(bool doRegister = true);

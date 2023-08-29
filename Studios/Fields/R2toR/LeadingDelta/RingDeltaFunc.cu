@@ -83,7 +83,7 @@ struct RingDeltaGPU
 };
 
 
-bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Base::DiscreteFunction<Real2D, Real> *toFunc) const {
+bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Core::DiscreteFunction<Real2D, Real> *toFunc) const {
     auto &func = *dynamic_cast<R2toR::DiscreteFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();

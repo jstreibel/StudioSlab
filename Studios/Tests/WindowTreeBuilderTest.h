@@ -8,12 +8,12 @@
 
 #include "Core/Backend/Events/EventListener.h"
 #include "Core/Graphics/Window/WindowTree/NodeWindow.h"
-//#include <Studios/Graphics/deprecated/Graph_depr.h>
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 class WindowTreeBuilderTest : public Window {
-    //Graph_depr graph;
-
     NodeWindow *main;
+
+    RtoR::AnalyticOscillon osc;
 public:
     WindowTreeBuilderTest();
     void draw() override;

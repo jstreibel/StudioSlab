@@ -5,8 +5,9 @@
 #ifndef STUDIOSLAB_TEXTURE_H
 #define STUDIOSLAB_TEXTURE_H
 
-#include "GL/gl.h"
 #include "Utils/Types.h"
+
+#include "Core/Graphics/OpenGL/OpenGL.h"
 #include "Core/Graphics/Styles/Colors.h"
 
 namespace OpenGL {
@@ -21,6 +22,8 @@ namespace OpenGL {
 
         void setColor(int i, int j, Styles::Color color);
         void setData(ByteData data);
+
+        void bind() const;
 
         void upload(PosInt row=0, Count nRows=0);
 

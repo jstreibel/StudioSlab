@@ -23,10 +23,10 @@ Real __t=0;
 void RtoR::Signal::JackControl::draw( ) {
     Window::draw( );
 
-    float w = float(this->w) - (float)2*this->winXoffset,
-            h = float(this->h) - (float)2*this->winYoffset;
-    float x = this->x+this->winXoffset;
-    float y = this->y+this->winYoffset;
+    float w = float(this->w) - (float)2*this->hPadding,
+            h = float(this->h) - (float)2*this->vPadding;
+    float x = this->x+this->hPadding;
+    float y = this->y+this->vPadding;
 
     bool closable=false;
 

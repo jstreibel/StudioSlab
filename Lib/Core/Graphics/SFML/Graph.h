@@ -9,7 +9,7 @@
 #include <SFML/Graphics/Font.hpp>
 #include <vector>
 
-#include <Common/Types.h>
+#include <Utils/Types.h>
 
 
 namespace Graphing {

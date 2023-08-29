@@ -17,16 +17,16 @@ namespace RtoR {
         FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
 
-        [[nodiscard]] auto Clone() const -> Base::FunctionT<Real, Real> * override;
+        [[nodiscard]] auto Clone() const -> Core::FunctionT<Real, Real> * override;
 
-        [[nodiscard]] auto CloneWithSize(PosInt N) const -> Base::DiscreteFunction<Real, Real> * override;
+        [[nodiscard]] auto CloneWithSize(PosInt N) const -> Core::DiscreteFunction<Real, Real> * override;
 
         auto Set(const RealVector &vec) -> FunctionArbitraryCPU &;
         auto Set(const FunctionT &func) -> FunctionArbitraryCPU & override;
 
         auto Apply(const MyBase &func,
-                   Base::DiscreteFunction<Real, Real> &out)
-                   const -> Base::DiscreteFunction<Real, Real> & override;
+                   Core::DiscreteFunction<Real, Real> &out)
+                   const -> Core::DiscreteFunction<Real, Real> & override;
 
         auto Laplacian(DiscreteFunction &outFunc) const -> DiscreteFunction & override;
 

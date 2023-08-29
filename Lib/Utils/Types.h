@@ -81,10 +81,11 @@ struct Point2D {
     //    return Point2D(x*a, y*a);
     //}
     //
-    //Point2D operator - () const { return Point2D(-x,-y); }
+    //Point2D operator - () const { return Point2D(-x,-y);}
 
-    void operator += (const Point2D &p) { x+=p.x; y+=p.y; }
-    void operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
+    Point2D operator +  (const Point2D &p) {return {x+p.x, y+p.y}; };
+    void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
+    void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
 
     inline Real lengthSqr() const { return x * x + y * y;}
     inline Real length( ) const { return sqrt(lengthSqr());}

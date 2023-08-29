@@ -7,10 +7,11 @@
 
 #include "Core/Backend/Events/EventListener.h"
 
+#include "Core/Graphics/OpenGL/OpenGL.h"
 #include <GL/glut.h>
 #include <glm/mat4x4.hpp>
 
-class ZoomPanRotate : public Base::EventListener {
+class ZoomPanRotate : public Core::EventListener {
 public:
     ZoomPanRotate();
 

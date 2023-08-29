@@ -2,7 +2,8 @@
 // Created by joao on 29/04/2021.
 //
 
-#include <GL/glew.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
+
 #include "Plane.h"
 
 Plane::Plane() {

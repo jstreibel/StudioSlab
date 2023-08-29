@@ -20,7 +20,7 @@ namespace R2toR {
         extern RingDeltaFunc::Ptr ringDelta1;
 
 
-        class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
+        class BoundaryCondition : public Core::BoundaryConditions<R2toR::EquationState> {
             RingDeltaFunc::Ptr ringDelta;
             Real tf;
             bool deltaSpeedOp;

@@ -13,7 +13,7 @@ namespace R2toR {
     public:
         DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
 
-        [[nodiscard]] Base::DiscreteFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
+        [[nodiscard]] Core::DiscreteFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
         DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const override;
 

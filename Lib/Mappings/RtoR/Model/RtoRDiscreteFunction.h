@@ -15,7 +15,7 @@
 
 namespace RtoR {
 
-    class DiscreteFunction : public Base::DiscreteFunction<Real, Real> {
+    class DiscreteFunction : public Core::DiscreteFunction<Real, Real> {
     public:
         enum LaplacianType {
             Standard1D,

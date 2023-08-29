@@ -2,8 +2,7 @@
 // Created by joao on 20/04/2021.
 //
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 #include "Window.h"
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
@@ -56,7 +55,6 @@ void Window::_setupViewport() const {
     glLoadIdentity();
 
     auto vp = getViewport();
-    // glViewport(x + winXoffset, y + winYoffset, w - 2 * winXoffset, h - 2 * winYoffset);
     glViewport(vp.xMin, vp.yMin, vp.w(), vp.h());
 
     glMatrixMode(GL_MODELVIEW);
@@ -83,12 +81,7 @@ auto Window::doesHit(int xMouse, int yMouse) const -> bool {
 bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     EventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
 
-
-    this->w = newScreenWidth;
-    this->h = newScreenHeight;
-
-    for(auto artist : content)
-        artist->reshape(w, h);
+    this->notifyReshape(newScreenWidth, newScreenHeight);
 
     return true;
 }
@@ -114,10 +107,10 @@ bool Window::notifyRender(float elTime_msec) {
 }
 
 RectI Window::getViewport() const {
-    auto _x = x + winXoffset,
-         _y = y + winYoffset,
-         _w = w - 2 * winXoffset,
-         _h = h - 2 * winYoffset;
+    auto _x = x + hPadding,
+         _y = y + vPadding,
+         _w = w - 2 * hPadding,
+         _h = h - 2 * vPadding;
 
     return {_x, _x+_w, _y, _y+_h};
 }

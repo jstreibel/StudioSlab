@@ -18,7 +18,7 @@
 namespace R2toR {
     namespace LeadingDelta {
 
-        typedef Base::DiscreteFunction<Real2D, Real> ArbFunc;
+        typedef Core::DiscreteFunction<Real2D, Real> ArbFunc;
 
         class RingDeltaFunc : public R2toR::Function {
         protected:

@@ -46,7 +46,7 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
     setupOrtho();
 
-    Base::Graphics::Graph2D::draw();
+    Core::Graphics::Graph2D::draw();
 
     if(func == nullptr) return;
 
@@ -119,6 +119,7 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     }
 
     glEnable(GL_TEXTURE_2D);
+    texture->bind();
     glBegin(GL_QUADS);
     {
         auto pixelSizeInTexCoord = 1./texture->getWidth();
@@ -144,10 +145,10 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
     glDisable(GL_TEXTURE_2D);
 
-    _drawAxes();
-    _drawCurves();
-    _drawPointSets();
-    _drawGUI();
+    drawAxes();
+    drawCurves();
+    drawPointSets();
+    drawGUI();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() {
@@ -202,7 +203,7 @@ bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(int wheel, int directio
 }
 
 void R2toR::Graphics::FlatFieldDisplay::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
+    Graph2D::notifyReshape(newWinW, newWinH);
 
     computeGraphRanges();
 }

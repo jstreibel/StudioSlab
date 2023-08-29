@@ -10,8 +10,8 @@
 #include "Math/Function/CommonFunctions.h"
 
 namespace RtoR {
-    typedef Base::Functions<Real>::Function1D Function;
-    typedef Base::Functions<Real>::Function1DSummable FunctionSummable;
+    typedef Core::Functions<Real>::Function1D Function;
+    typedef Core::Functions<Real>::Function1DSummable FunctionSummable;
 }
 
 /*

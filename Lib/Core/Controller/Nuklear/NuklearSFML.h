@@ -14,8 +14,7 @@
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 #include "_nuklear.h"
 #include "_nuklear_sfml.hpp"

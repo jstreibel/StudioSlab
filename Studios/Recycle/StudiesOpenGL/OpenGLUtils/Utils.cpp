@@ -3,7 +3,7 @@
 //
 
 #include "Utils.h"
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 void checkGLErrors(const std::string msg = "") {
     GLenum error;

@@ -5,30 +5,20 @@
 #ifndef STUDIOSLAB_GLFREETYPETESTS_H
 #define STUDIOSLAB_GLFREETYPETESTS_H
 
-#include <GL/glew.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 #include "Core/Graphics/Window/Window.h"
-#include "3rdParty/glfreetype/TextRenderer.hpp"
-#include "3rdParty/freetype-gl/vertex-buffer.h"
-#include "3rdParty/freetype-gl/texture-atlas.h"
-#include "3rdParty/freetype-gl/demos/mat4.h"
+#include "Core/Graphics/OpenGL/Writer.h"
 
 class GLFreeTypeTests : public Window {
-    glfreetype::font_data fontData;
-
-    ftgl::vertex_buffer_t *buffer;
-    GLuint shader;
-    ftgl::texture_atlas_t *atlas;
-    ftgl::mat4   model, view, projection;
+    Core::Graphics::Writer writer1, writer2;
 
 public:
     GLFreeTypeTests();
 
-    ~GLFreeTypeTests() override;
-
     void draw() override;
 
-    bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
+    void notifyReshape(int newWinW, int newWinH) override;
 };
 
 

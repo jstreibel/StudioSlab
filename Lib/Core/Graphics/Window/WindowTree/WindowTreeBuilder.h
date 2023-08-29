@@ -13,9 +13,10 @@
 
 class WindowTreeBuilder {
     Window shape;
-    NodeWindow *root = nullptr;
-    NodeWindow *currentNode = nullptr;
+    NodeWindow *root;
+    NodeWindow *currentNode;
 
+    WindowTreeBuilder() = delete;
 public:
     WindowTreeBuilder(int x, int y, int w, int h);
 

@@ -18,7 +18,7 @@ DiscreteFunction_CPU::DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real y
 
 }
 
-Base::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt outN) const {
+Core::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt outN) const {
     assert(M==N); // (por enquanto so vai funcionar assim.
 
     DiscreteFunction_CPU &myClone = *new DiscreteFunction_CPU(outN, outN, xMin, yMin, h);;
@@ -114,9 +114,9 @@ DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const R2toR::Function &func) {
 //}
 
 
-Base::DiscreteFunction<Real2D, Real> &
+Core::DiscreteFunction<Real2D, Real> &
 DiscreteFunction_CPU::Apply(const FunctionT<Real, Real> &func,
-                            Base::DiscreteFunction<Real2D, Real> &out) const {
+                            Core::DiscreteFunction<Real2D, Real> &out) const {
     cast(fOut, DiscreteFunction &, out)
 
     OMP_GET_BEGIN_END(begin, end, N)

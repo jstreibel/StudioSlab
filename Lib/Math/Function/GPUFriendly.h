@@ -5,9 +5,9 @@
 #ifndef V_SHAPE_GPUFRIENDLY_H
 #define V_SHAPE_GPUFRIENDLY_H
 
-#include <Common/DeviceConfig.h>
+#include <Utils/DeviceConfig.h>
 
-namespace Base {
+namespace Core {
 #if USE_CUDA == true
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \

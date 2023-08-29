@@ -2,14 +2,13 @@
 // Created by joao on 8/1/23.
 //
 
-#include <GL/gl.h>
 #include "OpenGLMonitor.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/GUIBackend.h"
 
 
-using namespace Base;
+using namespace Core;
 
 #define AUTO_ADJUST_SAMPLES_PER_SECOND true
 #define MAX_AVG_SAMPLES (8*60UL)

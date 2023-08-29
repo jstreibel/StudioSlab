@@ -37,7 +37,7 @@ namespace RtoR {
         Spaces::PointSet KHistoryData;
         Spaces::PointSet WHistoryData;
         Spaces::PointSet VHistoryData;
-        Base::Graphics::Graph2D mEnergyGraph;
+        Core::Graphics::Graph2D mEnergyGraph;
 
         const Styles::PlotStyle U_style = Styles::GetColorScheme()->funcPlotStyles[0];
         const Styles::PlotStyle K_style = Styles::GetColorScheme()->funcPlotStyles[1];

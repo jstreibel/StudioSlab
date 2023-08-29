@@ -2,7 +2,7 @@
 // Created by joao on 3/31/23.
 //
 
-#include <GL/glew.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 #include "GLUTUtils.h"
 #include "Utils.h"

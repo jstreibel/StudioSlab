@@ -193,7 +193,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(Str("Ring radius: ") + ToStr(rd.getRadius()));
 
     auto scale = eps;
-    static auto rdScaledDown = Base::Scale(rd, scale);
+    static auto rdScaledDown = Core::Scale(rd, scale);
     if(deltaRing) {
         auto name = Str("Ring delta x") + ToStr(scale, 2, true);
 

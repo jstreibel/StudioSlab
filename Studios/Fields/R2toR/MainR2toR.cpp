@@ -12,7 +12,7 @@ int run(int argc, const char **argv) {
     auto input = new R2toR :: LeadingDelta :: Builder( );
 
     InterfaceManager::getInstance().registerInterface(input->getInterface());
-    auto prog = Simulation::App(argc, argv, Base::Simulation::VoidBuilder::Ptr(input));
+    auto prog = Simulation::App(argc, argv, Core::Simulation::VoidBuilder::Ptr(input));
 
     return prog.run();
 }

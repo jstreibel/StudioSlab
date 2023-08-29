@@ -40,11 +40,11 @@ R2toR::DiscreteFunction &R2toR::DiscreteFunction_GPU::Laplacian(R2toR::DiscreteF
 
 //
 // Created by joao on 27/09/2019.
-Base::FunctionT<Real2D, Real> *R2toR::DiscreteFunction_GPU::Clone() const {
+Core::FunctionT<Real2D, Real> *R2toR::DiscreteFunction_GPU::Clone() const {
     return new DiscreteFunction_GPU(N, M, xMin, yMin, h);
 }
 
-Base::DiscreteFunction<Real2D, Real> *R2toR::DiscreteFunction_GPU::CloneWithSize(PosInt N) const {
+Core::DiscreteFunction<Real2D, Real> *R2toR::DiscreteFunction_GPU::CloneWithSize(PosInt N) const {
     throw "R2toRMap::FunctionArbitraryGPU::Clone(unsigned int) not implemented.";
 }
 
@@ -95,14 +95,14 @@ R2toR::DiscreteFunction_GPU::Set(const MyBase &func) {
 }
 
 DiscreteFunction &
-R2toR::DiscreteFunction_GPU::SetArb(const Base::DiscreteFunction<Real2D, Real> &func) {
+R2toR::DiscreteFunction_GPU::SetArb(const Core::DiscreteFunction<Real2D, Real> &func) {
     getSpace().setToValue(func.getSpace());
 
     return *this;
 }
 
-Base::DiscreteFunction<Real2D, Real> &DiscreteFunction_GPU::Apply(const FunctionT<Real, Real> &func,
-                                                                  Base::DiscreteFunction<Real2D, Real> &out) const {
+Core::DiscreteFunction<Real2D, Real> &DiscreteFunction_GPU::Apply(const FunctionT<Real, Real> &func,
+                                                                  Core::DiscreteFunction<Real2D, Real> &out) const {
     assert(func.isGPUFriendly());
 
     const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU&>(getSpace());
@@ -111,7 +111,7 @@ Base::DiscreteFunction<Real2D, Real> &DiscreteFunction_GPU::Apply(const Function
     auto& inX = mySpace.getDeviceData();
     auto& outX = outSpace.getDeviceData();
 
-    const Base::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
+    const Core::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
 
     funcGPU.GPUApply(inX, outX);
 

@@ -14,7 +14,7 @@
 #include "EquationState.h"
 
 namespace R2toR {
-    class Builder : public Base::Simulation::VoidBuilder {
+    class Builder : public Core::Simulation::VoidBuilder {
             Str name = "";
 
         protected:

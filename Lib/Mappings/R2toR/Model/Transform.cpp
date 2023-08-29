@@ -4,6 +4,8 @@
 
 #include "Transform.h"
 
+
+
 Rotation::Rotation(Real angleRad) : angle(angleRad) {
 
 }
@@ -17,3 +19,20 @@ Real2D Rotation::operator*(const Real2D &x) const {
 Rotation Rotation::ByAngle(Real angleRad) {
     return Rotation(angleRad);
 }
+
+
+
+Translation::Translation(Real2D a) : a(a) { }
+
+Real2D Translation::operator*(const Real2D &x) const {
+    return x + a;
+}
+
+
+
+Scale::Scale(const Real2D &s) : s(s) {}
+
+Real2D Scale::operator*(const Real2D &x) const {
+    return {x.x*s.x, x.y*s.y};
+}
+

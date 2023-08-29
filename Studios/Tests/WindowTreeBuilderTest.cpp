@@ -5,27 +5,45 @@
 #include "WindowTreeBuilderTest.h"
 
 #include "Core/Graphics/Window/WindowTree/WindowTreeBuilder.h"
-//#include <Studios/Graphics/Graph.h>
+#include "GLFreeTypeTests.h"
+#include "Math/Graph/Graph.h"
+#include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 
-WindowTreeBuilderTest::WindowTreeBuilderTest()  {
+WindowTreeBuilderTest::WindowTreeBuilderTest()
+: osc(0.0, -0.5, 0.75, 0.15, false, false)  {
     WindowTreeBuilder treeBuilder(0, 0, 1500, 1500);
 
     Window *window = nullptr;
 
-    window = new Window();
+    if(true) {
+        auto graph = new GraphRtoR(-1, 1, -1, 1, "Graph");
+        graph->addFunction(&osc, "oscillon 1");
+        graph->setScale(10);
+        window = graph;
+    } else {
+        window = new Window;
+    }
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
     window = new Window();
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
-    window = new Window();
+    window = new GLFreeTypeTests;
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
-    window = new Window();
+    window = new GLFreeTypeTests;
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
-    window = new Window();
+    if(true) {
+        auto graph = new GraphRtoR(-1, 1, -1, 1, "Graph");
+        graph->addFunction(&osc, "oscillon 2");
+        graph->setScale(10);
+        window = graph;
+    } else {
+        window = new Window;
+    }
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
     window = new Window();
@@ -36,6 +54,10 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()  {
 
 
 void WindowTreeBuilderTest::draw() {
+    static Timer timer;
+
+    osc.set_t(timer.getElTime_sec());
+
     main->draw();
 }
 

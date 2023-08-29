@@ -3,7 +3,7 @@
 //
 
 #include "Window.h"
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 Window::Window(int x, int y, int w, int h) : x(x), y(y), w(w), h(h) {}
 

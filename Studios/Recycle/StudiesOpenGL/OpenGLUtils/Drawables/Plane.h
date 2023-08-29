@@ -7,7 +7,7 @@
 
 #include "Drawable.h"
 #include <vector>
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 #include <glm/vec2.hpp>
 
 class Plane : public Drawable {

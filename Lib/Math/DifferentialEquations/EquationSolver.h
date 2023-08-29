@@ -12,10 +12,10 @@ namespace Slab {
     class EquationSolverT {
     public:
         using EqState = EquationStateType;
-        using EqBoundaryCondition = Base::BoundaryConditions<EqState>;
+        using EqBoundaryCondition = Core::BoundaryConditions<EqState>;
     protected:
         const NumericConfig &params;
-        Base::BoundaryConditions<EqState> &du;
+        Core::BoundaryConditions<EqState> &du;
 
     public:
         EquationSolverT(const NumericConfig &params, EqBoundaryCondition &du)
@@ -45,7 +45,7 @@ namespace Slab {
 
     class EquationSolver : public EquationSolverT<Simulation::EquationState>{
     public:
-        using EqBoundaryCondition = Base::BoundaryConditions<Simulation::EquationState>;
+        using EqBoundaryCondition = Core::BoundaryConditions<Simulation::EquationState>;
 
         EquationSolver(const NumericConfig &params, EqBoundaryCondition &du)
         : EquationSolverT(params, du) {};

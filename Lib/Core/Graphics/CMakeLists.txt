@@ -25,8 +25,10 @@ set( GRAPHICS_SOURCES
 		OpenGL/Utils.h			OpenGL/Utils.cpp
 		OpenGL/GLUTUtils.h  	OpenGL/GLUTUtils.cpp
 		OpenGL/Texture.h		OpenGL/Texture.cpp
+		OpenGL/Writer.h			OpenGL/Writer.cpp
 		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
 		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
+        OpenGL/OpenGL.h
 
 )
 
@@ -37,6 +39,7 @@ add_library(${LIB_LOCAL_NAME} STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		freeimage
+		freetype-gl
 		)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

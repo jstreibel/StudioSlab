@@ -6,7 +6,11 @@
 
 #define Clamp()
 
+
 namespace Styles {
+    Color White = {1,1,1,1};
+    Color Black = {0,0,0,1};
+
     Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
     Color::Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}

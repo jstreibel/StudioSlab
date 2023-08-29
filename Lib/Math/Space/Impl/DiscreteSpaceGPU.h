@@ -6,7 +6,7 @@
 #define V_SHAPE_DISCRETESPACEGPU_H
 
 #include "DiscreteSpace.h"
-#include <Common/DeviceConfig.h>
+#include <Utils/DeviceConfig.h>
 
 
 #if USE_CUDA || defined(__NVCC__) || defined(__CUDACC__)

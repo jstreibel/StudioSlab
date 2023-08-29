@@ -17,7 +17,7 @@ DiscreteFunction::DiscreteFunction(const DiscreteFunction &toCopy)
                                          {  }
 
 DiscreteFunction::DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
-    : Base::DiscreteFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
+    : Core::DiscreteFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
       xMin(xMin), xMax(xMax), laplacianType(laplacianType)
 {
 

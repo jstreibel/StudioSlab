@@ -7,7 +7,7 @@
 #include "Core/Controller/Interface/Interface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 
-namespace Base::Simulation {
+namespace Core::Simulation {
 
     class VoidBuilder : public InterfaceOwner {
     protected:

@@ -19,10 +19,10 @@ template<int NUM_THREADS, class FIELD_STATE_TYPE>
 class StepperMontecarlo : public Stepper{
 public:
 
-    StepperMontecarlo(Base::Simulation::VoidBuilder &builder)
+    StepperMontecarlo(Core::Simulation::VoidBuilder &builder)
     : Stepper()
     , H(*(Slab::EquationSolverT<FIELD_STATE_TYPE>*) builder.buildEquationSolver())
-    , dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
+    , dPhi((const Core::BoundaryConditions<FIELD_STATE_TYPE>*)builder.getBoundary())
     , _phi(    (FIELD_STATE_TYPE*)builder.newFieldState())
     , _phiTemp((FIELD_STATE_TYPE*)builder.newFieldState()) {
         dPhi->apply(*_phi, 0.0);
@@ -62,7 +62,7 @@ public:
 private:
     Slab::EquationSolverT<FIELD_STATE_TYPE> &H;
 
-    const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
+    const Core::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
 
     FIELD_STATE_TYPE *_phi;
     FIELD_STATE_TYPE *_phiTemp;

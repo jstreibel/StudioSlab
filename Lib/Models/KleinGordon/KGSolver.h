@@ -17,7 +17,7 @@ namespace Fields {
         class Solver : public Slab::EquationSolverT<EqState> {
         public:
             using MyBase = Slab::EquationSolverT<EqState>;
-            using PotentialFunc = Base::FunctionT<Real, Real>;
+            using PotentialFunc = Core::FunctionT<Real, Real>;
 
             typedef EqState::SubStateType           DiscrFuncType;
 

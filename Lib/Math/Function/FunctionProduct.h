@@ -7,7 +7,7 @@
 
 #include "Function.h"
 
-namespace Base {
+namespace Core {
 
         template<class InputCategory, class OutputCategory>
         class Product : public FunctionT<InputCategory, OutputCategory> {

@@ -10,7 +10,7 @@
 class DummyProgram : public Program {
 public:
     bool cycle(CycleOptions options) override {
-        return true;
+        return false;
     }
 };
 

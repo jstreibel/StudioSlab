@@ -11,7 +11,7 @@
 
 namespace RtoR {
     class KGEnergy {
-        Base::Simulation::VoidBuilder &builder;
+        Core::Simulation::VoidBuilder &builder;
 
         RtoR::DiscreteFunction *_oEnergyDensityFunc;
         RtoR::DiscreteFunction *_oKinetic;
@@ -19,7 +19,7 @@ namespace RtoR {
         RtoR::DiscreteFunction *_oPotential;
 
     public:
-        KGEnergy(Base::Simulation::VoidBuilder &builder);
+        KGEnergy(Core::Simulation::VoidBuilder &builder);
 
         const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
 

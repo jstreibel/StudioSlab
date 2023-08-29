@@ -19,21 +19,22 @@ namespace Resources {
                              "imgui/ProggyTiny.ttf",                    //  4
                              "imgui/Roboto-Medium.ttf",                 //  5
 
-                             "LatinModern/lmroman10-regular.otf",       //  6
-                             "LatinModern/lmromancaps10-regular.otf",   //  7
+                             "LatinModern/latinmodern-math.otf",        //  6 (math symbols confirmed)
+                             "LatinModern/lmroman10-regular.otf",       //  7
+                             "LatinModern/lmromancaps10-regular.otf",   //  8
 
-                             "Lucida/LSANS.TTF",                        //  8
+                             "Lucida/LSANS.TTF",                        //  9
 
-                             "JuliaMono/JuliaMono-Regular.ttf",         //  9
+                             "JuliaMono/JuliaMono-Regular.ttf",         // 10 (math symbols confirmed)
 
-                             "EBGaramond-VariableFont_wght.ttf",        // 10
-                             "FontAwesome-Solid.ttf",                   // 11
+                             "EBGaramond-VariableFont_wght.ttf",        // 11
+                             "FontAwesome-Solid.ttf",                   // 12
 
-                             "Inconsolata-Regular.ttf",                 // 12
+                             "Inconsolata-Regular.ttf",                 // 13
 
-                             "Roboto-Regular.ttf",                      // 13
-                             "times-new-roman-14.ttf",                  // 14
-                             "Simplex.ttf"                              // 15
+                             "Roboto-Regular.ttf",                      // 14
+                             "times-new-roman-14.ttf",                  // 15
+                             "Simplex.ttf"                              // 16
                              };
 
     Str fontFileName(int index);

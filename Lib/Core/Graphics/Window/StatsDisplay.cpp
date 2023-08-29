@@ -4,12 +4,7 @@
 
 #include "StatsDisplay.h"
 
-#include "Core/Graphics/Window/Window.h"
-#include "Core/Graphics/OpenGL/GLUTUtils.h"
-
 #include "imgui.h"
-
-#include <GL/gl.h>
 
 
 StatsDisplay::StatsDisplay() : Window( ) {
@@ -28,10 +23,10 @@ void StatsDisplay::draw() {
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    const float w_ = float(w) - (float)2*winXoffset,
-                h_ = float(h) - (float)2*winYoffset;
-    const float x_ = x+winXoffset,
-                y_ = displayHeight - (h_ + y + winYoffset);
+    const float w_ = float(w) - (float)2 * hPadding,
+                h_ = float(h) - (float)2 * vPadding;
+    const float x_ = x + hPadding,
+                y_ = displayHeight - (h_ + y + vPadding);
 
     const float hSpacing = 20.0f;
 

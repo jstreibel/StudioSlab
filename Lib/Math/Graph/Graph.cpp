@@ -15,335 +15,109 @@
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Utils/Resources.h"
 
-#define MARK                                                                                            \
-    {                                                                                                   \
-    buffer.str("");                                                                                     \
-    auto numRegion = log10(deltaY);                                                                     \
-    buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                          \
-           << (numRegion< -1 ? std::scientific : std::fixed) << mark;                                   \
-    GLUTUtils::writeOrtho(this, {xMin,xMax,yMin,yMax}, fontScale, float(xMarkingsLabels), float(mark),  \
-            buffer.str().c_str(), TICK_FONT);                                                           \
-    }
+#include "Graph_Config.h"
 
-Base::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled, int samples)
-: xMin(xMin)
+Count Core::Graphics::Graph2D::unnamedCount = 0;
+std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
+
+Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
+: writer(Resources::fontFileName(FONT_INDEX), FONT_SIZE)
+, xMin(xMin)
 , xMax(xMax)
 , yMin(yMin)
 , yMax(yMax)
-, title(std::move(title))
-, filled(filled)
+, title(std::move(_title))
 , samples(samples)
-{  }
+{
+    if(title.empty()) title = Str("<unnamed") + ToStr(++Graph2D::unnamedCount) + ">";
+    Count n=0;
+    while(Graph2D::graphMap.count(title))
+        title += " (" + ToStr(++n) + ")";
+    Graph2D::graphMap[title] = this;
 
-Base::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
-: title(std::move(title)), autoReviewGraphRanges(autoReviewGraphLimits) {
+    Log::Critical() << "Created Graph2D '" << title << "'" << Log::Flush;
+
+    fix vp = getViewport();
+    writer.reshape(vp.w(), vp.h());
+}
+
+Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
+: Graph2D(-1,1,-1,1,std::move(title))
+{
+    autoReviewGraphRanges = autoReviewGraphLimits;
+}
+
+void Core::Graphics::Graph2D::draw() {
+    Window::draw();
+
+    if (autoReviewGraphRanges) reviewGraphRanges();
+
+    setupOrtho();
+
+    drawAxes();
+
+    drawPointSets();
+
+    drawCurves();
+
+    drawGUI();
 
 }
 
-void Base::Graphics::Graph2D::_drawAxes() {
-
-    glLineWidth(1.0);
-
-    __computeSpacings();
-
-    __drawXAxis();
-    __drawYAxis();
-
-    if(!labels.empty()){
-        const Real Sx = (xMax-xMin) / w;
-        const Real Sy = (yMax-yMin) / h;
-        const Real Tx = xMin;
-        const Real Ty = yMin;
-
-        for(size_t i=0; i<labels.size(); ++i){
-            labels[i]->draw(Sx, Sy, Tx, Ty);
-        }
-    }
-}
-
-void Base::Graphics::Graph2D::__computeSpacings() {
-    {
-        const Real deltaY = yMax - yMin;
-
-        const auto theLog = log10(deltaY);
-        const auto spacing = pow(10., floor(theLog) - 1.);
-        const auto theRest = theLog - floor(theLog);
-        const auto multiplier = floor(pow(10., theRest));
-
-        yspacing = multiplier * spacing;
-    }
-
-    {
-        const auto deltaX = xMax - xMin;
-
-        const auto theLog = log10(deltaX);
-        const auto spacing = pow(10., floor(theLog) - 1.);
-        const auto theRest = theLog - floor(theLog);
-        const auto multiplier = floor(pow(10., theRest));
-
-        xspacing = multiplier * spacing;
-    }
-}
-
-void Base::Graphics::Graph2D::__drawXAxis() {
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-
-    const Real inPixelsTimes2 = 5;
-    const Real vTick = inPixelsTimes2 * (yMax-yMin) / h;
-    const Real hTick = inPixelsTimes2 * (xMax-xMin) / w;
-    (void)hTick;
-
-    auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
-
-    {
-
-
-
-
-        static glfreetype::font_data fontData;
-        static auto initd = false;
-        if(!initd) {
-            fontData.init(Resources::fontFileName(11).c_str(), 30);
-            initd = true;
-        }
-        glfreetype::print(fontData, 0.1, 0.1, "Hello, frikin world!!");
-
-
-
-        glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
-
-        const Real yloc = -yspacing*0.356;
-        for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
-            char buffer[64];
-            sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
-            // glfreetype::print(fontData, mark - xspacing / 18.0, yloc, "Hello, frikin world!!");
-        }
-        for (Real mark = 0; mark >= xMin * 1.0001; mark -= xspacing) {
-            char buffer[64];
-            sprintf(buffer, "%.2f", mark);
-            GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yloc, buffer, TICK_FONT);
-        }
-    }
-
-    if(1)
-    {
-        auto &ac = Styles::GetColorScheme()->axisColor;
-        auto &tc = Styles::GetColorScheme()->majorTickColor;
-        glBegin(GL_LINES);
-        {
-            glColor4f(ac.r, ac.g, ac.b, ac.a);
-
-            glVertex3d(xMin, 0, 0);
-            glVertex3d(xMax, 0, 0);
-
-            glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-            for(Real mark = 0; mark<=xMax; mark+=xspacing){
-                glVertex3d(mark, -vTick, 0);
-                glVertex3d(mark, +vTick, 0);
-            }
-            for(Real mark = 0; mark>=xMin; mark-=xspacing){
-                glVertex3d(mark, -vTick, 0);
-                glVertex3d(mark, +vTick, 0);
-            }
-        }
-        glEnd();
-    }
-
-
-}
-
-void Base::Graphics::Graph2D::__drawYAxis() {
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-
-    const Real deltaY = yMax-yMin;
-    const Real deltaX = xMax-xMin;
-    const Real xMarkingsLabels = xMin - deltaX * 0.05;
-
-    StringStream buffer;
-
-    auto &gtf = Styles::GetColorScheme()->graphTicksFont;
-    glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
-    {
-        if(yMin < 0 && yMax > 0) {
-            for(Real mark = 0; mark>=yMin; mark-=yspacing)         MARK
-            for(Real mark = yspacing; mark<=yMax; mark+=yspacing)  MARK
-        } else {
-            for (Real mark = yMin; mark <= yMax; mark += yspacing) MARK
-        }
-    }
-
-
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LINE_SMOOTH);
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(2, 0x2727);
-    glLineStipple(2, 0x1249);
-    glLineStipple(2, 0x1111);
-
-    glBegin(GL_LINES);
-    {
-        auto &ac = Styles::GetColorScheme()->axisColor;
-        auto &tc = Styles::GetColorScheme()->majorTickColor;
-
-        glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-        if(yMin < 0 && yMax > 0) {
-            for(Real mark = 0; mark>=yMin; mark-=yspacing) {
-                glVertex3d(xMin, mark, 0);
-                glVertex3d(xMax, mark, 0);
-            }
-            for(Real mark = yspacing; mark<=yMax; mark+=yspacing) {
-                glVertex3d(xMin, mark, 0);
-                glVertex3d(xMax, mark, 0);
-            }
-        } else {
-            for (Real mark = yMin; mark <= yMax; mark += yspacing) {
-                glVertex3d(xMin, mark, 0);
-                glVertex3d(xMax, mark, 0);
-            }
-        }
-
-        glColor4f(ac.r, ac.g, ac.b, ac.a);
-
-        glVertex3d(xMin, 0, 0);
-        glVertex3d(xMax, 0, 0);
-    }
-    glEnd();
-    glPopAttrib();
-
-}
-
-void Base::Graphics::Graph2D::setupOrtho() {
+void Core::Graphics::Graph2D::setupOrtho() const {
     const Real deltaX = xMax-xMin;
     const Real deltaY = yMax-yMin;
-    const Real xTraLeft  = -deltaX*0.07;
-    const Real xTraRight = +deltaX*0.02;
+    const Real xTraLeft   = 0;  // -deltaX*0.07;
+    const Real xTraRight  = 0;  // +deltaX*0.02;
+    const Real xTraTop    = 0;  // +deltaY*0.025;
+    const Real xTraBottom = 0;  // -deltaY*0.025;
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin-deltaY*0.025), (yMax+deltaY*0.025), -1, 1);
+    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
 }
 
-void Base::Graphics::Graph2D::_nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label,
-                                             const Window *window) {
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glOrtho(0, 1, 0, 1, -1, 1);
+auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
 
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
+auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
 
-    auto dx = .080,
-         dy = -.060;
-    auto xGap = 0.015,
-         yGap = -.025;
-    auto colWidth = 0.5;
-    auto xMin = .100+(colWidth+xGap+dx)*float(j),
-         xMax = xMin+dx,
-         yMin = .975+(yGap+dy)*float(i),
-         yMax = yMin+dy;
-
-    if(style.filled) {
-        auto color = style.fillColor;
-        glColor4f(color.r, color.g, color.b, .5 * color.a);
-
-        glRectd(xMin, yMin, xMax, yMax);
-    }
-
-    {
-        auto color = style.lineColor;
-
-        glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(style.thickness);
-
-        if (style.primitive != Styles::SolidLine) {
-            glDisable(GL_LINE_SMOOTH);
-            glEnable(GL_LINE_STIPPLE);
-            glLineStipple(style.stippleFactor, style.stipplePattern);
-        } else {
-            glEnable(GL_LINE_SMOOTH);
-            glDisable(GL_LINE_STIPPLE);
-        }
-
-        if(style.filled) {
-            glBegin(GL_LINE_LOOP);
-            glVertex2f(xMin, yMin);
-            glVertex2f(xMax, yMin);
-            glVertex2f(xMax, yMax);
-            glVertex2f(xMin, yMax);
-            glEnd();
-        } else {
-            glBegin(GL_LINES);
-            glVertex2f(xMin, .5*(yMin+yMax));
-            glVertex2f(xMax, .5*(yMin+yMax));
-            glEnd();
-        }
-
-    }
-
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-    glLineWidth(1.5);
-
-    auto c = Styles::GetColorScheme()->graphTitleFont;
-    glColor4f(c.r,c.g,c.b,c.a);
-    GLUTUtils::writeOrtho(window, RectR{0,1,0,1}, fontScale, xMax+xGap, .5*(yMax+yMin), label);
-
-    glPopMatrix();
-//
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-}
-
-void Base::Graphics::Graph2D::addLabel(Label *label) { labels.push_back(label); }
-
-auto Base::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
-
-auto Base::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-
-RectR Base::Graphics::Graph2D::getLimits() const {
+RectR Core::Graphics::Graph2D::getLimits() const {
     return RectR(xMin, xMax, yMin, yMax);
 }
 
-auto Base::Graphics::Graph2D::setLimits(RectR lims) -> void {
+auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void {
     xMin = lims.xMin;
     xMax = lims.xMax;
     yMin = lims.yMin;
     yMax = lims.yMax;
 }
 
-void Base::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
-void Base::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
-void Base::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
-void Base::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
-Real Base::Graphics::Graph2D::get_xMin() const { return xMin; }
-Real Base::Graphics::Graph2D::get_xMax() const { return xMax; }
-Real Base::Graphics::Graph2D::get_yMin() const { return yMin; }
-Real Base::Graphics::Graph2D::get_yMax() const { return yMax; }
+void Core::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
+void Core::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
+void Core::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
+void Core::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
+Real Core::Graphics::Graph2D::get_xMin() const { return xMin; }
+Real Core::Graphics::Graph2D::get_xMax() const { return xMax; }
+Real Core::Graphics::Graph2D::get_yMin() const { return yMin; }
+Real Core::Graphics::Graph2D::get_yMax() const { return yMax; }
 
 void
-Base::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
-                                    Styles::PlotStyle style,
-                                    Str setName,
-                                    bool affectsGraphRanges) {
+Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
+                                     Styles::PlotStyle style,
+                                     Str setName,
+                                     bool affectsGraphRanges) {
     auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName), affectsGraphRanges};
 
     mPointSets.emplace_back(metaData);
 }
 
 void
-Base::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
+Core::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
     CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
     curves.emplace_back(curveMetadata);
 }
 
-void Base::Graphics::Graph2D::reviewGraphRanges() {
+void Core::Graphics::Graph2D::reviewGraphRanges() {
     if(!mPointSets.empty())
     {
         auto referencePointSet = mPointSets[0].data;
@@ -386,7 +160,7 @@ void Base::Graphics::Graph2D::reviewGraphRanges() {
 
 
 void
-Base::Graphics::Graph2D::_renderPointSet(const Spaces::PointSet &pSet,
+Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
                                         Styles::PlotStyle style) const noexcept {
     auto pts = pSet.getPoints();
 
@@ -447,10 +221,11 @@ Base::Graphics::Graph2D::_renderPointSet(const Spaces::PointSet &pSet,
     }
 }
 
-void Base::Graphics::Graph2D::_drawGUI() {
+void Core::Graphics::Graph2D::drawGUI() {
     auto popupName = Str("win_") + title + Str("_popup");
 
     if(savePopupOn) {
+        Log::Info() << "Popup '" << popupName << "' is on" << Log::Flush;
         ImGui::OpenPopup(popupName.c_str());
         savePopupOn = false;
     }
@@ -462,25 +237,24 @@ void Base::Graphics::Graph2D::_drawGUI() {
             auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
             OpenGLUtils::outputToPNG(this, fileName, w, (int)h);
         }
-
         ImGui::EndPopup();
     }
 }
 
-void Base::Graphics::Graph2D::_drawPointSets() {
+void Core::Graphics::Graph2D::drawPointSets() {
     int i=0;
     for(auto &ptSet : mPointSets){
         auto &func = *ptSet.data;
         auto style = ptSet.plotStyle;
         auto label = ptSet.name;
 
-        if(!label.empty()) _nameLabelDraw(i++, 0, style, label, this);
+        if(!label.empty()) nameLabelDraw(i++, 0, style, label, this);
 
-        this->_renderPointSet(func, style);
+        this->renderPointSet(func, style);
     }
 }
 
-void Base::Graphics::Graph2D::_drawCurves() {
+void Core::Graphics::Graph2D::drawCurves() {
     auto i=0;
     for(IN curveData : curves) {
         auto curve = curveData.curve;
@@ -492,7 +266,7 @@ void Base::Graphics::Graph2D::_drawCurves() {
         auto style = curveData.style;
         auto name  = curveData.name;
 
-        _nameLabelDraw(i, 1, style, name, this);
+        nameLabelDraw(i, 1, style, name, this);
 
         auto color = style.lineColor;
 
@@ -520,32 +294,11 @@ void Base::Graphics::Graph2D::_drawCurves() {
     }
 }
 
-void Base::Graphics::Graph2D::clearPointSets() {
-    mPointSets.clear();
-}
+void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
 
-void Base::Graphics::Graph2D::clearCurves() {
-    curves.clear();
-}
+void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
-void Base::Graphics::Graph2D::draw() {
-    Window::draw();
-
-    if(autoReviewGraphRanges)
-        reviewGraphRanges();
-
-    setupOrtho();
-
-    _drawAxes();
-
-    _drawPointSets();
-
-    _drawCurves();
-
-    _drawGUI();
-}
-
-bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
+bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
     static auto time = Timer();
 
     if(button == 2){
@@ -558,7 +311,7 @@ bool Base::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
     return EventListener::notifyMouseButton(button, dir, x, y);
 }
 
-bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
+bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     auto elRet = EventListener::notifyMouseMotion(x, y);
 
     auto& mouseState = GUIBackend::GetInstance().getMouseState();
@@ -598,7 +351,7 @@ bool Base::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     return elRet;
 }
 
-bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
+bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
     EventListener::notifyMouseWheel(wheel, direction, x, y);
 
     constexpr const Real factor = 1.1;
@@ -617,6 +370,13 @@ bool Base::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     }
 
     return true;
+}
+
+void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) {
+    Window::notifyReshape(newWinW, newWinH);
+
+    auto vp = getViewport();
+    writer.reshape(vp.w(), vp.h());
 }
 
 

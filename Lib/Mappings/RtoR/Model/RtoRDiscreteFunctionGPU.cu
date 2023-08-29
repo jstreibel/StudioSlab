@@ -19,7 +19,7 @@ DiscreteFunctionGPU::DiscreteFunctionGPU(PosInt N, Real xMin, Real xMax, Laplaci
 
 }
 
-Base::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Function &func) {
+Core::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Function &func) {
     DiscreteSpaceGPU &spaceGPU = dynamic_cast<DiscreteSpaceGPU&>(getSpace());
 
     auto& XHost = spaceGPU.getHostData(false);
@@ -47,8 +47,8 @@ Base::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Functio
 
 
 
-Base::DiscreteFunction<Real,Real> &DiscreteFunctionGPU::Apply(const RtoR::Function &func,
-                                                               Base::DiscreteFunction<Real,Real> &out) const {
+Core::DiscreteFunction<Real,Real> &DiscreteFunctionGPU::Apply(const RtoR::Function &func,
+                                                              Core::DiscreteFunction<Real,Real> &out) const {
     assert(out.isGPUFriendly());
 
     const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU&>(getSpace());
@@ -58,7 +58,7 @@ Base::DiscreteFunction<Real,Real> &DiscreteFunctionGPU::Apply(const RtoR::Functi
     auto& XDev = mySpace.getDeviceData();
     auto& outXDev = outSpace.getDeviceData();
 
-    const Base::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
+    const Core::GPUFriendly &funcGPU = func.getGPUFriendlyVersion();
     //cast(outFunc, FunctionArbitraryGPU&, out);
 
     funcGPU.GPUApply(XDev, outXDev);
@@ -86,7 +86,7 @@ Str DiscreteFunctionGPU::myName() const {
     return "ℝ ↦ ℝ GPU discrete";
 }
 
-Base::FunctionT<Real, Real> *DiscreteFunctionGPU::Clone() const {
+Core::FunctionT<Real, Real> *DiscreteFunctionGPU::Clone() const {
     return new DiscreteFunctionGPU(N, xMin, xMax, laplacianType);
 }
 

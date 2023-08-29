@@ -26,7 +26,7 @@ class NumericalIntegration : public Program {
 
     BenchmarkHistogram simTimeHistogram;
 
-    Base::Simulation::VoidBuilder &simBuilder;
+    Core::Simulation::VoidBuilder &simBuilder;
     Stepper *stepper;
     OutputManager *outputManager;
 
@@ -38,7 +38,7 @@ class NumericalIntegration : public Program {
     auto _cycleUntilOutputOrFinish()    -> bool;
 
 public:
-    NumericalIntegration(Base::Simulation::VoidBuilder &simBuilder)
+    NumericalIntegration(Core::Simulation::VoidBuilder &simBuilder)
             : simBuilder(simBuilder)
             , stepper(simBuilder.buildStepper())
             , outputManager(simBuilder.buildOutputManager()),

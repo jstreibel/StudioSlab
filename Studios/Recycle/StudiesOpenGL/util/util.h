@@ -7,7 +7,7 @@
 
 //#define __FILENAME__ (__builtin_strrchr(__FILE__, '/') ? __builtin_strrchr(__FILE__, '/') + 1 : __FILE__)
 
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 #include <string>
 
 void checkOpenGLDebugExtension ();

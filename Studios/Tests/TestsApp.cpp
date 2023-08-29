@@ -22,9 +22,11 @@ TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv, DONT_REGIS
 
 int TestsApp::run() {
     Window *test;
-    if(false)      test = new WindowTreeBuilderTest;
-    else if(false) test = new WindowPanelTest;
+    if(true)      test = new WindowTreeBuilderTest;
+    else if(true) test = new WindowPanelTest;
     else test = new GLFreeTypeTests;
+
+
 
     auto &backend = GLUTBackend::GetInstance();
 

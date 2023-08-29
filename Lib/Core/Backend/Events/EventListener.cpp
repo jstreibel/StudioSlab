@@ -11,22 +11,22 @@
     return responded;          \
     };
 
-Base::EventListener::EventListener() { }
+Core::EventListener::EventListener() { }
 
-void Base::EventListener::addResponder(Base::EventListener *responder) {
+void Core::EventListener::addResponder(Core::EventListener *responder) {
     unmanagedDelegateResponders.emplace_back(responder);
 }
 
-bool Base::EventListener::hasResponders() const {
+bool Core::EventListener::hasResponders() const {
     return ! unmanagedDelegateResponders.empty();
 }
 
 
-bool Base::EventListener::notifyKeyboard(unsigned char key, int x, int y)               EVENT_CALLBACK(notifyKeyboard(key, x, y))
-bool Base::EventListener::notifyKeyboardSpecial(int key, int x, int y)                  EVENT_CALLBACK(notifyKeyboardSpecial(key, x, y))
-bool Base::EventListener::notifyMouseButton(int button, int dir, int x, int y)          EVENT_CALLBACK(notifyMouseButton(button, dir, x, y))
-bool Base::EventListener::notifyMouseMotion(int x, int y)                               EVENT_CALLBACK(notifyMouseMotion(x, y))
-bool Base::EventListener::notifyMousePassiveMotion(int x, int y)                        EVENT_CALLBACK(notifyMousePassiveMotion(x, y))
-bool Base::EventListener::notifyMouseWheel(int wheel, int direction, int x, int y)      EVENT_CALLBACK(notifyMouseWheel(wheel, direction, x, y))
-bool Base::EventListener::notifyScreenReshape(int newScreenWidth, int newScreenHeight)  EVENT_CALLBACK(notifyScreenReshape(newScreenWidth, newScreenHeight))
-bool Base::EventListener::notifyRender(float elTime_msec)                               EVENT_CALLBACK(notifyRender(elTime_msec))
+bool Core::EventListener::notifyKeyboard(unsigned char key, int x, int y)               EVENT_CALLBACK(notifyKeyboard(key, x, y))
+bool Core::EventListener::notifyKeyboardSpecial(int key, int x, int y)                  EVENT_CALLBACK(notifyKeyboardSpecial(key, x, y))
+bool Core::EventListener::notifyMouseButton(int button, int dir, int x, int y)          EVENT_CALLBACK(notifyMouseButton(button, dir, x, y))
+bool Core::EventListener::notifyMouseMotion(int x, int y)                               EVENT_CALLBACK(notifyMouseMotion(x, y))
+bool Core::EventListener::notifyMousePassiveMotion(int x, int y)                        EVENT_CALLBACK(notifyMousePassiveMotion(x, y))
+bool Core::EventListener::notifyMouseWheel(int wheel, int direction, int x, int y)      EVENT_CALLBACK(notifyMouseWheel(wheel, direction, x, y))
+bool Core::EventListener::notifyScreenReshape(int newScreenWidth, int newScreenHeight)  EVENT_CALLBACK(notifyScreenReshape(newScreenWidth, newScreenHeight))
+bool Core::EventListener::notifyRender(float elTime_msec)                               EVENT_CALLBACK(notifyRender(elTime_msec))

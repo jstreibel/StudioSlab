@@ -18,7 +18,7 @@
 
 #define BUILDER_IMPL
 
-namespace Base::Simulation {
+namespace Core::Simulation {
 
     template<typename EquationSolverType>
     class Builder : public InterfaceOwner {
@@ -50,7 +50,7 @@ namespace Base::Simulation {
 
         using EqSolver          = EquationSolverType;
         using EqState           = EqSolver::EqState;
-        using BoundaryCondition = Base::BoundaryConditions<EqState>;
+        using BoundaryCondition = Core::BoundaryConditions<EqState>;
 
         virtual ~Builder() {}
 
@@ -79,7 +79,7 @@ namespace Base::Simulation {
 
 #define DONT_REGISTER false
 
-namespace Base::Simulation {
+namespace Core::Simulation {
 
     template<typename SolverType>
     Builder<SolverType>::Builder(Str name, Str generalDescription)

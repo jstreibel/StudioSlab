@@ -10,10 +10,10 @@
 
 namespace Simulation {
     class App : public AppBase {
-        Base::Simulation::VoidBuilder::Ptr builder;
+        Core::Simulation::VoidBuilder::Ptr builder;
 
     public:
-        App(int argc, const char **argv, Base::Simulation::VoidBuilder::Ptr simBuilder);
+        App(int argc, const char **argv, Core::Simulation::VoidBuilder::Ptr simBuilder);
 
         auto run() -> int override;
 

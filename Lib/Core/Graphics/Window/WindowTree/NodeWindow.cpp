@@ -19,9 +19,11 @@ NodeWindow::NodeWindow(NodeWindow *parent, NodeArrangement nodeArrangement) : pa
 void NodeWindow::addSubWindow(Window *subWindow) {
     NodeWindow *nodeSub = dynamic_cast<NodeWindow*>(subWindow);
 
-    if(nodeSub != nullptr) nodeSub->parent = this;
+    if(nodeSub != nullptr){
+        nodeSub->parent = this;
+        nodeSub->setClear(false);
+    }
 
-    subWindow->setClear(false);
     children.emplace_back(subWindow);
 }
 

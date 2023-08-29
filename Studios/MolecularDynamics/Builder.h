@@ -9,7 +9,7 @@
 
 namespace MolecularDynamics {
 
-    class Builder : public Base::Simulation::VoidBuilder {
+    class Builder : public Core::Simulation::VoidBuilder {
         RealParameter temperature = RealParameter    (0.0, "T,temperature", "The system temperature in Langevin simulations.");
         RealParameter dissipation = RealParameter    (0.0, "k,dissipation_factor", "The system energy dissipation factor.");
         IntegerParameter model    = IntegerParameter (  0, "model", "The physical model to use:"

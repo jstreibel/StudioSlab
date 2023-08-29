@@ -10,7 +10,7 @@
 #include "Math/Function/GPUFriendly.h"
 
 namespace RtoR {
-    class SignumFunction : public RtoR::Function, Base::GPUFriendly {
+    class SignumFunction : public RtoR::Function, Core::GPUFriendly {
 
         MAKE_GPU_FRIENDLY(SignumFunction)
 

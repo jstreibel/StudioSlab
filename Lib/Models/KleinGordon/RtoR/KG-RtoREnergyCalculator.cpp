@@ -9,7 +9,7 @@
 #define RIGHT(i) ((i)<N-1?(i)+1:0)
 //#endif
 
-RtoR::KGEnergy::KGEnergy(Base::Simulation::VoidBuilder &builder)
+RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder)
 : builder(builder)
 , _oEnergyDensityFunc(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
 , _oKinetic          (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())

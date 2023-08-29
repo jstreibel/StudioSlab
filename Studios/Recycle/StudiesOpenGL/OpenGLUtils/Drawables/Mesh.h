@@ -7,7 +7,8 @@
 #ifndef OPENGLSTUDIES_MESH_H
 #define OPENGLSTUDIES_MESH_H
 
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
+
 #include <glm/vec3.hpp>
 #include <glm/vec2.hpp>
 #include <vector>

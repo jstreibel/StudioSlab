@@ -13,7 +13,7 @@
 #include "Core/Graphics/Styles/ColorMap.h"
 
 namespace R2toR::Graphics {
-    class FlatFieldDisplay : public Base::Graphics::Graph2D {
+    class FlatFieldDisplay : public Core::Graphics::Graph2D {
             bool validBuffer = false;
 
             Styles::ColorMap cMap = Styles::ColorMaps["BrBG"];
@@ -31,7 +31,7 @@ namespace R2toR::Graphics {
 
             void computeGraphRanges();
         public:
-            FlatFieldDisplay(Str title="Full 2D") : Base::Graphics::Graph2D(-1,1,-1,1,title) {};
+            FlatFieldDisplay(Str title="Full 2D") : Core::Graphics::Graph2D(-1, 1, -1, 1, title) {};
             explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
 
             void setup(R2toR::Function::ConstPtr function);

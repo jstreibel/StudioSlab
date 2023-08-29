@@ -47,7 +47,7 @@ namespace RtoR {
         };
 
 
-        class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
+        class BoundaryCondition : public Core::BoundaryConditions<RtoR::EquationState> {
             Real f, A;
             mutable jack_default_audio_sample_t *currentBuffer = nullptr;
             mutable size_t currentBufferLocation = 0;

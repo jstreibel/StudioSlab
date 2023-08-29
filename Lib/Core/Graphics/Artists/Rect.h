@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RECT_H
 #define STUDIOSLAB_RECT_H
 
-#include <Common/Types.h>
+#include <Utils/Types.h>
 
 template<typename T>
 struct Rect {

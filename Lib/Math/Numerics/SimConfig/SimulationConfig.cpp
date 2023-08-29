@@ -4,7 +4,7 @@
 
 #include "SimulationConfig.h"
 
-Base::Simulation::SimulationConfig::SimulationConfig(bool doRegister)
+Core::Simulation::SimulationConfig::SimulationConfig(bool doRegister)
         : numericConfig(doRegister)
         , dev(doRegister)
 {   }

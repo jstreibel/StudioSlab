@@ -17,10 +17,10 @@ namespace R2toR {
         const Real xMin, xMax, yMin, yMax;
     };
 
-    typedef Base::FunctionT<Real, Real> FuncBase;
-    typedef Base::DiscreteFunction<Real2D, Real> DiscrBase;
+    typedef Core::FunctionT<Real, Real> FuncBase;
+    typedef Core::DiscreteFunction<Real2D, Real> DiscrBase;
 
-    class DiscreteFunction : public Base::DiscreteFunction<Real2D,Real> {
+    class DiscreteFunction : public Core::DiscreteFunction<Real2D,Real> {
     protected:
         const PosInt N, M;
         const Real xMin, xMax,
@@ -28,7 +28,7 @@ namespace R2toR {
                    h;
 
     public:
-        typedef Base::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
+        typedef Core::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
 
         DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
         DiscreteFunction(const NumericConfig &, device);

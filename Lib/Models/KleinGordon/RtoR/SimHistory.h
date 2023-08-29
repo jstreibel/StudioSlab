@@ -17,7 +17,7 @@ class SimHistory : public Numerics::OutputSystem::Socket {
 
     auto handleOutput(const OutputPacket &packet) -> void override;
 public:
-    SimHistory(const Base::Simulation::SimulationConfig &simConfig,
+    SimHistory(const Core::Simulation::SimulationConfig &simConfig,
                      PosInt                              timeResolution,
                      PosInt                              spaceResolution);
 

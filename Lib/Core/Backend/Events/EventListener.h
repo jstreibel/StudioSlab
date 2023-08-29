@@ -13,7 +13,7 @@
 #include "Utils/Timer.h"
 
 
-namespace Base {
+namespace Core {
 
     class EventListener {
         std::vector<EventListener*> unmanagedDelegateResponders;

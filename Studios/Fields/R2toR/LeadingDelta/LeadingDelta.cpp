@@ -14,7 +14,7 @@ namespace R2toR {
                                              RingDeltaFunc::Ptr ringDelta,
                                              Real tf,
                                              bool deltaOperatesOnSpeed)
-                : Base::BoundaryConditions<R2toR::EquationState>(*prototype)
+                : Core::BoundaryConditions<R2toR::EquationState>(*prototype)
                 , ringDelta(ringDelta)
                 , tf(tf)
                 , deltaSpeedOp(deltaOperatesOnSpeed) { }

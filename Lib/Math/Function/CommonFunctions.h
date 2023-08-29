@@ -8,7 +8,7 @@
 #include "Function.h"
 #include "SummableFunction.h"
 
-namespace Base {
+namespace Core {
 
     template<class OutputCategory>
     struct Functions {

@@ -41,12 +41,28 @@ AnalyticOscillon::AnalyticOscillon(const AnalyticOscillon &copy) :
 }
 
 AnalyticOscillon::AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit)
-        : t0(t_0(alpha, -u)), x0(x_0(alpha, -u, v)), l(1), v(v), u(u), s1(phiMirrored?-1:1), s2(xMirrored?-1:1), bit(bit) {
+: t0(t_0(alpha, -u)-t)
+, x0(x_0(alpha, -u, v))
+, l(1)
+, v(v)
+, u(u)
+, s1(phiMirrored?-1:1)
+, s2(xMirrored?-1:1)
+, alpha(alpha)
+, bit(bit) {
 
 }
 
 AnalyticOscillon::AnalyticOscillon(Real t, Real x0, Real l, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, AnalyticOscillon::Bit bit)
-        : t0(t_0(alpha, -u)-t), x0(x_0(alpha, -u, v)+x0), l(l), v(v), u(u), s1(phiMirrored?-1:1), s2(xMirrored?-1:1), bit(bit) {
+: t0(t_0(alpha, -u)-t)
+, x0(x_0(alpha, -u, v)+x0)
+, l(l)
+, v(v)
+, u(u)
+, s1(phiMirrored?-1:1)
+, s2(xMirrored?-1:1)
+, alpha(alpha)
+, bit(bit) {
 
 }
 
@@ -65,5 +81,7 @@ auto AnalyticOscillon::swap() -> AnalyticOscillon & {
 
     return *this;
 }
+
+void AnalyticOscillon::set_t(Real t) { t0 = (t_0(alpha, -u)-t); }
 
 

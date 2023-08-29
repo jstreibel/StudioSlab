@@ -9,11 +9,11 @@
 #include "Math/Space/Space.h"
 #include "Math/Space/Impl/PointSet.h"
 
-#include <Common/Types.h>
+#include <Utils/Types.h>
 
 //#include "View/Util/EqStateOutputInterface.h"
 
-namespace Base {
+namespace Core {
 
 
     class GPUFriendly;

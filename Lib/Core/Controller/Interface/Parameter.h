@@ -7,7 +7,7 @@
 
 #include "../CLDefs.h"
 
-#include <Common/Types.h>
+#include <Utils/Types.h>
 
 class Parameter {
 protected:

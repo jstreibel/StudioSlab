@@ -16,7 +16,7 @@ break;
 #define DONT_REGISTER false
 
 
-Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, bool doRegister)
+Core::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, bool doRegister)
 : InterfaceOwner(name, 100, DONT_REGISTER)
 , simulationConfig(DONT_REGISTER)
 , prefix(name)
@@ -36,15 +36,15 @@ Base::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, boo
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 
-auto Base::Simulation::VoidBuilder::getNumericParams() const -> const NumericConfig & {
+auto Core::Simulation::VoidBuilder::getNumericParams() const -> const NumericConfig & {
     return simulationConfig.numericConfig;
 }
 
-auto Base::Simulation::VoidBuilder::getDevice() const -> const DeviceConfig & {
+auto Core::Simulation::VoidBuilder::getDevice() const -> const DeviceConfig & {
     return simulationConfig.dev;
 }
 
-Str Base::Simulation::VoidBuilder::suggestFileName() const {
+Str Core::Simulation::VoidBuilder::suggestFileName() const {
     const auto SEPARATOR = " ";
     auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
 

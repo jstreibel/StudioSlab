@@ -50,7 +50,8 @@ set ( EXPERIMENTAL_SOURCES
 
 set ( GRAPH_SOURCES
 		Graph/Graph.cpp
-        Graph/OpenGLMonitor.cpp)
+        Graph/OpenGLMonitor.cpp
+        Graph/Graph_Axis.cpp)
 
 
 set ( NUMERICS_SOURCES

@@ -8,7 +8,7 @@
 #include "Function.h"
 
 
-namespace Base {
+namespace Core {
 
     template<class InputCategory, class OutputCategory>
     class SummableFunction : public FunctionT<InputCategory, OutputCategory> {

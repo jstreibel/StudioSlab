@@ -11,7 +11,7 @@
 #include "Math/Space/Impl/DiscreteSpaceCPU.h"
 #include "Math/Space/Impl/DiscreteSpaceGPU.h"
 
-namespace Base {
+namespace Core {
 
 
     template<class PosSpaceType, class TargetSpaceType>

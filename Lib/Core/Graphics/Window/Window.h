@@ -13,7 +13,7 @@
 #include <vector>
 #include <memory>
 
-class Window : public Base::EventListener {
+class Window : public Core::EventListener {
     std::vector<Artist*> content;
 
 public:
@@ -50,8 +50,8 @@ public:
 protected:
     int w, h, x, y;
 
-    int winXoffset = 2;
-    int winYoffset = 2;
+    int hPadding = 2;
+    int vPadding = 2;
 
     bool gotHit = false;
 

@@ -8,7 +8,7 @@
 #include "Utils/Types.h"
 
 
-namespace Base {
+namespace Core {
     template<typename EqStateType>
     class BoundaryConditions {
         const EqStateType &prototype;

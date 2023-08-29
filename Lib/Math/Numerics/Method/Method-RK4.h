@@ -21,7 +21,7 @@ template<class STATE_TYPE>
 class StepperRK4 : public Stepper {
 public:
     typedef Slab::EquationSolverT<STATE_TYPE>    SolverType;
-    typedef Base::BoundaryConditions<STATE_TYPE> BCType;
+    typedef Core::BoundaryConditions<STATE_TYPE> BCType;
 
     StepperRK4(SolverType &solver)
     : Stepper()

@@ -72,5 +72,9 @@ namespace OpenGL {
         return h;
     }
 
+    void Texture::bind() const {
+        glBindTexture(GL_TEXTURE_2D, texture);
+    }
+
 
 } // OpenGL

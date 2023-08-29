@@ -19,6 +19,8 @@ namespace RtoR {
         AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
         AnalyticOscillon(Real t, Real x0, Real l, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
 
+        void set_t(Real t);
+
         Real operator()(Real x) const override;
 
         FunctionT<Real, Real> *Clone() const override;
@@ -26,7 +28,7 @@ namespace RtoR {
         AnalyticOscillon &swap();
 
     private:
-        Real t0, x0, v, u, s1, s2, l;
+        Real t0, x0, v, u, s1, s2, l, alpha;
         Bit bit;
     };
 }

@@ -7,7 +7,7 @@
 
 #include "../Artists/Rect.h"
 #include "Core/Graphics/Window/Window.h"
-#include <GL/gl.h>
+#include "Core/Graphics/OpenGL/OpenGL.h"
 
 namespace OpenGLUtils {
     struct FrameBuffer {

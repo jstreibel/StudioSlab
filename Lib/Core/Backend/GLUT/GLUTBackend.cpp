@@ -1,9 +1,10 @@
-#include <GL/glew.h>
+
+#include "Core/Graphics/OpenGL/OpenGL.h"
 #include <GL/freeglut.h>
 
 #include "GLUTBackend.h"
 
-#include <Common/Resources.h>
+#include <Utils/Resources.h>
 
 #include "3rdParty/imgui/imgui.h"
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
@@ -22,7 +23,8 @@
 //#define FORCE_FPS 60
 //const Real FRAME_TIME = 1.0/Real(FORCE_FPS);
 
-#define FULLSCREEN false
+#define FULLSCREEN true
+fix IMGUI_FONT_INDEX = 10; //6;
 
 GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     assert(Backend::singleInstance == nullptr);
@@ -123,8 +125,6 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
 
 
     if(1) {
-        fix FONT_INDEX = 9;
-
         static const ImWchar ranges[] =
                 {
                        0x0020, 0x007F, // Basic Latin
@@ -153,7 +153,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
         log << std::dec << Log::Flush;
 
         ImGuiIO& io = ImGui::GetIO();
-        auto fontName = Resources::fontFileName(FONT_INDEX);
+        auto fontName = Resources::fontFileName(IMGUI_FONT_INDEX);
 
         if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
 
@@ -162,7 +162,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
 
         io.FontDefault = font;
 
-        Log::Info() << "ImGui using font '" << Resources::fonts[FONT_INDEX] << "'." << Log::Flush;
+        Log::Info() << "ImGui using font '" << Resources::fonts[IMGUI_FONT_INDEX] << "'." << Log::Flush;
 
         //ImGui::PushFont(font);
     }
@@ -363,10 +363,9 @@ void GLUTBackend::idleCall()
         lastErr = err;
     }
 
-    auto stillRunning = true;
-    while(!me.isPaused() && !me.renderingRequested() && stillRunning) {
-        stillRunning = program->cycle(Program::CycleOptions::CycleUntilOutput);
-    }
+    while(!me.isPaused() && !me.renderingRequested())
+        if(!program->cycle(Program::CycleOptions::CycleUntilOutput)) break;
+
 }
 
 void GLUTBackend::reshape(int w, int h)

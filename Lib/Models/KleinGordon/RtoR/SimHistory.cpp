@@ -14,7 +14,7 @@
 #include "Core/Tools/Log.h"
 
 
-SimHistory::SimHistory(const Base::Simulation::SimulationConfig &simConfig,
+SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig,
                        PosInt timeResolution, PosInt spaceResolution)
 : Socket(simConfig.numericConfig, "SimHistory", (int)(simConfig.numericConfig.getn()/ timeResolution), "A specific history tracker designed to watch the full sim history through the OpenGL (or whichever) monitors")
 , dataIsOnGPU(simConfig.dev==GPU)

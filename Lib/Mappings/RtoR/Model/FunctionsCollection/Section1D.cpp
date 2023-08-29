@@ -21,7 +21,7 @@ Real RtoR::Section1D::operator()(Real x) const {
     return func(c(x));
 }
 
-Spaces::PointSet::Ptr RtoR::Section1D::renderToPointSet(Base::FunctionT<Real, Real>::RenderingOptions options) {
+Spaces::PointSet::Ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
     return RtoR::FunctionRenderer::toPointSet(*this, options.xMin, options.xMax, options.n);
 }
 

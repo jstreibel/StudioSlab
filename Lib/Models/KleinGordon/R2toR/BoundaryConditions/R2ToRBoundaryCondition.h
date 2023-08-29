@@ -11,7 +11,7 @@
 
 namespace R2toR {
 
-    class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
+    class BoundaryCondition : public Core::BoundaryConditions<R2toR::EquationState> {
     public:
         BoundaryCondition(Function *initialPhiCondition,
                           Function *initialdPhiDtCondition,
