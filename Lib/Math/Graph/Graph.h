@@ -7,26 +7,19 @@
 
 
 #include "Utils/Utils.h"
-
 #include "Core/Graphics/Utils.h"
-
 #include "Core/Graphics/Window/Window.h"
-
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
-
-#include "Mappings/RtoR2/ParametricCurve.h"
 #include "Core/Graphics/OpenGL/Writer.h"
+#include "Mappings/RtoR2/ParametricCurve.h"
 
 #include <memory>
-
-
 
 
 namespace Core::Graphics {
 
     class Graph2D : public Window {
-        static Count unnamedCount;
         static std::map<Str, Graph2D*> graphMap;
 
         Core::Graphics::Writer writer;

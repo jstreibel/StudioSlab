@@ -12,6 +12,16 @@
 
 namespace OpenGL {
     Texture::Texture(GLsizei width, GLsizei height) : w(width), h(height) {
+        GLint maxTextureSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        if(width>maxTextureSize || height>maxTextureSize) {
+            Log::Error() << "Requested texture size " << width << "x" << height
+                         << " too big: max texture size allowed is " << maxTextureSize << "x" << maxTextureSize
+                         << Log::Flush;
+
+            return;
+        }
+
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -29,9 +39,6 @@ namespace OpenGL {
 
         data = (ByteData)malloc(w*h*4);
 
-        IntVector maxTextureSize(2);
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize[0]);
-        Log::ErrorFatal() << "Max texture size: " << maxTextureSize[0] << "x" << maxTextureSize[1] << Log::Flush;
 
         fix sizeMB = w*h*4/(1024*1024.);
         Log::Critical() << "OpenGL::Texture is allocating " << sizeMB << "MB of GPU texture data to upload history to." << Log::Flush;
@@ -39,7 +46,9 @@ namespace OpenGL {
         Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    void Texture::setColor(int i, int j, Styles::Color color) {
+    bool Texture::setColor(int i, int j, Styles::Color color) {
+        if(data == nullptr) return false;
+
         fix index = i*4 + j*w*4;
         ByteData texel = &data[index];
 
@@ -47,9 +56,13 @@ namespace OpenGL {
         texel[G] = (Byte)(255*color.g);
         texel[B] = (Byte)(255*color.b);
         texel[A] = (Byte)(255*color.a);
+
+        return true;
     }
 
-    void Texture::upload(PosInt row0, Count nRows) {
+    bool Texture::upload(PosInt row0, Count nRows) {
+        if(data == nullptr || texture == 0) return false;
+
         glBindTexture(GL_TEXTURE_2D, texture);
 
         if(row0==0 && nRows==0)
@@ -58,10 +71,15 @@ namespace OpenGL {
             glTexSubImage2D(GL_TEXTURE_2D, 0, 0, row0, w, nRows, GL_RGBA, GL_UNSIGNED_BYTE, &data[row0 * w * 4]);
         }
 
+        return true;
     }
 
-    void Texture::setData(ByteData newData) {
+    bool Texture::setData(ByteData newData) {
+        if(texture == 0) return false;
+
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, newData);
+
+        return true;
     }
 
     GLsizei Texture::getWidth() const {
@@ -72,8 +90,12 @@ namespace OpenGL {
         return h;
     }
 
-    void Texture::bind() const {
+    bool Texture::bind() const {
+        if(texture == 0) return false;
+
         glBindTexture(GL_TEXTURE_2D, texture);
+
+        return true;
     }
 
 

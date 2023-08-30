@@ -8,26 +8,7 @@
 #include "Utils/OMPUtils.h"
 
 Real xi() {
-    /*
-    const Real z = FRANDOM;
-
-    const Real r = sqrt(-2.0 * log(1.0 - z));
-    // cheat?
-    // const Real r = sqrt(-log(1.0 - z));
-
-    static Real signs[] = {-1,1};
-    const Real sign = signs[random()%2];
-
-    return sign*r;
-     */
-
     return RandUtils::gaussianNoise(.0, 1.0);
-}
-
-void RtoR::LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
-    RtoR::KGSolver::startStep(stateIn, t, dt);
-
-    ComputeImpulses();
 }
 
 void RtoR::LangevinKGSolver::ComputeImpulses() {
@@ -38,13 +19,23 @@ void RtoR::LangevinKGSolver::ComputeImpulses() {
 
     auto &X = space.getHostData();
 
-    OMP_PARALLEL_FOR(i, X.size()) {
-        auto &x = X[i];
-
-        x = xi();
+    fix nSplit = 1;
+    OMP_PARALLEL_FOR(i, X.size()/nSplit) {
+        fix x = xi();
+        fix k = nSplit*i;
+        for(auto n=0; n<nSplit; ++n) {
+            auto &x1 = X[k + n];
+            x1 = x;
+        }
     }
 
     space.upload();
+}
+
+void RtoR::LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
+    RtoR::KGSolver::startStep(stateIn, t, dt);
+
+    ComputeImpulses();
 }
 
 RtoR::EquationState &

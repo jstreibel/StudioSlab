@@ -6,9 +6,17 @@
 
 #include "Graph_Config.h"
 
+
+#define vPixelsToSpaceScale ((yMax - yMin) / h);
+#define hPixelsToSpaceScale ((xMax - xMin) / w);
+
+fix vTickHeightinPixels_x2 = 5;
+fix vGraphPaddingInPixels = 60;
+
+
 #define MARK_Y                                                                                                  \
     {                                                                                                           \
-        Point2D loc = {float(xPosMarkingsLabels), float(mark)};                                                 \
+        Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels};                                   \
         buffer.str("");                                                                                         \
         buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                              \
             << (numRegion< -1 ? std::scientific : std::fixed) << (mark<0?"":" ") << mark;                       \
@@ -74,22 +82,17 @@ void Core::Graphics::Graph2D::computeTicksSpacings() {
 }
 
 void Core::Graphics::Graph2D::drawXAxis() {
-    fix vPixelsToSpaceScale = (yMax - yMin) / h;
-    fix hPixelsToSpaceScale = (xMax - xMin) / w;
+    fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
+    fix hTickHeightInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
+    (void)hTickHeightInSpace;
 
-    const Real inPixelsTimes2 = 5;
-    const Real vTick = inPixelsTimes2 * vPixelsToSpaceScale;
-    const Real hTick = inPixelsTimes2 * hPixelsToSpaceScale;
-    (void)hTick;
-
-    fix vPaddingInPixels = 30;
-    fix vPaddingInSpace = vPaddingInPixels * hPixelsToSpaceScale;
+    fix vGraphPaddingInSpace = vGraphPaddingInPixels * vPixelsToSpaceScale;
     fix fontHeight = writer.getFontHeightInPixels();
 
-    fix yLocationOfXAxis = yMin < -vPaddingInSpace
+    fix yLocationOfXAxis = yMin < -vGraphPaddingInSpace
                                 ? 0
-                                : yMin + vPaddingInSpace;
-    fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTick+fontHeight) * vPixelsToSpaceScale;
+                                : yMin + vGraphPaddingInSpace;
+    fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
     {
         auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
 
@@ -98,7 +101,12 @@ void Core::Graphics::Graph2D::drawXAxis() {
         if(!USE_FREETYPE_GL) glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
 
-        for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing) {
+
+        for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing)
+        // for (int m=0; m<xMax/xspacing; ++m)
+        {
+            // auto mark = 0.0 + m*xspacing;
+
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
 
@@ -143,12 +151,12 @@ void Core::Graphics::Graph2D::drawXAxis() {
             glColor4f(tc.r, tc.g, tc.b, tc.a);
 
             for(Real mark = 0; mark<=xMax; mark+=xspacing){
-                glVertex3d(mark, -vTick, 0);
-                glVertex3d(mark, +vTick, 0);
+                glVertex3d(mark, -vTickHeightInSpace, 0);
+                glVertex3d(mark, +vTickHeightInSpace, 0);
             }
             for(Real mark = 0; mark>=xMin; mark-=xspacing){
-                glVertex3d(mark, -vTick, 0);
-                glVertex3d(mark, +vTick, 0);
+                glVertex3d(mark, -vTickHeightInSpace, 0);
+                glVertex3d(mark, +vTickHeightInSpace, 0);
             }
         }
         glEnd();
@@ -159,12 +167,10 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
-    fix vPixelToSpaceScale = (yMax-yMin) / h;
-    fix hPixelToSpaceScale = (xMax-xMin) / w;
-
-    const Real Δy = yMax-yMin;
-    const Real Δx = xMax-xMin;
-    const Real xPosMarkingsLabels = xMin + 20*hPixelToSpaceScale;
+    fix Δy = yMax-yMin;
+    fix Δx = xMax-xMin;
+    fix xLocationOfYAxis = xMin + 20*hPixelsToSpaceScale;
+    fix yOffsetOfLabels = 0.2*writer.getFontHeightInPixels()*vPixelsToSpaceScale;
 
     StringStream buffer;
 
@@ -232,6 +238,46 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glEnd();
     glPopAttrib();
 
+}
+
+void Core::Graphics::Graph2D::reviewGraphRanges() {
+    if(!mPointSets.empty())
+    {
+        auto referencePointSet = mPointSets[0].data;
+
+        xMax = referencePointSet->getMax().x;
+        xMin = referencePointSet->getMin().x;
+        yMax = referencePointSet->getMax().y;
+        yMin = referencePointSet->getMin().y;
+
+        for (auto &set: mPointSets) {
+            if(!set.affectsGraphRanges) continue;
+
+            auto max = set.data->getMax();
+            auto min = set.data->getMin();
+
+            if (max.x > xMax) xMax = max.x;
+            if (min.x < xMin) xMin = min.x;
+            if (max.y > yMax) yMax = max.y;
+            if (min.y < yMin) yMin = min.y;
+        }
+
+        if(true)
+        {
+            const auto dMin = .025;
+
+            auto dx = dMin * (xMax - xMin);
+            auto dy = dMin * (yMax - yMin);
+
+            if(dx == 0) dx = dMin;
+            if(dy == 0) dy = dMin;
+
+            xMax += dx;
+            xMin -= dx;
+            yMax += dy;
+            yMin -= dy;
+        }
+    }
 }
 
 void Core::Graphics::Graph2D::nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label,

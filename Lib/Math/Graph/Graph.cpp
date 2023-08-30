@@ -17,7 +17,6 @@
 
 #include "Graph_Config.h"
 
-Count Core::Graphics::Graph2D::unnamedCount = 0;
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
 
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
@@ -29,13 +28,13 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
 , title(std::move(_title))
 , samples(samples)
 {
-    if(title.empty()) title = Str("<unnamed") + ToStr(++Graph2D::unnamedCount) + ">";
-    Count n=0;
+    if(title.empty()) title = Str("unnamed");
+    Count n=1;
     while(Graph2D::graphMap.count(title))
         title += " (" + ToStr(++n) + ")";
     Graph2D::graphMap[title] = this;
 
-    Log::Critical() << "Created Graph2D '" << title << "'" << Log::Flush;
+    Log::Note() << "Created Graph2D '" << title << "'" << Log::Flush;
 
     fix vp = getViewport();
     writer.reshape(vp.w(), vp.h());
@@ -64,43 +63,6 @@ void Core::Graphics::Graph2D::draw() {
 
 }
 
-void Core::Graphics::Graph2D::setupOrtho() const {
-    const Real deltaX = xMax-xMin;
-    const Real deltaY = yMax-yMin;
-    const Real xTraLeft   = 0;  // -deltaX*0.07;
-    const Real xTraRight  = 0;  // +deltaX*0.02;
-    const Real xTraTop    = 0;  // +deltaY*0.025;
-    const Real xTraBottom = 0;  // -deltaY*0.025;
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
-}
-
-auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
-
-auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-
-RectR Core::Graphics::Graph2D::getLimits() const {
-    return RectR(xMin, xMax, yMin, yMax);
-}
-
-auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void {
-    xMin = lims.xMin;
-    xMax = lims.xMax;
-    yMin = lims.yMin;
-    yMax = lims.yMax;
-}
-
-void Core::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
-void Core::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
-void Core::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
-void Core::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
-Real Core::Graphics::Graph2D::get_xMin() const { return xMin; }
-Real Core::Graphics::Graph2D::get_xMax() const { return xMax; }
-Real Core::Graphics::Graph2D::get_yMin() const { return yMin; }
-Real Core::Graphics::Graph2D::get_yMax() const { return yMax; }
-
 void
 Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
                                      Styles::PlotStyle style,
@@ -116,48 +78,6 @@ Core::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
     CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
     curves.emplace_back(curveMetadata);
 }
-
-void Core::Graphics::Graph2D::reviewGraphRanges() {
-    if(!mPointSets.empty())
-    {
-        auto referencePointSet = mPointSets[0].data;
-
-        xMax = referencePointSet->getMax().x;
-        xMin = referencePointSet->getMin().x;
-        yMax = referencePointSet->getMax().y;
-        yMin = referencePointSet->getMin().y;
-
-        for (auto &set: mPointSets) {
-            if(!set.affectsGraphRanges) continue;
-
-            auto max = set.data->getMax();
-            auto min = set.data->getMin();
-
-            if (max.x > xMax) xMax = max.x;
-            if (min.x < xMin) xMin = min.x;
-            if (max.y > yMax) yMax = max.y;
-            if (min.y < yMin) yMin = min.y;
-        }
-
-        // Give an extra 100*dMin% room each side.
-        if(true)
-        {
-            const auto dMin = .025;
-
-            auto dx = dMin * (xMax - xMin);
-            auto dy = dMin * (yMax - yMin);
-
-            if(dx == 0) dx = dMin;
-            if(dy == 0) dy = dMin;
-
-            xMax += dx;
-            xMin -= dx;
-            yMax += dy;
-            yMin -= dy;
-        }
-    }
-}
-
 
 void
 Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
@@ -294,9 +214,51 @@ void Core::Graphics::Graph2D::drawCurves() {
     }
 }
 
+
+void Core::Graphics::Graph2D::setupOrtho() const {
+    const Real deltaX = xMax-xMin;
+    const Real deltaY = yMax-yMin;
+    const Real xTraLeft   = 0;  // -deltaX*0.07;
+    const Real xTraRight  = 0;  // +deltaX*0.02;
+    const Real xTraTop    = 0;  // +deltaY*0.025;
+    const Real xTraBottom = 0;  // -deltaY*0.025;
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
+}
+
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
 
 void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
+
+
+
+auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
+
+auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
+
+RectR Core::Graphics::Graph2D::getLimits() const {
+    return RectR(xMin, xMax, yMin, yMax);
+}
+
+auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void {
+    xMin = lims.xMin;
+    xMax = lims.xMax;
+    yMin = lims.yMin;
+    yMax = lims.yMax;
+}
+
+void Core::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
+void Core::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
+void Core::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
+void Core::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
+Real Core::Graphics::Graph2D::get_xMin() const { return xMin; }
+Real Core::Graphics::Graph2D::get_xMax() const { return xMax; }
+Real Core::Graphics::Graph2D::get_yMin() const { return yMin; }
+Real Core::Graphics::Graph2D::get_yMax() const { return yMax; }
+
+
 
 bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
     static auto time = Timer();
