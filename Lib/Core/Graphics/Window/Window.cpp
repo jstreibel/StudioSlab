@@ -6,7 +6,7 @@
 
 #include "Window.h"
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
-// #include "Core/Graphics/OpenGL/GLUTUtils.h"
+#include "Core/Graphics/Window/WindowStyles.h"
 
 
 Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
@@ -14,14 +14,14 @@ Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
 void Window::draw() {
     glUseProgram( 0 );
 
-    _setupViewport();
+    setupWindow();
 
     for(auto artist : content) artist->draw(this);
 }
 
 void Window::_clear() const {
 
-    auto &bg = Styles::GetColorScheme()->background;
+    auto &bg = Styles::GetColorScheme()->windowBackground;
 
     glBegin(GL_QUADS);
     {
@@ -37,7 +37,8 @@ void Window::_clear() const {
 void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
-        glColor4d(1, 1, 1, 1);
+        auto bc = Styles::GetColorScheme()->windowBorder;
+        glColor4d(bc.r, bc.g, bc.b, bc.a);
 
         glVertex2f(-p, -p);
         glVertex2f( p, -p);
@@ -47,7 +48,7 @@ void Window::_decorate() const {
     glEnd();
 }
 
-void Window::_setupViewport() const {
+void Window::setupWindow() const {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
@@ -107,10 +108,10 @@ bool Window::notifyRender(float elTime_msec) {
 }
 
 RectI Window::getViewport() const {
-    auto _x = x + hPadding,
-         _y = y + vPadding,
-         _w = w - 2 * hPadding,
-         _h = h - 2 * vPadding;
+    auto _x = x +     Core::Graphics::hPadding,
+         _y = y +     Core::Graphics::vPadding,
+         _w = w - 2 * Core::Graphics::hPadding,
+         _h = h - 2 * Core::Graphics::vPadding;
 
     return {_x, _x+_w, _y, _y+_h};
 }

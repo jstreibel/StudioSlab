@@ -46,10 +46,12 @@ namespace Styles {
     };
 
     struct StyleScheme {
-        StyleScheme(Color background, Color graphTicksFont, Color graphTitleFont, Color axisColor,
+        StyleScheme(Color windowBackground, Color graphTicksFont, Color graphTitleFont, Color axisColor,
                     Color majorTickColor, std::vector<PlotStyle> plotStyles);
 
-        Color background;
+        Color deepBackground={0,0,0,1};
+        Color windowBorder = {1,1,1,1};
+        Color windowBackground;
         Color graphTicksFont;
         Color graphTitleFont;
         Color axisColor;

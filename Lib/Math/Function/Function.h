@@ -50,7 +50,7 @@ namespace Core {
                           {     }
 
         FunctionT(const FunctionT &toCopy)
-                          : myGPUFriendlyVersion(toCopy.getGPUFriendlyVersion()),
+                          : myGPUFriendlyVersion(&toCopy.getGPUFriendlyVersion()),
                           discrete(toCopy.discrete)
                           {     }
 

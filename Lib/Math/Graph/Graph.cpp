@@ -93,7 +93,7 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         glColor4f(color.r, color.g, color.b, color.a);
         glBegin(GL_QUADS);
         {
-            auto iMax = pts.size()-1;
+            auto iMax = (long)pts.size()-1;
             for(auto i=0; i<iMax; ++i){
                 auto pLeft = pts[i];
                 auto pRite = pts[i + 1];

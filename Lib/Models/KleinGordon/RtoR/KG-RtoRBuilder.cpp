@@ -122,7 +122,7 @@ void *RtoR::KGBuilder::newFunctionArbitrary() {
         return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
 
 #if USE_CUDA
-    else if(dev==GPU)
+    else if(simulationConfig.dev==GPU)
         return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
 #endif
 
@@ -139,10 +139,10 @@ void *RtoR::KGBuilder::buildEquationSolver() {
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
 #if USE_CUDA == true
-    if(dev == device::GPU) {
+    if(simulationConfig.dev == device::GPU) {
         //if(potential != VShape) throw "Only signum potential implemented in GPU.";
 
-        return new RtoR::SystemGordonGPU(numericParams, *dphi, *thePotential);
+        return new RtoR::SystemGordonGPU(simulationConfig.numericConfig, *dphi, *thePotential);
     }
 #endif
 

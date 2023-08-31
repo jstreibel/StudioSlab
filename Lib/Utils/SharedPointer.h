@@ -6,6 +6,8 @@
 #define STUDIOSLAB_SHAREDPOINTER_H
 
 
+#include <cstddef>
+
 template <typename T>
 class SharedPointer {
 private:

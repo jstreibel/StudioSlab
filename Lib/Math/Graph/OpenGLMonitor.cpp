@@ -10,7 +10,6 @@
 
 using namespace Core;
 
-#define AUTO_ADJUST_SAMPLES_PER_SECOND true
 #define MAX_AVG_SAMPLES (8*60UL)
 #define MIN_FPS 24
 #define MAX_FPS 30
@@ -80,7 +79,7 @@ void Graphics::OpenGLMonitor::writeStats() {
         avgSPs /= (Real)total;
         avgSPS /= (Real)total;
 
-        if(AUTO_ADJUST_SAMPLES_PER_SECOND && !hasFinished) {
+        if(autoAdjustStepsPerSecond && !hasFinished) {
             static Count counter = 0;
             static fix baseNSteps = getnSteps();
             // static let multiplier = 1;
@@ -103,7 +102,7 @@ void Graphics::OpenGLMonitor::writeStats() {
     }
 
     fix stepsToFinish = params.getn() - step;
-    fix timeToFinish = (int)(avgSPS==0.0 ? 0 : stepsToFinish/(int)avgSPS);
+    fix timeToFinish = (int)(avgSPS==0.0 ? 0.0 : stepsToFinish/avgSPS);
     fix remainingTimeMin = timeToFinish / 60;
     fix remainingTimeSec = timeToFinish % 60;
 
@@ -123,7 +122,10 @@ void Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
-    stats.addVolatileStat(Str("Finish in ") + (remainingTimeMin < 10 ? "0" : "") + ToStr(remainingTimeMin) + "m" + (remainingTimeSec < 10 ? "0" : "") + ToStr(remainingTimeSec) + "s");
+    if(currStep!=lastStep)
+        stats.addVolatileStat(Str("Finish in ") + (remainingTimeMin < 10 ? "0" : "") + ToStr(remainingTimeMin) + "m" + (remainingTimeSec < 10 ? "0" : "") + ToStr(remainingTimeSec) + "s");
+    else
+        stats.addVolatileStat(Str("Finish in ∞s"));
     fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";
     fix elTimeSecs_str = (totalTimeSecs < 10 ? "0" : "") + ToStr(totalTimeSecs) + "s";
     fix elTimeMSecs_str = Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
@@ -162,7 +164,7 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
     static fix baseNSteps = getnSteps();
     static let multiplier = 1;
 
-    if(true) {
+    if(false) {
         if (key == '=') {
             multiplier++;
             setnSteps(baseNSteps * multiplier);
@@ -195,4 +197,9 @@ void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
     panel.notifyReshape(newWinW, newWinH);
+}
+
+void Graphics::OpenGLMonitor::setnSteps(int nSteps) {
+    if(nSteps>0) autoAdjustStepsPerSecond = false;
+    Socket::setnSteps(nSteps);
 }

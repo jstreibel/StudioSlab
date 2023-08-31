@@ -7,6 +7,8 @@
 #include <memory>
 #include <utility>
 
+#define FILLED_GRAPH true
+
 // Rainbow
 // Red: #FF0000
 // Orange: #FF7F00
@@ -22,11 +24,13 @@ void SetSchemeDark1();
 void SetSchemeDark2();
 void SetSchemeDark3();
 
+void SetSchemeLight2();
+
 void Styles::Init() {
-    //SetSchemeDark();
+
     SetSchemeDark3();
-    //SetSchemePrint();
-    //SetSchemeLight2();
+
+    // SetSchemeLight2();
 }
 
 
@@ -186,17 +190,19 @@ void SetSchemeLight2 () {
     Color tickColor = {.2,.2,.2,1};
 
     std::vector<Styles::PlotStyle> graphs = {
-            Styles::PlotStyle{Color::FromHex("#003f5c"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#2f4b7c"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#665191"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#a05195"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#d45087"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#f95d6a"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#ff7c43"),          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Color::FromHex("#ffa600"),          Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Color::FromHex("#003f5c"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#2f4b7c"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#665191"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#a05195"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#d45087"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#f95d6a"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#ff7c43"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
+            Styles::PlotStyle{Color::FromHex("#ffa600"), Styles::Primitive::SolidLine, FILLED_GRAPH, Nil, 0.8},
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
+    current->deepBackground = {0.925,0.925,1.,1};
+    current->windowBorder = {0, 0, 0, 1};
 }
 
 void SetSchemeTest () {
@@ -231,9 +237,9 @@ Styles::ColorScheme_ptr Styles::NewScheme(const Styles::StyleScheme& scheme) {
     { return std::make_shared<Styles::StyleScheme>(scheme); }
 }
 
-Styles::StyleScheme::StyleScheme(Color background, Color graphTicksFont, Color graphTitleFont,
+Styles::StyleScheme::StyleScheme(Color windowBackground, Color graphTicksFont, Color graphTitleFont,
                                  Color axisColor, Color majorTickColor, std::vector<PlotStyle> plotStyles)
-        : background(background), graphTicksFont(graphTicksFont), graphTitleFont(graphTitleFont),
+        : windowBackground(windowBackground), graphTicksFont(graphTicksFont), graphTitleFont(graphTitleFont),
           axisColor(axisColor), majorTickColor(majorTickColor), funcPlotStyles(std::move(plotStyles)) {}
 
 Styles::PlotStyle::PlotStyle(Color color, Styles::Primitive primitive, bool filled,

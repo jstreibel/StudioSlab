@@ -47,7 +47,7 @@ namespace Numerics::OutputSystem {
 
         auto getLastSimTime()      -> Real;
         auto getnSteps()     const -> int;
-        auto setnSteps(int nSteps) -> void;
+        virtual auto setnSteps(int nSteps) -> void;
 
         void output(const OutputPacket &outData);
 

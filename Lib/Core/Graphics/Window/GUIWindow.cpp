@@ -2,31 +2,32 @@
 // Created by joao on 8/8/22.
 //
 
-#include "StatsDisplay.h"
+#include "GUIWindow.h"
 
 #include "imgui.h"
+#include "WindowStyles.h"
 
 
-StatsDisplay::StatsDisplay() : Window( ) {
+GUIWindow::GUIWindow() : Window( ) {
     setClear(false);
     setDecorate(false);
 }
 
 
-void StatsDisplay::addVolatileStat(const Str &stat, const Styles::Color color)
+void GUIWindow::addVolatileStat(const Str &stat, const Styles::Color color)
 {
     stats.emplace_back(stat, color);
 }
 
-void StatsDisplay::draw() {
+void GUIWindow::draw() {
     Window::draw();
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    const float w_ = float(w) - (float)2 * hPadding,
-                h_ = float(h) - (float)2 * vPadding;
-    const float x_ = x + hPadding,
-                y_ = displayHeight - (h_ + y + vPadding);
+    const float w_ = float(w) - (float)2 * Core::Graphics::hPadding,
+                h_ = float(h) - (float)2 * Core::Graphics::vPadding;
+    const float x_ = x + Core::Graphics::hPadding,
+                y_ = displayHeight - (h_ + y + Core::Graphics::vPadding);
 
     const float hSpacing = 20.0f;
 
@@ -85,7 +86,7 @@ void StatsDisplay::draw() {
     stats.clear();
 }
 
-void StatsDisplay::begin() const {
+void GUIWindow::begin() const {
     bool closable=false;
 
     ImGui::Begin("Stats", &closable,
@@ -93,7 +94,7 @@ void StatsDisplay::begin() const {
                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 }
 
-void StatsDisplay::end() const {
+void GUIWindow::end() const {
     ImGui::End();
 }
 

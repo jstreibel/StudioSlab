@@ -9,7 +9,7 @@
 #include "Math/Graph/OpenGLMonitor.h"
 #include "Mappings/R2toR/View/Artists/GraphR2ToR.h"
 #include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Core/Graphics/Window/StatsDisplay.h"
+#include "Core/Graphics/Window/GUIWindow.h"
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Mappings/R2toR/View/Artists/GraphR2Section.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"

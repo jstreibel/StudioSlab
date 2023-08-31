@@ -2,8 +2,8 @@
 // Created by joao on 8/8/22.
 //
 
-#ifndef STUDIOSLAB_STATSDISPLAY_H
-#define STUDIOSLAB_STATSDISPLAY_H
+#ifndef STUDIOSLAB_GUIWINDOW_H
+#define STUDIOSLAB_GUIWINDOW_H
 
 
 #include "Core/Graphics/Utils.h"
@@ -12,11 +12,11 @@
 #include "Utils/Types.h"
 
 
-class StatsDisplay : public Window {
+class GUIWindow : public Window {
     std::vector<std::pair<Str, Styles::Color>> stats;
 
 public:
-    explicit StatsDisplay( );
+    explicit GUIWindow( );
 
     void addVolatileStat(const Str& stat, const Styles::Color color = {1, 1, 1});
 
@@ -28,4 +28,4 @@ public:
 };
 
 
-#endif //STUDIOSLAB_STATSDISPLAY_H
+#endif //STUDIOSLAB_GUIWINDOW_H

@@ -112,8 +112,8 @@ namespace R2toR {
             return new R2toR::DiscreteFunction_CPU(N, N, xLeft, xLeft, simulationConfig.numericConfig.geth());
 
 #if USE_CUDA
-        else if (dev == GPU)
-            return new R2toR::FunctionArbitraryGPU(N, xLeft, numericParams.geth());
+        else if (simulationConfig.dev == GPU)
+            return new R2toR::DiscreteFunction_GPU(N, xLeft, simulationConfig.numericConfig.geth());
 #endif
 
         throw "Error while instantiating Field: device not recognized.";

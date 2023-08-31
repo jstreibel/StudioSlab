@@ -38,7 +38,7 @@ protected:
 
 private:
     bool hostIsUpdated = false;
-    VecFloat &XHost = data;
+    RealVector &XHost = data;
     DeviceVector &XDev;
 };
 #else

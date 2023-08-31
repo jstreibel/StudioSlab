@@ -16,6 +16,20 @@
 class Window : public Core::EventListener {
     std::vector<Artist*> content;
 
+    bool decorate = true;
+    bool clear = true;
+
+    static constexpr Real p = 0.999;
+
+    void _clear() const;
+    void _decorate() const;
+    void setupWindow() const;
+
+protected:
+    int w, h, x, y;
+
+    bool gotHit = false;
+
 public:
     typedef std::shared_ptr<Window> Ptr;
 
@@ -44,27 +58,6 @@ public:
     void setx(int _x) { this->x = _x; }
     void sety(int _y) { this->y = _y; }
     void setSize(int _w, int _h) { this->notifyReshape(_w, _h); }
-
-
-
-protected:
-    int w, h, x, y;
-
-    int hPadding = 2;
-    int vPadding = 2;
-
-    bool gotHit = false;
-
-private:
-
-    bool decorate = true;
-    bool clear = true;
-
-    void _clear() const;
-    void _decorate() const;
-    void _setupViewport() const;
-
-    static constexpr Real p = 0.999;
 
 };
 

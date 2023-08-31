@@ -2,7 +2,7 @@
 #define OUTPUTOPENGL_H
 
 #include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Core/Graphics/Window/StatsDisplay.h"
+#include "Core/Graphics/Window/GUIWindow.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 
 #include <iostream>
@@ -12,13 +12,14 @@ namespace Graphics {
 
     class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
         std::vector<Animation*> animations;
-
         void writeStats();
+
+        bool autoAdjustStepsPerSecond = true;
 
     protected:
         WindowPanel panel;
         Timer frameTimer = Timer();
-        StatsDisplay stats;
+        GUIWindow stats;
 
         Real t=.0;
         size_t step=0;
@@ -39,6 +40,9 @@ namespace Graphics {
         // ********************* From Socket ********************* //
     protected:
         void handleOutput(const OutputPacket &outInfo) override;
+
+    public:
+        auto setnSteps(int nSteps) -> void override;
         // ********************* END Socket ********************** //
 
 

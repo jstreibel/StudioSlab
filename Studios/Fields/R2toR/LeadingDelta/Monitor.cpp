@@ -93,6 +93,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     static auto lastAnalyticE = .0;
 
     auto dt = params.getdt();
+    /*
     stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
     stats.addVolatileStat(Str("step = ") + ToStr(step));
     //stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
@@ -102,6 +103,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));
     stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
+     */
     stats.addVolatileStat(Str("eps = ") + ToStr(epsilon, 4, true));
     stats.addVolatileStat(Str("eps/h = ") + ToStr(epsilon / h, 4));
     stats.addVolatileStat(Str("eps/L = ") + ToStr(epsilon / L, 6));

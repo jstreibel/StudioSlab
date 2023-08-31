@@ -8,7 +8,7 @@ set( GRAPHICS_SOURCES
 		Styles/ColorMap.cpp
         Styles/Colors.cpp
 
-		Window/StatsDisplay.cpp
+        Window/GUIWindow.cpp
 		Window/Window.cpp
 		Window/WindowStyles.cpp
 		Window/WindowContainer/WindowPanel.cpp
@@ -29,6 +29,7 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
 		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
+		Window/WindowStyles.h
 
 )
 

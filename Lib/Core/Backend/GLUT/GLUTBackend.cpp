@@ -370,6 +370,8 @@ void GLUTBackend::idleCall()
 
 void GLUTBackend::reshape(int w, int h)
 {
+    auto bg = Styles::GetColorScheme()->deepBackground;
+    glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     {
