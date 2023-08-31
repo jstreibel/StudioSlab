@@ -63,7 +63,7 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericConfig &params,
                                         xMin,
                                         xMax);
     mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
-    panel.addWindow(&mSpeedsGraph);
+    panel.addWindowToColumn(&mSpeedsGraph, 1);
 
 
 }
@@ -93,17 +93,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     static auto lastAnalyticE = .0;
 
     auto dt = params.getdt();
-    /*
-    stats.addVolatileStat(Str("t = ") + ToStr(t, 4));
-    stats.addVolatileStat(Str("step = ") + ToStr(step));
-    //stats.addVolatileStat(Str("steps/frame = ") + ToStr(nSteps));
-    //stats.addVolatileStat(Str("steps/sec: ") + ToStr(nSteps/(elTime*1e-3)));
-    stats.addVolatileStat(Str("FPS: ") + ToStr(1/(elTime*1e-3)));
-    stats.addVolatileStat(Str("<\\br>"));
-    stats.addVolatileStat(Str("L = ") + ToStr(L));
-    stats.addVolatileStat(Str("N = ") + ToStr(N));
-    stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
-     */
+
     stats.addVolatileStat(Str("eps = ") + ToStr(epsilon, 4, true));
     stats.addVolatileStat(Str("eps/h = ") + ToStr(epsilon / h, 4));
     stats.addVolatileStat(Str("eps/L = ") + ToStr(epsilon / L, 6));
@@ -163,8 +153,16 @@ void R2toR::LeadingDelta::OutGL::draw() {
     stats.addVolatileStat(Str("E_an = ") + ToStr(lastAnalyticE, 2, true));
     stats.addVolatileStat(Str("E_num/E_an = ") + ToStr(lastE / lastAnalyticE, 2, true));
 
+
+
+
     auto &phi = eqState.getPhi();       phi   .getSpace().syncHost();
     auto &dphidt = eqState.getDPhiDt(); dphidt.getSpace().syncHost();
+
+
+    if(mFieldDisplay.getFunction() == nullptr || true) {
+        mFieldDisplay.setup(DummyPtr(phi));
+    }
 
     mSectionGraph.clearFunctions();
     mSpeedsGraph .clearFunctions();

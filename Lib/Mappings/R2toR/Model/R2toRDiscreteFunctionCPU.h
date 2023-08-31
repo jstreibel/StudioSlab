@@ -15,6 +15,8 @@ namespace R2toR {
 
         [[nodiscard]] Core::DiscreteFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
 
+        auto Clone() const -> FunctionT * override;
+
         DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const override;
 
         Real At(PosInt n, PosInt m) const override;

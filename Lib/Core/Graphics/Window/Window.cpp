@@ -6,7 +6,7 @@
 
 #include "Window.h"
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
-#include "Core/Graphics/Window/WindowStyles.h"
+#include "Core/Graphics/Styles/WindowStyles.h"
 
 
 Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}

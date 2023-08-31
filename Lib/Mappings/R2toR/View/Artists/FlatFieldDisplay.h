@@ -5,11 +5,11 @@
 #ifndef STUDIOSLAB_FLATFIELDDISPLAY_H
 #define STUDIOSLAB_FLATFIELDDISPLAY_H
 
-#include "Core/Graphics/Window/Window.h"
-#include "Core/Graphics/OpenGL/Texture.h"
+#include <utility>
 
-#include "Math/Graph/Graph.h"
+#include "Core/Graphics/OpenGL/Texture.h"
 #include "Mappings/R2toR/Model/R2toRFunction.h"
+#include "Math/Graph/Graph.h"
 #include "Core/Graphics/Styles/ColorMap.h"
 
 namespace R2toR::Graphics {
@@ -22,7 +22,6 @@ namespace R2toR::Graphics {
             Real cMap_min = -.2;
             Real cMap_max =  .2;
 
-
         protected:
             R2toR::Function::ConstPtr func    = nullptr;
             OpenGL::Texture*          texture = nullptr;
@@ -30,20 +29,20 @@ namespace R2toR::Graphics {
             Styles::Color computeColor(Real val) const;
 
             void computeGraphRanges();
+
         public:
-            FlatFieldDisplay(Str title="Full 2D") : Core::Graphics::Graph2D(-1, 1, -1, 1, title) {};
+            explicit FlatFieldDisplay(Str title="Full 2D") : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title)) {};
             explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
 
             void setup(R2toR::Function::ConstPtr function);
+            auto getFunction() const -> R2toR::Function::ConstPtr;
 
-            virtual void draw() override;
+            void draw() override;
 
             void invalidateBuffer();
-
             void repopulateBuffer();
 
             bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
-
             void notifyReshape(int newWinW, int newWinH) override;
     };
 }

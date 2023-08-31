@@ -4,13 +4,12 @@ set( GRAPHICS_SOURCES
 		ZoomPanRotate.cpp
 
 		Styles/StylesAndColorSchemes.cpp
-		Styles/ColorMap.h
-		Styles/ColorMap.cpp
-        Styles/Colors.cpp
+		Styles/ColorMap.h 		Styles/ColorMap.cpp
+		Styles/Colors.h       	Styles/Colors.cpp
+		Styles/WindowStyles.h	Styles/WindowStyles.cpp
 
         Window/GUIWindow.cpp
 		Window/Window.cpp
-		Window/WindowStyles.cpp
 		Window/WindowContainer/WindowPanel.cpp
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp
@@ -29,7 +28,6 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
 		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
-		Window/WindowStyles.h
 
 )
 

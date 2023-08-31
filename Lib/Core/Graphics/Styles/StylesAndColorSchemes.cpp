@@ -102,6 +102,8 @@ void SetSchemeDark3 () {
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
+    current->deepBackground = {0.1,0.1,0.16,1};;
+    current->windowBorder = current->deepBackground.inverse();
 }
 
 void SetSchemeBWDark () {

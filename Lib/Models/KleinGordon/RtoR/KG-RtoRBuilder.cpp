@@ -78,9 +78,6 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         auto outputOpenGL = buildOpenGLOutput();
 
-        if(*OpenGLMonitor_stepsPerIdleCall > 0)
-            outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
-
         const auto t = p.gett();
         if(t>0)
         {
@@ -92,8 +89,14 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
             outputManager->addOutputChannel(simHistory);
             outputOpenGL->setSimulationHistory(DummyPtr(simHistory->getData()));
 
-            if(*OpenGLMonitor_stepsPerIdleCall <= 0)
+            if(*OpenGLMonitor_stepsPerIdleCall < 0) {
                 outputOpenGL->setnSteps(simHistory->getnSteps());
+                outputOpenGL->setAutoAdjust_nSteps(true);
+            }
+            else {
+                outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
+                outputOpenGL->setAutoAdjust_nSteps(false);
+            }
         }
 
         glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));

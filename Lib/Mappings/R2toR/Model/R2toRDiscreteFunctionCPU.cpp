@@ -127,4 +127,8 @@ DiscreteFunction_CPU::Apply(const FunctionT<Real, Real> &func,
     return out;
 }
 
+Core::FunctionT<Real2D, Real> *DiscreteFunction_CPU::Clone() const {
+    return new DiscreteFunction_CPU(*this);
+}
+
 #pragma clang diagnostic pop

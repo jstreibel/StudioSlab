@@ -10,7 +10,6 @@
 
 #include <cxxopts.hpp>
 
-
 void none() {};
 
 void showHelp()
@@ -35,10 +34,14 @@ Str FORMAT;
       return EXIT_FAILURE; }
 
 int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, const char *argv[]) {
-    try {
+#ifdef NDEBUG
+    try
+#endif
+    {
         FORMAT = Log::BGRed + Log::BoldFace;
         return pFunction(argc, argv);
     }
+#ifdef NDEBUG
     catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
     catch (Str &e)                                          LogException("Exception (std::string)",  e,        none)
     catch (cxxopts::exceptions::invalid_option_syntax e)    LogException("Invalid option syntax",    e.what(), showHelp)
@@ -49,7 +52,7 @@ int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, con
     catch (cxxopts::exceptions::exception &e)               LogException("Parsing exception",        e.what(), none)
     catch (std::exception &e)                               LogException("Exception std::exception", e.what(), none)
     catch (...)                                             LogException("Unknown exception",        "...",    none)
-
     throw "Impossible.";
+#endif
 }
 

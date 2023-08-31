@@ -5,7 +5,7 @@
 #include "GUIWindow.h"
 
 #include "imgui.h"
-#include "WindowStyles.h"
+#include "Core/Graphics/Styles/WindowStyles.h"
 
 
 GUIWindow::GUIWindow() : Window( ) {

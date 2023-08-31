@@ -37,9 +37,6 @@ struct Laplacian1D {
 } __attribute__((packed)) __attribute__((aligned(8)));
 
 
-Indices next;
-Indices prev;
-
 __host__ DeviceVector &d2dx2(const DeviceVector &in_const,
                              DeviceVector &out,
                              const Real h, const size_t N)
@@ -50,6 +47,8 @@ __host__ DeviceVector &d2dx2(const DeviceVector &in_const,
 
     #if PERIODIC_BC
     static bool init = false;
+    static Indices next;
+    static Indices prev;
     if(!init){
         thrust::host_vector<int> h_prev(N), h_next(N);
 

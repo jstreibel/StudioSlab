@@ -11,7 +11,7 @@
 #include <filesystem>
 
 R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericConfig &params)
-                                  : Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ signum-Gordon shockwave graphic monitor")
+                                  : Core::Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ signum-Gordon shockwave graphic monitor")
 {}
 
 void R2toR::OutputOpenGLShockwave::draw() {

@@ -24,8 +24,12 @@ void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
 
     auto subInterfaces = anInterface->getSubInterfaces();
     if(!subInterfaces.empty())
-        for (auto subInterface: subInterfaces)
-            log << "\n\t\t\t\tHas sub-interface: " << subInterface->getName();
+        for (const auto &subInterface: subInterfaces)
+            log << "\n\t\t\t\t\t\tSub-interface: " << subInterface->getName();
+
+    for(const auto &p : anInterface->getParameters())
+        log << "\n\t\t\t\t\t\tParameter: " << p->getCLName();
+
     log << Log::Flush;
 
     for (auto subInterface: subInterfaces)

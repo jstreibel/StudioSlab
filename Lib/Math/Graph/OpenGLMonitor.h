@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-namespace Graphics {
+namespace Core::Graphics {
 
     class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
         std::vector<Animation*> animations;
@@ -29,6 +29,8 @@ namespace Graphics {
         typedef std::shared_ptr<OpenGLMonitor> Ptr;
 
         explicit OpenGLMonitor(const NumericConfig &params, const Str& channelName="OpenGL monitor", int stepsBetweenDraws=1);
+
+        void setAutoAdjust_nSteps(bool value);
 
         // ********************* From EventListener ************** //
         bool notifyRender(float elTime_msec) final ;

@@ -5,10 +5,9 @@
 #ifndef STUDIOSLAB_GRAPHR2TOR_H
 #define STUDIOSLAB_GRAPHR2TOR_H
 
-
+#include "Core/Graphics/ZoomPanRotate.h"
 #include "Mappings/R2toR/Model/R2toRFunction.h"
 #include "Math/Graph/FunctionGraph.h"
-#include "Core/Graphics/ZoomPanRotate.h"
 
 
 class GraphR2toR : public FunctionGraph<R2toR::Function> {

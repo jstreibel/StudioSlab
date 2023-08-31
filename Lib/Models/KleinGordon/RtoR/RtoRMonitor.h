@@ -15,7 +15,7 @@
 
 namespace RtoR {
 
-    class Monitor : public Graphics::OpenGLMonitor {
+    class Monitor : public Core::Graphics::OpenGLMonitor {
         bool showEnergyHistoryAsDensities;
 
         bool notifyKeyboard(unsigned char key, int x, int y) override;

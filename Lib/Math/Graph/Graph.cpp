@@ -71,7 +71,6 @@ Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
                                      Str setName,
                                      bool affectsGraphRanges) {
     auto metaData = PointSetMetadata{std::move(pointSet), style, setName, affectsGraphRanges};
-    Log::Note() << "Added pointSet '" << setName << "' to graph '" << this->title << "'" << Log::Flush;
     mPointSets.emplace_back(metaData);
 }
 

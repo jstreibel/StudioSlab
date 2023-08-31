@@ -16,6 +16,7 @@ namespace RtoR::Thermal {
 
     class Monitor : public RtoR::Monitor {
         Real transientGuess = -1.0;
+        RtoR2::StraightLine transientLine;
 
         Real u=.0;
 

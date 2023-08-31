@@ -20,7 +20,7 @@
 
 RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                        const Real phiMin, const Real phiMax, Str name, bool showEnergyHistoryAsDensities)
-: Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
+: Core::Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , hamiltonian(hamiltonian)
 , mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, params.getN()*4)
@@ -116,7 +116,7 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
 
     mEnergyGraph.set_xMax(xMax);
 
-    Graphics::OpenGLMonitor::handleOutput(outInfo);
+    Core::Graphics::OpenGLMonitor::handleOutput(outInfo);
 }
 
 bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
@@ -140,7 +140,7 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
             break;
     }
 
-    return Graphics::OpenGLMonitor::notifyKeyboard(key, x, y);
+    return Core::Graphics::OpenGLMonitor::notifyKeyboard(key, x, y);
 }
 
 void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {

@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="ℝ²↦ℝ" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="-og" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Fields-R2toR" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Fields-R2toR">
+  <configuration default="false" name="ℝ²↦ℝ" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="-og --dev 1 -s1 -N128" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Fields-R2toR" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Fields-R2toR">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

@@ -14,7 +14,7 @@
 
 namespace R2toR {
 
-    class OutputOpenGLShockwaveAt_t0 : public Graphics::OpenGLMonitor {
+    class OutputOpenGLShockwaveAt_t0 : public Core::Graphics::OpenGLMonitor {
     public:
         OutputOpenGLShockwaveAt_t0(const NumericConfig &params);
 

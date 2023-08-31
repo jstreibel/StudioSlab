@@ -10,11 +10,11 @@
 
 using namespace Core;
 
-#define MAX_AVG_SAMPLES (8*60UL)
+#define MAX_AVG_SAMPLES (2*60UL)
 #define MIN_FPS 24
 #define MAX_FPS 30
 
-Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
+Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
     EventListener::addResponder(&panel);
 
@@ -23,14 +23,14 @@ Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& c
     Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
 }
 
-void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
+void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 
     GUIBackend::GetInstance().requestRender();
 }
 
-void Graphics::OpenGLMonitor::writeStats() {
+void Core::Graphics::OpenGLMonitor::writeStats() {
     static bool hasFinished = false;
     hasFinished = !(lastData.getSteps()<params.getn());
 
@@ -82,20 +82,22 @@ void Graphics::OpenGLMonitor::writeStats() {
         if(autoAdjustStepsPerSecond && !hasFinished) {
             static Count counter = 0;
             static fix baseNSteps = getnSteps();
-            // static let multiplier = 1;
+            static let multiplier = 1;
             static fix modVal = Common::max(baseNSteps/5, 1);
 
             if(!(++counter%modVal))
             {
                 if      (FPS >= MAX_FPS) {
-                    // setnSteps(baseNSteps * ++multiplier);
-                    setnSteps(getnSteps()+2*(int)ceil(FPS/MAX_FPS));
+                    setnSteps(baseNSteps * ++multiplier);
+                    // setnSteps(getnSteps()+1);
+                    autoAdjustStepsPerSecond = true;
                 }
                 else if (FPS <= MIN_FPS){
-                    // --multiplier;
-                    // if(multiplier<=0) multiplier = 1;
-                    // setnSteps(baseNSteps*multiplier);
-                    setnSteps(getnSteps()-1);
+                    --multiplier;
+                    if(multiplier<=0) multiplier = 1;
+                    setnSteps(baseNSteps*multiplier);
+                    // setnSteps(getnSteps()-1);
+                    autoAdjustStepsPerSecond = true;
                 }
             }
         }
@@ -122,7 +124,7 @@ void Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
-    if(currStep!=lastStep)
+    if(currStep!=lastStep || hasFinished)
         stats.addVolatileStat(Str("Finish in ") + (remainingTimeMin < 10 ? "0" : "") + ToStr(remainingTimeMin) + "m" + (remainingTimeSec < 10 ? "0" : "") + ToStr(remainingTimeSec) + "s");
     else
         stats.addVolatileStat(Str("Finish in ∞s"));
@@ -138,7 +140,7 @@ void Graphics::OpenGLMonitor::writeStats() {
     lastStep = step;
 }
 
-bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
+bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
     assert(lastData.hasValidData());
 
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
@@ -160,7 +162,7 @@ bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
     return true;
 }
 
-bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
+bool Core::Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
     static fix baseNSteps = getnSteps();
     static let multiplier = 1;
 
@@ -193,13 +195,17 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
     return EventListener::notifyKeyboard(key, x, y);
 }
 
-void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
+void Core::Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
     panel.notifyReshape(newWinW, newWinH);
 }
 
-void Graphics::OpenGLMonitor::setnSteps(int nSteps) {
+void Core::Graphics::OpenGLMonitor::setnSteps(int nSteps) {
     if(nSteps>0) autoAdjustStepsPerSecond = false;
     Socket::setnSteps(nSteps);
+}
+
+void Graphics::OpenGLMonitor::setAutoAdjust_nSteps(bool value) {
+    autoAdjustStepsPerSecond = value;
 }

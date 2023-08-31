@@ -5,6 +5,7 @@
 #include "FlatFieldDisplay.h"
 
 #include "Core/Graphics/Styles/ColorMap.h"
+#include "Core/Tools/Log.h"
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
 #include "imgui.h"
 
@@ -35,6 +36,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
     fontScale = .35;
 
+    delete texture;
     texture = new OpenGL::Texture((int)xRes, (int)yRes);
 
     repopulateBuffer();
@@ -48,102 +50,102 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     // Core::Graphics::Graph2D::draw();
     setupOrtho();
 
-    if(func == nullptr) return;
 
-    if(ImGui::Begin("Stats")){
-        if(ImGui::CollapsingHeader("Full history output")) {
+    if(func != nullptr) {
 
-            {
-                auto min = (float) cMap_min;
-                auto max = (float) cMap_max;
-                auto eps = (float) cMap_epsArg;
+        if (ImGui::Begin("Stats")) {
+            if (ImGui::CollapsingHeader("Full history output")) {
 
-                if (ImGui::SliderFloat("min", &min, -2, -.005f)) {
-                    cMap_min = min;
-                    cMap_max = -min;
-                    invalidateBuffer();
-                }
+                {
+                    auto min = (float) cMap_min;
+                    auto max = (float) cMap_max;
+                    auto eps = (float) cMap_epsArg;
 
-                if (ImGui::SliderFloat("max", &max, .005f, 2)) {
-                    cMap_max = max;
-                    cMap_min = -max;
-                    invalidateBuffer();
-                }
-
-                if (ImGui::DragFloat("log eps", &eps, eps * 1e-3, 1e-3, 1e3)) {
-                    cMap_epsArg = eps;
-                    if (logScale) invalidateBuffer();
-                }
-
-                if (ImGui::Checkbox("Log scale", &logScale)) {
-                    invalidateBuffer();
-                }
-            }
-
-
-            {
-                StrVector items;
-                for (const auto &cMapPair: Styles::ColorMaps)
-                    items.emplace_back(cMapPair.first);
-                static int item_current_idx = 0; // Here we store our selection data as an index.
-                static int item_last_idx = 0;
-                Str selectedItem;
-                const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
-                if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
-                    for (int n = 0; n < items.size(); n++) {
-                        const bool is_selected = (item_current_idx == n);
-                        if (ImGui::Selectable(items[n].c_str(), is_selected)) {
-                            selectedItem = items[n];
-                            item_current_idx = n;
-                        }
-
-                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                        if (is_selected)
-                            ImGui::SetItemDefaultFocus();
-                    }
-                    if (item_last_idx != item_current_idx) {
-                        cMap = Styles::ColorMaps[selectedItem];
+                    if (ImGui::SliderFloat("min", &min, -2, -.005f)) {
+                        cMap_min = min;
+                        cMap_max = -min;
                         invalidateBuffer();
                     }
-                    item_last_idx = item_current_idx;
-                    ImGui::EndCombo();
+
+                    if (ImGui::SliderFloat("max", &max, .005f, 2)) {
+                        cMap_max = max;
+                        cMap_min = -max;
+                        invalidateBuffer();
+                    }
+
+                    if (ImGui::DragFloat("log eps", &eps, eps * 1e-3, 1e-3, 1e3)) {
+                        cMap_epsArg = eps;
+                        if (logScale) invalidateBuffer();
+                    }
+
+                    if (ImGui::Checkbox("Log scale", &logScale)) {
+                        invalidateBuffer();
+                    }
+                }
+
+
+                {
+                    StrVector items;
+                    for (const auto &cMapPair: Styles::ColorMaps)
+                        items.emplace_back(cMapPair.first);
+                    static int item_current_idx = 0; // Here we store our selection data as an index.
+                    static int item_last_idx = 0;
+                    Str selectedItem;
+                    const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+                    if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
+                        for (int n = 0; n < items.size(); n++) {
+                            const bool is_selected = (item_current_idx == n);
+                            if (ImGui::Selectable(items[n].c_str(), is_selected)) {
+                                selectedItem = items[n];
+                                item_current_idx = n;
+                            }
+
+                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                            if (is_selected)
+                                ImGui::SetItemDefaultFocus();
+                        }
+                        if (item_last_idx != item_current_idx) {
+                            cMap = Styles::ColorMaps[selectedItem];
+                            invalidateBuffer();
+                        }
+                        item_last_idx = item_current_idx;
+                        ImGui::EndCombo();
+                    }
                 }
             }
         }
-    }
-    ImGui::End();
+        ImGui::End();
 
-    if(!validBuffer) {
-        repopulateBuffer();
-        validBuffer = true;
-    }
+        if (!validBuffer)
+            repopulateBuffer();
 
-    glEnable(GL_TEXTURE_2D);
-    texture->bind();
-    glBegin(GL_QUADS);
-    {
-        auto pixelSizeInTexCoord = 1./texture->getWidth();
+        glEnable(GL_TEXTURE_2D);
+        texture->bind();
+        glBegin(GL_QUADS);
+        {
+            auto pixelSizeInTexCoord = 1. / texture->getWidth();
 
-        auto ti = 0.0 + pixelSizeInTexCoord;
-        auto tf = 1.0;// - pixelSizeInTexCoord;
+            auto ti = 0.0 + pixelSizeInTexCoord;
+            auto tf = 1.0;// - pixelSizeInTexCoord;
 
-        auto domain = dynamic_cast<const R2toR::DiscreteFunction&>(*func).getDomain();
+            auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
 
-        fix fieldWidth = domain.xMax-domain.xMin;
-        glColor4d(1,1,1,1);
-        drawFlatField(0.0);
+            fix fieldWidth = domain.xMax - domain.xMin;
+            glColor4d(1, 1, 1, 1);
+            drawFlatField(0.0);
 
-        glColor4d(1,1,1,0.85);
-        for(int i=1; i<=2; i++) {
-            drawFlatField( i*fieldWidth);
-            drawFlatField(-i*fieldWidth);
+            glColor4d(1, 1, 1, 0.85);
+            for (int i = 1; i <= 2; i++) {
+                drawFlatField(i * fieldWidth);
+                drawFlatField(-i * fieldWidth);
+            }
+
+
         }
+        glEnd();
 
-
+        glDisable(GL_TEXTURE_2D);
     }
-    glEnd();
-
-    glDisable(GL_TEXTURE_2D);
 
     drawAxes();
     drawCurves();
@@ -170,16 +172,24 @@ void R2toR::Graphics::FlatFieldDisplay::repopulateBuffer() {
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
 
+    discreteFunc.getSpace().syncHost();
+
     for (int i = 0; i < xRes; ++i) {
         for (int j = 0; j < yRes; ++j) {
             auto val = discreteFunc.At(i, j);
             auto color = computeColor(val);
+
+            if(val != 0){
+                Log::Debug() << "Right here;" << Log::Flush;
+            }
 
             texture->setColor(i, j, color);
         }
     }
 
     texture->upload();
+
+    this->validBuffer = true;
 }
 
 
@@ -215,7 +225,8 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
 
-    auto domain = discreteFunc.getDomain();
+    fix vp = getViewport();
+    fix domain = discreteFunc.getDomain();
 
     fix dom_xMin = domain.xMin;
     fix dom_xMax = domain.xMax;
@@ -225,7 +236,7 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     fix Δx = dom_xMax-dom_xMin;
     fix Δy = dom_yMax-dom_yMin;
 
-    fix windowRatio = Window::geth()/(Real)Window::getw();
+    fix windowRatio = (double)vp.h()/vp.w();
     fix fieldRatio = Δy/Δx;
 
     let _xMin = dom_xMin;
@@ -237,4 +248,8 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     set_xMax(_xMax);
     set_yMin(_yMin);
     set_yMax(_yMax/fieldRatio*windowRatio);
+}
+
+auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr {
+    return func;
 }

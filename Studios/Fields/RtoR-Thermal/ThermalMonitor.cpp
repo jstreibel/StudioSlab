@@ -280,12 +280,8 @@ void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
         style.filled = false;
         style.thickness = 2;
 
-        static auto hLine = Spaces::PointSet::New();
-        hLine->clear();
-        hLine->addPoint({_xMin, transientGuess});
-        hLine->addPoint({_xMax, transientGuess});
-
-        mFullHistoryDisplay.addPointSet(hLine, style, "Transient", DONT_AFFECT_RANGES);
+        transientLine = RtoR2::StraightLine({_xMin, transientGuess}, {_xMax, transientGuess});
+        mFullHistoryDisplay.addCurve(DummyPtr(transientLine), style, "Transient");
     }
 }
 

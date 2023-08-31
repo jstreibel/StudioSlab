@@ -86,7 +86,7 @@ namespace R2toR {
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 
-            auto glOut = Graphics::OpenGLMonitor::Ptr(this->buildOpenGLOutput());
+            auto glOut = Core::Graphics::OpenGLMonitor::Ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
             backend.addWindow(glOut);
