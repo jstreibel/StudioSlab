@@ -330,9 +330,9 @@ void GLUTBackend::render()
         if (me.showDemo) ImGui::ShowDemoWindow();
     }
 
-    static auto timer = Timer();
 
     {
+        static auto timer = Timer();
         for (auto &win: me.windows) {
             auto elapsed = timer.getElTime_msec();
             win->notifyRender((float)elapsed);

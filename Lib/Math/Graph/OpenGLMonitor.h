@@ -14,7 +14,6 @@ namespace Graphics {
         std::vector<Animation*> animations;
 
         void writeStats();
-        bool finishFrameAndRender();
 
     protected:
         WindowPanel panel;
@@ -34,7 +33,6 @@ namespace Graphics {
         bool notifyRender(float elTime_msec) final ;
         bool notifyKeyboard(unsigned char key, int x, int y) override;
         void notifyReshape(int newWinW, int newWinH) override;
-        bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
         // ********************* End EventListener *************** //
 
 

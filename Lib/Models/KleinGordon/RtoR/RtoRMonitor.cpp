@@ -42,7 +42,6 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 }
 
 void RtoR::Monitor::draw() {
-
     // *************************** HISTORY *********************************
     if(simulationHistory != nullptr)
     {

@@ -27,7 +27,7 @@ public:
     virtual void notifyReshape(int newWinW, int newWinH);
     virtual IntPair getWindowSizeHint();
 
-    bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
+    bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
 
     bool notifyRender(float elTime_msec) override;
 

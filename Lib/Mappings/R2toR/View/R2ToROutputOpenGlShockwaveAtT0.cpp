@@ -130,54 +130,6 @@ void R2toR::OutputOpenGLShockwaveAt_t0::draw() {
     //}
 }
 
-bool R2toR::OutputOpenGLShockwaveAt_t0::notifyScreenReshape(int width, int height) {
-    //ModelBase::OutputOpenGL::reshape(width, height);
-
-    //const Real minSize = std::min(Real(windowWidth-statsWindowWidth), Real(windowHeight));
-    //Real phiGraphY = 0;
-    //Real phiGraphH = minSize;
-    //if(showDPhidt){ phiGraphY = height/2; phiGraphH = minSize/2; }
-    //phiGraph =     Graph(statsWindowWidth, phiGraphY, minSize, phiGraphH, 1.1*xMin, 1.1*xMax, 1.1*yMin, 1.1*yMax);
-    //dPhiGraph =    Graph(statsWindowWidth, 0,        minSize, minSize/2, 1.1*xMin, 1.1*xMax, 1.1*yMin, 1.1*yMax);
-    //zpr.zprReshape(phiGraph.winX, phiGraph.winY, phiGraph.winW, phiGraph.winH);
-//
-    //const PosInt nSections = sections.size();
-    //if(!nSections) return;
-//
-    //const Real secGraphHeight = windowHeight/(2.*nSections);
-    //Real y = windowHeight - secGraphHeight;
-    //for(auto& sec : sections){
-    //    Base::GraphPair &graphs = sec.first;
-//
-    //    {
-    //        auto &graph = graphs.first;
-    //        graph.winX = phiGraph.winX + phiGraph.winW;
-    //        graph.winY = y;
-    //        graph.winW = windowWidth - graph.winX;
-    //        graph.winH = secGraphHeight;
-    //        graph.yMin = yMin;
-    //        graph.yMax = yMax;
-    //    }
-//
-    //    y-=secGraphHeight;
-//
-    //    {
-    //        auto &graph = graphs.second;
-    //        graph.winX = phiGraph.winX + phiGraph.winW;
-    //        graph.winY = y;
-    //        graph.winW = windowWidth - graph.winX;
-    //        graph.winH = secGraphHeight;
-//
-    //        graph.yMin = yMin;
-    //        graph.yMax = yMax;
-    //    }
-//
-    //    y-=secGraphHeight;
-    //}
-
-    return true;
-}
-
 bool R2toR::OutputOpenGLShockwaveAt_t0::notifyKeyboardSpecial(int key, int x, int y) {
     //letc angle = 2.5e-3 * M_PI;
     if(key == GLUT_KEY_RIGHT) {

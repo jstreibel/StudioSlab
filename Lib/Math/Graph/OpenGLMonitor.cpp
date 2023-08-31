@@ -136,35 +136,24 @@ void Graphics::OpenGLMonitor::writeStats() {
     lastStep = step;
 }
 
-bool Graphics::OpenGLMonitor::finishFrameAndRender() {
+bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
+    assert(lastData.hasValidData());
+
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
 
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_POINT_SMOOTH);
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_DEPTH_TEST);
     glPushMatrix();
     {
-        {
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            glEnable(GL_POINT_SMOOTH);
-            glEnable(GL_LINE_SMOOTH);
-            glDisable(GL_DEPTH_TEST);
-        }
-
-        assert(lastData.hasValidData());
-
         writeStats();
         draw();
-        panel.draw();
+        EventListener::notifyRender(elTime_msec);   // here panel gets called.
+        frameTimer.reset();
     }
     glPopMatrix();
-
-    frameTimer.reset();
-    return true;
-}
-
-bool Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
-    Window::notifyRender(elTime_msec);
-
-    finishFrameAndRender();
 
     return true;
 }
@@ -207,15 +196,3 @@ void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
 
     panel.notifyReshape(newWinW, newWinH);
 }
-
-bool Graphics::OpenGLMonitor::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-    panel.notifyScreenReshape(newScreenWidth, newScreenHeight);
-    panel.notifyReshape(newScreenWidth, newScreenHeight);
-
-    return Window::notifyScreenReshape(newScreenWidth, newScreenHeight);
-}
-
-
-
-
-

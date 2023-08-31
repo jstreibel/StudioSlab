@@ -21,12 +21,12 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 
     const char *glyphsToLoad = "A QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
-                       "a quick brown fox jumps over the lazy dog"
-                       "αβγδ η ϕ τ"
-                       "¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀"
-                       "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ"
-                       "ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  "
-                       "0123456789|\\\"'!@#$%¨&*()_+-=`{[^~}]?/;:.>,<";
+                               "a quick brown fox jumps over the lazy dog"
+                               "αβγδηϕτ"
+                               "¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀"
+                               "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ"
+                               "ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  "
+                               "0123456789|\\\"'!@#$%&*()_+-=`{[^~}]?/;:.>,<";
     Styles::Color white = {1, 1, 1, 1};
     setBufferText(glyphsToLoad, {20, 20}, white);
 
@@ -65,7 +65,8 @@ void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styl
     auto text = textStr.c_str();
     for( i = 0; i < strlen(text); ++i )
     {
-        texture_glyph_t *glyph = texture_font_get_glyph( font, text + i );
+        auto code_point = text + i;
+        texture_glyph_t *glyph = texture_font_get_glyph( font, code_point );
         if( glyph != nullptr )
         {
             float kerning =  0.0f;

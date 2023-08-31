@@ -19,7 +19,6 @@ namespace R2toR {
         OutputOpenGLShockwave(const NumericConfig &params);
 
         void draw() override;
-        bool notifyScreenReshape(int width, int height) override;
 
         bool notifyMouseButton(int button, int dir, int x, int y) override;
 

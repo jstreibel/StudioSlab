@@ -44,9 +44,9 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 void R2toR::Graphics::FlatFieldDisplay::draw() {
     Window::draw();
 
+    // Don't call this:
+    // Core::Graphics::Graph2D::draw();
     setupOrtho();
-
-    Core::Graphics::Graph2D::draw();
 
     if(func == nullptr) return;
 
@@ -238,12 +238,3 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     set_yMin(_yMin);
     set_yMax(_yMax/fieldRatio*windowRatio);
 }
-
-bool R2toR::Graphics::FlatFieldDisplay::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-    auto retVal = Window::notifyScreenReshape(newScreenWidth, newScreenHeight);
-
-    computeGraphRanges();
-
-    return retVal;
-}
-

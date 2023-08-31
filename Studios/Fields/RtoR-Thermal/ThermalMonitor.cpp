@@ -22,6 +22,7 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 // Don't touch these:
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_GRAPH_LIMITS false
+#define DONT_AFFECT_RANGES false
 #define AUTO_REVIEW_GRAPH_LIMITS true
 #define ODD_PERMUTATION true
 #define SAMPLE_COUNT(n) (n)
@@ -32,6 +33,8 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define UPDATE_HISTORY_EVERY_STEP true
 #define GOOD_ENOUGH_NUMBER_OF_SAMPLES 300
 #define MAX_SAMPLES 50000
+#define _xMin (params.getxMin() - 3 * params.getL())
+#define _xMax (params.getxMax() + 3 * params.getL())
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
@@ -47,8 +50,8 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
     {
         auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
 
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ = 2<K>/L");
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ = ");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
+        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
         panel.addWindowToColumn(&mTemperaturesGraph, 0);
 
@@ -99,15 +102,15 @@ void RtoR::Thermal::Monitor::draw() {
     fix xMax = params.getxMax();
     fix tMax = params.gett();
 
-    // *************************** Full history ***************************
+    // ****************** Full history + correlation graph ****************
     static bool isSetup = false;
     bool updateSamples = false;
 
     if( simulationHistory != nullptr ) {
-        auto _xMin = xMin - 0.1*L,
-             _xMax = xMax + 0.1*L;
+        // auto _xMin = xMin - 0.1*L,
+        //      _xMax = xMax + 0.1*L;
 
-        auto currTimeLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
+        // auto currTimeLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
 
         if( not isSetup ) {
             mFullHistoryDisplay.setup(simulationHistory);
@@ -123,8 +126,6 @@ void RtoR::Thermal::Monitor::draw() {
         lastStepMod = stepMod;
     }
 
-
-    // *************************** Correlation graph **********************
     static auto last_t_history = 0.0;
     if(simulationHistory != nullptr) {
         stats.begin();
@@ -156,9 +157,10 @@ void RtoR::Thermal::Monitor::draw() {
         if(updateSamples || (t_history != last_t_history))
         {
             {
-                corrSampleLine = RtoR2::StraightLine({params.getxMin(), t_history}, {params.getxMax(), t_history});
+                corrSampleLine = RtoR2::StraightLine({_xMin, t_history}, {_xMax, t_history});
             }
 
+            // Sampler in correlation function
             {
                 fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
                 fix br = Real2D{xMax, min(t_history + Δt, tMax)};
@@ -170,19 +172,26 @@ void RtoR::Thermal::Monitor::draw() {
             }
 
             {
-                auto style = Styles::GetColorScheme()->funcPlotStyles[0];
-                style.primitive = Styles::Point;
-                style.thickness = 3;
-                auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
                 mFullHistoryDisplay.clearPointSets();
-                mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
 
-                style = Styles::GetColorScheme()->funcPlotStyles[1];
-                mCorrelationGraph.clearPointSets();
-                ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
-                                                           mCorrelationGraph.getResolution());
-                mCorrelationGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
-                mCorrelationGraph.reviewGraphRanges();
+                // Correlation samples in full history
+                {
+                    auto style = Styles::GetColorScheme()->funcPlotStyles[0];
+                    style.primitive = Styles::Point;
+                    style.thickness = 3;
+                    auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
+                    mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
+                }
+
+                // Correlation graph
+                {
+                    auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+                    mCorrelationGraph.clearPointSets();
+                    auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
+                                                               mCorrelationGraph.getResolution());
+                    mCorrelationGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
+                    mCorrelationGraph.reviewGraphRanges();
+                }
             }
         }
     }
@@ -255,13 +264,29 @@ void RtoR::Thermal::Monitor::draw() {
 void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
     transientGuess = guess;
 
-    static auto line = Spaces::PointSet::New();
-    line->clear();
-    line->addPoint({guess, -1.0});
-    line->addPoint({guess, 1.e7 });
+    auto transientStyle = Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors();
 
-    mEnergyGraph      .addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
-    mTemperaturesGraph.addPointSet(line, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true).permuteColors(), "Transient", false);
+    static auto vLine = Spaces::PointSet::New();
+    vLine->clear();
+    vLine->addPoint({guess, -1.0});
+    vLine->addPoint({guess, 1.e7 });
+
+    mEnergyGraph      .addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
+    mTemperaturesGraph.addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
+
+    // Transient in full history
+    {
+        auto style = Styles::GetColorScheme()->funcPlotStyles.back();
+        style.filled = false;
+        style.thickness = 2;
+
+        static auto hLine = Spaces::PointSet::New();
+        hLine->clear();
+        hLine->addPoint({_xMin, transientGuess});
+        hLine->addPoint({_xMax, transientGuess});
+
+        mFullHistoryDisplay.addPointSet(hLine, style, "Transient", DONT_AFFECT_RANGES);
+    }
 }
 
 void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {

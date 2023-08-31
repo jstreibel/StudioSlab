@@ -17,6 +17,8 @@
 
 #include "Graph_Config.h"
 
+#define POPUP_ON_MOUSE_CALL false
+
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
 
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
@@ -31,7 +33,7 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
     if(title.empty()) title = Str("unnamed");
     Count n=1;
     while(Graph2D::graphMap.count(title))
-        title += " (" + ToStr(++n) + ")";
+        title += "_" + ToStr(++n);
     Graph2D::graphMap[title] = this;
 
     Log::Note() << "Created Graph2D '" << title << "'" << Log::Flush;
@@ -68,8 +70,8 @@ Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
                                      Styles::PlotStyle style,
                                      Str setName,
                                      bool affectsGraphRanges) {
-    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName), affectsGraphRanges};
-
+    auto metaData = PointSetMetadata{std::move(pointSet), style, setName, affectsGraphRanges};
+    Log::Note() << "Added pointSet '" << setName << "' to graph '" << this->title << "'" << Log::Flush;
     mPointSets.emplace_back(metaData);
 }
 
@@ -142,10 +144,9 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 }
 
 void Core::Graphics::Graph2D::drawGUI() {
-    auto popupName = Str("win_") + title + Str("_popup");
+    auto popupName = title + Str(" window popup");
 
-    if(savePopupOn) {
-        Log::Info() << "Popup '" << popupName << "' is on" << Log::Flush;
+    if(savePopupOn && !POPUP_ON_MOUSE_CALL) {
         ImGui::OpenPopup(popupName.c_str());
         savePopupOn = false;
     }
@@ -229,25 +230,13 @@ void Core::Graphics::Graph2D::setupOrtho() const {
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
-
 void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
 
-
 auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
-
 auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-
-RectR Core::Graphics::Graph2D::getLimits() const {
-    return RectR(xMin, xMax, yMin, yMax);
-}
-
-auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void {
-    xMin = lims.xMin;
-    xMax = lims.xMax;
-    yMin = lims.yMin;
-    yMax = lims.yMax;
-}
+RectR Core::Graphics::Graph2D::getLimits() const { return RectR(xMin, xMax, yMin, yMax); }
+auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { xMin = lims.xMin; xMax = lims.xMax; yMin = lims.yMin; yMax = lims.yMax; }
 
 void Core::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
 void Core::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
@@ -259,13 +248,21 @@ Real Core::Graphics::Graph2D::get_yMin() const { return yMin; }
 Real Core::Graphics::Graph2D::get_yMax() const { return yMax; }
 
 
-
 bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
     static auto time = Timer();
 
     if(button == 2){
         if(dir == 0) time.reset();
-        else if(dir == 1 && time.getElTime_msec() < 200) savePopupOn = true;
+        else if(dir == 1 && time.getElTime_msec() < 200){
+            savePopupOn = true;
+
+            auto popupName = Str("win_") + title + Str("_popup");
+            if(POPUP_ON_MOUSE_CALL) {
+                Log::Info() << "Popup (on mouse call) '" << popupName << "' is on" << Log::Flush;
+                ImGui::OpenPopup(popupName.c_str());
+                savePopupOn = false;
+            }
+        }
 
         return true;
     }
