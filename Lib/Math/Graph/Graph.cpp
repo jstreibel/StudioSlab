@@ -50,20 +50,91 @@ Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
 
 void Core::Graphics::Graph2D::draw() {
     Window::draw();
-
     if (autoReviewGraphRanges) reviewGraphRanges();
-
     setupOrtho();
-
     drawAxes();
 
-    drawPointSets();
+    labelingHelper.setTotalItems(countDisplayItems());
 
+    drawPointSets();
     drawCurves();
 
     drawGUI();
 
 }
+
+
+void Core::Graphics::Graph2D::drawGUI() {
+    auto popupName = title + Str(" window popup");
+
+    if(savePopupOn && !POPUP_ON_MOUSE_CALL) {
+        ImGui::OpenPopup(popupName.c_str());
+        savePopupOn = false;
+    }
+
+    if (ImGui::BeginPopup(popupName.c_str())){
+        if(ImGui::MenuItem("Save graph")) {
+            auto w = Printing::getTotalHorizontalDots(.5);
+            auto h = w*.5;
+            auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
+            OpenGLUtils::outputToPNG(this, fileName, w, (int)h);
+        }
+        ImGui::EndPopup();
+    }
+}
+
+void Core::Graphics::Graph2D::drawPointSets() {
+    for(auto &ptSet : mPointSets){
+        auto &func = *ptSet.data;
+        auto style = ptSet.plotStyle;
+        auto label = ptSet.name;
+
+        if(!label.empty())
+            nameLabelDraw(style, label);
+
+        Core::Graphics::Graph2D::renderPointSet(func, style);
+    }
+}
+
+void Core::Graphics::Graph2D::drawCurves() {
+    for(IN curveData : curves) {
+        auto curve = curveData.curve;
+        auto pointSet = curve.get()->renderToPointSet();
+        auto points = pointSet.get()->getPoints();
+
+        if(points.size()<2) continue;
+
+        auto style = curveData.style;
+        auto name  = curveData.name;
+
+        nameLabelDraw(style, name);
+
+        auto color = style.lineColor;
+
+        glColor4f(color.r, color.g, color.b, color.a);
+        glLineWidth(style.thickness);
+
+        if (style.primitive != Styles::SolidLine) {
+            glDisable(GL_LINE_SMOOTH);
+            glEnable(GL_LINE_STIPPLE);
+            glLineStipple(style.stippleFactor, style.stipplePattern);
+        } else {
+            glEnable(GL_LINE_SMOOTH);
+            glDisable(GL_LINE_STIPPLE);
+        }
+
+        auto primitive = GL_LINE_STRIP;
+        if(style.primitive==Styles::Point) primitive = GL_POINTS;
+
+        glBegin(primitive);
+        {
+            for(const auto &p : points)
+                glVertex2d(p.x, p.y);
+        }
+        glEnd();
+    }
+}
+
 
 void
 Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
@@ -82,7 +153,7 @@ Core::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::Plo
 
 void
 Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
-                                        Styles::PlotStyle style) const noexcept {
+                                        Styles::PlotStyle style) noexcept {
     auto pts = pSet.getPoints();
 
     if(style.filled && !(style.primitive==Styles::Point))
@@ -141,79 +212,6 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 
     }
 }
-
-void Core::Graphics::Graph2D::drawGUI() {
-    auto popupName = title + Str(" window popup");
-
-    if(savePopupOn && !POPUP_ON_MOUSE_CALL) {
-        ImGui::OpenPopup(popupName.c_str());
-        savePopupOn = false;
-    }
-
-    if (ImGui::BeginPopup(popupName.c_str())){
-        if(ImGui::MenuItem("Save graph")) {
-            auto w = Printing::getTotalHorizontalDots(.5);
-            auto h = w*.5;
-            auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
-            OpenGLUtils::outputToPNG(this, fileName, w, (int)h);
-        }
-        ImGui::EndPopup();
-    }
-}
-
-void Core::Graphics::Graph2D::drawPointSets() {
-    int i=0;
-    for(auto &ptSet : mPointSets){
-        auto &func = *ptSet.data;
-        auto style = ptSet.plotStyle;
-        auto label = ptSet.name;
-
-        if(!label.empty()) nameLabelDraw(i++, 0, style, label, this);
-
-        this->renderPointSet(func, style);
-    }
-}
-
-void Core::Graphics::Graph2D::drawCurves() {
-    auto i=0;
-    for(IN curveData : curves) {
-        auto curve = curveData.curve;
-        auto pointSet = curve.get()->renderToPointSet();
-        auto points = pointSet.get()->getPoints();
-
-        if(points.size()<2) continue;
-
-        auto style = curveData.style;
-        auto name  = curveData.name;
-
-        nameLabelDraw(i, 1, style, name, this);
-
-        auto color = style.lineColor;
-
-        glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(style.thickness);
-
-        if (style.primitive != Styles::SolidLine) {
-            glDisable(GL_LINE_SMOOTH);
-            glEnable(GL_LINE_STIPPLE);
-            glLineStipple(style.stippleFactor, style.stipplePattern);
-        } else {
-            glEnable(GL_LINE_SMOOTH);
-            glDisable(GL_LINE_STIPPLE);
-        }
-
-        auto primitive = GL_LINE_STRIP;
-        if(style.primitive==Styles::Point) primitive = GL_POINTS;
-
-        glBegin(primitive);
-        {
-            for(const auto &p : points)
-                glVertex2d(p.x, p.y);
-        }
-        glEnd();
-    }
-}
-
 
 void Core::Graphics::Graph2D::setupOrtho() const {
     const Real deltaX = xMax-xMin;
@@ -335,6 +333,10 @@ void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) {
 
     auto vp = getViewport();
     writer.reshape(vp.w(), vp.h());
+}
+
+auto Core::Graphics::Graph2D::countDisplayItems() const -> Count {
+    return mPointSets.size() + curves.size();
 }
 
 

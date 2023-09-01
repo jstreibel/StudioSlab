@@ -125,7 +125,11 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
     stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
     if(currStep!=lastStep || hasFinished)
-        stats.addVolatileStat(Str("Finish in ") + (remainingTimeMin < 10 ? "0" : "") + ToStr(remainingTimeMin) + "m" + (remainingTimeSec < 10 ? "0" : "") + ToStr(remainingTimeSec) + "s");
+        stats.addVolatileStat(Str("Finish in ")
+            + (remainingTimeMin < 10 ? "0" : "")
+            + ToStr(remainingTimeMin) + "m"
+            + (remainingTimeSec < 10 ? "0" : "")
+            + ToStr(remainingTimeSec) + "s");
     else
         stats.addVolatileStat(Str("Finish in ∞s"));
     fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";

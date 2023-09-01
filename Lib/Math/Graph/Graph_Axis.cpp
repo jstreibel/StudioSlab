@@ -280,8 +280,7 @@ void Core::Graphics::Graph2D::reviewGraphRanges() {
     }
 }
 
-void Core::Graphics::Graph2D::nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label,
-                                            const Window *window) {
+void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -291,14 +290,18 @@ void Core::Graphics::Graph2D::nameLabelDraw(int i, int j, const Styles::PlotStyl
     glPushMatrix();
     glLoadIdentity();
 
+    fix col = labelingHelper.col();
+    fix row = labelingHelper.row();
+    ++labelingHelper;
+
     auto dx = .080,
             dy = -.060;
     auto xGap = 0.015,
             yGap = -.025;
     auto colWidth = 0.5;
-    auto xMin_label = .100 + (colWidth + xGap + dx) * float(j),
+    auto xMin_label = .100 + (colWidth + xGap + dx) * float(col),
             xMax_label = xMin_label + dx,
-            yMin_label = .975 + (yGap + dy) * float(i),
+            yMin_label = .975 + (yGap + dy) * float(row),
             yMax_label = yMin_label + dy;
 
     if(style.filled) {
@@ -351,7 +354,7 @@ void Core::Graphics::Graph2D::nameLabelDraw(int i, int j, const Styles::PlotStyl
         loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
         writer.write(label, {loc.x, loc.y});
     } else {
-        GLUTUtils::writeOrtho(window, RectR{0, 1, 0, 1}, fontScale, loc.x, loc.y, label);
+        GLUTUtils::writeOrtho(this, RectR{0, 1, 0, 1}, fontScale, loc.x, loc.y, label);
     }
 
     glPopMatrix();

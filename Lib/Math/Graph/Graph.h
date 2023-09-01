@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_GRAPH_H
 #define STUDIOSLAB_GRAPH_H
 
+#include "LabelingHelper.h"
 
 #include "Utils/Utils.h"
 #include "Core/Graphics/Utils.h"
@@ -31,11 +32,8 @@ namespace Core::Graphics {
             Str name;
             bool affectsGraphRanges=true;
         };
-
         typedef std::vector<PointSetMetadata> PointSets;
-        PointSets mPointSets;
-
-        void renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) const noexcept;
+        static void renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) noexcept;
 
 
         // ************************ CURVES *****************************************
@@ -45,6 +43,7 @@ namespace Core::Graphics {
             Str name;
         };
 
+        PointSets mPointSets;
         std::vector<CurveMetadata> curves;
 
         bool savePopupOn = false;
@@ -60,6 +59,8 @@ namespace Core::Graphics {
         Str title;
         Resolution samples = 512;
 
+        Math::Graphics::LabelingHelper labelingHelper;
+
 
         void drawAxes();
         void drawXAxis();
@@ -67,7 +68,8 @@ namespace Core::Graphics {
 
         void computeTicksSpacings();
 
-        void nameLabelDraw(int i, int j, const Styles::PlotStyle &style, Str label, const Window *window);
+        virtual auto countDisplayItems() const -> Count;
+        void nameLabelDraw(const Styles::PlotStyle &style, const Str& label);
 
         void drawGUI();
         void drawPointSets();

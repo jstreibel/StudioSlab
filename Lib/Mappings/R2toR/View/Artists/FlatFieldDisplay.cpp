@@ -50,6 +50,7 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     // Core::Graphics::Graph2D::draw();
     setupOrtho();
 
+    labelingHelper.setTotalItems(countDisplayItems());
 
     if(func != nullptr) {
 

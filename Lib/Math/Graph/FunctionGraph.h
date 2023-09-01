@@ -28,8 +28,12 @@ class FunctionGraph : public Core::Graphics::Graph2D {
     static auto GetStyle    ( FunctionTriple triple ) { return std::get<1>(triple); };
     static auto GetName     ( FunctionTriple triple ) { return std::get<2>(triple); };
 
-
     std::vector<FunctionTriple> mFunctions;
+
+protected:
+    auto countDisplayItems() const -> Count override;
+
+    virtual void _renderFunction(const FunctionType *func, Styles::PlotStyle color) = 0;
 
 public:
 
@@ -46,12 +50,11 @@ public:
 
     void clearFunctions();
 
-protected:
-
-    virtual void _renderFunction(const FunctionType *func, Styles::PlotStyle color) = 0;
 
 };
 
+template<class FunctionType>
+auto FunctionGraph<FunctionType>::countDisplayItems() const -> Count { return Graph2D::countDisplayItems() + mFunctions.size(); }
 
 
 template<class FunctionType>
@@ -64,13 +67,12 @@ template<class FunctionType>
 void FunctionGraph<FunctionType>::draw() {
     Graph2D::draw();
 
-    int i=0;
     for(auto &triple : mFunctions){
         auto &func = *GetFunction(triple);
         auto style = GetStyle(triple);
         auto label = GetName(triple);
 
-        if(label != "") nameLabelDraw(i++, 0, style, label, this);
+        if(label != "") nameLabelDraw(style, label);
 
         this->_renderFunction(&func, style);
     }

@@ -51,7 +51,9 @@ set ( EXPERIMENTAL_SOURCES
 set ( GRAPH_SOURCES
 		Graph/Graph.cpp
         Graph/OpenGLMonitor.cpp
-        Graph/Graph_Axis.cpp)
+        Graph/Graph_Axis.cpp
+        Graph/LabelingHelper.cpp
+        Graph/LabelingHelper.h)
 
 
 set ( NUMERICS_SOURCES
