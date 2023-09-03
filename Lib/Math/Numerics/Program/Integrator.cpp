@@ -84,7 +84,6 @@ bool NumericalIntegration::_cycleUntilOutputOrFinish() {
     }
 
     if (nCyclesToNextOutput == 0) {
-        Log::WarningImportant() << "No more cycles to next output" << Log::Flush;
         return false;
     }
 

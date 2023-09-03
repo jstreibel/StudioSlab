@@ -33,6 +33,9 @@ namespace RtoR {
         RtoR::Section1D::Ptr mSpaceCorrelation;
         R2toR::CorrelationFunction mCorrelationFunction;
         GraphRtoR mCorrelationGraph;
+        GraphRtoR mSpaceFourierModesGraph;
+
+        RtoR::Section1D mHistorySectionFunc;
 
         GraphRtoR mHistoryGraph;
 
@@ -60,19 +63,22 @@ namespace RtoR {
         float t_history = .0f;
         int step_history = 0;
 
+        void updateHistoryGraphs();
+        void updateFourierGraph();
+
     protected:
         RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
 
-        Real U;
-        Real K;
-        Real V;
-        Real W;
+        Real U = .0;
+        Real K = .0;
+        Real V = .0;
+        Real W = .0;
         KGEnergy &hamiltonian;
         Core::Graphics::Graph2D mEnergyGraph;
 
-        virtual void draw() override;
+        void draw() override;
 
-        virtual void handleOutput(const OutputPacket &outInfo) override;
+        void handleOutput(const OutputPacket &outInfo) override;
 
     public:
         Monitor(const NumericConfig &params,

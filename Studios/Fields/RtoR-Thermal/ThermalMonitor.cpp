@@ -33,8 +33,8 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define UPDATE_HISTORY_EVERY_STEP true
 #define GOOD_ENOUGH_NUMBER_OF_SAMPLES 300
 #define MAX_SAMPLES 50000
-#define _xMin (params.getxMin() - 3 * params.getL())
-#define _xMax (params.getxMax() + 3 * params.getL())
+#define xMinLinesInFullHistoryView (params.getxMin() - 3 * params.getL())
+#define xMaxLinesInFullHistoryView (params.getxMax() + 3 * params.getL())
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
@@ -163,7 +163,7 @@ void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
         style.filled = false;
         style.thickness = 2;
 
-        transientLine = RtoR2::StraightLine({_xMin, transientGuess}, {_xMax, transientGuess});
+        transientLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, transientGuess}, {xMaxLinesInFullHistoryView, transientGuess});
         mFullHistoryDisplay.addCurve(DummyPtr(transientLine), style, "Transient");
     }
 }

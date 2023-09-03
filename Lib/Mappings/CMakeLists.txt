@@ -26,6 +26,10 @@ endif()
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
 
+
+		RtoR/Model/Derivatives/DerivativesCPU.cpp
+
+
         RtoR/Model/FunctionsCollection/Oscillons/analytic-breather.cpp
 		RtoR/Model/FunctionsCollection/Shockwave/shockwave.cpp
 		RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.cpp
@@ -34,25 +38,23 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/AbsPerturbedFunction.cpp
 		RtoR/Model/FunctionsCollection/NoiseFunction.cpp
 		RtoR/Model/FunctionsCollection/Shockwave/QuasiShockwave.cpp
+		RtoR/Model/FunctionsCollection/Section1D.h							RtoR/Model/FunctionsCollection/Section1D.cpp
 
 		RtoR/Model/RtoRDiscreteFunction.cpp
 		RtoR/Model/RtoRDiscreteFunctionCPU.cpp
-		RtoR/Model/Derivatives/DerivativesCPU.cpp
-
 		RtoR/Model/RtoRResizableDiscreteFunction.cpp
+
 
 		RtoR/View/RtoROutputHistoryToFile.cpp
 
 		RtoR/View/Graphics/GraphRtoR.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
-
-		RtoR/Calc/Histogram.cpp
-		RtoR/Model/FunctionsCollection/Section1D.cpp
-		RtoR/Model/FunctionsCollection/Section1D.h
         RtoR/View/Graphics/HistoryDisplay.cpp
         RtoR/View/Graphics/HistoryDisplay.h
-        RtoR/Calc/CorrelationCalculator.cpp
-        RtoR/Calc/CorrelationCalculator.h
+
+		RtoR/Calc/Histogram.cpp
+        RtoR/Calc/CorrelationCalculator.h       RtoR/Calc/CorrelationCalculator.cpp
+		RtoR/Calc/FourierTransform.h			RtoR/Calc/FourierTransform.cpp
 
 )
 
@@ -90,14 +92,11 @@ set ( R2TOR_SOURCES
 
 		RtoR2/StraightLine.cpp
 
-		R2toR/View/Artists/FlatFieldDisplay.cpp
-		R2toR/View/Artists/FlatFieldDisplay.h
-		RtoR/Model/FunctionsCollection/Section1D.cpp
-		RtoR/Model/FunctionsCollection/Section1D.h
-		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
-		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h
-        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
-        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h
+		R2toR/View/Artists/FlatFieldDisplay.h										R2toR/View/Artists/FlatFieldDisplay.cpp
+		RtoR/Model/FunctionsCollection/Section1D.h									RtoR/Model/FunctionsCollection/Section1D.cpp
+		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h	R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
+        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h		        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
+        R2toR/FourierTransform.h											        R2toR/FourierTransform.cpp
 
 )
 
@@ -151,7 +150,7 @@ set ( MAPS_R2toR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-R2toR)
 set ( LIB_LOCAL_NAME ${MAPS_R2toR_LIB_NAME}_GPU )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${R2TOR_SOURCES} ${MAPS_CUDA_SOURCES})
-target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES} ${VTK_LIBRARIES} fftw3)
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 #set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
 

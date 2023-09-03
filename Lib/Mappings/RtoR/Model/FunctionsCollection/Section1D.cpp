@@ -15,6 +15,8 @@ RtoR::Section1D::Section1D(const R2toR::Function *function, const RtoR2::Paramet
 {   }
 
 Real RtoR::Section1D::operator()(Real x) const {
+    if(curve == nullptr || function == nullptr) return NaN;
+
     const auto &c = *curve;
     const auto &func = *function;
 
@@ -22,6 +24,8 @@ Real RtoR::Section1D::operator()(Real x) const {
 }
 
 Spaces::PointSet::Ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
+    if(curve == nullptr || function == nullptr) return {};
+
     return RtoR::FunctionRenderer::toPointSet(*this, options.xMin, options.xMax, options.n);
 }
 

@@ -22,6 +22,8 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
 
     const char *glyphsToLoad = "A QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
                                "a quick brown fox jumps over the lazy dog"
+                               "𝒜ℬ𝒞𝒟ℰℱ  ℐ        ℛ                  "
+                               "      ℯ         𝓂                        "
                                "αβγδηϕτ"
                                "¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀"
                                "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ"

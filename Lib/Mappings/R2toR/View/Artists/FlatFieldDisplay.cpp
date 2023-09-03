@@ -159,7 +159,6 @@ void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() {
 
 Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
 
-
     return cMap.mapValue(logScale ? logAbs(val, cMap_epsArg) : val, cMap_min, cMap_max);
 }
 

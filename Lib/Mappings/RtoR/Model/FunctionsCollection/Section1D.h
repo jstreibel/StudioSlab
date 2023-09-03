@@ -17,7 +17,7 @@ namespace RtoR {
         RtoR2::ParametricCurve::ConstPtr curve;
 
     public:
-        Section1D(const R2toR::Function *function, const RtoR2::ParametricCurve *curve);
+        explicit Section1D(const R2toR::Function *function= nullptr, const RtoR2::ParametricCurve *curve= nullptr);
         Section1D(R2toR::Function::ConstPtr function, RtoR2::ParametricCurve::ConstPtr curve);
 
         Real operator()(Real x) const override;
