@@ -36,7 +36,7 @@ namespace Styles {
             throw Str("Wrong hex color format ") + hex;
 
         unsigned int rr, gg, bb, aa=255;
-        std::stringstream ss;
+        StringStream ss;
         ss << std::hex << hex.substr(1, 2);
         ss >> rr;
         ss.clear();

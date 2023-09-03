@@ -8,6 +8,7 @@
 #include "Types.h"
 #include <typeinfo>
 #include <cxxabi.h>
+#include <set>
 
 #ifdef NDEBUG // Release
 #define cast(NAME, TO_TYPE, OBJECT) \

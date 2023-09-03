@@ -1,6 +1,6 @@
 
 set ( TOOLSET_SOURCES
-		Toolset/Constants.h
+		Constants.h
 		Toolset/NativeFunctions.h
 		)
 
@@ -13,8 +13,6 @@ set ( FUNCTION_SOURCES
 		Function/GPUFriendly.h
 		Function/SummableFunction.h
 )
-
-
 
 set ( SPACE_SOURCES
 		Space/Impl/DiscreteSpace.cpp

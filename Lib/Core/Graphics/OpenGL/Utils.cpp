@@ -118,4 +118,3 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
 
 }
 void OpenGLUtils::piccolos() { }
-

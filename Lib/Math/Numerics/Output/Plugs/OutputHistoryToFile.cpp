@@ -26,7 +26,7 @@ OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
         throw "OutputHistoryToFile couldn't open file.";
     }
 
-    Log::Info() << "Sim history data file is \'" << outFileName << "\'. " << Log::Flush;
+    Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;
     Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
     file << spaces << '\n';

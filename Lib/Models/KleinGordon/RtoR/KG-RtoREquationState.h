@@ -19,7 +19,7 @@ namespace RtoR {
 
     public:
         void outputPhi(OStream &out, Str separator) const override {
-            const RealVector &vPhi = getPhi().getSpace().getHostData();
+            const RealArray &vPhi = getPhi().getSpace().getHostData();
             const PosInt N = vPhi.size();
 
             for(PosInt n=0; n<N; n++)
@@ -27,7 +27,7 @@ namespace RtoR {
         }
 
         void outputdPhiDt(OStream &out, Str separator) const override {
-            const RealVector &vDPhiDt = getDPhiDt().getSpace().getHostData();
+            const RealArray &vDPhiDt = getDPhiDt().getSpace().getHostData();
             const PosInt N = vDPhiDt.size();
 
             for(PosInt n=0; n<N; n++)

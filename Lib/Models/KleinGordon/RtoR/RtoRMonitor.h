@@ -5,13 +5,20 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGL_H
 #define V_SHAPE_RTOROUTPUTOPENGL_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-#include "Mappings/RtoR/Model/RtoRResizableDiscreteFunction.h"
 #include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
 
-#include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Math/Graph/OpenGLMonitor.h"
+
+#include "Mappings/RtoR/Model/RtoRResizableDiscreteFunction.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/Section1D.h"
+#include "Mappings/RtoR/View/Graphics/HistoryDisplay.h"
+#include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
+
 #include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
+#include "Mappings/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
+
+#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
 namespace RtoR {
 
@@ -20,37 +27,48 @@ namespace RtoR {
 
         bool notifyKeyboard(unsigned char key, int x, int y) override;
 
-    protected:
+        Real Δt = 0.0;
+        RtoR2::StraightLine corrSampleLine;
+        std::shared_ptr<R2toR::Sampler> sampler;
+        RtoR::Section1D::Ptr mSpaceCorrelation;
+        R2toR::CorrelationFunction mCorrelationFunction;
+        GraphRtoR mCorrelationGraph;
 
-        Real U;
-        Real K;
-        Real V;
-        Real W;
-        KGEnergy &hamiltonian;
-        GraphRtoR mFieldsGraph;
         GraphRtoR mHistoryGraph;
 
         std::shared_ptr<const R2toR::DiscreteFunction>
                   simulationHistory = nullptr;
 
+        GraphRtoR mFieldsGraph;
+
+
         Spaces::PointSet UHistoryData;
         Spaces::PointSet KHistoryData;
         Spaces::PointSet WHistoryData;
         Spaces::PointSet VHistoryData;
-        Core::Graphics::Graph2D mEnergyGraph;
 
         const Styles::PlotStyle U_style = Styles::GetColorScheme()->funcPlotStyles[0];
         const Styles::PlotStyle K_style = Styles::GetColorScheme()->funcPlotStyles[1];
         const Styles::PlotStyle W_style = Styles::GetColorScheme()->funcPlotStyles[2];
         const Styles::PlotStyle V_style = Styles::GetColorScheme()->funcPlotStyles[3];
 
-        bool showPhi = true;
+        bool showPot = true;
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
         float t_history = .0f;
         int step_history = 0;
+
+    protected:
+        RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
+
+        Real U;
+        Real K;
+        Real V;
+        Real W;
+        KGEnergy &hamiltonian;
+        Core::Graphics::Graph2D mEnergyGraph;
 
         virtual void draw() override;
 
@@ -71,3 +89,4 @@ namespace RtoR {
 
 
 #endif //V_SHAPE_RTOROUTPUTOPENGL_H
+

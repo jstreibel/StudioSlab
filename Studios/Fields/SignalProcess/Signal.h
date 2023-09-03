@@ -60,7 +60,7 @@ namespace RtoR {
         };
 
 
-        class CLI : public RtoRBCInterface {
+    class CLI : public RtoR::BCInterface {
             RealParameter freq =      RealParameter{1, "freq", "The freq of the driving force"};
             RealParameter amplitude =   RealParameter{1, "amplitude", "The amplitude of the driving force"};
             RealParameter damping =     RealParameter{1.5e-3, "damping", "The damping factor at the right hand region of the field"};

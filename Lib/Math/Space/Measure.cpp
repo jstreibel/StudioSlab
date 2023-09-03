@@ -4,7 +4,7 @@
 
 #include "Measure.h"
 
-Measure::Measure(std::vector<Real> linearValues) : linearValues(linearValues) {
+Measure::Measure(RealVector linearValues) : linearValues(linearValues) {
 
 }
 

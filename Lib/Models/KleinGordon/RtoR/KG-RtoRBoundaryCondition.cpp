@@ -43,8 +43,8 @@ RtoR::BoundaryCondition::~BoundaryCondition() {
     delete initialPhiCondition;
     delete initialdPhiDtCondition;
 
-    delete leftPhiBoundaryCondition;        // Nao precisa testar se apontador eh nulo pq deletar nullptr nao tem efeito.
-    delete leftdPhiDtBoundaryCondition;     // Nao precisa testar se apontador eh nulo pq deletar nullptr nao tem efeito.
-    delete rightPhiBoundaryCondition;       // Nao precisa testar se apontador eh nulo pq deletar nullptr nao tem efeito.
-    delete rightdPhiDtBoundaryCondition;    // Nao precisa testar se apontador eh nulo pq deletar nullptr nao tem efeito.
+    delete leftPhiBoundaryCondition;      // Null ptr gets deleted anyway
+    delete leftdPhiDtBoundaryCondition;
+    delete rightPhiBoundaryCondition;
+    delete rightdPhiDtBoundaryCondition;
 };

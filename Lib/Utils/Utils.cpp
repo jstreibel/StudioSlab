@@ -3,7 +3,7 @@
 //
 
 #include "Utils.h"
-
+#include <cstdarg>
 #include <cmath>
 
 void Common::PrintThere(int x, int y, const char *format, ...)

@@ -14,7 +14,7 @@ namespace Fields::KleinGordon {
         KGBuilder(Str name="Klein-Gordon",
                   Str generalDescription="The Klein-Gordon scalar field equation builder",
                   bool doRegister=false)
-                  : Core::Simulation::VoidBuilder(name, generalDescription, false) {};
+                  : Core::Simulation::VoidBuilder(name, generalDescription, doRegister) {};
 
         virtual void* getHamiltonian() = 0;
     };

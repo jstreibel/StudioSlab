@@ -19,7 +19,7 @@ auto RtoR::RandomEnergyOverDotPhiBuilder::getBoundary() -> void* {
     auto h = simulationConfig.numericConfig.geth();
     auto dotPhi = (RtoR::FunctionArbitraryCPU*)newFunctionArbitrary();
 
-    RealVector p(N);
+    RealArray p(N);
 
     auto proto = (RtoR::EquationState*)newFieldState();
 

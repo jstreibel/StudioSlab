@@ -28,7 +28,7 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
 		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
-
+        OpenGL/GLDebug.h		OpenGL/GLDebug.cpp
 )
 
 

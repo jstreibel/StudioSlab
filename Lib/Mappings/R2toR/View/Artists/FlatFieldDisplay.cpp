@@ -44,10 +44,9 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 }
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
+    // Don't call Core::Graphics::Graph2D::draw();
     Window::draw();
 
-    // Don't call this:
-    // Core::Graphics::Graph2D::draw();
     setupOrtho();
 
     labelingHelper.setTotalItems(countDisplayItems());
@@ -136,10 +135,10 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
             drawFlatField(0.0);
 
             glColor4d(1, 1, 1, 0.85);
-            for (int i = 1; i <= 2; i++) {
-                drawFlatField(i * fieldWidth);
-                drawFlatField(-i * fieldWidth);
-            }
+            // for (int i = 1; i <= 2; i++) {
+            //     drawFlatField(i * fieldWidth);
+            //     drawFlatField(-i * fieldWidth);
+            // }
 
 
         }

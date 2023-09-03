@@ -212,7 +212,7 @@ void RtoR::Signal::OutGL::draw() {
         static RtoR::FunctionArbitraryCPU *func = nullptr;
 
         std::vector<float> rec_f = JackServer::GetInstance()->getRecording();
-        RealVector rec(rec_f.begin(), rec_f.end());
+        RealArray rec(rec_f.begin(), rec_f.end());
         auto recTime =  rec.size()/48000.;
 
         if(rec.size()){
@@ -310,7 +310,7 @@ void RtoR::Signal::OutGL::draw() {
 
         mFieldsGraph.clearFunctions();
 
-        if (showPhi) {
+        if (showPot) {
             // const Color colorPhi = V_color;
 //
             // //mFieldsGraph.addFunction(&energyCalculator.getPotential(), colorPhi, "|phi|");

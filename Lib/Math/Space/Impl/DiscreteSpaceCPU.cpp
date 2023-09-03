@@ -67,8 +67,8 @@ DiscreteSpace &DiscreteSpaceCPU::Multiply(floatt a) {
 }
 
 void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
-    RealVector &X = getHostData();
-    const RealVector &fVec = inSpace.getHostData();
+    RealArray &X = getHostData();
+    const RealArray &fVec = inSpace.getHostData();
     const PosInt N = inSpace.getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)

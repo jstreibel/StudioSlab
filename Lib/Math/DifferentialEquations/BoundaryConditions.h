@@ -15,7 +15,7 @@ namespace Core {
     public:
         using EqState = EqStateType;
 
-        BoundaryConditions(const EqState &prototype) : prototype(prototype) {};
+        explicit BoundaryConditions(const EqState &prototype) : prototype(prototype) {};
 
         EqState *newEqState() const { return prototype.clone(); }
 

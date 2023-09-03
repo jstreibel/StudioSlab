@@ -50,8 +50,8 @@ public:
     virtual
     auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };
 
-    auto getHostData(bool sync=false)           const -> const RealVector&;
-    auto getHostData(bool sync=false)                 ->       RealVector&;
+    auto getHostData(bool sync=false)           const -> const RealArray&;
+    auto getHostData(bool sync=false)                 ->       RealArray&;
 
     auto geth() const ->       Real;
 
@@ -65,7 +65,7 @@ public:
 
 protected:
     const DimensionMetaData dim;
-    RealVector data;
+    RealArray data;
     const Real h;
 };
 

@@ -187,8 +187,8 @@ void MetropolisAlgorithm::Simulate(int MCSteps, int transientSize) {
 }
 
 void
-MetropolisAlgorithm::_outputDataToConsole(const RealVector &e, const RealVector &e2, const RealVector &m,
-                                                const RealVector &m2, const RealVector &m4, long double T, double N) {
+MetropolisAlgorithm::_outputDataToConsole(const RealVector &e,  const RealVector &e2, const RealVector &m,
+                                          const RealVector &m2, const RealVector &m4, long double T, double N) {
     auto e_av = avg(e),
          e2_av= avg(e2),
          m_av = avg(m),

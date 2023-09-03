@@ -14,14 +14,14 @@ namespace RtoR {
         FunctionArbitraryCPU(const DiscreteFunction& toCopy);
         FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
-        FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
+        FunctionArbitraryCPU(RealArray_I data, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
 
         [[nodiscard]] auto Clone() const -> Core::FunctionT<Real, Real> * override;
 
         [[nodiscard]] auto CloneWithSize(PosInt N) const -> Core::DiscreteFunction<Real, Real> * override;
 
-        auto Set(const RealVector &vec) -> FunctionArbitraryCPU &;
+        auto Set(const RealArray &vec) -> FunctionArbitraryCPU &;
         auto Set(const FunctionT &func) -> FunctionArbitraryCPU & override;
 
         auto Apply(const MyBase &func,

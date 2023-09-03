@@ -37,13 +37,13 @@ RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRig
 
 }
 
-FunctionArbitraryCPU::FunctionArbitraryCPU(VecFloat_I data, Real xLeft, Real xRight,
+FunctionArbitraryCPU::FunctionArbitraryCPU(RealArray_I data, Real xLeft, Real xRight,
                                            DiscreteFunction::LaplacianType laplacianType)
                                            : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType) {
     getSpace().getHostData() = data;
 }
 
-auto FunctionArbitraryCPU::Set(const RealVector &vec) -> FunctionArbitraryCPU & {
+auto FunctionArbitraryCPU::Set(const RealArray &vec) -> FunctionArbitraryCPU & {
     assert(vec.size() == getSpace().getHostData().size());
 
     for(int i=0; i<vec.size(); ++i)
@@ -54,7 +54,7 @@ auto FunctionArbitraryCPU::Set(const RealVector &vec) -> FunctionArbitraryCPU & 
 
 FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
     const floatt L = xMax - xMin;
-    RealVector &X = getSpace().getHostData();
+    RealArray &X = getSpace().getHostData();
 
     OMP_PARALLEL_FOR(n, N){
         const floatt x = L * n / (N - 1) + xMin;
@@ -72,7 +72,7 @@ Core::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
 Core::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
     FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
 
-    const RealVector &X = getSpace().getHostData();
+    const RealArray &X = getSpace().getHostData();
     const Real inc_d = N / Real(outN);
 
     DiscreteSpace &newSpace = newFunc.getSpace();

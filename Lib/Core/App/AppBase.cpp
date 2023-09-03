@@ -12,8 +12,9 @@
 
 AppBase::AppBase(int argc, const char **argv, bool doRegister)
     : InterfaceOwner("App", 100, doRegister) {
-
     CLArgsManager::Initialize(argc, argv);
+
+    Log::Info() << "PWD: " << Common::GetPWD() << Log::Flush;
 }
 
 AppBase::~AppBase() {

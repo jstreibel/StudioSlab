@@ -14,6 +14,7 @@
 #include "Math/Numerics/Program/Integrator.h"
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
+#include "Core/Graphics/OpenGL/GLDebug.h"
 #include "Core/Tools/Log.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 
@@ -25,6 +26,14 @@
 
 #define FULLSCREEN true
 fix IMGUI_FONT_INDEX = 10; //6;
+
+#define CHECK_GL_ERRORS \
+    {                    \
+        GLenum err;                                                 \
+        while((err = glGetError()) != GL_NO_ERROR)                  \
+            Log::Warning() << "OpenGL error " << err << Log::Flush; \
+                                                                    \
+    }
 
 GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     assert(Backend::singleInstance == nullptr);
@@ -72,6 +81,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
+    OpenGL::StartupDebugLogging();
 
     Log::Success() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
 
@@ -261,7 +271,7 @@ void GLUTBackend::mouseButton(int button, int state, int x, int y)
 }
 
 void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y){
-    {
+    if(true) {
         ImGui_ImplGLUT_MouseWheelFunc(wheel, direction, x, y);
         if (ImGui::GetIO().WantCaptureMouse)
             return;
@@ -330,19 +340,24 @@ void GLUTBackend::render()
         if (me.showDemo) ImGui::ShowDemoWindow();
     }
 
+    CHECK_GL_ERRORS
 
     {
         static auto timer = Timer();
         for (auto &win: me.windows) {
             auto elapsed = timer.getElTime_msec();
             win->notifyRender((float)elapsed);
+
+            CHECK_GL_ERRORS
         }
         timer.reset();
     }
 
     {
         ImGui::Render();
+        CHECK_GL_ERRORS
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        CHECK_GL_ERRORS
     }
 
     glutSwapBuffers();
@@ -353,15 +368,6 @@ void GLUTBackend::idleCall()
 {
     GET me = GetInstanceSuper<GLUTBackend>();
     Program *program = me.program;
-
-    GLenum err;
-    static GLenum lastErr = 0;
-    while((err = glGetError()) != GL_NO_ERROR){
-        if(lastErr == err) continue;
-
-        Log::Warning() << "OpenGL error " << err << Log::Flush;
-        lastErr = err;
-    }
 
     while(!me.isPaused() && !me.renderingRequested())
         if(!program->cycle(Program::CycleOptions::CycleUntilOutput)) break;

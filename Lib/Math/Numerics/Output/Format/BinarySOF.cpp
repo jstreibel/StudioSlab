@@ -13,7 +13,7 @@ auto BinarySOF::getFormatDescription() const -> Str {
 
 auto BinarySOF::operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData {
     const auto &space = fOut;
-    const RealVector& X = fOut.getHostData(true);
+    const RealArray& X = fOut.getHostData(true);
 
     Numerics::ByteData data(X.size()*typeSize);
 

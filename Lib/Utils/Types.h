@@ -7,7 +7,13 @@
 
 #include "DeviceConfig.h"
 #include "NativeTypes.h"
-#include "STDLibInclude.h"
+// #include "STDLibInclude.h"
+#include <valarray>
+#include <vector>
+#include <iostream>
+#include <sstream>
+#include <cmath>
+
 
 typedef floatt              Real;
 
@@ -28,12 +34,14 @@ typedef int_least64_t       BigInt;
 
 fix HUGE_NUMBER = ((unsigned long long)0)-1;
 
-typedef std::vector<Real>   RealVector;
-typedef const RealVector      VecFloat_I;
-typedef RealVector            VecFloat_O;
-typedef RealVector            VecFloat_IO;
+typedef std::valarray<Real>   RealArray;
+typedef const RealArray       RealArray_I;
+typedef RealArray             RealArray_O;
+typedef RealArray             VecFloat_IO;
 
-typedef std::vector<int>    IntVector;
+typedef std::valarray<int>    IntVector;
+
+typedef std::vector<Real>     RealVector;
 
 template<class T1, class T2>
 struct Pair {
@@ -58,9 +66,6 @@ typedef std::string         Str;
 typedef std::stringstream   StringStream;
 typedef std::vector<Str> StrVector;
 
-#include <vector>
-#include <iostream>
-#include <cmath>
 
 union DoubleAccess {
     double val;

@@ -17,7 +17,7 @@ DerivativeCPU::DerivativeCPU(const DiscreteFunction &in)
 
 auto DerivativeCPU::dfdx_3s(PosInt X) const -> Real {
     const size_t &i = X;
-    const RealVector &f = *f_;
+    const RealArray &f = *f_;
 
     if(X==0)        return invh * 0.5 * (-3*f[i  ] + 4*f[i+1]    -f[i+2]);
     else if(X==N-1) return invh * 0.5 * (  +f[i-2] - 4*f[i-1] + 3*f[i  ]);
@@ -27,7 +27,7 @@ auto DerivativeCPU::dfdx_3s(PosInt X) const -> Real {
 
 auto DerivativeCPU::d2fdx2_3s(PosInt X) const -> Real {
     const size_t &i = X;
-    const RealVector &f = *f_;
+    const RealArray &f = *f_;
 
     #ifdef PERIODIC_BC
     auto LEFT=i-1, RIGHT=i+1, CENTER=i;
@@ -44,7 +44,7 @@ auto DerivativeCPU::d2fdx2_3s(PosInt X) const -> Real {
 
 auto DerivativeCPU::dfdx_5s(PosInt X) const -> Real {
     const size_t &i = X;
-    const RealVector &f = *f_;
+    const RealArray &f = *f_;
 
     if(X==0)        return 0.;
     else if(X==1)   return 0.;
@@ -57,7 +57,7 @@ auto DerivativeCPU::dfdx_5s(PosInt X) const -> Real {
 
 auto DerivativeCPU::d2fdx2_5s(PosInt X) const -> Real {
     const size_t &i = X;
-    const RealVector &f = *f_;
+    const RealArray &f = *f_;
 
     if(X<2 || X > N-3) return 0;
 
@@ -72,7 +72,7 @@ auto DerivativeCPU::d2fdx2(PosInt X) const -> Real {
     return d2fdx2_3s(X);
 }
 
-auto DerivativeCPU::d2fdx2_v(VecFloat_O &d2fdx2_O) -> RealVector & {
+auto DerivativeCPU::d2fdx2_v(RealArray_O &d2fdx2_O) -> RealArray & {
 
     OMP_PARALLEL_FOR(n, N)
         d2fdx2_O[n] = d2fdx2(n);
