@@ -13,9 +13,16 @@ namespace Modes {
         RealParameter A = RealParameter(1.0, "A", "Amplitude of input sine wave");
         RealParameter omega = RealParameter(1.0, "w,omega", "Angular frequency of input sine wave");
     public:
-        Builder(bool doRegister=true);
+        explicit Builder(bool doRegister=true);
         auto getBoundary() -> void * override;
 
+    protected:
+        auto buildOpenGLOutput() -> RtoR::Monitor * override;
+
+    public:
+        auto buildEquationSolver() -> void * override;
+
+    public:
         auto notifyCLArgsSetupFinished() -> void override;
     };
 

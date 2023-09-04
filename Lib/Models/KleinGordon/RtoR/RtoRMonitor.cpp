@@ -331,17 +331,23 @@ void RtoR::Monitor::updateFourierGraph() {
 
         modes = FFT::Compute(fieldState);
 
-        auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+        auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+        style.lineColor.inverse();
+        style.thickness = 5;
 
         mSpaceFourierModesGraph.clearFunctions();
-        mSpaceFourierModesGraph.addFunction(modes.realPart.get(), "ℛℯ(ℱ[ϕ])", *++style);
+        mSpaceFourierModesGraph.addFunction(modes.realPart.get(), "ℛℯ(ℱ[ϕ])", style);
         // mSpaceFourierModesGraph.addFunction(modes.imaginaryPart.get(), "ℐ𝓂(ℱ[ϕ])", *++style);
         mSpaceFourierModesGraph.setResolution(modes.realPart->N);
 
-        FIRST_TIMER ({
-                         mSpaceFourierModesGraph.set_xMin(modes.realPart->xMin);
-                         mSpaceFourierModesGraph.set_xMax(modes.realPart->xMax);
-                     })
+        FIRST_TIMER (
+                {
+                    fix xMax = modes.realPart->xMax;
+                    fix xMin = modes.realPart->xMin;
+                    fix Δx = xMax - xMin;
+                    mSpaceFourierModesGraph.set_xMin(xMin - Δx*0.1);
+                    mSpaceFourierModesGraph.set_xMax(xMax + Δx*0.1);
+                })
     }
 
     lastStep = step;

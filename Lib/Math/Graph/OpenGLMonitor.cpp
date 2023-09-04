@@ -54,7 +54,7 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     fix SPS = (Real)SPs*FPS;        // Steps per second
 
     auto avgFPS = .0;
-    auto avgSPS = .0; // avoid division by zero
+    auto avgSPS = .0; // careful with division by zero below
     auto avgSPs = .0;
     if(step>0)
     {

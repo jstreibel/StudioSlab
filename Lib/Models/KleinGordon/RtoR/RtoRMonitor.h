@@ -23,6 +23,7 @@
 namespace RtoR {
 
     class Monitor : public Core::Graphics::OpenGLMonitor {
+    protected:
         bool showEnergyHistoryAsDensities;
 
         bool notifyKeyboard(unsigned char key, int x, int y) override;
@@ -66,7 +67,6 @@ namespace RtoR {
         void updateHistoryGraphs();
         void updateFourierGraph();
 
-    protected:
         RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
 
         Real U = .0;

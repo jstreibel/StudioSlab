@@ -153,7 +153,6 @@ void *RtoR::KGBuilder::buildEquationSolver() {
 }
 
 auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
-    //return new RtoR::OutGLStatistic(numericParams);
     return new RtoR::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
 }
 

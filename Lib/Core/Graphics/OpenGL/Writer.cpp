@@ -20,11 +20,13 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     font    = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
     buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 
-    const char *glyphsToLoad = "A QUICK BROWN FOX JUMPS OVER THE LAZY DOG"
-                               "a quick brown fox jumps over the lazy dog"
+    const char *glyphsToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                               "abcdefghijklmnopqrstuvwxyz"
                                "𝒜ℬ𝒞𝒟ℰℱ  ℐ        ℛ                  "
                                "      ℯ         𝓂                        "
-                               "αβγδηϕτ"
+                               "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"
+                               "αβγδεζηθικλμνξοπρστυφχψω"
+                               "   𝜕ϵ  ϑ ϰ     ϖϱς  ϕ   "
                                "¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀"
                                "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ"
                                "ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  "

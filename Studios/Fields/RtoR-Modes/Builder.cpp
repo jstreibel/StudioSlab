@@ -11,6 +11,7 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
+#include "Monitor.h"
 
 #define DONT_REGISTER false
 
@@ -57,6 +58,19 @@ namespace Modes {
         fix res = (period/L)*n;
 
         Log::Info() << Log::BGWhite+Log::FGBlack << " Technical sine resolution is " << res << " samples/cycle " << Log::ResetFormatting << Log::Flush;
+    }
+
+    RtoR::Monitor *Builder::buildOpenGLOutput() {
+        fix amp = (*A) * 1.1;
+        auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(RtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
+
+        monitor->setInputModes({*A}, {*omega});
+
+        return monitor;
+    }
+
+    void *Builder::buildEquationSolver() {
+        return KGBuilder::buildEquationSolver();
     }
 
 } // Modes

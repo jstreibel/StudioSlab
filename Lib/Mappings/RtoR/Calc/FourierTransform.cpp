@@ -35,11 +35,12 @@ namespace RtoR {
         auto imPartField = new RtoR::FunctionArbitraryCPU(N/2+1, 0.0, Δk*(N/2.-1));
         auto A_Re = &realPartField->getSpace().getHostData()[0];
         auto A_Im = &realPartField->getSpace().getHostData()[0];
+        fix N⁻¹ = 1./N;
         for( auto i=0; i<N/2+1; ++i) {
             fix k = out[i];
 
-            A_Re[i] = k[REAL_PART];
-            A_Im[i] = k[IMAGINARY_PART];
+            A_Re[i] = k[REAL_PART] * N⁻¹;
+            A_Im[i] = k[IMAGINARY_PART] * N⁻¹;
         }
 
 
