@@ -21,6 +21,7 @@
 
 void WindowRow::addWindow(Window::Ptr window, float windowWidth) {
     windows.emplace_back(window);
+    widths.emplace_back(windowWidth);
 }
 
 void WindowRow::arrangeWindows() {
@@ -28,28 +29,43 @@ void WindowRow::arrangeWindows() {
 
     auto m = windows.size();
 
-    std::vector<int> computedWidths(m);
-    auto freeWidths = CountLessThanZero(widths);
-    if(freeWidths==m)
-        for(auto &w : computedWidths) w=this->w/m;
+    if(m==0) return;
 
-    else if(freeWidths==0){
+    std::vector<int> computedWidths(m, (int)(w/m));    // "if(freeWidths==m)"
+
+    auto freeWidths = CountLessThanZero(widths);
+    if(freeWidths==0){
         for(int i=0; i<m; ++i){
-            auto relWidth = this->widths[i];
-            auto width = this->w * relWidth;
+            auto relWidth = widths[i];
+            auto width = h * relWidth;
+            computedWidths[i] = (int)width;
+        }
+    } else if(freeWidths != m) {
+        auto reservedWidth = SumLargerThanZero(widths);
+        auto wFree = (float)w * (1-reservedWidth) / (float)freeWidths;
+
+        for(int i=0; i<m; ++i){
+            auto relWidth = widths[i];
+            auto width = relWidth>0 ? w * relWidth : wFree;
             computedWidths[i] = (int)width;
         }
     }
 
-    else {
-        auto reservedWidth = SumLargerThanZero(widths);
-        auto wFree = (float)this->w * (1-reservedWidth) / (float)freeWidths;
+    std::vector<int> computed_xPositions(m);
+    auto x = this->x;
+    for(int i=0; i<m; ++i){
+        computed_xPositions[i] = x;
+        x += computedWidths[i];
+    }
 
-        for(int i=0; i<m; ++i){
-            auto relWidth = this->widths[i];
-            auto width = relWidth>0 ? this->w * relWidth : wFree;
-            computedWidths[i] = (int)width;
-        }
+    auto i=0;
+    for(auto &win : windows){
+        win->setx(computed_xPositions[i]);
+        win->sety(y);
+
+        win->notifyReshape(computedWidths[i], h);
+
+        i++;
     }
 }
 
@@ -74,8 +90,8 @@ bool WindowRow::assertConsistency() const {
 
 void WindowRow::draw() { for(auto &win : windows) win->draw(); }
 
-void WindowRow::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
+void WindowRow::notifyReshape(int w, int h) {
+    Window::notifyReshape(w, h);
 
     arrangeWindows();
 }

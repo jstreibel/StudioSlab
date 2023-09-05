@@ -95,7 +95,7 @@ namespace RtoR {
             auto &phi = fieldState.getPhi();
             auto &dPhidt = fieldState.getDPhiDt();
 
-            auto N = phi.N;
+            auto N = phi.N_modes;
             auto h = phi.getSpace().geth();
             auto &X = phi.getSpace().getHostData();
 

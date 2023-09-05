@@ -6,7 +6,9 @@ add_executable ( Tests
 		WindowPanelTest.cpp
 		WindowTreeBuilderTest.cpp
 		GLFreeTypeTests.cpp
-		GLFreeTypeTests.h)
+		GLFreeTypeTests.h
+        FourierTestWindow.cpp
+        FourierTestWindow.h)
 
 target_link_libraries ( Tests ${SlabLibs} Slab-Maps-RtoR_GPU Slab-Core freetype-gl )
 

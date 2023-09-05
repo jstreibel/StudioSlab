@@ -13,28 +13,25 @@ typedef std::vector<Window*> WindowContainer;
 
 class WindowTreeBuilder;
 
+enum NodeArrangement {Horizontal, Vertical};
+
 class NodeWindow : public Window {
-    NodeWindow(const Window &window);
+    Window *parent = nullptr;
+    NodeArrangement arrangement = Horizontal;
+    WindowContainer children;
 
-    friend WindowTreeBuilder;
-    enum NodeArrangement {Horizontal, Vertical};
-
-    explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement=Horizontal);
 public:
+    friend WindowTreeBuilder;
+
     NodeWindow(int x, int y, int w, int h);
+    explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement=Horizontal);
+    explicit NodeWindow(const Window &window);
 
     void addSubWindow(Window *subWindow);
 
     void arrange();
 
-
     void draw() override;
-
-
-private:
-    Window *parent = nullptr;
-    NodeArrangement arrangement = Horizontal;
-    WindowContainer children;
 
 };
 

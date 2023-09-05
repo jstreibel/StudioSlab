@@ -84,6 +84,7 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/record-interval.cpp
 
 		DifferentialEquations/EquationState.h
+		Function/NativeFunction.h
 )
 
 

@@ -321,7 +321,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
 }
 
 void RtoR::Monitor::updateFourierGraph() {
-    static RtoR::FTResult modes;
+    static RtoR::DFTResult modes;
     using FFT = RtoR::FourierTransform;
 
     static auto lastStep = 0UL;
@@ -333,17 +333,18 @@ void RtoR::Monitor::updateFourierGraph() {
 
         auto style = Styles::GetColorScheme()->funcPlotStyles[1];
         style.lineColor.inverse();
-        style.thickness = 5;
+        style.thickness = 2.5;
+        style.primitive = Styles::VerticalLines;
+        style.filled = false;
 
-        mSpaceFourierModesGraph.clearFunctions();
-        mSpaceFourierModesGraph.addFunction(modes.realPart.get(), "ℛℯ(ℱ[ϕ])", style);
-        // mSpaceFourierModesGraph.addFunction(modes.imaginaryPart.get(), "ℐ𝓂(ℱ[ϕ])", *++style);
-        mSpaceFourierModesGraph.setResolution(modes.realPart->N);
+        mSpaceFourierModesGraph.clearPointSets();
+        mSpaceFourierModesGraph.addPointSet(modes.re, style,                                "ℜ(ℱ[ϕ])", false);
+        mSpaceFourierModesGraph.addPointSet(modes.re, style.permuteColors(ODD_PERMUTATION), "ℑ(ℱ[ϕ])", false);
 
         FIRST_TIMER (
                 {
-                    fix xMax = modes.realPart->xMax;
-                    fix xMin = modes.realPart->xMin;
+                    fix xMax = modes.re->getMax().x;
+                    fix xMin = modes.re->getMin().x;
                     fix Δx = xMax - xMin;
                     mSpaceFourierModesGraph.set_xMin(xMin - Δx*0.1);
                     mSpaceFourierModesGraph.set_xMax(xMax + Δx*0.1);

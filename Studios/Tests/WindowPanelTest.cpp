@@ -59,10 +59,3 @@ void WindowPanelTest::notifyReshape(int width, int height) {
     panel->arrangeWindows();
 }
 
-bool WindowPanelTest::notifyScreenReshape(int width, int height) {
-    panel->setSize(width, height);
-
-    panel->arrangeWindows();
-    return Window::notifyScreenReshape(width, height);
-}
-

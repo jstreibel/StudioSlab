@@ -20,9 +20,9 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     font    = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
     buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 
-    const char *glyphsToLoad = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-                               "abcdefghijklmnopqrstuvwxyz"
-                               "𝒜ℬ𝒞𝒟ℰℱ  ℐ        ℛ                  "
+    const char *glyphsToLoad = "A B C D E F G H I J K L M N O P Q R S T U V W X Y Z"
+                               "a b c d e f g h i j k l m n o p q r s t u v w x y z"
+                               "𝒜ℬ𝒞 𝒟 ℰℱ    ℐ                ℛ                "
                                "      ℯ         𝓂                        "
                                "ΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩ"
                                "αβγδεζηθικλμνξοπρστυφχψω"
@@ -30,7 +30,14 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
                                "¹²³⁴⁵⁶⁷⁸⁹⁰₁₂₃₄₅₆₇₈₉₀"
                                "ᵃᵇᶜᵈᵉᶠᵍʰⁱʲᵏˡᵐⁿᵒᵖ ʳˢᵗᵘᵛʷˣʸᶻ"
                                "ₐ   ₑ  ₕᵢⱼₖₗₘₙₒₚ ᵣₛₜᵤᵥ ₓ  "
+                               ""
+                               "𝔄 𝔅 ℭ 𝔇 𝔈 𝔉 𝔊 ℌ ℑ 𝔍 𝔎 𝔏 𝔐 𝔑 𝔒 𝔓 𝔔 ℜ 𝔖 𝔗 𝔘 𝔙 𝔚 𝔛 𝔜 ℨ"
+                               "𝔞 𝔟 𝔠 𝔡 𝔢 𝔣 𝔤 𝔥 𝔦 𝔧 𝔨 𝔩 𝔪 𝔫 𝔬 𝔭 𝔮 𝔯 𝔰 𝔱 𝔲 𝔳 𝔴 𝔵 𝔶 𝔷"
+                               "𝕬 𝕭 𝕮 𝕯 𝕰 𝕱 𝕲 𝕳 𝕴 𝕵 𝕶 𝕷 𝕸 𝕹 𝕺 𝕻 𝕼 𝕽 𝕾 𝕿 𝖀 𝖁 𝖂 𝖃 𝖄 𝖅"
+                               "𝖆 𝖇 𝖈 𝖉 𝖊 𝖋 𝖌 𝖍 𝖎 𝖏 𝖐 𝖑 𝖒 𝖓 𝖔 𝖕 𝖖 𝖗 𝖘 𝖙 𝖚 𝖛 𝖜 𝖝 𝖞 𝖟"
+                               "                  ℑ          ℜ "
                                "0123456789|\\\"'!@#$%&*()_+-=`{[^~}]?/;:.>,<";
+
     Styles::Color white = {1, 1, 1, 1};
     setBufferText(glyphsToLoad, {20, 20}, white);
 

@@ -49,7 +49,7 @@ void Spaces::PointSet::addPoint(const Spaces::Point2D &point) {
 }
 
 void Spaces::PointSet::setPoints(Spaces::Point2DVec newPoints) {
-    this->points = newPoints;
+    *this = PointSet(newPoints);
 }
 
 const Spaces::Point2DVec &Spaces::PointSet::getPoints() const { return points; }

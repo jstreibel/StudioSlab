@@ -25,6 +25,8 @@ void NodeWindow::addSubWindow(Window *subWindow) {
     }
 
     children.emplace_back(subWindow);
+
+    addResponder(subWindow);
 }
 
 void NodeWindow::arrange() {
@@ -62,9 +64,3 @@ void NodeWindow::draw() {
     for(auto win : children)
         win->draw();
 }
-
-
-
-
-
-

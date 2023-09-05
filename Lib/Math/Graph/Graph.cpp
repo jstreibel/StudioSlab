@@ -190,25 +190,42 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         auto color = style.lineColor;
         glColor4f(color.r, color.g, color.b, color.a);
 
-        if(style.primitive != Styles::SolidLine){
+        if(style.primitive != Styles::SolidLine && style.primitive!=Styles::VerticalLines){
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
         } else glEnable(GL_LINE_SMOOTH);
 
         auto primitive = GL_LINE_STRIP;
-        if(style.primitive==Styles::Point){
+        if(style.primitive==Styles::Point || style.primitive==Styles::VerticalLines){
+            fix ptSizeFactor = style.primitive==Styles::VerticalLines ? 5.0 : 1.0;
+
             primitive = GL_POINTS;
             glEnable(GL_POINT_SMOOTH);
-            glPointSize(style.thickness);
+            glPointSize(style.thickness * ptSizeFactor);
+
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(style.thickness);
         }
 
         glBegin(primitive);
         {
             for(auto p : pts)
                 glVertex2d(p.x, p.y);
+
         }
         glEnd();
+
+        if(style.primitive==Styles::VerticalLines){
+            glBegin(GL_LINES);
+            {
+                for(auto p : pts) {
+                    glVertex2d(p.x, 0.0);
+                    glVertex2d(p.x, p.y);
+                }
+            }
+            glEnd();
+        }
 
     }
 }

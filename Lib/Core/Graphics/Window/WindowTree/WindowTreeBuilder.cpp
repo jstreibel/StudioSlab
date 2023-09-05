@@ -11,14 +11,14 @@ WindowTreeBuilder::WindowTreeBuilder(int x, int y, int w, int h)
 }
 
 void WindowTreeBuilder::addWindow(Window *window, WindowTreeBuilder::Location location) {
-    auto arr = location==Right?NodeWindow::Horizontal:NodeWindow::Vertical;
+    auto arr = location==Right?Horizontal:Vertical;
 
     if(currentNode->arrangement != arr){
         auto n = currentNode->children.size();
         if(n <= 1)
             currentNode->arrangement = arr;
         else {
-            NodeWindow *newNode = new NodeWindow(nullptr, arr);
+            auto *newNode = new NodeWindow(nullptr, arr);
             newNode->addSubWindow(currentNode);
             currentNode = newNode;
         }

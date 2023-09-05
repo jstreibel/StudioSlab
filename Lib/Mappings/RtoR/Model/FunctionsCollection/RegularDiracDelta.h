@@ -11,13 +11,22 @@
 
 namespace RtoR {
     class RegularDiracDelta : public RtoR::Function {
-    public:
+        Real (*delta)(Real, Real);
 
+        const Real a, eps;
+        Real tx;
+
+    public:
         enum Regularization {
             Gaussian  = 0,
             Triangle  = 1,
             Rectangle = 2
         };
+
+    private:
+        const Regularization reg;
+
+    public:
 
         RegularDiracDelta(Real eps, Real a, Regularization reg=Triangle, Real tx=0)
          : a(a), eps(eps), tx(tx), reg(reg) {
@@ -44,14 +53,6 @@ namespace RtoR {
         }
 
         auto Clone() const -> RtoR::Function * override { return new RegularDiracDelta(eps, a, reg, tx); }
-
-    private:
-        Real (*delta)(Real, Real);
-
-        const Real a, eps;
-        Real tx;
-
-        const Regularization reg;
     };
 }
 

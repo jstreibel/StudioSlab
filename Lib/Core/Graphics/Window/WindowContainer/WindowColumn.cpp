@@ -29,6 +29,8 @@ void WindowColumn::arrangeWindows() {
 
     auto m = windows.size();
 
+    if(m == 0) return;
+
     std::vector<int> computedHeights(m, (int)(h/m));    // "if(freeHeights==m)"
 
     auto freeHeights = CountLessThanZero(heights);
@@ -43,24 +45,23 @@ void WindowColumn::arrangeWindows() {
         auto hFree = (float)h * (1-reservedHeight) / (float)freeHeights;
 
         for(int i=0; i<m; ++i){
-            auto relHeight = this->heights[i];
+            auto relHeight = heights[i];
             auto height = relHeight>0 ? h * relHeight : hFree;
             computedHeights[i] = (int)height;
         }
     }
 
-    // Widths:
-    std::vector<int> computedPositions(m);
+    std::vector<int> computed_yPositions(m);
     auto y = this->y;
     for(int i=0; i<m; ++i){
-        computedPositions[i] = y;
+        computed_yPositions[i] = y;
         y += computedHeights[i];
     }
 
     auto i=0;
     for(auto &win : windows){
         win->setx(x);
-        win->sety(computedPositions[i]);
+        win->sety(computed_yPositions[i]);
 
         win->notifyReshape(w, computedHeights[i]);
 

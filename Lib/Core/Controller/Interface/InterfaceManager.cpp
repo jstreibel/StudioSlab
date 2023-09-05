@@ -27,8 +27,12 @@ void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
         for (const auto &subInterface: subInterfaces)
             log << "\n\t\t\t\t\t\tSub-interface: " << subInterface->getName();
 
-    for(const auto &p : anInterface->getParameters())
-        log << "\n\t\t\t\t\t\tParameter: " << p->getCLName();
+    for(const auto &p : anInterface->getParameters()) {
+        auto desc = p->getDescription();
+        if(desc != "") desc = " (" + desc + ")";
+
+        log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->getFullCLName() << Log::ResetFormatting << desc;
+    }
 
     log << Log::Flush;
 

@@ -138,16 +138,16 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
         static const ImWchar ranges[] =
                 {
                        0x0020, 0x007F, // Basic Latin
-                       0x0391, 0x03C9, // Greek
-                       0x2200, 0x22FF, // Mathematical operators
-                       0x2A00, 0x2AFF, // Supplemental mathematical operators
-                       // too big: 0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
                        0x00B0, 0x00BF, // Superscript / subscript
+                       0x0391, 0x03C9, // Greek
                        0x03D0, 0x03F6,
                        0x2070, 0x209F, // Superscript / subscript
+                       ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
+                       0x2200, 0x22FF, // Mathematical operators
+                       0x2A00, 0x2AFF, // Supplemental mathematical operators
+                       0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
                        0,
                 };
-
         ImFontGlyphRangesBuilder glyphRangesBuilder;
         glyphRangesBuilder.AddRanges(ranges);
         if(0) for(ImWchar c: {0x00b2, 0x00b3, 0x00b9}) glyphRangesBuilder.AddChar(c);

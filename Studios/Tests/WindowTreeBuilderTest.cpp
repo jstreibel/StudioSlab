@@ -9,6 +9,7 @@
 #include "Math/Graph/Graph.h"
 #include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
 #include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "FourierTestWindow.h"
 
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
@@ -30,7 +31,7 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
     window = new Window();
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
-    window = new GLFreeTypeTests;
+    window = new Window();
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
     window = new GLFreeTypeTests;
@@ -46,7 +47,7 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
     }
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
-    window = new Window();
+    window = new Tests::FourierTestWindow();
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
     main = treeBuilder.getRoot();
@@ -66,10 +67,4 @@ void WindowTreeBuilderTest::notifyReshape(int width, int height) {
     main->setSize(width,  height);
 
     main->arrange();
-}
-
-bool WindowTreeBuilderTest::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-    notifyReshape(newScreenWidth, newScreenHeight);
-
-    return true;
 }

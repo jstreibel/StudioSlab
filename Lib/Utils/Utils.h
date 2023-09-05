@@ -19,6 +19,23 @@ TO_TYPE NAME = dynamic_cast<TO_TYPE>(OBJECT); \
 if(&NAME == nullptr) throw "Bad cast.";
 #endif
 
+#if USE_CUDA
+
+#include <driver_types.h>
+
+// cw stands for cuda error wrapper
+void cew(cudaError err);
+
+#endif // USE_CUDA
+
+Str ToStr(const double &a_value, const int &decimal_places = 2, bool useScientificNotation= false);
+
+template <typename T>
+Str ToStr(const T &a_value){ return std::to_string(a_value); }
+Str ToStr(bool value);
+Str ToStr(const Str& str);
+
+
 namespace Common {
     Str GetPWD();
 
@@ -76,23 +93,6 @@ namespace Common {
     unsigned short          BinaryToUShort(std::string binary, char zero='0', char one='1');
 
 }
-
-
-#if USE_CUDA
-
-#include <driver_types.h>
-
-// cw stands for cuda error wrapper
-void cew(cudaError err);
-
-#endif // USE_CUDA
-
-Str ToStr(const double &a_value, const int &decimal_places = 2, bool useScientificNotation= false);
-
-template <typename T>
-Str ToStr(const T &a_value){ return std::to_string(a_value); }
-Str ToStr(bool value);
-Str ToStr(const Str& str);
 
 
 

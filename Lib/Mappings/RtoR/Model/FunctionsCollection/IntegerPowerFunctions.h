@@ -10,23 +10,25 @@
 
 namespace RtoR {
     class HarmonicDerivative : public RtoR::Function {
+        Real m_sqr;
     public:
-        HarmonicDerivative() = default;
-        Real operator()(Real x) const override { return x; }
+        explicit HarmonicDerivative(Real m_sqr) : m_sqr(m_sqr) { };
+        Real operator()(Real x) const override { return m_sqr*x; }
 
-        FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(); }
+        FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(m_sqr); }
     };
 
     class HarmonicPotential : public RtoR::Function {
+        Real m_sqr;
     public:
-        HarmonicPotential() = default;
+        explicit HarmonicPotential(Real mass=1.0) : m_sqr(mass*mass) { };
 
         Real operator()(Real x) const override {
-            return .5*x*x;
+            return .5*m_sqr*x*x;
         }
 
         Ptr diff(int n) const override {
-            return Ptr(new HarmonicDerivative());
+            return Ptr(new HarmonicDerivative(m_sqr));
         }
 
         FunctionT<Real, Real> *Clone() const override {

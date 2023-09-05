@@ -10,7 +10,7 @@
 namespace RtoR {
 class NullFunction : public RtoR::Function {
     public:
-        Real operator()(Real x) const override { return 0.0; }
+        inline Real operator()(Real x) const override { return 0.0; }
 
         Ptr diff(int n) const override { if(n==0) return Ptr(new NullFunction); else throw "No diff NullFunc n>0"; }
         Real diff(int n, Real x) const override { if(n==0) return 0.0; else throw "No diff NullFunc n>0"; }

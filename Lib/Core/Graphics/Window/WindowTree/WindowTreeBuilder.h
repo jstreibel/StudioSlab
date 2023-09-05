@@ -20,7 +20,7 @@ class WindowTreeBuilder {
 public:
     WindowTreeBuilder(int x, int y, int w, int h);
 
-    enum Location {Above=NodeWindow::Vertical, Right=NodeWindow::Horizontal};
+    enum Location {Above=Vertical, Right=Horizontal};
 
     void addWindow(Window *window, Location location);
     NodeWindow* getRoot();

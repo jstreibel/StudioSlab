@@ -10,6 +10,12 @@
 
 namespace RtoR {
     class KGBuilder : public Fields::KleinGordon::KGBuilder {
+        IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
+                                                                        "\n\t 0: massless"
+                                                                        "\n\t 1: Klein-Gordon"
+                                                                        "\n\t 2: signum-Gordon" );
+        RealParameter mass  = RealParameter(1.0, "mass",   "Mass of the Klein-Gordon potential, if chosen.");
+
     protected:
         virtual auto buildOpenGLOutput() -> Monitor*;
 

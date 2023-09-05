@@ -38,7 +38,7 @@ public:
     void addArtist(Artist *pArtist);
 
     virtual void draw();
-    virtual void notifyReshape(int newWinW, int newWinH);
+    virtual void notifyReshape(int _w, int _h);
     virtual IntPair getWindowSizeHint();
 
     bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;

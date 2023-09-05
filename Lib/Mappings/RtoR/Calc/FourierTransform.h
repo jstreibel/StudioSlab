@@ -5,22 +5,28 @@
 #ifndef STUDIOSLAB_FOURIERTRANSFORM_H
 #define STUDIOSLAB_FOURIERTRANSFORM_H
 
+#include <memory>
+#include <utility>
+
 #include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
 
 namespace RtoR {
 
-    typedef std::shared_ptr<RtoR::DiscreteFunction> DFPtr;
+    typedef std::shared_ptr<Spaces::PointSet> DFTModes;
+    typedef Count NumberOfModes;
 
-    struct FTResult {
-        DFPtr realPart;
-        DFPtr imaginaryPart;
+    struct DFTResult {
+        explicit DFTResult(DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
+        : re(std::move(re)), im(std::move(im)) {}
 
+        DFTModes re;
+        DFTModes im;
     };
 
     class FourierTransform {
     public:
-
-        static FTResult Compute(const RtoR::DiscreteFunction &in);
+        static DFTResult Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax);
+        static DFTResult Compute(const RtoR::DiscreteFunction &in);
     };
 
 } // R2toR

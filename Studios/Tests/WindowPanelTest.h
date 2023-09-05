@@ -19,8 +19,6 @@ public:
 
     void notifyReshape(int width, int height) override;
 
-    bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) override;
-
 };
 
 

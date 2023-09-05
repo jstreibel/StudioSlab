@@ -10,11 +10,12 @@
 #include <fftw3.h>
 #include <cstring>
 
-#define REAL_PART 0
-#define IMAGINARY_PART 0
+#define RE_PART 0
+#define IM_PART 1
 
 namespace RtoR {
-    FTResult FourierTransform::Compute(const RtoR::DiscreteFunction &inFunc) {
+
+    DFTResult FourierTransform::Compute(const RtoR::DiscreteFunction &inFunc) {
         if(inFunc.getSpace().dataOnGPU()) throw "FourierTransform of GPU data is not implemented";
 
         fix N = (int)inFunc.N;
@@ -31,16 +32,18 @@ namespace RtoR {
         fftw_execute(p);
 
         fix Δk = 2 * Constants::pi / L;  // Delta k
-        auto realPartField = new RtoR::FunctionArbitraryCPU(N/2+1, 0.0, Δk*(N/2.-1));
-        auto imPartField = new RtoR::FunctionArbitraryCPU(N/2+1, 0.0, Δk*(N/2.-1));
-        auto A_Re = &realPartField->getSpace().getHostData()[0];
-        auto A_Im = &realPartField->getSpace().getHostData()[0];
-        fix N⁻¹ = 1./N;
-        for( auto i=0; i<N/2+1; ++i) {
-            fix k = out[i];
+        DFTResult result;
 
-            A_Re[i] = k[REAL_PART] * N⁻¹;
-            A_Im[i] = k[IMAGINARY_PART] * N⁻¹;
+        fix N⁻¹ = 1./N;
+        for( auto n=0; n<N/2+1; ++n) {
+            fix A = out[n];
+            fix A_Re = A[RE_PART] * N⁻¹;
+            fix A_Im = A[IM_PART] * N⁻¹;
+
+            fix ω = Δk * n;
+
+            result.re->addPoint({ω, A_Re});
+            result.im->addPoint({ω, A_Im});
         }
 
 
@@ -50,6 +53,45 @@ namespace RtoR {
         fftw_free(out);
 
 
-        return {DFPtr(realPartField), DFPtr(imPartField)};
+        return result;
+    }
+
+    DFTResult FourierTransform::Compute(const Function &f, NumberOfModes N, Real xMin, Real xMax) {
+        fix L = xMax - xMin;
+        fix dx = L / (Real) N;
+
+        auto in = (double *) fftw_malloc(sizeof(double) * N);
+
+        for (auto i = 0; i < N; ++i) {
+            auto x = xMin + i*dx;
+            in[i] = f(x);
+        }
+
+        fix Nₒᵤₜ = N/2 + 1;
+
+        auto out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * Nₒᵤₜ);
+        fftw_plan p = fftw_plan_dft_r2c_1d((int) N, in, out, FFTW_ESTIMATE);
+        fftw_execute(p);
+
+        fix Δk = 2 * Constants::pi / L;  // Delta k
+        DFTResult result;
+
+        fix scale = 1./Nₒᵤₜ;
+        for( auto n=0; n<Nₒᵤₜ; ++n) {
+            fix A = out[n];
+            fix A_Re = A[RE_PART] * scale;
+            fix A_Im = A[IM_PART] * scale;
+
+            fix ω = Δk * n;
+
+            result.re->addPoint({ω, A_Re});
+            result.im->addPoint({ω, A_Im});
+        }
+
+        fftw_destroy_plan(p);
+        fftw_free(in);
+        fftw_free(out);
+
+        return result;
     }
 } // R2toR

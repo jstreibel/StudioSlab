@@ -10,19 +10,17 @@
 namespace Modes {
 
     class Builder : public RtoR::KGBuilder {
-        RealParameter A = RealParameter(1.0, "A", "Amplitude of input sine wave");
+        RealParameter A     = RealParameter(1.0, "A",       "Amplitude of input sine wave");
         RealParameter omega = RealParameter(1.0, "w,omega", "Angular frequency of input sine wave");
-    public:
-        explicit Builder(bool doRegister=true);
-        auto getBoundary() -> void * override;
 
     protected:
         auto buildOpenGLOutput() -> RtoR::Monitor * override;
 
     public:
-        auto buildEquationSolver() -> void * override;
+        explicit Builder(bool doRegister=true);
 
-    public:
+        auto getBoundary() -> void * override;
+
         auto notifyCLArgsSetupFinished() -> void override;
     };
 

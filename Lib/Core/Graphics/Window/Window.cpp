@@ -87,12 +87,12 @@ bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     return true;
 }
 
-void Window::notifyReshape(int newWinW, int newWinH) {
-    this->w = newWinW;
-    this->h = newWinH;
+void Window::notifyReshape(int _w, int _h) {
+    this->w = _w;
+    this->h = _h;
 
     for(auto artist : content)
-        artist->reshape(w, h);
+        artist->reshape(_w, _h);
 }
 
 IntPair Window::getWindowSizeHint() { return {-1, -1}; }

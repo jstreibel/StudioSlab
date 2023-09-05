@@ -7,11 +7,14 @@
 #include "Math/Constants.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+
 #include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Monitor.h"
+#include "Models/KleinGordon/KGSolver.h"
 
 #define DONT_REGISTER false
 
@@ -67,10 +70,6 @@ namespace Modes {
         monitor->setInputModes({*A}, {*omega});
 
         return monitor;
-    }
-
-    void *Builder::buildEquationSolver() {
-        return KGBuilder::buildEquationSolver();
     }
 
 } // Modes

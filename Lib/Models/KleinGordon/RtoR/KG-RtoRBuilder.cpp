@@ -22,10 +22,20 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "SimHistory.h"
+#include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
+#define MASSLESS_WAVE_EQ        0
+#define KLEIN_GORDON_POTENTIAL  1
+#define SIGNUM_GORDON_POTENTIAL 2
+
+#define DONT_REGISTER_IMMEDIATELY false
 
 RtoR::KGBuilder::KGBuilder(Str name, Str generalDescription, bool doRegister)
-: Fields::KleinGordon::KGBuilder("RtoR-" + name, generalDescription, doRegister) { }
+: Fields::KleinGordon::KGBuilder("RtoR-" + name, generalDescription, DONT_REGISTER_IMMEDIATELY) {
+    interface->addParameters({&Potential, &mass});
+
+    if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
+}
 
 auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     auto outputFileName = this->suggestFileName();
@@ -138,7 +148,19 @@ void *RtoR::KGBuilder::newFieldState() {
 }
 
 void *RtoR::KGBuilder::buildEquationSolver() {
-    auto thePotential = new RtoR::AbsFunction;
+    RtoR::Function *thePotential = nullptr;
+    if(*Potential == MASSLESS_WAVE_EQ){
+        thePotential = new RtoR::NullFunction;
+    }
+    else if(*Potential == KLEIN_GORDON_POTENTIAL){
+        if(*mass > 0)
+            thePotential = new RtoR::HarmonicPotential(*mass);
+        else
+            thePotential = new RtoR::NullFunction;
+    }
+    else if(*Potential == SIGNUM_GORDON_POTENTIAL) {
+        thePotential = new RtoR::AbsFunction;
+    }
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
 #if USE_CUDA == true

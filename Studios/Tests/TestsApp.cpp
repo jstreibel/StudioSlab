@@ -7,6 +7,7 @@
 #include "WindowPanelTest.h"
 #include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
+#include "FourierTestWindow.h"
 
 #include <Core/Backend/GLUT/GLUTBackend.h>
 #include <Core/Backend/DummyProgram.h>
@@ -22,11 +23,10 @@ TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv, DONT_REGIS
 
 int TestsApp::run() {
     Window *test;
-    if(true)      test = new WindowTreeBuilderTest;
+    if(true)      test = new Tests::FourierTestWindow;
+    else if(true) test = new WindowTreeBuilderTest;
     else if(true) test = new WindowPanelTest;
     else test = new GLFreeTypeTests;
-
-
 
     auto &backend = GLUTBackend::GetInstance();
 

@@ -18,7 +18,7 @@ class GUIWindow : public Window {
 public:
     explicit GUIWindow( );
 
-    void addVolatileStat(const Str& stat, const Styles::Color color = {1, 1, 1});
+    void addVolatileStat(const Str& stat, Styles::Color color = {1, 1, 1});
 
     void draw() override;
 
