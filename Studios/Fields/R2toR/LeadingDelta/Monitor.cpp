@@ -8,9 +8,9 @@
 #include "3rdParty/imgui/imgui.h"
 
 #include "Math/Function/FunctionScale.h"
-#include "Mappings/R2toR/Model/Energy.h"
+#include "Maps/R2toR/Model/Energy.h"
 
-#include "Mappings/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
+#include "Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 
 #define xMin params.getxMin()
 #define xMax params.getxMax()

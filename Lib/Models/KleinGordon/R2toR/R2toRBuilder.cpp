@@ -7,21 +7,21 @@
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Backend/Console/ConsoleBackend.h"
 
-#include "Mappings/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "EquationState.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/Output/Format/BinarySOF.h"
 #include "Math/Numerics/Output/Format/SpaceFilterBase.h"
-#include "Mappings/R2toR/View/Filters/DimensionReductionFilter.h"
+#include "Maps/R2toR/View/Filters/DimensionReductionFilter.h"
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Mappings/R2toR/View/LastOutputVtkVisualizer.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Maps/R2toR/View/LastOutputVtkVisualizer.h"
 
 namespace R2toR {
 

@@ -8,7 +8,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 #include "Utils/RandUtils.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"

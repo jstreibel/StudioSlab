@@ -2,7 +2,7 @@
 // Created by joao on 08/06/23.
 //
 
-#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "DrivenEquation.h"
 #include "Core/Tools/Log.h"

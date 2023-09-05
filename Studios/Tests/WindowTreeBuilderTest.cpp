@@ -7,8 +7,8 @@
 #include "Core/Graphics/Window/WindowTree/WindowTreeBuilder.h"
 #include "GLFreeTypeTests.h"
 #include "Math/Graph/Graph.h"
-#include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Maps/RtoR/View/Graphics/GraphRtoR.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "FourierTestWindow.h"
 
 

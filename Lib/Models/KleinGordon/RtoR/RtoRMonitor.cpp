@@ -8,8 +8,8 @@
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Mappings/RtoR/Calc/FourierTransform.h"
-// #include "Mappings/R2toR/FourierTransform.h"
+#include "Maps/RtoR/Calc/FourierTransform.h"
+// #include "Maps/R2toR/FourierTransform.h"
 
 //
 // Created by joao on 23/09/2019.

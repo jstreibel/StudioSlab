@@ -6,7 +6,7 @@
 #define V_SHAPE_FIELDSTATERTOR_H
 
 #include "Models/KleinGordon/KGState.h"
-#include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunction.h"
 
 namespace RtoR {
 

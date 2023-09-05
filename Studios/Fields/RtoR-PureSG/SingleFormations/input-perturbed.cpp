@@ -1,8 +1,8 @@
 #include "input-perturbed.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
 
 using namespace RtoR;
 

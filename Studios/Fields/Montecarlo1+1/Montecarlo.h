@@ -7,10 +7,10 @@
 
 #include "Monitor.h"
 
-#include "Mappings/RtoR/Model/RtoRFunction.h"
+#include "Maps/RtoR/Model/RtoRFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Utils/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"

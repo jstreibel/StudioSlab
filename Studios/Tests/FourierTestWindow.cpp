@@ -9,10 +9,10 @@
 
 #include "Math/Constants.h"
 #include "Math/Function/NativeFunction.h"
-#include "Mappings/RtoR/Model/RtoRFunction.h"
-#include "Mappings/FunctionRenderer.h"
+#include "Maps/RtoR/Model/RtoRFunction.h"
+#include "Maps/FunctionRenderer.h"
 #include "Core/Tools/Log.h"
-#include "Mappings/RtoR/Calc/FourierTransform.h"
+#include "Maps/RtoR/Calc/FourierTransform.h"
 
 #define Re 0
 #define Im 1

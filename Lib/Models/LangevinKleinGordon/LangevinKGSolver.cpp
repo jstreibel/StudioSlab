@@ -3,7 +3,7 @@
 //
 
 #include "LangevinKGSolver.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Utils/RandUtils.h"
 #include "Utils/OMPUtils.h"
 

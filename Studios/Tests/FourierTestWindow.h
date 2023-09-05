@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_FOURIERTESTWINDOW_H
 #define STUDIOSLAB_FOURIERTESTWINDOW_H
 
-#include "Mappings/RtoR/View/Graphics/GraphRtoR.h"
+#include "Maps/RtoR/View/Graphics/GraphRtoR.h"
 #include "Core/Graphics/Window/GUIWindow.h"
 #include "Core/Graphics/Window/WindowContainer/WindowRow.h"
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"

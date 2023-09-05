@@ -7,11 +7,11 @@
 
 #include "Utils/Types.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 
-#include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
-#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 #define delta(r, eps) deltaRect(r, eps)
 

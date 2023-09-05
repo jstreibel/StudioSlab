@@ -8,8 +8,8 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Controller/Interface/InterfaceManager.h"

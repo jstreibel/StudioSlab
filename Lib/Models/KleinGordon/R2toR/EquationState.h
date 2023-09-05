@@ -6,7 +6,7 @@
 #define V_SHAPE_FIELDSTATER2TOR_H
 
 #include "Models/KleinGordon/KGState.h"
-#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace R2toR {
     class EquationState : public Fields::KleinGordon::KGState<DiscreteFunction> {

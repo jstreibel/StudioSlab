@@ -7,11 +7,11 @@
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Backend/Console/ConsoleBackend.h"
 
-#include "Mappings/RtoR/Model/RtoRDiscreteFunctionGPU.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
 #include "KG-RtoRSystemGordonGPU.h"
-#include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
 
@@ -22,7 +22,7 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "SimHistory.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1

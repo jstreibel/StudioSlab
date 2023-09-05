@@ -13,8 +13,8 @@
 
 #include "Math/Numerics/VoidBuilder.h"
 
-#include "Mappings/RtoR/Model/RtoRDiscreteFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 
 #define FType(a) typename FieldState::a

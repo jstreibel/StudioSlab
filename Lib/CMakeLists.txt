@@ -10,7 +10,7 @@ add_subdirectory(Utils)
 add_subdirectory(Core)
 
 add_subdirectory(Math)
-add_subdirectory(Mappings)
+add_subdirectory(Maps)
 
 add_subdirectory(Models)
 

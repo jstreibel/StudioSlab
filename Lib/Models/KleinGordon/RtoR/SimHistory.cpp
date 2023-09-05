@@ -4,10 +4,10 @@
 
 #include "SimHistory.h"
 
-#include "Mappings/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 #if USE_CUDA
-#include "Mappings/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #endif
 
 #include "KG-RtoREquationState.h"

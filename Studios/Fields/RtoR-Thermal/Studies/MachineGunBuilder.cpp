@@ -4,7 +4,7 @@
 
 #include "MachineGunBuilder.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
 RtoR::MachineGunBuilder::MachineGunBuilder() : RtoR::Thermal::Builder("Machinegun", "Machinegun scattering") {

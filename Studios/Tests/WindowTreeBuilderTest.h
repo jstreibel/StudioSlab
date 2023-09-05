@@ -8,7 +8,7 @@
 
 #include "Core/Backend/Events/EventListener.h"
 #include "Core/Graphics/Window/WindowTree/NodeWindow.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 class WindowTreeBuilderTest : public Window {
     NodeWindow *main;

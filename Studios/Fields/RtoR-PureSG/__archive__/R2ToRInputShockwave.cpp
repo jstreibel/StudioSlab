@@ -4,10 +4,10 @@
 
 #include "R2ToRInputShockwave.h"
 
-#include "Mappings/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
-#include "Mappings/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
-#include "Mappings/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
+#include "Maps/R2toR/Model/BoundaryConditions/R2ToRBoundaryCondition.h"
+#include "Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 const auto pi = 3.1415926535897932384626;
 

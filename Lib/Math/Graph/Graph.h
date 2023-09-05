@@ -13,7 +13,7 @@
 #include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Core/Graphics/OpenGL/Writer.h"
-#include "Mappings/RtoR2/ParametricCurve.h"
+#include "Maps/RtoR2/ParametricCurve.h"
 
 #include <memory>
 

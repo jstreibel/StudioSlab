@@ -2,13 +2,13 @@
 
 #include "input-shockwave.h"
 
-#include "Mappings/RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 
-#include "Mappings/RtoR/View/Graphics/RtoROutputOpenGLShockwave.h"
+#include "Maps/RtoR/View/Graphics/RtoROutputOpenGLShockwave.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 

@@ -8,7 +8,7 @@
 
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Mappings/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 class SimHistory : public Numerics::OutputSystem::Socket {
     R2toR::DiscreteFunction *fieldData;

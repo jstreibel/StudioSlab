@@ -3,8 +3,8 @@
 //
 
 #include "RandomEnergyOverDotPhiBuilder.h"
-#include "Mappings/RtoR/Model/RtoRDiscreteFunctionCPU.h"
-#include "Mappings/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Utils/RandUtils.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
