@@ -7,7 +7,7 @@
 
 #define USE_FREETYPE_GL true
 
-#define FONT_INDEX 10 // 6
-#define FONT_SIZE 18
+#define FONT_INDEX 10 // 6; 10; 17 (contain math symbols)
+#define FONT_SIZE 24
 
 #endif //STUDIOSLAB_GRAPH_CONFIG_H

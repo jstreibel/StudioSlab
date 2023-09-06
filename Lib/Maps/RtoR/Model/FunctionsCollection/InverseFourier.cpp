@@ -13,13 +13,16 @@ namespace RtoR {
 
         Real val = 0.0;
 
-        fix Re_A = re[0].y;
-        fix Im_A = im[0].y;
+        // First term must be 1/2
+        {
+            fix Re_A = re[0].y;
+            fix Im_A = im[0].y;
 
-        fix A = sqrt(Re_A*Re_A + Im_A*Im_A);
-        fix ϕ = atan2(Im_A, Re_A);
+            fix A = sqrt(Re_A * Re_A + Im_A * Im_A);
+            fix ϕ = atan2(Im_A, Re_A);
 
-        val += 0.5*A*cos(ϕ);
+            val += 0.5 * A * cos(ϕ);
+        }
 
         for(int i=1; i<N; ++i) {
             fix k = re[i].x;

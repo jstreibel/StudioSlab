@@ -67,7 +67,7 @@ typedef struct {
 Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     // font_manager_new
 
-    atlas   = texture_atlas_new(256, 256, 1);
+    atlas   = texture_atlas_new(512, 512, 1);
     font    = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
     buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 

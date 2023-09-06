@@ -30,12 +30,12 @@ namespace Tests {
     fix xMin = - .1*L;
     fix xMax =  1.1*L;
 
-    Real func(Real x) { return A* sin(ω*x); }
+    Real func(Real x) { return A* sin(ω*x) + 0.25*A*cos(4*ω*x) ; }
 
     Core::NativeFunction<Real, Real> Func(func);
     RtoR::InverseFourier FuncRebuilt;
 
-    FourierTestWindow::FourierTestWindow() : mFuncGraph(xMin, xMax, -1.25*A, 1.25*A, "func graph", false, N_modes)
+    FourierTestWindow::FourierTestWindow() : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph", false, N_modes)
     {
         updateGraphs();
 
