@@ -16,11 +16,12 @@ namespace RtoR {
     typedef Count NumberOfModes;
 
     struct DFTResult {
+        DFTModes re;
+        DFTModes im;
+
         explicit DFTResult(DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
         : re(std::move(re)), im(std::move(im)) {}
 
-        DFTModes re;
-        DFTModes im;
     };
 
     class FourierTransform {

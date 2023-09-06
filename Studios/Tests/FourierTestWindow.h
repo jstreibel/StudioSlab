@@ -16,7 +16,6 @@ namespace Tests {
         WindowRow row;
         WindowColumn col;
 
-
         GraphRtoR mFuncGraph;
         Core::Graphics::Graph2D mDFTGraph;
         GUIWindow gui;

@@ -55,6 +55,8 @@ set ( RTOR_SOURCES
 		RtoR/Calc/Histogram.cpp
         RtoR/Calc/CorrelationCalculator.h       RtoR/Calc/CorrelationCalculator.cpp
 		RtoR/Calc/FourierTransform.h			RtoR/Calc/FourierTransform.cpp
+        RtoR/Model/FunctionsCollection/InverseFourier.cpp
+        RtoR/Model/FunctionsCollection/InverseFourier.h
 
 )
 

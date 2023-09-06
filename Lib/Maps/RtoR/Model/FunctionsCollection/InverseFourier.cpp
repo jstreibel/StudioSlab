@@ -1,0 +1,37 @@
+//
+// Created by joao on 5/09/23.
+//
+
+#include "InverseFourier.h"
+
+namespace RtoR {
+    Real InverseFourier::operator()(Real x) const {
+        auto N = modes.re->getPoints().size();
+
+        IN re = modes.re->getPoints();
+        IN im = modes.im->getPoints();
+
+        Real val = 0.0;
+
+        fix Re_A = re[0].y;
+        fix Im_A = im[0].y;
+
+        fix A = sqrt(Re_A*Re_A + Im_A*Im_A);
+        fix ϕ = atan2(Im_A, Re_A);
+
+        val += 0.5*A*cos(ϕ);
+
+        for(int i=1; i<N; ++i) {
+            fix k = re[i].x;
+            fix Re_A = re[i].y;
+            fix Im_A = im[i].y;
+
+            fix A = sqrt(Re_A*Re_A + Im_A*Im_A);
+            fix ϕ = atan2(Im_A, Re_A);
+
+            val += A*cos(k*x + ϕ);
+        }
+
+        return val;
+    }
+} // RtoR
