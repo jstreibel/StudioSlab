@@ -12,6 +12,8 @@ namespace Resources {
     const auto Folder = std::string("/home/joao/Developer/StudioSlab/Resources/");
     const auto FontsFolder = Folder + "Fonts/";
 
+    const auto SystemFolder = "/usr/share/fonts/";
+
     const StrVector fonts = {"imgui/Cousine-Regular.ttf",               //  0
                              "imgui/DroidSans.ttf",                     //  1
                              "imgui/Karla-Regular.ttf",                 //  2
@@ -34,8 +36,10 @@ namespace Resources {
 
                              "Roboto-Regular.ttf",                      // 14
                              "times-new-roman-14.ttf",                  // 15
-                             "Simplex.ttf"                              // 16
-                             };
+                             "Simplex.ttf",                             // 16
+
+                             "DejaVu/DejaVuSans.ttf"                    // 17 (math symbols confirmed)
+    };
 
     Str fontFileName(int index);
 

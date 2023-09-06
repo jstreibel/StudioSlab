@@ -10,7 +10,7 @@
 #include "Core/Tools/Log.h"
 
 GLFreeTypeTests::GLFreeTypeTests()
-: writer1(Resources::fontFileName(9), 24)
+: writer1(Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Resources::fontFileName(7), 22)
 {   }
 
@@ -39,6 +39,10 @@ void GLFreeTypeTests::draw() {
         writer1.write(Str("Angle = ") + ToStr(angle) + Str("deg"), {40, 40});
 
         writer2.write(Str("Hell yeah!"), {40, 80});
+
+        writer1.write(Str("ℑ(ℱ[ϕ])  ℜ(ℱ[ϕ])  ℐ π² ϵᵢⱼₖ 𝕬𝕭𝕮  𝕬𝕭𝕮"), {40, 120});
+        writer1.write(Str("αβγδεζηθικλμνξοπρστυφχψω"), {40, 160});
+
     }
 
 

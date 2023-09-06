@@ -18,33 +18,13 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
 
     Window *window = nullptr;
 
-    if(true) {
-        auto graph = new GraphRtoR(-1, 1, -1, 1, "Graph");
-        graph->addFunction(&osc, "oscillon 1");
-        graph->setScale(10);
-        window = graph;
-    } else {
-        window = new Window;
-    }
-    treeBuilder.addWindow(window, WindowTreeBuilder::Right);
-
-    window = new Window();
-    treeBuilder.addWindow(window, WindowTreeBuilder::Right);
-
-    window = new Window();
-    treeBuilder.addWindow(window, WindowTreeBuilder::Above);
-
     window = new GLFreeTypeTests;
     treeBuilder.addWindow(window, WindowTreeBuilder::Above);
 
-    if(true) {
-        auto graph = new GraphRtoR(-1, 1, -1, 1, "Graph");
-        graph->addFunction(&osc, "oscillon 2");
-        graph->setScale(10);
-        window = graph;
-    } else {
-        window = new Window;
-    }
+    window = new Window;
+    treeBuilder.addWindow(window, WindowTreeBuilder::Right);
+
+    window = new Window;
     treeBuilder.addWindow(window, WindowTreeBuilder::Right);
 
     window = new Tests::FourierTestWindow();

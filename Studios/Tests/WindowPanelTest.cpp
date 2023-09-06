@@ -9,7 +9,6 @@
 #include "GLFreeTypeTests.h"
 //#include <Studios/Graphics/Graph.h>
 
-
 WindowPanelTest::WindowPanelTest() : panel(new WindowPanel) {
     Window *window = nullptr;
 
