@@ -9,7 +9,8 @@
 #include <thrust/iterator/constant_iterator.h>
 
 DiscreteSpaceGPU::DiscreteSpaceGPU(DimensionMetaData dim, floatt h)
-    : DiscreteSpace(dim, h), XDev(*new DeviceVector(dim.computeFullDiscreteSize())) {
+: DiscreteSpace(dim, h)
+, XDev(*new DeviceVector(dim.computeFullDiscreteSize())) {
 
 }
 
@@ -114,14 +115,14 @@ DiscreteSpace &DiscreteSpaceGPU::Multiply(floatt a) {
 void DiscreteSpaceGPU::syncHost() const {
     if (!hostIsUpdated){
         DiscreteSpaceGPU &me = *const_cast<DiscreteSpaceGPU*>(this); // cheating!!!
-        thrust::copy(XDev.begin(), XDev.end(), XHost.begin());
+        thrust::copy(XDev.begin(), XDev.end(), std::begin(XHost));
         me.hostIsUpdated = true;
     }
 }
 
 void DiscreteSpaceGPU::upload() {
     //DiscreteSpaceGPU &me = *const_cast<DiscreteSpaceGPU*>(this); // cheating!!!
-    thrust::copy(XHost.begin(), XHost.end(), XDev.begin());
+    thrust::copy(std::begin(XHost), std::end(XHost), XDev.begin());
     this->hostIsUpdated = true;
 }
 

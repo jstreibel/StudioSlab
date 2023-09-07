@@ -24,11 +24,17 @@ void SetSchemeDark1();
 void SetSchemeDark2();
 void SetSchemeDark3();
 
+void SetSchemeHacker();
+
 void SetSchemeLight2();
 
 void Styles::Init() {
 
-    SetSchemeDark3();
+    SetSchemeDark1();
+    // SetSchemeDark2();
+    // SetSchemeDark3();
+
+    // SetSchemeHacker();
 
     // SetSchemeLight2();
 }
@@ -37,10 +43,10 @@ void Styles::Init() {
 void SetSchemeDark1 () {
     Styles::Color graphTitleFont =  {1,1,1,1};
     Styles::Color graphTicksFont =  {1,1,1,.8};
-    Styles::Color background =      {0,0,0,1};
+    Styles::Color background =      {0.03,0.05,0.03,1};
 
-    Styles::Color axisColor =       {1,1,1,1};
-    Styles::Color tickColor =       {1,1,1,1};
+    Styles::Color axisColor =       {1,1,1, 0.75};
+    Styles::Color tickColor =       {1,.75,.75, 0.5};
 
     Styles::Color graph1a =         {.65,.65,.99,1};
     Styles::Color graph1b =         {.8,.2,.2, 1};
@@ -53,18 +59,22 @@ void SetSchemeDark1 () {
     std::vector<Styles::PlotStyle> graphs = {
             Styles::PlotStyle{graph1a, Styles::Primitive::SolidLine, true, graph1a_fill, 2.5},
             Styles::PlotStyle{graph1b, Styles::Primitive::SolidLine, true, graph1b_fill, 1.0},
-            Styles::PlotStyle{graph1c, Styles::Primitive::SolidLine, true, graph1c_fill, 1.0}};
+            Styles::PlotStyle{graph1c, Styles::Primitive::SolidLine, true, graph1c_fill, 1.0},
+            Styles::PlotStyle{graph1a.permute(), Styles::Primitive::SolidLine, true, graph1a_fill, 2.5},
+            Styles::PlotStyle{graph1b.permute(), Styles::Primitive::SolidLine, true, graph1b_fill, 1.0},
+            Styles::PlotStyle{graph1c.permute(), Styles::Primitive::SolidLine, true, graph1c_fill, 1.0}};
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
+    current->windowBorder = {0.2,0.2,0.2,1};
 }
 
 void SetSchemeDark2 () {
     Styles::Color graphTitleFont =  {1,1,1,1};
     Styles::Color graphTicksFont =  {1,1,1,.8};
-    Styles::Color background =      {0,0,0,1};
+    Styles::Color background =      {0.05,0.05,0.08,1};
 
-    Styles::Color axisColor =       {1,1,1,1};
-    Styles::Color tickColor =       {1,1,1,1};
+    Styles::Color axisColor =       {1,1,1,.25};
+    Styles::Color tickColor =       {1,1,1,.25};
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
@@ -79,6 +89,7 @@ void SetSchemeDark2 () {
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
+    current->windowBorder = {0.2, 0.2,0.32,1};
 }
 
 void SetSchemeDark3 () {
@@ -99,6 +110,31 @@ void SetSchemeDark3 () {
             Styles::PlotStyle{Styles::Color::FromHex("#f95d6a"), Styles::Primitive::SolidLine},
             Styles::PlotStyle{Styles::Color::FromHex("#ff7c43"), Styles::Primitive::SolidLine},
             Styles::PlotStyle{Styles::Color::FromHex("#ffa600"), Styles::Primitive::SolidLine}
+    };
+
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});
+    current->deepBackground = {0.1,0.1,0.16,1};;
+    current->windowBorder = current->deepBackground.inverse();
+}
+
+void SetSchemeHacker() {
+    Styles::Color graphTitleFont =  {1,1,1,1};
+    Styles::Color graphTicksFont =  {1,1,1,1};
+    Styles::Color background =      {0.0,0.0,0.0,1};
+
+    Styles::Color axisColor =       {1,1,1,1};
+    Styles::Color tickColor =       {1,1,1,1};
+
+    // https://www.learnui.design/tools/data-color-picker.html
+    std::vector<Styles::PlotStyle> graphs = {
+            Styles::PlotStyle{Styles::Color::FromHex("#ff0000"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#00ff00"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#0000ff"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#00ffff"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#ff00ff"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#ffff00"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#7f7fff"), Styles::Primitive::SolidLine},
+            Styles::PlotStyle{Styles::Color::FromHex("#7fff7f"), Styles::Primitive::SolidLine}
     };
 
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, graphs});

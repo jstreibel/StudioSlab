@@ -16,7 +16,11 @@ class NullFunction : public RtoR::Function {
         Real diff(int n, Real x) const override { if(n==0) return 0.0; else throw "No diff NullFunc n>0"; }
 
         FunctionT<Real, Real> *Clone() const override { return new NullFunction; }
-    };
+
+    Str mySymbol() const override {
+        return "0";
+    }
+};
 }
 
 #endif //V_SHAPE_NULLFUNCTION_H

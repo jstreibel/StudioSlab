@@ -60,6 +60,7 @@ namespace RtoR {
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
+        bool showComplexFourier = false;
 
         float t_history = .0f;
         int step_history = 0;

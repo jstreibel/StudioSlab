@@ -18,3 +18,7 @@ Function *AbsFunction::Clone() const {
 Function::Ptr AbsFunction::diff(int n) const {
     return FunctionT<Real, Real>::Ptr(new SignumFunction);
 }
+
+Str AbsFunction::mySymbol() const {
+    return "|ϕ|";
+}

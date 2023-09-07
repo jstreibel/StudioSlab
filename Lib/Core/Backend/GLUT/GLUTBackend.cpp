@@ -150,7 +150,8 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
                 };
         ImFontGlyphRangesBuilder glyphRangesBuilder;
         glyphRangesBuilder.AddRanges(ranges);
-        if(0) for(ImWchar c: {0x00b2, 0x00b3, 0x00b9}) glyphRangesBuilder.AddChar(c);
+        for(ImWchar c: { 0x1D62 // subscript 'i'
+                                                    }) glyphRangesBuilder.AddChar(c);
         static ImVector<ImWchar> vRanges;
         glyphRangesBuilder.BuildRanges(&vRanges);
 

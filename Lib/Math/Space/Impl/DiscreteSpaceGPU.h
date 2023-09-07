@@ -38,7 +38,7 @@ protected:
 
 private:
     bool hostIsUpdated = false;
-    RealVector &XHost = data;
+    RealArray &XHost = data;
     DeviceVector &XDev;
 };
 #else

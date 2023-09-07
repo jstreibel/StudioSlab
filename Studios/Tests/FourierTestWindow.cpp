@@ -30,7 +30,16 @@ namespace Tests {
     fix xMin = - .1*L;
     fix xMax =  1.1*L;
 
-    Real func(Real x) { return A* sin(ω*x) + 0.25*A*cos(4*ω*x) ; }
+    int N_sqrWave = 20;
+
+    Real func(Real x) {
+        Real val = 0.0;
+        for(int i=0; i<N_sqrWave; ++i) {
+            int n = 2*i + 1;
+            val += sin(n*ω*x)/(Real)n;
+        }
+        return 2*val/π;
+    }
 
     Core::NativeFunction<Real, Real> Func(func);
     RtoR::InverseFourier FuncRebuilt;
@@ -50,8 +59,11 @@ namespace Tests {
         gui.begin();
         if( ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
           | ImGui::SliderFloat("L", &L, 0.1, ωₘₐₓ)
-          | ImGui::DragInt("N", &N_modes, (float)N_modes / 20.f, 1, 20000))
+          | ImGui::DragInt("N", &N_modes, (float)N_modes / 20.f, 1, 20000)
+          | ImGui::DragInt("Nₛ", &N_sqrWave, 1, 1, 100))
             updateGraphs();
+
+
         gui.end();
 
         gui.addVolatileStat(Str("L = ")    + ToStr(L /π, 2) + "π = " + ToStr(L) );

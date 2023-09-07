@@ -61,17 +61,23 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
                     auto max = (float) cMap_max;
                     auto eps = (float) cMap_epsArg;
 
-                    if (ImGui::SliderFloat("min", &min, -2, -.005f)) {
+                    float fullWidth = ImGui::GetContentRegionAvail().x;
+                    float relativeWidth = fullWidth * 0.3f;
+                    ImGui::Text("ϕₘᵢₙ");
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(relativeWidth);
+                    if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
                         cMap_min = min;
                         cMap_max = -min;
                         invalidateBuffer();
                     }
-
-                    if (ImGui::SliderFloat("max", &max, .005f, 2)) {
+                    ImGui::SameLine();
+                    if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
                         cMap_max = max;
                         cMap_min = -max;
                         invalidateBuffer();
                     }
+                    ImGui::PopItemWidth();
 
                     if (ImGui::DragFloat("log eps", &eps, eps * 1e-3, 1e-3, 1e3)) {
                         cMap_epsArg = eps;

@@ -14,7 +14,9 @@ namespace RtoR {
 
         Ptr diff(int n) const override;
 
-        [[nodiscard]] FunctionT<Real, Real> *Clone() const override;
+        FunctionT<Real, Real> *Clone() const override;
+
+        Str mySymbol() const override;
     };
 }
 

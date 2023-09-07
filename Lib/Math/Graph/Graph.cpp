@@ -33,10 +33,10 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
     if(title.empty()) title = Str("unnamed");
     Count n=1;
     while(Graph2D::graphMap.count(title))
-        title += "_" + ToStr(++n);
+        title += "(" + ToStr(++n) + ")";
     Graph2D::graphMap[title] = this;
 
-    Log::Note() << "Created Graph2D '" << title << "'" << Log::Flush;
+    Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 
     fix vp = getViewport();
     writer.reshape(vp.w(), vp.h());

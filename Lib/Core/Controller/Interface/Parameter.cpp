@@ -21,7 +21,6 @@ auto Parameter::getFullCLName() const -> Str {
 }
 
 auto Parameter::getCLName(bool longNameIfPresent) const -> Str {
-
     return (longNameIfPresent && longCLName!="") ? longCLName : shortCLName;
 }
 

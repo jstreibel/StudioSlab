@@ -321,7 +321,7 @@ void RtoR::Signal::OutGL::draw() {
         if (showKineticEnergy) {
             //const Color colorKinetic = K_color;
 //
-            //// mFieldsGraph.addFunction(&energyCalculator.getKinetic(), colorKinetic);
+            //// mFieldsGraph.addFunction(&energyCalculator.getKineticDensity(), colorKinetic);
             //mFieldsGraph.addFunction(&fieldState.getDPhiDt(), colorKinetic, "kinetic");
         }
 

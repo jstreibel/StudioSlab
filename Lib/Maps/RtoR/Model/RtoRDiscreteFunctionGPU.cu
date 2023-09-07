@@ -33,7 +33,7 @@ Core::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Functio
             XHost[n] = func(x);
         }
 
-        thrust::copy(XHost.begin(), XHost.end(), XDev.begin());
+        thrust::copy(std::begin(XHost), std::end(XHost), XDev.begin());
         spaceGPU.notifyHostIsUpdated();
 
         return *this;

@@ -16,6 +16,11 @@ namespace RtoR {
         Real operator()(Real x) const override { return m_sqr*x; }
 
         FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(m_sqr); }
+
+        Str mySymbol() const override {
+            return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
+        }
+
     };
 
     class HarmonicPotential : public RtoR::Function {
@@ -33,6 +38,10 @@ namespace RtoR {
 
         FunctionT<Real, Real> *Clone() const override {
             return new HarmonicPotential();
+        }
+
+        Str mySymbol() const override {
+            return "½m²ϕ²   m=" + ToStr(sqrt(m_sqr), 2);
         }
     };
 

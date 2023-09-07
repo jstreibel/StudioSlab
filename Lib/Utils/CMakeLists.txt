@@ -12,13 +12,15 @@ set ( UTIL_SOURCES
 
 		ColorStrings.h
         Types.cpp		Types.h
+
+		SharedPointer.h 	SharedPointer.cpp
+		EncodingUtils.h 	EncodingUtils.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
-			CUDAUtils.cpp	CUDAUtils.h
-            SharedPointer.cpp
-            SharedPointer.h)
+			CUDAUtils.h			CUDAUtils.cpp
+	)
 endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
