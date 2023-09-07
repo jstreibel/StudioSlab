@@ -10,7 +10,7 @@
 
 namespace RtoR {
     class KGBuilder : public Fields::KleinGordon::KGBuilder {
-        IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
+        IntegerParameter Potential = IntegerParameter(2, "U,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
                                                                         "\n\t 2: signum-Gordon" );
