@@ -15,8 +15,8 @@ namespace RtoR {
         RealParameter alpha1 = RealParameter{.0, "a1", "Left oscillon's phase (alpha)."};
         RealParameter alpha2 = RealParameter{.0, "a2", "Right oscillon's phase (alpha)."};
         RealParameter l      = RealParameter{1., "l", "Right oscillon's scale factor (lambda)."};
-        RealParameter V      = RealParameter{.0, "V", "Each oscillon's speed."};
-        RealParameter xTouchLocation = RealParameter{.0, "V", "Each oscillon's speed."};
+        RealParameter V      = RealParameter{.0, "u", "Each oscillon's speed."};
+        RealParameter xTouchLocation = RealParameter{.0, "xTouch", "Each oscillon's speed."};
         BoolParameter mirror = BoolParameter{false, "mirror,+", "Flag to signal use of negative relative signal between input oscillons field value."};
 
     public:

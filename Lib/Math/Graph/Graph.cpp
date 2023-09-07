@@ -21,25 +21,25 @@
 
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
 
+Core::Graphics::Writer *Core::Graphics::Graph2D::writer = nullptr;
+
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
-: writer(Resources::fontFileName(FONT_INDEX), FONT_SIZE)
-, xMin(xMin)
+: xMin(xMin)
 , xMax(xMax)
 , yMin(yMin)
 , yMax(yMax)
 , title(std::move(_title))
 , samples(samples)
 {
+    if(writer == nullptr) writer = new Writer(Resources::fontFileName(FONT_INDEX), FONT_SIZE);
+
     if(title.empty()) title = Str("unnamed");
     Count n=1;
     while(Graph2D::graphMap.count(title))
-        title += "_" + ToStr(++n);
+        title += "(" + ToStr(++n) + ")";
     Graph2D::graphMap[title] = this;
 
-    Log::Note() << "Created Graph2D '" << title << "'" << Log::Flush;
-
-    fix vp = getViewport();
-    writer.reshape(vp.w(), vp.h());
+    Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 }
 
 Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
@@ -52,6 +52,7 @@ void Core::Graphics::Graph2D::draw() {
     Window::draw();
     if (autoReviewGraphRanges) reviewGraphRanges();
     setupOrtho();
+
     drawAxes();
 
     labelingHelper.setTotalItems(countDisplayItems());
@@ -241,6 +242,9 @@ void Core::Graphics::Graph2D::setupOrtho() const {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
+
+    auto vp = getViewport();
+    writer->reshape(vp.w(), vp.h());
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
@@ -347,9 +351,6 @@ bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
 
 void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
-
-    auto vp = getViewport();
-    writer.reshape(vp.w(), vp.h());
 }
 
 auto Core::Graphics::Graph2D::countDisplayItems() const -> Count {

@@ -41,7 +41,6 @@ namespace Core {
 
 
     protected:
-
         /** If the function derived from this class has a GPUFriendly version, then it should provide it at instantiation
          * time, because a single copy of this function must be kept and be provided when needed. */
         explicit FunctionT(const GPUFriendly *gpuFriendlyVersion = nullptr,
@@ -83,6 +82,7 @@ namespace Core {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
+        virtual Str mySymbol() const { return "f(x)"; }
         virtual Str myName() const { return "unnamed"; }
 
         // RENDERING

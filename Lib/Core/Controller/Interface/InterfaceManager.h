@@ -30,6 +30,7 @@ public:
     auto renderParametersToString(StrVector params, Str separator=" ", bool longName=true) const -> Str;
 
     auto getParametersValues(StrVector params) const -> std::vector<std::pair<Str,Str>>;
+    auto getParameter(Str name) const -> const Parameter&;
 
 };
 

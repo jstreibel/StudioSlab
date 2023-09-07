@@ -148,30 +148,16 @@ void *RtoR::KGBuilder::newFieldState() {
 }
 
 void *RtoR::KGBuilder::buildEquationSolver() {
-    RtoR::Function *thePotential = nullptr;
-    if(*Potential == MASSLESS_WAVE_EQ){
-        thePotential = new RtoR::NullFunction;
-    }
-    else if(*Potential == KLEIN_GORDON_POTENTIAL){
-        if(*mass > 0)
-            thePotential = new RtoR::HarmonicPotential(*mass);
-        else
-            thePotential = new RtoR::NullFunction;
-    }
-    else if(*Potential == SIGNUM_GORDON_POTENTIAL) {
-        thePotential = new RtoR::AbsFunction;
-    }
+    auto potential = getPotential();
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
 #if USE_CUDA == true
     if(simulationConfig.dev == device::GPU) {
-        //if(potential != VShape) throw "Only signum potential implemented in GPU.";
-
-        return new RtoR::SystemGordonGPU(simulationConfig.numericConfig, *dphi, *thePotential);
+        return new RtoR::SystemGordonGPU(simulationConfig.numericConfig, *dphi, *potential);
     }
 #endif
 
-    return new Fields::KleinGordon::Solver<RtoR::EquationState>(simulationConfig.numericConfig, *dphi, *thePotential);
+    return new Fields::KleinGordon::Solver<RtoR::EquationState>(simulationConfig.numericConfig, *dphi, *potential);
 }
 
 auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
@@ -194,7 +180,25 @@ auto RtoR::KGBuilder::buildStepper() -> Stepper * {
 }
 
 void *RtoR::KGBuilder::getHamiltonian() {
-    return new KGEnergy(*this);
+    auto potential = RtoR::Function::Ptr(getPotential());
+    return new KGEnergy(*this, potential);
+}
+
+Core::FunctionT<Real, Real> *RtoR::KGBuilder::getPotential() const {
+    if(*Potential == MASSLESS_WAVE_EQ){
+        return new RtoR::NullFunction;
+    }
+    else if(*Potential == KLEIN_GORDON_POTENTIAL){
+        if(*mass > 0)
+            return new RtoR::HarmonicPotential(*mass);
+        else
+            return new RtoR::NullFunction;
+    }
+    else if(*Potential == SIGNUM_GORDON_POTENTIAL) {
+        return new RtoR::AbsFunction;
+    }
+
+    throw "Unknown potential";
 }
 
 

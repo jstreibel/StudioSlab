@@ -55,11 +55,10 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto sty = Styles::GetColorScheme()->funcPlotStyles.begin();
 
-
-    mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "u"));
-    mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "k"));
-    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("Grad^2", "grad^2"));
-    mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, CHOOSE_ENERGY_LABEL("V", "v"));
+    mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "U/L"));
+    mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
+    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx", "<(𝜕ₓϕ)²>"));
+    mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
 
     panel.addWindow(&mEnergyGraph);
 
@@ -85,6 +84,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 }
 
 void RtoR::Monitor::draw() {
+    fix V_str = hamiltonian.getThePotential()->mySymbol();
 
     updateHistoryGraphs();
     updateFourierGraph();
@@ -94,20 +94,21 @@ void RtoR::Monitor::draw() {
 
     stats.begin();
     if(ImGui::CollapsingHeader("Real-time monitor")){
-        if(ImGui::Checkbox("Show V(ϕ)=|ϕ|",   &showPot))            { }
-        if(ImGui::Checkbox("Show (dϕ/dt)²/2", &showKineticEnergy))  { }
-        if(ImGui::Checkbox("Show (dϕ/dx)²/2", &showGradientEnergy)) { }
-        if(ImGui::Checkbox("Show e",          &showEnergyDensity))  { }
+
+        if(ImGui::Checkbox(("Show V(ϕ)="+V_str).c_str(), &showPot))              { }
+        if(ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy))    { }
+        if(ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy))   { }
+        if(ImGui::Checkbox("Show e",        &showEnergyDensity))    { }
     }
     stats.end();
 
     mFieldsGraph.clearFunctions();
     hamiltonian.computeDensities(fieldState);
 
-    if(showPot)             mFieldsGraph.addFunction(&hamiltonian.getPotential(), "V(ϕ)=|ϕ|", V_style);
-    if(showKineticEnergy)   mFieldsGraph.addFunction(&hamiltonian.getKinetic(), "K", K_style);
-    if(showGradientEnergy)  mFieldsGraph.addFunction(&hamiltonian.getGradient(), "grad^2", W_style);
-    if(showEnergyDensity)   mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(), "E", U_style);
+    if(showPot)             mFieldsGraph.addFunction(&hamiltonian.getPotentialDensity(), "V(ϕ)="+V_str, V_style);
+    if(showKineticEnergy)   mFieldsGraph.addFunction(&hamiltonian.getKineticDensity(),   "K/L"        , K_style);
+    if(showGradientEnergy)  mFieldsGraph.addFunction(&hamiltonian.getGradientDensity(),  "(𝜕ₓϕ)²"     , W_style);
+    if(showEnergyDensity)   mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(),    "E/L"        , U_style);
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
@@ -325,21 +326,37 @@ void RtoR::Monitor::updateFourierGraph() {
     using FFT = RtoR::FourierTransform;
 
     static auto lastStep = 0UL;
+    bool forceUpdate = false;
 
-    if(step != lastStep) {
+    stats.begin();
+    if (ImGui::CollapsingHeader("Fourier"))
+        forceUpdate = ImGui::Checkbox("Show Fourier as complex amplitudes", &showComplexFourier);
+    stats.end();
+
+    if(step != lastStep || forceUpdate) {
         auto &fieldState = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
 
         modes = FFT::Compute(fieldState);
 
-        auto style = Styles::GetColorScheme()->funcPlotStyles[1];
-        style.lineColor.inverse();
-        style.thickness = 2.5;
-        style.primitive = Styles::VerticalLines;
-        style.filled = false;
+        auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
 
         mSpaceFourierModesGraph.clearPointSets();
-        mSpaceFourierModesGraph.addPointSet(modes.re, style,                                "ℜ(ℱ[ϕ])", false);
-        mSpaceFourierModesGraph.addPointSet(modes.re, style.permuteColors(ODD_PERMUTATION), "ℑ(ℱ[ϕ])", false);
+
+        if(!showComplexFourier)
+        {
+            style->thickness = 1.5;
+            style->primitive = Styles::SolidLine;
+            style->filled = true;
+            mSpaceFourierModesGraph.addPointSet(modes.getAbs(), *style++, "|ℱ[ϕ](ω)|", false);
+        }
+        else
+        {
+            style->thickness = 2.5;
+            style->primitive = Styles::VerticalLines;
+            style->filled = false;
+            mSpaceFourierModesGraph.addPointSet(modes.re, *style++, "ℜ(ℱ[ϕ](ω))", false);
+            mSpaceFourierModesGraph.addPointSet(modes.im, *style, "ℑ(ℱ[ϕ](ω))", false);
+        }
 
         FIRST_TIMER (
                 {

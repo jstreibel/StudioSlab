@@ -133,6 +133,19 @@ auto InterfaceManager::getParametersValues(StrVector params) const -> std::vecto
     return values;
 }
 
+auto InterfaceManager::getParameter(Str name) const -> const Parameter & {
+    for(auto interface : interfaces) {
+        auto parameters = interface->getParameters();
+        for(const auto parameter : parameters) {
+            if(name == parameter->getCLName())
+                return *parameter;
+        }
+    }
+
+    Parameter *nullParam = nullptr;
+    return *nullParam;
+}
+
 //auto InterfaceManager::NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr {
 //    auto newInterface = Interface::Ptr(new Interface(name, owner));
 //

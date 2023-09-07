@@ -66,8 +66,16 @@ auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface, CLOpti
     auto group = opts.add_options(name);
 
     auto paramMap = anInterface.getParameters();
-    for(const auto p : paramMap)
+
+    for (const auto p: paramMap) try {
         p->addToOptionsGroup(group);
+    }
+    catch (cxxopts::exceptions::option_already_exists &e) {
+        fix &same = InterfaceManager::getInstance().getParameter(p->getCLName());
+        Log::Error() << "Couldn't add CLI option '" << p->  getFullCLName() << "' (" << p->  getDescription() << "): option already exists as '"
+                                                << same.getFullCLName() << "' (" << same.getDescription() << ")." << Log::Flush;
+        throw e;
+    }
 }
 
 

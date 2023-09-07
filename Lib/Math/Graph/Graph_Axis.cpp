@@ -5,6 +5,8 @@
 #include "Graph.h"
 
 #include "Graph_Config.h"
+#include "Core/Tools/Log.h"
+#include "Utils/EncodingUtils.h"
 
 
 #define vPixelsToSpaceScale ((yMax - yMin) / h);
@@ -13,24 +15,32 @@
 fix vTickHeightinPixels_x2 = 5;
 fix vGraphPaddingInPixels = 60;
 
-
-#define MARK_Y                                                                                                  \
-    {                                                                                                           \
-        Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels};                                   \
-        buffer.str("");                                                                                         \
-        buffer << std::setprecision(numRegion>2?0:numRegion>1?1:2)                                              \
-            << (numRegion< -1 ? std::scientific : std::fixed) << (mark<0?"":" ") << mark;                       \
-        RectR region = {xMin, xMax, yMin, yMax};                                                                \
-        if(USE_FREETYPE_GL){                                                                                    \
-            loc = FromSpaceToViewportCoord(loc, region, getViewport());                                         \
-            writer.write(buffer.str(), loc, gtf);                                                               \
-        }                                                                                                       \
-        else{                                                                                                   \
-            GLUTUtils::writeOrtho(this, region, fontScale, loc.x, loc.y,                                        \
-                buffer.str().c_str(), TICK_FONT);                                                               \
-        }                                                                                                       \
+#define MARK_Y                                                                \
+    {                                                                         \
+        Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels}; \
+        buffer.str("");                                                       \
+                                                                              \
+        if(numRegion>2)       buffer << std::setprecision(0);                 \
+        else if(numRegion>1)  buffer << std::setprecision(1);                 \
+        else                  buffer << std::setprecision(2);                 \
+                                                                              \
+        if(numRegion < -1)    buffer << std::scientific;                      \
+        else                  buffer << std::fixed;                           \
+                                                                              \
+        if(mark < 0)          buffer << "";                                   \
+        else buffer << " ";                                                   \
+                                                                              \
+        buffer << mark;                                                       \
+                                                                              \
+        Str text = buffer.str();                                              \
+        if(numRegion < -1) text = elegantScientific(text);                    \
+                                                                              \
+        RectR region = {xMin, xMax, yMin, yMax};                              \
+                                                                              \
+        loc = FromSpaceToViewportCoord(loc, region, getViewport());           \
+        writer->write(text, loc, gtf);                                         \
+                                                                              \
     }
-
 
 Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, RectR spaceRegion, RectI viewport ) {
     fix x = spaceCoord.x;
@@ -87,7 +97,7 @@ void Core::Graphics::Graph2D::drawXAxis() {
     (void)hTickHeightInSpace;
 
     fix vGraphPaddingInSpace = vGraphPaddingInPixels * vPixelsToSpaceScale;
-    fix fontHeight = writer.getFontHeightInPixels();
+    fix fontHeight = writer->getFontHeightInPixels();
 
     fix yLocationOfXAxis = yMin < -vGraphPaddingInSpace
                                 ? 0
@@ -105,19 +115,14 @@ void Core::Graphics::Graph2D::drawXAxis() {
         for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing)
         // for (int m=0; m<xMax/xspacing; ++m)
         {
-            // auto mark = 0.0 + m*xspacing;
-
-            char buffer[64];
-            sprintf(buffer, "%.2f", mark);
-
             if(USE_FREETYPE_GL) {
                 Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
                 RectR region = {xMin, xMax, yMin, yMax};
                 loc = FromSpaceToViewportCoord(loc, region, getViewport());
-                writer.write(Str(buffer), loc, gtfColor);
+                writer->write(ToStr(mark, 2), loc, gtfColor);
             } else {
                 glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
-                GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yLocationOfXAxis, buffer,
+                GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yLocationOfXAxis, ToStr(mark, 2),
                                       TICK_FONT);
             }
         }
@@ -129,7 +134,7 @@ void Core::Graphics::Graph2D::drawXAxis() {
                 Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
                 RectR region = {xMin, xMax, yMin, yMax};
                 loc = FromSpaceToViewportCoord(loc, region, getViewport());
-                writer.write(Str(buffer), loc, gtfColor);
+                writer->write(Str(buffer), loc, gtfColor);
             } else {
                 GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yLocationOfXAxis, buffer,
                                       TICK_FONT);
@@ -170,7 +175,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
     fix Δy = yMax-yMin;
     fix Δx = xMax-xMin;
     fix xLocationOfYAxis = xMin + 20*hPixelsToSpaceScale;
-    fix yOffsetOfLabels = 0.2*writer.getFontHeightInPixels()*vPixelsToSpaceScale;
+    fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()*vPixelsToSpaceScale;
 
     StringStream buffer;
 
@@ -339,7 +344,6 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
             glVertex2f(xMax_label, .5 * (yMin_label + yMax_label));
             glEnd();
         }
-
     }
 
     glEnable(GL_LINE_SMOOTH);
@@ -352,7 +356,7 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
 
     if(USE_FREETYPE_GL) {
         loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
-        writer.write(label, {loc.x, loc.y});
+        writer->write(label, {loc.x, loc.y});
     } else {
         GLUTUtils::writeOrtho(this, RectR{0, 1, 0, 1}, fontScale, loc.x, loc.y, label);
     }

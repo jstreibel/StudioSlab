@@ -22,8 +22,7 @@ namespace Core::Graphics {
 
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
-
-        Core::Graphics::Writer writer;
+        static Core::Graphics::Writer *writer;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {

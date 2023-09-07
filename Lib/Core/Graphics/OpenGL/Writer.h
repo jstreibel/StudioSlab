@@ -22,8 +22,6 @@ namespace Core::Graphics {
         GLuint shader{};
         ftgl::mat4 model{}, view{}, projection{};
 
-
-
     public:
         Writer(const Str &fontFile, float ptSize);
         virtual ~Writer();

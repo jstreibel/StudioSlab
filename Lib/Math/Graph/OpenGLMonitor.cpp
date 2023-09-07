@@ -20,7 +20,7 @@ Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const 
 
     panel.addWindow(&stats);
 
-    Log::Info() << "Graphic monitor instantiated. Channel name: '" << channelName << "'." << Log::Flush;
+    Log::Info() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
 }
 
 void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
@@ -32,8 +32,14 @@ void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
 
 void Core::Graphics::OpenGLMonitor::writeStats() {
     static bool hasFinished = false;
+    static bool isPaused = false;
+    static Count lastStep=0;
     hasFinished = !(lastData.getSteps()<params.getn());
 
+    auto dt = params.getdt();
+    fix currStep = step;
+
+    isPaused = currStep==lastStep;
 
     static auto timer = Timer();
     auto elTime = timer.getElTime_msec();
@@ -44,10 +50,6 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     const auto N = p.getN();
     const auto h = p.geth();
 
-    static Count lastStep=0;
-    auto dt = params.getdt();
-
-    fix currStep = step;
 
     fix FPS = 1e3/elTime;           // Frames/samples per second
     fix SPs = currStep - lastStep;  // Steps per frame/sample
@@ -79,7 +81,7 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
         avgSPs /= (Real)total;
         avgSPS /= (Real)total;
 
-        if(autoAdjustStepsPerSecond && !hasFinished) {
+        if(autoAdjustStepsPerSecond && !hasFinished && !isPaused) {
             static Count counter = 0;
             static fix baseNSteps = getnSteps();
             static let multiplier = 1;

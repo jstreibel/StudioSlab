@@ -13,20 +13,23 @@ namespace RtoR {
     class KGEnergy {
         Core::Simulation::VoidBuilder &builder;
 
-        RtoR::DiscreteFunction *_oEnergyDensityFunc;
-        RtoR::DiscreteFunction *_oKinetic;
-        RtoR::DiscreteFunction *_oGradient;
-        RtoR::DiscreteFunction *_oPotential;
+        RtoR::DiscreteFunction *_oEnergyDensity;
+        RtoR::DiscreteFunction *_oKineticDensity;
+        RtoR::DiscreteFunction *_oGradientDensity;
+        RtoR::DiscreteFunction *_oPotentialDensity;
+
+        RtoR::Function::Ptr V_ptr;
 
     public:
-        KGEnergy(Core::Simulation::VoidBuilder &builder);
+        KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc);
 
         const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
 
-        const RtoR::DiscreteFunction &getEnergyDensity() const { return *_oEnergyDensityFunc; };
-        const RtoR::DiscreteFunction &getKinetic() const { return *_oKinetic; };
-        const RtoR::DiscreteFunction &getGradient() const { return *_oGradient; };
-        const RtoR::DiscreteFunction &getPotential() const { return *_oPotential; };
+        const RtoR::DiscreteFunction &getEnergyDensity() const { return *_oEnergyDensity; };
+        const RtoR::DiscreteFunction &getKineticDensity() const { return *_oKineticDensity; };
+        const RtoR::DiscreteFunction &getGradientDensity() const { return *_oGradientDensity; };
+        const RtoR::DiscreteFunction &getPotentialDensity() const { return *_oPotentialDensity; };
+        const RtoR::Function::Ptr &getThePotential() const { return V_ptr; }
 
         Real integrateEnergy();
         Real integrateKinetic();

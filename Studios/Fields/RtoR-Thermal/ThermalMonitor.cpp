@@ -96,13 +96,13 @@ void RtoR::Thermal::Monitor::draw() {
         stats.end();
 
 
-        histogram.Compute(hamiltonian.getKinetic(), nbins);
+        histogram.Compute(hamiltonian.getKineticDensity(), nbins);
         histogramKData = histogram.asPDFPointSet(pretty);
 
-        histogram.Compute(hamiltonian.getGradient(), nbins);
+        histogram.Compute(hamiltonian.getGradientDensity(), nbins);
         histogramGradData = histogram.asPDFPointSet(pretty);
 
-        histogram.Compute(hamiltonian.getPotential(), nbins);
+        histogram.Compute(hamiltonian.getPotentialDensity(), nbins);
         histogramVData = histogram.asPDFPointSet(pretty);
 
         histogram.Compute(hamiltonian.getEnergyDensity(), nbins);

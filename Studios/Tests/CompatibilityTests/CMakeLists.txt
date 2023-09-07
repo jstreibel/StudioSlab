@@ -6,6 +6,7 @@ set( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR  OFF )
 message( NOTICE "Compatibility test error reproduction is ${REPRODUCE_CUDA_INCOMPATIBILITY_ERROR}")
 
 if( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR )
+
 	set(CUDA_DIR /opt/cuda)
 	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
 	include_directories(/opt/cuda/include)
@@ -18,6 +19,8 @@ if( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR )
 	set( COMPAT_TEST_CUDA_SRC
 			some_cuda_source.cu
 	)
+
+	message(AUTHOR_WARNING "Beware of using a g++ version that CUDA supports.")
 
 
 endif ()

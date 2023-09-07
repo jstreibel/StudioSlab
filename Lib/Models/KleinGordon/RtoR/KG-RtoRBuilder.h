@@ -24,6 +24,8 @@ namespace RtoR {
                            Str generalDescription,
                            bool doRegister=false);
 
+        Function *getPotential() const;
+
         auto buildOutputManager()   -> OutputManager * override;
         auto buildEquationSolver()  -> void * override;
         auto buildStepper()         -> Stepper * override;

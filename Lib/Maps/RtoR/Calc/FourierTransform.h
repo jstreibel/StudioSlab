@@ -19,6 +19,28 @@ namespace RtoR {
         DFTModes re;
         DFTModes im;
 
+        DFTModes getAbs() const {
+            IN R = re->getPoints();
+            IN I = im->getPoints();
+
+            assert(I.size() == R.size());
+
+            fix N = R.size();
+
+            auto amps = DFTModes(new Spaces::PointSet);
+            for(int i=0; i<N; ++i){
+                fix Re_A = R[i].y;
+                fix Im_A = I[i].y;
+                fix ω = R[i].x;
+
+                fix A = sqrt(Re_A*Re_A+Im_A*Im_A);
+
+                amps->addPoint({ω, A});
+            }
+
+            return amps;
+        };
+
         explicit DFTResult(DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
         : re(std::move(re)), im(std::move(im)) {}
 
