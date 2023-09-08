@@ -9,40 +9,42 @@
 
 using namespace RtoR;
 
+#define RESOLVE_BC (in.getLaplacianType()==DiscreteFunction::Standard1D_PeriodicBorder ? true : false)
+
 DerivativeCPU::DerivativeCPU(const DiscreteFunction &in)
-: f_(&in.getSpace().getHostData()), h(in.getSpace().geth()), invh(1. / h), invhsqr(1. / (h * h)),
-  N(in.getSpace().getTotalDiscreteSites())
+: f_(&in.getSpace().getHostData())
+, h(in.getSpace().geth())
+, inv2h(.5 / h)
+, inv12h((1./12) / h)
+, invhsqr(1. / (h*h))
+, inv12hsqr((1./12) / (h*h))
+, N(in.getSpace().getTotalDiscreteSites())
+, periodic(RESOLVE_BC)
 {
 }
 
-auto DerivativeCPU::dfdx_3s(PosInt X) const -> Real {
-    const size_t &i = X;
+auto DerivativeCPU::dfdx_periodic_3s(const PosInt &i) const -> Real {
     const RealArray &f = *f_;
 
-    if(X==0)        return invh * 0.5 * (-3*f[i  ] + 4*f[i+1]    -f[i+2]);
-    else if(X==N-1) return invh * 0.5 * (  +f[i-2] - 4*f[i-1] + 3*f[i  ]);
+    fix LEFT   = (i>0) ? i-1 : N-1,
+        RIGHT  = (i<N-1) ? i+1 : 0;
 
-    return                 invh * 0.5 * (  -f[i-1]            +   f[i+1]);
+    return (f[RIGHT]-f[LEFT])*inv2h;
 }
 
-auto DerivativeCPU::d2fdx2_3s(PosInt X) const -> Real {
-    const size_t &i = X;
+auto DerivativeCPU::dfdx_fixed_3s(const PosInt &i) const -> Real {
+
+    if(i<1 || i>N-2) return 0;
+
     const RealArray &f = *f_;
 
-    #ifdef PERIODIC_BC
-    auto LEFT=i-1, RIGHT=i+1, CENTER=i;
-    if (i == 0) { LEFT=N-1; }
-    else if (i == N - 1) RIGHT=0;
-    #else
-    if (X == 0) { return 0; }
-    else if (X == N - 1) return 0;
-    const auto LEFT=i-1, RIGHT=i+1, CENTER=i;
-    #endif
+    fix LEFT   = i-1,
+        RIGHT  = i+1;
 
-    return invhsqr * ((f[LEFT] + f[RIGHT]) - 2.0*f[CENTER]);
+    return (f[RIGHT]-f[LEFT])*inv2h;
 }
 
-auto DerivativeCPU::dfdx_5s(PosInt X) const -> Real {
+auto DerivativeCPU::dfdx_fixed_5s(const PosInt &X) const -> Real {
     const size_t &i = X;
     const RealArray &f = *f_;
 
@@ -52,34 +54,75 @@ auto DerivativeCPU::dfdx_5s(PosInt X) const -> Real {
     else if(X==N-2) return 0.;
 
     // 1 -8 0 8 -1  /  12
-    return ((f[i-2]-f[i+2])-8*(f[i-1] - f[i+1])) * invh * inv12;
+    return ((f[i-2]-f[i+2])-8*(f[i-1] - f[i+1])) * inv12h;
 }
 
-auto DerivativeCPU::d2fdx2_5s(PosInt X) const -> Real {
+auto DerivativeCPU::dfdx_loose_3s(PosInt X) const -> Real {
+    const size_t &i = X;
+    const RealArray &f = *f_;
+
+    if(X==0)        return inv2h * (-3*f[i  ] + 4*f[i+1] -f[i+2]);
+    else if(X==N-1) return inv2h * (+3*f[i  ] - 4*f[i-1] +f[i-2]);
+
+    return                 inv2h * (  -f[i-1]            +   f[i+1]);
+}
+
+auto DerivativeCPU::d2fdx2_fixed_3s(const PosInt &i) const -> Real {
+    const RealArray &f = *f_;
+
+    if (i == 0) { return 0; }
+    else if (i == N - 1) return 0;
+
+    const auto LEFT=i-1, RIGHT=i+1, CENTER=i;
+
+    return (i<1 || i>N-2) ? 0 : invhsqr * ((f[LEFT] + f[RIGHT]) - 2.0*f[CENTER]);
+}
+
+auto DerivativeCPU::d2fdx2_fixed_5s(PosInt X) const -> Real {
     const size_t &i = X;
     const RealArray &f = *f_;
 
     if(X<2 || X > N-3) return 0;
 
-    return     invhsqr * inv12 * ((-(f[i-2]+f[i+2]) + 16*(f[i-1]+f[i+1])) -  30*f[i]);
+    return     inv12hsqr * ((-(f[i-2]+f[i+2]) + 16*(f[i-1]+f[i+1])) -  30*f[i]);
 }
 
-auto DerivativeCPU::dfdx(PosInt X) const -> Real {
-    return dfdx_3s(X);
-}
+auto DerivativeCPU::d2fdx2_periodic_3s(const PosInt &i) const -> Real {
+    const RealArray &f = *f_;
 
-auto DerivativeCPU::d2fdx2(PosInt X) const -> Real {
-    return d2fdx2_3s(X);
+    auto LEFT   = (i>0) ? i-1 : N-1,
+         CENTER = i,
+         RIGHT  = (i<N-1) ? i+1 : 0;
+
+    return invhsqr * ((f[LEFT] + f[RIGHT]) - 2.0*f[CENTER]);
 }
 
 auto DerivativeCPU::d2fdx2_v(RealArray_O &d2fdx2_O) -> RealArray & {
 
-    OMP_PARALLEL_FOR(n, N)
-        d2fdx2_O[n] = d2fdx2(n);
+    if(periodic) {
+        OMP_PARALLEL_FOR(n, N)
+            d2fdx2_O[n] = d2fdx2_periodic_3s(n);
+    } else {
+        OMP_PARALLEL_FOR(n, N)
+            d2fdx2_O[n] = d2fdx2_fixed_3s(n);
+    }
 
     return d2fdx2_O;
+}
+
+auto DerivativeCPU::dfdx_v(RealArray_O &dfdx_O) -> RealArray & {
+    if(periodic) {
+        OMP_PARALLEL_FOR(n, N)
+            dfdx_O[n] = dfdx_periodic_3s(n);
+    } else {
+        OMP_PARALLEL_FOR(n, N)
+            dfdx_O[n] = dfdx_fixed_3s(n);
+    }
+
+    return dfdx_O;
 }
 
 Real DerivativeCPU::operator()(Real x) const {
     throw "DerivativeCPU::operator() not implemented.";
 }
+

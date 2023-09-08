@@ -4,7 +4,6 @@
 
 #include "Graph.h"
 
-#include "Graph_Config.h"
 #include "Core/Tools/Log.h"
 #include "Utils/EncodingUtils.h"
 
@@ -92,6 +91,8 @@ void Core::Graphics::Graph2D::computeTicksSpacings() {
 }
 
 void Core::Graphics::Graph2D::drawXAxis() {
+    auto *writer = Styles::GetCurrent()->ticksWriter;
+
     fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
     fix hTickHeightInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
     (void)hTickHeightInSpace;
@@ -104,48 +105,36 @@ void Core::Graphics::Graph2D::drawXAxis() {
                                 : yMin + vGraphPaddingInSpace;
     fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
     {
-        auto &gtfColor = Styles::GetColorScheme()->graphTicksFont;
+        auto &gtfColor = Styles::GetCurrent()->graphTicksFont;
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
-        if(!USE_FREETYPE_GL) glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
-
+        glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         for (Real mark = 0; mark <= xMax * 1.0001; mark += xspacing)
         // for (int m=0; m<xMax/xspacing; ++m)
         {
-            if(USE_FREETYPE_GL) {
-                Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
-                RectR region = {xMin, xMax, yMin, yMax};
-                loc = FromSpaceToViewportCoord(loc, region, getViewport());
-                writer->write(ToStr(mark, 2), loc, gtfColor);
-            } else {
-                glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
-                GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yLocationOfXAxis, ToStr(mark, 2),
-                                      TICK_FONT);
-            }
+            Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
+            RectR region = {xMin, xMax, yMin, yMax};
+            loc = FromSpaceToViewportCoord(loc, region, getViewport());
+            writer->write(ToStr(mark, 2), loc, gtfColor);
         }
         for (Real mark = -xspacing; mark >= xMin * 1.0001; mark -= xspacing) {
             char buffer[64];
             sprintf(buffer, "%.2f", mark);
 
-            if(USE_FREETYPE_GL) {
-                Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
-                RectR region = {xMin, xMax, yMin, yMax};
-                loc = FromSpaceToViewportCoord(loc, region, getViewport());
-                writer->write(Str(buffer), loc, gtfColor);
-            } else {
-                GLUTUtils::writeOrtho(this, {xMin, xMax, yMin, yMax}, fontScale, mark - xspacing / 18.0, yLocationOfXAxis, buffer,
-                                      TICK_FONT);
-            }
+            Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
+            RectR region = {xMin, xMax, yMin, yMax};
+            loc = FromSpaceToViewportCoord(loc, region, getViewport());
+            writer->write(Str(buffer), loc, gtfColor);
         }
     }
 
     if(1)
     {
-        auto &ac = Styles::GetColorScheme()->axisColor;
-        auto &tc = Styles::GetColorScheme()->majorTickColor;
+        auto &ac = Styles::GetCurrent()->axisColor;
+        auto &tc = Styles::GetCurrent()->majorTickColor;
         glBegin(GL_LINES);
         {
             glColor4f(ac.r, ac.g, ac.b, ac.a);
@@ -169,6 +158,8 @@ void Core::Graphics::Graph2D::drawXAxis() {
 }
 
 void Core::Graphics::Graph2D::drawYAxis() {
+    auto *writer = Styles::GetCurrent()->ticksWriter;
+
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 
@@ -179,7 +170,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
 
     StringStream buffer;
 
-    auto &gtf = Styles::GetColorScheme()->graphTicksFont;
+    auto &gtf = Styles::GetCurrent()->graphTicksFont;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
         auto numRegion = log10(Δy);
@@ -198,7 +189,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glDisable(GL_LINE_STIPPLE);
     glBegin(GL_LINES);
     {
-        auto &ac = Styles::GetColorScheme()->axisColor;
+        auto &ac = Styles::GetCurrent()->axisColor;
 
         glColor4f(ac.r, ac.g, ac.b, ac.a);
 
@@ -214,8 +205,8 @@ void Core::Graphics::Graph2D::drawYAxis() {
 
     glBegin(GL_LINES);
     {
-        auto &ac = Styles::GetColorScheme()->axisColor;
-        auto &tc = Styles::GetColorScheme()->majorTickColor;
+        auto &ac = Styles::GetCurrent()->axisColor;
+        auto &tc = Styles::GetCurrent()->majorTickColor;
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 
@@ -350,16 +341,12 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.5);
 
-    auto c = Styles::GetColorScheme()->graphTitleFont;
-    glColor4f(c.r,c.g,c.b,c.a);
+    auto c = Styles::GetCurrent()->graphTitleFont;
     Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
 
-    if(USE_FREETYPE_GL) {
-        loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
-        writer->write(label, {loc.x, loc.y});
-    } else {
-        GLUTUtils::writeOrtho(this, RectR{0, 1, 0, 1}, fontScale, loc.x, loc.y, label);
-    }
+    auto *writer = Styles::GetCurrent()->labelsWriter;
+    loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
+    writer->write(label, {loc.x, loc.y}, c);
 
     glPopMatrix();
 

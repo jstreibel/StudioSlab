@@ -9,6 +9,8 @@
 #include "Core/Graphics/Artists/Artist.h"
 #include "Core/Backend/Events/EventListener.h"
 #include "Core/Graphics/Artists/Rect.h"
+#include "Core/Graphics/Styles/Colors.h"
+#include "Core/Graphics/Styles/WindowStyles.h"
 
 #include <vector>
 #include <memory>
@@ -30,6 +32,7 @@ protected:
 
     bool gotHit = false;
 
+    Styles::Color backgroundColor = Core::Graphics::backgroundColor;
 public:
     typedef std::shared_ptr<Window> Ptr;
 

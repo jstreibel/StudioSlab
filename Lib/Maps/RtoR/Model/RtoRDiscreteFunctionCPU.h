@@ -13,9 +13,9 @@ namespace RtoR {
         FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
         FunctionArbitraryCPU(const DiscreteFunction& toCopy);
         FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
-                             DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
+                             DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
         FunctionArbitraryCPU(RealArray_I data, Real xLeft, Real xRight,
-                             DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D);
+                             DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
 
         [[nodiscard]] auto Clone() const -> Core::FunctionT<Real, Real> * override;
 

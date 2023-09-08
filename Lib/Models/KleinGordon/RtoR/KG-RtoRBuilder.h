@@ -10,14 +10,20 @@
 
 namespace RtoR {
     class KGBuilder : public Fields::KleinGordon::KGBuilder {
-        IntegerParameter Potential = IntegerParameter(2, "U,potential", "Potential of wave equation:"
+        IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
                                                                         "\n\t 2: signum-Gordon" );
         RealParameter mass  = RealParameter(1.0, "mass",   "Mass of the Klein-Gordon potential, if chosen.");
 
+        bool periodicBC = false;          // Gambiarris
+
     protected:
         virtual auto buildOpenGLOutput() -> Monitor*;
+
+        void setLaplacianPeriodicBC();    // Gambiarris
+        void setLaplacianFixedBC();       // Gambiarris
+        bool usesPeriodicBC() const;      // Gambiarris
 
     public:
         explicit KGBuilder(Str name,
@@ -36,7 +42,6 @@ namespace RtoR {
 
         auto newFunctionArbitrary() -> void * override;
         auto newFieldState()        -> void * override;
-
 
     };
 }

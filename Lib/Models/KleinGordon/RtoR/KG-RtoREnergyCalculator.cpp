@@ -3,22 +3,9 @@
 //
 
 #include "KG-RtoREnergyCalculator.h"
+#include "Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
 
-#ifdef PERIODIC_BC
-#undef PERIODIC_BC
-#endif
-
-#ifdef PERIODIC_BC
-#define BEGIN 0
-#define END N
-#define LEFT(i)  ((i)>0?(i)-1:N-1)
-#define RIGHT(i) ((i)<N-1?(i)+1:0)
-#else
-#define BEGIN 1
-#define END (N-1)
-#define LEFT(i)  ((i)-1)
-#define RIGHT(i) ((i)+1)
-#endif
+// #define USE_PERIODIC_BC
 
 RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc)
 : builder(builder)
@@ -43,22 +30,22 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
 
     fix &V = *V_ptr;
 
-    const floatt h = phiSpace.geth();
-    const floatt inv2h = .5/h;
-    auto &X = phiSpace.getHostData();
-    auto &dXdt = ddtPhiSpace.getHostData();
-    const int N = X.size();
+    auto &Φ    = phiSpace.getHostData();
+    auto &dΦdt = ddtPhiSpace.getHostData();
+    const int N = Φ.size();
+
+    RtoR::DerivativeCPU derivatves(phi);
+    RealArray_O dΦdx(phi.N);
     {
-        for (int i = BEGIN; i < END; i++) {
-            const Real xl = X[LEFT(i)],
-                       xcAbs = V(X[i]),
-                       xr = X[RIGHT(i)],
-                       dxdt = dXdt[i];
+        derivatves.dfdx_v(dΦdx);
 
-            const Real dxdx = inv2h*(xr-xl);
+        for (int i = 0; i < N; i++) {
+            const Real xcAbs = V(Φ[i]),
+                       dϕdt = dΦdt[i];
+            const Real dϕdx = dΦdx[i];
 
-            k[i] = .5*dxdt*dxdt;
-            g[i] = .5*dxdx*dxdx;
+            k[i] = .5*dϕdt*dϕdt;
+            g[i] = .5*dϕdx*dϕdx;
             v[i] = xcAbs;
 
             e[i] = k[i] + g[i] + v[i];

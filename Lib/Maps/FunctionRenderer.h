@@ -5,6 +5,8 @@
 #ifndef V_SHAPE_FUNCTIONRENDERER_H
 #define V_SHAPE_FUNCTIONRENDERER_H
 
+#include "Math/Graph/Styles.h"
+
 // TODO these #includes below shouldn't be THIS far from this file
 #include "Maps/RtoR/Model/RtoRFunction.h"
 #include "Maps/RtoR/Model/RtoRDiscreteFunction.h"
@@ -12,8 +14,6 @@
 #include "Maps/RtoR2/StraightLine.h"
 
 #include "Core/Graphics/Utils.h"
-#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
-
 
 namespace RtoR {
 

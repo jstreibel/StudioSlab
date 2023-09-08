@@ -131,12 +131,16 @@ void *RtoR::KGBuilder::newFunctionArbitrary() {
     const floatt xLeft = simulationConfig.numericConfig.getxMin();
     const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
 
+    auto laplacianType = periodicBC
+            ? RtoR::DiscreteFunction::Standard1D_PeriodicBorder
+            : RtoR::DiscreteFunction::Standard1D_FixedBorder;
+
     if(simulationConfig.dev==CPU)
-        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
+        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA
     else if(simulationConfig.dev==GPU)
-        return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, RtoR::DiscreteFunction::Standard1D);
+        return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, laplacianType);
 #endif
 
     throw "Error while instantiating Field: device not recognized.";
@@ -200,5 +204,17 @@ Core::FunctionT<Real, Real> *RtoR::KGBuilder::getPotential() const {
 
     throw "Unknown potential";
 }
+
+void RtoR::KGBuilder::setLaplacianPeriodicBC() {
+    Log::Info() << "KGBuilder Laplacian set to PERIODIC borders." << Log::Flush;
+    periodicBC = true;
+}
+
+void RtoR::KGBuilder::setLaplacianFixedBC() {
+    Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
+    periodicBC = false;
+}
+
+bool RtoR::KGBuilder::usesPeriodicBC() const { return periodicBC; }
 
 

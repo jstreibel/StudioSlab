@@ -4,53 +4,35 @@
 
 #include "Builder.h"
 
+#include "BoundaryCondition.h"
+
 #include "Math/Constants.h"
-
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-
-#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Monitor.h"
 #include "Models/KleinGordon/KGSolver.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #define DONT_REGISTER false
 
 namespace Modes {
 
-    class BC : public RtoR::BoundaryCondition {
-    public:
-        Real A, ω;
-
-        BC(const RtoR::EquationState &prototype, Real A, Real ω)
-        : BoundaryCondition(prototype, new RtoR::NullFunction(), new RtoR::NullFunction())
-        , A(A)
-        , ω(ω) {}
-
-        void apply(EqState &toFunction, Real t) const override {
-            if(t==0.0) RtoR::BoundaryCondition::apply(toFunction, t);
-
-            OUT ϕ = toFunction.getPhi();
-            OUT 𝜕ₜϕ = toFunction.getDPhiDt() ;
-
-            ϕ.getSpace().getHostData()[0] = A*sin(ω*t);
-            𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
-        }
-    };
-
     Builder::Builder(bool doRegister)
     : RtoR::KGBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        interface->addParameters({&A, &omega});
+        interface->addParameters({&BCSelection, &A, &omega, &k});
 
         if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
     void *Builder::getBoundary() {
         auto &prototype = *(RtoR::EquationState*) RtoR::KGBuilder::newFieldState();
-        return new Modes::BC(prototype, *A, *omega);
+
+        if(*BCSelection == 0) return new Modes::SignalBC(prototype, *A, *omega);
+        if(*BCSelection == 1) return new RtoR::BoundaryCondition(prototype, new RtoR::Sine(*A, *k), new RtoR::Cosine(A**omega, *k));
+
+        throw Str("Unknown initial condition ") + ToStr(*BCSelection);
     }
 
     void Builder::notifyCLArgsSetupFinished() {
@@ -59,8 +41,12 @@ namespace Modes {
         fix L = simulationConfig.numericConfig.getL();
         fix n = simulationConfig.numericConfig.getn();
         fix res = (period/L)*n;
+        fix a = simulationConfig.numericConfig.getr();
 
-        Log::Info() << Log::BGWhite+Log::FGBlack << " Technical sine resolution is " << res << " samples/cycle " << Log::ResetFormatting << Log::Flush;
+        if(*BCSelection == 0) this->setLaplacianFixedBC();
+        if(*BCSelection == 1) this->setLaplacianPeriodicBC();
+
+        Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
     RtoR::Monitor *Builder::buildOpenGLOutput() {

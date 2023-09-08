@@ -65,7 +65,9 @@ namespace Core {
         /*! Get derivative in dimension 'n' at point 'x'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.
          * @param x: the location to get differentiation. */
-        virtual OutputCategory diff(int n, InputCategory x) const { throw "Function::diff(n, x) not implemented."; }
+        virtual OutputCategory diff(int n, InputCategory x) const {
+            throw "Function::diff(n, x) not implemented.";
+        }
 
         virtual auto domainContainsPoint(InputCategory x) const -> bool {return true;}
 

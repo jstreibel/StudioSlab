@@ -5,8 +5,8 @@
 #include "Core/Graphics/OpenGL/OpenGL.h"
 
 #include "Window.h"
-#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/Styles/WindowStyles.h"
+#include "Core/Graphics/OpenGL/GLUTUtils.h"
 
 
 Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
@@ -21,7 +21,7 @@ void Window::draw() {
 
 void Window::_clear() const {
 
-    auto &bg = Styles::GetColorScheme()->windowBackground;
+    auto &bg = backgroundColor;
 
     glBegin(GL_QUADS);
     {
@@ -37,7 +37,7 @@ void Window::_clear() const {
 void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
-        auto bc = Styles::GetColorScheme()->windowBorder;
+        auto bc = Core::Graphics::windowBorderColor;
         glColor4d(bc.r, bc.g, bc.b, bc.a);
 
         glVertex2f(-p, -p);
@@ -56,7 +56,7 @@ void Window::setupWindow() const {
     glLoadIdentity();
 
     auto vp = getViewport();
-    glViewport(vp.xMin, vp.yMin, vp.w(), vp.h());
+    glViewport(vp.xMin-2, vp.yMin-2, vp.w()+4, vp.h()+4);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -65,6 +65,8 @@ void Window::setupWindow() const {
         this->_clear();
     if (decorate)
         this->_decorate();
+
+    glViewport(vp.xMin, vp.yMin, vp.w(), vp.h());
 
 }
 

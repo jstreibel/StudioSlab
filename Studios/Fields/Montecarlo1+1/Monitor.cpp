@@ -27,9 +27,9 @@ namespace Montecarlo {
         temperature3History = RtoR::ResizableDiscreteFunction(0, 0.1);
 //
         mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
-        mTemperaturesGraph->addFunction(&temperature1History, "T_1", Styles::GetColorScheme()->funcPlotStyles[0]);
-        mTemperaturesGraph->addFunction(&temperature2History, "T_2", Styles::GetColorScheme()->funcPlotStyles[1]);
-        mTemperaturesGraph->addFunction(&temperature3History, "T_3", Styles::GetColorScheme()->funcPlotStyles[2]);
+        mTemperaturesGraph->addFunction(&temperature1History, "T_1", Styles::GetCurrent()->funcPlotStyles[0]);
+        mTemperaturesGraph->addFunction(&temperature2History, "T_2", Styles::GetCurrent()->funcPlotStyles[1]);
+        mTemperaturesGraph->addFunction(&temperature3History, "T_3", Styles::GetCurrent()->funcPlotStyles[2]);
         panel.addWindow(mTemperaturesGraph);
 
         initialize();

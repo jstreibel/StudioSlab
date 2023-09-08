@@ -3,7 +3,6 @@ set( GRAPHICS_SOURCES
 		Animation.cpp
 		ZoomPanRotate.cpp
 
-		Styles/StylesAndColorSchemes.cpp
 		Styles/ColorMap.h 		Styles/ColorMap.cpp
 		Styles/Colors.h       	Styles/Colors.cpp
 		Styles/WindowStyles.h	Styles/WindowStyles.cpp

@@ -14,7 +14,7 @@ __host__ DeviceVector &d2dx2_DANIEL(const DeviceVector &in,
 
 __host__ DeviceVector &d2dx2(const DeviceVector &in,
                              DeviceVector &out,
-                             const Real h, const size_t N);
+                             const Real h, const size_t N, bool periodic);
 
 
 #endif // DERIVATIVESGPU_CUH

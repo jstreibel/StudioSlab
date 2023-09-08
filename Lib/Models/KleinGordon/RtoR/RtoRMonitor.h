@@ -51,10 +51,10 @@ namespace RtoR {
         Spaces::PointSet WHistoryData;
         Spaces::PointSet VHistoryData;
 
-        const Styles::PlotStyle U_style = Styles::GetColorScheme()->funcPlotStyles[0];
-        const Styles::PlotStyle K_style = Styles::GetColorScheme()->funcPlotStyles[1];
-        const Styles::PlotStyle W_style = Styles::GetColorScheme()->funcPlotStyles[2];
-        const Styles::PlotStyle V_style = Styles::GetColorScheme()->funcPlotStyles[3];
+        const Styles::PlotStyle U_style = Styles::GetCurrent()->funcPlotStyles[0];
+        const Styles::PlotStyle K_style = Styles::GetCurrent()->funcPlotStyles[1];
+        const Styles::PlotStyle W_style = Styles::GetCurrent()->funcPlotStyles[2];
+        const Styles::PlotStyle V_style = Styles::GetCurrent()->funcPlotStyles[3];
 
         bool showPot = true;
         bool showKineticEnergy = false;

@@ -7,10 +7,11 @@
 
 #include "LabelingHelper.h"
 
+#include "Styles.h"
+
 #include "Utils/Utils.h"
 #include "Core/Graphics/Utils.h"
 #include "Core/Graphics/Window/Window.h"
-#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Core/Graphics/OpenGL/Writer.h"
 #include "Maps/RtoR2/ParametricCurve.h"
@@ -22,7 +23,6 @@ namespace Core::Graphics {
 
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
-        static Core::Graphics::Writer *writer;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {

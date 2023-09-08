@@ -18,13 +18,14 @@ namespace RtoR {
     class DiscreteFunction : public Core::DiscreteFunction<Real, Real> {
     public:
         enum LaplacianType {
-            Standard1D,
+            Standard1D_FixedBorder,
+            Standard1D_PeriodicBorder,
             RadialSymmetry2D,
         };
 
     public:
         DiscreteFunction(const DiscreteFunction &toCopy);
-        DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D);
+        DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
 
     public:
         virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;

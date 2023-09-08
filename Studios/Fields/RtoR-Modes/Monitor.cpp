@@ -26,6 +26,6 @@ namespace Modes {
             modes->addPoint({ω, A[i]});
         }
 
-        mSpaceFourierModesGraph.addPointSet(modes, Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(ODD), "A(ω)", DONT_AFFECT_RANGES);
+        mSpaceFourierModesGraph.addPointSet(modes, Styles::GetCurrent()->funcPlotStyles[0].permuteColors(ODD), "A(ω)", DONT_AFFECT_RANGES);
     }
 } // Modes

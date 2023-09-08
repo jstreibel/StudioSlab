@@ -2,7 +2,7 @@
 #pragma ide diagnostic ignored "cppcoreguidelines-pro-type-static-cast-downcast"
 #pragma ide diagnostic ignored "modernize-use-auto"
 #pragma ide diagnostic ignored "hicpp-use-auto"
-//
+
 
 #include "RtoRDiscreteFunctionCPU.h"
 #include "Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
@@ -11,9 +11,13 @@
 
 // Created by joao on 17/09/2019.
 
+
 using namespace RtoR;
 
-//
+#define PERIODIC_BORDER true
+#define FIXED_BORDER false
+
+
 FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
     : DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
 
@@ -122,11 +126,11 @@ DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &out) const {
             //outX[i] = d2dr2;
         }
     }
-    else if(laplacianType == Standard1D)
+    else if(laplacianType == Standard1D_FixedBorder || laplacianType == Standard1D_PeriodicBorder)
     {
         DerivativeCPU deriv(*this);
         deriv.d2fdx2_v(out.getSpace().getHostData());
-    }
+    } else throw "Unknown Laplacian type";
 
     return out;
 }

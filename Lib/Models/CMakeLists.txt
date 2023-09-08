@@ -27,11 +27,10 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu )
 endif ()
 
+
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Models )
 
 add_library( ${LIB_LOCAL_NAME} STATIC ${MODELS_SOURCES} ${MODELS_SOURCES_CUDA} )
-
-
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core-Backend
@@ -41,5 +40,5 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Maps-RtoR-Periodic_GPU
 		Slab-Maps-R2toR_GPU
 
-		Slab-Math
-		)
+		Slab-Math )
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

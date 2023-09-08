@@ -12,11 +12,12 @@
 #include "3rdParty/ImGuiColorsSetup.h"
 
 #include "Math/Numerics/Program/Integrator.h"
-#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Core/Graphics/OpenGL/GLDebug.h"
 #include "Core/Tools/Log.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
+#include "Math/Graph/Styles.h"
+#include "Core/Graphics/Styles/WindowStyles.h"
 
 #include <cassert>
 #include <filesystem>
@@ -332,7 +333,7 @@ void GLUTBackend::mouseMotion(int x, int y)
 
 void GLUTBackend::render()
 {
-    auto bg = Styles::GetColorScheme()->deepBackground;
+    auto bg = Core::Graphics::backgroundColor;
     glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

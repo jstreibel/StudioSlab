@@ -51,7 +51,8 @@ set ( GRAPH_SOURCES
         Graph/OpenGLMonitor.cpp
         Graph/Graph_Axis.cpp
         Graph/LabelingHelper.cpp
-        Graph/LabelingHelper.h)
+        Graph/LabelingHelper.h
+		Graph/Styles.cpp)
 
 
 set ( NUMERICS_SOURCES

@@ -53,7 +53,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 , mHistoryGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
 , mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(150))
 {
-    auto sty = Styles::GetColorScheme()->funcPlotStyles.begin();
+    auto sty = Styles::GetCurrent()->funcPlotStyles.begin();
 
     mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "U/L"));
     mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
@@ -66,7 +66,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
     panel.addWindow(&mHistoryGraph);
 
     {
-        auto style = Styles::GetColorScheme()->funcPlotStyles[2].permuteColors();
+        auto style = Styles::GetCurrent()->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
 
@@ -198,7 +198,7 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
     auto section = new RtoR::Section1D(DummyPtr(mCorrelationFunction), func2Dto1DMap);
     mSpaceCorrelation = RtoR::Section1D::Ptr(section);
 
-    auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+    auto style = Styles::GetCurrent()->funcPlotStyles[1];
     //style.filled = false; // faster (way faster in this case, because CorrelationFunction is slow to compute each value.
 
     // mCorrelationGraph.addFunction(mSpaceCorrelation.get(), "Space correlation", style);
@@ -298,7 +298,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
 
                     // Correlation samples in full history
                     {
-                        auto style = Styles::GetColorScheme()->funcPlotStyles[0];
+                        auto style = Styles::GetCurrent()->funcPlotStyles[0];
                         style.primitive = Styles::Point;
                         style.thickness = 3;
                         auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
@@ -307,7 +307,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
 
                     // Correlation graph
                     {
-                        auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+                        auto style = Styles::GetCurrent()->funcPlotStyles[1];
                         mCorrelationGraph.clearPointSets();
                         auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
                                                                         mCorrelationGraph.getResolution());
@@ -338,22 +338,32 @@ void RtoR::Monitor::updateFourierGraph() {
 
         modes = FFT::Compute(fieldState);
 
-        auto style = Styles::GetColorScheme()->funcPlotStyles.begin();
+        auto style = Styles::GetCurrent()->funcPlotStyles.begin();
 
         mSpaceFourierModesGraph.clearPointSets();
 
         if(!showComplexFourier)
         {
-            style->thickness = 1.5;
-            style->primitive = Styles::SolidLine;
-            style->filled = true;
-            mSpaceFourierModesGraph.addPointSet(modes.getAbs(), *style++, "|ℱ[ϕ](ω)|", false);
+            auto myStyle = *style;
+
+            myStyle.thickness = 1.5;
+            myStyle.primitive = Styles::SolidLine;
+            myStyle.filled = true;
+            mSpaceFourierModesGraph.addPointSet(modes.getAbs(), myStyle, "|ℱ[ϕ](ω)|", false);
         }
         else
         {
-            style->thickness = 2.5;
-            style->primitive = Styles::VerticalLines;
-            style->filled = false;
+            auto myStyle1 = *++style;
+            auto myStyle2 = *++style;
+
+            myStyle1.thickness = 2.5;
+            myStyle1.primitive = Styles::VerticalLines;
+            myStyle1.filled = false;
+
+            myStyle2.thickness = 2.5;
+            myStyle2.primitive = Styles::VerticalLines;
+            myStyle2.filled = false;
+
             mSpaceFourierModesGraph.addPointSet(modes.re, *style++, "ℜ(ℱ[ϕ](ω))", false);
             mSpaceFourierModesGraph.addPointSet(modes.im, *style, "ℑ(ℱ[ϕ](ω))", false);
         }

@@ -111,7 +111,7 @@ namespace Tests {
                 }
             }
 
-            auto style = Styles::GetColorScheme()->funcPlotStyles[1];
+            auto style = Styles::GetCurrent()->funcPlotStyles[1];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.primitive = Styles::VerticalLines;
@@ -120,7 +120,7 @@ namespace Tests {
             mDFTGraph.clearPointSets();
             mDFTGraph.addPointSet(modes.re, style, "ℑ(ℱ[sin(x)])", false);
 
-            style = Styles::GetColorScheme()->funcPlotStyles[3];
+            style = Styles::GetCurrent()->funcPlotStyles[3];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.primitive = Styles::VerticalLines;
@@ -168,12 +168,12 @@ namespace Tests {
         {
             mFuncGraph.clearFunctions();
 
-            auto style = Styles::GetColorScheme()->funcPlotStyles[0].permuteColors(true);
+            auto style = Styles::GetCurrent()->funcPlotStyles[0].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             mFuncGraph.addFunction(&Func, "sin(x)", style);
 
-            style = Styles::GetColorScheme()->funcPlotStyles[1].permuteColors(true);
+            style = Styles::GetCurrent()->funcPlotStyles[1].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             FuncRebuilt.setModes(modes);
@@ -189,8 +189,8 @@ namespace Tests {
                 L_loc1.setPoints({{0.0, -2},
                                   {0.0, +2}});
 
-                mFuncGraph.addPointSet(DummyPtr(L_loc1), Styles::GetColorScheme()->funcPlotStyles[3], "xₘᵢₙ", false);
-                mFuncGraph.addPointSet(DummyPtr(L_loc2), Styles::GetColorScheme()->funcPlotStyles[3], "xₘₐₓ", false);
+                mFuncGraph.addPointSet(DummyPtr(L_loc1), Styles::GetCurrent()->funcPlotStyles[3], "xₘᵢₙ", false);
+                mFuncGraph.addPointSet(DummyPtr(L_loc2), Styles::GetCurrent()->funcPlotStyles[3], "xₘₐₓ", false);
 
                 initd = true;
             }

@@ -57,6 +57,8 @@ set ( RTOR_SOURCES
 		RtoR/Calc/FourierTransform.h			RtoR/Calc/FourierTransform.cpp
         RtoR/Model/FunctionsCollection/InverseFourier.cpp
         RtoR/Model/FunctionsCollection/InverseFourier.h
+		RtoR/Model/FunctionsCollection/Trigonometric.cpp
+		RtoR/Model/FunctionsCollection/Trigonometric.h
 
 )
 
@@ -135,15 +137,15 @@ set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 
-set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}-Periodic_GPU )
-
-add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
-target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
-target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
-set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
-#set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
-
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+# set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}-Periodic_GPU )
+#
+# add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
+# target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
+# target_compile_definitions( ${LIB_LOCAL_NAME} PUBLIC PERIODIC_BC )
+# set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
+# #set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61 )
+#
+# message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 
 # ℝ² ↦ ℝ

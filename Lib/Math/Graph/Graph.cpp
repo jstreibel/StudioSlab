@@ -13,15 +13,10 @@
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "3rdParty/glfreetype/TextRenderer.hpp"
-#include "Utils/Resources.h"
-
-#include "Graph_Config.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
-
-Core::Graphics::Writer *Core::Graphics::Graph2D::writer = nullptr;
 
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
 : xMin(xMin)
@@ -31,7 +26,7 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
 , title(std::move(_title))
 , samples(samples)
 {
-    if(writer == nullptr) writer = new Writer(Resources::fontFileName(FONT_INDEX), FONT_SIZE);
+    this->backgroundColor = Styles::GetCurrent()->graphBackground;
 
     if(title.empty()) title = Str("unnamed");
     Count n=1;
@@ -244,7 +239,8 @@ void Core::Graphics::Graph2D::setupOrtho() const {
     glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
 
     auto vp = getViewport();
-    writer->reshape(vp.w(), vp.h());
+    Styles::GetCurrent()->labelsWriter->reshape(vp.w(), vp.h());
+    Styles::GetCurrent()->ticksWriter->reshape(vp.w(), vp.h());
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }

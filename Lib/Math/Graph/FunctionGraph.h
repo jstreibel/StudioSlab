@@ -13,7 +13,6 @@
 
 #include "Core/Graphics/Window/Window.h"
 
-#include "Core/Graphics/Styles/StylesAndColorSchemes.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Graph.h"
 
@@ -46,7 +45,7 @@ public:
     void draw() override;
 
     void addFunction(const FunctionType* func, Str name="",
-                     Styles::PlotStyle style=Styles::GetColorScheme()->funcPlotStyles[0]);
+                     Styles::PlotStyle style= Styles::GetCurrent()->funcPlotStyles[0]);
 
     void clearFunctions();
 
