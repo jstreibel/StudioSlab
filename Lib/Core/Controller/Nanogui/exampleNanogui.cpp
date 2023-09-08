@@ -477,7 +477,7 @@ public:
                       << c.r() << ", "
                       << c.g() << ", "
                       << c.b() << ", "
-                      << c.w() << "]" << std::endl;
+                      << c.width() << "]" << std::endl;
         });
         // setup a fast callback for the color picker widget on a new window
         // for demonstrative purposes

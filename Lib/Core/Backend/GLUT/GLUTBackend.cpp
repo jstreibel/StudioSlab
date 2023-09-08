@@ -18,6 +18,7 @@
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Math/Graph/Styles.h"
 #include "Core/Graphics/Styles/WindowStyles.h"
+#include "Core/Tools/Animator.h"
 
 #include <cassert>
 #include <filesystem>
@@ -333,6 +334,8 @@ void GLUTBackend::mouseMotion(int x, int y)
 
 void GLUTBackend::render()
 {
+    Core::Graphics::Animator::Update();
+
     auto bg = Core::Graphics::backgroundColor;
     glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);

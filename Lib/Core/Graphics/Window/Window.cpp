@@ -56,7 +56,7 @@ void Window::setupWindow() const {
     glLoadIdentity();
 
     auto vp = getViewport();
-    glViewport(vp.xMin-2, vp.yMin-2, vp.w()+4, vp.h()+4);
+    glViewport(vp.xMin-2, vp.yMin-2, vp.width()+4, vp.height() + 4);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
@@ -66,7 +66,7 @@ void Window::setupWindow() const {
     if (decorate)
         this->_decorate();
 
-    glViewport(vp.xMin, vp.yMin, vp.w(), vp.h());
+    glViewport(vp.xMin, vp.yMin, vp.width(), vp.height());
 
 }
 

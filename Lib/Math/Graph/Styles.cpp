@@ -36,13 +36,13 @@ void Styles::Init() {
 
     // SetSchemeDark1();
     // SetSchemeDark2();
-    // SetSchemeDark3();
+    SetSchemeDark3();
 
     // SetSchemeHacker();
 
     // SetSchemeLight2();
 
-    SetSchemeElegant();
+    // SetSchemeElegant();
 }
 
 

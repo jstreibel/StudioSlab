@@ -11,8 +11,11 @@ template<typename T>
 struct Rect {
     T xMin, xMax, yMin, yMax;
 
-    T w() const {return xMax-xMin; }
-    T h() const {return yMax-yMin; }
+    T width() const {return xMax-xMin; }
+    T height() const {return yMax - yMin; }
+
+    T yCenter() const { return .5 * (yMax + yMin); }
+    T xCenter() const { return .5 * (xMax + xMin); }
 };
 
 typedef Rect<int> RectI;

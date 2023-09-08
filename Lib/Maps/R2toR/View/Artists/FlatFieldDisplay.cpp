@@ -6,6 +6,7 @@
 
 #include "Core/Graphics/Styles/ColorMap.h"
 #include "Core/Tools/Log.h"
+#include "Core/Tools/Animator.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "imgui.h"
 
@@ -33,8 +34,6 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
-
-    fontScale = .35;
 
     delete texture;
     texture = new OpenGL::Texture((int)xRes, (int)yRes);
@@ -202,16 +201,35 @@ bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(int wheel, int directio
     constexpr const Real factor = 1.1;
     const Real d = pow(factor, -direction);
 
-    {
-        const Real x0 = .5 * (xMax + xMin);
-        const Real hw = .5 * (xMax - xMin) * d;
-        xMin = x0 - hw;
-        xMax = x0 + hw;
+    static auto targetRegion = getLimits();
 
-        const Real y0 = .5 * (yMax + yMin);
-        const Real hh = .5 * (yMax - yMin) * d;
-        yMin = y0 - hh;
-        yMax = y0 + hh;
+    auto &region = getLimits();
+    if(!Core::Graphics::Animator::Contains(region.xMin)
+    && !Core::Graphics::Animator::Contains(region.xMax)
+    && !Core::Graphics::Animator::Contains(region.yMin)
+    && !Core::Graphics::Animator::Contains(region.yMax)) {
+        targetRegion = region;
+    }
+
+    {
+        const Real x0 = targetRegion.xCenter();
+        const Real hw = .5 * targetRegion.width() * d;
+
+        targetRegion.xMin = x0-hw;
+        targetRegion.xMax = x0+hw;
+
+        set_xMin(targetRegion.xMin);
+        set_xMax(targetRegion.xMax);
+
+
+        const Real y0 = targetRegion.yCenter();
+        const Real hh = .5 * targetRegion.height() * d;
+
+        targetRegion.yMin = y0-hh;
+        targetRegion.yMax = y0+hh;
+
+        set_yMin(targetRegion.yMin);
+        set_yMax(targetRegion.yMax);
     }
 
     return true;
@@ -241,7 +259,7 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     fix Δx = dom_xMax-dom_xMin;
     fix Δy = dom_yMax-dom_yMin;
 
-    fix windowRatio = (double)vp.h()/vp.w();
+    fix windowRatio = (double) vp.height() / vp.width();
     fix fieldRatio = Δy/Δx;
 
     let _xMin = dom_xMin;

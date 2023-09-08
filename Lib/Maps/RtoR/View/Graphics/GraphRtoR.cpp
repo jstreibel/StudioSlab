@@ -10,7 +10,7 @@ GraphRtoR::GraphRtoR(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool
 
 void GraphRtoR::_renderFunction(const RtoR::Function *func, Styles::PlotStyle style) {
       glLineWidth(style.thickness);
-      RtoR::FunctionRenderer::renderFunction(*func, style.lineColor, style.filled, xMin, xMax, samples, scale);
+      RtoR::FunctionRenderer::renderFunction(*func, style.lineColor, style.filled, get_xMin(), get_xMax(), samples, scale);
 }
 
 void GraphRtoR::setScale(Real s) {

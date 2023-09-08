@@ -48,12 +48,11 @@ namespace Core::Graphics {
         bool savePopupOn = false;
         bool autoReviewGraphRanges=false;
 
+        RectR region;
     protected:
-        Real xMin, xMax, yMin, yMax;
+
         Real yspacing = 1.e-5;
         Real xspacing = 1.e-5;
-
-        Real fontScale = 1.0;
 
         Str title;
         Resolution samples = 512;
@@ -97,7 +96,7 @@ namespace Core::Graphics {
 
         auto getResolution() const -> Resolution;
         auto setResolution(Resolution samples) -> void;
-        auto getLimits() const -> RectR;
+        auto getLimits() const -> const RectR&;
         auto setLimits(RectR limits) -> void;
         void set_xMin(Real);
         void set_xMax(Real);

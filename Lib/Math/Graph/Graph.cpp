@@ -9,20 +9,20 @@
 
 #include "Utils/Printing.h"
 #include "Core/Tools/Log.h"
+#include "Core/Tools/Animator.h"
 
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
+
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 
 #define POPUP_ON_MOUSE_CALL false
+#define ANIMATION_TIME_SECONDS 0.2
 
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
 
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
-: xMin(xMin)
-, xMax(xMax)
-, yMin(yMin)
-, yMax(yMax)
+: region{xMin, xMax, yMin, yMax}
 , title(std::move(_title))
 , samples(samples)
 {
@@ -227,8 +227,8 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 }
 
 void Core::Graphics::Graph2D::setupOrtho() const {
-    const Real deltaX = xMax-xMin;
-    const Real deltaY = yMax-yMin;
+    const Real deltaX = region.width();
+    const Real deltaY = region.height();
     const Real xTraLeft   = 0;  // -deltaX*0.07;
     const Real xTraRight  = 0;  // +deltaX*0.02;
     const Real xTraTop    = 0;  // +deltaY*0.025;
@@ -236,11 +236,11 @@ void Core::Graphics::Graph2D::setupOrtho() const {
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(xMin+xTraLeft, xMax+xTraRight, (yMin+xTraBottom), (yMax+xTraTop), -1, 1);
+    glOrtho(region.xMin+xTraLeft, region.xMax+xTraRight, (region.yMin+xTraBottom), (region.yMax+xTraTop), -1, 1);
 
     auto vp = getViewport();
-    Styles::GetCurrent()->labelsWriter->reshape(vp.w(), vp.h());
-    Styles::GetCurrent()->ticksWriter->reshape(vp.w(), vp.h());
+    Styles::GetCurrent()->labelsWriter->reshape(vp.width(), vp.height());
+    Styles::GetCurrent()->ticksWriter->reshape(vp.width(), vp.height());
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
@@ -249,17 +249,17 @@ void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
 auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
 auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-RectR Core::Graphics::Graph2D::getLimits() const { return RectR(xMin, xMax, yMin, yMax); }
-auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { xMin = lims.xMin; xMax = lims.xMax; yMin = lims.yMin; yMax = lims.yMax; }
+const RectR& Core::Graphics::Graph2D::getLimits() const { return region; }
+auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { region = lims; }
 
-void Core::Graphics::Graph2D::set_xMin(Real val) { xMin = val; }
-void Core::Graphics::Graph2D::set_xMax(Real val) { xMax = val; }
-void Core::Graphics::Graph2D::set_yMin(Real val) { yMin = val; }
-void Core::Graphics::Graph2D::set_yMax(Real val) { yMax = val; }
-Real Core::Graphics::Graph2D::get_xMin() const { return xMin; }
-Real Core::Graphics::Graph2D::get_xMax() const { return xMax; }
-Real Core::Graphics::Graph2D::get_yMin() const { return yMin; }
-Real Core::Graphics::Graph2D::get_yMax() const { return yMax; }
+void Core::Graphics::Graph2D::set_xMin(Real val) { Animator::Add(region.xMin, val, ANIMATION_TIME_SECONDS); }
+void Core::Graphics::Graph2D::set_xMax(Real val) { Animator::Add(region.xMax, val, ANIMATION_TIME_SECONDS); }
+void Core::Graphics::Graph2D::set_yMin(Real val) { Animator::Add(region.yMin, val, ANIMATION_TIME_SECONDS); }
+void Core::Graphics::Graph2D::set_yMax(Real val) { Animator::Add(region.yMax, val, ANIMATION_TIME_SECONDS); }
+Real Core::Graphics::Graph2D::get_xMin() const { return region.xMin; }
+Real Core::Graphics::Graph2D::get_xMax() const { return region.xMax; }
+Real Core::Graphics::Graph2D::get_yMin() const { return region.yMin; }
+Real Core::Graphics::Graph2D::get_yMax() const { return region.yMax; }
 
 
 bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
@@ -293,15 +293,15 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     {
         const Real dxClampd = - mouseState.dx / (Real)w;
         const Real dyClampd = mouseState.dy / (Real)h;
-        const Real wGraph = xMax-xMin;
-        const Real hGraph = yMax-yMin;
+        const Real wGraph = region.width();
+        const Real hGraph = region.height();
         const Real dxGraph = wGraph * dxClampd;
         const Real dyGraph = hGraph * dyClampd;
 
-        xMin += dxGraph;
-        xMax += dxGraph;
-        yMin += dyGraph;
-        yMax += dyGraph;
+        region.xMin += dxGraph;
+        region.xMax += dxGraph;
+        region.yMin += dyGraph;
+        region.yMax += dyGraph;
     }
     if(mouseState.centerPressed)
     {
@@ -309,16 +309,17 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
         const Real dx = 1+factor*mouseState.dx;
         const Real dy = 1+factor*mouseState.dy;
 
-        const Real x0 = .5*(xMax+xMin);
-        const Real y0 = .5*(yMax+yMin);
-        const Real hw = .5*(xMax-xMin)*dx;
-        const Real hh = .5*(yMax-yMin)*dy;
+        const Real x0 = region.xCenter();
+        const Real y0 = region.yCenter();
+        const Real hw = .5 * region.width()*dx;
+        const Real hh = .5 * region.height() * dy;
 
-        xMin = x0 - hw;
-        xMax = x0 + hw;
-        yMin = y0 - hh;
-        yMax = y0 + hh;
-
+        region = {
+            x0 - hw,
+            x0 + hw,
+            y0 - hh,
+            y0 + hh
+        };
     }
 
     return elRet;
@@ -327,19 +328,38 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
 bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
     EventListener::notifyMouseWheel(wheel, direction, x, y);
 
-    constexpr const Real factor = 1.1;
+    constexpr const Real factor = 1.2;
     const Real d = pow(factor, -direction);
 
+    static auto targetRegion = region;
+
+    if(!Animator::Contains(region.xMin)
+    && !Animator::Contains(region.xMax)
+    && !Animator::Contains(region.yMin)
+    && !Animator::Contains(region.yMax)) {
+        targetRegion = region;
+    }
+
     if(GUIBackend::GetInstance().getMouseState().rightPressed) {
-        const Real x0 = .5 * (xMax + xMin);
-        const Real hw = .5 * (xMax - xMin) * d;
-        xMin = x0 - hw;
-        xMax = x0 + hw;
+
+        const Real x0 = targetRegion.xCenter();
+        const Real hw = .5*targetRegion.width() * d;
+
+        targetRegion.xMin = x0-hw;
+        targetRegion.xMax = x0+hw;
+
+        set_xMin(targetRegion.xMin);
+        set_xMax(targetRegion.xMax);
+
     } else {
-        const Real y0 = .5 * (yMax + yMin);
-        const Real hh = .5 * (yMax - yMin) * d;
-        yMin = y0 - hh;
-        yMax = y0 + hh;
+        const Real y0 = targetRegion.yCenter();
+        const Real hh = .5 * targetRegion.height() * d;
+
+        targetRegion.yMin = y0-hh;
+        targetRegion.yMax = y0+hh;
+
+        set_yMin(targetRegion.yMin);
+        set_yMax(targetRegion.yMax);
     }
 
     return true;
