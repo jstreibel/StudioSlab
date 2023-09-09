@@ -8,7 +8,9 @@ add_executable ( Tests
 		GLFreeTypeTests.cpp
 		GLFreeTypeTests.h
         FourierTestWindow.cpp
-        FourierTestWindow.h)
+        FourierTestWindow.h
+        BezierTests.cpp
+        BezierTests.h)
 
 target_link_libraries ( Tests ${SlabLibs} Slab-Maps-RtoR_GPU Slab-Core freetype-gl )
 

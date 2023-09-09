@@ -6,29 +6,40 @@
 #define STUDIOSLAB_ANIMATOR_H
 
 
-#include "ThreadPool.h"
+#include "Utils/Timer.h"
+
+#include <unordered_map>
 
 namespace Core {
     namespace Graphics {
+
+        struct Animation {
+            double initialValue;
+            double targetValue;
+            double timeInSeconds;
+            Timer timer;
+        };
 
         class Animator {
             static Animator& Instance();
             Animator() {}
 
-            struct Animation {
-                double targetValue;
-                double timeInSeconds;
-                std::chrono::steady_clock::time_point startTime;
-            };
-
             std::unordered_map<double*, Animation> animations;
             static double cubicBezierInterpolation(double startValue, double endValue, double t);
 
+            double p1=1.0,p2=1.0;
         public:
+
 
             static void Add(double& variable, double targetValue, double timeInSeconds);
 
             static bool Contains(const double &variable);
+
+            static auto Get(const double &variable) -> const Animation&;
+
+            static void SetBezierParams(double p1, double p2);
+
+            static auto GetBezierParams() -> std::pair<double, double>;
 
             static void Update();
 

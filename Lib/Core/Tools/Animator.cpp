@@ -19,7 +19,7 @@ namespace Core {
         void Animator::Add(double &variable, double targetValue, double timeInSeconds) {
             auto &animations = Instance().animations;
 
-            animations[&variable] = {targetValue, timeInSeconds, std::chrono::steady_clock::now()};
+            animations[&variable] = {variable, targetValue, timeInSeconds};
         }
 
         void Animator::Update() {
@@ -29,13 +29,14 @@ namespace Core {
 
             for (auto it = animations.begin(); it != animations.end();) {
                 auto& [var, anim] = *it;
-                auto elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(now - anim.startTime).count() / 1000.0;
+                auto t = anim.timer.getElTime_sec()/anim.timeInSeconds;
 
-                if (elapsed >= anim.timeInSeconds) {
+                if (t >= 1) {
                     *var = anim.targetValue;
                     it = animations.erase(it);  // Remove the completed animation
                 } else {
-                    *var = cubicBezierInterpolation(*var, anim.targetValue, elapsed / anim.timeInSeconds);
+                    fix Δv = anim.targetValue-anim.initialValue;
+                    *var = anim.initialValue + Δv*cubicBezierInterpolation(0, 1, t);
                     ++it;
                 }
             }
@@ -43,10 +44,13 @@ namespace Core {
         }
 
         double Animator::cubicBezierInterpolation(double startValue, double endValue, double t) {
+            fix p1 = Animator::Instance().p1;
+            fix p2 = Animator::Instance().p2;
+
             // Cubic Bezier curve with control points P0, P1, P2, P3
             double P0 = startValue;
-            double P1 = startValue + (endValue - startValue) * 0.25;
-            double P2 = startValue + (endValue - startValue) * 0.75;
+            double P1 = startValue + (endValue - startValue) * p1;
+            double P2 = startValue + (endValue - startValue) * p2;
             double P3 = endValue;
 
             // Cubic Bezier formula
@@ -55,6 +59,20 @@ namespace Core {
 
         bool Animator::Contains(const double &variable) {
             return Animator::Instance().animations.contains(const_cast<double*>(&variable));
+        }
+
+        void Animator::SetBezierParams(double p1, double p2) {
+            Instance().p1 = p1;
+            Instance().p2 = p2;
+        }
+
+        auto Animator::Get(const double &variable) -> const Animation & {
+            return Animator::Instance().animations[const_cast<double*>(&variable)];
+        }
+
+        auto Animator::GetBezierParams() -> std::pair<double, double> {
+            auto &anim = Animator::Instance();
+            return {anim.p1, anim.p2};
         }
     } // Core
 } // Graphics

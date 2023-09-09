@@ -49,6 +49,8 @@ namespace Core::Graphics {
         bool autoReviewGraphRanges=false;
 
         RectR region;
+
+        Real animationTimeSeconds = 0.2;
     protected:
 
         Real yspacing = 1.e-5;
@@ -85,7 +87,7 @@ namespace Core::Graphics {
 
         void addPointSet(Spaces::PointSet::Ptr pointSet,
                          Styles::PlotStyle style,
-                         Str setName,
+                         Str setName="",
                          bool affectsGraphRanges=true);
         void clearPointSets();
 
@@ -106,6 +108,9 @@ namespace Core::Graphics {
         Real get_xMax() const;
         Real get_yMin() const;
         Real get_yMax() const;
+
+        void setAnimationTime(Real value);
+        Real getAnimationTime() const;
 
         bool notifyMouseButton(int button, int dir, int x, int y) override;
         bool notifyMouseMotion(int x, int y) override;

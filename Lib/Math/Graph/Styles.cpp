@@ -108,14 +108,14 @@ void SetSchemeDark3 () {
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
-            Styles::PlotStyle{Styles::Color::FromHex("#003f5c"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#2f4b7c"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#665191"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#a05195"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#d45087"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#f95d6a"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#ff7c43"), Styles::Primitive::SolidLine},
-            Styles::PlotStyle{Styles::Color::FromHex("#ffa600"), Styles::Primitive::SolidLine}
+            Styles::PlotStyle{Styles::Color::FromHex("#003f5c"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#2f4b7c"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#665191"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#a05195"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#d45087"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#f95d6a"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#ff7c43"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5},
+            Styles::PlotStyle{Styles::Color::FromHex("#ffa600"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5}
     };
 
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);

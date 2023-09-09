@@ -252,10 +252,10 @@ auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { sampl
 const RectR& Core::Graphics::Graph2D::getLimits() const { return region; }
 auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { region = lims; }
 
-void Core::Graphics::Graph2D::set_xMin(Real val) { Animator::Add(region.xMin, val, ANIMATION_TIME_SECONDS); }
-void Core::Graphics::Graph2D::set_xMax(Real val) { Animator::Add(region.xMax, val, ANIMATION_TIME_SECONDS); }
-void Core::Graphics::Graph2D::set_yMin(Real val) { Animator::Add(region.yMin, val, ANIMATION_TIME_SECONDS); }
-void Core::Graphics::Graph2D::set_yMax(Real val) { Animator::Add(region.yMax, val, ANIMATION_TIME_SECONDS); }
+void Core::Graphics::Graph2D::set_xMin(Real val) { Animator::Add(region.xMin, val, animationTimeSeconds); }
+void Core::Graphics::Graph2D::set_xMax(Real val) { Animator::Add(region.xMax, val, animationTimeSeconds); }
+void Core::Graphics::Graph2D::set_yMin(Real val) { Animator::Add(region.yMin, val, animationTimeSeconds); }
+void Core::Graphics::Graph2D::set_yMax(Real val) { Animator::Add(region.yMax, val, animationTimeSeconds); }
 Real Core::Graphics::Graph2D::get_xMin() const { return region.xMin; }
 Real Core::Graphics::Graph2D::get_xMax() const { return region.xMax; }
 Real Core::Graphics::Graph2D::get_yMin() const { return region.yMin; }
@@ -371,6 +371,14 @@ void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) {
 
 auto Core::Graphics::Graph2D::countDisplayItems() const -> Count {
     return mPointSets.size() + curves.size();
+}
+
+void Core::Graphics::Graph2D::setAnimationTime(Real value) {
+    animationTimeSeconds = value;
+}
+
+Real Core::Graphics::Graph2D::getAnimationTime() const {
+    return animationTimeSeconds;
 }
 
 

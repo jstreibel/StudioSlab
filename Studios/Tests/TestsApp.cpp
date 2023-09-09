@@ -4,6 +4,7 @@
 
 #include "TestsApp.h"
 
+#include "BezierTests.h"
 #include "WindowPanelTest.h"
 #include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
@@ -23,7 +24,8 @@ TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv, DONT_REGIS
 
 int TestsApp::run() {
     Window *test;
-    if(true)      test = new Tests::FourierTestWindow;
+    if(true)      test = new Tests::BezierTests;
+    else if(true) test = new Tests::FourierTestWindow;
     else if(true) test = new WindowTreeBuilderTest;
     else if(true) test = new WindowPanelTest;
     else test = new GLFreeTypeTests;
