@@ -28,10 +28,10 @@ void WindowTreeBuilder::addWindow(Window *window, WindowTreeBuilder::Location lo
 }
 
 NodeWindow* WindowTreeBuilder::getRoot(){
-    currentNode->x = shape.getx();
-    currentNode->y = shape.gety();
-    currentNode->w = shape.getw();
-    currentNode->h = shape.geth();
+    auto &myRect = shape.getWindowRect();
+    currentNode->setx(myRect.xMin);
+    currentNode->sety(myRect.yMin);
+    currentNode->setSize(myRect.width(), myRect.height());
 
     currentNode->arrange();
 

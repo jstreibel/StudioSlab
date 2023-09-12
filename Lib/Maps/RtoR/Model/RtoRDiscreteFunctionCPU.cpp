@@ -18,7 +18,7 @@ using namespace RtoR;
 #define FIXED_BORDER false
 
 
-FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
+DiscreteFunction_CPU::DiscreteFunction_CPU(const DiscreteFunction_CPU &toCopy)
     : DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
 
     auto &toCopyX = toCopy.getSpace().getHostData(true);
@@ -27,7 +27,7 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const FunctionArbitraryCPU &toCopy)
         getSpace().getHostData()[n] = toCopyX[n];
 }
 
-FunctionArbitraryCPU::FunctionArbitraryCPU(const DiscreteFunction& toCopy)
+DiscreteFunction_CPU::DiscreteFunction_CPU(const DiscreteFunction& toCopy)
     : DiscreteFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.getLaplacianType()) {
 
     auto &toCopyX = toCopy.getSpace().getHostData(true);
@@ -36,18 +36,18 @@ FunctionArbitraryCPU::FunctionArbitraryCPU(const DiscreteFunction& toCopy)
         getSpace().getHostData()[n] = toCopyX[n];
 }
 
-RtoR::FunctionArbitraryCPU::FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
+RtoR::DiscreteFunction_CPU::DiscreteFunction_CPU(PosInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
     : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType){
 
 }
 
-FunctionArbitraryCPU::FunctionArbitraryCPU(RealArray_I data, Real xLeft, Real xRight,
+DiscreteFunction_CPU::DiscreteFunction_CPU(RealArray_I data, Real xLeft, Real xRight,
                                            DiscreteFunction::LaplacianType laplacianType)
                                            : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType) {
     getSpace().getHostData() = data;
 }
 
-auto FunctionArbitraryCPU::Set(const RealArray &vec) -> FunctionArbitraryCPU & {
+auto DiscreteFunction_CPU::Set(const RealArray &vec) -> DiscreteFunction_CPU & {
     assert(vec.size() == getSpace().getHostData().size());
 
     for(int i=0; i<vec.size(); ++i)
@@ -56,7 +56,7 @@ auto FunctionArbitraryCPU::Set(const RealArray &vec) -> FunctionArbitraryCPU & {
     return *this;
 }
 
-FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
+DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const FunctionT & function) {
     const floatt L = xMax - xMin;
     RealArray &X = getSpace().getHostData();
 
@@ -69,12 +69,12 @@ FunctionArbitraryCPU &FunctionArbitraryCPU::Set(const FunctionT & function) {
     return *this;
 }
 
-Core::FunctionT<Real, Real> *FunctionArbitraryCPU::Clone() const {
-    return new FunctionArbitraryCPU(*this);
+Core::FunctionT<Real, Real> *DiscreteFunction_CPU::Clone() const {
+    return new DiscreteFunction_CPU(*this);
 }
 
-Core::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt outN) const {
-    FunctionArbitraryCPU &newFunc = *new FunctionArbitraryCPU(outN, xMin, xMax, laplacianType);
+Core::DiscreteFunction<Real, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt outN) const {
+    DiscreteFunction_CPU &newFunc = *new DiscreteFunction_CPU(outN, xMin, xMax, laplacianType);
 
     const RealArray &X = getSpace().getHostData();
     const Real inc_d = N / Real(outN);
@@ -86,7 +86,7 @@ Core::DiscreteFunction<Real, Real> *FunctionArbitraryCPU::CloneWithSize(PosInt o
     return &newFunc;
 }
 
-Core::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const FunctionT &func,
+Core::DiscreteFunction<Real, Real> &DiscreteFunction_CPU::Apply(const FunctionT &func,
                                                                 Core::DiscreteFunction<Real, Real> &out) const {
     auto &outSpace = out.getSpace();
 
@@ -99,7 +99,7 @@ Core::DiscreteFunction<Real, Real> &FunctionArbitraryCPU::Apply(const FunctionT 
     return out;
 }
 
-DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &out) const {
+DiscreteFunction &DiscreteFunction_CPU::Laplacian(DiscreteFunction &out) const {
 
     if(laplacianType == RadialSymmetry2D)
     {
@@ -135,7 +135,7 @@ DiscreteFunction &FunctionArbitraryCPU::Laplacian(DiscreteFunction &out) const {
     return out;
 }
 
-Real FunctionArbitraryCPU::integrate() const {
+Real DiscreteFunction_CPU::integrate() const {
 
     auto sum = .0;
     for(const auto &v : this->getSpace().getHostData())

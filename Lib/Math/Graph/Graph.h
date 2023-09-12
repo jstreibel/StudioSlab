@@ -71,9 +71,10 @@ namespace Core::Graphics {
         virtual auto countDisplayItems() const -> Count;
         void nameLabelDraw(const Styles::PlotStyle &style, const Str& label);
 
-        void drawGUI();
         void drawPointSets();
         void drawCurves();
+        void drawGUI();
+        void drawXHair();
 
     public:
         explicit Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,

@@ -10,16 +10,16 @@
 
 namespace Core {
 
-    template<typename InputCategory, typename OutputCategory>
-    class NativeFunction : public FunctionT<InputCategory,OutputCategory> {
-        OutputCategory (*nativeFunction)(InputCategory);
+    template<typename BaseFunction>
+    class NativeFunction : public BaseFunction {
+        BaseFunction::OutCategory (*nativeFunction)(BaseFunction::InCategory);
 
     public:
-        explicit NativeFunction(OutputCategory (*nativeFunction)(InputCategory))
-        : FunctionT<InputCategory,OutputCategory>(nullptr, false)
+        explicit NativeFunction(BaseFunction::OutCategory (*nativeFunction)(typename BaseFunction::InCategory))
+        : BaseFunction(nullptr, false)
         , nativeFunction(nativeFunction) {}
 
-        OutputCategory operator()(InputCategory x) const override {
+        BaseFunction::OutCategory operator()(BaseFunction::InCategory x) const override {
             return nativeFunction(x);
         }
 

@@ -18,7 +18,7 @@ void GLFreeTypeTests::draw() {
     Window::draw();
 
     glMatrixMode(GL_MODELVIEW);
-    fix ratio = Real(w)/h;
+    fix ratio = Real(getw())/geth();
     glScaled(1/ratio, 1, 1);
     static Real angle = 0.0;
     glRotated(angle, 0, 0, 1);

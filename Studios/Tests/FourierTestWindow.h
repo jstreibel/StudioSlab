@@ -18,6 +18,7 @@ namespace Tests {
 
         GraphRtoR mFuncGraph;
         Core::Graphics::Graph2D mDFTGraph;
+        GraphRtoR mFTGraph;
         GUIWindow gui;
 
         void updateGraphs();
@@ -26,8 +27,11 @@ namespace Tests {
 
         void draw() override;
 
-
         void notifyReshape(int w, int h) override;
+
+        bool notifyMouseMotion(int x, int y) override;
+
+        bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
     };
 
 } // Tests

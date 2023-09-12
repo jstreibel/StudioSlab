@@ -28,7 +28,7 @@ class Window : public Core::EventListener {
     void setupWindow() const;
 
 protected:
-    int w, h, x, y;
+    RectI windowRect;
 
     bool gotHit = false;
 
@@ -45,7 +45,6 @@ public:
     virtual IntPair getWindowSizeHint();
 
     bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
-
     bool notifyRender(float elTime_msec) override;
 
     void setDecorate(bool _decorate);
@@ -54,13 +53,17 @@ public:
     auto doesHit(int xMouse, int yMouse) const -> bool;
 
     RectI getViewport() const;
-    int getx() const { return x; }
-    int gety() const { return y; }
-    int getw() const { return w; }
-    int geth() const { return h; }
-    void setx(int _x) { this->x = _x; }
-    void sety(int _y) { this->y = _y; }
-    void setSize(int _w, int _h) { this->notifyReshape(_w, _h); }
+    const RectI &getWindowRect() const { return windowRect; };
+    int getx() const { return windowRect.xMin; }
+    int gety() const { return windowRect.yMin; }
+    int getw() const { return windowRect.width(); }
+    int geth() const { return windowRect.height(); }
+    void setx(int x) { windowRect.xMin = x; }
+    void sety(int y) { windowRect.yMin = y; }
+    void setSize(int w, int h) {
+        windowRect.xMax = windowRect.xMin+w;
+        windowRect.yMax = windowRect.yMin+h;
+    }
 
 };
 

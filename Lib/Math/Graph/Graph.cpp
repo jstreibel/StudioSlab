@@ -57,6 +57,7 @@ void Core::Graphics::Graph2D::draw() {
 
     drawGUI();
 
+    drawXHair();
 }
 
 
@@ -291,8 +292,8 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
 
     if(mouseState.leftPressed)
     {
-        const Real dxClampd = - mouseState.dx / (Real)w;
-        const Real dyClampd = mouseState.dy / (Real)h;
+        const Real dxClampd = - mouseState.dx / (Real)getw();
+        const Real dyClampd = mouseState.dy / (Real)geth();
         const Real wGraph = region.width();
         const Real hGraph = region.height();
         const Real dxGraph = wGraph * dxClampd;

@@ -8,21 +8,21 @@
 #include "RtoRDiscreteFunction.h"
 
 namespace RtoR {
-    class FunctionArbitraryCPU : public DiscreteFunction {
+    class DiscreteFunction_CPU : public DiscreteFunction {
     public:
-        FunctionArbitraryCPU(const FunctionArbitraryCPU& toCopy);
-        FunctionArbitraryCPU(const DiscreteFunction& toCopy);
-        FunctionArbitraryCPU(PosInt N, Real xLeft, Real xRight,
+        DiscreteFunction_CPU(const DiscreteFunction_CPU& toCopy);
+        DiscreteFunction_CPU(const DiscreteFunction& toCopy);
+        DiscreteFunction_CPU(PosInt N, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
-        FunctionArbitraryCPU(RealArray_I data, Real xLeft, Real xRight,
+        DiscreteFunction_CPU(RealArray_I data, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
 
         [[nodiscard]] auto Clone() const -> Core::FunctionT<Real, Real> * override;
 
         [[nodiscard]] auto CloneWithSize(PosInt N) const -> Core::DiscreteFunction<Real, Real> * override;
 
-        auto Set(const RealArray &vec) -> FunctionArbitraryCPU &;
-        auto Set(const FunctionT &func) -> FunctionArbitraryCPU & override;
+        auto Set(const RealArray &vec) -> DiscreteFunction_CPU &;
+        auto Set(const FunctionT &func) -> DiscreteFunction_CPU & override;
 
         auto Apply(const MyBase &func,
                    Core::DiscreteFunction<Real, Real> &out)

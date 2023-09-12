@@ -9,6 +9,7 @@
 
 #include <fftw3.h>
 #include <cstring>
+#include <complex>
 
 #define RE_PART 0
 #define IM_PART 1
@@ -76,7 +77,7 @@ namespace RtoR {
         fix Δk = 2 * Constants::pi / L;  // Delta k
         DFTResult result;
 
-        fix scale = 1./Nₒᵤₜ;
+        fix scale = 1./(double)Nₒᵤₜ;
         for( auto n=0; n<Nₒᵤₜ; ++n) {
             fix A = out[n];
             fix A_Re = A[RE_PART] * scale;
@@ -94,4 +95,5 @@ namespace RtoR {
 
         return result;
     }
+
 } // R2toR

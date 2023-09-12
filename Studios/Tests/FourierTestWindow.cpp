@@ -4,16 +4,21 @@
 
 #include "FourierTestWindow.h"
 
+#include "Core/Tools/Log.h"
 
 #include "3rdParty/imgui/imgui.h"
 
 #include "Math/Constants.h"
 #include "Math/Function/NativeFunction.h"
+
 #include "Maps/RtoR/Model/RtoRFunction.h"
-#include "Maps/FunctionRenderer.h"
-#include "Core/Tools/Log.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+
 #include "Maps/RtoR/Calc/FourierTransform.h"
 #include "Maps/RtoR/Model/FunctionsCollection/InverseFourier.h"
+#include "Maps/FunctionRenderer.h"
+#include "Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
+#include "Maps/RtoC/FourierModes.h"
 
 #define Re 0
 #define Im 1
@@ -30,28 +35,43 @@ namespace Tests {
     fix xMin = - .1*L;
     fix xMax =  1.1*L;
 
+    float ω₀ = 0.0;
+    int decimation = 1;
+
     int N_sqrWave = 20;
 
+
+    const char* funcSymbol = "sin";
+
     Real func(Real x) {
-        Real val = 0.0;
-        for(int i=0; i<N_sqrWave; ++i) {
-            int n = 2*i + 1;
-            val += sin(n*ω*x)/(Real)n;
-        }
-        return 2*val/π;
+        if(0) {
+            Real val = 0.0;
+            for (int i = 0; i < N_sqrWave; ++i) {
+                int n = 2 * i + 1;
+                val += sin(n * ω * x) / (Real) n;
+            }
+            return 2 * val / π;
+        } else return A*sin(ω*x);
     }
 
-    Core::NativeFunction<Real, Real> Func(func);
+    Core::NativeFunction<RtoR::Function> Func(func);
     RtoR::InverseFourier FuncRebuilt;
+    RtoC::FourierModes fourierModes(DummyPtr(Func), 0, L, 100);
+    RtoR::ComplexMagnitude amplitudes(DummyPtr(fourierModes));
 
-    FourierTestWindow::FourierTestWindow() : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph", false, N_modes)
+    FourierTestWindow::FourierTestWindow()
+    : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph", false, N_modes)
+    , mFTGraph(-1.1*ω, 1.1*ω, -0.1, 1.1, "", false, 200)
     {
         updateGraphs();
 
+        mFTGraph.addFunction(&amplitudes, Str("ℱ[") + funcSymbol + "](k)", Styles::GetCurrent()->funcPlotStyles[4]);
+
         row.addWindow(DummyPtr(gui), 0.25);
 
-        col.addWindow(DummyPtr(mFuncGraph));
+        col.addWindow(DummyPtr(mFTGraph));
         col.addWindow(DummyPtr(mDFTGraph));
+        col.addWindow(DummyPtr(mFuncGraph));
         row.addWindow(DummyPtr(col));
     }
 
@@ -60,7 +80,9 @@ namespace Tests {
         if( ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
           | ImGui::SliderFloat("L", &L, 0.1, ωₘₐₓ)
           | ImGui::DragInt("N", &N_modes, (float)N_modes / 20.f, 1, 20000)
-          | ImGui::DragInt("Nₛ", &N_sqrWave, 1, 1, 100))
+          | ImGui::DragInt("Nₛ", &N_sqrWave, 1, 1, 100)
+          | ImGui::SliderFloat("ω₀", &ω₀, 0, ωₘₐₓ)
+          | ImGui::SliderInt("dec", &decimation, 1, N_modes))
             updateGraphs();
 
 
@@ -79,17 +101,20 @@ namespace Tests {
     void FourierTestWindow::notifyReshape(int w, int h) {
         Window::notifyReshape(w,h);
 
-        row.setx(x);
-        row.sety(y);
+        row.setx(getx());
+        row.sety(gety());
 
         row.notifyReshape(w, h);
     }
 
     void FourierTestWindow::updateGraphs() {
         static RtoR::DFTResult modes;
+        using FFT = RtoR::FourierTransform;
+
+        fourierModes.setL(L);
+        fourierModes.setNSamples(N_modes);
 
         {
-            using FFT = RtoR::FourierTransform;
 
             modes = FFT::Compute(Func, N_modes, 0, L);
 
@@ -118,7 +143,7 @@ namespace Tests {
             style.filled = false;
             style.lineColor.a = 0.8;
             mDFTGraph.clearPointSets();
-            mDFTGraph.addPointSet(modes.re, style, "ℑ(ℱ[sin(x)])", false);
+            mDFTGraph.addPointSet(modes.re, style, Str("ℑ(ℱ[") + funcSymbol + "(x)])", false);
 
             style = Styles::GetCurrent()->funcPlotStyles[3];
             style.lineColor.inverse();
@@ -126,13 +151,12 @@ namespace Tests {
             style.primitive = Styles::VerticalLines;
             style.filled = false;
             style.lineColor.a = 0.8;
-            mDFTGraph.addPointSet(modes.im, style, "ℜ(ℱ[sin(x)])", false);
+            mDFTGraph.addPointSet(modes.im, style, Str("ℜ(ℱ[") + funcSymbol + "(x)])", false);
 
 
             if (true) {
                 mDFTGraph.set_xMin(-2 * π);
                 mDFTGraph.set_xMax(2*ωₘₐₓ);
-
             } else {
                 auto min = modes.re->getMin();
                 auto max = modes.re->getMax();
@@ -171,13 +195,13 @@ namespace Tests {
             auto style = Styles::GetCurrent()->funcPlotStyles[0].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
-            mFuncGraph.addFunction(&Func, "sin(x)", style);
+            mFuncGraph.addFunction(&Func, funcSymbol, style);
 
             style = Styles::GetCurrent()->funcPlotStyles[1].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             FuncRebuilt.setModes(modes);
-            mFuncGraph.addFunction(&FuncRebuilt, "ℱ⁻¹[ℱ[sin(x)]]", style);
+            mFuncGraph.addFunction(&FuncRebuilt, Str("ℱ⁻¹[ℱ[")+funcSymbol+"(x)]]", style);
 
             mFuncGraph.setResolution(N_modes);
             mFuncGraph.set_xMin(-0.1 * L);
@@ -199,5 +223,14 @@ namespace Tests {
                               {L, +2}});
         }
     }
+
+    bool FourierTestWindow::notifyMouseMotion(int x, int y) {
+        return row.notifyMouseMotion(x,y);
+    }
+
+    bool FourierTestWindow::notifyMouseWheel(int wheel, int direction, int x, int y) {
+        return row.notifyMouseWheel(wheel, direction, x, y);
+    }
+
 
 } // Tests

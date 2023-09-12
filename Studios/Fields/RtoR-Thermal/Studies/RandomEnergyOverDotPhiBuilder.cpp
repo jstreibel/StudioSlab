@@ -17,7 +17,7 @@ RtoR::RandomEnergyOverDotPhiBuilder::RandomEnergyOverDotPhiBuilder()
 auto RtoR::RandomEnergyOverDotPhiBuilder::getBoundary() -> void* {
     auto N = simulationConfig.numericConfig.getN();
     auto h = simulationConfig.numericConfig.geth();
-    auto dotPhi = (RtoR::FunctionArbitraryCPU*)newFunctionArbitrary();
+    auto dotPhi = (RtoR::DiscreteFunction_CPU*)newFunctionArbitrary();
 
     RealArray p(N);
 

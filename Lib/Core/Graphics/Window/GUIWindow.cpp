@@ -24,10 +24,10 @@ void GUIWindow::draw() {
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    const float w_ = float(w) - (float)2 * Core::Graphics::hPadding,
-                h_ = float(h) - (float)2 * Core::Graphics::vPadding;
-    const float x_ = x + Core::Graphics::hPadding,
-                y_ = displayHeight - (h_ + y + Core::Graphics::vPadding);
+    const float w_ = float(getw()) - (float)2 * Core::Graphics::hPadding,
+                h_ = float(geth()) - (float)2 * Core::Graphics::vPadding;
+    const float x_ = getx() + Core::Graphics::hPadding,
+                y_ = displayHeight - (h_ + gety() + Core::Graphics::vPadding);
 
     const float hSpacing = 20.0f;
 
@@ -50,7 +50,7 @@ void GUIWindow::draw() {
                 continue;
             }
 
-            if (i++ % 2 && w_ > 500) ImGui::SameLine(w / 2. - hSpacing);
+            if (i++ % 2 && w_ > 500) ImGui::SameLine(getw() / 2. - hSpacing);
 
             ImGui::TextColored(color, text.c_str(), nullptr);
         }
@@ -59,9 +59,9 @@ void GUIWindow::draw() {
     end();
 
     if(0) {
-        float scaleX = 2.f / w, scaleY = 2.f * 2.f / h;
+        float scaleX = 2.f / getw(), scaleY = 2.f * 2.f / geth();
         glScalef(scaleX, scaleY, 1);
-        glTranslatef(-w / 2.f, h / 4.f, 0);
+        glTranslatef(-getw() / 2.f, geth() / 4.f, 0);
 
 
         {

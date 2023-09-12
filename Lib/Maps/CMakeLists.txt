@@ -22,6 +22,11 @@ else()
 	message(STATUS "CUDA is disabled in Maps.")
 endif()
 
+set ( RTOC_SOURCES
+		RtoC/FourierModes.h		RtoC/FourierModes.cpp
+		RtoC/Function.h
+)
+
 
 set ( RTOR_SOURCES
 		FunctionRenderer.cpp
@@ -59,7 +64,8 @@ set ( RTOR_SOURCES
         RtoR/Model/FunctionsCollection/InverseFourier.h
 		RtoR/Model/FunctionsCollection/Trigonometric.cpp
 		RtoR/Model/FunctionsCollection/Trigonometric.h
-
+		RtoR/Model/FunctionsCollection/ComplexMagnitude.cpp
+		RtoR/Model/FunctionsCollection/ComplexMagnitude.h
 )
 
 
@@ -121,7 +127,7 @@ set ( MAPS_RtoR_LIB_NAME ${FIELDS_BASE_LIB_NAME}-RtoR)
 
 set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME} )
 
-add_library( ${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES})
+add_library( ${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${RTOC_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS})
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})
@@ -129,7 +135,7 @@ message(NOTICE "Added library " ${LIB_LOCAL_NAME})
 
 set ( LIB_LOCAL_NAME ${MAPS_RtoR_LIB_NAME}_GPU )
 
-add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${MAPS_CUDA_SOURCES})
+add_library(${LIB_LOCAL_NAME} STATIC ${RTOR_SOURCES} ${RTOC_SOURCES} ${MAPS_CUDA_SOURCES})
 target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS} ${CUDA_LIBRARIES})
 set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20 )
 #set_property( TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 72 )

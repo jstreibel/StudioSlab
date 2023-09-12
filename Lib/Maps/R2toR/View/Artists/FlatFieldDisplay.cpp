@@ -183,10 +183,6 @@ void R2toR::Graphics::FlatFieldDisplay::repopulateBuffer() {
             auto val = discreteFunc.At(i, j);
             auto color = computeColor(val);
 
-            if(val != 0){
-                Log::Debug() << "Right here;" << Log::Flush;
-            }
-
             texture->setColor(i, j, color);
         }
     }

@@ -27,7 +27,7 @@ namespace RtoR {
 
             fix N = R.size();
 
-            auto amps = DFTModes(new Spaces::PointSet);
+            auto amps = std::make_shared<Spaces::PointSet>();
             for(int i=0; i<N; ++i){
                 fix Re_A = R[i].y;
                 fix Im_A = I[i].y;

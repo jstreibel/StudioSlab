@@ -31,28 +31,28 @@ void WindowRow::arrangeWindows() {
 
     if(m==0) return;
 
-    std::vector<int> computedWidths(m, (int)(w/m));    // "if(freeWidths==m)"
+    std::vector<int> computedWidths(m, (int)(getw()/m));    // "if(freeWidths==m)"
 
     auto freeWidths = CountLessThanZero(widths);
     if(freeWidths==0){
         for(int i=0; i<m; ++i){
             auto relWidth = widths[i];
-            auto width = h * relWidth;
+            auto width = geth() * relWidth;
             computedWidths[i] = (int)width;
         }
     } else if(freeWidths != m) {
         auto reservedWidth = SumLargerThanZero(widths);
-        auto wFree = (float)w * (1-reservedWidth) / (float)freeWidths;
+        auto wFree = (float)getw() * (1-reservedWidth) / (float)freeWidths;
 
         for(int i=0; i<m; ++i){
             auto relWidth = widths[i];
-            auto width = relWidth>0 ? w * relWidth : wFree;
+            auto width = relWidth>0 ? getw() * relWidth : wFree;
             computedWidths[i] = (int)width;
         }
     }
 
     std::vector<int> computed_xPositions(m);
-    auto x = this->x;
+    auto x = this->getx();
     for(int i=0; i<m; ++i){
         computed_xPositions[i] = x;
         x += computedWidths[i];
@@ -61,9 +61,9 @@ void WindowRow::arrangeWindows() {
     auto i=0;
     for(auto &win : windows){
         win->setx(computed_xPositions[i]);
-        win->sety(y);
+        win->sety(gety());
 
-        win->notifyReshape(computedWidths[i], h);
+        win->notifyReshape(computedWidths[i], geth());
 
         i++;
     }

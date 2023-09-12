@@ -32,8 +32,8 @@ void NodeWindow::addSubWindow(Window *subWindow) {
 void NodeWindow::arrange() {
     auto n = children.size();
 
-    auto childWidth  = w;
-    auto childHeight = h;
+    auto childWidth  = getw();
+    auto childHeight = geth();
 
     auto dx = childWidth/n;
     auto dy = childHeight/n;
@@ -49,8 +49,8 @@ void NodeWindow::arrange() {
     for(auto i=0; i<n; ++i){
         auto child = children[i];
 
-        child->setx(x + i*dx);
-        child->sety(y + i*dy);
+        child->setx(getx() + i*dx);
+        child->sety(gety() + i*dy);
         child->setSize(childWidth, childHeight);
 
         auto cast = dynamic_cast<NodeWindow*>(child);

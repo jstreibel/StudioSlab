@@ -136,7 +136,7 @@ void *RtoR::KGBuilder::newFunctionArbitrary() {
             : RtoR::DiscreteFunction::Standard1D_FixedBorder;
 
     if(simulationConfig.dev==CPU)
-        return new RtoR::FunctionArbitraryCPU(N, xLeft, xRight, laplacianType);
+        return new RtoR::DiscreteFunction_CPU(N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA
     else if(simulationConfig.dev==GPU)

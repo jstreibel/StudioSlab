@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tests" type="CMakeRunConfiguration" factoryName="Application" folderName="Tests" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Tests" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Tests">
+  <configuration default="false" name="Tests" type="CMakeRunConfiguration" factoryName="Application" folderName="Tests" PROGRAM_PARAMS="--verbose" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="Tests" CONFIG_NAME="Debug (GPU support)" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="Tests">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

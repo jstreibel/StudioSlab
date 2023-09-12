@@ -39,28 +39,28 @@ void WindowPanel::arrangeWindows() {
     std::vector<int> computedWidths(m);
     auto freeWidths = countFreeWidths();
     if(freeWidths==m){
-        for(auto &w : computedWidths) w=this->w/m;
+        for(auto &w : computedWidths) w=this->getw()/m;
     }
     else if(freeWidths==0){
         for(int i=0; i<m; ++i){
             auto relWidth = this->widths[i];
-            auto width = this->w * relWidth;
+            auto width = this->getw() * relWidth;
             computedWidths[i] = width;
         }
     } else {
         auto reservedWidth = computeReservedWidth();
-        auto dxFree = this->w * (1-reservedWidth) / freeWidths;
+        auto dxFree = this->getw() * (1-reservedWidth) / freeWidths;
 
         for(int i=0; i<m; ++i){
             auto relWidth = this->widths[i];
-            auto width = relWidth>0 ? this->w * relWidth : dxFree;
+            auto width = relWidth>0 ? this->getw() * relWidth : dxFree;
             computedWidths[i] = width;
         }
     }
 
 
     std::vector<int> computedPositions(m);
-    auto x = this->x;
+    auto x = this->getx();
     for(int i=0; i<m; ++i){
         computedPositions[i] = x;
         x += computedWidths[i];
@@ -69,11 +69,11 @@ void WindowPanel::arrangeWindows() {
     auto i=0;
     for(auto &column : columns){
         auto n = column.size();
-        auto dy = this->h / n;
+        auto dy = this->geth() / n;
 
         auto j=0;
         for(auto window : column){
-            auto y = this->y + j*dy;
+            auto y = this->gety() + j*dy;
 
             window->setx(computedPositions[i]);
             window->sety(y);

@@ -209,7 +209,7 @@ void RtoR::Signal::OutGL::draw() {
 
     // *************************** RECORDING *******************************
     {
-        static RtoR::FunctionArbitraryCPU *func = nullptr;
+        static RtoR::DiscreteFunction_CPU *func = nullptr;
 
         std::vector<float> rec_f = JackServer::GetInstance()->getRecording();
         RealArray rec(rec_f.begin(), rec_f.end());
@@ -218,7 +218,7 @@ void RtoR::Signal::OutGL::draw() {
         if(rec.size()){
             if(func != nullptr) delete func;
 
-            func = new RtoR::FunctionArbitraryCPU(rec, .0, recTime);
+            func = new RtoR::DiscreteFunction_CPU(rec, .0, recTime);
 
             fullRecordingGraph.clearFunctions();
             fullRecordingGraph.addFunction(func);
@@ -232,7 +232,7 @@ void RtoR::Signal::OutGL::draw() {
 
     // *************************** SIGNAL TESTS ****************************
     if(1) {
-        static RtoR::FunctionArbitraryCPU *func1 = nullptr,
+        static RtoR::DiscreteFunction_CPU *func1 = nullptr,
                                           *func2 = nullptr;
 
         auto probed = JackServer::GetInstance()->getLastOutputData();
@@ -242,7 +242,7 @@ void RtoR::Signal::OutGL::draw() {
             if (func1 != nullptr) delete func1;
             signalBufferGraph.clearFunctions();
 
-            func1 = new RtoR::FunctionArbitraryCPU(probed.size(), .0, intervalSec);
+            func1 = new RtoR::DiscreteFunction_CPU(probed.size(), .0, intervalSec);
             auto &F1 = func1->getSpace().getHostData();
 
             for (int i = 0; i < probed.size(); i++) F1[i] = probed[i];
@@ -258,7 +258,7 @@ void RtoR::Signal::OutGL::draw() {
             signalFullGraph.clearFunctions();
 
             auto t = lastData.getSimTime();
-            func2 = new RtoR::FunctionArbitraryCPU(pdsize, 0, t);
+            func2 = new RtoR::DiscreteFunction_CPU(pdsize, 0, t);
             auto &F2 = func2->getSpace().getHostData();
 
             for (int i = 0; i < pdsize; i++) F2[i] = probingData[i];
@@ -272,9 +272,9 @@ void RtoR::Signal::OutGL::draw() {
     {
         auto L = 10.;
         auto N = 50, NMore = 800, NLess = 10;
-        static auto func =     RtoR::FunctionArbitraryCPU(N, .0, L);
-        static auto funcMore = RtoR::FunctionArbitraryCPU(NMore, .0, L);
-        static auto funcLess = RtoR::FunctionArbitraryCPU(NLess, .0, L);
+        static auto func =     RtoR::DiscreteFunction_CPU(N, .0, L);
+        static auto funcMore = RtoR::DiscreteFunction_CPU(NMore, .0, L);
+        static auto funcLess = RtoR::DiscreteFunction_CPU(NLess, .0, L);
         static bool started = false;
 
         if(!started){

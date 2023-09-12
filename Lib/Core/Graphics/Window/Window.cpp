@@ -9,7 +9,7 @@
 #include "Core/Graphics/OpenGL/GLUTUtils.h"
 
 
-Window::Window(int x, int y, int w, int h) : w(w), h(h), x(x), y(y) {}
+Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
 
 void Window::draw() {
     glUseProgram( 0 );
@@ -77,6 +77,11 @@ void Window::addArtist(Artist *pArtist) {
 auto Window::doesHit(int xMouse, int yMouse) const -> bool {
     auto hScreen = GLUTUtils::getScreenHeight();
 
+    fix x = windowRect.xMin;
+    fix y = windowRect.yMin;
+    fix w = windowRect.width();
+    fix h = windowRect.height();
+
     const_cast<bool&>(gotHit) = xMouse > x && xMouse < x + w && hScreen - yMouse > y && hScreen - yMouse < y + h;
     return gotHit;
 }
@@ -89,12 +94,11 @@ bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     return true;
 }
 
-void Window::notifyReshape(int _w, int _h) {
-    this->w = _w;
-    this->h = _h;
+void Window::notifyReshape(int w, int h) {
+    this->setSize(w, h);
 
     for(auto artist : content)
-        artist->reshape(_w, _h);
+        artist->reshape(w, h);
 }
 
 IntPair Window::getWindowSizeHint() { return {-1, -1}; }
@@ -110,10 +114,10 @@ bool Window::notifyRender(float elTime_msec) {
 }
 
 RectI Window::getViewport() const {
-    auto _x = x +     Core::Graphics::hPadding,
-         _y = y +     Core::Graphics::vPadding,
-         _w = w - 2 * Core::Graphics::hPadding,
-         _h = h - 2 * Core::Graphics::vPadding;
+    auto _x = getx() +     Core::Graphics::hPadding,
+         _y = gety() +     Core::Graphics::vPadding,
+         _w = getw() - 2 * Core::Graphics::hPadding,
+         _h = geth() - 2 * Core::Graphics::vPadding;
 
     return {_x, _x+_w, _y, _y+_h};
 }

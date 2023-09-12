@@ -38,7 +38,7 @@ namespace Tests {
         addWindow(DummyPtr(stats), .15);
         addWindow(DummyPtr(graph));
 
-        static Core::NativeFunction<Real,Real> function(cubicBezierInterpolation);
+        static Core::NativeFunction<RtoR::Function> function(cubicBezierInterpolation);
         graph.addFunction(&function, "Bezier");
 
         fix lim = 1.e3;

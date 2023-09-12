@@ -7,9 +7,11 @@
 #include "Core/Tools/Log.h"
 #include "Utils/EncodingUtils.h"
 
+#include "Core/Backend/GUIBackend.h"
 
-#define vPixelsToSpaceScale (region.height() / h);
-#define hPixelsToSpaceScale (region.width() / w);
+
+#define vPixelsToSpaceScale (region.height() / geth());
+#define hPixelsToSpaceScale (region.width() / getw());
 
 fix vTickHeightinPixels_x2 = 5;
 fix vGraphPaddingInPixels = 60;
@@ -65,12 +67,22 @@ void Core::Graphics::Graph2D::drawAxes() {
 
 }
 
+void Core::Graphics::Graph2D::drawXHair() {
+    if(!gotHit) return;
+
+    fix &mouse = GUIBackend::GetInstance().getMouseState();
+    // GUIBackend::GetInstance().getSystemWindowData();
+    fix xMouse = mouse.x;
+    fix yMouse = mouse.y;
+
+}
+
 void Core::Graphics::Graph2D::computeTicksSpacings() {
     if(1){
         const Real Δy = region.height();
 
         const auto theLog = log10(Δy);
-        const auto spacing = pow(10., floor(theLog) - 1.);
+        const auto spacing = 2*pow(10., floor(theLog) - 1.);
         const auto theRest = theLog - floor(theLog);
         const auto multiplier = floor(pow(10., theRest));
 
@@ -81,7 +93,7 @@ void Core::Graphics::Graph2D::computeTicksSpacings() {
         const auto Δx = region.width();
 
         const auto theLog = log10(Δx);
-        const auto spacing = pow(10., floor(theLog) - 1.);
+        const auto spacing = 2*pow(10., floor(theLog) - 1.);
         const auto theRest = theLog - floor(theLog);
         const auto multiplier = floor(pow(10., theRest));
 
@@ -161,7 +173,6 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glDisable(GL_LINE_STIPPLE);
 
     fix Δy = region.height();
-    fix Δx = region.width();
     fix xLocationOfYAxis = region.xMin + 20*hPixelsToSpaceScale;
     fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
 

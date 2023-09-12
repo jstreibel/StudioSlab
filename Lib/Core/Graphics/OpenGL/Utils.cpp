@@ -93,7 +93,7 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
 
         window->setx(0);
         window->sety(0);
-        window->setSize(width, height);
+        window->notifyReshape(width, height);
 
         glClear(GL_COLOR_BUFFER_BIT);
 
@@ -101,7 +101,7 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
 
         window->setx(xOld);
         window->sety(yOld);
-        window->setSize(wOld, hOld);
+        window->notifyReshape(wOld, hOld);
 
         glFlush();
 

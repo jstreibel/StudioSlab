@@ -25,6 +25,6 @@ void GraphR2toR::_renderFunction(const R2toR::Function *func, Styles::PlotStyle 
 void GraphR2toR::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
-    zpr.zprReshape(x, y, w, h);
+    zpr.zprReshape(getx(), gety(), getw(), geth());
 }
 

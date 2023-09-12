@@ -118,7 +118,7 @@ void SetSchemeDark3 () {
             Styles::PlotStyle{Styles::Color::FromHex("#ffa600"), Styles::Primitive::SolidLine, true, Styles::Nil, 1.5}
     };
 
-    static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
+    static Core::Graphics::Writer writer(Resources::fontFileName(10), 20);
     current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, &writer, &writer, graphs});
 }
 

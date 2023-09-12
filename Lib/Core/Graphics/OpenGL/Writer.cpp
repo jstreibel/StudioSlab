@@ -24,7 +24,7 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     font    = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
     buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 
-    Log::Info() << "Writer being instantiated. Will start generating atlas now." << Log::Flush;
+    Log::Critical() << "Writer being instantiated. Will start generating atlas now." << Log::Flush;
 
     Styles::Color white = {1, 1, 1, 1};
     setBufferText(glyphsToLoad, {0, 0}, white);
@@ -45,7 +45,7 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     mat4_set_identity(&model);
     mat4_set_identity(&view);
 
-    Log::Info() << "Writer with font '" << fontFile << "' with size " << ptSize << "pts instantiated." << Log::Flush;
+    Log::Success() << "Writer with font '" << fontFile << "' with size " << ptSize << "pts instantiated." << Log::Flush;
 }
 
 Core::Graphics::Writer::~Writer() {

@@ -13,9 +13,11 @@
 #include <iostream>
 #include <sstream>
 #include <cmath>
+#include <complex>
 
 
 typedef floatt              Real;
+typedef std::complex<Real>  Complex;
 
 typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
@@ -34,14 +36,17 @@ typedef int_least64_t       BigInt;
 
 fix HUGE_NUMBER = ((unsigned long long)0)-1;
 
-typedef std::valarray<Real>   RealArray;
-typedef const RealArray       RealArray_I;
-typedef RealArray             RealArray_O;
-typedef RealArray             VecFloat_IO;
+typedef std::valarray<Real>    RealArray;
+typedef std::vector<Real>      RealVector;
+typedef const RealArray        RealArray_I;
+typedef RealArray              RealArray_O;
+typedef RealArray              VecFloat_IO;
 
-typedef std::valarray<int>    IntVector;
+typedef std::valarray<Complex> ComplexArray;
+typedef std::vector<Complex>   ComplexVector;
 
-typedef std::vector<Real>     RealVector;
+typedef std::valarray<int>     IntVector;
+
 
 template<class T1, class T2>
 struct Pair {

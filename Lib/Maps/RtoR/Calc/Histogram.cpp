@@ -42,7 +42,7 @@ void Histogram::Compute(const RtoR::DiscreteFunction &func, int _nBins) {
 }
 
 RtoR::Function *Histogram::asPDFFunction() const {
-    auto *func = new RtoR::FunctionArbitraryCPU(bins.size(), vMin, vMax);
+    auto *func = new RtoR::DiscreteFunction_CPU(bins.size(), vMin, vMax);
 
     auto &F = func->getSpace().getHostData();
 

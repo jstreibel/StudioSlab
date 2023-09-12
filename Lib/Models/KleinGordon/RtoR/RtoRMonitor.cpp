@@ -57,7 +57,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 
     mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "U/L"));
     mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
-    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx", "<(𝜕ₓϕ)²>"));
+    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
     mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
 
     panel.addWindow(&mEnergyGraph);
