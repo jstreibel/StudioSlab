@@ -10,8 +10,8 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/KG-RtoREquationState.cpp
 		KleinGordon/RtoR/KG-RtoRBoundaryCondition.cpp
 		KleinGordon/RtoR/RtoRMonitor.cpp
-		KleinGordon/RtoR/SimHistory.cpp
-		KleinGordon/RtoR/SimHistory.h
+		KleinGordon/RtoR/Output/SimHistory.cpp
+		KleinGordon/RtoR/Output/SimHistory.h
 
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
@@ -21,6 +21,9 @@ set ( MODELS_SOURCES
 		KleinGordon/R2toR/EquationState.cpp
         LangevinKleinGordon/LangevinKGSolver.cpp
         LangevinKleinGordon/LangevinKGSolver.h
+		KleinGordon/RtoR/Output/SimHistoryWindow.h
+        KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
+        KleinGordon/RtoR/Output/SimHistory_Fourier.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

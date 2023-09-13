@@ -16,18 +16,24 @@ struct DimensionMetaData {
      * each of its entry. For example, a discretization of real space x, y, z
      * with 256x512x64 sites would have N={256,512,64}.
      */
-    explicit DimensionMetaData(std::vector<PosInt> N) : nDim(N.size()), N(N) {
+    explicit DimensionMetaData(UIntArray N, RealArray h) : nDim(N.size()), N(N), h(h) {
+        assert(N.size() == h.size());
     }
 
-    PosInt getNDim() const { return nDim; }
-    PosInt getN(PosInt dim) const { return N[dim]; }
-    const std::vector<PosInt>& getN() const { return N; }
-    PosInt computeFullDiscreteSize() const;
-    PosInt operator[](PosInt dim) const { return getN(dim); }
+    UInt getNDim()      const                       { return nDim; }
+    auto getN(UInt dim) const -> const UInt &       { return N[dim]; }
+    auto getN()         const -> const UIntArray &  { return N; }
+    auto geth(UInt dim) const -> const Real &       {return h[dim]; }
+    auto geth()         const -> const RealArray &  {return h; }
+
+    auto getL(UInt dim) const ->       Real         { return N[dim]*h[dim]; }
+
+    UInt computeFullDiscreteSize() const;
 
 private:
-    const PosInt nDim;
-    std::vector<PosInt> N;
+    const UInt nDim;
+    UIntArray N;
+    RealArray h;
 };
 
 
@@ -35,13 +41,13 @@ class DiscreteSpaceCPU;
 
 class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
 public:
-    DiscreteSpace(DimensionMetaData dim, Real h);
+    DiscreteSpace(DimensionMetaData dim);
     virtual ~DiscreteSpace();
-    auto hostCopy(PosInt maxResolution) const -> DiscreteSpaceCPU *;
+    auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
 
-    const DimensionMetaData& getDim() const { return dim; }
+    const DimensionMetaData& getMetaData() const { return dimensionMetaData; }
 
-    PosInt getTotalDiscreteSites() const;
+    UInt getTotalDiscreteSites() const;
 
     virtual
     auto dataOnGPU() const -> bool { return false; }
@@ -53,8 +59,6 @@ public:
     auto getHostData(bool sync=false)           const -> const RealArray&;
     auto getHostData(bool sync=false)                 ->       RealArray&;
 
-    auto geth() const ->       Real;
-
     // TODO colocar essa aqui no operator =
     virtual void setToValue(const DiscreteSpace &param) = 0;
 
@@ -64,9 +68,8 @@ public:
     virtual void upload();
 
 protected:
-    const DimensionMetaData dim;
+    const DimensionMetaData dimensionMetaData;
     RealArray data;
-    const Real h;
 };
 
 

@@ -32,7 +32,7 @@ namespace Numerics::OutputSystem {
         auto getDescription() const -> Str;
         auto getName() const -> Str;
 
-        virtual auto computeNextRecStep(PosInt currStep) -> size_t;
+        virtual auto computeNextRecStep(UInt currStep) -> size_t;
 
         /*!
          * This function allows child classes to give additional info on whether info should be output, or completely

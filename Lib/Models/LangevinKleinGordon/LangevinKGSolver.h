@@ -17,8 +17,6 @@
 #include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 
-#define FType(a) typename FieldState::a
-
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
 namespace RtoR {

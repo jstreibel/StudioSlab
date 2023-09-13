@@ -16,6 +16,8 @@ namespace RtoR::Thermal {
     : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
         interface->addParameters({&temperature, &dissipation, &transientGuess});
 
+        setLaplacianPeriodicBC();
+
         if(doRegister) registerToManager();
     }
 

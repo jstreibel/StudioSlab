@@ -9,10 +9,12 @@
 
 #define min(a, b) ((a)<(b)?(a):(b))
 
-void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
-    static Count nextRow = 0;
-    static Real lastUpdatedTime = -1;
+RtoR::Graphics::HistoryDisplay::HistoryDisplay(Str name, Real phiMin, Real phiMax)
+: R2toR::Graphics::FlatFieldDisplay(name, phiMin, phiMax) {
 
+}
+
+void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     if(t_ == lastUpdatedTime) return;
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
@@ -45,8 +47,6 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
 
     nextRow = upToRow+1;
     lastUpdatedTime = t_;
-
-    // static auto source = LabelSource();
-    // static auto label = new Label
-    // addLabel();
 }
+
+

@@ -20,13 +20,13 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
     dimMode = p.dimMode;
 }*/
 
-auto NumericConfig::getN() const -> size_t { return **N; }
+auto NumericConfig::getN() const -> UInt { return **N; }
 auto NumericConfig::getL() const -> floatt { return **L; }
 auto NumericConfig::getxMin() const -> floatt { return **xCenter - **L * .5; }
 auto NumericConfig::getxMax()  const -> floatt { return **xCenter + **L * .5; }
 auto NumericConfig::gett() const -> floatt { return **t; }
 auto NumericConfig::getr() const -> floatt { return **dt / **h; }
-auto NumericConfig::getn() const -> Count {
+auto NumericConfig::getn() const -> UInt {
     return n;
 }
 auto NumericConfig::geth() const -> floatt {
@@ -77,7 +77,7 @@ void NumericConfig::notifyCLArgsSetupFinished() {
         Log::Attention("NumericParams") << " parameter 'dt' is <0. Setting to dt = h/10 = " << *dt;
     }
 
-    n = PosInt(**t / **dt);
+    n = UInt(**t / **dt);
 }
 
 

@@ -14,7 +14,7 @@
 
 using namespace RtoR;
 
-DiscreteFunctionGPU::DiscreteFunctionGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType)
+DiscreteFunctionGPU::DiscreteFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType)
     : DiscreteFunction(N, xMin, xMax, device::GPU, laplacianType) {
 
 }
@@ -27,7 +27,7 @@ Core::DiscreteFunction<Real, Real> &DiscreteFunctionGPU::Set(const RtoR::Functio
 
     if(!func.isGPUFriendly()) {
         const floatt L = xMax - xMin;
-        for (PosInt n = 0; n < N; n++) {
+        for (UInt n = 0; n < N; n++) {
             const floatt x = L * n / (N - 1) + xMin;
 
             XHost[n] = func(x);

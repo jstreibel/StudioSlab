@@ -48,10 +48,12 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 , Δt(params.gett()*0.1)
 , showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , hamiltonian(hamiltonian)
-, mFieldsGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, (int)params.getN()*4)
+, mFieldsGraph( params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, (int)params.getN()*4)
 , mEnergyGraph("Energy")
 , mHistoryGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
 , mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(150))
+, mFullHistoryDisplay("ϕ(t,x)")
+, mFullSpaceFTHistoryDisplay("ℱ[ϕ(t)](k)", 0, 1.2)
 {
     auto sty = Styles::GetCurrent()->funcPlotStyles.begin();
 
@@ -64,16 +66,20 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 
     panel.addWindow(&mFieldsGraph, true, 0.80);
     panel.addWindow(&mHistoryGraph);
+    panel.addWindow(&mCorrelationGraph);
+    panel.addWindow(&mSpaceFourierModesGraph);
 
     {
+        auto windowColumn = new WindowColumn;
+
         auto style = Styles::GetCurrent()->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
 
-        auto windowColumn = new WindowColumn;
+        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"]);
+
         windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
-        windowColumn->addWindow(DummyPtr(mCorrelationGraph), 0.25);
-        windowColumn->addWindow(DummyPtr(mSpaceFourierModesGraph), 0.25);
+        windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
 
         panel.addWindow(windowColumn, ADD_NEW_COLUMN);
     }
@@ -87,6 +93,7 @@ void RtoR::Monitor::draw() {
     fix V_str = hamiltonian.getThePotential()->mySymbol();
 
     updateHistoryGraphs();
+    updateFTHistoryGraph();
     updateFourierGraph();
 
     // ************************ RT MONITOR**********************************
@@ -159,7 +166,6 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
             return true;
         case '4':
             showEnergyDensity = !showEnergyDensity;
-            if(showEnergyDensity) Log::Attention() << "Important: energy density is computing with the signum potential only." << Log::Flush;
             return true;
         default:
             break;
@@ -207,119 +213,143 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
     mCorrelationGraph.setScale(2.5e3);
 }
 
+void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory) {
+    spaceFTHistory = std::move(sftHistory);
+}
+
 void RtoR::Monitor::updateHistoryGraphs() {
+    if(simulationHistory == nullptr) return;
+
     fix L = params.getL();
     fix xMin = params.getxMin();
     fix xMax = params.getxMax();
     fix tMax = params.gett();
 
-    if(simulationHistory != nullptr) {
-        stats.begin();
-        if (ImGui::CollapsingHeader("History")) {
-            if (ImGui::SliderFloat("t", &t_history, .0f, (float) getLastSimTime()))
-                step_history = (int) (t_history / (float) params.gett() * (float) params.getn());
+    stats.begin();
+    if (ImGui::CollapsingHeader("History")) {
+        if (ImGui::SliderFloat("t", &t_history, .0f, (float) getLastSimTime()))
+            step_history = (int) (t_history / (float) params.gett() * (float) params.getn());
 
-            if (ImGui::SliderInt("step", &step_history, 0, (int) lastData.getSteps()))
-                t_history = (float) (step_history / (Real) params.getn() * params.gett());
+        if (ImGui::SliderInt("step", &step_history, 0, (int) lastData.getSteps()))
+            t_history = (float) (step_history / (Real) params.getn() * params.gett());
+    }
+    stats.end();
+
+    static auto section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
+
+    static bool isSetup = false;
+    bool updateSamples = false;
+    if( not isSetup ) {
+        mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
+        mFullHistoryDisplay.setup(simulationHistory);
+
+        isSetup = true;
+
+        updateSamples = true;
+    }
+
+    section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
+    mHistoryGraph.clearFunctions();
+    mHistoryGraph.addFunction(&mHistorySectionFunc, "History");
+
+    {
+        static Real stepMod, lastStepMod = 0;
+        stepMod = (Real) (step % (this->getnSteps() * 100));
+        if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
+        lastStepMod = stepMod;
+    }
+
+    {
+        stats.begin();
+        if (ImGui::CollapsingHeader("Correlation graph")) {
+            ImGui::Text("Space correlation @ t=%f", t_history);
+
+            auto nSamples = (int)sampler->get_nSamples();
+            if(ImGui::SliderInt("samples", &nSamples, 10, MAX_SAMPLES)) {
+                sampler->set_nSamples(nSamples);
+                updateSamples = true;
+            }
+
+            auto graphResolution = (int)mCorrelationGraph.getResolution();
+            if(ImGui::SliderInt("graph resolution", &graphResolution, 10, (int)simulationHistory->getN())) {
+                mCorrelationGraph.setResolution(graphResolution);
+                updateSamples = true;
+            }
+
+            fix Δt_max = params.gett();
+            auto Dt = (float)Δt;
+            if(ImGui::SliderFloat("sampling range (Delta t)", &Dt, (float)tMax/(float)simulationHistory->getM(), (float)Δt_max)) {
+                Δt = Dt;
+                sampler->invalidateSamples();
+                updateSamples = true;
+            }
         }
         stats.end();
 
-        static auto section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-
-        static bool isSetup = false;
-        bool updateSamples = false;
-        if( not isSetup ) {
-            mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
-            mFullHistoryDisplay.setup(simulationHistory);
-
-            isSetup = true;
-
-            updateSamples = true;
-        }
-
-        section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-        mHistoryGraph.clearFunctions();
-        mHistoryGraph.addFunction(&mHistorySectionFunc, "History");
-
+        static auto last_t_history = 0.0;
+        if(updateSamples || (t_history != last_t_history))
         {
-            static Real stepMod, lastStepMod = 0;
-            stepMod = (Real) (step % (this->getnSteps() * 100));
-            if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
-            lastStepMod = stepMod;
-        }
-
-        {
-            stats.begin();
-            if (ImGui::CollapsingHeader("Correlation graph")) {
-                ImGui::Text("Space correlation @ t=%f", t_history);
-
-                auto nSamples = (int)sampler->get_nSamples();
-                if(ImGui::SliderInt("samples", &nSamples, 10, MAX_SAMPLES)) {
-                    sampler->set_nSamples(nSamples);
-                    updateSamples = true;
-                }
-
-                auto graphResolution = (int)mCorrelationGraph.getResolution();
-                if(ImGui::SliderInt("graph resolution", &graphResolution, 10, (int)simulationHistory->getN())) {
-                    mCorrelationGraph.setResolution(graphResolution);
-                    updateSamples = true;
-                }
-
-                fix Δt_max = params.gett();
-                auto Dt = (float)Δt;
-                if(ImGui::SliderFloat("sampling range (Delta t)", &Dt, (float)tMax/(float)simulationHistory->getM(), (float)Δt_max)) {
-                    Δt = Dt;
-                    sampler->invalidateSamples();
-                    updateSamples = true;
-                }
-            }
-            stats.end();
-
-            static auto last_t_history = 0.0;
-            if(updateSamples || (t_history != last_t_history))
             {
+                corrSampleLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, t_history}, {xMaxLinesInFullHistoryView, t_history});
+            }
+
+            // Sampler in correlation function
+            {
+                fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
+                fix br = Real2D{xMax, min(t_history + Δt, tMax)};
+
+                fix nSamples = sampler->get_nSamples();
+                sampler = std::make_shared<R2toR::RandomSampler>(tl, br, nSamples);
+
+                mCorrelationFunction.setSampler(sampler);
+            }
+
+            {
+                mFullHistoryDisplay.clearPointSets();
+
+                // Correlation samples in full history
                 {
-                    corrSampleLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, t_history}, {xMaxLinesInFullHistoryView, t_history});
+                    auto style = Styles::GetCurrent()->funcPlotStyles[0];
+                    style.primitive = Styles::Point;
+                    style.thickness = 3;
+                    auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
+                    mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
                 }
 
-                // Sampler in correlation function
+                // Correlation graph
                 {
-                    fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
-                    fix br = Real2D{xMax, min(t_history + Δt, tMax)};
-
-                    fix nSamples = sampler->get_nSamples();
-                    sampler = std::make_shared<R2toR::RandomSampler>(tl, br, nSamples);
-
-                    mCorrelationFunction.setSampler(sampler);
-                }
-
-                {
-                    mFullHistoryDisplay.clearPointSets();
-
-                    // Correlation samples in full history
-                    {
-                        auto style = Styles::GetCurrent()->funcPlotStyles[0];
-                        style.primitive = Styles::Point;
-                        style.thickness = 3;
-                        auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
-                        mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
-                    }
-
-                    // Correlation graph
-                    {
-                        auto style = Styles::GetCurrent()->funcPlotStyles[1];
-                        mCorrelationGraph.clearPointSets();
-                        auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
-                                                                        mCorrelationGraph.getResolution());
-                        mCorrelationGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
-                        mCorrelationGraph.reviewGraphRanges();
-                    }
+                    auto style = Styles::GetCurrent()->funcPlotStyles[1];
+                    mCorrelationGraph.clearPointSets();
+                    auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
+                                                                    mCorrelationGraph.getResolution());
+                    mCorrelationGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
+                    mCorrelationGraph.reviewGraphRanges();
                 }
             }
-            last_t_history = t_history;
         }
+        last_t_history = t_history;
     }
 }
+
+void RtoR::Monitor::updateFTHistoryGraph() {
+    if(spaceFTHistory == nullptr) return;
+
+    static bool isSetup = false;
+
+    if( not isSetup ) {
+        mFullSpaceFTHistoryDisplay.setup(spaceFTHistory);
+
+        isSetup = true;
+    }
+
+    static Real stepMod, lastStepMod = 0;
+    stepMod = (Real) (step % (this->getnSteps() * 100));
+    if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
+        mFullSpaceFTHistoryDisplay.set_t(t);
+    lastStepMod = stepMod;
+}
+
+
 
 void RtoR::Monitor::updateFourierGraph() {
     static RtoR::DFTResult modes;
@@ -380,6 +410,9 @@ void RtoR::Monitor::updateFourierGraph() {
 
     lastStep = step;
 }
+
+
+
 
 
 

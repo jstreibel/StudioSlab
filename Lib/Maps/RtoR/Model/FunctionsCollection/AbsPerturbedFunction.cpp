@@ -8,7 +8,7 @@ inline floatt Hn(floatt arg){
     return UnitStep(arg+2.0) - UnitStep(arg-2.0);
 }
 
-AbsPerturbedDiffFunction::AbsPerturbedDiffFunction(PosInt Ns) : Ns(Ns) {
+AbsPerturbedDiffFunction::AbsPerturbedDiffFunction(UInt Ns) : Ns(Ns) {
 
 }
 
@@ -30,7 +30,7 @@ Core::FunctionT<Real, Real> *AbsPerturbedDiffFunction::Clone() const {
 
 //
 // Created by joao on 13/09/2019.
-AbsPerturbedFunction::AbsPerturbedFunction(PosInt Ns) : Ns(Ns) {
+AbsPerturbedFunction::AbsPerturbedFunction(UInt Ns) : Ns(Ns) {
 
 }
 

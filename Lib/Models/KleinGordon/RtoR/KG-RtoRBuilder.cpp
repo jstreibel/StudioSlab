@@ -4,25 +4,30 @@
 
 #include "KG-RtoRBuilder.h"
 
+#include <utility>
+
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Backend/Console/ConsoleBackend.h"
 
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
-#include "KG-RtoRSystemGordonGPU.h"
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
-#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
-#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "KG-RtoRSolver.h"
+#include "KG-RtoRSystemGordonGPU.h"
 #include "KG-RtoRBoundaryCondition.h"
-
-#include "Models/KleinGordon/R2toR/EquationSolver.h"
 
 #include "Math/Numerics/Output/Format/BinarySOF.h"
 #include "Math/Numerics/Output/Format/ResolutionReductionFilter.h"
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-#include "SimHistory.h"
+
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+
+#include "Models/KleinGordon/R2toR/EquationSolver.h"
+
+#include "Output/SimHistory.h"
+#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -30,8 +35,8 @@
 
 #define DONT_REGISTER_IMMEDIATELY false
 
-RtoR::KGBuilder::KGBuilder(Str name, Str generalDescription, bool doRegister)
-: Fields::KleinGordon::KGBuilder("RtoR-" + name, generalDescription, DONT_REGISTER_IMMEDIATELY) {
+RtoR::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegister)
+: Fields::KleinGordon::KGBuilder("RtoR-" + name, std::move(generalDescription), DONT_REGISTER_IMMEDIATELY) {
     interface->addParameters({&Potential, &mass});
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
@@ -65,12 +70,13 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         OutputFormatterBase *outputFilter = new BinarySOF;
 
-        auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}));
+        fix L = p.getL();
+        auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}, {L/ *outputResolution}));
 
         const auto N = (Real) p.getN();
         const Real Np = *outputResolution;
         const Real r = p.getr();
-        const auto stepsInterval = PosInt(N/(Np*r));
+        const auto stepsInterval = UInt(N/(Np*r));
 
         if(0) outputFileName += Str("-N=") + ToStr(N, 0);
 
@@ -92,12 +98,18 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
         if(t>0)
         {
             const auto L = p.getL();
+            const auto xMin = p.getxMin();
             const auto Nₒᵤₜ = *outputResolution;
-            const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
-            auto simHistory = new SimHistory(simulationConfig, nₒᵤₜ, Nₒᵤₜ);
+
+            auto simHistory = new SimHistory(simulationConfig, Nₒᵤₜ, xMin, L);
+            // auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 300, 0, 20*M_PI);
+            auto ftHistory = new SimHistory_DFT(simulationConfig);
 
             outputManager->addOutputChannel(simHistory);
-            outputOpenGL->setSimulationHistory(DummyPtr(simHistory->getData()));
+            outputManager->addOutputChannel(ftHistory);
+
+            outputOpenGL->setSimulationHistory   (DummyPtr(simHistory->getData()));
+            outputOpenGL->setSpaceFourierHistory (DummyPtr(ftHistory ->getData()));
 
             if(*OpenGLMonitor_stepsPerIdleCall < 0) {
                 outputOpenGL->setnSteps(simHistory->getnSteps());

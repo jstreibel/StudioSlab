@@ -37,14 +37,14 @@ class NumericConfig : public InterfaceOwner {
     RealParameter::Ptr      dt       =  RealParameter    ::New(-1, "dt", "Timestep parameter. If negative value, then it"
                                                                          "is set to dt=h/10.");
 
-    PosInt n;
+    UInt n;
 
 public:
 	NumericConfig(bool doRegister=true);
 	NumericConfig(const NumericConfig&) = delete;
 
-    auto getn()                    const -> PosInt;
-    auto getN()                    const -> PosInt;
+    auto getn()                    const -> UInt;
+    auto getN()                    const -> UInt;
     auto getL()                    const -> Real;
     auto getxMin()                 const -> Real;
 	auto getxMax()                 const -> Real;

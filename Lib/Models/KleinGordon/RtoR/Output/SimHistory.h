@@ -9,19 +9,25 @@
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Maps/RtoR/Model/RtoRFunction.h"
+#include "Maps/RtoR/Model/FunctionsCollection/Bypass.h"
+#include "../KG-RtoREquationState.h"
 
 class SimHistory : public Numerics::OutputSystem::Socket {
-    R2toR::DiscreteFunction *fieldData;
+    R2toR::DiscreteFunction *data;
     RealVector timestamps;
     bool dataIsOnGPU;
 
+    virtual auto filter(Real x, const RtoR::EquationState &input) -> Real;
+
+protected:
     auto handleOutput(const OutputPacket &packet) -> void override;
+
 public:
-    SimHistory(const Core::Simulation::SimulationConfig &simConfig,
-                     PosInt                              timeResolution,
-                     PosInt                              spaceResolution);
+    SimHistory(const Core::Simulation::SimulationConfig &simConfig, Resolution N, Real xMin, Real L, const Str& name = "SimulationHistory");
 
     auto getData() const -> const R2toR::DiscreteFunction&;
+
 };
 
 

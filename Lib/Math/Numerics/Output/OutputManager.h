@@ -28,7 +28,7 @@ public:
     void notifyIntegrationFinished(const OutputPacket &info);
 
     /****** QUERY ******/
-    auto computeNStepsToNextOutput(PosInt currStep) -> PosInt;
+    auto computeNStepsToNextOutput(UInt currStep) -> UInt;
 
     /****** INPUT/OUTPUT ******/
     void addOutputChannel(Numerics::OutputSystem::Socket *out, bool keepTrack = true);

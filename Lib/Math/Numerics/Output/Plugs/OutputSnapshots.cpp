@@ -81,7 +81,7 @@ bool OutputSnapshot::shouldOutput(const Real, const long unsigned timeStep) {
     return false;
 }
 
-size_t OutputSnapshot::computeNextRecStep(PosInt currStep) {
+size_t OutputSnapshot::computeNextRecStep(UInt currStep) {
     size_t smallest = snapSteps.back();
     for(auto step : snapSteps) if(step < smallest) smallest = step;
 

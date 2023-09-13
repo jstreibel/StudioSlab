@@ -13,7 +13,7 @@ namespace RtoR {
     public:
         Str myName() const override;
 
-        DiscreteFunctionGPU(PosInt N, Real xMin, Real xMax, LaplacianType laplacianType);
+        DiscreteFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType);
 
         auto Clone() const -> FunctionT * override;
 

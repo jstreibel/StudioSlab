@@ -14,7 +14,7 @@ class AAHyperCube : Space {
     Measure *measure;
 
 public:
-    AAHyperCube(PosInt dim, Real L);
+    AAHyperCube(UInt dim, Real L);
     ~AAHyperCube();
 
     [[nodiscard]] auto getMeasure() const -> const Measure override;

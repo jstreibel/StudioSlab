@@ -21,6 +21,7 @@ namespace R2toR::Graphics {
             Real cMap_epsArg = 1;
             Real cMap_min = -1.1;
             Real cMap_max =  1.1;
+            bool symmetricMaxMin = true;
 
         protected:
             R2toR::Function::ConstPtr func    = nullptr;
@@ -32,11 +33,16 @@ namespace R2toR::Graphics {
 
         public:
             explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.)
-            : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title)), cMap_min(phiMin), cMap_max(phiMax) {};
+            : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+            , cMap_min(phiMin)
+            , cMap_max(phiMax)
+            , symmetricMaxMin(Common::areEqual(phiMax,-phiMin)) {};
             explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
 
             void setup(R2toR::Function::ConstPtr function);
             auto getFunction() const -> R2toR::Function::ConstPtr;
+
+            void setColorMap(Styles::ColorMap colorMap);
 
             void draw() override;
 

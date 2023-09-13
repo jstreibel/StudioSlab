@@ -16,10 +16,11 @@ namespace R2toR {
         fix N = inFunc.getN();
         fix M = inFunc.getM();
         fix D = inFunc.getDomain();
-        fix h = inFunc.getSpace().geth();
+        fix hx = inFunc.getSpace().getMetaData().geth(0);
+        fix hy = inFunc.getSpace().getMetaData().geth(1);
         fix outN = N;
         fix outM = M/2 + 1;
-        OUT fourierTransformedField = * new R2toR::DiscreteFunction_CPU(N, M, D.xMin, D.yMin, h);
+        OUT fourierTransformedField = * new R2toR::DiscreteFunction_CPU(N, M, D.xMin, D.yMin, hx, hy);
 
 
         IN hostData = &inFunc.getSpace().getHostData()[0];

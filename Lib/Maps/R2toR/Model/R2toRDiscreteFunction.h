@@ -22,15 +22,15 @@ namespace R2toR {
 
     class DiscreteFunction : public Core::DiscreteFunction<Real2D,Real> {
     protected:
-        const PosInt N, M;
+        const UInt N, M;
         const Real xMin, xMax,
                    yMin, yMax,
-                   h;
+                   hx, hy;
 
     public:
         typedef Core::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
 
-        DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev);
+        DiscreteFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, device dev);
         DiscreteFunction(const NumericConfig &, device);
 
         auto operator()(Real2D x) const -> Real override;
@@ -40,11 +40,11 @@ namespace R2toR {
         auto diff(int n)           const -> MyBase::Ptr override;
 
         virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;
-        virtual Real              At(PosInt n, PosInt m)               const = 0;
-        virtual Real             &At(PosInt n, PosInt m)                     = 0;
+        virtual Real              At(UInt n, UInt m)               const = 0;
+        virtual Real             &At(UInt n, UInt m)                     = 0;
 
-        auto getN()      const -> PosInt;
-        auto getM()      const -> PosInt;
+        auto getN()      const -> UInt;
+        auto getM()      const -> UInt;
         auto getDomain() const -> Domain;
         auto myName()    const -> Str override;
     };

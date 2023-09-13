@@ -76,7 +76,7 @@ namespace Core {
          * @return The value of the integral.
          */
         virtual auto integrate()    const -> OutputCategory { throw "Function::integrate not implemented."; }
-        virtual auto Clone()        const -> FunctionT *     { throw Str("Function::Clone() of function '") + myName() + "' not implemented."; }
+        virtual auto Clone()        const -> FunctionT *     { throw Str("Method Clone() of Function '") + myName() + "' not implemented."; }
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
@@ -85,7 +85,7 @@ namespace Core {
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
         virtual Str mySymbol() const { return "f(x)"; }
-        virtual Str myName() const { return "unnamed"; }
+        virtual Str myName() const { return Common::getClassName(this); }
 
         // RENDERING
         struct RenderingOptions {
@@ -103,7 +103,7 @@ namespace Core {
             , xMax(xMax)
             { }
 
-            RenderingOptions(PosInt n,
+            RenderingOptions(UInt n,
                              const InputCategory &xMin,
                              const InputCategory &xMax)
             : hint(UseCustomResolution_n)
@@ -121,7 +121,7 @@ namespace Core {
             } hint = UseChoiceResolution;
 
             InputCategory dx;
-            PosInt n{};
+            UInt n{};
             InputCategory xMin, xMax;
         };
 

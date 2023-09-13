@@ -21,7 +21,7 @@ void OutputManager::output(OutputPacket &infoVolatile, bool force)
 }
 
 
-auto OutputManager::computeNStepsToNextOutput(PosInt currStep) -> PosInt
+auto OutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt
 {
     fix forceOverstepping = params.shouldForceOverstepping();
 

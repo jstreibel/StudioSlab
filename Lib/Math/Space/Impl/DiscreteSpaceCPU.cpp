@@ -6,7 +6,7 @@
 
 //
 // Created by joao on 11/10/2019.
-DiscreteSpaceCPU::DiscreteSpaceCPU(DimensionMetaData dim, Real h) : DiscreteSpace(dim, h) {
+DiscreteSpaceCPU::DiscreteSpaceCPU(DimensionMetaData dim) : DiscreteSpace(dim) {
 
 }
 
@@ -69,7 +69,7 @@ DiscreteSpace &DiscreteSpaceCPU::Multiply(floatt a) {
 void DiscreteSpaceCPU::setToValue(const DiscreteSpace &inSpace) {
     RealArray &X = getHostData();
     const RealArray &fVec = inSpace.getHostData();
-    const PosInt N = inSpace.getTotalDiscreteSites();
+    const UInt N = inSpace.getTotalDiscreteSites();
 
     OMP_PARALLEL_FOR(n, N)
         X[n] = fVec[n];

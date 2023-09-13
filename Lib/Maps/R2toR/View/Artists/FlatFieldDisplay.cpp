@@ -20,7 +20,7 @@ glTexCoord2d(ti, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
 
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function)
 {
-    setup(function);
+    setup(std::move(function));
 }
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
@@ -53,9 +53,16 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     if(func != nullptr) {
 
         if (ImGui::Begin("Stats")) {
-            if (ImGui::CollapsingHeader("Full history output")) {
+            if (ImGui::CollapsingHeader((title + " history output").c_str())) {
 
                 {
+                    if(logScale) {
+                        ImGui::Text("σ := sign(ϕ)");
+                        ImGui::Text("ϕ ↦ σ ln(|ϕ|/ε + 1)");
+                    }
+                    ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
+
+
                     auto min = (float) cMap_min;
                     auto max = (float) cMap_max;
                     auto eps = (float) cMap_epsArg;
@@ -67,13 +74,13 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
                     ImGui::PushItemWidth(relativeWidth);
                     if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
                         cMap_min = min;
-                        cMap_max = -min;
+                        if(symmetricMaxMin) cMap_max = -min;
                         invalidateBuffer();
                     }
                     ImGui::SameLine();
                     if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
                         cMap_max = max;
-                        cMap_min = -max;
+                        if(symmetricMaxMin) cMap_min = -max;
                         invalidateBuffer();
                     }
                     ImGui::PopItemWidth();
@@ -128,18 +135,18 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
         texture->bind();
         glBegin(GL_QUADS);
         {
-            auto pixelSizeInTexCoord = 1. / texture->getWidth();
+            auto hPixelSizeInTexCoord = 1. / texture->getWidth();
 
-            auto ti = 0.0 + pixelSizeInTexCoord;
-            auto tf = 1.0;// - pixelSizeInTexCoord;
+            auto ti = 0.0 + hPixelSizeInTexCoord;
+            auto tf = 1.0 - hPixelSizeInTexCoord;
 
             auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
 
-            fix fieldWidth = domain.xMax - domain.xMin;
             glColor4d(1, 1, 1, 1);
             drawFlatField(0.0);
 
-            glColor4d(1, 1, 1, 0.85);
+            // glColor4d(1, 1, 1, 0.85);
+            // fix fieldWidth = domain.xMax - domain.xMin;
             // for (int i = 1; i <= 2; i++) {
             //     drawFlatField(i * fieldWidth);
             //     drawFlatField(-i * fieldWidth);
@@ -257,18 +264,26 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
 
     fix windowRatio = (double) vp.height() / vp.width();
     fix fieldRatio = Δy/Δx;
+    fix scaleFactor = windowRatio/fieldRatio;
 
-    let _xMin = dom_xMin;
-    let _xMax = dom_xMin + Δx;
+    fix Δx_scaled = Δx/scaleFactor;
+    fix xMid = .5*(dom_xMax+dom_xMin);
+
+    let _xMin = xMid - .5*Δx_scaled;
+    let _xMax = xMid + .5*Δx_scaled;
     let _yMin = dom_yMin;
     let _yMax = dom_yMin + Δy;
 
     set_xMin(_xMin);
     set_xMax(_xMax);
     set_yMin(_yMin);
-    set_yMax(_yMax/fieldRatio*windowRatio);
+    set_yMax(_yMax);
 }
 
 auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr {
     return func;
+}
+
+void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
+    cMap = colorMap;
 }

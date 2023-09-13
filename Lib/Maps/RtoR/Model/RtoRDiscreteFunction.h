@@ -25,19 +25,19 @@ namespace RtoR {
 
     public:
         DiscreteFunction(const DiscreteFunction &toCopy);
-        DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
+        DiscreteFunction(UInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
 
     public:
         virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;
         LaplacianType getLaplacianType() const { return laplacianType; }
 
     public:
-        Real mapIntToPos(PosInt i) const;
-        PosInt mapPosToInt(Real x) const;
+        Real mapIntToPos(UInt i) const;
+        UInt mapPosToInt(Real x) const;
 
         Real operator()(Real x) const override;
 
-        const PosInt N;
+        const UInt N;
         const Real xMin;
         const Real xMax;
     protected:

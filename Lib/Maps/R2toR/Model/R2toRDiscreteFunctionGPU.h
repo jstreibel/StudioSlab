@@ -15,14 +15,14 @@ namespace R2toR {
         DiscreteFunction_GPU *helper= nullptr;
 
     public:
-        DiscreteFunction_GPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
-        DiscreteFunction_GPU(PosInt N, Real sMin, Real h);
+        DiscreteFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real h);
+        DiscreteFunction_GPU(UInt N, Real sMin, Real h);
         ~DiscreteFunction_GPU() override;
 
         auto Laplacian        (DiscreteFunction &outFunc)            const -> DiscreteFunction & override;
 
         auto Clone()                                                 const -> Type             * override;
-        auto CloneWithSize    (PosInt N)                             const -> DiscrBase        * override;
+        auto CloneWithSize    (UInt N)                             const -> DiscrBase        * override;
 
         auto Set              (const MyBase &func)                         -> DiscreteFunction & override;
         auto SetArb           (const DiscreteFunctionBase &func)           -> DiscreteFunction & override;
@@ -36,8 +36,8 @@ namespace R2toR {
 
         auto operator+=(const MyBase &func)                                -> DiscrBase        & override;
 
-        auto At               (PosInt n, PosInt m)                   const -> Real               override;
-        auto At               (PosInt n, PosInt m)                         -> Real             & override;
+        auto At               (UInt n, UInt m)                   const -> Real               override;
+        auto At               (UInt n, UInt m)                         -> Real             & override;
 
     };
 

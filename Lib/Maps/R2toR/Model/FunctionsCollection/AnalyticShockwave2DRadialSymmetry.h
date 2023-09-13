@@ -12,7 +12,7 @@ namespace RtoR {
 class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         Real t=0.;
 
-        const PosInt quant = 40;
+        const UInt quant = 40;
         Real a_k[40] =    {  1.,       2.43845,   4.04976,   5.77999,  7.60296,  9.50278, 11.4687, 13.4927, 15.5689, 17.6925,
                             19.8596,  22.0669,   24.3117,   26.5917,  28.9047,  31.2491,  33.6232, 36.0256, 38.455,  40.9103,
                             43.3904,  45.8944,   48.4214,   50.9705,  53.5411,  56.1325,  58.7439, 61.3749, 64.0248, 66.6931,
@@ -23,9 +23,9 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
                           -364.675,  397.509,  -431.594,   466.919, -503.474,  541.247, -580.23,  620.412,-661.785, 704.341,
                           -748.071,  792.968,  -839.023,   886.23,  -934.582,  984.072,-1034.69, 1086.44,-1139.31, 1193.28};
 
-        Real W_k(PosInt k, Real z) const;
+        Real W_k(UInt k, Real z) const;
 
-        Real theta_k(PosInt k, Real z) const;
+        Real theta_k(UInt k, Real z) const;
 
     public:
         explicit AnalyticShockwave2DRadialSymmetry(Real a0 = 1.0);
@@ -39,7 +39,7 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
     class AnalyticShockwave2DRadialSymmetryTimeDerivative : public RtoR::Function {
         Real t=0.;
 
-        const PosInt quant = 40;
+        const UInt quant = 40;
         Real a_k[40] =    {  1.,       2.43845,    4.04976,   5.77999,  7.60296,  9.50278, 11.4687, 13.4927, 15.5689, 17.6925,
                              19.8596,  22.0669,   24.3117,   26.5917,  28.9047,  31.2491,  33.6232, 36.0256, 38.455,  40.9103,
                              43.3904,  45.8944,   48.4214,   50.9705,  53.5411,  56.1325,  58.7439, 61.3749, 64.0248, 66.6931,
@@ -50,9 +50,9 @@ class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
                              -364.675,  397.509,  -431.594,   466.919, -503.474,  541.247, -580.23,  620.412,-661.785, 704.341,
                              -748.071,  792.968,  -839.023,   886.23,  -934.582,  984.072,-1034.69, 1086.44,-1139.31, 1193.28};
 
-        Real dW_kdz(PosInt k, Real z) const;
+        Real dW_kdz(UInt k, Real z) const;
 
-        Real theta_k(PosInt k, Real z) const;
+        Real theta_k(UInt k, Real z) const;
 
     public:
         AnalyticShockwave2DRadialSymmetryTimeDerivative() {throw "Analytic shockwave time derivative: I'm not working.";}

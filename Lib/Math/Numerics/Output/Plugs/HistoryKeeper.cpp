@@ -59,9 +59,9 @@ auto HistoryKeeper::renderMetaDataAsPythonDictionary() const -> Str {
 
     oss << R"({, "outresT": " << (countTotal+count))";
 
-    DimensionMetaData recDim = spaceFilter.getOutputDim();
+    DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
     Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
-    for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
+    for(UInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
     oss << R"(, "data_channels": 2)";
     oss << R"str(, "data_channel_names": ("phi", "ddtphi"), )str";
 

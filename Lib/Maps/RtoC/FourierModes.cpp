@@ -13,6 +13,8 @@ namespace RtoC {
     }
 
     Complex FourierModes::operator()(Real k) const {
+        if(baseFunc == nullptr) return {};
+
         fix dx = L/(Real)samples;
 
         auto &f = *baseFunc;
@@ -28,10 +30,13 @@ namespace RtoC {
         return aₖ*dx;
     }
 
+    void FourierModes::setBaseFunction(RtoR::Function::Ptr func) { baseFunc = func; }
+
     void FourierModes::set_xMin(Real val) { xMin = val; }
 
     void FourierModes::setL(Real val) { L = val; }
 
     void FourierModes::setNSamples(Count N) { samples = N; }
+
 
 } // RtoR

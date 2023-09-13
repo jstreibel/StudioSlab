@@ -10,7 +10,7 @@ Real Fields::KleinGordon::Energy::operator[](const R2toR::EquationState &functio
     const auto &dphidt = function.getDPhiDt();
     const auto &phiSpace = phi.getSpace();
 
-    auto h = phiSpace.geth();
+    auto h = phiSpace.getMetaData().geth(0); // TODO use both hx and hy here
     auto inv_2h = .5/h;
     auto h2 = h*h;
     auto N1 = phi.getN();
@@ -46,7 +46,7 @@ Real Fields::KleinGordon::Energy::computeRadial_method1(const R2toR::EquationSta
     const auto &dphidt = function.getDPhiDt();
     const auto &phiSpace = phi.getSpace();
 
-    auto h = phiSpace.geth();
+    auto h = phiSpace.getMetaData().geth(0); // TODO use both hx and hy here
     auto inv_2h = .5/h;
     auto h2 = h*h;
     auto N1 = phi.getN();
@@ -93,7 +93,7 @@ Real Fields::KleinGordon::Energy::computeRadial_method2(const R2toR::EquationSta
 
     assert(phi.getN() == phi.getM());
 
-    auto h = phi.getSpace().geth();
+    auto h = phi.getSpace().getMetaData().geth(0); // TODO use both hx and hy here
     auto inv_2h = .5/h;
     auto h2 = h*h;
     auto N_ = phi.getN();

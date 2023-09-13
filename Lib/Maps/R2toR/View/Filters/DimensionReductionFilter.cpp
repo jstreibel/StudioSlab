@@ -11,7 +11,7 @@
 
 //
 // Created by joao on 15/10/2019.
-DimensionReductionFilter::DimensionReductionFilter(PosInt resolution, RtoR2::StraightLine alongLine)
+DimensionReductionFilter::DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine)
     : line(alongLine), N_low(resolution) {
     Log::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
     << " to " << (alongLine.getx0() + alongLine.getr()) << Log::Flush;
@@ -21,16 +21,15 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
     R2toR::DiscreteFunction &f = outputInfo.getEqStateData<R2toR::EquationState>()->getPhi();
     // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
 
-    if(f.getSpace().getDim().getNDim() != 2) throw "Is rong.";
+    if(f.getSpace().getMetaData().getNDim() != 2) throw "Is rong.";
 
     f.getSpace().syncHost();
 
     const R2toR::Domain domain = f.getDomain();
     const auto L = domain.getLx();
-    const Real h_low = L / N_low;
     const auto delta_s = line.getΔs();
     const auto sMin = line.get_sMin();
-    DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(), h_low);
+    DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(L));
     auto &data = newPhi->getHostData();
 
     if(0) {
@@ -58,7 +57,7 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
         }
     }
 
-    for(PosInt i=0; i < N_low; i++){
+    for(UInt i=0; i < N_low; i++){
         const Real s = sMin + delta_s * Real(i) / N_low; // parametro da reta.
         const auto x = line(s);
 
@@ -68,6 +67,7 @@ DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outpu
     return {newPhi, nullptr};
 }
 
-DimensionMetaData DimensionReductionFilter::getOutputDim() const {
-    return DimensionMetaData({N_low});
+DimensionMetaData DimensionReductionFilter::getOutputDim(Real L) const {
+    const Real h_low = L / N_low;
+    return DimensionMetaData({N_low}, {h_low});
 }

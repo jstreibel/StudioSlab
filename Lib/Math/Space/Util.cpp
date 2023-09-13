@@ -8,7 +8,7 @@
 
 #include <iostream>
 
-void PrintSpace(const DiscreteSpace& space, PosInt resolution, Real scale){
+void PrintSpace(const DiscreteSpace& space, UInt resolution, Real scale){
     if(space.getDim().getNDim() == 1){
         const Real ratio = Real(resolution)/space.getDim()[0];
         for(int i=0; i<resolution; i++){

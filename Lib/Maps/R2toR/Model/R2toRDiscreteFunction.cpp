@@ -12,24 +12,26 @@
 
 //
 // Created by joao on 30/09/2019.
-R2toR::DiscreteFunction::DiscreteFunction(PosInt N, PosInt M, Real xMin, Real yMin, Real h, device dev)
-: DiscreteFunctionBase(DimensionMetaData({N, M}), h, dev)
+R2toR::DiscreteFunction::DiscreteFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, device dev)
+: DiscreteFunctionBase(DimensionMetaData({N, M}, {hx, hy}), dev)
 , N(N), M(M)
-, xMin(xMin), xMax(xMin+(Real)N*h)
-, yMin(yMin), yMax(yMin+(Real)M*h)
-, h(h)
+, xMin(xMin), xMax(xMin+(Real)N*hx)
+, yMin(yMin), yMax(yMin+(Real)M*hy)
+, hx(hx)
+, hy(hy)
 { }
 
 R2toR::DiscreteFunction::DiscreteFunction(const NumericConfig &p, device dev)
-: R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), dev)
+: R2toR::DiscreteFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), p.geth(), dev)
 { }
 
 Real R2toR::DiscreteFunction::operator()(Real2D x) const {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
-    const Real d = h;
-    int n = int((N-1) * (d+x.x-xMin)/Lx);
-    int m = int((M-1) * (d+x.y-yMin)/Ly);
+    const Real dx = hx;
+    const Real dy = hy;
+    int n = int((N-1) * (dx+x.x-xMin)/Lx);
+    int m = int((M-1) * (dy+x.y-yMin)/Ly);
 
     // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
     //  nao seja incluido no codigo.
@@ -51,16 +53,17 @@ Real R2toR::DiscreteFunction::operator()(Real2D x) const {
 auto R2toR::DiscreteFunction::operator()(Real2D x) -> Real& {
     const Real Lx = xMax-xMin;
     const Real Ly = yMax-yMin;
-    const Real d = h;
-    int n = int(floor(Real(N-1) * (d+x.x-xMin)/Lx));
-    int m = int(floor(Real(M-1) * (d+x.y-yMin)/Ly));
+    const Real dx = hx;
+    const Real dy = hy;
+    int n = int(floor(Real(N-1) * (dx+x.x-xMin)/Lx));
+    int m = int(floor(Real(M-1) * (dy+x.y-yMin)/Ly));
 
     return At(n,m);
 }
 
-PosInt R2toR::DiscreteFunction::getN() const { return N; }
+UInt R2toR::DiscreteFunction::getN() const { return N; }
 
-PosInt R2toR::DiscreteFunction::getM() const { return M; }
+UInt R2toR::DiscreteFunction::getM() const { return M; }
 
 R2toR::Domain R2toR::DiscreteFunction::getDomain() const { return {xMin, xMax, yMin, yMax}; }
 
@@ -76,10 +79,11 @@ Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
     auto& X = getSpace().getHostData();
     int j = n + m*N;
 
-    const Real inv2h = .5/h;
     if(dim == 0){
+        const Real inv2h = .5/hx;
         return inv2h * (At(n+1, m) - At(n-1, m));
     } else if (dim == 1){
+        const Real inv2h = .5/hy;
         return inv2h * (At(n, m+1) - At(n, m-1));
     } else throw "Tidak bagus diff.";
 }

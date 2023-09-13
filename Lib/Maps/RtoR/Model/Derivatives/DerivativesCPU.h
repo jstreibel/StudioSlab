@@ -9,18 +9,18 @@ namespace RtoR {
 
     class DerivativeCPU : public RtoR::Function {
 
-        auto dfdx_fixed_3s(const PosInt &X) const -> Real;
-        auto dfdx_fixed_5s(const PosInt &X) const -> Real;
-        auto dfdx_periodic_3s(const PosInt &X) const -> Real;
-        auto dfdx_loose_3s(PosInt X) const -> Real;
+        auto dfdx_fixed_3s(const UInt &X) const -> Real;
+        auto dfdx_fixed_5s(const UInt &X) const -> Real;
+        auto dfdx_periodic_3s(const UInt &X) const -> Real;
+        auto dfdx_loose_3s(UInt X) const -> Real;
 
-        auto d2fdx2_fixed_3s(const PosInt &X) const -> Real;
-        auto d2fdx2_fixed_5s(PosInt X) const -> Real;
-        auto d2fdx2_periodic_3s(const PosInt &X) const -> Real;
+        auto d2fdx2_fixed_3s(const UInt &X) const -> Real;
+        auto d2fdx2_fixed_5s(UInt X) const -> Real;
+        auto d2fdx2_periodic_3s(const UInt &X) const -> Real;
 
         const RealArray *f_;
         const Real h, inv12h, inv2h, invhsqr, inv12hsqr;
-        const PosInt N;
+        const UInt N;
 
         bool periodic;
 

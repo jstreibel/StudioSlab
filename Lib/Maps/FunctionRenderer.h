@@ -19,22 +19,22 @@ namespace RtoR {
 
     class FunctionRenderer {
     public:
-        static auto toPointSet(const RtoR::Function &func, Real xMin, Real xMax, PosInt resolution, Real scale=1.0) -> Spaces::PointSet::Ptr;
+        static auto toPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale=1.0) -> Spaces::PointSet::Ptr;
 
         static void renderFunction(          const RtoR::DiscreteFunction &func, Styles::Color c, bool filled,
                                              Real scale = 1.0);
         static void renderFunction(          const RtoR::Function &func, Styles::Color c, bool filled,
-                                             Real xMin, Real xMax, PosInt resolution, Real scale = 1.0);
+                                             Real xMin, Real xMax, UInt resolution, Real scale = 1.0);
         static void renderFunction(          const R2toR::Function &func, Real xMin, Real yMin,
-                                             Real L, PosInt nLines, PosInt linesRes, Real scale = 1.0);
+                                             Real L, UInt nLines, UInt linesRes, Real scale = 1.0);
 
 
         static void renderSection(           const R2toR::Function &func, const RtoR2::StraightLine &section,
-                                             Styles::PlotStyle style, PosInt resolution, Real scale=1.0);
+                                             Styles::PlotStyle style, UInt resolution, Real scale=1.0);
         static void renderHorizontalSection( const R2toR::Function &func, Styles::Color c, bool filled,
-                                             Real xMin, Real xMax, PosInt resolution);
+                                             Real xMin, Real xMax, UInt resolution);
         static void renderVerticalSection(   const R2toR::Function &func, Styles::Color c, bool filled,
-                                             Real yMin, Real yMax, PosInt resolution);
+                                             Real yMin, Real yMax, UInt resolution);
 
 
     };

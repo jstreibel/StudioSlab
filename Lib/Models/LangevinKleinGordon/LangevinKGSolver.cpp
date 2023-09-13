@@ -7,7 +7,7 @@
 #include "Utils/RandUtils.h"
 #include "Utils/OMPUtils.h"
 
-Real xi() {
+Real ξ() {
     return RandUtils::gaussianNoise(.0, 1.0);
 }
 
@@ -21,7 +21,7 @@ void RtoR::LangevinKGSolver::ComputeImpulses() {
 
     fix nSplit = 1;
     OMP_PARALLEL_FOR(i, X.size()/nSplit) {
-        fix x = xi();
+        fix x = ξ();
         fix k = nSplit*i;
         for(auto n=0; n<nSplit; ++n) {
             auto &x1 = X[k + n];

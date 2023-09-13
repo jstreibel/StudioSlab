@@ -16,22 +16,22 @@ DiscreteFunction::DiscreteFunction(const DiscreteFunction &toCopy)
                                          toCopy.laplacianType)
                                          {  }
 
-DiscreteFunction::DiscreteFunction(PosInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
-    : Core::DiscreteFunction<Real, Real>(DimensionMetaData({N}), (xMax - xMin) / Real(N), dev), N(N),
+DiscreteFunction::DiscreteFunction(UInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
+    : Core::DiscreteFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N)}), dev), N(N),
       xMin(xMin), xMax(xMax), laplacianType(laplacianType)
 {
 
 }
 
-auto DiscreteFunction::mapIntToPos(PosInt i) const -> Real {
+auto DiscreteFunction::mapIntToPos(UInt i) const -> Real {
     const floatt L = xMax-xMin;
-    const Real h_2 = .5*getSpace().geth();
+    const Real h_2 = .5*getSpace().getMetaData().geth(0);
     return (L * Real(i)/Real(N-1) + xMin) + h_2;
 }
 
-auto DiscreteFunction::mapPosToInt(Real x) const -> PosInt {
-    const Real h = getSpace().geth();
-    return PosInt((x-xMin)/h);
+auto DiscreteFunction::mapPosToInt(Real x) const -> UInt {
+    const Real h = getSpace().getMetaData().geth(0);
+    return UInt((x-xMin)/h);
 }
 
 Real DiscreteFunction::operator()(Real x) const {

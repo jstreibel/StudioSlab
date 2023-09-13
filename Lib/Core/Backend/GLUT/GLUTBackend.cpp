@@ -144,7 +144,9 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
                        0x0391, 0x03C9, // Greek
                        0x03D0, 0x03F6,
                        0x2070, 0x209F, // Superscript / subscript
+                       0x21A6, 0x21A6+1,
                        ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
+                       ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
                        0x2200, 0x22FF, // Mathematical operators
                        0x2A00, 0x2AFF, // Supplemental mathematical operators
                        0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
@@ -152,8 +154,7 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
                 };
         ImFontGlyphRangesBuilder glyphRangesBuilder;
         glyphRangesBuilder.AddRanges(ranges);
-        for(ImWchar c: { 0x1D62 // subscript 'i'
-                                                    }) glyphRangesBuilder.AddChar(c);
+        for(ImWchar c: { ImWchar(0x1D62) /* subscript 'i'*/, ImWchar(0x21A6) }) glyphRangesBuilder.AddChar(c);
         static ImVector<ImWchar> vRanges;
         glyphRangesBuilder.BuildRanges(&vRanges);
 

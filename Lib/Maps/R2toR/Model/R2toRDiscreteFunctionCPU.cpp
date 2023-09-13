@@ -9,26 +9,26 @@
 
 using namespace R2toR;
 
-#define USE_DISCRETE_LAPLACE_KERNEL_BIG true
+#define USE_DISCRETE_LAPLACE_KERNEL_BIG false
 
 //
 // Created by joao on 19/09/19.
-DiscreteFunction_CPU::DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h)
-    : DiscreteFunction(N, M, xMin, yMin, h, device::CPU) {
+DiscreteFunction_CPU::DiscreteFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy)
+    : DiscreteFunction(N, M, xMin, yMin, hx, hy, device::CPU) {
 
 }
 
-Core::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt outN) const {
+Core::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(UInt outN) const {
     assert(M==N); // (por enquanto so vai funcionar assim.
 
-    DiscreteFunction_CPU &myClone = *new DiscreteFunction_CPU(outN, outN, xMin, yMin, h);;
+    DiscreteFunction_CPU &myClone = *new DiscreteFunction_CPU(outN, outN, xMin, yMin, hx, hy);;
 
     const Real incX_d = N / Real(outN);
     const Real incY_d = M / Real(outN);
-    for(PosInt n=0; n<outN; n++){
-        for(PosInt m=0; m<outN; m++){
-            const PosInt myn = n*incX_d;
-            const PosInt mym = m*incY_d;
+    for(UInt n=0; n<outN; n++){
+        for(UInt m=0; m<outN; m++){
+            const UInt myn = n*incX_d;
+            const UInt mym = m*incY_d;
             myClone.At(n,m) = At(myn,mym);
         }
     }
@@ -36,25 +36,28 @@ Core::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(PosInt
     return &myClone;
 }
 
-Real DiscreteFunction_CPU::At(PosInt n, PosInt m) const {
+Real DiscreteFunction_CPU::At(UInt n, UInt m) const {
     assert(n + m*N < N*M);
 
     return getSpace().getHostData()[n + m * N];
 }
 
-Real &DiscreteFunction_CPU::At(PosInt n, PosInt m) {
+Real &DiscreteFunction_CPU::At(UInt n, UInt m) {
     assert(n + m*N < N*M);
     return getSpace().getHostData()[n + m * N];
 }
 
 DiscreteFunction &DiscreteFunction_CPU::Laplacian(DiscreteFunction &outFunc) const {
+    if(!Common::areEqual(hx, hy)) throw "No computation of discrete laplacian for dx!=dy";
+
+    fix h = hx;
     const Real invhsqr = 1./(h*h);
 
-    /*for(PosInt n=0; n<N; n++){
+    /*for(UInt n=0; n<N; n++){
         outFunc.At(n,0) = 0.0;
         outFunc.At(n,M-1) = 0.0;
     }
-    for(PosInt m=1; m<M-1; m++){ // de 1 ate M-2 porque o 0 e o M-1 ja foram feitos acima.
+    for(UInt m=1; m<M-1; m++){ // de 1 ate M-2 porque o 0 e o M-1 ja foram feitos acima.
         outFunc.At(0,m) = 0.0;
         outFunc.At(N-1,m) = 0.0;
     }*/
@@ -63,9 +66,9 @@ DiscreteFunction &DiscreteFunction_CPU::Laplacian(DiscreteFunction &outFunc) con
     begin = be.first==0?1:be.first;
     end = be.second==N?N-1:be.second;
 
-    for(PosInt n=begin; n<end; n++)
+    for(UInt n=begin; n<end; n++)
     {
-        for (PosInt m = 1; m < M - 1; m++) {
+        for (UInt m = 1; m < M - 1; m++) {
 #if USE_DISCRETE_LAPLACE_KERNEL_BIG
             const Real dx = At(n - 1, m) + At(n + 1, m);
             const Real dy = At(n, m - 1) + At(n, m + 1);
@@ -88,8 +91,8 @@ DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const R2toR::Function &func) {
     const Real L2 = yMax-yMin;
 
     OMP_GET_BEGIN_END(begin, end, N)
-    for(PosInt n=begin; n<end; n++)
-        for(PosInt m=0; m<M; m++) {
+    for(UInt n=begin; n<end; n++)
+        for(UInt m=0; m<M; m++) {
             Real2D x = {L1 * n / (N - 1) + xMin, L2 * m / (M - 1) + yMin};
 
             if(!func.domainContainsPoint(x)) continue;
@@ -106,8 +109,8 @@ DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const R2toR::Function &func) {
 //    cast(func, const ArbitraryFunction&, function)
 //
 //    OMP_GET_BEGIN_END(begin, end, N)
-//    for(PosInt n=begin; n<end; n++)
-//        for(PosInt m=0; m<M; m++)
+//    for(UInt n=begin; n<end; n++)
+//        for(UInt m=0; m<M; m++)
 //            At(n, m) = func.At(n,m);
 //
 //    return *this;
@@ -120,8 +123,8 @@ DiscreteFunction_CPU::Apply(const FunctionT<Real, Real> &func,
     cast(fOut, DiscreteFunction &, out)
 
     OMP_GET_BEGIN_END(begin, end, N)
-    for(PosInt n=begin; n<end; n++)
-        for(PosInt m=0; m<M; m++)
+    for(UInt n=begin; n<end; n++)
+        for(UInt m=0; m<M; m++)
             fOut.At(n, m) = func(At(n,m));
 
     return out;

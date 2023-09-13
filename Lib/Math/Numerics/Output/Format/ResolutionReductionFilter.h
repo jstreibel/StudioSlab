@@ -15,7 +15,7 @@ public:
 
     DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
 
-    auto getOutputDim() const -> DimensionMetaData override;
+    auto getOutputDim(const Real L) const -> DimensionMetaData override;
 
 private:
     DimensionMetaData newDim;

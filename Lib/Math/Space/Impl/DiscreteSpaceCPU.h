@@ -10,7 +10,7 @@
 
 class DiscreteSpaceCPU : public DiscreteSpace {
 public:
-    DiscreteSpaceCPU(DimensionMetaData dim, Real h);
+    DiscreteSpaceCPU(DimensionMetaData dim);
 
     auto Add                 (const DiscreteSpace &toi)                                 -> DiscreteSpace & override;
     auto StoreAddition       (const DiscreteSpace &space1, const DiscreteSpace &space2) -> DiscreteSpace & override;

@@ -25,7 +25,7 @@ namespace OpenGL {
 
         bool bind() const;
 
-        bool upload(PosInt row=0, Count nRows=0);
+        bool upload(UInt row=0, Count nRows=0);
 
         GLsizei getWidth() const;
         GLsizei getHeight() const;

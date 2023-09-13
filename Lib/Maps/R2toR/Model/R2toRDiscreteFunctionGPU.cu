@@ -11,13 +11,13 @@
 using namespace R2toR;
 
 
-DiscreteFunction_GPU::DiscreteFunction_GPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h)
+DiscreteFunction_GPU::DiscreteFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real h)
 : R2toR::DiscreteFunction(N, M, xMin, yMin, h, GPU)
 {
 
 }
 
-DiscreteFunction_GPU::DiscreteFunction_GPU(PosInt N, Real sMin, Real h)
+DiscreteFunction_GPU::DiscreteFunction_GPU(UInt N, Real sMin, Real h)
 : DiscreteFunction_GPU(N, N, sMin, sMin, h)
 {
 
@@ -44,17 +44,17 @@ Core::FunctionT<Real2D, Real> *R2toR::DiscreteFunction_GPU::Clone() const {
     return new DiscreteFunction_GPU(N, M, xMin, yMin, h);
 }
 
-Core::DiscreteFunction<Real2D, Real> *R2toR::DiscreteFunction_GPU::CloneWithSize(PosInt N) const {
+Core::DiscreteFunction<Real2D, Real> *R2toR::DiscreteFunction_GPU::CloneWithSize(UInt N) const {
     throw "R2toRMap::FunctionArbitraryGPU::Clone(unsigned int) not implemented.";
 }
 
-Real R2toR::DiscreteFunction_GPU::At(PosInt n, PosInt m) const {
+Real R2toR::DiscreteFunction_GPU::At(UInt n, UInt m) const {
     assert(n<N && m<M);
 
     return getSpace().getHostData()[n + m * N];
 }
 
-Real &R2toR::DiscreteFunction_GPU::At(PosInt n, PosInt m) {
+Real &R2toR::DiscreteFunction_GPU::At(UInt n, UInt m) {
     assert(n<N && m<M);
 
     return getSpace().getHostData()[n + m * N];
@@ -75,8 +75,8 @@ R2toR::DiscreteFunction_GPU::Set(const MyBase &func) {
 
     const floatt Lx = xMax - xMin;
     const floatt Ly = yMax - yMin;
-    for (PosInt n = 0; n < N; n++) {
-        for (PosInt m = 0; m < M; m++) {
+    for (UInt n = 0; n < N; n++) {
+        for (UInt m = 0; m < M; m++) {
             const floatt x = Lx * n / (N - 1) + xMin;
             const floatt y = Ly * m / (M - 1) + yMin;
 
@@ -162,8 +162,8 @@ DiscreteFunction_GPU::operator +=(const MyBase &func) {
         const floatt Lx = xMax - xMin;
         const floatt Ly = yMax - yMin;
 
-        for (PosInt n = 0; n < N; n++) {
-            for (PosInt m = 0; m < M; m++) {
+        for (UInt n = 0; n < N; n++) {
+            for (UInt m = 0; m < M; m++) {
                 const floatt x = Lx * n / (N - 1) + xMin;
                 const floatt y = Ly * m / (M - 1) + yMin;
 

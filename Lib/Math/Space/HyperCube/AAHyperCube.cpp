@@ -5,7 +5,7 @@
 #include "AAHyperCube.h"
 
 
-AAHyperCube::AAHyperCube(PosInt dim, Real L)
+AAHyperCube::AAHyperCube(UInt dim, Real L)
     : Space(dim), L(L), measure(new Measure(std::vector<Real>(dim, L)))
 {   }
 

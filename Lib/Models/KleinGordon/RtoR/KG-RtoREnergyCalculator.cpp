@@ -75,10 +75,10 @@ auto RtoR::KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
     RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
     Real dx = builder.getNumericParams().geth();
 
-    PosInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
+    UInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 
     Real E=0;
-    for(PosInt i=iMin; i<iMax; ++i)
+    for(UInt i=iMin; i<iMax; ++i)
         E += E_v[i];
 
     return E*dx;

@@ -44,7 +44,7 @@ private:
 #else
 class DiscreteSpaceGPU : public DiscreteSpace {
 public:
-    DiscreteSpaceGPU(DimensionMetaData dim, Real h) : DiscreteSpace(dim, h){
+    DiscreteSpaceGPU(DimensionMetaData dim) : DiscreteSpace(dim){
         throw "Error instatiating DiscreteSpaceGPU: program compiled with no GPU support.";
     };
     ~DiscreteSpaceGPU() {};

@@ -268,7 +268,7 @@ void Core::Graphics::Graph2D::reviewGraphRanges() {
 
         if(true)
         {
-            const auto dMin = .025;
+            const auto dMin = .1;
 
             auto dx = dMin * (region.xMax - region.xMin);
             auto dy = dMin * (region.yMax - region.yMin);
@@ -276,7 +276,7 @@ void Core::Graphics::Graph2D::reviewGraphRanges() {
             if(dx == 0) dx = dMin;
             if(dy == 0) dy = dMin;
 
-            region.xMax += dx;
+            region.xMax += .5*dx;
             region.xMin -= dx;
             region.yMax += dy;
             region.yMin -= dy;

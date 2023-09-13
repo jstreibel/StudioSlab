@@ -18,7 +18,7 @@ auto Numerics::OutputSystem::Socket::setnSteps(int n)  -> void {
     intervalStepsBetweenOutputs = n >= 1 ? n : 1;
 }
 
-auto Numerics::OutputSystem::Socket::computeNextRecStep(PosInt currStep) -> size_t {
+auto Numerics::OutputSystem::Socket::computeNextRecStep(UInt currStep) -> size_t {
     if (nextRecStep > currStep)
         return nextRecStep;
 

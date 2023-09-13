@@ -9,7 +9,7 @@
 //
 //}
 
-Real RtoR::AnalyticShockwave2DRadialSymmetry::W_k(PosInt k, Real z) const {
+Real RtoR::AnalyticShockwave2DRadialSymmetry::W_k(UInt k, Real z) const {
     if(k>=quant) return .0;
     if(z>.0) return .0;
 
@@ -27,7 +27,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetry::W_k(PosInt k, Real z) const {
         return  c*(z+a) + beta_k[k] * (1./sqrt(-z) - 1./sqrt(a));
 }
 
-Real RtoR::AnalyticShockwave2DRadialSymmetry::theta_k(PosInt k, Real z) const {
+Real RtoR::AnalyticShockwave2DRadialSymmetry::theta_k(UInt k, Real z) const {
     if(!k) return UnitStep(-z)*UnitStep(-(-z-a_k[0]));
 
     return UnitStep(-(z+a_k[k-1]))*UnitStep(z+a_k[k]);
@@ -38,7 +38,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetry::operator()(Real r) const {
 
     Real sum=.0;
 
-    for(PosInt n=0; n<quant; n++)
+    for(UInt n=0; n<quant; n++)
         sum += theta_k(n, z)*W_k(n, z);
 
     return sum;
@@ -56,7 +56,7 @@ RtoR::AnalyticShockwave2DRadialSymmetry::AnalyticShockwave2DRadialSymmetry(Real 
 }
 
 
-Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(PosInt k, Real z) const {
+Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(UInt k, Real z) const {
     if(k>=quant) return .0;
     if(z>.0) return .0;
 
@@ -71,7 +71,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::dW_kdz(PosInt k, Rea
         return  c + beta_k[k]*.5*pow(-z,1.5);
 }
 
-Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::theta_k(PosInt k, Real z) const {
+Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::theta_k(UInt k, Real z) const {
     if(!k) return UnitStep(-z)*UnitStep(-(-z-a_k[0]));
 
     return UnitStep(-(z+a_k[k-1]))*UnitStep(z+a_k[k]);
@@ -83,7 +83,7 @@ Real RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivative::operator()(Real r) c
 
     Real sum=.0;
 
-    for(PosInt n=0; n<quant; n++)
+    for(UInt n=0; n<quant; n++)
         sum += theta_k(n, z)*dzdt*dW_kdz(n, z);
 
     return sum;

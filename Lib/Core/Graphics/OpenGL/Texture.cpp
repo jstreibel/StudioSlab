@@ -64,7 +64,7 @@ namespace OpenGL {
         return true;
     }
 
-    bool Texture::upload(PosInt row0, Count nRows) {
+    bool Texture::upload(UInt row0, Count nRows) {
         if(data == nullptr || texture == 0) return false;
 
         glBindTexture(GL_TEXTURE_2D, texture);

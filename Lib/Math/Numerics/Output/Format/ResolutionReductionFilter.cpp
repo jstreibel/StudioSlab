@@ -21,8 +21,8 @@ auto ResolutionReductionFilter::operator()(const OutputPacket &outputInfo) -> Di
     DiscreteSpaceCPU *newPhi = nullptr;
     DiscreteSpaceCPU *newDPhi = nullptr;
     if(newDim.getNDim() == 1) {
-        newPhi = phi->hostCopy(newDim[0]);
-        newDPhi = dPhi->hostCopy(newDim[0]);
+        newPhi = phi->hostCopy(newDim.getN(0));
+        newDPhi = dPhi->hostCopy(newDim.getN(0));
     }
     else{
         throw "Higher res filter not implemented.";
@@ -31,6 +31,6 @@ auto ResolutionReductionFilter::operator()(const OutputPacket &outputInfo) -> Di
     return {newPhi, newDPhi};
 }
 
-auto ResolutionReductionFilter::getOutputDim() const -> DimensionMetaData {
+auto ResolutionReductionFilter::getOutputDim(const Real L) const -> DimensionMetaData {
     return newDim;
 }

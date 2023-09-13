@@ -20,7 +20,7 @@ namespace RtoR {
         if(inFunc.getSpace().dataOnGPU()) throw "FourierTransform of GPU data is not implemented";
 
         fix N = (int)inFunc.N;
-        fix h = inFunc.getSpace().geth();
+        fix h = inFunc.getSpace().getMetaData().geth(0);
         fix L = N*h;
 
 

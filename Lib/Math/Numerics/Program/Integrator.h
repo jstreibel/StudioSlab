@@ -20,7 +20,7 @@ const auto FORCE_INITIAL_OUTPUT = true;
 
 class NumericalIntegration : public Program {
     Real dt;
-    PosInt steps;
+    UInt steps;
     bool forceOverStepping = false;
     bool integrationFinished = false;
 

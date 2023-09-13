@@ -13,12 +13,13 @@ namespace RtoC {
     class FourierModes : public Function {
         RtoR::Function::Ptr baseFunc;
 
-        Real xMin, L;
-        Count samples;
+        Real xMin=0, L=1;
+        Count samples=500;
 
     public:
-        explicit FourierModes(RtoR::Function::Ptr baseFunc, Real xMin=0, Real L=1, Count samples=500);
+        explicit FourierModes(RtoR::Function::Ptr baseFunc, Real xMin, Real L, Count samples);
 
+        void setBaseFunction(RtoR::Function::Ptr func);
         void set_xMin(Real val);
         void setL(Real L);
         void setNSamples(Count N);

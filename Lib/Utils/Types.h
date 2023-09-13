@@ -21,8 +21,10 @@ typedef std::complex<Real>  Complex;
 
 typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
-typedef long                Int;
-typedef unsigned long       PosInt;
+typedef int                 Int;
+typedef unsigned int        UInt;
+typedef long                IntBig;
+typedef unsigned long       UIntBig;
 typedef std::size_t         Count;
 typedef std::size_t         Resolution;
 typedef int_least64_t       BigInt;
@@ -45,7 +47,8 @@ typedef RealArray              VecFloat_IO;
 typedef std::valarray<Complex> ComplexArray;
 typedef std::vector<Complex>   ComplexVector;
 
-typedef std::valarray<int>     IntVector;
+typedef std::valarray<unsigned> UIntArray;
+typedef std::valarray<int>      IntVector;
 
 
 template<class T1, class T2>

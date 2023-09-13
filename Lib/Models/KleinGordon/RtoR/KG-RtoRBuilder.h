@@ -14,7 +14,7 @@ namespace RtoR {
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
                                                                         "\n\t 2: signum-Gordon" );
-        RealParameter mass  = RealParameter(1.0, "mass",   "Mass of the Klein-Gordon potential, if chosen.");
+        RealParameter mass  = RealParameter(1.0, "mass",   "Mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen.");
 
         bool periodicBC = false;          // Gambiarris
 
@@ -26,7 +26,7 @@ namespace RtoR {
         bool usesPeriodicBC() const;      // Gambiarris
 
     public:
-        explicit KGBuilder(Str name,
+        explicit KGBuilder(const Str& name,
                            Str generalDescription,
                            bool doRegister=false);
 

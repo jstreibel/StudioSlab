@@ -61,7 +61,7 @@ EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out,
 
     {
         const Real h = sInPhi.geth();
-        const PosInt N = sInPhi.getTotalDiscreteSites();
+        const UInt N = sInPhi.getTotalDiscreteSites();
         DeviceVector & d2dx2_v = temp;
         d2dx2(vInPhi, d2dx2_v, h, N);
         thrust::transform(vInPhi.begin(), vInPhi.end(),

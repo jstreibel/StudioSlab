@@ -29,10 +29,10 @@ namespace Core {
 
         Str myName() const override { return "general discrete"; }
 
-        DiscreteFunction(DimensionMetaData dim, Real h, device dev) : MyBase(nullptr, true), dev(dev) {
+        DiscreteFunction(DimensionMetaData dim, device dev) : MyBase(nullptr, true), dev(dev) {
             switch(dev){
                 case device::CPU:
-                    space = new DiscreteSpaceCPU(dim, h);
+                    space = new DiscreteSpaceCPU(dim);
                     break;
 #if USE_CUDA
                 case device::GPU:
@@ -47,7 +47,7 @@ namespace Core {
             delete space;
         }
 
-        virtual DiscreteFunction *CloneWithSize(PosInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
+        virtual DiscreteFunction *CloneWithSize(UInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
                                                                         " not implemented.";}
         virtual DiscreteFunction &Set(const MyBase &func) = 0;
         virtual DiscreteFunction &SetArb(const DiscreteFunction &func){

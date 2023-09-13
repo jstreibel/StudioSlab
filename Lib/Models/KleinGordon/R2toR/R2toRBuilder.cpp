@@ -56,7 +56,7 @@ namespace R2toR {
         int fileOutputStepsInterval = -1;
         if (shouldTrackHistory) {
             const Real t = simulationConfig.numericConfig.gett();
-            const PosInt outputResolutionX = *outputResolution;
+            const UInt outputResolutionX = *outputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
 
@@ -66,7 +66,7 @@ namespace R2toR {
             const auto N = (Real) simulationConfig.numericConfig.getN();
             const Real Np = outputResolutionX;
             const Real r = simulationConfig.numericConfig.getr();
-            const auto stepsInterval = PosInt(N / (Np * r));
+            const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
@@ -107,13 +107,14 @@ namespace R2toR {
     void *Builder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
+        fix h = simulationConfig.numericConfig.geth();
 
         if (simulationConfig.dev == CPU)
-            return new R2toR::DiscreteFunction_CPU(N, N, xLeft, xLeft, simulationConfig.numericConfig.geth());
+            return new R2toR::DiscreteFunction_CPU(N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
         else if (simulationConfig.dev == GPU)
-            return new R2toR::DiscreteFunction_GPU(N, xLeft, simulationConfig.numericConfig.geth());
+            return new R2toR::DiscreteFunction_GPU(N, xLeft, h, h);
 #endif
 
         throw "Error while instantiating Field: device not recognized.";

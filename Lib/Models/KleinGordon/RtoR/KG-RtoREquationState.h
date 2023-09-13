@@ -20,21 +20,21 @@ namespace RtoR {
     public:
         void outputPhi(OStream &out, Str separator) const override {
             const RealArray &vPhi = getPhi().getSpace().getHostData();
-            const PosInt N = vPhi.size();
+            const UInt N = vPhi.size();
 
-            for(PosInt n=0; n<N; n++)
+            for(UInt n=0; n<N; n++)
                 out << vPhi[n] << separator;
         }
 
         void outputdPhiDt(OStream &out, Str separator) const override {
             const RealArray &vDPhiDt = getDPhiDt().getSpace().getHostData();
-            const PosInt N = vDPhiDt.size();
+            const UInt N = vDPhiDt.size();
 
-            for(PosInt n=0; n<N; n++)
+            for(UInt n=0; n<N; n++)
                 out << vDPhiDt[n] << separator;
         }
 
-        EqStateOutputInterface *Copy(PosInt N) const override {
+        EqStateOutputInterface *Copy(UInt N) const override {
             return new EquationState(dynamic_cast<DiscreteFunction*>(phi->CloneWithSize(N)),
                                      dynamic_cast<DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
         }

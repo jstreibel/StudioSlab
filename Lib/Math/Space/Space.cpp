@@ -4,11 +4,11 @@
 
 #include "Space.h"
 
-Space::Space(PosInt dim) : dim(dim) {   }
+Space::Space(UInt dim) : dim(dim) {   }
 
 Space::Space(const Space &space) : Space(space.dim)
 {   }
 
-auto Space::getDim() const -> PosInt {
+auto Space::getDim() const -> UInt {
     return dim;
 }

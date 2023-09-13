@@ -42,6 +42,8 @@ namespace RtoR {
 
         std::shared_ptr<const R2toR::DiscreteFunction>
                   simulationHistory = nullptr;
+        std::shared_ptr<const R2toR::DiscreteFunction>
+                spaceFTHistory = nullptr;
 
         GraphRtoR mFieldsGraph;
 
@@ -66,9 +68,11 @@ namespace RtoR {
         int step_history = 0;
 
         void updateHistoryGraphs();
+        void updateFTHistoryGraph();
         void updateFourierGraph();
 
         RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
+        RtoR::Graphics::HistoryDisplay mFullSpaceFTHistoryDisplay;
 
         Real U = .0;
         Real K = .0;
@@ -90,6 +94,7 @@ namespace RtoR {
                 bool showEnergyHistoryAsDensities=false);
 
         virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
+        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory);
     };
 
 }

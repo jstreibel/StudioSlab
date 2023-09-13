@@ -92,19 +92,19 @@ namespace Fields::KleinGordon {
         void outputPhi(OStream &out, Str separator) const override {
             DiscreteSpace &space = phi->getSpace();
 
-            const PosInt N = space.getTotalDiscreteSites();
+            const UInt N = space.getTotalDiscreteSites();
             const RealArray &vec = space.getHostData(true);
 
-            for(PosInt n=0; n<N; n++)
+            for(UInt n=0; n<N; n++)
                 out << vec[n] << separator;
         }
 
         void outputdPhiDt(OStream &out, Str separator) const override {
             DiscreteSpace &space = dPhiDt->getSpace();
-            const PosInt N = space.getTotalDiscreteSites();
+            const UInt N = space.getTotalDiscreteSites();
             const RealArray &vec = space.getHostData(true);
 
-            for(PosInt n=0; n<N; n++)
+            for(UInt n=0; n<N; n++)
                 out << vec[n] << separator;
         }
 

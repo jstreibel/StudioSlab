@@ -12,7 +12,7 @@
 
 const int HEADER_SIZE_BYTES = 2048;
 
-RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, PosInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
+RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
                                                Str  outputFileName)
                                                : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
                                                  outFileName(std::move(outputFileName)),
@@ -78,9 +78,9 @@ void RtoR::OutputHistoryToFile::_printHeaderToFile() {
     oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
 
 
-    DimensionMetaData recDim = spaceFilter.getOutputDim();
+    DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
     Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
-    for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
+    for(UInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 
 
     oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";

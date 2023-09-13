@@ -11,7 +11,7 @@ const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
 OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
-                                         PosInt stepsInterval,
+                                         UInt stepsInterval,
                                          SpaceFilterBase *spaceFilter,
                                          Real endT,
                                          const Str& outputFileName, OutputFormatterBase *outputFormatter)
@@ -78,9 +78,9 @@ void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNam
     oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
 
 
-    DimensionMetaData recDim = spaceFilter.getOutputDim();
+    DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
     Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
-    for(PosInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim[i];
+    for(UInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 
 
     oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";

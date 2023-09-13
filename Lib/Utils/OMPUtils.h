@@ -18,6 +18,6 @@ IntPair getBeginAndEndForThreadedFor(int N);
  * #pragma omp parallel num_threads(NUM_THREADS) */
 #define OMP_PARALLEL_FOR(indexLabel, NSites) \
     IntPair be = getBeginAndEndForThreadedFor(NSites); \
-    for(PosInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
+    for(UInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
 
 #endif //STUDIOSLAB_OMPUTILS_H

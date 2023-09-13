@@ -11,17 +11,17 @@
 namespace R2toR {
     class DiscreteFunction_CPU : public DiscreteFunction {
     public:
-        DiscreteFunction_CPU(PosInt N, PosInt M, Real xMin, Real yMin, Real h);
+        DiscreteFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
 
-        [[nodiscard]] Core::DiscreteFunction<Real2D, Real> *CloneWithSize(PosInt N) const override;
+        [[nodiscard]] Core::DiscreteFunction<Real2D, Real> *CloneWithSize(UInt N) const override;
 
         auto Clone() const -> FunctionT * override;
 
         DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const override;
 
-        Real At(PosInt n, PosInt m) const override;
+        Real At(UInt n, UInt m) const override;
 
-        Real &At(PosInt n, PosInt m);
+        Real &At(UInt n, UInt m);
 
         DiscreteFunction_CPU &Set(const R2toR::Function &func) override;
 

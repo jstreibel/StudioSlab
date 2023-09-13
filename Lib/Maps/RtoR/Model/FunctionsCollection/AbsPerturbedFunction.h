@@ -12,7 +12,7 @@
 namespace RtoR {
     class AbsPerturbedDiffFunction : public RtoR::Function {
     public:
-        explicit AbsPerturbedDiffFunction(PosInt Ns = BASE_NS);
+        explicit AbsPerturbedDiffFunction(UInt Ns = BASE_NS);
 
         Real operator()(Real x) const override;
 
@@ -21,12 +21,12 @@ namespace RtoR {
         FunctionT<Real, Real> *Clone() const override;
 
     private:
-        const PosInt Ns;
+        const UInt Ns;
     };
 
     class AbsPerturbedFunction : public RtoR::Function {
     public:
-        explicit AbsPerturbedFunction(PosInt Ns = BASE_NS);
+        explicit AbsPerturbedFunction(UInt Ns = BASE_NS);
 
         Real operator()(Real x) const override;
 
@@ -38,7 +38,7 @@ namespace RtoR {
         Real Fold(floatt eta, const int Ns);
 
     private:
-        const PosInt Ns;
+        const UInt Ns;
     };
 }
 

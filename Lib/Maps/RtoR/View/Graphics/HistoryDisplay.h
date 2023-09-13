@@ -11,7 +11,12 @@
 namespace RtoR::Graphics {
 
     class HistoryDisplay : public R2toR::Graphics::FlatFieldDisplay {
+        Count nextRow = 0;
+        Real lastUpdatedTime = -1;
+
     public:
+        explicit HistoryDisplay(Str name="Full history", Real phiMin=-1., Real phiMax=1.);
+
         void set_t(Real t);
     };
 
