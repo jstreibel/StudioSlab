@@ -9,6 +9,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Maps/RtoR/Calc/FourierTransform.h"
+#include "Math/Constants.h"
 // #include "Maps/R2toR/FourierTransform.h"
 
 //
@@ -78,6 +79,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 
         mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
+        mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
 
         windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
         windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));

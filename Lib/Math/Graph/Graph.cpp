@@ -386,6 +386,10 @@ Real Core::Graphics::Graph2D::getAnimationTime() const {
     return animationTimeSeconds;
 }
 
+void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) {
+    baseHorizontalUnit = hUnit;
+}
+
 
 
 

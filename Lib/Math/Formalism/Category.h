@@ -9,6 +9,9 @@
 
 #include "MathObject.h"
 
+#include <ostream>
+#include "Utils/Types.h"
+
 /**
  * Wikipedia (https://en.wikipedia.org/wiki/Category_(mathematics) , Nov 6th 2021).
  * T
@@ -25,8 +28,11 @@
  */
 class Category // : public Set<ObjectWithArrows<ObjectWithArrows>>
 {
-
+public:
+    virtual Str ToString() const {return "<Category::ToString not implemented>"; }
 };
+
+std::ostream& operator<<(std::ostream& os, const Category& obj);
 
 
 #endif //STUDIOSLAB_CATEGORY_H

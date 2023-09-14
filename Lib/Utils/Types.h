@@ -23,7 +23,7 @@ typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
 typedef int                 Int;
 typedef unsigned int        UInt;
-typedef long                IntBig;
+typedef long long           IntBig;
 typedef unsigned long       UIntBig;
 typedef std::size_t         Count;
 typedef std::size_t         Resolution;

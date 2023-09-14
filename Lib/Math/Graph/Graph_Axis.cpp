@@ -91,8 +91,8 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     auto coords = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
-    Styles::GetCurrent()->ticksWriter->write(Str("(")+ ToStr(coords.x) + ", " + ToStr(coords.y) + ")",
-                                             {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
+    auto label = Str("(")+ baseHorizontalUnit(coords.x) + ", " + baseVerticalUnit(coords.y) + ")";
+    Styles::GetCurrent()->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
     XHair.clear();
     XHair.addPoint({region.xMin, coords.y});
@@ -120,7 +120,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
 void Core::Graphics::Graph2D::computeTicksSpacings() {
     if(1){
-        const Real Δy = region.height();
+        const Real Δy = region.height() / baseVerticalUnit.value();
 
         const auto theLog = log10(Δy);
         const auto spacing = 2*pow(10., floor(theLog) - 1.);
@@ -131,12 +131,12 @@ void Core::Graphics::Graph2D::computeTicksSpacings() {
     }
 
     if(1){
-        const auto Δx = region.width();
+        const auto Δx = region.width() / baseHorizontalUnit.value();
 
         const auto theLog = log10(Δx);
         const auto spacing = 2*pow(10., floor(theLog) - 1.);
         const auto theRest = theLog - floor(theLog);
-        const auto multiplier = floor(pow(10., theRest));
+        const auto multiplier = 2 * floor(pow(10., theRest));
 
         xspacing = multiplier * spacing;
     }
@@ -165,19 +165,19 @@ void Core::Graphics::Graph2D::drawXAxis() {
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         for (Real mark = 0; mark <= region.xMax * 1.0001; mark += xspacing)
-        // for (int m=0; m<xMax/xspacing; ++m)
         {
             Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
             loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            writer->write(ToStr(mark, 2), loc, gtfColor);
+            auto label = baseHorizontalUnit(mark);
+            //auto label = ToStr(mark, 2)
+            writer->write(label, loc, gtfColor);
         }
         for (Real mark = -xspacing; mark >= region.xMin * 1.0001; mark -= xspacing) {
-            char buffer[64];
-            sprintf(buffer, "%.2f", mark);
-
             Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
             loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            writer->write(Str(buffer), loc, gtfColor);
+            auto label = baseHorizontalUnit(mark);
+            //auto label = ToStr(mark, 2)
+            writer->write(label, loc, gtfColor);
         }
     }
 

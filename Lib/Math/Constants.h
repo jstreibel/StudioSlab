@@ -11,6 +11,8 @@ namespace Constants {
     const auto pi = 3.14159265358979323846;
     const auto pi_1 = 1.0 / pi;
 
+    const Unit π("π", pi);
+
 }
 
 #endif //STUDIOSLAB_CONSTANTS_H

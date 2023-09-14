@@ -23,6 +23,8 @@ namespace Core::Graphics {
 
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
+        Unit baseHorizontalUnit;
+        Unit baseVerticalUnit;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
@@ -111,6 +113,9 @@ namespace Core::Graphics {
         Real get_xMax() const;
         Real get_yMin() const;
         Real get_yMax() const;
+
+        void setHorizontalUnit(const Unit &hUnit);
+        void setVerticalUnit(const Unit &vUnit);
 
         void setAnimationTime(Real value);
         Real getAnimationTime() const;

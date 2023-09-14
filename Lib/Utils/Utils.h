@@ -37,6 +37,9 @@ Str ToStr(const Str& str);
 
 
 namespace Common {
+    double RoundToMostSignificantDigits(double num, int digits=3);
+
+
     Str GetPWD();
 
     template<typename T>

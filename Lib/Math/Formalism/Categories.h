@@ -56,4 +56,33 @@ public:
     Real x, y, z;
 };
 
+class Rational : public Category {
+public:
+    Rational();
+    Rational(Int numerator, Int denominator);
+    Rational(Real val, Real epsilon = 1e-9, Int maxIter = 1000);
+
+    Str ToString() const override;
+
+    Int numerator;
+    Int denominator;
+};
+
+class Unit : public Category {
+    Str sym;
+    Real baseValue;
+public:
+
+    Unit(Str  symbol="", Real val=1.0);
+    Unit(const Unit &unit);
+
+    Real value() const;
+    Str symbol() const;
+
+    Str operator()(const Real &val);
+
+    Str ToString() const override;
+
+};
+
 #endif //V_SHAPE_MATHTYPES_H

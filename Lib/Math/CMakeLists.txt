@@ -42,7 +42,7 @@ set ( EXPERIMENTAL_SOURCES
 		Formalism/Information.cpp
 		Formalism/Information.h
 
-		Formalism/Categories.cpp
+		Formalism/Categories.h		Formalism/Categories.cpp
 )
 
 
