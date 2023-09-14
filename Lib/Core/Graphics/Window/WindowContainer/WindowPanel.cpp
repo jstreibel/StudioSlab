@@ -142,7 +142,7 @@ bool WindowPanel::notifyMousePassiveMotion(int x, int y) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) responded = win->notifyMousePassiveMotion(x, y);
+            if(win->isMouseIn()) responded = win->notifyMousePassiveMotion(x, y);
 
     return responded;
 }
@@ -151,7 +151,7 @@ bool WindowPanel::notifyMouseMotion(int x, int y) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) responded = win->notifyMouseMotion(x, y);
+            if(win->isMouseIn()) responded = win->notifyMouseMotion(x, y);
 
     return responded;
 }
@@ -166,7 +166,7 @@ bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) responded = win->notifyMouseButton(button, dir, x, y);
+            if(win->isMouseIn()) responded = win->notifyMouseButton(button, dir, x, y);
 
     return responded;
 }
@@ -175,7 +175,7 @@ bool WindowPanel::notifyMouseWheel(int wheel, int direction, int x, int y) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->doesHit(x, y)) responded = win->notifyMouseWheel(wheel, direction, x, y);
+            if(win->isMouseIn()) responded = win->notifyMouseWheel(wheel, direction, x, y);
 
     return responded;
 }

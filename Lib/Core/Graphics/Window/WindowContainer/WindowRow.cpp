@@ -14,7 +14,7 @@
 #define PropagateEvent(EVENT)   \
     auto responded = false;     \
     for(auto &win : windows)    \
-        if(win->doesHit(x,y)) responded = win->EVENT; \
+        if(win->isMouseIn()) responded = win->EVENT; \
                                 \
     return responded;
 

@@ -83,18 +83,16 @@ void Core::Graphics::Graph2D::drawAxes() {
 }
 
 void Core::Graphics::Graph2D::drawXHair() {
-    if(!gotHit) return;
+    if(!isMouseIn()) return;
 
-    fix &mouse = GUIBackend::GetInstance().getMouseState();
-    fix wRect = getWindowRect();
+    fix vpRect = getViewport(); // getWindowRect();
 
-    fix xMouseLocal = mouse.x-wRect.xMin;
-    fix yMouseLocal = 1-(mouse.y-wRect.yMin);
+    fix mouseLocal = getMouseViewportCoord();
 
-    auto coords = FromViewportToSpaceCoord({(Real) xMouseLocal, (Real) (yMouseLocal)}, region, wRect);
+    auto coords = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
     Styles::GetCurrent()->ticksWriter->write(Str("(")+ ToStr(coords.x) + ", " + ToStr(coords.y) + ")",
-                                             {(Real)xMouseLocal+20, (Real)yMouseLocal+20});
+                                             {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
     XHair.clear();
     XHair.addPoint({region.xMin, coords.y});
@@ -104,12 +102,16 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
 
-
     if(false)
     {
+        auto mouse = GUIBackend::GetInstance().getMouseState();
+
         ImGui::Begin("Graph debug");
-        // Log::Info() << coords.x << "    " << coords.y << Log::Flush;
+        ImGui::Text("Mouse @ %i, %i", mouse.x, mouse.y);
         ImGui::Text("Mouse in %s @ %f, %f", this->title.c_str(), coords.x, coords.y);
+        ImGui::Text("Local window coords: %f, %f", mouseLocal.x, mouseLocal.y);
+        ImGui::Text("Viewport rect (x, y, w, h): %i, %i, %i, %i", vpRect.xMin, vpRect.yMin, vpRect.width(), vpRect.height());
+        ImGui::Text("Window rect (x, y, w, h): %i, %i, %i, %i", windowRect.xMin, windowRect.yMin, windowRect.width(), windowRect.height());
         ImGui::End();
     }
 

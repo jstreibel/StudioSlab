@@ -40,7 +40,7 @@ void Window::_decorate() const {
     {
         auto bc = Core::Graphics::windowBorderColor;
 
-        if(gotHit) bc = Styles::Red;
+        if(isMouseIn()) bc = Styles::Red;
 
         glColor4d(bc.r, bc.g, bc.b, bc.a);
 
@@ -78,7 +78,8 @@ void Window::addArtist(Artist *pArtist) {
     content.emplace_back(pArtist);
 }
 
-auto Window::doesHit(int xMouse, int yMouse) const -> bool {
+auto Window::isMouseIn() const -> bool {
+    fix &mouse = GUIBackend::GetInstance().getMouseState();
     auto hScreen = GUIBackend::GetInstance().getScreenHeight();
 
     fix x = windowRect.xMin;
@@ -86,8 +87,27 @@ auto Window::doesHit(int xMouse, int yMouse) const -> bool {
     fix w = windowRect.width();
     fix h = windowRect.height();
 
-    const_cast<bool&>(gotHit) = xMouse > x && xMouse < x + w && hScreen - yMouse > y && hScreen - yMouse < y + h;
-    return gotHit;
+    return mouse.x > x && mouse.x < x + w && hScreen - mouse.y > y && hScreen - mouse.y < y + h;
+}
+
+auto Window::getMouseWindowCoord() const -> Point2D {
+    fix &mouse = GUIBackend::GetInstance().getMouseState();
+
+    fix xMouseLocal =      mouse.x - windowRect.xMin;
+    fix yMouseLocal = 1 - (mouse.y - windowRect.yMin);
+
+    return {(Real)xMouseLocal, (Real)yMouseLocal};
+}
+
+auto Window::getMouseViewportCoord() const -> Point2D {
+    fix &mouse = GUIBackend::GetInstance().getMouseState();
+    fix hScreen = GUIBackend::GetInstance().getScreenHeight();
+    auto vpRect = getViewport();
+
+    fix xMouseLocal =         mouse.x - vpRect.xMin;
+    fix yMouseLocal = hScreen-mouse.y - vpRect.yMin;
+
+    return {(Real)xMouseLocal, (Real)yMouseLocal};
 }
 
 bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {

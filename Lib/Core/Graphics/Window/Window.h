@@ -30,8 +30,6 @@ class Window : public Core::EventListener {
 protected:
     RectI windowRect;
 
-    bool gotHit = false;
-
     Styles::Color backgroundColor = Core::Graphics::backgroundColor;
 
 
@@ -52,7 +50,9 @@ public:
     void setDecorate(bool _decorate);
     void setClear(bool _clear);
 
-    auto doesHit(int xMouse, int yMouse) const -> bool;
+    auto isMouseIn() const -> bool;
+    auto getMouseWindowCoord() const -> Point2D;
+    auto getMouseViewportCoord() const -> Point2D;
 
     RectI getViewport() const;
     const RectI &getWindowRect() const { return windowRect; };
