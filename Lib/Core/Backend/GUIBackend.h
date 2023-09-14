@@ -22,6 +22,8 @@ protected:
 public:
     virtual auto addWindow(Window::Ptr window) -> void;
 
+    virtual auto getScreenHeight() const -> Real = 0;
+
     auto getMouseState() const -> const MouseState&;
     virtual auto pause() -> void = 0;
     virtual auto resume() -> void = 0;

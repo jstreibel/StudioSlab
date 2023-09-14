@@ -411,4 +411,8 @@ void GLUTBackend::addWindow(Window::Ptr window) {
     GUIBackend::addWindow(window);
 }
 
+Real GLUTBackend::getScreenHeight() const {
+    return GLUTUtils::getScreenHeight();
+}
+
 

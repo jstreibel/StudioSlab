@@ -153,7 +153,7 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
                                         Styles::PlotStyle style) noexcept {
     auto pts = pSet.getPoints();
 
-    if(style.filled && !(style.primitive==Styles::Point))
+    if(style.filled && !(style.primitive==Styles::Point || style.primitive==Styles::Lines))
     {
         const auto color = style.fillColor;
 
@@ -187,7 +187,9 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         auto color = style.lineColor;
         glColor4f(color.r, color.g, color.b, color.a);
 
-        if(style.primitive != Styles::SolidLine && style.primitive!=Styles::VerticalLines){
+        if(style.primitive != Styles::SolidLine
+        && style.primitive != Styles::VerticalLines
+        && style.primitive != Styles::Lines){
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
@@ -203,6 +205,8 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 
             glEnable(GL_LINE_SMOOTH);
             glLineWidth(style.thickness);
+        } else if(style.primitive==Styles::Lines) {
+            primitive = GL_LINES;
         }
 
         glBegin(primitive);

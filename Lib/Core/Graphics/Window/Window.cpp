@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "Core/Graphics/Styles/WindowStyles.h"
 #include "Core/Graphics/OpenGL/GLUTUtils.h"
+#include "Core/Backend/GUIBackend.h"
 
 
 Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
@@ -38,6 +39,9 @@ void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
         auto bc = Core::Graphics::windowBorderColor;
+
+        if(gotHit) bc = Styles::Red;
+
         glColor4d(bc.r, bc.g, bc.b, bc.a);
 
         glVertex2f(-p, -p);
@@ -75,7 +79,7 @@ void Window::addArtist(Artist *pArtist) {
 }
 
 auto Window::doesHit(int xMouse, int yMouse) const -> bool {
-    auto hScreen = GLUTUtils::getScreenHeight();
+    auto hScreen = GUIBackend::GetInstance().getScreenHeight();
 
     fix x = windowRect.xMin;
     fix y = windowRect.yMin;

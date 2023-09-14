@@ -46,6 +46,8 @@ namespace Modes {
         if(*BCSelection == 0) this->setLaplacianFixedBC();
         if(*BCSelection == 1) this->setLaplacianPeriodicBC();
 
+
+
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 

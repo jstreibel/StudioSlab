@@ -8,10 +8,11 @@
 #include "Utils/EncodingUtils.h"
 
 #include "Core/Backend/GUIBackend.h"
+#include "imgui.h"
 
 
-#define vPixelsToSpaceScale (region.height() / geth());
-#define hPixelsToSpaceScale (region.width() / getw());
+#define hPixelsToSpaceScale (region.width() / getw())
+#define vPixelsToSpaceScale (region.height() / geth())
 
 fix vTickHeightinPixels_x2 = 5;
 fix vGraphPaddingInPixels = 60;
@@ -42,7 +43,7 @@ fix vGraphPaddingInPixels = 60;
                                                                               \
     }
 
-Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, RectR spaceRegion, RectI viewport ) {
+Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, const RectR &spaceRegion, const RectI &viewport ) {
     fix x = spaceCoord.x;
     fix y = spaceCoord.y;
     fix xMin = spaceRegion.xMin;
@@ -52,7 +53,21 @@ Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, RectR spaceRegion, R
     fix W = viewport.width();
     fix H = viewport.height();
 
-    return {W*(x-xMin)/Δx, H*(y-yMin)/Δy};
+    return {W*(x-xMin)/Δx,
+            H*(y-yMin)/Δy};
+}
+
+Point2D FromViewportToSpaceCoord(const Point2D &viewportCoord, const RectR &spaceRegion, const RectI &viewport ) {
+    fix X = viewportCoord.x;
+    fix Y = viewportCoord.y;
+    fix xMin = spaceRegion.xMin;
+    fix yMin = spaceRegion.yMin;
+    fix Δx = spaceRegion.width();
+    fix Δy = spaceRegion.height();
+    fix W = viewport.width();
+    fix H = viewport.height();
+
+    return {xMin + Δx*X/W, yMin + Δy*Y/H};
 }
 
 
@@ -71,9 +86,33 @@ void Core::Graphics::Graph2D::drawXHair() {
     if(!gotHit) return;
 
     fix &mouse = GUIBackend::GetInstance().getMouseState();
-    // GUIBackend::GetInstance().getSystemWindowData();
-    fix xMouse = mouse.x;
-    fix yMouse = mouse.y;
+    fix wRect = getWindowRect();
+
+    fix xMouseLocal = mouse.x-wRect.xMin;
+    fix yMouseLocal = 1-(mouse.y-wRect.yMin);
+
+    auto coords = FromViewportToSpaceCoord({(Real) xMouseLocal, (Real) (yMouseLocal)}, region, wRect);
+
+    Styles::GetCurrent()->ticksWriter->write(Str("(")+ ToStr(coords.x) + ", " + ToStr(coords.y) + ")",
+                                             {(Real)xMouseLocal+20, (Real)yMouseLocal+20});
+
+    XHair.clear();
+    XHair.addPoint({region.xMin, coords.y});
+    XHair.addPoint({region.xMax, coords.y});
+    XHair.addPoint({coords.x, region.yMin});
+    XHair.addPoint({coords.x, region.yMax});
+
+    Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
+
+
+    if(false)
+    {
+        ImGui::Begin("Graph debug");
+        // Log::Info() << coords.x << "    " << coords.y << Log::Flush;
+        ImGui::Text("Mouse in %s @ %f, %f", this->title.c_str(), coords.x, coords.y);
+        ImGui::End();
+    }
+
 
 }
 

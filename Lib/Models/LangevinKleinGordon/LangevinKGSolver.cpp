@@ -15,7 +15,7 @@ void RtoR::LangevinKGSolver::ComputeImpulses() {
     if (langevinImpulses == nullptr) return;
 
     auto &space = langevinImpulses->getSpace();
-    assert(space.getDim().getNDim() == 1);
+    assert(space.getMetaData().getNDim() == 1);
 
     auto &X = space.getHostData();
 

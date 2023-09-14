@@ -37,13 +37,13 @@ Core::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(UInt o
 }
 
 Real DiscreteFunction_CPU::At(UInt n, UInt m) const {
-    assert(n + m*N < N*M);
+    assert(n<N && m<M);
 
     return getSpace().getHostData()[n + m * N];
 }
 
 Real &DiscreteFunction_CPU::At(UInt n, UInt m) {
-    assert(n + m*N < N*M);
+    assert(n<N && m<M);
     return getSpace().getHostData()[n + m * N];
 }
 

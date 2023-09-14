@@ -3,6 +3,7 @@
 //
 
 #include "Colors.h"
+#include "Utils/Utils.h"
 
 #define Clamp()
 
@@ -10,13 +11,14 @@
 namespace Styles {
     Color White = {1,1,1,1};
     Color Black = {0,0,0,1};
+    Color Red = {1,0,0,1};
 
     Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
     Color::Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
 
     Color Color::permute(bool odd) const {
-        if (odd) return {g, r, b, a};
+        if (odd) return {b, g, r, a};
 
         else return {b, r, g, a};
     }
@@ -64,11 +66,11 @@ namespace Styles {
     Color Color::rgb() const { return {r, g, b, -1}; }
 
     bool Color::operator==(const Color &rhs) const {
-        static float eps = 1.e-4;
-        return r > rhs.r-eps  && r < rhs.r+eps &&
-               g > rhs.g-eps  && g < rhs.g+eps &&
-               b > rhs.b-eps  && b < rhs.b+eps &&
-               a > rhs.a-eps  && a < rhs.a+eps;
+        fix eps = 1.e-4;
+        return Common::areEqual(r, rhs.r, eps) &&
+               Common::areEqual(g, rhs.g, eps) &&
+               Common::areEqual(b, rhs.b, eps) &&
+               Common::areEqual(a, rhs.a, eps);
     }
 
 

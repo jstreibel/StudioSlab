@@ -12,11 +12,13 @@
 
 #include <utility>
 
-#define drawFlatField(offset) \
+#define drawFieldVerts(offset) \
 glTexCoord2d(ti, ti); glVertex2d(domain.xMin+(offset), domain.yMin); \
 glTexCoord2d(tf, ti); glVertex2d(domain.xMax+(offset), domain.yMin); \
 glTexCoord2d(tf, tf); glVertex2d(domain.xMax+(offset), domain.yMax); \
 glTexCoord2d(ti, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
+
+#define ODD true
 
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function)
 {
@@ -48,24 +50,43 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
     setupOrtho();
 
+    drawFlatField();
+
+    drawAxes();
+    drawPointSets();
+    drawCurves();
+    drawGUI();
+    drawXHair();
+}
+
+void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
     labelingHelper.setTotalItems(countDisplayItems());
 
-    if(func != nullptr) {
+    if (func != nullptr) {
 
         if (ImGui::Begin("Stats")) {
             if (ImGui::CollapsingHeader((title + " history output").c_str())) {
 
+                if (func->isDiscrete()) {
+                    auto &dFunc = *dynamic_cast<const DiscreteFunction *>(func.get());
+                    ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
+                }
+
                 {
-                    if(logScale) {
+                    if (logScale) {
                         ImGui::Text("σ := sign(ϕ)");
                         ImGui::Text("ϕ ↦ σ ln(|ϕ|/ε + 1)");
                     }
                     ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
 
-
                     auto min = (float) cMap_min;
                     auto max = (float) cMap_max;
                     auto eps = (float) cMap_epsArg;
+
+                    bool antiAlias = texture->getAntiAlias();
+                    if (ImGui::Checkbox("Anti-alias display", &antiAlias)) {
+                        texture->setAntiAlias(antiAlias);
+                    }
 
                     float fullWidth = ImGui::GetContentRegionAvail().x;
                     float relativeWidth = fullWidth * 0.3f;
@@ -74,18 +95,18 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
                     ImGui::PushItemWidth(relativeWidth);
                     if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
                         cMap_min = min;
-                        if(symmetricMaxMin) cMap_max = -min;
+                        if (symmetricMaxMin) cMap_max = -min;
                         invalidateBuffer();
                     }
                     ImGui::SameLine();
                     if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
                         cMap_max = max;
-                        if(symmetricMaxMin) cMap_min = -max;
+                        if (symmetricMaxMin) cMap_min = -max;
                         invalidateBuffer();
                     }
                     ImGui::PopItemWidth();
 
-                    if (ImGui::DragFloat("log eps", &eps, eps * 1e-3, 1e-3, 1e3)) {
+                    if (ImGui::DragFloat("ε", &eps, eps * 1e-2, 1e-5, 1e3, "%.6f")) {
                         cMap_epsArg = eps;
                         if (logScale) invalidateBuffer();
                     }
@@ -123,6 +144,27 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
                         item_last_idx = item_current_idx;
                         ImGui::EndCombo();
                     }
+
+                    ImGui::Text("ColorMap operations:");
+                    if (ImGui::Button("Permute")) {
+                        cMap = cMap.permute();
+                        invalidateBuffer();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Odd permute")) {
+                        cMap = cMap.bgr();
+                        invalidateBuffer();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Inverse")) {
+                        cMap = cMap.inverse();
+                        invalidateBuffer();
+                    }
+                    ImGui::SameLine();
+                    if (ImGui::Button("Reverse")) {
+                        cMap = cMap.reverse();
+                        invalidateBuffer();
+                    }
                 }
             }
         }
@@ -143,7 +185,7 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
             auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
 
             glColor4d(1, 1, 1, 1);
-            drawFlatField(0.0);
+            drawFieldVerts(0.0);
 
             // glColor4d(1, 1, 1, 0.85);
             // fix fieldWidth = domain.xMax - domain.xMin;
@@ -158,11 +200,6 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
         glDisable(GL_TEXTURE_2D);
     }
-
-    drawAxes();
-    drawCurves();
-    drawPointSets();
-    drawGUI();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() {

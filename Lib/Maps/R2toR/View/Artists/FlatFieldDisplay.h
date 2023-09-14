@@ -23,6 +23,7 @@ namespace R2toR::Graphics {
             Real cMap_max =  1.1;
             bool symmetricMaxMin = true;
 
+            void drawFlatField();
         protected:
             R2toR::Function::ConstPtr func    = nullptr;
             OpenGL::Texture*          texture = nullptr;

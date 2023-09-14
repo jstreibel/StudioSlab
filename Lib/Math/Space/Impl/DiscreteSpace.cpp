@@ -63,7 +63,7 @@ DiscreteSpaceCPU *DiscreteSpace::hostCopy(UInt maxResolution) const {
 }
 
 UInt DiscreteSpace::getTotalDiscreteSites() const {
-    assert(data.size() == dim.computeFullDiscreteSize());
+    assert(data.size() == dimensionMetaData.computeFullDiscreteSize());
     return data.size();
 }
 

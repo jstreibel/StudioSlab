@@ -29,7 +29,7 @@ namespace RtoR {
 
         void changeFunc(const DiscreteFunction &vec) {
             assert(vec.getSpace().getTotalDiscreteSites() == N);
-            assert(vec.getSpace().geth() == h);
+            assert(vec.getSpace().getMetaData().geth(0) == h);
 
             f_ = &vec.getSpace().getHostData();
         }

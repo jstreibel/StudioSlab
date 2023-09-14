@@ -51,6 +51,8 @@ namespace Core::Graphics {
         RectR region;
 
         Real animationTimeSeconds = 0.2;
+
+        Spaces::PointSet XHair;
     protected:
 
         Real yspacing = 1.e-5;

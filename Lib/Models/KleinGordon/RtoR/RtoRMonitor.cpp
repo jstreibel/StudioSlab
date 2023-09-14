@@ -53,7 +53,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 , mHistoryGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
 , mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(150))
 , mFullHistoryDisplay("ϕ(t,x)")
-, mFullSpaceFTHistoryDisplay("ℱ[ϕ(t)](k)", 0, 1.2)
+, mFullSpaceFTHistoryDisplay("F[ϕ(t)](k)", 0, 1)
 {
     auto sty = Styles::GetCurrent()->funcPlotStyles.begin();
 
@@ -76,7 +76,8 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
 
-        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"]);
+        mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
+        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
 
         windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
         windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));

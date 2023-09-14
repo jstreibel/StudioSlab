@@ -16,6 +16,8 @@ struct Rect {
 
     T yCenter() const { return .5 * (yMax + yMin); }
     T xCenter() const { return .5 * (xMax + xMin); }
+
+    bool doesHit(const T &x, const T &y) const { return x>=xMin && x<=xMax && y>=yMin && y<=yMax; }
 };
 
 typedef Rect<int> RectI;

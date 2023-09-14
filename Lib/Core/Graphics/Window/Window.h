@@ -33,10 +33,12 @@ protected:
     bool gotHit = false;
 
     Styles::Color backgroundColor = Core::Graphics::backgroundColor;
+
+
 public:
     typedef std::shared_ptr<Window> Ptr;
 
-    Window(int x=0, int y=0, int w=100, int h=100);
+    explicit Window(int x=0, int y=0, int w=100, int h=100);
 
     void addArtist(Artist *pArtist);
 

@@ -139,7 +139,6 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     fix elTimeMSecs_str = Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
     stats.addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
     stats.addVolatileStat(Str("<\\br>"));
-    stats.addVolatileStat(Str(""));
     stats.addVolatileStat(Str("L = ") + ToStr(L));
     stats.addVolatileStat(Str("N = ") + ToStr(N));
     stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));

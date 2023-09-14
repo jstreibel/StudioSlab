@@ -25,15 +25,20 @@ namespace Styles {
         DashedLine,
         DotDashedLine,
         VerticalLines,
+        Lines,
 
         Point
     };
 
-    const Color Nil = Color(-1,-1,-1,-1);
+    const Styles::Color Nil = Color(-1, -1, -1, -1);
 
 
     struct PlotStyle {
-        explicit PlotStyle(Color color, Primitive primitive=SolidLine, bool filled=true, Color lineFill=Nil, float lineWidth=1.3);
+        explicit PlotStyle(Color color,
+                           Primitive primitive=SolidLine,
+                           bool filled=true,
+                           Color fillColor=Nil,
+                           float thickness=1.3);
 
         PlotStyle permuteColors(bool odd=false);
 
@@ -45,11 +50,13 @@ namespace Styles {
 
         GLint stippleFactor;
         GLshort stipplePattern;
+
+        bool visible;
     };
 
     struct StyleScheme {
         StyleScheme(Color windowBackground, Color graphTicksFont, Color graphTitleFont, Color axisColor,
-                    Color majorTickColor, Core::Graphics::Writer *labelsWriter, Core::Graphics::Writer *ticksWriter,
+                    Color majorTickColor, PlotStyle XHairStyle, Core::Graphics::Writer *labelsWriter, Core::Graphics::Writer *ticksWriter,
                     std::vector<PlotStyle> plotStyles);
 
         Color graphBackground;
@@ -57,6 +64,7 @@ namespace Styles {
         Color graphTitleFont;
         Color axisColor;
         Color majorTickColor;
+        PlotStyle XHairStyle;
 
         Core::Graphics::Writer *labelsWriter;
         Core::Graphics::Writer *ticksWriter;

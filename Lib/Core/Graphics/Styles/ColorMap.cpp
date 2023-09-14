@@ -4,16 +4,25 @@
 
 #include "ColorMap.h"
 
+#include <utility>
+#include "Math/Graph/Styles.h"
+
 #define Map(cMap) {cMap.getName(), cMap}
 
 namespace Styles {
 
-    auto blues = ColorMap{"blues", {
+    auto blues = ColorMap{
+        "blues",
+        {
             /* 0.00 */Color::FromBytes(240, 255, 255),
             /* 0.25 */Color::FromBytes(175, 225, 255),
             /* 0.50 */Color::FromBytes(133, 205, 249),
             /* 0.75 */Color::FromBytes(0, 103, 139),
-            /* 1.00 */Color::FromBytes(40, 64, 139)}};
+            /* 1.00 */Color::FromBytes(40, 64, 139)
+        },
+        Color::FromBytes(255,255,255),
+        Color::FromBytes(0,0,0)
+    };
 
     auto BrBG = ColorMap{"BrBG",
                                 {Color{0.0, 0.23529411764705882, 0.18823529411764706},
@@ -30,11 +39,14 @@ namespace Styles {
 
     std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
 
-    ColorMap::ColorMap(Str name, std::vector<Styles::Color> colorSeq)
-            : name(name), colors(colorSeq) {}
+    ColorMap::ColorMap(const Str &name, std::vector<Styles::Color> colorSeq, Styles::Color clipped, Styles::Color saturated)
+            : name(name), colors(colorSeq), clipped(clipped), saturated(saturated) {
+        if(clipped == Styles::Nil) this->clipped = colorSeq[0];
+        if(saturated == Styles::Nil) this->saturated = colorSeq.back();
+    }
 
     ColorMap::ColorMap(const Styles::ColorMap &colorMap)
-            : ColorMap(colorMap.name, colorMap.colors) {}
+            : ColorMap(colorMap.name, colorMap.colors, colorMap.clipped, colorMap.saturated) {}
 
     auto ColorMap::mapValue(Real value, Real min, Real max) const -> Styles::Color {
         Real clampedValue = (value - min) / (max-min);
@@ -44,11 +56,11 @@ namespace Styles {
         }
 
         if (clampedValue <= 0.0) {
-            return colors.front();
+            return clipped;
         }
 
         if (clampedValue >= 1.0) {
-            return colors.back();
+            return saturated;
         }
 
         Real interval = 1.0 / static_cast<double>(colors.size() - 1);
@@ -69,6 +81,41 @@ namespace Styles {
 
     Str ColorMap::getName() const {
         return name;
+    }
+
+
+
+    auto ColorMap::permute() const -> ColorMap {
+        std::vector<Styles::Color> newColors;
+        for(auto &c: colors)
+            newColors.push_back(c.permute());
+
+        return {name+"_p", newColors, clipped.permute(), saturated.permute()};
+    }
+
+    auto ColorMap::bgr() const -> ColorMap {
+        std::vector<Styles::Color> newColors;
+        for(auto &c: colors)
+            newColors.push_back(c.permute(true));
+
+        return {name+"_p", newColors, clipped.permute(true), saturated.permute(true)};
+    }
+
+    auto ColorMap::inverse() const -> ColorMap {
+        std::vector<Styles::Color> newColors;
+        for(auto &c: colors)
+            newColors.push_back(c.inverse());
+
+        return {name+"_i", newColors, clipped.inverse(), saturated.inverse()};
+    }
+
+    auto ColorMap::reverse() const -> ColorMap {
+        std::vector<Styles::Color> newColors;
+
+        for(int i=(int)colors.size()-1; i>=0; --i)
+            newColors.push_back(colors[i]);
+
+        return {name+"_r", newColors, saturated, clipped};
     }
 
 

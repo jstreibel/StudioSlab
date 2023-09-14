@@ -15,7 +15,7 @@
 #include "../KG-RtoREquationState.h"
 #include "Core/Tools/Log.h"
 
-#define tRes ( (N/L) * simConfig.numericConfig.gett() )
+#define tRes ( (N/L) * simConfig.numericConfig.gett() + 1 )
 
 // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
@@ -43,9 +43,9 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
         auto sizeMB = Real((Real)N*timeResolution*sizeof(Real))/(1024*1024.);
 
         Log::Critical() << name << " is about to allocate " << sizeMB
-                        << "MB of data to store full " << N << 'x' << timeResolution << "x8 bytes simulation history." << Log::Flush;
+                        << "MB of data to store full " << N << 'x' << timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
 
-        data = new R2toR::DiscreteFunction_CPU(N, (int)timeResolution, xMin, 0.0, hx, ht);
+        data = new R2toR::DiscreteFunction_CPU(N, (int)timeResolution+1, xMin, 0.0, hx, ht);
 
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
@@ -72,13 +72,15 @@ void SimHistory::handleOutput(const OutputPacket &packet) {
         OUT to_ϕ = *data;
 
         fix xMin = to_ϕ.getDomain().xMin;
-        fix xMax = to_ϕ.getDomain().xMax;
         fix dx = to_ϕ.getSpace().getMetaData().geth(0);
+        fix N = to_ϕ.getN();
 
         fix t = packet.getSimTime();
 
-        for(auto x=xMin; x<xMax; x+=dx)
+        for(auto i=0; i<N; ++i) {
+            fix x = xMin + i*dx;
             to_ϕ({x, t}) = filter(x, state);
+        }
     }
 
     timestamps.emplace_back(packet.getSimTime());

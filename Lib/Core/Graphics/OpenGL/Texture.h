@@ -17,11 +17,18 @@ namespace OpenGL {
         ByteData data = nullptr;
 
         GLsizei w, h;
+
+        bool antiAlias = true;
     public:
         Texture(GLsizei width, GLsizei height);
 
         bool setColor(int i, int j, Styles::Color color);
         bool setData(ByteData data);
+
+        bool getAntiAlias() const;
+        void setAntiAlias(bool val);
+        void setAntiAliasOn();
+        void setAntiAliasOff();
 
         bool bind() const;
 

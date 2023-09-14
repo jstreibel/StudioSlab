@@ -10,19 +10,26 @@
 
 #include "Utils/Types.h"
 #include "Colors.h"
+#include "Math/Graph/Styles.h"
 
 namespace Styles {
 
     class ColorMap {
         std::vector<Styles::Color> colors;
+        Styles::Color clipped, saturated;
         Str name;
 
     public:
         ColorMap() = default;
-        ColorMap(Str name, std::vector<Styles::Color> colorSeq);
+        ColorMap(const Str &name, std::vector<Styles::Color> colorSeq, Styles::Color clipped=Styles::Nil, Styles::Color saturated=Styles::Nil);
         ColorMap(const ColorMap &colorMap);
 
         auto mapValue(Real clampedValue, Real min=-1, Real max=1) const -> Styles::Color;
+
+        auto permute() const -> ColorMap;
+        auto bgr() const -> ColorMap;
+        auto inverse() const -> ColorMap;
+        auto reverse() const -> ColorMap;
 
         Str getName() const;
     };
