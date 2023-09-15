@@ -80,9 +80,9 @@ Str Unit::operator()(const Real &val){
 
     Rational rational(Common::RoundToMostSignificantDigits(reVal, 2));
 
-    if     (rational.numerator   == 1) return sym + "/" + ToStr(rational.denominator);
-    else if(rational.denominator == 1) return ToStr(rational.numerator) + sym;
-    else if(rational.numerator > 16 || rational.numerator > 16) return ToStr(reVal) + sym;
+    if     (std::abs(rational.numerator)   == 1) return sym + "/" + ToStr(rational.denominator);
+    else if(std::abs(rational.denominator) == 1) return ToStr(rational.numerator) + sym;
+    else if(std::abs(rational.numerator) > 16 || std::abs(rational.numerator) > 16) return ToStr(reVal) + sym;
 
     return ToStr(rational.numerator) + sym + "/" + ToStr(rational.denominator);
 }

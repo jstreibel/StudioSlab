@@ -76,8 +76,8 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         auto style = Styles::GetCurrent()->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
-
         mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
+
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
         mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
 
@@ -245,6 +245,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
     if( not isSetup ) {
         mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
         mFullHistoryDisplay.setup(simulationHistory);
+        mFullHistoryDisplay.set_xPeriodicOn();
 
         isSetup = true;
 

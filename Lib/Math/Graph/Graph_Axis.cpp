@@ -157,7 +157,7 @@ void Core::Graphics::Graph2D::drawXAxis() {
                                 : region.yMin + vGraphPaddingInSpace;
     fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
     {
-        auto &gtfColor = Styles::GetCurrent()->graphTicksFont;
+        auto &gtfColor = Styles::GetCurrent()->graphNumbersColor;
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
@@ -219,7 +219,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
 
     StringStream buffer;
 
-    auto &gtf = Styles::GetCurrent()->graphTicksFont;
+    auto &gtf = Styles::GetCurrent()->graphNumbersColor;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
         auto numRegion = log10(Δy);
@@ -255,7 +255,8 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glBegin(GL_LINES);
     {
         auto &ac = Styles::GetCurrent()->axisColor;
-        auto &tc = Styles::GetCurrent()->majorTickColor;
+        auto &tc = Styles::GetCurrent()->gridLines.lineColor;
+
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
 
@@ -390,7 +391,7 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.5);
 
-    auto c = Styles::GetCurrent()->graphTitleFont;
+    auto c = Styles::GetCurrent()->graphNumbersColor;
     Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
 
     auto *writer = Styles::GetCurrent()->labelsWriter;

@@ -22,69 +22,32 @@
 
 Styles::ColorScheme_ptr current;
 
-void SetSchemeDark1();
+void SetSchemeDark();
 void SetSchemeDark2();
-void SetSchemeDark3();
-
 void SetSchemeHacker();
-
-void SetSchemeLight2();
-
+void SetSchemePrint();
+void SetSchemeLight();
 void SetSchemeElegant();
 
 void Styles::Init() {
 
-    SetSchemeDark2();
-    // SetSchemeDark3();
-    // SetSchemeDark4();
-
-    // SetSchemeLight2();
-
+    SetSchemeDark();
+    // SetSchemeDark2();
+    // SetSchemeHacker();
+    // SetSchemePrint();
+    // SetSchemeLight();
     // SetSchemeElegant();
+
 }
 
 
-void SetSchemeDark1 () {
-    Styles::Color graphTitleFont =  {1,1,1,1};
-    Styles::Color graphTicksFont =  {1,1,1,.8};
-    Styles::Color background =      {0.03,0.05,0.03,1};
+void SetSchemeDark () {
+    Styles::Color graphTitleColor   = {1   ,1   ,1   ,1};
+    Styles::Color graphNumbersColor = {1   ,1   ,1   , .8};
+    Styles::Color background        = {0.05,0.05,0.08,1};
 
-    Styles::Color axisColor =       {1,1,1, 0.75};
-    Styles::Color tickColor =       {1,.75,.75, 0.5};
-
-    Styles::Color graph1a =         {.65,.65,.99,1};
-    Styles::Color graph1b =         {.8,.2,.2, 1};
-    Styles::Color graph1c =         {.2,.8,.2, 1};
-
-    Styles::Color graph1a_fill =    graph1a; graph1a_fill.a = .35;
-    Styles::Color graph1b_fill =    graph1b; graph1b_fill.a = .15;
-    Styles::Color graph1c_fill =    graph1c; graph1c_fill.a = .15;
-
-    std::vector<Styles::PlotStyle> graphs = {
-            Styles::PlotStyle{graph1a, Styles::Primitive::SolidLine, true, graph1a_fill, 2.5},
-            Styles::PlotStyle{graph1b, Styles::Primitive::SolidLine, true, graph1b_fill, 1.0},
-            Styles::PlotStyle{graph1c, Styles::Primitive::SolidLine, true, graph1c_fill, 1.0},
-            Styles::PlotStyle{graph1a.permute(), Styles::Primitive::SolidLine, true, graph1a_fill, 2.5},
-            Styles::PlotStyle{graph1b.permute(), Styles::Primitive::SolidLine, true, graph1b_fill, 1.0},
-            Styles::PlotStyle{graph1c.permute(), Styles::Primitive::SolidLine, true, graph1c_fill, 1.0}};
-
-    auto XHairColor = axisColor;
-    XHairColor.a = .89;
-    auto XHairStyle = Styles::PlotStyle(axisColor);
-    XHairStyle.primitive = Styles::DashedLine;
-    XHairStyle.thickness = 1;
-
-    static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
-}
-
-void SetSchemeDark2 () {
-    Styles::Color graphTitleFont =  {1,1,1,1};
-    Styles::Color graphTicksFont =  {1,1,1,.8};
-    Styles::Color background =      {0.05,0.05,0.08,1};
-
-    Styles::Color axisColor =       {1,1,1,.25};
-    Styles::Color tickColor =       {1,1,1,.25};
+    Styles::Color axisColor =       {1,1,1,.85};
+    Styles::Color tickColor =       {1,1,1,.75};
 
     // https://www.learnui.design/tools/data-color-picker.html
     std::vector<Styles::PlotStyle> graphs = {
@@ -104,12 +67,15 @@ void SetSchemeDark2 () {
     XHairStyle.primitive = Styles::Lines;
     XHairStyle.thickness = 1;
 
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
+
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 22);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
+    current = Styles::NewScheme({background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, &writer, &writer, graphs});
 
 }
 
-void SetSchemeDark3 () {
+void SetSchemeDark2 () {
     Styles::Color graphTitleFont =  {1,1,1,1};
     Styles::Color graphTicksFont =  {1,1,1,.8};
     Styles::Color background =      {0.05,0.05,0.08,1};
@@ -135,8 +101,11 @@ void SetSchemeDark3 () {
     XHairStyle.primitive = Styles::DashedLine;
     XHairStyle.thickness = 1;
 
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
+
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 20);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, &writer, &writer, graphs});
 }
 
 void SetSchemeHacker() {
@@ -165,39 +134,11 @@ void SetSchemeHacker() {
     XHairStyle.primitive = Styles::DashedLine;
     XHairStyle.thickness = 1;
 
-    static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
-}
-
-void SetSchemeBWDark () {
-    using namespace Styles;
-
-    Color graphTitleFont = {1,1,1,1};
-    Color graphTicksFont = {1,1,1,0.75};
-    Color background = {0,0,0,1};
-
-    Color axisColor = {1,1,1,1};
-    Color tickColor = {.9,.9,.9,1};
-
-    Color graph1a = {1,1,1,1};
-    Color graph1b = {.75,.75,.75,1};
-    Color graph1c = {.5,.5,.5,1};
-
-    std::vector<Styles::PlotStyle> graphs = {
-            Styles::PlotStyle{graph1a,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{graph1b,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{graph1c,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{{.25,.25,.25,1},  Styles::Primitive::SolidLine}};
-
-    auto XHairColor = axisColor;
-    XHairColor.a = .89;
-    auto XHairStyle = Styles::PlotStyle(axisColor);
-    XHairStyle.primitive = Styles::DashedLine;
-    XHairStyle.thickness = 1;
-
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
 
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, &writer, &writer, graphs});
 }
 
 void SetSchemePrint () {
@@ -230,41 +171,14 @@ void SetSchemePrint () {
     XHairStyle.primitive = Styles::DashedLine;
     XHairStyle.thickness = 1;
 
-    static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
-}
-
-void SetSchemeLight1 () {
-    using namespace Styles;
-
-    Color graphTitleFont = {0,0,0,1};
-    Color graphTicksFont = {0,0,0,0.75};
-    Color background = {1,1,1,1};
-
-    Color axisColor = {0,0,0,1};
-    Color tickColor = {.2,.2,.2,1};
-
-    Color graph1a = {.25,.3,.6,1};
-    Color graph1b = {.3,.6,.25,1};
-    Color graph1c = {.6,.3,.25,1};
-
-    std::vector<Styles::PlotStyle> graphs = {
-            Styles::PlotStyle{graph1a,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{graph1b,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{graph1c,          Styles::Primitive::SolidLine},
-            Styles::PlotStyle{{.25,.25,.25,1},  Styles::Primitive::SolidLine}};
-
-    auto XHairColor = axisColor;
-    XHairColor.a = .89;
-    auto XHairStyle = Styles::PlotStyle(axisColor);
-    XHairStyle.primitive = Styles::DashedLine;
-    XHairStyle.thickness = 1;
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
 
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, &writer, &writer, graphs});
 }
 
-void SetSchemeLight2 () {
+void SetSchemeLight () {
     using namespace Styles;
 
     Color graphTitleFont = {0,0,0,1};
@@ -291,8 +205,11 @@ void SetSchemeLight2 () {
     XHairStyle.primitive = Styles::DashedLine;
     XHairStyle.thickness = 1;
 
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
+
     static Core::Graphics::Writer writer(Resources::fontFileName(10), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &writer, &writer, graphs});
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, &writer, &writer, graphs});
 }
 
 void SetSchemeElegant() {
@@ -331,9 +248,12 @@ void SetSchemeElegant() {
     XHairStyle.thickness = 1;
     XHairStyle.filled = false;
 
+    auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
+    gridLinesScheme.lineColor.a = 0.15;
+
     static Core::Graphics::Writer labelsWriter(Resources::fontFileName(19), 24);
     static Core::Graphics::Writer ticksWriter(Resources::fontFileName(18), 24);
-    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, &labelsWriter, &ticksWriter, graphs});
+    current = Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, &labelsWriter, &ticksWriter, graphs});
 }
 
 Styles::ColorScheme_ptr Styles::GetCurrent() {
@@ -344,21 +264,23 @@ Styles::ColorScheme_ptr Styles::NewScheme(const Styles::StyleScheme& scheme) {
     { return std::make_shared<Styles::StyleScheme>(scheme); }
 }
 
-Styles::StyleScheme::StyleScheme(Color windowBackground,
-                                 Color graphTicksFont,
-                                 Color graphTitleFont,
+Styles::StyleScheme::StyleScheme(Color graphBackground,
+                                 Color graphNumbersColor,
+                                 Color graphTitleColor,
                                  Color axisColor,
                                  Color majorTickColor,
                                  PlotStyle XHairStyle,
+                                 PlotStyle gridStyle,
                                  Core::Graphics::Writer *labelsWriter,
                                  Core::Graphics::Writer *ticksWriter,
                                  std::vector<PlotStyle> plotStyles)
-                                 : graphBackground(windowBackground)
-                                 , graphTicksFont(graphTicksFont)
-                                 , graphTitleFont(graphTitleFont)
+                                 : graphBackground(graphBackground)
+                                 , graphNumbersColor(graphNumbersColor)
+                                 , graphTitleColor(graphTitleColor)
                                  , axisColor(axisColor)
                                  , majorTickColor(majorTickColor)
                                  , XHairStyle(XHairStyle)
+                                 , gridLines(gridStyle)
                                  , labelsWriter(labelsWriter)
                                  , ticksWriter(ticksWriter)
                                  , funcPlotStyles(std::move(plotStyles)) {}

@@ -6,6 +6,7 @@
 
 #include "imgui.h"
 #include "Core/Graphics/Styles/WindowStyles.h"
+#include "Core/Controller/Interface/InterfaceManager.h"
 
 
 GUIWindow::GUIWindow() : Window( ) {
@@ -56,32 +57,45 @@ void GUIWindow::draw() {
         }
     }
 
-    end();
+    if(ImGui::CollapsingHeader("Interfaces")) {
 
-    if(0) {
-        float scaleX = 2.f / getw(), scaleY = 2.f * 2.f / geth();
-        glScalef(scaleX, scaleY, 1);
-        glTranslatef(-getw() / 2.f, geth() / 4.f, 0);
+        for(auto &interface : InterfaceManager::getInstance().getInterfaces()) {
+            fix generalDescription = interface->getGeneralDescription();
+
+            fix text = interface->getName() + (!generalDescription.empty() ? "("+generalDescription+")" : "");
 
 
-        {
-            const int cursorx = 14;
-            const float lineHeight = 18;
-            float delta = lineHeight;
-            auto font = FONT_BITMAP_9;
+            if (ImGui::TreeNode(text.c_str()))
+            {
+                for(auto &param : interface->getParameters()){
+                    fix descr = param->getDescription();
+                    fix longName = param->getCLName(true);
+                    fix shortName = param->getCLName(false);
 
-            auto colorTone = char(0.9 * 255);
-            glColor3b(colorTone, colorTone, colorTone);
+                    auto name = Str("-");
+                    if(longName.size() > 1) {
+                        name += "-" + longName;
+                        if(shortName.size() == 1) name += ", -" + shortName;
+                    }
+                    else name += longName;
 
-            for (auto stat: stats) {
-                auto color = stat.second;
-                glColor3f(color.r, color.g, color.b);
-                std::string text = stat.first;
-                GLUTUtils::writeBitmap(this, cursorx, -delta, text, font);
-                delta += lineHeight;
+                    ImGui::Text("%s", name.c_str());
+
+                    ImGui::Text("\tValue: %s", param->valueToString().c_str());
+
+                    if(!descr.empty())
+                        ImGui::Text("\tDescr.: %s", descr.c_str());
+
+                }
+
+                ImGui::TreePop();
+                ImGui::Spacing();
             }
         }
+
     }
+
+    end();
 
     stats.clear();
 }

@@ -30,6 +30,8 @@ namespace OpenGL {
         void setAntiAliasOn();
         void setAntiAliasOff();
 
+        void set_sPeriodicOn();
+
         bool bind() const;
 
         bool upload(UInt row=0, Count nRows=0);

@@ -55,16 +55,17 @@ namespace Styles {
     };
 
     struct StyleScheme {
-        StyleScheme(Color windowBackground, Color graphTicksFont, Color graphTitleFont, Color axisColor,
-                    Color majorTickColor, PlotStyle XHairStyle, Core::Graphics::Writer *labelsWriter, Core::Graphics::Writer *ticksWriter,
+        StyleScheme(Color graphBackground, Color graphNumbersColor, Color graphTitleColor, Color axisColor,
+                    Color majorTickColor, PlotStyle XHairStyle, PlotStyle gridStyle, Core::Graphics::Writer *labelsWriter, Core::Graphics::Writer *ticksWriter,
                     std::vector<PlotStyle> plotStyles);
 
         Color graphBackground;
-        Color graphTicksFont;
-        Color graphTitleFont;
+        Color graphNumbersColor;
+        Color graphTitleColor;
         Color axisColor;
         Color majorTickColor;
         PlotStyle XHairStyle;
+        PlotStyle gridLines;
 
         Core::Graphics::Writer *labelsWriter;
         Core::Graphics::Writer *ticksWriter;

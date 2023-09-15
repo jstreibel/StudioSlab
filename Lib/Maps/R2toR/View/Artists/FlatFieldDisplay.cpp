@@ -13,10 +13,10 @@
 #include <utility>
 
 #define drawFieldVerts(offset) \
-glTexCoord2d(ti, ti); glVertex2d(domain.xMin+(offset), domain.yMin); \
-glTexCoord2d(tf, ti); glVertex2d(domain.xMax+(offset), domain.yMin); \
-glTexCoord2d(tf, tf); glVertex2d(domain.xMax+(offset), domain.yMax); \
-glTexCoord2d(ti, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
+glTexCoord2d(si, ti); glVertex2d(domain.xMin+(offset), domain.yMin); \
+glTexCoord2d(sf, ti); glVertex2d(domain.xMax+(offset), domain.yMin); \
+glTexCoord2d(sf, tf); glVertex2d(domain.xMax+(offset), domain.yMax); \
+glTexCoord2d(si, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
 
 #define ODD true
 
@@ -178,23 +178,27 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
         glBegin(GL_QUADS);
         {
             auto hPixelSizeInTexCoord = 1. / texture->getWidth();
+            auto vPixelSizeInTexCoord = 1. / texture->getHeight();
 
-            auto ti = 0.0 + hPixelSizeInTexCoord;
-            auto tf = 1.0 - hPixelSizeInTexCoord;
+            auto si = 0.0; // - hPixelSizeInTexCoord;
+            auto sf = 1.0; // + hPixelSizeInTexCoord;
+            auto ti = 0.0; // - vPixelSizeInTexCoord;
+            auto tf = 1.0; // + vPixelSizeInTexCoord;
 
             auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
 
             glColor4d(1, 1, 1, 1);
+
             drawFieldVerts(0.0);
 
-            // glColor4d(1, 1, 1, 0.85);
-            // fix fieldWidth = domain.xMax - domain.xMin;
-            // for (int i = 1; i <= 2; i++) {
-            //     drawFlatField(i * fieldWidth);
-            //     drawFlatField(-i * fieldWidth);
-            // }
-
-
+            if(xPeriodic) {
+                fix fieldWidth = domain.xMax - domain.xMin;
+                for (int i = 1; i <= 2; i++) {
+                    glColor4d(1, 1, 1, 0.75 / i);
+                    drawFieldVerts(i * fieldWidth);
+                    drawFieldVerts(-i * fieldWidth);
+                }
+            }
         }
         glEnd();
 
@@ -323,4 +327,9 @@ auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::
 
 void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
     cMap = colorMap;
+}
+
+void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
+    xPeriodic = true;
+    texture->set_sPeriodicOn();
 }

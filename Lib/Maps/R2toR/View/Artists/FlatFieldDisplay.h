@@ -23,6 +23,8 @@ namespace R2toR::Graphics {
             Real cMap_max =  1.1;
             bool symmetricMaxMin = true;
 
+            bool xPeriodic = false;
+
             void drawFlatField();
         protected:
             R2toR::Function::ConstPtr func    = nullptr;
@@ -44,6 +46,8 @@ namespace R2toR::Graphics {
             auto getFunction() const -> R2toR::Function::ConstPtr;
 
             void setColorMap(Styles::ColorMap colorMap);
+
+            void set_xPeriodicOn();
 
             void draw() override;
 
