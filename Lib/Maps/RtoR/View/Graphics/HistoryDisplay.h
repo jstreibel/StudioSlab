@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_HISTORYDISPLAY_H
 #define STUDIOSLAB_HISTORYDISPLAY_H
 
-#include "Maps/R2toR/View/Artists/FlatFieldDisplay.h"
+#include "Maps/R2toR/View/FlatFieldDisplay.h"
 
 
 namespace RtoR::Graphics {

@@ -12,10 +12,11 @@
 
 #include "Math/Graph/OpenGLMonitor.h"
 
-#include "Maps/R2toR/View/Artists/FlatFieldDisplay.h"
 #include "Maps/RtoR/View/Graphics/GraphRtoR.h"
-#include "Maps/R2toR/View/Artists/GraphR2ToR.h"
-#include "Maps/R2toR/View/Artists/GraphR2Section.h"
+
+#include "Maps/R2toR/View/FlatFieldDisplay.h"
+#include "Maps/R2toR/View/GraphR2ToR.h"
+#include "Maps/R2toR/View/GraphR2Section.h"
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 

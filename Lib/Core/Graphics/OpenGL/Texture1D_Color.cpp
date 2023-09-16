@@ -2,7 +2,7 @@
 // Created by joao on 16/09/23.
 //
 
-#include "Texture1D.h"
+#include "Texture1D_Color.h"
 #include "Core/Tools/Log.h"
 
 #define R 0
@@ -12,7 +12,7 @@
 
 namespace OpenGL {
 
-    Texture1D::Texture1D(GLsizei size) : size(size) {
+    Texture1D_Color::Texture1D_Color(GLsizei size) : size(size) {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         if(size>maxTextureSize) {
@@ -50,7 +50,7 @@ namespace OpenGL {
             Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    bool Texture1D::setColor(int i, Styles::Color color) {
+    bool Texture1D_Color::setColor(int i, Styles::Color color) {
         if(data == nullptr) return false;
 
         fix index = i*4;
@@ -64,7 +64,7 @@ namespace OpenGL {
         return true;
     }
 
-    bool Texture1D::upload(UInt row0, Count nRows) {
+    bool Texture1D_Color::upload(UInt row0, Count nRows) {
         if(data == nullptr || texture == 0) return false;
 
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -82,7 +82,7 @@ namespace OpenGL {
         return true;
     }
 
-    bool Texture1D::setData(ByteData newData) {
+    bool Texture1D_Color::setData(ByteData newData) {
         if(texture == 0) return false;
 
         glTexImage1D(GL_TEXTURE_2D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, newData);
@@ -90,11 +90,11 @@ namespace OpenGL {
         return true;
     }
 
-    GLsizei Texture1D::getSize() const {
+    GLsizei Texture1D_Color::getSize() const {
         return size;
     }
 
-    bool Texture1D::bind() const {
+    bool Texture1D_Color::bind() const {
         if(texture == 0) return false;
 
         glBindTexture(GL_TEXTURE_1D, texture);
@@ -102,12 +102,12 @@ namespace OpenGL {
         return true;
     }
 
-    void Texture1D::setAntiAlias(bool val) {
+    void Texture1D_Color::setAntiAlias(bool val) {
         if(val) setAntiAliasOn();
         else setAntiAliasOff();
     }
 
-    void Texture1D::setAntiAliasOn() {
+    void Texture1D_Color::setAntiAliasOn() {
         glBindTexture(GL_TEXTURE_1D, texture);
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -116,7 +116,7 @@ namespace OpenGL {
         antiAlias = true;
     }
 
-    void Texture1D::setAntiAliasOff() {
+    void Texture1D_Color::setAntiAliasOff() {
         glBindTexture(GL_TEXTURE_1D, texture);
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -125,11 +125,11 @@ namespace OpenGL {
         antiAlias = false;
     }
 
-    bool Texture1D::getAntiAlias() const {
+    bool Texture1D_Color::getAntiAlias() const {
         return antiAlias;
     }
 
-    void Texture1D::set_sPeriodicOn() {
+    void Texture1D_Color::set_sPeriodicOn() {
         glBindTexture(GL_TEXTURE_1D, texture);
 
         // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);

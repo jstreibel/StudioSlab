@@ -2,8 +2,8 @@
 // Created by joao on 16/09/23.
 //
 
-#ifndef STUDIOSLAB_TEXTURE1D_H
-#define STUDIOSLAB_TEXTURE1D_H
+#ifndef STUDIOSLAB_TEXTURE1D_COLOR_H
+#define STUDIOSLAB_TEXTURE1D_COLOR_H
 
 #include "Utils/Types.h"
 
@@ -12,7 +12,7 @@
 
 namespace OpenGL {
 
-    class Texture1D {
+    class Texture1D_Color {
         GLuint texture = 0;
         ByteData data = nullptr;
 
@@ -20,7 +20,7 @@ namespace OpenGL {
 
         bool antiAlias = true;
     public:
-        Texture1D(GLsizei length);
+        Texture1D_Color(GLsizei length);
 
         bool setColor(int i, Styles::Color color);
         bool setData(ByteData data);
@@ -41,4 +41,4 @@ namespace OpenGL {
 
 } // OpenGL
 
-#endif //STUDIOSLAB_TEXTURE1D_H
+#endif //STUDIOSLAB_TEXTURE1D_COLOR_H

@@ -7,11 +7,11 @@
 
 #include <utility>
 
-#include "Core/Graphics/OpenGL/Texture2D.h"
+#include "Core/Graphics/OpenGL/Texture2D_Color.h"
 #include "Maps/R2toR/Model/R2toRFunction.h"
 #include "Math/Graph/Graph.h"
 #include "Core/Graphics/Styles/ColorMap.h"
-#include "Core/Graphics/Texture1D.h"
+#include "Core/Graphics/OpenGL/Texture1D_Color.h"
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Core::Graphics::Graph2D {
@@ -22,7 +22,7 @@ namespace R2toR::Graphics {
             Real cMap_epsArg                =  1;
             Real cMap_min                   = -1.1;
             Real cMap_max                   =  1.1;
-            OpenGL::Texture1D* cMap_texture = nullptr;
+            OpenGL::Texture1D_Color* cMap_texture = nullptr;
             bool symmetricMaxMin            = true;
 
             bool xPeriodic = false;
@@ -31,7 +31,7 @@ namespace R2toR::Graphics {
 
         protected:
             R2toR::Function::ConstPtr func    = nullptr;
-            OpenGL::Texture2D*        texture = nullptr;
+            OpenGL::Texture2D_Color*        texture = nullptr;
 
             Styles::Color computeColor(Real val) const;
             void computeGraphRanges();

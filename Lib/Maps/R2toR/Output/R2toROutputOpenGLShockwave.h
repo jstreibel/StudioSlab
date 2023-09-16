@@ -8,7 +8,7 @@
 #include "Math/Graph/OpenGLMonitor.h"
 #include "Core/Graphics/ZoomPanRotate.h"
 #include "Math/Graph/FunctionGraph.h"
-#include "Maps/R2toR/View/Artists/GraphR2ToR.h"
+#include "Maps/R2toR/View/GraphR2ToR.h"
 #include "Maps/RtoR2/StraightLine.h"
 
 

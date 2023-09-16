@@ -20,16 +20,17 @@ set( GRAPHICS_SOURCES
 
 		SFML/Graph.cpp
 
-		OpenGL/Utils.h			OpenGL/Utils.cpp
-		OpenGL/GLUTUtils.h  	OpenGL/GLUTUtils.cpp
-        OpenGL/Texture2D.h OpenGL/Texture2D.cpp
-		OpenGL/Writer.h			OpenGL/Writer.cpp
-		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
-		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
+		OpenGL/Utils.h				OpenGL/Utils.cpp
+		OpenGL/GLUTUtils.h  		OpenGL/GLUTUtils.cpp
+		OpenGL/Writer.h				OpenGL/Writer.cpp
+		OpenGL/rougier/mat4.h		OpenGL/rougier/mat4.c
+		OpenGL/rougier/shader.h		OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
-        OpenGL/GLDebug.h		OpenGL/GLDebug.cpp
-		Texture1D.cpp
-		Texture1D.h
+        OpenGL/GLDebug.h			OpenGL/GLDebug.cpp
+		OpenGL/Texture1D_Color.h 	OpenGL/Texture1D_Color.cpp
+		OpenGL/Texture2D_Color.h 	OpenGL/Texture2D_Color.cpp
+		OpenGL/Texture2D_Real.h		OpenGL/Texture2D_Real.cpp
+
 )
 
 

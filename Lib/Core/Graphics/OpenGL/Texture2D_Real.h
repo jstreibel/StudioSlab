@@ -1,29 +1,32 @@
 //
-// Created by joao on 18/08/23.
+// Created by joao on 16/09/23.
 //
 
-#ifndef STUDIOSLAB_TEXTURE2D_H
-#define STUDIOSLAB_TEXTURE2D_H
+#ifndef STUDIOSLAB_TEXTURE2D_REAL_H
+#define STUDIOSLAB_TEXTURE2D_REAL_H
 
 #include "Utils/Types.h"
 
 #include "Core/Graphics/OpenGL/OpenGL.h"
-#include "Core/Graphics/Styles/Colors.h"
 
 namespace OpenGL {
 
-    class Texture2D {
+    class Texture2D_Real {
         GLuint texture = 0;
-        ByteData data = nullptr;
+        RealData data = nullptr;
+
+        const GLint internalFormat = GL_R32F;
+        const GLuint pixelDataFormat = GL_RED;
+        const GLuint pixelDataType = GL_FLOAT;
 
         GLsizei w, h;
 
         bool antiAlias = true;
     public:
-        Texture2D(GLsizei width, GLsizei height);
+        Texture2D_Real(GLsizei width, GLsizei height);
 
-        bool setColor(int i, int j, Styles::Color color);
-        bool setData(ByteData data);
+        bool setValue(int i, int j, Real value);
+        bool setData(RealData data);
 
         bool getAntiAlias() const;
         void setAntiAlias(bool val);
@@ -42,4 +45,4 @@ namespace OpenGL {
 
 } // OpenGL
 
-#endif //STUDIOSLAB_TEXTURE2D_H
+#endif //STUDIOSLAB_TEXTURE2D_REAL_H

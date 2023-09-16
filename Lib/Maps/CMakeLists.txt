@@ -96,25 +96,24 @@ set ( R2TOR_SOURCES
 
 		RtoR/View/Graphics/GraphRtoR.cpp
 
-
-		R2toR/View/Artists/GraphR2ToR.cpp
-		R2toR/View/Artists/GraphR2Section.cpp
-		R2toR/View/Filters/DimensionReductionFilter.cpp
-		R2toR/View/R2toROutputOpenGLShockwave.cpp
-		R2toR/View/R2toROutputOpenGLGeneric.cpp
-		R2toR/View/R2ToROutputOpenGlShockwaveAtT0.cpp
+		R2toR/Output/Filters/DimensionReductionFilter.cpp
+		R2toR/Output/R2toROutputOpenGLShockwave.cpp
+		R2toR/Output/R2toROutputOpenGLGeneric.cpp
+		R2toR/Output/R2ToROutputOpenGlShockwaveAtT0.cpp
 		#R2toR/View/OutputShockwaveZeros.cpp
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 		#R2toR/View/LastOutputVtkVisualizer.cpp	R2toR/View/LastOutputVtkVisualizer.h
 
 		RtoR2/StraightLine.cpp
 
-		R2toR/View/Artists/FlatFieldDisplay.h										R2toR/View/Artists/FlatFieldDisplay.cpp
+		R2toR/View/GraphR2Section.cpp
+		R2toR/View/FlatFieldDisplay.h			R2toR/View/FlatFieldDisplay.cpp
+		R2toR/View/GraphR2ToR.cpp
+
 		RtoR/Model/FunctionsCollection/Section1D.h									RtoR/Model/FunctionsCollection/Section1D.cpp
 		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h	R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
         R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h		        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
         R2toR/FourierTransform.h											        R2toR/FourierTransform.cpp
-
 )
 
 

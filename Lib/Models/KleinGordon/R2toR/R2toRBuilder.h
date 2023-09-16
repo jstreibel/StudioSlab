@@ -6,7 +6,8 @@
 #define STUDIOSLAB_R2TORBUILDER_H
 
 #include "Math/Numerics/Builder.h"
-#include "Maps/R2toR/View/R2toROutputOpenGLGeneric.h"
+
+#include "Maps/R2toR/Output/R2toROutputOpenGLGeneric.h"
 
 #include "Models/KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"

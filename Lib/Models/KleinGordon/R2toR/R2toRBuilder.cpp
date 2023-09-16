@@ -16,12 +16,13 @@
 #include "Math/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/Output/Format/BinarySOF.h"
 #include "Math/Numerics/Output/Format/SpaceFilterBase.h"
-#include "Maps/R2toR/View/Filters/DimensionReductionFilter.h"
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+
 #include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Maps/R2toR/Output/LastOutputVtkVisualizer.h"
+#include "Maps/R2toR/Output/Filters/DimensionReductionFilter.h"
 #include "Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-#include "Maps/R2toR/View/LastOutputVtkVisualizer.h"
 
 namespace R2toR {
 
