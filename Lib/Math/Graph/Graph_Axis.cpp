@@ -82,6 +82,11 @@ void Core::Graphics::Graph2D::drawAxes() {
 
 }
 
+Str Core::Graphics::Graph2D::getXHairLabel(const Point2D &coords) {
+    fix digits = 5;
+    return Str("(")+ baseHorizontalUnit(coords.x, digits) + ", " + baseVerticalUnit(coords.y, digits) + ")";
+}
+
 void Core::Graphics::Graph2D::drawXHair() {
     if(!isMouseIn()) return;
 
@@ -91,7 +96,8 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     auto coords = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
-    auto label = Str("(")+ baseHorizontalUnit(coords.x) + ", " + baseVerticalUnit(coords.y) + ")";
+    Count digits = 5;
+    auto label = getXHairLabel(coords);
     Styles::GetCurrent()->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
     XHair.clear();
@@ -168,14 +174,14 @@ void Core::Graphics::Graph2D::drawXAxis() {
         {
             Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
             loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            auto label = baseHorizontalUnit(mark);
+            auto label = baseHorizontalUnit(mark, 2);
             //auto label = ToStr(mark, 2)
             writer->write(label, loc, gtfColor);
         }
         for (Real mark = -xspacing; mark >= region.xMin * 1.0001; mark -= xspacing) {
             Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
             loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            auto label = baseHorizontalUnit(mark);
+            auto label = baseHorizontalUnit(mark, 2);
             //auto label = ToStr(mark, 2)
             writer->write(label, loc, gtfColor);
         }

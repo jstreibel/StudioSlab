@@ -10,6 +10,7 @@
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Maps/RtoR/Calc/FourierTransform.h"
 #include "Math/Constants.h"
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 // #include "Maps/R2toR/FourierTransform.h"
 
 //
@@ -70,8 +71,9 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
     panel.addWindow(&mCorrelationGraph);
     panel.addWindow(&mSpaceFourierModesGraph);
 
+    mSpaceFourierModesGraph.setHorizontalUnit(Constants::π);
+
     {
-        auto windowColumn = new WindowColumn;
 
         auto style = Styles::GetCurrent()->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
@@ -81,9 +83,9 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
         mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
 
+        auto windowColumn = new WindowColumn;
         windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
         windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
-
         panel.addWindow(windowColumn, ADD_NEW_COLUMN);
     }
 
@@ -245,7 +247,10 @@ void RtoR::Monitor::updateHistoryGraphs() {
     if( not isSetup ) {
         mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
         mFullHistoryDisplay.setup(simulationHistory);
-        mFullHistoryDisplay.set_xPeriodicOn();
+
+        auto &phi = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
+        if(phi.getLaplacianType() == DiscreteFunction::Standard1D_PeriodicBorder)
+            mFullHistoryDisplay.set_xPeriodicOn();
 
         isSetup = true;
 
@@ -380,9 +385,9 @@ void RtoR::Monitor::updateFourierGraph() {
         {
             auto myStyle = *style;
 
-            myStyle.thickness = 1.5;
-            myStyle.primitive = Styles::SolidLine;
-            myStyle.filled = true;
+            myStyle.thickness = 2.5;
+            myStyle.primitive = Styles::VerticalLines;
+            myStyle.filled = false;
             mSpaceFourierModesGraph.addPointSet(modes.getAbs(), myStyle, "|ℱ[ϕ](ω)|", false);
         }
         else

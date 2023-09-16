@@ -73,18 +73,20 @@ Str Unit::ToString() const {
     return Category::ToString();
 }
 
-Str Unit::operator()(const Real &val){
-    if(Common::areEqual(baseValue, 1) && sym.empty()) return ToStr(val);
+Str Unit::operator()(const Real &val, Count rounding){
+    if(Common::areEqual(baseValue, 1) && sym.empty()) return ToStr(val, (int)rounding);
 
     fix reVal = val/baseValue;
 
-    Rational rational(Common::RoundToMostSignificantDigits(reVal, 2));
+    Rational rational(Common::RoundToMostSignificantDigits(reVal, (int)rounding));
 
-    if     (std::abs(rational.numerator)   == 1) return sym + "/" + ToStr(rational.denominator);
-    else if(std::abs(rational.denominator) == 1) return ToStr(rational.numerator) + sym;
-    else if(std::abs(rational.numerator) > 16 || std::abs(rational.numerator) > 16) return ToStr(reVal) + sym;
+    if(std::abs(rational.numerator) > 16 || std::abs(rational.numerator) > 16) return ToStr(reVal, (int)rounding) + sym;
 
-    return ToStr(rational.numerator) + sym + "/" + ToStr(rational.denominator);
+    auto unitVal = sym;
+    if     (std::abs(rational.numerator)   != 1) unitVal = ToStr(rational.numerator) + unitVal;
+    else if(std::abs(rational.denominator) != 1) unitVal = unitVal + "/" + ToStr(rational.numerator);
+
+    return unitVal;
 }
 
 Real Unit::value() const {

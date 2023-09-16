@@ -22,12 +22,14 @@ set( GRAPHICS_SOURCES
 
 		OpenGL/Utils.h			OpenGL/Utils.cpp
 		OpenGL/GLUTUtils.h  	OpenGL/GLUTUtils.cpp
-		OpenGL/Texture.h		OpenGL/Texture.cpp
+        OpenGL/Texture2D.h OpenGL/Texture2D.cpp
 		OpenGL/Writer.h			OpenGL/Writer.cpp
 		OpenGL/rougier/mat4.h	OpenGL/rougier/mat4.c
 		OpenGL/rougier/shader.h	OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
         OpenGL/GLDebug.h		OpenGL/GLDebug.cpp
+		Texture1D.cpp
+		Texture1D.h
 )
 
 

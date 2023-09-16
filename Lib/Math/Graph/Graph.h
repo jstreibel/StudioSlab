@@ -23,8 +23,6 @@ namespace Core::Graphics {
 
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
-        Unit baseHorizontalUnit;
-        Unit baseVerticalUnit;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
@@ -56,6 +54,8 @@ namespace Core::Graphics {
 
         Spaces::PointSet XHair;
     protected:
+        Unit baseHorizontalUnit;
+        Unit baseVerticalUnit;
 
         Real yspacing = 1.e-5;
         Real xspacing = 1.e-5;
@@ -78,6 +78,8 @@ namespace Core::Graphics {
         void drawPointSets();
         void drawCurves();
         void drawGUI();
+
+        virtual Str getXHairLabel(const Point2D &coords);
         void drawXHair();
 
     public:

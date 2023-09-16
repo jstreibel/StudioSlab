@@ -13,10 +13,10 @@
 #include <utility>
 
 #define drawFieldVerts(offset) \
-glTexCoord2d(si, ti); glVertex2d(domain.xMin+(offset), domain.yMin); \
-glTexCoord2d(sf, ti); glVertex2d(domain.xMax+(offset), domain.yMin); \
-glTexCoord2d(sf, tf); glVertex2d(domain.xMax+(offset), domain.yMax); \
-glTexCoord2d(si, tf); glVertex2d(domain.xMin+(offset), domain.yMax);
+glTexCoord2d(si, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMin); \
+glTexCoord2d(sf, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMax+(offset), domain.yMin); \
+glTexCoord2d(sf, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMax+(offset), domain.yMax); \
+glTexCoord2d(si, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMax);
 
 #define ODD true
 
@@ -38,7 +38,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     auto yRes = discreteFunc.getM();
 
     delete texture;
-    texture = new OpenGL::Texture((int)xRes, (int)yRes);
+    texture = new OpenGL::Texture2D((int)xRes, (int)yRes);
 
     repopulateBuffer();
     validBuffer = true;
@@ -177,15 +177,19 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
         texture->bind();
         glBegin(GL_QUADS);
         {
+            auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
+
             auto hPixelSizeInTexCoord = 1. / texture->getWidth();
             auto vPixelSizeInTexCoord = 1. / texture->getHeight();
+
+            auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+            auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
 
             auto si = 0.0; // - hPixelSizeInTexCoord;
             auto sf = 1.0; // + hPixelSizeInTexCoord;
             auto ti = 0.0; // - vPixelSizeInTexCoord;
             auto tf = 1.0; // + vPixelSizeInTexCoord;
 
-            auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
 
             glColor4d(1, 1, 1, 1);
 
@@ -206,12 +210,9 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
     }
 }
 
-void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() {
-    validBuffer = false;
-}
+void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() { validBuffer = false; }
 
 Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
-
     return cMap.mapValue(logScale ? logAbs(val, cMap_epsArg) : val, cMap_min, cMap_max);
 }
 
@@ -288,9 +289,7 @@ void R2toR::Graphics::FlatFieldDisplay::notifyReshape(int newWinW, int newWinH) 
 void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     if(func == nullptr) return;
 
-
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
-
 
     fix vp = getViewport();
     fix domain = discreteFunc.getDomain();
@@ -332,4 +331,15 @@ void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
 void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
     xPeriodic = true;
     texture->set_sPeriodicOn();
+}
+
+Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
+    auto label = Graph2D::getXHairLabel(coords);
+
+    fix x = Real2D{coords.x, coords.y};
+    if(func->domainContainsPoint(x))
+        label = "f" + label + " = " + ToStr((*func)(x));
+
+
+    return label;
 }

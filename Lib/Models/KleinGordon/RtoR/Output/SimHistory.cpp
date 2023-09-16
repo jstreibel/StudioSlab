@@ -79,7 +79,8 @@ void SimHistory::handleOutput(const OutputPacket &packet) {
 
         for(auto i=0; i<N; ++i) {
             fix x = xMin + i*dx;
-            to_ϕ({x, t}) = filter(x, state);
+            fix f = filter(x, state);
+            to_ϕ({x, t}) = f;
         }
     }
 

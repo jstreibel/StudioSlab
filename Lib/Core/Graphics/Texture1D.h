@@ -1,9 +1,9 @@
 //
-// Created by joao on 18/08/23.
+// Created by joao on 16/09/23.
 //
 
-#ifndef STUDIOSLAB_TEXTURE_H
-#define STUDIOSLAB_TEXTURE_H
+#ifndef STUDIOSLAB_TEXTURE1D_H
+#define STUDIOSLAB_TEXTURE1D_H
 
 #include "Utils/Types.h"
 
@@ -12,17 +12,17 @@
 
 namespace OpenGL {
 
-    class Texture {
+    class Texture1D {
         GLuint texture = 0;
         ByteData data = nullptr;
 
-        GLsizei w, h;
+        GLsizei size;
 
         bool antiAlias = true;
     public:
-        Texture(GLsizei width, GLsizei height);
+        Texture1D(GLsizei length);
 
-        bool setColor(int i, int j, Styles::Color color);
+        bool setColor(int i, Styles::Color color);
         bool setData(ByteData data);
 
         bool getAntiAlias() const;
@@ -34,12 +34,11 @@ namespace OpenGL {
 
         bool bind() const;
 
-        bool upload(UInt row=0, Count nRows=0);
+        bool upload(UInt from=0, Count n=0);
 
-        GLsizei getWidth() const;
-        GLsizei getHeight() const;
+        GLsizei getSize() const;
     };
 
 } // OpenGL
 
-#endif //STUDIOSLAB_TEXTURE_H
+#endif //STUDIOSLAB_TEXTURE1D_H

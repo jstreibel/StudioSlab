@@ -39,6 +39,8 @@ namespace R2toR {
         auto diff(int n, Real2D x) const -> Real        override;
         auto diff(int n)           const -> MyBase::Ptr override;
 
+        auto domainContainsPoint(Real2D x) const -> bool override;
+
         virtual DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const = 0;
         virtual Real              At(UInt n, UInt m)               const = 0;
         virtual Real             &At(UInt n, UInt m)                     = 0;

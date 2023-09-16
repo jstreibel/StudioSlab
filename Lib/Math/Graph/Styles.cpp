@@ -216,7 +216,8 @@ void SetSchemeElegant() {
     using namespace Styles;
 
     Core::Graphics::backgroundColor = {.9,.9,.93,1};
-    Core::Graphics::windowBorderColor = {0,0,0,1};
+    Core::Graphics::windowBorderColor_inactive = {0.2,0.2,0.2,1};
+    Core::Graphics::windowBorderColor_active   = {0. ,0. ,0. ,1};
 
     Color graphTitleFont = {0,0,0,1};
     Color graphTicksFont = {0,0,0,1};

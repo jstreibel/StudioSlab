@@ -38,9 +38,8 @@ void Window::_clear() const {
 void Window::_decorate() const {
     glBegin(GL_LINE_LOOP);
     {
-        auto bc = Core::Graphics::windowBorderColor;
-
-        if(isMouseIn()) bc = Styles::Red;
+        auto bc = isMouseIn() ? Core::Graphics::windowBorderColor_active
+                              : Core::Graphics::windowBorderColor_inactive;
 
         glColor4d(bc.r, bc.g, bc.b, bc.a);
 

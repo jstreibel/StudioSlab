@@ -2,7 +2,7 @@
 // Created by joao on 18/08/23.
 //
 
-#include "Texture.h"
+#include "Texture2D.h"
 #include "Core/Tools/Log.h"
 
 #define R 0
@@ -11,7 +11,7 @@
 #define A 3
 
 namespace OpenGL {
-    Texture::Texture(GLsizei width, GLsizei height) : w(width), h(height) {
+    Texture2D::Texture2D(GLsizei width, GLsizei height) : w(width), h(height) {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         if(width>maxTextureSize || height>maxTextureSize) {
@@ -48,7 +48,7 @@ namespace OpenGL {
             Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    bool Texture::setColor(int i, int j, Styles::Color color) {
+    bool Texture2D::setColor(int i, int j, Styles::Color color) {
         if(data == nullptr) return false;
 
         fix index = i*4 + j*w*4;
@@ -62,7 +62,7 @@ namespace OpenGL {
         return true;
     }
 
-    bool Texture::upload(UInt row0, Count nRows) {
+    bool Texture2D::upload(UInt row0, Count nRows) {
         if(data == nullptr || texture == 0) return false;
 
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -80,7 +80,7 @@ namespace OpenGL {
         return true;
     }
 
-    bool Texture::setData(ByteData newData) {
+    bool Texture2D::setData(ByteData newData) {
         if(texture == 0) return false;
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, newData);
@@ -88,15 +88,15 @@ namespace OpenGL {
         return true;
     }
 
-    GLsizei Texture::getWidth() const {
+    GLsizei Texture2D::getWidth() const {
         return w;
     }
 
-    GLsizei Texture::getHeight() const {
+    GLsizei Texture2D::getHeight() const {
         return h;
     }
 
-    bool Texture::bind() const {
+    bool Texture2D::bind() const {
         if(texture == 0) return false;
 
         glBindTexture(GL_TEXTURE_2D, texture);
@@ -104,12 +104,12 @@ namespace OpenGL {
         return true;
     }
 
-    void Texture::setAntiAlias(bool val) {
+    void Texture2D::setAntiAlias(bool val) {
         if(val) setAntiAliasOn();
         else setAntiAliasOff();
     }
 
-    void Texture::setAntiAliasOn() {
+    void Texture2D::setAntiAliasOn() {
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -118,7 +118,7 @@ namespace OpenGL {
         antiAlias = true;
     }
 
-    void Texture::setAntiAliasOff() {
+    void Texture2D::setAntiAliasOff() {
         glBindTexture(GL_TEXTURE_2D, texture);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -127,11 +127,11 @@ namespace OpenGL {
         antiAlias = false;
     }
 
-    bool Texture::getAntiAlias() const {
+    bool Texture2D::getAntiAlias() const {
         return antiAlias;
     }
 
-    void Texture::set_sPeriodicOn() {
+    void Texture2D::set_sPeriodicOn() {
         glBindTexture(GL_TEXTURE_2D, texture);
 
         // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);

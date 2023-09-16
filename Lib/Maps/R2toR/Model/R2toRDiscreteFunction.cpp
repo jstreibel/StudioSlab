@@ -77,7 +77,7 @@ Real R2toR::DiscreteFunction::diff(int dim, Real2D x) const {
 
     getSpace().syncHost();
     auto& X = getSpace().getHostData();
-    int j = n + m*N;
+    // int j = n + m*N;
 
     if(dim == 0){
         const Real inv2h = .5/hx;
@@ -95,3 +95,7 @@ Core::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
 
 Str R2toR::DiscreteFunction::myName() const
 { return Core::DiscreteFunction<Real2D, Real>::myName() + " 2D " + (dev == GPU ? "GPU" : "CPU"); }
+
+bool R2toR::DiscreteFunction::domainContainsPoint(Real2D x) const {
+    return x.x>=xMin && x.x<=xMax && x.y>=yMin && x.y<=yMax;
+}

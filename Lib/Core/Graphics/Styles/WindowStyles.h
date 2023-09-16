@@ -12,7 +12,8 @@ namespace Core::Graphics {
     extern int vPadding;
 
     extern Styles::Color backgroundColor;
-    extern Styles::Color windowBorderColor;
+    extern Styles::Color windowBorderColor_inactive;
+    extern Styles::Color windowBorderColor_active;
 }
 
 #endif //V_SHAPE_WINDOWSTYLES_H

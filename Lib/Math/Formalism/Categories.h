@@ -79,7 +79,7 @@ public:
     Real value() const;
     Str symbol() const;
 
-    Str operator()(const Real &val);
+    Str operator()(const Real &val, Count rounding);
 
     Str ToString() const override;
 
