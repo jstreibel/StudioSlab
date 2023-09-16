@@ -15,12 +15,14 @@ set ( UTIL_SOURCES
 
 		SharedPointer.h 	SharedPointer.cpp
 		EncodingUtils.h 	EncodingUtils.cpp
+
+		CGMatrix.h			CGMatrix.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
 			CUDAUtils.h			CUDAUtils.cpp
-	)
+    )
 endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

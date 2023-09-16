@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="3rdParty" pattern="file[StudioSlab]:Lib/3rdParty//*||file[StudioSlab]:Studios//*" />
+</component>

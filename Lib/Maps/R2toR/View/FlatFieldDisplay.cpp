@@ -20,13 +20,11 @@ glTexCoord2d(si, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin
 
 #define ODD true
 
-R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function)
-{
-    setup(std::move(function));
-}
+R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function) { setup(std::move(function)); }
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
     func = std::move(function);
+
     if(!func->isDiscrete())
         throw "R2toR::Graphics::FlatFieldDisplay not-discrete function draw unimplemented";
 
@@ -40,7 +38,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     delete texture;
     texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
 
-    repopulateBuffer();
+    repopulatetTextureBuffer();
     validBuffer = true;
 }
 
@@ -171,7 +169,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
         ImGui::End();
 
         if (!validBuffer)
-            repopulateBuffer();
+            repopulatetTextureBuffer();
 
         glEnable(GL_TEXTURE_2D);
         texture->bind();
@@ -216,7 +214,7 @@ Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
     return cMap.mapValue(logScale ? logAbs(val, cMap_epsArg) : val, cMap_min, cMap_max);
 }
 
-void R2toR::Graphics::FlatFieldDisplay::repopulateBuffer() {
+void R2toR::Graphics::FlatFieldDisplay::repopulatetTextureBuffer() {
     if(func == nullptr) return;
     assert(func->isDiscrete());
 

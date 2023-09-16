@@ -370,25 +370,15 @@ bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     return true;
 }
 
-void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
-}
+void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
 
-auto Core::Graphics::Graph2D::countDisplayItems() const -> Count {
-    return mPointSets.size() + curves.size();
-}
+auto Core::Graphics::Graph2D::countDisplayItems() const -> Count { return mPointSets.size() + curves.size(); }
 
-void Core::Graphics::Graph2D::setAnimationTime(Real value) {
-    animationTimeSeconds = value;
-}
+void Core::Graphics::Graph2D::setAnimationTime(Real value) { animationTimeSeconds = value; }
 
-Real Core::Graphics::Graph2D::getAnimationTime() const {
-    return animationTimeSeconds;
-}
+Real Core::Graphics::Graph2D::getAnimationTime() const { return animationTimeSeconds; }
 
-void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) {
-    baseHorizontalUnit = hUnit;
-}
+void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) { baseHorizontalUnit = hUnit; }
 
 
 
