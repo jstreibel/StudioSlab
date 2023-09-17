@@ -90,7 +90,7 @@ namespace OpenGL {
 
         items = ftgl::vector_new( sizeof(ftgl::ivec4) );
         state = DIRTY;
-        mode = GL_TRIANGLES;
+        primitive = GL_TRIANGLES;
     }
 
     VertexBuffer::~VertexBuffer() {
@@ -242,7 +242,7 @@ namespace OpenGL {
         state = DIRTY;
     }
 
-    void VertexBuffer::renderSetup(GLenum _mode) {
+    void VertexBuffer::renderSetup(GLenum primitive) {
         size_t i;
 
         // Unbind so no existing VAO-state is overwritten,
@@ -288,7 +288,7 @@ namespace OpenGL {
         // Bind VAO for drawing
         glBindVertexArray( VAO_id );
 
-        this->mode = _mode;
+        this->primitive = primitive;
     }
 
     void VertexBuffer::renderFinish() {
@@ -304,28 +304,28 @@ namespace OpenGL {
         {
             size_t start = item->istart;
             size_t count = item->icount;
-            glDrawElements( mode, (GLsizei)count, GL_UNSIGNED_INT, (void *)(start*sizeof(GLuint)) );
+            glDrawElements(primitive, (GLsizei)count, GL_UNSIGNED_INT, (void *)(start * sizeof(GLuint)) );
         }
         else if( vertices->size )
         {
             size_t start = item->vstart;
             size_t count = item->vcount;
-            glDrawArrays( mode, (GLint)(start*vertices->item_size), (GLsizei)count);
+            glDrawArrays(primitive, (GLint)(start * vertices->item_size), (GLsizei)count);
         }
     }
 
-    void VertexBuffer::render(GLenum _mode) {
+    void VertexBuffer::render(GLenum primitive) {
         size_t vcount = vertices->size;
         size_t icount = indices->size;
 
-        renderSetup( _mode );
+        renderSetup( primitive );
         if( icount )
         {
-            glDrawElements( _mode, (GLsizei)icount, GL_UNSIGNED_INT, nullptr );
+            glDrawElements( primitive, (GLsizei)icount, GL_UNSIGNED_INT, nullptr );
         }
         else
         {
-            glDrawArrays( _mode, 0, (GLsizei)vcount );
+            glDrawArrays( primitive, 0, (GLsizei)vcount );
         }
         renderFinish();
     }

@@ -19,10 +19,12 @@ typedef struct {
     float r, g, b, a; // color
 } vertex_t;
 
-Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
+Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize)
+: vertexBuffer("vertex:3f,tex_coord:2f,color:4f")
+, program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag")
+{
     atlas   = texture_atlas_new(512, 512, 1);
     font    = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
-    buffer  = vertex_buffer_new("vertex:3f,tex_coord:2f,color:4f");
 
     Log::Critical() << "Writer being instantiated. Will start generating atlas now." << Log::Flush;
 
@@ -38,9 +40,6 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei)atlas->width, (GLsizei)atlas->height,
                  0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
 
-    shader = shader_load((shaderDir + "v3f-t2f-c4f.vert").c_str(),
-                         (shaderDir + "v3f-t2f-c4f.frag").c_str());
-
     mat4_set_identity(&projection);
     mat4_set_identity(&model);
     mat4_set_identity(&view);
@@ -53,13 +52,13 @@ Core::Graphics::Writer::~Writer() {
     atlas->id = 0;
     texture_atlas_delete( atlas );
 
-    vertex_buffer_delete(buffer);
+    // delete vertexBuffer;
 
     texture_font_delete(font);
 }
 
 void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styles::Color color) {
-    vertex_buffer_clear(buffer);
+    vertexBuffer.clear();
 
     size_t i;
     float r = color.r, g = color.g, b = color.b, a = color.a;
@@ -90,13 +89,15 @@ void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styl
                                      { (float)x0,(float)y1,0,  s0,t1,  r,g,b,a },
                                      { (float)x1,(float)y1,0,  s1,t1,  r,g,b,a },
                                      { (float)x1,(float)y0,0,  s1,t0,  r,g,b,a } };
-            vertex_buffer_push_back( buffer, vertices, 4, indices, 6 );
+
+            vertexBuffer.pushBack( vertices, 4, indices, 6);
+
             pen.x += glyph->advance_x;
         }
     }
 }
 
-void Core::Graphics::Writer::drawBuffer() const {
+void Core::Graphics::Writer::drawBuffer() {
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
@@ -104,20 +105,15 @@ void Core::Graphics::Writer::drawBuffer() const {
 
 #ifndef DEBUG_SHOW_ATLAS_TEXTURE
     {
-        glUseProgram(shader);
-        {
-            glUniform1i(glGetUniformLocation(shader, "texture"),
-                        0);
-            glUniformMatrix4fv(glGetUniformLocation(shader, "model"),
-                               1, 0, model.data);
-            glUniformMatrix4fv(glGetUniformLocation(shader, "view"),
-                               1, 0, view.data);
-            glUniformMatrix4fv(glGetUniformLocation(shader, "projection"),
-                               1, 0, projection.data);
+        program.use();
+        program.setUniform("texture", 0);
+        program.setUniform4x4("model", model.data);
+        program.setUniform4x4("view", view.data);
+        program.setUniform4x4("projection", projection.data);
 
-            vertex_buffer_render(buffer, GL_TRIANGLES);
-        }
-        glUseProgram(0);
+        vertexBuffer.render(GL_TRIANGLES);
+
+        program.remove();
     }
 #else
     {

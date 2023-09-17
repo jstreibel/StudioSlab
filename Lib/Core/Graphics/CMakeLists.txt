@@ -36,6 +36,8 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/vec234.h
 		OpenGL/rougier/vector.h					OpenGL/rougier/vector.c
 		OpenGL/rougier/vertex-attribute.c		OpenGL/rougier/vertex-attribute.c
+		OpenGL/Shader.cpp
+		OpenGL/Shader.h
 
 )
 

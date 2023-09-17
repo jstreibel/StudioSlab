@@ -45,7 +45,7 @@ namespace OpenGL {
         size_t GPU_isize;
 
         /** GL primitives to render. */
-        GLenum mode;
+        GLenum primitive;
 
         /** Whether the vertex buffer needs to be uploaded to GPU memory. */
         char state;

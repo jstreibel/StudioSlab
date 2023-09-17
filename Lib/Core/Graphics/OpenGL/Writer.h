@@ -5,21 +5,29 @@
 #ifndef STUDIOSLAB_WRITER_H
 #define STUDIOSLAB_WRITER_H
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
 
-#include "Core/Graphics/Window/Window.h"
 #include "3rdParty/freetype-gl/vertex-buffer.h"
 #include "3rdParty/freetype-gl/demos/mat4.h"
 #include "3rdParty/freetype-gl/freetype-gl.h"
+
+#include "Core/Graphics/Window/Window.h"
+
+#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Core/Graphics/OpenGL/VertexBuffer.h"
+
 #include "Core/Graphics/Styles/Colors.h"
+#include "Shader.h"
 
 namespace Core::Graphics {
 
     class Writer {
         ftgl::texture_font_t *font = nullptr;
         ftgl::texture_atlas_t *atlas = nullptr;
-        ftgl::vertex_buffer_t *buffer = nullptr;
-        GLuint shader{};
+        // ftgl::vertex_buffer_t *buffer = nullptr;
+        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::Shader program;
+
+        // GLuint shader{};
         ftgl::mat4 model{}, view{}, projection{};
 
     public:
@@ -28,7 +36,7 @@ namespace Core::Graphics {
 
         void write(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
 
-        void drawBuffer() const;
+        void drawBuffer();
         void setBufferText(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
 
         Real getFontHeightInPixels() const;
