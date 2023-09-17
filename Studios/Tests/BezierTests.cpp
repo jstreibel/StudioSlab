@@ -66,7 +66,7 @@ namespace Tests {
         stats.end();
 
         currentPt.clear();
-        auto &r = graph.getLimits();
+        auto &r = graph.getRegion();
         if(Core::Graphics::Animator::Contains(r.xMin)){
             auto &anim = Core::Graphics::Animator::Get(r.xMin);
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;

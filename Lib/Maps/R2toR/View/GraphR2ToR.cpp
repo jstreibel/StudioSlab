@@ -18,7 +18,7 @@ void GraphR2toR::_renderFunction(const R2toR::Function *func, Styles::PlotStyle 
     glLoadMatrixf(zpr.getModelview());
 
     //RtoR::FunctionRenderer::renderFunction(phi, xMin, xMin, xMax - xMin, phi.getN());
-    RtoR::FunctionRenderer::renderFunction(*func, get_xMin(), get_xMin(), getLimits().width(), 100, 100);
+    RtoR::FunctionRenderer::renderFunction(*func, get_xMin(), get_xMin(), getRegion().width(), 100, 100);
     //zpr.popModelViewMatrix();
 }
 

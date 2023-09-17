@@ -7,17 +7,13 @@
 #include "Shader.h"
 #include "rougier/shader.h"
 #include "Core/Tools/Log.h"
+#include "Utils.h"
 
 
 namespace OpenGL {
-    Shader::Shader(const Str& vertFilename, const Str& fragFilename) {
-        handle = ftgl::shader_load(vertFilename.c_str(), fragFilename.c_str());
-
+    void ListShaderUniforms(GLuint handle, std::basic_ostream<char, std::char_traits<char>> &log) {
         GLint numActiveUniforms = 0;
         glGetProgramiv(handle, GL_ACTIVE_UNIFORMS, &numActiveUniforms);
-
-        auto &log = Log::Info() << "Shader files '" << vertFilename
-                                       << "' and '" << fragFilename << "' loaded and compiled. Active uniforms:";
 
         for (GLint i = 0; i < numActiveUniforms; ++i) {
             GLsizei length;
@@ -30,10 +26,67 @@ namespace OpenGL {
 
             GLint location = glGetUniformLocation(handle, name);
 
-            log << "\n\t\t\t\t\t" << "Uniform #" << i << " Type: " << type << " Name: " << name << " Location: " << location;
+            log << "\n\t\t\t\t\t"
+                << "Uniform #"  << std::left << std::setw(8) << i
+                << "Location: " << std::left << std::setw(12) << location
+                << "Type: "     << std::left << std::setw(20) << OpenGLUtils::GLTypeToGLSLType(type)
+                << "Name: "     << std::left << std::setw(20) << name
+                    ;
         }
 
         log << Log::Flush;
+
+    }
+
+    void ListShaderAttributes(GLuint program, std::basic_ostream<char, std::char_traits<char>> &log) {
+        GLint numAttributes;
+        GLint maxLength;
+
+        // Get the number of active attributes
+        glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numAttributes);
+
+        // Get the maximum length of attribute names
+        glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxLength);
+
+        // Allocate space for the name of each attribute
+        GLchar *attributeName = new GLchar[maxLength];
+
+        std::cout << "Listing active attributes:" << std::endl;
+
+        for (GLint i = 0; i < numAttributes; ++i) {
+            GLint size;
+            GLenum type;
+            GLsizei length;
+
+            // Get information about the i-th active attribute
+            glGetActiveAttrib(program, i, maxLength, &length, &size, &type, attributeName);
+
+            // Get the location of the attribute
+            GLint location = glGetAttribLocation(program, attributeName);
+
+            std::cout << "Attribute " << i
+                      << ": Name = " << attributeName
+                      << ", Location = " << location
+                      << ", Type = " << type
+                      << ", Size = " << size
+                      << std::endl;
+        }
+
+        // Clean up
+        delete[] attributeName;
+    }
+
+
+
+
+    Shader::Shader(const Str& vertFilename, const Str& fragFilename) {
+        handle = ftgl::shader_load(vertFilename.c_str(), fragFilename.c_str());
+        auto &log = Log::Info() << "Shader files '" << vertFilename
+                                << "' and '" << fragFilename << "' loaded and compiled. Active uniforms:";
+
+        ListShaderUniforms(handle, log);
+
+        ListShaderAttributes(handle, log);
 
     }
 

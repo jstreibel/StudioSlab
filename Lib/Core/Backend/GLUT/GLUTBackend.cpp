@@ -85,7 +85,9 @@ GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
 
     OpenGL::StartupDebugLogging();
 
-    Log::Success() << "Initialized GLUTBackend. Current window: " << winHandle << Log::Flush;
+    Log::Success() << "Initialized GLUTBackend. "
+                   << "OpenGL version " << glGetString(GL_VERSION) << ". "
+                   << "Current window: " << winHandle << Log::Flush;
 
 
     // Setup Dear ImGui context

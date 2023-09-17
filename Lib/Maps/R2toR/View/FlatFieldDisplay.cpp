@@ -4,13 +4,19 @@
 
 #include "FlatFieldDisplay.h"
 
+
+#include "Utils/Resources.h"
+
 #include "Core/Graphics/Styles/ColorMap.h"
 #include "Core/Tools/Log.h"
 #include "Core/Tools/Animator.h"
+
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+
 #include "imgui.h"
 
 #include <utility>
+
 
 #define drawFieldVerts(offset) \
 glTexCoord2d(si, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMin); \
@@ -20,7 +26,16 @@ glTexCoord2d(si, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin
 
 #define ODD true
 
-R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function) { setup(std::move(function)); }
+R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
+: Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+, cMap_min(phiMin)
+, cMap_max(phiMax)
+, symmetricMaxMin(Common::areEqual(phiMax,-phiMin))
+, vertexBuffer("vertex:3f,tex_coord:2f,color:4f")
+, program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+{
+
+};
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
     func = std::move(function);
@@ -37,6 +52,8 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
     delete texture;
     texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
+
+
 
     repopulatetTextureBuffer();
     validBuffer = true;
@@ -173,6 +190,19 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
 
         glEnable(GL_TEXTURE_2D);
         texture->bind();
+
+        auto region = this->getRegion();
+        fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
+        glm::mat3x3 transform = {
+                2.0f / w,     0.0f, -1.0f - 2.0f * x / w,
+                    0.0f, 2.0f / h, -1.0f - 2.0f * y / h,
+                    0.0f,     0.0f,                 1.0f };
+
+
+        // // Assuming you've already created a shader program and got its ID as `shaderProgram`
+        // GLint transformLoc = glGetUniformLocation(shaderProgram, "transformMatrix");
+        // glUniformMatrix3fv(transformLoc, 1, GL_FALSE, transformMatrix);
+
         glBegin(GL_QUADS);
         {
             auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
@@ -244,9 +274,9 @@ bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(int wheel, int directio
     constexpr const Real factor = 1.1;
     const Real d = pow(factor, -direction);
 
-    static auto targetRegion = getLimits();
+    static auto targetRegion = getRegion();
 
-    auto &region = getLimits();
+    auto &region = getRegion();
     if(!Core::Graphics::Animator::Contains(region.xMin)
     && !Core::Graphics::Animator::Contains(region.xMax)
     && !Core::Graphics::Animator::Contains(region.yMin)

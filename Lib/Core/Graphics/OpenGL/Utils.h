@@ -38,6 +38,8 @@ namespace OpenGLUtils {
     bool outputToPNG(Window *window, std::string fileName, int width, int height);
 
     void piccolos();
+
+    Str GLTypeToGLSLType(GLenum type);
 }
 
 #endif //STUDIOSLAB_OPENGLUTILS_H

@@ -23,11 +23,10 @@ namespace Core::Graphics {
     class Writer {
         ftgl::texture_font_t *font = nullptr;
         ftgl::texture_atlas_t *atlas = nullptr;
-        // ftgl::vertex_buffer_t *buffer = nullptr;
+
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Shader program;
 
-        // GLuint shader{};
         ftgl::mat4 model{}, view{}, projection{};
 
     public:

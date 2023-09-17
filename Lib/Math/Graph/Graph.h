@@ -107,7 +107,7 @@ namespace Core::Graphics {
 
         auto getResolution() const -> Resolution;
         auto setResolution(Resolution samples) -> void;
-        auto getLimits() const -> const RectR&;
+        auto getRegion() const -> const RectR&;
         auto setLimits(RectR limits) -> void;
         void set_xMin(Real);
         void set_xMax(Real);

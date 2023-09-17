@@ -254,7 +254,7 @@ void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
 auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
 auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-const RectR& Core::Graphics::Graph2D::getLimits() const { return region; }
+const RectR& Core::Graphics::Graph2D::getRegion() const { return region; }
 auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { region = lims; }
 
 void Core::Graphics::Graph2D::set_xMin(Real val) { Animator::Add(region.xMin, val, animationTimeSeconds); }
