@@ -55,6 +55,7 @@ void Window::_decorate() const {
 
 void Window::setupWindow() const {
     OpenGL::Shader::remove();
+    glDisable(GL_TEXTURE_2D);
 
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);

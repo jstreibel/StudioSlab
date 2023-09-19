@@ -36,7 +36,7 @@ namespace OpenGL {
         auto getTarget() const -> Target;
         auto getInternalFormat() const -> InternalFormat;
 
-        // void setData(const PixelData &data);
+        void setData(const PixelData &data);
         auto getData() const -> const PixelData&;
 
         void setBorderColor(Styles::Color color) const;
@@ -45,10 +45,6 @@ namespace OpenGL {
         GLuint getGLtextureUnit() const;
 
         void diagnose() const;
-
-        static Str TargetToString(Target target);
-        static Str InternalFormatToString(InternalFormat format);
-        static Str TextureUnitToString(GLenum unit);
     };
 
 } // OpenGL

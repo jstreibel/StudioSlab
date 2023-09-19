@@ -345,6 +345,8 @@ void Core::Graphics::Graph2D::reviewGraphRanges() {
 }
 
 void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
+    OpenGL::Shader::remove();
+
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();

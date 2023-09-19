@@ -106,11 +106,12 @@ void Core::Graphics::Graph2D::drawCurves() {
         auto style = curveData.style;
         auto name  = curveData.name;
 
+        OpenGL::Shader::remove();
+
         nameLabelDraw(style, name);
 
         auto color = style.lineColor;
 
-        OpenGL::Shader::remove();
 
         glColor4f(color.r, color.g, color.b, color.a);
         glLineWidth(style.thickness);

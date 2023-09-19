@@ -140,7 +140,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
 
     } else {
 
-        // program.remove();
+        OpenGL::Shader::remove();
 
         glBegin(GL_QUADS);
         {
