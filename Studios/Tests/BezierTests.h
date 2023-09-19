@@ -9,7 +9,7 @@
 #include "Core/Graphics/Window/GUIWindow.h"
 #include "Math/Graph/Graph.h"
 
-#include "Maps/RtoR/View/Graphics/GraphRtoR.h"
+#include "Maps/RtoR/View/GraphRtoR.h"
 
 namespace Tests {
 

@@ -68,12 +68,12 @@ namespace OpenGL {
     Shader::Shader(const Str& vertFilename, const Str& fragFilename) {
         handle = ftgl::shader_load(vertFilename.c_str(), fragFilename.c_str());
         auto &log = Log::Info() << "Shader files '" << vertFilename
-                                << "' and '" << fragFilename << "' loaded and compiled. ";
+                                << "' and '" << fragFilename << "' loaded and compiled. Are active:";
 
-        log << "\n\t\t\t\tActive uniforms:";
+        log << "\n\t\t\t\tUniforms:";
         ListShaderUniforms(handle, log);
 
-        log << "\n\t\t\t\tActive attributes:";
+        log << "\n\t\t\t\tVertex attributes:";
         ListShaderAttributes(handle, log);
     }
 

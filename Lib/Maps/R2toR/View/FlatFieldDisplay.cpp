@@ -32,13 +32,17 @@ struct FlatFieldVertex {
     float s, t;     // texture
 };
 
+struct TestVertex {
+    float x, y;     // position
+};
+
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
 : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
 , cMap_min(phiMin)
 , cMap_max(phiMax)
 , symmetricMaxMin(Common::areEqual(phiMax,-phiMin))
-, vertexBuffer("vertex:2f,tex_coord:2f")
-, program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+, vertexBuffer("aPos:2f")
+, program(Resources::ShadersFolder+"tests.vert", Resources::ShadersFolder+"tests.frag")
 {
 
 };
@@ -80,13 +84,26 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
         vertexBuffer.clear();
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
-        FlatFieldVertex vertices[4] = {
-            {xMin_f, yMin_f, si, ti},
-            {xMax_f, yMin_f, sf, ti},
-            {xMax_f, yMax_f, sf, tf},
-            {xMin_f, yMax_f, si, tf}};
+        if(false)
+        {
+            FlatFieldVertex vertices[4] = {
+                    {xMin_f, yMin_f, si, ti},
+                    {xMax_f, yMin_f, sf, ti},
+                    {xMax_f, yMax_f, sf, tf},
+                    {xMin_f, yMax_f, si, tf}};
 
-        vertexBuffer.pushBack(vertices, 4, indices, 6);
+            vertexBuffer.pushBack(vertices, 4, indices, 6);
+        }
+        else {
+            TestVertex testSquare[4] = {
+                    {-.75, -.75},
+                    {+.75, -.75},
+                    {+.75, +.75},
+                    {-.75, +.75}
+            };
+
+            vertexBuffer.pushBack(testSquare, 4, indices, 6);
+        }
 
         Log::Debug() << "Generated vertices for '" << title << "' graph VertexBuffer. ";
     }
@@ -117,9 +134,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
     if (!validTextureData)
         repopulateTextureBuffer();
 
-    texture->bind();
-
-    if(false) {
+    if(true) {
         auto region = this->getRegion();
         fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
         // glm::mat3x3 transform = {
@@ -134,13 +149,16 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
             0,0,1
         };
 
-        program.setUniform("transformMatrix", transform);
+        // program.setUniform("transformMatrix", transform);
+        // texture->bind();
+        glDisable(GL_TEXTURE_2D);
         program.use();
         vertexBuffer.render(GL_TRIANGLES);
 
     } else {
-
         OpenGL::Shader::remove();
+
+        texture->bind();
 
         glBegin(GL_QUADS);
         {

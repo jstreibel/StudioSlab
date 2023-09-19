@@ -73,9 +73,8 @@ void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styl
         {
             float kerning =  0.0f;
             if( i > 0)
-            {
                 kerning = texture_glyph_get_kerning( glyph, text + i - 1 );
-            }
+
             pen.x += kerning;
             const int x0  = (int)( pen.x + glyph->offset_x );
             const int y0  = (int)( pen.y + glyph->offset_y );
