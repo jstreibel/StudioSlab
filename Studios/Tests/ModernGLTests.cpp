@@ -8,7 +8,7 @@
 #include "Core/Graphics/OpenGL/OpenGL.h"
 
 struct TestVertex {
-    float x, y, z;
+    float x, y;
     float s, t;
 };
 
@@ -17,7 +17,7 @@ fix texDim = 4096;
 namespace Tests {
     ModernGLTests::ModernGLTests()
     : program(Resources::ShadersFolder + "tests.vert", Resources::ShadersFolder + "tests.frag")
-    , buffer("vertex:3f,tex_coord:2f")
+    , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , writer(Resources::fontFileName(4), 100)
     {
@@ -29,10 +29,10 @@ namespace Tests {
         fix tMax =  1.1f;
 
         TestVertex square[4] = {
-            {-0.65f, -0.65f, 0.0f,   tMin, tMin},
-            {+0.65f, -0.65f, 0.0f,   tMax, tMin},
-            {+0.65f, +0.65f, 0.0f,   tMax, tMax},
-            {-0.65f, +0.65f, 0.0f,   tMin, tMax},
+            {-0.65f, -0.65f,   tMin, tMin},
+            {+0.65f, -0.65f,   tMax, tMin},
+            {+0.65f, +0.65f,   tMax, tMax},
+            {-0.65f, +0.65f,   tMin, tMax},
         };
 
         buffer.pushBack(square, 4, indices, 6);
