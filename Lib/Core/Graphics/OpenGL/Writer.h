@@ -24,10 +24,8 @@ namespace Core::Graphics {
         ftgl::texture_font_t *font = nullptr;
         ftgl::texture_atlas_t *atlas = nullptr;
 
-        ftgl::vertex_buffer_t *buffer;
-        GLuint shader;
-        // OpenGL::VertexBuffer vertexBuffer;
-        // OpenGL::Shader program;
+        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::Shader program;
 
         ftgl::mat4 model{}, view{}, projection{};
 
