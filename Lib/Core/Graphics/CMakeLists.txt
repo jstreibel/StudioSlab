@@ -47,6 +47,8 @@ set( GRAPHICS_SOURCES
 		OpenGL/Texture2D.h
 		OpenGL/Texture.cpp
 		OpenGL/Texture.h
+		OpenGL/TextureUtils.cpp
+		OpenGL/TextureUtils.h
 
 )
 

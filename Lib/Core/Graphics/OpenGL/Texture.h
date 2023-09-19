@@ -6,15 +6,22 @@
 #define STUDIOSLAB_TEXTURE_H
 
 #include "Utils/Types.h"
-#include "Core/Graphics/OpenGL/OpenGL.h"
+
+#include "OpenGL.h"
+#include "TextureUtils.h"
+
 
 namespace OpenGL {
 
     class Texture {
     protected:
         GLuint texture = 0;
+        Target target;
+
     public:
-        Texture();
+        Texture(Target target);
+
+        void bind() const;
     };
 
 } // OpenGL

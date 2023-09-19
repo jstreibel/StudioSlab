@@ -4,6 +4,7 @@
 
 #include "Texture2D_STIFF.h"
 #include "Core/Tools/Log.h"
+#include "Utils.h"
 
 #define R 0
 #define G 1
@@ -13,18 +14,6 @@
 namespace OpenGL {
     Texture2D_Color_STIFF::Texture2D_Color_STIFF(GLsizei w, GLsizei h)
     : Texture2D(w, h) {
-        GLint maxTextureSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        if(w>maxTextureSize || h>maxTextureSize) {
-            Log::Error() << "Requested texture size " << w << "x" << h
-                         << " too big: max texture size allowed is " << maxTextureSize << "x" << maxTextureSize
-                         << Log::Flush;
-
-            return;
-        }
-
-
-        glBindTexture(GL_TEXTURE_2D, texture);
 
         setAntiAliasOn();
 
@@ -38,18 +27,17 @@ namespace OpenGL {
 
         data = (ByteData)malloc(w*h*4);
 
-
-        fix sizeMB = w*h*4/(1024*1024.);
-        Log::Critical() << "OpenGL::Texture is allocating " << sizeMB << "MB of GPU texture data to upload " << w << "x" << h << " history to." << Log::Flush;
-        auto pixelDataFormat = GL_RGBA;
-        auto pixelDataType = GL_UNSIGNED_BYTE;
-        // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, pixelDataFormat, pixelDataType, nullptr);
-        auto error = glGetError();
-        if(error != GL_NO_ERROR)
-            Log::Error() << "OpenGL::Texture failed to allocate " << sizeMB << "MB of GPU texture data." << Log::Flush;
-        else
-            Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
+        // fix sizeMB = w*h*4/(1024*1024.);
+        // Log::Critical() << "OpenGL::Texture is allocating " << sizeMB << "MB of GPU texture data to upload " << w << "x" << h << " history to." << Log::Flush;
+        // auto pixelDataFormat = GL_RGBA;
+        // auto pixelDataType = GL_UNSIGNED_BYTE;
+        // // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
+        // glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, pixelDataFormat, pixelDataType, nullptr);
+        // auto error = glGetError();
+        // if(error != GL_NO_ERROR)
+        //     Log::Error() << "OpenGL::Texture failed to allocate " << sizeMB << "MB of GPU texture data." << Log::Flush;
+        // else
+        //     Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
     bool Texture2D_Color_STIFF::setColor(int i, int j, Styles::Color color) {
