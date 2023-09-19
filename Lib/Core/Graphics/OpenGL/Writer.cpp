@@ -112,8 +112,6 @@ void Core::Graphics::Writer::drawBuffer() {
         program.setUniform4x4("projection", projection.data);
 
         vertexBuffer.render(GL_TRIANGLES);
-
-        program.remove();
     }
 #else
     {

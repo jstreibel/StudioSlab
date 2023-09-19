@@ -8,6 +8,7 @@
 #include "rougier/shader.h"
 #include "Core/Tools/Log.h"
 #include "Utils.h"
+#include "Math/Formalism/Categories.h"
 
 
 namespace OpenGL {
@@ -77,8 +78,8 @@ namespace OpenGL {
     }
 
     void Shader::bindTextures() const {
-        // for(auto &texUnit : textureUnits)
-        //     texUnit.second->bind();
+        for(auto &texUnit : textureUnits)
+            texUnit.second->bind();
     }
 
     void Shader::use() const {
@@ -91,9 +92,24 @@ namespace OpenGL {
 
     void Shader::setUniform(const Str& name, GLint value) const {
         this->use();
-        glUniform1i( glGetUniformLocation(handle, name.c_str()), value);
+
+        fix loc = glGetUniformLocation(handle, name.c_str());
+        assert(loc != -1);
+
+        glUniform1i(loc, value);
 
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+    }
+
+    void Shader::setUniform(const Str &name, Real2D vec2) const {
+        this->use();
+
+        fix loc = glGetUniformLocation(handle, name.c_str());
+        assert(loc != -1);
+
+        glUniform2f(loc, vec2.x, vec2.y);
+
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
     }
 
     void Shader::setUniform(const Str& name, const glm::mat4 &mat4) const {
@@ -111,15 +127,15 @@ namespace OpenGL {
         OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
     }
 
-    //void Shader::setUniform(const Str &name, Texture& texture) {
-    //    this->use();
-    //
-    //    glUniform1i(glGetUniformLocation(handle, name.c_str()), texture.getTextureUnit());
-    //
-    //    textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
-    //
-    //    OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
-    //}
+    void Shader::setUniform(const Str &name, Texture& texture) {
+        this->use();
+
+        glUniform1i(glGetUniformLocation(handle, name.c_str()), texture.getTextureUnit());
+
+        textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
+
+        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+    }
 
     void Shader::setUniform4x4(const Str &name, const float *mat4) const {
         this->use();
@@ -134,6 +150,7 @@ namespace OpenGL {
 
         OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
     }
+
 
 
 } // OpenGL

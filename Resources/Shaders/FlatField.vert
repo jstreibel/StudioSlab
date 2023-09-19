@@ -9,8 +9,8 @@ out vec2 texCoord;
 
 void main()
 {
-    vec3 pos = transformMatrix * vec3(aSpacePos, 1.0);
-    gl_Position = vec4(pos.xy, 0.0, 1.0);
+    // texCoord = aTexCoord;
+    //vec3 pos = transformMatrix * vec3(aSpacePos, 1.0);
 
-    texCoord = aTexCoord;
+    gl_Position = vec4(aSpacePos, 0.0, 1.0);
 }

@@ -20,7 +20,9 @@ namespace OpenGL {
         Log::Debug() << "OpenGL::Texture " << handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Log::Flush;
     }
 
-    void Texture::activate()            const { /* glActiveTexture(getGLtextureUnit()); */ }
+    void Texture::activate() const {
+        glActiveTexture(getGLtextureUnit());
+    }
 
     void Texture::bind() const {
         activate();

@@ -8,13 +8,12 @@
 #include "Core/Graphics/Styles/WindowStyles.h"
 #include "Core/Graphics/OpenGL/GLUTUtils.h"
 #include "Core/Backend/GUIBackend.h"
+#include "Core/Graphics/OpenGL/Shader.h"
 
 
 Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
 
 void Window::draw() {
-    glUseProgram( 0 );
-
     setupWindow();
 
     for(auto artist : content){
@@ -55,6 +54,8 @@ void Window::_decorate() const {
 }
 
 void Window::setupWindow() const {
+    OpenGL::Shader::remove();
+
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
 

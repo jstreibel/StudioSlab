@@ -195,6 +195,8 @@ void Core::Graphics::Graph2D::drawXAxis() {
 
     if(1)
     {
+        OpenGL::Shader::remove();
+
         auto &ac = Styles::GetCurrent()->axisColor;
         auto &tc = Styles::GetCurrent()->majorTickColor;
         glBegin(GL_LINES);
@@ -245,6 +247,8 @@ void Core::Graphics::Graph2D::drawYAxis() {
             for (Real mark = region.yMin; mark <= region.yMax; mark += yspacing) MARK_Y
         }
     }
+
+    OpenGL::Shader::remove();
 
     glPushAttrib(GL_ENABLE_BIT);
     glDisable(GL_LINE_SMOOTH);

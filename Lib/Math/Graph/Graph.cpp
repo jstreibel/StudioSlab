@@ -110,6 +110,8 @@ void Core::Graphics::Graph2D::drawCurves() {
 
         auto color = style.lineColor;
 
+        OpenGL::Shader::remove();
+
         glColor4f(color.r, color.g, color.b, color.a);
         glLineWidth(style.thickness);
 
@@ -154,6 +156,8 @@ void
 Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
                                         Styles::PlotStyle style) noexcept {
     auto pts = pSet.getPoints();
+
+    OpenGL::Shader::remove();
 
     if(style.filled && !(style.primitive==Styles::Point || style.primitive==Styles::Lines))
     {
@@ -240,6 +244,8 @@ void Core::Graphics::Graph2D::setupOrtho() const {
     const Real xTraRight  = 0;  // +deltaX*0.02;
     const Real xTraTop    = 0;  // +deltaY*0.025;
     const Real xTraBottom = 0;  // -deltaY*0.025;
+
+    OpenGL::Shader::remove();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();

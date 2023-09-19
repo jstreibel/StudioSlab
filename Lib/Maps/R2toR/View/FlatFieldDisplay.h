@@ -29,9 +29,8 @@ namespace R2toR::Graphics {
 
         bool xPeriodic = false;
 
-        // OpenGL::VertexBuffer vertexBuffer;
-        // OpenGL::Shader program;
-
+        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::Shader program;
 
         void drawFlatField();
 
