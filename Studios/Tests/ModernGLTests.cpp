@@ -10,7 +10,6 @@
 struct TestVertex {
     float x, y, z;
     float s, t;
-    float r, g, b, a;
 };
 
 fix texDim = 256;
@@ -18,7 +17,7 @@ fix texDim = 256;
 namespace Tests {
     ModernGLTests::ModernGLTests()
     : program(Resources::ShadersFolder + "v3f-t2f-c4f.vert", Resources::ShadersFolder + "v3f-t2f-c4f.frag")
-    , buffer("vertex:3f,tex_coord:2f,color:4f")
+    , buffer("vertex:3f,tex_coord:2f")
     , texture(texDim, texDim)
     , writer(Resources::fontFileName(4), 100)
     {
@@ -26,12 +25,11 @@ namespace Tests {
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
-        float r=.5, g=.5, b=1, a=1;
         TestVertex square[4] = {
-            {-0.75f, -0.75f, 0.0f,   0.0f, 0.0f,    r, g, b, a},
-            {+0.75f, -0.75f, 0.0f,   1.0f, 0.0f,    r, g, b, a},
-            {+0.75f, +0.75f, 0.0f,   1.0f, 1.0f,    r, g, b, a},
-            {-0.75f, +0.75f, 0.0f,   0.0f, 1.0f,    r, g, b, a},
+            {-0.75f, -0.75f, 0.0f,   0.0f, 0.0f},
+            {+0.75f, -0.75f, 0.0f,   1.0f, 0.0f},
+            {+0.75f, +0.75f, 0.0f,   1.0f, 1.0f},
+            {-0.75f, +0.75f, 0.0f,   0.0f, 1.0f},
         };
 
         buffer.pushBack(square, 4, indices, 6);
@@ -42,7 +40,7 @@ namespace Tests {
 
         for(auto i=0; i<texDim; ++i){
             for(auto j=0; j<texDim; ++j){
-                fix color = Styles::Color(1, 1, 1, 1);
+                fix color = Styles::Color(1, 1, 0.25, 1);
                 texture.setColor(i, j, color);
             }
         }
