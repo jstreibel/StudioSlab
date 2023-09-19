@@ -12,7 +12,7 @@
 #include "Math/Graph/Graph.h"
 
 #include "Maps/R2toR/Model/R2toRFunction.h"
-#include "Core/Graphics/OpenGL/Texture2D_STIFF.h"
+#include "Core/Graphics/OpenGL/Texture2D_Color.h"
 
 
 namespace R2toR::Graphics {
@@ -37,7 +37,7 @@ namespace R2toR::Graphics {
 
     protected:
         R2toR::Function::ConstPtr func    = nullptr;
-        OpenGL::Texture2D_Color_STIFF*  texture = nullptr;
+        OpenGL::Texture2D_Color*  texture = nullptr;
 
         Styles::Color computeColor(Real val) const;
         void computeGraphRanges();

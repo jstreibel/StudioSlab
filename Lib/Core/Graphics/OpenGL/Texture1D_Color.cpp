@@ -13,7 +13,7 @@
 namespace OpenGL {
 
     Texture1D_Color::Texture1D_Color(GLsizei size)
-    : Texture(Texture1D), size(size)
+    : Texture(Texture_1D, RGBA), size(size)
     {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
