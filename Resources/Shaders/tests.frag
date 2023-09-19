@@ -6,5 +6,6 @@ in vec2 TexCoord;
 
 void main()
 {
-    gl_FragColor = texture2D(texture, TexCoord);
+    float val = texture2D(texture, TexCoord).r;
+    gl_FragColor = vec4(val*val*val, val*val, val, 1);
 }

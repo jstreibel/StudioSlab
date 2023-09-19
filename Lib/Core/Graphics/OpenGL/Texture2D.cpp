@@ -5,9 +5,10 @@
 #include "Texture2D.h"
 #include "Core/Tools/Log.h"
 #include "Utils.h"
+#include "TextureUtils.h"
 
-#define UspecifiedFormat GL_RGBA
-#define UnspecifiedType GL_UNSIGNED_BYTE
+fix UspecifiedFormat = OpenGL::PixelDataFormat::DataFormat_Red;
+fix UnspecifiedType  = OpenGL::PixelDataType::DataType_Float32;
 
 namespace OpenGL {
     Texture2D::Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
@@ -32,6 +33,8 @@ namespace OpenGL {
 
         // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, UspecifiedFormat, UnspecifiedType, nullptr);
+
+        setAntiAliasOn();
 
         if(!OpenGLUtils::checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Success() << "OpenGL::Texture reserved " << w << "x" << h << " GPU texture pixels." << Log::Flush;
@@ -79,18 +82,25 @@ namespace OpenGL {
                                PixelDataType dataType, const void *dataBegin) {
         assert(row0<getHeight());
         assert(getTarget() == GL_TEXTURE_2D);
+        assert(!((nRows==0) && (row0!=0)));
 
-        bind();
-
+        if(nRows==0) nRows = h;
         fix column0 = 0;
         fix nCols = w;
+        fix level = 0;
 
         OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
 
-        if(row0==0 && nRows==0)
-            glTexImage2D(   getTarget(), 0, getInternalFormat(), w, h, 0, dataFormat, dataType, dataBegin);
+        fix internalFormat = getInternalFormat();
+
+        bind();
+
+        if(row0==0 && nRows==w)
+            glTexImage2D(getTarget(), level, internalFormat,
+                         nCols, (GLsizei)nRows, 0,
+                         dataFormat, dataType, dataBegin);
         else
-            glTexSubImage2D(getTarget(), 0,
+            glTexSubImage2D(getTarget(), level,
                             (GLint)   column0, (GLint)   row0,
                             (GLsizei) nCols,   (GLsizei) nRows,
                             dataFormat, dataType, dataBegin);

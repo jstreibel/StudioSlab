@@ -11,24 +11,14 @@ namespace OpenGL {
     : Texture2D(w, h, InternalFormat::Red_32bit_Float)
     , data((RealData)malloc(w*h*sizeof(Real32)))
     {
-        GLint maxTextureSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-        if(w>maxTextureSize || h>maxTextureSize) {
-            Log::Error() << "Requested texture size " << w << "x" << h
-                         << " too big: max texture size allowed is " << maxTextureSize << "x" << maxTextureSize
-                         << Log::Flush;
 
-            return;
-        }
     }
 
     bool Texture2D_Real::setValue(int i, int j, Real32 value) {
         if(data == nullptr) return false;
 
         fix index = i + j*getWidth();
-        RealData texel = &data[index];
-
-        texel[0] = value;
+        data[index] = value;
 
         return true;
     }
@@ -42,8 +32,6 @@ namespace OpenGL {
         fix dataType = PixelDataType::DataType_Float32;
 
         return Texture2D::uploadData(row0, nRows, dataFormat, dataType, &data[row0 * getWidth()]);
-
-        return false;
     }
 
 } // OpenGL

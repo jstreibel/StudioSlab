@@ -19,6 +19,7 @@ namespace Tests {
     : program(Resources::ShadersFolder + "tests.vert", Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
+    , realTexture(texDim, texDim)
     , writer(Resources::fontFileName(4), 80)
     {
         addWindow(std::make_shared<Window>());
@@ -44,10 +45,12 @@ namespace Tests {
                 fix r = sqrt(x*x + y*y);
                 fix color = Styles::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
+                realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }
         }
 
         texture.upload();
+        realTexture.upload();
 
         program.setUniform("transformMatrix", {1,0,0,
                                                0,1,0,
@@ -58,7 +61,8 @@ namespace Tests {
         WindowRow::draw();
 
         {
-            texture.bind();
+            // texture.bind();
+            realTexture.bind();
             program.use();
             program.setUniform("texture", 0);
 

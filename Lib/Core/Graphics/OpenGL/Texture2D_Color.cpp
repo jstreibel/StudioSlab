@@ -18,7 +18,7 @@ namespace OpenGL {
     : Texture2D(w, h, InternalFormat::RGBA)
     , data((ByteData)malloc(w*h*4))
     {
-        setAntiAliasOn();
+
     }
 
     bool Texture2D_Color::setColor(int i, int j, Styles::Color color) {

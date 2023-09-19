@@ -10,6 +10,7 @@
 #include "Core/Graphics/OpenGL/Shader.h"
 #include "Core/Graphics/OpenGL/Writer.h"
 #include "Core/Graphics/OpenGL/Texture2D_Color.h"
+#include "Core/Graphics/OpenGL/Texture2D_Real.h"
 
 namespace Tests {
 
@@ -17,6 +18,7 @@ namespace Tests {
         OpenGL::Shader program;
         OpenGL::VertexBuffer buffer;
         OpenGL::Texture2D_Color texture;
+        OpenGL::Texture2D_Real realTexture;
         Core::Graphics::Writer writer;
 
         ftgl::mat4 model{}, view{}, projection{};
