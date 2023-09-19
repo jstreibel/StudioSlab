@@ -77,8 +77,8 @@ namespace OpenGL {
     }
 
     void Shader::bindTextures() const {
-        for(auto &texUnit : textureUnits)
-            texUnit.second->bind();
+        // for(auto &texUnit : textureUnits)
+        //     texUnit.second->bind();
     }
 
     void Shader::use() const {
@@ -111,15 +111,15 @@ namespace OpenGL {
         OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
     }
 
-    void Shader::setUniform(const Str &name, Texture& texture) {
-        this->use();
-
-        glUniform1i(glGetUniformLocation(handle, name.c_str()), texture.getTextureUnit());
-
-        textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
-
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
-    }
+    //void Shader::setUniform(const Str &name, Texture& texture) {
+    //    this->use();
+    //
+    //    glUniform1i(glGetUniformLocation(handle, name.c_str()), texture.getTextureUnit());
+    //
+    //    textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
+    //
+    //    OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+    //}
 
     void Shader::setUniform4x4(const Str &name, const float *mat4) const {
         this->use();

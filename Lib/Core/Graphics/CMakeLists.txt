@@ -33,15 +33,20 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/shader.h					OpenGL/rougier/shader.c
         OpenGL/OpenGL.h
         OpenGL/GLDebug.h						OpenGL/GLDebug.cpp
-        OpenGL/Texture.h				        OpenGL/Texture.cpp
+        # OpenGL/Texture.h				        OpenGL/Texture.cpp
 		# OpenGL/Texture1D_Color.h 				OpenGL/Texture1D_Color.cpp
-		OpenGL/Texture2D.h						OpenGL/Texture2D.cpp
-		OpenGL/Texture2D_UByte.h				OpenGL/Texture2D_UByte.cpp
-		OpenGL/Texture2D_Color.h 				OpenGL/Texture2D_Color.cpp
-		OpenGL/Texture2D_Real.h					OpenGL/Texture2D_Real.cpp
+		# OpenGL/Texture2D.h						OpenGL/Texture2D.cpp
+		# OpenGL/Texture2D_UByte.h				OpenGL/Texture2D_UByte.cpp
+		# OpenGL/Texture2D_Color.h 				OpenGL/Texture2D_Color.cpp
+		OpenGL/Texture2D_STIFF.h 				OpenGL/Texture2D_STIFF.cpp
+		# OpenGL/Texture2D_Real.h					OpenGL/Texture2D_Real.cpp
 		OpenGL/VertexBuffer.h					OpenGL/VertexBuffer.cpp
 		OpenGL/Shader.h							OpenGL/Shader.cpp
 		OpenGL/PixelData.h						OpenGL/PixelData.cpp
+		OpenGL/Texture2D.cpp
+		OpenGL/Texture2D.h
+		OpenGL/Texture.cpp
+		OpenGL/Texture.h
 
 )
 

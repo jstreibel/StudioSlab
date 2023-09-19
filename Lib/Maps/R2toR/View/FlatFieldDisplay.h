@@ -7,13 +7,12 @@
 
 #include <utility>
 
-#include "Core/Graphics/OpenGL/Texture2D_Color.h"
 #include "Core/Graphics/Styles/ColorMap.h"
-#include "Core/Graphics/OpenGL/Texture1D_Color.h"
 
 #include "Math/Graph/Graph.h"
 
 #include "Maps/R2toR/Model/R2toRFunction.h"
+#include "Core/Graphics/OpenGL/Texture2D_STIFF.h"
 
 
 namespace R2toR::Graphics {
@@ -21,7 +20,7 @@ namespace R2toR::Graphics {
         bool validTextureData = false;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-        OpenGL::Texture1D_Color* cMap_texture = nullptr;
+        // OpenGL::Texture1D_Color* cMap_texture = nullptr;
         bool logScale                   = true;
         Real cMap_epsArg                =  1;
         Real cMap_min                   = -1.1;
@@ -38,7 +37,7 @@ namespace R2toR::Graphics {
 
     protected:
         R2toR::Function::ConstPtr func    = nullptr;
-        OpenGL::Texture2D_Color*  texture = nullptr;
+        OpenGL::Texture2D_Color_STIFF*  texture = nullptr;
 
         Styles::Color computeColor(Real val) const;
         void computeGraphRanges();

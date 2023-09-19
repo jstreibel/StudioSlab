@@ -14,6 +14,7 @@
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 #include "imgui.h"
+#include "Core/Graphics/OpenGL/Texture2D_STIFF.h"
 
 #include <utility>
 
@@ -56,7 +57,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     auto yRes = discreteFunc.getM();
 
     delete texture;
-    texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
+    texture = new OpenGL::Texture2D_Color_STIFF((int)xRes, (int)yRes);
 
     {
         /*
