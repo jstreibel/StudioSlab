@@ -12,7 +12,7 @@
 
 #include "Math/Graph/OpenGLMonitor.h"
 
-#include "Maps/RtoR/View/Graphics/GraphRtoR.h"
+#include "Maps/RtoR/View/GraphRtoR.h"
 
 #include "Maps/R2toR/View/FlatFieldDisplay.h"
 #include "Maps/R2toR/View/GraphR2ToR.h"

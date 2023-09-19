@@ -58,8 +58,7 @@ set ( RTOR_SOURCES
 
 		RtoR/View/RtoROutputHistoryToFile.cpp
 
-		RtoR/View/Graphics/GraphRtoR.cpp
-		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
+		RtoR/View/GraphRtoR.cpp
 
 		RtoR/Calc/Histogram.cpp
         RtoR/Calc/CorrelationCalculator.h       RtoR/Calc/CorrelationCalculator.cpp
@@ -108,7 +107,7 @@ set ( R2TOR_SOURCES
         R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h		        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
         R2toR/FourierTransform.h											        R2toR/FourierTransform.cpp
 
-		RtoR/View/Graphics/GraphRtoR.cpp
+		RtoR/View/GraphRtoR.cpp
 		RtoR/Model/FunctionsCollection/AbsFunction.cpp
 		RtoR/Model/FunctionsCollection/Section1D.h									RtoR/Model/FunctionsCollection/Section1D.cpp
 )
