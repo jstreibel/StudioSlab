@@ -18,51 +18,53 @@
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Core::Graphics::Graph2D {
-            bool validBuffer = false;
+        bool validTextureData = false;
 
-            Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-            bool logScale                   = true;
-            Real cMap_epsArg                =  1;
-            Real cMap_min                   = -1.1;
-            Real cMap_max                   =  1.1;
-            OpenGL::Texture1D_Color* cMap_texture = nullptr;
-            bool symmetricMaxMin            = true;
+        Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
+        OpenGL::Texture1D_Color* cMap_texture = nullptr;
+        bool logScale                   = true;
+        Real cMap_epsArg                =  1;
+        Real cMap_min                   = -1.1;
+        Real cMap_max                   =  1.1;
+        bool symmetricMaxMin            = true;
 
-            bool xPeriodic = false;
+        bool xPeriodic = false;
 
-            void drawFlatField();
+        // OpenGL::VertexBuffer vertexBuffer;
+        // OpenGL::Shader program;
 
-        protected:
-            R2toR::Function::ConstPtr func    = nullptr;
-            OpenGL::Texture2D_Color*        texture = nullptr;
 
-            Styles::Color computeColor(Real val) const;
-            void computeGraphRanges();
+        void drawFlatField();
+
+    protected:
+        R2toR::Function::ConstPtr func    = nullptr;
+        OpenGL::Texture2D_Color*  texture = nullptr;
+
+        Styles::Color computeColor(Real val) const;
+        void computeGraphRanges();
 
         Str getXHairLabel(const Point2D &coords) override;
 
+        void drawGUI() override;
+
+        void invalidateTextureData();
+        void repopulateTextureBuffer();
+
     public:
-            explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.)
-            : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
-            , cMap_min(phiMin)
-            , cMap_max(phiMax)
-            , symmetricMaxMin(Common::areEqual(phiMax,-phiMin)) {};
-            explicit FlatFieldDisplay(R2toR::Function::ConstPtr function);
+        explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.);
 
-            void setup(R2toR::Function::ConstPtr function);
-            auto getFunction() const -> R2toR::Function::ConstPtr;
+        void setup(R2toR::Function::ConstPtr function);
 
-            void setColorMap(Styles::ColorMap colorMap);
+        auto getFunction() const -> R2toR::Function::ConstPtr;
 
-            void set_xPeriodicOn();
+        void setColorMap(Styles::ColorMap colorMap);
 
-            void draw() override;
+        void set_xPeriodicOn();
 
-            void invalidateBuffer();
-            void repopulatetTextureBuffer();
+        void draw() override;
 
-            bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
-            void notifyReshape(int newWinW, int newWinH) override;
+        bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+        void notifyReshape(int newWinW, int newWinH) override;
     };
 }
 

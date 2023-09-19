@@ -4,13 +4,19 @@
 
 #include "FlatFieldDisplay.h"
 
+
+#include "Utils/Resources.h"
+
 #include "Core/Graphics/Styles/ColorMap.h"
 #include "Core/Tools/Log.h"
 #include "Core/Tools/Animator.h"
+
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+
 #include "imgui.h"
 
 #include <utility>
+
 
 #define drawFieldVerts(offset) \
 glTexCoord2d(si, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMin); \
@@ -20,7 +26,21 @@ glTexCoord2d(si, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin
 
 #define ODD true
 
-R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(R2toR::Function::ConstPtr function) { setup(std::move(function)); }
+struct FlatFieldVertex {
+    float x, y;     // position
+    float s, t;     // texture
+};
+
+R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
+: Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+, cMap_min(phiMin)
+, cMap_max(phiMax)
+, symmetricMaxMin(Common::areEqual(phiMax,-phiMin))
+// , vertexBuffer("vertex:2f,tex_coord:2f")
+// , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+{
+
+};
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
     func = std::move(function);
@@ -38,8 +58,39 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     delete texture;
     texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
 
-    repopulatetTextureBuffer();
-    validBuffer = true;
+    {
+        /*
+        auto domain = discreteFunc.getDomain();
+
+        auto hPixelSizeInTexCoord = 1. / texture->getWidth();
+        auto vPixelSizeInTexCoord = 1. / texture->getHeight();
+
+        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+
+        auto si = 0.0f; // - hPixelSizeInTexCoord;
+        auto sf = 1.0f; // + hPixelSizeInTexCoord;
+        auto ti = 0.0f; // - vPixelSizeInTexCoord;
+        auto tf = 1.0f; // + vPixelSizeInTexCoord;
+
+        fix xMin_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMin);
+        fix xMax_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMax);
+        fix yMin_f = (float) (domain.yMin);
+        fix yMax_f = (float) (domain.yMax);
+
+        vertexBuffer.clear();
+        GLuint indices[6] = {0, 1, 2, 0, 2, 3};
+        FlatFieldVertex vertices[4] = {
+            {xMin_f, yMin_f, si, ti},
+            {xMax_f, yMin_f, sf, ti},
+            {xMax_f, yMax_f, sf, tf},
+            {xMin_f, yMax_f, si, tf}};
+        vertexBuffer.pushBack(vertices, 4, indices, 6);
+         */
+    }
+
+    invalidateTextureData();
+    repopulateTextureBuffer();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
@@ -48,6 +99,7 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 
     setupOrtho();
 
+    labelingHelper.setTotalItems(countDisplayItems());
     drawFlatField();
 
     drawAxes();
@@ -58,121 +110,30 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
 }
 
 void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
-    labelingHelper.setTotalItems(countDisplayItems());
+    if (func == nullptr) return;
 
-    if (func != nullptr) {
+    if (!validTextureData)
+        repopulateTextureBuffer();
 
-        if (ImGui::Begin("Stats")) {
-            if (ImGui::CollapsingHeader((title + " history output").c_str())) {
+    glEnable(GL_TEXTURE_2D);
+    texture->bind();
 
-                if (func->isDiscrete()) {
-                    auto &dFunc = *dynamic_cast<const DiscreteFunction *>(func.get());
-                    ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
-                }
+    if(false) {
+        auto region = this->getRegion();
+        fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
+        glm::mat3x3 transform = {
+                2.0f / w        , 0.0f          , -1.0f - 2.0f * x / w,
+                0.0f            , 2.0f / h      , -1.0f - 2.0f * y / h,
+                0.0f            , 0.0f          , 1.0f
+        };
 
-                {
-                    if (logScale) {
-                        ImGui::Text("σ := sign(ϕ)");
-                        ImGui::Text("ϕ ↦ σ ln(|ϕ|/ε + 1)");
-                    }
-                    ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
-
-                    auto min = (float) cMap_min;
-                    auto max = (float) cMap_max;
-                    auto eps = (float) cMap_epsArg;
-
-                    bool antiAlias = texture->getAntiAlias();
-                    if (ImGui::Checkbox("Anti-alias display", &antiAlias)) {
-                        texture->setAntiAlias(antiAlias);
-                    }
-
-                    float fullWidth = ImGui::GetContentRegionAvail().x;
-                    float relativeWidth = fullWidth * 0.3f;
-                    ImGui::Text("ϕₘᵢₙ");
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(relativeWidth);
-                    if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
-                        cMap_min = min;
-                        if (symmetricMaxMin) cMap_max = -min;
-                        invalidateBuffer();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
-                        cMap_max = max;
-                        if (symmetricMaxMin) cMap_min = -max;
-                        invalidateBuffer();
-                    }
-                    ImGui::PopItemWidth();
-
-                    if (ImGui::DragFloat("ε", &eps, eps * 1e-2, 1e-5, 1e3, "%.6f")) {
-                        cMap_epsArg = eps;
-                        if (logScale) invalidateBuffer();
-                    }
-
-                    if (ImGui::Checkbox("Log scale", &logScale)) {
-                        invalidateBuffer();
-                    }
-                }
+        // program.setUniform("transformMatrix", transform);
 
 
-                {
-                    StrVector items;
-                    for (const auto &cMapPair: Styles::ColorMaps)
-                        items.emplace_back(cMapPair.first);
-                    static int item_current_idx = 0; // Here we store our selection data as an index.
-                    static int item_last_idx = 0;
-                    Str selectedItem;
-                    const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
-                    if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
-                        for (int n = 0; n < items.size(); n++) {
-                            const bool is_selected = (item_current_idx == n);
-                            if (ImGui::Selectable(items[n].c_str(), is_selected)) {
-                                selectedItem = items[n];
-                                item_current_idx = n;
-                            }
+    } else {
 
-                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                            if (is_selected)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        if (item_last_idx != item_current_idx) {
-                            cMap = Styles::ColorMaps[selectedItem];
-                            invalidateBuffer();
-                        }
-                        item_last_idx = item_current_idx;
-                        ImGui::EndCombo();
-                    }
+        // program.remove();
 
-                    ImGui::Text("ColorMap operations:");
-                    if (ImGui::Button("Permute")) {
-                        cMap = cMap.permute();
-                        invalidateBuffer();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Odd permute")) {
-                        cMap = cMap.bgr();
-                        invalidateBuffer();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Inverse")) {
-                        cMap = cMap.inverse();
-                        invalidateBuffer();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Reverse")) {
-                        cMap = cMap.reverse();
-                        invalidateBuffer();
-                    }
-                }
-            }
-        }
-        ImGui::End();
-
-        if (!validBuffer)
-            repopulatetTextureBuffer();
-
-        glEnable(GL_TEXTURE_2D);
-        texture->bind();
         glBegin(GL_QUADS);
         {
             auto domain = dynamic_cast<const R2toR::DiscreteFunction &>(*func).getDomain();
@@ -193,7 +154,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
 
             drawFieldVerts(0.0);
 
-            if(xPeriodic) {
+            if (xPeriodic) {
                 fix fieldWidth = domain.xMax - domain.xMin;
                 for (int i = 1; i <= 2; i++) {
                     glColor4d(1, 1, 1, 0.75 / i);
@@ -203,19 +164,20 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
             }
         }
         glEnd();
-
-        glDisable(GL_TEXTURE_2D);
     }
+
+    glDisable(GL_TEXTURE_2D);
 }
 
-void R2toR::Graphics::FlatFieldDisplay::invalidateBuffer() { validBuffer = false; }
+void R2toR::Graphics::FlatFieldDisplay::invalidateTextureData() { validTextureData = false; }
 
 Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
     return cMap.mapValue(logScale ? logAbs(val, cMap_epsArg) : val, cMap_min, cMap_max);
 }
 
-void R2toR::Graphics::FlatFieldDisplay::repopulatetTextureBuffer() {
-    if(func == nullptr) return;
+void R2toR::Graphics::FlatFieldDisplay::repopulateTextureBuffer() {
+    if(func == nullptr || validTextureData) return;
+
     assert(func->isDiscrete());
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
@@ -236,7 +198,7 @@ void R2toR::Graphics::FlatFieldDisplay::repopulatetTextureBuffer() {
 
     texture->upload();
 
-    this->validBuffer = true;
+    validTextureData = true;
 }
 
 
@@ -318,13 +280,9 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
     set_yMax(_yMax);
 }
 
-auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr {
-    return func;
-}
+auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr { return func; }
 
-void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
-    cMap = colorMap;
-}
+void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) { cMap = colorMap; }
 
 void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
     xPeriodic = true;
@@ -340,4 +298,115 @@ Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
 
 
     return label;
+}
+
+void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
+    Graph2D::drawGUI();
+
+    if (ImGui::Begin("Stats")) {
+        if (ImGui::CollapsingHeader((title + " history output").c_str())) {
+
+            if (func->isDiscrete()) {
+                auto &dFunc = *dynamic_cast<const DiscreteFunction *>(func.get());
+                ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
+            }
+
+            {
+                if (logScale) {
+                    ImGui::Text("σ := sign(ϕ)");
+                    ImGui::Text("ϕ ↦ σ ln(|ϕ|/ε + 1)");
+                }
+                ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
+
+                auto min = (float) cMap_min;
+                auto max = (float) cMap_max;
+                auto eps = (float) cMap_epsArg;
+
+                bool antiAlias = texture->getAntiAlias();
+                if (ImGui::Checkbox("Anti-alias display", &antiAlias)) {
+                    texture->setAntiAlias(antiAlias);
+                }
+
+                float fullWidth = ImGui::GetContentRegionAvail().x;
+                float relativeWidth = fullWidth * 0.3f;
+                ImGui::Text("ϕₘᵢₙ");
+                ImGui::SameLine();
+                ImGui::PushItemWidth(relativeWidth);
+                if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
+                    cMap_min = min;
+                    if (symmetricMaxMin) cMap_max = -min;
+                    invalidateTextureData();
+                }
+                ImGui::SameLine();
+                if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
+                    cMap_max = max;
+                    if (symmetricMaxMin) cMap_min = -max;
+                    invalidateTextureData();
+                }
+                ImGui::PopItemWidth();
+
+                if (ImGui::DragFloat("ε", &eps, eps * 1e-2, 1e-5, 1e3, "%.6f")) {
+                    cMap_epsArg = eps;
+                    if (logScale) invalidateTextureData();
+                }
+
+                if (ImGui::Checkbox("Log scale", &logScale)) {
+                    invalidateTextureData();
+                }
+            }
+
+
+            {
+                StrVector items;
+                for (const auto &cMapPair: Styles::ColorMaps)
+                    items.emplace_back(cMapPair.first);
+                static int item_current_idx = 0; // Here we store our selection data as an index.
+                static int item_last_idx = 0;
+                Str selectedItem;
+                const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+                if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
+                    for (int n = 0; n < items.size(); n++) {
+                        const bool is_selected = (item_current_idx == n);
+                        if (ImGui::Selectable(items[n].c_str(), is_selected)) {
+                            selectedItem = items[n];
+                            item_current_idx = n;
+                        }
+
+                        // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                        if (is_selected)
+                            ImGui::SetItemDefaultFocus();
+                    }
+                    if (item_last_idx != item_current_idx) {
+                        cMap = Styles::ColorMaps[selectedItem];
+                        invalidateTextureData();
+                    }
+                    item_last_idx = item_current_idx;
+                    ImGui::EndCombo();
+                }
+
+                ImGui::Text("ColorMap operations:");
+                if (ImGui::Button("Permute")) {
+                    cMap = cMap.permute();
+                    invalidateTextureData();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Odd permute")) {
+                    cMap = cMap.bgr();
+                    invalidateTextureData();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Inverse")) {
+                    cMap = cMap.inverse();
+                    invalidateTextureData();
+                }
+                ImGui::SameLine();
+                if (ImGui::Button("Reverse")) {
+                    cMap = cMap.reverse();
+                    invalidateTextureData();
+                }
+            }
+        }
+    }
+    ImGui::End();
+
 }
