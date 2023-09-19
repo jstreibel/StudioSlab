@@ -19,7 +19,7 @@ namespace Tests {
     : program(Resources::ShadersFolder + "tests.vert", Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
-    , writer(Resources::fontFileName(4), 100)
+    , writer(Resources::fontFileName(4), 80)
     {
         addWindow(std::make_shared<Window>());
 
@@ -48,6 +48,10 @@ namespace Tests {
         }
 
         texture.upload();
+
+        program.setUniform("transformMatrix", {1,0,0,
+                                               0,1,0,
+                                               0,0,1});
     }
 
     void ModernGLTests::draw() {
@@ -64,7 +68,7 @@ namespace Tests {
         {
             fix vp = getViewport();
             writer.reshape(vp.width(), vp.height());
-            writer.write("VertexBuffer tests", {300, (double) geth() - 300});
+            writer.write("VertexBuffer + Texture tests", {200, (double) geth() - 200});
         }
     }
 } // Tests
