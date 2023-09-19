@@ -1,9 +1,8 @@
-#version 330
+attribute vec3 vertex;
+attribute vec2 tex_coord;
 
-in vec2 pos;
-
-out vec4 Position;
-
-void main() {
-    Position = vec4(pos, 0.0, 1.0);
+void main()
+{
+    gl_TexCoord[0].xy = tex_coord.xy;
+    gl_Position       = vec4(vertex,1.0);
 }

@@ -12,11 +12,11 @@ struct TestVertex {
     float s, t;
 };
 
-fix texDim = 256;
+fix texDim = 4096;
 
 namespace Tests {
     ModernGLTests::ModernGLTests()
-    : program(Resources::ShadersFolder + "v3f-t2f-c4f.vert", Resources::ShadersFolder + "v3f-t2f-c4f.frag")
+    : program(Resources::ShadersFolder + "tests.vert", Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:3f,tex_coord:2f")
     , texture(texDim, texDim)
     , writer(Resources::fontFileName(4), 100)
@@ -25,22 +25,24 @@ namespace Tests {
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
+        fix tMin = -0.1f;
+        fix tMax =  1.1f;
+
         TestVertex square[4] = {
-            {-0.75f, -0.75f, 0.0f,   0.0f, 0.0f},
-            {+0.75f, -0.75f, 0.0f,   1.0f, 0.0f},
-            {+0.75f, +0.75f, 0.0f,   1.0f, 1.0f},
-            {-0.75f, +0.75f, 0.0f,   0.0f, 1.0f},
+            {-0.65f, -0.65f, 0.0f,   tMin, tMin},
+            {+0.65f, -0.65f, 0.0f,   tMax, tMin},
+            {+0.65f, +0.65f, 0.0f,   tMax, tMax},
+            {-0.65f, +0.65f, 0.0f,   tMin, tMax},
         };
 
         buffer.pushBack(square, 4, indices, 6);
 
-        mat4_set_identity(&projection);
-        mat4_set_identity(&model);
-        mat4_set_identity(&view);
-
         for(auto i=0; i<texDim; ++i){
+            fix x = i/(float)texDim;
             for(auto j=0; j<texDim; ++j){
-                fix color = Styles::Color(1, 1, 0.25, 1);
+                fix y = j/(float)texDim;
+                fix r = sqrt(x*x + y*y);
+                fix color = Styles::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
             }
         }
@@ -55,9 +57,6 @@ namespace Tests {
             texture.bind();
             program.use();
             program.setUniform("texture", 0);
-            program.setUniform4x4("model", model.data);
-            program.setUniform4x4("view", view.data);
-            program.setUniform4x4("projection", projection.data);
 
             buffer.render(GL_TRIANGLES);
         }
