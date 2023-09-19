@@ -21,6 +21,7 @@ namespace OpenGL {
     }
 
     void Texture::activate() const {
+        glEnable(GL_TEXTURE_2D);
         glActiveTexture(getGLtextureUnit());
     }
 

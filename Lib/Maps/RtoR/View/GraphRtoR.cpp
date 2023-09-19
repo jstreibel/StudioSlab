@@ -13,7 +13,5 @@ void GraphRtoR::_renderFunction(const RtoR::Function *func, Styles::PlotStyle st
       RtoR::FunctionRenderer::renderFunction(*func, style.lineColor, style.filled, get_xMin(), get_xMax(), samples, scale);
 }
 
-void GraphRtoR::setScale(Real s) {
-      scale = s;
-}
+void GraphRtoR::setScale(Real s) { scale = s; }
 

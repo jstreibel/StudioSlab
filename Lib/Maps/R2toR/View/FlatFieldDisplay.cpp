@@ -88,7 +88,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
 
         vertexBuffer.pushBack(vertices, 4, indices, 6);
 
-        // Log::Debug() << "Generated vertices for '" << title << "' graph VertexBuffer. "
+        Log::Debug() << "Generated vertices for '" << title << "' graph VertexBuffer. ";
     }
 
     invalidateTextureData();
@@ -117,10 +117,9 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
     if (!validTextureData)
         repopulateTextureBuffer();
 
-    glEnable(GL_TEXTURE_2D);
     texture->bind();
 
-    if(true) {
+    if(false) {
         auto region = this->getRegion();
         fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
         // glm::mat3x3 transform = {
