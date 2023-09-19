@@ -38,8 +38,6 @@ namespace OpenGL {
     bool Texture2D_Color::upload(UInt row0, Count nRows) {
         if(data == nullptr) return false;
 
-        assert(row0<getHeight());
-        assert(getTarget() == GL_TEXTURE_2D);
         assert(getInternalFormat() == GL_RGBA);
 
         fix dataFormat = PixelDataFormat::DataFormat_RGBA;

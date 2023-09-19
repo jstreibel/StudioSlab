@@ -17,8 +17,7 @@ namespace OpenGL {
     public:
         Texture2D_Real(GLsizei width, GLsizei height);
 
-        bool setValue(int i, int j, Real value);
-        bool setData(RealData data);
+        bool setValue(int i, int j, Real32 value);
 
         bool upload(UInt row=0, Count nRows=0);
     };

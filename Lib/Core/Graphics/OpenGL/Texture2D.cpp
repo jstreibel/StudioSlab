@@ -75,7 +75,11 @@ namespace OpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     }
 
-    bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat, PixelDataType dataType, const void *dataBegin) {
+    bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat,
+                               PixelDataType dataType, const void *dataBegin) {
+        assert(row0<getHeight());
+        assert(getTarget() == GL_TEXTURE_2D);
+
         bind();
 
         fix column0 = 0;

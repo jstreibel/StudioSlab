@@ -13,14 +13,16 @@
 
 #include "Maps/R2toR/Model/R2toRFunction.h"
 #include "Core/Graphics/OpenGL/Texture2D_Color.h"
+#include "Core/Graphics/OpenGL/Texture2D_Real.h"
 
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Core::Graphics::Graph2D {
+    protected: // should be private, protected for Debug reasons.
         bool validTextureData = false;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-        // OpenGL::Texture1D_Color* cMap_texture = nullptr;
+        //  OpenGL::Texture1D_Color* cMap_texture = nullptr;
         bool logScale                   = true;
         Real cMap_epsArg                =  1;
         Real cMap_min                   = -1.1;
@@ -37,6 +39,7 @@ namespace R2toR::Graphics {
     protected:
         R2toR::Function::ConstPtr func    = nullptr;
         OpenGL::Texture2D_Color*  texture = nullptr;
+        OpenGL::Texture2D_Real*   textureReal = nullptr;
 
         Styles::Color computeColor(Real val) const;
         void computeGraphRanges();

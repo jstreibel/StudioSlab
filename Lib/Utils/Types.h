@@ -17,11 +17,13 @@
 
 
 typedef floatt              Real;
+typedef float               Real32;
+typedef double              Real64;
 typedef std::complex<Real>  Complex;
 
 typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
-typedef Real*               RealData;
+typedef Real32*             RealData;
 typedef int                 Int;
 typedef unsigned int        UInt;
 typedef long long           IntBig;
