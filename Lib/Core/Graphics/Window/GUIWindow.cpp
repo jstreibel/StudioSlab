@@ -21,7 +21,9 @@ void GUIWindow::addVolatileStat(const Str &stat, const Styles::Color color)
 }
 
 void GUIWindow::draw() {
+    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
     Window::draw();
+    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 

@@ -17,7 +17,10 @@ void Window::draw() {
 
     setupWindow();
 
-    for(auto artist : content) artist->draw(this);
+    for(auto artist : content){
+        artist->draw(this);
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist " + Common::getClassName(artist));
+    }
 }
 
 void Window::_clear() const {

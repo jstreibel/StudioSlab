@@ -4,6 +4,7 @@
 
 #include "WindowColumn.h"
 #include "Core/Tools/Log.h"
+#include "Core/Graphics/OpenGL/Utils.h"
 
 #include <algorithm>
 #include <numeric>
@@ -88,7 +89,12 @@ bool WindowColumn::assertConsistency() const {
     return false;
 }
 
-void WindowColumn::draw() { for(auto &win : windows) win->draw(); }
+void WindowColumn::draw() {
+    for(auto &win : windows) {
+        win->draw();
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
+    }
+}
 
 void WindowColumn::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);

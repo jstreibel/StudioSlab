@@ -32,7 +32,6 @@ protected:
 
     Styles::Color backgroundColor = Core::Graphics::backgroundColor;
 
-
 public:
     typedef std::shared_ptr<Window> Ptr;
 

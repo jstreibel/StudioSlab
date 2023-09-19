@@ -15,7 +15,7 @@
 #include "../KG-RtoREquationState.h"
 #include "Core/Tools/Log.h"
 
-#define tRes ( (N/L) * simConfig.numericConfig.gett() + 1 )
+#define tRes ( (N/L) * simConfig.numericConfig.gett() )
 
 // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
@@ -43,7 +43,7 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
         auto sizeMB = Real((Real)N*timeResolution*sizeof(Real))/(1024*1024.);
 
         Log::Critical() << name << " is about to allocate " << sizeMB
-                        << "MB of data to store full " << N << 'x' << timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
+                        << "MB of data to store full " << N << 'x' << (int)timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
 
         data = new R2toR::DiscreteFunction_CPU(N, (int)timeResolution+1, xMin, 0.0, hx, ht);
 

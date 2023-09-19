@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_TEXTURE1D_COLOR_H
 #define STUDIOSLAB_TEXTURE1D_COLOR_H
 
+#include "Texture.h"
+
 #include "Utils/Types.h"
 
 #include "Core/Graphics/OpenGL/OpenGL.h"
@@ -12,8 +14,7 @@
 
 namespace OpenGL {
 
-    class Texture1D_Color {
-        GLuint texture = 0;
+    class Texture1D_Color : public Texture {
         ByteData data = nullptr;
 
         GLsizei size;
@@ -23,7 +24,6 @@ namespace OpenGL {
         Texture1D_Color(GLsizei length);
 
         bool setColor(int i, Styles::Color color);
-        bool setData(ByteData data);
 
         bool getAntiAlias() const;
         void setAntiAlias(bool val);
@@ -31,8 +31,6 @@ namespace OpenGL {
         void setAntiAliasOff();
 
         void set_sPeriodicOn();
-
-        bool bind() const;
 
         bool upload(UInt from=0, Count n=0);
 

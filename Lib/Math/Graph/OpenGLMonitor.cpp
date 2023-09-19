@@ -156,13 +156,23 @@ bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_DEPTH_TEST);
+
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     {
         writeStats();
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
         draw();
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
         EventListener::notifyRender(elTime_msec);   // here panel gets called.
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
         frameTimer.reset();
     }
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
+    glMatrixMode(GL_PROJECTION);
     glPopMatrix();
 
     return true;

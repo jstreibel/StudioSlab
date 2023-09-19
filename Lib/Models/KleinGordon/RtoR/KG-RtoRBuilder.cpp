@@ -61,26 +61,28 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
     auto *outputManager = new OutputManager(simulationConfig.numericConfig);
 
+
+    fix t = p.gett();
+    fix N = (Real) p.getN();
+    fix L = p.getL();
+    fix xMin = p.getxMin();
+    fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
+    fix r = p.getr();
+
+
     /********************************************************************************************/
     int fileOutputStepsInterval = -1;
     Numerics::OutputSystem::Socket *out = nullptr;
     if(shouldOutputHistory)
     {
-        const Real Tf=p.gett();
 
         OutputFormatterBase *outputFilter = new BinarySOF;
 
-        fix L = p.getL();
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}, {L/ *outputResolution}));
 
-        const auto N = (Real) p.getN();
-        const Real Np = *outputResolution;
-        const Real r = p.getr();
-        const auto stepsInterval = UInt(N/(Np*r));
+        fix stepsInterval = UInt(N/(Nₒᵤₜ*r));
 
-        if(0) outputFileName += Str("-N=") + ToStr(N, 0);
-
-        out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval, spaceFilter, Tf,
+        out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval, spaceFilter, t,
                                       outputFileName, outputFilter);
         fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
@@ -94,14 +96,9 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         auto outputOpenGL = buildOpenGLOutput();
 
-        const auto t = p.gett();
         if(t>0)
         {
-            const auto L = p.getL();
-            const auto xMin = p.getxMin();
-            const auto Nₒᵤₜ = *outputResolution;
-
-            auto simHistory = new SimHistory(simulationConfig, Nₒᵤₜ, xMin, L);
+            auto simHistory = new SimHistory(simulationConfig, (Resolution)Nₒᵤₜ, xMin, L);
             // auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 300, 0, 20*M_PI);
             auto ftHistory = new SimHistory_DFT(simulationConfig);
 

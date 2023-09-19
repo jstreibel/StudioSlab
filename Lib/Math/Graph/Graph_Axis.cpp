@@ -78,7 +78,13 @@ void Core::Graphics::Graph2D::drawAxes() {
     computeTicksSpacings();
 
     drawXAxis();
+    OpenGLUtils::checkGLErrors(
+            Str("after a call to Core::Graphics::Graph2D::drawXAxis from ") + Common::getClassName(this) + ", " +
+            "graph title \"" + title + "\"");
     drawYAxis();
+    OpenGLUtils::checkGLErrors(
+            Str("after a call to Core::Graphics::Graph2D::drawYAxis from ") + Common::getClassName(this) + ", " +
+            "graph title \"" + title + "\"");
 
 }
 
@@ -211,6 +217,8 @@ void Core::Graphics::Graph2D::drawXAxis() {
         }
         glEnd();
     }
+
+    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__));
 }
 
 void Core::Graphics::Graph2D::drawYAxis() {
@@ -404,6 +412,7 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
     loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
     writer->write(label, {loc.x, loc.y}, c);
 
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
     glMatrixMode(GL_PROJECTION);

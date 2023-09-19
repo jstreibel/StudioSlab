@@ -7,22 +7,35 @@
 
 #include <GL/gl.h>
 #include <glm/detail/type_mat4x4.hpp>
+
 #include "Utils/Types.h"
+#include "Texture.h"
+
+#include <map>
 
 namespace OpenGL {
 
     class Shader {
         GLuint handle;
+        std::map<GLuint, std::shared_ptr<Texture>> textureUnits;
 
     public:
         Shader(const Str& vertFilename, const Str& fragFilename);
 
+        void bindTextures() const;
+
         void use() const;
-        void remove() const;
+        static void remove() ;
+
+        auto getHandle() const -> GLuint {return handle; };
 
         void setUniform(const Str& name, GLint value) const;
         void setUniform(const Str& name, const glm::mat4& mat4) const;
+        void setUniform(const Str& name, const glm::mat3& mat3) const;
+        void setUniform(const Str& name, Texture& texture);
+
         void setUniform4x4(const Str& name, const float* mat4) const;
+        void setUniform3x3(const Str& name, const float* mat4) const;
     };
 
 } // OpenGL

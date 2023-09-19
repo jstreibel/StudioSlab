@@ -12,6 +12,7 @@
 
 #include "rougier/vec234.h"
 #include "VertexBuffer.h"
+#include "Core/Tools/Log.h"
 
 /**
  * Buffer status
@@ -91,12 +92,12 @@ namespace OpenGL {
         items = ftgl::vector_new( sizeof(ftgl::ivec4) );
         state = DIRTY;
         primitive = GL_TRIANGLES;
+
+        Log::Debug() << "Instantiated new VertexBuffer" << Log::Flush;
     }
 
     VertexBuffer::~VertexBuffer() {
         size_t i;
-
-        assert( self );
 
         for( i=0; i<MAX_VERTEX_ATTRIBUTE; ++i )
         {
@@ -182,24 +183,19 @@ namespace OpenGL {
     }
 
     void VertexBuffer::upload() {
-        size_t vsize, isize;
+        if( state == FROZEN ) return;
 
-        if( state == FROZEN )
-        {
-            return;
-        }
-
-        if( !vertices_id )
-        {
+        if( !vertices_id ) {
             glGenBuffers( 1, &vertices_id );
+            Log::Debug() << "Vertices id generated: " << vertices_id << Log::Flush;
         }
-        if( !indices_id )
-        {
+        if( !indices_id ) {
             glGenBuffers( 1, &indices_id );
+            Log::Debug() << "Indices id generated: " << indices_id << Log::Flush;
         }
 
-        vsize = vertices->size*vertices->item_size;
-        isize = indices->size*indices->item_size;
+        fix vsize = vertices->size*vertices->item_size;
+        fix isize = indices->size*indices->item_size;
 
 
         // Always upload vertices first such that indices do not point to non-existing
@@ -243,8 +239,6 @@ namespace OpenGL {
     }
 
     void VertexBuffer::renderSetup(GLenum primitive) {
-        size_t i;
-
         // Unbind so no existing VAO-state is overwritten,
         // (e.g. the GL_ELEMENT_ARRAY_BUFFER-binding).
         glBindVertexArray( 0 );
@@ -264,25 +258,16 @@ namespace OpenGL {
 
             glBindBuffer( GL_ARRAY_BUFFER, vertices_id );
 
-            for( i=0; i<MAX_VERTEX_ATTRIBUTE; ++i )
+            for(auto attribute : attributes)
             {
-                ftgl::vertex_attribute_t *attribute = attributes[i];
-                if( attribute == nullptr )
-                {
-                    continue;
-                }
-                else
-                {
-                    vertex_attribute_enable( attribute );
-                }
+                if( attribute == nullptr ) continue;
+                else vertex_attribute_enable( attribute );
             }
 
             glBindBuffer( GL_ARRAY_BUFFER, 0 );
 
             if( indices->size )
-            {
                 glBindBuffer( GL_ELEMENT_ARRAY_BUFFER, indices_id );
-            }
         }
 
         // Bind VAO for drawing
@@ -291,14 +276,11 @@ namespace OpenGL {
         this->primitive = primitive;
     }
 
-    void VertexBuffer::renderFinish() {
-        glBindVertexArray( 0 );
-    }
+    void VertexBuffer::renderFinish() { glBindVertexArray( 0 ); }
 
     void VertexBuffer::renderItem(size_t index) {
         auto * item = (ftgl::ivec4 *) vector_get( items, index );
         assert( index < vector_size( items ) );
-
 
         if( indices->size )
         {
@@ -321,7 +303,7 @@ namespace OpenGL {
         renderSetup( primitive );
         if( icount )
         {
-            glDrawElements( primitive, (GLsizei)icount, GL_UNSIGNED_INT, nullptr );
+            glDrawElements( primitive, (GLsizei)icount, GL_UNSIGNED_INT, 0 );
         }
         else
         {
@@ -337,12 +319,12 @@ namespace OpenGL {
 
     void VertexBuffer::pushBackVertices(const void *_vertices, const size_t vcount) {
         state |= DIRTY;
-        vector_push_back_data( vertices, _vertices, vcount );
+        ftgl::vector_push_back_data( vertices, _vertices, vcount );
     }
 
     void VertexBuffer::insertIndices(const size_t _index, const GLuint *_indices, const size_t count) {
         assert( indices );
-        assert( index < indices->size+1 );
+        assert( _index < indices->size+1 );
 
         state |= DIRTY;
         vector_insert_data( indices, _index, _indices, count );
@@ -350,9 +332,8 @@ namespace OpenGL {
 
     void VertexBuffer::insertVertices(const size_t index, const void *_vertices, const size_t vcount) {
         size_t i;
-        assert( self );
-        assert( self->vertices );
-        assert( index < self->vertices->size+1 );
+        assert( this->vertices );
+        assert( index < this->vertices->size+1 );
 
         this->state |= DIRTY;
 
@@ -378,10 +359,9 @@ namespace OpenGL {
 
     void VertexBuffer::eraseVertices(const size_t first, const size_t last) {
         size_t i;
-        assert( self );
-        assert( self->vertices );
-        assert( first < self->vertices->size );
-        assert( last <= self->vertices->size );
+        assert( this->vertices );
+        assert( first < this->vertices->size );
+        assert( last <= this->vertices->size );
         assert( last > first );
 
         this->state |= DIRTY;
@@ -400,9 +380,8 @@ namespace OpenGL {
                                 const size_t icount) {
         size_t vstart, istart, i;
         ftgl::ivec4 item;
-        assert( self );
-        assert( vertices );
-        assert( indices );
+        assert( this->vertices );
+        assert( this->indices );
 
         this->state = FROZEN;
 
@@ -433,6 +412,7 @@ namespace OpenGL {
 
     size_t VertexBuffer::pushBack(const void *_vertices, const size_t vcount,
                                 const GLuint *_indices, const size_t icount) {
+
         return insert( vector_size( items ), _vertices, vcount, _indices, icount );
     }
 
@@ -441,8 +421,7 @@ namespace OpenGL {
         int vstart;
         size_t vcount, istart, icount, i;
 
-        assert( self );
-        assert( index < vector_size( self->items ) );
+        assert( index < vector_size( this->items ) );
 
         item = (ftgl::ivec4 *) vector_get( this->items, index );
         vstart = item->vstart;

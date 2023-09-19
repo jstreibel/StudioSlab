@@ -14,6 +14,8 @@ void GLUTUtils::write(const Window *win, const float fontScale, const float x, c
     glTranslatef(x,y,0);
     glScalef(fontScale, fontScale, 1);
     glutStrokeString(font, (unsigned char*)str.c_str());
+
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 }
 
@@ -32,13 +34,14 @@ void GLUTUtils::writeOrtho(const Window *window, RectR region, float fontScale, 
         yScale = fontScale*baseScale;
 
     glMatrixMode(GL_MODELVIEW);
-
     glPushMatrix();
     glLoadIdentity();
     glTranslatef(x, y, 0);
     glScalef(xScale, yScale, 1);
     for(int i=0;i<1;++i)
         glutStrokeString(font, (unsigned char *) str.c_str());
+
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 }
 

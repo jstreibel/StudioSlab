@@ -33,6 +33,7 @@
         firstTimer = false;         \
         code                        \
     }
+#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
@@ -97,9 +98,15 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 void RtoR::Monitor::draw() {
     fix V_str = hamiltonian.getThePotential()->mySymbol();
 
+    int errorCount = 0;
+
+    CHECK_GL_ERRORS(errorCount++)
     updateHistoryGraphs();
+    CHECK_GL_ERRORS(errorCount++)
     updateFTHistoryGraph();
+    CHECK_GL_ERRORS(errorCount++)
     updateFourierGraph();
+    CHECK_GL_ERRORS(errorCount++)
 
     // ************************ RT MONITOR**********************************
     const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
@@ -121,6 +128,8 @@ void RtoR::Monitor::draw() {
     if(showKineticEnergy)   mFieldsGraph.addFunction(&hamiltonian.getKineticDensity(),   "K/L"        , K_style);
     if(showGradientEnergy)  mFieldsGraph.addFunction(&hamiltonian.getGradientDensity(),  "(𝜕ₓϕ)²"     , W_style);
     if(showEnergyDensity)   mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(),    "E/L"        , U_style);
+
+    CHECK_GL_ERRORS(errorCount++)
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
@@ -225,6 +234,8 @@ void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::Discrete
 void RtoR::Monitor::updateHistoryGraphs() {
     if(simulationHistory == nullptr) return;
 
+    CHECK_GL_ERRORS(0)
+
     fix L = params.getL();
     fix xMin = params.getxMin();
     fix xMax = params.getxMax();
@@ -261,12 +272,16 @@ void RtoR::Monitor::updateHistoryGraphs() {
     mHistoryGraph.clearFunctions();
     mHistoryGraph.addFunction(&mHistorySectionFunc, "History");
 
+    CHECK_GL_ERRORS(1)
+
     {
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
         lastStepMod = stepMod;
     }
+
+    CHECK_GL_ERRORS(1.5)
 
     {
         stats.begin();
@@ -294,6 +309,8 @@ void RtoR::Monitor::updateHistoryGraphs() {
             }
         }
         stats.end();
+
+        CHECK_GL_ERRORS(2)
 
         static auto last_t_history = 0.0;
         if(updateSamples || (t_history != last_t_history))
@@ -338,6 +355,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
         }
         last_t_history = t_history;
     }
+    CHECK_GL_ERRORS(3)
 }
 
 void RtoR::Monitor::updateFTHistoryGraph() {

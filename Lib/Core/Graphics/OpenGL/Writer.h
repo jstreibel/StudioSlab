@@ -24,23 +24,26 @@ namespace Core::Graphics {
         ftgl::texture_font_t *font = nullptr;
         ftgl::texture_atlas_t *atlas = nullptr;
 
-        OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::Shader program;
+        ftgl::vertex_buffer_t *buffer;
+        GLuint shader;
+        // OpenGL::VertexBuffer vertexBuffer;
+        // OpenGL::Shader program;
 
         ftgl::mat4 model{}, view{}, projection{};
+
+        void drawBuffer();
+        void setBufferText(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
 
     public:
         Writer(const Str &fontFile, float ptSize);
         virtual ~Writer();
 
         void write(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
-
-        void drawBuffer();
-        void setBufferText(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
-
         Real getFontHeightInPixels() const;
-
         void reshape(int w, int h);
+
+
+
     };
 
 }

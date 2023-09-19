@@ -3,14 +3,37 @@
 //
 
 #include "Core/Graphics/OpenGL/OpenGL.h"
-
+#include <GL/glu.h>
 #include "GLUTUtils.h"
+
 #include "Utils.h"
 #include "Core/Tools/Log.h"
 #include <FreeImagePlus.h>
 
 #include <cstring>
 #include <iostream>
+
+#define CHECK_GL_ERRORS(strMark) \
+    {                    \
+        GLenum err;                                                 \
+        while((err = glGetError()) != GL_NO_ERROR)                  \
+            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): " << gluErrorString(err) << Log::Flush; \
+                                                                    \
+    }
+
+bool OpenGLUtils::checkGLErrors(const Str& hint, bool raiseException){
+    bool bad = false;
+
+    GLenum err;
+    while((err = glGetError()) != GL_NO_ERROR) {
+        Log::Warning() << "OpenGL error " << err << " (" << Log::FGBlue << (hint) << Log::ResetFormatting << "): " << gluErrorString(err) << Log::Flush;
+        bad = true;
+    }
+
+    if(bad && raiseException) throw "OpenGL error";
+
+    return bad;
+}
 
 void OpenGLUtils::drawOrthoNormalized(RectR rect) {
     // TODO ultra-provisório
@@ -24,6 +47,7 @@ void OpenGLUtils::drawOrthoNormalized(RectR rect) {
 
     glRectd(rect.xMin, rect.yMin, rect.xMax, rect.yMax);
 
+    glMatrixMode(GL_MODELVIEW);
     glPopMatrix();
 
     glMatrixMode(GL_PROJECTION);

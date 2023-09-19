@@ -29,14 +29,6 @@
 #define FULLSCREEN true
 fix IMGUI_FONT_INDEX = 10; //6;
 
-#define CHECK_GL_ERRORS \
-    {                    \
-        GLenum err;                                                 \
-        while((err = glGetError()) != GL_NO_ERROR)                  \
-            Log::Warning() << "OpenGL error " << err << Log::Flush; \
-                                                                    \
-    }
-
 GLUTBackend::GLUTBackend() : GUIBackend("GLUT backend") {
     assert(Backend::singleInstance == nullptr);
 
@@ -352,7 +344,7 @@ void GLUTBackend::render()
         if (me.showDemo) ImGui::ShowDemoWindow();
     }
 
-    CHECK_GL_ERRORS
+    OpenGLUtils::checkGLErrors("after ImGui frame begin / show demo window");
 
     {
         static auto timer = Timer();
@@ -360,16 +352,16 @@ void GLUTBackend::render()
             auto elapsed = timer.getElTime_msec();
             win->notifyRender((float)elapsed);
 
-            CHECK_GL_ERRORS
+            OpenGLUtils::checkGLErrors(Str("after rendering window ") + Common::getClassName(win.get()));
         }
         timer.reset();
     }
 
     {
         ImGui::Render();
-        CHECK_GL_ERRORS
+        OpenGLUtils::checkGLErrors("after ImGui::Render()");
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        CHECK_GL_ERRORS
+        OpenGLUtils::checkGLErrors("after ImGui_ImplOpenGL3_RenderDrawData");
     }
 
     glutSwapBuffers();

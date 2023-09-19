@@ -44,7 +44,9 @@ Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
 }
 
 void Core::Graphics::Graph2D::draw() {
+    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
     Window::draw();
+
     if (autoReviewGraphRanges) reviewGraphRanges();
     setupOrtho();
 

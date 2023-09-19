@@ -9,6 +9,8 @@
 
 #define min(a, b) ((a)<(b)?(a):(b))
 
+#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+
 RtoR::Graphics::HistoryDisplay::HistoryDisplay(Str name, Real phiMin, Real phiMax)
 : R2toR::Graphics::FlatFieldDisplay(name, phiMin, phiMax) {
 
@@ -24,7 +26,7 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     fix tₘₐₓ = discreteFunc.getDomain().yMax;
     fix t = min(t_, tₘₐₓ);
 
-    auto upToRow = (Count)( Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
+    auto upToRow = (Count)(Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
 
     assert(upToRow < n);
 
@@ -37,13 +39,13 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     }
 
     fix totalRows = upToRow-nextRow+1;
-    texture->upload(nextRow, totalRows);
+    if(!texture->upload(nextRow, totalRows)){
+        Log::Error("Graph " + this->title + " failed uploading texture from row ") << nextRow << " up to row " << upToRow << ", both inclusive'"
+                                                                       << " which implies a total of " << totalRows
+                                                                       << " rows @ t=" << t
+                                                                       << " with Δt=" << (t-lastUpdatedTime) << Log::Flush;
 
-    if(false)
-        Log::Note("Texture uploading from row ") << nextRow << " up to row " << upToRow
-                                                             << " a total of " << totalRows
-                                                             << " rows @ t=" << t
-                                                             << " with Δt=" << (t-lastUpdatedTime) << Log::Flush;
+    }
 
     nextRow = upToRow+1;
     lastUpdatedTime = t_;

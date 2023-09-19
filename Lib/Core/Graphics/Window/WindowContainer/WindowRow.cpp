@@ -4,6 +4,7 @@
 
 #include "WindowRow.h"
 #include "Core/Tools/Log.h"
+#include "Core/Graphics/OpenGL/Utils.h"
 
 #include <algorithm>
 #include <numeric>
@@ -88,7 +89,12 @@ bool WindowRow::assertConsistency() const {
     return false;
 }
 
-void WindowRow::draw() { for(auto &win : windows) win->draw(); }
+void WindowRow::draw() {
+    for(auto &win : windows){
+        win->draw();
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&win));
+    }
+}
 
 void WindowRow::notifyReshape(int w, int h) {
     Window::notifyReshape(w, h);

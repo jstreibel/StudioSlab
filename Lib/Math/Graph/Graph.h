@@ -79,7 +79,7 @@ namespace Core::Graphics {
 
         void drawPointSets();
         void drawCurves();
-        void drawGUI();
+        virtual void drawGUI();
 
         virtual Str getXHairLabel(const Point2D &coords);
         void drawXHair();

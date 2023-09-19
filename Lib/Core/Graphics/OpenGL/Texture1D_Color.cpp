@@ -12,7 +12,9 @@
 
 namespace OpenGL {
 
-    Texture1D_Color::Texture1D_Color(GLsizei size) : size(size) {
+    Texture1D_Color::Texture1D_Color(GLsizei size)
+    : Texture(Texture1D), size(size)
+    {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         if(size>maxTextureSize) {
@@ -22,9 +24,7 @@ namespace OpenGL {
 
             return;
         }
-
-        glGenTextures(1, &texture);
-        glBindTexture(GL_TEXTURE_2D, texture);
+        bind();
 
         setAntiAliasOn();
 
@@ -65,9 +65,9 @@ namespace OpenGL {
     }
 
     bool Texture1D_Color::upload(UInt row0, Count nRows) {
-        if(data == nullptr || texture == 0) return false;
+        if(data == nullptr) return false;
 
-        glBindTexture(GL_TEXTURE_2D, texture);
+        bind();
 
         if(row0==0 && nRows==0) {
             glTexImage1D(GL_TEXTURE_2D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -76,16 +76,8 @@ namespace OpenGL {
                 Log::Error() << "OpenGL::Texture failed to upload " << size << " data to GL_TEXTURE_2D." << Log::Flush;
         }
         else {
-            glTexSubImage1D(GL_TEXTURE_2D, 0, row0, nRows, GL_RGBA, GL_UNSIGNED_BYTE, &data[row0 * 4]);
+            glTexSubImage1D(GL_TEXTURE_1D, 0, (GLint)row0, (GLint)nRows, GL_RGBA, GL_UNSIGNED_BYTE, &data[row0 * 4]);
         }
-
-        return true;
-    }
-
-    bool Texture1D_Color::setData(ByteData newData) {
-        if(texture == 0) return false;
-
-        glTexImage1D(GL_TEXTURE_2D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, newData);
 
         return true;
     }
@@ -94,21 +86,13 @@ namespace OpenGL {
         return size;
     }
 
-    bool Texture1D_Color::bind() const {
-        if(texture == 0) return false;
-
-        glBindTexture(GL_TEXTURE_1D, texture);
-
-        return true;
-    }
-
     void Texture1D_Color::setAntiAlias(bool val) {
         if(val) setAntiAliasOn();
         else setAntiAliasOff();
     }
 
     void Texture1D_Color::setAntiAliasOn() {
-        glBindTexture(GL_TEXTURE_1D, texture);
+        bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -117,7 +101,7 @@ namespace OpenGL {
     }
 
     void Texture1D_Color::setAntiAliasOff() {
-        glBindTexture(GL_TEXTURE_1D, texture);
+        bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -130,7 +114,7 @@ namespace OpenGL {
     }
 
     void Texture1D_Color::set_sPeriodicOn() {
-        glBindTexture(GL_TEXTURE_1D, texture);
+        bind();
 
         // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);

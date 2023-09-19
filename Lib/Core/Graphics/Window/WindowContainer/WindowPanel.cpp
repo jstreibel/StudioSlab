@@ -4,7 +4,8 @@
 
 #include <cassert>
 #include "WindowPanel.h"
-
+#include "Core/Graphics/OpenGL/Utils.h"
+#include "Core/Tools/Log.h"
 
 
 void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth) {
@@ -97,9 +98,10 @@ void WindowPanel::setColumnRelativeWidth(int column, float relWidth) {
 
 void WindowPanel::draw() {
     for(auto &column : columns)
-        for(auto window : column)
+        for(auto window : column) {
             window->draw();
-
+            OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(window));
+        }
 }
 
 float WindowPanel::computeReservedWidth() const {

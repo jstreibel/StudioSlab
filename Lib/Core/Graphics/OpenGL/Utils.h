@@ -10,6 +10,13 @@
 #include "Core/Graphics/OpenGL/OpenGL.h"
 
 namespace OpenGLUtils {
+    /**
+     * Checks and logs all stacked OpenGL errors.
+     * @param hint Hint to recent operations.
+     * @return True if error was found, false otherwise.
+     */
+    bool checkGLErrors(const Str& hint, bool raiseException=true);
+
     struct FrameBuffer {
         typedef uint8_t DataType;
 

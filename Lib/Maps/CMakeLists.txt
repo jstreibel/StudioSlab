@@ -60,8 +60,6 @@ set ( RTOR_SOURCES
 
 		RtoR/View/Graphics/GraphRtoR.cpp
 		RtoR/View/Graphics/RtoROutputOpenGLShockwave.cpp
-        RtoR/View/Graphics/HistoryDisplay.cpp
-        RtoR/View/Graphics/HistoryDisplay.h
 
 		RtoR/Calc/Histogram.cpp
         RtoR/Calc/CorrelationCalculator.h       RtoR/Calc/CorrelationCalculator.cpp
@@ -79,9 +77,6 @@ set ( RTOR_SOURCES
 set ( R2TOR_SOURCES
 		FunctionRenderer.cpp
 
-
-		RtoR/Model/FunctionsCollection/AbsFunction.cpp
-
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 
@@ -94,7 +89,6 @@ set ( R2TOR_SOURCES
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
 
-		RtoR/View/Graphics/GraphRtoR.cpp
 
 		R2toR/Output/Filters/DimensionReductionFilter.cpp
 		R2toR/Output/R2toROutputOpenGLShockwave.cpp
@@ -110,10 +104,13 @@ set ( R2TOR_SOURCES
 		R2toR/View/FlatFieldDisplay.h			R2toR/View/FlatFieldDisplay.cpp
 		R2toR/View/GraphR2ToR.cpp
 
-		RtoR/Model/FunctionsCollection/Section1D.h									RtoR/Model/FunctionsCollection/Section1D.cpp
 		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h	R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
         R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h		        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
         R2toR/FourierTransform.h											        R2toR/FourierTransform.cpp
+
+		RtoR/View/Graphics/GraphRtoR.cpp
+		RtoR/Model/FunctionsCollection/AbsFunction.cpp
+		RtoR/Model/FunctionsCollection/Section1D.h									RtoR/Model/FunctionsCollection/Section1D.cpp
 )
 
 
