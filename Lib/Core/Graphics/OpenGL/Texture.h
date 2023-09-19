@@ -17,9 +17,10 @@ namespace OpenGL {
     protected:
         GLuint texture = 0;
         Target target;
+        InternalFormat internalFormat;
 
     public:
-        Texture(Target target);
+        Texture(Target, InternalFormat);
 
         void bind() const;
     };

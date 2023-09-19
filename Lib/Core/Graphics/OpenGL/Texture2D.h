@@ -14,7 +14,7 @@ namespace OpenGL {
     protected:
         GLsizei w, h;
 
-        Texture2D(GLsizei w, GLsizei h);
+        Texture2D(GLsizei w, GLsizei h, InternalFormat);
     };
 
 } // OpenGL

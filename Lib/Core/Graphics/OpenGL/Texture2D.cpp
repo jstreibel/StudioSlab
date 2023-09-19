@@ -7,7 +7,11 @@
 #include "Utils.h"
 
 namespace OpenGL {
-    Texture2D::Texture2D(GLsizei w, GLsizei h) : Texture(Target::Texture_2D) , w(w), h(h) {
+    Texture2D::Texture2D(GLsizei w, GLsizei h, InternalFormat internalFormat)
+    : Texture(Target::Texture_2D, internalFormat)
+    , w(w)
+    , h(h)
+    {
         GLint maxTextureSize;
         glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
         if(w>maxTextureSize || h>maxTextureSize) {
@@ -26,7 +30,7 @@ namespace OpenGL {
         auto pixelDataFormat = GL_RGBA;
         auto pixelDataType = GL_UNSIGNED_BYTE;
         // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, pixelDataFormat, pixelDataType, nullptr);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, w, h, 0, pixelDataFormat, pixelDataType, nullptr);
 
         if(!OpenGLUtils::checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Success() << "OpenGL::Texture reserved " << w << "x" << h << " GPU texture pixels." << Log::Flush;
