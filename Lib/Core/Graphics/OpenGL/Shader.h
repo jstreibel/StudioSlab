@@ -31,6 +31,7 @@ namespace OpenGL {
         auto getHandle() const -> GLuint {return handle; };
 
         void setUniform(const Str& name, GLint value) const;
+        void setUniform(const Str& name, GLfloat value) const;
         void setUniform(const Str& name, Real2D vec2) const;
         void setUniform(const Str& name, const glm::mat4& mat4) const;
         void setUniform(const Str& name, const glm::mat3& mat3) const;

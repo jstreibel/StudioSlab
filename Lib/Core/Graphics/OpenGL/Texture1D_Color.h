@@ -9,8 +9,9 @@
 
 #include "Utils/Types.h"
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
-#include "Core/Graphics/Styles/Colors.h"
+#include "OpenGL.h"
+#include "TextureUtils.h"
+#include "../Styles/Colors.h"
 
 namespace OpenGL {
 
@@ -25,12 +26,14 @@ namespace OpenGL {
 
         bool setColor(int i, Styles::Color color);
 
+        void setWrap(OpenGL::WrapMode) const;
+
         bool getAntiAlias() const;
         void setAntiAlias(bool val);
         void setAntiAliasOn();
         void setAntiAliasOff();
 
-        void set_sPeriodicOn();
+        void set_sPeriodicOn() const;
 
         bool upload(UInt from=0, Count n=0);
 

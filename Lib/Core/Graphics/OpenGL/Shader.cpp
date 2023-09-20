@@ -101,13 +101,24 @@ namespace OpenGL {
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
     }
 
+    void Shader::setUniform(const Str& name, GLfloat value) const {
+        this->use();
+
+        fix loc = glGetUniformLocation(handle, name.c_str());
+        assert(loc != -1);
+
+        glUniform1f(loc, value);
+
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+    }
+
     void Shader::setUniform(const Str &name, Real2D vec2) const {
         this->use();
 
         fix loc = glGetUniformLocation(handle, name.c_str());
         assert(loc != -1);
 
-        glUniform2f(loc, vec2.x, vec2.y);
+        glUniform2f(loc, (GLfloat)vec2.x, (GLfloat)vec2.y);
 
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
     }

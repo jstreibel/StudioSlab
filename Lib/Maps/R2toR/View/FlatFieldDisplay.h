@@ -19,7 +19,6 @@
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Core::Graphics::Graph2D {
-    protected: // should be private, protected for Debug reasons.
         bool validTextureData = false;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
@@ -37,10 +36,9 @@ namespace R2toR::Graphics {
 
         void drawFlatField();
 
-        void startupColormapTexture();
+        void computeColormapTexture();
     protected:
         R2toR::Function::ConstPtr func    = nullptr;
-        OpenGL::Texture2D_Color*  texture = nullptr;
         OpenGL::Texture2D_Real*   textureData = nullptr;
 
         Styles::Color computeColor(Real val) const;
@@ -60,7 +58,7 @@ namespace R2toR::Graphics {
 
         auto getFunction() const -> R2toR::Function::ConstPtr;
 
-        void setColorMap(Styles::ColorMap colorMap);
+        void setColorMap(const Styles::ColorMap& colorMap);
 
         void set_xPeriodicOn();
 

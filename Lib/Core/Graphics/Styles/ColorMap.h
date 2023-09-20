@@ -31,6 +31,9 @@ namespace Styles {
         auto inverse() const -> ColorMap;
         auto reverse() const -> ColorMap;
 
+        Color getClippedColor() const;
+        Color getSaturatedColor() const;
+
         Str getName() const;
     };
 

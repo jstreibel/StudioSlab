@@ -45,7 +45,12 @@ R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real
 , vertexBuffer("vertex:2f,tex_coord:2f")
 , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
 {
-    startupColormapTexture();
+    computeColormapTexture();
+
+    program.setUniform("colormap", cMap_texture->getTextureUnit());
+    program.setUniform("phiMin", (GLfloat)cMap_min);
+    program.setUniform("phiMax", (GLfloat)cMap_max);
+    program.setUniform("eps", (GLfloat)cMap_epsArg);
 };
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
@@ -61,15 +66,15 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
 
-    delete texture, textureData;
-    texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
+    delete textureData;
     textureData = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
+    program.setUniform("fieldData", textureData->getTextureUnit());
 
     {
         auto domain = discreteFunc.getDomain();
 
-        auto hPixelSizeInTexCoord = 1. / texture->getWidth();
-        auto vPixelSizeInTexCoord = 1. / texture->getHeight();
+        auto hPixelSizeInTexCoord = 1. / xRes;
+        auto vPixelSizeInTexCoord = 1. / yRes;
 
         auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
         auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
@@ -137,28 +142,24 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
             xTranslate    , yTranslate  , 1.0f
     };
 
-    // texture->bind();
     textureData->bind();
     cMap_texture->bind();
     program.use();
-    program.setUniform("fieldData", textureData->getTextureUnit());
-    program.setUniform("colormap", cMap_texture->getTextureUnit());
     program.setUniform("transformMatrix", transform);
 
     vertexBuffer.render(GL_TRIANGLES);
 
-    glDisable(GL_TEXTURE_2D);
-    glDisable(GL_TEXTURE_1D);
 }
 
-void R2toR::Graphics::FlatFieldDisplay::startupColormapTexture() {
+void R2toR::Graphics::FlatFieldDisplay::computeColormapTexture() {
     delete cMap_texture;
 
     fix nColors = 1024;
     cMap_texture = new OpenGL::Texture1D_Color(nColors, GL_TEXTURE1);
+    cMap_texture->setWrap(OpenGL::ClampToEdge);
 
     for(auto i=0; i<nColors; ++i){
-        fix s = (Real)i/(Real)nColors;
+        fix s = (Real)(i-1)/(Real)(nColors-2);
         fix color = cMap.mapValue(s, 0, 1);
         cMap_texture->setColor(i, color);
     }
@@ -184,17 +185,8 @@ void R2toR::Graphics::FlatFieldDisplay::repopulateTextureBuffer() {
 
     discreteFunc.getSpace().syncHost();
 
-    for (int i = 0; i < xRes; ++i) {
-        for (int j = 0; j < yRes; ++j) {
-            auto val = discreteFunc.At(i, j);
-            auto color = computeColor(val);
+    for (int i=0;i<xRes;++i) for (int j=0;j<yRes;++j) textureData->setValue(i, j, (Real32)discreteFunc.At(i, j));
 
-            texture->setColor(i, j, color);
-            textureData->setValue(i, j, val);
-        }
-    }
-
-    texture->upload();
     textureData->upload();
 
     validTextureData = true;
@@ -281,14 +273,13 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
 
 auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr { return func; }
 
-void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
+void R2toR::Graphics::FlatFieldDisplay::setColorMap(const Styles::ColorMap& colorMap) {
     cMap = colorMap;
-    startupColormapTexture();
+    computeColormapTexture();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
-    xPeriodic = true;
-    texture->set_sPeriodicOn();
+    textureData->set_sPeriodicOn();
 }
 
 Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
@@ -324,10 +315,9 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                 auto max = (float) cMap_max;
                 auto eps = (float) cMap_epsArg;
 
-                bool antiAlias = texture->getAntiAlias();
-                if (ImGui::Checkbox("Anti-alias display", &antiAlias)) {
-                    texture->setAntiAlias(antiAlias);
-                }
+                bool antiAlias = textureData->getAntiAlias();
+                if (ImGui::Checkbox("Anti-alias display", &antiAlias))
+                    textureData->setAntiAlias(antiAlias);
 
                 float fullWidth = ImGui::GetContentRegionAvail().x;
                 float relativeWidth = fullWidth * 0.3f;
@@ -337,23 +327,28 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                 if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
                     cMap_min = min;
                     if (symmetricMaxMin) cMap_max = -min;
-                    invalidateTextureData();
+
+                    program.setUniform("phiMin", (GLfloat)cMap_min);
+                    program.setUniform("phiMax", (GLfloat)cMap_max);
+
                 }
                 ImGui::SameLine();
                 if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
                     cMap_max = max;
                     if (symmetricMaxMin) cMap_min = -max;
-                    invalidateTextureData();
+
+                    program.setUniform("phiMin", (GLfloat)cMap_min);
+                    program.setUniform("phiMax", (GLfloat)cMap_max);
                 }
                 ImGui::PopItemWidth();
 
-                if (ImGui::DragFloat("ε", &eps, eps * 1e-2, 1e-5, 1e3, "%.6f")) {
+                if (ImGui::DragFloat("ε", &eps, (float)eps * 1e-2, 1e-5, 1e3, "%.6f")) {
                     cMap_epsArg = eps;
-                    if (logScale) invalidateTextureData();
+                    program.setUniform("eps", (GLfloat)cMap_epsArg);
                 }
 
                 if (ImGui::Checkbox("Log scale", &logScale)) {
-                    invalidateTextureData();
+                    program.setUniform("useLog", (GLboolean)logScale);
                 }
             }
 
@@ -380,7 +375,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                     }
                     if (item_last_idx != item_current_idx) {
                         cMap = Styles::ColorMaps[selectedItem];
-                        invalidateTextureData();
+                        computeColormapTexture();
                     }
                     item_last_idx = item_current_idx;
                     ImGui::EndCombo();
@@ -389,22 +384,22 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                 ImGui::Text("ColorMap operations:");
                 if (ImGui::Button("Permute")) {
                     cMap = cMap.permute();
-                    invalidateTextureData();
+                    computeColormapTexture();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Odd permute")) {
                     cMap = cMap.bgr();
-                    invalidateTextureData();
+                    computeColormapTexture();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Inverse")) {
                     cMap = cMap.inverse();
-                    invalidateTextureData();
+                    computeColormapTexture();
                 }
                 ImGui::SameLine();
                 if (ImGui::Button("Reverse")) {
                     cMap = cMap.reverse();
-                    invalidateTextureData();
+                    computeColormapTexture();
                 }
             }
         }

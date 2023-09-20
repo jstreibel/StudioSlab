@@ -31,17 +31,12 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
     assert(upToRow < n);
 
     const auto N = discreteFunc.getN();
-    for(auto i=0; i<N; ++i){
-        for(auto j=nextRow; j<=upToRow; ++j){
-            auto val = discreteFunc.At(i, j);
-            texture->setColor(i,j, computeColor(val));
-            textureData->setValue(i,j, logAbs(val, cMap_epsArg));
-        }
-    }
+    for(auto i=0; i<N; ++i)
+        for(auto j=nextRow; j<=upToRow; ++j)
+            textureData->setValue(i,j, (Real32)discreteFunc.At(i, j));
 
     fix totalRows = upToRow-nextRow+1;
-    if(!texture->upload(nextRow, totalRows)
-    || !textureData->upload(nextRow, totalRows))
+    if(!textureData->upload(nextRow, totalRows))
     {
         Log::Error("Graph " + this->title + " failed uploading texture from row ") << nextRow << " up to row " << upToRow << ", both inclusive'"
                                                                        << " which implies a total of " << totalRows

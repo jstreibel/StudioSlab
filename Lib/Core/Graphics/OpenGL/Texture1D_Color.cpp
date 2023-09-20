@@ -30,11 +30,6 @@ namespace OpenGL {
 
         setAntiAliasOn();
 
-        glTexParameteri(Texture_1D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-
-        float borderColor[] = { 0.f, 1.f, 0.f, 1.0f };
-        glTexParameterfv(Texture_1D, GL_TEXTURE_BORDER_COLOR, borderColor);
-
         data = (ByteData)malloc(size*4);
 
         fix sizeMB = size*4/(1024*1024.);
@@ -105,15 +100,14 @@ namespace OpenGL {
         antiAlias = false;
     }
 
-    bool Texture1D_Color::getAntiAlias() const {
-        return antiAlias;
-    }
+    bool Texture1D_Color::getAntiAlias() const { return antiAlias; }
 
-    void Texture1D_Color::set_sPeriodicOn() {
+    void Texture1D_Color::set_sPeriodicOn() const { setWrap(Repeat); }
+
+    void Texture1D_Color::setWrap(OpenGL::WrapMode mode) const {
         bind();
 
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, mode);
     }
 
 
