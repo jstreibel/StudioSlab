@@ -45,7 +45,7 @@ R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real
 , vertexBuffer("vertex:2f,tex_coord:2f")
 , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
 {
-
+    startupColormapTexture();
 };
 
 void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
@@ -61,9 +61,9 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
 
-    delete texture, textureReal;
+    delete texture, textureData;
     texture = new OpenGL::Texture2D_Color((int)xRes, (int)yRes);
-    textureReal = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
+    textureData = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
 
     {
         auto domain = discreteFunc.getDomain();
@@ -137,15 +137,33 @@ void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
             xTranslate    , yTranslate  , 1.0f
     };
 
-    texture->bind();
-    // textureReal->bind();
+    // texture->bind();
+    textureData->bind();
+    cMap_texture->bind();
     program.use();
-    program.setUniform("texture", 0);
+    program.setUniform("fieldData", textureData->getTextureUnit());
+    program.setUniform("colormap", cMap_texture->getTextureUnit());
     program.setUniform("transformMatrix", transform);
 
     vertexBuffer.render(GL_TRIANGLES);
 
     glDisable(GL_TEXTURE_2D);
+    glDisable(GL_TEXTURE_1D);
+}
+
+void R2toR::Graphics::FlatFieldDisplay::startupColormapTexture() {
+    delete cMap_texture;
+
+    fix nColors = 1024;
+    cMap_texture = new OpenGL::Texture1D_Color(nColors, GL_TEXTURE1);
+
+    for(auto i=0; i<nColors; ++i){
+        fix s = (Real)i/(Real)nColors;
+        fix color = cMap.mapValue(s, 0, 1);
+        cMap_texture->setColor(i, color);
+    }
+
+    cMap_texture->upload();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateTextureData() { validTextureData = false; }
@@ -172,12 +190,12 @@ void R2toR::Graphics::FlatFieldDisplay::repopulateTextureBuffer() {
             auto color = computeColor(val);
 
             texture->setColor(i, j, color);
-            textureReal->setValue(i, j, val);
+            textureData->setValue(i, j, val);
         }
     }
 
     texture->upload();
-    textureReal->upload();
+    textureData->upload();
 
     validTextureData = true;
 }
@@ -263,7 +281,10 @@ void R2toR::Graphics::FlatFieldDisplay::computeGraphRanges() {
 
 auto R2toR::Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr { return func; }
 
-void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) { cMap = colorMap; }
+void R2toR::Graphics::FlatFieldDisplay::setColorMap(Styles::ColorMap colorMap) {
+    cMap = colorMap;
+    startupColormapTexture();
+}
 
 void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
     xPeriodic = true;

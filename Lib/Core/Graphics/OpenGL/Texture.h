@@ -31,6 +31,7 @@ namespace OpenGL {
                          GLenum textureUnit = GL_TEXTURE0);
 
         void activate() const;
+        void deactivate() const;
         void bind() const;
 
         auto getTarget() const -> Target;

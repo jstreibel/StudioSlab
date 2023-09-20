@@ -21,7 +21,7 @@ namespace OpenGL {
 
         bool antiAlias = true;
     public:
-        Texture1D_Color(GLsizei length);
+        Texture1D_Color(GLsizei length, GLenum textureUnit = GL_TEXTURE0);
 
         bool setColor(int i, Styles::Color color);
 

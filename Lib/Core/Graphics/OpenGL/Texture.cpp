@@ -7,7 +7,9 @@
 #include "Core/Tools/Log.h"
 #include "Utils.h"
 
-#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) \
+    + " from " + Common::getClassName(this)                                        \
+    + " (check " + ToStr((count)) + ")");
 
 namespace OpenGL {
     Texture::Texture(Target target, InternalFormat format, GLenum textureUnit)
@@ -21,15 +23,18 @@ namespace OpenGL {
     }
 
     void Texture::activate() const {
-        glEnable(GL_TEXTURE_2D);
         glActiveTexture(getGLtextureUnit());
+    }
+
+    void Texture::deactivate() const {
+        glActiveTexture(GL_TEXTURE0);
     }
 
     void Texture::bind() const {
         activate();
         CHECK_GL_ERRORS(0)
         glBindTexture(target, handle);
-        CHECK_GL_ERRORS(0)
+        CHECK_GL_ERRORS(1)
     }
 
     GLuint Texture::getHandle()         const { return handle; }

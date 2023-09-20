@@ -9,6 +9,14 @@
 #include "Utils/Types.h"
 
 namespace OpenGL {
+    enum WrapMode {
+         ClampToEdge        = GL_CLAMP_TO_EDGE,
+         ClampToBorder      = GL_CLAMP_TO_BORDER,
+         MirroredRepeat     = GL_MIRRORED_REPEAT,
+         Repeat             = GL_REPEAT,
+         MirrorClampToEdge  = GL_MIRROR_CLAMP_TO_EDGE
+    };
+
     enum Target {
         Texture_1D                  = GL_TEXTURE_1D,
         Texture_2D                  = GL_TEXTURE_2D,

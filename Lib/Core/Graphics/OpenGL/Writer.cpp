@@ -100,12 +100,15 @@ void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styl
 void Core::Graphics::Writer::drawBuffer() {
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
+
+    fix textureUnit = GL_TEXTURE0;
+    glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, atlas->id);
 
 #ifndef DEBUG_SHOW_ATLAS_TEXTURE
     {
         program.use();
-        program.setUniform("texture", 0);
+        program.setUniform("texture", textureUnit-GL_TEXTURE0);
         program.setUniform4x4("model", model.data);
         program.setUniform4x4("view", view.data);
         program.setUniform4x4("projection", projection.data);
