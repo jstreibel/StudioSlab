@@ -8,6 +8,8 @@ set ( UTIL_SOURCES
 
 		Resources.cpp	Resources.h
 
+		Exception.h		Exception.cpp
+
 		UtilsCollection/Resample.cpp	UtilsCollection/Resample.h
 
 		ColorStrings.h

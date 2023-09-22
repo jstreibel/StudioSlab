@@ -23,18 +23,18 @@ void GLFWBackend::key_callback(GLFWwindow* window, int key, int scancode, int ac
         (mods & GLFW_MOD_NUM_LOCK) != 0,
     };
 
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyKeyboard(mappedKey, state, modKeys);
+    for(auto &listener : me.listeners)
+        listener->notifyKeyboard(mappedKey, state, modKeys);
 }
 
 void GLFWBackend::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyMouseMotion(xpos, ypos);
+    for(auto &listener : me.listeners)
+        listener->notifyMouseMotion(xpos, ypos);
 }
 
 void GLFWBackend::cursor_enter_callback(GLFWwindow* window, int entered)
@@ -62,18 +62,18 @@ void GLFWBackend::mouse_button_callback(GLFWwindow* window, int button, int acti
             (mods & GLFW_MOD_NUM_LOCK) != 0,
     };
 
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyMouseButton(mappedButton, state, modKeys);
+    for(auto &listener : me.listeners)
+        listener->notifyMouseButton(mappedButton, state, modKeys);
 }
 
 void GLFWBackend::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyMouseWheel(xoffset, yoffset);
+    for(auto &listener : me.listeners)
+        listener->notifyMouseWheel(xoffset, yoffset);
 }
 
 void GLFWBackend::drop_callback(GLFWwindow* window, int count, const char** paths)
@@ -89,15 +89,15 @@ void GLFWBackend::drop_callback(GLFWwindow* window, int count, const char** path
 
     log << Log::Flush;
 
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyFilesDropped(pathsVec);
+    for(auto &listener : me.listeners)
+        listener->notifyFilesDropped(pathsVec);
 }
 
 void GLFWBackend::window_size_callback(GLFWwindow* window, int width, int height) {
-    auto &me = GetInstanceSuper<GLFWBackend>();
+    auto &me = GetInstance();
 
-    for(auto &win : me.windows)
-        win->notifyReshape(width, height);
+    for(auto &listener : me.listeners)
+        listener->notifyScreenReshape(width, height);
 }

@@ -9,20 +9,17 @@
 
 class GLUTBackend : public GUIBackend
 {
-	friend DerivableSingleton;
-
-    GLUTBackend();
-    ~GLUTBackend() override;
-
-    int w, h;
-	bool showDemo = false;
 	bool programIsRunning = false;
 
 	Program *program = nullptr;
 	std::vector<Numerics::OutputSystem::Socket*> sockets;
 
+	bool renderingRequested = false;
 public:
-	void addWindow(Window::Ptr window);
+    GLUTBackend();
+    ~GLUTBackend() override;
+
+	static GLUTBackend &GetInstance();
 
     void run(Program *) override;
 
@@ -43,6 +40,8 @@ public:
     auto isPaused() const -> bool {return !programIsRunning;}
 	void pause()  override { programIsRunning = false; }
 	void resume() override { programIsRunning = true; }
+
+	auto requestRender() -> void override;
 
 };
 

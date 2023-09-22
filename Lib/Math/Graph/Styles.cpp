@@ -258,6 +258,8 @@ void SetSchemeElegant() {
 }
 
 Styles::ColorScheme_ptr Styles::GetCurrent() {
+    if(current == nullptr) Init();
+
     return current;
 }
 

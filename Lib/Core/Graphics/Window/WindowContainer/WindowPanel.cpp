@@ -140,15 +140,6 @@ void WindowPanel::assertConsistency() const {
     throw ss.str();
 }
 
-bool WindowPanel::notifyMousePassiveMotion(int x, int y) {
-    auto responded = false;
-    for(auto &col : columns)
-        for(auto &win : col)
-            if(win->isMouseIn()) responded = win->notifyMousePassiveMotion(x, y);
-
-    return responded;
-}
-
 bool WindowPanel::notifyMouseMotion(int x, int y) {
     auto responded = false;
     for(auto &col : columns)
@@ -164,33 +155,33 @@ void WindowPanel::notifyReshape(int newWinW, int newWinH) {
     arrangeWindows();
 }
 
-bool WindowPanel::notifyMouseButton(int button, int dir, int x, int y) {
+bool WindowPanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    return GUIEventListener::notifyKeyboard(key, state, modKeys);
+}
+
+bool WindowPanel::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->isMouseIn()) responded = win->notifyMouseButton(button, dir, x, y);
+            if(win->isMouseIn()) responded = win->notifyMouseButton(button, state, keys);
 
     return responded;
 }
 
-bool WindowPanel::notifyMouseWheel(int wheel, int direction, int x, int y) {
+bool WindowPanel::notifyMouseWheel(double dx, double dy) {
     auto responded = false;
     for(auto &col : columns)
         for(auto &win : col)
-            if(win->isMouseIn()) responded = win->notifyMouseWheel(wheel, direction, x, y);
+            if(win->isMouseIn()) responded = win->notifyMouseWheel(dx, dy);
 
     return responded;
 }
 
+bool WindowPanel::notifyFilesDropped(StrVector paths) {
+    auto responded = false;
+    for(auto &col : columns)
+        for(auto &win : col)
+            if(win->isMouseIn()) responded = win->notifyFilesDropped(paths);
 
-
-
-
-
-
-
-
-
-
-
-
+    return responded;
+}

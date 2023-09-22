@@ -7,20 +7,20 @@
 
 #include "Backend.h"
 #include "Core/Graphics/Window/Window.h"
+#include "Events/MouseState.h"
 
-class GUIBackend : public Backend {
+class GUIBackend : public Core::Backend {
 protected:
 
     explicit GUIBackend(Str name);
 
     MouseState mouseState;
-    std::vector<Window::Ptr> windows;
+    std::vector<Core::GUIEventListener::Ptr> listeners;
 
-    bool mustRender = true;
-    bool renderingRequested();
+    std::vector<std::shared_ptr<Core::Module>> modules;
 
 public:
-    virtual auto addWindow(Window::Ptr window) -> void;
+    virtual auto addEventListener(Core::GUIEventListener::Ptr listener) -> void;
 
     virtual auto getScreenHeight() const -> Real = 0;
 
@@ -28,10 +28,10 @@ public:
     virtual auto pause()  -> void = 0;
     virtual auto resume() -> void = 0;
 
-    auto requestRender() -> void;
+    void addModule(const std::shared_ptr<Core::Module>& module);
+    auto getModules() -> const std::vector<std::shared_ptr<Core::Module>>&;
 
-    static GUIBackend& GetInstance();
-
+    virtual auto requestRender() -> void = 0;
 };
 
 

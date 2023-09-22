@@ -124,9 +124,12 @@ namespace Core::Graphics {
         void setAnimationTime(Real value);
         Real getAnimationTime() const;
 
-        bool notifyMouseButton(int button, int dir, int x, int y) override;
+        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+
+        bool notifyMouseWheel(double dx, double dy) override;
+
         bool notifyMouseMotion(int x, int y) override;
-        bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+
 
         void notifyReshape(int newWinW, int newWinH) override;
     };

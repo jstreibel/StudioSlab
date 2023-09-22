@@ -5,29 +5,28 @@
 #ifndef STUDIOSLAB_SINGLETON_H
 #define STUDIOSLAB_SINGLETON_H
 
+#include <utility>
+
 #include "Types.h"
 #include "IsAbstract.h"
 // #include "Core/Tools/Log.h"
 
-template <typename T, bool Abstract=false>
+template <typename T>
 class Singleton {
 protected:
     const Str name;
     static T* singleInstance;
 
-    explicit Singleton(const Str &name) : name(name) {
+    explicit Singleton(Str name) : name(std::move(name)) {
          // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
     };
-    Singleton& operator=(const Singleton&) = delete;
     virtual ~Singleton() = default;
 
 public:
     Singleton(const Singleton&) = delete;
 
     static T& GetInstance() {
-        #if Abstract
         if(Singleton::singleInstance == nullptr) singleInstance = new T();
-        #endif
 
         return *singleInstance;
     }
@@ -37,12 +36,13 @@ public:
         singleInstance = nullptr;
     }
 
-
+    Singleton& operator=(const Singleton&) = delete;
 };
 
-template <typename T, bool Abstract>
-T* Singleton<T, Abstract>::singleInstance = nullptr;
+template <typename T>
+T* Singleton<T>::singleInstance = nullptr;
 
+/*
 template <typename T>
 class DerivableSingleton : public Singleton<T, true> {
 protected:
@@ -68,6 +68,5 @@ public:
     }
 
 };
-
-
+*/
 #endif //STUDIOSLAB_SINGLETON_H

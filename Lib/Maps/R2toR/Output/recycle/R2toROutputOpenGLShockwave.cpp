@@ -439,3 +439,12 @@ void R2toR::OutputOpenGLShockwave::_outputSnapshot() {
         file.close();
     }
 }
+
+bool
+R2toR::OutputOpenGLShockwave::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+    return GUIEventListener::notifyMouseButton(button, state, keys);
+}
+
+bool R2toR::OutputOpenGLShockwave::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    return OpenGLMonitor::notifyKeyboard(key, state, modKeys);
+}

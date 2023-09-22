@@ -20,7 +20,6 @@ AppBase::AppBase(int argc, const char **argv, bool doRegister)
 }
 
 AppBase::~AppBase() {
-    Backend::Terminate();
     Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
 }
 

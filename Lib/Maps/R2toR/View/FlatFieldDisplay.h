@@ -64,7 +64,8 @@ namespace R2toR::Graphics {
 
         void draw() override;
 
-        bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+        bool notifyMouseWheel(double dx, double dy) override;
+
         void notifyReshape(int newWinW, int newWinH) override;
     };
 }

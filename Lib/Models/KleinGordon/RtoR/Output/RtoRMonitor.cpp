@@ -165,8 +165,7 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
     Core::Graphics::OpenGLMonitor::handleOutput(outInfo);
 }
 
-bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
-
+bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
     switch(key)
     {
         case '1':
@@ -185,7 +184,7 @@ bool RtoR::Monitor::notifyKeyboard(unsigned char key, int x, int y) {
             break;
     }
 
-    return Core::Graphics::OpenGLMonitor::notifyKeyboard(key, x, y);
+    return OpenGLMonitor::notifyKeyboard(key, state, modKeys);
 }
 
 void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
@@ -375,8 +374,6 @@ void RtoR::Monitor::updateFTHistoryGraph() {
         mFullSpaceFTHistoryDisplay.set_t(t);
     lastStepMod = stepMod;
 }
-
-
 
 void RtoR::Monitor::updateFourierGraph() {
     static RtoR::DFTResult modes;

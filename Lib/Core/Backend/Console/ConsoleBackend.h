@@ -3,14 +3,11 @@
 
 #include "Core/Backend/Backend.h"
 
-class ConsoleBackend : public Backend
+class ConsoleBackend : public Core::Backend
 {
-    friend DerivableSingleton;
-protected:
-    ConsoleBackend();
-
 public:
-    virtual void run(Program *integrator);
+    ConsoleBackend();
+    void run(Program *integrator) override;
 };
 
 #endif // CONSOLEBACKEND_H

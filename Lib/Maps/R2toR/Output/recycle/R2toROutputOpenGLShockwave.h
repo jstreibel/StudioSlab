@@ -20,13 +20,11 @@ namespace R2toR {
 
         void draw() override;
 
-        bool notifyMouseButton(int button, int dir, int x, int y) override;
-
         bool notifyMouseMotion(int x, int y) override;
 
-        bool notifyKeyboardSpecial(int key, int x, int y) override;
+        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
 
-        bool notifyKeyboard(unsigned char key, int x, int y) override;
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
         IntPair getWindowSizeHint() override;
 

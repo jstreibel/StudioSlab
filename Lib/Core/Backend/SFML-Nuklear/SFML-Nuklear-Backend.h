@@ -19,7 +19,7 @@ class SFMLNuklearBackend : public GUIBackend {
     nk_context nkContext;
 
 
-    std::vector<SFMLListener*> listeners;
+    std::vector<SFMLListener*> sfmlListeners;
 
     bool running=true;
     bool paused=false;
@@ -38,6 +38,12 @@ public:
     auto pause() -> void override;
 
     auto resume() -> void override;
+
+    auto getScreenHeight() const -> Real override;
+
+    static SFMLNuklearBackend& GetInstance();
+
+    auto requestRender() -> void override;
 
 
 };

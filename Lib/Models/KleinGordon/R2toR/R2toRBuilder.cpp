@@ -4,8 +4,9 @@
 
 #include "R2toRBuilder.h"
 
-#include "Core/Backend/GLUT/GLUTBackend.h"
-#include "Core/Backend/Console/ConsoleBackend.h"
+#include <utility>
+
+#include "Core/Backend/BackendManager.h"
 
 #include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunctionGPU.h"
@@ -26,15 +27,15 @@
 
 namespace R2toR {
 
-    Builder::Builder(Str name, Str description)
-            : Fields::KleinGordon::KGBuilder(name, description) {    }
+    Builder::Builder(const Str& name, Str description)
+            : Fields::KleinGordon::KGBuilder(name, std::move(description)) {    }
 
     OutputManager *Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
 
-        if (*VisualMonitor) Backend::Initialize<GLUTBackend>();
-        else Backend::Initialize<ConsoleBackend>();
+        if (*VisualMonitor) Core::BackendManager::Startup(Core::GLUT);
+        else                Core::BackendManager::Startup(Core::Headless);
 
         auto *outputManager = new OutputManager(simulationConfig.numericConfig);
 
@@ -83,14 +84,14 @@ namespace R2toR {
 
         ///********************************************************************************************/
         if (shouldOutputOpenGL) {
-            GUIBackend &backend = GUIBackend::GetInstance(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
+            GUIBackend &backend = Core::BackendManager::GetGUIBackend();
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 
             auto glOut = Core::Graphics::OpenGLMonitor::Ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
-            backend.addWindow(glOut);
+            backend.addEventListener(glOut);
             outputManager->addOutputChannel(glOut.get(), false);
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que

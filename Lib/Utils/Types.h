@@ -7,6 +7,9 @@
 
 #include "DeviceConfig.h"
 #include "NativeTypes.h"
+
+#include "Exception.h"
+
 // #include "STDLibInclude.h"
 #include <valarray>
 #include <vector>

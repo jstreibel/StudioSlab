@@ -9,6 +9,7 @@
 #include "Core/Graphics/OpenGL/GLUTUtils.h"
 #include "Core/Backend/GUIBackend.h"
 #include "Core/Graphics/OpenGL/Shader.h"
+#include "Core/Backend/BackendManager.h"
 
 
 Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
@@ -83,8 +84,10 @@ void Window::addArtist(Artist *pArtist) {
 }
 
 auto Window::isMouseIn() const -> bool {
-    fix &mouse = GUIBackend::GetInstance().getMouseState();
-    auto hScreen = GUIBackend::GetInstance().getScreenHeight();
+    auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+    fix &mouse = guiBackend.getMouseState();
+    auto hScreen = guiBackend.getScreenHeight();
 
     fix x = windowRect.xMin;
     fix y = windowRect.yMin;
@@ -95,7 +98,7 @@ auto Window::isMouseIn() const -> bool {
 }
 
 auto Window::getMouseWindowCoord() const -> Point2D {
-    fix &mouse = GUIBackend::GetInstance().getMouseState();
+    fix &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 
     fix xMouseLocal =      mouse.x - windowRect.xMin;
     fix yMouseLocal = 1 - (mouse.y - windowRect.yMin);
@@ -104,8 +107,10 @@ auto Window::getMouseWindowCoord() const -> Point2D {
 }
 
 auto Window::getMouseViewportCoord() const -> Point2D {
-    fix &mouse = GUIBackend::GetInstance().getMouseState();
-    fix hScreen = GUIBackend::GetInstance().getScreenHeight();
+    auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+    fix &mouse = guiBackend.getMouseState();
+    fix hScreen = guiBackend.getScreenHeight();
     auto vpRect = getViewport();
 
     fix xMouseLocal =         mouse.x - vpRect.xMin;
@@ -129,16 +134,14 @@ void Window::notifyReshape(int w, int h) {
         artist->reshape(w, h);
 }
 
-IntPair Window::getWindowSizeHint() { return {-1, -1}; }
-
 void Window::setDecorate(bool _decorate) { this->decorate = _decorate; }
 
 void Window::setClear(bool _clear) { this->clear = _clear; }
 
-bool Window::notifyRender(float elTime_msec) {
+bool Window::notifyRender() {
     this->draw();
 
-    return GUIEventListener::notifyRender(elTime_msec);
+    return GUIEventListener::notifyRender();
 }
 
 RectI Window::getViewport() const {

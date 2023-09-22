@@ -101,7 +101,22 @@ void WindowColumn::notifyReshape(int newWinW, int newWinH) {
 
     arrangeWindows();
 }
-bool WindowColumn::notifyMouseMotion(int x, int y) {                           PropagateEvent(notifyMouseMotion(x,y)); }
-bool WindowColumn::notifyMousePassiveMotion(int x, int y){                     PropagateEvent(notifyMousePassiveMotion(x, y)); }
-bool WindowColumn::notifyMouseWheel(int wheel, int direction, int x, int y) {  PropagateEvent(notifyMouseWheel(wheel, direction, x, y)); }
-bool WindowColumn::notifyMouseButton(int button, int dir, int x, int y) {      PropagateEvent(notifyMouseButton(button, dir, x, y)); }
+bool WindowColumn::notifyMouseMotion(int x, int y) {
+    PropagateEvent(notifyMouseMotion(x,y));
+}
+
+bool WindowColumn::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    PropagateEvent(notifyKeyboard(key, state, modKeys));
+}
+
+bool WindowColumn::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+    PropagateEvent(notifyMouseButton(button, state, keys));
+}
+
+bool WindowColumn::notifyMouseWheel(double dx, double dy) {
+    PropagateEvent(notifyMouseWheel(dx, dy));
+}
+
+bool WindowColumn::notifyFilesDropped(StrVector paths) {
+    PropagateEvent(notifyFilesDropped(paths));
+}

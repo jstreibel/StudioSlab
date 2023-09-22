@@ -26,7 +26,10 @@ namespace RtoR {
     protected:
         bool showEnergyHistoryAsDensities;
 
-        bool notifyKeyboard(unsigned char key, int x, int y) override;
+    public:
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+
+    protected:
 
         Real Δt = 0.0;
         RtoR2::StraightLine corrSampleLine;

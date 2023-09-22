@@ -23,10 +23,14 @@ public:
     void draw() override;
 
     void notifyReshape(int newWinW, int newWinH) override;
+
+    bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+
+    bool notifyFilesDropped(StrVector paths) override;
+
     bool notifyMouseMotion(int x, int y)        override;
-    bool notifyMousePassiveMotion(int x, int y) override;
-    bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
-    bool notifyMouseButton(int button, int dir, int x, int y) override;
+    bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+    bool notifyMouseWheel(double dx, double dy) override;
 };
 
 

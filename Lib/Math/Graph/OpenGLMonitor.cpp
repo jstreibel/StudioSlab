@@ -6,6 +6,7 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/GUIBackend.h"
+#include "Core/Backend/BackendManager.h"
 
 
 using namespace Core;
@@ -27,7 +28,7 @@ void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 
-    GUIBackend::GetInstance().requestRender();
+    Core::BackendManager::GetGUIBackend().requestRender();
 }
 
 void Core::Graphics::OpenGLMonitor::writeStats() {
@@ -146,7 +147,7 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     lastStep = step;
 }
 
-bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
+bool Core::Graphics::OpenGLMonitor::notifyRender() {
     assert(lastData.hasValidData());
 
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
@@ -166,7 +167,7 @@ bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
         draw();
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
-        GUIEventListener::notifyRender(elTime_msec);   // here panel gets called.
+        GUIEventListener::notifyRender();   // here panel gets called.
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
         frameTimer.reset();
     }
@@ -178,7 +179,7 @@ bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
     return true;
 }
 
-bool Core::Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int y) {
+bool Graphics::OpenGLMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
     static fix baseNSteps = getnSteps();
     static let multiplier = 1;
 
@@ -203,12 +204,12 @@ bool Core::Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int
             setnSteps(getnSteps() - 1);
             return true;
         } else if (key == '_') {
-            setnSteps(getnSteps() / 1.1);
+            setnSteps((int)(getnSteps() / 1.1));
             return true;
         }
     }
 
-    return GUIEventListener::notifyKeyboard(key, x, y);
+    return GUIEventListener::notifyKeyboard(key, state, modKeys);
 }
 
 void Core::Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {

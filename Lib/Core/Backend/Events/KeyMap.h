@@ -47,7 +47,7 @@ namespace Core {
         /* The unknown key */
         Key_UNKNOWN         = -1,
 
-        /* Printable keys */
+        /* Printable keys (ASCII-coincident) */
         Key_SPACE           = 32,
         Key_APOSTROPHE      = 39  /* ' */,
         Key_COMMA           = 44  /* , */,

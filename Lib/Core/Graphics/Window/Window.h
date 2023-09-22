@@ -41,10 +41,9 @@ public:
 
     virtual void draw();
     virtual void notifyReshape(int _w, int _h);
-    virtual IntPair getWindowSizeHint();
 
     bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
-    bool notifyRender(float elTime_msec) override;
+    bool notifyRender() override;
 
     void setDecorate(bool _decorate);
     void setClear(bool _clear);

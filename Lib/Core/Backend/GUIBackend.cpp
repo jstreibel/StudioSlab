@@ -8,20 +8,10 @@ GUIBackend::GUIBackend(Str name) : Backend(name) {  }
 
 auto GUIBackend::getMouseState() const -> const MouseState & { return mouseState; }
 
-auto GUIBackend::addWindow(Window::Ptr window) -> void {
-    windows.emplace_back(window);
+auto GUIBackend::addEventListener(Core::GUIEventListener::Ptr listener) -> void {
+    listeners.emplace_back(listener);
 }
 
-GUIBackend &GUIBackend::GetInstance() {
-    return DerivableSingleton::GetInstanceSuper<GUIBackend>();
-}
+void GUIBackend::addModule(const std::shared_ptr<Core::Module> &module) { modules.emplace_back(module); }
 
-bool GUIBackend::renderingRequested() {
-    auto has = mustRender;
-    mustRender = false;
-    return has;
-}
-
-auto GUIBackend::requestRender() -> void {
-    mustRender = true;
-}
+const std::vector<std::shared_ptr<Core::Module>> &GUIBackend::getModules() { return modules; }

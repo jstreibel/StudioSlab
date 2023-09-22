@@ -90,9 +90,9 @@ set ( R2TOR_SOURCES
 
 
 		R2toR/Output/Filters/DimensionReductionFilter.cpp
-		R2toR/Output/R2toROutputOpenGLShockwave.cpp
 		R2toR/Output/R2toROutputOpenGLGeneric.cpp
-		R2toR/Output/R2ToROutputOpenGlShockwaveAtT0.cpp
+		#R2toR/Output/R2toROutputOpenGLShockwave.cpp
+		#R2toR/Output/R2ToROutputOpenGlShockwaveAtT0.cpp
 		#R2toR/View/OutputShockwaveZeros.cpp
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 		#R2toR/View/LastOutputVtkVisualizer.cpp	R2toR/View/LastOutputVtkVisualizer.h

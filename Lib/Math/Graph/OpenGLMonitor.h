@@ -33,8 +33,8 @@ namespace Core::Graphics {
         void setAutoAdjust_nSteps(bool value);
 
         // ********************* From EventListener ************** //
-        bool notifyRender(float elTime_msec) final ;
-        bool notifyKeyboard(unsigned char key, int x, int y) override;
+        bool notifyRender() final ;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
         void notifyReshape(int newWinW, int newWinH) override;
         // ********************* End EventListener *************** //
 

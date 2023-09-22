@@ -25,6 +25,8 @@ namespace Core {
         bool hasResponders() const;
 
     public:
+        typedef std::shared_ptr<GUIEventListener> Ptr;
+
         GUIEventListener();
         virtual ~GUIEventListener() = default;
 
@@ -38,17 +40,7 @@ namespace Core {
 
         virtual bool notifyScreenReshape(int newScreenWidth, int newScreenHeight);
 
-        virtual bool notifyRender(float elTime_msec);
-
-
-
-
-        virtual bool notifyKeyboard(unsigned char key, int x, int y);
-        virtual bool notifyKeyboardSpecial(int key, int x, int y);
-
-        virtual bool notifyMouseButton(int button, int dir, int x, int y);
-        virtual bool notifyMousePassiveMotion(int x, int y);
-        virtual bool notifyMouseWheel(int wheel, int direction, int x, int y);
+        virtual bool notifyRender();
 
     };
 }

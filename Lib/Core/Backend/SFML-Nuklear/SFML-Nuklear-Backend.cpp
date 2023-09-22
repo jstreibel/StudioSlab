@@ -4,6 +4,7 @@
 
 #include "SFML-Nuklear-Backend.h"
 #include "COMPILE_CONFIG.h"
+#include "Core/Backend/BackendManager.h"
 
 #include <Core/Controller/Nuklear/_nuklear_sfml.hpp>
 
@@ -65,7 +66,7 @@ void SFMLNuklearBackend::_treatEvents() {
 
         nk_sfml_handle_event(event);
 
-        for(auto l : listeners)
+        for(auto l : sfmlListeners)
             l->event(event);
     }
     nk_input_end(&nkContext);
@@ -74,14 +75,13 @@ void SFMLNuklearBackend::_treatEvents() {
 void SFMLNuklearBackend::_render() {
     window->clear();
 
-    for(auto l : listeners) {
+    for(auto &l : sfmlListeners) {
         l->drawUI(&nkContext);
         l->render(window);
     }
 
-    for(auto win : windows) {
-        win->draw();
-    }
+    for(auto &listener : GetInstance().listeners )
+        listener->notifyRender();
 
     window->display();
 }
@@ -96,4 +96,20 @@ void SFMLNuklearBackend::pause() {
 
 void SFMLNuklearBackend::resume() {
     paused = false;
+}
+
+Real SFMLNuklearBackend::getScreenHeight() const {
+    throw Str(__PRETTY_FUNCTION__) + " not implemented ";
+}
+
+SFMLNuklearBackend &SFMLNuklearBackend::GetInstance() {
+    assert(Core::BackendManager::GetImplementation() == Core::SFML);
+
+    auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+    return *dynamic_cast<SFMLNuklearBackend*>(&guiBackend);
+}
+
+void SFMLNuklearBackend::requestRender() {
+    throw Str(__PRETTY_FUNCTION__) + " not implemented";
 }

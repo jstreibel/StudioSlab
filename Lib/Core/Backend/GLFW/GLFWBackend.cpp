@@ -10,6 +10,7 @@
 #include "GLFWBackend.h"
 
 #include "Core/Tools/Log.h"
+#include "Core/Backend/BackendManager.h"
 
 void errorCallback(int error_code, const char* description){
     Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
@@ -30,10 +31,16 @@ GLFWBackend::GLFWBackend() : GUIBackend("GLFW Backend") {
 
     if(glfwVulkanSupported()) Log::Note() << "Vulkan is supported." << Log::Flush;
 
+    systemWindow = newGLFWWindow();
+    glfwMakeContextCurrent(systemWindow);
+
+    initGLEW();
 }
 
 GLFWBackend::~GLFWBackend() {
+    glfwDestroyWindow(systemWindow);
     glfwTerminate();
+
     Log::Info() << "GLFWBackend terminated." << Log::Flush;
 }
 
@@ -50,40 +57,40 @@ void GLFWBackend::initGLEW() {
 void GLFWBackend::run(Program *pProgram) {
     this->program = pProgram;
 
-    auto window = newGLFWWindow();
-    glfwMakeContextCurrent(window);
-
-    initGLEW();
-
-    mainLoop(window);
-
-    glfwDestroyWindow(window);
+    mainLoop();
 }
 
-void GLFWBackend::mainLoop(GLFWwindow* window) {
-    while (!glfwWindowShouldClose(window))
+void GLFWBackend::mainLoop() {
+    while (!glfwWindowShouldClose(systemWindow))
     {
         glClear(GL_COLOR_BUFFER_BIT);
 
-        for(auto &win : windows)
-            win->notifyRender(0.0);
+        for(auto &listener : GetInstance().listeners)
+            listener->notifyRender();
 
-        glfwSwapBuffers(window);
+        glfwSwapBuffers(systemWindow);
 
         glfwPollEvents();
     }
 }
 
 Real GLFWBackend::getScreenHeight() const {
+    throw "..4";
     return 0;
 }
 
 void GLFWBackend::pause() {
-
+    throw "..3";
+    paused = true;
 }
 
 void GLFWBackend::resume() {
+    throw "..2";
+    paused = false;
+}
 
+void GLFWBackend::requestRender() {
+    throw "..1";
 }
 
 GLFWwindow *GLFWBackend::newGLFWWindow() {
@@ -159,6 +166,13 @@ bool GLFWBackend::GetMouseButtonState(GLFWwindow *window, int button) {
     return state;
 }
 
+GLFWBackend &GLFWBackend::GetInstance() {
+    assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+
+    auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+    return *dynamic_cast<GLFWBackend*>(&guiBackend);
+}
 
 
 

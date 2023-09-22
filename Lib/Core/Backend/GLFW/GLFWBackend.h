@@ -10,10 +10,11 @@
 
 class GLFWBackend : public GUIBackend {
     Program* program = nullptr;
+    GLFWwindow *systemWindow = nullptr;
 
     void initGLEW();
 
-    void mainLoop(GLFWwindow*);
+    void mainLoop();
 
     static GLFWwindow *newGLFWWindow();
 
@@ -25,6 +26,9 @@ class GLFWBackend : public GUIBackend {
     static void drop_callback(GLFWwindow* window, int count, const char** paths);
     static void window_size_callback(GLFWwindow* window, int width, int height);
 
+    bool paused = false;
+
+    static GLFWBackend& GetInstance();
 
 public:
     explicit GLFWBackend();
@@ -42,8 +46,9 @@ public:
     auto getScreenHeight() const -> Real override;
 
     auto pause() -> void override;
-
     auto resume() -> void override;
+
+    auto requestRender() -> void override;
 };
 
 

@@ -13,7 +13,7 @@
 #include "Math/Numerics/Method/Method-RK4.h"
 #include "Math/Numerics/Method/Method-MCBase.h"
 
-#include <Core/Backend/Program.h>
+#include "Core/Backend/Program/Program.h"
 #include "Core/Tools/BenchmarkHistogram.h"
 
 const auto FORCE_INITIAL_OUTPUT = true;

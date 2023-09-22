@@ -4,10 +4,11 @@
 
 #include "Graph.h"
 
-#include "Core/Tools/Log.h"
 #include "Utils/EncodingUtils.h"
 
-#include "Core/Backend/GUIBackend.h"
+#include "Core/Tools/Log.h"
+#include "Core/Backend/BackendManager.h"
+
 #include "imgui.h"
 
 
@@ -116,7 +117,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     if(false)
     {
-        auto mouse = GUIBackend::GetInstance().getMouseState();
+        auto mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 
         ImGui::Begin("Graph debug");
         ImGui::Text("Mouse @ %i, %i", mouse.x, mouse.y);

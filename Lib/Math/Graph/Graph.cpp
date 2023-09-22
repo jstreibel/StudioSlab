@@ -15,6 +15,7 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 
 #include "3rdParty/glfreetype/TextRenderer.hpp"
+#include "Core/Backend/BackendManager.h"
 
 #define POPUP_ON_MOUSE_CALL false
 #define ANIMATION_TIME_SECONDS 0.2
@@ -275,13 +276,12 @@ Real Core::Graphics::Graph2D::get_xMax() const { return region.xMax; }
 Real Core::Graphics::Graph2D::get_yMin() const { return region.yMin; }
 Real Core::Graphics::Graph2D::get_yMax() const { return region.yMax; }
 
-
-bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int y) {
+bool Core::Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
     static auto time = Timer();
 
-    if(button == 2){
-        if(dir == 0) time.reset();
-        else if(dir == 1 && time.getElTime_msec() < 200){
+    if(button == Core::MouseButton_RIGHT){
+        if(state == Press) time.reset();
+        else if(state == Release && time.getElTime_msec() < 200){
             savePopupOn = true;
 
             auto popupName = Str("win_") + title + Str("_popup");
@@ -295,13 +295,13 @@ bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
         return true;
     }
 
-    return GUIEventListener::notifyMouseButton(button, dir, x, y);
+    return GUIEventListener::notifyMouseButton(button, state, keys);
 }
 
 bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     auto elRet = GUIEventListener::notifyMouseMotion(x, y);
 
-    auto& mouseState = GUIBackend::GetInstance().getMouseState();
+    auto& mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
     if(mouseState.leftPressed)
     {
@@ -339,22 +339,22 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     return elRet;
 }
 
-bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
-    GUIEventListener::notifyMouseWheel(wheel, direction, x, y);
+bool Core::Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
+    GUIEventListener::notifyMouseWheel(dx, dy);
 
     constexpr const Real factor = 1.2;
-    const Real d = pow(factor, -direction);
+    const Real d = pow(factor, -dx);
 
     static auto targetRegion = region;
 
     if(!Animator::Contains(region.xMin)
-    && !Animator::Contains(region.xMax)
-    && !Animator::Contains(region.yMin)
-    && !Animator::Contains(region.yMax)) {
+       && !Animator::Contains(region.xMax)
+       && !Animator::Contains(region.yMin)
+       && !Animator::Contains(region.yMax)) {
         targetRegion = region;
     }
 
-    if(GUIBackend::GetInstance().getMouseState().rightPressed) {
+    if(Core::BackendManager::GetGUIBackend().getMouseState().rightPressed) {
 
         const Real x0 = targetRegion.xCenter();
         const Real hw = .5*targetRegion.width() * d;
@@ -379,6 +379,8 @@ bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, 
     return true;
 }
 
+
+
 void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
 
 auto Core::Graphics::Graph2D::countDisplayItems() const -> Count { return mPointSets.size() + curves.size(); }
@@ -388,6 +390,9 @@ void Core::Graphics::Graph2D::setAnimationTime(Real value) { animationTimeSecond
 Real Core::Graphics::Graph2D::getAnimationTime() const { return animationTimeSeconds; }
 
 void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) { baseHorizontalUnit = hUnit; }
+
+void Core::Graphics::Graph2D::setVerticalUnit(const Unit &hUnit)   { baseVerticalUnit   = hUnit; }
+
 
 
 

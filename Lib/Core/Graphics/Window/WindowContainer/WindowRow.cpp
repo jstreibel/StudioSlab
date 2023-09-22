@@ -101,7 +101,21 @@ void WindowRow::notifyReshape(int w, int h) {
 
     arrangeWindows();
 }
-bool WindowRow::notifyMouseMotion(int x, int y) {                           PropagateEvent(notifyMouseMotion(x,y)); }
-bool WindowRow::notifyMousePassiveMotion(int x, int y){                     PropagateEvent(notifyMousePassiveMotion(x, y)); }
-bool WindowRow::notifyMouseWheel(int wheel, int direction, int x, int y) {  PropagateEvent(notifyMouseWheel(wheel, direction, x, y)); }
-bool WindowRow::notifyMouseButton(int button, int dir, int x, int y) {      PropagateEvent(notifyMouseButton(button, dir, x, y)); }
+bool WindowRow::notifyMouseMotion(int x, int y) {
+    PropagateEvent(notifyMouseMotion(x,y)); }
+
+bool WindowRow::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+    PropagateEvent(notifyMouseButton(button, state, keys));
+}
+
+bool WindowRow::notifyMouseWheel(double dx, double dy) {
+    PropagateEvent(notifyMouseWheel(dx, dy));
+}
+
+bool WindowRow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    PropagateEvent(notifyKeyboard(key, state, modKeys));
+}
+
+bool WindowRow::notifyFilesDropped(StrVector paths) {
+    PropagateEvent(notifyFilesDropped(paths));
+}

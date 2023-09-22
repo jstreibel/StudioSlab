@@ -6,8 +6,7 @@
 
 #include <utility>
 
-#include "Core/Backend/GLUT/GLUTBackend.h"
-#include "Core/Backend/Console/ConsoleBackend.h"
+#include "Core/Backend/BackendManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRSystemGordonGPU.h"
@@ -30,6 +29,7 @@
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 #include "Models/KleinGordon/RtoR/Output/SnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/Output/DFTSnapshotOutput.h"
+#include "Core/Backend/GLFW/GLFWBackend.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -51,13 +51,14 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
     if(*VisualMonitor){
-        auto &backend = Backend::Initialize<GLUTBackend>();
+        Core::BackendManager::Startup(Core::GLUT);
+        auto &backend = Core::BackendManager::GetGUIBackend();
 
         if(*VisualMonitor_startPaused) backend.pause();
         else backend.resume();
 
     }
-    else Backend::Initialize<ConsoleBackend>();
+    else Core::BackendManager::Startup(Core::Headless);
 
     const NumericConfig &p = simulationConfig.numericConfig;
 
@@ -113,7 +114,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
        *************************** VISUAL MONITOR *********************************************
        **************************************************************************************** */
     if(shouldOutputOpenGL) {
-        auto &glutBackend = Backend::GetInstanceSuper<GLUTBackend>(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         auto outputOpenGL = buildOpenGLOutput();
 
@@ -139,7 +140,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
             }
         }
 
-        glutBackend.addWindow(std::shared_ptr<Window>(outputOpenGL));
+        guiBackend.addEventListener(std::shared_ptr<Window>(outputOpenGL));
         outputManager->addOutputChannel(outputOpenGL);
     }
     else

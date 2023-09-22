@@ -23,7 +23,7 @@ namespace R2toR {
             virtual auto buildOpenGLOutput() -> R2toR::OutputOpenGL*;
 
         public:
-            Builder(Str name, Str description);
+            Builder(const Str& name, Str description);
 
             auto buildOutputManager()   -> OutputManager * override;
 
