@@ -11,7 +11,7 @@
 class GUIBackend : public Backend {
 protected:
 
-    GUIBackend(Str name);
+    explicit GUIBackend(Str name);
 
     MouseState mouseState;
     std::vector<Window::Ptr> windows;
@@ -25,7 +25,7 @@ public:
     virtual auto getScreenHeight() const -> Real = 0;
 
     auto getMouseState() const -> const MouseState&;
-    virtual auto pause() -> void = 0;
+    virtual auto pause()  -> void = 0;
     virtual auto resume() -> void = 0;
 
     auto requestRender() -> void;

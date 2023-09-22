@@ -9,6 +9,8 @@
 #define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
 
 
+
+
 SimHistory_FourierTransform::SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig, Resolution n, Real kMin, Real kMax)
 : SimHistory(simConfig, n, kMin, kMax-kMin, "FTSimHistory")
 , fourierModes(nullptr, nConfig.getxMin(), nConfig.getL(), nConfig.getN()/10) {}
@@ -26,6 +28,9 @@ void SimHistory_FourierTransform::handleOutput(const OutputPacket &packet) {
 
     SimHistory::handleOutput(packet);
 }
+
+
+
 
 
 SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig)

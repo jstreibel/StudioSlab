@@ -295,11 +295,11 @@ bool Core::Graphics::Graph2D::notifyMouseButton(int button, int dir, int x, int 
         return true;
     }
 
-    return EventListener::notifyMouseButton(button, dir, x, y);
+    return GUIEventListener::notifyMouseButton(button, dir, x, y);
 }
 
 bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
-    auto elRet = EventListener::notifyMouseMotion(x, y);
+    auto elRet = GUIEventListener::notifyMouseMotion(x, y);
 
     auto& mouseState = GUIBackend::GetInstance().getMouseState();
 
@@ -340,7 +340,7 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
 }
 
 bool Core::Graphics::Graph2D::notifyMouseWheel(int wheel, int direction, int x, int y) {
-    EventListener::notifyMouseWheel(wheel, direction, x, y);
+    GUIEventListener::notifyMouseWheel(wheel, direction, x, y);
 
     constexpr const Real factor = 1.2;
     const Real d = pow(factor, -direction);

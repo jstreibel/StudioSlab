@@ -1,7 +1,7 @@
 #ifndef GLUTBACKEND_H
 #define GLUTBACKEND_H
 
-#include "Core/Backend/Events/EventListener.h"
+#include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/GUIBackend.h"
 #include "Math/Graph/OpenGLMonitor.h"
 

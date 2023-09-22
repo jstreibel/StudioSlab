@@ -17,8 +17,8 @@
 #include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
 #include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
 
-#include "Output/HistoryDisplay.h"
-#include "KG-RtoREnergyCalculator.h"
+#include "HistoryDisplay.h"
+#include "../KG-RtoREnergyCalculator.h"
 
 namespace RtoR {
 

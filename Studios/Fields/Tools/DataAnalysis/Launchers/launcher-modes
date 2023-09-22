@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 10 19:19:17 2018
+
+@author: johnny
+"""
+
+import subprocess
+import os
+
+from numpy import unique, linspace
+import time
+from datetime import timedelta
+import argparse
+import ast
+
+import sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+print(parent_dir)
+sys.path.append(parent_dir)
+
+from Utils import utils as utils
+
+isfile = os.path.isfile
+
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--t', '-t',
+                    help="Total simulation time per simulation.",
+                    type=float,
+                    default=3.5)
+parser.add_argument('--L', '-L',
+                    help="Simulation width.",
+                    type=float,
+                    default=7.0)
+parser.add_argument('--N', '-N',
+                    help="Simulation resolution.",
+                    type=int,
+                    default=2 ** 12)
+parser.add_argument('--omega', '-w',
+                    help="Sweep ω in n steps (omega_min, omega_max, steps). Example \'--omega 0.2 0.4 10\' will sweep "
+                         "\'ω\' from 0.2 to 0.4 in 10 steps.",
+                    nargs=3,
+                    type=float,
+                    default=(0, 0, 1))
+parser.add_argument('--k', '-k',
+                    help="Sweep k in n steps. Same as for \'ω\'.",
+                    nargs=3,
+                    type=float,
+                    default=(0.5, 0.5, 1.0))
+parser.add_argument('--max_procs',
+                    help="Maximum number of parallel running programs.",
+                    type=int,
+                    default=7)
+
+
+args = parser.parse_args()
+
+MAX_PROCS = args.max_procs
+
+t = args.t
+L = args.L
+N = args.N
+
+omega_min, omega_max, omega_steps = args.omega
+omega_steps = int(omega_steps)
+k_min, k_max, k_steps = args.k
+k_steps = int(k_steps)
+sim_list = []
+
+f = '{:.6f}'.format
+for omega in unique(linspace(omega_min, omega_max, omega_steps)):
+    for k in unique(linspace(k_min, k_max, k_steps)):
+
+        arg_list = ["RtoR-Modes",
+                    '-t' + f(t), '-L' + f(L), '-N'+str(N),
+                    '--omega='+f(omega),
+                    '--th=1', '--dft_snapshot', '--no_history_to_file', '--BC=0', '-V2']
+
+        sim_info = (omega, k)
+        sim_list.append((arg_list, sim_info))
+
+
+proc_tuples = []
+dead_procs = []
+total = len(sim_list)
+total_time = 0.0
+n = 0
+while len(sim_list) or not (len(dead_procs) == total):
+    while not len(proc_tuples) == MAX_PROCS and len(sim_list):
+        sim = sim_list.pop()
+        sim_info_str = utils.yellow('ω=%.5f k=%.5f' % (sim[1]))
+        program_call = sim[0]
+
+        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')
+
+        proc = subprocess.Popen(program_call, stdout=subprocess.PIPE)
+        proc_tuples.append((proc, time.time()))
+
+        print('PID', proc.pid, end=". ")
+
+        print("")
+
+    for proc_tuple in proc_tuples:
+        proc = proc_tuple[0]
+        poll = proc.poll()
+        if proc.returncode is not None:
+            el_time = time.time() - proc_tuple[1]
+            total_time += el_time
+
+            n += 1
+
+            dead_procs.append((proc, el_time))
+            proc_tuples.remove(proc_tuple)
+
+            success = proc.returncode == 0
+
+            ret_code_string = utils.okfail('return code ' + str(proc.returncode), not success)
+            avg_string = utils.blue('Avg ' + f(total_time / n))
+            expected_string = utils.Bblue(
+                'expected ~' + str(timedelta(seconds=(total_time / n) * (len(sim_list) / MAX_PROCS))))
+
+            print('FINISHED', proc.pid, ret_code_string,
+                  'approx. elapsed time', f(el_time), 'sec.', avg_string,
+                  expected_string)
+
+            if not success:
+                out, err = proc.communicate()
+                print("\n\n\n")
+                # out = out.replace(b'\\\\', b'\\')
+                #ast.literal_eval(out.decode('utf-8'))
+                print(out.decode('utf-8'))
+                print("\n\n\n")
+
+    time.sleep(.1)
+
+print('\n\nAll done.\n\n')

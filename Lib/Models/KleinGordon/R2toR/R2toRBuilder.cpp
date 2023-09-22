@@ -27,7 +27,7 @@
 namespace R2toR {
 
     Builder::Builder(Str name, Str description)
-            : Core::Simulation::VoidBuilder(name, description) {    }
+            : Fields::KleinGordon::KGBuilder(name, description) {    }
 
     OutputManager *Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;

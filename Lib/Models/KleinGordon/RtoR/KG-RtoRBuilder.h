@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KG_RTORBUILDER_H
 #define STUDIOSLAB_KG_RTORBUILDER_H
 
-#include "RtoRMonitor.h"
+#include "Output/RtoRMonitor.h"
 #include "../KGBuilder.h"
 
 namespace RtoR {
@@ -24,6 +24,9 @@ namespace RtoR {
         void setLaplacianPeriodicBC();    // Gambiarris
         void setLaplacianFixedBC();       // Gambiarris
         bool usesPeriodicBC() const;      // Gambiarris
+
+    public:
+        auto suggestFileName() const -> Str override;
 
     public:
         explicit KGBuilder(const Str& name,

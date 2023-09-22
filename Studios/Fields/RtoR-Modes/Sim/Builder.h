@@ -21,6 +21,9 @@ namespace Modes {
         auto buildOpenGLOutput() -> RtoR::Monitor * override;
 
     public:
+        auto suggestFileName() const -> Str override;
+
+    public:
         explicit Builder(bool doRegister=true);
 
         auto getBoundary() -> void * override;

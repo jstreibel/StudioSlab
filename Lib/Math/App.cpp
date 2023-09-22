@@ -21,8 +21,6 @@ auto Simulation::App::run() -> int {
 
     backend.run(program);
 
-    Backend::Destroy();
-
     return 0;
 }
 

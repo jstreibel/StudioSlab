@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_THERMALMONITOR_H
 #define STUDIOSLAB_THERMALMONITOR_H
 
-#include "Models/KleinGordon/RtoR/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/Output/RtoRMonitor.h"
 
 
 namespace RtoR::Thermal {

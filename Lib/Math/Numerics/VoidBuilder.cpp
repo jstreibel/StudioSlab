@@ -16,15 +16,11 @@ break;
 #define DONT_REGISTER false
 
 
-Core::Simulation::VoidBuilder::VoidBuilder(Str name, Str generalDescription, bool doRegister)
+Core::Simulation::VoidBuilder::VoidBuilder(const Str& name, Str generalDescription, bool doRegister)
 : InterfaceOwner(name, 100, DONT_REGISTER)
 , simulationConfig(DONT_REGISTER)
 , prefix(name)
 {
-    interface->addParameters({&noHistoryToFile, &outputResolution,
-                              &VisualMonitor, &VisualMonitor_startPaused, &OpenGLMonitor_stepsPerIdleCall
-                                     /*&takeSnapshot, &snapshotTime, */ });
-
     interface->addSubInterface(simulationConfig.numericConfig.getInterface());
     interface->addSubInterface(simulationConfig.dev.getInterface());
 

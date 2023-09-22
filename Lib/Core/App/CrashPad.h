@@ -9,7 +9,7 @@
 
 
 namespace SafetyNet {
-    int jump(int (*callback)(int, const char**), int argc, const char *argv[]);
+    int jump(int (*callback)(int, const char**), int argc=0, const char *argv[]= nullptr);
 }
 
 #endif //V_SHAPE_SAFETYNET_H

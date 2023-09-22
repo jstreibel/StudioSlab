@@ -8,8 +8,6 @@
 #include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 
-#include "Maps/RtoR/View/Graphics/RtoROutputOpenGLShockwave.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 
 using namespace RtoR;

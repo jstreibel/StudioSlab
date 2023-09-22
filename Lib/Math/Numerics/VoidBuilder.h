@@ -11,26 +11,11 @@ namespace Core::Simulation {
 
     class VoidBuilder : public InterfaceOwner {
     protected:
-        BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
-
-        RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
-                                                                           "Force snapshot to be taken at some time prior to end (after will result in no output.");
-        BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file", "Don't output history to file.");
-
-        IntegerParameter outputResolution               = IntegerParameter(512, "outN",
-                                                                              "Output resolution of space dimension in history output.");
-        BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor", "Monitor simulation visually.");
-
-        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused", "Start visual monitored "
-                                                                                                             "simulation paused.");
-        IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(-1, "s,steps_per_idle_call",
-                                                                              "Simulation steps between visual monitor updates call. Leave negative for auto.");
-
         SimulationConfig simulationConfig;
 
         Str prefix;
 
-        explicit VoidBuilder(Str name, Str generalDescription, bool doRegister = false);
+        explicit VoidBuilder(const Str& name, Str generalDescription, bool doRegister = false);
 
     public:
         typedef std::shared_ptr<VoidBuilder> Ptr;

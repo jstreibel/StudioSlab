@@ -1,13 +1,22 @@
+
+
 add_executable ( RtoR-Modes
-        Main-RtoR-Modes.cpp
-        Builder.cpp
-        Builder.h
-        Monitor.cpp
-        Monitor.h
-        BoundaryCondition.cpp
-        BoundaryCondition.h
+        Sim/Main-RtoR-Modes.cpp
+        Sim/Builder.cpp
+        Sim/Builder.h
+        Sim/Monitor.cpp
+        Sim/Monitor.h
+        Sim/BoundaryCondition.cpp
+        Sim/BoundaryCondition.h
 )
 target_link_libraries ( RtoR-Modes ${SlabLibs} Slab-Maps-RtoR_GPU )
-#set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)
+
+
+add_executable ( RtoR-SnapshotDBViewer
+        SnapshotDBViewer/main.cpp
+        SnapshotDBViewer/DBViewer.cpp
+)
+target_link_libraries ( RtoR-SnapshotDBViewer ${SlabLibs} )
+
 
 message(NOTICE "Added executable RtoR-Modes")

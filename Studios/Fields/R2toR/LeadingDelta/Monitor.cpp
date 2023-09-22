@@ -223,7 +223,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
-    if(EventListener::notifyKeyboard(key, x, y)) return true;
+    if(GUIEventListener::notifyKeyboard(key, x, y)) return true;
 
     if (key == 16) { // glutGetModifiers() & GLUT_ACTIVE_CTRL && (key == 'p' || key == 'P') )
         auto buffer = GLUTUtils::getFrameBuffer();
@@ -249,7 +249,7 @@ bool R2toR::LeadingDelta::OutGL::notifyMouseMotion(int x, int y) {
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
-    if(EventListener::notifyMousePassiveMotion(x, y)) return true;
+    if(GUIEventListener::notifyMousePassiveMotion(x, y)) return true;
 
     if(panel.doesHit(x, y)) return panel.notifyMousePassiveMotion(x, y);
 
@@ -259,12 +259,12 @@ bool R2toR::LeadingDelta::OutGL::notifyMousePassiveMotion(int x, int y) {
 bool R2toR::LeadingDelta::OutGL::notifyMouseButton(int button, int dir, int x, int y) {
     panel.notifyMouseButton(button, dir, x, y);
 
-    return EventListener::notifyMouseButton(button, dir, x, y);
+    return GUIEventListener::notifyMouseButton(button, dir, x, y);
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyMouseWheel(int wheel, int direction, int x, int y) {
     panel.notifyMouseWheel(wheel, direction, x, y);
 
-    return EventListener::notifyMouseWheel(wheel, direction, x, y);
+    return GUIEventListener::notifyMouseWheel(wheel, direction, x, y);
 }
 

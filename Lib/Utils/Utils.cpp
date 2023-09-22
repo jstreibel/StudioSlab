@@ -16,11 +16,16 @@ void Common::PrintThere(int x, int y, const char *format, ...)
     fflush(stdout);
 }
 
-char Common::GetDensityChar(float dens){
-    const int N = 70;
-    const char* ascii_gs = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`\'. ";
+char Common::GetDensityChar(float dens, bool useLongSeq){
+    static constexpr const Str shortSeq = Str(".:-=+*#%@");
+    static const Str longSeq = Str("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"^`\'. ");
 
-    int loc = (N-dens*N);
+    Str seq = useLongSeq ? longSeq : shortSeq;
+
+    int N = (int)seq.length(); // leave as int!!! Negative values required
+    fix ascii_gs = seq.c_str();
+
+    int loc = N-int(dens*(float)N);
     loc = loc>N-1?N-1:loc<0?0:loc;
 
     return ascii_gs[loc];
@@ -145,7 +150,10 @@ Str ToStr(const double &a_value, const int &decimal_places, bool useScientificNo
 
 Str ToStr(bool value)       { return value ? "True" : "False"; }
 
-Str ToStr(const Str &str)   { return Str("\"") + str + Str("\""); }
+Str ToStr(const Str &str)   {
+    // return Str("\"") + str + Str("\"");
+    return str;
+}
 
 
 

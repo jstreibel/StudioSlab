@@ -67,7 +67,7 @@ namespace Common {
     }
 
     void                    PrintThere(int x, int y, const char *format, ...);
-    auto                    GetDensityChar(float dens) -> char;
+    auto                    GetDensityChar(float dens, bool longSeq=false) -> char;
     void                    PrintDensityThere(int x, int y, float dens);
 
     template<typename T>

@@ -115,7 +115,7 @@ auto Window::getMouseViewportCoord() const -> Point2D {
 }
 
 bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-    EventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
+    GUIEventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
 
     this->notifyReshape(newScreenWidth, newScreenHeight);
 
@@ -138,7 +138,7 @@ void Window::setClear(bool _clear) { this->clear = _clear; }
 bool Window::notifyRender(float elTime_msec) {
     this->draw();
 
-    return EventListener::notifyRender(elTime_msec);
+    return GUIEventListener::notifyRender(elTime_msec);
 }
 
 RectI Window::getViewport() const {

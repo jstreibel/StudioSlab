@@ -36,6 +36,7 @@ void RtoR::Graphics::HistoryDisplay::set_t(Real t_) {
             textureData->setValue(i,j, (Real32)discreteFunc.At(i, j));
 
     fix totalRows = upToRow-nextRow+1;
+    if(totalRows<1) return;
     if(!textureData->upload(nextRow, totalRows))
     {
         Log::Error("Graph " + this->title + " failed uploading texture from row ") << nextRow << " up to row " << upToRow << ", both inclusive'"

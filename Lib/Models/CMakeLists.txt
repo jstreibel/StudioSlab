@@ -1,4 +1,5 @@
 set ( MODELS_SOURCES
+        KleinGordon/KGBuilder.cpp
 		KleinGordon/KGBuilder.h
 		KleinGordon/KGSolver.h
 		KleinGordon/KGState.h
@@ -9,22 +10,27 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/KG-RtoREnergyCalculator.cpp
 		KleinGordon/RtoR/KG-RtoREquationState.cpp
 		KleinGordon/RtoR/KG-RtoRBoundaryCondition.cpp
-		KleinGordon/RtoR/RtoRMonitor.cpp
+		KleinGordon/RtoR/Output/RtoRMonitor.cpp
 		KleinGordon/RtoR/Output/SimHistory.h			KleinGordon/RtoR/Output/SimHistory.cpp
 		KleinGordon/RtoR/Output/HistoryDisplay.h		KleinGordon/RtoR/Output/HistoryDisplay.cpp
+		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
+		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
 
 
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
-
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
 		KleinGordon/R2toR/EquationSolver.h				KleinGordon/R2toR/EquationState.cpp
+
         LangevinKleinGordon/LangevinKGSolver.h	        LangevinKleinGordon/LangevinKGSolver.cpp
-		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
+		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp
+		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu )
+	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu
+			KleinGordon/RtoR/Output/SnapshotOutput.cpp
+			KleinGordon/RtoR/Output/SnapshotOutput.h)
 endif ()
 
 

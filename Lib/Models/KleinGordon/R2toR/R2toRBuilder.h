@@ -13,9 +13,10 @@
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "EquationSolver.h"
 #include "EquationState.h"
+#include "Models/KleinGordon/KGBuilder.h"
 
 namespace R2toR {
-    class Builder : public Core::Simulation::VoidBuilder {
+    class Builder : public Fields::KleinGordon::KGBuilder {
             Str name = "";
 
         protected:

@@ -28,6 +28,8 @@
 
 #include "Output/SimHistory.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
+#include "Models/KleinGordon/RtoR/Output/SnapshotOutput.h"
+#include "Models/KleinGordon/RtoR/Output/DFTSnapshotOutput.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -43,7 +45,7 @@ RtoR::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegis
 }
 
 auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
-    auto outputFileName = this->suggestFileName();
+    auto outputFileName = Common::GetPWD() + "/" + this->suggestFileName();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
     const auto shouldOutputHistory = ! *noHistoryToFile;
@@ -61,7 +63,6 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
     auto *outputManager = new OutputManager(simulationConfig.numericConfig);
 
-
     fix t = p.gett();
     fix N = (Real) p.getN();
     fix L = p.getL();
@@ -70,12 +71,30 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     fix r = p.getr();
 
 
-    /********************************************************************************************/
+
+    /* ****************************************************************************************
+       *************************** SNAPSHOT OUTPUT ********************************************
+       **************************************************************************************** */
+    if(*takeSnapshot) {
+        auto snapshotFilename = Common::GetPWD() + "/snapshots/" + suggestFileName();
+        outputManager->addOutputChannel(
+                new KleinGordon::RtoR::SnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
+    }
+    if(*takeDFTSnapshot) {
+        auto snapshotFilename = Common::GetPWD() + "/snapshots/" + suggestFileName();
+        outputManager->addOutputChannel(
+                new KleinGordon::RtoR::DFTSnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
+    }
+
+
+
+    /* ****************************************************************************************
+       *************************** HISTORY OUTPUT *********************************************
+       **************************************************************************************** */
     int fileOutputStepsInterval = -1;
     Numerics::OutputSystem::Socket *out = nullptr;
     if(shouldOutputHistory)
     {
-
         OutputFormatterBase *outputFilter = new BinarySOF;
 
         auto *spaceFilter = new ResolutionReductionFilter(DimensionMetaData({(unsigned)*outputResolution}, {L/ *outputResolution}));
@@ -87,10 +106,12 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
         fileOutputStepsInterval = out->getnSteps();
         outputManager->addOutputChannel(out);
     }
-    /********************************************************************************************/
 
 
-    /********************************************************************************************/
+
+    /* ****************************************************************************************
+       *************************** VISUAL MONITOR *********************************************
+       **************************************************************************************** */
     if(shouldOutputOpenGL) {
         auto &glutBackend = Backend::GetInstanceSuper<GLUTBackend>(); // GLUTBackend precisa ser instanciado, de preferencia, antes dos OutputOpenGL.
 
@@ -99,7 +120,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
         if(t>0)
         {
             auto simHistory = new SimHistory(simulationConfig, (Resolution)Nₒᵤₜ, xMin, L);
-            // auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 300, 0, 20*M_PI);
+            //auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 1000, 0, 40*M_PI);
             auto ftHistory = new SimHistory_DFT(simulationConfig);
 
             outputManager->addOutputChannel(simHistory);
@@ -130,6 +151,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
                 new OutputConsoleMonitor(simulationConfig.numericConfig, fileOutputStepsInterval > 0
                                                       ? fileOutputStepsInterval*25
                                                       : int(p.getn()/40)));
+
 
     return outputManager;
 
@@ -225,5 +247,12 @@ void RtoR::KGBuilder::setLaplacianFixedBC() {
 }
 
 bool RtoR::KGBuilder::usesPeriodicBC() const { return periodicBC; }
+
+Str RtoR::KGBuilder::suggestFileName() const {
+    auto strParams = interface->toString({"mass"}, " ");
+    Log::Debug() << strParams << Log::Flush;
+    auto voidSuggestion = VoidBuilder::suggestFileName();
+    return voidSuggestion + " " + strParams;
+}
 
 

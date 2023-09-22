@@ -16,7 +16,7 @@ using namespace Core;
 
 Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
-    EventListener::addResponder(&panel);
+    GUIEventListener::addResponder(&panel);
 
     panel.addWindow(&stats);
 
@@ -166,7 +166,7 @@ bool Core::Graphics::OpenGLMonitor::notifyRender(float elTime_msec) {
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
         draw();
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
-        EventListener::notifyRender(elTime_msec);   // here panel gets called.
+        GUIEventListener::notifyRender(elTime_msec);   // here panel gets called.
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
         frameTimer.reset();
     }
@@ -208,7 +208,7 @@ bool Core::Graphics::OpenGLMonitor::notifyKeyboard(unsigned char key, int x, int
         }
     }
 
-    return EventListener::notifyKeyboard(key, x, y);
+    return GUIEventListener::notifyKeyboard(key, x, y);
 }
 
 void Core::Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {

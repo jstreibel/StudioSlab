@@ -64,7 +64,14 @@ public:
     auto getOwner() const -> InterfaceOwner*;
 
     auto getName() const -> const Str&;
-    auto toString(StrVector paramNames={}, Str separator=" ", bool longName=true) const -> Str;
+    /**
+     *
+     * @param paramNames Parameters to turn into 'separator' separated string. All parameters if none is specified.
+     * @param separator Speparator string between argumens.
+     * @param longName Whether to use long parameter name, if available.
+     * @return A formated string, with all parameters and their values.
+     */
+    auto toString(const StrVector& paramNames={}, Str separator=" ", bool longName=true) const -> Str;
     void setup(CLVariablesMap vm);
 
     bool operator==(const Interface &rhs) const;

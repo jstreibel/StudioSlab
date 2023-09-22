@@ -7,7 +7,7 @@
 
 
 #include "Core/Graphics/Artists/Artist.h"
-#include "Core/Backend/Events/EventListener.h"
+#include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Graphics/Artists/Rect.h"
 #include "Core/Graphics/Styles/Colors.h"
 #include "Core/Graphics/Styles/WindowStyles.h"
@@ -15,7 +15,7 @@
 #include <vector>
 #include <memory>
 
-class Window : public Core::EventListener {
+class Window : public Core::GUIEventListener {
     std::vector<Artist*> content;
 
     bool decorate = true;

@@ -7,7 +7,7 @@
 
 GraphR2toR::GraphR2toR(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
                        int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {
-    EventListener::addResponder(&zpr);
+    GUIEventListener::addResponder(&zpr);
 }
 
 void GraphR2toR::_renderFunction(const R2toR::Function *func, Styles::PlotStyle style) {

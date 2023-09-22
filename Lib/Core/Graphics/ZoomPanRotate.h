@@ -5,13 +5,13 @@
 #ifndef V_SHAPE_ZOOMPANROTATE_H
 #define V_SHAPE_ZOOMPANROTATE_H
 
-#include "Core/Backend/Events/EventListener.h"
+#include "Core/Backend/Events/GUIEventListener.h"
 
 #include "Core/Graphics/OpenGL/OpenGL.h"
 #include <GL/glut.h>
 #include <glm/mat4x4.hpp>
 
-class ZoomPanRotate : public Core::EventListener {
+class ZoomPanRotate : public Core::GUIEventListener {
 public:
     ZoomPanRotate();
 

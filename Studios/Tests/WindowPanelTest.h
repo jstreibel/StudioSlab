@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOWPANELTEST_H
 
 
-#include <Core/Backend/Events/EventListener.h>
+#include <Core/Backend/Events/GUIEventListener.h>
 #include <Core/Graphics/Window/WindowContainer/WindowPanel.h>
 
 

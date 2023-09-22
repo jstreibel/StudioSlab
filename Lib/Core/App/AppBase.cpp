@@ -9,6 +9,8 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
 
+#include "Core/Backend/Backend.h"
+
 
 AppBase::AppBase(int argc, const char **argv, bool doRegister)
     : InterfaceOwner("App", 100, doRegister) {
@@ -18,7 +20,8 @@ AppBase::AppBase(int argc, const char **argv, bool doRegister)
 }
 
 AppBase::~AppBase() {
-    Log::Info() << Common::getClassName(this) << " destroyed" << Log::Flush;
+    Backend::Terminate();
+    Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
 }
 
 void AppBase::parseCLArgs() {

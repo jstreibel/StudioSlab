@@ -12,6 +12,11 @@ CLArgsManager* CLArgsManager::singleton = nullptr;
 CLArgsManager::CLArgsManager(int argc, const char **argv)
 : argc(argc), argv(argv) {
 
+    auto &log = Log::Info() << "CLArgsManager initialized with " << argc << " argument" << (argc>1?"s":"") << ": " << Log::Flush;
+    for(int i=0; i<argc; ++i)
+        log << "[" << argv[i] << "] ";
+
+    log << Log::Flush;
 }
 
 auto CLArgsManager::Initialize(int argc, const char **argv) -> CLArgsManager * {

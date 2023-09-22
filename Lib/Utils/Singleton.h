@@ -15,14 +15,15 @@ protected:
     const Str name;
     static T* singleInstance;
 
-    Singleton(Str name) : name(name) {
+    explicit Singleton(const Str &name) : name(name) {
          // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
     };
-    Singleton(const Singleton&) = delete;
     Singleton& operator=(const Singleton&) = delete;
-    virtual ~Singleton() {}
+    virtual ~Singleton() = default;
 
 public:
+    Singleton(const Singleton&) = delete;
+
     static T& GetInstance() {
         #if Abstract
         if(Singleton::singleInstance == nullptr) singleInstance = new T();
@@ -31,8 +32,8 @@ public:
         return *singleInstance;
     }
 
-    static void Destroy() {
-        if (singleInstance == nullptr) delete singleInstance;
+    static void Terminate() {
+        delete singleInstance;
         singleInstance = nullptr;
     }
 
@@ -45,7 +46,7 @@ T* Singleton<T, Abstract>::singleInstance = nullptr;
 template <typename T>
 class DerivableSingleton : public Singleton<T, true> {
 protected:
-    DerivableSingleton(Str name) : Singleton<T,true>(name) {}
+    explicit DerivableSingleton(const Str &name) : Singleton<T,true>(name) {}
 public:
 
     template< typename ToSuper >

@@ -60,4 +60,14 @@ namespace Modes {
         return monitor;
     }
 
+    Str Builder::suggestFileName() const {
+        const auto SEPARATOR = " ";
+
+        StrVector params = {"A", "omega"};
+        if(*BCSelection == 1) params.emplace_back("wave_number");
+
+        auto strParams = interface->toString(params, SEPARATOR);
+        return RtoR::KGBuilder::suggestFileName() + SEPARATOR + strParams;
+    }
+
 } // Modes

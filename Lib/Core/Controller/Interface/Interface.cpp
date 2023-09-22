@@ -86,16 +86,30 @@ auto Interface::getParameter(Str key) const -> Parameter::Ptr {
     return *result;
 }
 
-auto Interface::toString(StrVector paramNames, Str separator, bool longName) const -> Str {
-    std::stringstream ss;
+auto Interface::toString(const StrVector& paramNames, Str separator, bool longName) const -> Str {
+    std::stringstream ss("");
 
-    for(auto param : parameters) {
-        auto nameShort = param->getCLName(false);
-        auto nameLong  = param->getCLName(true);
+    std::map<Str,int> paramCount;
+    for(auto &p : paramNames) paramCount[p] = 0;
 
-        if(Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) || paramNames.empty())
-            ss << param->getCLName(longName) << "=" << param->valueToString() << separator;
+    fix LONG_NAME = true;
+    fix SHORT_NAME = false;
+
+    for(auto &param : parameters) {
+        auto nameShort = param->getCLName(SHORT_NAME);
+        auto nameLong  = param->getCLName(LONG_NAME);
+
+        if(Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) || paramNames.empty()) {
+            bool isLong = !nameLong.empty();
+            ss << param->getCLName(isLong) << "=" << param->valueToString() << separator;
+
+            paramCount[isLong ? nameLong : nameShort]++;
+        }
     }
+
+    for(auto &pCount : paramCount)
+        if(pCount.second == 0)
+            Log::Warning() << __PRETTY_FUNCTION__ << " could not find parameter " << pCount.first << Log::Flush;
 
     auto str = ss.str();
     if(!parameters.empty())
