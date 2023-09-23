@@ -229,7 +229,7 @@ namespace Modes::DatabaseViewer {
         return std::shared_ptr<RtoR::DiscreteFunction_CPU>{field};
     }
 
-    auto DBParser::getFieldData() const -> FieldMap {
+    auto DBParser::getFieldMap() const -> FieldMap {
         return fieldMap;
     }
 
