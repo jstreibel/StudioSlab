@@ -41,9 +41,10 @@ RtoR::DiscreteFunction_CPU::DiscreteFunction_CPU(UInt N, Real xLeft, Real xRight
 
 }
 
-DiscreteFunction_CPU::DiscreteFunction_CPU(RealArray_I data, Real xLeft, Real xRight,
+DiscreteFunction_CPU::DiscreteFunction_CPU(RealArray_I& data, Real xLeft, Real xRight,
                                            DiscreteFunction::LaplacianType laplacianType)
-                                           : DiscreteFunction(N, xLeft, xRight, device::CPU, laplacianType) {
+: DiscreteFunction_CPU(data.size(), xLeft, xRight, laplacianType)
+{
     getSpace().getHostData() = data;
 }
 

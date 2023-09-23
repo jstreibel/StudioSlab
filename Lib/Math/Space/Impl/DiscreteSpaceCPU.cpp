@@ -6,9 +6,9 @@
 
 //
 // Created by joao on 11/10/2019.
-DiscreteSpaceCPU::DiscreteSpaceCPU(DimensionMetaData dim) : DiscreteSpace(dim) {
-
-}
+DiscreteSpaceCPU::DiscreteSpaceCPU(DimensionMetaData dim)
+: DiscreteSpace(dim)
+{}
 
 DiscreteSpace &DiscreteSpaceCPU::Add(const DiscreteSpace &func) {
     assert(getTotalDiscreteSites() == func.getTotalDiscreteSites()); // TODO: assert, tambem, que os intervalos sao os mesmos.

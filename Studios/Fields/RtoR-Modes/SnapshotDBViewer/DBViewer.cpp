@@ -11,8 +11,11 @@ namespace Modes::DatabaseViewer {
     DBViewer::DBViewer(DBParser::Ptr dbParser)
     : dbParser(std::move(dbParser))
     , guiWindow()
+    , allDataDisplay("All data")
     {
         this->addWindow(DummyPtr(guiWindow));
+        this->addWindow(DummyPtr(allDataDisplay), .8);
+
     }
 
     void DBViewer::draw() {

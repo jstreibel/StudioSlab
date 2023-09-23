@@ -54,7 +54,7 @@ typedef std::valarray<Complex> ComplexArray;
 typedef std::vector<Complex>   ComplexVector;
 
 typedef std::valarray<unsigned> UIntArray;
-typedef std::valarray<int>      IntVector;
+typedef std::vector<int>        IntVector;
 
 
 template<class T1, class T2>

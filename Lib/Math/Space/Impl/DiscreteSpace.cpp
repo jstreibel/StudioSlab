@@ -3,7 +3,7 @@
 #include "DiscreteSpace.h"
 
 #include "DiscreteSpaceCPU.h"
-#include <assert.h>
+#include <cassert>
 
 // Created by joao on 11/10/2019.
 
@@ -17,9 +17,9 @@ UInt DimensionMetaData::computeFullDiscreteSize() const {
     return size;
 }
 
-DiscreteSpace::DiscreteSpace(DimensionMetaData dim) : dimensionMetaData(dim), data(dim.computeFullDiscreteSize()) {
-
-}
+DiscreteSpace::DiscreteSpace(const DimensionMetaData& dim)
+: dimensionMetaData(dim), data(dim.computeFullDiscreteSize())
+{ }
 
 DiscreteSpace::~DiscreteSpace() { }
 

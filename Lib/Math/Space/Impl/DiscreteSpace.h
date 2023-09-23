@@ -6,8 +6,11 @@
 #define V_SHAPE_DISCRETESPACE_H
 
 
+#include <utility>
+
 #include "Utils/NativeTypes.h"
 #include "ArithmeticOperationInterface.h"
+#include "Core/Tools/Log.h"
 
 struct DimensionMetaData {
     /*!
@@ -16,7 +19,8 @@ struct DimensionMetaData {
      * each of its entry. For example, a discretization of real space x, y, z
      * with 256x512x64 sites would have N={256,512,64}.
      */
-    explicit DimensionMetaData(UIntArray N, RealArray h) : nDim(N.size()), N(N), h(h) {
+    explicit DimensionMetaData(const UIntArray& N, RealArray _h) : nDim(N.size()), N(N), h(std::move(_h)) {
+        Log::Debug() << "Instantiated DimensionMetaData." << Log::Flush;
         assert(N.size() == h.size());
     }
 
@@ -41,7 +45,7 @@ class DiscreteSpaceCPU;
 
 class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
 public:
-    DiscreteSpace(DimensionMetaData dim);
+    explicit DiscreteSpace(const DimensionMetaData& dim);
     virtual ~DiscreteSpace();
     auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
 

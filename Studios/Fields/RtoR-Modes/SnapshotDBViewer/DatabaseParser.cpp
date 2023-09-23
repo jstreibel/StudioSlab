@@ -50,15 +50,19 @@ namespace Modes::DatabaseViewer {
 
         for(int i=1; i<values.size()-1; ++i){
             Real delta = values[i+1]-values[i];
-            auto &log = Log::Info();
-            if(!Common::areEqual(lastDelta, delta, eps)) log << Log::FGRed;
-            log << "delta = values[" << i+1 << "]-values[" << i << "] = " << delta << std::setw(10) << "" << "lastDelta = values[" << i << "]-values[" << i-1 << "] = " << lastDelta
-                        << std::setw(10) << "" << criticalParameter << ": "
-                        << "values[" << i-1 << "]=" << values[i-1] << " "
-                        << "values[" << i   << "]=" << values[i  ] << " "
-                        << "values[" << i+1 << "]=" << values[i+1] << " "
-                        << Log::ResetFormatting
-                        << Log::Flush;
+
+            if(false) {
+                auto &log = Log::Info();
+                if (!Common::areEqual(lastDelta, delta, eps)) log << Log::FGRed;
+                log << "delta = values[" << i + 1 << "]-values[" << i << "] = " << delta << std::setw(10) << ""
+                            << "lastDelta = values[" << i << "]-values[" << i - 1 << "] = " << lastDelta
+                            << std::setw(10) << "" << criticalParameter << ": "
+                            << "values[" << i - 1 << "]=" << values[i - 1] << " "
+                            << "values[" << i << "]=" << values[i] << " "
+                            << "values[" << i + 1 << "]=" << values[i + 1] << " "
+                            << Log::ResetFormatting
+                            << Log::Flush;
+            }
 
 
             if(!Common::areEqual(lastDelta, delta, eps)) {
@@ -74,8 +78,11 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBParser::readFolder(const Str& folderPath) {
+        Log::Status() << "Started reading database in '" << folderPath << "'" << Log::Flush;
+
         for (const auto &entry: std::filesystem::directory_iterator(folderPath)) {
             auto fileName = entry.path().string();
+            Log::Status() << "Started reading entry '" << fileName << "'" << Log::Flush;
 
             std::size_t pos = fileName.rfind(criticalParameter);
             if (pos != Str::npos) {
@@ -106,6 +113,7 @@ namespace Modes::DatabaseViewer {
                     }
 
                     fileSet[value] = fileName;
+                    fieldMap[value] = BuildField(fileName);
                 }
 
             } else {
@@ -120,11 +128,11 @@ namespace Modes::DatabaseViewer {
         Log::Success() << "Extracted critical parameter '" << criticalParameter << "' from database. Relation is below." << Log::Flush;
 
         for(auto &entry : fileSet)
-            Log::Info() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << entry.first << " from "
+            Log::Debug() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << entry.first << " from "
                         << entry.second << Log::Flush;
     }
 
-    PythonUtils::PyDict DBParser::ReadPyDict(const Str& filePath) {
+    auto DBParser::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {
         std::ifstream inFile(filePath, std::ios::binary);
 
         if (!inFile) {
@@ -136,14 +144,14 @@ namespace Modes::DatabaseViewer {
         Str line;
         Str separator = "<<<<-oOo->>>>";
         while (std::getline(inFile, line)) {
-            Log::Info() << "Read line: " << line << Log::Flush;
+            Log::Debug() << "Read line: " << line << Log::Flush;
 
             if(!PythonUtils::CheckIfPyDictIsWellFormed(line)) {
                 auto pyDict = PythonUtils::ParsePythonDict(line);
 
                 Log::Success() << "Is a Python dictionary with " << pyDict.size() << " entries." << Log::Flush;
 
-                for(auto &entry : pyDict){
+                if(false) for(auto &entry : pyDict) {
                     auto name = entry.first;
                     auto value = entry.second.first;
                     auto type = entry.second.second;
@@ -166,7 +174,7 @@ namespace Modes::DatabaseViewer {
         throw DirtyDBException("file \"" + filePath + "\" does not contain Python dictionary header");
     }
 
-    RealVector DBParser::ReadData(Str filePath) {
+    auto DBParser::ReadData(const Str& filePath) -> RealVector {
         std::ifstream inFile(filePath, std::ios::binary);
 
         if (!inFile) {
@@ -186,17 +194,44 @@ namespace Modes::DatabaseViewer {
             doubleData.emplace_back(value);
 
         // Output the read doubles for verification
-        for (const auto& val : doubleData) {
-            std::cout << val << ' ';
-        }
-        std::cout << std::endl;
+        Log::Debug() << "Read " << doubleData.size() << " float64 entries." << Log::Flush;
 
         inFile.close();
+
+        return doubleData;
     }
 
-
-    const std::map<Real, Str> &DBParser::getFileSet() const { return fileSet; }
+    auto DBParser::getFileSet() const -> const std::map<Real, Str> & { return fileSet; }
 
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
+
+    auto DBParser::BuildField(const Str& filename) -> std::shared_ptr<RtoR::DiscreteFunction_CPU> {
+        Log::Status() << "Started building field for " << filename << Log::Flush;
+
+        auto dict = ReadPyDict(filename);
+        auto data = ReadData(filename);
+
+        Log::Debug() << "Python dictionary and Real64 data are built" << Log::Flush;
+
+        RealArray dataArr(data.data(), data.size());
+
+        char *endPtr;
+        auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
+        auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
+        auto xMax = xMin+L;
+
+        Log::Debug() << "Gathered field metadata." << Log::Flush;
+
+        auto field = new RtoR::DiscreteFunction_CPU(dataArr, xMin, xMax);
+
+        Log::Debug() << "Built RtoR::DiscreteFunction_CPU." << Log::Flush;
+
+        return std::shared_ptr<RtoR::DiscreteFunction_CPU>{field};
+    }
+
+    auto DBParser::getFieldData() const -> FieldMap {
+        return fieldMap;
+    }
+
 
 } // Modes::DatabaseViewer

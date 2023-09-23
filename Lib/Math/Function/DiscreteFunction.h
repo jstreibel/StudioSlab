@@ -10,6 +10,7 @@
 #include "Math/Space/Impl/DiscreteSpace.h"
 #include "Math/Space/Impl/DiscreteSpaceCPU.h"
 #include "Math/Space/Impl/DiscreteSpaceGPU.h"
+#include "Core/Tools/Log.h"
 
 namespace Core {
 
@@ -30,6 +31,7 @@ namespace Core {
         Str myName() const override { return "general discrete"; }
 
         DiscreteFunction(DimensionMetaData dim, device dev) : MyBase(nullptr, true), dev(dev) {
+            Log::Debug() << "Instantiating Core::DiscreteFunction<>." << Log::Flush;
             switch(dev){
                 case device::CPU:
                     space = new DiscreteSpaceCPU(dim);
@@ -42,6 +44,7 @@ namespace Core {
                 default:
                     throw "Unknown device in instantiation of FunctionArbitrary.";
             }
+            Log::Debug() << "Done instantiating Core::DiscreteFunction<>." << Log::Flush;
         };
         virtual ~DiscreteFunction(){
             delete space;

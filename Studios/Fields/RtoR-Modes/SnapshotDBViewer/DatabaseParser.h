@@ -5,21 +5,29 @@
 #ifndef STUDIOSLAB_DATABASEPARSER_H
 #define STUDIOSLAB_DATABASEPARSER_H
 
+#include <map>
+
+#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+
 #include "Utils/Types.h"
 #include "Utils/PythonUtils.h"
 
-#include <map>
+
 
 namespace Modes::DatabaseViewer {
+    typedef std::map<Real, std::shared_ptr<RtoR::DiscreteFunction_CPU>> FieldMap;
     class DBParser {
         std::map<Real, Str> fileSet;
+        FieldMap fieldMap;
         Str criticalParameter;
 
         void readFolder(const Str& folder);
         void checkIntervalConsistency();
 
         static PythonUtils::PyDict ReadPyDict(const Str& filename);
-        static RealVector ReadData(Str filename);
+        static RealVector ReadData(const Str& filename);
+        static std::shared_ptr<RtoR::DiscreteFunction_CPU> BuildField(const Str& filename);
+
     public:
         typedef std::shared_ptr<Modes::DatabaseViewer::DBParser> Ptr;
 
@@ -27,6 +35,7 @@ namespace Modes::DatabaseViewer {
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;
+        auto getFieldData() const -> FieldMap;
     };
 } // Modes::DatabaseViewer
 
