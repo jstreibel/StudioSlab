@@ -42,7 +42,7 @@ void GUIWindow::draw() {
     ImGui::SetWindowPos( ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
 
-    if(ImGui::CollapsingHeader("Stats", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if(!stats.empty() && ImGui::CollapsingHeader("Stats", ImGuiTreeNodeFlags_DefaultOpen)) {
 
         auto i = 0;
         for (auto stat: stats) {
@@ -62,9 +62,10 @@ void GUIWindow::draw() {
         }
     }
 
-    if(ImGui::CollapsingHeader("Interfaces")) {
+    auto allInterfaces = InterfaceManager::getInstance().getInterfaces();
+    if(!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
-        for(auto &interface : InterfaceManager::getInstance().getInterfaces()) {
+        for(auto &interface : allInterfaces) {
             fix generalDescription = interface->getGeneralDescription();
 
             fix text = interface->getName() + (!generalDescription.empty() ? "("+generalDescription+")" : "");

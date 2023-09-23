@@ -27,6 +27,7 @@ class GLFWBackend : public GUIBackend {
     static void window_size_callback(GLFWwindow* window, int width, int height);
 
     bool paused = false;
+    bool mustRender = true;
 
     static GLFWBackend& GetInstance();
 
@@ -40,6 +41,9 @@ public:
     static bool IsWindowHovered(GLFWwindow *window);
     static bool GetMouseButtonState(GLFWwindow *window, int button);
 
+    auto getMouseState() const -> const MouseState override;
+
+    auto getGLFWWindow() -> GLFWwindow&;
 
     void run(Program *program) override;
 

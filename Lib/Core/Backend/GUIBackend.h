@@ -12,19 +12,17 @@
 class GUIBackend : public Core::Backend {
 protected:
 
-    explicit GUIBackend(Str name);
+    explicit GUIBackend(const Str& name);
 
-    MouseState mouseState;
     std::vector<Core::GUIEventListener::Ptr> listeners;
-
     std::vector<std::shared_ptr<Core::Module>> modules;
 
 public:
-    virtual auto addEventListener(Core::GUIEventListener::Ptr listener) -> void;
+    virtual auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> void;
 
     virtual auto getScreenHeight() const -> Real = 0;
 
-    auto getMouseState() const -> const MouseState&;
+    virtual auto getMouseState() const -> const MouseState = 0;
     virtual auto pause()  -> void = 0;
     virtual auto resume() -> void = 0;
 

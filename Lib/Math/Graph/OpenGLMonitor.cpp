@@ -163,6 +163,7 @@ bool Core::Graphics::OpenGLMonitor::notifyRender() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     {
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (0)");
         writeStats();
         OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
         draw();

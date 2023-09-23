@@ -274,4 +274,8 @@ void GLUTBackend::requestRender() {
     renderingRequested = true;
 }
 
+const MouseState GLUTBackend::getMouseState() const {
+    return mouseState;
+}
+
 

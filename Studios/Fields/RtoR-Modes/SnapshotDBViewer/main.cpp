@@ -2,27 +2,41 @@
 // Created by joao on 21/09/23.
 //
 
+#include "Core/Graphics/OpenGL/OpenGL.h"
+
 #include "Core/App/AppBase.h"
 #include "Core/App/CrashPad.h"
+
 #include "Core/Controller/Interface/CommonParameters.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
+
+#include "Core/Graphics/Styles/WindowStyles.h"
+
 #include "Core/Tools/Log.h"
 
-#include "DBViewer.h"
 #include "Core/Backend/GLFW/GLFWBackend.h"
-#include "Core/Backend/DummyProgram.h"
+#include "Core/Backend/Program/DummyProgram.h"
+#include "Core/Backend/BackendManager.h"
+
+#include "DBViewer.h"
+#include "DatabaseParser.h"
 
 class App : public AppBase {
-    StringParameter snapshotDBFolder = StringParameter("./snapshots", "db_folder", "The location of the snapshots "
+    StringParameter snapshotDBFolder = StringParameter("./snapshots", "db_folder", "the location of the snapshots "
                                                                             "database folder");
+
+    StringParameter criticalParameter = StringParameter("omega", "param", "the critical param of the db set; should "
+                                                                          "be the only changing value both on the "
+                                                                          "filenames and snapshot header");
+
 public:
     App(int argc, const char **argv)
     : AppBase(argc, argv, false)
     {
-        interface->addParameters({&snapshotDBFolder});
+        interface->addParameters({&snapshotDBFolder, &criticalParameter});
         InterfaceManager::getInstance().registerInterface(interface);
 
-        Backend::Initialize<GLFWBackend>();
+        Core::BackendManager::Startup(Core::GLUT);
 
         this->parseCLArgs();
     }
@@ -30,10 +44,14 @@ public:
     int run() override {
         Str dbLocation = Common::GetPWD() + "/" + *snapshotDBFolder;
 
-        Log::Info() << "Snapshots database location: " << dbLocation << Log::Flush;
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+        auto parser = std::make_shared<Modes::DatabaseViewer::DBParser>(dbLocation, *criticalParameter);
+        auto viewer = std::make_shared<Modes::DatabaseViewer::DBViewer>(parser);
+        guiBackend.addEventListener(viewer);
 
         auto program = new DummyProgram;
-        GUIBackend::GetInstance().run(program);
+        guiBackend.run(program);
 
         delete program;
 
@@ -51,9 +69,7 @@ int main(int argc, const char* argv[]) {
     return SafetyNet::jump(
     [](int argc, const char **argv)
     {
-
         App app(argc, argv);
         return app.run();
-
     }, argc, argv);
 }

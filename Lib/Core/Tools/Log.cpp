@@ -37,16 +37,18 @@ const Str Log::BoldFace          = "\033[1m";
 const Str Log::Italic            = "\033[3m"; // Might not work
 const Str Log::Underscore        = "\033[4m"; // Might not work
 
-const Str Log::InfoFormat =             Log::ResetFormatting + Log::FGCyan;
-const Str Log::NoteFormat =             Log::ResetFormatting + Log::FGWhite;
-const Str Log::AttentionFormat =        Log::ResetFormatting + Log::FGMagenta;
-const Str Log::CriticalFormat =         Log::ResetFormatting                  + Log::BGMagenta + Log::BoldFace  ;
-const Str Log::DebugFormat =            Log::ResetFormatting + Log::FGMagenta                  + Log::Italic ;
-const Str Log::SuccessFormat =          Log::ResetFormatting + Log::FGGreen                    + Log::BoldFace ;
-const Str Log::WarningFormat =          Log::ResetFormatting + Log::FGYellow;
-const Str Log::WarningImportantFormat = Log::ResetFormatting + Log::FGBlack   + Log::BGMagenta;
-const Str Log::ErrorFormat =            Log::ResetFormatting + Log::FGRed;
-const Str Log::ErrorFatalFormat =       Log::ResetFormatting + Log::FGRed                      + Log::BoldFace;
+const Str Log::StatusFormat =           Log::ResetFormatting  +  Log::FGBlue;
+const Str Log::InfoFormat =             Log::ResetFormatting  +  Log::FGCyan;
+const Str Log::NoteFormat =             Log::ResetFormatting  +  Log::FGWhite;
+const Str Log::AttentionFormat =        Log::ResetFormatting  +  Log::FGMagenta;
+const Str Log::CriticalFormat =         Log::ResetFormatting                        + Log::BGMagenta    + Log::BoldFace  ;
+const Str Log::DebugFormat =            Log::ResetFormatting  +  Log::FGMagenta                         + Log::Italic ;
+const Str Log::SuccessFormat =          Log::ResetFormatting  +  Log::FGGreen                           + Log::BoldFace ;
+const Str Log::FailFormat =             Log::ResetFormatting  +  Log::FGRed                             + Log::BoldFace ;
+const Str Log::WarningFormat =          Log::ResetFormatting  +  Log::FGYellow;
+const Str Log::WarningImportantFormat = Log::ResetFormatting  +  Log::FGBlack       + Log::BGMagenta;
+const Str Log::ErrorFormat =            Log::ResetFormatting  +  Log::FGRed;
+const Str Log::ErrorFatalFormat =       Log::ResetFormatting  +  Log::FGRed                             + Log::BoldFace;
 
 const Log::FlushClass Log::Flush;
 
@@ -83,26 +85,30 @@ inline Str Log::postfix(){
 };
 
 
+OStream &Log::Status()              { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << StatusFormat            << "Status"    << me.postfix(); return stream; }
 OStream &Log::Info()                { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << InfoFormat              << "Info"      << me.postfix(); return stream; }
 OStream &Log::Note()                { auto &me = Log::GetSingleton(); auto &stream = *me.notesStream; stream << me.prefix() << NoteFormat              << "Note"      << me.postfix(); return stream; }
 OStream &Log::Attention()           { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << AttentionFormat         << "Attention" << me.postfix(); return stream; }
 OStream &Log::Critical()            { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << CriticalFormat          << "Critical"  << me.postfix(); return stream; }
 OStream &Log::Debug()               { auto &me = Log::GetSingleton(); auto &stream = *me.debugStream; stream << me.prefix() << DebugFormat             << "Debug"     << me.postfix(); return stream; }
 OStream &Log::Success()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << SuccessFormat           << "Success"   << me.postfix(); return stream; }
+OStream &Log::Fail()                { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << FailFormat              << "Fail"      << me.postfix(); return stream; }
 OStream &Log::Warning()             { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningFormat           << "Warning"   << me.postfix(); return stream; }
 OStream &Log::WarningImportant()    { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << WarningImportantFormat  << "Warning!"  << me.postfix(); return stream; }
 OStream &Log::Error()               { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFormat             << "Error"     << me.postfix(); return stream; }
 OStream &Log::ErrorFatal()          { auto &me = Log::GetSingleton(); auto &stream = *me.mainStream;  stream << me.prefix() << ErrorFatalFormat        << "Crash" << me.postfix(); return stream; }
 
-auto Log::Info             (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
-auto Log::Note             (const Str &str) -> OStream& { return Note() << str << Log::Flush;}
-auto Log::Attention        (const Str &str) -> OStream& { return Attention() << str << Log::Flush;}
-auto Log::Critical         (const Str &str) -> OStream& { return Critical() << str << Log::Flush;}
-auto Log::Debug            (const Str &str) -> OStream& { return Debug() << str << Log::Flush;}
-auto Log::Success          (const Str &str) -> OStream& { return Success() << str << Log::Flush;}
-auto Log::Warning          (const Str &str) -> OStream& { return Info() << str << Log::Flush;}
-auto Log::WarningImportant (const Str &str) -> OStream& { return Warning() << str << Log::Flush;}
-auto Log::Error            (const Str &str) -> OStream& { return Error() << str << Log::Flush;}
+auto Log::Status           (const Str &str) -> OStream& { return Status()     << str << Log::Flush;}
+auto Log::Info             (const Str &str) -> OStream& { return Info()       << str << Log::Flush;}
+auto Log::Note             (const Str &str) -> OStream& { return Note()       << str << Log::Flush;}
+auto Log::Attention        (const Str &str) -> OStream& { return Attention()  << str << Log::Flush;}
+auto Log::Critical         (const Str &str) -> OStream& { return Critical()   << str << Log::Flush;}
+auto Log::Debug            (const Str &str) -> OStream& { return Debug()      << str << Log::Flush;}
+auto Log::Success          (const Str &str) -> OStream& { return Success()    << str << Log::Flush;}
+auto Log::Fail             (const Str &str) -> OStream& { return Fail()       << str << Log::Flush;}
+auto Log::Warning          (const Str &str) -> OStream& { return Info()       << str << Log::Flush;}
+auto Log::WarningImportant (const Str &str) -> OStream& { return Warning()    << str << Log::Flush;}
+auto Log::Error            (const Str &str) -> OStream& { return Error()      << str << Log::Flush;}
 auto Log::ErrorFatal       (const Str &str) -> OStream& { return ErrorFatal() << str << Log::Flush;}
 
 auto Log::FlushAll() -> void {

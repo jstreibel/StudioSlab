@@ -101,3 +101,7 @@ void GLFWBackend::window_size_callback(GLFWwindow* window, int width, int height
     for(auto &listener : me.listeners)
         listener->notifyScreenReshape(width, height);
 }
+
+auto GLFWBackend::getGLFWWindow() -> GLFWwindow & {
+    return *systemWindow;
+}

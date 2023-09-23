@@ -7,17 +7,15 @@
 
 #include "../GUIBackend.h"
 #include "SFMLListener.h"
-#include "Core/Controller/Nuklear/NuklearSFML.h"
 
 #include <SFML/Graphics.hpp>
 
 class SFMLNuklearBackend : public GUIBackend {
+    nk_context nkContext;
+
     sf::RenderWindow *window;
     sf::Font font;
     sf::Text text;
-
-    nk_context nkContext;
-
 
     std::vector<SFMLListener*> sfmlListeners;
 
@@ -45,7 +43,7 @@ public:
 
     auto requestRender() -> void override;
 
-
+    auto getMouseState() const -> const MouseState override;
 };
 
 

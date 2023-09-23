@@ -71,9 +71,11 @@ public:
     const static Str Italic;     // Might not work
     const static Str Underscore; // Might not work
 
+    const static Str StatusFormat;
     const static Str InfoFormat;
     const static Str NoteFormat;
     const static Str SuccessFormat;
+    const static Str FailFormat;
     const static Str AttentionFormat;
     const static Str CriticalFormat;
     const static Str DebugFormat;
@@ -84,23 +86,27 @@ public:
 
     constexpr const static char Return = '\r';
 
+    static auto Status           ()               -> OStream&;
     static auto Info             ()               -> OStream&;
     static auto Note             ()               -> OStream&;
     static auto Attention        ()               -> OStream&;
     static auto Critical         ()               -> OStream&;
     static auto Debug            ()               -> OStream&;
     static auto Success          ()               -> OStream&;
+    static auto Fail             ()               -> OStream&;
     static auto Warning          ()               -> OStream&;
     static auto WarningImportant ()               -> OStream&;
     static auto Error            ()               -> OStream&;
     static auto ErrorFatal       ()               -> OStream&;
 
+    static auto Status           (const Str& str) -> OStream&;
     static auto Info             (const Str& str) -> OStream&;
     static auto Note             (const Str& str) -> OStream&;
     static auto Attention        (const Str& str) -> OStream&;
     static auto Critical         (const Str& str) -> OStream&;
     static auto Debug            (const Str& str) -> OStream&;
     static auto Success          (const Str& str) -> OStream&;
+    static auto Fail             (const Str& str) -> OStream&;
     static auto Warning          (const Str& str) -> OStream&;
     static auto WarningImportant (const Str& str) -> OStream&;
     static auto Error            (const Str& str) -> OStream&;

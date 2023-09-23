@@ -6,7 +6,7 @@
 #include "COMPILE_CONFIG.h"
 #include "Core/Backend/BackendManager.h"
 
-#include <Core/Controller/Nuklear/_nuklear_sfml.hpp>
+
 
 SFMLNuklearBackend::SFMLNuklearBackend() : GUIBackend("SFML+Nuklear backend") {
 
@@ -49,7 +49,10 @@ void SFMLNuklearBackend::_treatEvents() {
     sf::Event event{};
     bool exitEvent = false;
 
+    for( auto &module : modules ) module->beginEvents();
+
     nk_input_begin(&nkContext);
+
     while (window->pollEvent(event)) {
         if (event.type == sf::Event::Closed)
             exitEvent = true;
@@ -64,12 +67,15 @@ void SFMLNuklearBackend::_treatEvents() {
             break;
         }
 
-        nk_sfml_handle_event(event);
+        // nk_sfml_handle_event(event);
 
-        for(auto l : sfmlListeners)
-            l->event(event);
+        for(auto l : sfmlListeners) l->event(event);
     }
+
     nk_input_end(&nkContext);
+
+    for( auto &module : modules ) module->endEvents();
+
 }
 
 void SFMLNuklearBackend::_render() {
@@ -111,5 +117,11 @@ SFMLNuklearBackend &SFMLNuklearBackend::GetInstance() {
 }
 
 void SFMLNuklearBackend::requestRender() {
-    throw Str(__PRETTY_FUNCTION__) + " not implemented";
+    NOT_IMPLEMENTED
+}
+
+const MouseState SFMLNuklearBackend::getMouseState() const {
+    NOT_IMPLEMENTED
+
+    return MouseState();
 }

@@ -6,10 +6,19 @@
 #define STUDIOSLAB_DBVIEWER_H
 
 #include "Core/Graphics/Window/WindowContainer/WindowRow.h"
+#include "DatabaseParser.h"
+#include "Core/Graphics/Window/GUIWindow.h"
 
-class DBViewer : public WindowRow {
+namespace Modes::DatabaseViewer {
+    class DBViewer : public WindowRow {
+        DBParser::Ptr dbParser;
+        GUIWindow guiWindow;
+    public:
+        explicit DBViewer(DBParser::Ptr dbParser);
 
-};
+        void draw() override;
+    };
+}
 
 
 #endif //STUDIOSLAB_DBVIEWER_H

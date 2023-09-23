@@ -18,6 +18,7 @@ set ( IMGUI_SOURCE
 		imgui/imgui_demo.cpp
 
 		imgui/backends/imgui_impl_glut.cpp
+		imgui/backends/imgui_impl_glfw.cpp
 		imgui/backends/imgui_impl_opengl3.cpp
 
 		imgui/misc/freetype/imgui_freetype.cpp)

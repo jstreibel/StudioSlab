@@ -4,8 +4,13 @@
 
 #include "Exception.h"
 
+
 Exception::Exception(std::string msg) : message(std::move(msg)) {}
 
 const char *Exception::what() const noexcept {
     return message.c_str();
+}
+
+NotImplementedException::NotImplementedException(std::string who) : Exception(who + " not implemented") {
+
 }

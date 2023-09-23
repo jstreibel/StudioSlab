@@ -30,6 +30,8 @@ set( BACKEND_SOURCE
 		Implementations.h
 		Modules/Module.cpp
 		Modules/Module.h
+		Modules/NuklearModule.cpp
+		Modules/NuklearModule.h
 )
 
 

@@ -15,6 +15,8 @@ target_link_libraries ( RtoR-Modes ${SlabLibs} Slab-Maps-RtoR_GPU )
 add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/main.cpp
         SnapshotDBViewer/DBViewer.cpp
+        SnapshotDBViewer/DatabaseParser.cpp
+        SnapshotDBViewer/DatabaseParser.h
 )
 target_link_libraries ( RtoR-SnapshotDBViewer ${SlabLibs} )
 

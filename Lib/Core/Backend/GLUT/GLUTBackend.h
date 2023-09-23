@@ -14,6 +14,8 @@ class GLUTBackend : public GUIBackend
 	Program *program = nullptr;
 	std::vector<Numerics::OutputSystem::Socket*> sockets;
 
+	MouseState mouseState;
+
 	bool renderingRequested = false;
 public:
     GLUTBackend();
@@ -42,6 +44,8 @@ public:
 	void resume() override { programIsRunning = true; }
 
 	auto requestRender() -> void override;
+
+	auto getMouseState() const -> const MouseState override;
 
 };
 

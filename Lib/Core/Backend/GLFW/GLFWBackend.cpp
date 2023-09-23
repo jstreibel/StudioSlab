@@ -48,7 +48,7 @@ void GLFWBackend::initGLEW() {
     GLenum glewInitStatus = glewInit();
     if (glewInitStatus != GLEW_OK){
         Log::Error() << "Failed GLEW initialization: " << glewGetErrorString(glewInitStatus) << Log::Flush;
-        throw "Failed GLEW initialization";
+        throw Exception("Failed GLEW initialization");
     }
     Log::Success() << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << Log::Flush;
 
@@ -63,6 +63,9 @@ void GLFWBackend::run(Program *pProgram) {
 void GLFWBackend::mainLoop() {
     while (!glfwWindowShouldClose(systemWindow))
     {
+        while(!mustRender)
+            program->cycle(Program::CycleOptions::CycleUntilOutput);
+
         glClear(GL_COLOR_BUFFER_BIT);
 
         for(auto &listener : GetInstance().listeners)
@@ -75,22 +78,22 @@ void GLFWBackend::mainLoop() {
 }
 
 Real GLFWBackend::getScreenHeight() const {
-    throw "..4";
-    return 0;
+    int w, h;
+    glfwGetWindowSize(systemWindow, &w, &h);
+
+    return h;
 }
 
 void GLFWBackend::pause() {
-    throw "..3";
     paused = true;
 }
 
 void GLFWBackend::resume() {
-    throw "..2";
     paused = false;
 }
 
 void GLFWBackend::requestRender() {
-    throw "..1";
+    mustRender = true;
 }
 
 GLFWwindow *GLFWBackend::newGLFWWindow() {
@@ -153,6 +156,15 @@ Point2D GLFWBackend::GetCursorPosition(GLFWwindow *window) {
     glfwGetCursorPos(window, &xpos, &ypos);
 
     return {xpos, ypos};
+}
+
+const MouseState GLFWBackend::getMouseState() const {
+    auto pos = GLFWBackend::GetCursorPosition(systemWindow);
+
+    return {(int)pos.x, (int)pos.y, 0, 0,
+            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_LEFT),
+            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_MIDDLE),
+            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_RIGHT)};
 }
 
 bool GLFWBackend::IsWindowHovered(GLFWwindow *window) {

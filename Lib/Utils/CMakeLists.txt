@@ -19,6 +19,8 @@ set ( UTIL_SOURCES
 		EncodingUtils.h 	EncodingUtils.cpp
 
 		CGMatrix.h			CGMatrix.cpp
+
+        PythonUtils.h       PythonUtils.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

@@ -2,7 +2,6 @@
 // Created by joao on 22/09/23.
 //
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 
 #include <filesystem>
@@ -20,8 +19,12 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-#include "3rdParty/ImGuiColorsSetup.h"
+#include "Core/Backend/GLFW/GLFWBackend.h"
 
+// Don't touch
+fix DO_NOT_INSTALL_CALLBACKS = false;
+
+// Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
 
 namespace Core {
@@ -89,6 +92,8 @@ namespace Core {
 
         ImGui::GetStyle().ScaleAllSizes(1.5);
         ImGui::GetIO().FontGlobalScale = 1;
+
+        system = backendImpl;
     }
 
     void ImGuiModule::InstallInGLUT() {
@@ -104,64 +109,78 @@ namespace Core {
     }
 
     void ImGuiModule::InstallInGLFW() {
-        throw Exception("ImGui GLFW module not implemented (yet)");
-        // ImGui_ImplGlfw_InitForOpenGL();
+        auto &window = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetGUIBackend())->getGLFWWindow();
+
+        ImGui_ImplGlfw_InitForOpenGL(&window, DO_NOT_INSTALL_CALLBACKS);
     }
 
     void ImGuiModule::InstallInSFML() {
         throw Exception("ImGui SFML module not implemented (yet)");
     }
 
-    void ImGuiModule::BuildFonts() {
-        {
-            static const ImWchar ranges[] =
-                    {
-                            0x0020, 0x007F, // Basic Latin
-                            0x00B0, 0x00BF, // Superscript / subscript
-                            0x0391, 0x03C9, // Greek
-                            0x03D0, 0x03F6,
-                            0x2070, 0x209F, // Superscript / subscript
-                            0x21A6, 0x21A6 + 1,
-                            ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
-                            ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
-                            0x2200, 0x22FF, // Mathematical operators
-                            0x2A00, 0x2AFF, // Supplemental mathematical operators
-                            0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
-                            0,
-                    };
-            ImFontGlyphRangesBuilder glyphRangesBuilder;
-            glyphRangesBuilder.AddRanges(ranges);
-            for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/, ImWchar(0x21A6)}) glyphRangesBuilder.AddChar(c);
-            static ImVector<ImWchar> vRanges;
-            glyphRangesBuilder.BuildRanges(&vRanges);
+    void ImGuiModule::BuildFonts()
+    {
+        static const ImWchar ranges[] =
+                {
+                        0x0020, 0x007F, // Basic Latin
+                        0x00B0, 0x00BF, // Superscript / subscript
+                        0x0391, 0x03C9, // Greek
+                        0x03D0, 0x03F6,
+                        0x2070, 0x209F, // Superscript / subscript
+                        0x21A6, 0x21A6 + 1,
+                        ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
+                        ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
+                        0x2200, 0x22FF, // Mathematical operators
+                        0x2A00, 0x2AFF, // Supplemental mathematical operators
+                        0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
+                        0,
+                };
+        ImFontGlyphRangesBuilder glyphRangesBuilder;
+        glyphRangesBuilder.AddRanges(ranges);
+        for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/, ImWchar(0x21A6)}) glyphRangesBuilder.AddChar(c);
+        static ImVector<ImWchar> vRanges;
+        glyphRangesBuilder.BuildRanges(&vRanges);
 
-            auto &log = Log::Info() << "ImGui loading glyph ranges: ";
-            int i = 0;
-            for (auto &v: vRanges) {
-                if (v == 0) break;
-                log << std::hex << v << (++i % 2 ? "-" : " ");
-            }
-            log << std::dec << Log::Flush;
-
-            ImGuiIO &io = ImGui::GetIO();
-            auto fontName = Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
-
-            if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
-
-            ImFontConfig fontConfig;
-            auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 26.0f, &fontConfig, &vRanges[0]);
-
-            io.FontDefault = font;
-
-            Log::Info() << "ImGui using font '" << Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Log::Flush;
-
-            //ImGui::PushFont(font);
+        auto &log = Log::Info() << "ImGui loading glyph ranges: ";
+        int i = 0;
+        for (auto &v: vRanges) {
+            if (v == 0) break;
+            log << std::hex << v << (++i % 2 ? "-" : " ");
         }
+        log << std::dec << Log::Flush;
+
+        ImGuiIO &io = ImGui::GetIO();
+        auto fontName = Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
+
+        if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
+
+        ImFontConfig fontConfig;
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 26.0f, &fontConfig, &vRanges[0]);
+
+        io.FontDefault = font;
+
+        Log::Info() << "ImGui using font '" << Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Log::Flush;
+
+        //ImGui::PushFont(font);
     }
 
     void ImGuiModule::beginRender() {
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGLUT_NewFrame();
+
+        switch (system) {
+            case Uninitialized:
+            case Headless:
+            case SFML:
+            case VTK:
+                NOT_IMPLEMENTED
+            case GLFW:
+                ImGui_ImplGlfw_NewFrame();
+                break;
+            case GLUT:
+                ImGui_ImplGLUT_NewFrame();
+                break;
+        }
+
         ImGui::NewFrame();
         // if (me.showDemo) ImGui::ShowDemoWindow();
     }
@@ -169,33 +188,52 @@ namespace Core {
     void ImGuiModule::endRender() {
         ImGui::Render();
         OpenGLUtils::checkGLErrors("after ImGui::Render()");
+
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         OpenGLUtils::checkGLErrors("after ImGui_ImplOpenGL3_RenderDrawData");
     }
 
     ImGuiModule::~ImGuiModule() {
         ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGLUT_Shutdown();
+
+        switch (system) {
+            case Uninitialized:
+            case Headless:
+            case SFML:
+            case VTK:
+                break;
+            case GLFW:
+                ImGui_ImplGlfw_Shutdown();
+                break;
+            case GLUT:
+                ImGui_ImplGLUT_Shutdown();
+                break;
+        }
+
         ImGui::DestroyContext();
     }
 
     bool ImGuiModule::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         auto &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 
-        if(Common::Contains(std::vector{Core::Key_NUM_LOCK,
-                                        Core::Key_HOME,
-                                        Core::Key_DELETE,
-                                        Core::Key_LEFT_SHIFT,
-                                        Core::Key_RIGHT_SHIFT,
-                                        Core::Key_LEFT_CONTROL,
-                                        Core::Key_RIGHT_CONTROL,
-                                        Core::Key_LEFT_ALT,
-                                        Core::Key_RIGHT_ALT,
-                                        Core::Key_LEFT_SUPER,
-                                        Core::Key_RIGHT_SUPER}, key))
-            ImGui_ImplGLUT_SpecialFunc(key, mouse.x, mouse.y);
-        else
-            ImGui_ImplGLUT_KeyboardFunc(key, mouse.x, mouse.y);
+        if(system == GLUT) {
+            if(Common::Contains(std::vector{Core::Key_NUM_LOCK,
+                                            Core::Key_HOME,
+                                            Core::Key_DELETE,
+                                            Core::Key_LEFT_SHIFT,
+                                            Core::Key_RIGHT_SHIFT,
+                                            Core::Key_LEFT_CONTROL,
+                                            Core::Key_RIGHT_CONTROL,
+                                            Core::Key_LEFT_ALT,
+                                            Core::Key_RIGHT_ALT,
+                                            Core::Key_LEFT_SUPER,
+                                            Core::Key_RIGHT_SUPER}, key))
+                ImGui_ImplGLUT_SpecialFunc(key, mouse.x, mouse.y);
+            else
+                ImGui_ImplGLUT_KeyboardFunc(key, mouse.x, mouse.y);
+        } else NOT_IMPLEMENTED
+
 
         if(ImGui::GetIO().WantCaptureKeyboard) return true;
 

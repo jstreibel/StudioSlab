@@ -37,8 +37,8 @@ void showHelp()
 Str FORMAT;
 
 #define LogException(description, what, exitFunc)                                       \
-    { Log::ErrorFatal() << description << ": \"" << FORMAT << what << Log::ResetFormatting   \
-                   << "\". Application will now exit." << Log::Flush;                    \
+    { Log::ErrorFatal() << description << ": " << FORMAT << " " << what << " " << Log::ResetFormatting   \
+                   << ". Application will now exit." << Log::Flush;                    \
       exitFunc();                                                                       \
       return EXIT_FAILURE; }
 
@@ -47,7 +47,7 @@ int SafetyNet::jump(int (*pFunction)(int argc, const char **argv), int argc, con
     try
 #endif
     {
-        FORMAT = Log::BGRed + Log::BoldFace;
+        FORMAT = Log::BGRed + Log::BoldFace + Log::FGBlack;
         return pFunction(argc, argv);
     }
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)

@@ -18,6 +18,8 @@ namespace Core {
         static void InstallInSFML();
 
         static void BuildFonts();
+
+        BackendImplementation system;
     public:
         explicit ImGuiModule(BackendImplementation);
         ~ImGuiModule() override;

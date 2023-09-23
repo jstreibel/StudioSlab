@@ -11,8 +11,11 @@ namespace Core {
 
     class Module : public GUIEventListener {
     public:
-        virtual void beginRender() = 0;
-        virtual void endRender() = 0;
+        virtual void beginRender() {};
+        virtual void endRender() {};
+
+        virtual void beginEvents() {};
+        virtual void endEvents() {};
     };
 
 } // Core
