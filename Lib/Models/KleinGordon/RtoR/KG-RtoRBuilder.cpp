@@ -45,6 +45,9 @@ RtoR::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegis
 }
 
 auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
+    StrUtils::UseScientificNotation = false;
+    StrUtils::RealToStringDecimalPlaces = 7;
+    
     auto outputFileName = Common::GetPWD() + "/" + this->suggestFileName();
 
     const auto shouldOutputOpenGL = *VisualMonitor;
@@ -56,7 +59,6 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         if(*VisualMonitor_startPaused) backend.pause();
         else backend.resume();
-
     }
     else Core::BackendManager::Startup(Core::Headless);
 

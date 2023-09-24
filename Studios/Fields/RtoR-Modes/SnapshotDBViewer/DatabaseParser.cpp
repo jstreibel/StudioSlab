@@ -7,12 +7,14 @@
 #include "Utils/PythonUtils.h"
 
 #include "Core/Tools/Log.h"
+#include "Math/Constants.h"
 
 
 #include <iostream>
 #include <fstream>
 #include <string>
 #include <map>
+#include <utility>
 #include <vector>
 #include <filesystem>  // C++17 and above
 
@@ -21,16 +23,18 @@ namespace Modes::DatabaseViewer {
 
     class DirtyDBException : public Exception {
     public:
-        DirtyDBException(const Str &msg="") : Exception(Str("dirty snapshot database") + (!msg.empty()?": "+msg:""))  { }
+        explicit DirtyDBException(const Str &msg="") : Exception(Str("dirty snapshot database") + (!msg.empty()?": "+msg:""))  { }
     };
 
+    fix DefaultDFTSnapshotsFolder = "./snapshots/";
+    fix DefaultHistoriesFolder = "./histories/";
 
-    DBParser::DBParser(const Str& rootDBFolder, const Str& criticalParameter)
-    : criticalParameter(criticalParameter)
+    DBParser::DBParser(const Str& rootDBFolder, Str  criticalParameter)
+    : criticalParameter(std::move(criticalParameter))
     {
-        Log::Info() << "Snapshots database location: " << rootDBFolder << Log::Flush;
+        Log::Info() << "Database location: " << rootDBFolder << Log::Flush;
 
-        readFolder(rootDBFolder);
+        readDatabase(rootDBFolder);
 
         checkIntervalConsistency();
     }
@@ -44,26 +48,13 @@ namespace Modes::DatabaseViewer {
             // ReadPyDict(entry.second);
         }
 
+        fix N = values.size();
         Real lastDelta = values[1]-values[0];
 
-        fix eps = 1.e-1*lastDelta;
+        fix eps = 1.e-5*(values[N-1]-values[N-2]);
 
-        for(int i=1; i<values.size()-1; ++i){
+        for(int i=1; i<N-1; ++i){
             Real delta = values[i+1]-values[i];
-
-            if(false) {
-                auto &log = Log::Info();
-                if (!Common::areEqual(lastDelta, delta, eps)) log << Log::FGRed;
-                log << "delta = values[" << i + 1 << "]-values[" << i << "] = " << delta << std::setw(10) << ""
-                            << "lastDelta = values[" << i << "]-values[" << i - 1 << "] = " << lastDelta
-                            << std::setw(10) << "" << criticalParameter << ": "
-                            << "values[" << i - 1 << "]=" << values[i - 1] << " "
-                            << "values[" << i << "]=" << values[i] << " "
-                            << "values[" << i + 1 << "]=" << values[i + 1] << " "
-                            << Log::ResetFormatting
-                            << Log::Flush;
-            }
-
 
             if(!Common::areEqual(lastDelta, delta, eps)) {
                 Log::Fail() << "DBParser deltas differ for "
@@ -77,12 +68,12 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBParser::readFolder(const Str& folderPath) {
-        Log::Status() << "Started reading database in '" << folderPath << "'" << Log::Flush;
 
-        for (const auto &entry: std::filesystem::directory_iterator(folderPath)) {
+    void DBParser::readDatabase(const Str& dbPath) {
+        auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + DefaultDFTSnapshotsFolder);
+
+        for (const auto &entry: snapshotsFolderIterator) {
             auto fileName = entry.path().string();
-            Log::Status() << "Started reading entry '" << fileName << "'" << Log::Flush;
 
             std::size_t pos = fileName.rfind(criticalParameter);
             if (pos != Str::npos) {
@@ -131,7 +122,6 @@ namespace Modes::DatabaseViewer {
             Log::Debug() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << entry.first << " from "
                         << entry.second << Log::Flush;
     }
-
     auto DBParser::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {
         std::ifstream inFile(filePath, std::ios::binary);
 
@@ -148,8 +138,6 @@ namespace Modes::DatabaseViewer {
 
             if(!PythonUtils::CheckIfPyDictIsWellFormed(line)) {
                 auto pyDict = PythonUtils::ParsePythonDict(line);
-
-                Log::Success() << "Is a Python dictionary with " << pyDict.size() << " entries." << Log::Flush;
 
                 if(false) for(auto &entry : pyDict) {
                     auto name = entry.first;
@@ -173,7 +161,6 @@ namespace Modes::DatabaseViewer {
 
         throw DirtyDBException("file \"" + filePath + "\" does not contain Python dictionary header");
     }
-
     auto DBParser::ReadData(const Str& filePath) -> RealVector {
         std::ifstream inFile(filePath, std::ios::binary);
 
@@ -194,43 +181,69 @@ namespace Modes::DatabaseViewer {
             doubleData.emplace_back(value);
 
         // Output the read doubles for verification
-        Log::Debug() << "Read " << doubleData.size() << " float64 entries." << Log::Flush;
 
         inFile.close();
 
         return doubleData;
     }
-
-    auto DBParser::getFileSet() const -> const std::map<Real, Str> & { return fileSet; }
-
-    auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
-
     auto DBParser::BuildField(const Str& filename) -> std::shared_ptr<RtoR::DiscreteFunction_CPU> {
-        Log::Status() << "Started building field for " << filename << Log::Flush;
+        Log::Debug() << "Started building field for " << filename << Log::Flush;
 
         auto dict = ReadPyDict(filename);
         auto data = ReadData(filename);
 
-        Log::Debug() << "Python dictionary and Real64 data are built" << Log::Flush;
-
         RealArray dataArr(data.data(), data.size());
 
         char *endPtr;
+        auto N    = std::strtol(dict["N"].first.c_str(), &endPtr, 10);
         auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
         auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
         auto xMax = xMin+L;
 
-        Log::Debug() << "Gathered field metadata." << Log::Flush;
+        if(filename.rfind(".dft.snapshot")) {
+            if(!(dataArr.size() == N/2+1))
+                Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
+
+            fix Δk = 2 * Constants::pi / L;
+            xMin = 0.0;
+            xMax = Δk*(Real)dataArr.size();
+        }
 
         auto field = new RtoR::DiscreteFunction_CPU(dataArr, xMin, xMax);
-
-        Log::Debug() << "Built RtoR::DiscreteFunction_CPU." << Log::Flush;
 
         return std::shared_ptr<RtoR::DiscreteFunction_CPU>{field};
     }
 
-    auto DBParser::getFieldMap() const -> FieldMap {
-        return fieldMap;
+
+    auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
+    auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
+
+    auto DBParser::buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU> {
+        IN sampleField = *fieldMap.begin()->second;
+
+        fix N = fieldMap.size();
+        fix M = sampleField.N;
+        fix ωMin = fieldMap.begin() ->first;
+        fix ωMax = fieldMap.rbegin()->first;
+        fix kMin = sampleField.xMin;
+        fix kMax = sampleField.xMax;
+        fix hω = (ωMax-ωMin)/(Real)N;
+        fix hk = (kMax-kMin)/(Real)M;
+
+
+        auto fullField = new R2toR::DiscreteFunction_CPU(N, M, ωMin, kMin, hω, hk);
+
+        int i=0;
+        for (auto &pair: fieldMap) {
+            auto ω = pair.first;
+            IN field = *pair.second;
+            auto &spaceData = field.getSpace().getHostData();
+            for(int j=0; j<M; ++j)
+                fullField->At(i, j) = spaceData[j];
+            ++i;
+        }
+
+        return std::shared_ptr<R2toR::DiscreteFunction_CPU>(fullField);
     }
 
 

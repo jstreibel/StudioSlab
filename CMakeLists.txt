@@ -6,6 +6,8 @@ option( STUDIOSLAB_SFML2_SUPPORT "Enable SFML 2 support in StudioSlab" ON )
 
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
 
+option( STUDIOSLAB_FAST_COMPILE "Disable O3 etc." OFF)
+
 
 
 project(StudioSlab CXX C )
@@ -92,12 +94,18 @@ else ()
     add_compile_definitions( STUDIOSLAB_USE_FP32=false )
 endif ()
 
-if(CMAKE_BUILD_TYPE STREQUAL Release)
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
-	message(STATUS "Using -O3 flag")
+
+if(STUDIOSLAB_FAST_COMPILE)
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0")
+	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O0")
+	message(STATUS "Using -O0 flag (for fast compile)")
+
+elseif(CMAKE_BUILD_TYPE STREQUAL Release)
+		set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
+		set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
+		message(STATUS "Using -O3 flag")
 else()
-	message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
+		message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
 

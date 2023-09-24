@@ -63,6 +63,7 @@ namespace Core {
         switch (impl) {
             case Headless:
                 BackendManager::instance = std::make_unique<ConsoleBackend>();
+                break;
             case GLFW:
                 BackendManager::instance = std::make_unique<GLFWBackend>();
                 break;

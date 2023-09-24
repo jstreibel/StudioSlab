@@ -23,22 +23,20 @@ if(&NAME == nullptr) throw "Bad cast.";
 
 #include <driver_types.h>
 
-// cw stands for cuda error wrapper
+// cew stands for Cuda Error Wrapper
 void cew(cudaError err);
 
 #endif // USE_CUDA
 
-Str ToStr(const double &a_value, const int &decimal_places = 2, bool useScientificNotation= false);
+#include "String.h"
 
-template <typename T>
-Str ToStr(const T &a_value){ return std::to_string(a_value); }
-Str ToStr(bool value);
-Str ToStr(const Str& str);
-
+template<typename T>
+std::shared_ptr<T> DummyPtr(T &instance) {
+    return std::shared_ptr<T>(&instance, [](T*){});
+}
 
 namespace Common {
     double RoundToMostSignificantDigits(double num, int digits=3);
-
 
     Str GetPWD();
 

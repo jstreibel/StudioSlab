@@ -161,7 +161,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
 
     if(mFieldDisplay.getFunction() == nullptr || true) {
-        mFieldDisplay.setup(DummyPtr(phi));
+        mFieldDisplay.setFunction(DummyPtr(phi));
     }
 
     mSectionGraph.clearFunctions();

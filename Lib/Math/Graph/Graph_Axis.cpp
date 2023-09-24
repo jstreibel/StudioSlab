@@ -103,7 +103,6 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     auto coords = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
-    Count digits = 5;
     auto label = getXHairLabel(coords);
     Styles::GetCurrent()->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
@@ -115,7 +114,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
 
-    if(false)
+    if(true)
     {
         auto mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 

@@ -48,7 +48,7 @@ void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
              + "failed conversion from command line input. Type is " + typeid(Type).name()
              + ". Exception what(): " + exception.what();
 
-        throw msg;
+        throw Exception(msg);
     }
 }
 
@@ -89,9 +89,10 @@ auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
     return val < rhs;
 }
 
-#endif
-
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;
 template class ParameterTemplate<Str>;
 template class ParameterTemplate<bool>;
+
+#endif
+

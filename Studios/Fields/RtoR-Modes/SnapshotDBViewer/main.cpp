@@ -22,7 +22,7 @@
 #include "DatabaseParser.h"
 
 class App : public AppBase {
-    StringParameter snapshotDBFolder = StringParameter("./snapshots", "db_folder", "the location of the snapshots "
+    StringParameter snapshotDBFolder = StringParameter("./db", "db_folder", "the location of the snapshots "
                                                                             "database folder");
 
     StringParameter criticalParameter = StringParameter("omega", "param", "the critical param of the db set; should "

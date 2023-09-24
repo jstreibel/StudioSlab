@@ -3,7 +3,7 @@
 
 #include "Parameter.h"
 
-#define PARAMETER_TEMPLATE_SOURCE_ON_HEADER
+// #define PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
 template <class Type>
 class ParameterTemplate : public Parameter {
@@ -127,17 +127,13 @@ auto ParameterTemplate<Type>::operator=(const ParameterTemplate &rhs) -> Type {
 template<class Type>
 auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {    return val < rhs; }
 
+
 #endif // PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
 typedef ParameterTemplate < int  > IntegerParameter;
 typedef ParameterTemplate < Real > RealParameter;
 typedef ParameterTemplate < Str  > StringParameter;
 typedef ParameterTemplate < bool > BoolParameter;
-
-
-
-
-
 
 
 

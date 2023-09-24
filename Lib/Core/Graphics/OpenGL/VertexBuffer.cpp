@@ -185,14 +185,8 @@ namespace OpenGL {
     void VertexBuffer::upload() {
         if( state == FROZEN ) return;
 
-        if( !vertices_id ) {
-            glGenBuffers( 1, &vertices_id );
-            Log::Debug() << "Vertices id generated: " << vertices_id << Log::Flush;
-        }
-        if( !indices_id ) {
-            glGenBuffers( 1, &indices_id );
-            Log::Debug() << "Indices id generated: " << indices_id << Log::Flush;
-        }
+        if( !vertices_id ) glGenBuffers( 1, &vertices_id );
+        if( !indices_id )  glGenBuffers( 1, &indices_id );
 
         fix vsize = vertices->size*vertices->item_size;
         fix isize = indices->size*indices->item_size;

@@ -1,3 +1,4 @@
+
 #include "OutputHistoryToFile.h"
 #include "Core/Tools/Log.h"
 
@@ -6,6 +7,7 @@
 #include <Utils/Timer.h>
 
 #include <utility>
+#include <iomanip>
 
 const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))

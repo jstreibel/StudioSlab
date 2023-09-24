@@ -18,13 +18,6 @@
 
 #include <utility>
 
-
-#define drawFieldVerts(offset) \
-glTexCoord2d(si, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMin); \
-glTexCoord2d(sf, ti); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMax+(offset), domain.yMin); \
-glTexCoord2d(sf, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMax+(offset), domain.yMax); \
-glTexCoord2d(si, tf); glVertex2d(-.5*hTexturePixelSizeInSpaceCoord + domain.xMin+(offset), domain.yMax);
-
 #define ODD true
 
 struct FlatFieldVertex {
@@ -53,11 +46,10 @@ R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real
     program.setUniform("eps", (GLfloat)cMap_epsArg);
 };
 
-void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function) {
+void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function) {
     func = std::move(function);
 
-    if(!func->isDiscrete())
-        throw "R2toR::Graphics::FlatFieldDisplay not-discrete function draw unimplemented";
+    if(!func->isDiscrete()) NOT_IMPLEMENTED
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
@@ -85,7 +77,7 @@ void R2toR::Graphics::FlatFieldDisplay::setup(R2toR::Function::ConstPtr function
         auto tf = 1.0f; // + vPixelSizeInTexCoord;
 
         fix xMin_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMin);
-        fix xMax_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMax);
+        fix xMax_f = (float) (+.5*hTexturePixelSizeInSpaceCoord + domain.xMax);
         fix yMin_f = (float) (domain.yMin);
         fix yMax_f = (float) (domain.yMax);
 
@@ -168,10 +160,6 @@ void R2toR::Graphics::FlatFieldDisplay::computeColormapTexture() {
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateTextureData() { validTextureData = false; }
-
-Styles::Color R2toR::Graphics::FlatFieldDisplay::computeColor(Real val) const {
-    return cMap.mapValue(logScale ? logAbs(val, cMap_epsArg) : val, cMap_min, cMap_max);
-}
 
 void R2toR::Graphics::FlatFieldDisplay::repopulateTextureBuffer() {
     if(func == nullptr || validTextureData) return;
@@ -324,7 +312,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                 ImGui::Text("ϕₘᵢₙ");
                 ImGui::SameLine();
                 ImGui::PushItemWidth(relativeWidth);
-                if (ImGui::SliderFloat("##min", &min, -2, -.005f)) {
+                if (ImGui::SliderFloat("##min", &min, -10, 0)) {
                     cMap_min = min;
                     if (symmetricMaxMin) cMap_max = -min;
 
@@ -333,7 +321,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
 
                 }
                 ImGui::SameLine();
-                if (ImGui::SliderFloat("ϕₘₐₓ", &max, .005f, 2)) {
+                if (ImGui::SliderFloat("ϕₘₐₓ", &max, .001f, 10)) {
                     cMap_max = max;
                     if (symmetricMaxMin) cMap_min = -max;
 
@@ -387,7 +375,7 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                     computeColormapTexture();
                 }
                 ImGui::SameLine();
-                if (ImGui::Button("Odd permute")) {
+                if (ImGui::Button("RGB -> BGR")) {
                     cMap = cMap.bgr();
                     computeColormapTexture();
                 }

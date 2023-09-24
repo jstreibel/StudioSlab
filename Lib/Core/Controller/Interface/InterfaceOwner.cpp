@@ -7,6 +7,8 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
 
+#include <iomanip>
+
 InterfaceOwner::InterfaceOwner(bool IKnowIMustCallLateStart) {
     if(!IKnowIMustCallLateStart) Log::WarningImportant("Remember to call LateStart!") << Log::Flush;
 }

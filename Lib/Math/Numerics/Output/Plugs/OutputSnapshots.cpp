@@ -8,8 +8,10 @@
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Core/Tools/Log.h"
 
-#include <Core/Controller/Interface/InterfaceManager.h>
+#include "Core/Controller/Interface/InterfaceManager.h"
 
+#include <fstream>
+#include <iomanip>
 
 OutputSnapshot::OutputSnapshot(const NumericConfig &params, const Str &customFileDescription, const size_t T_fileNamePrecision)
         : Numerics::OutputSystem::Socket(params, "Snapshot output", 1), customFileDescription(customFileDescription),

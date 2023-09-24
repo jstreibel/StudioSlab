@@ -19,6 +19,13 @@
 
 namespace R2toR::Graphics {
     class FlatFieldDisplay : public Core::Graphics::Graph2D {
+        enum Scale {
+            Linear,
+            Log,
+            Logit,
+            LogEpsilon
+        };
+
         bool validTextureData = false;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
@@ -28,8 +35,6 @@ namespace R2toR::Graphics {
         Real cMap_min                   = -1.1;
         Real cMap_max                   =  1.1;
         bool symmetricMaxMin            = true;
-
-        bool xPeriodic = false;
 
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Shader program;
@@ -41,7 +46,6 @@ namespace R2toR::Graphics {
         R2toR::Function::ConstPtr func    = nullptr;
         OpenGL::Texture2D_Real*   textureData = nullptr;
 
-        Styles::Color computeColor(Real val) const;
         void computeGraphRanges();
 
         Str getXHairLabel(const Point2D &coords) override;
@@ -54,7 +58,7 @@ namespace R2toR::Graphics {
     public:
         explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.);
 
-        void setup(R2toR::Function::ConstPtr function);
+        void setFunction(R2toR::Function::ConstPtr function);
 
         auto getFunction() const -> R2toR::Function::ConstPtr;
 

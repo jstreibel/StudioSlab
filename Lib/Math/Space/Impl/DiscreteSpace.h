@@ -20,7 +20,6 @@ struct DimensionMetaData {
      * with 256x512x64 sites would have N={256,512,64}.
      */
     explicit DimensionMetaData(const UIntArray& N, RealArray _h) : nDim(N.size()), N(N), h(std::move(_h)) {
-        Log::Debug() << "Instantiated DimensionMetaData." << Log::Flush;
         assert(N.size() == h.size());
     }
 

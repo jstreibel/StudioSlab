@@ -9,7 +9,7 @@
 #include <utility>
 #include <string>
 
-#define NOT_IMPLEMENTED throw NotImplementedException(__PRETTY_FUNCTION__);
+#define NOT_IMPLEMENTED throw NotImplementedException(Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__));
 
 class Exception : public std::exception {
 private:

@@ -8,7 +8,6 @@
 #include <utility>
 
 #include "Types.h"
-#include "IsAbstract.h"
 // #include "Core/Tools/Log.h"
 
 template <typename T>

@@ -8,6 +8,8 @@
 #include "Math/Numerics/Output/Plugs/HistoryKeeper.h"
 #include "Math/Numerics/Output/Format/OutputFormatterBase.h"
 
+#include <fstream>
+
 namespace RtoR {
     class OutputHistoryToFile : public HistoryKeeper {
         void _dump(bool integrationIsFinished) override;

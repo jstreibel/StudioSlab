@@ -77,7 +77,7 @@ for omega in unique(linspace(omega_min, omega_max, omega_steps)):
         arg_list = ["RtoR-Modes",
                     '-t' + f(t), '-L' + f(L), '-N'+str(N),
                     '--omega='+f(omega),
-                    '--th=1', '--dft_snapshot', '--no_history_to_file', '--BC=0', '-V2']
+                    '--th=1', '--dft_snapshot', '--outN=2000', '--BC=0', '-V2']
 
         sim_info = (omega, k)
         sim_list.append((arg_list, sim_info))
@@ -129,8 +129,6 @@ while len(sim_list) or not (len(dead_procs) == total):
             if not success:
                 out, err = proc.communicate()
                 print("\n\n\n")
-                # out = out.replace(b'\\\\', b'\\')
-                #ast.literal_eval(out.decode('utf-8'))
                 print(out.decode('utf-8'))
                 print("\n\n\n")
 

@@ -8,6 +8,8 @@
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
+#include <iomanip>
+
 Interface::Interface(Str name, InterfaceOwner *owner, int priority)
     : owner(owner), priority(priority) {
 

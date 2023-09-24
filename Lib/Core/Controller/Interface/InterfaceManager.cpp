@@ -15,7 +15,7 @@ auto InterfaceManager::getInstance() -> InterfaceManager & {
     return *instance;
 }
 
-void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
+void InterfaceManager::registerInterface(const Interface::Ptr& anInterface) {
     auto &log = Log::Info();
     log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName() << Log::ResetFormatting << "\" [ "
                 << "priority " << anInterface->priority << " ]";
@@ -29,14 +29,14 @@ void InterfaceManager::registerInterface(Interface::Ptr anInterface) {
 
     for(const auto &p : anInterface->getParameters()) {
         auto desc = p->getDescription();
-        if(desc != "") desc = " (" + desc + ")";
+        if(!desc.empty()) desc = " (" + desc + ")";
 
         log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->getFullCLName() << Log::ResetFormatting << desc;
     }
 
     log << Log::Flush;
 
-    for (auto subInterface: subInterfaces)
+    for (const auto& subInterface: subInterfaces)
         registerInterface(subInterface);
 }
 
@@ -48,7 +48,7 @@ auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
     return V;
 }
 
-void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
+void InterfaceManager::feedInterfaces(const CLVariablesMap& vm) {
     Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
     auto comp = [](const Interface::Ptr& a, const Interface::Ptr& b) { return *a < *b; };
@@ -56,7 +56,7 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
 
     auto &log = Log::Info();
     log << "[priority] Interface";
-    for(auto interface : interfaces){
+    for(const auto& interface : interfaces){
 
         log << "\n\t\t\t\t\t  [" << interface->priority << "] " << interface->getName();
 
@@ -65,7 +65,7 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
     }
     log << Log::Flush;
 
-    for(auto interface : interfaces){
+    for(const auto& interface : interfaces){
         // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
         // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
@@ -76,24 +76,23 @@ void InterfaceManager::feedInterfaces(CLVariablesMap vm) {
 }
 
 auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {
-    //for(letcr p : modelMTMap) stringStream << "\"" << p.first << "\": " << p.second << ", ";
 
     StringStream ss;
-    for(auto interface : interfaces) {
+    for(const auto& interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto parameter : parameters)
+        for(const auto& parameter : parameters)
             ss << "\"" << parameter->getCLName(true) << "\": " << parameter->valueToString() << ", ";
     }
 
     return ss.str();
 }
 
-auto InterfaceManager::renderParametersToString(StrVector params, Str separator, bool longName) const -> Str {
+auto InterfaceManager::renderParametersToString(const StrVector& params, const Str& separator, bool longName) const -> Str {
     StringStream ss;
 
-    for(auto interface : interfaces) {
+    for(const auto& interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto parameter : parameters) {
+        for(const auto& parameter : parameters) {
             auto name = parameter->getCLName(longName);
 
             if(Common::Contains(params, name))
@@ -107,7 +106,7 @@ auto InterfaceManager::renderParametersToString(StrVector params, Str separator,
 }
 
 auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr   {
-    auto compFunc = [target](Interface::ConstPtr anInterface) { return anInterface->operator==(target); };
+    auto compFunc = [target](const Interface::ConstPtr& anInterface) { return anInterface->operator==(target); };
 
     auto it = std::find_if( interfaces.begin(), interfaces.end(), compFunc );
 
@@ -117,12 +116,12 @@ auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr  
     return *it;
 }
 
-auto InterfaceManager::getParametersValues(StrVector params) const -> std::vector<std::pair<Str,Str>> {
+auto InterfaceManager::getParametersValues(const StrVector& params) const -> std::vector<std::pair<Str,Str>> {
     std::vector<std::pair<Str,Str>> values;
 
-    for(auto interface : interfaces) {
+    for(const auto& interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto parameter : parameters) {
+        for(const auto& parameter : parameters) {
             auto name = parameter->getCLName();
 
             if(Common::Contains(params, name))
@@ -133,10 +132,10 @@ auto InterfaceManager::getParametersValues(StrVector params) const -> std::vecto
     return values;
 }
 
-auto InterfaceManager::getParameter(Str name) const -> const Parameter & {
-    for(auto interface : interfaces) {
+auto InterfaceManager::getParameter(const Str& name) const -> const Parameter & {
+    for(const auto& interface : interfaces) {
         auto parameters = interface->getParameters();
-        for(const auto parameter : parameters) {
+        for(const auto& parameter : parameters) {
             if(name == parameter->getCLName())
                 return *parameter;
         }

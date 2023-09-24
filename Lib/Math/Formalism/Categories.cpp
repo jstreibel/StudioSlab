@@ -73,7 +73,7 @@ Str Unit::ToString() const {
     return Category::ToString();
 }
 
-Str Unit::operator()(const Real &val, Count rounding){
+Str Unit::operator()(const Real &val, Count rounding) const {
     if(Common::areEqual(baseValue, 1) && sym.empty()) return ToStr(val, (int)rounding);
 
     fix reVal = val/baseValue;

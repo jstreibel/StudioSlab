@@ -14,6 +14,8 @@
 #include "Core/Controller/Interface/InterfaceOwner.h"
 #include "Utils/Singleton.h"
 
+#include <iostream>
+
 #define FORCE_VERBOSE false
 
 class Log : public Singleton<Log>, InterfaceOwner

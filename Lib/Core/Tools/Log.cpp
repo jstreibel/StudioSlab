@@ -5,6 +5,7 @@
 #include "Log.h"
 
 #include <typeinfo>
+#include <iomanip>
 #define GET_CLASS_NAME(obj) typeid(obj).name()
 
 Log* Log::myInstance = nullptr;

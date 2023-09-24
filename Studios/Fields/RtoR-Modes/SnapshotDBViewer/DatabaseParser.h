@@ -11,7 +11,7 @@
 
 #include "Utils/Types.h"
 #include "Utils/PythonUtils.h"
-
+#include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 
 namespace Modes::DatabaseViewer {
@@ -21,7 +21,7 @@ namespace Modes::DatabaseViewer {
         FieldMap fieldMap;
         Str criticalParameter;
 
-        void readFolder(const Str& folder);
+        void readDatabase(const Str& folder);
         void checkIntervalConsistency();
 
         static auto ReadPyDict(const Str& filename) -> PythonUtils::PyDict;
@@ -31,11 +31,11 @@ namespace Modes::DatabaseViewer {
     public:
         typedef std::shared_ptr<Modes::DatabaseViewer::DBParser> Ptr;
 
-        explicit DBParser(const Str& rootDBFolder, const Str& criticalParameter);
+        explicit DBParser(const Str& rootDBFolder, Str  criticalParameter);
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;
-        auto getFieldMap() const -> FieldMap;
+        auto buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU>;
     };
 } // Modes::DatabaseViewer
 

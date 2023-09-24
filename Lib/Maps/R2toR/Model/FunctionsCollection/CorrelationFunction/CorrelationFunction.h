@@ -7,7 +7,6 @@
 
 
 #include "Maps/R2toR/Model/R2toRFunction.h"
-#include "Utils/SharedPointer.h"
 #include "Sampler.h"
 
 namespace R2toR {

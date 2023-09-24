@@ -33,10 +33,7 @@ namespace OpenGL {
         data = (ByteData)malloc(size*4);
 
         fix sizeMB = size*4/(1024*1024.);
-        Log::Critical() << "OpenGL::Texture is allocating " << sizeMB << "MB of GPU texture data to upload "
-                        << size << " history to." << Log::Flush;
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-
         if(!OpenGLUtils::checkGLErrors("after trying to reserve texture in gpu"))
             Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }

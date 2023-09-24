@@ -37,7 +37,7 @@ void R2toR::OutputOpenGL::draw() {
     mSectionGraph.addFunction(&phi);
 
     if(mFieldDisplay.getFunction() == nullptr)
-        mFieldDisplay.setup(DummyPtr(phi));
+        mFieldDisplay.setFunction(DummyPtr(phi));
 }
 
 

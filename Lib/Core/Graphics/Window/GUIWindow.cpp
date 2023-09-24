@@ -56,7 +56,7 @@ void GUIWindow::draw() {
                 continue;
             }
 
-            if (i++ % 2 && w_ > 500) ImGui::SameLine(getw() / 2. - hSpacing);
+            if(false) if (i++ % 2 && w_ > 500) ImGui::SameLine(getw() / 2. - hSpacing);
 
             ImGui::TextColored(color, text.c_str(), nullptr);
         }
