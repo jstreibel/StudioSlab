@@ -20,6 +20,8 @@ namespace Core {
         static void BuildFonts();
 
         BackendImplementation system;
+
+        bool showDemos = false;
     public:
         explicit ImGuiModule(BackendImplementation);
         ~ImGuiModule() override;

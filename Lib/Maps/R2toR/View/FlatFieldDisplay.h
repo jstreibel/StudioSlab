@@ -15,6 +15,8 @@
 #include "Core/Graphics/OpenGL/Texture2D_Color.h"
 #include "Core/Graphics/OpenGL/Texture2D_Real.h"
 #include "Core/Graphics/OpenGL/Texture1D_Color.h"
+#include "Core/Graphics/OpenGL/Artists/ColorBar.h"
+#include "Math/Constants.h"
 
 
 namespace R2toR::Graphics {
@@ -30,6 +32,7 @@ namespace R2toR::Graphics {
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
         OpenGL::Texture1D_Color* cMap_texture = nullptr;
+        OpenGL::ColorBar colorBar;
         bool logScale                   = true;
         Real cMap_epsArg                =  1;
         Real cMap_min                   = -1.1;
@@ -43,6 +46,7 @@ namespace R2toR::Graphics {
 
         void computeColormapTexture();
     protected:
+        Unit funcUnit;
         R2toR::Function::ConstPtr func    = nullptr;
         OpenGL::Texture2D_Real*   textureData = nullptr;
 
@@ -58,7 +62,7 @@ namespace R2toR::Graphics {
     public:
         explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.);
 
-        void setFunction(R2toR::Function::ConstPtr function);
+        void setFunction(R2toR::Function::ConstPtr function, Unit unit=Constants::One);
 
         auto getFunction() const -> R2toR::Function::ConstPtr;
 

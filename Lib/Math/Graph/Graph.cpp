@@ -18,7 +18,6 @@
 #include "Core/Backend/BackendManager.h"
 
 #define POPUP_ON_MOUSE_CALL false
-#define ANIMATION_TIME_SECONDS 0.2
 
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
 
@@ -392,7 +391,6 @@ Real Core::Graphics::Graph2D::getAnimationTime() const { return animationTimeSec
 void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) { baseHorizontalUnit = hUnit; }
 
 void Core::Graphics::Graph2D::setVerticalUnit(const Unit &hUnit)   { baseVerticalUnit   = hUnit; }
-
 
 
 

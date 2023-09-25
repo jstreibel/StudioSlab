@@ -28,6 +28,7 @@ namespace OpenGL {
         bool uploadData(UInt row0, Count nRows, PixelDataFormat format, PixelDataType type, const void *dataBegin);
 
         void set_sPeriodicOn();
+        void setSWrap(WrapMode wrapMode);
     };
 
 } // OpenGL

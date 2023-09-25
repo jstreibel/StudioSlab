@@ -17,6 +17,7 @@ add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/DBViewer.cpp
         SnapshotDBViewer/DatabaseParser.cpp
         SnapshotDBViewer/DatabaseParser.h
+        SnapshotDBViewer/KGDispersionRelation.cpp
 )
 target_link_libraries ( RtoR-SnapshotDBViewer ${SlabLibs} )
 

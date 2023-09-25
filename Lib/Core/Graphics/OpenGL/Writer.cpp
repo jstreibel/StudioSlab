@@ -105,46 +105,13 @@ void Core::Graphics::Writer::drawBuffer() {
     glActiveTexture(textureUnit);
     glBindTexture(GL_TEXTURE_2D, atlas->id);
 
-#ifndef DEBUG_SHOW_ATLAS_TEXTURE
-    {
-        program.use();
-        program.setUniform("texture", textureUnit-GL_TEXTURE0);
-        program.setUniform4x4("model", model.data);
-        program.setUniform4x4("view", view.data);
-        program.setUniform4x4("projection", projection.data);
+    program.use();
+    program.setUniform("texture", textureUnit-GL_TEXTURE0);
+    program.setUniform4x4("model", model.data);
+    program.setUniform4x4("view", view.data);
+    program.setUniform4x4("projection", projection.data);
 
-        vertexBuffer.render(GL_TRIANGLES);
-    }
-#else
-    {
-        glEnable(GL_TEXTURE_2D);
-
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glColor3d(1,1,1);
-        fix p =.95;
-        fix smin = -.1;
-        fix tmin = -.1;
-        fix smax = 1.1;
-        fix tmax = 1.1;
-        glBegin(GL_QUADS);
-        glTexCoord2d(smin, tmin); glVertex2d(-p, p);
-        glTexCoord2d(smax, tmin); glVertex2d( p, p);
-        glTexCoord2d(smax, tmax); glVertex2d( p,-p);
-        glTexCoord2d(smin, tmax); glVertex2d(-p,-p);
-        glEnd();
-
-        glDisable(GL_TEXTURE_2D);
-        glBegin(GL_LINE_LOOP);
-        glVertex2d(-p, p);
-        glVertex2d( p, p);
-        glVertex2d( p,-p);
-        glVertex2d(-p,-p);
-        glEnd();
-    }
-#endif
+    vertexBuffer.render(GL_TRIANGLES);
 
 }
 

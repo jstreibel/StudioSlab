@@ -114,7 +114,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
 
-    if(true)
+    if(false)
     {
         auto mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 

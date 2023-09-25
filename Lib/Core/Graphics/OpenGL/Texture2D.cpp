@@ -74,8 +74,13 @@ namespace OpenGL {
     void Texture2D::set_sPeriodicOn() {
         bind();
 
-        // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode::Repeat);
+    }
+
+    void Texture2D::setSWrap(WrapMode wrapMode) {
+        bind();
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
     }
 
     bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat,

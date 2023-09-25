@@ -12,6 +12,7 @@ namespace Constants {
     const auto pi_1 = 1.0 / pi;
 
     const Unit π("π", pi);
+    const Unit One("", 1);
 
 }
 

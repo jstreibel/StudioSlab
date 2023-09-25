@@ -17,9 +17,9 @@ Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
 void Window::draw() {
     setupWindow();
 
-    for(auto artist : content){
+    for(const auto& artist : content){
         artist->draw(this);
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist " + Common::getClassName(artist));
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist " + Common::getClassName(artist.get()));
     }
 }
 
@@ -79,7 +79,7 @@ void Window::setupWindow() const {
 
 }
 
-void Window::addArtist(Artist *pArtist) {
+void Window::addArtist(Artist::Ptr pArtist) {
     content.emplace_back(pArtist);
 }
 
@@ -127,12 +127,7 @@ bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
     return true;
 }
 
-void Window::notifyReshape(int w, int h) {
-    this->setSize(w, h);
-
-    for(auto artist : content)
-        artist->reshape(w, h);
-}
+void Window::notifyReshape(int w, int h) { this->setSize(w, h); }
 
 void Window::setDecorate(bool _decorate) { this->decorate = _decorate; }
 

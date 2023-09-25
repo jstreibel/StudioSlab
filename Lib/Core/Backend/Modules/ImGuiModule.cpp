@@ -31,7 +31,6 @@ namespace Core {
 
     void ImGuiModule::GeneralInitialization() {
         // Setup Dear ImGui context
-        // Themes: https://github.com/ocornut/imgui/issues/707
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
@@ -42,9 +41,12 @@ namespace Core {
         // Setup Dear ImGui style
         ImGui::StyleColorsDark();
         //ImGui::StyleColorsLight();
-        //SetupImGuiColors_BlackAndWhite();
+        // SetupImGuiColors_BlackAndWhite();
 
         {
+            // ** THEMES everybody **
+            // https://github.com/ocornut/imgui/issues/707
+
             ImGui::GetStyle().WindowPadding = {20, 10};
             ImGui::GetStyle().FramePadding = ImVec2(12.0f, 6.0f);
             ImGui::GetStyle().CellPadding = {9, 5};
@@ -182,7 +184,6 @@ namespace Core {
         }
 
         ImGui::NewFrame();
-        // if (me.showDemo) ImGui::ShowDemoWindow();
     }
 
     void ImGuiModule::endRender() {
@@ -237,6 +238,13 @@ namespace Core {
 
         if(ImGui::GetIO().WantCaptureKeyboard) return true;
 
+        if(state == Press) {
+            if (key == Key_d) {
+                showDemos = !showDemos;
+                return true;
+            }
+        }
+
         return GUIEventListener::notifyKeyboard(key, state, modKeys);
     }
 
@@ -285,6 +293,8 @@ namespace Core {
     }
 
     bool ImGuiModule::notifyRender() {
+        if (showDemos) ImGui::ShowDemoWindow();
+
         return GUIEventListener::notifyRender();
     }
 

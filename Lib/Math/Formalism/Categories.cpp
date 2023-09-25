@@ -67,7 +67,12 @@ Str Rational::ToString() const {
 
 Unit::Unit(const Unit &unit) : Unit(unit.sym, unit.baseValue) {}
 
-Unit::Unit(Str  symbol, const Real val) : sym(std::move(symbol)), baseValue(val) {}
+Unit::Unit(Str  symbol, const Real val, unsigned maxNumerator, unsigned maxDenominator)
+: sym(std::move(symbol))
+, baseValue(val)
+, maxNumerator(maxNumerator)
+, maxDenominator(maxDenominator)
+{}
 
 Str Unit::ToString() const {
     return Category::ToString();
@@ -80,11 +85,13 @@ Str Unit::operator()(const Real &val, Count rounding) const {
 
     Rational rational(Common::RoundToMostSignificantDigits(reVal, (int)rounding));
 
-    if(std::abs(rational.numerator) > 16 || std::abs(rational.numerator) > 16) return ToStr(reVal, (int)rounding) + sym;
+    if(std::abs(rational.numerator) > maxNumerator
+    || std::abs(rational.denominator) > maxDenominator)
+        return ToStr(reVal, (int)rounding) + sym;
 
     auto unitVal = sym;
-    if     (std::abs(rational.numerator)   != 1) unitVal = ToStr(rational.numerator) + unitVal;
-    else if(std::abs(rational.denominator) != 1) unitVal = unitVal + "/" + ToStr(rational.numerator);
+    if (std::abs(rational.numerator)   != 1) unitVal = ToStr(rational.numerator) + unitVal;
+    if (std::abs(rational.denominator) != 1) unitVal = unitVal + "/" + ToStr(rational.denominator);
 
     return unitVal;
 }

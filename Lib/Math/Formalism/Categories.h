@@ -71,9 +71,11 @@ public:
 class Unit : public Category {
     Str sym;
     Real baseValue;
+    unsigned maxNumerator;
+    unsigned maxDenominator;
 public:
 
-    Unit(Str  symbol="", Real val=1.0);
+    Unit(Str  symbol="", Real val=1.0, unsigned maxNumerator=4, unsigned maxDenominator=4);
     Unit(const Unit &unit);
 
     Real value() const;

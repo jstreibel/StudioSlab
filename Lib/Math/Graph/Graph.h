@@ -9,12 +9,13 @@
 
 #include "Styles.h"
 
-#include "Utils/Utils.h"
-
 #include "Core/Graphics/Utils.h"
 #include "Core/Graphics/Window/Window.h"
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Core/Graphics/OpenGL/Writer.h"
+
+#include "Utils/Utils.h"
+
 
 #include "Maps/RtoR2/ParametricCurve.h"
 
@@ -27,6 +28,7 @@ namespace Core::Graphics {
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
 
+
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
             Spaces::PointSet::Ptr data;
@@ -36,6 +38,7 @@ namespace Core::Graphics {
         };
         typedef std::vector<PointSetMetadata> PointSets;
         static void renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) noexcept;
+
 
         // ************************ CURVES *****************************************
         struct CurveMetadata{

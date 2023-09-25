@@ -44,6 +44,11 @@ set( GRAPHICS_SOURCES
 		OpenGL/PixelData.h						OpenGL/PixelData.cpp
 		OpenGL/TextureUtils.cpp
 		OpenGL/TextureUtils.h
+        OpenGL/Artists/Overlay.cpp
+        OpenGL/Artists/Overlay.h
+		OpenGL/Artists/ColorBar.cpp
+		OpenGL/Artists/ColorBar.h
+		Artists/Artist.cpp
 
 )
 

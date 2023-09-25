@@ -15,6 +15,13 @@ namespace Modes::DatabaseViewer {
         DBParser::Ptr dbParser;
         GUIWindow guiWindow;
         R2toR::Graphics::FlatFieldDisplay allDataDisplay;
+
+        std::shared_ptr<R2toR::DiscreteFunction_CPU> fullField;
+
+        RealVector max_kValues;
+
+        Real KG_mass = 1.0;
+        void drawKGDispersion();
     public:
         explicit DBViewer(DBParser::Ptr dbParser);
 

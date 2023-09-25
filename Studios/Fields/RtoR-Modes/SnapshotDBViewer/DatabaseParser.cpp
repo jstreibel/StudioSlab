@@ -246,5 +246,9 @@ namespace Modes::DatabaseViewer {
         return std::shared_ptr<R2toR::DiscreteFunction_CPU>(fullField);
     }
 
+    auto DBParser::getFieldMap() const -> const FieldMap & {
+        return fieldMap;
+    }
+
 
 } // Modes::DatabaseViewer

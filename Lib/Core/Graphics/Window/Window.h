@@ -16,7 +16,7 @@
 #include <memory>
 
 class Window : public Core::GUIEventListener {
-    std::vector<Artist*> content;
+    std::vector<Artist::Ptr> content;
 
     bool decorate = true;
     bool clear = true;
@@ -37,7 +37,7 @@ public:
 
     explicit Window(int x=0, int y=0, int w=100, int h=100);
 
-    void addArtist(Artist *pArtist);
+    void addArtist(Artist::Ptr pArtist);
 
     virtual void draw();
     virtual void notifyReshape(int _w, int _h);

@@ -35,6 +35,7 @@ namespace Modes::DatabaseViewer {
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;
+        auto getFieldMap() const -> const FieldMap &;
         auto buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU>;
     };
 } // Modes::DatabaseViewer

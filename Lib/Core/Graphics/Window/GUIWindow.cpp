@@ -42,7 +42,7 @@ void GUIWindow::draw() {
     ImGui::SetWindowPos( ImVec2{x_, y_});
     ImGui::SetWindowSize(ImVec2{w_, h_});
 
-    if(!stats.empty() && ImGui::CollapsingHeader("Stats", ImGuiTreeNodeFlags_DefaultOpen)) {
+    if(!stats.empty() && ImGui::CollapsingHeader("Stats")) {
 
         auto i = 0;
         for (auto stat: stats) {

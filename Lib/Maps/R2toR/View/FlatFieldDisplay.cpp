@@ -32,6 +32,7 @@ struct TestVertex {
 
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
 : Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+, colorBar({50,150, 50, 750})
 , cMap_min(phiMin)
 , cMap_max(phiMax)
 , symmetricMaxMin(Common::areEqual(phiMax,-phiMin))
@@ -44,10 +45,13 @@ R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real
     program.setUniform("phiMin", (GLfloat)cMap_min);
     program.setUniform("phiMax", (GLfloat)cMap_max);
     program.setUniform("eps", (GLfloat)cMap_epsArg);
+
+    addArtist(DummyPtr(colorBar));
 };
 
-void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function) {
+void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function, Unit unit) {
     func = std::move(function);
+    funcUnit = unit;
 
     if(!func->isDiscrete()) NOT_IMPLEMENTED
 
@@ -60,6 +64,7 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
 
     delete textureData;
     textureData = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
+    textureData->setSWrap(OpenGL::ClampToEdge);
     program.setUniform("fieldData", textureData->getTextureUnit());
 
     {
@@ -78,8 +83,8 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
 
         fix xMin_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMin);
         fix xMax_f = (float) (+.5*hTexturePixelSizeInSpaceCoord + domain.xMax);
-        fix yMin_f = (float) (domain.yMin);
-        fix yMax_f = (float) (domain.yMax);
+        fix yMin_f = (float) (-.5*vTexturePixelSizeInSpaceCoord + domain.yMin);
+        fix yMax_f = (float) (+.5*vTexturePixelSizeInSpaceCoord + domain.yMax);
 
         vertexBuffer.clear();
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
@@ -157,6 +162,8 @@ void R2toR::Graphics::FlatFieldDisplay::computeColormapTexture() {
     }
 
     cMap_texture->upload();
+
+    colorBar.setTexture(DummyPtr(*cMap_texture));
 }
 
 void R2toR::Graphics::FlatFieldDisplay::invalidateTextureData() { validTextureData = false; }
@@ -222,6 +229,8 @@ bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 void R2toR::Graphics::FlatFieldDisplay::notifyReshape(int newWinW, int newWinH) {
     Graph2D::notifyReshape(newWinW, newWinH);
 
+    colorBar.setLocation({newWinW-100, newWinW-50, newWinH-700, newWinH-200});
+
     computeGraphRanges();
 }
 
@@ -274,8 +283,10 @@ Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
     auto label = Graph2D::getXHairLabel(coords);
 
     fix x = Real2D{coords.x, coords.y};
-    if(func->domainContainsPoint(x))
-        label = "f" + label + " = " + ToStr((*func)(x));
+    if(func->domainContainsPoint(x)) {
+        fix val = (*func)(x);
+        label = "f" + label + " = " + funcUnit(val, 5);
+    }
 
 
     return label;

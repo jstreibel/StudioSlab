@@ -75,8 +75,8 @@ inline Str Log::prefix(){
 
     auto time = timer.getElTime_msec();
 
-    ss << Str("\n") << ResetFormatting << std::setw(10) << ToStr(time)
-       << "ms [ ";
+
+    ss << Str("\n") << ResetFormatting << std::fixed << std::setprecision(2) << std::setw(10) << time << "ms [ ";
 
     return ss.str();
 };
