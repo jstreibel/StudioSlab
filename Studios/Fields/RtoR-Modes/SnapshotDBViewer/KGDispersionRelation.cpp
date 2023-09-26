@@ -17,6 +17,8 @@ Real RtoR::KGDispersionRelation::operator()(Real x) const {
         case ω_AsFunctionOf_k: return sign*sqrt(k² + m²);
         case k_AsFunctionOf_ω: return sign*sqrt(ω² - m²);
     }
+
+    NOT_IMPLEMENTED
 }
 
 bool RtoR::KGDispersionRelation::domainContainsPoint(Real x) const {
@@ -24,5 +26,7 @@ bool RtoR::KGDispersionRelation::domainContainsPoint(Real x) const {
         case ω_AsFunctionOf_k: return true;
         case k_AsFunctionOf_ω: return ω² > m²;
     }
+
+    NOT_IMPLEMENTED
 }
 

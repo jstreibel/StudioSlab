@@ -56,7 +56,7 @@ void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo)
         Log::Info() << "El time since last step: " << elTime << "s" << Log::Flush;
         Log::Info() << "Expected finish in " << Log::FGBlue << int(expectedFinish) / 60 << "m " << int(expectedFinish) % 60 << "s" << Log::Flush;
 
-        this->setnSteps(stepsPerSec);
+        // this->setnSteps(stepsPerSec);
     }
 
     lastn = currn;

@@ -101,16 +101,16 @@ void Core::Graphics::Graph2D::drawXHair() {
 
     fix mouseLocal = getMouseViewportCoord();
 
-    auto coords = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
+    XHairLocation = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
-    auto label = getXHairLabel(coords);
+    auto label = getXHairLabel(XHairLocation);
     Styles::GetCurrent()->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
     XHair.clear();
-    XHair.addPoint({region.xMin, coords.y});
-    XHair.addPoint({region.xMax, coords.y});
-    XHair.addPoint({coords.x, region.yMin});
-    XHair.addPoint({coords.x, region.yMax});
+    XHair.addPoint({region.xMin, XHairLocation.y});
+    XHair.addPoint({region.xMax, XHairLocation.y});
+    XHair.addPoint({XHairLocation.x, region.yMin});
+    XHair.addPoint({XHairLocation.x, region.yMax});
 
     Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
 
@@ -120,7 +120,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
         ImGui::Begin("Graph debug");
         ImGui::Text("Mouse @ %i, %i", mouse.x, mouse.y);
-        ImGui::Text("Mouse in %s @ %f, %f", this->title.c_str(), coords.x, coords.y);
+        ImGui::Text("Mouse in %s @ %f, %f", this->title.c_str(), XHairLocation.x, XHairLocation.y);
         ImGui::Text("Local window coords: %f, %f", mouseLocal.x, mouseLocal.y);
         ImGui::Text("Viewport rect (x, y, w, h): %i, %i, %i, %i", vpRect.xMin, vpRect.yMin, vpRect.width(), vpRect.height());
         ImGui::Text("Window rect (x, y, w, h): %i, %i, %i, %i", windowRect.xMin, windowRect.yMin, windowRect.width(), windowRect.height());
@@ -307,7 +307,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
 void Core::Graphics::Graph2D::reviewGraphRanges() {
     if(!mPointSets.empty())
     {
-        auto referencePointSet = mPointSets[0].data;
+        auto referencePointSet = mPointSets.begin()->data;
 
         region.xMax = referencePointSet->getMax().x;
         region.xMin = referencePointSet->getMin().x;

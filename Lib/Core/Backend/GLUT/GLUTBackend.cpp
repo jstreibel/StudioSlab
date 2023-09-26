@@ -104,17 +104,38 @@ void GLUTBackend::keyboardSpecial(int key, int x, int y)
 {
     Core::KeyMap keyMap;
     switch (key) {
-        case GLUT_KEY_NUM_LOCK: keyMap = Core::Key_NUM_LOCK; break;
-        case GLUT_KEY_BEGIN:    keyMap = Core::Key_HOME; break;
-        case GLUT_KEY_DELETE:   keyMap = Core::Key_DELETE; break;
-        case GLUT_KEY_SHIFT_L:  keyMap = Core::Key_LEFT_SHIFT; break;
-        case GLUT_KEY_SHIFT_R:  keyMap = Core::Key_RIGHT_SHIFT; break;
-        case GLUT_KEY_CTRL_L:   keyMap = Core::Key_LEFT_CONTROL; break;
-        case GLUT_KEY_CTRL_R:   keyMap = Core::Key_RIGHT_CONTROL; break;
-        case GLUT_KEY_ALT_L:    keyMap = Core::Key_LEFT_ALT; break;
-        case GLUT_KEY_ALT_R:    keyMap = Core::Key_RIGHT_ALT; break;
-        case GLUT_KEY_SUPER_L:  keyMap = Core::Key_LEFT_SUPER; break;
-        case GLUT_KEY_SUPER_R:  keyMap = Core::Key_RIGHT_SUPER; break;
+        case GLUT_KEY_NUM_LOCK:  keyMap = Core::Key_NUM_LOCK;      break;
+        case GLUT_KEY_BEGIN:     keyMap = Core::Key_HOME;          break;
+        case GLUT_KEY_DELETE:    keyMap = Core::Key_DELETE;        break;
+        case GLUT_KEY_SHIFT_L:   keyMap = Core::Key_LEFT_SHIFT;    break;
+        case GLUT_KEY_SHIFT_R:   keyMap = Core::Key_RIGHT_SHIFT;   break;
+        case GLUT_KEY_CTRL_L:    keyMap = Core::Key_LEFT_CONTROL;  break;
+        case GLUT_KEY_CTRL_R:    keyMap = Core::Key_RIGHT_CONTROL; break;
+        case GLUT_KEY_ALT_L:     keyMap = Core::Key_LEFT_ALT;      break;
+        case GLUT_KEY_ALT_R:     keyMap = Core::Key_RIGHT_ALT;     break;
+        case GLUT_KEY_SUPER_L:   keyMap = Core::Key_LEFT_SUPER;    break;
+        case GLUT_KEY_SUPER_R:   keyMap = Core::Key_RIGHT_SUPER;   break;
+        case GLUT_KEY_F1:        keyMap = Core::Key_F1;            break;
+        case GLUT_KEY_F2:        keyMap = Core::Key_F2;            break;
+        case GLUT_KEY_F3:        keyMap = Core::Key_F3;            break;
+        case GLUT_KEY_F4:        keyMap = Core::Key_F4;            break;
+        case GLUT_KEY_F5:        keyMap = Core::Key_F5;            break;
+        case GLUT_KEY_F6:        keyMap = Core::Key_F6;            break;
+        case GLUT_KEY_F7:        keyMap = Core::Key_F7;            break;
+        case GLUT_KEY_F8:        keyMap = Core::Key_F8;            break;
+        case GLUT_KEY_F9:        keyMap = Core::Key_F9;            break;
+        case GLUT_KEY_F10:       keyMap = Core::Key_F10;            break;
+        case GLUT_KEY_F11:       keyMap = Core::Key_F11;            break;
+        case GLUT_KEY_F12:       keyMap = Core::Key_F12;            break;
+        case GLUT_KEY_LEFT:      keyMap = Core::Key_LEFT;          break;
+        case GLUT_KEY_UP:        keyMap = Core::Key_UP;            break;
+        case GLUT_KEY_RIGHT:     keyMap = Core::Key_RIGHT;         break;
+        case GLUT_KEY_DOWN:      keyMap = Core::Key_PAGE_DOWN;     break;
+        case GLUT_KEY_PAGE_UP:   keyMap = Core::Key_PAGE_UP;       break;
+        case GLUT_KEY_PAGE_DOWN: keyMap = Core::Key_PAGE_DOWN;     break;
+        case GLUT_KEY_HOME:      keyMap = Core::Key_HOME;          break;
+        case GLUT_KEY_END:       keyMap = Core::Key_END;           break;
+        case GLUT_KEY_INSERT:    keyMap = Core::Key_INSERT;        break;
 
         default: keyMap = Core::Key_UNKNOWN;
     }

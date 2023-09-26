@@ -20,24 +20,34 @@
     return responded;
 
 
-void WindowRow::addWindow(Window::Ptr window, float windowWidth) {
-    windows.emplace_back(window);
-    widths.emplace_back(windowWidth);
+void WindowRow::addWindow(const Window::Ptr& window, RelativePosition relPosition, float windowWidth) {
+    switch (relPosition) {
+        case Left:
+            windows.push_front(window);
+            widths.push_front(windowWidth);
+            break;
+        case Right:
+            windows.push_back(window);
+            widths.push_back(windowWidth);
+            break;
+    }
+
 }
 
 void WindowRow::arrangeWindows() {
-    if(!assertConsistency()) throw "WindowRow inconsistency";
+    if(!assertConsistency()) throw Exception("WindowRow inconsistency");
 
     auto m = windows.size();
 
     if(m==0) return;
 
     std::vector<int> computedWidths(m, (int)(getw()/m));    // "if(freeWidths==m)"
+    auto widthsVector  = RealVector(widths.begin(), widths.end());
 
     auto freeWidths = CountLessThanZero(widths);
     if(freeWidths==0){
         for(int i=0; i<m; ++i){
-            auto relWidth = widths[i];
+            auto relWidth = widthsVector[i];
             auto width = geth() * relWidth;
             computedWidths[i] = (int)width;
         }
@@ -46,7 +56,7 @@ void WindowRow::arrangeWindows() {
         auto wFree = (float)getw() * (1-reservedWidth) / (float)freeWidths;
 
         for(int i=0; i<m; ++i){
-            auto relWidth = widths[i];
+            auto relWidth = widthsVector[i];
             auto width = relWidth>0 ? getw() * relWidth : wFree;
             computedWidths[i] = (int)width;
         }

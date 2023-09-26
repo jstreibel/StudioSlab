@@ -83,6 +83,7 @@ void Core::Graphics::Graph2D::drawGUI() {
 }
 
 void Core::Graphics::Graph2D::drawPointSets() {
+
     for(auto &ptSet : mPointSets){
         auto &func = *ptSet.data;
         auto style = ptSet.plotStyle;
@@ -142,9 +143,24 @@ void
 Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
                                      Styles::PlotStyle style,
                                      Str setName,
-                                     bool affectsGraphRanges) {
-    auto metaData = PointSetMetadata{std::move(pointSet), style, setName, affectsGraphRanges};
-    mPointSets.emplace_back(metaData);
+                                     bool affectsGraphRanges)
+{
+    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName), affectsGraphRanges};
+    mPointSets.push_back(metaData);
+}
+
+void Core::Graphics::Graph2D::removePointSet(const Spaces::PointSet::Ptr& pointSet) {
+    mPointSets.remove_if([&pointSet](const PointSetMetadata &ptSetMetadata)
+    {
+        return ptSetMetadata.data == pointSet;
+    });
+}
+
+void Core::Graphics::Graph2D::removePointSet(const Str &name) {
+    mPointSets.remove_if([&name](const PointSetMetadata &ptSetMetadata)
+     {
+         return ptSetMetadata.name == name;
+     });
 }
 
 void
@@ -258,6 +274,7 @@ void Core::Graphics::Graph2D::setupOrtho() const {
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
+
 void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
 
@@ -391,6 +408,14 @@ Real Core::Graphics::Graph2D::getAnimationTime() const { return animationTimeSec
 void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) { baseHorizontalUnit = hUnit; }
 
 void Core::Graphics::Graph2D::setVerticalUnit(const Unit &hUnit)   { baseVerticalUnit   = hUnit; }
+
+auto Core::Graphics::Graph2D::getLastXHairPosition() const -> Point2D {
+    return XHairLocation;
+}
+
+
+
+
 
 
 

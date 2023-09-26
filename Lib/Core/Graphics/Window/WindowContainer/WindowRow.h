@@ -7,16 +7,18 @@
 
 #include "Core/Graphics/Window/Window.h"
 
+#include <list>
 
 class WindowRow : public Window {
-    std::vector<Window::Ptr> windows;
-    RealVector widths;
+    std::list<Window::Ptr> windows;
+    std::list<Real> widths;
 
     bool assertConsistency() const;
 public:
     WindowRow() = default;
 
-    void addWindow(Window::Ptr window, float windowWidth=-1);
+    enum RelativePosition { Left, Right };
+    void addWindow(const Window::Ptr& window, RelativePosition=Right, float windowWidth=-1);
 
     void arrangeWindows();
 

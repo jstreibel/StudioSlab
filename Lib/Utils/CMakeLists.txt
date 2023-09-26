@@ -15,13 +15,14 @@ set ( UTIL_SOURCES
         PythonUtils.h       PythonUtils.cpp
 		String.h			String.cpp
 		Numbers.h
-		Arrays.h
+		Arrays.h			Arrays.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
 			CUDAUtils.h			CUDAUtils.cpp
-	)
+            Arrays.cpp
+    )
 endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

@@ -65,6 +65,7 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
     delete textureData;
     textureData = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
     textureData->setSWrap(OpenGL::ClampToEdge);
+    textureData->setAntiAliasOff();
     program.setUniform("fieldData", textureData->getTextureUnit());
 
     {
@@ -298,6 +299,9 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
     if (ImGui::Begin("Stats")) {
         if (ImGui::CollapsingHeader((title + " history output").c_str())) {
 
+            const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+            ImGui::BeginChild((title + "history output##1").c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
+
             if (func->isDiscrete()) {
                 auto &dFunc = *dynamic_cast<const DiscreteFunction *>(func.get());
                 ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
@@ -402,6 +406,8 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                 }
             }
         }
+
+        ImGui::EndChild();
     }
     ImGui::End();
 

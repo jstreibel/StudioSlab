@@ -21,6 +21,7 @@
 
 
 #include <memory>
+#include <list>
 
 
 namespace Core::Graphics {
@@ -36,7 +37,7 @@ namespace Core::Graphics {
             Str name;
             bool affectsGraphRanges=true;
         };
-        typedef std::vector<PointSetMetadata> PointSets;
+        typedef std::list<PointSetMetadata> PointSets;
         static void renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) noexcept;
 
 
@@ -57,6 +58,7 @@ namespace Core::Graphics {
 
         Real animationTimeSeconds = 0.2;
 
+        Point2D XHairLocation;
         Spaces::PointSet XHair;
     protected:
         Unit baseHorizontalUnit;
@@ -101,12 +103,16 @@ namespace Core::Graphics {
                          Styles::PlotStyle style,
                          Str setName="",
                          bool affectsGraphRanges=true);
+        void removePointSet(const Spaces::PointSet::Ptr& pointSet);
+        void removePointSet(const Str& name);
         void clearPointSets();
 
         void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name);
         void clearCurves();
 
         void reviewGraphRanges();
+
+        auto getLastXHairPosition() const -> Point2D;
 
         auto getResolution() const -> Resolution;
         auto setResolution(Resolution samples) -> void;

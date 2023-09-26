@@ -32,4 +32,16 @@ typedef std::vector<Str> StrVector;
 
 typedef std::vector<Point2D> PointContainer;
 
+namespace Utils {
+
+    typedef Real MaxValue_type;
+    typedef size_t MaxValue_index;
+
+    typedef std::pair<MaxValue_type, MaxValue_index> MaxInfo;
+
+    MaxInfo GetMax(const RealArray &arr);
+
+}
+
+
 #endif //STUDIOSLAB_ARRAYS_H
