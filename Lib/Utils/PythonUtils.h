@@ -23,7 +23,7 @@ namespace PythonUtils {
 
     Str PyTypeToString(PyType);
 
-    bool CheckIfPyDictIsWellFormed(const Str& pyDict);
+    bool BadPythonDictionary(const Str& pyDict);
 
     /**
      * Very light-weight not-solid parser for python dictionary strings;

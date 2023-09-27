@@ -18,6 +18,7 @@ typedef std::complex<Real>  Complex;
 
 typedef unsigned char       Byte;
 typedef unsigned char*      ByteData;
+typedef char*               RawData;
 typedef Real32*             RealData;
 typedef int                 Int;
 typedef unsigned int        UInt;

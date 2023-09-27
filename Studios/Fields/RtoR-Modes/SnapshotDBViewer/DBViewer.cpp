@@ -3,167 +3,170 @@
 //
 
 #include "DBViewer.h"
-#include "Math/Constants.h"
 
 #include <utility>
 #include "KGDispersionRelation.h"
-#include "Maps/FunctionRenderer.h"
-
-#include "Core/Graphics/Window/WindowContainer/WindowRow.h"
 
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "HistoryFileLoader.h"
 
 namespace Modes::DatabaseViewer {
 
-DBViewer::DBViewer(DBParser::Ptr _dbParser)
-: dbParser(std::move(_dbParser))
-, guiWindow()
-, allDataDisplay("All data", 0.0, 0.5)
-{
-    this->addWindow(DummyPtr(guiWindow));
+    DBViewer::DBViewer(DBParser::Ptr _dbParser)
+    : dbParser(std::move(_dbParser))
+    , guiWindow()
+    , allDataDisplay("All data", 0.0, 0.5)
+    , fullParticularHistoryDisplay("Particular data")
+    {
+        this->addWindow(DummyPtr(guiWindow));
 
-    std::shared_ptr<WindowColumn>winCol(new WindowColumn);
-    this->addWindow(winCol, WindowRow::Left, .8);
-
-
-    auto style = Styles::GetCurrent()->funcPlotStyles[2];
-    style.primitive = Styles::VerticalLines;
-    style.filled = false;
-    style.thickness = 1.5;
-    massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-k²)]", true);
-    style.lineColor = style.lineColor.permute(true);
-    massesGraph.addPointSet(DummyPtr(massesImag_pointSet), style, "ℑ[m=√(ω²-k²)]");
-    style.lineColor = style.lineColor.permute();
-    style.thickness = 3.0;
-    massesGraph.addPointSet(DummyPtr(underXHair), style);
-    massesGraph.setHorizontalUnit(Constants::π);
-
-    winCol->addWindow(DummyPtr(massesGraph));
+        std::shared_ptr<WindowColumn>winCol(new WindowColumn);
 
 
-    allDataDisplay.setVerticalUnit(Constants::π);
-    allDataDisplay.setHorizontalUnit(Constants::π);
-    allDataDisplay.setColorMap(Styles::ColorMaps["blues"].inverse());
-    winCol->addWindow(DummyPtr(allDataDisplay), 0.75);
+        auto style = Styles::GetCurrent()->funcPlotStyles[2];
+        style.primitive = Styles::VerticalLines;
+        style.filled = false;
+        style.thickness = 1.5;
+        massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-k²)]", true);
+        style.lineColor = style.lineColor.permute(true);
+        massesGraph.addPointSet(DummyPtr(massesImag_pointSet), style, "ℑ[m=√(ω²-k²)]");
+        style.lineColor = style.lineColor.permute();
+        style.thickness = 3.0;
+        massesGraph.addPointSet(DummyPtr(underXHair), style);
+        massesGraph.setHorizontalUnit(Constants::π);
 
-    reloadData();
-}
+        allDataDisplay.setVerticalUnit(Constants::π);
+        allDataDisplay.setHorizontalUnit(Constants::π);
+        allDataDisplay.setColorMap(Styles::ColorMaps["blues"].inverse());
 
-void DBViewer::draw() {
+        std::shared_ptr<WindowRow>winRow(new WindowRow);
 
-    guiWindow.begin();
+        winRow->addWindow(DummyPtr(allDataDisplay));
+        winRow->addWindow(DummyPtr(fullParticularHistoryDisplay));
 
-    if(ImGui::CollapsingHeader("Dominant modes")) {
-        static bool isVisible = false;
+        winCol->addWindow(DummyPtr(massesGraph));
+        winCol->addWindow(winRow, 0.75);
 
-        if(ImGui::Checkbox("Visible##dominant_modes", &isVisible)){
-            if(isVisible) drawDominantModes();
-            else allDataDisplay.removePointSet(DummyPtr(maxValuesPointSet));
-        }
+        addWindow(winCol, WindowRow::Left, .8);
+
+        reloadData();
+    }
+
+    void DBViewer::draw() {
 
         fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
         fix dx = fullField->getSpace().getMetaData().geth(0);
         fix L = fullField->getDomain().getLx();
         fix N = fullField->getN();
         fix ωMin = -1.5*dx+fullField->getDomain().xMin;
-        int index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
+        index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
 
-        drawTable(index_XHair);
+        guiWindow.begin();
 
-        // if(index_XHair>=0 && index_XHair<=fullField->getN())            underXHair.addPoint({ω_XHair, });
-    }
+        if(ImGui::CollapsingHeader("Dominant modes")) {
+            static bool isVisible = false;
 
-    if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
-        static bool isVisible = false;
+            if(ImGui::Checkbox("Visible##dominant_modes", &isVisible)){
+                if(isVisible) drawDominantModes();
+                else allDataDisplay.removePointSet(DummyPtr(maxValuesPointSet));
+            }
 
-        if(ImGui::Checkbox("Visible", &isVisible))
-            updateKGDispersion(isVisible);
+            drawTable(index_XHair);
 
-        auto mass = (float)KG_mass;
-        if(ImGui::SliderFloat("mass", &mass, 0.0, 10.0)) {
-            KG_mass = mass;
-            isVisible = true;
-            updateKGDispersion(isVisible);
+            // if(index_XHair>=0 && index_XHair<=fullField->getN()){ /*underXHair.addPoint({ω_XHair, });*/ };
         }
 
-    }
-    guiWindow.end();
+        if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
+            static bool isVisible = false;
 
-    WindowRow::draw();
-}
+            if(ImGui::Checkbox("Visible", &isVisible))
+                updateKGDispersion(isVisible);
 
-void DBViewer::updateKGDispersion(bool visible) {
-    Real mass = KG_mass;
-    static Spaces::PointSet::Ptr KGRelation;
-    allDataDisplay.removePointSet(KGRelation);
+            auto mass = (float)KG_mass;
+            if(ImGui::SliderFloat("mass", &mass, 0.0, 10.0)) {
+                KG_mass = mass;
+                isVisible = true;
+                updateKGDispersion(isVisible);
+            }
 
-    if(!visible) return;
-
-    KGRelation = RtoR::FunctionRenderer::toPointSet(
-            RtoR::KGDispersionRelation(mass, RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
-            0,
-            fullField->getDomain().xMax,
-            5000);
-    auto style = Styles::GetCurrent()->funcPlotStyles[5];
-    style.thickness = 3;
-    style.filled = false;
-    allDataDisplay.addPointSet(KGRelation, style, Str("ω²-k²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
-}
-
-void DBViewer::drawDominantModes() {
-    auto style = Styles::GetCurrent()->funcPlotStyles[0];
-    style.primitive = Styles::Point;
-    style.thickness = 8;
-    allDataDisplay.removePointSet("main modes");
-    allDataDisplay.addPointSet(DummyPtr(maxValuesPointSet), style, "main modes");
-}
-
-void DBViewer::computeMasses(int avRange) {
-    auto &fieldMap = dbParser->getFieldMap();
-
-    for (auto &entry : fieldMap){
-        IN field = *entry.second;
-        IN data = field.getSpace().getHostData();
-
-        fix N = field.N;
-        fix kMin = field.xMin;
-
-        auto maxInfo = Utils::GetMax(data);
-
-        IN ω = entry.first;
-        fix idx = maxInfo.second;
-        fix Δk = field.xMax-field.xMin;
-
-        auto k_avg = 0.0;
-        auto norm = 0.0;
-        int i=-avRange;
-        for(; i <= avRange; ++i){
-            int curr_idx = idx+i;
-            if(curr_idx<0 || curr_idx>=N) continue;
-
-            auto weight = data[curr_idx];
-            auto k = Δk*(Real)(curr_idx)/(Real)N - kMin;
-
-            k_avg += k*weight;
-            norm += weight;
         }
+        guiWindow.end();
 
-        auto k = k_avg/norm;
-
-        maxValues.emplace_back(maxInfo);
-        maxValuesPointSet.addPoint({ω, k});
-
-        fix m² = ω*ω - k*k;
-
-        if(m²>=0)
-            massesReal_pointSet.addPoint({ω, sqrt(m²)});
-        else
-            massesImag_pointSet.addPoint({ω, sqrt(-m²)});
+        WindowRow::draw();
     }
-}
 
-void DBViewer::drawTable(int specialIndex) {
+    void DBViewer::updateKGDispersion(bool visible) {
+        Real mass = KG_mass;
+        static Spaces::PointSet::Ptr KGRelation;
+        allDataDisplay.removePointSet(KGRelation);
+
+        if(!visible) return;
+
+        KGRelation = RtoR::FunctionRenderer::toPointSet(
+                RtoR::KGDispersionRelation(mass, RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
+                0,
+                fullField->getDomain().xMax,
+                5000);
+        auto style = Styles::GetCurrent()->funcPlotStyles[5];
+        style.thickness = 3;
+        style.filled = false;
+        allDataDisplay.addPointSet(KGRelation, style, Str("ω²-k²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
+    }
+
+    void DBViewer::drawDominantModes() {
+        auto style = Styles::GetCurrent()->funcPlotStyles[0];
+        style.primitive = Styles::Point;
+        style.thickness = 8;
+        allDataDisplay.removePointSet("main modes");
+        allDataDisplay.addPointSet(DummyPtr(maxValuesPointSet), style, "main modes");
+    }
+
+    void DBViewer::computeMasses(int avRange) {
+        auto &fieldMap = dbParser->getFieldMap();
+
+        for (auto &entry : fieldMap){
+            IN field = *entry.second;
+            IN data = field.getSpace().getHostData();
+
+            fix N = field.N;
+            fix kMin = field.xMin;
+
+            auto maxInfo = Utils::GetMax(data);
+
+            IN ω = entry.first;
+            fix idx = maxInfo.second;
+            fix Δk = field.xMax-field.xMin;
+
+            auto k_avg = 0.0;
+            auto norm = 0.0;
+            int i=-avRange;
+            for(; i <= avRange; ++i){
+                int curr_idx = idx+i;
+                if(curr_idx<0 || curr_idx>=N) continue;
+
+                auto weight = data[curr_idx];
+                auto k = Δk*(Real)(curr_idx)/(Real)N - kMin;
+
+                k_avg += k*weight;
+                norm += weight;
+            }
+
+            auto k = k_avg/norm;
+
+            maxValues.emplace_back(maxInfo);
+            maxValuesPointSet.addPoint({ω, k});
+
+            fix m² = ω*ω - k*k;
+
+            if(m²>=0)
+                massesReal_pointSet.addPoint({ω, sqrt(m²)});
+            else
+                massesImag_pointSet.addPoint({ω, sqrt(-m²)});
+        }
+    }
+
+    void DBViewer::drawTable(int specialIndex) {
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
@@ -236,11 +239,45 @@ void DBViewer::drawTable(int specialIndex) {
         return WindowRow::notifyKeyboard(key, state, modKeys);
     }
 
-    void DBViewer::reloadData() {
-        fullField = dbParser->buildFullField();
-        allDataDisplay.setFunction(fullField);
+        void DBViewer::reloadData() {
+            fullField = dbParser->buildFullField();
+            allDataDisplay.setFunction(fullField);
 
-        computeMasses(2);
+            computeMasses(2);
+        }
+
+    bool DBViewer::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+        static Timer timer;
+        if(button==Core::MouseButton_LEFT){
+            if(state==Core::Press) timer.reset();
+            else if(state==Core::Release && timer.getElTime_msec() < 200)
+                loadDataUnderMouse();
+        }
+
+
+        return WindowRow::notifyMouseButton(button, state, keys);
+    }
+
+    void DBViewer::loadDataUnderMouse() {
+        auto &fSet = dbParser->getFileSet();
+
+        auto index = index_XHair-1;
+        if(index<0 || index>=fSet.size()) return;
+
+        std::vector files(fSet.begin(), fSet.end());
+        auto filename = files[index].second;
+
+        StrUtils::ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
+        StrUtils::ReplaceLastOccurrence(filename, ".//./snapshots/", "/");
+
+        auto fieldHistory = fullHistoriesMap[filename];
+
+        if(fieldHistory == nullptr) {
+            fieldHistory = HistoryFileLoader::Load(filename);
+            fullHistoriesMap[filename] = fieldHistory;
+        }
+
+        fullParticularHistoryDisplay.setFunction(fieldHistory);
     }
 
 }

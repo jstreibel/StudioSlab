@@ -8,6 +8,11 @@ namespace StrUtils {
     unsigned RealToStringDecimalPlaces = 2;
     bool UseScientificNotation = false;
 
+    void ReplaceLastOccurrence(Str& str, const Str& toReplace, const Str& replaceWith) {
+        auto pos = str.rfind(toReplace);
+        if (pos != Str::npos)  str.replace(pos, toReplace.length(), replaceWith);
+    }
+
 }
 Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {
     auto base = useScientificNotation ? std::scientific : std::fixed;

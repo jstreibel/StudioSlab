@@ -22,7 +22,7 @@ namespace PythonUtils {
         }
     }
 
-    bool CheckIfPyDictIsWellFormed(const Str& pyDict) {
+    bool BadPythonDictionary(const Str& pyDict) {
         std::stack<char> brackets;
         bool inQuotes = false;
         bool expectColon = false;

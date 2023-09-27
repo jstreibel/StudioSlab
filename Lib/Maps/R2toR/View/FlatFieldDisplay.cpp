@@ -283,6 +283,8 @@ void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
 Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
     auto label = Graph2D::getXHairLabel(coords);
 
+    if(func == nullptr) return label;
+
     fix x = Real2D{coords.x, coords.y};
     if(func->domainContainsPoint(x)) {
         fix val = (*func)(x);
@@ -295,6 +297,8 @@ Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
 
 void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
     Graph2D::drawGUI();
+
+    if(func == nullptr) return;
 
     if (ImGui::Begin("Stats")) {
         if (ImGui::CollapsingHeader((title + " history output").c_str())) {

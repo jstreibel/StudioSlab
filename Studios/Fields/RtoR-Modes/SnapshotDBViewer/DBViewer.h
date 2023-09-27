@@ -16,6 +16,7 @@ namespace Modes::DatabaseViewer {
         DBParser::Ptr dbParser;
         GUIWindow guiWindow;
         R2toR::Graphics::FlatFieldDisplay allDataDisplay;
+        R2toR::Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
         Core::Graphics::Graph2D massesGraph;
 
@@ -27,6 +28,9 @@ namespace Modes::DatabaseViewer {
         std::shared_ptr<R2toR::DiscreteFunction_CPU> fullField;
         std::vector<Utils::MaxInfo> maxValues;
 
+        std::map<Str, std::shared_ptr<R2toR::DiscreteFunction_CPU>> fullHistoriesMap;
+
+        int index_XHair;
 
         Real KG_mass = 1.0;
         void updateKGDispersion(bool visible);
@@ -34,12 +38,15 @@ namespace Modes::DatabaseViewer {
         void reloadData();
         void computeMasses(int avRange);
         void drawTable(int specialIndex);
+        void loadDataUnderMouse();
     public:
         explicit DBViewer(DBParser::Ptr dbParser);
 
         void draw() override;
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+
+        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
     };
 }
 

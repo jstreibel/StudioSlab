@@ -24,10 +24,6 @@ namespace Modes::DatabaseViewer {
         void readDatabase(const Str& folder);
         void checkIntervalConsistency();
 
-        static auto ReadPyDict(const Str& filename) -> PythonUtils::PyDict;
-        static auto ReadData(const Str& filename) -> RealVector;
-        static auto BuildField(const Str& filename) -> std::shared_ptr<RtoR::DiscreteFunction_CPU>;
-
     public:
         typedef std::shared_ptr<Modes::DatabaseViewer::DBParser> Ptr;
 

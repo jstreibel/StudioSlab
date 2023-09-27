@@ -14,6 +14,8 @@ typedef std::stringstream   StringStream;
 namespace StrUtils {
     extern unsigned RealToStringDecimalPlaces;
     extern bool UseScientificNotation;
+
+    void ReplaceLastOccurrence(Str& str, const Str& toReplace, const Str& replaceWith);
 }
 
 Str ToStr(const double &a_value);

@@ -4,14 +4,11 @@
 
 #include "DatabaseParser.h"
 
-#include "Utils/PythonUtils.h"
 
-#include "Core/Tools/Log.h"
-#include "Math/Constants.h"
+#include "SnapshotFileLoader.h"
 
 
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <map>
 #include <utility>
@@ -68,7 +65,6 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-
     void DBParser::readDatabase(const Str& dbPath) {
         auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + DefaultDFTSnapshotsFolder);
 
@@ -104,7 +100,7 @@ namespace Modes::DatabaseViewer {
                     }
 
                     fileSet[value] = fileName;
-                    fieldMap[value] = BuildField(fileName);
+                    fieldMap[value] = SnapshotFileLoader::Load(fileName);
                 }
 
             } else {
@@ -116,104 +112,13 @@ namespace Modes::DatabaseViewer {
             }
         }
 
-        Log::Success() << "Extracted critical parameter '" << criticalParameter << "' from database. Relation is below." << Log::Flush;
+        Log::Success() << "Extracted critical parameter '" << criticalParameter
+                       << "' from database. Relation is below." << Log::Flush;
 
         for(auto &entry : fileSet)
             Log::Debug() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << entry.first << " from "
                         << entry.second << Log::Flush;
     }
-    auto DBParser::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {
-        std::ifstream inFile(filePath, std::ios::binary);
-
-        if (!inFile) {
-            Log::Error() << "Error opening file '" << filePath << "'" << Log::Flush;
-            throw DirtyDBException();
-        }
-
-        // Read text lines until separator is found
-        Str line;
-        Str separator = "<<<<-oOo->>>>";
-        while (std::getline(inFile, line)) {
-            Log::Debug() << "Read line: " << line << Log::Flush;
-
-            if(!PythonUtils::CheckIfPyDictIsWellFormed(line)) {
-                auto pyDict = PythonUtils::ParsePythonDict(line);
-
-                if(false) for(auto &entry : pyDict) {
-                    auto name = entry.first;
-                    auto value = entry.second.first;
-                    auto type = entry.second.second;
-                    Log::Info() << std::setw(22) << entry.first << ": " << std::setw(6) << value << " ("
-                                << PythonUtils::PyTypeToString(type)
-                                << ")" << Log::Flush;
-                }
-
-                return pyDict;
-            }
-
-            else Log::Fail() << "Line is not a Python dictionary" << Log::Flush;
-
-            if (line == separator) {
-                Log::Info() << "Line is separator. Breaking." << Log::Flush;
-                break;
-            }
-        }
-
-        throw DirtyDBException("file \"" + filePath + "\" does not contain Python dictionary header");
-    }
-    auto DBParser::ReadData(const Str& filePath) -> RealVector {
-        std::ifstream inFile(filePath, std::ios::binary);
-
-        if (!inFile) {
-            Log::Error() << "Error opening file '" << filePath << "'" << Log::Flush;
-            throw DirtyDBException();
-        }
-
-        // Read text lines until separator is found
-        Str line;
-        Str separator = "<<<<-oOo->>>>";
-        while (std::getline(inFile, line)) if (line == separator) break;
-
-        // Read binary data into a vector of doubles
-        RealVector doubleData;
-        double value;
-        while (inFile.read(reinterpret_cast<char*>(&value), sizeof(double)))
-            doubleData.emplace_back(value);
-
-        // Output the read doubles for verification
-
-        inFile.close();
-
-        return doubleData;
-    }
-    auto DBParser::BuildField(const Str& filename) -> std::shared_ptr<RtoR::DiscreteFunction_CPU> {
-        Log::Debug() << "Started building field for " << filename << Log::Flush;
-
-        auto dict = ReadPyDict(filename);
-        auto data = ReadData(filename);
-
-        RealArray dataArr(data.data(), data.size());
-
-        char *endPtr;
-        auto N    = std::strtol(dict["N"].first.c_str(), &endPtr, 10);
-        auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
-        auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
-        auto xMax = xMin+L;
-
-        if(filename.rfind(".dft.snapshot")) {
-            if(!(dataArr.size() == N/2+1))
-                Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
-
-            fix Δk = 2 * Constants::pi / L;
-            xMin = 0.0;
-            xMax = Δk*(Real)dataArr.size();
-        }
-
-        auto field = new RtoR::DiscreteFunction_CPU(dataArr, xMin, xMax);
-
-        return std::shared_ptr<RtoR::DiscreteFunction_CPU>{field};
-    }
-
 
     auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
