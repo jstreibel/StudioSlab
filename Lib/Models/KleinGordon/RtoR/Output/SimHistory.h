@@ -24,7 +24,12 @@ protected:
     auto handleOutput(const OutputPacket &packet) -> void override;
 
 public:
-    SimHistory(const Core::Simulation::SimulationConfig &simConfig, Resolution N, Real xMin, Real L, const Str& name = "SimulationHistory");
+    SimHistory(const Core::Simulation::SimulationConfig &simConfig,
+               Resolution N_x,
+               Resolution N_t,
+               Real xMin,
+               Real L,
+               const Str& name = "SimulationHistory");
 
     auto getData() const -> const R2toR::DiscreteFunction&;
 

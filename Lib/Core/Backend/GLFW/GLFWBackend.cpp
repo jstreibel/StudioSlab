@@ -64,21 +64,16 @@ void GLFWBackend::run(Program *pProgram) {
 void GLFWBackend::mainLoop() {
     while (!glfwWindowShouldClose(systemWindow))
     {
-        while(!mustRender)
-            program->cycle(Program::CycleOptions::CycleUntilOutput);
+        while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
+        mustRender = false;
 
         auto bg = Core::Graphics::backgroundColor;
         glClearColor(bg.r, bg.g, bg.b, bg.a);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        for(auto &module : modules)
-            module->beginRender();
-
-        for(auto &listener : GetInstance().listeners)
-            listener->Render(systemWindow);
-
-        for(auto &module : modules)
-            module->endRender();
+        for(auto &module : modules) module->beginRender();
+        for(auto &listener : GetInstance().listeners) listener->Render(systemWindow);
+        for(auto &module : modules) module->endRender();
 
         glfwSwapBuffers(systemWindow);
 

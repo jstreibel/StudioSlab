@@ -17,7 +17,7 @@
 BenchmarkHistogram::BenchmarkHistogram(int firstClass, int lastClass, int nClasses)
 : C0(firstClass), VLast(lastClass+classInterval-1), I(classInterval), invI(1./classInterval), histogram(nClasses) {
 
-    Log::Info() << "Benchmark histogram started with " << histogram.size()
+    Log::Status() << "Benchmark histogram started with " << histogram.size()
                 << " classes of width " << classInterval << " each." << Log::Flush;
 }
 

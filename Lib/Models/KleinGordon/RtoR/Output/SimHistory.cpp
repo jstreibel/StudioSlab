@@ -15,19 +15,17 @@
 #include "../KG-RtoREquationState.h"
 #include "Core/Tools/Log.h"
 
-#define tRes ( (N/L) * simConfig.numericConfig.gett() )
-
 // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
-SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Resolution N, Real xMin, Real L, const Str& name)
-: Socket(simConfig.numericConfig, name, (int)(simConfig.numericConfig.getn()/ tRes),
+SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Resolution N_x, Resolution N_t, Real xMin, Real L, const Str& name)
+: Socket(simConfig.numericConfig, name, (int)(simConfig.numericConfig.getn()/N_t),
          "A specific history tracker designed to watch the full sim history through the OpenGL (or whichever) monitors.")
 , dataIsOnGPU(simConfig.dev==GPU)
 {
     fix t = simConfig.numericConfig.gett();
-    fix timeResolution = tRes;
+    fix timeResolution = N_t;
 
-    fix hx = L / (Real)N;
+    fix hx = L / (Real)N_x;
     fix ht = t / timeResolution;
 
     #if USE_CUDA
@@ -40,12 +38,12 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
     } else
     #endif
     {
-        auto sizeMB = Real((Real)N*timeResolution*sizeof(Real))/(1024*1024.);
+        auto sizeMB = Real((Real)N_x*timeResolution*sizeof(Real))/(1024*1024.);
 
         Log::Critical() << name << " is about to allocate " << sizeMB
-                        << "MB of data to store full " << N << 'x' << (int)timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
+                        << "MB of data to store full " << N_x << 'x' << (int)timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
 
-        data = new R2toR::DiscreteFunction_CPU(N, (int)timeResolution+1, xMin, 0.0, hx, ht);
+        data = new R2toR::DiscreteFunction_CPU(N_x, (int)timeResolution+1, xMin, 0.0, hx, ht);
 
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }

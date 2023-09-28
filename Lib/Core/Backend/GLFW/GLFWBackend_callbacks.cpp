@@ -12,6 +12,8 @@ void GLFWBackend::key_callback(GLFWwindow* window, int key, int scancode, int ac
 {
     auto &me = GetInstance();
 
+    if(key == GLFW_KEY_SPACE) me.paused = !me.paused;
+
     for(auto &listener : me.listeners) if(listener->KeyboardEvent(window, key, scancode, action, mods)) break;
 }
 
@@ -26,8 +28,8 @@ void GLFWBackend::cursor_position_callback(GLFWwindow* window, double xpos, doub
     xOld = (int)xpos;
     yOld = (int)ypos;
 
-    me.mouseState.x = xpos;
-    me.mouseState.y = ypos;
+    me.mouseState.x = (int)xpos;
+    me.mouseState.y = (int)ypos;
     me.mouseState.dx = dx;
     me.mouseState.dy = dy;
 

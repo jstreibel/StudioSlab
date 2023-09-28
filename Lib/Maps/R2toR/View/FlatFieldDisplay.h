@@ -62,7 +62,7 @@ namespace R2toR::Graphics {
     public:
         explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.);
 
-        void setFunction(R2toR::Function::ConstPtr function, Unit unit=Constants::One);
+        void setFunction(R2toR::Function::ConstPtr function, const Unit& unit=Constants::One);
 
         auto getFunction() const -> R2toR::Function::ConstPtr;
 

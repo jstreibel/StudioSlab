@@ -21,7 +21,7 @@ Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const 
 
     panel.addWindow(&stats);
 
-    Log::Info() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
+    Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
 }
 
 void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){

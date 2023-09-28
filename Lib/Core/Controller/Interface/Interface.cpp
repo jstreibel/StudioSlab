@@ -19,7 +19,7 @@ Interface::Interface(Str name, InterfaceOwner *owner, int priority)
 
     if(owner != nullptr) addListener(owner);
 
-    Log::Info() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
+    Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
     if(owner == nullptr)
         Log::Attention()  << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' is NOT owned." << Log::Flush;
 }

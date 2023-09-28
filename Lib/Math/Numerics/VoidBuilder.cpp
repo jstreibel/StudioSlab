@@ -28,7 +28,7 @@ Core::Simulation::VoidBuilder::VoidBuilder(const Str& name, Str generalDescripti
         InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    Log::Info() << "SimulationBuilder '" << interface->getName() << "': \""
+    Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
                 << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
 }
 

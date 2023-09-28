@@ -38,7 +38,9 @@
 #define DONT_REGISTER_IMMEDIATELY false
 
 RtoR::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegister)
-: Fields::KleinGordon::KGBuilder("RtoR-" + name, std::move(generalDescription), DONT_REGISTER_IMMEDIATELY) {
+: Fields::KleinGordon::KGBuilder("RtoR-" + name, std::move(generalDescription),
+                                 DONT_REGISTER_IMMEDIATELY)
+{
     interface->addParameters({&Potential, &mass});
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
@@ -123,9 +125,15 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
 
         if(t>0)
         {
-            auto simHistory = new SimHistory(simulationConfig, (Resolution)Nₒᵤₜ, xMin, L);
+            fix nₒᵤₜ = ( (Nₒᵤₜ/L) * t );
+
+            auto simHistory = new SimHistory(simulationConfig,
+                                             (Resolution)Nₒᵤₜ,
+                                             (Resolution)nₒᵤₜ,
+                                             xMin,
+                                             L);
             //auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 1000, 0, 40*M_PI);
-            auto ftHistory = new SimHistory_DFT(simulationConfig);
+            auto ftHistory = new SimHistory_DFT(simulationConfig, nₒᵤₜ);
 
             outputManager->addOutputChannel(simHistory);
             outputManager->addOutputChannel(ftHistory);

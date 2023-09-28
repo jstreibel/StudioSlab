@@ -41,6 +41,8 @@ namespace Modes::DatabaseViewer {
         void computeMasses(int avRange);
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
+
+        Core::ModKeys modKeys;
     public:
         explicit DBViewer(DBParser::Ptr dbParser);
 
@@ -49,6 +51,8 @@ namespace Modes::DatabaseViewer {
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
         bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+
+        bool notifyMouseMotion(int x, int y) override;
     };
 }
 

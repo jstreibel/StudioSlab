@@ -25,9 +25,12 @@ void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister)
 }
 
 void InterfaceOwner::notifyCLArgsSetupFinished() {
-    auto &info = Log::Info();
-    info << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting << " (priority " << interface->priority << ") "
-                << "has been setup from command-line with the following values:";
+    Log::Status() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting << " (priority " << interface->priority << ") "
+                << "has been setup from command-line." << Log::Flush;
+
+    auto &info = Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace
+            << interface->getName() << Log::ResetFormatting << " initialized with the following "
+                                                               "values from command line:";
 
     for(auto &param : interface->getParameters())
         info << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCLName() << ": " << param->valueToString();

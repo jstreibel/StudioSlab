@@ -69,7 +69,7 @@ void SFMLNuklearBackend::_treatEvents() {
             break;
         }
 
-        // nk_sfml_handle_event(event);
+        nk_sfml_handle_event(event);
 
         for(auto l : sfmlListeners) l->event(event);
     }
@@ -93,21 +93,13 @@ void SFMLNuklearBackend::_render() {
     window->display();
 }
 
-auto SFMLNuklearBackend::getRenderWindow() -> sf::RenderWindow & {
-    return *window;
-}
+auto SFMLNuklearBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
-void SFMLNuklearBackend::pause() {
-    paused = true;
-}
+void SFMLNuklearBackend::pause() { paused = true; }
 
-void SFMLNuklearBackend::resume() {
-    paused = false;
-}
+void SFMLNuklearBackend::resume() { paused = false; }
 
-Real SFMLNuklearBackend::getScreenHeight() const {
-    throw Str(__PRETTY_FUNCTION__) + " not implemented ";
-}
+Real SFMLNuklearBackend::getScreenHeight() const { throw Str(__PRETTY_FUNCTION__) + " not implemented "; }
 
 SFMLNuklearBackend &SFMLNuklearBackend::GetInstance() {
     assert(Core::BackendManager::GetImplementation() == Core::SFML);

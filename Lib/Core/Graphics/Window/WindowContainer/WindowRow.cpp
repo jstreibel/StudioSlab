@@ -5,6 +5,7 @@
 #include "WindowRow.h"
 #include "Core/Tools/Log.h"
 #include "Core/Graphics/OpenGL/Utils.h"
+#include "Core/Backend/BackendManager.h"
 
 #include <algorithm>
 #include <numeric>
@@ -144,8 +145,21 @@ void WindowRow::notifyReshape(int w, int h) {
 
     arrangeWindows();
 }
+
 bool WindowRow::notifyMouseMotion(int x, int y) {
-    PropagateEvent(notifyMouseMotion(x,y)); }
+    for(auto &winData : windowsList)
+        if(winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y)) return true;
+
+    //auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
+    //if(mouseState.leftPressed){
+    //    Log::Error() << "Resize not implemented" << Log::Flush;
+    //    for(auto &winData : windowsList) {
+//
+    //    }
+    //}
+
+    return false;
+}
 
 bool WindowRow::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
     PropagateEvent(notifyMouseButton(button, state, keys));

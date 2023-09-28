@@ -10,6 +10,7 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
 #include "HistoryFileLoader.h"
+#include "Core/Backend/BackendManager.h"
 
 namespace Modes::DatabaseViewer {
 
@@ -41,6 +42,7 @@ namespace Modes::DatabaseViewer {
         allDataDisplay.setColorMap(Styles::ColorMaps["blues"].inverse());
 
         topRow.addWindow(DummyPtr(allDataDisplay));
+        fullParticularHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
         // winRow->addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         winCol->addWindow(DummyPtr(massesGraph));
@@ -234,7 +236,7 @@ namespace Modes::DatabaseViewer {
             return true;
         }
 
-        else if( key==Core::Key_DELETE && state==Core::Press ){
+        else if( key==Core::Key_ESCAPE && state==Core::Press ){
             topRow.removeWindow(DummyPtr(fullParticularHistoryDisplay));
             return true;
         }
@@ -244,9 +246,10 @@ namespace Modes::DatabaseViewer {
 
     bool DBViewer::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
         static Timer timer;
+        auto elTime = timer.getElTime_msec();
         if(button==Core::MouseButton_LEFT){
             if(state==Core::Press) timer.reset();
-            else if(state==Core::Release && timer.getElTime_msec() < 200) {
+            else if(state==Core::Release && elTime < 200 && keys.Mod_Ctrl) {
                 loadDataUnderMouse();
                 return true;
             }
@@ -284,6 +287,15 @@ namespace Modes::DatabaseViewer {
         fullParticularHistoryDisplay.setFunction(fieldHistory);
 
         topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
+    }
+
+    bool DBViewer::notifyMouseMotion(int x, int y) {
+        // if(modKeys.Mod_Ctrl && modKeys.Mod_Alt){
+        //     loadDataUnderMouse();
+        //     return true;
+        // }
+
+        return WindowRow::notifyMouseMotion(x, y);
     }
 
 }

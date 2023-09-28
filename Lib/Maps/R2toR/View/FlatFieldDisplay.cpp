@@ -49,15 +49,18 @@ R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real
     addArtist(DummyPtr(colorBar));
 };
 
-void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function, Unit unit) {
+void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function, const Unit& unit) {
+    if(func == function) return;
+
+    bool firstTime = func == nullptr;
     func = std::move(function);
     funcUnit = unit;
+    if(firstTime) computeGraphRanges();
 
     if(!func->isDiscrete()) NOT_IMPLEMENTED
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
-    computeGraphRanges();
 
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
@@ -285,12 +288,32 @@ Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
 
     if(func == nullptr) return label;
 
-    fix x = Real2D{coords.x, coords.y};
-    if(func->domainContainsPoint(x)) {
-        fix val = (*func)(x);
+    auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+
+    auto xRes = discreteFunc.getN();
+    auto yRes = discreteFunc.getM();
+
+    auto domain = discreteFunc.getDomain();
+
+    auto hPixelSizeInTexCoord = 1. / xRes;
+    auto vPixelSizeInTexCoord = 1. / yRes;
+
+    auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+    auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+
+    fix r = Real2D{coords.x, coords.y};
+    fix rMin = Real2D{coords.x+.5*hTexturePixelSizeInSpaceCoord, coords.y+.5*vTexturePixelSizeInSpaceCoord};
+    fix rMax = Real2D{coords.x-.5*hTexturePixelSizeInSpaceCoord, coords.y-.5*vTexturePixelSizeInSpaceCoord};
+    if(func->domainContainsPoint(r)) {
+        fix val = (*func)(r);
+        label = "f" + label + " = " + funcUnit(val, 5);
+    } else if(func->domainContainsPoint(rMin)) {
+        fix val = (*func)(rMin);
+        label = "f" + label + " = " + funcUnit(val, 5);
+    } else if(func->domainContainsPoint(rMax)) {
+        fix val = (*func)(rMax);
         label = "f" + label + " = " + funcUnit(val, 5);
     }
-
 
     return label;
 }

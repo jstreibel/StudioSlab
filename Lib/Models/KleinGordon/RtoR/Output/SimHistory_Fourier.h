@@ -22,7 +22,8 @@ protected:
     auto handleOutput(const OutputPacket &packet) -> void override;
 
 public:
-    SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig, Resolution n, Real kMin, Real kMax);
+    SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig,
+                                Resolution N_x, Resolution N_t, Real kMin, Real kMax);
 };
 
 
@@ -37,7 +38,7 @@ protected:
     auto handleOutput(const OutputPacket &packet) -> void override;
 
 public:
-    explicit SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig);
+    explicit SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig, Resolution N_time);
 };
 
 

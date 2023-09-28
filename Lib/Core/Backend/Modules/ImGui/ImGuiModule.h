@@ -25,7 +25,6 @@ namespace Core {
         static ImGuiModule* BuildModule(BackendImplementation);
 
         void beginRender() override;
-
         void endRender() override;
     };
 

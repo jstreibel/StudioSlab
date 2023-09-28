@@ -11,9 +11,11 @@
 
 
 
-SimHistory_FourierTransform::SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig, Resolution n, Real kMin, Real kMax)
-: SimHistory(simConfig, n, kMin, kMax-kMin, "FTSimHistory")
-, fourierModes(nullptr, nConfig.getxMin(), nConfig.getL(), nConfig.getN()/10) {}
+SimHistory_FourierTransform::SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig,
+                                                         Resolution N_x, Resolution N_t, Real kMin, Real kMax)
+: SimHistory(simConfig, N_x, N_t, kMin, kMax-kMin, "FTSimHistory")
+, fourierModes(nullptr, nConfig.getxMin(), nConfig.getL(), nConfig.getN()/10)
+{}
 
 
 Real SimHistory_FourierTransform::filter(Real x, const RtoR::EquationState &input) {
@@ -33,8 +35,9 @@ void SimHistory_FourierTransform::handleOutput(const OutputPacket &packet) {
 
 
 
-SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig)
-: SimHistory(simConfig, NDFTModes, 0, kMaxDFT)
+SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig,
+                               Resolution N_time)
+: SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT)
 , dft(NDFTModes, 0.0, kMaxDFT)
 {
 

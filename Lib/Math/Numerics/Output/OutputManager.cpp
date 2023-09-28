@@ -41,7 +41,7 @@ void OutputManager::addOutputChannel(Numerics::OutputSystem::Socket *out, bool k
     outputs.push_back(out);
     if(keepTrack) myOutputs.push_back(out);
 
-    Log::Info() << "Output manager added '" << out->getName() << "' output channel. Updates "
+    Log::Status() << "Output manager added '" << out->getName() << "' output channel. Updates "
                 << "every " << out->getnSteps() << " sim steps." << Log::Flush;
 }
 
