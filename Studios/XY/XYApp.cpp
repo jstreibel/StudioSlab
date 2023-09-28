@@ -3,7 +3,7 @@
 //
 
 #include "XYApp.h"
-#include "Core/Backend/GUIBackend.h"
+#include "Core/Backend/GraphicBackend.h"
 
 #include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 

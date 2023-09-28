@@ -86,6 +86,8 @@ set ( NUMERICS_SOURCES
 
 		DifferentialEquations/EquationState.h
 		Function/NativeFunction.h
+        Graph/Graph_Events.cpp
+		Graph/Graph_GetSet.cpp
 )
 
 

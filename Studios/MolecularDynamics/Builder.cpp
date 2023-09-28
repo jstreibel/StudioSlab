@@ -41,7 +41,7 @@ namespace MolecularDynamics {
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = new MolecularDynamics::Monitor(numericConfig, simModel);
-        Backend::GetInstanceSuper<GUIBackend>().addWindow(std::shared_ptr<Window>(monitor));
+        Backend::GetInstanceSuper<GraphicBackend>().addWindow(std::shared_ptr<Window>(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;

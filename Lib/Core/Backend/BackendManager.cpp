@@ -2,6 +2,7 @@
 // Created by joao on 22/09/23.
 //
 
+#include "Core/Backend/Modules/RealTimeAnimation.h"
 
 #include "BackendManager.h"
 
@@ -11,7 +12,7 @@
 #include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
 #include "Core/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/Console/ConsoleBackend.h"
-#include "Core/Backend/Modules/ImGuiModule.h"
+#include "Core/Backend/Modules/ImGui/ImGuiModule.h"
 
 namespace Core {
     BackendImplementation BackendManager::backendImplementation = Uninitialized;
@@ -24,7 +25,7 @@ namespace Core {
         return *BackendManager::instance;
     }
 
-    GUIBackend& BackendManager::GetGUIBackend() {
+    GraphicBackend& BackendManager::GetGUIBackend() {
         if (BackendManager::backendImplementation == BackendImplementation::Uninitialized){
             assert(instance == nullptr);
             throw Exception("backend must be initialized via BackendManager::Startup before call to "
@@ -33,7 +34,7 @@ namespace Core {
             throw Exception("trying to access graphic backend on headless run");
         }
 
-        return *dynamic_cast<GUIBackend*>(instance.get());
+        return *dynamic_cast<GraphicBackend*>(instance.get());
     }
 
     void BackendManager::LoadModule(Modules moduleDescr) {
@@ -42,17 +43,19 @@ namespace Core {
         Module *module = nullptr;
         switch (moduleDescr) {
             case ImGui:
-                module = new ImGuiModule(system);
+                module = ImGuiModule::BuildModule(system);
+                break;
+            case RealTimeAnimation:
+                module = new RealTimeAnimationModule;
                 break;
             case Nuklear:
                 throw Exception("Nuklear module not implemented");
-                break;
             case NanoGUI:
                 throw Exception("NanoGUI module not implemented");
-                break;
             case Jack:
                 throw Exception("Jack module not implemented");
-                break;
+            case NodeJS:
+                throw Exception("NodeJS module not implemented");
         }
 
         auto &guiBackend = GetGUIBackend();

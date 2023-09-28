@@ -5,19 +5,22 @@
 #ifndef STUDIOSLAB_SFML_NUKLEAR_BACKEND_H
 #define STUDIOSLAB_SFML_NUKLEAR_BACKEND_H
 
-#include "../GUIBackend.h"
+#include "../GraphicBackend.h"
 #include "SFMLListener.h"
+#include "SFMLEventTranslator.h"
 
 #include <SFML/Graphics.hpp>
 
-class SFMLNuklearBackend : public GUIBackend {
+class SFMLNuklearBackend : public GraphicBackend {
+    Core::SFMLEventTranslator sfmlEventTranslator;
+    std::vector<SFMLListener*> sfmlListeners;
+
     nk_context nkContext;
 
     sf::RenderWindow *window;
     sf::Font font;
     sf::Text text;
 
-    std::vector<SFMLListener*> sfmlListeners;
 
     bool running=true;
     bool paused=false;
@@ -28,6 +31,8 @@ class SFMLNuklearBackend : public GUIBackend {
 
 public:
     SFMLNuklearBackend();
+
+    bool addSFMLListener(SFMLListener* sfmlListener);
 
     void run(Program *program) override;
 
@@ -43,7 +48,7 @@ public:
 
     auto requestRender() -> void override;
 
-    auto getMouseState() const -> const MouseState override;
+    auto getMouseState() const -> MouseState override;
 };
 
 

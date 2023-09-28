@@ -11,7 +11,11 @@ namespace Core {
         Nuklear,
         NanoGUI,
 
-        Jack
+        RealTimeAnimation,
+
+        Jack,
+
+        NodeJS
     };
 }
 

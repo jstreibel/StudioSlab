@@ -5,31 +5,26 @@
 #include "Core/Graphics/OpenGL/Utils.h"
 
 #include <filesystem>
-#include <GL/freeglut.h>
+
 #include "ImGuiModule.h"
 
 #include "Utils/Resources.h"
 
-#include "../BackendManager.h"
-
+#include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "backends/imgui_impl_glut.h"
-#include "backends/imgui_impl_glfw.h"
+
+#include "ImGuiModuleGLUT.h"
+#include "ImGuiModuleGLFW.h"
 #include "backends/imgui_impl_opengl3.h"
-
-#include "Core/Backend/GLFW/GLFWBackend.h"
-
-// Don't touch
-fix DO_NOT_INSTALL_CALLBACKS = false;
 
 // Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
 
 namespace Core {
 
-    void ImGuiModule::GeneralInitialization() {
+    void ImGuiModule::generalInitialization() {
         // Setup Dear ImGui context
 
         IMGUI_CHECKVERSION();
@@ -125,58 +120,17 @@ namespace Core {
     }
 
     ImGuiModule::ImGuiModule(BackendImplementation backendImpl) {
-
-        GeneralInitialization();
-
-        // Setup Platform/Renderer backends
-        switch (backendImpl) {
-            case Uninitialized:
-            case Headless:
-                throw Exception("ImGui module must be used with a graphic backend already initialized");
-            case GLFW:
-                InstallInGLFW();
-                break;
-            case GLUT:
-                InstallInGLUT();
-                break;
-            case SFML:
-                InstallInSFML();
-                break;
-            case VTK:
-                break;
-        }
-
-        BuildFonts();
-
-        ImGui::GetStyle().ScaleAllSizes(1.5);
-        ImGui::GetIO().FontGlobalScale = 1;
-
         system = backendImpl;
+
+        generalInitialization();
     }
 
-    void ImGuiModule::InstallInGLUT() {
-        // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
-        // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
-        // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
-        // - When io.WantCaptureMouse is true, do not dispatch mouse input data to your main application, or clear/overwrite your copy of the mouse data.
-        // - When io.WantCaptureKeyboard is true, do not dispatch keyboard input data to your main application, or clear/overwrite your copy of the keyboard data.
-        // Generally you may always pass all inputs to dear imgui, and hide them from your application based on those two flags.
-        ImGui_ImplGLUT_Init();
-        ImGui_ImplOpenGL3_Init();
-        if (false) ImGui_ImplGLUT_InstallFuncs();
+    ImGuiModule::~ImGuiModule() {
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui::DestroyContext();
     }
 
-    void ImGuiModule::InstallInGLFW() {
-        auto &window = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetGUIBackend())->getGLFWWindow();
-
-        ImGui_ImplGlfw_InitForOpenGL(&window, DO_NOT_INSTALL_CALLBACKS);
-    }
-
-    void ImGuiModule::InstallInSFML() {
-        throw Exception("ImGui SFML module not implemented (yet)");
-    }
-
-    void ImGuiModule::BuildFonts()
+    void ImGuiModule::buildFonts()
     {
         static const ImWchar ranges[] =
                 {
@@ -210,7 +164,7 @@ namespace Core {
         ImGuiIO &io = ImGui::GetIO();
         auto fontName = Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
 
-        if (!std::filesystem::exists(fontName)) throw Str("Font ") + fontName + " does not exist.";
+        if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
 
         ImFontConfig fontConfig;
         auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 26.0f, &fontConfig, &vRanges[0]);
@@ -222,137 +176,42 @@ namespace Core {
         //ImGui::PushFont(font);
     }
 
-    void ImGuiModule::beginRender() {
-        ImGui_ImplOpenGL3_NewFrame();
+    void ImGuiModule::finishInitialization() {
+        buildFonts();
 
-        switch (system) {
+        ImGui::GetStyle().ScaleAllSizes(1.5);
+        ImGui::GetIO().FontGlobalScale = 1;
+    }
+
+    ImGuiModule* ImGuiModule::BuildModule(BackendImplementation backendImplementation) {
+        switch (backendImplementation) {
             case Uninitialized:
             case Headless:
-            case SFML:
-            case VTK:
-                NOT_IMPLEMENTED
+                throw NotImplementedException("Headless ImGui module");
             case GLFW:
-                ImGui_ImplGlfw_NewFrame();
-                break;
+                return new ImGuiModuleGLFW();
+            case SFML:
+                throw NotImplementedException("SFML ImGui module");
+            case VTK:
+                throw NotImplementedException("VTK ImGui module");
             case GLUT:
-                ImGui_ImplGLUT_NewFrame();
-                break;
+                return new ImGuiModuleGLUT();
         }
 
+        NOT_IMPLEMENTED
+    }
+
+    void ImGuiModule::beginRender() {
+        ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
     }
 
     void ImGuiModule::endRender() {
         ImGui::Render();
-        OpenGLUtils::checkGLErrors("after ImGui::Render()");
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        OpenGLUtils::checkGLErrors("after ImGui_ImplOpenGL3_RenderDrawData");
     }
 
-    ImGuiModule::~ImGuiModule() {
-        ImGui_ImplOpenGL3_Shutdown();
-
-        switch (system) {
-            case Uninitialized:
-            case Headless:
-            case SFML:
-            case VTK:
-                break;
-            case GLFW:
-                ImGui_ImplGlfw_Shutdown();
-                break;
-            case GLUT:
-                ImGui_ImplGLUT_Shutdown();
-                break;
-        }
-
-        ImGui::DestroyContext();
-    }
-
-    bool ImGuiModule::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        auto &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
-
-        if(system == GLUT) {
-            if(Common::Contains(std::vector{Core::Key_NUM_LOCK,
-                                            Core::Key_HOME,
-                                            Core::Key_DELETE,
-                                            Core::Key_LEFT_SHIFT,
-                                            Core::Key_RIGHT_SHIFT,
-                                            Core::Key_LEFT_CONTROL,
-                                            Core::Key_RIGHT_CONTROL,
-                                            Core::Key_LEFT_ALT,
-                                            Core::Key_RIGHT_ALT,
-                                            Core::Key_LEFT_SUPER,
-                                            Core::Key_RIGHT_SUPER}, key))
-                ImGui_ImplGLUT_SpecialFunc(key, mouse.x, mouse.y);
-            else
-                ImGui_ImplGLUT_KeyboardFunc(key, mouse.x, mouse.y);
-        } else NOT_IMPLEMENTED
-
-
-        if(ImGui::GetIO().WantCaptureKeyboard) return true;
-
-        if(state == Press) {
-            if (key == Key_d) {
-                showDemos = !showDemos;
-                return true;
-            }
-        }
-
-        return GUIEventListener::notifyKeyboard(key, state, modKeys);
-    }
-
-    bool ImGuiModule::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-        auto &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
-
-        int GLUTstate = state==Press ? GLUT_DOWN : GLUT_UP;
-        int GLUTbutton = button==MouseButton_LEFT ? GLUT_LEFT_BUTTON
-                       : button==MouseButton_MIDDLE ? GLUT_MIDDLE_BUTTON
-                       : button==MouseButton_RIGHT ? GLUT_RIGHT_BUTTON
-                       : -1;
-
-        ImGui_ImplGLUT_MouseFunc(GLUTbutton, GLUTstate, mouse.x, mouse.y);
-
-        if(ImGui::GetIO().WantCaptureMouse)
-            return true;
-
-        return GUIEventListener::notifyMouseButton(button, state, keys);
-    }
-
-    bool ImGuiModule::notifyMouseMotion(int x, int y) {
-        ImGui_ImplGLUT_MotionFunc(x, y);
-        return ImGui::GetIO().WantCaptureMouse;
-    }
-
-    bool ImGuiModule::notifyMouseWheel(double dx, double dy) {
-        auto &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
-        ImGui_ImplGLUT_MouseWheelFunc(0, dx, mouse.x, mouse.y);
-
-        if(ImGui::GetIO().WantCaptureMouse) return true;
-
-        return GUIEventListener::notifyMouseWheel(dx, dy);
-    }
-
-    bool ImGuiModule::notifyFilesDropped(StrVector paths) {
-        return GUIEventListener::notifyFilesDropped(paths);
-    }
-
-    bool ImGuiModule::notifyScreenReshape(int w, int h) {
-        {
-            ImGuiIO &io = ImGui::GetIO();
-            io.DisplaySize = ImVec2((float) w, (float) h);
-        }
-
-        return GUIEventListener::notifyScreenReshape(w, h);
-    }
-
-    bool ImGuiModule::notifyRender() {
-        if (showDemos) ImGui::ShowDemoWindow();
-
-        return GUIEventListener::notifyRender();
-    }
 
 
 } // Core

@@ -54,7 +54,8 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     const auto shouldOutputHistory = ! *noHistoryToFile;
 
     if(*VisualMonitor){
-        Core::BackendManager::Startup(Core::GLUT);
+        Core::BackendManager::Startup(Core::GLFW);
+        // Core::BackendManager::Startup(Core::GLUT);
         auto &backend = Core::BackendManager::GetGUIBackend();
 
         if(*VisualMonitor_startPaused) backend.pause();

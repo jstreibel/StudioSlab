@@ -36,7 +36,7 @@ public:
         interface->addParameters({&snapshotDBFolder, &criticalParameter});
         InterfaceManager::getInstance().registerInterface(interface);
 
-        Core::BackendManager::Startup(Core::GLUT);
+        Core::BackendManager::Startup(Core::GLFW);
 
         this->parseCLArgs();
     }

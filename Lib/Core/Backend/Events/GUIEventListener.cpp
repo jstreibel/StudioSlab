@@ -24,7 +24,7 @@ bool Core::GUIEventListener::hasResponders() const {
 
 
 bool Core::GUIEventListener::notifyMouseMotion(int x, int y)                               EVENT_CALLBACK(notifyMouseMotion(x, y))
-bool Core::GUIEventListener::notifyScreenReshape(int newScreenWidth, int newScreenHeight)  EVENT_CALLBACK(notifyScreenReshape(newScreenWidth, newScreenHeight))
+bool Core::GUIEventListener::notifyScreenReshape(int w, int h)                             EVENT_CALLBACK(notifyScreenReshape(w, h))
 bool Core::GUIEventListener::notifyRender()                                                EVENT_CALLBACK(notifyRender())
 
 bool Core::GUIEventListener::

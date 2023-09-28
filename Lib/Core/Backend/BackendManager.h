@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_BACKENDMANAGER_H
 #define STUDIOSLAB_BACKENDMANAGER_H
 
-#include "GUIBackend.h"
+#include "GraphicBackend.h"
 
 #include "Implementations.h"
 #include "Modules/Modules.h"
@@ -19,7 +19,7 @@ namespace Core {
 
     public:
         static Backend& GetBackend();
-        static GUIBackend& GetGUIBackend();
+        static GraphicBackend& GetGUIBackend();
 
         static BackendImplementation GetImplementation();
 

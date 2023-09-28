@@ -16,14 +16,13 @@ void errorCallback(int error_code, const char* description){
     Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
 }
 
-GLFWBackend::GLFWBackend() : GUIBackend("GLFW Backend") {
+GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend", eventTranslator) {
     glfwSetErrorCallback(errorCallback);
 
     int major, minor, rev;
     glfwGetVersion(&major, &minor, &rev);
 
     glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE);
-
 
     if (!glfwInit()) throw Str("Error initializing GLFW");
     Log::Success() << "GLFW runtime version " << major << "." << minor << "." << rev
@@ -34,7 +33,9 @@ GLFWBackend::GLFWBackend() : GUIBackend("GLFW Backend") {
     systemWindow = newGLFWWindow();
     glfwMakeContextCurrent(systemWindow);
 
-    initGLEW();
+    InitGLEW();
+
+    addGLFWListener(&eventTranslator);
 }
 
 GLFWBackend::~GLFWBackend() {
@@ -44,7 +45,7 @@ GLFWBackend::~GLFWBackend() {
     Log::Info() << "GLFWBackend terminated." << Log::Flush;
 }
 
-void GLFWBackend::initGLEW() {
+void GLFWBackend::InitGLEW() {
     GLenum glewInitStatus = glewInit();
     if (glewInitStatus != GLEW_OK){
         Log::Error() << "Failed GLEW initialization: " << glewGetErrorString(glewInitStatus) << Log::Flush;
@@ -66,14 +67,24 @@ void GLFWBackend::mainLoop() {
         while(!mustRender)
             program->cycle(Program::CycleOptions::CycleUntilOutput);
 
+        auto bg = Core::Graphics::backgroundColor;
+        glClearColor(bg.r, bg.g, bg.b, bg.a);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        for(auto &module : modules)
+            module->beginRender();
+
         for(auto &listener : GetInstance().listeners)
-            listener->notifyRender();
+            listener->Render(systemWindow);
+
+        for(auto &module : modules)
+            module->endRender();
 
         glfwSwapBuffers(systemWindow);
 
+        for(auto &module : modules) module->beginEvents();
         glfwPollEvents();
+        for(auto &module : modules) module->endEvents();
     }
 }
 
@@ -84,22 +95,21 @@ Real GLFWBackend::getScreenHeight() const {
     return h;
 }
 
-void GLFWBackend::pause() {
-    paused = true;
-}
+void GLFWBackend::pause() { paused = true; }
 
-void GLFWBackend::resume() {
-    paused = false;
-}
+void GLFWBackend::resume() { paused = false; }
 
-void GLFWBackend::requestRender() {
-    mustRender = true;
-}
+void GLFWBackend::requestRender() { mustRender = true; }
 
 GLFWwindow *GLFWBackend::newGLFWWindow() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-    GLFWwindow* window = glfwCreateWindow(1600, 900, "Studios Lab", nullptr, nullptr);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+
+    auto monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+    GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, "Studios Lab", monitor, nullptr);
     if (!window){
         Log::Error() << "Failed creating GLFW window." << Log::Flush;
         throw "GLFW error";
@@ -123,9 +133,12 @@ GLFWwindow *GLFWBackend::newGLFWWindow() {
     glfwSetKeyCallback(window, key_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSetCursorEnterCallback(window, cursor_enter_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
     glfwSetScrollCallback(window, scroll_callback);
     glfwSetDropCallback(window, drop_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
+
+    // glfwSetWindowSize(window, );
 
     return window;
 }
@@ -133,20 +146,22 @@ GLFWwindow *GLFWBackend::newGLFWWindow() {
 bool GLFWBackend::GetKeyState(GLFWwindow *window, int key) {
     fix state = glfwGetKey(window, key);
 
-    // Keys:
-    // GLFW_KEY_7
-    // GLFW_KEY_8
-    // GLFW_KEY_9
-    // GLFW_KEY_SEMICOLON
-    // GLFW_KEY_EQUAL
-    // GLFW_KEY_A
-    // GLFW_KEY_B
-    // etc.
+    /*
+        Keys:
+        GLFW_KEY_7
+        GLFW_KEY_8
+        GLFW_KEY_9
+        GLFW_KEY_SEMICOLON
+        GLFW_KEY_EQUAL
+        GLFW_KEY_A
+        GLFW_KEY_B
+        etc.
 
-    // states:
-    // GLFW_PRESS or GLFW_RELEASE
+        States:
+        GLFW_PRESS or GLFW_RELEASE
 
-    // The GLFW_KEY_LAST constant holds the highest value of any named key.
+        The GLFW_KEY_LAST constant holds the highest value of any named key.
+     */
 
     return state;
 }
@@ -158,13 +173,8 @@ Point2D GLFWBackend::GetCursorPosition(GLFWwindow *window) {
     return {xpos, ypos};
 }
 
-const MouseState GLFWBackend::getMouseState() const {
-    auto pos = GLFWBackend::GetCursorPosition(systemWindow);
-
-    return {(int)pos.x, (int)pos.y, 0, 0,
-            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_LEFT),
-            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_MIDDLE),
-            GetMouseButtonState(systemWindow, Core::MouseButton::MouseButton_RIGHT)};
+MouseState GLFWBackend::getMouseState() const {
+    return mouseState;
 }
 
 bool GLFWBackend::IsWindowHovered(GLFWwindow *window) {

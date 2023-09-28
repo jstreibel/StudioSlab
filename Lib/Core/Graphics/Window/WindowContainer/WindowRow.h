@@ -10,21 +10,27 @@
 #include <list>
 
 class WindowRow : public Window {
-    std::list<Window::Ptr> windows;
-    std::list<Real> widths;
+    struct WinMetaData {
+        Window::Ptr window;
+        Real width;
+    };
+
+    std::list<WinMetaData> windowsList;
+    RealVector _widthsVector() const;
 
     bool assertConsistency() const;
 public:
     WindowRow() = default;
 
     enum RelativePosition { Left, Right };
-    void addWindow(const Window::Ptr& window, RelativePosition=Right, float windowWidth=-1);
+    bool addWindow(const Window::Ptr& window, RelativePosition=Right, float windowWidth=-1);
+    void removeWindow(const Window::Ptr& window);
 
     void arrangeWindows();
 
     void draw() override;
 
-    void notifyReshape(int newWinW, int newWinH) override;
+    void notifyReshape(int w, int h) override;
 
     bool notifyMouseMotion(int x, int y)        override;
     bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;

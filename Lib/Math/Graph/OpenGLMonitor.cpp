@@ -5,7 +5,7 @@
 #include "OpenGLMonitor.h"
 
 #include "Core/Tools/Log.h"
-#include "Core/Backend/GUIBackend.h"
+#include "Core/Backend/GraphicBackend.h"
 #include "Core/Backend/BackendManager.h"
 
 

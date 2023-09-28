@@ -2,27 +2,28 @@
 // Created by joao on 08/07/23.
 //
 
-#ifndef STUDIOSLAB_GUIBACKEND_H
-#define STUDIOSLAB_GUIBACKEND_H
+#ifndef STUDIOSLAB_GRAPHICBACKEND_H
+#define STUDIOSLAB_GRAPHICBACKEND_H
 
 #include "Backend.h"
 #include "Core/Graphics/Window/Window.h"
 #include "Events/MouseState.h"
+#include "Core/Backend/Events/GUIEventTranslator.h"
 
-class GUIBackend : public Core::Backend {
+class GraphicBackend : public Core::Backend {
+    Core::EventTranslator &eventTranslator;
+
 protected:
+    GraphicBackend(const Str& name, Core::EventTranslator &eventTranslator);
 
-    explicit GUIBackend(const Str& name);
-
-    std::vector<Core::GUIEventListener::Ptr> listeners;
     std::vector<std::shared_ptr<Core::Module>> modules;
 
 public:
-    virtual auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> void;
+    virtual auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> bool;
 
     virtual auto getScreenHeight() const -> Real = 0;
 
-    virtual auto getMouseState() const -> const MouseState = 0;
+    virtual auto getMouseState() const -> MouseState = 0;
     virtual auto pause()  -> void = 0;
     virtual auto resume() -> void = 0;
 
@@ -33,4 +34,4 @@ public:
 };
 
 
-#endif //STUDIOSLAB_GUIBACKEND_H
+#endif //STUDIOSLAB_GRAPHICBACKEND_H

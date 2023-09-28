@@ -84,7 +84,7 @@ namespace R2toR {
 
         ///********************************************************************************************/
         if (shouldOutputOpenGL) {
-            GUIBackend &backend = Core::BackendManager::GetGUIBackend();
+            GraphicBackend &backend = Core::BackendManager::GetGUIBackend();
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 

@@ -5,12 +5,12 @@
 #ifndef STUDIOSLAB_MODULE_H
 #define STUDIOSLAB_MODULE_H
 
-#include "Core/Backend/Events/GUIEventListener.h"
-
 namespace Core {
 
-    class Module : public GUIEventListener {
+    class Module {
     public:
+        virtual ~Module() = default;
+
         virtual void beginRender() {};
         virtual void endRender() {};
 

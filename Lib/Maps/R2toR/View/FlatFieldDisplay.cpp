@@ -191,7 +191,7 @@ void R2toR::Graphics::FlatFieldDisplay::repopulateTextureBuffer() {
 bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 
     constexpr const Real factor = 1.1;
-    const Real d = pow(factor, -dx);
+    const Real d = pow(factor, -dy);
 
     static auto targetRegion = getRegion();
 

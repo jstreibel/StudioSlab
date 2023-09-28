@@ -6,6 +6,8 @@
 #include "Core/Controller/Nuklear/_nuklear.h"
 #include "Core/Controller/Nuklear/_nuklear_sfml.hpp"
 
+#include "Utils/Exception.h"
+
 namespace Core {
     NuklearModule::NuklearModule(Core::BackendImplementation system) {
         if(system != Core::SFML) NOT_IMPLEMENTED

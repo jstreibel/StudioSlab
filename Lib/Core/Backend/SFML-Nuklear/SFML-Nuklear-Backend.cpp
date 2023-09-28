@@ -8,7 +8,7 @@
 
 
 
-SFMLNuklearBackend::SFMLNuklearBackend() : GUIBackend("SFML+Nuklear backend") {
+SFMLNuklearBackend::SFMLNuklearBackend() : GraphicBackend("SFML+Nuklear backend", sfmlEventTranslator) {
 
     window = new sf::RenderWindow(
             sf::VideoMode(1920, 1080),
@@ -16,6 +16,8 @@ SFMLNuklearBackend::SFMLNuklearBackend() : GUIBackend("SFML+Nuklear backend") {
 
     window->setFramerateLimit(0);
     window->setPosition(sf::Vector2i(250, 250));
+
+    addSFMLListener(&sfmlEventTranslator);
 
     nk_init_default(&nkContext, nullptr);
 }
@@ -86,8 +88,7 @@ void SFMLNuklearBackend::_render() {
         l->render(window);
     }
 
-    for(auto &listener : GetInstance().listeners )
-        listener->notifyRender();
+    // for(auto &listener : GetInstance().listeners )        listener->notifyRender();
 
     window->display();
 }
@@ -120,8 +121,17 @@ void SFMLNuklearBackend::requestRender() {
     NOT_IMPLEMENTED
 }
 
-const MouseState SFMLNuklearBackend::getMouseState() const {
+MouseState SFMLNuklearBackend::getMouseState() const {
     NOT_IMPLEMENTED
 
     return MouseState();
 }
+
+bool SFMLNuklearBackend::addSFMLListener(SFMLListener *sfmlListener) {
+    if(Common::Contains(sfmlListeners, sfmlListener)) return false;
+
+    sfmlListeners.emplace_back(sfmlListener);
+
+    return true;
+}
+

@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_VTKBACKEND_H
 #define STUDIOSLAB_VTKBACKEND_H
 
-#include "Core/Backend/GUIBackend.h"
+#include "Core/Backend/GraphicBackend.h"
 
-class VTKBackend : public GUIBackend {
+class VTKBackend : public GraphicBackend {
 public:
     void run(Program *integrator) override;
 };

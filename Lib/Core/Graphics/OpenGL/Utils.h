@@ -15,7 +15,7 @@ namespace OpenGLUtils {
      * @param hint Hint to recent operations.
      * @return True if error was found, false otherwise.
      */
-    bool checkGLErrors(const Str& hint, bool raiseException=true);
+    bool checkGLErrors(const Str& hint, bool raiseException=false);
 
     struct FrameBuffer {
         typedef uint8_t DataType;
@@ -27,7 +27,7 @@ namespace OpenGLUtils {
         static const GLenum  format   = GL_RGBA,
                 type     = GL_UNSIGNED_BYTE;
 
-        int getBitsPerPixel() const {
+        static int GetBitsPerPixel() {
             assert(FrameBuffer::channels == 4           &&
                    FrameBuffer::format   == GL_RGBA     &&
                    FrameBuffer::type     == GL_UNSIGNED_BYTE );

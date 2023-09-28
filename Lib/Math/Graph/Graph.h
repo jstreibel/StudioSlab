@@ -58,7 +58,7 @@ namespace Core::Graphics {
 
         Real animationTimeSeconds = 0.2;
 
-        Point2D XHairLocation;
+        Point2D XHairLocation{};
         Spaces::PointSet XHair;
     protected:
         Unit baseHorizontalUnit;

@@ -14,3 +14,9 @@ const char *Exception::what() const noexcept {
 NotImplementedException::NotImplementedException(std::string who) : Exception(who + " not implemented") {
 
 }
+
+StudioSlabRuntimeBackendInconsistency::StudioSlabRuntimeBackendInconsistency( std::string why)
+: Exception("Inconsistency while building StudioSlab::Core functionalities: " + why)
+{
+
+}

@@ -12,6 +12,8 @@ struct MouseState {
     int dx=0,
         dy=0;
 
+    int wheel_dx=0, wheel_dy=0;
+
     bool leftPressed   = false,
          centerPressed = false,
          rightPressed  = false;

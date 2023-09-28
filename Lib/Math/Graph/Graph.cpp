@@ -9,7 +9,6 @@
 
 #include "Utils/Printing.h"
 #include "Core/Tools/Log.h"
-#include "Core/Tools/Animator.h"
 
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
@@ -20,6 +19,7 @@
 #define POPUP_ON_MOUSE_CALL false
 
 std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
+
 
 Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
 : region{xMin, xMax, yMin, yMax}
@@ -33,6 +33,8 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
     while(Graph2D::graphMap.count(title))
         title += "(" + ToStr(++n) + ")";
     Graph2D::graphMap[title] = this;
+
+    BackendManager::LoadModule(Core::RealTimeAnimation);
 
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 }
@@ -61,7 +63,6 @@ void Core::Graphics::Graph2D::draw() {
 
     drawXHair();
 }
-
 
 void Core::Graphics::Graph2D::drawGUI() {
     auto popupName = title + Str(" window popup");
@@ -137,7 +138,6 @@ void Core::Graphics::Graph2D::drawCurves() {
         glEnd();
     }
 }
-
 
 void
 Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
@@ -277,141 +277,7 @@ void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
 
 void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
 
-
-auto Core::Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
-auto Core::Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
-const RectR& Core::Graphics::Graph2D::getRegion() const { return region; }
-auto Core::Graphics::Graph2D::setLimits(RectR lims) -> void { region = lims; }
-
-void Core::Graphics::Graph2D::set_xMin(Real val) { Animator::Add(region.xMin, val, animationTimeSeconds); }
-void Core::Graphics::Graph2D::set_xMax(Real val) { Animator::Add(region.xMax, val, animationTimeSeconds); }
-void Core::Graphics::Graph2D::set_yMin(Real val) { Animator::Add(region.yMin, val, animationTimeSeconds); }
-void Core::Graphics::Graph2D::set_yMax(Real val) { Animator::Add(region.yMax, val, animationTimeSeconds); }
-Real Core::Graphics::Graph2D::get_xMin() const { return region.xMin; }
-Real Core::Graphics::Graph2D::get_xMax() const { return region.xMax; }
-Real Core::Graphics::Graph2D::get_yMin() const { return region.yMin; }
-Real Core::Graphics::Graph2D::get_yMax() const { return region.yMax; }
-
-bool Core::Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
-    static auto time = Timer();
-
-    if(button == Core::MouseButton_RIGHT){
-        if(state == Press) time.reset();
-        else if(state == Release && time.getElTime_msec() < 200){
-            savePopupOn = true;
-
-            auto popupName = Str("win_") + title + Str("_popup");
-            if(POPUP_ON_MOUSE_CALL) {
-                Log::Info() << "Popup (on mouse call) '" << popupName << "' is on" << Log::Flush;
-                ImGui::OpenPopup(popupName.c_str());
-                savePopupOn = false;
-            }
-        }
-
-        return true;
-    }
-
-    return GUIEventListener::notifyMouseButton(button, state, keys);
-}
-
-bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
-    auto elRet = GUIEventListener::notifyMouseMotion(x, y);
-
-    auto& mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
-
-    if(mouseState.leftPressed)
-    {
-        const Real dxClampd = - mouseState.dx / (Real)getw();
-        const Real dyClampd = mouseState.dy / (Real)geth();
-        const Real wGraph = region.width();
-        const Real hGraph = region.height();
-        const Real dxGraph = wGraph * dxClampd;
-        const Real dyGraph = hGraph * dyClampd;
-
-        region.xMin += dxGraph;
-        region.xMax += dxGraph;
-        region.yMin += dyGraph;
-        region.yMax += dyGraph;
-    }
-    if(mouseState.centerPressed)
-    {
-        constexpr const Real factor = 0.01;
-        const Real dx = 1-factor*mouseState.dx;
-        const Real dy = 1+factor*mouseState.dy;
-
-        const Real x0 = region.xCenter();
-        const Real y0 = region.yCenter();
-        const Real hw = .5 * region.width() *dx;
-        const Real hh = .5 * region.height()*dy;
-
-        region = {
-            x0 - hw,
-            x0 + hw,
-            y0 - hh,
-            y0 + hh
-        };
-    }
-
-    return elRet;
-}
-
-bool Core::Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
-    GUIEventListener::notifyMouseWheel(dx, dy);
-
-    constexpr const Real factor = 1.2;
-    const Real d = pow(factor, -dx);
-
-    static auto targetRegion = region;
-
-    if(!Animator::Contains(region.xMin)
-       && !Animator::Contains(region.xMax)
-       && !Animator::Contains(region.yMin)
-       && !Animator::Contains(region.yMax)) {
-        targetRegion = region;
-    }
-
-    if(Core::BackendManager::GetGUIBackend().getMouseState().rightPressed) {
-
-        const Real x0 = targetRegion.xCenter();
-        const Real hw = .5*targetRegion.width() * d;
-
-        targetRegion.xMin = x0-hw;
-        targetRegion.xMax = x0+hw;
-
-        set_xMin(targetRegion.xMin);
-        set_xMax(targetRegion.xMax);
-
-    } else {
-        const Real y0 = targetRegion.yCenter();
-        const Real hh = .5 * targetRegion.height() * d;
-
-        targetRegion.yMin = y0-hh;
-        targetRegion.yMax = y0+hh;
-
-        set_yMin(targetRegion.yMin);
-        set_yMax(targetRegion.yMax);
-    }
-
-    return true;
-}
-
-
-
-void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
-
 auto Core::Graphics::Graph2D::countDisplayItems() const -> Count { return mPointSets.size() + curves.size(); }
-
-void Core::Graphics::Graph2D::setAnimationTime(Real value) { animationTimeSeconds = value; }
-
-Real Core::Graphics::Graph2D::getAnimationTime() const { return animationTimeSeconds; }
-
-void Core::Graphics::Graph2D::setHorizontalUnit(const Unit &hUnit) { baseHorizontalUnit = hUnit; }
-
-void Core::Graphics::Graph2D::setVerticalUnit(const Unit &hUnit)   { baseVerticalUnit   = hUnit; }
-
-auto Core::Graphics::Graph2D::getLastXHairPosition() const -> Point2D {
-    return XHairLocation;
-}
 
 
 

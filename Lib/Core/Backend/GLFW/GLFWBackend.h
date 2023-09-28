@@ -6,13 +6,20 @@
 #define STUDIOSLAB_GLFWBACKEND_H
 
 #include <GLFW/glfw3.h>
-#include "../GUIBackend.h"
+#include "../GraphicBackend.h"
+#include "GLFWListener.h"
+#include "GLFWEventTranslator.h"
 
-class GLFWBackend : public GUIBackend {
+class GLFWBackend : public GraphicBackend {
+    Core::GLFWEventTranslator eventTranslator;
+    std::vector<Core::GLFWListener*> listeners;
+
+    MouseState mouseState;
+
     Program* program = nullptr;
     GLFWwindow *systemWindow = nullptr;
 
-    void initGLEW();
+    static void InitGLEW();
 
     void mainLoop();
 
@@ -33,25 +40,23 @@ class GLFWBackend : public GUIBackend {
 
 public:
     explicit GLFWBackend();
-
     ~GLFWBackend() override;
+    auto getGLFWWindow() -> GLFWwindow&;
+
+    void addGLFWListener(Core::GLFWListener *glfwListener);
 
     static bool GetKeyState(GLFWwindow *window, int key);
     static Point2D GetCursorPosition(GLFWwindow *window);
     static bool IsWindowHovered(GLFWwindow *window);
     static bool GetMouseButtonState(GLFWwindow *window, int button);
 
-    auto getMouseState() const -> const MouseState override;
+    auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> bool override;
 
-    auto getGLFWWindow() -> GLFWwindow&;
-
+    auto getMouseState() const -> MouseState override;
     void run(Program *program) override;
-
     auto getScreenHeight() const -> Real override;
-
     auto pause() -> void override;
     auto resume() -> void override;
-
     auto requestRender() -> void override;
 };
 

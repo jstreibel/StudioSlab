@@ -30,7 +30,7 @@ bool OpenGLUtils::checkGLErrors(const Str& hint, bool raiseException){
         bad = true;
     }
 
-    if(bad && raiseException) throw "OpenGL error";
+    if(bad && raiseException) throw Exception("OpenGL error");
 
     return bad;
 }
@@ -58,7 +58,7 @@ bool OpenGLUtils::outputToPNG(OpenGLUtils::FrameBuffer buffer,
                               std::string fileName)
 {
     const auto w = buffer.w, h = buffer.h;
-    const auto bpp = buffer.getBitsPerPixel();
+    const auto bpp = buffer.GetBitsPerPixel();
     const auto pixelData = buffer.getPixelData();
     const auto dataSize = w*h*bpp/8;
 

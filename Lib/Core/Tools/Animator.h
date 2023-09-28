@@ -22,7 +22,7 @@ namespace Core {
 
         class Animator {
             static Animator& Instance();
-            Animator() {}
+            Animator() = default;
 
             std::unordered_map<double*, Animation> animations;
             static double cubicBezierInterpolation(double startValue, double endValue, double t);

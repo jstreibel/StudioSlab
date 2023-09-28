@@ -13,8 +13,10 @@
 
 namespace Modes::DatabaseViewer {
     class DBViewer : public WindowRow {
-        DBParser::Ptr dbParser;
         GUIWindow guiWindow;
+        WindowRow topRow;
+
+        DBParser::Ptr dbParser;
         R2toR::Graphics::FlatFieldDisplay allDataDisplay;
         R2toR::Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
@@ -30,7 +32,7 @@ namespace Modes::DatabaseViewer {
 
         std::map<Str, std::shared_ptr<R2toR::DiscreteFunction_CPU>> fullHistoriesMap;
 
-        int index_XHair;
+        int index_XHair=-1;
 
         Real KG_mass = 1.0;
         void updateKGDispersion(bool visible);

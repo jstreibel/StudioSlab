@@ -7,7 +7,7 @@
 
 #include <exception>
 #include <utility>
-#include <string>
+#include "String.h"
 
 #define NOT_IMPLEMENTED throw NotImplementedException(Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__));
 
@@ -21,10 +21,14 @@ public:
 };
 
 class NotImplementedException : public Exception {
-private:
-    std::string message;
 public:
     explicit NotImplementedException(std::string who);
+};
+
+class StudioSlabRuntimeBackendInconsistency : public Exception {
+private:
+public:
+    explicit StudioSlabRuntimeBackendInconsistency(std::string why);
 };
 
 #endif //STUDIOSLAB_EXCEPTION_H

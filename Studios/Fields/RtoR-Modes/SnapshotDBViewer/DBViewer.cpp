@@ -40,13 +40,11 @@ namespace Modes::DatabaseViewer {
         allDataDisplay.setHorizontalUnit(Constants::π);
         allDataDisplay.setColorMap(Styles::ColorMaps["blues"].inverse());
 
-        std::shared_ptr<WindowRow>winRow(new WindowRow);
-
-        winRow->addWindow(DummyPtr(allDataDisplay));
-        winRow->addWindow(DummyPtr(fullParticularHistoryDisplay));
+        topRow.addWindow(DummyPtr(allDataDisplay));
+        // winRow->addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         winCol->addWindow(DummyPtr(massesGraph));
-        winCol->addWindow(winRow, 0.75);
+        winCol->addWindow(DummyPtr(topRow), 0.75);
 
         addWindow(winCol, WindowRow::Left, .8);
 
@@ -236,26 +234,32 @@ namespace Modes::DatabaseViewer {
             return true;
         }
 
+        else if( key==Core::Key_DELETE && state==Core::Press ){
+            topRow.removeWindow(DummyPtr(fullParticularHistoryDisplay));
+            return true;
+        }
+
         return WindowRow::notifyKeyboard(key, state, modKeys);
     }
-
-        void DBViewer::reloadData() {
-            fullField = dbParser->buildFullField();
-            allDataDisplay.setFunction(fullField);
-
-            computeMasses(2);
-        }
 
     bool DBViewer::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
         static Timer timer;
         if(button==Core::MouseButton_LEFT){
             if(state==Core::Press) timer.reset();
-            else if(state==Core::Release && timer.getElTime_msec() < 200)
+            else if(state==Core::Release && timer.getElTime_msec() < 200) {
                 loadDataUnderMouse();
+                return true;
+            }
         }
 
-
         return WindowRow::notifyMouseButton(button, state, keys);
+    }
+
+    void DBViewer::reloadData() {
+        fullField = dbParser->buildFullField();
+        allDataDisplay.setFunction(fullField);
+
+        computeMasses(2);
     }
 
     void DBViewer::loadDataUnderMouse() {
@@ -278,6 +282,8 @@ namespace Modes::DatabaseViewer {
         }
 
         fullParticularHistoryDisplay.setFunction(fieldHistory);
+
+        topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
     }
 
 }

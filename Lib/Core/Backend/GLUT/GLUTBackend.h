@@ -1,21 +1,25 @@
 #ifndef GLUTBACKEND_H
 #define GLUTBACKEND_H
 
+#include "GLUTListener.h"
+#include "GLUTEventTranslator.h"
+
 #include "Core/Backend/Events/GUIEventListener.h"
-#include "Core/Backend/GUIBackend.h"
+#include "Core/Backend/GraphicBackend.h"
+
 #include "Math/Graph/OpenGLMonitor.h"
 
 
 
-class GLUTBackend : public GUIBackend
+class GLUTBackend : public GraphicBackend
 {
-	bool programIsRunning = false;
+    ::Backend::GLUTEventTranslator eventTranslator;
+    std::vector<::Backend::GLUTListener*> glutListeners;
 
+	bool programIsRunning = false;
 	Program *program = nullptr;
-	std::vector<Numerics::OutputSystem::Socket*> sockets;
 
 	MouseState mouseState;
-
 	bool renderingRequested = false;
 public:
     GLUTBackend();
@@ -26,7 +30,9 @@ public:
     void run(Program *) override;
 
     static void keyboard(unsigned char key, int x, int y);
+    static void keyboardUp(unsigned char key, int x, int y);
     static void keyboardSpecial(int key, int x, int y);
+    static void keyboardSpecialUp(int key, int x, int y);
 
     static void mouseButton(int button, int dir, int x, int y);
     static void mousePassiveMotion(int x, int y);
@@ -37,6 +43,8 @@ public:
     static void idleCall();
     static void reshape(int w, int h);
 
+    auto addGLUTListener(::Backend::GLUTListener *glutListener) -> void;
+
     auto getScreenHeight() const -> Real override;
 
     auto isPaused() const -> bool {return !programIsRunning;}
@@ -45,7 +53,7 @@ public:
 
 	auto requestRender() -> void override;
 
-	auto getMouseState() const -> const MouseState override;
+	auto getMouseState() const -> MouseState override;
 
 };
 

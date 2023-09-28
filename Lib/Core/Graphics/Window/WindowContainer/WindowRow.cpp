@@ -14,40 +14,67 @@
 
 #define PropagateEvent(EVENT)   \
     auto responded = false;     \
-    for(auto &win : windows)    \
-        if(win->isMouseIn()) responded = win->EVENT; \
+    for(auto &winData : windowsList)    \
+        if(winData.window->isMouseIn()) responded = winData.window->EVENT; \
                                 \
     return responded;
 
 
-void WindowRow::addWindow(const Window::Ptr& window, RelativePosition relPosition, float windowWidth) {
-    switch (relPosition) {
-        case Left:
-            windows.push_front(window);
-            widths.push_front(windowWidth);
-            break;
-        case Right:
-            windows.push_back(window);
-            widths.push_back(windowWidth);
-            break;
+RealVector WindowRow::_widthsVector() const {
+    auto widths = RealVector(windowsList.size());
+
+    auto i=0;
+    for(auto &winData : windowsList){
+        widths[i] = winData.width;
+        ++i;
     }
 
+    return widths;
+}
+
+bool WindowRow::addWindow(const Window::Ptr& window, RelativePosition relPosition, float windowWidth) {
+    if(std::find_if(windowsList.begin(), windowsList.end(), [&window](WinMetaData &winMetaData){
+        return winMetaData.window == window;
+    }) != windowsList.end()){
+        return false;
+    }
+
+    switch (relPosition) {
+        case Left:
+            windowsList.push_front({window, windowWidth});
+            arrangeWindows();
+            return true;
+        case Right:
+            windowsList.push_back({window, windowWidth});
+            arrangeWindows();
+            return true;
+    }
+
+    return false;
+}
+
+void WindowRow::removeWindow(const Window::Ptr &window) {
+    windowsList.remove_if([&window](WinMetaData &toComp){
+        return toComp.window == window;
+    });
+
+    arrangeWindows();
 }
 
 void WindowRow::arrangeWindows() {
     if(!assertConsistency()) throw Exception("WindowRow inconsistency");
 
-    auto m = windows.size();
+    auto m = windowsList.size();
 
     if(m==0) return;
 
     std::vector<int> computedWidths(m, (int)(getw()/m));    // "if(freeWidths==m)"
-    auto widthsVector  = RealVector(widths.begin(), widths.end());
+    auto widths  = _widthsVector();
 
     auto freeWidths = CountLessThanZero(widths);
     if(freeWidths==0){
         for(int i=0; i<m; ++i){
-            auto relWidth = widthsVector[i];
+            auto relWidth = widths[i];
             auto width = geth() * relWidth;
             computedWidths[i] = (int)width;
         }
@@ -56,7 +83,7 @@ void WindowRow::arrangeWindows() {
         auto wFree = (float)getw() * (1-reservedWidth) / (float)freeWidths;
 
         for(int i=0; i<m; ++i){
-            auto relWidth = widthsVector[i];
+            auto relWidth = widths[i];
             auto width = relWidth>0 ? getw() * relWidth : wFree;
             computedWidths[i] = (int)width;
         }
@@ -70,17 +97,21 @@ void WindowRow::arrangeWindows() {
     }
 
     auto i=0;
-    for(auto &win : windows){
-        win->setx(computed_xPositions[i]);
-        win->sety(gety());
+    for(auto &winMData : windowsList){
+        OUT win = *winMData.window;
 
-        win->notifyReshape(computedWidths[i], geth());
+        win.setx(computed_xPositions[i]);
+        win.sety(gety());
+
+        win.notifyReshape(computedWidths[i], geth());
 
         i++;
     }
 }
 
 bool WindowRow::assertConsistency() const {
+    auto widths  = _widthsVector();
+
     auto reserverdWidth   = SumLargerThanZero(widths);
     auto freeWidths       = CountLessThanZero(widths);
 
@@ -100,9 +131,11 @@ bool WindowRow::assertConsistency() const {
 }
 
 void WindowRow::draw() {
-    for(auto &win : windows){
-        win->draw();
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&win));
+    for(auto &winData : windowsList){
+        auto &window = *winData.window;
+
+        window.draw();
+        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
     }
 }
 

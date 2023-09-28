@@ -38,7 +38,7 @@ namespace Core {
 
         virtual bool notifyFilesDropped(StrVector paths);
 
-        virtual bool notifyScreenReshape(int newScreenWidth, int newScreenHeight);
+        virtual bool notifyScreenReshape(int w, int h);
 
         virtual bool notifyRender();
 
