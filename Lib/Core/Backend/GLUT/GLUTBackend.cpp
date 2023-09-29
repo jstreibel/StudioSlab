@@ -6,8 +6,6 @@
 
 #include "Core/Graphics/OpenGL/GLDebug.h"
 
-#include "Math/Graph/Styles.h"
-#include "Math/Numerics/Program/Integrator.h"
 #include "Core/Backend/BackendManager.h"
 
 #include <cassert>
@@ -71,8 +69,6 @@ GLUTBackend::GLUTBackend()
                    << "OpenGL version " << glGetString(GL_VERSION) << ". "
                    << "Current window: " << winHandle << Log::Flush;
 
-    Styles::Init();
-
     Log::Info() << "Initialized Imgui." << Log::Flush;
 }
 
@@ -94,7 +90,6 @@ void GLUTBackend::keyboard(unsigned char key, int x, int y)
     Program *program = me.program;
 
     if(key == ' ') me.programIsRunning = !me.programIsRunning;
-    else if(key == 'f') dynamic_cast<NumericalIntegration*>(program)->doForceOverStepping();
     else if(key == '[') {
         Log::Info("GLUTBackend ") << "forcing cycle until next output;" << Log::Flush;
         program->cycle(Program::CycleOptions::CycleUntilOutput);

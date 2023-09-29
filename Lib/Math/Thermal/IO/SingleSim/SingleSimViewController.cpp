@@ -362,7 +362,6 @@ namespace ThermoOutput {
         updateIsingGraph();
         drawEverything(params, data);
 
-        nk_clear(nkContext);
         if(nk_begin(nkContext, "Manips",
                     nk_rect(isingSpriteSize+ 2 * _border, isingSpriteSize, _graphsWidth, _graphsHeight),
                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_TITLE)){

@@ -30,7 +30,7 @@ void SetSchemeLight();
 void SetSchemeElegant();
 
 void Styles::Init() {
-
+    if(current != nullptr) return;
     SetSchemeDark();
     // SetSchemeDark2();
     // SetSchemeHacker();

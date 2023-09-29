@@ -3,6 +3,7 @@
 //
 
 #include "Graph.h"
+#include "Styles.h"
 
 #include <utility>
 #include "imgui.h"
@@ -26,6 +27,8 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
 , title(std::move(_title))
 , samples(samples)
 {
+    Styles::Init();
+
     this->backgroundColor = Styles::GetCurrent()->graphBackground;
 
     if(title.empty()) title = Str("unnamed");

@@ -9,6 +9,7 @@
 #include "Core/Tools/Log.h"
 #include "Utils.h"
 #include "Math/Formalism/Categories.h"
+#include "Core/Backend/BackendManager.h"
 
 
 namespace OpenGL {
@@ -66,6 +67,8 @@ namespace OpenGL {
 
 
     Shader::Shader(const Str& vertFilename, const Str& fragFilename) {
+        Core::BackendManager::LoadModule(Core::ModernOpenGL);
+
         handle = ftgl::shader_load(vertFilename.c_str(), fragFilename.c_str());
         Log::Info() << "Shader files '" << vertFilename
                                 << "' and '" << fragFilename << "' loaded and compiled." << Log::Flush;

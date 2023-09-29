@@ -16,7 +16,7 @@ namespace Fields::KleinGordon {
     class KGBuilder : public Core::Simulation::VoidBuilder {
     protected:
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
-        BoolParameter    takeDFTSnapshot                = BoolParameter(true,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
+        BoolParameter    takeDFTSnapshot                = BoolParameter(false,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
 
         RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
                                                                         "Force snapshot to be taken at some time prior to end (after will result in no output.");
