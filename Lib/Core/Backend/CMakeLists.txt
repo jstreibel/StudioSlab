@@ -10,9 +10,9 @@ set( GRAPHIC_BACKEND_SOURCE
 		GLFW/GLFWListener.h						GLFW/GLFWListener.cpp
 		GLFW/GLFWEventTranslator.h				GLFW/GLFWEventTranslator.cpp
 
-		SFML-Nuklear/SFML-Nuklear-Backend.h		SFML-Nuklear/SFML-Nuklear-Backend.cpp
-		SFML-Nuklear/SFMLEventTranslator.h		SFML-Nuklear/SFMLEventTranslator.cpp
-		SFML-Nuklear/SFMLListener.h				SFML-Nuklear/SFMLListener.cpp
+		SFML/SFMLBackend.h SFML/SFMLBackend.cpp
+		SFML/SFMLEventTranslator.h SFML/SFMLEventTranslator.cpp
+		SFML/SFMLListener.h SFML/SFMLListener.cpp
 
 		VTK/VTKBackend.h						VTK/VTKBackend.cpp
 
@@ -27,8 +27,11 @@ set( GRAPHIC_BACKEND_SOURCE
 		Modules/ImGui/ImGuiModule.h				Modules/ImGui/ImGuiModule.cpp
 		Modules/ImGui/ImGuiModuleGLUT.h			Modules/ImGui/ImGuiModuleGLUT.cpp
 		Modules/ImGui/ImGuiModuleGLFW.h			Modules/ImGui/ImGuiModuleGLFW.cpp
-		Modules/NuklearModule.h					Modules/NuklearModule.cpp
 		Modules/RealTimeAnimation.h				Modules/RealTimeAnimation.cpp
+		Modules/Nuklear/NuklearModule.h			Modules/Nuklear/NuklearModule.cpp
+		Modules/Nuklear/NuklearSFMLModule.h		Modules/Nuklear/NuklearSFMLModule.cpp
+		Modules/Nuklear/NuklearGLFWModule.h		Modules/Nuklear/NuklearGLFWModule.cpp
+		Modules/ModernOpenGLModule.h Modules/ModernOpenGLModule.cpp
 
 )
 

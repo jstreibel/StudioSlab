@@ -5,7 +5,6 @@
 #include <ostream>
 #include <fstream>
 #include <boost/range/combine.hpp>
-#include <iostream>
 
 #include "SingleSimViewController.h"
 
@@ -13,12 +12,10 @@
 #include "Core/Graphics/Styles/Colors.h"
 
 #include <SFML/Graphics.hpp>
-#include <SFML/OpenGL.hpp>
 
 #include "Utils/Utils.h"
-#include "Core/Controller/Nuklear/NuklearSFML.h"
-#include "Math/Toolset/NativeFunctions.h"
-
+#include "Core/Backend/BackendManager.h"
+#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
 
 
 #define COMPUTE_AVERAGES false
@@ -39,8 +36,8 @@ namespace ThermoOutput {
     const int fontSize = 28;
     const float _border = 1.2f*fontSize;
     const float isingSpriteSize = (WinH- 3 * _border) / 2; //2l + 3b = H => 2l = H-3b => l = (H-3b)/2
-    const int _graphsWidth = (WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
-    const int _graphsHeight = (WinH- (Rows+1) * _border) / Rows;
+    const int _graphsWidth = int(WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
+    const int _graphsHeight = int(WinH- (Rows+1) * _border) / Rows;
     Real GAP = 15.0; // in degrees, used to view the Dirac strings between field twists.
 
     // user input parameters to manip T and h.
@@ -55,29 +52,14 @@ namespace ThermoOutput {
     // Output
     const std::string fileLoc = "/home/joao/Developer/StudiesC++/Ising/DataAndPlot/Workdir/";
 
-    // Nuklear
-    const uint32_t MaxVertexMemory = 512 * 1024;
-    const uint32_t MaxElementMemory = 128 * 1024;
-
-
     SingleSimViewController::SingleSimViewController(const int L, int MCSteps, int transientSize)
-        : window(sf::VideoMode(WinW, WinH), "SFML window", style), MCSteps(MCSteps), transientSize(transientSize)
+        : MCSteps(MCSteps), transientSize(transientSize)
     {
-        nkContext = nk_sfml_init(&window);
 
-        nk_font_atlas *atlas{nullptr};
-        nk_sfml_font_stash_begin(&atlas);
-        // Adding fonts:
-        // nk_font *font = nk_font_atlas_add_from_file(atlas, "path", height, config);
-        nk_sfml_font_stash_end();
 
-#if FULLSCREEN == false
-        window.setPosition(sf::Vector2i(10, 100));
-#endif
-
-#if LIMIT_SIM_SPEED == true
-        window.setFramerateLimit(1000./_FRAME_INTERVAL_MSEC);
-#endif
+        auto nkModule_abstract = Core::BackendManager::GetModule(Core::Nuklear);
+        auto &nkModule = *dynamic_cast<Core::NuklearModule*>(nkModule_abstract.get());
+        nkContext = nkModule.getContext();
 
         timer.restart();
 
@@ -106,9 +88,9 @@ namespace ThermoOutput {
         }
 
 
-        sf::IntRect subWindow(2 * _border + 2 * isingSpriteSize, _border, _graphsWidth, _graphsHeight);
+        sf::IntRect subWindow(2 * _border + 2 * isingSpriteSize, (int)_border, _graphsWidth, _graphsHeight);
 
-        float xMin=0, xMax=MCSteps; u_char gray=.4*255; sf::Color dashColor(gray, gray, gray);
+        float xMin=0, xMax=(float)MCSteps; u_char gray=.4*255; sf::Color dashColor(gray, gray, gray);
         auto *_mag_t_view = new GraphAndAverageCalc(subWindow, {xMin, -1.1}, {xMax, 1.1}, MCSteps, transientSize, "t", "m", true);
         mag_t_View = _mag_t_view;
         mag_t_View->addHorizontalDashedLine( 1, 200, dashColor);
@@ -216,33 +198,7 @@ namespace ThermoOutput {
     }
 
 
-    bool SingleSimViewController::doOperate(SystemParams &params, OutputData &data) {
-        _treatEvents(params, data);
-
-        if(params.shouldRun) {
-            if(data.mcStep>0) {
-                history.push_back(data);
-                _updateGraphsAndData(params, data);
-                // _runIOProgram(params, data);
-            }
-        }
-
-#if LIMIT_SIM_SPEED == false
-        if(timer.getElapsedTime().asMilliseconds() > _FRAME_INTERVAL_MSEC)
-#endif
-        {
-            _updateIsingGraph(data.S);
-            window.clear();
-            _drawEverything(params, data);
-            window.display();
-
-            timer.restart();
-        }
-
-        return window.isOpen();
-    }
-
-    void SingleSimViewController::_computeTimeCorrelations(int upToMCStep) {
+    void SingleSimViewController::computeTimeCorrelations(int upToMCStep) {
         auto tau_eq = transientSize;
         auto t0 = tau_eq;
         auto t_max = 5*tau_eq < (MCSteps-tau_eq) ? 5*tau_eq : (MCSteps-tau_eq);
@@ -252,7 +208,7 @@ namespace ThermoOutput {
         auto t_total = upToMCStep - t0;
         auto tCorrMax_local = fmin(t_total, t_max);
 
-        std::vector<Real> c(tCorrMax_local);
+        std::vector<Real> c((size_t)tCorrMax_local);
 
         for (auto t=0; t < tCorrMax_local; ++t){
             auto corr = .0;
@@ -279,28 +235,29 @@ namespace ThermoOutput {
             corr_t_View->clearData();
             for(auto t=0; t < tCorrMax_local; ++t) {
                 auto norm_corr = c[t] / c0;
-                corr_t_View->addPoint(t, norm_corr);
+                corr_t_View->addPoint((float)t, (float)norm_corr);
             }
         }
     }
 
-    void SingleSimViewController::_updateGraphsAndData(SystemParams &params, OutputData &data) {
+    void SingleSimViewController::updateGraphsAndData(SystemParams &params, OutputData &data) {
         sf::Color graphColor = sf::Color::White;
-        if (data.mcStep > data.transientSize)
+        if (currStep > transientSize)
             graphColor = sf::Color::Green;
-        float MCStep = data.mcStep;
+        auto MCStep = (float)currStep;
 
-        mag_t_View->addPoint(MCStep, data.m, graphColor);
-        en_t_View->addPoint(MCStep, data.e, graphColor);
-        T_t_View->addPoint(MCStep, params.T, sf::Color::White);
-        h_t_View->addPoint(MCStep, params.h, sf::Color::White);
+        mag_t_View->addPoint(MCStep, (float)data.m, graphColor);
+        en_t_View->addPoint(MCStep, (float)data.e, graphColor);
+        T_t_View->addPoint(MCStep, (float)params.T, sf::Color::White);
+        h_t_View->addPoint(MCStep, (float)params.h, sf::Color::White);
 
-        accepted_t_View->addPoint(MCStep, data.rejected / data.N);
+        accepted_t_View->addPoint(MCStep, (float)data.rejected / data.N);
 
         //_computeTimeCorrelations(data.mcStep);
     }
 
-    void SingleSimViewController::_updateIsingGraph(const XYNetwork &S) {
+    void SingleSimViewController::updateIsingGraph() {
+        const XYNetwork &S = algorithm->getData().S;
 
         float eMin=100, eMax=-100;
         for(int i=0; i<S.L; ++i) {
@@ -311,7 +268,7 @@ namespace ThermoOutput {
                     val *= 360.0;
 
                     auto rgbColor = Styles::hsv2rgb({static_cast<Real>(val), 1, 1});
-                    auto color = sf::Color(rgbColor.r * 255., rgbColor.g * 255., rgbColor.b * 255.);
+                    auto color = sf::Color((float)rgbColor.r * 255., (float)rgbColor.g * 255., (float)rgbColor.b * 255.);
 
                     if(val>(360.0-.5*GAP) || val<(.5*GAP)){ color.r*=0; color.g*=0; color.b*=0; }
 
@@ -323,7 +280,7 @@ namespace ThermoOutput {
 
                     val = fmin(fmax((1-b)*val + b*val*val, 0), 1);
 
-                    auto color = sf::Color(val * 255., val * 255., val * 255.);
+                    auto color = sf::Color((sf::Uint8)val * 255., (sf::Uint8)val * 255., (sf::Uint8)val * 255.);
 
                     XYEnergyBitmap.setPixel(i, j, color);
                 }
@@ -333,88 +290,77 @@ namespace ThermoOutput {
         XYEnergyTexture.loadFromImage(XYEnergyBitmap);
     }
 
-    void SingleSimViewController::_treatEvents(SystemParams &params, OutputData &data) {
-        sf::Event event{};
-        nk_input_begin(nkContext);
-        while (window.pollEvent(event)) {
-            nk_sfml_handle_event(event);
+    void SingleSimViewController::event(const sf::Event &event) {
+        if(event.type != sf::Event::KeyPressed) return;
 
-            if (event.type == sf::Event::Closed) {
-                window.close();
-                exit(0);
-            }
 
-            else if(event.type == sf::Event::KeyPressed) {
-                sf::Keyboard::Key key = event.key.code;
+        sf::Keyboard::Key key = event.key.code;
 
-                auto delta = ThermoOutput::delta;
+        auto delta = ThermoOutput::delta;
 
-                if(event.key.shift) delta *= 5;
-                else if(event.key.control) delta *= .2;
+        if(event.key.shift) delta *= 5;
+        else if(event.key.control) delta *= .2;
 
-                if(key == sf::Keyboard::Escape){
-                    window.close();
-                    exit(0);
-                }
-                else if(key == sf::Keyboard::RBracket){
-                    __manipulationOfParametersHasHappened(params.T, params.h, data.N);
-                    params.T += delta; if(params.T>TMax) params.T=TMax;
-                }
-                else if(key == sf::Keyboard::LBracket){
-                    params.T -= delta; if(params.T<TMin) params.T=TMin;
-                    __manipulationOfParametersHasHappened(params.T, params.h, data.N);
+        auto params = algorithm->getParams();
+        auto data = algorithm->getData();
 
-                }
-                else if(key == sf::Keyboard::H){
-                    __outputHistoryToFile((int)sqrt(data.N));
-                }
-                else if(key == sf::Keyboard::M){
-                    __outputAveragesHistoryToFile((int) sqrt(data.N));
-                }
-                else if(key == sf::Keyboard::A){
-                    __outputHisteresisToFile((int)sqrt(data.N));
-                }
-                else if(key == sf::Keyboard::P){
-                    params.h += delta;
-                    if(params.h>hRange) params.h=hRange;
-                    else {
-                        sf::Color color = sf::Color::Green;
-                        if(event.key.shift) color = sf::Color::Red;
-                        else if(event.key.control) color = sf::Color(135, 206, 235);
-                        color.a = 0.7*255;
-                        histeresisView->addPoint(params.h, data.m, color);
-                    }
-                    __manipulationOfParametersHasHappened(params.T, params.h, data.N);
-                }
-                else if(key == sf::Keyboard::O){
-                    params.h -= delta;
-                    if(params.h<-hRange) params.h=-hRange;
-                    else {
-                        sf::Color color = sf::Color::Green;
-                        if(event.key.shift) color = sf::Color::Red;
-                        else if(event.key.control) color = sf::Color(135, 206, 235);
-                        color.a = 0.7*255;
-                        histeresisView->addPoint(params.h, data.m, color);
-                    }
-                    __manipulationOfParametersHasHappened(params.T, params.h, data.N);
-                }
-
-                else if(key == sf::Keyboard::S) {
-                    XYThetaTexture.setSmooth(!XYThetaTexture.isSmooth());
-                    XYEnergyTexture.setSmooth(!XYEnergyTexture.isSmooth());
-                }
-                else if(key == sf::Keyboard::Q) {
-
-                }
-                else if(key == sf::Keyboard::W) {
-
-                }
-                else if(key == sf::Keyboard::Space){
-                    params.shouldRun = !params.shouldRun;
-                }
-            }
+        if(key == sf::Keyboard::RBracket){
+            manipulationOfParametersHasHappened(params.T, params.h, data.N);
+            params.T += delta; if(params.T>TMax) params.T=TMax;
         }
-        nk_input_end(nkContext);
+        else if(key == sf::Keyboard::LBracket){
+            params.T -= delta; if(params.T<TMin) params.T=TMin;
+            manipulationOfParametersHasHappened(params.T, params.h, data.N);
+        }
+        else if(key == sf::Keyboard::H) outputHistoryToFile((int)sqrt(data.N));
+        else if(key == sf::Keyboard::M) outputAveragesHistoryToFile((int) sqrt(data.N));
+        else if(key == sf::Keyboard::A) outputHisteresisToFile((int)sqrt(data.N));
+        else if(key == sf::Keyboard::P){
+            params.h += delta;
+            if(params.h>hRange) params.h=hRange;
+            else {
+                sf::Color color = sf::Color::Green;
+                if(event.key.shift) color = sf::Color::Red;
+                else if(event.key.control) color = sf::Color(135, 206, 235);
+                color.a = 0.7*255;
+                histeresisView->addPoint(params.h, data.m, color);
+            }
+            manipulationOfParametersHasHappened(params.T, params.h, data.N);
+        }
+        else if(key == sf::Keyboard::O){
+            params.h -= delta;
+            if(params.h<-hRange) params.h=-hRange;
+            else {
+                sf::Color color = sf::Color::Green;
+                if(event.key.shift) color = sf::Color::Red;
+                else if(event.key.control) color = sf::Color(135, 206, 235);
+                color.a = 0.7*255;
+                histeresisView->addPoint(params.h, data.m, color);
+            }
+            manipulationOfParametersHasHappened(params.T, params.h, data.N);
+        }
+
+        else if(key == sf::Keyboard::S) {
+            XYThetaTexture.setSmooth(!XYThetaTexture.isSmooth());
+            XYEnergyTexture.setSmooth(!XYEnergyTexture.isSmooth());
+        }
+        else if(key == sf::Keyboard::Space) params.shouldRun = !params.shouldRun;
+    }
+
+    void SingleSimViewController::render(sf::RenderWindow *pWindow) {
+        this->window = pWindow;
+
+        algorithm->MCStep();
+
+        auto params = algorithm->getParams();
+        auto data = algorithm->getData();
+
+        // if running:
+        history.push_back(data);
+        updateGraphsAndData(params, data);
+
+        updateIsingGraph();
+        drawEverything(params, data);
 
         nk_clear(nkContext);
         if(nk_begin(nkContext, "Manips",
@@ -431,7 +377,7 @@ namespace ThermoOutput {
             ss << "T = " << std::setprecision(3) << params.T;
             nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*_graphsWidth - lw);
+            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
             static auto fT = (float)params.T;
             if (nk_slider_float(nkContext, 0.f, &fT, 5.f, 0.001f)) {
                 params.T = fT;
@@ -443,7 +389,7 @@ namespace ThermoOutput {
             ss << "d = " << std::setprecision(3) << params.δ;
             nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*_graphsWidth - lw);
+            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
             static auto fδ = (float)params.δ;
             if (nk_slider_float(nkContext, 0.0f, &fδ, 2*M_PI, 0.001f)) {
                 params.δ = fδ;
@@ -455,14 +401,14 @@ namespace ThermoOutput {
             ss << "b = " << std::setprecision(3) << b;
             nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*_graphsWidth - lw);
+            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
             fδ = (float)params.δ;
             if (nk_slider_float(nkContext, -100, &b, 20, 0.001f)) {
                 params.δ = fδ;
             }
 
 
-            nk_layout_row_push(nkContext, 0.75f*_graphsWidth - lw);
+            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
 
             nk_bool shouldNotOverrelax = !params.shouldOverrelax;
             if(nk_checkbox_text(nkContext, "Overrelax", 9, &shouldNotOverrelax))
@@ -471,38 +417,38 @@ namespace ThermoOutput {
             nk_layout_row_end(nkContext);
         }
         nk_end(nkContext);
-
     }
 
-    void SingleSimViewController::_runIOProgram(SystemParams &params, OutputData &data) {
-        const int totalMCSteps = data.mcTotalSteps;
-        const int transient = data.transientSize;
+
+    void SingleSimViewController::runIOProgram(SystemParams &params, OutputData &data) {
+        const int totalMCSteps = MCSteps;
+        const int transient = transientSize;
         const int sampleSizeDemand = (transientToSamplesRatio+1)*transient;
         const int totalSamples = totalMCSteps/sampleSizeDemand;
 
-        if(data.mcStep==0) {
+        if(currStep==0) {
             auto lastT = params.T;
             params.T = T_min;
-            __manipulationOfParametersHasHappened(lastT, params.h, data.N);
+            manipulationOfParametersHasHappened(lastT, params.h, data.N);
             return;
         }
 
         Real dT = (T_max-T_min)/totalSamples;
-        if((data.mcStep % ((transientToSamplesRatio+1 )*data.transientSize)) == 0){
+        if((currStep % ((transientToSamplesRatio+1 )*transientSize)) == 0){
             auto lastT = params.T;
             params.T += dT;
-            __manipulationOfParametersHasHappened(lastT, params.h, data.N);
+            manipulationOfParametersHasHappened(lastT, params.h, data.N);
             return;
         }
     }
 
-    void SingleSimViewController::_drawEverything(SystemParams &params, OutputData &data) {
-        window.draw(XYThetaSprite);
-        window.draw(XYEnergySprite);
+    void SingleSimViewController::drawEverything(SystemParams &params, OutputData &data) {
+        window->draw(XYThetaSprite);
+        window->draw(XYEnergySprite);
 
         std::ostringstream textOutput;
-        textOutput << "t=" << data.mcStep << "/" << data.mcTotalSteps << " MC steps"
-                   << "\nTransient@" << data.transientSize << " MC steps"
+        textOutput << "t=" << currStep << "/" << MCSteps << " MC steps"
+                   << "\nTransient@" << transientSize << " MC steps"
                    << "\n" << data.S.L << "x" << data.S.L << " network"
                    << "\nTc=" << T_c
                    << "\nT=" << params.T
@@ -514,7 +460,7 @@ namespace ThermoOutput {
                    << "\n\n"
                    << (params.shouldOverrelax?"Is overrelaxing":"Not overrelaxing");
         text.setString(textOutput.str());
-        window.draw(text);
+        window->draw(text);
 
 
         // window.draw(*mag_t_View);
@@ -530,16 +476,14 @@ namespace ThermoOutput {
         //window.draw(*en_T_View);
         //window.draw(*chi_T_View);
         //window.draw(*C_v_View);
-
-        nk_sfml_render(NK_ANTI_ALIASING_ON, MaxVertexMemory, MaxElementMemory);
     }
 
-    void SingleSimViewController::__manipulationOfParametersHasHappened(Real last_T, Real last_h, Real N) {
+    void SingleSimViewController::manipulationOfParametersHasHappened(Real last_T, Real last_h, Real N) {
         //mag_t_View->manipulationOfParametersHasHappened(last_T, N/last_T);
         //en_t_View->manipulationOfParametersHasHappened(last_T, N/(last_T*last_T));
     }
 
-    void SingleSimViewController::__outputHistoryToFile(int L) {
+    void SingleSimViewController::outputHistoryToFile(int L) {
         std::stringstream ssFileName;
         ssFileName << "MCIsing-" << L << "x" << L;
         auto fileName = ssFileName.str();
@@ -616,7 +560,7 @@ namespace ThermoOutput {
         }
     }
 
-    void SingleSimViewController::__outputAveragesHistoryToFile(int L) {
+    void SingleSimViewController::outputAveragesHistoryToFile(int L) {
         auto mag_T = mag_T_View->getData();
         auto en_T  = en_T_View->getData();
         auto Cv_T  = C_v_View->getData();
@@ -672,7 +616,7 @@ namespace ThermoOutput {
         myfile.close();
     }
 
-    void SingleSimViewController::__outputHisteresisToFile(int L) {
+    void SingleSimViewController::outputHisteresisToFile(int L) {
         auto mag_h = histeresisView->getData();
 
         std::stringstream fileName;
@@ -681,7 +625,7 @@ namespace ThermoOutput {
         std::ofstream myfile;
         myfile.open (fileLoc + fileName.str() + ".dat");
         myfile << "# History output\n# h    <m>(h) \n";
-        std::pair<double,double> mag, e, Cv, chi;
+        // std::pair<double,double> mag, e, Cv, chi;
         for(auto mag : mag_h) myfile << mag.first << " " << mag.second << "\n";
         myfile.close();
 
@@ -697,8 +641,9 @@ namespace ThermoOutput {
         myfile.close();
     }
 
-    void SingleSimViewController::hide() {
-        window.setVisible(false);
+    void SingleSimViewController::setAlgorithm(MetropolisAlgorithm *pAlgorithm) {
+        this->algorithm = pAlgorithm;
     }
+
 
 }

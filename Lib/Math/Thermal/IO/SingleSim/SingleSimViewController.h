@@ -6,13 +6,17 @@
 #define ISING_SINGLESIMVIEWCONTROLLER_H
 
 #include "Utils/Types.h"
+#include "Core/Backend/SFML/SFMLListener.h"
 
-#include "Core/Controller/Nuklear/NuklearSFML.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"
+
+#include "3rdParty/Nuklear/NuklearInclude.h"
 
 #include "../../Model/XYNetwork.h"
 #include "../Tools/GraphAndAverageCalc.h"
 #include "../ViewControlBase.h"
+#include "Math/Thermal/Metropolis/MetropolisAlgorithm.h"
+#include "Math/Thermal/Utils/ThermoUtils.h"
 
 #include <SFML/Graphics.hpp>
 
@@ -20,8 +24,7 @@
 namespace ThermoOutput {
     const double T_c = 0.8935;
 
-    class SingleSimViewController : public ViewControlBase {
-        sf::RenderWindow window;
+    class SingleSimViewController : public SFMLListener {
         sf::Font font;
         sf::Text text;
 
@@ -33,9 +36,6 @@ namespace ThermoOutput {
         sf::Texture XYEnergyTexture;
         sf::Sprite XYEnergySprite;
         float b = 0;
-
-
-        nk_context *nkContext = nullptr;
 
 
         GraphAndAverageCalc *mag_t_View,
@@ -53,34 +53,40 @@ namespace ThermoOutput {
 
         int MCSteps;
         int transientSize;
+        int currStep = 0;
         std::vector<ThermoOutput::OutputData> history;
+
+        nk_context *nkContext = nullptr;
+        sf::RenderWindow *window = nullptr;
+        MetropolisAlgorithm *algorithm = nullptr;
 
     public:
 
         explicit SingleSimViewController(int L, int MCSteps, int transientSize);
         ~SingleSimViewController();
 
-        bool doOperate(SystemParams &params, OutputData &data);
+        void event(const sf::Event &event) override;
 
-        void hide();
+        void render(sf::RenderWindow *window) override;
+
+        void setAlgorithm(MetropolisAlgorithm *algorithm);
 
     private:
-        void _computeTimeCorrelations(int upToMCStep);
-        void _updateGraphsAndData(SystemParams &params, OutputData &data);
-        void _updateIsingGraph(const XYNetwork &S);
-        void _treatEvents(SystemParams &params, OutputData &data);
+        void computeTimeCorrelations(int upToMCStep);
+        void updateGraphsAndData(SystemParams &params, OutputData &data);
+        void updateIsingGraph();
 
         sf::Clock timer;
-        virtual void _runIOProgram(SystemParams &params, OutputData &data);
-        void __manipulationOfParametersHasHappened(Real newValue, Real lastValue, Real N);
+        virtual void runIOProgram(SystemParams &params, OutputData &data);
+        void manipulationOfParametersHasHappened(Real newValue, Real lastValue, Real N);
 
 
-        void _drawEverything(SystemParams &params, OutputData &data);
+        void drawEverything(SystemParams &params, OutputData &data);
 
 
-        void __outputHistoryToFile(int L);
-        void __outputAveragesHistoryToFile(int L);
-        void __outputHisteresisToFile(int L);
+        void outputHistoryToFile(int L);
+        void outputAveragesHistoryToFile(int L);
+        void outputHisteresisToFile(int L);
     };
 }
 

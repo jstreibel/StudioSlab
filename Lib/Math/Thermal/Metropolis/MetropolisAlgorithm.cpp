@@ -5,16 +5,12 @@
 #include "MetropolisAlgorithm.h"
 
 #include "Utils/RandUtils.h"
-#include "Math/Thermal/Utils/ThermoUtils.h"
 
 #include <cmath>
-#include <iostream>
 #include <numeric>
 #include <boost/range/combine.hpp>
 
 #define IS ==
-
-#include "Core/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
 
 
 Real avg(const RealVector &v) {
@@ -24,15 +20,20 @@ Real avg(const RealVector &v) {
 }
 
 
-MetropolisAlgorithm::MetropolisAlgorithm(int L, Real T, Real h,
-                                                     ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
-                                                     Dynamic dynamic, Sweeping sweeping)
-: S(L), T(T), h(h), ic(ic), aDynamic(dynamic), vcOutput(viewer), sweeping(sweeping) {
-
-#if OUTPUT_MODE IS _CONSOLE_OUTPUT
-    viewer.hide();
-#endif
-
+MetropolisAlgorithm::MetropolisAlgorithm(
+int                 L,
+Real                T,
+Real                h,
+InitialConditions   ic,
+Dynamic             dynamic,
+Sweeping            sweeping        )
+: S                 (   L           )
+, T                 (   T           )
+, h                 (   h           )
+, ic                (   ic          )
+, aDynamic          (   dynamic     )
+, sweeping          (   sweeping    )
+{
     _shake(0);
 }
 
@@ -54,7 +55,7 @@ void MetropolisAlgorithm::_shake(double h) {
 }
 
 
-inline bool MetropolisAlgorithm::__shouldAccept(const Real deltaE) {
+inline bool MetropolisAlgorithm::shouldAccept(const Real deltaE) const {
     if(deltaE<0) return true;
 
     const double r = RandUtils::random01();
@@ -69,22 +70,22 @@ void MetropolisAlgorithm::MCStep() {
     switch(aDynamic)
     {
         case Metropolis:
-            __MCStepMetropolis();
+            MCStepMetropolis();
             break;
         case Kawasaki:
-            __MCStepKawasaki();
+            MCStepKawasaki();
             break;
     }
 }
 
-void MetropolisAlgorithm::__MCStepMetropolis() {
+void MetropolisAlgorithm::MCStepMetropolis() {
     _totalAcceptedSSCLastMCStep=0;
 
     if(sweeping == Random) {
         for (int ssf = 0; ssf < S.N; ++ssf) {
             // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
-            const int i = RandUtils::RandInt() % S.L;
-            const int j = RandUtils::RandInt() % S.L;
+            const int i = (int)RandUtils::RandInt() % S.L;
+            const int j = (int)RandUtils::RandInt() % S.L;
 
             if(shouldOverrelax) {
                 //auto e0 = S.e(i, j),
@@ -100,7 +101,7 @@ void MetropolisAlgorithm::__MCStepMetropolis() {
             auto deltaTh = δ*(RandUtils::random01() - .5);
             const double deltaE = S.ssrDeltaE(i, j, h, deltaTh);
 
-            if (__shouldAccept(deltaE)) {
+            if (shouldAccept(deltaE)) {
                 S.rotate(i, j, deltaTh);
                 ++_totalAcceptedSSCLastMCStep;
             }
@@ -110,7 +111,7 @@ void MetropolisAlgorithm::__MCStepMetropolis() {
             for (int j = 0; j < S.L; ++j) {
                 auto deltaTh = δ*(RandUtils::random01() - .5);
                 const double deltaE = S.ssrDeltaE(i, j, h, deltaTh);
-                if (__shouldAccept(deltaE)) {
+                if (shouldAccept(deltaE)) {
                     S.rotate(i, j, deltaE);
                     ++_totalAcceptedSSCLastMCStep;
                 }
@@ -118,19 +119,19 @@ void MetropolisAlgorithm::__MCStepMetropolis() {
         }
     }
 }
-void MetropolisAlgorithm::__MCStepKawasaki() {
+void MetropolisAlgorithm::MCStepKawasaki() {
     auto N = S.N;
 
     for (int ssf = 0; ssf < N; ++ssf) {
         const auto s1 = RandUtils::RandInt() % N; // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
         const auto s2 = RandUtils::RandInt() % N;
 
-        if(S.theta(s1) == S.theta(s2)) continue;
+        if(S.theta((int)s1) == S.theta((int)s2)) continue;
 
-        const double deltaE = S.tseDeltaE(s1, s2, h);
+        const double deltaE = S.tseDeltaE((int)s1, (int)s2, h);
 
-        if (__shouldAccept(deltaE)) {
-            throw "Kawasaki not implemented.";
+        if (shouldAccept(deltaE)) {
+            throw NotImplementedException("Kawasaki step method");
             // S.rotate(s1);
             // S.rotate(s2);
         }
@@ -138,69 +139,7 @@ void MetropolisAlgorithm::__MCStepKawasaki() {
 }
 
 
-void MetropolisAlgorithm::Simulate(int MCSteps, int transientSize) {
-    _shake(h);
 
-    std::cout.precision(8);
-    const auto &N = S.N;
-    const auto Nd = double(N);
-
-#if OUTPUT_MODE IS _CONSOLE_OUTPUT
-    std::vector<Real> e, m, e2, m2, m4, Cv, Xi;
-
-    for (int mcStep = 0; mcStep<MCSteps; ++mcStep) {
-        if(mcStep < transientSize) continue; // descarta o transiente
-
-        MCStep(T, h, N);
-
-        Real E = S.E((double)h),
-                          M = S.M();
-
-        const auto _e = E/Nd, _m=M/Nd;
-        e.push_back(_e);
-        e2.push_back(_e*_e);
-        m.push_back(abs(_m));
-        m2.push_back(_m*_m);
-        m4.push_back(_m*_m*_m*_m);
-    } // end sim for
-
-    std::cout << T << " ";
-    _outputDataToConsole(e, e2, m, m2, m4, T, Nd);
-
-#else
-    bool shouldRun = false;
-    bool firstStop = true;
-
-    for (int mcStep = 0; true; ++mcStep) {
-
-        if(mcStep==MCSteps && firstStop){ shouldRun = false; firstStop = false;}
-        if(shouldRun) MCStep(); else --mcStep; // end if shouldRun
-
-        ThermoOutput::SystemParams p = {T, h, δ, shouldRun, shouldOverrelax};
-        ThermoOutput::OutputData data = {MCSteps, mcStep, transientSize, S, h,
-                                         _totalAcceptedSSCLastMCStep, S.N-_totalAcceptedSSCLastMCStep};
-
-        if (!vcOutput->doOperate(p, data)) exit(0);
-    } // end sim for
-#endif
-
-}
-
-void
-MetropolisAlgorithm::_outputDataToConsole(const RealVector &e,  const RealVector &e2, const RealVector &m,
-                                          const RealVector &m2, const RealVector &m4, long double T, double N) {
-    auto e_av = avg(e),
-         e2_av= avg(e2),
-         m_av = avg(m),
-         m2_av= avg(m2),
-         m4_av= avg(m4);
-
-    Real Cv = (e2_av-e_av*e_av)*N/(T*T),
-         Xi = (m2_av-m_av*m_av)*N/T,
-         B = .5*(3-m4_av/(m2_av*m2_av));
-
-    std::cout << e_av << " " << e2_av << " " << m_av << " " << m2_av << " " << m4_av << " " << Cv << " " << Xi << " " << B << "\n";
-}
 
 void MetropolisAlgorithm::set_T(Real T) {
     this->T = T;
@@ -208,6 +147,14 @@ void MetropolisAlgorithm::set_T(Real T) {
 
 void MetropolisAlgorithm::set_h(Real h) {
     this->h = h;
+}
+
+ThermoOutput::SystemParams MetropolisAlgorithm::getParams() {
+    return {T, h, δ, shouldRun, shouldOverrelax};
+}
+
+auto MetropolisAlgorithm::getData() -> ThermoOutput::OutputData {
+    return {S, h, _totalAcceptedSSCLastMCStep, S.N-_totalAcceptedSSCLastMCStep};
 }
 
 

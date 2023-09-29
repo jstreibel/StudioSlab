@@ -33,8 +33,6 @@ GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend", eventTranslator) {
     systemWindow = newGLFWWindow();
     glfwMakeContextCurrent(systemWindow);
 
-    InitGLEW();
-
     addGLFWListener(&eventTranslator);
 }
 
@@ -43,16 +41,6 @@ GLFWBackend::~GLFWBackend() {
     glfwTerminate();
 
     Log::Info() << "GLFWBackend terminated." << Log::Flush;
-}
-
-void GLFWBackend::InitGLEW() {
-    GLenum glewInitStatus = glewInit();
-    if (glewInitStatus != GLEW_OK){
-        Log::Error() << "Failed GLEW initialization: " << glewGetErrorString(glewInitStatus) << Log::Flush;
-        throw Exception("Failed GLEW initialization");
-    }
-    Log::Success() << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << Log::Flush;
-
 }
 
 void GLFWBackend::run(Program *pProgram) {
@@ -126,6 +114,7 @@ GLFWwindow *GLFWBackend::newGLFWWindow() {
     }
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetCharCallback(window, window_char_callback);
     glfwSetCursorPosCallback(window, cursor_position_callback);
     glfwSetCursorEnterCallback(window, cursor_enter_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);

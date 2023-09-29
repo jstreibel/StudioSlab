@@ -67,7 +67,7 @@ namespace Tests {
 
         mFTGraph.addFunction(&amplitudes, Str("ℱ[") + funcSymbol + "](k)", Styles::GetCurrent()->funcPlotStyles[4]);
 
-        row.addWindow(DummyPtr(gui), 0.25);
+        row.addWindow(DummyPtr(gui), WindowRow::Right, .25);
 
         col.addWindow(DummyPtr(mFTGraph));
         col.addWindow(DummyPtr(mDFTGraph));
@@ -228,8 +228,8 @@ namespace Tests {
         return row.notifyMouseMotion(x,y);
     }
 
-    bool FourierTestWindow::notifyMouseWheel(int wheel, int direction, int x, int y) {
-        return row.notifyMouseWheel(wheel, direction, x, y);
+    bool FourierTestWindow::notifyMouseWheel(double dx, double dy) {
+        return row.notifyMouseWheel(dx, dy);
     }
 
 

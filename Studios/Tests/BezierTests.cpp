@@ -35,7 +35,7 @@ namespace Tests {
         param2 = Core::Graphics::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();
 
-        addWindow(DummyPtr(stats), .15);
+        addWindow(DummyPtr(stats), Right, .15);
         addWindow(DummyPtr(graph));
 
         static Core::NativeFunction<RtoR::Function> function(cubicBezierInterpolation);

@@ -5,7 +5,9 @@
 #include "XYApp.h"
 #include "Core/Backend/GraphicBackend.h"
 
-#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Core/Backend/BackendManager.h"
+#include "Core/Backend/Program/DummyProgram.h"
 
 #include <Math/Thermal/IO/SingleSim/SingleSimViewController.h>
 #include <Math/Thermal/Metropolis/MetropolisAlgorithm.h>
@@ -17,23 +19,30 @@ XY::App::App(int argc, const char **argv) : AppBase(argc, argv, DONT_SELF_REGIST
 
     registerToManager();
 
+    Core::BackendManager::Startup(Core::SFML);
+    Core::BackendManager::LoadModule(Core::Nuklear);
+
     AppBase::parseCLArgs();
 }
 
 
 int XY::App::App::run() {
 
-    if(1)
-    {
-        auto *viewControl = new ThermoOutput::SingleSimViewController(*N, *MCSteps, *transient);
 
-        MetropolisAlgorithm mcCalculator(*N, *T, .0, viewControl,
-                                         MetropolisAlgorithm::Ferromagnetic,
-                                         MetropolisAlgorithm::Metropolis,
-                                         MetropolisAlgorithm::Random);
+    auto *viewControl = new ThermoOutput::SingleSimViewController(*N, *MCSteps, *transient);
 
-        mcCalculator.Simulate(*MCSteps, *transient);
-    }
+    MetropolisAlgorithm mcCalculator(*N, *T, .0,
+                                     MetropolisAlgorithm::Ferromagnetic,
+                                     MetropolisAlgorithm::Metropolis,
+                                     MetropolisAlgorithm::Random);
+
+    viewControl->setAlgorithm(&mcCalculator);
+
+    auto &backend = dynamic_cast<SFMLBackend&>(Core::BackendManager::GetBackend());
+    backend.addSFMLListener(viewControl);
+    backend.run(new DummyProgram());
+
+    delete viewControl;
 
     return 0;
 }

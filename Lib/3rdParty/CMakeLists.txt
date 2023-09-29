@@ -3,12 +3,15 @@ set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
 add_subdirectory(freetype-gl)
 
+set ( NUKLEAR_SOURCES
+		Nuklear/NuklearInclude.h
+		Nuklear/NuklearSource.h
+)
 
 set ( RESAMPLE_SOURCE
 		libresample/include/*
 		libresample/src/*
 )
-
 
 set ( IMGUI_SOURCE
 		imgui/imgui.cpp

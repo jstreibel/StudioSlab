@@ -5,10 +5,14 @@
 #ifndef STUDIOSLAB_MODULE_H
 #define STUDIOSLAB_MODULE_H
 
+#include <memory> // Includes Shared Pointer
+
 namespace Core {
 
     class Module {
     public:
+        typedef std::shared_ptr<Module> Ptr;
+
         virtual ~Module() = default;
 
         virtual void beginRender() {};

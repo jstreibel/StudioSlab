@@ -13,18 +13,14 @@
 namespace ThermoOutput {
 
     struct OutputData {
-        const int mcTotalSteps;
-        const int mcStep;
-        const int transientSize;
-
         const XYNetwork &S;
 
         const int accepted=0, rejected=0;
 
-        OutputData(int mcTotalSteps, int mcStep, int transientSize, XYNetwork &S, Real h,
-                   int acceptedCount=0, int rejectedCount=0)
-            : mcTotalSteps(mcTotalSteps), mcStep(mcStep), transientSize(transientSize), S(S),
-              accepted(acceptedCount), rejected(rejectedCount)
+        OutputData(XYNetwork &S, Real h, int acceptedCount=0, int rejectedCount=0)
+        : S(S)
+        , accepted(acceptedCount)
+        , rejected(rejectedCount)
         {
             Real E = S.E(h), M = S.M();
 
@@ -35,7 +31,7 @@ namespace ThermoOutput {
             m2=M*M/N;
         }
 
-        OutputData(const XYNetwork &S, Real h) : mcTotalSteps(-1), mcStep(-1), transientSize(-1), S(S){
+        OutputData(const XYNetwork &S, Real h) : S(S) {
             Real E = S.E(double(h)), M = S.M();
 
             N = (double)S.N;
@@ -49,7 +45,7 @@ namespace ThermoOutput {
     };
 
 
-// Tambem conhecido como parametros termodinamicos
+    // Tambem conhecido como parametros termodinamicos
     struct SystemParams {
         SystemParams(Real &T, Real &h, Real &δ, bool &shouldRun, bool &shouldOverrelax)
                 : T(T), h(h), δ(δ), shouldRun(shouldRun), shouldOverrelax(shouldOverrelax) {}

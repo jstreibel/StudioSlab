@@ -9,9 +9,7 @@
 
 class DummyProgram : public Program {
 public:
-    bool cycle(CycleOptions options) override {
-        return false;
-    }
+    bool cycle(CycleOptions options) override { return false; }
 };
 
 #endif //STUDIOSLAB_DUMMYPROGRAM_H

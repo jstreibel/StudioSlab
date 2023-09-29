@@ -10,7 +10,7 @@
 
 #include "Utils/Types.h"
 
-#include "Core/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
+#include "Core/Backend/SFML/COMPILE_CONFIG.h"
 #include "Math/Thermal/Utils/ThermoUtils.h"
 
 typedef std::vector<Real> StateType;
@@ -20,7 +20,7 @@ class XYNetwork {
 
 public:
     const int L, N;
-    XYNetwork(int L);
+    explicit XYNetwork(int L);
 
     int ij_to_k_periodic(int i, int j) const;
     int ij_to_k_abs(int i, int j) const;

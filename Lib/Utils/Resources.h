@@ -10,8 +10,10 @@
 namespace Resources {
 
     const auto Folder = std::string("/home/joao/Developer/StudioSlab/Resources/");
-    const auto ShadersFolder = Folder + "Shaders/";
+
     const auto FontsFolder = Folder + "Fonts/";
+    const auto ShadersFolder = Folder + "Shaders/";
+    const auto IconsFolder = Folder + "Icons/";
 
     const auto SystemFolder = "/usr/share/fonts/";
 

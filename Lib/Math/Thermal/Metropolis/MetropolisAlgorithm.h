@@ -6,17 +6,11 @@
 #define ISING_ISINGMONTECARLOCALCULATOR_H
 
 #include "../Model/XYNetwork.h"
-#include "Math/Thermal/Utils/ThermoUtils.h"
-#include "../IO/SingleSim/SingleSimViewController.h"
-
-#include "Core/Backend/SFML-Nuklear/COMPILE_CONFIG.h"
-
-
-typedef std::vector<Real> RealVector;
+#include "Core/Backend/SFML/COMPILE_CONFIG.h"
+#include "Math/Thermal/IO/Tools/InputOutput.h"
 
 
 class MetropolisAlgorithm {
-
 public:
 
     enum InitialConditions {
@@ -39,6 +33,7 @@ public:
     Sweeping sweeping;
 
     bool shouldOverrelax = false;
+    bool shouldRun = true;
 
 private:
     Real T;
@@ -51,11 +46,11 @@ private:
 
     XYNetwork S;
 
-    bool __shouldAccept(Real deltaE) ;
+    bool shouldAccept(Real deltaE) const ;
 
 
-    void __MCStepMetropolis();
-    void __MCStepKawasaki();
+    void MCStepMetropolis();
+    void MCStepKawasaki();
 
     void _shake(double h);
 public:
@@ -71,24 +66,21 @@ public:
      * @param sweeping
      */
     explicit MetropolisAlgorithm(int L, Real T, Real h,
-                                 ThermoOutput::ViewControlBase *viewer, InitialConditions ic,
-                                 Dynamic dynamic, Sweeping sweeping);
+                                 InitialConditions ic,
+                                 Dynamic dynamic,
+                                 Sweeping sweeping);
 
     ~MetropolisAlgorithm() = default;
 
     void set_T(Real T);
     void set_h(Real h);
     void MCStep();
-    void Simulate(int MCSteps, int transientSize);
 
-    [[nodiscard]] const XYNetwork &getS() const {return S;}
+    auto getParams() -> ThermoOutput::SystemParams;
+    auto getData()   -> ThermoOutput::OutputData;
 
-private:
-    ThermoOutput::ViewControlBase *vcOutput;
+    const XYNetwork &getS() const {return S;}
 
-    static void
-    _outputDataToConsole(const RealVector &e, const RealVector &e2, const RealVector &m, const RealVector &m2,
-                         const RealVector &m4, long double T, double N);
 };
 
 #endif //ISING_ISINGMONTECARLOCALCULATOR_H

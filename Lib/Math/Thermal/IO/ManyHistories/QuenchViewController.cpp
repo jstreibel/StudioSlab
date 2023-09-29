@@ -82,7 +82,12 @@ namespace ThermoOutput {
                 sprite->setScale(isingSpriteScale, isingSpriteScale);
                 sprite->setPosition(float(i) * (miniBorder + isingSpriteSize) + _border, float(j) * (miniBorder + isingSpriteSize) + _border);
 
-                auto calc = new MetropolisAlgorithm(L, T, .0, this, MetropolisAlgorithm::Ferromagnetic, dynamic, MetropolisAlgorithm::Random);
+                /***********************************************************************************
+                 * *********************************************************************************
+                 * ********** TODO: MAKE THIS WORK AGAIN *******************************************
+                 * *********************************************************************************
+                 */
+                auto calc = new MetropolisAlgorithm(L, T, .0, MetropolisAlgorithm::Ferromagnetic, dynamic, MetropolisAlgorithm::Random);
 
                 drawables.push_back(sprite);
                 simulations.emplace_back(calc, texture);
@@ -117,7 +122,7 @@ namespace ThermoOutput {
             subWindow.top += rowHeight + _border;
 
             T_t_view = new Graph(subWindow, {0, float(1.9)}, {float(MCSteps), 3.1}, "t", "T(t)");
-            T_t_view->addHorizontalDashedLine(T_c);
+            // T_t_view->addHorizontalDashedLine(T_c);
 
             drawables.push_back(T_t_view);
         }

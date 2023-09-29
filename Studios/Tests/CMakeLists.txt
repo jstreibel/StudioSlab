@@ -5,14 +5,23 @@ add_executable ( Tests
 		TestsApp.cpp
 		WindowPanelTest.cpp
 		WindowTreeBuilderTest.cpp
-		GLFreeTypeTests.cpp
+
 		GLFreeTypeTests.h
-        FourierTestWindow.cpp
+		GLFreeTypeTests.cpp
+
         FourierTestWindow.h
-        BezierTests.cpp
+        FourierTestWindow.cpp
+
         BezierTests.h
+        BezierTests.cpp
+
+        ModernGLTests.h
         ModernGLTests.cpp
-        ModernGLTests.h)
+
+        NuklearTests.h
+        NuklearTests.cpp
+
+)
 
 target_link_libraries ( Tests ${SlabLibs} Slab-Maps-RtoR_GPU Slab-Core freetype-gl )
 

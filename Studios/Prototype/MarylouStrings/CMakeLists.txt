@@ -7,7 +7,7 @@ set(LIBDIR ../../../Lib)
 include_directories($LIBDIR)
 
 set(EXTERNAL_SRC
-		${LIBDIR}/Core/Controller/Nuklear/NuklearImplementation.cpp
+		${LIBDIR}/3rdParty/Nuklear/NuklearSource.h
 		${LIBDIR}/Core/Graphics/SFML/Graph.cpp)
 
 add_executable(MarylouStrings

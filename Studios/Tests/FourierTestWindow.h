@@ -31,7 +31,7 @@ namespace Tests {
 
         bool notifyMouseMotion(int x, int y) override;
 
-        bool notifyMouseWheel(int wheel, int direction, int x, int y) override;
+        bool notifyMouseWheel(double dx, double dy) override;
     };
 
 } // Tests

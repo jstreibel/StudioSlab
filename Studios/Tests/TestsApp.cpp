@@ -4,42 +4,56 @@
 
 #include "TestsApp.h"
 
+#include "Core/Backend/Program/DummyProgram.h"
+#include "Core/Controller/CLArgsManager.h"
+
 #include "BezierTests.h"
 #include "WindowPanelTest.h"
 #include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
 #include "FourierTestWindow.h"
-#include "Core/Controller/CLArgsManager.h"
 #include "ModernGLTests.h"
+#include "Core/Backend/BackendManager.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
+#include "NuklearTests.h"
 
-#include <Core/Backend/GLUT/GLUTBackend.h>
-#include <Core/Backend/DummyProgram.h>
 
 #define DONT_REGISTER false
 
 TestsApp:: TestsApp(int argc, const char**argv) : AppBase(argc, argv, DONT_REGISTER) {
-    Backend::Initialize<GLUTBackend>();
 
     AppBase::registerToManager();
 
-    CLArgsManager::GetInstance()->Parse();
+    CLArgsManager::Parse();
 }
 
 
 int TestsApp::run() {
-    Window *test;
-    if(true) test = new Tests::ModernGLTests;
-    else if(false) test = new Tests::BezierTests;
-    else if(true)  test = new Tests::FourierTestWindow;
-    else if(true)  test = new WindowTreeBuilderTest;
-    else if(true)  test = new WindowPanelTest;
-    else test = new GLFreeTypeTests;
+    Core::GUIEventListener *test;
 
-    auto &backend = GLUTBackend::GetInstance();
+    GraphicBackend *backend = nullptr;
 
-    backend.addWindow(Window::Ptr(test));
+    if(false) {
+        Core::BackendManager::Startup(Core::GLFW);
 
-    backend.run(new DummyProgram);
+        if(true)       test = new Tests::ModernGLTests;
+        else if(false) test = new Tests::BezierTests;
+        else if(true)  test = new Tests::FourierTestWindow;
+        else if(true)  test = new WindowTreeBuilderTest;
+        else if(true)  test = new WindowPanelTest;
+        else test = new GLFreeTypeTests;
+
+        backend = &Core::BackendManager::GetGUIBackend();
+        backend->addEventListener(Core::GUIEventListener::Ptr(test));
+
+    } else {
+        Core::BackendManager::Startup(Core::GLFW);
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        backend = &guiBackend;
+        guiBackend.addEventListener(Core::GUIEventListener::Ptr(new Tests::NuklearTests()));
+    }
+
+    backend->run(new DummyProgram);
 
     return 0;
 }

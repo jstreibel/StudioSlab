@@ -17,6 +17,8 @@ namespace Core {
         static BackendImplementation backendImplementation;
         static std::unique_ptr<Backend> instance;
 
+        static std::map<Modules, std::shared_ptr<Module>> loadedModules;
+
     public:
         static Backend& GetBackend();
         static GraphicBackend& GetGUIBackend();
@@ -24,6 +26,7 @@ namespace Core {
         static BackendImplementation GetImplementation();
 
         static void LoadModule(Modules);
+        static Module::Ptr GetModule(Modules);
 
         static void Startup(BackendImplementation backendImplementation);
     };

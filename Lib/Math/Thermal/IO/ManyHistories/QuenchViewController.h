@@ -17,7 +17,7 @@
 namespace ThermoOutput {
     class QuenchViewController : public ViewControlBase {
         double T;
-        int MCStep;
+        int MCStep{};
 
         const int L;
         const int MCSteps;

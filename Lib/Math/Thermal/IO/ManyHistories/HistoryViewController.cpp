@@ -94,7 +94,18 @@ namespace ThermoOutput {
                                         : (FERRO_IC           ? MetropolisAlgorithm::Ferromagnetic : MetropolisAlgorithm::Paramagnetic);
 
                 auto sweep = (DYNAMIC_BEFORE_EQ == _SWEEP_SEQ) ? MetropolisAlgorithm::Sequential : MetropolisAlgorithm::Random;
-                auto calc = new MetropolisAlgorithm(L, T, .0, this, ic, dynamic, sweep);
+
+                /***********************************************************************************
+                 * *********************************************************************************
+                 * ********** TODO: MAKE THIS WORK AGAIN *******************************************
+                 * *********************************************************************************
+                 */
+                auto calc = new MetropolisAlgorithm(L, T, .0, ic, dynamic, sweep);
+                /***********************************************************************************
+                 * *********************************************************************************
+                 * *********************************************************************************
+                 * *********************************************************************************
+                 */
 
                 drawables.push_back(sprite);
                 simulations.emplace_back(calc, texture);

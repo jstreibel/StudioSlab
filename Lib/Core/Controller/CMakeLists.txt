@@ -11,14 +11,9 @@ set ( CONSOLE_SOURCES
 		CLArgsManager.cpp
 		)
 
-set ( NUKLEAR_SOURCES
-		Nuklear/NuklearImplementation.cpp
-		Nuklear/NuklearSFML.h
-		)
-
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Controller )
 
-add_library(${LIB_LOCAL_NAME} STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} ${NUKLEAR_SOURCES})
+add_library(${LIB_LOCAL_NAME} STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} )
 
 target_link_libraries(${LIB_LOCAL_NAME} Slab-Utils )
 

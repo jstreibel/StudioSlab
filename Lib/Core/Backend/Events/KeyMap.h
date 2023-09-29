@@ -50,6 +50,10 @@ namespace Core {
         /* Printable keys (ASCII-coincident) */
         Key_SPACE           = 32,
         Key_APOSTROPHE      = 39  /* ' */,
+        Ket_LEFT_PARENTHESIS= 40,
+        Key_RIGHT_PARENTHESIS=41,
+        Key_ASTERISK        = 42,
+        Key_PLUS            = 43,
         Key_COMMA           = 44  /* , */,
         Key_MINUS           = 45  /* - */,
         Key_PERIOD          = 46  /* . */,

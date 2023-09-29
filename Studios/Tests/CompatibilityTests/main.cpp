@@ -5,7 +5,7 @@
 
 bool TestSFML() {
     // Setting GLIBCXX_USE_CXX11_ABI=0 will kind of solve CUDA incompatibility problem,
-    // but then SFML gets weird, and the following line produces a alloc error.
+    // but then SFML gets weird, and the following line produces an alloc error.
 
     sf::RenderWindow window = sf::RenderWindow(
             sf::VideoMode(1920, 1080),

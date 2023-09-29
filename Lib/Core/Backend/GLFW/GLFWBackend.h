@@ -19,13 +19,12 @@ class GLFWBackend : public GraphicBackend {
     Program* program = nullptr;
     GLFWwindow *systemWindow = nullptr;
 
-    static void InitGLEW();
-
     void mainLoop();
 
     static GLFWwindow *newGLFWWindow();
 
     static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
+    static void window_char_callback(GLFWwindow* window, unsigned int value);
     static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
     static void cursor_enter_callback(GLFWwindow* window, int entered);
     static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);

@@ -11,6 +11,8 @@ namespace Core {
         Nuklear,
         NanoGUI,
 
+        ModernOpenGL,
+
         RealTimeAnimation,
 
         Jack,

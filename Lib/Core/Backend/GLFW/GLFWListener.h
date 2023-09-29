@@ -9,10 +9,14 @@
 
 namespace Core {
 
+    typedef unsigned int Codepoint;
+
     class GLFWListener {
 
     public:
         virtual bool KeyboardEvent(GLFWwindow* window, int key, int scancode, int action, int mods);
+
+        virtual bool CharEvent(GLFWwindow* window, Codepoint value);
 
         virtual bool MouseMotion(GLFWwindow* window, double xpos, double ypos);
 

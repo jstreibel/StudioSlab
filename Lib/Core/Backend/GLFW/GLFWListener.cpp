@@ -10,6 +10,10 @@ namespace Core {
         return false;
     }
 
+    bool GLFWListener::CharEvent(GLFWwindow *window, Codepoint value) {
+        return false;
+    }
+
     bool GLFWListener::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
         return false;
     }

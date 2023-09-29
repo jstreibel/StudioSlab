@@ -17,6 +17,12 @@ void GLFWBackend::key_callback(GLFWwindow* window, int key, int scancode, int ac
     for(auto &listener : me.listeners) if(listener->KeyboardEvent(window, key, scancode, action, mods)) break;
 }
 
+void GLFWBackend::window_char_callback(GLFWwindow *window, unsigned int value) {
+    auto &me = GetInstance();
+
+    for(auto &listener : me.listeners) if(listener->CharEvent(window, value)) break;
+}
+
 void GLFWBackend::cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
 {
     auto &me = GetInstance();
@@ -105,3 +111,5 @@ bool GLFWBackend::addEventListener(const Core::GUIEventListener::Ptr &listener) 
 
     return GraphicBackend::addEventListener(listener);
 }
+
+
