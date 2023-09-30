@@ -204,6 +204,9 @@ namespace Core {
     void ImGuiModule::beginRender() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
+
+        if (showDemos)
+            ImGui::ShowDemoWindow();
     }
 
     void ImGuiModule::endRender() {

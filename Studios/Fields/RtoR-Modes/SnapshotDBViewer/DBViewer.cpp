@@ -93,6 +93,18 @@ namespace Modes::DatabaseViewer {
         }
         guiWindow.end();
 
+        if(ImGui::BeginMainMenuBar()) {
+            if(ImGui::BeginMenu("O HAI")){
+
+                ImGui::MenuItem("Item 1");
+                ImGui::MenuItem("Item 2");
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMainMenuBar();
+        }
+
         WindowRow::draw();
     }
 

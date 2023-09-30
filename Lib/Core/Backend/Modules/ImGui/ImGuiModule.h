@@ -17,6 +17,8 @@ namespace Core {
         BackendImplementation system;
 
     protected:
+        bool showDemos = false;
+
         static void finishInitialization();
         explicit ImGuiModule(BackendImplementation);
         ~ImGuiModule() override;
@@ -25,6 +27,7 @@ namespace Core {
         static ImGuiModule* BuildModule(BackendImplementation);
 
         void beginRender() override;
+
         void endRender() override;
     };
 

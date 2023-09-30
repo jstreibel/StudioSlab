@@ -94,12 +94,6 @@ namespace Core {
         return ImGui::GetIO().WantCaptureMouse;
     }
 
-    bool ImGuiModuleGLUT::render() {
-        if (showDemos) ImGui::ShowDemoWindow();
-
-        return false;
-    }
-
     bool ImGuiModuleGLUT::idle() { GLUTListener::idle(); return false; }
 
     bool ImGuiModuleGLUT::reshape(int w, int h) {

@@ -13,7 +13,6 @@
 namespace Core {
 
     class ImGuiModuleGLUT : public ImGuiModule, public ::Backend::GLUTListener {
-        bool showDemos = false;
     public:
         ImGuiModuleGLUT();
         ~ImGuiModuleGLUT() override;
@@ -30,7 +29,6 @@ namespace Core {
         bool mousePassiveMotion(int x, int y) override;
         bool mouseWheel(int wheel, int dir, int x, int y) override;
         bool mouseMotion(int x, int y) override;
-        bool render() override;
         bool idle() override;
         bool reshape(int w, int h) override;
     };

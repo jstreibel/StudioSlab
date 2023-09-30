@@ -17,6 +17,8 @@ namespace Core {
 
         void beginRender() override;
 
+        void Render(GLFWwindow *window) override;
+
         bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;
 
         bool MouseMotion(GLFWwindow *window, double xpos, double ypos) override;

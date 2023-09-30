@@ -42,7 +42,15 @@ namespace Core {
     bool ImGuiModuleGLFW::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
-        return ImGui::GetIO().WantCaptureKeyboard;
+        if(!ImGui::GetIO().WantCaptureKeyboard) {
+            if(key == GLFW_KEY_D){
+                showDemos = true;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     bool ImGuiModuleGLFW::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
@@ -76,6 +84,7 @@ namespace Core {
         io.DisplaySize = ImVec2((float) width, (float) height);
     }
 
+    void ImGuiModuleGLFW::Render(GLFWwindow *window) { if (showDemos) ImGui::ShowDemoWindow(); }
 
 
 } // Core
