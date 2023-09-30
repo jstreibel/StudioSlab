@@ -61,15 +61,19 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
 
     auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
 
-
     auto xRes = discreteFunc.getN();
     auto yRes = discreteFunc.getM();
 
-    delete textureData;
-    textureData = new OpenGL::Texture2D_Real((int)xRes, (int)yRes);
-    textureData->setSWrap(OpenGL::ClampToEdge);
-    textureData->setAntiAliasOff();
-    program.setUniform("fieldData", textureData->getTextureUnit());
+    if(firstTime
+    || textureData->getWidth() != xRes
+    || textureData->getHeight() != yRes)
+    {
+        delete textureData;
+        textureData = new OpenGL::Texture2D_Real((int) xRes, (int) yRes);
+        textureData->setSWrap(OpenGL::ClampToEdge);
+        textureData->setAntiAliasOff();
+        program.setUniform("fieldData", textureData->getTextureUnit());
+    }
 
     {
         auto domain = discreteFunc.getDomain();
@@ -432,9 +436,9 @@ void R2toR::Graphics::FlatFieldDisplay::drawGUI() {
                     computeColormapTexture();
                 }
             }
-        }
 
-        ImGui::EndChild();
+            ImGui::EndChild();
+        }
     }
     ImGui::End();
 

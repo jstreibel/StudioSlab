@@ -93,17 +93,14 @@ namespace Modes::DatabaseViewer {
         }
         guiWindow.end();
 
-        if(ImGui::BeginMainMenuBar()) {
-            if(ImGui::BeginMenu("O HAI")){
-
-                ImGui::MenuItem("Item 1");
-                ImGui::MenuItem("Item 2");
-
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMainMenuBar();
-        }
+        // if(ImGui::BeginMainMenuBar()) {
+        //     if(ImGui::BeginMenu("O HAI")){
+        //         ImGui::MenuItem("Item 1");
+        //         ImGui::MenuItem("Item 2");
+        //         ImGui::EndMenu();
+        //     }
+        //     ImGui::EndMainMenuBar();
+        // }
 
         WindowRow::draw();
     }
@@ -243,11 +240,12 @@ namespace Modes::DatabaseViewer {
     }
 
     bool DBViewer::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+        if( key==Core::Key_LEFT_SHIFT  ) shiftKey = state;
+
+
         if( key==Core::Key_F5 && state==Core::Press ){
             reloadData();
-            return true;
-        }
-
+            return true;        }
         else if( key==Core::Key_ESCAPE && state==Core::Press ){
             topRow.removeWindow(DummyPtr(fullParticularHistoryDisplay));
             return true;
@@ -274,7 +272,7 @@ namespace Modes::DatabaseViewer {
         fullField = dbParser->buildFullField();
         allDataDisplay.setFunction(fullField);
 
-        computeMasses(2);
+        computeMasses(10);
     }
 
     void DBViewer::loadDataUnderMouse() {
@@ -289,23 +287,29 @@ namespace Modes::DatabaseViewer {
         StrUtils::ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
         StrUtils::ReplaceLastOccurrence(filename, ".//./snapshots/", "/");
 
+        Log::Info() << "Find history" << Log::Flush;
         auto fieldHistory = fullHistoriesMap[filename];
 
         if(fieldHistory == nullptr) {
+            Log::Info() << "Not found. Loading history" << Log::Flush;
             fieldHistory = HistoryFileLoader::Load(filename);
             fullHistoriesMap[filename] = fieldHistory;
         }
 
+        Log::Info() << "Set function" << Log::Flush;
         fullParticularHistoryDisplay.setFunction(fieldHistory);
 
+        Log::Info() << "Add window" << Log::Flush;
         topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
+
+        Log::Info() << "Done\n" << Log::Flush;
     }
 
     bool DBViewer::notifyMouseMotion(int x, int y) {
-        // if(modKeys.Mod_Ctrl && modKeys.Mod_Alt){
-        //     loadDataUnderMouse();
-        //     return true;
-        // }
+        if( shiftKey == Core::Press ){
+            loadDataUnderMouse();
+            return true;
+        };
 
         return WindowRow::notifyMouseMotion(x, y);
     }

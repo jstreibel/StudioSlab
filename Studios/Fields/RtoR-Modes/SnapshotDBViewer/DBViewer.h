@@ -42,7 +42,7 @@ namespace Modes::DatabaseViewer {
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
 
-        Core::ModKeys modKeys;
+        Core::KeyState shiftKey = Core::Release;
     public:
         explicit DBViewer(DBParser::Ptr dbParser);
 
