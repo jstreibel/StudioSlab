@@ -16,6 +16,7 @@
 
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Core/Backend/BackendManager.h"
+#include "StylesManager.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -27,10 +28,6 @@ Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str
 , title(std::move(_title))
 , samples(samples)
 {
-    Styles::Init();
-
-    this->backgroundColor = Styles::GetCurrent()->graphBackground;
-
     if(title.empty()) title = Str("unnamed");
     Count n=1;
     while(Graph2D::graphMap.count(title))
@@ -50,6 +47,7 @@ Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
 
 void Core::Graphics::Graph2D::draw() {
     OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
+    Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
     Window::draw();
 
     if (autoReviewGraphRanges) reviewGraphRanges();
@@ -258,22 +256,24 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 }
 
 void Core::Graphics::Graph2D::setupOrtho() const {
-    const Real deltaX = region.width();
-    const Real deltaY = region.height();
-    const Real xTraLeft   = 0;  // -deltaX*0.07;
-    const Real xTraRight  = 0;  // +deltaX*0.02;
-    const Real xTraTop    = 0;  // +deltaY*0.025;
-    const Real xTraBottom = 0;  // -deltaY*0.025;
+    // const Real deltaX = region.width();
+    // const Real deltaY = region.height();
+    // const Real xTraLeft   = 0-deltaX*0.07;
+    // const Real xTraRight  = 0+deltaX*0.02;
+    // const Real xTraTop    = 0+deltaY*0.025;
+    // const Real xTraBottom = 0-deltaY*0.025;
 
     OpenGL::Shader::remove();
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(region.xMin+xTraLeft, region.xMax+xTraRight, (region.yMin+xTraBottom), (region.yMax+xTraTop), -1, 1);
+    // glOrtho(region.xMin+xTraLeft, region.xMax+xTraRight, (region.yMin+xTraBottom), (region.yMax+xTraTop), -1, 1);
+    glOrtho(region.xMin, region.xMax, region.yMin, region.yMax, -1, 1);
 
     auto vp = getViewport();
-    Styles::GetCurrent()->labelsWriter->reshape(vp.width(), vp.height());
-    Styles::GetCurrent()->ticksWriter->reshape(vp.width(), vp.height());
+    auto currStyle = Math::StylesManager::GetCurrent();
+    currStyle->labelsWriter->reshape(vp.width(), vp.height());
+    currStyle->ticksWriter->reshape(vp.width(), vp.height());
 }
 
 void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }

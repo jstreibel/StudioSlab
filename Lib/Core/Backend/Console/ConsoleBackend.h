@@ -8,6 +8,8 @@ class ConsoleBackend : public Core::Backend
 public:
     ConsoleBackend();
     void run(Program *integrator) override;
+
+    void finish() override;
 };
 
 #endif // CONSOLEBACKEND_H

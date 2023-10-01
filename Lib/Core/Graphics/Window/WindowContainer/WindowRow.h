@@ -20,7 +20,7 @@ class WindowRow : public Window {
 
     bool assertConsistency() const;
 public:
-    WindowRow() = default;
+    WindowRow(Window::Flags flags=None);
 
     enum RelativePosition { Left, Right };
     bool addWindow(const Window::Ptr& window, RelativePosition=Right, float windowWidth=-1);

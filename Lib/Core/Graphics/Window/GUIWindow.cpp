@@ -30,10 +30,15 @@ void GUIWindow::draw() {
 
     auto  displayHeight = ImGui::GetIO().DisplaySize.y;
 
-    const float w_ = float(getw()) - (float)2 * Core::Graphics::hPadding,
-                h_ = float(geth()) - (float)2 * Core::Graphics::vPadding;
-    const float x_ = getx() + Core::Graphics::hPadding,
-                y_ = displayHeight - (h_ + gety() + Core::Graphics::vPadding);
+    auto vp = getViewport();
+    // const float w_ = float(getw()) - (float)2 * Core::Graphics::hPadding,
+    //             h_ = float(geth()) - (float)2 * Core::Graphics::vPadding;
+    // const float x_ = getx() + Core::Graphics::hPadding,
+    //             y_ = displayHeight - (h_ + gety() + Core::Graphics::vPadding);
+    const float w_ = vp.width(),
+                h_ = vp.height();
+    const float x_ = vp.xMin,
+                y_ = displayHeight - vp.yMax;
 
     const float hSpacing = 20.0f;
 
@@ -45,7 +50,7 @@ void GUIWindow::draw() {
     if(!stats.empty() && ImGui::CollapsingHeader("Stats")) {
 
         auto i = 0;
-        for (auto stat: stats) {
+        for (const auto& stat: stats) {
             const auto c = stat.second;
             const auto text = stat.first;
             const auto color = ImVec4(c.r, c.g, c.b, c.a);

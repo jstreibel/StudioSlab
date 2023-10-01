@@ -169,7 +169,7 @@ void GLUTBackend::render()
 
     if(me.renderingRequested) me.renderingRequested = false;
 
-    auto bg = Core::Graphics::backgroundColor;
+    auto bg = Core::Graphics::clearColor;
     glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -221,4 +221,8 @@ MouseState GLUTBackend::getMouseState() const { return eventTranslator.getMouseS
 
 auto GLUTBackend::addGLUTListener(::Backend::GLUTListener *glutListener) -> void {
     glutListeners.emplace_back(glutListener);
+}
+
+void GLUTBackend::finish() {
+    glutLeaveMainLoop();
 }

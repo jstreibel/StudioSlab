@@ -29,6 +29,8 @@ public:
 
     void run(Program *) override;
 
+    void finish() override;
+
     static void keyboard(unsigned char key, int x, int y);
     static void keyboardUp(unsigned char key, int x, int y);
     static void keyboardSpecial(int key, int x, int y);

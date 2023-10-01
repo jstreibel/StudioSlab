@@ -16,10 +16,19 @@
 #include <memory>
 
 class Window : public Core::GUIEventListener {
+public:
+    typedef std::shared_ptr<Window> Ptr;
+    enum Flags {
+        None = 0x0,
+        HasMainMenu = 0x1
+    };
+
+private:
     std::vector<Artist::Ptr> content;
 
     bool decorate = true;
     bool clear = true;
+    Styles::Color clearColor;
 
     static constexpr Real p = 0.999;
 
@@ -28,14 +37,12 @@ class Window : public Core::GUIEventListener {
     void setupWindow() const;
 
 protected:
+    Flags flags;
     RectI windowRect;
 
-    Styles::Color backgroundColor = Core::Graphics::backgroundColor;
-
+    void setClearColor(Styles::Color color);
 public:
-    typedef std::shared_ptr<Window> Ptr;
-
-    explicit Window(int x=0, int y=0, int w=100, int h=100);
+    explicit Window(int x=0, int y=0, int w=100, int h=100, Flags flags=None);
 
     void addArtist(Artist::Ptr pArtist);
 

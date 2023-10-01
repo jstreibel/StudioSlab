@@ -122,3 +122,7 @@ sf::RenderWindow &SFMLBackend::getMainWindow() {
     return *window;
 }
 
+void SFMLBackend::finish() {
+    window->close();
+}
+

@@ -12,6 +12,8 @@
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
+bool finishFlag = false;
+
 void errorCallback(int error_code, const char* description){
     Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
 }
@@ -49,13 +51,18 @@ void GLFWBackend::run(Program *pProgram) {
     mainLoop();
 }
 
+void GLFWBackend::finish() {
+    // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
+    finishFlag = true;
+}
+
 void GLFWBackend::mainLoop() {
-    while (!glfwWindowShouldClose(systemWindow))
+    while (!glfwWindowShouldClose(systemWindow) && !finishFlag)
     {
         while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
         mustRender = false;
 
-        auto bg = Core::Graphics::backgroundColor;
+        auto bg = Core::Graphics::clearColor;
         glClearColor(bg.r, bg.g, bg.b, bg.a);
         glClear(GL_COLOR_BUFFER_BIT);
 

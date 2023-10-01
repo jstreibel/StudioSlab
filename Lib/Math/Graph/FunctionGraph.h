@@ -15,6 +15,7 @@
 
 #include "Core/Graphics/OpenGL/Utils.h"
 #include "Graph.h"
+#include "StylesManager.h"
 
 #include <memory>
 
@@ -45,7 +46,7 @@ public:
     void draw() override;
 
     void addFunction(const FunctionType* func, Str name="",
-                     Styles::PlotStyle style= Styles::GetCurrent()->funcPlotStyles[0]);
+                     Styles::PlotStyle style= Math::StylesManager::GetCurrent()->funcPlotStyles[0]);
 
     void clearFunctions();
 

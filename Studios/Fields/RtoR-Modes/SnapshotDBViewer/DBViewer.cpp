@@ -15,7 +15,8 @@
 namespace Modes::DatabaseViewer {
 
     DBViewer::DBViewer(DBParser::Ptr _dbParser)
-    : dbParser(std::move(_dbParser))
+    : WindowRow(HasMainMenu)
+    , dbParser(std::move(_dbParser))
     , guiWindow()
     , allDataDisplay("All data", 0.0, 0.5)
     , fullParticularHistoryDisplay("Particular data")
@@ -25,7 +26,7 @@ namespace Modes::DatabaseViewer {
         std::shared_ptr<WindowColumn>winCol(new WindowColumn);
 
 
-        auto style = Styles::GetCurrent()->funcPlotStyles[2];
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
         style.primitive = Styles::VerticalLines;
         style.filled = false;
         style.thickness = 1.5;
@@ -93,14 +94,13 @@ namespace Modes::DatabaseViewer {
         }
         guiWindow.end();
 
-        // if(ImGui::BeginMainMenuBar()) {
-        //     if(ImGui::BeginMenu("O HAI")){
-        //         ImGui::MenuItem("Item 1");
-        //         ImGui::MenuItem("Item 2");
-        //         ImGui::EndMenu();
-        //     }
-        //     ImGui::EndMainMenuBar();
-        // }
+        if(ImGui::BeginMainMenuBar()) {
+            if(ImGui::BeginMenu("System")){
+                if(ImGui::MenuItem("Leave")) Core::BackendManager::GetBackend().finish();
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
 
         WindowRow::draw();
     }
@@ -117,14 +117,14 @@ namespace Modes::DatabaseViewer {
                 0,
                 fullField->getDomain().xMax,
                 5000);
-        auto style = Styles::GetCurrent()->funcPlotStyles[5];
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[5];
         style.thickness = 3;
         style.filled = false;
         allDataDisplay.addPointSet(KGRelation, style, Str("ω²-k²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
     }
 
     void DBViewer::drawDominantModes() {
-        auto style = Styles::GetCurrent()->funcPlotStyles[0];
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[0];
         style.primitive = Styles::Point;
         style.thickness = 8;
         allDataDisplay.removePointSet("main modes");

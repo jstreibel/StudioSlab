@@ -12,7 +12,8 @@
 #include "Core/Backend/BackendManager.h"
 
 
-Window::Window(int x, int y, int w, int h) : windowRect(x, x+w, y, y+h) {}
+Window::Window(int x, int y, int w, int h, Flags flags)
+: clearColor(Core::Graphics::clearColor), flags(flags), windowRect(x, x+w, y, y+h) {}
 
 void Window::draw() {
     setupWindow();
@@ -23,9 +24,33 @@ void Window::draw() {
     }
 }
 
-void Window::_clear() const {
+void Window::setupWindow() const {
+    OpenGL::Shader::remove();
+    glDisable(GL_TEXTURE_2D);
 
-    auto &bg = backgroundColor;
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_LINE_STIPPLE);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    auto vp = getViewport();
+    glViewport(vp.xMin-2, vp.yMin-2, vp.width()+4, vp.height() + 4);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    if (clear)
+        this->_clear();
+    if (decorate)
+        this->_decorate();
+
+    glViewport(vp.xMin, vp.yMin, vp.width(), vp.height());
+
+}
+
+void Window::_clear() const {
+    auto &bg = clearColor;
 
     glBegin(GL_QUADS);
     {
@@ -52,31 +77,6 @@ void Window::_decorate() const {
         glVertex2f(-p,  p);
     }
     glEnd();
-}
-
-void Window::setupWindow() const {
-    OpenGL::Shader::remove();
-    glDisable(GL_TEXTURE_2D);
-
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-
-    auto vp = getViewport();
-    glViewport(vp.xMin-2, vp.yMin-2, vp.width()+4, vp.height() + 4);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    if (clear)
-        this->_clear();
-    if (decorate)
-        this->_decorate();
-
-    glViewport(vp.xMin, vp.yMin, vp.width(), vp.height());
-
 }
 
 void Window::addArtist(Artist::Ptr pArtist) {
@@ -140,10 +140,16 @@ bool Window::notifyRender() {
 }
 
 RectI Window::getViewport() const {
+    int menuHeight = flags&HasMainMenu ? Core::Graphics::menuHeight : 0;
+
     auto _x = getx() +     Core::Graphics::hPadding,
          _y = gety() +     Core::Graphics::vPadding,
          _w = getw() - 2 * Core::Graphics::hPadding,
-         _h = geth() - 2 * Core::Graphics::vPadding;
+         _h = geth() - 2 * Core::Graphics::vPadding - menuHeight;
 
     return {_x, _x+_w, _y, _y+_h};
+}
+
+void Window::setClearColor(Styles::Color color) {
+    clearColor = std::move(color);
 }

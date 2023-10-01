@@ -21,6 +21,12 @@
     return responded;
 
 
+WindowRow::WindowRow(Window::Flags flags)
+: Window(0, 0, 100, 100, flags)
+{
+
+}
+
 RealVector WindowRow::_widthsVector() const {
     auto widths = RealVector(windowsList.size());
 
@@ -98,13 +104,14 @@ void WindowRow::arrangeWindows() {
     }
 
     auto i=0;
+    int menuRoom = flags & HasMainMenu ? Core::Graphics::menuHeight : 0;
     for(auto &winMData : windowsList){
         OUT win = *winMData.window;
 
         win.setx(computed_xPositions[i]);
         win.sety(gety());
 
-        win.notifyReshape(computedWidths[i], geth());
+        win.notifyReshape(computedWidths[i], geth()-menuRoom);
 
         i++;
     }
@@ -176,3 +183,4 @@ bool WindowRow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::Mod
 bool WindowRow::notifyFilesDropped(StrVector paths) {
     PropagateEvent(notifyFilesDropped(paths));
 }
+

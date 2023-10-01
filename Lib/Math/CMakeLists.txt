@@ -111,7 +111,9 @@ set ( THERMO_SOURCES
 
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
-		Function/FunctionProduct.h)
+		Function/FunctionProduct.h
+        Graph/StylesManager.cpp
+        Graph/StylesManager.h)
 
 
 

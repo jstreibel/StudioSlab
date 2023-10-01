@@ -11,7 +11,9 @@ namespace Core::Graphics {
     extern int hPadding;
     extern int vPadding;
 
-    extern Styles::Color backgroundColor;
+    extern int menuHeight;
+
+    extern Styles::Color clearColor;
     extern Styles::Color windowBorderColor_inactive;
     extern Styles::Color windowBorderColor_active;
 }

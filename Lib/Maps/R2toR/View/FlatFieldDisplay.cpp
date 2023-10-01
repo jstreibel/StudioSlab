@@ -15,6 +15,7 @@
 
 #include "imgui.h"
 #include "Core/Graphics/OpenGL/Texture2D_Color.h"
+#include "Math/Graph/StylesManager.h"
 
 #include <utility>
 
@@ -112,6 +113,7 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
 }
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
+    Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
     // Don't call Core::Graphics::Graph2D::draw();
     Window::draw();
 

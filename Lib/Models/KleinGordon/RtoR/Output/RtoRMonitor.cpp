@@ -58,7 +58,9 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 , mFullHistoryDisplay("ϕ(t,x)")
 , mFullSpaceFTHistoryDisplay("F[ϕ(t)](k)", 0, 1)
 {
-    auto sty = Styles::GetCurrent()->funcPlotStyles.begin();
+    auto currStyle = Math::StylesManager::GetCurrent();
+
+    auto sty = currStyle->funcPlotStyles.begin();
 
     mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "U/L"));
     mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
@@ -76,7 +78,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 
     {
 
-        auto style = Styles::GetCurrent()->funcPlotStyles[2].permuteColors();
+        auto style = currStyle->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
         mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
@@ -217,7 +219,7 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
     auto section = new RtoR::Section1D(DummyPtr(mCorrelationFunction), func2Dto1DMap);
     mSpaceCorrelation = RtoR::Section1D::Ptr(section);
 
-    auto style = Styles::GetCurrent()->funcPlotStyles[1];
+    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
     //style.filled = false; // faster (way faster in this case, because CorrelationFunction is slow to compute each value.
 
     // mCorrelationGraph.addFunction(mSpaceCorrelation.get(), "Space correlation", style);
@@ -334,7 +336,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
 
                 // Correlation samples in full history
                 {
-                    auto style = Styles::GetCurrent()->funcPlotStyles[0];
+                    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[0];
                     style.primitive = Styles::Point;
                     style.thickness = 3;
                     auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
@@ -343,7 +345,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
 
                 // Correlation graph
                 {
-                    auto style = Styles::GetCurrent()->funcPlotStyles[1];
+                    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
                     mCorrelationGraph.clearPointSets();
                     auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
                                                                     mCorrelationGraph.getResolution());
@@ -392,7 +394,7 @@ void RtoR::Monitor::updateFourierGraph() {
 
         modes = FFT::Compute(fieldState);
 
-        auto style = Styles::GetCurrent()->funcPlotStyles.begin();
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
 
         mSpaceFourierModesGraph.clearPointSets();
 

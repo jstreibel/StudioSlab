@@ -17,8 +17,6 @@
 
 namespace Styles {
 
-    void Init();
-
     enum Primitive {
         SolidLine,
         DottedLine,
@@ -40,7 +38,7 @@ namespace Styles {
                            Color fillColor=Nil,
                            float thickness=1.3);
 
-        PlotStyle permuteColors(bool odd=false);
+        PlotStyle permuteColors(bool odd=false) const;
 
         Color lineColor;
         Primitive primitive;
@@ -55,8 +53,15 @@ namespace Styles {
     };
 
     struct StyleScheme {
-        StyleScheme(Color graphBackground, Color graphNumbersColor, Color graphTitleColor, Color axisColor,
-                    Color majorTickColor, PlotStyle XHairStyle, PlotStyle gridStyle, Core::Graphics::Writer *labelsWriter, Core::Graphics::Writer *ticksWriter,
+        StyleScheme(Color graphBackground,
+                    Color graphNumbersColor,
+                    Color graphTitleColor,
+                    Color axisColor,
+                    Color majorTickColor,
+                    PlotStyle XHairStyle,
+                    PlotStyle gridStyle,
+                    std::shared_ptr<Core::Graphics::Writer> labelsWriter,
+                    std::shared_ptr<Core::Graphics::Writer> ticksWriter,
                     std::vector<PlotStyle> plotStyles);
 
         Color graphBackground;
@@ -67,8 +72,8 @@ namespace Styles {
         PlotStyle XHairStyle;
         PlotStyle gridLines;
 
-        Core::Graphics::Writer *labelsWriter;
-        Core::Graphics::Writer *ticksWriter;
+        std::shared_ptr<Core::Graphics::Writer> labelsWriter;
+        std::shared_ptr<Core::Graphics::Writer> ticksWriter;
 
         std::vector<PlotStyle> funcPlotStyles;
     };
@@ -76,8 +81,6 @@ namespace Styles {
     typedef std::shared_ptr<Styles::StyleScheme> ColorScheme_ptr;
 
     ColorScheme_ptr NewScheme(const StyleScheme& scheme);
-
-    ColorScheme_ptr GetCurrent();
 }
 
 #endif //STUDIOSLAB_STYLES_H

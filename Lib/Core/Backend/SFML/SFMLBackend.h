@@ -36,6 +36,8 @@ public:
 
     void run(Program *program) override;
 
+    void finish() override;
+
     auto getRenderWindow() -> sf::RenderWindow&;
 
     auto pause() -> void override;

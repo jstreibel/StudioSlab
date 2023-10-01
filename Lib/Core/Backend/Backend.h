@@ -19,6 +19,7 @@ namespace Core {
     public:
         virtual ~Backend() = default;
         virtual void run(Program *) = 0;
+        virtual void finish() = 0;
 
     };
 }

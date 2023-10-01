@@ -10,6 +10,7 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "imgui.h"
+#include "StylesManager.h"
 
 
 #define hPixelsToSpaceScale (region.width() / getw())
@@ -104,7 +105,8 @@ void Core::Graphics::Graph2D::drawXHair() {
     XHairLocation = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
     auto label = getXHairLabel(XHairLocation);
-    Styles::GetCurrent()->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
+    auto currStyle = Math::StylesManager::GetCurrent();
+    currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
     XHair.clear();
     XHair.addPoint({region.xMin, XHairLocation.y});
@@ -112,7 +114,7 @@ void Core::Graphics::Graph2D::drawXHair() {
     XHair.addPoint({XHairLocation.x, region.yMin});
     XHair.addPoint({XHairLocation.x, region.yMax});
 
-    Core::Graphics::Graph2D::renderPointSet(XHair, Styles::GetCurrent()->XHairStyle);
+    Core::Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
 
     if(false)
     {
@@ -155,7 +157,9 @@ void Core::Graphics::Graph2D::computeTicksSpacings() {
 }
 
 void Core::Graphics::Graph2D::drawXAxis() {
-    auto *writer = Styles::GetCurrent()->ticksWriter;
+    auto currStyle = Math::StylesManager::GetCurrent();
+
+    auto writer = currStyle->ticksWriter;
 
     fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
     fix hTickHeightInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
@@ -169,7 +173,7 @@ void Core::Graphics::Graph2D::drawXAxis() {
                                 : region.yMin + vGraphPaddingInSpace;
     fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
     {
-        auto &gtfColor = Styles::GetCurrent()->graphNumbersColor;
+        auto &gtfColor = currStyle->graphNumbersColor;
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
@@ -197,8 +201,8 @@ void Core::Graphics::Graph2D::drawXAxis() {
     {
         OpenGL::Shader::remove();
 
-        auto &ac = Styles::GetCurrent()->axisColor;
-        auto &tc = Styles::GetCurrent()->majorTickColor;
+        auto &ac = currStyle->axisColor;
+        auto &tc = currStyle->majorTickColor;
         glBegin(GL_LINES);
         {
             glColor4f(ac.r, ac.g, ac.b, ac.a);
@@ -224,7 +228,9 @@ void Core::Graphics::Graph2D::drawXAxis() {
 }
 
 void Core::Graphics::Graph2D::drawYAxis() {
-    auto *writer = Styles::GetCurrent()->ticksWriter;
+    auto currStyle = Math::StylesManager::GetCurrent();
+
+    auto writer = currStyle->ticksWriter;
 
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
@@ -235,7 +241,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
 
     StringStream buffer;
 
-    auto &gtf = Styles::GetCurrent()->graphNumbersColor;
+    auto &gtf = currStyle->graphNumbersColor;
     glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
     {
         auto numRegion = log10(Δy);
@@ -256,7 +262,7 @@ void Core::Graphics::Graph2D::drawYAxis() {
     glDisable(GL_LINE_STIPPLE);
     glBegin(GL_LINES);
     {
-        auto &ac = Styles::GetCurrent()->axisColor;
+        auto &ac = currStyle->axisColor;
 
         glColor4f(ac.r, ac.g, ac.b, ac.a);
 
@@ -272,8 +278,8 @@ void Core::Graphics::Graph2D::drawYAxis() {
 
     glBegin(GL_LINES);
     {
-        auto &ac = Styles::GetCurrent()->axisColor;
-        auto &tc = Styles::GetCurrent()->gridLines.lineColor;
+        auto &ac = currStyle->axisColor;
+        auto &tc = currStyle->gridLines.lineColor;
 
 
         glColor4f(tc.r, tc.g, tc.b, tc.a);
@@ -411,10 +417,12 @@ void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, cons
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.5);
 
-    auto c = Styles::GetCurrent()->graphNumbersColor;
+    auto currStyle = Math::StylesManager::GetCurrent();
+
+    auto c = currStyle->graphNumbersColor;
     Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
 
-    auto *writer = Styles::GetCurrent()->labelsWriter;
+    auto writer = currStyle->labelsWriter;
     loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, getViewport());
     writer->write(label, {loc.x, loc.y}, c);
 
