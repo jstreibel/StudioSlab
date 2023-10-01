@@ -23,10 +23,8 @@ namespace OpenGL {
         setLocation(loc);
     }
 
-    void OpenGL::ColorBar::draw(const Window *window) {
+    void OpenGL::ColorBar::draw(const RectI &vp) {
         if( texture == nullptr ) return;
-
-        auto vp = window->getViewport();
 
         texture->bind();
 

@@ -29,6 +29,7 @@ namespace Core::Graphics {
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
 
+        std::vector<Artist::Ptr> content;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
@@ -95,7 +96,10 @@ namespace Core::Graphics {
 
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
+        void addArtist(Artist::Ptr pArtist);
+
         void draw() override;
+
 
         void setupOrtho() const;
 

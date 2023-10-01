@@ -18,7 +18,7 @@ namespace OpenGL {
         explicit ColorBar(RectI loc);
 
         void setLocation(RectI loc);
-        void draw(const Window *window) override;
+        void draw(const RectI &viewport) override;
 
         void setTexture(std::shared_ptr<Texture>);
     };

@@ -17,6 +17,7 @@
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Core/Backend/BackendManager.h"
 #include "StylesManager.h"
+#include "AxisArtist.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -45,6 +46,10 @@ Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
     autoReviewGraphRanges = autoReviewGraphLimits;
 }
 
+void Core::Graphics::Graph2D::addArtist(Artist::Ptr pArtist) {
+    content.emplace_back(pArtist);
+}
+
 void Core::Graphics::Graph2D::draw() {
     OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
     Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
@@ -52,6 +57,15 @@ void Core::Graphics::Graph2D::draw() {
 
     if (autoReviewGraphRanges) reviewGraphRanges();
     setupOrtho();
+
+    auto vp = getViewport();
+    for(const auto& artist : content){
+        if(artist->isVisible()){
+            artist->draw(vp);
+            OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist "
+            + Common::getClassName(artist.get()));
+        }
+    }
 
     drawAxes();
 

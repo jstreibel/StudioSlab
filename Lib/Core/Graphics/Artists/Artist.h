@@ -6,8 +6,7 @@
 #define V_SHAPE_ARTIST_H
 
 #include "Utils/Utils.h"
-
-class Window;
+#include "Rect.h"
 
 
 class Artist {
@@ -15,7 +14,7 @@ class Artist {
 public:
     typedef std::shared_ptr<Artist> Ptr;
 
-    virtual void draw(const Window *window) = 0;
+    virtual void draw(const RectI &viewport) = 0;
 
     void setVisibility(bool visible);
     bool isVisible() const;

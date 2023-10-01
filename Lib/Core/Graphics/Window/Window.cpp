@@ -17,11 +17,6 @@ Window::Window(int x, int y, int w, int h, Flags flags)
 
 void Window::draw() {
     setupWindow();
-
-    for(const auto& artist : content){
-        artist->draw(this);
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist " + Common::getClassName(artist.get()));
-    }
 }
 
 void Window::setupWindow() const {
@@ -77,10 +72,6 @@ void Window::_decorate() const {
         glVertex2f(-p,  p);
     }
     glEnd();
-}
-
-void Window::addArtist(Artist::Ptr pArtist) {
-    content.emplace_back(pArtist);
 }
 
 auto Window::isMouseIn() const -> bool {

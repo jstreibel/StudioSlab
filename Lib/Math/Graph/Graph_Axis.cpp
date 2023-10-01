@@ -212,7 +212,9 @@ void Core::Graphics::Graph2D::drawXAxis() {
 
             glColor4f(tc.r, tc.g, tc.b, tc.a);
 
-            for(Real mark = 0; mark<=region.xMax; mark+=xspacing){
+            Count size = (Count) region.xMax/xspacing;
+            for(auto i = 0; i<=size; ++i){
+                Real mark = i*xspacing;
                 glVertex3d(mark, -vTickHeightInSpace, 0);
                 glVertex3d(mark, +vTickHeightInSpace, 0);
             }

@@ -52,7 +52,11 @@ set ( GRAPH_SOURCES
         Graph/Graph_Axis.cpp
         Graph/LabelingHelper.cpp
         Graph/LabelingHelper.h
-		Graph/Styles.cpp)
+		Graph/Styles.cpp
+
+		Graph/StylesManager.h		Graph/StylesManager.cpp
+		Graph/AxisArtist.h			Graph/AxisArtist.cpp
+)
 
 
 set ( NUMERICS_SOURCES
@@ -112,8 +116,7 @@ set ( THERMO_SOURCES
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
-        Graph/StylesManager.cpp
-        Graph/StylesManager.h)
+)
 
 
 

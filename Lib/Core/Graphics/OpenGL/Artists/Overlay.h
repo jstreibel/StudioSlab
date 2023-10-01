@@ -20,7 +20,7 @@ namespace OpenGL {
     public:
         explicit Overlay(RectI loc);
 
-        void draw(const Window *window) override;
+        void draw(const RectI &viewport) override;
     };
 
 }

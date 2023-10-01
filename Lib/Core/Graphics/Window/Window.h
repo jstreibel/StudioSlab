@@ -24,8 +24,6 @@ public:
     };
 
 private:
-    std::vector<Artist::Ptr> content;
-
     bool decorate = true;
     bool clear = true;
     Styles::Color clearColor;
@@ -43,8 +41,6 @@ protected:
     void setClearColor(Styles::Color color);
 public:
     explicit Window(int x=0, int y=0, int w=100, int h=100, Flags flags=None);
-
-    void addArtist(Artist::Ptr pArtist);
 
     virtual void draw();
     virtual void notifyReshape(int _w, int _h);

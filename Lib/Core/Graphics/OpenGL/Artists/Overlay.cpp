@@ -41,9 +41,7 @@ namespace OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void OpenGL::Overlay::draw(const Window *window) {
-        auto vp = window->getViewport();
-
+    void OpenGL::Overlay::draw(const RectI &vp) {
         shader.setUniform("vpWidth", vp.width());
         shader.setUniform("vpHeight", vp.height());
 
