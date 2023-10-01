@@ -12,7 +12,7 @@
 #include "Core/Graphics/OpenGL/OpenGL.h"
 #include "Core/Graphics/Styles/Colors.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Texture2D_Color : public Texture2D {
         ByteData data = nullptr;

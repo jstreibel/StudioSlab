@@ -6,19 +6,24 @@
 #define V_SHAPE_ARTIST_H
 
 #include "Utils/Utils.h"
-#include "Rect.h"
+#include "Core/Graphics/Types.h"
 
 
-class Artist {
-    bool visible = true;
-public:
-    typedef std::shared_ptr<Artist> Ptr;
+namespace Graphics {
 
-    virtual void draw(const RectI &viewport) = 0;
+    class Artist {
+        bool visible = true;
+    public:
+        typedef std::shared_ptr<Artist> Ptr;
 
-    void setVisibility(bool visible);
-    bool isVisible() const;
-};
+        virtual void draw(const RectI &viewport) = 0;
+
+        void setVisibility(bool visible);
+
+        bool isVisible() const;
+    };
+
+}
 
 
 

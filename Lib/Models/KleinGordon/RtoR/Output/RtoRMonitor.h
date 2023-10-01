@@ -22,7 +22,7 @@
 
 namespace RtoR {
 
-    class Monitor : public Core::Graphics::OpenGLMonitor {
+    class Monitor : public ::Graphics::OpenGLMonitor {
     protected:
         bool showEnergyHistoryAsDensities;
 
@@ -82,7 +82,7 @@ namespace RtoR {
         Real V = .0;
         Real W = .0;
         KGEnergy &hamiltonian;
-        Core::Graphics::Graph2D mEnergyGraph;
+        ::Graphics::Graph2D mEnergyGraph;
 
         void draw() override;
 

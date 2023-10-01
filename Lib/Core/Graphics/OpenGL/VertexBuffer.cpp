@@ -21,7 +21,7 @@
 #define DIRTY  (1)
 #define FROZEN (2)
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     VertexBuffer::VertexBuffer(Str formatStr) {
         size_t i, index = 0, stride = 0;

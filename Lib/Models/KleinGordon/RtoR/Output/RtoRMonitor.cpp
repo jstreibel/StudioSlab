@@ -33,7 +33,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) ::Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define SHOW_ENERGY_HISTORY_AS_DENSITIES true
@@ -47,7 +47,7 @@
 
 RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                        const Real phiMin, const Real phiMax, Str name, bool showEnergyHistoryAsDensities)
-: Core::Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
+: ::Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , Δt(params.gett()*0.1)
 , showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , hamiltonian(hamiltonian)
@@ -86,7 +86,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
         mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
 
-        auto windowColumn = new WindowColumn;
+        auto windowColumn = new ::Graphics::WindowColumn;
         windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
         windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
         panel.addWindow(windowColumn, ADD_NEW_COLUMN);
@@ -164,7 +164,7 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
 
     mEnergyGraph.set_xMax(xMax);
 
-    Core::Graphics::OpenGLMonitor::handleOutput(outInfo);
+    ::Graphics::OpenGLMonitor::handleOutput(outInfo);
 }
 
 bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {

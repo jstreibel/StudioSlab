@@ -20,7 +20,7 @@
 
 
 namespace R2toR::Graphics {
-    class FlatFieldDisplay : public Core::Graphics::Graph2D {
+class FlatFieldDisplay : public ::Graphics::Graph2D {
         enum Scale {
             Linear,
             Log,
@@ -31,16 +31,16 @@ namespace R2toR::Graphics {
         bool validTextureData = false;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-        OpenGL::Texture1D_Color* cMap_texture = nullptr;
-        OpenGL::ColorBar colorBar;
+        ::Graphics::OpenGL::Texture1D_Color* cMap_texture = nullptr;
+        ::Graphics::OpenGL::ColorBar colorBar;
         bool logScale                   = true;
         Real cMap_epsArg                =  1;
         Real cMap_min                   = -1.1;
         Real cMap_max                   =  1.1;
         bool symmetricMaxMin            = true;
 
-        OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::Shader program;
+        ::Graphics::OpenGL::VertexBuffer vertexBuffer;
+        ::Graphics::OpenGL::Shader program;
 
         void drawFlatField();
 
@@ -48,11 +48,11 @@ namespace R2toR::Graphics {
     protected:
         Unit funcUnit;
         R2toR::Function::ConstPtr func    = nullptr;
-        OpenGL::Texture2D_Real*   textureData = nullptr;
+        ::Graphics::OpenGL::Texture2D_Real*   textureData = nullptr;
 
         void computeGraphRanges();
 
-        Str getXHairLabel(const Point2D &coords) override;
+        Str getXHairLabel(const ::Graphics::Point2D &coords) override;
 
         void drawGUI() override;
 

@@ -7,10 +7,11 @@
 #include "Utils.h"
 #include "TextureUtils.h"
 
-fix UspecifiedFormat = OpenGL::PixelDataFormat::DataFormat_Red;
-fix UnspecifiedType  = OpenGL::PixelDataType::DataType_Float32;
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
+    fix UspecifiedFormat = OpenGL::PixelDataFormat::DataFormat_Red;
+    fix UnspecifiedType  = OpenGL::PixelDataType::DataType_Float32;
+
     Texture2D::Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
     : Texture(Texture_2D, format, textureUnit)
     , w(w)
@@ -36,7 +37,7 @@ namespace OpenGL {
 
         setAntiAliasOn();
 
-        if(!OpenGLUtils::checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
+        if(!checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Success() << "OpenGL::Texture reserved " << w << "x" << h << " GPU texture pixels." << Log::Flush;
     }
 
@@ -94,7 +95,7 @@ namespace OpenGL {
         fix nCols = w;
         fix level = 0;
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
 
         fix internalFormat = getInternalFormat();
 
@@ -110,7 +111,7 @@ namespace OpenGL {
                             (GLsizei) nCols,   (GLsizei) nRows,
                             dataFormat, dataType, dataBegin);
 
-        if(OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__, false)) {
+        if(checkGLErrors(__PRETTY_FUNCTION__, false)) {
             Log::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
                          << " data to target " << TargetToString(getTarget())
                          << " with internal format " << InternalFormatToString(getInternalFormat())

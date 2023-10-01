@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLUTDEFS_H
 #define STUDIOSLAB_GLUTDEFS_H
 
-#include "Core/Graphics/Artists/Rect.h"
+#include "Core/Graphics/Types.h"
 
 #include "Utils/STDLibInclude.h"
 
@@ -33,7 +33,7 @@
 
 class Window;
 
-namespace GLUTUtils {
+namespace Graphics::OpenGL::GLUT {
 
     void write(const Window *window, float fontScale, float x, float y, std::string str,
                void *font = FONT_STROKE_DEFAULT);
@@ -44,7 +44,7 @@ namespace GLUTUtils {
     void writeBitmap(const Window *window, float x, float y, std::string str,
                      void *font = FONT_BITMAP_DEFAULT);
 
-    OpenGLUtils::FrameBuffer getFrameBuffer(int x=0, int y=0, int w=-1, int h=-1);
+    FrameBuffer getFrameBuffer(int x=0, int y=0, int w=-1, int h=-1);
 
     int getScreenWidth();
 

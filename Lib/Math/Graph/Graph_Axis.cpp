@@ -4,98 +4,18 @@
 
 #include "Graph.h"
 
-#include "Utils/EncodingUtils.h"
-
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "imgui.h"
 #include "StylesManager.h"
 
-
-#define hPixelsToSpaceScale (region.width() / getw())
-#define vPixelsToSpaceScale (region.height() / geth())
-
-fix vTickHeightinPixels_x2 = 5;
-fix vGraphPaddingInPixels = 60;
-
-#define MARK_Y                                                                \
-    {                                                                         \
-        Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels}; \
-        buffer.str("");                                                       \
-                                                                              \
-        if(numRegion>2)       buffer << std::setprecision(0);                 \
-        else if(numRegion>1)  buffer << std::setprecision(1);                 \
-        else                  buffer << std::setprecision(2);                 \
-                                                                              \
-        if(numRegion < -1)    buffer << std::scientific;                      \
-        else                  buffer << std::fixed;                           \
-                                                                              \
-        if(mark < 0)          buffer << "";                                   \
-        else buffer << " ";                                                   \
-                                                                              \
-        buffer << mark;                                                       \
-                                                                              \
-        Str text = buffer.str();                                              \
-        if(numRegion < -1) text = elegantScientific(text);                    \
-                                                                              \
-                                                                              \
-        loc = FromSpaceToViewportCoord(loc, region, getViewport());           \
-        writer->write(text, loc, gtf);                                        \
-                                                                              \
-    }
-
-Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, const RectR &spaceRegion, const RectI &viewport ) {
-    fix x = spaceCoord.x;
-    fix y = spaceCoord.y;
-    fix xMin = spaceRegion.xMin;
-    fix yMin = spaceRegion.yMin;
-    fix Δx = spaceRegion.width();
-    fix Δy = spaceRegion.height();
-    fix W = viewport.width();
-    fix H = viewport.height();
-
-    return {W*(x-xMin)/Δx,
-            H*(y-yMin)/Δy};
-}
-
-Point2D FromViewportToSpaceCoord(const Point2D &viewportCoord, const RectR &spaceRegion, const RectI &viewport ) {
-    fix X = viewportCoord.x;
-    fix Y = viewportCoord.y;
-    fix xMin = spaceRegion.xMin;
-    fix yMin = spaceRegion.yMin;
-    fix Δx = spaceRegion.width();
-    fix Δy = spaceRegion.height();
-    fix W = viewport.width();
-    fix H = viewport.height();
-
-    return {xMin + Δx*X/W, yMin + Δy*Y/H};
-}
-
-
-void Core::Graphics::Graph2D::drawAxes() {
-
-    glLineWidth(1.0);
-
-    computeTicksSpacings();
-
-    drawXAxis();
-    OpenGLUtils::checkGLErrors(
-            Str("after a call to Core::Graphics::Graph2D::drawXAxis from ") + Common::getClassName(this) + ", " +
-            "graph title \"" + title + "\"");
-    drawYAxis();
-    OpenGLUtils::checkGLErrors(
-            Str("after a call to Core::Graphics::Graph2D::drawYAxis from ") + Common::getClassName(this) + ", " +
-            "graph title \"" + title + "\"");
-
-}
-
-Str Core::Graphics::Graph2D::getXHairLabel(const Point2D &coords) {
+Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) {
     fix digits = 5;
     return Str("(")+ baseHorizontalUnit(coords.x, digits) + ", " + baseVerticalUnit(coords.y, digits) + ")";
 }
 
-void Core::Graphics::Graph2D::drawXHair() {
+void Graphics::Graph2D::drawXHair() {
     if(!isMouseIn()) return;
 
     fix vpRect = getViewport(); // getWindowRect();
@@ -114,7 +34,7 @@ void Core::Graphics::Graph2D::drawXHair() {
     XHair.addPoint({XHairLocation.x, region.yMin});
     XHair.addPoint({XHairLocation.x, region.yMax});
 
-    Core::Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
+    Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
 
     if(false)
     {
@@ -132,187 +52,7 @@ void Core::Graphics::Graph2D::drawXHair() {
 
 }
 
-void Core::Graphics::Graph2D::computeTicksSpacings() {
-    if(1){
-        const Real Δy = region.height() / baseVerticalUnit.value();
-
-        const auto theLog = log10(Δy);
-        const auto spacing = 2*pow(10., floor(theLog) - 1.);
-        const auto theRest = theLog - floor(theLog);
-        const auto multiplier = floor(pow(10., theRest));
-
-        yspacing = multiplier * spacing;
-    }
-
-    if(1){
-        const auto Δx = region.width() / baseHorizontalUnit.value();
-
-        const auto theLog = log10(Δx);
-        const auto spacing = 2*pow(10., floor(theLog) - 1.);
-        const auto theRest = theLog - floor(theLog);
-        const auto multiplier = 2 * floor(pow(10., theRest));
-
-        xspacing = multiplier * spacing;
-    }
-}
-
-void Core::Graphics::Graph2D::drawXAxis() {
-    auto currStyle = Math::StylesManager::GetCurrent();
-
-    auto writer = currStyle->ticksWriter;
-
-    fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
-    fix hTickHeightInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
-    (void)hTickHeightInSpace;
-
-    fix vGraphPaddingInSpace = vGraphPaddingInPixels * vPixelsToSpaceScale;
-    fix fontHeight = writer->getFontHeightInPixels();
-
-    fix yLocationOfXAxis = region.yMin < -vGraphPaddingInSpace
-                                ? 0
-                                : region.yMin + vGraphPaddingInSpace;
-    fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
-    {
-        auto &gtfColor = currStyle->graphNumbersColor;
-
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_LINE_STIPPLE);
-
-        glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
-
-        for (Real mark = 0; mark <= region.xMax * 1.0001; mark += xspacing)
-        {
-            Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
-            loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            auto label = baseHorizontalUnit(mark, 2);
-            //auto label = ToStr(mark, 2)
-            writer->write(label, loc, gtfColor);
-        }
-        for (Real mark = -xspacing; mark >= region.xMin * 1.0001; mark -= xspacing) {
-            Point2D loc = {mark - xspacing / 18.0, yLocationOfLabels};
-            loc = FromSpaceToViewportCoord(loc, region, getViewport());
-            auto label = baseHorizontalUnit(mark, 2);
-            //auto label = ToStr(mark, 2)
-            writer->write(label, loc, gtfColor);
-        }
-    }
-
-    if(1)
-    {
-        OpenGL::Shader::remove();
-
-        auto &ac = currStyle->axisColor;
-        auto &tc = currStyle->majorTickColor;
-        glBegin(GL_LINES);
-        {
-            glColor4f(ac.r, ac.g, ac.b, ac.a);
-
-            glVertex3d(region.xMin, yLocationOfXAxis, 0);
-            glVertex3d(region.xMax, yLocationOfXAxis, 0);
-
-            glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-            Count size = (Count) region.xMax/xspacing;
-            for(auto i = 0; i<=size; ++i){
-                Real mark = i*xspacing;
-                glVertex3d(mark, -vTickHeightInSpace, 0);
-                glVertex3d(mark, +vTickHeightInSpace, 0);
-            }
-            for(Real mark = 0; mark>=region.xMin; mark-=xspacing){
-                glVertex3d(mark, -vTickHeightInSpace, 0);
-                glVertex3d(mark, +vTickHeightInSpace, 0);
-            }
-        }
-        glEnd();
-    }
-
-    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__));
-}
-
-void Core::Graphics::Graph2D::drawYAxis() {
-    auto currStyle = Math::StylesManager::GetCurrent();
-
-    auto writer = currStyle->ticksWriter;
-
-    glEnable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-
-    fix Δy = region.height();
-    fix xLocationOfYAxis = region.xMin + 20*hPixelsToSpaceScale;
-    fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
-
-    StringStream buffer;
-
-    auto &gtf = currStyle->graphNumbersColor;
-    glColor4f(gtf.r, gtf.g, gtf.b, gtf.a);
-    {
-        auto numRegion = log10(Δy);
-
-        if(region.yMin < 0 && region.yMax > 0) {
-            for(Real mark = 0; mark>=region.yMin; mark-=yspacing)         MARK_Y
-            for(Real mark = yspacing; mark<=region.yMax; mark+=yspacing)  MARK_Y
-        } else {
-            for (Real mark = region.yMin; mark <= region.yMax; mark += yspacing) MARK_Y
-        }
-    }
-
-    OpenGL::Shader::remove();
-
-    glPushAttrib(GL_ENABLE_BIT);
-    glDisable(GL_LINE_SMOOTH);
-
-    glDisable(GL_LINE_STIPPLE);
-    glBegin(GL_LINES);
-    {
-        auto &ac = currStyle->axisColor;
-
-        glColor4f(ac.r, ac.g, ac.b, ac.a);
-
-        glVertex3d(region.xMin, 0, 0);
-        glVertex3d(region.xMax, 0, 0);
-    }
-    glEnd();
-
-    glEnable(GL_LINE_STIPPLE);
-    glLineStipple(2, 0x2727);
-    glLineStipple(2, 0x1249);
-    glLineStipple(2, 0x1111);
-
-    glBegin(GL_LINES);
-    {
-        auto &ac = currStyle->axisColor;
-        auto &tc = currStyle->gridLines.lineColor;
-
-
-        glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-        if(region.yMin < 0 && region.yMax > 0) {
-            for(Real mark = 0; mark>=region.yMin; mark-=yspacing) {
-                glVertex3d(region.xMin, mark, 0);
-                glVertex3d(region.xMax, mark, 0);
-            }
-            for(Real mark = yspacing; mark<=region.yMax; mark+=yspacing) {
-                glVertex3d(region.xMin, mark, 0);
-                glVertex3d(region.xMax, mark, 0);
-            }
-        } else {
-            for (Real mark = region.yMin; mark <= region.yMax; mark += yspacing) {
-                glVertex3d(region.xMin, mark, 0);
-                glVertex3d(region.xMax, mark, 0);
-            }
-        }
-
-        glColor4f(ac.r, ac.g, ac.b, ac.a);
-
-        glVertex3d(region.xMin, 0, 0);
-        glVertex3d(region.xMax, 0, 0);
-    }
-    glEnd();
-    glPopAttrib();
-
-}
-
-void Core::Graphics::Graph2D::reviewGraphRanges() {
+void Graphics::Graph2D::reviewGraphRanges() {
     if(!mPointSets.empty())
     {
         auto referencePointSet = mPointSets.begin()->data;
@@ -352,7 +92,7 @@ void Core::Graphics::Graph2D::reviewGraphRanges() {
     }
 }
 
-void Core::Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
+void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
     OpenGL::Shader::remove();
 
     glMatrixMode(GL_PROJECTION);

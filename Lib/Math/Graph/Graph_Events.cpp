@@ -10,12 +10,12 @@
 
 #define POPUP_ON_MOUSE_CALL false
 
-bool Core::Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+bool Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
     static auto time = Timer();
 
     if(button == Core::MouseButton_RIGHT){
-        if(state == Press) time.reset();
-        else if(state == Release && time.getElTime_msec() < 200){
+        if(state == Core::Press) time.reset();
+        else if(state == Core::Release && time.getElTime_msec() < 200){
             savePopupOn = true;
 
             auto popupName = Str("win_") + title + Str("_popup");
@@ -32,7 +32,7 @@ bool Core::Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::
     return GUIEventListener::notifyMouseButton(button, state, keys);
 }
 
-bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
+bool Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     auto elRet = GUIEventListener::notifyMouseMotion(x, y);
 
     auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
@@ -73,7 +73,7 @@ bool Core::Graphics::Graph2D::notifyMouseMotion(int x, int y) {
     return elRet;
 }
 
-bool Core::Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
+bool Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
     GUIEventListener::notifyMouseWheel(dx, dy);
 
     constexpr const Real factor = 1.2;
@@ -81,10 +81,10 @@ bool Core::Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
 
     static auto targetRegion = region;
 
-    if(!Animator::Contains(region.xMin)
-       && !Animator::Contains(region.xMax)
-       && !Animator::Contains(region.yMin)
-       && !Animator::Contains(region.yMax)) {
+    if(!Core::Animator::Contains(region.xMin)
+       && !Core::Animator::Contains(region.xMax)
+       && !Core::Animator::Contains(region.yMin)
+       && !Core::Animator::Contains(region.yMax)) {
         targetRegion = region;
     }
 
@@ -113,4 +113,4 @@ bool Core::Graphics::Graph2D::notifyMouseWheel(double dx, double dy) {
     return true;
 }
 
-void Core::Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
+void Graphics::Graph2D::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }

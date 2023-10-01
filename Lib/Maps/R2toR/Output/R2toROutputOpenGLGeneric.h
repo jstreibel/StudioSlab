@@ -21,7 +21,7 @@
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 namespace R2toR {
-    class OutputOpenGL : public Core::Graphics::OpenGLMonitor {
+class OutputOpenGL : public ::Graphics::OpenGLMonitor {
     protected:
         Real phiMin, phiMax;
         GraphR2Section mSectionGraph;

@@ -9,9 +9,8 @@
 #include "Core/Graphics/Artists/Artist.h"
 #include "Core/Graphics/OpenGL/VertexBuffer.h"
 #include "Core/Graphics/OpenGL/Shader.h"
-#include "Core/Graphics/Artists/Rect.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Overlay : public Artist {
         VertexBuffer vertexBuffer;

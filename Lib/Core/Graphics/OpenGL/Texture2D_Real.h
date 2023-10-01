@@ -9,7 +9,7 @@
 
 #include "Texture2D.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Texture2D_Real : public Texture2D {
         RealData data = nullptr;

@@ -11,41 +11,39 @@
 #include <unordered_map>
 
 namespace Core {
-    namespace Graphics {
 
-        struct Animation {
-            double initialValue;
-            double targetValue;
-            double timeInSeconds;
-            Timer timer;
-        };
+    struct Animation {
+        double initialValue;
+        double targetValue;
+        double timeInSeconds;
+        Timer timer;
+    };
 
-        class Animator {
-            static Animator& Instance();
-            Animator() = default;
+    class Animator {
+        static Animator& Instance();
+        Animator() = default;
 
-            std::unordered_map<double*, Animation> animations;
-            static double cubicBezierInterpolation(double startValue, double endValue, double t);
+        std::unordered_map<double*, Animation> animations;
+        static double cubicBezierInterpolation(double startValue, double endValue, double t);
 
-            double p1=1.0,p2=1.0;
-        public:
+        double p1=1.0,p2=1.0;
+    public:
 
 
-            static void Add(double& variable, double targetValue, double timeInSeconds);
+        static void Add(double& variable, double targetValue, double timeInSeconds);
 
-            static bool Contains(const double &variable);
+        static bool Contains(const double &variable);
 
-            static auto Get(const double &variable) -> const Animation&;
+        static auto Get(const double &variable) -> const Animation&;
 
-            static void SetBezierParams(double p1, double p2);
+        static void SetBezierParams(double p1, double p2);
 
-            static auto GetBezierParams() -> std::pair<double, double>;
+        static auto GetBezierParams() -> std::pair<double, double>;
 
-            static void Update();
+        static void Update();
 
-        };
+    };
 
-    } // Core
-} // Graphics
+} // Core
 
 #endif //STUDIOSLAB_ANIMATOR_H

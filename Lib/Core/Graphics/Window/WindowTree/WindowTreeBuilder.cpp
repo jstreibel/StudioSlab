@@ -4,36 +4,42 @@
 
 #include "WindowTreeBuilder.h"
 
-WindowTreeBuilder::WindowTreeBuilder(int x, int y, int w, int h)
-: root(new NodeWindow(x, y, w, h)), shape(x, y, w, h), currentNode(new NodeWindow(x, y, w, h))
-{
-    root->addSubWindow(currentNode);
-}
 
-void WindowTreeBuilder::addWindow(Window *window, WindowTreeBuilder::Location location) {
-    auto arr = location==Right?Horizontal:Vertical;
+namespace Graphics {
 
-    if(currentNode->arrangement != arr){
-        auto n = currentNode->children.size();
-        if(n <= 1)
-            currentNode->arrangement = arr;
-        else {
-            auto *newNode = new NodeWindow(nullptr, arr);
-            newNode->addSubWindow(currentNode);
-            currentNode = newNode;
-        }
+    WindowTreeBuilder::WindowTreeBuilder(int x, int y, int w, int h)
+            : root(new NodeWindow(x, y, w, h)), shape(x, y, w, h),
+              currentNode(new NodeWindow(x, y, w, h)) {
+        root->addSubWindow(currentNode);
     }
 
-    currentNode->addSubWindow(window);
-}
+    void WindowTreeBuilder::addWindow(Window *window, WindowTreeBuilder::Location location) {
+        auto arr = location == Right ? Horizontal : Vertical;
 
-NodeWindow* WindowTreeBuilder::getRoot(){
-    auto &myRect = shape.getWindowRect();
-    currentNode->setx(myRect.xMin);
-    currentNode->sety(myRect.yMin);
-    currentNode->setSize(myRect.width(), myRect.height());
+        if (currentNode->arrangement != arr) {
+            auto n = currentNode->children.size();
+            if (n <= 1)
+                currentNode->arrangement = arr;
+            else {
+                auto *newNode = new NodeWindow(nullptr, arr);
+                newNode->addSubWindow(currentNode);
+                currentNode = newNode;
+            }
+        }
 
-    currentNode->arrange();
+        currentNode->addSubWindow(window);
+    }
 
-    return currentNode;
+    NodeWindow *WindowTreeBuilder::getRoot() {
+        auto &myRect = shape.getWindowRect();
+        currentNode->setx(myRect.xMin);
+        currentNode->sety(myRect.yMin);
+        currentNode->setSize(myRect.width(), myRect.height());
+
+        currentNode->arrange();
+
+        return currentNode;
+    }
+
+
 }

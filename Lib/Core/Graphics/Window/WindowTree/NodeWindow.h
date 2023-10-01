@@ -9,31 +9,39 @@
 
 #include <vector>
 
-typedef std::vector<Window*> WindowContainer;
 
-class WindowTreeBuilder;
+namespace Graphics {
 
-enum NodeArrangement {Horizontal, Vertical};
+    typedef std::vector<Window *> WindowContainer;
 
-class NodeWindow : public Window {
-    Window *parent = nullptr;
-    NodeArrangement arrangement = Horizontal;
-    WindowContainer children;
+    class WindowTreeBuilder;
 
-public:
-    friend WindowTreeBuilder;
+    enum NodeArrangement {
+        Horizontal, Vertical
+    };
 
-    NodeWindow(int x, int y, int w, int h);
-    explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement=Horizontal);
-    explicit NodeWindow(const Window &window);
+    class NodeWindow : public Window {
+        Window *parent = nullptr;
+        NodeArrangement arrangement = Horizontal;
+        WindowContainer children;
 
-    void addSubWindow(Window *subWindow);
+    public:
+        friend WindowTreeBuilder;
 
-    void arrange();
+        NodeWindow(int x, int y, int w, int h);
 
-    void draw() override;
+        explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement = Horizontal);
 
-};
+        explicit NodeWindow(const Window &window);
 
+        void addSubWindow(Window *subWindow);
+
+        void arrange();
+
+        void draw() override;
+
+    };
+
+}
 
 #endif //V_SHAPE_NODEWINDOW_H

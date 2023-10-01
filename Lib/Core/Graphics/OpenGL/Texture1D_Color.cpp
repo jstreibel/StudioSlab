@@ -11,7 +11,7 @@
 #define B 2
 #define A 3
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     Texture1D_Color::Texture1D_Color(GLsizei size, GLenum textureUnit)
     : Texture(Texture_1D, RGBA, textureUnit)
@@ -34,7 +34,7 @@ namespace OpenGL {
 
         fix sizeMB = size*4/(1024*1024.);
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        if(!OpenGLUtils::checkGLErrors("after trying to reserve texture in gpu"))
+        if(!checkGLErrors("after trying to reserve texture in gpu"))
             Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 

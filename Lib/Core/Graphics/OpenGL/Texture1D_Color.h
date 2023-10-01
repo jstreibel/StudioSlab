@@ -13,7 +13,7 @@
 #include "TextureUtils.h"
 #include "../Styles/Colors.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Texture1D_Color : public Texture {
         ByteData data = nullptr;

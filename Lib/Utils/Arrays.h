@@ -29,9 +29,6 @@ typename std::vector<T>     Vector;
 typedef std::ostream        OStream;
 typedef std::vector<Str> StrVector;
 
-
-typedef std::vector<Point2D> PointContainer;
-
 namespace Utils {
 
     typedef Real MaxValue_type;

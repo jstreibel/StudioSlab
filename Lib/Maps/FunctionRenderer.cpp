@@ -37,7 +37,7 @@ void RtoR::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::
 
     if(dx == .0) return;
 
-    OpenGL::Shader::remove();
+    Graphics::OpenGL::Shader::remove();
 
     if(filled)
     {
@@ -79,7 +79,7 @@ void RtoR::FunctionRenderer::renderFunction(const R2toR::Function &func, Real xM
     const Real dx = (xMax-xMin) / nLines,
             dy = (yMax-yMin) / linesRes;
 
-    OpenGL::Shader::remove();
+    Graphics::OpenGL::Shader::remove();
 
     glPointSize(2);
     glLineWidth(1.5);
@@ -115,7 +115,7 @@ void RtoR::FunctionRenderer::renderSection(const R2toR::Function &func, const Rt
     const auto ds = section.getΔs() / Real(resolution);
     const auto sMin = section.get_sMin(), sMax = section.get_sMax();
 
-    OpenGL::Shader::remove();
+    Graphics::OpenGL::Shader::remove();
 
     glLineWidth(style.thickness);
 
@@ -182,7 +182,7 @@ void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func
     const Real xEnd = xMax;
     if(filled)
     {
-        OpenGL::Shader::remove();
+        Graphics::OpenGL::Shader::remove();
 
         glColor4f(c.r, c.g, c.b, c.a/3.0);
         glBegin(GL_QUADS);
@@ -216,7 +216,7 @@ void RtoR::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func
 
 void RtoR::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real yMin, Real yMax,
                                                    UInt resolution) {
-    OpenGL::Shader::remove();
+    Graphics::OpenGL::Shader::remove();
 
     const Real dy = (yMax - yMin) / Real(resolution);
     const Real yBegin = yMin;

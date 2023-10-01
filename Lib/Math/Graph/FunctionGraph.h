@@ -21,7 +21,7 @@
 
 
 template<class FunctionType>
-class FunctionGraph : public Core::Graphics::Graph2D {
+class FunctionGraph : public Graphics::Graph2D {
     typedef std::unique_ptr<const FunctionType> FunctionPtr;
     typedef std::tuple<const FunctionType*, Styles::PlotStyle, Str> FunctionTriple;
     static auto GetFunction ( FunctionTriple triple ) { return std::get<0>(triple); };
@@ -59,7 +59,7 @@ auto FunctionGraph<FunctionType>::countDisplayItems() const -> Count { return Gr
 
 template<class FunctionType>
 FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled, int samples)
-        : Core::Graphics::Graph2D(xMin, xMax, yMin, yMax, title, samples) {   }
+        : Graphics::Graph2D(xMin, xMax, yMin, yMax, title, samples) {   }
 
 
 

@@ -21,7 +21,7 @@
                                                                     \
     }
 
-bool OpenGLUtils::checkGLErrors(const Str& hint, bool raiseException){
+bool Graphics::OpenGL::checkGLErrors(const Str& hint, bool raiseException){
     bool bad = false;
 
     GLenum err;
@@ -35,7 +35,7 @@ bool OpenGLUtils::checkGLErrors(const Str& hint, bool raiseException){
     return bad;
 }
 
-void OpenGLUtils::drawOrthoNormalized(RectR rect) {
+void Graphics::OpenGL::drawOrthoNormalized(RectR rect) {
     // TODO ultra-provisório
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
@@ -54,7 +54,7 @@ void OpenGLUtils::drawOrthoNormalized(RectR rect) {
     glPopMatrix();
 }
 
-bool OpenGLUtils::outputToPNG(OpenGLUtils::FrameBuffer buffer,
+bool Graphics::OpenGL::outputToPNG(FrameBuffer buffer,
                               std::string fileName)
 {
     const auto w = buffer.w, h = buffer.h;
@@ -83,7 +83,7 @@ bool OpenGLUtils::outputToPNG(OpenGLUtils::FrameBuffer buffer,
     return success;
 }
 
-bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, int height) {
+bool Graphics::OpenGL::outputToPNG(Window *window, std::string fileName, int width, int height) {
     // Create texture:
     GLuint texColorBuffer;
     glGenTextures(1, &texColorBuffer);
@@ -129,7 +129,7 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
 
         glFlush();
 
-        auto buffer = GLUTUtils::getFrameBuffer(0,0,width,height);
+        auto buffer = GLUT::getFrameBuffer(0,0,width,height);
 
         outputToPNG(buffer, fileName);
     }
@@ -141,9 +141,9 @@ bool OpenGLUtils::outputToPNG(Window *window, std::string fileName, int width, i
     return retVal;
 
 }
-void OpenGLUtils::piccolos() { }
+void Graphics::OpenGL::piccolos() { }
 
-Str OpenGLUtils::GLTypeToGLSLType(GLenum type) {
+Str Graphics::OpenGL::GLTypeToGLSLType(GLenum type) {
     std::map<GLenum, Str> typeMap =
     {
         {

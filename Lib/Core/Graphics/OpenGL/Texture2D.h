@@ -7,7 +7,7 @@
 
 #include "Texture.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Texture2D : public Texture {
         GLsizei w, h;

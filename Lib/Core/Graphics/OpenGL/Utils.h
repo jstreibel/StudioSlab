@@ -5,11 +5,12 @@
 #ifndef STUDIOSLAB_OPENGLUTILS_H
 #define STUDIOSLAB_OPENGLUTILS_H
 
-#include "../Artists/Rect.h"
+#include "Core/Graphics/Types.h"
 #include "Core/Graphics/Window/Window.h"
 #include "Core/Graphics/OpenGL/OpenGL.h"
 
-namespace OpenGLUtils {
+
+namespace Graphics::OpenGL {
     /**
      * Checks and logs all stacked OpenGL errors.
      * @param hint Hint to recent operations.

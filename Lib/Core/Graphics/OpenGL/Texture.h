@@ -10,7 +10,7 @@
 #include "TextureUtils.h"
 #include "Core/Graphics/Styles/Colors.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Texture {
         GLuint handle=0;

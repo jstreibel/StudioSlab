@@ -21,53 +21,46 @@
 
 #define POPUP_ON_MOUSE_CALL false
 
-std::map<Str, Core::Graphics::Graph2D*> Core::Graphics::Graph2D::graphMap = {};
+std::map<Str, Graphics::Graph2D *> Graphics::Graph2D::graphMap = {};
 
 
-Core::Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
+Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
 : region{xMin, xMax, yMin, yMax}
 , title(std::move(_title))
 , samples(samples)
+, axisArtist(region)
 {
-    if(title.empty()) title = Str("unnamed");
-    Count n=1;
-    while(Graph2D::graphMap.count(title))
+    if (title.empty()) title = Str("unnamed");
+    Count n = 1;
+    while (Graph2D::graphMap.count(title))
         title += "(" + ToStr(++n) + ")";
     Graph2D::graphMap[title] = this;
 
-    BackendManager::LoadModule(Core::RealTimeAnimation);
+    Core::BackendManager::LoadModule(Core::RealTimeAnimation);
 
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
+
+    addArtist(DummyPtr(axisArtist));
 }
 
-Core::Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
-: Graph2D(-1,1,-1,1,std::move(title))
-{
+Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
+        : Graph2D(-1, 1, -1, 1, std::move(title)) {
     autoReviewGraphRanges = autoReviewGraphLimits;
 }
 
-void Core::Graphics::Graph2D::addArtist(Artist::Ptr pArtist) {
+void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist) {
     content.emplace_back(pArtist);
 }
 
-void Core::Graphics::Graph2D::draw() {
-    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
+void Graphics::Graph2D::draw() {
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
     Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
     Window::draw();
 
     if (autoReviewGraphRanges) reviewGraphRanges();
     setupOrtho();
 
-    auto vp = getViewport();
-    for(const auto& artist : content){
-        if(artist->isVisible()){
-            artist->draw(vp);
-            OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist "
-            + Common::getClassName(artist.get()));
-        }
-    }
-
-    drawAxes();
+    artistsDraw();
 
     labelingHelper.setTotalItems(countDisplayItems());
 
@@ -79,49 +72,51 @@ void Core::Graphics::Graph2D::draw() {
     drawXHair();
 }
 
-void Core::Graphics::Graph2D::drawGUI() {
+void Graphics::Graph2D::drawGUI() {
     auto popupName = title + Str(" window popup");
 
-    if(savePopupOn && !POPUP_ON_MOUSE_CALL) {
+    if (savePopupOn && !POPUP_ON_MOUSE_CALL) {
         ImGui::OpenPopup(popupName.c_str());
         savePopupOn = false;
     }
 
-    if (ImGui::BeginPopup(popupName.c_str())){
-        if(ImGui::MenuItem("Save graph")) {
+    if (ImGui::BeginPopup(popupName.c_str())) {
+        if (ImGui::MenuItem("Save graph")) {
             auto w = Printing::getTotalHorizontalDots(.5);
-            auto h = w*.5;
-            auto fileName = title + " " + InterfaceManager::getInstance().renderParametersToString({"N", "L"}) + ".png";
-            OpenGLUtils::outputToPNG(this, fileName, w, (int)h);
+            auto h = w * .5;
+            auto fileName = title + " " +
+                            InterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
+                            ".png";
+            OpenGL::outputToPNG(this, fileName, w, (int) h);
         }
         ImGui::EndPopup();
     }
 }
 
-void Core::Graphics::Graph2D::drawPointSets() {
+void Graphics::Graph2D::drawPointSets() {
 
-    for(auto &ptSet : mPointSets){
+    for (auto &ptSet: mPointSets) {
         auto &func = *ptSet.data;
         auto style = ptSet.plotStyle;
         auto label = ptSet.name;
 
-        if(!label.empty())
+        if (!label.empty())
             nameLabelDraw(style, label);
 
-        Core::Graphics::Graph2D::renderPointSet(func, style);
+        Graphics::Graph2D::renderPointSet(func, style);
     }
 }
 
-void Core::Graphics::Graph2D::drawCurves() {
-    for(IN curveData : curves) {
+void Graphics::Graph2D::drawCurves() {
+    for (IN curveData: curves) {
         auto curve = curveData.curve;
         auto pointSet = curve.get()->renderToPointSet();
         auto points = pointSet.get()->getPoints();
 
-        if(points.size()<2) continue;
+        if (points.size() < 2) continue;
 
         auto style = curveData.style;
-        auto name  = curveData.name;
+        auto name = curveData.name;
 
         OpenGL::Shader::remove();
 
@@ -143,11 +138,11 @@ void Core::Graphics::Graph2D::drawCurves() {
         }
 
         auto primitive = GL_LINE_STRIP;
-        if(style.primitive==Styles::Point) primitive = GL_POINTS;
+        if (style.primitive == Styles::Point) primitive = GL_POINTS;
 
         glBegin(primitive);
         {
-            for(const auto &p : points)
+            for (const auto &p: points)
                 glVertex2d(p.x, p.y);
         }
         glEnd();
@@ -155,51 +150,48 @@ void Core::Graphics::Graph2D::drawCurves() {
 }
 
 void
-Core::Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
-                                     Styles::PlotStyle style,
-                                     Str setName,
-                                     bool affectsGraphRanges)
-{
-    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName), affectsGraphRanges};
+Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
+                               Styles::PlotStyle style,
+                               Str setName,
+                               bool affectsGraphRanges) {
+    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName),
+                                     affectsGraphRanges};
     mPointSets.push_back(metaData);
 }
 
-void Core::Graphics::Graph2D::removePointSet(const Spaces::PointSet::Ptr& pointSet) {
-    mPointSets.remove_if([&pointSet](const PointSetMetadata &ptSetMetadata)
-    {
+void Graphics::Graph2D::removePointSet(const Spaces::PointSet::Ptr &pointSet) {
+    mPointSets.remove_if([&pointSet](const PointSetMetadata &ptSetMetadata) {
         return ptSetMetadata.data == pointSet;
     });
 }
 
-void Core::Graphics::Graph2D::removePointSet(const Str &name) {
-    mPointSets.remove_if([&name](const PointSetMetadata &ptSetMetadata)
-     {
-         return ptSetMetadata.name == name;
-     });
+void Graphics::Graph2D::removePointSet(const Str &name) {
+    mPointSets.remove_if([&name](const PointSetMetadata &ptSetMetadata) {
+        return ptSetMetadata.name == name;
+    });
 }
 
 void
-Core::Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
+Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
     CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
     curves.emplace_back(curveMetadata);
 }
 
 void
-Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
-                                        Styles::PlotStyle style) noexcept {
+Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
+                                  Styles::PlotStyle style) noexcept {
     auto pts = pSet.getPoints();
 
     OpenGL::Shader::remove();
 
-    if(style.filled && !(style.primitive==Styles::Point || style.primitive==Styles::Lines))
-    {
+    if (style.filled && !(style.primitive == Styles::Point || style.primitive == Styles::Lines)) {
         const auto color = style.fillColor;
 
         glColor4f(color.r, color.g, color.b, color.a);
         glBegin(GL_QUADS);
         {
-            auto iMax = (long)pts.size()-1;
-            for(auto i=0; i<iMax; ++i){
+            auto iMax = (long) pts.size() - 1;
+            for (auto i = 0; i < iMax; ++i) {
                 auto pLeft = pts[i];
                 auto pRite = pts[i + 1];
 
@@ -225,17 +217,17 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         auto color = style.lineColor;
         glColor4f(color.r, color.g, color.b, color.a);
 
-        if(style.primitive != Styles::SolidLine
-        && style.primitive != Styles::VerticalLines
-        && style.primitive != Styles::Lines){
+        if (style.primitive != Styles::SolidLine
+            && style.primitive != Styles::VerticalLines
+            && style.primitive != Styles::Lines) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
         } else glEnable(GL_LINE_SMOOTH);
 
         auto primitive = GL_LINE_STRIP;
-        if(style.primitive==Styles::Point || style.primitive==Styles::VerticalLines){
-            fix ptSizeFactor = style.primitive==Styles::VerticalLines ? 5.0 : 1.0;
+        if (style.primitive == Styles::Point || style.primitive == Styles::VerticalLines) {
+            fix ptSizeFactor = style.primitive == Styles::VerticalLines ? 5.0 : 1.0;
 
             primitive = GL_POINTS;
             glEnable(GL_POINT_SMOOTH);
@@ -243,22 +235,22 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 
             glEnable(GL_LINE_SMOOTH);
             glLineWidth(style.thickness);
-        } else if(style.primitive==Styles::Lines) {
+        } else if (style.primitive == Styles::Lines) {
             primitive = GL_LINES;
         }
 
         glBegin(primitive);
         {
-            for(auto p : pts)
+            for (auto p: pts)
                 glVertex2d(p.x, p.y);
 
         }
         glEnd();
 
-        if(style.primitive==Styles::VerticalLines){
+        if (style.primitive == Styles::VerticalLines) {
             glBegin(GL_LINES);
             {
-                for(auto p : pts) {
+                for (auto p: pts) {
                     glVertex2d(p.x, 0.0);
                     glVertex2d(p.x, p.y);
                 }
@@ -269,7 +261,7 @@ Core::Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
     }
 }
 
-void Core::Graphics::Graph2D::setupOrtho() const {
+void Graphics::Graph2D::setupOrtho() const {
     // const Real deltaX = region.width();
     // const Real deltaY = region.height();
     // const Real xTraLeft   = 0-deltaX*0.07;
@@ -290,11 +282,24 @@ void Core::Graphics::Graph2D::setupOrtho() const {
     currStyle->ticksWriter->reshape(vp.width(), vp.height());
 }
 
-void Core::Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
+void Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
 
-void Core::Graphics::Graph2D::clearCurves() { curves.clear(); }
+void Graphics::Graph2D::clearCurves() { curves.clear(); }
 
-auto Core::Graphics::Graph2D::countDisplayItems() const -> Count { return mPointSets.size() + curves.size(); }
+auto Graphics::Graph2D::countDisplayItems() const -> Count {
+    return mPointSets.size() + curves.size();
+}
+
+void Graphics::Graph2D::artistsDraw() {
+    auto vp = getViewport();
+    for (const auto &artist: content) {
+        if (artist->isVisible()) {
+            artist->draw(vp);
+            OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist "
+                                  + Common::getClassName(artist.get()));
+        }
+    }
+}
 
 
 

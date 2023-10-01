@@ -18,7 +18,7 @@
 #include "Core/Graphics/Styles/Colors.h"
 #include "Shader.h"
 
-namespace Core::Graphics {
+namespace Graphics {
 
     class Writer {
         ftgl::texture_font_t *font = nullptr;

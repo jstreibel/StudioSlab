@@ -23,8 +23,8 @@ Styles::StyleScheme::StyleScheme(Color graphBackground,
                                  Color majorTickColor,
                                  PlotStyle XHairStyle,
                                  PlotStyle gridStyle,
-                                 std::shared_ptr<Core::Graphics::Writer> labelsWriter,
-                                 std::shared_ptr<Core::Graphics::Writer> ticksWriter,
+                                 std::shared_ptr<Graphics::Writer> labelsWriter,
+                                 std::shared_ptr<Graphics::Writer> ticksWriter,
                                  std::vector<PlotStyle> plotStyles)
                                  : graphBackground(graphBackground)
                                  , graphNumbersColor(graphNumbersColor)

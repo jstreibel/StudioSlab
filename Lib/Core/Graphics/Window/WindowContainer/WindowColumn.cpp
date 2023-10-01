@@ -20,103 +20,112 @@
     return responded;
 
 
-void WindowColumn::addWindow(Window::Ptr window, float windowHeight) {
-    windows.emplace_back(window);
-    heights.emplace_back(windowHeight);
-}
+namespace Graphics {
 
-void WindowColumn::arrangeWindows() {
-    if(!assertConsistency()) throw "WindowRow inconsistency";
 
-    auto m = windows.size();
+    void WindowColumn::addWindow(Window::Ptr window, float windowHeight) {
+        windows.emplace_back(window);
+        heights.emplace_back(windowHeight);
+    }
 
-    if(m == 0) return;
+    void WindowColumn::arrangeWindows() {
+        if (!assertConsistency()) throw "WindowRow inconsistency";
 
-    std::vector<int> computedHeights(m, (int)(geth()/m));    // "if(freeHeights==m)"
+        auto m = windows.size();
 
-    auto freeHeights = CountLessThanZero(heights);
-    if(freeHeights==0){
-        for(int i=0; i<m; ++i){
-            auto relHeight = heights[i];
-            auto height = geth() * relHeight;
-            computedHeights[i] = (int)height;
+        if (m == 0) return;
+
+        std::vector<int> computedHeights(m, (int) (geth() / m));    // "if(freeHeights==m)"
+
+        auto freeHeights = CountLessThanZero(heights);
+        if (freeHeights == 0) {
+            for (int i = 0; i < m; ++i) {
+                auto relHeight = heights[i];
+                auto height = geth() * relHeight;
+                computedHeights[i] = (int) height;
+            }
+        } else if (freeHeights != m) {
+            auto reservedHeight = SumLargerThanZero(heights);
+            auto hFree = (float) geth() * (1 - reservedHeight) / (float) freeHeights;
+
+            for (int i = 0; i < m; ++i) {
+                auto relHeight = heights[i];
+                auto height = relHeight > 0 ? geth() * relHeight : hFree;
+                computedHeights[i] = (int) height;
+            }
         }
-    } else if(freeHeights != m) {
+
+        std::vector<int> computed_yPositions(m);
+        auto y = this->gety();
+        for (int i = 0; i < m; ++i) {
+            computed_yPositions[i] = y;
+            y += computedHeights[i];
+        }
+
+        auto i = 0;
+        for (auto &win: windows) {
+            win->setx(getx());
+            win->sety(computed_yPositions[i]);
+
+            win->notifyReshape(getw(), computedHeights[i]);
+
+            i++;
+        }
+    }
+
+    bool WindowColumn::assertConsistency() const {
         auto reservedHeight = SumLargerThanZero(heights);
-        auto hFree = (float)geth() * (1-reservedHeight) / (float)freeHeights;
+        auto freeHeights = CountLessThanZero(heights);
 
-        for(int i=0; i<m; ++i){
-            auto relHeight = heights[i];
-            auto height = relHeight>0 ? geth() * relHeight : hFree;
-            computedHeights[i] = (int)height;
+        using namespace Common;
+
+        if (freeHeights == 0 && areEqual(reservedHeight, 1))
+            return true;
+
+        if (reservedHeight < 1 - (float) freeHeights * 1.e-2)
+            return true;
+
+        auto &log = Log::Error() << "Inconsistent column widths: ";
+
+        for (auto w: heights) log << (w == -1 ? Str("free") : ToStr(w)) << "; ";
+
+        return false;
+    }
+
+    void WindowColumn::draw() {
+        for (auto &win: windows) {
+            win->draw();
+            OpenGL::checkGLErrors(
+                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
         }
     }
 
-    std::vector<int> computed_yPositions(m);
-    auto y = this->gety();
-    for(int i=0; i<m; ++i){
-        computed_yPositions[i] = y;
-        y += computedHeights[i];
+    void WindowColumn::notifyReshape(int newWinW, int newWinH) {
+        Window::notifyReshape(newWinW, newWinH);
+
+        arrangeWindows();
     }
 
-    auto i=0;
-    for(auto &win : windows){
-        win->setx(getx());
-        win->sety(computed_yPositions[i]);
-
-        win->notifyReshape(getw(), computedHeights[i]);
-
-        i++;
+    bool WindowColumn::notifyMouseMotion(int x, int y) {
+        PropagateEvent(notifyMouseMotion(x, y));
     }
-}
 
-bool WindowColumn::assertConsistency() const {
-    auto reservedHeight   = SumLargerThanZero(heights);
-    auto freeHeights      = CountLessThanZero(heights);
-
-    using namespace Common;
-
-    if(freeHeights==0 && areEqual(reservedHeight, 1))
-        return true;
-
-    if(reservedHeight<1-(float)freeHeights*1.e-2)
-        return true;
-
-    auto &log = Log::Error() << "Inconsistent column widths: ";
-
-    for(auto w : heights) log << (w==-1 ? Str("free") : ToStr(w)) << "; ";
-
-    return false;
-}
-
-void WindowColumn::draw() {
-    for(auto &win : windows) {
-        win->draw();
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
+    bool
+    WindowColumn::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+        PropagateEvent(notifyKeyboard(key, state, modKeys));
     }
-}
 
-void WindowColumn::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
+    bool WindowColumn::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
+                                         Core::ModKeys keys) {
+        PropagateEvent(notifyMouseButton(button, state, keys));
+    }
 
-    arrangeWindows();
-}
-bool WindowColumn::notifyMouseMotion(int x, int y) {
-    PropagateEvent(notifyMouseMotion(x,y));
-}
+    bool WindowColumn::notifyMouseWheel(double dx, double dy) {
+        PropagateEvent(notifyMouseWheel(dx, dy));
+    }
 
-bool WindowColumn::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-    PropagateEvent(notifyKeyboard(key, state, modKeys));
-}
+    bool WindowColumn::notifyFilesDropped(StrVector paths) {
+        PropagateEvent(notifyFilesDropped(paths));
+    }
 
-bool WindowColumn::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
-    PropagateEvent(notifyMouseButton(button, state, keys));
-}
-
-bool WindowColumn::notifyMouseWheel(double dx, double dy) {
-    PropagateEvent(notifyMouseWheel(dx, dy));
-}
-
-bool WindowColumn::notifyFilesDropped(StrVector paths) {
-    PropagateEvent(notifyFilesDropped(paths));
 }

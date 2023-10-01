@@ -8,7 +8,7 @@
 #include "OpenGL.h"
 #include "Utils/Types.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
     enum WrapMode {
          ClampToEdge        = GL_CLAMP_TO_EDGE,
          ClampToBorder      = GL_CLAMP_TO_BORDER,

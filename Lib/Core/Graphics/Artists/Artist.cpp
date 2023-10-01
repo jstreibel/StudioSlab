@@ -4,6 +4,10 @@
 
 #include "Artist.h"
 
-void Artist::setVisibility(bool vis) { visible = vis; }
+namespace Graphics {
 
-bool Artist::isVisible() const { return visible; }
+    void Artist::setVisibility(bool vis) { visible = vis; }
+
+    bool Artist::isVisible() const { return visible; }
+
+}

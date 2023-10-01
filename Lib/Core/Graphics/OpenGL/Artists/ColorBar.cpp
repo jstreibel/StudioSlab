@@ -7,7 +7,7 @@
 
 #include "Core/Graphics/Window/Window.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     struct ColorBarVertex {
         int x, y;

@@ -6,7 +6,7 @@
 
 #include "Core/Graphics/Window/Window.h"
 
-void GLUTUtils::write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
+void Graphics::OpenGL::GLUT::write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
 {
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
@@ -19,7 +19,7 @@ void GLUTUtils::write(const Window *win, const float fontScale, const float x, c
     glPopMatrix();
 }
 
-void GLUTUtils::writeOrtho(const Window *window, RectR region, float fontScale, float x, float y, std::string str,
+void Graphics::OpenGL::GLUT::writeOrtho(const Window *window, RectR region, float fontScale, float x, float y, std::string str,
                 void *font) {
     fix w = region.xMax-region.xMin;
     fix h = region.yMax-region.yMin;
@@ -45,27 +45,27 @@ void GLUTUtils::writeOrtho(const Window *window, RectR region, float fontScale, 
     glPopMatrix();
 }
 
-void GLUTUtils::writeBitmap(const Window *window, float x, float y, std::string str, void *font){
+void Graphics::OpenGL::GLUT::writeBitmap(const Window *window, float x, float y, std::string str, void *font){
     glRasterPos2f(x, y);
     for(char c : str) glutBitmapCharacter(font, c);
 }
 
-OpenGLUtils::FrameBuffer GLUTUtils::getFrameBuffer(int x, int y, int w_, int h_) {
+Graphics::OpenGL::FrameBuffer Graphics::OpenGL::GLUT::getFrameBuffer(int x, int y, int w_, int h_) {
     const auto w = w_<0 ? glutGet(GLUT_WINDOW_WIDTH)  : w_;
     const auto h = h_<0 ? glutGet(GLUT_WINDOW_HEIGHT) : h_;
-    const auto channels = OpenGLUtils::FrameBuffer::channels;
+    const auto channels = Graphics::OpenGL::FrameBuffer::channels;
 
-    std::vector<OpenGLUtils::FrameBuffer::DataType> pixels(w*h*channels);
+    std::vector<Graphics::OpenGL::FrameBuffer::DataType> pixels(w*h*channels);
 
     glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
 
     return {w, h, pixels};
 }
 
-int GLUTUtils::getScreenWidth() {
+int Graphics::OpenGL::GLUT::getScreenWidth() {
     return glutGet(GLUT_WINDOW_WIDTH);
 }
 
-int GLUTUtils::getScreenHeight() {
+int Graphics::OpenGL::GLUT::getScreenHeight() {
     return glutGet(GLUT_WINDOW_HEIGHT);
 }

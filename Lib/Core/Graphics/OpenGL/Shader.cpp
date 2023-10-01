@@ -12,7 +12,7 @@
 #include "Core/Backend/BackendManager.h"
 
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
     void ListShaderUniforms(GLuint handle, std::basic_ostream<char, std::char_traits<char>> &log) {
         GLint numActiveUniforms = 0;
         GLint maxLength;
@@ -34,7 +34,7 @@ namespace OpenGL {
 
             log << "\n\t\t\t\t\t"
                 << (i+1) << "/" << numActiveUniforms << " @ location " << location << " : \""
-                << name << "\" (" << OpenGLUtils::GLTypeToGLSLType(type) << ")";
+                << name << "\" (" << GLTypeToGLSLType(type) << ")";
         }
     }
 
@@ -59,7 +59,7 @@ namespace OpenGL {
 
             log << "\n\t\t\t\t\t"
                 << (i+1) << "/" << numAttributes << " @ location " << location << " : \""
-                << name << "\" (" << OpenGLUtils::GLTypeToGLSLType(type) << ")" ;
+                << name << "\" (" << GLTypeToGLSLType(type) << ")" ;
         }
     }
 
@@ -103,7 +103,7 @@ namespace OpenGL {
 
         glUniform1i(loc, value);
 
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
     }
 
     void Shader::setUniform(const Str& name, GLfloat value) const {
@@ -114,7 +114,7 @@ namespace OpenGL {
 
         glUniform1f(loc, value);
 
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
     }
 
     void Shader::setUniform(const Str &name, Real2D vec2) const {
@@ -125,14 +125,14 @@ namespace OpenGL {
 
         glUniform2f(loc, (GLfloat)vec2.x, (GLfloat)vec2.y);
 
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
+        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
     }
 
     void Shader::setUniform(const Str& name, const glm::mat4 &mat4) const {
         auto matrixData = (const float*)glm::value_ptr(mat4);
         setUniform4x4(name, matrixData);
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
     }
 
     void Shader::setUniform(const Str &name, const glm::mat3 &mat3) const {
@@ -140,7 +140,7 @@ namespace OpenGL {
 
         setUniform3x3(name, matrixData);
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
     }
 
     void Shader::setUniform(const Str &name, Texture& texture) {
@@ -150,21 +150,21 @@ namespace OpenGL {
 
         textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
     }
 
     void Shader::setUniform4x4(const Str &name, const float *mat4) const {
         this->use();
         glUniformMatrix4fv( glGetUniformLocation(handle, name.c_str()), 1, GL_FALSE, mat4);
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
     }
 
     void Shader::setUniform3x3(const Str &name, const float *mat3) const {
         this->use();
         glUniformMatrix3fv( glGetUniformLocation(handle, name.c_str()), 1, GL_FALSE, mat3);
 
-        OpenGLUtils::checkGLErrors(__PRETTY_FUNCTION__);
+        checkGLErrors(__PRETTY_FUNCTION__);
     }
 
 

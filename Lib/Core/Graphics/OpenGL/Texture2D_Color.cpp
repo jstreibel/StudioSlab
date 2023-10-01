@@ -13,7 +13,7 @@
 #define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
     Texture2D_Color::Texture2D_Color(GLsizei w, GLsizei h)
     : Texture2D(w, h, InternalFormat::RGBA)
     , data((ByteData)malloc(w*h*4))

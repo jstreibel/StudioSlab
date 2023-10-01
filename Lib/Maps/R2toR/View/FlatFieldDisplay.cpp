@@ -32,7 +32,7 @@ struct TestVertex {
 };
 
 R2toR::Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
-: Core::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+: ::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
 , colorBar({50,150, 50, 750})
 , cMap_min(phiMin)
 , cMap_max(phiMax)
@@ -70,8 +70,8 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
     || textureData->getHeight() != yRes)
     {
         delete textureData;
-        textureData = new OpenGL::Texture2D_Real((int) xRes, (int) yRes);
-        textureData->setSWrap(OpenGL::ClampToEdge);
+        textureData = new ::Graphics::OpenGL::Texture2D_Real((int) xRes, (int) yRes);
+        textureData->setSWrap(::Graphics::OpenGL::ClampToEdge);
         textureData->setAntiAliasOff();
         program.setUniform("fieldData", textureData->getTextureUnit());
     }
@@ -122,7 +122,8 @@ void R2toR::Graphics::FlatFieldDisplay::draw() {
     labelingHelper.setTotalItems(countDisplayItems());
     drawFlatField();
 
-    drawAxes();
+    artistsDraw();
+
     drawPointSets();
     drawCurves();
     drawGUI();
@@ -162,8 +163,8 @@ void R2toR::Graphics::FlatFieldDisplay::computeColormapTexture() {
     delete cMap_texture;
 
     fix nColors = 1024;
-    cMap_texture = new OpenGL::Texture1D_Color(nColors, GL_TEXTURE1);
-    cMap_texture->setWrap(OpenGL::ClampToEdge);
+    cMap_texture = new ::Graphics::OpenGL::Texture1D_Color(nColors, GL_TEXTURE1);
+    cMap_texture->setWrap(::Graphics::OpenGL::ClampToEdge);
 
     for(auto i=0; i<nColors; ++i){
         fix s = (Real)(i-1)/(Real)(nColors-2);
@@ -205,10 +206,10 @@ bool R2toR::Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
     static auto targetRegion = getRegion();
 
     auto &region = getRegion();
-    if(!Core::Graphics::Animator::Contains(region.xMin)
-    && !Core::Graphics::Animator::Contains(region.xMax)
-    && !Core::Graphics::Animator::Contains(region.yMin)
-    && !Core::Graphics::Animator::Contains(region.yMax)) {
+    if(!Core::Animator::Contains(region.xMin)
+    && !Core::Animator::Contains(region.xMax)
+    && !Core::Animator::Contains(region.yMin)
+    && !Core::Animator::Contains(region.yMax)) {
         targetRegion = region;
     }
 
@@ -289,7 +290,7 @@ void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
     textureData->set_sPeriodicOn();
 }
 
-Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const Point2D &coords) {
+Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords) {
     auto label = Graph2D::getXHairLabel(coords);
 
     if(func == nullptr) return label;

@@ -8,7 +8,7 @@
 #include <iostream>
 #include <vector>
 
-namespace Core::Graphics {
+namespace Graphics {
 
     class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
         std::vector<Animation*> animations;
@@ -34,7 +34,7 @@ namespace Core::Graphics {
 
         // ********************* From EventListener ************** //
         bool notifyRender() final ;
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
         void notifyReshape(int newWinW, int newWinH) override;
         // ********************* End EventListener *************** //
 

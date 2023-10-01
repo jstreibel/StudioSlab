@@ -45,7 +45,7 @@ public:
     void addGLFWListener(Core::GLFWListener *glfwListener);
 
     static bool GetKeyState(GLFWwindow *window, int key);
-    static Point2D GetCursorPosition(GLFWwindow *window);
+    static Graphics::Point2D GetCursorPosition(GLFWwindow *window);
     static bool IsWindowHovered(GLFWwindow *window);
     static bool GetMouseButtonState(GLFWwindow *window, int button);
 

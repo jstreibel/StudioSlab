@@ -8,7 +8,7 @@
 #include "Core/Graphics/Artists/Artist.h"
 #include "Math/Constants.h"
 
-namespace Math {
+namespace Graphics {
 
     class AxisArtist : public Artist {
         void computeTicksSpacings();
@@ -26,7 +26,8 @@ namespace Math {
 
         void draw(const RectI &viewport) override;
 
-        void tieToRegion(RectR);
+        void setHorizontalUnit(const Unit&);
+        void setVerticalUnit(const Unit&);
     };
 
 } // Math

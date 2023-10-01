@@ -18,13 +18,14 @@
 
 
 #include "Maps/RtoR2/ParametricCurve.h"
+#include "AxisArtist.h"
 
 
 #include <memory>
 #include <list>
 
 
-namespace Core::Graphics {
+namespace Graphics {
 
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
@@ -61,28 +62,21 @@ namespace Core::Graphics {
 
         Point2D XHairLocation{};
         Spaces::PointSet XHair;
+
+
     protected:
         Unit baseHorizontalUnit;
         Unit baseVerticalUnit;
-
-        Real yspacing = 1.e-5;
-        Real xspacing = 1.e-5;
 
         Str title;
         Resolution samples = 512;
 
         Math::Graphics::LabelingHelper labelingHelper;
 
-
-        void drawAxes();
-        void drawXAxis();
-        void drawYAxis();
-
-        void computeTicksSpacings();
-
         virtual auto countDisplayItems() const -> Count;
         void nameLabelDraw(const Styles::PlotStyle &style, const Str& label);
 
+        void artistsDraw();
         void drawPointSets();
         void drawCurves();
         virtual void drawGUI();
@@ -90,13 +84,14 @@ namespace Core::Graphics {
         virtual Str getXHairLabel(const Point2D &coords);
         void drawXHair();
 
+        AxisArtist axisArtist;
     public:
         explicit Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                 Str title = "no_title", int samples = 512);
 
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
-        void addArtist(Artist::Ptr pArtist);
+        void addArtist(const Artist::Ptr& pArtist);
 
         void draw() override;
 
@@ -137,7 +132,7 @@ namespace Core::Graphics {
         void setAnimationTime(Real value);
         Real getAnimationTime() const;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
 

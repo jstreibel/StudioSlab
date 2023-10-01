@@ -151,7 +151,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
             }
         }
 
-        guiBackend.addEventListener(std::shared_ptr<Window>(outputOpenGL));
+        guiBackend.addEventListener(std::shared_ptr<::Graphics::Window>(outputOpenGL));
         outputManager->addOutputChannel(outputOpenGL);
     }
     else

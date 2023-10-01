@@ -8,7 +8,7 @@
 #include "OpenGL.h"
 #include "Utils/Types.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     enum PixelDataFormat {
         DataFormat_Red = GL_RED,

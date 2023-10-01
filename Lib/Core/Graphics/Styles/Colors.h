@@ -12,7 +12,8 @@ namespace Styles {
     class Color
     {
     public:
-        Color(float r=.0f, float g=.0f, float b=.0f, float a=1.);
+        Color();
+        Color(float r, float g, float b, float a=1.);
         Color(Color rgb, float a);
         Color(const Color &c) = default;
 

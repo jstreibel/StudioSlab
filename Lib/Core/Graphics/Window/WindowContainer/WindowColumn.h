@@ -8,30 +8,38 @@
 #include "Core/Graphics/Window/Window.h"
 
 
-class WindowColumn : public Window {
-    std::vector<Window::Ptr> windows;
-    RealVector heights;
+namespace Graphics {
 
-    bool assertConsistency() const;
-public:
-    WindowColumn() = default;
+    class WindowColumn : public Window {
+        std::vector<Window::Ptr> windows;
+        RealVector heights;
 
-    void addWindow(Window::Ptr window, float windowHeight=-1);
+        bool assertConsistency() const;
 
-    void arrangeWindows();
+    public:
+        WindowColumn() = default;
 
-    void draw() override;
+        void addWindow(Window::Ptr window, float windowHeight = -1);
 
-    void notifyReshape(int newWinW, int newWinH) override;
+        void arrangeWindows();
 
-    bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        void draw() override;
 
-    bool notifyFilesDropped(StrVector paths) override;
+        void notifyReshape(int newWinW, int newWinH) override;
 
-    bool notifyMouseMotion(int x, int y)        override;
-    bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
-    bool notifyMouseWheel(double dx, double dy) override;
-};
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
+        bool notifyFilesDropped(StrVector paths) override;
+
+        bool notifyMouseMotion(int x, int y) override;
+
+        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state,
+                               Core::ModKeys keys) override;
+
+        bool notifyMouseWheel(double dx, double dy) override;
+    };
+
+
+}
 
 #endif //STUDIOSLAB_WINDOWCOLUMN_H

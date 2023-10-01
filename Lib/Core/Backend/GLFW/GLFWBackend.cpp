@@ -157,7 +157,7 @@ bool GLFWBackend::GetKeyState(GLFWwindow *window, int key) {
     return state;
 }
 
-Point2D GLFWBackend::GetCursorPosition(GLFWwindow *window) {
+Graphics::Point2D GLFWBackend::GetCursorPosition(GLFWwindow *window) {
     double xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
 

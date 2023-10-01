@@ -3,11 +3,12 @@
 //
 
 #include "Overlay.h"
-
 #include "Utils/Resources.h"
-#include "Core/Graphics/Window/Window.h"
 
-namespace OpenGL {
+
+
+
+namespace Graphics::OpenGL {
     struct OverlayVertex {
         int x, y;
         float r, g, b, a;

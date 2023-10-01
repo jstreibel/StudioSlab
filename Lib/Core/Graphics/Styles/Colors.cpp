@@ -13,6 +13,10 @@ namespace Styles {
     Color Black = {0,0,0,1};
     Color Red = {1,0,0,1};
 
+    Color::Color(): r(r), g(g), b(b), a(a) {
+
+    }
+
     Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
     Color::Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
@@ -35,7 +39,7 @@ namespace Styles {
         const auto size = hex.length();
 
         if((size!=7 && size!=9) || hex[0] != '#')
-            throw Str("Wrong hex color format ") + hex;
+            throw Exception((Str("Wrong hex color format ") + hex).c_str());
 
         unsigned int rr, gg, bb, aa=255;
         StringStream ss;
@@ -72,6 +76,7 @@ namespace Styles {
                Common::areEqual(b, rhs.b, eps) &&
                Common::areEqual(a, rhs.a, eps);
     }
+
 
 
 

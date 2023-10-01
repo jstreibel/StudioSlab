@@ -205,7 +205,7 @@ void GLUTBackend::reshape(int w, int h)
     glutPostRedisplay();
 }
 
-Real GLUTBackend::getScreenHeight() const { return GLUTUtils::getScreenHeight(); }
+Real GLUTBackend::getScreenHeight() const { return Graphics::OpenGL::GLUT::getScreenHeight(); }
 
 GLUTBackend &GLUTBackend::GetInstance() {
     assert(Core::BackendManager::GetImplementation() == Core::GLUT);

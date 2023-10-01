@@ -12,15 +12,15 @@
 #include "Maps/RtoR/View/GraphRtoR.h"
 
 namespace Modes::DatabaseViewer {
-    class DBViewer : public WindowRow {
-        GUIWindow guiWindow;
+    class DBViewer : public Graphics::WindowRow {
+        Graphics::GUIWindow guiWindow;
         WindowRow topRow;
 
         DBParser::Ptr dbParser;
         R2toR::Graphics::FlatFieldDisplay allDataDisplay;
         R2toR::Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
-        Core::Graphics::Graph2D massesGraph;
+        Graphics::Graph2D massesGraph;
 
         Spaces::PointSet maxValuesPointSet;
         Spaces::PointSet massesReal_pointSet;

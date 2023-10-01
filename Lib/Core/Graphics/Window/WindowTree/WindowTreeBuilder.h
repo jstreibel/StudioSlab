@@ -11,21 +11,29 @@
 #include "Core/Graphics/Window/Window.h"
 #include "NodeWindow.h"
 
-class WindowTreeBuilder {
-    Window shape;
-    NodeWindow *root;
-    NodeWindow *currentNode;
 
-    WindowTreeBuilder() = delete;
-public:
-    WindowTreeBuilder(int x, int y, int w, int h);
+namespace Graphics {
 
-    enum Location {Above=Vertical, Right=Horizontal};
+    class WindowTreeBuilder {
+        Window shape;
+        NodeWindow *root;
+        NodeWindow *currentNode;
 
-    void addWindow(Window *window, Location location);
-    NodeWindow* getRoot();
-};
+        WindowTreeBuilder() = delete;
 
+    public:
+        WindowTreeBuilder(int x, int y, int w, int h);
+
+        enum Location {
+            Above = Vertical, Right = Horizontal
+        };
+
+        void addWindow(Window *window, Location location);
+
+        NodeWindow *getRoot();
+    };
+
+}
 
 #endif //V_SHAPE_WINDOWTREEBUILDER_H
 

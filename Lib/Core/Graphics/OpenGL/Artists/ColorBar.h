@@ -7,7 +7,7 @@
 
 #include "Overlay.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class ColorBar : public Artist {
         VertexBuffer vertexBuffer;

@@ -7,11 +7,11 @@
 #include "Core/Tools/Log.h"
 #include "Utils.h"
 
-#define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) \
+#define CHECK_GL_ERRORS(count) checkGLErrors(Str(__PRETTY_FUNCTION__) \
     + " from " + Common::getClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
     Texture::Texture(Target target, InternalFormat format, GLenum textureUnit)
     : target(target)
     , format(format)

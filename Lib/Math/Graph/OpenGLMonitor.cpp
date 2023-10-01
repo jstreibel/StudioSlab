@@ -9,13 +9,11 @@
 #include "Core/Backend/BackendManager.h"
 
 
-using namespace Core;
-
 #define MAX_AVG_SAMPLES (2*60UL)
 #define MIN_FPS 24
 #define MAX_FPS 30
 
-Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
+Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
         : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
     GUIEventListener::addResponder(&panel);
 
@@ -24,14 +22,14 @@ Core::Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const 
     Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
 }
 
-void Core::Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
+void Graphics::OpenGLMonitor::handleOutput(const OutputPacket &outInfo){
     t = outInfo.getSimTime();
     step = outInfo.getSteps();
 
     Core::BackendManager::GetGUIBackend().requestRender();
 }
 
-void Core::Graphics::OpenGLMonitor::writeStats() {
+void Graphics::OpenGLMonitor::writeStats() {
     static bool hasFinished = false;
     static bool isPaused = false;
     static Count lastStep=0;
@@ -147,7 +145,7 @@ void Core::Graphics::OpenGLMonitor::writeStats() {
     lastStep = step;
 }
 
-bool Core::Graphics::OpenGLMonitor::notifyRender() {
+bool Graphics::OpenGLMonitor::notifyRender() {
     assert(lastData.hasValidData());
 
     for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
@@ -163,13 +161,13 @@ bool Core::Graphics::OpenGLMonitor::notifyRender() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     {
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (0)");
+        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (0)");
         writeStats();
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
+        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
         draw();
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
+        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
         GUIEventListener::notifyRender();   // here panel gets called.
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
+        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
         frameTimer.reset();
     }
     glMatrixMode(GL_MODELVIEW);
@@ -180,7 +178,7 @@ bool Core::Graphics::OpenGLMonitor::notifyRender() {
     return true;
 }
 
-bool Graphics::OpenGLMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+bool Graphics::OpenGLMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
     static fix baseNSteps = getnSteps();
     static let multiplier = 1;
 
@@ -213,13 +211,13 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys
     return GUIEventListener::notifyKeyboard(key, state, modKeys);
 }
 
-void Core::Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
+void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
     panel.notifyReshape(newWinW, newWinH);
 }
 
-void Core::Graphics::OpenGLMonitor::setnSteps(int nSteps) {
+void Graphics::OpenGLMonitor::setnSteps(int nSteps) {
     if(nSteps>0) autoAdjustStepsPerSecond = false;
     Socket::setnSteps(nSteps);
 }

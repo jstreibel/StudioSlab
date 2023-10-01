@@ -5,62 +5,68 @@
 #include "NodeWindow.h"
 
 
-NodeWindow::NodeWindow(const Window &window) : Window(window) {
-}
+namespace Graphics {
 
-NodeWindow::NodeWindow(int x, int y, int w, int h) : Window(x, y, w, h) {
-
-}
-
-NodeWindow::NodeWindow(NodeWindow *parent, NodeArrangement nodeArrangement) : parent(parent), arrangement(nodeArrangement) {
-
-}
-
-void NodeWindow::addSubWindow(Window *subWindow) {
-    NodeWindow *nodeSub = dynamic_cast<NodeWindow*>(subWindow);
-
-    if(nodeSub != nullptr){
-        nodeSub->parent = this;
-        nodeSub->setClear(false);
+    NodeWindow::NodeWindow(const Window &window) : Window(window) {
     }
 
-    children.emplace_back(subWindow);
+    NodeWindow::NodeWindow(int x, int y, int w, int h) : Window(x, y, w, h) {
 
-    addResponder(subWindow);
-}
-
-void NodeWindow::arrange() {
-    auto n = children.size();
-
-    auto childWidth  = getw();
-    auto childHeight = geth();
-
-    auto dx = childWidth/n;
-    auto dy = childHeight/n;
-
-    if(arrangement == Horizontal){
-        childWidth /= n;
-        dy = 0;
-    } else {
-        childHeight /= n;
-        dx = 0;
     }
 
-    for(auto i=0; i<n; ++i){
-        auto child = children[i];
+    NodeWindow::NodeWindow(NodeWindow *parent, NodeArrangement nodeArrangement) : parent(parent),
+                                                                                  arrangement(
+                                                                                          nodeArrangement) {
 
-        child->setx(getx() + i*dx);
-        child->sety(gety() + i*dy);
-        child->setSize(childWidth, childHeight);
-
-        auto cast = dynamic_cast<NodeWindow*>(child);
-        if(cast != nullptr) cast->arrange();
     }
-}
 
-void NodeWindow::draw() {
-    if(children.empty()) Window::draw( );
+    void NodeWindow::addSubWindow(Window *subWindow) {
+        NodeWindow *nodeSub = dynamic_cast<NodeWindow *>(subWindow);
 
-    for(auto win : children)
-        win->draw();
+        if (nodeSub != nullptr) {
+            nodeSub->parent = this;
+            nodeSub->setClear(false);
+        }
+
+        children.emplace_back(subWindow);
+
+        addResponder(subWindow);
+    }
+
+    void NodeWindow::arrange() {
+        auto n = children.size();
+
+        auto childWidth = getw();
+        auto childHeight = geth();
+
+        auto dx = childWidth / n;
+        auto dy = childHeight / n;
+
+        if (arrangement == Horizontal) {
+            childWidth /= n;
+            dy = 0;
+        } else {
+            childHeight /= n;
+            dx = 0;
+        }
+
+        for (auto i = 0; i < n; ++i) {
+            auto child = children[i];
+
+            child->setx(getx() + i * dx);
+            child->sety(gety() + i * dy);
+            child->setSize(childWidth, childHeight);
+
+            auto cast = dynamic_cast<NodeWindow *>(child);
+            if (cast != nullptr) cast->arrange();
+        }
+    }
+
+    void NodeWindow::draw() {
+        if (children.empty()) Window::draw();
+
+        for (auto win: children)
+            win->draw();
+    }
+
 }

@@ -49,6 +49,9 @@ set( GRAPHICS_SOURCES
 		OpenGL/Artists/ColorBar.cpp
 		OpenGL/Artists/ColorBar.h
 		Artists/Artist.cpp
+        Types.cpp
+        Types.h
+		Utils.cpp
 
 )
 

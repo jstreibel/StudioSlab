@@ -46,35 +46,7 @@ fix vGraphPaddingInPixels = 60;
     }
 
 
-namespace Math {
-
-    Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, const RectR &spaceRegion, const RectI &viewport ) {
-        fix x = spaceCoord.x;
-        fix y = spaceCoord.y;
-        fix xMin = spaceRegion.xMin;
-        fix yMin = spaceRegion.yMin;
-        fix Δx = spaceRegion.width();
-        fix Δy = spaceRegion.height();
-        fix W = viewport.width();
-        fix H = viewport.height();
-
-        return {W*(x-xMin)/Δx,
-                H*(y-yMin)/Δy};
-    }
-
-    Point2D FromViewportToSpaceCoord(const Point2D &viewportCoord, const RectR &spaceRegion, const RectI &viewport ) {
-        fix X = viewportCoord.x;
-        fix Y = viewportCoord.y;
-        fix xMin = spaceRegion.xMin;
-        fix yMin = spaceRegion.yMin;
-        fix Δx = spaceRegion.width();
-        fix Δy = spaceRegion.height();
-        fix W = viewport.width();
-        fix H = viewport.height();
-
-        return {xMin + Δx*X/W, yMin + Δy*Y/H};
-    }
-
+namespace Graphics {
 
     AxisArtist::AxisArtist(const RectR &regionToTie, const Unit& horizontal, const Unit& vertical)
     : tiedRegion(regionToTie)
@@ -185,7 +157,7 @@ namespace Math {
             glEnd();
         }
 
-        OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__));
+        Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
     void AxisArtist::drawYAxis(const RectI &vp) {
@@ -271,5 +243,8 @@ namespace Math {
 
     }
 
+    void AxisArtist::setHorizontalUnit(const Unit &unit) { hUnit = unit; }
+
+    void AxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
 
 } // Math

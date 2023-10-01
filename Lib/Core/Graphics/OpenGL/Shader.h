@@ -14,7 +14,7 @@
 
 #include <map>
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
 
     class Shader {
         GLuint handle;

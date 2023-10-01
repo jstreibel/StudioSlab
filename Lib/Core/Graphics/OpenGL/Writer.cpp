@@ -20,7 +20,7 @@ typedef struct {
     float r, g, b, a; // color
 } vertex_t;
 
-Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize)
+Graphics::Writer::Writer(const Str& fontFile, float ptSize)
 : vertexBuffer("vertex:3f,tex_coord:2f,color:4f")
 , program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag")
 {
@@ -48,7 +48,7 @@ Core::Graphics::Writer::Writer(const Str& fontFile, float ptSize)
     Log::Success() << "Writer with font '" << fontFile << "' with size " << ptSize << "pts instantiated." << Log::Flush;
 }
 
-Core::Graphics::Writer::~Writer() {
+Graphics::Writer::~Writer() {
     glDeleteTextures( 1, &atlas->id );
     atlas->id = 0;
     texture_atlas_delete( atlas );
@@ -58,7 +58,7 @@ Core::Graphics::Writer::~Writer() {
     texture_font_delete(font);
 }
 
-void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styles::Color color) {
+void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styles::Color color) {
     vertexBuffer.clear();
 
     size_t i;
@@ -97,7 +97,7 @@ void Core::Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styl
     }
 }
 
-void Core::Graphics::Writer::drawBuffer() {
+void Graphics::Writer::drawBuffer() {
     glEnable( GL_BLEND );
     glBlendFunc( GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA );
 
@@ -115,17 +115,17 @@ void Core::Graphics::Writer::drawBuffer() {
 
 }
 
-void Core::Graphics::Writer::write(const Str &text, Point2D pen, Styles::Color color) {
+void Graphics::Writer::write(const Str &text, Point2D pen, Styles::Color color) {
     setBufferText(text, pen, color);
-    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
     drawBuffer();
-    OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
 }
 
-Real Core::Graphics::Writer::getFontHeightInPixels() const { return font->height; }
+Real Graphics::Writer::getFontHeightInPixels() const { return font->height; }
 
-void Core::Graphics::Writer::reshape(int w, int h) { mat4_set_orthographic( &projection, 0, (float)w,  0, (float)h, -1, 1); }
+void Graphics::Writer::reshape(int w, int h) { mat4_set_orthographic( &projection, 0, (float)w,  0, (float)h, -1, 1); }
 
 
 

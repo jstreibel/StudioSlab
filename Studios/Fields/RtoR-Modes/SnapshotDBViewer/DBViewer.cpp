@@ -23,7 +23,7 @@ namespace Modes::DatabaseViewer {
     {
         this->addWindow(DummyPtr(guiWindow));
 
-        std::shared_ptr<WindowColumn>winCol(new WindowColumn);
+        std::shared_ptr<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
 
         auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];

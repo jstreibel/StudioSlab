@@ -12,20 +12,25 @@
 #include "Utils/Types.h"
 
 
-class GUIWindow : public Window {
-    std::vector<std::pair<Str, Styles::Color>> stats;
+namespace Graphics {
 
-public:
-    explicit GUIWindow( );
+    class GUIWindow : public Window {
+        std::vector<std::pair<Str, Styles::Color>> stats;
 
-    void addVolatileStat(const Str& stat, Styles::Color color = {1, 1, 1});
+    public:
+        explicit GUIWindow();
 
-    void draw() override;
+        void addVolatileStat(const Str &stat, Styles::Color color = {1, 1, 1});
 
-    void begin() const;
-    void end() const;
+        void draw() override;
 
-};
+        void begin() const;
 
+        void end() const;
+
+    };
+
+
+}
 
 #endif //STUDIOSLAB_GUIWINDOW_H

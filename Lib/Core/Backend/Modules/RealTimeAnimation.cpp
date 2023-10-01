@@ -10,7 +10,7 @@ namespace Core {
     void RealTimeAnimationModule::beginRender() {
         Module::beginRender();
 
-        Core::Graphics::Animator::Update();
+        Core::Animator::Update();
     }
 
 } // Core

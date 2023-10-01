@@ -3,10 +3,9 @@
 //
 
 #include "PixelData.h"
-#include "Utils/Types.h"
-#include "Utils/Utils.h"
 
-namespace OpenGL {
+namespace Graphics::OpenGL {
+
     PixelData::PixelData(const PixelDataFormat dataFormat,
                          const PixelDataType dataType,
                          const int nDim,
