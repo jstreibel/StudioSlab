@@ -4,8 +4,8 @@
 
 #include "XHairArtist.h"
 #include "Core/Backend/BackendManager.h"
-#include "StylesManager.h"
-#include "Graph.h"
+#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/Graph.h"
 #include "imgui.h"
 
 namespace Graphics {

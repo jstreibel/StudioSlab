@@ -7,7 +7,7 @@
 
 
 #include "Graphics/Utils.h"
-#include "Graphics/Artists/Artist.h"
+#include "Artists/Artist.h"
 
 #include "Utils/Utils.h"
 

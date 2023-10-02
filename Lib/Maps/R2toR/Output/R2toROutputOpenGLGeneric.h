@@ -25,7 +25,7 @@ class OutputOpenGL : public ::Graphics::OpenGLMonitor {
     protected:
         Real phiMin, phiMax;
         GraphR2Section mSectionGraph;
-        R2toR::Graphics::FlatFieldDisplay mFieldDisplay;
+        Graphics::FlatFieldDisplay mFieldDisplay;
 
     public:
         OutputOpenGL(const NumericConfig &params, Real phiMin, Real phiMax);

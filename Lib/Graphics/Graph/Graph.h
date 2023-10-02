@@ -18,8 +18,8 @@
 
 
 #include "Maps/RtoR2/ParametricCurve.h"
-#include "AxisArtist.h"
-#include "XHairArtist.h"
+#include "Artists/AxisArtist.h"
+#include "Artists/XHairArtist.h"
 
 
 #include <memory>
@@ -31,7 +31,9 @@ namespace Graphics {
     class Graph2D : public Window {
         static std::map<Str, Graph2D*> graphMap;
 
-        std::vector<Artist::Ptr> content;
+        typedef Int Priority_t;
+        typedef std::multimap<Priority_t, Artist::Ptr> ContentMap;
+        ContentMap content;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
@@ -92,7 +94,7 @@ namespace Graphics {
 
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
-        void addArtist(const Artist::Ptr& pArtist);
+        void addArtist(const Artist::Ptr& pArtist, Int priority=0);
 
         void draw() override;
 

@@ -3,6 +3,9 @@ set( GRAPHICS_SOURCES
 		Animation.cpp
 		ZoomPanRotate.cpp
 
+		Types.h        Types.cpp
+		Utils.cpp
+
 		Styles/ColorMap.h 		Styles/ColorMap.cpp
 		Styles/Colors.h       	Styles/Colors.cpp
 		Styles/WindowStyles.h	Styles/WindowStyles.cpp
@@ -46,24 +49,23 @@ set( GRAPHICS_SOURCES
 		OpenGL/TextureUtils.h
         OpenGL/Artists/Overlay.cpp
         OpenGL/Artists/Overlay.h
-		OpenGL/Artists/ColorBar.cpp
-		OpenGL/Artists/ColorBar.h
-		Artists/Artist.cpp
-        Types.cpp
-        Types.h
-		Utils.cpp
+		OpenGL/Artists/ColorBarArtist.cpp
+		OpenGL/Artists/ColorBarArtist.h
 
+		Graph/Artists/Artist.cpp
 		Graph/Graph.cpp
+		Graph/LabelingHelper.h		Graph/LabelingHelper.cpp
 		Graph/OpenGLMonitor.cpp
 		Graph/Graph_Axis.cpp
-		Graph/LabelingHelper.h		Graph/LabelingHelper.cpp
 		Graph/Styles.cpp
 		Graph/Graph_Events.cpp
 		Graph/Graph_GetSet.cpp
-		Graph/XHairArtist.h			Graph/XHairArtist.cpp
+		Graph/Artists/XHairArtist.h			Graph/Artists/XHairArtist.cpp
+		Graph/Artists/AxisArtist.h			Graph/Artists/AxisArtist.cpp
 
 		Graph/StylesManager.h		Graph/StylesManager.cpp
-		Graph/AxisArtist.h			Graph/AxisArtist.cpp
+		../Maps/R2toR/View/FlatField2DArtist.cpp
+		../Maps/R2toR/View/FlatField2DArtist.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

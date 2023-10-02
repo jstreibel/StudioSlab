@@ -6,7 +6,7 @@
 #define STUDIOSLAB_OVERLAY_H
 
 
-#include "Graphics/Artists/Artist.h"
+#include "Graphics/Graph/Artists/Artist.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Shader.h"
 

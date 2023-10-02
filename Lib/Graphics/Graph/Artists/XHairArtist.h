@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_XHAIRARTIST_H
 #define STUDIOSLAB_XHAIRARTIST_H
 
-#include "Graphics/Artists/Artist.h"
+#include "Artist.h"
 #include "Math/Space/Impl/PointSet.h"
 
 namespace Graphics {

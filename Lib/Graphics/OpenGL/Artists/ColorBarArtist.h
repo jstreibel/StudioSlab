@@ -2,20 +2,20 @@
 // Created by joao on 24/09/23.
 //
 
-#ifndef STUDIOSLAB_COLORBAR_H
-#define STUDIOSLAB_COLORBAR_H
+#ifndef STUDIOSLAB_COLORBARARTIST_H
+#define STUDIOSLAB_COLORBARARTIST_H
 
 #include "Overlay.h"
 
 namespace Graphics::OpenGL {
 
-    class ColorBar : public Artist {
+    class ColorBarArtist : public Artist {
         VertexBuffer vertexBuffer;
         Shader shader;
         std::shared_ptr<Texture> texture;
 
     public:
-        explicit ColorBar(RectI loc);
+        explicit ColorBarArtist(RectI loc);
 
         void setLocation(RectI loc);
         void draw(const Graph2D &) override;
@@ -25,4 +25,4 @@ namespace Graphics::OpenGL {
 
 } // OpenGL
 
-#endif //STUDIOSLAB_COLORBAR_H
+#endif //STUDIOSLAB_COLORBARARTIST_H

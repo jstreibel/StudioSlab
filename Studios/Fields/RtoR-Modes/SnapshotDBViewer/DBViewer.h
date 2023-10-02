@@ -17,8 +17,8 @@ namespace Modes::DatabaseViewer {
         WindowRow topRow;
 
         DBParser::Ptr dbParser;
-        R2toR::Graphics::FlatFieldDisplay allDataDisplay;
-        R2toR::Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
+        Graphics::FlatFieldDisplay allDataDisplay;
+        Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
         Graphics::Graph2D massesGraph;
 

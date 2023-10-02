@@ -2,7 +2,7 @@
 // Created by joao on 24/09/23.
 //
 
-#include "ColorBar.h"
+#include "ColorBarArtist.h"
 #include "Utils/Resources.h"
 
 #include "Graphics/Graph/Graph.h"
@@ -15,7 +15,7 @@ namespace Graphics::OpenGL {
 
     };
 
-    ColorBar::ColorBar(RectI loc)
+    ColorBarArtist::ColorBarArtist(RectI loc)
             : vertexBuffer("inPosition:2f,inTexCoord:1f")
             , shader(Resources::ShadersFolder + "ColorBar.vert",
                      Resources::ShadersFolder + "ColorBar.frag")
@@ -23,7 +23,7 @@ namespace Graphics::OpenGL {
         setLocation(loc);
     }
 
-    void OpenGL::ColorBar::draw(const Graph2D &graph) {
+    void OpenGL::ColorBarArtist::draw(const Graph2D &graph) {
         if( texture == nullptr ) return;
 
         auto vp = graph.getViewport();
@@ -37,9 +37,9 @@ namespace Graphics::OpenGL {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void ColorBar::setTexture(std::shared_ptr<Texture> tex) { texture = tex; }
+    void ColorBarArtist::setTexture(std::shared_ptr<Texture> tex) { texture = tex; }
 
-    void ColorBar::setLocation(RectI loc) {
+    void ColorBarArtist::setLocation(RectI loc) {
         fix xMin = loc.xMin;
         fix xMax = loc.xMax;
         fix yMin = loc.yMin;

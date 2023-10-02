@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_AXISARTIST_H
 #define STUDIOSLAB_AXISARTIST_H
 
-#include "Graphics/Artists/Artist.h"
+#include "Artist.h"
 #include "Math/Constants.h"
 
 namespace Graphics {

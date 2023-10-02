@@ -17,7 +17,7 @@
 #include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Core/Backend/BackendManager.h"
 #include "StylesManager.h"
-#include "AxisArtist.h"
+#include "Artists/AxisArtist.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -49,8 +49,8 @@ Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
     autoReviewGraphRanges = autoReviewGraphLimits;
 }
 
-void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist) {
-    content.emplace_back(pArtist);
+void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, Int priority) {
+    content.emplace(priority, pArtist);
 }
 
 void Graphics::Graph2D::draw() {
@@ -292,7 +292,7 @@ auto Graphics::Graph2D::countDisplayItems() const -> Count {
 }
 
 void Graphics::Graph2D::artistsDraw() {
-    for (const auto &artist: content) {
+    for (const auto & [priority, artist] : content) {
         if (artist->isVisible()) {
             artist->draw(*this);
             OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist "
@@ -300,18 +300,3 @@ void Graphics::Graph2D::artistsDraw() {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

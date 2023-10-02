@@ -148,8 +148,6 @@ void Graphics::OpenGLMonitor::writeStats() {
 bool Graphics::OpenGLMonitor::notifyRender() {
     assert(lastData.hasValidData());
 
-    for(auto *anim : animations) anim->step(frameTimer.getElTime_sec());
-
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_POINT_SMOOTH);

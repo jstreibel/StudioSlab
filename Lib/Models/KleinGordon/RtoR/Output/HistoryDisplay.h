@@ -8,9 +8,9 @@
 #include "Maps/R2toR/View/FlatFieldDisplay.h"
 
 
-namespace RtoR::Graphics {
+namespace Graphics {
 
-    class HistoryDisplay : public R2toR::Graphics::FlatFieldDisplay {
+    class HistoryDisplay : public Graphics::FlatFieldDisplay {
         Count nextRow = 0;
         Real lastUpdatedTime = -1;
 

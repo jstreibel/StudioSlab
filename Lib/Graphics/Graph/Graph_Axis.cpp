@@ -7,7 +7,6 @@
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
-#include "imgui.h"
 #include "StylesManager.h"
 
 Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) const {

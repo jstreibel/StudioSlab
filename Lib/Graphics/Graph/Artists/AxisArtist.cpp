@@ -10,7 +10,7 @@
 #include "Graphics/OpenGL/Shader.h"
 
 #include "AxisArtist.h"
-#include "StylesManager.h"
+#include "Graphics/Graph/StylesManager.h"
 
 
 #define hPixelsToSpaceScale (tiedRegion.width() / vp.width())

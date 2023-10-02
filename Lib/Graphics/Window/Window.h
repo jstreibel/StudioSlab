@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOW_H
 
 
-#include "Graphics/Artists/Artist.h"
+#include "Graphics/Graph/Artists/Artist.h"
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Styles/WindowStyles.h"
 

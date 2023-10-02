@@ -1,0 +1,69 @@
+//
+// Created by joao on 2/10/23.
+//
+
+#ifndef STUDIOSLAB_FLATFIELD2DARTIST_H
+#define STUDIOSLAB_FLATFIELD2DARTIST_H
+
+#include "Graphics/Graph/Artists/Artist.h"
+#include "Graphics/OpenGL/Shader.h"
+#include "Graphics/OpenGL/VertexBuffer.h"
+#include "Graphics/OpenGL/Texture1D_Color.h"
+#include "Graphics/OpenGL/Artists/ColorBarArtist.h"
+#include "Graphics/Styles/ColorMap.h"
+#include "Graphics/OpenGL/Texture2D_Real.h"
+
+#include "Maps/R2toR/Model/R2toRFunction.h"
+#include "Math/Constants.h"
+
+namespace Graphics {
+
+    class FlatField2DArtist : public Artist {
+        enum Scale {
+            Linear,
+            Log,
+            Logit,
+            LogEpsilon
+        };
+
+        typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
+
+        bool validTextureData = false;
+
+        Unit funcUnit;
+
+        Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
+        CMapTexturePtr cMap_texture = nullptr;
+        bool logScale                   = true;
+        Real cMap_epsArg                =  1;
+        Real cMap_min                   = -1.1;
+        Real cMap_max                   =  1.1;
+        bool symmetricMaxMin            = true;
+
+        Graphics::OpenGL::VertexBuffer vertexBuffer;
+        Graphics::OpenGL::Shader program;
+        R2toR::Function::ConstPtr func    = nullptr;
+        Graphics::OpenGL::Texture2D_Real*   textureData = nullptr;
+
+        void computeColormapTexture();
+        void invalidateTextureData();
+        void repopulateTextureBuffer();
+
+        void drawGUI();
+
+    public:
+        FlatField2DArtist(Real phiMin, Real phiMax);
+
+        void draw(const Graph2D &d) override;
+
+        void setFunction(R2toR::Function::ConstPtr function, const Unit& unit=Constants::One);
+        auto getFunction() const -> R2toR::Function::ConstPtr;
+        void setColorMap(const Styles::ColorMap& colorMap);
+        void set_xPeriodicOn();
+
+        CMapTexturePtr getColorMapTexture() const;
+    };
+
+} // Graphics
+
+#endif //STUDIOSLAB_FLATFIELD2DARTIST_H

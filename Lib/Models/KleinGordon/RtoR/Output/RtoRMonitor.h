@@ -74,8 +74,8 @@ namespace RtoR {
         void updateFTHistoryGraph();
         void updateFourierGraph();
 
-        RtoR::Graphics::HistoryDisplay mFullHistoryDisplay;
-        RtoR::Graphics::HistoryDisplay mFullSpaceFTHistoryDisplay;
+        Graphics::HistoryDisplay mFullHistoryDisplay;
+        Graphics::HistoryDisplay mFullSpaceFTHistoryDisplay;
 
         Real U = .0;
         Real K = .0;

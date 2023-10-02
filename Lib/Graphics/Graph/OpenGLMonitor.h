@@ -11,7 +11,6 @@
 namespace Graphics {
 
     class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
-        std::vector<Animation*> animations;
         void writeStats();
 
         bool autoAdjustStepsPerSecond = true;
@@ -46,13 +45,6 @@ namespace Graphics {
     public:
         auto setnSteps(int nSteps) -> void override;
         // ********************* END Socket ********************** //
-
-
-    public:
-        void addAnimation(Animation *animation) {animations.push_back(animation); }
-        void addStat(const Str& stat, const Styles::Color color = {1, 1, 1}) {
-            stats.addVolatileStat(stat, color);
-        }
 
     };
 }
