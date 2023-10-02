@@ -7,7 +7,8 @@
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/GraphicBackend.h"
 
-#include "Math/Graph/OpenGLMonitor.h"
+#include "Graphics/Graph/OpenGLMonitor.h"
+
 
 
 

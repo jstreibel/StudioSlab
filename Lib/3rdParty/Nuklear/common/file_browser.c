@@ -9,7 +9,7 @@
 # include <pwd.h>
 #endif
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "3rdParty/stb_image.h"
 

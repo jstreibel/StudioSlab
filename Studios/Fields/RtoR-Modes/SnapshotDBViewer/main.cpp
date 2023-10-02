@@ -2,7 +2,7 @@
 // Created by joao on 21/09/23.
 //
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 
 #include "Core/App/AppBase.h"
 #include "Core/App/CrashPad.h"
@@ -10,7 +10,7 @@
 #include "Core/Controller/Interface/CommonParameters.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
-#include "Core/Graphics/Styles/WindowStyles.h"
+#include "Graphics/Styles/WindowStyles.h"
 
 #include "Core/Tools/Log.h"
 

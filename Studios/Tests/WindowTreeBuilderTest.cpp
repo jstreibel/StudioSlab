@@ -4,9 +4,9 @@
 
 #include "WindowTreeBuilderTest.h"
 
-#include "Core/Graphics/Window/WindowTree/WindowTreeBuilder.h"
+#include "Graphics/Window/WindowTree/WindowTreeBuilder.h"
 #include "GLFreeTypeTests.h"
-#include "Math/Graph/Graph.h"
+#include "Graphics/Graph/Graph.h"
 #include "Maps/RtoR/View/GraphRtoR.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "FourierTestWindow.h"

@@ -2,7 +2,7 @@
 // Created by joao on 29/04/2021.
 //
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 
 #include "Mesh.h"
 

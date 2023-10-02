@@ -14,4 +14,6 @@ add_subdirectory(Maps)
 
 add_subdirectory(Models)
 
+add_subdirectory(Graphics)
+
 # add_dependencies(Fields Studios)

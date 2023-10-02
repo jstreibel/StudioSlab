@@ -7,7 +7,7 @@
 
 
 #include "Core/Backend/Events/GUIEventListener.h"
-#include "Core/Graphics/Window/WindowTree/NodeWindow.h"
+#include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 class WindowTreeBuilderTest : public Window {

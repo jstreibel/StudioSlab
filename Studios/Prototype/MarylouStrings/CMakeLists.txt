@@ -8,7 +8,7 @@ include_directories($LIBDIR)
 
 set(EXTERNAL_SRC
 		${LIBDIR}/3rdParty/Nuklear/NuklearSource.h
-		${LIBDIR}/Core/Graphics/SFML/Graph.cpp)
+		${LIBDIR}/Graphics/SFML/Graph.cpp)
 
 add_executable(MarylouStrings
         Integrator.cpp

@@ -2,7 +2,7 @@
 // Created by joao on 27/08/23.
 //
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 #include "GLFreeTypeTests.h"
 
 #include "Utils/Resources.h"

@@ -8,7 +8,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)
 add_subdirectory( Controller )
 add_subdirectory( Backend )
 add_subdirectory( App )
-add_subdirectory( Graphics)
 add_subdirectory( Tools )
 
 

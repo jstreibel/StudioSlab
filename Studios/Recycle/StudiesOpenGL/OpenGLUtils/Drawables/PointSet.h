@@ -8,7 +8,7 @@
 
 #include "Drawable.h"
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 #include <glm/vec3.hpp>
 #include <vector>
 

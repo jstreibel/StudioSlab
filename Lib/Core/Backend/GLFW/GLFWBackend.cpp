@@ -4,13 +4,14 @@
 
 // Thanks https://www.glfw.org/docs/3.3/input_guide.html
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 
 #include <GLFW/glfw3.h>
 #include "GLFWBackend.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/Styles/WindowStyles.h"
 
 bool finishFlag = false;
 
@@ -62,7 +63,7 @@ void GLFWBackend::mainLoop() {
         while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
         mustRender = false;
 
-        auto bg = Core::Graphics::clearColor;
+        auto bg = Graphics::clearColor;
         glClearColor(bg.r, bg.g, bg.b, bg.a);
         glClear(GL_COLOR_BUFFER_BIT);
 

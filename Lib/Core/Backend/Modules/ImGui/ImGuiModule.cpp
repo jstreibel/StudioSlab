@@ -2,7 +2,7 @@
 // Created by joao on 22/09/23.
 //
 
-#include "Core/Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/Utils.h"
 
 #include <filesystem>
 

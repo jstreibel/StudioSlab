@@ -5,7 +5,7 @@
 #ifndef OPENGLTUTORIAL_PROGRAM_H
 #define OPENGLTUTORIAL_PROGRAM_H
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 #include <string>
 
 class Program {

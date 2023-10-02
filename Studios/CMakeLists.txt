@@ -5,12 +5,13 @@ set ( SlabLibs
 		Slab-Core-App
 		Slab-Core-Backend
 		Slab-Core-Controller
-		Slab-Core-Graphics
 		Slab-Core-Tools
 
 		Slab-Math
 
 		Slab-Models
+
+		Slab-Graphics
 		)
 
 

@@ -3,15 +3,15 @@
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Maps/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
-#include "Core/Graphics/Utils.h"
-#include "Math/Graph/FunctionGraph.h"
+#include "Graphics/Utils.h"
+#include "Graphics/Graph/FunctionGraph.h"
 #include "Maps/RtoR2/StraightLine.h"
 #include "R2toROutputOpenGLShockwave.h"
 
 #include <filesystem>
 
 R2toR::OutputOpenGLShockwave::OutputOpenGLShockwave(const NumericConfig &params)
-                                  : Core::Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ signum-Gordon shockwave graphic monitor")
+                                  : Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ signum-Gordon shockwave graphic monitor")
 {}
 
 void R2toR::OutputOpenGLShockwave::draw() {

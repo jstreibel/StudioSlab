@@ -7,15 +7,15 @@
 
 #include <utility>
 
-#include "Core/Graphics/Styles/ColorMap.h"
+#include "Graphics/Styles/ColorMap.h"
 
-#include "Math/Graph/Graph.h"
+#include "Graphics/Graph/Graph.h"
 
 #include "Maps/R2toR/Model/R2toRFunction.h"
-#include "Core/Graphics/OpenGL/Texture2D_Color.h"
-#include "Core/Graphics/OpenGL/Texture2D_Real.h"
-#include "Core/Graphics/OpenGL/Texture1D_Color.h"
-#include "Core/Graphics/OpenGL/Artists/ColorBar.h"
+#include "Graphics/OpenGL/Texture2D_Color.h"
+#include "Graphics/OpenGL/Texture2D_Real.h"
+#include "Graphics/OpenGL/Texture1D_Color.h"
+#include "Graphics/OpenGL/Artists/ColorBar.h"
 #include "Math/Constants.h"
 
 

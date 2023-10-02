@@ -7,7 +7,7 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Maps/RtoR/Calc/FourierTransform.h"
 #include "Math/Constants.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"

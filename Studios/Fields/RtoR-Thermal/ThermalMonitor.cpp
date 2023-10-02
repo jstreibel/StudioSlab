@@ -11,7 +11,7 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
-#include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <sstream>
 #include <array>

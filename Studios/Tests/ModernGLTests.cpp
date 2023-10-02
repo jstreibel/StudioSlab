@@ -5,7 +5,7 @@
 #include "ModernGLTests.h"
 
 #include "Utils/Resources.h"
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 
 struct TestVertex {
     float x, y;

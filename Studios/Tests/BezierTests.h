@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_BEZIERTESTS_H
 #define STUDIOSLAB_BEZIERTESTS_H
 
-#include "Core/Graphics/Window/WindowContainer/WindowRow.h"
-#include "Core/Graphics/Window/GUIWindow.h"
-#include "Math/Graph/Graph.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/Window/GUIWindow.h"
+#include "Graphics/Graph/Graph.h"
 
 #include "Maps/RtoR/View/GraphRtoR.h"
 

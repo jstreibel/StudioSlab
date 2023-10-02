@@ -6,7 +6,6 @@
 #define STUDIOSLAB_GRAPHICBACKEND_H
 
 #include "Backend.h"
-#include "Core/Graphics/Window/Window.h"
 #include "Events/MouseState.h"
 #include "Core/Backend/Events/GUIEventTranslator.h"
 

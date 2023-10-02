@@ -46,19 +46,6 @@ set ( EXPERIMENTAL_SOURCES
 )
 
 
-set ( GRAPH_SOURCES
-		Graph/Graph.cpp
-        Graph/OpenGLMonitor.cpp
-        Graph/Graph_Axis.cpp
-        Graph/LabelingHelper.cpp
-        Graph/LabelingHelper.h
-		Graph/Styles.cpp
-
-		Graph/StylesManager.h		Graph/StylesManager.cpp
-		Graph/AxisArtist.h			Graph/AxisArtist.cpp
-)
-
-
 set ( NUMERICS_SOURCES
 		App.cpp
 		App.h
@@ -90,8 +77,6 @@ set ( NUMERICS_SOURCES
 
 		DifferentialEquations/EquationState.h
 		Function/NativeFunction.h
-        Graph/Graph_Events.cpp
-		Graph/Graph_GetSet.cpp
 )
 
 
@@ -127,7 +112,6 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		${FUNCTION_SOURCES}
 		${SPACE_SOURCES}
 		${SPACE_SOURCES_CUDA}
-		${GRAPH_SOURCES}
 		${EXPERIMENTAL_SOURCES}
 		${NUMERICS_SOURCES}
 		${DIFFEQS_SOURCES}

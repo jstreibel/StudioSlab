@@ -11,7 +11,7 @@
 
 
 R2toR::OutputOpenGLShockwaveAt_t0::OutputOpenGLShockwaveAt_t0(const NumericConfig &params)
-        : Core::Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ shockwave at t₀ graphic monitor.")
+        : Graphics::OpenGLMonitor(params, "ℝ² ↦ ℝ shockwave at t₀ graphic monitor.")
 
 {
 

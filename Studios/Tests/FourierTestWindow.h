@@ -6,9 +6,9 @@
 #define STUDIOSLAB_FOURIERTESTWINDOW_H
 
 #include "Maps/RtoR/View/GraphRtoR.h"
-#include "Core/Graphics/Window/GUIWindow.h"
-#include "Core/Graphics/Window/WindowContainer/WindowRow.h"
-#include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Graphics/Window/GUIWindow.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 namespace Tests {
 
@@ -17,7 +17,7 @@ namespace Tests {
         WindowColumn col;
 
         GraphRtoR mFuncGraph;
-        Core::Graphics::Graph2D mDFTGraph;
+        Graphics::Graph2D mDFTGraph;
         GraphRtoR mFTGraph;
         GUIWindow gui;
 

@@ -5,16 +5,16 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "Math/Graph/OpenGLMonitor.h"
-#include "Core/Graphics/ZoomPanRotate.h"
-#include "Math/Graph/FunctionGraph.h"
+#include "Graphics/Graph/OpenGLMonitor.h"
+#include "Graphics/ZoomPanRotate.h"
+#include "Graphics/Graph/FunctionGraph.h"
 #include "Maps/R2toR/View/GraphR2ToR.h"
 #include "Maps/RtoR2/StraightLine.h"
 
 
 namespace R2toR {
 
-    class OutputOpenGLShockwave : public Core::Graphics::OpenGLMonitor {
+    class OutputOpenGLShockwave : public Graphics::OpenGLMonitor {
     public:
         OutputOpenGLShockwave(const NumericConfig &params);
 

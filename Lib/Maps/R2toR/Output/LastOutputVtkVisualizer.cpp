@@ -5,7 +5,7 @@
 #include "LastOutputVtkVisualizer.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
-#include "Core/Graphics/Styles/Colors.h"
+#include "Graphics/Styles/Colors.h"
 
 
 #include <vtkSmartPointer.h>

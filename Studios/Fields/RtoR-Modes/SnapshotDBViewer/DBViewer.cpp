@@ -8,7 +8,7 @@
 #include "KGDispersionRelation.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "Core/Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "HistoryFileLoader.h"
 #include "Core/Backend/BackendManager.h"
 

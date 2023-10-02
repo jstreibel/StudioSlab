@@ -5,7 +5,7 @@
 
 #include "3rdParty/Nuklear/NuklearSource.h"
 #define NK_GLFW_GL4_IMPLEMENTATION
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 #include "3rdParty/Nuklear/nuklear_glfw_gl4.h"
 
 #include "NuklearGLFWModule.h"

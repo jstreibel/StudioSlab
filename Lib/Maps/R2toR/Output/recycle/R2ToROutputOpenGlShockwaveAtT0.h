@@ -7,14 +7,14 @@
 
 
 #include "R2toROutputOpenGLShockwave.h"
-#include "Core/Graphics/ZoomPanRotate.h"
-#include "Math/Graph/FunctionGraph.h"
+#include "Graphics/ZoomPanRotate.h"
+#include "Graphics/Graph/FunctionGraph.h"
 #include "Maps/RtoR2/StraightLine.h"
 
 
 namespace R2toR {
 
-    class OutputOpenGLShockwaveAt_t0 : public Core::Graphics::OpenGLMonitor {
+    class OutputOpenGLShockwaveAt_t0 : public Graphics::OpenGLMonitor {
     public:
         OutputOpenGLShockwaveAt_t0(const NumericConfig &params);
 

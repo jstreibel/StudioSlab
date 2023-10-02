@@ -6,13 +6,16 @@
 #define STUDIOSLAB_GLFWBACKEND_H
 
 #include <GLFW/glfw3.h>
+
+#include "Graphics/Types.h"
+
 #include "../GraphicBackend.h"
 #include "GLFWListener.h"
 #include "GLFWEventTranslator.h"
 
 class GLFWBackend : public GraphicBackend {
     Core::GLFWEventTranslator eventTranslator;
-    std::vector<Core::GLFWListener*> listeners;
+    std::vector<Core::GLFWListener*> listeners{};
 
     MouseState mouseState;
 

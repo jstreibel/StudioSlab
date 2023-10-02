@@ -5,9 +5,9 @@
 #ifndef V_SHAPE_RTOROUTPUTOPENGL_H
 #define V_SHAPE_RTOROUTPUTOPENGL_H
 
-#include "Core/Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Graphics/Window/WindowContainer/WindowPanel.h"
 
-#include "Math/Graph/OpenGLMonitor.h"
+#include "Graphics/Graph/OpenGLMonitor.h"
 
 #include "Maps/RtoR/Model/RtoRResizableDiscreteFunction.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Section1D.h"

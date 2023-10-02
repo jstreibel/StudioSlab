@@ -9,7 +9,7 @@
 #include "SingleSimViewController.h"
 
 #include "../../Utils/ViewerUtils.h"
-#include "Core/Graphics/Styles/Colors.h"
+#include "Graphics/Styles/Colors.h"
 
 #include <SFML/Graphics.hpp>
 

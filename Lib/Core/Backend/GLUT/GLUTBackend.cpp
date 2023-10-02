@@ -1,13 +1,11 @@
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
-#include <GL/freeglut.h>
 
 #include "GLUTBackend.h"
 
-#include "Core/Graphics/OpenGL/GLDebug.h"
-
 #include "Core/Backend/BackendManager.h"
+#include "Core/Tools/Log.h"
 
+#include <GL/freeglut.h>
 #include <cassert>
 #include <filesystem>
 
@@ -29,20 +27,6 @@ GLUTBackend::GLUTBackend()
 
     if(FULLSCREEN) glutFullScreen();
 
-    // GLEW init:
-    {
-            GLenum initStatus = glewInit();
-        if (GLEW_OK != initStatus) {
-            char buffer[1024];
-            sprintf(buffer, "Error: %s", glewGetErrorString(initStatus));
-            throw Str(buffer);
-        } else {
-            char buffer[1024];
-            sprintf(buffer, "Using GLEW %s", glewGetString(GLEW_VERSION));
-            Log::Info() << buffer << Log::Flush;
-        }
-    }
-
     glutDisplayFunc(GLUTBackend::render);
     glutReshapeFunc(GLUTBackend::reshape);
 
@@ -60,8 +44,6 @@ GLUTBackend::GLUTBackend()
     glutIdleFunc(GLUTBackend::idleCall);
 
     glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
-
-    OpenGL::StartupDebugLogging();
 
     addGLUTListener(&eventTranslator);
 
@@ -169,7 +151,7 @@ void GLUTBackend::render()
 
     if(me.renderingRequested) me.renderingRequested = false;
 
-    auto bg = Core::Graphics::clearColor;
+    auto bg = Graphics::clearColor;
     glClearColor(bg.r, bg.g, bg.b, bg.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_DBVIEWER_H
 #define STUDIOSLAB_DBVIEWER_H
 
-#include "Core/Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "DatabaseParser.h"
-#include "Core/Graphics/Window/GUIWindow.h"
+#include "Graphics/Window/GUIWindow.h"
 #include "Maps/R2toR/View/FlatFieldDisplay.h"
 #include "Maps/RtoR/View/GraphRtoR.h"
 

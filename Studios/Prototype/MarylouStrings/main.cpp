@@ -3,7 +3,7 @@
 //
 
 
-#include "Core/Graphics/SFML/Graph.h"
+#include "Graphics/SFML/Graph.h"
 #include "Core/Controller/Nuklear/NuklearSFML.h"
 
 #include "Integrator.h"

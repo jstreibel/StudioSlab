@@ -2,7 +2,7 @@
 // Created by joao on 29/09/23.
 //
 
-#include "Core/Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/OpenGL.h"
 
 #include "NuklearTests.h"
 #include "Core/Backend/BackendManager.h"
