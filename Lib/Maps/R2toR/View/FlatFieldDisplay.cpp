@@ -113,21 +113,22 @@ void R2toR::Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr fu
 }
 
 void R2toR::Graphics::FlatFieldDisplay::draw() {
-    Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
-    // Don't call Graphics::Graph2D::draw();
-    Window::draw();
+    if(true) {
+        Graph2D::draw();
+    }
+    else {
+        // Don't call Graphics::Graph2D::draw();
+        Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
+        Window::draw();
+        setupOrtho();
+        labelingHelper.setTotalItems(countDisplayItems());
+        artistsDraw();
+        drawPointSets();
+        drawCurves();
+        drawGUI();
+    }
 
-    setupOrtho();
-
-    labelingHelper.setTotalItems(countDisplayItems());
     drawFlatField();
-
-    artistsDraw();
-
-    drawPointSets();
-    drawCurves();
-    drawGUI();
-    drawXHair();
 }
 
 void R2toR::Graphics::FlatFieldDisplay::drawFlatField() {
@@ -290,7 +291,7 @@ void R2toR::Graphics::FlatFieldDisplay::set_xPeriodicOn() {
     textureData->set_sPeriodicOn();
 }
 
-Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords) {
+Str R2toR::Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords) const {
     auto label = Graph2D::getXHairLabel(coords);
 
     if(func == nullptr) return label;

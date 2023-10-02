@@ -52,7 +52,7 @@ class FlatFieldDisplay : public ::Graphics::Graph2D {
 
         void computeGraphRanges();
 
-        Str getXHairLabel(const ::Graphics::Point2D &coords) override;
+        Str getXHairLabel(const ::Graphics::Point2D &coords) const override;
 
         void drawGUI() override;
 

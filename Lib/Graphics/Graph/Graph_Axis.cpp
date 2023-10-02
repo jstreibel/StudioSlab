@@ -10,46 +10,9 @@
 #include "imgui.h"
 #include "StylesManager.h"
 
-Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) {
+Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) const {
     fix digits = 5;
     return Str("(")+ baseHorizontalUnit(coords.x, digits) + ", " + baseVerticalUnit(coords.y, digits) + ")";
-}
-
-void Graphics::Graph2D::drawXHair() {
-    if(!isMouseIn()) return;
-
-    fix vpRect = getViewport(); // getWindowRect();
-
-    fix mouseLocal = getMouseViewportCoord();
-
-    XHairLocation = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
-
-    auto label = getXHairLabel(XHairLocation);
-    auto currStyle = Math::StylesManager::GetCurrent();
-    currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
-
-    XHair.clear();
-    XHair.addPoint({region.xMin, XHairLocation.y});
-    XHair.addPoint({region.xMax, XHairLocation.y});
-    XHair.addPoint({XHairLocation.x, region.yMin});
-    XHair.addPoint({XHairLocation.x, region.yMax});
-
-    Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
-
-    if(false)
-    {
-        auto mouse = Core::BackendManager::GetGUIBackend().getMouseState();
-
-        ImGui::Begin("Graph debug");
-        ImGui::Text("Mouse @ %i, %i", mouse.x, mouse.y);
-        ImGui::Text("Mouse in %s @ %f, %f", this->title.c_str(), XHairLocation.x, XHairLocation.y);
-        ImGui::Text("Local window coords: %f, %f", mouseLocal.x, mouseLocal.y);
-        ImGui::Text("Viewport rect (x, y, w, h): %i, %i, %i, %i", vpRect.xMin, vpRect.yMin, vpRect.width(), vpRect.height());
-        ImGui::Text("Window rect (x, y, w, h): %i, %i, %i, %i", windowRect.xMin, windowRect.yMin, windowRect.width(), windowRect.height());
-        ImGui::End();
-    }
-
-
 }
 
 void Graphics::Graph2D::reviewGraphRanges() {

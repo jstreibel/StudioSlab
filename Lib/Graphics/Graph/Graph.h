@@ -19,6 +19,7 @@
 
 #include "Maps/RtoR2/ParametricCurve.h"
 #include "AxisArtist.h"
+#include "XHairArtist.h"
 
 
 #include <memory>
@@ -80,10 +81,11 @@ namespace Graphics {
         void drawCurves();
         virtual void drawGUI();
 
-        virtual Str getXHairLabel(const Point2D &coords);
-        void drawXHair();
+        friend class Artist;;
 
         AxisArtist axisArtist;
+        XHairArtist artistXHair;
+
     public:
         explicit Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                 Str title = "no_title", int samples = 512);
@@ -112,6 +114,8 @@ namespace Graphics {
         void reviewGraphRanges();
 
         auto getLastXHairPosition() const -> Point2D;
+
+        virtual Str getXHairLabel(const Point2D &coords) const;
 
         auto getResolution() const -> Resolution;
         auto setResolution(Resolution samples) -> void;

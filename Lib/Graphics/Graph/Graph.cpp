@@ -41,6 +41,7 @@ Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _titl
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 
     addArtist(DummyPtr(axisArtist));
+    addArtist(DummyPtr(artistXHair));
 }
 
 Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
@@ -57,6 +58,8 @@ void Graphics::Graph2D::draw() {
     Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
     Window::draw();
 
+    artistXHair.setVisibility(isMouseIn());
+
     if (autoReviewGraphRanges) reviewGraphRanges();
     setupOrtho();
 
@@ -68,8 +71,6 @@ void Graphics::Graph2D::draw() {
     drawCurves();
 
     drawGUI();
-
-    drawXHair();
 }
 
 void Graphics::Graph2D::drawGUI() {

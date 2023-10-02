@@ -6,6 +6,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "StylesManager.h"
 #include "Graph.h"
+#include "imgui.h"
 
 namespace Graphics {
 
@@ -32,6 +33,8 @@ namespace Graphics {
 
         auto XHairLocation = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 
+        auto label = graph2D.getXHairLabel(XHairLocation);
+
         auto currStyle = Math::StylesManager::GetCurrent();
         currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
 
@@ -43,8 +46,5 @@ namespace Graphics {
 
         Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
     }
-
-    void XHairArtist::setLabel(Str newLabel) { label = newLabel; }
-
 
 } // Graphics
