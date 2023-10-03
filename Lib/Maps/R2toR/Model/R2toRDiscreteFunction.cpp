@@ -109,3 +109,11 @@ Str R2toR::DiscreteFunction::myName() const
 bool R2toR::DiscreteFunction::domainContainsPoint(Real2D x) const {
     return x.x>=xMin && x.x<=xMax && x.y>=yMin && x.y<=yMax;
 }
+
+Real R2toR::DiscreteFunction::max() const {
+    return getSpace().getHostData(true).max();
+}
+
+Real R2toR::DiscreteFunction::min() const {
+    return getSpace().getHostData(true).min();
+}

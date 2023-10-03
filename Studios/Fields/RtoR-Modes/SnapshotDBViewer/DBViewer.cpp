@@ -14,13 +14,18 @@
 
 namespace Modes::DatabaseViewer {
 
-    DBViewer::DBViewer(DBParser::Ptr _dbParser)
+    DBViewer::DBViewer(StrVector dbFilenames, const Str &criticalParam)
     : WindowRow(HasMainMenu)
-    , dbParser(std::move(_dbParser))
     , guiWindow()
-    , allDataDisplay("All data", 0.0, 0.5)
+    , allDataDisplay("All data")
     , fullParticularHistoryDisplay("Particular data")
     {
+        for(const auto &dbFilename : dbFilenames){
+            auto parser = std::make_shared<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);
+            dbParsers.emplace_back(parser);
+        }
+
+
         this->addWindow(DummyPtr(guiWindow));
 
         std::shared_ptr<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
@@ -56,15 +61,19 @@ namespace Modes::DatabaseViewer {
 
     void DBViewer::draw() {
 
+        /*
         fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
         fix dx = fullField->getSpace().getMetaData().geth(0);
         fix L = fullField->getDomain().getLx();
         fix N = fullField->getN();
         fix ωMin = -1.5*dx+fullField->getDomain().xMin;
+
         index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
+         */
 
         guiWindow.begin();
 
+        /*
         if(ImGui::CollapsingHeader("Dominant modes")) {
             static bool isVisible = false;
 
@@ -75,8 +84,9 @@ namespace Modes::DatabaseViewer {
 
             drawTable(index_XHair);
 
-            // if(index_XHair>=0 && index_XHair<=fullField->getN()){ /*underXHair.addPoint({ω_XHair, });*/ };
+            // if(index_XHair>=0 && index_XHair<=fullField->getN()){ underXHair.addPoint({ω_XHair, }); };
         }
+         */
 
         if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
             static bool isVisible = false;
@@ -112,11 +122,14 @@ namespace Modes::DatabaseViewer {
 
         if(!visible) return;
 
+        auto xMax = 0.0;
+        for(auto &fullField : fullFields){
+            auto xMax_local = fullField->getDomain().xMax;
+            if(xMax_local > xMax) xMax = xMax_local;
+        }
         KGRelation = RtoR::FunctionRenderer::toPointSet(
                 RtoR::KGDispersionRelation(mass, RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
-                0,
-                fullField->getDomain().xMax,
-                5000);
+                0.0, xMax, 5000);
         auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[5];
         style.thickness = 3;
         style.filled = false;
@@ -132,51 +145,55 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewer::computeMasses(int avRange) {
-        auto &fieldMap = dbParser->getFieldMap();
+        for(auto &dbParser : dbParsers) {
 
-        for (auto &entry : fieldMap){
-            IN field = *entry.second;
-            IN data = field.getSpace().getHostData();
+            auto &fieldMap = dbParser->getFieldMap();
 
-            fix N = field.N;
-            fix kMin = field.xMin;
+            for (auto &entry: fieldMap) {
+                IN field = *entry.second;
+                IN data = field.getSpace().getHostData();
 
-            auto maxInfo = Utils::GetMax(data);
+                fix N = field.N;
+                fix kMin = field.xMin;
 
-            IN ω = entry.first;
-            fix idx = maxInfo.second;
-            fix Δk = field.xMax-field.xMin;
+                auto maxInfo = Utils::GetMax(data);
 
-            auto k_avg = 0.0;
-            auto norm = 0.0;
-            int i=-avRange;
-            for(; i <= avRange; ++i){
-                int curr_idx = idx+i;
-                if(curr_idx<0 || curr_idx>=N) continue;
+                IN ω = entry.first;
+                fix idx = maxInfo.second;
+                fix Δk = field.xMax - field.xMin;
 
-                auto weight = data[curr_idx];
-                auto k = Δk*(Real)(curr_idx)/(Real)N - kMin;
+                auto k_avg = 0.0;
+                auto norm = 0.0;
+                int i = -avRange;
+                for (; i <= avRange; ++i) {
+                    int curr_idx = idx + i;
+                    if (curr_idx < 0 || curr_idx >= N) continue;
 
-                k_avg += k*weight;
-                norm += weight;
-            }
+                    auto weight = data[curr_idx];
+                    auto k = Δk * (Real) (curr_idx) / (Real) N - kMin;
 
-            auto k = k_avg/norm;
+                    k_avg += k * weight;
+                    norm += weight;
+                }
 
-            maxValues.emplace_back(maxInfo);
-            maxValuesPointSet.addPoint({ω, k});
+                auto k = k_avg / norm;
 
-            fix m² = ω*ω - k*k;
+                maxValues.emplace_back(maxInfo);
+                maxValuesPointSet.addPoint({ω, k});
 
-            if(m²>=0)
+                fix m² = ω * ω - k * k;
+
+                if (m²>=0)
                 massesReal_pointSet.addPoint({ω, sqrt(m²)});
-            else
+                else
                 massesImag_pointSet.addPoint({ω, sqrt(-m²)});
+            }
         }
     }
 
     void DBViewer::drawTable(int specialIndex) {
 
+        /*
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
@@ -237,6 +254,7 @@ namespace Modes::DatabaseViewer {
         }
 
         ImGui::EndTable();
+         */
     }
 
     bool DBViewer::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
@@ -269,13 +287,21 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewer::reloadData() {
-        fullField = dbParser->buildFullField();
-        allDataDisplay.setFunction(fullField);
+        if(!fullFields.empty()) NOT_IMPLEMENTED_CLASS_METHOD;
+
+        for (auto &dbParser: dbParsers) {
+            auto fullField = dbParser->buildFullField();
+            auto dbRootFolder = StrUtils::ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
+
+            allDataDisplay.addFunction(fullField, dbRootFolder);
+            fullFields.emplace_back(fullField);
+        }
 
         computeMasses(10);
     }
 
     void DBViewer::loadDataUnderMouse() {
+        /*
         auto &fSet = dbParser->getFileSet();
 
         auto index = index_XHair-1;
@@ -295,14 +321,14 @@ namespace Modes::DatabaseViewer {
             fieldHistory = HistoryFileLoader::Load(filename);
             fullHistoriesMap[filename] = fieldHistory;
         }
-
         Log::Info() << "Set function" << Log::Flush;
-        fullParticularHistoryDisplay.setFunction(fieldHistory);
+        fullParticularHistoryDisplay.addFunction(fieldHistory);
 
         Log::Info() << "Add window" << Log::Flush;
         topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         Log::Info() << "Done\n" << Log::Flush;
+         */
     }
 
     bool DBViewer::notifyMouseMotion(int x, int y) {

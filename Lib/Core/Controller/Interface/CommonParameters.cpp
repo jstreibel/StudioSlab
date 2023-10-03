@@ -92,6 +92,7 @@ auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
 template class ParameterTemplate<int>;
 template class ParameterTemplate<Real>;
 template class ParameterTemplate<Str>;
+template class ParameterTemplate<StrVector>;
 template class ParameterTemplate<bool>;
 
 #endif

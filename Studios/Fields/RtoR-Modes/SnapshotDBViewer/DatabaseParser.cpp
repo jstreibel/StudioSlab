@@ -28,8 +28,9 @@ namespace Modes::DatabaseViewer {
 
     DBParser::DBParser(const Str& rootDBFolder, Str  criticalParameter)
     : criticalParameter(std::move(criticalParameter))
+    , rootDatabaseFolder(rootDBFolder)
     {
-        Log::Info() << "Database location: " << rootDBFolder << Log::Flush;
+        Log::Info() << "Parsing database from " << rootDBFolder << Log::Flush;
 
         readDatabase(rootDBFolder);
 
@@ -48,7 +49,7 @@ namespace Modes::DatabaseViewer {
         fix N = values.size();
         Real lastDelta = values[1]-values[0];
 
-        fix eps = 1.e-5*(values[N-1]-values[N-2]);
+        fix eps = 1.e-3*(values[N-1]-values[N-2]);
 
         for(int i=1; i<N-1; ++i){
             Real delta = values[i+1]-values[i];
@@ -151,9 +152,9 @@ namespace Modes::DatabaseViewer {
         return std::shared_ptr<R2toR::DiscreteFunction_CPU>(fullField);
     }
 
-    auto DBParser::getFieldMap() const -> const FieldMap & {
-        return fieldMap;
-    }
+    auto DBParser::getFieldMap() const -> const FieldMap & { return fieldMap; }
+
+    auto DBParser::getRootDatabaseFolder() const -> const Str & { return rootDatabaseFolder; }
 
 
 } // Modes::DatabaseViewer

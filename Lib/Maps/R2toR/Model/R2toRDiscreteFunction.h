@@ -49,6 +49,10 @@ namespace R2toR {
         auto getM()      const -> UInt;
         auto getDomain() const -> Domain;
         auto myName()    const -> Str override;
+
+        Real max() const override;
+
+        Real min() const override;
     };
 }
 

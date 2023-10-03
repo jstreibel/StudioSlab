@@ -138,12 +138,14 @@ namespace Core {
                         0x00B0, 0x00BF, // Superscript / subscript
                         0x0391, 0x03C9, // Greek
                         0x03D0, 0x03F6,
-                        0x2070, 0x209F, // Superscript / subscript
+                        0x2000, 0x2311, // Math stuff
+                        /*0x2070, 0x209F, // Superscript / subscript
                         0x21A6, 0x21A6 + 1,
                         ImWchar("ℑ"[0]), ImWchar("ℜ"[0]),
                         ImWchar("ℱ"[0]), ImWchar("𝒵"[0]),
+                        ImWchar("𝔸"[0]), ImWchar("ℤ"[0]),
                         0x2200, 0x22FF, // Mathematical operators
-                        0x2A00, 0x2AFF, // Supplemental mathematical operators
+                        0x2A00, 0x2AFF, // Supplemental mathematical operators */
                         0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
                         0,
                 };

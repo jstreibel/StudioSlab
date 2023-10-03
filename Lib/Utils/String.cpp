@@ -13,6 +13,15 @@ namespace StrUtils {
         if (pos != Str::npos)  str.replace(pos, toReplace.length(), replaceWith);
     }
 
+    Str ReplaceAll(Str str, const Str& from, const Str& to) {
+        size_t start_pos = 0;
+        while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
+            str.replace(start_pos, from.length(), to);
+            start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+        }
+
+        return str;
+    }
 }
 Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {
     auto base = useScientificNotation ? std::scientific : std::fixed;
@@ -33,4 +42,13 @@ Str ToStr(const Str &str)   {
     // return Str("\"") + str + Str("\"");
     return str;
 }
+
+Str ToStr(const StrVector& strVector){
+    Str val;
+
+    for(auto &s : strVector) val += s + ";";
+
+    return val;
+}
+
 

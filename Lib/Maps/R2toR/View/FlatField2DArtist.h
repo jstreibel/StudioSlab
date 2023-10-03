@@ -45,6 +45,8 @@ namespace Graphics {
         R2toR::Function::ConstPtr func    = nullptr;
         Graphics::OpenGL::Texture2D_Real*   textureData = nullptr;
 
+        Str name;
+
         void computeColormapTexture();
         void invalidateTextureData();
         void repopulateTextureBuffer();
@@ -52,7 +54,7 @@ namespace Graphics {
         void drawGUI();
 
     public:
-        FlatField2DArtist(Real phiMin, Real phiMax);
+        FlatField2DArtist(Str name);
 
         void draw(const Graph2D &d) override;
 

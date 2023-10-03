@@ -58,17 +58,20 @@ namespace Core {
 
         virtual OutputCategory operator()(InputCategory x) const = 0;
 
+        virtual OutputCategory max() const { NOT_IMPLEMENTED_CLASS_METHOD };
+        virtual OutputCategory min() const { NOT_IMPLEMENTED_CLASS_METHOD };
+
         /*! Get derivative in dimension 'n'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.*/
         virtual Ptr diff(int n) const {
-            throw Common::getClassName(this) + "::" + __FUNCTION__ + " is not implemented.";
+            NOT_IMPLEMENTED_CLASS_METHOD
         };
 
         /*! Get derivative in dimension 'n' at point 'x'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.
          * @param x: the location to get differentiation. */
         virtual OutputCategory diff(int n, InputCategory x) const {
-            throw "Function::diff(n, x) not implemented.";
+            NOT_IMPLEMENTED_CLASS_METHOD
         }
 
         virtual auto domainContainsPoint(InputCategory x) const -> bool {return true;}

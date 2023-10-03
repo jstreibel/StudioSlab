@@ -8,10 +8,11 @@
 #include "DeviceConfig.h"
 #include "NativeTypes.h"
 
-#include "Exception.h"
-
 #include "Numbers.h"
 #include "Arrays.h"
+
+#include "Exception.h"
+
 
 #define let     auto
 #define OUT auto&

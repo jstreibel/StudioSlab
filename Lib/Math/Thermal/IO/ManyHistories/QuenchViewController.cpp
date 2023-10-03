@@ -9,8 +9,6 @@
 
 #include <SFML/Graphics.hpp>
 
-#include <boost/range/combine.hpp>
-
 #include <ostream>
 #include <iostream>
 #include <fstream>
@@ -341,6 +339,9 @@ namespace ThermoOutput {
 
     void QuenchViewController::_dumpData() {
 
+        NOT_IMPLEMENTED_CLASS_METHOD
+
+        /*
         std::stringstream fileName;
 
         fileName << "MCIsing-manyHistories-manyT--" << SQRT_SIMS << "x" << SQRT_SIMS << "HISTORIES--" << L << "x" << L
@@ -349,6 +350,7 @@ namespace ThermoOutput {
         std::ofstream file;
 
 
+        /*
         {
             file.open(fileLoc + fileName.str() + ".dat");
 
@@ -440,6 +442,7 @@ namespace ThermoOutput {
 
             file.close();
         }
+         */
     }
 
 }

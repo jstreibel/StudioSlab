@@ -16,7 +16,7 @@ namespace Modes::DatabaseViewer {
         Graphics::GUIWindow guiWindow;
         WindowRow topRow;
 
-        DBParser::Ptr dbParser;
+        std::vector<DBParser::Ptr> dbParsers;
         Graphics::FlatFieldDisplay allDataDisplay;
         Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
@@ -27,7 +27,8 @@ namespace Modes::DatabaseViewer {
         Spaces::PointSet massesImag_pointSet;
         Spaces::PointSet underXHair;
 
-        std::shared_ptr<R2toR::DiscreteFunction_CPU> fullField;
+        typedef std::shared_ptr<R2toR::DiscreteFunction_CPU> FullField_ptr;
+        std::vector<FullField_ptr> fullFields;
         std::vector<Utils::MaxInfo> maxValues;
 
         std::map<Str, std::shared_ptr<R2toR::DiscreteFunction_CPU>> fullHistoriesMap;
@@ -44,7 +45,7 @@ namespace Modes::DatabaseViewer {
 
         Core::KeyState shiftKey = Core::Release;
     public:
-        explicit DBViewer(DBParser::Ptr dbParser);
+        explicit DBViewer(StrVector dbFilenames, const Str &criticalParam);
 
         void draw() override;
 

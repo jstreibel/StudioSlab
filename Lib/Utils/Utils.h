@@ -68,17 +68,21 @@ namespace Common {
     auto                    GetDensityChar(float dens, bool longSeq=false) -> char;
     void                    PrintDensityThere(int x, int y, float dens);
 
-    template<typename T>
-    bool                    contains(const std::vector<T> &vec, const T &val) {
-        return std::find(vec.begin(), vec.end(), val) != vec.end();
+    bool                    Contains(auto container, const auto &element) {
+        return std::find(container.begin(), container.end(), element) != container.end();
     }
+    // template<typename T>
+    // bool                    Contains(std::vector<T> vec, const T &element) {
+    //     return std::find(vec.begin(), vec.end(), element) != vec.end();
+    // }
+    // template<typename T>
+    // bool                    Contains(std::set<T> set, const T &element) {
+    //     return std::find(set.begin(), set.end(), element) != set.end();
+    // }
+
     template<typename T>
-    bool                    Contains(std::vector<T> vec, const T &element) {
-        return std::find(vec.begin(), vec.end(), element) != vec.end();
-    }
-    template<typename T>
-    bool                    Contains(std::set<T> vec, const T &element) {
-        return std::find(vec.begin(), vec.end(), element) != vec.end();
+    bool                    Find(auto container, bool(*compareFunc)(const T&)) {
+        return std::find_if(container.begin(), container.end(), compareFunc) != container.end();
     }
 
     /**

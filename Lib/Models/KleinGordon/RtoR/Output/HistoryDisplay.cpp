@@ -12,23 +12,23 @@
 #define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 Graphics::HistoryDisplay::HistoryDisplay(Str name, Real phiMin, Real phiMax)
-: Graphics::FlatFieldDisplay(name, phiMin, phiMax) {
+: Graphics::FlatFieldDisplay(name) {
 
 }
 
 void Graphics::HistoryDisplay::set_t(Real t_) {
     if(t_ == lastUpdatedTime) return;
 
-    auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
-
-    fix n = discreteFunc.getM();
-    fix t₀ = discreteFunc.getDomain().yMin;
-    fix tₘₐₓ = discreteFunc.getDomain().yMax;
-    fix t = min(t_, tₘₐₓ);
-
-    auto upToRow = (Count)(Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
-
-    assert(upToRow < n);
+    //auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+//
+    //fix n = discreteFunc.getM();
+    //fix t₀ = discreteFunc.getDomain().yMin;
+    //fix tₘₐₓ = discreteFunc.getDomain().yMax;
+    //fix t = min(t_, tₘₐₓ);
+//
+    //auto upToRow = (Count)(Real(n-1) * (t-t₀)/(tₘₐₓ-t₀));
+//
+    //assert(upToRow < n);
 
     NOT_IMPLEMENTED
     //const auto N = discreteFunc.getN();
@@ -47,8 +47,8 @@ void Graphics::HistoryDisplay::set_t(Real t_) {
 //
     //}
 
-    nextRow = upToRow+1;
-    lastUpdatedTime = t_;
+    // nextRow = upToRow+1;
+    // lastUpdatedTime = t_;
 }
 
 

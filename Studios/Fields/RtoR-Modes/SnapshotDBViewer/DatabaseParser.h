@@ -17,6 +17,7 @@
 namespace Modes::DatabaseViewer {
     typedef std::map<Real, std::shared_ptr<RtoR::DiscreteFunction_CPU>> FieldMap;
     class DBParser {
+        Str rootDatabaseFolder;
         std::map<Real, Str> fileSet;
         FieldMap fieldMap;
         Str criticalParameter;
@@ -32,6 +33,9 @@ namespace Modes::DatabaseViewer {
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;
         auto getFieldMap() const -> const FieldMap &;
+
+        auto getRootDatabaseFolder() const -> const Str&;
+
         auto buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU>;
     };
 } // Modes::DatabaseViewer

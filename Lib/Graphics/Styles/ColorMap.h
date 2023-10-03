@@ -15,13 +15,23 @@
 namespace Styles {
 
     class ColorMap {
+    public:
+        /* https://matplotlib.org/stable/users/explain/colors/colormaps.html */
+        enum ColorMapType {
+            Sequential,
+            Divergent,
+            Cyclic,
+        };
+
+    private:
         std::vector<Styles::Color> colors;
         Styles::Color clipped, saturated;
         Str name;
+        ColorMapType type;
 
     public:
         ColorMap() = default;
-        ColorMap(const Str &name, std::vector<Styles::Color> colorSeq, Styles::Color clipped=Styles::Nil, Styles::Color saturated=Styles::Nil);
+        ColorMap(const Str &name, ColorMapType, std::vector<Styles::Color> colorSeq, Styles::Color clipped=Styles::Nil, Styles::Color saturated=Styles::Nil);
         ColorMap(const ColorMap &colorMap);
 
         auto mapValue(Real clampedValue, Real min=-1, Real max=1) const -> Styles::Color;
@@ -34,7 +44,8 @@ namespace Styles {
         Color getClippedColor() const;
         Color getSaturatedColor() const;
 
-        Str getName() const;
+        auto getName() const -> Str;
+        auto getType() const -> ColorMapType;
     };
 
     extern std::map<Str, ColorMap> ColorMaps;

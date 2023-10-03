@@ -15,12 +15,10 @@ namespace Graphics {
         float s, t;     // texture
     };
 
-    FlatField2DArtist::FlatField2DArtist(Real phiMin, Real phiMax)
-    : cMap_min(phiMin)
-    , cMap_max(phiMax)
-    , symmetricMaxMin(Common::areEqual(phiMax,-phiMin))
-    , vertexBuffer("vertex:2f,tex_coord:2f")
+    FlatField2DArtist::FlatField2DArtist(Str name)
+    : vertexBuffer("vertex:2f,tex_coord:2f")
     , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+    , name(std::move(name))
     {
         computeColormapTexture();
 
@@ -34,6 +32,8 @@ namespace Graphics {
         if (func == nullptr) return;
 
         drawGUI();
+
+        if(!isVisible()) return;
 
         if (!validTextureData)
             repopulateTextureBuffer();
@@ -96,13 +96,18 @@ namespace Graphics {
     }
 
     void FlatField2DArtist::drawGUI() {
-        auto myName = Str("ℝ² flat field");
+        auto myName = Str("ℝ² ") + name + " display";
 
         if (ImGui::Begin("Stats")) {
             if (ImGui::CollapsingHeader(myName.c_str())) {
 
                 const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
-                ImGui::BeginChild((myName + "##1").c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
+                ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
+
+                auto visible = isVisible();
+                if(ImGui::Checkbox("Visible", &visible))
+                    setVisibility(visible);
+
 
                 if (func->isDiscrete()) {
                     auto &dFunc = *dynamic_cast<const R2toR::DiscreteFunction *>(func.get());
@@ -178,10 +183,8 @@ namespace Graphics {
                             if (is_selected)
                                 ImGui::SetItemDefaultFocus();
                         }
-                        if (item_last_idx != item_current_idx) {
-                            cMap = Styles::ColorMaps[selectedItem];
-                            computeColormapTexture();
-                        }
+                        if (item_last_idx != item_current_idx)
+                            setColorMap(Styles::ColorMaps[selectedItem]);
                         item_last_idx = item_current_idx;
                         ImGui::EndCombo();
                     }
@@ -219,6 +222,15 @@ namespace Graphics {
             funcUnit = unit;
             return;
         }
+
+        cMap_min = function->min();
+        cMap_max = function->max();
+
+        if(cMap_min >= 0.0) symmetricMaxMin = false;
+        else symmetricMaxMin = true;
+
+        program.setUniform("phiMin", (GLfloat) cMap_min);
+        program.setUniform("phiMax", (GLfloat) cMap_max);
 
         bool firstTime = func == nullptr;
         func = std::move(function);
@@ -280,6 +292,17 @@ namespace Graphics {
 
     void FlatField2DArtist::setColorMap(const Styles::ColorMap &colorMap) {
         cMap = colorMap;
+
+        symmetricMaxMin = cMap.getType() == Styles::ColorMap::Divergent;
+        if(symmetricMaxMin) {
+            auto max = std::max(abs(cMap_min), abs(cMap_max));
+            cMap_min = -max;
+            cMap_max = max;
+
+            program.setUniform("phiMin", (GLfloat) cMap_min);
+            program.setUniform("phiMax", (GLfloat) cMap_max);
+        }
+
         computeColormapTexture();
     }
 

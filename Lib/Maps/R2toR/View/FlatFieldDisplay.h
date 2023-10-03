@@ -34,22 +34,25 @@ namespace Graphics {
             };
 
             Graphics::OpenGL::ColorBarArtist colorBar;
-            Graphics::FlatField2DArtist flatField2DArtist;
+            typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
+            std::vector<FlatField2DArtistPtr> ff2dArtists;
 
         protected:
             Unit funcUnit;
-            R2toR::Function::ConstPtr func    = nullptr;
+            typedef std::multimap<zOrder_t, R2toR::Function::ConstPtr> FuncsMap;
+            FuncsMap funcsMap;
+            bool ContainsFunc(const R2toR::Function::ConstPtr&);
 
             void computeGraphRanges(const R2toR::Domain &domain);
 
             Str getXHairLabel(const Graphics::Point2D &coords) const override;
 
         public:
-            explicit FlatFieldDisplay(Str title="Full 2D", Real phiMin=-1., Real phiMax=1.);
+            explicit FlatFieldDisplay(Str title="Full 2D");
 
-            void setFunction(R2toR::Function::ConstPtr function, const Unit& unit=Constants::One);
+            void addFunction(R2toR::Function::ConstPtr function, Str name, zOrder_t zOrder=0);
 
-            auto getFunction() const -> R2toR::Function::ConstPtr;
+            auto getFunctionsMap() const -> FuncsMap;
 
             void setColorMap(const Styles::ColorMap& colorMap);
 

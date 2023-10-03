@@ -8,8 +8,14 @@
 #include <exception>
 #include <utility>
 #include "String.h"
+#include "Utils.h"
 
-#define NOT_IMPLEMENTED throw NotImplementedException(Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__));
+#define NOT_IMPLEMENTED_CLASS_METHOD throw NotImplementedException( \
+        Common::getClassName(this) +                   \
+        " (" + Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__) + ")");
+
+#define NOT_IMPLEMENTED throw NotImplementedException( \
+        Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__));
 
 class Exception : public std::exception {
 private:

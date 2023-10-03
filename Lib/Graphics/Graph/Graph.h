@@ -29,10 +29,13 @@
 namespace Graphics {
 
     class Graph2D : public Window {
+    protected:
+        typedef Int zOrder_t;
+
+    private:
         static std::map<Str, Graph2D*> graphMap;
 
-        typedef Int Priority_t;
-        typedef std::multimap<Priority_t, Artist::Ptr> ContentMap;
+        typedef std::multimap<zOrder_t, Artist::Ptr> ContentMap;
         ContentMap content;
 
         // ************************ POINT SET **************************************
@@ -94,7 +97,7 @@ namespace Graphics {
 
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
-        void addArtist(const Artist::Ptr& pArtist, Int priority=0);
+        void addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder=0);
 
         void draw() override;
 

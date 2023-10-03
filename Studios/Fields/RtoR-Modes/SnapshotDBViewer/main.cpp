@@ -22,8 +22,8 @@
 #include "DatabaseParser.h"
 
 class App : public AppBase {
-    StringParameter snapshotDBFolder = StringParameter("./db", "db_folder", "the location of the snapshots "
-                                                                            "database folder");
+        MultiStringParameter snapshotDBFolders = MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
+                                                                                        "database folders");
 
     StringParameter criticalParameter = StringParameter("omega", "param", "the critical param of the db set; should "
                                                                           "be the only changing value both on the "
@@ -33,7 +33,7 @@ public:
     App(int argc, const char **argv)
     : AppBase(argc, argv, false)
     {
-        interface->addParameters({&snapshotDBFolder, &criticalParameter});
+        interface->addParameters({&snapshotDBFolders, &criticalParameter});
         InterfaceManager::getInstance().registerInterface(interface);
 
         Core::BackendManager::Startup(Core::GLFW);
@@ -42,12 +42,11 @@ public:
     }
 
     int run() override {
-        Str dbLocation = Common::GetPWD() + "/" + *snapshotDBFolder;
+        auto dbLocations = *snapshotDBFolders;
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-        auto parser = std::make_shared<Modes::DatabaseViewer::DBParser>(dbLocation, *criticalParameter);
-        auto viewer = std::make_shared<Modes::DatabaseViewer::DBViewer>(parser);
+        auto viewer = std::make_shared<Modes::DatabaseViewer::DBViewer>(dbLocations, *criticalParameter);
         guiBackend.addEventListener(viewer);
 
         auto program = new DummyProgram;

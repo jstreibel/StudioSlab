@@ -28,7 +28,7 @@ Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _titl
 : region{xMin, xMax, yMin, yMax}
 , title(std::move(_title))
 , samples(samples)
-, axisArtist(region)
+, axisArtist()
 {
     if (title.empty()) title = Str("unnamed");
     Count n = 1;
@@ -40,8 +40,8 @@ Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _titl
 
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 
-    addArtist(DummyPtr(axisArtist));
-    addArtist(DummyPtr(artistXHair));
+    addArtist(DummyPtr(axisArtist), 100);
+    addArtist(DummyPtr(artistXHair), 90);
 }
 
 Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
@@ -49,8 +49,8 @@ Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
     autoReviewGraphRanges = autoReviewGraphLimits;
 }
 
-void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, Int priority) {
-    content.emplace(priority, pArtist);
+void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder) {
+    content.emplace(zOrder, pArtist);
 }
 
 void Graphics::Graph2D::draw() {
@@ -292,11 +292,5 @@ auto Graphics::Graph2D::countDisplayItems() const -> Count {
 }
 
 void Graphics::Graph2D::artistsDraw() {
-    for (const auto & [priority, artist] : content) {
-        if (artist->isVisible()) {
-            artist->draw(*this);
-            OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " drawing artist "
-                                  + Common::getClassName(artist.get()));
-        }
-    }
+    for (const auto & [priority, artist] : content) artist->draw(*this);
 }

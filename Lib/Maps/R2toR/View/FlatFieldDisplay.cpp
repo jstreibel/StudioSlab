@@ -4,30 +4,35 @@
 
 #include "FlatFieldDisplay.h"
 #include "Core/Tools/Animator.h"
+
 #include <utility>
+#include <limits>
 
 #define ODD true
 
-Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title, Real phiMin, Real phiMax)
+
+Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 : ::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
 , colorBar({50,150, 50, 750})
-, flatField2DArtist(phiMin, phiMax)
 {
-    addArtist(DummyPtr(flatField2DArtist), -10);
     addArtist(DummyPtr(colorBar));
 };
 
-void Graphics::FlatFieldDisplay::setFunction(R2toR::Function::ConstPtr function, const Unit& unit) {
-    if(func == function) return;
+void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, Str name, zOrder_t zOrder) {
+    if(ContainsFunc(function)) return;
 
-    bool firstTime = (func == nullptr);
-    func = std::move(function);
-    funcUnit = unit;
+    bool firstTime = funcsMap.empty();
 
-    flatField2DArtist.setFunction(func, unit);
-    auto &discrFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+    if(firstTime){
+        auto &discrFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*function);
+        computeGraphRanges(discrFunc.getDomain());
+    }
 
-    if(firstTime) computeGraphRanges(discrFunc.getDomain());
+    auto artist = std::make_shared<FlatField2DArtist>(name);
+    artist->setFunction(function);
+
+    funcsMap.emplace(zOrder, std::move(function));
+    addArtist(artist, zOrder);
 }
 
 bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
@@ -107,50 +112,68 @@ void Graphics::FlatFieldDisplay::computeGraphRanges(const R2toR::Domain &domain)
     set_yMax(_yMax);
 }
 
-auto Graphics::FlatFieldDisplay::getFunction() const -> R2toR::Function::ConstPtr { return func; }
+auto Graphics::FlatFieldDisplay::getFunctionsMap() const -> FuncsMap { return funcsMap; }
 
 Str Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords) const {
     auto label = Graph2D::getXHairLabel(coords);
 
-    if(func == nullptr) return label;
+    int zOrder_min = std::numeric_limits<int>::min();
 
-    auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+    for(auto &[zOrder, func] : funcsMap) {
 
-    auto xRes = discreteFunc.getN();
-    auto yRes = discreteFunc.getM();
+        if(zOrder < zOrder_min) continue;
 
-    auto domain = discreteFunc.getDomain();
+        zOrder_min = zOrder;
 
-    auto hPixelSizeInTexCoord = 1. / xRes;
-    auto vPixelSizeInTexCoord = 1. / yRes;
+        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction &>(*func);
 
-    auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
-    auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+        auto xRes = discreteFunc.getN();
+        auto yRes = discreteFunc.getM();
 
-    fix r = Real2D{coords.x, coords.y};
-    fix rMin = Real2D{coords.x+.5*hTexturePixelSizeInSpaceCoord, coords.y+.5*vTexturePixelSizeInSpaceCoord};
-    fix rMax = Real2D{coords.x-.5*hTexturePixelSizeInSpaceCoord, coords.y-.5*vTexturePixelSizeInSpaceCoord};
-    if(func->domainContainsPoint(r)) {
-        fix val = (*func)(r);
-        label = "f" + label + " = " + funcUnit(val, 5);
-    } else if(func->domainContainsPoint(rMin)) {
-        fix val = (*func)(rMin);
-        label = "f" + label + " = " + funcUnit(val, 5);
-    } else if(func->domainContainsPoint(rMax)) {
-        fix val = (*func)(rMax);
-        label = "f" + label + " = " + funcUnit(val, 5);
+        auto domain = discreteFunc.getDomain();
+
+        auto hPixelSizeInTexCoord = 1. / xRes;
+        auto vPixelSizeInTexCoord = 1. / yRes;
+
+        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+
+        fix r = Real2D{coords.x, coords.y};
+        fix rMin = Real2D{coords.x + .5 * hTexturePixelSizeInSpaceCoord,
+                          coords.y + .5 * vTexturePixelSizeInSpaceCoord};
+        fix rMax = Real2D{coords.x - .5 * hTexturePixelSizeInSpaceCoord,
+                          coords.y - .5 * vTexturePixelSizeInSpaceCoord};
+        if (func->domainContainsPoint(r)) {
+            fix val = (*func)(r);
+            label = "f" + label + " = " + funcUnit(val, 5);
+        } else if (func->domainContainsPoint(rMin)) {
+            fix val = (*func)(rMin);
+            label = "f" + label + " = " + funcUnit(val, 5);
+        } else if (func->domainContainsPoint(rMax)) {
+            fix val = (*func)(rMax);
+            label = "f" + label + " = " + funcUnit(val, 5);
+        }
     }
 
     return label;
 }
 
 void Graphics::FlatFieldDisplay::setColorMap(const Styles::ColorMap &colorMap) {
-    flatField2DArtist.setColorMap(colorMap);
-    colorBar.setTexture(flatField2DArtist.getColorMapTexture());
+    for(auto &artist : ff2dArtists) {
+        artist->setColorMap(colorMap);
+        colorBar.setTexture(artist->getColorMapTexture());
+    }
+}
+
+bool Graphics::FlatFieldDisplay::ContainsFunc(const R2toR::Function::ConstPtr& func){
+    typedef std::pair<zOrder_t, R2toR::Function::ConstPtr> Pair;
+    auto pred = [&func](const Pair &toComp){ return toComp.second==func; };
+    return std::find_if(funcsMap.begin(), funcsMap.end(), pred) != funcsMap.end();
 }
 
 void Graphics::FlatFieldDisplay::set_xPeriodicOn() {
-    flatField2DArtist.set_xPeriodicOn();
+    for(auto &artist : ff2dArtists)
+        artist->set_xPeriodicOn();
 }
 
 

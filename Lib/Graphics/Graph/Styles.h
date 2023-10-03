@@ -28,7 +28,7 @@ namespace Styles {
         Point
     };
 
-    const Styles::Color Nil = Color(-1, -1, -1, -1);
+    const Color Nil = Color(-1, -1, -1, -1);
 
 
     struct PlotStyle {
@@ -76,6 +76,9 @@ namespace Styles {
         std::shared_ptr<Graphics::Writer> ticksWriter;
 
         std::vector<PlotStyle> funcPlotStyles;
+
+        Resolution vTickHeightinPixels = 4;
+        Resolution vAxisPaddingInPixels = 60;
     };
 
     typedef std::shared_ptr<Styles::StyleScheme> ColorScheme_ptr;

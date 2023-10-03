@@ -70,6 +70,8 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/ComplexMagnitude.cpp
 		RtoR/Model/FunctionsCollection/ComplexMagnitude.h
 		RtoR/Model/FunctionsCollection/Bypass.h
+
+		R2toR/View/FlatFieldDisplay.h			R2toR/View/FlatFieldDisplay.cpp
 )
 
 
@@ -100,8 +102,9 @@ set ( R2TOR_SOURCES
 		RtoR2/StraightLine.cpp
 
 		R2toR/View/GraphR2Section.cpp
-		R2toR/View/FlatFieldDisplay.h			R2toR/View/FlatFieldDisplay.cpp
 		R2toR/View/GraphR2ToR.cpp
+		R2toR/View/FlatFieldDisplay.h			R2toR/View/FlatFieldDisplay.cpp
+		R2toR/View/FlatField2DArtist.h			R2toR/View/FlatField2DArtist.cpp
 
 		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h	R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
         R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h		        R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp

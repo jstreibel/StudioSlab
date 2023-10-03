@@ -130,10 +130,11 @@ auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {    return val
 
 #endif // PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
-typedef ParameterTemplate < int  > IntegerParameter;
-typedef ParameterTemplate < Real > RealParameter;
-typedef ParameterTemplate < Str  > StringParameter;
-typedef ParameterTemplate < bool > BoolParameter;
+typedef ParameterTemplate < int  >      IntegerParameter;
+typedef ParameterTemplate < Real >      RealParameter;
+typedef ParameterTemplate < StrVector > MultiStringParameter;
+typedef ParameterTemplate < Str  >      StringParameter;
+typedef ParameterTemplate < bool >      BoolParameter;
 
 
 

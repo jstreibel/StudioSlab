@@ -7,15 +7,20 @@
 
 #include <string>
 #include <sstream>
+#include <vector>
 
 typedef std::string         Str;
 typedef std::stringstream   StringStream;
+typedef std::vector<Str>    StrVector;
 
 namespace StrUtils {
     extern unsigned RealToStringDecimalPlaces;
     extern bool UseScientificNotation;
 
     void ReplaceLastOccurrence(Str& str, const Str& toReplace, const Str& replaceWith);
+
+    Str ReplaceAll(Str str, const Str& from, const Str& to);
+
 }
 
 Str ToStr(const double &a_value);
@@ -25,6 +30,7 @@ template <typename T>
 Str ToStr(const T &a_value){ return std::to_string(a_value); }
 Str ToStr(bool value);
 Str ToStr(const Str& str);
+Str ToStr(const StrVector& strVector);
 
 
 #endif //STUDIOSLAB_STRING_H

@@ -11,18 +11,16 @@
 namespace Graphics {
 
     class AxisArtist : public Artist {
-        void computeTicksSpacings();
+        void computeTicksSpacings(const Graph2D &graph);
 
-        void drawXAxis(const RectI &viewport);
-        void drawYAxis(const RectI &viewport);
+        void drawXAxis(const Graph2D &graph) const;
+        void drawYAxis(const Graph2D &graph) const;
 
-        const RectR &tiedRegion;
         Unit hUnit, vUnit;
         Real xSpacing=1, ySpacing=1;
     public:
-        explicit AxisArtist(const RectR &regionToTie,
-                            const Unit& horizontal =Constants::One,
-                            const Unit& vertical   =Constants::One);
+        AxisArtist();
+        explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
 
         void draw(const Graph2D &) override;
 

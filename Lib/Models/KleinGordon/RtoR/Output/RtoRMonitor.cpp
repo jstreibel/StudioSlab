@@ -258,7 +258,7 @@ void RtoR::Monitor::updateHistoryGraphs() {
     bool updateSamples = false;
     if( not isSetup ) {
         mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
-        mFullHistoryDisplay.setFunction(simulationHistory);
+        mFullHistoryDisplay.addFunction(simulationHistory, "ϕ(t,x)");
 
         auto &phi = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
         if(phi.getLaplacianType() == DiscreteFunction::Standard1D_PeriodicBorder)
@@ -365,7 +365,7 @@ void RtoR::Monitor::updateFTHistoryGraph() {
     static bool isSetup = false;
 
     if( not isSetup ) {
-        mFullSpaceFTHistoryDisplay.setFunction(spaceFTHistory);
+        mFullSpaceFTHistoryDisplay.addFunction(spaceFTHistory, "ϕ(t,x)");
 
         isSetup = true;
     }

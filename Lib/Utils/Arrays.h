@@ -27,7 +27,7 @@ typedef std::vector<int>        IntVector;
 template<class T>
 typename std::vector<T>     Vector;
 typedef std::ostream        OStream;
-typedef std::vector<Str> StrVector;
+typedef std::vector<Str>    StrVector;
 
 namespace Utils {
 
