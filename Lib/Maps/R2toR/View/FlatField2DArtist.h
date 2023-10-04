@@ -27,6 +27,7 @@ namespace Graphics {
         };
 
         typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
+        typedef std::shared_ptr<Graphics::OpenGL::Texture2D_Real> FieldDataTexturePtr;
 
         bool validTextureData = false;
 
@@ -43,7 +44,7 @@ namespace Graphics {
         Graphics::OpenGL::VertexBuffer vertexBuffer;
         Graphics::OpenGL::Shader program;
         R2toR::Function::ConstPtr func    = nullptr;
-        Graphics::OpenGL::Texture2D_Real*   textureData = nullptr;
+        FieldDataTexturePtr   textureData = nullptr;
 
         Str name;
 
@@ -54,7 +55,7 @@ namespace Graphics {
         void drawGUI();
 
     public:
-        FlatField2DArtist(Str name);
+        explicit FlatField2DArtist(Str name);
 
         void draw(const Graph2D &d) override;
 
@@ -63,7 +64,8 @@ namespace Graphics {
         void setColorMap(const Styles::ColorMap& colorMap);
         void set_xPeriodicOn();
 
-        CMapTexturePtr getColorMapTexture() const;
+        auto getColorMapTexture () const -> CMapTexturePtr;
+        auto getFieldTextureData() const -> FieldDataTexturePtr;
     };
 
 } // Graphics

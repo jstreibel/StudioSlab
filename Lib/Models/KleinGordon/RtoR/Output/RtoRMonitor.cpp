@@ -53,10 +53,10 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 , hamiltonian(hamiltonian)
 , mFieldsGraph( params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true, (int)params.getN()*4)
 , mEnergyGraph("Energy")
-, mHistoryGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
+, mHistorySliceGraph(params.getxMin(), params.getxMax(), phiMin, phiMax, "Fields", true)
 , mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true, SAMPLE_COUNT(150))
 , mFullHistoryDisplay("ϕ(t,x)")
-, mFullSpaceFTHistoryDisplay("F[ϕ(t)](k)", 0, 1)
+, mFullSpaceFTHistoryDisplay("F[ϕ(t)](k)")
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
@@ -70,7 +70,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
     panel.addWindow(&mEnergyGraph);
 
     panel.addWindow(&mFieldsGraph, true, 0.80);
-    panel.addWindow(&mHistoryGraph);
+    panel.addWindow(&mHistorySliceGraph);
     panel.addWindow(&mCorrelationGraph);
     panel.addWindow(&mSpaceFourierModesGraph);
 
@@ -98,7 +98,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 }
 
 void RtoR::Monitor::draw() {
-    fix V_str = hamiltonian.getThePotential()->mySymbol();
+    fix V_str = hamiltonian.getThePotential()->symbol();
 
     int errorCount = 0;
 
@@ -190,7 +190,7 @@ bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core:
 }
 
 void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
-    mHistoryGraph.setResolution(simHistory->getN());
+    mHistorySliceGraph.setResolution(simHistory->getN());
     simulationHistory = std::move(simHistory);
 
     if(sampler == nullptr){
@@ -270,8 +270,9 @@ void RtoR::Monitor::updateHistoryGraphs() {
     }
 
     section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-    mHistoryGraph.clearFunctions();
-    mHistoryGraph.addFunction(&mHistorySectionFunc, "History");
+    mHistorySliceGraph.clearFunctions();
+    auto label = Str("ϕ(t=") + ToStr(t_history, 2) + ",x)";
+    mHistorySliceGraph.addFunction(&mHistorySectionFunc, label);
 
     CHECK_GL_ERRORS(1)
 
@@ -296,14 +297,21 @@ void RtoR::Monitor::updateHistoryGraphs() {
             }
 
             auto graphResolution = (int)mCorrelationGraph.getResolution();
-            if(ImGui::SliderInt("graph resolution", &graphResolution, 10, (int)simulationHistory->getN())) {
+            if(ImGui::SliderInt("graph resolution",
+                                &graphResolution,
+                                10,
+                                (int)simulationHistory->getN()))
+            {
                 mCorrelationGraph.setResolution(graphResolution);
                 updateSamples = true;
             }
 
             fix Δt_max = params.gett();
             auto Dt = (float)Δt;
-            if(ImGui::SliderFloat("sampling range (Delta t)", &Dt, (float)tMax/(float)simulationHistory->getM(), (float)Δt_max)) {
+            if(ImGui::SliderFloat("sampling range (Delta t)",
+                                  &Dt,
+                                  (float)tMax/(float)simulationHistory->getM(),
+                                  (float)Δt_max)) {
                 Δt = Dt;
                 sampler->invalidateSamples();
                 updateSamples = true;
@@ -365,7 +373,7 @@ void RtoR::Monitor::updateFTHistoryGraph() {
     static bool isSetup = false;
 
     if( not isSetup ) {
-        mFullSpaceFTHistoryDisplay.addFunction(spaceFTHistory, "ϕ(t,x)");
+        mFullSpaceFTHistoryDisplay.addFunction(spaceFTHistory, "ℱ[ϕ(t)](k)");
 
         isSetup = true;
     }

@@ -17,7 +17,7 @@ class NullFunction : public RtoR::Function {
 
         FunctionT<Real, Real> *Clone() const override { return new NullFunction; }
 
-    Str mySymbol() const override {
+    Str symbol() const override {
         return "0";
     }
 };

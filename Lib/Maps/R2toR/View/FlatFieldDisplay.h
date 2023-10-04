@@ -35,9 +35,10 @@ namespace Graphics {
 
             Graphics::OpenGL::ColorBarArtist colorBar;
             typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
-            std::vector<FlatField2DArtistPtr> ff2dArtists;
 
         protected:
+            std::vector<FlatField2DArtistPtr> ff2dArtists;
+
             Unit funcUnit;
             typedef std::multimap<zOrder_t, R2toR::Function::ConstPtr> FuncsMap;
             FuncsMap funcsMap;
@@ -50,7 +51,7 @@ namespace Graphics {
         public:
             explicit FlatFieldDisplay(Str title="Full 2D");
 
-            void addFunction(R2toR::Function::ConstPtr function, Str name, zOrder_t zOrder=0);
+            void addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
 
             auto getFunctionsMap() const -> FuncsMap;
 

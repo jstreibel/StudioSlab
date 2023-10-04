@@ -4,6 +4,8 @@
 
 #include "Monitor.h"
 
+#include <memory>
+
 #define ODD true
 #define DONT_AFFECT_RANGES false
 
@@ -19,13 +21,15 @@ namespace Modes {
         assert(A.size() == Ω.size());
 
         fix N = A.size();
-        auto modes = Spaces::PointSet::Ptr(new Spaces::PointSet);
+        auto modes = std::make_shared<Spaces::PointSet>();
         for (auto i=0; i<N; ++i ) {
             fix ω = Ω[i];
             modes->addPoint({ω, 0.0});
             modes->addPoint({ω, A[i]});
         }
 
-        mSpaceFourierModesGraph.addPointSet(modes, Styles::GetCurrent()->funcPlotStyles[0].permuteColors(ODD), "A(ω)", DONT_AFFECT_RANGES);
+        mSpaceFourierModesGraph.addPointSet(modes,
+            Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
+            "A(ω)", DONT_AFFECT_RANGES);
     }
 } // Modes

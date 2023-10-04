@@ -42,7 +42,7 @@ namespace Core {
         // SetColorThemeDarkRed();
         SetStyleDark();
         //SetStyleLight();
-        SetStyleStudioSlab();
+        //SetStyleStudioSlab();
     }
 
     ImGuiModule::ImGuiModule(BackendImplementation backendImpl) {

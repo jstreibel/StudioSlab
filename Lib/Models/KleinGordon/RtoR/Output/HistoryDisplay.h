@@ -15,7 +15,7 @@ namespace Graphics {
         Real lastUpdatedTime = -1;
 
     public:
-        explicit HistoryDisplay(Str name="Full history", Real phiMin=-1., Real phiMax=1.);
+        explicit HistoryDisplay(Str name="Full history");
 
         void set_t(Real t);
     };

@@ -18,7 +18,7 @@ Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
     addArtist(DummyPtr(colorBar));
 };
 
-void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, Str name, zOrder_t zOrder) {
+void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) {
     if(ContainsFunc(function)) return;
 
     bool firstTime = funcsMap.empty();
@@ -32,6 +32,7 @@ void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
     artist->setFunction(function);
 
     funcsMap.emplace(zOrder, std::move(function));
+    ff2dArtists.emplace_back(artist);
     addArtist(artist, zOrder);
 }
 

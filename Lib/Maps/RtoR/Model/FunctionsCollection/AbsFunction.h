@@ -16,7 +16,7 @@ namespace RtoR {
 
         FunctionT<Real, Real> *Clone() const override;
 
-        Str mySymbol() const override;
+        Str symbol() const override;
     };
 }
 

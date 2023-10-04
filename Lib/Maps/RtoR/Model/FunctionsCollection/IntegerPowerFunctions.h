@@ -17,7 +17,7 @@ namespace RtoR {
 
         FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(m_sqr); }
 
-        Str mySymbol() const override {
+        Str symbol() const override {
             return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
         }
 
@@ -40,7 +40,7 @@ namespace RtoR {
             return new HarmonicPotential();
         }
 
-        Str mySymbol() const override {
+        Str symbol() const override {
             return "½m²ϕ²   m=" + ToStr(sqrt(m_sqr), 2);
         }
     };

@@ -19,6 +19,6 @@ Function::Ptr AbsFunction::diff(int n) const {
     return FunctionT<Real, Real>::Ptr(new SignumFunction);
 }
 
-Str AbsFunction::mySymbol() const {
+Str AbsFunction::symbol() const {
     return "|ϕ|";
 }

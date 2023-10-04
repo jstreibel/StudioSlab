@@ -89,7 +89,7 @@ namespace Core {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
-        virtual Str mySymbol() const { return "f(x)"; }
+        virtual Str symbol() const { return "f(x)"; }
         virtual Str myName() const { return Common::getClassName(this); }
 
         // RENDERING

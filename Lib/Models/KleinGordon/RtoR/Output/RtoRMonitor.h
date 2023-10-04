@@ -41,7 +41,7 @@ namespace RtoR {
 
         RtoR::Section1D mHistorySectionFunc;
 
-        GraphRtoR mHistoryGraph;
+        GraphRtoR mHistorySliceGraph;
 
         std::shared_ptr<const R2toR::DiscreteFunction>
                   simulationHistory = nullptr;

@@ -3,6 +3,8 @@
 //
 
 #include "FlatField2DArtist.h"
+
+#include <memory>
 #include "Graphics/Graph/Graph.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Utils/Resources.h"
@@ -247,8 +249,7 @@ namespace Graphics {
            || textureData->getWidth() != xRes
            || textureData->getHeight() != yRes)
         {
-            delete textureData;
-            textureData = new ::Graphics::OpenGL::Texture2D_Real((int) xRes, (int) yRes);
+            textureData = std::make_shared<::Graphics::OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
             textureData->setSWrap(::Graphics::OpenGL::ClampToEdge);
             textureData->setAntiAliasOff();
             program.setUniform("fieldData", textureData->getTextureUnit());
@@ -308,6 +309,12 @@ namespace Graphics {
 
     void FlatField2DArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
 
-    FlatField2DArtist::CMapTexturePtr FlatField2DArtist::getColorMapTexture() const{ return cMap_texture; }
+    FlatField2DArtist::CMapTexturePtr FlatField2DArtist::getColorMapTexture() const {
+        return cMap_texture;
+    }
+
+    FlatField2DArtist::FieldDataTexturePtr FlatField2DArtist::getFieldTextureData() const {
+        return textureData;
+    }
 
 } // Graphics
