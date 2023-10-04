@@ -31,8 +31,8 @@ namespace Tests {
 
 
     BezierTests::BezierTests() {
-        param1 = Graphics::Animator::GetBezierParams().first;
-        param2 = Graphics::Animator::GetBezierParams().second;
+        param1 = Core::Animator::GetBezierParams().first;
+        param2 = Core::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();
 
         addWindow(DummyPtr(stats), Right, .15);
@@ -44,9 +44,9 @@ namespace Tests {
         fix lim = 1.e3;
         static Spaces::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
         static Spaces::PointSet vertLine2{{{1.0, -lim}, {1.0, lim}}};
-        graph.addPointSet(DummyPtr(vertLine1), Styles::GetCurrent()->funcPlotStyles[1], "", false);
-        graph.addPointSet(DummyPtr(vertLine2), Styles::GetCurrent()->funcPlotStyles[1], "", false);
-        auto style = Styles::GetCurrent()->funcPlotStyles[2];
+        graph.addPointSet(DummyPtr(vertLine1), Math::StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
+        graph.addPointSet(DummyPtr(vertLine2), Math::StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
         style.primitive = Styles::Point;
         style.thickness = 10;
         graph.addPointSet(DummyPtr(currentPt), style, "", false);
@@ -60,33 +60,33 @@ namespace Tests {
         if(ImGui::SliderFloat("param1", &param1, -1, 2)
          | ImGui::SliderFloat("param2", &param2, -1, 2)
          | ImGui::SliderFloat("time", &animTimeSeconds, 0.1, 5)){
-            Graphics::Animator::SetBezierParams(param1, param2);
+            Core::Animator::SetBezierParams(param1, param2);
             graph.setAnimationTime(animTimeSeconds);
         }
         stats.end();
 
         currentPt.clear();
         auto &r = graph.getRegion();
-        if(Graphics::Animator::Contains(r.xMin)){
-            auto &anim = Graphics::Animator::Get(r.xMin);
+        if(Core::Animator::Contains(r.xMin)){
+            auto &anim = Core::Animator::Get(r.xMin);
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(r.xMax)){
-            auto &anim = Graphics::Animator::Get(r.xMax);
+        if(Core::Animator::Contains(r.xMax)){
+            auto &anim = Core::Animator::Get(r.xMax);
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(r.yMin)){
-            auto &anim = Graphics::Animator::Get(r.yMin);
+        if(Core::Animator::Contains(r.yMin)){
+            auto &anim = Core::Animator::Get(r.yMin);
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Graphics::Animator::Contains(r.yMax)){
-            auto &anim = Graphics::Animator::Get(r.yMax);
+        if(Core::Animator::Contains(r.yMax)){
+            auto &anim = Core::Animator::Get(r.yMax);
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }

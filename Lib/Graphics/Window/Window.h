@@ -11,6 +11,7 @@
 #include "Graphics/Styles/WindowStyles.h"
 
 #include "Core/Backend/Events/GUIEventListener.h"
+#include "Core/Backend/Events/MouseState.h"
 
 #include <vector>
 #include <memory>
@@ -39,6 +40,9 @@ namespace Graphics {
 
         void setupWindow() const;
 
+        Core::KeyState mouseLeftButton = Core::Release;
+        Core::KeyState mouseRightButton = Core::Release;
+
     protected:
         Flags flags;
         RectI windowRect;
@@ -50,9 +54,12 @@ namespace Graphics {
 
         virtual void draw();
 
-        virtual void notifyReshape(int _w, int _h);
+        virtual void notifyReshape(int w, int h);
 
         bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
+
+        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state,
+                               Core::ModKeys keys) override;
 
         bool notifyRender() override;
 
@@ -61,28 +68,22 @@ namespace Graphics {
         void setClear(bool _clear);
 
         auto isMouseIn() const -> bool;
-
+        auto isMouseLeftClicked() const -> bool;
+        auto isMouseRightClicked() const -> bool;
         auto getMouseWindowCoord() const -> Point2D;
-
         auto getMouseViewportCoord() const -> Point2D;
 
         RectI getViewport() const;
 
         const RectI &getWindowRect() const { return windowRect; };
 
-        int getx() const { return windowRect.xMin; }
-
-        int gety() const { return windowRect.yMin; }
-
-        int getw() const { return windowRect.width(); }
-
-        int geth() const { return windowRect.height(); }
-
-        void setx(int x) { windowRect.xMin = x; }
-
-        void sety(int y) { windowRect.yMin = y; }
-
-        void setSize(int w, int h) {
+        inline auto getx() const -> int  { return windowRect.xMin; }
+        inline auto gety() const -> int  { return windowRect.yMin; }
+        inline auto getw() const -> int  { return windowRect.width(); }
+        inline auto geth() const -> int  { return windowRect.height(); }
+        inline auto setx(int x)  -> void { windowRect.xMin = x; }
+        inline auto sety(int y)  -> void { windowRect.yMin = y; }
+        inline void setSize(int w, int h) {
             windowRect.xMax = windowRect.xMin + w;
             windowRect.yMax = windowRect.yMin + h;
         }

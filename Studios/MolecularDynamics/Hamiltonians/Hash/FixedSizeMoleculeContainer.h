@@ -7,6 +7,7 @@
 
 #include "Utils/Types.h"
 #include "HashParams.h"
+#include "Graphics/Types.h"
 
 
 #define get_q(triple) (*(triple.first.first))
@@ -16,8 +17,8 @@
 
 class FixedSizeMoleculeContainer{
 public:
-    typedef std::pair<const Point2D*, const Point2D*> PointRefPair;
-    typedef std::pair<PointRefPair, Point2D*> VerletPointTriple;
+    typedef std::pair<const Graphics::Point2D*, const Graphics::Point2D*> PointRefPair;
+    typedef std::pair<PointRefPair, Graphics::Point2D*> VerletPointTriple;
 
 public:
     FixedSizeMoleculeContainer() = default;

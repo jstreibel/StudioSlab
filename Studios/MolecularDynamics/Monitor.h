@@ -16,7 +16,7 @@
 #define MOLS_HISTORY_SIZE 100
 
 namespace MolecularDynamics {
-    class Monitor : public Numerics::OutputSystem::Socket, public Window {
+    class Monitor : public Numerics::OutputSystem::Socket, public Graphics::Window {
         sf::RenderWindow &renderWindow;
 
         std::vector<sf::Vertex> molShapes;

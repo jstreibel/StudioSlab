@@ -65,9 +65,9 @@ namespace Tests {
     {
         updateGraphs();
 
-        mFTGraph.addFunction(&amplitudes, Str("ℱ[") + funcSymbol + "](k)", Styles::GetCurrent()->funcPlotStyles[4]);
+        mFTGraph.addFunction(&amplitudes, Str("ℱ[") + funcSymbol + "](k)", Math::StylesManager::GetCurrent()->funcPlotStyles[4]);
 
-        row.addWindow(DummyPtr(gui), WindowRow::Right, .25);
+        row.addWindow(DummyPtr(gui), Graphics::WindowRow::Right, .25);
 
         col.addWindow(DummyPtr(mFTGraph));
         col.addWindow(DummyPtr(mDFTGraph));
@@ -136,7 +136,7 @@ namespace Tests {
                 }
             }
 
-            auto style = Styles::GetCurrent()->funcPlotStyles[1];
+            auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.primitive = Styles::VerticalLines;
@@ -145,7 +145,7 @@ namespace Tests {
             mDFTGraph.clearPointSets();
             mDFTGraph.addPointSet(modes.re, style, Str("ℑ(ℱ[") + funcSymbol + "(x)])", false);
 
-            style = Styles::GetCurrent()->funcPlotStyles[3];
+            style = Math::StylesManager::GetCurrent()->funcPlotStyles[3];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.primitive = Styles::VerticalLines;
@@ -192,12 +192,12 @@ namespace Tests {
         {
             mFuncGraph.clearFunctions();
 
-            auto style = Styles::GetCurrent()->funcPlotStyles[0].permuteColors(true);
+            auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             mFuncGraph.addFunction(&Func, funcSymbol, style);
 
-            style = Styles::GetCurrent()->funcPlotStyles[1].permuteColors(true);
+            style = Math::StylesManager::GetCurrent()->funcPlotStyles[1].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             FuncRebuilt.setModes(modes);
@@ -213,8 +213,8 @@ namespace Tests {
                 L_loc1.setPoints({{0.0, -2},
                                   {0.0, +2}});
 
-                mFuncGraph.addPointSet(DummyPtr(L_loc1), Styles::GetCurrent()->funcPlotStyles[3], "xₘᵢₙ", false);
-                mFuncGraph.addPointSet(DummyPtr(L_loc2), Styles::GetCurrent()->funcPlotStyles[3], "xₘₐₓ", false);
+                mFuncGraph.addPointSet(DummyPtr(L_loc1), Math::StylesManager::GetCurrent()->funcPlotStyles[3], "xₘᵢₙ", false);
+                mFuncGraph.addPointSet(DummyPtr(L_loc2), Math::StylesManager::GetCurrent()->funcPlotStyles[3], "xₘₐₓ", false);
 
                 initd = true;
             }

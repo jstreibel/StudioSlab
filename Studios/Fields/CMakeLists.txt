@@ -4,17 +4,17 @@ add_subdirectory(RtoR-Modes)
 # ************************************************************************************************************
 
 
-add_executable ( Signals-RtoR
-		SignalProcess/SignalMain.cpp
-		SignalProcess/Signal.cpp
-		SignalProcess/JackServer.cpp
-		SignalProcess/JackServer.h
-		SignalProcess/OutGL.cpp
-		SignalProcess/OutGL.h)
-target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU jack SOIL )
-# set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
-
-message(NOTICE "Added executable Signals-RtoR")
+#add_executable ( Signals-RtoR
+#		SignalProcess/SignalMain.cpp
+#		SignalProcess/Signal.cpp
+#		SignalProcess/JackServer.cpp
+#		SignalProcess/JackServer.h
+#		SignalProcess/OutGL.cpp
+#		SignalProcess/OutGL.h)
+#target_link_libraries ( Signals-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU jack SOIL )
+## set_property(TARGET fieldsRtoR PROPERTY CUDA_ARCHITECTURES 61)
+#
+#message(NOTICE "Added executable Signals-RtoR")
 
 
 # ************************************************************************************************************
@@ -51,7 +51,7 @@ add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/Studies/StatisticalBuilder.h				RtoR-Thermal/Studies/StatisticalBuilder.cpp
 		RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.h	RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.cpp
 		)
-target_link_libraries (Fields-RtoR-Thermal Slab-Models Slab-Maps-RtoR_GPU )
+target_link_libraries (Fields-RtoR-Thermal Slab-Graphics Slab-Models Slab-Maps-RtoR_GPU )
 
 message(NOTICE "Added executable Fields-RtoR-Thermal")
 
@@ -59,13 +59,13 @@ message(NOTICE "Added executable Fields-RtoR-Thermal")
 # ************************************************************************************************************
 
 
-add_executable (Fields-Montecarlo
-		Montecarlo1+1/MontecarloMain.cpp
-		Montecarlo1+1/Monitor.cpp
-		${SOURCES}  )
-target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Maps-RtoR-Periodic_GPU )
-
-message(NOTICE "Added executable Fields-Montecarlo")
+#add_executable (Fields-Montecarlo
+#		Montecarlo1+1/MontecarloMain.cpp
+#		Montecarlo1+1/Monitor.cpp
+#		${SOURCES}  )
+#target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Maps-RtoR-Periodic_GPU )
+#
+#message(NOTICE "Added executable Fields-Montecarlo")
 
 
 # ************************************************************************************************************

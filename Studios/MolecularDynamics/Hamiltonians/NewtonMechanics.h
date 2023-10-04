@@ -22,19 +22,19 @@ namespace MolecularDynamics {
     protected:
         const NumericConfig &params;
 
-        virtual void applyBoundaryConditions(PointContainer &v_q);      // For velocity Verlet stepper
+        virtual void applyBoundaryConditions(Graphics::PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
 
-        virtual Real U(const Point2D &q1, const Point2D &q2) { return 0; };
+        virtual Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) { return 0; };
 
-        virtual Point2D dUdr(const Point2D &q1, const Point2D &q2) = 0;
+        virtual Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) = 0;
 
         /**
          * Non-homogeneous force term
          * @param t current simulation time
          * @return the non-homogeneous force
          */
-        virtual Point2D F_nh(Real t) { return {0,0}; }
+        virtual Graphics::Point2D F_nh(Real t) { return {0,0}; }
 
     public:
         explicit NewtonMechanics(const NumericConfig &);
@@ -43,12 +43,12 @@ namespace MolecularDynamics {
 
         auto setDissipation(Real k) -> void;
 
-        Real computeEnergy(const PointContainer &v_q, PointContainer &v_p);
+        Real computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p);
 
         // For velocity Verlet stepper
-        void operator()(const PointContainer &q,
-                        const PointContainer &p,
-                        PointContainer &dpdt, Real /* t */);
+        void operator()(const Graphics::PointContainer &q,
+                        const Graphics::PointContainer &p,
+                        Graphics::PointContainer &dpdt, Real /* t */);
 
         // For RK4 stepper
         void operator()(const MoleculeContainer &m, MoleculeContainer &dmdt, Real /* t */);

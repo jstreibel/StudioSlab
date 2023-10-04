@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KG_RTORBUILDER_H
 #define STUDIOSLAB_KG_RTORBUILDER_H
 
-#include "Output/RtoRMonitor.h"
+#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 #include "../KGBuilder.h"
 
 namespace RtoR {

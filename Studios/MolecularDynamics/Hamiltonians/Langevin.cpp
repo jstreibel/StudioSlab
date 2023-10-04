@@ -8,14 +8,14 @@ namespace MolecularDynamics {
 
     Langevin::Langevin(const NumericConfig &p, Real T) : NewtonMechanics(p), T(T), dt(p.getdt()) {    }
 
-    Point2D Langevin::xi() {
+    Graphics::Point2D Langevin::xi() {
         const Real z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;
         const Real r = sqrt(-2.0 * log(1.0 - z));
 
         return {r * cos(theta), r * sin(theta)};
     }
 
-    Point2D Langevin::F_nh(Real) {
+    Graphics::Point2D Langevin::F_nh(Real) {
         fix alpha = sqrt(2 * T / dt);
         return alpha * xi();
     }

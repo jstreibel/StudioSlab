@@ -29,5 +29,6 @@ target_link_libraries ( MolDynamic
 		Slab-Utils
 		Slab-Core
 		Slab-Math
+		Slab-Graphics
 		boost_random
 )

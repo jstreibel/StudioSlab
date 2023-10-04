@@ -5,7 +5,8 @@
 #ifndef STUDIOSLAB_MONITOR_H
 #define STUDIOSLAB_MONITOR_H
 
-#include "Models/KleinGordon/RtoR/Output/RtoRMonitor.h"
+
+#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 
 namespace Modes {
 

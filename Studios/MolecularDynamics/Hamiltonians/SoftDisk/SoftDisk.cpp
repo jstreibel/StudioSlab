@@ -11,26 +11,26 @@ namespace MolecularDynamics {
 
     }
 
-    inline Point2D SoftDisk::dUdr(const Point2D &q1, const Point2D &q2) {
+    inline Graphics::Point2D SoftDisk::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
         const Real SIGMA_SQR = σ * σ;
         Real normSqr;
 
         const auto L = params.getL();
 
-        const Point2D points[] = {
+        const Graphics::Point2D points[] = {
                 q2 - q1,
-                Point2D(q2.x - L, q2.y) - q1,
-                Point2D(q2.x + L, q2.y) - q1,
-                Point2D(q2.x, q2.y - L) - q1,
-                Point2D(q2.x, q2.y + L) - q1,
+                Graphics::Point2D(q2.x - L, q2.y) - q1,
+                Graphics::Point2D(q2.x + L, q2.y) - q1,
+                Graphics::Point2D(q2.x, q2.y - L) - q1,
+                Graphics::Point2D(q2.x, q2.y + L) - q1,
 
-                Point2D(q2.x - L, q2.y - L) - q1,
-                Point2D(q2.x - L, q2.y + L) - q1,
-                Point2D(q2.x + L, q2.y - L) - q1,
-                Point2D(q2.x + L, q2.y + L) - q1
+                Graphics::Point2D(q2.x - L, q2.y - L) - q1,
+                Graphics::Point2D(q2.x - L, q2.y + L) - q1,
+                Graphics::Point2D(q2.x + L, q2.y - L) - q1,
+                Graphics::Point2D(q2.x + L, q2.y + L) - q1
         };
 
-        Point2D resultForce = {.0, .0};
+        Graphics::Point2D resultForce = {.0, .0};
         for (auto r: points) {
             normSqr = r.lengthSqr();
 
@@ -39,7 +39,7 @@ namespace MolecularDynamics {
                 const DoubleAccess arg = {1.0 - norm / σ};
                 const Real mag = ε / σ * pow(arg.val, ALPHA - 1.0) * arg.isPositive();
 
-                const Point2D force = -(mag / norm) * r;
+                const Graphics::Point2D force = -(mag / norm) * r;
 
                 resultForce = resultForce + force;
             }
@@ -48,11 +48,11 @@ namespace MolecularDynamics {
         return resultForce;
     }
 
-    Real SoftDisk::U(const Point2D &q1, const Point2D &q2) {
+    Real SoftDisk::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
         const Real SIGMA_SQR = σ * σ;
         Real normSqr;
 
-        const Point2D points[] = {
+        const Graphics::Point2D points[] = {
                 q2 - q1,
                 /*
                 Point2D(q2.x-SIMSPACE_SIDE_SIZE, q2.y)-q1,

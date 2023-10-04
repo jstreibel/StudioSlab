@@ -11,6 +11,8 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
+
+#include "Graphics/Graph/StylesManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <sstream>
@@ -38,7 +40,7 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 
 
 RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
-: RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
+: ::RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
 , mTemperaturesGraph("T")
 , mHistogramsGraphK(   "k histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_GRAPH_LIMITS)
@@ -46,7 +48,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 , mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 {
     {
-        auto style = Styles::GetCurrent()->funcPlotStyles.begin();
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
 
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
@@ -61,14 +63,14 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
     }
 
     {
-        auto style = Styles::GetCurrent()->funcPlotStyles.begin();
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
         mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
         mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
         mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
         mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), *style++, "V");
 
 
-        auto *histogramsPanel = new WindowPanel();
+        auto *histogramsPanel = new Graphics::WindowPanel();
         histogramsPanel->addWindow(&mHistogramsGraphV);
         histogramsPanel->addWindow(&mHistogramsGraphGrad);
         histogramsPanel->addWindow(&mHistogramsGraphK, ADD_NEW_COLUMN);
@@ -126,7 +128,7 @@ void RtoR::Thermal::Monitor::draw() {
     }
 
     std::ostringstream ss;
-    auto style = Styles::GetCurrent()->funcPlotStyles.begin();
+    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
     stats.addVolatileStat("<\\br>");
     stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
     stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
@@ -134,7 +136,7 @@ void RtoR::Thermal::Monitor::draw() {
     stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
     stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-    style = Styles::GetCurrent()->funcPlotStyles.begin();
+    style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
     stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
     stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
     stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
@@ -147,7 +149,7 @@ void RtoR::Thermal::Monitor::draw() {
 void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
     transientGuess = guess;
 
-    auto transientStyle = Styles::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
+    auto transientStyle = Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
 
     static auto vLine = Spaces::PointSet::New();
     vLine->clear();
@@ -159,7 +161,7 @@ void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
 
     // Transient in full history
     {
-        auto style = Styles::GetCurrent()->funcPlotStyles.back();
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.back();
         style.filled = false;
         style.thickness = 2;
 

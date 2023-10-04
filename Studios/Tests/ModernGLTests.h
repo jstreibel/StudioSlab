@@ -14,11 +14,11 @@
 
 namespace Tests {
 
-    class ModernGLTests : public WindowRow {
-        OpenGL::Shader program;
-        OpenGL::VertexBuffer buffer;
-        OpenGL::Texture2D_Color texture;
-        OpenGL::Texture2D_Real realTexture;
+    class ModernGLTests : public Graphics::WindowRow {
+        Graphics::OpenGL::Shader program;
+        Graphics::OpenGL::VertexBuffer buffer;
+        Graphics::OpenGL::Texture2D_Color texture;
+        Graphics::OpenGL::Texture2D_Real realTexture;
         Graphics::Writer writer;
 
         ftgl::mat4 model{}, view{}, projection{};

@@ -19,3 +19,9 @@ void GraphicBackend::addModule(const std::shared_ptr<Core::Module> &module) {
 const std::vector<std::shared_ptr<Core::Module>> &GraphicBackend::getModules() {
     return modules;
 }
+
+void GraphicBackend::setClearColor(Real _r, Real _g, Real _b) {
+    r = _r;
+    g = _g;
+    b = _b;
+}

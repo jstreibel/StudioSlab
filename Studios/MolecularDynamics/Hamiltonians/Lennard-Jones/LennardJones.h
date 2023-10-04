@@ -9,9 +9,9 @@ namespace MolecularDynamics {
         const Real L;
 
     protected:
-        Real U(const Point2D &q1, const Point2D &q2) override;
+        Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
-        Point2D dUdr(const Point2D &q1, const Point2D &q2) override;
+        Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
         LennardJones(const NumericConfig &);

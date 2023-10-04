@@ -18,9 +18,7 @@ namespace Graphics {
             : clearColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
 
-    void Window::draw() {
-        setupWindow();
-    }
+    void Window::draw() { setupWindow(); }
 
     void Window::setupWindow() const {
         OpenGL::Shader::remove();
@@ -91,6 +89,26 @@ namespace Graphics {
         return mouse.x > x && mouse.x < x + w && hScreen - mouse.y > y && hScreen - mouse.y < y + h;
     }
 
+    auto Window::isMouseLeftClicked() const -> bool {
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+        fix &mouse = guiBackend.getMouseState();
+
+        if(!mouse.leftPressed) return false;
+
+        return mouseLeftButton==Core::Press;
+    }
+
+    auto Window::isMouseRightClicked() const -> bool {
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+        fix &mouse = guiBackend.getMouseState();
+
+        if(!mouse.rightPressed) return false;
+
+        return mouseRightButton==Core::Press;
+    }
+
     auto Window::getMouseWindowCoord() const -> Point2D {
         fix &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
 
@@ -134,18 +152,25 @@ namespace Graphics {
     }
 
     RectI Window::getViewport() const {
-        int menuHeight = flags & HasMainMenu ? Graphics::menuHeight : 0;
+        int xtraPadding = flags & HasMainMenu ? Graphics::menuHeight : 0;
 
         auto _x = getx() + Graphics::hPadding,
                 _y = gety() + Graphics::vPadding,
                 _w = getw() - 2 * Graphics::hPadding,
-                _h = geth() - 2 * Graphics::vPadding - menuHeight;
+                _h = geth() - 2 * Graphics::vPadding - xtraPadding;
 
         return {_x, _x + _w, _y, _y + _h};
     }
 
-    void Window::setClearColor(Styles::Color color) {
-        clearColor = std::move(color);
+    void Window::setClearColor(Styles::Color color) { clearColor = color; }
+
+    bool
+    Window::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+        if     (button == Core::MouseButton_LEFT)  mouseLeftButton  = state;
+
+        else if(button == Core::MouseButton_RIGHT) mouseRightButton = state;
+
+        return GUIEventListener::notifyMouseButton(button, state, keys);
     }
 
 }

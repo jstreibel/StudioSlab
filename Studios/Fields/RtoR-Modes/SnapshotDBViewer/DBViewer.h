@@ -8,8 +8,7 @@
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "DatabaseParser.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Maps/R2toR/View/FlatFieldDisplay.h"
-#include "Maps/RtoR/View/GraphRtoR.h"
+#include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
 
 namespace Modes::DatabaseViewer {
     class DBViewer : public Graphics::WindowRow {

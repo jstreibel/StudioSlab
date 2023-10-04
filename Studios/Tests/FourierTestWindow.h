@@ -5,21 +5,21 @@
 #ifndef STUDIOSLAB_FOURIERTESTWINDOW_H
 #define STUDIOSLAB_FOURIERTESTWINDOW_H
 
-#include "Maps/RtoR/View/GraphRtoR.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
 
 namespace Tests {
 
-    class FourierTestWindow : public Window {
-        WindowRow row;
-        WindowColumn col;
+class FourierTestWindow : public Graphics::Window {
+        Graphics::WindowRow row;
+        Graphics::WindowColumn col;
 
-        GraphRtoR mFuncGraph;
+        Graphics::GraphRtoR mFuncGraph;
         Graphics::Graph2D mDFTGraph;
-        GraphRtoR mFTGraph;
-        GUIWindow gui;
+        Graphics::GraphRtoR mFTGraph;
+        Graphics::GUIWindow gui;
 
         void updateGraphs();
     public:

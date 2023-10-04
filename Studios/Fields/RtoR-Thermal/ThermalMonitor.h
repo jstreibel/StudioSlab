@@ -5,12 +5,12 @@
 #ifndef STUDIOSLAB_THERMALMONITOR_H
 #define STUDIOSLAB_THERMALMONITOR_H
 
-#include "Models/KleinGordon/RtoR/Output/RtoRMonitor.h"
 
+#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 
 namespace RtoR::Thermal {
 
-    class Monitor : public RtoR::Monitor {
+    class Monitor : public ::RtoR::Monitor {
         Real transientGuess = -1.0;
         RtoR2::StraightLine transientLine;
 

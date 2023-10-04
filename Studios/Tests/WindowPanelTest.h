@@ -7,11 +7,12 @@
 
 
 #include <Core/Backend/Events/GUIEventListener.h>
-#include <Core/Graphics/Window/WindowContainer/WindowPanel.h>
+#include "Graphics/Window/Window.h"
+#include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 
-class WindowPanelTest : public Window {
-    WindowPanel *panel;
+class WindowPanelTest : public Graphics::Window {
+    Graphics::WindowPanel *panel;
 
 public:
     WindowPanelTest();

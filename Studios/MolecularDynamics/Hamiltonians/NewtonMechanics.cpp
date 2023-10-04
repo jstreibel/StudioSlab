@@ -25,14 +25,14 @@ namespace MolecularDynamics {
 
         if(USE_NEW_EXPERIMENTAL_IMPLEMENTATION) {
             if (spaceHash.totalLength() != L) {
-                Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
+                Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
                              << spaceHash.totalLength()
                              << " while sim space is " << L;
 
                 throw "Hashspace inconsistency";
 
             } else if (spaceHash.l <= CUTOFF_RADIUS) {
-                Log::Fatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
+                Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
                              << " while molecule cutoff radius is " << CUTOFF_RADIUS << Log::Flush;
 
                 throw "Hashspace inconsistency";
@@ -46,7 +46,7 @@ namespace MolecularDynamics {
     NewtonMechanics::~NewtonMechanics() = default;
 
 
-    void NewtonMechanics::applyBoundaryConditions(PointContainer & v_q) {
+    void NewtonMechanics::applyBoundaryConditions(Graphics::PointContainer & v_q) {
         const auto L = params.getL();
 
         const Real hw = L * .5;
@@ -89,7 +89,7 @@ namespace MolecularDynamics {
     }
 
 
-    Real NewtonMechanics::computeEnergy(const PointContainer &v_q, PointContainer &v_p) {
+    Real NewtonMechanics::computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p) {
         Real K = .0;
         for (auto &p : v_p)
             K += p.lengthSqr();
@@ -98,9 +98,9 @@ namespace MolecularDynamics {
         const size_t N = v_q.size();
         Real _U = 0.0;
         for (size_t i = 0; i < N - 1; i++) {
-            const Point2D &q1 = v_q[i];
+            const Graphics::Point2D &q1 = v_q[i];
             for (size_t j = i; j < N; j++) {
-                const Point2D &q2 = v_q[j];
+                const Graphics::Point2D &q2 = v_q[j];
 
                 _U += U(q1, q2);
             }
@@ -110,9 +110,9 @@ namespace MolecularDynamics {
     }
 
     void
-    NewtonMechanics::operator()(const PointContainer &v_q, const PointContainer &v_p, PointContainer &v_dpdt,
+    NewtonMechanics::operator()(const Graphics::PointContainer &v_q, const Graphics::PointContainer &v_p, Graphics::PointContainer &v_dpdt,
                                 double t) {
-        applyBoundaryConditions(const_cast<PointContainer &>(v_q));
+        applyBoundaryConditions(const_cast<Graphics::PointContainer &>(v_q));
 
         // Single molecule potential + non-homogenous
         for (int i = 0; i < v_q.size(); i++) {
@@ -235,7 +235,7 @@ namespace MolecularDynamics {
                     const auto &q2 = v_q[l];
                     auto       &F2 = v_dpdt[l];
 
-                    const Point2D F = dUdr(q1, q2);
+                    const Graphics::Point2D F = dUdr(q1, q2);
 
                     F1 += F;
                     F2 -= F;

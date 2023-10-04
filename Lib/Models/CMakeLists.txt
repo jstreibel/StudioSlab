@@ -10,9 +10,7 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/KG-RtoREnergyCalculator.cpp
 		KleinGordon/RtoR/KG-RtoREquationState.cpp
 		KleinGordon/RtoR/KG-RtoRBoundaryCondition.cpp
-		KleinGordon/RtoR/Output/RtoRMonitor.cpp
 		KleinGordon/RtoR/Output/SimHistory.h			KleinGordon/RtoR/Output/SimHistory.cpp
-		KleinGordon/RtoR/Output/HistoryDisplay.h		KleinGordon/RtoR/Output/HistoryDisplay.cpp
 		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
 		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
 

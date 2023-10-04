@@ -4,12 +4,10 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
-#include "Graphics/Styles/WindowStyles.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
 
 #include <GL/freeglut.h>
 #include <cassert>
-#include <filesystem>
 
 #define FULLSCREEN true
 
@@ -153,8 +151,7 @@ void GLUTBackend::render()
 
     if(me.renderingRequested) me.renderingRequested = false;
 
-    auto bg = Graphics::clearColor;
-    glClearColor(bg.r, bg.g, bg.b, bg.a);
+    glClearColor(me.r, me.g, me.b, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     auto &modules = me.getModules();

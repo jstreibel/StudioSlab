@@ -14,7 +14,8 @@
 #define MAX_FPS 30
 
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
-        : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws), Window() {
+: Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws)
+, Window(0, 0, 100, 100, HasMainMenu) {
     GUIEventListener::addResponder(&panel);
 
     panel.addWindow(&stats);
@@ -212,7 +213,8 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState st
 void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
     Window::notifyReshape(newWinW, newWinH);
 
-    panel.notifyReshape(newWinW, newWinH);
+    int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
+    panel.notifyReshape(newWinW, newWinH-menuRoom);
 }
 
 void Graphics::OpenGLMonitor::setnSteps(int nSteps) {

@@ -16,7 +16,7 @@ namespace MolecularDynamics {
     class VerletStepper : public Stepper {
         NewtonMechanicsModel mechanicsModel;
 
-        PointContainer q, p;
+        Graphics::PointContainer q, p;
         State state;
         Count currStep=0;
 

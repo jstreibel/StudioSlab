@@ -10,11 +10,11 @@ namespace MolecularDynamics {
         if (n < 3) throw "Hash space linear subdivisions must be >= 3.";
     }
 
-    void MoleculeSpaceHash::ComputeHash(const PointContainer &v_q, const PointContainer &v_p, PointContainer &dpdt) {
+    void MoleculeSpaceHash::ComputeHash(const Graphics::PointContainer &v_q, const Graphics::PointContainer &v_p, Graphics::PointContainer &dpdt) {
         for (auto &c: hashSpace) c.reset();
 
         for (auto k = 0; k < v_q.size(); ++k) {
-            const Point2D &q = v_q[k];
+            const Graphics::Point2D &q = v_q[k];
 
             double x = q.x - L * floor(q.x / L + .5) + .5 * L,
                     y = q.y - L * floor(q.y / L + .5) + .5 * L;

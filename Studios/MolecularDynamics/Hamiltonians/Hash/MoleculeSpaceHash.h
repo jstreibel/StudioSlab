@@ -14,7 +14,9 @@ namespace MolecularDynamics {
     public:
         MoleculeSpaceHash(int linSubdivs, Real L);
 
-        void ComputeHash(const PointContainer &v_q, const PointContainer &v_p, PointContainer &dpdt);
+        void ComputeHash(const Graphics::PointContainer &v_q,
+                         const Graphics::PointContainer &v_p,
+                         Graphics::PointContainer &dpdt);
 
         Real totalLength() const;
 

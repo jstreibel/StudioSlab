@@ -18,6 +18,8 @@
 #include "Core/Backend/Modules/ModernOpenGLModule.h"
 
 namespace Core {
+    BackendImplementation DefaultGUIBackend = SFML;
+
     BackendImplementation BackendManager::backendImplementation = Uninitialized;
     std::unique_ptr<Backend> BackendManager::instance = nullptr;
     std::map<Modules, std::shared_ptr<Module>> BackendManager::loadedModules{};
@@ -31,9 +33,7 @@ namespace Core {
 
     GraphicBackend& BackendManager::GetGUIBackend() {
         if (BackendManager::backendImplementation == BackendImplementation::Uninitialized){
-            assert(instance == nullptr);
-            throw Exception("backend must be initialized via BackendManager::Startup before call to "
-                  "BackendManager::GetBackend");
+            Startup(DefaultGUIBackend);
         } else if (BackendManager::backendImplementation == BackendImplementation::Headless) {
             throw Exception("trying to access graphic backend on headless run");
         }

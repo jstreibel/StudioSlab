@@ -34,7 +34,6 @@
 # Docs
 Lib/Docs/*
 
-Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
 BUILD
 venv
 ./Build/
@@ -46,24 +45,33 @@ Lib/Docs/
 *~
 
 /Notebooks/.Entidades.autosave.xopp
-/Lib/Python/PySLib/.idea/.gitignore
-/Studios/Fields/PyFields2D/.idea/.gitignore
 /Notebooks/.Ultrasimple-dispenser.autosave.xopp
 /Notebooks/2021-11-04-Template-21-56.xopt
-/Studios/Fields/PyFields2D/.idea/codeStyles/codeStyleConfig.xml
+/Notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
+
 /Slab/bin/Fields-RtoR
 /Slab/bin/Fields-RtoR-PeriodicBC
-/Lib/Python/PySLib/.idea/misc.xml
+
+/Studios/Fields/PyFields2D/.idea/.gitignore
+/Studios/Fields/PyFields2D/.idea/codeStyles/codeStyleConfig.xml
 /Studios/Fields/PyFields2D/.idea/misc.xml
-/Lib/Python/PySLib/.idea/modules.xml
 /Studios/Fields/PyFields2D/.idea/modules.xml
-/Lib/Python/PySLib/.idea/inspectionProfiles/profiles_settings.xml
 /Studios/Fields/PyFields2D/.idea/inspectionProfiles/profiles_settings.xml
-/Lib/Python/PySLib/.idea/inspectionProfiles/Project_Default.xml
 /Studios/Fields/PyFields2D/.idea/inspectionProfiles/Project_Default.xml
+/Studios/Fields/PyFields2D/.idea/vcs.xml
+
+/Lib/3rdParty/freetype-gl/*
+/Lib/3rdParty/imgui/*
+
+/Lib/Python/PySLib/.idea/.gitignore
+/Lib/Python/PySLib/.idea/misc.xml
+/Lib/Python/PySLib/.idea/modules.xml
+/Lib/Python/PySLib/.idea/inspectionProfiles/profiles_settings.xml
+/Lib/Python/PySLib/.idea/inspectionProfiles/Project_Default.xml
+/Lib/Python/PySLib/.idea/vcs.xml
+
+Studios/.DEPR_UNTRACKED_MEMORABLE_SOURCES
+
 /Slab/bin/R2toR-sw-=1.000000-=0.000000-=1.000000-=0.000000-=0.000000-N=1024.oscb
 /Slab/bin/RtoR--E=1.000000-n=100-N=1024.oscb
 /Slab/bin/RtoR--v=0.000000-V=0.000000-alpha=0.000000-asym=False-N=1024.oscb
-/Notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
-/Lib/Python/PySLib/.idea/vcs.xml
-/Studios/Fields/PyFields2D/.idea/vcs.xml

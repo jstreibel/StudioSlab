@@ -11,12 +11,8 @@
 #include "Graphics/Window/GUIWindow.h"
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-
-#include "Maps/RtoR/View/GraphRtoR.h"
-
-#include "Maps/R2toR/View/FlatFieldDisplay.h"
-#include "Maps/R2toR/View/GraphR2ToR.h"
-#include "Maps/R2toR/View/GraphR2Section.h"
+#include "Graphics/Graph/ℝ²↦ℝ/GraphR2Section.h"
+#include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 

@@ -25,11 +25,9 @@ bool Graphics::Graph2D::notifyMouseButton(Core::MouseButton button, Core::KeySta
                 savePopupOn = false;
             }
         }
-
-        return true;
     }
 
-    return GUIEventListener::notifyMouseButton(button, state, keys);
+    return Graphics::Window::notifyMouseButton(button, state, keys);
 }
 
 bool Graphics::Graph2D::notifyMouseMotion(int x, int y) {
@@ -37,7 +35,7 @@ bool Graphics::Graph2D::notifyMouseMotion(int x, int y) {
 
     auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
-    if(mouseState.leftPressed)
+    if(isMouseLeftClicked())
     {
         const Real dxClampd = -mouseState.dx / (Real)getw();
         const Real dyClampd = mouseState.dy / (Real)geth();
@@ -51,7 +49,7 @@ bool Graphics::Graph2D::notifyMouseMotion(int x, int y) {
         region.yMin += dyGraph;
         region.yMax += dyGraph;
     }
-    if(mouseState.centerPressed)
+    if(isMouseRightClicked())
     {
         constexpr const Real factor = 0.01;
         const Real dx = 1-factor*mouseState.dx;

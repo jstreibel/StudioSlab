@@ -11,7 +11,6 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
-#include "Graphics/Styles/WindowStyles.h"
 
 bool finishFlag = false;
 
@@ -63,8 +62,7 @@ void GLFWBackend::mainLoop() {
         while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
         mustRender = false;
 
-        auto bg = Graphics::clearColor;
-        glClearColor(bg.r, bg.g, bg.b, bg.a);
+        glClearColor(r, g, b, 1.0);
         glClear(GL_COLOR_BUFFER_BIT);
 
         for(auto &module : modules) module->beginRender();

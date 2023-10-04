@@ -12,11 +12,12 @@
 #include "Monitor.h"
 #include "Builder.h"
 
-#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Core/Tools/Log.h"
+#include "Core/Backend/BackendManager.h"
 
 
 #define DO_REGISTER true
@@ -33,6 +34,8 @@ namespace MolecularDynamics {
     }
 
     OutputManager *Builder::buildOutputManager() {
+        auto &numericConfig = simulationConfig.numericConfig;
+
         auto outputManager = new OutputManager(numericConfig);
 
         outputManager->addOutputChannel(new OutputConsoleMonitor(numericConfig, numericConfig.getn() / 5));
@@ -41,13 +44,15 @@ namespace MolecularDynamics {
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = new MolecularDynamics::Monitor(numericConfig, simModel);
-        Backend::GetInstanceSuper<GraphicBackend>().addWindow(std::shared_ptr<Window>(monitor));
+        Core::BackendManager::GetGUIBackend().addEventListener(Core::GUIEventListener::Ptr(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;
     }
 
     Stepper *Builder::buildStepper() {
+        auto &numericConfig = simulationConfig.numericConfig;
+
         fix T = *temperature;
         fix k = *dissipation;
 
@@ -92,7 +97,7 @@ namespace MolecularDynamics {
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
-        numericConfig.sett(-1);
+        simulationConfig.numericConfig.sett(-1);
     }
 
 } // MolecularDynamics

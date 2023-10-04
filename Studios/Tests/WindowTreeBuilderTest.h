@@ -10,8 +10,8 @@
 #include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-class WindowTreeBuilderTest : public Window {
-    NodeWindow *main;
+class WindowTreeBuilderTest : public Graphics::Window {
+    Graphics::NodeWindow *main;
 
     RtoR::AnalyticOscillon osc;
 public:

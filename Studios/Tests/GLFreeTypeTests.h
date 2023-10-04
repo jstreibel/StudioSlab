@@ -10,7 +10,7 @@
 #include "Graphics/Window/Window.h"
 #include "Graphics/OpenGL/Writer.h"
 
-class GLFreeTypeTests : public Window {
+class GLFreeTypeTests : public Graphics::Window {
     Graphics::Writer writer1, writer2;
 
 public:

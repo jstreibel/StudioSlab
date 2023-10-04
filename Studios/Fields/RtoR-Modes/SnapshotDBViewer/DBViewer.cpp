@@ -4,13 +4,19 @@
 
 #include "DBViewer.h"
 
-#include <utility>
-#include "KGDispersionRelation.h"
-
 #include "3rdParty/imgui/imgui.h"
-#include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "HistoryFileLoader.h"
+
 #include "Core/Backend/BackendManager.h"
+
+#include "KGDispersionRelation.h"
+#include "HistoryFileLoader.h"
+
+#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
+#include "Maps/FunctionRenderer.h"
+
+
+#include <utility>
 
 namespace Modes::DatabaseViewer {
 
@@ -35,9 +41,9 @@ namespace Modes::DatabaseViewer {
         style.primitive = Styles::VerticalLines;
         style.filled = false;
         style.thickness = 1.5;
-        massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-k²)]", true);
+        massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-kₚₑₐₖ²)]", true);
         style.lineColor = style.lineColor.permute(true);
-        massesGraph.addPointSet(DummyPtr(massesImag_pointSet), style, "ℑ[m=√(ω²-k²)]");
+        massesGraph.addPointSet(DummyPtr(massesImag_pointSet), style, "ℑ[m=√(ω²-kₚₑₐₖ²)]");
         style.lineColor = style.lineColor.permute();
         style.thickness = 3.0;
         massesGraph.addPointSet(DummyPtr(underXHair), style);
@@ -133,7 +139,7 @@ namespace Modes::DatabaseViewer {
         auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[5];
         style.thickness = 3;
         style.filled = false;
-        allDataDisplay.addPointSet(KGRelation, style, Str("ω²-k²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
+        allDataDisplay.addPointSet(KGRelation, style, Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
     }
 
     void DBViewer::drawDominantModes() {

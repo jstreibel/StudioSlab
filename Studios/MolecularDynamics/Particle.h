@@ -7,18 +7,20 @@
 
 #include "Utils/Types.h"
 
+#include "Graphics/Types.h"
+
 #define CUTOFF_RADIUS 4
 
 // Used for Verlet
-typedef std::pair<PointContainer &, PointContainer &> State;
-typedef std::pair<PointContainer, PointContainer> VerletMoleculeContainer;
+typedef std::pair<Graphics::PointContainer &, Graphics::PointContainer &> State;
+typedef std::pair<Graphics::PointContainer, Graphics::PointContainer> VerletMoleculeContainer;
 
 // Used for RK4
 struct Molecule {
-    Molecule(Point2D q, Point2D p) : m_q(q), m_p(p) {}
+    Molecule(Graphics::Point2D q, Graphics::Point2D p) : m_q(q), m_p(p) {}
     Molecule() = default;
 
-    Point2D m_q, m_p;
+    Graphics::Point2D m_q, m_p;
 };
 
 Molecule operator*(const Real &a, const Molecule &m);

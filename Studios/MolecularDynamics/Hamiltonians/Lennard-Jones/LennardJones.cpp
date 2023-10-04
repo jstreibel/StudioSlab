@@ -15,24 +15,24 @@ MolecularDynamics::LennardJones::LennardJones(const NumericConfig &p) : Langevin
 
 }
 
-inline Point2D MolecularDynamics::LennardJones::dUdr(const Point2D &q1, const Point2D &q2) {
+inline Graphics::Point2D MolecularDynamics::LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
     Real sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
     Real distSqr;
 
-    const Point2D points[] = {
+    const Graphics::Point2D points[] = {
             q2 - q1,
-            Point2D(q2.x - L, q2.y) - q1,
-            Point2D(q2.x + L, q2.y) - q1,
-            Point2D(q2.x, q2.y - L) - q1,
-            Point2D(q2.x, q2.y + L) - q1,
+            Graphics::Point2D(q2.x - L, q2.y) - q1,
+            Graphics::Point2D(q2.x + L, q2.y) - q1,
+            Graphics::Point2D(q2.x, q2.y - L) - q1,
+            Graphics::Point2D(q2.x, q2.y + L) - q1,
 
-            Point2D(q2.x - L, q2.y - L) - q1,
-            Point2D(q2.x - L, q2.y + L) - q1,
-            Point2D(q2.x + L, q2.y - L) - q1,
-            Point2D(q2.x + L, q2.y + L) - q1
+            Graphics::Point2D(q2.x - L, q2.y - L) - q1,
+            Graphics::Point2D(q2.x - L, q2.y + L) - q1,
+            Graphics::Point2D(q2.x + L, q2.y - L) - q1,
+            Graphics::Point2D(q2.x + L, q2.y + L) - q1
     };
 
-    Point2D resultForce = {.0, .0};
+    Graphics::Point2D resultForce = {.0, .0};
     for (auto r : points) {
         distSqr = r.lengthSqr();
 
@@ -42,7 +42,7 @@ inline Point2D MolecularDynamics::LennardJones::dUdr(const Point2D &q1, const Po
 
             const auto F = 24 * ε / σ * (2 * POW13(inv_n) - POW7(inv_n));
 
-            const Point2D force = -F/r_abs  * r;
+            const Graphics::Point2D force = -F/r_abs  * r;
 
             resultForce = resultForce + force;
         }
@@ -56,23 +56,23 @@ Real MolecularDynamics::LennardJones::U(Real r) {
     return 4. * ε * (POW12(inv_n) - POW6(inv_n));
 }
 
-Real MolecularDynamics::LennardJones::U(const Point2D &q1, const Point2D &q2) {
+Real MolecularDynamics::LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
     const Real SIGMA_SQR = σ * σ;
     Real distSqr;
     const auto L = params.getL();
 
-    const Point2D points[] = {
+    const Graphics::Point2D points[] = {
             q2 - q1,
 
-            Point2D(q2.x - L, q2.y) - q1,
-            Point2D(q2.x + L, q2.y) - q1,
-            Point2D(q2.x, q2.y - L) - q1,
-            Point2D(q2.x, q2.y + L) - q1,
+            Graphics::Point2D(q2.x - L, q2.y) - q1,
+            Graphics::Point2D(q2.x + L, q2.y) - q1,
+            Graphics::Point2D(q2.x, q2.y - L) - q1,
+            Graphics::Point2D(q2.x, q2.y + L) - q1,
 
-            Point2D(q2.x - L, q2.y - L) - q1,
-            Point2D(q2.x - L, q2.y + L) - q1,
-            Point2D(q2.x + L, q2.y - L) - q1,
-            Point2D(q2.x + L, q2.y + L) - q1
+            Graphics::Point2D(q2.x - L, q2.y - L) - q1,
+            Graphics::Point2D(q2.x - L, q2.y + L) - q1,
+            Graphics::Point2D(q2.x + L, q2.y - L) - q1,
+            Graphics::Point2D(q2.x + L, q2.y + L) - q1
     };
 
     for (auto r : points) {

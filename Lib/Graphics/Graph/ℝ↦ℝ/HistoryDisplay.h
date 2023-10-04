@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_HISTORYDISPLAY_H
 #define STUDIOSLAB_HISTORYDISPLAY_H
 
-#include "Maps/R2toR/View/FlatFieldDisplay.h"
 
+#include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
 
 namespace Graphics {
 

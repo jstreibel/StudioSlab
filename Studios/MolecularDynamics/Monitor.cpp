@@ -4,7 +4,7 @@
 
 #include "Monitor.h"
 
-#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
 #include "Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
@@ -13,16 +13,19 @@
 #include "Hamiltonians/SoftDisk/SoftDisk.h"
 
 #include "Core/Tools/Log.h"
+#include "Core/Backend/BackendManager.h"
 
 namespace MolecularDynamics {
 
 #define SHOW_DOT false
 #define SHOW_RADIUS true
 
+#define SFML_Backend dynamic_cast<SFMLBackend&>(Core::BackendManager::GetGUIBackend())
+
     Monitor::Monitor(const NumericConfig &params, Model model)
     : Numerics::OutputSystem::Socket(params, "Particle dynamics monitor", 10)
-    , Window()
-    , renderWindow(Backend::GetInstanceSuper<SFMLNuklearBackend>().getRenderWindow())
+    , Window(0, 0, 100, 100, HasMainMenu)
+    , renderWindow(SFML_Backend.getRenderWindow())
     , molShapes(2*params.getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()

@@ -3,6 +3,7 @@
 //
 
 #include "FixedSizeMoleculeContainer.h"
+#include "Core/Tools/Log.h"
 
 
 void FixedSizeMoleculeContainer::reset() {
@@ -11,7 +12,7 @@ void FixedSizeMoleculeContainer::reset() {
 
 void FixedSizeMoleculeContainer::add(VerletPointTriple triple) {
     if(occupation > HASH_CONTAINER_SIZE) {
-        std::cout << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
+        Log::Error() << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
         throw "FixedSizeMoleculeContainer max occupancy reached.";
     }
 

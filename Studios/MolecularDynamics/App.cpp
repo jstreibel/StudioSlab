@@ -7,9 +7,12 @@
 #include "Core/Tools/Log.h"
 #include "Core/Controller/CLArgsManager.h"
 #include "Math/Numerics/Program/Integrator.h"
+#include "Core/Backend/BackendManager.h"
+
+#define SFML_Backend dynamic_cast<SFMLBackend&>(Core::BackendManager::GetGUIBackend())
 
 MolecularDynamics::App::App(int argc, const char **argv)
-: AppBase(argc, argv), backend(Backend::Initialize<SFMLNuklearBackend>()) {
+: AppBase(argc, argv), backend(SFML_Backend) {
     CLArgsManager::Parse();
 }
 

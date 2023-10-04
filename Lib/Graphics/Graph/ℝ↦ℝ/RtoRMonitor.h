@@ -11,14 +11,15 @@
 
 #include "Maps/RtoR/Model/RtoRResizableDiscreteFunction.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Section1D.h"
-#include "Maps/RtoR/View/GraphRtoR.h"
 
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
 #include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
 
 #include "HistoryDisplay.h"
-#include "../KG-RtoREnergyCalculator.h"
+#include "Maps/RtoR2/StraightLine.h"
+#include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
+#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
 namespace RtoR {
 
@@ -36,19 +37,19 @@ namespace RtoR {
         std::shared_ptr<R2toR::Sampler> sampler;
         RtoR::Section1D::Ptr mSpaceCorrelation;
         R2toR::CorrelationFunction mCorrelationFunction;
-        GraphRtoR mCorrelationGraph;
-        GraphRtoR mSpaceFourierModesGraph;
+        Graphics::GraphRtoR mCorrelationGraph;
+        Graphics::GraphRtoR mSpaceFourierModesGraph;
 
         RtoR::Section1D mHistorySectionFunc;
 
-        GraphRtoR mHistorySliceGraph;
+        Graphics::GraphRtoR mHistorySliceGraph;
 
         std::shared_ptr<const R2toR::DiscreteFunction>
                   simulationHistory = nullptr;
         std::shared_ptr<const R2toR::DiscreteFunction>
                 spaceFTHistory = nullptr;
 
-        GraphRtoR mFieldsGraph;
+        Graphics::GraphRtoR mFieldsGraph;
 
 
         Spaces::PointSet UHistoryData;

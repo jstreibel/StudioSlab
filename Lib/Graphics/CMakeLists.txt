@@ -47,12 +47,9 @@ set( GRAPHICS_SOURCES
 		OpenGL/VertexBuffer.h					OpenGL/VertexBuffer.cpp
 		OpenGL/Shader.h							OpenGL/Shader.cpp
 		OpenGL/PixelData.h						OpenGL/PixelData.cpp
-		OpenGL/TextureUtils.cpp
-		OpenGL/TextureUtils.h
-        OpenGL/Artists/Overlay.cpp
-        OpenGL/Artists/Overlay.h
-		OpenGL/Artists/ColorBarArtist.cpp
-		OpenGL/Artists/ColorBarArtist.h
+		OpenGL/TextureUtils.h					OpenGL/TextureUtils.cpp
+        OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
+		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 
 		Graph/Artists/Artist.cpp
 		Graph/Graph.cpp
@@ -64,10 +61,14 @@ set( GRAPHICS_SOURCES
 		Graph/Artists/XHairArtist.h			Graph/Artists/XHairArtist.cpp
 		Graph/Artists/AxisArtist.h			Graph/Artists/AxisArtist.cpp
 
-		Graph/StylesManager.h		Graph/StylesManager.cpp
+		Graph/StylesManager.h				Graph/StylesManager.cpp
 
-		../Maps/R2toR/View/FlatField2DArtist.cpp
-		../Maps/R2toR/View/FlatField2DArtist.h
+		Graph/ℝ²↦ℝ/FlatFieldDisplay.h		Graph/ℝ²↦ℝ/FlatFieldDisplay.cpp
+		Graph/ℝ²↦ℝ/FlatField2DArtist.h		Graph/ℝ²↦ℝ/FlatField2DArtist.cpp
+
+		Graph/ℝ↦ℝ/HistoryDisplay.h			Graph/ℝ↦ℝ/HistoryDisplay.cpp
+		Graph/ℝ↦ℝ/GraphRtoR.h				Graph/ℝ↦ℝ/GraphRtoR.cpp
+		Graph/ℝ↦ℝ/RtoRMonitor.cpp
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

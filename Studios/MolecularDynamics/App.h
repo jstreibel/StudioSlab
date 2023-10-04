@@ -8,12 +8,12 @@
 
 #include "Core/App/AppBase.h"
 #include "Builder.h"
-#include "Core/Backend/SFML-Nuklear/SFML-Nuklear-Backend.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
 
 namespace MolecularDynamics {
     class App : public AppBase {
         MolecularDynamics::Builder builder;
-        SFMLNuklearBackend &backend;
+        SFMLBackend &backend;
     public:
         App(int argc, const char *argv[]);
 
