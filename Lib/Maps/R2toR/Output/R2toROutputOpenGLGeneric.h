@@ -10,7 +10,7 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
 
-#include "Graphics/Graph/OpenGLMonitor.h"
+#include "Graphics/OpenGL/OpenGLMonitor.h"
 
 #include "Maps/RtoR/View/GraphRtoR.h"
 

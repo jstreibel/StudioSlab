@@ -30,6 +30,7 @@ void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
 
     auto artist = std::make_shared<FlatField2DArtist>(name);
     artist->setFunction(function);
+    artist->setColorMap(currColorMap);
 
     funcsMap.emplace(zOrder, std::move(function));
     ff2dArtists.emplace_back(artist);
@@ -164,6 +165,8 @@ void Graphics::FlatFieldDisplay::setColorMap(const Styles::ColorMap &colorMap) {
         artist->setColorMap(colorMap);
         colorBar.setTexture(artist->getColorMapTexture());
     }
+
+    currColorMap = colorMap;
 }
 
 bool Graphics::FlatFieldDisplay::ContainsFunc(const R2toR::Function::ConstPtr& func){

@@ -6,9 +6,6 @@
 
 #include <utility>
 
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Core/Tools/Log.h"
-
 #define min(a, b) ((a)<(b)?(a):(b))
 
 #define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");

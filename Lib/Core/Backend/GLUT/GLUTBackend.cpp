@@ -4,6 +4,8 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
+#include "Graphics/Styles/WindowStyles.h"
+#include "Graphics/OpenGL/GLUTUtils.h"
 
 #include <GL/freeglut.h>
 #include <cassert>

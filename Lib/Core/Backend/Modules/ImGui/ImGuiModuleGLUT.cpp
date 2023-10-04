@@ -6,7 +6,9 @@
 
 #include "3rdParty/imgui/backends/imgui_impl_glut.h"
 #include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
+
 #include "Core/Backend/BackendManager.h"
+#include "Core/Tools/Log.h"
 
 // Don't touch
 fix SHOULD_INSTALL_CALLBACKS = false;

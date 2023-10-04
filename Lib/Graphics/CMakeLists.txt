@@ -30,6 +30,8 @@ set( GRAPHICS_SOURCES
 		OpenGL/rougier/vector.h					OpenGL/rougier/vector.c
 		OpenGL/rougier/vertex-attribute.c		OpenGL/rougier/vertex-attribute.c
 
+		OpenGL/OpenGLMonitor.cpp
+
 		OpenGL/GLUTUtils.h  					OpenGL/GLUTUtils.cpp
 		OpenGL/Utils.h							OpenGL/Utils.cpp
 		OpenGL/Writer.h							OpenGL/Writer.cpp
@@ -54,8 +56,7 @@ set( GRAPHICS_SOURCES
 
 		Graph/Artists/Artist.cpp
 		Graph/Graph.cpp
-		Graph/LabelingHelper.h		Graph/LabelingHelper.cpp
-		Graph/OpenGLMonitor.cpp
+		Graph/LabelingHelper.h				Graph/LabelingHelper.cpp
 		Graph/Graph_Axis.cpp
 		Graph/Styles.cpp
 		Graph/Graph_Events.cpp
@@ -64,6 +65,7 @@ set( GRAPHICS_SOURCES
 		Graph/Artists/AxisArtist.h			Graph/Artists/AxisArtist.cpp
 
 		Graph/StylesManager.h		Graph/StylesManager.cpp
+
 		../Maps/R2toR/View/FlatField2DArtist.cpp
 		../Maps/R2toR/View/FlatField2DArtist.h
 )

@@ -7,7 +7,7 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
-#include "Graphics/Graph/OpenGLMonitor.h"
+#include "Graphics/OpenGL/OpenGLMonitor.h"
 
 #include "Maps/RtoR/Model/RtoRResizableDiscreteFunction.h"
 #include "Maps/RtoR/Model/FunctionsCollection/Section1D.h"

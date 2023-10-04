@@ -33,6 +33,7 @@ namespace Graphics {
                 LogEpsilon
             };
 
+            Styles::ColorMap currColorMap;
             Graphics::OpenGL::ColorBarArtist colorBar;
             typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
 

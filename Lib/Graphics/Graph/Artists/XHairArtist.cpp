@@ -26,6 +26,8 @@ namespace Graphics {
 
 
     void XHairArtist::draw(const Graph2D &graph2D) {
+        if(!graph2D.isMouseIn()) return;
+
         auto vpRect = graph2D.getViewport();
         auto region = graph2D.getRegion();
 

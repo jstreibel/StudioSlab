@@ -7,10 +7,6 @@
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/GraphicBackend.h"
 
-#include "Graphics/Graph/OpenGLMonitor.h"
-
-
-
 
 class GLUTBackend : public GraphicBackend
 {
