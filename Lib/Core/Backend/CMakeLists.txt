@@ -24,14 +24,19 @@ set( GRAPHIC_BACKEND_SOURCE
 		Events/GUIEventTranslator.h				Events/GUIEventTranslator.cpp
 
 		Modules/Modules.h
+
 		Modules/ImGui/ImGuiModule.h				Modules/ImGui/ImGuiModule.cpp
 		Modules/ImGui/ImGuiModuleGLUT.h			Modules/ImGui/ImGuiModuleGLUT.cpp
 		Modules/ImGui/ImGuiModuleGLFW.h			Modules/ImGui/ImGuiModuleGLFW.cpp
+		Modules/ImGui/ImGuiColorAndStyles.h		Modules/ImGui/ImGuiColorAndStyles.cpp
+
 		Modules/RealTimeAnimation.h				Modules/RealTimeAnimation.cpp
+
 		Modules/Nuklear/NuklearModule.h			Modules/Nuklear/NuklearModule.cpp
 		Modules/Nuklear/NuklearSFMLModule.h		Modules/Nuklear/NuklearSFMLModule.cpp
 		Modules/Nuklear/NuklearGLFWModule.h		Modules/Nuklear/NuklearGLFWModule.cpp
-		Modules/ModernOpenGLModule.h Modules/ModernOpenGLModule.cpp
+
+		Modules/ModernOpenGLModule.h 			Modules/ModernOpenGLModule.cpp
 
 )
 
