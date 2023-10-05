@@ -69,6 +69,14 @@ set( GRAPHICS_SOURCES
 		Graph/ℝ↦ℝ/HistoryDisplay.h			Graph/ℝ↦ℝ/HistoryDisplay.cpp
 		Graph/ℝ↦ℝ/GraphRtoR.h				Graph/ℝ↦ℝ/GraphRtoR.cpp
 		Graph/ℝ↦ℝ/RtoRMonitor.cpp
+		Graph3D/Graph3D.cpp
+		Graph3D/Graph3D.h
+		Graph3D/Actor.cpp
+		Graph3D/Actor.h
+		Graph3D/Field2DActor.cpp
+		Graph3D/Field2DActor.h
+		OpenGL/ShaderLoader.cpp
+		OpenGL/ShaderLoader.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

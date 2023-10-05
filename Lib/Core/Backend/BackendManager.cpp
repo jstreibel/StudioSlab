@@ -78,6 +78,10 @@ namespace Core {
         return loadedModules[moduleDescr];
     }
 
+    bool BackendManager::IsModuleLoaded(Modules moduleDescr) {
+        return loadedModules[moduleDescr] != nullptr;
+    }
+
     void BackendManager::Startup(BackendImplementation impl) {
         switch (impl) {
             case Headless:
@@ -102,5 +106,6 @@ namespace Core {
     }
 
     BackendImplementation BackendManager::GetImplementation() { return backendImplementation; }
+
 
 } // Core

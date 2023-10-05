@@ -5,11 +5,10 @@
 #include <GL/glew.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Shader.h"
-#include "rougier/shader.h"
 #include "Core/Tools/Log.h"
 #include "Utils.h"
-#include "Math/Formalism/Categories.h"
 #include "Core/Backend/BackendManager.h"
+#include "ShaderLoader.h"
 
 
 namespace Graphics::OpenGL {
@@ -69,7 +68,8 @@ namespace Graphics::OpenGL {
     Shader::Shader(const Str& vertFilename, const Str& fragFilename) {
         Core::BackendManager::LoadModule(Core::ModernOpenGL);
 
-        handle = ftgl::shader_load(vertFilename.c_str(), fragFilename.c_str());
+        handle = ShaderLoader::Load(vertFilename, fragFilename);
+
         Log::Info() << "Shader files '" << vertFilename
                                 << "' and '" << fragFilename << "' loaded and compiled." << Log::Flush;
         auto &log = Log::Debug() << "Are active in this shader:";
@@ -93,7 +93,10 @@ namespace Graphics::OpenGL {
         glUseProgram(handle);
     }
 
-    void Shader::remove() { glUseProgram(0); }
+    void Shader::remove() {
+        if(!Core::BackendManager::IsModuleLoaded(Core::ModernOpenGL)) return;
+        glUseProgram(0);
+    }
 
     void Shader::setUniform(const Str& name, GLint value) const {
         this->use();

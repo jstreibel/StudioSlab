@@ -16,6 +16,11 @@
 
 namespace Graphics::OpenGL {
 
+    enum ShaderType {
+        VertexShader = GL_VERTEX_SHADER,
+        FragmentShader = GL_FRAGMENT_SHADER
+    };
+
     class Shader {
         GLuint handle;
         std::map<GLuint, std::shared_ptr<Texture>> textureUnits;

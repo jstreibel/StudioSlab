@@ -16,6 +16,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/SFML/SFMLBackend.h"
 #include "NuklearTests.h"
+#include "Graph3DTests.h"
 
 
 #define DONT_REGISTER false
@@ -33,10 +34,11 @@ int TestsApp::run() {
 
     GraphicBackend *backend = nullptr;
 
-    if(false) {
+    if(true) {
         Core::BackendManager::Startup(Core::GLFW);
 
-        if(true)       test = new Tests::ModernGLTests;
+        if(true)       test = new Tests::Graph3DTests;
+        else if(true)  test = new Tests::ModernGLTests;
         else if(false) test = new Tests::BezierTests;
         else if(true)  test = new Tests::FourierTestWindow;
         else if(true)  test = new WindowTreeBuilderTest;

@@ -48,7 +48,8 @@ namespace Graphics {
         ImGui::SetWindowPos(ImVec2{x_, y_});
         ImGui::SetWindowSize(ImVec2{w_, h_});
 
-        if (!stats.empty() && ImGui::CollapsingHeader("Stats")) {
+        auto flags = ImGuiTreeNodeFlags_DefaultOpen;
+        if (!stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
 
             auto i = 0;
             for (const auto &stat: stats) {
