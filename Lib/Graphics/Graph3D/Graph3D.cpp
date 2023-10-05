@@ -13,7 +13,7 @@
 namespace Graphics {
 
     Graph3D::Graph3D()
-    : cameraPos({0, 1, 0.5f}) {
+    {
         Core::BackendManager::LoadModule(Core::ImGui);
         Core::BackendManager::LoadModule(Core::ModernOpenGL);
 
@@ -27,10 +27,8 @@ namespace Graphics {
         Window::draw();
 
         ImGui::Begin("Graph3D debug");
-        ImGui::Text("pitch %f",   pitch);
-        ImGui::Text("yaw %f",     yaw);
-        auto cam = cameraPos;
-        ImGui::Text("Camera @ [%f, %f, %f]", cam[0], cam[1], cam[2]);
+
+        // ImGui::Text("Camera @ [%f, %f, %f]", cam[0], cam[1], cam[2]);
         ImGui::End();
 
         for(auto &actor : actors) actor->draw(*this);
@@ -42,6 +40,13 @@ namespace Graphics {
     auto Graph3D::getViewTransform()  const -> glm::mat4 {
         glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f);
+
+        fix r = cameraDist_xy;
+        fix θ = cameraAngle;
+        fix x = r*cos(θ);
+        fix y = cameraHeight;
+        fix z = r*sin(θ);
+        glm::vec3 cameraPos({x, y, z});
 
         glm::mat4 view = glm::lookAt(cameraPos, target, up);
 
@@ -64,15 +69,6 @@ namespace Graphics {
 
             projection = glm::perspective(fov, aspect, nearPlane, farPlane);
 
-        } else {
-            fix L = 1.f;
-            fix yMin = -.5f*L;
-            fix yMax = +.5f*L;
-            fix xMin = yMin*aspect;
-            fix xMax = yMax*aspect;
-            fix zMin = -.5f*L;
-            fix zMax = +.5f*L;
-            // projection = glm::ortho(xMin, xMax, yMin, yMax, -20.f, 20.f);
         }
     }
 
@@ -83,22 +79,18 @@ namespace Graphics {
             fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
 
-            fix zxAngle = dy*.25f;
-            fix yzAngle = dx*.25f;
-
-            yaw += yzAngle;
-            pitch += zxAngle;
+            cameraAngle += dx*.0025f;
+            cameraDist_xy += dy*.0025f;
 
             return true;
         }
         else if(Window::isMouseRightClicked()) {
             auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
-            fix dx = (float)mouseState.dx*.01f;
-            fix dy = (float)mouseState.dy*.01f;
+            fix dx = (float)mouseState.dx;
+            fix dy = (float)mouseState.dy;
 
-            cameraPos[0] += dx;
-            cameraPos[2] += dy;
+            cameraHeight += dy*.0025f;
 
             return true;
         }

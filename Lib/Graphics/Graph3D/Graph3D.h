@@ -17,8 +17,9 @@ namespace Graphics {
     class Graph3D : public Window {
         glm::mat4 projection{1.f};
 
-        float yaw=.0f, pitch=.0f;
-        glm::vec3 cameraPos;
+        float cameraDist_xy = 1.f;
+        float cameraAngle = .0f;
+        float cameraHeight = 1.0f;
 
         std::list<Actor::Ptr> actors;
 
