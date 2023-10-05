@@ -8,12 +8,18 @@
 #include "Actor.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
+#include "Graphics/OpenGL/Texture2D_Real.h"
 
 namespace Graphics {
 
     class Field2DActor : public Actor {
         OpenGL::Shader program;
-        OpenGL::VertexBuffer vertices;
+        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::Texture2D_Real texture;
+
+        enum LightMode { Colors, White }
+        currentLightMode = Colors;
+
     public:
         Field2DActor();
 

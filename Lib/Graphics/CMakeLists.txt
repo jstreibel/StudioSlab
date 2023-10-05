@@ -77,6 +77,8 @@ set( GRAPHICS_SOURCES
 		Graph3D/Field2DActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
+        MeshUtils.cpp
+        MeshUtils.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

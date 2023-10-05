@@ -1,9 +1,13 @@
 #version 460
 
-uniform mat4 view;
-uniform mat4 model;
+
+
+
+
+uniform mat4 modelview;
 uniform mat4 projection;
 
+// texture element size. In texture coords?
 uniform vec2 dr_tex;
 
 uniform int viewMode;
@@ -68,5 +72,5 @@ void main()
     v_texcoord = texcoord;
     v_normal = normal;
 
-    // gl_Position = <transform>;
+    gl_Position = projection*modelview*vec4(position, 1);
 }

@@ -12,6 +12,8 @@ namespace Graphics::OpenGL {
     class ShaderLoader {
     public:
         static GLuint Load(const Str& vertFilename, const Str& fragFilename);
+
+        static GLuint Compile(const Str &source, ShaderType);
     };
 
 } // Graphics::OpenGL

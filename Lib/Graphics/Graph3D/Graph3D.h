@@ -15,14 +15,23 @@
 namespace Graphics {
 
     class Graph3D : public Window {
-        glm::mat4 projection{};
-        glm::mat4 modelview{};
+        glm::mat4 projection{1.f};
+
+        float yaw=.0f, pitch=.0f;
 
         std::list<Actor::Ptr> actors;
 
+        void updateProjectionMatrix();
     public:
         Graph3D();
         void draw() override;
+
+        auto getProjection() const -> glm::mat4;
+        auto getViewTransform() const -> glm::mat4;
+
+        bool notifyMouseMotion(int x, int y) override;
+
+        void notifyReshape(int w, int h) override;
     };
 
 } // Graphics

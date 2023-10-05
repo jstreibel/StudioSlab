@@ -3,8 +3,8 @@
 // Distributed under the (new) BSD License.
 // -----------------------------------------------------------------------------
 #include "colormaps/util.glsl"
-#include "colormaps/ice.glsl"
-#include "colormaps/fire.glsl"
+#include "colormaps/Ice.glsl"
+#include "colormaps/Fire.glsl"
 
 vec3 colormap_icefire(float t)
 {

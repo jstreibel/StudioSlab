@@ -4,42 +4,92 @@
 
 #include "ShaderLoader.h"
 
+#include "Utils/Resources.h"
+
 #include "rougier/shader.h"
 #include "Core/Tools/Log.h"
+
 #include "Graphics/OpenGL/rougier/shader.h"
 
 #include <fstream>
 
 namespace Graphics::OpenGL {
-    Str ParseGLSL(const Str& filePath) {
+
+    fix shadersRoot = Resources::ShadersFolder;
+
+    Str _parseGLSL(const Str& filePath, std::unordered_set<std::string> &includedFiles) {
+        // Check if the file has already been included
+        if (includedFiles.find(filePath) != includedFiles.end())
+            return "";
+
+        includedFiles.insert(filePath);
+
+        for(auto &incFile : includedFiles)
+            Log::Debug() << incFile << Log::Flush;
+
+
         std::ifstream file(filePath);
         if (!file.is_open()) {
             Log::Error() << "Failed to open shader file: " << filePath << Log::Flush;
-            return "";
+            throw Exception("while trying to compile glsl shader");
         }
 
-        std::stringstream ss;
-        std::string line;
+
+        StringStream ss;
+        Str line;
         while (std::getline(file, line)) {
+            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](unsigned char ch) {
+                return !std::isspace(ch);
+            }));
+
+            // Skip lines that start with "//"
+            if (line.substr(0, 2) == "//") continue;
+
             if (line.find("#include") != std::string::npos) {
                 // Extract the included file name
                 size_t start = line.find('\"') + 1;
                 size_t end = line.find_last_of('\"');
-                std::string includeFile = line.substr(start, end - start);
+                Str includeFile = shadersRoot + line.substr(start, end - start);
+
+                Log::Note() << "Including file " << includeFile << Log::Flush;
 
                 // Parse the included file recursively
-                std::string includedContent = ParseGLSL(includeFile);
+                Str includedContent = _parseGLSL(includeFile, includedFiles);
 
                 // Append the included content to the output
                 ss << includedContent << "\n";
-            } else {
+
+            } else
                 ss << line << "\n";
-            }
         }
 
         return ss.str();
+
     }
 
+    Str ParseGLSLSource(const Str& filePath) {
+        std::unordered_set<std::string> included;
+        return _parseGLSL(filePath, included);
+    }
+
+    GLuint ShaderLoader::Compile(const Str &source, ShaderType type) {
+        GLint compile_status;
+        GLuint handle = glCreateShader( type );
+
+        const char *rawSource = source.c_str();
+
+        glShaderSource( handle, 1, &rawSource, 0 );
+        glCompileShader( handle );
+
+        glGetShaderiv( handle, GL_COMPILE_STATUS, &compile_status );
+        if( compile_status == GL_FALSE )
+        {
+            GLchar messages[256];
+            glGetShaderInfoLog( handle, sizeof(messages), 0, &messages[0] );
+            Log::Error() << messages;
+            throw Exception("while trying to compile glsl shader");
+        }
+        return handle;    }
 
     GLuint ShaderLoader::Load(const Str &vertFilename, const Str &fragFilename) {
         GLuint handle = glCreateProgram( );
@@ -47,20 +97,17 @@ namespace Graphics::OpenGL {
 
         if( !vertFilename.empty() )
         {
-            char *vert_source = ftgl::shader_read( vertFilename.c_str() );
-
-            GLuint vert_shader = ftgl::shader_compile( vert_source, GL_VERTEX_SHADER);
-            glAttachShader( handle, vert_shader);
-            glDeleteShader( vert_shader );
-            free( vert_source );
+            auto vertSource = ParseGLSLSource( vertFilename );
+            GLuint vertShader = Compile(vertSource, VertexShader);
+            glAttachShader( handle, vertShader);
+            glDeleteShader( vertShader );
         }
         if( !fragFilename.empty() )
         {
-            char *frag_source = ftgl::shader_read( fragFilename.c_str() );
-            GLuint frag_shader = ftgl::shader_compile( frag_source, GL_FRAGMENT_SHADER);
-            glAttachShader( handle, frag_shader);
-            glDeleteShader( frag_shader );
-            free( frag_source );
+            auto fragSource = ParseGLSLSource( fragFilename );
+            GLuint fragShader = Compile( fragSource, FragmentShader);
+            glAttachShader( handle, fragShader);
+            glDeleteShader( fragShader );
         }
 
         glLinkProgram( handle );
@@ -69,9 +116,9 @@ namespace Graphics::OpenGL {
         if (link_status == GL_FALSE)
         {
             GLchar messages[256];
-            glGetProgramInfoLog( handle, sizeof(messages), 0, &messages[0] );
-            fprintf( stderr, "%s\n", messages );
-            exit(1);
+            glGetProgramInfoLog( handle, sizeof(messages), nullptr, &messages[0] );
+            Log::Error() << messages;
+            throw Exception("while trying to compile glsl shader");
         }
         return handle;
     }

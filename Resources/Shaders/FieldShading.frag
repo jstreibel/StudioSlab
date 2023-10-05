@@ -1,118 +1,10 @@
 #version 460
 
-
-
-
-
-/*
- * t <= 0    : return 0
- * 0 < t < 1 : return t
- * t >= 1    : return 0
- */
-float
-colormap_segment(float edge0, float edge1, float x)
-{
-    return step(edge0,x) * (1.0-step(edge1,x));
-}
-
-/*
- * t <= 0    : return under
- * 0 < t < 1 : return color
- * t >= 1    : return over
- */
-vec3
-colormap_underover(float t, vec3 color, vec3 under, vec3 over)
-{
-    return step(t,0.0)*under +
-    colormap_segment(0.0,1.0,t)*color +
-    step(1.0,t)*over;
-}
-
-/*
- * t <= 0    : return under
- * 0 < t < 1 : return color
- * t >= 1    : return over
- */
-vec4
-colormap_underover(float t, vec4 color, vec4 under, vec4 over)
-{
-    return step(t,0.0)*under +
-    colormap_segment(0.0,1.0,t)*color +
-    step(1.0,t)*over;
-}
-
-
-
-
-
-vec3 colormap_ice(float t)
-{
-    t = 1 - t;
-    return mix(mix(vec3(1,1,1), vec3(0,1,1), t),
-    mix(vec3(0,1,1), vec3(0,0,1), t*t), t);
-}
-
-vec3 colormap_ice(float t, vec3 under, vec3 over)
-{
-    return colormap_underover(t, colormap_ice(t), under, over);
-}
-
-vec4 colormap_ice(float t, vec4 under, vec4 over)
-{
-    return colormap_underover(t, vec4(colormap_ice(t),1.0), under, over);
-}
-
-
-
-
-vec3 colormap_fire(float t)
-{
-    return mix(mix(vec3(1,1,1), vec3(1,1,0), t),
-    mix(vec3(1,1,0), vec3(1,0,0), t*t), t);
-}
-
-vec3 colormap_fire(float t, vec3 under, vec3 over)
-{
-    return colormap_underover(t, colormap_fire(t), under, over);
-}
-
-vec4 colormap_fire(float t, vec4 under, vec4 over)
-{
-    return colormap_underover(t, vec4(colormap_fire(t),1.0), under, over);
-}
-
-
-
-
-vec3 colormap_icefire(float t)
-{
-    return colormap_segment(0.0,0.5,t) * colormap_ice(2.0*(t-0.0)) +
-    colormap_segment(0.5,1.0,t) * colormap_fire(2.0*(t-0.5));
-}
-
-vec3 colormap_icefire(float t, vec3 under, vec3 over)
-{
-    return colormap_underover(t, colormap_icefire(t), under, over);
-}
-
-vec4 colormap_icefire(float t, vec4 under, vec4 over)
-{
-    return colormap_underover(t, vec4(colormap_icefire(t),1.0), under, over);
-}
-
-
-
-
-
-
-
-
-
+#include "colormaps/IceFire.glsl"
 
 
 // Input from host **********************************
-uniform mat4 view;
-uniform mat4 model;
+uniform mat4 modelview;
 uniform mat4 normal;
 uniform mat4 projection;
 
@@ -128,7 +20,7 @@ uniform vec3 light3_color;
 uniform int gridType;
 uniform int lightOn;
 uniform int shading = 0;
-uniform int gridSubdivs;
+uniform int gridSubdivs; // Power of 2
 uniform int showLevelLines;
 
 uniform sampler2D field;
@@ -164,7 +56,7 @@ float lighting(vec3 light_position, vec3 normal_vector)
     vec3 n = normalize(normal * vec4(normal_vector,1.0)).xyz;
 
     // Calculate the location of this fragment (pixel) in world coordinates
-    vec3 pos = vec3(view * model * vec4(v_position, 1));
+    vec3 pos = vec3(modelview * vec4(v_position, 1));
 
     // Calculate the vector from this pixels surface to the light source
     vec3 surface_to_light = light_position - pos;
@@ -243,15 +135,13 @@ void main()
     //vec4 color = vec4(colormap_fire(dPhidt), 1);
     //vec4 color = vec4(colormap_blues(dPhidt), 1);
     if(viewMode == 0){
-//!!!!! color = vec4(colormap_icefire(dPhidt+.5), 1);
+        color = vec4(colormap_icefire(dPhidt+.5), 1);
         //color = vec4((v_texcoord-.5)*s+.5, 0, 1);
     }
-    else if(viewMode == 1){
-//!!!!! color = vec4(colormap_icefire(Phi+.5), 1);
-    }
-    else if(viewMode == 2){
-//!!!!! color = vec4(colormap_icefire(floor(24*(Phi+.5))/24), 1);
-    }
+    else if(viewMode == 1)
+        color = vec4(colormap_icefire(Phi+.5), 1);
+    else if(viewMode == 2)
+        color = vec4(colormap_icefire(floor(24*(Phi+.5))/24), 1);
 
     //vec4 color = vec4(colormap_blues(Phi), 1);
     //vec4 color = vec4(1);
@@ -359,10 +249,13 @@ void main()
         //color.a=1;
     }
 
-    if(shading==0)
+    if(shading==0){
         fragColor = color;
+    }
     else if(shading==1)
         fragColor = vec4(normal*.5+.5, 1);
     else if(shading==2)
         fragColor = vec4(v_texcoord, 1, 1);
+
+
 }

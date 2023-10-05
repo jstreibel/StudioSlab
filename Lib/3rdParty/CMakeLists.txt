@@ -3,6 +3,8 @@ set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
 add_subdirectory(freetype-gl)
 
+add_subdirectory(MeshLib)
+
 set ( NUKLEAR_SOURCES
 		Nuklear/NuklearInclude.h
 		Nuklear/NuklearSource.h
