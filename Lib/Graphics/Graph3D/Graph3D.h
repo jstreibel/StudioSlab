@@ -18,6 +18,7 @@ namespace Graphics {
         glm::mat4 projection{1.f};
 
         float yaw=.0f, pitch=.0f;
+        glm::vec3 cameraPos;
 
         std::list<Actor::Ptr> actors;
 
@@ -27,6 +28,7 @@ namespace Graphics {
         void draw() override;
 
         auto getProjection() const -> glm::mat4;
+
         auto getViewTransform() const -> glm::mat4;
 
         bool notifyMouseMotion(int x, int y) override;

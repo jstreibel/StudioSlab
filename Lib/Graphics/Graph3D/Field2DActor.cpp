@@ -12,26 +12,32 @@
 
 namespace Graphics {
 
+    typedef std::array<float,2> vec2;
+    typedef std::array<float,3> vec3;
+
     struct Field2DVertex{
         float nx, ny, nz;
         float x, y, z;
         float s, t;
     };
 
-    fix gridN = 5;
-    fix gridM = 7;
-    fix xMinSpace = -.25f;
-    fix yMinSpace = -.25f;
+    fix gridN = 20;
+    fix gridM = 20;
+    fix xMinSpace = -1.f;
+    fix yMinSpace = -1.f;
     fix wSpace = 2*abs(xMinSpace);
     fix hSpace = 2*abs(yMinSpace);
 
-    void GeneratePlane(OpenGL::VertexBuffer &buffer, int N, int M, float width, float height) {
+    void GenerateSurface(OpenGL::VertexBuffer &buffer,
+                         int N, int M,
+                         float width, float height,
+                         vec3 (*surf)(vec2) = [](vec2 in){return vec3{in[0], in[1], .0f};})
+    {
         std::vector<GLuint> indices;
         std::vector<Field2DVertex> vertices;
 
         // Generate vertices
-        fix z = .0f;
-        fix nx = .0f, ny = .0f, nz = -1.f;
+        fix nx = .0f, ny = .0f, nz = 1.0f;
 
         fix xNormFactor = 1/float(M-1);
         fix yNormFactor = 1/float(N-1);
@@ -40,15 +46,17 @@ namespace Graphics {
         fix yFactor = height*yNormFactor;
 
         for (int i = 0; i < N; ++i) {
-            fix y =   (float)i*yFactor + yMinSpace;
-            fix t = 2*(float)i*yNormFactor - 1;
+            fix t =   (float)i*yFactor + yMinSpace;
+            fix v = 2*(float)i*yNormFactor - 1;
             for (int j = 0; j < M; ++j) {
-                fix x =   (float)j*xFactor + xMinSpace;
-                fix s = 2*(float)j*xNormFactor - 1;
+                fix s =   (float)j*xFactor + xMinSpace;
+                fix u = 2*(float)j*xNormFactor - 1;
+
+                auto [x, y, z] = surf({s, t});
 
                 vertices.push_back({nx, ny, nz,
                                      x,  y,  z,
-                                     s, t});
+                                     u, v});
             }
         }
 
@@ -76,33 +84,12 @@ namespace Graphics {
     }
 
     Field2DActor::Field2DActor()
-    : program(Resources::ShadersFolder + "FieldShading.vert", Resources::ShadersFolder + "FieldShading.frag")
+    : program(Resources::ShadersFolder + "FieldTestShading.vert",
+              Resources::ShadersFolder + "FieldTestShading.frag")
     , vertexBuffer("normal:3f,position:3f,texcoord:2f")
     , texture(100, 100)
     {
-        GeneratePlane(vertexBuffer, gridN, gridM, wSpace, hSpace);
-        if(false)
-        {
-            auto si = 0.0f;
-            auto sf = 1.0f;
-            auto ti = 0.0f;
-            auto tf = 1.0f;
-
-            fix xMin_f = -.5f;
-            fix xMax_f = +.5f;
-            fix yMin_f = -.5f;
-            fix yMax_f = +.5f;
-
-            vertexBuffer.clear();
-            GLuint indices[6] = {0, 1, 2, 0, 2, 3};
-            Field2DVertex vertices[4] = {
-                    {.0f, .0f, -1.f, xMin_f, yMin_f, .0f, si, ti},
-                    {.0f, .0f, -1.f, xMax_f, yMin_f, .0f, sf, ti},
-                    {.0f, .0f, -1.f, xMax_f, yMax_f, .0f, sf, tf},
-                    {.0f, .0f, -1.f, xMin_f, yMax_f, .0f, si, tf}};
-
-            vertexBuffer.pushBack(vertices, 4, indices, 6);
-        }
+        GenerateSurface(vertexBuffer, gridN, gridM, wSpace, hSpace);
 
         for(auto i=0; i<100; ++i) for(auto j=0; j<100; ++j) {
             auto x = 2*M_PI*j/100;
@@ -150,13 +137,18 @@ namespace Graphics {
     }
 
     void Field2DActor::draw(const Graph3D &graph3D) {
+        // glEnable(GL_DEPTH_TEST);
+        // glDepthFunc(GL_LESS);
+        // glDepthRange(-10.f, 10.f);
+
         texture.bind();
 
+        auto proj = graph3D.getProjection();
         auto view = graph3D.getViewTransform();
         auto model = glm::mat4(1.f);
 
         program.setUniform("modelview", view*model);
-        program.setUniform("projection", graph3D.getProjection());
+        program.setUniform("projection", proj);
 
         vertexBuffer.render(GL_TRIANGLES);
     }

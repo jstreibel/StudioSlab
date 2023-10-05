@@ -30,20 +30,21 @@ void main()
     vec3 newNormal;
 
     if(viewMode==0){
-        //float fN = phiScale * texture2D(field, texcoord+dy).r;
-        //float fS = phiScale * texture2D(field, texcoord-dy).r;
-        //float fE = phiScale * texture2D(field, texcoord+dx).r;
-        //float fW = phiScale * texture2D(field, texcoord-dx).r;
-        //float fC = phiScale * texture2D(field, texcoord+dr_tex*0.5).r;
+           //float fN = phiScale * texture2D(field, texcoord+dy).r;
+           //float fS = phiScale * texture2D(field, texcoord-dy).r;
+           //float fE = phiScale * texture2D(field, texcoord+dx).r;
+           //float fW = phiScale * texture2D(field, texcoord-dx).r;
+           //float fC = phiScale * texture2D(field, texcoord+dr_tex*0.5).r;
+
         vec4 phi = texture(field, texcoord);
         float fC = phiScale * phi.r;
 
-        //float dfdx = dFdx(fC);
-        //float dfdy = dFdy(fC);
+           //float dfdx = dFdx(fC);
+           //float dfdy = dFdy(fC);
 
-        //float dfdx = (fW-fE) / dr.x;
-        //float dfdy = (fN-fS) / dr.y;
-        //newNormal = normalize(vec3(dfdx, dfdy, -1));
+           //float dfdx = (fW-fE) / dr.x;
+           //float dfdy = (fN-fS) / dr.y;
+           //newNormal = normalize(vec3(dfdx, dfdy, -1));
 
         v_position = position + fC*normal;
     }
