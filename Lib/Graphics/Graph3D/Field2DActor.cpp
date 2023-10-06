@@ -103,7 +103,11 @@ namespace Graphics {
         if(ImGui::DragFloat("gloom base", &gloomPowBase, gloomPowBase*1.e-1f, 0.1f, 100.f))
             program.setUniform("gloomPowBase", gloomPowBase);
 
-        //ImGui::Checkbox()
+        const char *items[] = {"Color", "Normals", "Gloom"};
+        static int current = 0;
+        if(ImGui::Combo("Shading", &current, items, 3))
+            program.setUniform("shading", current);
+
         ImGui::End();
 
         program.setUniform("eye", camera.pos);

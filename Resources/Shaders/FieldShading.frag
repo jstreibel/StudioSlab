@@ -23,10 +23,10 @@ uniform int gridSubdivs; // Power of 2
 
 uniform sampler2D field;
 
-const int COLOR = 0;
-const int NORMALS = 1;
-const int CAMERA_RAYS = 2;
-const int GLOOM = 2;
+const int COLOR         = 0;
+const int NORMALS       = 1;
+const int GLOOM         = 2;
+
 uniform int shading = COLOR;
 
 uniform float scale;
@@ -56,13 +56,13 @@ void main()
     vec4 gridColor = vec4(vec3(0.2), 1);
     vec4 color = cartesianGrid(v_position.xy, gridColor, lightingColor, gridSubdivs);
 
-    vec3 cameraToPixel = normalize(eye-v_position);
-    float gloom = pow(gloomPowBase, 1-dot(cameraToPixel,normal))/gloomPowBase;
-
-    if(shading == COLOR)            fragColor = color;
+    if     (shading == COLOR)       fragColor = color;
     else if(shading == NORMALS)     fragColor = vec4(.5*normal+.5, 1);
-    else if(shading == CAMERA_RAYS) fragColor = vec4(.5*cameraToPixel+.5, 1);
-    else if(shading == GLOOM)       fragColor = vec4(vec3(gloom), 1);
+    else if(shading == GLOOM){
+        vec3 cameraToPixel = normalize(eye-v_position);
+        float gloom = pow(gloomPowBase, 1-dot(cameraToPixel,normal))/gloomPowBase;
+        fragColor = vec4(vec3(gloom), 1);
+    }
 
 
 }
