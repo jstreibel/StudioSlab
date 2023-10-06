@@ -21,7 +21,6 @@ namespace Graphics {
         float cameraAnglePolar = .25*M_PI;
         float cameraAngleAzimuth = .0f;
 
-
         std::list<Actor::Ptr> actors;
 
         void updateCamera();

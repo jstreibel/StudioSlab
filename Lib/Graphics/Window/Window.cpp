@@ -102,6 +102,16 @@ namespace Graphics {
         return mouseLeftButton==Core::Press;
     }
 
+    auto Window::isMouseCenterClicked() const -> bool {
+        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+
+        fix &mouse = guiBackend.getMouseState();
+
+        if(!mouse.centerPressed) return false;
+
+        return mouseCenterButton==Core::Press;
+    }
+
     auto Window::isMouseRightClicked() const -> bool {
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
@@ -169,9 +179,9 @@ namespace Graphics {
 
     bool
     Window::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
-        if     (button == Core::MouseButton_LEFT)  mouseLeftButton  = state;
-
-        else if(button == Core::MouseButton_RIGHT) mouseRightButton = state;
+        if     (button == Core::MouseButton_LEFT)   mouseLeftButton  = state;
+        else if(button == Core::MouseButton_MIDDLE) mouseCenterButton = state;
+        else if(button == Core::MouseButton_RIGHT)  mouseRightButton = state;
 
         return GUIEventListener::notifyMouseButton(button, state, keys);
     }

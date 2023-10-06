@@ -62,10 +62,18 @@ namespace Graphics {
         else if(Window::isMouseRightClicked()) {
             auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
-            fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
 
             cameraDist += dy*.01f;
+
+            return true;
+        }
+        else if(Window::isMouseCenterClicked()) {
+            auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
+
+            fix dy = (float)mouseState.dy;
+
+            camera.yFov += dy*.005f;
 
             return true;
         }

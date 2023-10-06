@@ -41,6 +41,7 @@ namespace Graphics {
         void setupWindow() const;
 
         Core::KeyState mouseLeftButton = Core::Release;
+        Core::KeyState mouseCenterButton = Core::Release;
         Core::KeyState mouseRightButton = Core::Release;
 
     protected:
@@ -69,6 +70,7 @@ namespace Graphics {
 
         auto isMouseIn() const -> bool;
         auto isMouseLeftClicked() const -> bool;
+        auto isMouseCenterClicked() const -> bool;
         auto isMouseRightClicked() const -> bool;
         auto getMouseWindowCoord() const -> Point2D;
         auto getMouseViewportCoord() const -> Point2D;

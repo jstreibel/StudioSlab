@@ -84,6 +84,18 @@ namespace Graphics::OpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
     }
 
+    void Texture2D::set_tPeriodicOn() {
+        bind();
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapMode::Repeat);
+    }
+
+    void Texture2D::setTWrap(WrapMode wrapMode) {
+        bind();
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
+    }
+
     bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat,
                                PixelDataType dataType, const void *dataBegin) {
         assert(row0<getHeight());
@@ -127,4 +139,5 @@ namespace Graphics::OpenGL {
 
         return true;
     }
+
 } // OpenGL

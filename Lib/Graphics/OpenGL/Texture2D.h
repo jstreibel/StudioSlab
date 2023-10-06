@@ -29,6 +29,9 @@ namespace Graphics::OpenGL {
 
         void set_sPeriodicOn();
         void setSWrap(WrapMode wrapMode);
+
+        void set_tPeriodicOn();
+        void setTWrap(WrapMode wrapMode);
     };
 
 } // OpenGL

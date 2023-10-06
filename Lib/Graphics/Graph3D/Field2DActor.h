@@ -17,9 +17,6 @@ namespace Graphics {
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
-        enum LightMode { Colors, White }
-        currentLightMode = Colors;
-
     public:
         Field2DActor();
 

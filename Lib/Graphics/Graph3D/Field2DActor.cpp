@@ -10,6 +10,7 @@
 #include "imgui.h"
 
 #include <array>
+#include <cmath>
 
 namespace Graphics {
 
@@ -29,41 +30,45 @@ namespace Graphics {
         std::array<float, 3> color() const { return {r, g, b}; }
     };
 
+    fix gridSubdivs = 4;
+    fix gridN = 1024;
+    fix gridM = 1024;
+    fix xMinSpace = -5.f;
+    fix yMinSpace = -5.f;
+    fix wSpace = 2.f*(float)fabs(xMinSpace);
+    fix hSpace = 2.f*(float)fabs(yMinSpace);
+
     fix zLight = 2.f;
-    fix a = .5f;
-    fix b = 1.f - a;
+    fix intensity = 2.f;
+    fix a = intensity*(.5f);
+    fix b = intensity*(1.f - a);
     LightData light1 = { 1,  0, 0 + zLight, a, b, 0};
     LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
     LightData light3 = {-1, -1, 0 + zLight, b, 0, a};
-
-    fix gridSubdivs = 4;
-    fix gridN = 21;
-    fix gridM = 21;
-    fix xMinSpace = -10.f;
-    fix yMinSpace = -10.f;
-    fix wSpace = 2.f*(float)fabs(xMinSpace);
-    fix hSpace = 2.f*(float)fabs(yMinSpace);
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
 
     Field2DActor::Field2DActor()
-    : program(Resources::ShadersFolder + "FieldTestShading.vert",
-              Resources::ShadersFolder + "FieldTestShading.frag")
+    : program(Resources::ShadersFolder + "FieldShading.vert",
+              Resources::ShadersFolder + "FieldShading.frag")
     , vertexBuffer("position:2f,texcoord:2f")
     , texture(gridN, gridM)
     {
         GenerateXYPLane(vertexBuffer, gridN, gridM, wSpace, hSpace);
 
         for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
-            float x = 2.f*(float)M_PI*(float)j/(float)gridM + xMinSpace;
-            float y = 2.f*(float)M_PI*(float)i/(float)gridN + yMinSpace;
-            float r = sqrtf(x*x+y*y);
+            float x = wSpace*(float)j/(float)gridM + xMinSpace;
+            float y = hSpace*(float)i/(float)gridN + yMinSpace;
+            float r² = x*x+y*y;
 
-            texture.setValue(i, j, cos(r));
+            texture.setValue(i, j, std::exp(-r²));
         }
 
         texture.upload();
+        texture.setAntiAliasOff();
+        texture.setSWrap(OpenGL::ClampToEdge);
+        texture.setTWrap(OpenGL::ClampToEdge);
 
         program.setUniform("field", texture.getTextureUnit());
 
@@ -79,16 +84,10 @@ namespace Graphics {
         program.setUniform("scale", 1.f);
 
         program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
-        program.setUniform("dr", Real2D(wSpace/(Real)gridM, hSpace/(Real)gridN));
     }
 
     void Field2DActor::draw(const Graph3D &graph3D) {
         texture.bind();
-
-        ImGui::Begin("Actor debug");
-        if(ImGui::SliderFloat3("light1.pos", &light1.x, -5, 5))
-            program.setUniform("light1_position", light1.pos());
-        ImGui::End();
 
         auto view = graph3D.getCamera().getViewTransform();
         auto proj = graph3D.getCamera().getProjection();
