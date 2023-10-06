@@ -5,6 +5,8 @@
 #include "Colors.h"
 #include "Utils/Utils.h"
 
+#include <array>
+
 #define Clamp()
 
 
@@ -65,8 +67,6 @@ namespace Styles {
         return Color(r, g, b, a);
     }
 
-    std::vector<Real> Color::toVector() { return {r, g, b}; }
-
     Color Color::rgb() const { return {r, g, b, -1}; }
 
     bool Color::operator==(const Color &rhs) const {
@@ -77,7 +77,9 @@ namespace Styles {
                Common::areEqual(a, rhs.a, eps);
     }
 
-
+    std::array<Real32, 4> Color::array() const {
+        return std::array<Real32, 4>({r, g, b, a});
+    }
 
 
 }

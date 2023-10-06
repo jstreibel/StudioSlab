@@ -30,7 +30,7 @@ namespace Graphics {
     private:
         bool decorate = true;
         bool clear = true;
-        Styles::Color clearColor;
+        Styles::Color backgroundColor;
 
         static constexpr Real p = 0.999;
 
@@ -48,7 +48,7 @@ namespace Graphics {
         Flags flags;
         RectI windowRect;
 
-        void setClearColor(Styles::Color color);
+        void setBGColor(Styles::Color color);
 
     public:
         explicit Window(int x = 0, int y = 0, int w = 100, int h = 100, Flags flags = None);
@@ -67,6 +67,7 @@ namespace Graphics {
         void setDecorate(bool _decorate);
 
         void setClear(bool _clear);
+        auto getBGColor() const -> const Styles::Color&;
 
         auto isMouseIn() const -> bool;
         auto isMouseLeftClicked() const -> bool;

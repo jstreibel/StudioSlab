@@ -17,7 +17,9 @@ namespace Graphics {
         Core::BackendManager::LoadModule(Core::ImGui);
         Core::BackendManager::LoadModule(Core::ModernOpenGL);
 
-        actors.emplace_back(std::make_shared<Field2DActor>());
+        auto actor = std::make_shared<Field2DActor>();
+        // actor->setAmbientLight(getBGColor());
+        actors.emplace_back(actor);
     }
 
     void Graph3D::draw() {
@@ -56,6 +58,8 @@ namespace Graphics {
 
             cameraAngleAzimuth -= dx*.0025f;
             cameraAnglePolar   -= dy*.0025f;
+
+            cameraAnglePolar = std::min(std::max(cameraAnglePolar, 1.e-5f), (1.f-1.e-5f)*(float)M_PI);
 
             return true;
         }

@@ -15,7 +15,7 @@
 namespace Graphics {
 
     Window::Window(int x, int y, int w, int h, Flags flags)
-            : clearColor(Graphics::clearColor), flags(flags),
+            : backgroundColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
 
     void Window::draw() { setupWindow(); }
@@ -49,7 +49,7 @@ namespace Graphics {
     }
 
     void Window::_clear() const {
-        auto &bg = clearColor;
+        auto &bg = backgroundColor;
 
         glBegin(GL_QUADS);
         {
@@ -175,7 +175,8 @@ namespace Graphics {
         return {_x, _x + _w, _y, _y + _h};
     }
 
-    void Window::setClearColor(Styles::Color color) { clearColor = color; }
+    void Window::setBGColor(Styles::Color color) { backgroundColor = color; }
+    auto Window::getBGColor() const -> const Styles::Color & { return backgroundColor; }
 
     bool
     Window::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
@@ -185,5 +186,6 @@ namespace Graphics {
 
         return GUIEventListener::notifyMouseButton(button, state, keys);
     }
+
 
 }

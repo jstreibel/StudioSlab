@@ -55,7 +55,7 @@ void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder) {
 
 void Graphics::Graph2D::draw() {
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
-    Window::setClearColor(Math::StylesManager::GetCurrent()->graphBackground);
+    Window::setBGColor(Math::StylesManager::GetCurrent()->graphBackground);
     Window::draw();
 
     artistXHair.setVisibility(isMouseIn());

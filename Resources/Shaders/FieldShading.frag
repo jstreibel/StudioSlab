@@ -17,16 +17,22 @@ uniform vec3 light3_position;
 uniform vec3 light1_color;
 uniform vec3 light2_color;
 uniform vec3 light3_color;
-uniform vec3 ambientColor = vec3(.25f);
+uniform vec4 amb = vec4(.25f);
 
 uniform int gridSubdivs; // Power of 2
 
 uniform sampler2D field;
 
+const int COLOR = 0;
+const int NORMALS = 1;
+const int CAMERA_RAYS = 2;
+const int GLOOM = 2;
+uniform int shading = COLOR;
+
 uniform float scale;
+uniform float gloomPowBase = 50;
 
 uniform vec2 texelSize;
-uniform vec2 dr;
 
 // Input from vertex shader *************************
 in vec3 v_normal;
@@ -36,31 +42,27 @@ in vec2 v_texcoord;
 // Output
 out vec4 fragColor;
 
-// Const ********************************************
-const float pi = 3.14159265359;
-
-
 void main()
 {
-    vec4 color = vec4(1);
+    // Lighting ************************************
+    vec3 normal = computeNormal(field, v_texcoord, texelSize, scale);
+    vec4 l1 = vec4(light1_color * omni_brightness_no_decay(v_position, light1_position, normal), 1);
+    vec4 l2 = vec4(light2_color * omni_brightness_no_decay(v_position, light2_position, normal), 1);
+    vec4 l3 = vec4(light3_color * omni_brightness_no_decay(v_position, light3_position, normal), 1);
 
-    // Coordinates:
-    float x = v_position.x,
-          y = v_position.y;
-    float r = length(v_position.xy),
-          theta = atan(y/x)+.5*pi;
+    vec4 lightingColor = amb + (1-amb)*(l1+l2+l3);
 
     // Grid ****************************************
     vec4 gridColor = vec4(vec3(0.2), 1);
-    color = cartesianGrid(vec2(x, y), gridColor, color, gridSubdivs);
+    vec4 color = cartesianGrid(v_position.xy, gridColor, lightingColor, gridSubdivs);
 
-    // Lighting ************************************
-    vec3 normal = computeNormal(field, v_texcoord, texelSize, scale);
-    vec4 l1 = vec4(light1_color * lighting(v_position, light1_position, normal), 1);
-    vec4 l2 = vec4(light2_color * lighting(v_position, light2_position, normal), 1);
-    vec4 l3 = vec4(light3_color * lighting(v_position, light3_position, normal), 1);
-    vec4 amb = vec4(ambientColor, 1.0);
-    color *= (amb + (1-amb)*(l1+l2+l3));
+    vec3 cameraToPixel = normalize(eye-v_position);
+    float gloom = pow(gloomPowBase, 1-dot(cameraToPixel,normal))/gloomPowBase;
 
-    fragColor = color;
+    if(shading == COLOR)            fragColor = color;
+    else if(shading == NORMALS)     fragColor = vec4(.5*normal+.5, 1);
+    else if(shading == CAMERA_RAYS) fragColor = vec4(.5*cameraToPixel+.5, 1);
+    else if(shading == GLOOM)       fragColor = vec4(vec3(gloom), 1);
+
+
 }

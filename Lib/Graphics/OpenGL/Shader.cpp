@@ -163,7 +163,7 @@ namespace Graphics::OpenGL {
 
         CHECK_UNIFORM_EXISTS
 
-        glUniformMatrix3fv(loc, 1, GL_FALSE, data );
+        glUniform3fv(loc, 1, data);
 
         CHECK_UNIFORM_ERRORS
     }
@@ -176,7 +176,7 @@ namespace Graphics::OpenGL {
 
         CHECK_UNIFORM_EXISTS
 
-        glUniformMatrix3fv( loc, 1, GL_FALSE, data );
+        glUniform4fv(loc, 1, data);
 
         CHECK_UNIFORM_ERRORS
     }

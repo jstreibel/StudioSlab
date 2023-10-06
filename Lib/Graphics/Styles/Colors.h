@@ -9,15 +9,16 @@
 #include "Utils/Types.h"
 
 namespace Styles {
-    class Color
+    struct Color
     {
     public:
+        float r, g, b, a;
+
         Color();
         Color(float r, float g, float b, float a=1.);
         Color(Color rgb, float a);
         Color(const Color &c) = default;
 
-        float r, g, b, a;
 
         Color permute(bool odd=false) const;
         Color inverse(bool invertAlpha=false) const;
@@ -25,7 +26,7 @@ namespace Styles {
         static Color FromBytes(Byte r, Byte g, Byte b, Byte a=0xff);
         static Color FromHex(Str hex);
 
-        std::vector<Real> toVector();
+        std::array<Real32, 4> array() const;
 
         Color rgb() const;
 

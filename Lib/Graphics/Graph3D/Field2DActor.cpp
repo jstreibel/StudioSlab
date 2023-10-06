@@ -44,7 +44,7 @@ namespace Graphics {
     fix b = intensity*(1.f - a);
     LightData light1 = { 1,  0, 0 + zLight, a, b, 0};
     LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
-    LightData light3 = {-1, -1, 0 + zLight, b, 0, a};
+    LightData light3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
@@ -55,14 +55,14 @@ namespace Graphics {
     , vertexBuffer("position:2f,texcoord:2f")
     , texture(gridN, gridM)
     {
-        GenerateXYPLane(vertexBuffer, gridN, gridM, wSpace, hSpace);
+        GenerateXYPLane(vertexBuffer, gridN+1, gridM+1, wSpace, hSpace);
 
         for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
             float x = wSpace*(float)j/(float)(gridM-1) + xMinSpace;
             float y = hSpace*(float)i/(float)(gridN-1) + yMinSpace;
             float r² = x*x+y*y;
-
-            texture.setValue(i, j, std::exp(-r²));
+            float k = 4.0f;
+            texture.setValue(i, j, cosf(2*M_PI*sqrt(r²)/k)*std::exp(-r²/(k*k)));
         }
 
         texture.upload();
@@ -94,12 +94,27 @@ namespace Graphics {
         auto proj = camera.getProjection();
         auto model = glm::mat4(1.f);
 
+        ImGui::Begin("Actor");
+        static float scale = 1.0;
+        if(ImGui::SliderFloat("scale", &scale, .1f, 10.f))
+            program.setUniform("scale", scale);
+
+        static float gloomPowBase = 1.0;
+        if(ImGui::DragFloat("gloom base", &gloomPowBase, gloomPowBase*1.e-1f, 0.1f, 100.f))
+            program.setUniform("gloomPowBase", gloomPowBase);
+
+        //ImGui::Checkbox()
+        ImGui::End();
+
         program.setUniform("eye", camera.pos);
+
         program.setUniform("modelview", view*model);
         program.setUniform("projection", proj);
 
         vertexBuffer.render(GL_TRIANGLES);
     }
+
+    void Field2DActor::setAmbientLight(Styles::Color color) { program.setUniform("amb", color.array()); }
 
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer,
