@@ -22,7 +22,23 @@ namespace StrUtils {
 
         return str;
     }
+
+    StrVector GetLines(const char *text) {
+        StrVector lines;
+        InStringStream stream(text);
+        Str line;
+
+        while (std::getline(stream, line))
+            lines.push_back(line);
+
+        return lines;
+    }
+
+    StrVector GetLines(const Str &text) {
+        return GetLines(text.c_str());
+    }
 }
+
 Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {
     auto base = useScientificNotation ? std::scientific : std::fixed;
     std::ostringstream out;

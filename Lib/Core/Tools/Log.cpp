@@ -51,8 +51,6 @@ const Str Log::WarningImportantFormat = Log::ResetFormatting  +  Log::FGBlack   
 const Str Log::ErrorFormat =            Log::ResetFormatting  +  Log::FGRed;
 const Str Log::ErrorFatalFormat =       Log::ResetFormatting  +  Log::FGRed                             + Log::BoldFace;
 
-const Log::FlushClass Log::Flush;
-
 Log::Log() : Singleton<Log>("Log"), InterfaceOwner (true) { };
 
 auto Log::GetSingleton() -> Log & {
@@ -116,16 +114,11 @@ auto Log::FlushAll() -> void {
     *Log::GetSingleton().mainStream << Log::Flush;
 }
 
-OStream &operator<<(OStream &os, const Log::FlushClass &flush) {
-    os.flush();
-    return os;
-}
-
 void Log::notifyCLArgsSetupFinished() {
     InterfaceOwner::notifyCLArgsSetupFinished();
 
 
-    #if !FORCE_VERBOSE
+#if !FORCE_VERBOSE
     if(**logDebug || **verbose){
         std::cout << FGBlue << BoldFace << "\n\n --- SOME LATE DEBUG MESSAGES --- \n";
 
@@ -157,11 +150,38 @@ void Log::notifyCLArgsSetupFinished() {
 
         std::cout << FGBlue << BoldFace << "\n\n --- END LATE NOTES MESSAGES --- \n";
     }
-    #endif
+#endif
 
 
 }
 
-void Log::FlushClass::operator()() const {
-//    Log::GetSingleton().myStream.flush();
+
+
+const Log::FlushClass Log::Flush;
+OStream &operator<<(OStream &os, const Log::FlushClass &flush) {
+    os.flush();
+    return os;
+}
+void Log::FlushClass::operator()() const { }
+
+
+
+Log::FormattingClass Log::Format;
+OStream &operator<<(OStream &os, const Log::FormattingClass &width) {
+    os << std::setw((int)width.len);
+
+    switch (width.textPosition) {
+        case Log::Left:  os << std::left;  break;
+        case Log::Right: os << std::right; break;
+    }
+
+    return os;
+}
+auto Log::FormattingClass::operator()(Count _len) -> const FormattingClass& {
+    this->len = _len;
+    return *this;
+}
+auto Log::FormattingClass::operator()(TextPosition pos) -> const FormattingClass& {
+    this->textPosition = pos;
+    return *this;
 }

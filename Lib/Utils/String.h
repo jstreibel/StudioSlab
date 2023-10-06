@@ -11,6 +11,7 @@
 
 typedef std::string         Str;
 typedef std::stringstream   StringStream;
+typedef std::istringstream  InStringStream;
 typedef std::vector<Str>    StrVector;
 
 namespace StrUtils {
@@ -20,6 +21,9 @@ namespace StrUtils {
     void ReplaceLastOccurrence(Str& str, const Str& toReplace, const Str& replaceWith);
 
     Str ReplaceAll(Str str, const Str& from, const Str& to);
+
+    StrVector GetLines(const char*);
+    StrVector GetLines(const Str&);
 
 }
 

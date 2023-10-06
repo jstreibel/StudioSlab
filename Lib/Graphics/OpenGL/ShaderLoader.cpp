@@ -24,10 +24,6 @@ namespace Graphics::OpenGL {
 
         includedFiles.insert(filePath);
 
-        for(auto &incFile : includedFiles)
-            Log::Debug() << incFile << Log::Flush;
-
-
         std::ifstream file(filePath);
         if (!file.is_open()) {
             Log::Error() << "Failed to open shader file: " << filePath << Log::Flush;
@@ -38,25 +34,20 @@ namespace Graphics::OpenGL {
         StringStream ss;
         Str line;
         while (std::getline(file, line)) {
-            line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](unsigned char ch) {
-                return !std::isspace(ch);
-            }));
+            // line.erase(line.begin(), std::find_if(line.begin(), line.end(), [](unsigned char ch) {
+            //     return !std::isspace(ch);
+            // }));
 
-            // Skip lines that start with "//"
+            // Skip comments
             if (line.substr(0, 2) == "//") continue;
 
             if (line.find("#include") != std::string::npos) {
-                // Extract the included file name
                 size_t start = line.find('\"') + 1;
                 size_t end = line.find_last_of('\"');
                 Str includeFile = shadersRoot + line.substr(start, end - start);
 
-                Log::Note() << "Including file " << includeFile << Log::Flush;
-
-                // Parse the included file recursively
                 Str includedContent = _parseGLSL(includeFile, includedFiles);
 
-                // Append the included content to the output
                 ss << includedContent << "\n";
 
             } else
@@ -84,9 +75,45 @@ namespace Graphics::OpenGL {
         glGetShaderiv( handle, GL_COMPILE_STATUS, &compile_status );
         if( compile_status == GL_FALSE )
         {
-            GLchar messages[256];
-            glGetShaderInfoLog( handle, sizeof(messages), 0, &messages[0] );
-            Log::Error() << messages;
+            fix BUFFER_SIZE = 1024;
+            GLchar rawMessages[BUFFER_SIZE];
+
+            glGetShaderInfoLog( handle, BUFFER_SIZE, nullptr, &rawMessages[0] );
+            auto messages = StrUtils::GetLines(rawMessages);
+
+            auto &log = Log::Error() << "While compiling "
+                << (type==VertexShader?"vertex":(type==FragmentShader?"fragment":"<unknown_type>"))
+                << " shader;\n";
+
+            log << "Messages:" << Log::FGYellow;
+            std::set<Count> problematicLines;
+            for(auto &message : messages) {
+                log << "\n" << message;
+                auto lineNumberStr = message.substr(2, 2);
+                auto number = std::atoi(lineNumberStr.c_str());
+
+                if(number!=0) problematicLines.insert(number);
+            }
+
+            log << Log::ResetFormatting << "\n\n";
+            log << "Source:\n" << Log::BGBlue;
+            Count lineNumber = 1;
+            auto srcLines = StrUtils::GetLines(source);
+            for(auto &line : srcLines) {
+                if(problematicLines.contains(lineNumber))
+                    log << Log::FGRed;
+                else
+                    log << Log::FGBlack;
+
+                log
+                << Log::Format(3) << Log::Format(Log::Right) << lineNumber << ":   "
+                << line << "\n";
+
+                ++lineNumber;
+            }
+
+            log << Log::ResetFormatting << Log::Flush;
+
             throw Exception("while trying to compile glsl shader");
         }
         return handle;    }

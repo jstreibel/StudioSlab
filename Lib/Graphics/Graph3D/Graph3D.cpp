@@ -18,13 +18,14 @@ namespace Graphics {
         Core::BackendManager::LoadModule(Core::ModernOpenGL);
 
         actors.emplace_back(std::make_shared<Field2DActor>());
-
-        updateProjectionMatrix();
-
     }
 
     void Graph3D::draw() {
         Window::draw();
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+        glDepthMask(GL_TRUE);
 
         fix r = cameraDist_xy;
         fix θ = cameraAngle;
@@ -41,7 +42,17 @@ namespace Graphics {
     }
 
     auto Graph3D::getProjection() const -> glm::mat4 {
-        return projection;
+        float aspect = (float)getw()/(float)geth();   // Aspect ratio
+
+        // float fovY = 2.0f * glm::atan(d / (2.0f * camHeight));
+        // float fovX = 2.0f * glm::atan(w / (2.0f * camHeight));
+        // float fov = glm::max(fovX, fovY);
+        // float aspect = w / d;  // or use the aspect ratio of your viewport
+
+        float nearPlane = 0.1f;
+        float farPlane = 100.0f;
+
+        return glm::perspective(fovY, aspect, nearPlane, farPlane);
     }
     auto Graph3D::getViewTransform()  const -> glm::mat4 {
         glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
@@ -55,26 +66,7 @@ namespace Graphics {
 
         glm::vec3 cameraPos({x, y, z});
 
-        glm::mat4 view = glm::lookAt(cameraPos, target, up);
-
-        return view;
-    }
-
-    void Graph3D::updateProjectionMatrix() {
-        float aspect = (float)getw()/(float)geth();   // Aspect ratio
-
-        if(true) {
-            // float fovY = 2.0f * glm::atan(d / (2.0f * camHeight));
-            // float fovX = 2.0f * glm::atan(w / (2.0f * camHeight));
-            // float fov = glm::max(fovX, fovY);
-            // float aspect = w / d;  // or use the aspect ratio of your viewport
-
-            float nearPlane = 0.1f;
-            float farPlane = 100.0f;
-
-            projection = glm::perspective(fovY, aspect, nearPlane, farPlane);
-
-        }
+        return glm::lookAt(cameraPos, target, up);
     }
 
     bool Graph3D::notifyMouseMotion(int x, int y) {
@@ -85,7 +77,7 @@ namespace Graphics {
             fix dy = (float)mouseState.dy;
 
             cameraAngle += dx*.0025f;
-            cameraDist_xy += dy*.0025f;
+            cameraDist_xy += dy*.01f;
 
             return true;
         }
@@ -95,7 +87,7 @@ namespace Graphics {
             fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
 
-            cameraHeight += dy*.0025f;
+            cameraHeight += dy*.01f;
 
             return true;
         }
@@ -103,16 +95,8 @@ namespace Graphics {
         return GUIEventListener::notifyMouseMotion(x, y);
     }
 
-    void Graph3D::notifyReshape(int w, int h) {
-        Window::notifyReshape(w, h);
-
-        updateProjectionMatrix();
-    }
-
     bool Graph3D::notifyMouseWheel(double dx, double dy) {
         fovY += .01f*fovY*(float)dy;
-
-        updateProjectionMatrix();
 
         return GUIEventListener::notifyMouseWheel(dx, dy);
     }

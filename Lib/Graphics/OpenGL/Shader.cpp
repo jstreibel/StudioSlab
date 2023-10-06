@@ -19,6 +19,9 @@
     return; \
     }
 
+#define CHECK_UNIFORM_ERRORS \
+    checkGLErrors(Str("uniform '") + name + "' @ " + __PRETTY_FUNCTION__);
+
 namespace Graphics::OpenGL {
     void ListShaderUniforms(GLuint handle, std::basic_ostream<char, std::char_traits<char>> &log) {
         GLint numActiveUniforms = 0;
@@ -149,7 +152,7 @@ namespace Graphics::OpenGL {
         auto matrixData = (const float*)glm::value_ptr(mat4);
         setUniform4x4(name, matrixData);
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, const glm::vec3 &vec3) const {
@@ -162,7 +165,7 @@ namespace Graphics::OpenGL {
 
         glUniformMatrix3fv(loc, 1, GL_FALSE, data );
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, const glm::vec4 &vec4) const {
@@ -175,7 +178,7 @@ namespace Graphics::OpenGL {
 
         glUniformMatrix3fv( loc, 1, GL_FALSE, data );
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, const glm::mat3 &mat3) const {
@@ -183,7 +186,7 @@ namespace Graphics::OpenGL {
 
         setUniform3x3(name, matrixData);
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, Texture& texture) {
@@ -197,7 +200,7 @@ namespace Graphics::OpenGL {
 
         textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, std::array<float, 3> vec3) const {
@@ -206,9 +209,9 @@ namespace Graphics::OpenGL {
         fix loc = glGetUniformLocation(handle, name.c_str());
         CHECK_UNIFORM_EXISTS
 
-        glUniformMatrix3fv( loc, 1, GL_FALSE, vec3.data());
+        glUniform3fv( loc, 1, vec3.data());
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform(const Str &name, std::array<float, 4> vec4) const {
@@ -217,9 +220,9 @@ namespace Graphics::OpenGL {
         fix loc = glGetUniformLocation(handle, name.c_str());
 
         CHECK_UNIFORM_EXISTS
-        glUniformMatrix3fv( loc, 1, GL_FALSE, vec4.data());
+        glUniform4fv( loc, 1, vec4.data());
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform3x3(const Str &name, const float *mat3) const {
@@ -230,7 +233,7 @@ namespace Graphics::OpenGL {
         CHECK_UNIFORM_EXISTS
         glUniformMatrix3fv( loc, 1, GL_FALSE, mat3);
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
     void Shader::setUniform4x4(const Str &name, const float *mat4) const {
@@ -242,7 +245,7 @@ namespace Graphics::OpenGL {
 
         glUniformMatrix4fv( loc, 1, GL_FALSE, mat4);
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CHECK_UNIFORM_ERRORS
     }
 
 

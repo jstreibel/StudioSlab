@@ -119,6 +119,19 @@ public:
     static const FlushClass Flush;
     friend OStream& operator<<(OStream& os, const FlushClass& flush);
 
+    enum TextPosition { Left, Right };
+    class FormattingClass {
+    public:
+        Count len{};
+        TextPosition textPosition = Left;
+
+        const FormattingClass& operator()(Count len);
+        const FormattingClass& operator()(TextPosition);
+    };
+    friend FormattingClass;
+    static FormattingClass Format;
+    friend OStream& operator<<(OStream& os, const FormattingClass& flush);
+
     static auto FlushAll() -> void;
 
     auto notifyCLArgsSetupFinished() -> void override;

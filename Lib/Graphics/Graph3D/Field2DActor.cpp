@@ -7,6 +7,7 @@
 #include "Utils/Resources.h"
 
 #include "Graph3D.h"
+#include "imgui.h"
 
 #include <array>
 
@@ -16,82 +17,78 @@ namespace Graphics {
     typedef std::array<float,3> vec3;
 
     struct Field2DVertex{
-        float nx, ny, nz;
-        float x, y, z;
+        float x, y;
         float s, t;
     };
 
-    fix gridN = 100;
-    fix gridM = 100;
-    fix xMinSpace = -1.f;
-    fix yMinSpace = -1.f;
-    fix wSpace = 2*abs(xMinSpace);
-    fix hSpace = 2*abs(yMinSpace);
+    struct LightData {
+        float x, y, z;
+        float r, g, b;
 
-    void GenerateSurface(OpenGL::VertexBuffer &buffer, int N, int M,
-                         float width, float height,
-                         vec3 (*surf)(vec2) = [](vec2 in){return vec3{in[0], in[1], .0f};});
+        std::array<float, 3> pos()   const { return {x, y, z}; }
+        std::array<float, 3> color() const { return {r, g, b}; }
+    };
+
+    fix zLight = 2.f;
+    fix a = .5f;
+    fix b = 1.f - a;
+    LightData light1 = { 1,  0, 0 + zLight, a, b, 0};
+    LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
+    LightData light3 = {-1, -1, 0 + zLight, b, 0, a};
+
+    fix gridSubdivs = 1;
+    fix gridN = 21;
+    fix gridM = 21;
+    fix xMinSpace = -10.f;
+    fix yMinSpace = -10.f;
+    fix wSpace = 2.f*(float)fabs(xMinSpace);
+    fix hSpace = 2.f*(float)fabs(yMinSpace);
+
+    void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
+                         float width, float height);
 
     Field2DActor::Field2DActor()
     : program(Resources::ShadersFolder + "FieldTestShading.vert",
               Resources::ShadersFolder + "FieldTestShading.frag")
-    , vertexBuffer("normal:3f,position:3f,texcoord:2f")
+    , vertexBuffer("position:2f,texcoord:2f")
     , texture(gridN, gridM)
     {
-        GenerateSurface(vertexBuffer, gridN, gridM, wSpace, hSpace);
+        GenerateXYPLane(vertexBuffer, gridN, gridM, wSpace, hSpace);
 
         for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
-            float x = 2.f*M_PI*j/(float)gridM;
-            float y = 2.f*M_PI*i/(float)gridN;
+            float x = 2.f*(float)M_PI*(float)j/(float)gridM + xMinSpace;
+            float y = 2.f*(float)M_PI*(float)i/(float)gridN + yMinSpace;
             float r = sqrtf(x*x+y*y);
 
-            texture.setValue(i, j, sinf(r));
+            texture.setValue(i, j, cos(r));
         }
 
         texture.upload();
 
-
-        program.setUniform("viewMode", 0);
-
         program.setUniform("field", texture.getTextureUnit());
 
-        fix zLight = 0.f;
-        if (currentLightMode == White) {
-            std::array<float, 3> lightPostition = {{1.f, 0.f, 0.f + zLight}};
-            program.setUniform("light1_position", lightPostition);
-            program.setUniform("light2_position", lightPostition);
-            program.setUniform("light3_position", lightPostition);
-        }
-        else if (currentLightMode == Colors) {
-            std::array<float, 3> light1Postition = { 1,  0, 0 + zLight};
-            std::array<float, 3> light2Postition = { 0,  1, 0 + zLight};
-            std::array<float, 3> light3Postition = {-1, -1, 0 + zLight};
+        program.setUniform("light1_position", light1.pos());
+        program.setUniform("light2_position", light2.pos());
+        program.setUniform("light3_position", light3.pos());
+        program.setUniform("light1_color", light1.color());
+        program.setUniform("light2_color", light2.color());
+        program.setUniform("light3_color", light3.color());
 
-            program.setUniform("light1_position", light1Postition);
-            program.setUniform("light2_position", light2Postition);
-            program.setUniform("light3_position", light3Postition);
-        }
+        program.setUniform("gridSubdivs", gridSubdivs);
 
-        program.setUniform("gridType", 1); // Cartesian
-        program.setUniform("lightOn", 1);
+        program.setUniform("scale", 1.f);
 
-        program.setUniform("gridSubdivs", 8);
-        program.setUniform("showLevelLines", 0);
-
-        program.setUniform("phiScale", 1.f);
-        program.setUniform("dPhidtScale", 1.f);
-
-        program.setUniform("dr_tex", Real2D(1./(Real)gridM, 1./(Real)gridN));
+        program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
         program.setUniform("dr", Real2D(wSpace/(Real)gridM, hSpace/(Real)gridN));
     }
 
     void Field2DActor::draw(const Graph3D &graph3D) {
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
-        glDepthMask(GL_TRUE);
-        // glDepthRange(-10.f, 10.f);
-
         texture.bind();
+
+        ImGui::Begin("Actor debug");
+        if(ImGui::SliderFloat3("light1.pos", &light1.x, -5, 5))
+            program.setUniform("light1_position", light1.pos());
+        ImGui::End();
 
         auto proj = graph3D.getProjection();
         auto view = graph3D.getViewTransform();
@@ -104,35 +101,24 @@ namespace Graphics {
     }
 
 
-    void GenerateSurface(OpenGL::VertexBuffer &buffer,
+    void GenerateXYPLane(OpenGL::VertexBuffer &buffer,
                          int N, int M,
-                         float width, float height,
-                         vec3 (*surf)(vec2))
+                         float width, float height)
     {
         std::vector<GLuint> indices;
         std::vector<Field2DVertex> vertices;
 
-        // Generate vertices
-        fix nx = .0f, ny = .0f, nz = 1.0f;
-
         fix xNormFactor = 1/float(M-1);
         fix yNormFactor = 1/float(N-1);
 
-        fix xFactor = width *xNormFactor;
-        fix yFactor = height*yNormFactor;
-
         for (int i = 0; i < N; ++i) {
-            fix t = (float)i*yFactor + yMinSpace;
-            fix v = (float)i*yNormFactor;
+            fix t = (float)i*yNormFactor;
+            fix y = t*height + yMinSpace;
             for (int j = 0; j < M; ++j) {
-                fix s = (float)j*xFactor + xMinSpace;
-                fix u = (float)j*xNormFactor;
+                fix s = (float)j*xNormFactor;
+                fix x = s*width + xMinSpace;
 
-                auto [x, y, z] = surf({s, t});
-
-                vertices.push_back({nx, ny, nz,
-                                    x,  y,  z,
-                                    u, v});
+                vertices.push_back({x, y, s, t});
             }
         }
 
