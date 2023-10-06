@@ -79,6 +79,8 @@ set( GRAPHICS_SOURCES
 		OpenGL/ShaderLoader.h
         MeshUtils.cpp
         MeshUtils.h
+        Graph3D/Camera.cpp
+        Graph3D/Camera.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

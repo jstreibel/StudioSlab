@@ -32,12 +32,6 @@ namespace Graphics {
         Point2D(Real x, Real y) : x(x), y(y) {}
         Point2D(const Point2D& p) = default;
 
-        //Point2D operator * (const double a) const {
-        //    return Point2D(x*a, y*a);
-        //}
-        //
-        //Point2D operator - () const { return Point2D(-x,-y);}
-
         Point2D operator +  (const Point2D &p) {return {x+p.x, y+p.y}; };
         void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
         void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
@@ -53,6 +47,10 @@ namespace Graphics {
     Point2D operator * (const Real &a, const Point2D &p);
 
     typedef std::vector<Point2D> PointContainer;
+
+    struct Point3D { float x, y, z; };
+
+    typedef Point3D Vector3D;
 
 }
 

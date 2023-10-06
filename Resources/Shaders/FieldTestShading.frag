@@ -14,7 +14,7 @@ uniform vec3 light3_position;
 uniform vec3 light1_color;
 uniform vec3 light2_color;
 uniform vec3 light3_color;
-uniform vec3 ambientColor = vec3(.25f);
+uniform vec3 ambientColor = vec3(.5f);
 
 uniform int gridSubdivs; // Power of 2
 

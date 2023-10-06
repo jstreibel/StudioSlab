@@ -27,46 +27,24 @@ namespace Graphics {
         glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
 
-        fix r = cameraDist_xy;
-        fix θ = cameraAngle;
-        fix x = r*cos(θ);
-        fix y = r*sin(θ);
-        fix z = cameraHeight;
-
-        ImGui::Begin("Graph3D debug");
-        ImGui::Text("Camera rθz: [%f, %f, %f]", r, θ, z);
-        ImGui::Text("Camera xyz: [%f, %f, %f]", x, y, z);
-        ImGui::End();
+        updateCamera();
 
         for(auto &actor : actors) actor->draw(*this);
     }
 
-    auto Graph3D::getProjection() const -> glm::mat4 {
-        float aspect = (float)getw()/(float)geth();   // Aspect ratio
-
-        // float fovY = 2.0f * glm::atan(d / (2.0f * camHeight));
-        // float fovX = 2.0f * glm::atan(w / (2.0f * camHeight));
-        // float fov = glm::max(fovX, fovY);
-        // float aspect = w / d;  // or use the aspect ratio of your viewport
-
-        float nearPlane = 0.1f;
-        float farPlane = 100.0f;
-
-        return glm::perspective(fovY, aspect, nearPlane, farPlane);
-    }
-    auto Graph3D::getViewTransform()  const -> glm::mat4 {
+    void Graph3D::updateCamera() {
         glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
         glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
 
-        fix r = cameraDist_xy;
-        fix θ = cameraAngle;
-        fix x = r*cos(θ);
-        fix y = r*sin(θ);
-        fix z = cameraHeight;
+        fix r = cameraDist;
+        fix θ = cameraAnglePolar;
+        fix φ = cameraAngleAzimuth;
+        fix x = r*sin(θ)*cos(φ);
+        fix y = r*sin(θ)*sin(φ);
+        fix z = r*cos(θ);
 
-        glm::vec3 cameraPos({x, y, z});
-
-        return glm::lookAt(cameraPos, target, up);
+        camera.pos = {x, y, z};
+        camera.aspect = (float)getw()/(float)geth();
     }
 
     bool Graph3D::notifyMouseMotion(int x, int y) {
@@ -76,8 +54,8 @@ namespace Graphics {
             fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
 
-            cameraAngle += dx*.0025f;
-            cameraDist_xy += dy*.01f;
+            cameraAngleAzimuth -= dx*.0025f;
+            cameraAnglePolar   += dy*.0025f;
 
             return true;
         }
@@ -87,7 +65,7 @@ namespace Graphics {
             fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
 
-            cameraHeight += dy*.01f;
+            cameraDist += dy*.01f;
 
             return true;
         }
@@ -96,9 +74,13 @@ namespace Graphics {
     }
 
     bool Graph3D::notifyMouseWheel(double dx, double dy) {
-        fovY += .01f*fovY*(float)dy;
+        camera.yFov += .01f*camera.yFov*(float)dy;
 
         return GUIEventListener::notifyMouseWheel(dx, dy);
+    }
+
+    auto Graph3D::getCamera() const -> const Camera & {
+        return camera;
     }
 
 

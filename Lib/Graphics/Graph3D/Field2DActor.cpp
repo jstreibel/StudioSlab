@@ -36,7 +36,7 @@ namespace Graphics {
     LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
     LightData light3 = {-1, -1, 0 + zLight, b, 0, a};
 
-    fix gridSubdivs = 1;
+    fix gridSubdivs = 4;
     fix gridN = 21;
     fix gridM = 21;
     fix xMinSpace = -10.f;
@@ -90,8 +90,8 @@ namespace Graphics {
             program.setUniform("light1_position", light1.pos());
         ImGui::End();
 
-        auto proj = graph3D.getProjection();
-        auto view = graph3D.getViewTransform();
+        auto view = graph3D.getCamera().getViewTransform();
+        auto proj = graph3D.getCamera().getProjection();
         auto model = glm::mat4(1.f);
 
         program.setUniform("modelview", view*model);

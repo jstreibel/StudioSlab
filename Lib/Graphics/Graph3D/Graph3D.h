@@ -7,6 +7,7 @@
 
 #include "Graphics/Window/Window.h"
 #include "Actor.h"
+#include "Camera.h"
 
 #include <glm/detail/type_mat4x4.hpp>
 
@@ -15,20 +16,22 @@
 namespace Graphics {
 
     class Graph3D : public Window {
-        float cameraDist_xy = 9.f;
-        float cameraAngle = -.5*M_PI;
-        float cameraHeight = 5;
-        float fovY = M_PI * 60.0f / 180.0f;
+        Camera camera;
+        float cameraDist = 9.f;
+        float cameraAnglePolar = .25*M_PI;
+        float cameraAngleAzimuth = .0f;
+
 
         std::list<Actor::Ptr> actors;
 
+        void updateCamera();
     public:
         Graph3D();
         void draw() override;
-        auto getProjection() const -> glm::mat4;
-        auto getViewTransform() const -> glm::mat4;
+        auto getCamera() const -> const Camera&;
         bool notifyMouseMotion(int x, int y) override;
         bool notifyMouseWheel(double dx, double dy) override;
+
     };
 
 } // Graphics
