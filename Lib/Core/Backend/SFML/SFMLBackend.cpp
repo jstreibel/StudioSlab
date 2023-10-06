@@ -5,14 +5,22 @@
 #include "SFMLBackend.h"
 #include "COMPILE_CONFIG.h"
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/OpenGL/OpenGL.h"
+
 
 
 
 SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", sfmlEventTranslator) {
 
+    sf::ContextSettings contextSettings;
+    contextSettings.depthBits = 24;
+    contextSettings.majorVersion = 4;
+    contextSettings.minorVersion = 6;
+    contextSettings.antialiasingLevel = 8;
+
     window = new sf::RenderWindow(
             sf::VideoMode(1920, 1080),
-            "SFML Window");
+            "SFML Window", sf::Style::Default, contextSettings);
 
     window->setFramerateLimit(0);
     window->setPosition(sf::Vector2i(250, 250));
@@ -74,6 +82,8 @@ void SFMLBackend::_treatEvents() {
 
 void SFMLBackend::_render() {
     window->clear();
+
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     for(auto &module : modules) module->beginRender();
 

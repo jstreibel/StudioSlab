@@ -62,7 +62,7 @@ void GLFWBackend::mainLoop() {
         while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
         mustRender = false;
 
-        glClearColor(r, g, b, 1.0);
+        glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for(auto &module : modules) module->beginRender();

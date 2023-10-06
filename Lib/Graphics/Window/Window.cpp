@@ -27,6 +27,9 @@ namespace Graphics {
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
 
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
