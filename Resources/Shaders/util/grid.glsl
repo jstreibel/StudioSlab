@@ -20,6 +20,22 @@ vec4 computeLine(float value,  vec4  line_color, vec4  bg_color,
     return mix(line_color, bg_color, d);
 }
 
+vec4 polarGrid(vec2 xy, vec4 line_color, vec4 bg_color, int subdivs){
+    const float pi = 3.14159265359;
+
+    float r = length(xy), theta = atan(xy.y/xy.x)+.5*pi;
+
+    float initialThickness = 3;
+    vec4 color = bg_color;
+    for (int l=1; l<=subdivs; l*=2){
+        float antialias = pow(gridAntialiasFactor, l);
+        color = computeLine(r,        line_color, color, l, initialThickness/l, antialias);
+        color = computeLine(theta/pi, line_color, color, l, initialThickness/l, antialias);
+    }
+
+    return color;
+}
+
 vec4 cartesianGrid(vec2 xy, vec4 line_color, vec4 bg_color, int subdivs){
     float x = xy.x, y = xy.y;
 

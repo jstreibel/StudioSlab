@@ -9,6 +9,8 @@ uniform mat4 modelview;
 uniform mat4 normal;
 uniform mat4 projection;
 
+uniform vec3 eye;
+
 uniform vec3 light1_position;
 uniform vec3 light2_position;
 uniform vec3 light3_position;

@@ -55,7 +55,7 @@ namespace Graphics {
             fix dy = (float)mouseState.dy;
 
             cameraAngleAzimuth -= dx*.0025f;
-            cameraAnglePolar   += dy*.0025f;
+            cameraAnglePolar   -= dy*.0025f;
 
             return true;
         }

@@ -30,11 +30,11 @@ namespace Graphics {
         std::array<float, 3> color() const { return {r, g, b}; }
     };
 
-    fix gridSubdivs = 4;
-    fix gridN = 1024;
-    fix gridM = 1024;
-    fix xMinSpace = -5.f;
-    fix yMinSpace = -5.f;
+    fix gridSubdivs = 8;
+    fix gridN = 64;
+    fix gridM = 64;
+    fix xMinSpace = -8.f;
+    fix yMinSpace = -8.f;
     fix wSpace = 2.f*(float)fabs(xMinSpace);
     fix hSpace = 2.f*(float)fabs(yMinSpace);
 
@@ -58,8 +58,8 @@ namespace Graphics {
         GenerateXYPLane(vertexBuffer, gridN, gridM, wSpace, hSpace);
 
         for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
-            float x = wSpace*(float)j/(float)gridM + xMinSpace;
-            float y = hSpace*(float)i/(float)gridN + yMinSpace;
+            float x = wSpace*(float)j/(float)(gridM-1) + xMinSpace;
+            float y = hSpace*(float)i/(float)(gridN-1) + yMinSpace;
             float r² = x*x+y*y;
 
             texture.setValue(i, j, std::exp(-r²));
@@ -89,10 +89,12 @@ namespace Graphics {
     void Field2DActor::draw(const Graph3D &graph3D) {
         texture.bind();
 
-        auto view = graph3D.getCamera().getViewTransform();
-        auto proj = graph3D.getCamera().getProjection();
+        auto camera = graph3D.getCamera();
+        auto view = camera.getViewTransform();
+        auto proj = camera.getProjection();
         auto model = glm::mat4(1.f);
 
+        program.setUniform("eye", camera.pos);
         program.setUniform("modelview", view*model);
         program.setUniform("projection", proj);
 
