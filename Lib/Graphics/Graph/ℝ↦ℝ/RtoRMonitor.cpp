@@ -60,24 +60,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
-    auto sty = currStyle->funcPlotStyles.begin();
-
-    mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty,   CHOOSE_ENERGY_LABEL("U", "U/L"));
-    mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
-    mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
-    mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
-
-    panel.addWindow(&mEnergyGraph);
-
-    panel.addWindow(&mFieldsGraph, true, 0.80);
-    panel.addWindow(&mHistorySliceGraph);
-    panel.addWindow(&mCorrelationGraph);
-    panel.addWindow(&mSpaceFourierModesGraph);
-
-    mSpaceFourierModesGraph.setHorizontalUnit(Constants::π);
-
     {
-
         auto style = currStyle->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
@@ -86,15 +69,39 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
         mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
 
-        auto windowColumn = new ::Graphics::WindowColumn;
-        windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
-        windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
-        panel.addWindow(windowColumn, ADD_NEW_COLUMN);
+        if(false) {
+            auto windowColumn = new ::Graphics::WindowColumn;
+            windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
+            windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
+            addWindow(Window::Ptr(windowColumn));
+        } else {
+            addWindow(DummyPtr(mFullHistoryDisplay), true, 0.15);
+            addWindow(DummyPtr(mFullSpaceFTHistoryDisplay), true, 0.15);
+        }
     }
 
-    panel.setColumnRelativeWidth(1,-1.0);
-    panel.setColumnRelativeWidth(0, 0.2);
-    panel.setColumnRelativeWidth(2, 0.4);
+    {
+        auto sty = currStyle->funcPlotStyles.begin();
+
+        mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty, CHOOSE_ENERGY_LABEL("U", "U/L"));
+        mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
+        mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty,
+                                 CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
+        mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty,
+                                 CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
+
+        addWindow(DummyPtr(mEnergyGraph), ADD_NEW_COLUMN);
+        // addWindow(DummyPtr(mFieldsGraph), ADD_NEW_COLUMN);
+        addWindow(DummyPtr(mHistorySliceGraph));
+        addWindow(DummyPtr(mCorrelationGraph));
+        // addWindow(DummyPtr(mSpaceFourierModesGraph));
+
+        mSpaceFourierModesGraph.setHorizontalUnit(Constants::π);
+    }
+
+    setColumnRelativeWidth(1,-1.0);
+    setColumnRelativeWidth(0, 0.2);
+    // panel.setColumnRelativeWidth(2, 0.4);
 }
 
 void RtoR::Monitor::draw() {
@@ -132,6 +139,8 @@ void RtoR::Monitor::draw() {
     if(showEnergyDensity)   mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(),    "E/L"        , U_style);
 
     CHECK_GL_ERRORS(errorCount++)
+
+    OpenGLMonitor::draw();
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
@@ -168,7 +177,7 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
 }
 
 bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-    switch(key)
+    if(state == Core::Press) switch(key)
     {
         case '1':
             showPot = !showPot;

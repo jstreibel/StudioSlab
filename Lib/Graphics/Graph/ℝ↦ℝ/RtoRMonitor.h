@@ -20,6 +20,7 @@
 #include "Maps/RtoR2/StraightLine.h"
 #include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 namespace RtoR {
 

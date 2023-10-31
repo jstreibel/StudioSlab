@@ -107,15 +107,17 @@ namespace Math {
         };
 
         auto XHairColor = axisColor;
-        XHairColor.a = .50;
+        XHairColor.a = .15;
         auto XHairStyle = Styles::PlotStyle(axisColor);
         XHairStyle.primitive = Styles::Lines;
-        XHairStyle.thickness = 1;
+        XHairStyle.thickness = .5;
 
         auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 22);
+
+        Graphics::clearColor = {};
 
         return Styles::NewScheme({background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, writer, writer, graphs});
 

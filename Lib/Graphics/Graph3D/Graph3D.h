@@ -31,6 +31,7 @@ namespace Graphics {
         bool notifyMouseMotion(int x, int y) override;
         bool notifyMouseWheel(double dx, double dy) override;
 
+        bool addActor(const Actor::Ptr& actor);
     };
 
 } // Graphics

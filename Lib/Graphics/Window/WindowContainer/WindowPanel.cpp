@@ -10,9 +10,11 @@
 
 namespace Graphics {
 
-    void WindowPanel::addWindow(Window *window, bool newColumn, float newColumnWidth) {
+    WindowPanel::WindowPanel(Window::Flags flags) : Window(0, 0, 100, 100, flags) {    }
+
+    void WindowPanel::addWindow(const Window::Ptr& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
-            columns.emplace_back(WinCol());
+            columns.emplace_back();
             widths.emplace_back(newColumnWidth);
 
             assertConsistency();
@@ -22,14 +24,14 @@ namespace Graphics {
 
         auto *column = &columns.back();
 
-        column->emplace_back(window);
+        column->addWindow(window);
     }
 
-    bool WindowPanel::addWindowToColumn(Window *window, int columnId) {
+    bool WindowPanel::addWindowToColumn(const Window::Ptr &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];
-        column->emplace_back(window);
+        column->addWindow(window);
 
         return true;
     }
@@ -69,23 +71,14 @@ namespace Graphics {
         }
 
         auto i = 0;
+        auto y = this->gety();
+        auto h = this->geth();
         for (auto &column: columns) {
-            auto n = column.size();
-            auto dy = this->geth() / n;
+            column.setx(computedPositions[i]);
+            column.sety(y);
+            auto w = computedWidths[i];
 
-            auto j = 0;
-            for (auto window: column) {
-                auto y = this->gety() + j * dy;
-
-                window->setx(computedPositions[i]);
-                window->sety(y);
-                auto w = computedWidths[i];
-                auto h = dy;
-
-                window->notifyReshape(w, h);
-
-                ++j;
-            }
+            column.notifyReshape(w, h);
 
             ++i;
         }
@@ -99,8 +92,7 @@ namespace Graphics {
 
     void WindowPanel::draw() {
         for (auto &column: columns)
-            for (auto window: column)
-                window->draw();
+            column.draw();
     }
 
     float WindowPanel::computeReservedWidth() const {
@@ -141,15 +133,15 @@ namespace Graphics {
 
     bool WindowPanel::notifyMouseMotion(int x, int y) {
         auto responded = false;
-        for (auto &col: columns)
-            for (auto &win: col)
-                if (win->isMouseIn()) responded = win->notifyMouseMotion(x, y);
+        for (auto &col: columns) if (col.isMouseIn()) responded = col.notifyMouseMotion(x, y);
 
         return responded;
     }
 
     void WindowPanel::notifyReshape(int newWinW, int newWinH) {
-        Window::notifyReshape(newWinW, newWinH);
+        int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
+
+        Window::notifyReshape(newWinW, newWinH-menuRoom);
 
         arrangeWindows();
     }
@@ -163,8 +155,7 @@ namespace Graphics {
                                         Core::ModKeys keys) {
         auto responded = false;
         for (auto &col: columns)
-            for (auto &win: col)
-                if (win->isMouseIn()) responded = win->notifyMouseButton(button, state, keys);
+            if(col.isMouseIn()) responded = col.notifyMouseButton(button, state, keys);
 
         return responded;
     }
@@ -172,19 +163,15 @@ namespace Graphics {
     bool WindowPanel::notifyMouseWheel(double dx, double dy) {
         auto responded = false;
         for (auto &col: columns)
-            for (auto &win: col)
-                if (win->isMouseIn()) responded = win->notifyMouseWheel(dx, dy);
+            if (col.isMouseIn()) responded = col.notifyMouseWheel(dx, dy);
 
         return responded;
     }
 
     bool WindowPanel::notifyFilesDropped(StrVector paths) {
         auto responded = false;
-        for (auto &col: columns)
-            for (auto &win: col)
-                if (win->isMouseIn()) responded = win->notifyFilesDropped(paths);
+        for (auto &col: columns) if(col.isMouseIn()) responded = col.notifyFilesDropped(paths);
 
         return responded;
     }
-
 }

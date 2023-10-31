@@ -31,6 +31,7 @@ uniform int shading = COLOR;
 
 uniform float scale;
 uniform float gloomPowBase = 50;
+uniform float gloomMultiplier = 1;
 
 uniform vec2 texelSize;
 
@@ -60,9 +61,7 @@ void main()
     else if(shading == NORMALS)     fragColor = vec4(.5*normal+.5, 1);
     else if(shading == GLOOM){
         vec3 cameraToPixel = normalize(eye-v_position);
-        float gloom = pow(gloomPowBase, 1-dot(cameraToPixel,normal))/gloomPowBase;
+        float gloom = gloomMultiplier*pow(gloomPowBase, 1-dot(cameraToPixel,normal))/gloomPowBase;
         fragColor = vec4(vec3(gloom), 1);
     }
-
-
 }

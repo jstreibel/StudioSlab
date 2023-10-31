@@ -16,7 +16,9 @@ R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params, Real phiMin, Real
                 params.getN()*3)
 , mFieldDisplay()
 {
-    panel.addWindow(&mSectionGraph, ADD_TO_NEW_COLUMN, .50);
+
+
+    addWindow(DummyPtr(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
 
     auto yMin = params.getxMin(),
          yMax = params.getxMax();
@@ -24,7 +26,7 @@ R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params, Real phiMin, Real
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
     mSectionGraph.addSection(line, Styles::Color(1,0,0,1));
 
-    panel.addWindow(&mFieldDisplay, ADD_TO_NEW_COLUMN, .25);
+    addWindow(DummyPtr(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
 }
 
 void R2toR::OutputOpenGL::draw() {

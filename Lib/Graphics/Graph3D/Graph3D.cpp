@@ -16,10 +16,6 @@ namespace Graphics {
     {
         Core::BackendManager::LoadModule(Core::ImGui);
         Core::BackendManager::LoadModule(Core::ModernOpenGL);
-
-        auto actor = std::make_shared<Field2DActor>();
-        // actor->setAmbientLight(getBGColor());
-        actors.emplace_back(actor);
     }
 
     void Graph3D::draw() {
@@ -93,6 +89,14 @@ namespace Graphics {
 
     auto Graph3D::getCamera() const -> const Camera & {
         return camera;
+    }
+
+    bool Graph3D::addActor(const Actor::Ptr& actor) {
+        if(Common::Contains(actors, actor)) return false;
+
+        actors.emplace_back(actor);
+
+        return true;
     }
 
 

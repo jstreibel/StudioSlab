@@ -4,19 +4,20 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
+#include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <iostream>
 #include <vector>
 
 namespace Graphics {
 
-    class OpenGLMonitor : public Numerics::OutputSystem::Socket, public Window {
+    class OpenGLMonitor : public Numerics::OutputSystem::Socket, public WindowPanel {
         void writeStats();
 
         bool autoAdjustStepsPerSecond = true;
 
     protected:
-        WindowPanel panel;
         Timer frameTimer = Timer();
         GUIWindow stats;
 
@@ -34,7 +35,6 @@ namespace Graphics {
         // ********************* From EventListener ************** //
         bool notifyRender() final ;
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
-        void notifyReshape(int newWinW, int newWinH) override;
         // ********************* End EventListener *************** //
 
 

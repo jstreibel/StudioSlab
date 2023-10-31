@@ -1,8 +1,8 @@
 //
-// Created by joao on 4/10/23.
+// Created by joao on 11/10/23.
 //
 
-#include "Field2DActor.h"
+#include "TestActor.h"
 
 #include "Utils/Resources.h"
 
@@ -11,7 +11,6 @@
 
 #include <array>
 #include <cmath>
-#include <utility>
 
 namespace Graphics {
 
@@ -31,6 +30,14 @@ namespace Graphics {
         std::array<float, 3> color() const { return {r, g, b}; }
     };
 
+    fix gridSubdivs = 8;
+    fix gridN = 64;
+    fix gridM = 64;
+    fix xMinSpace = -8.f;
+    fix yMinSpace = -8.f;
+    fix wSpace = 2.f*(float)fabs(xMinSpace);
+    fix hSpace = 2.f*(float)fabs(yMinSpace);
+
     fix zLight = 2.f;
     fix intensity = 2.f;
     fix a = intensity*(.5f);
@@ -42,21 +49,21 @@ namespace Graphics {
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    Field2DActor::Field2DActor(std::shared_ptr<R2toR::DiscreteFunction> function)
-    : func(std::move(function))
-    , gridMetadata(Field2DActor::GridMetadata::FromDiscreteFunction(*func))
-    , program(Resources::ShadersFolder + "FieldShading.vert",
-              Resources::ShadersFolder + "FieldShading.frag")
-    , vertexBuffer("position:2f,texcoord:2f")
-    , texture((GLsizei)gridMetadata.gridN, (GLsizei)gridMetadata.gridM)
+    TestActor::TestActor()
+            : program(Resources::ShadersFolder + "FieldShading.vert",
+                      Resources::ShadersFolder + "FieldShading.frag")
+            , vertexBuffer("position:2f,texcoord:2f")
+            , texture(gridN, gridM)
     {
-        gridMetadata.generateXYPlane(vertexBuffer);
+        GenerateXYPLane(vertexBuffer, gridN+1, gridM+1, wSpace, hSpace);
 
-        fix gridN = gridMetadata.gridN;
-        fix gridM = gridMetadata.gridM;
-
-        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j)
-            texture.setValue(i, j, func->At(i, j));
+        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
+                float x = wSpace*(float)j/(float)(gridM-1) + xMinSpace;
+                float y = hSpace*(float)i/(float)(gridN-1) + yMinSpace;
+                float r² = x*x+y*y;
+                float k = 4.0f;
+                texture.setValue(i, j, cosf(2*M_PI*sqrt(r²)/k)*std::exp(-r²/(k*k)));
+            }
 
         texture.upload();
         texture.setAntiAliasOff();
@@ -72,7 +79,6 @@ namespace Graphics {
         program.setUniform("light2_color", light2.color());
         program.setUniform("light3_color", light3.color());
 
-        const int gridSubdivs = 8;
         program.setUniform("gridSubdivs", gridSubdivs);
 
         program.setUniform("scale", 1.f);
@@ -80,7 +86,7 @@ namespace Graphics {
         program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
     }
 
-    void Field2DActor::draw(const Graph3D &graph3D) {
+    void TestActor::draw(const Graph3D &graph3D) {
         texture.bind();
 
         auto camera = graph3D.getCamera();
@@ -100,10 +106,6 @@ namespace Graphics {
         if(ImGui::DragFloat("gloom multiplier", &gloomMultiplier, 0.1f, 0.1f, 10.f))
             program.setUniform("gloomMultiplier", gloomMultiplier);
 
-        static int gridSubdivs = 8;
-        if(ImGui::DragInt("Grid subdivs", &gridSubdivs, .1f, 0, 8))
-            setGridSubdivs(powf32x(2, gridSubdivs));
-
         const char *items[] = {"Color", "Normals", "Gloom"};
         static int current = 0;
         if(ImGui::Combo("Shading", &current, items, 3))
@@ -119,30 +121,25 @@ namespace Graphics {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void Field2DActor::setAmbientLight(Styles::Color color) { program.setUniform("amb", color.array()); }
+    void TestActor::setAmbientLight(Styles::Color color) { program.setUniform("amb", color.array()); }
 
-    void Field2DActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
 
-    void Field2DActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
+    void GenerateXYPLane(OpenGL::VertexBuffer &buffer,
+                         int N, int M,
+                         float width, float height)
+    {
         std::vector<GLuint> indices;
         std::vector<Field2DVertex> vertices;
-
-        fix M = gridN;
-        fix N = gridM;
-        fix width = wSpace;
-        fix height = hSpace;
-        fix xMin = xMinSpace;
-        fix yMin = yMinSpace;
 
         fix xNormFactor = 1/float(M-1);
         fix yNormFactor = 1/float(N-1);
 
         for (int i = 0; i < N; ++i) {
             fix t = (float)i*yNormFactor;
-            fix y = t*height + yMin;
+            fix y = t*height + yMinSpace;
             for (int j = 0; j < M; ++j) {
                 fix s = (float)j*xNormFactor;
-                fix x = s*width + xMin;
+                fix x = s*width + xMinSpace;
 
                 vertices.push_back({x, y, s, t});
             }
@@ -170,20 +167,4 @@ namespace Graphics {
 
         buffer.pushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
     }
-
-    Field2DActor::GridMetadata
-    Field2DActor::GridMetadata::FromDiscreteFunction(const R2toR::DiscreteFunction &func) {
-        fix D = func.getDomain();
-
-        Field2DActor::GridMetadata gridMetadata;
-        gridMetadata.gridN = func.getN();
-        gridMetadata.gridM = func.getM();
-        gridMetadata.xMinSpace = D.xMin;
-        gridMetadata.yMinSpace = D.yMin;
-        gridMetadata.wSpace = D.xMax - D.xMin;
-        gridMetadata.hSpace = D.yMax - D.yMin;
-
-        return gridMetadata;
-    }
-
 } // Graphics

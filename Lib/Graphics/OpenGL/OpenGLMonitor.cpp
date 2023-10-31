@@ -15,10 +15,8 @@
 
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
 : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws)
-, Window(0, 0, 100, 100, HasMainMenu) {
-    GUIEventListener::addResponder(&panel);
-
-    panel.addWindow(&stats);
+, WindowPanel(HasMainMenu) {
+    addWindow(DummyPtr(stats), false, .15);
 
     Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
 }
@@ -160,13 +158,8 @@ bool Graphics::OpenGLMonitor::notifyRender() {
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     {
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (0)");
         writeStats();
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (1)");
-        draw();
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (2)");
-        GUIEventListener::notifyRender();   // here panel gets called.
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (3)");
+        WindowPanel::notifyRender(); // draw();
         frameTimer.reset();
     }
     glMatrixMode(GL_MODELVIEW);
@@ -207,14 +200,7 @@ bool Graphics::OpenGLMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState st
         }
     }
 
-    return GUIEventListener::notifyKeyboard(key, state, modKeys);
-}
-
-void Graphics::OpenGLMonitor::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
-
-    int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
-    panel.notifyReshape(newWinW, newWinH-menuRoom);
+    return Graphics::WindowPanel::notifyKeyboard(key, state, modKeys);
 }
 
 void Graphics::OpenGLMonitor::setnSteps(int nSteps) {

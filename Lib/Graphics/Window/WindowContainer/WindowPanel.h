@@ -7,12 +7,13 @@
 
 
 #include "Graphics/Window/Window.h"
+#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 
 namespace Graphics {
 
-    typedef std::vector<Window *> WinCol;
-    typedef std::vector<WinCol> WindowColumns;
+    // typedef std::vector<Window::Ptr> WinCol;
+    typedef std::vector<WindowColumn> WindowColumns;
 
 
     class WindowPanel : public Window {
@@ -27,9 +28,9 @@ namespace Graphics {
         void assertConsistency() const;
 
     public:
-        WindowPanel() = default;
+        explicit WindowPanel(Flags flags = None);
 
-        void addWindow(Window *window, bool newColumn = false, float newColumnWidth = -1);
+        void addWindow(const Window::Ptr& window, bool newColumn = false, float newColumnWidth = -1);
 
         /**
          * Add window to column columnId.
@@ -37,7 +38,7 @@ namespace Graphics {
          * @param columnId zero-based index of column.
          * @return true if success, false otherwise.
          */
-        bool addWindowToColumn(Window *window, int columnId);
+        bool addWindowToColumn(const Window::Ptr &window, int columnId);
 
         /**
          * Set the the relative width of a column.

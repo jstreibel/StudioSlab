@@ -81,6 +81,8 @@ set( GRAPHICS_SOURCES
         MeshUtils.h
         Graph3D/Camera.cpp
         Graph3D/Camera.h
+        Graph3D/TestActor.cpp
+        Graph3D/TestActor.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

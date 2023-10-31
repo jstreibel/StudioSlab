@@ -53,7 +53,8 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
-        panel.addWindowToColumn(&mTemperaturesGraph, 0);
+
+        // addWindowToColumn(&mTemperaturesGraph, 0);
 
         auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
         auto pts = Spaces::Point2DVec({{-.1,T},{params.gett()+.1,T}});
@@ -71,13 +72,18 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 
 
         auto *histogramsPanel = new Graphics::WindowPanel();
-        histogramsPanel->addWindow(&mHistogramsGraphV);
-        histogramsPanel->addWindow(&mHistogramsGraphGrad);
-        histogramsPanel->addWindow(&mHistogramsGraphK, ADD_NEW_COLUMN);
-        histogramsPanel->addWindow(&mHistogramsGraphE);
+        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphV));
+        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphGrad));
+        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphK), ADD_NEW_COLUMN);
+        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphE));
 
-        panel.addWindow(histogramsPanel);
+        addWindow(Window::Ptr(histogramsPanel), true);
     }
+
+    setColumnRelativeWidth(0, -1);
+    setColumnRelativeWidth(1, 0.15);
+    setColumnRelativeWidth(2, 0.15);
+    setColumnRelativeWidth(3, 0.30);
 }
 
 void RtoR::Thermal::Monitor::draw() {
