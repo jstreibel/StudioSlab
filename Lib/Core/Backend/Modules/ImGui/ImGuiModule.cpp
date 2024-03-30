@@ -13,11 +13,14 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 
+#define IMGUI_USE_WCHAR32
+
 #include "ImGuiColorAndStyles.h"
 
 #include "ImGuiModuleGLUT.h"
 #include "ImGuiModuleGLFW.h"
-#include "backends/imgui_impl_opengl3.h"
+
+#include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 
 // Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;

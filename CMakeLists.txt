@@ -61,12 +61,15 @@ endif()
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(CMAKE_CUDA_ARCHITECTURES 61)
 
+	set(CUDAToolkit_ROOT /opt/nvidia/hpc_sdk/Linux_x86_64/23.9/cuda)
+
+	find_package( CUDA )
+	find_package( CUDAToolkit )
+	set( CMAKE_CUDA_COMPILER /opt/nvidia/hpc_sdk/Linux_x86_64/2023/compilers/bin/nvcc )
 	enable_language( CUDA )
 
-	set(CUDA_DIR /opt/cuda)
-
-	set( CMAKE_CUDA_COMPILER /opt/cuda/bin/nvcc )
-	include_directories(/opt/cuda/include)
+	#set(CUDA_DIR /opt/cuda)
+	#include_directories(/opt/cuda/include)
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
 	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA architectures is ${CMAKE_CUDA_ARCHITECTURES}"  )
@@ -78,7 +81,7 @@ endif()
 
 if( STUDIOSLAB_SFML2_SUPPORT )
 	# set( SFML_STATIC_LIBRARIES TRUE )
-	find_package( SFML 2.6 COMPONENTS graphics window system REQUIRED )
+	find_package( SFML 2.5 COMPONENTS graphics window system REQUIRED )
 
 	message(STATUS "StudioSlab SFML2 support is ENABLED."  )
 else()

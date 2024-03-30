@@ -37,6 +37,31 @@ namespace StrUtils {
     StrVector GetLines(const Str &text) {
         return GetLines(text.c_str());
     }
+
+    StrVector Split(const Str &input, const Str &separator)
+    {
+        // By Chat GPT
+
+        std::vector<std::string> tokens;
+        size_t start = 0, end = 0;
+
+        while ((end = input.find(separator, start)) != std::string::npos) {
+            // Avoid adding empty strings if `sep` occurs at the beginning
+            // or more than once in succession.
+            if (end != start) {
+                tokens.push_back(input.substr(start, end - start));
+            }
+            start = end + separator.length();
+        }
+
+        // Add the last token, if any, to the list.
+        if (start != input.length()) {
+            tokens.push_back(input.substr(start));
+        }
+
+        return tokens;
+
+    }
 }
 
 Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {

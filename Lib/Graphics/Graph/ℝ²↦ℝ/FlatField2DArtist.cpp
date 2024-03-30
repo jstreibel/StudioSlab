@@ -231,6 +231,8 @@ namespace Graphics {
         if(cMap_min >= 0.0) symmetricMaxMin = false;
         else symmetricMaxMin = true;
 
+
+
         program.setUniform("phiMin", (GLfloat) cMap_min);
         program.setUniform("phiMax", (GLfloat) cMap_max);
 

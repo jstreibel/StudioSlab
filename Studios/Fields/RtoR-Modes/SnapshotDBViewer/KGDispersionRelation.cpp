@@ -30,3 +30,23 @@ bool RtoR::KGDispersionRelation::domainContainsPoint(Real x) const {
     NOT_IMPLEMENTED
 }
 
+RtoR::KGDispersionRelation_high_k::KGDispersionRelation_high_k(Real mass, KGDRMode mode) : m²(mass*mass), mode(mode) {
+
+}
+
+Real RtoR::KGDispersionRelation_high_k::operator()(Real x) const {
+    const auto k = x;
+    const auto ω = x;
+    switch (mode) {
+        case ω_AsFunctionOf_k: return k + 0.5*m²/k - 0.125*m²*m²/(k*k*k);
+        case k_AsFunctionOf_ω: return ω - 0.5*m²/ω + 0.125*m²*m²/(ω*ω*ω);
+    }
+
+    NOT_IMPLEMENTED
+}
+
+auto RtoR::KGDispersionRelation_high_k::domainContainsPoint(Real x) const -> bool {
+    return x != 0.0;
+}
+
+

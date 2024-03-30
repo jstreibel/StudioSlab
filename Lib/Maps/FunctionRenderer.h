@@ -20,6 +20,7 @@ namespace RtoR {
     class FunctionRenderer {
     public:
         static auto toPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale=1.0) -> Spaces::PointSet::Ptr;
+        static auto toDiscreteFunction(const RtoR::Function &func, RtoR::DiscreteFunction &output);
 
         static void renderFunction(          const RtoR::DiscreteFunction &func, Styles::Color c, bool filled,
                                              Real scale = 1.0);

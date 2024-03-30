@@ -3,6 +3,7 @@
 //
 
 #ifndef V_SHAPE_FUNCTIONRTOR_H
+#define V_SHAPE_FUNCTIONRTOR_H
 
 #include "Utils/Types.h"
 

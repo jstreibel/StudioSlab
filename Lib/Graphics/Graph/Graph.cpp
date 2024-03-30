@@ -292,5 +292,6 @@ auto Graphics::Graph2D::countDisplayItems() const -> Count {
 }
 
 void Graphics::Graph2D::artistsDraw() {
-    for (const auto & [priority, artist] : content) artist->draw(*this);
+    for (const auto & [priority, artist] : content)
+        artist->draw(*this);
 }

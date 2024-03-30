@@ -9,7 +9,7 @@ Created on Thu May 10 19:19:17 2018
 import subprocess
 import os
 
-from numpy import unique, linspace
+from numpy import pi
 import time
 from datetime import timedelta
 import argparse
@@ -48,17 +48,12 @@ parser.add_argument('--A', '-A',
                     help="Amplitude of oscillation.",
                     type=float,
                     default=1.0)
-parser.add_argument('--omega', '-w',
-                    help="Sweep ω in n steps (omega_min, omega_max, steps). Example \'--omega 0.2 0.4 10\' will sweep "
-                         "\'ω\' from 0.2 to 0.4 in 10 steps.",
-                    nargs=3,
-                    type=float,
-                    default=(0, 0, 1))
-parser.add_argument('--k', '-k',
-                    help="Sweep k in n steps. Same as for \'ω\'.",
-                    nargs=3,
-                    type=float,
-                    default=(0.5, 0.5, 1.0))
+parser.add_argument('--n_modes', '-n',
+                    help="Sweep k=2πn/L (n_min, n_max). Example \'--n_modes 5 100\' will sweep "
+                         "\'k\' from 10π/L to 200π/L steps.",
+                    nargs=2,
+                    type=int,
+                    default=(1, 10))
 parser.add_argument('--max_procs',
                     help="Maximum number of parallel running programs.",
                     type=int,
@@ -74,25 +69,27 @@ L = args.L
 N = args.N
 V = args.V
 
+dk = 2*pi/L
+
 A = args.A
-omega_min, omega_max, omega_steps = args.omega
-omega_steps = int(omega_steps)
-k_min, k_max, k_steps = args.k
-k_steps = int(k_steps)
+n_min, n_max = args.n_modes
 sim_list = []
 
 f = '{:.6f}'.format
-for omega in unique(linspace(omega_min, omega_max, omega_steps)):
-    for k in unique(linspace(k_min, k_max, k_steps)):
 
-        arg_list = ["RtoR-Modes",
-                    '-t' + f(t), '-L' + f(L), '-N'+str(N),
-                    '-A' + f(A),
-                    '--omega='+f(omega),
-                    '--th=1', '--dft_snapshot', '--outN=2000', '--BC=0', '-V'+str(V), '--mass=1']
+for n in range(n_min, n_max+1):
+    k = n*dk
+    omega = k
 
-        sim_info = (omega, k)
-        sim_list.append((arg_list, sim_info))
+    arg_list = ["RtoR-Modes",
+                '-t' + f(t), '-L' + f(L), '-N'+str(N),
+                '-A' + f(A),
+                '--omega='+f(omega),
+                '-k'+f(k),
+                '--th=1', '--dft_snapshot', '--outN=2000', '--BC=1', '-V'+str(V), '--massSqr=1']
+
+    sim_info = (n,k)
+    sim_list.append((arg_list, sim_info))
 
 
 proc_tuples = []
@@ -103,7 +100,7 @@ n = 0
 while len(sim_list) or not (len(dead_procs) == total):
     while not len(proc_tuples) == MAX_PROCS and len(sim_list):
         sim = sim_list.pop()
-        sim_info_str = utils.yellow('ω=%.5f k=%.5f' % (sim[1]))
+        sim_info_str = utils.yellow('n=%i k=%.5f' % (sim[1]))
         program_call = sim[0]
 
         print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')

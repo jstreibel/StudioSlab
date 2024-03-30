@@ -26,7 +26,7 @@ namespace RtoR {
     class HarmonicPotential : public RtoR::Function {
         Real m_sqr;
     public:
-        explicit HarmonicPotential(Real mass=1.0) : m_sqr(mass*mass) { };
+        explicit HarmonicPotential(Real massSqr=1.0) : m_sqr(massSqr) { };
 
         Real operator()(Real x) const override {
             return .5*m_sqr*x*x;

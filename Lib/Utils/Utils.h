@@ -35,6 +35,14 @@ std::shared_ptr<T> DummyPtr(T &instance) {
     return std::shared_ptr<T>(&instance, [](T*){});
 }
 
+template<typename T>
+std::shared_ptr<T> NullPtr() {
+    T *ptr = nullptr;
+    return std::shared_ptr<T>(ptr, [](T*){});
+}
+
+
+
 namespace Common {
     double RoundToMostSignificantDigits(double num, int digits=3);
 

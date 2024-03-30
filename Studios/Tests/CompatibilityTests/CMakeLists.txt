@@ -28,7 +28,7 @@ endif ()
 message( NOTICE "Compatibility test CUDA source: ${COMPAT_TEST_CUDA_SRC}" )
 message( NOTICE "Compatibility test CUDA links: ${CUDA_LIBRARIES}" )
 
-find_package( SFML 2.6 COMPONENTS graphics )
+find_package( SFML 2.5 COMPONENTS graphics )
 
 set( STUDIOSLAB_LIBDIR ../../Lib)
 include_directories( ${STUDIOSLAB_LIBDIR} )

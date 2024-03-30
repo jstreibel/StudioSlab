@@ -3,6 +3,8 @@
 //
 
 #include "BoundaryCondition.h"
+
+#include <utility>
 #include "Maps/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 Modes::SignalBC::SignalBC(const RtoR::EquationState &prototype, Real A, Real ω)
@@ -18,4 +20,15 @@ void Modes::SignalBC::apply(EqState &toFunction, Real t) const {
 
     ϕ.getSpace().getHostData()[0] = A*sin(ω*t);
     𝜕ₜϕ.getSpace().getHostData()[0] = A*ω*cos(ω*t);
+}
+
+
+Modes::DrivenBC::DrivenBC(const RtoR::EquationState &prototype, std::shared_ptr<Modes::SquareWave> sqrWave)
+: BoundaryCondition(prototype, new RtoR::NullFunction, new RtoR::NullFunction),
+  sqrWave(std::move(sqrWave)) { }
+
+void Modes::DrivenBC::apply(RtoR::EquationState &toFunction, Real t) const {
+    if(sqrWave != nullptr) sqrWave->set_t(t);
+
+    BoundaryCondition::apply(toFunction, t);
 }

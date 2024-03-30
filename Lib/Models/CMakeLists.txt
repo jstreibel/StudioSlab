@@ -41,7 +41,7 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Core-Controller
 		Slab-Maps-RtoR
 		Slab-Maps-RtoR_GPU
-		Slab-Maps-RtoR-Periodic_GPU
+		# Slab-Maps-RtoR-Periodic_GPU
 		Slab-Maps-R2toR_GPU
 
 		Slab-Math )

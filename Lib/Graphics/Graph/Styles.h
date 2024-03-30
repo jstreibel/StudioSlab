@@ -22,7 +22,9 @@ namespace Styles {
         DottedLine,
         DashedLine,
         DotDashedLine,
+
         VerticalLines,
+
         Lines,
 
         Point

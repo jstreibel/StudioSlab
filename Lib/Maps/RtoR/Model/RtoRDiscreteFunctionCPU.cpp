@@ -146,6 +146,19 @@ Real DiscreteFunction_CPU::integrate() const {
     return sum*dx;
 }
 
+Core::DiscreteFunction<Real, Real> &DiscreteFunction_CPU::operator+=(const FunctionT<Real, Real> &func) {
+    auto &outSpace = getSpace();
+
+    auto &outX = outSpace.getHostData();
+    const auto &myX = getSpace().getHostData();
+
+    OMP_PARALLEL_FOR(n, N) {
+        const auto x = mapIntToPos(n);
+        outX[n] += func(x);
+    }
+
+    return *this;
+}
 
 
 #pragma clang diagnostic pop

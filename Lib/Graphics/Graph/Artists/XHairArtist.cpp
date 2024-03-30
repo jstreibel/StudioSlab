@@ -38,7 +38,7 @@ namespace Graphics {
         auto label = graph2D.getXHairLabel(XHairLocation);
 
         auto currStyle = Math::StylesManager::GetCurrent();
-        currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20});
+        currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
         XHair.addPoint({region.xMin, XHairLocation.y});

@@ -12,6 +12,7 @@
 #include "HistoryFileLoader.h"
 
 #include "Graphics/Graph/StylesManager.h"
+#include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Maps/FunctionRenderer.h"
 
@@ -51,11 +52,11 @@ namespace Modes::DatabaseViewer {
 
         allDataDisplay.setVerticalUnit(Constants::π);
         allDataDisplay.setHorizontalUnit(Constants::π);
-        allDataDisplay.setColorMap(Styles::ColorMaps["blues"].inverse());
+        allDataDisplay.setColorMap(Styles::ColorMaps["blues"]);
 
         topRow.addWindow(DummyPtr(allDataDisplay));
         fullParticularHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
-        // winRow->addWindow(DummyPtr(fullParticularHistoryDisplay));
+        // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         winCol->addWindow(DummyPtr(massesGraph));
         winCol->addWindow(DummyPtr(topRow), 0.75);
@@ -67,19 +68,16 @@ namespace Modes::DatabaseViewer {
 
     void DBViewer::draw() {
 
-        /*
         fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
-        fix dx = fullField->getSpace().getMetaData().geth(0);
-        fix L = fullField->getDomain().getLx();
-        fix N = fullField->getN();
-        fix ωMin = -1.5*dx+fullField->getDomain().xMin;
+        fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
+        fix L = fullFields[0]->getDomain().getLx();
+        fix N = fullFields[0]->getN();
+        fix ωMin = -1.5*dx+fullFields[0]->getDomain().xMin;
 
         index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
-         */
 
         guiWindow.begin();
 
-        /*
         if(ImGui::CollapsingHeader("Dominant modes")) {
             static bool isVisible = false;
 
@@ -90,9 +88,8 @@ namespace Modes::DatabaseViewer {
 
             drawTable(index_XHair);
 
-            // if(index_XHair>=0 && index_XHair<=fullField->getN()){ underXHair.addPoint({ω_XHair, }); };
+            // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
         }
-         */
 
         if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
             static bool isVisible = false;
@@ -123,8 +120,11 @@ namespace Modes::DatabaseViewer {
 
     void DBViewer::updateKGDispersion(bool visible) {
         Real mass = KG_mass;
+
         static Spaces::PointSet::Ptr KGRelation;
+        static Spaces::PointSet::Ptr KGRelation_high_k;
         allDataDisplay.removePointSet(KGRelation);
+        allDataDisplay.removePointSet(KGRelation_high_k);
 
         if(!visible) return;
 
@@ -135,11 +135,20 @@ namespace Modes::DatabaseViewer {
         }
         KGRelation = RtoR::FunctionRenderer::toPointSet(
                 RtoR::KGDispersionRelation(mass, RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
-                0.0, xMax, 5000);
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[5];
+                0.0, xMax, 10000);
+        KGRelation_high_k = RtoR::FunctionRenderer::toPointSet(
+                RtoR::KGDispersionRelation_high_k(mass, RtoR::KGDispersionRelation_high_k::k_AsFunctionOf_ω),
+                0.0, xMax, 10000);
+
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         allDataDisplay.addPointSet(KGRelation, style, Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
+
+        style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
+        style.thickness = 3;
+        style.filled = false;
+        allDataDisplay.addPointSet(KGRelation_high_k, style, Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
     void DBViewer::drawDominantModes() {
@@ -199,7 +208,6 @@ namespace Modes::DatabaseViewer {
 
     void DBViewer::drawTable(int specialIndex) {
 
-        /*
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
@@ -208,7 +216,7 @@ namespace Modes::DatabaseViewer {
         fix columns = 4;
         if (!ImGui::BeginTable("table1", columns, flags, outer_size_value)) return;
 
-        Str paramName = dbParser->getCriticalParameter();
+        Str paramName = dbParsers[0]->getCriticalParameter();
 
         ImGui::TableSetupColumn((paramName + " (x axis)").c_str());
         ImGui::TableSetupColumn("Aₘₐₓ");
@@ -219,7 +227,7 @@ namespace Modes::DatabaseViewer {
         ImGui::TableHeadersRow();
 
         fix unit = Constants::π;
-        auto &fieldMap = dbParser->getFieldMap();
+        auto &fieldMap = dbParsers[0]->getFieldMap();
         int i=0;
         for (auto &entry : fieldMap)
         {
@@ -260,7 +268,6 @@ namespace Modes::DatabaseViewer {
         }
 
         ImGui::EndTable();
-         */
     }
 
     bool DBViewer::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
@@ -307,8 +314,7 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewer::loadDataUnderMouse() {
-        /*
-        auto &fSet = dbParser->getFileSet();
+        auto &fSet = dbParsers[0]->getFileSet();
 
         auto index = index_XHair-1;
         if(index<0 || index>=fSet.size()) return;
@@ -317,7 +323,7 @@ namespace Modes::DatabaseViewer {
         auto filename = files[index].second;
 
         StrUtils::ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
-        StrUtils::ReplaceLastOccurrence(filename, ".//./snapshots/", "/");
+        StrUtils::ReplaceLastOccurrence(filename, "snapshots/", "./");
 
         Log::Info() << "Find history" << Log::Flush;
         auto fieldHistory = fullHistoriesMap[filename];
@@ -328,13 +334,16 @@ namespace Modes::DatabaseViewer {
             fullHistoriesMap[filename] = fieldHistory;
         }
         Log::Info() << "Set function" << Log::Flush;
-        fullParticularHistoryDisplay.addFunction(fieldHistory);
+        StrUtils::ReplaceAll(filename, ".oscb", "");
+        auto omegaStr = StrUtils::Split(filename, " ").back();
+        omegaStr = StrUtils::Split(omegaStr, "=")[1];
+        ;
+        fullParticularHistoryDisplay.addFunction(fieldHistory, Str("ω=") + omegaStr);
 
         Log::Info() << "Add window" << Log::Flush;
         topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         Log::Info() << "Done\n" << Log::Flush;
-         */
     }
 
     bool DBViewer::notifyMouseMotion(int x, int y) {

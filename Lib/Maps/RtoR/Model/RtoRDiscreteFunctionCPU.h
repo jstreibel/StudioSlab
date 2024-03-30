@@ -30,6 +30,8 @@ namespace RtoR {
 
         auto Laplacian(DiscreteFunction &outFunc) const -> DiscreteFunction & override;
 
+        Core::DiscreteFunction<Real, Real> &operator+=(const MyBase &func) override;
+
         Real integrate() const override;
 
     };

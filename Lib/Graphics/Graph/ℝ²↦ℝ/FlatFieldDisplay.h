@@ -49,12 +49,13 @@ namespace Graphics {
 
             Str getXHairLabel(const Graphics::Point2D &coords) const override;
 
-        public:
+    public:
             explicit FlatFieldDisplay(Str title="Full 2D");
 
             void addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
 
             auto getFunctionsMap() const -> FuncsMap;
+
 
             void setColorMap(const Styles::ColorMap& colorMap);
 

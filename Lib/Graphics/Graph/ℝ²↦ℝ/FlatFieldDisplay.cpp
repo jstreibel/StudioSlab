@@ -10,12 +10,11 @@
 
 #define ODD true
 
-
 Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 : ::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
 , colorBar({50,150, 50, 750})
 {
-    addArtist(DummyPtr(colorBar));
+    addArtist(DummyPtr(colorBar), 100);
 };
 
 void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) {
@@ -31,6 +30,7 @@ void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
     auto artist = std::make_shared<FlatField2DArtist>(name);
     artist->setFunction(function);
     artist->setColorMap(currColorMap);
+    if(firstTime) colorBar.setTexture(artist->getColorMapTexture());
 
     funcsMap.emplace(zOrder, std::move(function));
     ff2dArtists.emplace_back(artist);
@@ -79,7 +79,12 @@ bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 void Graphics::FlatFieldDisplay::notifyReshape(int newWinW, int newWinH) {
     Graph2D::notifyReshape(newWinW, newWinH);
 
-    colorBar.setLocation({newWinW-100, newWinW-50, newWinH-700, newWinH-200});
+    const int left = -400;
+    const int cbarWidth = 150;
+    const int cbarHeight = 0.8 * newWinH;
+    const int cbarTop = (newWinH-cbarHeight)/2;
+
+    colorBar.setLocation({newWinW+left, newWinW+left+cbarWidth, newWinH-cbarTop, newWinH-cbarTop-cbarHeight});
 
     // computeGraphRanges();
 }

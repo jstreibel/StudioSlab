@@ -22,6 +22,12 @@ auto RtoR::FunctionRenderer::toPointSet(const RtoR::Function &func, Real xMin, R
     return std::make_shared<Spaces::PointSet>(pts);
 }
 
+
+auto RtoR::FunctionRenderer::toDiscreteFunction(const RtoR::Function &func, RtoR::DiscreteFunction &output) {
+    output.Set(func);
+}
+
+
 void RtoR::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &func, Styles::Color c, bool filled, Real scale){
     const Real xMin = func.xMin,
                xMax = func.xMax;

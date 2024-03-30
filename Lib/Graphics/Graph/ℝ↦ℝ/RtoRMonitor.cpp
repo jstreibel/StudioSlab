@@ -60,25 +60,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
-    {
-        auto style = currStyle->funcPlotStyles[2].permuteColors();
-        style.thickness = 3;
-        mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
-        mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
-
-        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
-        mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
-
-        if(false) {
-            auto windowColumn = new ::Graphics::WindowColumn;
-            windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
-            windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
-            addWindow(Window::Ptr(windowColumn));
-        } else {
-            addWindow(DummyPtr(mFullHistoryDisplay), true, 0.15);
-            addWindow(DummyPtr(mFullSpaceFTHistoryDisplay), true, 0.15);
-        }
-    }
+    addWindow(DummyPtr(mEnergyGraph));
 
     {
         auto sty = currStyle->funcPlotStyles.begin();
@@ -90,18 +72,37 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty,
                                  CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
 
-        addWindow(DummyPtr(mEnergyGraph), ADD_NEW_COLUMN);
-        // addWindow(DummyPtr(mFieldsGraph), ADD_NEW_COLUMN);
+        addWindow(DummyPtr(mFieldsGraph), ADD_NEW_COLUMN);
         addWindow(DummyPtr(mHistorySliceGraph));
         addWindow(DummyPtr(mCorrelationGraph));
-        // addWindow(DummyPtr(mSpaceFourierModesGraph));
+        addWindow(DummyPtr(mSpaceFourierModesGraph));
 
         mSpaceFourierModesGraph.setHorizontalUnit(Constants::π);
     }
 
+    {
+        auto style = currStyle->funcPlotStyles[2].permuteColors();
+        style.thickness = 3;
+        mFullHistoryDisplay.addCurve(DummyPtr(corrSampleLine), style, "t_history");
+        mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
+
+        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
+        mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
+
+        if(true) {
+            auto windowColumn = new ::Graphics::WindowColumn;
+            windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
+            windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
+            addWindow(Window::Ptr(windowColumn), ADD_NEW_COLUMN);
+        } else {
+            addWindow(DummyPtr(mFullHistoryDisplay), true, 0.15);
+            addWindow(DummyPtr(mFullSpaceFTHistoryDisplay), true, 0.15);
+        }
+    }
+
     setColumnRelativeWidth(1,-1.0);
-    setColumnRelativeWidth(0, 0.2);
-    // panel.setColumnRelativeWidth(2, 0.4);
+    setColumnRelativeWidth(0, 0.15);
+    setColumnRelativeWidth(2, 0.4);
 }
 
 void RtoR::Monitor::draw() {

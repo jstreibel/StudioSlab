@@ -49,6 +49,8 @@ namespace Math {
         stylesInitializers["Elegant"]   = GetSchemeElegant;
 
         current = "Dark";
+        // current = "Light";
+        // current = "Print";
 
         Core::BackendManager::GetGUIBackend().addEventListener(DummyPtr(*this));;
     }
@@ -200,8 +202,9 @@ namespace Math {
         Color tickColor = {.2,.2,.2,1};
 
         Color black = {0,0,0,1};
+        Color red = {1, 0, 0, 0.86};
         Color graph1a = black;
-        Color graph1b = black;
+        Color graph1b = red;
         Color graph1c = {.25 ,.25 ,.25 ,1};
 
         Color graph1a_fill = {graph1a.rgb(), 1/3.};
@@ -210,19 +213,20 @@ namespace Math {
 
         std::vector<Styles::PlotStyle> graphs = {
                 Styles::PlotStyle{graph1a, Styles::Primitive::SolidLine, true, graph1a_fill, 3},
-                Styles::PlotStyle{graph1b, Styles::Primitive::SolidLine, true, graph1b_fill, 1},
+                Styles::PlotStyle{graph1b, Styles::Primitive::DotDashedLine, true, graph1b_fill, 1},
                 Styles::PlotStyle{graph1c, Styles::Primitive::DashedLine, true, graph1c_fill, 3}};
 
         auto XHairColor = axisColor;
         XHairColor.a = .89;
         auto XHairStyle = Styles::PlotStyle(axisColor);
         XHairStyle.primitive = Styles::DashedLine;
-        XHairStyle.thickness = 1;
+        XHairStyle.thickness = 2;
+        XHairStyle.filled = false;
 
         auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 24);
+        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 40);
         return Styles::NewScheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer, writer, graphs});
     }
 
@@ -252,6 +256,7 @@ namespace Math {
         auto XHairStyle = Styles::PlotStyle(axisColor);
         XHairStyle.primitive = Styles::DashedLine;
         XHairStyle.thickness = 1;
+        XHairStyle.filled = false;
 
         auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;

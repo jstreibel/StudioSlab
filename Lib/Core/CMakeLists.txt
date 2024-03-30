@@ -24,7 +24,7 @@ if ( WRAP_BASE_LIB )
     		Slab-Core-Controller
     		Slab-Core-Backend
     		Slab-Core-App
-    		Slab-Core-Graphics
+    		Slab-Graphics
 			Slab-Core-Tools
     		)
 

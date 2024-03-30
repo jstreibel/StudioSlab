@@ -7,6 +7,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "SquareWave.h"
 
 namespace Modes {
 
@@ -15,6 +16,15 @@ namespace Modes {
         Real A, ω;
 
         SignalBC(const RtoR::EquationState &prototype, Real A, Real ω);
+
+        void apply(EqState &toFunction, Real t) const override;
+    };
+
+    class DrivenBC : public RtoR::BoundaryCondition {
+        std::shared_ptr<Modes::SquareWave> sqrWave;
+    public:
+
+        DrivenBC(const RtoR::EquationState &prototype, std::shared_ptr<Modes::SquareWave> sqrWave);
 
         void apply(EqState &toFunction, Real t) const override;
     };

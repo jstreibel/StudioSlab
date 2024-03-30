@@ -59,7 +59,7 @@ target_link_libraries( ${LIB_LOCAL_NAME}
 		Slab-3rdParty-Imgui
 		Slab-3rdParty-GLFreetype
 		Slab-Utils
-		Slab-Core-Graphics
+		Slab-Graphics
 
 		glut
 		GLEW

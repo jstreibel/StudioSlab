@@ -1,6 +1,7 @@
 //
 
 #include "RtoRDiscreteFunction.h"
+#include "Math/Function/DiscreteFunction.h"
 
 
 //
@@ -50,6 +51,7 @@ Real DiscreteFunction::operator()(Real x) const {
 
     return getSpace().getHostData()[n];
 }
+
 
 
 

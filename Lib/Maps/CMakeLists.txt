@@ -109,7 +109,7 @@ set ( MAPS_LINKS
 		Slab-Core-Controller
 		Slab-Core-Backend
 		Slab-Core-App
-		Slab-Core-Graphics
+		Slab-Graphics
 
 		Slab-Utils
 		Slab-Math

@@ -126,7 +126,10 @@ namespace R2toR {
         auto thePotential = new RtoR::AbsFunction;
         auto dphi = (R2toR::BoundaryCondition*)getBoundary();
 
-        return new Fields::KleinGordon::Solver<R2toR::EquationState>(simulationConfig.numericConfig, *dphi, *thePotential);
+        return new Fields::KleinGordon::Solver<R2toR::EquationState>(simulationConfig.numericConfig,
+                                                                     *dphi,
+                                                                     *thePotential,
+                                                                     nullptr);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

@@ -63,6 +63,7 @@ namespace Graphics {
     }
 
     void Window::_decorate() const {
+        glLineWidth(2.0f);
         glBegin(GL_LINE_LOOP);
         {
             auto bc = isMouseIn() ? Graphics::windowBorderColor_active

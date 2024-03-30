@@ -8,6 +8,8 @@ add_executable ( RtoR-Modes
         Sim/Monitor.h
         Sim/BoundaryCondition.cpp
         Sim/BoundaryCondition.h
+        Sim/SquareWave.cpp
+        Sim/SquareWave.h
 )
 target_link_libraries ( RtoR-Modes ${SlabLibs} Slab-Maps-RtoR_GPU )
 

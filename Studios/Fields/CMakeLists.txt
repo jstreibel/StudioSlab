@@ -85,7 +85,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			Slab-Core-Controller
 			Slab-Core-Backend
 			Slab-Core-App
-			Slab-Core-Graphics
+			Slab-Graphics
 			Slab-Math
 			Slab-Maps-R2toR_GPU
 			Slab-Models

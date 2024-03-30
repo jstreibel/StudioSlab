@@ -22,6 +22,8 @@ namespace StrUtils {
 
     Str ReplaceAll(Str str, const Str& from, const Str& to);
 
+    StrVector Split(const Str& input, const Str& separator);
+
     StrVector GetLines(const char*);
     StrVector GetLines(const Str&);
 

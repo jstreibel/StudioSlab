@@ -90,6 +90,7 @@ set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
 add_library(${LIB_LOCAL_NAME} STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
+		Slab-Core
 		freeimage
 		freetype-gl
 		)

@@ -6,7 +6,6 @@
 #define STUDIOSLAB_WRITER_H
 
 
-#include "3rdParty/freetype-gl/vertex-buffer.h"
 #include "3rdParty/freetype-gl/demos/mat4.h"
 #include "3rdParty/freetype-gl/freetype-gl.h"
 

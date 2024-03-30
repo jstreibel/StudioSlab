@@ -6,6 +6,8 @@
 
 #include <utility>
 
+#include "Utils/Files.h"
+
 #include "Core/Backend/BackendManager.h"
 
 #include "KG-RtoRSolver.h"
@@ -29,7 +31,6 @@
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 #include "Models/KleinGordon/RtoR/Output/SnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/Output/DFTSnapshotOutput.h"
-#include "Core/Backend/GLFW/GLFWBackend.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -41,7 +42,7 @@ RtoR::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegis
 : Fields::KleinGordon::KGBuilder("RtoR-" + name, std::move(generalDescription),
                                  DONT_REGISTER_IMMEDIATELY)
 {
-    interface->addParameters({&Potential, &mass});
+    interface->addParameters({&Potential, &massSqr});
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
 }
@@ -82,12 +83,18 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
        *************************** SNAPSHOT OUTPUT ********************************************
        **************************************************************************************** */
     if(*takeSnapshot) {
-        auto snapshotFilename = Common::GetPWD() + "/snapshots/" + suggestFileName();
+        auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+        Utils::CheckFolderExists(snapshotsFolder);
+
+        auto snapshotFilename = snapshotsFolder + suggestFileName();
         outputManager->addOutputChannel(
                 new KleinGordon::RtoR::SnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
     }
     if(*takeDFTSnapshot) {
-        auto snapshotFilename = Common::GetPWD() + "/snapshots/" + suggestFileName();
+        auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+        Utils::CheckFolderExists(snapshotsFolder);
+
+        auto snapshotFilename = snapshotsFolder + suggestFileName();
         outputManager->addOutputChannel(
                 new KleinGordon::RtoR::DFTSnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
     }
@@ -196,6 +203,7 @@ void *RtoR::KGBuilder::newFieldState() {
 
 void *RtoR::KGBuilder::buildEquationSolver() {
     auto potential = getPotential();
+    auto nonHomogenous = getNonHomogenous();
     auto dphi = (RtoR::BoundaryCondition*)getBoundary();
 
 #if USE_CUDA == true
@@ -204,7 +212,8 @@ void *RtoR::KGBuilder::buildEquationSolver() {
     }
 #endif
 
-    return new Fields::KleinGordon::Solver<RtoR::EquationState>(simulationConfig.numericConfig, *dphi, *potential);
+    return new Fields::KleinGordon::Solver<RtoR::EquationState>(simulationConfig.numericConfig,
+                                                                *dphi, *potential, nonHomogenous);
 }
 
 auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
@@ -236,16 +245,17 @@ Core::FunctionT<Real, Real> *RtoR::KGBuilder::getPotential() const {
         return new RtoR::NullFunction;
     }
     else if(*Potential == KLEIN_GORDON_POTENTIAL){
-        if(*mass > 0)
-            return new RtoR::HarmonicPotential(*mass);
-        else
-            return new RtoR::NullFunction;
+        return new RtoR::HarmonicPotential(*massSqr);
     }
     else if(*Potential == SIGNUM_GORDON_POTENTIAL) {
         return new RtoR::AbsFunction;
     }
 
     throw "Unknown potential";
+}
+
+Core::FunctionT<Real, Real>::Ptr RtoR::KGBuilder::getNonHomogenous() {
+    return NullPtr<Core::FunctionT<Real, Real>>();
 }
 
 void RtoR::KGBuilder::setLaplacianPeriodicBC() {
@@ -261,7 +271,7 @@ void RtoR::KGBuilder::setLaplacianFixedBC() {
 bool RtoR::KGBuilder::usesPeriodicBC() const { return periodicBC; }
 
 Str RtoR::KGBuilder::suggestFileName() const {
-    auto strParams = interface->toString({"mass"}, " ");
+    auto strParams = interface->toString({"massSqr"}, " ");
     Log::Debug() << strParams << Log::Flush;
     auto voidSuggestion = VoidBuilder::suggestFileName();
     return voidSuggestion + " " + strParams;

@@ -35,6 +35,10 @@ void Graphics::Graph2D::setVerticalUnit(const Unit &unit)   {
     axisArtist.setVerticalUnit(unit);
 }
 
-auto Graphics::Graph2D::getLastXHairPosition() const -> Point2D { return XHairLocation;
+auto Graphics::Graph2D::getLastXHairPosition() const -> Point2D {
+    auto vpRect = getViewport();
+    fix mouseLocal = getMouseViewportCoord();
+
+    return FromViewportToSpaceCoord(mouseLocal, region, vpRect);
 }
 

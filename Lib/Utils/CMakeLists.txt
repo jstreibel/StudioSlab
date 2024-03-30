@@ -16,6 +16,8 @@ set ( UTIL_SOURCES
 		String.h			String.cpp
 		Numbers.h
 		Arrays.h			Arrays.cpp
+		Files.h				Files.cpp
+
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

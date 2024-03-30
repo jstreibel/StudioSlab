@@ -6,6 +6,7 @@
 #include "Utils/Resources.h"
 
 #include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/StylesManager.h"
 
 namespace Graphics::OpenGL {
 
@@ -14,6 +15,9 @@ namespace Graphics::OpenGL {
         float u;
 
     };
+
+    const auto ui = -0.1f;
+    const auto uf = +1.1f;
 
     ColorBarArtist::ColorBarArtist(RectI loc)
             : vertexBuffer("inPosition:2f,inTexCoord:1f")
@@ -25,6 +29,19 @@ namespace Graphics::OpenGL {
 
     void OpenGL::ColorBarArtist::draw(const Graph2D &graph) {
         if( texture == nullptr ) return;
+
+        auto style =  Math::StylesManager::GetCurrent();
+        auto &writer = style->labelsWriter;
+
+        auto n=5;
+        auto dx = rect.width();
+        auto dy = rect.height();
+        for(int i=0; i<n; ++i){
+            auto val = float(i)/float(n-1);
+            auto yNorm = float(i)/float(n)- ui;
+
+            writer->write(ToStr(1-val), {(float)rect.xMax+dx*0.1, (float)rect.yMax-yNorm*dy}, style->graphTitleColor);
+        }
 
         auto vp = graph.getViewport();
 
@@ -40,13 +57,12 @@ namespace Graphics::OpenGL {
     void ColorBarArtist::setTexture(std::shared_ptr<Texture> tex) { texture = tex; }
 
     void ColorBarArtist::setLocation(RectI loc) {
+        rect = loc;
+
         fix xMin = loc.xMin;
         fix xMax = loc.xMax;
         fix yMin = loc.yMin;
         fix yMax = loc.yMax;
-
-        auto ui = -0.1f;
-        auto uf = +1.1f;
 
         vertexBuffer.clear();
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};

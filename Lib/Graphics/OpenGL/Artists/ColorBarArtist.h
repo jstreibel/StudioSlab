@@ -13,6 +13,7 @@ namespace Graphics::OpenGL {
         VertexBuffer vertexBuffer;
         Shader shader;
         std::shared_ptr<Texture> texture;
+        RectI rect;
 
     public:
         explicit ColorBarArtist(RectI loc);

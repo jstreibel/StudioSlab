@@ -18,6 +18,17 @@ void errorCallback(int error_code, const char* description){
     Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
 }
 
+void window_focus_callback(GLFWwindow* window, int focused)
+{
+    if (!focused)
+    {
+        // Here, you can handle the event when the window loses focus.
+        // If you leave this empty, the window will not do anything special
+        // when it loses focus, which includes not minimizing.
+    }
+}
+
+
 GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend", eventTranslator) {
     glfwSetErrorCallback(errorCallback);
 
@@ -62,7 +73,9 @@ void GLFWBackend::mainLoop() {
         while(!mustRender && !paused && program->cycle(Program::CycleOptions::CycleUntilOutput));
         mustRender = false;
 
-        glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
+        // glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
+        glClearColor(0.25f,.25f, .35f, 1.f);
+        // glClearColor(0.75f,.75f, .65f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         for(auto &module : modules) module->beginRender();
@@ -128,6 +141,7 @@ GLFWwindow *GLFWBackend::newGLFWWindow() {
     glfwSetDropCallback(window, drop_callback);
     glfwSetWindowSizeCallback(window, window_size_callback);
 
+    glfwSetWindowFocusCallback(window, window_focus_callback);
     // glfwSetWindowSize(window, );
 
     return window;

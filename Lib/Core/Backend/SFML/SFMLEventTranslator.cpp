@@ -126,10 +126,12 @@ namespace Core {
             case sf::Keyboard::Semicolon:   return KeyMap::Key_SEMICOLON;
             case sf::Keyboard::Comma:       return KeyMap::Key_COMMA;
             case sf::Keyboard::Period:      return KeyMap::Key_PERIOD;
+#if SFML_VERSION_MAJOR>=2 && SFML_VERSION_MINOR >=6
             case sf::Keyboard::Apostrophe:  return KeyMap::Key_APOSTROPHE;
+            case sf::Keyboard::Grave:       return KeyMap::Key_GRAVE_ACCENT;
+#endif
             case sf::Keyboard::Slash:       return KeyMap::Key_SLASH;
             case sf::Keyboard::Backslash:   return KeyMap::Key_BACKSLASH;
-            case sf::Keyboard::Grave:       return KeyMap::Key_GRAVE_ACCENT;
             case sf::Keyboard::Equal:       return KeyMap::Key_EQUAL;
             case sf::Keyboard::Hyphen:      return KeyMap::Key_MINUS;
             case sf::Keyboard::Space:       return KeyMap::Key_SPACE;
