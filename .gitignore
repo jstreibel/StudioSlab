@@ -49,6 +49,8 @@ Lib/Docs/
 /Notebooks/2021-11-04-Template-21-56.xopt
 /Notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
 
+/.idea/*
+
 /Slab/bin/Fields-RtoR
 /Slab/bin/Fields-RtoR-PeriodicBC
 

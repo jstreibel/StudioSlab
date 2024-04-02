@@ -40,6 +40,7 @@ namespace Graphics {
         Real cMap_min                   = -1.1;
         Real cMap_max                   =  1.1;
         bool symmetricMaxMin            = true;
+        Graphics::OpenGL::ColorBarArtist colorBar;
 
         Graphics::OpenGL::VertexBuffer vertexBuffer;
         Graphics::OpenGL::Shader program;
@@ -66,6 +67,8 @@ namespace Graphics {
 
         auto getColorMapTexture () const -> CMapTexturePtr;
         auto getFieldTextureData() const -> FieldDataTexturePtr;
+
+
     };
 
 } // Graphics

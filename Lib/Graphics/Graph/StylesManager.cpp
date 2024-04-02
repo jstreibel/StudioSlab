@@ -48,9 +48,9 @@ namespace Math {
         stylesInitializers["Light"]     = GetSchemeLight;
         stylesInitializers["Elegant"]   = GetSchemeElegant;
 
-        current = "Dark";
+        // current = "Dark";
         // current = "Light";
-        // current = "Print";
+        current = "Print";
 
         Core::BackendManager::GetGUIBackend().addEventListener(DummyPtr(*this));;
     }

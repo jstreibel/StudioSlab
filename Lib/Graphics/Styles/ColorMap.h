@@ -29,9 +29,14 @@ namespace Styles {
         Str name;
         ColorMapType type;
 
+        Real (*scalingFunction)(Real);
+
     public:
         ColorMap() = default;
-        ColorMap(const Str &name, ColorMapType, std::vector<Styles::Color> colorSeq, Styles::Color clipped=Styles::Nil, Styles::Color saturated=Styles::Nil);
+        ColorMap(Str name, ColorMapType, std::vector<Styles::Color> colorSeq,
+                 Styles::Color clipped=Styles::Nil,
+                 Styles::Color saturated=Styles::Nil,
+                 Real (*scalingFunction)(Real)=nullptr);
         ColorMap(const ColorMap &colorMap);
 
         auto mapValue(Real clampedValue, Real min=-1, Real max=1) const -> Styles::Color;

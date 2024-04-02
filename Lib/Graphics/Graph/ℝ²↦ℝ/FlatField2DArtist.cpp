@@ -21,6 +21,7 @@ namespace Graphics {
     : vertexBuffer("vertex:2f,tex_coord:2f")
     , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
     , name(std::move(name))
+    , colorBar({50,150, 50, 750})
     {
         computeColormapTexture();
 
@@ -60,6 +61,17 @@ namespace Graphics {
         program.setUniform("transformMatrix", transform);
 
         vertexBuffer.render(GL_TRIANGLES);
+
+        const int left = -400;
+        const int vpWidth = graph.getViewport().width();
+        const int vpHeight = graph.getViewport().height();
+        const int cbarWidth = 150;
+        const int cbarHeight = 0.8 * vpHeight;
+        const int cbarTop = (vpHeight-cbarHeight)/2;
+
+        colorBar.setLocation({vpWidth+left, vpWidth+left+cbarWidth, vpWidth-cbarTop, vpWidth-cbarTop-cbarHeight});
+        colorBar.draw(graph);
+
     }
 
     void FlatField2DArtist::computeColormapTexture() {
@@ -195,21 +207,25 @@ namespace Graphics {
                     if (ImGui::Button("Permute")) {
                         cMap = cMap.permute();
                         computeColormapTexture();
+                        colorBar.setTexture(getColorMapTexture());
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("RGB -> BGR")) {
                         cMap = cMap.bgr();
                         computeColormapTexture();
+                        colorBar.setTexture(getColorMapTexture());
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Inverse")) {
                         cMap = cMap.inverse();
                         computeColormapTexture();
+                        colorBar.setTexture(getColorMapTexture());
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Reverse")) {
                         cMap = cMap.reverse();
                         computeColormapTexture();
+                        colorBar.setTexture(getColorMapTexture());
                     }
                 }
 
@@ -307,6 +323,8 @@ namespace Graphics {
         }
 
         computeColormapTexture();
+
+        colorBar.setTexture(getColorMapTexture());
     }
 
     void FlatField2DArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }

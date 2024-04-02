@@ -79,8 +79,11 @@ namespace Styles {
 
         std::vector<PlotStyle> funcPlotStyles;
 
-        Resolution vTickHeightinPixels = 4;
-        Resolution vAxisPaddingInPixels = 60;
+        Resolution vTickHeightinPixels;
+        Resolution vAxisPaddingInPixels;
+
+        Resolution hTickWidthInPixels;
+        Resolution hAxisPaddingInPixels;
     };
 
     typedef std::shared_ptr<Styles::StyleScheme> ColorScheme_ptr;

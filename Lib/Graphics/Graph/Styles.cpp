@@ -80,7 +80,9 @@ Styles::StyleScheme::StyleScheme(Color graphBackground,
                                  , ticksWriter(std::move(std::move(ticksWriter)))
                                  , funcPlotStyles(std::move(plotStyles))
                                  , vTickHeightinPixels(5)
-                                 , vAxisPaddingInPixels(60)
+                                 , vAxisPaddingInPixels(80)
+                                 , hTickWidthInPixels(5)
+                                 , hAxisPaddingInPixels(30)
 {
 
 }

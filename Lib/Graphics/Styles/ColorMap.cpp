@@ -50,16 +50,30 @@ namespace Styles {
 
     std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
 
-    ColorMap::ColorMap(const Str &name, ColorMapType colorMapType, std::vector<Styles::Color> colorSeq, Styles::Color clipped, Styles::Color saturated)
-            : name(name), type(colorMapType), colors(colorSeq), clipped(clipped), saturated(saturated) {
+    ColorMap::ColorMap(Str name, ColorMapType colorMapType,
+                       std::vector<Styles::Color> colorSeq,
+                       Styles::Color clipped,
+                       Styles::Color saturated,
+                       Real (*scalingFunction)(Real))
+            : name(std::move(name))
+            , type(colorMapType)
+            , colors(colorSeq)
+            , clipped(clipped)
+            , saturated(saturated)
+            , scalingFunction(scalingFunction){
         if(clipped == Styles::Nil) this->clipped = colorSeq[0];
         if(saturated == Styles::Nil) this->saturated = colorSeq.back();
+
+        if(this->scalingFunction == nullptr)
+            this->scalingFunction = [](Real val){ return val; };
     }
 
     ColorMap::ColorMap(const Styles::ColorMap &colorMap)
-            : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated) {}
+            : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated, colorMap.scalingFunction) {}
 
     auto ColorMap::mapValue(Real value, Real min, Real max) const -> Styles::Color {
+        value = scalingFunction(value);
+
         Real clampedValue = (value - min) / (max-min);
 
         if (colors.empty()) {
@@ -100,7 +114,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.permute());
 
-        return {name+"_p", type, newColors, clipped.permute(), saturated.permute()};
+        return {name+"_p", type, newColors, clipped.permute(), saturated.permute(), scalingFunction};
     }
 
     auto ColorMap::bgr() const -> ColorMap {
@@ -108,7 +122,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.permute(true));
 
-        return {name+"_p", type, newColors, clipped.permute(true), saturated.permute(true)};
+        return {name+"_p", type, newColors, clipped.permute(true), saturated.permute(true), scalingFunction};
     }
 
     auto ColorMap::inverse() const -> ColorMap {
@@ -116,7 +130,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.inverse());
 
-        return {name+"_i", type, newColors, clipped.inverse(), saturated.inverse()};
+        return {name+"_i", type, newColors, clipped.inverse(), saturated.inverse(), scalingFunction};
     }
 
     auto ColorMap::reverse() const -> ColorMap {
@@ -125,7 +139,7 @@ namespace Styles {
         for(int i=(int)colors.size()-1; i>=0; --i)
             newColors.push_back(colors[i]);
 
-        return {name+"_r", type, newColors, saturated, clipped};
+        return {name+"_r", type, newColors, saturated, clipped, scalingFunction};
     }
 
 

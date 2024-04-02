@@ -18,6 +18,9 @@ namespace Graphics {
 
         Unit hUnit, vUnit;
         Real xSpacing=1, ySpacing=1;
+
+        Str horizontalAxisLabel = "x";
+        Str verticalAxisLabel = "y";
     public:
         AxisArtist();
         explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
@@ -26,6 +29,9 @@ namespace Graphics {
 
         void setHorizontalUnit(const Unit&);
         void setVerticalUnit(const Unit&);
+
+        void set_horizontalAxisLabel(const Str &label);
+        void set_verticalAxisLabel(const Str &label);
     };
 
 } // Math

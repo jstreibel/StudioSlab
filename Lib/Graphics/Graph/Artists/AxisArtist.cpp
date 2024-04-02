@@ -89,8 +89,8 @@ namespace Graphics {
         fix vAxisPaddingInPixels = (Real)currStyle->vAxisPaddingInPixels;
 
         fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
-        fix hTickHeightInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
-        (void)hTickHeightInSpace;
+        fix hTickWidthInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
+        (void)hTickWidthInSpace;
 
         fix vGraphPaddingInSpace = vAxisPaddingInPixels * vPixelsToSpaceScale;
         fix fontHeight = writer->getFontHeightInPixels();
@@ -107,7 +107,9 @@ namespace Graphics {
 
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
-        for (auto i=iMin; i<=iMax; ++i) {
+        // Write numbers
+        for (auto i=iMin; i<=iMax; ++i)
+        {
             fix mark = i*xSpacing;
 
             Point2D loc = {mark - xSpacing / 18.0, yLocationOfLabels};
@@ -116,6 +118,7 @@ namespace Graphics {
             writer->write(label, loc, gtfColor);
         }
 
+        // Draw axes
         {
             OpenGL::Shader::remove();
 
@@ -123,11 +126,14 @@ namespace Graphics {
             auto &tc = currStyle->majorTickColor;
             glBegin(GL_LINES);
             {
+                // Draw x axis
                 glColor4f(ac.r, ac.g, ac.b, ac.a);
 
                 glVertex3d(region.xMin, yLocationOfXAxis, 0);
                 glVertex3d(region.xMax, yLocationOfXAxis, 0);
 
+
+                // Draw ticks
                 glColor4f(tc.r, tc.g, tc.b, tc.a);
 
                 for(auto i = iMin; i<=iMax; ++i){
@@ -137,6 +143,19 @@ namespace Graphics {
                 }
             }
             glEnd();
+        }
+
+        // Draw axis name
+        {
+            const auto xMidpoint = region.xCenter();
+            const auto yMidpoint = region.yMin;
+            const Point2D loc = {xMidpoint, yMidpoint};
+            auto writer = currStyle->labelsWriter;
+
+            auto pen = FromSpaceToViewportCoord(loc, region, vp);
+            pen.y += writer->getFontHeightInPixels();
+
+            writer->write(horizontalAxisLabel, pen , currStyle->graphTitleColor);
         }
 
         Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
@@ -153,7 +172,7 @@ namespace Graphics {
         glDisable(GL_LINE_STIPPLE);
 
         fix Δy = region.height();
-        fix xLocationOfYAxis = region.xMin + 20*hPixelsToSpaceScale;
+        fix xLocationOfYAxis = region.xMin + currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
         fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
         fix iMin = int(region.yMin/ySpacing);
         fix iMax = int(region.yMax/ySpacing);
@@ -225,12 +244,28 @@ namespace Graphics {
         glEnd();
         glPopAttrib();
 
+        // Draw axis name
+        {
+            const auto xMidpoint = region.xMin;
+            const auto yMidpoint = region.yCenter();
+            const Point2D loc = {xMidpoint, yMidpoint};
+            auto writer = currStyle->labelsWriter;
+
+            auto pen = FromSpaceToViewportCoord(loc, region, vp);
+            pen.x += .5*writer->getFontHeightInPixels();
+
+            writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor);
+        }
+
     }
 
     void AxisArtist::setHorizontalUnit(const Unit &unit) { hUnit = unit; }
 
     void AxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
 
+    void AxisArtist::set_horizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
+
+    void AxisArtist::set_verticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
 
 
 } // Math
