@@ -53,44 +53,30 @@ namespace Styles {
     ColorMap::ColorMap(Str name, ColorMapType colorMapType,
                        std::vector<Styles::Color> colorSeq,
                        Styles::Color clipped,
-                       Styles::Color saturated,
-                       Real (*scalingFunction)(Real))
+                       Styles::Color saturated)
             : name(std::move(name))
             , type(colorMapType)
             , colors(colorSeq)
             , clipped(clipped)
-            , saturated(saturated)
-            , scalingFunction(scalingFunction){
+            , saturated(saturated) {
         if(clipped == Styles::Nil) this->clipped = colorSeq[0];
         if(saturated == Styles::Nil) this->saturated = colorSeq.back();
-
-        if(this->scalingFunction == nullptr)
-            this->scalingFunction = [](Real val){ return val; };
     }
 
     ColorMap::ColorMap(const Styles::ColorMap &colorMap)
-            : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated, colorMap.scalingFunction) {}
+            : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated) {}
 
-    auto ColorMap::mapValue(Real value, Real min, Real max) const -> Styles::Color {
-        value = scalingFunction(value);
-
-        Real clampedValue = (value - min) / (max-min);
-
-        if (colors.empty()) {
+    auto ColorMap::mapValueToColor(Real value) const -> Styles::Color {
+        if (colors.empty())
             return {0.0, 0.0, 0.0, 0.0};
-        }
-
-        if (clampedValue <= 0.0) {
+        if (value <= 0.0)
             return clipped;
-        }
-
-        if (clampedValue >= 1.0) {
+        if (value >= 1.0)
             return saturated;
-        }
 
         Real interval = 1.0 / static_cast<double>(colors.size() - 1);
-        auto index = static_cast<size_t>(clampedValue / interval);
-        Real t = (clampedValue - (Real)index * interval) / interval;
+        auto index = static_cast<size_t>(value / interval);
+        Real t = (value - (Real)index * interval) / interval;
 
         const Color& color1 = colors[index];
         const Color& color2 = colors[index + 1];
@@ -114,7 +100,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.permute());
 
-        return {name+"_p", type, newColors, clipped.permute(), saturated.permute(), scalingFunction};
+        return {name+"_p", type, newColors, clipped.permute(), saturated.permute()};
     }
 
     auto ColorMap::bgr() const -> ColorMap {
@@ -122,7 +108,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.permute(true));
 
-        return {name+"_p", type, newColors, clipped.permute(true), saturated.permute(true), scalingFunction};
+        return {name+"_p", type, newColors, clipped.permute(true), saturated.permute(true)};
     }
 
     auto ColorMap::inverse() const -> ColorMap {
@@ -130,7 +116,7 @@ namespace Styles {
         for(auto &c: colors)
             newColors.push_back(c.inverse());
 
-        return {name+"_i", type, newColors, clipped.inverse(), saturated.inverse(), scalingFunction};
+        return {name+"_i", type, newColors, clipped.inverse(), saturated.inverse()};
     }
 
     auto ColorMap::reverse() const -> ColorMap {
@@ -139,8 +125,7 @@ namespace Styles {
         for(int i=(int)colors.size()-1; i>=0; --i)
             newColors.push_back(colors[i]);
 
-        return {name+"_r", type, newColors, saturated, clipped, scalingFunction};
+        return {name+"_r", type, newColors, saturated, clipped};
     }
-
 
 };

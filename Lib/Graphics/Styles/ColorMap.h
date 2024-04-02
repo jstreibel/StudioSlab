@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <map>
+#include <functional>
 
 #include "Utils/Types.h"
 #include "Colors.h"
@@ -29,17 +30,14 @@ namespace Styles {
         Str name;
         ColorMapType type;
 
-        Real (*scalingFunction)(Real);
-
     public:
         ColorMap() = default;
         ColorMap(Str name, ColorMapType, std::vector<Styles::Color> colorSeq,
                  Styles::Color clipped=Styles::Nil,
-                 Styles::Color saturated=Styles::Nil,
-                 Real (*scalingFunction)(Real)=nullptr);
+                 Styles::Color saturated=Styles::Nil);
         ColorMap(const ColorMap &colorMap);
 
-        auto mapValue(Real clampedValue, Real min=-1, Real max=1) const -> Styles::Color;
+        auto mapValueToColor(Real value) const -> Styles::Color;
 
         auto permute() const -> ColorMap;
         auto bgr() const -> ColorMap;

@@ -19,12 +19,42 @@ inline bool isPOT(const unsigned long n){
 }
 
 template<class T>
-inline T SIGN(const T &a)
-    {return a>0 ? 1 : (a<0 ? -1 : 0);}
+inline T SIGN(const T &a) { return a>0 ? 1 : (a<0 ? -1 : 0); }
+
+/*
+const auto RealSize = sizeof(Real);
+inline Real SIGN(const Real &val){
+    union RealBits {
+        Real val;
+        char bytes[RealSize];
+
+        inline bool isPositive() const {
+            return !((bytes[RealSize-1] & 0x80) >> (RealSize-1));
+
+        }
+    };
+
+    asdfas
+}
+*/
 
 template<class T>
-inline T ABS(const T &a)
-    {return a>=0 ? a : -a;}
+inline T ABS(const T &a) { return a>=0 ? a : -a; }
+
+/*
+union DoubleBits {
+    double value;
+    uint64_t bits;
+};
+
+double absoluteValue(double value) {
+    DoubleBits db;
+    db.value = value;
+    db.bits &= ~(1ULL << 63); // Clear the sign bit.
+    return db.value;
+}
+*/
+
 
 inline bool isEqual(const Real a, const Real b,
                     const Real eps = 1.e-3)

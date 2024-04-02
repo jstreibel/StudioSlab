@@ -5,6 +5,8 @@
 #include "FlatField2DArtist.h"
 
 #include <memory>
+#include <functional>
+
 #include "Graphics/Graph/Graph.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Utils/Resources.h"
@@ -23,12 +25,9 @@ namespace Graphics {
     , name(std::move(name))
     , colorBar({50,150, 50, 750})
     {
-        computeColormapTexture();
+        updateColorBar();
 
-        program.setUniform("colormap", cMap_texture->getTextureUnit());
-        program.setUniform("phiMin", (GLfloat)cMap_min);
-        program.setUniform("phiMax", (GLfloat)cMap_max);
-        program.setUniform("eps", (GLfloat)cMap_epsArg);
+        program.setUniform("colormap", colorBar.getTexture()->getTextureUnit());
     }
 
     void FlatField2DArtist::draw(const Graph2D &graph) {
@@ -56,7 +55,7 @@ namespace Graphics {
         };
 
         textureData->bind();
-        cMap_texture->bind();
+        colorBar.getTexture()->bind();
         program.use();
         program.setUniform("transformMatrix", transform);
 
@@ -69,23 +68,12 @@ namespace Graphics {
         const int cbarHeight = 0.8 * vpHeight;
         const int cbarTop = (vpHeight-cbarHeight)/2;
 
-        colorBar.setLocation({vpWidth+left, vpWidth+left+cbarWidth, vpWidth-cbarTop, vpWidth-cbarTop-cbarHeight});
+        colorBar.setLocation({vpWidth+left,
+                              vpWidth+left+cbarWidth,
+                              vpHeight-cbarTop,
+                              vpHeight-cbarTop-cbarHeight});
         colorBar.draw(graph);
 
-    }
-
-    void FlatField2DArtist::computeColormapTexture() {
-        fix nColors = 1024;
-        cMap_texture = std::make_shared<::Graphics::OpenGL::Texture1D_Color>(nColors, GL_TEXTURE1);
-        cMap_texture->setWrap(::Graphics::OpenGL::ClampToEdge);
-
-        for(auto i=0; i<nColors; ++i){
-            fix s = (Real)(i-1)/(Real)(nColors-2);
-            fix color = cMap.mapValue(s, 0, 1);
-            cMap_texture->setColor(i, color);
-        }
-
-        cMap_texture->upload();
     }
 
     void FlatField2DArtist::invalidateTextureData() { validTextureData = false; }
@@ -102,7 +90,8 @@ namespace Graphics {
 
         discreteFunc.getSpace().syncHost();
 
-        for (int i=0;i<xRes;++i) for (int j=0;j<yRes;++j) textureData->setValue(i, j, (Real32)discreteFunc.At(i, j));
+        for (int i=0;i<xRes;++i) for (int j=0;j<yRes;++j)
+            textureData->setValue(i, j, (Real32)discreteFunc.At(i, j));
 
         textureData->upload();
 
@@ -152,27 +141,26 @@ namespace Graphics {
                         cMap_min = min;
                         if (symmetricMaxMin) cMap_max = -min;
 
-                        program.setUniform("phiMin", (GLfloat)cMap_min);
-                        program.setUniform("phiMax", (GLfloat)cMap_max);
-
+                        updateColorBar();
                     }
                     ImGui::SameLine();
                     if (ImGui::SliderFloat("ϕₘₐₓ", &max, .001f, 10)) {
                         cMap_max = max;
                         if (symmetricMaxMin) cMap_min = -max;
 
-                        program.setUniform("phiMin", (GLfloat)cMap_min);
-                        program.setUniform("phiMax", (GLfloat)cMap_max);
+                        updateColorBar();
                     }
                     ImGui::PopItemWidth();
 
                     if (ImGui::DragFloat("ε", &eps, (float)eps * 1e-2f, 1e-5, 1e3, "%.6f")) {
                         cMap_epsArg = eps;
-                        program.setUniform("eps", (GLfloat)cMap_epsArg);
+
+                        updateColorBar();
                     }
 
                     if (ImGui::Checkbox("Log scale", &logScale)) {
-                        program.setUniform("useLog", (GLboolean)logScale);
+
+                        updateColorBar();
                     }
                 }
 
@@ -206,26 +194,22 @@ namespace Graphics {
                     ImGui::Text("ColorMap operations:");
                     if (ImGui::Button("Permute")) {
                         cMap = cMap.permute();
-                        computeColormapTexture();
-                        colorBar.setTexture(getColorMapTexture());
+                        updateColorBar();
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("RGB -> BGR")) {
                         cMap = cMap.bgr();
-                        computeColormapTexture();
-                        colorBar.setTexture(getColorMapTexture());
+                        updateColorBar();
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Inverse")) {
                         cMap = cMap.inverse();
-                        computeColormapTexture();
-                        colorBar.setTexture(getColorMapTexture());
+                        updateColorBar();
                     }
                     ImGui::SameLine();
                     if (ImGui::Button("Reverse")) {
                         cMap = cMap.reverse();
-                        computeColormapTexture();
-                        colorBar.setTexture(getColorMapTexture());
+                        updateColorBar();
                     }
                 }
 
@@ -247,10 +231,8 @@ namespace Graphics {
         if(cMap_min >= 0.0) symmetricMaxMin = false;
         else symmetricMaxMin = true;
 
-
-
-        program.setUniform("phiMin", (GLfloat) cMap_min);
-        program.setUniform("phiMax", (GLfloat) cMap_max);
+        // program.setUniform("phiMin", (GLfloat) cMap_min);
+        // program.setUniform("phiMax", (GLfloat) cMap_max);
 
         bool firstTime = func == nullptr;
         func = std::move(function);
@@ -317,24 +299,39 @@ namespace Graphics {
             auto max = std::max(abs(cMap_min), abs(cMap_max));
             cMap_min = -max;
             cMap_max = max;
-
-            program.setUniform("phiMin", (GLfloat) cMap_min);
-            program.setUniform("phiMax", (GLfloat) cMap_max);
         }
 
-        computeColormapTexture();
+        updateColorBar();
+    }
 
-        colorBar.setTexture(getColorMapTexture());
+    void FlatField2DArtist::updateColorBar() {
+        std::function<Real(Real)> invScaleFunc;
+        {
+            auto min = cMap_min;
+            auto max = cMap_max;
+            if (logScale) {
+                auto &eps = cMap_epsArg;
+                invScaleFunc = [min, max, &eps](Real x) {
+                    x = x*(max-min)+min;
+                    const auto s = SIGN(x);
+
+                    return eps*(exp(s*x) - 1);
+                };
+            } else invScaleFunc = [min, max](Real x) { return x*(max-min)+min; };
+        }
+        colorBar.setInverseScalingFunction(invScaleFunc);
+
+        colorBar.setColorMap(cMap);
+
+        program.setUniform("phiMin", (float)cMap_min);
+        program.setUniform("phiMax", (float)cMap_max);
+        program.setUniform("eps", (float)cMap_epsArg);
+        program.setUniform("useLog", (float)logScale);
+
     }
 
     void FlatField2DArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
 
-    FlatField2DArtist::CMapTexturePtr FlatField2DArtist::getColorMapTexture() const {
-        return cMap_texture;
-    }
-
-    FlatField2DArtist::FieldDataTexturePtr FlatField2DArtist::getFieldTextureData() const {
-        return textureData;
-    }
+    FlatField2DArtist::FieldDataTexturePtr FlatField2DArtist::getFieldTextureData() const { return textureData; }
 
 } // Graphics

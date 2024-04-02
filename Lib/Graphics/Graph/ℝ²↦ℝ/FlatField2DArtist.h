@@ -26,7 +26,6 @@ namespace Graphics {
             LogEpsilon
         };
 
-        typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
         typedef std::shared_ptr<Graphics::OpenGL::Texture2D_Real> FieldDataTexturePtr;
 
         bool validTextureData = false;
@@ -34,7 +33,6 @@ namespace Graphics {
         Unit funcUnit;
 
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-        CMapTexturePtr cMap_texture = nullptr;
         bool logScale                   = true;
         Real cMap_epsArg                =  1;
         Real cMap_min                   = -1.1;
@@ -49,7 +47,7 @@ namespace Graphics {
 
         Str name;
 
-        void computeColormapTexture();
+        void updateColorBar();
         void invalidateTextureData();
         void repopulateTextureBuffer();
 
@@ -65,7 +63,6 @@ namespace Graphics {
         void setColorMap(const Styles::ColorMap& colorMap);
         void set_xPeriodicOn();
 
-        auto getColorMapTexture () const -> CMapTexturePtr;
         auto getFieldTextureData() const -> FieldDataTexturePtr;
 
 

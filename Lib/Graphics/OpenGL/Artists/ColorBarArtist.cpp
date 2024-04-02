@@ -3,10 +3,13 @@
 //
 
 #include "ColorBarArtist.h"
+
+#include <utility>
 #include "Utils/Resources.h"
 
 #include "Graphics/Graph/Graph.h"
 #include "Graphics/Graph/StylesManager.h"
+#include "Graphics/OpenGL/Texture1D_Color.h"
 
 namespace Graphics::OpenGL {
 
@@ -23,6 +26,7 @@ namespace Graphics::OpenGL {
             : vertexBuffer("inPosition:2f,inTexCoord:1f")
             , shader(Resources::ShadersFolder + "ColorBar.vert",
                      Resources::ShadersFolder + "ColorBar.frag")
+            , inverseScalingFunction([](Real x){ return x; })
     {
         setLocation(loc);
     }
@@ -37,10 +41,13 @@ namespace Graphics::OpenGL {
         auto dx = rect.width();
         auto dy = rect.height();
         for(int i=0; i<n; ++i){
-            auto val = float(i)/float(n-1);
+            auto s = (1.-(Real(i)/Real(n-1)));
             auto yNorm = float(i)/float(n)- ui;
 
-            writer->write(ToStr(1-val), {(float)rect.xMax+dx*0.1, (float)rect.yMax-yNorm*dy}, style->graphTitleColor);
+            auto val = inverseScalingFunction(s);
+
+            writer->write(ToStr(val),
+                          {(float)rect.xMax+dx*0.1, (float)rect.yMax-yNorm*dy}, style->graphTitleColor);
         }
 
         auto vp = graph.getViewport();
@@ -54,7 +61,24 @@ namespace Graphics::OpenGL {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void ColorBarArtist::setTexture(std::shared_ptr<Texture> tex) { texture = tex; }
+    void ColorBarArtist::updateTexture(int samples) {
+        if(!textureDirty) return;
+
+        if(texture==nullptr || texture->getSize()!=samples) {
+            texture = std::make_shared<::Graphics::OpenGL::Texture1D_Color>(samples, GL_TEXTURE1);
+            texture->setWrap(::Graphics::OpenGL::ClampToEdge);
+        }
+
+        for(auto i=0; i<samples; ++i){
+            fix s = (Real)(i-1)/(Real)(samples-2);
+            fix color = colorMap.mapValueToColor(s);
+            texture->setColor(i, color);
+        }
+
+        texture->upload();
+
+        textureDirty = false;
+    }
 
     void ColorBarArtist::setLocation(RectI loc) {
         rect = loc;
@@ -74,5 +98,22 @@ namespace Graphics::OpenGL {
 
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
+
+    void ColorBarArtist::setColorMap(const Styles::ColorMap& map) {
+        this->colorMap = map;
+
+        textureDirty = true;
+    }
+
+    auto ColorBarArtist::getTexture() -> CMapTexturePtr {
+        updateTexture();
+
+        return texture;
+    }
+
+    void ColorBarArtist::setInverseScalingFunction(std::function<Real(Real)> func) {
+        inverseScalingFunction = std::move(func);
+    }
+
 
 } // OpenGL
