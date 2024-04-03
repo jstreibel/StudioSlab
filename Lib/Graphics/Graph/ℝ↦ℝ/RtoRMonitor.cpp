@@ -77,7 +77,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         addWindow(DummyPtr(mCorrelationGraph));
         addWindow(DummyPtr(mSpaceFourierModesGraph));
 
-        mSpaceFourierModesGraph.setHorizontalUnit(Constants::π);
+        mSpaceFourierModesGraph.getAxisArtist().setHorizontalUnit(Constants::π);
     }
 
     {
@@ -87,7 +87,9 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
         mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
 
         mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
-        mFullSpaceFTHistoryDisplay.setHorizontalUnit(Constants::π);
+        mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalUnit(Constants::π);
+        mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisLabel("k");
+        mFullSpaceFTHistoryDisplay.getAxisArtist().setVerticalAxisLabel("t");
 
         if(true) {
             auto windowColumn = new ::Graphics::WindowColumn;

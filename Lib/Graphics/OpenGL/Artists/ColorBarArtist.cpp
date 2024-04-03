@@ -37,11 +37,56 @@ namespace Graphics::OpenGL {
         auto style =  Math::StylesManager::GetCurrent();
         auto &writer = style->labelsWriter;
 
+        OpenGL::Shader::remove();
+        {
+            // GAMBIARRAS
+
+            auto slack = 15.0;
+
+            auto xMin = rect.xMin - slack;
+            auto xMax = rect.xMax + writer->getFontHeightInPixels()*5;
+            auto yMin = rect.yMin + slack;
+            auto yMax = rect.yMax - slack;
+
+            xMin = 2.f*(xMin/graph.getViewport().width()-.5f);
+            xMax = 2.f*(xMax/graph.getViewport().width()-.5f);
+            yMin = 2.f*(yMin/graph.getViewport().height()-.5f);
+            yMax = 2.f*(yMax/graph.getViewport().height()-.5f);
+
+            glMatrixMode(GL_PROJECTION);
+            glPushMatrix();
+            glLoadIdentity();
+
+            glMatrixMode(GL_MODELVIEW);
+            glPushMatrix();
+            glLoadIdentity();
+
+            glColor3f(1.0,1.0,1.0);
+            glBegin(GL_QUADS);
+            glVertex2f(xMin, yMin);
+            glVertex2f(xMin, yMax);
+            glVertex2f(xMax, yMax);
+            glVertex2f(xMax, yMin);
+            glEnd();
+
+            glColor3f(0,0,0);
+            glBegin(GL_LINE_LOOP);
+            glVertex2f(xMin, yMin);
+            glVertex2f(xMin, yMax);
+            glVertex2f(xMax, yMax);
+            glVertex2f(xMax, yMin);
+            glEnd();
+
+            glPopMatrix();
+            glMatrixMode(GL_PROJECTION);
+            glPopMatrix();
+        }
+
         auto n=5;
         auto dx = rect.width();
         auto dy = rect.height();
         for(int i=0; i<n; ++i){
-            auto s = (1.-(Real(i)/Real(n-1)));
+            auto s = (Real(i)/Real(n-1));
             auto yNorm = float(i)/float(n)- ui;
 
             auto val = inverseScalingFunction(s);
@@ -57,6 +102,7 @@ namespace Graphics::OpenGL {
         shader.setUniform("colormap", texture->getTextureUnit());
         shader.setUniform("vpWidth", vp.width());
         shader.setUniform("vpHeight", vp.height());
+
 
         vertexBuffer.render(GL_TRIANGLES);
     }
@@ -91,10 +137,10 @@ namespace Graphics::OpenGL {
         vertexBuffer.clear();
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
         ColorBarVertex vertices[4] = {
-                {xMin, yMin,   ui},
-                {xMax, yMin,   ui},
-                {xMax, yMax,   uf},
-                {xMin, yMax,   uf}};
+                {xMin, yMax,   ui},
+                {xMax, yMax,   ui},
+                {xMax, yMin,   uf},
+                {xMin, yMin,   uf}};
 
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }

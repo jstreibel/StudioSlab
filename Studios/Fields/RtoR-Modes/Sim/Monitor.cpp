@@ -14,7 +14,6 @@ namespace Modes {
                      const Str &name, bool showEnergyHistoryAsDensities)
     : RtoR::Monitor(params, hamiltonian, phiMin, phiMax, name, showEnergyHistoryAsDensities)
     {
-
     }
 
     void Monitor::setInputModes(RealVector A, RealVector Ω) {
@@ -31,5 +30,13 @@ namespace Modes {
         mSpaceFourierModesGraph.addPointSet(modes,
             Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
             "A(ω)", DONT_AFFECT_RANGES);
+
+        Graphics::AxisArtist::Ticks ticks;
+        auto unit = mSpaceFourierModesGraph.getAxisArtist().getHorizontalUnit();
+        fix k=Ω[0];
+        for(int n=1; n<20; ++n){
+            ticks.push_back(Graphics::AxisArtist::Tick{(2*n-1)*k, unit((2*n-1)*k, 0)});
+        }
+        this->mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisTicks(ticks);
     }
 } // Modes

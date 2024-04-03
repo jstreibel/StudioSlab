@@ -260,6 +260,8 @@ Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         }
 
     }
+
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
 }
 
 void Graphics::Graph2D::setupOrtho() const {
@@ -294,4 +296,8 @@ auto Graphics::Graph2D::countDisplayItems() const -> Count {
 void Graphics::Graph2D::artistsDraw() {
     for (const auto & [priority, artist] : content)
         artist->draw(*this);
+}
+
+Graphics::AxisArtist &Graphics::Graph2D::getAxisArtist() {
+    return axisArtist;
 }

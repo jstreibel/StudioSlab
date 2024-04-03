@@ -57,7 +57,8 @@ Graphics::OpenGL::FrameBuffer Graphics::OpenGL::GLUT::getFrameBuffer(int x, int 
 
     std::vector<Graphics::OpenGL::FrameBuffer::DataType> pixels(w*h*channels);
 
-    glReadPixels(x, y, w, h, GL_RGBA, GL_UNSIGNED_BYTE, &pixels[0]);
+    auto format = GL_BGRA;
+    glReadPixels(x, y, w, h, format, GL_UNSIGNED_BYTE, &pixels[0]);
 
     return {w, h, pixels};
 }

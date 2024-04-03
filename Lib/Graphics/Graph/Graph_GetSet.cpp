@@ -25,16 +25,6 @@ void Graphics::Graph2D::setAnimationTime(Real value) { animationTimeSeconds = va
 
 Real Graphics::Graph2D::getAnimationTime() const { return animationTimeSeconds; }
 
-void Graphics::Graph2D::setHorizontalUnit(const Unit &unit) {
-    baseHorizontalUnit = unit;
-    axisArtist.setHorizontalUnit(unit);
-}
-
-void Graphics::Graph2D::setVerticalUnit(const Unit &unit)   {
-    baseVerticalUnit= unit;
-    axisArtist.setVerticalUnit(unit);
-}
-
 auto Graphics::Graph2D::getLastXHairPosition() const -> Point2D {
     auto vpRect = getViewport();
     fix mouseLocal = getMouseViewportCoord();

@@ -68,7 +68,6 @@ bool Graphics::OpenGL::outputToPNG(FrameBuffer buffer,
         return false;
     }
 
-
     BYTE* bits = FreeImage_GetBits(image);
     memcpy(bits, pixelData, dataSize);
 

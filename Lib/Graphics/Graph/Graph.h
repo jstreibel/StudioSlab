@@ -65,14 +65,10 @@ namespace Graphics {
 
         Real animationTimeSeconds = 0.2;
 
-        // Point2D XHairLocation{};
         Spaces::PointSet XHair;
 
 
     protected:
-        Unit baseHorizontalUnit;
-        Unit baseVerticalUnit;
-
         Str title;
         Resolution samples = 512;
 
@@ -135,8 +131,7 @@ namespace Graphics {
         Real get_yMin() const;
         Real get_yMax() const;
 
-        void setHorizontalUnit(const Unit &hUnit);
-        void setVerticalUnit(const Unit &vUnit);
+        AxisArtist &getAxisArtist();
 
         void setAnimationTime(Real value);
         Real getAnimationTime() const;

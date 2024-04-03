@@ -11,7 +11,16 @@
 namespace Graphics {
 
     class AxisArtist : public Artist {
-        void computeTicksSpacings(const Graph2D &graph);
+    public:
+        struct Tick {
+            Real mark;
+            Str label;
+        };
+
+        typedef std::vector<Tick> Ticks;
+
+    private:
+        void computeTicks(const Graph2D &graph);
 
         void drawXAxis(const Graph2D &graph) const;
         void drawYAxis(const Graph2D &graph) const;
@@ -21,6 +30,12 @@ namespace Graphics {
 
         Str horizontalAxisLabel = "x";
         Str verticalAxisLabel = "y";
+
+        bool hTicksManual=false;
+        Ticks hTicks;
+        bool vTicksManual=false;
+        Ticks vTicks;
+
     public:
         AxisArtist();
         explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
@@ -28,10 +43,14 @@ namespace Graphics {
         void draw(const Graph2D &) override;
 
         void setHorizontalUnit(const Unit&);
+        auto getHorizontalUnit() const -> const Unit&;
         void setVerticalUnit(const Unit&);
 
-        void set_horizontalAxisLabel(const Str &label);
-        void set_verticalAxisLabel(const Str &label);
+        void setHorizontalAxisLabel(const Str &label);
+        auto getVerticalUnit() const -> const Unit&;
+        void setVerticalAxisLabel(const Str &label);
+
+        void setHorizontalAxisTicks(Ticks ticks);
     };
 
 } // Math

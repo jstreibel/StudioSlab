@@ -65,7 +65,7 @@ namespace Graphics {
         const int vpWidth = graph.getViewport().width();
         const int vpHeight = graph.getViewport().height();
         const int cbarWidth = 150;
-        const int cbarHeight = 0.8 * vpHeight;
+        const int cbarHeight = 0.6 * vpHeight;
         const int cbarTop = (vpHeight-cbarHeight)/2;
 
         colorBar.setLocation({vpWidth+left,

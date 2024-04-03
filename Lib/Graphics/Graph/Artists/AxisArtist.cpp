@@ -10,6 +10,8 @@
 #include "Graphics/OpenGL/Shader.h"
 
 #include "AxisArtist.h"
+
+#include <utility>
 #include "Graphics/Graph/StylesManager.h"
 
 
@@ -42,14 +44,19 @@ namespace Graphics {
     void AxisArtist::draw(const Graph2D &graph) {
         glLineWidth(1.0);
 
-        computeTicksSpacings(graph);
+        computeTicks(graph);
 
         drawXAxis(graph);
         drawYAxis(graph);
     }
 
-    void AxisArtist::computeTicksSpacings(const Graph2D &graph) {
+    void AxisArtist::computeTicks(const Graph2D &graph) {
         auto &region = graph.getRegion();
+        auto vp = graph.getViewport();
+
+        auto currStyle = Math::StylesManager::GetCurrent();
+
+        auto writer = currStyle->ticksWriter;
 
         if(true){
             const Real Δy = region.height() / vUnit.value();
@@ -62,7 +69,9 @@ namespace Graphics {
             ySpacing = multiplier * spacing;
         }
 
-        if(true){
+        if(!hTicksManual){
+            hTicks.clear();
+
             const auto Δx = region.width() / hUnit.value();
 
             const auto theLog = log10(Δx);
@@ -71,6 +80,17 @@ namespace Graphics {
             const auto multiplier = 2 * floor(pow(10., theRest));
 
             xSpacing = multiplier * spacing;
+
+            fix iMin = int(region.xMin/xSpacing);
+            fix iMax = int(region.xMax/xSpacing);
+
+            for (auto i=iMin; i<=iMax; ++i)
+            {
+                fix mark = i*xSpacing;
+                auto label = hUnit(mark, 2);
+
+                hTicks.push_back({mark, label});
+            }
         }
     }
 
@@ -78,26 +98,18 @@ namespace Graphics {
         auto vp = graph.getViewport();
         auto region = graph.getRegion();
 
-        fix iMin = int(region.xMin/xSpacing);
-        fix iMax = int(region.xMax/xSpacing);
-
         auto currStyle = Math::StylesManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
-
-        fix vTickHeightinPixels_x2 = 2.0*(Real)currStyle->vTickHeightinPixels;
-        fix vAxisPaddingInPixels = (Real)currStyle->vAxisPaddingInPixels;
-
-        fix vTickHeightInSpace = vTickHeightinPixels_x2 * vPixelsToSpaceScale;
-        fix hTickWidthInSpace = vTickHeightinPixels_x2 * hPixelsToSpaceScale;
-        (void)hTickWidthInSpace;
-
-        fix vGraphPaddingInSpace = vAxisPaddingInPixels * vPixelsToSpaceScale;
         fix fontHeight = writer->getFontHeightInPixels();
 
+        fix vTickHeightInSpace = 2.0*(Real)currStyle->vTickHeightinPixels * vPixelsToSpaceScale;
+        fix vGraphPaddingInSpace = (Real)currStyle->vAxisPaddingInPixels * vPixelsToSpaceScale;
+
         fix yLocationOfXAxis = region.yMin < -vGraphPaddingInSpace
-                               ? 0
-                               : region.yMin + vGraphPaddingInSpace;
+                                         ? 0
+                                         : region.yMin + vGraphPaddingInSpace;
+
         fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
 
         auto &gtfColor = currStyle->graphNumbersColor;
@@ -108,14 +120,9 @@ namespace Graphics {
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         // Write numbers
-        for (auto i=iMin; i<=iMax; ++i)
-        {
-            fix mark = i*xSpacing;
-
-            Point2D loc = {mark - xSpacing / 18.0, yLocationOfLabels};
-            loc = FromSpaceToViewportCoord(loc, region, vp);
-            auto label = hUnit(mark, 2);
-            writer->write(label, loc, gtfColor);
+        for (auto &hTick : hTicks) {
+            auto pen = FromSpaceToViewportCoord({hTick.mark, yLocationOfLabels}, region, vp);
+            writer->write(hTick.label, pen, gtfColor);
         }
 
         // Draw axes
@@ -126,7 +133,7 @@ namespace Graphics {
             auto &tc = currStyle->majorTickColor;
             glBegin(GL_LINES);
             {
-                // Draw x axis
+                // Draw x-axis
                 glColor4f(ac.r, ac.g, ac.b, ac.a);
 
                 glVertex3d(region.xMin, yLocationOfXAxis, 0);
@@ -135,9 +142,8 @@ namespace Graphics {
 
                 // Draw ticks
                 glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-                for(auto i = iMin; i<=iMax; ++i){
-                    Real mark = i*xSpacing;
+                for (auto &hTick : hTicks){
+                    Real mark = hTick.mark;
                     glVertex3d(mark, -vTickHeightInSpace, 0);
                     glVertex3d(mark, +vTickHeightInSpace, 0);
                 }
@@ -150,7 +156,7 @@ namespace Graphics {
             const auto xMidpoint = region.xCenter();
             const auto yMidpoint = region.yMin;
             const Point2D loc = {xMidpoint, yMidpoint};
-            auto writer = currStyle->labelsWriter;
+            writer = currStyle->labelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region, vp);
             pen.y += writer->getFontHeightInPixels();
@@ -263,9 +269,18 @@ namespace Graphics {
 
     void AxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
 
-    void AxisArtist::set_horizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
+    void AxisArtist::setHorizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
 
-    void AxisArtist::set_verticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
+    void AxisArtist::setVerticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
+
+    void AxisArtist::setHorizontalAxisTicks(AxisArtist::Ticks ticks) {
+        hTicksManual = true;
+        hTicks = std::move(ticks);
+    }
+
+    auto AxisArtist::getHorizontalUnit() const -> const Unit & { return hUnit; }
+
+    auto AxisArtist::getVerticalUnit() const -> const Unit & { return vUnit; }
 
 
 } // Math

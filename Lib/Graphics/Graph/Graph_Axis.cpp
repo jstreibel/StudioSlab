@@ -11,7 +11,10 @@
 
 Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) const {
     fix digits = 5;
-    return Str("(")+ baseHorizontalUnit(coords.x, digits) + ", " + baseVerticalUnit(coords.y, digits) + ")";
+    auto &hUnit = axisArtist.getHorizontalUnit();
+    auto &vUnit = axisArtist.getVerticalUnit();
+
+    return Str("(")+ hUnit(coords.x, digits) + ", " + vUnit(coords.y, digits) + ")";
 }
 
 void Graphics::Graph2D::reviewGraphRanges() {
@@ -55,6 +58,8 @@ void Graphics::Graph2D::reviewGraphRanges() {
 }
 
 void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+
     OpenGL::Shader::remove();
 
     glMatrixMode(GL_PROJECTION);
@@ -87,6 +92,8 @@ void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str&
         glRectd(xMin_label, yMin_label, xMax_label, yMax_label);
     }
 
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+
     {
         auto color = style.lineColor;
 
@@ -116,6 +123,8 @@ void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str&
             glEnd();
         }
     }
+
+    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (2)");
 
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_LINE_STIPPLE);
