@@ -34,11 +34,13 @@ namespace Graphics::OpenGL {
     void OpenGL::ColorBarArtist::draw(const Graph2D &graph) {
         if( texture == nullptr ) return;
 
+        if(1) return;
+
         auto style =  Math::StylesManager::GetCurrent();
         auto &writer = style->labelsWriter;
 
         OpenGL::Shader::remove();
-        {
+        if(0) {
             // GAMBIARRAS
 
             auto slack = 15.0;

@@ -28,7 +28,9 @@ namespace Graphics {
     public:
         typedef std::shared_ptr<OpenGLMonitor> Ptr;
 
-        explicit OpenGLMonitor(const NumericConfig &params, const Str& channelName="OpenGL monitor", int stepsBetweenDraws=1);
+        explicit OpenGLMonitor(const NumericConfig &params,
+                               const Str& channelName="OpenGL monitor",
+                               int stepsBetweenDraws=1);
 
         void setAutoAdjust_nSteps(bool value);
 

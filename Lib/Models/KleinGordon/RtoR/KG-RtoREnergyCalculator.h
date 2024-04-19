@@ -18,12 +18,14 @@ namespace RtoR {
         RtoR::DiscreteFunction *_oGradientDensity;
         RtoR::DiscreteFunction *_oPotentialDensity;
 
+        Real U, K, W, V;
+
         RtoR::Function::Ptr V_ptr;
 
     public:
         KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc);
 
-        const RtoR::DiscreteFunction &computeDensities(const RtoR::EquationState &field);
+        const RtoR::DiscreteFunction &computeEnergies(const RtoR::EquationState &field);
 
         const RtoR::DiscreteFunction &getEnergyDensity() const { return *_oEnergyDensity; };
         const RtoR::DiscreteFunction &getKineticDensity() const { return *_oKineticDensity; };
@@ -31,10 +33,10 @@ namespace RtoR {
         const RtoR::DiscreteFunction &getPotentialDensity() const { return *_oPotentialDensity; };
         const RtoR::Function::Ptr &getThePotential() const { return V_ptr; }
 
-        Real integrateEnergy();
-        Real integrateKinetic();
-        Real integrateGradient();
-        Real integratePotential();
+        Real getTotalEnergy() const;
+        Real getTotalKineticEnergy() const;
+        Real getTotalGradientEnergy() const;
+        Real getTotalPotentialEnergy() const;
 
         Real integrateEnergy(Real xmin, Real xmax);
     };

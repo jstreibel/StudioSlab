@@ -6,8 +6,12 @@
 
 #include <memory>
 
+// Don't touch
 #define ODD true
 #define DONT_AFFECT_RANGES false
+
+// Options
+#define CUSTOM_TICKS false
 
 namespace Modes {
     Monitor::Monitor(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax,
@@ -27,16 +31,20 @@ namespace Modes {
             modes->addPoint({ω, A[i]});
         }
 
+        /*
         mSpaceFourierModesGraph.addPointSet(modes,
             Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
             "A(ω)", DONT_AFFECT_RANGES);
 
-        Graphics::AxisArtist::Ticks ticks;
-        auto unit = mSpaceFourierModesGraph.getAxisArtist().getHorizontalUnit();
-        fix k=Ω[0];
-        for(int n=1; n<20; ++n){
-            ticks.push_back(Graphics::AxisArtist::Tick{(2*n-1)*k, unit((2*n-1)*k, 0)});
+        if(CUSTOM_TICKS) {
+            Graphics::AxisArtist::Ticks ticks;
+            auto unit = mSpaceFourierModesGraph.getAxisArtist().getHorizontalUnit();
+            fix k = Ω[0];
+            for (int n = 1; n < 20; ++n) {
+                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
+            }
+            this->mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisTicks(ticks);
         }
-        this->mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisTicks(ticks);
+         */
     }
 } // Modes

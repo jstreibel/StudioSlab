@@ -74,16 +74,16 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
         auto *histogramsPanel = new Graphics::WindowPanel();
         histogramsPanel->addWindow(DummyPtr(mHistogramsGraphV));
         histogramsPanel->addWindow(DummyPtr(mHistogramsGraphGrad));
-        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphK), ADD_NEW_COLUMN);
+        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphK));
         histogramsPanel->addWindow(DummyPtr(mHistogramsGraphE));
 
         addWindow(Window::Ptr(histogramsPanel), true);
     }
 
-    setColumnRelativeWidth(0, -1);
-    setColumnRelativeWidth(1, 0.15);
-    setColumnRelativeWidth(2, 0.15);
-    setColumnRelativeWidth(3, 0.30);
+    setColumnRelativeWidth(0, 0.125);
+    setColumnRelativeWidth(1, 0.20);
+    setColumnRelativeWidth(2, -1);
+    setColumnRelativeWidth(3, 0.25);
 }
 
 void RtoR::Thermal::Monitor::draw() {
@@ -133,6 +133,11 @@ void RtoR::Thermal::Monitor::draw() {
         stats.addVolatileStat(name + " = " + p.second);
     }
 
+    auto U = hamiltonian.getTotalEnergy();
+    auto K = hamiltonian.getTotalKineticEnergy();
+    auto W = hamiltonian.getTotalGradientEnergy();
+    auto V = hamiltonian.getTotalPotentialEnergy();
+
     std::ostringstream ss;
     auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
     stats.addVolatileStat("<\\br>");
@@ -180,6 +185,11 @@ void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {
     RtoR::Monitor::handleOutput(outInfo);
 
     auto L =       params.getL();
+
+    auto U = hamiltonian.getTotalEnergy();
+    auto K = hamiltonian.getTotalKineticEnergy();
+    auto W = hamiltonian.getTotalGradientEnergy();
+    auto V = hamiltonian.getTotalPotentialEnergy();
 
     u            = U/L;
     barϕ         = V / L;

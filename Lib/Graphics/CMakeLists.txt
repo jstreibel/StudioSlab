@@ -83,6 +83,12 @@ set( GRAPHICS_SOURCES
         Graph3D/Camera.h
         Graph3D/TestActor.cpp
         Graph3D/TestActor.h
+        Graph/ℝ↦ℝ/RtoRStatisticalMonitor.cpp
+        Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h
+        Graph/ℝ↦ℝ/RtoRRealtimePanel.cpp
+        Graph/ℝ↦ℝ/RtoRRealtimePanel.h
+		Graph/ℝ↦ℝ/RtoRPanel.cpp
+		Graph/ℝ↦ℝ/RtoRPanel.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

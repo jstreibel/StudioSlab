@@ -21,70 +21,22 @@
 #include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
+#include "RtoRPanel.h"
 
 namespace RtoR {
 
     class Monitor : public ::Graphics::OpenGLMonitor {
-    protected:
-        bool showEnergyHistoryAsDensities;
+        std::vector<Graphics::RtoRPanel*> dataViews;
+        Graphics::RtoRPanel* currentDataView = nullptr;
 
     public:
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
     protected:
+        std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
+        std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
 
-        Real Δt = 0.0;
-        RtoR2::StraightLine corrSampleLine;
-        std::shared_ptr<R2toR::Sampler> sampler;
-        RtoR::Section1D::Ptr mSpaceCorrelation;
-        R2toR::CorrelationFunction mCorrelationFunction;
-        Graphics::GraphRtoR mCorrelationGraph;
-        Graphics::GraphRtoR mSpaceFourierModesGraph;
-
-        RtoR::Section1D mHistorySectionFunc;
-
-        Graphics::GraphRtoR mHistorySliceGraph;
-
-        std::shared_ptr<const R2toR::DiscreteFunction>
-                  simulationHistory = nullptr;
-        std::shared_ptr<const R2toR::DiscreteFunction>
-                spaceFTHistory = nullptr;
-
-        Graphics::GraphRtoR mFieldsGraph;
-
-
-        Spaces::PointSet UHistoryData;
-        Spaces::PointSet KHistoryData;
-        Spaces::PointSet WHistoryData;
-        Spaces::PointSet VHistoryData;
-
-        const Styles::PlotStyle U_style = Math::StylesManager::GetCurrent()->funcPlotStyles[0];
-        const Styles::PlotStyle K_style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
-        const Styles::PlotStyle W_style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
-        const Styles::PlotStyle V_style = Math::StylesManager::GetCurrent()->funcPlotStyles[3];
-
-        bool showPot = true;
-        bool showKineticEnergy = false;
-        bool showGradientEnergy = false;
-        bool showEnergyDensity = false;
-        bool showComplexFourier = false;
-
-        float t_history = .0f;
-        int step_history = 0;
-
-        void updateHistoryGraphs();
-        void updateFTHistoryGraph();
-        void updateFourierGraph();
-
-        Graphics::HistoryDisplay mFullHistoryDisplay;
-        Graphics::HistoryDisplay mFullSpaceFTHistoryDisplay;
-
-        Real U = .0;
-        Real K = .0;
-        Real V = .0;
-        Real W = .0;
         KGEnergy &hamiltonian;
-        ::Graphics::Graph2D mEnergyGraph;
 
         void draw() override;
 
@@ -95,7 +47,7 @@ namespace RtoR {
                 KGEnergy &hamiltonian,
                 Real phiMin=-1,
                 Real phiMax=1,
-                Str name = "general graphic monitor",
+                const Str& name = "general graphic monitor",
                 bool showEnergyHistoryAsDensities=false);
 
         virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);

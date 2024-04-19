@@ -18,7 +18,7 @@ RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function:
 
 }
 
-auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const RtoR::DiscreteFunction &{
+auto RtoR::KGEnergy::computeEnergies(const RtoR::EquationState &field) -> const RtoR::DiscreteFunction &{
     auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
     auto &phiSpace = phi.getSpace(),
             &ddtPhiSpace = ddtPhi.getSpace();
@@ -28,11 +28,16 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
     RealArray &g = _oGradientDensity->getSpace().getHostData();
     RealArray &v = _oPotentialDensity->getSpace().getHostData();
 
-    fix &V = *V_ptr;
+    fix &V_func = *V_ptr;
 
     auto &Φ    = phiSpace.getHostData();
     auto &dΦdt = ddtPhiSpace.getHostData();
     const int N = Φ.size();
+
+    U = .0;
+    K = .0;
+    W = .0;
+    V = .0;
 
     RtoR::DerivativeCPU derivatves(phi);
     RealArray_O dΦdx(phi.N);
@@ -40,7 +45,7 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
         derivatves.dfdx_v(dΦdx);
 
         for (int i = 0; i < N; i++) {
-            const Real xcAbs = V(Φ[i]),
+            const Real xcAbs = V_func(Φ[i]),
                        dϕdt = dΦdt[i];
             const Real dϕdx = dΦdx[i];
 
@@ -49,23 +54,24 @@ auto RtoR::KGEnergy::computeDensities(const RtoR::EquationState &field) -> const
             v[i] = xcAbs;
 
             e[i] = k[i] + g[i] + v[i];
+
+            U += e[i];
+            K += k[i];
+            W += g[i];
+            V += v[i];
         }
     }
+
+    Real dx = builder.getNumericParams().geth();
+    U *= dx;
+    K *= dx;
+    W *= dx;
+    V *= dx;
 
     return *_oEnergyDensity;
 }
 
-auto RtoR::KGEnergy::integrateEnergy() -> Real
-{
-    RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
-    Real E=0;
-
-    for(const auto &e : E_v)
-        E += e;
-
-    Real dx = builder.getNumericParams().geth();
-    return E*dx;
-}
+auto RtoR::KGEnergy::getTotalEnergy() const -> Real { return U; }
 
 
 
@@ -86,35 +92,8 @@ auto RtoR::KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
     return 0;
 }
 
-Real RtoR::KGEnergy::integrateKinetic() {
-    RealArray &K_v = _oKineticDensity->getSpace().getHostData();
-    Real K=0;
+Real RtoR::KGEnergy::getTotalKineticEnergy()   const { return K; }
 
-    for(const auto &k : K_v)
-        K += k;
+Real RtoR::KGEnergy::getTotalGradientEnergy()  const { return W; }
 
-    Real dx = builder.getNumericParams().geth();
-    return K*dx;
-}
-
-Real RtoR::KGEnergy::integrateGradient() {
-    RealArray &Grad_v = _oGradientDensity->getSpace().getHostData();
-    Real Grad=0;
-
-    for(const auto &grad : Grad_v)
-        Grad += grad;
-
-    Real dx = builder.getNumericParams().geth();
-    return Grad*dx;
-}
-
-Real RtoR::KGEnergy::integratePotential() {
-    RealArray &Pot_v = _oPotentialDensity->getSpace().getHostData();
-    Real Pot=0;
-
-    for(const auto &pot : Pot_v)
-        Pot += pot;
-
-    Real dx = builder.getNumericParams().geth();
-    return Pot*dx;
-}
+Real RtoR::KGEnergy::getTotalPotentialEnergy() const { return V; }

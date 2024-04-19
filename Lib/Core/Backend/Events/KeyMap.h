@@ -41,6 +41,10 @@ namespace Core {
         bool Mod_Super = false;
         bool Mod_CapsLock = false;
         bool Mod_NumLock = false;
+
+        auto nonePressed() const -> bool {
+            return !(Mod_Shift | Mod_Ctrl | Mod_Alt | Mod_Super | Mod_CapsLock | Mod_NumLock);
+        }
     };
 
     enum KeyMap {
