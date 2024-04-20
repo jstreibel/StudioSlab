@@ -17,9 +17,10 @@
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "HistoryDisplay.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
+#include "RtoRPanel.h"
 
 namespace RtoR {
-    class StatisticalMonitor : public ::Graphics::OpenGLMonitor {
+    class StatisticalMonitor : public Graphics::RtoRPanel {
         Real Δt = 0.0;
         RtoR2::StraightLine corrSampleLine;
         std::shared_ptr<R2toR::Sampler> sampler;
@@ -63,15 +64,10 @@ namespace RtoR {
         Graphics::Graph2D mHistogramsGraphV;
         Graphics::Graph2D mHistogramsGraphE;
 
-    protected:
     public:
+        StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+
         void draw() override;
-
-    protected:
-        void handleOutput(const OutputPacket &outInfo) override;
-
-    public:
-        StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, int stepsBetweenDraws);
 
         void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory);
 

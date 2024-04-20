@@ -32,6 +32,8 @@ namespace Graphics {
 
         void addWindow(const Window::Ptr& window, bool newColumn = false, float newColumnWidth = -1);
 
+        bool removeWindow(const Window::Ptr& window);
+
         /**
          * Add window to column columnId.
          * @param window the window being added.

@@ -28,6 +28,23 @@ namespace Graphics {
         heights.emplace_back(windowHeight);
     }
 
+    bool WindowColumn::removeWindow(const Window::Ptr& window) {
+
+        auto it = windows.begin();
+        for(auto i=0; i<windows.size(); ++i){
+            if(*it == window) {
+                windows.remove(*it);
+                heights.erase(heights.begin()+i);
+
+                return true;
+            }
+
+            it++;
+        }
+
+        return false;
+    }
+
     void WindowColumn::arrangeWindows() {
         if (!assertConsistency()) throw "WindowRow inconsistency";
 
@@ -127,5 +144,10 @@ namespace Graphics {
     bool WindowColumn::notifyFilesDropped(StrVector paths) {
         PropagateEvent(notifyFilesDropped(paths));
     }
+
+    bool WindowColumn::isEmpty() const {
+        return windows.empty();
+    }
+
 
 }

@@ -18,7 +18,7 @@ namespace RtoR::Thermal {
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
     protected:
-        auto buildOpenGLOutput() -> Monitor * override;
+        // auto buildOpenGLOutput() -> Monitor * override;
 
     public:
 

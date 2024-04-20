@@ -24,6 +24,8 @@ namespace Graphics {
         std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
         std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
 
+        auto handleOutput(const OutputPacket &packet) -> void override;
+
     public:
         RtoRPanel(const NumericConfig &params,
                   GUIWindow &guiWindow,
@@ -33,6 +35,8 @@ namespace Graphics {
 
         virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
         virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory);
+
+
     };
 
 } // Graphics

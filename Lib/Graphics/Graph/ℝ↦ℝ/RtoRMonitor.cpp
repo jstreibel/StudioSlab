@@ -10,6 +10,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 #include "Maps/RtoR/Calc/FourierTransform.h"
 #include "RtoRRealtimePanel.h"
+#include "RtoRStatisticalMonitor.h"
 
 
 RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
@@ -19,16 +20,28 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
-    currentDataView = new RtoR::RealtimePanel(params, hamiltonian, stats,
+    Graphics::RtoRPanel *dataView = new RtoR::RealtimePanel(params, hamiltonian, stats,
                                               phiMin, phiMax, showEnergyHistoryAsDensities);
+    dataViews.emplace_back(dataView);
 
-    dataViews.emplace_back(currentDataView);
+    dataView = new RtoR::StatisticalMonitor(params, hamiltonian, stats);
+    dataViews.emplace_back(dataView);
 
-    addWindow(DummyPtr(*currentDataView), true, .85);
+    setDataView(0);
 }
 
 void RtoR::Monitor::draw() {
     OpenGLMonitor::draw();
+}
+
+void RtoR::Monitor::setDataView(int index) {
+    if(index > dataViews.size()-1) return;
+
+    removeWindow(DummyPtr(*currentDataView));
+    currentDataView = dataViews[index];
+    addWindow(DummyPtr(*currentDataView), true, .85);
+
+    arrangeWindows();
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
@@ -47,9 +60,17 @@ bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core:
     if(modKeys.nonePressed() && state == Core::Press)
             switch (key) {
                 case '1':
+                    setDataView(0);
+                    break;
                 case '2':
+                    setDataView(1);
+                    break;
                 case '3':
+                    setDataView(2);
+                    break;
                 case '4':
+                    setDataView(3);
+                    break;
                 default:
                     break;
             }
@@ -70,6 +91,8 @@ void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::Discrete
     for(auto dataView : dataViews)
         const_cast<Graphics::RtoRPanel*>(dataView)->setSpaceFourierHistory(sftHistory);
 }
+
+
 
 
 

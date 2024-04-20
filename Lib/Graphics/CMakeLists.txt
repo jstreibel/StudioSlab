@@ -97,6 +97,7 @@ add_library(${LIB_LOCAL_NAME} STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core
+		Slab-Models
 		freeimage
 		freetype-gl
 		)

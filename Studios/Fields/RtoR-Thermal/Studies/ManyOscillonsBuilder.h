@@ -16,7 +16,7 @@ class ManyOscillonsBuilder  : public RtoR::Thermal::Builder {
         auto getBoundary() -> void * override;
 
     protected:
-        auto buildOpenGLOutput() -> Monitor * override;
+        //auto buildOpenGLOutput() -> Monitor * override;
 
     };
 }

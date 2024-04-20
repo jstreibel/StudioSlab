@@ -5,13 +5,15 @@
 #ifndef STUDIOSLAB_WINDOWCOLUMN_H
 #define STUDIOSLAB_WINDOWCOLUMN_H
 
+#include <list>
 #include "Graphics/Window/Window.h"
+
 
 
 namespace Graphics {
 
     class WindowColumn : public Window {
-        std::vector<Window::Ptr> windows;
+        std::list<Window::Ptr> windows;
         RealVector heights;
 
         bool assertConsistency() const;
@@ -20,6 +22,10 @@ namespace Graphics {
         WindowColumn() = default;
 
         void addWindow(Window::Ptr window, float windowHeight = -1);
+
+        bool removeWindow(const Window::Ptr&);
+
+        bool isEmpty() const;
 
         void arrangeWindows();
 

@@ -27,6 +27,24 @@ namespace Graphics {
         column->addWindow(window);
     }
 
+    bool WindowPanel::removeWindow(const Window::Ptr &windowToRemove) {
+        int i=0;
+        for(auto &column : columns){
+            if(column.removeWindow(windowToRemove)) {
+                if(column.isEmpty()){
+                    columns.erase(columns.begin()+i);
+                    widths.erase(widths.begin()+i);
+                }
+
+                return true;
+            }
+
+            ++i;
+        }
+
+        return false;
+    }
+
     bool WindowPanel::addWindowToColumn(const Window::Ptr &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
@@ -174,4 +192,5 @@ namespace Graphics {
 
         return responded;
     }
+
 }

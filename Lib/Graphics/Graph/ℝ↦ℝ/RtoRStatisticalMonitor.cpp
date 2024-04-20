@@ -6,12 +6,15 @@
 
 #include "imgui.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
 #include "Maps/RtoR/Calc/Histogram.h"
-#include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
+#include "Core/Controller/Interface/InterfaceManager.h"
 
+#include <sstream>
+#include <array>
 
+// #include "Core/Controller/Interface/InterfaceManager.h"
+// #include "Maps/RtoR/Calc/Histogram.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
@@ -43,8 +46,8 @@
 
 
 
-RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, int stepsBetweenDraws)
-: OpenGLMonitor(params, "Statistical monitor", stepsBetweenDraws)
+RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow)
+: Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
 , Δt(params.gett()*0.1)
 , hamiltonian(hamiltonian)
 , mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true,
@@ -66,11 +69,16 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
 
         addWindowToColumn(DummyPtr(mTemperaturesGraph), 0);
 
-        auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
-        auto pts = Spaces::Point2DVec({{-.1,T},{params.gett()+.1,T}});
-        auto Tstyle = (*style++).permuteColors();
-        Tstyle.filled = false;
-        mTemperaturesGraph.addPointSet(std::make_shared<Spaces::PointSet>(pts), Tstyle, "T (nominal)");
+        auto TParam = InterfaceManager::getInstance().getParametersValues({"T"});
+        if(!TParam.empty())
+        {
+            auto T = std::stod(TParam[0].second);
+            auto pts = Spaces::Point2DVec({{-.1,                T},
+                                           {params.gett() + .1, T}});
+            auto Tstyle = (*style++).permuteColors();
+            Tstyle.filled = false;
+            mTemperaturesGraph.addPointSet(std::make_shared<Spaces::PointSet>(pts), Tstyle, "T (nominal)");
+        }
     }
 
     {
@@ -90,10 +98,9 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
         addWindow(Window::Ptr(histogramsPanel), true);
     }
 
-    setColumnRelativeWidth(0, 0.125);
-    setColumnRelativeWidth(1, 0.20);
-    setColumnRelativeWidth(2, -1);
-    setColumnRelativeWidth(3, 0.25);
+    // setColumnRelativeWidth(0, 0.125);
+    setColumnRelativeWidth(0, -1);
+    setColumnRelativeWidth(1, 0.40);
 }
 
 void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
@@ -145,7 +152,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
     fix xMax = params.getxMax();
     fix tMax = params.gett();
 
-    stats.begin();
+    guiWindow.begin();
     if (ImGui::CollapsingHeader("History")) {
         if (ImGui::SliderFloat("t", &t_history, .0f, (float) getLastSimTime()))
             step_history = (int) (t_history / (float) params.gett() * (float) params.getn());
@@ -153,7 +160,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
         if (ImGui::SliderInt("step", &step_history, 0, (int) lastData.getSteps()))
             t_history = (float) (step_history / (Real) params.getn() * params.gett());
     }
-    stats.end();
+    guiWindow.end();
 
     static auto section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
 
@@ -177,6 +184,9 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
     CHECK_GL_ERRORS(1)
 
     {
+        fix step = lastData.getSteps();
+        fix t = lastData.getSimTime();
+
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
@@ -186,7 +196,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
     CHECK_GL_ERRORS(1.5)
 
     {
-        stats.begin();
+        guiWindow.begin();
         if (ImGui::CollapsingHeader("Correlation graph")) {
             ImGui::Text("Space correlation @ t=%f", t_history);
 
@@ -217,7 +227,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                 updateSamples = true;
             }
         }
-        stats.end();
+        guiWindow.end();
 
         CHECK_GL_ERRORS(2)
 
@@ -288,13 +298,13 @@ void RtoR::StatisticalMonitor::draw() {
         static auto nbins = 200;
         static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
-        stats.begin();
+        guiWindow.begin();
         if(ImGui::CollapsingHeader("Probability density functions"))
         {
             ImGui::SliderInt("n bins", &nbins, 10, 2000);
             ImGui::Checkbox("Pretty bars", &pretty);
         }
-        stats.end();
+        guiWindow.end();
 
 
         histogram.Compute(hamiltonian.getKineticDensity(), nbins);
@@ -309,6 +319,8 @@ void RtoR::StatisticalMonitor::draw() {
         histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
         histogramEData = histogram.asPDFPointSet(pretty);
 
+        fix t = lastData.getSimTime();
+
         if(t<transientGuess || transientGuess<0){
             mHistogramsGraphK.reviewGraphRanges();
             mHistogramsGraphGrad.reviewGraphRanges();
@@ -319,11 +331,11 @@ void RtoR::StatisticalMonitor::draw() {
 
     // *************************** MY BEAUTY *****************************
 
-    stats.addVolatileStat("<\\br>");
+    guiWindow.addVolatileStat("<\\br>");
     for(const auto& p : InterfaceManager::getInstance().getParametersValues({"T", "k", "i"}) ) {
         auto name = p.first;
         if(name == "i") name = "transient";
-        stats.addVolatileStat(name + " = " + p.second);
+        guiWindow.addVolatileStat(name + " = " + p.second);
     }
 
     auto U = hamiltonian.getTotalEnergy();
@@ -333,26 +345,21 @@ void RtoR::StatisticalMonitor::draw() {
 
     std::ostringstream ss;
     auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
-    stats.addVolatileStat("<\\br>");
-    stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
-    stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
-    stats.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
-    stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
-    stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+    guiWindow.addVolatileStat("<\\br>");
+    guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+    guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+    guiWindow.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+    guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+    guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
     style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
-    stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
+    guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
+    guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
+    guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
 
+    fix t = lastData.getSimTime();
     mTemperaturesGraph.set_xMax(t);
 
-
-
-    OpenGLMonitor::draw();
-}
-
-void RtoR::StatisticalMonitor::handleOutput(const OutputPacket &outInfo) {
-    OpenGLMonitor::handleOutput(outInfo);
+    RtoRPanel::draw();
 }
 

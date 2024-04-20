@@ -38,6 +38,8 @@ auto RtoR::ManyOscillonsBuilder::getBoundary() -> void * {
     return new BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
 }
 
+/*
 RtoR::Monitor *RtoR::ManyOscillonsBuilder::buildOpenGLOutput() {
     return new RtoR::Thermal::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
 }
+ */

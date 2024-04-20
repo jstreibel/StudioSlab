@@ -21,5 +21,9 @@ namespace Graphics {
         spaceFTHistory = sftHistory;
     }
 
+    void RtoRPanel::handleOutput(const OutputPacket &packet) {
+
+    }
+
 
 } // Graphics

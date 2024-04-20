@@ -42,6 +42,8 @@ namespace RtoR {
 
         void handleOutput(const OutputPacket &outInfo) override;
 
+        void setDataView(int index);
+
     public:
         Monitor(const NumericConfig &params,
                 KGEnergy &hamiltonian,

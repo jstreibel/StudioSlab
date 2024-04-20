@@ -44,7 +44,7 @@ add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/MainRtoRThermal.cpp
 
 		RtoR-Thermal/ThermalBuilder.h							RtoR-Thermal/ThermalBuilder.cpp
-		RtoR-Thermal/ThermalMonitor.h							RtoR-Thermal/ThermalMonitor.cpp
+		#RtoR-Thermal/ThermalMonitor.h							RtoR-Thermal/ThermalMonitor.cpp
 
 		RtoR-Thermal/Studies/ManyOscillonsBuilder.h				RtoR-Thermal/Studies/ManyOscillonsBuilder.cpp
 		RtoR-Thermal/Studies/MachineGunBuilder.h				RtoR-Thermal/Studies/MachineGunBuilder.cpp
