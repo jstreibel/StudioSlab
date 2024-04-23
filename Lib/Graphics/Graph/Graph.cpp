@@ -53,6 +53,20 @@ void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder) {
     content.emplace(zOrder, pArtist);
 }
 
+bool Graphics::Graph2D::removeArtist(const Graphics::Artist::Ptr &pArtist) {
+    auto haveErased = false;
+
+    for(auto item = content.begin(); item!=content.end();) {
+        if(item->second==pArtist){
+            item=content.erase(item);
+            haveErased = true;
+        }
+        else ++item;
+    }
+
+    return haveErased;
+}
+
 void Graphics::Graph2D::draw() {
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
     Window::setBGColor(Math::StylesManager::GetCurrent()->graphBackground);
@@ -112,41 +126,13 @@ void Graphics::Graph2D::drawCurves() {
     for (IN curveData: curves) {
         auto curve = curveData.curve;
         auto pointSet = curve.get()->renderToPointSet();
-        auto points = pointSet.get()->getPoints();
-
-        if (points.size() < 2) continue;
 
         auto style = curveData.style;
         auto name = curveData.name;
 
-        OpenGL::Shader::remove();
-
         nameLabelDraw(style, name);
 
-        auto color = style.lineColor;
-
-
-        glColor4f(color.r, color.g, color.b, color.a);
-        glLineWidth(style.thickness);
-
-        if (style.primitive != Styles::SolidLine) {
-            glDisable(GL_LINE_SMOOTH);
-            glEnable(GL_LINE_STIPPLE);
-            glLineStipple(style.stippleFactor, style.stipplePattern);
-        } else {
-            glEnable(GL_LINE_SMOOTH);
-            glDisable(GL_LINE_STIPPLE);
-        }
-
-        auto primitive = GL_LINE_STRIP;
-        if (style.primitive == Styles::Point) primitive = GL_POINTS;
-
-        glBegin(primitive);
-        {
-            for (const auto &p: points)
-                glVertex2d(p.x, p.y);
-        }
-        glEnd();
+        Graphics::Graph2D::renderPointSet(*pointSet, style);
     }
 }
 
@@ -301,3 +287,5 @@ void Graphics::Graph2D::artistsDraw() {
 Graphics::AxisArtist &Graphics::Graph2D::getAxisArtist() {
     return axisArtist;
 }
+
+

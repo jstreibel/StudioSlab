@@ -2,8 +2,8 @@
 // Created by joao on 23/09/2019.
 //
 
-#ifndef V_SHAPE_RTOROUTPUTOPENGL_H
-#define V_SHAPE_RTOROUTPUTOPENGL_H
+#ifndef V_SHAPE_RTORMONITOR_BASE_H
+#define V_SHAPE_RTORMONITOR_BASE_H
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
@@ -22,6 +22,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 namespace RtoR {
 
@@ -29,20 +30,24 @@ namespace RtoR {
         std::vector<Graphics::RtoRPanel*> dataViews;
         Graphics::RtoRPanel* currentDataView = nullptr;
 
-    public:
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
-
-    protected:
         std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
+        std::shared_ptr<Graphics::HistoryDisplay> fullHistoryGraph = nullptr;
         std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
+        std::shared_ptr<Graphics::HistoryDisplay> fullSFTHistoryGraph = nullptr;
+        const SimHistory_DFT::DFTDataHistory *dftData;
 
         KGEnergy &hamiltonian;
 
+        void setDataView(int index);
+
+        void updateHistoryGraph();
+
+        void updateSFTHistoryGraph();
+
+    protected:
         void draw() override;
 
         void handleOutput(const OutputPacket &outInfo) override;
-
-        void setDataView(int index);
 
     public:
         Monitor(const NumericConfig &params,
@@ -53,11 +58,14 @@ namespace RtoR {
                 bool showEnergyHistoryAsDensities=false);
 
         virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
-        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory);
+        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+                                            const SimHistory_DFT::DFTDataHistory &dftData);
+
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
     };
 
 }
 
 
-#endif //V_SHAPE_RTOROUTPUTOPENGL_H
+#endif // V_SHAPE_RTORMONITOR_BASE_H
 

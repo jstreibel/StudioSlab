@@ -94,6 +94,7 @@ namespace Graphics {
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
         void addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder=0);
+        bool removeArtist(const Artist::Ptr& pArtist);
 
         void draw() override;
 

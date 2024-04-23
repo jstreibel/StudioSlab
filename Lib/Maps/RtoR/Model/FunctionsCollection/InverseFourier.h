@@ -7,7 +7,7 @@
 
 #include <utility>
 
-#include "Maps/RtoR/Calc/FourierTransform.h"
+#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
 
 namespace RtoR {
 

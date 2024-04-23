@@ -11,7 +11,7 @@
 
 namespace R2toR {
     std::shared_ptr<R2toR::DiscreteFunction> FourierTransform::Compute(const R2toR::DiscreteFunction &inFunc) {
-        if(inFunc.getSpace().dataOnGPU()) throw "FourierTransform of GPU data is not implemented";
+        if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
 
         fix N = inFunc.getN();
         fix M = inFunc.getM();

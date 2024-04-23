@@ -7,7 +7,7 @@
 
 #include "SimHistory.h"
 
-#include "Maps/RtoR/Calc/FourierTransform.h"
+#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
 #include "Maps/RtoC/FourierModes.h"
 #include "Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
 #include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
@@ -30,7 +30,16 @@ public:
 
 
 class SimHistory_DFT : public SimHistory {
+public:
+    struct DFTInstantResult {
+        Real t;
+        RtoR::DFTResult result;
+    };
+
+    typedef std::vector<DFTInstantResult> DFTDataHistory;
+private:
     RtoR::DiscreteFunction_CPU dft;
+    DFTDataHistory dftDataHistory;
 
     auto filter(Real x, const RtoR::EquationState &input) -> Real override;
 
@@ -39,6 +48,8 @@ protected:
 
 public:
     explicit SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig, Resolution N_time);
+
+    const DFTDataHistory &getDFTDataHistory() const;
 };
 
 

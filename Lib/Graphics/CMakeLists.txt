@@ -89,6 +89,10 @@ set( GRAPHICS_SOURCES
         Graph/ℝ↦ℝ/RtoRRealtimePanel.h
 		Graph/ℝ↦ℝ/RtoRPanel.cpp
 		Graph/ℝ↦ℝ/RtoRPanel.h
+		Graph/ℝ↦ℝ/RtoRFourierPanel.cpp
+		Graph/ℝ↦ℝ/RtoRFourierPanel.h
+		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.cpp
+		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

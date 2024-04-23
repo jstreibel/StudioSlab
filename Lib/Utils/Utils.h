@@ -31,6 +31,11 @@ void cew(cudaError err);
 #include "String.h"
 
 template<typename T>
+std::shared_ptr<T> Pointer(T *instance) {
+    return std::shared_ptr<T>(instance);
+}
+
+template<typename T>
 std::shared_ptr<T> DummyPtr(T &instance) {
     return std::shared_ptr<T>(&instance, [](T*){});
 }

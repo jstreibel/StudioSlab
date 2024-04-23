@@ -50,7 +50,11 @@ Real SimHistory_DFT::filter(Real x, const RtoR::EquationState &input) {
 void SimHistory_DFT::handleOutput(const OutputPacket &packet) {
     IN phi = packet.getEqStateData<RtoR::EquationState>()->getPhi();
 
-    fix pts = RtoR::FourierTransform::Compute(phi).getAbs()->getPoints();
+    auto dftData = RtoR::DFT::Compute(phi);
+    fix pts = dftData.getAbs()->getPoints();
+
+    auto result = DFTInstantResult{packet.getSimTime(), dftData};
+    dftDataHistory.emplace_back(result);
 
     OUT dftSpace = dft.getSpace().getHostData(true);
     for(auto i=0; i<pts.size(); ++i) {
@@ -60,4 +64,8 @@ void SimHistory_DFT::handleOutput(const OutputPacket &packet) {
     }
 
     SimHistory::handleOutput(packet);
+}
+
+const SimHistory_DFT::DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {
+    return dftDataHistory;
 }

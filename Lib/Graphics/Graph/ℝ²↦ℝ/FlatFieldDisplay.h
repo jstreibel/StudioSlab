@@ -53,6 +53,8 @@ namespace Graphics {
 
             void addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
 
+            bool removeFunction(R2toR::Function::ConstPtr function);
+
             auto getFunctionsMap() const -> FuncsMap;
 
 

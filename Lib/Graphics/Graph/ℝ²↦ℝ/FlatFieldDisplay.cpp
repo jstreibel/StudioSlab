@@ -34,6 +34,34 @@ void Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
     addArtist(artist, zOrder);
 }
 
+bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function::ConstPtr function) {
+    auto haveErased = false;
+
+    for(auto item = funcsMap.begin(); item!=funcsMap.end();) {
+        if(item->second==function){
+            item=funcsMap.erase(item);
+            haveErased = true;
+        }
+        else ++item;
+    }
+
+    auto newEnd = std::remove_if(
+            ff2dArtists.begin(),
+            ff2dArtists.end(),
+            [&function,this,&haveErased](FlatField2DArtistPtr &x)
+            {
+                if(x->getFunction() == function){
+                    removeArtist(x);
+                    haveErased = true;
+                    return true;
+                };
+
+                return false;
+            });
+
+    return haveErased;
+}
+
 bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 
     constexpr const Real factor = 1.1;

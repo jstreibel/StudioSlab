@@ -146,7 +146,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
             outputManager->addOutputChannel(ftHistory);
 
             outputOpenGL->setSimulationHistory   (DummyPtr(simHistory->getData()));
-            outputOpenGL->setSpaceFourierHistory (DummyPtr(ftHistory ->getData()));
+            outputOpenGL->setSpaceFourierHistory (DummyPtr(ftHistory->getData()), ftHistory->getDFTDataHistory());
 
             if(*OpenGLMonitor_stepsPerIdleCall < 0) {
                 outputOpenGL->setnSteps(simHistory->getnSteps());

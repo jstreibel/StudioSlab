@@ -7,12 +7,15 @@
 
 
 #include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
+#include "HistoryTexture2DUploadHelper.h"
 
 namespace Graphics {
 
     class HistoryDisplay : public Graphics::FlatFieldDisplay {
-        Count nextRow = 0;
-        Real lastUpdatedTime = -1;
+        // Count nextRow = 0;
+        // Real lastUpdatedTime = -1;
+
+        std::shared_ptr<HistoryTexture2DUploadHelper> helper;
 
     public:
         explicit HistoryDisplay(Str name="Full history");

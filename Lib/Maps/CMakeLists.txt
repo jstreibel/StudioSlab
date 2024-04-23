@@ -59,7 +59,7 @@ set ( RTOR_SOURCES
 
 		RtoR/Calc/Histogram.cpp
         RtoR/Calc/CorrelationCalculator.h       RtoR/Calc/CorrelationCalculator.cpp
-		RtoR/Calc/FourierTransform.h			RtoR/Calc/FourierTransform.cpp
+		RtoR/Calc/DiscreteFourierTransform.h RtoR/Calc/DiscreteFourierTransform.cpp
         RtoR/Model/FunctionsCollection/InverseFourier.cpp
         RtoR/Model/FunctionsCollection/InverseFourier.h
 		RtoR/Model/FunctionsCollection/Trigonometric.cpp
@@ -67,6 +67,8 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/ComplexMagnitude.cpp
 		RtoR/Model/FunctionsCollection/ComplexMagnitude.h
 		RtoR/Model/FunctionsCollection/Bypass.h
+		RtoR/Calc/DFTInverse.cpp
+		RtoR/Calc/DFTInverse.h
 )
 
 

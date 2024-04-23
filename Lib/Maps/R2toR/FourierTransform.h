@@ -2,7 +2,7 @@
 // Created by joao on 2/09/23.
 //
 
-#ifndef STUDIOSLAB_FOURIERTRANSFORM_H
+#ifndef STUDIOSLAB_DISCRETEFOURIERTRANSFORM_H
 #define STUDIOSLAB_FOURIERTRANSFORM_H
 
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
@@ -16,4 +16,4 @@ namespace R2toR {
 
 } // R2toR
 
-#endif //STUDIOSLAB_FOURIERTRANSFORM_H
+#endif //STUDIOSLAB_DISCRETEFOURIERTRANSFORM_H

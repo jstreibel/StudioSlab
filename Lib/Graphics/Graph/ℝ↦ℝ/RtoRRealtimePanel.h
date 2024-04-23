@@ -54,11 +54,7 @@ namespace RtoR {
         int step_history = 0;
 
         void updateHistoryGraphs();
-        void updateFTHistoryGraph();
         void updateFourierGraph();
-
-        Graphics::HistoryDisplay mFullHistoryDisplay;
-        Graphics::HistoryDisplay mFullSpaceFTHistoryDisplay;
 
         ::Graphics::Graph2D mEnergyGraph;
 
@@ -73,7 +69,12 @@ namespace RtoR {
                       const Real phiMin, const Real phiMax,
                       bool showEnergyHistoryAsDensities);
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory) override;
+        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
+                                  std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
+
+        void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+                                    const SimHistory_DFT::DFTDataHistory &dftData,
+                                    std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph) override;
     };
 }
 

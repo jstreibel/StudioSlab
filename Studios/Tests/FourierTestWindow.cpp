@@ -14,7 +14,7 @@
 #include "Maps/RtoR/Model/RtoRFunction.h"
 #include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
-#include "Maps/RtoR/Calc/FourierTransform.h"
+#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
 #include "Maps/RtoR/Model/FunctionsCollection/InverseFourier.h"
 #include "Maps/FunctionRenderer.h"
 #include "Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
@@ -109,7 +109,7 @@ namespace Tests {
 
     void FourierTestWindow::updateGraphs() {
         static RtoR::DFTResult modes;
-        using FFT = RtoR::FourierTransform;
+        using FFT = RtoR::DFT;
 
         fourierModes.setL(L);
         fourierModes.setNSamples(N_modes);

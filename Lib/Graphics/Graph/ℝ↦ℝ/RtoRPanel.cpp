@@ -3,6 +3,8 @@
 //
 
 #include "RtoRPanel.h"
+#include "HistoryDisplay.h"
+#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 namespace Graphics {
 
@@ -11,14 +13,24 @@ namespace Graphics {
             : Socket(params, name, 1, description)
             , guiWindow(guiWindow)
             , params(params)
-            , hamiltonian(hamiltonian) {}
+            , hamiltonian(hamiltonian)
+    {
 
-    void RtoRPanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
-        simulationHistory = simHistory;
     }
 
-    void RtoRPanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory) {
+    void RtoRPanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory,
+                                         std::shared_ptr<HistoryDisplay> simHistoryGraph) {
+        simulationHistory = simHistory;
+        simulationHistoryGraph = simHistoryGraph;
+    }
+
+    void RtoRPanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+                                           const SimHistory_DFT::DFTDataHistory &dftData,
+                                           std::shared_ptr<HistoryDisplay> sftHistoryGraph) {
+
         spaceFTHistory = sftHistory;
+        this->dftData = &dftData;
+        spaceFTHistoryGraph = sftHistoryGraph;
     }
 
     void RtoRPanel::handleOutput(const OutputPacket &packet) {

@@ -9,8 +9,8 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Maps/RtoR/Calc/FourierTransform.h"
-// #include "Maps/R2toR/FourierTransform.h"
+#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
+// #include "Maps/R2toR/DFT.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
@@ -51,8 +51,6 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 , mEnergyGraph("Energy")
 , mHistorySliceGraph(params.getxMin(), params.getxMax(),
                      phiMin, phiMax, "Fields", true)
-, mFullHistoryDisplay("ϕ(t,x)")
-, mFullSpaceFTHistoryDisplay("F[ϕ(t)](k)")
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
@@ -73,34 +71,9 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
         mSpaceFourierModesGraph.getAxisArtist().setHorizontalUnit(Constants::π);
     }
 
-    {
-        addWindow(DummyPtr(mEnergyGraph));
-    }
-
-    {
-        auto style = currStyle->funcPlotStyles[2].permuteColors();
-        style.thickness = 3;
-        mFullHistoryDisplay.addCurve(DummyPtr(historyLine), style, "t_history");
-        mFullHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
-
-        mFullSpaceFTHistoryDisplay.setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
-        mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalUnit(Constants::π);
-        mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisLabel("k");
-        mFullSpaceFTHistoryDisplay.getAxisArtist().setVerticalAxisLabel("t");
-
-        if(true) {
-            auto windowColumn = new ::Graphics::WindowColumn;
-            windowColumn->addWindow(DummyPtr(mFullHistoryDisplay));
-            windowColumn->addWindow(DummyPtr(mFullSpaceFTHistoryDisplay));
-            addWindow(Window::Ptr(windowColumn), ADD_NEW_COLUMN);
-        } else {
-            addWindow(DummyPtr(mFullHistoryDisplay), true, 0.15);
-            addWindow(DummyPtr(mFullSpaceFTHistoryDisplay), true, 0.15);
-        }
-    }
+    addWindow(DummyPtr(mEnergyGraph));
 
     setColumnRelativeWidth(0, 0.4);
-    setColumnRelativeWidth(1,-1);
 }
 
 void RtoR::RealtimePanel::draw() {
@@ -110,8 +83,6 @@ void RtoR::RealtimePanel::draw() {
 
     CHECK_GL_ERRORS(errorCount++)
     updateHistoryGraphs();
-    CHECK_GL_ERRORS(errorCount++)
-    updateFTHistoryGraph();
     CHECK_GL_ERRORS(errorCount++)
     updateFourierGraph();
     CHECK_GL_ERRORS(errorCount++)
@@ -136,7 +107,7 @@ void RtoR::RealtimePanel::draw() {
 
     CHECK_GL_ERRORS(errorCount++)
 
-    Graphics::WindowPanel::draw();
+    Graphics::RtoRPanel::draw();
 }
 
 void RtoR::RealtimePanel::handleOutput(const OutputPacket &outInfo) {
@@ -193,10 +164,29 @@ bool RtoR::RealtimePanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state,
     return WindowPanel::notifyKeyboard(key, state, modKeys);
 }
 
-void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
+void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory,
+                                               std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) {
     mHistorySliceGraph.setResolution(simHistory->getN());
 
-    RtoRPanel::setSimulationHistory(simHistory);
+    RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
+
+    if(0) {
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors();
+        style.thickness = 3;
+        simulationHistoryGraph->addCurve(DummyPtr(historyLine), style, "t_history");
+    }
+
+    addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
+    setColumnRelativeWidth(1,-1);
+}
+
+void RtoR::RealtimePanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+                                                 const SimHistory_DFT::DFTDataHistory &dftData,
+                                                 std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph)
+{
+    RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
+
+    addWindow(sftHistoryGraph);
 }
 
 void RtoR::RealtimePanel::updateHistoryGraphs() {
@@ -225,14 +215,7 @@ void RtoR::RealtimePanel::updateHistoryGraphs() {
     bool updateSamples = false;
     if( not isSetup ) {
         mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
-        mFullHistoryDisplay.addFunction(simulationHistory, "ϕ(t,x)");
-
-        auto &phi = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
-        if(phi.getLaplacianType() == DiscreteFunction::Standard1D_PeriodicBorder)
-            mFullHistoryDisplay.set_xPeriodicOn();
-
         isSetup = true;
-
         updateSamples = true;
     }
 
@@ -242,42 +225,11 @@ void RtoR::RealtimePanel::updateHistoryGraphs() {
     mHistorySliceGraph.addFunction(&mHistorySectionFunc, label);
 
     CHECK_GL_ERRORS(1)
-
-    {
-        static Real stepMod, lastStepMod = 0;
-        stepMod = (Real) (lastData.getSteps() % (this->getnSteps() * 100));
-        fix t = lastData.getSimTime();
-        if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
-        lastStepMod = stepMod;
-    }
-
-    CHECK_GL_ERRORS(1.5)
-}
-
-void RtoR::RealtimePanel::updateFTHistoryGraph() {
-    if(spaceFTHistory == nullptr) return;
-
-    static bool isSetup = false;
-
-    if( not isSetup ) {
-        mFullSpaceFTHistoryDisplay.addFunction(spaceFTHistory, "ℱ[ϕ(t)](k)");
-
-        isSetup = true;
-    }
-
-    fix step = lastData.getSteps();
-    fix t = lastData.getSimTime();
-
-    static Real stepMod, lastStepMod = 0;
-    stepMod = (Real) (step % (this->getnSteps() * 100));
-    if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-        mFullSpaceFTHistoryDisplay.set_t(t);
-    lastStepMod = stepMod;
 }
 
 void RtoR::RealtimePanel::updateFourierGraph() {
     static RtoR::DFTResult modes;
-    using FFT = RtoR::FourierTransform;
+    using FFT = RtoR::DFT;
 
     static auto lastStep = 0UL;
     fix step = lastData.getSteps();
@@ -336,3 +288,5 @@ void RtoR::RealtimePanel::updateFourierGraph() {
 
     lastStep = step;
 }
+
+

@@ -2,8 +2,8 @@
 // Created by joao on 2/09/23.
 //
 
-#ifndef STUDIOSLAB_FOURIERTRANSFORM_H
-#define STUDIOSLAB_FOURIERTRANSFORM_H
+#ifndef STUDIOSLAB_DISCRETEFOURIERTRANSFORM_H
+#define STUDIOSLAB_DISCRETEFOURIERTRANSFORM_H
 
 #include <memory>
 #include <utility>
@@ -39,14 +39,25 @@ namespace RtoR {
             }
 
             return amps;
-        };
+        }
+
+        Count modeCount() const {
+            assert(re->count() == im->count());
+            return re->count();
+        }
 
         explicit DFTResult(DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
-        : re(std::move(re)), im(std::move(im)) {}
+        : re(re), im(im)
+        {
+
+        }
 
     };
 
-    class FourierTransform {
+    /**
+     * Discrete Fourier transform, the one and only
+     */
+    class DFT {
     public:
         static DFTResult Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax);
         static DFTResult Compute(const RtoR::DiscreteFunction &in);
@@ -54,4 +65,4 @@ namespace RtoR {
 
 } // R2toR
 
-#endif //STUDIOSLAB_FOURIERTRANSFORM_H
+#endif //STUDIOSLAB_DISCRETEFOURIERTRANSFORM_H

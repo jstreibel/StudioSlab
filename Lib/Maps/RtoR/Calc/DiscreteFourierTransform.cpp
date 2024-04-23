@@ -2,7 +2,7 @@
 // Created by joao on 2/09/23.
 //
 
-#include "FourierTransform.h"
+#include "DiscreteFourierTransform.h"
 
 #include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Math/Constants.h"
@@ -16,8 +16,8 @@
 
 namespace RtoR {
 
-    DFTResult FourierTransform::Compute(const RtoR::DiscreteFunction &inFunc) {
-        if(inFunc.getSpace().dataOnGPU()) throw "FourierTransform of GPU data is not implemented";
+    DFTResult DFT::Compute(const RtoR::DiscreteFunction &inFunc) {
+        if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
 
         fix N = (int)inFunc.N;
         fix h = inFunc.getSpace().getMetaData().geth(0);
@@ -57,7 +57,7 @@ namespace RtoR {
         return result;
     }
 
-    DFTResult FourierTransform::Compute(const Function &f, NumberOfModes N, Real xMin, Real xMax) {
+    DFTResult DFT::Compute(const Function &f, NumberOfModes N, Real xMin, Real xMax) {
         fix L = xMax - xMin;
         fix dx = L / (Real) N;
 

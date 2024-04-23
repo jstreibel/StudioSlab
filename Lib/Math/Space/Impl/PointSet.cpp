@@ -58,6 +58,8 @@ void Spaces::PointSet::clear() {
     points.clear();
 }
 
+Count Spaces::PointSet::count() const { return points.size(); }
+
 
 
 

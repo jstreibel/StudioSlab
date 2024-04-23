@@ -13,6 +13,9 @@
 #include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
+#include "HistoryDisplay.h"
+#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
+
 namespace Graphics {
 
     class RtoRPanel : public Graphics::WindowPanel, public Numerics::OutputSystem::Socket {
@@ -22,7 +25,11 @@ namespace Graphics {
         RtoR::KGEnergy &hamiltonian;
 
         std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
+        std::shared_ptr<HistoryDisplay> simulationHistoryGraph = nullptr;
+
         std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
+        std::shared_ptr<HistoryDisplay> spaceFTHistoryGraph = nullptr;
+        const SimHistory_DFT::DFTDataHistory *dftData;
 
         auto handleOutput(const OutputPacket &packet) -> void override;
 
@@ -33,9 +40,11 @@ namespace Graphics {
                   const Str &name,
                   const Str &description);
 
-        virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory);
-        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory);
-
+        virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
+                                          std::shared_ptr<HistoryDisplay> simHistoryGraph);
+        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+                                            const SimHistory_DFT::DFTDataHistory &,
+                                            std::shared_ptr<HistoryDisplay> sftHistoryGraph);
 
     };
 

@@ -29,6 +29,8 @@ namespace Spaces {
         auto getMax() const -> Point2D;
         auto getMin() const -> Point2D;
 
+        Count count() const;
+
         void clear();
         void addPoint(const Point2D &point);
         void setPoints(Point2DVec points);
