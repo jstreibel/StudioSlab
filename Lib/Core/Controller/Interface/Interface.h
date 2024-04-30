@@ -11,7 +11,18 @@
 
 class InterfaceManager;
 class InterfaceOwner;
-class InterfaceListener { public: virtual auto notifyCLArgsSetupFinished()-> void = 0; };
+class InterfaceListener {
+public:
+    /**
+     * Notify listeners that this interface has finished being set up from command line.
+     */
+    virtual auto notifyCLArgsSetupFinished()-> void { };
+
+    /**
+     * Notify listeners that all interfaces have finished being set up from command line.
+     */
+    virtual auto notifyAllCLArgsSetupFinished()-> void { };
+};
 
 class Interface final {
     const int priority;
@@ -78,8 +89,6 @@ public:
     bool operator==(Str val) const;
     bool operator!=(const Interface &rhs) const;
     bool operator< (const Interface& other) const;
-
-
 };
 
 

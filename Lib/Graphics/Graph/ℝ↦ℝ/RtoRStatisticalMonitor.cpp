@@ -66,6 +66,7 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
+        // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
 
         addWindowToColumn(DummyPtr(mTemperaturesGraph), 0);
 
@@ -103,8 +104,11 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
     setColumnRelativeWidth(1, 0.40);
 }
 
-void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
-    simulationHistory = std::move(simHistory);
+void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
+                                                    std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) {
+    RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
+
+    addWindow(simulationHistoryGraph, true);
 
     if(sampler == nullptr){
         fix xMin = params.getxMin();
@@ -353,13 +357,42 @@ void RtoR::StatisticalMonitor::draw() {
     guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
     style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
-    guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
-    guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
-    guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
+    fix decimalPlaces = 3;
+    guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),      (style++)->lineColor.permute());
+    guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces), (style++)->lineColor.permute());
+    guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), decimalPlaces),  (style++)->lineColor.permute());
+    // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
 
     fix t = lastData.getSimTime();
     mTemperaturesGraph.set_xMax(t);
 
     RtoRPanel::draw();
 }
+
+void RtoR::StatisticalMonitor::handleOutput(const OutputPacket &packet) {
+    RtoRPanel::handleOutput(packet);
+
+    auto L =       params.getL();
+
+    auto U = hamiltonian.getTotalEnergy();
+    auto K = hamiltonian.getTotalKineticEnergy();
+    auto W = hamiltonian.getTotalGradientEnergy();
+    auto V = hamiltonian.getTotalPotentialEnergy();
+
+    u            = U/L;
+    barϕ         = V / L;
+    tau          = 2*K/L;
+    tau_indirect = u - .5*barϕ;
+    fix tau_2 = barϕ + 2*W / L;
+    tau_avg = .5*(tau+tau_2);
+
+    fix t = packet.getSimTime();
+
+    temperature1HistoryData.addPoint({t, tau});
+    temperature2HistoryData.addPoint({t, tau_indirect});
+    temperature3HistoryData.addPoint({t, tau_2});
+    // temperature4HistoryData.addPoint({t, tau_avg});
+}
+
+
 

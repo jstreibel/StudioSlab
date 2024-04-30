@@ -21,6 +21,8 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
 : Socket(simConfig.numericConfig, name, (int)(simConfig.numericConfig.getn()/N_t),
          "A specific history tracker designed to watch the full sim history through the OpenGL (or whichever) monitors.")
 , dataIsOnGPU(simConfig.dev==GPU)
+, N_x(N_x)
+, N_t(N_t)
 {
     fix t = simConfig.numericConfig.gett();
     fix timeResolution = N_t;
@@ -49,14 +51,30 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
     }
 }
 
-auto SimHistory::filter(Real x, const RtoR::EquationState &input) -> Real {
-    IN f = input.getPhi();
-    return f(x);
+auto SimHistory::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
+    IN stateIn = *input.getEqStateData<RtoR::EquationState>();
+
+    IN f_in = stateIn.getPhi();
+    IN in = f_in.getSpace().getHostData(true);
+
+    fix N_in = f_in.N;
+    fix N_out = N_x;
+    fix x_ratio = (double)N_in/N_out;
+
+    for(auto i_out=0; i_out<N_out; ++i_out) {
+        fix i_in = int(floor(i_out*x_ratio));
+
+        dataOut[i_out] = in[i_in];
+    }
 }
 
 void SimHistory::handleOutput(const OutputPacket &packet) {
     if(packet.getSimTime() >= params.gett())
         return;
+
+    assert(packet.getEqStateData<RtoR::EquationState>() != nullptr);
+
+
 
 #if USE_CUDA
     if(dataIsOnGPU)
@@ -64,22 +82,15 @@ void SimHistory::handleOutput(const OutputPacket &packet) {
     else
 #endif
     {
-        assert(packet.getEqStateData<RtoR::EquationState>() != nullptr);
+        fix M_in  = (double) params.getn();
+        fix M_out = (double) N_t;
+        fix t_ratio = M_out/M_in;
 
-        IN state = *packet.getEqStateData<RtoR::EquationState>();
-        OUT to_ϕ = *data;
+        fix j_in = packet.getSteps();
+        fix j_out = int(floor(j_in*t_ratio));
+        ValarrayWrapper<Real> instantData(&data->At(0, j_out), data->getN());
 
-        fix xMin = to_ϕ.getDomain().xMin;
-        fix dx = to_ϕ.getSpace().getMetaData().geth(0);
-        fix N = to_ϕ.getN();
-
-        fix t = packet.getSimTime();
-
-        for(auto i=0; i<N; ++i) {
-            fix x = xMin + i*dx;
-            fix f = filter(x, state);
-            to_ϕ({x, t}) = f;
-        }
+        transfer(packet, instantData);
     }
 
     timestamps.emplace_back(packet.getSimTime());

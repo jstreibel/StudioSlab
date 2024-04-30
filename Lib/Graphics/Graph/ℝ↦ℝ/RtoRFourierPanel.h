@@ -8,6 +8,7 @@
 #include "RtoRPanel.h"
 #include "Maps/RtoR2/StraightLine.h"
 #include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Maps/RtoR/Calc/DFTInverse.h"
 
 namespace Graphics {
 
@@ -18,7 +19,7 @@ namespace Graphics {
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
 
-        void refreshInverseDFT();
+        void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
 
     public:
         RtoRFourierPanel(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, GUIWindow &guiWindow);

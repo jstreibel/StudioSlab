@@ -33,7 +33,7 @@ namespace RtoR {
         fftw_execute(p);
 
         fix Δk = 2 * Constants::pi / L;  // Delta k
-        DFTResult result;
+        DFTResult result(true);
 
         fix N⁻¹ = 1./N;
         for( auto n=0; n<N/2+1; ++n) {
@@ -75,7 +75,7 @@ namespace RtoR {
         fftw_execute(p);
 
         fix Δk = 2 * Constants::pi / L;  // Delta k
-        DFTResult result;
+        DFTResult result(true);
 
         fix scale = 1./(double)Nₒᵤₜ;
         for( auto n=0; n<Nₒᵤₜ; ++n) {

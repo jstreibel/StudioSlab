@@ -41,7 +41,7 @@ Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _titl
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 
     addArtist(DummyPtr(axisArtist), 100);
-    addArtist(DummyPtr(artistXHair), 90);
+    addArtist(DummyPtr(artistXHair), 10000);
 }
 
 Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)

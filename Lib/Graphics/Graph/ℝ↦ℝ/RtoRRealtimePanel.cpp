@@ -257,7 +257,7 @@ void RtoR::RealtimePanel::updateFourierGraph() {
             myStyle.thickness = 2.5;
             myStyle.primitive = Styles::VerticalLines;
             myStyle.filled = false;
-            mSpaceFourierModesGraph.addPointSet(modes.getAbs(), myStyle, "|ℱ[ϕ](ω)|", false);
+            mSpaceFourierModesGraph.addPointSet(modes.getMagnitudes(), myStyle, "|ℱ[ϕ](ω)|", false);
         }
         else
         {

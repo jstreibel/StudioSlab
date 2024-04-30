@@ -51,7 +51,7 @@ namespace Graphics {
     public:
             explicit FlatFieldDisplay(Str title="Full 2D");
 
-            void addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
+            std::shared_ptr<FlatField2DArtist> addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
 
             bool removeFunction(R2toR::Function::ConstPtr function);
 

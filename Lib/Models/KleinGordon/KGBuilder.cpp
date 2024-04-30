@@ -20,3 +20,12 @@ Fields::KleinGordon::KGBuilder::KGBuilder(const Str& name, Str generalDescriptio
 
     if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
 }
+
+void Fields::KleinGordon::KGBuilder::notifyAllCLArgsSetupFinished() {
+    auto nThreads = VoidBuilder::simulationConfig.dev.get_nThreads();
+    auto N = VoidBuilder::simulationConfig.numericConfig.getN();
+    if(N%nThreads != 0) throw Exception("Bad assertion N%nThreads. Expected 0 got "
+                                        + ToStr(N%nThreads) + ".");
+
+    InterfaceListener::notifyAllCLArgsSetupFinished();
+}

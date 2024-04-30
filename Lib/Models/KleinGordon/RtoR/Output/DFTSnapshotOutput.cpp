@@ -21,7 +21,7 @@ namespace KleinGordon::RtoR {
         ::RtoR::DiscreteFunction_CPU dft((int)NDFTModes, 0.0, kMaxDFT);
 
         IN phi = packet.getEqStateData<::RtoR::EquationState>()->getPhi();
-        fix pts = ::RtoR::DFT::Compute(phi).getAbs()->getPoints();
+        fix pts = ::RtoR::DFT::Compute(phi).getMagnitudes()->getPoints();
 
         OUT dftSpace = dft.getSpace().getHostData(true);
         for(auto i=0; i<pts.size(); ++i) {

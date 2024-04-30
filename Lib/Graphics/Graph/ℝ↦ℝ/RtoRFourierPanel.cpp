@@ -17,13 +17,20 @@ namespace Graphics {
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
         addWindow(inverseFTDisplay);
+
+        inverseFTDisplay->setColorMap(Styles::ColorMaps["BrBG"].inverse());
     }
 
     void RtoRFourierPanel::draw() {
         guiWindow.begin();
         if(ImGui::CollapsingHeader("Cutoff filter")){
+            //this->dftData
             fix kMax = M_PI/params.geth();
             auto k = (float)kFilterCutoff;
+
+            static int selected = 0;
+            ImGui::RadioButton("High-pass", &selected, 0);
+            ImGui::RadioButton("Low-pass", &selected, 1);
 
             if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
                 kFilterCutoff = k;
@@ -32,15 +39,30 @@ namespace Graphics {
 
                 spaceFTHistoryGraph->clearCurves();
                 spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), Math::StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+
+                if(selected==0) {
+                    RtoR::DFTInverse::HighPass lowPass(kFilterCutoff);
+                    refreshInverseDFT(&lowPass);
+                    // Log::Info(Str("Filtered kMax = ") + ToStr(lowPass.kMax));
+                } else if(selected==1) {
+                    RtoR::DFTInverse::LowPass highPass(kFilterCutoff);
+                    refreshInverseDFT(&highPass);
+                    // Log::Info(Str("Filtered kMax = ") + ToStr(highPass.kMax));
+                }
             }
 
-            static int selected = 0;
-            ImGui::RadioButton("High-pass", &selected, 0);
-            ImGui::RadioButton("Low-pass", &selected, 1);
 
-            if(ImGui::Button("Compute ℱₖ⁻¹")){
-                refreshInverseDFT();
-            }
+
+            // if(ImGui::Button("Compute ℱₖ⁻¹"))
+            // {
+            //     if(selected==0) {
+            //         RtoR::DFTInverse::LowPass lowPass(kFilterCutoff);
+            //         refreshInverseDFT(&lowPass);
+            //     } else if(selected==1) {
+            //         RtoR::DFTInverse::HighPass highPass(kFilterCutoff);
+            //         refreshInverseDFT(&highPass);
+            //     }
+            // }
         }
         guiWindow.end();
 
@@ -64,12 +86,12 @@ namespace Graphics {
         spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), Math::StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 
-    void RtoRFourierPanel::refreshInverseDFT() {
+    void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
         fix xMin = RtoRPanel::params.getxMin();
         fix L = RtoRPanel::params.getL();
-        fix N = RtoRPanel::params.getN();
+        fix N = (*dftData)[0].result.modeCount();
         fix hx = L/N;
 
         fix tMin = (*dftData)[0].t;
@@ -83,8 +105,9 @@ namespace Graphics {
         Log::Info(__PRETTY_FUNCTION__ + Str(" STARTED computing inverse DFT."));
         int _n = 0;
         for(auto &data : *dftData){
+
             auto func = RtoR::DFTInverse::Compute(data.result, xMin, L,
-                                                  RtoR::DFTInverse::OriginalFunctionIsRealValued);
+                                                  filter);
 
             auto *out = &rebuiltHistory->At(0, _n);
             auto *in = &func->getSpace().getHostData(true)[0];

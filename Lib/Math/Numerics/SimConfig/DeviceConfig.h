@@ -10,6 +10,11 @@ class DeviceConfig : public InterfaceOwner
 {
     auto notifyCLArgsSetupFinished() -> void override;
 
+public:
+    auto notifyAllCLArgsSetupFinished() -> void override;
+
+private:
+
     device dev = device::CPU;
     IntegerParameter::Ptr deviceChoice = IntegerParameter::New(1, "dev", "Device on which to run simulation.\n"
                                                                          "\t0: CPU \n"

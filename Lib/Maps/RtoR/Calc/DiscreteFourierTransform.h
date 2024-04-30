@@ -19,7 +19,7 @@ namespace RtoR {
         DFTModes re;
         DFTModes im;
 
-        DFTModes getAbs() const {
+        DFTModes getMagnitudes() const {
             IN R = re->getPoints();
             IN I = im->getPoints();
 
@@ -43,14 +43,24 @@ namespace RtoR {
 
         Count modeCount() const {
             assert(re->count() == im->count());
-            return re->count();
+
+            fix n = re->count();
+
+            if(inverseIsReal) return (n-1)*2;
+
+            return n;
         }
 
-        explicit DFTResult(DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
-        : re(re), im(im)
+        explicit DFTResult(bool functionIsReal=false, DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
+        : re(re), im(im), inverseIsReal(functionIsReal)
         {
 
         }
+
+        [[nodiscard]] bool isInverseReal() const { return inverseIsReal; }
+
+    private:
+        bool inverseIsReal;
 
     };
 

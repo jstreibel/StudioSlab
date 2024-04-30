@@ -40,39 +40,44 @@ namespace Graphics {
         if (!validTextureData)
             repopulateTextureBuffer();
 
-        auto region = graph.getRegion();
-        fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
+        {
+            textureData->bind();
+            colorBar.getTexture()->bind();
+            program.use();
 
-        fix xScale = 2.f/w;
-        fix xTranslate = -1.0f - 2.0f * x / w;
-        fix yScale = 2.f/h;
-        fix yTranslate = -1.0f - 2.0f * y / h;
+            auto region = graph.getRegion();
+            fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
 
-        glm::mat3x3 transform = {
-                xScale        , 0.0f        , 0.0f,
-                0.0f          , yScale      , 0.0f,
-                xTranslate    , yTranslate  , 1.0f
-        };
+            fix xScale = 2.f / w;
+            fix xTranslate = -1.0f - 2.0f * x / w;
+            fix yScale = 2.f / h;
+            fix yTranslate = -1.0f - 2.0f * y / h;
 
-        textureData->bind();
-        colorBar.getTexture()->bind();
-        program.use();
-        program.setUniform("transformMatrix", transform);
+            glm::mat3x3 transform = {
+                    xScale, 0.0f, 0.0f,
+                    0.0f, yScale, 0.0f,
+                    xTranslate, yTranslate, 1.0f
+            };
 
-        vertexBuffer.render(GL_TRIANGLES);
+            program.setUniform("transformMatrix", transform);
 
-        const int left = -400;
-        const int vpWidth = graph.getViewport().width();
-        const int vpHeight = graph.getViewport().height();
-        const int cbarWidth = 150;
-        const int cbarHeight = 0.6 * vpHeight;
-        const int cbarTop = (vpHeight-cbarHeight)/2;
+            vertexBuffer.render(GL_TRIANGLES);
+        }
 
-        colorBar.setLocation({vpWidth+left,
-                              vpWidth+left+cbarWidth,
-                              vpHeight-cbarTop,
-                              vpHeight-cbarTop-cbarHeight});
-        colorBar.draw(graph);
+        {
+            const int left = -400;
+            const int vpWidth = graph.getViewport().width();
+            const int vpHeight = graph.getViewport().height();
+            const int cbarWidth = 150;
+            const int cbarHeight = 0.6 * vpHeight;
+            const int cbarTop = (vpHeight - cbarHeight) / 2;
+
+            colorBar.setLocation({vpWidth + left,
+                                  vpWidth + left + cbarWidth,
+                                  vpHeight - cbarTop,
+                                  vpHeight - cbarTop - cbarHeight});
+            colorBar.draw(graph);
+        }
 
     }
 
@@ -274,15 +279,21 @@ namespace Graphics {
             fix yMin_f = (float) (-.5*vTexturePixelSizeInSpaceCoord + domain.yMin);
             fix yMax_f = (float) (+.5*vTexturePixelSizeInSpaceCoord + domain.yMax);
 
+            fix Lx = xMax_f-xMin_f;
+
             vertexBuffer.clear();
             GLuint indices[6] = {0, 1, 2, 0, 2, 3};
-            FlatFieldVertex vertices[4] = {
-                    {xMin_f, yMin_f,   si, ti},
-                    {xMax_f, yMin_f,   sf, ti},
-                    {xMax_f, yMax_f,   sf, tf},
-                    {xMin_f, yMax_f,   si, tf}};
 
-            vertexBuffer.pushBack(vertices, 4, indices, 6);
+            for(int i=-1; i<2; ++i) {
+                fix Δx = Lx*(float)i;
+                FlatFieldVertex vertices[4] = {
+                        {xMin_f+Δx, yMin_f, si, ti},
+                        {xMax_f+Δx, yMin_f, sf, ti},
+                        {xMax_f+Δx, yMax_f, sf, tf},
+                        {xMin_f+Δx, yMax_f, si, tf}};
+
+                vertexBuffer.pushBack(vertices, 4, indices, 6);
+            }
         }
 
         invalidateTextureData();

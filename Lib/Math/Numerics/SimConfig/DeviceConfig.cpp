@@ -70,4 +70,9 @@ void DeviceConfig::notifyCLArgsSetupFinished() {
     }
 }
 
+void DeviceConfig::notifyAllCLArgsSetupFinished() {
+
+    InterfaceListener::notifyAllCLArgsSetupFinished();
+}
+
 

@@ -13,16 +13,26 @@ namespace RtoR {
     class DFTInverse {
     public:
         typedef std::shared_ptr<RtoR::DiscreteFunction> DFTInverseFunction_ptr;
-        enum Hint {
-            None=0,
-            OriginalFunctionIsRealValued
+        struct Filter {
+            Real kMax = 0.0;
+            virtual Complex operator()(const Complex &A, Real k) { return A; };
+        };
+
+        struct LowPass : public Filter {
+            int kThreshold;
+            explicit LowPass(int kThreshold);
+            Complex operator()(const Complex &A, Real k) override;
+        };
+        struct HighPass : public Filter {
+            int kThreshold;
+            explicit HighPass(int kThreshold);
+            Complex operator()(const Complex &A, Real k) override;
         };
 
         static DFTInverseFunction_ptr Compute(const DFTResult &dftResult,
                                               Real xMin,
                                               Real L,
-                                              Hint hint=None);
-
+                                              Filter *filter=nullptr);
     };
 
 } // RtoR

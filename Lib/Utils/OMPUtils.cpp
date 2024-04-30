@@ -12,5 +12,7 @@ IntPair getBeginAndEndForThreadedFor(int N) {
     const int begin = myThreadRank * block_size;
     const int end = begin + block_size;
 
+    assert(N%nThreads == 0);
+
     return {begin, end};
 }

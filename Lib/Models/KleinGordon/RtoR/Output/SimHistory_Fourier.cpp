@@ -8,62 +8,25 @@
 #define NDFTModes (nConfig.getN()/2+1)
 #define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
 
+SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig, Resolution N_time)
+: SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT) { }
 
+auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
+    IN stateIn = *input.getEqStateData<RtoR::EquationState>();
 
+    IN phi = stateIn.getPhi();
+    IN dataIn = phi.getSpace().getHostData(true);
 
-SimHistory_FourierTransform::SimHistory_FourierTransform(const Core::Simulation::SimulationConfig &simConfig,
-                                                         Resolution N_x, Resolution N_t, Real kMin, Real kMax)
-: SimHistory(simConfig, N_x, N_t, kMin, kMax-kMin, "FTSimHistory")
-, fourierModes(nullptr, nConfig.getxMin(), nConfig.getL(), nConfig.getN()/10)
-{}
+    auto dftNewData = RtoR::DFT::Compute(phi);
 
-
-Real SimHistory_FourierTransform::filter(Real x, const RtoR::EquationState &input) {
-    return abs(fourierModes(x));
-}
-
-
-void SimHistory_FourierTransform::handleOutput(const OutputPacket &packet) {
-    IN state = *packet.getEqStateData<RtoR::EquationState>();
-
-    fourierModes.setBaseFunction(DummyPtr(state.getPhi()));
-
-    SimHistory::handleOutput(packet);
-}
-
-
-
-
-
-SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig,
-                               Resolution N_time)
-: SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT)
-, dft(NDFTModes, 0.0, kMaxDFT)
-{
-
-}
-
-Real SimHistory_DFT::filter(Real x, const RtoR::EquationState &input) {
-    return dft(x);
-}
-
-void SimHistory_DFT::handleOutput(const OutputPacket &packet) {
-    IN phi = packet.getEqStateData<RtoR::EquationState>()->getPhi();
-
-    auto dftData = RtoR::DFT::Compute(phi);
-    fix pts = dftData.getAbs()->getPoints();
-
-    auto result = DFTInstantResult{packet.getSimTime(), dftData};
+    auto result = DFTInstantResult{input.getSimTime(), dftNewData};
     dftDataHistory.emplace_back(result);
 
-    OUT dftSpace = dft.getSpace().getHostData(true);
-    for(auto i=0; i<pts.size(); ++i) {
-        fix &pt = pts[i];
+    fix pts = dftNewData.getMagnitudes()->getPoints();
+    assert(N_x==pts.size());
 
-        dftSpace[i] = pt.y;
-    }
-
-    SimHistory::handleOutput(packet);
+    for(auto i=0; i<N_x; ++i)
+        dataOut[i] = pts[i].y;
 }
 
 const SimHistory_DFT::DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {

@@ -72,6 +72,11 @@ void InterfaceManager::feedInterfaces(const CLVariablesMap& vm) {
         interface->setup(vm);
     }
 
+    for(const auto& interface : interfaces){
+        for(auto listener : interface->listeners)
+            listener->notifyAllCLArgsSetupFinished();
+    }
+
     Log::Success() << "InterfaceManager finished feeding interfaces." << Log::Flush;
 }
 

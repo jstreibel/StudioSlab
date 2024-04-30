@@ -29,6 +29,31 @@ typename std::vector<T>     Vector;
 typedef std::ostream        OStream;
 typedef std::vector<Str>    StrVector;
 
+template <typename T>
+class ValarrayWrapper {
+private:
+    T* data_;
+    std::size_t size_;
+
+public:
+    // Construct from existing data
+    ValarrayWrapper(T* data, std::size_t size) : data_(data), size_(size) {}
+
+    // Mimic the valarray interface you need
+    T& operator[](std::size_t i) { return data_[i]; }
+    const T& operator[](std::size_t i) const { return data_[i]; }
+
+    std::size_t size() const { return size_; }
+
+    // Example operation: sum
+    T sum() const {
+        T result = 0;
+        for (std::size_t i = 0; i < size_; ++i)
+            result += data_[i];
+        return result;
+    }
+};
+
 namespace Utils {
 
     typedef Real MaxValue_type;

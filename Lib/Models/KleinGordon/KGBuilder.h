@@ -37,6 +37,8 @@ namespace Fields::KleinGordon {
                   bool doRegister=false);;
 
         virtual void* getHamiltonian() = 0;
+
+        auto notifyAllCLArgsSetupFinished() -> void override;
     };
 
 }

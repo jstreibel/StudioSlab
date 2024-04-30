@@ -30,8 +30,6 @@ namespace RtoR {
 
         float t_history = .0f;
         int step_history = 0;
-        std::shared_ptr<const R2toR::DiscreteFunction>
-                simulationHistory = nullptr;
 
         Graphics::HistoryDisplay mFullHistoryDisplay;
 
@@ -47,10 +45,12 @@ namespace RtoR {
         Real barϕ=.0;
         Real tau=.0;
         Real tau_indirect=.0;
+        Real tau_avg=.0;
 
         Spaces::PointSet temperature1HistoryData;
         Spaces::PointSet temperature2HistoryData;
         Spaces::PointSet temperature3HistoryData;
+        Spaces::PointSet temperature4HistoryData;
 
         Graphics::Graph2D mTemperaturesGraph;
 
@@ -69,7 +69,13 @@ namespace RtoR {
 
         void draw() override;
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory);
+    protected:
+        auto handleOutput(const OutputPacket &packet) -> void override;
+
+    public:
+
+        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
+                                  std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
 
     };
 }

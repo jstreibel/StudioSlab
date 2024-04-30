@@ -18,9 +18,11 @@ class SimHistory : public Numerics::OutputSystem::Socket {
     RealVector timestamps;
     bool dataIsOnGPU;
 
-    virtual auto filter(Real x, const RtoR::EquationState &input) -> Real;
+    virtual auto transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void;
 
 protected:
+    const int N_t, N_x;
+
     auto handleOutput(const OutputPacket &packet) -> void override;
 
 public:
