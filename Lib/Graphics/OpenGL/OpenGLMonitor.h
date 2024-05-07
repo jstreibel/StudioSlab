@@ -19,7 +19,7 @@ namespace Graphics {
 
     protected:
         Timer frameTimer = Timer();
-        GUIWindow stats;
+        GUIWindow guiWindow;
 
         Real t=.0;
         size_t step=0;
@@ -39,6 +39,7 @@ namespace Graphics {
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
         // ********************* End EventListener *************** //
 
+        GUIWindow &getGUIWindow();
 
         // ********************* From Socket ********************* //
     protected:

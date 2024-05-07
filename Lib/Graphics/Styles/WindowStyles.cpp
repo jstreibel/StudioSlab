@@ -5,8 +5,8 @@
 #include "WindowStyles.h"
 
 namespace Graphics {
-    int hPadding = 6;
-    int vPadding = 6;
+    int hPadding = 4;
+    int vPadding = 4;
 
     int menuHeight = 32;
 

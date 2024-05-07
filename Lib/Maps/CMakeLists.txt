@@ -31,6 +31,7 @@ set ( OTHER_MAPS_SOURCES
 		${RTOC_SOURCES}
 
 		ℝ²↦ℂ/R2toCDiscreteFunction.h	ℝ²↦ℂ/R2toCDiscreteFunction.h
+		RtoR2/StraightLine.cpp			RtoR2/StraightLine.h
 )
 
 
@@ -82,10 +83,10 @@ set ( R2TOR_SOURCES
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
 		R2toR/Model/FunctionsCollection/R2ToRRegularDelta.cpp
 		R2toR/Model/FunctionsCollection/GrowingHole.cpp
-		R2toR/Model/Transform.cpp
 		R2toR/Model/Util/Interpolator.cpp
 		R2toR/Model/R2toRDiscreteFunction.cpp
 		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
+		R2toR/Model/Transform.cpp							R2toR/Model/Transform.h
 
 
 		R2toR/Output/Filters/DimensionReductionFilter.cpp

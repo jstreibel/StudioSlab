@@ -5,12 +5,8 @@
 
 #include "RtoRMonitor.h"
 
-#include <utility>
-
 #include "Models/KleinGordon/KGSolver.h"
-#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
 #include "RtoRRealtimePanel.h"
-#include "RtoRStatisticalMonitor.h"
 #include "RtoRFourierPanel.h"
 
 
@@ -27,25 +23,34 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto currStyle = Math::StylesManager::GetCurrent();
 
-    dataViews.emplace_back(new RtoR::RealtimePanel(params, hamiltonian, stats, phiMin, phiMax, showEnergyHistoryAsDensities));
-    dataViews.emplace_back(new RtoR::StatisticalMonitor(params, hamiltonian, stats));
-    dataViews.emplace_back(new Graphics::RtoRFourierPanel(params, hamiltonian, stats));
+    dataViews.emplace_back(new RtoR::RealtimePanel(params, hamiltonian, guiWindow, phiMin, phiMax, showEnergyHistoryAsDensities));
+    dataViews.emplace_back(new Graphics::RtoRFourierPanel(params, hamiltonian, guiWindow));
 
     setDataView(0);
 }
 
-void RtoR::Monitor::draw() {
-    OpenGLMonitor::draw();
+void RtoR::Monitor::addDataView(std::shared_ptr<Graphics::RtoRPanel> dataView){
+    dataViews.emplace_back(dataView);
 }
 
 void RtoR::Monitor::setDataView(int index) {
     if(index > dataViews.size()-1) return;
 
-    removeWindow(DummyPtr(*currentDataView));
-    currentDataView = dataViews[index];
-    addWindow(DummyPtr(*currentDataView), true, .85);
+    auto oldDataView = currentDataView;
+    auto newDataView= dataViews[index];
+
+    if(newDataView==oldDataView) return;
+
+    removeWindow(currentDataView);
+
+    currentDataView = newDataView;
+
+    addWindow(currentDataView, true, -1);
 
     arrangeWindows();
+
+    newDataView->notifyBecameVisible();
+    if(oldDataView != nullptr) oldDataView->notifyBecameInvisible();
 }
 
 void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
@@ -64,23 +69,12 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
 
 bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
 
-    if(modKeys.nonePressed() && state == Core::Press)
-            switch (key) {
-                case '1':
-                    setDataView(0);
-                    break;
-                case '2':
-                    setDataView(1);
-                    break;
-                case '3':
-                    setDataView(2);
-                    break;
-                case '4':
-                    setDataView(3);
-                    break;
-                default:
-                    break;
-            }
+    char number = key-'0';
+
+    if(modKeys.nonePressed() && state == Core::Press && (number>=1 && number<=9)) {
+        setDataView(number-1);
+        return true;
+    }
 
     return OpenGLMonitor::notifyKeyboard(key, state, modKeys);
 }
@@ -88,7 +82,7 @@ bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core:
 void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
     simulationHistory = simHistory;
     fullHistoryGraph = Pointer(new Graphics::HistoryDisplay("Full field history"));
-    fullHistoryGraph->addFunction(simulationHistory, "ϕ(t,x)", 100);
+    fullHistoryGraph->addFunction(simulationHistory, "ϕ(t,x)", -100);
 
     fullHistoryGraph->setColorMap(Styles::ColorMaps["BrBG"].inverse());
 
@@ -97,9 +91,9 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
 }
 
 void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                           const SimHistory_DFT::DFTDataHistory &dftData)
+                                           const SimHistory_DFT::DFTDataHistory &_dftData)
 {
-    this->dftData = &dftData;
+    this->dftData = &_dftData;
 
     spaceFTHistory = sftHistory;
     fullSFTHistoryGraph = Pointer(new Graphics::HistoryDisplay("Space DFT history"));
@@ -111,7 +105,7 @@ void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::Discrete
     fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
 
     for(auto dataView : dataViews)
-        dataView->setSpaceFourierHistory(sftHistory, dftData, fullSFTHistoryGraph);
+        dataView->setSpaceFourierHistory(sftHistory, _dftData, fullSFTHistoryGraph);
 }
 
 void RtoR::Monitor::updateHistoryGraph() {
@@ -147,16 +141,3 @@ void RtoR::Monitor::updateSFTHistoryGraph() {
         fullSFTHistoryGraph->set_t(lastData.getSimTime());
     lastStepMod = stepMod;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

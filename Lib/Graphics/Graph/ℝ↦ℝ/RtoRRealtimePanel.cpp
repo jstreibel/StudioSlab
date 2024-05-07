@@ -74,6 +74,7 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
     addWindow(DummyPtr(mEnergyGraph));
 
     setColumnRelativeWidth(0, 0.4);
+    setColumnRelativeWidth(1, -1);
 }
 
 void RtoR::RealtimePanel::draw() {

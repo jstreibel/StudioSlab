@@ -139,7 +139,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
                                              (Resolution)nₒᵤₜ,
                                              xMin,
                                              L);
-            //auto ftHistory = new SimHistory_FourierTransform(simulationConfig, 1000, 0, 40*M_PI);
+
             auto ftHistory = new SimHistory_DFT(simulationConfig, nₒᵤₜ);
 
             outputManager->addOutputChannel(simHistory);
@@ -236,8 +236,10 @@ auto RtoR::KGBuilder::buildStepper() -> Stepper * {
 }
 
 void *RtoR::KGBuilder::getHamiltonian() {
-    auto potential = RtoR::Function::Ptr(getPotential());
-    return new KGEnergy(*this, potential);
+    static auto potential = RtoR::Function::Ptr(getPotential());
+    static auto hamiltonian = new KGEnergy(*this, potential);
+
+    return hamiltonian;
 }
 
 Core::FunctionT<Real, Real> *RtoR::KGBuilder::getPotential() const {

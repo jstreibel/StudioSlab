@@ -74,8 +74,6 @@ void SimHistory::handleOutput(const OutputPacket &packet) {
 
     assert(packet.getEqStateData<RtoR::EquationState>() != nullptr);
 
-
-
 #if USE_CUDA
     if(dataIsOnGPU)
         throw "SimHistory::handleOutput with GPU data is not implemented";

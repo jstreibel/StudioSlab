@@ -117,7 +117,7 @@ namespace Math {
         auto gridLinesScheme = Styles::PlotStyle(tickColor, Styles::DotDashedLine, false, Styles::Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 22);
+        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 17);
 
         Graphics::clearColor = {};
 

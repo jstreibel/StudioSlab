@@ -7,8 +7,10 @@
 #include "imgui.h"
 
 #include "Maps/RtoR/Calc/Histogram.h"
+#include "Maps/R2toR/Model/Transform.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
+#include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
 
 #include <sstream>
 #include <array>
@@ -44,13 +46,14 @@
 #define xMinLinesInFullHistoryView (params.getxMin() - linesOffset)
 #define xMaxLinesInFullHistoryView (params.getxMax() + linesOffset)
 
+#define CORR_SCALE 1e0
 
 
 RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow)
 : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
 , Δt(params.gett()*0.1)
 , hamiltonian(hamiltonian)
-, mCorrelationGraph(0, params.getL(), 0, 1, "Space correlation", true,
+, mCorrelationSectionGraph(0, params.getL(), 0, 1, "Space correlation", true,
                     SAMPLE_COUNT(150))
 , mTemperaturesGraph("T")
 , mHistogramsGraphK(   "k histogram", MANUAL_REVIEW_GRAPH_LIMITS)
@@ -58,6 +61,7 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
 , mHistogramsGraphV(   "v histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 , mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 {
+    addWindow(DummyPtr(mCorrelationSectionGraph));
     addWindow(DummyPtr(mCorrelationGraph));
 
     {
@@ -89,7 +93,6 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
         mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
         mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), *style++, "V");
 
-
         auto *histogramsPanel = new Graphics::WindowPanel();
         histogramsPanel->addWindow(DummyPtr(mHistogramsGraphV));
         histogramsPanel->addWindow(DummyPtr(mHistogramsGraphGrad));
@@ -104,11 +107,11 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
     setColumnRelativeWidth(1, 0.40);
 }
 
-void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
+void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory,
                                                     std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) {
-    RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
+    RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
-    addWindow(simulationHistoryGraph, true);
+    addWindow(simulationHistoryGraph, true, 0.20);
 
     if(sampler == nullptr){
         fix xMin = params.getxMin();
@@ -116,8 +119,8 @@ void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR:
 
         if(false)
         {
-            corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
-            sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
+            // corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
+            // sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
         } else {
             fix tl = Real2D{xMin, max(t_history-Δt, 0.0)};
             fix br = Real2D{xMax, min(t_history+Δt, params.gett())};
@@ -132,18 +135,33 @@ void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR:
     mCorrelationFunction.setSampler(sampler);
 
     fix L = params.getL();
-    auto func2Dto1DMap = RtoR2::ParametricCurve::Ptr(new RtoR2::StraightLine({0, 0}, {L, 0}, 0, L));
-    auto section = new RtoR::Section1D(DummyPtr(mCorrelationFunction), func2Dto1DMap);
-    mSpaceCorrelation = RtoR::Section1D::Ptr(section);
 
-    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
-    //style.filled = false; // faster (way faster in this case, because CorrelationFunction is slow to compute each value.
+    {
+        mCorrelationComputed = Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction, 400, 400,
+                                                                                 {-L, L, -L, L},
+                                                                                 CORR_SCALE);
+        // mCorrelationComputed = Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction, 100, 100,
+        //                                                                          {0, .5 * L, 0, .5 * L},
+        //                                                                          CORR_SCALE);
+        mCorrelationGraph.addFunction(mCorrelationComputed, "xt correlation map");
+    }
 
-    // mCorrelationGraph.addFunction(mSpaceCorrelation.get(), "Space correlation", style);
-    mCorrelationGraph.addPointSet(mSpaceCorrelation->renderToPointSet(), style, "Space correlation", false);
-    mCorrelationGraph.setLimits({-0.05*L, L*(.5+0.05), -.5, 1});
-    mCorrelationGraph.setScale(2.5e3);
+    {
+        correlationLine = std::shared_ptr<RtoR2::StraightLine>(new RtoR2::StraightLine({0, 0}, {L * .5, 0}, 0, L * .5));
+        mSpaceCorrelation = RtoR::Section1D::Ptr(new RtoR::Section1D(DummyPtr(mCorrelationFunction), correlationLine));
 
+        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
+        //style.filled = false; // faster (way faster in this case,
+        // because CorrelationFunction is slow to compute each value, and filled plots require more computation.
+
+        mCorrelationSectionGraph.addPointSet(mSpaceCorrelation->renderToPointSet(), style, "Correlation", false);
+        mCorrelationSectionGraph.setLimits({-0.05 * L, L * (.5 + 0.05), -.5, 1});
+        mCorrelationSectionGraph.setScale(2.5e3);
+
+        simulationHistoryGraph->addCurve(correlationLine,
+                                         Math::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors(true),
+                                         "Correlation reference");
+    }
 }
 
 void RtoR::StatisticalMonitor::updateHistoryGraphs() {
@@ -166,57 +184,29 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
     }
     guiWindow.end();
 
-    static auto section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-
-    static bool isSetup = false;
     bool updateSamples = false;
-    if( not isSetup ) {
-        mFullHistoryDisplay.addFunction(simulationHistory, "ϕ(t,x)");
-
-        auto &phi = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
-        if(phi.getLaplacianType() == DiscreteFunction::Standard1D_PeriodicBorder)
-            mFullHistoryDisplay.set_xPeriodicOn();
-
-        isSetup = true;
-
-        updateSamples = true;
-    }
-
-    section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
     auto label = Str("ϕ(t=") + ToStr(t_history, 2) + ",x)";
 
     CHECK_GL_ERRORS(1)
 
     {
-        fix step = lastData.getSteps();
-        fix t = lastData.getSimTime();
-
-        static Real stepMod, lastStepMod = 0;
-        stepMod = (Real) (step % (this->getnSteps() * 100));
-        if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP) mFullHistoryDisplay.set_t(t);
-        lastStepMod = stepMod;
-    }
-
-    CHECK_GL_ERRORS(1.5)
-
-    {
         guiWindow.begin();
         if (ImGui::CollapsingHeader("Correlation graph")) {
-            ImGui::Text("Space correlation @ t=%f", t_history);
+            ImGui::Text("Correlation @ samples");
 
             auto nSamples = (int)sampler->get_nSamples();
-            if(ImGui::SliderInt("samples", &nSamples, 10, MAX_SAMPLES)) {
+            if(ImGui::SliderInt("samples n", &nSamples, 10, MAX_SAMPLES)) {
                 sampler->set_nSamples(nSamples);
                 updateSamples = true;
             }
 
-            auto graphResolution = (int)mCorrelationGraph.getResolution();
+            auto graphResolution = (int)mCorrelationSectionGraph.getResolution();
             if(ImGui::SliderInt("graph resolution",
                                 &graphResolution,
                                 10,
                                 (int)simulationHistory->getN()))
             {
-                mCorrelationGraph.setResolution(graphResolution);
+                mCorrelationSectionGraph.setResolution(graphResolution);
                 updateSamples = true;
             }
 
@@ -230,6 +220,25 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                 sampler->invalidateSamples();
                 updateSamples = true;
             }
+
+            static auto θ = .0f;
+            if(ImGui::SliderAngle("Correlation direction", &θ, 0.f, 180.f)){
+                fix Δ = .5*Graphics::RtoRPanel::params.getL();
+                fix c = cos((Real)θ);
+                fix s = sin((Real)θ);
+
+                correlationLine->getr() = {Δ*c, Δ*s};
+
+                updateSamples = true;
+            }
+
+            if(ImGui::Button("Compute map")) {
+                Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction,
+                                                                  mCorrelationComputed, CORR_SCALE);
+                mCorrelationGraph.removeFunction(mCorrelationComputed);
+                mCorrelationGraph.addFunction(mCorrelationComputed, "xt correlation map");
+            }
+
         }
         guiWindow.end();
 
@@ -238,10 +247,6 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
         static auto last_t_history = 0.0;
         if(updateSamples || (t_history != last_t_history))
         {
-            {
-                corrSampleLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, t_history}, {xMaxLinesInFullHistoryView, t_history});
-            }
-
             // Sampler in correlation function
             {
                 fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
@@ -254,7 +259,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
             }
 
             {
-                mFullHistoryDisplay.clearPointSets();
+                simulationHistoryGraph->clearPointSets();
 
                 // Correlation samples in full history
                 {
@@ -262,17 +267,17 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                     style.primitive = Styles::Point;
                     style.thickness = 3;
                     auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
-                    mFullHistoryDisplay.addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
+                    simulationHistoryGraph->addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
                 }
 
                 // Correlation graph
                 {
                     auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
-                    mCorrelationGraph.clearPointSets();
-                    auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, -.1, .5 * L * (1.1),
-                                                                    mCorrelationGraph.getResolution());
-                    mCorrelationGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
-                    mCorrelationGraph.reviewGraphRanges();
+                    mCorrelationSectionGraph.clearPointSets();
+                    auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, .0, .5 * L,
+                                                                    mCorrelationSectionGraph.getResolution());
+                    mCorrelationSectionGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
+                    mCorrelationSectionGraph.reviewGraphRanges();
                 }
             }
         }
@@ -290,9 +295,9 @@ void RtoR::StatisticalMonitor::draw() {
 
     CHECK_GL_ERRORS(errorCount++)
 
-    // ************************ RT MONITOR**********************************
-    const RtoR::EquationState &fieldState = *lastData.getEqStateData<RtoR::EquationState>();
+    drawGUI();
 
+    CHECK_GL_ERRORS(errorCount++)
 
     fix L = params.getL();
 
@@ -325,7 +330,8 @@ void RtoR::StatisticalMonitor::draw() {
 
         fix t = lastData.getSimTime();
 
-        if(t<transientGuess || transientGuess<0){
+        // if(t<transientHint || transientHint<0 || 1)
+        {
             mHistogramsGraphK.reviewGraphRanges();
             mHistogramsGraphGrad.reviewGraphRanges();
             mHistogramsGraphV.reviewGraphRanges();
@@ -369,6 +375,19 @@ void RtoR::StatisticalMonitor::draw() {
     RtoRPanel::draw();
 }
 
+void RtoR::StatisticalMonitor::drawGUI() {
+    guiWindow.begin();
+
+    if(ImGui::CollapsingHeader("Statistical")) {
+        float transient = transientHint;
+        if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params.gett())) {
+            setTransientHint((Real) transient);
+        }
+    }
+
+    guiWindow.end();
+}
+
 void RtoR::StatisticalMonitor::handleOutput(const OutputPacket &packet) {
     RtoRPanel::handleOutput(packet);
 
@@ -384,15 +403,19 @@ void RtoR::StatisticalMonitor::handleOutput(const OutputPacket &packet) {
     tau          = 2*K/L;
     tau_indirect = u - .5*barϕ;
     fix tau_2 = barϕ + 2*W / L;
-    tau_avg = .5*(tau+tau_2);
 
     fix t = packet.getSimTime();
 
     temperature1HistoryData.addPoint({t, tau});
     temperature2HistoryData.addPoint({t, tau_indirect});
     temperature3HistoryData.addPoint({t, tau_2});
-    // temperature4HistoryData.addPoint({t, tau_avg});
 }
+
+void RtoR::StatisticalMonitor::setTransientHint(Real value) {
+    transientHint = value;
+}
+
+
 
 
 

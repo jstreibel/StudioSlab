@@ -34,6 +34,9 @@ namespace RtoR2 {
         Real2D getx0() const {return this->x0;}
         Real2D getr() const {return this->r;}
 
+        Real2D& getx0() {return this->x0;}
+        Real2D& getr() {return this->r;}
+
         Real length() const {return this->getr().norm();}
 
     };

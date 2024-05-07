@@ -15,7 +15,7 @@ Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 {
 };
 
-std::shared_ptr<Graphics::FlatField2DArtist> Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) {
+auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) -> std::shared_ptr<Graphics::FlatField2DArtist> {
     if(ContainsFunc(function)) return nullptr;
 
     bool firstTime = funcsMap.empty();

@@ -27,8 +27,8 @@
 namespace RtoR {
 
     class Monitor : public ::Graphics::OpenGLMonitor {
-        std::vector<Graphics::RtoRPanel*> dataViews;
-        Graphics::RtoRPanel* currentDataView = nullptr;
+        std::vector<std::shared_ptr<Graphics::RtoRPanel>> dataViews;
+        std::shared_ptr<Graphics::RtoRPanel> currentDataView = nullptr;
 
         std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
         std::shared_ptr<Graphics::HistoryDisplay> fullHistoryGraph = nullptr;
@@ -45,8 +45,6 @@ namespace RtoR {
         void updateSFTHistoryGraph();
 
     protected:
-        void draw() override;
-
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
@@ -62,6 +60,8 @@ namespace RtoR {
                                             const SimHistory_DFT::DFTDataHistory &dftData);
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+
+        void addDataView(std::shared_ptr<Graphics::RtoRPanel>);
     };
 
 }

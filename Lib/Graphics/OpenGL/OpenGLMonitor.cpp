@@ -16,7 +16,8 @@
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
 : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws)
 , WindowPanel(HasMainMenu) {
-    addWindow(DummyPtr(stats), false, .15);
+    addWindow(DummyPtr(guiWindow));
+    setColumnRelativeWidth(0, 0.1);
 
     Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
 }
@@ -117,29 +118,29 @@ void Graphics::OpenGLMonitor::writeStats() {
     fix totalTimeSecs = (totalTimeIn_msec/1000)%60;
     fix totalTimeMins = (totalTimeIn_msec/1000)/60;
 
-    stats.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
-    stats.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
-    stats.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
-    stats.addVolatileStat("");
-    stats.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
-    stats.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
-    stats.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
+    guiWindow.addVolatileStat(Str("t = ")    + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
+    guiWindow.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
+    guiWindow.addVolatileStat(Str("dt = ")   + ToStr(dt, 2, true));
+    guiWindow.addVolatileStat("");
+    guiWindow.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
+    guiWindow.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
+    guiWindow.addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
     if(currStep!=lastStep || hasFinished)
-        stats.addVolatileStat(Str("Finish in ")
+        guiWindow.addVolatileStat(Str("Finish in ")
             + (remainingTimeMin < 10 ? "0" : "")
             + ToStr(remainingTimeMin) + "m"
             + (remainingTimeSec < 10 ? "0" : "")
             + ToStr(remainingTimeSec) + "s");
     else
-        stats.addVolatileStat(Str("Finish in ∞s"));
+        guiWindow.addVolatileStat(Str("Finish in ∞s"));
     fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";
     fix elTimeSecs_str = (totalTimeSecs < 10 ? "0" : "") + ToStr(totalTimeSecs) + "s";
     fix elTimeMSecs_str = Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
-    stats.addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
-    stats.addVolatileStat(Str("<\\br>"));
-    stats.addVolatileStat(Str("L = ") + ToStr(L));
-    stats.addVolatileStat(Str("N = ") + ToStr(N));
-    stats.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
+    guiWindow.addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
+    guiWindow.addVolatileStat(Str("<\\br>"));
+    guiWindow.addVolatileStat(Str("L = ") + ToStr(L));
+    guiWindow.addVolatileStat(Str("N = ") + ToStr(N));
+    guiWindow.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
 
     lastStep = step;
 }
@@ -210,4 +211,8 @@ void Graphics::OpenGLMonitor::setnSteps(int nSteps) {
 
 void Graphics::OpenGLMonitor::setAutoAdjust_nSteps(bool value) {
     autoAdjustStepsPerSecond = value;
+}
+
+Graphics::GUIWindow &Graphics::OpenGLMonitor::getGUIWindow() {
+    return guiWindow;
 }

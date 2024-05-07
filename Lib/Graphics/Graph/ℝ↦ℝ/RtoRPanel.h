@@ -46,6 +46,9 @@ namespace Graphics {
                                             const SimHistory_DFT::DFTDataHistory &,
                                             std::shared_ptr<HistoryDisplay> sftHistoryGraph);
 
+        virtual void notifyBecameVisible();
+        virtual void notifyBecameInvisible();
+
     };
 
 } // Graphics

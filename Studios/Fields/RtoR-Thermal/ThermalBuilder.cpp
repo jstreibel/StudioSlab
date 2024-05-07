@@ -3,9 +3,13 @@
 //
 
 #include "ThermalBuilder.h"
+
+#include <memory>
 // #include "ThermalMonitor.h"
 #include "Models/LangevinKleinGordon/LangevinKGSolver.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Graphics/Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h"
+#include "Graphics/Graph/ℝ↦ℝ/CorrelationsPanel.h"
 
 #define DONT_SELF_REGISTER false
 #define SHORT_NAME false
@@ -40,10 +44,22 @@ namespace RtoR::Thermal {
     }
 }
 
-/*
 RtoR::Monitor *RtoR::Thermal::Builder::buildOpenGLOutput() {
-    auto monitor = new RtoR::Thermal::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
-    monitor->setTransientGuess(*transientGuess);
+    auto monitor = KGBuilder::buildOpenGLOutput();
+    auto &guiWindow = monitor->getGUIWindow();
+    auto &config = simulationConfig.numericConfig;
+    auto &hamiltonian = *(KGEnergy*)getHamiltonian();
+
+
+
+    auto temp1 = std::make_shared<RtoR::StatisticalMonitor>(
+            config, hamiltonian, guiWindow);
+    temp1->setTransientHint(*transientGuess);
+    auto temp2 = std::make_shared<Graphics::CorrelationsPanel>(
+            config, guiWindow, hamiltonian);
+
+    monitor->addDataView(temp1);
+    monitor->addDataView(temp2);
+
     return monitor;
 }
- */

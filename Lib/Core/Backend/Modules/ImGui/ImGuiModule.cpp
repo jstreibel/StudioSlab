@@ -24,6 +24,7 @@
 
 // Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
+fix FONT_SIZE_PIXELS = 20.0f;
 
 namespace Core {
 
@@ -98,7 +99,7 @@ namespace Core {
         if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
 
         ImFontConfig fontConfig;
-        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), 26.0f, &fontConfig, &vRanges[0]);
+        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), FONT_SIZE_PIXELS, &fontConfig, &vRanges[0]);
 
         io.FontDefault = font;
 
@@ -110,7 +111,7 @@ namespace Core {
     void ImGuiModule::finishInitialization() {
         buildFonts();
 
-        ImGui::GetStyle().ScaleAllSizes(1.5);
+        ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
     }
 

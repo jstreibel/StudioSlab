@@ -37,5 +37,13 @@ namespace Graphics {
 
     }
 
+    void RtoRPanel::notifyBecameVisible() {
+
+    }
+
+    void RtoRPanel::notifyBecameInvisible() {
+
+    }
+
 
 } // Graphics

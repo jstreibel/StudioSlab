@@ -149,7 +149,7 @@ namespace Graphics {
                         updateColorBar();
                     }
                     ImGui::SameLine();
-                    if (ImGui::SliderFloat("ϕₘₐₓ", &max, .001f, 10)) {
+                    if (ImGui::SliderFloat("ϕₘₐₓ", &max, 1e-3f, 10)) {
                         cMap_max = max;
                         if (symmetricMaxMin) cMap_min = -max;
 
@@ -284,7 +284,8 @@ namespace Graphics {
             vertexBuffer.clear();
             GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
-            for(int i=-1; i<2; ++i) {
+            fix n=0;
+            for(int i=-n; i<=n; ++i) {
                 fix Δx = Lx*(float)i;
                 FlatFieldVertex vertices[4] = {
                         {xMin_f+Δx, yMin_f, si, ti},

@@ -93,6 +93,10 @@ set( GRAPHICS_SOURCES
 		Graph/ℝ↦ℝ/RtoRFourierPanel.h
 		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.cpp
 		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.h
+        Graph/ℝ↦ℝ/CorrelationsPanel.cpp
+        Graph/ℝ↦ℝ/CorrelationsPanel.h
+		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
+		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
@@ -102,6 +106,9 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core
 		Slab-Models
+		Slab-Maps-RtoR
+		Slab-Maps-RtoR_GPU
+		Slab-Maps-R2toR_GPU
 		freeimage
 		freetype-gl
 		)

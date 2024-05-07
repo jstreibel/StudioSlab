@@ -22,21 +22,22 @@
 namespace RtoR {
     class StatisticalMonitor : public Graphics::RtoRPanel {
         Real Δt = 0.0;
-        RtoR2::StraightLine corrSampleLine;
         std::shared_ptr<R2toR::Sampler> sampler;
+
+        std::shared_ptr<RtoR2::StraightLine> correlationLine;
         RtoR::Section1D::Ptr mSpaceCorrelation;
         R2toR::CorrelationFunction mCorrelationFunction;
-        Graphics::GraphRtoR mCorrelationGraph;
+        std::shared_ptr<R2toR::DiscreteFunction> mCorrelationComputed;
+        Graphics::GraphRtoR mCorrelationSectionGraph;
+        Graphics::FlatFieldDisplay mCorrelationGraph;
+
 
         float t_history = .0f;
         int step_history = 0;
 
-        Graphics::HistoryDisplay mFullHistoryDisplay;
-
         void updateHistoryGraphs();
 
-        Real transientGuess = -1.0;
-        RtoR2::StraightLine transientLine;
+        Real transientHint = -1.0;
 
         KGEnergy &hamiltonian;
 
@@ -64,15 +65,17 @@ namespace RtoR {
         Graphics::Graph2D mHistogramsGraphV;
         Graphics::Graph2D mHistogramsGraphE;
 
-    public:
-        StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
-
-        void draw() override;
+        void drawGUI();
 
     protected:
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
+        StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+
+        void draw() override;
+
+        void setTransientHint(Real);
 
         void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
                                   std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
