@@ -5,7 +5,6 @@ set ( UTIL_SOURCES
 		Printing.cpp		Printing.h
 		Utils.cpp			Utils.h
 		RandUtils.cpp		RandUtils.h
-		Resources.cpp		Resources.h
 		Exception.h			Exception.cpp
 
 		UtilsCollection/Resample.cpp	UtilsCollection/Resample.h

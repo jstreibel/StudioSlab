@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "Math/Numerics/Program/Integrator.h"
-#include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Core/Backend/Backend.h"
 #include "Core/Backend/BackendManager.h"
 

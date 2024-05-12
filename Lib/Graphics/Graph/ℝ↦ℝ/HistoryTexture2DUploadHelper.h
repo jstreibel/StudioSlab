@@ -7,7 +7,7 @@
 
 #include "Utils/Numbers.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace Graphics {
 

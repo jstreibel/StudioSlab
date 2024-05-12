@@ -6,9 +6,9 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include "Core/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backends/Events/GUIEventListener.h"
 #include "Graphics/Window/WindowTree/NodeWindow.h"
-#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 class WindowTreeBuilderTest : public Graphics::Window {
     Graphics::NodeWindow *main;

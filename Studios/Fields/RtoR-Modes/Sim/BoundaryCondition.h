@@ -6,7 +6,7 @@
 #define STUDIOSLAB_BOUNDARYCONDITION_H
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "SquareWave.h"
 
 namespace Modes {

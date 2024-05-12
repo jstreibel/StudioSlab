@@ -5,7 +5,7 @@
 #include "StylesManager.h"
 
 #include <memory>
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Backend/BackendManager.h"

@@ -2,10 +2,12 @@
 #define BACKEND_H
 
 #include "Program/Program.h"
+#include "Modules/Modules.h"
+#include "Modules/Module.h"
+
 #include "Core/Controller/Interface/InterfaceOwner.h"
 
-#include "Modules/Modules.h"
-#include "Core/Backend/Modules/Module.h"
+
 
 namespace Core {
 
@@ -20,6 +22,8 @@ namespace Core {
         virtual ~Backend() = default;
         virtual void run(Program *) = 0;
         virtual void finish() = 0;
+
+        Str getName() const {return name;}
 
     };
 }

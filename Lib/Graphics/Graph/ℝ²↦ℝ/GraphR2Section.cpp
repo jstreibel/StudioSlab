@@ -3,7 +3,7 @@
 //
 
 #include "GraphR2Section.h"
-#include "Maps/FunctionRenderer.h"
+#include "Graphics/OpenGL/LegacyGL/FunctionRenderer.h"
 
 
 GraphR2Section::GraphR2Section(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,

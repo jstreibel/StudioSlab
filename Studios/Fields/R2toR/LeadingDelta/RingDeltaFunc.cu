@@ -2,7 +2,7 @@
 
 #include "RingDeltaFunc.h"
 #include "Math/Function/DiscreteFunction.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 struct IsRingDeltaDomain
 {

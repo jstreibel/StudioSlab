@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "Maps/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunction.h"
 #include "KG-RtoREquationState.h"
 #include "Math/Numerics/VoidBuilder.h"
 

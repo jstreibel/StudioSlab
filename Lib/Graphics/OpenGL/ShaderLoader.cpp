@@ -4,7 +4,7 @@
 
 #include "ShaderLoader.h"
 
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 
 #include "rougier/shader.h"
 #include "Core/Tools/Log.h"

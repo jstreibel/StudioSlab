@@ -6,7 +6,7 @@
 #include "Core/Tools/Log.h"
 #include "imgui.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Tools/Animator.h"
+#include "Graphics/Animator.h"
 
 #define POPUP_ON_MOUSE_CALL false
 

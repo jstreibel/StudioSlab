@@ -4,7 +4,7 @@
 
 #include "ModernGLTests.h"
 
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 #include "Graphics/OpenGL/OpenGL.h"
 
 struct TestVertex {

@@ -18,7 +18,7 @@
 #include "3rdParty/Nuklear/common/overview.c"
 #include "3rdParty/Nuklear/common/node_editor.c"
 #include "3rdParty/Nuklear/common/file_browser.c"
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 
 namespace Tests {
     file_browser browser;

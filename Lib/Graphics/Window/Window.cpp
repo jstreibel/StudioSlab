@@ -7,7 +7,7 @@
 #include "Window.h"
 #include "Graphics/Styles/WindowStyles.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backends/GraphicBackend.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Core/Backend/BackendManager.h"
 

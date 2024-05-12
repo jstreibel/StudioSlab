@@ -9,7 +9,7 @@
 #include "Graphics/OpenGL/rougier/shader.h"
 #include "Core/Tools/Log.h"
 #include "Utils.h"
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 // #define DEBUG_SHOW_ATLAS_TEXTURE
 
 const Str shaderDir = Resources::ShadersFolder + "rougier/";

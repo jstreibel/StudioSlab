@@ -3,7 +3,7 @@
 //
 
 #include "KG-RtoREnergyCalculator.h"
-#include "Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
+#include "Math/Function/Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
 
 // #define USE_PERIODIC_BC
 

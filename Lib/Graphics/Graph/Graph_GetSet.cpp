@@ -4,7 +4,7 @@
 
 #include "Graph.h"
 
-#include "Core/Tools/Animator.h"
+#include "Graphics/Animator.h"
 
 
 auto Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }

@@ -5,7 +5,7 @@
 #include "ColorBarArtist.h"
 
 #include <utility>
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 
 #include "Graphics/Graph/Graph.h"
 #include "Graphics/Graph/StylesManager.h"

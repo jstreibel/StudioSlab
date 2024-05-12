@@ -7,10 +7,10 @@
 
 #include "SimHistory.h"
 
-#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
-#include "Maps/RtoC/FourierModes.h"
-#include "Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/Maps/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/Maps/RtoC/FourierModes.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 class SimHistory_DFT : public SimHistory {
 public:

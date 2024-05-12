@@ -8,7 +8,7 @@
 #include "GLFreeTypeTests.h"
 #include "Graphics/Graph/Graph.h"
 #include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
-#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "FourierTestWindow.h"
 
 

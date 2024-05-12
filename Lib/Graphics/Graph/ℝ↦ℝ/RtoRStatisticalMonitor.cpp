@@ -6,8 +6,8 @@
 
 #include "imgui.h"
 
-#include "Maps/RtoR/Calc/Histogram.h"
-#include "Maps/R2toR/Model/Transform.h"
+#include "Math/Function/Maps/RtoR/Calc/Histogram.h"
+#include "Math/Function/Maps/R2toR/Model/Transform.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
@@ -16,7 +16,7 @@
 #include <array>
 
 // #include "Core/Controller/Interface/InterfaceManager.h"
-// #include "Maps/RtoR/Calc/Histogram.h"
+// #include "Math/Function/Maps/RtoR/Calc/Histogram.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
@@ -137,8 +137,8 @@ void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR:
     fix L = params.getL();
 
     {
-        mCorrelationComputed = Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction, 400, 400,
-                                                                                 {-L, L, -L, L},
+        mCorrelationComputed = Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction, 300, 300,
+                                                                                 {-.5*L, .5*L, 0, L},
                                                                                  CORR_SCALE);
         // mCorrelationComputed = Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction, 100, 100,
         //                                                                          {0, .5 * L, 0, .5 * L},
@@ -232,6 +232,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                 updateSamples = true;
             }
 
+            ImGui::Spacing();
             if(ImGui::Button("Compute map")) {
                 Graphics::R2toRFunctionRenderer::renderToDiscrete(mCorrelationFunction,
                                                                   mCorrelationComputed, CORR_SCALE);

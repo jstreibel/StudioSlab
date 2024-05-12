@@ -8,8 +8,8 @@
 #include <functional>
 
 #include "Graphics/Graph/Graph.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Utils/Resources.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Core/Tools/Resources.h"
 #include "imgui.h"
 
 namespace Graphics {

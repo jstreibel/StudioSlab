@@ -8,10 +8,10 @@
 #include "Models/KleinGordon/KGSolver.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 #include "Utils/RandUtils.h"
-#include "Math/Thermal/Utils/ThermoUtils.h"
+#include "Math/Thermal/ThermoUtils.h"
 
 
 #define FType(a) typename FieldState::a

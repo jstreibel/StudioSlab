@@ -6,8 +6,6 @@
 #define STUDIOSLAB_RESAMPLE_H
 
 #include <vector>
-
-#include <vector>
 // #include "3rdParty/libresample/include/libresample.h"
 
 

@@ -5,9 +5,9 @@
 #include "Monitor.h"
 
 
-#include "Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include "Maps/RtoR/Calc/Histogram.h"
+#include "Math/Function/Maps/RtoR/Calc/Histogram.h"
 
 
 #include <sstream>

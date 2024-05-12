@@ -1,4 +1,8 @@
 
+set(STUDIOSLAB_MATH_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Math)
+
+add_subdirectory(Function/Maps)
+
 set ( TOOLSET_SOURCES
 		Constants.h
 		Toolset/NativeFunctions.h
@@ -15,17 +19,16 @@ set ( FUNCTION_SOURCES
 )
 
 set ( SPACE_SOURCES
+		Space/Impl/ComplexSpace.cpp		Space/Impl/ComplexSpace.h
 		Space/Impl/DiscreteSpace.cpp
 		Space/Impl/DiscreteSpaceCPU.cpp
-		Space/Space.cpp Space/Space.h
-		Space/Measure.cpp Space/Measure.h
-		Space/HyperCube/AAHyperCube.cpp
-		Space/HyperCube/AAHyperCube.h
+		Space/Space.cpp 				Space/Space.h
+		Space/Measure.cpp 				Space/Measure.h
+		Space/HyperCube/AAHyperCube.cpp Space/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
-		Space/Impl/PointSet.cpp
-		Space/Impl/PointSet.h
-		Space/Point.cpp
-		Space/Point.h)
+		Space/Impl/PointSet.cpp			Space/Impl/PointSet.h
+		Space/Point.cpp					Space/Point.h
+)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 set ( SPACE_SOURCES_CUDA Space/Impl/DiscreteSpaceGPU.cu )
@@ -79,35 +82,20 @@ set ( NUMERICS_SOURCES
 		Function/NativeFunction.h
 )
 
-
 set ( THERMO_SOURCES
-		Thermal/Utils/ThermoUtils.cpp
+		Thermal/ThermoUtils.cpp
 		Thermal/SpinNetwork.cpp
 
-		Thermal/Metropolis/MetropolisAlgorithm.cpp
+		Thermal/MetropolisAlgorithm.cpp
 
-		Thermal/Model/XYNetwork.cpp
-
-		Thermal/IO/SingleSim/SingleSimViewController.h		Thermal/IO/SingleSim/SingleSimViewController.cpp
-
-		Thermal/IO/ManyHistories/QuenchViewController.cpp
-		Thermal/IO/ManyHistories/HistoryViewController.cpp
-
-		Thermal/IO/Tools/Graph.cpp
-		Thermal/IO/Tools/GraphAndAverageCalc.cpp
-
-		Thermal/Utils/ViewerUtils.cpp
+		Thermal/XYNetwork.cpp
 
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
 )
 
-
-
-set (LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Math)
-
-add_library(${LIB_LOCAL_NAME} STATIC
+add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		${TOOLSET_SOURCES}
 		${FUNCTION_SOURCES}
 		${SPACE_SOURCES}
@@ -119,14 +107,16 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		)
 
 
-target_link_libraries(${LIB_LOCAL_NAME}
+target_link_libraries(${STUDIOSLAB_MATH_BASE_LIB_NAME}
 		Slab-Core
+		${STUDIOSLAB_MATH_BASE_LIB_NAME}-Maps
+		fftw3
 		)
 
-set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
+set_property(TARGET ${STUDIOSLAB_MATH_BASE_LIB_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)
 #set_property(TARGET ${LIB_LOCAL_NAME} PROPERTY CUDA_ARCHITECTURES 61)
 
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added library " ${STUDIOSLAB_MATH_BASE_LIB_NAME} )
 
 
 # add_library( ${PHYS_BASE_LIB_NAME}-CoreThermo STATIC ${THERMO_SOURCES} )

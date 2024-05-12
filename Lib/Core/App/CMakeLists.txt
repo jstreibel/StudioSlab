@@ -9,5 +9,5 @@ add_library(${LIB_LOCAL_NAME} STATIC ${APP_SOURCES})
 
 target_link_libraries(${LIB_LOCAL_NAME} Slab-Utils Slab-Core-Controller )
 
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added sub-library " ${LIB_LOCAL_NAME})
 

@@ -5,22 +5,22 @@
 #include "Printing.h"
 
 const auto dpi = 800;
-const auto textWidthInches = 6.47699;
+const auto LaTEXTextWidthInches = 6.47699;
 
 auto Printing::getDPI() -> int {
     return dpi;
 }
 
 auto Printing::getTextWidthInches() -> Real {
-    return textWidthInches;
+    return LaTEXTextWidthInches;
 }
 
 auto Printing::getTotalHorizontalDots(Real proportionOfTextWidth) -> int {
-    return dpi*(textWidthInches*proportionOfTextWidth);
+    return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
 
 auto Printing::getTotalVerticalDots(Real proportionOfTextWidth) -> int {
-    return dpi*(textWidthInches*proportionOfTextWidth);
+    return dpi*(LaTEXTextWidthInches*proportionOfTextWidth);
 }
 
 

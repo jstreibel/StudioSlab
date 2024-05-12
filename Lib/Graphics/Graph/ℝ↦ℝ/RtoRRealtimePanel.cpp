@@ -9,8 +9,8 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
-// #include "Maps/R2toR/DFT.h"
+#include "Math/Function/Maps/RtoR/Calc/DiscreteFourierTransform.h"
+// #include "Math/Function/Maps/R2toR/DFT.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))

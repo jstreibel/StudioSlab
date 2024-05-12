@@ -13,8 +13,8 @@
 
 #include "Graphics/Graph/Graph.h"
 
-#include "Maps/R2toR/Model/R2toRFunction.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
 #include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"

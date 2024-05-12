@@ -1,0 +1,94 @@
+//
+// Created by joao on 17/05/2021.
+//
+
+#ifndef ISING_SINGLESIMVIEWCONTROLLER_H
+#define ISING_SINGLESIMVIEWCONTROLLER_H
+
+#include "Utils/Types.h"
+#include "Core/Backend/SFML/SFMLListener.h"
+
+#include "Math/Thermal/ThermoUtils.h"
+
+#include "3rdParty/Nuklear/NuklearInclude.h"
+
+#include "Math/Thermal/XYNetwork.h"
+#include "Math/Thermal/IO/Tools/GraphAndAverageCalc.h"
+#include "Math/Thermal/ViewControlBase.h"
+#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Thermal/ThermoUtils.h"
+
+#include <SFML/Graphics.hpp>
+
+
+namespace ThermoOutput {
+    const double T_c = 0.8935;
+
+    class SingleSimViewController : public SFMLListener {
+        sf::Font font;
+        sf::Text text;
+
+        sf::Image XYThetaBitmap;
+        sf::Texture XYThetaTexture;
+        sf::Sprite XYThetaSprite;
+
+        sf::Image XYEnergyBitmap;
+        sf::Texture XYEnergyTexture;
+        sf::Sprite XYEnergySprite;
+        float b = 0;
+
+
+        GraphAndAverageCalc *mag_t_View,
+                            *en_t_View;
+
+        Graph *corr_t_View      = nullptr,
+              *T_t_View         = nullptr,
+              *h_t_View         = nullptr,
+              *accepted_t_View  = nullptr,
+              *mag_T_View       = nullptr,
+              *en_T_View        = nullptr,
+              *chi_T_View       = nullptr,
+              *C_v_View         = nullptr,
+              *histeresisView   = nullptr;
+
+        int MCSteps;
+        int transientSize;
+        int currStep = 0;
+        std::vector<ThermoOutput::OutputData> history;
+
+        nk_context *nkContext = nullptr;
+        sf::RenderWindow *window = nullptr;
+        MetropolisAlgorithm *algorithm = nullptr;
+
+    public:
+
+        explicit SingleSimViewController(int L, int MCSteps, int transientSize);
+        ~SingleSimViewController();
+
+        void event(const sf::Event &event) override;
+
+        void render(sf::RenderWindow *window) override;
+
+        void setAlgorithm(MetropolisAlgorithm *algorithm);
+
+    private:
+        void computeTimeCorrelations(int upToMCStep);
+        void updateGraphsAndData(SystemParams &params, OutputData &data);
+        void updateIsingGraph();
+
+        sf::Clock timer;
+        virtual void runIOProgram(SystemParams &params, OutputData &data);
+        void manipulationOfParametersHasHappened(Real newValue, Real lastValue, Real N);
+
+
+        void drawEverything(SystemParams &params, OutputData &data);
+
+
+        void outputHistoryToFile(int L);
+        void outputAveragesHistoryToFile(int L);
+        void outputHisteresisToFile(int L);
+    };
+}
+
+
+#endif //ISING_SINGLESIMVIEWCONTROLLER_H

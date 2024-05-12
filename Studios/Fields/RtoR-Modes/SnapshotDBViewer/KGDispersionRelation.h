@@ -5,7 +5,7 @@
 // Created by joao on 24/09/23.
 //
 
-#include "Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
 

@@ -10,24 +10,16 @@ add_subdirectory( Backend )
 add_subdirectory( App )
 add_subdirectory( Tools )
 
+set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME} )
 
-option( WRAP_BASE_LIB {"Wrap all \""${STUDIOS_LIB_BASE_NAME}"-\" libs in a single \"${STUDIOS_LIB_BASE_NAME}"\"" library."} ON )
+add_library(${LIB_LOCAL_NAME} STATIC Base.cpp)
+target_link_libraries(${LIB_LOCAL_NAME}
+		Slab-Utils
 
-if ( WRAP_BASE_LIB )
+		Slab-Core-Controller
+		Slab-Core-Backend
+		Slab-Core-App
+		Slab-Core-Tools
+		)
 
-    set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME} )
-
-    add_library(${LIB_LOCAL_NAME} STATIC Base.cpp)
-    target_link_libraries(${LIB_LOCAL_NAME}
-			Slab-Utils
-
-    		Slab-Core-Controller
-    		Slab-Core-Backend
-    		Slab-Core-App
-    		Slab-Graphics
-			Slab-Core-Tools
-    		)
-
-    message(NOTICE "Wrapping all Core libs into single library " ${LIB_LOCAL_NAME})
-
-endif()
+message(NOTICE "Added library " ${LIB_LOCAL_NAME})

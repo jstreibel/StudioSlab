@@ -18,6 +18,8 @@ typedef RealArray              RealArray_O;
 typedef RealArray              VecFloat_IO;
 
 typedef std::valarray<Complex> ComplexArray;
+
+typedef std::valarray<Complex> ComplexArray;
 typedef std::vector<Complex>   ComplexVector;
 
 typedef std::valarray<unsigned> UIntArray;

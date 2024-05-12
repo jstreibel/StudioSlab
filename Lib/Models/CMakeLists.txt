@@ -1,4 +1,6 @@
-set ( MODELS_SOURCES
+
+
+set ( KG_SOURCES
         KleinGordon/KGBuilder.cpp
 		KleinGordon/KGBuilder.h
 		KleinGordon/KGSolver.h
@@ -13,7 +15,7 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/Output/SimHistory.h			KleinGordon/RtoR/Output/SimHistory.cpp
 		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
 		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
-
+		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
 
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
@@ -25,24 +27,22 @@ set ( MODELS_SOURCES
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
 )
 
+set ( XY_SOURCES
+
+	XY/SingleSim/SingleSimViewController.h XY/SingleSim/SingleSimViewController.cpp
+
+	XY/ManyHistories/QuenchViewController.cpp
+	XY/ManyHistories/HistoryViewController.cpp
+
+)
+
 if( STUDIOSLAB_CUDA_SUPPORT )
-	set ( MODELS_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu
-			KleinGordon/RtoR/Output/SnapshotOutput.cpp
-			KleinGordon/RtoR/Output/SnapshotOutput.h)
+	set ( KG_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu)
 endif ()
 
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Models )
 
-add_library( ${LIB_LOCAL_NAME} STATIC ${MODELS_SOURCES} ${MODELS_SOURCES_CUDA} )
-target_link_libraries(${LIB_LOCAL_NAME}
-		Slab-Utils
-		Slab-Core-Backend
-		Slab-Core-Controller
-		Slab-Maps-RtoR
-		Slab-Maps-RtoR_GPU
-		# Slab-Maps-RtoR-Periodic_GPU
-		Slab-Maps-R2toR_GPU
-
-		Slab-Math )
+add_library( ${LIB_LOCAL_NAME} STATIC ${KG_SOURCES} ${KG_SOURCES_CUDA} ${XY_SOURCES} )
+target_link_libraries(${LIB_LOCAL_NAME} Slab-Math )
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

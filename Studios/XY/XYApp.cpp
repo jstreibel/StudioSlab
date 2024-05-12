@@ -3,14 +3,14 @@
 //
 
 #include "XYApp.h"
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backends/GraphicBackend.h"
 
 #include "Core/Backend/SFML/SFMLBackend.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Program/DummyProgram.h"
 
 #include <Math/Thermal/IO/SingleSim/SingleSimViewController.h>
-#include <Math/Thermal/Metropolis/MetropolisAlgorithm.h>
+#include "Math/Thermal/MetropolisAlgorithm.h"
 
 #define DONT_SELF_REGISTER false
 

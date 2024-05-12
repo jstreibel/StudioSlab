@@ -51,7 +51,7 @@ add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/Studies/StatisticalBuilder.h				RtoR-Thermal/Studies/StatisticalBuilder.cpp
 		RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.h	RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.cpp
 		)
-target_link_libraries (Fields-RtoR-Thermal Slab-Graphics Slab-Models Slab-Maps-RtoR_GPU )
+target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} )
 
 message(NOTICE "Added executable Fields-RtoR-Thermal")
 

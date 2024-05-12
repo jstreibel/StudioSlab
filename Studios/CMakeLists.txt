@@ -1,16 +1,9 @@
 
 set ( SlabLibs
 		Slab-Utils
-
-		Slab-Core-App
-		Slab-Core-Backend
-		Slab-Core-Controller
-		Slab-Core-Tools
-
+		Slab-Core
 		Slab-Math
-
 		Slab-Models
-
 		Slab-Graphics
 		)
 

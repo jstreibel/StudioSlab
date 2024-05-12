@@ -5,7 +5,7 @@
 #include "input-general-oscillons.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 using namespace RtoR;

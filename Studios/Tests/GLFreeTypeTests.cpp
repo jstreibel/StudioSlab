@@ -5,7 +5,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #include "GLFreeTypeTests.h"
 
-#include "Utils/Resources.h"
+#include "Core/Tools/Resources.h"
 
 #include "Core/Tools/Log.h"
 

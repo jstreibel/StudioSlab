@@ -5,7 +5,7 @@
 #include <Core/App/CrashPad.h>
 #include <Core/Controller/Interface/InterfaceManager.h>
 
-#include "Maps/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
+#include "Math/Function/Maps/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
 
 #include "Montecarlo.h"
 

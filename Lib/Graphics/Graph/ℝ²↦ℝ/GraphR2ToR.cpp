@@ -3,7 +3,7 @@
 //
 
 #include "GraphR2ToR.h"
-#include "Maps/FunctionRenderer.h"
+#include "Math/Function/MapsFunctionRenderer.h"
 
 GraphR2toR::GraphR2toR(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
                        int samples) : FunctionGraph(xMin, xMax, yMin, yMax, title, filled, samples) {

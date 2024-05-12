@@ -4,7 +4,7 @@
 
 #include "DFTSnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Maps/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/Maps/RtoR/Calc/DiscreteFourierTransform.h"
 
 #define nConfig (params)
 #define NDFTModes (nConfig.getN()/2.+1.)

@@ -3,7 +3,7 @@
 //
 
 #include "FlatFieldDisplay.h"
-#include "Core/Tools/Animator.h"
+#include "Graphics/Animator.h"
 
 #include <utility>
 #include <limits>
@@ -37,6 +37,8 @@ auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
 }
 
 bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function::ConstPtr function) {
+    if(function== nullptr) return false;
+
     auto haveErased = false;
 
     for(auto item = funcsMap.begin(); item!=funcsMap.end();) {

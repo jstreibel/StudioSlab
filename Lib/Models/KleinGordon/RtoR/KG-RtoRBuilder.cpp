@@ -19,11 +19,11 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
-#include "Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
-#include "Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
 #include "Models/KleinGordon/R2toR/EquationSolver.h"
 

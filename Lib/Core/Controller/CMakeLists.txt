@@ -15,6 +15,4 @@ set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Controller )
 
 add_library(${LIB_LOCAL_NAME} STATIC ${INTERFACE_SOURCES} ${CONSOLE_SOURCES} )
 
-target_link_libraries(${LIB_LOCAL_NAME} Slab-Utils )
-
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added sub-library " ${LIB_LOCAL_NAME})

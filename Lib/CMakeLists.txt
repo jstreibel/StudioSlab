@@ -8,12 +8,19 @@ add_subdirectory(3rdParty)
 
 add_subdirectory(Utils)
 add_subdirectory(Core)
-
 add_subdirectory(Math)
-add_subdirectory(Maps)
 
 add_subdirectory(Models)
 
 add_subdirectory(Graphics)
+
+add_library(${STUDIOSLAB_BASE_LIB_NAME} STATIC StudioSlab.cpp)
+target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}
+        Slab-Utils
+        Slab-Core
+        Slab-Graphics
+        Slab-Math
+)
+message(NOTICE "Added library " ${STUDIOSLAB_BASE_LIB_NAME} " (wraps all '${STUDIOSLAB_BASE_LIB_NAME}-' libraries)")
 
 # add_dependencies(Fields Studios)

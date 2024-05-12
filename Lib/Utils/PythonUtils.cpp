@@ -8,7 +8,6 @@
 #include <string>
 #include <stack>
 #include <sstream>
-#include <utility>
 
 namespace PythonUtils {
 

@@ -8,10 +8,10 @@
 #include "Graphics/OpenGL/OpenGLMonitor.h"
 #include "GraphRtoR.h"
 
-#include "Maps/RtoR2/StraightLine.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
 
-#include "Maps/RtoR/Model/FunctionsCollection/Section1D.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "HistoryDisplay.h"

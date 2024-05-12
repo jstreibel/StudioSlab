@@ -13,7 +13,7 @@
 #include "Graphics/Styles/ColorMap.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
 
-#include "Maps/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
 
 namespace Graphics {

@@ -9,15 +9,15 @@
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
 
-#include "Maps/RtoR/Model/RtoRResizableDiscreteFunction.h"
-#include "Maps/RtoR/Model/FunctionsCollection/Section1D.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRResizableDiscreteFunction.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Section1D.h"
 
-#include "Maps/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
-#include "Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
+#include "Math/Function/Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
 
 #include "HistoryDisplay.h"
-#include "Maps/RtoR2/StraightLine.h"
+#include "Math/Function/Maps/RtoR2/StraightLine.h"
 #include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"

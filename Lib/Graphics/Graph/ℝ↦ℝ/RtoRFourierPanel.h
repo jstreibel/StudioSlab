@@ -6,9 +6,9 @@
 #define STUDIOSLAB_RTORFOURIERPANEL_H
 
 #include "RtoRPanel.h"
-#include "Maps/RtoR2/StraightLine.h"
-#include "Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Maps/RtoR/Calc/DFTInverse.h"
+#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/Maps/RtoR/Calc/DFTInverse.h"
 
 namespace Graphics {
 
@@ -16,10 +16,15 @@ namespace Graphics {
         std::shared_ptr<FlatFieldDisplay> inverseFTDisplay;
         std::shared_ptr<R2toR::DiscreteFunction> inverseDFT;
 
+        std::shared_ptr<FlatFieldDisplay> timeFTDisplay;
+        std::shared_ptr<R2toR::DiscreteFunction> timeDFT;
+
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
 
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
+
+        void computeTimeDFT(Real tMin, Real tMax);
 
     public:
         RtoRFourierPanel(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, GUIWindow &guiWindow);
@@ -29,9 +34,6 @@ namespace Graphics {
         void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
                                     const SimHistory_DFT::DFTDataHistory &dftData,
                                     std::shared_ptr<HistoryDisplay> sftHistoryGraph) override;
-
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                  std::shared_ptr<HistoryDisplay> simHistoryGraph) override;
     };
 
 } // Graphics

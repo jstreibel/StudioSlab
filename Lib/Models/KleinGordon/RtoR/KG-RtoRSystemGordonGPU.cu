@@ -7,8 +7,8 @@
 #include <thrust/iterator/constant_iterator.h>
 
 #include "KG-RtoRSystemGordonGPU.h"
-#include "Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
-#include "Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
+#include "Math/Function/Maps/RtoR/Model/Derivatives/DerivativesGPU.h"
 
 using namespace RtoR;
 

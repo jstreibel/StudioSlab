@@ -14,7 +14,7 @@
 #include "Graphics/Graph/StylesManager.h"
 #include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Maps/FunctionRenderer.h"
+#include "Math/Function/MapsFunctionRenderer.h"
 
 
 #include <utility>
