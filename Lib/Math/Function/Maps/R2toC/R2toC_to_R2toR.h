@@ -11,13 +11,21 @@
 namespace Math {
     enum R2toC_to_R2toR_Mode {
         Phase,
-        Magnitude
+        Magnitude,
+        Real,
+        Imaginary
     };
 
-    std::shared_ptr<R2toR::DiscreteFunction> Convert(std::shared_ptr<const R2toC::DiscreteFunction>, R2toC_to_R2toR_Mode);
+    std::shared_ptr<R2toR::DiscreteFunction> Convert(const std::shared_ptr<const R2toC::DiscreteFunction>&, R2toC_to_R2toR_Mode);
 
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToAbs(std::shared_ptr<const R2toC::DiscreteFunction> in, std::shared_ptr<R2toR::DiscreteFunction> out);
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToPhase(std::shared_ptr<const R2toC::DiscreteFunction> in, std::shared_ptr<R2toR::DiscreteFunction> out);
+    std::shared_ptr<R2toR::DiscreteFunction> ConvertToAbs       (const std::shared_ptr<const R2toC::DiscreteFunction>& in,
+                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
+    std::shared_ptr<R2toR::DiscreteFunction> ConvertToPhase     (const std::shared_ptr<const R2toC::DiscreteFunction>& in,
+                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
+    std::shared_ptr<R2toR::DiscreteFunction> ConvertToReal      (const std::shared_ptr<const R2toC::DiscreteFunction> &in,
+                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
+    std::shared_ptr<R2toR::DiscreteFunction> ConvertToImaginary (const std::shared_ptr<const R2toC::DiscreteFunction> &in,
+                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
 }
 
 #endif //STUDIOSLAB_R2TOC_TO_R2TOR_H

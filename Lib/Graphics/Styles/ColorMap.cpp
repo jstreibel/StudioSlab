@@ -45,7 +45,8 @@ namespace Styles {
             Color /* Yellow: */ {1.0, 1.0, 0.0},
             Color /* Green:  */ {0.0, 1.0, 0.0},
             Color /* Cyan  : */ {.0, 1.0, 1.0},
-            Color /* Blue    */ {.0, .0, 1.0}}
+            Color /* Blue    */ {.0, .0, 1.0},
+            Color /* Redagain*/ {1.0, .0, 0.0}}
     };
 
     std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};

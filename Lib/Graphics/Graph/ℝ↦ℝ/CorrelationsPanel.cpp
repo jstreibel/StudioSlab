@@ -43,18 +43,32 @@ namespace Graphics {
     }
 
     void CorrelationsPanel::computeFullDFT2D() {
-        auto result = R2toR::R2toRDFT::DFT(*simulationHistory);
+        auto result = R2toR::R2toRDFT::DFT_symmetric(*simulationHistory);
 
         if(ftAmplitudes != nullptr) {
+            assert(ftPhases != nullptr && ftImagParts != nullptr && ftRealParts != nullptr);
+
             DFT2DGraph.removeFunction(ftAmplitudes);
+            DFT2DGraph.removeFunction(ftPhases);
+            DFT2DGraph.removeFunction(ftRealParts);
+            DFT2DGraph.removeFunction(ftImagParts);
 
             Math::ConvertToAbs(result, ftAmplitudes);
+            Math::ConvertToPhase(result, ftPhases);
+            Math::ConvertToReal(result, ftRealParts);
+            Math::ConvertToImaginary(result, ftImagParts);
         }
         else {
             ftAmplitudes = Math::Convert(result, Math::Magnitude);
+            ftPhases = Math::Convert(result, Math::Phase);
+            ftRealParts = Math::Convert(result, Math::Real);
+            ftImagParts = Math::Convert(result, Math::Imaginary);
         }
 
-        DFT2DGraph.addFunction(ftAmplitudes, "ℱₜₓ[ϕ](ω,k)");
+        DFT2DGraph.addFunction(ftAmplitudes, "|ℱₜₓ[ϕ](ω,k)|");
+        DFT2DGraph.addFunction(ftPhases, "arg{ℱₜₓ[ϕ](ω,k)}");
+        DFT2DGraph.addFunction(ftRealParts, "ℜ{ℱₜₓ[ϕ](ω,k)}");
+        DFT2DGraph.addFunction(ftImagParts, "ℑ{ℱₜₓ[ϕ](ω,k)}");
     }
 
 

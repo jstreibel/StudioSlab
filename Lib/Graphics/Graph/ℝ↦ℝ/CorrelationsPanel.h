@@ -12,6 +12,9 @@ namespace Graphics {
     class CorrelationsPanel : public RtoRPanel {
         FlatFieldDisplay DFT2DGraph;
         std::shared_ptr<R2toR::DiscreteFunction> ftAmplitudes;
+        std::shared_ptr<R2toR::DiscreteFunction> ftPhases;
+        std::shared_ptr<R2toR::DiscreteFunction> ftRealParts;
+        std::shared_ptr<R2toR::DiscreteFunction> ftImagParts;
 
         void computeFullDFT2D();
 

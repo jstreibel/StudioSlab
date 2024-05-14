@@ -154,7 +154,8 @@ namespace Graphics::OpenGL {
     }
 
     auto ColorBarArtist::getTexture() -> CMapTexturePtr {
-        updateTexture();
+        fix samples = 4*4096;
+        updateTexture(samples);
 
         return texture;
     }

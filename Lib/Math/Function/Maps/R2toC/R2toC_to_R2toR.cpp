@@ -6,7 +6,7 @@
 #include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 std::shared_ptr<R2toR::DiscreteFunction>
-Math::Convert(std::shared_ptr<const R2toC::DiscreteFunction> in, Math::R2toC_to_R2toR_Mode mode) {
+Math::Convert(const std::shared_ptr<const R2toC::DiscreteFunction>& in, Math::R2toC_to_R2toR_Mode mode) {
     fix N = in->N,
         M = in->M;
     fix Lx = in->Lx,
@@ -21,13 +21,17 @@ Math::Convert(std::shared_ptr<const R2toC::DiscreteFunction> in, Math::R2toC_to_
             return ConvertToPhase(in, out);
         case Magnitude:
             return ConvertToAbs(in, out);
+        case Real:
+            return ConvertToReal(in, out);
+        case Imaginary:
+            return ConvertToImaginary(in, out);
     }
 
     throw Exception("unknown Complex conversion mode");
 }
 
 std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToAbs(std::shared_ptr<const R2toC::DiscreteFunction> in, std::shared_ptr<R2toR::DiscreteFunction> out) {
+Math::ConvertToAbs(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out) {
 
     assert(in->N == out->getN() && in->M == out->getM());
 
@@ -37,7 +41,7 @@ Math::ConvertToAbs(std::shared_ptr<const R2toC::DiscreteFunction> in, std::share
     fix n = in->N*in->M;
     for(auto i=0; i<n; ++i) {
         fix &z = v_in[i];
-        fix r = abs(z);
+        fix r = sqrt(norm(z));
         auto &v = v_out[i];
 
         v = r;
@@ -47,7 +51,7 @@ Math::ConvertToAbs(std::shared_ptr<const R2toC::DiscreteFunction> in, std::share
 }
 
 std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToPhase(std::shared_ptr<const R2toC::DiscreteFunction> in, std::shared_ptr<R2toR::DiscreteFunction> out) {
+Math::ConvertToPhase(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out) {
     assert(in->N == out->getN() && in->M == out->getM());
 
     auto &v_in = in->getData();
@@ -56,6 +60,34 @@ Math::ConvertToPhase(std::shared_ptr<const R2toC::DiscreteFunction> in, std::sha
     fix n = in->N*in->M;
     for(auto i=0; i<n; ++i)
         v_out[i] = arg(v_in[i]);
+
+    return out;
+}
+
+std::shared_ptr<R2toR::DiscreteFunction>
+Math::ConvertToReal(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out){
+    assert(in->N == out->getN() && in->M == out->getM());
+
+    auto &v_in = in->getData();
+    auto &v_out = out->getSpace().getHostData(false);
+
+    fix n = in->N*in->M;
+    for(auto i=0; i<n; ++i)
+        v_out[i] = v_in[i].real();
+
+    return out;
+}
+
+std::shared_ptr<R2toR::DiscreteFunction>
+Math::ConvertToImaginary(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out){
+    assert(in->N == out->getN() && in->M == out->getM());
+
+    auto &v_in = in->getData();
+    auto &v_out = out->getSpace().getHostData(false);
+
+    fix n = in->N*in->M;
+    for(auto i=0; i<n; ++i)
+        v_out[i] = v_in[i].imag();
 
     return out;
 }
