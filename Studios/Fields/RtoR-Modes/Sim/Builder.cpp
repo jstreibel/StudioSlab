@@ -31,8 +31,27 @@ namespace Modes {
     void *Builder::getBoundary() {
         auto &prototype = *(RtoR::EquationState*) RtoR::KGBuilder::newFieldState();
 
-        if(*BCSelection == 0) return new Modes::SignalBC(prototype, *A, *omega);
-        if(*BCSelection == 1) return new RtoR::BoundaryCondition(prototype, new RtoR::Sine(*A, *k), new RtoR::Cosine(A**omega, *k));
+        fix L = this->getNumericParams().getL();
+
+        fix A = this->A.getValue();
+        fix dk = 2*M_PI/L;
+        fix k = dk*this->k.getValue();
+        fix ω = dk*this->omega.getValue();
+
+        if(*BCSelection == 0) return new Modes::SignalBC(prototype, A,  ω);
+        if(*BCSelection == 1) {
+            fix A2 = A * 0.0;
+
+            auto func1 = RtoR::Sine(A, k);
+            auto func2 = RtoR::Sine(A2, 2*k);
+            auto f_0 = new RtoR::FunctionSummable(func1, func2);
+
+            auto ddtfunc1 = RtoR::Cosine(A*ω, k);
+            auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k);
+            auto ddtf_0 = new RtoR::FunctionSummable(ddtfunc1, ddtfunc2);
+
+            return new RtoR::BoundaryCondition(prototype, f_0, ddtf_0);
+        }
         if(*BCSelection == 2){
             if(getNonHomogenous() == nullptr) getNonHomogenous();
 

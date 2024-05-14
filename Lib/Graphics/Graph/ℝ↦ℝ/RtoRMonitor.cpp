@@ -8,6 +8,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 #include "RtoRRealtimePanel.h"
 #include "RtoRFourierPanel.h"
+#include "CorrelationsPanel.h"
 
 
 
@@ -25,6 +26,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 
     dataViews.emplace_back(new RtoR::RealtimePanel(params, hamiltonian, guiWindow, phiMin, phiMax, showEnergyHistoryAsDensities));
     dataViews.emplace_back(new Graphics::RtoRFourierPanel(params, hamiltonian, guiWindow));
+    dataViews.emplace_back(new Graphics::CorrelationsPanel(params, guiWindow, hamiltonian));
 
     setDataView(0);
 }

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_COMPLEXSPACE_H
 
 #include "ArithmeticOperationInterface.h"
-#include "DiscreteSpace.h"
+#include "Math/Space/DimensionMetaData.h"
 
 namespace Math {
 
@@ -36,6 +36,8 @@ namespace Math {
         auto StoreMultiplication (const DiscreteComplexSpace &aoi1,   const Real a) -> DiscreteComplexSpace & override;
 
         auto setToValue          (const DiscreteComplexSpace &param)                -> void;
+
+        DiscreteComplexSpace &operator*=(Real a) override;
 
 
     };

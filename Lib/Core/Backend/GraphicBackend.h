@@ -6,8 +6,8 @@
 #define STUDIOSLAB_GRAPHICBACKEND_H
 
 #include "Core/Backend/Backend.h"
-#include "Events/MouseState.h"
-#include "Graphics/Backends/Events/GUIEventTranslator.h"
+#include "Core/Backend/Events/MouseState.h"
+#include "Core/Backend/Events/GUIEventTranslator.h"
 
 class GraphicBackend : public Core::Backend {
     Core::EventTranslator &eventTranslator;
@@ -33,6 +33,8 @@ public:
     auto getModules() -> const std::vector<std::shared_ptr<Core::Module>>&;
 
     virtual auto requestRender() -> void = 0;
+
+    auto isHeadless() const -> bool final;
 };
 
 

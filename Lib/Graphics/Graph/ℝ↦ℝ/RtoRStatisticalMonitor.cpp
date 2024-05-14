@@ -11,12 +11,10 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRFunctionRenderer.h"
 
 #include <sstream>
 #include <array>
-
-// #include "Core/Controller/Interface/InterfaceManager.h"
-// #include "Math/Function/Maps/RtoR/Calc/Histogram.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
@@ -275,7 +273,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                 {
                     auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
                     mCorrelationSectionGraph.clearPointSets();
-                    auto ptSet = RtoR::FunctionRenderer::toPointSet(*mSpaceCorrelation, .0, .5 * L,
+                    auto ptSet = RtoR::FunctionRenderer::ToPointSet(*mSpaceCorrelation, .0, .5 * L,
                                                                     mCorrelationSectionGraph.getResolution());
                     mCorrelationSectionGraph.addPointSet(ptSet, style, "Space correlation", MANUAL_REVIEW_GRAPH_LIMITS);
                     mCorrelationSectionGraph.reviewGraphRanges();

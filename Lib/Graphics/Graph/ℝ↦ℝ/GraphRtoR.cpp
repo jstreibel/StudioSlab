@@ -3,7 +3,7 @@
 //
 
 #include "GraphRtoR.h"
-
+#include "Graphics/OpenGL/LegacyGL/FunctionRenderer.h"
 
 namespace Graphics {
 
@@ -13,7 +13,7 @@ namespace Graphics {
 
     void GraphRtoR::_renderFunction(const RtoR::Function *func, Styles::PlotStyle style) {
         glLineWidth(style.thickness);
-        RtoR::FunctionRenderer::renderFunction(*func, style.lineColor, style.filled, get_xMin(),
+        Graphics::FunctionRenderer::renderFunction(*func, style.lineColor, style.filled, get_xMin(),
                                                get_xMax(), samples, scale);
     }
 

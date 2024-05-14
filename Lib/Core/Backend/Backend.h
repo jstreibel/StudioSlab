@@ -25,6 +25,8 @@ namespace Core {
 
         Str getName() const {return name;}
 
+        virtual auto isHeadless() const -> bool { return true; }
+
     };
 }
 

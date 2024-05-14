@@ -129,10 +129,6 @@ namespace Graphics {
                     }
                     ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
 
-                    auto min = (float) cMap_min;
-                    auto max = (float) cMap_max;
-                    auto eps = (float) cMap_epsArg;
-
                     bool antiAlias = textureData->getAntiAlias();
                     if (ImGui::Checkbox("Anti-alias display", &antiAlias))
                         textureData->setAntiAlias(antiAlias);
@@ -142,25 +138,39 @@ namespace Graphics {
                     ImGui::Text("ϕₘᵢₙ");
                     ImGui::SameLine();
                     ImGui::PushItemWidth(relativeWidth);
-                    if (ImGui::SliderFloat("##min", &min, -10, 0)) {
-                        cMap_min = min;
-                        if (symmetricMaxMin) cMap_max = -min;
 
-                        updateColorBar();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::SliderFloat("ϕₘₐₓ", &max, 1e-3f, 10)) {
-                        cMap_max = max;
-                        if (symmetricMaxMin) cMap_min = -max;
+                    {
+                        auto cMap_min_f = (float) cMap_min;
+                        auto cMap_max_f = (float) cMap_max;
+                        auto cMap_eps_f = (float) cMap_epsArg;
+                        fix v_max = 1.e3f;
+                        fix v_min = -v_max;
 
-                        updateColorBar();
-                    }
-                    ImGui::PopItemWidth();
+                        // if (ImGui::SliderFloat("##min", &cMap_min_f, v_min, 0.0))
+                        if (ImGui::DragFloat("##min", &cMap_min_f, cMap_min_f*1.e-2f, v_min, 0.f, "%.6f"))
+                        {
+                            cMap_min = cMap_min_f;
+                            if (symmetricMaxMin) cMap_max = -cMap_min;
 
-                    if (ImGui::DragFloat("ε", &eps, (float)eps * 1e-2f, 1e-5, 1e3, "%.6f")) {
-                        cMap_epsArg = eps;
+                            updateColorBar();
+                        }
+                        ImGui::SameLine();
 
-                        updateColorBar();
+                        // if (ImGui::SliderFloat("ϕₘₐₓ", &cMap_max_f, 1e-5f, v_max))
+                        if (ImGui::DragFloat("ϕₘₐₓ", &cMap_max_f, cMap_max_f*1.e-2f, 1.e-6f, v_max, "%.6f"))
+                        {
+                            cMap_max = cMap_max_f;
+                            if (symmetricMaxMin) cMap_min = -cMap_max;
+
+                            updateColorBar();
+                        }
+                        ImGui::PopItemWidth();
+
+                        if (ImGui::DragFloat("ε", &cMap_eps_f, (float) cMap_eps_f * 1e-2f, 1e-8, 1e8, "%.8f")) {
+                            cMap_epsArg = cMap_eps_f;
+
+                            updateColorBar();
+                        }
                     }
 
                     if (ImGui::Checkbox("Log scale", &logScale)) {

@@ -19,8 +19,6 @@ add_subdirectory(RtoR-Modes)
 
 # ************************************************************************************************************
 
-message(NOTICE "SlabLibs: ${SlabLibs}")
-
 add_executable ( Fields-RtoR
 		RtoR-PureSG/MainRtoR.cpp
 
@@ -31,7 +29,7 @@ add_executable ( Fields-RtoR
 		RtoR-PureSG/InteractingFormations/input-sym-oscillons.cpp
 		RtoR-PureSG/InteractingFormations/input-general-oscillons.cpp
 )
-target_link_libraries ( Fields-RtoR ${SlabLibs} Slab-Maps-RtoR_GPU )
+target_link_libraries ( Fields-RtoR Slab )
 #set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)
 
 message(NOTICE "Added executable Fields-RtoR")
@@ -51,7 +49,7 @@ add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/Studies/StatisticalBuilder.h				RtoR-Thermal/Studies/StatisticalBuilder.cpp
 		RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.h	RtoR-Thermal/Studies/RandomEnergyOverDotPhiBuilder.cpp
 		)
-target_link_libraries (Fields-RtoR-Thermal ${SlabLibs} )
+target_link_libraries (Fields-RtoR-Thermal Slab )
 
 message(NOTICE "Added executable Fields-RtoR-Thermal")
 
@@ -63,7 +61,7 @@ message(NOTICE "Added executable Fields-RtoR-Thermal")
 #		Montecarlo1+1/MontecarloMain.cpp
 #		Montecarlo1+1/Monitor.cpp
 #		${SOURCES}  )
-#target_link_libraries (Fields-Montecarlo ${SlabLibs} Slab-Maps-RtoR-Periodic_GPU )
+#target_link_libraries (Fields-Montecarlo Slab )
 #
 #message(NOTICE "Added executable Fields-Montecarlo")
 
@@ -81,15 +79,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 			R2toR/LeadingDelta/Monitor.cpp
 			R2toR/LeadingDelta/RingDeltaFunc.cu
 			)
-	target_link_libraries ( Fields-R2toR
-			Slab-Core-Controller
-			Slab-Core-Backend
-			Slab-Core-App
-			Slab-Graphics
-			Slab-Math
-			Slab-Maps-R2toR_GPU
-			Slab-Models
-			)
+	target_link_libraries ( Fields-R2toR Slab )
 
 	set_property(TARGET Fields-R2toR PROPERTY CUDA_STANDARD_REQUIRED 20)
 	#set_property(TARGET Fields-R2toR PROPERTY CUDA_ARCHITECTURES 61)

@@ -6,6 +6,10 @@
 
 #include "imgui.h"
 #include "Math/Function/Maps/R2toR/Calc/R2toRDFT.h"
+#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/Maps/R2toC/R2toC_to_R2toR.h"
+
+#include <memory>
 
 namespace Graphics {
     CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian)
@@ -35,16 +39,22 @@ namespace Graphics {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
 
         addWindow(this->simulationHistoryGraph);
+        addWindow(DummyPtr(DFT2DGraph), true);
     }
 
     void CorrelationsPanel::computeFullDFT2D() {
         auto result = R2toR::R2toRDFT::DFT(*simulationHistory);
 
-        DFT2DGraph.removeFunction(DummyPtr(ftAmplitudes));
+        if(ftAmplitudes != nullptr) {
+            DFT2DGraph.removeFunction(ftAmplitudes);
 
-        ftAmplitudes.setFunc(result);
+            Math::ConvertToAbs(result, ftAmplitudes);
+        }
+        else {
+            ftAmplitudes = Math::Convert(result, Math::Magnitude);
+        }
 
-        DFT2DGraph.addFunction(DummyPtr(ftAmplitudes), "ℱₜₓ[ϕ](ω,k)");
+        DFT2DGraph.addFunction(ftAmplitudes, "ℱₜₓ[ϕ](ω,k)");
     }
 
 

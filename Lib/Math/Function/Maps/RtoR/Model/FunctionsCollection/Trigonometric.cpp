@@ -17,6 +17,12 @@ namespace RtoR {
         return Ptr(new Cosine(A*k, k));
     }
 
+    Core::FunctionT<Real, Real> *Sine::Clone() const {
+        return new Sine(A, k);
+    }
+
+
+
     Cosine::Cosine(Real a, Real k) : FunctionT(nullptr, false), A(a), k(k) {}
 
     Real Cosine::operator()(Real x) const {
@@ -27,5 +33,9 @@ namespace RtoR {
         assert(n==0);
 
         return Ptr(new Sine(-A*k, k));
+    }
+
+    Core::FunctionT<Real, Real> *Cosine::Clone() const {
+        return new Cosine(A, k);
     }
 } // RtoR

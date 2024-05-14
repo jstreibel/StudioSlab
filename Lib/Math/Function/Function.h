@@ -6,12 +6,9 @@
 #define V_SHAPE_FUNCTIONSBASE_H
 
 #include "Math/Formalism/Categories.h"
-#include "Math/Space/Space.h"
 #include "Math/Space/Impl/PointSet.h"
 
 #include <Utils/Types.h>
-
-//#include "View/Util/EqStateOutputInterface.h"
 
 namespace Core {
 

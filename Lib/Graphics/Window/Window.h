@@ -10,8 +10,8 @@
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Styles/WindowStyles.h"
 
-#include "Graphics/Backends/Events/GUIEventListener.h"
-#include "Graphics/Backends/Events/MouseState.h"
+#include "Core/Backend/Events/GUIEventListener.h"
+#include "Core/Backend/Events/MouseState.h"
 
 #include <vector>
 #include <memory>

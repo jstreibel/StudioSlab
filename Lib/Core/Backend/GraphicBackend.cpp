@@ -25,3 +25,5 @@ void GraphicBackend::setClearColor(Real _r, Real _g, Real _b) {
     g = _g;
     b = _b;
 }
+
+bool GraphicBackend::isHeadless() const {    return false;   }

@@ -15,7 +15,7 @@
 #include "Math/Function/Maps/RtoR2/StraightLine.h"
 
 
-namespace RtoR {
+namespace Graphics {
 
     class FunctionRenderer {
     public:

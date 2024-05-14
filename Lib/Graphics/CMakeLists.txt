@@ -1,38 +1,4 @@
 
-set( GRAPHICS_BACKEND_SOURCE
-		Backends/Implementations.h
-
-		Backends/GLUT/GLUTBackend.h                      Backends/GLUT/GLUTBackend.cpp
-		Backends/GLUT/GLUTListener.h                     Backends/GLUT/GLUTListener.cpp
-		Backends/GLUT/GLUTEventTranslator.h              Backends/GLUT/GLUTEventTranslator.cpp
-
-		Backends/GLFW/GLFWBackend.h                      Backends/GLFW/GLFWBackend.cpp
-		Backends/GLFW/GLFWBackend_callbacks.cpp
-		Backends/GLFW/GLFWListener.h                     Backends/GLFW/GLFWListener.cpp
-		Backends/GLFW/GLFWEventTranslator.h              Backends/GLFW/GLFWEventTranslator.cpp
-
-		Backends/SFML/SFMLBackend.h                      Backends/SFML/SFMLBackend.cpp
-		Backends/SFML/SFMLEventTranslator.h              Backends/SFML/SFMLEventTranslator.cpp
-		Backends/SFML/SFMLListener.h                     Backends/SFML/SFMLListener.cpp
-
-		Backends/VTK/VTKBackend.h                        Backends/VTK/VTKBackend.cpp
-
-		Backends/GraphicBackend.h                        Backends/GraphicBackend.cpp
-
-		Backends/Events/GUIEventListener.h               Backends/Events/GUIEventListener.cpp
-		Backends/Events/KeyMap.h
-		Backends/Events/GUIEventTranslator.h             Backends/Events/GUIEventTranslator.cpp
-
-		Backends/Modules/ImGui/ImGuiModule.h             Backends/Modules/ImGui/ImGuiModule.cpp
-		Backends/Modules/ImGui/ImGuiModuleGLUT.h         Backends/Modules/ImGui/ImGuiModuleGLUT.cpp
-		Backends/Modules/ImGui/ImGuiModuleGLFW.h         Backends/Modules/ImGui/ImGuiModuleGLFW.cpp
-		Backends/Modules/ImGui/ImGuiColorAndStyles.h     Backends/Modules/ImGui/ImGuiColorAndStyles.cpp
-		Backends/Modules/RealTimeAnimation.h             Backends/Modules/RealTimeAnimation.cpp
-		Backends/Modules/Nuklear/NuklearModule.h         Backends/Modules/Nuklear/NuklearModule.cpp
-		Backends/Modules/Nuklear/NuklearSFMLModule.h     Backends/Modules/Nuklear/NuklearSFMLModule.cpp
-		Backends/Modules/Nuklear/NuklearGLFWModule.h     Backends/Modules/Nuklear/NuklearGLFWModule.cpp
-		Backends/Modules/ModernOpenGLModule.h            Backends/Modules/ModernOpenGLModule.cpp
-)
 
 set( GRAPHICS_SOURCES
 		Animation_depr.cpp
@@ -71,7 +37,7 @@ set( GRAPHICS_SOURCES
 
 		OpenGL/OpenGLMonitor.cpp
 
-		OpenGL/GLUTUtils.h  					OpenGL/GLUTUtils.cpp
+		OpenGL/GLUTUtils.h OpenGL/GLUTUtils.cpp
 		OpenGL/Utils.h							OpenGL/Utils.cpp
 		OpenGL/Writer.h							OpenGL/Writer.cpp
 		OpenGL/rougier/shader.h					OpenGL/rougier/shader.c
@@ -138,8 +104,6 @@ set( GRAPHICS_SOURCES
         Graph/ℝ↦ℝ/CorrelationsPanel.h
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h
-		Backends/GraphicBackendManager.cpp
-		Backends/GraphicBackendManager.h
 
 		SFML/Tools/Graph.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp
@@ -154,27 +118,6 @@ target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core
 		Slab-Models
-		Slab-Maps-RtoR
-		Slab-Maps-RtoR_GPU
-		Slab-Maps-R2toR_GPU
-
-		Slab-3rdParty-Imgui
-		Slab-3rdParty-GLFreetype
-
-		freeimage
-		freetype-gl
-
-		glut
-		GLEW
-
-		glfw
-
-		GL
-		OpenGL
-
-		sfml-graphics
-		# sfml-window
-		# sfml-system
-		)
+)
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

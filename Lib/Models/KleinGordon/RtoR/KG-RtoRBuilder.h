@@ -7,6 +7,7 @@
 
 #include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 #include "../KGBuilder.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
 
 namespace RtoR {
     class KGBuilder : public Fields::KleinGordon::KGBuilder {

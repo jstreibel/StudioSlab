@@ -28,6 +28,8 @@ set ( SPACE_SOURCES
 		Function/AllBaseFunctions.h
 		Space/Impl/PointSet.cpp			Space/Impl/PointSet.h
 		Space/Point.cpp					Space/Point.h
+		Space/DimensionMetaData.cpp
+		Space/DimensionMetaData.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

@@ -11,7 +11,7 @@ add_executable ( RtoR-Modes
         Sim/SquareWave.cpp
         Sim/SquareWave.h
 )
-target_link_libraries ( RtoR-Modes ${SlabLibs} Slab-Maps-RtoR_GPU )
+target_link_libraries ( RtoR-Modes Slab )
 
 
 add_executable ( RtoR-SnapshotDBViewer
@@ -25,7 +25,7 @@ add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/SnapshotFileLoader.cpp
         SnapshotDBViewer/SnapshotFileLoader.h
 )
-target_link_libraries ( RtoR-SnapshotDBViewer ${SlabLibs} )
+target_link_libraries ( RtoR-SnapshotDBViewer Slab )
 
 
 message(NOTICE "Added executable RtoR-Modes")

@@ -8,11 +8,16 @@
 #include "Backend.h"
 
 #include "Console/ConsoleBackend.h"
-
-// #include "Graphics/Backends/Modules/RealTimeAnimation.h"
-// #include "Graphics/Backends/Modules/ModernOpenGLModule.h"
+#include "Core/Backend/Modules/ImGui/ImGuiModule.h"
+#include "Core/Backend/Modules/RealTimeAnimation.h"
+#include "Core/Backend/Modules/ModernOpenGLModule.h"
+#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
+#include "Core/Backend/GLFW/GLFWBackend.h"
+#include "Core/Backend/GLUT/GLUTBackend.h"
+#include "Core/Backend/SFML/SFMLBackend.h"
 
 namespace Core {
+    BackendImplementation BackendManager::backendImplementation = Uninitialized;
     std::unique_ptr<Backend> BackendManager::instance = nullptr;
     std::map<Modules, std::shared_ptr<Module>> BackendManager::loadedModules{};
 
@@ -23,51 +28,20 @@ namespace Core {
         return *BackendManager::instance;
     }
 
-    void BackendManager::LoadModule(Modules moduleDescr) {
-        if(loadedModules[moduleDescr] != nullptr) return;
+    auto BackendManager::GetGUIBackend() -> GraphicBackend & {
+        if(BackendManager::instance->isHeadless()) throw Exception("requiring graphic backend on headless run");
 
-        Module *module = nullptr;
-        switch (moduleDescr) {
-            // case ImGui:
-            //     module = ImGuiModule::BuildModule(system);      break;
-            // case RealTimeAnimation:
-            //     module = new RealTimeAnimationModule;           break;
-            // case Nuklear:
-            //     module = NuklearModule::BuildModule(system);    break;
-            // case ModernOpenGL:
-            //     module = new ModernOpenGLModule();                      break;
-            case NanoGUI:
-                throw Exception("NanoGUI module not implemented");
-            case Jack:
-                throw Exception("Jack module not implemented");
-            case NodeJS:
-                throw Exception("NodeJS module not implemented");
-        }
-
-        // Module::Ptr modulePtr = Module::Ptr(module);
-        // auto &guiBackend = GetGUIBackend();
-        // guiBackend.addModule(modulePtr);
-
-        // loadedModules[moduleDescr] = modulePtr;
-   }
-
-
-    Module::Ptr BackendManager::GetModule(Modules moduleDescr) {
-        LoadModule(moduleDescr);
-
-        return loadedModules[moduleDescr];
+        return dynamic_cast<GraphicBackend&>(GetBackend());
     }
 
-    bool BackendManager::IsModuleLoaded(Modules moduleDescr) {
-        return loadedModules[moduleDescr] != nullptr;
-    }
-
-    void BackendManager::StartupHeadless() {
+    void BackendManager::Startup(BackendImplementation implementation) {
         if(BackendManager::instance != nullptr) throw Exception("Backend already initialized");
 
-        BackendManager::instance = std::make_unique<ConsoleBackend>();
-
-        /*        break;
+        switch (implementation) {
+            case Uninitialized: return;
+            case Headless:
+                BackendManager::instance = std::make_unique<ConsoleBackend>();
+                break;
             case GLFW:
                 BackendManager::instance = std::make_unique<GLFWBackend>();
                 break;
@@ -82,13 +56,53 @@ namespace Core {
             default:
                 throw Exception("Unknown backend");
         }
-         */
+
+        BackendManager::backendImplementation = implementation;
     }
 
-    void BackendManager::StartupFromBackend(std::unique_ptr<Backend> &backend) {
-        if(BackendManager::instance != nullptr) throw Exception("Backend already initialized");
 
-        BackendManager::instance = std::move(backend);
+
+    void BackendManager::LoadModule(Modules moduleDescr) {
+        if(loadedModules[moduleDescr] != nullptr) return;
+
+        fix system = BackendManager::backendImplementation;
+
+        Module *module = nullptr;
+        switch (moduleDescr) {
+            case ImGui:
+                module = ImGuiModule::BuildModule(system);      break;
+            case RealTimeAnimation:
+                module = new RealTimeAnimationModule;           break;
+            case Nuklear:
+                module = NuklearModule::BuildModule(system);    break;
+            case ModernOpenGL:
+                module = new ModernOpenGLModule();              break;
+            case NanoGUI:
+                throw Exception("NanoGUI module not implemented");
+            case Jack:
+                throw Exception("Jack module not implemented");
+            case NodeJS:
+                throw Exception("NodeJS module not implemented");
+        }
+
+        Module::Ptr modulePtr = Module::Ptr(module);
+        auto &guiBackend = GetGUIBackend();
+        guiBackend.addModule(modulePtr);
+
+        loadedModules[moduleDescr] = modulePtr;
+   }
+
+
+    Module::Ptr BackendManager::GetModule(Modules moduleDescr) {
+        LoadModule(moduleDescr);
+
+        return loadedModules[moduleDescr];
     }
+
+    bool BackendManager::IsModuleLoaded(Modules moduleDescr) {
+        return loadedModules[moduleDescr] != nullptr;
+    }
+
+
 
 } // Core

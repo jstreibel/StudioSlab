@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_IMGUIMODULE_H
 #define STUDIOSLAB_IMGUIMODULE_H
 
-#include "Graphics/Backends/Implementations.h"
+#include "Core/Backend/Implementations.h"
 #include "Core/Backend/Modules/Module.h"
 
 namespace Core {

@@ -1,7 +1,6 @@
 
 set(MAPS_BASE_LIB_NAME ${STUDIOSLAB_MATH_BASE_LIB_NAME}-Maps)
 
-# include_directories (../../..)		# clean me up
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( MAPS_CUDA_SOURCES
@@ -22,21 +21,19 @@ else()
 	message(STATUS "CUDA is disabled in Maps.")
 endif()
 
-set ( RTOC_SOURCES
-        RtoC/FourierModes.h RtoC/FourierModes.cpp
-        RtoC/Function.h
-)
 
 set ( OTHER_MAPS_SOURCES
-		${RTOC_SOURCES}
+		RtoC/FourierModes.h				RtoC/FourierModes.cpp
+		RtoC/Function.h
 
-		R2toC/R2toCDiscreteFunction.h R2toC/R2toCDiscreteFunction.h
-        RtoR2/StraightLine.cpp RtoR2/StraightLine.h
+		R2toC/R2toC_to_R2toR.cpp		R2toC/R2toC_to_R2toR.h
+		R2toC/R2toCDiscreteFunction.h 	R2toC/R2toCDiscreteFunction.cpp
+
+        RtoR2/StraightLine.h			RtoR2/StraightLine.cpp
 )
 
 set ( RTOR_SOURCES
         RtoR/Model/Derivatives/DerivativesCPU.cpp
-
 
         RtoR/Model/FunctionsCollection/Oscillons/analytic-breather.cpp
         RtoR/Model/FunctionsCollection/Shockwave/shockwave.cpp
@@ -47,6 +44,16 @@ set ( RTOR_SOURCES
         RtoR/Model/FunctionsCollection/NoiseFunction.cpp
         RtoR/Model/FunctionsCollection/Shockwave/QuasiShockwave.cpp
         RtoR/Model/FunctionsCollection/Section1D.h RtoR/Model/FunctionsCollection/Section1D.cpp
+		RtoR/Model/FunctionsCollection/InverseFourier.cpp
+		RtoR/Model/FunctionsCollection/InverseFourier.h
+		RtoR/Model/FunctionsCollection/Trigonometric.cpp
+		RtoR/Model/FunctionsCollection/Trigonometric.h
+		RtoR/Model/FunctionsCollection/ComplexMagnitude.cpp
+		RtoR/Model/FunctionsCollection/ComplexMagnitude.h
+		RtoR/Model/FunctionsCollection/Bypass.h
+
+		RtoR/Model/RtoRFunctionRenderer.cpp
+		RtoR/Model/RtoRFunctionRenderer.h
 
         RtoR/Model/RtoRDiscreteFunction.cpp
         RtoR/Model/RtoRDiscreteFunctionCPU.cpp
@@ -57,13 +64,7 @@ set ( RTOR_SOURCES
         RtoR/Calc/Histogram.cpp
         RtoR/Calc/CorrelationCalculator.h RtoR/Calc/CorrelationCalculator.cpp
         RtoR/Calc/DiscreteFourierTransform.h RtoR/Calc/DiscreteFourierTransform.cpp
-        RtoR/Model/FunctionsCollection/InverseFourier.cpp
-        RtoR/Model/FunctionsCollection/InverseFourier.h
-        RtoR/Model/FunctionsCollection/Trigonometric.cpp
-        RtoR/Model/FunctionsCollection/Trigonometric.h
-        RtoR/Model/FunctionsCollection/ComplexMagnitude.cpp
-        RtoR/Model/FunctionsCollection/ComplexMagnitude.h
-        RtoR/Model/FunctionsCollection/Bypass.h
+
         RtoR/Calc/DFTInverse.cpp
         RtoR/Calc/DFTInverse.h
 )
@@ -89,51 +90,34 @@ set ( R2TOR_SOURCES
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 		#R2toR/View/LastOutputVtkVisualizer.cpp	R2toR/View/LastOutputVtkVisualizer.h
 
-        RtoR2/StraightLine.cpp
+
 
         R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
         R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
         R2toR/FourierTransform.h R2toR/FourierTransform.cpp
 
-        RtoR/Model/FunctionsCollection/AbsFunction.cpp
-        RtoR/Model/FunctionsCollection/Section1D.h RtoR/Model/FunctionsCollection/Section1D.cpp
         R2toR/Calc/R2toRDFT.cpp
         R2toR/Calc/R2toRDFT.h
         R2toR/Model/FunctionsCollection/ComplexMagnitudeFunction.cpp
         R2toR/Model/FunctionsCollection/ComplexMagnitudeFunction.h
-
-		R2toC/R2toCDiscreteFunction.cpp
 )
 
 set(MAPS_SOURCES
-		${RTOC_SOURCES}
 		${OTHER_MAPS_SOURCES}
 		${RTOR_SOURCES}
 		${R2TOR_SOURCES}
-		RtoR/Model/RtoRFunctionRenderer.cpp
-		RtoR/Model/RtoRFunctionRenderer.h
+
 )
-
-
-#set ( MAPS_LINKS
-#		Slab-Core-Controller
-#		Slab-Core-Backend
-#		Slab-Core-App
-#		Slab-Graphics
-#
-#		Slab-Utils
-#		Slab-Math
-#		)
-
 
 # Maps
 
-set ( LIB_LOCAL_NAME ${MAPS_BASE_LIB_NAME} )
 
-add_library( ${LIB_LOCAL_NAME} STATIC ${MAPS_SOURCES})
-target_link_libraries( ${LIB_LOCAL_NAME} ${MAPS_LINKS})
+add_library( ${MAPS_BASE_LIB_NAME} STATIC
+		${MAPS_SOURCES}
+)
+target_link_libraries( ${MAPS_BASE_LIB_NAME} omp)
 
-message(NOTICE "Added sub-library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added sub-library " ${MAPS_BASE_LIB_NAME})
 
 
 

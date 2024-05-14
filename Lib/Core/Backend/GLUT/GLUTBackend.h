@@ -4,8 +4,8 @@
 #include "GLUTListener.h"
 #include "GLUTEventTranslator.h"
 
-#include "Graphics/Backends/Events/GUIEventListener.h"
-#include "Graphics/Backends/GraphicBackend.h"
+#include "Core/Backend/Events/GUIEventListener.h"
+#include "Core/Backend/GraphicBackend.h"
 
 
 class GLUTBackend : public GraphicBackend

@@ -103,7 +103,7 @@ void SFMLBackend::resume() { paused = false; }
 Real SFMLBackend::getScreenHeight() const { throw Str(__PRETTY_FUNCTION__) + " not implemented "; }
 
 SFMLBackend &SFMLBackend::GetInstance() {
-    assert(Core::BackendManager::GetImplementation() == Core::SFML);
+    // assert(Core::BackendManager::GetImplementation() == Core::SFML);
 
     auto &guiBackend = Core::BackendManager::GetGUIBackend();
 

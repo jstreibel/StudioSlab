@@ -10,16 +10,14 @@ add_subdirectory( Backend )
 add_subdirectory( App )
 add_subdirectory( Tools )
 
-set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME} )
-
-add_library(${LIB_LOCAL_NAME} STATIC Base.cpp)
-target_link_libraries(${LIB_LOCAL_NAME}
+add_library(${STUDIOS_LIB_BASE_NAME} STATIC Base.cpp)
+target_link_libraries(${STUDIOS_LIB_BASE_NAME}
 		Slab-Utils
 
 		Slab-Core-Controller
 		Slab-Core-Backend
 		Slab-Core-App
 		Slab-Core-Tools
-		)
+)
 
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added library " ${STUDIOS_LIB_BASE_NAME})

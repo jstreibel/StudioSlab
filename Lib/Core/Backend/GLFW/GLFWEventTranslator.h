@@ -7,7 +7,7 @@
 
 #include "GLFWListener.h"
 
-#include "Graphics/Backends/Events/GUIEventTranslator.h"
+#include "Core/Backend/Events/GUIEventTranslator.h"
 
 namespace Core {
     class GLFWEventTranslator : public EventTranslator, public GLFWListener{

@@ -103,4 +103,8 @@ namespace Math {
         return data;
     }
 
+    DiscreteComplexSpace &DiscreteComplexSpace::operator*=(Real a) {
+        return ArithmeticOpsInterface::operator*=(a);
+    }
+
 } // Math

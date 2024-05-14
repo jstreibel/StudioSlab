@@ -6,12 +6,16 @@
 #define STUDIOSLAB_IMPLEMENTATIONS_H
 
 namespace Core {
+
     enum BackendImplementation {
+        Uninitialized,
+        Headless,
         GLFW,
         GLUT,
         SFML,
         VTK
     };
+
 }
 
 #endif //STUDIOSLAB_IMPLEMENTATIONS_H

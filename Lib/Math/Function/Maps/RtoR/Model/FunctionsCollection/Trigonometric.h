@@ -17,6 +17,8 @@ namespace RtoR {
         Real operator()(Real x) const override;
 
         Ptr diff(int n) const override;
+
+        auto Clone() const -> FunctionT * override;
     };
 
     class Cosine : public RtoR::Function {
@@ -27,6 +29,8 @@ namespace RtoR {
         Real operator()(Real x) const override;
 
         Ptr diff(int n) const override;
+
+        auto Clone() const -> FunctionT * override;
     };
 
 } // RtoR

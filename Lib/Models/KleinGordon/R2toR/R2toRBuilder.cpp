@@ -21,7 +21,6 @@
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
 #include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Graphics/Graph/ℝ²↦ℝ/LastOutputVtkVisualizer.h"
 #include "Math/Function/Maps/R2toR/Output/Filters/DimensionReductionFilter.h"
 #include "Math/Function/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
@@ -34,7 +33,7 @@ namespace R2toR {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
 
-        if (*VisualMonitor) Core::BackendManager::Startup(Core::GLUT);
+        if (*VisualMonitor) Core::BackendManager::Startup(Core::GLFW);
         else                Core::BackendManager::Startup(Core::Headless);
 
         auto *outputManager = new OutputManager(simulationConfig.numericConfig);

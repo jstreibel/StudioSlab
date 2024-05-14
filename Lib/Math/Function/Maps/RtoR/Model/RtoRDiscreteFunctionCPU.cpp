@@ -61,10 +61,11 @@ DiscreteFunction_CPU &DiscreteFunction_CPU::Set(const FunctionT & function) {
     const floatt L = xMax - xMin;
     RealArray &X = getSpace().getHostData();
 
-    OMP_PARALLEL_FOR(n, N){
-        const floatt x = L * n / (N - 1) + xMin;
+    fix dx = L/N;
+    OMP_PARALLEL_FOR(i, N){
+        const floatt x = i*dx + xMin;
 
-        X[n] = function(x);
+        X[i       ] = function(x);
     }
 
     return *this;

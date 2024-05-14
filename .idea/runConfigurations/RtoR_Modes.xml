@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="RtoR-Modes" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="-og -A1 -w 12.56 -k 12.56 -L20 -t10 -c10 -N 2000 --outN 2000 --BC 1 -V 2 " REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$USER_HOME$/Data/StudioSlab/SG1d/modes" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="RtoR-Modes" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="RtoR-Modes">
+  <configuration default="false" name="RtoR-Modes" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="-og -A1 -w 12.56 -k 12.56 -L20 -t10 -c10 -N 2000 --outN 2000 --BC 1 -V 0 " REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$USER_HOME$/Data/StudioSlab/SG1d/modes" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="RtoR-Modes" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="RtoR-Modes">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

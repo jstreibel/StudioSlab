@@ -16,8 +16,10 @@ namespace Modes {
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
                                                                                 "\n\t2: Dead.");
         RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
-        RealParameter omega          = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
-        RealParameter k              = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
+        // RealParameter omega          = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
+        RealParameter omega          = RealParameter(1.0, "w,omega_n", "Angular frequency 'ω' harmonic. Computed as ω=2πj/L");
+        // RealParameter k              = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
+        RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
         BoolParameter driving_force  = BoolParameter   (false,"F,driving_force", "Compute with non-homogenous driving force.");
 
         std::shared_ptr<Modes::SquareWave> squareWave;

@@ -10,12 +10,13 @@
 
 #include "Graphics/SFML/ViewerUtils.h"
 #include "Graphics/Styles/Colors.h"
+#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
 
 #include <SFML/Graphics.hpp>
 
-#include "Utils/Utils.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
+
+
 
 
 #define COMPUTE_AVERAGES false

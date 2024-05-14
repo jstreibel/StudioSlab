@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SFMLEVENTTRANSLATOR_H
 #define STUDIOSLAB_SFMLEVENTTRANSLATOR_H
 
-#include "Graphics/Backends/Events/GUIEventTranslator.h"
+#include "Core/Backend/Events/GUIEventTranslator.h"
 #include "SFMLListener.h"
 
 namespace Core {

@@ -4,8 +4,6 @@
 
 #include "GLUTUtils.h"
 
-#include "Graphics/Window/Window.h"
-
 void Graphics::OpenGL::GLUT::write(const Window *win, const float fontScale, const float x, const float y, std::string str, void *font)
 {
     glMatrixMode(GL_MODELVIEW);

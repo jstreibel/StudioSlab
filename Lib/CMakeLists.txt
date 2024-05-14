@@ -18,9 +18,10 @@ add_library(${STUDIOSLAB_BASE_LIB_NAME} STATIC StudioSlab.cpp)
 target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}
         Slab-Utils
         Slab-Core
-        Slab-Graphics
         Slab-Math
+        Slab-Graphics
+        Slab-Models
 )
-message(NOTICE "Added library " ${STUDIOSLAB_BASE_LIB_NAME} " (wraps all '${STUDIOSLAB_BASE_LIB_NAME}-' libraries)")
+message(NOTICE "Added library " ${STUDIOSLAB_BASE_LIB_NAME})
 
 # add_dependencies(Fields Studios)

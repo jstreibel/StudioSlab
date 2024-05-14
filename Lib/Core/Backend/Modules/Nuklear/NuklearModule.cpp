@@ -15,13 +15,12 @@
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
 namespace Core {
-    NuklearModule::NuklearModule(Core::BackendImplementation system)
+    NuklearModule::NuklearModule(BackendImplementation system)
     : system(system)
     , nkContext(nullptr)
     {
         switch (system) {
             case Uninitialized:
-            case Headless:
             case VTK:
                 break;
             case GLFW:

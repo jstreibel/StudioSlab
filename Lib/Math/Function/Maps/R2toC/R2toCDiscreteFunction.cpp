@@ -7,15 +7,15 @@
 namespace R2toC {
 
     DiscreteFunction::DiscreteFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly)
-    : space(DimensionMetaData({(UInt)N,(UInt)M}, {Lx/N, Ly/M}))
-    , x0(x0), y0(y0)
+    : x0(x0), y0(y0)
     , Lx(Lx), Ly(Ly)
-    , N(N), M(M) {
+    , N(N), M(M)
+    , data(N*M) {
 
     }
 
     Complex DiscreteFunction::operator()(Real2D x) const {
-        return const_cast<DiscreteFunction*>(this)->operator()(x);
+        return const_cast<DiscreteFunction*>(this)->At(x);
     }
 
     inline Complex &DiscreteFunction::At(Real2D x) {
@@ -30,8 +30,18 @@ namespace R2toC {
 
         if(i<0 || i>N-1 || j<0 || j>M-1) return zero;
 
-        return space.getData()[i + j*N];
+        return data[i + j*N];
     }
+
+    auto DiscreteFunction::getData() const -> const ComplexArray & {
+        return data;
+    }
+
+    auto DiscreteFunction::getData() -> ComplexArray & {
+        return data;
+    }
+
+
 
 
 } // R2toC

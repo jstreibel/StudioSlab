@@ -193,7 +193,7 @@ bool GLFWBackend::GetMouseButtonState(GLFWwindow *window, int button) {
 }
 
 GLFWBackend &GLFWBackend::GetInstance() {
-    assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+    // assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
     auto &guiBackend = Core::BackendManager::GetGUIBackend();
 

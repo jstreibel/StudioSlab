@@ -6,14 +6,12 @@
 #define STUDIOSLAB_CORRELATIONSPANEL_H
 
 #include "RtoRPanel.h"
-#include "Math/Function/Maps/R2toC/R2toCDiscreteFunction.h"
-#include "Math/Function/Maps/R2toR/Model/FunctionsCollection/ComplexMagnitudeFunction.h"
 
 namespace Graphics {
 
     class CorrelationsPanel : public RtoRPanel {
         FlatFieldDisplay DFT2DGraph;
-        R2toR::ComplexMagnitudeFunction ftAmplitudes;
+        std::shared_ptr<R2toR::DiscreteFunction> ftAmplitudes;
 
         void computeFullDFT2D();
 

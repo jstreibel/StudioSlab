@@ -45,7 +45,8 @@ SimHistory::SimHistory(const Core::Simulation::SimulationConfig &simConfig, Reso
         Log::Critical() << name << " is about to allocate " << sizeMB
                         << "MB of data to store full " << N_x << 'x' << (int)timeResolution+1 << "x8 bytes simulation history." << Log::Flush;
 
-        data = new R2toR::DiscreteFunction_CPU(N_x, (int)timeResolution+1, xMin, 0.0, hx, ht);
+
+        data = new R2toR::DiscreteFunction_CPU(N_x, (int)timeResolution/*+1*/, xMin, 0.0, hx, ht);
 
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }

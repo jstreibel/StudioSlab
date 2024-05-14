@@ -1,11 +1,5 @@
 
-set ( SlabLibs
-		Slab-Utils
-		Slab-Core
-		Slab-Math
-		Slab-Models
-		Slab-Graphics
-		)
+#set ( SlabLibs		Slab-Utils		Slab-Core		Slab-Math		Slab-Models		Slab-Graphics		)
 
 
 include_directories(../Lib)

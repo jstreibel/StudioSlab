@@ -8,23 +8,23 @@
 #include "Core/Backend/Modules/Module.h"
 #include "Core/Backend/Modules/Modules.h"
 
-#include "Graphics/Backends/Implementations.h"
+#include "Core/Backend/Implementations.h"
 #include "3rdParty/Nuklear/NuklearInclude.h"
 
 namespace Core {
 
-    class NuklearModule : public Module {
+    class NuklearModule : public Core::Module {
         Core::BackendImplementation system;
     protected:
         nk_context *nkContext;
 
     public:
-        explicit NuklearModule(Core::BackendImplementation system);
+        explicit NuklearModule(Core::BackendImplementation);
 
         void beginEvents() override;
         void endEvents() override;
 
-        static NuklearModule *BuildModule(BackendImplementation backendImplementation);
+        static NuklearModule *BuildModule(BackendImplementation);
 
         nk_context *getContext();
 

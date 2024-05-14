@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_VTKBACKEND_H
 #define STUDIOSLAB_VTKBACKEND_H
 
-#include "Graphics/Backends/GraphicBackend.h"
+#include "Core/Backend/GraphicBackend.h"
 
 class VTKBackend : public GraphicBackend {
 public:

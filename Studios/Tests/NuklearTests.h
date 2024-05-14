@@ -6,7 +6,7 @@
 #define STUDIOSLAB_NUKLEARTESTS_H
 
 #include "Core/Backend/SFML/SFMLListener.h"
-#include "Graphics/Backends/Events/GUIEventListener.h"
+#include "Core/Backend/Events/GUIEventListener.h"
 
 namespace Tests {
 

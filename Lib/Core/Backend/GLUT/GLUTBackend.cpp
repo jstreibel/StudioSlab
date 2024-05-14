@@ -4,7 +4,7 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
-#include "Graphics/OpenGL/GLUTUtils.h"
+// #include "GLUTUtils.h"
 
 #include <GL/freeglut.h>
 #include <cassert>
@@ -186,10 +186,12 @@ void GLUTBackend::reshape(int w, int h)
     glutPostRedisplay();
 }
 
-Real GLUTBackend::getScreenHeight() const { return Graphics::OpenGL::GLUT::getScreenHeight(); }
+Real GLUTBackend::getScreenHeight() const {
+    return glutGet(GLUT_WINDOW_HEIGHT);
+}
 
 GLUTBackend &GLUTBackend::GetInstance() {
-    assert(Core::BackendManager::GetImplementation() == Core::GLUT);
+    //assert(Core::BackendManager::GetImplementation() == Core::GLUT);
 
     auto &guiBackend = Core::BackendManager::GetGUIBackend();
 

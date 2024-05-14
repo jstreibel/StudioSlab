@@ -7,13 +7,13 @@
 
 #include "Utils/Types.h"
 #include "Core/Backend/SFML/SFMLListener.h"
+#include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 
 #include "Math/Thermal/ThermoUtils.h"
 
 #include "3rdParty/Nuklear/NuklearInclude.h"
 
 #include "Math/Thermal/XYNetwork.h"
-#include "Math/Thermal/IO/Tools/GraphAndAverageCalc.h"
 #include "Math/Thermal/ViewControlBase.h"
 #include "Math/Thermal/MetropolisAlgorithm.h"
 #include "Math/Thermal/ThermoUtils.h"

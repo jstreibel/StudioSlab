@@ -8,14 +8,7 @@
 // Created by joao on 11/10/2019.
 
 //
-UInt DimensionMetaData::computeFullDiscreteSize() const {
-    UInt size = 1;
-    for(auto n : N){
-        size *= n;
-    }
 
-    return size;
-}
 
 DiscreteSpace::DiscreteSpace(const DimensionMetaData& dim)
 : dimensionMetaData(dim), data(dim.computeFullDiscreteSize())
