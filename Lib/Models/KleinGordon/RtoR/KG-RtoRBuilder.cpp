@@ -32,6 +32,8 @@
 #include "Models/KleinGordon/RtoR/Output/SnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/Output/DFTSnapshotOutput.h"
 
+#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
+
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
 #define SIGNUM_GORDON_POTENTIAL 2

@@ -69,26 +69,16 @@ namespace R2toR {
     }
 
     auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
-        if(0)
-            for (int j = 0; j < M; ++j) {
-                for (int i = 0; i < n; ++i) {
-                    fix &zv       = in[i*M + j ];
-                    auto &value = out[i*M + j ];
-                    value = {zv[0], zv[1]};
-                }
-            }
 
-        else {
-            int halfM = (int)M/2;
-            for (int i = 0; i < M; ++i) {
-                fix i_out= i; // j<0 ? j+halfM : 0;
-                fix i_in = i; // j+halfM; // (j + M) % M;
+        int halfM = (int)M/2;
+        for (int i = 0; i < n; ++i) {
+            for (auto j = 0; j < M; ++j) {
+                fix σ = j<=halfM ? 1 : -1;
+                fix j_out = j-1 + σ*halfM;
 
-                for (auto j = 0; j < n; ++j) {
-                    fix &z_in = in [j*M + i_in  ];
-                    auto &z_out = out[j*M + i_out ];
-                    z_out = {z_in[0], z_in[1]};
-                }
+                fix &z_in = in [i + j*n];
+                auto &z_out = out[i + j_out*n];
+                z_out = scaleFactor * Complex {z_in[0], z_in[1]};
             }
         }
     }
