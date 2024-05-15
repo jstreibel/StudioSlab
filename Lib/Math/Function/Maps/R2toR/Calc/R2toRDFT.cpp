@@ -68,6 +68,31 @@ namespace R2toR {
         }*/
     }
 
+    auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
+        if(0)
+            for (int j = 0; j < M; ++j) {
+                for (int i = 0; i < n; ++i) {
+                    fix &zv       = in[i*M + j ];
+                    auto &value = out[i*M + j ];
+                    value = {zv[0], zv[1]};
+                }
+            }
+
+        else {
+            int halfM = (int)M/2;
+            for (int i = 0; i < M; ++i) {
+                fix i_out= i; // j<0 ? j+halfM : 0;
+                fix i_in = i; // j+halfM; // (j + M) % M;
+
+                for (auto j = 0; j < n; ++j) {
+                    fix &z_in = in [j*M + i_in  ];
+                    auto &z_out = out[j*M + i_out ];
+                    z_out = {z_in[0], z_in[1]};
+                }
+            }
+        }
+    }
+
     auto R2toRDFT::DFT_symmetric(const DiscreteFunction &toTransform) -> std::shared_ptr<R2toC::DiscreteFunction> {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
@@ -80,7 +105,7 @@ namespace R2toR {
         auto* data_src/*(N * M)*/ = const_cast<Real*>(&toTransform.getSpace().getHostData(false)[0]);
         auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * n * M);
 
-        auto plan = fftw_plan_dft_r2c_2d(M, N, data_src, data_dft, FFTW_ESTIMATE);
+        auto plan = fftw_plan_dft_r2c_2d((int)M, (int)N, data_src, data_dft, FFTW_ESTIMATE);
 
         fftw_execute(plan);
 
@@ -97,68 +122,11 @@ namespace R2toR {
         auto out = new R2toC::DiscreteFunction(n, M, -Δk, -Δω, 2 * Δk, 2*Δω);
         auto &data_out = out->getData();
         fix scale = 1e0/(N*M);
-        for (int j = 0; j < M; ++j) {
-            for (int i = 0; i < N / 2 + 1; ++i) {
-                fix &zv       = data_dft[i*M + j ];
-                auto &value = data_out[i*M + j ];
-                value = {zv[0], zv[1]};
-            }
-        }
+
+        moveData(data_dft, data_out, n, M, scale);
 
         fftw_destroy_plan(plan);
         fftw_free(data_dft);
-
-        return std::shared_ptr<R2toC::DiscreteFunction>{out};
-    }
-
-    auto R2toRDFT::DFT(const R2toR::DiscreteFunction &toTransform) -> std::shared_ptr<R2toC::DiscreteFunction> {
-        fix _N_ = toTransform.getN();
-        fix _M_ = toTransform.getM();
-
-        if(_N_%2 || _M_%2) throw Exception("can't FT real data with odd number of sites");
-
-        fix N = _N_%2==0 ? _N_ : _N_-1;
-        fix M = _M_%2==0 ? _M_ : _M_-1;
-
-        // Allocate input data (real) and output data (complex)
-        auto* input_data_src/*(N * M)*/ = const_cast<Real*>(&toTransform.getSpace().getHostData(false)[0]);
-        auto *input_data =  (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N * M);
-        auto* output_data = (fftw_complex*)fftw_malloc(sizeof(fftw_complex) * N * M);
-
-        for(auto i=0; i<N; ++i) {
-            for(auto j=0; j<M; ++j) {
-                fix k = i+j*N;
-                fix &src = input_data_src[k];
-                auto in = input_data[k];
-
-                in[0] = src;
-                in[1] = .0;
-            }
-        }
-
-        auto plan = fftw_plan_dft_2d(N, M, input_data, output_data, FFTW_FORWARD, FFTW_ESTIMATE);
-
-        fftw_execute(plan);
-
-        fix Lx = toTransform.getDomain().getLx();
-        fix Ly = toTransform.getDomain().getLy();
-
-        // fix n = N;
-        // fix m = M/2+1;
-        fix dk = 2 * M_PI / Lx;
-        fix dω = 2 * M_PI / Ly;
-        fix Δk = N * dk; // N/2 not N/2+1
-        fix Δω = M * dω;
-
-        auto out = new R2toC::DiscreteFunction(N, M, -Δk, -Δω, 2 * Δk, 2*Δω);
-        auto &out_effective_data = out->getData();
-        fix scale = 1e0/(N*M);
-        copy_effective_modes(output_data, out_effective_data, N, M, scale);
-
-        fftw_destroy_plan(plan);
-        fftw_free(output_data);
-        fftw_free(input_data);
-
 
         return std::shared_ptr<R2toC::DiscreteFunction>{out};
     }
