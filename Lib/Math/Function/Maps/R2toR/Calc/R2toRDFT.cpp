@@ -7,67 +7,6 @@
 
 namespace R2toR {
 
-    inline int compute_index(int i, int j, int N, int M) {
-        return (i * M + j);
-    }
-
-
-    void copy_effective_modes(const fftw_complex *output_data, ComplexArray &effective_output_data,
-                              int N, int M, Real scaleFactor) {
-
-        int halfN = N / 2;
-        int halfM = M / 2;
-
-        std::cout << "FFT Output in wavenumber order:" << std::endl;
-        for (int i = -halfN; i < halfN; ++i) {
-            for (int j = -halfM; j < halfM; ++j) {
-                fix wrapped_i = (i + N) % N;
-                fix wrapped_j = (j + M) % M;
-
-                fix out_i = i+halfN;
-                fix out_j = j+halfM;
-
-                fix k_in = compute_index(wrapped_i, wrapped_j, N, M);
-                fix k_out = out_i*M + out_j;
-
-                // Access the complex value at the computed index
-
-                auto &inVal = output_data[k_in];
-                auto &outVal = effective_output_data[k_out];
-
-                outVal = scaleFactor * Complex(inVal[0], inVal[1]);
-            }
-        }
-
-        /*
-        for (int i = 0; i < N; ++i) {
-            for (int j = 0; j < M; ++j) {
-                auto &outVal = effective_output_data[i + j*N];
-                auto &inVal = output_data[i*M + j];
-
-                outVal = scaleFactor * Complex(inVal[0], inVal[1]);
-            }
-        }
-         */
-
-        /*
-        fix hN = N/2;
-
-        for (int i = 0; i < N; ++i) {
-            // fix i_out = i<=N/2 ? i-1+hN : i-1-hN;
-            // fix i_out = i;
-            for (int j = 0; j < m; ++j) {
-                fix k_in = i*m + j;
-                fix k_out = i + j*N;
-
-                auto &in = output_data[k_in];
-                auto &out = effective_output_data[k_out];
-
-                out = scaleFactor * Complex(in[0], in[1]);
-            }
-        }*/
-    }
-
     auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
 
         int halfM = (int)M/2;
@@ -106,10 +45,10 @@ namespace R2toR {
         // fix m = M/2+1;
         fix dk = 2 * M_PI / Lx;
         fix dω = 2 * M_PI / Ly;
-        fix Δk = N * dk; // N/2 not N/2+1
+        fix Δk = (Real)N/2 * dk; // N/2 not N/2+1
         fix Δω = M * dω;
 
-        auto out = new R2toC::DiscreteFunction(n, M, -Δk, -Δω, 2 * Δk, 2*Δω);
+        auto out = new R2toC::DiscreteFunction(n, M, 0, -Δω/2, Δk+dk, Δω+ dω);
         auto &data_out = out->getData();
         fix scale = 1e0/(N*M);
 

@@ -6,6 +6,7 @@
 
 #include <memory>
 #include <functional>
+// #include <string_view>
 
 #include "Graphics/Graph/Graph.h"
 #include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
@@ -64,11 +65,12 @@ namespace Graphics {
             vertexBuffer.render(GL_TRIANGLES);
         }
 
+        if(showColorBar)
         {
-            const int left = -400;
+            const int left = -300;
             const int vpWidth = graph.getViewport().width();
             const int vpHeight = graph.getViewport().height();
-            const int cbarWidth = 150;
+            const int cbarWidth = 100;
             const int cbarHeight = 0.6 * vpHeight;
             const int cbarTop = (vpHeight - cbarHeight) / 2;
 
@@ -108,12 +110,11 @@ namespace Graphics {
 
         if (ImGui::Begin("Stats")) {
             if (ImGui::CollapsingHeader(myName.c_str())) {
-
                 const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
                 ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
                 auto visible = isVisible();
-                if(ImGui::Checkbox("Visible", &visible))
+                if(ImGui::Checkbox("Visible##", &visible))
                     setVisibility(visible);
 
 
@@ -123,59 +124,41 @@ namespace Graphics {
                 }
 
                 {
-                    if (logScale) {
+                    {
                         ImGui::Text("σ := sign(ϕ)");
-                        ImGui::Text("ϕ ↦ σ ln(|ϕ|/ε + 1)");
+                        ImGui::Text("ϕ ↦ σ ln(|ϕ|×ε + 1) / ln(ϕₛₐₜ×ε + 1)");
                     }
-                    ImGui::Text("ϕ ↦ (ϕ-ϕₘᵢₙ)/Δϕ, Δϕ=ϕₘₐₓ-ϕₘᵢₙ");
 
                     bool antiAlias = textureData->getAntiAlias();
-                    if (ImGui::Checkbox("Anti-alias display", &antiAlias))
+                    if (ImGui::Checkbox("Anti-alias display##", &antiAlias))
                         textureData->setAntiAlias(antiAlias);
 
-                    float fullWidth = ImGui::GetContentRegionAvail().x;
-                    float relativeWidth = fullWidth * 0.3f;
-                    ImGui::Text("ϕₘᵢₙ");
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(relativeWidth);
-
-                    {
-                        auto cMap_min_f = (float) cMap_min;
-                        auto cMap_max_f = (float) cMap_max;
-                        auto cMap_eps_f = (float) cMap_epsArg;
-                        fix v_max = 1.e3f;
-                        fix v_min = -v_max;
-
-                        // if (ImGui::SliderFloat("##min", &cMap_min_f, v_min, 0.0))
-                        if (ImGui::DragFloat("##min", &cMap_min_f, cMap_min_f*1.e-2f, v_min, 0.f, "%.6f"))
-                        {
-                            cMap_min = cMap_min_f;
-                            if (symmetricMaxMin) cMap_max = -cMap_min;
-
-                            updateColorBar();
-                        }
-                        ImGui::SameLine();
-
-                        // if (ImGui::SliderFloat("ϕₘₐₓ", &cMap_max_f, 1e-5f, v_max))
-                        if (ImGui::DragFloat("ϕₘₐₓ", &cMap_max_f, cMap_max_f*1.e-2f, 1.e-6f, v_max, "%.6f"))
-                        {
-                            cMap_max = cMap_max_f;
-                            if (symmetricMaxMin) cMap_min = -cMap_max;
-
-                            updateColorBar();
-                        }
-                        ImGui::PopItemWidth();
-
-                        if (ImGui::DragFloat("ε", &cMap_eps_f, (float) cMap_eps_f * 1e-2f, 1e-8, 1e8, "%.8f")) {
-                            cMap_epsArg = cMap_eps_f;
-
-                            updateColorBar();
-                        }
+                    if (ImGui::Button("Compute ϕₛₐₜ")) {
+                        adjustScale();
                     }
 
-                    if (ImGui::Checkbox("Log scale", &logScale)) {
+                    {
+                        auto cMap_saturationValue_f = (float) cMap_saturationValue;
+                        auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
 
-                        updateColorBar();
+                        if (ImGui::DragFloat("ϕₛₐₜ",
+                                             &cMap_saturationValue_f,
+                                             cMap_saturationValue_f*5e-3f,
+                                             1.e-5f,
+                                             1.e5f,
+                                             "%.2e"))
+                        {
+                            cMap_saturationValue = cMap_saturationValue_f;
+
+                            updateColorBar();
+                        }
+
+                        if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
+                                             1e-10, 1e10, "%.1e")) {
+                            cMap_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
+
+                            updateColorBar();
+                        }
                     }
                 }
 
@@ -226,6 +209,8 @@ namespace Graphics {
                         cMap = cMap.reverse();
                         updateColorBar();
                     }
+
+                    ImGui::Checkbox("Show colorbar##", &showColorBar);
                 }
 
                 ImGui::EndChild();
@@ -240,14 +225,18 @@ namespace Graphics {
             return;
         }
 
-        cMap_min = function->min();
-        cMap_max = function->max();
+        field_min = function->min();
+        field_max = function->max();
 
-        if(cMap_min >= 0.0) symmetricMaxMin = false;
+        if(Common::areEqual(field_min, field_max)) field_max += 0.1;
+
+        cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
+
+        if(field_min >= 0.0) symmetricMaxMin = false;
         else symmetricMaxMin = true;
 
-        // program.setUniform("phiMin", (GLfloat) cMap_min);
-        // program.setUniform("phiMax", (GLfloat) cMap_max);
+        program.setUniform("symmetric", (GLboolean ) symmetricMaxMin);
+        program.setUniform("phi_sat", (GLfloat) cMap_saturationValue);
 
         bool firstTime = func == nullptr;
         func = std::move(function);
@@ -267,7 +256,9 @@ namespace Graphics {
             textureData = std::make_shared<::Graphics::OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
             textureData->setSWrap(::Graphics::OpenGL::ClampToEdge);
             textureData->setAntiAliasOff();
-            program.setUniform("fieldData", textureData->getTextureUnit());
+            program.setUniform("field_data", textureData->getTextureUnit());
+
+            updateColorBar();
         }
 
         {
@@ -317,43 +308,54 @@ namespace Graphics {
         cMap = colorMap;
 
         symmetricMaxMin = cMap.getType() == Styles::ColorMap::Divergent;
-        if(symmetricMaxMin) {
-            auto max = std::max(abs(cMap_min), abs(cMap_max));
-            cMap_min = -max;
-            cMap_max = max;
-        }
+        program.setUniform("symmetric", true);
 
         updateColorBar();
     }
 
     void FlatField2DArtist::updateColorBar() {
-        std::function<Real(Real)> invScaleFunc;
-        {
-            auto min = cMap_min;
-            auto max = cMap_max;
-            if (logScale) {
-                auto &eps = cMap_epsArg;
-                invScaleFunc = [min, max, &eps](Real x) {
-                    x = x*(max-min)+min;
-                    const auto s = SIGN(x);
+        fix min = field_min;
+        fix max = field_max;
 
-                    return eps*(exp(s*x) - 1);
-                };
-            } else invScaleFunc = [min, max](Real x) { return x*(max-min)+min; };
+        auto &kappa = cMap_kappaArg;
+
+        std::function<Real(Real)> g⁻¹;
+
+
+        if(symmetricMaxMin) {
+            g⁻¹ = [min, max, &kappa](Real x) {
+                x = x*(max-min)+min;
+                const auto s = SIGN(x);
+
+                return kappa*(exp(s*x) - 1);
+            };
         }
-        colorBar.setInverseScalingFunction(invScaleFunc);
+        g⁻¹ = [](Real x) {
+            return x;
+        };
+
+
+        colorBar.setInverseScalingFunction(g⁻¹);
 
         colorBar.setColorMap(cMap);
 
-        program.setUniform("phiMin", (float)cMap_min);
-        program.setUniform("phiMax", (float)cMap_max);
-        program.setUniform("eps", (float)cMap_epsArg);
-        program.setUniform("useLog", (float)logScale);
+        program.setUniform("phi_sat", (float)cMap_saturationValue);
+        program.setUniform("kappa", (float)cMap_kappaArg);
+        program.setUniform("symmetric", symmetricMaxMin);
 
     }
 
     void FlatField2DArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
 
     FlatField2DArtist::FieldDataTexturePtr FlatField2DArtist::getFieldTextureData() const { return textureData; }
+
+    void FlatField2DArtist::adjustScale() {
+        field_min = func->min();
+        field_max = func->max();
+
+        cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
+
+        updateColorBar();
+    }
 
 } // Graphics

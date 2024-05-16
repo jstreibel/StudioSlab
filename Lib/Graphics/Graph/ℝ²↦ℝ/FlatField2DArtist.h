@@ -32,12 +32,15 @@ namespace Graphics {
 
         Unit funcUnit;
 
+        Real field_min;
+        Real field_max;
+
         Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
-        bool logScale                   = true;
-        Real cMap_epsArg                =  1;
-        Real cMap_min                   = -1.1;
-        Real cMap_max                   =  1.1;
+        Real cMap_kappaArg                =  1; // contrast
+        Real cMap_saturationValue       =  1.1;
         bool symmetricMaxMin            = true;
+
+        bool showColorBar = true;
         Graphics::OpenGL::ColorBarArtist colorBar;
 
         Graphics::OpenGL::VertexBuffer vertexBuffer;
@@ -62,6 +65,8 @@ namespace Graphics {
         auto getFunction() const -> R2toR::Function::ConstPtr;
         void setColorMap(const Styles::ColorMap& colorMap);
         void set_xPeriodicOn();
+
+        void adjustScale();
 
         auto getFieldTextureData() const -> FieldDataTexturePtr;
 
