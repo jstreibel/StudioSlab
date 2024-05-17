@@ -73,7 +73,7 @@ namespace RtoR {
                                   std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
 
         void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                    const SimHistory_DFT::DFTDataHistory &dftData,
+                                    const DFTDataHistory &dftData,
                                     std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph) override;
     };
 }

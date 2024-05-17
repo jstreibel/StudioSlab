@@ -24,7 +24,7 @@ namespace Modes {
 
         std::shared_ptr<Modes::SquareWave> squareWave;
     protected:
-        auto buildOpenGLOutput() -> RtoR::Monitor * override;
+        auto buildOpenGLOutput() -> void * override;
 
 
     public:

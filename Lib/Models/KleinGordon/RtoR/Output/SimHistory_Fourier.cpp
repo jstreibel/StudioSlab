@@ -29,6 +29,6 @@ auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &
         dataOut[i] = pts[i].y;
 }
 
-const SimHistory_DFT::DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {
+const DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {
     return dftDataHistory;
 }

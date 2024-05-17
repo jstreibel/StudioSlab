@@ -11,7 +11,6 @@
 #include "CorrelationsPanel.h"
 
 
-
 // Ok to touch these:
 #define UPDATE_HISTORY_EVERY_STEP true
 
@@ -93,7 +92,7 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
 }
 
 void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                           const SimHistory_DFT::DFTDataHistory &_dftData)
+                                           const DFTDataHistory &_dftData)
 {
     this->dftData = &_dftData;
 

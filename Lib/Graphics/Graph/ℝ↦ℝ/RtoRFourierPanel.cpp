@@ -94,7 +94,7 @@ namespace Graphics {
     }
 
     void RtoRFourierPanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                                  const SimHistory_DFT::DFTDataHistory &dftData,
+                                                  const DFTDataHistory &dftData,
                                                   std::shared_ptr<HistoryDisplay> sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 

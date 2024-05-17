@@ -1,12 +1,12 @@
 #include "input-sym-oscillons.h"
+#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 using namespace RtoR;
 
 InputSymmetricOscillon::InputSymmetricOscillon()
-: KGBuilder("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
+: PureSG::Builder("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")
 {
     interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
 }

@@ -2,8 +2,8 @@
 // Created by joao on 05/09/2019.
 //
 
-#ifndef V_SHAPE_FIELDSTATERTOR_H
-#define V_SHAPE_FIELDSTATERTOR_H
+#ifndef V_SHAPE_EQSTATERTOR_H
+#define V_SHAPE_EQSTATERTOR_H
 
 #include "Models/KleinGordon/KGState.h"
 #include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunction.h"
@@ -43,4 +43,4 @@ namespace RtoR {
     };
 }
 
-#endif //V_SHAPE_FIELDSTATE_H
+#endif //V_SHAPE_EQSTATERTOR_H

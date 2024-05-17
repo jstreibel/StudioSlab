@@ -5,11 +5,16 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunction.h"
-#include "KG-RtoREquationState.h"
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+
+namespace Core::Simulation{
+    class VoidBuilder;
+}
 
 namespace RtoR {
+    class EquationState;
+    class DiscreteFunction;
+
     class KGEnergy {
         Core::Simulation::VoidBuilder &builder;
 

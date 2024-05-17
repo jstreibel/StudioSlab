@@ -182,7 +182,7 @@ void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::Disc
 }
 
 void RtoR::RealtimePanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                                 const SimHistory_DFT::DFTDataHistory &dftData,
+                                                 const DFTDataHistory &dftData,
                                                  std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph)
 {
     RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);

@@ -29,7 +29,7 @@ namespace Graphics {
 
         std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
         std::shared_ptr<HistoryDisplay> spaceFTHistoryGraph = nullptr;
-        const SimHistory_DFT::DFTDataHistory *dftData;
+        const DFTDataHistory *dftData;
 
         auto handleOutput(const OutputPacket &packet) -> void override;
 
@@ -43,7 +43,7 @@ namespace Graphics {
         virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
                                           std::shared_ptr<HistoryDisplay> simHistoryGraph);
         virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
-                                            const SimHistory_DFT::DFTDataHistory &,
+                                            const DFTDataHistory &,
                                             std::shared_ptr<HistoryDisplay> sftHistoryGraph);
 
         virtual void notifyBecameVisible();

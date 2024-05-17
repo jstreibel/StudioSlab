@@ -82,7 +82,7 @@ namespace Modes {
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
-    RtoR::Monitor *Builder::buildOpenGLOutput() {
+    void *Builder::buildOpenGLOutput() {
         fix amp = (*A) * 1.1;
         auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(RtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
 

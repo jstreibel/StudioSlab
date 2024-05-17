@@ -12,14 +12,14 @@
 #include "Math/Function/Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
 #include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
-class SimHistory_DFT : public SimHistory {
-public:
-    struct DFTInstantResult {
-        Real t;
-        RtoR::DFTResult result;
-    };
+struct DFTInstantResult {
+    Real t;
+    RtoR::DFTResult result;
+};
+typedef std::vector<DFTInstantResult> DFTDataHistory;
 
-    typedef std::vector<DFTInstantResult> DFTDataHistory;
+class SimHistory_DFT : public SimHistory {
+
 private:
     DFTDataHistory dftDataHistory;
 

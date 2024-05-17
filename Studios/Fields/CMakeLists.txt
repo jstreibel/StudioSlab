@@ -28,6 +28,8 @@ add_executable ( Fields-RtoR
 
 		RtoR-PureSG/InteractingFormations/input-sym-oscillons.cpp
 		RtoR-PureSG/InteractingFormations/input-general-oscillons.cpp
+		RtoR-PureSG/Builder.cpp
+		RtoR-PureSG/Builder.h
 )
 target_link_libraries ( Fields-RtoR Slab )
 #set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)

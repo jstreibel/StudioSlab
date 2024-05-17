@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_KG_RTORBUILDER_H
 #define STUDIOSLAB_KG_RTORBUILDER_H
 
-#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 #include "../KGBuilder.h"
 #include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+
 
 namespace RtoR {
     class KGBuilder : public Fields::KleinGordon::KGBuilder {
@@ -20,7 +20,7 @@ namespace RtoR {
         bool periodicBC = false;          // Gambiarris
 
     protected:
-        virtual auto buildOpenGLOutput() -> Monitor*;
+        virtual auto buildOpenGLOutput() -> void*;
 
         void setLaplacianPeriodicBC();    // Gambiarris
         void setLaplacianFixedBC();       // Gambiarris

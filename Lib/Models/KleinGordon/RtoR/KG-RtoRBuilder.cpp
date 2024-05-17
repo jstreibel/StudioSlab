@@ -11,7 +11,6 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "KG-RtoRSolver.h"
-#include "KG-RtoRSystemGordonGPU.h"
 #include "KG-RtoRBoundaryCondition.h"
 
 #include "Math/Numerics/Output/Format/BinarySOF.h"
@@ -19,18 +18,13 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionGPU.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Math/Function/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include "Models/KleinGordon/R2toR/EquationSolver.h"
-
 #include "Output/SimHistory.h"
-#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
-#include "Models/KleinGordon/RtoR/Output/SnapshotOutput.h"
-#include "Models/KleinGordon/RtoR/Output/DFTSnapshotOutput.h"
+#include "Output/SnapshotOutput.h"
+#include "Output/DFTSnapshotOutput.h"
 
 #include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 
@@ -129,7 +123,7 @@ auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
     if(shouldOutputOpenGL) {
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-        auto outputOpenGL = buildOpenGLOutput();
+        auto outputOpenGL = (RtoR::Monitor*)buildOpenGLOutput();
 
         if(t>0)
         {
@@ -217,7 +211,7 @@ void *RtoR::KGBuilder::buildEquationSolver() {
                                                                 *dphi, *potential, nonHomogenous);
 }
 
-auto RtoR::KGBuilder::buildOpenGLOutput() -> RtoR::Monitor * {
+auto RtoR::KGBuilder::buildOpenGLOutput() -> void * {
     return new RtoR::Monitor(simulationConfig.numericConfig, *(KGEnergy*)getHamiltonian());
 }
 

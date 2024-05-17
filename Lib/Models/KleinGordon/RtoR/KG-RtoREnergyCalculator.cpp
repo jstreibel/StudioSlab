@@ -5,6 +5,9 @@
 #include "KG-RtoREnergyCalculator.h"
 #include "Math/Function/Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
 
+#include "Math/Numerics/VoidBuilder.h"
+#include "KG-RtoREquationState.h"
+
 // #define USE_PERIODIC_BC
 
 RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc)

@@ -3,13 +3,13 @@
 #include "Core/App/CrashPad.h"
 #include "Core/Controller/Interface/InterfaceSelector.h"
 
+#include "Math/App.h"
+
 #include "InteractingFormations/input-sym-oscillons.h"
 #include "InteractingFormations/input-general-oscillons.h"
 #include "SingleFormations/input-perturbed.h"
 #include "SingleFormations/input-shockwave.h"
 #include "SingleFormations/InputSingleOscillon.h"
-
-#include "Math/App.h"
 
 int run(int argc, const char **argv) {
     InterfaceSelector selector("Simulation builder selector");
@@ -27,8 +27,8 @@ int run(int argc, const char **argv) {
     /* sim 4 */selector.registerOption(option5->getInterface());
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<Core::Simulation::VoidBuilder*>(selectedInterface->getOwner());
-    auto inputPtr = Core::Simulation::VoidBuilder::Ptr(input);
+    auto input    = dynamic_cast<RtoR::KGBuilder*>(selectedInterface->getOwner());
+    auto inputPtr = RtoR::KGBuilder::Ptr(input);
 
     auto prog = Simulation::App(argc, argv, inputPtr);
 
