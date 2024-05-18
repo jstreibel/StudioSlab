@@ -10,8 +10,8 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"

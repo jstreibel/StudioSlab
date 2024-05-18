@@ -7,11 +7,11 @@
 
 #include <map>
 
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 #include "Utils/Types.h"
 #include "Utils/PythonUtils.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 
 namespace Modes::DatabaseViewer {

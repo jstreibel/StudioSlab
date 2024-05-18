@@ -10,7 +10,7 @@
 #include "Graphics/Graph/ℝ²↦ℝ/R2toROutputOpenGLGeneric.h"
 
 #include "Models/KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "EquationSolver.h"
 #include "EquationState.h"
 #include "Models/KleinGordon/KGBuilder.h"

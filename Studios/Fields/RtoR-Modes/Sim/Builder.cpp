@@ -14,7 +14,7 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Monitor.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Trigonometric.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #define DONT_REGISTER false
 

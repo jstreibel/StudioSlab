@@ -81,7 +81,11 @@ namespace Core {
                 };
         ImFontGlyphRangesBuilder glyphRangesBuilder;
         glyphRangesBuilder.AddRanges(ranges);
-        for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/, ImWchar(0x21A6)}) glyphRangesBuilder.AddChar(c);
+        for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/,
+                         ImWchar(0x21A6),
+                         /*ImWchar("⟨"[0]),
+                         ImWchar("⟩"[0])*/}
+                         ) glyphRangesBuilder.AddChar(c);
         static ImVector<ImWchar> vRanges;
         glyphRangesBuilder.BuildRanges(&vRanges);
 

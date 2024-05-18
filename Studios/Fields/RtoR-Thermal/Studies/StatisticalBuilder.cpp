@@ -2,9 +2,9 @@
 // Created by joao on 04/04/2020.
 //
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 

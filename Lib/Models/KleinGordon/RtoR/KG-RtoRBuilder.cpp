@@ -18,9 +18,9 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
 #include "Output/SimHistory.h"
 #include "Output/SnapshotOutput.h"

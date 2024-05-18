@@ -6,7 +6,7 @@
 #define V_SHAPE_RTORBOUNDARYCONDITION_H
 
 
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"

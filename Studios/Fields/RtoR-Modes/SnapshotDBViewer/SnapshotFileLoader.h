@@ -7,7 +7,7 @@
 
 #include "Utils/String.h"
 #include "Utils/PythonUtils.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 namespace Modes {
 

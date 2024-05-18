@@ -13,7 +13,7 @@
 Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 : ::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
 {
-};
+}
 
 auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) -> std::shared_ptr<Graphics::FlatField2DArtist> {
     if(ContainsFunc(function)) return nullptr;
@@ -40,6 +40,7 @@ bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function::ConstPtr functi
     if(function== nullptr) return false;
 
     auto haveErased = false;
+
 
     for(auto item = funcsMap.begin(); item!=funcsMap.end();) {
         if(item->second==function){

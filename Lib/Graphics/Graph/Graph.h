@@ -17,7 +17,7 @@
 #include "Utils/Utils.h"
 
 
-#include "Math/Function/Maps/RtoR2/ParametricCurve.h"
+#include "Math/Function/RtoR2/ParametricCurve.h"
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
 

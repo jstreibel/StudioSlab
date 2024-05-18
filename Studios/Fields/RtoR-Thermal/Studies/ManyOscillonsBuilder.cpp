@@ -3,7 +3,7 @@
 //
 
 #include "ManyOscillonsBuilder.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Utils/RandUtils.h"
 #include "../ThermalMonitor.h"

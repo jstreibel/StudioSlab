@@ -10,14 +10,14 @@
 
 #include "GraphRtoR.h"
 
-#include "Math/Function/Maps/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Section1D.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Math/Function/Function.h"
 
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 #include "HistoryDisplay.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"

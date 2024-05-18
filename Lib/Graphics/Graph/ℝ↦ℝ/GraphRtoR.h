@@ -7,7 +7,7 @@
 
 
 #include "Graphics/Graph/FunctionGraph.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 
 namespace Graphics {

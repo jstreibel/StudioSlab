@@ -3,7 +3,7 @@
 //
 
 #include "KG-RtoREnergyCalculator.h"
-#include "Math/Function/Maps/RtoR/Model/Derivatives/DerivativesCPU.h"
+#include "Math/Function/RtoR/Model/Derivatives/DerivativesCPU.h"
 
 #include "Math/Numerics/VoidBuilder.h"
 #include "KG-RtoREquationState.h"

@@ -14,7 +14,7 @@
 #include "Graphics/Graph/StylesManager.h"
 #include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Math/Function/MapsFunctionRenderer.h"
+#include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
 
 
 #include <utility>
@@ -48,10 +48,10 @@ namespace Modes::DatabaseViewer {
         style.lineColor = style.lineColor.permute();
         style.thickness = 3.0;
         massesGraph.addPointSet(DummyPtr(underXHair), style);
-        massesGraph.setHorizontalUnit(Constants::π);
+        massesGraph.getAxisArtist().setHorizontalUnit(Constants::π);
 
-        allDataDisplay.setVerticalUnit(Constants::π);
-        allDataDisplay.setHorizontalUnit(Constants::π);
+        allDataDisplay.getAxisArtist().setVerticalUnit(Constants::π);
+        allDataDisplay.getAxisArtist().setHorizontalUnit(Constants::π);
         allDataDisplay.setColorMap(Styles::ColorMaps["blues"]);
 
         topRow.addWindow(DummyPtr(allDataDisplay));
@@ -133,10 +133,10 @@ namespace Modes::DatabaseViewer {
             auto xMax_local = fullField->getDomain().xMax;
             if(xMax_local > xMax) xMax = xMax_local;
         }
-        KGRelation = RtoR::FunctionRenderer::toPointSet(
+        KGRelation = RtoR::FunctionRenderer::ToPointSet(
                 RtoR::KGDispersionRelation(mass, RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
                 0.0, xMax, 10000);
-        KGRelation_high_k = RtoR::FunctionRenderer::toPointSet(
+        KGRelation_high_k = RtoR::FunctionRenderer::ToPointSet(
                 RtoR::KGDispersionRelation_high_k(mass, RtoR::KGDispersionRelation_high_k::k_AsFunctionOf_ω),
                 0.0, xMax, 10000);
 

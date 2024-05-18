@@ -6,10 +6,10 @@
 #define STUDIOSLAB_GRAPHR2SECTION_H
 
 
-#include "Math/Function/Maps/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Graphics/Graph/FunctionGraph.h"
-#include "Math/Function/Maps/RtoR2/ParametricCurve.h"
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/RtoR2/ParametricCurve.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 class GraphR2Section : public FunctionGraph<R2toR::Function> {
 public:

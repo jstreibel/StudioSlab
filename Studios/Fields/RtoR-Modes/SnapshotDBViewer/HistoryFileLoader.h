@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_HISTORYFILELOADER_H
 #define STUDIOSLAB_HISTORYFILELOADER_H
 
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Utils/PythonUtils.h"
 
 namespace Modes {

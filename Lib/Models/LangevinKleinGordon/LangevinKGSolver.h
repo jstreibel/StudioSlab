@@ -13,8 +13,8 @@
 
 #include "Math/Numerics/VoidBuilder.h"
 
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunction.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 
 #define FRANDOM (random()/(RAND_MAX+1.0))

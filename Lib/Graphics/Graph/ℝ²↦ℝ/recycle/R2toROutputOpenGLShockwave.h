@@ -8,8 +8,8 @@
 #include "Graphics/OpenGL/OpenGLMonitor.h"
 #include "Graphics/ZoomPanRotate.h"
 #include "Graphics/Graph/FunctionGraph.h"
-#include "Math/Function/Maps/R2toR/View/GraphR2ToR.h"
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/R2toR/View/GraphR2ToR.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 
 namespace R2toR {

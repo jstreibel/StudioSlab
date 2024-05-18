@@ -7,7 +7,7 @@
 
 
 #include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 namespace RtoR::Thermal {
 

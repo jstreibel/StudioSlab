@@ -6,12 +6,12 @@
 
 #include "imgui.h"
 
-#include "Math/Function/Maps/RtoR/Calc/Histogram.h"
-#include "Math/Function/Maps/R2toR/Model/Transform.h"
+#include "Math/Function/RtoR/Calc/Histogram.h"
+#include "Math/Function/R2toR/Model/Transform.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRFunctionRenderer.h"
+#include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
 
 #include <sstream>
 #include <array>

@@ -6,10 +6,10 @@
 
 #include <utility>
 
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 #if USE_CUDA
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #endif
 
 #include "../KG-RtoREquationState.h"

@@ -15,6 +15,6 @@ add_executable ( Tests
 
 )
 
-target_link_libraries ( Tests ${SlabLibs} Slab-Maps-RtoR_GPU Slab-Core freetype-gl )
+target_link_libraries ( Tests ${SlabLibs} Slab )
 
 message(NOTICE "Added executable Tests")

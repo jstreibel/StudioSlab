@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 namespace Core::Simulation{
     class VoidBuilder;

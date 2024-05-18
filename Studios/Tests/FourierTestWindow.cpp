@@ -11,14 +11,14 @@
 #include "Math/Constants.h"
 #include "Math/Function/NativeFunction.h"
 
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
-#include "Math/Function/Maps/RtoR/Calc/DiscreteFourierTransform.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/InverseFourier.h"
-#include "Math/Function/MapsFunctionRenderer.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
-#include "Math/Function/Maps/RtoC/FourierModes.h"
+#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/InverseFourier.h"
+// #include "Math/Function/MapsFunctionRenderer.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
+#include "Math/Function/RtoC/FourierModes.h"
 
 #define Re 0
 #define Im 1

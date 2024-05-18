@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SNAPSHOTOUTPUT_H
 #define STUDIOSLAB_SNAPSHOTOUTPUT_H
 
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 #include "Math/Numerics/Output/Plugs/Socket.h"
 

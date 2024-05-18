@@ -6,7 +6,7 @@
 #define STUDIOSLAB_KG_RTORBUILDER_H
 
 #include "../KGBuilder.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 
 namespace RtoR {

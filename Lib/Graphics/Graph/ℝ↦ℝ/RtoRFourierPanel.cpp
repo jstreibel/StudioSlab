@@ -6,8 +6,8 @@
 
 #include "Graphics/Graph/StylesManager.h"
 #include "imgui.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/Maps/RtoR/Calc/DFTInverse.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Calc/DFTInverse.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 
 namespace Graphics {

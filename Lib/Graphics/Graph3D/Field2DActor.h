@@ -9,7 +9,7 @@
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
 namespace Graphics {
 

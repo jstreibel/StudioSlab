@@ -13,33 +13,34 @@ WindowPanelTest::WindowPanelTest() : panel(new Graphics::WindowPanel) {
     Window *window = nullptr;
 
     window = new Window();
-    panel->addWindow(window);
+    typedef Window::Ptr Ptr;
+    panel->addWindow(Ptr(window));
 
     if(true) {
         window = new Window();
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         window = new Window();
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         window = new Window();
-        panel->addWindow(window, true);
+        panel->addWindow(Ptr(window), true);
 
         window = new Window();
         window = new GLFreeTypeTests;
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         window = new Window();
-        panel->addWindow(window, true, 0.2);
+        panel->addWindow(Ptr(window), true, 0.2);
 
         window = new Window();
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         window = new Window();
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         window = new Window();
-        panel->addWindow(window);
+        panel->addWindow(Ptr(window));
 
         panel->setColumnRelativeWidth(0, 0.2);
     }

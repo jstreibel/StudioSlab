@@ -1,22 +1,12 @@
 
 set(STUDIOSLAB_MATH_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Math)
 
-add_subdirectory(Function/Maps)
+add_subdirectory(Function)
 
 set ( TOOLSET_SOURCES
 		Constants.h
 		Toolset/NativeFunctions.h
 		)
-
-set ( FUNCTION_SOURCES
-		Function/AllBaseFunctions.h
-		Function/CommonFunctions.h
-		Function/DiscreteFunction.h
-		Function/FunctionProduct.h
-		Function/FunctionScale.h
-		Function/GPUFriendly.h
-		Function/SummableFunction.h
-)
 
 set ( SPACE_SOURCES
 		Space/Impl/ComplexSpace.cpp		Space/Impl/ComplexSpace.h
@@ -99,7 +89,6 @@ set ( THERMO_SOURCES
 
 add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		${TOOLSET_SOURCES}
-		${FUNCTION_SOURCES}
 		${SPACE_SOURCES}
 		${SPACE_SOURCES_CUDA}
 		${EXPERIMENTAL_SOURCES}

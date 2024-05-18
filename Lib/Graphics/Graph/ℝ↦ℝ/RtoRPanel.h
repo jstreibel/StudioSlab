@@ -10,7 +10,7 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
 
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
 #include "HistoryDisplay.h"

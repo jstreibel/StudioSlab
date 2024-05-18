@@ -1,5 +1,5 @@
 #include "input-sym-oscillons.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 

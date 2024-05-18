@@ -9,8 +9,8 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Program/DummyProgram.h"
 
-#include <Math/Thermal/IO/SingleSim/SingleSimViewController.h>
 #include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Models/XY/SingleSim/SingleSimViewController.h"
 
 #define DONT_SELF_REGISTER false
 

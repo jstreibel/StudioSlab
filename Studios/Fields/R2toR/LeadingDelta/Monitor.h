@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MONITOR_H
 #define STUDIOSLAB_MONITOR_H
 
-#include "Math/Function/Maps/R2toR/View/R2toROutputOpenGLGeneric.h"
+#include "Math/Function/R2toR/View/R2toROutputOpenGLGeneric.h"
 
 namespace R2toR {
 

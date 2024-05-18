@@ -9,10 +9,10 @@
 #include "Graphics/Utils.h"
 
 // TODO these #includes below shouldn't be THIS far from this file
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunction.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRFunction.h"
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/RtoR2/StraightLine.h"
 
 
 namespace Graphics {

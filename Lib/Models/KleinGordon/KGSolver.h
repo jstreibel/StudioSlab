@@ -4,7 +4,7 @@
 #include "Math/DifferentialEquations/EquationSolver.h"
 
 #include "Math/Numerics/Builder.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/SignumFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/SignumFunction.h"
 
 
 #define CLONE(func) dynamic_cast<DiscrFuncType&>(*(func.Clone()))

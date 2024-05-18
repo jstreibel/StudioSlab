@@ -6,9 +6,9 @@
 #define STUDIOSLAB_RTORFOURIERPANEL_H
 
 #include "RtoRPanel.h"
-#include "Math/Function/Maps/RtoR2/StraightLine.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/Maps/RtoR/Calc/DFTInverse.h"
+#include "Math/Function/RtoR2/StraightLine.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Calc/DFTInverse.h"
 
 namespace Graphics {
 

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SQUAREWAVE_H
 #define STUDIOSLAB_SQUAREWAVE_H
 
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 namespace Modes {
 

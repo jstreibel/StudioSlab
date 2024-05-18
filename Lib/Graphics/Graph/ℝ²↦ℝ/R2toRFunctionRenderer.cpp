@@ -3,7 +3,7 @@
 //
 
 #include "R2toRFunctionRenderer.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
 namespace Graphics {
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,

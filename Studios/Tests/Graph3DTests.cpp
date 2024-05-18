@@ -5,7 +5,7 @@
 #include "Graph3DTests.h"
 #include "Graphics/Graph3D/Graph3D.h"
 #include "Graphics/Graph3D/TestActor.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Graphics/Graph3D/Field2DActor.h"
 
 namespace Tests {

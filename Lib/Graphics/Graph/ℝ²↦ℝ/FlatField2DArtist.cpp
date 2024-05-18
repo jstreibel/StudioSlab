@@ -9,7 +9,7 @@
 // #include <string_view>
 
 #include "Graphics/Graph/Graph.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Core/Tools/Resources.h"
 #include "imgui.h"
 
@@ -296,6 +296,11 @@ namespace Graphics {
 
                 vertexBuffer.pushBack(vertices, 4, indices, 6);
             }
+        }
+
+        if(symmetricMaxMin) setColorMap(Styles::ColorMaps["BrBG"]);
+        else {
+            setColorMap(Styles::ColorMaps["blues"]);
         }
 
         invalidateTextureData();

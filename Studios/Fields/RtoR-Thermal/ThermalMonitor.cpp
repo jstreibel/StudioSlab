@@ -6,8 +6,8 @@
 
 #include "3rdParty/imgui/imgui.h"
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
-#include "Math/Function/Maps/RtoR/Calc/Histogram.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Function/RtoR/Calc/Histogram.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"

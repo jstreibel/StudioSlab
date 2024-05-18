@@ -7,10 +7,10 @@
 
 #include "SimHistory.h"
 
-#include "Math/Function/Maps/RtoR/Calc/DiscreteFourierTransform.h"
-#include "Math/Function/Maps/RtoC/FourierModes.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoC/FourierModes.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 struct DFTInstantResult {
     Real t;

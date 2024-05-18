@@ -12,7 +12,7 @@ out vec4 FragColor;
 
 const float e1 = 1.7182818284590452354f;	/* e-1 */
 
-float f(float x) {
+float log1(float x) {
     if (abs(x) < 1e-4) {
         // Use a series expansion for better precision when x is small
         return x - 0.5 * x * x + x * x * x / 3.0;
@@ -21,8 +21,14 @@ float f(float x) {
     return log(1.0 + x);
 }
 
+float f(float x) {
+    // return tanh(x);
+    return log1(x);
+}
+
 float map_to_tex_coord(float phi){
     float keps  = e1/(kappa);
+
     float Gamma = f(keps * phi_sat);
     float mu    = f(keps * abs(phi));
 

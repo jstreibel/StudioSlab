@@ -6,7 +6,7 @@
 #define STUDIOSLAB_GRAPHR2TOR_H
 
 #include "Graphics/ZoomPanRotate.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Graphics/Graph/FunctionGraph.h"
 
 

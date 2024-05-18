@@ -8,10 +8,10 @@
 
 #include "Core/Backend/BackendManager.h"
 
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #include "EquationState.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/AbsFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Numerics/Output/Format/OutputFormatterBase.h"
@@ -20,9 +20,9 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/NullFunction.h"
-#include "Math/Function/Maps/R2toR/Output/Filters/DimensionReductionFilter.h"
-#include "Math/Function/Maps/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/R2toR/Output/Filters/DimensionReductionFilter.h"
+#include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 namespace R2toR {
 

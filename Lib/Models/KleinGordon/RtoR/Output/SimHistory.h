@@ -8,9 +8,9 @@
 
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Math/Function/Maps/R2toR/Model/R2toRDiscreteFunction.h"
-#include "Math/Function/Maps/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Bypass.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
 #include "../KG-RtoREquationState.h"
 
 class SimHistory : public Numerics::OutputSystem::Socket {

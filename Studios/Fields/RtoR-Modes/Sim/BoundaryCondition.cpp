@@ -5,7 +5,7 @@
 #include "BoundaryCondition.h"
 
 #include <utility>
-#include "Math/Function/Maps/RtoR/Model/FunctionsCollection/Trigonometric.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 Modes::SignalBC::SignalBC(const RtoR::EquationState &prototype, Real A, Real ω)
 : BoundaryCondition(prototype, new RtoR::NullFunction(), new RtoR::NullFunction())
