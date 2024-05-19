@@ -5,68 +5,57 @@
 #include <fftw3.h>
 #include "R2toRDFT.h"
 
-#define DONT_FIX_OUTPUT
-#include "UnmangleFFTWOutput.h"
+// #define DONT_FIX_OUTPUT
+#include "FFTWDataMangling.h"
 
+#define TO_FFTW(a) (reinterpret_cast<fftw_complex*>(a))
+#define TO_STD(a) (reinterpret_cast<Complex*>(a))
 
 namespace R2toR {
 
-    auto R2toRDFT::DFT(const R2toC::DiscreteFunction &in, int sign) -> std::shared_ptr<R2toC::DiscreteFunction> {
+
+
+    auto R2toRDFT::DFTComplex(const R2toC::DiscreteFunction &in, int sign) -> std::shared_ptr<R2toC::DiscreteFunction> {
         fix M = (int)in.M;
         fix N = (int)in.N;
 
         // const_cast because fftw does not accept constant data sources.
-        auto* data_src_raw /*(N * M)*/ = &in.getData()[0];
+        auto* data_src_raw /*(N * M)*/ = TO_FFTW(const_cast<Complex*>(&in.getData()[0]));
         auto* data_src = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
-        auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
+        auto* data_dft_output = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
 
-        for(int i=0; i<N; ++i) {
-            for (int j=0; j < M; ++j) {
-                fix &f = data_src_raw[i+j*N];
-                auto *z = data_src[i+j*N];
+        // sign==1 => only mangle if inverse FT
+        MoveData(TO_STD(data_src_raw),
+                TO_STD(data_src),
+                N, M, 1.0,
+                sign==1 ? Mangle : KeepArrangement);
 
-                z[0] = f.real();
-                z[1] = f.imag();
-            }
-        }
-
-        auto plan = fftw_plan_dft_2d(M, N, data_src, data_dft, sign, FFTW_ESTIMATE);
+        auto plan = fftw_plan_dft_2d(M, N, TO_FFTW(data_src), data_dft_output, sign, FFTW_ESTIMATE);
 
         fftw_execute(plan);
 
-        fix Lx = in.Lx;
-        fix Ly = in.Ly;
+        fix Lₓ = in.Lx;
+        fix Lₜ = in.Ly;
 
-        fix dk = M_PI / Lx;
-        fix dω = M_PI / Ly;
-        fix Δk = N * dk;
-        fix Δω = M * dω;
+        fix dk = M_PI/Lₓ; // 2kₘₐₓ/N;
+        fix dω = M_PI/Lₜ;
+        fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
+        fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::DiscreteFunction(N, M, -Δk/2, -Δω/2, Δk, Δω);
-        auto &data_out = out->getData();
-        fix scale = Lx*Ly/(N*M);
+        auto out = new R2toC::DiscreteFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto data_out = &out->getData()[0];
+        fix scale = Lₓ*Lₜ/(N*M);
 
-        fix halfN = N/2;
-        fix halfM = M/2;
-        for(int i=0; i<N; ++i) {
-            FIX_i_out
-
-            for(int j=0; j<M; ++j) {
-                FIX_j_out
-
-                fix k_in = i + j*N;
-                fix k_out = i_out + j_out*N;
-
-                fix &z = data_dft[k_in];
-                data_out[k_out] = scale * Complex(z[0], z[1]);
-            }
-        }
+        MoveData( TO_STD(data_dft_output),
+                 TO_STD(data_out),
+                 N, M,
+                 scale, sign==-1 ? Unmangle : KeepArrangement);
 
         fftw_destroy_plan(plan);
-        fftw_free(data_src);
-        fftw_free(data_dft);
+        fftw_free(data_dft_output);
 
-        return std::shared_ptr<R2toC::DiscreteFunction>{out};    }
+        return std::shared_ptr<R2toC::DiscreteFunction>{out};
+    }
 
     auto R2toRDFT::DFTReal(const DiscreteFunction &in, int sign) -> std::shared_ptr<R2toC::DiscreteFunction> {
         fix M = (int)in.getM();
@@ -77,6 +66,9 @@ namespace R2toR {
         auto* data_src = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
         auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
 
+        MoveData(data_src_raw, TO_STD(data_src), N, M, 1.0, sign==1 ? Mangle : KeepArrangement);
+
+        /*
         for(int i=0; i<N; ++i) {
             for (int j=0; j < M; ++j) {
                 fix &f = data_src_raw[i+j*N];
@@ -85,39 +77,29 @@ namespace R2toR {
                 z[0] = f;
                 z[1] = 0.0;
             }
-        }
+        }*/
 
         auto plan = fftw_plan_dft_2d(M, N, data_src, data_dft, sign, FFTW_ESTIMATE);
 
         fftw_execute(plan);
 
-        fix Lx = in.getDomain().getLx();
-        fix Ly = in.getDomain().getLy();
+        fix Lₓ = in.getDomain().getLx();
+        fix Lₜ = in.getDomain().getLy();
 
-        fix dk = M_PI / Lx;
-        fix dω = M_PI / Ly;
-        fix Δk = N * dk;
-        fix Δω = M * dω;
+        fix dk = M_PI/Lₓ; // 2kₘₐₓ/N;
+        fix dω = M_PI/Lₜ;
+        fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
+        fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::DiscreteFunction(N, M, -Δk/2, -Δω/2, Δk, Δω);
-        auto &data_out = out->getData();
-        fix scale = Lx*Ly/(N*M);
+        auto out = new R2toC::DiscreteFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto data_out = &out->getData()[0];
 
-        fix halfN = N/2;
-        fix halfM = M/2;
-        for(int i=0; i<N; ++i) {
-            FIX_i_out
+        fix scale = Lₓ*Lₜ/(N*M);
 
-            for(int j=0; j<M; ++j) {
-                FIX_j_out
-
-                fix k_in = i + j*N;
-                fix k_out = i_out + j_out*N;
-
-                fix &z = data_dft[k_in];
-                data_out[k_out] = scale * Complex(z[0], z[1]);
-            }
-        }
+        MoveData( TO_STD(data_dft),
+                 TO_STD(data_out),
+                 N, M, scale,
+                 sign==-1 ? Unmangle : KeepArrangement);
 
         fftw_destroy_plan(plan);
         fftw_free(data_src);
@@ -143,6 +125,8 @@ namespace R2toR {
     auto R2toRDFT::DFTReal_symmetric(const DiscreteFunction &toTransform) -> std::shared_ptr<R2toC::DiscreteFunction> {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
+        NOT_IMPLEMENTED
+
         fix M = toTransform.getM();
         fix N = toTransform.getN();
 
@@ -161,12 +145,12 @@ namespace R2toR {
 
         // fix n = N;
         // fix m = M/2+1;
-        fix dk = 2 * M_PI / Lx;
-        fix dω = 2 * M_PI / Ly;
-        fix Δk = (Real)N/2 * dk; // N/2 not N/2+1
+        fix dk = M_PI / Lx;
+        fix dω = M_PI / Ly;
+        fix Δk = (Real)N * dk;
         fix Δω = M * dω;
 
-        auto out = new R2toC::DiscreteFunction(n, M, 0, -Δω/2, Δk+dk, Δω+ dω);
+        auto out = new R2toC::DiscreteFunction(n, M, 0, -Δω/2, Δk+dk, Δω);
         auto &data_out = out->getData();
         fix scale = 1e0/(N*M);
 

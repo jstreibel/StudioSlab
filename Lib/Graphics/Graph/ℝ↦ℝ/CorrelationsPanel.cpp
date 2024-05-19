@@ -95,9 +95,9 @@ namespace Graphics {
 
         if(ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")){
             static auto discardRedundant = false;
-            if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
-                this->computeAll(discardRedundant);
-            }
+            // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
+            //     this->computeAll(discardRedundant);
+            // }
 
             if(ImGui::Button("Compute"))
                 this->computeAll(discardRedundant);
@@ -158,7 +158,7 @@ namespace Graphics {
         if(1) {
             powerSpectrum = Math::Convert(dftFunction, Math::PowerSpectrum);
 
-            auto invDFT    = R2toR::R2toRDFT::DFT(*dftFunction, 1);
+            auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dftFunction, 1);
             auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum, 1);
 
             correlationGraph.addFunction(Math::Convert(invDFT, Math::Real), "choopsy doopsy");

@@ -16,7 +16,7 @@ namespace R2toR {
         static auto DFTReal_symmetric(const R2toR::DiscreteFunction &in) -> std::shared_ptr<R2toC::DiscreteFunction>;
         static auto DFTReal(const R2toR::DiscreteFunction &in, int sign=-1) -> std::shared_ptr<R2toC::DiscreteFunction>;
 
-        static auto DFT(const R2toC::DiscreteFunction &in, int sign=-1) -> std::shared_ptr<R2toC::DiscreteFunction>;
+        static auto DFTComplex(const R2toC::DiscreteFunction &in, int sign=-1) -> std::shared_ptr<R2toC::DiscreteFunction>;
 
 
 
