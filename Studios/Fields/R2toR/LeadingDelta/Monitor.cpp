@@ -36,7 +36,7 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericConfig &params,
 {
     energyRatioData = Spaces::PointSet::New();
     mEnergyRatioGraph.addPointSet(energyRatioData,
-                                  Styles::GetCurrent()->funcPlotStyles[0],
+                                  GetCurrent()->funcPlotStyles[0],
                                   "Numeric/analytic energy");
     panel.addWindowToColumn(&mEnergyRatioGraph, 0);
 
@@ -44,17 +44,17 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericConfig &params,
     numericEnergyData = Spaces::PointSet::New();
     analyticEnergyData = Spaces::PointSet::New();
     mEnergyGraph.addPointSet(numericEnergyData,
-                             Styles::GetCurrent()->funcPlotStyles[0],
+                             GetCurrent()->funcPlotStyles[0],
                              "Numeric energy");
     mEnergyGraph.addPointSet(analyticEnergyData,
-                             Styles::GetCurrent()->funcPlotStyles[1],
+                             GetCurrent()->funcPlotStyles[1],
                              "Analytic energy");
     panel.addWindowToColumn(&mEnergyGraph, 0);
 
 
     totalEnergyData = Spaces::PointSet::New();
     mTotalEnergyGraph.addPointSet(totalEnergyData,
-                                  Styles::GetCurrent()->funcPlotStyles[0],
+                                  GetCurrent()->funcPlotStyles[0],
                                   "Total analytic energy");
     panel.addWindowToColumn(&mTotalEnergyGraph, 0);
 
@@ -62,7 +62,7 @@ R2toR::LeadingDelta::OutGL::OutGL(const NumericConfig &params,
                                         {0, xMax},
                                         xMin,
                                         xMax);
-    mSpeedsGraph.addSection(line, Styles::Color(1,0,0,1));
+    mSpeedsGraph.addSection(line, Color(1,0,0,1));
     panel.addWindowToColumn(&mSpeedsGraph, 1);
 
 
@@ -131,10 +131,10 @@ void R2toR::LeadingDelta::OutGL::draw() {
 
             mSectionGraph.clearCurves();
             mSectionGraph.addCurve(RtoR2::StraightLine::New({R, -10}, {R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashedLine, false, Styles::Nil, 2),
+                                   PlotStyle(Color{1, 0, 0}, DotDashedLine, false, Nil, 2),
                                    "Numeric wave inside limits");
             mSectionGraph.addCurve(RtoR2::StraightLine::New({-R, -10}, {-R, 10}),
-                                   Styles::PlotStyle(Styles::Color{1, 0, 0}, Styles::DotDashedLine, false, Styles::Nil, 2),
+                                   PlotStyle(Color{1, 0, 0}, DotDashedLine, false, Nil, 2),
                                    "");
         }
 
@@ -188,7 +188,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     ImGui::Checkbox("Show analytic speed", &analyticSpeed);
     ImGui::End();
 
-    if(numeric) mSectionGraph.addFunction(&phi, "Numeric", Styles::GetCurrent()->funcPlotStyles[0]);
+    if(numeric) mSectionGraph.addFunction(&phi, "Numeric", GetCurrent()->funcPlotStyles[0]);
 
     stats.addVolatileStat(Str("Ring radius: ") + ToStr(rd.getRadius()));
 
@@ -197,7 +197,7 @@ void R2toR::LeadingDelta::OutGL::draw() {
     if(deltaRing) {
         auto name = Str("Ring delta x") + ToStr(scale, 2, true);
 
-        mSectionGraph.addFunction(&rdScaledDown, name, Styles::GetCurrent()->funcPlotStyles[1]);
+        mSectionGraph.addFunction(&rdScaledDown, name, GetCurrent()->funcPlotStyles[1]);
     }
 
     // Essas funcs precisam ficar do lado de fora do 'if', pra não serem deletadas antes da chamada ao
@@ -208,18 +208,18 @@ void R2toR::LeadingDelta::OutGL::draw() {
     if(analytic)     mSectionGraph.addFunction(
             &shockwave,
             "Analytic",
-            Styles::GetCurrent()->funcPlotStyles[2]);
+            GetCurrent()->funcPlotStyles[2]);
 
     if(numericSpeed) mSpeedsGraph .addFunction(
             &dphidt,
             "Numeric speed",
-            Styles::GetCurrent()->funcPlotStyles[0]);
+            GetCurrent()->funcPlotStyles[0]);
 
     static RtoR::AnalyticShockwave2DRadialSymmetryTimeDerivativeB ddtRadialShockwave(2*h);
     ddtRadialShockwave.sett(t - dt - Real(timeOffset));
     static FunctionAzimuthalSymmetry ddtShockwave(&ddtRadialShockwave, 1, 0, 0, false);
     if(analyticSpeed)
-        mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", Styles::GetCurrent()->funcPlotStyles[2]);
+        mSpeedsGraph.addFunction(&ddtShockwave, "Analytic speed", GetCurrent()->funcPlotStyles[2]);
 }
 
 bool R2toR::LeadingDelta::OutGL::notifyKeyboard(unsigned char key, int x, int y) {

@@ -62,7 +62,7 @@ void GLFWBackend::run(Program *pProgram) {
     mainLoop();
 }
 
-void GLFWBackend::finish() {
+void GLFWBackend::terminate() {
     // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
     finishFlag = true;
 }

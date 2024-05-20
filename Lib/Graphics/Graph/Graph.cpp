@@ -3,7 +3,7 @@
 //
 
 #include "Graph.h"
-#include "Styles.h"
+#include "PlotStyle.h"
 
 #include <utility>
 #include "imgui.h"
@@ -69,7 +69,7 @@ bool Graphics::Graph2D::removeArtist(const Graphics::Artist::Ptr &pArtist) {
 
 void Graphics::Graph2D::draw() {
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
-    Window::setBGColor(Math::StylesManager::GetCurrent()->graphBackground);
+    Window::setBGColor(StylesManager::GetCurrent()->graphBackground);
     Window::draw();
 
     artistXHair.setVisibility(isMouseIn());
@@ -138,7 +138,7 @@ void Graphics::Graph2D::drawCurves() {
 
 void
 Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
-                               Styles::PlotStyle style,
+                               PlotStyle style,
                                Str setName,
                                bool affectsGraphRanges) {
     auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName),
@@ -159,19 +159,19 @@ void Graphics::Graph2D::removePointSet(const Str &name) {
 }
 
 void
-Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name) {
+Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, PlotStyle style, Str name) {
     CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
     curves.emplace_back(curveMetadata);
 }
 
 void
 Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
-                                  Styles::PlotStyle style) noexcept {
+                                  PlotStyle style) noexcept {
     auto pts = pSet.getPoints();
 
     OpenGL::Shader::remove();
 
-    if (style.filled && !(style.primitive == Styles::Point || style.primitive == Styles::Lines)) {
+    if (style.filled && !(style.primitive == Point || style.primitive == Lines)) {
         const auto color = style.fillColor;
 
         glColor4f(color.r, color.g, color.b, color.a);
@@ -204,17 +204,17 @@ Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         auto color = style.lineColor;
         glColor4f(color.r, color.g, color.b, color.a);
 
-        if (style.primitive != Styles::SolidLine
-            && style.primitive != Styles::VerticalLines
-            && style.primitive != Styles::Lines) {
+        if (style.primitive != Solid
+            && style.primitive != VerticalLines
+            && style.primitive != Lines) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
         } else glEnable(GL_LINE_SMOOTH);
 
         auto primitive = GL_LINE_STRIP;
-        if (style.primitive == Styles::Point || style.primitive == Styles::VerticalLines) {
-            fix ptSizeFactor = style.primitive == Styles::VerticalLines ? 5.0 : 1.0;
+        if (style.primitive == Point || style.primitive == VerticalLines) {
+            fix ptSizeFactor = style.primitive == VerticalLines ? 5.0 : 1.0;
 
             primitive = GL_POINTS;
             glEnable(GL_POINT_SMOOTH);
@@ -222,7 +222,7 @@ Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
 
             glEnable(GL_LINE_SMOOTH);
             glLineWidth(style.thickness);
-        } else if (style.primitive == Styles::Lines) {
+        } else if (style.primitive == Lines) {
             primitive = GL_LINES;
         }
 
@@ -234,7 +234,7 @@ Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
         }
         glEnd();
 
-        if (style.primitive == Styles::VerticalLines) {
+        if (style.primitive == VerticalLines) {
             glBegin(GL_LINES);
             {
                 for (auto p: pts) {
@@ -266,7 +266,7 @@ void Graphics::Graph2D::setupOrtho() const {
     glOrtho(region.xMin, region.xMax, region.yMin, region.yMax, -1, 1);
 
     auto vp = getViewport();
-    auto currStyle = Math::StylesManager::GetCurrent();
+    auto currStyle = StylesManager::GetCurrent();
     currStyle->labelsWriter->reshape(vp.width(), vp.height());
     currStyle->ticksWriter->reshape(vp.width(), vp.height());
 }

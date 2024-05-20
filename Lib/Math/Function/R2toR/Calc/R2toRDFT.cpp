@@ -13,24 +13,40 @@
 
 namespace R2toR {
 
+    DataMoveMangleMode resolveInputPolicy(R2toRDFT::DataPolicy inputPolicy, R2toRDFT::Transform transform) {
+        if(inputPolicy == R2toRDFT::Auto)
+            return transform==R2toRDFT::InverseFourier ? DataMoveMangleMode::Mangle : KeepArrangement;
 
+        return inputPolicy==R2toRDFT::Mangle ? DataMoveMangleMode::Mangle : DataMoveMangleMode::KeepArrangement;
+    }
 
-    auto R2toRDFT::DFTComplex(const R2toC::DiscreteFunction &in, int sign) -> std::shared_ptr<R2toC::DiscreteFunction> {
+    DataMoveMangleMode resolveOutputPolicy(R2toRDFT::DataPolicy outputPolicy, R2toRDFT::Transform transform) {
+        if(outputPolicy == R2toRDFT::Auto)
+            return transform==R2toRDFT::Fourier ? DataMoveMangleMode::Mangle : KeepArrangement;
+
+        return outputPolicy==R2toRDFT::Mangle ? DataMoveMangleMode::Unmangle : DataMoveMangleMode::KeepArrangement;
+    }
+
+    auto R2toRDFT::DFTComplex(const R2toC::DiscreteFunction &in, Transform transform,
+                              DataPolicy inputPolicy, DataPolicy outputPolicy) -> std::shared_ptr<R2toC::DiscreteFunction> {
         fix M = (int)in.M;
         fix N = (int)in.N;
 
         // const_cast because fftw does not accept constant data sources.
         auto* data_src_raw /*(N * M)*/ = TO_FFTW(const_cast<Complex*>(&in.getData()[0]));
         auto* data_src = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
-        auto* data_dft_output = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
+        auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
+
+
 
         // sign==1 => only mangle if inverse FT
+
         MoveData(TO_STD(data_src_raw),
                 TO_STD(data_src),
                 N, M, 1.0,
-                sign==1 ? Mangle : KeepArrangement);
+                 resolveInputPolicy(inputPolicy, transform));
 
-        auto plan = fftw_plan_dft_2d(M, N, TO_FFTW(data_src), data_dft_output, sign, FFTW_ESTIMATE);
+        auto plan = fftw_plan_dft_2d(M, N, TO_FFTW(data_src), data_dft, transform, FFTW_ESTIMATE);
 
         fftw_execute(plan);
 
@@ -46,18 +62,20 @@ namespace R2toR {
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
-        MoveData( TO_STD(data_dft_output),
+        MoveData(TO_STD(data_dft),
                  TO_STD(data_out),
                  N, M,
-                 scale, sign==-1 ? Unmangle : KeepArrangement);
+                 scale, resolveOutputPolicy(outputPolicy, transform));
 
         fftw_destroy_plan(plan);
-        fftw_free(data_dft_output);
+        fftw_free(data_src);
+        fftw_free(data_dft);
 
         return std::shared_ptr<R2toC::DiscreteFunction>{out};
     }
 
-    auto R2toRDFT::DFTReal(const DiscreteFunction &in, int sign) -> std::shared_ptr<R2toC::DiscreteFunction> {
+    auto R2toRDFT::DFTReal(const DiscreteFunction &in, Transform transform,
+                           DataPolicy inputPolicy, DataPolicy outputPolicy) -> std::shared_ptr<R2toC::DiscreteFunction> {
         fix M = (int)in.getM();
         fix N = (int)in.getN();
 
@@ -66,20 +84,16 @@ namespace R2toR {
         auto* data_src = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
         auto* data_dft = fftw_alloc_complex(sizeof(fftw_complex) * N * M);
 
-        MoveData(data_src_raw, TO_STD(data_src), N, M, 1.0, sign==1 ? Mangle : KeepArrangement);
 
-        /*
-        for(int i=0; i<N; ++i) {
-            for (int j=0; j < M; ++j) {
-                fix &f = data_src_raw[i+j*N];
-                auto *z = data_src[i+j*N];
 
-                z[0] = f;
-                z[1] = 0.0;
-            }
-        }*/
+        // -----
 
-        auto plan = fftw_plan_dft_2d(M, N, data_src, data_dft, sign, FFTW_ESTIMATE);
+        MoveData(data_src_raw,
+                 TO_STD(data_src),
+                 N, M, 1.0,
+                 resolveInputPolicy(inputPolicy, transform));
+
+        auto plan = fftw_plan_dft_2d(M, N, data_src, data_dft, transform, FFTW_ESTIMATE);
 
         fftw_execute(plan);
 
@@ -93,13 +107,12 @@ namespace R2toR {
 
         auto out = new R2toC::DiscreteFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
         auto data_out = &out->getData()[0];
-
         fix scale = Lₓ*Lₜ/(N*M);
 
         MoveData( TO_STD(data_dft),
                  TO_STD(data_out),
                  N, M, scale,
-                 sign==-1 ? Unmangle : KeepArrangement);
+                  resolveOutputPolicy(outputPolicy, transform));
 
         fftw_destroy_plan(plan);
         fftw_free(data_src);

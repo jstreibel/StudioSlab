@@ -15,12 +15,12 @@
 namespace Graphics {
 
     class GUIWindow : public Window {
-        std::vector<std::pair<Str, Styles::Color>> stats;
+        std::vector<std::pair<Str, Color>> stats;
 
     public:
         explicit GUIWindow();
 
-        void addVolatileStat(const Str &stat, Styles::Color color = {1, 1, 1});
+        void addVolatileStat(const Str &stat, Color color = {0, 0, 0});
 
         void draw() override;
 

@@ -14,7 +14,7 @@ namespace Graphics {
     class GraphRtoR : public FunctionGraph<RtoR::Function> {
         Real scale = 1.0;
     protected:
-        void _renderFunction(const RtoR::Function *func, Styles::PlotStyle style) override;
+        void _renderFunction(const RtoR::Function *func, PlotStyle style) override;
 
     public:
         explicit GraphRtoR(Real xMin = -1, Real xMax = 1, Real yMin = -1, Real yMax = 1,

@@ -7,7 +7,7 @@
 
 #include "LabelingHelper.h"
 
-#include "Styles.h"
+#include "PlotStyle.h"
 
 #include "Graphics/Utils.h"
 #include "Graphics/Window/Window.h"
@@ -41,7 +41,7 @@ namespace Graphics {
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
             Spaces::PointSet::Ptr data;
-            Styles::PlotStyle plotStyle;
+            PlotStyle plotStyle;
             Str name;
             bool affectsGraphRanges=true;
         };
@@ -51,7 +51,7 @@ namespace Graphics {
         // ************************ CURVES *****************************************
         struct CurveMetadata{
             RtoR2::ParametricCurve::Ptr curve;
-            Styles::PlotStyle style;
+            PlotStyle style;
             Str name;
         };
 
@@ -75,7 +75,7 @@ namespace Graphics {
         Math::Graphics::LabelingHelper labelingHelper;
 
         virtual auto countDisplayItems() const -> Count;
-        void nameLabelDraw(const Styles::PlotStyle &style, const Str& label);
+        void nameLabelDraw(const PlotStyle &style, const Str& label);
 
         void artistsDraw();
         void drawPointSets();
@@ -102,15 +102,15 @@ namespace Graphics {
         void setupOrtho() const;
 
         void addPointSet(Spaces::PointSet::Ptr pointSet,
-                         Styles::PlotStyle style,
+                         PlotStyle style,
                          Str setName="",
                          bool affectsGraphRanges=true);
         void removePointSet(const Spaces::PointSet::Ptr& pointSet);
         void removePointSet(const Str& name);
-        static void renderPointSet(const Spaces::PointSet &pSet, Styles::PlotStyle style) noexcept;
+        static void renderPointSet(const Spaces::PointSet &pSet, PlotStyle style) noexcept;
         void clearPointSets();
 
-        void addCurve(RtoR2::ParametricCurve::Ptr curve, Styles::PlotStyle style, Str name);
+        void addCurve(RtoR2::ParametricCurve::Ptr curve, PlotStyle style, Str name);
         void clearCurves();
 
         void reviewGraphRanges();

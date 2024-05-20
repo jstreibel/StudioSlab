@@ -54,7 +54,7 @@ namespace Graphics {
         auto &region = graph.getRegion();
         auto vp = graph.getViewport();
 
-        auto currStyle = Math::StylesManager::GetCurrent();
+        auto currStyle = StylesManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
 
@@ -98,7 +98,7 @@ namespace Graphics {
         auto vp = graph.getViewport();
         auto region = graph.getRegion();
 
-        auto currStyle = Math::StylesManager::GetCurrent();
+        auto currStyle = StylesManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
         fix fontHeight = writer->getFontHeightInPixels();
@@ -170,7 +170,7 @@ namespace Graphics {
     void AxisArtist::drawYAxis(const Graph2D &graph) const {
         auto vp = graph.getViewport();
         auto region = graph.getRegion();
-        auto currStyle = Math::StylesManager::GetCurrent();
+        auto currStyle = StylesManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
 

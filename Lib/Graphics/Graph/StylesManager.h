@@ -5,13 +5,12 @@
 #ifndef STUDIOSLAB_STYLESMANAGER_H
 #define STUDIOSLAB_STYLESMANAGER_H
 
-#include "Styles.h"
-
 #include "Utils/Singleton.h"
 
 #include "Core/Backend/Events/GUIEventListener.h"
+#include "GraphTheme.h"
 
-namespace Math {
+namespace Graphics {
 
     class StylesManager : public Singleton<StylesManager>, public Core::GUIEventListener {
     protected:
@@ -20,11 +19,11 @@ namespace Math {
         StylesManager();
 
     public:
-        static Styles::ColorScheme_ptr GetCurrent();
+        static GraphTheme_ptr GetCurrent();
 
         bool notifyRender() override;
     };
 
-} // Math
+} // Graphics
 
 #endif //STUDIOSLAB_STYLESMANAGER_H

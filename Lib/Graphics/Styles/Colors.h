@@ -8,7 +8,7 @@
 #include <cmath>
 #include "Utils/Types.h"
 
-namespace Styles {
+namespace Graphics {
     struct Color
     {
     public:

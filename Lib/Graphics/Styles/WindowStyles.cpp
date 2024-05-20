@@ -10,10 +10,10 @@ namespace Graphics {
 
     int menuHeight = 32;
 
-    // Styles::Color clearColor = {0.1, 0.1, 0.15, 1};
-    // Styles::Color clearColor = {0.9, 0.9, 0.85, 1};
-    Styles::Color clearColor = {0.9, 0.85, 0.85, 1};
-    //Styles::Color windowBorderColor_inactive = {0.2,0.2,0.30,1};
-    Styles::Color windowBorderColor_inactive = {0.,0.,0.,1};
-    Styles::Color windowBorderColor_active = {0.4,0.4,0.60,1};
+    // Color clearColor = {0.1, 0.1, 0.15, 1};
+    // Color clearColor = {0.9, 0.9, 0.85, 1};
+    Color clearColor = {0.9, 0.85, 0.85, 1};
+    //Color windowBorderColor_inactive = {0.2,0.2,0.30,1};
+    Color windowBorderColor_inactive = {0.,0.,0.,1};
+    Color windowBorderColor_active = {0.4,0.4,0.60,1};
 }

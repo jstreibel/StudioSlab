@@ -119,7 +119,7 @@ namespace Graphics {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void Field2DActor::setAmbientLight(Styles::Color color) { program.setUniform("amb", color.array()); }
+    void Field2DActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
 
     void Field2DActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
 

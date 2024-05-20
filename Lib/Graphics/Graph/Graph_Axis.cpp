@@ -57,7 +57,7 @@ void Graphics::Graph2D::reviewGraphRanges() {
     }
 }
 
-void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str& label) {
+void Graphics::Graph2D::nameLabelDraw(const Graphics::PlotStyle &style, const Str& label) {
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
     OpenGL::Shader::remove();
@@ -100,7 +100,7 @@ void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str&
         glColor4f(color.r, color.g, color.b, color.a);
         glLineWidth(style.thickness);
 
-        if (style.primitive != Styles::SolidLine) {
+        if (style.primitive != Graphics::Solid) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
             glLineStipple(style.stippleFactor, style.stipplePattern);
@@ -130,7 +130,7 @@ void Graphics::Graph2D::nameLabelDraw(const Styles::PlotStyle &style, const Str&
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.5);
 
-    auto currStyle = Math::StylesManager::GetCurrent();
+    auto currStyle = StylesManager::GetCurrent();
 
     auto c = currStyle->graphNumbersColor;
     Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};

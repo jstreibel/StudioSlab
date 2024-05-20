@@ -15,9 +15,9 @@
 
 #define max(a, b) ((a)>(b)?(a):(b))
 
-const Styles::Color T1_color = Styles::Color(0, 1, 0);
-const Styles::Color T2_color = Styles::Color(1, 0.45, 1);
-const Styles::Color T3_color = Styles::Color(1, 1, 0);
+const Color T1_color = Color(0, 1, 0);
+const Color T2_color = Color(1, 0.45, 1);
+const Color T3_color = Color(1, 1, 0);
 
 namespace Montecarlo {
 
@@ -27,9 +27,9 @@ namespace Montecarlo {
         temperature3History = RtoR::ResizableDiscreteFunction(0, 0.1);
 //
         mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
-        mTemperaturesGraph->addFunction(&temperature1History, "T_1", Styles::GetCurrent()->funcPlotStyles[0]);
-        mTemperaturesGraph->addFunction(&temperature2History, "T_2", Styles::GetCurrent()->funcPlotStyles[1]);
-        mTemperaturesGraph->addFunction(&temperature3History, "T_3", Styles::GetCurrent()->funcPlotStyles[2]);
+        mTemperaturesGraph->addFunction(&temperature1History, "T_1", GetCurrent()->funcPlotStyles[0]);
+        mTemperaturesGraph->addFunction(&temperature2History, "T_2", GetCurrent()->funcPlotStyles[1]);
+        mTemperaturesGraph->addFunction(&temperature3History, "T_3", GetCurrent()->funcPlotStyles[2]);
         panel.addWindow(mTemperaturesGraph);
 
         initialize();

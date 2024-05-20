@@ -13,9 +13,9 @@ namespace Graphics {
 
     extern int menuHeight;
 
-    extern Styles::Color clearColor;
-    extern Styles::Color windowBorderColor_inactive;
-    extern Styles::Color windowBorderColor_active;
+    extern Color clearColor;
+    extern Color windowBorderColor_inactive;
+    extern Color windowBorderColor_active;
 }
 
 #endif //V_SHAPE_WINDOWSTYLES_H

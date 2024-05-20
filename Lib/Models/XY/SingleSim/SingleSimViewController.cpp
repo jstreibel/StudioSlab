@@ -268,7 +268,7 @@ namespace ThermoOutput {
                     val -= floor(val);
                     val *= 360.0;
 
-                    auto rgbColor = Styles::hsv2rgb({static_cast<Real>(val), 1, 1});
+                    auto rgbColor = Graphics::hsv2rgb({static_cast<Real>(val), 1, 1});
                     auto color = sf::Color((float)rgbColor.r * 255., (float)rgbColor.g * 255., (float)rgbColor.b * 255.);
 
                     if(val>(360.0-.5*GAP) || val<(.5*GAP)){ color.r*=0; color.g*=0; color.b*=0; }

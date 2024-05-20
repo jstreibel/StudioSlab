@@ -11,9 +11,9 @@
 
 #include "Utils/Types.h"
 #include "Colors.h"
-#include "Graphics/Graph/Styles.h"
+#include "Graphics/Graph/PlotStyle.h"
 
-namespace Styles {
+namespace Graphics {
 
     class ColorMap {
     public:
@@ -25,19 +25,19 @@ namespace Styles {
         };
 
     private:
-        std::vector<Styles::Color> colors;
-        Styles::Color clipped, saturated;
+        std::vector<Color> colors;
+        Color clipped, saturated;
         Str name;
         ColorMapType type;
 
     public:
         ColorMap() = default;
-        ColorMap(Str name, ColorMapType, std::vector<Styles::Color> colorSeq,
-                 Styles::Color clipped=Styles::Nil,
-                 Styles::Color saturated=Styles::Nil);
+        ColorMap(Str name, ColorMapType, std::vector<Color> colorSeq,
+                 Color clipped=Nil,
+                 Color saturated=Nil);
         ColorMap(const ColorMap &colorMap);
 
-        auto mapValueToColor(Real value) const -> Styles::Color;
+        auto mapValueToColor(Real value) const -> Color;
 
         auto permute() const -> ColorMap;
         auto bgr() const -> ColorMap;

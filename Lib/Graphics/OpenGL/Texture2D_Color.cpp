@@ -21,7 +21,7 @@ namespace Graphics::OpenGL {
 
     }
 
-    bool Texture2D_Color::setColor(int i, int j, Styles::Color color) {
+    bool Texture2D_Color::setColor(int i, int j, Color color) {
         if(data == nullptr) return false;
 
         fix index = i*4 + j*getWidth()*4;

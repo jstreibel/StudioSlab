@@ -21,7 +21,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 : ::Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , hamiltonian(hamiltonian)
 {
-    auto currStyle = Math::StylesManager::GetCurrent();
+    auto currStyle = Graphics::StylesManager::GetCurrent();
 
     dataViews.emplace_back(new RtoR::RealtimePanel(params, hamiltonian, guiWindow, phiMin, phiMax, showEnergyHistoryAsDensities));
     dataViews.emplace_back(new Graphics::RtoRFourierPanel(params, hamiltonian, guiWindow));
@@ -85,7 +85,7 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
     fullHistoryGraph = Pointer(new Graphics::HistoryDisplay("Full field history"));
     fullHistoryGraph->addFunction(simulationHistory, "ϕ(t,x)", -100);
 
-    fullHistoryGraph->setColorMap(Styles::ColorMaps["BrBG"].inverse());
+    fullHistoryGraph->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
 
     for(auto dataView : dataViews)
         dataView->setSimulationHistory(simHistory, fullHistoryGraph);
@@ -100,7 +100,7 @@ void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::Discrete
     fullSFTHistoryGraph = Pointer(new Graphics::HistoryDisplay("Space DFT history"));
     fullSFTHistoryGraph->addFunction(spaceFTHistory, "ℱ[ϕ(t)](k)");
 
-    fullSFTHistoryGraph->setColorMap(Styles::ColorMaps["blues"].inverse().bgr());
+    fullSFTHistoryGraph->setColorMap(Graphics::ColorMaps["blues"].inverse().bgr());
     fullSFTHistoryGraph->getAxisArtist().setHorizontalUnit(Constants::π);
     fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
     fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");

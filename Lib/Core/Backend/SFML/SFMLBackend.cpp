@@ -132,7 +132,7 @@ sf::RenderWindow &SFMLBackend::getMainWindow() {
     return *window;
 }
 
-void SFMLBackend::finish() {
+void SFMLBackend::terminate() {
     window->close();
 }
 

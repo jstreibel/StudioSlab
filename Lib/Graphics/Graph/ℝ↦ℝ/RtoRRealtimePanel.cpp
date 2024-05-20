@@ -52,7 +52,7 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 , mHistorySliceGraph(params.getxMin(), params.getxMax(),
                      phiMin, phiMax, "Fields", true)
 {
-    auto currStyle = Math::StylesManager::GetCurrent();
+    auto currStyle = Graphics::StylesManager::GetCurrent();
 
     {
         auto sty = currStyle->funcPlotStyles.begin();
@@ -172,7 +172,7 @@ void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::Disc
     RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
     if(0) {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors();
         style.thickness = 3;
         simulationHistoryGraph->addCurve(DummyPtr(historyLine), style, "t_history");
     }
@@ -247,7 +247,7 @@ void RtoR::RealtimePanel::updateFourierGraph() {
 
         modes = FFT::Compute(fieldState);
 
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
 
         mSpaceFourierModesGraph.clearPointSets();
 
@@ -256,7 +256,7 @@ void RtoR::RealtimePanel::updateFourierGraph() {
             auto myStyle = *style;
 
             myStyle.thickness = 2.5;
-            myStyle.primitive = Styles::VerticalLines;
+            myStyle.primitive = Graphics::VerticalLines;
             myStyle.filled = false;
             mSpaceFourierModesGraph.addPointSet(modes.getMagnitudes(), myStyle, "|ℱ[ϕ](ω)|", false);
         }
@@ -266,11 +266,11 @@ void RtoR::RealtimePanel::updateFourierGraph() {
             auto myStyle2 = *++style;
 
             myStyle1.thickness = 2.5;
-            myStyle1.primitive = Styles::VerticalLines;
+            myStyle1.primitive = Graphics::VerticalLines;
             myStyle1.filled = false;
 
             myStyle2.thickness = 2.5;
-            myStyle2.primitive = Styles::VerticalLines;
+            myStyle2.primitive = Graphics::VerticalLines;
             myStyle2.filled = false;
 
             mSpaceFourierModesGraph.addPointSet(modes.re, *style++, "ℜ(ℱ[ϕ](ω))", false);

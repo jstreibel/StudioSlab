@@ -34,7 +34,10 @@ namespace Core {
     void ImGuiModuleGLFW::beginRender() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+
+        //ImGui::NewFrame();
+
+        ImGuiModule::beginRender();
     }
 
 
@@ -44,7 +47,7 @@ namespace Core {
 
         if(!ImGui::GetIO().WantCaptureKeyboard) {
             if(key == GLFW_KEY_D){
-                showDemos = true;
+                showDemos = !showDemos;
 
                 return true;
             }

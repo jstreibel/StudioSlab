@@ -38,7 +38,7 @@ namespace Graphics::OpenGL {
             Log::Success() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    bool Texture1D_Color::setColor(int i, Styles::Color color) {
+    bool Texture1D_Color::setColor(int i, Color color) {
         if(data == nullptr) return false;
 
         fix index = i*4;

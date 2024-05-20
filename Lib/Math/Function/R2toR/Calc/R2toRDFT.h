@@ -12,15 +12,27 @@ namespace R2toR {
 
     class R2toRDFT {
     public:
+        typedef std::shared_ptr<R2toC::DiscreteFunction> FFTData;
 
-        static auto DFTReal_symmetric(const R2toR::DiscreteFunction &in) -> std::shared_ptr<R2toC::DiscreteFunction>;
-        static auto DFTReal(const R2toR::DiscreteFunction &in, int sign=-1) -> std::shared_ptr<R2toC::DiscreteFunction>;
+        enum DataPolicy {
+            Mangle,
+            Keep,
+            Auto
+        };
 
-        static auto DFTComplex(const R2toC::DiscreteFunction &in, int sign=-1) -> std::shared_ptr<R2toC::DiscreteFunction>;
+        enum Transform {
+            Fourier=-1,
+            InverseFourier=1
+        };
 
+        static auto DFTReal_symmetric(const R2toR::DiscreteFunction &in) -> FFTData;
 
+        static auto DFTReal   (const R2toR::DiscreteFunction &in, Transform transform=Fourier,
+                               DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
+        static auto DFTComplex(const R2toC::DiscreteFunction &in, Transform transform=Fourier,
+                               DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
 
-        static auto DFT_inverse_symmetric(const R2toC::DiscreteFunction &in) -> std::shared_ptr<R2toC::DiscreteFunction>;
+        static auto DFT_inverse_symmetric(const R2toC::DiscreteFunction &in) -> FFTData;
 
 
 

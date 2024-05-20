@@ -20,7 +20,7 @@ namespace Graphics::OpenGL {
     public:
         Texture2D_Color(GLsizei width, GLsizei height);
 
-        bool setColor(int i, int j, Styles::Color color);
+        bool setColor(int i, int j, Color color);
 
         bool upload(UInt row=0, Count nRows=0);
     };

@@ -18,7 +18,7 @@ public:
     void notifyReshape(int newWinW, int newWinH) override;
 
 protected:
-    void _renderFunction(const R2toR::Function *func, Styles::PlotStyle style) override;
+    void _renderFunction(const R2toR::Function *func, PlotStyle style) override;
 
 private:
     ZoomPanRotate zpr;

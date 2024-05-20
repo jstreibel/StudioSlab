@@ -20,7 +20,7 @@ namespace R2toR {
 class OutputOpenGL : public ::Graphics::OpenGLMonitor {
     protected:
         Real phiMin, phiMax;
-        GraphR2Section mSectionGraph;
+        Graphics::GraphR2Section mSectionGraph;
         Graphics::FlatFieldDisplay mFieldDisplay;
 
     public:

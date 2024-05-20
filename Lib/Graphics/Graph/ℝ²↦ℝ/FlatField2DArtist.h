@@ -35,7 +35,7 @@ namespace Graphics {
         Real field_min;
         Real field_max;
 
-        Styles::ColorMap cMap           = Styles::ColorMaps["BrBG"];
+        ColorMap cMap           = ColorMaps["BrBG"];
         Real cMap_kappaArg                =  1; // contrast
         Real cMap_saturationValue       =  1.1;
         bool symmetricMaxMin            = true;
@@ -63,7 +63,7 @@ namespace Graphics {
 
         void setFunction(R2toR::Function::ConstPtr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function::ConstPtr;
-        void setColorMap(const Styles::ColorMap& colorMap);
+        void setColorMap(const ColorMap& colorMap);
         void set_xPeriodicOn();
 
         void adjustScale();

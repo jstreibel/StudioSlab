@@ -33,7 +33,7 @@ namespace Graphics {
                 LogEpsilon
             };
 
-            Styles::ColorMap currColorMap;
+            ColorMap currColorMap;
             typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
 
         protected:
@@ -58,7 +58,7 @@ namespace Graphics {
             auto getFunctionsMap() const -> FuncsMap;
 
 
-            void setColorMap(const Styles::ColorMap& colorMap);
+            void setColorMap(const ColorMap& colorMap);
 
             bool notifyMouseWheel(double dx, double dy) override;
 

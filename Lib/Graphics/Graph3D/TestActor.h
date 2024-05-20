@@ -22,7 +22,7 @@ namespace Graphics {
 
         void draw(const Graph3D &graph3D) override;
 
-        void setAmbientLight(Styles::Color color);
+        void setAmbientLight(Color color);
     };
 
 } // Graphics

@@ -24,7 +24,7 @@ R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params, Real phiMin, Real
          yMax = params.getxMax();
 
     auto line = new RtoR2::StraightLine({0, yMin},{0, yMax}, yMin, yMax);
-    mSectionGraph.addSection(line, Styles::Color(1,0,0,1));
+    mSectionGraph.addSection(line, Graphics::Color(1,0,0,1));
 
     addWindow(DummyPtr(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
 }

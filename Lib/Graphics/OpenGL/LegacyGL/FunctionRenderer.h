@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FUNCTIONRENDERER_H
 #define V_SHAPE_FUNCTIONRENDERER_H
 
-#include "Graphics/Graph/Styles.h"
+#include "Graphics/Graph/PlotStyle.h"
 #include "Graphics/Utils.h"
 
 // TODO these #includes below shouldn't be THIS far from this file
@@ -20,19 +20,19 @@ namespace Graphics {
     class FunctionRenderer {
     public:
 
-        static void renderFunction(          const RtoR::DiscreteFunction &func, Styles::Color c, bool filled,
+        static void renderFunction(          const RtoR::DiscreteFunction &func, Color c, bool filled,
                                              Real scale = 1.0);
-        static void renderFunction(          const RtoR::Function &func, Styles::Color c, bool filled,
+        static void renderFunction(          const RtoR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, UInt resolution, Real scale = 1.0);
         static void renderFunction(          const R2toR::Function &func, Real xMin, Real yMin,
                                              Real L, UInt nLines, UInt linesRes, Real scale = 1.0);
 
 
         static void renderSection(           const R2toR::Function &func, const RtoR2::StraightLine &section,
-                                             Styles::PlotStyle style, UInt resolution, Real scale=1.0);
-        static void renderHorizontalSection( const R2toR::Function &func, Styles::Color c, bool filled,
+                                             PlotStyle style, UInt resolution, Real scale=1.0);
+        static void renderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, UInt resolution);
-        static void renderVerticalSection(   const R2toR::Function &func, Styles::Color c, bool filled,
+        static void renderVerticalSection(   const R2toR::Function &func, Color c, bool filled,
                                              Real yMin, Real yMax, UInt resolution);
 
 

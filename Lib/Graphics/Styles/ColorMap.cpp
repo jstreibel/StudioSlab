@@ -5,11 +5,11 @@
 #include "ColorMap.h"
 
 #include <utility>
-#include "Graphics/Graph/Styles.h"
+#include "Graphics/Graph/PlotStyle.h"
 
 #define Map(cMap) {cMap.getName(), cMap}
 
-namespace Styles {
+namespace Graphics {
 
     auto blues = ColorMap{
         "blues",
@@ -52,22 +52,22 @@ namespace Styles {
     std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
 
     ColorMap::ColorMap(Str name, ColorMapType colorMapType,
-                       std::vector<Styles::Color> colorSeq,
-                       Styles::Color clipped,
-                       Styles::Color saturated)
+                       std::vector<Color> colorSeq,
+                       Color clipped,
+                       Color saturated)
             : name(std::move(name))
             , type(colorMapType)
             , colors(colorSeq)
             , clipped(clipped)
             , saturated(saturated) {
-        if(clipped == Styles::Nil) this->clipped = colorSeq[0];
-        if(saturated == Styles::Nil) this->saturated = colorSeq.back();
+        if(clipped == Nil) this->clipped = colorSeq[0];
+        if(saturated == Nil) this->saturated = colorSeq.back();
     }
 
-    ColorMap::ColorMap(const Styles::ColorMap &colorMap)
+    ColorMap::ColorMap(const ColorMap &colorMap)
             : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated) {}
 
-    auto ColorMap::mapValueToColor(Real value) const -> Styles::Color {
+    auto ColorMap::mapValueToColor(Real value) const -> Color {
         if (colors.empty())
             return {0.0, 0.0, 0.0, 0.0};
         if (value <= 0.0)
@@ -97,7 +97,7 @@ namespace Styles {
 
 
     auto ColorMap::permute() const -> ColorMap {
-        std::vector<Styles::Color> newColors;
+        std::vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.permute());
 
@@ -105,7 +105,7 @@ namespace Styles {
     }
 
     auto ColorMap::bgr() const -> ColorMap {
-        std::vector<Styles::Color> newColors;
+        std::vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.permute(true));
 
@@ -113,7 +113,7 @@ namespace Styles {
     }
 
     auto ColorMap::inverse() const -> ColorMap {
-        std::vector<Styles::Color> newColors;
+        std::vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.inverse());
 
@@ -121,7 +121,7 @@ namespace Styles {
     }
 
     auto ColorMap::reverse() const -> ColorMap {
-        std::vector<Styles::Color> newColors;
+        std::vector<Color> newColors;
 
         for(int i=(int)colors.size()-1; i>=0; --i)
             newColors.push_back(colors[i]);

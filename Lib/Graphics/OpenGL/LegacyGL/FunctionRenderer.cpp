@@ -7,7 +7,7 @@
 // Created by joao on 27/09/2019.
 
 
-void Graphics::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &func, Styles::Color c, bool filled, Real scale){
+void Graphics::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &func, Color c, bool filled, Real scale){
     const Real xMin = func.xMin,
                xMax = func.xMax;
     const int N = func.N;
@@ -15,7 +15,7 @@ void Graphics::FunctionRenderer::renderFunction(const RtoR::DiscreteFunction &fu
     renderFunction(func, c, filled, xMin, xMax, N, scale);
 }
 
-void Graphics::FunctionRenderer::renderFunction(const RtoR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax, UInt resolution, Real scale) {
+void Graphics::FunctionRenderer::renderFunction(const RtoR::Function &func, Color c, bool filled, Real xMin, Real xMax, UInt resolution, Real scale) {
     const Real dx = (xMax-xMin) / Real(resolution);
     const Real xBegin = xMin;
     const Real xEnd = xMax;
@@ -96,7 +96,7 @@ void Graphics::FunctionRenderer::renderFunction(const R2toR::Function &func, Rea
 }
 
 void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section,
-                                           Styles::PlotStyle style, UInt resolution, Real scale) {
+                                           PlotStyle style, UInt resolution, Real scale) {
     const auto ds = section.getΔs() / Real(resolution);
     const auto sMin = section.get_sMin(), sMax = section.get_sMax();
 
@@ -134,7 +134,7 @@ void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, cons
     auto c = style.lineColor;
     glColor4f(c.r, c.g, c.b, c.a);
 
-    if(style.primitive != Styles::SolidLine){
+    if(style.primitive != Solid){
         glDisable(GL_LINE_SMOOTH);
         glEnable(GL_LINE_STIPPLE);
         glLineStipple(style.stippleFactor, style.stipplePattern);
@@ -160,7 +160,7 @@ void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, cons
     //glEnd();
 }
 
-void Graphics::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real xMin, Real xMax,
+void Graphics::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Color c, bool filled, Real xMin, Real xMax,
                                                      UInt resolution) {
     const Real dx = (xMax-xMin) / Real(resolution);
     const Real xBegin = xMin;
@@ -199,7 +199,7 @@ void Graphics::FunctionRenderer::renderHorizontalSection(const R2toR::Function &
     glEnd();
 }
 
-void Graphics::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Styles::Color c, bool filled, Real yMin, Real yMax,
+void Graphics::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Color c, bool filled, Real yMin, Real yMax,
                                                    UInt resolution) {
     Graphics::OpenGL::Shader::remove();
 

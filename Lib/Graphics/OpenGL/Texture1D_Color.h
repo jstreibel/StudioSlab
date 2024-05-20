@@ -24,7 +24,7 @@ namespace Graphics::OpenGL {
     public:
         Texture1D_Color(GLsizei length, GLenum textureUnit = GL_TEXTURE0);
 
-        bool setColor(int i, Styles::Color color);
+        bool setColor(int i, Color color);
 
         void setWrap(OpenGL::WrapMode) const;
 

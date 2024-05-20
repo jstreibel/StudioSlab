@@ -8,6 +8,6 @@ void ConsoleBackend::run(Program *integrator) {
     integrator->cycle(Program::CycleOptions::cycleCycleUntilFinished);
 }
 
-void ConsoleBackend::finish() {
+void ConsoleBackend::terminate() {
 
 }

@@ -57,7 +57,7 @@ public:
     auto getMouseState() const -> MouseState override;
     void run(Program *program) override;
 
-    void finish() override;
+    void terminate() override;
 
     auto getScreenHeight() const -> Real override;
     auto pause() -> void override;

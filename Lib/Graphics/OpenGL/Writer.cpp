@@ -29,7 +29,7 @@ Graphics::Writer::Writer(const Str& fontFile, float ptSize)
 
     Log::Critical() << "Writer being instantiated. Will start generating atlas now." << Log::Flush;
 
-    Styles::Color white = {1, 1, 1, 1};
+    Color white = {1, 1, 1, 1};
     setBufferText(glyphsToLoad, {0, 0}, white);
 
     glGenTextures(1, &atlas->id);
@@ -58,7 +58,7 @@ Graphics::Writer::~Writer() {
     texture_font_delete(font);
 }
 
-void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Styles::Color color) {
+void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Color color) {
     vertexBuffer.clear();
 
     size_t i;
@@ -115,7 +115,7 @@ void Graphics::Writer::drawBuffer() {
 
 }
 
-void Graphics::Writer::write(const Str &text, Point2D pen, Styles::Color color) {
+void Graphics::Writer::write(const Str &text, Point2D pen, Color color) {
     setBufferText(text, pen, color);
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 

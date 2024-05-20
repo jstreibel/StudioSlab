@@ -9,7 +9,7 @@
 #define Clamp()
 
 
-namespace Styles {
+namespace Graphics {
     Color White = {1,1,1,1};
     Color Black = {0,0,0,1};
     Color Red = {1,0,0,1};

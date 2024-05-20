@@ -63,7 +63,7 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
     addWindow(DummyPtr(mCorrelationGraph));
 
     {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
 
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
@@ -85,7 +85,7 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
     }
 
     {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
         mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
         mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
         mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
@@ -148,7 +148,7 @@ void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR:
         correlationLine = std::shared_ptr<RtoR2::StraightLine>(new RtoR2::StraightLine({0, 0}, {L * .5, 0}, 0, L * .5));
         mSpaceCorrelation = RtoR::Section1D::Ptr(new RtoR::Section1D(DummyPtr(mCorrelationFunction), correlationLine));
 
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[1];
         //style.filled = false; // faster (way faster in this case,
         // because CorrelationFunction is slow to compute each value, and filled plots require more computation.
 
@@ -157,7 +157,7 @@ void RtoR::StatisticalMonitor::setSimulationHistory(std::shared_ptr<const R2toR:
         mCorrelationSectionGraph.setScale(2.5e3);
 
         simulationHistoryGraph->addCurve(correlationLine,
-                                         Math::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors(true),
+                                         Graphics::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors(true),
                                          "Correlation reference");
     }
 }
@@ -262,8 +262,8 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
 
                 // Correlation samples in full history
                 {
-                    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[0];
-                    style.primitive = Styles::Point;
+                    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[0];
+                    style.primitive = Graphics::Point;
                     style.thickness = 3;
                     auto ptSet = std::make_shared<Spaces::PointSet>(sampler->getSamples());
                     simulationHistoryGraph->addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
@@ -271,7 +271,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
 
                 // Correlation graph
                 {
-                    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
+                    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[1];
                     mCorrelationSectionGraph.clearPointSets();
                     auto ptSet = RtoR::FunctionRenderer::ToPointSet(*mSpaceCorrelation, .0, .5 * L,
                                                                     mCorrelationSectionGraph.getResolution());
@@ -353,7 +353,7 @@ void RtoR::StatisticalMonitor::draw() {
     auto V = hamiltonian.getTotalPotentialEnergy();
 
     std::ostringstream ss;
-    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
     guiWindow.addVolatileStat("<\\br>");
     guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
     guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
@@ -361,7 +361,7 @@ void RtoR::StatisticalMonitor::draw() {
     guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
     guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-    style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
     fix decimalPlaces = 3;
     guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),      (style++)->lineColor.permute());
     guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces), (style++)->lineColor.permute());

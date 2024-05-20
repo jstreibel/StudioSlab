@@ -20,7 +20,7 @@ namespace Graphics {
     }
 
 
-    void GUIWindow::addVolatileStat(const Str &stat, const Styles::Color color) {
+    void GUIWindow::addVolatileStat(const Str &stat, const Color color) {
         stats.emplace_back(stat, color);
     }
 

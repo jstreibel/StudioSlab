@@ -34,7 +34,7 @@ namespace Graphics::OpenGL {
     void OpenGL::ColorBarArtist::draw(const Graph2D &graph) {
         if( texture == nullptr ) return;
 
-        auto style =  Math::StylesManager::GetCurrent();
+        auto style =  StylesManager::GetCurrent();
         auto &writer = style->labelsWriter;
 
         OpenGL::Shader::remove();
@@ -145,7 +145,7 @@ namespace Graphics::OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void ColorBarArtist::setColorMap(const Styles::ColorMap& map) {
+    void ColorBarArtist::setColorMap(const ColorMap& map) {
         this->colorMap = map;
 
         textureDirty = true;

@@ -43,7 +43,7 @@ namespace Tests {
             for(auto j=0; j<texDim; ++j){
                 fix y = j/(float)texDim;
                 fix r = sqrt(x*x + y*y);
-                fix color = Styles::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
+                fix color = Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
                 realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }

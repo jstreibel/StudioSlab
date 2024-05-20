@@ -195,7 +195,7 @@ void RtoR::Signal::OutGL::draw() {
     stats.addVolatileStat("");
 
     auto jackServer = JackServer::GetInstance();
-    Styles::Color samplingStatusColor = jackServer->isSubSampled()?Styles::Color{1,0,0,1}:Styles::Color{0,1,0,1};
+    Color samplingStatusColor = jackServer->isSubSampled()?Color{1,0,0,1}:Color{0,1,0,1};
 
     stats.addVolatileStat("Jack I/O:");
     stats.addVolatileStat(Str("Probed samples/nframes: ")
@@ -299,7 +299,7 @@ void RtoR::Signal::OutGL::draw() {
         }
         signalBufferGraph.clearFunctions();
         signalBufferGraph.addFunction(&func);
-        // signalBufferGraph.addFunction(&funcMore, Styles::Color(0, 1, 0, 1));
+        // signalBufferGraph.addFunction(&funcMore, Color(0, 1, 0, 1));
         //signalGraph.addFunction(&funcLess, Color(.3,.3,1,1));
     }
 

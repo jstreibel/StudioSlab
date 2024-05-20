@@ -29,13 +29,13 @@ namespace Graphics {
         ftgl::mat4 model{}, view{}, projection{};
 
         void drawBuffer();
-        void setBufferText(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
+        void setBufferText(const Str &text, Point2D penLocation, Color color=White);
 
     public:
         Writer(const Str &fontFile, float ptSize);
         virtual ~Writer();
 
-        void write(const Str &text, Point2D penLocation, Styles::Color color=Styles::White);
+        void write(const Str &text, Point2D penLocation, Color color=White);
         Real getFontHeightInPixels() const;
         void reshape(int w, int h);
 

@@ -188,7 +188,7 @@ Str Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords)
     return label;
 }
 
-void Graphics::FlatFieldDisplay::setColorMap(const Styles::ColorMap &colorMap) {
+void Graphics::FlatFieldDisplay::setColorMap(const ColorMap &colorMap) {
     for(auto &artist : ff2dArtists) {
         artist->setColorMap(colorMap);
     }

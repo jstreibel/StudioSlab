@@ -165,7 +165,7 @@ namespace Graphics {
 
                 {
                     StrVector items;
-                    for (const auto &cMapPair: Styles::ColorMaps)
+                    for (const auto &cMapPair: ColorMaps)
                         items.emplace_back(cMapPair.first);
                     static int item_current_idx = 0; // Here we store our selection data as an index.
                     static int item_last_idx = 0;
@@ -184,7 +184,7 @@ namespace Graphics {
                                 ImGui::SetItemDefaultFocus();
                         }
                         if (item_last_idx != item_current_idx)
-                            setColorMap(Styles::ColorMaps[selectedItem]);
+                            setColorMap(ColorMaps[selectedItem]);
                         item_last_idx = item_current_idx;
                         ImGui::EndCombo();
                     }
@@ -298,9 +298,9 @@ namespace Graphics {
             }
         }
 
-        if(symmetricMaxMin) setColorMap(Styles::ColorMaps["BrBG"]);
+        if(symmetricMaxMin) setColorMap(ColorMaps["BrBG"]);
         else {
-            setColorMap(Styles::ColorMaps["blues"]);
+            setColorMap(ColorMaps["blues"]);
         }
 
         invalidateTextureData();
@@ -309,10 +309,10 @@ namespace Graphics {
 
     auto FlatField2DArtist::getFunction() const -> R2toR::Function::ConstPtr { return func; }
 
-    void FlatField2DArtist::setColorMap(const Styles::ColorMap &colorMap) {
+    void FlatField2DArtist::setColorMap(const ColorMap &colorMap) {
         cMap = colorMap;
 
-        symmetricMaxMin = cMap.getType() == Styles::ColorMap::Divergent;
+        symmetricMaxMin = cMap.getType() == ColorMap::Divergent;
         program.setUniform("symmetric", true);
 
         updateColorBar();

@@ -22,14 +22,14 @@ namespace Graphics::OpenGL {
 
         ScalingFunction inverseScalingFunction;
 
-        Styles::ColorMap colorMap;
+        ColorMap colorMap;
 
         void updateTexture(int samples=1024);
     public:
         explicit ColorBarArtist(RectI loc);
 
         void setLocation(RectI loc);
-        void setColorMap(const Styles::ColorMap& colorMap);
+        void setColorMap(const ColorMap& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
         void draw(const Graph2D &) override;

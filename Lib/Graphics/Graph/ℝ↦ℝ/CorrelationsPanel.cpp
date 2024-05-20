@@ -158,24 +158,13 @@ namespace Graphics {
         if(1) {
             powerSpectrum = Math::Convert(dftFunction, Math::PowerSpectrum);
 
-            auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dftFunction, 1);
-            auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum, 1);
+            auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dftFunction, R2toR::R2toRDFT::InverseFourier);
+            auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum,
+                                                      R2toR::R2toRDFT::InverseFourier,
+                                                      R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
             correlationGraph.addFunction(Math::Convert(invDFT, Math::Real), "choopsy doopsy");
             correlationGraph.addFunction(Math::Convert(invPowDFT, Math::Real), "choopsy doopsy power whoopsy");
-        } else {
-
-            if(powerSpectrum!=nullptr)
-                Math::ConvertToPowerSpectrum(dftFunction, powerSpectrum);
-            else
-                powerSpectrum = Math::Convert(dftFunction, Math::PowerSpectrum);
-
-            auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum, 1);
-
-            correlationGraph.removeFunction(twoPointCorrFunction);
-            twoPointCorrFunction = Math::Convert(invPowDFT, Math::Real);
-            correlationGraph.addFunction(twoPointCorrFunction, "<ϕ(t,x)ϕ(t′,x′)>");
-
         }
     }
 

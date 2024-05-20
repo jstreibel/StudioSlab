@@ -78,45 +78,51 @@ void MoveData(const auto* in_data, Complex *out_data, int N, int M, Real scale, 
     fix halfN = N/2;
     fix halfM = M/2;
 
-    if(mode==Unmangle) {
-         /*for (int i = 0; i < N; ++i) {
-            fix i_out = MangleIndex(i, halfN);
-
-            for (int j = 0; j < M; ++j)
-                out_data[i_out + MangleIndex(j, halfM) * N] = scale * in_data[i + j * N];
-        } */
+    if(mode==Unmangle || mode==Mangle) {
         for(int i=0; i<halfN; ++i){
              fix i_in = i;
              fix i_out = i+halfN;
-             for (int j = 0; j < M; ++j)
-                 out_data[i_out + MangleIndex(j, halfM) * N] = scale * in_data[i_in + j * N];
+
+             for (int j = 0; j < halfM; ++j) {
+                 fix j_in = j;
+                 fix j_out = j+halfM;
+
+                 out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
+             }
+
+            for (int j = 0; j < halfM; ++j) {
+                fix j_in = j+halfM;
+                fix j_out = j;
+
+                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
+            }
+
         }
 
         for(int i=0; i<halfN; ++i){
             fix i_in  = i+halfN;
             fix i_out = i;
-            for (int j = 0; j < M; ++j)
-                out_data[i_out + MangleIndex(j, halfM) * N] = scale * in_data[i_in + j * N];
+
+            for (int j = 0; j < halfM; ++j) {
+                fix j_in = j;
+                fix j_out = j+halfM;
+
+                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
+            }
+
+            for (int j = 0; j < halfM; ++j) {
+                fix j_in = j+halfM;
+                fix j_out = j;
+
+                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
+            }
         }
 
-    } else if(mode==Mangle) {
-        for(int i=0; i<halfN; ++i){
-            fix i_in = i;
-            fix i_out = i+halfN;
-            for (int j = 0; j < M; ++j)
-                out_data[i_out + MangleIndex(j, halfM) * N] = scale * in_data[i_in + j * N];
-        }
-
-        for(int i=0; i<halfN; ++i){
-            fix i_in  = i+halfN;
-            fix i_out = i;
-            for (int j = 0; j < M; ++j)
-                out_data[i_out + MangleIndex(j, halfM) * N] = scale * in_data[i_in + j * N];
-        }
     } else if(mode==KeepArrangement) {
         for(int i=0; i<N*M; ++i)
             out_data[i] = scale * in_data[i];
-    }
+
+    } else NOT_IMPLEMENTED
 }
 
 

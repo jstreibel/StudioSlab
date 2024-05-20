@@ -206,6 +206,6 @@ auto GLUTBackend::addGLUTListener(::Backend::GLUTListener *glutListener) -> void
     glutListeners.emplace_back(glutListener);
 }
 
-void GLUTBackend::finish() {
+void GLUTBackend::terminate() {
     glutLeaveMainLoop();
 }

@@ -18,7 +18,7 @@ namespace Graphics {
     , timeFTDisplay(new FlatFieldDisplay("ℱₜ[ϕ](ω,x)"))
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
-        inverseFTDisplay->setColorMap(Styles::ColorMaps["BrBG"].inverse());
+        inverseFTDisplay->setColorMap(ColorMaps["BrBG"].inverse());
     }
 
     void RtoRFourierPanel::draw() {
@@ -51,7 +51,7 @@ namespace Graphics {
                 cutoffLine = RtoR2::StraightLine({kFilterCutoff, -10.0}, {kFilterCutoff, t+10.0});
 
                 spaceFTHistoryGraph->clearCurves();
-                spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), Math::StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+                spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
 
                 if(selected==0) {
                     RtoR::DFTInverse::HighPass lowPass(kFilterCutoff);
@@ -98,7 +98,7 @@ namespace Graphics {
                                                   std::shared_ptr<HistoryDisplay> sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
-        spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), Math::StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+        spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {

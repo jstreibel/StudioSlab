@@ -121,7 +121,7 @@ namespace Graphics {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void TestActor::setAmbientLight(Styles::Color color) { program.setUniform("amb", color.array()); }
+    void TestActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
 
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer,

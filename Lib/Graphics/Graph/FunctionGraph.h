@@ -19,73 +19,81 @@
 
 #include <memory>
 
+namespace Graphics {
 
-template<class FunctionType>
-class FunctionGraph : public Graphics::Graph2D {
-    typedef std::unique_ptr<const FunctionType> FunctionPtr;
-    typedef std::tuple<const FunctionType*, Styles::PlotStyle, Str> FunctionTriple;
-    static auto GetFunction ( FunctionTriple triple ) { return std::get<0>(triple); };
-    static auto GetStyle    ( FunctionTriple triple ) { return std::get<1>(triple); };
-    static auto GetName     ( FunctionTriple triple ) { return std::get<2>(triple); };
+    template<class FunctionType>
+    class FunctionGraph : public Graphics::Graph2D {
+        typedef std::unique_ptr<const FunctionType> FunctionPtr;
+        typedef std::tuple<const FunctionType *, PlotStyle, Str> FunctionTriple;
 
-    std::vector<FunctionTriple> mFunctions;
+        static auto GetFunction(FunctionTriple triple) { return std::get<0>(triple); };
 
-protected:
-    auto countDisplayItems() const -> Count override;
+        static auto GetStyle(FunctionTriple triple) { return std::get<1>(triple); };
 
-    virtual void _renderFunction(const FunctionType *func, Styles::PlotStyle color) = 0;
+        static auto GetName(FunctionTriple triple) { return std::get<2>(triple); };
 
-public:
+        std::vector<FunctionTriple> mFunctions;
 
-    FunctionGraph(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
-                  Str title = "no_title", bool filled = false, int samples = 512);
+    protected:
+        auto countDisplayItems() const -> Count override;
 
-    /*!
-     * Draw presumes OpenGL model view matrix is identity.
-     */
-    void draw() override;
+        virtual void _renderFunction(const FunctionType *func, PlotStyle color) = 0;
 
-    void addFunction(const FunctionType* func, Str name="",
-                     Styles::PlotStyle style= Math::StylesManager::GetCurrent()->funcPlotStyles[0]);
+    public:
 
-    void clearFunctions();
+        FunctionGraph(Real xMin = -1, Real xMax = 1, Real yMin = -1, Real yMax = 1,
+                      Str title = "no_title", bool filled = false, int samples = 512);
 
+        /*!
+         * Draw presumes OpenGL model view matrix is identity.
+         */
+        void draw() override;
 
-};
+        void addFunction(const FunctionType *func, Str name = "",
+                         PlotStyle style = StylesManager::GetCurrent()->funcPlotStyles[0]);
 
-template<class FunctionType>
-auto FunctionGraph<FunctionType>::countDisplayItems() const -> Count { return Graph2D::countDisplayItems() + mFunctions.size(); }
+        void clearFunctions();
 
 
-template<class FunctionType>
-FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled, int samples)
-        : Graphics::Graph2D(xMin, xMax, yMin, yMax, title, samples) {   }
+    };
 
-
-
-template<class FunctionType>
-void FunctionGraph<FunctionType>::draw() {
-    Graph2D::draw();
-
-    for(auto &triple : mFunctions){
-        auto &func = *GetFunction(triple);
-        auto style = GetStyle(triple);
-        auto label = GetName(triple);
-
-        if(label != "") nameLabelDraw(style, label);
-
-        this->_renderFunction(&func, style);
+    template<class FunctionType>
+    auto FunctionGraph<FunctionType>::countDisplayItems() const -> Count {
+        return Graph2D::countDisplayItems() + mFunctions.size();
     }
-}
 
-template<class FunctionType>
-void FunctionGraph<FunctionType>::addFunction(const FunctionType *func, Str name, Styles::PlotStyle style) {
-    mFunctions.emplace_back(FunctionTriple{func, style, name});
-}
 
-template<class FunctionType>
-void FunctionGraph<FunctionType>::clearFunctions() {
-    mFunctions.clear();
+    template<class FunctionType>
+    FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
+                                               int samples)
+            : Graphics::Graph2D(xMin, xMax, yMin, yMax, title, samples) {}
+
+
+    template<class FunctionType>
+    void FunctionGraph<FunctionType>::draw() {
+        Graph2D::draw();
+
+        for (auto &triple: mFunctions) {
+            auto &func = *GetFunction(triple);
+            auto style = GetStyle(triple);
+            auto label = GetName(triple);
+
+            if (label != "") nameLabelDraw(style, label);
+
+            this->_renderFunction(&func, style);
+        }
+    }
+
+    template<class FunctionType>
+    void FunctionGraph<FunctionType>::addFunction(const FunctionType *func, Str name, PlotStyle style) {
+        mFunctions.emplace_back(FunctionTriple{func, style, name});
+    }
+
+    template<class FunctionType>
+    void FunctionGraph<FunctionType>::clearFunctions() {
+        mFunctions.clear();
+    }
+
 }
 
 

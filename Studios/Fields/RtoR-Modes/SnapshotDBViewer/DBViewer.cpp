@@ -38,8 +38,8 @@ namespace Modes::DatabaseViewer {
         std::shared_ptr<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
 
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
-        style.primitive = Styles::VerticalLines;
+        auto style = StylesManager::GetCurrent()->funcPlotStyles[2];
+        style.primitive = VerticalLines;
         style.filled = false;
         style.thickness = 1.5;
         massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-kₚₑₐₖ²)]", true);
@@ -52,10 +52,10 @@ namespace Modes::DatabaseViewer {
 
         allDataDisplay.getAxisArtist().setVerticalUnit(Constants::π);
         allDataDisplay.getAxisArtist().setHorizontalUnit(Constants::π);
-        allDataDisplay.setColorMap(Styles::ColorMaps["blues"]);
+        allDataDisplay.setColorMap(ColorMaps["blues"]);
 
         topRow.addWindow(DummyPtr(allDataDisplay));
-        fullParticularHistoryDisplay.setColorMap(Styles::ColorMaps["BrBG"].inverse());
+        fullParticularHistoryDisplay.setColorMap(ColorMaps["BrBG"].inverse());
         // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
 
         winCol->addWindow(DummyPtr(massesGraph));
@@ -109,7 +109,7 @@ namespace Modes::DatabaseViewer {
 
         if(ImGui::BeginMainMenuBar()) {
             if(ImGui::BeginMenu("System")){
-                if(ImGui::MenuItem("Leave")) Core::BackendManager::GetBackend().finish();
+                if(ImGui::MenuItem("Leave")) Core::BackendManager::GetBackend().terminate();
                 ImGui::EndMenu();
             }
             ImGui::EndMainMenuBar();
@@ -140,20 +140,20 @@ namespace Modes::DatabaseViewer {
                 RtoR::KGDispersionRelation_high_k(mass, RtoR::KGDispersionRelation_high_k::k_AsFunctionOf_ω),
                 0.0, xMax, 10000);
 
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[1];
+        auto style = StylesManager::GetCurrent()->funcPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         allDataDisplay.addPointSet(KGRelation, style, Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
 
-        style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
+        style = StylesManager::GetCurrent()->funcPlotStyles[2];
         style.thickness = 3;
         style.filled = false;
         allDataDisplay.addPointSet(KGRelation_high_k, style, Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
     void DBViewer::drawDominantModes() {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[0];
-        style.primitive = Styles::Point;
+        auto style = StylesManager::GetCurrent()->funcPlotStyles[0];
+        style.primitive = Point;
         style.thickness = 8;
         allDataDisplay.removePointSet("main modes");
         allDataDisplay.addPointSet(DummyPtr(maxValuesPointSet), style, "main modes");

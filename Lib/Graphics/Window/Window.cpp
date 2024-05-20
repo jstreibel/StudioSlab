@@ -176,8 +176,8 @@ namespace Graphics {
         return {_x, _x + _w, _y, _y + _h};
     }
 
-    void Window::setBGColor(Styles::Color color) { backgroundColor = color; }
-    auto Window::getBGColor() const -> const Styles::Color & { return backgroundColor; }
+    void Window::setBGColor(Color color) { backgroundColor = color; }
+    auto Window::getBGColor() const -> const Color & { return backgroundColor; }
 
     bool
     Window::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {

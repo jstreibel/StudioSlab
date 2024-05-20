@@ -44,10 +44,10 @@ namespace Tests {
         fix lim = 1.e3;
         static Spaces::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
         static Spaces::PointSet vertLine2{{{1.0, -lim}, {1.0, lim}}};
-        graph.addPointSet(DummyPtr(vertLine1), Math::StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
-        graph.addPointSet(DummyPtr(vertLine2), Math::StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles[2];
-        style.primitive = Styles::Point;
+        graph.addPointSet(DummyPtr(vertLine1), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
+        graph.addPointSet(DummyPtr(vertLine2), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
+        auto style = StylesManager::GetCurrent()->funcPlotStyles[2];
+        style.primitive = Point;
         style.thickness = 10;
         graph.addPointSet(DummyPtr(currentPt), style, "", false);
 

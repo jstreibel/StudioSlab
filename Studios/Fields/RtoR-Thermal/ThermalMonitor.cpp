@@ -48,7 +48,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
 , mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 {
     {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
 
         mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
         mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
@@ -64,7 +64,7 @@ RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamilton
     }
 
     {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
         mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
         mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
         mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
@@ -139,7 +139,7 @@ void RtoR::Thermal::Monitor::draw() {
     auto V = hamiltonian.getTotalPotentialEnergy();
 
     std::ostringstream ss;
-    auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
     stats.addVolatileStat("<\\br>");
     stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
     stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
@@ -147,7 +147,7 @@ void RtoR::Thermal::Monitor::draw() {
     stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
     stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-    style = Math::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    style = StylesManager::GetCurrent()->funcPlotStyles.begin();
     stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
     stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
     stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
@@ -160,7 +160,7 @@ void RtoR::Thermal::Monitor::draw() {
 void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
     transientGuess = guess;
 
-    auto transientStyle = Math::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
+    auto transientStyle = StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
 
     static auto vLine = Spaces::PointSet::New();
     vLine->clear();
@@ -172,7 +172,7 @@ void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
 
     // Transient in full history
     {
-        auto style = Math::StylesManager::GetCurrent()->funcPlotStyles.back();
+        auto style = StylesManager::GetCurrent()->funcPlotStyles.back();
         style.filled = false;
         style.thickness = 2;
 

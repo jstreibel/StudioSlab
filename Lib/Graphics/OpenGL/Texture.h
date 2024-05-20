@@ -40,7 +40,7 @@ namespace Graphics::OpenGL {
         void setData(const PixelData &data);
         auto getData() const -> const PixelData&;
 
-        void setBorderColor(Styles::Color color) const;
+        void setBorderColor(Color color) const;
 
         GLint getTextureUnit() const;
         GLuint getGLtextureUnit() const;

@@ -60,7 +60,7 @@ set( GRAPHICS_SOURCES
 		Graph/Graph.cpp
 		Graph/LabelingHelper.h				Graph/LabelingHelper.cpp
 		Graph/Graph_Axis.cpp
-		Graph/Styles.cpp
+		Graph/PlotStyle.cpp
 		Graph/Graph_Events.cpp
 		Graph/Graph_GetSet.cpp
 		Graph/Artists/XHairArtist.h			Graph/Artists/XHairArtist.cpp
@@ -109,6 +109,8 @@ set( GRAPHICS_SOURCES
 		SFML/Tools/GraphAndAverageCalc.cpp
 
 		SFML/ViewerUtils.cpp
+		Graph/GraphTheme.cpp
+		Graph/GraphTheme.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

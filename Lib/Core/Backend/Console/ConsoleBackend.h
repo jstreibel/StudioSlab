@@ -9,7 +9,7 @@ public:
     ConsoleBackend();
     void run(Program *integrator) override;
 
-    void finish() override;
+    void terminate() override;
 };
 
 #endif // CONSOLEBACKEND_H

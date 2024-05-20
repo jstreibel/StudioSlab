@@ -31,6 +31,16 @@ namespace Core {
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707
 
+    Str currentTheme = "Light";
+    std::map<Str, void(*)()> colorThemes = {
+            {"Native light", SetColorThemeNativeLight},
+            {"Native dark", SetColorThemeNativeDark},
+            {"Dark red", SetColorThemeDarkRed},
+            {"Dark", SetStyleDark},
+            {"Light", SetStyleLight},
+            {"StudioSlab", SetStyleStudioSlab}
+    };
+
     void ImGuiModule::generalInitialization() {
         // Setup Dear ImGui context
 
@@ -41,12 +51,7 @@ namespace Core {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
         // Setup Dear ImGui style
-        // SetColorThemeNativeLight();
-        // SetColorThemeNativeDark();
-        // SetColorThemeDarkRed();
-        SetStyleDark();
-        //SetStyleLight();
-        //SetStyleStudioSlab();
+        colorThemes[currentTheme]();
     }
 
     ImGuiModule::ImGuiModule(BackendImplementation backendImpl) {
@@ -138,11 +143,35 @@ namespace Core {
     }
 
     void ImGuiModule::beginRender() {
-        ImGui_ImplOpenGL3_NewFrame();
         ImGui::NewFrame();
 
         if (showDemos)
             ImGui::ShowDemoWindow();
+
+        ImGui::BeginMainMenuBar();
+        {
+            if(ImGui::BeginMenu("Menu")) {
+                if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend().terminate();
+
+                ImGui::EndMenu();
+            }
+
+            if(ImGui::BeginMenu("Style")) {
+                if(ImGui::BeginMenu("GUI")) {
+                    for(const auto& theme : colorThemes) {
+                        if (ImGui::MenuItem(theme.first.c_str(), nullptr,
+                                            theme.first==currentTheme))
+                            theme.second();
+                    }
+
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMenu();
+            }
+
+            ImGui::EndMainMenuBar();
+        }
     }
 
     void ImGuiModule::endRender() {
