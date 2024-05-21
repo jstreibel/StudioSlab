@@ -40,31 +40,23 @@
 #define xMinLinesInFullHistoryView (params.getxMin() - linesOffset)
 #define xMaxLinesInFullHistoryView (params.getxMax() + linesOffset)
 
-RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamiltonian,
-                                   Graphics::GUIWindow &guiWindow,
-                                   const Real phiMin, const Real phiMax,
-                                   bool showEnergyHistoryAsDensities)
+RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow)
 : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor", "realtime monitoring of simulation state")
-, showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , mFieldsGraph( params.getxMin(), params.getxMax(),
-                phiMin, phiMax, "Fields")
+                -1, 1, "Fields")
 , mEnergyGraph("Energy")
-, mHistorySliceGraph(params.getxMin(), params.getxMax(),
-                     phiMin, phiMax, "Fields", true)
 {
     auto currStyle = Graphics::StylesManager::GetCurrent();
 
     {
         auto sty = currStyle->funcPlotStyles.begin();
 
-        mEnergyGraph.addPointSet(Slab::DummyPointer(UHistoryData), *sty, CHOOSE_ENERGY_LABEL("U", "U/L"));
-        mEnergyGraph.addPointSet(Slab::DummyPointer(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
-        mEnergyGraph.addPointSet(Slab::DummyPointer(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
-        mEnergyGraph.addPointSet(Slab::DummyPointer(VHistoryData), *++sty,
-                                 CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
+        mEnergyGraph.addPointSet(Slab::DummyPointer(UHistoryData), *sty, "U/L");
+        mEnergyGraph.addPointSet(Slab::DummyPointer(KHistoryData), *++sty, "K/L");
+        mEnergyGraph.addPointSet(Slab::DummyPointer(WHistoryData), *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
+        mEnergyGraph.addPointSet(Slab::DummyPointer(VHistoryData), *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
         addWindow(Slab::DummyPointer(mFieldsGraph));
-        addWindow(Slab::DummyPointer(mHistorySliceGraph));
     }
 
     addWindow(Slab::DummyPointer(mEnergyGraph));
@@ -87,8 +79,6 @@ void RtoR::RealtimePanel::draw() {
 
     int errorCount = 0;
 
-    CHECK_GL_ERRORS(errorCount++)
-    updateHistoryGraphs();
     CHECK_GL_ERRORS(errorCount++)
 
     // ************************ RT MONITOR**********************************
@@ -119,8 +109,7 @@ void RtoR::RealtimePanel::handleOutput(const OutputPacket &outInfo) {
     auto W = hamiltonian.getTotalGradientEnergy();
     auto V = hamiltonian.getTotalPotentialEnergy();
 
-    auto factor = 1.0;
-    if(showEnergyHistoryAsDensities) factor = 1./params.getL();
+    auto factor = 1.0/params.getL();
 
     UHistoryData.addPoint({t, U*factor});
     KHistoryData.addPoint({t, K*factor});
@@ -177,28 +166,3 @@ void RtoR::RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constpt
 
     addWindow(sftHistoryGraph);
 }
-
-void RtoR::RealtimePanel::updateHistoryGraphs() {
-    if(simulationHistory == nullptr) return;
-
-    CHECK_GL_ERRORS(0)
-
-    fix L = params.getL();
-    fix xMin = params.getxMin();
-    fix xMax = params.getxMax();
-    fix tMax = params.gett();
-
-    guiWindow.begin();
-    if (ImGui::CollapsingHeader("History")) {
-        if (ImGui::SliderFloat("t", &t_history, .0f, (float) getLastSimTime()))
-            step_history = (int) (t_history / (float) params.gett() * (float) params.getn());
-
-        if (ImGui::SliderInt("step", &step_history, 0, (int) lastData.getSteps()))
-            t_history = (float) (step_history / (Real) params.getn() * params.gett());
-    }
-    guiWindow.end();
-
-    CHECK_GL_ERRORS(1)
-}
-
-

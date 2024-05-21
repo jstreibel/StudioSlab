@@ -58,7 +58,7 @@ namespace RtoR {
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
-        void addDataView(Graphics::RtoRPanel_ptr);
+        void addDataView(const Graphics::RtoRPanel_ptr&);
     };
 
 }

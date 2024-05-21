@@ -51,8 +51,8 @@ namespace Graphics {
                 fix t = params.gett();
 
                 // TODO make it so that we no allocation everytime is needed.
-                auto curve = Slab::New<RtoR2::StraightLine>(Real2D{kFilterCutoff, -10.0}, Real2D{kFilterCutoff, t+10.0});
-                cutoffLineArtist->setCurve(curve);
+                cutoffLine.getx0() = {kFilterCutoff, -10.0};
+                cutoffLine.getr() = {0, 10.0+t};
 
                 if(selected==0) {
                     RtoR::DFTInverse::HighPass lowPass(kFilterCutoff);

@@ -23,14 +23,14 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 {
     auto currStyle = Graphics::StylesManager::GetCurrent();
 
-    dataViews.emplace_back(new RtoR::RealtimePanel(params, hamiltonian, guiWindow, phiMin, phiMax, showEnergyHistoryAsDensities));
-    dataViews.emplace_back(new Graphics::RtoRFourierPanel(params, hamiltonian, guiWindow));
-    dataViews.emplace_back(new Graphics::CorrelationsPanel(params, guiWindow, hamiltonian));
+    addDataView(Slab::New<RtoR::RealtimePanel>(params, hamiltonian, guiWindow));
+    addDataView(Slab::New<Graphics::RtoRFourierPanel>(params, hamiltonian, guiWindow));
+    addDataView(Slab::New<Graphics::CorrelationsPanel>(params, guiWindow, hamiltonian));
 
     setDataView(0);
 }
 
-void RtoR::Monitor::addDataView(Graphics::RtoRPanel_ptr dataView){
+void RtoR::Monitor::addDataView(const Graphics::RtoRPanel_ptr& dataView){
     dataViews.emplace_back(dataView);
 }
 
@@ -62,7 +62,7 @@ void RtoR::Monitor::handleOutput(const OutputPacket &outInfo) {
     updateHistoryGraph();
     updateSFTHistoryGraph();
 
-    for(auto dataView : dataViews)
+    for(const auto& dataView : dataViews)
         dataView->output(outInfo);
 
     ::Graphics::OpenGLMonitor::handleOutput(outInfo);
@@ -87,7 +87,7 @@ void RtoR::Monitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHis
 
     fullHistoryGraph->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
 
-    for(auto dataView : dataViews)
+    for(const auto& dataView : dataViews)
         dataView->setSimulationHistory(simHistory, fullHistoryGraph);
 }
 
@@ -105,7 +105,7 @@ void RtoR::Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftH
     fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
     fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
 
-    for(auto dataView : dataViews)
+    for(const auto& dataView : dataViews)
         dataView->setSpaceFourierHistory(sftHistory, _dftData, fullSFTHistoryGraph);
 }
 

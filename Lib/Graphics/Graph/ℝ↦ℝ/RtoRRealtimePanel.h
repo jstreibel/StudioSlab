@@ -19,18 +19,10 @@
 
 namespace RtoR {
     class RealtimePanel : public Graphics::RtoRPanel {
-    protected:
-        bool showEnergyHistoryAsDensities;
-
     public:
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
     protected:
-        RtoR2::StraightLine historyLine;
-        RtoR::Section1D mHistorySectionFunc;
-
-        Graphics::GraphRtoR mHistorySliceGraph;
-
         Graphics::Graph2D mFieldsGraph;
         Graphics::Artist_ptr vArtist;
         Graphics::Artist_ptr kArtist;
@@ -51,12 +43,6 @@ namespace RtoR {
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
-        bool showComplexFourier = false;
-
-        float t_history = .0f;
-        int step_history = 0;
-
-        void updateHistoryGraphs();
 
         ::Graphics::Graph2D mEnergyGraph;
 
@@ -67,9 +53,7 @@ namespace RtoR {
     public:
         RealtimePanel(const NumericConfig &params,
                       KGEnergy &hamiltonian,
-                      Graphics::GUIWindow &guiWindow,
-                      const Real phiMin, const Real phiMax,
-                      bool showEnergyHistoryAsDensities);
+                      Graphics::GUIWindow &guiWindow);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
                                   Graphics::HistoryDisplay_ptr simHistoryGraph) override;
