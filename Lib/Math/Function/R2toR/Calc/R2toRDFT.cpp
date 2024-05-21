@@ -28,7 +28,7 @@ namespace R2toR {
     }
 
     auto R2toRDFT::DFTComplex(const R2toC::DiscreteFunction &in, Transform transform,
-                              DataPolicy inputPolicy, DataPolicy outputPolicy) -> std::shared_ptr<R2toC::DiscreteFunction> {
+                              DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.M;
         fix N = (int)in.N;
 
@@ -71,11 +71,11 @@ namespace R2toR {
         fftw_free(data_src);
         fftw_free(data_dft);
 
-        return std::shared_ptr<R2toC::DiscreteFunction>{out};
+        return FFTData{out};
     }
 
     auto R2toRDFT::DFTReal(const DiscreteFunction &in, Transform transform,
-                           DataPolicy inputPolicy, DataPolicy outputPolicy) -> std::shared_ptr<R2toC::DiscreteFunction> {
+                           DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.getM();
         fix N = (int)in.getN();
 
@@ -118,7 +118,7 @@ namespace R2toR {
         fftw_free(data_src);
         fftw_free(data_dft);
 
-        return std::shared_ptr<R2toC::DiscreteFunction>{out};
+        return FFTData{out};
     }
 
     auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
@@ -135,7 +135,7 @@ namespace R2toR {
         }
     }
 
-    auto R2toRDFT::DFTReal_symmetric(const DiscreteFunction &toTransform) -> std::shared_ptr<R2toC::DiscreteFunction> {
+    auto R2toRDFT::DFTReal_symmetric(const DiscreteFunction &toTransform) -> FFTData {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
         NOT_IMPLEMENTED
@@ -172,7 +172,7 @@ namespace R2toR {
         fftw_destroy_plan(plan);
         fftw_free(data_dft);
 
-        return std::shared_ptr<R2toC::DiscreteFunction>{out};
+        return FFTData{out};
     }
 
 } // R2toR

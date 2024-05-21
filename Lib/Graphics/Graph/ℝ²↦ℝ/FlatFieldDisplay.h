@@ -37,12 +37,12 @@ namespace Graphics {
             typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
 
         protected:
-            std::vector<FlatField2DArtistPtr> ff2dArtists;
+            std::vector<FlatField2DArtist_ptr> ff2dArtists;
 
             Unit funcUnit;
-            typedef std::multimap<zOrder_t, R2toR::Function::ConstPtr> FuncsMap;
+            typedef std::multimap<zOrder_t, R2toR::Function_constptr> FuncsMap;
             FuncsMap funcsMap;
-            bool ContainsFunc(const R2toR::Function::ConstPtr&);
+            bool ContainsFunc(const R2toR::Function_constptr&);
 
             void computeGraphRanges(const R2toR::Domain &domain);
 
@@ -51,9 +51,9 @@ namespace Graphics {
     public:
             explicit FlatFieldDisplay(Str title="Full 2D");
 
-            std::shared_ptr<FlatField2DArtist> addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder=0);
+            FlatField2DArtist_ptr addFunction(R2toR::Function_constptr function, const Str& name, zOrder_t zOrder=0);
 
-            bool removeFunction(R2toR::Function::ConstPtr function);
+            bool removeFunction(R2toR::Function_constptr function);
 
             auto getFunctionsMap() const -> FuncsMap;
 
@@ -65,8 +65,9 @@ namespace Graphics {
             void notifyReshape(int newWinW, int newWinH) override;
 
             void set_xPeriodicOn();
-
     };
+
+    DefinePointer(FlatFieldDisplay)
 }
 
 #endif //STUDIOSLAB_FLATFIELDDISPLAY_H

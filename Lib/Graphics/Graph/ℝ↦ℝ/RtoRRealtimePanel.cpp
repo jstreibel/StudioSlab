@@ -57,21 +57,20 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
     {
         auto sty = currStyle->funcPlotStyles.begin();
 
-        mEnergyGraph.addPointSet(DummyPtr(UHistoryData), *sty, CHOOSE_ENERGY_LABEL("U", "U/L"));
-        mEnergyGraph.addPointSet(DummyPtr(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
-        mEnergyGraph.addPointSet(DummyPtr(WHistoryData), *++sty,
-                                 CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
-        mEnergyGraph.addPointSet(DummyPtr(VHistoryData), *++sty,
+        mEnergyGraph.addPointSet(Slab::DummyPointer(UHistoryData), *sty, CHOOSE_ENERGY_LABEL("U", "U/L"));
+        mEnergyGraph.addPointSet(Slab::DummyPointer(KHistoryData), *++sty, CHOOSE_ENERGY_LABEL("K", "K/L"));
+        mEnergyGraph.addPointSet(Slab::DummyPointer(WHistoryData), *++sty, CHOOSE_ENERGY_LABEL("∫(𝜕ₓϕ)²dx/2", "<(𝜕ₓϕ)²>/2"));
+        mEnergyGraph.addPointSet(Slab::DummyPointer(VHistoryData), *++sty,
                                  CHOOSE_ENERGY_LABEL("∫V(ϕ)dx", "<V(ϕ)>"));
 
-        addWindow(DummyPtr(mFieldsGraph));
-        addWindow(DummyPtr(mHistorySliceGraph));
-        addWindow(DummyPtr(mSpaceFourierModesGraph));
+        addWindow(Slab::DummyPointer(mFieldsGraph));
+        addWindow(Slab::DummyPointer(mHistorySliceGraph));
+        addWindow(Slab::DummyPointer(mSpaceFourierModesGraph));
 
         mSpaceFourierModesGraph.getAxisArtist().setHorizontalUnit(Constants::π);
     }
 
-    addWindow(DummyPtr(mEnergyGraph));
+    addWindow(Slab::DummyPointer(mEnergyGraph));
 
     setColumnRelativeWidth(0, 0.4);
     setColumnRelativeWidth(1, -1);
@@ -165,8 +164,8 @@ bool RtoR::RealtimePanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state,
     return WindowPanel::notifyKeyboard(key, state, modKeys);
 }
 
-void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory,
-                                               std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) {
+void RtoR::RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+                                               Graphics::HistoryDisplay_ptr simHistoryGraph) {
     mHistorySliceGraph.setResolution(simHistory->getN());
 
     RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
@@ -181,9 +180,9 @@ void RtoR::RealtimePanel::setSimulationHistory(std::shared_ptr<const R2toR::Disc
     setColumnRelativeWidth(1,-1);
 }
 
-void RtoR::RealtimePanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+void RtoR::RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                                  const DFTDataHistory &dftData,
-                                                 std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph)
+                                                 Graphics::HistoryDisplay_ptr sftHistoryGraph)
 {
     RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
@@ -209,21 +208,6 @@ void RtoR::RealtimePanel::updateHistoryGraphs() {
             t_history = (float) (step_history / (Real) params.getn() * params.gett());
     }
     guiWindow.end();
-
-    static auto section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-
-    static bool isSetup = false;
-    bool updateSamples = false;
-    if( not isSetup ) {
-        mHistorySectionFunc = RtoR::Section1D(simulationHistory, DummyPtr(section));
-        isSetup = true;
-        updateSamples = true;
-    }
-
-    section = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history}, xMin, xMax);
-    mHistorySliceGraph.clearFunctions();
-    auto label = Str("ϕ(t=") + ToStr(t_history, 2) + ",x)";
-    mHistorySliceGraph.addFunction(&mHistorySectionFunc, label);
 
     CHECK_GL_ERRORS(1)
 }

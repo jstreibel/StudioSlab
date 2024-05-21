@@ -30,9 +30,9 @@ namespace RtoR2 {
         inline Real get_sMin() const {return sMin;}
         inline Real get_sMax() const {return sMax;}
         inline void set_s(Real min, Real max) { sMin = min; sMax = max; }
-
-
     };
+
+    DefinePointer(ParametricCurve)
 }
 
 

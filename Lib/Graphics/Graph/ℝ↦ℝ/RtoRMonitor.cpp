@@ -30,7 +30,7 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
     setDataView(0);
 }
 
-void RtoR::Monitor::addDataView(std::shared_ptr<Graphics::RtoRPanel> dataView){
+void RtoR::Monitor::addDataView(Graphics::RtoRPanel_ptr dataView){
     dataViews.emplace_back(dataView);
 }
 
@@ -80,9 +80,9 @@ bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core:
     return OpenGLMonitor::notifyKeyboard(key, state, modKeys);
 }
 
-void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory) {
+void RtoR::Monitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory) {
     simulationHistory = simHistory;
-    fullHistoryGraph = Pointer(new Graphics::HistoryDisplay("Full field history"));
+    fullHistoryGraph = Slab::New<Graphics::HistoryDisplay>("Full field history");
     fullHistoryGraph->addFunction(simulationHistory, "ϕ(t,x)", -100);
 
     fullHistoryGraph->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
@@ -91,13 +91,13 @@ void RtoR::Monitor::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFu
         dataView->setSimulationHistory(simHistory, fullHistoryGraph);
 }
 
-void RtoR::Monitor::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+void RtoR::Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                            const DFTDataHistory &_dftData)
 {
     this->dftData = &_dftData;
 
     spaceFTHistory = sftHistory;
-    fullSFTHistoryGraph = Pointer(new Graphics::HistoryDisplay("Space DFT history"));
+    fullSFTHistoryGraph = Slab::New<Graphics::HistoryDisplay>("Space DFT history");
     fullSFTHistoryGraph->addFunction(spaceFTHistory, "ℱ[ϕ(t)](k)");
 
     fullSFTHistoryGraph->setColorMap(Graphics::ColorMaps["blues"].inverse().bgr());

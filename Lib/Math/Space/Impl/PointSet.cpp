@@ -6,36 +6,36 @@
 #include "Math/Formalism/Categories.h"
 #include <memory>
 
-Spaces::PointSet::PointSet() : Space(2) { }
+Math::PointSet::PointSet() : Space(2) { }
 
-Spaces::PointSet::PointSet(const Spaces::Point2DVec& points) : PointSet() {
+Math::PointSet::PointSet(const Math::Point2DVec& points) : PointSet() {
     for(const auto &p : points) addPoint(p);
 }
 
-Spaces::PointSet::PointSet(const Spaces::PointSet &pointSet)
+Math::PointSet::PointSet(const Math::PointSet &pointSet)
 : Space(2)
 , points(pointSet.points)
 , max(pointSet.max)
 , min(pointSet.min)
 {   }
 
-Spaces::PointSet::Ptr Spaces::PointSet::New() {
+Math::PointSet::Ptr Math::PointSet::New() {
     return std::make_shared<PointSet>(PointSet());
 }
 
-auto Spaces::PointSet::getMeasure() const -> const Measure {
+auto Math::PointSet::getMeasure() const -> const Measure {
     return {{max.x-min.x, max.y-min.y}};
 }
 
-auto Spaces::PointSet::getMax() const -> Spaces::Point2D {
+auto Math::PointSet::getMax() const -> Math::Point2D {
     return max;
 }
 
-auto Spaces::PointSet::getMin() const -> Spaces::Point2D {
+auto Math::PointSet::getMin() const -> Math::Point2D {
     return min;
 }
 
-void Spaces::PointSet::addPoint(const Spaces::Point2D &point) {
+void Math::PointSet::addPoint(const Math::Point2D &point) {
     if( points.empty() ){ min=point; max=point; }
 
     if     ( point.x > max.x ) max.x = point.x;
@@ -48,17 +48,17 @@ void Spaces::PointSet::addPoint(const Spaces::Point2D &point) {
     points.emplace_back(p);
 }
 
-void Spaces::PointSet::setPoints(Spaces::Point2DVec newPoints) {
+void Math::PointSet::setPoints(Math::Point2DVec newPoints) {
     *this = PointSet(newPoints);
 }
 
-const Spaces::Point2DVec &Spaces::PointSet::getPoints() const { return points; }
+const Math::Point2DVec &Math::PointSet::getPoints() const { return points; }
 
-void Spaces::PointSet::clear() {
+void Math::PointSet::clear() {
     points.clear();
 }
 
-Count Spaces::PointSet::count() const { return points.size(); }
+Count Math::PointSet::count() const { return points.size(); }
 
 
 

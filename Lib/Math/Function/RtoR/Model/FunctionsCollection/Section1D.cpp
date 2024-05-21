@@ -7,12 +7,12 @@
 // #include "Graphics/FunctionRenderer.h"
 #include <utility>
 
-RtoR::Section1D::Section1D(R2toR::Function::ConstPtr function, RtoR2::ParametricCurve::ConstPtr curve)
+RtoR::Section1D::Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve)
 : function(std::move(function)), curve(std::move(curve))
 {   }
 
 RtoR::Section1D::Section1D(const R2toR::Function *function, const RtoR2::ParametricCurve *curve)
-: Section1D(DummyPtr(*function), DummyPtr(*curve))
+: Section1D(Slab::DummyPointer(*function), Slab::DummyPointer(*curve))
 {   }
 
 Real RtoR::Section1D::operator()(Real x) const {
@@ -24,7 +24,7 @@ Real RtoR::Section1D::operator()(Real x) const {
     return func(c(x));
 }
 
-Spaces::PointSet::Ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
+Math::PointSet::Ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
     if(curve == nullptr || function == nullptr) return {};
 
     return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);

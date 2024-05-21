@@ -15,8 +15,9 @@ Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 {
 }
 
-auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function, const Str& name, zOrder_t zOrder) -> std::shared_ptr<Graphics::FlatField2DArtist> {
-    if(ContainsFunc(function)) return nullptr;
+auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function_constptr function, const Str& name, zOrder_t zOrder)
+    -> FlatField2DArtist_ptr {
+    if(ContainsFunc(function)) return {};
 
     bool firstTime = funcsMap.empty();
 
@@ -25,7 +26,7 @@ auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
         computeGraphRanges(discrFunc.getDomain());
     }
 
-    auto artist = std::make_shared<FlatField2DArtist>(name);
+    auto artist = Slab::New<FlatField2DArtist>(name);
     artist->setFunction(function);
     artist->setColorMap(currColorMap);
 
@@ -36,7 +37,7 @@ auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function::ConstPtr function,
     return artist;
 }
 
-bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function::ConstPtr function) {
+bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function_constptr function) {
     if(function== nullptr) return false;
 
     auto haveErased = false;
@@ -53,7 +54,7 @@ bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function::ConstPtr functi
     auto newEnd = std::remove_if(
             ff2dArtists.begin(),
             ff2dArtists.end(),
-            [&function,this,&haveErased](FlatField2DArtistPtr &x)
+            [&function,this,&haveErased](FlatField2DArtist_ptr &x)
             {
                 if(x->getFunction() == function){
                     removeArtist(x);
@@ -196,8 +197,8 @@ void Graphics::FlatFieldDisplay::setColorMap(const ColorMap &colorMap) {
     currColorMap = colorMap;
 }
 
-bool Graphics::FlatFieldDisplay::ContainsFunc(const R2toR::Function::ConstPtr& func){
-    typedef std::pair<zOrder_t, R2toR::Function::ConstPtr> Pair;
+bool Graphics::FlatFieldDisplay::ContainsFunc(const R2toR::Function_constptr& func){
+    typedef std::pair<zOrder_t, R2toR::Function_constptr> Pair;
     auto pred = [&func](const Pair &toComp){ return toComp.second==func; };
     return std::find_if(funcsMap.begin(), funcsMap.end(), pred) != funcsMap.end();
 }

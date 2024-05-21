@@ -57,17 +57,17 @@ RtoR::Function *Histogram::asPDFFunction() const {
     return func;
 }
 
-auto Histogram::asPDFPointSet(bool beautiful) const -> Spaces::PointSet {
-    Spaces::PointSet pointSet;
+auto Histogram::asPDFPointSet(bool beautiful) const -> Math::PointSet {
+    Math::PointSet pointSet;
     return renderPDFToPointSet(pointSet, beautiful);
 }
 
-auto Histogram::renderPDFToPointSet(Spaces::PointSet &pointSet, bool beautiful) const -> Spaces::PointSet {
+auto Histogram::renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful) const -> Math::PointSet {
     const auto N=Real(count);
     const auto w = binWidth;
     const auto normFactor = N*w;
 
-    Spaces::Point2DVec points;
+    Math::Point2DVec points;
 
     if(beautiful) points.emplace_back(vMin, 0);
 
@@ -95,7 +95,7 @@ auto Histogram::renderPDFToPointSet(Spaces::PointSet &pointSet, bool beautiful) 
 
     debugCount_last = debugCount;
 
-    return pointSet = Spaces::PointSet(points);
+    return pointSet = Math::PointSet(points);
 }
 
 auto Histogram::integrate() const -> Real {

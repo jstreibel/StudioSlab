@@ -219,7 +219,7 @@ namespace Graphics {
         ImGui::End();
     }
 
-    void FlatField2DArtist::setFunction(R2toR::Function::ConstPtr function, const Unit &unit) {
+    void FlatField2DArtist::setFunction(R2toR::Function_constptr function, const Unit &unit) {
         if(func == function){
             funcUnit = unit;
             return;
@@ -253,7 +253,7 @@ namespace Graphics {
            || textureData->getWidth() != xRes
            || textureData->getHeight() != yRes)
         {
-            textureData = std::make_shared<::Graphics::OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
+            textureData = Slab::New<OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
             textureData->setSWrap(::Graphics::OpenGL::ClampToEdge);
             textureData->setAntiAliasOff();
             program.setUniform("field_data", textureData->getTextureUnit());
@@ -307,7 +307,7 @@ namespace Graphics {
         repopulateTextureBuffer();
     }
 
-    auto FlatField2DArtist::getFunction() const -> R2toR::Function::ConstPtr { return func; }
+    auto FlatField2DArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
     void FlatField2DArtist::setColorMap(const ColorMap &colorMap) {
         cMap = colorMap;

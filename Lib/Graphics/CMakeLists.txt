@@ -1,9 +1,6 @@
 
 
 set( GRAPHICS_SOURCES
-		Animation_depr.cpp
-		ZoomPanRotate.cpp
-
 		Types.h     	Types.cpp
 		Utils.cpp
 
@@ -55,6 +52,7 @@ set( GRAPHICS_SOURCES
 		OpenGL/TextureUtils.h					OpenGL/TextureUtils.cpp
         OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
+		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
 
 		Graph/Artists/Artist.cpp
 		Graph/Graph.cpp
@@ -111,6 +109,8 @@ set( GRAPHICS_SOURCES
 		SFML/ViewerUtils.cpp
 		Graph/GraphTheme.cpp
 		Graph/GraphTheme.h
+		Graph/Artists/PointSetArtist.cpp
+		Graph/Artists/PointSetArtist.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

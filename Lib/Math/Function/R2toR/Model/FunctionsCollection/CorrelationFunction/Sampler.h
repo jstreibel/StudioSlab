@@ -62,6 +62,10 @@ namespace R2toR {
 
     };
 
+    DefinePointer(Sampler)
+
+    DefinePointer(Sampler1D)
+
 } // R2toR
 
 #endif //STUDIOSLAB_SAMPLER_H

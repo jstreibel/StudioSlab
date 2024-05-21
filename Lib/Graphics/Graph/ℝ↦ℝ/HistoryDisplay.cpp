@@ -26,7 +26,7 @@ void Graphics::HistoryDisplay::set_t(Real t_) {
 
         auto textureData = (*firstArtist)->getFieldTextureData();
 
-        helper = Pointer(new HistoryTexture2DUploadHelper(DummyPtr(discreteFunc), textureData));
+        helper = Slab::New<HistoryTexture2DUploadHelper>(Slab::DummyPointer(discreteFunc), textureData);
     }
 
     helper->uploadUpTo(t_);

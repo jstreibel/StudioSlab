@@ -7,6 +7,7 @@
 #include "Graphics/Graph/StylesManager.h"
 #include "Graphics/Graph/Graph.h"
 #include "imgui.h"
+#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
 namespace Graphics {
 
@@ -46,7 +47,7 @@ namespace Graphics {
         XHair.addPoint({XHairLocation.x, region.yMin});
         XHair.addPoint({XHairLocation.x, region.yMax});
 
-        Graphics::Graph2D::renderPointSet(XHair, currStyle->XHairStyle);
+        Graphics::OpenGL::Legacy::RenderPointSet(XHair, currStyle->XHairStyle);
     }
 
 } // Graphics

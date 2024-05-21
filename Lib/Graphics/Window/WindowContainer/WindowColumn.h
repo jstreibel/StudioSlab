@@ -13,7 +13,7 @@
 namespace Graphics {
 
     class WindowColumn : public Window {
-        std::list<Window::Ptr> windows;
+        std::list<Window_ptr> windows;
         RealVector heights;
 
         bool assertConsistency() const;
@@ -21,9 +21,9 @@ namespace Graphics {
     public:
         WindowColumn() = default;
 
-        void addWindow(Window::Ptr window, float windowHeight = -1);
+        void addWindow(Window_ptr window, float windowHeight = -1);
 
-        bool removeWindow(const Window::Ptr&);
+        bool removeWindow(const Window_ptr&);
 
         bool isEmpty() const;
 

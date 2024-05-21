@@ -7,9 +7,10 @@
 
 #include "../Space.h"
 #include "../Point.h"
+#include "Utils/Pointer.h"
 
 
-namespace Spaces {
+namespace Math {
 
 
     class PointSet : public Space {
@@ -36,10 +37,9 @@ namespace Spaces {
         void setPoints(Point2DVec points);
 
         const Point2DVec& getPoints() const;
-
     };
 
-
+    DefinePointer(PointSet)
 
 }
 

@@ -48,7 +48,7 @@ namespace RtoR::Thermal {
         auto &config = simulationConfig.numericConfig;
         auto &hamiltonian = *(KGEnergy*)getHamiltonian();
 
-        auto temp1 = std::make_shared<RtoR::StatisticalMonitor>(
+        auto temp1 = Slab::New<RtoR::StatisticalMonitor>(
                 config, hamiltonian, guiWindow);
         temp1->setTransientHint(*transientGuess);
 

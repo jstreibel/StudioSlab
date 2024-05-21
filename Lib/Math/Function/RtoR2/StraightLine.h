@@ -21,7 +21,7 @@ namespace RtoR2 {
         StraightLine(const StraightLine& line);
 
 
-        Spaces::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
+        Math::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
 
         static Ptr New(Real2D x0, Real2D xf);
 
@@ -40,6 +40,8 @@ namespace RtoR2 {
         Real length() const {return this->getr().norm();}
 
     };
+
+    DefinePointer(StraightLine)
 
 }
 

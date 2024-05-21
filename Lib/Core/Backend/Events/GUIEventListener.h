@@ -5,9 +5,6 @@
 #ifndef V_SHAPE_OPENGLARTISTBASE_H
 #define V_SHAPE_OPENGLARTISTBASE_H
 
-
-#include "Graphics/Animation_depr.h"
-
 #include "Utils/Types.h"
 #include "Utils/Utils.h"
 #include "Utils/Timer.h"

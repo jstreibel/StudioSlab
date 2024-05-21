@@ -8,19 +8,19 @@
 namespace Graphics {
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,
                                                  Resolution N, Resolution M,
-                                                 R2toR::Domain domain, Real scale) -> std::shared_ptr<R2toR::DiscreteFunction> {
+                                                 R2toR::Domain domain, Real scale) -> R2toR::DiscreteFunction_ptr {
         fix xMin = domain.xMin;
         fix yMin = domain.yMin;
         fix dx = domain.getLx() / N;
         fix dy = domain.getLy() / M;
-        auto discreteFunc = std::shared_ptr<R2toR::DiscreteFunction>(new R2toR::DiscreteFunction_CPU(N, M, xMin, yMin, dx, dy));
+        auto discreteFunc = Slab::New<R2toR::DiscreteFunction_CPU>(N, M, xMin, yMin, dx, dy);
 
         return renderToDiscrete(function, discreteFunc, scale);
     }
 
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,
-                                                 std::shared_ptr<R2toR::DiscreteFunction> out,
-                                                 Real scale) -> std::shared_ptr<R2toR::DiscreteFunction> {
+                                                 R2toR::DiscreteFunction_ptr out,
+                                                 Real scale) -> R2toR::DiscreteFunction_ptr {
         assert(out != nullptr);
 
         fix &domain = out->getDomain();

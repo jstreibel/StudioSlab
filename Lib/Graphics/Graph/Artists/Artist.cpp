@@ -7,7 +7,9 @@
 namespace Graphics {
 
     void Artist::setVisibility(bool vis) { visible = vis; }
-
     bool Artist::isVisible() const { return visible; }
+
+    void Artist::setAffectGraphRanges(bool affects) { affectGraphRanges=affects; }
+    bool Artist::affectsGraphRanges() const { return affectGraphRanges; }
 
 }

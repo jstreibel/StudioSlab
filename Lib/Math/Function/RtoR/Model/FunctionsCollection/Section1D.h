@@ -13,17 +13,19 @@
 
 namespace RtoR {
     class Section1D : public RtoR::Function {
-        R2toR::Function::ConstPtr function;
-        RtoR2::ParametricCurve::ConstPtr curve;
+        R2toR::Function_constptr function;
+        RtoR2::ParametricCurve_constptr curve;
 
     public:
         explicit Section1D(const R2toR::Function *function= nullptr, const RtoR2::ParametricCurve *curve= nullptr);
-        Section1D(R2toR::Function::ConstPtr function, RtoR2::ParametricCurve::ConstPtr curve);
+        Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve);
 
         Real operator()(Real x) const override;
 
-        Spaces::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
+        Math::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
     };
+
+    DefinePointer(Section1D)
 }
 
 

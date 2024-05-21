@@ -207,7 +207,7 @@ namespace Tests {
             mFuncGraph.set_xMin(-0.1 * L);
             mFuncGraph.set_xMax(1.1 * L);
 
-            static Spaces::PointSet L_loc1, L_loc2;
+            static Math::PointSet L_loc1, L_loc2;
             static bool initd = false;
             if (!initd) {
                 L_loc1.setPoints({{0.0, -2},

@@ -11,6 +11,8 @@
 #include "Numbers.h"
 #include "Arrays.h"
 
+#include "Pointer.h"
+
 #include "Exception.h"
 
 

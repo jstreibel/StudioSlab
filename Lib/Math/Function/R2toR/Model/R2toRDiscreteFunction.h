@@ -54,6 +54,8 @@ namespace R2toR {
 
         Real min() const override;
     };
+
+    DefinePointer(DiscreteFunction)
 }
 
 

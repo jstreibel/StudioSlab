@@ -24,7 +24,7 @@ namespace Modes {
         assert(A.size() == Ω.size());
 
         fix N = A.size();
-        auto modes = std::make_shared<Spaces::PointSet>();
+        auto modes = std::make_shared<Math::PointSet>();
         for (auto i=0; i<N; ++i ) {
             fix ω = Ω[i];
             modes->addPoint({ω, 0.0});

@@ -16,8 +16,8 @@ public:
 
     RtoR::Function* asPDFFunction() const;
 
-    auto asPDFPointSet(bool beautiful=true) const -> Spaces::PointSet;
-    auto renderPDFToPointSet(Spaces::PointSet &pointSet, bool beautiful=true) const -> Spaces::PointSet;
+    auto asPDFPointSet(bool beautiful=true) const -> Math::PointSet;
+    auto renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful=true) const -> Math::PointSet;
 
     auto integrate() const -> Real;
 

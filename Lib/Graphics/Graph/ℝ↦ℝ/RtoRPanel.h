@@ -24,11 +24,11 @@ namespace Graphics {
         const NumericConfig &params;
         RtoR::KGEnergy &hamiltonian;
 
-        std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory = nullptr;
-        std::shared_ptr<HistoryDisplay> simulationHistoryGraph = nullptr;
+        R2toR::DiscreteFunction_constptr simulationHistory;
+        HistoryDisplay_ptr simulationHistoryGraph;
 
-        std::shared_ptr<const R2toR::DiscreteFunction> spaceFTHistory = nullptr;
-        std::shared_ptr<HistoryDisplay> spaceFTHistoryGraph = nullptr;
+        R2toR::DiscreteFunction_constptr spaceFTHistory;
+        HistoryDisplay_ptr spaceFTHistoryGraph;
         const DFTDataHistory *dftData;
 
         auto handleOutput(const OutputPacket &packet) -> void override;
@@ -40,16 +40,18 @@ namespace Graphics {
                   const Str &name,
                   const Str &description);
 
-        virtual void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                          std::shared_ptr<HistoryDisplay> simHistoryGraph);
-        virtual void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+        virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                          HistoryDisplay_ptr simHistoryGraph);
+        virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                             const DFTDataHistory &,
-                                            std::shared_ptr<HistoryDisplay> sftHistoryGraph);
+                                            HistoryDisplay_ptr sftHistoryGraph);
 
         virtual void notifyBecameVisible();
         virtual void notifyBecameInvisible();
 
     };
+
+    DefinePointer(RtoRPanel)
 
 } // Graphics
 

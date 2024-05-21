@@ -127,7 +127,7 @@ namespace Core {
             InputCategory xMin, xMax;
         };
 
-        virtual Spaces::PointSet::Ptr
+        virtual Math::PointSet::Ptr
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
             throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };

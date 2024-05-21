@@ -12,6 +12,8 @@
 
 namespace R2toR {
     typedef Core::Functions<Real>::Function2D Function;
+
+    DefinePointer(Function)
 }
 
 #endif //V_SHAPE_R2TORFUNCTION_H

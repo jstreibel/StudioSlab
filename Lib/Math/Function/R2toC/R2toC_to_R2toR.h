@@ -17,18 +17,18 @@ namespace Math {
         PowerSpectrum
     };
 
-    std::shared_ptr<R2toR::DiscreteFunction> Convert(const std::shared_ptr<const R2toC::DiscreteFunction>&, R2toC_to_R2toR_Mode);
+    R2toR::DiscreteFunction_ptr Convert                 (const R2toC::DiscreteFunction_constptr&, R2toC_to_R2toR_Mode);
 
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToAbs       (const std::shared_ptr<const R2toC::DiscreteFunction>& in,
-                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToPowerSpectrum    (const std::shared_ptr<const R2toC::DiscreteFunction>& in,
-                                                                        std::shared_ptr<R2toR::DiscreteFunction> out);
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToPhase     (const std::shared_ptr<const R2toC::DiscreteFunction>& in,
-                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToReal      (const std::shared_ptr<const R2toC::DiscreteFunction> &in,
-                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
-    std::shared_ptr<R2toR::DiscreteFunction> ConvertToImaginary (const std::shared_ptr<const R2toC::DiscreteFunction> &in,
-                                                                 std::shared_ptr<R2toR::DiscreteFunction> out);
+    R2toR::DiscreteFunction_ptr ConvertToAbs            (const R2toC::DiscreteFunction_constptr& in,
+                                                                 R2toR::DiscreteFunction_ptr out);
+    R2toR::DiscreteFunction_ptr ConvertToPowerSpectrum  (const R2toC::DiscreteFunction_constptr& in,
+                                                                 R2toR::DiscreteFunction_ptr out);
+    R2toR::DiscreteFunction_ptr ConvertToPhase          (const R2toC::DiscreteFunction_constptr& in,
+                                                                 R2toR::DiscreteFunction_ptr out);
+    R2toR::DiscreteFunction_ptr ConvertToReal           (const R2toC::DiscreteFunction_constptr &in,
+                                                                 R2toR::DiscreteFunction_ptr out);
+    R2toR::DiscreteFunction_ptr ConvertToImaginary      (const R2toC::DiscreteFunction_constptr &in,
+                                                                 R2toR::DiscreteFunction_ptr out);
 }
 
 #endif //STUDIOSLAB_R2TOC_TO_R2TOR_H

@@ -6,7 +6,6 @@
 #define R2TOR_OUTPUTMONITOR_GENERIC_H
 
 
-#include "Graphics/ZoomPanRotate.h"
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
 

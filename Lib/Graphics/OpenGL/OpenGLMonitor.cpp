@@ -16,7 +16,7 @@
 Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str& channelName, int stepsBetweenDraws)
 : Numerics::OutputSystem::Socket(params, channelName, stepsBetweenDraws)
 , WindowPanel(HasMainMenu) {
-    addWindow(DummyPtr(guiWindow));
+    addWindow(Slab::DummyPointer(guiWindow));
     setColumnRelativeWidth(0, 0.1);
 
     Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;

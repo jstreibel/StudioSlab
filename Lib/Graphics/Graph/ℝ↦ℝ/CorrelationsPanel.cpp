@@ -52,7 +52,7 @@ namespace Graphics {
         }
     };
 
-    std::shared_ptr<R2toR::DiscreteFunction> Make_FFTW_TestFunc(int n_modes=150){
+    R2toR::DiscreteFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
 
         SomeCurve someCurve;
 
@@ -77,7 +77,7 @@ namespace Graphics {
             }
         }
 
-        return std::shared_ptr<R2toR::DiscreteFunction>{func};
+        return Slab::Pointer<R2toR::DiscreteFunction>{func};
     }
 
     CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian)
@@ -108,15 +108,15 @@ namespace Graphics {
         WindowPanel::draw();
     }
 
-    void CorrelationsPanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                                 std::shared_ptr<HistoryDisplay> simHistoryGraph) {
+    void CorrelationsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                                 HistoryDisplay_ptr simHistoryGraph) {
 
 
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
 
         addWindow(simulationHistoryGraph);
-        addWindow(DummyPtr(correlationGraph));
-        addWindow(DummyPtr(DFT2DGraph), true);
+        addWindow(Slab::DummyPointer(correlationGraph));
+        addWindow(Slab::DummyPointer(DFT2DGraph), true);
     }
 
     void CorrelationsPanel::computeAll(bool discardRedundantModes) {

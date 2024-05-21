@@ -12,7 +12,7 @@
 
 namespace RtoR {
 
-    typedef std::shared_ptr<Spaces::PointSet> DFTModes;
+    typedef Math::PointSet_ptr DFTModes;
     typedef Count NumberOfModes;
 
     struct DFTResult {
@@ -27,7 +27,7 @@ namespace RtoR {
 
             fix N = R.size();
 
-            auto amps = std::make_shared<Spaces::PointSet>();
+            auto amps = Slab::New<Math::PointSet>();
             for(int i=0; i<N; ++i){
                 fix Re_A = R[i].y;
                 fix Im_A = I[i].y;
@@ -51,7 +51,7 @@ namespace RtoR {
             return n;
         }
 
-        explicit DFTResult(bool functionIsReal=false, DFTModes re=std::make_shared<Spaces::PointSet>(), DFTModes im=std::make_shared<Spaces::PointSet>())
+        explicit DFTResult(bool functionIsReal=false, DFTModes re=Slab::New<Math::PointSet>(), DFTModes im=Slab::New<Math::PointSet>())
         : re(re), im(im), inverseIsReal(functionIsReal)
         {
 

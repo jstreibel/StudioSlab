@@ -35,12 +35,12 @@ namespace Graphics {
     private:
         static std::map<Str, Graph2D*> graphMap;
 
-        typedef std::multimap<zOrder_t, Artist::Ptr> ContentMap;
+        typedef std::multimap<zOrder_t, Artist_ptr> ContentMap;
         ContentMap content;
 
         // ************************ POINT SET **************************************
         struct PointSetMetadata {
-            Spaces::PointSet::Ptr data;
+            Math::PointSet_ptr data;
             PlotStyle plotStyle;
             Str name;
             bool affectsGraphRanges=true;
@@ -65,7 +65,7 @@ namespace Graphics {
 
         Real animationTimeSeconds = 0.2;
 
-        Spaces::PointSet XHair;
+        Math::PointSet XHair;
 
 
     protected:
@@ -93,21 +93,21 @@ namespace Graphics {
 
         explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
 
-        void addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder=0);
-        bool removeArtist(const Artist::Ptr& pArtist);
+        void addArtist(const Artist_ptr& pArtist, zOrder_t zOrder=0);
+        bool removeArtist(const Artist_ptr& pArtist);
 
         void draw() override;
 
 
         void setupOrtho() const;
 
-        void addPointSet(Spaces::PointSet::Ptr pointSet,
+        void addPointSet(Math::PointSet_ptr pointSet,
                          PlotStyle style,
                          Str setName="",
                          bool affectsGraphRanges=true);
-        void removePointSet(const Spaces::PointSet::Ptr& pointSet);
+        void removePointSet(const Math::PointSet_ptr& pointSet);
         void removePointSet(const Str& name);
-        static void renderPointSet(const Spaces::PointSet &pSet, PlotStyle style) noexcept;
+
         void clearPointSets();
 
         void addCurve(RtoR2::ParametricCurve::Ptr curve, PlotStyle style, Str name);

@@ -26,7 +26,7 @@ namespace Graphics {
             LogEpsilon
         };
 
-        typedef std::shared_ptr<Graphics::OpenGL::Texture2D_Real> FieldDataTexturePtr;
+        typedef Slab::Pointer<Graphics::OpenGL::Texture2D_Real> FieldDataTexturePtr;
 
         bool validTextureData = false;
 
@@ -45,8 +45,8 @@ namespace Graphics {
 
         Graphics::OpenGL::VertexBuffer vertexBuffer;
         Graphics::OpenGL::Shader program;
-        R2toR::Function::ConstPtr func    = nullptr;
-        FieldDataTexturePtr   textureData = nullptr;
+        R2toR::Function_constptr func;
+        FieldDataTexturePtr   textureData;
 
         Str name;
 
@@ -61,17 +61,17 @@ namespace Graphics {
 
         void draw(const Graph2D &d) override;
 
-        void setFunction(R2toR::Function::ConstPtr function, const Unit& unit=Constants::One);
-        auto getFunction() const -> R2toR::Function::ConstPtr;
+        void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
+        auto getFunction() const -> R2toR::Function_constptr;
         void setColorMap(const ColorMap& colorMap);
         void set_xPeriodicOn();
 
         void adjustScale();
 
         auto getFieldTextureData() const -> FieldDataTexturePtr;
-
-
     };
+
+    DefinePointer(FlatField2DArtist)
 
 } // Graphics
 

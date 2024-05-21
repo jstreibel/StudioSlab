@@ -15,11 +15,11 @@ namespace Graphics {
         static auto renderToDiscrete(const R2toR::Function& function,
                                      Resolution x, Resolution y, R2toR::Domain,
                                      Real scale=1.0)
-                                     -> std::shared_ptr<R2toR::DiscreteFunction>;
+                                     -> R2toR::DiscreteFunction_ptr;
 
         static auto renderToDiscrete(const R2toR::Function& in,
-                                     std::shared_ptr<R2toR::DiscreteFunction>out, Real scale=1.0)
-                                     -> std::shared_ptr<R2toR::DiscreteFunction>;
+                                     R2toR::DiscreteFunction_ptr out, Real scale=1.0)
+                                     -> R2toR::DiscreteFunction_ptr ;
     };
 
 } // Graphics

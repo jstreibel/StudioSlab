@@ -30,9 +30,9 @@ namespace Graphics {
     public:
         explicit WindowPanel(Flags flags = None);
 
-        void addWindow(const Window::Ptr& window, bool newColumn = false, float newColumnWidth = -1);
+        void addWindow(const Window_ptr& window, bool newColumn = false, float newColumnWidth = -1);
 
-        bool removeWindow(const Window::Ptr& window);
+        bool removeWindow(const Window_ptr& window);
 
         /**
          * Add window to column columnId.
@@ -40,7 +40,7 @@ namespace Graphics {
          * @param columnId zero-based index of column.
          * @return true if success, false otherwise.
          */
-        bool addWindowToColumn(const Window::Ptr &window, int columnId);
+        bool addWindowToColumn(const Window_ptr &window, int columnId);
 
         /**
          * Set the the relative width of a column.

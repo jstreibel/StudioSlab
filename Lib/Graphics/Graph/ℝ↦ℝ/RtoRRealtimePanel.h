@@ -34,10 +34,10 @@ namespace RtoR {
 
         Graphics::GraphRtoR mFieldsGraph;
 
-        Spaces::PointSet UHistoryData;
-        Spaces::PointSet KHistoryData;
-        Spaces::PointSet WHistoryData;
-        Spaces::PointSet VHistoryData;
+        Math::PointSet UHistoryData;
+        Math::PointSet KHistoryData;
+        Math::PointSet WHistoryData;
+        Math::PointSet VHistoryData;
 
         const Graphics::PlotStyle U_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[0];
         const Graphics::PlotStyle K_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[1];
@@ -69,12 +69,12 @@ namespace RtoR {
                       const Real phiMin, const Real phiMax,
                       bool showEnergyHistoryAsDensities);
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                  std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
+        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                  Graphics::HistoryDisplay_ptr simHistoryGraph) override;
 
-        void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
-                                    std::shared_ptr<Graphics::HistoryDisplay> sftHistoryGraph) override;
+                                    Graphics::HistoryDisplay_ptr sftHistoryGraph) override;
     };
 }
 

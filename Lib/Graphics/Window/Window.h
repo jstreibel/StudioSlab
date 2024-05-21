@@ -5,13 +5,12 @@
 #ifndef V_SHAPE_WINDOW_H
 #define V_SHAPE_WINDOW_H
 
-
-#include "Graphics/Graph/Artists/Artist.h"
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Styles/WindowStyles.h"
 
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/Events/MouseState.h"
+#include "Graphics/Types.h"
 
 #include <vector>
 #include <memory>
@@ -92,6 +91,8 @@ namespace Graphics {
         }
 
     };
+
+    DefinePointer(Window)
 
 }
 

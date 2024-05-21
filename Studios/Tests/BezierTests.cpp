@@ -42,8 +42,8 @@ namespace Tests {
         graph.addFunction(&function, "Bezier");
 
         fix lim = 1.e3;
-        static Spaces::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
-        static Spaces::PointSet vertLine2{{{1.0, -lim}, {1.0, lim}}};
+        static Math::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
+        static Math::PointSet vertLine2{{{1.0, -lim}, {1.0, lim}}};
         graph.addPointSet(DummyPtr(vertLine1), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
         graph.addPointSet(DummyPtr(vertLine2), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
         auto style = StylesManager::GetCurrent()->funcPlotStyles[2];

@@ -1,0 +1,15 @@
+//
+// Created by joao on 20/05/24.
+//
+
+#ifndef STUDIOSLAB_POINTSETRENDERER_H
+#define STUDIOSLAB_POINTSETRENDERER_H
+
+#include "Math/Space/Impl/PointSet.h"
+#include "Graphics/Graph/PlotStyle.h"
+
+namespace Graphics::OpenGL::Legacy {
+    void RenderPointSet(const Math::PointSet &pSet, PlotStyle style) noexcept;
+}
+
+#endif //STUDIOSLAB_POINTSETRENDERER_H

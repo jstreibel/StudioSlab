@@ -27,12 +27,12 @@
 namespace RtoR {
     class StatisticalMonitor : public Graphics::RtoRPanel {
         Real Δt = 0.0;
-        std::shared_ptr<R2toR::Sampler> sampler;
+        R2toR::Sampler_ptr sampler;
 
-        std::shared_ptr<RtoR2::StraightLine> correlationLine;
-        RtoR::Section1D::Ptr mSpaceCorrelation;
+        RtoR2::StraightLine_ptr correlationLine;
+        RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::CorrelationFunction mCorrelationFunction;
-        std::shared_ptr<R2toR::DiscreteFunction> mCorrelationComputed;
+        R2toR::DiscreteFunction_ptr mCorrelationComputed;
         Graphics::GraphRtoR mCorrelationSectionGraph;
         Graphics::FlatFieldDisplay mCorrelationGraph;
 
@@ -53,17 +53,17 @@ namespace RtoR {
         Real tau_indirect=.0;
         Real tau_avg=.0;
 
-        Spaces::PointSet temperature1HistoryData;
-        Spaces::PointSet temperature2HistoryData;
-        Spaces::PointSet temperature3HistoryData;
-        Spaces::PointSet temperature4HistoryData;
+        Math::PointSet temperature1HistoryData;
+        Math::PointSet temperature2HistoryData;
+        Math::PointSet temperature3HistoryData;
+        Math::PointSet temperature4HistoryData;
 
         Graphics::Graph2D mTemperaturesGraph;
 
-        Spaces::PointSet histogramKData;
-        Spaces::PointSet histogramGradData;
-        Spaces::PointSet histogramVData;
-        Spaces::PointSet histogramEData;
+        Math::PointSet histogramKData;
+        Math::PointSet histogramGradData;
+        Math::PointSet histogramVData;
+        Math::PointSet histogramEData;
 
         Graphics::Graph2D mHistogramsGraphK;
         Graphics::Graph2D mHistogramsGraphGrad;
@@ -82,8 +82,8 @@ namespace RtoR {
 
         void setTransientHint(Real);
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                  std::shared_ptr<Graphics::HistoryDisplay> simHistoryGraph) override;
+        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                  Graphics::HistoryDisplay_ptr simHistoryGraph) override;
 
     };
 }

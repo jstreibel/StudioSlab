@@ -29,6 +29,8 @@ namespace R2toC {
         auto getData() -> ComplexArray&;
     };
 
+    DefinePointer(DiscreteFunction)
+
 } // R2toC
 
 #endif //STUDIOSLAB_R2TOCDISCRETEFUNCTION_H

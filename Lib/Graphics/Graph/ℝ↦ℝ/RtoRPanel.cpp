@@ -18,15 +18,15 @@ namespace Graphics {
 
     }
 
-    void RtoRPanel::setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simHistory,
-                                         std::shared_ptr<HistoryDisplay> simHistoryGraph) {
+    void RtoRPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+                                         HistoryDisplay_ptr simHistoryGraph) {
         simulationHistory = simHistory;
         simulationHistoryGraph = simHistoryGraph;
     }
 
-    void RtoRPanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+    void RtoRPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                            const DFTDataHistory &dftData,
-                                           std::shared_ptr<HistoryDisplay> sftHistoryGraph) {
+                                           HistoryDisplay_ptr sftHistoryGraph) {
 
         spaceFTHistory = sftHistory;
         this->dftData = &dftData;

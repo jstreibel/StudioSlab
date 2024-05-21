@@ -15,13 +15,15 @@ namespace Graphics {
         // Count nextRow = 0;
         // Real lastUpdatedTime = -1;
 
-        std::shared_ptr<HistoryTexture2DUploadHelper> helper;
+        HistoryTexture2DUploadHelper_ptr helper;
 
     public:
         explicit HistoryDisplay(Str name="Full history");
 
         void set_t(Real t);
     };
+
+    DefinePointer(HistoryDisplay)
 
 }
 

@@ -21,10 +21,10 @@ namespace Modes::DatabaseViewer {
 
         Graphics::Graph2D massesGraph;
 
-        Spaces::PointSet maxValuesPointSet;
-        Spaces::PointSet massesReal_pointSet;
-        Spaces::PointSet massesImag_pointSet;
-        Spaces::PointSet underXHair;
+        Math::PointSet maxValuesPointSet;
+        Math::PointSet massesReal_pointSet;
+        Math::PointSet massesImag_pointSet;
+        Math::PointSet underXHair;
 
         typedef std::shared_ptr<R2toR::DiscreteFunction_CPU> FullField_ptr;
         std::vector<FullField_ptr> fullFields;

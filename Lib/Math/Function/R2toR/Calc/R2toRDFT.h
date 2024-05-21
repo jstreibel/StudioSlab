@@ -12,7 +12,7 @@ namespace R2toR {
 
     class R2toRDFT {
     public:
-        typedef std::shared_ptr<R2toC::DiscreteFunction> FFTData;
+        typedef R2toC::DiscreteFunction_ptr FFTData;
 
         enum DataPolicy {
             Mangle,

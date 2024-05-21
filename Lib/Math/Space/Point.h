@@ -10,7 +10,7 @@
 
 #include "Math/Formalism/Categories.h"
 
-namespace Spaces {
+namespace Math {
 
     typedef Real2D Point2D;
 

@@ -23,12 +23,12 @@
 namespace Graphics {
 
 
-    void WindowColumn::addWindow(Window::Ptr window, float windowHeight) {
+    void WindowColumn::addWindow(Window_ptr window, float windowHeight) {
         windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
 
-    bool WindowColumn::removeWindow(const Window::Ptr& window) {
+    bool WindowColumn::removeWindow(const Window_ptr& window) {
 
         auto it = windows.begin();
         for(auto i=0; i<windows.size(); ++i){

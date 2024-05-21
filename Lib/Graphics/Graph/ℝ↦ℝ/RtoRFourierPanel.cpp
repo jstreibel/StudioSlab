@@ -93,9 +93,9 @@ namespace Graphics {
         WindowPanel::draw();
     }
 
-    void RtoRFourierPanel::setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+    void RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                                   const DFTDataHistory &dftData,
-                                                  std::shared_ptr<HistoryDisplay> sftHistoryGraph) {
+                                                  HistoryDisplay_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
         spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
@@ -114,8 +114,7 @@ namespace Graphics {
         fix n = dftData->size();
         fix ht = (t-tMin)/n;
 
-        std::shared_ptr<R2toR::DiscreteFunction_CPU>
-                rebuiltHistory(new R2toR::DiscreteFunction_CPU(N, n, xMin, tMin, hx, ht));
+        auto rebuiltHistory = Slab::New<R2toR::DiscreteFunction_CPU>(N, n, xMin, tMin, hx, ht);
 
         Log::Info(__PRETTY_FUNCTION__ + Str(" STARTED computing inverse DFT."));
         int _n = 0;
@@ -131,6 +130,9 @@ namespace Graphics {
 
             ++_n;
         }
+
+        const Core::FunctionT<Real2D, double>* a;
+        const R2toR::DiscreteFunction* b;
 
         Log::Info(__PRETTY_FUNCTION__ + Str(" FINISHED computing inverse DFT."));
 
@@ -155,7 +157,7 @@ namespace Graphics {
 
         timeFTDisplay->removeFunction(timeDFT);
 
-        timeDFT = std::shared_ptr<R2toR::DiscreteFunction>(new R2toR::DiscreteFunction_CPU(N, m, xMin, 0, dx, dk));
+        timeDFT = Slab::New<R2toR::DiscreteFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::DiscreteFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor(t₀/dt);

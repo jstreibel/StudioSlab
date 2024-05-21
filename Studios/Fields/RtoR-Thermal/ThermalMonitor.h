@@ -21,16 +21,16 @@ namespace RtoR::Thermal {
         Real tau=.0;
         Real tau_indirect=.0;
 
-        Spaces::PointSet temperature1HistoryData;
-        Spaces::PointSet temperature2HistoryData;
-        Spaces::PointSet temperature3HistoryData;
+        Math::PointSet temperature1HistoryData;
+        Math::PointSet temperature2HistoryData;
+        Math::PointSet temperature3HistoryData;
 
         Graphics::Graph2D mTemperaturesGraph;
 
-        Spaces::PointSet histogramKData;
-        Spaces::PointSet histogramGradData;
-        Spaces::PointSet histogramVData;
-        Spaces::PointSet histogramEData;
+        Math::PointSet histogramKData;
+        Math::PointSet histogramGradData;
+        Math::PointSet histogramVData;
+        Math::PointSet histogramEData;
 
         Graphics::Graph2D mHistogramsGraphK;
         Graphics::Graph2D mHistogramsGraphGrad;

@@ -11,7 +11,7 @@
 namespace Graphics {
 
     class XHairArtist : public Artist {
-        Spaces::PointSet XHair;
+        Math::PointSet XHair;
     public:
         void draw(const Graph2D &window) override;
     };

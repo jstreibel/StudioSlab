@@ -8,7 +8,7 @@
 #include "Sampler.h"
 
 
-R2toR::CorrelationFunction::CorrelationFunction(R2toR::Function::ConstPtr baseFunc, std::shared_ptr<Sampler> sampler)
+R2toR::CorrelationFunction::CorrelationFunction(R2toR::Function_constptr baseFunc, Sampler_ptr sampler)
 : baseFunction( std::move(baseFunc) )
 , sampler(      std::move(sampler) )
 {   }
@@ -40,11 +40,11 @@ Real R2toR::CorrelationFunction::operator()(Real2D x) const {
     return av_s₁s₂/n - av_s₁*av_s₂/(n*n);
 }
 
-void R2toR::CorrelationFunction::setBaseFunction(R2toR::Function::ConstPtr baseFunc) {
+void R2toR::CorrelationFunction::setBaseFunction(R2toR::Function_constptr baseFunc) {
     baseFunction = std::move(baseFunc);
 }
 
-void R2toR::CorrelationFunction::setSampler(std::shared_ptr<Sampler> _sampler) {
+void R2toR::CorrelationFunction::setSampler(Sampler_ptr _sampler) {
     this->sampler = std::move(_sampler);
 
 }

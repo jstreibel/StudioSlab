@@ -12,15 +12,15 @@ namespace Graphics {
 
     class CorrelationsPanel : public RtoRPanel {
         FlatFieldDisplay DFT2DGraph;
-        std::shared_ptr<R2toC::DiscreteFunction> dftFunction;
-        std::shared_ptr<R2toR::DiscreteFunction> ftAmplitudes;
-        std::shared_ptr<R2toR::DiscreteFunction> ftPhases;
-        std::shared_ptr<R2toR::DiscreteFunction> ftRealParts;
-        std::shared_ptr<R2toR::DiscreteFunction> ftImagParts;
+        R2toC::DiscreteFunction_ptr dftFunction;
+        R2toR::DiscreteFunction_ptr ftAmplitudes;
+        R2toR::DiscreteFunction_ptr ftPhases;
+        R2toR::DiscreteFunction_ptr ftRealParts;
+        R2toR::DiscreteFunction_ptr ftImagParts;
 
         FlatFieldDisplay correlationGraph;
-        std::shared_ptr<R2toR::DiscreteFunction> powerSpectrum;
-        std::shared_ptr<R2toR::DiscreteFunction> twoPointCorrFunction;
+        R2toR::DiscreteFunction_ptr powerSpectrum;
+        R2toR::DiscreteFunction_ptr twoPointCorrFunction;
 
         void computeAll(bool discardRedundantModes);
         void computeFullDFT2D(bool discardRedundantModes);
@@ -30,8 +30,8 @@ namespace Graphics {
     public:
         CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian);
 
-        void setSimulationHistory(std::shared_ptr<const R2toR::DiscreteFunction> simulationHistory,
-                                  std::shared_ptr<HistoryDisplay> simHistoryGraph) override;
+        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                  HistoryDisplay_ptr simHistoryGraph) override;
 
         void draw() override;
     };

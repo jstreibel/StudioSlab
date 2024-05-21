@@ -13,11 +13,11 @@
 namespace Graphics {
 
     class RtoRFourierPanel : public RtoRPanel {
-        std::shared_ptr<FlatFieldDisplay> inverseFTDisplay;
-        std::shared_ptr<R2toR::DiscreteFunction> inverseDFT;
+        FlatFieldDisplay_ptr inverseFTDisplay;
+        R2toR::DiscreteFunction_ptr inverseDFT;
 
-        std::shared_ptr<FlatFieldDisplay> timeFTDisplay;
-        std::shared_ptr<R2toR::DiscreteFunction> timeDFT;
+        FlatFieldDisplay_ptr timeFTDisplay;
+        R2toR::DiscreteFunction_ptr timeDFT;
 
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
@@ -31,9 +31,9 @@ namespace Graphics {
 
         void draw() override;
 
-        void setSpaceFourierHistory(std::shared_ptr<const R2toR::DiscreteFunction> sftHistory,
+        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
-                                    std::shared_ptr<HistoryDisplay> sftHistoryGraph) override;
+                                    HistoryDisplay_ptr sftHistoryGraph) override;
     };
 
 } // Graphics

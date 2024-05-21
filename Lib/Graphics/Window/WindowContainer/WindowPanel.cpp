@@ -12,7 +12,7 @@ namespace Graphics {
 
     WindowPanel::WindowPanel(Window::Flags flags) : Window(0, 0, 100, 100, flags) {    }
 
-    void WindowPanel::addWindow(const Window::Ptr& window, bool newColumn, float newColumnWidth) {
+    void WindowPanel::addWindow(const Window_ptr& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
             columns.emplace_back();
             widths.emplace_back(newColumnWidth);
@@ -27,7 +27,7 @@ namespace Graphics {
         column->addWindow(window);
     }
 
-    bool WindowPanel::removeWindow(const Window::Ptr &windowToRemove) {
+    bool WindowPanel::removeWindow(const Window_ptr &windowToRemove) {
         int i=0;
         for(auto &column : columns){
             if(column.removeWindow(windowToRemove)) {
@@ -45,7 +45,7 @@ namespace Graphics {
         return false;
     }
 
-    bool WindowPanel::addWindowToColumn(const Window::Ptr &window, int columnId) {
+    bool WindowPanel::addWindowToColumn(const Window_ptr &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];

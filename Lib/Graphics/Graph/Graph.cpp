@@ -18,6 +18,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "StylesManager.h"
 #include "Artists/AxisArtist.h"
+#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -40,8 +41,8 @@ Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _titl
 
     Log::Info() << "Created Graph2D '" << title << "'" << Log::Flush;
 
-    addArtist(DummyPtr(axisArtist), 100);
-    addArtist(DummyPtr(artistXHair), 10000);
+    addArtist(Slab::DummyPointer(axisArtist), 100);
+    addArtist(Slab::DummyPointer(artistXHair), 10000);
 }
 
 Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
@@ -49,11 +50,11 @@ Graphics::Graph2D::Graph2D(Str title, bool autoReviewGraphLimits)
     autoReviewGraphRanges = autoReviewGraphLimits;
 }
 
-void Graphics::Graph2D::addArtist(const Artist::Ptr& pArtist, zOrder_t zOrder) {
+void Graphics::Graph2D::addArtist(const Artist_ptr& pArtist, zOrder_t zOrder) {
     content.emplace(zOrder, pArtist);
 }
 
-bool Graphics::Graph2D::removeArtist(const Graphics::Artist::Ptr &pArtist) {
+bool Graphics::Graph2D::removeArtist(const Graphics::Artist_ptr &pArtist) {
     auto haveErased = false;
 
     for(auto item = content.begin(); item!=content.end();) {
@@ -118,7 +119,7 @@ void Graphics::Graph2D::drawPointSets() {
         if (!label.empty())
             nameLabelDraw(style, label);
 
-        Graphics::Graph2D::renderPointSet(func, style);
+        Graphics::OpenGL::Legacy::RenderPointSet(func, style);
     }
 }
 
@@ -132,12 +133,12 @@ void Graphics::Graph2D::drawCurves() {
 
         nameLabelDraw(style, name);
 
-        Graphics::Graph2D::renderPointSet(*pointSet, style);
+        Graphics::OpenGL::Legacy::RenderPointSet(*pointSet, style);
     }
 }
 
 void
-Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
+Graphics::Graph2D::addPointSet(Math::PointSet_ptr pointSet,
                                PlotStyle style,
                                Str setName,
                                bool affectsGraphRanges) {
@@ -146,7 +147,7 @@ Graphics::Graph2D::addPointSet(Spaces::PointSet::Ptr pointSet,
     mPointSets.push_back(metaData);
 }
 
-void Graphics::Graph2D::removePointSet(const Spaces::PointSet::Ptr &pointSet) {
+void Graphics::Graph2D::removePointSet(const Math::PointSet_ptr &pointSet) {
     mPointSets.remove_if([&pointSet](const PointSetMetadata &ptSetMetadata) {
         return ptSetMetadata.data == pointSet;
     });
@@ -162,92 +163,6 @@ void
 Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, PlotStyle style, Str name) {
     CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
     curves.emplace_back(curveMetadata);
-}
-
-void
-Graphics::Graph2D::renderPointSet(const Spaces::PointSet &pSet,
-                                  PlotStyle style) noexcept {
-    auto pts = pSet.getPoints();
-
-    OpenGL::Shader::remove();
-
-    if (style.filled && !(style.primitive == Point || style.primitive == Lines)) {
-        const auto color = style.fillColor;
-
-        glColor4f(color.r, color.g, color.b, color.a);
-        glBegin(GL_QUADS);
-        {
-            auto iMax = (long) pts.size() - 1;
-            for (auto i = 0; i < iMax; ++i) {
-                auto pLeft = pts[i];
-                auto pRite = pts[i + 1];
-
-                const Real xmin = pLeft.x;
-                const Real xmax = pRite.x;
-
-                const Real ymin = 0,
-                        ymax1 = pLeft.y,
-                        ymax2 = pRite.y;
-
-                glVertex2d(xmin, ymin);
-                glVertex2d(xmin, ymax1);
-                glVertex2d(xmax, ymax2);
-                glVertex2d(xmax, ymin);
-            }
-        }
-        glEnd();
-    }
-
-    {
-        glLineWidth(style.thickness);
-
-        auto color = style.lineColor;
-        glColor4f(color.r, color.g, color.b, color.a);
-
-        if (style.primitive != Solid
-            && style.primitive != VerticalLines
-            && style.primitive != Lines) {
-            glDisable(GL_LINE_SMOOTH);
-            glEnable(GL_LINE_STIPPLE);
-            glLineStipple(style.stippleFactor, style.stipplePattern);
-        } else glEnable(GL_LINE_SMOOTH);
-
-        auto primitive = GL_LINE_STRIP;
-        if (style.primitive == Point || style.primitive == VerticalLines) {
-            fix ptSizeFactor = style.primitive == VerticalLines ? 5.0 : 1.0;
-
-            primitive = GL_POINTS;
-            glEnable(GL_POINT_SMOOTH);
-            glPointSize(style.thickness * ptSizeFactor);
-
-            glEnable(GL_LINE_SMOOTH);
-            glLineWidth(style.thickness);
-        } else if (style.primitive == Lines) {
-            primitive = GL_LINES;
-        }
-
-        glBegin(primitive);
-        {
-            for (auto p: pts)
-                glVertex2d(p.x, p.y);
-
-        }
-        glEnd();
-
-        if (style.primitive == VerticalLines) {
-            glBegin(GL_LINES);
-            {
-                for (auto p: pts) {
-                    glVertex2d(p.x, 0.0);
-                    glVertex2d(p.x, p.y);
-                }
-            }
-            glEnd();
-        }
-
-    }
-
-    OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
 }
 
 void Graphics::Graph2D::setupOrtho() const {

@@ -12,8 +12,8 @@
 namespace Graphics {
 
     class HistoryTexture2DUploadHelper {
-        typedef std::shared_ptr<OpenGL::Texture2D_Real> Texture2D_Real_Ptr;
-        typedef std::shared_ptr<const R2toR::DiscreteFunction> DiscreteFunction_Ptr;
+        typedef Slab::Pointer<OpenGL::Texture2D_Real> Texture2D_Real_Ptr;
+        typedef Slab::Pointer<const R2toR::DiscreteFunction> DiscreteFunction_Ptr;
 
         Texture2D_Real_Ptr textureData;
         DiscreteFunction_Ptr function;
@@ -25,6 +25,8 @@ namespace Graphics {
 
         void uploadUpTo(const Real time);
     };
+
+    DefinePointer(HistoryTexture2DUploadHelper)
 
 } // Graphics
 

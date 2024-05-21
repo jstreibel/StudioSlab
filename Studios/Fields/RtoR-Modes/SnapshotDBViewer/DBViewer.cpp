@@ -121,8 +121,8 @@ namespace Modes::DatabaseViewer {
     void DBViewer::updateKGDispersion(bool visible) {
         Real mass = KG_mass;
 
-        static Spaces::PointSet::Ptr KGRelation;
-        static Spaces::PointSet::Ptr KGRelation_high_k;
+        static Math::PointSet::Ptr KGRelation;
+        static Math::PointSet::Ptr KGRelation_high_k;
         allDataDisplay.removePointSet(KGRelation);
         allDataDisplay.removePointSet(KGRelation_high_k);
 

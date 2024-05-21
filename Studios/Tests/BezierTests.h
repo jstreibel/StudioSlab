@@ -17,7 +17,7 @@ namespace Tests {
         Graphics::GUIWindow stats;
         Graphics::GraphRtoR graph;
 
-        Spaces::PointSet currentPt;
+        Math::PointSet currentPt;
 
     public:
         BezierTests();

@@ -5,8 +5,8 @@
 #include "R2toC_to_R2toR.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
-std::shared_ptr<R2toR::DiscreteFunction>
-Math::Convert(const std::shared_ptr<const R2toC::DiscreteFunction>& in, Math::R2toC_to_R2toR_Mode mode) {
+R2toR::DiscreteFunction_ptr
+Math::Convert(const R2toC::DiscreteFunction_constptr & in, Math::R2toC_to_R2toR_Mode mode) {
     fix N = in->N,
         M = in->M;
     fix Lx = in->Lx,
@@ -14,7 +14,7 @@ Math::Convert(const std::shared_ptr<const R2toC::DiscreteFunction>& in, Math::R2
     fix xMin = in->x0;
     fix yMin = in->y0;
 
-    auto out = std::make_shared<R2toR::DiscreteFunction_CPU>(N, M, xMin, yMin, Lx/N, Ly/M);
+    auto out = Slab::New<R2toR::DiscreteFunction_CPU>(N, M, xMin, yMin, Lx/N, Ly/M);
 
     switch (mode) {
         case Phase:
@@ -32,8 +32,8 @@ Math::Convert(const std::shared_ptr<const R2toC::DiscreteFunction>& in, Math::R2
     throw Exception("unknown Complex conversion mode");
 }
 
-std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToAbs(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out) {
+R2toR::DiscreteFunction_ptr
+Math::ConvertToAbs(const R2toC::DiscreteFunction_constptr& in, R2toR::DiscreteFunction_ptr out) {
 
     assert(in->N == out->getN() && in->M == out->getM());
 
@@ -52,8 +52,8 @@ Math::ConvertToAbs(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std
     return out;
 }
 
-std::shared_ptr<R2toR::DiscreteFunction> Math::ConvertToPowerSpectrum(const std::shared_ptr<const R2toC::DiscreteFunction> &in,
-                                                                      std::shared_ptr<R2toR::DiscreteFunction> out) {
+R2toR::DiscreteFunction_ptr Math::ConvertToPowerSpectrum(const R2toC::DiscreteFunction_constptr &in,
+                                                         R2toR::DiscreteFunction_ptr out) {
     assert(in->N == out->getN() && in->M == out->getM());
 
     auto &v_in = in->getData();
@@ -71,8 +71,8 @@ std::shared_ptr<R2toR::DiscreteFunction> Math::ConvertToPowerSpectrum(const std:
     return out;
 }
 
-std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToPhase(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out) {
+R2toR::DiscreteFunction_ptr
+Math::ConvertToPhase(const R2toC::DiscreteFunction_constptr& in, R2toR::DiscreteFunction_ptr out) {
     assert(in->N == out->getN() && in->M == out->getM());
 
     auto &v_in = in->getData();
@@ -85,8 +85,8 @@ Math::ConvertToPhase(const std::shared_ptr<const R2toC::DiscreteFunction>& in, s
     return out;
 }
 
-std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToReal(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out){
+R2toR::DiscreteFunction_ptr
+Math::ConvertToReal(const R2toC::DiscreteFunction_constptr& in, R2toR::DiscreteFunction_ptr out){
     assert(in->N == out->getN() && in->M == out->getM());
 
     auto &v_in = in->getData();
@@ -99,8 +99,8 @@ Math::ConvertToReal(const std::shared_ptr<const R2toC::DiscreteFunction>& in, st
     return out;
 }
 
-std::shared_ptr<R2toR::DiscreteFunction>
-Math::ConvertToImaginary(const std::shared_ptr<const R2toC::DiscreteFunction>& in, std::shared_ptr<R2toR::DiscreteFunction> out){
+R2toR::DiscreteFunction_ptr
+Math::ConvertToImaginary(const R2toC::DiscreteFunction_constptr& in, R2toR::DiscreteFunction_ptr out){
     assert(in->N == out->getN() && in->M == out->getM());
 
     auto &v_in = in->getData();
