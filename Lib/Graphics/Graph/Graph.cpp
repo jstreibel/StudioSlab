@@ -19,16 +19,19 @@
 #include "StylesManager.h"
 #include "Artists/AxisArtist.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
+#include "Graphics/Graph/Artists/PointSetArtist.h"
+#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
 std::map<Str, Graphics::Graph2D *> Graphics::Graph2D::graphMap = {};
 
 
-Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, int samples)
+Graphics::Graph2D::Graph2D(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
 : region{xMin, xMax, yMin, yMax}
 , title(std::move(_title))
-, samples(samples)
 , axisArtist()
 {
     if (title.empty()) title = Str("unnamed");
@@ -82,9 +85,6 @@ void Graphics::Graph2D::draw() {
 
     labelingHelper.setTotalItems(countDisplayItems());
 
-    drawPointSets();
-    drawCurves();
-
     drawGUI();
 }
 
@@ -109,60 +109,36 @@ void Graphics::Graph2D::drawGUI() {
     }
 }
 
-void Graphics::Graph2D::drawPointSets() {
-
-    for (auto &ptSet: mPointSets) {
-        auto &func = *ptSet.data;
-        auto style = ptSet.plotStyle;
-        auto label = ptSet.name;
-
-        if (!label.empty())
-            nameLabelDraw(style, label);
-
-        Graphics::OpenGL::Legacy::RenderPointSet(func, style);
-    }
-}
-
-void Graphics::Graph2D::drawCurves() {
-    for (IN curveData: curves) {
-        auto curve = curveData.curve;
-        auto pointSet = curve.get()->renderToPointSet();
-
-        auto style = curveData.style;
-        auto name = curveData.name;
-
-        nameLabelDraw(style, name);
-
-        Graphics::OpenGL::Legacy::RenderPointSet(*pointSet, style);
-    }
-}
-
-void
+Graphics::Artist_ptr
 Graphics::Graph2D::addPointSet(Math::PointSet_ptr pointSet,
                                PlotStyle style,
                                Str setName,
                                bool affectsGraphRanges) {
-    auto metaData = PointSetMetadata{std::move(pointSet), style, std::move(setName),
-                                     affectsGraphRanges};
-    mPointSets.push_back(metaData);
+
+    auto artist = Slab::New<PointSetArtist>(pointSet, setName, style);
+    artist->setAffectGraphRanges(affectsGraphRanges);
+
+    addArtist(artist);
+
+    return artist;
 }
 
-void Graphics::Graph2D::removePointSet(const Math::PointSet_ptr &pointSet) {
-    mPointSets.remove_if([&pointSet](const PointSetMetadata &ptSetMetadata) {
-        return ptSetMetadata.data == pointSet;
-    });
+Graphics::Artist_ptr
+Graphics::Graph2D::addCurve(RtoR2::ParametricCurve_ptr curve, PlotStyle style, Str name) {
+    auto artist = Slab::New<ParametricCurve2DArtist>(curve, style);
+
+    addArtist(artist);
+
+    return artist;
 }
 
-void Graphics::Graph2D::removePointSet(const Str &name) {
-    mPointSets.remove_if([&name](const PointSetMetadata &ptSetMetadata) {
-        return ptSetMetadata.name == name;
-    });
-}
+Graphics::Artist_ptr
+Graphics::Graph2D::addFunction(RtoR::Function_ptr function, PlotStyle style, Str name, Resolution samples) {
+    auto artist = Slab::New<RtoRFunctionArtist>(function, style, samples);
 
-void
-Graphics::Graph2D::addCurve(RtoR2::ParametricCurve::Ptr curve, PlotStyle style, Str name) {
-    CurveMetadata curveMetadata = {std::move(curve), style, std::move(name)};
-    curves.emplace_back(curveMetadata);
+    addArtist(artist);
+
+    return artist;
 }
 
 void Graphics::Graph2D::setupOrtho() const {
@@ -186,17 +162,17 @@ void Graphics::Graph2D::setupOrtho() const {
     currStyle->ticksWriter->reshape(vp.width(), vp.height());
 }
 
-void Graphics::Graph2D::clearPointSets() { mPointSets.clear(); }
-
-void Graphics::Graph2D::clearCurves() { curves.clear(); }
-
 auto Graphics::Graph2D::countDisplayItems() const -> Count {
-    return mPointSets.size() + curves.size();
+    Count n=0;
+    for(const auto& a : content)
+        if(a.second->wantsLegend()) ++n;
+
+    return n;
 }
 
 void Graphics::Graph2D::artistsDraw() {
     for (const auto & [priority, artist] : content)
-        artist->draw(*this);
+        if(artist->isVisible()) artist->draw(*this);
 }
 
 Graphics::AxisArtist &Graphics::Graph2D::getAxisArtist() {

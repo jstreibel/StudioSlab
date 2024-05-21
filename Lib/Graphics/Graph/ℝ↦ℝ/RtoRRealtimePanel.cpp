@@ -47,7 +47,7 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor", "realtime monitoring of simulation state")
 , showEnergyHistoryAsDensities(showEnergyHistoryAsDensities)
 , mFieldsGraph( params.getxMin(), params.getxMax(),
-                phiMin, phiMax, "Fields", true, (int)params.getN()*4)
+                phiMin, phiMax, "Fields")
 , mEnergyGraph("Energy")
 , mHistorySliceGraph(params.getxMin(), params.getxMax(),
                      phiMin, phiMax, "Fields", true)
@@ -65,15 +65,21 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 
         addWindow(Slab::DummyPointer(mFieldsGraph));
         addWindow(Slab::DummyPointer(mHistorySliceGraph));
-        addWindow(Slab::DummyPointer(mSpaceFourierModesGraph));
-
-        mSpaceFourierModesGraph.getAxisArtist().setHorizontalUnit(Constants::π);
     }
 
     addWindow(Slab::DummyPointer(mEnergyGraph));
 
     setColumnRelativeWidth(0, 0.4);
     setColumnRelativeWidth(1, -1);
+
+
+    {
+        fix V_str = hamiltonian.getThePotential()->symbol();
+        vArtist = mFieldsGraph.addFunction(hamiltonian.getPotentialDensity(), V_style, Str("V(ϕ)=")+V_str, 1024);
+        kArtist = mFieldsGraph.addFunction(hamiltonian.getKineticDensity(),   K_style, "K/L"                , 1024);
+        wArtist = mFieldsGraph.addFunction(hamiltonian.getGradientDensity(),  W_style, "(𝜕ₓϕ)²"             , 1024);
+        uArtist = mFieldsGraph.addFunction(hamiltonian.getEnergyDensity(),    U_style, "E/L"                , 1024);
+    }
 }
 
 void RtoR::RealtimePanel::draw() {
@@ -84,26 +90,17 @@ void RtoR::RealtimePanel::draw() {
     CHECK_GL_ERRORS(errorCount++)
     updateHistoryGraphs();
     CHECK_GL_ERRORS(errorCount++)
-    updateFourierGraph();
-    CHECK_GL_ERRORS(errorCount++)
 
     // ************************ RT MONITOR**********************************
     guiWindow.begin();
     if(ImGui::CollapsingHeader("Real-time monitor")){
 
-        if(ImGui::Checkbox(("Show V(ϕ)="+V_str).c_str(), &showPot))              { }
-        if(ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy))    { }
-        if(ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy))   { }
-        if(ImGui::Checkbox("Show e",        &showEnergyDensity))    { }
+        if(ImGui::Checkbox(("Show V(ϕ)="+V_str).c_str(), &showPot)) { vArtist->setVisibility(showPot);}
+        if(ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy))    { kArtist->setVisibility(showKineticEnergy);}
+        if(ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy))   { wArtist->setVisibility(showGradientEnergy);}
+        if(ImGui::Checkbox("Show e",        &showEnergyDensity))    { uArtist->setVisibility(showEnergyDensity);}
     }
     guiWindow.end();
-
-    mFieldsGraph.clearFunctions();
-
-    if(showPot)             mFieldsGraph.addFunction(&hamiltonian.getPotentialDensity(), "V(ϕ)="+V_str, V_style);
-    if(showKineticEnergy)   mFieldsGraph.addFunction(&hamiltonian.getKineticDensity(),   "K/L"        , K_style);
-    if(showGradientEnergy)  mFieldsGraph.addFunction(&hamiltonian.getGradientDensity(),  "(𝜕ₓϕ)²"     , W_style);
-    if(showEnergyDensity)   mFieldsGraph.addFunction(&hamiltonian.getEnergyDensity(),    "E/L"        , U_style);
 
     CHECK_GL_ERRORS(errorCount++)
 
@@ -166,15 +163,7 @@ bool RtoR::RealtimePanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state,
 
 void RtoR::RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
                                                Graphics::HistoryDisplay_ptr simHistoryGraph) {
-    mHistorySliceGraph.setResolution(simHistory->getN());
-
     RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
-
-    if(0) {
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[2].permuteColors();
-        style.thickness = 3;
-        simulationHistoryGraph->addCurve(DummyPtr(historyLine), style, "t_history");
-    }
 
     addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
     setColumnRelativeWidth(1,-1);
@@ -210,68 +199,6 @@ void RtoR::RealtimePanel::updateHistoryGraphs() {
     guiWindow.end();
 
     CHECK_GL_ERRORS(1)
-}
-
-void RtoR::RealtimePanel::updateFourierGraph() {
-    static RtoR::DFTResult modes;
-    using FFT = RtoR::DFT;
-
-    static auto lastStep = 0UL;
-    fix step = lastData.getSteps();
-
-    bool forceUpdate = false;
-
-    guiWindow.begin();
-    if (ImGui::CollapsingHeader("Fourier"))
-        forceUpdate = ImGui::Checkbox("Show Fourier as complex amplitudes", &showComplexFourier);
-    guiWindow.end();
-
-    if(step != lastStep || forceUpdate) {
-        auto &fieldState = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
-
-        modes = FFT::Compute(fieldState);
-
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
-
-        mSpaceFourierModesGraph.clearPointSets();
-
-        if(!showComplexFourier)
-        {
-            auto myStyle = *style;
-
-            myStyle.thickness = 2.5;
-            myStyle.primitive = Graphics::VerticalLines;
-            myStyle.filled = false;
-            mSpaceFourierModesGraph.addPointSet(modes.getMagnitudes(), myStyle, "|ℱ[ϕ](ω)|", false);
-        }
-        else
-        {
-            auto myStyle1 = *++style;
-            auto myStyle2 = *++style;
-
-            myStyle1.thickness = 2.5;
-            myStyle1.primitive = Graphics::VerticalLines;
-            myStyle1.filled = false;
-
-            myStyle2.thickness = 2.5;
-            myStyle2.primitive = Graphics::VerticalLines;
-            myStyle2.filled = false;
-
-            mSpaceFourierModesGraph.addPointSet(modes.re, *style++, "ℜ(ℱ[ϕ](ω))", false);
-            mSpaceFourierModesGraph.addPointSet(modes.im, *style, "ℑ(ℱ[ϕ](ω))", false);
-        }
-
-        FIRST_TIMER (
-                {
-                    fix xMax = modes.re->getMax().x;
-                    fix xMin = modes.re->getMin().x;
-                    fix Δx = xMax - xMin;
-                    mSpaceFourierModesGraph.set_xMin(xMin - Δx*0.1);
-                    mSpaceFourierModesGraph.set_xMax(xMax + Δx*0.1);
-                })
-    }
-
-    lastStep = step;
 }
 
 

@@ -9,6 +9,7 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Math/Function/RtoR/Calc/DFTInverse.h"
+#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 
 namespace Graphics {
 
@@ -21,6 +22,7 @@ namespace Graphics {
 
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
+        ParametricCurve2DArtist_ptr cutoffLineArtist;
 
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
 

@@ -36,11 +36,11 @@ RtoR2::StraightLine::Ptr RtoR2::StraightLine::New(Real2D x0, Real2D xf) {
     return std::make_shared<RtoR2::StraightLine>(x0, xf);
 }
 
-Math::PointSet::Ptr
+Math::PointSet_ptr
 RtoR2::StraightLine::renderToPointSet(RenderingOptions options) {
     auto set = Math::PointSet({x0, x0 + r});
 
-    return std::make_shared<Math::PointSet>(set);
+    return Slab::New<Math::PointSet>(set);
 }
 
 

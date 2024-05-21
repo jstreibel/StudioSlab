@@ -6,6 +6,7 @@
 #define V_SHAPE_ENERGYCALCULATOR_H
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
 namespace Core::Simulation{
     class VoidBuilder;
@@ -18,25 +19,25 @@ namespace RtoR {
     class KGEnergy {
         Core::Simulation::VoidBuilder &builder;
 
-        RtoR::DiscreteFunction *_oEnergyDensity;
-        RtoR::DiscreteFunction *_oKineticDensity;
-        RtoR::DiscreteFunction *_oGradientDensity;
-        RtoR::DiscreteFunction *_oPotentialDensity;
+        RtoR::DiscreteFunction_ptr _oEnergyDensity;
+        RtoR::DiscreteFunction_ptr _oKineticDensity;
+        RtoR::DiscreteFunction_ptr _oGradientDensity;
+        RtoR::DiscreteFunction_ptr _oPotentialDensity;
 
         Real U, K, W, V;
 
-        RtoR::Function::Ptr V_ptr;
+        RtoR::Function_ptr V_ptr;
 
     public:
-        KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc);
+        KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function_ptr potentialFunc);
 
         const RtoR::DiscreteFunction &computeEnergies(const RtoR::EquationState &field);
 
-        const RtoR::DiscreteFunction &getEnergyDensity() const { return *_oEnergyDensity; };
-        const RtoR::DiscreteFunction &getKineticDensity() const { return *_oKineticDensity; };
-        const RtoR::DiscreteFunction &getGradientDensity() const { return *_oGradientDensity; };
-        const RtoR::DiscreteFunction &getPotentialDensity() const { return *_oPotentialDensity; };
-        const RtoR::Function::Ptr &getThePotential() const { return V_ptr; }
+        RtoR::DiscreteFunction_ptr getEnergyDensity() const { return _oEnergyDensity; };
+        RtoR::DiscreteFunction_ptr getKineticDensity() const { return _oKineticDensity; };
+        RtoR::DiscreteFunction_ptr getGradientDensity() const { return _oGradientDensity; };
+        RtoR::DiscreteFunction_ptr getPotentialDensity() const { return _oPotentialDensity; };
+        RtoR::Function_constptr getThePotential() const { return V_ptr; }
 
         Real getTotalEnergy() const;
         Real getTotalKineticEnergy() const;

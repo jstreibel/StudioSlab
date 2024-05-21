@@ -111,6 +111,12 @@ set( GRAPHICS_SOURCES
 		Graph/GraphTheme.h
 		Graph/Artists/PointSetArtist.cpp
 		Graph/Artists/PointSetArtist.h
+        Graph/Artists/ParametricCurve2DArtist.cpp
+        Graph/Artists/ParametricCurve2DArtist.h
+		Graph/GraphRegion.cpp
+		Graph/GraphRegion.h
+		Graph/Artists/RtoRFunctionArtist.cpp
+		Graph/Artists/RtoRFunctionArtist.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

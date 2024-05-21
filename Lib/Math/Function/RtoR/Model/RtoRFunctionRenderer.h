@@ -11,7 +11,7 @@
 namespace RtoR {
     class FunctionRenderer{
     public:
-        static auto ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale=1.0) -> Math::PointSet::Ptr;
+        static auto ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale=1.0) -> Math::PointSet_ptr;
         static auto ToDiscreteFunction(const RtoR::Function &func, RtoR::DiscreteFunction &output);
     };
 }

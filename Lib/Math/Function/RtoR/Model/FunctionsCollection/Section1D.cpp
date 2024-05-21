@@ -24,7 +24,7 @@ Real RtoR::Section1D::operator()(Real x) const {
     return func(c(x));
 }
 
-Math::PointSet::Ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
+Math::PointSet_ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
     if(curve == nullptr || function == nullptr) return {};
 
     return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);

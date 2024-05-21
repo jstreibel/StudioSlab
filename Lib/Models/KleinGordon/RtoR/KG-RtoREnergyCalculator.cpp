@@ -10,11 +10,11 @@
 
 // #define USE_PERIODIC_BC
 
-RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function::Ptr potentialFunc)
+RtoR::KGEnergy::KGEnergy(Core::Simulation::VoidBuilder &builder, RtoR::Function_ptr potentialFunc)
 : builder(builder)
-, _oEnergyDensity (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
-, _oKineticDensity (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
-, _oGradientDensity (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oEnergyDensity    (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oKineticDensity   (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
+, _oGradientDensity  (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
 , _oPotentialDensity (builder.NewFunctionArbitrary<RtoR::DiscreteFunction>())
 , V_ptr(potentialFunc)
 {

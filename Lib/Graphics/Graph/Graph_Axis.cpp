@@ -18,43 +18,22 @@ Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) const {
 }
 
 void Graphics::Graph2D::reviewGraphRanges() {
-    if(!mPointSets.empty())
-    {
-        auto referencePointSet = mPointSets.begin()->data;
+    RectR newRegion = region;
 
-        region.xMax = referencePointSet->getMax().x;
-        region.xMin = referencePointSet->getMin().x;
-        region.yMax = referencePointSet->getMax().y;
-        region.yMin = referencePointSet->getMin().y;
+    for(auto &a : content){
+        auto &artist = a.second;
 
-        for (auto &set: mPointSets) {
-            if(!set.affectsGraphRanges) continue;
+        if(!artist->affectsGraphRanges()) continue;
 
-            auto max = set.data->getMax();
-            auto min = set.data->getMin();
+        auto aRegion = artist->getRegion();
 
-            if (max.x > region.xMax) region.xMax = max.x;
-            if (min.x < region.xMin) region.xMin = min.x;
-            if (max.y > region.yMax) region.yMax = max.y;
-            if (min.y < region.yMin) region.yMin = min.y;
-        }
-
-        if(true)
-        {
-            const auto dMin = .1;
-
-            auto dx = dMin * (region.xMax - region.xMin);
-            auto dy = dMin * (region.yMax - region.yMin);
-
-            if(dx == 0) dx = dMin;
-            if(dy == 0) dy = dMin;
-
-            region.xMax += .5*dx;
-            region.xMin -= dx;
-            region.yMax += dy;
-            region.yMin -= dy;
-        }
+        if(aRegion.xMax > newRegion.xMax) newRegion.xMax = aRegion.xMax;
+        if(aRegion.xMin < newRegion.xMin) newRegion.xMin = aRegion.xMin;
+        if(aRegion.yMax > newRegion.yMax) newRegion.yMax = aRegion.yMax;
+        if(aRegion.yMin < newRegion.yMin) newRegion.yMin = aRegion.yMin;
     }
+
+    region = newRegion;
 }
 
 void Graphics::Graph2D::nameLabelDraw(const Graphics::PlotStyle &style, const Str& label) {

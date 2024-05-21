@@ -3,8 +3,8 @@
 //
 #include "PointSetRenderer.h"
 
-void Graphics::OpenGL::Legacy::RenderPointSet(const Math::PointSet &pSet, PlotStyle style) noexcept {
-    auto pts = pSet.getPoints();
+void Graphics::OpenGL::Legacy::RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept {
+    auto pts = pSet->getPoints();
 
     OpenGL::Shader::remove();
 

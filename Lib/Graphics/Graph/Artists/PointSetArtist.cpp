@@ -15,7 +15,7 @@ namespace Graphics {
     }
 
     void PointSetArtist::draw(const Graph2D &graph2D) {
-        Graphics::OpenGL::Legacy::RenderPointSet(*pointSet, plotStyle);
+        Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
     }
 
 

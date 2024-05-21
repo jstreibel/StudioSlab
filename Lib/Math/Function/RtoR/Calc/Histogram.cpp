@@ -11,11 +11,11 @@ Histogram::Histogram() {
 
 }
 
-void Histogram::Compute(const RtoR::DiscreteFunction &func, int _nBins) {
+void Histogram::Compute(RtoR::DiscreteFunction_constptr func, int _nBins) {
 
     this->nBins = _nBins;
 
-    auto &F = func.getSpace().getHostData();
+    auto &F = func->getSpace().getHostData();
 
     auto max = F[0];
     auto min = F[0];

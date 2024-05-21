@@ -9,6 +9,7 @@
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Math/Function/RtoR/Calc/DFTInverse.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
+#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 
 namespace Graphics {
 
@@ -48,19 +49,17 @@ namespace Graphics {
             if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
                 kFilterCutoff = k;
                 fix t = params.gett();
-                cutoffLine = RtoR2::StraightLine({kFilterCutoff, -10.0}, {kFilterCutoff, t+10.0});
 
-                spaceFTHistoryGraph->clearCurves();
-                spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+                // TODO make it so that we no allocation everytime is needed.
+                auto curve = Slab::New<RtoR2::StraightLine>(Real2D{kFilterCutoff, -10.0}, Real2D{kFilterCutoff, t+10.0});
+                cutoffLineArtist->setCurve(curve);
 
                 if(selected==0) {
                     RtoR::DFTInverse::HighPass lowPass(kFilterCutoff);
                     refreshInverseDFT(&lowPass);
-                    // Log::Info(Str("Filtered kMax = ") + ToStr(lowPass.kMax));
                 } else if(selected==1) {
                     RtoR::DFTInverse::LowPass highPass(kFilterCutoff);
                     refreshInverseDFT(&highPass);
-                    // Log::Info(Str("Filtered kMax = ") + ToStr(highPass.kMax));
                 }
             }
 
@@ -98,7 +97,8 @@ namespace Graphics {
                                                   HistoryDisplay_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
-        spaceFTHistoryGraph->addCurve(DummyPtr(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+        auto artist = spaceFTHistoryGraph->addCurve(Slab::DummyPointer(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+        cutoffLineArtist = static_cast<ParametricCurve2DArtist_ptr>(cutoffLineArtist);
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {

@@ -16,23 +16,25 @@ namespace Graphics {
     class Artist {
         bool visible = true;
         bool affectGraphRanges = false;
-    public:
-        typedef std::shared_ptr<Artist> Ptr;
 
+        RectR region{-1,1,-1,1};
+
+    public:
         Artist() = default;
 
         virtual void draw(const Graph2D &) = 0;
 
+        virtual const RectR &getRegion();
+
         void setVisibility(bool);
         bool isVisible() const;
+        virtual bool wantsLegend() const;
 
         void setAffectGraphRanges(bool);
         bool affectsGraphRanges() const;
     };
 
-    // DefinePointer(Artist)
-    typedef ::Slab::Pointer<Artist> Artist_ptr;
-
+    DefinePointer(Artist)
 }
 
 

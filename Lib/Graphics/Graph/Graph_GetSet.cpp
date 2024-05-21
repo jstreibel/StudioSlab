@@ -7,8 +7,6 @@
 #include "Graphics/Animator.h"
 
 
-auto Graphics::Graph2D::getResolution() const -> Resolution        { return samples; }
-auto Graphics::Graph2D::setResolution(Resolution samples_) -> void { samples = samples_; }
 const Graphics::RectR& Graphics::Graph2D::getRegion() const { return region; }
 auto Graphics::Graph2D::setLimits(RectR lims) -> void { region = lims; }
 

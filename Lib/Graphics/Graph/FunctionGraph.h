@@ -42,7 +42,7 @@ namespace Graphics {
     public:
 
         FunctionGraph(Real xMin = -1, Real xMax = 1, Real yMin = -1, Real yMax = 1,
-                      Str title = "no_title", bool filled = false, int samples = 512);
+                      Str title = "no_title", bool filled = false);
 
         /*!
          * Draw presumes OpenGL model view matrix is identity.
@@ -64,9 +64,8 @@ namespace Graphics {
 
 
     template<class FunctionType>
-    FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled,
-                                               int samples)
-            : Graphics::Graph2D(xMin, xMax, yMin, yMax, title, samples) {}
+    FunctionGraph<FunctionType>::FunctionGraph(Real xMin, Real xMax, Real yMin, Real yMax, Str title, bool filled)
+            : Graphics::Graph2D(xMin, xMax, yMin, yMax, title) {}
 
 
     template<class FunctionType>

@@ -33,7 +33,6 @@ namespace RtoR {
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::CorrelationFunction mCorrelationFunction;
         R2toR::DiscreteFunction_ptr mCorrelationComputed;
-        Graphics::GraphRtoR mCorrelationSectionGraph;
         Graphics::FlatFieldDisplay mCorrelationGraph;
 
 

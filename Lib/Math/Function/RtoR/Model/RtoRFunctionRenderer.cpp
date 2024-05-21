@@ -5,7 +5,7 @@
 #include "RtoRFunctionRenderer.h"
 
 
-auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale) -> Math::PointSet::Ptr {
+auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale) -> Math::PointSet_ptr {
     fix Δx = xMax-xMin;
     fix dx = Δx/(Real)resolution;
 
@@ -16,7 +16,7 @@ auto RtoR::FunctionRenderer::ToPointSet(const RtoR::Function &func, Real xMin, R
         pts[i] = {x, func(x)};
     }
 
-    return std::make_shared<Math::PointSet>(pts);
+    return Slab::New<Math::PointSet>(pts);
 }
 
 

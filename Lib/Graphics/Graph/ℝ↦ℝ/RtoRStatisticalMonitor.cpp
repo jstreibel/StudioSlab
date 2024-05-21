@@ -51,15 +51,12 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
 : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
 , Δt(params.gett()*0.1)
 , hamiltonian(hamiltonian)
-, mCorrelationSectionGraph(0, params.getL(), 0, 1, "Space correlation", true,
-                    SAMPLE_COUNT(150))
 , mTemperaturesGraph("T")
 , mHistogramsGraphK(   "k histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 , mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 , mHistogramsGraphV(   "v histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 , mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_GRAPH_LIMITS)
 {
-    addWindow(Slab::DummyPointer(mCorrelationSectionGraph));
     addWindow(Slab::DummyPointer(mCorrelationGraph));
 
     {
@@ -169,16 +166,6 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                 updateSamples = true;
             }
 
-            auto graphResolution = (int)mCorrelationSectionGraph.getResolution();
-            if(ImGui::SliderInt("graph resolution",
-                                &graphResolution,
-                                10,
-                                (int)simulationHistory->getN()))
-            {
-                mCorrelationSectionGraph.setResolution(graphResolution);
-                updateSamples = true;
-            }
-
             fix Δt_max = params.gett();
             auto Dt = (float)Δt;
             if(ImGui::SliderFloat("sampling range (Delta t)",
@@ -220,6 +207,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
             }
 
             {
+                /*
                 simulationHistoryGraph->clearPointSets();
 
                 // Correlation samples in full history
@@ -230,6 +218,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
                     auto ptSet = Slab::New<Math::PointSet>(sampler->getSamples());
                     simulationHistoryGraph->addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
                 }
+                 */
             }
         }
         last_t_history = t_history;

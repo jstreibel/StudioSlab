@@ -231,21 +231,21 @@ auto RtoR::KGBuilder::buildStepper() -> Stepper * {
 }
 
 void *RtoR::KGBuilder::getHamiltonian() {
-    static auto potential = RtoR::Function::Ptr(getPotential());
+    static auto potential = RtoR::Function_ptr(getPotential());
     static auto hamiltonian = new KGEnergy(*this, potential);
 
     return hamiltonian;
 }
 
-Core::FunctionT<Real, Real> *RtoR::KGBuilder::getPotential() const {
+RtoR::Function_ptr RtoR::KGBuilder::getPotential() const {
     if(*Potential == MASSLESS_WAVE_EQ){
-        return new RtoR::NullFunction;
+        return Slab::New<RtoR::NullFunction>();
     }
     else if(*Potential == KLEIN_GORDON_POTENTIAL){
-        return new RtoR::HarmonicPotential(*massSqr);
+        return Slab::New<RtoR::HarmonicPotential>(*massSqr);
     }
     else if(*Potential == SIGNUM_GORDON_POTENTIAL) {
-        return new RtoR::AbsFunction;
+        return Slab::New<RtoR::AbsFunction>();
     }
 
     throw "Unknown potential";

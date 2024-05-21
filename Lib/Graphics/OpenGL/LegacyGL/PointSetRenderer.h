@@ -9,7 +9,7 @@
 #include "Graphics/Graph/PlotStyle.h"
 
 namespace Graphics::OpenGL::Legacy {
-    void RenderPointSet(const Math::PointSet &pSet, PlotStyle style) noexcept;
+    void RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept;
 }
 
 #endif //STUDIOSLAB_POINTSETRENDERER_H

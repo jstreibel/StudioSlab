@@ -12,4 +12,12 @@ namespace Graphics {
     void Artist::setAffectGraphRanges(bool affects) { affectGraphRanges=affects; }
     bool Artist::affectsGraphRanges() const { return affectGraphRanges; }
 
+    const RectR &Artist::getRegion() {
+        return region;
+    }
+
+    bool Artist::wantsLegend() const {
+        return false;
+    }
+
 }

@@ -22,7 +22,7 @@ namespace RtoR {
 
         Real operator()(Real x) const override;
 
-        Math::PointSet::Ptr renderToPointSet(RenderingOptions options) override;
+        Math::PointSet_ptr renderToPointSet(RenderingOptions options) override;
     };
 
     DefinePointer(Section1D)

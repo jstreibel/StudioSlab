@@ -44,6 +44,8 @@ namespace RtoR {
         LaplacianType laplacianType;
     };
 
+    DefinePointer(DiscreteFunction)
+
 }
 
 #endif //V_SHAPE_RTORFUNCTIONARBITRARY_H

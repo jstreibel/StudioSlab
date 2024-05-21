@@ -26,6 +26,8 @@ namespace Graphics {
     typedef Rect<int> RectI;
     typedef Rect<Real> RectR;
 
+    DefinePointer(RectI)
+    DefinePointer(RectR)
 
     struct Point2D {
         Point2D() = default;

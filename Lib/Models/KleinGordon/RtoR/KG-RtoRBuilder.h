@@ -34,7 +34,7 @@ namespace RtoR {
                            Str generalDescription,
                            bool doRegister=false);
 
-        Function *getPotential() const;
+        Function_ptr getPotential() const;
         virtual Function::Ptr getNonHomogenous();
 
         auto buildOutputManager()   -> OutputManager * override;

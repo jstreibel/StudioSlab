@@ -26,13 +26,16 @@ namespace RtoR {
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
     protected:
-        Graphics::GraphRtoR mSpaceFourierModesGraph;
-
         RtoR2::StraightLine historyLine;
         RtoR::Section1D mHistorySectionFunc;
+
         Graphics::GraphRtoR mHistorySliceGraph;
 
-        Graphics::GraphRtoR mFieldsGraph;
+        Graphics::Graph2D mFieldsGraph;
+        Graphics::Artist_ptr vArtist;
+        Graphics::Artist_ptr kArtist;
+        Graphics::Artist_ptr wArtist;
+        Graphics::Artist_ptr uArtist;
 
         Math::PointSet UHistoryData;
         Math::PointSet KHistoryData;
@@ -54,7 +57,6 @@ namespace RtoR {
         int step_history = 0;
 
         void updateHistoryGraphs();
-        void updateFourierGraph();
 
         ::Graphics::Graph2D mEnergyGraph;
 
