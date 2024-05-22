@@ -19,12 +19,12 @@ namespace RtoR {
         };
 
         struct LowPass : public Filter {
-            int kThreshold;
+            Real kThreshold;
             explicit LowPass(int kThreshold);
             Complex operator()(const Complex &A, Real k) override;
         };
         struct HighPass : public Filter {
-            int kThreshold;
+            Real kThreshold;
             explicit HighPass(int kThreshold);
             Complex operator()(const Complex &A, Real k) override;
         };

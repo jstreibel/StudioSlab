@@ -5,9 +5,11 @@
 #include "CorrelationsPanel.h"
 
 #include "imgui.h"
+
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
+#include "Math/Function/RtoR2/ParametricCurve.h"
 
 #include <memory>
 
@@ -127,7 +129,7 @@ namespace Graphics {
     void CorrelationsPanel::computeFullDFT2D(bool discardRedundantModes) {
         auto toFT = simulationHistory;
         // auto toFT = Make_FFTW_TestFunc();
-        // correlationGraph.addFunction(toFT, "choopsy");
+        // correlationGraph.addRtoRFunction(toFT, "choopsy");
 
         if(discardRedundantModes) {
             dftFunction = R2toR::R2toRDFT::DFTReal_symmetric(*toFT);

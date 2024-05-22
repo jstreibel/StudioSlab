@@ -16,7 +16,7 @@ Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
 }
 
 auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function_constptr function, const Str& name, zOrder_t zOrder)
-    -> FlatField2DArtist_ptr {
+    -> R2toRFunctionArtist_ptr {
     if(ContainsFunc(function)) return {};
 
     bool firstTime = funcsMap.empty();
@@ -26,7 +26,8 @@ auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function_constptr function, 
         computeGraphRanges(discrFunc.getDomain());
     }
 
-    auto artist = Slab::New<FlatField2DArtist>(name);
+    auto artist = Slab::New<R2toRFunctionArtist>();
+    artist->setLabel(name);
     artist->setFunction(function);
     artist->setColorMap(currColorMap);
 
@@ -54,7 +55,7 @@ bool Graphics::FlatFieldDisplay::removeFunction(R2toR::Function_constptr functio
     auto newEnd = std::remove_if(
             ff2dArtists.begin(),
             ff2dArtists.end(),
-            [&function,this,&haveErased](FlatField2DArtist_ptr &x)
+            [&function,this,&haveErased](R2toRFunctionArtist_ptr &x)
             {
                 if(x->getFunction() == function){
                     removeArtist(x);

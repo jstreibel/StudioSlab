@@ -20,4 +20,8 @@ namespace Graphics {
         return false;
     }
 
+    void Artist::setLabel(Str newLabel)  { label = newLabel; }
+
+    auto Artist::getLabel() const -> Str { return label; }
+
 }

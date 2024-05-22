@@ -2,6 +2,8 @@
 // Created by joao on 29/05/23.
 //
 
+#include "Core/Tools/Log.h"
+
 #include "Graph.h"
 #include "PlotStyle.h"
 
@@ -9,7 +11,6 @@
 #include "imgui.h"
 
 #include "Utils/Printing.h"
-#include "Core/Tools/Log.h"
 
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
@@ -18,11 +19,6 @@
 #include "Core/Backend/BackendManager.h"
 #include "StylesManager.h"
 #include "Artists/AxisArtist.h"
-#include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
-#include "Graphics/Graph/Artists/PointSetArtist.h"
-#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
-#include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -109,38 +105,6 @@ void Graphics::Graph2D::drawGUI() {
     }
 }
 
-Graphics::Artist_ptr
-Graphics::Graph2D::addPointSet(Math::PointSet_ptr pointSet,
-                               PlotStyle style,
-                               Str setName,
-                               bool affectsGraphRanges) {
-
-    auto artist = Slab::New<PointSetArtist>(pointSet, setName, style);
-    artist->setAffectGraphRanges(affectsGraphRanges);
-
-    addArtist(artist);
-
-    return artist;
-}
-
-Graphics::Artist_ptr
-Graphics::Graph2D::addCurve(RtoR2::ParametricCurve_ptr curve, PlotStyle style, Str name) {
-    auto artist = Slab::New<ParametricCurve2DArtist>(curve, style);
-
-    addArtist(artist);
-
-    return artist;
-}
-
-Graphics::Artist_ptr
-Graphics::Graph2D::addFunction(RtoR::Function_ptr function, PlotStyle style, Str name, Resolution samples) {
-    auto artist = Slab::New<RtoRFunctionArtist>(function, style, samples);
-
-    addArtist(artist);
-
-    return artist;
-}
-
 void Graphics::Graph2D::setupOrtho() const {
     // const Real deltaX = region.width();
     // const Real deltaY = region.height();
@@ -178,5 +142,6 @@ void Graphics::Graph2D::artistsDraw() {
 Graphics::AxisArtist &Graphics::Graph2D::getAxisArtist() {
     return axisArtist;
 }
+
 
 

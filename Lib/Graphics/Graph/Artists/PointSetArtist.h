@@ -14,11 +14,10 @@ namespace Graphics {
 
     class PointSetArtist : public Artist {
         Math::PointSet_ptr pointSet;
-        Str name;
         PlotStyle plotStyle;
 
     public:
-        PointSetArtist(Math::PointSet_ptr, Str name, PlotStyle);
+        PointSetArtist(Math::PointSet_ptr, PlotStyle);
 
         void draw(const Graph2D &) override;
     };

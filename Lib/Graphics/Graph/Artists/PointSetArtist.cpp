@@ -9,8 +9,8 @@
 
 namespace Graphics {
 
-    PointSetArtist::PointSetArtist(Math::PointSet_ptr pointSet, Str name, PlotStyle style)
-    : pointSet(std::move(pointSet)), name(name), plotStyle(style) {
+    PointSetArtist::PointSetArtist(Math::PointSet_ptr pointSet, PlotStyle style)
+    : pointSet(std::move(pointSet)), plotStyle(style) {
 
     }
 

@@ -2,7 +2,7 @@
 // Created by joao on 2/10/23.
 //
 
-#include "FlatField2DArtist.h"
+#include "R2toRFunctionArtist.h"
 
 #include <memory>
 #include <functional>
@@ -20,10 +20,9 @@ namespace Graphics {
         float s, t;     // texture
     };
 
-    FlatField2DArtist::FlatField2DArtist(Str name)
+    R2toRFunctionArtist::R2toRFunctionArtist()
     : vertexBuffer("vertex:2f,tex_coord:2f")
     , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
-    , name(std::move(name))
     , colorBar({50,150, 50, 750})
     {
         updateColorBar();
@@ -31,7 +30,7 @@ namespace Graphics {
         program.setUniform("colormap", colorBar.getTexture()->getTextureUnit());
     }
 
-    void FlatField2DArtist::draw(const Graph2D &graph) {
+    void R2toRFunctionArtist::draw(const Graph2D &graph) {
         if (func == nullptr) return;
 
         drawGUI();
@@ -83,9 +82,9 @@ namespace Graphics {
 
     }
 
-    void FlatField2DArtist::invalidateTextureData() { validTextureData = false; }
+    void R2toRFunctionArtist::invalidateTextureData() { validTextureData = false; }
 
-    void FlatField2DArtist::repopulateTextureBuffer() {
+    void R2toRFunctionArtist::repopulateTextureBuffer() {
         if(func == nullptr || validTextureData) return;
 
         assert(func->isDiscrete());
@@ -105,8 +104,8 @@ namespace Graphics {
         validTextureData = true;
     }
 
-    void FlatField2DArtist::drawGUI() {
-        auto myName = Str("ℝ² ") + name + " display";
+    void R2toRFunctionArtist::drawGUI() {
+        auto myName = Str("ℝ² ") + getLabel() + " display";
 
         if (ImGui::Begin("Stats")) {
             if (ImGui::CollapsingHeader(myName.c_str())) {
@@ -219,7 +218,7 @@ namespace Graphics {
         ImGui::End();
     }
 
-    void FlatField2DArtist::setFunction(R2toR::Function_constptr function, const Unit &unit) {
+    void R2toRFunctionArtist::setFunction(R2toR::Function_constptr function, const Unit &unit) {
         if(func == function){
             funcUnit = unit;
             return;
@@ -307,9 +306,9 @@ namespace Graphics {
         repopulateTextureBuffer();
     }
 
-    auto FlatField2DArtist::getFunction() const -> R2toR::Function_constptr { return func; }
+    auto R2toRFunctionArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
-    void FlatField2DArtist::setColorMap(const ColorMap &colorMap) {
+    void R2toRFunctionArtist::setColorMap(const ColorMap &colorMap) {
         cMap = colorMap;
 
         symmetricMaxMin = cMap.getType() == ColorMap::Divergent;
@@ -318,14 +317,13 @@ namespace Graphics {
         updateColorBar();
     }
 
-    void FlatField2DArtist::updateColorBar() {
+    void R2toRFunctionArtist::updateColorBar() {
         fix min = field_min;
         fix max = field_max;
 
         auto &kappa = cMap_kappaArg;
 
         std::function<Real(Real)> g⁻¹;
-
 
         if(symmetricMaxMin) {
             g⁻¹ = [min, max, &kappa](Real x) {
@@ -350,11 +348,11 @@ namespace Graphics {
 
     }
 
-    void FlatField2DArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
+    void R2toRFunctionArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
 
-    FlatField2DArtist::FieldDataTexturePtr FlatField2DArtist::getFieldTextureData() const { return textureData; }
+    R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
 
-    void FlatField2DArtist::adjustScale() {
+    void R2toRFunctionArtist::adjustScale() {
         field_min = func->min();
         field_max = func->max();
 

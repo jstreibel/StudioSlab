@@ -39,7 +39,7 @@ void R2toR::OutputOpenGL::draw() {
     mSectionGraph.addFunction(&phi);
 
     // if(mFieldDisplay.getFunctionsMap().empty())
-    //     mFieldDisplay.addFunction(Slab::DummyPointer_const(phi), "ϕ");
+    //     mFieldDisplay.addRtoRFunction(Slab::DummyPointer_const(phi), "ϕ");
 }
 
 

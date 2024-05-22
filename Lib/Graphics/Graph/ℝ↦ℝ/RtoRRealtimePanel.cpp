@@ -10,6 +10,7 @@
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Graphics/Graph/GraphBuilder.h"
 // #include "Math/Function/R2toR/DFT.h"
 
 // Don't touch these:
@@ -51,10 +52,18 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
     {
         auto sty = currStyle->funcPlotStyles.begin();
 
-        mEnergyGraph.addPointSet(Slab::DummyPointer(UHistoryData), *sty, "U/L");
-        mEnergyGraph.addPointSet(Slab::DummyPointer(KHistoryData), *++sty, "K/L");
-        mEnergyGraph.addPointSet(Slab::DummyPointer(WHistoryData), *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
-        mEnergyGraph.addPointSet(Slab::DummyPointer(VHistoryData), *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
+        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                            Slab::DummyPointer(UHistoryData),
+                                            *sty, "U/L");
+        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                            Slab::DummyPointer(KHistoryData),
+                                            *++sty, "K/L");
+        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                            Slab::DummyPointer(WHistoryData),
+                                            *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
+        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                            Slab::DummyPointer(VHistoryData),
+                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
         addWindow(Slab::DummyPointer(mFieldsGraph));
     }
@@ -67,10 +76,10 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 
     {
         fix V_str = hamiltonian.getThePotential()->symbol();
-        vArtist = mFieldsGraph.addFunction(hamiltonian.getPotentialDensity(), V_style, Str("V(ϕ)=")+V_str, 1024);
-        kArtist = mFieldsGraph.addFunction(hamiltonian.getKineticDensity(),   K_style, "K/L"                , 1024);
-        wArtist = mFieldsGraph.addFunction(hamiltonian.getGradientDensity(),  W_style, "(𝜕ₓϕ)²"             , 1024);
-        uArtist = mFieldsGraph.addFunction(hamiltonian.getEnergyDensity(),    U_style, "E/L"                , 1024);
+        vArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getPotentialDensity(), V_style, Str("V(ϕ)=") + V_str, 1024);
+        kArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
+        wArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
+        uArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
     }
 }
 

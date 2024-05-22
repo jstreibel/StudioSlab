@@ -7,7 +7,7 @@
 
 
 #include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
-#include "HistoryTexture2DUploadHelper.h"
+#include "Graphics/Graph/Artists/HistoryTexture2DUploadHelper.h"
 
 namespace Graphics {
 

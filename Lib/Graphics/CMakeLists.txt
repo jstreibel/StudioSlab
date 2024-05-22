@@ -67,7 +67,7 @@ set( GRAPHICS_SOURCES
 		Graph/StylesManager.h				Graph/StylesManager.cpp
 
 		Graph/ℝ²↦ℝ/FlatFieldDisplay.h		Graph/ℝ²↦ℝ/FlatFieldDisplay.cpp
-		Graph/ℝ²↦ℝ/FlatField2DArtist.h		Graph/ℝ²↦ℝ/FlatField2DArtist.cpp
+		Graph/Artists/R2toRFunctionArtist.h Graph/Artists/R2toRFunctionArtist.cpp
 		Graph/ℝ²↦ℝ/R2toROutputOpenGLGeneric.cpp
 
 
@@ -96,8 +96,8 @@ set( GRAPHICS_SOURCES
 		Graph/ℝ↦ℝ/RtoRPanel.h
 		Graph/ℝ↦ℝ/RtoRFourierPanel.cpp
 		Graph/ℝ↦ℝ/RtoRFourierPanel.h
-		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.cpp
-		Graph/ℝ↦ℝ/HistoryTexture2DUploadHelper.h
+		Graph/Artists/HistoryTexture2DUploadHelper.cpp
+		Graph/Artists/HistoryTexture2DUploadHelper.h
         Graph/ℝ↦ℝ/CorrelationsPanel.cpp
         Graph/ℝ↦ℝ/CorrelationsPanel.h
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
@@ -117,6 +117,10 @@ set( GRAPHICS_SOURCES
 		Graph/GraphRegion.h
 		Graph/Artists/RtoRFunctionArtist.cpp
 		Graph/Artists/RtoRFunctionArtist.h
+		Graph/Artists/HistoryArtist.cpp
+		Graph/Artists/HistoryArtist.h
+		Graph/GraphBuilder.cpp
+		Graph/GraphBuilder.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )

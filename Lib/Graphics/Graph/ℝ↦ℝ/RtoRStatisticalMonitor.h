@@ -7,21 +7,18 @@
 
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-
-#include "GraphRtoR.h"
-
-#include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
-
-#include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
+#include "Graphics/Graph/Graph.h"
 
 #include "Math/Function/Function.h"
+#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Math/Function/RtoR2/StraightLine.h"
 
 #include "HistoryDisplay.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "RtoRPanel.h"
+#include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
 
 
 namespace RtoR {
@@ -31,9 +28,8 @@ namespace RtoR {
 
         RtoR2::StraightLine_ptr correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
-        R2toR::CorrelationFunction mCorrelationFunction;
         R2toR::DiscreteFunction_ptr mCorrelationComputed;
-        Graphics::FlatFieldDisplay mCorrelationGraph;
+        Graphics::Graph2D mCorrelationGraph;
 
 
         float t_history = .0f;

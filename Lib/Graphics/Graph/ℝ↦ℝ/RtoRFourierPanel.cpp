@@ -10,6 +10,7 @@
 #include "Math/Function/RtoR/Calc/DFTInverse.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
+#include "Graphics/Graph/GraphBuilder.h"
 
 namespace Graphics {
 
@@ -49,8 +50,6 @@ namespace Graphics {
             if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
                 kFilterCutoff = k;
                 fix t = params.gett();
-
-                // TODO make it so that we no allocation everytime is needed.
                 cutoffLine.getx0() = {kFilterCutoff, -10.0};
                 cutoffLine.getr() = {0, 10.0+t};
 
@@ -97,8 +96,9 @@ namespace Graphics {
                                                   HistoryDisplay_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
-        auto artist = spaceFTHistoryGraph->addCurve(Slab::DummyPointer(cutoffLine), StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
-        cutoffLineArtist = static_cast<ParametricCurve2DArtist_ptr>(cutoffLineArtist);
+        cutoffLineArtist = Graphics::GraphBuilder::AddCurve(spaceFTHistoryGraph,
+                                                       Slab::DummyPointer(cutoffLine),
+                                                       StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {

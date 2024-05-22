@@ -14,6 +14,8 @@ namespace Graphics {
     class Graph2D;
 
     class Artist {
+        Str label = "<unnamed artist>";
+
         bool visible = true;
         bool affectGraphRanges = false;
 
@@ -25,6 +27,9 @@ namespace Graphics {
         virtual void draw(const Graph2D &) = 0;
 
         virtual const RectR &getRegion();
+
+        void setLabel(Str label);
+        auto getLabel() const -> Str;
 
         void setVisibility(bool);
         bool isVisible() const;

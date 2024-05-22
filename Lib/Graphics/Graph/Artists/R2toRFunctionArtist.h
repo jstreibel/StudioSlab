@@ -2,8 +2,8 @@
 // Created by joao on 2/10/23.
 //
 
-#ifndef STUDIOSLAB_FLATFIELD2DARTIST_H
-#define STUDIOSLAB_FLATFIELD2DARTIST_H
+#ifndef STUDIOSLAB_R2TORFUNCTIONARTIST_H
+#define STUDIOSLAB_R2TORFUNCTIONARTIST_H
 
 #include "Graphics/Graph/Artists/Artist.h"
 #include "Graphics/OpenGL/Shader.h"
@@ -18,7 +18,7 @@
 
 namespace Graphics {
 
-    class FlatField2DArtist : public Artist {
+    class R2toRFunctionArtist : public Artist {
         enum Scale {
             Linear,
             Log,
@@ -48,8 +48,6 @@ namespace Graphics {
         R2toR::Function_constptr func;
         FieldDataTexturePtr   textureData;
 
-        Str name;
-
         void updateColorBar();
         void invalidateTextureData();
         void repopulateTextureBuffer();
@@ -57,7 +55,7 @@ namespace Graphics {
         void drawGUI();
 
     public:
-        explicit FlatField2DArtist(Str name);
+        explicit R2toRFunctionArtist();
 
         void draw(const Graph2D &d) override;
 
@@ -71,8 +69,8 @@ namespace Graphics {
         auto getFieldTextureData() const -> FieldDataTexturePtr;
     };
 
-    DefinePointer(FlatField2DArtist)
+    DefinePointer(R2toRFunctionArtist)
 
 } // Graphics
 
-#endif //STUDIOSLAB_FLATFIELD2DARTIST_H
+#endif //STUDIOSLAB_R2TORFUNCTIONARTIST_H

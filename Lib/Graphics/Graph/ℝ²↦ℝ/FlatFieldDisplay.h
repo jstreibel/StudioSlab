@@ -7,7 +7,7 @@
 
 #include <utility>
 
-#include "FlatField2DArtist.h"
+#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
 #include "Graphics/Styles/ColorMap.h"
 
@@ -34,10 +34,10 @@ namespace Graphics {
             };
 
             ColorMap currColorMap;
-            typedef std::shared_ptr<Graphics::FlatField2DArtist> FlatField2DArtistPtr;
+            typedef std::shared_ptr<Graphics::R2toRFunctionArtist> FlatField2DArtistPtr;
 
         protected:
-            std::vector<FlatField2DArtist_ptr> ff2dArtists;
+            std::vector<R2toRFunctionArtist_ptr> ff2dArtists;
 
             Unit funcUnit;
             typedef std::multimap<zOrder_t, R2toR::Function_constptr> FuncsMap;
@@ -51,7 +51,7 @@ namespace Graphics {
     public:
             explicit FlatFieldDisplay(Str title="Full 2D");
 
-            FlatField2DArtist_ptr addFunction(R2toR::Function_constptr function, const Str& name, zOrder_t zOrder=0);
+            R2toRFunctionArtist_ptr addFunction(R2toR::Function_constptr function, const Str& name, zOrder_t zOrder=0);
 
             bool removeFunction(R2toR::Function_constptr function);
 

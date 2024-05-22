@@ -5,8 +5,10 @@
 #ifndef STUDIOSLAB_GRAPH_H
 #define STUDIOSLAB_GRAPH_H
 
-#include "Math/Function/RtoR2/ParametricCurve.h"
-#include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include <memory>
+#include <list>
+
+#include "Utils/Utils.h"
 
 #include "LabelingHelper.h"
 
@@ -17,14 +19,8 @@
 #include "Graphics/OpenGL/Utils.h"
 #include "Graphics/OpenGL/Writer.h"
 
-#include "Utils/Utils.h"
-
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
-
-
-#include <memory>
-#include <list>
 
 namespace Graphics {
 
@@ -74,11 +70,6 @@ namespace Graphics {
         void addArtist(const Artist_ptr& pArtist, zOrder_t zOrder=0);
         bool removeArtist(const Artist_ptr& pArtist);
 
-        Artist_ptr addPointSet(Math::PointSet_ptr,         PlotStyle, Str name="", bool affectsGraphRanges=true);
-
-        Artist_ptr addCurve   (RtoR2::ParametricCurve_ptr, PlotStyle, Str name);
-        Artist_ptr addFunction(RtoR::Function_ptr,         PlotStyle, Str name, Resolution samples);
-
         AxisArtist &getAxisArtist();
 
         auto getLastXHairPosition() const -> Point2D;
@@ -107,7 +98,10 @@ namespace Graphics {
         bool notifyMouseMotion(int x, int y) override;
 
         void notifyReshape(int newWinW, int newWinH) override;
+
     };
+
+    DefinePointer(Graph2D)
 
 }
 

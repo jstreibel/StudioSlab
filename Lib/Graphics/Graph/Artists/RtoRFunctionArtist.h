@@ -23,6 +23,8 @@ namespace Graphics {
         void draw(const Graph2D &d) override;
     };
 
+    DefinePointer(RtoRFunctionArtist)
+
 } // Graphics
 
 #endif //STUDIOSLAB_RTORFUNCTIONARTIST_H
