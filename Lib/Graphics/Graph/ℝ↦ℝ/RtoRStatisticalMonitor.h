@@ -7,7 +7,7 @@
 
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 
 #include "Math/Function/Function.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
@@ -15,7 +15,6 @@
 
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "HistoryDisplay.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "RtoRPanel.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
@@ -29,7 +28,7 @@ namespace RtoR {
         RtoR2::StraightLine_ptr correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::DiscreteFunction_ptr mCorrelationComputed;
-        Graphics::Graph2D mCorrelationGraph;
+        Graphics::PlottingWindow mCorrelationGraph;
 
 
         float t_history = .0f;
@@ -53,17 +52,17 @@ namespace RtoR {
         Math::PointSet temperature3HistoryData;
         Math::PointSet temperature4HistoryData;
 
-        Graphics::Graph2D mTemperaturesGraph;
+        Graphics::PlottingWindow mTemperaturesGraph;
 
         Math::PointSet histogramKData;
         Math::PointSet histogramGradData;
         Math::PointSet histogramVData;
         Math::PointSet histogramEData;
 
-        Graphics::Graph2D mHistogramsGraphK;
-        Graphics::Graph2D mHistogramsGraphGrad;
-        Graphics::Graph2D mHistogramsGraphV;
-        Graphics::Graph2D mHistogramsGraphE;
+        Graphics::PlottingWindow mHistogramsGraphK;
+        Graphics::PlottingWindow mHistogramsGraphGrad;
+        Graphics::PlottingWindow mHistogramsGraphV;
+        Graphics::PlottingWindow mHistogramsGraphE;
 
         void drawGUI();
 
@@ -78,7 +77,7 @@ namespace RtoR {
         void setTransientHint(Real);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                  Graphics::HistoryDisplay_ptr simHistoryGraph) override;
+                                  Graphics::PlottingWindow_ptr simHistoryGraph) override;
 
     };
 }

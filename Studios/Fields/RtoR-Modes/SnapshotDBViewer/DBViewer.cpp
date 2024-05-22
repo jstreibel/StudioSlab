@@ -11,7 +11,7 @@
 #include "KGDispersionRelation.h"
 #include "HistoryFileLoader.h"
 
-#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"

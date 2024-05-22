@@ -8,7 +8,7 @@ GraphicBackend::GraphicBackend(const Str& name, Core::EventTranslator &eventTran
 : Backend(name), eventTranslator(eventTranslator)
 {  }
 
-auto GraphicBackend::addEventListener(const Core::GUIEventListener::Ptr &listener) -> bool {
+auto GraphicBackend::addEventListener(const Core::GUIEventListener_ptr &listener) -> bool {
     return eventTranslator.addGUIEventListener(listener);
 }
 

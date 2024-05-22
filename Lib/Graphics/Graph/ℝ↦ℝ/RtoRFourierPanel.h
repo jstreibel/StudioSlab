@@ -10,14 +10,17 @@
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Math/Function/RtoR/Calc/DFTInverse.h"
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
+#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
 namespace Graphics {
 
     class RtoRFourierPanel : public RtoRPanel {
-        FlatFieldDisplay_ptr inverseFTDisplay;
+        PlottingWindow_ptr inverseDFTDisplay = Slab::New<PlottingWindow>("ℱₖ⁻¹[ℱ]");
+        R2toRFunctionArtist_ptr inverseDFTArtist = Slab::New<R2toRFunctionArtist>();
         R2toR::DiscreteFunction_ptr inverseDFT;
 
-        FlatFieldDisplay_ptr timeFTDisplay;
+        PlottingWindow_ptr timeDFTDisplay = Slab::New<PlottingWindow>("ℱₜ[ϕ](ω,x)");
+        R2toRFunctionArtist_ptr timeDFTArtist = Slab::New<R2toRFunctionArtist>();;
         R2toR::DiscreteFunction_ptr timeDFT;
 
         Real kFilterCutoff = 0.0;
@@ -35,7 +38,7 @@ namespace Graphics {
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
-                                    HistoryDisplay_ptr sftHistoryGraph) override;
+                                    PlottingWindow_ptr sftHistoryGraph) override;
     };
 
 } // Graphics

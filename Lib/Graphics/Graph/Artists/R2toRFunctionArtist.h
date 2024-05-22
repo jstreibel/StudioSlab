@@ -57,12 +57,16 @@ namespace Graphics {
     public:
         explicit R2toRFunctionArtist();
 
-        void draw(const Graph2D &d) override;
+        void draw(const PlottingWindow &d) override;
+
+        bool hasGUI() override;
 
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
         void setColorMap(const ColorMap& colorMap);
         void set_xPeriodicOn();
+
+        auto getXHairInfo(const Point2D &XHairCoord) const -> Str override;
 
         void adjustScale();
 

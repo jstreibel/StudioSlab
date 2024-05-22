@@ -12,8 +12,8 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
 #include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
-#include "Graphics/Graph/StylesManager.h"
-#include "Graphics/Graph/GraphBuilder.h"
+#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Graph/Plotter.h"
 
 #include <sstream>
 #include <array>
@@ -62,17 +62,17 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
     addWindow(Slab::DummyPointer(mCorrelationGraph));
 
     {
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
-                                            Slab::DummyPointer(temperature1HistoryData),
-                                            (*style++).permuteColors(), "τₖ=2<K>/L");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
-                                            Slab::DummyPointer(temperature2HistoryData),
-                                            (*style++).permuteColors(), "τ");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
-                                            Slab::DummyPointer(temperature3HistoryData),
-                                            (*style++).permuteColors(), "τ₂");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+                                       Slab::DummyPointer(temperature1HistoryData),
+                                       (*style++).permuteColors(), "τₖ=2<K>/L");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+                                       Slab::DummyPointer(temperature2HistoryData),
+                                       (*style++).permuteColors(), "τ");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+                                       Slab::DummyPointer(temperature3HistoryData),
+                                       (*style++).permuteColors(), "τ₂");
         // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
 
         addWindowToColumn(Slab::DummyPointer(mTemperaturesGraph), 0);
@@ -85,25 +85,25 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
                                          {params.gett() + .1, T}});
             auto Tstyle = (*style++).permuteColors();
             Tstyle.filled = false;
-            Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
-                                                Slab::New<Math::PointSet>(pts), Tstyle, "T (nominal)");
+            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+                                           Slab::New<Math::PointSet>(pts), Tstyle, "T (nominal)");
         }
     }
 
     {
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mHistogramsGraphE),
-                                            Slab::DummyPointer(histogramEData),
-                                            *style++, "E");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mHistogramsGraphK),
-                                            Slab::DummyPointer(histogramKData),
-                                            *style++, "K");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mHistogramsGraphGrad),
-                                            Slab::DummyPointer(histogramGradData),
-                                            *style++, "grad");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mHistogramsGraphV),
-                                            Slab::DummyPointer(histogramVData),
-                                            *style++, "V");
+        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphE),
+                                       Slab::DummyPointer(histogramEData),
+                                       *style++, "E");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphK),
+                                       Slab::DummyPointer(histogramKData),
+                                       *style++, "K");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphGrad),
+                                       Slab::DummyPointer(histogramGradData),
+                                       *style++, "grad");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphV),
+                                       Slab::DummyPointer(histogramVData),
+                                       *style++, "V");
 
         auto *histogramsPanel = new Graphics::WindowPanel();
         histogramsPanel->addWindow(Slab::DummyPointer(mHistogramsGraphV));
@@ -120,7 +120,7 @@ RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEner
 }
 
 void RtoR::StatisticalMonitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                                    Graphics::HistoryDisplay_ptr simHistoryGraph) {
+                                                    Graphics::PlottingWindow_ptr simHistoryGraph) {
     RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
     addWindow(simulationHistoryGraph, true, 0.20);
@@ -224,7 +224,7 @@ void RtoR::StatisticalMonitor::updateHistoryGraphs() {
 
                 // Correlation samples in full history
                 {
-                    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[0];
+                    auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
                     style.primitive = Graphics::Point;
                     style.thickness = 3;
                     auto ptSet = Slab::New<Math::PointSet>(sampler->getSamples());
@@ -306,7 +306,7 @@ void RtoR::StatisticalMonitor::draw() {
     auto V = hamiltonian.getTotalPotentialEnergy();
 
     std::ostringstream ss;
-    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
     guiWindow.addVolatileStat("<\\br>");
     guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
     guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
@@ -314,7 +314,7 @@ void RtoR::StatisticalMonitor::draw() {
     guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
     guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
-    style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+    style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
     fix decimalPlaces = 3;
     guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),      (style++)->lineColor.permute());
     guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces), (style++)->lineColor.permute());

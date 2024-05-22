@@ -6,24 +6,20 @@
 #define R2TOR_OUTPUTMONITOR_GENERIC_H
 
 
-#include "Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Graphics/Window/GUIWindow.h"
-
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-#include "Graphics/Graph/ℝ²↦ℝ/GraphR2Section.h"
-#include "Graphics/Graph/ℝ²↦ℝ/FlatFieldDisplay.h"
-
-#include "Models/KleinGordon/R2toR/EquationState.h"
+#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Graph/Artists/R2SectionArtist.h"
 
 namespace R2toR {
 class OutputOpenGL : public ::Graphics::OpenGLMonitor {
     protected:
-        Real phiMin, phiMax;
-        Graphics::GraphR2Section mSectionGraph;
-        Graphics::FlatFieldDisplay mFieldDisplay;
+        Graphics::PlottingWindow mSectionGraph;
+        Graphics::R2SectionArtist sectionArtist;
+
+        Graphics::PlottingWindow mFieldDisplay;
 
     public:
-        OutputOpenGL(const NumericConfig &params, Real phiMin, Real phiMax);
+        OutputOpenGL(const NumericConfig &params);
 
 
         void draw() override;

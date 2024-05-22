@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTORREALTIMEPANEL_H
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-#include "GraphRtoR.h"
+#include "../PlotThemeManager.h"
 
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
@@ -14,7 +14,6 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-#include "HistoryDisplay.h"
 #include "RtoRPanel.h"
 
 namespace RtoR {
@@ -23,7 +22,7 @@ namespace RtoR {
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
     protected:
-        Graphics::Graph2D mFieldsGraph;
+        Graphics::PlottingWindow mFieldsGraph;
         Graphics::Artist_ptr vArtist;
         Graphics::Artist_ptr kArtist;
         Graphics::Artist_ptr wArtist;
@@ -34,17 +33,17 @@ namespace RtoR {
         Math::PointSet WHistoryData;
         Math::PointSet VHistoryData;
 
-        const Graphics::PlotStyle U_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[0];
-        const Graphics::PlotStyle K_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[1];
-        const Graphics::PlotStyle W_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[2];
-        const Graphics::PlotStyle V_style = Graphics::StylesManager::GetCurrent()->funcPlotStyles[3];
+        const Graphics::PlotStyle U_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+        const Graphics::PlotStyle K_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        const Graphics::PlotStyle W_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+        const Graphics::PlotStyle V_style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[3];
 
         bool showPot = true;
         bool showKineticEnergy = false;
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
-        ::Graphics::Graph2D mEnergyGraph;
+        ::Graphics::PlottingWindow mEnergyGraph;
 
         void draw() override;
 
@@ -56,11 +55,11 @@ namespace RtoR {
                       Graphics::GUIWindow &guiWindow);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                  Graphics::HistoryDisplay_ptr simHistoryGraph) override;
+                                  Graphics::PlottingWindow_ptr simHistoryGraph) override;
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
-                                    Graphics::HistoryDisplay_ptr sftHistoryGraph) override;
+                                    Graphics::PlottingWindow_ptr sftHistoryGraph) override;
     };
 }
 

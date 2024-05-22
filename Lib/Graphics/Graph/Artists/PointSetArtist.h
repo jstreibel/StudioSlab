@@ -19,7 +19,7 @@ namespace Graphics {
     public:
         PointSetArtist(Math::PointSet_ptr, PlotStyle);
 
-        void draw(const Graph2D &) override;
+        void draw(const PlottingWindow &) override;
     };
 
     DefinePointer(PointSetArtist)

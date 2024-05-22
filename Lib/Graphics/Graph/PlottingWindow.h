@@ -2,8 +2,8 @@
 // Created by joao on 29/05/23.
 //
 
-#ifndef STUDIOSLAB_GRAPH_H
-#define STUDIOSLAB_GRAPH_H
+#ifndef STUDIOSLAB_PLOTTINGWINDOW_H
+#define STUDIOSLAB_PLOTTINGWINDOW_H
 
 #include <memory>
 #include <list>
@@ -24,17 +24,22 @@
 
 namespace Graphics {
 
-    class Graph2D : public Window {
+    class PlottingWindow : public Window {
+        static Count WindowCount;
+        Count id;
+
+        bool showInterface = false;
+
     protected:
         typedef Int zOrder_t;
 
     private:
-        static std::map<Str, Graph2D*> graphMap;
+        static std::map<Str, PlottingWindow*> graphMap;
 
         typedef std::multimap<zOrder_t, Artist_ptr> ContentMap;
         ContentMap content;
 
-        bool savePopupOn = false;
+        bool popupOn = false;
         bool autoReviewGraphRanges=false;
 
         RectR region;
@@ -54,16 +59,16 @@ namespace Graphics {
         void artistsDraw();
         virtual void drawGUI();
 
-        friend class Artist;;
+        friend class Artist;
 
         AxisArtist axisArtist;
         XHairArtist artistXHair;
 
     public:
-        explicit Graph2D(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
-                Str title = "no_title");
+        explicit PlottingWindow(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
+                                Str title = "no_title");
 
-        explicit Graph2D(Str title, bool autoReviewGraphLimits=true);
+        explicit PlottingWindow(Str title, bool autoReviewGraphLimits=true);
 
         void draw() override;
 
@@ -101,11 +106,11 @@ namespace Graphics {
 
     };
 
-    DefinePointer(Graph2D)
+    DefinePointer(PlottingWindow)
 
 }
 
 
 
 
-#endif //STUDIOSLAB_GRAPH_H
+#endif //STUDIOSLAB_PLOTTINGWINDOW_H

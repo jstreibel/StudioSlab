@@ -25,17 +25,17 @@ namespace RtoR::Thermal {
         Math::PointSet temperature2HistoryData;
         Math::PointSet temperature3HistoryData;
 
-        Graphics::Graph2D mTemperaturesGraph;
+        Graphics::PlottingWindow mTemperaturesGraph;
 
         Math::PointSet histogramKData;
         Math::PointSet histogramGradData;
         Math::PointSet histogramVData;
         Math::PointSet histogramEData;
 
-        Graphics::Graph2D mHistogramsGraphK;
-        Graphics::Graph2D mHistogramsGraphGrad;
-        Graphics::Graph2D mHistogramsGraphV;
-        Graphics::Graph2D mHistogramsGraphE;
+        Graphics::PlottingWindow mHistogramsGraphK;
+        Graphics::PlottingWindow mHistogramsGraphGrad;
+        Graphics::PlottingWindow mHistogramsGraphV;
+        Graphics::PlottingWindow mHistogramsGraphE;
 
     protected:
         void handleOutput(const OutputPacket &outInfo) override;

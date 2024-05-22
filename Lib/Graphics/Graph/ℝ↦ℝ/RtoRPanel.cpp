@@ -3,7 +3,6 @@
 //
 
 #include "RtoRPanel.h"
-#include "HistoryDisplay.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 namespace Graphics {
@@ -19,14 +18,14 @@ namespace Graphics {
     }
 
     void RtoRPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                         HistoryDisplay_ptr simHistoryGraph) {
+                                         PlottingWindow_ptr simHistoryGraph) {
         simulationHistory = simHistory;
         simulationHistoryGraph = simHistoryGraph;
     }
 
     void RtoRPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                            const DFTDataHistory &dftData,
-                                           HistoryDisplay_ptr sftHistoryGraph) {
+                                           PlottingWindow_ptr sftHistoryGraph) {
 
         spaceFTHistory = sftHistory;
         this->dftData = &dftData;

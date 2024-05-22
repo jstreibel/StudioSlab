@@ -28,7 +28,7 @@ namespace Graphics {
                                              Real L, UInt nLines, UInt linesRes, Real scale = 1.0);
 
 
-        static void renderSection(           const R2toR::Function &func, const RtoR2::StraightLine &section,
+        static void renderSection(           const R2toR::Function &func, const RtoR2::ParametricCurve &section,
                                              PlotStyle style, UInt resolution, Real scale=1.0);
         static void renderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, UInt resolution);

@@ -10,19 +10,15 @@
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
-#include "Graphics/Graph/GraphBuilder.h"
+#include "Graphics/Graph/Plotter.h"
 // #include "Math/Function/R2toR/DFT.h"
 
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
-#define CHOOSE_ENERGY_LABEL(A, a) (showEnergyHistoryAsDensities ? (a) : (A))
+
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_GRAPH_LIMITS false
-#define DONT_AFFECT_RANGES false
-#define AUTO_REVIEW_GRAPH_LIMITS true
-#define ODD_PERMUTATION true
-#define SAMPLE_COUNT(n) (n)
 #define FIRST_TIMER(code)           \
     static bool firstTimer = true;  \
     if (firstTimer) {               \
@@ -32,14 +28,11 @@
 #define CHECK_GL_ERRORS(count) ::Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
-#define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
 #define UPDATE_HISTORY_EVERY_STEP true
 #define GOOD_ENOUGH_NUMBER_OF_SAMPLES 300
 #define MAX_SAMPLES 50000
 #define linesOffset (3 * params.getL())
-#define xMinLinesInFullHistoryView (params.getxMin() - linesOffset)
-#define xMaxLinesInFullHistoryView (params.getxMax() + linesOffset)
 
 RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow)
 : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor", "realtime monitoring of simulation state")
@@ -47,23 +40,23 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
                 -1, 1, "Fields")
 , mEnergyGraph("Energy")
 {
-    auto currStyle = Graphics::StylesManager::GetCurrent();
+    auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
     {
         auto sty = currStyle->funcPlotStyles.begin();
 
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                            Slab::DummyPointer(UHistoryData),
-                                            *sty, "U/L");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                            Slab::DummyPointer(KHistoryData),
-                                            *++sty, "K/L");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                            Slab::DummyPointer(WHistoryData),
-                                            *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
-        Graphics::GraphBuilder::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                            Slab::DummyPointer(VHistoryData),
-                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                       Slab::DummyPointer(UHistoryData),
+                                       *sty, "U/L");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                       Slab::DummyPointer(KHistoryData),
+                                       *++sty, "K/L");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                       Slab::DummyPointer(WHistoryData),
+                                       *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
+        Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
+                                       Slab::DummyPointer(VHistoryData),
+                                       *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
         addWindow(Slab::DummyPointer(mFieldsGraph));
     }
@@ -76,10 +69,10 @@ RtoR::RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamilt
 
     {
         fix V_str = hamiltonian.getThePotential()->symbol();
-        vArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getPotentialDensity(), V_style, Str("V(ϕ)=") + V_str, 1024);
-        kArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
-        wArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
-        uArtist = Graphics::GraphBuilder::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
+        vArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getPotentialDensity(), V_style, Str("V(ϕ)=") + V_str, 1024);
+        kArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
+        wArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
+        uArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph), hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
     }
 }
 
@@ -160,7 +153,7 @@ bool RtoR::RealtimePanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state,
 }
 
 void RtoR::RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                               Graphics::HistoryDisplay_ptr simHistoryGraph) {
+                                               Graphics::PlottingWindow_ptr simHistoryGraph) {
     RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
     addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
@@ -169,7 +162,7 @@ void RtoR::RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr 
 
 void RtoR::RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                                  const DFTDataHistory &dftData,
-                                                 Graphics::HistoryDisplay_ptr sftHistoryGraph)
+                                                 Graphics::PlottingWindow_ptr  sftHistoryGraph)
 {
     RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 

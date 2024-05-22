@@ -7,8 +7,8 @@
 #include <utility>
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph/Graph.h"
-#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/OpenGL/Texture1D_Color.h"
 
 namespace Graphics::OpenGL {
@@ -31,10 +31,10 @@ namespace Graphics::OpenGL {
         setLocation(loc);
     }
 
-    void OpenGL::ColorBarArtist::draw(const Graph2D &graph) {
+    void OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
         if( texture == nullptr ) return;
 
-        auto style =  StylesManager::GetCurrent();
+        auto style =  PlotThemeManager::GetCurrent();
         auto &writer = style->labelsWriter;
 
         OpenGL::Shader::remove();

@@ -4,23 +4,22 @@
 
 #include "RtoRFourierPanel.h"
 
-#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 #include "imgui.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 #include "Math/Function/RtoR/Calc/DFTInverse.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
-#include "Graphics/Graph/GraphBuilder.h"
+#include "Graphics/Graph/Plotter.h"
 
 namespace Graphics {
 
     RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, GUIWindow &guiWindow)
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
-    , inverseFTDisplay(new FlatFieldDisplay("ℱₖ⁻¹[ℱ]"))
-    , timeFTDisplay(new FlatFieldDisplay("ℱₜ[ϕ](ω,x)"))
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
-        inverseFTDisplay->setColorMap(ColorMaps["BrBG"].inverse());
+        inverseDFTArtist->setLabel("ℱₖ⁻¹(t, x)");
+        timeDFTArtist->setLabel("ℱₜ(ω, x)");
     }
 
     void RtoRFourierPanel::draw() {
@@ -28,9 +27,9 @@ namespace Graphics {
         if(firstRun) {
             firstRun = false;
             // auto windowRow = new WindowRow();
-            addWindow(timeFTDisplay);
+            addWindow(timeDFTDisplay);
             addWindow(simulationHistoryGraph);
-            addWindow(inverseFTDisplay, true);
+            addWindow(inverseDFTDisplay, true);
             addWindow(spaceFTHistoryGraph);
 
             arrangeWindows();
@@ -93,12 +92,12 @@ namespace Graphics {
 
     void RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                                   const DFTDataHistory &dftData,
-                                                  HistoryDisplay_ptr sftHistoryGraph) {
+                                                  PlottingWindow_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 
-        cutoffLineArtist = Graphics::GraphBuilder::AddCurve(spaceFTHistoryGraph,
+        cutoffLineArtist = Graphics::Plotter::AddCurve(spaceFTHistoryGraph,
                                                        Slab::DummyPointer(cutoffLine),
-                                                       StylesManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+                                                       PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
@@ -131,14 +130,9 @@ namespace Graphics {
             ++_n;
         }
 
-        const Core::FunctionT<Real2D, double>* a;
-        const R2toR::DiscreteFunction* b;
-
         Log::Info(__PRETTY_FUNCTION__ + Str(" FINISHED computing inverse DFT."));
 
-        inverseFTDisplay->removeFunction(inverseDFT);
-        inverseDFT = rebuiltHistory;
-        inverseFTDisplay->addFunction(inverseDFT, "ℱ⁻¹");
+        inverseDFTArtist->setFunction(rebuiltHistory);
     }
 
     void RtoRFourierPanel::computeTimeDFT(Real t₀, Real t_f) {
@@ -154,8 +148,6 @@ namespace Graphics {
         fix m = M/2 + 1;
 
         fix dk = 2*M_PI/Δt;
-
-        timeFTDisplay->removeFunction(timeDFT);
 
         timeDFT = Slab::New<R2toR::DiscreteFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::DiscreteFunction_CPU tempSpace(M, .0, dk*M);
@@ -180,6 +172,7 @@ namespace Graphics {
         }
 
         Str timeInterval = ToStr(t₀) + " ≤ t ≤ " + ToStr(t_f);
-        timeFTDisplay->addFunction(timeDFT, Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
+        timeDFTArtist->setFunction(timeDFT);
+        timeDFTArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 } // Graphics

@@ -46,13 +46,13 @@ int TestsApp::run() {
         else test = new GLFreeTypeTests;
 
         backend = &Core::BackendManager::GetGUIBackend();
-        backend->addEventListener(Core::GUIEventListener::Ptr(test));
+        backend->addEventListener(Core::GUIEventListener_ptr(test));
 
     } else {
         Core::BackendManager::Startup(Core::GLFW);
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
         backend = &guiBackend;
-        guiBackend.addEventListener(Core::GUIEventListener::Ptr(new Tests::NuklearTests()));
+        guiBackend.addEventListener(Core::GUIEventListener_ptr(new Tests::NuklearTests()));
     }
 
     backend->run(new DummyProgram);

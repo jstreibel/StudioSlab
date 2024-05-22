@@ -2,22 +2,38 @@
 // Created by joao on 29/08/23.
 //
 
-#include "Graph.h"
+#include "PlottingWindow.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
-#include "StylesManager.h"
+#include "PlotThemeManager.h"
 
-Str Graphics::Graph2D::getXHairLabel(const Point2D &coords) const {
+Str Graphics::PlottingWindow::getXHairLabel(const Point2D &coords) const {
     fix digits = 5;
     auto &hUnit = axisArtist.getHorizontalUnit();
     auto &vUnit = axisArtist.getVerticalUnit();
 
-    return Str("(")+ hUnit(coords.x, digits) + ", " + vUnit(coords.y, digits) + ")";
+    Str hAxisName = axisArtist.getHorizontalAxisLabel();
+    Str vAxisName = axisArtist.getVerticalAxisLabel();
+    auto baseLabel = Str("(")+ hAxisName +", " + vAxisName + ") = (" + hUnit(coords.x, digits) + ", " + vUnit(coords.y, digits) + ")";
+
+    for(IN contie : content) {
+        IN artie = contie.second;
+
+        if(artie->getRegion().doesHit(coords.x, coords.y)) {
+            auto artLabel = artie->getXHairInfo(coords);
+
+            if(artLabel=="") continue;
+
+            baseLabel += " --> " + artLabel;
+        }
+    }
+
+    return baseLabel;
 }
 
-void Graphics::Graph2D::reviewGraphRanges() {
+void Graphics::PlottingWindow::reviewGraphRanges() {
     RectR newRegion = region;
 
     for(auto &a : content){
@@ -36,7 +52,7 @@ void Graphics::Graph2D::reviewGraphRanges() {
     region = newRegion;
 }
 
-void Graphics::Graph2D::nameLabelDraw(const Graphics::PlotStyle &style, const Str& label) {
+void Graphics::PlottingWindow::nameLabelDraw(const Graphics::PlotStyle &style, const Str& label) {
     OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
     OpenGL::Shader::remove();
@@ -109,7 +125,7 @@ void Graphics::Graph2D::nameLabelDraw(const Graphics::PlotStyle &style, const St
     glDisable(GL_LINE_STIPPLE);
     glLineWidth(1.5);
 
-    auto currStyle = StylesManager::GetCurrent();
+    auto currStyle = PlotThemeManager::GetCurrent();
 
     auto c = currStyle->graphNumbersColor;
     Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};

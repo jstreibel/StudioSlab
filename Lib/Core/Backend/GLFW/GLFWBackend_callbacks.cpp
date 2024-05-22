@@ -104,7 +104,7 @@ void GLFWBackend::addGLFWListener(Core::GLFWListener *glfwListener) {
     listeners.emplace_back(glfwListener);
 }
 
-bool GLFWBackend::addEventListener(const Core::GUIEventListener::Ptr &listener) {
+bool GLFWBackend::addEventListener(const Core::GUIEventListener_ptr &listener) {
     int w, h;
     glfwGetWindowSize(systemWindow, &w, &h);
     listener->notifyScreenReshape(w, h);

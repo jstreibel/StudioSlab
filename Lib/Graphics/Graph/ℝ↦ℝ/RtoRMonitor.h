@@ -5,12 +5,15 @@
 #ifndef V_SHAPE_RTORMONITOR_BASE_H
 #define V_SHAPE_RTORMONITOR_BASE_H
 
-#include "Graphics/Window/WindowContainer/WindowPanel.h"
-
-#include "Graphics/OpenGL/OpenGLMonitor.h"
-
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
+
+#include "Graphics/Window/WindowContainer/WindowPanel.h"
+#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Graph/Artists/HistoryArtist.h"
+
 #include "RtoRPanel.h"
+
 
 namespace Graphics {
     class HistoryDisplay;
@@ -28,9 +31,13 @@ namespace RtoR {
         Graphics::RtoRPanel_ptr currentDataView;
 
         R2toR::DiscreteFunction_constptr simulationHistory;
-        Graphics::HistoryDisplay_ptr fullHistoryGraph;
+        Graphics::PlottingWindow_ptr fullHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full field history");
+        Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+
         R2toR::DiscreteFunction_constptr spaceFTHistory;
-        Graphics::HistoryDisplay_ptr fullSFTHistoryGraph;
+        Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
+        Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+
         const DFTDataHistory *dftData;
 
         KGEnergy &hamiltonian;

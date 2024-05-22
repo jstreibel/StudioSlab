@@ -11,7 +11,7 @@
 
 #include "Graphics/Styles/ColorMap.h"
 
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
@@ -25,7 +25,7 @@
 
 
 namespace Graphics {
-    class FlatFieldDisplay : public Graphics::Graph2D {
+    class FlatFieldDisplay : public Graphics::PlottingWindow {
             enum Scale {
                 Linear,
                 Log,

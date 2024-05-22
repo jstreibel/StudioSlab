@@ -19,7 +19,7 @@ namespace Modes::DatabaseViewer {
         Graphics::FlatFieldDisplay allDataDisplay;
         Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
-        Graphics::Graph2D massesGraph;
+        Graphics::PlottingWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;

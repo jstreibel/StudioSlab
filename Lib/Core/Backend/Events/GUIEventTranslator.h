@@ -14,10 +14,10 @@
 namespace Core {
     class EventTranslator {
     protected:
-        std::vector<Core::GUIEventListener::Ptr> guiListeners;
+        std::vector<Core::GUIEventListener_ptr> guiListeners;
 
     public:
-        bool addGUIEventListener(const Core::GUIEventListener::Ptr& guiEventListener);
+        bool addGUIEventListener(const Core::GUIEventListener_ptr& guiEventListener);
 
     };
 

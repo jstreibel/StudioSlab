@@ -11,7 +11,7 @@
 #define ODD true
 
 Graphics::FlatFieldDisplay::FlatFieldDisplay(Str title)
-: ::Graphics::Graph2D(-1, 1, -1, 1, std::move(title))
+: ::Graphics::PlottingWindow(-1, 1, -1, 1, std::move(title))
 {
 }
 
@@ -109,7 +109,7 @@ bool Graphics::FlatFieldDisplay::notifyMouseWheel(double dx, double dy) {
 }
 
 void Graphics::FlatFieldDisplay::notifyReshape(int newWinW, int newWinH) {
-    Graph2D::notifyReshape(newWinW, newWinH);
+    PlottingWindow::notifyReshape(newWinW, newWinH);
 
     // computeGraphRanges();
 }
@@ -147,7 +147,7 @@ void Graphics::FlatFieldDisplay::computeGraphRanges(const R2toR::Domain &domain)
 auto Graphics::FlatFieldDisplay::getFunctionsMap() const -> FuncsMap { return funcsMap; }
 
 Str Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords) const {
-    auto label = Graph2D::getXHairLabel(coords);
+    auto label = PlottingWindow::getXHairLabel(coords);
 
     int zOrder_min = std::numeric_limits<int>::min();
 

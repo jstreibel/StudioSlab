@@ -22,7 +22,6 @@ namespace Core {
         bool hasResponders() const;
 
     public:
-        typedef std::shared_ptr<GUIEventListener> Ptr;
 
         GUIEventListener();
         virtual ~GUIEventListener() = default;
@@ -40,6 +39,8 @@ namespace Core {
         virtual bool notifyRender();
 
     };
+
+    DefinePointer(GUIEventListener)
 }
 
 

@@ -20,7 +20,7 @@ namespace Graphics {
     public:
         RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
 
-        void draw(const Graph2D &d) override;
+        void draw(const PlottingWindow &d) override;
     };
 
     DefinePointer(RtoRFunctionArtist)

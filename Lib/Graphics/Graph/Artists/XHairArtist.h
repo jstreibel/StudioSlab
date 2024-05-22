@@ -13,7 +13,7 @@ namespace Graphics {
     class XHairArtist : public Artist {
         Math::PointSet XHair;
     public:
-        void draw(const Graph2D &window) override;
+        void draw(const PlottingWindow &window) override;
     };
 
 } // Graphics

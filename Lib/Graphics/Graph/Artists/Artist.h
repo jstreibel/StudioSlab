@@ -11,7 +11,7 @@
 
 namespace Graphics {
 
-    class Graph2D;
+    class PlottingWindow;
 
     class Artist {
         Str label = "<unnamed artist>";
@@ -19,17 +19,22 @@ namespace Graphics {
         bool visible = true;
         bool affectGraphRanges = false;
 
+    protected:
         RectR region{-1,1,-1,1};
 
     public:
         Artist() = default;
 
-        virtual void draw(const Graph2D &) = 0;
+        virtual void draw(const PlottingWindow &) = 0;
+        virtual bool hasGUI();
+        virtual void drawGUI();
 
         virtual const RectR &getRegion();
 
         void setLabel(Str label);
         auto getLabel() const -> Str;
+
+        virtual auto getXHairInfo(const Point2D &XHairCoord) const -> Str;
 
         void setVisibility(bool);
         bool isVisible() const;

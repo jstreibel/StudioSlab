@@ -1,6 +1,8 @@
 
 
-set( GRAPHICS_SOURCES
+set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
+
+add_library(${LIB_LOCAL_NAME} STATIC
 		Types.h     	Types.cpp
 		Utils.cpp
 
@@ -12,7 +14,7 @@ set( GRAPHICS_SOURCES
 		Styles/Colors.h       	Styles/Colors.cpp
 		Styles/WindowStyles.h	Styles/WindowStyles.cpp
 
-        Window/GUIWindow.cpp
+		Window/GUIWindow.cpp
 		Window/Window.cpp
 		Window/WindowContainer/WindowPanel.cpp
 		Window/WindowTree/NodeWindow.cpp
@@ -38,9 +40,9 @@ set( GRAPHICS_SOURCES
 		OpenGL/Utils.h							OpenGL/Utils.cpp
 		OpenGL/Writer.h							OpenGL/Writer.cpp
 		OpenGL/rougier/shader.h					OpenGL/rougier/shader.c
-        OpenGL/OpenGL.h
-        OpenGL/GLDebug.h						OpenGL/GLDebug.cpp
-        OpenGL/Texture.h				        OpenGL/Texture.cpp
+		OpenGL/OpenGL.h
+		OpenGL/GLDebug.h						OpenGL/GLDebug.cpp
+		OpenGL/Texture.h				        OpenGL/Texture.cpp
 		OpenGL/Texture1D_Color.h 				OpenGL/Texture1D_Color.cpp
 		OpenGL/Texture2D.h						OpenGL/Texture2D.cpp
 		# OpenGL/Texture2D_UByte.h				OpenGL/Texture2D_UByte.cpp
@@ -50,29 +52,25 @@ set( GRAPHICS_SOURCES
 		OpenGL/Shader.h							OpenGL/Shader.cpp
 		OpenGL/PixelData.h						OpenGL/PixelData.cpp
 		OpenGL/TextureUtils.h					OpenGL/TextureUtils.cpp
-        OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
+		OpenGL/Artists/Overlay.h        		OpenGL/Artists/Overlay.cpp
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
 
 		Graph/Artists/Artist.cpp
-		Graph/Graph.cpp
+		Graph/PlottingWindow.cpp
 		Graph/LabelingHelper.h				Graph/LabelingHelper.cpp
-		Graph/Graph_Axis.cpp
+		Graph/PlottingWindow_Axis.cpp
 		Graph/PlotStyle.cpp
-		Graph/Graph_Events.cpp
-		Graph/Graph_GetSet.cpp
+		Graph/PlottingWindow_Events.cpp
+		Graph/PlottingWindow_GetSet.cpp
 		Graph/Artists/XHairArtist.h			Graph/Artists/XHairArtist.cpp
 		Graph/Artists/AxisArtist.h			Graph/Artists/AxisArtist.cpp
 
-		Graph/StylesManager.h				Graph/StylesManager.cpp
+		Graph/PlotThemeManager.h Graph/PlotThemeManager.cpp
 
-		Graph/ℝ²↦ℝ/FlatFieldDisplay.h		Graph/ℝ²↦ℝ/FlatFieldDisplay.cpp
 		Graph/Artists/R2toRFunctionArtist.h Graph/Artists/R2toRFunctionArtist.cpp
 		Graph/ℝ²↦ℝ/R2toROutputOpenGLGeneric.cpp
 
-
-		Graph/ℝ↦ℝ/HistoryDisplay.h			Graph/ℝ↦ℝ/HistoryDisplay.cpp
-		Graph/ℝ↦ℝ/GraphRtoR.h				Graph/ℝ↦ℝ/GraphRtoR.cpp
 		Graph/ℝ↦ℝ/RtoRMonitor.cpp
 		Graph3D/Graph3D.cpp
 		Graph3D/Graph3D.h
@@ -82,24 +80,24 @@ set( GRAPHICS_SOURCES
 		Graph3D/Field2DActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
-        MeshUtils.cpp
-        MeshUtils.h
-        Graph3D/Camera.cpp
-        Graph3D/Camera.h
-        Graph3D/TestActor.cpp
-        Graph3D/TestActor.h
-        Graph/ℝ↦ℝ/RtoRStatisticalMonitor.cpp
-        Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h
-        Graph/ℝ↦ℝ/RtoRRealtimePanel.cpp
-        Graph/ℝ↦ℝ/RtoRRealtimePanel.h
+		MeshUtils.cpp
+		MeshUtils.h
+		Graph3D/Camera.cpp
+		Graph3D/Camera.h
+		Graph3D/TestActor.cpp
+		Graph3D/TestActor.h
+		Graph/ℝ↦ℝ/RtoRStatisticalMonitor.cpp
+		Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h
+		Graph/ℝ↦ℝ/RtoRRealtimePanel.cpp
+		Graph/ℝ↦ℝ/RtoRRealtimePanel.h
 		Graph/ℝ↦ℝ/RtoRPanel.cpp
 		Graph/ℝ↦ℝ/RtoRPanel.h
 		Graph/ℝ↦ℝ/RtoRFourierPanel.cpp
 		Graph/ℝ↦ℝ/RtoRFourierPanel.h
 		Graph/Artists/HistoryTexture2DUploadHelper.cpp
 		Graph/Artists/HistoryTexture2DUploadHelper.h
-        Graph/ℝ↦ℝ/CorrelationsPanel.cpp
-        Graph/ℝ↦ℝ/CorrelationsPanel.h
+		Graph/ℝ↦ℝ/CorrelationsPanel.cpp
+		Graph/ℝ↦ℝ/CorrelationsPanel.h
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h
 
@@ -107,25 +105,24 @@ set( GRAPHICS_SOURCES
 		SFML/Tools/GraphAndAverageCalc.cpp
 
 		SFML/ViewerUtils.cpp
-		Graph/GraphTheme.cpp
-		Graph/GraphTheme.h
+		Graph/PlottingTheme.cpp
+		Graph/PlottingTheme.h
 		Graph/Artists/PointSetArtist.cpp
 		Graph/Artists/PointSetArtist.h
-        Graph/Artists/ParametricCurve2DArtist.cpp
-        Graph/Artists/ParametricCurve2DArtist.h
-		Graph/GraphRegion.cpp
-		Graph/GraphRegion.h
+		Graph/Artists/ParametricCurve2DArtist.cpp
+		Graph/Artists/ParametricCurve2DArtist.h
+		Graph/PlotRegion.cpp
+		Graph/PlotRegion.h
 		Graph/Artists/RtoRFunctionArtist.cpp
 		Graph/Artists/RtoRFunctionArtist.h
 		Graph/Artists/HistoryArtist.cpp
 		Graph/Artists/HistoryArtist.h
-		Graph/GraphBuilder.cpp
-		Graph/GraphBuilder.h
+		Graph/Plotter.cpp
+		Graph/Plotter.h
+		Graph/Artists/R2SectionArtist.cpp
+		Graph/Artists/R2SectionArtist.h
+
 )
-
-set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
-
-add_library(${LIB_LOCAL_NAME} STATIC ${GRAPHICS_SOURCES} ${GRAPHICS_BACKEND_SOURCE})
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core

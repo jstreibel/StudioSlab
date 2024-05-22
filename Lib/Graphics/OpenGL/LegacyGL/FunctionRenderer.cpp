@@ -95,7 +95,7 @@ void Graphics::FunctionRenderer::renderFunction(const R2toR::Function &func, Rea
     }
 }
 
-void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::StraightLine &section,
+void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::ParametricCurve &section,
                                            PlotStyle style, UInt resolution, Real scale) {
     const auto ds = section.getΔs() / Real(resolution);
     const auto sMin = section.get_sMin(), sMax = section.get_sMax();

@@ -19,7 +19,7 @@ protected:
 
     Real r=0, g=0, b=0;
 public:
-    virtual auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> bool;
+    virtual auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool;
 
     virtual auto getScreenHeight() const -> Real = 0;
 

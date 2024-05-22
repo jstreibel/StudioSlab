@@ -33,7 +33,7 @@ namespace Modes {
 
         /*
         mSpaceFourierModesGraph.addPointSet(modes,
-            Graphics::StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
+            Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
             "A(ω)", DONT_AFFECT_RANGES);
 
         if(CUSTOM_TICKS) {

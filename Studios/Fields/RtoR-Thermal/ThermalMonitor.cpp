@@ -12,7 +12,7 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
 
-#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 #include <sstream>

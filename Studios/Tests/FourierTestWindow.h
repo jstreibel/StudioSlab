@@ -17,7 +17,7 @@ class FourierTestWindow : public Graphics::Window {
         Graphics::WindowColumn col;
 
         Graphics::GraphRtoR mFuncGraph;
-        Graphics::Graph2D mDFTGraph;
+        Graphics::PlottingWindow mDFTGraph;
         Graphics::GraphRtoR mFTGraph;
         Graphics::GUIWindow gui;
 

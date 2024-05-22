@@ -87,7 +87,7 @@ namespace R2toR {
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 
-            auto glOut = ::Graphics::OpenGLMonitor::Ptr(this->buildOpenGLOutput());
+            auto glOut = ::Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
             backend.addEventListener(glOut);
@@ -132,7 +132,7 @@ namespace R2toR {
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-        return new R2toR::OutputOpenGL(simulationConfig.numericConfig, -1, 1);
+        return new R2toR::OutputOpenGL(simulationConfig.numericConfig);
     }
 
     auto Builder::newFieldState() -> void * {

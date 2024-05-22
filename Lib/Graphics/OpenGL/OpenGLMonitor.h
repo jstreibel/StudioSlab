@@ -50,6 +50,8 @@ namespace Graphics {
         // ********************* END Socket ********************** //
 
     };
+
+    DefinePointer(OpenGLMonitor)
 }
 
 #endif // OUTPUTOPENGL_H

@@ -7,9 +7,11 @@
 namespace Graphics {
 
     void Artist::setVisibility(bool vis) { visible = vis; }
+
     bool Artist::isVisible() const { return visible; }
 
-    void Artist::setAffectGraphRanges(bool affects) { affectGraphRanges=affects; }
+    void Artist::setAffectGraphRanges(bool affects) { affectGraphRanges = affects; }
+
     bool Artist::affectsGraphRanges() const { return affectGraphRanges; }
 
     const RectR &Artist::getRegion() {
@@ -20,8 +22,19 @@ namespace Graphics {
         return false;
     }
 
-    void Artist::setLabel(Str newLabel)  { label = newLabel; }
+    void Artist::setLabel(Str newLabel) { label = newLabel; }
 
     auto Artist::getLabel() const -> Str { return label; }
+
+    auto Artist::getXHairInfo(const Point2D &XHairCoord) const -> Str {
+        return Str();
+    }
+
+    void Artist::drawGUI() {
+    }
+
+    bool Artist::hasGUI() {
+        return false;
+    }
 
 }

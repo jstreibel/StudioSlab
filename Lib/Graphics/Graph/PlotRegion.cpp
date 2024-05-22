@@ -2,7 +2,7 @@
 // Created by joao on 21/05/24.
 //
 
-#include "GraphRegion.h"
+#include "PlotRegion.h"
 
 namespace Graphics {
 } // Graphics

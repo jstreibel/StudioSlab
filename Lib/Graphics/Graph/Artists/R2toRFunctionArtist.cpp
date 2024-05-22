@@ -8,7 +8,7 @@
 #include <functional>
 // #include <string_view>
 
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Core/Tools/Resources.h"
 #include "imgui.h"
@@ -30,12 +30,8 @@ namespace Graphics {
         program.setUniform("colormap", colorBar.getTexture()->getTextureUnit());
     }
 
-    void R2toRFunctionArtist::draw(const Graph2D &graph) {
+    void R2toRFunctionArtist::draw(const PlottingWindow &graph) {
         if (func == nullptr) return;
-
-        drawGUI();
-
-        if(!isVisible()) return;
 
         if (!validTextureData)
             repopulateTextureBuffer();
@@ -104,118 +100,115 @@ namespace Graphics {
         validTextureData = true;
     }
 
+    bool R2toRFunctionArtist::hasGUI() { return true; }
+
     void R2toRFunctionArtist::drawGUI() {
-        auto myName = Str("ℝ² ") + getLabel() + " display";
+        if(func == nullptr) {
+            ImGui::TextColored(ImVec4{1,0,0,1}, "nullptr ℝ²↦ℝ function");
+            return;
+        }
 
-        if (ImGui::Begin("Stats")) {
-            if (ImGui::CollapsingHeader(myName.c_str())) {
-                const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
-                ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
+        auto myName = getLabel();
 
-                auto visible = isVisible();
-                if(ImGui::Checkbox("Visible##", &visible))
-                    setVisibility(visible);
+        const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+        ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
+        if (func->isDiscrete()) {
+            auto &dFunc = *dynamic_cast<const R2toR::DiscreteFunction *>(func.get());
+            ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
+        }
 
-                if (func->isDiscrete()) {
-                    auto &dFunc = *dynamic_cast<const R2toR::DiscreteFunction *>(func.get());
-                    ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
-                }
+        {
+            {
+                ImGui::Text("σ := sign(ϕ)");
+                ImGui::Text("ϕ ↦ σ ln(|ϕ|×ε + 1) / ln(ϕₛₐₜ×ε + 1)");
+            }
 
+            bool antiAlias = textureData->getAntiAlias();
+            if (ImGui::Checkbox("Anti-alias display##", &antiAlias))
+                textureData->setAntiAlias(antiAlias);
+
+            if (ImGui::Button("Compute ϕₛₐₜ")) {
+                adjustScale();
+            }
+
+            {
+                auto cMap_saturationValue_f = (float) cMap_saturationValue;
+                auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
+
+                if (ImGui::DragFloat("ϕₛₐₜ",
+                                     &cMap_saturationValue_f,
+                                     cMap_saturationValue_f*5e-3f,
+                                     1.e-5f,
+                                     1.e5f,
+                                     "%.2e"))
                 {
-                    {
-                        ImGui::Text("σ := sign(ϕ)");
-                        ImGui::Text("ϕ ↦ σ ln(|ϕ|×ε + 1) / ln(ϕₛₐₜ×ε + 1)");
-                    }
+                    cMap_saturationValue = cMap_saturationValue_f;
 
-                    bool antiAlias = textureData->getAntiAlias();
-                    if (ImGui::Checkbox("Anti-alias display##", &antiAlias))
-                        textureData->setAntiAlias(antiAlias);
-
-                    if (ImGui::Button("Compute ϕₛₐₜ")) {
-                        adjustScale();
-                    }
-
-                    {
-                        auto cMap_saturationValue_f = (float) cMap_saturationValue;
-                        auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
-
-                        if (ImGui::DragFloat("ϕₛₐₜ",
-                                             &cMap_saturationValue_f,
-                                             cMap_saturationValue_f*5e-3f,
-                                             1.e-5f,
-                                             1.e5f,
-                                             "%.2e"))
-                        {
-                            cMap_saturationValue = cMap_saturationValue_f;
-
-                            updateColorBar();
-                        }
-
-                        if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
-                                             1e-10, 1e10, "%.1e")) {
-                            cMap_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
-
-                            updateColorBar();
-                        }
-                    }
+                    updateColorBar();
                 }
 
+                if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
+                                     1e-10, 1e10, "%.1e")) {
+                    cMap_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
 
-                {
-                    StrVector items;
-                    for (const auto &cMapPair: ColorMaps)
-                        items.emplace_back(cMapPair.first);
-                    static int item_current_idx = 0; // Here we store our selection data as an index.
-                    static int item_last_idx = 0;
-                    Str selectedItem;
-                    const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
-                    if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
-                        for (int n = 0; n < items.size(); n++) {
-                            const bool is_selected = (item_current_idx == n);
-                            if (ImGui::Selectable(items[n].c_str(), is_selected)) {
-                                selectedItem = items[n];
-                                item_current_idx = n;
-                            }
-
-                            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                            if (is_selected)
-                                ImGui::SetItemDefaultFocus();
-                        }
-                        if (item_last_idx != item_current_idx)
-                            setColorMap(ColorMaps[selectedItem]);
-                        item_last_idx = item_current_idx;
-                        ImGui::EndCombo();
-                    }
-
-                    ImGui::Text("ColorMap operations:");
-                    if (ImGui::Button("Permute")) {
-                        cMap = cMap.permute();
-                        updateColorBar();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("RGB -> BGR")) {
-                        cMap = cMap.bgr();
-                        updateColorBar();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Inverse")) {
-                        cMap = cMap.inverse();
-                        updateColorBar();
-                    }
-                    ImGui::SameLine();
-                    if (ImGui::Button("Reverse")) {
-                        cMap = cMap.reverse();
-                        updateColorBar();
-                    }
-
-                    ImGui::Checkbox("Show colorbar##", &showColorBar);
+                    updateColorBar();
                 }
-
-                ImGui::EndChild();
             }
         }
-        ImGui::End();
+
+
+        {
+            StrVector items;
+            for (const auto &cMapPair: ColorMaps)
+                items.emplace_back(cMapPair.first);
+            static int item_current_idx = 0; // Here we store our selection data as an index.
+            static int item_last_idx = 0;
+            Str selectedItem;
+            const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+            if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
+                for (int n = 0; n < items.size(); n++) {
+                    const bool is_selected = (item_current_idx == n);
+                    if (ImGui::Selectable(items[n].c_str(), is_selected)) {
+                        selectedItem = items[n];
+                        item_current_idx = n;
+                    }
+
+                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+                    if (is_selected)
+                        ImGui::SetItemDefaultFocus();
+                }
+                if (item_last_idx != item_current_idx)
+                    setColorMap(ColorMaps[selectedItem]);
+                item_last_idx = item_current_idx;
+                ImGui::EndCombo();
+            }
+
+            ImGui::Text("ColorMap operations:");
+            if (ImGui::Button("Permute")) {
+                cMap = cMap.permute();
+                updateColorBar();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("RGB -> BGR")) {
+                cMap = cMap.bgr();
+                updateColorBar();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Inverse")) {
+                cMap = cMap.inverse();
+                updateColorBar();
+            }
+            ImGui::SameLine();
+            if (ImGui::Button("Reverse")) {
+                cMap = cMap.reverse();
+                updateColorBar();
+            }
+
+            ImGui::Checkbox("Show colorbar##", &showColorBar);
+        }
+
+        ImGui::EndChild();
     }
 
     void R2toRFunctionArtist::setFunction(R2toR::Function_constptr function, const Unit &unit) {
@@ -244,6 +237,11 @@ namespace Graphics {
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
         auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+
+        {
+            auto 𝒟 = discreteFunc.getDomain();
+            region = {𝒟.xMin, 𝒟.xMax, 𝒟.yMin, 𝒟.yMax};
+        }
 
         auto xRes = discreteFunc.getN();
         auto yRes = discreteFunc.getM();
@@ -360,5 +358,45 @@ namespace Graphics {
 
         updateColorBar();
     }
+
+    Str R2toRFunctionArtist::getXHairInfo(const Point2D &coords) const {
+        if(func == nullptr) return {};
+
+        fix r = Real2D{coords.x, coords.y};
+        assert(func->domainContainsPoint(r));
+
+        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction &>(*func);
+
+        auto xRes = discreteFunc.getN();
+        auto yRes = discreteFunc.getM();
+
+        auto domain = discreteFunc.getDomain();
+
+        auto hPixelSizeInTexCoord = 1. / xRes;
+        auto vPixelSizeInTexCoord = 1. / yRes;
+
+        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+
+        fix rMin = Real2D{coords.x + .5 * hTexturePixelSizeInSpaceCoord,
+                          coords.y + .5 * vTexturePixelSizeInSpaceCoord};
+        fix rMax = Real2D{coords.x - .5 * hTexturePixelSizeInSpaceCoord,
+                          coords.y - .5 * vTexturePixelSizeInSpaceCoord};
+
+        Str info = getLabel() + " = ";
+        if (func->domainContainsPoint(r)) {
+            fix val = (*func)(r);
+            info += funcUnit(val, 5);
+        } else if (func->domainContainsPoint(rMin)) {
+            fix val = (*func)(rMin);
+            info = funcUnit(val, 5);
+        } else if (func->domainContainsPoint(rMax)) {
+            fix val = (*func)(rMax);
+            info += funcUnit(val, 5);
+        }
+
+        return info;
+    }
+
 
 } // Graphics

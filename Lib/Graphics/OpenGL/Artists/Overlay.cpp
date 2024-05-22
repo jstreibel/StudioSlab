@@ -5,7 +5,7 @@
 #include "Overlay.h"
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 
 
 
@@ -43,7 +43,7 @@ namespace Graphics::OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void OpenGL::Overlay::draw(const Graph2D &graph2D) {
+    void OpenGL::Overlay::draw(const PlottingWindow &graph2D) {
         auto vp = graph2D.getViewport();
 
         shader.setUniform("vpWidth", vp.width());

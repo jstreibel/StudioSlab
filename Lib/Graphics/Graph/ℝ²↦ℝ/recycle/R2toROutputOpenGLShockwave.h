@@ -7,7 +7,7 @@
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
 #include "Graphics/ZoomPanRotate.h"
-#include "Graphics/Graph/FunctionGraph.h"
+#include "Graphics/Graph/FunctionGraph_depr.h"
 #include "Math/Function/R2toR/View/GraphR2ToR.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 

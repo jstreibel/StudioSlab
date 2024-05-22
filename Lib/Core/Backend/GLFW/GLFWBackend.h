@@ -52,7 +52,7 @@ public:
     static bool IsWindowHovered(GLFWwindow *window);
     static bool GetMouseButtonState(GLFWwindow *window, int button);
 
-    auto addEventListener(const Core::GUIEventListener::Ptr &listener) -> bool override;
+    auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool override;
 
     auto getMouseState() const -> MouseState override;
     void run(Program *program) override;

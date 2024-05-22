@@ -90,28 +90,43 @@ namespace Graphics {
     , correlationGraph("Two-point correlation")
     {
 
+        ftAmplitudesArtist->setLabel("|ℱₜₓ[ϕ](ω,k)|");
+        ftPhasesArtist->setLabel(   "arg{ℱₜₓ[ϕ](ω,k)}");
+        ftRealPartsArtist->setLabel("ℜ{ℱₜₓ[ϕ](ω,k)}");
+        ftImagPartsArtist->setLabel("ℑ{ℱₜₓ[ϕ](ω,k)}");
+
+        DFT2DGraph.addArtist(ftAmplitudesArtist);
+        DFT2DGraph.addArtist(ftPhasesArtist);
+        DFT2DGraph.addArtist(ftRealPartsArtist);
+        DFT2DGraph.addArtist(ftImagPartsArtist);
+
+        correlationGraph.addArtist(twoPointCorrArtist);
     }
 
     void CorrelationsPanel::draw() {
-        guiWindow.begin();
+        try {
+            guiWindow.begin();
 
-        if(ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")){
-            static auto discardRedundant = false;
-            // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
-            //     this->computeAll(discardRedundant);
-            // }
+            if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
+                static auto discardRedundant = false;
+                // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
+                //     this->computeAll(discardRedundant);
+                // }
 
-            if(ImGui::Button("Compute"))
-                this->computeAll(discardRedundant);
+                if (ImGui::Button("Compute"))
+                    this->computeAll(discardRedundant);
+            }
+
+            guiWindow.end();
+
+            WindowPanel::draw();
+        } catch (std::bad_cast &e) {
+            Log::Error() << "Bad cast.";
         }
-
-        guiWindow.end();
-
-        WindowPanel::draw();
     }
 
     void CorrelationsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                                 HistoryDisplay_ptr simHistoryGraph) {
+                                                 PlottingWindow_ptr simHistoryGraph) {
 
 
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
@@ -138,36 +153,30 @@ namespace Graphics {
             dftFunction = R2toR::R2toRDFT::DFTReal(*toFT);
         }
 
-        DFT2DGraph.removeFunction(ftAmplitudes);
-        DFT2DGraph.removeFunction(ftPhases);
-        DFT2DGraph.removeFunction(ftRealParts);
-        DFT2DGraph.removeFunction(ftImagParts);
+        auto ftAmplitudes = Math::Convert(dftFunction, Math::Magnitude);
+        auto ftPhases     = Math::Convert(dftFunction, Math::Phase);
+        auto ftRealParts  = Math::Convert(dftFunction, Math::Real);
+        auto ftImagParts  = Math::Convert(dftFunction, Math::Imaginary);
 
-        ftAmplitudes = Math::Convert(dftFunction, Math::Magnitude);
-        ftPhases     = Math::Convert(dftFunction, Math::Phase);
-        ftRealParts  = Math::Convert(dftFunction, Math::Real);
-        ftImagParts  = Math::Convert(dftFunction, Math::Imaginary);
-
-        DFT2DGraph.addFunction(ftAmplitudes, "|ℱₜₓ[ϕ](ω,k)|");
-        DFT2DGraph.addFunction(ftPhases,     "arg{ℱₜₓ[ϕ](ω,k)}");
-        DFT2DGraph.addFunction(ftRealParts,  "ℜ{ℱₜₓ[ϕ](ω,k)}");
-        DFT2DGraph.addFunction(ftImagParts,  "ℑ{ℱₜₓ[ϕ](ω,k)}");
+        ftAmplitudesArtist->setFunction(ftAmplitudes);
+        ftPhasesArtist    ->setFunction(ftPhases);
+        ftRealPartsArtist ->setFunction(ftRealParts);
+        ftImagPartsArtist ->setFunction(ftImagParts);
     }
 
     void CorrelationsPanel::computeTwoPointCorrelations() {
         if(dftFunction == nullptr) return;
 
-        if(1) {
-            powerSpectrum = Math::Convert(dftFunction, Math::PowerSpectrum);
 
-            auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dftFunction, R2toR::R2toRDFT::InverseFourier);
-            auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum,
-                                                      R2toR::R2toRDFT::InverseFourier,
-                                                      R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
+        auto powerSpectrum = Math::Convert(dftFunction, Math::PowerSpectrum);
 
-            correlationGraph.addFunction(Math::Convert(invDFT, Math::Real), "choopsy doopsy");
-            correlationGraph.addFunction(Math::Convert(invPowDFT, Math::Real), "choopsy doopsy power whoopsy");
-        }
+        auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dftFunction, R2toR::R2toRDFT::InverseFourier);
+        auto invPowDFT = R2toR::R2toRDFT::DFTReal(*powerSpectrum,
+                                                  R2toR::R2toRDFT::InverseFourier,
+                                                  R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
+
+        twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::Real));
+        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
     }
 
 

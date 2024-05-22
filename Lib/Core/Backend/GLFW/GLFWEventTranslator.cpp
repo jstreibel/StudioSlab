@@ -32,7 +32,7 @@ namespace Core {
                 (mods & GLFW_MOD_NUM_LOCK) != 0,
         };
 
-        auto funky = [&mappedKey, &state, &modKeys](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&mappedKey, &state, &modKeys](GUIEventListener_ptr& listener){
             return listener->
                     notifyKeyboard(mappedKey, state, modKeys);
         };
@@ -42,7 +42,7 @@ namespace Core {
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
 
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyMouseMotion((int)xpos, (int)ypos);
         };
@@ -66,7 +66,7 @@ namespace Core {
                 (mods & GLFW_MOD_NUM_LOCK) != 0,
         };
 
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyMouseButton(mappedButton, state, modKeys);
         };
@@ -75,7 +75,7 @@ namespace Core {
     }
 
     bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyMouseWheel(xoffset, yoffset);
         };
@@ -90,7 +90,7 @@ namespace Core {
         for (i = 0;  i < count;  i++)
             pathsVec.emplace_back(paths[i]);
 
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyFilesDropped(pathsVec);
         };
@@ -99,7 +99,7 @@ namespace Core {
     }
 
     void GLFWEventTranslator::Render(GLFWwindow *window) {
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyRender();
         };
@@ -108,7 +108,7 @@ namespace Core {
     }
 
     void GLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
-        auto funky = [&](std::shared_ptr<GUIEventListener>& listener){
+        auto funky = [&](GUIEventListener_ptr& listener){
             return listener->
             notifyScreenReshape(width, height);
         };

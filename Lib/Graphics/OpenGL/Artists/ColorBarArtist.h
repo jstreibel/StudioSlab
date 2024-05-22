@@ -32,7 +32,7 @@ namespace Graphics::OpenGL {
         void setColorMap(const ColorMap& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
-        void draw(const Graph2D &) override;
+        void draw(const PlottingWindow &) override;
 
         void setInverseScalingFunction(std::function<Real(Real)>);
     };

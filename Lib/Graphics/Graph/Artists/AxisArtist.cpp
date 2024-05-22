@@ -4,7 +4,7 @@
 
 #include "Utils/EncodingUtils.h"
 
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Graphics/OpenGL/Shader.h"
@@ -12,7 +12,7 @@
 #include "AxisArtist.h"
 
 #include <utility>
-#include "Graphics/Graph/StylesManager.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 
 
 #define hPixelsToSpaceScale (region.width() / vp.width())
@@ -41,7 +41,7 @@ namespace Graphics {
     , vUnit(vertical)
     {    }
 
-    void AxisArtist::draw(const Graph2D &graph) {
+    void AxisArtist::draw(const PlottingWindow &graph) {
         glLineWidth(1.0);
 
         computeTicks(graph);
@@ -50,11 +50,11 @@ namespace Graphics {
         drawYAxis(graph);
     }
 
-    void AxisArtist::computeTicks(const Graph2D &graph) {
+    void AxisArtist::computeTicks(const PlottingWindow &graph) {
         auto &region = graph.getRegion();
         auto vp = graph.getViewport();
 
-        auto currStyle = StylesManager::GetCurrent();
+        auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
 
@@ -94,11 +94,11 @@ namespace Graphics {
         }
     }
 
-    void AxisArtist::drawXAxis(const Graph2D &graph) const {
+    void AxisArtist::drawXAxis(const PlottingWindow &graph) const {
         auto vp = graph.getViewport();
         auto region = graph.getRegion();
 
-        auto currStyle = StylesManager::GetCurrent();
+        auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
         fix fontHeight = writer->getFontHeightInPixels();
@@ -167,10 +167,10 @@ namespace Graphics {
         Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
-    void AxisArtist::drawYAxis(const Graph2D &graph) const {
+    void AxisArtist::drawYAxis(const PlottingWindow &graph) const {
         auto vp = graph.getViewport();
         auto region = graph.getRegion();
-        auto currStyle = StylesManager::GetCurrent();
+        auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
 
@@ -281,6 +281,14 @@ namespace Graphics {
     auto AxisArtist::getHorizontalUnit() const -> const Unit & { return hUnit; }
 
     auto AxisArtist::getVerticalUnit() const -> const Unit & { return vUnit; }
+
+    auto AxisArtist::getHorizontalAxisLabel() const -> Str {
+        return horizontalAxisLabel;
+    }
+
+    auto AxisArtist::getVerticalAxisLabel() const -> Str {
+        return verticalAxisLabel;
+    }
 
 
 } // Math

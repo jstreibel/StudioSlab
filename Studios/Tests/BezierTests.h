@@ -7,7 +7,7 @@
 
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
 
 

@@ -19,7 +19,7 @@ namespace Graphics::OpenGL {
     public:
         explicit Overlay(RectI loc);
 
-        void draw(const Graph2D &) override;
+        void draw(const PlottingWindow &) override;
     };
 
 }

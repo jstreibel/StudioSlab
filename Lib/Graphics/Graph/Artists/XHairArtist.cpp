@@ -4,8 +4,8 @@
 
 #include "XHairArtist.h"
 #include "Core/Backend/BackendManager.h"
-#include "Graphics/Graph/StylesManager.h"
-#include "Graphics/Graph/Graph.h"
+#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Graph/PlottingWindow.h"
 #include "imgui.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
@@ -26,7 +26,7 @@ namespace Graphics {
     }
 
 
-    void XHairArtist::draw(const Graph2D &graph2D) {
+    void XHairArtist::draw(const PlottingWindow &graph2D) {
         if(!graph2D.isMouseIn()) return;
 
         auto vpRect = graph2D.getViewport();
@@ -38,7 +38,7 @@ namespace Graphics {
 
         auto label = graph2D.getXHairLabel(XHairLocation);
 
-        auto currStyle = StylesManager::GetCurrent();
+        auto currStyle = PlotThemeManager::GetCurrent();
         currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();

@@ -2,7 +2,7 @@
 // Created by joao on 30/09/23.
 //
 
-#include "StylesManager.h"
+#include "PlotThemeManager.h"
 
 #include <memory>
 #include "Core/Tools/Resources.h"
@@ -40,7 +40,7 @@ namespace Graphics {
         return loadedStyles[style] = stylesInitializers[style]();
     }
 
-    StylesManager::StylesManager() : Singleton("Styles manager") {
+    PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
         stylesInitializers["Dark"]      = GetSchemeDark;
         stylesInitializers["Dark2"]     = GetSchemeDark2;
         stylesInitializers["Hacker"]    = GetSchemeHacker;
@@ -52,11 +52,11 @@ namespace Graphics {
         current = "Light";
         // current = "Print";
 
-        Core::BackendManager::GetGUIBackend().addEventListener(DummyPtr(*this));;
+        Core::BackendManager::GetGUIBackend().addEventListener(Slab::DummyPointer(*this));;
     }
 
-    GraphTheme_ptr StylesManager::GetCurrent() {
-        StylesManager::GetInstance();
+    GraphTheme_ptr PlotThemeManager::GetCurrent() {
+        PlotThemeManager::GetInstance();
 
         auto style = loadedStyles[current];
         if(style == nullptr)
@@ -65,7 +65,7 @@ namespace Graphics {
         return style;
     }
 
-    bool StylesManager::notifyRender() {
+    bool PlotThemeManager::notifyRender() {
         if(ImGui::BeginMainMenuBar()){
             if(ImGui::BeginMenu("Style")){
                 if(ImGui::BeginMenu("Graphs")) {

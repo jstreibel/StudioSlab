@@ -21,7 +21,14 @@ RtoR::Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
 : ::Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name)
 , hamiltonian(hamiltonian)
 {
-    auto currStyle = Graphics::StylesManager::GetCurrent();
+    fullHistoryArtist->setLabel("ϕ(t,x)");
+    fullHistoryGraph->addArtist(fullHistoryArtist);
+
+    fullSFTHistoryArtist->setLabel("ℱₓ(t,k)");
+    fullSFTHistoryGraph->addArtist(fullSFTHistoryArtist);
+
+
+    auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
     addDataView(Slab::New<RtoR::RealtimePanel>(params, hamiltonian, guiWindow));
     addDataView(Slab::New<Graphics::RtoRFourierPanel>(params, hamiltonian, guiWindow));
@@ -82,10 +89,9 @@ bool RtoR::Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core:
 
 void RtoR::Monitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory) {
     simulationHistory = simHistory;
-    fullHistoryGraph = Slab::New<Graphics::HistoryDisplay>("Full field history");
-    fullHistoryGraph->addFunction(simulationHistory, "ϕ(t,x)", -100);
 
-    fullHistoryGraph->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
+    fullHistoryArtist->setFunction(simulationHistory);
+    fullHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
 
     for(const auto& dataView : dataViews)
         dataView->setSimulationHistory(simHistory, fullHistoryGraph);
@@ -97,10 +103,8 @@ void RtoR::Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftH
     this->dftData = &_dftData;
 
     spaceFTHistory = sftHistory;
-    fullSFTHistoryGraph = Slab::New<Graphics::HistoryDisplay>("Space DFT history");
-    fullSFTHistoryGraph->addFunction(spaceFTHistory, "ℱ[ϕ(t)](k)");
-
-    fullSFTHistoryGraph->setColorMap(Graphics::ColorMaps["blues"].inverse().bgr());
+    fullSFTHistoryArtist->setFunction(spaceFTHistory);
+    fullSFTHistoryArtist->setColorMap(Graphics::ColorMaps["blues"].inverse().bgr());
     fullSFTHistoryGraph->getAxisArtist().setHorizontalUnit(Constants::π);
     fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
     fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
@@ -117,7 +121,7 @@ void RtoR::Monitor::updateHistoryGraph() {
 
         auto &phi = lastData.getEqStateData<RtoR::EquationState>()->getPhi();
         if(phi.getLaplacianType() == DiscreteFunction::Standard1D_PeriodicBorder)
-            fullHistoryGraph->set_xPeriodicOn();
+            fullHistoryArtist->set_xPeriodicOn();
 
         isSetup = true;
     }
@@ -126,7 +130,7 @@ void RtoR::Monitor::updateHistoryGraph() {
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (lastData.getSteps() % (this->getnSteps() * 100));
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryGraph->set_t(lastData.getSimTime());
+            fullHistoryArtist->set_t(lastData.getSimTime());
         lastStepMod = stepMod;
     }
 }
@@ -139,6 +143,6 @@ void RtoR::Monitor::updateSFTHistoryGraph() {
     static Real stepMod, lastStepMod = 0;
     stepMod = (Real) (step % (this->getnSteps() * 100));
     if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-        fullSFTHistoryGraph->set_t(lastData.getSimTime());
+        fullSFTHistoryArtist->set_t(lastData.getSimTime());
     lastStepMod = stepMod;
 }

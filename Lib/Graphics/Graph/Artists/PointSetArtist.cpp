@@ -14,7 +14,9 @@ namespace Graphics {
 
     }
 
-    void PointSetArtist::draw(const Graph2D &graph2D) {
+    void PointSetArtist::draw(const PlottingWindow &graph2D) {
+        if(pointSet == nullptr) return;
+
         Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
     }
 

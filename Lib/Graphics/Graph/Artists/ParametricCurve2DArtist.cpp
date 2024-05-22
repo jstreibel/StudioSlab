@@ -15,7 +15,7 @@ namespace Graphics {
 
     }
 
-    void ParametricCurve2DArtist::draw(const Graph2D &d) {
+    void ParametricCurve2DArtist::draw(const PlottingWindow &d) {
         auto pointSet = curve.get()->renderToPointSet();
 
         OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
