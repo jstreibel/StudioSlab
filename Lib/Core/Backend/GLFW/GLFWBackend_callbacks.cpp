@@ -12,8 +12,6 @@ void GLFWBackend::key_callback(GLFWwindow* window, int key, int scancode, int ac
 {
     auto &me = GetInstance();
 
-    if(key == GLFW_KEY_SPACE) me.paused = !me.paused;
-
     for(auto &listener : me.listeners) if(listener->KeyboardEvent(window, key, scancode, action, mods)) break;
 }
 
@@ -58,8 +56,7 @@ void GLFWBackend::mouse_button_callback(GLFWwindow* window, int button, int acti
     if(button == GLFW_MOUSE_BUTTON_RIGHT)  me.mouseState.rightPressed  = (action == GLFW_PRESS);
 
     for(auto &listener : me.listeners)
-        listener->
-        MouseButton(window, button, action, mods);
+        if(listener->MouseButton(window, button, action, mods)) break;
 }
 
 void GLFWBackend::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -69,7 +66,8 @@ void GLFWBackend::scroll_callback(GLFWwindow* window, double xoffset, double yof
     me.mouseState.wheel_dx = xoffset;
     me.mouseState.wheel_dy = yoffset;
 
-    for(auto &listener : me.listeners) listener->MouseWheel(window, xoffset, yoffset);
+    for(auto &listener : me.listeners)
+        if(listener->MouseWheel(window, xoffset, yoffset)) break;
 }
 
 void GLFWBackend::drop_callback(GLFWwindow* window, int count, const char** paths)
@@ -100,8 +98,9 @@ auto GLFWBackend::getGLFWWindow() -> GLFWwindow & {
     return *systemWindow;
 }
 
-void GLFWBackend::addGLFWListener(Core::GLFWListener *glfwListener) {
-    listeners.emplace_back(glfwListener);
+void GLFWBackend::addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority) {
+    if(highPriority) listeners.emplace_front(glfwListener);
+    else             listeners.emplace_back(glfwListener);
 }
 
 bool GLFWBackend::addEventListener(const Core::GUIEventListener_ptr &listener) {

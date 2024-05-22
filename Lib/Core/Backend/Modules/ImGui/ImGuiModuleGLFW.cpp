@@ -10,6 +10,7 @@
 
 // Don't touch
 fix DONT_INSTALL_CALLBACKS = false;
+fix PRIORITIZE_ME = true;
 
 namespace Core {
     ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule(GLFW) {
@@ -24,7 +25,7 @@ namespace Core {
 
         ImGuiModule::finishInitialization();
 
-        backend->addGLFWListener(this);
+        backend->addGLFWListener(this, PRIORITIZE_ME);
     }
 
     ImGuiModuleGLFW::~ImGuiModuleGLFW() {
@@ -45,12 +46,12 @@ namespace Core {
     bool ImGuiModuleGLFW::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
 
-        if(!ImGui::GetIO().WantCaptureKeyboard) {
-            if(key == GLFW_KEY_D){
-                showDemos = !showDemos;
+        if(ImGui::GetIO().WantCaptureKeyboard) return true;
 
-                return true;
-            }
+        if(key == GLFW_KEY_D){
+            showDemos = !showDemos;
+
+            return true;
         }
 
         return false;

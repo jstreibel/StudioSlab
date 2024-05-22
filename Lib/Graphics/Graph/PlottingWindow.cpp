@@ -124,38 +124,39 @@ void Graphics::PlottingWindow::drawGUI() {
     }
 
     if(showInterface) {
-        ImGui::Begin(title.c_str());
+        if(ImGui::Begin(title.c_str())) {
 
-        for (IN cont: content) {
-            IN artie = cont.second;
+            for (IN cont: content) {
+                IN artie = cont.second;
 
-            if(artie == artistXHair) continue;
+                if (artie == artistXHair) continue;
 
-            bool visible = artie->isVisible();
+                bool visible = artie->isVisible();
 
-            if (ImGui::Checkbox(Unique(artie->getLabel()), &visible))
-                artie->setVisibility(visible);
-        }
-
-        for (IN cont: content) {
-            IN artie = cont.second;
-
-            if(artie == artistXHair) continue;
-
-            if(artie->isVisible() && artie->hasGUI()) {
-                if(ImGui::CollapsingHeader(Unique(artie->getLabel())))
-                    artie->drawGUI();
+                if (ImGui::Checkbox(Unique(artie->getLabel()), &visible))
+                    artie->setVisibility(visible);
             }
-        }
 
-        {
-            // Get the current window size
-            ImVec2 windowSize = ImGui::GetWindowSize();
-            ImVec2 buttonSize(100.0f, 30.0f); // Example button size
-            ImVec2 buttonPos = ImVec2(windowSize.x - buttonSize.x - 15.0f, windowSize.y - buttonSize.y - 15.0f); // 10.0f is padding
-            ImGui::SetCursorPos(buttonPos);
-            if (ImGui::Button(Unique("Close"), buttonSize))
-                showInterface = false;
+            for (IN cont: content) {
+                IN artie = cont.second;
+
+                if (artie == artistXHair) continue;
+
+                if (artie->isVisible() && artie->hasGUI()) {
+                    if (ImGui::CollapsingHeader(Unique(artie->getLabel())))
+                        artie->drawGUI();
+                }
+            }
+
+            {
+                // Get the current window size
+                ImVec2 windowSize = ImGui::GetWindowSize();
+                ImVec2 buttonSize(100.0f, 30.0f); // Example button size
+                ImVec2 buttonPos = ImVec2(windowSize.x - buttonSize.x - 15.0f,
+                                          windowSize.y - buttonSize.y - 15.0f); // 10.0f is padding
+                ImGui::SetCursorPos(buttonPos);
+                if (ImGui::Button(Unique("Close"), buttonSize))
+                    showInterface = false;
             }
         }
 

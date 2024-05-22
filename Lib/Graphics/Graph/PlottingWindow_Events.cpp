@@ -14,7 +14,9 @@ bool Graphics::PlottingWindow::notifyMouseButton(Core::MouseButton button, Core:
     static auto time = Timer();
 
     if(button == Core::MouseButton_RIGHT){
-        if(state == Core::Press) time.reset();
+        if(state == Core::Press){
+            time.reset();
+        }
         else if(state == Core::Release && time.getElTime_msec() < 200){
             popupOn = true;
 
@@ -24,6 +26,9 @@ bool Graphics::PlottingWindow::notifyMouseButton(Core::MouseButton button, Core:
                 ImGui::OpenPopup(popupName.c_str());
                 popupOn = false;
             }
+
+            Graphics::Window::notifyMouseButton(button, state, keys);
+            return true;
         }
     }
 
@@ -48,6 +53,8 @@ bool Graphics::PlottingWindow::notifyMouseMotion(int x, int y) {
         region.xMax += dxGraph;
         region.yMin += dyGraph;
         region.yMax += dyGraph;
+
+        elRet = true;
     }
 
     if(isMouseRightClicked())
@@ -67,6 +74,8 @@ bool Graphics::PlottingWindow::notifyMouseMotion(int x, int y) {
                 y0 - hh,
                 y0 + hh
         };
+
+        elRet = true;
     }
 
     return elRet;
@@ -106,6 +115,8 @@ bool Graphics::PlottingWindow::notifyMouseWheel(double dx, double dy) {
 
         set_yMin(targetRegion.yMin);
         set_yMax(targetRegion.yMax);
+
+        return true;
     } else {
         if(Core::BackendManager::GetGUIBackend().getMouseState().rightPressed) {
 
@@ -128,9 +139,11 @@ bool Graphics::PlottingWindow::notifyMouseWheel(double dx, double dy) {
             set_yMin(targetRegion.yMin);
             set_yMax(targetRegion.yMax);
         }
+
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 void Graphics::PlottingWindow::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }

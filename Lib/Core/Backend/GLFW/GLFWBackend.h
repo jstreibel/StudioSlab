@@ -6,6 +6,7 @@
 #define STUDIOSLAB_GLFWBACKEND_H
 
 #include <GLFW/glfw3.h>
+#include <list>
 
 #include "Graphics/Types.h"
 
@@ -15,7 +16,7 @@
 
 class GLFWBackend : public GraphicBackend {
     Core::GLFWEventTranslator eventTranslator;
-    std::vector<Core::GLFWListener*> listeners{};
+    std::list<Core::GLFWListener*> listeners{};
 
     MouseState mouseState;
 
@@ -45,7 +46,7 @@ public:
     ~GLFWBackend() override;
     auto getGLFWWindow() -> GLFWwindow&;
 
-    void addGLFWListener(Core::GLFWListener *glfwListener);
+    void addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority=false);
 
     static bool GetKeyState(GLFWwindow *window, int key);
     static Graphics::Point2D GetCursorPosition(GLFWwindow *window);
