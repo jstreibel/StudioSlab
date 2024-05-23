@@ -8,6 +8,14 @@
 #include <Utils/Types.h>
 
 namespace Slab::Core {
+
+    class Task;
+
+    class TaskListener {
+        void notifyTaskStarted(const Task&);
+        void notifyTaskFinished(const Task&);
+    };
+
     class Task {
     public:
         struct CycleOptions {
@@ -28,6 +36,7 @@ namespace Slab::Core {
 
         virtual ~Task() = default;
 
+        virtual bool run() = 0;
         virtual bool cycle(CycleOptions options) = 0;
     };
 

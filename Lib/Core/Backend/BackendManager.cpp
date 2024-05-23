@@ -15,6 +15,7 @@
 #include "Core/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Backend/SFML/SFMLBackend.h"
+#include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 namespace Slab::Core {
     BackendImplementation BackendManager::backendImplementation = Uninitialized;
@@ -77,6 +78,8 @@ namespace Slab::Core {
                 module = NuklearModule::BuildModule(system);    break;
             case ModernOpenGL:
                 module = new ModernOpenGLModule();              break;
+            case TaskManager:
+                module = new TaskManagerModule();               break;
             case NanoGUI:
                 throw Exception("NanoGUI module not implemented");
             case Jack:

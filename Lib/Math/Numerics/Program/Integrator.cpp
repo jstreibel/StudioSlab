@@ -107,5 +107,9 @@ namespace Slab::Math {
         Log::Error("NumericalIntegration") << " doForceOverstepping function is deactivated and won't respond.";
     }
 
+    bool NumericalIntegration::run() {
+        return _runFullIntegration();
+    }
+
 
 }

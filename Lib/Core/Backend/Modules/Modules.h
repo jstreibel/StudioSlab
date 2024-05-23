@@ -15,6 +15,8 @@ namespace Slab::Core {
 
         RealTimeAnimation,
 
+        TaskManager,
+
         Jack,
 
         NodeJS

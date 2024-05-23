@@ -3,6 +3,7 @@ set( BACKEND_SOURCE
 		Console/ConsoleBackend.cpp
 		BackendManager.h						BackendManager.cpp
 		Modules/Module.h						Modules/Module.cpp
+		Modules/TaskManager/TaskManager.cpp		Modules/TaskManager/TaskManager.h
 )
 
 set( GRAPHICS_BACKEND_SOURCE

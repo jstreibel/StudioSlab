@@ -13,7 +13,7 @@
 #include "Math/Numerics/Method/Method-RK4.h"
 #include "Math/Numerics/Method/Method-MCBase.h"
 
-#include "Core/Backend/Program/Task.h"
+#include "Core/Backend/Modules/TaskManager/Task.h"
 #include "Core/Tools/BenchmarkHistogram.h"
 
 const auto FORCE_INITIAL_OUTPUT = true;
@@ -72,6 +72,8 @@ namespace Slab::Math {
         ~NumericalIntegration() override;
 
         bool cycle(CycleOptions options) override;
+
+        bool run() override;
 
         auto getSteps() const -> size_t;
 
