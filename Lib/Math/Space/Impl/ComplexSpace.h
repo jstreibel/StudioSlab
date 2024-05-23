@@ -8,9 +8,9 @@
 #include "ArithmeticOperationInterface.h"
 #include "Math/Space/DimensionMetaData.h"
 
-namespace Math {
+namespace Slab::Math {
 
-    class DiscreteComplexSpace : public Utils::ArithmeticOpsInterface<DiscreteComplexSpace> {
+    class DiscreteComplexSpace : public ArithmeticOpsInterface<DiscreteComplexSpace> {
     protected:
         const DimensionMetaData dimensionMetaData;
         ComplexArray data;

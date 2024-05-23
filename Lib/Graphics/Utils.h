@@ -6,7 +6,7 @@
 #include <Utils/Types.h>
 #include "Styles/Colors.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     Point2D FromSpaceToViewportCoord(const Point2D &spaceCoord, const RectR &spaceRegion, const RectI &viewport );
 

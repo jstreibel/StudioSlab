@@ -4,6 +4,6 @@
 
 #include "VTKBackend.h"
 
-void VTKBackend::run(Program *integrator) {
+void Slab::Core::VTKBackend::run(Task *integrator) {
 
 }

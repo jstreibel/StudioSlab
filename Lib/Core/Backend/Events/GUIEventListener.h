@@ -12,7 +12,7 @@
 #include "KeyMap.h"
 
 
-namespace Core {
+namespace Slab::Core {
 
     class GUIEventListener {
         std::vector<GUIEventListener*> unmanagedDelegateResponders;

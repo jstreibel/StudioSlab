@@ -4,7 +4,7 @@
 
 #include "Artist.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     void Artist::setVisibility(bool vis) { visible = vis; }
 

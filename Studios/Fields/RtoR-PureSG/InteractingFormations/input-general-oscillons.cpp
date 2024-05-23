@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 
 InputGeneralOscillons::InputGeneralOscillons()

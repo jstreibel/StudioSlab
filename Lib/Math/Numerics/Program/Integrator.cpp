@@ -10,101 +10,102 @@
 #include <sstream>
 #endif
 
+namespace Slab::Math {
 
+    NumericalIntegration::~NumericalIntegration() {
+        Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
+    }
 
-NumericalIntegration::~NumericalIntegration()
-{
-    Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
-}
+    bool NumericalIntegration::cycle(CycleOptions options) {
+        const auto &p = simBuilder.getNumericParams();
 
-bool NumericalIntegration::cycle(CycleOptions options) {
-    const auto &p = simBuilder.getNumericParams();
+        if (getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()) {
+            if (!integrationFinished) {
+                outputManager->notifyIntegrationFinished(getOutputInfo());
+                integrationFinished = true;
+            }
 
-    if(getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()){
-        if(!integrationFinished){
-            outputManager->notifyIntegrationFinished(getOutputInfo());
-            integrationFinished = true;
+            return false;
+        }
+
+        switch (options.cycleOption) {
+            case CycleOptions::Cycle_nCycles:
+                return _cycle(options.nCycles);
+            case CycleOptions::CycleUntilOutput:
+                return _cycleUntilOutputOrFinish();
+            case CycleOptions::cycleCycleUntilFinished:
+                return _runFullIntegration();
         }
 
         return false;
     }
 
-    switch (options.cycleOption){
-        case CycleOptions::Cycle_nCycles:
-            return _cycle(options.nCycles);
-        case CycleOptions::CycleUntilOutput:
-            return _cycleUntilOutputOrFinish();
-        case CycleOptions::cycleCycleUntilFinished:
-            return _runFullIntegration();
+    OutputPacket NumericalIntegration::getOutputInfo() {
+        return {stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime()};
     }
 
-    return false;
-}
+    bool NumericalIntegration::_cycle(size_t nCycles) {
 
-OutputPacket NumericalIntegration::getOutputInfo(){
-    return {stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime()};
-}
+        simTimeHistogram.startMeasure();
+        stepper->step(dt, nCycles);
+        simTimeHistogram.storeMeasure((int) nCycles);
 
-bool NumericalIntegration::_cycle(size_t nCycles) {
+        steps += nCycles;
 
-    simTimeHistogram.startMeasure();
-    stepper->step(dt, nCycles);
-    simTimeHistogram.storeMeasure((int)nCycles);
+        static fix maxSteps = simBuilder.getNumericParams().getn();
+        fix forceOutput = steps >= maxSteps;
 
-    steps += nCycles;
+        output(forceOutput);
 
-    static fix maxSteps = simBuilder.getNumericParams().getn();
-    fix forceOutput = steps >= maxSteps;
-
-    output(forceOutput);
-
-    return true;
-}
-
-bool NumericalIntegration::_runFullIntegration()
-{
-    auto &p = simBuilder.getNumericParams();
-    size_t n = p.getn();
-
-    while(steps < n && _cycleUntilOutputOrFinish());
-
-    // Para cumprir com os steps quebrados faltantes:
-    if(steps < n) _cycle(n - steps);
-
-    outputManager->notifyIntegrationFinished(getOutputInfo());
-
-    return true;
-}
-
-bool NumericalIntegration::_cycleUntilOutputOrFinish() {
-    size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
-
-    if (nCyclesToNextOutput > 50000) {
-        Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
+        return true;
     }
 
-    if (nCyclesToNextOutput == 0) {
-        return false;
+    bool NumericalIntegration::_runFullIntegration() {
+        auto &p = simBuilder.getNumericParams();
+        size_t n = p.getn();
+
+        while (steps < n && _cycleUntilOutputOrFinish());
+
+        // Para cumprir com os steps quebrados faltantes:
+        if (steps < n) _cycle(n - steps);
+
+        outputManager->notifyIntegrationFinished(getOutputInfo());
+
+        return true;
     }
 
-    _cycle(nCyclesToNextOutput);
+    bool NumericalIntegration::_cycleUntilOutputOrFinish() {
+        size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
 
-    return true;
-}
+        if (nCyclesToNextOutput > 50000) {
+            Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
+        }
 
-void NumericalIntegration::output(bool force){
-    OutputPacket info = getOutputInfo();
-    outputManager->output(info, force);
-}
+        if (nCyclesToNextOutput == 0) {
+            return false;
+        }
 
-size_t NumericalIntegration::getSteps() const { return steps; }
+        _cycle(nCyclesToNextOutput);
 
-inline floatt NumericalIntegration::getSimulationTime() const { return floatt(getSteps()) * dt; }
+        return true;
+    }
 
-const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
-    return simTimeHistogram;
-}
+    void NumericalIntegration::output(bool force) {
+        OutputPacket info = getOutputInfo();
+        outputManager->output(info, force);
+    }
 
-void NumericalIntegration::doForceOverStepping() {
-    Log::Error("NumericalIntegration") << " doForceOverstepping function is deactivated and won't respond.";
+    size_t NumericalIntegration::getSteps() const { return steps; }
+
+    inline floatt NumericalIntegration::getSimulationTime() const { return floatt(getSteps()) * dt; }
+
+    const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
+        return simTimeHistogram;
+    }
+
+    void NumericalIntegration::doForceOverStepping() {
+        Log::Error("NumericalIntegration") << " doForceOverstepping function is deactivated and won't respond.";
+    }
+
+
 }

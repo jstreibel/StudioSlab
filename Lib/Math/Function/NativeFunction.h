@@ -8,7 +8,7 @@
 
 #include "Function.h"
 
-namespace Core {
+namespace Slab::Math::Base {
 
     template<typename BaseFunction>
     class NativeFunction : public BaseFunction {

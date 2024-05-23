@@ -20,14 +20,14 @@
 
 const auto pi = 3.1415926535897932384626;
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     namespace Signal {
         extern Real xInitDampCutoff_normalized;
         extern Real dampFactor;
 
 
-        class JackOutput : public Numerics::OutputSystem::Socket {
+        class JackOutput : public Math::Socket {
             auto handleOutput(const OutputPacket &packet) -> void override;
 
         public:

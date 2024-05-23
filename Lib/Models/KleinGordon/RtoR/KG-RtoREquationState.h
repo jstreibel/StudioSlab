@@ -8,14 +8,14 @@
 #include "Models/KleinGordon/KGState.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
-    class EquationState : public Fields::KleinGordon::KGState<RtoR::DiscreteFunction> {
+    class EquationState : public Models::KGState<RtoR::DiscreteFunction> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
         EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
-        : Fields::KleinGordon::KGState<DiscreteFunction>(phi, dPhiDt) {}
+        : Models::KGState<DiscreteFunction>(phi, dPhiDt) {}
 
     public:
         void outputPhi(OStream &out, Str separator) const override {

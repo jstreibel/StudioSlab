@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KEYMAP_H
 #define STUDIOSLAB_KEYMAP_H
 
-namespace Core {
+namespace Slab::Core {
     /** The numberings are based on GLFW 3.3.8 numbering of keys
      * For example
      * KeySpace is the same value as GLFW_KEY_SPACE

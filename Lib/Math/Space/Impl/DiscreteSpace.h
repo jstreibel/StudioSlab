@@ -13,40 +13,51 @@
 #include "Core/Tools/Log.h"
 #include "Math/Space/DimensionMetaData.h"
 
-class DiscreteSpaceCPU;
 
-class DiscreteSpace : public Utils::ArithmeticOpsInterface<DiscreteSpace> {
-public:
-    explicit DiscreteSpace(const DimensionMetaData& dim);
-    virtual ~DiscreteSpace();
-    auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
+namespace Slab::Math {
 
-    const DimensionMetaData& getMetaData() const { return dimensionMetaData; }
+    class DiscreteSpaceCPU;
 
-    UInt getTotalDiscreteSites() const;
+    class DiscreteSpace : public ArithmeticOpsInterface<DiscreteSpace> {
+    public:
+        explicit DiscreteSpace(const DimensionMetaData &dim);
 
-    virtual
-    auto dataOnGPU() const -> bool { return false; }
-    virtual
-    auto getDeviceData()                        const -> const DeviceVector& { throw "trying to access device data on host Space"; };
-    virtual
-    auto getDeviceData()                              ->       DeviceVector& { throw "trying to access device data on host Space"; };
+        virtual ~DiscreteSpace();
 
-    auto getHostData(bool sync=false)           const -> const RealArray&;
-    auto getHostData(bool sync=false)                 ->       RealArray&;
+        auto hostCopy(UInt maxResolution) const -> DiscreteSpaceCPU *;
 
-    // TODO colocar essa aqui no operator =
-    virtual void setToValue(const DiscreteSpace &param) = 0;
+        const DimensionMetaData &getMetaData() const { return dimensionMetaData; }
 
-public:
-    /*! Sync host with server information. */
-    virtual void syncHost() const;
-    virtual void upload();
+        UInt getTotalDiscreteSites() const;
 
-protected:
-    const DimensionMetaData dimensionMetaData;
-    RealArray data;
-};
+        virtual
+        auto dataOnGPU() const -> bool { return false; }
 
+        virtual
+        auto getDeviceData() const -> const DeviceVector & { throw "trying to access device data on host Space"; };
+
+        virtual
+        auto getDeviceData() -> DeviceVector & { throw "trying to access device data on host Space"; };
+
+        auto getHostData(bool sync = false) const -> const RealArray &;
+
+        auto getHostData(bool sync = false) -> RealArray &;
+
+        // TODO colocar essa aqui no operator =
+        virtual void setToValue(const DiscreteSpace &param) = 0;
+
+    public:
+        /*! Sync host with server information. */
+        virtual void syncHost() const;
+
+        virtual void upload();
+
+    protected:
+        const DimensionMetaData dimensionMetaData;
+        RealArray data;
+    };
+
+
+}
 
 #endif //V_SHAPE_DISCRETESPACE_H

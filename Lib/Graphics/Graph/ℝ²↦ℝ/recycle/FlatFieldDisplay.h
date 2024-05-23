@@ -24,7 +24,7 @@
 #include "Math/Constants.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
     class FlatFieldDisplay : public Graphics::PlottingWindow {
             enum Scale {
                 Linear,

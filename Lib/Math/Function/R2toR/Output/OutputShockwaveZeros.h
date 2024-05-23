@@ -10,7 +10,7 @@
 #include <fstream>
 
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class OutputShockwaveZeros : public OutputChannel {
     private:

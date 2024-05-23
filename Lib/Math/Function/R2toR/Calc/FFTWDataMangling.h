@@ -9,16 +9,18 @@
 #define SYMMETRIC_DATA true
 
 
-enum DataMoveMangleMode {
-    KeepArrangement,
-    Mangle,
-    Unmangle
-};
+namespace Slab::Math::R2toR {
+
+    enum DataMoveMangleMode {
+        KeepArrangement,
+        Mangle,
+        Unmangle
+    };
 
 
-void MoveData  (const auto *in_data, Complex *out_data,
-                int N, int M, Real scale,
-                DataMoveMangleMode mode, bool isNSymmetric=NON_SYMMETRIC_DATA);
+    void MoveData(const auto *in_data, Complex *out_data,
+                  int N, int M, Real scale,
+                  DataMoveMangleMode mode, bool isNSymmetric = NON_SYMMETRIC_DATA);
 
 #define UNMANGLE_i_out \
     fix σ_i = i<=halfN ? 1 : -1; \
@@ -52,7 +54,6 @@ void MoveData  (const auto *in_data, Complex *out_data,
 #endif
 
 
-
 /**
  * Mangles FFTW double[2] memory data from [0, ..., k, -k, ..., -1] mapping to [-k .. k].
  *
@@ -65,65 +66,69 @@ void MoveData  (const auto *in_data, Complex *out_data,
  * @param isNSymmetric
  */
 
-static inline int MangleIndex(int i, int halfN) {
-    // fix σ_i = i<=halfN ? 1 : -1;
-    // return i-1 + σ_i*halfN;
+    static inline int MangleIndex(int i, int halfN) {
+        // fix σ_i = i<=halfN ? 1 : -1;
+        // return i-1 + σ_i*halfN;
 
-    return i;
+        return i;
+    }
+
+    void MoveData(const auto *in_data, Complex *out_data, int N, int M, Real scale, DataMoveMangleMode mode,
+                  bool isNSymmetric) {
+        if (isNSymmetric) NOT_IMPLEMENTED
+
+        fix halfN = N / 2;
+        fix halfM = M / 2;
+
+        if (mode == Unmangle || mode == Mangle) {
+            for (int i = 0; i < halfN; ++i) {
+                fix i_in = i;
+                fix i_out = i + halfN;
+
+                for (int j = 0; j < halfM; ++j) {
+                    fix j_in = j;
+                    fix j_out = j + halfM;
+
+                    out_data[i_out + j_out * N] = scale * in_data[i_in + j_in * N];
+                }
+
+                for (int j = 0; j < halfM; ++j) {
+                    fix j_in = j + halfM;
+                    fix j_out = j;
+
+                    out_data[i_out + j_out * N] = scale * in_data[i_in + j_in * N];
+                }
+
+            }
+
+            for (int i = 0; i < halfN; ++i) {
+                fix i_in = i + halfN;
+                fix i_out = i;
+
+                for (int j = 0; j < halfM; ++j) {
+                    fix j_in = j;
+                    fix j_out = j + halfM;
+
+                    out_data[i_out + j_out * N] = scale * in_data[i_in + j_in * N];
+                }
+
+                for (int j = 0; j < halfM; ++j) {
+                    fix j_in = j + halfM;
+                    fix j_out = j;
+
+                    out_data[i_out + j_out * N] = scale * in_data[i_in + j_in * N];
+                }
+            }
+
+        } else if (mode == KeepArrangement) {
+            for (int i = 0; i < N * M; ++i)
+                out_data[i] = scale * in_data[i];
+
+        } else
+            NOT_IMPLEMENTED
+    }
+
+
 }
-
-void MoveData(const auto* in_data, Complex *out_data, int N, int M, Real scale, DataMoveMangleMode mode, bool isNSymmetric) {
-    if(isNSymmetric) NOT_IMPLEMENTED
-
-    fix halfN = N/2;
-    fix halfM = M/2;
-
-    if(mode==Unmangle || mode==Mangle) {
-        for(int i=0; i<halfN; ++i){
-             fix i_in = i;
-             fix i_out = i+halfN;
-
-             for (int j = 0; j < halfM; ++j) {
-                 fix j_in = j;
-                 fix j_out = j+halfM;
-
-                 out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
-             }
-
-            for (int j = 0; j < halfM; ++j) {
-                fix j_in = j+halfM;
-                fix j_out = j;
-
-                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
-            }
-
-        }
-
-        for(int i=0; i<halfN; ++i){
-            fix i_in  = i+halfN;
-            fix i_out = i;
-
-            for (int j = 0; j < halfM; ++j) {
-                fix j_in = j;
-                fix j_out = j+halfM;
-
-                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
-            }
-
-            for (int j = 0; j < halfM; ++j) {
-                fix j_in = j+halfM;
-                fix j_out = j;
-
-                out_data[i_out + j_out*N] = scale * in_data[i_in + j_in * N];
-            }
-        }
-
-    } else if(mode==KeepArrangement) {
-        for(int i=0; i<N*M; ++i)
-            out_data[i] = scale * in_data[i];
-
-    } else NOT_IMPLEMENTED
-}
-
 
 #endif //STUDIOSLAB_FFTWDATAMANGLING_H

@@ -31,11 +31,11 @@
 #define FONT_BITMAP_DEFAULT FONT_BITMAP_6
 #define FONT_STROKE_DEFAULT FONT_STROKE_ROMAN
 
-namespace Graphics {
+namespace Slab::Graphics {
     class Window;
 }
 
-namespace Graphics::OpenGL::GLUT {
+namespace Slab::Graphics::OpenGL::GLUT {
 
     void write(const Window *window, float fontScale, float x, float y, std::string str,
                void *font = FONT_STROKE_DEFAULT);

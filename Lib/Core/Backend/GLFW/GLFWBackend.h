@@ -14,57 +14,79 @@
 #include "GLFWListener.h"
 #include "GLFWEventTranslator.h"
 
-class GLFWBackend : public GraphicBackend {
-    Core::GLFWEventTranslator eventTranslator;
-    std::list<Core::GLFWListener*> listeners{};
 
-    MouseState mouseState;
+namespace Slab::Core {
 
-    Program* program = nullptr;
-    GLFWwindow *systemWindow = nullptr;
 
-    void mainLoop();
+    class GLFWBackend : public GraphicBackend {
+        GLFWEventTranslator eventTranslator;
+        std::list<GLFWListener *> listeners{};
 
-    static GLFWwindow *newGLFWWindow();
+        MouseState mouseState;
 
-    static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
-    static void window_char_callback(GLFWwindow* window, unsigned int value);
-    static void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
-    static void cursor_enter_callback(GLFWwindow* window, int entered);
-    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
-    static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-    static void drop_callback(GLFWwindow* window, int count, const char** paths);
-    static void window_size_callback(GLFWwindow* window, int width, int height);
+        Task *program = nullptr;
+        GLFWwindow *systemWindow = nullptr;
 
-    bool paused = false;
-    bool mustRender = true;
+        void mainLoop();
 
-    static GLFWBackend& GetInstance();
+        static GLFWwindow *newGLFWWindow();
 
-public:
-    explicit GLFWBackend();
-    ~GLFWBackend() override;
-    auto getGLFWWindow() -> GLFWwindow&;
+        static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);
 
-    void addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority=false);
+        static void window_char_callback(GLFWwindow *window, unsigned int value);
 
-    static bool GetKeyState(GLFWwindow *window, int key);
-    static Graphics::Point2D GetCursorPosition(GLFWwindow *window);
-    static bool IsWindowHovered(GLFWwindow *window);
-    static bool GetMouseButtonState(GLFWwindow *window, int button);
+        static void cursor_position_callback(GLFWwindow *window, double xpos, double ypos);
 
-    auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool override;
+        static void cursor_enter_callback(GLFWwindow *window, int entered);
 
-    auto getMouseState() const -> MouseState override;
-    void run(Program *program) override;
+        static void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 
-    void terminate() override;
+        static void scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
 
-    auto getScreenHeight() const -> Real override;
-    auto pause() -> void override;
-    auto resume() -> void override;
-    auto requestRender() -> void override;
-};
+        static void drop_callback(GLFWwindow *window, int count, const char **paths);
 
+        static void window_size_callback(GLFWwindow *window, int width, int height);
+
+        bool paused = false;
+        bool mustRender = true;
+
+        static GLFWBackend &GetInstance();
+
+    public:
+        explicit GLFWBackend();
+
+        ~GLFWBackend() override;
+
+        auto getGLFWWindow() -> GLFWwindow &;
+
+        void addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority = false);
+
+        static bool GetKeyState(GLFWwindow *window, int key);
+
+        static Graphics::Point2D GetCursorPosition(GLFWwindow *window);
+
+        static bool IsWindowHovered(GLFWwindow *window);
+
+        static bool GetMouseButtonState(GLFWwindow *window, int button);
+
+        auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool override;
+
+        auto getMouseState() const -> MouseState override;
+
+        void run(Task *program) override;
+
+        void terminate() override;
+
+        auto getScreenHeight() const -> Real override;
+
+        auto pause() -> void override;
+
+        auto resume() -> void override;
+
+        auto requestRender() -> void override;
+    };
+
+
+}
 
 #endif //STUDIOSLAB_GLFWBACKEND_H

@@ -11,7 +11,7 @@
 #include "Math/Function/RtoR2/ParametricCurve.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class Section1D : public RtoR::Function {
         R2toR::Function_constptr function;
         RtoR2::ParametricCurve_constptr curve;

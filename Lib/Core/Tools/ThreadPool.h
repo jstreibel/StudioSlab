@@ -12,7 +12,7 @@
 #include <condition_variable>
 #include <functional>
 
-namespace Core {
+namespace Slab::Core {
     namespace Tools {
 
         class ThreadPool {

@@ -7,10 +7,14 @@
 
 #include "Core/Backend/GraphicBackend.h"
 
-class VTKBackend : public GraphicBackend {
-public:
-    void run(Program *integrator) override;
-};
+namespace Slab::Core {
+
+    class VTKBackend : public GraphicBackend {
+    public:
+        void run(Task *integrator) override;
+    };
+
+}
 
 
 #endif //STUDIOSLAB_VTKBACKEND_H

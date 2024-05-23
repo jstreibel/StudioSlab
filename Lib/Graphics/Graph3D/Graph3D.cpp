@@ -10,7 +10,7 @@
 #include "imgui.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     Graph3D::Graph3D()
     {

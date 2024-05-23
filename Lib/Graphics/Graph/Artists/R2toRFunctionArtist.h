@@ -16,7 +16,9 @@
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class R2toRFunctionArtist : public Artist {
         enum Scale {

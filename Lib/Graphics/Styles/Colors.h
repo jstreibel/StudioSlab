@@ -8,7 +8,7 @@
 #include <cmath>
 #include "Utils/Types.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
     struct Color
     {
     public:

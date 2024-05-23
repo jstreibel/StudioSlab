@@ -9,7 +9,7 @@
 
 #define BASE_NS 2
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class AbsPerturbedDiffFunction : public RtoR::Function {
     public:
         explicit AbsPerturbedDiffFunction(UInt Ns = BASE_NS);

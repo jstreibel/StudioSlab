@@ -30,7 +30,7 @@
     else (buffer) << " ";
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     AxisArtist::AxisArtist()
     : AxisArtist(Constants::One, Constants::One)

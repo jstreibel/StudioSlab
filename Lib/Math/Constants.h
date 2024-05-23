@@ -5,7 +5,8 @@
 #ifndef STUDIOSLAB_CONSTANTS_H
 #define STUDIOSLAB_CONSTANTS_H
 
-namespace Constants {
+namespace Slab::Math::Constants {
+
 
     const auto e = 2.718281828459045235360287471352;
     const auto pi = 3.14159265358979323846;

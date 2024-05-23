@@ -10,7 +10,7 @@
 #include "../KG-RtoREquationState.h"
 
 
-namespace KleinGordon::RtoR {
+namespace Slab::Math::RtoR {
 
     const Str suffix = ".simsnap";
 
@@ -28,10 +28,10 @@ namespace KleinGordon::RtoR {
     void SnapshotOutput::handleOutput(const OutputPacket &) { /* do nothing */ }
 
 
-    auto SnapshotOutput::filterData(const OutputPacket &packet) -> ::RtoR::DiscreteFunction_CPU {
-        auto &phi = packet.getEqStateData<::RtoR::EquationState>()->getPhi();
+    auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU {
+        auto &phi = packet.getEqStateData<RtoR::EquationState>()->getPhi();
 
-        return ::RtoR::DiscreteFunction_CPU(phi);
+        return RtoR::DiscreteFunction_CPU(phi);
     }
 
 

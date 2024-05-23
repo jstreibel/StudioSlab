@@ -2,8 +2,8 @@
 // Created by joao on 7/20/23.
 //
 
-#ifndef STUDIOSLAB_BUILDER_H
-#define STUDIOSLAB_BUILDER_H
+#ifndef STUDIOSLAB_NUMERIC_BUILDER_H
+#define STUDIOSLAB_NUMERIC_BUILDER_H
 
 #include "Math/Numerics/SimConfig/DeviceConfig.h"
 #include "Math/Numerics/SimConfig/NumericConfig.h"
@@ -18,7 +18,7 @@
 
 #define BUILDER_IMPL
 
-namespace Core::Simulation {
+namespace Slab::Math {
 
     template<typename EquationSolverType>
     class Builder : public InterfaceOwner {
@@ -50,7 +50,7 @@ namespace Core::Simulation {
 
         using EqSolver          = EquationSolverType;
         using EqState           = EqSolver::EqState;
-        using BoundaryCondition = Core::BoundaryConditions<EqState>;
+        using BoundaryCondition = Base::BoundaryConditions<EqState>;
 
         virtual ~Builder() {}
 
@@ -79,7 +79,7 @@ namespace Core::Simulation {
 
 #define DONT_REGISTER false
 
-namespace Core::Simulation {
+namespace Slab::Math {
 
     template<typename SolverType>
     Builder<SolverType>::Builder(Str name, Str generalDescription)

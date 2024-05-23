@@ -6,7 +6,7 @@
 
 #include <utility>
 
-namespace RtoC {
+namespace Slab::Math::RtoC {
     FourierModes::FourierModes(RtoR::Function::Ptr baseFunc, Real xMin, Real L, Count samples)
     : baseFunc(std::move(baseFunc)), xMin(xMin), L(L), samples(samples) {
 

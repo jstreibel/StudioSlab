@@ -20,8 +20,9 @@
     return responded;
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
+    using namespace Core;
 
     void WindowColumn::addWindow(Window_ptr window, float windowHeight) {
         windows.emplace_back(window);

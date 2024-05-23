@@ -6,7 +6,7 @@
 
 #include <utility>
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     ComplexMagnitude::ComplexMagnitude(RtoC::Function::Ptr func)
     : RtoCFunction(std::move(func)) {    }
 

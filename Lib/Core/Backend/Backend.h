@@ -1,7 +1,7 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#include "Program/Program.h"
+#include "Core/Backend/Program/Task.h"
 #include "Modules/Modules.h"
 #include "Modules/Module.h"
 
@@ -9,7 +9,7 @@
 
 
 
-namespace Core {
+namespace Slab::Core {
 
     class Backend : public InterfaceOwner {
         Str name;
@@ -20,7 +20,7 @@ namespace Core {
 
     public:
         virtual ~Backend() = default;
-        virtual void run(Program *) = 0;
+        virtual void run(Task *) = 0;
         virtual void terminate() = 0;
 
         Str getName() const {return name;}

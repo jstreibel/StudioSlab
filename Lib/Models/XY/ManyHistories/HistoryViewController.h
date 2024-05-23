@@ -9,78 +9,86 @@
 #include "Math/Thermal/ThermoUtils.h"
 #include "Math/Thermal/MetropolisAlgorithm.h"
 
+#include "Graphics/SFML/Graph.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 #include "Math/Thermal/ViewControlBase.h"
 
 #include <SFML/Graphics.hpp>
 
-namespace ThermoOutput {
-    class HistoryViewController : public ViewControlBase {
-        double T;
-        double eT; // expected avg e/spin in thermod. equilibrium
 
-        const int L;
-        const int MCSteps;
-        const int tau_eq;
-        int tau_int=-1;
-        const int SQRT_SIMS;
+namespace Slab::Lost {
+    namespace ThermoOutput {
+        class HistoryViewController : public ViewControlBase {
+            double T;
+            double eT; // expected avg e/spin in thermod. equilibrium
 
-        // Program:
-        int t_max;
-        int MCSTEPS_BETWEEN_FRAMES = 1;
+            const int L;
+            const int MCSteps;
+            const int tau_eq;
+            int tau_int = -1;
+            const int SQRT_SIMS;
 
-        // Output
-        const std::string fileLoc = std::string("/home/joao/Developer/StudiesC++/Ising/Result/Tarefa7/");
+            // Program:
+            int t_max;
+            int MCSTEPS_BETWEEN_FRAMES = 1;
 
-        bool running=true;
+            // Output
+            const std::string fileLoc = std::string("/home/joao/Developer/StudiesC++/Ising/Result/Tarefa7/");
 
-        sf::RenderWindow window;
-        sf::Font font;
-        sf::Text text;
+            bool running = true;
 
-        Graph *avg_e_view;
+            sf::RenderWindow window;
+            sf::Font font;
+            sf::Text text;
 
-        Graph *avg_t_view_1;
-        Graph *ddtavg_t_view_1;
+            Lost::Graph *avg_e_view;
 
-        Graph *avg_t_view_2;
-        Graph *ddtavg_t_view_2;
+            Lost::Graph *avg_t_view_1;
+            Lost::Graph *ddtavg_t_view_1;
 
-        Graph *time_corr_view;
-        Graph *space_corr_est_view;
+            Lost::Graph *avg_t_view_2;
+            Lost::Graph *ddtavg_t_view_2;
 
-        typedef std::pair<MetropolisAlgorithm*, sf::Texture*> ModelViewDataPair;
+            Lost::Graph *time_corr_view;
+            Lost::Graph *space_corr_est_view;
 
-        sf::Image helperBitmap;
-        std::vector<sf::Drawable*> drawables;
-        std::vector<ModelViewDataPair> simulations;
-        std::vector<std::vector<OutputData*>> histories;
-    public:
-        explicit HistoryViewController(double T, int L, int MCSteps, int tau_eq, int sqrtNSims);
+            typedef std::pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
-        void run();
+            sf::Image helperBitmap;
+            std::vector<sf::Drawable *> drawables;
+            std::vector<ModelViewDataPair> simulations;
+            std::vector<std::vector<OutputData *>> histories;
+        public:
+            explicit HistoryViewController(double T, int L, int MCSteps, int tau_eq, int sqrtNSims);
 
-        bool doOperate(SystemParams &params, OutputData &data) override;
+            void run();
 
-        void hide();
+            bool doOperate(SystemParams &params, OutputData &data) override;
 
-    private:
-        void _stepSims(int &MCStep);
-        void _computeTimeCorrelations(int upToMCStep);
-        void _computeSpaceCorrelations();
+            void hide();
 
-        void __updateIsingGraph(const XYNetwork &S, sf::Texture &networkTexture);
-        void _treatEvents();
-        void _drawEverything(int MCStep);
+        private:
+            void _stepSims(int &MCStep);
 
-        void _dumpData();
+            void _computeTimeCorrelations(int upToMCStep);
 
-        sf::Clock timer;
+            void _computeSpaceCorrelations();
+
+            void __updateIsingGraph(const XYNetwork &S, sf::Texture &networkTexture);
+
+            void _treatEvents();
+
+            void _drawEverything(int MCStep);
+
+            void _dumpData();
+
+            sf::Clock timer;
 
 
-        bool realTimeCorrelations=false;
-    };
+            bool realTimeCorrelations = false;
+        };
+    }
+
 }
-
 
 #endif //ISING_HISTORYVIEWCONTROLLER_H

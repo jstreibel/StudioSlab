@@ -4,14 +4,19 @@
 
 #include "Measure.h"
 
-Measure::Measure(RealVector linearValues) : linearValues(linearValues) {
+#include <utility>
 
-}
+namespace Slab::Math {
 
-Real Measure::operator*() {
-    auto v = 1.;
-    for(auto lv : linearValues)
-         v *= lv;
+    Measure::Measure(RealVector linearValues) : linearValues(std::move(linearValues)) {
 
-    return v;
+    }
+
+    Real Measure::operator*() {
+        auto v = 1.;
+        for (auto lv: linearValues)
+            v *= lv;
+
+        return v;
+    }
 }

@@ -5,20 +5,23 @@
 #include "AbsFunction.h"
 #include "SignumFunction.h"
 
-using namespace RtoR;
+namespace Slab::Math::RtoR {
 
-Real AbsFunction::operator()(Real x) const {
-    return ABS(x);
-}
+    Real AbsFunction::operator()(Real x) const {
+        return ABS(x);
+    }
 
-Function *AbsFunction::Clone() const {
-    return new AbsFunction;
-}
+    Function *AbsFunction::Clone() const {
+        return new AbsFunction;
+    }
 
-Function::Ptr AbsFunction::diff(int n) const {
-    return FunctionT<Real, Real>::Ptr(new SignumFunction);
-}
+    Function::Ptr AbsFunction::diff(int n) const {
+        return FunctionT<Real, Real>::Ptr(new SignumFunction);
+    }
 
-Str AbsFunction::symbol() const {
-    return "|ϕ|";
+    Str AbsFunction::symbol() const {
+        return "|ϕ|";
+    }
+
+
 }

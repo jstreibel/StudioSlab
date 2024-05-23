@@ -7,7 +7,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class InputGeneralOscillons : public KGBuilder {
         RealParameter v1     = RealParameter{.0, "v1", "Left oscillon's border speed."};

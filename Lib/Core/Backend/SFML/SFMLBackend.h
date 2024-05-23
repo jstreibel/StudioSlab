@@ -11,47 +11,50 @@
 
 #include <SFML/Graphics.hpp>
 
-class SFMLBackend : public GraphicBackend {
-    Core::SFMLEventTranslator sfmlEventTranslator;
-    std::vector<SFMLListener*> sfmlListeners;
+namespace Slab::Core {
 
-    sf::RenderWindow *window;
-    sf::Font font;
-    sf::Text text;
+    class SFMLBackend : public GraphicBackend {
+        Core::SFMLEventTranslator sfmlEventTranslator;
+        std::vector<SFMLListener *> sfmlListeners;
+
+        sf::RenderWindow *window;
+        sf::Font font;
+        sf::Text text;
 
 
-    bool running=true;
-    bool paused=false;
+        bool running = true;
+        bool paused = false;
 
-    void _treatEvents();
+        void _treatEvents();
 
-    void _render();
+        void _render();
 
-public:
-    SFMLBackend();
+    public:
+        SFMLBackend();
 
-    sf::RenderWindow& getMainWindow();
+        sf::RenderWindow &getMainWindow();
 
-    bool addSFMLListener(SFMLListener* sfmlListener);
+        bool addSFMLListener(SFMLListener *sfmlListener);
 
-    void run(Program *program) override;
+        void run(Task *program) override;
 
-    void terminate() override;
+        void terminate() override;
 
-    auto getRenderWindow() -> sf::RenderWindow&;
+        auto getRenderWindow() -> sf::RenderWindow &;
 
-    auto pause() -> void override;
+        auto pause() -> void override;
 
-    auto resume() -> void override;
+        auto resume() -> void override;
 
-    auto getScreenHeight() const -> Real override;
+        auto getScreenHeight() const -> Real override;
 
-    static SFMLBackend& GetInstance();
+        static SFMLBackend &GetInstance();
 
-    auto requestRender() -> void override;
+        auto requestRender() -> void override;
 
-    auto getMouseState() const -> MouseState override;
-};
+        auto getMouseState() const -> MouseState override;
+    };
 
+}
 
 #endif //STUDIOSLAB_SFMLBACKEND_H

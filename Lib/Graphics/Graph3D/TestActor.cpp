@@ -12,7 +12,9 @@
 #include <array>
 #include <cmath>
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     typedef std::array<float,2> vec2;
     typedef std::array<float,3> vec3;
@@ -50,8 +52,8 @@ namespace Graphics {
                          float width, float height);
 
     TestActor::TestActor()
-            : program(Resources::ShadersFolder + "FieldShading.vert",
-                      Resources::ShadersFolder + "FieldShading.frag")
+            : program(Core::Resources::ShadersFolder + "FieldShading.vert",
+                      Core::Resources::ShadersFolder + "FieldShading.frag")
             , vertexBuffer("position:2f,texcoord:2f")
             , texture(gridN, gridM)
     {

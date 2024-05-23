@@ -7,7 +7,7 @@
 
 #include "Models/KleinGordon/RtoR/RtoRMonitor.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     namespace Signal {
 

@@ -9,7 +9,7 @@
 
 /** Arithmetical Operations Interface */
 
-namespace Utils {
+namespace Slab::Math {
     template<class OPS_TYPE>
     class ArithmeticOpsInterface {
     public:

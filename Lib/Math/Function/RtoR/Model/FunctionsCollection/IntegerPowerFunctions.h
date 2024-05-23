@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class HarmonicDerivative : public RtoR::Function {
         Real m_sqr;
     public:

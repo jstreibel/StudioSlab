@@ -5,7 +5,7 @@
 #include "NodeWindow.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     NodeWindow::NodeWindow(const Window &window) : Window(window) {
     }

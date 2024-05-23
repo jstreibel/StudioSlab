@@ -7,27 +7,28 @@
 // #include "Graphics/FunctionRenderer.h"
 #include <utility>
 
-RtoR::Section1D::Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve)
-: function(std::move(function)), curve(std::move(curve))
-{   }
+namespace Slab::Math {
 
-RtoR::Section1D::Section1D(const R2toR::Function *function, const RtoR2::ParametricCurve *curve)
-: Section1D(Slab::DummyPointer(*function), Slab::DummyPointer(*curve))
-{   }
+    RtoR::Section1D::Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve)
+            : function(std::move(function)), curve(std::move(curve)) {}
 
-Real RtoR::Section1D::operator()(Real x) const {
-    if(curve == nullptr || function == nullptr) return NaN;
+    RtoR::Section1D::Section1D(const R2toR::Function *function, const RtoR2::ParametricCurve *curve)
+            : Section1D(Slab::DummyPointer(*function), Slab::DummyPointer(*curve)) {}
 
-    const auto &c = *curve;
-    const auto &func = *function;
+    Real RtoR::Section1D::operator()(Real x) const {
+        if (curve == nullptr || function == nullptr) return NaN;
 
-    return func(c(x));
+        const auto &c = *curve;
+        const auto &func = *function;
+
+        return func(c(x));
+    }
+
+    Math::PointSet_ptr RtoR::Section1D::renderToPointSet(FunctionT<Real, Real>::RenderingOptions options) {
+        if (curve == nullptr || function == nullptr) return {};
+
+        return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);
+    }
+
+
 }
-
-Math::PointSet_ptr RtoR::Section1D::renderToPointSet(Core::FunctionT<Real, Real>::RenderingOptions options) {
-    if(curve == nullptr || function == nullptr) return {};
-
-    return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);
-}
-
-

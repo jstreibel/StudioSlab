@@ -8,7 +8,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     class GrowingHoleFunc : public R2toR::Function {
         Real t;
         Real height;

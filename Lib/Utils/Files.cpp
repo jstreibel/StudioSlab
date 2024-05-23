@@ -7,7 +7,7 @@
 
 #include <filesystem>
 
-void Utils::CheckFolderExists(const Str &dirPath) {
+void Slab::Utils::CheckFolderExists(const Str &dirPath) {
     namespace fs = std::filesystem;
 
     if (!fs::exists(dirPath)) {

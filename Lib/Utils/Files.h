@@ -7,7 +7,7 @@
 
 #include "String.h"
 
-namespace Utils {
+namespace Slab::Utils {
     void CheckFolderExists(const Str &folder);
 }
 

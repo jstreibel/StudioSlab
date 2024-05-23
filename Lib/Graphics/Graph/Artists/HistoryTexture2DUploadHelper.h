@@ -9,7 +9,9 @@
 #include "Graphics/OpenGL/Texture2D_Real.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class HistoryTexture2DUploadHelper {
         typedef Slab::Pointer<OpenGL::Texture2D_Real> Texture2D_Real_Ptr;

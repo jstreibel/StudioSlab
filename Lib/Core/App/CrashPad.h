@@ -8,7 +8,7 @@
 #include "AppBase.h"
 
 
-namespace SafetyNet {
+namespace Slab::Core::SafetyNet {
     int jump(int (*callback)(int, const char**), int argc=0, const char *argv[]= nullptr);
 }
 

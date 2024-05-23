@@ -11,7 +11,7 @@
 
 const auto pi = 3.1415926535897932384626;
 
-using namespace R2toR;
+using namespace Slab::Math::R2toR;
 
 R2toRInputShockwave::R2toRInputShockwave()
 : R2toR::Builder("Shockwave", "(2+1)-dim signum-Gordon shockwave") {

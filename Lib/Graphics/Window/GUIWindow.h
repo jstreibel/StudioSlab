@@ -12,7 +12,7 @@
 #include "Utils/Types.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class GUIWindow : public Window {
         std::vector<std::pair<Str, Color>> stats;

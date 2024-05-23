@@ -22,7 +22,7 @@
 #define COMPUTE_AVERAGES false
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
 
 #if FULLSCREEN == true
     const int WinW=3840, WinH=2160;

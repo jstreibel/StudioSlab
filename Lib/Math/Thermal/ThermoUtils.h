@@ -11,7 +11,7 @@
 #include <boost/math/special_functions/expint.hpp>
 #include <map>
 
-namespace ThermoUtils {
+namespace Slab::Math::ThermoUtils {
     extern std::map<Real, Real> eT_Onsager_by_T;
 
     Real BoltzmannWeight_betaE(Real betaE);

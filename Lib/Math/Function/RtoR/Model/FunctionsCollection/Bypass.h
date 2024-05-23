@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class Bypass : public Function {
     public:

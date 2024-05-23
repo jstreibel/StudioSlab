@@ -12,18 +12,22 @@
 #include <Math/Space/Impl/DiscreteSpace.h>
 
 
-class OutputFormatterBase {
-public:
-    virtual ~OutputFormatterBase() = default;
+namespace Slab::Math {
 
-    virtual auto operator() (const DiscreteSpace &fOut) const -> Numerics::ByteData = 0;
+    class OutputFormatterBase {
+    public:
+        virtual ~OutputFormatterBase() = default;
 
-    virtual auto operator() (const Real &out) const -> Numerics::ByteData = 0;
+        virtual auto operator()(const DiscreteSpace &fOut) const -> ByteData = 0;
 
-    virtual auto isBinary() const -> bool = 0;
+        virtual auto operator()(const Real &out) const -> ByteData = 0;
 
-    virtual auto getFormatDescription() const -> Str = 0;
-};
+        virtual auto isBinary() const -> bool = 0;
 
+        virtual auto getFormatDescription() const -> Str = 0;
+    };
+
+
+}
 
 #endif //V_SHAPE_SPACEOUTPUTFORMATTERBASE_H

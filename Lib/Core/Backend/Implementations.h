@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_IMPLEMENTATIONS_H
 #define STUDIOSLAB_IMPLEMENTATIONS_H
 
-namespace Core {
+namespace Slab::Core {
 
     enum BackendImplementation {
         Uninitialized,

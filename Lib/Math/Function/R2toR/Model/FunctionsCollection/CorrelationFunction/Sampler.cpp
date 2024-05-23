@@ -7,7 +7,7 @@
 
 #include <utility>
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     Sampler::Sampler(Count nSamples) : nSamples(nSamples) { }
 

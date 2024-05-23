@@ -10,9 +10,9 @@
 #include "Core/Backend/Events/GUIEventTranslator.h"
 #include "Core/Backend/Events/MouseState.h"
 
-namespace Backend {
+namespace Slab::Core {
 
-    class GLUTEventTranslator : public Core::EventTranslator, public GLUTListener {
+    class GLUTEventTranslator : public EventTranslator, public GLUTListener {
         MouseState mouseState;
 
     public:

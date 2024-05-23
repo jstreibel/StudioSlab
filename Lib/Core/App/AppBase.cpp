@@ -10,20 +10,22 @@
 #include "Core/Tools/Log.h"
 
 
-AppBase::AppBase(int argc, const char **argv, bool doRegister)
-    : InterfaceOwner("App", 100, doRegister) {
-    CLArgsManager::Initialize(argc, argv);
+namespace Slab::Core {
 
-    Log::Info() << "PWD: " << Common::GetPWD() << Log::Flush;
+    AppBase::AppBase(int argc, const char **argv, bool doRegister)
+            : InterfaceOwner("App", 100, doRegister) {
+        CLArgsManager::Initialize(argc, argv);
+
+        Log::Info() << "PWD: " << Common::GetPWD() << Log::Flush;
+    }
+
+    AppBase::~AppBase() {
+        Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
+    }
+
+    void AppBase::parseCLArgs() {
+        CLArgsManager::Parse();
+    }
+
+
 }
-
-AppBase::~AppBase() {
-    Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
-}
-
-void AppBase::parseCLArgs() {
-    CLArgsManager::Parse();
-}
-
-
-

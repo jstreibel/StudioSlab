@@ -7,22 +7,30 @@
 
 #include "Interface.h"
 
-class InterfaceOwner : public InterfaceListener {
-protected:
-    Interface::Ptr interface;
 
-public:
-    InterfaceOwner(bool IKnowIMustCallLateStart=false);
-    InterfaceOwner(Str interfaceName, int priotity=10000, bool doRegister=true);
+namespace Slab::Core {
 
-    void LateStart(Str interfaceName, int priotity=10000, bool doRegister=true);
+    class InterfaceOwner : public InterfaceListener {
+    protected:
+        Interface::Ptr interface;
 
-    auto registerToManager() const -> void;
+    public:
+        InterfaceOwner(bool IKnowIMustCallLateStart = false);
 
-    auto getInterface() -> Interface::Ptr;
-    auto getInterface() const -> Interface::Ptr;
-    auto notifyCLArgsSetupFinished() -> void override;
-};
+        InterfaceOwner(Str interfaceName, int priotity = 10000, bool doRegister = true);
 
+        void LateStart(Str interfaceName, int priotity = 10000, bool doRegister = true);
+
+        auto registerToManager() const -> void;
+
+        auto getInterface() -> Interface::Ptr;
+
+        auto getInterface() const -> Interface::Ptr;
+
+        auto notifyCLArgsSetupFinished() -> void override;
+    };
+
+
+}
 
 #endif //STUDIOSLAB_INTERFACEOWNER_H

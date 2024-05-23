@@ -9,100 +9,105 @@
 #include <utility>
 #include <iomanip>
 
-const Str extension = ".osc";
+
+namespace Slab::Math {
+
+    const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
-OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
-                                         UInt stepsInterval,
-                                         SpaceFilterBase *spaceFilter,
-                                         Real endT,
-                                         const Str& outputFileName, OutputFormatterBase *outputFormatter)
-                                         : HistoryKeeper(params, stepsInterval, spaceFilter, endT)
-                                         , outFileName(outputFilename)
-                                         , outputFormatter(*outputFormatter)
-{
-    file.open(outFileName, std::ios::out);
+    OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
+                                             UInt stepsInterval,
+                                             SpaceFilterBase *spaceFilter,
+                                             Real endT,
+                                             const Str &outputFileName, OutputFormatterBase *outputFormatter)
+            : HistoryKeeper(params, stepsInterval, spaceFilter, endT), outFileName(outputFilename),
+              outputFormatter(*outputFormatter) {
+        file.open(outFileName, std::ios::out);
 
-    if(!file){
-        Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
-        throw "OutputHistoryToFile couldn't open file.";
-    }
-
-    Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;
-    Str spaces(HEADER_SIZE_BYTES - 1, ' ');
-
-    file << spaces << '\n';
-}
-
-OutputHistoryToFile::~OutputHistoryToFile() {
-    auto *f = &outputFormatter;
-    delete f;
-};
-
-void OutputHistoryToFile::_dump(bool integrationIsFinished) {
-    if(integrationIsFinished){
-        _printHeaderToFile({"phi"});
-
-        auto shouldNotDump = !lastData.hasValidData();
-        if(shouldNotDump) {
-            file.close();
-            return;
-        }
-    }
-
-    Timer timer;
-
-    for(size_t Ti=0; Ti<count; Ti++) {
-        if(timer.getElTime_sec() > 1) {
-            timer.reset();
-            Log::Info() << std::setprecision(3) << "Flushing " << (Real)Ti/Real(count)*100.0 << "%    " << Log::Flush;
+        if (!file) {
+            Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
+            throw "OutputHistoryToFile couldn't open file.";
         }
 
-        file << outputFormatter(tHistory[int(Ti)]);
+        Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;
+        Str spaces(HEADER_SIZE_BYTES - 1, ' ');
 
-        const auto &fieldPair = spaceDataHistory[Ti];
-        const DiscreteSpace &phiOut = *fieldPair.first;
-        //const DiscreteSpace &ddtPhiOut = *fieldPair.second;
-
-        file << outputFormatter(phiOut);
-        //file << outputFormatter(ddtPhiOut);
+        file << spaces << '\n';
     }
 
-    file.flush();
+    OutputHistoryToFile::~OutputHistoryToFile() {
+        auto *f = &outputFormatter;
+        delete f;
+    };
 
-    Log::Success() << "Flushed " << "100% " << Log::Flush;
-}
+    void OutputHistoryToFile::_dump(bool integrationIsFinished) {
+        if (integrationIsFinished) {
+            _printHeaderToFile({"phi"});
 
-void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
-    std::ostringstream oss;
+            auto shouldNotDump = !lastData.hasValidData();
+            if (shouldNotDump) {
+                file.close();
+                return;
+            }
+        }
 
+        Timer timer;
 
-    oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
+        for (size_t Ti = 0; Ti < count; Ti++) {
+            if (timer.getElTime_sec() > 1) {
+                timer.reset();
+                Log::Info() << std::setprecision(3) << "Flushing " << (Real) Ti / Real(count) * 100.0 << "%    "
+                            << Log::Flush;
+            }
 
+            file << outputFormatter(tHistory[int(Ti)]);
 
-    DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
-    Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
-    for(UInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
+            const auto &fieldPair = spaceDataHistory[Ti];
+            const DiscreteSpace &phiOut = *fieldPair.first;
+            //const DiscreteSpace &ddtPhiOut = *fieldPair.second;
 
+            file << outputFormatter(phiOut);
+            //file << outputFormatter(ddtPhiOut);
+        }
 
-    oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
-    if(0) {
-        oss << R"(, "data_channels": 2)";
-        oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
-    } else {
-        assert(channelNames.size() != 0);
+        file.flush();
 
-        oss << R"(, "data_channels": )" << channelNames.size();
-        oss << R"str(, "data_channel_names": ()str";
-        for(auto name : channelNames)
-            oss << "\"" << name << "\", ";
-        oss << ") ";
+        Log::Success() << "Flushed " << "100% " << Log::Flush;
     }
 
-    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+    void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
+        std::ostringstream oss;
 
-    const auto &s = oss.str();
 
-    file.seekp(0);
-    file.write(s.c_str(), (long)s.size());
+        oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
+
+
+        DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
+        Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
+        for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
+
+
+        oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
+        if (0) {
+            oss << R"(, "data_channels": 2)";
+            oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
+        } else {
+            assert(channelNames.size() != 0);
+
+            oss << R"(, "data_channels": )" << channelNames.size();
+            oss << R"str(, "data_channel_names": ()str";
+            for (auto name: channelNames)
+                oss << "\"" << name << "\", ";
+            oss << ") ";
+        }
+
+        oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+
+        const auto &s = oss.str();
+
+        file.seekp(0);
+        file.write(s.c_str(), (long) s.size());
+    }
+
+
 }

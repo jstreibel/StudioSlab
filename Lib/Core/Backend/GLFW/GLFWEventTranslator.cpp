@@ -15,7 +15,7 @@
     }
 
 
-namespace Core {
+namespace Slab::Core {
 
     bool GLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE

@@ -8,10 +8,10 @@
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "R2toCDiscreteFunction.h"
 
-namespace Math {
+namespace Slab::Math {
     enum R2toC_to_R2toR_Mode {
-        Real,
-        Imaginary,
+        RealPart,
+        ImaginaryPart,
         Phase,
         Magnitude,
         PowerSpectrum

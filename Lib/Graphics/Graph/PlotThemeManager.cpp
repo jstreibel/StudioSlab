@@ -22,7 +22,7 @@
 // Indigo: #4B0082
 // Violet: #9400D3
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     GraphTheme_ptr GetSchemeDark();
     GraphTheme_ptr GetSchemeDark2();
@@ -48,8 +48,8 @@ namespace Graphics {
         stylesInitializers["Light"]     = GetSchemeLight;
         stylesInitializers["Elegant"]   = GetSchemeElegant;
 
-        // current = "Dark";
-        current = "Light";
+        current = "Dark";
+        // current = "Light";
         // current = "Print";
 
         Core::BackendManager::GetGUIBackend().addEventListener(Slab::DummyPointer(*this));;
@@ -118,7 +118,7 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 17);
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 17);
 
         Graphics::clearColor = {};
 
@@ -157,7 +157,7 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 20);
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 20);
         return NewTheme(
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
@@ -192,7 +192,7 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 24);
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
         return NewTheme(
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
@@ -231,7 +231,7 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 40);
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 40);
         return NewTheme(
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
@@ -266,7 +266,7 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::Writer>(Resources::fontFileName(10), 24);
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
         return NewTheme(
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
@@ -310,8 +310,8 @@ namespace Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto labelsWriter = std::make_shared<Graphics::Writer>(Resources::fontFileName(19), 24);
-        auto ticksWriter = std::make_shared<Graphics::Writer>(Resources::fontFileName(18), 24);
+        auto labelsWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(19), 24);
+        auto ticksWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(18), 24);
         return NewTheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme,
                          labelsWriter, ticksWriter, graphs});
     }

@@ -7,10 +7,11 @@
 
 #include "Artist.h"
 #include "Graphics/Graph/PlotStyle.h"
+#include "Math/Function/RtoR2/ParametricCurve.h"
 
-namespace RtoR2 { class ParametricCurve; }
+namespace Slab::Graphics {
 
-namespace Graphics {
+    using namespace Math;
 
     class ParametricCurve2DArtist : public Artist {
         Slab::Pointer<RtoR2::ParametricCurve> curve;

@@ -11,7 +11,7 @@
 #define TO_FFTW(a) (reinterpret_cast<fftw_complex*>(a))
 #define TO_STD(a) (reinterpret_cast<Complex*>(a))
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     DataMoveMangleMode resolveInputPolicy(R2toRDFT::DataPolicy inputPolicy, R2toRDFT::Transform transform) {
         if(inputPolicy == R2toRDFT::Auto)

@@ -4,7 +4,7 @@
 
 #include "Types.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     Point2D operator+(const Point2D &a, const Point2D &b) { return {a.x + b.x, a.y + b.y}; }
 

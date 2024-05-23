@@ -8,7 +8,7 @@
 #include "Graphics/Styles/Colors.h"
 #include "PlotStyle.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     struct PlottingTheme {
         PlottingTheme(Color graphBackground,

@@ -7,7 +7,7 @@
 
 #include "../ThermalBuilder.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class StatisticalBuilder  : public RtoR::Thermal::Builder {
         RealParameter E = RealParameter{1., "E", "System energy"};
         IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};

@@ -10,9 +10,9 @@
 
 #include "ImGuiModule.h"
 
-namespace Core {
+namespace Slab::Core {
 
-    class ImGuiModuleGLUT : public ImGuiModule, public ::Backend::GLUTListener {
+    class ImGuiModuleGLUT : public ImGuiModule, public GLUTListener {
     public:
         ImGuiModuleGLUT();
         ~ImGuiModuleGLUT() override;

@@ -10,9 +10,9 @@
 #include "Utils/NativeTypes.h"
 #include "Math/Function/CommonFunctions.h"
 
-namespace RtoR {
-    typedef Core::Functions<Real>::Function1D Function;
-    typedef Core::Functions<Real>::Function1DSummable FunctionSummable;
+namespace Slab::Math::RtoR {
+    typedef Base::Functions<Real>::Function1D Function;
+    typedef Base::Functions<Real>::Function1DSummable FunctionSummable;
 
     DefinePointer(Function)
     DefinePointer(FunctionSummable)

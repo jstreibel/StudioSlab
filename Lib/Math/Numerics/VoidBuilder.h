@@ -7,7 +7,7 @@
 #include "Core/Controller/Interface/Interface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 
-namespace Core::Simulation {
+namespace Slab::Math {
 
     class VoidBuilder : public InterfaceOwner {
     protected:

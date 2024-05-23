@@ -16,7 +16,7 @@
 #define TICK_FONT FONT_STROKE_ROMAN
 #endif
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     enum LinePrimitive {
         Solid,

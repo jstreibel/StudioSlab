@@ -21,7 +21,7 @@
     return responded;
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     WindowRow::WindowRow(Window::Flags flags)
             : Window(0, 0, 100, 100, flags) {
@@ -134,7 +134,7 @@ namespace Graphics {
         if (reserverdWidth < 1 - (float) freeWidths * 1.e-2)
             return true;
 
-        auto &log = Log::Error() << "Inconsistent column widths: ";
+        auto &log = Core::Log::Error() << "Inconsistent column widths: ";
 
         for (auto w: widths) log << (w == -1 ? Str("free") : ToStr(w)) << "; ";
 

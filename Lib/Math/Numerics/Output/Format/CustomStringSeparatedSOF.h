@@ -7,20 +7,25 @@
 
 #include "OutputFormatterBase.h"
 
-class CustomStringSeparatedSOF : public OutputFormatterBase {
-public:
-    explicit CustomStringSeparatedSOF(std::string sep = " ");
 
-    auto operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData override;
-    auto operator()(const Real &out) const -> Numerics::ByteData override;
+namespace Slab::Math {
 
-    auto isBinary() const -> bool override;
+    class CustomStringSeparatedSOF : public OutputFormatterBase {
+    public:
+        explicit CustomStringSeparatedSOF(std::string sep = " ");
 
-    auto getFormatDescription() const -> Str override;
+        auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
 
-private:
-    const std::string sep;
-};
+        auto operator()(const Real &out) const -> ByteData override;
+
+        auto isBinary() const -> bool override;
+
+        auto getFormatDescription() const -> Str override;
+
+    private:
+        const std::string sep;
+    };
 
 
+}
 #endif //V_SHAPE_CUSTOMSTRINGSEPARATEDSOF_H

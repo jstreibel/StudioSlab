@@ -14,32 +14,39 @@
 #include <iostream>
 
 
-typedef boost::timer::cpu_timer CPUTimer;
-typedef boost::timer::cpu_times CPUTimes;
+namespace Slab::Core {
 
-class BenchmarkHistogram {
-public:
-    explicit BenchmarkHistogram(int firstClass=100, int lastClass=150100, int nClasses=100);
-    ~BenchmarkHistogram();
-    void startMeasure();
-    void storeMeasure(int nSteps=1);
+    typedef boost::timer::cpu_timer CPUTimer;
+    typedef boost::timer::cpu_times CPUTimes;
 
-    auto getAverage() const -> boost::timer::nanosecond_type;
+    class BenchmarkHistogram {
+    public:
+        explicit BenchmarkHistogram(int firstClass = 100, int lastClass = 150100, int nClasses = 100);
 
-    void printHistogram(OStream &out = std::cout) const;
-    friend OStream& operator<<(OStream& os, const BenchmarkHistogram& hist);
+        ~BenchmarkHistogram();
 
-private:
-    bool firstMeasure = true;
+        void startMeasure();
 
-    CPUTimer timer;
+        void storeMeasure(int nSteps = 1);
 
-    int count=0;
-    const int C0,I,VLast;
-    const Real invI;
-    std::vector<int> histogram;
-    std::vector<boost::timer::nanosecond_type> measures;
-};
+        auto getAverage() const -> boost::timer::nanosecond_type;
 
+        void printHistogram(OStream &out = std::cout) const;
+
+        friend OStream &operator<<(OStream &os, const BenchmarkHistogram &hist);
+
+    private:
+        bool firstMeasure = true;
+
+        CPUTimer timer;
+
+        int count = 0;
+        const int C0, I, VLast;
+        const Real invI;
+        std::vector<int> histogram;
+        std::vector<boost::timer::nanosecond_type> measures;
+    };
+
+}
 
 #endif //V_SHAPE_BENCHMARKHISTOGRAM_H

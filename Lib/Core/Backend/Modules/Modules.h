@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MODULES_H
 #define STUDIOSLAB_MODULES_H
 
-namespace Core {
+namespace Slab::Core {
     enum Modules {
         ImGui,
         Nuklear,

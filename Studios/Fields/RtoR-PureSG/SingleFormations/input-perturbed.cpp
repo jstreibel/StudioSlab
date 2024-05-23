@@ -4,7 +4,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 InputPerturbations::InputPerturbations()
 : KGBuilder("Perturbations", "Perturbed oscillon in its reference frame")

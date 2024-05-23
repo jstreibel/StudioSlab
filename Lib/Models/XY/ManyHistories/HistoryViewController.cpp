@@ -11,7 +11,7 @@
 #include <fstream>
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
     // View
     const bool SHOW_DDT = false;
 #if SHOW_DDT == true
@@ -121,7 +121,7 @@ namespace ThermoOutput {
         float xMin=0, xMax=MCSteps; u_char gray=.4*255; sf::Color dashColor(gray, gray, gray);
 
         {
-            avg_e_view = new Graph(subWindow, {xMin, float(eT*1.1)}, {xMax, 0.1}, "t", "<e>(t)");
+            avg_e_view = new Lost::Graph(subWindow, {xMin, float(eT*1.1)}, {xMax, 0.1}, "t", "<e>(t)");
             avg_e_view->addHorizontalDashedLine(eT);
 
             drawables.push_back(avg_e_view);
@@ -130,13 +130,13 @@ namespace ThermoOutput {
         {
             subWindow.top += rowHeight + _border;
 
-            avg_t_view_1 = new Graph(subWindow, {xMin, -1.1}, {xMax, 1.1}, "t", "<m>(t)");
+            avg_t_view_1 = new Lost::Graph(subWindow, {xMin, -1.1}, {xMax, 1.1}, "t", "<m>(t)");
             drawables.push_back(avg_t_view_1);
             avg_t_view_1->addVerticalDashedLine(tau_eq);
             avg_t_view_1->addHorizontalDashedLine(1);
 
             if(!_SINGLE_IC) {
-                avg_t_view_2 = new Graph(subWindow, {xMin, -1.1}, {xMax, 1.1}, "", "");
+                avg_t_view_2 = new Lost::Graph(subWindow, {xMin, -1.1}, {xMax, 1.1}, "", "");
                 drawables.push_back(avg_t_view_2);
             }
         }
@@ -145,11 +145,11 @@ namespace ThermoOutput {
         {
             subWindow.top += 400 + 2 * _border;
 
-            ddtavg_t_view_1 = new Graph(subWindow, {xMin, -0.05}, {xMax, 0.01}, "t", "d<m>(t)/dt");
+            ddtavg_t_view_1 = new Lost::Graph(subWindow, {xMin, -0.05}, {xMax, 0.01}, "t", "d<m>(t)/dt");
             drawables.push_back(ddtavg_t_view_1);
 
             if(!_SINGLE_IC) {
-                ddtavg_t_view_2 = new Graph(subWindow, {xMin, -0.05}, {xMax, 0.01}, "", "");
+                ddtavg_t_view_2 = new Lost::Graph(subWindow, {xMin, -0.05}, {xMax, 0.01}, "", "");
                 drawables.push_back(ddtavg_t_view_2);
             }
         }
@@ -164,7 +164,7 @@ namespace ThermoOutput {
                 subWindow.top += rowHeight + _border;
             }
 
-            time_corr_view = new Graph(subWindow, {0, -1.0}, {float(t_max), 2.0}, "t", "C(t)/C(0)");
+            time_corr_view = new Lost::Graph(subWindow, {0, -1.0}, {float(t_max), 2.0}, "t", "C(t)/C(0)");
             time_corr_view->addHorizontalDashedLine(1);
 
             drawables.push_back(time_corr_view);
@@ -173,7 +173,7 @@ namespace ThermoOutput {
         {
             subWindow.top += rowHeight + _border;
 
-            space_corr_est_view = new Graph(subWindow, {0, -1.0}, {float(MCSteps), 2.0}, "t", "R_e(t)");
+            space_corr_est_view = new Lost::Graph(subWindow, {0, -1.0}, {float(MCSteps), 2.0}, "t", "R_e(t)");
 
             drawables.push_back(space_corr_est_view);
         }

@@ -8,7 +8,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 class AnalyticShockwave2DRadialSymmetry : public RtoR::Function {
         Real t=0.;
 

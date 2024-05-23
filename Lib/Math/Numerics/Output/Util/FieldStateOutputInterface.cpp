@@ -4,5 +4,11 @@
 
 #include "FieldStateOutputInterface.h"
 
-EqStateOutputInterface::Formats EqStateOutputInterface::format = SpaceSeparated;
-EqStateOutputInterface::FieldDataOutputTypes EqStateOutputInterface::fDataOutType = Phi;
+
+namespace Slab::Math {
+
+    EqStateOutputInterface::Formats EqStateOutputInterface::format = SpaceSeparated;
+    EqStateOutputInterface::FieldDataOutputTypes EqStateOutputInterface::fDataOutType = Phi;
+
+
+}

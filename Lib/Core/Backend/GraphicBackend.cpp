@@ -4,19 +4,21 @@
 
 #include "GraphicBackend.h"
 
-GraphicBackend::GraphicBackend(const Str& name, Core::EventTranslator &eventTranslator)
+using namespace Slab::Core;
+
+GraphicBackend::GraphicBackend(const Str& name, EventTranslator &eventTranslator)
 : Backend(name), eventTranslator(eventTranslator)
 {  }
 
-auto GraphicBackend::addEventListener(const Core::GUIEventListener_ptr &listener) -> bool {
+auto GraphicBackend::addEventListener(const GUIEventListener_ptr &listener) -> bool {
     return eventTranslator.addGUIEventListener(listener);
 }
 
-void GraphicBackend::addModule(const std::shared_ptr<Core::Module> &module) {
+void GraphicBackend::addModule(const std::shared_ptr<Module> &module) {
     modules.emplace_back(module);
 }
 
-const std::vector<std::shared_ptr<Core::Module>> &GraphicBackend::getModules() {
+const std::vector<std::shared_ptr<Module>> &GraphicBackend::getModules() {
     return modules;
 }
 

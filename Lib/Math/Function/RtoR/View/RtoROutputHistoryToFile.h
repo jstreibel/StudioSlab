@@ -10,7 +10,7 @@
 
 #include <fstream>
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class OutputHistoryToFile : public HistoryKeeper {
         void _dump(bool integrationIsFinished) override;
         void _printHeaderToFile();

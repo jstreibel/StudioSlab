@@ -4,29 +4,36 @@
 #include "Utils/STDLibInclude.h"
 #include "Utils/Types.h"
 
-struct RecordInterval{
-	RecordInterval(const Real beginT, const Real endT, const Real x);
 
-	Real deltaT() const;
+namespace Slab::Math {
 
-	const Real beginT, endT;
-	const Real x;
+    struct RecordInterval {
+        RecordInterval(const Real beginT, const Real endT, const Real x);
 
-	void add(Real f, Real t);
+        Real deltaT() const;
 
-	bool contains(const Real T) const;
+        const Real beginT, endT;
+        const Real x;
 
-	const Real & operator() (const Real &t);
+        void add(Real f, Real t);
 
-	const std::vector<Real> &getFVals() const;
-	const std::vector<Real> &getTVals() const;
+        bool contains(const Real T) const;
 
-private:
-    std::vector<Real> fVals;
-    std::vector<Real> tVals;
+        const Real &operator()(const Real &t);
 
-public:
-	typedef std::vector<RecordInterval>::iterator Iterator;
-};
+        const std::vector<Real> &getFVals() const;
+
+        const std::vector<Real> &getTVals() const;
+
+    private:
+        std::vector<Real> fVals;
+        std::vector<Real> tVals;
+
+    public:
+        typedef std::vector<RecordInterval>::iterator Iterator;
+    };
+
+
+}
 
 #endif // RECORDINTERVAL_H

@@ -10,7 +10,7 @@
 #include "Utils/Pointer.h"
 
 
-namespace Math {
+namespace Slab::Math {
 
 
     class PointSet : public Space {

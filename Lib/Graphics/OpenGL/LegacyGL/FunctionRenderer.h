@@ -15,7 +15,9 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class FunctionRenderer {
     public:

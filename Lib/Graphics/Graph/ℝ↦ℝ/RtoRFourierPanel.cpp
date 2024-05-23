@@ -6,20 +6,21 @@
 
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "imgui.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/RtoR/Calc/DFTInverse.h"
-#include "Graphics/Window/WindowContainer/WindowRow.h"
-#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 #include "Graphics/Graph/Plotter.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, GUIWindow &guiWindow)
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
         inverseDFTArtist->setLabel("ℱₖ⁻¹(t, x)");
+        inverseDFTDisplay->addArtist(inverseDFTArtist);
+
         timeDFTArtist->setLabel("ℱₜ(ω, x)");
+        timeDFTDisplay->addArtist(timeDFTArtist);
+
+
     }
 
     void RtoRFourierPanel::draw() {
@@ -77,12 +78,18 @@ namespace Graphics {
             static auto t₀=.0f;
             static fix tMax =(float)RtoRPanel::params.gett();
             static auto t_f = tMax;
+            static auto autoUpdate = false;
 
+            if(ImGui::Checkbox("Auto", &autoUpdate));
+
+            ImGui::BeginDisabled(autoUpdate);
             if(ImGui::Button("Compute"))
                 computeTimeDFT(t₀, t_f);
+            ImGui::EndDisabled();
 
-            ImGui::SliderFloat("tₘᵢₙ", &t₀, .0f, t_f);
-            ImGui::SliderFloat("tₘₐₓ", &t_f, t₀, tMax);
+            if(ImGui::SliderFloat("tₘᵢₙ", &t₀, .0f, t_f) | ImGui::SliderFloat("tₘₐₓ", &t_f, t₀, tMax))
+                if(autoUpdate) computeTimeDFT(t₀, t_f);
+
         }
 
         guiWindow.end();
@@ -91,7 +98,7 @@ namespace Graphics {
     }
 
     void RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                                  const DFTDataHistory &dftData,
+                                                  const Models::DFTDataHistory &dftData,
                                                   PlottingWindow_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 

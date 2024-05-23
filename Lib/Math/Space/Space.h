@@ -7,19 +7,25 @@
 
 #include "Measure.h"
 
-class Space {
-    UInt dim;
 
-public:
-    typedef std::shared_ptr<Space> Ptr;
+namespace Slab::Math {
 
-    explicit Space(UInt dim);
-    Space(const Space &);
+    class Space {
+        UInt dim;
 
-    virtual auto getMeasure() const -> const Measure = 0;
-    virtual auto getDim() const -> UInt;
+    public:
+        typedef std::shared_ptr<Space> Ptr;
 
-};
+        explicit Space(UInt dim);
 
+        Space(const Space &);
+
+        virtual auto getMeasure() const -> const Measure = 0;
+
+        virtual auto getDim() const -> UInt;
+
+    };
+
+}
 
 #endif //STUDIOSLAB_SPACE_H

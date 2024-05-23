@@ -21,7 +21,7 @@
 #define DIRTY  (1)
 #define FROZEN (2)
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     VertexBuffer::VertexBuffer(Str formatStr) {
         size_t i, index = 0, stride = 0;
@@ -93,7 +93,7 @@ namespace Graphics::OpenGL {
         state = DIRTY;
         primitive = GL_TRIANGLES;
 
-        Log::Debug() << "Instantiated new VertexBuffer" << Log::Flush;
+        Core::Log::Debug() << "Instantiated new VertexBuffer" << Core::Log::Flush;
     }
 
     VertexBuffer::~VertexBuffer() {

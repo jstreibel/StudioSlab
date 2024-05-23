@@ -16,7 +16,7 @@
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Backend/SFML/SFMLBackend.h"
 
-namespace Core {
+namespace Slab::Core {
     BackendImplementation BackendManager::backendImplementation = Uninitialized;
     std::unique_ptr<Backend> BackendManager::instance = nullptr;
     std::map<Modules, std::shared_ptr<Module>> BackendManager::loadedModules{};

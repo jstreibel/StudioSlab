@@ -12,12 +12,12 @@
 #include "Math/Space/Impl/DiscreteSpaceGPU.h"
 #include "Core/Tools/Log.h"
 
-namespace Core {
+namespace Slab::Math::Base {
 
 
     template<class PosSpaceType, class TargetSpaceType>
     class DiscreteFunction : public FunctionT<PosSpaceType, TargetSpaceType>,
-                             public Utils::ArithmeticOpsInterface<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
+                             public ArithmeticOpsInterface<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
 
         DiscreteSpace *space;
 

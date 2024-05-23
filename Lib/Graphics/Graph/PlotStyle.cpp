@@ -14,7 +14,7 @@
 
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     PlotStyle::PlotStyle(Color color, LinePrimitive primitive, bool filled,
                          Color fillColor, float thickness)

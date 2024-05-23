@@ -10,173 +10,176 @@
 
 #include <iomanip>
 
-Interface::Interface(Str name, InterfaceOwner *owner, int priority)
-    : owner(owner), priority(priority) {
 
-    auto tokens = Common::SplitString(name, delimiter, 2);
-    this->name = tokens[0];
-    this->descr = tokens.size() > 1 ? tokens[1] : this->descr;
+namespace Slab::Core {
 
-    if(owner != nullptr) addListener(owner);
+    Interface::Interface(Str name, InterfaceOwner *owner, int priority)
+            : owner(owner), priority(priority) {
 
-    Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
-    if(owner == nullptr)
-        Log::Attention()  << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' is NOT owned." << Log::Flush;
-}
+        auto tokens = Common::SplitString(name, delimiter, 2);
+        this->name = tokens[0];
+        this->descr = tokens.size() > 1 ? tokens[1] : this->descr;
 
-auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
-    std::vector<Parameter::ConstPtr> constParameters;
+        if (owner != nullptr) addListener(owner);
 
-    std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
-
-    return constParameters;
-}
-
-auto Interface::getSubInterfaces() const -> std::vector<Interface::Ptr> {
-    std::vector<Interface::Ptr> interfaces;
-
-    std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
-
-    return interfaces;
-}
-
-void Interface::addParameter(Parameter::Ptr parameter) {
-    auto insertionSuccessful = parameters.insert(parameter).second;
-
-    if(!insertionSuccessful){
-        throw "Error while inserting parameter in interface.";
+        Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
+        if (owner == nullptr)
+            Log::Attention() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' is NOT owned."
+                             << Log::Flush;
     }
 
-    auto name = Str("\"") + parameter->getFullCLName() + "\"";
-    Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName() << "\".";
-}
+    auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
+        std::vector<Parameter::ConstPtr> constParameters;
 
-void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
-    for(auto param : parametersList)
-        addParameter(param);
-}
+        std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
 
-void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
-    for(auto param : parametersList)
-        addParameter(DummyPtr(*param));
-}
-
-
-void Interface::addSubInterface(Interface::Ptr subInterface) {
-    if(Common::Contains(subInterfaces, subInterface))
-        throw Str("Error while inserting sub-interface '") + subInterface->getName()
-            + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
-
-    if(!subInterfaces.insert(subInterface).second){
-        throw Str("Error while inserting sub-interface '") + subInterface->getName()
-              + Str("' in interface '") + this->getName() + Str("': not specified");
+        return constParameters;
     }
-}
 
-auto Interface::getGeneralDescription() const -> Str {
+    auto Interface::getSubInterfaces() const -> std::vector<Interface::Ptr> {
+        std::vector<Interface::Ptr> interfaces;
 
-    return descr!="<empty>" ? descr : "";
-}
+        std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
 
-auto Interface::getParameter(Str key) const -> Parameter::Ptr {
-    auto compareFunc = [key](Parameter::Ptr parameter) {
-        return *parameter == key;
-    };
+        return interfaces;
+    }
 
-    auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);
+    void Interface::addParameter(Parameter::Ptr parameter) {
+        auto insertionSuccessful = parameters.insert(parameter).second;
 
-    return *result;
-}
+        if (!insertionSuccessful) {
+            throw "Error while inserting parameter in interface.";
+        }
 
-auto Interface::toString(const StrVector& paramNames, Str separator, bool longName) const -> Str {
-    std::stringstream ss("");
+        auto name = Str("\"") + parameter->getFullCLName() + "\"";
+        Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName()
+                    << "\".";
+    }
 
-    std::map<Str,int> paramCount;
-    for(auto &p : paramNames) paramCount[p] = 0;
+    void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
+        for (auto param: parametersList)
+            addParameter(param);
+    }
 
-    fix LONG_NAME = true;
-    fix SHORT_NAME = false;
+    void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
+        for (auto param: parametersList)
+            addParameter(DummyPtr(*param));
+    }
 
-    for(auto &param : parameters) {
-        auto nameShort = param->getCLName(SHORT_NAME);
-        auto nameLong  = param->getCLName(LONG_NAME);
 
-        if(Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) || paramNames.empty()) {
-            bool isLong = !nameLong.empty();
-            ss << param->getCLName(isLong) << "=" << param->valueToString() << separator;
+    void Interface::addSubInterface(Interface::Ptr subInterface) {
+        if (Common::Contains(subInterfaces, subInterface))
+            throw Str("Error while inserting sub-interface '") + subInterface->getName()
+                  + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
 
-            paramCount[isLong ? nameLong : nameShort]++;
+        if (!subInterfaces.insert(subInterface).second) {
+            throw Str("Error while inserting sub-interface '") + subInterface->getName()
+                  + Str("' in interface '") + this->getName() + Str("': not specified");
         }
     }
 
-    for(auto &pCount : paramCount)
-        if(pCount.second == 0)
-            Log::Warning() << __PRETTY_FUNCTION__ << " could not find parameter " << pCount.first << Log::Flush;
+    auto Interface::getGeneralDescription() const -> Str {
 
-    auto str = ss.str();
-    if(!parameters.empty())
-        for(int i=0; i<separator.size(); i++) str.pop_back(); // remove trailing sparator
+        return descr != "<empty>" ? descr : "";
+    }
 
-    return str;
-}
+    auto Interface::getParameter(Str key) const -> Parameter::Ptr {
+        auto compareFunc = [key](Parameter::Ptr parameter) {
+            return *parameter == key;
+        };
 
-void Interface::setup(CLVariablesMap vm) {
-    try {
-        for (auto param : parameters) {
-            auto key = param->getCLName(true);
-            auto val = vm[key];
+        auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);
 
-            param->setValueFrom(val);
+        return *result;
+    }
+
+    auto Interface::toString(const StrVector &paramNames, Str separator, bool longName) const -> Str {
+        std::stringstream ss("");
+
+        std::map<Str, int> paramCount;
+        for (auto &p: paramNames) paramCount[p] = 0;
+
+        fix LONG_NAME = true;
+        fix SHORT_NAME = false;
+
+        for (auto &param: parameters) {
+            auto nameShort = param->getCLName(SHORT_NAME);
+            auto nameLong = param->getCLName(LONG_NAME);
+
+            if (Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) ||
+                paramNames.empty()) {
+                bool isLong = !nameLong.empty();
+                ss << param->getCLName(isLong) << "=" << param->valueToString() << separator;
+
+                paramCount[isLong ? nameLong : nameShort]++;
+            }
         }
 
-        for(auto listener : listeners)
-            listener->notifyCLArgsSetupFinished();
+        for (auto &pCount: paramCount)
+            if (pCount.second == 0)
+                Log::Warning() << __PRETTY_FUNCTION__ << " could not find parameter " << pCount.first << Log::Flush;
 
-    } catch (cxxopts::exceptions::exception &exception) {
-        Log::Error() << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << Log::Flush;
-        throw exception;
+        auto str = ss.str();
+        if (!parameters.empty())
+            for (int i = 0; i < separator.size(); i++) str.pop_back(); // remove trailing sparator
+
+        return str;
     }
+
+    void Interface::setup(CLVariablesMap vm) {
+        try {
+            for (auto param: parameters) {
+                auto key = param->getCLName(true);
+                auto val = vm[key];
+
+                param->setValueFrom(val);
+            }
+
+            for (auto listener: listeners)
+                listener->notifyCLArgsSetupFinished();
+
+        } catch (cxxopts::exceptions::exception &exception) {
+            Log::Error() << "Exception happened in Interface \"" << getGeneralDescription() << "\"" << Log::Flush;
+            throw exception;
+        }
+    }
+
+    bool Interface::operator==(const Interface &rhs) const {
+        return std::tie(name, parameters, subInterfaces) ==
+               std::tie(rhs.name, rhs.parameters, rhs.subInterfaces);
+    }
+
+    bool Interface::operator==(Str str) const {
+        return name == str;
+    }
+
+    bool Interface::operator!=(const Interface &rhs) const {
+        return !(rhs == *this);
+    }
+
+    Interface::~Interface() {
+
+    }
+
+    Interface::Ptr Interface::New(Str name, InterfaceOwner *owner, int priority) {
+        return Interface::Ptr(new Interface(name, owner, priority));
+    }
+
+    auto Interface::addListener(InterfaceListener *newListener) -> void {
+        listeners.emplace_back(newListener);
+    }
+
+    auto Interface::getOwner() const -> InterfaceOwner * {
+        return owner;
+    }
+
+    auto Interface::getName() const -> const Str & {
+        return name;
+    }
+
+    bool Interface::operator<(const Interface &other) const {
+        return priority < other.priority;
+    }
+
+
 }
-
-bool Interface::operator==(const Interface &rhs) const {
-    return std::tie(name, parameters, subInterfaces) ==
-           std::tie(rhs.name, rhs.parameters, rhs.subInterfaces);
-}
-
-bool Interface::operator==(Str str) const {
-    return name == str;
-}
-
-bool Interface::operator!=(const Interface &rhs) const {
-    return !(rhs == *this);
-}
-
-Interface::~Interface() {
-
-}
-
-Interface::Ptr Interface::New(Str name, InterfaceOwner *owner, int priority) {
-    return Interface::Ptr(new Interface(name, owner, priority));
-}
-
-auto Interface::addListener(InterfaceListener *newListener) -> void {
-    listeners.emplace_back(newListener);
-}
-
-auto Interface::getOwner() const -> InterfaceOwner * {
-    return owner;
-}
-
-auto Interface::getName() const -> const Str & {
-    return name;
-}
-
-bool Interface::operator<(const Interface &other) const {
-    return priority < other.priority;
-}
-
-
-
-
-
-

@@ -7,7 +7,7 @@
 #include <Utils/OMPUtils.h>
 
 
-namespace Math {
+namespace Slab::Math {
 
     DiscreteComplexSpace::DiscreteComplexSpace(const DimensionMetaData& dim)
             : dimensionMetaData(dim), data(dim.computeFullDiscreteSize())

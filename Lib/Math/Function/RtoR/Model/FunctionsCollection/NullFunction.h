@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 class NullFunction : public RtoR::Function {
     public:
         inline Real operator()(Real x) const override { return 0.0; }

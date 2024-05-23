@@ -8,7 +8,7 @@
 #include "Function.h"
 
 
-namespace Core {
+namespace Slab::Math::Base {
 
     template<class InputCategory, class OutputCategory>
     class SummableFunction : public FunctionT<InputCategory, OutputCategory> {

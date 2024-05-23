@@ -8,28 +8,33 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
-class Histogram {
-public:
-    Histogram();
 
-    void Compute(RtoR::DiscreteFunction_constptr func, int nBins = 100);
+namespace Slab::Math::RtoR {
 
-    RtoR::Function* asPDFFunction() const;
+    class Histogram {
+    public:
+        Histogram();
 
-    auto asPDFPointSet(bool beautiful=true) const -> Math::PointSet;
-    auto renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful=true) const -> Math::PointSet;
+        void Compute(RtoR::DiscreteFunction_constptr func, int nBins = 100);
 
-    auto integrate() const -> Real;
+        RtoR::Function *asPDFFunction() const;
 
-    int nBins;
-    Real vMax, vMin;
-    Real binWidth;
+        auto asPDFPointSet(bool beautiful = true) const -> Math::PointSet;
 
-private:
-    unsigned long count;
-    RealVector bins;
+        auto renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful = true) const -> Math::PointSet;
 
-};
+        auto integrate() const -> Real;
 
+        int nBins;
+        Real vMax, vMin;
+        Real binWidth;
+
+    private:
+        unsigned long count;
+        RealVector bins;
+
+    };
+
+}
 
 #endif //STUDIOSLAB_HISTOGRAM_H

@@ -15,7 +15,7 @@
 
 #define delta(r, eps) deltaRect(r, eps)
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     namespace LeadingDelta {
 
         typedef Core::DiscreteFunction<Real2D, Real> ArbFunc;

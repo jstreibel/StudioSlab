@@ -14,7 +14,9 @@
 
 #include <map>
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
+
+    using namespace Math;
 
     enum ShaderType {
         VertexShader = GL_VERTEX_SHADER,

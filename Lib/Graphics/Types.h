@@ -8,7 +8,7 @@
 #include "Utils/Types.h"
 #include "Utils/Numbers.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     template<typename T>
     struct Rect {

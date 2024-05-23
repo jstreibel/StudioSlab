@@ -10,7 +10,7 @@
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class TestActor : public Actor {
         OpenGL::Shader program;

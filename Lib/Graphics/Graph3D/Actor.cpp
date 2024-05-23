@@ -4,5 +4,5 @@
 
 #include "Actor.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 } // Graphics

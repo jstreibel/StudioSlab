@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 #include "DiscreteFourierTransform.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class DFTInverse {
     public:

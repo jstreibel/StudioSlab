@@ -101,7 +101,7 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
 		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h
 
-		SFML/Tools/Graph.cpp
+		SFML/Tools/Graph_deprydepr.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp
 
 		SFML/ViewerUtils.cpp

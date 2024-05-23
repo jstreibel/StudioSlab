@@ -13,7 +13,7 @@
 #include "GraphicBackend.h"
 #include "Implementations.h"
 
-namespace Core {
+namespace Slab::Core {
 
     // Singleton manager for backends
     class BackendManager {

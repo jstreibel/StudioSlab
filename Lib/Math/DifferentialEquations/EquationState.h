@@ -9,9 +9,9 @@
 #include "Utils/Types.h"
 #include "Math/Space/Impl/ArithmeticOperationInterface.h"
 
-namespace Simulation {
+namespace Slab::Math {
 
-    class EquationState : public Utils::ArithmeticOpsInterface<EquationState>{
+    class EquationState : public ArithmeticOpsInterface<EquationState>{
     public:
         typedef std::shared_ptr<EquationState> Ptr;
         typedef std::shared_ptr<const EquationState> ConstPtr;

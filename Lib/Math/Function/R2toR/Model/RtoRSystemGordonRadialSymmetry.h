@@ -11,7 +11,7 @@
 #include "Lib/Fields/Maps/RtoR/Model/RtoRFieldState.h"
 #include "Core/Math/Allocator.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class SystemGordonRadialSymmetry : public Base::System<RtoR::FieldState> {
     public:
         SystemGordonRadialSymmetry(RtoR::Function &V)

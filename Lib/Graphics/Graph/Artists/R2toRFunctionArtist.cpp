@@ -13,7 +13,7 @@
 #include "Core/Tools/Resources.h"
 #include "imgui.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     struct FlatFieldVertex {
         float x, y;     // position
@@ -251,7 +251,7 @@ namespace Graphics {
            || textureData->getHeight() != yRes)
         {
             textureData = Slab::New<OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
-            textureData->setSWrap(::Graphics::OpenGL::ClampToEdge);
+            textureData->setSWrap(Graphics::OpenGL::ClampToEdge);
             textureData->setAntiAliasOff();
             program.setUniform("field_data", textureData->getTextureUnit());
 

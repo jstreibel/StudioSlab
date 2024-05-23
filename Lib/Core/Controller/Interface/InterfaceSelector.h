@@ -9,22 +9,29 @@
 #include "InterfaceOwner.h"
 #include "CommonParameters.h"
 
-class InterfaceSelector : public InterfaceOwner {
-    int currentSelection = 0;
-    std::vector<Interface::Ptr> candidates;
 
-    IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
+namespace Slab::Core {
 
-    auto generateHelpDescription() -> void;
-public:
-    InterfaceSelector(Str selectorName);
+    class InterfaceSelector : public InterfaceOwner {
+        int currentSelection = 0;
+        std::vector<Interface::Ptr> candidates;
 
-    void registerOption(Interface::Ptr interface);
+        IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
 
-    auto preParse(int argc, const char **argv, bool registerInInterfaceManager=true) -> const InterfaceSelector&;
-    auto getCurrentCandidate() const -> Interface::Ptr;
+        auto generateHelpDescription() -> void;
 
-};
+    public:
+        InterfaceSelector(Str selectorName);
 
+        void registerOption(Interface::Ptr interface);
+
+        auto preParse(int argc, const char **argv, bool registerInInterfaceManager = true) -> const InterfaceSelector &;
+
+        auto getCurrentCandidate() const -> Interface::Ptr;
+
+    };
+
+
+}
 
 #endif //V_SHAPE_COMMANDLINEINPUTMANAGER_H

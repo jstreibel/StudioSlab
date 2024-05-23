@@ -12,7 +12,7 @@
 #include "Core/Backend/BackendManager.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     Window::Window(int x, int y, int w, int h, Flags flags)
             : backgroundColor(Graphics::clearColor), flags(flags),

@@ -17,7 +17,7 @@
 #include "Graphics/Styles/Colors.h"
 #include "Shader.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class Writer {
         ftgl::texture_font_t *font = nullptr;

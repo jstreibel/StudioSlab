@@ -11,7 +11,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 #include "../../../../Studios/Fields/R2toR/LeadingDelta/RingDeltaFunc.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     namespace LeadingDelta {
 

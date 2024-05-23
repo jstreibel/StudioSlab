@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_DUMMYPROGRAM_H
 #define STUDIOSLAB_DUMMYPROGRAM_H
 
-#include "Program.h"
+#include "Task.h"
 
-class DummyProgram : public Program {
+class DummyProgram : public Task {
 public:
     bool cycle(CycleOptions options) override { return false; }
 };

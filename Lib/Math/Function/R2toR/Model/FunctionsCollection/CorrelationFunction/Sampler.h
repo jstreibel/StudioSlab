@@ -13,7 +13,7 @@
 #include "Math/Function/RtoR2/ParametricCurve.h"
 
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     typedef std::vector<Real2D> R2Vec;
 

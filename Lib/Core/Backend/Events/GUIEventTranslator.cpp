@@ -4,7 +4,7 @@
 
 #include "GUIEventTranslator.h"
 
-bool Core::EventTranslator::addGUIEventListener(const Core::GUIEventListener_ptr &guiEventListener) {
+bool Slab::Core::EventTranslator::addGUIEventListener(const Core::GUIEventListener_ptr &guiEventListener) {
     if(Common::Contains(guiListeners, guiEventListener)) return false;
 
     guiListeners.emplace_back(guiEventListener);

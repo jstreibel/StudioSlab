@@ -8,7 +8,7 @@
 #include "Core/Backend/Events/GUIEventTranslator.h"
 #include "SFMLListener.h"
 
-namespace Core {
+namespace Slab::Core {
 
     class SFMLEventTranslator : public EventTranslator, public SFMLListener {
     public:

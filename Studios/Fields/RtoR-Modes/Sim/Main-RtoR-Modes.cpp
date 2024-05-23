@@ -10,11 +10,13 @@ int run(int argc, const char *argv[]) {
 
     auto builder = new Modes::Builder();
 
-    auto prog = Simulation::App(argc, argv, RtoR::KGBuilder::Ptr(builder));
+    using namespace Slab::Math;
+
+    auto prog = App(argc, argv, RtoR::KGBuilder::Ptr(builder));
 
     return prog.run();
 }
 
 int main(int argc, const char *argv[]){
-    return SafetyNet::jump(run, argc, argv);
+    return Slab::Core::SafetyNet::jump(run, argc, argv);
 }

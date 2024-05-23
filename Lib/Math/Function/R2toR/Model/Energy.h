@@ -9,10 +9,10 @@
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 
-namespace Fields {
+namespace Slab::Math::R2toR {
 
     namespace KleinGordon {
-        typedef Functionals::Functional<const R2toR::EquationState> Functional;
+        typedef Functional<const R2toR::EquationState> Functional;
 
         class Energy : public Functional {
 

@@ -12,7 +12,7 @@
 
 // Created by joao on 17/09/2019.
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 DiscreteFunctionGPU::DiscreteFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType)
     : DiscreteFunction(N, xMin, xMax, device::GPU, laplacianType) {

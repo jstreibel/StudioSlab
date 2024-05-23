@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     fix N = 1200;
     fix M = 1538;
@@ -155,8 +155,8 @@ namespace Graphics {
 
         auto ftAmplitudes = Math::Convert(dftFunction, Math::Magnitude);
         auto ftPhases     = Math::Convert(dftFunction, Math::Phase);
-        auto ftRealParts  = Math::Convert(dftFunction, Math::Real);
-        auto ftImagParts  = Math::Convert(dftFunction, Math::Imaginary);
+        auto ftRealParts  = Math::Convert(dftFunction, Math::RealPart);
+        auto ftImagParts  = Math::Convert(dftFunction, Math::ImaginaryPart);
 
         ftAmplitudesArtist->setFunction(ftAmplitudes);
         ftPhasesArtist    ->setFunction(ftPhases);
@@ -175,7 +175,7 @@ namespace Graphics {
                                                   R2toR::R2toRDFT::InverseFourier,
                                                   R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
-        twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::Real));
+        twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::RealPart));
         twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
     }
 

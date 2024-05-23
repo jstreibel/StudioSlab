@@ -19,7 +19,7 @@
 #define MAX_VERTEX_BUFFER  (1024 * 1024)
 #define MAX_ELEMENT_BUFFER (1024 * 1024)
 
-namespace Core {
+namespace Slab::Core {
 
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(GLFW) {
         try {

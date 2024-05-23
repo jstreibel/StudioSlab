@@ -10,7 +10,7 @@
 
 
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 InputShockwave::InputShockwave() : KGBuilder("1d shockwave", "Shockwave in 1-dim") {
     interface->addParameters({&a0, &E});

@@ -4,7 +4,7 @@
 
 #include "GLUTListener.h"
 
-namespace Backend {
+namespace Slab::Core {
 
     bool GLUTListener::keyboard(unsigned char key, int x, int y)      { return false; }
     bool GLUTListener::keyboardUp(unsigned char key, int x, int y)    { return false; }

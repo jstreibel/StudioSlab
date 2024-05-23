@@ -4,11 +4,16 @@
 
 #include "CorrelationCalculator.h"
 
-void CorrelationCalculator::setFunc(RtoR::Function::Ptr function) {
-    func = std::move(function);
-}
 
-RtoR::Function::Ptr CorrelationCalculator::compute(Real begin, Real end, Real dx) {
-    throw "Not implemented.";
-    return func;
+namespace Slab::Math::RtoR {
+
+    void CorrelationCalculator::setFunc(RtoR::Function::Ptr function) {
+        func = std::move(function);
+    }
+
+    RtoR::Function::Ptr CorrelationCalculator::compute(Real begin, Real end, Real dx) {
+        throw "Not implemented.";
+        return func;
+    }
+
 }

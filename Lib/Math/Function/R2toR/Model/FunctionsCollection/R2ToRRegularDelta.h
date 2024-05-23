@@ -7,7 +7,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     struct R2toRRegularDelta : public R2toR::Function {
     private:
         Real eps, a;

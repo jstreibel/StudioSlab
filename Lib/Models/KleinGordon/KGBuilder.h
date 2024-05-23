@@ -11,9 +11,12 @@
 
 #define DONT_REGISTER false // don touch
 
-namespace Fields::KleinGordon {
+namespace Slab::Models {
 
-    class KGBuilder : public Core::Simulation::VoidBuilder {
+    using namespace Slab::Core;
+    using namespace Slab::Math;
+
+    class KGBuilder : public VoidBuilder {
     protected:
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
         BoolParameter    takeDFTSnapshot                = BoolParameter(false,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");

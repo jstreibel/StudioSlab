@@ -7,7 +7,7 @@
 
 #include "Utils/Types.h"
 
-namespace Numerics {
+namespace Slab::Math {
     typedef std::vector<char> ByteData;
 
     template<typename TYPE>
@@ -18,8 +18,9 @@ namespace Numerics {
         TYPE value;
     };
 
-}
 
-auto operator<< (OStream& stream, const Numerics::ByteData &byteData) -> OStream&;
+    auto operator<<(OStream &stream, const ByteData &byteData) -> OStream &;
+
+}
 
 #endif //FIELDS_BYTEDATA_H

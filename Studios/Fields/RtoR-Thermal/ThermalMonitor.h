@@ -9,7 +9,7 @@
 #include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-namespace RtoR::Thermal {
+namespace Slab::Math::RtoR::Thermal {
 
     class Monitor : public ::RtoR::Monitor {
         Real transientGuess = -1.0;

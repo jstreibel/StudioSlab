@@ -5,7 +5,7 @@
 #include "Texture2D_Real.h"
 #include "Core/Tools/Log.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     Texture2D_Real::Texture2D_Real(GLsizei w, GLsizei h)
     : Texture2D(w, h, InternalFormat::Red_32bit_Float)

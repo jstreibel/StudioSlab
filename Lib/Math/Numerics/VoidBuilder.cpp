@@ -16,36 +16,38 @@ break;
 #define DONT_REGISTER false
 
 
-Core::Simulation::VoidBuilder::VoidBuilder(const Str& name, Str generalDescription, bool doRegister)
-: InterfaceOwner(name, 100, DONT_REGISTER)
-, simulationConfig(DONT_REGISTER)
-, prefix(name)
-{
-    interface->addSubInterface(simulationConfig.numericConfig.getInterface());
-    interface->addSubInterface(simulationConfig.dev.getInterface());
+namespace Slab::Math {
 
-    if(doRegister){
-        InterfaceManager::getInstance().registerInterface(interface);
+
+    VoidBuilder::VoidBuilder(const Str &name, Str generalDescription, bool doRegister)
+            : InterfaceOwner(name, 100, DONT_REGISTER), simulationConfig(DONT_REGISTER), prefix(name) {
+        interface->addSubInterface(simulationConfig.numericConfig.getInterface());
+        interface->addSubInterface(simulationConfig.dev.getInterface());
+
+        if (doRegister) {
+            InterfaceManager::getInstance().registerInterface(interface);
+        }
+
+        Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
+                      << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
     }
 
-    Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
-                << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
+    auto VoidBuilder::getNumericParams() const -> const NumericConfig & {
+        return simulationConfig.numericConfig;
+    }
+
+    auto VoidBuilder::getDevice() const -> const DeviceConfig & {
+        return simulationConfig.dev;
+    }
+
+    Str VoidBuilder::suggestFileName() const {
+        const auto SEPARATOR = " ";
+        auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
+
+        auto str = prefix + SEPARATOR + strParams;
+
+        return str;
+    }
+
+
 }
-
-auto Core::Simulation::VoidBuilder::getNumericParams() const -> const NumericConfig & {
-    return simulationConfig.numericConfig;
-}
-
-auto Core::Simulation::VoidBuilder::getDevice() const -> const DeviceConfig & {
-    return simulationConfig.dev;
-}
-
-Str Core::Simulation::VoidBuilder::suggestFileName() const {
-    const auto SEPARATOR = " ";
-    auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
-
-    auto str = prefix + SEPARATOR + strParams;
-
-    return str;
-}
-

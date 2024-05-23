@@ -7,45 +7,50 @@
 #include <utility>
 
 
-CustomStringSeparatedSOF::CustomStringSeparatedSOF(std::string sep) : sep(std::move(sep)) { }
+namespace Slab::Math {
 
-auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
-    return Str("text");
-}
+    CustomStringSeparatedSOF::CustomStringSeparatedSOF(std::string sep) : sep(std::move(sep)) {}
 
-auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData {
-    const auto &space = fOut;
+    auto CustomStringSeparatedSOF::getFormatDescription() const -> Str {
+        return Str("text");
+    }
 
-    const RealArray& X = space.getHostData(true);
+    auto CustomStringSeparatedSOF::operator()(const DiscreteSpace &fOut) const -> ByteData {
+        const auto &space = fOut;
 
-    std::ostringstream oss;
+        const RealArray &X = space.getHostData(true);
 
-    for(const auto& x : X)
-        oss << (std::isnan(x) ? .0 : x) << sep;
+        std::ostringstream oss;
 
-    oss << std::endl;
+        for (const auto &x: X)
+            oss << (std::isnan(x) ? .0 : x) << sep;
 
-    const auto &s = oss.str();
-    Numerics::ByteData data(s.size());
+        oss << std::endl;
 
-    std::copy(s.begin(), s.end(), data.begin());
+        const auto &s = oss.str();
+        ByteData data(s.size());
 
-    return data;
-}
+        std::copy(s.begin(), s.end(), data.begin());
 
-auto CustomStringSeparatedSOF::operator()(const Real &out) const -> Numerics::ByteData {
-    std::ostringstream oss;
+        return data;
+    }
 
-    oss << out << sep;
+    auto CustomStringSeparatedSOF::operator()(const Real &out) const -> ByteData {
+        std::ostringstream oss;
 
-    auto s = oss.str();
+        oss << out << sep;
 
-    Numerics::ByteData data(s.size());
-    std::copy(s.begin(), s.end(), data.begin());
+        auto s = oss.str();
 
-    return data;
-}
+        ByteData data(s.size());
+        std::copy(s.begin(), s.end(), data.begin());
 
-bool CustomStringSeparatedSOF::isBinary() const {
-    return false;
+        return data;
+    }
+
+    bool CustomStringSeparatedSOF::isBinary() const {
+        return false;
+    }
+
+
 }

@@ -8,9 +8,9 @@
 #include "Math/Function/Function.h"
 #include "Math/Space/Impl/ComplexSpace.h"
 
-namespace R2toC {
+namespace Slab::Math::R2toC {
 
-    class DiscreteFunction : public Core::FunctionT<Real2D, Complex>  {
+    class DiscreteFunction : public Base::FunctionT<Real2D, Complex>  {
         ComplexArray data;
 
     public:

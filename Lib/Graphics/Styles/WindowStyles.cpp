@@ -4,7 +4,7 @@
 
 #include "WindowStyles.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
     int hPadding = 4;
     int vPadding = 4;
 

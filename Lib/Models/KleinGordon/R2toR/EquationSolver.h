@@ -9,9 +9,9 @@
 #include "Math/DifferentialEquations/EquationSolver.h"
 #include "Models/KleinGordon/KGSolver.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     // typedef Slab::EquationSolverT<R2toR::EquationState> EquationSolver;
-    typedef Fields::KleinGordon::Solver<R2toR::EquationState> EquationSolver;
+    typedef Models::Solver<R2toR::EquationState> EquationSolver;
 }
 
 #endif //STUDIOSLAB_EQUATIONSOLVER_H

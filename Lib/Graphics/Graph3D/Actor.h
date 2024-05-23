@@ -7,7 +7,7 @@
 
 #include <memory>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class Graph3D;
 

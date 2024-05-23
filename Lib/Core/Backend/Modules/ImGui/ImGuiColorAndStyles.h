@@ -7,7 +7,7 @@
 
 #include "3rdParty/imgui/imgui.h"
 
-namespace Core {
+namespace Slab::Core {
 
     void SetColorThemeNativeLight();
     void SetColorThemeNativeDark();

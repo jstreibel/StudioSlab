@@ -12,7 +12,7 @@
 #include "Math/Function/R2toR/Model/Transform.h"
 
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
 class FunctionAzimuthalSymmetry : public R2toR::Function {
     public:

@@ -22,7 +22,7 @@
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class PlottingWindow : public Window {
         static Count WindowCount;
@@ -51,7 +51,7 @@ namespace Graphics {
     protected:
         Str title;
 
-        Math::Graphics::LabelingHelper labelingHelper;
+        LabelingHelper labelingHelper;
 
         virtual auto countDisplayItems() const -> Count;
         void nameLabelDraw(const PlotStyle &style, const Str& label);

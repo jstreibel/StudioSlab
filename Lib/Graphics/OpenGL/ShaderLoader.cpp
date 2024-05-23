@@ -13,9 +13,11 @@
 
 #include <fstream>
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
-    fix shadersRoot = Resources::ShadersFolder;
+    using Log = Core::Log;
+
+    fix shadersRoot = Core::Resources::ShadersFolder;
 
     Str _parseGLSL(const Str& filePath, std::unordered_set<std::string> &includedFiles) {
         // Check if the file has already been included

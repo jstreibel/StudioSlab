@@ -4,17 +4,15 @@
 
 #include "DiscreteFourierTransform.h"
 
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 #include "Math/Constants.h"
 
 #include <fftw3.h>
 #include <cstring>
-#include <complex>
 
 #define RE_PART 0
 #define IM_PART 1
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     DFTResult DFT::Compute(const RtoR::DiscreteFunction &inFunc) {
         if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";

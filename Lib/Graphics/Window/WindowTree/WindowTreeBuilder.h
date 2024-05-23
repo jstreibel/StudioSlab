@@ -12,7 +12,7 @@
 #include "NodeWindow.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class WindowTreeBuilder {
         Window shape;

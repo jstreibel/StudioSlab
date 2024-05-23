@@ -12,31 +12,38 @@
         indicating header size. */
 const int HEADER_SIZE_BYTES = 2048;
 
-class OutputHistoryToFile : public HistoryKeeper {
 
-    const Str outFileName;
-    std::ofstream file;
+namespace Slab::Math {
 
-    /*! I manage this. */
-    OutputFormatterBase &outputFormatter;
+    class OutputHistoryToFile : public HistoryKeeper {
 
+        const Str outFileName;
+        std::ofstream file;
 
-
-public:
-
-    OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval, SpaceFilterBase *spaceFilter,
-                        Real endT, const Str&  outputFileName,
-                        OutputFormatterBase *outputFormatter = new BinarySOF());
-
-    ~OutputHistoryToFile() override;
+        /*! I manage this. */
+        OutputFormatterBase &outputFormatter;
 
 
-private:
+    public:
 
-    void _printHeaderToFile(std::vector<std::string> channelNames);
-    void _dump(bool integrationIsFinished) override;
+        OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval, SpaceFilterBase *spaceFilter,
+                            Real endT, const Str &outputFileName,
+                            OutputFormatterBase *outputFormatter = new BinarySOF());
 
-public:
-};
+        ~OutputHistoryToFile() override;
+
+
+    private:
+
+        void _printHeaderToFile(std::vector<std::string> channelNames);
+
+        void _dump(bool integrationIsFinished) override;
+
+    public:
+    };
+
+
+}
+
 
 #endif // OUTPUTFILE1D_H

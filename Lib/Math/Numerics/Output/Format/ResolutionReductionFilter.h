@@ -8,18 +8,22 @@
 #include "SpaceFilterBase.h"
 
 
+namespace Slab::Math {
+
 /*! A discrete space filter that reduces resolution and returns a CPU- (host) located discrete space. */
-class ResolutionReductionFilter : public SpaceFilterBase {
-public:
-    explicit ResolutionReductionFilter(DimensionMetaData newDim);
+    class ResolutionReductionFilter : public SpaceFilterBase {
+    public:
+        explicit ResolutionReductionFilter(DimensionMetaData newDim);
 
-    DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
+        DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
 
-    auto getOutputDim(const Real L) const -> DimensionMetaData override;
+        auto getOutputDim(const Real L) const -> DimensionMetaData override;
 
-private:
-    DimensionMetaData newDim;
-};
+    private:
+        DimensionMetaData newDim;
+    };
 
+
+}
 
 #endif //V_SHAPE_RESOLUTIONREDUCTIONFILTER_H

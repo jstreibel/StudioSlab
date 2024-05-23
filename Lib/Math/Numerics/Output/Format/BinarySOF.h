@@ -9,23 +9,27 @@
 #include "OutputFormatterBase.h"
 
 
-class BinarySOF : public OutputFormatterBase {
-public:
-    const int typeSize = sizeof(float);
+namespace Slab::Math {
 
-    explicit BinarySOF();
+    class BinarySOF : public OutputFormatterBase {
+    public:
+        const int typeSize = sizeof(float);
 
-    auto operator()(const Real &out) const -> Numerics::ByteData override;
+        explicit BinarySOF();
 
-    auto operator()(const DiscreteSpace &fOut) const -> Numerics::ByteData override;
+        auto operator()(const Real &out) const -> ByteData override;
 
-    auto isBinary() const -> bool override;
+        auto operator()(const DiscreteSpace &fOut) const -> ByteData override;
 
-    auto getFormatDescription() const -> Str override;
+        auto isBinary() const -> bool override;
 
-private:
-    const std::string sep;
-};
+        auto getFormatDescription() const -> Str override;
 
+    private:
+        const std::string sep;
+    };
+
+
+}
 
 #endif //V_SHAPE_BINARYSOF_H

@@ -14,7 +14,7 @@
 
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
-namespace Core {
+namespace Slab::Core {
     NuklearModule::NuklearModule(BackendImplementation system)
     : system(system)
     , nkContext(nullptr)

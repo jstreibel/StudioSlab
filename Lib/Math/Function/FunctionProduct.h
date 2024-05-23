@@ -7,7 +7,7 @@
 
 #include "Function.h"
 
-namespace Core {
+namespace Slab::Math::Base {
 
         template<class InputCategory, class OutputCategory>
         class Product : public FunctionT<InputCategory, OutputCategory> {

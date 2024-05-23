@@ -13,7 +13,7 @@
 // Don't touch
 fix SHOULD_INSTALL_CALLBACKS = false;
 
-namespace Core {
+namespace Slab::Core {
     ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule(GLUT) {
         // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
         // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)

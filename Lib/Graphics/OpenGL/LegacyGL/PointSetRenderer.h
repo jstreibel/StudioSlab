@@ -8,7 +8,7 @@
 #include "Math/Space/Impl/PointSet.h"
 #include "Graphics/Graph/PlotStyle.h"
 
-namespace Graphics::OpenGL::Legacy {
+namespace Slab::Graphics::OpenGL::Legacy {
     void RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept;
 }
 

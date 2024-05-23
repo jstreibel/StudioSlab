@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 #include <GL/gl.h>
 
-namespace OpenGL {
+namespace Slab::Graphics::OpenGL {
     void OpenGL_Debug_Callback(GLenum source, GLenum type, GLuint id,
         GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 

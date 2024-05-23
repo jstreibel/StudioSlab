@@ -12,7 +12,7 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class OutputOpenGLShockwave : public Graphics::OpenGLMonitor {
     public:

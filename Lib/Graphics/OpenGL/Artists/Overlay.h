@@ -10,7 +10,7 @@
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Shader.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     class Overlay : public Artist {
         VertexBuffer vertexBuffer;

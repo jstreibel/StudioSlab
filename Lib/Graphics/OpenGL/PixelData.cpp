@@ -4,7 +4,7 @@
 
 #include "PixelData.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     PixelData::PixelData(const PixelDataFormat dataFormat,
                          const PixelDataType dataType,

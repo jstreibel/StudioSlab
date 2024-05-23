@@ -7,7 +7,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 InputSingleOscillon::InputSingleOscillon() : KGBuilder("Oscillon 1d", "Single 1+1 dim oscillon")
 {

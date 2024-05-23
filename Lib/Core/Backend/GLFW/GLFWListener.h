@@ -7,7 +7,7 @@
 
 #include <GLFW/glfw3.h>
 
-namespace Core {
+namespace Slab::Core {
 
     typedef unsigned int Codepoint;
 

@@ -11,10 +11,10 @@
 #include "Math/Thermal/InputOutput.h"
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
 
 
-    class Graph : public sf::Drawable {
+    class Graph_deprydepr : public sf::Drawable {
     protected:
         sf::VertexArray frame;
         sf::VertexArray axes;
@@ -32,7 +32,7 @@ namespace ThermoOutput {
         void _computeScale();
 
     public:
-        Graph(sf::IntRect subWindow,
+        Graph_deprydepr(sf::IntRect subWindow,
               sf::Vector2f rMin,
               sf::Vector2f rMax,
               std::string xAxisLabel, std::string yAxisLabel);

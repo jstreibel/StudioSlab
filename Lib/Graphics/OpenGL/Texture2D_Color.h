@@ -12,10 +12,10 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/Styles/Colors.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     class Texture2D_Color : public Texture2D {
-        ByteData data = nullptr;
+        ByteData_raw data = nullptr;
 
     public:
         Texture2D_Color(GLsizei width, GLsizei height);

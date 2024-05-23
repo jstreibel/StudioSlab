@@ -6,7 +6,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "Camera.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
     auto Camera::getProjection() const -> glm::mat4 {
         // float fovY = 2.0f * glm::atan(d / (2.0f * camHeight));
         // float fovX = 2.0f * glm::atan(w / (2.0f * camHeight));

@@ -6,26 +6,33 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 
-Fields::KleinGordon::KGBuilder::KGBuilder(const Str& name, Str generalDescription, bool doRegister)
-        : Core::Simulation::VoidBuilder(name, std::move(generalDescription), DONT_REGISTER) {
 
-    interface->addParameters({&noHistoryToFile,
-                              &outputResolution,
-                              &VisualMonitor,
-                              &VisualMonitor_startPaused,
-                              &OpenGLMonitor_stepsPerIdleCall,
-                              &takeSnapshot,
-                              &takeDFTSnapshot,
-                              /*, &snapshotTime, */ });
+namespace Slab::Models {
 
-    if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
-}
+    KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
+            : VoidBuilder(name, std::move(generalDescription), DONT_REGISTER) {
 
-void Fields::KleinGordon::KGBuilder::notifyAllCLArgsSetupFinished() {
-    auto nThreads = VoidBuilder::simulationConfig.dev.get_nThreads();
-    auto N = VoidBuilder::simulationConfig.numericConfig.getN();
-    if(N%nThreads != 0) throw Exception("Bad assertion N%nThreads. Expected 0 got "
-                                        + ToStr(N%nThreads) + ".");
+        interface->addParameters({&noHistoryToFile,
+                                  &outputResolution,
+                                  &VisualMonitor,
+                                  &VisualMonitor_startPaused,
+                                  &OpenGLMonitor_stepsPerIdleCall,
+                                  &takeSnapshot,
+                                  &takeDFTSnapshot,
+                                         /*, &snapshotTime, */ });
 
-    InterfaceListener::notifyAllCLArgsSetupFinished();
+        if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
+    }
+
+    void KGBuilder::notifyAllCLArgsSetupFinished() {
+        auto nThreads = VoidBuilder::simulationConfig.dev.get_nThreads();
+        auto N = VoidBuilder::simulationConfig.numericConfig.getN();
+        if (N % nThreads != 0)
+            throw Exception("Bad assertion N%nThreads. Expected 0 got "
+                            + ToStr(N % nThreads) + ".");
+
+        InterfaceListener::notifyAllCLArgsSetupFinished();
+    }
+
+
 }

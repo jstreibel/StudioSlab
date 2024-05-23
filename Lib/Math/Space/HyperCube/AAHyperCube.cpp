@@ -5,19 +5,21 @@
 #include "AAHyperCube.h"
 
 
-AAHyperCube::AAHyperCube(UInt dim, Real L)
-    : Space(dim), L(L), measure(new Measure(std::vector<Real>(dim, L)))
-{   }
+namespace Slab::Math {
 
-AAHyperCube::~AAHyperCube() {
-    delete measure;
+    AAHyperCube::AAHyperCube(UInt dim, Real L)
+            : Space(dim), L(L), measure(new Measure(std::vector<Real>(dim, L))) {}
+
+    AAHyperCube::~AAHyperCube() {
+        delete measure;
+    }
+
+    const Measure AAHyperCube::getMeasure() const {
+        return *measure;
+    }
+
+    auto AAHyperCube::getSide() const -> const Real {
+        return L;
+    }
+
 }
-
-const Measure AAHyperCube::getMeasure() const {
-    return *measure;
-}
-
-auto AAHyperCube::getSide() const -> const Real {
-    return L;
-}
-

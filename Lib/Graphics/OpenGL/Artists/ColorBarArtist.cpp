@@ -11,7 +11,7 @@
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/OpenGL/Texture1D_Color.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     struct ColorBarVertex {
         int x, y;
@@ -24,8 +24,8 @@ namespace Graphics::OpenGL {
 
     ColorBarArtist::ColorBarArtist(RectI loc)
             : vertexBuffer("inPosition:2f,inTexCoord:1f")
-            , shader(Resources::ShadersFolder + "ColorBar.vert",
-                     Resources::ShadersFolder + "ColorBar.frag")
+            , shader(Core::Resources::ShadersFolder + "ColorBar.vert",
+                     Core::Resources::ShadersFolder + "ColorBar.frag")
             , inverseScalingFunction([](Real x){ return x; })
     {
         setLocation(loc);
@@ -111,8 +111,8 @@ namespace Graphics::OpenGL {
         if(!textureDirty) return;
 
         if(texture==nullptr || texture->getSize()!=samples) {
-            texture = std::make_shared<::Graphics::OpenGL::Texture1D_Color>(samples, GL_TEXTURE1);
-            texture->setWrap(::Graphics::OpenGL::ClampToEdge);
+            texture = std::make_shared<OpenGL::Texture1D_Color>(samples, GL_TEXTURE1);
+            texture->setWrap(OpenGL::ClampToEdge);
         }
 
         for(auto i=0; i<samples; ++i){

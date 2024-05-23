@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 
-namespace Core {
+namespace Slab::Core {
 
     struct Animation {
         double initialValue;

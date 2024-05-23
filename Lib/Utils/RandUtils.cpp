@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-namespace RandUtils {
+namespace Slab::RandUtils {
     std::mt19937 mt(2);
     std::uniform_real_distribution<Real> realRandGen(0, 1);
 
@@ -35,7 +35,7 @@ namespace RandUtils {
 }
 
 
-namespace LostAndFound {
+namespace Slab::LostAndFound {
     void imprimeBinario(uint64_t a) {
         for (int i = 63; i >= 0; --i) {
             uint64_t val = (a & (1 << i)) >> i;

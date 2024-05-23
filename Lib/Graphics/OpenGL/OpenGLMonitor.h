@@ -10,9 +10,11 @@
 #include <iostream>
 #include <vector>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
-    class OpenGLMonitor : public Numerics::OutputSystem::Socket, public WindowPanel {
+    using namespace Math;
+
+    class OpenGLMonitor : public Socket, public WindowPanel {
         void writeStats();
 
         bool autoAdjustStepsPerSecond = true;

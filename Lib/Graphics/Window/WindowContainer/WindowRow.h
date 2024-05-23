@@ -10,7 +10,7 @@
 #include <list>
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class WindowRow : public Window {
         struct WinMetaData {

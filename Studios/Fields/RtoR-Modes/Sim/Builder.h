@@ -2,13 +2,17 @@
 // Created by joao on 1/09/23.
 //
 
-#ifndef STUDIOSLAB_BUILDER_H
-#define STUDIOSLAB_BUILDER_H
+#ifndef STUDIOSLAB_SIM_BUILDER_H
+#define STUDIOSLAB_SIM_BUILDER_H
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 #include "SquareWave.h"
 
 namespace Modes {
+
+    using namespace Slab;
+    using namespace Slab::Math;
+
 
     class Builder : public RtoR::KGBuilder {
         IntegerParameter BCSelection = IntegerParameter(0,    "BC",              "Boundary conditions selection:"
@@ -22,7 +26,7 @@ namespace Modes {
         RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
         BoolParameter driving_force  = BoolParameter   (false,"F,driving_force", "Compute with non-homogenous driving force.");
 
-        std::shared_ptr<Modes::SquareWave> squareWave;
+        Pointer<Modes::SquareWave> squareWave;
     protected:
         auto buildOpenGLOutput() -> void * override;
 
@@ -35,7 +39,7 @@ namespace Modes {
 
         auto getBoundary() -> void * override;
 
-        RtoR::Function::Ptr getNonHomogenous() override;
+        Pointer<Base::FunctionT<Real, Real>> getNonHomogenous() override;
 
         auto notifyCLArgsSetupFinished() -> void override;
     };

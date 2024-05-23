@@ -9,7 +9,7 @@
 
 #include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class InverseFourier : public RtoR::Function {
         DFTResult modes;

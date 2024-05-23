@@ -8,7 +8,7 @@
 #include "Math/Function/R2toR/Model/Transform.h"
 #include "ParametricCurve.h"
 
-namespace RtoR2 {
+namespace Slab::Math::RtoR2 {
 
     class StraightLine : public ParametricCurve {
         Real2D x0={0,0}, r={0,0};
@@ -27,7 +27,7 @@ namespace RtoR2 {
 
         Real2D operator()(Real s) const override;
 
-        friend StraightLine operator*(const Transform &T, const StraightLine &line);
+        friend StraightLine operator*(const R2toR::Transform &T, const StraightLine &line);
 
         StraightLine &operator=(const StraightLine &rhs);
 

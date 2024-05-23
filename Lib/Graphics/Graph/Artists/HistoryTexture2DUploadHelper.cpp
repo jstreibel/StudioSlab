@@ -6,7 +6,7 @@
 
 #define min(a, b) ((a)<(b)?(a):(b))
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(DiscreteFunction_Ptr history, Texture2D_Real_Ptr texture)
     : function(history)

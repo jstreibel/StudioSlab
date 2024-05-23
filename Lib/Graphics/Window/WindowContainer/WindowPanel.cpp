@@ -8,7 +8,7 @@
 #include "Core/Tools/Log.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     WindowPanel::WindowPanel(Window::Flags flags) : Window(0, 0, 100, 100, flags) {    }
 

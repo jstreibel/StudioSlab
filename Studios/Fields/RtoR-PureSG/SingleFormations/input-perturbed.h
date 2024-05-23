@@ -4,7 +4,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class InputPerturbations : public KGBuilder {
         RealParameter l   = RealParameter{1., "l", "Initial condition scale factor."};

@@ -7,32 +7,42 @@
 
 #include "Utils/Arrays.h"
 
-struct DimensionMetaData {
-    /*!
-     * Constructor.
-     * @param N A vector of size=dim and the discrete size of each dimension in
-     * each of its entry. For example, a discretization of real space x, y, z
-     * with 256x512x64 sites would have N={256,512,64}.
-     */
-    explicit DimensionMetaData(const UIntArray& N, RealArray _h) : nDim(N.size()), N(N), h(std::move(_h)) {
-        assert(N.size() == h.size());
-    }
 
-    UInt getNDim()      const                       { return nDim; }
-    auto getN(UInt dim) const -> const UInt &       { return N[dim]; }
-    auto getN()         const -> const UIntArray &  { return N; }
-    auto geth(UInt dim) const -> const Real &       {return h[dim]; }
-    auto geth()         const -> const RealArray &  {return h; }
+namespace Slab::Math {
 
-    auto getL(UInt dim) const ->       Real         { return N[dim]*h[dim]; }
+    struct DimensionMetaData {
+        /*!
+         * Constructor.
+         * @param N A vector of size=dim and the discrete size of each dimension in
+         * each of its entry. For example, a discretization of real space x, y, z
+         * with 256x512x64 sites would have N={256,512,64}.
+         */
+        explicit DimensionMetaData(const UIntArray &N, RealArray _h) : nDim(N.size()), N(N), h(std::move(_h)) {
+            assert(N.size() == h.size());
+        }
 
-    UInt computeFullDiscreteSize() const;
+        UInt getNDim() const { return nDim; }
 
-private:
-    const UInt nDim;
-    UIntArray N;
-    RealArray h;
-};
+        auto getN(UInt dim) const -> const UInt & { return N[dim]; }
+
+        auto getN() const -> const UIntArray & { return N; }
+
+        auto geth(UInt dim) const -> const Real & { return h[dim]; }
+
+        auto geth() const -> const RealArray & { return h; }
+
+        auto getL(UInt dim) const -> Real { return N[dim] * h[dim]; }
+
+        UInt computeFullDiscreteSize() const;
+
+    private:
+        const UInt nDim;
+        UIntArray N;
+        RealArray h;
+    };
+
+
+}
 
 
 #endif //STUDIOSLAB_DIMENSIONMETADATA_H

@@ -7,7 +7,7 @@
 #include "DrivenEquation.h"
 #include "Core/Tools/Log.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     namespace LeadingDelta {
 

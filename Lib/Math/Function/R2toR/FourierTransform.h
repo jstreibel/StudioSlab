@@ -7,7 +7,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class FourierTransform {
     public:

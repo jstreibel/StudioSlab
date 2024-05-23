@@ -22,7 +22,10 @@
 #define CHECK_UNIFORM_ERRORS \
     checkGLErrors(Str("uniform '") + name + "' @ " + __PRETTY_FUNCTION__);
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
+
+    using Log = Core::Log;
+
     void ListShaderUniforms(GLuint handle, std::basic_ostream<char, std::char_traits<char>> &log) {
         GLint numActiveUniforms = 0;
         GLint maxLength;

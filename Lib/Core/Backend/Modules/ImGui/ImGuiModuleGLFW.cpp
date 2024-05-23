@@ -12,7 +12,7 @@
 fix DONT_INSTALL_CALLBACKS = false;
 fix PRIORITIZE_ME = true;
 
-namespace Core {
+namespace Slab::Core {
     ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule(GLFW) {
 
         auto backend = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetGUIBackend());

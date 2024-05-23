@@ -7,7 +7,7 @@
 
 #include "Colors.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
     extern int hPadding;
     extern int vPadding;
 

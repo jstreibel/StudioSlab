@@ -10,7 +10,7 @@
 #include "Core/Backend/SFML/SFMLListener.h"
 #include "3rdParty/Nuklear/NuklearInclude.h"
 
-namespace Core {
+namespace Slab::Core {
 
     class NuklearSFMLModule : public NuklearModule, public SFMLListener {
         sf::RenderWindow *renderWindow = nullptr;

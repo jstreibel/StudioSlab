@@ -7,24 +7,33 @@
 
 typedef boost::timer::cpu_timer CPUTimer;
 
+namespace Slab {
 
-class Timer
-{
-public:
-    Timer() = default;
-    ~Timer() {}
+    class Timer {
+    public:
+        Timer() = default;
 
-    void reset() { timer = CPUTimer(); }
-    Real getElTime_sec() const { return timer.elapsed().wall*1e-9; }
-    Real getElTime_msec() const { return timer.elapsed().wall*1e-6; }
-    Real getElTime_musec() const { return timer.elapsed().wall*1e-3; }
-    Real getElTime_nsec() const { return timer.elapsed().wall; }
+        ~Timer() {}
 
-    void stop() { timer.stop(); }
-    void resume() { timer.resume(); }
+        void reset() { timer = CPUTimer(); }
 
-private:
-    CPUTimer timer = CPUTimer();
-};
+        Real getElTime_sec() const { return timer.elapsed().wall * 1e-9; }
+
+        Real getElTime_msec() const { return timer.elapsed().wall * 1e-6; }
+
+        Real getElTime_musec() const { return timer.elapsed().wall * 1e-3; }
+
+        Real getElTime_nsec() const { return timer.elapsed().wall; }
+
+        void stop() { timer.stop(); }
+
+        void resume() { timer.resume(); }
+
+    private:
+        CPUTimer timer = CPUTimer();
+    };
+
+}
 
 #endif
+

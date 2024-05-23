@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class AnalyticOscillon : public RtoR::Function {
     public:
         enum Bit {

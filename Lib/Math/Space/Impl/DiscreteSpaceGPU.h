@@ -9,6 +9,8 @@
 #include <Utils/DeviceConfig.h>
 
 
+namespace Slab::Math {
+
 #if USE_CUDA || defined(__NVCC__) || defined(__CUDACC__)
 class DiscreteSpaceGPU : public DiscreteSpace {
 public:
@@ -59,5 +61,7 @@ public:
 };
 #endif
 
+
+}
 
 #endif //V_SHAPE_DISCRETESPACEGPU_H

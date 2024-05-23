@@ -3,7 +3,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class ShockwavePhi : public RtoR::Function {
     public:
         ShockwavePhi(Real h);

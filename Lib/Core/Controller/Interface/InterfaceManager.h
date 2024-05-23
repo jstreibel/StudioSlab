@@ -9,30 +9,39 @@
 #include "Interface.h"
 
 
-class InterfaceManager {
-    static InterfaceManager *instance;
+namespace Slab::Core {
 
-    std::vector<Interface::Ptr> interfaces;
+    class InterfaceManager {
+        static InterfaceManager *instance;
 
-public:
-    static auto getInstance() -> InterfaceManager &;
+        std::vector<Interface::Ptr> interfaces;
 
-    // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
+    public:
+        static auto getInstance() -> InterfaceManager &;
 
-    void registerInterface(const Interface::Ptr& anInterface);
-    auto getInterfaces() -> std::vector<Interface::ConstPtr>;
-    auto getInterface(const char *string) -> Interface::ConstPtr;
+        // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
-    void feedInterfaces(const CLVariablesMap& vm);
+        void registerInterface(const Interface::Ptr &anInterface);
 
-    auto renderAsPythonDictionaryEntries() -> Str;
+        auto getInterfaces() -> std::vector<Interface::ConstPtr>;
 
-    auto renderParametersToString(const StrVector& params, const Str& separator=" ", bool longName=true) const -> Str;
+        auto getInterface(const char *string) -> Interface::ConstPtr;
 
-    auto getParametersValues(const StrVector& params) const -> std::vector<std::pair<Str,Str>>;
-    auto getParameter(const Str& name) const -> const Parameter&;
+        void feedInterfaces(const CLVariablesMap &vm);
 
-};
+        auto renderAsPythonDictionaryEntries() -> Str;
+
+        auto renderParametersToString(const StrVector &params, const Str &separator = " ",
+                                      bool longName = true) const -> Str;
+
+        auto getParametersValues(const StrVector &params) const -> std::vector<std::pair<Str, Str>>;
+
+        auto getParameter(const Str &name) const -> const Parameter &;
+
+    };
+
+
+}
 
 
 #endif //FIELDS_INTERFACEMANAGER_H

@@ -4,7 +4,7 @@
 
 #include "R2toCDiscreteFunction.h"
 
-namespace R2toC {
+namespace Slab::Math::R2toC {
 
     DiscreteFunction::DiscreteFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly)
     : x0(x0), y0(y0)

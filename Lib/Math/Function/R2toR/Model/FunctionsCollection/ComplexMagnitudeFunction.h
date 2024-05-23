@@ -8,7 +8,7 @@
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Function/R2toC/R2toCDiscreteFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class ComplexMagnitudeFunction : public R2toR::Function {
         std::shared_ptr<R2toC::DiscreteFunction> function = nullptr;

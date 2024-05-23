@@ -11,7 +11,7 @@
 #include "Core/Backend/Implementations.h"
 #include "3rdParty/Nuklear/NuklearInclude.h"
 
-namespace Core {
+namespace Slab::Core {
 
     class NuklearModule : public Core::Module {
         Core::BackendImplementation system;

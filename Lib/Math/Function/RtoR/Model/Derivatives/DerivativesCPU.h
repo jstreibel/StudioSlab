@@ -5,7 +5,7 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class DerivativeCPU : public RtoR::Function {
 

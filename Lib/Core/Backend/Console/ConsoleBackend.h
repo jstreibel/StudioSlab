@@ -3,13 +3,16 @@
 
 #include "Core/Backend/Backend.h"
 
-class ConsoleBackend : public Core::Backend
-{
-public:
-    ConsoleBackend();
-    void run(Program *integrator) override;
+namespace Slab::Core {
 
-    void terminate() override;
-};
+    class ConsoleBackend : public Backend {
+    public:
+        ConsoleBackend();
+
+        void run(Task *integrator) override;
+
+        void terminate() override;
+    };
+}
 
 #endif // CONSOLEBACKEND_H

@@ -7,9 +7,9 @@
 
 #include <map>
 
-namespace Backend {
+namespace Slab::Core {
 
-    Core::KeyMap translateFromGLUTSpecial(unsigned key){
+    KeyMap translateFromGLUTSpecial(unsigned key){
         switch (key) {
             case GLUT_KEY_NUM_LOCK:  return Core::Key_NUM_LOCK;
             case GLUT_KEY_BEGIN:     return Core::Key_HOME;

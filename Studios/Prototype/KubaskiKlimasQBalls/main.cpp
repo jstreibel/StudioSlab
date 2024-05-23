@@ -55,7 +55,7 @@ OutputToVector output;
 auto w = 1200.f;
 int rectLeft = 1.1 * w + 4 * 20;
 
-std::vector<Graphing::Graph> graphs;
+std::vector<Lost::Graph> graphs;
 Real start_r = 0.0001, end_r = 5, dr = 1.e-5 ;
 
 float f0 = 1.09868, g0 = 0, dfdr0=0, dgdr0 = 1.31902;
@@ -168,7 +168,7 @@ int main(int, const char **)
             sf::PrimitiveType primitiveType = sf::LineStrip;
             //if(k<2) primitiveType = sf::Lines;
             auto winW = window.getSize().x, winH = window.getSize().y;
-            graphs.push_back(Graphing::Graph(sf::IntRect(rectLeft, 20, winW-rectLeft-20, winH-2*20), {0, -0.2}, {end_r, 1.2}, "x", "f(x), g(x), h(x)", primitiveType));
+            graphs.push_back(Lost::Graph(sf::IntRect(rectLeft, 20, winW-rectLeft-20, winH-2*20), {0, -0.2}, {end_r, 1.2}, "x", "f(x), g(x), h(x)", primitiveType));
             colors[k] = sf::Color(colorInts[k]);
         }
 

@@ -4,5 +4,5 @@
 
 #include "Module.h"
 
-namespace Core {
+namespace Slab::Core {
 } // Core

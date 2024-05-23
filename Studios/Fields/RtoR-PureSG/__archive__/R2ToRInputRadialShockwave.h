@@ -7,7 +7,7 @@
 
 #include "Math/Numerics/VoidBuilder.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     class R2toRInputRadialShockwave : public Base::BCInterface {
     private:
         //DoubleParameter a = DoubleParameter{1., "a", "Shockwave simulation delta \'height\' scale parameter."};

@@ -13,7 +13,7 @@
 #include <iostream>
 #include <fstream>
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
     // View
     const bool SHOW_ENERGY = false;
     const int COLS = 1;

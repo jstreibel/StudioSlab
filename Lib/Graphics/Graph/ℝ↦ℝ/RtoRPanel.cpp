@@ -5,9 +5,9 @@
 #include "RtoRPanel.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
-    RtoRPanel::RtoRPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian,
+    RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, Math::RtoR::KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
             : Socket(params, name, 1, description)
             , guiWindow(guiWindow)
@@ -17,14 +17,14 @@ namespace Graphics {
 
     }
 
-    void RtoRPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+    void RtoRPanel::setSimulationHistory(Math::R2toR::DiscreteFunction_constptr simHistory,
                                          PlottingWindow_ptr simHistoryGraph) {
         simulationHistory = simHistory;
         simulationHistoryGraph = simHistoryGraph;
     }
 
-    void RtoRPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                           const DFTDataHistory &dftData,
+    void RtoRPanel::setSpaceFourierHistory(Math::R2toR::DiscreteFunction_constptr sftHistory,
+                                           const Models::DFTDataHistory &dftData,
                                            PlottingWindow_ptr sftHistoryGraph) {
 
         spaceFTHistory = sftHistory;
@@ -32,7 +32,7 @@ namespace Graphics {
         spaceFTHistoryGraph = sftHistoryGraph;
     }
 
-    void RtoRPanel::handleOutput(const OutputPacket &packet) {
+    void RtoRPanel::handleOutput(const Math::OutputPacket &packet) {
 
     }
 

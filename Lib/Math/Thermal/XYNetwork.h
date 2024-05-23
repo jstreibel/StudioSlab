@@ -13,69 +13,82 @@
 // #include "Core/Backend/SFML/COMPILE_CONFIG.h"
 #include "ThermoUtils.h"
 
-typedef std::vector<Real> StateType;
 
-class XYNetwork {
-    StateType ThetaField;
+namespace Slab::Math {
 
-public:
-    const int L, N;
-    explicit XYNetwork(int L);
+    typedef std::vector<Real> StateType;
 
-    int ij_to_k_periodic(int i, int j) const;
-    int ij_to_k_abs(int i, int j) const;
-    Real theta(int k) const;
-    Real theta(int i, int j) const;
-    Real E(Real h) const;
-    Real M() const;
-    bool areNeighbors(int i1, int j1, int i2, int j2) const;
+    class XYNetwork {
+        StateType ThetaField;
 
-    void set(int k, Real value);
+    public:
+        const int L, N;
 
-    /**
-     * Calculates energy density at site i, j with h=0;
-     * @param i
-     * @param j
-     * @return
-     */
-    Real e(int i, int j) const;
+        explicit XYNetwork(int L);
 
-    /**
-     * Calculates a proposed single-spin-rotate delta angle energy difference.
-     * @param i
-     * @param j
-     * @param h
-     * @return
-     */
-    Real ssrDeltaE(int i, int j, Real h, Real delta) const;
+        int ij_to_k_periodic(int i, int j) const;
 
-    /**
-     * Calculates a proposed single-spin-overrelaxation with rotation delta angle energy difference.
-     * @param i
-     * @param j
-     * @param h
-     * @return
-     */
-    Real ssorrDeltaE(int i, int j, Real h, Real delta) const;
+        int ij_to_k_abs(int i, int j) const;
 
-    void overrelax(int i, int j);
+        Real theta(int k) const;
 
-    /**
-     * Calculates a proposed two-spin exchange energy difference.
-     * @param s1
-     * @param s2
-     * @param h
-     * @return
-     */
-    double tseDeltaE(int s1, int s2, double h) const;
+        Real theta(int i, int j) const;
 
-    void rotate(int k, Real angle);
-    void rotate(int i, int j, Real angle);
+        Real E(Real h) const;
 
-    void operator = (StateType S);
-    //void operator = (const std::vector<long double> S);
+        Real M() const;
 
-};
+        bool areNeighbors(int i1, int j1, int i2, int j2) const;
 
+        void set(int k, Real value);
+
+        /**
+         * Calculates energy density at site i, j with h=0;
+         * @param i
+         * @param j
+         * @return
+         */
+        Real e(int i, int j) const;
+
+        /**
+         * Calculates a proposed single-spin-rotate delta angle energy difference.
+         * @param i
+         * @param j
+         * @param h
+         * @return
+         */
+        Real ssrDeltaE(int i, int j, Real h, Real delta) const;
+
+        /**
+         * Calculates a proposed single-spin-overrelaxation with rotation delta angle energy difference.
+         * @param i
+         * @param j
+         * @param h
+         * @return
+         */
+        Real ssorrDeltaE(int i, int j, Real h, Real delta) const;
+
+        void overrelax(int i, int j);
+
+        /**
+         * Calculates a proposed two-spin exchange energy difference.
+         * @param s1
+         * @param s2
+         * @param h
+         * @return
+         */
+        double tseDeltaE(int s1, int s2, double h) const;
+
+        void rotate(int k, Real angle);
+
+        void rotate(int i, int j, Real angle);
+
+        void operator=(StateType S);
+        //void operator = (const std::vector<long double> S);
+
+    };
+
+
+}
 
 #endif //ISING_ISINGNETWORK_H

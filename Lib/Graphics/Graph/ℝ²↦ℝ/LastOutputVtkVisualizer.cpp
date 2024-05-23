@@ -36,10 +36,10 @@
 
 #define vtkPtrNew(ofClass) vtkSmartPointer<ofClass>::New()
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     LastOutputVTKVisualizer::LastOutputVTKVisualizer(const NumericParams &params, int outN)
-    : Numerics::OutputSystem::Socket(params, "LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
+    : Socket(params, "LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
     , outN(outN) {
 
     }

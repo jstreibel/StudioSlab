@@ -9,7 +9,7 @@
 
 #include "Math/Toolset/NativeFunctions.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class RegularDiracDelta : public RtoR::Function {
         Real (*delta)(Real, Real);
 

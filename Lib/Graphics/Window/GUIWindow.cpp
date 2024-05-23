@@ -10,7 +10,7 @@
 #include "Core/Backend/BackendManager.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     GUIWindow::GUIWindow() : Window() {
         setClear(false);
@@ -69,7 +69,7 @@ namespace Graphics {
             }
         }
 
-        auto allInterfaces = InterfaceManager::getInstance().getInterfaces();
+        auto allInterfaces = Core::InterfaceManager::getInstance().getInterfaces();
         if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
             for (auto &interface: allInterfaces) {

@@ -10,7 +10,7 @@
 
 #include <Utils/Types.h>
 
-namespace Core {
+namespace Slab::Math::Base {
 
 
     class GPUFriendly;

@@ -10,11 +10,12 @@
 #include "Math/Thermal/MetropolisAlgorithm.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 #include "Math/Thermal/ViewControlBase.h"
+#include "Graphics/SFML/Graph.h"
 
 #include <SFML/Graphics.hpp>
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
     class QuenchViewController : public ViewControlBase {
         double T;
         int MCStep{};
@@ -32,9 +33,9 @@ namespace ThermoOutput {
         sf::Font font;
         sf::Text text;
 
-        Graph *e_t_view;
-        Graph *m_t_view;
-        Graph *T_t_view;
+        Lost::Graph *e_t_view;
+        Lost::Graph *m_t_view;
+        Lost::Graph *T_t_view;
 
         std::vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 

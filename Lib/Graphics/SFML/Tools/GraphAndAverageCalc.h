@@ -5,14 +5,14 @@
 #ifndef ISING_GRAPHANDAVERAGECALC_H
 #define ISING_GRAPHANDAVERAGECALC_H
 
-#include "Graph.h"
+#include "../Graph.h"
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
 
     typedef std::pair<double,double> DoublePair;
     typedef std::vector<std::pair<DoublePair ,DoublePair>> AveragesHistory;
 
-    class GraphAndAverageCalc : public Graph {
+    class GraphAndAverageCalc : public Lost::Graph {
 
         sf::VertexArray postTransientDataAvgPlusSigma;
         sf::VertexArray postTransientDataAvg;
@@ -25,8 +25,8 @@ namespace ThermoOutput {
 
         sf::VertexArray movingTransientVerticalLine;
 
-        Graph *avgSubgraph = nullptr;
-        Graph *sigmaSubgraph = nullptr;
+        Lost::Graph *avgSubgraph = nullptr;
+        Lost::Graph *sigmaSubgraph = nullptr;
         bool avgAbs;
 
         double avg;
@@ -42,7 +42,7 @@ namespace ThermoOutput {
                             unsigned transient,
                             std::string xAxisLabel, std::string yAxisLabel, bool avgAbs);
 
-        void addPoint(float x, float y, sf::Color color) override;
+        void addPoint(float x, float y, sf::Color color, bool rescaleIfOverflow=false) override;
 
         /**
          *
@@ -52,7 +52,7 @@ namespace ThermoOutput {
 
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
-        void setAvgOutputSubGraph(Graph *avgSubgraph, Graph *sigmaSubgraph) {
+        void setAvgOutputSubGraph(Lost::Graph *avgSubgraph, Lost::Graph *sigmaSubgraph) {
             this->avgSubgraph = avgSubgraph;
             this->sigmaSubgraph = sigmaSubgraph;
         };

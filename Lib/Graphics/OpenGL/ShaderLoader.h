@@ -7,7 +7,7 @@
 
 #include "Shader.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     class ShaderLoader {
     public:

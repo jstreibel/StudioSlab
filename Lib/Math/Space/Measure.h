@@ -8,14 +8,17 @@
 
 #include "Utils/Types.h"
 
-class Measure {
-    RealVector linearValues;
+namespace Slab::Math {
 
-public:
-    Measure(RealVector linearValues);
+    class Measure {
+        RealVector linearValues;
 
-    Real operator*();
-};
+    public:
+        Measure(RealVector linearValues);
 
+        Real operator*();
+    };
+
+}
 
 #endif //STUDIOSLAB_MEASURE_H

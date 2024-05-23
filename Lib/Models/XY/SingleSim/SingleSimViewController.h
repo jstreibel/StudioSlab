@@ -21,7 +21,7 @@
 #include <SFML/Graphics.hpp>
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
     const double T_c = 0.8935;
 
     class SingleSimViewController : public SFMLListener {

@@ -4,7 +4,7 @@
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class InputShockwave : public KGBuilder {
     private:
 

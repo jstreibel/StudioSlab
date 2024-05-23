@@ -9,7 +9,7 @@
 //#include <View/Graphic/OutputOpenGL.h>
 //#include "Apps/Simulations/BCInterface.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class R2toRInputShockwaveAt_t0 : public Base::BCInterface {
     private:

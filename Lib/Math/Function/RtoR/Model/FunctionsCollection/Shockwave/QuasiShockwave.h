@@ -8,7 +8,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class QuasiShockwave : public RtoR::Function {
         auto ϕ_1L(Real x) const -> Real;
         auto ϕ_2L(Real x) const -> Real;

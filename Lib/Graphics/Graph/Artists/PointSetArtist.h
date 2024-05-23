@@ -10,7 +10,7 @@
 #include "Math/Space/Impl/PointSet.h"
 #include "Graphics/Graph/PlotStyle.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class PointSetArtist : public Artist {
         Math::PointSet_ptr pointSet;

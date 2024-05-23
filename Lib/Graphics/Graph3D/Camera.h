@@ -8,7 +8,7 @@
 #include <glm/ext/matrix_float4x4.hpp>
 #include "Graphics/Types.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     struct Camera {
     public:

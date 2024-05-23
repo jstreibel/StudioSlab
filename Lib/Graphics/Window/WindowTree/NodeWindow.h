@@ -10,7 +10,7 @@
 #include <vector>
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     typedef std::vector<Window *> WindowContainer;
 

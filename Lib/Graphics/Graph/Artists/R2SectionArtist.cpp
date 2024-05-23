@@ -7,7 +7,7 @@
 
 #include <utility>
 
-namespace Graphics {
+namespace Slab::Graphics {
     void R2SectionArtist::setFunction(R2toR::Function_ptr func)  { function2D = std::move(func); }
 
     void R2SectionArtist::addSection(const RtoR2::ParametricCurve_ptr& section, PlotStyle style) {

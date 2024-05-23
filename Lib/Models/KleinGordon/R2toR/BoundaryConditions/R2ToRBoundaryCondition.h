@@ -9,9 +9,9 @@
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
-    class BoundaryCondition : public Core::BoundaryConditions<R2toR::EquationState> {
+    class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
     public:
         BoundaryCondition(Function *initialPhiCondition,
                           Function *initialdPhiDtCondition,

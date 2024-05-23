@@ -10,8 +10,8 @@
 #include "Utils/NativeTypes.h"
 #include "Math/Function/CommonFunctions.h"
 
-namespace R2toR {
-    typedef Core::Functions<Real>::Function2D Function;
+namespace Slab::Math::R2toR {
+    typedef Base::Functions<Real>::Function2D Function;
 
     DefinePointer(Function)
 }

@@ -9,6 +9,9 @@
 
 namespace Modes {
 
+    using namespace Slab;
+    using namespace Slab::Math;
+
     class SquareWave : public RtoR::Function {
         Real t=0;
         Real len=1;

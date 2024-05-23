@@ -4,7 +4,7 @@
 
 #include "TextureUtils.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     Str TargetToString(Target target) {
         switch (target) {

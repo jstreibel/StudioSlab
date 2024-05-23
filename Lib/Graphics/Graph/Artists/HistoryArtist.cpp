@@ -4,7 +4,7 @@
 
 #include "HistoryArtist.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     void HistoryArtist::set_t(Real t) {
         auto func = this->getFunction();

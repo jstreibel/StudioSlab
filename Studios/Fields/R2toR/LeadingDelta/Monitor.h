@@ -7,7 +7,7 @@
 
 #include "Math/Function/R2toR/View/R2toROutputOpenGLGeneric.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     namespace LeadingDelta {
 

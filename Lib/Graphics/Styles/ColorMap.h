@@ -13,7 +13,7 @@
 #include "Colors.h"
 #include "Graphics/Graph/PlotStyle.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class ColorMap {
     public:

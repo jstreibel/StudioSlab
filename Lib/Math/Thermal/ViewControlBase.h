@@ -8,7 +8,7 @@
 
 #include "Math/Thermal/InputOutput.h"
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
     class ViewControlBase {
     public:
         virtual bool doOperate(SystemParams &params, OutputData &data) = 0;

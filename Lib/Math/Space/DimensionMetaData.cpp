@@ -4,7 +4,7 @@
 
 #include "DimensionMetaData.h"
 
-UInt DimensionMetaData::computeFullDiscreteSize() const {
+Slab::UInt Slab::Math::DimensionMetaData::computeFullDiscreteSize() const {
     UInt size = 1;
     for(auto n : N){
         size *= n;

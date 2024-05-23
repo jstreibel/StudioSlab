@@ -7,17 +7,23 @@
 
 #include <Core/Controller/Interface/InterfaceOwner.h>
 
-class AppBase : public InterfaceOwner {
 
-protected:
-    AppBase(int argc, const char *argv[], bool doRegister=true);
-    virtual ~AppBase();
+namespace Slab::Core {
 
-    void parseCLArgs();
+    class AppBase : public InterfaceOwner {
 
-public:
-    virtual int run() = 0;
-};
+    protected:
+        AppBase(int argc, const char *argv[], bool doRegister = true);
 
+        virtual ~AppBase();
+
+        void parseCLArgs();
+
+    public:
+        virtual int run() = 0;
+    };
+
+
+}
 
 #endif //V_SHAPE_APPBASE_H

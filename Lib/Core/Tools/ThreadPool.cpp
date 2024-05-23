@@ -5,7 +5,7 @@
 #include "ThreadPool.h"
 
 
-namespace Core {
+namespace Slab::Core {
     namespace Tools {
         ThreadPool::ThreadPool(size_t numThreads) {
             for (size_t i = 0; i < numThreads; ++i) {

@@ -4,10 +4,14 @@
 
 #include "R2ToRRegularDelta.h"
 
-Real R2toR::R2toRRegularDelta::operator()(Real2D x) const {
-    const float r = x.norm();
+namespace Slab::Math {
 
-    if(r < eps) return a*(3./(std::numbers::pi*eps*eps)) * (1. - r/eps);
+    Real R2toR::R2toRRegularDelta::operator()(Real2D x) const {
+        const float r = x.norm();
 
-    return .0;
+        if (r < eps) return a * (3. / (std::numbers::pi * eps * eps)) * (1. - r / eps);
+
+        return .0;
+    }
+
 }

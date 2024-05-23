@@ -7,7 +7,7 @@
 #include "Utils.h"
 
 
-namespace Utils {
+namespace Slab::Utils {
 
     MaxInfo GetMax(const RealArray &arr) {
         double maxVal = arr[0];

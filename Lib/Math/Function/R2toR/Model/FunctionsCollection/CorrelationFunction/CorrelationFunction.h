@@ -9,7 +9,7 @@
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Sampler.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class CorrelationFunction : public R2toR::Function {
         R2toR::Function_constptr baseFunction;

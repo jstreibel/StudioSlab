@@ -7,7 +7,7 @@
 
 #include <utility>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     PointSetArtist::PointSetArtist(Math::PointSet_ptr pointSet, PlotStyle style)
     : pointSet(std::move(pointSet)), plotStyle(style) {

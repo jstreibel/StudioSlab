@@ -5,7 +5,7 @@
 #include "RealTimeAnimation.h"
 #include "Graphics/Animator.h"
 
-namespace Core {
+namespace Slab::Core {
 
     void RealTimeAnimationModule::beginRender() {
         Module::beginRender();

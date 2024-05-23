@@ -4,7 +4,11 @@
 
 #include "SimulationConfig.h"
 
-Core::Simulation::SimulationConfig::SimulationConfig(bool doRegister)
-        : numericConfig(doRegister)
-        , dev(doRegister)
-{   }
+
+namespace Slab::Math {
+
+    SimulationConfig::SimulationConfig(bool doRegister)
+            : numericConfig(doRegister), dev(doRegister) {}
+
+
+}

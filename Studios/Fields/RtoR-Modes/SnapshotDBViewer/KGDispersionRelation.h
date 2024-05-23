@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class KGDispersionRelation : public RtoR::Function {
         Real m²;

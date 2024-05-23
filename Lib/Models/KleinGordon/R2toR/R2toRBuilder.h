@@ -15,8 +15,8 @@
 #include "EquationState.h"
 #include "Models/KleinGordon/KGBuilder.h"
 
-namespace R2toR {
-    class Builder : public Fields::KleinGordon::KGBuilder {
+namespace Slab::Math::R2toR {
+    class Builder : public Models::KGBuilder {
             Str name = "";
 
         protected:

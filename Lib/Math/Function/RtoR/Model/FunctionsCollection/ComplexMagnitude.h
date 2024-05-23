@@ -8,7 +8,7 @@
 #include "Math/Function/RtoC/Function.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class ComplexMagnitude : public RtoR::Function {
         RtoC::Function::Ptr RtoCFunction;

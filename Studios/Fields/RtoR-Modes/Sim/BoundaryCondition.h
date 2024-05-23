@@ -21,10 +21,10 @@ namespace Modes {
     };
 
     class DrivenBC : public RtoR::BoundaryCondition {
-        std::shared_ptr<Modes::SquareWave> sqrWave;
+        Slab::Pointer<Modes::SquareWave> sqrWave;
     public:
 
-        DrivenBC(const RtoR::EquationState &prototype, std::shared_ptr<Modes::SquareWave> sqrWave);
+        DrivenBC(const RtoR::EquationState &prototype, Slab::Pointer<Modes::SquareWave> sqrWave);
 
         void apply(EqState &toFunction, Real t) const override;
     };

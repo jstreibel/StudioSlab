@@ -7,7 +7,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
-namespace RtoR::Thermal {
+namespace Slab::Math::RtoR::Thermal {
 
     class Builder : public RtoR::KGBuilder {
         RealParameter temperature    = RealParameter(.0, "T,temperature", "The Langevin temperature reservoir's temperature");

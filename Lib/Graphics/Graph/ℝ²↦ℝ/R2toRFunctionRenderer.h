@@ -8,8 +8,10 @@
 #include <memory>
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
+    using namespace Math;
+    
     class R2toRFunctionRenderer {
     public:
         static auto renderToDiscrete(const R2toR::Function& function,

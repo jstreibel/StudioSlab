@@ -13,7 +13,7 @@
 #include <cmath>
 #include <utility>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     typedef std::array<float,2> vec2;
     typedef std::array<float,3> vec3;

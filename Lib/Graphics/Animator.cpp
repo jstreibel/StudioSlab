@@ -8,7 +8,7 @@
 #include <cmath>
 #include <chrono>
 
-namespace Core {
+namespace Slab::Core {
 
     Animator &Animator::Instance() {
         static Animator instance;

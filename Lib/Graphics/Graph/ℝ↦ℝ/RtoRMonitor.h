@@ -15,18 +15,18 @@
 #include "RtoRPanel.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
     class HistoryDisplay;
 }
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     class DiscreteFunction;
 }
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class KGEnergy;
 
-    class Monitor : public ::Graphics::OpenGLMonitor {
+    class Monitor : public Graphics::OpenGLMonitor {
         std::vector<Graphics::RtoRPanel_ptr> dataViews;
         Graphics::RtoRPanel_ptr currentDataView;
 
@@ -38,7 +38,7 @@ namespace RtoR {
         Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
-        const DFTDataHistory *dftData;
+        const Models::DFTDataHistory *dftData;
 
         KGEnergy &hamiltonian;
 
@@ -61,7 +61,7 @@ namespace RtoR {
 
         virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory);
         virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                            const DFTDataHistory &dftData);
+                                            const Models::DFTDataHistory &dftData);
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 

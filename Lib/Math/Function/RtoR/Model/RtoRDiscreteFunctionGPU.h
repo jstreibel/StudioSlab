@@ -7,7 +7,7 @@
 
 #include "RtoRDiscreteFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 #if USE_CUDA == true
     class DiscreteFunctionGPU : public DiscreteFunction {
     public:

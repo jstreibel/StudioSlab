@@ -11,7 +11,9 @@
 #include "Graphics/OpenGL/Texture2D_Real.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class Field2DActor : public Actor {
         std::shared_ptr<R2toR::DiscreteFunction> func;

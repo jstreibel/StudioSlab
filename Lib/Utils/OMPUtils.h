@@ -7,7 +7,10 @@
 
 #include "Types.h"
 
-IntPair getBeginAndEndForThreadedFor(int N);
+
+namespace Slab {
+
+    IntPair getBeginAndEndForThreadedFor(int N);
 
 #define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
     IntPair be = getBeginAndEndForThreadedFor(NSites); \
@@ -19,5 +22,8 @@ IntPair getBeginAndEndForThreadedFor(int N);
 #define OMP_PARALLEL_FOR(indexLabel, NSites) \
     IntPair be = getBeginAndEndForThreadedFor(NSites); \
     for(UInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
+
+
+}
 
 #endif //STUDIOSLAB_OMPUTILS_H

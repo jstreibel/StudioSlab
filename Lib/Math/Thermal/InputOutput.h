@@ -10,7 +10,9 @@
 #include "Math/Thermal/XYNetwork.h"
 
 
-namespace ThermoOutput {
+namespace Slab::Lost::ThermoOutput {
+
+    using namespace Math;
 
     struct OutputData {
         const XYNetwork &S;

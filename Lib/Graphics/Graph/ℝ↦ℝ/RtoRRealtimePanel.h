@@ -16,7 +16,8 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "RtoRPanel.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
+
     class RealtimePanel : public Graphics::RtoRPanel {
     public:
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
@@ -43,7 +44,7 @@ namespace RtoR {
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
-        ::Graphics::PlottingWindow mEnergyGraph;
+        Graphics::PlottingWindow mEnergyGraph;
 
         void draw() override;
 
@@ -58,7 +59,7 @@ namespace RtoR {
                                   Graphics::PlottingWindow_ptr simHistoryGraph) override;
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                    const DFTDataHistory &dftData,
+                                    const Models::DFTDataHistory &dftData,
                                     Graphics::PlottingWindow_ptr sftHistoryGraph) override;
     };
 }

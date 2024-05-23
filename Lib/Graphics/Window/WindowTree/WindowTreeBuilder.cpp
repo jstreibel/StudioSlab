@@ -5,7 +5,7 @@
 #include "WindowTreeBuilder.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     WindowTreeBuilder::WindowTreeBuilder(int x, int y, int w, int h)
             : root(new NodeWindow(x, y, w, h)), shape(x, y, w, h),

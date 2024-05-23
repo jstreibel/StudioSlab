@@ -8,7 +8,7 @@
 #include "../ThermalBuilder.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     class MachineGunBuilder  : public RtoR::Thermal::Builder {
         RealParameter v1 = RealParameter{0.5, "v1", "Left oscillon's border speed."};
         IntegerParameter n = IntegerParameter{10, "n", "Number of shooting tiny oscillons."};

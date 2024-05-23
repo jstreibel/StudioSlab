@@ -7,173 +7,172 @@
 #include <SFML/Graphics/Text.hpp>
 
 
-using namespace Graphing;
+namespace Slab::Lost {
 
 
-Graph::Graph(sf::IntRect subWindow, sf::Vector2f rMin, sf::Vector2f rMax,
-              const Str xAxisLabel, const Str yAxisLabel, sf::PrimitiveType primitiveType)
-: theData(primitiveType), scale(scale), rMin(rMin), rMax(rMax) {
-    setPlacing(subWindow);
+    Graph::Graph(sf::IntRect subWindow, sf::Vector2f rMin, sf::Vector2f rMax,
+                 const Str xAxisLabel, const Str yAxisLabel, sf::PrimitiveType primitiveType)
+            : theData(primitiveType), scale(scale), rMin(rMin), rMax(rMax) {
+        setPlacing(subWindow);
 
-    if (!font.loadFromFile("/home/joao/Developer/StudioSlab/Resources/Fonts/static/EBGaramond-Regular.ttf")) {
-        system("pwd");
-        throw "SFML error.";
-    }
-
-    int fontSize = 14;
-
-    sf::Text text = sf::Text(yAxisLabel, font, fontSize);
-    float yMid = mySubWindow.height*(1./2);
-    auto tBounds = text.getGlobalBounds();
-    auto textWidth = tBounds.width;
-    auto textHeight = tBounds.height;
-    text.setPosition(-(fontSize+2),yMid-textHeight/2);
-    text.setOrigin(textWidth/2, textHeight/2);
-    text.setRotation(-90);
-    labels.push_back(text);
-
-    text = sf::Text(xAxisLabel, font, fontSize);
-    float xMid = mySubWindow.width/2;
-    float yBelow = mySubWindow.height +1;
-    text.setPosition(xMid, yBelow);
-    labels.push_back(text);
-}
-
-
-
-
-void Graph::setPlacing(sf::IntRect placing) {
-    this->mySubWindow = placing;
-    _computeScale();
-
-    {
-        int sizeHint = theData.getVertexCount();
-        for (auto i = 0; i < sizeHint; ++i)
-            theData[i].color = sf::Color::White;
-    }
-
-
-    {
-        frame.setPrimitiveType(sf::Lines);
-
-        float w = placing.width, h = placing.height;
-        frame.append({{0, 0}, sf::Color::White});
-        frame.append({{w, 0}, sf::Color::White});
-        frame.append({{w, 0}, sf::Color::White});
-        frame.append({{w, h}, sf::Color::White});
-        frame.append({{w, h}, sf::Color::White});
-        frame.append({{0, h}, sf::Color::White});
-        frame.append({{0, h}, sf::Color::White});
-        frame.append({{0, 0}, sf::Color::White});
-    }
-
-    // Axes
-    {
-        axes.setPrimitiveType(sf::Lines);
-
-        float w=rMax.x-rMin.x, h=rMax.y-rMin.y;
-        const int tickCount = 10;
-        for(int i=0; i < tickCount; ++i){
-            axes.append({{(float(i) / tickCount) * w + rMin.x, -h / 80}, sf::Color::White});
-            axes.append({{(float(i) / tickCount) * w + rMin.x, h / 80}, sf::Color::White});
+        if (!font.loadFromFile("/home/joao/Developer/StudioSlab/Resources/Fonts/static/EBGaramond-Regular.ttf")) {
+            system("pwd");
+            throw "SFML error.";
         }
-        axes.append({{rMin.x, 0}, sf::Color::White});
-        axes.append({{rMax.x, 0}, sf::Color::White});
+
+        int fontSize = 14;
+
+        sf::Text text = sf::Text(yAxisLabel, font, fontSize);
+        float yMid = mySubWindow.height * (1. / 2);
+        auto tBounds = text.getGlobalBounds();
+        auto textWidth = tBounds.width;
+        auto textHeight = tBounds.height;
+        text.setPosition(-(fontSize + 2), yMid - textHeight / 2);
+        text.setOrigin(textWidth / 2, textHeight / 2);
+        text.setRotation(-90);
+        labels.push_back(text);
+
+        text = sf::Text(xAxisLabel, font, fontSize);
+        float xMid = mySubWindow.width / 2;
+        float yBelow = mySubWindow.height + 1;
+        text.setPosition(xMid, yBelow);
+        labels.push_back(text);
     }
-}
 
 
-void Graph::draw(sf::RenderTarget &target, sf::RenderStates states) const {
-    states.transform.translate(mySubWindow.left, mySubWindow.top);
-    target.draw(&frame[0], frame.getVertexCount(), frame.getPrimitiveType(), states);
+    void Graph::setPlacing(sf::IntRect placing) {
+        this->mySubWindow = placing;
+        _computeScale();
 
-    for(const auto &label : labels)
-        target.draw(label, states);
-
-
-    states.transform.translate(0, mySubWindow.height);
-    states.transform.scale(scale);
-    states.transform.translate(-rMin.x, -rMin.y);
-
-    target.draw(&axes[0], axes.getVertexCount(), axes.getPrimitiveType(), states);
-
-    target.draw(&theData[0], theData.getVertexCount(), theData.getPrimitiveType(), states);
-}
-
-
-void Graph::clear(){
-    theData.clear();
-}
-
-
-void Graph::addPoint(float x, float y, sf::Color color, bool rescaleIfOverflow) {
-    theData.append({{x, y}, color});
-
-    if(rescaleIfOverflow) {
-        if (y > rMax.y) {
-            rMax.y = y * 1.1;
-            _computeScale();
-        } else if (y < rMin.y) {
-            rMin.y = y / 1.1;
-            _computeScale();
+        {
+            int sizeHint = theData.getVertexCount();
+            for (auto i = 0; i < sizeHint; ++i)
+                theData[i].color = sf::Color::White;
         }
-        if (x > rMax.x) {
-            rMax.x = x * 1.1;
-            _computeScale();
-        } else if (x < rMin.x) {
-            rMin.x = x / 1.1;
-            _computeScale();
+
+
+        {
+            frame.setPrimitiveType(sf::Lines);
+
+            float w = placing.width, h = placing.height;
+            frame.append({{0, 0}, sf::Color::White});
+            frame.append({{w, 0}, sf::Color::White});
+            frame.append({{w, 0}, sf::Color::White});
+            frame.append({{w, h}, sf::Color::White});
+            frame.append({{w, h}, sf::Color::White});
+            frame.append({{0, h}, sf::Color::White});
+            frame.append({{0, h}, sf::Color::White});
+            frame.append({{0, 0}, sf::Color::White});
+        }
+
+        // Axes
+        {
+            axes.setPrimitiveType(sf::Lines);
+
+            float w = rMax.x - rMin.x, h = rMax.y - rMin.y;
+            const int tickCount = 10;
+            for (int i = 0; i < tickCount; ++i) {
+                axes.append({{(float(i) / tickCount) * w + rMin.x, -h / 80}, sf::Color::White});
+                axes.append({{(float(i) / tickCount) * w + rMin.x, h / 80}, sf::Color::White});
+            }
+            axes.append({{rMin.x, 0}, sf::Color::White});
+            axes.append({{rMax.x, 0}, sf::Color::White});
         }
     }
-}
 
-void Graph::_computeScale() {
-    scale.x = mySubWindow.width / (rMax.x - rMin.x);
-    scale.y = -mySubWindow.height / (rMax.y - rMin.y);
-}
 
-void Graph::addHorizontalDashedLine(float y, int dashCount, sf::Color color) {
-    float w=rMax.x-rMin.x, h=rMax.y-rMin.y;
+    void Graph::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+        states.transform.translate(mySubWindow.left, mySubWindow.top);
+        target.draw(&frame[0], frame.getVertexCount(), frame.getPrimitiveType(), states);
 
-    for(int i=0; i<dashCount; i++){
-        float x0 = rMin.x + w*(float(i  ) / dashCount),
-                x1 = rMin.x + w*(float(i + 1) / dashCount);
-        axes.append({{x0, y}, color});
-        axes.append({{x1, y}, color});
+        for (const auto &label: labels)
+            target.draw(label, states);
 
-        ++i;
-    }
-}
 
-void Graph::addVerticalDashedLine(float x, int dashCount, sf::Color color) {
-    float h=rMax.y-rMin.y;
+        states.transform.translate(0, mySubWindow.height);
+        states.transform.scale(scale);
+        states.transform.translate(-rMin.x, -rMin.y);
 
-    for(int i=0; i<dashCount; i++){
-        float y0 = rMin.y + h*(float(i  ) / dashCount),
-              y1 = rMin.y + h*(float(i + 1) / dashCount);
-        axes.append({{x, y0}, color});
-        axes.append({{x, y1}, color});
+        target.draw(&axes[0], axes.getVertexCount(), axes.getPrimitiveType(), states);
 
-        ++i;
-    }
-}
-
-void Graph::manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor) {
-    // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
-}
-
-std::vector<std::pair<Real,Real>> Graph::getData() const {
-    std::vector<std::pair<Real,Real>> data(theData.getVertexCount());
-    for(int i=0; i<theData.getVertexCount(); i++){
-        auto iData = theData[i].position;
-        data[i] = {iData.x, iData.y};
+        target.draw(&theData[0], theData.getVertexCount(), theData.getPrimitiveType(), states);
     }
 
-    return data;
+
+    void Graph::clear() {
+        theData.clear();
+    }
+
+
+    void Graph::addPoint(float x, float y, sf::Color color, bool rescaleIfOverflow) {
+        theData.append({{x, y}, color});
+
+        if (rescaleIfOverflow) {
+            if (y > rMax.y) {
+                rMax.y = y * 1.1;
+                _computeScale();
+            } else if (y < rMin.y) {
+                rMin.y = y / 1.1;
+                _computeScale();
+            }
+            if (x > rMax.x) {
+                rMax.x = x * 1.1;
+                _computeScale();
+            } else if (x < rMin.x) {
+                rMin.x = x / 1.1;
+                _computeScale();
+            }
+        }
+    }
+
+    void Graph::_computeScale() {
+        scale.x = mySubWindow.width / (rMax.x - rMin.x);
+        scale.y = -mySubWindow.height / (rMax.y - rMin.y);
+    }
+
+    void Graph::addHorizontalDashedLine(float y, int dashCount, sf::Color color) {
+        float w = rMax.x - rMin.x, h = rMax.y - rMin.y;
+
+        for (int i = 0; i < dashCount; i++) {
+            float x0 = rMin.x + w * (float(i) / dashCount),
+                    x1 = rMin.x + w * (float(i + 1) / dashCount);
+            axes.append({{x0, y}, color});
+            axes.append({{x1, y}, color});
+
+            ++i;
+        }
+    }
+
+    void Graph::addVerticalDashedLine(float x, int dashCount, sf::Color color) {
+        float h = rMax.y - rMin.y;
+
+        for (int i = 0; i < dashCount; i++) {
+            float y0 = rMin.y + h * (float(i) / dashCount),
+                    y1 = rMin.y + h * (float(i + 1) / dashCount);
+            axes.append({{x, y0}, color});
+            axes.append({{x, y1}, color});
+
+            ++i;
+        }
+    }
+
+    void Graph::manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor) {
+        // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
+    }
+
+    std::vector<std::pair<Real, Real>> Graph::getData() const {
+        std::vector<std::pair<Real, Real>> data(theData.getVertexCount());
+        for (int i = 0; i < theData.getVertexCount(); i++) {
+            auto iData = theData[i].position;
+            data[i] = {iData.x, iData.y};
+        }
+
+        return data;
+    }
+
+    void Graph::clearData() {
+        theData.clear();
+    }
+
+
 }
-
-
-
-
-
-

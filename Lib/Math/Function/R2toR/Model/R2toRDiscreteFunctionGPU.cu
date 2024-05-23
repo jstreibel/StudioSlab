@@ -8,7 +8,7 @@
 
 
 
-using namespace R2toR;
+using namespace Slab::Math::R2toR;
 
 
 DiscreteFunction_GPU::DiscreteFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real h)

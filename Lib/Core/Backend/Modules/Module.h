@@ -7,7 +7,7 @@
 
 #include <memory> // Includes Shared Pointer
 
-namespace Core {
+namespace Slab::Core {
 
     class Module {
     public:

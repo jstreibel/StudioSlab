@@ -56,7 +56,7 @@ class MaryApp : public AppBase {
     float w = 300.f;
     int rectLeft = 1.1 * w + 4 * 20;
 
-    std::vector<Graphing::Graph> graphs;
+    std::vector<Lost::Graph> graphs;
     float start_x = 0.0001, end_x = 5, dx = 1.e-5 ;
     float f0 = 1.09868f, dgdx0 = 1.31902f, dhdx0 = 0.000119189;
 

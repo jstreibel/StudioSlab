@@ -10,7 +10,7 @@
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     // typedef std::vector<Window::Ptr> WinCol;
     typedef std::vector<WindowColumn> WindowColumns;

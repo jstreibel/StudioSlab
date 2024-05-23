@@ -3,12 +3,13 @@
 //
 
 #include "ParametricCurve2DArtist.h"
-#include "Math/Function/RtoR2/ParametricCurve.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
 #include <utility>
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     ParametricCurve2DArtist::ParametricCurve2DArtist(RtoR2::ParametricCurve_ptr curve, PlotStyle style)
     : curve(std::move(curve)), plotStyle(style) {

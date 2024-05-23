@@ -10,7 +10,7 @@
 
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class WindowColumn : public Window {
         std::list<Window_ptr> windows;

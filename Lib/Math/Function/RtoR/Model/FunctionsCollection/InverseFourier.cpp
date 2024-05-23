@@ -4,7 +4,7 @@
 
 #include "InverseFourier.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     Real InverseFourier::operator()(Real x) const {
         auto N = modes.re->getPoints().size();
 

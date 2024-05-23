@@ -11,7 +11,7 @@
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/R2toR/R2toRBuilder.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class R2toRInputShockwave : public R2toR::Builder {
     private:

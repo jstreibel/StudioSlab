@@ -16,7 +16,7 @@
 #include "rougier/vertex-attribute.h"
 #include "Utils/Types.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     enum PrimitiveType {
          Points = GL_POINTS,
          LineStrip = GL_LINE_STRIP,

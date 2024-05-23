@@ -12,7 +12,9 @@
 
 #include "Graphics/Graph/PlotStyle.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class R2SectionArtist : public Artist {
         R2toR::Function_ptr function2D;

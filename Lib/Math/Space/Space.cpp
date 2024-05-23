@@ -4,11 +4,14 @@
 
 #include "Space.h"
 
-Space::Space(UInt dim) : dim(dim) {   }
 
-Space::Space(const Space &space) : Space(space.dim)
-{   }
+namespace Slab::Math {
 
-auto Space::getDim() const -> UInt {
-    return dim;
+    Space::Space(UInt dim) : dim(dim) {}
+
+    Space::Space(const Space &space) : Space(space.dim) {}
+
+    auto Space::getDim() const -> UInt {
+        return dim;
+    }
 }

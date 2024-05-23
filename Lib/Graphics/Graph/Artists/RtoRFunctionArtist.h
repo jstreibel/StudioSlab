@@ -9,7 +9,9 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Graphics/Graph/PlotStyle.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class RtoRFunctionArtist : public Artist {
         RtoR::Function_ptr function;

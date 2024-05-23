@@ -9,7 +9,7 @@
 #include "imgui.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
 
 

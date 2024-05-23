@@ -4,7 +4,7 @@
 
 #include "PlottingTheme.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     GraphTheme_ptr NewTheme(const PlottingTheme &scheme) {
         { return Slab::New<PlottingTheme>(scheme); }

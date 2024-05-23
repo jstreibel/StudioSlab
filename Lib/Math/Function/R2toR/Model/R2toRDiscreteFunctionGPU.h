@@ -9,7 +9,7 @@
 
 
 #if USE_CUDA
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     class DiscreteFunction_GPU : public R2toR::DiscreteFunction {
         DiscreteFunction_GPU *helper= nullptr;

@@ -6,34 +6,40 @@
 
 #define M_GUESS 1024 //1048576 // 1024*1024
 
-class HistoryKeeper : public Numerics::OutputSystem::Socket
-{
-private:
-    /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,
-     * because history will be purged. */
-    virtual void _dump(bool integrationIsFinished) = 0;
-    void handleOutput(const OutputPacket &outInfo) final;
+namespace Slab::Math {
 
-protected:
-    SpaceFilterBase &spaceFilter;
+    class HistoryKeeper : public Socket {
+    private:
+        /** Dump is called whenever memory needs purging. Child class should dispose of all info contained in history,
+         * because history will be purged. */
+        virtual void _dump(bool integrationIsFinished) = 0;
 
-    const Real tEnd;
+        void handleOutput(const OutputPacket &outInfo) final;
 
-    std::vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
-    RealVector tHistory;
-    size_t count;
-    size_t countTotal;
+    protected:
+        SpaceFilterBase &spaceFilter;
 
-public:
-    HistoryKeeper(const NumericConfig &params, size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
-    ~HistoryKeeper() override;
+        const Real tEnd;
 
-    [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
-    auto shouldOutput(Real t, long unsigned timestep) -> bool override;
+        std::vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
+        RealVector tHistory;
+        size_t count;
+        size_t countTotal;
 
-    auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+    public:
+        HistoryKeeper(const NumericConfig &params, size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
 
-    auto renderMetaDataAsPythonDictionary() const -> Str;
-};
+        ~HistoryKeeper() override;
 
+        [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
+
+        auto shouldOutput(Real t, long unsigned timestep) -> bool override;
+
+        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+
+        auto renderMetaDataAsPythonDictionary() const -> Str;
+    };
+
+
+}
 #endif // OUTPUTHISTORY_H

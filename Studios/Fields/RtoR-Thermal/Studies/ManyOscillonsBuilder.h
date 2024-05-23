@@ -7,7 +7,7 @@
 
 #include "../ThermalBuilder.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 class ManyOscillonsBuilder  : public RtoR::Thermal::Builder {
 
         IntegerParameter nOscillons = IntegerParameter(100, "n_osc", "Number of oscillons distributed.");

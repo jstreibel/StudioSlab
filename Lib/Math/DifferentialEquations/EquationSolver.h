@@ -6,16 +6,16 @@
 #include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "BoundaryConditions.h"
 
-namespace Slab {
+namespace Slab::Math {
 
     template<class EquationStateType>
     class EquationSolverT {
     public:
         using EqState = EquationStateType;
-        using EqBoundaryCondition = Core::BoundaryConditions<EqState>;
+        using EqBoundaryCondition = Base::BoundaryConditions<EqState>;
     protected:
         const NumericConfig &params;
-        Core::BoundaryConditions<EqState> &du;
+        Base::BoundaryConditions<EqState> &du;
 
     public:
         EquationSolverT(const NumericConfig &params, EqBoundaryCondition &du)
@@ -43,9 +43,9 @@ namespace Slab {
         return state;
     }
 
-    class EquationSolver : public EquationSolverT<Simulation::EquationState>{
+    class EquationSolver : public EquationSolverT<EquationState>{
     public:
-        using EqBoundaryCondition = Core::BoundaryConditions<Simulation::EquationState>;
+        using EqBoundaryCondition = Base::BoundaryConditions<EquationState>;
 
         EquationSolver(const NumericConfig &params, EqBoundaryCondition &du)
         : EquationSolverT(params, du) {};

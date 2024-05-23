@@ -101,8 +101,8 @@ namespace Modes {
         return RtoR::KGBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
-    RtoR::Function::Ptr Builder::getNonHomogenous() {
-        if(*driving_force == true && squareWave== nullptr) squareWave = std::make_shared<Modes::SquareWave>(1);
+    Pointer<Base::FunctionT<Real, Real>> Builder::getNonHomogenous() {
+        if(*driving_force == true && squareWave== nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;
     }

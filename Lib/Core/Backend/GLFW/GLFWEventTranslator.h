@@ -9,7 +9,7 @@
 
 #include "Core/Backend/Events/GUIEventTranslator.h"
 
-namespace Core {
+namespace Slab::Core {
     class GLFWEventTranslator : public EventTranslator, public GLFWListener{
     public:
         bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;

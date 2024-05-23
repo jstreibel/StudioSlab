@@ -13,7 +13,7 @@
 
 #include <list>
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class Graph3D : public Window {
         Camera camera;

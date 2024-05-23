@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLUTLISTENER_H
 #define STUDIOSLAB_GLUTLISTENER_H
 
-namespace Backend {
+namespace Slab::Core {
 
     class GLUTListener {
     public:

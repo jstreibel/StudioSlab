@@ -10,8 +10,9 @@
 
 #include <memory>
 
-namespace RtoR2 {
-    class ParametricCurve : public Core::FunctionT<Real, Real2D> {
+namespace Slab::Math::RtoR2 {
+
+    class ParametricCurve : public Base::FunctionT<Real, Real2D> {
         Real sMin=.0, sMax=1.;
 
     public:

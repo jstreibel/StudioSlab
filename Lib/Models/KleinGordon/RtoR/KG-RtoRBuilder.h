@@ -9,8 +9,9 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 
-namespace RtoR {
-    class KGBuilder : public Fields::KleinGordon::KGBuilder {
+namespace Slab::Math::RtoR {
+
+    class KGBuilder : public Slab::Models::KGBuilder {
         IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
@@ -35,7 +36,7 @@ namespace RtoR {
                            bool doRegister=false);
 
         Function_ptr getPotential() const;
-        virtual Function::Ptr getNonHomogenous();
+        virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
         auto buildOutputManager()   -> OutputManager * override;
         auto buildEquationSolver()  -> void * override;

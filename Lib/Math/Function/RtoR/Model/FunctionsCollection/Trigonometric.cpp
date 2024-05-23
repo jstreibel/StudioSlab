@@ -4,20 +4,20 @@
 
 #include "Trigonometric.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     Sine::Sine(Real a, Real k) : FunctionT(nullptr, false), A(a), k(k) {}
 
     Real Sine::operator()(Real x) const {
         return A*sin(k*x);
     }
 
-    Core::FunctionT<Real, Real>::Ptr Sine::diff(int n) const {
+    Base::FunctionT<Real, Real>::Ptr Sine::diff(int n) const {
         assert(n==0);
 
         return Ptr(new Cosine(A*k, k));
     }
 
-    Core::FunctionT<Real, Real> *Sine::Clone() const {
+    Base::FunctionT<Real, Real> *Sine::Clone() const {
         return new Sine(A, k);
     }
 
@@ -29,13 +29,13 @@ namespace RtoR {
         return A*cos(k*x);
     }
 
-    Core::FunctionT<Real, Real>::Ptr Cosine::diff(int n) const {
+    Base::FunctionT<Real, Real>::Ptr Cosine::diff(int n) const {
         assert(n==0);
 
         return Ptr(new Sine(-A*k, k));
     }
 
-    Core::FunctionT<Real, Real> *Cosine::Clone() const {
+    Base::FunctionT<Real, Real> *Cosine::Clone() const {
         return new Cosine(A, k);
     }
 } // RtoR

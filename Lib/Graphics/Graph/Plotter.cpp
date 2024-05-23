@@ -4,7 +4,7 @@
 
 #include "Plotter.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     Plotter::Plotter(Graphics::PlottingWindow_ptr win) : plottingWindow(win) {}
 

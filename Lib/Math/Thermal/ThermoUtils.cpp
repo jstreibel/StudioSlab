@@ -7,7 +7,7 @@
 
 #include <cmath>
 
-namespace ThermoUtils {
+namespace Slab::Math::ThermoUtils {
                                                 // T                e_T
     std::map<Real, Real> eT_Onsager_by_T = {{1.0, -1.997160204112251   },
                                                 {1.5, -1.951116573078377   },

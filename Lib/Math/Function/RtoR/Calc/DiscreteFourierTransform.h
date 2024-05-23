@@ -10,7 +10,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     typedef Math::PointSet_ptr DFTModes;
     typedef Count NumberOfModes;

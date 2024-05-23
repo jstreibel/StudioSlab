@@ -6,7 +6,7 @@
 #include "LeadingDelta.h"
 #include "Monitor.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     namespace LeadingDelta {
         RingDeltaFunc::Ptr ringDelta1;
 

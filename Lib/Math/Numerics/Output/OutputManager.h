@@ -3,41 +3,48 @@
 
 #include "Plugs/Socket.h"
 
-class OutputManager {
 
-protected:
+namespace Slab::Math {
 
-	std::vector<Numerics::OutputSystem::Socket*> outputs;
-	std::vector<Numerics::OutputSystem::Socket*> myOutputs;
+    class OutputManager {
 
-	const NumericConfig &params;
+    protected:
 
-public:
+        std::vector<Socket *> outputs;
+        std::vector<Socket *> myOutputs;
 
-    OutputManager(const NumericConfig &params);
-	~OutputManager();
+        const NumericConfig &params;
 
-	/**
-	 * This parameter comes in by reference because copying it can be very heavy. OTOH it is treated as if it is
-	 * allocated on the HEAP.
-	 *
-	 * @param infoVolatile the information to output.
-	 */
-    void output(OutputPacket &infoVolatile, bool force=false);
+    public:
 
-    void notifyIntegrationFinished(const OutputPacket &info);
+        OutputManager(const NumericConfig &params);
 
-    /****** QUERY ******/
-    auto computeNStepsToNextOutput(UInt currStep) -> UInt;
+        ~OutputManager();
 
-    /****** INPUT/OUTPUT ******/
-    void addOutputChannel(Numerics::OutputSystem::Socket *out, bool keepTrack = true);
+        /**
+         * This parameter comes in by reference because copying it can be very heavy. OTOH it is treated as if it is
+         * allocated on the HEAP.
+         *
+         * @param infoVolatile the information to output.
+         */
+        void output(OutputPacket &infoVolatile, bool force = false);
+
+        void notifyIntegrationFinished(const OutputPacket &info);
+
+        /****** QUERY ******/
+        auto computeNStepsToNextOutput(UInt currStep) -> UInt;
+
+        /****** INPUT/OUTPUT ******/
+        void addOutputChannel(Socket *out, bool keepTrack = true);
 
 
-private:
-    const size_t maxSteps;
+    private:
+        const size_t maxSteps;
 
 
-};
+    };
+
+
+}
 
 #endif // OUTPUTMANAGER_H

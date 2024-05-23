@@ -11,38 +11,44 @@
     return responded;          \
     };
 
-Core::GUIEventListener::GUIEventListener() = default;
 
-void Core::GUIEventListener::addResponder(Core::GUIEventListener *responder) {
-    assert(responder != this);
-    unmanagedDelegateResponders.emplace_back(responder);
+namespace Slab::Core {
+
+
+    GUIEventListener::GUIEventListener() = default;
+
+    void GUIEventListener::addResponder(GUIEventListener *responder) {
+        assert(responder != this);
+        unmanagedDelegateResponders.emplace_back(responder);
+    }
+
+    bool GUIEventListener::hasResponders() const {
+        return !unmanagedDelegateResponders.empty();
+    }
+
+
+    bool GUIEventListener::notifyMouseMotion(int x, int y) EVENT_CALLBACK(notifyMouseMotion(x, y))
+
+    bool GUIEventListener::notifyScreenReshape(int w, int h) EVENT_CALLBACK(notifyScreenReshape(w, h))
+
+    bool GUIEventListener::notifyRender() EVENT_CALLBACK(notifyRender())
+
+    bool GUIEventListener::
+    notifyKeyboard(KeyMap key,
+                   KeyState state,
+                   ModKeys modKeys) EVENT_CALLBACK(notifyKeyboard(key, state, modKeys))
+
+    bool GUIEventListener::
+    notifyMouseButton(MouseButton button,
+                      KeyState state,
+                      ModKeys mods) EVENT_CALLBACK(notifyMouseButton(button, state, mods))
+
+
+    bool GUIEventListener::
+    notifyMouseWheel(double dx, double dy) EVENT_CALLBACK(notifyMouseWheel(dx, dy))
+
+
+    bool GUIEventListener::
+    notifyFilesDropped(StrVector paths) EVENT_CALLBACK(notifyFilesDropped(paths))
+
 }
-
-bool Core::GUIEventListener::hasResponders() const {
-    return ! unmanagedDelegateResponders.empty();
-}
-
-
-bool Core::GUIEventListener::notifyMouseMotion(int x, int y)                               EVENT_CALLBACK(notifyMouseMotion(x, y))
-bool Core::GUIEventListener::notifyScreenReshape(int w, int h)                             EVENT_CALLBACK(notifyScreenReshape(w, h))
-bool Core::GUIEventListener::notifyRender()                                                EVENT_CALLBACK(notifyRender())
-
-bool Core::GUIEventListener::
-notifyKeyboard(Core::KeyMap key,
-               Core::KeyState state,
-               Core::ModKeys modKeys)          EVENT_CALLBACK(notifyKeyboard(key, state, modKeys))
-
-bool Core::GUIEventListener::
-notifyMouseButton(Core::MouseButton button,
-                  Core::KeyState state,
-                  Core::ModKeys mods)          EVENT_CALLBACK(notifyMouseButton(button, state, mods))
-
-
-
-bool Core::GUIEventListener::
-notifyMouseWheel(double dx, double dy)         EVENT_CALLBACK(notifyMouseWheel(dx, dy))
-
-
-
-bool Core::GUIEventListener::
-notifyFilesDropped(StrVector paths)            EVENT_CALLBACK(notifyFilesDropped(paths))

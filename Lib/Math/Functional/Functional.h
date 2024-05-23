@@ -7,20 +7,16 @@
 
 #include "Utils/Types.h"
 
-namespace Fields {
-    namespace Functionals {
+namespace Slab::Math {
 
-        template < class FunctionType >
-        class Functional {
+    template < class FunctionType >
+    class Functional {
 
-        public:
+    public:
 
-            virtual Real operator[] (FunctionType &function) const = 0;
+        virtual Real operator[] (FunctionType &function) const = 0;
 
-        };
-
-    }
-
+    };
 }
 
 

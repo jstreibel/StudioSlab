@@ -11,10 +11,10 @@
 #include "GUIEventListener.h"
 
 
-namespace Core {
+namespace Slab::Core {
     class EventTranslator {
     protected:
-        std::vector<Core::GUIEventListener_ptr> guiListeners;
+        std::vector<GUIEventListener_ptr> guiListeners;
 
     public:
         bool addGUIEventListener(const Core::GUIEventListener_ptr& guiEventListener);

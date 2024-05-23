@@ -7,7 +7,7 @@
 #include "OutputShockwaveZeros.h"
 #include "View/Util/Printing.h"
 
-using namespace R2toR;
+using namespace Slab::Math::R2toR;
 
 typedef R2toR::FunctionArbitrary Func;
 

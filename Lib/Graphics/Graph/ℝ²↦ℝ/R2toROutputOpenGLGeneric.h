@@ -10,8 +10,11 @@
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/Artists/R2SectionArtist.h"
 
-namespace R2toR {
-class OutputOpenGL : public ::Graphics::OpenGLMonitor {
+namespace Slab::Math::R2toR {
+
+
+
+    class OutputOpenGL : public Graphics::OpenGLMonitor {
     protected:
         Graphics::PlottingWindow mSectionGraph;
         Graphics::R2SectionArtist sectionArtist;

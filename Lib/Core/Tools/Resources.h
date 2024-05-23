@@ -7,7 +7,7 @@
 
 #include "Utils/Types.h"
 
-namespace Resources {
+namespace Slab::Core::Resources {
 
     const auto Folder = std::string("/home/joao/Developer/StudioSlab/Resources/");
 

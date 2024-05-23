@@ -23,7 +23,7 @@ void Modes::SignalBC::apply(EqState &toFunction, Real t) const {
 }
 
 
-Modes::DrivenBC::DrivenBC(const RtoR::EquationState &prototype, std::shared_ptr<Modes::SquareWave> sqrWave)
+Modes::DrivenBC::DrivenBC(const RtoR::EquationState &prototype, Slab::Pointer<Modes::SquareWave> sqrWave)
 : BoundaryCondition(prototype, new RtoR::NullFunction, new RtoR::NullFunction),
   sqrWave(std::move(sqrWave)) { }
 

@@ -13,10 +13,10 @@
 #define CHECK_GL_ERRORS(count) OpenGLUtils::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     Texture2D_Color::Texture2D_Color(GLsizei w, GLsizei h)
     : Texture2D(w, h, InternalFormat::RGBA)
-    , data((ByteData)malloc(w*h*4))
+    , data((ByteData_raw)malloc(w*h*4))
     {
 
     }
@@ -25,7 +25,7 @@ namespace Graphics::OpenGL {
         if(data == nullptr) return false;
 
         fix index = i*4 + j*getWidth()*4;
-        ByteData texel = &data[index];
+        ByteData_raw texel = &data[index];
 
         texel[R] = (Byte)(255*color.r);
         texel[G] = (Byte)(255*color.g);

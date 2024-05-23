@@ -7,23 +7,22 @@
 
 #include "Utils/Types.h"
 
-namespace Math {
-    namespace Graphics {
+namespace Slab::Graphics {
 
-        class LabelingHelper {
-            Count currItem=0;
-            Count cols = 1;
+    class LabelingHelper {
+        Count currItem=0;
+        Count cols = 1;
 
-        public:
-            void setTotalItems(Count tot);
+    public:
+        void setTotalItems(Count tot);
 
-            Count row() const;
-            Count col() const;
+        Count row() const;
+        Count col() const;
 
-            LabelingHelper& operator++();
-        };
+        LabelingHelper& operator++();
+    };
 
-    } // Math
-} // Graphics
+}
+
 
 #endif //STUDIOSLAB_LABELINGHELPER_H

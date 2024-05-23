@@ -9,7 +9,7 @@
 #include "Math/Function/R2toC/R2toCDiscreteFunction.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class CorrelationsPanel : public RtoRPanel {
         PlottingWindow DFT2DGraph;

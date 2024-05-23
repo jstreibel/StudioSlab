@@ -11,8 +11,9 @@
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 
-namespace RtoR {
-    class BoundaryCondition : public Core::BoundaryConditions<RtoR::EquationState> {
+namespace Slab::Math::RtoR {
+
+    class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
     public:
         BoundaryCondition(const RtoR::EquationState &prototype,
                           Function *initialPhiCondition,

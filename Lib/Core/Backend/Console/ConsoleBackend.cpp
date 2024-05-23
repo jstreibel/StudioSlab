@@ -1,13 +1,18 @@
 #include "ConsoleBackend.h"
 
-ConsoleBackend::ConsoleBackend() : Backend("Console backend")
-{
-}
 
-void ConsoleBackend::run(Program *integrator) {
-    integrator->cycle(Program::CycleOptions::cycleCycleUntilFinished);
-}
+namespace Slab::Core {
 
-void ConsoleBackend::terminate() {
+
+    ConsoleBackend::ConsoleBackend() : Backend("Console backend") {
+    }
+
+    void ConsoleBackend::run(Task *integrator) {
+        integrator->cycle(Task::CycleOptions::cycleCycleUntilFinished);
+    }
+
+    void ConsoleBackend::terminate() {
+
+    }
 
 }

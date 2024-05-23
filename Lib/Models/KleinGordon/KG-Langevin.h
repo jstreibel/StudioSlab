@@ -9,7 +9,7 @@
 
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
     Real xi() {
         const Real z = FRANDOM;
 

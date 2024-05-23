@@ -9,35 +9,45 @@
 
 #include <ostream>
 
-class EqStateOutputInterface {
-public:
-    static enum Formats {
-        SpaceSeparated,
-        PythonDictionaryEntry
-    } format;
 
-    static enum FieldDataOutputTypes {
-        Phi,
-        PhiAndDPhiDt
-    } fDataOutType;
+namespace Slab::Math {
 
-    virtual void outputPhi(OStream &out, Str separator) const { throw "EqStateOutputInterface::outputPhi(...) Not implemented."; }
-    virtual void outputdPhiDt(OStream &out, Str separator) const { throw "EqStateOutputInterface::outputDPhiDt(...) not implemented."; }
-    virtual EqStateOutputInterface* Copy(UInt N) const = 0;
+    class EqStateOutputInterface {
+    public:
+        static enum Formats {
+            SpaceSeparated,
+            PythonDictionaryEntry
+        } format;
 
-    friend OStream& operator<< (OStream& stream, const EqStateOutputInterface& oStreamReady) {
-        Str sep = format == SpaceSeparated ? " " : ", ";
+        static enum FieldDataOutputTypes {
+            Phi,
+            PhiAndDPhiDt
+        } fDataOutType;
 
-        if(format == PythonDictionaryEntry) stream << "\"phi\": (";
-        oStreamReady.outputPhi(stream, sep);
-        if(fDataOutType) {
-            if (format == PythonDictionaryEntry) stream << "), \"dphidt\": (";
-            oStreamReady.outputdPhiDt(stream, sep);
+        virtual void outputPhi(OStream &out,
+                               Str separator) const { throw "EqStateOutputInterface::outputPhi(...) Not implemented."; }
+
+        virtual void outputdPhiDt(OStream &out,
+                                  Str separator) const { throw "EqStateOutputInterface::outputDPhiDt(...) not implemented."; }
+
+        virtual EqStateOutputInterface *Copy(UInt N) const = 0;
+
+        friend OStream &operator<<(OStream &stream, const EqStateOutputInterface &oStreamReady) {
+            Str sep = format == SpaceSeparated ? " " : ", ";
+
+            if (format == PythonDictionaryEntry) stream << "\"phi\": (";
+            oStreamReady.outputPhi(stream, sep);
+            if (fDataOutType) {
+                if (format == PythonDictionaryEntry) stream << "), \"dphidt\": (";
+                oStreamReady.outputdPhiDt(stream, sep);
+            }
+            if (format == PythonDictionaryEntry) stream << ")";
+
+            return stream;
         }
-        if(format == PythonDictionaryEntry) stream << ")";
+    };
 
-        return stream;
-    }
-};
+
+}
 
 #endif //V_SHAPE_FSTATEOUTPUTINTERFACE_H

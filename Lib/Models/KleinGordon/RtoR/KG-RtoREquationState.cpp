@@ -4,9 +4,14 @@
 
 #include "KG-RtoREquationState.h"
 
-auto RtoR::EquationState::clone() const -> RtoR::EquationState * {
-    auto *clone1 = dynamic_cast<RtoR::DiscreteFunction*>(phi->Clone());
-    auto *clone2 = dynamic_cast<RtoR::DiscreteFunction*>(phi->Clone());
+namespace Slab::Math {
 
-    return new RtoR::EquationState(clone1, clone2);
+    auto RtoR::EquationState::clone() const -> RtoR::EquationState * {
+        auto *clone1 = dynamic_cast<RtoR::DiscreteFunction *>(phi->Clone());
+        auto *clone2 = dynamic_cast<RtoR::DiscreteFunction *>(phi->Clone());
+
+        return new RtoR::EquationState(clone1, clone2);
+    }
+
+
 }

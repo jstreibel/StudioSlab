@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MESHUTILS_H
 #define STUDIOSLAB_MESHUTILS_H
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class MeshUtils {
 

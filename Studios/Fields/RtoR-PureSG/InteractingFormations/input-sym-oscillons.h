@@ -4,7 +4,7 @@
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 #include "../Builder.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 class InputSymmetricOscillon : public PureSG::Builder {
         RealParameter v               = RealParameter(.0, "v", "Each oscillon's border speed");
         RealParameter V               = RealParameter(.0, "u", "Each oscillon's speed");

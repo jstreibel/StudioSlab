@@ -13,69 +13,77 @@
 #include "Math/Numerics/Method/Method-RK4.h"
 #include "Math/Numerics/Method/Method-MCBase.h"
 
-#include "Core/Backend/Program/Program.h"
+#include "Core/Backend/Program/Task.h"
 #include "Core/Tools/BenchmarkHistogram.h"
 
 const auto FORCE_INITIAL_OUTPUT = true;
 
-class NumericalIntegration : public Program {
-    Real dt;
-    UInt steps;
-    bool forceOverStepping = false;
-    bool integrationFinished = false;
+namespace Slab::Math {
 
-    BenchmarkHistogram simTimeHistogram;
+    class NumericalIntegration : public Task {
+        Real dt;
+        UInt steps;
+        bool forceOverStepping = false;
+        bool integrationFinished = false;
 
-    Core::Simulation::VoidBuilder &simBuilder;
-    Stepper *stepper;
-    OutputManager *outputManager;
+        BenchmarkHistogram simTimeHistogram;
 
-    void output(bool force=false);
-    OutputPacket getOutputInfo();
+        VoidBuilder &simBuilder;
+        Stepper *stepper;
+        OutputManager *outputManager;
 
-    auto _cycle(size_t nCycles) -> bool;
-    auto _runFullIntegration()  -> bool;
-    auto _cycleUntilOutputOrFinish()    -> bool;
+        void output(bool force = false);
 
-public:
-    NumericalIntegration(Core::Simulation::VoidBuilder &simBuilder)
-            : simBuilder(simBuilder)
-            , stepper(simBuilder.buildStepper())
-            , outputManager(simBuilder.buildOutputManager()),
-              dt(simBuilder.getNumericParams().getdt()),
-              steps(0)
-    {
-        #if ATTEMP_REALTIME
-        {
-            // Declare a sched_param struct to hold the scheduling parameters.
-            sched_param param;
+        OutputPacket getOutputInfo();
 
-            // Set the priority value in the sched_param struct.
-            param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+        auto _cycle(size_t nCycles) -> bool;
 
-            // Set the scheduling policy and priority of the current process.
-            int ret = sched_setscheduler(0, SCHED_FIFO, &param);
-            if (ret == -1) {
-                Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
-            } else {
-                Log::Info() << "Program running with realtime priority." << Log::Flush;
+        auto _runFullIntegration() -> bool;
+
+        auto _cycleUntilOutputOrFinish() -> bool;
+
+    public:
+        NumericalIntegration(VoidBuilder &simBuilder)
+                : simBuilder(simBuilder), stepper(simBuilder.buildStepper()),
+                  outputManager(simBuilder.buildOutputManager()),
+                  dt(simBuilder.getNumericParams().getdt()),
+                  steps(0) {
+#if ATTEMP_REALTIME
+            {
+                // Declare a sched_param struct to hold the scheduling parameters.
+                sched_param param;
+
+                // Set the priority value in the sched_param struct.
+                param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+
+                // Set the scheduling policy and priority of the current process.
+                int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+                if (ret == -1) {
+                    Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+                } else {
+                    Log::Info() << "Program running with realtime priority." << Log::Flush;
+                }
             }
+#endif
+
+            this->output(FORCE_INITIAL_OUTPUT);
         }
-        #endif
 
-        this->output(FORCE_INITIAL_OUTPUT);
-    }
+        ~NumericalIntegration() override;
 
-    ~NumericalIntegration() override;
+        bool cycle(CycleOptions options) override;
 
-    bool cycle(CycleOptions options) override;
+        auto getSteps() const -> size_t;
 
-    auto getSteps() const -> size_t;
-    auto getSimulationTime() const -> Real;
-    auto doForceOverStepping() -> void;
+        auto getSimulationTime() const -> Real;
 
-    auto getHistogram() const -> const BenchmarkHistogram&;
+        auto doForceOverStepping() -> void;
 
-};
+        auto getHistogram() const -> const BenchmarkHistogram &;
+
+    };
+
+
+}
 
 #endif // def INTEGRATOR_H

@@ -10,7 +10,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     /**
      * Checks and logs all stacked OpenGL errors.
      * @param hint Hint to recent operations.

@@ -9,7 +9,7 @@
 
 
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     struct OverlayVertex {
         int x, y;
         float r, g, b, a;
@@ -19,8 +19,8 @@ namespace Graphics::OpenGL {
 
     Overlay::Overlay(RectI loc)
     : vertexBuffer("inPosition:2f,inColor:4f,inTexCoord:2f")
-    , shader(Resources::ShadersFolder + "ScreenCoords2D.vert",
-             Resources::ShadersFolder + "ScreenCoords2D.frag")
+    , shader(Core::Resources::ShadersFolder + "ScreenCoords2D.vert",
+             Core::Resources::ShadersFolder + "ScreenCoords2D.frag")
     {
         fix xMin = loc.xMin;
         fix xMax = loc.xMax;

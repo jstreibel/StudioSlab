@@ -10,6 +10,9 @@
 
 namespace Modes {
 
+    using namespace Slab;
+    using namespace Slab::Math;
+
     class Monitor : public RtoR::Monitor {
     public:
         Monitor(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax, const Str &name,

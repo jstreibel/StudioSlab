@@ -11,7 +11,8 @@
     + " from " + Common::getClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
+
     Texture::Texture(Target target, InternalFormat format, GLenum textureUnit)
     : target(target)
     , format(format)
@@ -19,7 +20,7 @@ namespace Graphics::OpenGL {
     {
         glGenTextures(1, &handle);
 
-        Log::Debug() << "OpenGL::Texture " << handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Log::Flush;
+        Core::Log::Debug() << "OpenGL::Texture " << handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Core::Log::Flush;
     }
 
     void Texture::activate() const {
@@ -81,6 +82,8 @@ namespace Graphics::OpenGL {
     auto Texture::getInternalFormat() const -> InternalFormat { return format; }
 
     void Texture::diagnose() const {
+
+        using Log = Core::Log;
 
         GLint currentTexture = 0;
         GLenum bindingEnum;

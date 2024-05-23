@@ -24,10 +24,10 @@
 #include "Math/Function/R2toR/Output/Filters/DimensionReductionFilter.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     Builder::Builder(const Str& name, Str description)
-            : Fields::KleinGordon::KGBuilder(name, std::move(description)) {    }
+            : Models::KGBuilder(name, std::move(description)) {    }
 
     OutputManager *Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
@@ -71,7 +71,7 @@ namespace R2toR {
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            Numerics::OutputSystem::Socket *out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval,
+            Socket *out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval,
                                                                           spaceFilter, t, outputFileName,
                                                                           outputFilter);
 
@@ -87,7 +87,7 @@ namespace R2toR {
             if ((*VisualMonitor_startPaused)) backend.pause();
             else backend.resume();
 
-            auto glOut = ::Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
+            auto glOut = Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
             backend.addEventListener(glOut);
@@ -125,10 +125,9 @@ namespace R2toR {
         auto thePotential = new RtoR::AbsFunction;
         auto dphi = (R2toR::BoundaryCondition*)getBoundary();
 
-        return new Fields::KleinGordon::Solver<R2toR::EquationState>(simulationConfig.numericConfig,
+        return new Models::Solver<R2toR::EquationState>(simulationConfig.numericConfig,
                                                                      *dphi,
-                                                                     *thePotential,
-                                                                     nullptr);
+                                                                     *thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

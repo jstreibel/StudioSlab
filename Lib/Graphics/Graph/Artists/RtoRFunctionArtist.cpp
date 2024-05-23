@@ -10,7 +10,7 @@
 
 #include <utility>
 
-namespace Graphics {
+namespace Slab::Graphics {
     RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, Count samples)
     : function(std::move(func)), plotStyle(plotStyle), samples(samples)
     {    }

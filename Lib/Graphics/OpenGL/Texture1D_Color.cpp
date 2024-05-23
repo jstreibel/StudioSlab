@@ -11,7 +11,9 @@
 #define B 2
 #define A 3
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
+
+    using Log = Core::Log;
 
     Texture1D_Color::Texture1D_Color(GLsizei size, GLenum textureUnit)
     : Texture(Texture_1D, RGBA, textureUnit)
@@ -30,7 +32,7 @@ namespace Graphics::OpenGL {
 
         setAntiAliasOn();
 
-        data = (ByteData)malloc(size*4);
+        data = (ByteData_raw)malloc(size*4);
 
         fix sizeMB = size*4/(1024*1024.);
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
@@ -42,7 +44,7 @@ namespace Graphics::OpenGL {
         if(data == nullptr) return false;
 
         fix index = i*4;
-        ByteData texel = &data[index];
+        ByteData_raw texel = &data[index];
 
         texel[R] = (Byte)(255*color.r);
         texel[G] = (Byte)(255*color.g);

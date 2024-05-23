@@ -9,7 +9,7 @@
 #include "Graphics/Styles/ColorMap.h"
 #include "Graphics/OpenGL/Texture1D_Color.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
     typedef std::function<Real(Real)> ScalingFunction;
 

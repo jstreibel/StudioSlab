@@ -2,8 +2,8 @@
 // Created by joao on 8/08/23.
 //
 
-#ifndef STUDIOSLAB_BUILDER_H
-#define STUDIOSLAB_BUILDER_H
+#ifndef STUDIOSLAB_MOLDYN_BUILDER_H
+#define STUDIOSLAB_MOLDYN_BUILDER_H
 
 #include "Math/Numerics/VoidBuilder.h"
 

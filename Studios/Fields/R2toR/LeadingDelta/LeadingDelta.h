@@ -13,7 +13,7 @@
 #include "Monitor.h"
 #include "RingDeltaFunc.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     namespace LeadingDelta {
 
 

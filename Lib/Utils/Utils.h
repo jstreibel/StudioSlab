@@ -23,95 +23,102 @@ if(&NAME == nullptr) throw "Bad cast.";
 
 #include <driver_types.h>
 
+namespace Slab::CUDA {
 // cew stands for Cuda Error Wrapper
 void cew(cudaError err);
+}
 
 #endif // USE_CUDA
 
 #include "String.h"
 
-template<typename T>
-std::shared_ptr<T> Pointer(T *instance) {
-    return std::shared_ptr<T>(instance);
-}
-
-template<typename T>
-std::shared_ptr<T> DummyPtr(T &instance) {
-    return std::shared_ptr<T>(&instance, [](T*){});
-}
-
-template<typename T>
-std::shared_ptr<T> NullPtr() {
-    T *ptr = nullptr;
-    return std::shared_ptr<T>(ptr, [](T*){});
-}
-
-
-
-namespace Common {
-    double RoundToMostSignificantDigits(double num, int digits=3);
-
-    Str GetPWD();
+namespace Slab {
 
     template<typename T>
-    inline T max(const T &a, const T &b){ return a>b ? a : b; };
-    template<typename T>
-    inline T min(const T &a, const T &b){ return a<b ? a : b; };
-
-    const Real infty = std::numeric_limits<Real>::infinity();
-
-    double periodic_space(double x, double xMin, double xMax);
-
-    bool areEqual(const Real &lhs, const Real &rhs, Real eps=1.e-5);
-
-    template<class Class>
-    Str getClassName(Class *thisClass){
-        int status;
-        char* demangled_name = abi::__cxa_demangle(typeid(*thisClass).name(), 0, 0, &status);
-
-        Str returnString(demangled_name);
-
-        if(status != 0)
-            returnString = "<error demangling name>";
-
-        return returnString;
+    std::shared_ptr<T> StdPointer(T *instance) {
+        return std::shared_ptr<T>(instance);
     }
-
-    void                    PrintThere(int x, int y, const char *format, ...);
-    auto                    GetDensityChar(float dens, bool longSeq=false) -> char;
-    void                    PrintDensityThere(int x, int y, float dens);
-
-    bool                    Contains(auto container, const auto &element) {
-        return std::find(container.begin(), container.end(), element) != container.end();
-    }
-    // template<typename T>
-    // bool                    Contains(std::vector<T> vec, const T &element) {
-    //     return std::find(vec.begin(), vec.end(), element) != vec.end();
-    // }
-    // template<typename T>
-    // bool                    Contains(std::set<T> set, const T &element) {
-    //     return std::find(set.begin(), set.end(), element) != set.end();
-    // }
 
     template<typename T>
-    bool                    Find(auto container, bool(*compareFunc)(const T&)) {
-        return std::find_if(container.begin(), container.end(), compareFunc) != container.end();
+    std::shared_ptr<T> DummyPtr(T &instance) {
+        return std::shared_ptr<T>(&instance, [](T *) {});
     }
 
-    /**
-     * Splits a string in 'maxTokens' tokens, separated by 'delimiter', starting from beginning of string.
-     * @param s The string to be separated in tokens.
-     * @param delimiter The delimiter to use.
-     * @param maxTokens The maximum number of tokens to separate the string. Negative values mean no limit.
-     * @return A vector containing all the separated strings.
-     */
-    StrVector               SplitString(const Str& s, const Str &delimiter, unsigned int maxTokens=(unsigned)-1);
+    template<typename T>
+    std::shared_ptr<T> NullPtr() {
+        T *ptr = nullptr;
+        return std::shared_ptr<T>(ptr, [](T *) {});
+    }
 
-    unsigned                BinaryToUInt(std::string binary, char zero='0', char one='1');
-    unsigned short          BinaryToUShort(std::string binary, char zero='0', char one='1');
+
+    namespace Common {
+        double RoundToMostSignificantDigits(double num, int digits = 3);
+
+        Str GetPWD();
+
+        template<typename T>
+        inline T max(const T &a, const T &b) { return a > b ? a : b; };
+
+        template<typename T>
+        inline T min(const T &a, const T &b) { return a < b ? a : b; };
+
+        const Real infty = std::numeric_limits<Real>::infinity();
+
+        double periodic_space(double x, double xMin, double xMax);
+
+        bool areEqual(const Real &lhs, const Real &rhs, Real eps = 1.e-5);
+
+        template<class Class>
+        Str getClassName(Class *thisClass) {
+            int status;
+            char *demangled_name = abi::__cxa_demangle(typeid(*thisClass).name(), 0, 0, &status);
+
+            Str returnString(demangled_name);
+
+            if (status != 0)
+                returnString = "<error demangling name>";
+
+            return returnString;
+        }
+
+        void PrintThere(int x, int y, const char *format, ...);
+
+        auto GetDensityChar(float dens, bool longSeq = false) -> char;
+
+        void PrintDensityThere(int x, int y, float dens);
+
+        bool Contains(auto container, const auto &element) {
+            return std::find(container.begin(), container.end(), element) != container.end();
+        }
+        // template<typename T>
+        // bool                    Contains(std::vector<T> vec, const T &element) {
+        //     return std::find(vec.begin(), vec.end(), element) != vec.end();
+        // }
+        // template<typename T>
+        // bool                    Contains(std::set<T> set, const T &element) {
+        //     return std::find(set.begin(), set.end(), element) != set.end();
+        // }
+
+        template<typename T>
+        bool Find(auto container, bool(*compareFunc)(const T &)) {
+            return std::find_if(container.begin(), container.end(), compareFunc) != container.end();
+        }
+
+        /**
+         * Splits a string in 'maxTokens' tokens, separated by 'delimiter', starting from beginning of string.
+         * @param s The string to be separated in tokens.
+         * @param delimiter The delimiter to use.
+         * @param maxTokens The maximum number of tokens to separate the string. Negative values mean no limit.
+         * @return A vector containing all the separated strings.
+         */
+        StrVector SplitString(const Str &s, const Str &delimiter, unsigned int maxTokens = (unsigned) -1);
+
+        unsigned BinaryToUInt(std::string binary, char zero = '0', char one = '1');
+
+        unsigned short BinaryToUShort(std::string binary, char zero = '0', char one = '1');
+
+    }
 
 }
-
-
 
 #endif //V_SHAPE_UTILS_H

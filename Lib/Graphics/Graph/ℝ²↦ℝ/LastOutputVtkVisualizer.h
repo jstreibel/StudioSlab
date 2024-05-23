@@ -7,9 +7,9 @@
 
 #include "Math/Numerics/Output/Plugs/Socket.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
-    class LastOutputVTKVisualizer : public Numerics::OutputSystem::Socket {
+    class LastOutputVTKVisualizer : public Socket {
         int outN;
     protected:
         auto handleOutput(const OutputPacket &packet) -> void override {};

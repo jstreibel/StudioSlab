@@ -7,7 +7,7 @@
 
 #include "Types.h"
 
-namespace Printing {
+namespace Slab::Printing {
     auto getDPI() -> int;
     auto getTextWidthInches() -> Real;
 

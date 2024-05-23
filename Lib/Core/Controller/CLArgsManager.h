@@ -8,26 +8,33 @@
 #include "Core/Controller/Interface/Interface.h"
 #include "Core/Controller/CLDefs.h"
 
-class CLArgsManager {
-    static CLArgsManager *singleton;
 
-    int argc;
-    const char **argv;
+namespace Slab::Core {
 
-    CLArgsManager() = delete;
-    CLArgsManager(int argc, const char **argv);
+    class CLArgsManager {
+        static CLArgsManager *singleton;
 
-public:
-    static auto Initialize(int argc, const char **argv) -> CLArgsManager *;
+        int argc;
+        const char **argv;
 
-    static auto GetInstance() -> CLArgsManager *;
+        CLArgsManager() = delete;
 
-    static void ShowHelp();
-    static void Parse();
+        CLArgsManager(int argc, const char **argv);
 
-    static auto BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void;
+    public:
+        static auto Initialize(int argc, const char **argv) -> CLArgsManager *;
 
-};
+        static auto GetInstance() -> CLArgsManager *;
 
+        static void ShowHelp();
+
+        static void Parse();
+
+        static auto BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void;
+
+    };
+
+
+}
 
 #endif //FIELDS_COMMANDLINEINTERFACEMANAGER_H

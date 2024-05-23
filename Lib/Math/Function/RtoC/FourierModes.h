@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Function.h"
 
-namespace RtoC {
+namespace Slab::Math::RtoC {
 
     class FourierModes : public Function {
         RtoR::Function::Ptr baseFunc;

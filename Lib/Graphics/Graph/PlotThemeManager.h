@@ -10,7 +10,7 @@
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "PlottingTheme.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class PlotThemeManager : public Singleton<PlotThemeManager>, public Core::GUIEventListener {
     protected:

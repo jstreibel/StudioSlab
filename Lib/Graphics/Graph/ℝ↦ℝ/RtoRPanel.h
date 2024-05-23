@@ -16,11 +16,13 @@
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 #include "Graphics/Graph/PlottingWindow.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
-    class RtoRPanel : public Graphics::WindowPanel, public Numerics::OutputSystem::Socket {
+    using namespace Math;
+
+    class RtoRPanel : public WindowPanel, public Math::Socket {
     protected:
-        Graphics::GUIWindow &guiWindow;
+        GUIWindow &guiWindow;
         const NumericConfig &params;
         RtoR::KGEnergy &hamiltonian;
 
@@ -29,7 +31,7 @@ namespace Graphics {
 
         R2toR::DiscreteFunction_constptr spaceFTHistory;
         PlottingWindow_ptr spaceFTHistoryGraph;
-        const DFTDataHistory *dftData;
+        const Models::DFTDataHistory *dftData;
 
         auto handleOutput(const OutputPacket &packet) -> void override;
 
@@ -43,7 +45,7 @@ namespace Graphics {
         virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
                                           PlottingWindow_ptr simHistoryGraph);
         virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                            const DFTDataHistory &,
+                                            const Models::DFTDataHistory &,
                                             PlottingWindow_ptr sftHistoryGraph);
 
         virtual void notifyBecameVisible();

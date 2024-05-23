@@ -4,7 +4,7 @@
 
 #include "ComplexMagnitudeFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
 
     ComplexMagnitudeFunction::ComplexMagnitudeFunction() = default;
 

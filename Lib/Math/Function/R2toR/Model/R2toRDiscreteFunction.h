@@ -9,7 +9,7 @@
 #include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "R2toRFunction.h"
 
-namespace R2toR {
+namespace Slab::Math::R2toR {
     class Domain {
     public:
         Real getLx() const { return xMax-xMin; }
@@ -17,10 +17,10 @@ namespace R2toR {
         const Real xMin, xMax, yMin, yMax;
     };
 
-    typedef Core::FunctionT<Real, Real> FuncBase;
-    typedef Core::DiscreteFunction<Real2D, Real> DiscrBase;
+    typedef Base::FunctionT<Real, Real> FuncBase;
+    typedef Base::DiscreteFunction<Real2D, Real> DiscrBase;
 
-    class DiscreteFunction : public Core::DiscreteFunction<Real2D,Real> {
+    class DiscreteFunction : public Base::DiscreteFunction<Real2D,Real> {
     protected:
         const UInt N, M;
         const Real xMin, xMax,
@@ -28,7 +28,7 @@ namespace R2toR {
                    hx, hy;
 
     public:
-        typedef Core::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
+        typedef Base::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
 
         DiscreteFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, device dev);
         DiscreteFunction(const NumericConfig &, device);

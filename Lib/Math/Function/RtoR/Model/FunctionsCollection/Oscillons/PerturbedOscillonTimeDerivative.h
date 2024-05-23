@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 class PerturbedOscillonTimeDerivative : public RtoR::Function {
     public:
         PerturbedOscillonTimeDerivative(Real l, Real eps) : l(l), eps(eps) {}

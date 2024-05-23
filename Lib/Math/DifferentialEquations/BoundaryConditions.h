@@ -8,7 +8,7 @@
 #include "Utils/Types.h"
 
 
-namespace Core {
+namespace Slab::Math::Base {
     template<typename EqStateType>
     class BoundaryConditions {
         const EqStateType &prototype;

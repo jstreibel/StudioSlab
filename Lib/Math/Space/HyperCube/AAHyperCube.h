@@ -9,18 +9,24 @@
 #include "Math/Space/Space.h"
 
 
-class AAHyperCube : Space {
-    Real L;
-    Measure *measure;
+namespace Slab::Math {
 
-public:
-    AAHyperCube(UInt dim, Real L);
-    ~AAHyperCube();
+    class AAHyperCube : Space {
+        Real L;
+        Measure *measure;
 
-    [[nodiscard]] auto getMeasure() const -> const Measure override;
-    auto getSide() const -> const Real;
+    public:
+        AAHyperCube(UInt dim, Real L);
 
-};
+        ~AAHyperCube();
 
+        [[nodiscard]] auto getMeasure() const -> const Measure override;
+
+        auto getSide() const -> const Real;
+
+    };
+
+
+}
 
 #endif //STUDIOSLAB_AAHYPERCUBE_H

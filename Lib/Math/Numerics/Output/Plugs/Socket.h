@@ -10,7 +10,7 @@
 #define SHOULD_OUTPUT___MODE INT_BASED
 
 
-namespace Numerics::OutputSystem {
+namespace Slab::Math {
     class Socket {
         int nextRecStep = -1;
         int intervalStepsBetweenOutputs; // Number of steps between recordings.
@@ -20,16 +20,19 @@ namespace Numerics::OutputSystem {
         const NumericConfig &params;
         Str name, description;
 
-        virtual auto handleOutput(const OutputPacket&) -> void = 0;
+        virtual auto handleOutput(const OutputPacket &) -> void = 0;
 
     public:
-        explicit Socket(const NumericConfig &, Str name="", int nStepsInterval = 1, Str description="");
+        explicit Socket(const NumericConfig &, Str name = "", int nStepsInterval = 1, Str description = "");
+
         virtual ~Socket() = default;
 
         std::shared_ptr<Socket> Ptr;
 
         virtual auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool;
+
         auto getDescription() const -> Str;
+
         auto getName() const -> Str;
 
         virtual auto computeNextRecStep(UInt currStep) -> size_t;
@@ -45,16 +48,20 @@ namespace Numerics::OutputSystem {
          */
         virtual auto shouldOutput(Real t, long unsigned timestep) -> bool;
 
-        auto getLastSimTime()      -> Real;
-        auto getnSteps()     const -> int;
+        auto getLastSimTime() -> Real;
+
+        auto getnSteps() const -> int;
+
         virtual auto setnSteps(int nSteps) -> void;
 
         void output(const OutputPacket &outData);
 
     };
+
+
+    typedef std::vector<Socket *> OutputCollection;
+
 }
 
-
-typedef std::vector<Numerics::OutputSystem::Socket*> OutputCollection;
 
 #endif

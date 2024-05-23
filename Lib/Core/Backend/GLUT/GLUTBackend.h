@@ -7,53 +7,65 @@
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/GraphicBackend.h"
 
+namespace Slab::Core {
 
-class GLUTBackend : public GraphicBackend
-{
-    ::Backend::GLUTEventTranslator eventTranslator;
-    std::vector<::Backend::GLUTListener*> glutListeners;
+    class GLUTBackend : public GraphicBackend {
+        GLUTEventTranslator eventTranslator;
+        std::vector<GLUTListener *> glutListeners;
 
-	bool programIsRunning = false;
-	Program *program = nullptr;
+        bool programIsRunning = false;
+        Task *program = nullptr;
 
-	MouseState mouseState;
-	bool renderingRequested = false;
-public:
-    GLUTBackend();
-    ~GLUTBackend() override;
+        MouseState mouseState;
+        bool renderingRequested = false;
+    public:
+        GLUTBackend();
 
-	static GLUTBackend &GetInstance();
+        ~GLUTBackend() override;
 
-    void run(Program *) override;
+        static GLUTBackend &GetInstance();
 
-    void terminate() override;
+        void run(Task *) override;
 
-    static void keyboard(unsigned char key, int x, int y);
-    static void keyboardUp(unsigned char key, int x, int y);
-    static void keyboardSpecial(int key, int x, int y);
-    static void keyboardSpecialUp(int key, int x, int y);
+        void terminate() override;
 
-    static void mouseButton(int button, int dir, int x, int y);
-    static void mousePassiveMotion(int x, int y);
-    static void mouseWheel(int wheel, int direction, int x, int y);
-    static void mouseMotion(int x, int y);
+        static void keyboard(unsigned char key, int x, int y);
 
-    static void render();
-    static void idleCall();
-    static void reshape(int w, int h);
+        static void keyboardUp(unsigned char key, int x, int y);
 
-    auto addGLUTListener(::Backend::GLUTListener *glutListener) -> void;
+        static void keyboardSpecial(int key, int x, int y);
 
-    auto getScreenHeight() const -> Real override;
+        static void keyboardSpecialUp(int key, int x, int y);
 
-    auto isPaused() const -> bool {return !programIsRunning;}
-	void pause()  override { programIsRunning = false; }
-	void resume() override { programIsRunning = true; }
+        static void mouseButton(int button, int dir, int x, int y);
 
-	auto requestRender() -> void override;
+        static void mousePassiveMotion(int x, int y);
 
-	auto getMouseState() const -> MouseState override;
+        static void mouseWheel(int wheel, int direction, int x, int y);
 
-};
+        static void mouseMotion(int x, int y);
 
+        static void render();
+
+        static void idleCall();
+
+        static void reshape(int w, int h);
+
+        auto addGLUTListener(GLUTListener *glutListener) -> void;
+
+        auto getScreenHeight() const -> Real override;
+
+        auto isPaused() const -> bool { return !programIsRunning; }
+
+        void pause() override { programIsRunning = false; }
+
+        void resume() override { programIsRunning = true; }
+
+        auto requestRender() -> void override;
+
+        auto getMouseState() const -> MouseState override;
+
+    };
+
+}
 #endif // GLUTBACKEND_H

@@ -11,87 +11,91 @@
 
 const int HEADER_SIZE_BYTES = 2048;
 
-RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT,
-                                               Str  outputFileName)
-                                               : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
-                                                 outFileName(std::move(outputFileName)),
-                                                 outputFormatter(*(new BinarySOF()))
-{
-    this->name = "Full (1+1) history output";
+namespace Slab::Math {
 
-    file.open(outFileName, std::ios::out);
+    RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval,
+                                                   SpaceFilterBase *spaceFilter, Real endT,
+                                                   Str outputFileName)
+            : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
+              outFileName(std::move(outputFileName)),
+              outputFormatter(*(new BinarySOF())) {
+        this->name = "Full (1+1) history output";
 
-    if(!file) throw "OutputHistoryToFile: nao abriu arquivo.";
+        file.open(outFileName, std::ios::out);
 
-    Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
+        if (!file) throw "OutputHistoryToFile: nao abriu arquivo.";
 
-    file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
-}
+        Log::Info() << "Sim history will be saved in '" << outFileName << "'. " << Log::Flush;
 
-RtoR::OutputHistoryToFile::~OutputHistoryToFile() {
-    auto *f = &outputFormatter;
-    delete f;
-}
-
-void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
-    if(integrationIsFinished){
-        _printHeaderToFile();
-
-        auto shouldNotDump = !lastData.hasValidData();
-        if(shouldNotDump) {
-            file.close();
-            return;
-        }
+        file << Str(HEADER_SIZE_BYTES - 1, ' ') << '\n';
     }
 
-    Timer timer;
-
-    for(size_t Ti=0; Ti<count; Ti++) {
-        if(timer.getElTime_sec() > 1) {
-            timer.reset();
-            Log::Info() << std::setprecision(3) << "Flushing " << (Real)Ti/Real(count)*100.0 << "%" << Log::Flush;
-        }
-
-        file << outputFormatter(tHistory[int(Ti)]);
-
-        const auto &fieldPair = spaceDataHistory[Ti];
-        const DiscreteSpace &phiOut = *fieldPair.first;
-        const DiscreteSpace &ddtPhiOut = *fieldPair.second;
-
-        file << outputFormatter(phiOut);
-        file << outputFormatter(ddtPhiOut);
+    RtoR::OutputHistoryToFile::~OutputHistoryToFile() {
+        auto *f = &outputFormatter;
+        delete f;
     }
 
-    file.flush();
+    void RtoR::OutputHistoryToFile::_dump(bool integrationIsFinished) {
+        if (integrationIsFinished) {
+            _printHeaderToFile();
 
-    Log::Success() << "Flushed " << "100%" << Log::Flush;
+            auto shouldNotDump = !lastData.hasValidData();
+            if (shouldNotDump) {
+                file.close();
+                return;
+            }
+        }
+
+        Timer timer;
+
+        for (size_t Ti = 0; Ti < count; Ti++) {
+            if (timer.getElTime_sec() > 1) {
+                timer.reset();
+                Log::Info() << std::setprecision(3) << "Flushing " << (Real) Ti / Real(count) * 100.0 << "%"
+                            << Log::Flush;
+            }
+
+            file << outputFormatter(tHistory[int(Ti)]);
+
+            const auto &fieldPair = spaceDataHistory[Ti];
+            const DiscreteSpace &phiOut = *fieldPair.first;
+            const DiscreteSpace &ddtPhiOut = *fieldPair.second;
+
+            file << outputFormatter(phiOut);
+            file << outputFormatter(ddtPhiOut);
+        }
+
+        file.flush();
+
+        Log::Success() << "Flushed " << "100%" << Log::Flush;
+    }
+
+
+    void RtoR::OutputHistoryToFile::_printHeaderToFile() {
+        // Allocator &builder = Allocator::getInstance();
+
+
+        std::ostringstream oss;
+
+        oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
+
+
+        DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
+        Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
+        for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
+
+
+        oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
+        oss << R"(, "data_channels": 2)";
+        oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
+
+        oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+
+        const auto &s = oss.str();
+
+        file.seekp(0);
+        file.write(s.c_str(), (long) s.size());
+
+    }
+
 }
-
-
-void RtoR::OutputHistoryToFile::_printHeaderToFile() {
-    // Allocator &builder = Allocator::getInstance();
-
-
-    std::ostringstream oss;
-
-    oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal+count);
-
-
-    DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
-    Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
-    for(UInt i=0; i<recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
-
-
-    oss << R"(, "data_type": ")" << outputFormatter.getFormatDescription() << "\"";
-    oss << R"(, "data_channels": 2)";
-    oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
-
-    oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
-
-    const auto &s = oss.str();
-
-    file.seekp(0);
-    file.write(s.c_str(), (long)s.size());
-
-}
-

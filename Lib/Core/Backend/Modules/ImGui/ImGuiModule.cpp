@@ -26,19 +26,19 @@
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
 fix FONT_SIZE_PIXELS = 20.0f;
 
-namespace Core {
+namespace Slab::Core {
 
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707
 
-    Str currentTheme = "Light";
+    Str currentTheme = "Dark";
     std::map<Str, void(*)()> colorThemes = {
-            {"Native light", SetColorThemeNativeLight},
-            {"Native dark", SetColorThemeNativeDark},
-            {"Dark red", SetColorThemeDarkRed},
-            {"Dark", SetStyleDark},
-            {"Light", SetStyleLight},
-            {"StudioSlab", SetStyleStudioSlab}
+            {"Native light", Slab::Core::SetColorThemeNativeLight},
+            {"Native dark", Slab::Core::SetColorThemeNativeDark},
+            {"Dark red", Slab::Core::SetColorThemeDarkRed},
+            {"Dark", Slab::Core::SetStyleDark},
+            {"Light", Slab::Core::SetStyleLight},
+            {"StudioSlab", Slab::Core::SetStyleStudioSlab}
     };
 
     void ImGuiModule::generalInitialization() {

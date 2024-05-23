@@ -9,8 +9,9 @@
 #include "Math/Function/DiscreteFunction.h"
 #include "RtoRFunction.h"
 
-namespace RtoR {
-    class ResizableDiscreteFunction : public Core::FunctionT<Real, Real> {
+namespace Slab::Math::RtoR {
+
+    class ResizableDiscreteFunction : public Base::FunctionT<Real, Real> {
         Real yMin=1, yMax=-1;
     public:
         auto getYMin() const -> Real;

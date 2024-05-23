@@ -4,5 +4,5 @@
 
 #include "PlotRegion.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 } // Graphics

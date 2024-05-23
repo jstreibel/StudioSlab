@@ -8,7 +8,9 @@
 #include "Artist.h"
 #include "Math/Constants.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
+
+    using namespace Math;
 
     class AxisArtist : public Artist {
     public:

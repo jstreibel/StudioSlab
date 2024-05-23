@@ -13,9 +13,9 @@
 #include "Utils/Types.h"
 
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
-    class DiscreteFunction : public Core::DiscreteFunction<Real, Real> {
+    class DiscreteFunction : public Base::DiscreteFunction<Real, Real> {
     public:
         enum LaplacianType {
             Standard1D_FixedBorder,

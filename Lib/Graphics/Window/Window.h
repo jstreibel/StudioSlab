@@ -16,7 +16,7 @@
 #include <memory>
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class Window : public Core::GUIEventListener {
     public:

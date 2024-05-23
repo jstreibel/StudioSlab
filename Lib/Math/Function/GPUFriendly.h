@@ -7,7 +7,7 @@
 
 #include <Utils/DeviceConfig.h>
 
-namespace Core {
+namespace Slab::Math::Base {
 #if USE_CUDA == true
 #define MAKE_GPU_FRIENDLY(CLASS_NAME)                                    \
     public:                                                              \

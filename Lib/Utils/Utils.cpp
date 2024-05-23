@@ -12,7 +12,7 @@
 #include <vector>
 #include <filesystem>
 
-namespace Common {
+namespace Slab::Common {
 
     void PrintThere(int x, int y, const char *format, ...) {
         va_list args;

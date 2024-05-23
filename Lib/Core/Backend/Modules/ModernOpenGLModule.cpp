@@ -7,7 +7,7 @@
 
 #include <GL/glew.h>
 
-namespace Core {
+namespace Slab::Core {
     ModernOpenGLModule::ModernOpenGLModule() {
         GLenum glewInitStatus = glewInit();
         if (glewInitStatus != GLEW_OK){

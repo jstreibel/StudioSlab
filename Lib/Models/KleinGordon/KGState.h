@@ -10,14 +10,16 @@
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
 
-namespace Fields::KleinGordon {
+namespace Slab::Models {
+
+    using namespace Slab::Math;
 
     /**
      * State representing 2nd order equation state.
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
     template<class EqCategory>
-    class KGState : public Utils::ArithmeticOpsInterface<KGState<EqCategory>>, public EqStateOutputInterface {
+    class KGState : public ArithmeticOpsInterface<KGState<EqCategory>>, public EqStateOutputInterface {
     public:
         typedef EqCategory SubStateType;
         using FunctionType = typename EqCategory::Type;

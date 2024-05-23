@@ -33,7 +33,7 @@ Real t0 = 5;
  *                   \/      \/      \/              \/             \/
  */
 RtoR::Signal::JackOutput::JackOutput(const NumericConfig &params)
-: Numerics::OutputSystem::Socket(params, "Jack output", 1) {
+: Math::Socket(params, "Jack output", 1) {
     JackServer::GetInstance();
 
     auto delta = xInitDampCutoff_normalized*params.getL();

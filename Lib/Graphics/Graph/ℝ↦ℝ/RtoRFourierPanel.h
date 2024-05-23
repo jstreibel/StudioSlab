@@ -12,7 +12,7 @@
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class RtoRFourierPanel : public RtoRPanel {
         PlottingWindow_ptr inverseDFTDisplay = Slab::New<PlottingWindow>("ℱₖ⁻¹[ℱ]");
@@ -37,7 +37,7 @@ namespace Graphics {
         void draw() override;
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                    const DFTDataHistory &dftData,
+                                    const Models::DFTDataHistory &dftData,
                                     PlottingWindow_ptr sftHistoryGraph) override;
     };
 

@@ -3,7 +3,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 
-using namespace RtoR;
+using namespace Slab::Math::RtoR;
 
 InputSymmetricOscillon::InputSymmetricOscillon()
 : PureSG::Builder("Symmetric scattering", "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.")

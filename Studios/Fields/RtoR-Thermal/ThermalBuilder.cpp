@@ -13,7 +13,7 @@
 #define DONT_SELF_REGISTER false
 #define SHORT_NAME false
 
-namespace RtoR::Thermal {
+namespace Slab::Math::RtoR::Thermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {

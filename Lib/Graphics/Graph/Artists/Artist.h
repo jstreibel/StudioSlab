@@ -9,7 +9,7 @@
 #include "Graphics/Types.h"
 
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class PlottingWindow;
 

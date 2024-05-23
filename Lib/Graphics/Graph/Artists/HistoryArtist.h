@@ -8,7 +8,7 @@
 #include "R2toRFunctionArtist.h"
 #include "HistoryTexture2DUploadHelper.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class HistoryArtist : public R2toRFunctionArtist {
         HistoryTexture2DUploadHelper_ptr helper;

@@ -8,27 +8,33 @@
 #define NDFTModes (nConfig.getN()/2+1)
 #define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
 
-SimHistory_DFT::SimHistory_DFT(const Core::Simulation::SimulationConfig &simConfig, Resolution N_time)
-: SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT) { }
 
-auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
-    IN stateIn = *input.getEqStateData<RtoR::EquationState>();
+namespace Slab::Models {
 
-    IN phi = stateIn.getPhi();
-    IN dataIn = phi.getSpace().getHostData(true);
+    SimHistory_DFT::SimHistory_DFT(const SimulationConfig &simConfig, Resolution N_time)
+            : SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT) {}
 
-    auto dftNewData = RtoR::DFT::Compute(phi);
+    auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
+        IN stateIn = *input.getEqStateData<RtoR::EquationState>();
 
-    auto result = DFTInstantResult{input.getSimTime(), dftNewData};
-    dftDataHistory.emplace_back(result);
+        IN phi = stateIn.getPhi();
+        IN dataIn = phi.getSpace().getHostData(true);
 
-    fix pts = dftNewData.getMagnitudes()->getPoints();
-    assert(N_x==pts.size());
+        auto dftNewData = RtoR::DFT::Compute(phi);
 
-    for(auto i=0; i<N_x; ++i)
-        dataOut[i] = pts[i].y;
-}
+        auto result = DFTInstantResult{input.getSimTime(), dftNewData};
+        dftDataHistory.emplace_back(result);
 
-const DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {
-    return dftDataHistory;
+        fix pts = dftNewData.getMagnitudes()->getPoints();
+        assert(N_x == pts.size());
+
+        for (auto i = 0; i < N_x; ++i)
+            dataOut[i] = pts[i].y;
+    }
+
+    const DFTDataHistory &SimHistory_DFT::getDFTDataHistory() const {
+        return dftDataHistory;
+    }
+
+
 }

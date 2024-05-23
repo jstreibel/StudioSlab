@@ -8,7 +8,7 @@
 #include "Core/Backend/Implementations.h"
 #include "Core/Backend/Modules/Module.h"
 
-namespace Core {
+namespace Slab::Core {
 
     class ImGuiModule : public Module {
         static void generalInitialization();

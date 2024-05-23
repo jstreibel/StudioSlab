@@ -23,7 +23,7 @@ namespace MolecularDynamics {
 #define SFML_Backend dynamic_cast<SFMLBackend&>(Core::BackendManager::GetGUIBackend())
 
     Monitor::Monitor(const NumericConfig &params, Model model)
-    : Numerics::OutputSystem::Socket(params, "Particle dynamics monitor", 10)
+    : Socket(params, "Particle dynamics monitor", 10)
     , Window(0, 0, 100, 100, HasMainMenu)
     , renderWindow(SFML_Backend.getRenderWindow())
     , molShapes(2*params.getN())

@@ -8,9 +8,11 @@
 #include "TextureUtils.h"
 
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
     fix UspecifiedFormat = OpenGL::PixelDataFormat::DataFormat_Red;
     fix UnspecifiedType  = OpenGL::PixelDataType::DataType_Float32;
+
+    using Log = Core::Log;
 
     Texture2D::Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit)
     : Texture(Texture_2D, format, textureUnit)

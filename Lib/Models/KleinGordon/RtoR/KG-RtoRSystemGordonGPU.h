@@ -11,7 +11,7 @@
 #include "Utils/DeviceConfig.h"
 #include "Models/KleinGordon/KGSolver.h"
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     class SystemGordonGPU : Fields::KleinGordon::Solver<EquationState> {
     public:

@@ -9,7 +9,7 @@
 
 #define Map(cMap) {cMap.getName(), cMap}
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     auto blues = ColorMap{
         "blues",

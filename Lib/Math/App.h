@@ -8,12 +8,12 @@
 #include "Core/App/AppBase.h"
 #include "Math/Numerics/VoidBuilder.h"
 
-namespace Simulation {
+namespace Slab::Math {
     class App : public AppBase {
-        Core::Simulation::VoidBuilder::Ptr builder;
+        VoidBuilder::Ptr builder;
 
     public:
-        App(int argc, const char **argv, Core::Simulation::VoidBuilder::Ptr simBuilder);
+        App(int argc, const char **argv, VoidBuilder::Ptr simBuilder);
 
         auto run() -> int override;
 

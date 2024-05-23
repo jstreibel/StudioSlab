@@ -12,7 +12,8 @@
 #include <Utils/Types.h>
 
 
-namespace Graphing {
+namespace Slab::Lost {
+
     class Graph : public sf::Drawable {
     protected:
         sf::VertexArray frame;
@@ -55,6 +56,7 @@ namespace Graphing {
         virtual void manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor);
 
         std::vector<std::pair<Real, Real>> getData() const;
+        void clearData();
     };
 }
 

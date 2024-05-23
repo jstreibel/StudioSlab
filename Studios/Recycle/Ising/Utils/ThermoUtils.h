@@ -11,7 +11,7 @@
 namespace ThermoUtils {
     extern std::map<double, double> eT_Onsager_by_T;
 
-    typedef long double Real;
+    // typedef long double Real;
 
     Real BoltzmannWeight_betaE(Real betaE);
     Real BoltzmannWeight(Real T, Real E);

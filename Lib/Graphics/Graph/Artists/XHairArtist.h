@@ -8,7 +8,7 @@
 #include "Artist.h"
 #include "Math/Space/Impl/PointSet.h"
 
-namespace Graphics {
+namespace Slab::Graphics {
 
     class XHairArtist : public Artist {
         Math::PointSet XHair;

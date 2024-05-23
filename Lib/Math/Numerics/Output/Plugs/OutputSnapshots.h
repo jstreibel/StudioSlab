@@ -3,34 +3,41 @@
 
 #include "Math/Numerics/Output/Plugs/Socket.h"
 
-class OutputSnapshot : public Numerics::OutputSystem::Socket {
 
-private:
-    std::vector<size_t> snapSteps;
-    Str customFileDescription;
+namespace Slab::Math {
 
-    size_t T_fileNamePrecision;
-public:
-    OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "", const size_t fileNamePrecision = 4);
+    class OutputSnapshot : public Socket {
 
-    ~OutputSnapshot();
+    private:
+        std::vector<size_t> snapSteps;
+        Str customFileDescription;
 
-    void addSnapshotStep(const size_t snapshotStep);
+        size_t T_fileNamePrecision;
+    public:
+        OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "",
+                       const size_t fileNamePrecision = 4);
 
-    static void doOutput(const OutputPacket &outInfo, const Str& customFileDescription = "",
-                         const size_t T_fileNamePrecision = 4);
+        ~OutputSnapshot();
 
-    size_t computeNextRecStep(UInt currStep) override;
+        void addSnapshotStep(const size_t snapshotStep);
 
-protected:
-    static void _outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName);
+        static void doOutput(const OutputPacket &outInfo, const Str &customFileDescription = "",
+                             const size_t T_fileNamePrecision = 4);
 
-protected:
-    virtual bool shouldOutput(const Real t, const long unsigned timeStep) override;
+        size_t computeNextRecStep(UInt currStep) override;
 
-    virtual void handleOutput(const OutputPacket &outInfo) override {
-        OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
-    }
-};
+    protected:
+        static void _outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName);
+
+    protected:
+        virtual bool shouldOutput(const Real t, const long unsigned timeStep) override;
+
+        virtual void handleOutput(const OutputPacket &outInfo) override {
+            OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
+        }
+    };
+
+
+}
 
 #endif // OUTPUTSNAPSHOTS1D_H

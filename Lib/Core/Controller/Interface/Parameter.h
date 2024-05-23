@@ -9,38 +9,49 @@
 
 #include <Utils/Types.h>
 
-class Parameter {
-protected:
-    Str shortCLName, longCLName, fullCLName, description;
+namespace Slab::Core {
 
-public:
-    typedef std::shared_ptr<Parameter> Ptr;
-    typedef std::shared_ptr<const Parameter> ConstPtr;
+    class Parameter {
+    protected:
+        Str shortCLName, longCLName, fullCLName, description;
 
-    Parameter(const Str& commandLineArgName, const Str& description);
+    public:
+        typedef std::shared_ptr<Parameter> Ptr;
+        typedef std::shared_ptr<const Parameter> ConstPtr;
 
-    virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
+        Parameter(const Str &commandLineArgName, const Str &description);
 
-    virtual auto valueToString() const -> Str = 0;
+        virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
 
-    virtual void setValueFrom(VariableValue var) = 0;
-    virtual void setValue(const void*) = 0;
-    virtual auto getValueVoid() const -> const void* = 0;
+        virtual auto valueToString() const -> Str = 0;
 
-    auto getFullCLName() const -> Str;
-    auto getCLName(bool longNameIfPresent=false) const -> Str;
-    auto getDescription() const -> Str;
-    void setDescription(Str newDescription);
+        virtual void setValueFrom(VariableValue var) = 0;
 
-    bool operator<(const Parameter *rhs);
+        virtual void setValue(const void *) = 0;
 
-    bool operator==(Str str) const;
+        virtual auto getValueVoid() const -> const void * = 0;
 
-    bool operator!=(const Parameter &rhs) const;
+        auto getFullCLName() const -> Str;
 
-};
+        auto getCLName(bool longNameIfPresent = false) const -> Str;
 
-OStream & operator << (OStream &out, const Parameter &b);
-OStream & operator << (OStream &out, const Parameter *b);
+        auto getDescription() const -> Str;
+
+        void setDescription(Str newDescription);
+
+        bool operator<(const Parameter *rhs);
+
+        bool operator==(Str str) const;
+
+        bool operator!=(const Parameter &rhs) const;
+
+    };
+
+    OStream &operator<<(OStream &out, const Parameter &b);
+
+    OStream &operator<<(OStream &out, const Parameter *b);
+
+
+}
 
 #endif //FIELDS_PARAMETERBASE_H

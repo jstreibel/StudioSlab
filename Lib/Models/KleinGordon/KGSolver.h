@@ -11,22 +11,24 @@
 
 
 
-namespace Fields::KleinGordon {
+namespace Slab::Models {
+
+    using namespace Math;
 
     template<class EqState>
-    class Solver : public Slab::EquationSolverT<EqState> {
+    class Solver : public EquationSolverT<EqState> {
     public:
-        using MyBase = Slab::EquationSolverT<EqState>;
-        using PotentialFunc = Core::FunctionT<Real, Real>;
+        using MyBase = EquationSolverT<EqState>;
+        using PotentialFunc = Base::FunctionT<Real, Real>;
         typedef EqState::SubStateType           DiscrFuncType;
         using NonHomogenousFunc = typename EqState::SubStateType::MyBase;
-        using NonHomogenousPtr = std::shared_ptr<NonHomogenousFunc>;
+        using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
 
         Solver(const NumericConfig &params,
                         MyBase::EqBoundaryCondition &du,
                         PotentialFunc &potential,
-                        NonHomogenousPtr nonHomogenousFunc= NullPtr<NonHomogenousFunc>())
-        : Slab::EquationSolverT<EqState>(params, du)
+                        NonHomogenousPtr nonHomogenousFunc= Pointer<NonHomogenousFunc>())
+        : EquationSolverT<EqState>(params, du)
         , V(potential)
         , dVDPhi(potential.diff(0))
         , f(nonHomogenousFunc)

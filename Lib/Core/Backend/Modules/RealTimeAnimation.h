@@ -7,7 +7,7 @@
 
 #include "Core/Backend/Modules/Module.h"
 
-namespace Core {
+namespace Slab::Core {
 
     class RealTimeAnimationModule : public Module {
     public:

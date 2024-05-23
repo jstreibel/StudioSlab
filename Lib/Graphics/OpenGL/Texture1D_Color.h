@@ -13,10 +13,10 @@
 #include "TextureUtils.h"
 #include "../Styles/Colors.h"
 
-namespace Graphics::OpenGL {
+namespace Slab::Graphics::OpenGL {
 
     class Texture1D_Color : public Texture {
-        ByteData data = nullptr;
+        ByteData_raw data;
 
         GLsizei size;
 

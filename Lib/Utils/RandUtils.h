@@ -7,20 +7,24 @@
 
 #include "Utils/Types.h"
 
-namespace RandUtils {
-    void seed(int s);
+namespace Slab {
 
-    Real random01();
+    namespace RandUtils {
+        void seed(int s);
 
-    Real random(Real a, Real b);
+        Real random01();
 
-    unsigned RandInt();
+        Real random(Real a, Real b);
 
-    double gaussianNoise(Real mean=0.0, Real standard_deviation=1.0, bool reSeed=false, int seed=1);
-}
+        unsigned RandInt();
 
-namespace LostAndFound {
-    void imprimeBinario(unsigned long long a);
+        double gaussianNoise(Real mean = 0.0, Real standard_deviation = 1.0, bool reSeed = false, int seed = 1);
+    }
+
+    namespace LostAndFound {
+        void imprimeBinario(unsigned long long a);
+    }
+
 }
 
 #endif //ISING_RANDUTILS_H

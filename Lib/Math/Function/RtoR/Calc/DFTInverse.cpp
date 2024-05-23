@@ -9,7 +9,7 @@
 
 #define INVERSE_FOURIER_TRANSFORM FFTW_BACKWARD
 
-namespace RtoR {
+namespace Slab::Math::RtoR {
 
     DFTInverse::LowPass::LowPass(int kThreshold) : kThreshold(kThreshold)   {    }
     Complex DFTInverse::LowPass::operator()(const Complex &A, Real k) {

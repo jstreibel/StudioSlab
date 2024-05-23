@@ -5,7 +5,10 @@
 #include "GLDebug.h"
 #include "Core/Tools/Log.h"
 
-namespace OpenGL {
+namespace Slab::Graphics::OpenGL {
+
+    using namespace Core;
+
     void OpenGL_Debug_Callback(GLenum source,
                                GLenum type,
                                GLuint id,

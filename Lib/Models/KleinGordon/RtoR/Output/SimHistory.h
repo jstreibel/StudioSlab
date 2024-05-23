@@ -13,29 +13,36 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
 #include "../KG-RtoREquationState.h"
 
-class SimHistory : public Numerics::OutputSystem::Socket {
-    R2toR::DiscreteFunction *data;
-    RealVector timestamps;
-    bool dataIsOnGPU;
 
-    virtual auto transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void;
+namespace Slab::Models {
 
-protected:
-    const int N_t, N_x;
+    using namespace Slab::Math;
 
-    auto handleOutput(const OutputPacket &packet) -> void override;
+    class SimHistory : public Socket {
+        R2toR::DiscreteFunction *data;
+        RealVector timestamps;
+        bool dataIsOnGPU;
 
-public:
-    SimHistory(const Core::Simulation::SimulationConfig &simConfig,
-               Resolution N_x,
-               Resolution N_t,
-               Real xMin,
-               Real L,
-               const Str& name = "SimulationHistory");
+        virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <Real> &dataOut) -> void;
 
-    auto getData() const -> const R2toR::DiscreteFunction&;
+    protected:
+        const int N_t, N_x;
 
-};
+        auto handleOutput(const OutputPacket &packet) -> void override;
 
+    public:
+        SimHistory(const SimulationConfig &simConfig,
+                   Resolution N_x,
+                   Resolution N_t,
+                   Real xMin,
+                   Real L,
+                   const Str &name = "SimulationHistory");
+
+        auto getData() const -> const R2toR::DiscreteFunction &;
+
+    };
+
+
+}
 
 #endif //STUDIOSLAB_SIMHISTORY_H

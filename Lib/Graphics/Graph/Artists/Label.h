@@ -10,7 +10,7 @@
 #include "Utils/Types.h"
 #include "Artist.h"
 
-namespace Core::Graphics {
+namespace Slab::Graphics {
 
     enum LocationReference {
         SystemWindow,

@@ -81,7 +81,7 @@ MaryApp::MaryApp(sf::RenderWindow &window) : AppBase(0, nullptr) {
         if(k<3) primitiveType = sf::Lines;
         auto winW = window.getSize().x, winH = window.getSize().y;
         graphs.push_back(
-                Graphing::Graph(
+                Lost::Graph(
                         sf::IntRect(rectLeft,
                                     20,
                                     winW-rectLeft-20,

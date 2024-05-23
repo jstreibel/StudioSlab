@@ -8,11 +8,12 @@
 #include "Models/KleinGordon/KGState.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace R2toR {
-    class EquationState : public Fields::KleinGordon::KGState<DiscreteFunction> {
+namespace Slab::Math::R2toR {
+
+    class EquationState : public Models::KGState<DiscreteFunction> {
     public:
         EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
-        : Fields::KleinGordon::KGState<DiscreteFunction>(phi, dPhiDt)
+        : Models::KGState<DiscreteFunction>(phi, dPhiDt)
         {
         }
 

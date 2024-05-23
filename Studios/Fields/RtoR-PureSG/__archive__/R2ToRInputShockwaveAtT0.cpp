@@ -13,7 +13,7 @@
 #include "Core/Math/Maps/R2toR/View/R2ToROutputOpenGlShockwaveAtT0.h"
 
 
-using namespace R2toR;
+using namespace Slab::Math::R2toR;
 
 void R2toRInputShockwaveAt_t0::YoureTheChosenOne(CLVariablesMap &vm) {
     t0 = vm["t0"].as<Real>();
