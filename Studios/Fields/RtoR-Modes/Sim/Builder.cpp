@@ -20,8 +20,10 @@
 
 namespace Modes {
 
+    using namespace Slab::Models;
+
     Builder::Builder(bool doRegister)
-    : RtoR::KGBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : KGRtoR::KGBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         interface->addParameters({&BCSelection, &A, &omega, &k, &driving_force});
 
@@ -29,7 +31,7 @@ namespace Modes {
     }
 
     void *Builder::getBoundary() {
-        auto &prototype = *(RtoR::EquationState*) RtoR::KGBuilder::newFieldState();
+        auto &prototype = *(KGRtoR::EquationState*) KGRtoR::KGBuilder::newFieldState();
 
         fix L = this->getNumericParams().getL();
 
@@ -50,7 +52,7 @@ namespace Modes {
             auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k);
             auto ddtf_0 = new RtoR::FunctionSummable(ddtfunc1, ddtfunc2);
 
-            return new RtoR::BoundaryCondition(prototype, f_0, ddtf_0);
+            return new KGRtoR::BoundaryCondition(prototype, f_0, ddtf_0);
         }
         if(*BCSelection == 2){
             if(getNonHomogenous() == nullptr) getNonHomogenous();
@@ -83,8 +85,9 @@ namespace Modes {
     }
 
     void *Builder::buildOpenGLOutput() {
+
         fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(RtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
+        auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(KGRtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
 
         monitor->setInputModes({*A}, {*omega});
 
@@ -98,7 +101,7 @@ namespace Modes {
         if(*BCSelection == 1) params.emplace_back("wave_number");
 
         auto strParams = interface->toString(params, SEPARATOR);
-        return RtoR::KGBuilder::suggestFileName() + SEPARATOR + strParams;
+        return KGRtoR::KGBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
     Pointer<Base::FunctionT<Real, Real>> Builder::getNonHomogenous() {

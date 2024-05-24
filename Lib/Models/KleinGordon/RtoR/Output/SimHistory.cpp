@@ -16,7 +16,7 @@
 #include "Core/Tools/Log.h"
 
 
-namespace Slab::Models {
+namespace Slab::Models::KGRtoR {
 
 // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
@@ -56,7 +56,7 @@ namespace Slab::Models {
     }
 
     auto SimHistory::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
-        IN stateIn = *input.getEqStateData<RtoR::EquationState>();
+        IN stateIn = *input.getEqStateData<EquationState>();
 
         IN f_in = stateIn.getPhi();
         IN in = f_in.getSpace().getHostData(true);
@@ -76,7 +76,7 @@ namespace Slab::Models {
         if (packet.getSimTime() >= params.gett())
             return;
 
-        assert(packet.getEqStateData<RtoR::EquationState>() != nullptr);
+        assert(packet.getEqStateData<EquationState>() != nullptr);
 
 #if USE_CUDA
         if(dataIsOnGPU)

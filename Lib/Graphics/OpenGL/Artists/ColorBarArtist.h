@@ -13,6 +13,20 @@ namespace Slab::Graphics::OpenGL {
     typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
     typedef std::function<Real(Real)> ScalingFunction;
 
+    enum ColorBarMode {
+        AllFieldValues=0,
+        ValuesInSatRangeOnly=1
+    };
+
+    struct ColorBarParams {
+        Real kappa;
+        Real phi_sat;
+        Real phi_max;
+        Real phi_min;
+        bool symmetric;
+        ColorBarMode mode;
+    };
+
     class ColorBarArtist : public Artist {
         VertexBuffer vertexBuffer;
         Shader shader;
@@ -20,6 +34,9 @@ namespace Slab::Graphics::OpenGL {
         bool textureDirty = true;
         RectI rect;
 
+        ColorBarParams params;
+
+        ScalingFunction scalingFunction;
         ScalingFunction inverseScalingFunction;
 
         ColorMap colorMap;
@@ -32,8 +49,16 @@ namespace Slab::Graphics::OpenGL {
         void setColorMap(const ColorMap& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
+        void setKappa(Real);
+        void setPhiSaturation(Real);
+        void setSymmetric(bool);
+        void setPhiMax(Real);
+        void setPhiMin(Real);
+        void setMode(ColorBarMode);
+
         bool draw(const PlottingWindow &) override;
 
+        void setScalingFunction(std::function<Real(Real)>);
         void setInverseScalingFunction(std::function<Real(Real)>);
     };
 

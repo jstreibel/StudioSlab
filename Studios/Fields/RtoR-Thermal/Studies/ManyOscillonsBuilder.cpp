@@ -6,7 +6,6 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Utils/RandUtils.h"
-#include "../ThermalMonitor.h"
 
 namespace Studios::Fields::RtoRThermal {
 
@@ -37,8 +36,8 @@ namespace Studios::Fields::RtoRThermal {
             initCondDPhiDt += oscRight.swap() + oscLeft.swap();
         }
 
-        auto proto = (RtoR::EquationState *) newFieldState();
-        return new RtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        auto proto = (Models::KGRtoR::EquationState *) newFieldState();
+        return new Models::KGRtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 /*

@@ -8,11 +8,13 @@
 #include "SnapshotOutput.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
+
+    using namespace Slab::Math;
 
     class DFTSnapshotOutput : public SnapshotOutput {
     protected:
-        auto filterData(const OutputPacket &packet) -> DiscreteFunction_CPU override;
+        auto filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU override;
     public:
         DFTSnapshotOutput(const NumericConfig &config, const Str &fileName);
     };

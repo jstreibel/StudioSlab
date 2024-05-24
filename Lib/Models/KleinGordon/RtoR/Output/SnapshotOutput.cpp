@@ -10,7 +10,7 @@
 #include "../KG-RtoREquationState.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
     const Str suffix = ".simsnap";
 
@@ -29,7 +29,7 @@ namespace Slab::Math::RtoR {
 
 
     auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU {
-        auto &phi = packet.getEqStateData<RtoR::EquationState>()->getPhi();
+        auto &phi = packet.getEqStateData<EquationState>()->getPhi();
 
         return RtoR::DiscreteFunction_CPU(phi);
     }

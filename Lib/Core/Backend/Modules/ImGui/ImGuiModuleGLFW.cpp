@@ -48,7 +48,7 @@ namespace Slab::Core {
 
         if(ImGui::GetIO().WantCaptureKeyboard) return true;
 
-        if(key == GLFW_KEY_D){
+        if(action == Release && key == GLFW_KEY_D){
             showDemos = !showDemos;
 
             return true;

@@ -7,18 +7,19 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 
-namespace PureSG {
+namespace Studios::PureSG {
 
-class Builder : public Slab::Math::RtoR::KGBuilder {
+    using namespace Slab;
+    using namespace Slab::Math;
+    using namespace Slab::Models::KGRtoR;
+
+    class Builder : public KGBuilder {
 
     public:
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
     protected:
         auto buildOpenGLOutput() -> void * override;
-
-    public:
-        auto getBoundary() -> void * override;
     };
 
 } // PureSG

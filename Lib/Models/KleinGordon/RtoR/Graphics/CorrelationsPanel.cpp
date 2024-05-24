@@ -13,7 +13,7 @@
 
 #include <memory>
 
-namespace Slab::Graphics {
+namespace Slab::Models::KGRtoR {
 
     fix N = 1200;
     fix M = 1538;
@@ -82,7 +82,7 @@ namespace Slab::Graphics {
         return Slab::Pointer<R2toR::DiscreteFunction>{func};
     }
 
-    CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian)
+    CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
     : RtoRPanel(params, guiWindow, hamiltonian,
                 "Correlations",
                 "panel for computing and visualizing correlations over simulation history data")

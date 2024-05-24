@@ -51,6 +51,7 @@ namespace Slab::Core {
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
         // Setup Dear ImGui style
+        SetStyleStudioSlab();   // For sizes
         colorThemes[currentTheme]();
     }
 

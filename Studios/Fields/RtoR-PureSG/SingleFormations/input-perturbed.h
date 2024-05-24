@@ -1,12 +1,15 @@
 #ifndef SIMPERTURBED_H
 #define SIMPERTURBED_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../Builder.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Studios::PureSG {
 
-    class InputPerturbations : public KGBuilder {
+    using namespace Slab::Core;
+
+
+    class InputPerturbations : public Builder {
         RealParameter l   = RealParameter{1., "l", "Initial condition scale factor."};
         RealParameter eps = RealParameter{1., "a", "Perturbation value. a=1 means no perturbation."};
 

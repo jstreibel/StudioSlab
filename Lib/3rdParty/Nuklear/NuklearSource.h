@@ -4,4 +4,9 @@
 
 #define NK_IMPLEMENTATION
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"
+
 #include "NuklearInclude.h"
+
+#pragma GCC diagnostic pop

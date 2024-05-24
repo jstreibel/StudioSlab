@@ -34,9 +34,6 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        Real field_min;
-        Real field_max;
-
         ColorMap cMap           = ColorMaps["BrBG"];
         Real cMap_kappaArg                =  1; // contrast
         Real cMap_saturationValue       =  1.1;

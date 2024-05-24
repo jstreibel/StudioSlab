@@ -5,7 +5,7 @@
 #include "R2toRFunctionRenderer.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
 
-namespace Slab::Graphics {
+namespace Slab::Math::R2toR {
     auto R2toRFunctionRenderer::renderToDiscrete(const R2toR::Function &function,
                                                  Resolution N, Resolution M,
                                                  R2toR::Domain domain, Real scale) -> R2toR::DiscreteFunction_ptr {

@@ -122,6 +122,12 @@ namespace Slab {
         }
 
         if (showInterface) {
+            auto vp = getViewport();
+            auto sh = Core::BackendManager::GetGUIBackend().getScreenHeight();
+
+            ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
+
             if (ImGui::Begin(title.c_str())) {
 
                 for (IN cont: content) {
@@ -193,6 +199,10 @@ namespace Slab {
 
     Graphics::AxisArtist &Graphics::PlottingWindow::getAxisArtist() {
         return axisArtist;
+    }
+
+    void Graphics::PlottingWindow::setAutoReviewGraphRanges(bool autoReview) {
+        autoReviewGraphRanges = autoReview;
     }
 
 

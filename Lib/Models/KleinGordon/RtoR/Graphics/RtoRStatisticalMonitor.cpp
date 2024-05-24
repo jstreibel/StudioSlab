@@ -7,11 +7,8 @@
 #include "imgui.h"
 
 #include "Math/Function/RtoR/Calc/Histogram.h"
-#include "Math/Function/R2toR/Model/Transform.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
-#include "Graphics/Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h"
-#include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Graph/Plotter.h"
 
@@ -49,13 +46,13 @@
 #define CORR_SCALE 1e0
 
 
-namespace Slab {
+namespace Slab::Models::KGRtoR {
 
-    using namespace Math;
+    using namespace Slab::Math;
 
-    RtoR::StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian,
+    StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian,
                                                  Graphics::GUIWindow &guiWindow)
-            : Graphics::RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
+            : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
                                   "panel for statistic analysis of simulation data"), Δt(params.gett() * 0.1),
               hamiltonian(hamiltonian), mTemperaturesGraph("T"),
               mHistogramsGraphK("k histogram", MANUAL_REVIEW_GRAPH_LIMITS),
@@ -121,7 +118,7 @@ namespace Slab {
         setColumnRelativeWidth(1, 0.40);
     }
 
-    void RtoR::StatisticalMonitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+    void StatisticalMonitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
                                                         Graphics::PlottingWindow_ptr simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
@@ -145,7 +142,7 @@ namespace Slab {
         }
     }
 
-    void RtoR::StatisticalMonitor::updateHistoryGraphs() {
+    void StatisticalMonitor::updateHistoryGraphs() {
         if (simulationHistory == nullptr) return;
 
         CHECK_GL_ERRORS(0)
@@ -194,7 +191,7 @@ namespace Slab {
 
                 static auto θ = .0f;
                 if (ImGui::SliderAngle("Correlation direction", &θ, 0.f, 180.f)) {
-                    fix Δ = .5 * Graphics::RtoRPanel::params.getL();
+                    fix Δ = .5 * RtoRPanel::params.getL();
                     fix c = cos((Real) θ);
                     fix s = sin((Real) θ);
 
@@ -238,7 +235,7 @@ namespace Slab {
         CHECK_GL_ERRORS(3)
     }
 
-    void RtoR::StatisticalMonitor::draw() {
+    void StatisticalMonitor::draw() {
         int errorCount = 0;
 
         CHECK_GL_ERRORS(errorCount++)
@@ -255,7 +252,7 @@ namespace Slab {
 
         // *************************** Histograms *****************************
         {
-            Histogram histogram;
+            RtoR::Histogram histogram;
             static auto nbins = 200;
             static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
@@ -329,7 +326,7 @@ namespace Slab {
         RtoRPanel::draw();
     }
 
-    void RtoR::StatisticalMonitor::drawGUI() {
+    void StatisticalMonitor::drawGUI() {
         guiWindow.begin();
 
         if (ImGui::CollapsingHeader("Statistical")) {
@@ -342,7 +339,7 @@ namespace Slab {
         guiWindow.end();
     }
 
-    void RtoR::StatisticalMonitor::handleOutput(const OutputPacket &packet) {
+    void StatisticalMonitor::handleOutput(const OutputPacket &packet) {
         RtoRPanel::handleOutput(packet);
 
         auto L = params.getL();
@@ -365,7 +362,7 @@ namespace Slab {
         temperature3HistoryData.addPoint({t, tau_2});
     }
 
-    void RtoR::StatisticalMonitor::setTransientHint(Real value) {
+    void StatisticalMonitor::setTransientHint(Real value) {
         transientHint = value;
     }
 

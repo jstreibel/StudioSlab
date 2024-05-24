@@ -13,7 +13,7 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
 
 
-namespace Slab::Models {
+namespace Slab::Models::KGRtoR {
 
     struct DFTInstantResult {
         Real t;

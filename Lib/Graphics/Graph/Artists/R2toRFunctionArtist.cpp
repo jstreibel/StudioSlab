@@ -218,8 +218,8 @@ namespace Slab::Graphics {
             return;
         }
 
-        field_min = function->min();
-        field_max = function->max();
+        auto field_min = function->min();
+        auto field_max = function->max();
 
         if(Common::areEqual(field_min, field_max)) field_max += 0.1;
 
@@ -230,6 +230,8 @@ namespace Slab::Graphics {
 
         program.setUniform("symmetric", (GLboolean ) symmetricMaxMin);
         program.setUniform("phi_sat", (GLfloat) cMap_saturationValue);
+        colorBar.setSymmetric(symmetricMaxMin);
+        colorBar.setPhiSaturation(cMap_saturationValue);
 
         bool firstTime = func == nullptr;
         func = std::move(function);
@@ -317,24 +319,28 @@ namespace Slab::Graphics {
     }
 
     void R2toRFunctionArtist::updateColorBar() {
-        fix min = field_min;
-        fix max = field_max;
+        if(func == nullptr) return;
+
+        fix field_min = func->min();
+        fix field_max = func->max();
 
         auto &kappa = cMap_kappaArg;
 
         std::function<Real(Real)> g⁻¹;
 
         if(symmetricMaxMin) {
-            g⁻¹ = [min, max, &kappa](Real x) {
-                x = x*(max-min)+min;
+            g⁻¹ = [field_min, field_max, &kappa](Real x) {
+                x = x*(field_max-field_min)+field_min;
                 const auto s = SIGN(x);
 
                 return kappa*(exp(s*x) - 1);
             };
+        } else {
+            g⁻¹ = [](Real x) {
+                return x;
+            };
         }
-        g⁻¹ = [](Real x) {
-            return x;
-        };
+
 
 
         colorBar.setInverseScalingFunction(g⁻¹);
@@ -345,6 +351,13 @@ namespace Slab::Graphics {
         program.setUniform("kappa", (float)cMap_kappaArg);
         program.setUniform("symmetric", symmetricMaxMin);
 
+        colorBar.setPhiMin(field_min);
+        colorBar.setPhiMax(field_max);
+        colorBar.setPhiSaturation(cMap_saturationValue);
+        colorBar.setKappa(cMap_kappaArg);
+        colorBar.setSymmetric(symmetricMaxMin);
+        colorBar.setMode(OpenGL::ColorBarMode::ValuesInSatRangeOnly);
+
     }
 
     void R2toRFunctionArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
@@ -352,8 +365,10 @@ namespace Slab::Graphics {
     R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
 
     void R2toRFunctionArtist::adjustScale() {
-        field_min = func->min();
-        field_max = func->max();
+        if(func == nullptr) return;
+
+        fix field_min = func->min();
+        fix field_max = func->max();
 
         cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
 

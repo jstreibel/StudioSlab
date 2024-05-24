@@ -1,11 +1,10 @@
 #ifndef SIMSHOCKWAVE_H
 #define SIMSHOCKWAVE_H
 
-#include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../Builder.h"
 
-namespace Slab::Math::RtoR {
-    class InputShockwave : public KGBuilder {
+namespace Studios::PureSG {
+    class InputShockwave : public Builder {
     private:
 
         unsigned int deltaType = 1;

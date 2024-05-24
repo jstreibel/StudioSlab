@@ -13,12 +13,20 @@
 #define CountLessThanZero(vec) std::count_if(begin(vec), end(vec), [](float x) { return x < 0; });
 #define SumLargerThanZero(vec) std::accumulate(begin(vec), end(vec), 0.0f, [](float acc, float x) { return x > 0 ? acc + x : acc; });
 
-#define PropagateEvent(EVENT)   \
+
+
+// Don't touch
+fix AlwaysPropagate = true;
+fix PropagateOnlyIfMouseIsIn = false;
+
+#define PropagateEvent(EVENT, PROPAGATE_ALWAYS) \
+    {                                            \
     auto responded = false;     \
     for(auto &winData : windowsList)    \
-        if(winData.window->isMouseIn()) responded = winData.window->EVENT; \
+        if(winData.window->isMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
                                 \
-    return responded;
+    return responded;                           \
+    }
 
 
 namespace Slab::Graphics {
@@ -174,19 +182,23 @@ namespace Slab::Graphics {
 
     bool WindowRow::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
                                       Core::ModKeys keys) {
-        PropagateEvent(notifyMouseButton(button, state, keys));
+        if(state == Core::Release)
+            // PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate)
+            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
+        else
+            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowRow::notifyMouseWheel(double dx, double dy) {
-        PropagateEvent(notifyMouseWheel(dx, dy));
+        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowRow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        PropagateEvent(notifyKeyboard(key, state, modKeys));
+        PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowRow::notifyFilesDropped(StrVector paths) {
-        PropagateEvent(notifyFilesDropped(paths));
+        PropagateEvent(notifyFilesDropped(paths), PropagateOnlyIfMouseIsIn)
     }
 
 }

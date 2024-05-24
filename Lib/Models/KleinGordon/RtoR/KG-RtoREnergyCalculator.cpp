@@ -5,14 +5,13 @@
 #include "KG-RtoREnergyCalculator.h"
 #include "Math/Function/RtoR/Model/Derivatives/DerivativesCPU.h"
 
-#include "Math/Numerics/VoidBuilder.h"
-#include "KG-RtoREquationState.h"
-
 // #define USE_PERIODIC_BC
 
-namespace Slab::Math {
+namespace Slab::Models::KGRtoR {
 
-    RtoR::KGEnergy::KGEnergy(VoidBuilder &builder, RtoR::Function_ptr potentialFunc)
+    using namespace Slab::Math;
+
+    KGEnergy::KGEnergy(VoidBuilder &builder, RtoR::Function_ptr potentialFunc)
             : builder(builder), _oEnergyDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
               _oKineticDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
               _oGradientDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
@@ -20,7 +19,7 @@ namespace Slab::Math {
 
     }
 
-    auto RtoR::KGEnergy::computeEnergies(const RtoR::EquationState &field) -> const RtoR::DiscreteFunction & {
+    auto KGEnergy::computeEnergies(const EquationState &field) -> const RtoR::DiscreteFunction & {
         auto &phi = field.getPhi(), &ddtPhi = field.getDPhiDt();
         auto &phiSpace = phi.getSpace(),
                 &ddtPhiSpace = ddtPhi.getSpace();
@@ -73,10 +72,10 @@ namespace Slab::Math {
         return *_oEnergyDensity;
     }
 
-    auto RtoR::KGEnergy::getTotalEnergy() const -> Real { return U; }
+    auto KGEnergy::getTotalEnergy() const -> Real { return U; }
 
 
-    auto RtoR::KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
+    auto KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
         auto &func = *_oEnergyDensity;
 
         RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
@@ -93,11 +92,11 @@ namespace Slab::Math {
         return 0;
     }
 
-    Real RtoR::KGEnergy::getTotalKineticEnergy() const { return K; }
+    Real KGEnergy::getTotalKineticEnergy() const { return K; }
 
-    Real RtoR::KGEnergy::getTotalGradientEnergy() const { return W; }
+    Real KGEnergy::getTotalGradientEnergy() const { return W; }
 
-    Real RtoR::KGEnergy::getTotalPotentialEnergy() const { return V; }
+    Real KGEnergy::getTotalPotentialEnergy() const { return V; }
 
 
 }

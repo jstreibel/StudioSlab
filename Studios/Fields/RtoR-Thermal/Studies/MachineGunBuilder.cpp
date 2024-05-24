@@ -36,8 +36,8 @@ namespace Studios::Fields::RtoRThermal {
             initCondDPhiDt += tiny.swap();
         }
 
-        auto proto = (RtoR::EquationState *) newFieldState();
-        return new RtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        auto proto = (Slab::Models::KGRtoR::EquationState *) newFieldState();
+        return new Slab::Models::KGRtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

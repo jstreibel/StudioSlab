@@ -9,7 +9,7 @@
 #include "Math/Function/R2toC/R2toCDiscreteFunction.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
-namespace Slab::Graphics {
+namespace Slab::Models::KGRtoR {
 
     class CorrelationsPanel : public RtoRPanel {
         PlottingWindow DFT2DGraph;
@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
 
     public:
-        CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, RtoR::KGEnergy &hamiltonian);
+        CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
                                   PlottingWindow_ptr simHistoryGraph) override;

@@ -12,12 +12,18 @@
 #define CountLessThanZero(vec) std::count_if(vec.begin(), vec.end(), [](float x) { return x < 0; });
 #define SumLargerThanZero(vec) std::accumulate(vec.begin(), vec.end(), 0.0f, [](float acc, float x) { return x > 0 ? acc + x : acc; });
 
-#define PropagateEvent(EVENT)   \
+
+// Don't touch
+fix AlwaysPropagate = true;
+fix PropagateOnlyIfMouseIsIn = false;
+
+
+#define PropagateEvent(EVENT, PROPAGATE_ALWAYS){   \
     auto responded = false;     \
     for(auto &win : windows)    \
-        if(win->isMouseIn()) responded = win->EVENT; \
+        if(win->isMouseIn() || PROPAGATE_ALWAYS) responded = win->EVENT; \
                                 \
-    return responded;
+    return responded;}
 
 
 namespace Slab::Graphics {
@@ -125,25 +131,29 @@ namespace Slab::Graphics {
     }
 
     bool WindowColumn::notifyMouseMotion(int x, int y) {
-        PropagateEvent(notifyMouseMotion(x, y));
+        PropagateEvent(notifyMouseMotion(x, y), PropagateOnlyIfMouseIsIn);
     }
 
     bool
     WindowColumn::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        PropagateEvent(notifyKeyboard(key, state, modKeys));
+        PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn);
     }
 
     bool WindowColumn::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
                                          Core::ModKeys keys) {
-        PropagateEvent(notifyMouseButton(button, state, keys));
+        if(state == Release)
+            // PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate);
+            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);
+
+        PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);
     }
 
     bool WindowColumn::notifyMouseWheel(double dx, double dy) {
-        PropagateEvent(notifyMouseWheel(dx, dy));
+        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn);
     }
 
     bool WindowColumn::notifyFilesDropped(StrVector paths) {
-        PropagateEvent(notifyFilesDropped(paths));
+        PropagateEvent(notifyFilesDropped(paths), PropagateOnlyIfMouseIsIn);
     }
 
     bool WindowColumn::isEmpty() const {

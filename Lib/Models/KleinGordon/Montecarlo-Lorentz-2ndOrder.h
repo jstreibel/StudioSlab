@@ -18,7 +18,7 @@
 
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
     typedef Fields::KleinGordon::GordonSystem<RtoR::FieldState> LorentzInvariant;
 

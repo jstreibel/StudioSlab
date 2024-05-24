@@ -8,14 +8,14 @@
 #include "Models/KleinGordon/KGState.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
     class EquationState : public Models::KGState<RtoR::DiscreteFunction> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
-        : Models::KGState<DiscreteFunction>(phi, dPhiDt) {}
+        EquationState(RtoR::DiscreteFunction *phi, RtoR::DiscreteFunction *dPhiDt)
+        : Models::KGState<RtoR::DiscreteFunction>(phi, dPhiDt) {}
 
     public:
         void outputPhi(OStream &out, Str separator) const override {
@@ -35,8 +35,8 @@ namespace Slab::Math::RtoR {
         }
 
         EqStateOutputInterface *Copy(UInt N) const override {
-            return new EquationState(dynamic_cast<DiscreteFunction*>(phi->CloneWithSize(N)),
-                                     dynamic_cast<DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
+            return new EquationState(dynamic_cast<RtoR::DiscreteFunction*>(phi->CloneWithSize(N)),
+                                     dynamic_cast<RtoR::DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
         }
 
         auto clone() const -> EquationState *;

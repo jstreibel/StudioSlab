@@ -7,7 +7,7 @@
 #include <memory>
 #include "Models/LangevinKleinGordon/LangevinKGSolver.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Graphics/Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRStatisticalMonitor.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
 
@@ -26,9 +26,9 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto Builder::buildEquationSolver() -> void * {
-        GET bc = *(RtoR::BoundaryCondition*)getBoundary();
+        GET bc = *(Slab::Models::KGRtoR::BoundaryCondition*)getBoundary();
 
-        auto solver = new RtoR::LangevinKGSolver(simulationConfig.numericConfig, bc);
+        auto solver = new Slab::Models::KGRtoR::LangevinKGSolver(simulationConfig.numericConfig, bc);
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 
@@ -44,12 +44,12 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     void *Builder::buildOpenGLOutput() {
-        auto monitor = (Slab::Math::RtoR::Monitor*) KGBuilder::buildOpenGLOutput();
+        auto monitor = (Slab::Models::KGRtoR::Monitor*) KGBuilder::buildOpenGLOutput();
         auto &guiWindow = monitor->getGUIWindow();
         auto &config = simulationConfig.numericConfig;
-        auto &hamiltonian = *(Slab::Math::RtoR::KGEnergy*)getHamiltonian();
+        auto &hamiltonian = *(Slab::Models::KGRtoR::KGEnergy*)getHamiltonian();
 
-        auto temp1 = Slab::New<RtoR::StatisticalMonitor>(
+        auto temp1 = Slab::New<Slab::Models::KGRtoR::StatisticalMonitor>(
                 config, hamiltonian, guiWindow);
         temp1->setTransientHint(*transientGuess);
 

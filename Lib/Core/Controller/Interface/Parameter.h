@@ -43,8 +43,6 @@ namespace Slab::Core {
 
         bool operator==(Str str) const;
 
-        bool operator!=(const Parameter &rhs) const;
-
     };
 
     OStream &operator<<(OStream &out, const Parameter &b);

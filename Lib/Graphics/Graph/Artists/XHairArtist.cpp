@@ -6,7 +6,6 @@
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Graph/PlottingWindow.h"
-#include "imgui.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
 namespace Slab::Graphics {

@@ -171,9 +171,11 @@ namespace Slab::Graphics {
 
     bool WindowPanel::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
                                         Core::ModKeys keys) {
+        bool alwaysPropagate = false; state==Core::Release;
+
         auto responded = false;
         for (auto &col: columns)
-            if(col.isMouseIn()) responded = col.notifyMouseButton(button, state, keys);
+            if(col.isMouseIn() || alwaysPropagate) responded = col.notifyMouseButton(button, state, keys);
 
         return responded;
     }

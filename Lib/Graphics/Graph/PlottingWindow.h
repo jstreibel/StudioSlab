@@ -81,6 +81,8 @@ namespace Slab::Graphics {
         virtual Str getXHairLabel(const Point2D &coords) const;
 
         void setupOrtho() const;
+
+        void setAutoReviewGraphRanges(bool);
         void reviewGraphRanges();
 
         auto getRegion() const -> const RectR&;

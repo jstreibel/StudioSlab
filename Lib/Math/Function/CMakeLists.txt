@@ -108,6 +108,9 @@ set ( R2TOR_SOURCES
 
 		R2toR/Calc/R2toRDFT.cpp
 		R2toR/Calc/R2toRDFT.h
+		R2toR/Calc/R2toRFunctionRenderer.cpp
+		R2toR/Calc/R2toRFunctionRenderer.h
+
 		R2toR/Model/FunctionsCollection/ComplexMagnitudeFunction.cpp
 		R2toR/Model/FunctionsCollection/ComplexMagnitudeFunction.h
 )

@@ -5,9 +5,11 @@
 #include "RtoRPanel.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
-namespace Slab::Graphics {
+namespace Slab::Models::KGRtoR {
 
-    RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, Math::RtoR::KGEnergy &hamiltonian,
+
+
+    RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
             : Socket(params, name, 1, description)
             , guiWindow(guiWindow)
@@ -24,7 +26,7 @@ namespace Slab::Graphics {
     }
 
     void RtoRPanel::setSpaceFourierHistory(Math::R2toR::DiscreteFunction_constptr sftHistory,
-                                           const Models::DFTDataHistory &dftData,
+                                           const DFTDataHistory &dftData,
                                            PlottingWindow_ptr sftHistoryGraph) {
 
         spaceFTHistory = sftHistory;

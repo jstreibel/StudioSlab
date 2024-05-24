@@ -5,11 +5,13 @@
 #ifndef V_SHAPE_INPUT_GENERAL_OSCILLONS_H
 #define V_SHAPE_INPUT_GENERAL_OSCILLONS_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "../Builder.h"
 
-namespace Slab::Math::RtoR {
+namespace Studios::PureSG {
 
-    class InputGeneralOscillons : public KGBuilder {
+    using namespace Slab;
+
+    class InputGeneralOscillons : public Builder {
         RealParameter v1     = RealParameter{.0, "v1", "Left oscillon's border speed."};
         RealParameter v2     = RealParameter{.0, "v2", "Right oscillon's border speed."};
         RealParameter alpha1 = RealParameter{.0, "a1", "Left oscillon's phase (alpha)."};

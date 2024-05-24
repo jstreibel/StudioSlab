@@ -4,18 +4,22 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/PerturbedOscillonTimeDerivative.h"
 
-using namespace Slab::Math::RtoR;
 
-InputPerturbations::InputPerturbations()
-: KGBuilder("Perturbations", "Perturbed oscillon in its reference frame")
-{
-    interface->addParameters({&l, &eps});
-};
+namespace Studios::PureSG {
 
-auto InputPerturbations::getBoundary() -> void *
-{
-    auto proto = (RtoR::EquationState*)newFieldState();
-    return new RtoR::BoundaryCondition(*proto, new RtoR::NullFunction,
-                                       new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
-                                                                                 eps.getValue()));
+    using namespace Slab::Math;
+
+    InputPerturbations::InputPerturbations()
+            : Builder("Perturbations", "Perturbed oscillon in its reference frame") {
+        interface->addParameters({&l, &eps});
+    };
+
+    auto InputPerturbations::getBoundary() -> void * {
+        auto proto = (EquationState *) newFieldState();
+        return new BoundaryCondition(*proto, new RtoR::NullFunction,
+                                           new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
+                                                                                     eps.getValue()));
+    }
+
+
 }

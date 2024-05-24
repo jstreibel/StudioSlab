@@ -3,17 +3,16 @@
 //
 
 #include "Builder.h"
+#include "../RtoR-Modes/Sim/Monitor.h"
 
-namespace PureSG {
+namespace Studios:: PureSG {
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGBuilder(name, generalDescription, doRegister) {}
 
     void *Builder::buildOpenGLOutput() {
-        return KGBuilder::buildOpenGLOutput();
-    }
+        return new Monitor(simulationConfig.numericConfig,
+                                             *(KGEnergy*)getHamiltonian());
 
-    void *Builder::getBoundary() {
-        return nullptr;
     }
 
 

@@ -7,7 +7,7 @@
 #include "Graphics/Window/WindowTree/WindowTreeBuilder.h"
 #include "GLFreeTypeTests.h"
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
+#include "Graphics/Graph/RtoR/GraphRtoR.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "FourierTestWindow.h"
 

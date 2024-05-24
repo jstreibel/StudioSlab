@@ -4,9 +4,7 @@
 
 #include "RtoRFunctionArtist.h"
 #include "Graphics/OpenGL/LegacyGL/FunctionRenderer.h"
-
 #include "Graphics/Graph/PlottingWindow.h"
-
 
 #include <utility>
 

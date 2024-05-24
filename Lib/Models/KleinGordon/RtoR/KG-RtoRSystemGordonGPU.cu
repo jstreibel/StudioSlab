@@ -10,7 +10,7 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunctionGPU.h"
 #include "Math/Function/RtoR/Model/Derivatives/DerivativesGPU.h"
 
-using namespace Slab::Math::RtoR;
+using namespace Slab::Models::KGRtoR;
 
 
 SystemGordonGPU::SystemGordonGPU(const NumericConfig &params,

@@ -9,7 +9,9 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
+
+    using namespace Core;
 
     class KGBuilder : public Slab::Models::KGBuilder {
         IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
@@ -35,7 +37,7 @@ namespace Slab::Math::RtoR {
                            Str generalDescription,
                            bool doRegister=false);
 
-        Function_ptr getPotential() const;
+        RtoR::Function_ptr getPotential() const;
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
         auto buildOutputManager()   -> OutputManager * override;

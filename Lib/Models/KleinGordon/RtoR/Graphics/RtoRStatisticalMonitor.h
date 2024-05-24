@@ -20,8 +20,9 @@
 #include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
 
 
-namespace Slab::Math::RtoR {
-    class StatisticalMonitor : public Graphics::RtoRPanel {
+namespace Slab::Models::KGRtoR {
+
+    class StatisticalMonitor : public RtoRPanel {
         Real Δt = 0.0;
         R2toR::Sampler_ptr sampler;
 

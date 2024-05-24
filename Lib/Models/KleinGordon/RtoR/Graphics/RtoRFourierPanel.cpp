@@ -8,9 +8,9 @@
 #include "imgui.h"
 #include "Graphics/Graph/Plotter.h"
 
-namespace Slab::Graphics {
+namespace Slab::Models::KGRtoR {
 
-    RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, GUIWindow &guiWindow)
+    RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, KGEnergy &hamiltonian, GUIWindow &guiWindow)
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
@@ -98,7 +98,7 @@ namespace Slab::Graphics {
     }
 
     void RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                                  const Models::DFTDataHistory &dftData,
+                                                  const DFTDataHistory &dftData,
                                                   PlottingWindow_ptr sftHistoryGraph) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
 

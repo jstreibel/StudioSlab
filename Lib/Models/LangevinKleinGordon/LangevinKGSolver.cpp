@@ -8,13 +8,13 @@
 #include "Utils/OMPUtils.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
     Real ξ() {
         return RandUtils::gaussianNoise(.0, 1.0);
     }
 
-    void RtoR::LangevinKGSolver::ComputeImpulses() {
+    void LangevinKGSolver::ComputeImpulses() {
         if (langevinImpulses == nullptr) return;
 
         auto &space = langevinImpulses->getSpace();
@@ -35,14 +35,14 @@ namespace Slab::Math::RtoR {
         space.upload();
     }
 
-    void RtoR::LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
-        RtoR::KGSolver::startStep(stateIn, t, dt);
+    void LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
+        KGSolver::startStep(stateIn, t, dt);
 
         ComputeImpulses();
     }
 
-    RtoR::EquationState &
-    RtoR::LangevinKGSolver::dtF(const RtoR::EquationState &stateIn, RtoR::EquationState &stateOut, Real t, Real dt) {
+    EquationState &
+    LangevinKGSolver::dtF(const EquationState &stateIn, EquationState &stateOut, Real t, Real dt) {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
@@ -54,7 +54,7 @@ namespace Slab::Math::RtoR {
 
 #pragma omp barrier
 
-        stateOut = RtoR::KGSolver::dtF(stateIn, stateOut, t, dt);
+        stateOut = KGSolver::dtF(stateIn, stateOut, t, dt);
 
 #pragma omp barrier
 
@@ -77,9 +77,9 @@ namespace Slab::Math::RtoR {
         return stateOut;
     }
 
-    void RtoR::LangevinKGSolver::setTemperature(Real value) { T = value; }
+    void LangevinKGSolver::setTemperature(Real value) { T = value; }
 
-    void RtoR::LangevinKGSolver::setDissipationCoefficient(Real value) { γ = value; }
+    void LangevinKGSolver::setDissipationCoefficient(Real value) { γ = value; }
 
 
 }

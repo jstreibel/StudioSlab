@@ -9,7 +9,6 @@
 
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/PlotThemeManager.h"
-#include "Graphics/OpenGL/Texture1D_Color.h"
 
 namespace Slab::Graphics::OpenGL {
 
@@ -38,13 +37,13 @@ namespace Slab::Graphics::OpenGL {
         auto &writer = style->labelsWriter;
 
         OpenGL::Shader::remove();
-        if(0) {
+        if(1) {
             // GAMBIARRAS
 
             auto slack = 15.0;
 
             auto xMin = rect.xMin - slack;
-            auto xMax = rect.xMax + writer->getFontHeightInPixels()*5;
+            auto xMax = rect.xMax + writer->getFontHeightInPixels()*6;
             auto yMin = rect.yMin + slack;
             auto yMax = rect.yMax - slack;
 
@@ -61,20 +60,23 @@ namespace Slab::Graphics::OpenGL {
             glPushMatrix();
             glLoadIdentity();
 
-            glColor3f(1.0,1.0,1.0);
+            fix bgColor = PlotThemeManager::GetCurrent()->graphBackground;
+            fix fgColor = PlotThemeManager::GetCurrent()->graphNumbersColor;
+
+            glColor4fv(bgColor.asFloat4fv());
             glBegin(GL_QUADS);
-            glVertex2f(xMin, yMin);
-            glVertex2f(xMin, yMax);
-            glVertex2f(xMax, yMax);
-            glVertex2f(xMax, yMin);
+            glVertex2d(xMin, yMin);
+            glVertex2d(xMin, yMax);
+            glVertex2d(xMax, yMax);
+            glVertex2d(xMax, yMin);
             glEnd();
 
-            glColor3f(0,0,0);
+            glColor4fv(fgColor.asFloat4fv());
             glBegin(GL_LINE_LOOP);
-            glVertex2f(xMin, yMin);
-            glVertex2f(xMin, yMax);
-            glVertex2f(xMax, yMax);
-            glVertex2f(xMax, yMin);
+            glVertex2d(xMin, yMin);
+            glVertex2d(xMin, yMax);
+            glVertex2d(xMax, yMax);
+            glVertex2d(xMax, yMin);
             glEnd();
 
             glPopMatrix();
@@ -82,17 +84,28 @@ namespace Slab::Graphics::OpenGL {
             glPopMatrix();
         }
 
-        auto n=5;
+        auto n=9;
         auto dx = rect.width();
         auto dy = rect.height();
+        auto Δu = uf-ui;
+        // writer->getFontHeightInPixels();
+
         for(int i=0; i<n; ++i){
-            auto s = (Real(i)/Real(n-1));
-            auto yNorm = float(i)/float(n)- ui;
+            auto t = (Real(i)/Real(n-1));
+            auto yMeasure = t/Δu-ui; //(float(i)/float(n)) - ui;
 
-            auto val = inverseScalingFunction(s);
+            Real phi;
+            if(params.mode == ColorBarMode::AllFieldValues)
+                phi = t*(params.phi_max-params.phi_min)+params.phi_min;
+            else if(params.mode == ColorBarMode::ValuesInSatRangeOnly) {
+                if (params.symmetric)
+                    phi = params.phi_sat * (2 * t - 1);
+                else
+                    phi = params.phi_sat * t;
+            }
 
-            writer->write(ToStr(val),
-                          {(float)rect.xMax+dx*0.1, (float)rect.yMax-yNorm*dy}, style->graphTitleColor);
+            writer->write(ToStr(phi),
+                          {(float)rect.xMax+dx*0.1, (float)rect.yMax-yMeasure*dy}, style->graphTitleColor);
         }
 
         auto vp = graph.getViewport();
@@ -102,7 +115,6 @@ namespace Slab::Graphics::OpenGL {
         shader.setUniform("colormap", texture->getTextureUnit());
         shader.setUniform("vpWidth", vp.width());
         shader.setUniform("vpHeight", vp.height());
-
 
         vertexBuffer.render(GL_TRIANGLES);
 
@@ -160,9 +172,51 @@ namespace Slab::Graphics::OpenGL {
         return texture;
     }
 
+    void ColorBarArtist::setScalingFunction(std::function<Real(Real)> func) {
+        scalingFunction = std::move(func);
+    }
+
     void ColorBarArtist::setInverseScalingFunction(std::function<Real(Real)> func) {
         inverseScalingFunction = std::move(func);
     }
+
+    void ColorBarArtist::setKappa(Real kappa) {
+        shader.setUniform("kappa", (float)kappa);
+
+        params.kappa = kappa;
+    }
+
+    void ColorBarArtist::setPhiSaturation(Real phiSat) {
+        shader.setUniform("phi_sat", (float)phiSat);
+
+        params.phi_sat = phiSat;
+    }
+
+    void ColorBarArtist::setSymmetric(bool symmetric) {
+        shader.setUniform("symmetric", symmetric);
+
+        params.symmetric = symmetric;
+    }
+
+    void ColorBarArtist::setPhiMax(Real phiMax) {
+        shader.setUniform("phi_max", (float)phiMax);
+
+        params.phi_max = phiMax;
+    }
+
+    void ColorBarArtist::setPhiMin(Real phiMin) {
+        shader.setUniform("phi_min", (float)phiMin);
+
+        params.phi_min = phiMin;
+    }
+
+    void ColorBarArtist::setMode(ColorBarMode mode) {
+        shader.setUniform("mode", (int)mode);
+
+        params.mode = mode;
+    }
+
+
 
 
 } // OpenGL

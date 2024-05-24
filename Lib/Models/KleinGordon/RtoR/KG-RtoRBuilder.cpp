@@ -26,7 +26,7 @@
 #include "Output/SnapshotOutput.h"
 #include "Output/DFTSnapshotOutput.h"
 
-#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
+#include "Graphics/RtoRMonitor.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -35,9 +35,9 @@
 #define DONT_REGISTER_IMMEDIATELY false
 
 
-namespace Slab::Math {
+namespace Slab::Models::KGRtoR {
 
-    RtoR::KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
+    KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
             : Models::KGBuilder("RtoR-" + name, std::move(generalDescription),
                                              DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr});
@@ -45,7 +45,7 @@ namespace Slab::Math {
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto RtoR::KGBuilder::buildOutputManager() -> OutputManager * {
+    auto KGBuilder::buildOutputManager() -> OutputManager * {
         StrUtils::UseScientificNotation = false;
         StrUtils::RealToStringDecimalPlaces = 7;
 
@@ -119,18 +119,18 @@ namespace Slab::Math {
         if (shouldOutputOpenGL) {
             auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-            auto outputOpenGL = Pointer<RtoR::Monitor>((RtoR::Monitor*)buildOpenGLOutput());
+            auto outputOpenGL = Pointer<Monitor>((Monitor*)buildOpenGLOutput());
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
-                auto simHistory = Slab::New<Models::SimHistory>(simulationConfig,
+                auto simHistory = Slab::New<SimHistory>(simulationConfig,
                                                  (Resolution) Nₒᵤₜ,
                                                  (Resolution) nₒᵤₜ,
                                                  xMin,
                                                  L);
 
-                auto ftHistory = Slab::New<Models::SimHistory_DFT>(simulationConfig, nₒᵤₜ);
+                auto ftHistory = Slab::New<SimHistory_DFT>(simulationConfig, nₒᵤₜ);
 
                 outputManager->addOutputChannel(simHistory);
                 outputManager->addOutputChannel(ftHistory);
@@ -165,7 +165,7 @@ namespace Slab::Math {
 
     }
 
-    void *RtoR::KGBuilder::newFunctionArbitrary() {
+    void *KGBuilder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
         const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
@@ -185,15 +185,15 @@ namespace Slab::Math {
         throw "Error while instantiating Field: device not recognized.";
     }
 
-    void *RtoR::KGBuilder::newFieldState() {
-        return new RtoR::EquationState((RtoR::DiscreteFunction *) this->newFunctionArbitrary(),
+    void *KGBuilder::newFieldState() {
+        return new EquationState((RtoR::DiscreteFunction *) this->newFunctionArbitrary(),
                                        (RtoR::DiscreteFunction *) this->newFunctionArbitrary());
     }
 
-    void *RtoR::KGBuilder::buildEquationSolver() {
+    void *KGBuilder::buildEquationSolver() {
         auto potential = getPotential();
         auto nonHomogenous = getNonHomogenous();
-        auto dphi = (RtoR::BoundaryCondition *) getBoundary();
+        auto dphi = (BoundaryCondition *) getBoundary();
 
 #if USE_CUDA == true
         if(simulationConfig.dev == device::GPU) {
@@ -201,16 +201,16 @@ namespace Slab::Math {
         }
 #endif
 
-        return new Models::Solver<RtoR::EquationState>(simulationConfig.numericConfig,
+        return new Models::Solver<EquationState>(simulationConfig.numericConfig,
                                                                     *dphi, *potential, nonHomogenous);
     }
 
-    auto RtoR::KGBuilder::buildOpenGLOutput() -> void * {
-        return new RtoR::Monitor(simulationConfig.numericConfig, *(KGEnergy *) getHamiltonian());
+    auto KGBuilder::buildOpenGLOutput() -> void * {
+        return new Monitor(simulationConfig.numericConfig, *(KGEnergy *) getHamiltonian());
     }
 
-    auto RtoR::KGBuilder::getInitialState() -> void * {
-        auto &u_0 = *(RtoR::EquationState *) newFieldState();
+    auto KGBuilder::getInitialState() -> void * {
+        auto &u_0 = *(EquationState *) newFieldState();
 
         u_0.setPhi(RtoR::NullFunction());
         u_0.setDPhiDt(RtoR::NullFunction());
@@ -218,20 +218,20 @@ namespace Slab::Math {
         return &u_0;
     }
 
-    auto RtoR::KGBuilder::buildStepper() -> Stepper * {
-        auto &solver = *(RtoR::KGSolver *) buildEquationSolver();
+    auto KGBuilder::buildStepper() -> Stepper * {
+        auto &solver = *(KGSolver *) buildEquationSolver();
 
-        return new StepperRK4<typename RtoR::EquationState>(solver);
+        return new StepperRK4<typename Slab::Models::KGRtoR::EquationState>(solver);
     }
 
-    void *RtoR::KGBuilder::getHamiltonian() {
+    void *KGBuilder::getHamiltonian() {
         static auto potential = RtoR::Function_ptr(getPotential());
         static auto hamiltonian = new KGEnergy(*this, potential);
 
         return hamiltonian;
     }
 
-    RtoR::Function_ptr RtoR::KGBuilder::getPotential() const {
+    RtoR::Function_ptr KGBuilder::getPotential() const {
         if (*Potential == MASSLESS_WAVE_EQ) {
             return Slab::New<RtoR::NullFunction>();
         } else if (*Potential == KLEIN_GORDON_POTENTIAL) {
@@ -243,23 +243,23 @@ namespace Slab::Math {
         throw "Unknown potential";
     }
 
-    Pointer<Base::FunctionT<Real, Real>> RtoR::KGBuilder::getNonHomogenous() {
+    Pointer<Base::FunctionT<Real, Real>> KGBuilder::getNonHomogenous() {
         return {};
     }
 
-    void RtoR::KGBuilder::setLaplacianPeriodicBC() {
+    void KGBuilder::setLaplacianPeriodicBC() {
         Log::Info() << "KGBuilder Laplacian set to PERIODIC borders." << Log::Flush;
         periodicBC = true;
     }
 
-    void RtoR::KGBuilder::setLaplacianFixedBC() {
+    void KGBuilder::setLaplacianFixedBC() {
         Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
         periodicBC = false;
     }
 
-    bool RtoR::KGBuilder::usesPeriodicBC() const { return periodicBC; }
+    bool KGBuilder::usesPeriodicBC() const { return periodicBC; }
 
-    Str RtoR::KGBuilder::suggestFileName() const {
+    Str KGBuilder::suggestFileName() const {
         auto strParams = interface->toString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
         auto voidSuggestion = VoidBuilder::suggestFileName();

@@ -80,5 +80,9 @@ namespace Slab::Graphics {
         return std::array<Real32, 4>({r, g, b, a});
     }
 
+    const float *Color::asFloat4fv() const {
+        return reinterpret_cast<const float*>(this);
+    }
+
 
 }

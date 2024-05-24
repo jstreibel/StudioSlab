@@ -69,9 +69,10 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		Graph/PlotThemeManager.h Graph/PlotThemeManager.cpp
 
 		Graph/Artists/R2toRFunctionArtist.h Graph/Artists/R2toRFunctionArtist.cpp
-		Graph/ℝ²↦ℝ/R2toROutputOpenGLGeneric.cpp
 
-		Graph/ℝ↦ℝ/RtoRMonitor.cpp
+		Graph/Artists/HistoryTexture2DUploadHelper.cpp
+		Graph/Artists/HistoryTexture2DUploadHelper.h
+
 		Graph3D/Graph3D.cpp
 		Graph3D/Graph3D.h
 		Graph3D/Actor.cpp
@@ -80,26 +81,13 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		Graph3D/Field2DActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
+
 		MeshUtils.cpp
 		MeshUtils.h
 		Graph3D/Camera.cpp
 		Graph3D/Camera.h
 		Graph3D/TestActor.cpp
 		Graph3D/TestActor.h
-		Graph/ℝ↦ℝ/RtoRStatisticalMonitor.cpp
-		Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h
-		Graph/ℝ↦ℝ/RtoRRealtimePanel.cpp
-		Graph/ℝ↦ℝ/RtoRRealtimePanel.h
-		Graph/ℝ↦ℝ/RtoRPanel.cpp
-		Graph/ℝ↦ℝ/RtoRPanel.h
-		Graph/ℝ↦ℝ/RtoRFourierPanel.cpp
-		Graph/ℝ↦ℝ/RtoRFourierPanel.h
-		Graph/Artists/HistoryTexture2DUploadHelper.cpp
-		Graph/Artists/HistoryTexture2DUploadHelper.h
-		Graph/ℝ↦ℝ/CorrelationsPanel.cpp
-		Graph/ℝ↦ℝ/CorrelationsPanel.h
-		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.cpp
-		Graph/ℝ²↦ℝ/R2toRFunctionRenderer.h
 
 		SFML/Tools/Graph_deprydepr.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp
@@ -126,7 +114,8 @@ add_library(${LIB_LOCAL_NAME} STATIC
 target_link_libraries(${LIB_LOCAL_NAME}
 		Slab-Utils
 		Slab-Core
-		Slab-Models
+		Slab-Math
+
 )
 
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

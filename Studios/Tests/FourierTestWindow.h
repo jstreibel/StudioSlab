@@ -8,7 +8,7 @@
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Graphics/Graph/ℝ↦ℝ/GraphRtoR.h"
+#include "Graphics/Graph/RtoR/GraphRtoR.h"
 
 namespace Tests {
 

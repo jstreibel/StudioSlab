@@ -12,7 +12,9 @@
 #include <fstream>
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
+
+    using namespace Slab::Math;
 
     class SnapshotOutput : public Socket {
         Str outputFileName;

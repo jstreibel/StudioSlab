@@ -6,7 +6,6 @@
 #define STUDIOSLAB_RTORREALTIMEPANEL_H
 
 #include "Graphics/OpenGL/OpenGLMonitor.h"
-#include "../PlotThemeManager.h"
 
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
@@ -15,10 +14,11 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "RtoRPanel.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
-    class RealtimePanel : public Graphics::RtoRPanel {
+    class RealtimePanel : public RtoRPanel {
     public:
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
@@ -59,7 +59,7 @@ namespace Slab::Math::RtoR {
                                   Graphics::PlottingWindow_ptr simHistoryGraph) override;
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                    const Models::DFTDataHistory &dftData,
+                                    const DFTDataHistory &dftData,
                                     Graphics::PlottingWindow_ptr sftHistoryGraph) override;
     };
 }

@@ -27,6 +27,7 @@ namespace Slab::Graphics {
         static Color FromHex(Str hex);
 
         std::array<Real32, 4> array() const;
+        const float* asFloat4fv() const;
 
         Color rgb() const;
 

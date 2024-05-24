@@ -7,13 +7,13 @@
 #include <utility>
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
-Modes::SignalBC::SignalBC(const RtoR::EquationState &prototype, Real A, Real ω)
+Modes::SignalBC::SignalBC(const KGRtoR::EquationState &prototype, Real A, Real ω)
 : BoundaryCondition(prototype, new RtoR::NullFunction(), new RtoR::NullFunction())
 , A(A)
 , ω(ω) {}
 
 void Modes::SignalBC::apply(EqState &toFunction, Real t) const {
-    if(t==0.0) RtoR::BoundaryCondition::apply(toFunction, t);
+    if(t==0.0) KGRtoR::BoundaryCondition::apply(toFunction, t);
 
     OUT ϕ = toFunction.getPhi();
     OUT 𝜕ₜϕ = toFunction.getDPhiDt() ;
@@ -23,11 +23,11 @@ void Modes::SignalBC::apply(EqState &toFunction, Real t) const {
 }
 
 
-Modes::DrivenBC::DrivenBC(const RtoR::EquationState &prototype, Slab::Pointer<Modes::SquareWave> sqrWave)
+Modes::DrivenBC::DrivenBC(const KGRtoR::EquationState &prototype, Slab::Pointer<Modes::SquareWave> sqrWave)
 : BoundaryCondition(prototype, new RtoR::NullFunction, new RtoR::NullFunction),
   sqrWave(std::move(sqrWave)) { }
 
-void Modes::DrivenBC::apply(RtoR::EquationState &toFunction, Real t) const {
+void Modes::DrivenBC::apply(KGRtoR::EquationState &toFunction, Real t) const {
     if(sqrWave != nullptr) sqrWave->set_t(t);
 
     BoundaryCondition::apply(toFunction, t);

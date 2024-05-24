@@ -9,13 +9,13 @@
 #define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
 
 
-namespace Slab::Models {
+namespace Slab::Models::KGRtoR {
 
     SimHistory_DFT::SimHistory_DFT(const SimulationConfig &simConfig, Resolution N_time)
             : SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT) {}
 
     auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
-        IN stateIn = *input.getEqStateData<RtoR::EquationState>();
+        IN stateIn = *input.getEqStateData<EquationState>();
 
         IN phi = stateIn.getPhi();
         IN dataIn = phi.getSpace().getHostData(true);

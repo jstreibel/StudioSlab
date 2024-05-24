@@ -11,30 +11,32 @@
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
-    class BoundaryCondition : public Base::BoundaryConditions<RtoR::EquationState> {
+    using namespace Slab::Math;
+
+    class BoundaryCondition : public Base::BoundaryConditions<EquationState> {
     public:
-        BoundaryCondition(const RtoR::EquationState &prototype,
-                          Function *initialPhiCondition,
-                          Function *initialdPhiDtCondition,
-                          Function *leftPhiBoundaryCondition = nullptr,
-                          Function *leftdPhiDtBoundaryCondition = nullptr,
-                          Function *rightPhiBoundaryCondition = nullptr,
-                          Function *rightdPhiDtBoundaryCondition = nullptr);
+        BoundaryCondition(const EquationState &prototype,
+                          RtoR::Function *initialPhiCondition,
+                          RtoR::Function *initialdPhiDtCondition,
+                          RtoR::Function *leftPhiBoundaryCondition = nullptr,
+                          RtoR::Function *leftdPhiDtBoundaryCondition = nullptr,
+                          RtoR::Function *rightPhiBoundaryCondition = nullptr,
+                          RtoR::Function *rightdPhiDtBoundaryCondition = nullptr);
 
         ~BoundaryCondition();
 
         void apply(EquationState &fieldState, Real t) const override;
 
     private:
-        Function *initialPhiCondition;
-        Function *leftPhiBoundaryCondition;
-        Function *rightPhiBoundaryCondition;
+        RtoR::Function *initialPhiCondition;
+        RtoR::Function *leftPhiBoundaryCondition;
+        RtoR::Function *rightPhiBoundaryCondition;
 
-        Function *initialdPhiDtCondition;
-        Function *leftdPhiDtBoundaryCondition;
-        Function *rightdPhiDtBoundaryCondition;
+        RtoR::Function *initialdPhiDtCondition;
+        RtoR::Function *leftdPhiDtBoundaryCondition;
+        RtoR::Function *rightdPhiDtBoundaryCondition;
 
     };
 }

@@ -4,15 +4,17 @@
 
 #include "GLFWEventTranslator.h"
 
+// Don't touch:
 #define STOP_ON_FIRST_RESPONDER true
+#define TO_ALL_RESPONDERS false
 
-#define PropagateEvents \
-    if(!STOP_ON_FIRST_RESPONDER){                                               \
+#define PropagateEvents(stopOnFirstResponder) {                                          \
+    if(!(stopOnFirstResponder)){                                                \
         return std::any_of(guiListeners.begin(), guiListeners.end(), funky);    \
     } else {                                                                    \
         std::for_each(guiListeners.begin(), guiListeners.end(), funky);         \
         return false;                                                           \
-    }
+    }}
 
 
 namespace Slab::Core {
@@ -37,7 +39,7 @@ namespace Slab::Core {
                     notifyKeyboard(mappedKey, state, modKeys);
         };
 
-        PropagateEvents;
+        PropagateEvents(STOP_ON_FIRST_RESPONDER)
     }
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
@@ -47,7 +49,7 @@ namespace Slab::Core {
             notifyMouseMotion((int)xpos, (int)ypos);
         };
 
-        PropagateEvents;
+        PropagateEvents(STOP_ON_FIRST_RESPONDER)
     }
 
     void GLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
@@ -71,7 +73,10 @@ namespace Slab::Core {
             notifyMouseButton(mappedButton, state, modKeys);
         };
 
-        PropagateEvents;
+        if(state == Release)
+            PropagateEvents(TO_ALL_RESPONDERS)
+        else
+            PropagateEvents(STOP_ON_FIRST_RESPONDER)
     }
 
     bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
@@ -80,7 +85,7 @@ namespace Slab::Core {
             notifyMouseWheel(xoffset, yoffset);
         };
 
-        PropagateEvents;
+        PropagateEvents(STOP_ON_FIRST_RESPONDER)
     }
 
     bool GLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
@@ -95,7 +100,7 @@ namespace Slab::Core {
             notifyFilesDropped(pathsVec);
         };
 
-        PropagateEvents;
+        PropagateEvents(STOP_ON_FIRST_RESPONDER)
     }
 
     void GLFWEventTranslator::Render(GLFWwindow *window) {

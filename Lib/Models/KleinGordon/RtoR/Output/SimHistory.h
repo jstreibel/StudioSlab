@@ -14,7 +14,7 @@
 #include "../KG-RtoREquationState.h"
 
 
-namespace Slab::Models {
+namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 

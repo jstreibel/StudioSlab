@@ -12,13 +12,17 @@
 #include "SingleFormations/InputSingleOscillon.h"
 
 int run(int argc, const char **argv) {
+    using namespace Slab::Core;
+    using namespace Slab::Math;
+    using namespace Slab::Models::KGRtoR;
+
     InterfaceSelector selector("Simulation builder selector");
 
-    auto option1 = new RtoR::InputSymmetricOscillon();
-    auto option2 = new RtoR::InputPerturbations();
-    auto option3 = new RtoR::InputGeneralOscillons();
-    auto option4 = new RtoR::InputShockwave();
-    auto option5 = new RtoR::InputSingleOscillon();
+    auto option1 = new Studios::PureSG::InputSymmetricOscillon();
+    auto option2 = new Studios::PureSG::InputPerturbations();
+    auto option3 = new Studios::PureSG::InputGeneralOscillons();
+    auto option4 = new Studios::PureSG::InputShockwave();
+    auto option5 = new Studios::PureSG::InputSingleOscillon();
 
     /* sim 0 */selector.registerOption(option1->getInterface());
     /* sim 1 */selector.registerOption(option2->getInterface());
@@ -27,16 +31,16 @@ int run(int argc, const char **argv) {
     /* sim 4 */selector.registerOption(option5->getInterface());
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<RtoR::KGBuilder*>(selectedInterface->getOwner());
-    auto inputPtr = RtoR::KGBuilder::Ptr(input);
+    auto input    = dynamic_cast<KGBuilder*>(selectedInterface->getOwner());
+    auto inputPtr = KGBuilder::Ptr(input);
 
-    auto prog = Simulation::App(argc, argv, inputPtr);
+    auto prog = App(argc, argv, inputPtr);
 
     return prog.run();
 }
 
 auto main(int argc, const char **argv) -> int {
-    return SafetyNet::jump(run, argc, argv);
+    return Slab::Core::SafetyNet::jump(run, argc, argv);
 }
 
 

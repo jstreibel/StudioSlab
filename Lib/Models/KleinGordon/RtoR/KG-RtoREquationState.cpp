@@ -4,13 +4,13 @@
 
 #include "KG-RtoREquationState.h"
 
-namespace Slab::Math {
+namespace Slab::Models::KGRtoR {
 
-    auto RtoR::EquationState::clone() const -> RtoR::EquationState * {
+    auto EquationState::clone() const -> EquationState * {
         auto *clone1 = dynamic_cast<RtoR::DiscreteFunction *>(phi->Clone());
         auto *clone2 = dynamic_cast<RtoR::DiscreteFunction *>(phi->Clone());
 
-        return new RtoR::EquationState(clone1, clone2);
+        return new EquationState(clone1, clone2);
     }
 
 

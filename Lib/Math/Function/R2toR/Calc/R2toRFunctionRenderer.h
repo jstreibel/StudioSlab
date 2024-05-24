@@ -8,9 +8,7 @@
 #include <memory>
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 
-namespace Slab::Graphics {
-
-    using namespace Math;
+namespace Slab::Math::R2toR {
     
     class R2toRFunctionRenderer {
     public:

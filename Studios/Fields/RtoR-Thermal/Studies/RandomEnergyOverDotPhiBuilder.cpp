@@ -26,7 +26,7 @@ namespace Studios::Fields::RtoRThermal {
 
         RealArray p(N);
 
-        auto proto = (RtoR::EquationState *) newFieldState();
+        auto proto = (Slab::Models::KGRtoR::EquationState *) newFieldState();
 
         if (1) {
             Real E_rand = .0;
@@ -53,10 +53,10 @@ namespace Studios::Fields::RtoRThermal {
 
             // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
 
-            return new RtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dotPhi->Clone());
+            return new Slab::Models::KGRtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dotPhi->Clone());
 
         } else {
-            return new RtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
+            return new Slab::Models::KGRtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
         }
     }
 

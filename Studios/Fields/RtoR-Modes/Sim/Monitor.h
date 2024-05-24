@@ -6,16 +6,16 @@
 #define STUDIOSLAB_MONITOR_H
 
 
-#include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRMonitor.h"
 
 namespace Modes {
 
     using namespace Slab;
     using namespace Slab::Math;
 
-    class Monitor : public RtoR::Monitor {
+    class Monitor : public Slab::Models::KGRtoR::Monitor {
     public:
-        Monitor(const NumericConfig &params, RtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax, const Str &name,
+        Monitor(const NumericConfig &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax, const Str &name,
                 bool showEnergyHistoryAsDensities=true);
 
         void setInputModes(RealVector A, RealVector Ω);

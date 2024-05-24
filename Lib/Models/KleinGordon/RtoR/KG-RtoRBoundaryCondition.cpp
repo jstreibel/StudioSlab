@@ -5,22 +5,22 @@
 #include "KG-RtoRBoundaryCondition.h"
 
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
 
 
-    RtoR::BoundaryCondition::BoundaryCondition(const RtoR::EquationState &prototype,
-                                               Function *initialPhiCondition,
-                                               Function *initialdPhiDtCondition,
-                                               Function *leftPhiBoundaryCondition,
-                                               Function *leftdPhiDtBoundaryCondition,
-                                               Function *rightPhiBoundaryCondition,
-                                               Function *rightdPhiDtBoundaryCondition)
-            : Base::BoundaryConditions<RtoR::EquationState>(prototype), initialPhiCondition(initialPhiCondition),
+    BoundaryCondition::BoundaryCondition(const EquationState &prototype,
+                                               RtoR::Function *initialPhiCondition,
+                                               RtoR::Function *initialdPhiDtCondition,
+                                               RtoR::Function *leftPhiBoundaryCondition,
+                                               RtoR::Function *leftdPhiDtBoundaryCondition,
+                                               RtoR::Function *rightPhiBoundaryCondition,
+                                               RtoR::Function *rightdPhiDtBoundaryCondition)
+            : Base::BoundaryConditions<EquationState>(prototype), initialPhiCondition(initialPhiCondition),
               leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition),
               initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition),
               rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) {}
 
-    void RtoR::BoundaryCondition::apply(EquationState &fieldState, const floatt t) const {
+    void BoundaryCondition::apply(EquationState &fieldState, const floatt t) const {
         if (t == 0.0) {
             fieldState.setPhi(*initialPhiCondition);
             fieldState.setDPhiDt(*initialdPhiDtCondition);
@@ -35,7 +35,7 @@ namespace Slab::Math::RtoR {
         }
     }
 
-    RtoR::BoundaryCondition::~BoundaryCondition() {
+    BoundaryCondition::~BoundaryCondition() {
         delete initialPhiCondition;
         delete initialdPhiDtCondition;
 

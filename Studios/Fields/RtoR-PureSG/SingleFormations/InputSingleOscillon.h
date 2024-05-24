@@ -5,16 +5,17 @@
 #ifndef FIELDS_INPUTSINGLEOSCILLON_H
 #define FIELDS_INPUTSINGLEOSCILLON_H
 
+#include "../Builder.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+namespace Studios::PureSG {
 
+    using namespace Slab::Core;
 
-namespace Slab::Math::RtoR {
-    class InputSingleOscillon : public KGBuilder {
-        RealParameter v      = RealParameter(.0, "v", "Left oscillon's border speed.");
-        RealParameter V      = RealParameter(.0, "u", "Each oscillon's speed.");
-        RealParameter alpha  = RealParameter(.0, "alpha,a", "Left oscillon's phase (alpha).");
-        RealParameter lambda = RealParameter(1., "lambda,l", "Right oscillon's scale factor (lambda).");
+    class InputSingleOscillon : public Builder {
+        RealParameter v      = RealParameter(.0, "v", "Oscillon's border speed.");
+        RealParameter V      = RealParameter(.0, "u", "Oscillon's speed.");
+        RealParameter alpha  = RealParameter(.0, "alpha,a", "Oscillon's initial phase (alpha).");
+        RealParameter lambda = RealParameter(1., "lambda,l", "Oscillon's scale factor (lambda).");
         BoolParameter mirror = BoolParameter(false, "mirror",
                                              "Flag to signal use of negative relative signal between input oscillons field value.");
 
@@ -22,6 +23,8 @@ namespace Slab::Math::RtoR {
         InputSingleOscillon();
 
         auto getBoundary() -> void * override;
+
+
     };
 }
 

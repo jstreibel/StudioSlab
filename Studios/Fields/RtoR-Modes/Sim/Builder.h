@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class Builder : public RtoR::KGBuilder {
+    class Builder : public Slab::Models::KGRtoR::KGBuilder {
         IntegerParameter BCSelection = IntegerParameter(0,    "BC",              "Boundary conditions selection:"
                                                                                 "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."

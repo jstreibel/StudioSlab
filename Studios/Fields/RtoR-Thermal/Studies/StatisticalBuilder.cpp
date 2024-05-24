@@ -58,8 +58,9 @@ namespace Studios::Fields::RtoRThermal {
             dPhidt0 += RtoR::RegularDiracDelta(osc_eps, s * a, RtoR::RegularDiracDelta::Triangle, tx);
         }
 
-        auto proto = (RtoR::EquationState *) newFieldState();
-        return new RtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
+        using namespace Slab::Models::KGRtoR;
+        auto proto = (EquationState *) newFieldState();
+        return new BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
     }
 
 

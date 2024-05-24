@@ -23,12 +23,12 @@ namespace Slab::Math::R2toR {
     class DiscreteFunction;
 }
 
-namespace Slab::Math::RtoR {
+namespace Slab::Models::KGRtoR {
     class KGEnergy;
 
     class Monitor : public Graphics::OpenGLMonitor {
-        std::vector<Graphics::RtoRPanel_ptr> dataViews;
-        Graphics::RtoRPanel_ptr currentDataView;
+        std::vector<RtoRPanel_ptr> dataViews;
+        RtoRPanel_ptr currentDataView;
 
         R2toR::DiscreteFunction_constptr simulationHistory;
         Graphics::PlottingWindow_ptr fullHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full field history");
@@ -38,7 +38,7 @@ namespace Slab::Math::RtoR {
         Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
-        const Models::DFTDataHistory *dftData;
+        const DFTDataHistory *dftData;
 
         KGEnergy &hamiltonian;
 
@@ -63,11 +63,11 @@ namespace Slab::Math::RtoR {
 
         virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory);
         virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                            const Models::DFTDataHistory &dftData);
+                                            const DFTDataHistory &dftData);
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
-        void addDataView(const Graphics::RtoRPanel_ptr&);
+        void addDataView(const RtoRPanel_ptr&);
     };
 
 }
