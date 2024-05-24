@@ -7,8 +7,8 @@
 
 #include "../ThermalBuilder.h"
 
-namespace Slab::Math::RtoR {
-    class RandomEnergyOverDotPhiBuilder : public RtoR::Thermal::Builder {
+namespace Studios::Fields::RtoRThermal {
+    class RandomEnergyOverDotPhiBuilder : public Builder {
         RealParameter E = RealParameter{1. / 24, "E", "Total energy over space."};
 
     public:

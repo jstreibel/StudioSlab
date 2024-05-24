@@ -14,12 +14,15 @@ namespace Slab::Core {
 
         class TaskManagerModule : public Module {
         private:
+            std::vector<Task_ptr> tasks;
             std::vector<std::thread> threads;
             std::mutex mtx;
 
         public:
             // Add a task to the manager and start it immediately in a new thread
-            void addTask(Slab::Pointer<Task> task);
+            void addTask(Task_ptr task);
+
+            void signalFinishAllTasks();
 
             // Destructor to join all threads
             ~TaskManagerModule() override;

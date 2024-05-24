@@ -54,13 +54,8 @@ namespace Slab::Math {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldOutputHistory = !*noHistoryToFile;
 
-        if (*VisualMonitor) {
-            Core::BackendManager::Startup(Core::GLFW);
-            auto &backend = Core::BackendManager::GetGUIBackend();
-
-            if (*VisualMonitor_startPaused) backend.pause();
-            else backend.resume();
-        } else Core::BackendManager::Startup(Core::Headless);
+        if (*VisualMonitor) Core::BackendManager::Startup(Core::GLFW);
+        else                Core::BackendManager::Startup(Core::Headless);
 
         const NumericConfig &p = simulationConfig.numericConfig;
 
@@ -84,7 +79,7 @@ namespace Slab::Math {
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
-                    new SnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
+                    Slab::New<SnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
         }
         if (*takeDFTSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
@@ -92,7 +87,7 @@ namespace Slab::Math {
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
-                    new DFTSnapshotOutput(simulationConfig.numericConfig, snapshotFilename));
+                    Slab::New<DFTSnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
         }
 
 
@@ -101,7 +96,7 @@ namespace Slab::Math {
            *************************** HISTORY OUTPUT *********************************************
            **************************************************************************************** */
         int fileOutputStepsInterval = -1;
-        Socket *out = nullptr;
+        Socket_ptr out;
         if (shouldOutputHistory) {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
@@ -110,7 +105,7 @@ namespace Slab::Math {
 
             fix stepsInterval = UInt(N / (Nₒᵤₜ * r));
 
-            out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval, spaceFilter, t,
+            out = Slab::New<OutputHistoryToFile>(simulationConfig.numericConfig, stepsInterval, spaceFilter, t,
                                           outputFileName, outputFilter);
             fileOutputStepsInterval = out->getnSteps();
             outputManager->addOutputChannel(out);
@@ -124,18 +119,18 @@ namespace Slab::Math {
         if (shouldOutputOpenGL) {
             auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-            auto outputOpenGL = (RtoR::Monitor *) buildOpenGLOutput();
+            auto outputOpenGL = Pointer<RtoR::Monitor>((RtoR::Monitor*)buildOpenGLOutput());
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
-                auto simHistory = new Models::SimHistory(simulationConfig,
+                auto simHistory = Slab::New<Models::SimHistory>(simulationConfig,
                                                  (Resolution) Nₒᵤₜ,
                                                  (Resolution) nₒᵤₜ,
                                                  xMin,
                                                  L);
 
-                auto ftHistory = new Models::SimHistory_DFT(simulationConfig, nₒᵤₜ);
+                auto ftHistory = Slab::New<Models::SimHistory_DFT>(simulationConfig, nₒᵤₜ);
 
                 outputManager->addOutputChannel(simHistory);
                 outputManager->addOutputChannel(ftHistory);
@@ -161,7 +156,7 @@ namespace Slab::Math {
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
             outputManager->addOutputChannel(
-                    new OutputConsoleMonitor(simulationConfig.numericConfig, fileOutputStepsInterval > 0
+                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig, fileOutputStepsInterval > 0
                                                                              ? fileOutputStepsInterval * 25
                                                                              : int(p.getn() / 40)));
 

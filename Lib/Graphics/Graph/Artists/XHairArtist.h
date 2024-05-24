@@ -13,7 +13,7 @@ namespace Slab::Graphics {
     class XHairArtist : public Artist {
         Math::PointSet XHair;
     public:
-        void draw(const PlottingWindow &window) override;
+        bool draw(const PlottingWindow &window) override;
     };
 
 } // Graphics

@@ -27,8 +27,6 @@ namespace Slab::Graphics {
     void OpenGLMonitor::handleOutput(const OutputPacket &outInfo) {
         t = outInfo.getSimTime();
         step = outInfo.getSteps();
-
-        Core::BackendManager::GetGUIBackend().requestRender();
     }
 
     void OpenGLMonitor::writeStats() {

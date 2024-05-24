@@ -39,164 +39,168 @@ auto min(auto a, auto b) { return ((a)<(b)?(a):(b)); }
 #define xMaxLinesInFullHistoryView (params.getxMax() + 3 * params.getL())
 
 
-RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
-: ::RtoR::Monitor(params1, hamiltonian,  -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES)
-, mTemperaturesGraph("T")
-, mHistogramsGraphK(   "k histogram", MANUAL_REVIEW_GRAPH_LIMITS)
-, mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_GRAPH_LIMITS)
-, mHistogramsGraphV(   "v histogram", MANUAL_REVIEW_GRAPH_LIMITS)
-, mHistogramsGraphE(   "e histogram", MANUAL_REVIEW_GRAPH_LIMITS)
-{
-    {
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+namespace Studios::Fields::RtoRThermal {
 
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
-        mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
-
-        // addWindowToColumn(&mTemperaturesGraph, 0);
-
-        auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
-        auto pts = Spaces::Point2DVec({{-.1,T},{params.gett()+.1,T}});
-        auto Tstyle = (*style++).permuteColors();
-        Tstyle.filled = false;
-        mTemperaturesGraph.addPointSet(std::make_shared<Spaces::PointSet>(pts), Tstyle, "T (nominal)");
-    }
-
-    {
-        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
-        mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
-        mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
-        mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
-        mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), *style++, "V");
-
-
-        auto *histogramsPanel = new Graphics::WindowPanel();
-        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphV));
-        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphGrad));
-        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphK));
-        histogramsPanel->addWindow(DummyPtr(mHistogramsGraphE));
-
-        addWindow(Window::Ptr(histogramsPanel), true);
-    }
-
-    setColumnRelativeWidth(0, 0.125);
-    setColumnRelativeWidth(1, 0.20);
-    setColumnRelativeWidth(2, -1);
-    setColumnRelativeWidth(3, 0.25);
-}
-
-void RtoR::Thermal::Monitor::draw() {
-    fix L = params.getL();
-
-    // *************************** Histograms *****************************
-    {
-        Histogram histogram;
-        static auto nbins = 200;
-        static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
-
-        stats.begin();
-        if(ImGui::CollapsingHeader("Probability density functions"))
+    RtoR::Thermal::Monitor::Monitor(const NumericConfig &params1, KGEnergy &hamiltonian)
+            : ::RtoR::Monitor(params1, hamiltonian, -1, 1, "thermal monitor", SHOW_ENERGY_HISTORY_AS_DENSITIES),
+              mTemperaturesGraph("T"), mHistogramsGraphK("k histogram", MANUAL_REVIEW_GRAPH_LIMITS),
+              mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_GRAPH_LIMITS),
+              mHistogramsGraphV("v histogram", MANUAL_REVIEW_GRAPH_LIMITS),
+              mHistogramsGraphE("e histogram", MANUAL_REVIEW_GRAPH_LIMITS) {
         {
-            ImGui::SliderInt("n bins", &nbins, 10, 2000);
-            ImGui::Checkbox("Pretty bars", &pretty);
+            auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+
+            mTemperaturesGraph.addPointSet(DummyPtr(temperature1HistoryData), (*style++).permuteColors(), "τₖ=2<K>/L");
+            mTemperaturesGraph.addPointSet(DummyPtr(temperature2HistoryData), (*style++).permuteColors(), "τ");
+            mTemperaturesGraph.addPointSet(DummyPtr(temperature3HistoryData), (*style++).permuteColors(), "τ₂");
+
+            // addWindowToColumn(&mTemperaturesGraph, 0);
+
+            auto T = std::stod(InterfaceManager::getInstance().getParametersValues({"T"})[0].second);
+            auto pts = Spaces::Point2DVec({{-.1,                T},
+                                           {params.gett() + .1, T}});
+            auto Tstyle = (*style++).permuteColors();
+            Tstyle.filled = false;
+            mTemperaturesGraph.addPointSet(std::make_shared<Spaces::PointSet>(pts), Tstyle, "T (nominal)");
         }
-        stats.end();
+
+        {
+            auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+            mHistogramsGraphE.addPointSet(DummyPtr(histogramEData), *style++, "E");
+            mHistogramsGraphK.addPointSet(DummyPtr(histogramKData), *style++, "K");
+            mHistogramsGraphGrad.addPointSet(DummyPtr(histogramGradData), *style++, "grad");
+            mHistogramsGraphV.addPointSet(DummyPtr(histogramVData), *style++, "V");
 
 
-        histogram.Compute(hamiltonian.getKineticDensity(), nbins);
-        histogramKData = histogram.asPDFPointSet(pretty);
+            auto *histogramsPanel = new Graphics::WindowPanel();
+            histogramsPanel->addWindow(DummyPtr(mHistogramsGraphV));
+            histogramsPanel->addWindow(DummyPtr(mHistogramsGraphGrad));
+            histogramsPanel->addWindow(DummyPtr(mHistogramsGraphK));
+            histogramsPanel->addWindow(DummyPtr(mHistogramsGraphE));
 
-        histogram.Compute(hamiltonian.getGradientDensity(), nbins);
-        histogramGradData = histogram.asPDFPointSet(pretty);
+            addWindow(Window::Ptr(histogramsPanel), true);
+        }
 
-        histogram.Compute(hamiltonian.getPotentialDensity(), nbins);
-        histogramVData = histogram.asPDFPointSet(pretty);
+        setColumnRelativeWidth(0, 0.125);
+        setColumnRelativeWidth(1, 0.20);
+        setColumnRelativeWidth(2, -1);
+        setColumnRelativeWidth(3, 0.25);
+    }
 
-        histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
-        histogramEData = histogram.asPDFPointSet(pretty);
+    void RtoR::Thermal::Monitor::draw() {
+        fix L = params.getL();
 
-        if(t<transientGuess || transientGuess<0){
-            mHistogramsGraphK.reviewGraphRanges();
-            mHistogramsGraphGrad.reviewGraphRanges();
-            mHistogramsGraphV.reviewGraphRanges();
-            mHistogramsGraphE.reviewGraphRanges();
+        // *************************** Histograms *****************************
+        {
+            Histogram histogram;
+            static auto nbins = 200;
+            static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
+
+            stats.begin();
+            if (ImGui::CollapsingHeader("Probability density functions")) {
+                ImGui::SliderInt("n bins", &nbins, 10, 2000);
+                ImGui::Checkbox("Pretty bars", &pretty);
+            }
+            stats.end();
+
+
+            histogram.Compute(hamiltonian.getKineticDensity(), nbins);
+            histogramKData = histogram.asPDFPointSet(pretty);
+
+            histogram.Compute(hamiltonian.getGradientDensity(), nbins);
+            histogramGradData = histogram.asPDFPointSet(pretty);
+
+            histogram.Compute(hamiltonian.getPotentialDensity(), nbins);
+            histogramVData = histogram.asPDFPointSet(pretty);
+
+            histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
+            histogramEData = histogram.asPDFPointSet(pretty);
+
+            if (t < transientGuess || transientGuess < 0) {
+                mHistogramsGraphK.reviewGraphRanges();
+                mHistogramsGraphGrad.reviewGraphRanges();
+                mHistogramsGraphV.reviewGraphRanges();
+                mHistogramsGraphE.reviewGraphRanges();
+            }
+        }
+
+        // *************************** MY BEAUTY *****************************
+
+        stats.addVolatileStat("<\\br>");
+        for (const auto &p: InterfaceManager::getInstance().getParametersValues({"T", "k", "i"})) {
+            auto name = p.first;
+            if (name == "i") name = "transient";
+            stats.addVolatileStat(name + " = " + p.second);
+        }
+
+        auto U = hamiltonian.getTotalEnergy();
+        auto K = hamiltonian.getTotalKineticEnergy();
+        auto W = hamiltonian.getTotalGradientEnergy();
+        auto V = hamiltonian.getTotalPotentialEnergy();
+
+        std::ostringstream ss;
+        auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
+        stats.addVolatileStat("<\\br>");
+        stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+        stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+        stats.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+        stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+        stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+
+        style = StylesManager::GetCurrent()->funcPlotStyles.begin();
+        stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2), (style++)->lineColor.permute());
+        stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
+        stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), 2), (style++)->lineColor.permute());
+
+        mTemperaturesGraph.set_xMax(t);
+
+        RtoR::Monitor::draw();
+    }
+
+    void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
+        transientGuess = guess;
+
+        auto transientStyle = StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
+
+        static auto vLine = Spaces::PointSet::New();
+        vLine->clear();
+        vLine->addPoint({guess, -1.0});
+        vLine->addPoint({guess, 1.e7});
+
+        mEnergyGraph.addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
+        mTemperaturesGraph.addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
+
+        // Transient in full history
+        {
+            auto style = StylesManager::GetCurrent()->funcPlotStyles.back();
+            style.filled = false;
+            style.thickness = 2;
+
+            transientLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, transientGuess},
+                                                {xMaxLinesInFullHistoryView, transientGuess});
+            mFullHistoryDisplay.addCurve(DummyPtr(transientLine), style, "Transient");
         }
     }
 
-    // *************************** MY BEAUTY *****************************
+    void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {
+        RtoR::Monitor::handleOutput(outInfo);
 
-    stats.addVolatileStat("<\\br>");
-    for(const auto& p : InterfaceManager::getInstance().getParametersValues({"T", "k", "i"}) ) {
-        auto name = p.first;
-        if(name == "i") name = "transient";
-        stats.addVolatileStat(name + " = " + p.second);
+        auto L = params.getL();
+
+        auto U = hamiltonian.getTotalEnergy();
+        auto K = hamiltonian.getTotalKineticEnergy();
+        auto W = hamiltonian.getTotalGradientEnergy();
+        auto V = hamiltonian.getTotalPotentialEnergy();
+
+        u = U / L;
+        barϕ = V / L;
+        tau = 2 * K / L;
+        tau_indirect = u - .5 * barϕ;
+
+        temperature1HistoryData.addPoint({t, tau});
+        temperature2HistoryData.addPoint({t, tau_indirect});
+        temperature3HistoryData.addPoint({t, barϕ + 2 * W / L});
     }
 
-    auto U = hamiltonian.getTotalEnergy();
-    auto K = hamiltonian.getTotalKineticEnergy();
-    auto W = hamiltonian.getTotalGradientEnergy();
-    auto V = hamiltonian.getTotalPotentialEnergy();
 
-    std::ostringstream ss;
-    auto style = Graphics::StylesManager::GetCurrent()->funcPlotStyles.begin();
-    stats.addVolatileStat("<\\br>");
-    stats.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
-    stats.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
-    stats.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
-    stats.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
-    stats.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
-
-    style = StylesManager::GetCurrent()->funcPlotStyles.begin();
-    stats.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, 2),      (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, 2), (style++)->lineColor.permute());
-    stats.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ+2*W/L), 2),  (style++)->lineColor.permute());
-
-    mTemperaturesGraph.set_xMax(t);
-
-    RtoR::Monitor::draw();
-}
-
-void RtoR::Thermal::Monitor::setTransientGuess(Real guess) {
-    transientGuess = guess;
-
-    auto transientStyle = StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true).permuteColors();
-
-    static auto vLine = Spaces::PointSet::New();
-    vLine->clear();
-    vLine->addPoint({guess, -1.0});
-    vLine->addPoint({guess, 1.e7 });
-
-    mEnergyGraph      .addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
-    mTemperaturesGraph.addPointSet(vLine, transientStyle, "Transient", DONT_AFFECT_RANGES);
-
-    // Transient in full history
-    {
-        auto style = StylesManager::GetCurrent()->funcPlotStyles.back();
-        style.filled = false;
-        style.thickness = 2;
-
-        transientLine = RtoR2::StraightLine({xMinLinesInFullHistoryView, transientGuess}, {xMaxLinesInFullHistoryView, transientGuess});
-        mFullHistoryDisplay.addCurve(DummyPtr(transientLine), style, "Transient");
-    }
-}
-
-void RtoR::Thermal::Monitor::handleOutput(const OutputPacket &outInfo) {
-    RtoR::Monitor::handleOutput(outInfo);
-
-    auto L =       params.getL();
-
-    auto U = hamiltonian.getTotalEnergy();
-    auto K = hamiltonian.getTotalKineticEnergy();
-    auto W = hamiltonian.getTotalGradientEnergy();
-    auto V = hamiltonian.getTotalPotentialEnergy();
-
-    u            = U/L;
-    barϕ         = V / L;
-    tau          = 2*K/L;
-    tau_indirect = u - .5*barϕ;
-
-    temperature1HistoryData.addPoint({t, tau});
-    temperature2HistoryData.addPoint({t, tau_indirect});
-    temperature3HistoryData.addPoint({t, barϕ + 2*W / L});
 }

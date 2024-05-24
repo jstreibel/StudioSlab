@@ -47,9 +47,6 @@ namespace Slab::Core {
 
         static void window_size_callback(GLFWwindow *window, int width, int height);
 
-        bool paused = false;
-        bool mustRender = true;
-
         static GLFWBackend &GetInstance();
 
     public:
@@ -73,17 +70,11 @@ namespace Slab::Core {
 
         auto getMouseState() const -> MouseState override;
 
-        void run(Task *program) override;
+        void run() override;
 
         void terminate() override;
 
         auto getScreenHeight() const -> Real override;
-
-        auto pause() -> void override;
-
-        auto resume() -> void override;
-
-        auto requestRender() -> void override;
     };
 
 

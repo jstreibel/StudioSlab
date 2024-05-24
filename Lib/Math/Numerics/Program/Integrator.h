@@ -23,8 +23,8 @@ namespace Slab::Math {
     class NumericalIntegration : public Task {
         Real dt;
         UInt steps;
-        bool forceOverStepping = false;
-        bool integrationFinished = false;
+
+        bool forceStopFlag = false;
 
         BenchmarkHistogram simTimeHistogram;
 
@@ -37,8 +37,6 @@ namespace Slab::Math {
         OutputPacket getOutputInfo();
 
         auto _cycle(size_t nCycles) -> bool;
-
-        auto _runFullIntegration() -> bool;
 
         auto _cycleUntilOutputOrFinish() -> bool;
 
@@ -71,15 +69,13 @@ namespace Slab::Math {
 
         ~NumericalIntegration() override;
 
-        bool cycle(CycleOptions options) override;
-
         bool run() override;
+
+        void forceStop() override;
 
         auto getSteps() const -> size_t;
 
         auto getSimulationTime() const -> Real;
-
-        auto doForceOverStepping() -> void;
 
         auto getHistogram() const -> const BenchmarkHistogram &;
 

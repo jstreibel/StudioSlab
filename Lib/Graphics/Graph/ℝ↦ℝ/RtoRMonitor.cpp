@@ -65,8 +65,8 @@ namespace Slab::Math {
 
         hamiltonian.computeEnergies(fieldState);
 
-        updateHistoryGraph();
-        updateSFTHistoryGraph();
+        // updateHistoryGraph();
+        // updateSFTHistoryGraph();
 
         for (const auto &dataView: dataViews)
             dataView->output(outInfo);
@@ -143,6 +143,13 @@ namespace Slab::Math {
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
             fullSFTHistoryArtist->set_t(lastData.getSimTime());
         lastStepMod = stepMod;
+    }
+
+    void RtoR::Monitor::draw() {
+        updateHistoryGraph();
+        updateSFTHistoryGraph();
+
+        WindowPanel::draw();
     }
 
 

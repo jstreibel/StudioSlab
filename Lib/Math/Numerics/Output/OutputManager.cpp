@@ -13,7 +13,7 @@ namespace Slab::Math {
         const Real t = infoVolatile.getSimTime();
         const size_t steps = infoVolatile.getSteps();
 
-        for (auto *out: outputs) {
+        for (auto &out : outputs) {
             auto shouldOutput = out->shouldOutput(t, steps) || force;
             if (shouldOutput) {
                 out->output(infoVolatile);
@@ -37,9 +37,8 @@ namespace Slab::Math {
         return nSteps < currStep ? 1 : nSteps - currStep;
     }
 
-    void OutputManager::addOutputChannel(Socket *out, bool keepTrack) {
+    void OutputManager::addOutputChannel(Socket_ptr out) {
         outputs.push_back(out);
-        if (keepTrack) myOutputs.push_back(out);
 
         Log::Status() << "Output manager added '" << out->getName() << "' output channel. Updates "
                       << "every " << out->getnSteps() << " sim steps." << Log::Flush;
@@ -49,7 +48,7 @@ namespace Slab::Math {
         Log::Success() << "Simulation finished. Total time steps: "
                        << theVeryLastOutputInformation.getSteps() << Log::Flush;
 
-        for (auto output: myOutputs) {
+        for (auto output: outputs) {
             if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
                 Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
 

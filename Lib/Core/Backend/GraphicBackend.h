@@ -17,6 +17,11 @@ namespace Slab::Core {
     protected:
         GraphicBackend(const Str &name, EventTranslator &eventTranslator);
 
+    public:
+        ~GraphicBackend() override;
+
+    protected:
+
         std::vector<std::shared_ptr<Module>> modules;
 
         Real r = 0, g = 0, b = 0;
@@ -27,17 +32,11 @@ namespace Slab::Core {
 
         virtual auto getMouseState() const -> MouseState = 0;
 
-        virtual auto pause() -> void = 0;
-
-        virtual auto resume() -> void = 0;
-
         void setClearColor(Real r, Real g, Real b);
 
         void addModule(const std::shared_ptr<Module> &module);
 
         auto getModules() -> const std::vector<std::shared_ptr<Module>> &;
-
-        virtual auto requestRender() -> void = 0;
 
         auto isHeadless() const -> bool final;
     };

@@ -59,7 +59,7 @@ namespace Slab::Graphics {
     public:
         explicit R2toRFunctionArtist();
 
-        void draw(const PlottingWindow &d) override;
+        bool draw(const PlottingWindow &d) override;
 
         bool hasGUI() override;
 

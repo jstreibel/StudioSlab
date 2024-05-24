@@ -91,7 +91,6 @@ namespace Slab {
         if (autoReviewGraphRanges) reviewGraphRanges();
         setupOrtho();
 
-
         artistsDraw();
 
         labelingHelper.setTotalItems(countDisplayItems());
@@ -186,7 +185,10 @@ namespace Slab {
 
     void Graphics::PlottingWindow::artistsDraw() {
         for (const auto &[priority, artist]: content)
-            if (artist->isVisible()) artist->draw(*this);
+            if (artist->isVisible() && !artist->draw(*this))
+                Core::Log::Error() << "In PlottingWindow \"" << title
+                << "\" while drawing Artist \"" << artist->getLabel() << "\"" << Core::Log::Flush;
+
     }
 
     Graphics::AxisArtist &Graphics::PlottingWindow::getAxisArtist() {

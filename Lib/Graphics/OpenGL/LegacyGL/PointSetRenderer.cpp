@@ -6,7 +6,7 @@
 
 namespace Slab {
 
-    void Graphics::OpenGL::Legacy::RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept {
+    bool Graphics::OpenGL::Legacy::RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept {
         auto pts = pSet->getPoints();
 
         OpenGL::Shader::remove();
@@ -87,7 +87,7 @@ namespace Slab {
 
         }
 
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
+        return !OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
 

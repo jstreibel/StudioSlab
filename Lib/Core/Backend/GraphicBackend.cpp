@@ -3,6 +3,8 @@
 //
 
 #include "GraphicBackend.h"
+#include "BackendManager.h"
+#include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 using namespace Slab::Core;
 
@@ -29,3 +31,13 @@ void GraphicBackend::setClearColor(Real _r, Real _g, Real _b) {
 }
 
 bool GraphicBackend::isHeadless() const {    return false;   }
+
+GraphicBackend::~GraphicBackend() {
+    /*
+    auto mod = BackendManager::GetModule(Modules::TaskManager);
+
+    auto taskManager = dynamic_cast<TaskManagerModule*>(mod.get());
+
+    taskManager->signalFinishAllTasks();
+     */
+}

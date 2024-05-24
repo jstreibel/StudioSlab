@@ -10,10 +10,11 @@
 #include "Graphics/Graph/ℝ↦ℝ/RtoRStatisticalMonitor.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
+
 #define DONT_SELF_REGISTER false
 #define SHORT_NAME false
 
-namespace Slab::Math::RtoR::Thermal {
+namespace Studios::Fields::RtoRThermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
@@ -43,10 +44,10 @@ namespace Slab::Math::RtoR::Thermal {
     }
 
     void *Builder::buildOpenGLOutput() {
-        auto monitor = (RtoR::Monitor*) KGBuilder::buildOpenGLOutput();
+        auto monitor = (Slab::Math::RtoR::Monitor*) KGBuilder::buildOpenGLOutput();
         auto &guiWindow = monitor->getGUIWindow();
         auto &config = simulationConfig.numericConfig;
-        auto &hamiltonian = *(KGEnergy*)getHamiltonian();
+        auto &hamiltonian = *(Slab::Math::RtoR::KGEnergy*)getHamiltonian();
 
         auto temp1 = Slab::New<RtoR::StatisticalMonitor>(
                 config, hamiltonian, guiWindow);

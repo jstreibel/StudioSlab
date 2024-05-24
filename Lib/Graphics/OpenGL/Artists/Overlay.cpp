@@ -43,13 +43,15 @@ namespace Slab::Graphics::OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void OpenGL::Overlay::draw(const PlottingWindow &graph2D) {
+    bool OpenGL::Overlay::draw(const PlottingWindow &graph2D) {
         auto vp = graph2D.getViewport();
 
         shader.setUniform("vpWidth", vp.width());
         shader.setUniform("vpHeight", vp.height());
 
         vertexBuffer.render(GL_TRIANGLES);
+
+        return true;
     }
 
 }

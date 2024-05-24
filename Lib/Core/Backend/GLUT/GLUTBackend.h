@@ -13,11 +13,7 @@ namespace Slab::Core {
         GLUTEventTranslator eventTranslator;
         std::vector<GLUTListener *> glutListeners;
 
-        bool programIsRunning = false;
-        Task *program = nullptr;
-
         MouseState mouseState;
-        bool renderingRequested = false;
     public:
         GLUTBackend();
 
@@ -25,7 +21,7 @@ namespace Slab::Core {
 
         static GLUTBackend &GetInstance();
 
-        void run(Task *) override;
+        void run() override;
 
         void terminate() override;
 
@@ -54,14 +50,6 @@ namespace Slab::Core {
         auto addGLUTListener(GLUTListener *glutListener) -> void;
 
         auto getScreenHeight() const -> Real override;
-
-        auto isPaused() const -> bool { return !programIsRunning; }
-
-        void pause() override { programIsRunning = false; }
-
-        void resume() override { programIsRunning = true; }
-
-        auto requestRender() -> void override;
 
         auto getMouseState() const -> MouseState override;
 

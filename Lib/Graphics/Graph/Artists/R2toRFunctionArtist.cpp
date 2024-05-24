@@ -30,8 +30,8 @@ namespace Slab::Graphics {
         program.setUniform("colormap", colorBar.getTexture()->getTextureUnit());
     }
 
-    void R2toRFunctionArtist::draw(const PlottingWindow &graph) {
-        if (func == nullptr) return;
+    bool R2toRFunctionArtist::draw(const PlottingWindow &graph) {
+        if (func == nullptr) return true;
 
         if (!validTextureData)
             repopulateTextureBuffer();
@@ -76,6 +76,7 @@ namespace Slab::Graphics {
             colorBar.draw(graph);
         }
 
+        return true;
     }
 
     void R2toRFunctionArtist::invalidateTextureData() { validTextureData = false; }

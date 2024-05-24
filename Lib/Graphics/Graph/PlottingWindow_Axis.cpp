@@ -43,6 +43,15 @@ namespace Slab {
         for (auto &a: content) {
             auto &artist = a.second;
 
+            if(artist->affectsGraphRanges()) {
+                newRegion = artist->getRegion();
+                break;
+            }
+        }
+
+        for (auto &a: content) {
+            auto &artist = a.second;
+
             if (!artist->affectsGraphRanges()) continue;
 
             auto aRegion = artist->getRegion();

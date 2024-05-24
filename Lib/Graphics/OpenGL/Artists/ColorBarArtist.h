@@ -32,7 +32,7 @@ namespace Slab::Graphics::OpenGL {
         void setColorMap(const ColorMap& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
-        void draw(const PlottingWindow &) override;
+        bool draw(const PlottingWindow &) override;
 
         void setInverseScalingFunction(std::function<Real(Real)>);
     };

@@ -53,9 +53,7 @@ namespace Slab::Graphics {
 
             auto i = 0;
             for (const auto &stat: stats) {
-                const auto c = stat.second;
                 const auto text = stat.first;
-                const auto color = ImVec4(c.r, c.g, c.b, c.a);
 
                 if (text == "<\\br>") {
                     ImGui::Separator();
@@ -63,9 +61,14 @@ namespace Slab::Graphics {
                     continue;
                 }
 
-                if (false) if (i++ % 2 && w_ > 500) ImGui::SameLine(getw() / 2. - hSpacing);
+                const auto c = stat.second;
+                if(c.r<0 || c.g<0 || c.b<0 || c.a<0) {
+                    ImGui::Text("%s", text.c_str());
+                } else {
+                    const auto color = ImVec4(c.r, c.g, c.b, c.a);
+                    ImGui::TextColored(color, text.c_str(), nullptr);
+                }
 
-                ImGui::TextColored(color, text.c_str(), nullptr);
             }
         }
 

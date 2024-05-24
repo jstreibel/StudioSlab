@@ -11,7 +11,7 @@ namespace Slab::Core {
 
     class VTKBackend : public GraphicBackend {
     public:
-        void run(Task *integrator) override;
+        void run() override;
     };
 
 }

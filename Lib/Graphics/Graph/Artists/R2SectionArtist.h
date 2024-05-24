@@ -23,7 +23,7 @@ namespace Slab::Graphics {
 
     public:
 
-        void draw(const PlottingWindow &window) override;
+        bool draw(const PlottingWindow &window) override;
 
         void setSamples(Resolution);
         void setFunction(R2toR::Function_ptr);

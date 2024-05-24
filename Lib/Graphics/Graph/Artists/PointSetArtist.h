@@ -19,7 +19,9 @@ namespace Slab::Graphics {
     public:
         PointSetArtist(Math::PointSet_ptr, PlotStyle);
 
-        void draw(const PlottingWindow &) override;
+        bool draw(const PlottingWindow &) override;
+
+        const RectR &getRegion() override;
     };
 
     DefinePointer(PointSetArtist)

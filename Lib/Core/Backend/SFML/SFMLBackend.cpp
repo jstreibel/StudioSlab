@@ -29,15 +29,11 @@ namespace Slab::Core {
         addSFMLListener(&sfmlEventTranslator);
     }
 
-    void SFMLBackend::run(Task *program) {
+    void SFMLBackend::run() {
 
         sf::Clock timer;
         timer.restart();
         while (running) {
-
-            if (!paused)
-                program->cycle(Task::CycleOptions(1));
-
 #if LIMIT_SIM_SPEED == false
             constexpr const auto frameInterval = _FRAME_INTERVAL_MSEC;
             auto elTimeMSec = (double) timer.getElapsedTime().asMilliseconds();
@@ -98,10 +94,6 @@ namespace Slab::Core {
 
     auto SFMLBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
-    void SFMLBackend::pause() { paused = true; }
-
-    void SFMLBackend::resume() { paused = false; }
-
     Real SFMLBackend::getScreenHeight() const { throw Str(__PRETTY_FUNCTION__) + " not implemented "; }
 
     SFMLBackend &SFMLBackend::GetInstance() {
@@ -110,10 +102,6 @@ namespace Slab::Core {
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         return *dynamic_cast<SFMLBackend *>(&guiBackend);
-    }
-
-    void SFMLBackend::requestRender() {
-        NOT_IMPLEMENTED
     }
 
     MouseState SFMLBackend::getMouseState() const {

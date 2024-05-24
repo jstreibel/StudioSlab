@@ -21,9 +21,7 @@ namespace Slab::Core {
         sf::Font font;
         sf::Text text;
 
-
         bool running = true;
-        bool paused = false;
 
         void _treatEvents();
 
@@ -36,21 +34,15 @@ namespace Slab::Core {
 
         bool addSFMLListener(SFMLListener *sfmlListener);
 
-        void run(Task *program) override;
+        void run() override;
 
         void terminate() override;
 
         auto getRenderWindow() -> sf::RenderWindow &;
 
-        auto pause() -> void override;
-
-        auto resume() -> void override;
-
         auto getScreenHeight() const -> Real override;
 
         static SFMLBackend &GetInstance();
-
-        auto requestRender() -> void override;
 
         auto getMouseState() const -> MouseState override;
     };

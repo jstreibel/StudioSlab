@@ -22,7 +22,7 @@ namespace Slab::Graphics {
     public:
         RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
 
-        void draw(const PlottingWindow &d) override;
+        bool draw(const PlottingWindow &d) override;
     };
 
     DefinePointer(RtoRFunctionArtist)

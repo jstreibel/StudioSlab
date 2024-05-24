@@ -58,9 +58,7 @@ namespace Slab::Core {
         Log::Info() << "GLFWBackend terminated." << Log::Flush;
     }
 
-    void GLFWBackend::run(Task *pProgram) {
-        this->program = pProgram;
-
+    void GLFWBackend::run() {
         mainLoop();
     }
 
@@ -71,9 +69,6 @@ namespace Slab::Core {
 
     void GLFWBackend::mainLoop() {
         while (!glfwWindowShouldClose(systemWindow) && !finishFlag) {
-            while (!mustRender && !paused && program->cycle(Task::CycleOptions::CycleUntilOutput));
-            mustRender = false;
-
             // glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
             glClearColor(0.25f, .25f, .35f, 1.f);
             // glClearColor(0.75f,.75f, .65f, 1.f);
@@ -97,12 +92,6 @@ namespace Slab::Core {
 
         return h;
     }
-
-    void GLFWBackend::pause() { paused = true; }
-
-    void GLFWBackend::resume() { paused = false; }
-
-    void GLFWBackend::requestRender() { mustRender = true; }
 
     GLFWwindow *GLFWBackend::newGLFWWindow() {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

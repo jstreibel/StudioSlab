@@ -26,8 +26,8 @@ namespace Slab::Graphics {
     }
 
 
-    void XHairArtist::draw(const PlottingWindow &graph2D) {
-        if(!graph2D.isMouseIn()) return;
+    bool XHairArtist::draw(const PlottingWindow &graph2D) {
+        if(!graph2D.isMouseIn()) return true;
 
         auto vpRect = graph2D.getViewport();
         auto region = graph2D.getRegion();
@@ -47,7 +47,7 @@ namespace Slab::Graphics {
         XHair.addPoint({XHairLocation.x, region.yMin});
         XHair.addPoint({XHairLocation.x, region.yMax});
 
-        Graphics::OpenGL::Legacy::RenderPointSet(Slab::DummyPointer(XHair), currStyle->XHairStyle);
+        return Graphics::OpenGL::Legacy::RenderPointSet(Slab::DummyPointer(XHair), currStyle->XHairStyle);
     }
 
 } // Graphics

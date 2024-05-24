@@ -71,7 +71,7 @@ namespace Slab::Math::R2toR {
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            Socket *out = new OutputHistoryToFile(simulationConfig.numericConfig, stepsInterval,
+            auto out = Slab::New<OutputHistoryToFile>(simulationConfig.numericConfig, stepsInterval,
                                                                           spaceFilter, t, outputFileName,
                                                                           outputFilter);
 
@@ -84,19 +84,17 @@ namespace Slab::Math::R2toR {
         ///********************************************************************************************/
         if (shouldOutputOpenGL) {
             GraphicBackend &backend = Core::BackendManager::GetGUIBackend();
-            if ((*VisualMonitor_startPaused)) backend.pause();
-            else backend.resume();
 
             auto glOut = Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
             glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
 
             backend.addEventListener(glOut);
-            outputManager->addOutputChannel(glOut.get(), false);
+            outputManager->addOutputChannel(glOut);
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             outputManager->addOutputChannel(
-                    new OutputConsoleMonitor(simulationConfig.numericConfig, fileOutputStepsInterval > 0
+                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig, fileOutputStepsInterval > 0
                                                             ? fileOutputStepsInterval * 25
                                                             : int(simulationConfig.numericConfig.getn() / 40)));
         }

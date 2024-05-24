@@ -31,8 +31,8 @@ namespace Slab::Graphics::OpenGL {
         setLocation(loc);
     }
 
-    void OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
-        if( texture == nullptr ) return;
+    bool OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
+        if( texture == nullptr ) return true;
 
         auto style =  PlotThemeManager::GetCurrent();
         auto &writer = style->labelsWriter;
@@ -105,6 +105,8 @@ namespace Slab::Graphics::OpenGL {
 
 
         vertexBuffer.render(GL_TRIANGLES);
+
+        return true;
     }
 
     void ColorBarArtist::updateTexture(int samples) {

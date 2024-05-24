@@ -21,7 +21,6 @@ namespace Slab::Math::RtoR {
         fix h = inFunc.getSpace().getMetaData().geth(0);
         fix L = N*h;
 
-
         IN hostData = &inFunc.getSpace().getHostData()[0];
         auto in = (double *) fftw_malloc(sizeof(double) * N);
         std::memcpy(in, hostData, sizeof(double) * N);

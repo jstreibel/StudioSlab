@@ -7,9 +7,19 @@
 
 #include "Task.h"
 
-class DummyProgram : public Task {
-public:
-    bool cycle(CycleOptions options) override { return false; }
-};
+namespace Slab::Core {
+
+    class DummyTask : public Task {
+    public:
+        bool cycle(CycleOptions options) override { return false; }
+
+        bool run() override {
+            return false;
+        }
+
+
+    };
+
+}
 
 #endif //STUDIOSLAB_DUMMYPROGRAM_H

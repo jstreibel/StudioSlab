@@ -57,9 +57,7 @@ namespace Slab::Core {
 
     GLUTBackend::~GLUTBackend() = default;
 
-    void GLUTBackend::run(Task *pProgram) {
-        this->program = pProgram;
-
+    void GLUTBackend::run() {
         glutMainLoop();
     }
 
@@ -68,17 +66,8 @@ namespace Slab::Core {
 
         if (key == 27) glutLeaveMainLoop();
 
-        Task *program = me.program;
-
-        if (key == ' ') me.programIsRunning = !me.programIsRunning;
-        else if (key == '[') {
-            Log::Info("GLUTBackend ") << "forcing cycle until next output;" << Log::Flush;
-            program->cycle(Task::CycleOptions::CycleUntilOutput);
-        } else {
-            for (auto &listener: me.glutListeners) {
-                if (listener->keyboard(key, x, y)) return;
-            }
-        }
+        for (auto &listener: me.glutListeners)
+            if (listener->keyboard(key, x, y)) return;
     }
 
     void GLUTBackend::keyboardUp(unsigned char key, int x, int y) {
@@ -143,8 +132,6 @@ namespace Slab::Core {
     void GLUTBackend::render() {
         auto &me = GetInstance();
 
-        if (me.renderingRequested) me.renderingRequested = false;
-
         glClearColor(me.r, me.g, me.b, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -164,10 +151,8 @@ namespace Slab::Core {
 
     void GLUTBackend::idleCall() {
         GET me = GetInstance();
-        Task *program = me.program;
 
-        while (!me.isPaused() && !me.renderingRequested)
-            if (!program->cycle(Task::CycleOptions::CycleUntilOutput)) break;
+        for (auto &listener: me.glutListeners) listener->idle();
     }
 
     void GLUTBackend::reshape(int w, int h) {
@@ -189,8 +174,6 @@ namespace Slab::Core {
 
         return *dynamic_cast<GLUTBackend *>(&guiBackend);
     }
-
-    void GLUTBackend::requestRender() { renderingRequested = true; }
 
     MouseState GLUTBackend::getMouseState() const { return eventTranslator.getMouseState(); }
 

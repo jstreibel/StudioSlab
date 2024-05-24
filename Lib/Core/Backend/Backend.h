@@ -20,7 +20,7 @@ namespace Slab::Core {
 
     public:
         virtual ~Backend() = default;
-        virtual void run(Task *) = 0;
+        virtual void run() = 0;
         virtual void terminate() = 0;
 
         Str getName() const {return name;}

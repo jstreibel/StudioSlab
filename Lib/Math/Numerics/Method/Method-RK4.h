@@ -59,43 +59,30 @@ namespace Slab::Math {
             for (size_t i = 0; i < n_steps; ++i) {
                 const Real t = (steps + i) * dt;
 
-#pragma omp parallel
                 {
                     H.startStep(phi, t, dt);
-#pragma omp barrier
-
                     H.applyBC(phi, t, dt);
-#pragma omp barrier
 
                     H(phi, k1, t, dt2);
-#pragma omp barrier
 
                     phiTemp.StoreAddition(phi, k1);
-#pragma omp barrier
 
                     H(phiTemp, k2, t, dt2);
-#pragma omp barrier
 
                     phiTemp.StoreAddition(phi, k2);
-#pragma omp barrier
 
                     H(phiTemp, k3, t, dt);
-#pragma omp barrier
 
                     phiTemp.StoreAddition(phi, k3);
-#pragma omp barrier
 
                     H(phiTemp, k4, t, dt);
-#pragma omp barrier
 
                     ((k2 *= 2.0) += k3) *= 2.0;
                     (k1 *= 2.0) += k4;
                     phiTemp.StoreAddition(k1, k2) *= inv6;
                     phi += phiTemp;
-#pragma omp barrier
 
                     H.finishStep(phi, t, dt);
-#pragma omp barrier
                 }
             }
             steps += n_steps;

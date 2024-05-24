@@ -16,30 +16,6 @@ namespace Slab::Math {
         Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
     }
 
-    bool NumericalIntegration::cycle(CycleOptions options) {
-        const auto &p = simBuilder.getNumericParams();
-
-        if (getSimulationTime() >= p.gett() && !p.shouldForceOverstepping()) {
-            if (!integrationFinished) {
-                outputManager->notifyIntegrationFinished(getOutputInfo());
-                integrationFinished = true;
-            }
-
-            return false;
-        }
-
-        switch (options.cycleOption) {
-            case CycleOptions::Cycle_nCycles:
-                return _cycle(options.nCycles);
-            case CycleOptions::CycleUntilOutput:
-                return _cycleUntilOutputOrFinish();
-            case CycleOptions::cycleCycleUntilFinished:
-                return _runFullIntegration();
-        }
-
-        return false;
-    }
-
     OutputPacket NumericalIntegration::getOutputInfo() {
         return {stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime()};
     }
@@ -56,20 +32,6 @@ namespace Slab::Math {
         fix forceOutput = steps >= maxSteps;
 
         output(forceOutput);
-
-        return true;
-    }
-
-    bool NumericalIntegration::_runFullIntegration() {
-        auto &p = simBuilder.getNumericParams();
-        size_t n = p.getn();
-
-        while (steps < n && _cycleUntilOutputOrFinish());
-
-        // Para cumprir com os steps quebrados faltantes:
-        if (steps < n) _cycle(n - steps);
-
-        outputManager->notifyIntegrationFinished(getOutputInfo());
 
         return true;
     }
@@ -103,12 +65,22 @@ namespace Slab::Math {
         return simTimeHistogram;
     }
 
-    void NumericalIntegration::doForceOverStepping() {
-        Log::Error("NumericalIntegration") << " doForceOverstepping function is deactivated and won't respond.";
+    bool NumericalIntegration::run() {
+        auto &p = simBuilder.getNumericParams();
+        size_t n = p.getn();
+
+        while (!forceStopFlag && steps < n && _cycleUntilOutputOrFinish());
+
+        // Para cumprir com os steps quebrados faltantes:
+        if (steps < n) _cycle(n - steps);
+
+        outputManager->notifyIntegrationFinished(getOutputInfo());
+
+        return true;
     }
 
-    bool NumericalIntegration::run() {
-        return _runFullIntegration();
+    void NumericalIntegration::forceStop() {
+        forceStopFlag = true;
     }
 
 

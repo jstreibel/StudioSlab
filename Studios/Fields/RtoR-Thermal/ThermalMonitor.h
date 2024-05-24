@@ -9,9 +9,11 @@
 #include "Graphics/Graph/ℝ↦ℝ/RtoRMonitor.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-namespace Slab::Math::RtoR::Thermal {
+namespace Studios::Fields::RtoRThermal {
 
-    class Monitor : public ::RtoR::Monitor {
+    using namespace Slab;
+
+    class Monitor : public Math::RtoR::Monitor {
         Real transientGuess = -1.0;
         RtoR2::StraightLine transientLine;
 
@@ -41,7 +43,7 @@ namespace Slab::Math::RtoR::Thermal {
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        explicit Monitor(const NumericConfig &, KGEnergy &hamiltonian);
+        explicit Monitor(const NumericConfig &, RtoR::KGEnergy &hamiltonian);
 
         void draw() override;
 

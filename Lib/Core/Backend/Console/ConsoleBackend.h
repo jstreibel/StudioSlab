@@ -9,7 +9,7 @@ namespace Slab::Core {
     public:
         ConsoleBackend();
 
-        void run(Task *integrator) override;
+        void run() override;
 
         void terminate() override;
     };

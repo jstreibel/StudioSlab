@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     public:
         Artist() = default;
 
-        virtual void draw(const PlottingWindow &) = 0;
+        virtual bool draw(const PlottingWindow &) = 0;
         virtual bool hasGUI();
         virtual void drawGUI();
 

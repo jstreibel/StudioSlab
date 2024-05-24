@@ -10,8 +10,7 @@ namespace Slab::Math {
 
     protected:
 
-        std::vector<Socket *> outputs;
-        std::vector<Socket *> myOutputs;
+        std::vector<Socket_ptr > outputs;
 
         const NumericConfig &params;
 
@@ -35,7 +34,7 @@ namespace Slab::Math {
         auto computeNStepsToNextOutput(UInt currStep) -> UInt;
 
         /****** INPUT/OUTPUT ******/
-        void addOutputChannel(Socket *out, bool keepTrack = true);
+        void addOutputChannel(Socket_ptr out);
 
 
     private:

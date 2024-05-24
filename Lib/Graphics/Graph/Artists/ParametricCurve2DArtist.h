@@ -20,7 +20,7 @@ namespace Slab::Graphics {
     public:
         ParametricCurve2DArtist(Slab::Pointer<RtoR2::ParametricCurve>, PlotStyle);
 
-        void draw(const PlottingWindow &d) override;
+        bool draw(const PlottingWindow &d) override;
 
         void setCurve(Slab::Pointer<RtoR2::ParametricCurve>);
 

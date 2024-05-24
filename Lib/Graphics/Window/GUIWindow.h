@@ -20,7 +20,7 @@ namespace Slab::Graphics {
     public:
         explicit GUIWindow();
 
-        void addVolatileStat(const Str &stat, Color color = {0, 0, 0});
+        void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 
         void draw() override;
 

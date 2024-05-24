@@ -15,12 +15,14 @@ namespace Slab::Graphics {
     : function(std::move(func)), plotStyle(plotStyle), samples(samples)
     {    }
 
-    void RtoRFunctionArtist::draw(const PlottingWindow &d) {
-        if(function == nullptr) return;
+    bool RtoRFunctionArtist::draw(const PlottingWindow &d) {
+        if(function == nullptr) return true;
 
         glLineWidth(plotStyle.thickness);
 
         Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, d.get_xMin(),
                                                    d.get_xMax(), samples, 1);
+
+        return true;
     }
 } // Graphics

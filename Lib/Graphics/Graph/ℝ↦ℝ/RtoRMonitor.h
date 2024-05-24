@@ -59,6 +59,8 @@ namespace Slab::Math::RtoR {
                 const Str& name = "general graphic monitor",
                 bool showEnergyHistoryAsDensities=false);
 
+        void draw() override;
+
         virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory);
         virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                             const Models::DFTDataHistory &dftData);

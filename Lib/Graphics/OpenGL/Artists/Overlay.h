@@ -19,7 +19,7 @@ namespace Slab::Graphics::OpenGL {
     public:
         explicit Overlay(RectI loc);
 
-        void draw(const PlottingWindow &) override;
+        bool draw(const PlottingWindow &) override;
     };
 
 }

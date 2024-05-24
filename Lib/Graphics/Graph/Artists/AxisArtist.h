@@ -42,7 +42,7 @@ namespace Slab::Graphics {
         AxisArtist();
         explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
 
-        void draw(const PlottingWindow &) override;
+        bool draw(const PlottingWindow &) override;
 
         void setHorizontalUnit(const Unit&);
         auto getHorizontalUnit() const -> const Unit&;

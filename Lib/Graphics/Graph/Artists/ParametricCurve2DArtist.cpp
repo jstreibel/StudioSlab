@@ -16,10 +16,10 @@ namespace Slab::Graphics {
 
     }
 
-    void ParametricCurve2DArtist::draw(const PlottingWindow &d) {
+    bool ParametricCurve2DArtist::draw(const PlottingWindow &d) {
         auto pointSet = curve.get()->renderToPointSet();
 
-        OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
+        return OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
 
     }
 

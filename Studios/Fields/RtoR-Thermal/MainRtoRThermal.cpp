@@ -13,12 +13,16 @@
 #include "Studies/RandomEnergyOverDotPhiBuilder.h"
 
 int run(int argc, const char **argv){
+    using namespace Slab::Core;
+    using namespace Slab::Math;
+    using namespace Studios::Fields::RtoRThermal;
+
     InterfaceSelector selector("Dynamic thermal");
     std::vector<RtoR::KGBuilder*>
-            options = { new RtoR::StatisticalBuilder,
-                        new RtoR::MachineGunBuilder,
-                        new RtoR::ManyOscillonsBuilder,
-                        new RtoR::RandomEnergyOverDotPhiBuilder };
+            options = { new StatisticalBuilder,
+                        new MachineGunBuilder,
+                        new ManyOscillonsBuilder,
+                        new RandomEnergyOverDotPhiBuilder };
 
     for(auto &opt : options)
         selector.registerOption(opt->getInterface());
@@ -26,13 +30,13 @@ int run(int argc, const char **argv){
     auto selection = dynamic_cast<RtoR::KGBuilder*>(
             selector.preParse(argc, argv).getCurrentCandidate()->getOwner());
 
-    auto prog = Simulation::App(argc, argv, RtoR::KGBuilder::Ptr(selection));
+    auto prog = App(argc, argv, RtoR::KGBuilder::Ptr(selection));
 
     return prog.run();
 }
 
 int main(int argc, const char **argv) {
-    return SafetyNet::jump(run, argc, argv);
+    return Slab::Core::SafetyNet::jump(run, argc, argv);
 }
 
 

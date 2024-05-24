@@ -160,8 +160,10 @@ namespace Slab::Core {
                 if(ImGui::BeginMenu("GUI")) {
                     for(const auto& theme : colorThemes) {
                         if (ImGui::MenuItem(theme.first.c_str(), nullptr,
-                                            theme.first==currentTheme))
+                                            theme.first==currentTheme)) {
                             theme.second();
+                            currentTheme = theme.first;
+                        }
                     }
 
                     ImGui::EndMenu();

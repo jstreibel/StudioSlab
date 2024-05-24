@@ -41,13 +41,15 @@ namespace Slab::Graphics {
     , vUnit(vertical)
     {    }
 
-    void AxisArtist::draw(const PlottingWindow &graph) {
+    bool AxisArtist::draw(const PlottingWindow &graph) {
         glLineWidth(1.0);
 
         computeTicks(graph);
 
         drawXAxis(graph);
         drawYAxis(graph);
+
+        return true;
     }
 
     void AxisArtist::computeTicks(const PlottingWindow &graph) {

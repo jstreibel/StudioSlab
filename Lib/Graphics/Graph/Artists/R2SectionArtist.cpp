@@ -14,8 +14,8 @@ namespace Slab::Graphics {
         sections.emplace_back(section, style);
     }
 
-    void R2SectionArtist::draw(const PlottingWindow &window) {
-        if(function2D == nullptr) return;
+    bool R2SectionArtist::draw(const PlottingWindow &window) {
+        if(function2D == nullptr) return true;
 
         for (const auto& pair : sections) {
             auto section = pair.first.get();
@@ -23,6 +23,8 @@ namespace Slab::Graphics {
 
             FunctionRenderer::renderSection(*function2D, *section, style, samples);
         }
+
+        return true;
 
     }
 
