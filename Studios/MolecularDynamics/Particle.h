@@ -7,7 +7,7 @@
 
 #include "Utils/Types.h"
 
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 #define CUTOFF_RADIUS 4
 

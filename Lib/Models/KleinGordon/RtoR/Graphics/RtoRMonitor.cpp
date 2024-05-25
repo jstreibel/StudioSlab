@@ -9,6 +9,7 @@
 #include "RtoRRealtimePanel.h"
 #include "RtoRFourierPanel.h"
 #include "CorrelationsPanel.h"
+#include "RtoRScenePanel.h"
 
 
 // Ok to touch these:
@@ -22,9 +23,12 @@ namespace Slab::Models::KGRtoR {
             : Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name), hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
         fullHistoryGraph->addArtist(fullHistoryArtist);
+        fullHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
 
         fullSFTHistoryArtist->setLabel("ℱₓ(t,k)");
         fullSFTHistoryGraph->addArtist(fullSFTHistoryArtist);
+        fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
+        fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
 
 
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
@@ -32,6 +36,7 @@ namespace Slab::Models::KGRtoR {
         addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
+        addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));
 
         setDataView(0);
     }

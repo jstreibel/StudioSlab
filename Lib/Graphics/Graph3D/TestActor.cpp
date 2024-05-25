@@ -6,7 +6,7 @@
 
 #include "Core/Tools/Resources.h"
 
-#include "Graph3D.h"
+#include "Scene3DWindow.h"
 #include "imgui.h"
 
 #include <array>
@@ -44,9 +44,9 @@ namespace Slab::Graphics {
     fix intensity = 2.f;
     fix a = intensity*(.5f);
     fix b = intensity*(1.f - a);
-    LightData light1 = { 1,  0, 0 + zLight, a, b, 0};
-    LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
-    LightData light3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
+    LightData testLight1 = { 1,  0, 0 + zLight, a, b, 0};
+    LightData testLight2 = { 0,  1, 0 + zLight, 0, a, b};
+    LightData testLight3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
@@ -74,12 +74,12 @@ namespace Slab::Graphics {
 
         program.setUniform("field", texture.getTextureUnit());
 
-        program.setUniform("light1_position", light1.pos());
-        program.setUniform("light2_position", light2.pos());
-        program.setUniform("light3_position", light3.pos());
-        program.setUniform("light1_color", light1.color());
-        program.setUniform("light2_color", light2.color());
-        program.setUniform("light3_color", light3.color());
+        program.setUniform("light1_position", testLight1.pos());
+        program.setUniform("light2_position", testLight2.pos());
+        program.setUniform("light3_position", testLight3.pos());
+        program.setUniform("light1_color", testLight1.color());
+        program.setUniform("light2_color", testLight2.color());
+        program.setUniform("light3_color", testLight3.color());
 
         program.setUniform("gridSubdivs", gridSubdivs);
 
@@ -88,7 +88,7 @@ namespace Slab::Graphics {
         program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
     }
 
-    void TestActor::draw(const Graph3D &graph3D) {
+    void TestActor::draw(const Scene3DWindow &graph3D) {
         texture.bind();
 
         auto camera = graph3D.getCamera();
@@ -96,7 +96,22 @@ namespace Slab::Graphics {
         auto proj = camera.getProjection();
         auto model = glm::mat4(1.f);
 
-        ImGui::Begin("Actor");
+        program.setUniform("eye", camera.pos);
+
+        program.setUniform("modelview", view*model);
+        program.setUniform("projection", proj);
+
+        vertexBuffer.render(GL_TRIANGLES);
+    }
+
+    void TestActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
+
+    bool TestActor::hasGUI() {
+        return true;
+    }
+
+    void TestActor::drawGUI() {
+
         static float scale = 1.0;
         if(ImGui::SliderFloat("scale", &scale, .1f, 10.f))
             program.setUniform("scale", scale);
@@ -113,17 +128,7 @@ namespace Slab::Graphics {
         if(ImGui::Combo("Shading", &current, items, 3))
             program.setUniform("shading", current);
 
-        ImGui::End();
-
-        program.setUniform("eye", camera.pos);
-
-        program.setUniform("modelview", view*model);
-        program.setUniform("projection", proj);
-
-        vertexBuffer.render(GL_TRIANGLES);
     }
-
-    void TestActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
 
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer,

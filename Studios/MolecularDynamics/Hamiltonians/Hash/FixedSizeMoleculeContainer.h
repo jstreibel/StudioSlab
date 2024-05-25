@@ -7,7 +7,7 @@
 
 #include "Utils/Types.h"
 #include "HashParams.h"
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 
 #define get_q(triple) (*(triple.first.first))

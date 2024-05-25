@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLUTDEFS_H
 #define STUDIOSLAB_GLUTDEFS_H
 
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 #include "Graphics/Utils.h"
 #include "Graphics/OpenGL/Utils.h"
 

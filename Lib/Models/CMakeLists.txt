@@ -37,6 +37,8 @@ set ( KG_SOURCES
         LangevinKleinGordon/LangevinKGSolver.h	        LangevinKleinGordon/LangevinKGSolver.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
+        KleinGordon/RtoR/Graphics/RtoRScenePanel.cpp
+        KleinGordon/RtoR/Graphics/RtoRScenePanel.h
 )
 
 set ( XY_SOURCES

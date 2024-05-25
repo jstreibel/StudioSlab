@@ -5,6 +5,7 @@
 #include "WindowColumn.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
+#include "Core/Backend/BackendManager.h"
 
 #include <algorithm>
 #include <numeric>
@@ -131,7 +132,17 @@ namespace Slab::Graphics {
     }
 
     bool WindowColumn::notifyMouseMotion(int x, int y) {
-        PropagateEvent(notifyMouseMotion(x, y), PropagateOnlyIfMouseIsIn);
+        auto responded = false;
+        for(auto &win : windows)
+        if(win->isMouseIn() ){
+            responded = win->notifyMouseMotion(x,y);
+        }
+
+        if(!responded) {
+
+        }
+
+        return responded;
     }
 
     bool

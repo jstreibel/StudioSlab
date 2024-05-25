@@ -16,10 +16,13 @@ namespace Slab::Models::KGRtoR {
     {
         inverseDFTArtist->setLabel("ℱₖ⁻¹(t, x)");
         inverseDFTDisplay->addArtist(inverseDFTArtist);
+        inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
+        inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
 
         timeDFTArtist->setLabel("ℱₜ(ω, x)");
         timeDFTDisplay->addArtist(timeDFTArtist);
-
+        timeDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
+        timeDFTDisplay->getAxisArtist().setVerticalAxisLabel("ω");
 
     }
 

@@ -10,7 +10,7 @@
 #include "Core/Controller/Interface/CommonParameters.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
-#include "Graphics/Styles/WindowStyles.h"
+#include "Graphics/Window/WindowStyles.h"
 
 #include "Core/Tools/Log.h"
 

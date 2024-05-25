@@ -2,8 +2,8 @@
 // Created by joao on 4/10/23.
 //
 
-#ifndef STUDIOSLAB_FIELD2DACTOR_H
-#define STUDIOSLAB_FIELD2DACTOR_H
+#ifndef STUDIOSLAB_R2TORFUNCTIONACTOR_H
+#define STUDIOSLAB_R2TORFUNCTIONACTOR_H
 
 #include "Actor.h"
 #include "Graphics/OpenGL/Shader.h"
@@ -15,11 +15,11 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class Field2DActor : public Actor {
-        std::shared_ptr<R2toR::DiscreteFunction> func;
+    class R2toRFunctionActor : public Actor {
+        R2toR::DiscreteFunction_constptr func;
 
         struct GridMetadata {
-            static auto FromDiscreteFunction(const R2toR::DiscreteFunction&) -> GridMetadata;
+            static auto FromDiscreteFunction(const R2toR::DiscreteFunction_constptr&) -> GridMetadata;
             auto generateXYPlane(OpenGL::VertexBuffer &buffer) const -> void;
             int gridN = 64;
             int gridM = 64;
@@ -33,16 +33,23 @@ namespace Slab::Graphics {
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
+        void rebuildTextureData();
 
     public:
-        explicit Field2DActor(std::shared_ptr<R2toR::DiscreteFunction> function);
+        explicit R2toRFunctionActor(R2toR::DiscreteFunction_constptr function);
 
-        void draw(const Graph3D &graph3D) override;
+        void draw(const Scene3DWindow &graph3D) override;
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
 
         void setAmbientLight(Color color);
         void setGridSubdivs(int n);
     };
 
+    DefinePointer(R2toRFunctionActor)
+
 } // Graphics
 
-#endif //STUDIOSLAB_FIELD2DACTOR_H
+#endif //STUDIOSLAB_R2TORFUNCTIONACTOR_H

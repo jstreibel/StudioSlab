@@ -5,7 +5,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 
 #include "Window.h"
-#include "Graphics/Styles/WindowStyles.h"
+#include "WindowStyles.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
 #include "Core/Backend/GraphicBackend.h"
 #include "Graphics/OpenGL/Shader.h"
@@ -85,10 +85,12 @@ namespace Slab::Graphics {
         fix &mouse = guiBackend.getMouseState();
         auto hScreen = guiBackend.getScreenHeight();
 
-        fix x = windowRect.xMin;
-        fix y = windowRect.yMin;
-        fix w = windowRect.width();
-        fix h = windowRect.height();
+        auto rect = getViewport();
+
+        fix x = rect.xMin;
+        fix y = rect.yMin;
+        fix w = rect.width();
+        fix h = rect.height();
 
         return mouse.x > x && mouse.x < x + w && hScreen - mouse.y > y && hScreen - mouse.y < y + h;
     }

@@ -62,7 +62,8 @@ namespace Slab::Models::KGRtoR {
                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
             mEnergyGraph.setAutoReviewGraphRanges(false);
-
+            mEnergyGraph.getAxisArtist().setHorizontalAxisLabel("t");
+            mEnergyGraph.getAxisArtist().setHorizontalAxisLabel("e");
         }
 
         {

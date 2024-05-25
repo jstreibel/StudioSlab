@@ -6,7 +6,7 @@
 #define STUDIOSLAB_CAMERA_H
 
 #include <glm/ext/matrix_float4x4.hpp>
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
 

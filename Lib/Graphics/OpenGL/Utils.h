@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_OPENGLUTILS_H
 #define STUDIOSLAB_OPENGLUTILS_H
 
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 #include "Graphics/Window/Window.h"
 #include "Graphics/OpenGL/OpenGL.h"
 

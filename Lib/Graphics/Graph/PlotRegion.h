@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_PLOTREGION_H
 #define STUDIOSLAB_PLOTREGION_H
 
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
 

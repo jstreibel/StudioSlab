@@ -5,10 +5,10 @@
 #include "WindowStyles.h"
 
 namespace Slab::Graphics {
-    int hPadding = 4;
-    int vPadding = 4;
+    int hPadding = 10;
+    int vPadding = 10;
 
-    int menuHeight = 32;
+    int menuHeight = 40;
 
     // Color clearColor = {0.1, 0.1, 0.15, 1};
     // Color clearColor = {0.9, 0.9, 0.85, 1};

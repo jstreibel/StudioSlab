@@ -20,7 +20,11 @@ namespace Slab::Graphics {
     public:
         TestActor();
 
-        void draw(const Graph3D &graph3D) override;
+        void draw(const Scene3DWindow &graph3D) override;
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
 
         void setAmbientLight(Color color);
     };

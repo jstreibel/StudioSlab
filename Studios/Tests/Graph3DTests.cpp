@@ -3,10 +3,10 @@
 //
 
 #include "Graph3DTests.h"
-#include "Graphics/Graph3D/Graph3D.h"
+#include "Graphics/Graph3D/Scene3DWindow.h"
 #include "Graphics/Graph3D/TestActor.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Graphics/Graph3D/Field2DActor.h"
+#include "Graphics/Graph3D/R2toRFunctionActor.h"
 
 namespace Tests {
     Graph3DTests::Graph3DTests() {

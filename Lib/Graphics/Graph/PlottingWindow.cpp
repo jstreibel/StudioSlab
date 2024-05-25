@@ -128,7 +128,7 @@ namespace Slab {
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
 
-            if (ImGui::Begin(title.c_str())) {
+            if (ImGui::Begin(title.c_str(), &showInterface)) {
 
                 for (IN cont: content) {
                     IN artie = cont.second;
@@ -150,17 +150,6 @@ namespace Slab {
                         if (ImGui::CollapsingHeader(Unique(artie->getLabel())))
                             artie->drawGUI();
                     }
-                }
-
-                {
-                    // Get the current window size
-                    ImVec2 windowSize = ImGui::GetWindowSize();
-                    ImVec2 buttonSize(100.0f, 30.0f); // Example button size
-                    ImVec2 buttonPos = ImVec2(windowSize.x - buttonSize.x - 15.0f,
-                                              windowSize.y - buttonSize.y - 15.0f); // 10.0f is padding
-                    ImGui::SetCursorPos(buttonPos);
-                    if (ImGui::Button(Unique("Close"), buttonSize))
-                        showInterface = false;
                 }
             }
 

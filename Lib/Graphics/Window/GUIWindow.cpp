@@ -5,7 +5,7 @@
 #include "GUIWindow.h"
 
 #include "imgui.h"
-#include "Graphics/Styles/WindowStyles.h"
+#include "WindowStyles.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 

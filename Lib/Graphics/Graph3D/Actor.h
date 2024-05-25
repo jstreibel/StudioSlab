@@ -6,17 +6,30 @@
 #define STUDIOSLAB_ACTOR_H
 
 #include <memory>
+#include "Utils/Pointer.h"
+#include "Utils/String.h"
 
 namespace Slab::Graphics {
 
-    class Graph3D;
+    class Scene3DWindow;
 
     class Actor {
-    public:
-        typedef std::shared_ptr<Actor> Ptr;
+        Str label = "<unnamed actor>";
+        bool visible = true;
 
-        virtual void draw(const Graph3D &graph3D) = 0;
+    public:
+        virtual void draw(const Scene3DWindow &graph3D) = 0;
+        virtual bool hasGUI();
+        virtual void drawGUI();
+
+        void setLabel(Str);
+        auto getLabel() const -> Str;
+
+        void setVisibility(bool);
+        bool isVisible() const;
     };
+
+    DefinePointer(Actor)
 
 } // Graphics
 

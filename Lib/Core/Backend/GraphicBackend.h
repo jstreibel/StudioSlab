@@ -11,6 +11,8 @@
 
 namespace Slab::Core {
 
+
+
     class GraphicBackend : public Backend {
         EventTranslator &eventTranslator;
 
@@ -31,6 +33,8 @@ namespace Slab::Core {
         virtual auto getScreenHeight() const -> Real = 0;
 
         virtual auto getMouseState() const -> MouseState = 0;
+
+        virtual void setMouseCursor(MouseCursor);
 
         void setClearColor(Real r, Real g, Real b);
 

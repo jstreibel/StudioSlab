@@ -8,7 +8,7 @@
 #include <GLFW/glfw3.h>
 #include <list>
 
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 #include "Core/Backend/GraphicBackend.h"
 #include "GLFWListener.h"
@@ -69,6 +69,8 @@ namespace Slab::Core {
         auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool override;
 
         auto getMouseState() const -> MouseState override;
+
+        void setMouseCursor(MouseCursor cursor) override;
 
         void run() override;
 

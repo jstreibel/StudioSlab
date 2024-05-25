@@ -6,11 +6,11 @@
 #define V_SHAPE_WINDOW_H
 
 #include "Graphics/Styles/Colors.h"
-#include "Graphics/Styles/WindowStyles.h"
+#include "WindowStyles.h"
 
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/Events/MouseState.h"
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 #include <vector>
 #include <memory>

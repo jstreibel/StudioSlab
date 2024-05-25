@@ -100,7 +100,12 @@ namespace Slab::Models::KGRtoR {
         DFT2DGraph.addArtist(ftRealPartsArtist);
         DFT2DGraph.addArtist(ftImagPartsArtist);
 
+        DFT2DGraph.getAxisArtist().setHorizontalAxisLabel("k");
+        DFT2DGraph.getAxisArtist().setVerticalAxisLabel("ω");
+
         correlationGraph.addArtist(twoPointCorrArtist);
+        correlationGraph.getAxisArtist().setHorizontalAxisLabel("x");
+        correlationGraph.getAxisArtist().setVerticalAxisLabel("t");
     }
 
     void CorrelationsPanel::draw() {

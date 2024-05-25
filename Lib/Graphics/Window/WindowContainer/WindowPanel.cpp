@@ -166,7 +166,13 @@ namespace Slab::Graphics {
 
     bool
     WindowPanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        return GUIEventListener::notifyKeyboard(key, state, modKeys);
+        // return GUIEventListener::notifyKeyboard(key, state, modKeys);
+
+        auto responded = false;
+        for (auto &col: columns)
+            if (col.isMouseIn()) responded = col.notifyKeyboard(key, state, modKeys);
+
+        return responded;
     }
 
     bool WindowPanel::notifyMouseButton(Core::MouseButton button, Core::KeyState state,

@@ -1,9 +1,9 @@
 
 
-set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
+set ( LIB_GRAPHICS ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
 
-add_library(${LIB_LOCAL_NAME} STATIC
-		Types.h     	Types.cpp
+add_library(${LIB_GRAPHICS} STATIC
+        Types2D.h Types2D.cpp
 		Utils.cpp
 
 		Animator.cpp	Animator.h
@@ -12,7 +12,7 @@ add_library(${LIB_LOCAL_NAME} STATIC
 
 		Styles/ColorMap.h 		Styles/ColorMap.cpp
 		Styles/Colors.h       	Styles/Colors.cpp
-		Styles/WindowStyles.h	Styles/WindowStyles.cpp
+		Window/WindowStyles.h Window/WindowStyles.cpp
 
 		Window/GUIWindow.cpp
 		Window/Window.cpp
@@ -73,12 +73,12 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		Graph/Artists/HistoryTexture2DUploadHelper.cpp
 		Graph/Artists/HistoryTexture2DUploadHelper.h
 
-		Graph3D/Graph3D.cpp
-		Graph3D/Graph3D.h
+		Graph3D/Scene3DWindow.cpp
+        Graph3D/Scene3DWindow.h
 		Graph3D/Actor.cpp
 		Graph3D/Actor.h
-		Graph3D/Field2DActor.cpp
-		Graph3D/Field2DActor.h
+        Graph3D/R2toRFunctionActor.cpp
+		Graph3D/R2toRFunctionActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
 
@@ -109,13 +109,17 @@ add_library(${LIB_LOCAL_NAME} STATIC
 		Graph/Plotter.h
 		Graph/Artists/R2SectionArtist.cpp
 		Graph/Artists/R2SectionArtist.h
+        Window/WindowContainer/WindowContainer.cpp
+        Window/WindowContainer/WindowContainer.h
+		Types3D.cpp
+		Types3D.h
 
 )
-target_link_libraries(${LIB_LOCAL_NAME}
+target_link_libraries(${LIB_GRAPHICS}
 		Slab-Utils
 		Slab-Core
 		Slab-Math
 
 )
 
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added library " ${LIB_GRAPHICS})

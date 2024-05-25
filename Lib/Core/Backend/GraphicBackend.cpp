@@ -41,3 +41,16 @@ GraphicBackend::~GraphicBackend() {
     taskManager->signalFinishAllTasks();
      */
 }
+
+void GraphicBackend::setMouseCursor(MouseCursor cursor) {
+    switch (cursor) {
+        case Mouse_ArrowCursor:     break;
+        case Mouse_VResizeCursor:   break;
+        case Mouse_HResizeCursor:   break;
+        case Mouse_HandCursor:      break;
+        case Mouse_IBeamCursor:     break;
+        case Mouse_CrossHairCursor: break;
+    }
+
+    NOT_IMPLEMENTED
+}

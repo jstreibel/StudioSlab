@@ -2,11 +2,11 @@
 // Created by joao on 4/10/23.
 //
 
-#include "Field2DActor.h"
+#include "R2toRFunctionActor.h"
 
 #include "Core/Tools/Resources.h"
 
-#include "Graph3D.h"
+#include "Scene3DWindow.h"
 #include "imgui.h"
 
 #include <array>
@@ -42,9 +42,9 @@ namespace Slab::Graphics {
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    Field2DActor::Field2DActor(std::shared_ptr<R2toR::DiscreteFunction> function)
+    R2toRFunctionActor::R2toRFunctionActor(R2toR::DiscreteFunction_constptr function)
     : func(std::move(function))
-    , gridMetadata(Field2DActor::GridMetadata::FromDiscreteFunction(*func))
+    , gridMetadata(R2toRFunctionActor::GridMetadata::FromDiscreteFunction(func))
     , program(Resources::ShadersFolder + "FieldShading.vert",
               Resources::ShadersFolder + "FieldShading.frag")
     , vertexBuffer("position:2f,texcoord:2f")
@@ -52,13 +52,8 @@ namespace Slab::Graphics {
     {
         gridMetadata.generateXYPlane(vertexBuffer);
 
-        fix gridN = gridMetadata.gridN;
-        fix gridM = gridMetadata.gridM;
+        rebuildTextureData();
 
-        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j)
-            texture.setValue(i, j, func->At(i, j));
-
-        texture.upload();
         texture.setAntiAliasOff();
         texture.setSWrap(OpenGL::ClampToEdge);
         texture.setTWrap(OpenGL::ClampToEdge);
@@ -77,10 +72,12 @@ namespace Slab::Graphics {
 
         program.setUniform("scale", 1.f);
 
+        fix gridN = gridMetadata.gridN;
+        fix gridM = gridMetadata.gridM;
         program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
     }
 
-    void Field2DActor::draw(const Graph3D &graph3D) {
+    void R2toRFunctionActor::draw(const Scene3DWindow &graph3D) {
         texture.bind();
 
         auto camera = graph3D.getCamera();
@@ -88,9 +85,29 @@ namespace Slab::Graphics {
         auto proj = camera.getProjection();
         auto model = glm::mat4(1.f);
 
-        ImGui::Begin("Actor");
+        program.setUniform("eye", camera.pos);
+
+        program.setUniform("modelview", view*model);
+        program.setUniform("projection", proj);
+
+        vertexBuffer.render(GL_TRIANGLES);
+    }
+
+    void R2toRFunctionActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
+
+    void R2toRFunctionActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
+
+    bool R2toRFunctionActor::hasGUI() {
+        return true;
+    }
+
+    void R2toRFunctionActor::drawGUI() {
+        if(ImGui::Button("Rebuild texture data")) {
+            rebuildTextureData();
+        }
+
         static float scale = 1.0;
-        if(ImGui::SliderFloat("scale", &scale, .1f, 10.f))
+        if(ImGui::DragFloat("scale", &scale, scale*5e-1f, 1e-2f, 1e2f, "%.2e"))
             program.setUniform("scale", scale);
 
         static float gloomPowBase = 50.0;
@@ -108,22 +125,19 @@ namespace Slab::Graphics {
         static int current = 0;
         if(ImGui::Combo("Shading", &current, items, 3))
             program.setUniform("shading", current);
-
-        ImGui::End();
-
-        program.setUniform("eye", camera.pos);
-
-        program.setUniform("modelview", view*model);
-        program.setUniform("projection", proj);
-
-        vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void Field2DActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
+    void R2toRFunctionActor::rebuildTextureData() {
+        fix gridN = gridMetadata.gridN;
+        fix gridM = gridMetadata.gridM;
 
-    void Field2DActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
+        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j)
+                texture.setValue(i, j, func->At(i, j));
 
-    void Field2DActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
+        texture.upload();
+    }
+
+    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
         std::vector<GLuint> indices;
         std::vector<Field2DVertex> vertices;
 
@@ -171,17 +185,17 @@ namespace Slab::Graphics {
         buffer.pushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
     }
 
-    Field2DActor::GridMetadata
-    Field2DActor::GridMetadata::FromDiscreteFunction(const R2toR::DiscreteFunction &func) {
-        fix D = func.getDomain();
+    R2toRFunctionActor::GridMetadata
+    R2toRFunctionActor::GridMetadata::FromDiscreteFunction(const R2toR::DiscreteFunction_constptr &func) {
+        fix D = func->getDomain();
 
-        Field2DActor::GridMetadata gridMetadata;
-        gridMetadata.gridN = func.getN();
-        gridMetadata.gridM = func.getM();
-        gridMetadata.xMinSpace = D.xMin;
-        gridMetadata.yMinSpace = D.yMin;
-        gridMetadata.wSpace = D.xMax - D.xMin;
-        gridMetadata.hSpace = D.yMax - D.yMin;
+        R2toRFunctionActor::GridMetadata gridMetadata;
+        gridMetadata.gridN = (int)func->getN();
+        gridMetadata.gridM = (int)func->getM();
+        gridMetadata.xMinSpace = (float)D.xMin;
+        gridMetadata.yMinSpace = (float)D.yMin;
+        gridMetadata.wSpace = (float)(D.xMax - D.xMin);
+        gridMetadata.hSpace = (float)(D.yMax - D.yMin);
 
         return gridMetadata;
     }

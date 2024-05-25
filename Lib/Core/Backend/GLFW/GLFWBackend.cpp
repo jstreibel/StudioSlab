@@ -17,6 +17,13 @@ namespace Slab::Core {
 
     bool finishFlag = false;
 
+    GLFWcursor* arrowCursor;
+    GLFWcursor* IBeamCursor;
+    GLFWcursor* crossHairCursor;
+    GLFWcursor* handCursor;
+    GLFWcursor* hResizeCursor;
+    GLFWcursor* vResizeCursor;
+
     void errorCallback(int error_code, const char *description) {
         Log::Error() << "GLFW error " << error_code << ": " << description << Log::Flush;
     }
@@ -47,6 +54,13 @@ namespace Slab::Core {
 
         systemWindow = newGLFWWindow();
         glfwMakeContextCurrent(systemWindow);
+
+        arrowCursor     = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
+        IBeamCursor     = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
+        crossHairCursor = glfwCreateStandardCursor(GLFW_CROSSHAIR_CURSOR);
+        handCursor      = glfwCreateStandardCursor(GLFW_HAND_CURSOR);
+        hResizeCursor   = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
+        vResizeCursor   = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
 
         addGLFWListener(&eventTranslator);
     }
@@ -188,6 +202,18 @@ namespace Slab::Core {
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         return *dynamic_cast<GLFWBackend *>(&guiBackend);
+    }
+
+    void GLFWBackend::setMouseCursor(MouseCursor cursor) {
+        switch (cursor) {
+            case Mouse_ArrowCursor:     glfwSetCursor(systemWindow, arrowCursor);     break;
+            case Mouse_VResizeCursor:   glfwSetCursor(systemWindow, vResizeCursor);   break;
+            case Mouse_HResizeCursor:   glfwSetCursor(systemWindow, hResizeCursor);   break;
+            case Mouse_HandCursor:      glfwSetCursor(systemWindow, handCursor);      break;
+            case Mouse_IBeamCursor:     glfwSetCursor(systemWindow, IBeamCursor);     break;
+            case Mouse_CrossHairCursor: glfwSetCursor(systemWindow, crossHairCursor); break;
+        }
+
     }
 
 

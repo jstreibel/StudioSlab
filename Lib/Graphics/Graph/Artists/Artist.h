@@ -6,7 +6,7 @@
 #define V_SHAPE_ARTIST_H
 
 #include "Utils/Utils.h"
-#include "Graphics/Types.h"
+#include "Graphics/Types2D.h"
 
 
 namespace Slab::Graphics {

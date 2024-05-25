@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_WINDOWSTYLES_H
 #define V_SHAPE_WINDOWSTYLES_H
 
-#include "Colors.h"
+#include "Graphics/Styles/Colors.h"
 
 namespace Slab::Graphics {
     extern int hPadding;
