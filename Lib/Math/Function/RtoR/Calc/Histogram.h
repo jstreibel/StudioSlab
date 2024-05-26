@@ -19,9 +19,9 @@ namespace Slab::Math::RtoR {
 
         RtoR::Function *asPDFFunction() const;
 
-        auto asPDFPointSet(bool beautiful = true) const -> Math::PointSet;
+        auto asPDFPointSet(bool beautiful = true) const -> PointSet_ptr;
 
-        auto renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful = true) const -> Math::PointSet;
+        auto renderPDFToPointSet(PointSet_ptr out, bool beautiful = true) const -> PointSet_ptr;
 
         auto integrate() const -> Real;
 

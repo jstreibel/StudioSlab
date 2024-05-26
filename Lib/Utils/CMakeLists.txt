@@ -17,6 +17,8 @@ set ( UTIL_SOURCES
 		Arrays.h			Arrays.cpp
 		Files.h				Files.cpp
 
+		Threads.cpp			Threads.h
+
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
@@ -25,7 +27,9 @@ if( STUDIOSLAB_CUDA_SUPPORT )
             Arrays.cpp
             Sets.cpp
             Sets.h
-    )
+            Threads.cpp
+			Threads.h
+	)
 endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )

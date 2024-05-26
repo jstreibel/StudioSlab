@@ -6,8 +6,12 @@
 
 namespace Slab {
 
-    bool Graphics::OpenGL::Legacy::RenderPointSet(Math::PointSet_constptr pSet, PlotStyle style) noexcept {
-        auto pts = pSet->getPoints();
+    bool Graphics::OpenGL::Legacy::RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
+        if(pSet== nullptr) return false;
+
+        IN pts = pSet->getPoints();
+
+        if(pts.empty()) return false;
 
         OpenGL::Shader::remove();
 

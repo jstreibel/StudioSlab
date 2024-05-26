@@ -43,12 +43,9 @@ namespace Slab::Core {
         std::vector<InterfaceListener *> listeners;
 
     public:
-        typedef std::shared_ptr<Interface> Ptr;
-        typedef std::shared_ptr<const Interface> ConstPtr;
-
     private:
-        std::set<Parameter::Ptr> parameters;
-        std::set<Ptr> subInterfaces;
+        std::set<Parameter_ptr> parameters;
+        std::set<Pointer<Interface>> subInterfaces;
 
     public:
         Interface(Str name, InterfaceOwner *owner, int priority);
@@ -61,27 +58,26 @@ namespace Slab::Core {
          * @param owner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
          * @return an std::shared_ptr to an Interface.
          */
-        static Ptr New(Str name, InterfaceOwner *owner, int priority);
 
         ~Interface();
 
         auto getGeneralDescription() const -> Str;
 
-        void addSubInterface(Ptr subInterface);
+        void addSubInterface(Pointer<Interface> subInterface);
 
         auto addListener(InterfaceListener *) -> void;
 
-        void addParameter(Parameter::Ptr parameter);
+        void addParameter(Parameter_ptr parameter);
 
-        void addParameters(std::initializer_list<Parameter::Ptr> parameters);
+        void addParameters(std::initializer_list<Parameter_ptr> parameters);
 
         void addParameters(std::initializer_list<Parameter *> parameters);
 
-        auto getSubInterfaces() const -> std::vector<Interface::Ptr>;
+        auto getSubInterfaces() const -> std::vector<Pointer<Interface>>;
 
-        auto getParameters() const -> std::vector<Parameter::ConstPtr>;
+        auto getParameters() const -> std::vector<Parameter_constptr>;
 
-        auto getParameter(Str key) const -> Parameter::Ptr;
+        auto getParameter(Str key) const -> Parameter_ptr;
 
         auto getOwner() const -> InterfaceOwner *;
 
@@ -106,6 +102,8 @@ namespace Slab::Core {
 
         bool operator<(const Interface &other) const;
     };
+
+    DefinePointer(Interface)
 
 }
 

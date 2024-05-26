@@ -31,8 +31,6 @@ namespace Slab::Models {
 
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused", "Start visual monitored "
                                                                                                           "simulation paused.");
-        IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(-1, "steps_per_idle_call",
-                                                                           "Simulation steps between visual monitor updates call. Leave negative for auto.");
 
     public:
         explicit KGBuilder(const Str& name="Klein-Gordon",

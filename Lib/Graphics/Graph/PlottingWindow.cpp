@@ -133,7 +133,7 @@ namespace Slab {
                 for (IN cont: content) {
                     IN artie = cont.second;
 
-                    if (artie == artistXHair) continue;
+                    if (artie.get() == &artistXHair) continue;
 
                     bool visible = artie->isVisible();
 
@@ -144,7 +144,7 @@ namespace Slab {
                 for (IN cont: content) {
                     IN artie = cont.second;
 
-                    if (artie == artistXHair) continue;
+                    if (artie.get() == &artistXHair) continue;
 
                     if (artie->isVisible() && artie->hasGUI()) {
                         if (ImGui::CollapsingHeader(Unique(artie->getLabel())))

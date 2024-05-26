@@ -22,9 +22,6 @@ namespace Slab::Math {
         explicit PointSet(const Point2DVec& points);
         PointSet(const PointSet& pointSet);
 
-        typedef std::shared_ptr<PointSet> Ptr;
-        static Ptr New();
-
         auto getMeasure() const -> const Measure override;
 
         auto getMax() const -> Point2D;
@@ -37,6 +34,7 @@ namespace Slab::Math {
         void setPoints(Point2DVec points);
 
         const Point2DVec& getPoints() const;
+        Point2DVec& getPoints();
     };
 
     DefinePointer(PointSet)

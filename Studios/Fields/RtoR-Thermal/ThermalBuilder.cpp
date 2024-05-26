@@ -43,19 +43,5 @@ namespace Studios::Fields::RtoRThermal {
         return str + " " + extra;
     }
 
-    void *Builder::buildOpenGLOutput() {
-        auto monitor = (Slab::Models::KGRtoR::Monitor*) KGBuilder::buildOpenGLOutput();
-        auto &guiWindow = monitor->getGUIWindow();
-        auto &config = simulationConfig.numericConfig;
-        auto &hamiltonian = *(Slab::Models::KGRtoR::KGEnergy*)getHamiltonian();
-
-        auto temp1 = Slab::New<Slab::Models::KGRtoR::StatisticalMonitor>(
-                config, hamiltonian, guiWindow);
-        temp1->setTransientHint(*transientGuess);
-
-        monitor->addDataView(temp1);
-
-        return monitor;
-    }
 
 }

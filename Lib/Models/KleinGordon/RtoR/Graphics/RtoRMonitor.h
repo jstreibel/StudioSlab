@@ -13,6 +13,7 @@
 #include "Graphics/Graph/Artists/HistoryArtist.h"
 
 #include "RtoRPanel.h"
+#include "Utils/Threads.h"
 
 
 namespace Slab::Graphics {
@@ -27,6 +28,8 @@ namespace Slab::Models::KGRtoR {
     class KGEnergy;
 
     class Monitor : public Graphics::OpenGLMonitor {
+        Mutex mutex;
+
         std::vector<RtoRPanel_ptr> dataViews;
         RtoRPanel_ptr currentDataView;
 
@@ -37,8 +40,6 @@ namespace Slab::Models::KGRtoR {
         R2toR::DiscreteFunction_constptr spaceFTHistory;
         Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
-
-        const DFTDataHistory *dftData;
 
         KGEnergy &hamiltonian;
 

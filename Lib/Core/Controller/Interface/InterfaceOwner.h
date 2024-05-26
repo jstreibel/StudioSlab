@@ -12,20 +12,20 @@ namespace Slab::Core {
 
     class InterfaceOwner : public InterfaceListener {
     protected:
-        Interface::Ptr interface;
+        Pointer<Interface> interface;
 
     public:
         InterfaceOwner(bool IKnowIMustCallLateStart = false);
 
-        InterfaceOwner(Str interfaceName, int priotity = 10000, bool doRegister = true);
+        explicit InterfaceOwner(Str interfaceName, int priotity = 10000, bool doRegister = true);
 
         void LateStart(Str interfaceName, int priotity = 10000, bool doRegister = true);
 
         auto registerToManager() const -> void;
 
-        auto getInterface() -> Interface::Ptr;
+        auto getInterface() -> Pointer<Interface>;
 
-        auto getInterface() const -> Interface::Ptr;
+        auto getInterface() const -> Pointer<Interface>;
 
         auto notifyCLArgsSetupFinished() -> void override;
     };

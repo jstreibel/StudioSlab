@@ -86,8 +86,6 @@ namespace Slab::Math::R2toR {
             GraphicBackend &backend = Core::BackendManager::GetGUIBackend();
 
             auto glOut = Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
-            glOut->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
-
             backend.addEventListener(glOut);
             outputManager->addOutputChannel(glOut);
         } else {

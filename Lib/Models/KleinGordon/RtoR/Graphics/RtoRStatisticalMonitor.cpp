@@ -11,6 +11,7 @@
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Graph/Plotter.h"
+#include "Utils/Threads.h"
 
 #include <sstream>
 #include <array>
@@ -18,13 +19,8 @@
 // Don't touch these:
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
-#define CHOOSE_ENERGY_LABEL(A, a) (showEnergyHistoryAsDensities ? (a) : (A))
 #define ADD_NEW_COLUMN true
 #define MANUAL_REVIEW_GRAPH_LIMITS false
-#define DONT_AFFECT_RANGES false
-#define AUTO_REVIEW_GRAPH_LIMITS true
-#define ODD_PERMUTATION true
-#define SAMPLE_COUNT(n) (n)
 #define FIRST_TIMER(code)           \
     static bool firstTimer = true;  \
     if (firstTimer) {               \
@@ -34,48 +30,42 @@
 #define CHECK_GL_ERRORS(count) Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
-#define SHOW_ENERGY_HISTORY_AS_DENSITIES true
 #define HISTOGRAM_SHOULD_BE_PRETTY false
 #define UPDATE_HISTORY_EVERY_STEP true
-#define GOOD_ENOUGH_NUMBER_OF_SAMPLES 300
-#define MAX_SAMPLES 50000
 #define linesOffset (3 * params.getL())
 #define xMinLinesInFullHistoryView (params.getxMin() - linesOffset)
 #define xMaxLinesInFullHistoryView (params.getxMax() + linesOffset)
-
-#define CORR_SCALE 1e0
-
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    StatisticalMonitor::StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian,
-                                                 Graphics::GUIWindow &guiWindow)
+    RtoRStatisticsPanel::RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian,
+                                             Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
                                   "panel for statistic analysis of simulation data"), Δt(params.gett() * 0.1),
-              hamiltonian(hamiltonian), mTemperaturesGraph("T"),
-              mHistogramsGraphK("k histogram", MANUAL_REVIEW_GRAPH_LIMITS),
-              mHistogramsGraphGrad("w histogram", MANUAL_REVIEW_GRAPH_LIMITS),
-              mHistogramsGraphV("v histogram", MANUAL_REVIEW_GRAPH_LIMITS),
-              mHistogramsGraphE("e histogram", MANUAL_REVIEW_GRAPH_LIMITS) {
+              hamiltonian(hamiltonian) {
+
         addWindow(Slab::DummyPointer(mCorrelationGraph));
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+            auto mTemperaturesGraph = Slab::New<Graphics::PlottingWindow>("T");
+
+            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::DummyPointer(temperature1HistoryData),
                                            (*style++).permuteColors(), "τₖ=2<K>/L");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::DummyPointer(temperature2HistoryData),
                                            (*style++).permuteColors(), "τ");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+            Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::DummyPointer(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
+            mTemperaturesGraph->set_xMax(params.gett());
 
-            addWindowToColumn(Slab::DummyPointer(mTemperaturesGraph), 0);
+            addWindowToColumn(mTemperaturesGraph, 0);
 
             auto TParam = InterfaceManager::getInstance().getParametersValues({"T"});
             if (!TParam.empty()) {
@@ -84,31 +74,37 @@ namespace Slab::Models::KGRtoR {
                                              {params.gett() + .1, T}});
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;
-                Graphics::Plotter::AddPointSet(Slab::DummyPointer(mTemperaturesGraph),
+                Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                                Slab::New<Math::PointSet>(pts), Tstyle, "T (nominal)");
             }
         }
 
         {
+            auto mHistogramsGraphK = Slab::New<Graphics::PlottingWindow>   ("k histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphGrad = Slab::New<Graphics::PlottingWindow>("w histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphV = Slab::New<Graphics::PlottingWindow>   ("v histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphE = Slab::New<Graphics::PlottingWindow>   ("e histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+
+
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphE),
+            Graphics::Plotter::AddPointSet(mHistogramsGraphE,
                                            Slab::DummyPointer(histogramEData),
                                            *style++, "E");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphK),
+            Graphics::Plotter::AddPointSet(mHistogramsGraphK,
                                            Slab::DummyPointer(histogramKData),
                                            *style++, "K");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphGrad),
+            Graphics::Plotter::AddPointSet(mHistogramsGraphGrad,
                                            Slab::DummyPointer(histogramGradData),
                                            *style++, "grad");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mHistogramsGraphV),
+            Graphics::Plotter::AddPointSet(mHistogramsGraphV,
                                            Slab::DummyPointer(histogramVData),
                                            *style++, "V");
 
             auto *histogramsPanel = new Graphics::WindowPanel();
-            histogramsPanel->addWindow(Slab::DummyPointer(mHistogramsGraphV));
-            histogramsPanel->addWindow(Slab::DummyPointer(mHistogramsGraphGrad));
-            histogramsPanel->addWindow(Slab::DummyPointer(mHistogramsGraphK));
-            histogramsPanel->addWindow(Slab::DummyPointer(mHistogramsGraphE));
+            histogramsPanel->addWindow(mHistogramsGraphV);
+            histogramsPanel->addWindow(mHistogramsGraphGrad);
+            histogramsPanel->addWindow(mHistogramsGraphK);
+            histogramsPanel->addWindow(mHistogramsGraphE);
 
             addWindow(Graphics::Window_ptr(histogramsPanel), true);
         }
@@ -118,139 +114,25 @@ namespace Slab::Models::KGRtoR {
         setColumnRelativeWidth(1, 0.40);
     }
 
-    void StatisticalMonitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                                        Graphics::PlottingWindow_ptr simHistoryGraph) {
+    void RtoRStatisticsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+                                                   Graphics::PlottingWindow_ptr simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
         addWindow(simulationHistoryGraph, true, 0.20);
-
-        if (sampler == nullptr) {
-            fix xMin = params.getxMin();
-            fix xMax = params.getxMax();
-
-            if (false) {
-                // corrSampleLine = RtoR2::StraightLine({xMin, t_history}, {xMax, t_history});
-                // sampler = std::make_shared<R2toR::Sampler1D>(DummyPtr(corrSampleLine));
-            } else {
-                fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
-                fix br = Real2D{xMax, min(t_history + Δt, params.gett())};
-
-                sampler = Slab::New<R2toR::RandomSampler>(tl, br, GOOD_ENOUGH_NUMBER_OF_SAMPLES);
-            }
-
-            sampler->set_nSamples(GOOD_ENOUGH_NUMBER_OF_SAMPLES);
-        }
     }
 
-    void StatisticalMonitor::updateHistoryGraphs() {
-        if (simulationHistory == nullptr) return;
 
-        CHECK_GL_ERRORS(0)
 
-        fix L = params.getL();
-        fix xMin = params.getxMin();
-        fix xMax = params.getxMax();
-        fix tMax = params.gett();
-
-        guiWindow.begin();
-        if (ImGui::CollapsingHeader("History")) {
-            if (ImGui::SliderFloat("t", &t_history, .0f, (float) getLastSimTime()))
-                step_history = (int) (t_history / (float) params.gett() * (float) params.getn());
-
-            if (ImGui::SliderInt("step", &step_history, 0, (int) lastData.getSteps()))
-                t_history = (float) (step_history / (Real) params.getn() * params.gett());
-        }
-        guiWindow.end();
-
-        bool updateSamples = false;
-        auto label = Str("ϕ(t=") + ToStr(t_history, 2) + ",x)";
-
-        CHECK_GL_ERRORS(1)
-
-        {
-            guiWindow.begin();
-            if (ImGui::CollapsingHeader("Correlation graph")) {
-                ImGui::Text("Correlation @ samples");
-
-                auto nSamples = (int) sampler->get_nSamples();
-                if (ImGui::SliderInt("samples n", &nSamples, 10, MAX_SAMPLES)) {
-                    sampler->set_nSamples(nSamples);
-                    updateSamples = true;
-                }
-
-                fix Δt_max = params.gett();
-                auto Dt = (float) Δt;
-                if (ImGui::SliderFloat("sampling range (Delta t)",
-                                       &Dt,
-                                       (float) tMax / (float) simulationHistory->getM(),
-                                       (float) Δt_max)) {
-                    Δt = Dt;
-                    sampler->invalidateSamples();
-                    updateSamples = true;
-                }
-
-                static auto θ = .0f;
-                if (ImGui::SliderAngle("Correlation direction", &θ, 0.f, 180.f)) {
-                    fix Δ = .5 * RtoRPanel::params.getL();
-                    fix c = cos((Real) θ);
-                    fix s = sin((Real) θ);
-
-                    correlationLine->getr() = {Δ * c, Δ * s};
-
-                    updateSamples = true;
-                }
-            }
-            guiWindow.end();
-
-            CHECK_GL_ERRORS(2)
-
-            static auto last_t_history = 0.0;
-            if (updateSamples || (t_history != last_t_history)) {
-                // Sampler in correlation function
-                {
-                    fix tl = Real2D{xMin, max(t_history - Δt, 0.0)};
-                    fix br = Real2D{xMax, min(t_history + Δt, tMax)};
-
-                    fix nSamples = sampler->get_nSamples();
-                    sampler = Slab::New<R2toR::RandomSampler>(tl, br, nSamples);
-                }
-
-                {
-                    /*
-                    simulationHistoryGraph->clearPointSets();
-
-                    // Correlation samples in full history
-                    {
-                        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
-                        style.primitive = Graphics::Point;
-                        style.thickness = 3;
-                        auto ptSet = Slab::New<Math::PointSet>(sampler->getSamples());
-                        simulationHistoryGraph->addPointSet(ptSet, style, "Correlation samples", MANUAL_REVIEW_GRAPH_LIMITS);
-                    }
-                     */
-                }
-            }
-            last_t_history = t_history;
-        }
-        CHECK_GL_ERRORS(3)
-    }
-
-    void StatisticalMonitor::draw() {
+    void RtoRStatisticsPanel::draw() {
         int errorCount = 0;
-
-        CHECK_GL_ERRORS(errorCount++)
-
-        updateHistoryGraphs();
-
         CHECK_GL_ERRORS(errorCount++)
 
         drawGUI();
 
         CHECK_GL_ERRORS(errorCount++)
 
-        fix L = params.getL();
-
         // *************************** Histograms *****************************
+        if(1)
         {
             RtoR::Histogram histogram;
             static auto nbins = 200;
@@ -265,26 +147,16 @@ namespace Slab::Models::KGRtoR {
 
 
             histogram.Compute(hamiltonian.getKineticDensity(), nbins);
-            histogramKData = histogram.asPDFPointSet(pretty);
+            histogram.renderPDFToPointSet(DummyPointer(histogramKData), pretty);
 
             histogram.Compute(hamiltonian.getGradientDensity(), nbins);
-            histogramGradData = histogram.asPDFPointSet(pretty);
+            histogram.renderPDFToPointSet(DummyPointer(histogramGradData), pretty);
 
             histogram.Compute(hamiltonian.getPotentialDensity(), nbins);
-            histogramVData = histogram.asPDFPointSet(pretty);
+            histogram.renderPDFToPointSet(DummyPointer(histogramVData), pretty);
 
             histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
-            histogramEData = histogram.asPDFPointSet(pretty);
-
-            fix t = lastData.getSimTime();
-
-            // if(t<transientHint || transientHint<0 || 1)
-            {
-                mHistogramsGraphK.reviewGraphRanges();
-                mHistogramsGraphGrad.reviewGraphRanges();
-                mHistogramsGraphV.reviewGraphRanges();
-                mHistogramsGraphE.reviewGraphRanges();
-            }
+            histogram.renderPDFToPointSet(DummyPointer(histogramEData), pretty);
         }
 
         // *************************** MY BEAUTY *****************************
@@ -312,6 +184,7 @@ namespace Slab::Models::KGRtoR {
 
         style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
         fix decimalPlaces = 3;
+        fix L = params.getL();
         guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
                                   (style++)->lineColor.permute());
         guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
@@ -320,13 +193,10 @@ namespace Slab::Models::KGRtoR {
                                   (style++)->lineColor.permute());
         // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
 
-        fix t = lastData.getSimTime();
-        mTemperaturesGraph.set_xMax(t);
-
         RtoRPanel::draw();
     }
 
-    void StatisticalMonitor::drawGUI() {
+    void RtoRStatisticsPanel::drawGUI() {
         guiWindow.begin();
 
         if (ImGui::CollapsingHeader("Statistical")) {
@@ -339,7 +209,7 @@ namespace Slab::Models::KGRtoR {
         guiWindow.end();
     }
 
-    void StatisticalMonitor::handleOutput(const OutputPacket &packet) {
+    void RtoRStatisticsPanel::handleOutput(const OutputPacket &packet) {
         RtoRPanel::handleOutput(packet);
 
         auto L = params.getL();
@@ -362,7 +232,7 @@ namespace Slab::Models::KGRtoR {
         temperature3HistoryData.addPoint({t, tau_2});
     }
 
-    void StatisticalMonitor::setTransientHint(Real value) {
+    void RtoRStatisticsPanel::setTransientHint(Real value) {
         transientHint = value;
     }
 

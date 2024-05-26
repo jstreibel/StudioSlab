@@ -145,14 +145,14 @@ namespace Slab::Models::KGRtoR {
         inverseDFTArtist->setFunction(rebuiltHistory);
     }
 
-    void RtoRFourierPanel::computeTimeDFT(Real t₀, Real t_f) {
+    void RtoRFourierPanel::computeTimeDFT(Real t_0, Real t_f) {
         fix N = simulationHistory->getN();
         fix xMin = simulationHistory->getDomain().xMin;
         fix dx = simulationHistory->getDomain().getLx()/N;
 
         fix Mₜ = simulationHistory->getM();
         fix dt = simulationHistory->getDomain().getLy()/Mₜ;
-        fix Δt = t_f-t₀;
+        fix Δt = t_f-t_0;
         fix __M = (Count)floor(Δt/dt);
         fix M = __M%2==0 ? __M : __M-1;
         fix m = M/2 + 1;
@@ -162,7 +162,7 @@ namespace Slab::Models::KGRtoR {
         timeDFT = Slab::New<R2toR::DiscreteFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::DiscreteFunction_CPU tempSpace(M, .0, dk*M);
 
-        fix j₀ = floor(t₀/dt);
+        fix j₀ = floor(t_0/dt);
         for(auto i=0; i<N; ++i){
             auto &spaceData_temp = tempSpace.getSpace().getHostData(false);
 
@@ -181,7 +181,7 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        Str timeInterval = ToStr(t₀) + " ≤ t ≤ " + ToStr(t_f);
+        Str timeInterval = ToStr(t_0) + " ≤ t ≤ " + ToStr(t_f);
         timeDFTArtist->setFunction(timeDFT);
         timeDFTArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }

@@ -201,7 +201,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform1i(loc, texture.getTextureUnit());
 
-        textureUnits[texture.getTextureUnit()] = DummyPtr(texture);
+        textureUnits[texture.getTextureUnit()] = Slab::DummyPointer(texture);
 
         CHECK_UNIFORM_ERRORS
     }

@@ -25,16 +25,13 @@ namespace Slab {
 #define fix     const auto
 #define look    const auto *
 
-    template<class T1, class T2>
-    struct Pair {
-        T1 first;
-        T2 second;
-    };
+    template <typename T1, typename T2>
+    using Pair = std::pair<T1, T2>;
 
     typedef Pair<int, int> IntPair;
 
     namespace Math {
-        typedef std::pair<const class DiscreteSpace *, const class DiscreteSpace *> DiscreteSpacePair;
+        typedef Pair<const class DiscreteSpace *, const class DiscreteSpace *> DiscreteSpacePair;
     }
 
 }

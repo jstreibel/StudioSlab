@@ -17,15 +17,12 @@ namespace Slab::Graphics {
     class OpenGLMonitor : public Socket, public WindowPanel {
         void writeStats();
 
-        bool autoAdjustStepsPerSecond = true;
-
     protected:
         Timer frameTimer = Timer();
         GUIWindow guiWindow;
 
         Real t=.0;
         size_t step=0;
-
 
     public:
         typedef std::shared_ptr<OpenGLMonitor> Ptr;
@@ -34,21 +31,15 @@ namespace Slab::Graphics {
                                const Str& channelName="OpenGL monitor",
                                int stepsBetweenDraws=1);
 
-        void setAutoAdjust_nSteps(bool value);
+        GUIWindow &getGUIWindow();
 
         // ********************* From EventListener ************** //
         bool notifyRender() final ;
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
         // ********************* End EventListener *************** //
 
-        GUIWindow &getGUIWindow();
-
         // ********************* From Socket ********************* //
-    protected:
         void handleOutput(const OutputPacket &outInfo) override;
-
-    public:
-        auto setnSteps(int nSteps) -> void override;
         // ********************* END Socket ********************** //
 
     };

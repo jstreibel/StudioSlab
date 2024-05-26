@@ -16,9 +16,6 @@ namespace Slab::Core {
         Str shortCLName, longCLName, fullCLName, description;
 
     public:
-        typedef std::shared_ptr<Parameter> Ptr;
-        typedef std::shared_ptr<const Parameter> ConstPtr;
-
         Parameter(const Str &commandLineArgName, const Str &description);
 
         virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
@@ -44,6 +41,8 @@ namespace Slab::Core {
         bool operator==(Str str) const;
 
     };
+
+    DefinePointer(Parameter)
 
     OStream &operator<<(OStream &out, const Parameter &b);
 

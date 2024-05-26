@@ -60,17 +60,20 @@ namespace Slab::Math::RtoR {
         return func;
     }
 
-    auto Histogram::asPDFPointSet(bool beautiful) const -> Math::PointSet {
-        Math::PointSet pointSet;
+    auto Histogram::asPDFPointSet(bool beautiful) const -> PointSet_ptr {
+        PointSet_ptr pointSet;
         return renderPDFToPointSet(pointSet, beautiful);
     }
 
-    auto Histogram::renderPDFToPointSet(Math::PointSet &pointSet, bool beautiful) const -> Math::PointSet {
+    auto Histogram::renderPDFToPointSet(PointSet_ptr pointSet, bool beautiful) const -> PointSet_ptr {
+        if(pointSet == nullptr) pointSet = Slab::New<PointSet>();
+
         const auto N = Real(count);
         const auto w = binWidth;
         const auto normFactor = N * w;
 
-        Math::Point2DVec points;
+        auto &points = pointSet->getPoints();
+        points.clear();
 
         if (beautiful) points.emplace_back(vMin, 0);
 
@@ -98,7 +101,7 @@ namespace Slab::Math::RtoR {
 
         debugCount_last = debugCount;
 
-        return pointSet = Math::PointSet(points);
+        return pointSet;
     }
 
     auto Histogram::integrate() const -> Real {
@@ -109,6 +112,5 @@ namespace Slab::Math::RtoR {
 
         return sum / (double) count;
     }
-
 
 }

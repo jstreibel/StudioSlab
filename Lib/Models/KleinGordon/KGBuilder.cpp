@@ -16,7 +16,6 @@ namespace Slab::Models {
                                   &outputResolution,
                                   &VisualMonitor,
                                   &VisualMonitor_startPaused,
-                                  &OpenGLMonitor_stepsPerIdleCall,
                                   &takeSnapshot,
                                   &takeDFTSnapshot,
                                          /*, &snapshotTime, */ });

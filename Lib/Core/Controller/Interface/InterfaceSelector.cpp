@@ -19,7 +19,7 @@ namespace Slab::Core {
         interface->addParameters({&selection});
     };
 
-    auto InterfaceSelector::getCurrentCandidate() const -> Interface::Ptr {
+    auto InterfaceSelector::getCurrentCandidate() const -> Interface_ptr {
         if (currentSelection > candidates.size() - 1)
             throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
@@ -66,7 +66,7 @@ namespace Slab::Core {
         return *this;
     }
 
-    void InterfaceSelector::registerOption(Interface::Ptr interface) {
+    void InterfaceSelector::registerOption(Interface_ptr interface) {
         candidates.push_back(interface);
 
         generateHelpDescription();

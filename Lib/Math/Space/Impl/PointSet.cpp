@@ -17,10 +17,6 @@ namespace Slab::Math {
     PointSet::PointSet(const PointSet &pointSet)
             : Space(2), points(pointSet.points), max(pointSet.max), min(pointSet.min) {}
 
-    PointSet::Ptr PointSet::New() {
-        return std::make_shared<PointSet>(PointSet());
-    }
-
     auto PointSet::getMeasure() const -> const Measure {
         return {{max.x - min.x, max.y - min.y}};
     }
@@ -53,13 +49,15 @@ namespace Slab::Math {
         *this = PointSet(newPoints);
     }
 
-    const Point2DVec &PointSet::getPoints() const { return points; }
+    const
+    Point2DVec &PointSet::getPoints() const { return points; }
+    Point2DVec &PointSet::getPoints()       { return points; }
 
-    void PointSet::clear() {
-        points.clear();
-    }
+    void PointSet::clear() { points.clear(); }
 
     Count PointSet::count() const { return points.size(); }
+
+
 
 
 }

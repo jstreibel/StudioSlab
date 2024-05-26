@@ -18,7 +18,7 @@ namespace Slab::Core {
         return *instance;
     }
 
-    void InterfaceManager::registerInterface(const Interface::Ptr &anInterface) {
+    void InterfaceManager::registerInterface(const Pointer<Interface> &anInterface) {
         auto &log = Log::Note();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName()
             << Log::ResetFormatting << "\" [ "
@@ -44,8 +44,8 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto InterfaceManager::getInterfaces() -> std::vector<Interface::ConstPtr> {
-        std::vector<Interface::ConstPtr> V(interfaces.size());
+    auto InterfaceManager::getInterfaces() -> std::vector<Pointer<const Interface>> {
+        std::vector<Pointer<const Interface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
@@ -55,7 +55,7 @@ namespace Slab::Core {
     void InterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
         Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const Interface::Ptr &a, const Interface::Ptr &b) { return *a < *b; };
+        auto comp = [](const Interface_ptr &a, const Interface_ptr &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
         auto &log = Log::Info();
@@ -115,8 +115,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto InterfaceManager::getInterface(const char *target) -> Interface::ConstPtr {
-        auto compFunc = [target](const Interface::ConstPtr &anInterface) { return anInterface->operator==(target); };
+    auto InterfaceManager::getInterface(const char *target) -> Interface_constptr {
+        auto compFunc = [target](const Interface_constptr &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(interfaces.begin(), interfaces.end(), compFunc);
 

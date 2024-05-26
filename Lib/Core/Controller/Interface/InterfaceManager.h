@@ -14,18 +14,18 @@ namespace Slab::Core {
     class InterfaceManager {
         static InterfaceManager *instance;
 
-        std::vector<Interface::Ptr> interfaces;
+        std::vector<Pointer<Interface>> interfaces;
 
     public:
         static auto getInstance() -> InterfaceManager &;
 
         // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
-        void registerInterface(const Interface::Ptr &anInterface);
+        void registerInterface(const Pointer<Interface> &anInterface);
 
-        auto getInterfaces() -> std::vector<Interface::ConstPtr>;
+        auto getInterfaces() -> std::vector<Pointer<const Interface>>;
 
-        auto getInterface(const char *string) -> Interface::ConstPtr;
+        auto getInterface(const char *string) -> Pointer<const Interface>;
 
         void feedInterfaces(const CLVariablesMap &vm);
 

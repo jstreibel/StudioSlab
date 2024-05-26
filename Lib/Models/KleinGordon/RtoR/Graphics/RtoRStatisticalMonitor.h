@@ -22,7 +22,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class StatisticalMonitor : public RtoRPanel {
+    class RtoRStatisticsPanel : public RtoRPanel {
         Real Δt = 0.0;
         R2toR::Sampler_ptr sampler;
 
@@ -30,12 +30,6 @@ namespace Slab::Models::KGRtoR {
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::DiscreteFunction_ptr mCorrelationComputed;
         Graphics::PlottingWindow mCorrelationGraph;
-
-
-        float t_history = .0f;
-        int step_history = 0;
-
-        void updateHistoryGraphs();
 
         Real transientHint = -1.0;
 
@@ -53,17 +47,10 @@ namespace Slab::Models::KGRtoR {
         Math::PointSet temperature3HistoryData;
         Math::PointSet temperature4HistoryData;
 
-        Graphics::PlottingWindow mTemperaturesGraph;
-
         Math::PointSet histogramKData;
         Math::PointSet histogramGradData;
         Math::PointSet histogramVData;
         Math::PointSet histogramEData;
-
-        Graphics::PlottingWindow mHistogramsGraphK;
-        Graphics::PlottingWindow mHistogramsGraphGrad;
-        Graphics::PlottingWindow mHistogramsGraphV;
-        Graphics::PlottingWindow mHistogramsGraphE;
 
         void drawGUI();
 
@@ -71,7 +58,7 @@ namespace Slab::Models::KGRtoR {
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        StatisticalMonitor(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+        RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
 
         void draw() override;
 

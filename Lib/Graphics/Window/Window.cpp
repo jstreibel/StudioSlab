@@ -10,6 +10,7 @@
 #include "Core/Backend/GraphicBackend.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Core/Backend/BackendManager.h"
+#include "Core/Tools/Log.h"
 
 
 namespace Slab::Graphics {
@@ -17,6 +18,10 @@ namespace Slab::Graphics {
     Window::Window(int x, int y, int w, int h, Flags flags)
             : backgroundColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
+
+    Window::~Window() {
+        Core::Log::Info("Deleting Window") << Core::Log::Flush;
+    }
 
     void Window::draw() { setupWindow(); }
 
@@ -195,6 +200,4 @@ namespace Slab::Graphics {
 
         return GUIEventListener::notifyMouseButton(button, state, keys);
     }
-
-
 }

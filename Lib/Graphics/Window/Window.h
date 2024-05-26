@@ -51,6 +51,7 @@ namespace Slab::Graphics {
 
     public:
         explicit Window(int x = 0, int y = 0, int w = 100, int h = 100, Flags flags = None);
+        virtual ~Window();
 
         virtual void draw();
 

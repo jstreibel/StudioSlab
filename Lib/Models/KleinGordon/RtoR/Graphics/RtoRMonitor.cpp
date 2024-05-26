@@ -10,6 +10,7 @@
 #include "RtoRFourierPanel.h"
 #include "CorrelationsPanel.h"
 #include "RtoRScenePanel.h"
+#include "RtoRStatisticalMonitor.h"
 
 
 // Ok to touch these:
@@ -36,6 +37,7 @@ namespace Slab::Models::KGRtoR {
         addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
+        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));
 
         setDataView(0);
@@ -68,7 +70,9 @@ namespace Slab::Models::KGRtoR {
     void Monitor::handleOutput(const OutputPacket &outInfo) {
         const EquationState &fieldState = *outInfo.getEqStateData<EquationState>();
 
+        mutex.lock();
         hamiltonian.computeEnergies(fieldState);
+        mutex.unlock();
 
         // updateHistoryGraph();
         // updateSFTHistoryGraph();
@@ -103,8 +107,6 @@ namespace Slab::Models::KGRtoR {
 
     void Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                                const DFTDataHistory &_dftData) {
-        this->dftData = &_dftData;
-
         spaceFTHistory = sftHistory;
         fullSFTHistoryArtist->setFunction(spaceFTHistory);
         fullSFTHistoryArtist->setColorMap(Graphics::ColorMaps["blues"].inverse().bgr());
@@ -129,13 +131,12 @@ namespace Slab::Models::KGRtoR {
             isSetup = true;
         }
 
-        {
-            static Real stepMod, lastStepMod = 0;
-            stepMod = (Real) (lastData.getSteps() % (this->getnSteps() * 100));
-            if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-                fullHistoryArtist->set_t(lastData.getSimTime());
-            lastStepMod = stepMod;
-        }
+        static Real stepMod, lastStepMod = 0;
+        stepMod = (Real) (lastData.getSteps() % (this->getnSteps() * 100));
+        if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
+            fullHistoryArtist->set_t(lastData.getSimTime());
+        lastStepMod = stepMod;
+
     }
 
     void Monitor::updateSFTHistoryGraph() {
@@ -151,10 +152,14 @@ namespace Slab::Models::KGRtoR {
     }
 
     void Monitor::draw() {
+        mutex.lock();
+
         updateHistoryGraph();
         updateSFTHistoryGraph();
 
         WindowPanel::draw();
+
+        mutex.unlock();
     }
 
 

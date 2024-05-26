@@ -13,23 +13,28 @@
 
 namespace Slab {
 
-    typedef std::valarray<Real> RealArray;
-    typedef std::vector<Real> RealVector;
+    template <typename T>
+    using Vector = std::vector<T>;
+
+    template <typename T>
+    using Array = std::valarray<T>;
+
+    //template<class T>
+    //typename std::vector<T> Vector;
+
+    typedef Array<Real> RealArray;
+    typedef Vector<Real> RealVector;
     typedef const RealArray RealArray_I;
     typedef RealArray RealArray_O;
     typedef RealArray VecFloat_IO;
 
-    typedef std::valarray<Complex> ComplexArray;
+    typedef Array<Complex> ComplexArray;
 
-    typedef std::valarray<Complex> ComplexArray;
-    typedef std::vector<Complex> ComplexVector;
+    typedef Vector<Complex> ComplexVector;
 
-    typedef std::valarray<unsigned> UIntArray;
-    typedef std::vector<int> IntVector;
+    typedef Array<unsigned> UIntArray;
+    typedef Vector<int> IntVector;
 
-
-    template<class T>
-    typename std::vector<T> Vector;
     typedef std::ostream OStream;
     typedef std::vector<Str> StrVector;
 

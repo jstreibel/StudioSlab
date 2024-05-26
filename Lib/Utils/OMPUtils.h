@@ -7,10 +7,13 @@
 
 #include "Types.h"
 
+// #define FORCE_NO_OMP
 
 namespace Slab {
 
     IntPair getBeginAndEndForThreadedFor(int N);
+
+#ifndef FORCE_NO_OMP
 
 #define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
     IntPair be = getBeginAndEndForThreadedFor(NSites); \
@@ -23,6 +26,16 @@ namespace Slab {
     IntPair be = getBeginAndEndForThreadedFor(NSites); \
     for(UInt indexLabel=be.first; indexLabel<be.second; indexLabel++)
 
+#else
+
+#define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
+    IntPair be(0, NSites);                                  \
+    int beginVarName = be.first, endVarName = be.second;
+
+#define OMP_PARALLEL_FOR(indexLabel, NSites) \
+    for(UInt indexLabel=0; indexLabel<NSites; indexLabel++)
+
+#endif // USE_OMP
 
 }
 

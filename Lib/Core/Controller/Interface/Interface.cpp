@@ -28,23 +28,23 @@ namespace Slab::Core {
                              << Log::Flush;
     }
 
-    auto Interface::getParameters() const -> std::vector<Parameter::ConstPtr> {
-        std::vector<Parameter::ConstPtr> constParameters;
+    auto Interface::getParameters() const -> std::vector<Parameter_constptr> {
+        std::vector<Parameter_constptr> constParameters;
 
         std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
     }
 
-    auto Interface::getSubInterfaces() const -> std::vector<Interface::Ptr> {
-        std::vector<Interface::Ptr> interfaces;
+    auto Interface::getSubInterfaces() const -> std::vector<Pointer<Interface>> {
+        std::vector<Pointer<Interface>> interfaces;
 
         std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
 
         return interfaces;
     }
 
-    void Interface::addParameter(Parameter::Ptr parameter) {
+    void Interface::addParameter(Parameter_ptr parameter) {
         auto insertionSuccessful = parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
@@ -56,18 +56,18 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void Interface::addParameters(std::initializer_list<Parameter::Ptr> parametersList) {
+    void Interface::addParameters(std::initializer_list<Parameter_ptr> parametersList) {
         for (auto param: parametersList)
             addParameter(param);
     }
 
     void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
         for (auto param: parametersList)
-            addParameter(DummyPtr(*param));
+            addParameter(DummyPointer(*param));
     }
 
 
-    void Interface::addSubInterface(Interface::Ptr subInterface) {
+    void Interface::addSubInterface(Pointer<Interface> subInterface) {
         if (Common::Contains(subInterfaces, subInterface))
             throw Str("Error while inserting sub-interface '") + subInterface->getName()
                   + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
@@ -83,8 +83,8 @@ namespace Slab::Core {
         return descr != "<empty>" ? descr : "";
     }
 
-    auto Interface::getParameter(Str key) const -> Parameter::Ptr {
-        auto compareFunc = [key](Parameter::Ptr parameter) {
+    auto Interface::getParameter(Str key) const -> Parameter_ptr {
+        auto compareFunc = [key](Parameter_ptr parameter) {
             return *parameter == key;
         };
 
@@ -159,10 +159,6 @@ namespace Slab::Core {
 
     Interface::~Interface() {
 
-    }
-
-    Interface::Ptr Interface::New(Str name, InterfaceOwner *owner, int priority) {
-        return Interface::Ptr(new Interface(name, owner, priority));
     }
 
     auto Interface::addListener(InterfaceListener *newListener) -> void {

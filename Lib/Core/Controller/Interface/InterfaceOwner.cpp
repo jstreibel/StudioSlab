@@ -21,7 +21,7 @@ namespace Slab::Core {
     }
 
     void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister) {
-        interface = Interface::New(interfaceName, this, priority);
+        interface = Slab::New<Interface>(interfaceName, this, priority);
 
         if (doRegister) registerToManager();
         else
@@ -51,11 +51,11 @@ namespace Slab::Core {
         InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto InterfaceOwner::getInterface() -> Interface::Ptr {
+    auto InterfaceOwner::getInterface() -> Interface_ptr {
         return interface;
     }
 
-    auto InterfaceOwner::getInterface() const -> Interface::Ptr {
+    auto InterfaceOwner::getInterface() const -> Interface_ptr {
         return interface;
     }
 

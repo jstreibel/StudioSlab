@@ -78,27 +78,6 @@ namespace Slab::Graphics {
             avgFPS /= (Real) total;
             avgSPs /= (Real) total;
             avgSPS /= (Real) total;
-
-            if (autoAdjustStepsPerSecond && !hasFinished && !isPaused) {
-                static Count counter = 0;
-                static fix baseNSteps = getnSteps();
-                static let multiplier = 1;
-                static fix modVal = Common::max(baseNSteps / 5, 1);
-
-                if (!(++counter % modVal)) {
-                    if (FPS >= MAX_FPS) {
-                        setnSteps(baseNSteps * ++multiplier);
-                        // setnSteps(getnSteps()+1);
-                        autoAdjustStepsPerSecond = true;
-                    } else if (FPS <= MIN_FPS) {
-                        --multiplier;
-                        if (multiplier <= 0) multiplier = 1;
-                        setnSteps(baseNSteps * multiplier);
-                        // setnSteps(getnSteps()-1);
-                        autoAdjustStepsPerSecond = true;
-                    }
-                }
-            }
         }
 
         fix stepsToFinish = params.getn() - step;
@@ -200,15 +179,6 @@ namespace Slab::Graphics {
         }
 
         return WindowPanel::notifyKeyboard(key, state, modKeys);
-    }
-
-    void OpenGLMonitor::setnSteps(int nSteps) {
-        if (nSteps > 0) autoAdjustStepsPerSecond = false;
-        Socket::setnSteps(nSteps);
-    }
-
-    void OpenGLMonitor::setAutoAdjust_nSteps(bool value) {
-        autoAdjustStepsPerSecond = value;
     }
 
     GUIWindow &OpenGLMonitor::getGUIWindow() {

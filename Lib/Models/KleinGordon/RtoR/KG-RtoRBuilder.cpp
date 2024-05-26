@@ -138,14 +138,6 @@ namespace Slab::Models::KGRtoR {
                 outputOpenGL->setSimulationHistory(Slab::DummyPointer(simHistory->getData()));
                 outputOpenGL->setSpaceFourierHistory(Slab::DummyPointer(ftHistory->getData()),
                                                      ftHistory->getDFTDataHistory());
-
-                if (*OpenGLMonitor_stepsPerIdleCall < 0) {
-                    outputOpenGL->setnSteps(simHistory->getnSteps());
-                    outputOpenGL->setAutoAdjust_nSteps(true);
-                } else {
-                    outputOpenGL->setnSteps(*OpenGLMonitor_stepsPerIdleCall);
-                    outputOpenGL->setAutoAdjust_nSteps(false);
-                }
             }
 
             guiBackend.addEventListener(Graphics::Window_ptr(outputOpenGL));
