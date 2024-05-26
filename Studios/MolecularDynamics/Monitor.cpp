@@ -40,7 +40,7 @@ namespace MolecularDynamics {
             sf::Image molImg;
             const int texDim = 256;
 
-            std::pair<double, double> nearestZero = {1.e3, .0},
+            Pair<double, double> nearestZero = {1.e3, .0},
                     smallest    = {.0,   .0},
                     largest     = {.0,   .0};
 
@@ -105,7 +105,7 @@ namespace MolecularDynamics {
     void Monitor::draw() {
         // Window::draw();
 
-        auto state = lastData.getEqStateData<State>();
+        auto state = lastPacket.getEqStateData<State>();
         auto v_q = state->first;
         auto v_p = state->second;
 
@@ -128,7 +128,7 @@ namespace MolecularDynamics {
             sf::Color cor = umPreto;
             auto l = L / HASH_SUBDIVS;
             auto base = sf::Vector2f{-.5f*L, -.5f*L};
-            std::vector<sf::Vertex> subdivs;
+            Vector<sf::Vertex> subdivs;
 
             for(auto i=1; i<HASH_SUBDIVS; ++i){
                 auto il = float(i)*l;

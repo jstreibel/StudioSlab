@@ -87,6 +87,8 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RealtimePanel::draw() {
+        updateEnergyData();
+
         fix V_str = hamiltonian.getThePotential()->symbol();
 
         int errorCount = 0;
@@ -109,12 +111,24 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel::draw();
     }
 
-    void RealtimePanel::handleOutput(const OutputPacket &outInfo) {
-        const auto t = outInfo.getSimTime();
+    void RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+                                                   Graphics::PlottingWindow_ptr simHistoryGraph) {
+        RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
-        const EquationState &fieldState = *outInfo.getEqStateData<EquationState>();
+        addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
+        setColumnRelativeWidth(1, -1);
+    }
 
-        //hamiltonian.computeEnergies(fieldState);
+    void RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+                                                     const DFTDataHistory &dftData,
+                                                     Graphics::PlottingWindow_ptr sftHistoryGraph) {
+        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
+
+        addWindow(sftHistoryGraph);
+    }
+
+    void RealtimePanel::updateEnergyData() {
+        const auto t = lastPacket.getSimTime();
 
         auto U = hamiltonian.getTotalEnergy();
         auto K = hamiltonian.getTotalKineticEnergy();
@@ -139,45 +153,6 @@ namespace Slab::Models::KGRtoR {
         mEnergyGraph.set_yMin(yMin);
 
         mEnergyGraph.set_xMax(xMax);
-
-    }
-
-    bool RealtimePanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        if (state == Core::Press)
-            switch (key) {
-                case '1':
-                    showPot = !showPot;
-                    return true;
-                case '2':
-                    showKineticEnergy = !showKineticEnergy;
-                    return true;
-                case '3':
-                    showGradientEnergy = !showGradientEnergy;
-                    return true;
-                case '4':
-                    showEnergyDensity = !showEnergyDensity;
-                    return true;
-                default:
-                    break;
-            }
-
-        return WindowPanel::notifyKeyboard(key, state, modKeys);
-    }
-
-    void RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                                   Graphics::PlottingWindow_ptr simHistoryGraph) {
-        RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
-
-        addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
-        setColumnRelativeWidth(1, -1);
-    }
-
-    void RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                                     const DFTDataHistory &dftData,
-                                                     Graphics::PlottingWindow_ptr sftHistoryGraph) {
-        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
-
-        addWindow(sftHistoryGraph);
     }
 
 

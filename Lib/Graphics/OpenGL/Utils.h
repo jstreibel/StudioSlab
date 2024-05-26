@@ -22,7 +22,7 @@ namespace Slab::Graphics::OpenGL {
         typedef uint8_t DataType;
 
         const GLsizei w, h;
-        std::vector<DataType> pixels;
+        Vector<DataType> pixels;
 
         static const GLsizei channels = 4;
         static const GLenum  format   = GL_RGBA,

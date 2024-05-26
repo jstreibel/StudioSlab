@@ -14,7 +14,7 @@ namespace Slab::Core {
 
     class InterfaceSelector : public InterfaceOwner {
         int currentSelection = 0;
-        std::vector<Interface_ptr> candidates;
+        Vector<Interface_ptr> candidates;
 
         IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
 

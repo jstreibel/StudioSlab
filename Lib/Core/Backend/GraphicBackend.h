@@ -24,7 +24,7 @@ namespace Slab::Core {
 
     protected:
 
-        std::vector<std::shared_ptr<Module>> modules;
+        Vector<std::shared_ptr<Module>> modules;
 
         Real r = 0, g = 0, b = 0;
     public:
@@ -40,7 +40,7 @@ namespace Slab::Core {
 
         void addModule(const std::shared_ptr<Module> &module);
 
-        auto getModules() -> const std::vector<std::shared_ptr<Module>> &;
+        auto getModules() -> const Vector<std::shared_ptr<Module>> &;
 
         auto isHeadless() const -> bool final;
     };

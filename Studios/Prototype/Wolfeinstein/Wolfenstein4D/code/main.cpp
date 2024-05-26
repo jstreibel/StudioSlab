@@ -47,7 +47,7 @@ int main()
 
     Minimap minimap(defaultMap);
 
-    std::vector<Ray> rays(100);
+    Vector<Ray> rays(100);
     for(int i=0; i<rays.size(); i++){
         rays[i].pos = Vector2f(4.5, 6.5);
         rays[i].angle = (float(i)/rays.size())*pi/4;

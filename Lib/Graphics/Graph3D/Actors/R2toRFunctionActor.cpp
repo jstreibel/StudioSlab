@@ -6,7 +6,7 @@
 
 #include "Core/Tools/Resources.h"
 
-#include "Scene3DWindow.h"
+#include "Graphics/Graph3D/Scene3DWindow.h"
 #include "imgui.h"
 
 #include <array>
@@ -107,7 +107,7 @@ namespace Slab::Graphics {
         }
 
         static float scale = 1.0;
-        if(ImGui::DragFloat("scale", &scale, scale*5e-1f, 1e-2f, 1e2f, "%.2e"))
+        if(ImGui::DragFloat("scale", &scale, scale*2.5e-2f, 1e-4f, 1e4f, "%.2e"))
             program.setUniform("scale", scale);
 
         static float gloomPowBase = 50.0;
@@ -138,8 +138,8 @@ namespace Slab::Graphics {
     }
 
     void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
-        std::vector<GLuint> indices;
-        std::vector<Field2DVertex> vertices;
+        Vector<GLuint> indices;
+        Vector<Field2DVertex> vertices;
 
         fix M = gridN;
         fix N = gridM;

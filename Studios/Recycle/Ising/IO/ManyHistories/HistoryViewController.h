@@ -48,12 +48,12 @@ namespace ThermoOutput {
         Graph *time_corr_view;
         Graph *space_corr_est_view;
 
-        typedef std::pair<IsingMonteCarloCalculator*, sf::Texture*> ModelViewDataPair;
+        typedef Pair<IsingMonteCarloCalculator*, sf::Texture*> ModelViewDataPair;
 
         sf::Image helperBitmap;
-        std::vector<sf::Drawable*> drawables;
-        std::vector<ModelViewDataPair> simulations;
-        std::vector<std::vector<OutputData*>> histories;
+        Vector<sf::Drawable*> drawables;
+        Vector<ModelViewDataPair> simulations;
+        Vector<Vector<OutputData*>> histories;
     public:
         explicit HistoryViewController(double T, int L, int MCSteps, int tau_eq, int sqrtNSims);
 

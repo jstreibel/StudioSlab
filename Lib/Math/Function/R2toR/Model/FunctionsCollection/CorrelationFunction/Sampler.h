@@ -15,7 +15,7 @@
 
 namespace Slab::Math::R2toR {
 
-    typedef std::vector<Real2D> R2Vec;
+    typedef Vector<Real2D> R2Vec;
 
 
     class Sampler {

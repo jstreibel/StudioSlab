@@ -8,7 +8,7 @@
 namespace Slab::Math {
 
     AAHyperCube::AAHyperCube(UInt dim, Real L)
-            : Space(dim), L(L), measure(new Measure(std::vector<Real>(dim, L))) {}
+            : Space(dim), L(L), measure(new Measure(Vector<Real>(dim, L))) {}
 
     AAHyperCube::~AAHyperCube() {
         delete measure;

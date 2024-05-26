@@ -68,15 +68,6 @@ namespace Slab::Models::KGRtoR {
     }
 
     void Monitor::handleOutput(const OutputPacket &outInfo) {
-        const EquationState &fieldState = *outInfo.getEqStateData<EquationState>();
-
-        mutex.lock();
-        hamiltonian.computeEnergies(fieldState);
-        mutex.unlock();
-
-        // updateHistoryGraph();
-        // updateSFTHistoryGraph();
-
         for (const auto &dataView: dataViews)
             dataView->output(outInfo);
 
@@ -122,9 +113,9 @@ namespace Slab::Models::KGRtoR {
         if (simulationHistory == nullptr) return;
 
         static bool isSetup = false;
-        if (not isSetup && lastData.hasValidData()) {
+        if (not isSetup && lastPacket.hasValidData()) {
 
-            auto &phi = lastData.getEqStateData<EquationState>()->getPhi();
+            auto &phi = lastPacket.getEqStateData<EquationState>()->getPhi();
             if (phi.getLaplacianType() == RtoR::DiscreteFunction::Standard1D_PeriodicBorder)
                 fullHistoryArtist->set_xPeriodicOn();
 
@@ -132,9 +123,9 @@ namespace Slab::Models::KGRtoR {
         }
 
         static Real stepMod, lastStepMod = 0;
-        stepMod = (Real) (lastData.getSteps() % (this->getnSteps() * 100));
+        stepMod = (Real) (lastPacket.getSteps() % (this->getnSteps() * 100));
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryArtist->set_t(lastData.getSimTime());
+            fullHistoryArtist->set_t(lastPacket.getSimTime());
         lastStepMod = stepMod;
 
     }
@@ -142,24 +133,23 @@ namespace Slab::Models::KGRtoR {
     void Monitor::updateSFTHistoryGraph() {
         if (spaceFTHistory == nullptr) return;
 
-        fix step = lastData.getSteps();
+        fix step = lastPacket.getSteps();
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullSFTHistoryArtist->set_t(lastData.getSimTime());
+            fullSFTHistoryArtist->set_t(lastPacket.getSimTime());
         lastStepMod = stepMod;
     }
 
     void Monitor::draw() {
-        mutex.lock();
+        const EquationState &fieldState = *lastPacket.getEqStateData<EquationState>();
+        hamiltonian.computeEnergies(fieldState);
 
         updateHistoryGraph();
         updateSFTHistoryGraph();
 
         WindowPanel::draw();
-
-        mutex.unlock();
     }
 
 

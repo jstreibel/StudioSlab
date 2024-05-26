@@ -21,7 +21,7 @@ namespace Slab::Math {
     }
 
     void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo) {
-        static std::vector<Real> measures;
+        static Vector<Real> measures;
         auto elTime = timer.getElTime_sec();
 
         auto n = params.getn();

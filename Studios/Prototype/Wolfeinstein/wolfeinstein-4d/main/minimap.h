@@ -14,8 +14,8 @@
 #define RAY_RESOLUTION 2
 #define NUM_RAYS 15
 
-typedef std::vector<sf::Shape*> ShapeSet;
-typedef std::vector<sf::Drawable*> DrawableSet;
+typedef Vector<sf::Shape*> ShapeSet;
+typedef Vector<sf::Drawable*> DrawableSet;
 
 using namespace sf;
 
@@ -139,7 +139,7 @@ private:
     Uint32 iCellScale;
     Shape *wallBlock, *floorBlock, *invBlock, *playerBlock;
 
-    std::vector<Ray*> rays;
+    Vector<Ray*> rays;
 
     ShapeSet blocks;
     ShapeSet shapes;

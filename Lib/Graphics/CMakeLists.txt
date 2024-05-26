@@ -77,8 +77,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Graph3D/Scene3DWindow.h
 		Graph3D/Actor.cpp
 		Graph3D/Actor.h
-        Graph3D/R2toRFunctionActor.cpp
-		Graph3D/R2toRFunctionActor.h
+        Graph3D/Actors/R2toRFunctionActor.cpp
+        Graph3D/Actors/R2toRFunctionActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
 
@@ -86,8 +86,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		MeshUtils.h
 		Graph3D/Camera.cpp
 		Graph3D/Camera.h
-		Graph3D/TestActor.cpp
-		Graph3D/TestActor.h
+		Graph3D/Actors/TestActor.cpp
+		Graph3D/Actors/TestActor.h
 
 		SFML/Tools/Graph_deprydepr.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp

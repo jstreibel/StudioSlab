@@ -18,7 +18,7 @@ namespace Slab::Math::RtoR {
         auto getYMax() const -> Real;
 
 
-        std::vector<Real> X;
+        Vector<Real> X;
         Real xMin, xMax;
 
         ResizableDiscreteFunction() : xMin(0), xMax(0), X(0) {};

@@ -48,7 +48,7 @@ namespace Slab::Graphics {
     Point2D operator - (const Point2D &a, const Point2D &b);
     Point2D operator * (const Real &a, const Point2D &p);
 
-    typedef std::vector<Point2D> PointContainer;
+    typedef Vector<Point2D> PointContainer;
 
     struct Point3D { float x, y, z; };
 

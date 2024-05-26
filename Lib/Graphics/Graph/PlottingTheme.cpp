@@ -19,7 +19,7 @@ namespace Slab::Graphics {
                                  PlotStyle gridStyle,
                                  std::shared_ptr<Graphics::Writer> labelsWriter,
                                  std::shared_ptr<Graphics::Writer> ticksWriter,
-                                 std::vector<PlotStyle> plotStyles)
+                                 Vector<PlotStyle> plotStyles)
             : graphBackground(graphBackground), graphNumbersColor(graphNumbersColor), graphTitleColor(graphTitleColor),
               axisColor(axisColor), majorTickColor(majorTickColor), XHairStyle(XHairStyle), gridLines(gridStyle),
               labelsWriter(std::move(labelsWriter)), ticksWriter(std::move(std::move(ticksWriter))),

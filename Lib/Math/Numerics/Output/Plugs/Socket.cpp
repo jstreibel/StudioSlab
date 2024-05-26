@@ -13,7 +13,7 @@ namespace Slab::Math {
               nextRecStep(1) {}
 
 
-    auto Socket::getLastSimTime() -> Real { return lastData.getSimTime(); }
+    auto Socket::getLastSimTime() -> Real { return lastPacket.getSimTime(); }
 
     auto Socket::getnSteps() const -> int { return intervalStepsBetweenOutputs; }
 
@@ -47,12 +47,12 @@ namespace Slab::Math {
 
     void Socket::output(const OutputPacket &outData) {
         handleOutput(outData);
-        lastData = outData;
+        lastPacket = outData;
     }
 
     auto Socket::notifyIntegrationHasFinished(
             const OutputPacket &theVeryLastOutputInformation) -> bool {
-        lastData = theVeryLastOutputInformation;
+        lastPacket = theVeryLastOutputInformation;
         return true;
     }
 

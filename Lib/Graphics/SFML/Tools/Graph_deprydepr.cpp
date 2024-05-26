@@ -152,8 +152,8 @@ namespace Slab::Lost::ThermoOutput {
         // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
     }
 
-    std::vector<std::pair<double, double>> Graph_deprydepr::getData() const {
-        std::vector<std::pair<double, double>> data(theData.getVertexCount());
+    Vector<Pair<double, double>> Graph_deprydepr::getData() const {
+        Vector<Pair<double, double>> data(theData.getVertexCount());
         for (int i = 0; i < theData.getVertexCount(); i++) {
             auto iData = theData[i].position;
             data[i] = {iData.x, iData.y};

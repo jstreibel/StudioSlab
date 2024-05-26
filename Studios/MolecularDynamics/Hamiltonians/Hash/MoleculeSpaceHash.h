@@ -22,12 +22,12 @@ namespace MolecularDynamics {
 
         FixedSizeMoleculeContainer &get(int i, int j);
 
-        std::vector<FixedSizeMoleculeContainer::VerletPointTriple *> gather(int i, int j);
+        Vector<FixedSizeMoleculeContainer::VerletPointTriple *> gather(int i, int j);
 
 
         const int n;
         const Real L, l;
-        std::vector<FixedSizeMoleculeContainer> hashSpace;
+        Vector<FixedSizeMoleculeContainer> hashSpace;
 
     };
 

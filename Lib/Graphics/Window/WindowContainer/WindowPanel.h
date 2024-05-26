@@ -12,13 +12,13 @@
 
 namespace Slab::Graphics {
 
-    // typedef std::vector<Window::Ptr> WinCol;
-    typedef std::vector<WindowColumn> WindowColumns;
+    // typedef Vector<Window::Ptr> WinCol;
+    typedef Vector<WindowColumn> WindowColumns;
 
 
     class WindowPanel : public Window {
         WindowColumns columns = WindowColumns(1);
-        std::vector<float> widths = {-1};
+        Vector<float> widths = {-1};
 
 
         float computeReservedWidth() const;

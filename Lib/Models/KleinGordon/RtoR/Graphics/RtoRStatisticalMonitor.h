@@ -18,13 +18,12 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "RtoRPanel.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
+#include "Utils/Threads.h"
 
 
 namespace Slab::Models::KGRtoR {
 
     class RtoRStatisticsPanel : public RtoRPanel {
-        Real Δt = 0.0;
-        R2toR::Sampler_ptr sampler;
 
         RtoR2::StraightLine_ptr correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
@@ -54,8 +53,7 @@ namespace Slab::Models::KGRtoR {
 
         void drawGUI();
 
-    protected:
-        auto handleOutput(const OutputPacket &packet) -> void override;
+        void updateEnergyData();
 
     public:
         RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);

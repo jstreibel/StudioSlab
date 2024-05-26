@@ -43,8 +43,8 @@ namespace Slab::Core {
         int count = 0;
         const int C0, I, VLast;
         const Real invI;
-        std::vector<int> histogram;
-        std::vector<boost::timer::nanosecond_type> measures;
+        Vector<int> histogram;
+        Vector<boost::timer::nanosecond_type> measures;
     };
 
 }

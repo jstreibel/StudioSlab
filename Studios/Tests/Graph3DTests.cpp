@@ -4,9 +4,9 @@
 
 #include "Graph3DTests.h"
 #include "Graphics/Graph3D/Scene3DWindow.h"
-#include "Graphics/Graph3D/TestActor.h"
+#include "Graphics/Graph3D/Actors/TestActor.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Graphics/Graph3D/R2toRFunctionActor.h"
+#include "Graphics/Graph3D/Actors/R2toRFunctionActor.h"
 
 namespace Tests {
     Graph3DTests::Graph3DTests() {

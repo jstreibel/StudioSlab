@@ -38,7 +38,7 @@ namespace Slab::Math::R2toR {
         Real xMin, xMax, yMin, yMax, phiMin, phiMax;
         GraphR2toR phiGraph, dPhiGraph;
 
-        //std::vector<Base::SectionPair> sections;
+        //Vector<Base::SectionPair> sections;
 
         void _outputSnapshot();
     };

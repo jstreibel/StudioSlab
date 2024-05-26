@@ -52,12 +52,12 @@ namespace Slab::Lost {
             Lost::Graph *time_corr_view;
             Lost::Graph *space_corr_est_view;
 
-            typedef std::pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+            typedef Pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
             sf::Image helperBitmap;
-            std::vector<sf::Drawable *> drawables;
-            std::vector<ModelViewDataPair> simulations;
-            std::vector<std::vector<OutputData *>> histories;
+            Vector<sf::Drawable *> drawables;
+            Vector<ModelViewDataPair> simulations;
+            Vector<Vector<OutputData *>> histories;
         public:
             explicit HistoryViewController(double T, int L, int MCSteps, int tau_eq, int sqrtNSims);
 

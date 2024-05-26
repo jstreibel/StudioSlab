@@ -9,7 +9,7 @@
 #include <stack>
 #include <sstream>
 
-namespace PythonUtils {
+namespace Slab::PythonUtils {
 
     Str PyTypeToString(PyType type){
         switch (type) {

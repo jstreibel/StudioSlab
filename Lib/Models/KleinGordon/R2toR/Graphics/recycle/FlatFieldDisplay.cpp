@@ -199,7 +199,7 @@ void Graphics::FlatFieldDisplay::setColorMap(const ColorMap &colorMap) {
 }
 
 bool Graphics::FlatFieldDisplay::ContainsFunc(const R2toR::Function_constptr& func){
-    typedef std::pair<zOrder_t, R2toR::Function_constptr> Pair;
+    typedef Pair<zOrder_t, R2toR::Function_constptr> Pair;
     auto pred = [&func](const Pair &toComp){ return toComp.second==func; };
     return std::find_if(funcsMap.begin(), funcsMap.end(), pred) != funcsMap.end();
 }

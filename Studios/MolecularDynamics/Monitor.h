@@ -19,12 +19,12 @@ namespace MolecularDynamics {
 class Monitor : public Slab::Math::Socket, public Slab::Graphics::Window {
         sf::RenderWindow &renderWindow;
 
-        std::vector<sf::Vertex> molShapes;
+        Vector<sf::Vertex> molShapes;
 
         sf::CircleShape molShape;
         sf::Texture molTexture;
 
-        // std::vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
+        // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
     public:
         enum Model {
             LennardJones,

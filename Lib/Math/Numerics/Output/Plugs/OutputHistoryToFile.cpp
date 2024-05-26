@@ -44,7 +44,7 @@ namespace Slab::Math {
         if (integrationIsFinished) {
             _printHeaderToFile({"phi"});
 
-            auto shouldNotDump = !lastData.hasValidData();
+            auto shouldNotDump = !lastPacket.hasValidData();
             if (shouldNotDump) {
                 file.close();
                 return;
@@ -75,7 +75,7 @@ namespace Slab::Math {
         Log::Success() << "Flushed " << "100% " << Log::Flush;
     }
 
-    void OutputHistoryToFile::_printHeaderToFile(std::vector<std::string> channelNames) {
+    void OutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
         std::ostringstream oss;
 
 

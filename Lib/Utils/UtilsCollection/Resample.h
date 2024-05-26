@@ -5,13 +5,13 @@
 #ifndef STUDIOSLAB_RESAMPLE_H
 #define STUDIOSLAB_RESAMPLE_H
 
-#include <vector>
+#include "Utils/Arrays.h"
 // #include "3rdParty/libresample/include/libresample.h"
 
 
-namespace Studios {
+namespace Slab {
     namespace Utils {
-        std::vector<float> resample(std::vector<float> in, int output_size);
+        Vector<float> resample(Vector<float> in, int output_size);
     }
 }
 
@@ -19,12 +19,12 @@ namespace Studios {
 
 
 /*
-std::vector<double> resample(const std::vector<double>& input, int output_size)
+Vector<double> resample(const Vector<double>& input, int output_size)
 {
     const int input_size = input.size();
     const double input_rate = input_size;
     const double output_rate = output_size;
-    std::vector<double> output(output_size); // allocate output buffer
+    Vector<double> output(output_size); // allocate output buffer
 
     // create resampler object
 
@@ -51,10 +51,10 @@ std::vector<double> resample(const std::vector<double>& input, int output_size)
 #include <soxr.h>
 #include <stdexcept>
 
-std::vector<double> resample(const std::vector<double>& input, double input_rate, double output_rate)
+Vector<double> resample(const Vector<double>& input, double input_rate, double output_rate)
 {
     const int input_size = input.size();
-    std::vector<double> output(input_size * output_rate / input_rate); // allocate output buffer
+    Vector<double> output(input_size * output_rate / input_rate); // allocate output buffer
 
     // create resampler object
     soxr_error_t err;
@@ -74,13 +74,13 @@ std::vector<double> resample(const std::vector<double>& input, double input_rate
 }
 
 /*
-std::vector<int> grow(const std::vector<int>& v, std::size_t k)
+Vector<int> grow(const Vector<int>& v, std::size_t k)
 {
     if (v.empty()) {
         return {};
     }
 
-    std::vector<int> res(v.size() * (k - 1) + 1);
+    Vector<int> res(v.size() * (k - 1) + 1);
 
     for (std::size_t i = 0; i + 1 < v.size(); ++i) {
         for (std::size_t j = 0; j != k; ++j) {

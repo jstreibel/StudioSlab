@@ -5,7 +5,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #include "PointSet.h"
 
-void PointSet::initialize(const std::vector<glm::vec3> &points) {
+void PointSet::initialize(const Vector<glm::vec3> &points) {
     if(initialized){
         glDeleteVertexArrays(1, &VAO);
         initialized = false;
@@ -47,7 +47,7 @@ unsigned PointSet::getSize() const {
     return pointSet.size();
 }
 
-const std::vector<glm::vec3> &PointSet::getPointSet() {
+const Vector<glm::vec3> &PointSet::getPointSet() {
     return pointSet;
 }
 

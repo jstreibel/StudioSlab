@@ -32,7 +32,7 @@ void PendulumStudy::resize(GLuint newWindowWidth, GLuint newWindowHeight){
 
     const float halfQuadSize = 0.8;
 
-    std::vector<GLfloat> quad(12);
+    Vector<GLfloat> quad(12);
     quad[0] = -halfQuadSize; quad[1]  = -halfQuadSize; quad[2] = 0;
     quad[3] = -halfQuadSize; quad[4]  =  halfQuadSize; quad[5] = 0;
     quad[6] =  halfQuadSize; quad[7]  =  halfQuadSize; quad[8] = 0;

@@ -17,8 +17,8 @@
 
 class FixedSizeMoleculeContainer{
 public:
-    typedef std::pair<const Graphics::Point2D*, const Graphics::Point2D*> PointRefPair;
-    typedef std::pair<PointRefPair, Graphics::Point2D*> VerletPointTriple;
+    typedef Pair<const Graphics::Point2D*, const Graphics::Point2D*> PointRefPair;
+    typedef Pair<PointRefPair, Graphics::Point2D*> VerletPointTriple;
 
 public:
     FixedSizeMoleculeContainer() = default;

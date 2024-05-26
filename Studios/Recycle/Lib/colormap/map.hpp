@@ -38,7 +38,7 @@ namespace colormap {
                 supports[(i++) * step] = c;
         }
 
-        map (std::initializer_list<std::pair<double,Color>> il) {
+        map (std::initializer_list<Pair<double,Color>> il) {
             range = { std::numeric_limits<double>::max(),
                       std::numeric_limits<double>::min() };
             for (auto p : il) {
@@ -75,7 +75,7 @@ namespace colormap {
 
     private:
         std::map<double, Color> supports;
-        std::pair<double,double> range;
+        Pair<double,double> range;
     };
 
 }

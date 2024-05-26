@@ -26,7 +26,7 @@ namespace ThermoOutput {
         sf::Vector2f rMin, rMax;
 
         sf::Font font;
-        std::vector<sf::Text> labels;
+        Vector<sf::Text> labels;
 
 
         void _computeScale();
@@ -53,7 +53,7 @@ namespace ThermoOutput {
     public:
         virtual void manipulationOfParametersHasHappened(double previousParamValue, double sigmaFactor);
 
-        std::vector<std::pair<double,double>> getData() const;
+        Vector<Pair<double,double>> getData() const;
     };
 }
 

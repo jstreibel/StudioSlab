@@ -34,7 +34,7 @@ namespace Slab::Core {
         for (int i = 0; i < argc; i++) {
             const str arg(argv[i]);
             if (boost::contains(arg, simStr)) {
-                std::vector<str> result;
+                Vector<str> result;
                 boost::split(result, arg, [](char c) { return (c == '='); });
 
                 if (result.size() == 1) {

@@ -7,7 +7,7 @@
 
 ChaosGame::ChaosGame(float radius, int NSides) {
     const float ang = 2*M_PI/NSides;
-    std::vector<glm::vec3> points;
+    Vector<glm::vec3> points;
     for(int i=0; i<NSides; i++)
         points.push_back({sin(i*ang) * radius, cos(i*ang), .0});
 
@@ -18,8 +18,8 @@ void ChaosGame::generatePointSet(const glm::vec3 seed, const int n, bool allowRe
     const int bps = basePointsSet.getSize();
 
     glm::vec3 p = seed;
-    const std::vector<glm::vec3> &basePointsVec = basePointsSet.getPointSet();
-    std::vector<glm::vec3> pointSetData;
+    const Vector<glm::vec3> &basePointsVec = basePointsSet.getPointSet();
+    Vector<glm::vec3> pointSetData;
     int last_i = rand()%bps;
     for(int i=0; i<n; i++){
         int si;

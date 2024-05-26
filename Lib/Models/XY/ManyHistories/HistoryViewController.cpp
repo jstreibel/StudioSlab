@@ -274,7 +274,7 @@ namespace Slab::Lost::ThermoOutput {
         auto t_total = upToMCStep - t0;
         auto tCorrMax_local = fmin(t_total, t_max);
 
-        std::vector<double> c(tCorrMax_local);
+        Vector<double> c(tCorrMax_local);
 
         for (auto t=0; t < tCorrMax_local; ++t){
             auto corr = .0;

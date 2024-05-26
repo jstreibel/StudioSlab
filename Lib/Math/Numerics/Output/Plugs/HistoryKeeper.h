@@ -21,7 +21,7 @@ namespace Slab::Math {
 
         const Real tEnd;
 
-        std::vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
+        Vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
         RealVector tHistory;
         size_t count;
         size_t countTotal;

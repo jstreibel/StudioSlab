@@ -160,8 +160,8 @@ namespace Slab::Lost {
         // esse metodo (essa funcao) eh um presente pras subclasses dessa classe
     }
 
-    std::vector<std::pair<Real, Real>> Graph::getData() const {
-        std::vector<std::pair<Real, Real>> data(theData.getVertexCount());
+    Vector<Pair<Real, Real>> Graph::getData() const {
+        Vector<Pair<Real, Real>> data(theData.getVertexCount());
         for (int i = 0; i < theData.getVertexCount(); i++) {
             auto iData = theData[i].position;
             data[i] = {iData.x, iData.y};

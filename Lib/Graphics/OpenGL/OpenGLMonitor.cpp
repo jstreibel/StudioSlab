@@ -33,7 +33,7 @@ namespace Slab::Graphics {
         static bool hasFinished = false;
         static bool isPaused = false;
         static Count lastStep = 0;
-        hasFinished = !(lastData.getSteps() < params.getn());
+        hasFinished = !(lastPacket.getSteps() < params.getn());
 
         auto dt = params.getdt();
         fix currStep = step;
@@ -58,9 +58,9 @@ namespace Slab::Graphics {
         auto avgSPS = .0; // careful with division by zero below
         auto avgSPs = .0;
         if (step > 0) {
-            static std::vector<Real> FPSmeasures;
-            static std::vector<Real> SPsmeasures; // steps per sample
-            static std::vector<Real> SPSmeasures; // steps per second
+            static Vector<Real> FPSmeasures;
+            static Vector<Real> SPsmeasures; // steps per sample
+            static Vector<Real> SPSmeasures; // steps per second
 
             FPSmeasures.emplace_back(FPS);
             SPsmeasures.emplace_back(SPs);
@@ -123,7 +123,7 @@ namespace Slab::Graphics {
     }
 
     bool OpenGLMonitor::notifyRender() {
-        assert(lastData.hasValidData());
+        assert(lastPacket.hasValidData());
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);

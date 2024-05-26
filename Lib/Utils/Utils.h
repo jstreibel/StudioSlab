@@ -72,7 +72,7 @@ namespace Slab::Common {
         return std::find(container.begin(), container.end(), element) != container.end();
     }
     // template<typename T>
-    // bool                    Contains(std::vector<T> vec, const T &element) {
+    // bool                    Contains(Vector<T> vec, const T &element) {
     //     return std::find(vec.begin(), vec.end(), element) != vec.end();
     // }
     // template<typename T>

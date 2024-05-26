@@ -37,7 +37,7 @@ namespace Slab::Math::R2toR {
 
         GraphR2toR phiGraph, dPhiGraph;
 
-        //std::vector<Base::SectionPair> sections;
+        //Vector<Base::SectionPair> sections;
 
         void _outputSnapshot();
     };

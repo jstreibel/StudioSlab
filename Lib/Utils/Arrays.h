@@ -7,6 +7,7 @@
 
 #include "Numbers.h"
 #include "String.h"
+#include "Types.h"
 
 #include <vector>
 #include <valarray>
@@ -20,7 +21,7 @@ namespace Slab {
     using Array = std::valarray<T>;
 
     //template<class T>
-    //typename std::vector<T> Vector;
+    //typename Vector<T> Vector;
 
     typedef Array<Real> RealArray;
     typedef Vector<Real> RealVector;
@@ -36,7 +37,7 @@ namespace Slab {
     typedef Vector<int> IntVector;
 
     typedef std::ostream OStream;
-    typedef std::vector<Str> StrVector;
+    typedef Vector<Str> StrVector;
 
     template<typename T>
     class ValarrayWrapper {

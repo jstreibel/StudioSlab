@@ -12,7 +12,7 @@ namespace Slab::Math {
         fix Δx = xMax - xMin;
         fix dx = Δx / (Real) resolution;
 
-        std::vector<Real2D> pts(resolution);
+        Vector<Real2D> pts(resolution);
 
         for (auto i = 0; i < resolution; ++i) {
             fix x = xMin + Real(i) * dx;

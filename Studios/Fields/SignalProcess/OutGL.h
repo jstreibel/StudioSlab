@@ -26,11 +26,11 @@ namespace Slab::Math::RtoR {
 
             bool gotNewData = true;
 
-            std::vector<std::vector<Real>> getHistoryMatrixData();
-            std::vector<RtoR::DiscreteFunction*> history;
+            Vector<Vector<Real>> getHistoryMatrixData();
+            Vector<RtoR::DiscreteFunction*> history;
         protected:
 
-            std::vector <Real> probingData;
+            Vector <Real> probingData;
 
             void handleOutput(const OutputPacket &outInfo) override;
 

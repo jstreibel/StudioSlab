@@ -9,7 +9,7 @@ namespace Slab::Math {
     class OutputSnapshot : public Socket {
 
     private:
-        std::vector<size_t> snapSteps;
+        Vector<size_t> snapSteps;
         Str customFileDescription;
 
         size_t T_fileNamePrecision;

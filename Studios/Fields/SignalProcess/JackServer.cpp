@@ -98,11 +98,11 @@ JackServer::JackServer() {
     if(ports == nullptr)
         throw "Jack error 3";
 
-    std::vector<Str> connect_to_processed_output = {"spectrum_analyzer_x1:in0"/*,
+    Vector<Str> connect_to_processed_output = {"spectrum_analyzer_x1:in0"/*,
                                                        /*"Built-in Audio Analog Stereo:playback_FL",
                                                        "Built-in Audio Analog Stereo:playback_FR"*/};
 
-    std::vector<Str> connect_to_input =     {"C-1U Digital Stereo (IEC958):capture_FL",
+    Vector<Str> connect_to_input =     {"C-1U Digital Stereo (IEC958):capture_FL",
                                              "C-1U Digital Stereo (IEC958):capture_FR"/*,
                                                 testPortName*/};
 
@@ -149,7 +149,7 @@ void JackServer::recordInputBuffer(jack_nframes_t nframes) {
     auto jack_input_buffer = (jack_default_audio_sample_t*) jack_port_get_buffer(getInputPort(), nframes);
     memcpy(input_buffer, jack_input_buffer, sizeof(jack_default_audio_sample_t) * nframes);
 
-    std::vector<jack_default_audio_sample_t> in(input_buffer, input_buffer + nframes);
+    Vector<jack_default_audio_sample_t> in(input_buffer, input_buffer + nframes);
     recordedInput.insert(recordedInput.end(), in.begin(), in.end());
 
     totalInputBufferUpdates++;
@@ -163,7 +163,7 @@ bool JackServer::toggleRecording() {
     return isRecordingInput;
 }
 
-std::vector<float> JackServer::getRecording() {
+Vector<float> JackServer::getRecording() {
     return recordedInput;
 }
 
@@ -239,9 +239,9 @@ void bypassJack(jack_nframes_t nframes){
 }
 
 
-std::vector<float> VecDoubToVecFloat(std::vector<Real> &doubles){
+Vector<float> VecDoubToVecFloat(Vector<Real> &doubles){
     const auto N = doubles.size();
-    std::vector<float> floats(N);
+    Vector<float> floats(N);
 
     for(auto i=0; i<N; i++)
         floats[i] = doubles[i];

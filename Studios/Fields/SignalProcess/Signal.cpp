@@ -15,7 +15,7 @@
 
 Real RtoR::Signal::xInitDampCutoff_normalized;
 Real RtoR::Signal::dampFactor;
-std::vector<Real> damps;
+Vector<Real> damps;
 Real jackProbeLocation=0;
 size_t lastBufferDumpedSamplesCount = 0;
 Real t0 = 5;

@@ -25,11 +25,11 @@ class JackServer {
 
     const int buffer_size = 2048;
     jack_default_audio_sample_t* input_buffer = new jack_default_audio_sample_t[buffer_size];
-    std::vector<jack_default_audio_sample_t> recordedInput = std::vector<jack_default_audio_sample_t>(0);
+    Vector<jack_default_audio_sample_t> recordedInput = Vector<jack_default_audio_sample_t>(0);
     size_t totalInputBufferUpdates = 0;
 
-    std::vector<Real> dataToOutput;
-    std::vector<Real> lastOutputData;
+    Vector<Real> dataToOutput;
+    Vector<Real> lastOutputData;
     std::mutex dataMutex;
     int totalLastOutputProcessedSamples, nframes_jack;
     enum SamplingFlags {UnderSampled, OverSampled, EvenSampled} samplingFlag = EvenSampled;
@@ -45,8 +45,8 @@ public:
 
     size_t getInputBufferUpdateCount() { return totalInputBufferUpdates; };
 
-    std::vector<Real> &getDataToOutput() { return dataToOutput; }
-    std::vector<Real> &getLastOutputData() { return lastOutputData; }
+    Vector<Real> &getDataToOutput() { return dataToOutput; }
+    Vector<Real> &getLastOutputData() { return lastOutputData; }
 
     int getInputBufferSize();
     jack_default_audio_sample_t *getInputBuffer();
@@ -67,7 +67,7 @@ public:
 
     bool toggleRecording();
 
-    std::vector<float> getRecording();
+    Vector<float> getRecording();
 };
 
 

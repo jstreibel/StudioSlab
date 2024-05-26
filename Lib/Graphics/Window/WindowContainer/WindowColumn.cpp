@@ -60,7 +60,7 @@ namespace Slab::Graphics {
 
         if (m == 0) return;
 
-        std::vector<int> computedHeights(m, (int) (geth() / m));    // "if(freeHeights==m)"
+        Vector<int> computedHeights(m, (int) (geth() / m));    // "if(freeHeights==m)"
 
         auto freeHeights = CountLessThanZero(heights);
         if (freeHeights == 0) {
@@ -80,7 +80,7 @@ namespace Slab::Graphics {
             }
         }
 
-        std::vector<int> computed_yPositions(m);
+        Vector<int> computed_yPositions(m);
         auto y = this->gety();
         for (int i = 0; i < m; ++i) {
             computed_yPositions[i] = y;

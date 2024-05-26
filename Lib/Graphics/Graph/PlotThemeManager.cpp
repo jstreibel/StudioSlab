@@ -98,7 +98,7 @@ namespace Slab::Graphics {
         Color tickColor =       {1,1,1,.75};
 
         // https://www.learnui.design/tools/data-color-picker.html
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#004c6d"), LinePrimitive::Solid},
                 PlotStyle{Color::FromHex("#1d617f"), LinePrimitive::Solid},
                 PlotStyle{Color::FromHex("#347691"), LinePrimitive::Solid},
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         Color tickColor =       {1,1,1,.25};
 
         // https://www.learnui.design/tools/data-color-picker.html
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#003f5c"), LinePrimitive::Solid, true, Nil, 1.5},
                 PlotStyle{Color::FromHex("#2f4b7c"), LinePrimitive::Solid, true, Nil, 1.5},
                 PlotStyle{Color::FromHex("#665191"), LinePrimitive::Solid, true, Nil, 1.5},
@@ -172,7 +172,7 @@ namespace Slab::Graphics {
         Color tickColor =       {1,1,1,1};
 
         // https://www.learnui.design/tools/data-color-picker.html
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#ff0000"), LinePrimitive::Solid},
                 PlotStyle{Color::FromHex("#00ff00"), LinePrimitive::Solid},
                 PlotStyle{Color::FromHex("#0000ff"), LinePrimitive::Solid},
@@ -216,7 +216,7 @@ namespace Slab::Graphics {
         Color graph1b_fill = {graph1b.rgb(), 0.1};
         Color graph1c_fill = {graph1c.rgb(), .25};
 
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{graph1a, LinePrimitive::Solid, true, graph1a_fill, 3},
                 PlotStyle{graph1b, LinePrimitive::DotDashed, true, graph1b_fill, 1},
                 PlotStyle{graph1c, LinePrimitive::Dashed, true, graph1c_fill, 3}};
@@ -245,7 +245,7 @@ namespace Slab::Graphics {
         Color axisColor = {0,0,0,1};
         Color tickColor = {.2,.2,.2,1};
 
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#003f5c"), LinePrimitive::Solid, FILLED, Nil, 0.8},
                 PlotStyle{Color::FromHex("#2f4b7c"), LinePrimitive::Solid, FILLED, Nil, 0.8},
                 PlotStyle{Color::FromHex("#665191"), LinePrimitive::Solid, FILLED, Nil, 0.8},
@@ -288,7 +288,7 @@ namespace Slab::Graphics {
 
         fix fill = FILLED;
 
-        std::vector<PlotStyle> graphs = {
+        Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#ff0000"), LinePrimitive::Solid, fill, Nil, lineWidth},
                 PlotStyle{Color::FromHex("#00ff00"), LinePrimitive::Solid, fill, Nil, lineWidth},
                 PlotStyle{Color::FromHex("#0000ff"), LinePrimitive::Solid, fill, Nil, lineWidth},

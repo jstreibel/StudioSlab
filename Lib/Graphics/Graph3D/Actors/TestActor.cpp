@@ -6,7 +6,7 @@
 
 #include "Core/Tools/Resources.h"
 
-#include "Scene3DWindow.h"
+#include "Graphics/Graph3D/Scene3DWindow.h"
 #include "imgui.h"
 
 #include <array>
@@ -135,8 +135,8 @@ namespace Slab::Graphics {
                          int N, int M,
                          float width, float height)
     {
-        std::vector<GLuint> indices;
-        std::vector<Field2DVertex> vertices;
+        Vector<GLuint> indices;
+        Vector<Field2DVertex> vertices;
 
         fix xNormFactor = 1/float(M-1);
         fix yNormFactor = 1/float(N-1);

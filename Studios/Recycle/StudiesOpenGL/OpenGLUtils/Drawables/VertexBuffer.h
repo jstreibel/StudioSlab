@@ -14,7 +14,7 @@ class VertexBuffer : public Drawable {
 public:
     VertexBuffer();
 
-    void setData(const std::vector<GLfloat> &data, GLenum primitive, GLuint dim);
+    void setData(const Vector<GLfloat> &data, GLenum primitive, GLuint dim);
 
     void draw(const int n);
 

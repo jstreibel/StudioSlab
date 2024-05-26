@@ -13,8 +13,8 @@
 
 struct OutputToVector : public Output
 {
-    std::vector< Funcs > m_states;
-    std::vector< double > m_times;
+    Vector< Funcs > m_states;
+    Vector< double > m_times;
 
     OutputToVector() = default;
 
@@ -55,17 +55,17 @@ OutputToVector output;
 auto w = 1200.f;
 int rectLeft = 1.1 * w + 4 * 20;
 
-std::vector<Lost::Graph> graphs;
+Vector<Lost::Graph> graphs;
 Real start_r = 0.0001, end_r = 5, dr = 1.e-5 ;
 
 float f0 = 1.09868, g0 = 0, dfdr0=0, dgdr0 = 1.31902;
 
-//std::vector<unsigned> colorInts({0xbeef9eff, 0xa6c36fff,0x828c51ff,0x335145ff,0x1e352fff,0x7d5ba6ff});
-//std::vector<unsigned> colorInts({0xe27396ff,0xea9ab2ff,0xe0e2dbff,0xd2d4c8ff,0xd3efbdff,0x447604ff});
-const std::vector<unsigned> ci{ 0x54478cff, 0x2c699aff, 0x048ba8ff, 0x0db39eff, 0x16db93ff, 0x83e377ff, 0xb9e769ff, 0xefea5aff, 0xf1c453ff, 0xf29e4cff };
-const std::vector<unsigned> colorInts{ ci[0], ci[3], ci[6], ci[1], ci[4], ci[7] };
+//Vector<unsigned> colorInts({0xbeef9eff, 0xa6c36fff,0x828c51ff,0x335145ff,0x1e352fff,0x7d5ba6ff});
+//Vector<unsigned> colorInts({0xe27396ff,0xea9ab2ff,0xe0e2dbff,0xd2d4c8ff,0xd3efbdff,0x447604ff});
+const Vector<unsigned> ci{ 0x54478cff, 0x2c699aff, 0x048ba8ff, 0x0db39eff, 0x16db93ff, 0x83e377ff, 0xb9e769ff, 0xefea5aff, 0xf1c453ff, 0xf29e4cff };
+const Vector<unsigned> colorInts{ ci[0], ci[3], ci[6], ci[1], ci[4], ci[7] };
 
-std::vector<sf::Color> colors = std::vector<sf::Color>(6);
+Vector<sf::Color> colors = Vector<sf::Color>(6);
 
 
 void InitGUI() {

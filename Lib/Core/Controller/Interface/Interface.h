@@ -40,7 +40,7 @@ namespace Slab::Core {
         Str descr = "<empty>";
         const Str delimiter = ",";
 
-        std::vector<InterfaceListener *> listeners;
+        Vector<InterfaceListener *> listeners;
 
     public:
     private:
@@ -73,9 +73,9 @@ namespace Slab::Core {
 
         void addParameters(std::initializer_list<Parameter *> parameters);
 
-        auto getSubInterfaces() const -> std::vector<Pointer<Interface>>;
+        auto getSubInterfaces() const -> Vector<Pointer<Interface>>;
 
-        auto getParameters() const -> std::vector<Parameter_constptr>;
+        auto getParameters() const -> Vector<Parameter_constptr>;
 
         auto getParameter(Str key) const -> Parameter_ptr;
 

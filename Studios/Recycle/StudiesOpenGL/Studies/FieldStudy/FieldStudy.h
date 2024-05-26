@@ -40,7 +40,7 @@ private:
 
     //oglplus::Program lineShader;
     //oglplus::VertexArray line;
-    //std::vector<GLfloat> lineData_v;
+    //Vector<GLfloat> lineData_v;
     //oglplus::Buffer lineData;
 
     oglplus::Uniform<GLfloat> uYPos, uXRot, uYRot, uPhase;

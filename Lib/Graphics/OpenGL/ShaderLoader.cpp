@@ -81,7 +81,7 @@ namespace Slab::Graphics::OpenGL {
             GLchar rawMessages[BUFFER_SIZE];
 
             glGetShaderInfoLog( handle, BUFFER_SIZE, nullptr, &rawMessages[0] );
-            auto messages = StrUtils::GetLines(rawMessages);
+            auto messages = GetLines(rawMessages);
 
             auto &log = Log::Error() << "While compiling "
                 << (type==VertexShader?"vertex":(type==FragmentShader?"fragment":"<unknown_type>"))
@@ -100,7 +100,7 @@ namespace Slab::Graphics::OpenGL {
             log << Log::ResetFormatting << "\n\n";
             log << "Source:\n" << Log::BGBlue;
             Count lineNumber = 1;
-            auto srcLines = StrUtils::GetLines(source);
+            auto srcLines = GetLines(source);
             for(auto &line : srcLines) {
                 if(problematicLines.contains(lineNumber))
                     log << Log::FGRed;

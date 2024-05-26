@@ -15,7 +15,7 @@ namespace Slab::Core {
 
     class SFMLBackend : public GraphicBackend {
         Core::SFMLEventTranslator sfmlEventTranslator;
-        std::vector<SFMLListener *> sfmlListeners;
+        Vector<SFMLListener *> sfmlListeners;
 
         sf::RenderWindow *window;
         sf::Font font;

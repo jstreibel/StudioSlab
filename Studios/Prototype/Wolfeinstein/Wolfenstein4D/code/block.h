@@ -9,6 +9,6 @@ public:
     float x, y;
 };
 
-typedef std::vector<Block*> BlockSet;
+typedef Vector<Block*> BlockSet;
 
 #endif // BLOCK_H

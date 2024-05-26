@@ -37,7 +37,7 @@ namespace Slab::Graphics {
             typedef std::shared_ptr<Graphics::R2toRFunctionArtist> FlatField2DArtistPtr;
 
         protected:
-            std::vector<R2toRFunctionArtist_ptr> ff2dArtists;
+            Vector<R2toRFunctionArtist_ptr> ff2dArtists;
 
             Unit funcUnit;
             typedef std::multimap<zOrder_t, R2toR::Function_constptr> FuncsMap;

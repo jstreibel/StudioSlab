@@ -8,7 +8,8 @@
 #include "Types.h"
 #include <map>
 
-namespace PythonUtils {
+namespace Slab::PythonUtils {
+
     enum PyType {
         Integer,
         Float,
@@ -18,7 +19,7 @@ namespace PythonUtils {
 
     typedef Str Key;
     typedef Str StringValue;
-    typedef std::pair<StringValue, PyType> Value;
+    typedef Pair<StringValue, PyType> Value;
     typedef std::map<Key, Value> PyDict;
 
     Str PyTypeToString(PyType);

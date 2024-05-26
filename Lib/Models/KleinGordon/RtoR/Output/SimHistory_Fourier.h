@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
         Real t;
         RtoR::DFTResult result;
     };
-    typedef std::vector<DFTInstantResult> DFTDataHistory;
+    typedef Vector<DFTInstantResult> DFTDataHistory;
 
     class SimHistory_DFT : public SimHistory {
 

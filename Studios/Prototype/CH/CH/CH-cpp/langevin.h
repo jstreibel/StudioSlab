@@ -10,7 +10,7 @@ public:
     Langevin(double T, double dt);
 
     void apply_bc(MoleculContainer &mols);
-    double computeEnergy(const std::vector<Point2D> &v_q, std::vector<Point2D> &v_p);
+    double computeEnergy(const Vector<Point2D> &v_q, Vector<Point2D> &v_p);
 
     void operator() ( const MoleculContainer &m, MoleculContainer &dmdt, const double t);
 

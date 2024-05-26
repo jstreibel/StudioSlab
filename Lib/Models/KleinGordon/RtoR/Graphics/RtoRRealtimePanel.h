@@ -19,8 +19,7 @@
 namespace Slab::Models::KGRtoR {
 
     class RealtimePanel : public RtoRPanel {
-    public:
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        void updateEnergyData();
 
     protected:
         Graphics::PlottingWindow mFieldsGraph;
@@ -47,8 +46,6 @@ namespace Slab::Models::KGRtoR {
         Graphics::PlottingWindow mEnergyGraph;
 
         void draw() override;
-
-        void handleOutput(const OutputPacket &outInfo) override;
 
     public:
         RealtimePanel(const NumericConfig &params,

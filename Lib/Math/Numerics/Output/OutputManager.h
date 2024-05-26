@@ -10,7 +10,7 @@ namespace Slab::Math {
 
     protected:
 
-        std::vector<Socket_ptr > outputs;
+        Vector<Socket_ptr > outputs;
 
         const NumericConfig &params;
 

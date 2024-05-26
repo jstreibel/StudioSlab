@@ -21,16 +21,16 @@ namespace Slab::Math {
 
         const Real &operator()(const Real &t);
 
-        const std::vector<Real> &getFVals() const;
+        const Vector<Real> &getFVals() const;
 
-        const std::vector<Real> &getTVals() const;
+        const Vector<Real> &getTVals() const;
 
     private:
-        std::vector<Real> fVals;
-        std::vector<Real> tVals;
+        Vector<Real> fVals;
+        Vector<Real> tVals;
 
     public:
-        typedef std::vector<RecordInterval>::iterator Iterator;
+        typedef Vector<RecordInterval>::iterator Iterator;
     };
 
 

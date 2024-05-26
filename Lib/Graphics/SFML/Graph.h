@@ -26,7 +26,7 @@ namespace Slab::Lost {
         sf::Vector2f rMin, rMax;
 
         sf::Font font;
-        std::vector<sf::Text> labels;
+        Vector<sf::Text> labels;
 
 
         void _computeScale();
@@ -55,7 +55,7 @@ namespace Slab::Lost {
     public:
         virtual void manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor);
 
-        std::vector<std::pair<Real, Real>> getData() const;
+        Vector<Pair<Real, Real>> getData() const;
         void clearData();
     };
 }

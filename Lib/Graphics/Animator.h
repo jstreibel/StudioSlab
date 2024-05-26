@@ -38,7 +38,7 @@ namespace Slab::Core {
 
         static void SetBezierParams(double p1, double p2);
 
-        static auto GetBezierParams() -> std::pair<double, double>;
+        static auto GetBezierParams() -> Pair<double, double>;
 
         static void Update();
 

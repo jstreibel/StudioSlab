@@ -28,16 +28,16 @@ namespace Slab::Core {
                              << Log::Flush;
     }
 
-    auto Interface::getParameters() const -> std::vector<Parameter_constptr> {
-        std::vector<Parameter_constptr> constParameters;
+    auto Interface::getParameters() const -> Vector<Parameter_constptr> {
+        Vector<Parameter_constptr> constParameters;
 
         std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
     }
 
-    auto Interface::getSubInterfaces() const -> std::vector<Pointer<Interface>> {
-        std::vector<Pointer<Interface>> interfaces;
+    auto Interface::getSubInterfaces() const -> Vector<Pointer<Interface>> {
+        Vector<Pointer<Interface>> interfaces;
 
         std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
 

@@ -56,7 +56,7 @@ namespace Slab {
         const auto h = h_ < 0 ? glutGet(GLUT_WINDOW_HEIGHT) : h_;
         const auto channels = Graphics::OpenGL::FrameBuffer::channels;
 
-        std::vector<Graphics::OpenGL::FrameBuffer::DataType> pixels(w * h * channels);
+        Vector<Graphics::OpenGL::FrameBuffer::DataType> pixels(w * h * channels);
 
         auto format = GL_BGRA;
         glReadPixels(x, y, w, h, format, GL_UNSIGNED_BYTE, &pixels[0]);

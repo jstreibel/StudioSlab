@@ -14,7 +14,7 @@ namespace Slab::Core {
     class InterfaceManager {
         static InterfaceManager *instance;
 
-        std::vector<Pointer<Interface>> interfaces;
+        Vector<Pointer<Interface>> interfaces;
 
     public:
         static auto getInstance() -> InterfaceManager &;
@@ -23,7 +23,7 @@ namespace Slab::Core {
 
         void registerInterface(const Pointer<Interface> &anInterface);
 
-        auto getInterfaces() -> std::vector<Pointer<const Interface>>;
+        auto getInterfaces() -> Vector<Pointer<const Interface>>;
 
         auto getInterface(const char *string) -> Pointer<const Interface>;
 
@@ -34,7 +34,7 @@ namespace Slab::Core {
         auto renderParametersToString(const StrVector &params, const Str &separator = " ",
                                       bool longName = true) const -> Str;
 
-        auto getParametersValues(const StrVector &params) const -> std::vector<std::pair<Str, Str>>;
+        auto getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>>;
 
         auto getParameter(const Str &name) const -> const Parameter &;
 

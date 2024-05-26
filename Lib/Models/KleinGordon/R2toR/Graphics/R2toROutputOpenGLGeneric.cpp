@@ -35,7 +35,7 @@ namespace Slab::Math {
         Graphics::OpenGLMonitor::draw();
 
         if (sectionArtist.getFunction() == nullptr) {
-            const R2toR::EquationState &fState = *lastData.getEqStateData<R2toR::EquationState>();
+            const R2toR::EquationState &fState = *lastPacket.getEqStateData<R2toR::EquationState>();
             auto &phi = fState.getPhi();
 
             sectionArtist.setFunction(Slab::DummyPointer(phi));

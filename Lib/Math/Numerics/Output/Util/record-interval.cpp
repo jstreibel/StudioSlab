@@ -30,9 +30,9 @@ namespace Slab::Math {
         throw "Not implemented";
     }
 
-    const std::vector<Real> &RecordInterval::getFVals() const { return fVals; }
+    const Vector<Real> &RecordInterval::getFVals() const { return fVals; }
 
-    const std::vector<Real> &RecordInterval::getTVals() const { return tVals; }
+    const Vector<Real> &RecordInterval::getTVals() const { return tVals; }
 
 
 }

@@ -28,9 +28,7 @@ namespace Slab::Models::KGRtoR {
     class KGEnergy;
 
     class Monitor : public Graphics::OpenGLMonitor {
-        Mutex mutex;
-
-        std::vector<RtoRPanel_ptr> dataViews;
+        Vector<RtoRPanel_ptr> dataViews;
         RtoRPanel_ptr currentDataView;
 
         R2toR::DiscreteFunction_constptr simulationHistory;

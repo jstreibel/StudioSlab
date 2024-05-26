@@ -12,9 +12,9 @@
 
 namespace Slab::Math::RtoR {
     class AnalyticShockwave1D : public RtoR::Function {
-        std::vector<Real> xk;
-        std::vector<Real> ak;
-        std::vector<Real> zk;
+        Vector<Real> xk;
+        Vector<Real> ak;
+        Vector<Real> zk;
 
         Real Wk(Real z, int k) const;
 

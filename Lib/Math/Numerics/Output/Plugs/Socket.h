@@ -16,7 +16,7 @@ namespace Slab::Math {
         int intervalStepsBetweenOutputs; // Number of steps between recordings.
 
     protected:
-        OutputPacket lastData;
+        OutputPacket lastPacket;
         const NumericConfig &params;
         Str name, description;
 
@@ -60,7 +60,7 @@ namespace Slab::Math {
 
     DefinePointer(Socket)
 
-    typedef std::vector<Socket *> OutputCollection;
+    typedef Vector<Socket *> OutputCollection;
 
 }
 

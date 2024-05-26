@@ -42,7 +42,7 @@ FieldStudy::FieldStudy(int winWidth, int winHeight) /*: posSpaceVP(0, 0, winWidt
 
     //const int dim = 1;
     //const int N = 200;
-    //lineData_v = std::vector<GLfloat>(N * dim);
+    //lineData_v = Vector<GLfloat>(N * dim);
     //const float dt = 1. / N;
     //for (int i = 0; i < N; i++) {
     //    const float t = -1 + 2 * i * dt;
@@ -145,7 +145,7 @@ void FieldStudy::resize(GLuint newWindowWidth, GLuint newWindowHeight) {
     {
         const float halfQuadSize = 0.8;
 
-        std::vector<GLfloat> quad(12);
+        Vector<GLfloat> quad(12);
         quad[0] = -halfQuadSize;
         quad[1] = -halfQuadSize;
         quad[2] = 0;

@@ -19,7 +19,7 @@ namespace Slab::Graphics {
             Str label;
         };
 
-        typedef std::vector<Tick> Ticks;
+        typedef Vector<Tick> Ticks;
 
     private:
         void computeTicks(const PlottingWindow &graph);

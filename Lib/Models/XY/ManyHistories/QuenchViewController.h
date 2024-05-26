@@ -37,14 +37,14 @@ namespace Slab::Lost::ThermoOutput {
         Lost::Graph *m_t_view;
         Lost::Graph *T_t_view;
 
-        std::vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
+        Vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
-        typedef std::pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+        typedef Pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
         sf::Image helperBitmap;
-        std::vector<sf::Drawable *> drawables;
-        std::vector<ModelViewDataPair> simulations;
-        std::vector<std::vector<OutputData *>> histories;
+        Vector<sf::Drawable *> drawables;
+        Vector<ModelViewDataPair> simulations;
+        Vector<Vector<OutputData *>> histories;
     public:
         explicit QuenchViewController(int L, int MCSteps, int tau_eq, int tau_corr, int sqrtNSims);
 

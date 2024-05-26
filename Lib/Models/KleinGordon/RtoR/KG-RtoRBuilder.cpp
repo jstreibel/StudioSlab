@@ -46,8 +46,8 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGBuilder::buildOutputManager() -> OutputManager * {
-        StrUtils::UseScientificNotation = false;
-        StrUtils::RealToStringDecimalPlaces = 7;
+        UseScientificNotation = false;
+        RealToStringDecimalPlaces = 7;
 
         auto outputFileName = Common::GetPWD() + "/" + this->suggestFileName();
 

@@ -4,16 +4,16 @@
 
 #include "String.h"
 
-namespace StrUtils {
+namespace Slab {
     unsigned RealToStringDecimalPlaces = 2;
     bool UseScientificNotation = false;
 
-    void ReplaceLastOccurrence(Str& str, const Str& toReplace, const Str& replaceWith) {
+    void ReplaceLastOccurrence(Str &str, const Str &toReplace, const Str &replaceWith) {
         auto pos = str.rfind(toReplace);
-        if (pos != Str::npos)  str.replace(pos, toReplace.length(), replaceWith);
+        if (pos != Str::npos) str.replace(pos, toReplace.length(), replaceWith);
     }
 
-    Str ReplaceAll(Str str, const Str& from, const Str& to) {
+    Str ReplaceAll(Str str, const Str &from, const Str &to) {
         size_t start_pos = 0;
         while ((start_pos = str.find(from, start_pos)) != std::string::npos) {
             str.replace(start_pos, from.length(), to);
@@ -38,11 +38,10 @@ namespace StrUtils {
         return GetLines(text.c_str());
     }
 
-    StrVector Split(const Str &input, const Str &separator)
-    {
+    StrVector Split(const Str &input, const Str &separator) {
         // By Chat GPT
 
-        std::vector<std::string> tokens;
+        StrVector tokens;
         size_t start = 0, end = 0;
 
         while ((end = input.find(separator, start)) != std::string::npos) {
@@ -62,34 +61,34 @@ namespace StrUtils {
         return tokens;
 
     }
+
+    Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {
+        auto base = useScientificNotation ? std::scientific : std::fixed;
+        std::ostringstream out;
+        out.precision(decimalPlaces);
+        out << base << a_value;
+
+        return out.str();
+    }
+
+    Str ToStr(const double &a_value) {
+        return ToStr(a_value, RealToStringDecimalPlaces, UseScientificNotation);
+    }
+
+    Str ToStr(bool value) { return value ? "True" : "False"; }
+
+    Str ToStr(const Str &str) {
+        // return Str("\"") + str + Str("\"");
+        return str;
+    }
+
+    Str ToStr(const StrVector &strVector) {
+        Str val;
+
+        for (auto &s: strVector) val += s + ";";
+
+        return val;
+    }
+
+
 }
-
-Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {
-    auto base = useScientificNotation ? std::scientific : std::fixed;
-    std::ostringstream out;
-    out.precision(decimalPlaces);
-    out << base << a_value;
-
-    return out.str();
-}
-
-Str ToStr(const double &a_value) {
-    return ToStr(a_value, StrUtils::RealToStringDecimalPlaces, StrUtils::UseScientificNotation);
-}
-
-Str ToStr(bool value)       { return value ? "True" : "False"; }
-
-Str ToStr(const Str &str)   {
-    // return Str("\"") + str + Str("\"");
-    return str;
-}
-
-Str ToStr(const StrVector& strVector){
-    Str val;
-
-    for(auto &s : strVector) val += s + ";";
-
-    return val;
-}
-
-

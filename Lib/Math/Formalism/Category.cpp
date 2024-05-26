@@ -4,6 +4,12 @@
 
 #include "Category.h"
 
-std::ostream &operator<<(std::ostream &os, const Category &obj) {
-    return os << obj.ToString();
+
+namespace Slab::Math {
+
+    std::ostream &operator<<(std::ostream &os, const Category &obj) {
+        return os << obj.ToString();
+    }
+
+
 }

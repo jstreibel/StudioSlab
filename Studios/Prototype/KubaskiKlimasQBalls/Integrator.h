@@ -10,7 +10,7 @@
 
 
 typedef long double Real;
-typedef std::vector<Real> Funcs;
+typedef Vector<Real> Funcs;
 
 
 struct Output {

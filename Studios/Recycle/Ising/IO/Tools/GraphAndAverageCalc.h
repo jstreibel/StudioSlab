@@ -9,8 +9,8 @@
 
 namespace ThermoOutput {
 
-    typedef std::pair<double,double> DoublePair;
-    typedef std::vector<std::pair<DoublePair ,DoublePair>> AveragesHistory;
+    typedef Pair<double,double> DoublePair;
+    typedef Vector<Pair<DoublePair ,DoublePair>> AveragesHistory;
 
     class GraphAndAverageCalc : public Graph {
 

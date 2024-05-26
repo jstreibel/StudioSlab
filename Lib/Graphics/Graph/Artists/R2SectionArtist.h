@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
     class R2SectionArtist : public Artist {
         R2toR::Function_ptr function2D;
-        std::vector<std::pair<RtoR2::ParametricCurve_ptr, PlotStyle>> sections;
+        Vector<Pair<RtoR2::ParametricCurve_ptr, PlotStyle>> sections;
         Resolution samples=1024;
 
     public:

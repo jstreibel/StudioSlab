@@ -126,7 +126,7 @@ void IsingMonteCarloCalculator::Simulate(int MCSteps, int transientSize) {
     const auto Nd = double(N);
 
 #if OUTPUT_MODE IS CONSOLE_OUTPUT
-    std::vector<Real> e, m, e2, m2, m4, Cv, Xi;
+    Vector<Real> e, m, e2, m2, m4, Cv, Xi;
 
     for (int mcStep = 0; mcStep<MCSteps; ++mcStep) {
         if(mcStep < transientSize) continue; // descarta o transiente

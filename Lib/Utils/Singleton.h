@@ -10,36 +10,39 @@
 #include "Types.h"
 // #include "Core/Tools/Log.h"
 
-template <typename T>
-class Singleton {
-protected:
-    const Str name;
-    static T* singleInstance;
+namespace Slab {
 
-    explicit Singleton(Str name) : name(std::move(name)) {
-         // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+    template<typename T>
+    class Singleton {
+    protected:
+        const Str name;
+        static T *singleInstance;
+
+        explicit Singleton(Str name) : name(std::move(name)) {
+            // Log::Info("Singleton \"") << name << "\" has been instantiated." << Log::Flush;
+        };
+
+        virtual ~Singleton() = default;
+
+    public:
+        Singleton(const Singleton &) = delete;
+
+        static T &GetInstance() {
+            if (Singleton::singleInstance == nullptr) singleInstance = new T();
+
+            return *singleInstance;
+        }
+
+        static void Terminate() {
+            delete singleInstance;
+            singleInstance = nullptr;
+        }
+
+        Singleton &operator=(const Singleton &) = delete;
     };
-    virtual ~Singleton() = default;
 
-public:
-    Singleton(const Singleton&) = delete;
-
-    static T& GetInstance() {
-        if(Singleton::singleInstance == nullptr) singleInstance = new T();
-
-        return *singleInstance;
-    }
-
-    static void Terminate() {
-        delete singleInstance;
-        singleInstance = nullptr;
-    }
-
-    Singleton& operator=(const Singleton&) = delete;
-};
-
-template <typename T>
-T* Singleton<T>::singleInstance = nullptr;
+    template<typename T>
+    T *Singleton<T>::singleInstance = nullptr;
 
 /*
 template <typename T>
@@ -68,4 +71,7 @@ public:
 
 };
 */
+
+}
+
 #endif //STUDIOSLAB_SINGLETON_H

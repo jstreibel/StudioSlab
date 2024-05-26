@@ -7,7 +7,9 @@
 
 #include "Types.h"
 
-extern const char *glyphsToLoad;
+namespace Slab {
+
+    extern const char *glyphsToLoad;
 
 /**
  * Calculates the utf8 size (in bytes) of a character
@@ -16,10 +18,12 @@ extern const char *glyphsToLoad;
  * if character is a sequence character, and negative value
  * if unknown.
  */
-int utf8_characterByteSize(const char *character);
+    int utf8_characterByteSize(const char *character);
 
-const Str &mapToSuperscript(char c);
+    const Str &mapToSuperscript(char c);
 
-Str &elegantScientific(Str &stringScientificValue);
+    Str &elegantScientific(Str &stringScientificValue);
+
+}
 
 #endif //STUDIOSLAB_ENCODINGUTILS_H

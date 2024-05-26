@@ -8,7 +8,7 @@
 #include "Utils/Types.h"
 
 namespace Slab::Math {
-    typedef std::vector<char> ByteData;
+    typedef Vector<char> ByteData;
 
     template<typename TYPE>
     union ByteDataConvertHelperUnion {

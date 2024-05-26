@@ -20,7 +20,7 @@ namespace Slab::Graphics {
                       PlotStyle gridStyle,
                       std::shared_ptr <Graphics::Writer> labelsWriter,
                       std::shared_ptr <Graphics::Writer> ticksWriter,
-                      std::vector <PlotStyle> plotStyles);
+                      Vector <PlotStyle> plotStyles);
 
         Color graphBackground;
         Color graphNumbersColor;
@@ -33,7 +33,7 @@ namespace Slab::Graphics {
         std::shared_ptr <Graphics::Writer> labelsWriter;
         std::shared_ptr <Graphics::Writer> ticksWriter;
 
-        std::vector <PlotStyle> funcPlotStyles;
+        Vector <PlotStyle> funcPlotStyles;
 
         Resolution vTickHeightinPixels;
         Resolution vAxisPaddingInPixels;

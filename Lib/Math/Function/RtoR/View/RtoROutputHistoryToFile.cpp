@@ -39,7 +39,7 @@ namespace Slab::Math {
         if (integrationIsFinished) {
             _printHeaderToFile();
 
-            auto shouldNotDump = !lastData.hasValidData();
+            auto shouldNotDump = !lastPacket.hasValidData();
             if (shouldNotDump) {
                 file.close();
                 return;

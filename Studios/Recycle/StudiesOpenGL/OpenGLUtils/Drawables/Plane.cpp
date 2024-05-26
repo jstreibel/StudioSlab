@@ -7,7 +7,7 @@
 #include "Plane.h"
 
 Plane::Plane() {
-    std::vector<VertexType> verts = { {1, 1}, {-1, 1}, {-1, -1}, {1, -1}, {1, 1}};
+    Vector<VertexType> verts = { {1, 1}, {-1, 1}, {-1, -1}, {1, -1}, {1, 1}};
     this->verts = verts;
 
     glGenVertexArrays(1, &VAO);

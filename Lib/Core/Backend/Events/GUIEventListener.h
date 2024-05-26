@@ -15,7 +15,7 @@
 namespace Slab::Core {
 
     class GUIEventListener {
-        std::vector<GUIEventListener*> unmanagedDelegateResponders;
+        Vector<GUIEventListener*> unmanagedDelegateResponders;
 
     protected:
         void addResponder(GUIEventListener *responder);

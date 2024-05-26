@@ -14,8 +14,8 @@ namespace Slab::Core {
 
         class TaskManagerModule : public Module {
         private:
-            std::vector<Task_ptr> tasks;
-            std::vector<std::thread> threads;
+            Vector<Task_ptr> tasks;
+            Vector<std::thread> threads;
             std::mutex mtx;
 
         public:

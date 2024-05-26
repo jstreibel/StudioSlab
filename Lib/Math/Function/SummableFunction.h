@@ -54,7 +54,7 @@ namespace Slab::Math::Base {
         }
 
     private:
-        std::vector<MyBase *> funcs;
+        Vector<MyBase *> funcs;
     };
 
     template<class InCategory, class OutCategory>

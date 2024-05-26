@@ -14,7 +14,7 @@ namespace Slab::Math {
 
     typedef Real2D Point2D;
 
-    typedef std::vector<Point2D> Point2DVec;
+    typedef Vector<Point2D> Point2DVec;
 }
 
 

@@ -12,8 +12,8 @@ VertexBuffer::VertexBuffer() {
 }
 
 
-void VertexBuffer::setData(const std::vector<GLfloat> &vertData, GLenum primitive, GLuint dim) {
-    // TODO: typedef std::vector<GLfloat> pra FloatData, em um arquivo dataTypes.h e cpp
+void VertexBuffer::setData(const Vector<GLfloat> &vertData, GLenum primitive, GLuint dim) {
+    // TODO: typedef Vector<GLfloat> pra FloatData, em um arquivo dataTypes.h e cpp
     _bind();
 
     this->dim = dim;

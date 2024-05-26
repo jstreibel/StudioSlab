@@ -15,7 +15,7 @@ namespace Modes::DatabaseViewer {
         Graphics::GUIWindow guiWindow;
         WindowRow topRow;
 
-        std::vector<DBParser::Ptr> dbParsers;
+        Vector<DBParser::Ptr> dbParsers;
         Graphics::FlatFieldDisplay allDataDisplay;
         Graphics::FlatFieldDisplay fullParticularHistoryDisplay;
 
@@ -27,8 +27,8 @@ namespace Modes::DatabaseViewer {
         Math::PointSet underXHair;
 
         typedef std::shared_ptr<R2toR::DiscreteFunction_CPU> FullField_ptr;
-        std::vector<FullField_ptr> fullFields;
-        std::vector<Utils::MaxInfo> maxValues;
+        Vector<FullField_ptr> fullFields;
+        Vector<Utils::MaxInfo> maxValues;
 
         std::map<Str, std::shared_ptr<R2toR::DiscreteFunction_CPU>> fullHistoriesMap;
 

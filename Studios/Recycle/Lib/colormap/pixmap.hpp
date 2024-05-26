@@ -29,7 +29,7 @@ namespace colormap {
     template <typename ForwardIterator>
     struct pixmap {
         using color_type = typename std::iterator_traits<ForwardIterator>::value_type;
-        using shape_type = std::pair<size_t, size_t>;
+        using shape_type = Pair<size_t, size_t>;
 
         pixmap (ForwardIterator begin, shape_type shape)
             : begin(begin), shape(shape) {};

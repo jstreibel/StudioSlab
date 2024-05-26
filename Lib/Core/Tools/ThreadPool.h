@@ -5,33 +5,33 @@
 #ifndef STUDIOSLAB_THREADPOOL_H
 #define STUDIOSLAB_THREADPOOL_H
 
-#include <vector>
 #include <queue>
 #include <thread>
 #include <mutex>
 #include <condition_variable>
 #include <functional>
 
+#include "Utils/Arrays.h"
+#include "Utils/Threads.h"
+
 namespace Slab::Core {
-    namespace Tools {
 
-        class ThreadPool {
-            std::vector<std::thread> workers;
-            std::queue<std::function<void()>> tasks;
-            std::mutex queueMutex;
-            std::condition_variable condition;
-            bool terminate = false;
+    class ThreadPool {
+        Vector<std::thread> workers;
+        std::queue<std::function<void()>> tasks;
+        Mutex queueMutex;
+        std::condition_variable condition;
+        bool terminate = false;
 
-        public:
-            ThreadPool(size_t numThreads);
+    public:
+        ThreadPool(size_t numThreads);
 
-            ~ThreadPool();
+        ~ThreadPool();
 
-            void enqueue(std::function<void()> task);
+        void enqueue(std::function<void()> task);
 
-        };
+    };
 
-    } // Core
-} // Tools
+} // Slab::Core
 
 #endif //STUDIOSLAB_THREADPOOL_H

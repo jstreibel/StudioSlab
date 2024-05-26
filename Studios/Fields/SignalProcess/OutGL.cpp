@@ -13,7 +13,7 @@
 #include <Maps/RtoR/Model/RtoRDiscreteFunctionCPU.h>
 
 extern size_t lastBufferDumpedSamplesCount;
-extern std::vector<Real> damps;
+extern Vector<Real> damps;
 extern Real jackProbeLocation;
 extern Real t0;
 Real __t=0;
@@ -132,14 +132,14 @@ void RtoR::Signal::OutGL::handleOutput(const OutputPacket &packet) {
 
 #include <SOIL/SOIL.h>
 
-void renderMatrix(const std::vector<std::vector<Real>>& matrix)
+void renderMatrix(const Vector<Vector<Real>>& matrix)
 {
     // Get the size of the matrix
     int width = matrix.size();
     int height = matrix[0].size();
 
     // Convert the matrix to an array of floats
-    std::vector<float> data(width * height * 4, 0.0f);
+    Vector<float> data(width * height * 4, 0.0f);
     for (int i = 0; i < width; i++) {
         for (int j = 0; j < height; j++) {
             int index = (i * height + j) * 4;
@@ -211,7 +211,7 @@ void RtoR::Signal::OutGL::draw() {
     {
         static RtoR::DiscreteFunction_CPU *func = nullptr;
 
-        std::vector<float> rec_f = JackServer::GetInstance()->getRecording();
+        Vector<float> rec_f = JackServer::GetInstance()->getRecording();
         RealArray rec(rec_f.begin(), rec_f.end());
         auto recTime =  rec.size()/48000.;
 
@@ -284,7 +284,7 @@ void RtoR::Signal::OutGL::draw() {
 
             for(auto &f : F) f = RandUtils::random(0.25,.7);
 
-            std::vector<float> in(F.size());
+            Vector<float> in(F.size());
             for(auto i=0; i<func.N; i++) in[i] = F[i];
 
             {
@@ -368,10 +368,10 @@ bool RtoR::Signal::OutGL::notifyKeyboard(unsigned char key, int x, int y) {
     if(key == 13) t0 = lastData.getSimTime();
 }
 
-std::vector<std::vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
+Vector<Vector<Real>> RtoR::Signal::OutGL::getHistoryMatrixData() {
     auto M = history.size();
 
-    std::vector<std::vector<Real>> outputData(M);
+    Vector<Vector<Real>> outputData(M);
     for (int i=0; i<M; ++i) outputData[i] = history[i]->getSpace().getHostData();
 
     return outputData;

@@ -54,7 +54,7 @@ namespace Slab::Lost::ThermoOutput {
         int MCSteps;
         int transientSize;
         int currStep = 0;
-        std::vector<ThermoOutput::OutputData> history;
+        Vector<ThermoOutput::OutputData> history;
 
         nk_context *nkContext = nullptr;
         sf::RenderWindow *window = nullptr;

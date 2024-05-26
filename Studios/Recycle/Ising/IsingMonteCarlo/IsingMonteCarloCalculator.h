@@ -11,7 +11,7 @@
 
 #include "../COMPILE_CONFIG.h"
 
-typedef std::vector<Real> RealVector;
+typedef Vector<Real> RealVector;
 
 class IsingMonteCarloCalculator {
 

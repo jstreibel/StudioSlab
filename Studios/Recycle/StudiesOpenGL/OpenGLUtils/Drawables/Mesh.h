@@ -22,8 +22,8 @@ struct Vertex{
 
 class Mesh : public Drawable {
 public:
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+    Vector<Vertex> vertices;
+    Vector<unsigned int> indices;
 
     GLuint VAO;
 

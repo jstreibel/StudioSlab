@@ -12,7 +12,7 @@
 
 namespace Slab::Graphics {
 
-    typedef std::vector<Window *> WindowContainer;
+    typedef Vector<Window *> WindowContainer;
 
     class WindowTreeBuilder;
 

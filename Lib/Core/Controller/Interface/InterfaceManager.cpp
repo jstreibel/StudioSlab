@@ -44,8 +44,8 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto InterfaceManager::getInterfaces() -> std::vector<Pointer<const Interface>> {
-        std::vector<Pointer<const Interface>> V(interfaces.size());
+    auto InterfaceManager::getInterfaces() -> Vector<Pointer<const Interface>> {
+        Vector<Pointer<const Interface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
@@ -127,8 +127,8 @@ namespace Slab::Core {
         return *it;
     }
 
-    auto InterfaceManager::getParametersValues(const StrVector &params) const -> std::vector<std::pair<Str, Str>> {
-        std::vector<std::pair<Str, Str>> values;
+    auto InterfaceManager::getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
+        Vector<Pair<Str, Str>> values;
 
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();

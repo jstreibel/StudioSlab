@@ -14,7 +14,7 @@
 namespace Slab::Core {
     class EventTranslator {
     protected:
-        std::vector<GUIEventListener_ptr> guiListeners;
+        Vector<GUIEventListener_ptr> guiListeners;
 
     public:
         bool addGUIEventListener(const Core::GUIEventListener_ptr& guiEventListener);

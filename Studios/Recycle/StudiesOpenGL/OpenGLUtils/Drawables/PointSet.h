@@ -13,7 +13,7 @@
 #include <vector>
 
 class PointSet : public Drawable {
-    std::vector<glm::vec3> pointSet;
+    Vector<glm::vec3> pointSet;
     GLuint VAO; GLboolean initialized = false;
     GLuint begin, end;
 public:
@@ -27,9 +27,9 @@ public:
 
 public:
     void draw() override;
-    void initialize(const std::vector<glm::vec3> &points);
+    void initialize(const Vector<glm::vec3> &points);
     unsigned getSize() const;
-    const std::vector<glm::vec3> &getPointSet();
+    const Vector<glm::vec3> &getPointSet();
 };
 
 

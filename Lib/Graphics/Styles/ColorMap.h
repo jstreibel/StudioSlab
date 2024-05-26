@@ -25,14 +25,14 @@ namespace Slab::Graphics {
         };
 
     private:
-        std::vector<Color> colors;
+        Vector<Color> colors;
         Color clipped, saturated;
         Str name;
         ColorMapType type;
 
     public:
         ColorMap() = default;
-        ColorMap(Str name, ColorMapType, std::vector<Color> colorSeq,
+        ColorMap(Str name, ColorMapType, Vector<Color> colorSeq,
                  Color clipped=Nil,
                  Color saturated=Nil);
         ColorMap(const ColorMap &colorMap);

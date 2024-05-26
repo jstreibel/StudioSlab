@@ -21,7 +21,7 @@ void Langevin::apply_bc(MoleculContainer &mols)
     }
 }
 
-double Langevin::computeEnergy(const std::vector<Point2D> &v_q, std::vector<Point2D> &v_p)
+double Langevin::computeEnergy(const Vector<Point2D> &v_q, Vector<Point2D> &v_p)
 {
     double K = .0;
     for(auto &p : v_p)

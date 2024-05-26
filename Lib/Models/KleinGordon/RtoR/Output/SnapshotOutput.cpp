@@ -46,8 +46,8 @@ namespace Slab::Models::KGRtoR {
 
         fix SEPARATOR = "\n<<<<-oOo->>>>\n";
 
-        StrUtils::UseScientificNotation = false;
-        StrUtils::RealToStringDecimalPlaces = 7;
+        UseScientificNotation = false;
+        RealToStringDecimalPlaces = 7;
         outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << "   " << SEPARATOR;
 
         auto f = filterData(theVeryLastOutputInformation);

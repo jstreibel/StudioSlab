@@ -362,7 +362,7 @@ namespace ThermoOutput {
 
             myfile.open(fileLoc + fileName + ".dat");
             myfile << "# History output\n# t    T(t)    h(t)    e(t)    m(t)\n";
-            std::pair<double, double> T, h, e, m;
+            Pair<double, double> T, h, e, m;
             for (auto data : boost::combine(T_t, h_t, en_t, mag_t)) {
                 boost::tie(T, h, e, m) = data;
                 const auto t = T.first; // ou h.first ou e.first ou m.first. Eles devem (!) todos retornar a mesma coisa.
@@ -379,7 +379,7 @@ namespace ThermoOutput {
 
             myfile.open(fileLoc + fileName + "-averages.dat");
             myfile << "# History output\n# t    <e>(t)    <e>(t)+sigma(t)    <e>(t)-sigma(t)    <m>(t)    <m>(t)+sigma(t)    <m>(t)-sigma(t)\n";
-            std::pair<std::pair<double, double>, std::pair<double, double>> mag, en;
+            Pair<Pair<double, double>, Pair<double, double>> mag, en;
             for (auto data : boost::combine(magAv_t, enAv_t)) {
                 boost::tie(mag, en) = data;
                 const auto t = mag.first.first;
@@ -434,7 +434,7 @@ namespace ThermoOutput {
         std::ofstream myfile;
         myfile.open (fileLoc + fileName.str() + ".dat");
         myfile << "# History output\n# T    <e>(T)    <m>(t)    Cv(T)    chi(T)\n";
-        std::pair<double,double> mag, e, Cv, chi;
+        Pair<double,double> mag, e, Cv, chi;
         for(auto data : boost::combine(mag_T, en_T, Cv_T, chi_T)) {
             boost::tie(mag, e, Cv, chi) = data;
             const auto T = mag.first; // ou e.first ou Cv.first ou chi.first. Eles devem (!) todos retornar a mesma coisa.
@@ -487,7 +487,7 @@ namespace ThermoOutput {
         std::ofstream myfile;
         myfile.open (fileLoc + fileName.str() + ".dat");
         myfile << "# History output\n# h    <m>(h) \n";
-        std::pair<double,double> mag, e, Cv, chi;
+        Pair<double,double> mag, e, Cv, chi;
         for(auto mag : mag_h) myfile << mag.first << " " << mag.second << "\n";
         myfile.close();
 

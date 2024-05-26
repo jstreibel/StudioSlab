@@ -304,7 +304,7 @@ namespace Modes::DatabaseViewer {
 
         for (auto &dbParser: dbParsers) {
             auto fullField = dbParser->buildFullField();
-            auto dbRootFolder = StrUtils::ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
+            auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
 
             allDataDisplay.addFunction(fullField, dbRootFolder);
             fullFields.emplace_back(fullField);
@@ -319,11 +319,11 @@ namespace Modes::DatabaseViewer {
         auto index = index_XHair-1;
         if(index<0 || index>=fSet.size()) return;
 
-        std::vector files(fSet.begin(), fSet.end());
+        Vector files(fSet.begin(), fSet.end());
         auto filename = files[index].second;
 
-        StrUtils::ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
-        StrUtils::ReplaceLastOccurrence(filename, "snapshots/", "./");
+        ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
+        ReplaceLastOccurrence(filename, "snapshots/", "./");
 
         Log::Info() << "Find history" << Log::Flush;
         auto fieldHistory = fullHistoriesMap[filename];
@@ -334,9 +334,9 @@ namespace Modes::DatabaseViewer {
             fullHistoriesMap[filename] = fieldHistory;
         }
         Log::Info() << "Set function" << Log::Flush;
-        StrUtils::ReplaceAll(filename, ".oscb", "");
-        auto omegaStr = StrUtils::Split(filename, " ").back();
-        omegaStr = StrUtils::Split(omegaStr, "=")[1];
+        ReplaceAll(filename, ".oscb", "");
+        auto omegaStr = Split(filename, " ").back();
+        omegaStr = Split(omegaStr, "=")[1];
         ;
         fullParticularHistoryDisplay.addFunction(fieldHistory, Str("ω=") + omegaStr);
 

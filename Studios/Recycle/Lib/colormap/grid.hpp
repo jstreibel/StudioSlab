@@ -224,7 +224,7 @@ private:
 
 template <major_order order, typename T>
 struct grid<1, order, T> {
-    using range_t = std::pair<T, T>;
+    using range_t = Pair<T, T>;
     grid (size_t N, range_t range)
         : N(N), begin_(0, range, N) {
         if (N < 2)

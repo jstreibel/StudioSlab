@@ -30,7 +30,7 @@ Point2D operator + (const Point2D a, const Point2D b);
 Point2D operator - (const Point2D a, const Point2D b);
 Point2D operator * (const double a, const Point2D p);
 
-typedef std::vector<Point2D> PointContainer;
+typedef Vector<Point2D> PointContainer;
 
 struct Molecul {
     Molecul(Point2D q, Point2D p)
@@ -42,7 +42,7 @@ struct Molecul {
 Molecul operator*(const double &a, const Molecul &m);
 Molecul operator+(const Molecul &a, const Molecul &b);
 
-typedef std::vector<Molecul> MoleculContainer;
+typedef Vector<Molecul> MoleculContainer;
 
 class ConsoleOutput {
 public:
@@ -68,11 +68,11 @@ public:
 #endif
 #endif
 
-typedef std::vector<double> VecDoub;
+typedef Vector<double> VecDoub;
 typedef VecDoub VecDoub_O;
 typedef const VecDoub VecDoub_I;
 typedef VecDoub VecDoub_IO;
-typedef std::vector<std::vector<double> > MatDoub;
+typedef Vector<Vector<double> > MatDoub;
 
 typedef int Int;
 typedef double Doub;

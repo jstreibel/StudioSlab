@@ -15,7 +15,7 @@
 namespace Slab::Graphics {
 
     class GUIWindow : public Window {
-        std::vector<std::pair<Str, Color>> stats;
+        Vector<Pair<Str, Color>> stats;
 
     public:
         explicit GUIWindow();

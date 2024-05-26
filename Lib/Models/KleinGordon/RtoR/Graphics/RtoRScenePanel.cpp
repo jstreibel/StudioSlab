@@ -3,8 +3,8 @@
 //
 
 #include "RtoRScenePanel.h"
-#include "Graphics/Graph3D/TestActor.h"
-#include "Graphics/Graph3D/R2toRFunctionActor.h"
+#include "Graphics/Graph3D/Actors/TestActor.h"
+#include "Graphics/Graph3D/Actors/R2toRFunctionActor.h"
 
 namespace Slab::Models::KGRtoR {
     RtoRScenePanel::RtoRScenePanel(const NumericConfig &params,

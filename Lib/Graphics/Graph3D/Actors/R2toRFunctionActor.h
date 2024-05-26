@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_R2TORFUNCTIONACTOR_H
 #define STUDIOSLAB_R2TORFUNCTIONACTOR_H
 
-#include "Actor.h"
+#include "Graphics/Graph3D/Actor.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"

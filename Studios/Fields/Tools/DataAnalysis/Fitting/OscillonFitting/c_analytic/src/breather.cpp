@@ -1,7 +1,7 @@
 #include "breather.h"
 #include "RtoR/Model/FunctionsCollection/AnalyticOscillon.cpp"
 
-std::vector<AnalyticOscillon*> breathers;
+Vector<AnalyticOscillon*> breathers;
 
 int newBreather(int N, double xMin, double xMax, bool mirrored, bool anti_sym){
 

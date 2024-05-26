@@ -12,8 +12,8 @@
 #define CUTOFF_RADIUS 4
 
 // Used for Verlet
-typedef std::pair<Graphics::PointContainer &, Graphics::PointContainer &> State;
-typedef std::pair<Graphics::PointContainer, Graphics::PointContainer> VerletMoleculeContainer;
+typedef Pair<Graphics::PointContainer &, Graphics::PointContainer &> State;
+typedef Pair<Graphics::PointContainer, Graphics::PointContainer> VerletMoleculeContainer;
 
 // Used for RK4
 struct Molecule {
@@ -26,7 +26,7 @@ struct Molecule {
 Molecule operator*(const Real &a, const Molecule &m);
 Molecule operator+(const Molecule &a, const Molecule &b);
 
-typedef std::vector<Molecule> MoleculeContainer;
+typedef Vector<Molecule> MoleculeContainer;
 
 
 #endif //STUDIOSLAB_PARTICLE_H

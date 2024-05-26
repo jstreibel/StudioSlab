@@ -19,11 +19,11 @@
 #endif
 #endif
 
-typedef std::vector<double> VecDoub;
+typedef Vector<double> VecDoub;
 typedef VecDoub VecDoub_O;
 typedef const VecDoub VecDoub_I;
 typedef VecDoub VecDoub_IO;
-typedef std::vector<std::vector<double> > MatDoub;
+typedef Vector<Vector<double> > MatDoub;
 
 typedef int Int;
 typedef double Doub;

@@ -52,7 +52,7 @@ namespace Slab::Graphics {
     std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
 
     ColorMap::ColorMap(Str name, ColorMapType colorMapType,
-                       std::vector<Color> colorSeq,
+                       Vector<Color> colorSeq,
                        Color clipped,
                        Color saturated)
             : name(std::move(name))
@@ -97,7 +97,7 @@ namespace Slab::Graphics {
 
 
     auto ColorMap::permute() const -> ColorMap {
-        std::vector<Color> newColors;
+        Vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.permute());
 
@@ -105,7 +105,7 @@ namespace Slab::Graphics {
     }
 
     auto ColorMap::bgr() const -> ColorMap {
-        std::vector<Color> newColors;
+        Vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.permute(true));
 
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
     }
 
     auto ColorMap::inverse() const -> ColorMap {
-        std::vector<Color> newColors;
+        Vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.inverse());
 
@@ -121,7 +121,7 @@ namespace Slab::Graphics {
     }
 
     auto ColorMap::reverse() const -> ColorMap {
-        std::vector<Color> newColors;
+        Vector<Color> newColors;
 
         for(int i=(int)colors.size()-1; i>=0; --i)
             newColors.push_back(colors[i]);

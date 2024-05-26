@@ -70,7 +70,7 @@ auto R2toRInputShockwaveAt_t0::getGeneralDescription() const -> String {
     return String("2-d shockwave starting at arbitrary t0.");
 }
 
-auto R2toRInputShockwaveAt_t0::getOutputs(bool usingOpenGLBackend) const -> std::vector<OutputChannel *> {
+auto R2toRInputShockwaveAt_t0::getOutputs(bool usingOpenGLBackend) const -> Vector<OutputChannel *> {
     auto outputs = myOutputs;
     if (usingOpenGLBackend) { outputs.push_back(outGL); }
 

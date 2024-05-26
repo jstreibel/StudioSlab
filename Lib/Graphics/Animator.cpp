@@ -69,7 +69,7 @@ namespace Slab::Core {
         return Animator::Instance().animations[const_cast<double*>(&variable)];
     }
 
-    auto Animator::GetBezierParams() -> std::pair<double, double> {
+    auto Animator::GetBezierParams() -> Pair<double, double> {
         auto &anim = Animator::Instance();
         return {anim.p1, anim.p2};
     }

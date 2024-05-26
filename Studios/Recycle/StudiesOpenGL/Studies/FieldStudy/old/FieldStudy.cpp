@@ -18,7 +18,7 @@ FieldStudy_old::FieldStudy_old(int winWidth, int winHeight) : posSpaceVP(0, 0, w
 
     const int dim = 1;
     const int N = 200;
-    std::vector<GLfloat> lineData((N+1) * dim);
+    Vector<GLfloat> lineData((N+1) * dim);
     const float dt = 1. / N;
     for (int i = 0; i <= N; i++) {
         const float t = -1 + 2 * i * dt;

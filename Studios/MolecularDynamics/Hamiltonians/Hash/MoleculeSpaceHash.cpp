@@ -28,7 +28,7 @@ namespace MolecularDynamics {
         }
     }
 
-    std::vector<FixedSizeMoleculeContainer::VerletPointTriple *> MoleculeSpaceHash::gather(int i, int j) {
+    Vector<FixedSizeMoleculeContainer::VerletPointTriple *> MoleculeSpaceHash::gather(int i, int j) {
         int E = i + 1, S = j + 1;
         if (i == n - 1) E = 0;
         if (j == n - 1) S = 0;
@@ -38,7 +38,7 @@ namespace MolecularDynamics {
                                                    get(E, S),
                                                    get(E, j)};
 
-        std::vector<FixedSizeMoleculeContainer::VerletPointTriple *> a;
+        Vector<FixedSizeMoleculeContainer::VerletPointTriple *> a;
         for (auto &container: everybody) {
             for (auto k = 0; k < container.getOccupation(); ++k) {
                 auto &triple = container.getPair(k);

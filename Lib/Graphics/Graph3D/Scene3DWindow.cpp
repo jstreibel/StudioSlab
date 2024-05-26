@@ -5,7 +5,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include "Scene3DWindow.h"
-#include "R2toRFunctionActor.h"
+#include "Graphics/Graph3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
 #include "imgui.h"
 

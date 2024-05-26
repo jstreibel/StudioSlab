@@ -15,7 +15,7 @@ namespace Slab::Math {
 
         ak = {a0};
 
-        std::vector<Real> &xk = this->xk;
+        Vector<Real> &xk = this->xk;
         auto bk = [&xk](const int k) {
             auto val = 1.;
 

@@ -140,9 +140,9 @@ public:
 	}
 
 private:
-	std::vector<floatt> timeStamps;
-	std::vector<Field_CPU*> inputData;
-	std::vector<AnalyticBreather*> analyticBreathers;
+	Vector<floatt> timeStamps;
+	Vector<Field_CPU*> inputData;
+	Vector<AnalyticBreather*> analyticBreathers;
 };
 
 std::map<int, Fitting*> fits;

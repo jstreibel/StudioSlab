@@ -16,7 +16,7 @@
 
 namespace Slab::Math {
 
-    typedef std::vector<Real> StateType;
+    typedef Vector<Real> StateType;
 
     class XYNetwork {
         StateType ThetaField;
@@ -84,7 +84,7 @@ namespace Slab::Math {
         void rotate(int i, int j, Real angle);
 
         void operator=(StateType S);
-        //void operator = (const std::vector<long double> S);
+        //void operator = (const Vector<long double> S);
 
     };
 

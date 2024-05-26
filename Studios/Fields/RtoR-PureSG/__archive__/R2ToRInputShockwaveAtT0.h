@@ -20,13 +20,13 @@ namespace Slab::Math::R2toR {
 
         void YoureTheChosenOne(CLVariablesMap &vm) override;
 
-        auto getOutputs(bool usingOpenGLBackend) const -> std::vector<OutputChannel *> override;
+        auto getOutputs(bool usingOpenGLBackend) const -> Vector<OutputChannel *> override;
 
         auto getGeneralDescription() const -> std::string override;
 
     private:
         //Base::OutputOpenGL *outGL;
-        std::vector<OutputChannel *> myOutputs;
+        Vector<OutputChannel *> myOutputs;
     };
 
 }

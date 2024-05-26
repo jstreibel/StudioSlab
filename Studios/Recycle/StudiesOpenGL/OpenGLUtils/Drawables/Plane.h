@@ -12,7 +12,7 @@
 
 class Plane : public Drawable {
     typedef glm::vec2 VertexType;
-    std::vector<VertexType> verts;
+    Vector<VertexType> verts;
     GLuint VAO;
 public:
     Plane();

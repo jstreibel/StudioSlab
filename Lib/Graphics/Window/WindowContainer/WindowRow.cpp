@@ -86,7 +86,7 @@ namespace Slab::Graphics {
 
         if (m == 0) return;
 
-        std::vector<int> computedWidths(m, (int) (getw() / m));    // "if(freeWidths==m)"
+        Vector<int> computedWidths(m, (int) (getw() / m));    // "if(freeWidths==m)"
         auto widths = _widthsVector();
 
         auto freeWidths = CountLessThanZero(widths);
@@ -107,7 +107,7 @@ namespace Slab::Graphics {
             }
         }
 
-        std::vector<int> computed_xPositions(m);
+        Vector<int> computed_xPositions(m);
         auto x = this->getx();
         for (int i = 0; i < m; ++i) {
             computed_xPositions[i] = x;

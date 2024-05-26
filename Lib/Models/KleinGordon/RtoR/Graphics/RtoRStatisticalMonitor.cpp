@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
     RtoRStatisticsPanel::RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian,
                                              Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
-                                  "panel for statistic analysis of simulation data"), Δt(params.gett() * 0.1),
+                                  "panel for statistic analysis of simulation data"),
               hamiltonian(hamiltonian) {
 
         addWindow(Slab::DummyPointer(mCorrelationGraph));
@@ -131,8 +131,11 @@ namespace Slab::Models::KGRtoR {
 
         CHECK_GL_ERRORS(errorCount++)
 
+        updateEnergyData();
+
+        CHECK_GL_ERRORS(errorCount++)
+
         // *************************** Histograms *****************************
-        if(1)
         {
             RtoR::Histogram histogram;
             static auto nbins = 200;
@@ -168,31 +171,6 @@ namespace Slab::Models::KGRtoR {
             guiWindow.addVolatileStat(name + " = " + p.second);
         }
 
-        auto U = hamiltonian.getTotalEnergy();
-        auto K = hamiltonian.getTotalKineticEnergy();
-        auto W = hamiltonian.getTotalGradientEnergy();
-        auto V = hamiltonian.getTotalPotentialEnergy();
-
-        std::ostringstream ss;
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-        guiWindow.addVolatileStat("<\\br>");
-        guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
-
-        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
-        fix decimalPlaces = 3;
-        fix L = params.getL();
-        guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
-                                  (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
-                                  (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
-                                  (style++)->lineColor.permute());
-        // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
-
         RtoRPanel::draw();
     }
 
@@ -200,7 +178,7 @@ namespace Slab::Models::KGRtoR {
         guiWindow.begin();
 
         if (ImGui::CollapsingHeader("Statistical")) {
-            float transient = transientHint;
+            auto transient = (float)transientHint;
             if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params.gett())) {
                 setTransientHint((Real) transient);
             }
@@ -209,10 +187,14 @@ namespace Slab::Models::KGRtoR {
         guiWindow.end();
     }
 
-    void RtoRStatisticsPanel::handleOutput(const OutputPacket &packet) {
-        RtoRPanel::handleOutput(packet);
+    void RtoRStatisticsPanel::setTransientHint(Real value) {
+        transientHint = value;
+    }
 
+    void RtoRStatisticsPanel::updateEnergyData() {
         auto L = params.getL();
+
+        fix t = lastPacket.getSimTime();
 
         auto U = hamiltonian.getTotalEnergy();
         auto K = hamiltonian.getTotalKineticEnergy();
@@ -225,16 +207,27 @@ namespace Slab::Models::KGRtoR {
         tau_indirect = u - .5 * barϕ;
         fix tau_2 = barϕ + 2 * W / L;
 
-        fix t = packet.getSimTime();
-
         temperature1HistoryData.addPoint({t, tau});
         temperature2HistoryData.addPoint({t, tau_indirect});
         temperature3HistoryData.addPoint({t, tau_2});
+
+        std::ostringstream ss;
+        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        guiWindow.addVolatileStat("<\\br>");
+        guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+        guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+        guiWindow.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+        guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+        guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+
+        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        fix decimalPlaces = 3;
+        guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
+                                  (style++)->lineColor.permute());
+        guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
+                                  (style++)->lineColor.permute());
+        guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
+                                  (style++)->lineColor.permute());
+        // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
     }
-
-    void RtoRStatisticsPanel::setTransientHint(Real value) {
-        transientHint = value;
-    }
-
-
 }

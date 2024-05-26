@@ -18,7 +18,7 @@ int run(int argc, const char **argv){
     using namespace Studios::Fields::RtoRThermal;
 
     InterfaceSelector selector("Dynamic thermal");
-    std::vector<Slab::Models::KGRtoR::KGBuilder*>
+    Vector<Slab::Models::KGRtoR::KGBuilder*>
             options = { new StatisticalBuilder,
                         new MachineGunBuilder,
                         new ManyOscillonsBuilder,

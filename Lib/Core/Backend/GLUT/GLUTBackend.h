@@ -11,7 +11,7 @@ namespace Slab::Core {
 
     class GLUTBackend : public GraphicBackend {
         GLUTEventTranslator eventTranslator;
-        std::vector<GLUTListener *> glutListeners;
+        Vector<GLUTListener *> glutListeners;
 
         MouseState mouseState;
     public:
