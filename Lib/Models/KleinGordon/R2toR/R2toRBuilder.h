@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_R2TORBUILDER_H
 #define STUDIOSLAB_R2TORBUILDER_H
 
-#include "Math/Numerics/Builder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 #include "Models/KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
@@ -25,14 +25,17 @@ namespace Slab::Math::R2toR {
             Builder(const Str& name, Str description);
 
             auto buildOutputManager()   -> OutputManager * override;
-
-            auto newFunctionArbitrary() -> void * override;
-            auto newFieldState()        -> void * override;
-            auto buildEquationSolver()    -> void * override;
-
-            auto getInitialState()      -> void * override;
-
+            auto buildEquationSolver()  -> Base::EquationSolver_ptr override;
             auto buildStepper()         -> Stepper * override;
+
+            auto newFunctionArbitrary() -> R2toR::DiscreteFunction_ptr ;
+            auto newFieldState()        -> R2toR::EquationState_ptr;
+
+            auto getInitialState()      -> R2toR::EquationState_ptr;
+
+            virtual auto getBoundary() -> R2toR::BoundaryCondition_ptr = 0;
+
+
     };
 }
 

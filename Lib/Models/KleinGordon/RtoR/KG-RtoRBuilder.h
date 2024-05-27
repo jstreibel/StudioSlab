@@ -6,14 +6,19 @@
 #define STUDIOSLAB_KG_RTORBUILDER_H
 
 #include "../KGBuilder.h"
+
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
+#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+
+#include "KG-RtoRBoundaryCondition.h"
+#include "Math/DifferentialEquations/EquationState.h"
 
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Core;
 
-    class KGBuilder : public Slab::Models::KGBuilder {
+    class KGRtoRBuilder : public Slab::Models::KGBuilder {
         IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
@@ -33,7 +38,7 @@ namespace Slab::Models::KGRtoR {
         auto suggestFileName() const -> Str override;
 
     public:
-        explicit KGBuilder(const Str& name,
+        explicit KGRtoRBuilder(const Str& name,
                            Str generalDescription,
                            bool doRegister=false);
 
@@ -41,15 +46,15 @@ namespace Slab::Models::KGRtoR {
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
         auto buildOutputManager()   -> OutputManager * override;
-        auto buildEquationSolver()  -> void * override;
+        auto buildEquationSolver()  -> Base::EquationSolver_ptr override;
         auto buildStepper()         -> Stepper * override;
 
         void *getHamiltonian() override;
 
-        auto getInitialState()      -> void * override;
-
-        auto newFunctionArbitrary() -> void * override;
-        auto newFieldState()        -> void * override;
+        auto getInitialState()      -> KGRtoR::EquationState_ptr;
+        virtual auto getBoundary()  -> BoundaryCondition_ptr = 0;
+        auto newFunctionArbitrary() -> Math::RtoR::DiscreteFunction_ptr;
+        auto newFieldState()        -> KGRtoR::EquationState_ptr;
 
     };
 }

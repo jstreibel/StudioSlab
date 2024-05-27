@@ -12,7 +12,7 @@ namespace Slab::Math::R2toR {
 
     class EquationState : public Models::KGState<DiscreteFunction> {
     public:
-        EquationState(DiscreteFunction *phi, DiscreteFunction *dPhiDt)
+        EquationState(DiscreteFunction_ptr phi, DiscreteFunction_ptr dPhiDt)
         : Models::KGState<DiscreteFunction>(phi, dPhiDt)
         {
         }
@@ -22,8 +22,10 @@ namespace Slab::Math::R2toR {
             return nullptr;
         }
 
-        auto clone() const -> EquationState *;
+        auto clone() const -> Pointer<Base::EquationState> override;
     };
+
+    DefinePointer(EquationState)
 
 }
 

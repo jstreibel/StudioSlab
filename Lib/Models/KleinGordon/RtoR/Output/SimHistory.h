@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class SimHistory : public Socket {
-        R2toR::DiscreteFunction *data;
+        R2toR::DiscreteFunction_ptr data;
         RealVector timestamps;
         bool dataIsOnGPU;
 

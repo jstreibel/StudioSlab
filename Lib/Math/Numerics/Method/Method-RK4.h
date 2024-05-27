@@ -23,7 +23,7 @@ namespace Slab::Math {
     template<class STATE_TYPE>
     class StepperRK4 : public Stepper {
     public:
-        typedef EquationSolverT<STATE_TYPE> SolverType;
+        typedef Base::EquationSolverT<STATE_TYPE> SolverType;
         typedef Base::BoundaryConditions<STATE_TYPE> BCType;
 
         StepperRK4(SolverType &solver)
@@ -95,7 +95,7 @@ namespace Slab::Math {
         }
 
     private:
-        EquationSolverT<STATE_TYPE> &H;
+        Base::EquationSolverT<STATE_TYPE> &H;
 
         STATE_TYPE *_phi;
         STATE_TYPE *_k1, *_k2, *_k3, *_k4;

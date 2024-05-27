@@ -9,13 +9,14 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 #include "KG-RtoREquationState.h"
+#include "KG-RtoRBuilder.h"
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
     class KGEnergy {
-        VoidBuilder &builder;
+        Base::VoidBuilder &builder;
 
         RtoR::DiscreteFunction_ptr _oEnergyDensity;
         RtoR::DiscreteFunction_ptr _oKineticDensity;
@@ -27,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function_ptr V_ptr;
 
     public:
-        KGEnergy(VoidBuilder &builder, RtoR::Function_ptr potentialFunc);
+        KGEnergy(KGRtoRBuilder &builder, RtoR::Function_ptr potentialFunc);
 
         const RtoR::DiscreteFunction &computeEnergies(const EquationState &field);
 

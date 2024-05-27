@@ -6,24 +6,25 @@
 #include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "BoundaryConditions.h"
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
 
     template<class EquationStateType>
     class EquationSolverT {
     public:
         using EqState = EquationStateType;
         using EqBoundaryCondition = Base::BoundaryConditions<EqState>;
+        using EqBoundaryCondition_ptr = Pointer<EqBoundaryCondition>;
     protected:
         const NumericConfig &params;
-        Base::BoundaryConditions<EqState> &du;
+        EqBoundaryCondition_ptr du;
 
     public:
-        EquationSolverT(const NumericConfig &params, EqBoundaryCondition &du)
+        EquationSolverT(const NumericConfig &params, EqBoundaryCondition_ptr du)
         : params(params), du(du) {}
         virtual ~EquationSolverT() {}
 
-        virtual auto NewEqState() const -> EqState* {
-            return du.newEqState();
+        virtual auto NewEqState() const -> Pointer<EqState> {
+            return du->newEqState();
         };
 
         virtual EqState& applyBC(EqState &state, Real t, Real dt);
@@ -39,7 +40,7 @@ namespace Slab::Math {
 
     template<class EqState>
     EqState &EquationSolverT<EqState>::applyBC(EqState &state, Real t, Real dt) {
-        du.apply(state, t);
+        du->apply(state, t);
         return state;
     }
 
@@ -47,10 +48,12 @@ namespace Slab::Math {
     public:
         using EqBoundaryCondition = Base::BoundaryConditions<EquationState>;
 
-        EquationSolver(const NumericConfig &params, EqBoundaryCondition &du)
+        EquationSolver(const NumericConfig &params, EqBoundaryCondition_ptr du)
         : EquationSolverT(params, du) {};
 
     };
+
+    DefinePointer(EquationSolver)
 }
 
 #endif // HAMILTON_H

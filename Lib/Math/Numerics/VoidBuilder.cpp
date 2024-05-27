@@ -16,7 +16,7 @@ break;
 #define DONT_REGISTER false
 
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
 
 
     VoidBuilder::VoidBuilder(const Str &name, Str generalDescription, bool doRegister)
@@ -36,9 +36,9 @@ namespace Slab::Math {
         return simulationConfig.numericConfig;
     }
 
-    auto VoidBuilder::getDevice() const -> const DeviceConfig & {
-        return simulationConfig.dev;
-    }
+    // auto VoidBuilder::getDevice() const -> const DeviceConfig & {
+    //     return simulationConfig.dev;
+    // }
 
     Str VoidBuilder::suggestFileName() const {
         const auto SEPARATOR = " ";

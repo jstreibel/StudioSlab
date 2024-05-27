@@ -3,7 +3,7 @@
 
 #include "Math/DifferentialEquations/EquationSolver.h"
 
-#include "Math/Numerics/Builder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/SignumFunction.h"
 
 
@@ -15,20 +15,20 @@ namespace Slab::Models {
 
     using namespace Math;
 
-    template<class EqState>
-    class Solver : public EquationSolverT<EqState> {
+    template<class State>
+    class Solver : public Base::EquationSolverT<State> {
     public:
-        using MyBase = EquationSolverT<EqState>;
+        using MyBase = Base::EquationSolverT<State>;
         using PotentialFunc = Base::FunctionT<Real, Real>;
-        typedef EqState::SubStateType           DiscrFuncType;
-        using NonHomogenousFunc = typename EqState::SubStateType::MyBase;
+        typedef State::SubStateType           DiscrFuncType;
+        using NonHomogenousFunc = typename State::SubStateType::MyBase;
         using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
 
         Solver(const NumericConfig &params,
-                        MyBase::EqBoundaryCondition &du,
-                        PotentialFunc &potential,
-                        NonHomogenousPtr nonHomogenousFunc= Pointer<NonHomogenousFunc>())
-        : EquationSolverT<EqState>(params, du)
+               MyBase::EqBoundaryCondition_ptr du,
+               PotentialFunc &potential,
+               NonHomogenousPtr nonHomogenousFunc= Pointer<NonHomogenousFunc>())
+        : Base::EquationSolverT<State>(params, du)
         , V(potential)
         , dVDPhi(potential.diff(0))
         , f(nonHomogenousFunc)
@@ -40,7 +40,7 @@ namespace Slab::Models {
             delete &V;
         }
 
-        void startStep(const EqState &in, Real t, Real dt) override {
+        void startStep(const State &in, Real t, Real dt) override {
             MyBase::startStep(in, t, dt);
 
             if(temp1 == nullptr){
@@ -51,8 +51,8 @@ namespace Slab::Models {
             }
         }
 
-        EqState &
-        dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override {
+        State &
+        dtF(const State &stateIn, State &stateOut, Real t, Real dt) override {
             const auto &iPhi = stateIn.getPhi();
             const auto &iDPhi = stateIn.getDPhiDt();
             auto &oPhi = stateOut.getPhi();

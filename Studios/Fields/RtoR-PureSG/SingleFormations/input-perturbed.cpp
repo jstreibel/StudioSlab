@@ -14,10 +14,10 @@ namespace Studios::PureSG {
         interface->addParameters({&l, &eps});
     };
 
-    auto InputPerturbations::getBoundary() -> void * {
-        auto proto = (EquationState *) newFieldState();
-        return new BoundaryCondition(*proto, new RtoR::NullFunction,
-                                           new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
+    auto InputPerturbations::getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr {
+        auto proto = newFieldState();
+        return New<BoundaryCondition>(*proto, new RtoR::NullFunction,
+                                              new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
                                                                                      eps.getValue()));
     }
 

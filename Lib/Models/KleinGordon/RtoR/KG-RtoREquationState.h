@@ -10,12 +10,15 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class EquationState : public Models::KGState<RtoR::DiscreteFunction> {
+    using DiscreteFunky = RtoR::DiscreteFunction;
+    using DiscreteFunky_ptr = RtoR::DiscreteFunction_ptr;
+
+    class EquationState : public Models::KGState<DiscreteFunky> {
         // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
         //  entirety of the field in all of space and time.
     public:
-        EquationState(RtoR::DiscreteFunction *phi, RtoR::DiscreteFunction *dPhiDt)
-        : Models::KGState<RtoR::DiscreteFunction>(phi, dPhiDt) {}
+        EquationState(DiscreteFunky_ptr phi, DiscreteFunky_ptr dPhiDt)
+        : Models::KGState<DiscreteFunky>(phi, dPhiDt) {}
 
     public:
         void outputPhi(OStream &out, Str separator) const override {
@@ -35,12 +38,17 @@ namespace Slab::Models::KGRtoR {
         }
 
         EqStateOutputInterface *Copy(UInt N) const override {
-            return new EquationState(dynamic_cast<RtoR::DiscreteFunction*>(phi->CloneWithSize(N)),
-                                     dynamic_cast<RtoR::DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
+
+            // new EquationState(dynamic_cast<RtoR::DiscreteFunction*>(phi->CloneWithSize(N)),
+            //                   dynamic_cast<RtoR::DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
+
+            return nullptr;
         }
 
-        auto clone() const -> EquationState *;
+        auto clone() const -> Pointer<Base::EquationState>;
     };
+
+    DefinePointer(EquationState)
 }
 
 #endif //V_SHAPE_EQSTATERTOR_H

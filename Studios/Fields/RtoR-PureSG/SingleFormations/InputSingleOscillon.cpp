@@ -16,15 +16,15 @@ namespace Studios::PureSG {
         interface->addParameters({&v, &V, &alpha, &lambda, &mirror});
     }
 
-    auto InputSingleOscillon::getBoundary() -> void * {
+    auto InputSingleOscillon::getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr {
         RtoR::AnalyticOscillon oscillon = RtoR::AnalyticOscillon(0.0, *v, *V, *alpha, false, false, RtoR::AnalyticOscillon::Bit::phi);
 
         auto initCondPhi = oscillon;
         auto initCondDPhiDt = oscillon.swap();
 
-        auto proto = (EquationState *) newFieldState();
+        auto proto = newFieldState();
 
-        return new BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        return New<BoundaryCondition>(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

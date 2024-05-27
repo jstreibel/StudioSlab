@@ -10,10 +10,10 @@
 
 namespace Slab::Math {
     class App : public AppBase {
-        VoidBuilder::Ptr builder;
+        Base::VoidBuilder_ptr builder;
 
     public:
-        App(int argc, const char **argv, VoidBuilder::Ptr simBuilder);
+        App(int argc, const char **argv, Base::VoidBuilder_ptr simBuilder);
 
         auto run() -> int override;
 

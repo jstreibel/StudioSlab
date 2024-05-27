@@ -48,7 +48,7 @@ namespace Slab::Math::Base {
             delete space;
         }
 
-        virtual DiscreteFunction *CloneWithSize(UInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
+        virtual Pointer<DiscreteFunction> CloneWithSize(UInt N) const {throw "ModelBase::FunctionArbitrary::Clone()"
                                                                         " not implemented.";}
         virtual DiscreteFunction &Set(const MyBase &func) = 0;
         virtual DiscreteFunction &SetArb(const DiscreteFunction &func){

@@ -16,7 +16,7 @@ namespace Studios::PureSG {
         interface->addParameters({&a0, &E});
     }
 
-    auto InputShockwave::getBoundary() -> void * {
+    auto InputShockwave::getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr {
         //deltaType = vm["delta"].as<unsigned int>();
 
         auto a = 2 * a0.getValue();
@@ -24,8 +24,8 @@ namespace Studios::PureSG {
         const Real eps = a * a / (3 * E.getValue());
 
         Slab::Math::RtoR::AnalyticShockwave1D shockwave1D(*a0);
-        auto proto = (EquationState *) newFieldState();
-        return new BoundaryCondition(*proto, new RtoR::NullFunction,
+        auto proto = newFieldState();
+        return New<BoundaryCondition>(*proto, new RtoR::NullFunction,
                                            new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(
                                                    deltaType)));
     }

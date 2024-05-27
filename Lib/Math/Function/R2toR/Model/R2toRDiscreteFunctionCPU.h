@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
     public:
         DiscreteFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
 
-        [[nodiscard]] Base::DiscreteFunction<Real2D, Real> *CloneWithSize(UInt N) const override;
+        [[nodiscard]] Pointer<Base::DiscreteFunction<Real2D, Real>> CloneWithSize(UInt N) const override;
 
         auto Clone() const -> FunctionT * override;
 

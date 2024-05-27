@@ -21,16 +21,17 @@ const auto FORCE_INITIAL_OUTPUT = true;
 namespace Slab::Math {
 
     class NumericalIntegration : public Task {
+        Base::VoidBuilder &simBuilder;
+        Stepper *stepper;
+        OutputManager *outputManager;
+
         Real dt;
-        UInt steps;
+        const UInt totalSteps;
+        UInt stepsConcluded;
 
         bool forceStopFlag = false;
 
         BenchmarkHistogram simTimeHistogram;
-
-        VoidBuilder &simBuilder;
-        Stepper *stepper;
-        OutputManager *outputManager;
 
         void output(bool force = false);
 
@@ -41,11 +42,12 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     public:
-        NumericalIntegration(VoidBuilder &simBuilder)
+        NumericalIntegration(Base::VoidBuilder &simBuilder)
                 : simBuilder(simBuilder), stepper(simBuilder.buildStepper()),
                   outputManager(simBuilder.buildOutputManager()),
                   dt(simBuilder.getNumericParams().getdt()),
-                  steps(0) {
+                  totalSteps(simBuilder.getNumericParams().getn()),
+                  stepsConcluded(0) {
 #if ATTEMP_REALTIME
             {
                 // Declare a sched_param struct to hold the scheduling parameters.

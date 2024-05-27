@@ -16,7 +16,7 @@ namespace Studios::PureSG {
     public:
         InputPerturbations();
 
-        auto getBoundary() -> void * override;
+        auto getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr override;
     };
 }
 

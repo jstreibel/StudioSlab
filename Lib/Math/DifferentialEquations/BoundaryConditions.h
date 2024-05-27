@@ -11,13 +11,13 @@
 namespace Slab::Math::Base {
     template<typename EqStateType>
     class BoundaryConditions {
-        const EqStateType &prototype;
+        Pointer<const EqStateType> prototype;
     public:
         using EqState = EqStateType;
 
-        explicit BoundaryConditions(const EqState &prototype) : prototype(prototype) {};
+        explicit BoundaryConditions(Pointer<const EqState> prototype) : prototype(prototype) {};
 
-        EqState *newEqState() const { return prototype.clone(); }
+        Pointer<EqState> newEqState() const { return prototype->clone(); }
 
         virtual void apply(EqState &toFunction, Real t) const = 0;
     };

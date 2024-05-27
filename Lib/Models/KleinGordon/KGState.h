@@ -5,8 +5,8 @@
 #ifndef V_SHAPE_FIELDSTATE_H
 #define V_SHAPE_FIELDSTATE_H
 
-#include "Math/Space/Impl/ArithmeticOperationInterface.h"
 #include "Math/Space/Impl/DiscreteSpace.h"
+#include "Math/DifferentialEquations/EquationState.h"
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
 
@@ -19,62 +19,73 @@ namespace Slab::Models {
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
     template<class EqCategory>
-    class KGState : public ArithmeticOpsInterface<KGState<EqCategory>>, public EqStateOutputInterface {
+    class KGState : public Base::EquationState, public EqStateOutputInterface {
+        typedef Base::EquationState State;
+
     public:
         typedef EqCategory SubStateType;
         using FunctionType = typename EqCategory::Type;
         using FunctionArbitraryType = EqCategory;
 
-        KGState(EqCategory *phi, EqCategory *dPhiDt) : phi(phi), dPhiDt(dPhiDt) {}
+        KGState(Pointer<EqCategory> phi, Pointer<EqCategory> dPhiDt)
+        : phi(phi), dPhiDt(dPhiDt) {}
         KGState(const KGState& state)
         : KGState(new EqCategory(state.phi), new EqCategory(state.dPhiDt)) {};
-        virtual ~KGState() {
-            delete phi;
-            delete dPhiDt;
-        }
+        virtual ~KGState() = default;
 
-        KGState &Add(const KGState &fieldState) override {
-            phi->Add(fieldState.getPhi());
-            dPhiDt->Add(fieldState.getDPhiDt());
+        State &Add(const State &fieldState) override {
+            auto &kgState = dynamic_cast<const KGState&>(fieldState);
 
-            return *this;
-        }
-        KGState &Subtract(const KGState<EqCategory> &fieldState) override {
-            phi->Subtract(fieldState.getPhi());
-            dPhiDt->Subtract(fieldState.getDPhiDt());
+            phi->Add(kgState.getPhi());
+            dPhiDt->Add(kgState.getDPhiDt());
 
             return *this;
         }
-        KGState &StoreAddition(const KGState &fieldState1, const KGState &fieldState2) override {
-            phi->StoreAddition(fieldState1.getPhi(), fieldState2.getPhi());
-            dPhiDt->StoreAddition(fieldState1.getDPhiDt(), fieldState2.getDPhiDt());
+        State &Subtract(const State &fieldState) override {
+            auto &kgState = dynamic_cast<const KGState&>(fieldState);
+
+            phi->Subtract(kgState.getPhi());
+            dPhiDt->Subtract(kgState.getDPhiDt());
 
             return *this;
         }
-        KGState &Multiply(floatt a) override {
+        State &StoreAddition(const State &fieldState1, const State &fieldState2) override {
+            auto &kgState1 = dynamic_cast<const KGState&>(fieldState1);
+            auto &kgState2 = dynamic_cast<const KGState&>(fieldState2);
+
+            phi->StoreAddition(kgState1.getPhi(), kgState2.getPhi());
+            dPhiDt->StoreAddition(kgState1.getDPhiDt(), kgState2.getDPhiDt());
+
+            return *this;
+        }
+        State &Multiply(floatt a) override {
             phi->Multiply(a);
             dPhiDt->Multiply(a);
 
             return *this;
         }
-        KGState<EqCategory> &
-                StoreSubtraction(const KGState &aoi1, const KGState &aoi2) override {
-            phi->StoreSubtraction(aoi1.getPhi(), aoi2.getPhi());
-            dPhiDt->StoreSubtraction(aoi1.getDPhiDt(), aoi2.getDPhiDt());
+        State &StoreSubtraction(const State &state1, const State &state2) override {
+            auto &kgState1 = dynamic_cast<const KGState&>(state1);
+            auto &kgState2 = dynamic_cast<const KGState&>(state2);
+
+            phi->StoreSubtraction(kgState1.getPhi(), kgState2.getPhi());
+            dPhiDt->StoreSubtraction(kgState1.getDPhiDt(), kgState2.getDPhiDt());
 
             return *this;
         }
-        KGState<EqCategory> &
-                StoreMultiplication(const KGState<EqCategory> &aoi1, const Real a) override {
-            phi->StoreMultiplication(aoi1.getPhi(), a);
-            dPhiDt->StoreMultiplication(aoi1.getDPhiDt(), a);
+        State &StoreMultiplication(const State &state, const Real a) override {
+            auto &kgState = dynamic_cast<const KGState&>(state);
+            phi->StoreMultiplication(kgState.getPhi(), a);
+            dPhiDt->StoreMultiplication(kgState.getDPhiDt(), a);
 
             return *this;
         }
 
-        void set(const KGState &val) {
-            setPhi(val.getPhi());
-            setDPhiDt(val.getDPhiDt());
+        void set(const State &state) override {
+            auto &kgState = dynamic_cast<const KGState&>(state);
+
+            setPhi(kgState.getPhi());
+            setDPhiDt(kgState.getDPhiDt());
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
@@ -111,8 +122,8 @@ namespace Slab::Models {
         }
 
     protected:
-        EqCategory *phi;
-        EqCategory *dPhiDt;
+        Pointer<EqCategory> phi;
+        Pointer<EqCategory> dPhiDt;
     };
 }
 

@@ -37,7 +37,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
+    KGRtoRBuilder::KGRtoRBuilder(const Str &name, Str generalDescription, bool doRegister)
             : Models::KGBuilder("RtoR-" + name, std::move(generalDescription),
                                              DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr});
@@ -45,7 +45,7 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto KGBuilder::buildOutputManager() -> OutputManager * {
+    auto KGRtoRBuilder::buildOutputManager() -> OutputManager * {
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
 
@@ -157,7 +157,7 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void *KGBuilder::newFunctionArbitrary() {
+    RtoR::DiscreteFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
         const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
@@ -167,25 +167,25 @@ namespace Slab::Models::KGRtoR {
                              : RtoR::DiscreteFunction::Standard1D_FixedBorder;
 
         if (simulationConfig.dev == CPU)
-            return new RtoR::DiscreteFunction_CPU(N, xLeft, xRight, laplacianType);
+            return New<RtoR::DiscreteFunction_CPU>(N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA
         else if(simulationConfig.dev==GPU)
             return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, laplacianType);
 #endif
 
-        throw "Error while instantiating Field: device not recognized.";
+        throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    void *KGBuilder::newFieldState() {
-        return new EquationState((RtoR::DiscreteFunction *) this->newFunctionArbitrary(),
-                                       (RtoR::DiscreteFunction *) this->newFunctionArbitrary());
+    EquationState_ptr KGRtoRBuilder::newFieldState() {
+        return New<EquationState>(this->newFunctionArbitrary(),
+                                       this->newFunctionArbitrary());
     }
 
-    void *KGBuilder::buildEquationSolver() {
+    Base::EquationSolver_ptr KGRtoRBuilder::buildEquationSolver() {
         auto potential = getPotential();
         auto nonHomogenous = getNonHomogenous();
-        auto dphi = (BoundaryCondition *) getBoundary();
+        auto dphi = getBoundary();
 
 #if USE_CUDA == true
         if(simulationConfig.dev == device::GPU) {
@@ -197,33 +197,33 @@ namespace Slab::Models::KGRtoR {
                                                                     *dphi, *potential, nonHomogenous);
     }
 
-    auto KGBuilder::buildOpenGLOutput() -> void * {
+    auto KGRtoRBuilder::buildOpenGLOutput() -> void * {
         return new Monitor(simulationConfig.numericConfig, *(KGEnergy *) getHamiltonian());
     }
 
-    auto KGBuilder::getInitialState() -> void * {
-        auto &u_0 = *(EquationState *) newFieldState();
+    auto KGRtoRBuilder::getInitialState() -> KGRtoR::EquationState_ptr {
+        auto u_0 = newFieldState();
 
-        u_0.setPhi(RtoR::NullFunction());
-        u_0.setDPhiDt(RtoR::NullFunction());
+        u_0->setPhi(RtoR::NullFunction());
+        u_0->setDPhiDt(RtoR::NullFunction());
 
-        return &u_0;
+        return u_0;
     }
 
-    auto KGBuilder::buildStepper() -> Stepper * {
+    auto KGRtoRBuilder::buildStepper() -> Stepper * {
         auto &solver = *(KGSolver *) buildEquationSolver();
 
         return new StepperRK4<typename Slab::Models::KGRtoR::EquationState>(solver);
     }
 
-    void *KGBuilder::getHamiltonian() {
+    void *KGRtoRBuilder::getHamiltonian() {
         static auto potential = RtoR::Function_ptr(getPotential());
         static auto hamiltonian = new KGEnergy(*this, potential);
 
         return hamiltonian;
     }
 
-    RtoR::Function_ptr KGBuilder::getPotential() const {
+    RtoR::Function_ptr KGRtoRBuilder::getPotential() const {
         if (*Potential == MASSLESS_WAVE_EQ) {
             return Slab::New<RtoR::NullFunction>();
         } else if (*Potential == KLEIN_GORDON_POTENTIAL) {
@@ -232,26 +232,26 @@ namespace Slab::Models::KGRtoR {
             return Slab::New<RtoR::AbsFunction>();
         }
 
-        throw "Unknown potential";
+        throw Exception("Unknown potential");
     }
 
-    Pointer<Base::FunctionT<Real, Real>> KGBuilder::getNonHomogenous() {
+    Pointer<Base::FunctionT<Real, Real>> KGRtoRBuilder::getNonHomogenous() {
         return {};
     }
 
-    void KGBuilder::setLaplacianPeriodicBC() {
+    void KGRtoRBuilder::setLaplacianPeriodicBC() {
         Log::Info() << "KGBuilder Laplacian set to PERIODIC borders." << Log::Flush;
         periodicBC = true;
     }
 
-    void KGBuilder::setLaplacianFixedBC() {
+    void KGRtoRBuilder::setLaplacianFixedBC() {
         Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
         periodicBC = false;
     }
 
-    bool KGBuilder::usesPeriodicBC() const { return periodicBC; }
+    bool KGRtoRBuilder::usesPeriodicBC() const { return periodicBC; }
 
-    Str KGBuilder::suggestFileName() const {
+    Str KGRtoRBuilder::suggestFileName() const {
         auto strParams = interface->toString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
         auto voidSuggestion = VoidBuilder::suggestFileName();

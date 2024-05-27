@@ -101,13 +101,13 @@ namespace Slab::Math::R2toR {
 
     }
 
-    void *Builder::newFunctionArbitrary() {
+    R2toR::DiscreteFunction_ptr Builder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
         fix h = simulationConfig.numericConfig.geth();
 
         if (simulationConfig.dev == CPU)
-            return new R2toR::DiscreteFunction_CPU(N, N, xLeft, xLeft, h, h);
+            return New<R2toR::DiscreteFunction_CPU>(N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
         else if (simulationConfig.dev == GPU)
@@ -117,24 +117,28 @@ namespace Slab::Math::R2toR {
         throw "Error while instantiating Field: device not recognized.";
     }
 
-    void *Builder::buildEquationSolver() {
+    Base::EquationSolver_ptr Builder::buildEquationSolver() {
         auto thePotential = new RtoR::AbsFunction;
-        auto dphi = (R2toR::BoundaryCondition*)getBoundary();
+        auto dphi = getBoundary();
 
-        return new Models::Solver<R2toR::EquationState>(simulationConfig.numericConfig,
-                                                                     *dphi,
-                                                                     *thePotential);
+        auto eqSolver = New<Models::Solver<R2toR::EquationState>>(simulationConfig.numericConfig,
+                                                                 dphi,
+                                                                 *thePotential);
+
+        return eqSolver;
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
         return new R2toR::OutputOpenGL(simulationConfig.numericConfig);
     }
 
-    auto Builder::newFieldState() -> void * {
-        auto u   = (R2toR::DiscreteFunction*)newFunctionArbitrary();
-        auto du  = (R2toR::DiscreteFunction*)newFunctionArbitrary();
+    auto Builder::newFieldState() -> R2toR::EquationState_ptr {
+        auto u   = newFunctionArbitrary();
+        auto du  = newFunctionArbitrary();
 
-        return new R2toR::EquationState(u, du);
+
+
+        return New<R2toR::EquationState>(u, du);
     }
 
     Stepper *Builder::buildStepper() {
@@ -143,15 +147,15 @@ namespace Slab::Math::R2toR {
         return new StepperRK4<typename R2toR::EquationState>(solver);
     }
 
-    void *Builder::getInitialState() {
+    R2toR::EquationState_ptr Builder::getInitialState() {
         RtoR::NullFunction nullFunction;
         R2toR::FunctionAzimuthalSymmetry fullNull(&nullFunction, 1, 0, 0, false);
 
-        auto &u_0 = *(R2toR::EquationState*)newFieldState();
+        auto u_0 = newFieldState();
 
-        u_0.setPhi(fullNull);
-        u_0.setDPhiDt(fullNull);
+        u_0->setPhi(fullNull);
+        u_0->setDPhiDt(fullNull);
 
-        return &u_0;
+        return u_0;
     }
 };

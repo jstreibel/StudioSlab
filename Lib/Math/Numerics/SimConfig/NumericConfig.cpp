@@ -9,7 +9,7 @@ namespace Slab::Math {
 
     NumericConfig::NumericConfig(bool doRegister) : InterfaceOwner(
             "Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister) {
-        interface->addParameters({N, L, xCenter, t, forceOverstepping, dt, dimMode, h});
+        interface->addParameters({N, L, xCenter, t, forceOverstepping, rdt, dimMode, h});
     }
 
 /*
@@ -34,7 +34,7 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
 
     auto NumericConfig::gett() const -> floatt { return **t; }
 
-    auto NumericConfig::getr() const -> floatt { return **dt / **h; }
+    auto NumericConfig::getr() const -> floatt { return **rdt; }
 
     auto NumericConfig::getn() const -> UInt {
         return n;
@@ -45,7 +45,7 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
     }
 
     auto NumericConfig::getdt() const -> floatt {
-        return **dt;
+        return **rdt * **h;
     }
 
     void NumericConfig::sett(Real tMax) const {
@@ -84,12 +84,14 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
             Log::Attention("NumericParams") << ": flag '" << forceOverstepping->getCLName(true)
                                             << "' is set to active: simulation time limit will be ignored.";
 
-        if (*dt < 0) {
-            **dt = **h / 10.0;
-            Log::Attention("NumericParams") << " parameter 'dt' is <0. Setting to dt = h/10 = " << *dt;
+        if (*rdt < 0) {
+            *rdt = .1;
+            auto dt = **h * **rdt;
+            Log::Attention("NumericParams") << " parameter 'r_dt' is <0. Setting to r_dt=0.1 → dt = h/10 = " << dt;
         }
 
-        n = UInt(**t / **dt);
+        auto dt = **h * **rdt;
+        n = UInt(round(**t / dt));
     }
 
 

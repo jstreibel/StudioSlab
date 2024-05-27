@@ -9,17 +9,18 @@
 #include "Utils/Types.h"
 #include "Math/Space/Impl/ArithmeticOperationInterface.h"
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
+
+
 
     class EquationState : public ArithmeticOpsInterface<EquationState>{
     public:
-        typedef std::shared_ptr<EquationState> Ptr;
-        typedef std::shared_ptr<const EquationState> ConstPtr;
-
-        virtual EquationState *clone() const = 0;
+        virtual Pointer<EquationState> clone() const = 0;
 
         virtual void set(const EquationState&) = 0;
     };
+
+    DefinePointer(EquationState)
 }
 
 

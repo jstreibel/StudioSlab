@@ -13,7 +13,7 @@ namespace Studios::PureSG {
         interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
     }
 
-    auto InputSymmetricOscillon::getBoundary() -> void * {
+    auto InputSymmetricOscillon::getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr {
         RtoR::FunctionSummable &initCondPhi = *(new RtoR::FunctionSummable),
                 &initCondDPhiDt = *(new RtoR::FunctionSummable);
 
@@ -25,8 +25,8 @@ namespace Studios::PureSG {
         initCondPhi += oscRight + oscLeft;
         initCondDPhiDt += oscRight.swap() + oscLeft.swap();
 
-        auto proto = (EquationState *) newFieldState();
-        return new BoundaryCondition(*proto, &initCondPhi, &initCondDPhiDt);
+        auto proto = newFieldState();
+        return New<BoundaryCondition>(*proto, &initCondPhi, &initCondDPhiDt);
     }
 
 }

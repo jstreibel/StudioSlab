@@ -8,7 +8,7 @@
 namespace Slab::Models::KGRtoR {
 
 
-    BoundaryCondition::BoundaryCondition(const EquationState &prototype,
+    BoundaryCondition::BoundaryCondition(const EquationState_constptr &prototype,
                                                RtoR::Function *initialPhiCondition,
                                                RtoR::Function *initialdPhiDtCondition,
                                                RtoR::Function *leftPhiBoundaryCondition,

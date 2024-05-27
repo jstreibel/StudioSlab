@@ -41,8 +41,8 @@ namespace Slab::Math {
         RealParameter::Ptr h = RealParameter::New(0.009765625, "h", "Cell 1-measure. Defaults to L/N. This value is "
                                                                     "ignored unless '--mode' is properly set.");
 
-        RealParameter::Ptr dt = RealParameter::New(-1, "dt", "Timestep parameter. If negative value, then it"
-                                                             "is set to dt=h/10.");
+        RealParameter::Ptr rdt = RealParameter::New(-1, "r_dt", "Timestep 'r' parameter such that dt=r*h. If negative value, then it"
+                                                             "is set to r=1/10.");
 
         UInt n;
 

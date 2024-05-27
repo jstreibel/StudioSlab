@@ -12,6 +12,8 @@
 namespace Slab::Math::R2toR {
     // typedef Slab::EquationSolverT<R2toR::EquationState> EquationSolver;
     typedef Models::Solver<R2toR::EquationState> EquationSolver;
+
+    DefinePointer(EquationSolver)
 }
 
 #endif //STUDIOSLAB_EQUATIONSOLVER_H

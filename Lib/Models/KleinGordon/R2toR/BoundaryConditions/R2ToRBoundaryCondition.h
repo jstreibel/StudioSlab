@@ -15,7 +15,7 @@ namespace Slab::Math::R2toR {
     public:
         BoundaryCondition(Function *initialPhiCondition,
                           Function *initialdPhiDtCondition,
-                          R2toR::EquationState *prototype);
+                          R2toR::EquationState_constptr prototype);
 
         void apply(EquationState &fieldState, Real t) const override;
 
@@ -26,6 +26,8 @@ namespace Slab::Math::R2toR {
         Function *phi, *dPhiDt;
 
     };
+
+    DefinePointer(BoundaryCondition)
 
 }
 

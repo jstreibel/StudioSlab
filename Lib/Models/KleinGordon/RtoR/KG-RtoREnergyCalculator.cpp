@@ -4,6 +4,7 @@
 
 #include "KG-RtoREnergyCalculator.h"
 #include "Math/Function/RtoR/Model/Derivatives/DerivativesCPU.h"
+#include "KG-RtoRBuilder.h"
 
 // #define USE_PERIODIC_BC
 
@@ -11,11 +12,12 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    KGEnergy::KGEnergy(VoidBuilder &builder, RtoR::Function_ptr potentialFunc)
-            : builder(builder), _oEnergyDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
-              _oKineticDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
-              _oGradientDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()),
-              _oPotentialDensity(builder.NewFunctionArbitrary<RtoR::DiscreteFunction>()), V_ptr(potentialFunc) {
+    KGEnergy::KGEnergy(KGRtoRBuilder &builder, RtoR::Function_ptr potentialFunc)
+            : builder(builder), _oEnergyDensity(builder.newFunctionArbitrary())
+            , _oKineticDensity(   builder.newFunctionArbitrary() )
+            , _oGradientDensity(  builder.newFunctionArbitrary() )
+            , _oPotentialDensity( builder.newFunctionArbitrary() )
+            , V_ptr(potentialFunc) {
 
     }
 

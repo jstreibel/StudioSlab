@@ -14,7 +14,7 @@
 
 namespace Slab::Math {
 
-    App::App(int argc, const char **argv, VoidBuilder::Ptr simBuilder)
+    App::App(int argc, const char **argv, Base::VoidBuilder_ptr simBuilder)
             : AppBase(argc, argv), builder(std::move(simBuilder)) {
         parseCLArgs();
     }

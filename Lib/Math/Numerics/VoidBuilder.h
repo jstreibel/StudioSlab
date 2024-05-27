@@ -6,8 +6,9 @@
 
 #include "Core/Controller/Interface/Interface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
+#include "Math/DifferentialEquations/EquationSolver.h"
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
 
     class VoidBuilder : public InterfaceOwner {
     protected:
@@ -24,38 +25,40 @@ namespace Slab::Math {
         virtual ~VoidBuilder() = default;
 
         virtual auto buildOutputManager()         -> OutputManager * = 0;
-        virtual auto buildEquationSolver()        -> void * = 0;
+        virtual auto buildEquationSolver()        -> EquationSolver_ptr = 0;
         virtual auto buildStepper()               -> Stepper* = 0;
 
         virtual auto suggestFileName()      const -> Str;
 
-        virtual auto getBoundary()                -> void * = 0;
-        virtual auto getInitialState()            -> void * = 0;
+        // virtual auto getBoundary()                -> void * = 0;
+        // virtual auto getInitialState()            -> void * = 0;
 
 
-        virtual
-        auto newFunctionArbitrary()       -> void * = 0;
-        template<class ARB_FUNC_TYPE>
-        auto NewFunctionArbitrary()       -> ARB_FUNC_TYPE *;
+        // virtual
+        // auto newFunctionArbitrary()       -> void * = 0;
+        // template<class ARB_FUNC_TYPE>
+        // auto NewFunctionArbitrary()       -> ARB_FUNC_TYPE *;
 
-        virtual
-        auto newFieldState()              -> void * = 0;
-        template<typename StateType>
-        auto NewFieldState()              -> StateType*;
+        // virtual
+        // auto newFieldState()              -> void * = 0;
+        // template<typename StateType>
+        // auto NewFieldState()              -> StateType*;
 
         auto getNumericParams()             const -> const NumericConfig &;
-        auto getDevice()                    const -> const DeviceConfig &;
+        // auto getDevice()                    const -> const DeviceConfig &;
     };
 
-    template<typename StateType>
-    auto VoidBuilder::NewFieldState() -> StateType * {
-        return (StateType*)this->newFieldState();
-    }
+    DefinePointer(VoidBuilder)
 
-    template<class ARB_FUNC_TYPE>
-    ARB_FUNC_TYPE *VoidBuilder::NewFunctionArbitrary() {
-        return (ARB_FUNC_TYPE *) newFunctionArbitrary();
-    }
+    // template<typename StateType>
+    // auto VoidBuilder::NewFieldState() -> StateType * {
+    //     return (StateType*)this->newFieldState();
+    // }
+
+    // template<class ARB_FUNC_TYPE>
+    // ARB_FUNC_TYPE *VoidBuilder::NewFunctionArbitrary() {
+    //     return (ARB_FUNC_TYPE *) newFunctionArbitrary();
+    // }
 }
 
 

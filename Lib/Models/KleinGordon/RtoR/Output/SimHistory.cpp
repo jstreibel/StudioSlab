@@ -12,9 +12,7 @@
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
 #endif
 
-#include "../KG-RtoREquationState.h"
-#include "Core/Tools/Log.h"
-
+#define StepsInterval ((int) (simConfig.numericConfig.getn() / N_t))
 
 namespace Slab::Models::KGRtoR {
 
@@ -22,11 +20,12 @@ namespace Slab::Models::KGRtoR {
 
     SimHistory::SimHistory(const SimulationConfig &simConfig, Resolution N_x, Resolution N_t,
                            Real xMin, Real L, const Str &name)
-            : Socket(simConfig.numericConfig, name, (int) (simConfig.numericConfig.getn() / N_t),
-                     "A specific history tracker designed to watch the full sim history through the OpenGL (or whichever) monitors."),
-              dataIsOnGPU(simConfig.dev == GPU), N_x(N_x), N_t(N_t) {
+            : Socket(simConfig.numericConfig, name, StepsInterval,
+                     "A specific history tracker designed to watch the full sim history through visual monitors.")
+            , dataIsOnGPU(simConfig.dev == GPU)
+            , N_x((int)N_x), N_t((int)N_t) {
         fix t = simConfig.numericConfig.gett();
-        fix timeResolution = N_t;
+        fix timeResolution =(Real) N_t;
 
         fix hx = L / (Real) N_x;
         fix ht = t / timeResolution;
@@ -49,7 +48,7 @@ namespace Slab::Models::KGRtoR {
 
 
             fix safeTimeResolution = timeResolution + 1;
-            data = new R2toR::DiscreteFunction_CPU(N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+            data = New<R2toR::DiscreteFunction_CPU>(N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
 
             Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
         }

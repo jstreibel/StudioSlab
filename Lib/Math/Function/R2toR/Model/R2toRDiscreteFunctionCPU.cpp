@@ -19,10 +19,10 @@ namespace Slab::Math::R2toR {
 
     }
 
-    Base::DiscreteFunction<Real2D, Real> *DiscreteFunction_CPU::CloneWithSize(UInt outN) const {
+    Pointer<Base::DiscreteFunction<Real2D, Real>> DiscreteFunction_CPU::CloneWithSize(UInt outN) const {
         assert(M==N); // (por enquanto so vai funcionar assim.
 
-        DiscreteFunction_CPU &myClone = *new DiscreteFunction_CPU(outN, outN, xMin, yMin, hx, hy);;
+        auto myClone = New<DiscreteFunction_CPU>(outN, outN, xMin, yMin, hx, hy);;
 
         const Real incX_d = N / Real(outN);
         const Real incY_d = M / Real(outN);
@@ -30,11 +30,11 @@ namespace Slab::Math::R2toR {
             for(UInt m=0; m<outN; m++){
                 const UInt myn = n*incX_d;
                 const UInt mym = m*incY_d;
-                myClone.At(n,m) = At(myn,mym);
+                myClone->At(n,m) = At(myn,mym);
             }
         }
 
-        return &myClone;
+        return myClone;
     }
 
     Real DiscreteFunction_CPU::At(UInt n, UInt m) const {

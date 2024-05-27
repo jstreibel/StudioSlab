@@ -7,7 +7,7 @@
 
 namespace Studios:: PureSG {
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
-    : KGBuilder(name, generalDescription, doRegister) {}
+    : KGRtoRBuilder(name, generalDescription, doRegister) {}
 
     void *Builder::buildOpenGLOutput() {
         return new Monitor(simulationConfig.numericConfig,

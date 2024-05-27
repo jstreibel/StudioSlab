@@ -8,8 +8,8 @@ namespace Slab::Math {
 
     R2toR::BoundaryCondition::BoundaryCondition(R2toR::Function *initialPhiCondition,
                                                 R2toR::Function *initialdPhiDtCondition,
-                                                R2toR::EquationState *prototype)
-            : Base::BoundaryConditions<R2toR::EquationState>(*prototype), initialPhiCondition(initialPhiCondition),
+                                                R2toR::EquationState_constptr prototype)
+            : Base::BoundaryConditions<R2toR::EquationState>(prototype), initialPhiCondition(initialPhiCondition),
               initialdPhiDtCondition(initialdPhiDtCondition) {
     }
 

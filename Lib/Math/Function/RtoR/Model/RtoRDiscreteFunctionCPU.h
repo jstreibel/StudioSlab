@@ -19,7 +19,7 @@ class DiscreteFunction_CPU : public RtoR::DiscreteFunction {
 
         [[nodiscard]] auto Clone() const -> FunctionT<Real, Real> * override;
 
-        [[nodiscard]] auto CloneWithSize(UInt N) const -> Base::DiscreteFunction<Real, Real> * override;
+        [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::DiscreteFunction<Real, Real>> override;
 
         auto Set(const RealArray &vec) -> DiscreteFunction_CPU &;
         auto Set(const FunctionT &func) -> DiscreteFunction_CPU & override;

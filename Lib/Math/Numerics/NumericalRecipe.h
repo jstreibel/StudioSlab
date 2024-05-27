@@ -18,41 +18,25 @@
 
 #define BUILDER_IMPL
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
 
     template<typename EquationSolverType>
-    class Builder : public InterfaceOwner {
+    class NumericalRecipe : public InterfaceOwner {
     protected:
-        BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
-
-        RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
-                                                                        "Force snapshot to be taken at some time prior to end (after will result in no output.");
-        BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file", "Don't output history to file.");
-
-        IntegerParameter outputResolution               = IntegerParameter(512, "outN",
-                                                                           "Output resolution of space dimension in history output.");
-        BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor", "Monitor simulation visually.");
-
-        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused", "Start visual monitored "
-                                                                                                          "simulation paused.");
-        IntegerParameter OpenGLMonitor_stepsPerIdleCall = IntegerParameter(1, "steps_per_idle_call",
-                                                                           "Simulation steps between visual monitor updates call.");
-
-        Str prefix = "";
-
-        explicit Builder(Str name, Str generalDescription);
+        explicit NumericalRecipe(Str name, Str generalDescription);
 
         NumericConfig numericParams;
         DeviceConfig dev;
+        EquationState_ptr boundaries;
 
     public:
-        typedef std::shared_ptr<Builder> Ptr;
+        typedef std::shared_ptr<NumericalRecipe> Ptr;
 
         using EqSolver          = EquationSolverType;
         using EqState           = EqSolver::EqState;
         using BoundaryCondition = Base::BoundaryConditions<EqState>;
 
-        virtual ~Builder() {}
+        virtual ~NumericalRecipe() {}
 
         virtual auto buildOutputManager()         -> OutputManager * = 0;
 
@@ -79,18 +63,17 @@ namespace Slab::Math {
 
 #define DONT_REGISTER false
 
-namespace Slab::Math {
+namespace Slab::Math::Base {
 
     template<typename SolverType>
-    Builder<SolverType>::Builder(Str name, Str generalDescription)
+    NumericalRecipe<SolverType>::NumericalRecipe(Str name, Str generalDescription)
             : InterfaceOwner(name, 100, DONT_REGISTER)
             , numericParams(DONT_REGISTER)
             , dev(DONT_REGISTER)
-            , prefix(name)
     {
-        interface->addParameters({&noHistoryToFile, &outputResolution,
+        /*interface->addParameters({&noHistoryToFile, &outputResolution,
                                   &VisualMonitor, &VisualMonitor_startPaused, &OpenGLMonitor_stepsPerIdleCall
-                                         /*&takeSnapshot, &snapshotTime, */ });
+                                         &takeSnapshot, &snapshotTime }); */
 
         interface->addSubInterface(numericParams.getInterface());
         interface->addSubInterface(dev.getInterface());
@@ -100,26 +83,26 @@ namespace Slab::Math {
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::getNumericParams() const -> const NumericConfig & {
+    auto NumericalRecipe<SolverType>::getNumericParams() const -> const NumericConfig & {
         return numericParams;
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::getDevice() const -> const DeviceConfig & {
+    auto NumericalRecipe<SolverType>::getDevice() const -> const DeviceConfig & {
         return dev;
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::toString() const -> Str {
+    auto NumericalRecipe<SolverType>::toString() const -> Str {
         auto strParams = interface->toString();
 
-        auto str = prefix + "-" + strParams;
+        auto str = /*prefix*/ + "-" + strParams;
 
         return str;
     }
 
     template<typename SolverType>
-    auto Builder<SolverType>::getMethod() -> Stepper * {
+    auto NumericalRecipe<SolverType>::getMethod() -> Stepper * {
         auto &u_0 = *getInitialState();
         auto &solver = *getEquationSolver();
 

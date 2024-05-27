@@ -17,7 +17,7 @@ namespace Slab::Models::KGRtoR {
 
     class BoundaryCondition : public Base::BoundaryConditions<EquationState> {
     public:
-        BoundaryCondition(const EquationState &prototype,
+        BoundaryCondition(const EquationState_constptr &prototype,
                           RtoR::Function *initialPhiCondition,
                           RtoR::Function *initialdPhiDtCondition,
                           RtoR::Function *leftPhiBoundaryCondition = nullptr,
@@ -39,6 +39,8 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function *rightdPhiDtBoundaryCondition;
 
     };
+
+    DefinePointer(BoundaryCondition)
 }
 
 

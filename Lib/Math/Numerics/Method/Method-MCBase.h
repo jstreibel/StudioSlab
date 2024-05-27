@@ -22,12 +22,18 @@ namespace Slab::Math {
     class StepperMontecarlo : public Stepper {
     public:
 
-        StepperMontecarlo(VoidBuilder &builder)
-                : Stepper(), H(*(EquationSolverT<FIELD_STATE_TYPE> *) builder.buildEquationSolver()),
-                  dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE> *) builder.getBoundary()),
+        StepperMontecarlo(Base::VoidBuilder &builder)
+                : Stepper(), H(*(Base::EquationSolverT<FIELD_STATE_TYPE> *) builder.buildEquationSolver()),
+                  dPhi(nullptr),
+                  _phi(nullptr),
+                  _phiTemp(nullptr)
+                  /*dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE> *) builder.getBoundary()),
                   _phi((FIELD_STATE_TYPE *) builder.newFieldState()),
-                  _phiTemp((FIELD_STATE_TYPE *) builder.newFieldState()) {
+                  _phiTemp((FIELD_STATE_TYPE *) builder.newFieldState()) */
+                   {
             dPhi->apply(*_phi, 0.0);
+
+            NOT_IMPLEMENTED
         }
 
         ~StepperMontecarlo() {
@@ -62,12 +68,12 @@ namespace Slab::Math {
         }
 
     private:
-        EquationSolverT<FIELD_STATE_TYPE> &H;
+        Base::EquationSolverT<FIELD_STATE_TYPE> &H;
 
-        const Base::BoundaryConditions<FIELD_STATE_TYPE> *dPhi;
+        Pointer<const Base::BoundaryConditions<FIELD_STATE_TYPE>> dPhi;
 
-        FIELD_STATE_TYPE *_phi;
-        FIELD_STATE_TYPE *_phiTemp;
+        Pointer<FIELD_STATE_TYPE> _phi;
+        Pointer<FIELD_STATE_TYPE>_phiTemp;
 
         int steps = 0;
 

@@ -17,7 +17,7 @@ namespace Slab::Math {
     }
 
     OutputPacket NumericalIntegration::getOutputInfo() {
-        return {stepper->getCurrentState(), stepper->getSpaces(), steps, getSimulationTime()};
+        return {stepper->getCurrentState(), stepper->getSpaces(), stepsConcluded, getSimulationTime()};
     }
 
     bool NumericalIntegration::_cycle(size_t nCycles) {
@@ -26,10 +26,10 @@ namespace Slab::Math {
         stepper->step(dt, nCycles);
         simTimeHistogram.storeMeasure((int) nCycles);
 
-        steps += nCycles;
+        stepsConcluded += nCycles;
 
         static fix maxSteps = simBuilder.getNumericParams().getn();
-        fix forceOutput = steps >= maxSteps;
+        fix forceOutput = stepsConcluded >= maxSteps;
 
         output(forceOutput);
 
@@ -37,7 +37,7 @@ namespace Slab::Math {
     }
 
     bool NumericalIntegration::_cycleUntilOutputOrFinish() {
-        size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(steps);
+        size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(stepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
             Log::WarningImportant() << "Huge nCyclesToNextOutput: " << nCyclesToNextOutput << Log::Flush;
@@ -57,7 +57,7 @@ namespace Slab::Math {
         outputManager->output(info, force);
     }
 
-    size_t NumericalIntegration::getSteps() const { return steps; }
+    size_t NumericalIntegration::getSteps() const { return stepsConcluded; }
 
     inline floatt NumericalIntegration::getSimulationTime() const { return floatt(getSteps()) * dt; }
 
@@ -69,10 +69,10 @@ namespace Slab::Math {
         auto &p = simBuilder.getNumericParams();
         size_t n = p.getn();
 
-        while (!forceStopFlag && steps < n && _cycleUntilOutputOrFinish());
+        while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
 
         // Para cumprir com os steps quebrados faltantes:
-        if (steps < n) _cycle(n - steps);
+        if (stepsConcluded < n) _cycle(n - stepsConcluded);
 
         outputManager->notifyIntegrationFinished(getOutputInfo());
 

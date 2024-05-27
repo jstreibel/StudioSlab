@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
         Real γ=.0;
 
     public:
-        explicit LangevinKGSolver(const NumericConfig &numericParams, KGSolver::MyBase::EqBoundaryCondition &boundary)
+        explicit LangevinKGSolver(const NumericConfig &numericParams, KGSolver::MyBase::EqBoundaryCondition_ptr boundary)
         : KGSolver(numericParams, boundary, *(new RtoR::AbsFunction())) { }
 
         void startStep(const EqState &stateIn, Real t, Real dt) override;

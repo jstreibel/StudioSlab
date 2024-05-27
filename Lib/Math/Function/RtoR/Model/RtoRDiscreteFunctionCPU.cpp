@@ -74,17 +74,17 @@ namespace Slab::Math::RtoR {
         return new DiscreteFunction_CPU(*this);
     }
 
-    Base::DiscreteFunction <Real, Real> *DiscreteFunction_CPU::CloneWithSize(UInt outN) const {
-        DiscreteFunction_CPU &newFunc = *new DiscreteFunction_CPU(outN, xMin, xMax, laplacianType);
+    Pointer<Base::DiscreteFunction <Real, Real>> DiscreteFunction_CPU::CloneWithSize(UInt outN) const {
+        auto newFunc = New<DiscreteFunction_CPU>(outN, xMin, xMax, laplacianType);
 
         const RealArray &X = getSpace().getHostData();
         const Real inc_d = N / Real(outN);
 
-        DiscreteSpace &newSpace = newFunc.getSpace();
+        DiscreteSpace &newSpace = newFunc->getSpace();
         for (UInt i = 0; i < outN; i++)
             newSpace.getHostData()[i] = X[int(i * inc_d)];;
 
-        return &newFunc;
+        return newFunc;
     }
 
     Base::DiscreteFunction <Real, Real> &DiscreteFunction_CPU::Apply(const FunctionT &func,
