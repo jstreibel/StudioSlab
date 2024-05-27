@@ -112,17 +112,23 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                                   Graphics::PlottingWindow_ptr simHistoryGraph) {
+                                             const Graphics::R2toRFunctionArtist_ptr &simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
+
+        auto simulationHistoryGraph = Slab::New<Graphics::PlottingWindow>();
+        simulationHistoryGraph->addArtist(simHistoryGraph);
 
         addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
         setColumnRelativeWidth(1, -1);
     }
 
     void RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                                     const DFTDataHistory &dftData,
-                                                     Graphics::PlottingWindow_ptr sftHistoryGraph) {
-        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
+                                               const DFTDataHistory &dftData,
+                                               const Graphics::R2toRFunctionArtist_ptr &sftHistoryArtist) {
+        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryArtist);
+
+        auto sftHistoryGraph = Slab::New<PlottingWindow>();
+        sftHistoryGraph->addArtist(sftHistoryArtist);
 
         addWindow(sftHistoryGraph);
     }
@@ -154,6 +160,5 @@ namespace Slab::Models::KGRtoR {
 
         mEnergyGraph.set_xMax(xMax);
     }
-
 
 }

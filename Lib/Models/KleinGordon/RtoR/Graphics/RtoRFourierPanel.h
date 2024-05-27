@@ -15,6 +15,9 @@
 namespace Slab::Models::KGRtoR {
 
     class RtoRFourierPanel : public RtoRPanel {
+        PlottingWindow_ptr spaceFTHistoryGraph{};
+        PlottingWindow_ptr simulationHistoryGraph{};
+
         PlottingWindow_ptr inverseDFTDisplay = Slab::New<PlottingWindow>("ℱₖ⁻¹[ℱ]");
         R2toRFunctionArtist_ptr inverseDFTArtist = Slab::New<R2toRFunctionArtist>();
         R2toR::DiscreteFunction_ptr inverseDFT;
@@ -25,7 +28,6 @@ namespace Slab::Models::KGRtoR {
 
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
-        ParametricCurve2DArtist_ptr cutoffLineArtist;
 
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
 
@@ -36,9 +38,11 @@ namespace Slab::Models::KGRtoR {
 
         void draw() override;
 
-        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                    const DFTDataHistory &dftData,
-                                    PlottingWindow_ptr sftHistoryGraph) override;
+        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                  const R2toRFunctionArtist_ptr &simHistoryGraph) override;
+
+        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory, const DFTDataHistory &history,
+                                    const R2toRFunctionArtist_ptr &functionArtist) override;
     };
 
 } // Graphics

@@ -21,13 +21,13 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRScenePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                              PlottingWindow_ptr simHistoryGraph) {
-
+                                              const R2toRFunctionArtist_ptr &simHistoryArtist) {
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(simulationHistory);
-        functionActor->setLabel("ϕ(t,x)");
 
+        functionActor->setLabel("ϕ(t,x)");
         scene->addActor(functionActor);
 
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
+        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
     }
+
 } // Slab::Models::KGRtoR

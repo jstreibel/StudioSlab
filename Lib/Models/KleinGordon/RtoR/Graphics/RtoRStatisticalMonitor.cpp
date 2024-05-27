@@ -114,10 +114,12 @@ namespace Slab::Models::KGRtoR {
         setColumnRelativeWidth(1, 0.40);
     }
 
-    void RtoRStatisticsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
-                                                   Graphics::PlottingWindow_ptr simHistoryGraph) {
-        RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
+    void RtoRStatisticsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                                   const R2toRFunctionArtist_ptr &simHistoryArtist) {
+        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
+        auto simulationHistoryGraph = Slab::New<PlottingWindow>();
+        simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph, true, 0.20);
     }
 
@@ -230,4 +232,6 @@ namespace Slab::Models::KGRtoR {
                                   (style++)->lineColor.permute());
         // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
     }
+
+
 }

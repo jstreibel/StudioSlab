@@ -131,11 +131,11 @@ namespace Slab::Models::KGRtoR {
     }
 
     void CorrelationsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                                 PlottingWindow_ptr simHistoryGraph) {
+                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
+        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
-
+        auto simulationHistoryGraph = Slab::New<PlottingWindow>();
+        simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph);
         addWindow(Slab::DummyPointer(correlationGraph));
         addWindow(Slab::DummyPointer(DFT2DGraph), true);
@@ -183,6 +183,8 @@ namespace Slab::Models::KGRtoR {
         twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::RealPart));
         twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
     }
+
+
 
 
 } // Graphics

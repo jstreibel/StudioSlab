@@ -5,16 +5,17 @@
 #ifndef STUDIOSLAB_RTORREALTIMEPANEL_H
 #define STUDIOSLAB_RTORREALTIMEPANEL_H
 
-#include "Graphics/OpenGL/OpenGLMonitor.h"
-
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
-
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-#include "RtoRPanel.h"
+#include "Graphics/OpenGL/OpenGLMonitor.h"
 #include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+
+#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
+
+#include "RtoRPanel.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -53,11 +54,13 @@ namespace Slab::Models::KGRtoR {
                       Graphics::GUIWindow &guiWindow);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                  Graphics::PlottingWindow_ptr simHistoryGraph) override;
+                                  const R2toRFunctionArtist_ptr &simHistoryGraph) override;
 
         void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
-                                    Graphics::PlottingWindow_ptr sftHistoryGraph) override;
+                                    const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
+
+
     };
 }
 

@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                  PlottingWindow_ptr simHistoryGraph) override;
+                                  const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
         void draw() override;
     };

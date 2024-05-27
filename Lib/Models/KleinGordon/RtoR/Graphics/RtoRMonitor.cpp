@@ -97,7 +97,7 @@ namespace Slab::Models::KGRtoR {
         fullHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
 
         for (const auto &dataView: dataViews)
-            dataView->setSimulationHistory(simHistory, fullHistoryGraph);
+            dataView->setSimulationHistory(simHistory, fullHistoryArtist);
     }
 
     void Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
@@ -110,7 +110,7 @@ namespace Slab::Models::KGRtoR {
         fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
 
         for (const auto &dataView: dataViews)
-            dataView->setSpaceFourierHistory(sftHistory, _dftData, fullSFTHistoryGraph);
+            dataView->setSpaceFourierHistory(sftHistory, _dftData, fullSFTHistoryArtist);
     }
 
     void Monitor::updateHistoryGraph() {

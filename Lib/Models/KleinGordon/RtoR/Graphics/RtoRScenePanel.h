@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
                        KGEnergy &hamiltonian);
 
         void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
-                                  PlottingWindow_ptr simHistoryGraph) override;
+                                  const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };
 
     DefinePointer(RtoRScenePanel)

@@ -7,8 +7,6 @@
 
 namespace Slab::Models::KGRtoR {
 
-
-
     RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
             : Socket(params, name, 1, description)
@@ -20,18 +18,18 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRPanel::setSimulationHistory(Math::R2toR::DiscreteFunction_constptr simHistory,
-                                         PlottingWindow_ptr simHistoryGraph) {
+                                         const Graphics::R2toRFunctionArtist_ptr& simHistoryArtist) {
         simulationHistory = simHistory;
-        simulationHistoryGraph = simHistoryGraph;
+        simulationHistoryArtist = simHistoryArtist;
     }
 
     void RtoRPanel::setSpaceFourierHistory(Math::R2toR::DiscreteFunction_constptr sftHistory,
                                            const DFTDataHistory &dftData,
-                                           PlottingWindow_ptr sftHistoryGraph) {
+                                           const Graphics::R2toRFunctionArtist_ptr& sftHistoryArtist) {
 
         spaceFTHistory = sftHistory;
         this->dftData = &dftData;
-        spaceFTHistoryGraph = sftHistoryGraph;
+        spaceFTHistoryArtist = sftHistoryArtist;
     }
 
     void RtoRPanel::handleOutput(const Math::OutputPacket &packet) {

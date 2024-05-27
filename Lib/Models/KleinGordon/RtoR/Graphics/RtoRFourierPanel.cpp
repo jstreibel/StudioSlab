@@ -15,9 +15,9 @@ namespace Slab::Models::KGRtoR {
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
         inverseDFTArtist->setLabel("ℱₖ⁻¹(t, x)");
-        inverseDFTDisplay->addArtist(inverseDFTArtist);
-        inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
-        inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
+        // inverseDFTDisplay->addArtist(inverseDFTArtist);
+        // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
+        // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
 
         timeDFTArtist->setLabel("ℱₜ(ω, x)");
         timeDFTDisplay->addArtist(timeDFTArtist);
@@ -100,14 +100,19 @@ namespace Slab::Models::KGRtoR {
         WindowPanel::draw();
     }
 
-    void RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
-                                                  const DFTDataHistory &dftData,
-                                                  PlottingWindow_ptr sftHistoryGraph) {
-        RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryGraph);
+    void
+    RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+                                             const DFTDataHistory &dftDataHistory,
+                                             const R2toRFunctionArtist_ptr &dftFunctionArtist) {
 
-        cutoffLineArtist = Graphics::Plotter::AddCurve(spaceFTHistoryGraph,
-                                                       Slab::DummyPointer(cutoffLine),
-                                                       PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+        RtoRPanel::setSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
+
+        spaceFTHistoryGraph = Slab::New<PlottingWindow>();
+        spaceFTHistoryGraph->addArtist(dftFunctionArtist);
+
+        Graphics::Plotter::AddCurve(spaceFTHistoryGraph,
+                                    Slab::DummyPointer(cutoffLine),
+                                    PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
@@ -185,4 +190,15 @@ namespace Slab::Models::KGRtoR {
         timeDFTArtist->setFunction(timeDFT);
         timeDFTArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
+
+    void RtoRFourierPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+                                                const R2toRFunctionArtist_ptr &simHistoryArtist) {
+        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+
+        simulationHistoryGraph = Slab::New<PlottingWindow>();
+        simulationHistoryGraph->addArtist(simulationHistoryArtist);
+        simulationHistoryGraph->addArtist(inverseDFTArtist);
+    }
+
+
 } // Graphics
