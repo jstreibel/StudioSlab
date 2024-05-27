@@ -47,7 +47,12 @@ namespace Slab::Common {
 
     double periodic_space(double x, double xMin, double xMax);
 
-    bool areEqual(const Real &lhs, const Real &rhs, Real eps = 1.e-5);
+    bool AreEqual(const Real &lhs, const Real &rhs, Real eps = 1.e-5);
+
+    template<typename T>
+    bool AreEqual(const T &lhs, const T &rhs) {
+        return lhs==rhs;
+    }
 
     template<class Class>
     Str getClassName(Class *thisClass) {

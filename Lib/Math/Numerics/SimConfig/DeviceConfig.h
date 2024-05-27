@@ -4,7 +4,7 @@
 #include "Utils/DeviceConfig.h"
 
 #include "Core/Controller/Interface/InterfaceOwner.h"
-#include "Core/Controller/Interface/CommonParameters.h"
+#include "Core/Controller/Parameter/CommonParameters.h"
 
 
 namespace Slab::Math {

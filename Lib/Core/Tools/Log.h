@@ -10,7 +10,7 @@
 #include "Utils/Utils.h"
 #include "Utils/Timer.h"
 
-#include "Core/Controller/Interface/CommonParameters.h"
+#include "Core/Controller/Parameter/CommonParameters.h"
 #include "Core/Controller/Interface/InterfaceOwner.h"
 #include "Utils/Singleton.h"
 

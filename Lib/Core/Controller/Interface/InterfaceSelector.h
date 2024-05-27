@@ -7,7 +7,7 @@
 
 #include "Interface.h"
 #include "InterfaceOwner.h"
-#include "CommonParameters.h"
+#include "Core/Controller/Parameter/CommonParameters.h"
 
 
 namespace Slab::Core {

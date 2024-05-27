@@ -5,9 +5,9 @@
 #ifndef FIELDS_PARAMETERBASE_H
 #define FIELDS_PARAMETERBASE_H
 
-#include "../CLDefs.h"
+#include "Core/Controller/CommandLine/CLDefs.h"
 
-#include <Utils/Types.h>
+#include "Utils/Types.h"
 
 namespace Slab::Core {
 

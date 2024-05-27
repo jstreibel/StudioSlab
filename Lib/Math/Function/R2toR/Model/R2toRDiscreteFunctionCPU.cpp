@@ -49,7 +49,7 @@ namespace Slab::Math::R2toR {
     }
 
     DiscreteFunction &DiscreteFunction_CPU::Laplacian(DiscreteFunction &outFunc) const {
-        if(!Common::areEqual(hx, hy)) throw "No computation of discrete laplacian for dx!=dy";
+        if(!Common::AreEqual(hx, hy)) throw "No computation of discrete laplacian for dx!=dy";
 
         fix h = hx;
         const Real invhsqr = 1./(h*h);

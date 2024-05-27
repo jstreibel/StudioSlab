@@ -22,6 +22,8 @@ target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}
         Slab-Graphics
         Slab-Models
 )
+target_compile_options(${STUDIOSLAB_BASE_LIB_NAME} PRIVATE -fmodules-ts)
+
 message(NOTICE "Added library " ${STUDIOSLAB_BASE_LIB_NAME})
 
 # add_dependencies(Fields Studios)

@@ -5,7 +5,7 @@
 #include "TestsApp.h"
 
 #include "Core/Backend/Program/DummyProgram.h"
-#include "Core/Controller/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CLArgsManager.h"
 
 #include "BezierTests.h"
 #include "WindowPanelTest.h"

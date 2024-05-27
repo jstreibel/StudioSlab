@@ -109,8 +109,8 @@ namespace Slab::Graphics {
         fix vGraphPaddingInSpace = (Real)currStyle->vAxisPaddingInPixels * vPixelsToSpaceScale;
 
         fix yLocationOfXAxis = region.yMin < -vGraphPaddingInSpace
-                                         ? 0
-                                         : region.yMin + vGraphPaddingInSpace;
+                                           ? 0
+                                           : region.yMin + vGraphPaddingInSpace;
 
         fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
 

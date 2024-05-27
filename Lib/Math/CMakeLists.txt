@@ -72,6 +72,10 @@ set ( NUMERICS_SOURCES
 
 		DifferentialEquations/EquationState.h
 		Function/NativeFunction.h
+        Numerics/Data/DataManager.cpp
+        Numerics/Data/DataManager.h
+		Numerics/Data/DataSet.cpp
+		Numerics/Data/DataSet.h
 )
 
 set ( THERMO_SOURCES

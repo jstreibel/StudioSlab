@@ -5,7 +5,7 @@
 #ifndef FIELDS_INTERFACE_H
 #define FIELDS_INTERFACE_H
 
-#include "Parameter.h"
+#include "Core/Controller/Parameter/Parameter.h"
 
 #include <set>
 

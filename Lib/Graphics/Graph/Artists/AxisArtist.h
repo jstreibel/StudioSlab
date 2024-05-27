@@ -52,6 +52,7 @@ namespace Slab::Graphics {
 
         void setVerticalUnit(const Unit&);
         auto getVerticalUnit() const -> const Unit&;
+
         void setVerticalAxisLabel(const Str &label);
         auto getVerticalAxisLabel() const -> Str;
 

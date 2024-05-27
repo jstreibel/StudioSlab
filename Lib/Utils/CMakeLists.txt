@@ -1,5 +1,7 @@
 
 
+# set ( UTIL_INTERFACES Maps.ixx Test.ixx)
+
 set ( UTIL_SOURCES
 		OMPUtils.cpp		OMPUtils.h
 		Printing.cpp		Printing.h
@@ -19,24 +21,27 @@ set ( UTIL_SOURCES
 
 		Threads.cpp			Threads.h
 
+		Arrays.cpp
+		Sets.cpp			Sets.h
+		Threads.cpp			Threads.h
+
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
 			CUDAUtils.h			CUDAUtils.cpp
-            Arrays.cpp
-            Sets.cpp
-            Sets.h
-            Threads.cpp
-			Threads.h
-	)
+    )
 endif ()
 
-set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
+set ( UTILS_LIB ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
+
+add_library(${UTILS_LIB} STATIC ${UTIL_SOURCES} ${UTIL_INTERFACES} )
+target_link_libraries(${UTILS_LIB} omp boost_timer )
+target_sources(${UTILS_LIB} PRIVATE ${UTIL_INTERFACES})
+target_compile_options(${UTILS_LIB}
+		PRIVATE
+		-std=c++20
+)
 
 
-
-add_library(${LIB_LOCAL_NAME} STATIC ${UTIL_SOURCES})
-target_link_libraries(${LIB_LOCAL_NAME} omp boost_timer )
-
-message(NOTICE "Added library " ${LIB_LOCAL_NAME})
+message(NOTICE "Added library " ${UTILS_LIB})

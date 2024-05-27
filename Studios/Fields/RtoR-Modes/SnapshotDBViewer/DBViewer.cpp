@@ -43,9 +43,9 @@ namespace Modes::DatabaseViewer {
         style.filled = false;
         style.thickness = 1.5;
         massesGraph.addPointSet(DummyPtr(massesReal_pointSet), style, "ℜ[m=√(ω²-kₚₑₐₖ²)]", true);
-        style.lineColor = style.lineColor.permute(true);
+        style.lineColor = style.lineColor.brg(true);
         massesGraph.addPointSet(DummyPtr(massesImag_pointSet), style, "ℑ[m=√(ω²-kₚₑₐₖ²)]");
-        style.lineColor = style.lineColor.permute();
+        style.lineColor = style.lineColor.brg();
         style.thickness = 3.0;
         massesGraph.addPointSet(DummyPtr(underXHair), style);
         massesGraph.getAxisArtist().setHorizontalUnit(Constants::π);

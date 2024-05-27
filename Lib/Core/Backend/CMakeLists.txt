@@ -34,11 +34,15 @@ set( GRAPHICS_BACKEND_SOURCE
 		Modules/ImGui/ImGuiModuleGLUT.h 		Modules/ImGui/ImGuiModuleGLUT.cpp
 		Modules/ImGui/ImGuiModuleGLFW.h 		Modules/ImGui/ImGuiModuleGLFW.cpp
 		Modules/ImGui/ImGuiColorAndStyles.h 	Modules/ImGui/ImGuiColorAndStyles.cpp
-		Modules/RealTimeAnimation.h 			Modules/RealTimeAnimation.cpp
+
 		Modules/Nuklear/NuklearModule.h 		Modules/Nuklear/NuklearModule.cpp
 		Modules/Nuklear/NuklearSFMLModule.h 	Modules/Nuklear/NuklearSFMLModule.cpp
 		Modules/Nuklear/NuklearGLFWModule.h 	Modules/Nuklear/NuklearGLFWModule.cpp
+
 		Modules/ModernOpenGLModule.h 			Modules/ModernOpenGLModule.cpp
+
+		Modules/Animator/RealTimeAnimation.h 	Modules/Animator/RealTimeAnimation.cpp
+		Modules/Animator/Animator.cpp 			Modules/Animator/Animator.h
 )
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Backend )

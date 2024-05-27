@@ -22,7 +22,7 @@ namespace Slab::Utils {
             }
         }
 
-        if(!Common::areEqual(maxVal, arr.max()))
+        if(!Common::AreEqual(maxVal, arr.max()))
             throw Exception(Str(__PRETTY_FUNCTION__) + " error.");
 
         return {maxVal, maxIdx};

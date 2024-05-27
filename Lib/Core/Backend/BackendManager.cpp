@@ -9,7 +9,7 @@
 
 #include "Console/ConsoleBackend.h"
 #include "Core/Backend/Modules/ImGui/ImGuiModule.h"
-#include "Core/Backend/Modules/RealTimeAnimation.h"
+#include "Core/Backend/Modules/Animator/RealTimeAnimation.h"
 #include "Core/Backend/Modules/ModernOpenGLModule.h"
 #include "Core/Backend/Modules/Nuklear/NuklearModule.h"
 #include "Core/Backend/GLFW/GLFWBackend.h"

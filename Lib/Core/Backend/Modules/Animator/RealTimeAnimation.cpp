@@ -3,7 +3,7 @@
 //
 
 #include "RealTimeAnimation.h"
-#include "Graphics/Animator.h"
+#include "Animator.h"
 
 namespace Slab::Core {
 

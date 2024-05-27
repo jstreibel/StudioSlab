@@ -89,6 +89,7 @@ namespace Slab {
         artistXHair.setVisibility(isMouseIn());
 
         if (autoReviewGraphRanges) reviewGraphRanges();
+
         setupOrtho();
 
         artistsDraw();
@@ -107,15 +108,18 @@ namespace Slab {
         }
 
         if (ImGui::BeginPopup(Unique(popupName))) {
-            if (ImGui::MenuItem(Unique("Save graph"))) {
+            if(ImGui::MenuItem("Auto adjust", NULL, autoReviewGraphRanges)) {
+                autoReviewGraphRanges = !autoReviewGraphRanges;
+            }
+            else if (ImGui::MenuItem(Unique("Show interface"), NULL, showInterface)) {
+                showInterface = !showInterface;
+            } else if (ImGui::MenuItem(Unique("Save graph"))) {
                 auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w * .5;
                 auto fileName = title + " " +
                                 Core::InterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                 ".png";
                 OpenGL::outputToPNG(this, fileName, w, (int) h);
-            } else if (ImGui::MenuItem(Unique("Show interface"), NULL, showInterface)) {
-                showInterface = !showInterface;
             }
 
             ImGui::EndPopup();

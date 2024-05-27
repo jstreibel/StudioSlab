@@ -7,7 +7,7 @@
 #include "Math/Function/NativeFunction.h"
 
 #include "3rdParty/imgui/imgui.h"
-#include "Graphics/Animator.h"
+#include "Core/Backend/Modules/Animator/Animator.h"
 
 namespace Tests {
     double startValue=0;

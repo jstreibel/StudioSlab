@@ -70,10 +70,10 @@ namespace Slab::Graphics {
 
     bool Color::operator==(const Color &rhs) const {
         fix eps = 1.e-4;
-        return Common::areEqual(r, rhs.r, eps) &&
-               Common::areEqual(g, rhs.g, eps) &&
-               Common::areEqual(b, rhs.b, eps) &&
-               Common::areEqual(a, rhs.a, eps);
+        return Common::AreEqual(r, rhs.r, eps) &&
+               Common::AreEqual(g, rhs.g, eps) &&
+               Common::AreEqual(b, rhs.b, eps) &&
+               Common::AreEqual(a, rhs.a, eps);
     }
 
     std::array<Real32, 4> Color::array() const {

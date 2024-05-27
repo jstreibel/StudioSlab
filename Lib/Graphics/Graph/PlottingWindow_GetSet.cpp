@@ -4,7 +4,7 @@
 
 #include "PlottingWindow.h"
 
-#include "Graphics/Animator.h"
+#include "Core/Backend/Modules/Animator/Animator.h"
 
 
 namespace Slab {

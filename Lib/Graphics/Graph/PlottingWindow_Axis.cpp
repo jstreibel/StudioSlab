@@ -62,7 +62,19 @@ namespace Slab {
             if (aRegion.yMin < newRegion.yMin) newRegion.yMin = aRegion.yMin;
         }
 
-        region = newRegion;
+        if(newRegion != region) {
+            region = newRegion;
+
+            auto currStyle = PlotThemeManager::GetCurrent();
+            auto pix = PixelSizeInSpace(region, getViewport());
+            auto Δx = (Real)currStyle->hAxisPaddingInPixels * pix.x;
+            auto Δy = (Real)currStyle->hAxisPaddingInPixels * pix.y;
+
+            region.xMin -= 2*Δx;
+            region.xMax += 2*Δx;
+            region.yMin -= 2*Δy;
+            region.yMax += 2*Δy;
+        }
     }
 
     void Graphics::PlottingWindow::nameLabelDraw(const Graphics::PlotStyle &style, const Str &label) {

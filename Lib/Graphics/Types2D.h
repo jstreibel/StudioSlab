@@ -21,6 +21,17 @@ namespace Slab::Graphics {
         T xCenter() const { return .5 * (xMax + xMin); }
 
         bool doesHit(const T &x, const T &y) const { return x>=xMin && x<=xMax && y>=yMin && y<=yMax; }
+
+        bool operator==(const Rect &rhs) const {
+            return Common::AreEqual(xMin, rhs.xMin) &&
+                   Common::AreEqual(xMax, rhs.xMax) &&
+                   Common::AreEqual(yMin, rhs.yMin) &&
+                   Common::AreEqual(yMax, rhs.yMax);
+        }
+
+        bool operator!=(const Rect &rhs) const {
+            return !(rhs == *this);
+        }
     };
 
     typedef Rect<int> RectI;
@@ -34,7 +45,7 @@ namespace Slab::Graphics {
         Point2D(Real x, Real y) : x(x), y(y) {}
         Point2D(const Point2D& p) = default;
 
-        Point2D operator +  (const Point2D &p) {return {x+p.x, y+p.y}; };
+        Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; };
         void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
         void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
 

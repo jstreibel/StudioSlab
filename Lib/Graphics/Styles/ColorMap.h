@@ -39,7 +39,7 @@ namespace Slab::Graphics {
 
         auto mapValueToColor(Real value) const -> Color;
 
-        auto permute() const -> ColorMap;
+        auto brg() const -> ColorMap;
         auto bgr() const -> ColorMap;
         auto inverse() const -> ColorMap;
         auto reverse() const -> ColorMap;

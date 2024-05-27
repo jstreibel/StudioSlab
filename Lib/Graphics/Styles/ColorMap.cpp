@@ -96,7 +96,7 @@ namespace Slab::Graphics {
 
 
 
-    auto ColorMap::permute() const -> ColorMap {
+    auto ColorMap::brg() const -> ColorMap {
         Vector<Color> newColors;
         for(auto &c: colors)
             newColors.push_back(c.permute());

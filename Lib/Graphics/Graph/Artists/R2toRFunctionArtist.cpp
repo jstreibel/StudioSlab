@@ -122,22 +122,20 @@ namespace Slab::Graphics {
         {
             {
                 ImGui::Text("σ := sign(ϕ)");
-                ImGui::Text("ϕ ↦ σ ln(|ϕ|×ε + 1) / ln(ϕₛₐₜ×ε + 1)");
+                ImGui::Text("μ(ϕ) = σ ln(|ϕ|/κ + 1)");
+                ImGui::Text("ϕ ↦ μ(ϕ)/μ(ϕₛₐₜ)");
             }
 
             bool antiAlias = textureData->getAntiAlias();
             if (ImGui::Checkbox("Anti-alias display##", &antiAlias))
                 textureData->setAntiAlias(antiAlias);
 
-            if (ImGui::Button("Compute ϕₛₐₜ")) {
-                adjustScale();
-            }
 
             {
                 auto cMap_saturationValue_f = (float) cMap_saturationValue;
                 auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
 
-                if (ImGui::DragFloat("ϕₛₐₜ",
+                if (ImGui::DragFloat("##",
                                      &cMap_saturationValue_f,
                                      cMap_saturationValue_f*5e-3f,
                                      1.e-5f,
@@ -148,6 +146,8 @@ namespace Slab::Graphics {
 
                     updateColorBar();
                 }
+                ImGui::SameLine();
+                if (ImGui::Button("ϕₛₐₜ")) adjustScale();
 
                 if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
                                      1e-10, 1e10, "%.1e")) {
@@ -186,22 +186,21 @@ namespace Slab::Graphics {
             }
 
             ImGui::Text("ColorMap operations:");
-            if (ImGui::Button("Permute")) {
-                cMap = cMap.permute();
+            if (ImGui::Button("RGB->BRG")) {
+                cMap = cMap.brg();
                 updateColorBar();
             }
             ImGui::SameLine();
-            if (ImGui::Button("RGB -> BGR")) {
+            if (ImGui::Button("RGB->BGR")) {
                 cMap = cMap.bgr();
                 updateColorBar();
             }
-            ImGui::SameLine();
-            if (ImGui::Button("Inverse")) {
+            if (ImGui::Button("Inv")) {
                 cMap = cMap.inverse();
                 updateColorBar();
             }
             ImGui::SameLine();
-            if (ImGui::Button("Reverse")) {
+            if (ImGui::Button("Rev")) {
                 cMap = cMap.reverse();
                 updateColorBar();
             }
@@ -221,7 +220,7 @@ namespace Slab::Graphics {
         auto field_min = function->min();
         auto field_max = function->max();
 
-        if(Common::areEqual(field_min, field_max)) field_max += 0.1;
+        if(Common::AreEqual(field_min, field_max)) field_max += 0.1;
 
         cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
 
@@ -340,8 +339,6 @@ namespace Slab::Graphics {
                 return x;
             };
         }
-
-
 
         colorBar.setInverseScalingFunction(g⁻¹);
 

@@ -9,7 +9,7 @@
 #define PARAMS_H_
 
 #include "Core/Controller/Interface/InterfaceOwner.h"
-#include "Core/Controller/Interface/CommonParameters.h"
+#include "Core/Controller/Parameter/CommonParameters.h"
 #include "Utils/Types.h"
 #include "Utils/NativeTypes.h"
 

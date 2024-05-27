@@ -23,13 +23,17 @@ namespace Slab::Models::KGRtoR {
                            const Real phiMin, const Real phiMax, const Str &name, bool showEnergyHistoryAsDensities)
             : Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name), hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
+        fullHistoryArtist->setAffectGraphRanges(true);
         fullHistoryGraph->addArtist(fullHistoryArtist);
         fullHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
+        fullHistoryGraph->setAutoReviewGraphRanges(true);
 
         fullSFTHistoryArtist->setLabel("ℱₓ(t,k)");
+        fullSFTHistoryArtist->setAffectGraphRanges(true);
         fullSFTHistoryGraph->addArtist(fullSFTHistoryArtist);
         fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
         fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
+        fullSFTHistoryGraph->setAutoReviewGraphRanges(true);
 
 
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();

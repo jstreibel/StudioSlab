@@ -122,7 +122,7 @@ namespace Slab::Common {
         return xMin + std::fmod(x - xMin, Δx);
     }
 
-    bool areEqual(const Real &lhs, const Real &rhs, const Real eps) {
+    bool AreEqual(const Real &lhs, const Real &rhs, Real eps) {
         return std::abs(lhs - rhs) < eps;
     }
 

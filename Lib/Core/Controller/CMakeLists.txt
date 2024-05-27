@@ -1,14 +1,14 @@
 
 set ( INTERFACE_SOURCES
-		Interface/Parameter.cpp				Interface/Parameter.h
-		Interface/CommonParameters.cpp		Interface/CommonParameters.h
+        Parameter/Parameter.cpp Parameter/Parameter.h
+        Parameter/CommonParameters.cpp Parameter/CommonParameters.h
 		Interface/Interface.cpp				Interface/Interface.h
 		Interface/InterfaceManager.cpp		Interface/InterfaceManager.h
 		Interface/InterfaceOwner.cpp		Interface/InterfaceOwner.h)
 
 set ( CONSOLE_SOURCES
 		Interface/InterfaceSelector.cpp
-		CLArgsManager.cpp
+		CommandLine/CLArgsManager.cpp
 		)
 
 set ( LIB_LOCAL_NAME ${STUDIOS_LIB_BASE_NAME}-Controller )

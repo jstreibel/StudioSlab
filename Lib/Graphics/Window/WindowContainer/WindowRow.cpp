@@ -136,7 +136,7 @@ namespace Slab::Graphics {
 
         using namespace Common;
 
-        if (freeWidths == 0 && areEqual(reserverdWidth, 1))
+        if (freeWidths == 0 && AreEqual(reserverdWidth, 1))
             return true;
 
         if (reserverdWidth < 1 - (float) freeWidths * 1.e-2)

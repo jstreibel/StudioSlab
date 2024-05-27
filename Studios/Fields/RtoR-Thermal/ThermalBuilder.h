@@ -9,10 +9,12 @@
 
 namespace Studios::Fields::RtoRThermal {
 
+    using namespace Slab;
     using namespace Slab::Core;
     using namespace Slab::Math;
+    using namespace Slab::Models;
 
-class Builder : public Slab::Models::KGRtoR::KGBuilder {
+class Builder : public KGRtoR::KGBuilder {
         RealParameter temperature    = RealParameter(.0, "T,temperature", "The Langevin temperature reservoir's temperature");
         RealParameter dissipation    = RealParameter(.0, "k,dissipation_coefficient", "The dynamics dissipation coefficient");
         RealParameter transientGuess = RealParameter(.0, "i,transient_guess", "User guess for transient value");

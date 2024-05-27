@@ -80,7 +80,7 @@ namespace Slab::Math {
     }
 
     Str Unit::operator()(const Real &val, Count rounding) const {
-        if (Common::areEqual(baseValue, 1) && sym.empty()) return ToStr(val, (int) rounding);
+        if (Common::AreEqual(baseValue, 1) && sym.empty()) return ToStr(val, (int) rounding);
 
         fix reVal = val / baseValue;
 

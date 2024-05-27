@@ -6,8 +6,6 @@ add_library(${LIB_GRAPHICS} STATIC
         Types2D.h Types2D.cpp
 		Utils.cpp
 
-		Animator.cpp	Animator.h
-
 		OpenGL/LegacyGL/FunctionRenderer.cpp OpenGL/LegacyGL/FunctionRenderer.h
 
 		Styles/ColorMap.h 		Styles/ColorMap.cpp

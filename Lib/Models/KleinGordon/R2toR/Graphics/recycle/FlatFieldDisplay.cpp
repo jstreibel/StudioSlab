@@ -3,7 +3,7 @@
 //
 
 #include "FlatFieldDisplay.h"
-#include "Graphics/Animator.h"
+#include "Core/Backend/Modules/Animator/Animator.h"
 
 #include <utility>
 #include <limits>

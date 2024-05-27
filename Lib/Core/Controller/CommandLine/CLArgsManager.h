@@ -6,7 +6,7 @@
 #define FIELDS_COMMANDLINEINTERFACEMANAGER_H
 
 #include "Core/Controller/Interface/Interface.h"
-#include "Core/Controller/CLDefs.h"
+#include "CLDefs.h"
 
 
 namespace Slab::Core {

@@ -104,7 +104,7 @@ namespace Slab::Graphics {
 
         using namespace Common;
 
-        if (freeHeights == 0 && areEqual(reservedHeight, 1))
+        if (freeHeights == 0 && AreEqual(reservedHeight, 1))
             return true;
 
         if (reservedHeight < 1 - (float) freeHeights * 1.e-2)
