@@ -14,7 +14,7 @@ namespace Studios::PureSG {
     public:
         InputShockwave();
 
-        auto getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr override;
+        auto getBoundary() -> Math::Base::BoundaryConditions_ptr override;
 
     };
 }

@@ -11,20 +11,21 @@
 
 namespace Slab::Math::R2toR {
 
-    class BoundaryCondition : public Base::BoundaryConditions<R2toR::EquationState> {
-    public:
-        BoundaryCondition(Function *initialPhiCondition,
-                          Function *initialdPhiDtCondition,
-                          R2toR::EquationState_constptr prototype);
-
-        void apply(EquationState &fieldState, Real t) const override;
-
-    private:
+    class BoundaryCondition : public Base::BoundaryConditions {
         Function *initialPhiCondition;
         Function *initialdPhiDtCondition;
 
-        Function *phi, *dPhiDt;
+    public:
+        BoundaryCondition(Function *initialPhiCondition,
+                          Function *initialdPhiDtCondition,
+                          const R2toR::EquationState_constptr& prototype);
 
+
+
+        void apply(Base::EquationState &toFunction, Real t) const final;
+
+    protected:
+        virtual void apply_KGR2toR(EquationState &fieldState, Real t) const;
     };
 
     DefinePointer(BoundaryCondition)

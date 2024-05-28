@@ -13,8 +13,7 @@ namespace Slab::Math {
 
     bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
-        OutputPacket dummyInfo = OutputPacket(nullptr, DiscreteSpacePair(nullptr, nullptr),
-                                              params.getn(), maxT);
+        OutputPacket dummyInfo = OutputPacket(nullptr,  params.getn(), maxT);
 
         this->handleOutput(dummyInfo);
         return true;
@@ -34,7 +33,7 @@ namespace Slab::Math {
         Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Log::Flush;
         Log::Info() << "t = " << t << "/" << maxT << Log::Flush;
 
-        auto expectedFinish = NAN;
+        auto expectedFinish = (Real)NAN;
         if (lastn != currn) {
             Real stepsPerSec;
 
@@ -45,12 +44,12 @@ namespace Slab::Math {
             auto count = measures.size();
             auto countMin = count > MAX_AVG_SAMPLES ? count - MAX_AVG_SAMPLES : 0;
             auto total = count - countMin;
-            for (int index = countMin; index < count; index++) avg += measures[index];
-            avg /= total;
+            for (int index = (int)countMin; index < count; index++) avg += measures[index];
+            avg /= (Real)total;
 
-            stepsPerSec = (currn - lastn) / avg;
+            stepsPerSec = (Real)(currn - lastn) / avg;
 
-            expectedFinish = (n - currn) / stepsPerSec;
+            expectedFinish = (Real)(n - currn) / stepsPerSec;
 
             Log::Info() << "Avg " << stepsPerSec << " steps/s in last " << total << " measures" << Log::Flush;
             Log::Info() << "El time since last step: " << elTime << "s" << Log::Flush;

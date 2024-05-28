@@ -32,7 +32,7 @@ set ( KG_SOURCES
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
-		KleinGordon/R2toR/EquationSolver.h				KleinGordon/R2toR/EquationState.cpp
+        KleinGordon/R2toR/EquationState.cpp
 
         LangevinKleinGordon/LangevinKGSolver.h	        LangevinKleinGordon/LangevinKGSolver.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp

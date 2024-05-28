@@ -119,7 +119,7 @@ namespace Slab::Models::KGRtoR {
         static bool isSetup = false;
         if (not isSetup && lastPacket.hasValidData()) {
 
-            auto &phi = lastPacket.getEqStateData<EquationState>()->getPhi();
+            auto &phi = lastPacket.GetNakedStateData<EquationState>()->getPhi();
             if (phi.getLaplacianType() == RtoR::DiscreteFunction::Standard1D_PeriodicBorder)
                 fullHistoryArtist->set_xPeriodicOn();
 
@@ -147,7 +147,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void Monitor::draw() {
-        const EquationState &fieldState = *lastPacket.getEqStateData<EquationState>();
+        const EquationState &fieldState = *lastPacket.GetNakedStateData<EquationState>();
         hamiltonian.computeEnergies(fieldState);
 
         updateHistoryGraph();

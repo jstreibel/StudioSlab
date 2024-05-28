@@ -21,26 +21,25 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class LangevinKGSolver : public KGSolver {
+    class LangevinKGSolver : public KGRtoRSolver {
         RtoR::DiscreteFunction *langevinImpulses = nullptr;
         RtoR::DiscreteFunction *scaledImpulses   = nullptr;
 
         Real T=.0;
         Real γ=.0;
 
-    public:
-        explicit LangevinKGSolver(const NumericConfig &numericParams, KGSolver::MyBase::EqBoundaryCondition_ptr boundary)
-        : KGSolver(numericParams, boundary, *(new RtoR::AbsFunction())) { }
-
-        void startStep(const EqState &stateIn, Real t, Real dt) override;
-
         void ComputeImpulses();
+    public:
+
 
         void setTemperature(Real value);
         void setDissipationCoefficient(Real value);
 
-        EqState &
-        dtF(const EqState &stateIn, EqState &stateOut, Real t, Real dt) override;
+    protected:
+        void startStep_KG(const EquationState &state, Real t, Real dt) override;
+
+        EquationState &dtF_KG(const EquationState &stateIn, EquationState &stateOut, Real t, Real dt) override;
+
 
     };
 

@@ -6,11 +6,11 @@
 #define STUDIOSLAB_KG_RTORSOLVER_H
 
 #include "KG-RtoREquationState.h"
-#include "Math/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/Solver.h"
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace Slab::Models::KGRtoR {
-    typedef Models::Solver<EquationState> KGSolver;
+    using KGRtoRSolver = Models::KGSolver<KGRtoR::EquationState>;
 }
 
 #endif //STUDIOSLAB_KG_RTORSOLVER_H

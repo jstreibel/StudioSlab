@@ -5,6 +5,8 @@
 #ifndef V_SHAPE_EQSTATERTOR_H
 #define V_SHAPE_EQSTATERTOR_H
 
+#include <utility>
+
 #include "Models/KleinGordon/KGState.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
@@ -14,13 +16,10 @@ namespace Slab::Models::KGRtoR {
     using DiscreteFunky_ptr = RtoR::DiscreteFunction_ptr;
 
     class EquationState : public Models::KGState<DiscreteFunky> {
-        // TODO rename FieldState to Field, since phi and dphidt are enough (analytically) to describe the
-        //  entirety of the field in all of space and time.
     public:
         EquationState(DiscreteFunky_ptr phi, DiscreteFunky_ptr dPhiDt)
-        : Models::KGState<DiscreteFunky>(phi, dPhiDt) {}
+        : Models::KGState<DiscreteFunky>(std::move(phi), std::move(dPhiDt)) {}
 
-    public:
         void outputPhi(OStream &out, Str separator) const override {
             const RealArray &vPhi = getPhi().getSpace().getHostData();
             const UInt N = vPhi.size();

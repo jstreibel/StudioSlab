@@ -46,9 +46,8 @@ set ( NUMERICS_SOURCES
 		App.h
 
 		Numerics/VoidBuilder.cpp
-        Numerics/NumericalRecipe.h
 
-		Numerics/Program/Integrator.cpp
+        Numerics/Program/Integrator.cpp
 		Numerics/SimConfig/NumericConfig.cpp
 		Numerics/SimConfig/DeviceConfig.cpp
 		Numerics/SimConfig/SimulationConfig.cpp
@@ -76,6 +75,9 @@ set ( NUMERICS_SOURCES
         Numerics/Data/DataManager.h
 		Numerics/Data/DataSet.cpp
 		Numerics/Data/DataSet.h
+		DifferentialEquations/Solver.cpp
+		DifferentialEquations/EquationState.cpp
+		DifferentialEquations/BoundaryConditions.cpp
 )
 
 set ( THERMO_SOURCES

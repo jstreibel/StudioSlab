@@ -16,7 +16,7 @@ namespace Studios::PureSG {
         interface->addParameters({&v1, &v2, &alpha1, &alpha2, &l, &V, &xTouchLocation, &mirror});
     }
 
-    auto InputGeneralOscillons::getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr {
+    auto InputGeneralOscillons::getBoundary() -> Math::Base::BoundaryConditions_ptr {
         using namespace Slab::Math::RtoR;
 
         AnalyticOscillon oscRight = AnalyticOscillon(0.0, v1.getValue(), V.getValue(), alpha1.getValue(),
@@ -28,7 +28,8 @@ namespace Studios::PureSG {
         auto initCondDPhiDt = oscRight.swap() + oscLeft.swap();
 
         auto proto = newFieldState();
-        return New<BoundaryCondition>(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+
+        return New<BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

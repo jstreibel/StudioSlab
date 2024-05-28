@@ -29,9 +29,12 @@ namespace Slab::Models::KGRtoR {
 
 
     auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU {
-        auto &phi = packet.getEqStateData<EquationState>()->getPhi();
+        NOT_IMPLEMENTED
+        /*
+        auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
 
         return RtoR::DiscreteFunction_CPU(phi);
+         */
     }
 
 

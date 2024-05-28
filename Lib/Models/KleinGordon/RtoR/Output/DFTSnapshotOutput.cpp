@@ -22,7 +22,9 @@ namespace Slab::Models::KGRtoR {
     RtoR::DiscreteFunction_CPU DFTSnapshotOutput::filterData(const OutputPacket &packet) {
         RtoR::DiscreteFunction_CPU dft((int)NDFTModes, 0.0, kMaxDFT);
 
-        IN phi = packet.getEqStateData<EquationState>()->getPhi();
+        IN kgState = *packet.GetNakedStateData<KGRtoR::EquationState>();
+
+        IN phi = kgState.getPhi();
         fix pts = RtoR::DFT::Compute(phi).getMagnitudes()->getPoints();
 
         OUT dftSpace = dft.getSpace().getHostData(true);

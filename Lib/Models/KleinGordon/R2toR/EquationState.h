@@ -10,7 +10,7 @@
 
 namespace Slab::Math::R2toR {
 
-    class EquationState : public Models::KGState<DiscreteFunction> {
+    class EquationState : public Models::KGState<R2toR::DiscreteFunction> {
     public:
         EquationState(DiscreteFunction_ptr phi, DiscreteFunction_ptr dPhiDt)
         : Models::KGState<DiscreteFunction>(phi, dPhiDt)

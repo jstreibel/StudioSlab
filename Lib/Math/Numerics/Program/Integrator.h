@@ -5,7 +5,7 @@
 
 #include "Math/Numerics/Output/OutputManager.h"
 
-#include "Math/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/Solver.h"
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 
@@ -42,7 +42,7 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     public:
-        NumericalIntegration(Base::VoidBuilder &simBuilder)
+        explicit NumericalIntegration(Base::VoidBuilder &simBuilder)
                 : simBuilder(simBuilder), stepper(simBuilder.buildStepper()),
                   outputManager(simBuilder.buildOutputManager()),
                   dt(simBuilder.getNumericParams().getdt()),

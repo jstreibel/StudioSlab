@@ -11,12 +11,9 @@
 
 namespace Slab::Math::Base {
 
-
-
     class EquationState : public ArithmeticOpsInterface<EquationState>{
     public:
         virtual Pointer<EquationState> clone() const = 0;
-
         virtual void set(const EquationState&) = 0;
     };
 

@@ -9,6 +9,7 @@
 #include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Core/Controller/Interface/InterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
@@ -27,6 +28,7 @@
 #include "Output/DFTSnapshotOutput.h"
 
 #include "Graphics/RtoRMonitor.h"
+#include "Math/Numerics/Method/Method-RK4.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -182,7 +184,7 @@ namespace Slab::Models::KGRtoR {
                                        this->newFunctionArbitrary());
     }
 
-    Base::EquationSolver_ptr KGRtoRBuilder::buildEquationSolver() {
+    Base::Solver_ptr KGRtoRBuilder::buildEquationSolver() {
         auto potential = getPotential();
         auto nonHomogenous = getNonHomogenous();
         auto dphi = getBoundary();
@@ -192,9 +194,11 @@ namespace Slab::Models::KGRtoR {
             return new RtoR::SystemGordonGPU(simulationConfig.numericConfig, *dphi, *potential);
         }
 #endif
+        auto &params = simulationConfig.numericConfig;
 
-        return new Models::Solver<EquationState>(simulationConfig.numericConfig,
-                                                                    *dphi, *potential, nonHomogenous);
+        auto solver = New<KGRtoRSolver>(params, dphi, *potential, nonHomogenous);
+
+        return solver;
     }
 
     auto KGRtoRBuilder::buildOpenGLOutput() -> void * {
@@ -211,9 +215,12 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGRtoRBuilder::buildStepper() -> Stepper * {
-        auto &solver = *(KGSolver *) buildEquationSolver();
+        auto solver = buildEquationSolver();
 
-        return new StepperRK4<typename Slab::Models::KGRtoR::EquationState>(solver);
+        using State = typename Slab::Models::KGRtoR::EquationState;
+        auto stepper = new Math::StepperRK4(solver);
+
+        return stepper;
     }
 
     void *KGRtoRBuilder::getHamiltonian() {

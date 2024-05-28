@@ -3,6 +3,8 @@
 //
 
 #ifndef V_SHAPE_FIELDSTATE_H
+
+#include "Utils/Templates.h"
 #define V_SHAPE_FIELDSTATE_H
 
 #include "Math/Space/Impl/DiscreteSpace.h"
@@ -18,19 +20,20 @@ namespace Slab::Models {
      * State representing 2nd order equation state.
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
-    template<class EqCategory>
+    template<class FUNC_CATEGORY>
     class KGState : public Base::EquationState, public EqStateOutputInterface {
         typedef Base::EquationState State;
 
     public:
-        typedef EqCategory SubStateType;
-        using FunctionType = typename EqCategory::Type;
-        using FunctionArbitraryType = EqCategory;
+        using CategoryType = FUNC_CATEGORY;
+        typedef FUNC_CATEGORY FunctionCategoryType;
 
-        KGState(Pointer<EqCategory> phi, Pointer<EqCategory> dPhiDt)
+        KGState(Pointer<FUNC_CATEGORY> phi, Pointer<FUNC_CATEGORY> dPhiDt)
         : phi(phi), dPhiDt(dPhiDt) {}
+
         KGState(const KGState& state)
-        : KGState(new EqCategory(state.phi), new EqCategory(state.dPhiDt)) {};
+        : KGState(state.phi, state.dPhiDt) {};
+
         virtual ~KGState() = default;
 
         State &Add(const State &fieldState) override {
@@ -89,18 +92,18 @@ namespace Slab::Models {
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
-        void setPhi(const typename EqCategory::Type &function) {
+        void setPhi(const typename FUNC_CATEGORY::Type &function) {
             phi->Set(function);
         }
         /*! Basicamente utilizado por BoundaryConditions */
-        void setDPhiDt(const typename EqCategory::Type &function) {
+        void setDPhiDt(const typename FUNC_CATEGORY::Type &function) {
             dPhiDt->Set(function);
         }
 
-        EqCategory &getPhi() { return *phi; }
-        EqCategory &getPhi() const { return *phi; }
-        EqCategory &getDPhiDt() { return *dPhiDt; }
-        EqCategory &getDPhiDt() const { return *dPhiDt; }
+        FUNC_CATEGORY &getPhi() { return *phi; }
+        FUNC_CATEGORY &getPhi() const { return *phi; }
+        FUNC_CATEGORY &getDPhiDt() { return *dPhiDt; }
+        FUNC_CATEGORY &getDPhiDt() const { return *dPhiDt; }
 
         void outputPhi(OStream &out, Str separator) const override {
             DiscreteSpace &space = phi->getSpace();
@@ -122,9 +125,12 @@ namespace Slab::Models {
         }
 
     protected:
-        Pointer<EqCategory> phi;
-        Pointer<EqCategory> dPhiDt;
+        Pointer<FUNC_CATEGORY> phi;
+        Pointer<FUNC_CATEGORY> dPhiDt;
     };
+
+    template<typename StateType, typename FunctionCategory>
+    concept DerivedFromKGState = std::is_base_of_v<KGState<FunctionCategory>, StateType>;
 }
 
 #endif //V_SHAPE_FIELDSTATE_H

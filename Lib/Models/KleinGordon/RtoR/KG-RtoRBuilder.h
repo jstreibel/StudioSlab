@@ -46,13 +46,13 @@ namespace Slab::Models::KGRtoR {
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
         auto buildOutputManager()   -> OutputManager * override;
-        auto buildEquationSolver()  -> Base::EquationSolver_ptr override;
+        auto buildEquationSolver()  -> Base::Solver_ptr override;
         auto buildStepper()         -> Stepper * override;
 
         void *getHamiltonian() override;
 
         auto getInitialState()      -> KGRtoR::EquationState_ptr;
-        virtual auto getBoundary()  -> BoundaryCondition_ptr = 0;
+        virtual auto getBoundary()  -> Base::BoundaryConditions_ptr = 0;
         auto newFunctionArbitrary() -> Math::RtoR::DiscreteFunction_ptr;
         auto newFieldState()        -> KGRtoR::EquationState_ptr;
 

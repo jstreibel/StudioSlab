@@ -10,7 +10,7 @@
 #include "Stepper.h"
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
-#include "Math/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/Solver.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>
@@ -21,7 +21,7 @@ namespace Slab::Math {
     template<int NUM_THREADS, class FIELD_STATE_TYPE>
     class StepperMontecarlo : public Stepper {
     public:
-
+/*
         StepperMontecarlo(Base::VoidBuilder &builder)
                 : Stepper(), H(*(Base::EquationSolverT<FIELD_STATE_TYPE> *) builder.buildEquationSolver()),
                   dPhi(nullptr),
@@ -29,9 +29,9 @@ namespace Slab::Math {
                   _phiTemp(nullptr)
                   /*dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE> *) builder.getBoundary()),
                   _phi((FIELD_STATE_TYPE *) builder.newFieldState()),
-                  _phiTemp((FIELD_STATE_TYPE *) builder.newFieldState()) */
+                  _phiTemp((FIELD_STATE_TYPE *) builder.newFieldState()) *//*
                    {
-            dPhi->apply(*_phi, 0.0);
+            // dPhi->apply(*_phi, 0.0);
 
             NOT_IMPLEMENTED
         }
@@ -76,6 +76,7 @@ namespace Slab::Math {
         Pointer<FIELD_STATE_TYPE>_phiTemp;
 
         int steps = 0;
+*/
 
     };
 

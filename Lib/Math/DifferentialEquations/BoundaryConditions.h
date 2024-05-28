@@ -5,22 +5,25 @@
 #ifndef V_SHAPE_BOUNDARYCONDITIONS_H
 #define V_SHAPE_BOUNDARYCONDITIONS_H
 
+#include <utility>
 #include "Utils/Types.h"
-
+#include "EquationState.h"
 
 namespace Slab::Math::Base {
-    template<typename EqStateType>
+
     class BoundaryConditions {
-        Pointer<const EqStateType> prototype;
+        EquationState_constptr prototype;
+
     public:
-        using EqState = EqStateType;
 
-        explicit BoundaryConditions(Pointer<const EqState> prototype) : prototype(prototype) {};
+        explicit BoundaryConditions(EquationState_constptr prototype);
 
-        Pointer<EqState> newEqState() const { return prototype->clone(); }
+        EquationState_ptr newEqState() const;
 
-        virtual void apply(EqState &toFunction, Real t) const = 0;
+        virtual void apply(EquationState &toFunction, Real t) const = 0;
     };
+
+    DefinePointer(BoundaryConditions)
 }
 
 

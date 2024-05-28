@@ -23,7 +23,7 @@ namespace Studios::PureSG {
 
     public:
         InputGeneralOscillons();
-        auto getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr override;
+        auto getBoundary() -> Math::Base::BoundaryConditions_ptr override;
     };
 }
 

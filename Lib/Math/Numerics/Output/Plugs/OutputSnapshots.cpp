@@ -50,35 +50,39 @@ namespace Slab::Math {
         log.precision(4);
 
         log << "Saving snapshot for t = " << t << " in \'" << fileName << "\'... " << Log::Flush;
-        _outputToFile(outInfo.getSpaceData(), t, fileName);
-        Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
-    }
+        {
+            std::ofstream file;
+            file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
 
-    void OutputSnapshot::_outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName) {
-        std::ofstream file;
-        file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+            try {
+                file.open(fileName);
+                Log::Note() << "Opened file \"" << fileName << "\"" << Log::Flush;
 
-        try {
-            file.open(fileName);
-            Log::Note() << "Opened file \"" << fileName << "\"" << Log::Flush;
+                EqStateOutputInterface::format = EqStateOutputInterface::PythonDictionaryEntry;
+                EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
 
-            EqStateOutputInterface::format = EqStateOutputInterface::PythonDictionaryEntry;
-            EqStateOutputInterface::fDataOutType = EqStateOutputInterface::PhiAndDPhiDt;
+                /*
+                CustomStringSeparatedSOF formatter(", ");
+                file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() /*<< ", " *//* << "\"t\": "
+                     << t
+                     << ", \"phi\": (" << formatter(*spaceData.first) << ")"
+                     << ", \"dPhiDt\": (" << formatter(*spaceData.second) << ")}";
+                */
 
-            CustomStringSeparatedSOF formatter(", ");
-            file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() /*<< ", " */ << "\"t\": "
-                 << t
-                 << ", \"phi\": (" << formatter(*spaceData.first) << ")"
-                 << ", \"dPhiDt\": (" << formatter(*spaceData.second) << ")}";
+                // _outputToFile(outInfo.getSpaceData(), t, fileName);
+                _outputToFile(file);
 
-            file.flush();
-        } catch (std::system_error &e) {
-            Log::Error() << "File not saved. std::system_error::code().message(): "
-                            "\"" << e.code().message() << "\"." << Log::Flush;
+                file.flush();
+            } catch (std::system_error &e) {
+                Log::Error() << "File not saved. std::system_error::code().message(): "
+                                "\"" << e.code().message() << "\"." << Log::Flush;
+            }
+
+            file.close();
+            Log::Note() << "Closed file \"" << fileName << "\"" << Log::Flush;
+
         }
-
-        file.close();
-        Log::Note() << "Closed file \"" << fileName << "\"" << Log::Flush;
+        Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
     }
 
     bool OutputSnapshot::shouldOutput(const Real, const long unsigned timeStep) {

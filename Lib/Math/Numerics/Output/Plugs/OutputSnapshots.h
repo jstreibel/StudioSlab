@@ -14,26 +14,26 @@ namespace Slab::Math {
 
         size_t T_fileNamePrecision;
     public:
-        OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "",
-                       const size_t fileNamePrecision = 4);
+        explicit OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "",
+                       size_t fileNamePrecision = 4);
 
-        ~OutputSnapshot();
+        ~OutputSnapshot() override;
 
-        void addSnapshotStep(const size_t snapshotStep);
+        void addSnapshotStep(size_t snapshotStep);
 
-        static void doOutput(const OutputPacket &outInfo, const Str &customFileDescription = "",
-                             const size_t T_fileNamePrecision = 4);
+        void doOutput(const OutputPacket &outInfo, const Str &customFileDescription = "",
+                             size_t T_fileNamePrecision = 4);
 
         size_t computeNextRecStep(UInt currStep) override;
 
     protected:
-        static void _outputToFile(DiscreteSpacePair spaceData, Real t, const Str &fileName);
+        virtual void _outputToFile(std::ofstream &file) = 0;
 
     protected:
-        virtual bool shouldOutput(const Real t, const long unsigned timeStep) override;
+        bool shouldOutput(Real t, long unsigned timeStep) override;
 
-        virtual void handleOutput(const OutputPacket &outInfo) override {
-            OutputSnapshot::doOutput(outInfo, customFileDescription.c_str(), 4);
+        void handleOutput(const OutputPacket &outInfo) override {
+            OutputSnapshot::doOutput(outInfo, customFileDescription, 4);
         }
     };
 

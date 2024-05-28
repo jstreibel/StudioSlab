@@ -17,7 +17,9 @@ namespace Slab::Math {
     }
 
     OutputPacket NumericalIntegration::getOutputInfo() {
-        return {stepper->getCurrentState(), stepper->getSpaces(), stepsConcluded, getSimulationTime()};
+        auto currentState = stepper->getCurrentState();
+
+        return {currentState, stepsConcluded, getSimulationTime()};
     }
 
     bool NumericalIntegration::_cycle(size_t nCycles) {

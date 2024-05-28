@@ -1,58 +1,36 @@
 #ifndef HamiltonCPU_H
 #define HamiltonCPU_H
 
-#include "Math/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/Solver.h"
 
-#include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/SignumFunction.h"
 
-
-#define CLONE(func) dynamic_cast<DiscrFuncType&>(*(func.Clone()))
-
+#include "KGState.h"
 
 
 namespace Slab::Models {
 
     using namespace Math;
 
-    template<class State>
-    class Solver : public Base::EquationSolverT<State> {
-    public:
-        using MyBase = Base::EquationSolverT<State>;
-        using PotentialFunc = Base::FunctionT<Real, Real>;
-        typedef State::SubStateType           DiscrFuncType;
-        using NonHomogenousFunc = typename State::SubStateType::MyBase;
-        using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
+    template<class STATE_T>
+    requires DerivedFromKGState<STATE_T, typename STATE_T::CategoryType>
+    class KGSolver : public Base::Solver {
 
-        Solver(const NumericConfig &params,
-               MyBase::EqBoundaryCondition_ptr du,
-               PotentialFunc &potential,
-               NonHomogenousPtr nonHomogenousFunc= Pointer<NonHomogenousFunc>())
-        : Base::EquationSolverT<State>(params, du)
-        , V(potential)
-        , dVDPhi(potential.diff(0))
-        , f(nonHomogenousFunc)
-        {    }
-
-        ~Solver() override {
-            delete temp1;
-            delete temp2;
-            delete &V;
-        }
-
-        void startStep(const State &in, Real t, Real dt) override {
-            MyBase::startStep(in, t, dt);
+    protected:
+        virtual void
+        startStep_KG(const STATE_T &state, Real t, Real dt) {
+            Base::Solver::startStep(state, t, dt);
 
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
 
-                temp1 = (DiscrFuncType*)in.getPhi().Clone();
-                temp2    = (DiscrFuncType*)in.getPhi().Clone();
+                temp1 = (DiscrFuncType*)state.getPhi().Clone();
+                temp2 = (DiscrFuncType*)state.getPhi().Clone();
             }
         }
 
-        State &
-        dtF(const State &stateIn, State &stateOut, Real t, Real dt) override {
+        virtual STATE_T &
+        dtF_KG(const STATE_T &stateIn, STATE_T &stateOut, Real t, Real dt) {
             const auto &iPhi = stateIn.getPhi();
             const auto &iDPhi = stateIn.getDPhiDt();
             auto &oPhi = stateOut.getPhi();
@@ -79,13 +57,52 @@ namespace Slab::Models {
             return stateOut;
         }
 
+    public:
+        using Potential = Base::FunctionT<Real, Real>;
+        typedef STATE_T::CategoryType DiscrFuncType;
+        using NonHomogenousFunc = typename STATE_T::CategoryType::MyBase;
+        using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
+
+        KGSolver(const NumericConfig &params,
+               Base::BoundaryConditions_ptr du,
+               Potential &potential,
+               NonHomogenousPtr nonHomogenousFunc=Pointer<NonHomogenousFunc>())
+        : Base::Solver(params, du)
+        , V(potential)
+        , dVDPhi(potential.diff(0))
+        , f(nonHomogenousFunc)
+        {    }
+
+        ~KGSolver() override {
+            delete temp1;
+            delete temp2;
+            delete &V;
+        }
+
+
+
+        void startStep(const Base::EquationState &state, Real t, Real dt) final {
+            Base::Solver::startStep(state, t, dt);
+
+            IN kgState = dynamic_cast<const STATE_T&>(state);
+            this->startStep_KG(kgState, t, dt);
+        }
+
+        Base::EquationState &
+        dtF(const Base::EquationState &stateIn, Base::EquationState &stateOut, Real t, Real dt) final {
+            auto &kgStateIn  = dynamic_cast<const STATE_T&>(stateIn );
+            auto &kgStateOut = dynamic_cast<      STATE_T&>(stateOut);
+
+            return dynamic_cast<Base::EquationState&>(dtF_KG(kgStateIn, kgStateOut, t, dt));
+        }
+
         static bool isDissipating() { return false; }
 
     protected:
         DiscrFuncType *temp1 = nullptr
                     , *temp2 = nullptr;
-        PotentialFunc &V;
-        PotentialFunc::Ptr dVDPhi= nullptr;
+        Potential &V;
+        Potential::Ptr dVDPhi= nullptr;
         NonHomogenousPtr f = nullptr;
     };
 

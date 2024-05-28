@@ -54,8 +54,8 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    auto SimHistory::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
-        IN stateIn = *input.getEqStateData<EquationState>();
+    auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
+        IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
         IN f_in = stateIn.getPhi();
         IN in = f_in.getSpace().getHostData(true);
@@ -75,7 +75,10 @@ namespace Slab::Models::KGRtoR {
         if (packet.getSimTime() >= params.gett())
             return;
 
-        assert(packet.getEqStateData<EquationState>() != nullptr);
+        IN stateIn = packet.GetNakedStateData<KGRtoR::EquationState>();
+
+
+        assert(&stateIn != nullptr);
 
 #if USE_CUDA
         if(dataIsOnGPU)

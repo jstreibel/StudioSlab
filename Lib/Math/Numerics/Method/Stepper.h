@@ -2,6 +2,7 @@
 #define STEPPER_H
 
 #include "Utils/Types.h"
+#include "Math/DifferentialEquations/EquationState.h"
 
 
 namespace Slab::Math {
@@ -15,9 +16,7 @@ namespace Slab::Math {
     public:
         virtual void step(const Real &dt, size_t n_steps) = 0;
 
-        virtual auto getCurrentState() const -> const void * = 0;
-
-        virtual auto getSpaces() const -> DiscreteSpacePair = 0;
+        virtual auto getCurrentState() const -> Base::EquationState_ptr = 0;
     };
 
 

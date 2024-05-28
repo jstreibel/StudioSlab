@@ -15,17 +15,18 @@ namespace Slab::Models::KGRtoR {
                                                RtoR::Function *leftdPhiDtBoundaryCondition,
                                                RtoR::Function *rightPhiBoundaryCondition,
                                                RtoR::Function *rightdPhiDtBoundaryCondition)
-            : Base::BoundaryConditions<EquationState>(prototype), initialPhiCondition(initialPhiCondition),
-              leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition),
-              initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition),
-              rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) {}
+    : Base::BoundaryConditions(prototype), initialPhiCondition(initialPhiCondition)
+    , leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition)
+    , initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition)
+    , rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) { }
 
-    void BoundaryCondition::apply(EquationState &fieldState, const floatt t) const {
+
+    void BoundaryCondition::applyKG(EquationState &kgState, Real t) const {
         if (t == 0.0) {
-            fieldState.setPhi(*initialPhiCondition);
-            fieldState.setDPhiDt(*initialdPhiDtCondition);
+            kgState.setPhi(*initialPhiCondition);
+            kgState.setDPhiDt(*initialdPhiDtCondition);
         } else {
-            fieldState.getPhi();
+            kgState.getPhi();
 
             if (rightPhiBoundaryCondition != nullptr ||
                 rightdPhiDtBoundaryCondition != nullptr ||
@@ -33,6 +34,13 @@ namespace Slab::Models::KGRtoR {
                 leftdPhiDtBoundaryCondition != nullptr)
                 throw "Not implemented. But definitely very simple to implement.";
         }
+    };
+
+    void BoundaryCondition::apply(Base::EquationState &state, const floatt t) const {
+        auto kgState = dynamic_cast<EquationState&>(state);
+
+        this->applyKG(kgState, t);
+
     }
 
     BoundaryCondition::~BoundaryCondition() {
@@ -43,7 +51,6 @@ namespace Slab::Models::KGRtoR {
         delete leftdPhiDtBoundaryCondition;
         delete rightPhiBoundaryCondition;
         delete rightdPhiDtBoundaryCondition;
-    };
-
+    }
 
 }

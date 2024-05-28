@@ -13,7 +13,6 @@
 #include "EquationState.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
-#include "Models/KleinGordon/KGSolver.h"
 #include "Math/Numerics/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/Output/Format/BinarySOF.h"
 #include "Math/Numerics/Output/Format/SpaceFilterBase.h"
@@ -23,6 +22,9 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/R2toR/Output/Filters/DimensionReductionFilter.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+
+#include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
+#include "Math/Numerics/Method/Method-RK4.h"
 
 namespace Slab::Math::R2toR {
 
@@ -117,15 +119,13 @@ namespace Slab::Math::R2toR {
         throw "Error while instantiating Field: device not recognized.";
     }
 
-    Base::EquationSolver_ptr Builder::buildEquationSolver() {
+    Base::Solver_ptr Builder::buildEquationSolver() {
         auto thePotential = new RtoR::AbsFunction;
         auto dphi = getBoundary();
 
-        auto eqSolver = New<Models::Solver<R2toR::EquationState>>(simulationConfig.numericConfig,
-                                                                 dphi,
-                                                                 *thePotential);
+        using SolvySolver = Models::KGR2toR::KGR2toRSolver;
 
-        return eqSolver;
+        return New<SolvySolver>(simulationConfig.numericConfig, dphi, *thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
@@ -142,9 +142,9 @@ namespace Slab::Math::R2toR {
     }
 
     Stepper *Builder::buildStepper() {
-        auto &solver = *(R2toR::EquationSolver*) buildEquationSolver();
+        auto solver = buildEquationSolver();
 
-        return new StepperRK4<typename R2toR::EquationState>(solver);
+        return new StepperRK4(solver);
     }
 
     R2toR::EquationState_ptr Builder::getInitialState() {

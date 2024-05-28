@@ -6,7 +6,7 @@
 
 #include "Core/Controller/Interface/Interface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
-#include "Math/DifferentialEquations/EquationSolver.h"
+#include "Math/DifferentialEquations/Solver.h"
 
 namespace Slab::Math::Base {
 
@@ -21,44 +21,17 @@ namespace Slab::Math::Base {
     public:
         typedef std::shared_ptr<VoidBuilder> Ptr;
 
-        VoidBuilder() = delete;
-        virtual ~VoidBuilder() = default;
-
         virtual auto buildOutputManager()         -> OutputManager * = 0;
-        virtual auto buildEquationSolver()        -> EquationSolver_ptr = 0;
+        virtual auto buildEquationSolver()        -> Solver_ptr = 0;
         virtual auto buildStepper()               -> Stepper* = 0;
 
         virtual auto suggestFileName()      const -> Str;
 
-        // virtual auto getBoundary()                -> void * = 0;
-        // virtual auto getInitialState()            -> void * = 0;
-
-
-        // virtual
-        // auto newFunctionArbitrary()       -> void * = 0;
-        // template<class ARB_FUNC_TYPE>
-        // auto NewFunctionArbitrary()       -> ARB_FUNC_TYPE *;
-
-        // virtual
-        // auto newFieldState()              -> void * = 0;
-        // template<typename StateType>
-        // auto NewFieldState()              -> StateType*;
-
         auto getNumericParams()             const -> const NumericConfig &;
-        // auto getDevice()                    const -> const DeviceConfig &;
     };
 
     DefinePointer(VoidBuilder)
 
-    // template<typename StateType>
-    // auto VoidBuilder::NewFieldState() -> StateType * {
-    //     return (StateType*)this->newFieldState();
-    // }
-
-    // template<class ARB_FUNC_TYPE>
-    // ARB_FUNC_TYPE *VoidBuilder::NewFunctionArbitrary() {
-    //     return (ARB_FUNC_TYPE *) newFunctionArbitrary();
-    // }
 }
 
 

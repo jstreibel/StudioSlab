@@ -17,7 +17,7 @@ namespace Studios::PureSG {
     public:
         InputSymmetricOscillon();
 
-        auto getBoundary() -> Models::KGRtoR::BoundaryCondition_ptr override;
+        auto getBoundary() -> Math::Base::BoundaryConditions_ptr override;
 
 
     };

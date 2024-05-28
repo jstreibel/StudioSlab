@@ -35,31 +35,31 @@ namespace Slab::Models::KGRtoR {
         space.upload();
     }
 
-    void LangevinKGSolver::startStep(const EqState &stateIn, Real t, Real dt) {
-        KGSolver::startStep(stateIn, t, dt);
+    void LangevinKGSolver::startStep_KG(const EquationState &kgState, Real t, Real dt) {
+        KGRtoRSolver::startStep_KG(kgState, t, dt);
 
         ComputeImpulses();
     }
 
     EquationState &
-    LangevinKGSolver::dtF(const EquationState &stateIn, EquationState &stateOut, Real t, Real dt) {
+    LangevinKGSolver::dtF_KG(const EquationState &kgStateIn, EquationState &kgStateOut, Real t, Real dt) {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
-            langevinImpulses = (EqState::SubStateType *) stateIn.getPhi().Clone();
-            scaledImpulses = (EqState::SubStateType *) stateIn.getPhi().Clone();
+            langevinImpulses = dynamic_cast<RtoR::DiscreteFunction *>(kgStateIn.getPhi().Clone());
+            scaledImpulses = dynamic_cast<RtoR::DiscreteFunction *>(kgStateIn.getPhi().Clone());
 
             scaledImpulses->Set(RtoR::NullFunction());
         }
 
 #pragma omp barrier
 
-        stateOut = KGSolver::dtF(stateIn, stateOut, t, dt);
+        kgStateOut = KGSolver::dtF_KG(kgStateIn, kgStateOut, t, dt);
 
 #pragma omp barrier
 
         {
-            IN pi = stateIn.getDPhiDt();
+            IN pi = kgStateIn.getDPhiDt();
             OUT dissipation = *temp1;
             dissipation.StoreMultiplication(pi, -γ);
 
@@ -67,19 +67,20 @@ namespace Slab::Models::KGRtoR {
             fix alpha = sqrt(2 * T * γ / dt);
             scaledImpulses->StoreMultiplication(*langevinImpulses, alpha);
 
-            OUT F = stateOut.getDPhiDt();
+            OUT F = kgStateOut.getDPhiDt();
             OUT F_ext = *temp2;
             F_ext.StoreAddition(*scaledImpulses, dissipation) *= dt;
 
             F.Add(F_ext);
         }
 
-        return stateOut;
+        return kgStateOut;
     }
 
     void LangevinKGSolver::setTemperature(Real value) { T = value; }
 
     void LangevinKGSolver::setDissipationCoefficient(Real value) { γ = value; }
+
 
 
 }

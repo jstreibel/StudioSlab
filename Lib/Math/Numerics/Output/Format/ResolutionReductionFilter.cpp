@@ -15,6 +15,9 @@ namespace Slab::Math {
     }
 
     auto ResolutionReductionFilter::operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair {
+        NOT_IMPLEMENTED
+
+        /*
         DiscreteSpacePair inputSpacePair = outputInfo.getSpaceData();
         const DiscreteSpace *phi = inputSpacePair.first;
         const DiscreteSpace *dPhi = inputSpacePair.second;
@@ -31,6 +34,7 @@ namespace Slab::Math {
         }
 
         return {newPhi, newDPhi};
+         */
     }
 
     auto ResolutionReductionFilter::getOutputDim(const Real L) const -> DimensionMetaData {
