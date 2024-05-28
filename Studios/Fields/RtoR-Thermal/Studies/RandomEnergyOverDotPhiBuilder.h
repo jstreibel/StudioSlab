@@ -14,7 +14,7 @@ namespace Studios::Fields::RtoRThermal {
     public:
         RandomEnergyOverDotPhiBuilder();
 
-        auto getBoundary() -> void * override;
+        auto getBoundary() -> Base::BoundaryConditions_ptr override;
     };
 
 }

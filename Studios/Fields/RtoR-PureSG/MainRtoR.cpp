@@ -32,7 +32,7 @@ int run(int argc, const char **argv) {
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
     auto input    = dynamic_cast<KGRtoRBuilder*>(selectedInterface->getOwner());
-    auto inputPtr = KGRtoRBuilder::Ptr(input);
+    auto inputPtr = KGRtoRBuilder_ptr(input);
 
     auto prog = App(argc, argv, inputPtr);
 

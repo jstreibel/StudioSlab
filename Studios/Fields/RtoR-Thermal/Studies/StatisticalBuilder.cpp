@@ -34,7 +34,7 @@ namespace Studios::Fields::RtoRThermal {
                    "on a bath of small oscillons (some sort of thermal equilibrium) could find subsidy to remain stable.");
     }
 
-    auto StatisticalBuilder::getBoundary() -> void * {
+    auto StatisticalBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
         auto L = simulationConfig.numericConfig.getL(); // not good bc 'L' is not my parameter.
         auto xLeft = simulationConfig.numericConfig.getxMin();
 
@@ -59,8 +59,8 @@ namespace Studios::Fields::RtoRThermal {
         }
 
         using namespace Slab::Models::KGRtoR;
-        auto proto = (EquationState *) newFieldState();
-        return new BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
+        auto proto = newFieldState();
+        return New<KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dPhidt0.Clone());
     }
 
 

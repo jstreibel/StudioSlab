@@ -11,9 +11,9 @@
 namespace Slab::Math::RtoR {
 
     class ComplexMagnitude : public RtoR::Function {
-        RtoC::Function::Ptr RtoCFunction;
+        RtoC::Function_ptr RtoCFunction;
     public:
-        explicit ComplexMagnitude(RtoC::Function::Ptr func);
+        explicit ComplexMagnitude(RtoC::Function_ptr func);
 
         Real operator()(Real x) const override;
 

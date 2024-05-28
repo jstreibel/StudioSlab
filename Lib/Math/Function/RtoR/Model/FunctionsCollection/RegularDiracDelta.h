@@ -52,7 +52,7 @@ namespace Slab::Math::RtoR {
             return a * delta(x, eps);
         }
 
-        auto Clone() const -> RtoR::Function * override { return new RegularDiracDelta(eps, a, reg, tx); }
+        auto Clone() const -> RtoR::Function_ptr override { return New <RegularDiracDelta> (eps, a, reg, tx); }
     };
 }
 

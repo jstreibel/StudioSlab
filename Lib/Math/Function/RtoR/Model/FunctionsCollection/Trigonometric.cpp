@@ -11,14 +11,14 @@ namespace Slab::Math::RtoR {
         return A*sin(k*x);
     }
 
-    Base::FunctionT<Real, Real>::Ptr Sine::diff(int n) const {
+    Function_ptr Sine::diff(int n) const {
         assert(n==0);
 
-        return Ptr(new Cosine(A*k, k));
+        return New<Cosine>(A*k, k);
     }
 
-    Base::FunctionT<Real, Real> *Sine::Clone() const {
-        return new Sine(A, k);
+    Function_ptr Sine::Clone() const {
+        return New<Sine>(A, k);
     }
 
 
@@ -29,13 +29,13 @@ namespace Slab::Math::RtoR {
         return A*cos(k*x);
     }
 
-    Base::FunctionT<Real, Real>::Ptr Cosine::diff(int n) const {
+    Function_ptr Cosine::diff(int n) const {
         assert(n==0);
 
-        return Ptr(new Sine(-A*k, k));
+        return New <Sine> (-A*k, k);
     }
 
-    Base::FunctionT<Real, Real> *Cosine::Clone() const {
-        return new Cosine(A, k);
+    Function_ptr Cosine::Clone() const {
+        return New <Cosine> (A, k);
     }
 } // RtoR

@@ -15,7 +15,7 @@ namespace Studios::Fields::RtoRThermal {
 
     public:
         MachineGunBuilder();
-        auto getBoundary() -> void * override;
+        auto getBoundary() -> Base::BoundaryConditions_ptr override;
     };
 }
 

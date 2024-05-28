@@ -10,17 +10,15 @@
 
 namespace Slab::Math::Base {
 
-    class VoidBuilder : public InterfaceOwner {
+    class NumericalRecipe : public InterfaceOwner {
     protected:
         SimulationConfig simulationConfig;
 
         Str prefix;
 
-        explicit VoidBuilder(const Str& name, Str generalDescription, bool doRegister = false);
+        explicit NumericalRecipe(const Str& name, Str generalDescription, bool doRegister = false);
 
     public:
-        typedef std::shared_ptr<VoidBuilder> Ptr;
-
         virtual auto buildOutputManager()         -> OutputManager * = 0;
         virtual auto buildEquationSolver()        -> Solver_ptr = 0;
         virtual auto buildStepper()               -> Stepper* = 0;
@@ -30,7 +28,7 @@ namespace Slab::Math::Base {
         auto getNumericParams()             const -> const NumericConfig &;
     };
 
-    DefinePointer(VoidBuilder)
+    DefinePointer(NumericalRecipe)
 
 }
 

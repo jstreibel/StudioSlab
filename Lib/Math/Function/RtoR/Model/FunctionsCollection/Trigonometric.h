@@ -16,9 +16,9 @@ namespace Slab::Math::RtoR {
 
         Real operator()(Real x) const override;
 
-        Ptr diff(int n) const override;
+        Function_ptr diff(int n) const override;
 
-        auto Clone() const -> FunctionT * override;
+        auto Clone() const -> Function_ptr override;
     };
 
     class Cosine : public RtoR::Function {
@@ -28,9 +28,9 @@ namespace Slab::Math::RtoR {
 
         Real operator()(Real x) const override;
 
-        Ptr diff(int n) const override;
+        Function_ptr diff(int n) const override;
 
-        auto Clone() const -> FunctionT * override;
+        auto Clone() const -> Function_ptr override;
     };
 
 } // RtoR

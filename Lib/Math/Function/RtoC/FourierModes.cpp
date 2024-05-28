@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace Slab::Math::RtoC {
-    FourierModes::FourierModes(RtoR::Function::Ptr baseFunc, Real xMin, Real L, Count samples)
+    FourierModes::FourierModes(RtoR::Function_ptr baseFunc, Real xMin, Real L, Count samples)
     : baseFunc(std::move(baseFunc)), xMin(xMin), L(L), samples(samples) {
 
     }
@@ -30,7 +30,7 @@ namespace Slab::Math::RtoC {
         return aₖ*dx;
     }
 
-    void FourierModes::setBaseFunction(RtoR::Function::Ptr func) { baseFunc = func; }
+    void FourierModes::setBaseFunction(RtoR::Function_ptr func) { baseFunc = func; }
 
     void FourierModes::set_xMin(Real val) { xMin = val; }
 

@@ -11,6 +11,8 @@
 
 namespace Slab::Math::RtoC {
     typedef Base::Functions<Complex>::Function1D Function;
+
+    DefinePointer(Function)
 }
 
 #endif //STUDIOSLAB_RTOCFUNCTION_H

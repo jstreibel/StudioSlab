@@ -22,7 +22,7 @@ namespace Slab::Math {
     class StepperMontecarlo : public Stepper {
     public:
 /*
-        StepperMontecarlo(Base::VoidBuilder &builder)
+        StepperMontecarlo(Base::NumericalRecipe &builder)
                 : Stepper(), H(*(Base::EquationSolverT<FIELD_STATE_TYPE> *) builder.buildEquationSolver()),
                   dPhi(nullptr),
                   _phi(nullptr),

@@ -21,12 +21,12 @@ namespace Slab::Math::RtoR {
         return Vp;
     }
 
-    Base::FunctionT<Real, Real>::Ptr AbsPerturbedDiffFunction::diff(int n) const {
-        return FunctionT<Real, Real>::Ptr(new AbsPerturbedDiffFunction(Ns));
+    Pointer<Base::FunctionT<Real, Real>> AbsPerturbedDiffFunction::diff(int n) const {
+        return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Base::FunctionT <Real, Real> *AbsPerturbedDiffFunction::Clone() const {
-        return new AbsPerturbedDiffFunction(Ns);
+    Pointer<Base::FunctionT<Real,Real>> AbsPerturbedDiffFunction::Clone() const {
+        return New<AbsPerturbedDiffFunction>(Ns);
     }
 
 //
@@ -45,12 +45,12 @@ namespace Slab::Math::RtoR {
         return V;
     }
 
-    Base::FunctionT<Real, Real>::Ptr AbsPerturbedFunction::diff(int n) const {
-        return FunctionT<Real, Real>::Ptr(new AbsPerturbedDiffFunction(Ns));
+    Pointer<Base::FunctionT<Real, Real>> AbsPerturbedFunction::diff(int n) const {
+        return New<AbsPerturbedDiffFunction>(Ns);
     }
 
-    Base::FunctionT <Real, Real> *AbsPerturbedFunction::Clone() const {
-        return new AbsPerturbedFunction(Ns);
+    Pointer<Base::FunctionT<Real,Real>> AbsPerturbedFunction::Clone() const {
+        return New<AbsPerturbedFunction>(Ns);
     }
 
     Real AbsPerturbedFunction::Fold(Real eta, const int Ns) {

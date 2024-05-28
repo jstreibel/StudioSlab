@@ -13,14 +13,14 @@
 namespace Slab::Math::RtoR {
 
     class CorrelationCalculator {
-        RtoR::Function::Ptr func;
+        RtoR::Function_ptr func;
 
     public:
-        explicit CorrelationCalculator(RtoR::Function::Ptr function = nullptr) : func(std::move(function)) {};
+        explicit CorrelationCalculator(RtoR::Function_ptr function = nullptr) : func(std::move(function)) {};
 
-        void setFunc(RtoR::Function::Ptr function);
+        void setFunc(RtoR::Function_ptr function);
 
-        RtoR::Function::Ptr compute(Real begin, Real end, Real dx);
+        RtoR::Function_ptr compute(Real begin, Real end, Real dx);
     };
 
 

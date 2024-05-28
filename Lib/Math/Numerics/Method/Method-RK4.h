@@ -12,7 +12,7 @@
 
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 #include "Math/DifferentialEquations/Solver.h"
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>

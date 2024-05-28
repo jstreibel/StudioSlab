@@ -17,7 +17,7 @@
 namespace Studios::Fields::RtoRThermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
-    : KGBuilder(name, generalDescription, DONT_SELF_REGISTER) {
+    : KGRtoRBuilder(name, generalDescription, DONT_SELF_REGISTER) {
         interface->addParameters({&temperature, &dissipation, &transientGuess});
 
         setLaplacianPeriodicBC();
@@ -25,10 +25,11 @@ namespace Studios::Fields::RtoRThermal {
         if(doRegister) registerToManager();
     }
 
-    auto Builder::buildEquationSolver() -> void * {
-        GET bc = *(Slab::Models::KGRtoR::BoundaryCondition*)getBoundary();
+    auto Builder::buildEquationSolver() -> Base::Solver_ptr {
+        auto bc = getBoundary();
+        auto pot = getPotential();
 
-        auto solver = new Slab::Models::KGRtoR::LangevinKGSolver(simulationConfig.numericConfig, bc);
+        auto solver = New<Slab::Models::KGRtoR::LangevinKGSolver>(simulationConfig.numericConfig, bc, pot);
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 
@@ -36,7 +37,7 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     Str Builder::suggestFileName() const {
-        auto str = VoidBuilder::suggestFileName();
+        auto str = NumericalRecipe::suggestFileName();
 
         auto extra = interface->toString({"T", "k"}, " ", SHORT_NAME);
 

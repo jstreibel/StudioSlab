@@ -24,8 +24,8 @@ namespace Slab::Models {
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
 
-                temp1 = (DiscrFuncType*)state.getPhi().Clone();
-                temp2 = (DiscrFuncType*)state.getPhi().Clone();
+                temp1 = DynamicPointerCast<DiscrFuncType>(state.getPhi().Clone());
+                temp2 = DynamicPointerCast<DiscrFuncType>(state.getPhi().Clone());
             }
         }
 
@@ -58,26 +58,22 @@ namespace Slab::Models {
         }
 
     public:
-        using Potential = Base::FunctionT<Real, Real>;
+        using Potential = RtoR::Function;
         typedef STATE_T::CategoryType DiscrFuncType;
         using NonHomogenousFunc = typename STATE_T::CategoryType::MyBase;
         using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
 
         KGSolver(const NumericConfig &params,
                Base::BoundaryConditions_ptr du,
-               Potential &potential,
+               Pointer<Potential> potential,
                NonHomogenousPtr nonHomogenousFunc=Pointer<NonHomogenousFunc>())
         : Base::Solver(params, du)
         , V(potential)
-        , dVDPhi(potential.diff(0))
+        , dVDPhi(potential->diff(0))
         , f(nonHomogenousFunc)
         {    }
 
-        ~KGSolver() override {
-            delete temp1;
-            delete temp2;
-            delete &V;
-        }
+        ~KGSolver() override = default;
 
 
 
@@ -99,10 +95,10 @@ namespace Slab::Models {
         static bool isDissipating() { return false; }
 
     protected:
-        DiscrFuncType *temp1 = nullptr
-                    , *temp2 = nullptr;
-        Potential &V;
-        Potential::Ptr dVDPhi= nullptr;
+        Pointer<DiscrFuncType> temp1 = nullptr
+                             , temp2 = nullptr;
+        Pointer<Potential> V;
+        Pointer<Potential> dVDPhi = nullptr;
         NonHomogenousPtr f = nullptr;
     };
 

@@ -4,7 +4,7 @@
 #include "KGSolver.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 
 #define FRANDOM (random()/(RAND_MAX+1.0))

@@ -16,7 +16,7 @@ namespace Studios::Fields::RtoRThermal {
     public:
         StatisticalBuilder();
 
-        auto getBoundary() -> void * override;
+        auto getBoundary() -> Base::BoundaryConditions_ptr override;
         static auto getDetailedDescription() -> Str;
     };
 }

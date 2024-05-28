@@ -17,7 +17,7 @@ namespace Studios::Fields::RtoRThermal {
 
     }
 
-    auto MachineGunBuilder::getBoundary() -> void * {
+    auto MachineGunBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
         RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 
         auto scaleBig = 1.0;
@@ -36,8 +36,8 @@ namespace Studios::Fields::RtoRThermal {
             initCondDPhiDt += tiny.swap();
         }
 
-        auto proto = (Slab::Models::KGRtoR::EquationState *) newFieldState();
-        return new Slab::Models::KGRtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        auto proto = newFieldState();
+        return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 

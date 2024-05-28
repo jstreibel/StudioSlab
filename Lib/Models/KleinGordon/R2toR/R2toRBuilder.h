@@ -31,7 +31,7 @@ namespace Slab::Math::R2toR {
 
             auto getInitialState()      -> R2toR::EquationState_ptr;
 
-            virtual auto getBoundary() -> R2toR::BoundaryCondition_ptr = 0;
+            virtual auto getBoundary() -> Base::BoundaryConditions_ptr = 0;
 
 
     };

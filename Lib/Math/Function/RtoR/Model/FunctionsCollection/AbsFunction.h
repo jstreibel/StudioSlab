@@ -12,9 +12,9 @@ namespace Slab::Math::RtoR {
     public:
         Real operator()(Real x) const override;
 
-        Ptr diff(int n) const override;
+        Pointer<FunctionT> diff(int n) const override;
 
-        FunctionT<Real, Real> *Clone() const override;
+        Pointer<FunctionT<Real, Real>> Clone() const override;
 
         Str symbol() const override;
     };

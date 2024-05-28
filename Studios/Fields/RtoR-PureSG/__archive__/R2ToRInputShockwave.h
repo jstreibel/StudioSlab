@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORINPUTSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTSHOCKWAVE_H
 
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 #include "Utils/NativeTypes.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"

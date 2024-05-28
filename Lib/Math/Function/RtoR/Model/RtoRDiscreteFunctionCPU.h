@@ -17,7 +17,7 @@ class DiscreteFunction_CPU : public RtoR::DiscreteFunction {
         DiscreteFunction_CPU(RealArray_I& data, Real xLeft, Real xRight,
                              DiscreteFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
 
-        [[nodiscard]] auto Clone() const -> FunctionT<Real, Real> * override;
+        [[nodiscard]] auto Clone() const -> Function_ptr override;
 
         [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::DiscreteFunction<Real, Real>> override;
 

@@ -19,7 +19,7 @@ namespace Slab::Math::Base {
         SummableFunction() = default;
 
         SummableFunction(const SummableFunction &toClone) {
-            for (const auto *func : toClone.funcs)
+            for (const auto &func : toClone.funcs)
                 funcs.push_back(func->Clone());
         }
 
@@ -27,25 +27,25 @@ namespace Slab::Math::Base {
             (*this += func1) += func2;
         }
 
-        FunctionT<InputCategory, OutputCategory> *Clone() const override { return new SummableFunction(*this); }
+        Pointer<MyBase> Clone() const override { return New <SummableFunction> (*this); }
 
         SummableFunction &operator+=(const MyBase &func) {
             funcs.push_back(func.Clone());
             return *this;
         }
 
-        typename MyBase::Ptr diff(int n) const override {
+        Pointer<MyBase> diff(int n) const override {
             auto *myDiff = new SummableFunction;
 
-            for (auto *func : funcs)
+            for (auto &func : funcs)
                 (*myDiff) += *(func->diff(n));
 
-            return typename MyBase::Ptr(myDiff);
+            return Pointer<MyBase>(myDiff);
         }
 
         OutputCategory operator()(InputCategory x) const override {
             OutputCategory val(0);
-            for (auto *func : funcs) {
+            for (auto &func : funcs) {
                 auto &f = *func;
                 val += f(x);
             }
@@ -54,7 +54,7 @@ namespace Slab::Math::Base {
         }
 
     private:
-        Vector<MyBase *> funcs;
+        Vector<Pointer<MyBase>> funcs;
     };
 
     template<class InCategory, class OutCategory>

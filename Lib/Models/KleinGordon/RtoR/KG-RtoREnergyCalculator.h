@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 #include "KG-RtoREquationState.h"
@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class KGEnergy {
-        Base::VoidBuilder &builder;
+        Base::NumericalRecipe &builder;
 
         RtoR::DiscreteFunction_ptr _oEnergyDensity;
         RtoR::DiscreteFunction_ptr _oKineticDensity;

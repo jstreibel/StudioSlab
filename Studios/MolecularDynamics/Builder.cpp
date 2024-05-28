@@ -25,7 +25,7 @@
 
 namespace MolecularDynamics {
     Builder::Builder()
-    : VoidBuilder("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DONT_REGISTER)
+    : NumericalRecipe("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DONT_REGISTER)
     , molDynamicsInterface(Interface::New("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});

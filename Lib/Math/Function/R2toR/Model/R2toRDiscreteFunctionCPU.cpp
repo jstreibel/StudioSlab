@@ -131,8 +131,8 @@ namespace Slab::Math::R2toR {
         return out;
     }
 
-    Base::FunctionT<Real2D, Real> *DiscreteFunction_CPU::Clone() const {
-        return new DiscreteFunction_CPU(*this);
+    Function_ptr DiscreteFunction_CPU::Clone() const {
+        return New <DiscreteFunction_CPU> (*this);
     }
 
 }

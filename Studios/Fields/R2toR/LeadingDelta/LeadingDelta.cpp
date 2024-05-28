@@ -107,7 +107,7 @@ namespace Slab::Math::R2toR {
         }
 
         Str Builder::suggestFileName() const {
-            auto fname = VoidBuilder::suggestFileName();
+            auto fname = NumericalRecipe::suggestFileName();
 
             return fname + " " + interface->toString({"W", "eps", "delta_duration"});
         }

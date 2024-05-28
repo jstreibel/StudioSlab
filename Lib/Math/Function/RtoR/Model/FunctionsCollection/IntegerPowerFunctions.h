@@ -15,7 +15,7 @@ namespace Slab::Math::RtoR {
         explicit HarmonicDerivative(Real m_sqr) : m_sqr(m_sqr) { };
         Real operator()(Real x) const override { return m_sqr*x; }
 
-        FunctionT<Real, Real> *Clone() const override { return new HarmonicDerivative(m_sqr); }
+        Function_ptr Clone() const override { return New <HarmonicDerivative> (m_sqr); }
 
         Str symbol() const override {
             return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
@@ -32,12 +32,12 @@ namespace Slab::Math::RtoR {
             return .5*m_sqr*x*x;
         }
 
-        Ptr diff(int n) const override {
-            return Ptr(new HarmonicDerivative(m_sqr));
+        Function_ptr diff(int n) const override {
+            return New <HarmonicDerivative> (m_sqr);
         }
 
-        FunctionT<Real, Real> *Clone() const override {
-            return new HarmonicPotential();
+        Function_ptr Clone() const override {
+            return New <HarmonicPotential> ();
         }
 
         Str symbol() const override {

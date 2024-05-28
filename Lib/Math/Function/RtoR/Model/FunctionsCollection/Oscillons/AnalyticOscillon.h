@@ -23,7 +23,7 @@ namespace Slab::Math::RtoR {
 
         Real operator()(Real x) const override;
 
-        FunctionT<Real, Real> *Clone() const override;
+        Pointer<FunctionT<Real, Real>> Clone() const override;
 
         AnalyticOscillon &swap();
 

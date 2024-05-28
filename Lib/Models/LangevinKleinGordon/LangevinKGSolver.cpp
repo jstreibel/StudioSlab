@@ -14,6 +14,13 @@ namespace Slab::Models::KGRtoR {
         return RandUtils::gaussianNoise(.0, 1.0);
     }
 
+    LangevinKGSolver::LangevinKGSolver(const NumericConfig &params,
+                                       Base::BoundaryConditions_ptr du,
+                                       Pointer<Potential> potential)
+    : KGRtoRSolver(params, du, potential){
+
+    }
+
     void LangevinKGSolver::ComputeImpulses() {
         if (langevinImpulses == nullptr) return;
 
@@ -46,8 +53,8 @@ namespace Slab::Models::KGRtoR {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
-            langevinImpulses = dynamic_cast<RtoR::DiscreteFunction *>(kgStateIn.getPhi().Clone());
-            scaledImpulses = dynamic_cast<RtoR::DiscreteFunction *>(kgStateIn.getPhi().Clone());
+            langevinImpulses = DynamicPointerCast <RtoR::DiscreteFunction> (kgStateIn.getPhi().Clone());
+            scaledImpulses   = DynamicPointerCast <RtoR::DiscreteFunction> (kgStateIn.getPhi().Clone());
 
             scaledImpulses->Set(RtoR::NullFunction());
         }

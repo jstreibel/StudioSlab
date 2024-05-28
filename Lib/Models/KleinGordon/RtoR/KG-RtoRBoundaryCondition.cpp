@@ -9,12 +9,12 @@ namespace Slab::Models::KGRtoR {
 
 
     BoundaryCondition::BoundaryCondition(const EquationState_constptr &prototype,
-                                               RtoR::Function *initialPhiCondition,
-                                               RtoR::Function *initialdPhiDtCondition,
-                                               RtoR::Function *leftPhiBoundaryCondition,
-                                               RtoR::Function *leftdPhiDtBoundaryCondition,
-                                               RtoR::Function *rightPhiBoundaryCondition,
-                                               RtoR::Function *rightdPhiDtBoundaryCondition)
+                                               RtoR::Function_ptr initialPhiCondition,
+                                               RtoR::Function_ptr initialdPhiDtCondition,
+                                               RtoR::Function_ptr leftPhiBoundaryCondition,
+                                               RtoR::Function_ptr leftdPhiDtBoundaryCondition,
+                                               RtoR::Function_ptr rightPhiBoundaryCondition,
+                                               RtoR::Function_ptr rightdPhiDtBoundaryCondition)
     : Base::BoundaryConditions(prototype), initialPhiCondition(initialPhiCondition)
     , leftPhiBoundaryCondition(leftPhiBoundaryCondition), rightPhiBoundaryCondition(rightPhiBoundaryCondition)
     , initialdPhiDtCondition(initialdPhiDtCondition), leftdPhiDtBoundaryCondition(leftdPhiDtBoundaryCondition)
@@ -32,9 +32,9 @@ namespace Slab::Models::KGRtoR {
                 rightdPhiDtBoundaryCondition != nullptr ||
                 leftPhiBoundaryCondition != nullptr ||
                 leftdPhiDtBoundaryCondition != nullptr)
-                throw "Not implemented. But definitely very simple to implement.";
+                throw NotImplementedException("Not implemented. But definitely very simple to implement.");
         }
-    };
+    }
 
     void BoundaryCondition::apply(Base::EquationState &state, const floatt t) const {
         auto kgState = dynamic_cast<EquationState&>(state);
@@ -43,14 +43,6 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    BoundaryCondition::~BoundaryCondition() {
-        delete initialPhiCondition;
-        delete initialdPhiDtCondition;
-
-        delete leftPhiBoundaryCondition;      // Null ptr gets deleted anyway
-        delete leftdPhiDtBoundaryCondition;
-        delete rightPhiBoundaryCondition;
-        delete rightdPhiDtBoundaryCondition;
-    }
+    BoundaryCondition::~BoundaryCondition() = default;
 
 }

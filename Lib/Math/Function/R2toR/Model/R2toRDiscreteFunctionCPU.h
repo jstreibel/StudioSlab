@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
 
         [[nodiscard]] Pointer<Base::DiscreteFunction<Real2D, Real>> CloneWithSize(UInt N) const override;
 
-        auto Clone() const -> FunctionT * override;
+        auto Clone() const -> Function_ptr override;
 
         DiscreteFunction &Laplacian(DiscreteFunction &outFunc) const override;
 

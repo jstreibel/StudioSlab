@@ -11,15 +11,15 @@
 namespace Slab::Math::RtoC {
 
     class FourierModes : public Function {
-        RtoR::Function::Ptr baseFunc;
+        RtoR::Function_ptr baseFunc;
 
         Real xMin=0, L=1;
         Count samples=500;
 
     public:
-        explicit FourierModes(RtoR::Function::Ptr baseFunc, Real xMin, Real L, Count samples);
+        explicit FourierModes(RtoR::Function_ptr baseFunc, Real xMin, Real L, Count samples);
 
-        void setBaseFunction(RtoR::Function::Ptr func);
+        void setBaseFunction(RtoR::Function_ptr func);
         void set_xMin(Real val);
         void setL(Real L);
         void setNSamples(Count N);

@@ -29,9 +29,6 @@ namespace Slab::Math::Base {
         const GPUFriendly *myGPUFriendlyVersion;
 
     public:
-        typedef std::shared_ptr<FunctionT<InputCategory, OutputCategory>> Ptr;
-        typedef std::shared_ptr<const FunctionT<InputCategory, OutputCategory>> ConstPtr;
-
         typedef FunctionT<InputCategory, OutputCategory> Type;
         typedef InputCategory InCategory;
         typedef OutputCategory OutCategory;
@@ -60,7 +57,7 @@ namespace Slab::Math::Base {
 
         /*! Get derivative in dimension 'n'.
          * @param n: the number of the dimension to differentiate, e.g. n=0 => x, n=1 => y, etc.*/
-        virtual Ptr diff(int n) const {
+        virtual Pointer<Type> diff(int n) const {
             NOT_IMPLEMENTED_CLASS_METHOD
         };
 
@@ -77,8 +74,8 @@ namespace Slab::Math::Base {
          * Integrates the function through all of its domain.
          * @return The value of the integral.
          */
-        virtual auto integrate()    const -> OutputCategory { throw "Function::integrate not implemented."; }
-        virtual auto Clone()        const -> FunctionT *     { throw Str("Method Clone() of Function '") + myName() + "' not implemented."; }
+        virtual auto integrate()    const -> OutputCategory { NOT_IMPLEMENTED_CLASS_METHOD }
+        virtual auto Clone()        const -> Pointer<Type>  { NOT_IMPLEMENTED_CLASS_METHOD }
         virtual auto isDiscrete()   const -> bool           { return discrete; }
 
         /** Returns a managed reference to a GPUFriendly version of this function. */
@@ -136,6 +133,8 @@ namespace Slab::Math::Base {
         renderToDiscreteFunction(DiscreteFunction<InputCategory, OutputCategory> *toFunc) const {
             throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
+
+        DefinePointer(FunctionT)
 
     };
 }

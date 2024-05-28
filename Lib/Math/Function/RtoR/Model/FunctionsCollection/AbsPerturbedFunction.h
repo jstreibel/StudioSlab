@@ -16,9 +16,9 @@ namespace Slab::Math::RtoR {
 
         Real operator()(Real x) const override;
 
-        Ptr diff(int n) const override;
+        RtoR::Function_ptr diff(int n) const override;
 
-        FunctionT<Real, Real> *Clone() const override;
+        Pointer<FunctionT<Real, Real>> Clone() const override;
 
     private:
         const UInt Ns;
@@ -30,9 +30,9 @@ namespace Slab::Math::RtoR {
 
         Real operator()(Real x) const override;
 
-        Ptr diff(int n) const override;
+        RtoR::Function_ptr diff(int n) const override;
 
-        FunctionT<Real, Real> *Clone() const override;
+        Pointer<FunctionT<Real, Real>> Clone() const override;
 
     public:
         Real Fold(floatt eta, const int Ns);

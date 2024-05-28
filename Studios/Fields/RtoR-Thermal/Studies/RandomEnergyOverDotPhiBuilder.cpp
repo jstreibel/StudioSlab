@@ -19,14 +19,14 @@ namespace Studios::Fields::RtoRThermal {
         interface->addParameters({&E});
     }
 
-    auto RandomEnergyOverDotPhiBuilder::getBoundary() -> void * {
+    auto RandomEnergyOverDotPhiBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
         auto N = simulationConfig.numericConfig.getN();
         auto h = simulationConfig.numericConfig.geth();
-        auto dotPhi = (RtoR::DiscreteFunction_CPU *) newFunctionArbitrary();
+        auto dotPhi = newFunctionArbitrary();
 
-        RealArray p(N);
+        auto &p = dotPhi->getSpace().getHostData(false);
 
-        auto proto = (Slab::Models::KGRtoR::EquationState *) newFieldState();
+        auto proto = newFieldState();
 
         if (1) {
             Real E_rand = .0;
@@ -49,14 +49,13 @@ namespace Studios::Fields::RtoRThermal {
             E_rand *= .5 * h;
 
             auto phi = RtoR::NullFunction();
-            dotPhi->Set(p);
 
             // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
 
-            return new Slab::Models::KGRtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), dotPhi->Clone());
+            return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dotPhi);
 
         } else {
-            return new Slab::Models::KGRtoR::BoundaryCondition(*proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
+            return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), RtoR::NullFunction().Clone());
         }
     }
 

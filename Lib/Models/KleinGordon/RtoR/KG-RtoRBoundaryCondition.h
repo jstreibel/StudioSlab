@@ -16,13 +16,12 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class BoundaryCondition : public Base::BoundaryConditions {
-        RtoR::Function *initialPhiCondition;
-        RtoR::Function *leftPhiBoundaryCondition;
-        RtoR::Function *rightPhiBoundaryCondition;
-
-        RtoR::Function *initialdPhiDtCondition;
-        RtoR::Function *leftdPhiDtBoundaryCondition;
-        RtoR::Function *rightdPhiDtBoundaryCondition;
+        RtoR::Function_ptr initialPhiCondition;
+        RtoR::Function_ptr leftPhiBoundaryCondition;
+        RtoR::Function_ptr rightPhiBoundaryCondition;
+        RtoR::Function_ptr initialdPhiDtCondition;
+        RtoR::Function_ptr leftdPhiDtBoundaryCondition;
+        RtoR::Function_ptr rightdPhiDtBoundaryCondition;
 
     protected:
 
@@ -30,14 +29,14 @@ namespace Slab::Models::KGRtoR {
 
     public:
         BoundaryCondition(const KGRtoR::EquationState_constptr &prototype,
-                          RtoR::Function *initialPhiCondition,
-                          RtoR::Function *initialdPhiDtCondition,
-                          RtoR::Function *leftPhiBoundaryCondition = nullptr,
-                          RtoR::Function *leftdPhiDtBoundaryCondition = nullptr,
-                          RtoR::Function *rightPhiBoundaryCondition = nullptr,
-                          RtoR::Function *rightdPhiDtBoundaryCondition = nullptr);
+                          RtoR::Function_ptr initialPhiCondition,
+                          RtoR::Function_ptr initialdPhiDtCondition,
+                          RtoR::Function_ptr leftPhiBoundaryCondition = nullptr,
+                          RtoR::Function_ptr leftdPhiDtBoundaryCondition = nullptr,
+                          RtoR::Function_ptr rightPhiBoundaryCondition = nullptr,
+                          RtoR::Function_ptr rightdPhiDtBoundaryCondition = nullptr);
 
-        ~BoundaryCondition();
+        virtual ~BoundaryCondition();
 
         void apply(Base::EquationState &state, Real t) const final;
 

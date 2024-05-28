@@ -5,11 +5,11 @@
 #ifndef STUDIOSLAB_MOLDYN_BUILDER_H
 #define STUDIOSLAB_MOLDYN_BUILDER_H
 
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 namespace MolecularDynamics {
 
-    class Builder : public Core::Simulation::VoidBuilder {
+    class Builder : public Core::Simulation::NumericalRecipe {
         RealParameter temperature = RealParameter    (0.0, "T,temperature", "The system temperature in Langevin simulations.");
         RealParameter dissipation = RealParameter    (0.0, "k,dissipation_factor", "The system energy dissipation factor.");
         IntegerParameter model    = IntegerParameter (  0, "model", "The physical model to use:"

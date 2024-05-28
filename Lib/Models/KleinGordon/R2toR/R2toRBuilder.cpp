@@ -120,12 +120,11 @@ namespace Slab::Math::R2toR {
     }
 
     Base::Solver_ptr Builder::buildEquationSolver() {
-        auto thePotential = new RtoR::AbsFunction;
+        auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 
-        using SolvySolver = Models::KGR2toR::KGR2toRSolver;
-
-        return New<SolvySolver>(simulationConfig.numericConfig, dphi, *thePotential);
+        using SolvySolver = Models::KGSolver<Math::R2toR::EquationState>;
+        return New<SolvySolver>(simulationConfig.numericConfig, dphi, thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

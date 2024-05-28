@@ -6,14 +6,14 @@
 #define STUDIOSLAB_APP_H
 
 #include "Core/App/AppBase.h"
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 namespace Slab::Math {
     class App : public AppBase {
-        Base::VoidBuilder_ptr builder;
+        Base::NumericalRecipe_ptr builder;
 
     public:
-        App(int argc, const char **argv, Base::VoidBuilder_ptr simBuilder);
+        App(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder);
 
         auto run() -> int override;
 

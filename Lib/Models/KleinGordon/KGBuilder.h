@@ -7,7 +7,7 @@
 
 #include <utility>
 
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 #define DONT_REGISTER false // don touch
 
@@ -16,7 +16,7 @@ namespace Slab::Models {
     using namespace Slab::Core;
     using namespace Slab::Math;
 
-    class KGBuilder : public Base::VoidBuilder {
+    class KGBuilder : public Base::NumericalRecipe {
     protected:
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
         BoolParameter    takeDFTSnapshot                = BoolParameter(false,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");

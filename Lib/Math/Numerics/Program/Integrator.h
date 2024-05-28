@@ -21,7 +21,7 @@ const auto FORCE_INITIAL_OUTPUT = true;
 namespace Slab::Math {
 
     class NumericalIntegration : public Task {
-        Base::VoidBuilder &simBuilder;
+        Base::NumericalRecipe &simBuilder;
         Stepper *stepper;
         OutputManager *outputManager;
 
@@ -42,7 +42,7 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     public:
-        explicit NumericalIntegration(Base::VoidBuilder &simBuilder)
+        explicit NumericalIntegration(Base::NumericalRecipe &simBuilder)
                 : simBuilder(simBuilder), stepper(simBuilder.buildStepper()),
                   outputManager(simBuilder.buildOutputManager()),
                   dt(simBuilder.getNumericParams().getdt()),

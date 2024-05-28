@@ -70,8 +70,8 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
-    Base::FunctionT <Real, Real> *DiscreteFunction_CPU::Clone() const {
-        return new DiscreteFunction_CPU(*this);
+    Function_ptr DiscreteFunction_CPU::Clone() const {
+        return New <DiscreteFunction_CPU> (*this);
     }
 
     Pointer<Base::DiscreteFunction <Real, Real>> DiscreteFunction_CPU::CloneWithSize(UInt outN) const {

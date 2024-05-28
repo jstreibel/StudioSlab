@@ -96,7 +96,7 @@ namespace Slab::Math {
             NOT_IMPLEMENTED;
     }
 
-    Base::FunctionT<Real2D, Real>::Ptr R2toR::DiscreteFunction::diff(int n) const {
+    R2toR::Function_ptr R2toR::DiscreteFunction::diff(int n) const {
         NOT_IMPLEMENTED
     }
 

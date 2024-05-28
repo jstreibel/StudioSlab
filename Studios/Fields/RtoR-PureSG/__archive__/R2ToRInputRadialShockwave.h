@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TORINPUTRADIALSHOCKWAVE_H
 #define V_SHAPE_R2TORINPUTRADIALSHOCKWAVE_H
 
-#include "Math/Numerics/VoidBuilder.h"
+#include "Math/Numerics/NumericalRecipe.h"
 
 namespace Slab::Math::R2toR {
     class R2toRInputRadialShockwave : public Base::BCInterface {

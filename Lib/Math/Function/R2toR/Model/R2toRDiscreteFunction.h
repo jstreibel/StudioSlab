@@ -37,7 +37,7 @@ namespace Slab::Math::R2toR {
         auto operator()(Real2D x)       -> Real &;
 
         auto diff(int n, Real2D x) const -> Real        override;
-        auto diff(int n)           const -> MyBase::Ptr override;
+        auto diff(int n)           const -> Function_ptr override;
 
         auto domainContainsPoint(Real2D x) const -> bool override;
 

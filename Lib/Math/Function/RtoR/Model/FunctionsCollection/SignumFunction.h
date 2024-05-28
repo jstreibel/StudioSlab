@@ -18,8 +18,8 @@ namespace Slab::Math::RtoR {
             return SIGN(x);
         }
 
-        RtoR::Function *Clone() const override {
-            return new SignumFunction;
+        Function_ptr Clone() const override {
+            return New<SignumFunction>();
         }
     };
 }

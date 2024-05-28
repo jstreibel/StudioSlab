@@ -10,7 +10,7 @@
 namespace Slab::Models {
 
     KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
-            : VoidBuilder(name, std::move(generalDescription), DONT_REGISTER) {
+            : NumericalRecipe(name, std::move(generalDescription), DONT_REGISTER) {
 
         interface->addParameters({&noHistoryToFile,
                                   &outputResolution,
@@ -24,8 +24,8 @@ namespace Slab::Models {
     }
 
     void KGBuilder::notifyAllCLArgsSetupFinished() {
-        auto nThreads = VoidBuilder::simulationConfig.dev.get_nThreads();
-        auto N = VoidBuilder::simulationConfig.numericConfig.getN();
+        auto nThreads = NumericalRecipe::simulationConfig.dev.get_nThreads();
+        auto N = NumericalRecipe::simulationConfig.numericConfig.getN();
         if (N % nThreads != 0)
             throw Exception("Bad assertion N%nThreads. Expected 0 got "
                             + ToStr(N % nThreads) + ".");

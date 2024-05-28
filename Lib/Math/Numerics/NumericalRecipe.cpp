@@ -5,7 +5,7 @@
 #include "Core/Controller/Interface/InterfaceSelector.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
-#include "VoidBuilder.h"
+#include "NumericalRecipe.h"
 //#include "Math/Numerics/Method/Method-RK4.h"
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
@@ -19,7 +19,7 @@ break;
 namespace Slab::Math::Base {
 
 
-    VoidBuilder::VoidBuilder(const Str &name, Str generalDescription, bool doRegister)
+    NumericalRecipe::NumericalRecipe(const Str &name, Str generalDescription, bool doRegister)
             : InterfaceOwner(name, 100, DONT_REGISTER), simulationConfig(DONT_REGISTER), prefix(name) {
         interface->addSubInterface(simulationConfig.numericConfig.getInterface());
         interface->addSubInterface(simulationConfig.dev.getInterface());
@@ -32,15 +32,15 @@ namespace Slab::Math::Base {
                       << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
     }
 
-    auto VoidBuilder::getNumericParams() const -> const NumericConfig & {
+    auto NumericalRecipe::getNumericParams() const -> const NumericConfig & {
         return simulationConfig.numericConfig;
     }
 
-    // auto VoidBuilder::getDevice() const -> const DeviceConfig & {
+    // auto NumericalRecipe::getDevice() const -> const DeviceConfig & {
     //     return simulationConfig.dev;
     // }
 
-    Str VoidBuilder::suggestFileName() const {
+    Str NumericalRecipe::suggestFileName() const {
         const auto SEPARATOR = " ";
         auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
 

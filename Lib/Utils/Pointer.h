@@ -14,11 +14,11 @@ namespace Slab {
     template <typename T>
     using Pointer = std::shared_ptr<T>;
 
-    /*
-    template<typename T, typename UP>
-    Pointer<T
-    std::shared_ptr <_Tp> std::dynamic_pointer_cast(shared_ptr <_Up> &&r) noexcept {}
-     */
+    template<typename Derived>
+    inline auto DynamicPointerCast(auto base_pointer) {
+        return std::dynamic_pointer_cast<Derived>(base_pointer);;
+    }
+
 
     template<typename T, typename... Args>
     Pointer<T> New(Args&&... args);

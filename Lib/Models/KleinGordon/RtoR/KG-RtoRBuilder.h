@@ -42,6 +42,8 @@ namespace Slab::Models::KGRtoR {
                            Str generalDescription,
                            bool doRegister=false);
 
+        virtual ~KGRtoRBuilder() = default;
+
         RtoR::Function_ptr getPotential() const;
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
@@ -57,6 +59,8 @@ namespace Slab::Models::KGRtoR {
         auto newFieldState()        -> KGRtoR::EquationState_ptr;
 
     };
+
+    DefinePointer(KGRtoRBuilder)
 }
 
 #endif //STUDIOSLAB_KG_RTORBUILDER_H

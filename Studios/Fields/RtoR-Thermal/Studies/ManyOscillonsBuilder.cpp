@@ -17,7 +17,7 @@ namespace Studios::Fields::RtoRThermal {
         interface->addParameters({&nOscillons});
     }
 
-    auto ManyOscillonsBuilder::getBoundary() -> void * {
+    auto ManyOscillonsBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
         int n = *nOscillons;
         auto L = simulationConfig.numericConfig.getL();
         auto xMin = simulationConfig.numericConfig.getxMin();
@@ -36,8 +36,8 @@ namespace Studios::Fields::RtoRThermal {
             initCondDPhiDt += oscRight.swap() + oscLeft.swap();
         }
 
-        auto proto = (Models::KGRtoR::EquationState *) newFieldState();
-        return new Models::KGRtoR::BoundaryCondition(*proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
+        auto proto = newFieldState();
+        return New<KGRtoR::BoundaryCondition>(proto, initCondPhi.Clone(), initCondDPhiDt.Clone());
     }
 
 /*

@@ -196,7 +196,7 @@ namespace Slab::Models::KGRtoR {
 #endif
         auto &params = simulationConfig.numericConfig;
 
-        auto solver = New<KGRtoRSolver>(params, dphi, *potential, nonHomogenous);
+        auto solver = New<KGRtoRSolver>(params, dphi, potential, nonHomogenous);
 
         return solver;
     }
@@ -261,7 +261,7 @@ namespace Slab::Models::KGRtoR {
     Str KGRtoRBuilder::suggestFileName() const {
         auto strParams = interface->toString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
-        auto voidSuggestion = VoidBuilder::suggestFileName();
+        auto voidSuggestion = NumericalRecipe::suggestFileName();
         return voidSuggestion + " " + strParams;
     }
 
