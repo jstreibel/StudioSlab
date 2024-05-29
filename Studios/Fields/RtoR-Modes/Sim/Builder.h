@@ -14,7 +14,7 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class Builder : public Slab::Models::KGRtoR::KGBuilder {
+    class Builder : public Slab::Models::KGRtoR::KGRtoRBuilder {
         IntegerParameter BCSelection = IntegerParameter(0,    "BC",              "Boundary conditions selection:"
                                                                                 "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
@@ -37,7 +37,7 @@ namespace Modes {
     public:
         explicit Builder(bool doRegister=true);
 
-        auto getBoundary() -> void * override;
+        auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
         Pointer<Base::FunctionT<Real, Real>> getNonHomogenous() override;
 

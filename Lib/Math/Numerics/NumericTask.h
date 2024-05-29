@@ -10,18 +10,18 @@
 #include "Math/DifferentialEquations/BoundaryConditions.h"
 
 #include "Math/Numerics/Method/Stepper.h"
-#include "Math/Numerics/Method/Method-RK4.h"
+#include "Math/Numerics/Method/RungeKutta4.h"
 #include "Math/Numerics/Method/Method-MCBase.h"
 
 #include "Core/Backend/Modules/TaskManager/Task.h"
-#include "Core/Tools/BenchmarkHistogram.h"
+#include "Core/Tools/BenchmarkData.h"
 
 const auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 
-    class NumericalIntegration : public Task {
-        Base::NumericalRecipe &simBuilder;
+    class NumericTask : public Task {
+        Base::NumericalRecipe &numericalRecipe;
         Stepper *stepper;
         OutputManager *outputManager;
 
@@ -31,7 +31,7 @@ namespace Slab::Math {
 
         bool forceStopFlag = false;
 
-        BenchmarkHistogram simTimeHistogram;
+        BenchmarkData benchmarkData;
 
         void output(bool force = false);
 
@@ -42,12 +42,13 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     public:
-        explicit NumericalIntegration(Base::NumericalRecipe &simBuilder)
-                : simBuilder(simBuilder), stepper(simBuilder.buildStepper()),
-                  outputManager(simBuilder.buildOutputManager()),
-                  dt(simBuilder.getNumericParams().getdt()),
-                  totalSteps(simBuilder.getNumericParams().getn()),
-                  stepsConcluded(0) {
+        explicit NumericTask(Base::NumericalRecipe &recipe)
+                : numericalRecipe(recipe), stepper(recipe.buildStepper()),
+                  outputManager(recipe.buildOutputManager()),
+                  dt(recipe.getNumericParams().getdt()),
+                  totalSteps(recipe.getNumericParams().getn()),
+                  stepsConcluded(0),
+                  benchmarkData(recipe.getNumericParams().getn()/100){
 #if ATTEMP_REALTIME
             {
                 // Declare a sched_param struct to hold the scheduling parameters.
@@ -69,7 +70,7 @@ namespace Slab::Math {
             this->output(FORCE_INITIAL_OUTPUT);
         }
 
-        ~NumericalIntegration() override;
+        ~NumericTask() override;
 
         bool run() override;
 
@@ -79,7 +80,7 @@ namespace Slab::Math {
 
         auto getSimulationTime() const -> Real;
 
-        auto getHistogram() const -> const BenchmarkHistogram &;
+        auto getBenchmarkData() const -> const BenchmarkData &;
 
     };
 

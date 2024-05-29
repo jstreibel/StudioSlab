@@ -5,9 +5,12 @@
 
 #include <boost/timer/timer.hpp>
 
-typedef boost::timer::cpu_timer CPUTimer;
+
 
 namespace Slab {
+    using CPUTimer = boost::timer::cpu_timer;
+    using CPUTimes = boost::timer::cpu_times;
+    using Nanosecond = boost::timer::nanosecond_type;
 
     class Timer {
     public:

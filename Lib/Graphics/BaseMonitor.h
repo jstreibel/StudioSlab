@@ -14,7 +14,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class OpenGLMonitor : public Socket, public WindowPanel {
+    class BaseMonitor : public Socket, public WindowPanel {
         void writeStats();
 
     protected:
@@ -25,11 +25,11 @@ namespace Slab::Graphics {
         size_t step=0;
 
     public:
-        typedef std::shared_ptr<OpenGLMonitor> Ptr;
+        typedef std::shared_ptr<BaseMonitor> Ptr;
 
-        explicit OpenGLMonitor(const NumericConfig &params,
-                               const Str& channelName="OpenGL monitor",
-                               int stepsBetweenDraws=1);
+        explicit BaseMonitor(const NumericConfig &params,
+                             const Str& channelName="OpenGL monitor",
+                             int stepsBetweenDraws=1);
 
         GUIWindow &getGUIWindow();
 
@@ -44,7 +44,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(OpenGLMonitor)
+    DefinePointer(BaseMonitor)
 }
 
 #endif // OUTPUTOPENGL_H

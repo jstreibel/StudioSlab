@@ -46,9 +46,13 @@ namespace Slab::Models::KGRtoR {
             fix kMax = M_PI/params.geth();
             auto k = (float)kFilterCutoff;
 
+            static bool needRefresh = false;
             static int selected = 0;
-            ImGui::RadioButton("High-pass", &selected, 0);
-            ImGui::RadioButton("Low-pass", &selected, 1);
+            static bool autoRefresh = false;
+            if(ImGui::Checkbox("Auto##space_dft", &autoRefresh) && autoRefresh) needRefresh = true;
+
+            if(ImGui::RadioButton("High-pass", &selected, 0) | ImGui::RadioButton("Low-pass", &selected, 1))
+                needRefresh = true;
 
             if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
                 kFilterCutoff = k;
@@ -56,25 +60,21 @@ namespace Slab::Models::KGRtoR {
                 cutoffLine.getx0() = {kFilterCutoff, -10.0};
                 cutoffLine.getr() = {0, 10.0+t};
 
-                if(selected==0) {
-                    RtoR::DFTInverse::HighPass lowPass(kFilterCutoff);
-                    refreshInverseDFT(&lowPass);
-                } else if(selected==1) {
-                    RtoR::DFTInverse::LowPass highPass(kFilterCutoff);
-                    refreshInverseDFT(&highPass);
-                }
+                needRefresh = true;
             }
 
-            // if(ImGui::Button("Compute ℱₖ⁻¹"))
-            // {
-            //     if(selected==0) {
-            //         RtoR::DFTInverse::LowPass lowPass(kFilterCutoff);
-            //         refreshInverseDFT(&lowPass);
-            //     } else if(selected==1) {
-            //         RtoR::DFTInverse::HighPass highPass(kFilterCutoff);
-            //         refreshInverseDFT(&highPass);
-            //     }
-            // }
+
+            if((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
+                if (selected == 1) {
+                    RtoR::DFTInverse::LowPass lowPass(kFilterCutoff);
+                    refreshInverseDFT(&lowPass);
+                } else if (selected == 0) {
+                    RtoR::DFTInverse::HighPass highPass(kFilterCutoff);
+                    refreshInverseDFT(&highPass);
+                }
+
+                needRefresh = false;
+            }
         }
 
         if(ImGui::CollapsingHeader("Time FT")){
@@ -83,7 +83,7 @@ namespace Slab::Models::KGRtoR {
             static auto t_f = tMax;
             static auto autoUpdate = false;
 
-            if(ImGui::Checkbox("Auto", &autoUpdate));
+            ImGui::Checkbox("Auto##time_dft", &autoUpdate);
 
             ImGui::BeginDisabled(autoUpdate);
             if(ImGui::Button("Compute"))

@@ -12,7 +12,7 @@ int run(int argc, const char *argv[]) {
 
     using namespace Slab::Math;
 
-    auto prog = App(argc, argv, Slab::Models::KGRtoR::KGBuilder::Ptr(builder));
+    auto prog = App(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(builder));
 
     return prog.run();
 }

@@ -17,7 +17,7 @@ namespace Slab::Math::Base {
 
     template<class PosSpaceType, class TargetSpaceType>
     class DiscreteFunction : public FunctionT<PosSpaceType, TargetSpaceType>,
-                             public ArithmeticOpsInterface<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
+                             public NumericAlgebra<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
 
         DiscreteSpace *space;
 

@@ -28,7 +28,7 @@
 #include "Output/DFTSnapshotOutput.h"
 
 #include "Graphics/RtoRMonitor.h"
-#include "Math/Numerics/Method/Method-RK4.h"
+#include "Math/Numerics/Method/RungeKutta4.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -218,7 +218,7 @@ namespace Slab::Models::KGRtoR {
         auto solver = buildEquationSolver();
 
         using State = typename Slab::Models::KGRtoR::EquationState;
-        auto stepper = new Math::StepperRK4(solver);
+        auto stepper = new Math::RungeKutta4(solver);
 
         return stepper;
     }

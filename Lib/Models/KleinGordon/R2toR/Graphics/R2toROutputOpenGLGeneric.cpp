@@ -12,10 +12,10 @@
 namespace Slab::Math {
 
     R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params)
-            : Graphics::OpenGLMonitor(params, "R2 -> R OpenGL output", 1), mSectionGraph(params.getxMin(),
-                                                                                           params.getxMax(),
-                                                                                           -1, 1,
-                                                                                           "Sections"),
+            : Graphics::BaseMonitor(params, "R2 -> R OpenGL output", 1), mSectionGraph(params.getxMin(),
+                                                                                       params.getxMax(),
+                                                                                       -1, 1,
+                                                                                       "Sections"),
               mFieldDisplay() {
         addWindow(Slab::DummyPointer(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
 
@@ -32,7 +32,7 @@ namespace Slab::Math {
     }
 
     void R2toR::OutputOpenGL::draw() {
-        Graphics::OpenGLMonitor::draw();
+        Graphics::BaseMonitor::draw();
 
         if (sectionArtist.getFunction() == nullptr) {
             IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();

@@ -104,7 +104,7 @@ namespace Slab::Math {
     }
 
     DiscreteComplexSpace &DiscreteComplexSpace::operator*=(Real a) {
-        return ArithmeticOpsInterface::operator*=(a);
+        return NumericAlgebra::operator*=(a);
     }
 
 } // Math

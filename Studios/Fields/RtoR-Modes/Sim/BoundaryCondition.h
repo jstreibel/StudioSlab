@@ -13,22 +13,28 @@ namespace Modes {
 
     using namespace Slab::Models;
 
+
+
     class SignalBC : public KGRtoR::BoundaryCondition {
+    protected:
+        void applyKG(KGRtoR::EquationState &, Real t) const override;
+
     public:
         Real A, ω;
 
-        SignalBC(const KGRtoR::EquationState &prototype, Real A, Real ω);
-
-        void apply(EqState &toFunction, Real t) const override;
+        SignalBC(const KGRtoR::EquationState_ptr &prototype, Real A, Real ω);
     };
+
+
 
     class DrivenBC : public KGRtoR::BoundaryCondition {
         Slab::Pointer<Modes::SquareWave> sqrWave;
+
+    protected:
+        void applyKG(KGRtoR::EquationState &, Real t) const override;
+
     public:
-
-        DrivenBC(const KGRtoR::EquationState &prototype, Slab::Pointer<Modes::SquareWave> sqrWave);
-
-        void apply(EqState &toFunction, Real t) const override;
+        DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::Pointer<Modes::SquareWave> sqrWave);
     };
 
 } // Modes

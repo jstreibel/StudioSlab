@@ -24,7 +24,7 @@
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
-#include "Math/Numerics/Method/Method-RK4.h"
+#include "Math/Numerics/Method/RungeKutta4.h"
 
 namespace Slab::Math::R2toR {
 
@@ -87,7 +87,7 @@ namespace Slab::Math::R2toR {
         if (shouldOutputOpenGL) {
             GraphicBackend &backend = Core::BackendManager::GetGUIBackend();
 
-            auto glOut = Graphics::OpenGLMonitor_ptr(this->buildOpenGLOutput());
+            auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
             backend.addEventListener(glOut);
             outputManager->addOutputChannel(glOut);
         } else {
@@ -143,7 +143,7 @@ namespace Slab::Math::R2toR {
     Stepper *Builder::buildStepper() {
         auto solver = buildEquationSolver();
 
-        return new StepperRK4(solver);
+        return new RungeKutta4(solver);
     }
 
     R2toR::EquationState_ptr Builder::getInitialState() {

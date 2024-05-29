@@ -10,7 +10,7 @@ namespace Slab::Math::Base {
     BoundaryConditions::BoundaryConditions(EquationState_constptr prototype)
     : prototype(std::move(prototype)) {}
 
-    EquationState_ptr BoundaryConditions::newEqState() const { return prototype->clone(); }
+    EquationState_ptr BoundaryConditions::newEqState() const { return prototype->replicate(); }
 
 
 }

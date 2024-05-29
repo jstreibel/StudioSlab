@@ -8,7 +8,7 @@
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/BaseMonitor.h"
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/Artists/HistoryArtist.h"
 
@@ -27,7 +27,7 @@ namespace Slab::Math::R2toR {
 namespace Slab::Models::KGRtoR {
     class KGEnergy;
 
-    class Monitor : public Graphics::OpenGLMonitor {
+    class Monitor : public Graphics::BaseMonitor {
         Vector<RtoRPanel_ptr> dataViews;
         RtoRPanel_ptr currentDataView;
 

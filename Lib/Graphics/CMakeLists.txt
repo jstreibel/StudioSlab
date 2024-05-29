@@ -32,7 +32,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/rougier/vector.h					OpenGL/rougier/vector.c
 		OpenGL/rougier/vertex-attribute.c		OpenGL/rougier/vertex-attribute.c
 
-		OpenGL/OpenGLMonitor.cpp
+		BaseMonitor.cpp
 
 		OpenGL/GLUTUtils.h OpenGL/GLUTUtils.cpp
 		OpenGL/Utils.h							OpenGL/Utils.cpp
@@ -111,6 +111,7 @@ add_library(${LIB_GRAPHICS} STATIC
         Window/WindowContainer/WindowContainer.h
 		Types3D.cpp
 		Types3D.h
+		OpenGL/LegacyGL/SceneSetup.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

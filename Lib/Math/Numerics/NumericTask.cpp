@@ -1,7 +1,7 @@
 
 
 
-#include "Integrator.h"
+#include "NumericTask.h"
 #include "Core/Tools/Log.h"
 
 #define ATTEMP_REALTIME false
@@ -12,33 +12,32 @@
 
 namespace Slab::Math {
 
-    NumericalIntegration::~NumericalIntegration() {
-        Log::Note() << "Avg. integration time: " << simTimeHistogram << Log::Flush;
+    NumericTask::~NumericTask() {
+        Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
     }
 
-    OutputPacket NumericalIntegration::getOutputInfo() {
+    OutputPacket NumericTask::getOutputInfo() {
         auto currentState = stepper->getCurrentState();
 
         return {currentState, stepsConcluded, getSimulationTime()};
     }
 
-    bool NumericalIntegration::_cycle(size_t nCycles) {
+    bool NumericTask::_cycle(size_t nCycles) {
 
-        simTimeHistogram.startMeasure();
+        benchmarkData.startMeasure();
         stepper->step(dt, nCycles);
-        simTimeHistogram.storeMeasure((int) nCycles);
+        benchmarkData.storeMeasure((int) nCycles);
 
         stepsConcluded += nCycles;
 
-        static fix maxSteps = simBuilder.getNumericParams().getn();
-        fix forceOutput = stepsConcluded >= maxSteps;
+        fix forceOutput = stepsConcluded >= totalSteps;
 
         output(forceOutput);
 
         return true;
     }
 
-    bool NumericalIntegration::_cycleUntilOutputOrFinish() {
+    bool NumericTask::_cycleUntilOutputOrFinish() {
         size_t nCyclesToNextOutput = outputManager->computeNStepsToNextOutput(stepsConcluded);
 
         if (nCyclesToNextOutput > 50000) {
@@ -54,21 +53,21 @@ namespace Slab::Math {
         return true;
     }
 
-    void NumericalIntegration::output(bool force) {
+    void NumericTask::output(bool force) {
         OutputPacket info = getOutputInfo();
         outputManager->output(info, force);
     }
 
-    size_t NumericalIntegration::getSteps() const { return stepsConcluded; }
+    size_t NumericTask::getSteps() const { return stepsConcluded; }
 
-    inline floatt NumericalIntegration::getSimulationTime() const { return floatt(getSteps()) * dt; }
+    inline floatt NumericTask::getSimulationTime() const { return floatt(getSteps()) * dt; }
 
-    const BenchmarkHistogram &NumericalIntegration::getHistogram() const {
-        return simTimeHistogram;
+    const BenchmarkData &NumericTask::getBenchmarkData() const {
+        return benchmarkData;
     }
 
-    bool NumericalIntegration::run() {
-        auto &p = simBuilder.getNumericParams();
+    bool NumericTask::run() {
+        auto &p = numericalRecipe.getNumericParams();
         size_t n = p.getn();
 
         while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
@@ -81,7 +80,7 @@ namespace Slab::Math {
         return true;
     }
 
-    void NumericalIntegration::forceStop() {
+    void NumericTask::forceStop() {
         forceStopFlag = true;
     }
 

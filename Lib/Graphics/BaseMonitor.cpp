@@ -2,7 +2,7 @@
 // Created by joao on 8/1/23.
 //
 
-#include "OpenGLMonitor.h"
+#include "BaseMonitor.h"
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/GraphicBackend.h"
@@ -16,7 +16,7 @@
 
 namespace Slab::Graphics {
 
-    Graphics::OpenGLMonitor::OpenGLMonitor(const NumericConfig &params, const Str &channelName, int stepsBetweenDraws)
+    Graphics::BaseMonitor::BaseMonitor(const NumericConfig &params, const Str &channelName, int stepsBetweenDraws)
             : Socket(params, channelName, stepsBetweenDraws), WindowPanel(HasMainMenu) {
         addWindow(Slab::DummyPointer(guiWindow));
         setColumnRelativeWidth(0, 0.1);
@@ -24,12 +24,12 @@ namespace Slab::Graphics {
         Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
     }
 
-    void OpenGLMonitor::handleOutput(const OutputPacket &outInfo) {
+    void BaseMonitor::handleOutput(const OutputPacket &outInfo) {
         t = outInfo.getSimTime();
         step = outInfo.getSteps();
     }
 
-    void OpenGLMonitor::writeStats() {
+    void BaseMonitor::writeStats() {
         static bool hasFinished = false;
         static bool isPaused = false;
         static Count lastStep = 0;
@@ -122,33 +122,20 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    bool OpenGLMonitor::notifyRender() {
+    bool BaseMonitor::notifyRender() {
         assert(lastPacket.hasValidData());
 
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_POINT_SMOOTH);
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_DEPTH_TEST);
 
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
         {
             writeStats();
             WindowPanel::notifyRender(); // draw();
             frameTimer.reset();
         }
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
 
         return true;
     }
 
-    bool OpenGLMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    bool BaseMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
         static fix baseNSteps = getnSteps();
         static let multiplier = 1;
 
@@ -181,7 +168,7 @@ namespace Slab::Graphics {
         return WindowPanel::notifyKeyboard(key, state, modKeys);
     }
 
-    GUIWindow &OpenGLMonitor::getGUIWindow() {
+    GUIWindow &BaseMonitor::getGUIWindow() {
         return guiWindow;
     }
 

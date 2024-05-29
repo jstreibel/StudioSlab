@@ -7,18 +7,32 @@
 
 
 #include "Utils/Types.h"
-#include "Math/Space/Impl/ArithmeticOperationInterface.h"
+#include "Math/Space/Impl/NumericAlgebra.h"
 
 namespace Slab::Math::Base {
 
-    class EquationState : public ArithmeticOpsInterface<EquationState>{
+    class EquationState;
+    using EquationAlgebra = NumericAlgebra<EquationState>;
+
+    class EquationState : public EquationAlgebra {
     public:
-        virtual Pointer<EquationState> clone() const = 0;
-        virtual void set(const EquationState&) = 0;
+        using EquationAlgebra::operator+;
+        using EquationAlgebra::operator=;
+
+        /**
+         * Produce a replica of this EquationState with all parameters replicated, except for the state data itself.
+         * @return the replica.
+         */
+        virtual auto replicate() const -> Pointer<EquationState> = 0;
+
+        /**
+         * Sets this EquationState's data to match that of other state. Notice that both state's parameters (dimensions,
+         * discretization, etc.) should be equal, as well as (of course) their type.
+         */
+        virtual void setData(const EquationState&) = 0;
     };
 
     DefinePointer(EquationState)
 }
-
 
 #endif //STUDIOSLAB_EQUATIONSTATE_H

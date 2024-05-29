@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTORSTATISTICALMONITOR_H
 
 
-#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/BaseMonitor.h"
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include "Math/Function/Function.h"

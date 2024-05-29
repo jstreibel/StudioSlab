@@ -6,7 +6,7 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
-#include "Math/Numerics/Program/Integrator.h"
+#include "Math/Numerics/Program/NumericTask.h"
 #include "Core/Backend/BackendManager.h"
 
 #define SFML_Backend dynamic_cast<SFMLBackend&>(Core::BackendManager::GetGUIBackend())

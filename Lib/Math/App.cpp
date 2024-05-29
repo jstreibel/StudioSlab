@@ -6,10 +6,11 @@
 
 #include <utility>
 
-#include "Math/Numerics/Program/Integrator.h"
 #include "Core/Backend/Backend.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+
+#include "Math/Numerics/NumericTask.h"
 
 
 namespace Slab::Math {
@@ -20,7 +21,7 @@ namespace Slab::Math {
     }
 
     auto App::run() -> int {
-        auto integrationTask = Slab::New<NumericalIntegration>(*builder.get());
+        auto integrationTask = Slab::New<NumericTask>(*builder.get());
         auto &backend = Core::BackendManager::GetBackend();
 
         auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(BackendManager::GetModule(Modules::TaskManager).get());

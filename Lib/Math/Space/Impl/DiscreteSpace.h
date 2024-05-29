@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "Utils/NativeTypes.h"
-#include "ArithmeticOperationInterface.h"
+#include "NumericAlgebra.h"
 #include "Core/Tools/Log.h"
 #include "Math/Space/DimensionMetaData.h"
 
@@ -18,7 +18,7 @@ namespace Slab::Math {
 
     class DiscreteSpaceCPU;
 
-    class DiscreteSpace : public ArithmeticOpsInterface<DiscreteSpace> {
+    class DiscreteSpace : public NumericAlgebra<DiscreteSpace> {
     public:
         explicit DiscreteSpace(const DimensionMetaData &dim);
 

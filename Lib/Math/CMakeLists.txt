@@ -20,6 +20,7 @@ set ( SPACE_SOURCES
 		Space/Point.cpp					Space/Point.h
 		Space/DimensionMetaData.cpp
 		Space/DimensionMetaData.h
+        Space/Algebra.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
@@ -46,8 +47,8 @@ set ( NUMERICS_SOURCES
 		App.h
 
 		Numerics/NumericalRecipe.cpp
+		Numerics/NumericTask.cpp
 
-        Numerics/Program/Integrator.cpp
 		Numerics/SimConfig/NumericConfig.cpp
 		Numerics/SimConfig/DeviceConfig.cpp
 		Numerics/SimConfig/SimulationConfig.cpp

@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 #define V_SHAPE_R2TOROUTPUTOPENGLSHOCKWAVE_H
 
-#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/BaseMonitor.h"
 #include "Graphics/ZoomPanRotate.h"
 #include "Graphics/Graph/FunctionGraph_depr.h"
 #include "Math/Function/R2toR/View/GraphR2ToR.h"

@@ -44,7 +44,7 @@ namespace Slab::Models::KGRtoR {
             return nullptr;
         }
 
-        auto clone() const -> Pointer<Base::EquationState> override;
+        auto replicate() const -> Pointer<Base::EquationState> override;
     };
 
     DefinePointer(EquationState)

@@ -23,15 +23,15 @@ namespace Modes {
     using namespace Slab::Models;
 
     Builder::Builder(bool doRegister)
-    : KGRtoR::KGBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
+    : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         interface->addParameters({&BCSelection, &A, &omega, &k, &driving_force});
 
         if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    void *Builder::getBoundary() {
-        auto &prototype = *(KGRtoR::EquationState*) KGRtoR::KGBuilder::newFieldState();
+    Math::Base::BoundaryConditions_ptr Builder::getBoundary() {
+        auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
         fix L = this->getNumericParams().getL();
 
@@ -40,27 +40,27 @@ namespace Modes {
         fix k = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
 
-        if(*BCSelection == 0) return new Modes::SignalBC(prototype, A,  ω);
+        if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A,  ω);
         if(*BCSelection == 1) {
             fix A2 = A * 0.0;
 
             auto func1 = RtoR::Sine(A, k);
             auto func2 = RtoR::Sine(A2, 2*k);
-            auto f_0 = new RtoR::FunctionSummable(func1, func2);
+            auto f_0 = New <RtoR::FunctionSummable> (func1, func2);
 
             auto ddtfunc1 = RtoR::Cosine(A*ω, k);
             auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k);
-            auto ddtf_0 = new RtoR::FunctionSummable(ddtfunc1, ddtfunc2);
+            auto ddtf_0 = New <RtoR::FunctionSummable> (ddtfunc1, ddtfunc2);
 
-            return new KGRtoR::BoundaryCondition(prototype, f_0, ddtf_0);
+            return New <KGRtoR::BoundaryCondition> (prototype, f_0, ddtf_0);
         }
         if(*BCSelection == 2){
             if(getNonHomogenous() == nullptr) getNonHomogenous();
 
-            return new Modes::DrivenBC(prototype, squareWave);
+            return New <Modes::DrivenBC> (prototype, squareWave);
         }
 
-        throw Str("Unknown initial condition ") + ToStr(*BCSelection);
+        throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
     void Builder::notifyCLArgsSetupFinished() {
@@ -101,11 +101,11 @@ namespace Modes {
         if(*BCSelection == 1) params.emplace_back("wave_number");
 
         auto strParams = interface->toString(params, SEPARATOR);
-        return KGRtoR::KGBuilder::suggestFileName() + SEPARATOR + strParams;
+        return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
     Pointer<Base::FunctionT<Real, Real>> Builder::getNonHomogenous() {
-        if(*driving_force == true && squareWave== nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
+        if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;
     }

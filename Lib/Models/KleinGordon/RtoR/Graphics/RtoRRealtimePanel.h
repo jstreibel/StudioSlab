@@ -9,7 +9,7 @@
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
-#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/BaseMonitor.h"
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 

@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                            const Real phiMin, const Real phiMax, const Str &name, bool showEnergyHistoryAsDensities)
-            : Graphics::OpenGLMonitor(params, Str("ℝ↦ℝ ") + name), hamiltonian(hamiltonian) {
+            : Graphics::BaseMonitor(params, Str("ℝ↦ℝ ") + name), hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
         fullHistoryArtist->setAffectGraphRanges(true);
         fullHistoryGraph->addArtist(fullHistoryArtist);
@@ -75,7 +75,7 @@ namespace Slab::Models::KGRtoR {
         for (const auto &dataView: dataViews)
             dataView->output(outInfo);
 
-        Graphics::OpenGLMonitor::handleOutput(outInfo);
+        Graphics::BaseMonitor::handleOutput(outInfo);
     }
 
     bool Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
@@ -87,7 +87,7 @@ namespace Slab::Models::KGRtoR {
             return true;
         }
 
-        return OpenGLMonitor::notifyKeyboard(key, state, modKeys);
+        return BaseMonitor::notifyKeyboard(key, state, modKeys);
     }
 
     void Monitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory) {

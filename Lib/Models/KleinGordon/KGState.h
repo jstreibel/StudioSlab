@@ -84,7 +84,7 @@ namespace Slab::Models {
             return *this;
         }
 
-        void set(const State &state) override {
+        void setData(const EquationState &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
             setPhi(kgState.getPhi());

@@ -6,7 +6,7 @@
 #define R2TOR_OUTPUTMONITOR_GENERIC_H
 
 
-#include "Graphics/OpenGL/OpenGLMonitor.h"
+#include "Graphics/BaseMonitor.h"
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/Artists/R2SectionArtist.h"
 
@@ -14,7 +14,7 @@ namespace Slab::Math::R2toR {
 
 
 
-    class OutputOpenGL : public Graphics::OpenGLMonitor {
+    class OutputOpenGL : public Graphics::BaseMonitor {
     protected:
         Graphics::PlottingWindow mSectionGraph;
         Graphics::R2SectionArtist sectionArtist;

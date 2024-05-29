@@ -5,12 +5,12 @@
 #ifndef STUDIOSLAB_COMPLEXSPACE_H
 #define STUDIOSLAB_COMPLEXSPACE_H
 
-#include "ArithmeticOperationInterface.h"
+#include "NumericAlgebra.h"
 #include "Math/Space/DimensionMetaData.h"
 
 namespace Slab::Math {
 
-    class DiscreteComplexSpace : public ArithmeticOpsInterface<DiscreteComplexSpace> {
+    class DiscreteComplexSpace : public NumericAlgebra<DiscreteComplexSpace> {
     protected:
         const DimensionMetaData dimensionMetaData;
         ComplexArray data;

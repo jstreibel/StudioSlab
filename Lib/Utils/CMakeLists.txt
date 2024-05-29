@@ -30,6 +30,7 @@ set ( UTIL_SOURCES
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set(UTIL_SOURCES ${UTIL_SOURCES}
 			CUDAUtils.h			CUDAUtils.cpp
+            List.h
     )
 endif ()
 
