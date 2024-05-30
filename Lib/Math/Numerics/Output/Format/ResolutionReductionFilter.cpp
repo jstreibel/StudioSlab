@@ -4,8 +4,8 @@
 
 #include "ResolutionReductionFilter.h"
 
-#include "Math/Space/Impl/DiscreteSpace.h"
-#include "Math/Space/Impl/DiscreteSpaceCPU.h"
+#include "Math/VectorSpace/Impl/DiscreteSpace.h"
+#include "Math/VectorSpace/Impl/DiscreteSpaceCPU.h"
 
 
 namespace Slab::Math {

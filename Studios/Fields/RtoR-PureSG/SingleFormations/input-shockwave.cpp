@@ -25,9 +25,10 @@ namespace Studios::PureSG {
 
         Slab::Math::RtoR::AnalyticShockwave1D shockwave1D(*a0);
         auto proto = newFieldState();
-        return New<BoundaryCondition>(proto, new RtoR::NullFunction,
-                                           new RtoR::RegularDiracDelta(eps, a, RtoR::RegularDiracDelta::Regularization(
-                                                   deltaType)));
+        auto reggy = RtoR::RegularDiracDelta::Regularization(deltaType);
+        auto DiracMateyMate = New <RtoR::RegularDiracDelta> (eps, a, reggy);
+
+        return New<BoundaryCondition>(proto, New <RtoR::NullFunction> (), DiracMateyMate);
     }
 
 

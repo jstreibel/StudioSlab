@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_POINTSETRENDERER_H
 #define STUDIOSLAB_POINTSETRENDERER_H
 
-#include "Math/Space/Impl/PointSet.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
 #include "Graphics/Graph/PlotStyle.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {

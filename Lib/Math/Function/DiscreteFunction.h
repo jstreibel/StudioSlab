@@ -7,26 +7,28 @@
 
 #include "Function.h"
 
-#include "Math/Space/Impl/DiscreteSpace.h"
-#include "Math/Space/Impl/DiscreteSpaceCPU.h"
-#include "Math/Space/Impl/DiscreteSpaceGPU.h"
+#include "Math/VectorSpace/Impl/DiscreteSpace.h"
+#include "Math/VectorSpace/Impl/DiscreteSpaceCPU.h"
+#include "Math/VectorSpace/Impl/DiscreteSpaceGPU.h"
 #include "Core/Tools/Log.h"
 
 namespace Slab::Math::Base {
 
 
-    template<class PosSpaceType, class TargetSpaceType>
-    class DiscreteFunction : public FunctionT<PosSpaceType, TargetSpaceType>,
-                             public NumericAlgebra<DiscreteFunction<PosSpaceType, TargetSpaceType>> {
-
+    template<class ArgumentCategory, class FunctionCategory>
+    class DiscreteFunction : public FunctionT<ArgumentCategory, FunctionCategory>,
+                             public NumericAlgebra<DiscreteFunction<ArgumentCategory, FunctionCategory>>
+    {
         DiscreteSpace *space;
 
     protected:
         device dev;
 
     public:
-        typedef FunctionT<PosSpaceType, TargetSpaceType> MyBase;
-        typedef std::shared_ptr<DiscreteFunction<PosSpaceType,TargetSpaceType>> Ptr;
+        using NumericAlgebra<Base::DiscreteFunction<ArgumentCategory, Real>>::operator=;
+        typedef DiscreteFunction<ArgumentCategory, FunctionCategory> MyType;
+        typedef FunctionT<ArgumentCategory, FunctionCategory> MyBase;
+        typedef std::shared_ptr<DiscreteFunction<ArgumentCategory,FunctionCategory>> Ptr;
 
         Str myName() const override { return "general discrete"; }
 
@@ -68,43 +70,43 @@ namespace Slab::Math::Base {
 
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
-        virtual DiscreteFunction &Apply(const FunctionT<TargetSpaceType, TargetSpaceType> &func,
+        virtual DiscreteFunction &Apply(const FunctionT<FunctionCategory, FunctionCategory> &func,
                                         DiscreteFunction &out) const = 0;
 
-        auto Add(const DiscreteFunction<PosSpaceType, TargetSpaceType> &toi) ->
-        DiscreteFunction<PosSpaceType, TargetSpaceType> & override {
+        auto Add(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi) ->
+        DiscreteFunction<ArgumentCategory, FunctionCategory> & override {
             space->Add(*toi.space);
             return *this;
         }
 
-        auto Subtract(const DiscreteFunction<PosSpaceType, TargetSpaceType> &toi) ->
-        DiscreteFunction<PosSpaceType, TargetSpaceType> & override {
+        auto Subtract(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi) ->
+        DiscreteFunction<ArgumentCategory, FunctionCategory> & override {
             space->Subtract(*toi.space);
             return *this;
         }
 
-        auto StoreAddition(const DiscreteFunction<PosSpaceType, TargetSpaceType> &toi1,
-                      const DiscreteFunction <PosSpaceType, TargetSpaceType> & toi2) ->
-                      DiscreteFunction<PosSpaceType, TargetSpaceType> & override{
+        auto StoreAddition(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi1,
+                      const DiscreteFunction <ArgumentCategory, FunctionCategory> & toi2) ->
+                      DiscreteFunction<ArgumentCategory, FunctionCategory> & override{
             space->StoreAddition(*toi1.space, *toi2.space);
             return *this;
         }
 
-        auto StoreSubtraction(const DiscreteFunction<PosSpaceType, TargetSpaceType> &aoi1,
-                         const DiscreteFunction<PosSpaceType, TargetSpaceType> & aoi2) ->
-                         DiscreteFunction<PosSpaceType, TargetSpaceType> & override{
+        auto StoreSubtraction(const DiscreteFunction<ArgumentCategory, FunctionCategory> &aoi1,
+                         const DiscreteFunction<ArgumentCategory, FunctionCategory> & aoi2) ->
+                         DiscreteFunction<ArgumentCategory, FunctionCategory> & override{
             space->StoreSubtraction(*aoi1.space, *aoi2.space);
             return *this;
         }
 
-        DiscreteFunction<PosSpaceType, TargetSpaceType> &
-        StoreMultiplication(const DiscreteFunction<PosSpaceType, TargetSpaceType> &aoi1,
+        DiscreteFunction<ArgumentCategory, FunctionCategory> &
+        StoreScalarMultiplication(const DiscreteFunction<ArgumentCategory, FunctionCategory> &aoi1,
                             const Real a) override {
-            space->StoreMultiplication(*aoi1.space, a);
+            space->StoreScalarMultiplication(*aoi1.space, a);
             return *this;
         }
 
-        DiscreteFunction<PosSpaceType, TargetSpaceType> &Multiply(floatt a) override {
+        DiscreteFunction<ArgumentCategory, FunctionCategory> &Multiply(floatt a) override {
             space->Multiply(a);
             return *this;
         }

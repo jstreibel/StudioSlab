@@ -29,6 +29,7 @@ namespace Slab::Math::R2toR {
 
     public:
         typedef Base::DiscreteFunction <Real2D, Real> DiscreteFunctionBase;
+        using NumericAlgebra<DiscreteFunctionBase>::operator=;
 
         DiscreteFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, device dev);
         DiscreteFunction(const NumericConfig &, device);

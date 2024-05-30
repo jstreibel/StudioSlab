@@ -8,7 +8,7 @@
 
 #include "KG-RtoRSystemGordonGPU.h"
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunctionGPU.h"
-#include "Math/Function/RtoR/Model/Derivatives/DerivativesGPU.h"
+#include "Math/Function/RtoR/Model/Operators/DerivativesGPU.h"
 
 using namespace Slab::Models::KGRtoR;
 

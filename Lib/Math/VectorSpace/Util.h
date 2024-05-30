@@ -6,7 +6,7 @@
 #define V_SHAPE_UTIL_H
 
 
-#include "Math/Space/Impl/DiscreteSpace.h"
+#include "Math/VectorSpace/Impl/DiscreteSpace.h"
 
 void PrintSpace(const DiscreteSpace& space, UInt resolution = 80, Real scale = 10.);
 

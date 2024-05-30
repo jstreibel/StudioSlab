@@ -9,22 +9,23 @@ set ( TOOLSET_SOURCES
 		)
 
 set ( SPACE_SOURCES
-		Space/Impl/ComplexSpace.cpp		Space/Impl/ComplexSpace.h
-		Space/Impl/DiscreteSpace.cpp
-		Space/Impl/DiscreteSpaceCPU.cpp
-		Space/Space.cpp 				Space/Space.h
-		Space/Measure.cpp 				Space/Measure.h
-		Space/HyperCube/AAHyperCube.cpp Space/HyperCube/AAHyperCube.h
+        VectorSpace/Impl/ComplexSpace.cpp VectorSpace/Impl/ComplexSpace.h
+        VectorSpace/Impl/DiscreteSpace.cpp
+        VectorSpace/Impl/DiscreteSpaceCPU.cpp
+        VectorSpace/Space.cpp VectorSpace/Space.h
+        VectorSpace/Measure.cpp VectorSpace/Measure.h
+        VectorSpace/HyperCube/AAHyperCube.cpp VectorSpace/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
-		Space/Impl/PointSet.cpp			Space/Impl/PointSet.h
-		Space/Point.cpp					Space/Point.h
-		Space/DimensionMetaData.cpp
-		Space/DimensionMetaData.h
-        Space/Algebra.h
+        VectorSpace/Impl/PointSet.cpp VectorSpace/Impl/PointSet.h
+        VectorSpace/Point.cpp VectorSpace/Point.h
+        VectorSpace/DimensionMetaData.cpp
+        VectorSpace/DimensionMetaData.h
+        VectorSpace/Algebra.h
+		VectorSpace/Operator.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-set ( SPACE_SOURCES_CUDA Space/Impl/DiscreteSpaceGPU.cu )
+set ( SPACE_SOURCES_CUDA VectorSpace/Impl/DiscreteSpaceGPU.cu)
 endif ()
 
 set ( EXPERIMENTAL_SOURCES
@@ -79,6 +80,7 @@ set ( NUMERICS_SOURCES
 		DifferentialEquations/Solver.cpp
 		DifferentialEquations/EquationState.cpp
 		DifferentialEquations/BoundaryConditions.cpp
+        Numerics/Method/RungeKutta4.cpp
 )
 
 set ( THERMO_SOURCES

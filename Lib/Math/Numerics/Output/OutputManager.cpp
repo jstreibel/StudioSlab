@@ -24,9 +24,7 @@ namespace Slab::Math {
 
 
     auto OutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
-        fix forceOverstepping = params.shouldForceOverstepping();
-
-        Count nSteps = forceOverstepping ? HUGE_NUMBER : maxSteps;
+        Count nSteps = maxSteps;
 
         for (auto &socket: outputs) {
             const size_t nextRecStep = socket->computeNextRecStep(currStep);

@@ -3,7 +3,7 @@
 
 #include "DimensionReductionFilter.h"
 
-#include "Math/Space/Impl/DiscreteSpaceCPU.h"
+#include "Math/VectorSpace/Impl/DiscreteSpaceCPU.h"
 
 #include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"

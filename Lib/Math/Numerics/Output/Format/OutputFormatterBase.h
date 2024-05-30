@@ -9,7 +9,7 @@
 #include <Math/Numerics/Output/Util/FieldStateOutputInterface.h>
 #include <Math/Numerics/Output/Util/ByteData.h>
 
-#include <Math/Space/Impl/DiscreteSpace.h>
+#include <Math/VectorSpace/Impl/DiscreteSpace.h>
 
 
 namespace Slab::Math {

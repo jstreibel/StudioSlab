@@ -7,7 +7,7 @@
 #include "Utils/Templates.h"
 #define V_SHAPE_FIELDSTATE_H
 
-#include "Math/Space/Impl/DiscreteSpace.h"
+#include "Math/VectorSpace/Impl/DiscreteSpace.h"
 #include "Math/DifferentialEquations/EquationState.h"
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
@@ -25,8 +25,7 @@ namespace Slab::Models {
         typedef Base::EquationState State;
 
     public:
-        using CategoryType = FUNC_CATEGORY;
-        typedef FUNC_CATEGORY FunctionCategoryType;
+        typedef FUNC_CATEGORY CategoryType;
 
         KGState(Pointer<FUNC_CATEGORY> phi, Pointer<FUNC_CATEGORY> dPhiDt)
         : phi(phi), dPhiDt(dPhiDt) {}
@@ -76,10 +75,10 @@ namespace Slab::Models {
 
             return *this;
         }
-        State &StoreMultiplication(const State &state, const Real a) override {
+        State &StoreScalarMultiplication(const State &state, const Real a) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
-            phi->StoreMultiplication(kgState.getPhi(), a);
-            dPhiDt->StoreMultiplication(kgState.getDPhiDt(), a);
+            phi->StoreScalarMultiplication(kgState.getPhi(), a);
+            dPhiDt->StoreScalarMultiplication(kgState.getDPhiDt(), a);
 
             return *this;
         }

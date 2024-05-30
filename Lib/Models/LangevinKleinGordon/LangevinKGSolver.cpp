@@ -6,6 +6,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Utils/RandUtils.h"
 #include "Utils/OMPUtils.h"
+#include "Math/Function/RtoR/Model/Operators/RtoRLaplacian.h"
 
 
 namespace Slab::Models::KGRtoR {
@@ -16,8 +17,8 @@ namespace Slab::Models::KGRtoR {
 
     LangevinKGSolver::LangevinKGSolver(const NumericConfig &params,
                                        Base::BoundaryConditions_ptr du,
-                                       Pointer<Potential> potential)
-    : KGRtoRSolver(params, du, potential){
+                                       const Pointer<Potential>& potential)
+    : KGRtoRSolver(params, du, New<RtoR::RtoRLaplacian>(), potential){
 
     }
 
@@ -45,11 +46,13 @@ namespace Slab::Models::KGRtoR {
     void LangevinKGSolver::startStep_KG(const EquationState &kgState, Real t, Real dt) {
         KGRtoRSolver::startStep_KG(kgState, t, dt);
 
+        α = sqrt(2 * T * γ / dt);
+
         ComputeImpulses();
     }
 
     EquationState &
-    LangevinKGSolver::dtF_KG(const EquationState &kgStateIn, EquationState &kgStateOut, Real t, Real dt) {
+    LangevinKGSolver::dtF_KG(const EquationState &kgStateIn, EquationState &kgStateOut, Real t) {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
@@ -61,24 +64,31 @@ namespace Slab::Models::KGRtoR {
 
 #pragma omp barrier
 
-        kgStateOut = KGSolver::dtF_KG(kgStateIn, kgStateOut, t, dt);
+        kgStateOut = KGSolver::dtF_KG(kgStateIn, kgStateOut, t);
 
 #pragma omp barrier
 
         {
             IN pi = kgStateIn.getDPhiDt();
             OUT dissipation = *temp1;
-            dissipation.StoreMultiplication(pi, -γ);
 
-            fix h = params.geth();
-            fix alpha = sqrt(2 * T * γ / dt);
-            scaledImpulses->StoreMultiplication(*langevinImpulses, alpha);
+            dissipation = pi * (-γ);
 
+            (*scaledImpulses) = *langevinImpulses * α;
+
+            /*
             OUT F = kgStateOut.getDPhiDt();
             OUT F_ext = *temp2;
             F_ext.StoreAddition(*scaledImpulses, dissipation) *= dt;
 
             F.Add(F_ext);
+             */
+
+            OUT F = kgStateOut.getDPhiDt();
+            OUT F_ext = *temp2;
+            F_ext = *scaledImpulses + dissipation;
+
+            F += F_ext;
         }
 
         return kgStateOut;

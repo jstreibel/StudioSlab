@@ -7,7 +7,7 @@
 
 #include "Math/Numerics/Output/Util/OutputPacket.h"
 
-#include <Math/Space/Impl/DiscreteSpace.h>
+#include <Math/VectorSpace/Impl/DiscreteSpace.h>
 
 
 namespace Slab::Math {

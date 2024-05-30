@@ -9,9 +9,9 @@
 #include <utility>
 
 #include "Utils/NativeTypes.h"
-#include "NumericAlgebra.h"
+#include "Math/VectorSpace/NumericAlgebra.h"
 #include "Core/Tools/Log.h"
-#include "Math/Space/DimensionMetaData.h"
+#include "Math/VectorSpace/DimensionMetaData.h"
 
 
 namespace Slab::Math {
@@ -20,6 +20,9 @@ namespace Slab::Math {
 
     class DiscreteSpace : public NumericAlgebra<DiscreteSpace> {
     public:
+        using NumericAlgebra<DiscreteSpace>::operator=;
+
+
         explicit DiscreteSpace(const DimensionMetaData &dim);
 
         virtual ~DiscreteSpace();

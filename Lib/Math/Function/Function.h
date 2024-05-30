@@ -6,7 +6,7 @@
 #define V_SHAPE_FUNCTIONSBASE_H
 
 #include "Math/Formalism/Categories.h"
-#include "Math/Space/Impl/PointSet.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
 
 #include <Utils/Types.h>
 

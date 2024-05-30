@@ -24,7 +24,7 @@ namespace Slab::Math {
 
         auto Multiply(floatt a) -> DiscreteSpace & override;
 
-        auto StoreMultiplication(const DiscreteSpace &aoi1, const Real a) -> DiscreteSpace & override;
+        auto StoreScalarMultiplication(const DiscreteSpace &aoi1, const Real a) -> DiscreteSpace & override;
 
         auto setToValue(const DiscreteSpace &param) -> void override;
     };

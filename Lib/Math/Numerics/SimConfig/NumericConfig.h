@@ -27,8 +27,6 @@ namespace Slab::Math {
         RealParameter::Ptr xCenter = RealParameter::New(.0, "c,xCenter", "Center of simulation space");
         RealParameter::Ptr t = RealParameter::New(-1, "t", "Max simulation time. If left negative, defaults to L/2. "
                                                            "Note that this value can be overriden by simulation.");
-        BoolParameter::Ptr forceOverstepping = BoolParameter::New(false, "f,force_overstepping",
-                                                                  "Ignore '-t' option and let simulation run forever.");
 
         IntegerParameter::Ptr dimMode = IntegerParameter::New(0, "m,dimensions_mode",
                                                               "Method to compute space measures:"
@@ -62,8 +60,6 @@ namespace Slab::Math {
         auto getxMax() const -> Real;
 
         auto gett() const -> Real;
-
-        auto shouldForceOverstepping() const -> bool;
 
         auto getr() const -> Real;
 

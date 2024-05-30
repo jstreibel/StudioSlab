@@ -6,7 +6,7 @@
 #define V_SHAPE_PARAMETRICCURVE_H
 
 #include "Math/Function/Function.h"
-#include "Math/Space/Impl/PointSet.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
 
 #include <memory>
 

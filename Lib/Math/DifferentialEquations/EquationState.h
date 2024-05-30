@@ -7,7 +7,7 @@
 
 
 #include "Utils/Types.h"
-#include "Math/Space/Impl/NumericAlgebra.h"
+#include "Math/VectorSpace/NumericAlgebra.h"
 
 namespace Slab::Math::Base {
 
@@ -16,7 +16,8 @@ namespace Slab::Math::Base {
 
     class EquationState : public EquationAlgebra {
     public:
-        using EquationAlgebra::operator+;
+        // using EquationAlgebra::operator-;
+        // using EquationAlgebra::operator+;
         using EquationAlgebra::operator=;
 
         /**

@@ -7,7 +7,7 @@
 
 #include "Artist.h"
 #include "Utils/Pointer.h"
-#include "Math/Space/Impl/PointSet.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
 #include "Graphics/Graph/PlotStyle.h"
 
 namespace Slab::Graphics {

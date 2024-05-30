@@ -73,7 +73,7 @@ namespace Slab::Models::KGRtoR {
 
             // Eq 2
             {
-                scaledImpulses.StoreMultiplication(langevinImpulses, sqrt(2*T/dt));
+                scaledImpulses.StoreScalarMultiplication(langevinImpulses, sqrt(2 * T / dt));
 
                 iPhi.Laplacian(*temp1); // Laplaciano do phi de input tem seu laplaciano
                                            // calculado e o resultado vai pra dentro do temp1,

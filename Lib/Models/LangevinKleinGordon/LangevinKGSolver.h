@@ -27,12 +27,13 @@ namespace Slab::Models::KGRtoR {
 
         Real T=.0;
         Real γ=.0;
+        Real α=.0;
 
         void ComputeImpulses();
     public:
         LangevinKGSolver(const NumericConfig &params,
                          Base::BoundaryConditions_ptr du,
-                         Pointer<Potential> potential);
+                         const Pointer<Potential>& potential);
 
         void setTemperature(Real value);
         void setDissipationCoefficient(Real value);
@@ -40,7 +41,7 @@ namespace Slab::Models::KGRtoR {
     protected:
         void startStep_KG(const EquationState &state, Real t, Real dt) override;
 
-        EquationState &dtF_KG(const EquationState &stateIn, EquationState &stateOut, Real t, Real dt) override;
+        EquationState &dtF_KG(const EquationState &stateIn, EquationState &stateOut, Real t) override;
 
 
     };

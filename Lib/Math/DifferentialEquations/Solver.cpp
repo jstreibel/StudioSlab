@@ -12,8 +12,8 @@ namespace Slab::Math::Base {
         return state;
     }
 
-    EquationState &Solver::operator()(const EquationState &in, EquationState &out, Real t, Real dt) {
-        return this->dtF(in, out, t, dt);
+    EquationState &Solver::operator()(const EquationState &in, EquationState &out, Real t) {
+        return this->dtF(in, out, t);
     }
 
     auto Solver::NewEqState() const -> EquationState_ptr {

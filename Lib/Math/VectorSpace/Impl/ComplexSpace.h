@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_COMPLEXSPACE_H
 #define STUDIOSLAB_COMPLEXSPACE_H
 
-#include "NumericAlgebra.h"
-#include "Math/Space/DimensionMetaData.h"
+#include "Math/VectorSpace/NumericAlgebra.h"
+#include "Math/VectorSpace/DimensionMetaData.h"
 
 namespace Slab::Math {
 
@@ -33,7 +33,7 @@ namespace Slab::Math {
         auto StoreSubtraction    (const DiscreteComplexSpace &space1, const DiscreteComplexSpace &space2) -> DiscreteComplexSpace & override;
 
         auto Multiply            (floatt a)                                         -> DiscreteComplexSpace & override;
-        auto StoreMultiplication (const DiscreteComplexSpace &aoi1,   const Real a) -> DiscreteComplexSpace & override;
+        auto StoreScalarMultiplication (const DiscreteComplexSpace &aoi1,   const Real a) -> DiscreteComplexSpace & override;
 
         auto setToValue          (const DiscreteComplexSpace &param)                -> void;
 

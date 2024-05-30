@@ -9,7 +9,7 @@ namespace Slab::Math {
 
     NumericConfig::NumericConfig(bool doRegister) : InterfaceOwner(
             "Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister) {
-        interface->addParameters({N, L, xCenter, t, forceOverstepping, rdt, dimMode, h});
+        interface->addParameters({N, L, xCenter, t, rdt, dimMode, h});
     }
 
 /*
@@ -55,8 +55,6 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
         t->setValue(tMax);
     }
 
-    bool NumericConfig::shouldForceOverstepping() const { return **forceOverstepping; }
-
     void NumericConfig::notifyCLArgsSetupFinished() {
         InterfaceOwner::notifyCLArgsSetupFinished();
 
@@ -79,10 +77,6 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
             *t = **L * .5;
             Log::Attention("NumericParams") << " parameter 't' is <0. Setting to t = L/2 = " << *t;
         }
-
-        if (**forceOverstepping)
-            Log::Attention("NumericParams") << ": flag '" << forceOverstepping->getCLName(true)
-                                            << "' is set to active: simulation time limit will be ignored.";
 
         if (*rdt < 0) {
             *rdt = .1;

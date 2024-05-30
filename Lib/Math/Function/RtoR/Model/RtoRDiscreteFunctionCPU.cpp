@@ -5,7 +5,7 @@
 
 
 #include "RtoRDiscreteFunctionCPU.h"
-#include "Math/Function/RtoR/Model/Derivatives/DerivativesCPU.h"
+#include "Math/Function/RtoR/Model/Operators/DerivativesCPU.h"
 
 #include "Utils/OMPUtils.h"
 

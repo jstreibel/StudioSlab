@@ -29,6 +29,7 @@
 
 #include "Graphics/RtoRMonitor.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
+#include "Math/Function/RtoR/Model/Operators/RtoRLaplacian.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -196,7 +197,9 @@ namespace Slab::Models::KGRtoR {
 #endif
         auto &params = simulationConfig.numericConfig;
 
-        auto solver = New<KGRtoRSolver>(params, dphi, potential, nonHomogenous);
+        auto Laplacian = New <Math::RtoR::RtoRLaplacian> ();
+
+        auto solver = New<KGRtoRSolver>(params, dphi, Laplacian, potential, nonHomogenous);
 
         return solver;
     }

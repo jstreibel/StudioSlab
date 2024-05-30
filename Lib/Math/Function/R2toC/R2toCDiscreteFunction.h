@@ -6,7 +6,7 @@
 #define STUDIOSLAB_R2TOCDISCRETEFUNCTION_H
 
 #include "Math/Function/Function.h"
-#include "Math/Space/Impl/ComplexSpace.h"
+#include "Math/VectorSpace/Impl/ComplexSpace.h"
 
 namespace Slab::Math::R2toC {
 

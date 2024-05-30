@@ -6,7 +6,7 @@
 #define STUDIOSLAB_XHAIRARTIST_H
 
 #include "Artist.h"
-#include "Math/Space/Impl/PointSet.h"
+#include "Math/VectorSpace/Impl/PointSet.h"
 
 namespace Slab::Graphics {
 

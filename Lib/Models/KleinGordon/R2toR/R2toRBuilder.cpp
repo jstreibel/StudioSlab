@@ -25,6 +25,7 @@
 
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
+#include "Math/Function/R2toR/Model/Operators/R2toRLaplacian.h"
 
 namespace Slab::Math::R2toR {
 
@@ -124,7 +125,8 @@ namespace Slab::Math::R2toR {
         auto dphi = getBoundary();
 
         using SolvySolver = Models::KGSolver<Math::R2toR::EquationState>;
-        return New<SolvySolver>(simulationConfig.numericConfig, dphi, thePotential);
+        auto Laplacian = New <R2toR::R2toRLaplacian>();
+        return New<SolvySolver>(simulationConfig.numericConfig, dphi, Laplacian, thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

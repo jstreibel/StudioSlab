@@ -16,9 +16,12 @@ namespace Studios::PureSG {
 
     auto InputPerturbations::getBoundary() -> Math::Base::BoundaryConditions_ptr {
         auto proto = newFieldState();
-        return New<BoundaryCondition>(proto, new RtoR::NullFunction,
-                                              new RtoR::PerturbedOscillonTimeDerivative(l.getValue(),
-                                                                                     eps.getValue()));
+
+        auto pertOscillon = New <RtoR::PerturbedOscillonTimeDerivative> (l.getValue(), eps.getValue());
+
+        return New<BoundaryCondition>(proto,
+                                      New <RtoR::NullFunction> (),
+                                      pertOscillon);
     }
 
 

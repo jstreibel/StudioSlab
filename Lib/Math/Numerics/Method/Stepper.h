@@ -16,7 +16,7 @@ namespace Slab::Math {
     public:
         virtual void step(const Real &dt, size_t n_steps) = 0;
 
-        virtual auto getCurrentState() const -> Base::EquationState_ptr = 0;
+        virtual auto getCurrentState() const -> Base::EquationState_constptr = 0;
     };
 
 

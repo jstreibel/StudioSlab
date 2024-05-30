@@ -6,7 +6,7 @@
 #define STUDIOSLAB_AAHYPERCUBE_H
 
 
-#include "Math/Space/Space.h"
+#include "Math/VectorSpace/Space.h"
 
 
 namespace Slab::Math {
