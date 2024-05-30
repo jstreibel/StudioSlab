@@ -6,7 +6,7 @@
 
 
 namespace Slab::Math {
-    RungeKutta4::RungeKutta4(const Slab::Pointer<Slab::Math::Base::Solver> &solver, Slab::Count totalSwapStates)
+    RungeKutta4::RungeKutta4(const Pointer<Base::Solver> &solver, Slab::Count totalSwapStates)
 
             : Stepper(), _H(solver), _f(solver->NewEqState()), _k1(solver->NewEqState()), _k2(solver->NewEqState()),
               _k3(solver->NewEqState()), _k4(solver->NewEqState()), _temp(solver->NewEqState()), swapsIterator(swaps) {

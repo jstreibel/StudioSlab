@@ -22,8 +22,8 @@ namespace Slab::Math {
 
     class NumericTask : public Task {
         Base::NumericalRecipe &numericalRecipe;
-        Stepper *stepper;
-        OutputManager *outputManager;
+        Stepper_ptr stepper;
+        Pointer<OutputManager> outputManager;
 
         Real dt;
         const UInt totalSteps;

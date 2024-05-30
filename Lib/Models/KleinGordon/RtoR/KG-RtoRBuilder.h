@@ -47,9 +47,8 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function_ptr getPotential() const;
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
-        auto buildOutputManager()   -> OutputManager * override;
+        auto buildOutputManager()   -> Pointer<OutputManager> override;
         auto buildEquationSolver()  -> Base::Solver_ptr override;
-        auto buildStepper()         -> Stepper * override;
 
         void *getHamiltonian() override;
 

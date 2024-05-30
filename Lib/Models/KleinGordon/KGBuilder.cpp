@@ -23,10 +23,10 @@ namespace Slab::Models {
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto KGBuilder::buildStepper() -> Stepper * {
+    auto KGBuilder::buildStepper() -> Pointer<Stepper> {
         auto solver = buildEquationSolver();
 
-        return new RungeKutta4(solver);
+        return New <RungeKutta4> (solver);
     }
 
 

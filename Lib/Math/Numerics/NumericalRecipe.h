@@ -19,9 +19,9 @@ namespace Slab::Math::Base {
         explicit NumericalRecipe(const Str& name, Str generalDescription, bool doRegister = false);
 
     public:
-        virtual auto buildOutputManager()         -> OutputManager * = 0;
+        virtual auto buildOutputManager()         -> Pointer<OutputManager> = 0;
         virtual auto buildEquationSolver()        -> Solver_ptr = 0;
-        virtual auto buildStepper()               -> Stepper* = 0;
+        virtual auto buildStepper()               -> Pointer<Stepper> = 0;
 
         virtual auto suggestFileName()      const -> Str;
 

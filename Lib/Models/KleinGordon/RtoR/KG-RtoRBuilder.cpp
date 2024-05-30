@@ -48,7 +48,7 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto KGRtoRBuilder::buildOutputManager() -> OutputManager * {
+    auto KGRtoRBuilder::buildOutputManager() -> Pointer<OutputManager> {
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
 
@@ -62,7 +62,7 @@ namespace Slab::Models::KGRtoR {
 
         const NumericConfig &p = simulationConfig.numericConfig;
 
-        auto *outputManager = new OutputManager(simulationConfig.numericConfig);
+        auto outputManager = New <OutputManager> (simulationConfig.numericConfig);
 
         fix t = p.gett();
         fix N = (Real) p.getN();
@@ -215,15 +215,6 @@ namespace Slab::Models::KGRtoR {
         u_0->setDPhiDt(RtoR::NullFunction());
 
         return u_0;
-    }
-
-    auto KGRtoRBuilder::buildStepper() -> Stepper * {
-        auto solver = buildEquationSolver();
-
-        using State = typename Slab::Models::KGRtoR::EquationState;
-        auto stepper = new Math::RungeKutta4(solver);
-
-        return stepper;
     }
 
     void *KGRtoRBuilder::getHamiltonian() {

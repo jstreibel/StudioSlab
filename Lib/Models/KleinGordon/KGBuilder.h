@@ -39,7 +39,7 @@ namespace Slab::Models {
 
         virtual void* getHamiltonian() = 0;
 
-        Stepper* buildStepper() override;
+        Pointer<Stepper> buildStepper() override;
 
         auto notifyAllCLArgsSetupFinished() -> void override;
     };

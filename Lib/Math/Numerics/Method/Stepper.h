@@ -19,6 +19,7 @@ namespace Slab::Math {
         virtual auto getCurrentState() const -> Base::EquationState_constptr = 0;
     };
 
+    DefinePointer(Stepper)
 
 }
 

@@ -31,14 +31,14 @@ namespace Slab::Math::R2toR {
     Builder::Builder(const Str& name, Str description)
             : Models::KGBuilder(name, std::move(description)) {    }
 
-    OutputManager *Builder::buildOutputManager() {
+    Pointer<OutputManager> Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
 
         if (*VisualMonitor) Core::BackendManager::Startup(Core::GLFW);
         else                Core::BackendManager::Startup(Core::Headless);
 
-        auto *outputManager = new OutputManager(simulationConfig.numericConfig);
+        auto outputManager = New <OutputManager> (simulationConfig.numericConfig);
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
