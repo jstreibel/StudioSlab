@@ -119,7 +119,9 @@ namespace Slab::Models::KGRtoR {
         static bool isSetup = false;
         if (not isSetup && lastPacket.hasValidData()) {
 
-            auto &phi = lastPacket.GetNakedStateData<EquationState>()->getPhi();
+            auto &phi = static_cast<RtoR::DiscreteFunction&>
+                    (lastPacket.GetNakedStateData<EquationState>()->getPhi());
+
             if (phi.getLaplacianType() == RtoR::DiscreteFunction::Standard1D_PeriodicBorder)
                 fullHistoryArtist->set_xPeriodicOn();
 

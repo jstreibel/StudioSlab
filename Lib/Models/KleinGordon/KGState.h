@@ -8,6 +8,7 @@
 #define V_SHAPE_FIELDSTATE_H
 
 #include "Math/VectorSpace/Impl/DiscreteSpace.h"
+#include "Math/Function/DiscreteFunction.h"
 #include "Math/DifferentialEquations/EquationState.h"
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
@@ -20,14 +21,16 @@ namespace Slab::Models {
      * State representing 2nd order equation state.
      * @tparam EqCategory Usually some DiscreteFunction type.
      */
-    template<class FUNC_CATEGORY>
+    template<class InCategory>
     class KGState : public Base::EquationState, public EqStateOutputInterface {
-        typedef Base::EquationState State;
-
     public:
-        typedef FUNC_CATEGORY CategoryType;
+        typedef Base::EquationState State;
+        typedef Real OutCategory;
+        typedef Base::DiscreteFunction<InCategory, OutCategory> Field;
+        typedef Base::FunctionT<InCategory, OutCategory> FieldBase;
+        typedef Pointer<Field> Field_ptr;
 
-        KGState(Pointer<FUNC_CATEGORY> phi, Pointer<FUNC_CATEGORY> dPhiDt)
+        KGState(Pointer<Field> phi, Pointer<Field> dPhiDt)
         : phi(phi), dPhiDt(dPhiDt) {}
 
         KGState(const KGState& state)
@@ -35,25 +38,25 @@ namespace Slab::Models {
 
         virtual ~KGState() = default;
 
-        State &Add(const State &fieldState) override {
-            auto &kgState = dynamic_cast<const KGState&>(fieldState);
+        State &Add(const State &state) override {
+            auto &kgState = dynamic_cast<const KGState&>(state);
 
             phi->Add(kgState.getPhi());
             dPhiDt->Add(kgState.getDPhiDt());
 
             return *this;
         }
-        State &Subtract(const State &fieldState) override {
-            auto &kgState = dynamic_cast<const KGState&>(fieldState);
+        State &Subtract(const State &state) override {
+            auto &kgState = dynamic_cast<const KGState&>(state);
 
             phi->Subtract(kgState.getPhi());
             dPhiDt->Subtract(kgState.getDPhiDt());
 
             return *this;
         }
-        State &StoreAddition(const State &fieldState1, const State &fieldState2) override {
-            auto &kgState1 = dynamic_cast<const KGState&>(fieldState1);
-            auto &kgState2 = dynamic_cast<const KGState&>(fieldState2);
+        State &StoreAddition(const State &state1, const State &state2) override {
+            auto &kgState1 = dynamic_cast<const KGState&>(state1);
+            auto &kgState2 = dynamic_cast<const KGState&>(state2);
 
             phi->StoreAddition(kgState1.getPhi(), kgState2.getPhi());
             dPhiDt->StoreAddition(kgState1.getDPhiDt(), kgState2.getDPhiDt());
@@ -83,7 +86,7 @@ namespace Slab::Models {
             return *this;
         }
 
-        void setData(const EquationState &state) override {
+        void setData(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
             setPhi(kgState.getPhi());
@@ -91,18 +94,18 @@ namespace Slab::Models {
         }
 
         /*! Basicamente utilizado por BoundaryConditions */
-        void setPhi(const typename FUNC_CATEGORY::Type &function) {
+        void setPhi(const FieldBase &function) {
             phi->Set(function);
         }
         /*! Basicamente utilizado por BoundaryConditions */
-        void setDPhiDt(const typename FUNC_CATEGORY::Type &function) {
+        void setDPhiDt(const FieldBase &function) {
             dPhiDt->Set(function);
         }
 
-        FUNC_CATEGORY &getPhi() { return *phi; }
-        FUNC_CATEGORY &getPhi() const { return *phi; }
-        FUNC_CATEGORY &getDPhiDt() { return *dPhiDt; }
-        FUNC_CATEGORY &getDPhiDt() const { return *dPhiDt; }
+        Field &getPhi() { return *phi; }
+        Field &getPhi() const { return *phi; }
+        Field &getDPhiDt() { return *dPhiDt; }
+        Field &getDPhiDt() const { return *dPhiDt; }
 
         void outputPhi(OStream &out, Str separator) const override {
             DiscreteSpace &space = phi->getSpace();
@@ -124,12 +127,12 @@ namespace Slab::Models {
         }
 
     protected:
-        Pointer<FUNC_CATEGORY> phi;
-        Pointer<FUNC_CATEGORY> dPhiDt;
+        Field_ptr phi;
+        Field_ptr dPhiDt;
     };
 
-    template<typename StateType, typename FunctionCategory>
-    concept DerivedFromKGState = std::is_base_of_v<KGState<FunctionCategory>, StateType>;
+    template<typename StateType, typename InCategory>
+    concept DerivedFromKGState = std::is_base_of_v<KGState<InCategory>, StateType>;
 }
 
 #endif //V_SHAPE_FIELDSTATE_H

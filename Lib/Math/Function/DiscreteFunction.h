@@ -15,9 +15,9 @@
 namespace Slab::Math::Base {
 
 
-    template<class ArgumentCategory, class FunctionCategory>
-    class DiscreteFunction : public FunctionT<ArgumentCategory, FunctionCategory>,
-                             public NumericAlgebra<DiscreteFunction<ArgumentCategory, FunctionCategory>>
+    template<class InCategory, class OutCategory>
+    class DiscreteFunction : public FunctionT<InCategory, OutCategory>,
+                             public NumericAlgebra<DiscreteFunction<InCategory, OutCategory>>
     {
         DiscreteSpace *space;
 
@@ -25,10 +25,10 @@ namespace Slab::Math::Base {
         device dev;
 
     public:
-        using NumericAlgebra<Base::DiscreteFunction<ArgumentCategory, Real>>::operator=;
-        typedef DiscreteFunction<ArgumentCategory, FunctionCategory> MyType;
-        typedef FunctionT<ArgumentCategory, FunctionCategory> MyBase;
-        typedef std::shared_ptr<DiscreteFunction<ArgumentCategory,FunctionCategory>> Ptr;
+        using NumericAlgebra<Base::DiscreteFunction<InCategory, Real>>::operator=;
+        typedef DiscreteFunction<InCategory, OutCategory> MyType;
+        typedef FunctionT<InCategory, OutCategory> MyBase;
+        typedef std::shared_ptr<DiscreteFunction<InCategory,OutCategory>> Ptr;
 
         Str myName() const override { return "general discrete"; }
 
@@ -70,43 +70,43 @@ namespace Slab::Math::Base {
 
 
         // TODO: override o op. () para Function aqui abaixo (static), para chamar func(arb).
-        virtual DiscreteFunction &Apply(const FunctionT<FunctionCategory, FunctionCategory> &func,
+        virtual DiscreteFunction &Apply(const FunctionT<OutCategory, OutCategory> &func,
                                         DiscreteFunction &out) const = 0;
 
-        auto Add(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi) ->
-        DiscreteFunction<ArgumentCategory, FunctionCategory> & override {
+        auto Add(const DiscreteFunction<InCategory, OutCategory> &toi) ->
+        DiscreteFunction<InCategory, OutCategory> & override {
             space->Add(*toi.space);
             return *this;
         }
 
-        auto Subtract(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi) ->
-        DiscreteFunction<ArgumentCategory, FunctionCategory> & override {
+        auto Subtract(const DiscreteFunction<InCategory, OutCategory> &toi) ->
+        DiscreteFunction<InCategory, OutCategory> & override {
             space->Subtract(*toi.space);
             return *this;
         }
 
-        auto StoreAddition(const DiscreteFunction<ArgumentCategory, FunctionCategory> &toi1,
-                      const DiscreteFunction <ArgumentCategory, FunctionCategory> & toi2) ->
-                      DiscreteFunction<ArgumentCategory, FunctionCategory> & override{
+        auto StoreAddition(const DiscreteFunction<InCategory, OutCategory> &toi1,
+                      const DiscreteFunction <InCategory, OutCategory> & toi2) ->
+                      DiscreteFunction<InCategory, OutCategory> & override{
             space->StoreAddition(*toi1.space, *toi2.space);
             return *this;
         }
 
-        auto StoreSubtraction(const DiscreteFunction<ArgumentCategory, FunctionCategory> &aoi1,
-                         const DiscreteFunction<ArgumentCategory, FunctionCategory> & aoi2) ->
-                         DiscreteFunction<ArgumentCategory, FunctionCategory> & override{
+        auto StoreSubtraction(const DiscreteFunction<InCategory, OutCategory> &aoi1,
+                         const DiscreteFunction<InCategory, OutCategory> & aoi2) ->
+                         DiscreteFunction<InCategory, OutCategory> & override{
             space->StoreSubtraction(*aoi1.space, *aoi2.space);
             return *this;
         }
 
-        DiscreteFunction<ArgumentCategory, FunctionCategory> &
-        StoreScalarMultiplication(const DiscreteFunction<ArgumentCategory, FunctionCategory> &aoi1,
+        DiscreteFunction<InCategory, OutCategory> &
+        StoreScalarMultiplication(const DiscreteFunction<InCategory, OutCategory> &aoi1,
                             const Real a) override {
             space->StoreScalarMultiplication(*aoi1.space, a);
             return *this;
         }
 
-        DiscreteFunction<ArgumentCategory, FunctionCategory> &Multiply(floatt a) override {
+        DiscreteFunction<InCategory, OutCategory> &Multiply(floatt a) override {
             space->Multiply(a);
             return *this;
         }

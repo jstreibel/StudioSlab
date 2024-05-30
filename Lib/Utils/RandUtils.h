@@ -18,7 +18,7 @@ namespace Slab {
 
         unsigned RandInt();
 
-        double gaussianNoise(Real mean = 0.0, Real standard_deviation = 1.0, bool reSeed = false, int seed = 1);
+        double GaussianNoise(Real mean = 0.0, Real standard_deviation = 1.0, bool reSeed = false, int seed = 1);
     }
 
     namespace LostAndFound {

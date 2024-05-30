@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
 
         IN kgState = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN phi = kgState.getPhi();
+        IN phi = static_cast<RtoR::DiscreteFunction&>(kgState.getPhi());
         fix pts = RtoR::DFT::Compute(phi).getMagnitudes()->getPoints();
 
         OUT dftSpace = dft.getSpace().getHostData(true);

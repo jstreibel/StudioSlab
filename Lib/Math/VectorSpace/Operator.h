@@ -7,27 +7,37 @@
 
 namespace Slab::Math {
 
-    template<typename Ty>
+    template<typename Group>
     class NumericAlgebra;
 
 
-    template<typename Ty>
+    template<typename Group>
     class Operator {
-        friend class NumericAlgebra<Ty>;
+        friend class NumericAlgebra<Group>;
 
         class OperatorActionProxy {
-            friend class NumericAlgebra<Ty>;
+            friend class NumericAlgebra<Group>;
             friend class Operator;
-            OperatorActionProxy(const Operator &oppy, const Ty &elly) : O(oppy), g(elly) {};
+
+            OperatorActionProxy
+            (const Operator &oppy, const Group &elly)
+            : O(oppy), g(elly) {};
+
             const Operator &O;
-            const Ty &g;
+            const Group &g;
         };
 
     protected:
-        virtual Ty& operateAndStoreResult(Ty& output, const Ty& input) const = 0;
+        virtual Group&
+        operateAndStoreResult
+        (Group& output, const Group& input)
+        const = 0;
 
     public:
-        virtual OperatorActionProxy operator *(const Ty &elleyOh) const {
+        virtual OperatorActionProxy
+        operator *
+        (const Group &elleyOh) const
+        {
             return OperatorActionProxy(*this, elleyOh);
         };
     };

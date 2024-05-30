@@ -5,7 +5,7 @@
 #include "KGBuilder.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
-
+#include "Math/Numerics/Method/RungeKutta4.h"
 
 namespace Slab::Models {
 
@@ -22,6 +22,13 @@ namespace Slab::Models {
 
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
+
+    auto KGBuilder::buildStepper() -> Stepper * {
+        auto solver = buildEquationSolver();
+
+        return new RungeKutta4(solver);
+    }
+
 
     void KGBuilder::notifyAllCLArgsSetupFinished() {
         auto nThreads = NumericalRecipe::simulationConfig.dev.get_nThreads();

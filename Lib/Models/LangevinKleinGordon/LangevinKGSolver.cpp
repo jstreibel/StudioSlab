@@ -12,7 +12,7 @@
 namespace Slab::Models::KGRtoR {
 
     Real ξ() {
-        return RandUtils::gaussianNoise(.0, 1.0);
+        return RandUtils::GaussianNoise(.0, 1.0);
     }
 
     LangevinKGSolver::LangevinKGSolver(const NumericConfig &params,
@@ -43,7 +43,7 @@ namespace Slab::Models::KGRtoR {
         space.upload();
     }
 
-    void LangevinKGSolver::startStep_KG(const EquationState &kgState, Real t, Real dt) {
+    void LangevinKGSolver::startStep_KG(const FieldState &kgState, Real t, Real dt) {
         KGRtoRSolver::startStep_KG(kgState, t, dt);
 
         α = sqrt(2 * T * γ / dt);
@@ -51,8 +51,8 @@ namespace Slab::Models::KGRtoR {
         ComputeImpulses();
     }
 
-    EquationState &
-    LangevinKGSolver::dtF_KG(const EquationState &kgStateIn, EquationState &kgStateOut, Real t) {
+    LangevinKGSolver::FieldState &
+    LangevinKGSolver::dtF_KG(const FieldState &kgStateIn, FieldState &kgStateOut, Real t) {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 

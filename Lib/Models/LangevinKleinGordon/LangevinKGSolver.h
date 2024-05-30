@@ -39,9 +39,10 @@ namespace Slab::Models::KGRtoR {
         void setDissipationCoefficient(Real value);
 
     protected:
-        void startStep_KG(const EquationState &state, Real t, Real dt) override;
+        void startStep_KG(const FieldState &state, Real t, Real dt) override;
 
-        EquationState &dtF_KG(const EquationState &stateIn, EquationState &stateOut, Real t) override;
+
+        FieldState &dtF_KG(const FieldState &stateIn, FieldState &stateOut, Real t) override;
 
 
     };

@@ -24,7 +24,6 @@
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
-#include "Math/Numerics/Method/RungeKutta4.h"
 #include "Math/Function/R2toR/Model/Operators/R2toRLaplacian.h"
 
 namespace Slab::Math::R2toR {
@@ -124,8 +123,9 @@ namespace Slab::Math::R2toR {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 
-        using SolvySolver = Models::KGSolver<Math::R2toR::EquationState>;
+        using SolvySolver = Models::KGR2toR::KGR2toRSolver;
         auto Laplacian = New <R2toR::R2toRLaplacian>();
+
         return New<SolvySolver>(simulationConfig.numericConfig, dphi, Laplacian, thePotential);
     }
 
@@ -137,15 +137,7 @@ namespace Slab::Math::R2toR {
         auto u   = newFunctionArbitrary();
         auto du  = newFunctionArbitrary();
 
-
-
         return New<R2toR::EquationState>(u, du);
-    }
-
-    Stepper *Builder::buildStepper() {
-        auto solver = buildEquationSolver();
-
-        return new RungeKutta4(solver);
     }
 
     R2toR::EquationState_ptr Builder::getInitialState() {

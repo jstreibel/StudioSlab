@@ -57,7 +57,7 @@ namespace Slab::Models::KGRtoR {
     auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
         IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN f_in = stateIn.getPhi();
+        IN f_in = static_cast<RtoR::DiscreteFunction&>(stateIn.getPhi());
         IN in = f_in.getSpace().getHostData(true);
 
         fix N_in = f_in.N;

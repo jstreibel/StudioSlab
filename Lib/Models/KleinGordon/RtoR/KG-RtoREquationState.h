@@ -12,13 +12,13 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using DiscreteFunky = RtoR::DiscreteFunction;
-    using DiscreteFunky_ptr = RtoR::DiscreteFunction_ptr;
 
-    class EquationState : public Models::KGState<DiscreteFunky> {
+
+    class EquationState : public Models::KGState<Real> {
+        typedef Models::KGState<Real>::Field_ptr Field_ptr;
     public:
-        EquationState(DiscreteFunky_ptr phi, DiscreteFunky_ptr dPhiDt)
-        : Models::KGState<DiscreteFunky>(std::move(phi), std::move(dPhiDt)) {}
+        EquationState(Field_ptr phi, Field_ptr dPhiDt)
+        : Models::KGState<Real>(std::move(phi), std::move(dPhiDt)) {}
 
         void outputPhi(OStream &out, Str separator) const override {
             const RealArray &vPhi = getPhi().getSpace().getHostData();

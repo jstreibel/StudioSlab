@@ -24,7 +24,6 @@ namespace Slab::Math::R2toR {
 
             auto buildOutputManager()   -> OutputManager * override;
             auto buildEquationSolver()  -> Base::Solver_ptr override;
-            auto buildStepper()         -> Stepper * override;
 
             auto newFunctionArbitrary() -> R2toR::DiscreteFunction_ptr ;
             auto newFieldState()        -> R2toR::EquationState_ptr;

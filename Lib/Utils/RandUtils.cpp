@@ -23,7 +23,7 @@ namespace Slab::RandUtils {
 
     unsigned RandInt() { return uintRandGen(mt); }
 
-    double gaussianNoise(double mean, double standard_deviation, bool reSeed, int seed) {
+    double GaussianNoise(double mean, double standard_deviation, bool reSeed, int seed) {
         static std::mt19937 generator(seed);
         if(reSeed) generator.seed(seed);
 

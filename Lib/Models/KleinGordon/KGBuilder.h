@@ -39,6 +39,8 @@ namespace Slab::Models {
 
         virtual void* getHamiltonian() = 0;
 
+        Stepper* buildStepper() override;
+
         auto notifyAllCLArgsSetupFinished() -> void override;
     };
 

@@ -8,7 +8,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 
 namespace Slab::Models::KGR2toR {
-    typedef Models::KGSolver<Math::R2toR::EquationState> KGR2toRSolver;
+    typedef Models::KGSolver<Real2D> KGR2toRSolver;
 }
 
 

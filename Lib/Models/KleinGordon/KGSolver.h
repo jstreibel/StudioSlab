@@ -10,23 +10,24 @@ namespace Slab::Models {
 
     using namespace Math;
 
-    template<class STATE_T>
-    requires DerivedFromKGState<STATE_T, typename STATE_T::CategoryType>
+    template<class InCategory>
     class KGSolver : public Base::Solver {
-
     public:
-        using Potential = RtoR::Function;
-        typedef STATE_T::CategoryType DiscrFuncType;
-        typedef STATE_T::CategoryType::MyType DiscreteBase;
-        using NonHomogenousFunc = typename STATE_T::CategoryType::MyBase;
-        using NonHomogenousPtr = Pointer<NonHomogenousFunc>;
-        using Operator = Math::Operator<DiscreteBase>;
+        typedef KGState<InCategory>     FieldState;
+        typedef FieldState::Field       Field;
+        typedef FieldState::FieldBase   FieldBase;
+        typedef FieldState::OutCategory OutCategory;
+
+        using Potential =               Base::FunctionT<OutCategory, OutCategory>;
+        using NonHomogenousFunc =       FieldBase;
+        using NonHomogenousFunc_ptr =   Pointer<NonHomogenousFunc>;
+        using Operator =                Math::Operator<Field>;
 
         KGSolver(const NumericConfig &params,
                Base::BoundaryConditions_ptr du,
                const Pointer<Operator> & O,
                const Pointer<Potential>& potential,
-               NonHomogenousPtr nonHomogenousFunc=Pointer<NonHomogenousFunc>())
+               NonHomogenousFunc_ptr nonHomogenousFunc=NonHomogenousFunc_ptr())
         : Base::Solver(params, du)
         , O(O)
         , V(potential)
@@ -39,14 +40,14 @@ namespace Slab::Models {
         void startStep(const Base::EquationState &state, Real t, Real dt) final {
             Base::Solver::startStep(state, t, dt);
 
-            IN kgState = dynamic_cast<const STATE_T&>(state);
+            IN kgState = dynamic_cast<const FieldState&>(state);
             this->startStep_KG(kgState, t, dt);
         }
 
         Base::EquationState &
         dtF(const Base::EquationState &stateIn, Base::EquationState &stateOut, Real t) final {
-            auto &kgStateIn  = dynamic_cast<const STATE_T&>(stateIn );
-            auto &kgStateOut = dynamic_cast<      STATE_T&>(stateOut);
+            auto &kgStateIn  = dynamic_cast<const FieldState&>(stateIn );
+            auto &kgStateOut = dynamic_cast<      FieldState&>(stateOut);
 
             return dynamic_cast<Base::EquationState&>(dtF_KG(kgStateIn, kgStateOut, t));
         }
@@ -54,19 +55,17 @@ namespace Slab::Models {
     protected:
 
         virtual void
-        startStep_KG(const STATE_T &state, Real t, Real dt) {
-            Base::Solver::startStep(state, t, dt);
-
+        startStep_KG(const FieldState &state, Real t, Real dt) {
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
 
-                temp1 = DynamicPointerCast<DiscrFuncType>(state.getPhi().Clone());
-                temp2 = DynamicPointerCast<DiscrFuncType>(state.getPhi().Clone());
+                temp1 = DynamicPointerCast<Field>(state.getPhi().Clone());
+                temp2 = DynamicPointerCast<Field>(state.getPhi().Clone());
             }
         }
 
-        virtual STATE_T &
-        dtF_KG(const STATE_T &stateIn, STATE_T &stateOut, Real t) {
+        virtual FieldState &
+        dtF_KG(const FieldState &stateIn, FieldState &stateOut, Real t) {
             const auto &iPhi  = stateIn .getPhi();
             const auto &iDPhi = stateIn .getDPhiDt();
             auto       &oPhi  = stateOut.getPhi();
@@ -98,11 +97,10 @@ namespace Slab::Models {
         }
 
         Pointer<Operator> O;
-        Pointer<DiscrFuncType> temp1 = nullptr
-        , temp2 = nullptr;
+        Pointer<Field> temp1 = nullptr, temp2 = nullptr;
         Pointer<Potential> V;
         Pointer<Potential> dVDPhi = nullptr;
-        NonHomogenousPtr f = nullptr;
+        NonHomogenousFunc_ptr f = nullptr;
     };
 
 }
