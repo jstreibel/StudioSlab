@@ -130,7 +130,6 @@ namespace Slab::Models::KGRtoR {
 
         auto rebuiltHistory = Slab::New<R2toR::DiscreteFunction_CPU>(N, n, xMin, tMin, hx, ht);
 
-        Log::Info(__PRETTY_FUNCTION__ + Str(" STARTED computing inverse DFT."));
         int _n = 0;
         for(auto &data : *dftData){
 
@@ -144,8 +143,6 @@ namespace Slab::Models::KGRtoR {
 
             ++_n;
         }
-
-        Log::Info(__PRETTY_FUNCTION__ + Str(" FINISHED computing inverse DFT."));
 
         inverseDFTArtist->setFunction(rebuiltHistory);
     }

@@ -9,8 +9,8 @@
 
 #include "Stepper.h"
 
-#include "Math/DifferentialEquations/BoundaryConditions.h"
-#include "Math/DifferentialEquations/Solver.h"
+#include "Math/Numerics/Solver/BoundaryConditions.h"
+#include "Math/Numerics/Solver/Solver.h"
 
 #include <cstring> // contains memcpy
 #include <omp.h>

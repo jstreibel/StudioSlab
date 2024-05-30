@@ -12,13 +12,13 @@
 namespace Slab::Math::Base {
 
     class EquationState;
-    using EquationAlgebra = NumericAlgebra<EquationState>;
+    using StateAlgebra = NumericAlgebra<EquationState>;
 
-    class EquationState : public EquationAlgebra {
+    class EquationState : public StateAlgebra {
     public:
         // using EquationAlgebra::operator-;
         // using EquationAlgebra::operator+;
-        using EquationAlgebra::operator=;
+        using StateAlgebra::operator=;
 
         /**
          * Produce a replica of this EquationState with all parameters replicated, except for the state data itself.

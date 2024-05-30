@@ -13,7 +13,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Math/DifferentialEquations/BoundaryConditions.h"
+#include "Math/Numerics/Solver/BoundaryConditions.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
 

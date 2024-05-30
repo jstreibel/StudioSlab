@@ -3,7 +3,7 @@
 
 #include "FieldStateOutputInterface.h"
 
-#include "Math/DifferentialEquations/EquationState.h"
+#include "Math/Numerics/Solver/EquationState.h"
 
 #include <memory>
 #include <utility>

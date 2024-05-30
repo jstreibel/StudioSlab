@@ -11,7 +11,7 @@
 #include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
 
 #include "KG-RtoRBoundaryCondition.h"
-#include "Math/DifferentialEquations/EquationState.h"
+#include "Math/Numerics/Solver/EquationState.h"
 
 
 namespace Slab::Models::KGRtoR {

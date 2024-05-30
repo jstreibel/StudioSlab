@@ -12,8 +12,8 @@
 
 #include "Stepper.h"
 
-#include "Math/DifferentialEquations/BoundaryConditions.h"
-#include "Math/DifferentialEquations/Solver.h"
+#include "Math/Numerics/Solver/BoundaryConditions.h"
+#include "Math/Numerics/Solver/Solver.h"
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Utils/Threads.h"
 

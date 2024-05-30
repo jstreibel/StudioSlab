@@ -71,15 +71,15 @@ set ( NUMERICS_SOURCES
 		Numerics/Output/Util/FieldStateOutputInterface.cpp
 		Numerics/Output/Util/record-interval.cpp
 
-		DifferentialEquations/EquationState.h
+        Numerics/Solver/EquationState.h
 		Function/NativeFunction.h
         Numerics/Data/DataManager.cpp
         Numerics/Data/DataManager.h
 		Numerics/Data/DataSet.cpp
 		Numerics/Data/DataSet.h
-		DifferentialEquations/Solver.cpp
-		DifferentialEquations/EquationState.cpp
-		DifferentialEquations/BoundaryConditions.cpp
+        Numerics/Solver/Solver.cpp
+        Numerics/Solver/EquationState.cpp
+        Numerics/Solver/BoundaryConditions.cpp
         Numerics/Method/RungeKutta4.cpp
 )
 

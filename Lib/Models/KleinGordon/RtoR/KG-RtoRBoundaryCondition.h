@@ -9,7 +9,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 
-#include "Math/DifferentialEquations/BoundaryConditions.h"
+#include "Math/Numerics/Solver/BoundaryConditions.h"
 
 namespace Slab::Models::KGRtoR {
 

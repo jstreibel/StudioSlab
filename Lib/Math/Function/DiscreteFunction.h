@@ -59,7 +59,7 @@ namespace Slab::Math::Base {
         }
 
         virtual DiscreteFunction &operator=(const MyBase &func) { this->Set(func); return *this; }
-        // virtual DiscreteFunction &operator=(const DiscreteFunction &func) { this->SetArb(func); return *this; }
+        virtual DiscreteFunction &operator=(const DiscreteFunction &func) { this->SetArb(func); return *this; }
         // virtual DiscreteFunction &operator*(const Real &val) { this->Multiply(val); return *this; }
         virtual DiscreteFunction &operator+=(const MyBase &func) { throw Str("ArbitraryFunction operator += not implemented"); };
 

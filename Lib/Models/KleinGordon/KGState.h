@@ -9,7 +9,7 @@
 
 #include "Math/VectorSpace/Impl/DiscreteSpace.h"
 #include "Math/Function/DiscreteFunction.h"
-#include "Math/DifferentialEquations/EquationState.h"
+#include "Math/Numerics/Solver/EquationState.h"
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
 

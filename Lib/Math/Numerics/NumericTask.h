@@ -5,9 +5,9 @@
 
 #include "Math/Numerics/Output/OutputManager.h"
 
-#include "Math/DifferentialEquations/Solver.h"
+#include "Math/Numerics/Solver/Solver.h"
 
-#include "Math/DifferentialEquations/BoundaryConditions.h"
+#include "Math/Numerics/Solver/BoundaryConditions.h"
 
 #include "Math/Numerics/Method/Stepper.h"
 #include "Math/Numerics/Method/RungeKutta4.h"

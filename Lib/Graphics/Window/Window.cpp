@@ -19,9 +19,7 @@ namespace Slab::Graphics {
             : backgroundColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
 
-    Window::~Window() {
-        Core::Log::Info("Deleting Window") << Core::Log::Flush;
-    }
+    Window::~Window() = default;
 
     void Window::draw() { setupWindow(); }
 

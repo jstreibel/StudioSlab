@@ -2,7 +2,7 @@
 #define STEPPER_H
 
 #include "Utils/Types.h"
-#include "Math/DifferentialEquations/EquationState.h"
+#include "Math/Numerics/Solver/EquationState.h"
 
 
 namespace Slab::Math {

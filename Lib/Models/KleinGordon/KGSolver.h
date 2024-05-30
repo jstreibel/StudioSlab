@@ -1,7 +1,7 @@
 #ifndef HamiltonCPU_H
 #define HamiltonCPU_H
 
-#include "Math/DifferentialEquations/Solver.h"
+#include "Math/Numerics/Solver/Solver.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/SignumFunction.h"
 #include "KGState.h"
 
@@ -9,6 +9,8 @@
 namespace Slab::Models {
 
     using namespace Math;
+
+    #define FieldCast(FIELD) DynamicPointerCast<Field>(FIELD)
 
     template<class InCategory>
     class KGSolver : public Base::Solver {
@@ -59,39 +61,34 @@ namespace Slab::Models {
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
 
-                temp1 = DynamicPointerCast<Field>(state.getPhi().Clone());
-                temp2 = DynamicPointerCast<Field>(state.getPhi().Clone());
+                temp1 = FieldCast(state.getPhi().Clone());
+                temp2 = FieldCast(state.getPhi().Clone());
             }
         }
 
         virtual FieldState &
         dtF_KG(const FieldState &stateIn, FieldState &stateOut, Real t) {
-            const auto &iPhi  = stateIn .getPhi();
-            const auto &iDPhi = stateIn .getDPhiDt();
-            auto       &oPhi  = stateOut.getPhi();
-            auto       &oDPhi = stateOut.getDPhiDt();
+            const auto &ϕᵢₙ  = stateIn .getPhi();
+            const auto &δₜϕᵢₙ = stateIn .getDPhiDt();
+            auto       &ϕₒᵤₜ  = stateOut.getPhi();
+            auto       &δₜϕₒᵤₜ = stateOut.getDPhiDt();
 
-            // Eq 1
-            {
-                oPhi.SetArb(iDPhi);
-            }
+            auto &L = *O;
+            GET Lϕ = *temp1;
+            GET dVdϕ = *temp2;
+            Lϕ = L*ϕᵢₙ;
+            ϕᵢₙ .Apply(*dVDPhi, dVdϕ);
 
-            // Eq 2
-            {
-                auto &L = *O;
+            auto &fₑₓₜ = *f;
 
-                GET laplacianOutput = *temp1;
-                GET dVdphi_out = *temp2;
 
-                auto Lϕ = L*iPhi;
-                laplacianOutput = Lϕ;
-                // iPhi.Laplacian(laplacianOutput);
-                iPhi.Apply(*dVDPhi, dVdphi_out);
 
-                oDPhi = laplacianOutput - dVdphi_out;
+            /* EQ 1 */
+            ϕₒᵤₜ = δₜϕᵢₙ;
 
-                if(f != nullptr) oDPhi += *f;
-            }
+            /* EQ 2 */
+            δₜϕₒᵤₜ = Lϕ - dVdϕ;
+            if(&fₑₓₜ != nullptr) δₜϕₒᵤₜ += fₑₓₜ;
 
             return stateOut;
         }

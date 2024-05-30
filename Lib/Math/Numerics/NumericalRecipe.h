@@ -6,7 +6,7 @@
 
 #include "Core/Controller/Interface/Interface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
-#include "Math/DifferentialEquations/Solver.h"
+#include "Math/Numerics/Solver/Solver.h"
 
 namespace Slab::Math::Base {
 
