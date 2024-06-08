@@ -114,7 +114,7 @@ namespace Slab {
             else if (ImGui::MenuItem(Unique("Show interface"), NULL, showInterface)) {
                 showInterface = !showInterface;
             } else if (ImGui::MenuItem(Unique("Save graph"))) {
-                auto w = Printing::getTotalHorizontalDots(DC  BC .5);
+                auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w * .5;
                 auto fileName = title + " " +
                                 Core::InterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
