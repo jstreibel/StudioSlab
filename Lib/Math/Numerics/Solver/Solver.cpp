@@ -13,7 +13,7 @@ namespace Slab::Math::Base {
     }
 
     EquationState &Solver::operator()(const EquationState &in, EquationState &out, Real t) {
-        return this->dtF(in, out, t);
+        return this->F(in, out, t);
     }
 
     auto Solver::NewEqState() const -> EquationState_ptr {

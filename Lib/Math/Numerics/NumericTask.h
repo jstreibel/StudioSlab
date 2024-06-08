@@ -43,7 +43,8 @@ namespace Slab::Math {
 
     public:
         explicit NumericTask(Base::NumericalRecipe &recipe)
-                : numericalRecipe(recipe), stepper(recipe.buildStepper()),
+                : numericalRecipe(recipe),
+                  stepper(recipe.buildStepper()),
                   outputManager(recipe.buildOutputManager()),
                   dt(recipe.getNumericParams().getdt()),
                   totalSteps(recipe.getNumericParams().getn()),

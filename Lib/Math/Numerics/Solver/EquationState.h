@@ -7,7 +7,7 @@
 
 
 #include "Utils/Types.h"
-#include "Math/VectorSpace/NumericAlgebra.h"
+#include "Math/VectorSpace/Algebra/NumericAlgebra.h"
 
 namespace Slab::Math::Base {
 

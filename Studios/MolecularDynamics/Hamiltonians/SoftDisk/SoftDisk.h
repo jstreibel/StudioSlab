@@ -6,6 +6,8 @@
 
 namespace MolecularDynamics {
 
+    using namespace Slab;
+
     class SoftDisk : public Langevin {
     protected:
         Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
@@ -13,7 +15,7 @@ namespace MolecularDynamics {
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
-        SoftDisk(const NumericConfig &p, Real T);
+        SoftDisk(const Math::NumericConfig &p, Real T);
 
         static Real U(Real r);
     };

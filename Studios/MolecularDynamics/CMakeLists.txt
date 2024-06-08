@@ -3,7 +3,7 @@ include_directories( ./ )
 set (SOURCES
 		main.cpp
 		App.h			App.cpp
-		Builder.h		Builder.cpp
+        Recipe.h Recipe.cpp
         VerletStepper.h VerletStepper.cpp
         Particle.h 		Particle.cpp
 		Monitor.h		Monitor.cpp

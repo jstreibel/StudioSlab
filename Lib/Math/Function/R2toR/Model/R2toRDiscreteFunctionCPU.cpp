@@ -121,7 +121,7 @@ namespace Slab::Math::R2toR {
     Base::DiscreteFunction<Real2D, Real> &
     DiscreteFunction_CPU::Apply(const FunctionT<Real, Real> &func,
                                 Base::DiscreteFunction<Real2D, Real> &out) const {
-        cast(fOut, DiscreteFunction &, out)
+        SlabCast(fOut, DiscreteFunction &, out)
 
         OMP_GET_BEGIN_END(begin, end, N)
         for(UInt n=begin; n<end; n++)

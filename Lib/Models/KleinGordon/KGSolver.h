@@ -46,8 +46,7 @@ namespace Slab::Models {
             this->startStep_KG(kgState, t, dt);
         }
 
-        Base::EquationState &
-        dtF(const Base::EquationState &stateIn, Base::EquationState &stateOut, Real t) final {
+        Base::EquationState & F(const Base::EquationState &stateIn, Base::EquationState &stateOut, Real t) final {
             auto &kgStateIn  = dynamic_cast<const FieldState&>(stateIn );
             auto &kgStateOut = dynamic_cast<      FieldState&>(stateOut);
 
@@ -81,12 +80,14 @@ namespace Slab::Models {
 
             auto &fₑₓₜ = *f;
 
-
-
-            /* EQ 1 */
+            /* ********
+             * EQ 1
+             * ********/
             ϕₒᵤₜ = δₜϕᵢₙ;
 
-            /* EQ 2 */
+            /* ********
+             * EQ 2
+             * ********/
             δₜϕₒᵤₜ = Lϕ - dVdϕ;
             if(&fₑₓₜ != nullptr) δₜϕₒᵤₜ += fₑₓₜ;
 

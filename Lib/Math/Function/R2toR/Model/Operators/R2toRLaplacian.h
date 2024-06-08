@@ -6,7 +6,7 @@
 #define STUDIOSLAB_R2TORLAPLACIAN_H
 
 #include "../R2toRDiscreteFunction.h"
-#include "Math/VectorSpace/Operator.h"
+#include "Math/VectorSpace/Algebra/Operator.h"
 
 namespace Slab::Math::R2toR {
 

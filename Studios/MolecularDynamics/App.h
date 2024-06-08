@@ -7,13 +7,16 @@
 
 
 #include "Core/App/AppBase.h"
-#include "Builder.h"
+#include "Recipe.h"
 #include "Core/Backend/SFML/SFMLBackend.h"
+#include "Math/Numerics/NumericTask.h"
 
 namespace MolecularDynamics {
+
+    using namespace Slab::Core;
+
     class App : public AppBase {
-        MolecularDynamics::Builder builder;
-        SFMLBackend &backend;
+        Pointer<Slab::Math::NumericTask> numericTask;
     public:
         App(int argc, const char *argv[]);
 

@@ -17,11 +17,14 @@ set ( SPACE_SOURCES
         VectorSpace/HyperCube/AAHyperCube.cpp VectorSpace/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
         VectorSpace/Impl/PointSet.cpp VectorSpace/Impl/PointSet.h
-        VectorSpace/Point.cpp VectorSpace/Point.h
+        Point.cpp Point.h
         VectorSpace/DimensionMetaData.cpp
         VectorSpace/DimensionMetaData.h
-        VectorSpace/Algebra.h
-		VectorSpace/Operator.h
+		VectorSpace/Algebra/Algebra.h
+		VectorSpace/Algebra/Operator.h
+        VectorSpace/Algebra/AlgebraTests.cpp
+        Numerics/Odeint/OdeintAlgebra.cpp
+        Numerics/Odeint/OdeintAlgebra.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
@@ -81,6 +84,9 @@ set ( NUMERICS_SOURCES
         Numerics/Solver/EquationState.cpp
         Numerics/Solver/BoundaryConditions.cpp
         Numerics/Method/RungeKutta4.cpp
+		Numerics/Odeint/OdeintState.cpp
+		Numerics/Odeint/OdeintToSlabState.cpp
+		Numerics/Odeint/OdeintToSlabState.h
 )
 
 set ( THERMO_SOURCES
@@ -94,6 +100,7 @@ set ( THERMO_SOURCES
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
+        Numerics/Odeint/OdeintSignatureHelper.h
 )
 
 add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC

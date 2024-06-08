@@ -13,6 +13,8 @@
 
 namespace MolecularDynamics {
 
+    using namespace Slab;
+
     class NewtonMechanics {
         MoleculeSpaceHash spaceHash;
 
@@ -20,7 +22,7 @@ namespace MolecularDynamics {
         Real dissipation;
 
     protected:
-        const NumericConfig &params;
+        const Math::NumericConfig &params;
 
         virtual void applyBoundaryConditions(Graphics::PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
@@ -37,7 +39,7 @@ namespace MolecularDynamics {
         virtual Graphics::Point2D F_nh(Real t) { return {0,0}; }
 
     public:
-        explicit NewtonMechanics(const NumericConfig &);
+        explicit NewtonMechanics(const Math::NumericConfig &);
 
         ~NewtonMechanics();
 

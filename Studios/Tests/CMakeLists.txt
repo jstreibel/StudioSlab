@@ -12,9 +12,10 @@ add_executable ( Tests
         ModernGLTests.h       ModernGLTests.cpp
         NuklearTests.h        NuklearTests.cpp
         Graph3DTests.h        Graph3DTests.cpp
-
 )
-
 target_link_libraries ( Tests ${SlabLibs} Slab )
-
 message(NOTICE "Added executable Tests")
+
+add_executable(OdeintInteropTest SlabOdeintInteropTest.cpp)
+target_link_libraries ( OdeintInteropTest ${SlabLibs} Slab )
+message(NOTICE "Added executable OdeintInteropTest")

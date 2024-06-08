@@ -24,7 +24,7 @@ namespace Slab::Math::Base {
         virtual auto NewEqState() const -> EquationState_ptr;
 
         virtual EquationState& applyBC(EquationState &state, Real t, Real dt);
-        virtual EquationState& dtF(const EquationState &in, EquationState &out, Real t) = 0;
+        virtual EquationState& F(const EquationState &in, EquationState &out, Real t) = 0;
 
         virtual void startStep (const EquationState &in, Real t, Real dt) {};
         virtual void finishStep(const EquationState &in, Real t, Real dt) {};

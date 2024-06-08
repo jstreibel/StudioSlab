@@ -9,7 +9,7 @@
 #include <utility>
 
 #include "Utils/NativeTypes.h"
-#include "Math/VectorSpace/NumericAlgebra.h"
+#include "Math/VectorSpace/Algebra/NumericAlgebra.h"
 #include "Core/Tools/Log.h"
 #include "Math/VectorSpace/DimensionMetaData.h"
 

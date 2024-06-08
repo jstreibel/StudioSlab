@@ -41,7 +41,7 @@ namespace Slab::Models {
         State &Add(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
-            phi->Add(kgState.getPhi());
+            phi   ->Add(kgState.getPhi());
             dPhiDt->Add(kgState.getDPhiDt());
 
             return *this;
@@ -49,7 +49,7 @@ namespace Slab::Models {
         State &Subtract(const State &state) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
 
-            phi->Subtract(kgState.getPhi());
+            phi   ->Subtract(kgState.getPhi());
             dPhiDt->Subtract(kgState.getDPhiDt());
 
             return *this;
@@ -131,8 +131,6 @@ namespace Slab::Models {
         Field_ptr dPhiDt;
     };
 
-    template<typename StateType, typename InCategory>
-    concept DerivedFromKGState = std::is_base_of_v<KGState<InCategory>, StateType>;
 }
 
 #endif //V_SHAPE_FIELDSTATE_H

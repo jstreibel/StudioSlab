@@ -11,10 +11,10 @@
 #include <set>
 
 #ifdef NDEBUG // Release
-#define cast(NAME, TO_TYPE, OBJECT) \
+#define SlabCast(NAME, TO_TYPE, OBJECT) \
 TO_TYPE NAME = static_cast<TO_TYPE>(OBJECT);
 #else
-#define cast(NAME, TO_TYPE, OBJECT) \
+#define SlabCast(NAME, TO_TYPE, OBJECT) \
 TO_TYPE NAME = dynamic_cast<TO_TYPE>(OBJECT); \
 if(&NAME == nullptr) throw "Bad cast.";
 #endif

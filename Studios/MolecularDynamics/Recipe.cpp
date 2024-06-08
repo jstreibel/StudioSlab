@@ -10,7 +10,7 @@
 #include "Hamiltonians/SoftDisk/SoftDisk.h"
 
 #include "Monitor.h"
-#include "Builder.h"
+#include "Recipe.h"
 
 #include "Core/Backend/SFML/SFMLBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
@@ -20,37 +20,34 @@
 #include "Core/Backend/BackendManager.h"
 
 
-#define DO_REGISTER true
-#define DONT_REGISTER (!DO_REGISTER)
-
 namespace MolecularDynamics {
-    Builder::Builder()
-    : NumericalRecipe("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", DONT_REGISTER)
-    , molDynamicsInterface(Interface::New("Molecular dynamics 2-d", this, 100))
+    Recipe::Recipe()
+    : NumericalRecipe("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
+    , molDynamicsInterface(New <Interface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
         interface->addSubInterface(molDynamicsInterface);
         InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    OutputManager *Builder::buildOutputManager() {
+    Pointer<Math::OutputManager> Recipe::buildOutputManager() {
         auto &numericConfig = simulationConfig.numericConfig;
 
-        auto outputManager = new OutputManager(numericConfig);
+        auto outputManager = New <Math::OutputManager> (numericConfig);
 
-        outputManager->addOutputChannel(new OutputConsoleMonitor(numericConfig, numericConfig.getn() / 5));
+        outputManager->addOutputChannel(New <Math::OutputConsoleMonitor> (numericConfig, numericConfig.getn() / 5));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
-        auto monitor = new MolecularDynamics::Monitor(numericConfig, simModel);
+        auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
         Core::BackendManager::GetGUIBackend().addEventListener(Core::GUIEventListener_ptr(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;
     }
 
-    Stepper *Builder::buildStepper() {
+    Pointer<Math::Stepper> Recipe::buildStepper() {
         auto &numericConfig = simulationConfig.numericConfig;
 
         fix T = *temperature;
@@ -60,39 +57,23 @@ namespace MolecularDynamics {
             LennardJones lj(numericConfig);
             lj.setDissipation(k);
             lj.setTemperature(T);
-            return new MolecularDynamics::VerletStepper<LennardJones>(numericConfig, lj);
+            return New <MolecularDynamics::VerletStepper<LennardJones>>(numericConfig, lj);
         }
         if (*model == 1) {
             SoftDisk sd(numericConfig, 0);
             sd.setDissipation(k);
             sd.setTemperature(T);
-            return new MolecularDynamics::VerletStepper<SoftDisk>(numericConfig, sd);
+            return New<MolecularDynamics::VerletStepper<SoftDisk>>(numericConfig, sd);
         }
 
         throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
     }
 
-    void *Builder::buildEquationSolver() {
+    Math::Base::Solver_ptr Recipe::buildEquationSolver() {
         throw Str(__PRETTY_FUNCTION__) + " not implemented.";
     }
 
-    void *Builder::getBoundary() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
-    }
-
-    void *Builder::getInitialState() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
-    }
-
-    void *Builder::newFunctionArbitrary() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
-    }
-
-    void *Builder::newFieldState() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
-    }
-
-    void Builder::notifyCLArgsSetupFinished() {
+    void Recipe::notifyCLArgsSetupFinished() {
         InterfaceOwner::notifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";

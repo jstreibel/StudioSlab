@@ -20,9 +20,9 @@ namespace MolecularDynamics {
 #define SHOW_DOT false
 #define SHOW_RADIUS true
 
-#define SFML_Backend dynamic_cast<SFMLBackend&>(Core::BackendManager::GetGUIBackend())
+#define SFML_Backend dynamic_cast<Core::SFMLBackend&>(Core::BackendManager::GetGUIBackend())
 
-    Monitor::Monitor(const NumericConfig &params, Model model)
+    Monitor::Monitor(const Math::NumericConfig &params, Model model)
     : Socket(params, "Particle dynamics monitor", 10)
     , Window(0, 0, 100, 100, HasMainMenu)
     , renderWindow(SFML_Backend.getRenderWindow())
@@ -83,7 +83,7 @@ namespace MolecularDynamics {
                 }
             }
 
-            Log::Info("ParticleDynamics::Monitor: ")
+            Core::Log::Info("ParticleDynamics::Monitor: ")
                       << "\n\t\t\t\t\tNearest zero " << nearestZero.first << " @ r=" << nearestZero.second
                       << "\n\t\t\t\t\tSmallest     " << smallest.first << " @ r=" << smallest.second
                       << "\n\t\t\t\t\tLargest      " << largest.first << " @ r=" << largest.second;
@@ -100,14 +100,14 @@ namespace MolecularDynamics {
         molShape.setOrigin(CUTOFF_RADIUS, CUTOFF_RADIUS);
     }
 
-    void Monitor::handleOutput(const OutputPacket &packet) {    }
+    void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
 
     void Monitor::draw() {
         // Window::draw();
 
-        auto state = lastPacket.getEqStateData<State>();
-        auto v_q = state->first;
-        auto v_p = state->second;
+        auto state = lastPacket.GetNakedStateData<State>();
+        auto v_q = state->first();
+        auto v_p = state->second();
 
         const auto L = (float)params.getL(), O = .0f;;
         const auto N = params.getN();

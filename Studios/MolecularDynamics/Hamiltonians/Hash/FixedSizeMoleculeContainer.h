@@ -14,6 +14,7 @@
 #define get_p(triple) (*(triple.first.second))
 #define get_dpdt(triple) (*(triple.second))
 
+using namespace Slab;
 
 class FixedSizeMoleculeContainer{
 public:

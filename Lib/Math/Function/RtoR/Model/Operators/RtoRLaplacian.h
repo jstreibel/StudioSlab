@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORLAPLACIAN_H
 #define STUDIOSLAB_RTORLAPLACIAN_H
 
-#include "Math/VectorSpace/Operator.h"
+#include "Math/VectorSpace/Algebra/Operator.h"
 #include "../RtoRDiscreteFunction.h"
 
 namespace Slab::Math::RtoR {

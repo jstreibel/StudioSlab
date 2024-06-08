@@ -6,7 +6,7 @@
 #define STUDIOSLAB_POINTSET_H
 
 #include "../Space.h"
-#include "../Point.h"
+#include "Math/Point.h"
 #include "Utils/Pointer.h"
 
 

@@ -6,7 +6,7 @@
 
 namespace MolecularDynamics {
 
-    Langevin::Langevin(const NumericConfig &p, Real T) : NewtonMechanics(p), T(T), dt(p.getdt()) {    }
+    Langevin::Langevin(const Math::NumericConfig &p, Real T) : NewtonMechanics(p), T(T), dt(p.getdt()) {    }
 
     Graphics::Point2D Langevin::xi() {
         const Real z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;

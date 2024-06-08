@@ -30,9 +30,11 @@ namespace Slab::Core {
     }
 
     auto BackendManager::GetGUIBackend() -> GraphicBackend & {
-        if(BackendManager::instance->isHeadless()) throw Exception("requiring graphic backend on headless run");
+        auto &backend = BackendManager::GetBackend();
 
-        return dynamic_cast<GraphicBackend&>(GetBackend());
+        if(backend.isHeadless()) throw Exception("requiring graphic backend on headless run");
+
+        return dynamic_cast<GraphicBackend&>(backend);
     }
 
     void BackendManager::Startup(BackendImplementation implementation) {

@@ -6,6 +6,8 @@
 #include "Utils/Types.h"
 
 namespace MolecularDynamics {
+    using namespace Slab;
+
     class Langevin : public NewtonMechanics {
         Real T, dt;
 
@@ -13,7 +15,7 @@ namespace MolecularDynamics {
         static Graphics::Point2D xi();
 
     public:
-        Langevin(const NumericConfig&, Real Temperature);
+        Langevin(const Math::NumericConfig&, Real Temperature);
 
         void setTemperature(Real T);
     };

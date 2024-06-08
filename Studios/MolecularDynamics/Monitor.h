@@ -16,7 +16,10 @@
 #define MOLS_HISTORY_SIZE 100
 
 namespace MolecularDynamics {
-class Monitor : public Slab::Math::Socket, public Slab::Graphics::Window {
+
+    using namespace Slab;
+
+    class Monitor : public Math::Socket, public Graphics::Window {
         sf::RenderWindow &renderWindow;
 
         Vector<sf::Vertex> molShapes;
@@ -31,12 +34,12 @@ class Monitor : public Slab::Math::Socket, public Slab::Graphics::Window {
             SoftDisk
         };
 
-        Monitor(const NumericConfig &params, Model model);
+        Monitor(const Math::NumericConfig &params, Model model);
 
         void draw() override;
 
     protected:
-        auto handleOutput(const OutputPacket &packet) -> void override;
+        auto handleOutput(const Math::OutputPacket &packet) -> void override;
     };
 
 } // MolecularDynamics

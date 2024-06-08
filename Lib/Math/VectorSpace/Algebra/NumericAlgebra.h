@@ -6,7 +6,7 @@
 #define V_SHAPE_ARITHMETICOPSINTERFACE_H
 
 #include "Utils/Types.h"
-#include "Math/VectorSpace/Algebra.h"
+#include "Algebra.h"
 
 #include "Operator.h"
 
@@ -39,9 +39,6 @@ namespace Slab::Math {
             return this->Store##Operation(proxy.get_a(), proxy.get_b());            \
         }
 
-
-
-
     template<class Ty>
     class NumericAlgebra {
         using Oppy = Operator<Ty>;
@@ -58,6 +55,16 @@ namespace Slab::Math {
         };
 
     public:
+        /*
+        // class Operation1 { virtual void operator()(Ty &state, Real a) = 0; };
+         */
+        struct MetaAlgebra {
+            template<class Operation>
+            static void for_each1(NumericAlgebra<Ty> &element, Operation operation) {
+                operation(element);
+            }
+        };
+
 
         virtual Ty &Add                   (const Ty &) = 0;
         virtual Ty &Subtract              (const Ty &) = 0;
@@ -65,10 +72,13 @@ namespace Slab::Math {
         virtual Ty &StoreScalarMultiplication   (const Ty &, Real a) = 0;
         virtual Ty &Multiply              (Real a) = 0;
 
-        Ty &operator+=(const Ty &a) { return this->Add(a); }
-        Ty &operator-=(const Ty &a) { return this->Subtract(a); }
+        /*** *** ***
+         * operators += and *= are sufficient for
+         */
+        Ty &operator+=(const Ty &a)     { return this->Add(a); }
+        Ty &operator*=(Real a)  { return this->Multiply(a); }
 
-        virtual Ty &operator*=(Real a)      { return this->Multiply(a); }
+        Ty &operator-=(const Ty &a) { return this->Subtract(a); }
 
         virtual ScalarMultiplicationProxy operator * (Real a) const { return ScalarMultiplicationProxy(*this, a); }
         Ty& operator=(const ScalarMultiplicationProxy &proxy) {
@@ -87,7 +97,6 @@ namespace Slab::Math {
         DefineOperation(Addition, +)
         DefineOperation(Subtraction, -)
     };
-
 }
 
 #endif //V_SHAPE_ARITHMETICOPSINTERFACE_H

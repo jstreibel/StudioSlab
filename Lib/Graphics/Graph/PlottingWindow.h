@@ -57,6 +57,7 @@ namespace Slab::Graphics {
         void nameLabelDraw(const PlotStyle &style, const Str& label);
 
         void artistsDraw();
+        void toggleShowInterface();
         virtual void drawGUI();
 
         friend class Artist;
@@ -103,6 +104,7 @@ namespace Slab::Graphics {
         bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;
         bool notifyMouseMotion(int x, int y) override;
+        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
         void notifyReshape(int newWinW, int newWinH) override;
 

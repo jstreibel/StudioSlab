@@ -12,23 +12,23 @@
 
 namespace MolecularDynamics {
 
+    using namespace Slab;
+
     template<class NewtonMechanicsModel>
-    class VerletStepper : public Stepper {
+    class VerletStepper : public Math::Stepper {
         NewtonMechanicsModel mechanicsModel;
 
         Graphics::PointContainer q, p;
-        State state;
+        Pointer<State> state;
         Count currStep=0;
 
     public:
 
-        explicit VerletStepper(NumericConfig &params, NewtonMechanicsModel mechModel);
+        explicit VerletStepper(Math::NumericConfig &params, NewtonMechanicsModel mechModel);
 
         void step(const Real &dt, Count n_steps) override;
 
-        auto getCurrentState() const -> const void * override;
-
-        auto getSpaces() const -> DiscreteSpacePair override;
+        auto getCurrentState() const -> Math::Base::EquationState_constptr override;
     };
 
 }

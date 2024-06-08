@@ -149,5 +149,15 @@ namespace Slab {
 
     void Graphics::PlottingWindow::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
 
+    bool Graphics::PlottingWindow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+        if(state==Core::Release) {
+            if(key == Core::Key_TAB) {
+                toggleShowInterface();
+                return true;
+            }
+        }
+
+        return GUIEventListener::notifyKeyboard(key, state, modKeys);
+    }
 
 }

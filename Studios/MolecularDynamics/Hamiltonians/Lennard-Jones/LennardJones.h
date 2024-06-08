@@ -14,7 +14,7 @@ namespace MolecularDynamics {
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
-        LennardJones(const NumericConfig &);
+        LennardJones(const Math::NumericConfig &);
 
         static Real U(Real r);
     };

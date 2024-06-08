@@ -46,24 +46,26 @@ namespace Slab::Graphics {
         Point2D(const Point2D& p) = default;
 
         Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; };
+
         void    operator += (const Point2D &p) { x+=p.x; y+=p.y; }
         void    operator -= (const Point2D &p) { x-=p.x; y-=p.y; }
+
+        void    operator *= (const Real &a) { x*=a; y*=a; }
+
 
         inline Real lengthSqr() const { return x * x + y * y;}
         inline Real length( ) const { return sqrt(lengthSqr());}
 
+
+
         Real x, y;
     };
 
-    Point2D operator + (const Point2D &a, const Point2D &b);
+    // Point2D operator + (const Point2D &a, const Point2D &b);
     Point2D operator - (const Point2D &a, const Point2D &b);
     Point2D operator * (const Real &a, const Point2D &p);
 
     typedef Vector<Point2D> PointContainer;
-
-    struct Point3D { float x, y, z; };
-
-    typedef Point3D Vector3D;
 
 }
 
