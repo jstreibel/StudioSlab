@@ -18,8 +18,9 @@ namespace Slab::Graphics {
 
         glLineWidth(plotStyle.thickness);
 
-        Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, d.get_xMin(),
-                                                   d.get_xMax(), samples, 1);
+        auto graphRect = d.getRegion().getRect();
+        Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
+                                                   graphRect.xMax, samples, 1);
 
         return true;
     }

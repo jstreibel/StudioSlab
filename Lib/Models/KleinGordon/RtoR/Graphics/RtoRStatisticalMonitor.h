@@ -10,7 +10,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include "Math/Function/Function.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Math/Function/RtoR2/StraightLine.h"
@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
 
         RtoR2::StraightLine_ptr correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
-        R2toR::DiscreteFunction_ptr mCorrelationComputed;
+        R2toR::NumericFunction_ptr mCorrelationComputed;
         Graphics::PlottingWindow mCorrelationGraph;
 
         Real transientHint = -1.0;
@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
         void setTransientHint(Real);
 
 
-        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };
 }

@@ -3,14 +3,14 @@
 //
 
 #include "FourierTransform.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 #include <fftw3.h>
 
 #define REAL_PART 0
 
 namespace Slab::Math::R2toR {
-    std::shared_ptr<R2toR::DiscreteFunction> FourierTransform::Compute(const R2toR::DiscreteFunction &inFunc) {
+    std::shared_ptr<R2toR::NumericFunction> FourierTransform::Compute(const R2toR::NumericFunction &inFunc) {
         if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
 
         fix N = inFunc.getN();
@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
         fix hy = inFunc.getSpace().getMetaData().geth(1);
         fix outN = N;
         fix outM = M/2 + 1;
-        OUT fourierTransformedField = * new R2toR::DiscreteFunction_CPU(N, M, D.xMin, D.yMin, hx, hy);
+        OUT fourierTransformedField = * new R2toR::NumericFunction_CPU(N, M, D.xMin, D.yMin, hx, hy);
 
 
         IN hostData = &inFunc.getSpace().getHostData()[0];
@@ -47,6 +47,6 @@ namespace Slab::Math::R2toR {
         fftw_free(in);
         fftw_free(out);
 
-        return std::shared_ptr<R2toR::DiscreteFunction>(&fourierTransformedField);
+        return std::shared_ptr<R2toR::NumericFunction>(&fourierTransformedField);
     }
 } // R2toR

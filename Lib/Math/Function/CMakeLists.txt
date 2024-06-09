@@ -5,12 +5,12 @@ set(MAPS_BASE_LIB_NAME ${STUDIOSLAB_MATH_BASE_LIB_NAME}-Maps)
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( MAPS_CUDA_SOURCES
             RtoR/Model/Operators/DerivativesGPU.cu
-			RtoR/Model/RtoRDiscreteFunctionGPU.cu
+			RtoR/Model/RtoRNumericFunctionGPU.cu
 
 			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
             R2toR/Model/Operators/DerivativesGPU.cu
-			R2toR/Model/R2toRDiscreteFunctionGPU.cu
+			R2toR/Model/R2toRNumericFunctionGPU.cu
 
 			)
 
@@ -25,7 +25,7 @@ endif()
 set ( FUNCTION_SOURCES
 		AllBaseFunctions.h
 		CommonFunctions.h
-		DiscreteFunction.h
+        NumericFunction.h
 		FunctionProduct.h
 		FunctionScale.h
 		GPUFriendly.h
@@ -38,7 +38,7 @@ set ( OTHER_MAPS_SOURCES
 		RtoC/Function.h
 
 		R2toC/R2toC_to_R2toR.cpp R2toC/R2toC_to_R2toR.h
-		R2toC/R2toCDiscreteFunction.h R2toC/R2toCDiscreteFunction.cpp
+		R2toC/R2toCNumericFunction.h R2toC/R2toCNumericFunction.cpp
 
 		RtoR2/StraightLine.h RtoR2/StraightLine.cpp
 )
@@ -63,34 +63,33 @@ set ( RTOR_SOURCES
 		RtoR/Model/FunctionsCollection/ComplexMagnitude.h
 		RtoR/Model/FunctionsCollection/Bypass.h
 
-		RtoR/Model/RtoRFunctionRenderer.cpp
-		RtoR/Model/RtoRFunctionRenderer.h
+		RtoR/Model/RtoRFunctionSampler.cpp
+		RtoR/Model/RtoRFunctionSampler.h
 
-		RtoR/Model/RtoRDiscreteFunction.cpp
-		RtoR/Model/RtoRDiscreteFunctionCPU.cpp
-		RtoR/Model/RtoRResizableDiscreteFunction.cpp
+		RtoR/Model/RtoRNumericFunction.cpp
+		RtoR/Model/RtoRNumericFunctionCPU.cpp
+		RtoR/Model/RtoRResizableNumericFunction.cpp
 
 		RtoR/View/RtoROutputHistoryToFile.cpp
 
-		RtoR/Calc/Histogram.cpp
-		RtoR/Calc/CorrelationCalculator.h RtoR/Calc/CorrelationCalculator.cpp
-		RtoR/Calc/DiscreteFourierTransform.h RtoR/Calc/DiscreteFourierTransform.cpp
+		RtoR/Operations/Histogram.cpp
+		RtoR/Operations/DiscreteFourierTransform.h RtoR/Operations/DiscreteFourierTransform.cpp
 
-		RtoR/Calc/DFTInverse.cpp
-		RtoR/Calc/DFTInverse.h
+		RtoR/Operations/DFTInverse.cpp
+		RtoR/Operations/DFTInverse.h
 )
 
 set ( R2TOR_SOURCES
-		R2toR/Model/R2toRDiscreteFunction.cpp
-		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
+		R2toR/Model/R2toRNumericFunction.cpp
+		R2toR/Model/R2toRNumericFunctionCPU.cpp
 
 		R2toR/Model/Energy.cpp
 		R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.cpp
 		R2toR/Model/FunctionsCollection/R2ToRRegularDelta.cpp
 		R2toR/Model/FunctionsCollection/GrowingHole.cpp
 		R2toR/Model/Util/Interpolator.cpp
-		R2toR/Model/R2toRDiscreteFunction.cpp
-		R2toR/Model/R2toRDiscreteFunctionCPU.cpp
+		R2toR/Model/R2toRNumericFunction.cpp
+		R2toR/Model/R2toRNumericFunctionCPU.cpp
 		R2toR/Model/Transform.cpp R2toR/Model/Transform.h
 
 

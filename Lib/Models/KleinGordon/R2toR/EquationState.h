@@ -6,13 +6,13 @@
 #define V_SHAPE_FIELDSTATER2TOR_H
 
 #include "Models/KleinGordon/KGState.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math::R2toR {
 
     class EquationState : public Models::KGState<Real2D> {
     public:
-        EquationState(DiscreteFunction_ptr phi, DiscreteFunction_ptr dPhiDt)
+        EquationState(NumericFunction_ptr phi, NumericFunction_ptr dPhiDt)
         : Models::KGState<Real2D>(phi, dPhiDt)
         {
         }

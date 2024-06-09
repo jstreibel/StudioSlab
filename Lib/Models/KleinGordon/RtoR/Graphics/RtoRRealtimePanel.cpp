@@ -9,7 +9,7 @@
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
-#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 #include "Graphics/Graph/Plotter.h"
 // #include "Math/Function/R2toR/DFT.h"
 
@@ -111,7 +111,7 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel::draw();
     }
 
-    void RealtimePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory,
+    void RealtimePanel::setSimulationHistory(R2toR::NumericFunction_constptr simHistory,
                                              const Graphics::R2toRFunctionArtist_ptr &simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
@@ -122,7 +122,7 @@ namespace Slab::Models::KGRtoR {
         setColumnRelativeWidth(1, -1);
     }
 
-    void RealtimePanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+    void RealtimePanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                                const DFTDataHistory &dftData,
                                                const Graphics::R2toRFunctionArtist_ptr &sftHistoryArtist) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryArtist);
@@ -155,10 +155,10 @@ namespace Slab::Models::KGRtoR {
         auto yMax = max(UHistoryData.getMax().y,
                         min(KHistoryData.getMax().y, min(WHistoryData.getMax().y, VHistoryData.getMax().y)));
 
-        mEnergyGraph.set_yMax(yMax);
-        mEnergyGraph.set_yMin(yMin);
+        mEnergyGraph.getRegion().animate_yMax(yMax);
+        mEnergyGraph.getRegion().animate_yMin(yMin);
 
-        mEnergyGraph.set_xMax(xMax);
+        mEnergyGraph.getRegion().animate_xMax(xMax);
     }
 
 }

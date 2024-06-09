@@ -160,21 +160,21 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    RtoR::DiscreteFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
+    RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
         const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
 
         auto laplacianType = periodicBC
-                             ? RtoR::DiscreteFunction::Standard1D_PeriodicBorder
-                             : RtoR::DiscreteFunction::Standard1D_FixedBorder;
+                             ? RtoR::NumericFunction::Standard1D_PeriodicBorder
+                             : RtoR::NumericFunction::Standard1D_FixedBorder;
 
         if (simulationConfig.dev == CPU)
-            return New<RtoR::DiscreteFunction_CPU>(N, xLeft, xRight, laplacianType);
+            return New<RtoR::NumericFunction_CPU>(N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA
         else if(simulationConfig.dev==GPU)
-            return new RtoR::DiscreteFunctionGPU(N, xLeft, xRight, laplacianType);
+            return new RtoR::NumericFunctionGPU(N, xLeft, xRight, laplacianType);
 #endif
 
         throw Exception("Error while instantiating Field: device not recognized.");

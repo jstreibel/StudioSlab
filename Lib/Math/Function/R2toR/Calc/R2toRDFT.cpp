@@ -27,7 +27,7 @@ namespace Slab::Math::R2toR {
         return outputPolicy==R2toRDFT::Mangle ? DataMoveMangleMode::Unmangle : DataMoveMangleMode::KeepArrangement;
     }
 
-    auto R2toRDFT::DFTComplex(const R2toC::DiscreteFunction &in, Transform transform,
+    auto R2toRDFT::DFTComplex(const R2toC::NumericFunction &in, Transform transform,
                               DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.M;
         fix N = (int)in.N;
@@ -58,7 +58,7 @@ namespace Slab::Math::R2toR {
         fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
         fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::DiscreteFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto out = new R2toC::NumericFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
@@ -74,7 +74,7 @@ namespace Slab::Math::R2toR {
         return FFTData{out};
     }
 
-    auto R2toRDFT::DFTReal(const DiscreteFunction &in, Transform transform,
+    auto R2toRDFT::DFTReal(const NumericFunction &in, Transform transform,
                            DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.getM();
         fix N = (int)in.getN();
@@ -105,7 +105,7 @@ namespace Slab::Math::R2toR {
         fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
         fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::DiscreteFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto out = new R2toC::NumericFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
@@ -135,7 +135,7 @@ namespace Slab::Math::R2toR {
         }
     }
 
-    auto R2toRDFT::DFTReal_symmetric(const DiscreteFunction &toTransform) -> FFTData {
+    auto R2toRDFT::DFTReal_symmetric(const NumericFunction &toTransform) -> FFTData {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
         NOT_IMPLEMENTED
@@ -163,7 +163,7 @@ namespace Slab::Math::R2toR {
         fix Δk = (Real)N * dk;
         fix Δω = M * dω;
 
-        auto out = new R2toC::DiscreteFunction(n, M, 0, -Δω/2, Δk+dk, Δω);
+        auto out = new R2toC::NumericFunction(n, M, 0, -Δω/2, Δk+dk, Δω);
         auto &data_out = out->getData();
         fix scale = 1e0/(N*M);
 

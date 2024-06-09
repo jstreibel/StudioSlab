@@ -5,17 +5,17 @@
 #ifndef STUDIOSLAB_R2TORLAPLACIAN_H
 #define STUDIOSLAB_R2TORLAPLACIAN_H
 
-#include "../R2toRDiscreteFunction.h"
+#include "../R2toRNumericFunction.h"
 #include "Math/VectorSpace/Algebra/Operator.h"
 
 namespace Slab::Math::R2toR {
 
-    class R2toRLaplacian : public Operator<Base::DiscreteFunction<Real2D, Real>> {
-        using Operator<Base::DiscreteFunction<Real2D, Real>>::operator*;
+    class R2toRLaplacian : public Operator<Base::NumericFunction<Real2D, Real>> {
+        using Operator<Base::NumericFunction<Real2D, Real>>::operator*;
     protected:
 
-        Base::DiscreteFunction<Real2D, Real> &operateAndStoreResult(Base::DiscreteFunction<Real2D, Real> &output,
-                                                                    const Base::DiscreteFunction<Real2D, Real> &input) const override;
+        Base::NumericFunction<Real2D, Real> &operateAndStoreResult(Base::NumericFunction<Real2D, Real> &output,
+                                                                   const Base::NumericFunction<Real2D, Real> &input) const override;
     };
 
 } // Slab

@@ -56,8 +56,6 @@ namespace Slab::Graphics {
         inline Real lengthSqr() const { return x * x + y * y;}
         inline Real length( ) const { return sqrt(lengthSqr());}
 
-
-
         Real x, y;
     };
 

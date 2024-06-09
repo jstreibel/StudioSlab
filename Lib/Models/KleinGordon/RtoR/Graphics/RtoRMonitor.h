@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 }
 
 namespace Slab::Math::R2toR {
-    class DiscreteFunction;
+    class NumericFunction;
 }
 
 namespace Slab::Models::KGRtoR {
@@ -31,11 +31,11 @@ namespace Slab::Models::KGRtoR {
         Vector<RtoRPanel_ptr> dataViews;
         RtoRPanel_ptr currentDataView;
 
-        R2toR::DiscreteFunction_constptr simulationHistory;
+        R2toR::NumericFunction_constptr simulationHistory;
         Graphics::PlottingWindow_ptr fullHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full field history");
         Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
-        R2toR::DiscreteFunction_constptr spaceFTHistory;
+        R2toR::NumericFunction_constptr spaceFTHistory;
         Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
@@ -60,8 +60,8 @@ namespace Slab::Models::KGRtoR {
 
         void draw() override;
 
-        virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory);
-        virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+        virtual void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory);
+        virtual void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                             const DFTDataHistory &dftData);
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;

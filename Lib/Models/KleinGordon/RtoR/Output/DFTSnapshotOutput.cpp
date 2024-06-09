@@ -4,7 +4,7 @@
 
 #include "DFTSnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 
 #define nConfig (params)
 #define NDFTModes (nConfig.getN()/2.+1.)
@@ -19,12 +19,12 @@ namespace Slab::Models::KGRtoR {
     {   }
 
 
-    RtoR::DiscreteFunction_CPU DFTSnapshotOutput::filterData(const OutputPacket &packet) {
-        RtoR::DiscreteFunction_CPU dft((int)NDFTModes, 0.0, kMaxDFT);
+    RtoR::NumericFunction_CPU DFTSnapshotOutput::filterData(const OutputPacket &packet) {
+        RtoR::NumericFunction_CPU dft((int)NDFTModes, 0.0, kMaxDFT);
 
         IN kgState = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN phi = static_cast<RtoR::DiscreteFunction&>(kgState.getPhi());
+        IN phi = static_cast<RtoR::NumericFunction&>(kgState.getPhi());
         fix pts = RtoR::DFT::Compute(phi).getMagnitudes()->getPoints();
 
         OUT dftSpace = dft.getSpace().getHostData(true);

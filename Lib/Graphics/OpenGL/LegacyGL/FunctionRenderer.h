@@ -10,7 +10,7 @@
 
 // TODO these #includes below shouldn't be THIS far from this file
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
@@ -22,7 +22,7 @@ namespace Slab::Graphics {
     class FunctionRenderer {
     public:
 
-        static void renderFunction(          const RtoR::DiscreteFunction &func, Color c, bool filled,
+        static void renderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
                                              Real scale = 1.0);
         static void renderFunction(          const RtoR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, UInt resolution, Real scale = 1.0);

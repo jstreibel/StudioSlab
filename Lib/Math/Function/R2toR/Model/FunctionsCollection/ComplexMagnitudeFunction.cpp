@@ -8,7 +8,7 @@ namespace Slab::Math::R2toR {
 
     ComplexMagnitudeFunction::ComplexMagnitudeFunction() = default;
 
-    ComplexMagnitudeFunction::ComplexMagnitudeFunction(std::shared_ptr<R2toC::DiscreteFunction> func)
+    ComplexMagnitudeFunction::ComplexMagnitudeFunction(std::shared_ptr<R2toC::NumericFunction> func)
     : function(func) {
     }
 
@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
         return norm(val);
     }
 
-    void ComplexMagnitudeFunction::setFunc(std::shared_ptr<R2toC::DiscreteFunction> func) {
+    void ComplexMagnitudeFunction::setFunc(std::shared_ptr<R2toC::NumericFunction> func) {
         function = func;
     }
 

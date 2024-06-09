@@ -21,6 +21,7 @@
 
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
+#include "Graphics/Graph/Artists/PlotRegion2D.h"
 
 namespace Slab::Graphics {
 
@@ -42,7 +43,7 @@ namespace Slab::Graphics {
         bool popupOn = false;
         bool autoReviewGraphRanges=false;
 
-        RectR region;
+        PlotRegion2D region;
 
         Real animationTimeSeconds = 0.2;
 
@@ -86,17 +87,8 @@ namespace Slab::Graphics {
         void setAutoReviewGraphRanges(bool);
         void reviewGraphRanges();
 
-        auto getRegion() const -> const RectR&;
-        auto setLimits(RectR limits) -> void;
-        void set_xMin(Real);
-        void set_xMax(Real);
-        void set_yMin(Real);
-        void set_yMax(Real);
-        Real get_xMin() const;
-        Real get_xMax() const;
-        Real get_yMin() const;
-        Real get_yMax() const;
-
+        auto getRegion() const -> const PlotRegion2D&;
+        auto getRegion() -> PlotRegion2D&;
 
         void setAnimationTime(Real value);
         Real getAnimationTime() const;

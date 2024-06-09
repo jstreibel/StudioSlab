@@ -8,7 +8,7 @@
 #include <utility>
 
 #include "Models/KleinGordon/KGState.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -38,8 +38,8 @@ namespace Slab::Models::KGRtoR {
 
         EqStateOutputInterface *Copy(UInt N) const override {
 
-            // new EquationState(dynamic_cast<RtoR::DiscreteFunction*>(phi->CloneWithSize(N)),
-            //                   dynamic_cast<RtoR::DiscreteFunction*>(dPhiDt->CloneWithSize(N)));
+            // new EquationState(dynamic_cast<RtoR::NumericFunction*>(phi->CloneWithSize(N)),
+            //                   dynamic_cast<RtoR::NumericFunction*>(dPhiDt->CloneWithSize(N)));
 
             return nullptr;
         }

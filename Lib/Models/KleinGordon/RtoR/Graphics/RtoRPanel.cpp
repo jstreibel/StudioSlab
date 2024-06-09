@@ -17,13 +17,13 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void RtoRPanel::setSimulationHistory(Math::R2toR::DiscreteFunction_constptr simHistory,
+    void RtoRPanel::setSimulationHistory(Math::R2toR::NumericFunction_constptr simHistory,
                                          const Graphics::R2toRFunctionArtist_ptr& simHistoryArtist) {
         simulationHistory = simHistory;
         simulationHistoryArtist = simHistoryArtist;
     }
 
-    void RtoRPanel::setSpaceFourierHistory(Math::R2toR::DiscreteFunction_constptr sftHistory,
+    void RtoRPanel::setSpaceFourierHistory(Math::R2toR::NumericFunction_constptr sftHistory,
                                            const DFTDataHistory &dftData,
                                            const Graphics::R2toRFunctionArtist_ptr& sftHistoryArtist) {
 

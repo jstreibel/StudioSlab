@@ -21,15 +21,15 @@ namespace Slab::Graphics {
         return Plotter::AddRtoRFunction(plottingWindow, data, style, name, samples);
     }
 
-    RtoRFunctionArtist_ptr Plotter::addRtoRDiscreteFunction(const RtoR::DiscreteFunction_ptr &data, PlotStyle style, Str name) {
-        return Plotter::AddRtoRDiscreteFunction(plottingWindow, data, style, name);
+    RtoRFunctionArtist_ptr Plotter::addRtoRNumericFunction(const RtoR::NumericFunction_ptr &data, PlotStyle style, Str name) {
+        return Plotter::AddRtoRNumericFunction(plottingWindow, data, style, name);
     }
 
-    R2toRFunctionArtist_ptr Plotter::addR2toRFunction(const R2toR::DiscreteFunction_ptr &data, Str name) {
+    R2toRFunctionArtist_ptr Plotter::addR2toRFunction(const R2toR::NumericFunction_ptr &data, Str name) {
         return Plotter::AddR2toRFunction(plottingWindow, data, name);
     }
 
-    HistoryArtist_ptr Plotter::addRtoRHistory(const R2toR::DiscreteFunction_ptr &data, Str name) {
+    HistoryArtist_ptr Plotter::addRtoRHistory(const R2toR::NumericFunction_ptr &data, Str name) {
         return Plotter::AddRtoRHistory(plottingWindow, data, name);
     }
 
@@ -70,11 +70,11 @@ namespace Slab::Graphics {
     }
 
     RtoRFunctionArtist_ptr
-    Plotter::AddRtoRDiscreteFunction(PlottingWindow_ptr, const RtoR::DiscreteFunction_ptr &, PlotStyle, Str label) {
+    Plotter::AddRtoRNumericFunction(PlottingWindow_ptr, const RtoR::NumericFunction_ptr &, PlotStyle, Str label) {
         NOT_IMPLEMENTED
     }
 
-    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(PlottingWindow_ptr graph, const R2toR::DiscreteFunction_ptr &function, Str label) {
+    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(PlottingWindow_ptr graph, const R2toR::NumericFunction_ptr &function, Str label) {
         auto artist = Slab::New<R2toRFunctionArtist>();
         artist->setLabel(label);
 
@@ -85,7 +85,7 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    HistoryArtist_ptr Plotter::AddRtoRHistory(PlottingWindow_ptr graph, const R2toR::DiscreteFunction_ptr &function, Str label) {
+    HistoryArtist_ptr Plotter::AddRtoRHistory(PlottingWindow_ptr graph, const R2toR::NumericFunction_ptr &function, Str label) {
         auto artist = Slab::New<HistoryArtist>();
         artist->setLabel(label);
 

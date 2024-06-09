@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         scene->addActor(testy);
     }
 
-    void RtoRScenePanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+    void RtoRScenePanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                               const R2toRFunctionArtist_ptr &simHistoryArtist) {
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(simulationHistory);
 

@@ -7,8 +7,8 @@
 
 #include "RtoRPanel.h"
 #include "Math/Function/RtoR2/StraightLine.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/RtoR/Calc/DFTInverse.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Math/Function/RtoR/Operations/DFTInverse.h"
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
@@ -20,11 +20,11 @@ namespace Slab::Models::KGRtoR {
 
         PlottingWindow_ptr inverseDFTDisplay = Slab::New<PlottingWindow>("ℱₖ⁻¹[ℱ]");
         R2toRFunctionArtist_ptr inverseDFTArtist = Slab::New<R2toRFunctionArtist>();
-        R2toR::DiscreteFunction_ptr inverseDFT;
+        R2toR::NumericFunction_ptr inverseDFT;
 
         PlottingWindow_ptr timeDFTDisplay = Slab::New<PlottingWindow>("ℱₜ[ϕ](ω,x)");
         R2toRFunctionArtist_ptr timeDFTArtist = Slab::New<R2toRFunctionArtist>();;
-        R2toR::DiscreteFunction_ptr timeDFT;
+        R2toR::NumericFunction_ptr timeDFT;
 
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
@@ -38,10 +38,10 @@ namespace Slab::Models::KGRtoR {
 
         void draw() override;
 
-        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryGraph) override;
 
-        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory, const DFTDataHistory &history,
+        void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &functionArtist) override;
     };
 

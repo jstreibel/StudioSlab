@@ -22,7 +22,7 @@ auto Graphics::FlatFieldDisplay::addFunction(R2toR::Function_constptr function, 
     bool firstTime = funcsMap.empty();
 
     if(firstTime){
-        auto &discrFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*function);
+        auto &discrFunc = dynamic_cast<const R2toR::NumericFunction&>(*function);
         computeGraphRanges(discrFunc.getDomain());
     }
 
@@ -157,7 +157,7 @@ Str Graphics::FlatFieldDisplay::getXHairLabel(const ::Graphics::Point2D &coords)
 
         zOrder_min = zOrder;
 
-        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction &>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(*func);
 
         auto xRes = discreteFunc.getN();
         auto yRes = discreteFunc.getM();

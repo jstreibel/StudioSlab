@@ -9,17 +9,17 @@
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Graphics {
 
     using namespace Math;
 
     class R2toRFunctionActor : public Actor {
-        R2toR::DiscreteFunction_constptr func;
+        R2toR::NumericFunction_constptr func;
 
         struct GridMetadata {
-            static auto FromDiscreteFunction(const R2toR::DiscreteFunction_constptr&) -> GridMetadata;
+            static auto FromNumericFunction(const R2toR::NumericFunction_constptr&) -> GridMetadata;
             auto generateXYPlane(OpenGL::VertexBuffer &buffer) const -> void;
             int gridN = 64;
             int gridM = 64;
@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         void rebuildTextureData();
 
     public:
-        explicit R2toRFunctionActor(R2toR::DiscreteFunction_constptr function);
+        explicit R2toRFunctionActor(R2toR::NumericFunction_constptr function);
 
         void draw(const Scene3DWindow &graph3D) override;
 

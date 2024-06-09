@@ -7,7 +7,7 @@
 
 #include "Utils/Singleton.h"
 
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "DataSet.h"
 
 // import Maps;
@@ -21,7 +21,7 @@ namespace Slab::Math {
     public:
         explicit DataManager();
 
-        static R2toR::DiscreteFunction_ptr NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r);
+        static R2toR::NumericFunction_ptr NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r);
     };
 
 } // Slab::Math

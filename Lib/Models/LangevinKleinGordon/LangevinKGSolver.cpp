@@ -56,8 +56,8 @@ namespace Slab::Models::KGRtoR {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
-            langevinImpulses = DynamicPointerCast <RtoR::DiscreteFunction> (kgStateIn.getPhi().Clone());
-            scaledImpulses   = DynamicPointerCast <RtoR::DiscreteFunction> (kgStateIn.getPhi().Clone());
+            langevinImpulses = DynamicPointerCast <RtoR::NumericFunction> (kgStateIn.getPhi().Clone());
+            scaledImpulses   = DynamicPointerCast <RtoR::NumericFunction> (kgStateIn.getPhi().Clone());
 
             scaledImpulses->Set(RtoR::NullFunction());
         }

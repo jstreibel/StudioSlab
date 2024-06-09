@@ -21,9 +21,9 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    auto KGEnergy::computeEnergies(const EquationState &field) -> const RtoR::DiscreteFunction & {
-        auto &phi = static_cast<RtoR::DiscreteFunction&>(field.getPhi()),
-          &ddtPhi = static_cast<RtoR::DiscreteFunction&>(field.getDPhiDt());
+    auto KGEnergy::computeEnergies(const EquationState &field) -> const RtoR::NumericFunction & {
+        auto &phi = static_cast<RtoR::NumericFunction&>(field.getPhi()),
+          &ddtPhi = static_cast<RtoR::NumericFunction&>(field.getDPhiDt());
 
         auto &phiSpace = phi.getSpace(),
                 &ddtPhiSpace = ddtPhi.getSpace();

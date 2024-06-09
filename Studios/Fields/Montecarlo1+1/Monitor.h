@@ -15,9 +15,9 @@ namespace Montecarlo {
         void draw() override;
 
     private:
-        RtoR::ResizableDiscreteFunction temperature1History;
-        RtoR::ResizableDiscreteFunction temperature2History;
-        RtoR::ResizableDiscreteFunction temperature3History;
+        RtoR::ResizableNumericFunction temperature1History;
+        RtoR::ResizableNumericFunction temperature2History;
+        RtoR::ResizableNumericFunction temperature3History;
 
         GraphRtoR *mTemperaturesGraph;
         GraphRtoR *mHistogramsGraph;

@@ -9,7 +9,7 @@
 
 
 namespace Modes {
-    std::unique_ptr<R2toR::DiscreteFunction_CPU> HistoryFileLoader::Load(const Str &filename) {
+    std::unique_ptr<R2toR::NumericFunction_CPU> HistoryFileLoader::Load(const Str &filename) {
         std::ifstream inFile(filename, std::ios::binary);
         if (!inFile) throw Exception(Str("Error opening file '") + filename + "'");
 
@@ -37,11 +37,11 @@ namespace Modes {
         auto hx = L/(Real)N;
         auto hy = t/(Real)N;
 
-        auto *field = new R2toR::DiscreteFunction_CPU(N, M, xMin, t0, hx, hy);
+        auto *field = new R2toR::NumericFunction_CPU(N, M, xMin, t0, hx, hy);
 
         for (int i=0; i<N; ++i) for (int j=0; j<M; ++j) field->At(i, j) = data[i + j*N];
 
-        return std::unique_ptr<R2toR::DiscreteFunction_CPU>{field};
+        return std::unique_ptr<R2toR::NumericFunction_CPU>{field};
     }
 
     auto HistoryFileLoader::ReadPyDict(std::ifstream &file) -> PythonUtils::PyDict {

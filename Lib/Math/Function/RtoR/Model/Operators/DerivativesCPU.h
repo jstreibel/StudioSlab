@@ -2,7 +2,7 @@
 #define DERIVATIVES_H
 
 
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 
 namespace Slab::Math::RtoR {
@@ -25,9 +25,9 @@ namespace Slab::Math::RtoR {
         bool periodic;
 
     public:
-        explicit DerivativeCPU(const DiscreteFunction &in);
+        explicit DerivativeCPU(const NumericFunction &in);
 
-        void changeFunc(const DiscreteFunction &vec) {
+        void changeFunc(const NumericFunction &vec) {
             assert(vec.getSpace().getTotalDiscreteSites() == N);
             assert(vec.getSpace().getMetaData().geth(0) == h);
 

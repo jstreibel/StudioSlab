@@ -19,7 +19,7 @@ namespace Modes {
         fieldPtr = Load(filename);
     }
 
-    auto SnapshotFileLoader::Load(const Str &filename) -> std::shared_ptr<RtoR::DiscreteFunction_CPU> {
+    auto SnapshotFileLoader::Load(const Str &filename) -> std::shared_ptr<RtoR::NumericFunction_CPU> {
         auto dict = ReadPyDict(filename);
         auto data = ReadData(filename);
 
@@ -40,9 +40,9 @@ namespace Modes {
             xMax = Δk*(Real)dataArr.size();
         }
 
-        auto field = new RtoR::DiscreteFunction_CPU(dataArr, xMin, xMax);
+        auto field = new RtoR::NumericFunction_CPU(dataArr, xMin, xMax);
 
-        return std::shared_ptr<RtoR::DiscreteFunction_CPU>{field};
+        return std::shared_ptr<RtoR::NumericFunction_CPU>{field};
     }
 
     auto SnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {

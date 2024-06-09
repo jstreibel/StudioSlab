@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SNAPSHOTOUTPUT_H
 #define STUDIOSLAB_SNAPSHOTOUTPUT_H
 
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include "Math/Numerics/Output/Plugs/Socket.h"
 
@@ -22,7 +22,7 @@ namespace Slab::Models::KGRtoR {
     protected:
         auto handleOutput(const OutputPacket &packet) -> void override;
 
-        virtual auto filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU;
+        virtual auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU;
 
         SnapshotOutput(const NumericConfig &config, const Str &fileName, const Str &socketName, const Str &description);
     public:

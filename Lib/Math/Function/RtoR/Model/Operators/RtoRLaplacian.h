@@ -6,18 +6,18 @@
 #define STUDIOSLAB_RTORLAPLACIAN_H
 
 #include "Math/VectorSpace/Algebra/Operator.h"
-#include "../RtoRDiscreteFunction.h"
+#include "../RtoRNumericFunction.h"
 
 namespace Slab::Math::RtoR {
 
-    class RtoRLaplacian : public Operator<Base::DiscreteFunction<Real,Real>> {
+    class RtoRLaplacian : public Operator<Base::NumericFunction<Real,Real>> {
     public:
-        using Operator<Base::DiscreteFunction<Real,Real>>::operator*;
+        using Operator<Base::NumericFunction<Real,Real>>::operator*;
 
     protected:
-        Base::DiscreteFunction<Real, Real> &operateAndStoreResult(Base::DiscreteFunction<Real, Real> &output,
-                                                                  const Base::DiscreteFunction<Real, Real> &input) const override;
-        // DiscreteFunction &operateAndStoreResult(DiscreteFunction &output, const DiscreteFunction &input) const override;
+        Base::NumericFunction<Real, Real> &operateAndStoreResult(Base::NumericFunction<Real, Real> &output,
+                                                                 const Base::NumericFunction<Real, Real> &input) const override;
+        // NumericFunction &operateAndStoreResult(NumericFunction &output, const NumericFunction &input) const override;
     };
 
 } // Slab::Math::RtoR

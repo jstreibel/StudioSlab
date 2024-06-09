@@ -14,7 +14,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 #include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"

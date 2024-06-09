@@ -7,15 +7,15 @@
 
 #include <map>
 
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include "Utils/Types.h"
 #include "Utils/PythonUtils.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 
 namespace Modes::DatabaseViewer {
-    typedef std::map<Real, std::shared_ptr<RtoR::DiscreteFunction_CPU>> FieldMap;
+    typedef std::map<Real, std::shared_ptr<RtoR::NumericFunction_CPU>> FieldMap;
     class DBParser {
         Str rootDatabaseFolder;
         std::map<Real, Str> fileSet;
@@ -36,7 +36,7 @@ namespace Modes::DatabaseViewer {
 
         auto getRootDatabaseFolder() const -> const Str&;
 
-        auto buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU>;
+        auto buildFullField() const -> std::shared_ptr<R2toR::NumericFunction_CPU>;
     };
 } // Modes::DatabaseViewer
 

@@ -8,7 +8,7 @@
 #define V_SHAPE_FIELDSTATE_H
 
 #include "Math/VectorSpace/Impl/DiscreteSpace.h"
-#include "Math/Function/DiscreteFunction.h"
+#include "Math/Function/NumericFunction.h"
 #include "Math/Numerics/Solver/EquationState.h"
 
 #include "Math/Numerics/Output/Util/FieldStateOutputInterface.h"
@@ -19,14 +19,14 @@ namespace Slab::Models {
 
     /**
      * State representing 2nd order equation state.
-     * @tparam EqCategory Usually some DiscreteFunction type.
+     * @tparam EqCategory Usually some NumericFunction type.
      */
     template<class InCategory>
     class KGState : public Base::EquationState, public EqStateOutputInterface {
     public:
         typedef Base::EquationState State;
         typedef Real OutCategory;
-        typedef Base::DiscreteFunction<InCategory, OutCategory> Field;
+        typedef Base::NumericFunction<InCategory, OutCategory> Field;
         typedef Base::FunctionT<InCategory, OutCategory> FieldBase;
         typedef Pointer<Field> Field_ptr;
 

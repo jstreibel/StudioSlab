@@ -42,9 +42,9 @@ namespace Slab::Graphics {
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    R2toRFunctionActor::R2toRFunctionActor(R2toR::DiscreteFunction_constptr function)
+    R2toRFunctionActor::R2toRFunctionActor(R2toR::NumericFunction_constptr function)
     : func(std::move(function))
-    , gridMetadata(R2toRFunctionActor::GridMetadata::FromDiscreteFunction(func))
+    , gridMetadata(R2toRFunctionActor::GridMetadata::FromNumericFunction(func))
     , program(Resources::ShadersFolder + "FieldShading.vert",
               Resources::ShadersFolder + "FieldShading.frag")
     , vertexBuffer("position:2f,texcoord:2f")
@@ -186,7 +186,7 @@ namespace Slab::Graphics {
     }
 
     R2toRFunctionActor::GridMetadata
-    R2toRFunctionActor::GridMetadata::FromDiscreteFunction(const R2toR::DiscreteFunction_constptr &func) {
+    R2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::NumericFunction_constptr &func) {
         fix D = func->getDomain();
 
         R2toRFunctionActor::GridMetadata gridMetadata;

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTORREALTIMEPANEL_H
 
 #include "Math/Function/RtoR2/StraightLine.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Graphics/BaseMonitor.h"
@@ -53,10 +53,10 @@ namespace Slab::Models::KGRtoR {
                       KGEnergy &hamiltonian,
                       Graphics::GUIWindow &guiWindow);
 
-        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryGraph) override;
 
-        void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+        void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                     const DFTDataHistory &dftData,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
 

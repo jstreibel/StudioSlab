@@ -8,7 +8,7 @@
 
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
 #include "../KG-RtoREquationState.h"
@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class SimHistory : public Socket {
-        R2toR::DiscreteFunction_ptr data;
+        R2toR::NumericFunction_ptr data;
         RealVector timestamps;
         bool dataIsOnGPU;
 
@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
                    Real L,
                    const Str &name = "SimulationHistory");
 
-        auto getData() const -> const R2toR::DiscreteFunction &;
+        auto getData() const -> const R2toR::NumericFunction &;
 
     };
 

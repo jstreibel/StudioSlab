@@ -7,7 +7,7 @@
 
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 #include "KG-RtoREquationState.h"
 #include "KG-RtoRBuilder.h"
 
@@ -18,10 +18,10 @@ namespace Slab::Models::KGRtoR {
     class KGEnergy {
         Base::NumericalRecipe &builder;
 
-        RtoR::DiscreteFunction_ptr _oEnergyDensity;
-        RtoR::DiscreteFunction_ptr _oKineticDensity;
-        RtoR::DiscreteFunction_ptr _oGradientDensity;
-        RtoR::DiscreteFunction_ptr _oPotentialDensity;
+        RtoR::NumericFunction_ptr _oEnergyDensity;
+        RtoR::NumericFunction_ptr _oKineticDensity;
+        RtoR::NumericFunction_ptr _oGradientDensity;
+        RtoR::NumericFunction_ptr _oPotentialDensity;
 
         Real U, K, W, V;
 
@@ -30,12 +30,12 @@ namespace Slab::Models::KGRtoR {
     public:
         KGEnergy(KGRtoRBuilder &builder, RtoR::Function_ptr potentialFunc);
 
-        const RtoR::DiscreteFunction &computeEnergies(const EquationState &field);
+        const RtoR::NumericFunction &computeEnergies(const EquationState &field);
 
-        RtoR::DiscreteFunction_ptr getEnergyDensity() const { return _oEnergyDensity; };
-        RtoR::DiscreteFunction_ptr getKineticDensity() const { return _oKineticDensity; };
-        RtoR::DiscreteFunction_ptr getGradientDensity() const { return _oGradientDensity; };
-        RtoR::DiscreteFunction_ptr getPotentialDensity() const { return _oPotentialDensity; };
+        RtoR::NumericFunction_ptr getEnergyDensity() const { return _oEnergyDensity; };
+        RtoR::NumericFunction_ptr getKineticDensity() const { return _oKineticDensity; };
+        RtoR::NumericFunction_ptr getGradientDensity() const { return _oGradientDensity; };
+        RtoR::NumericFunction_ptr getPotentialDensity() const { return _oPotentialDensity; };
         RtoR::Function_constptr getThePotential() const { return V_ptr; }
 
         Real getTotalEnergy() const;

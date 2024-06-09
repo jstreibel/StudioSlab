@@ -5,29 +5,15 @@
 #ifndef STUDIOSLAB_SCENESETUP_H
 #define STUDIOSLAB_SCENESETUP_H
 
-#include "Graphics/OpenGL/OpenGL.h"
+#include "Graphics/Types2D.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {
 
-    void PushScene() {
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glEnable(GL_POINT_SMOOTH);
-        glEnable(GL_LINE_SMOOTH);
-        glDisable(GL_DEPTH_TEST);
+    void PushScene();
 
-        glMatrixMode(GL_MODELVIEW);
-        glPushMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPushMatrix();
-    }
+    void SetupOrtho(const RectR &region, Real zNear=-1.0, Real zFar=1.0);
 
-    void PopScene() {
-        glMatrixMode(GL_MODELVIEW);
-        glPopMatrix();
-        glMatrixMode(GL_PROJECTION);
-        glPopMatrix();
-    }
+    void PopScene();
 }
 
 #endif //STUDIOSLAB_SCENESETUP_H

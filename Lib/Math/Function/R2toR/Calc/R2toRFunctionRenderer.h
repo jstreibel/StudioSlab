@@ -6,7 +6,7 @@
 #define STUDIOSLAB_R2TORFUNCTIONRENDERER_H
 
 #include <memory>
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math::R2toR {
     
@@ -15,11 +15,11 @@ namespace Slab::Math::R2toR {
         static auto renderToDiscrete(const R2toR::Function& function,
                                      Resolution x, Resolution y, R2toR::Domain,
                                      Real scale=1.0)
-                                     -> R2toR::DiscreteFunction_ptr;
+                                     -> R2toR::NumericFunction_ptr;
 
         static auto renderToDiscrete(const R2toR::Function& in,
-                                     R2toR::DiscreteFunction_ptr out, Real scale=1.0)
-                                     -> R2toR::DiscreteFunction_ptr ;
+                                     R2toR::NumericFunction_ptr out, Real scale=1.0)
+                                     -> R2toR::NumericFunction_ptr ;
     };
 
 } // Graphics

@@ -111,7 +111,9 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		${NUMERICS_SOURCES}
 		${DIFFEQS_SOURCES}
 		${THERMO_SOURCES}
-		)
+        FunctionOperations/FunctionOperation.cpp
+        FunctionOperations/FunctionOperation.h
+)
 
 
 target_link_libraries(${STUDIOSLAB_MATH_BASE_LIB_NAME}

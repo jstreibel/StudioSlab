@@ -7,7 +7,7 @@
 #include "imgui.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
 #include "Math/Function/RtoR2/ParametricCurve.h"
 
@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
     fix L1 = 20.0;
     fix h = L1/N;
     fix L2 = h*M;
-    auto func = new R2toR::DiscreteFunction_CPU(N, M, 0, 0, h, h);
+    auto func = new R2toR::NumericFunction_CPU(N, M, 0, 0, h, h);
     auto data = &func->getSpace().getHostData(false)[0];
 
     fix xCenter = 0;
@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    R2toR::DiscreteFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
+    R2toR::NumericFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
 
         SomeCurve someCurve;
 
@@ -79,7 +79,7 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        return Slab::Pointer<R2toR::DiscreteFunction>{func};
+        return Slab::Pointer<R2toR::NumericFunction>{func};
     }
 
     CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
@@ -109,28 +109,24 @@ namespace Slab::Models::KGRtoR {
     }
 
     void CorrelationsPanel::draw() {
-        try {
-            guiWindow.begin();
+        guiWindow.begin();
 
-            if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
-                static auto discardRedundant = false;
-                // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
-                //     this->computeAll(discardRedundant);
-                // }
+        if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
+            static auto discardRedundant = false;
+            // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
+            //     this->computeAll(discardRedundant);
+            // }
 
-                if (ImGui::Button("Compute"))
-                    this->computeAll(discardRedundant);
-            }
-
-            guiWindow.end();
-
-            WindowPanel::draw();
-        } catch (std::bad_cast &e) {
-            Log::Error() << "Bad cast.";
+            if (ImGui::Button("Compute"))
+                this->computeAll(discardRedundant);
         }
+
+        guiWindow.end();
+
+        WindowPanel::draw();
     }
 
-    void CorrelationsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+    void CorrelationsPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 

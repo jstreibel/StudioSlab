@@ -5,7 +5,7 @@
 #include "Graph3DTests.h"
 #include "Graphics/Graph3D/Scene3DWindow.h"
 #include "Graphics/Graph3D/Actors/TestActor.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Graphics/Graph3D/Actors/R2toRFunctionActor.h"
 
 namespace Tests {
@@ -21,7 +21,7 @@ namespace Tests {
         fix w = 10.;
         fix h = 10.;
 
-        auto funky = std::make_shared<R2toR::DiscreteFunction_CPU>(N, M,
+        auto funky = std::make_shared<R2toR::NumericFunction_CPU>(N, M,
                                                                    xMin, yMin,
                                                                    w/N, h/M);
 

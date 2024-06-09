@@ -3,7 +3,7 @@
 //
 
 #include "RingDeltaFunc.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 
 namespace Slab::Math::R2toR {
     namespace LeadingDelta {

@@ -14,7 +14,7 @@ namespace Slab::Models::KGRtoR {
 
     class DFTSnapshotOutput : public SnapshotOutput {
     protected:
-        auto filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU override;
+        auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU override;
     public:
         DFTSnapshotOutput(const NumericConfig &config, const Str &fileName);
     };

@@ -26,11 +26,11 @@ namespace Modes::DatabaseViewer {
         Math::PointSet massesImag_pointSet;
         Math::PointSet underXHair;
 
-        typedef std::shared_ptr<R2toR::DiscreteFunction_CPU> FullField_ptr;
+        typedef std::shared_ptr<R2toR::NumericFunction_CPU> FullField_ptr;
         Vector<FullField_ptr> fullFields;
         Vector<Utils::MaxInfo> maxValues;
 
-        std::map<Str, std::shared_ptr<R2toR::DiscreteFunction_CPU>> fullHistoriesMap;
+        std::map<Str, std::shared_ptr<R2toR::NumericFunction_CPU>> fullHistoriesMap;
 
         int index_XHair=-1;
 

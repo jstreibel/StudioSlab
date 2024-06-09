@@ -12,7 +12,7 @@ namespace Slab::Graphics {
         if(func == nullptr) return;
 
         if(helper == nullptr){
-            auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+            auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
             auto textureData = getFieldTextureData();
 

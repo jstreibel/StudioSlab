@@ -6,10 +6,10 @@
 
 #include <utility>
 
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 #if USE_CUDA
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 #endif
 
 #define StepsInterval ((int) (simConfig.numericConfig.getn() / N_t))
@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
 #if USE_CUDA
         if(dataIsOnGPU)
         {
-            fieldData = new R2toR::DiscreteFunction_GPU(spaceResolution,
+            fieldData = new R2toR::NumericFunction_GPU(spaceResolution,
                                                         timeResolution,
                                                         params.getxMin(),
                                                         0.0, hp);
@@ -48,7 +48,7 @@ namespace Slab::Models::KGRtoR {
 
 
             fix safeTimeResolution = timeResolution + 1;
-            data = New<R2toR::DiscreteFunction_CPU>(N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+            data = New<R2toR::NumericFunction_CPU>(N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
 
             Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
         }
@@ -57,7 +57,7 @@ namespace Slab::Models::KGRtoR {
     auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
         IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN f_in = static_cast<RtoR::DiscreteFunction&>(stateIn.getPhi());
+        IN f_in = static_cast<RtoR::NumericFunction&>(stateIn.getPhi());
         IN in = f_in.getSpace().getHostData(true);
 
         fix N_in = f_in.N;
@@ -100,7 +100,7 @@ namespace Slab::Models::KGRtoR {
         timestamps.emplace_back(packet.getSimTime());
     }
 
-    auto SimHistory::getData() const -> const R2toR::DiscreteFunction & {
+    auto SimHistory::getData() const -> const R2toR::NumericFunction & {
         return *data;
     }
 

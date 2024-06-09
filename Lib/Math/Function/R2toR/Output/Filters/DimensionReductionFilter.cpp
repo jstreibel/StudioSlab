@@ -5,7 +5,7 @@
 
 #include "Math/VectorSpace/Impl/DiscreteSpaceCPU.h"
 
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Core/Tools/Log.h"
 
@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
 
     DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outputInfo) {
         IN kgState = *outputInfo.GetNakedStateData<R2toR::EquationState>();
-        auto &f = static_cast<R2toR::DiscreteFunction&>(kgState.getPhi());
+        auto &f = static_cast<R2toR::NumericFunction&>(kgState.getPhi());
         // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
 
         if (f.getSpace().getMetaData().getNDim() != 2) throw "Is rong.";

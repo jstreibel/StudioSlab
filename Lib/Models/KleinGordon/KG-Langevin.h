@@ -26,23 +26,23 @@ namespace Slab::Models::KGRtoR {
 
 
     class LorentzLangevin_2ndOrder : public KGSolver {
-        DiscreteFunction &langevinImpulses;
-        DiscreteFunction &scaledImpulses;
+        NumericFunction &langevinImpulses;
+        NumericFunction &scaledImpulses;
 
         Real T=0.01;
         Real alpha = 1.0;
     public:
         LorentzLangevin_2ndOrder(const NumericConfig &params, EqBoundaryCondition &du,
-                                 KGSolver::PotentialFunc &potential, DiscreteFunction &langevinImpulses,
-                                 DiscreteFunction &scaledImpulses) : Solver(params, du, potential),
+                                 KGSolver::PotentialFunc &potential, NumericFunction &langevinImpulses,
+                                 NumericFunction &scaledImpulses) : Solver(params, du, potential),
                                                                      langevinImpulses(langevinImpulses),
                                                                      scaledImpulses(scaledImpulses) {}
 
         // explicit LorentzLangevin_2ndOrder(NumericParams &params, KGSolver::MyBase::EqBoundaryCondition &du,
         //                                   RtoR::Function &potential)
         // : KGSolver<RtoR::EquationState>(params, du, potential)
-        // , langevinImpulses(*builder.NewFunctionArbitrary<DiscreteFunction>())
-        // , scaledImpulses(  *builder.NewFunctionArbitrary<DiscreteFunction>()) { }
+        // , langevinImpulses(*builder.NewFunctionArbitrary<NumericFunction>())
+        // , scaledImpulses(  *builder.NewFunctionArbitrary<NumericFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             KGSolver::startStep(t, dt);
@@ -63,10 +63,10 @@ namespace Slab::Models::KGRtoR {
         void setTemperature(Real value) {T = value;}
 
         EqState &dtF(const EqState &fieldStateIn, EqState &fieldStateOut, Real t, Real dt) override {
-            const DiscreteFunction &iPhi = fieldStateIn.getPhi();
-            const DiscreteFunction &iDPhi = fieldStateIn.getDPhiDt();
-            DiscreteFunction &oPhi = fieldStateOut.getPhi();
-            DiscreteFunction &oDPhi = fieldStateOut.getDPhiDt();
+            const NumericFunction &iPhi = fieldStateIn.getPhi();
+            const NumericFunction &iDPhi = fieldStateIn.getDPhiDt();
+            NumericFunction &oPhi = fieldStateOut.getPhi();
+            NumericFunction &oDPhi = fieldStateOut.getDPhiDt();
 
             // Eq 1
             {   oPhi.SetArb(iDPhi) *= dt;   }

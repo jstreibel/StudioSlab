@@ -27,7 +27,7 @@ namespace Slab::Math::RtoR {
             bool gotNewData = true;
 
             Vector<Vector<Real>> getHistoryMatrixData();
-            Vector<RtoR::DiscreteFunction*> history;
+            Vector<RtoR::NumericFunction*> history;
         protected:
 
             Vector <Real> probingData;

@@ -23,6 +23,10 @@
 #define POPUP_ON_MOUSE_CALL false
 
 
+#include "Graphics/Graph/Shapes/Shape.h"
+#include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
+
 namespace Slab {
 
     using Log = Core::Log;
@@ -34,14 +38,18 @@ namespace Slab {
     Str(Str(label) + "##" + ToStr(this->id)).c_str()
 
     Graphics::PlottingWindow::PlottingWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
-            : region{xMin, xMax, yMin, yMax}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
+            : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
 
         if (title.empty()) title = Str("unnamed");
         Count n = 1;
-        while (PlottingWindow::graphMap.count(title))
-            title += "(" + ToStr(++n) + ")";
+        {
+            Str uniqueTitle = title;
+            while (PlottingWindow::graphMap.count(uniqueTitle))
+                uniqueTitle = title + "(" + ToStr(++n) + ")";
+            title = uniqueTitle;
+        }
         PlottingWindow::graphMap[title] = this;
 
         Core::BackendManager::LoadModule(Core::RealTimeAnimation);
@@ -162,11 +170,7 @@ namespace Slab {
     }
 
     void Graphics::PlottingWindow::setupOrtho() const {
-        OpenGL::Shader::remove();
-
-        glMatrixMode(GL_PROJECTION);
-        glLoadIdentity();
-        glOrtho(region.xMin, region.xMax, region.yMin, region.yMax, -1, 1);
+        OpenGL::Legacy::SetupOrtho(region.getRect());
 
         auto vp = getViewport();
         auto currStyle = PlotThemeManager::GetCurrent();

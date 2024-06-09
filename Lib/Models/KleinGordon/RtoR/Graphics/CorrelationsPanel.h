@@ -6,7 +6,7 @@
 #define STUDIOSLAB_CORRELATIONSPANEL_H
 
 #include "RtoRPanel.h"
-#include "Math/Function/R2toC/R2toCDiscreteFunction.h"
+#include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
 namespace Slab::Models::KGRtoR {
@@ -19,7 +19,7 @@ namespace Slab::Models::KGRtoR {
         R2toRFunctionArtist_ptr ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
         R2toRFunctionArtist_ptr ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
 
-        R2toC::DiscreteFunction_ptr dftFunction;
+        R2toC::NumericFunction_ptr dftFunction;
 
         PlottingWindow correlationGraph;
         R2toRFunctionArtist_ptr twoPointCorrArtist = Slab::New<R2toRFunctionArtist>();;
@@ -32,7 +32,7 @@ namespace Slab::Models::KGRtoR {
     public:
         CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
         void draw() override;

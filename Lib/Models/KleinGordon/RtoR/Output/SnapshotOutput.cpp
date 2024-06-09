@@ -28,12 +28,12 @@ namespace Slab::Models::KGRtoR {
     void SnapshotOutput::handleOutput(const OutputPacket &) { /* do nothing */ }
 
 
-    auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::DiscreteFunction_CPU {
+    auto SnapshotOutput::filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU {
         NOT_IMPLEMENTED
         /*
         auto &phi = packet.GetNakedStateData<EquationState>()->getPhi();
 
-        return RtoR::DiscreteFunction_CPU(phi);
+        return RtoR::NumericFunction_CPU(phi);
          */
     }
 

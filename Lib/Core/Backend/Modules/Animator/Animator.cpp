@@ -15,7 +15,7 @@ namespace Slab::Core {
         return instance;
     }
 
-    void Animator::Add(double &variable, double targetValue, double timeInSeconds) {
+    void Animator::Set(double &variable, double targetValue, double timeInSeconds) {
         auto &animations = Instance().animations;
 
         animations[&variable] = {variable, targetValue, timeInSeconds};
@@ -34,8 +34,9 @@ namespace Slab::Core {
                 *var = anim.targetValue;
                 it = animations.erase(it);  // Remove the completed animation
             } else {
-                fix Δv = anim.targetValue-anim.initialValue;
-                *var = anim.initialValue + Δv*cubicBezierInterpolation(0, 1, t);
+                fix a = anim.initialValue;
+                fix b = anim.targetValue;
+                *var = cubicBezierInterpolation(a, b, t);
                 ++it;
             }
         }
@@ -53,7 +54,10 @@ namespace Slab::Core {
         double P3 = endValue;
 
         // Cubic Bezier formula
-        return std::pow(1 - t, 3) * P0 + 3 * std::pow(1 - t, 2) * t * P1 + 3 * (1 - t) * std::pow(t, 2) * P2 + std::pow(t, 3) * P3;
+        return            std::pow(1 - t, 3) * P0 +
+            3 * t *       std::pow(1 - t, 2) * P1 +
+            3 * (1 - t) * std::pow(t, 2)     * P2 +
+                          std::pow(t, 3)     * P3;
     }
 
     bool Animator::Contains(const double &variable) {

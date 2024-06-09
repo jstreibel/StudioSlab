@@ -8,7 +8,7 @@
 #include "Models/KleinGordon/KGSolver.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include "Utils/RandUtils.h"
 #include "Math/Thermal/ThermoUtils.h"
@@ -27,7 +27,7 @@ namespace Slab::Models::KGRtoR {
         Real T=1.e-3;
         unsigned accepted = 0;
 
-        Real E(const DiscreteFunction &phi){
+        Real E(const NumericFunction &phi){
             const auto h = phi.getSpace().geth();
             const auto inv_2h = .5/h;
             const auto &X = phi.getSpace().getHostData();
@@ -48,9 +48,9 @@ namespace Slab::Models::KGRtoR {
             return h*E_h;
         }
 
-        DiscreteFunction *temp;
-        Real deltaE(DiscreteFunction &phi, const int site, const Real newVal, const Real h){
-            DiscreteFunction &phiNew = *temp;
+        NumericFunction *temp;
+        Real deltaE(NumericFunction &phi, const int site, const Real newVal, const Real h){
+            NumericFunction &phiNew = *temp;
 
             phiNew.SetArb(phi);
 
@@ -80,7 +80,7 @@ namespace Slab::Models::KGRtoR {
         }
     public:
         explicit MontecarloLangevin_2ndOrder(Core::Simulation::Builder &builder, RtoR::Function &potential)
-            : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<DiscreteFunction>()) { }
+            : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<NumericFunction>()) { }
 
         void startStep(Real t, Real dt) override{
             DifferentialEquation::startStep(t, dt);

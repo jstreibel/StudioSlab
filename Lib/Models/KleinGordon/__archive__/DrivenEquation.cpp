@@ -51,7 +51,7 @@ namespace Slab::Math::R2toR {
                 // z=¼(r²-t²)
                 // δ(z)𝕕z = r/t δ(r-t)𝕕r
 
-                drivingForce->renderToDiscreteFunction(&drivingForceRendered);
+                drivingForce->renderToNumericFunction(&drivingForceRendered);
                 auto &δ = drivingForceRendered;
                 auto &dVdϕ = *dVDPhi;
                 auto &dVdϕₒᵤₜ = dV_out;

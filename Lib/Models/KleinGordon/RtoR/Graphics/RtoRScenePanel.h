@@ -18,7 +18,7 @@ namespace Slab::Models::KGRtoR {
                        GUIWindow &guiWindow,
                        KGEnergy &hamiltonian);
 
-        void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };
 

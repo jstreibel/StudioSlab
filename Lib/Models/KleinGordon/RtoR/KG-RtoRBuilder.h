@@ -8,7 +8,7 @@
 #include "../KGBuilder.h"
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 
 #include "KG-RtoRBoundaryCondition.h"
 #include "Math/Numerics/Solver/EquationState.h"
@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
 
         auto getInitialState()      -> KGRtoR::EquationState_ptr;
         virtual auto getBoundary()  -> Base::BoundaryConditions_ptr = 0;
-        auto newFunctionArbitrary() -> Math::RtoR::DiscreteFunction_ptr;
+        auto newFunctionArbitrary() -> Math::RtoR::NumericFunction_ptr;
         auto newFieldState()        -> KGRtoR::EquationState_ptr;
 
     };

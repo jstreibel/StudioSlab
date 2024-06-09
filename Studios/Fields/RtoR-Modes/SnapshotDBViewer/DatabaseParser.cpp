@@ -124,7 +124,7 @@ namespace Modes::DatabaseViewer {
     auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
 
-    auto DBParser::buildFullField() const -> std::shared_ptr<R2toR::DiscreteFunction_CPU> {
+    auto DBParser::buildFullField() const -> std::shared_ptr<R2toR::NumericFunction_CPU> {
         IN sampleField = *fieldMap.begin()->second;
 
         fix N = fieldMap.size();
@@ -137,7 +137,7 @@ namespace Modes::DatabaseViewer {
         fix hk = (kMax-kMin)/(Real)M;
 
 
-        auto fullField = new R2toR::DiscreteFunction_CPU(N, M, ωMin, kMin, hω, hk);
+        auto fullField = new R2toR::NumericFunction_CPU(N, M, ωMin, kMin, hω, hk);
 
         int i=0;
         for (auto &pair: fieldMap) {
@@ -149,7 +149,7 @@ namespace Modes::DatabaseViewer {
             ++i;
         }
 
-        return std::shared_ptr<R2toR::DiscreteFunction_CPU>(fullField);
+        return std::shared_ptr<R2toR::NumericFunction_CPU>(fullField);
     }
 
     auto DBParser::getFieldMap() const -> const FieldMap & { return fieldMap; }

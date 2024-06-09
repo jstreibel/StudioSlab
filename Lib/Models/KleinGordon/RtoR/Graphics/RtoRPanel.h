@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTORPANEL_H
 
 #include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
@@ -27,10 +27,10 @@ namespace Slab::Models::KGRtoR {
         const NumericConfig &params;
         KGEnergy &hamiltonian;
 
-        R2toR::DiscreteFunction_constptr simulationHistory;
+        R2toR::NumericFunction_constptr simulationHistory;
         R2toRFunctionArtist_ptr simulationHistoryArtist{};
 
-        R2toR::DiscreteFunction_constptr spaceFTHistory;
+        R2toR::NumericFunction_constptr spaceFTHistory;
         R2toRFunctionArtist_ptr spaceFTHistoryArtist{};
         const DFTDataHistory *dftData{};
 
@@ -43,9 +43,9 @@ namespace Slab::Models::KGRtoR {
                   const Str &name,
                   const Str &description);
 
-        virtual void setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+        virtual void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                           const R2toRFunctionArtist_ptr &simHistoryGraph);
-        virtual void setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+        virtual void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                             const DFTDataHistory &,
                                             const R2toRFunctionArtist_ptr &sftHistoryGraph);
 

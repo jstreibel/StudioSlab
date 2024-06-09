@@ -8,8 +8,8 @@
 
 #include "Core/Backend/BackendManager.h"
 
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionGPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 #include "EquationState.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
@@ -103,17 +103,17 @@ namespace Slab::Math::R2toR {
 
     }
 
-    R2toR::DiscreteFunction_ptr Builder::newFunctionArbitrary() {
+    R2toR::NumericFunction_ptr Builder::newFunctionArbitrary() {
         const size_t N = simulationConfig.numericConfig.getN();
         const floatt xLeft = simulationConfig.numericConfig.getxMin();
         fix h = simulationConfig.numericConfig.geth();
 
         if (simulationConfig.dev == CPU)
-            return New<R2toR::DiscreteFunction_CPU>(N, N, xLeft, xLeft, h, h);
+            return New<R2toR::NumericFunction_CPU>(N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
         else if (simulationConfig.dev == GPU)
-            return new R2toR::DiscreteFunction_GPU(N, xLeft, h, h);
+            return new R2toR::NumericFunction_GPU(N, xLeft, h, h);
 #endif
 
         throw "Error while instantiating Field: device not recognized.";

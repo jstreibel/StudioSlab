@@ -9,7 +9,7 @@
 // #include <string_view>
 
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Core/Tools/Resources.h"
 #include "imgui.h"
 
@@ -41,8 +41,8 @@ namespace Slab::Graphics {
             colorBar.getTexture()->bind();
             program.use();
 
-            auto region = graph.getRegion();
-            fix x = region.xMin, y = region.yMin, w = region.width(), h = region.height();
+            auto graphRect = graph.getRegion().getRect();
+            fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
 
             fix xScale = 2.f / w;
             fix xTranslate = -1.0f - 2.0f * x / w;
@@ -86,7 +86,7 @@ namespace Slab::Graphics {
 
         assert(func->isDiscrete());
 
-        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
         auto xRes = discreteFunc.getN();
         auto yRes = discreteFunc.getM();
@@ -115,7 +115,7 @@ namespace Slab::Graphics {
         ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
         if (func->isDiscrete()) {
-            auto &dFunc = *dynamic_cast<const R2toR::DiscreteFunction *>(func.get());
+            auto &dFunc = *dynamic_cast<const R2toR::NumericFunction *>(func.get());
             ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
         }
 
@@ -238,7 +238,7 @@ namespace Slab::Graphics {
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
-        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
         {
             auto 𝒟 = discreteFunc.getDomain();
@@ -378,7 +378,7 @@ namespace Slab::Graphics {
         fix r = Real2D{coords.x, coords.y};
         assert(func->domainContainsPoint(r));
 
-        auto &discreteFunc = dynamic_cast<const R2toR::DiscreteFunction &>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(*func);
 
         auto xRes = discreteFunc.getN();
         auto yRes = discreteFunc.getM();

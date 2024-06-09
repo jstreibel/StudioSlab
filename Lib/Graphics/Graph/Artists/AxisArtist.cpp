@@ -53,7 +53,7 @@ namespace Slab::Graphics {
     }
 
     void AxisArtist::computeTicks(const PlottingWindow &graph) {
-        auto &region = graph.getRegion();
+        auto region = graph.getRegion();
         auto vp = graph.getViewport();
 
         auto currStyle = PlotThemeManager::GetCurrent();
@@ -83,8 +83,8 @@ namespace Slab::Graphics {
 
             xSpacing = multiplier * spacing;
 
-            fix iMin = int(region.xMin/xSpacing);
-            fix iMax = int(region.xMax/xSpacing);
+            fix iMin = int(region.getXMin()/xSpacing);
+            fix iMax = int(region.getXMax()/xSpacing);
 
             for (auto i=iMin; i<=iMax; ++i)
             {
@@ -108,9 +108,9 @@ namespace Slab::Graphics {
         fix vTickHeightInSpace = 2.0*(Real)currStyle->vTickHeightinPixels * vPixelsToSpaceScale;
         fix vGraphPaddingInSpace = (Real)currStyle->vAxisPaddingInPixels * vPixelsToSpaceScale;
 
-        fix yLocationOfXAxis = region.yMin < -vGraphPaddingInSpace
+        fix yLocationOfXAxis = region.getYMin() < -vGraphPaddingInSpace
                                            ? 0
-                                           : region.yMin + vGraphPaddingInSpace;
+                                           : region.getYMin() + vGraphPaddingInSpace;
 
         fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
 
@@ -123,7 +123,7 @@ namespace Slab::Graphics {
 
         // Write numbers
         for (auto &hTick : hTicks) {
-            auto pen = FromSpaceToViewportCoord({hTick.mark, yLocationOfLabels}, region, vp);
+            auto pen = FromSpaceToViewportCoord({hTick.mark, yLocationOfLabels}, region.getRect(), vp);
             writer->write(hTick.label, pen, gtfColor);
         }
 
@@ -138,8 +138,8 @@ namespace Slab::Graphics {
                 // Draw x-axis
                 glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-                glVertex3d(region.xMin, yLocationOfXAxis, 0);
-                glVertex3d(region.xMax, yLocationOfXAxis, 0);
+                glVertex3d(region.getXMin(), yLocationOfXAxis, 0);
+                glVertex3d(region.getXMax(), yLocationOfXAxis, 0);
 
 
                 // Draw ticks
@@ -156,11 +156,11 @@ namespace Slab::Graphics {
         // Draw axis name
         {
             const auto xMidpoint = region.xCenter();
-            const auto yMidpoint = region.yMin;
+            const auto yMidpoint = region.getYMin();
             const Point2D loc = {xMidpoint, yMidpoint};
             writer = currStyle->labelsWriter;
 
-            auto pen = FromSpaceToViewportCoord(loc, region, vp);
+            auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             pen.y += writer->getFontHeightInPixels();
 
             writer->write(horizontalAxisLabel, pen , currStyle->graphTitleColor);
@@ -180,10 +180,10 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_STIPPLE);
 
         fix Δy = region.height();
-        fix xLocationOfYAxis = region.xMin + currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
+        fix xLocationOfYAxis = region.getXMin() + currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
         fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
-        fix iMin = int(region.yMin/ySpacing);
-        fix iMax = int(region.yMax/ySpacing);
+        fix iMin = int(region.getYMin()/ySpacing);
+        fix iMax = int(region.getYMax()/ySpacing);
 
         StringStream buffer;
 
@@ -204,7 +204,7 @@ namespace Slab::Graphics {
             Str text = buffer.str();
             if(numRegion < -1) text = elegantScientific(text);
 
-            loc = FromSpaceToViewportCoord(loc, region, vp);
+            loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             writer->write(text, loc, gtf);
         }
 
@@ -221,8 +221,8 @@ namespace Slab::Graphics {
 
             glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-            glVertex3d(region.xMin, 0, 0);
-            glVertex3d(region.xMax, 0, 0);
+            glVertex3d(region.getXMin(), 0, 0);
+            glVertex3d(region.getXMax(), 0, 0);
         }
         glEnd();
 
@@ -240,26 +240,26 @@ namespace Slab::Graphics {
 
             for(auto i = iMin; i<=iMax; ++i) {
                 Real mark = i*ySpacing;
-                glVertex3d(region.xMin, mark, 0);
-                glVertex3d(region.xMax, mark, 0);
+                glVertex3d(region.getXMin(), mark, 0);
+                glVertex3d(region.getXMax(), mark, 0);
             }
 
             glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-            glVertex3d(region.xMin, 0, 0);
-            glVertex3d(region.xMax, 0, 0);
+            glVertex3d(region.getXMin(), 0, 0);
+            glVertex3d(region.getXMax(), 0, 0);
         }
         glEnd();
         glPopAttrib();
 
         // Draw axis name
         {
-            const auto xMidpoint = region.xMin;
+            const auto xMidpoint = region.getXMin();
             const auto yMidpoint = region.yCenter();
             const Point2D loc = {xMidpoint, yMidpoint};
             auto writer = currStyle->labelsWriter;
 
-            auto pen = FromSpaceToViewportCoord(loc, region, vp);
+            auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             pen.x += .5*writer->getFontHeightInPixels();
 
             writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor);

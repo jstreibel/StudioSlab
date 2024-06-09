@@ -17,7 +17,7 @@ namespace Slab::Models::KGRtoR {
     auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
         IN stateIn = *input.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN phi = static_cast<RtoR::DiscreteFunction&>(stateIn.getPhi());
+        IN phi = static_cast<RtoR::NumericFunction&>(stateIn.getPhi());
 
         auto dftNewData = RtoR::DFT::Compute(phi);
 

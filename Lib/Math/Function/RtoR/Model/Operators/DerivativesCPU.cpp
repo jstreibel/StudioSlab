@@ -9,9 +9,9 @@
 
 namespace Slab::Math::RtoR {
 
-#define RESOLVE_BC (in.getLaplacianType()==DiscreteFunction::Standard1D_PeriodicBorder ? true : false)
+#define RESOLVE_BC (in.getLaplacianType()==NumericFunction::Standard1D_PeriodicBorder ? true : false)
 
-    DerivativeCPU::DerivativeCPU(const DiscreteFunction &in)
+    DerivativeCPU::DerivativeCPU(const NumericFunction &in)
             : f_(&in.getSpace().getHostData()), h(in.getSpace().getMetaData().geth(0)), inv2h(.5 / h),
               inv12h((1. / 12) / h), invhsqr(1. / (h * h)), inv12hsqr((1. / 12) / (h * h)),
               N(in.getSpace().getTotalDiscreteSites()), periodic(RESOLVE_BC) {

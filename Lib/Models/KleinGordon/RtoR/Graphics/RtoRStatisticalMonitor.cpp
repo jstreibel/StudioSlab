@@ -6,7 +6,7 @@
 
 #include "imgui.h"
 
-#include "Math/Function/RtoR/Calc/Histogram.h"
+#include "Math/Function/RtoR/Operations/Histogram.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Graphics/Graph/PlotThemeManager.h"
@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
                                            Slab::DummyPointer(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
-            mTemperaturesGraph->set_xMax(params.gett());
+            mTemperaturesGraph->getRegion().animate_xMax(params.gett());
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
@@ -114,7 +114,7 @@ namespace Slab::Models::KGRtoR {
         setColumnRelativeWidth(1, 0.40);
     }
 
-    void RtoRStatisticsPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+    void RtoRStatisticsPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 

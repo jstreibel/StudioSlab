@@ -9,6 +9,7 @@
 #include "Math/VectorSpace/Impl/PointSet.h"
 
 #include <Utils/Types.h>
+#include <type_traits>
 
 namespace Slab::Math::Base {
 
@@ -16,7 +17,7 @@ namespace Slab::Math::Base {
     class GPUFriendly;
 
     template<class InputCategory, class OutputCategory>
-    class DiscreteFunction;
+    class NumericFunction;
 
     class Function {
     public:
@@ -130,13 +131,26 @@ namespace Slab::Math::Base {
         };
 
         virtual bool
-        renderToDiscreteFunction(DiscreteFunction<InputCategory, OutputCategory> *toFunc) const {
+        renderToNumericFunction(NumericFunction<InputCategory, OutputCategory> *toFunc) const {
             throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
         DefinePointer(FunctionT)
 
     };
+
+
+    // Base template is false
+    template<typename T>
+    struct IsSlabFunction_ : std::false_type {};
+
+    // Specialization for FunctionT
+    template<typename A, typename B>
+    struct IsSlabFunction_<FunctionT<A, B>> : std::true_type {};
+
+    // Helper variable template
+    template<typename T>
+    inline constexpr bool IsSlabFunction_v = IsSlabFunction_<T>::value;
 }
 
 

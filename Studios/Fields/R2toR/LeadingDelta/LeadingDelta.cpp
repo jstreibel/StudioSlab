@@ -38,7 +38,7 @@ namespace Slab::Math::R2toR {
 
                 if(deltaSpeedOp) {
                     ringDelta->setRadius(t);
-                    ringDelta->renderToDiscreteFunction(&ϕₜ);
+                    ringDelta->renderToNumericFunction(&ϕₜ);
                 } else {
                     const bool AS_THETA = false;
 
@@ -46,27 +46,27 @@ namespace Slab::Math::R2toR {
                         const auto radius = t;
 
                         ringDelta->setRadius(radius);
-                        ringDelta->renderToDiscreteFunction(&ϕ);
+                        ringDelta->renderToNumericFunction(&ϕ);
 
                         auto a = ringDelta->getA();
                         ringDelta->setA(0);
-                        ringDelta->renderToDiscreteFunction(&ϕₜ);
+                        ringDelta->renderToNumericFunction(&ϕₜ);
                         ringDelta->setA(a);
                     } else {
                         const auto eps = ringDelta->getEps();
                         const auto radius = t;
 
                         ringDelta->setRadius(radius);
-                        ringDelta->renderToDiscreteFunction(&ϕ);
+                        ringDelta->renderToNumericFunction(&ϕ);
 
                         auto a = ringDelta->getA();
                         ringDelta->setA(0);
 
                         ringDelta->setRadius(radius + eps);
-                        ringDelta->renderToDiscreteFunction(&ϕ);
+                        ringDelta->renderToNumericFunction(&ϕ);
                         ringDelta->setRadius(radius);
 
-                        ringDelta->renderToDiscreteFunction(&ϕₜ);
+                        ringDelta->renderToNumericFunction(&ϕₜ);
 
                         ringDelta->setA(a);
                     }

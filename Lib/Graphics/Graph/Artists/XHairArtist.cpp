@@ -30,10 +30,11 @@ namespace Slab::Graphics {
 
         auto vpRect = graph2D.getViewport();
         auto region = graph2D.getRegion();
+        auto rect = region.getRect();
 
         fix mouseLocal = getMouseViewportCoord(vpRect);
 
-        auto XHairLocation = FromViewportToSpaceCoord(mouseLocal, region, vpRect);
+        auto XHairLocation = FromViewportToSpaceCoord(mouseLocal, rect, vpRect);
 
         auto label = graph2D.getXHairLabel(XHairLocation);
 
@@ -41,10 +42,10 @@ namespace Slab::Graphics {
         currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, (Real)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
-        XHair.addPoint({region.xMin, XHairLocation.y});
-        XHair.addPoint({region.xMax, XHairLocation.y});
-        XHair.addPoint({XHairLocation.x, region.yMin});
-        XHair.addPoint({XHairLocation.x, region.yMax});
+        XHair.addPoint({rect.xMin, XHairLocation.y});
+        XHair.addPoint({rect.xMax, XHairLocation.y});
+        XHair.addPoint({XHairLocation.x, rect.yMin});
+        XHair.addPoint({XHairLocation.x, rect.yMax});
 
         return Graphics::OpenGL::Legacy::RenderPointSet(Slab::DummyPointer(XHair), currStyle->XHairStyle);
     }

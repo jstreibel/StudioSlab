@@ -1,8 +1,8 @@
 
 
 #include "RingDeltaFunc.h"
-#include "Math/Function/DiscreteFunction.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/NumericFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 struct IsRingDeltaDomain
 {
@@ -83,8 +83,8 @@ struct RingDeltaGPU
 };
 
 
-bool R2toR::LeadingDelta::RingDeltaFunc::renderToDiscreteFunction(Core::DiscreteFunction<Real2D, Real> *toFunc) const {
-    auto &func = *dynamic_cast<R2toR::DiscreteFunction*>(toFunc);
+bool R2toR::LeadingDelta::RingDeltaFunc::renderToNumericFunction(Core::NumericFunction<Real2D, Real> *toFunc) const {
+    auto &func = *dynamic_cast<R2toR::NumericFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();
     const auto N = outputSpace.getDim().getN(0);

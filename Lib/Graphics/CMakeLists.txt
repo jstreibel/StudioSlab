@@ -112,6 +112,15 @@ add_library(${LIB_GRAPHICS} STATIC
 		Types3D.cpp
 		Types3D.h
 		OpenGL/LegacyGL/SceneSetup.h
+        Graph/Tool/MathTool.cpp
+        Graph/Tool/MathTool.h
+		Graph/Shapes/Shape.cpp
+		Graph/Shapes/Shape.h
+		OpenGL/LegacyGL/ShapeRenderer.cpp
+		OpenGL/LegacyGL/ShapeRenderer.h
+		OpenGL/LegacyGL/SceneSetup.cpp
+		Graph/Artists/PlotRegion2D.cpp
+		Graph/Artists/PlotRegion2D.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

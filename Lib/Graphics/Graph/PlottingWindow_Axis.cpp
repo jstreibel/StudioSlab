@@ -38,7 +38,7 @@ namespace Slab {
     }
 
     void Graphics::PlottingWindow::reviewGraphRanges() {
-        RectR newRegion = region;
+        RectR newRegion = region.getRect();
 
         for (auto &a: content) {
             auto &artist = a.second;
@@ -62,6 +62,7 @@ namespace Slab {
             if (aRegion.yMin < newRegion.yMin) newRegion.yMin = aRegion.yMin;
         }
 
+        /*
         if(newRegion != region) {
             region = newRegion;
 
@@ -75,6 +76,7 @@ namespace Slab {
             region.yMin -= 2*Δy;
             region.yMax += 2*Δy;
         }
+         */
     }
 
     void Graphics::PlottingWindow::nameLabelDraw(const Graphics::PlotStyle &style, const Str &label) {

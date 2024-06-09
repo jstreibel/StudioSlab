@@ -13,7 +13,7 @@
 
 #include "Math/Numerics/NumericalRecipe.h"
 
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunction.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 
@@ -22,8 +22,8 @@
 namespace Slab::Models::KGRtoR {
 
     class LangevinKGSolver : public KGRtoRSolver {
-        RtoR::DiscreteFunction_ptr langevinImpulses = nullptr;
-        RtoR::DiscreteFunction_ptr scaledImpulses   = nullptr;
+        RtoR::NumericFunction_ptr langevinImpulses = nullptr;
+        RtoR::NumericFunction_ptr scaledImpulses   = nullptr;
 
         Real T=.0;
         Real γ=.0;

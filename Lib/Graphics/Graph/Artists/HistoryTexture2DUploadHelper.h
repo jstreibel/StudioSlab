@@ -7,7 +7,7 @@
 
 #include "Utils/Numbers.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Graphics {
 
@@ -15,15 +15,15 @@ namespace Slab::Graphics {
 
     class HistoryTexture2DUploadHelper {
         typedef Slab::Pointer<OpenGL::Texture2D_Real> Texture2D_Real_Ptr;
-        typedef Slab::Pointer<const R2toR::DiscreteFunction> DiscreteFunction_Ptr;
+        typedef Slab::Pointer<const R2toR::NumericFunction> NumericFunction_Ptr;
 
         Texture2D_Real_Ptr textureData;
-        DiscreteFunction_Ptr function;
+        NumericFunction_Ptr function;
 
         Count nextRow = 0;
         Real lastUpdatedTime = -1.0;
     public:
-        HistoryTexture2DUploadHelper(DiscreteFunction_Ptr history, Texture2D_Real_Ptr texture);
+        HistoryTexture2DUploadHelper(NumericFunction_Ptr history, Texture2D_Real_Ptr texture);
 
         void uploadUpTo(const Real time);
     };

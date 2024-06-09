@@ -5,14 +5,14 @@
 #ifndef STUDIOSLAB_R2TORDFT_H
 #define STUDIOSLAB_R2TORDFT_H
 
-#include "Math/Function/R2toC/R2toCDiscreteFunction.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunction.h"
+#include "Math/Function/R2toC/R2toCNumericFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math::R2toR {
 
     class R2toRDFT {
     public:
-        typedef R2toC::DiscreteFunction_ptr FFTData;
+        typedef R2toC::NumericFunction_ptr FFTData;
 
         enum DataPolicy {
             Mangle,
@@ -25,14 +25,14 @@ namespace Slab::Math::R2toR {
             InverseFourier=1
         };
 
-        static auto DFTReal_symmetric(const R2toR::DiscreteFunction &in) -> FFTData;
+        static auto DFTReal_symmetric(const R2toR::NumericFunction &in) -> FFTData;
 
-        static auto DFTReal   (const R2toR::DiscreteFunction &in, Transform transform=Fourier,
+        static auto DFTReal   (const R2toR::NumericFunction &in, Transform transform=Fourier,
                                DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
-        static auto DFTComplex(const R2toC::DiscreteFunction &in, Transform transform=Fourier,
+        static auto DFTComplex(const R2toC::NumericFunction &in, Transform transform=Fourier,
                                DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
 
-        static auto DFT_inverse_symmetric(const R2toC::DiscreteFunction &in) -> FFTData;
+        static auto DFT_inverse_symmetric(const R2toC::NumericFunction &in) -> FFTData;
 
 
 

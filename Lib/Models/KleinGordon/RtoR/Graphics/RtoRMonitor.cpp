@@ -90,7 +90,7 @@ namespace Slab::Models::KGRtoR {
         return BaseMonitor::notifyKeyboard(key, state, modKeys);
     }
 
-    void Monitor::setSimulationHistory(R2toR::DiscreteFunction_constptr simHistory) {
+    void Monitor::setSimulationHistory(R2toR::NumericFunction_constptr simHistory) {
         simulationHistory = simHistory;
 
         fullHistoryArtist->setFunction(simulationHistory);
@@ -100,7 +100,7 @@ namespace Slab::Models::KGRtoR {
             dataView->setSimulationHistory(simHistory, fullHistoryArtist);
     }
 
-    void Monitor::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+    void Monitor::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                                const DFTDataHistory &_dftData) {
         spaceFTHistory = sftHistory;
         fullSFTHistoryArtist->setFunction(spaceFTHistory);
@@ -119,10 +119,10 @@ namespace Slab::Models::KGRtoR {
         static bool isSetup = false;
         if (not isSetup && lastPacket.hasValidData()) {
 
-            auto &phi = static_cast<RtoR::DiscreteFunction&>
+            auto &phi = static_cast<RtoR::NumericFunction&>
                     (lastPacket.GetNakedStateData<EquationState>()->getPhi());
 
-            if (phi.getLaplacianType() == RtoR::DiscreteFunction::Standard1D_PeriodicBorder)
+            if (phi.getLaplacianType() == RtoR::NumericFunction::Standard1D_PeriodicBorder)
                 fullHistoryArtist->set_xPeriodicOn();
 
             isSetup = true;

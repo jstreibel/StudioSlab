@@ -18,7 +18,7 @@
 namespace Slab::Math::R2toR {
     namespace LeadingDelta {
 
-        typedef Core::DiscreteFunction<Real2D, Real> ArbFunc;
+        typedef Core::NumericFunction<Real2D, Real> ArbFunc;
 
         class RingDeltaFunc : public R2toR::Function {
         protected:
@@ -48,7 +48,7 @@ namespace Slab::Math::R2toR {
             RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta);
             auto operator()(Real2D x) const -> Real override;
 
-            bool renderToDiscreteFunction(ArbFunc *toFunc) const override;
+            bool renderToNumericFunction(ArbFunc *toFunc) const override;
         };
 
     }

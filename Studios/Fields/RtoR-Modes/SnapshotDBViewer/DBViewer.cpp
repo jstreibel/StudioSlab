@@ -14,7 +14,7 @@
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
+#include "Math/Function/RtoR/Model/RtoRFunctionSampler.h"
 
 
 #include <utility>

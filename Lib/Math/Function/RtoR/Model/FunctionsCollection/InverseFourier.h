@@ -7,7 +7,7 @@
 
 #include <utility>
 
-#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 
 namespace Slab::Math::RtoR {
 

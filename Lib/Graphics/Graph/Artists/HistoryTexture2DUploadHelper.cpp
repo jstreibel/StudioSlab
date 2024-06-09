@@ -8,7 +8,7 @@
 
 namespace Slab::Graphics {
 
-    HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(DiscreteFunction_Ptr history, Texture2D_Real_Ptr texture)
+    HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(NumericFunction_Ptr history, Texture2D_Real_Ptr texture)
     : function(history)
     , textureData(texture)
     {

@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 
-#include "Math/Function/RtoR/Calc/Histogram.h"
+#include "Math/Function/RtoR/Operations/Histogram.h"
 
 
 #include <sstream>
@@ -22,9 +22,9 @@ const Color T3_color = Color(1, 1, 0);
 namespace Montecarlo {
 
     Monitor::Monitor(const NumericConfig &params) : RtoR::Monitor(params, -10, 10) {
-        temperature1History = RtoR::ResizableDiscreteFunction(0, 0.1);
-        temperature2History = RtoR::ResizableDiscreteFunction(0, 0.1);
-        temperature3History = RtoR::ResizableDiscreteFunction(0, 0.1);
+        temperature1History = RtoR::ResizableNumericFunction(0, 0.1);
+        temperature2History = RtoR::ResizableNumericFunction(0, 0.1);
+        temperature3History = RtoR::ResizableNumericFunction(0, 0.1);
 //
         mTemperaturesGraph = new GraphRtoR(0, 2, 0, 0.01, "Temperaturas");
         mTemperaturesGraph->addFunction(&temperature1History, "T_1", GetCurrent()->funcPlotStyles[0]);

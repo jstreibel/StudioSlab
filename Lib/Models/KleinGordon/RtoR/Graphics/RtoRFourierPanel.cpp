@@ -24,6 +24,11 @@ namespace Slab::Models::KGRtoR {
         timeDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         timeDFTDisplay->getAxisArtist().setVerticalAxisLabel("ω");
 
+        auto commonYMin = timeDFTDisplay->getRegion().getReference_yMin();
+        auto commonYMax = timeDFTDisplay->getRegion().getReference_yMax();
+
+        inverseDFTDisplay->getRegion().setReference_yMin(commonYMin);
+        inverseDFTDisplay->getRegion().setReference_yMax(commonYMax);
     }
 
     void RtoRFourierPanel::draw() {
@@ -101,7 +106,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void
-    RtoRFourierPanel::setSpaceFourierHistory(R2toR::DiscreteFunction_constptr sftHistory,
+    RtoRFourierPanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                              const DFTDataHistory &dftDataHistory,
                                              const R2toRFunctionArtist_ptr &dftFunctionArtist) {
 
@@ -113,6 +118,18 @@ namespace Slab::Models::KGRtoR {
         Graphics::Plotter::AddCurve(spaceFTHistoryGraph,
                                     Slab::DummyPointer(cutoffLine),
                                     PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+
+        auto commonYMin = spaceFTHistoryGraph->getRegion().getReference_yMin();
+        auto commonYMax = spaceFTHistoryGraph->getRegion().getReference_yMax();
+
+        simulationHistoryGraph->getRegion().setReference_yMin(commonYMin);
+        simulationHistoryGraph->getRegion().setReference_yMax(commonYMax);
+
+        auto commonXMin = spaceFTHistoryGraph->getRegion().getReference_xMin();
+        auto commonXMax = spaceFTHistoryGraph->getRegion().getReference_xMax();
+
+        inverseDFTDisplay->getRegion().setReference_xMin(commonXMin);
+        inverseDFTDisplay->getRegion().setReference_xMax(commonXMax);
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
@@ -128,7 +145,7 @@ namespace Slab::Models::KGRtoR {
         fix n = dftData->size();
         fix ht = (t-tMin)/n;
 
-        auto rebuiltHistory = Slab::New<R2toR::DiscreteFunction_CPU>(N, n, xMin, tMin, hx, ht);
+        auto rebuiltHistory = Slab::New<R2toR::NumericFunction_CPU>(N, n, xMin, tMin, hx, ht);
 
         int _n = 0;
         for(auto &data : *dftData){
@@ -161,8 +178,8 @@ namespace Slab::Models::KGRtoR {
 
         fix dk = 2*M_PI/Δt;
 
-        timeDFT = Slab::New<R2toR::DiscreteFunction_CPU>(N, m, xMin, 0, dx, dk);
-        RtoR::DiscreteFunction_CPU tempSpace(M, .0, dk*M);
+        timeDFT = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor(t_0/dt);
         for(auto i=0; i<N; ++i){
@@ -188,13 +205,19 @@ namespace Slab::Models::KGRtoR {
         timeDFTArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
-    void RtoRFourierPanel::setSimulationHistory(R2toR::DiscreteFunction_constptr simulationHistory,
+    void RtoRFourierPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
         simulationHistoryGraph = Slab::New<PlottingWindow>();
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         simulationHistoryGraph->addArtist(inverseDFTArtist);
+
+        auto commonXMin = timeDFTDisplay->getRegion().getReference_xMin();
+        auto commonXMax = timeDFTDisplay->getRegion().getReference_xMax();
+
+        simulationHistoryGraph->getRegion().setReference_xMin(commonXMin);
+        simulationHistoryGraph->getRegion().setReference_xMax(commonXMax);
     }
 
 

@@ -44,17 +44,19 @@ namespace Slab {
         auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
         if (isMouseLeftClicked()) {
+            const auto rect = region.getRect();
+
             const Real dxClampd = -mouseState.dx / (Real) getw();
             const Real dyClampd = mouseState.dy / (Real) geth();
-            const Real wGraph = region.width();
-            const Real hGraph = region.height();
+            const Real wGraph = rect.width();
+            const Real hGraph = rect.height();
             const Real dxGraph = wGraph * dxClampd;
             const Real dyGraph = hGraph * dyClampd;
 
-            region.xMin += dxGraph;
-            region.xMax += dxGraph;
-            region.yMin += dyGraph;
-            region.yMax += dyGraph;
+            region = RectR{rect.xMin + dxGraph,
+                           rect.xMax + dxGraph,
+                           rect.yMin + dyGraph,
+                           rect.yMax + dyGraph};
 
             elRet = true;
         }
@@ -88,63 +90,31 @@ namespace Slab {
         constexpr const Real factor = 1.2;
         const Real d = pow(factor, -dy);
 
-        static auto targetRegion = region;
+        static auto targetRegion = region.getRect();
 
-        if (!Core::Animator::Contains(region.xMin)
-            && !Core::Animator::Contains(region.xMax)
-            && !Core::Animator::Contains(region.yMin)
-            && !Core::Animator::Contains(region.yMax)) {
-            targetRegion = region;
-        }
+        // If not animating region at all
+        if (!region.isAnimating())
+        targetRegion = region.getRect();
 
-        if (1) {
-            const Real x0 = targetRegion.xCenter();
-            const Real hw = .5 * targetRegion.width() * d;
+        const Real x0 = targetRegion.xCenter();
+        const Real hw = .5 * targetRegion.width() * d;
 
-            targetRegion.xMin = x0 - hw;
-            targetRegion.xMax = x0 + hw;
+        targetRegion.xMin = x0 - hw;
+        targetRegion.xMax = x0 + hw;
 
-            set_xMin(targetRegion.xMin);
-            set_xMax(targetRegion.xMax);
+        region.animate_xMin(targetRegion.xMin);
+        region.animate_xMax(targetRegion.xMax);
 
+        const Real y0 = targetRegion.yCenter();
+        const Real hh = .5 * targetRegion.height() * d;
 
-            const Real y0 = targetRegion.yCenter();
-            const Real hh = .5 * targetRegion.height() * d;
+        targetRegion.yMin = y0 - hh;
+        targetRegion.yMax = y0 + hh;
 
-            targetRegion.yMin = y0 - hh;
-            targetRegion.yMax = y0 + hh;
+        region.animate_yMin(targetRegion.yMin);
+        region.animate_yMax(targetRegion.yMax);
 
-            set_yMin(targetRegion.yMin);
-            set_yMax(targetRegion.yMax);
-
-            return true;
-        } else {
-            if (Core::BackendManager::GetGUIBackend().getMouseState().rightPressed) {
-
-                const Real x0 = targetRegion.xCenter();
-                const Real hw = .5 * targetRegion.width() * d;
-
-                targetRegion.xMin = x0 - hw;
-                targetRegion.xMax = x0 + hw;
-
-                set_xMin(targetRegion.xMin);
-                set_xMax(targetRegion.xMax);
-
-            } else {
-                const Real y0 = targetRegion.yCenter();
-                const Real hh = .5 * targetRegion.height() * d;
-
-                targetRegion.yMin = y0 - hh;
-                targetRegion.yMax = y0 + hh;
-
-                set_yMin(targetRegion.yMin);
-                set_yMax(targetRegion.yMax);
-            }
-
-            return true;
-        }
-
-        return false;
+        return true;
     }
 
     void Graphics::PlottingWindow::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }

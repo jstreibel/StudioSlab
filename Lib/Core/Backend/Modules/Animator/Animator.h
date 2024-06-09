@@ -30,7 +30,7 @@ namespace Slab::Core {
     public:
 
 
-        static void Add(double& variable, double targetValue, double timeInSeconds);
+        static void Set(double& variable, double targetValue, double timeInSeconds);
 
         static bool Contains(const double &variable);
 

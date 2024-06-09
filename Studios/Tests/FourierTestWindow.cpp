@@ -12,9 +12,9 @@
 #include "Math/Function/NativeFunction.h"
 
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionCPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
-#include "Math/Function/RtoR/Calc/DiscreteFourierTransform.h"
+#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/InverseFourier.h"
 // #include "Math/Function/MapsFunctionRenderer.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"

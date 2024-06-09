@@ -7,7 +7,7 @@
 #include <thrust/iterator/constant_iterator.h>
 
 #include "KG-RtoRSystemGordonGPU.h"
-#include "Math/Function/RtoR/Model/RtoRDiscreteFunctionGPU.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionGPU.h"
 #include "Math/Function/RtoR/Model/Operators/DerivativesGPU.h"
 
 using namespace Slab::Models::KGRtoR;
@@ -38,10 +38,10 @@ struct GPUHamiltonianStepper
 };
 
 EquationState &SystemGordonGPU::dtF(const EquationState &in, EquationState &out, Real t, Real dt) {
-    cast(inPhi, const DiscreteFunctionGPU&, in.getPhi());
-    cast(inDPhiDt, const DiscreteFunctionGPU&, in.getDPhiDt());
-    cast(outPhi, DiscreteFunctionGPU&, out.getPhi());
-    cast(outDPhiDt, DiscreteFunctionGPU&, out.getDPhiDt());
+    cast(inPhi, const NumericFunctionGPU&, in.getPhi());
+    cast(inDPhiDt, const NumericFunctionGPU&, in.getDPhiDt());
+    cast(outPhi, NumericFunctionGPU&, out.getPhi());
+    cast(outDPhiDt, NumericFunctionGPU&, out.getDPhiDt());
 
     const auto& sInPhi = dynamic_cast<const DiscreteSpaceGPU&>(inPhi.getSpace());
     const auto& sInDPhiDt = dynamic_cast<const DiscreteSpaceGPU&>(inDPhiDt.getSpace());

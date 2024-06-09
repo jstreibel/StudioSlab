@@ -3,7 +3,7 @@
 //
 
 #include "Section1D.h"
-#include "Math/Function/RtoR/Model/RtoRFunctionRenderer.h"
+#include "Math/Function/RtoR/Model/RtoRFunctionSampler.h"
 // #include "Graphics/FunctionRenderer.h"
 #include <utility>
 

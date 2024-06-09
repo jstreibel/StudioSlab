@@ -3,12 +3,12 @@
 //
 
 #include "R2toC_to_R2toR.h"
-#include "Math/Function/R2toR/Model/R2toRDiscreteFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 namespace Slab::Math {
 
-    R2toR::DiscreteFunction_ptr
-    Convert(const R2toC::DiscreteFunction_constptr &in, Math::R2toC_to_R2toR_Mode mode) {
+    R2toR::NumericFunction_ptr
+    Convert(const R2toC::NumericFunction_constptr &in, Math::R2toC_to_R2toR_Mode mode) {
         fix N = in->N,
                 M = in->M;
         fix Lx = in->Lx,
@@ -16,7 +16,7 @@ namespace Slab::Math {
         fix xMin = in->x0;
         fix yMin = in->y0;
 
-        auto out = Slab::New<R2toR::DiscreteFunction_CPU>(N, M, xMin, yMin, Lx / N, Ly / M);
+        auto out = Slab::New<R2toR::NumericFunction_CPU>(N, M, xMin, yMin, Lx / N, Ly / M);
 
         switch (mode) {
             case Phase:
@@ -34,8 +34,8 @@ namespace Slab::Math {
         throw Exception("unknown Complex conversion mode");
     }
 
-    R2toR::DiscreteFunction_ptr
-    ConvertToAbs(const R2toC::DiscreteFunction_constptr &in, R2toR::DiscreteFunction_ptr out) {
+    R2toR::NumericFunction_ptr
+    ConvertToAbs(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
 
         assert(in->N == out->getN() && in->M == out->getM());
 
@@ -54,8 +54,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::DiscreteFunction_ptr ConvertToPowerSpectrum(const R2toC::DiscreteFunction_constptr &in,
-                                                             R2toR::DiscreteFunction_ptr out) {
+    R2toR::NumericFunction_ptr ConvertToPowerSpectrum(const R2toC::NumericFunction_constptr &in,
+                                                             R2toR::NumericFunction_ptr out) {
         assert(in->N == out->getN() && in->M == out->getM());
 
         auto &v_in = in->getData();
@@ -73,8 +73,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::DiscreteFunction_ptr
-    ConvertToPhase(const R2toC::DiscreteFunction_constptr &in, R2toR::DiscreteFunction_ptr out) {
+    R2toR::NumericFunction_ptr
+    ConvertToPhase(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
         assert(in->N == out->getN() && in->M == out->getM());
 
         auto &v_in = in->getData();
@@ -87,8 +87,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::DiscreteFunction_ptr
-    ConvertToReal(const R2toC::DiscreteFunction_constptr &in, R2toR::DiscreteFunction_ptr out) {
+    R2toR::NumericFunction_ptr
+    ConvertToReal(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
         assert(in->N == out->getN() && in->M == out->getM());
 
         auto &v_in = in->getData();
@@ -101,8 +101,8 @@ namespace Slab::Math {
         return out;
     }
 
-    R2toR::DiscreteFunction_ptr
-    ConvertToImaginary(const R2toC::DiscreteFunction_constptr &in, R2toR::DiscreteFunction_ptr out) {
+    R2toR::NumericFunction_ptr
+    ConvertToImaginary(const R2toC::NumericFunction_constptr &in, R2toR::NumericFunction_ptr out) {
         assert(in->N == out->getN() && in->M == out->getM());
 
         auto &v_in = in->getData();
