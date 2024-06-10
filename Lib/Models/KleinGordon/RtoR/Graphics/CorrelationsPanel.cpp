@@ -108,8 +108,7 @@ namespace Slab::Models::KGRtoR {
         correlationGraph.getAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::draw() {
-        guiWindow.begin();
+    void CorrelationsPanel::draw() {        guiWindow.begin();
 
         if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
             static auto discardRedundant = false;
@@ -147,12 +146,10 @@ namespace Slab::Models::KGRtoR {
         // auto toFT = Make_FFTW_TestFunc();
         // correlationGraph.addRtoRFunction(toFT, "choopsy");
 
-        if(discardRedundantModes) {
+        if(discardRedundantModes)
             dftFunction = R2toR::R2toRDFT::DFTReal_symmetric(*toFT);
-        }
-        else {
+        else
             dftFunction = R2toR::R2toRDFT::DFTReal(*toFT);
-        }
 
         auto ftAmplitudes = Math::Convert(dftFunction, Math::Magnitude);
         auto ftPhases     = Math::Convert(dftFunction, Math::Phase);

@@ -7,7 +7,7 @@
 
 #include "NuklearModule.h"
 
-#include "3rdParty/Nuklear/NuklearSource.h"
+#include "3rdParty/NuklearSource.h"
 
 #include "Core/Backend/GLFW/GLFWListener.h"
 #include "Utils/Types.h"

@@ -6,31 +6,50 @@
 #define STUDIOSLAB_RTORFOURIERPANEL_H
 
 #include "RtoRPanel.h"
+
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/RtoR/Operations/DFTInverse.h"
+#include "Math/Function/R2toC/R2toCNumericFunction.h"
+
 #include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 
 namespace Slab::Models::KGRtoR {
 
     class RtoRFourierPanel : public RtoRPanel {
-        PlottingWindow_ptr spaceFTHistoryGraph{};
-        PlottingWindow_ptr simulationHistoryGraph{};
+        Pointer<PlottingWindow> kSpaceGraph  = Slab::New<PlottingWindow>("ℱₓ");
+        Pointer<PlottingWindow> ωSpaceGraph  = Slab::New<PlottingWindow>("ℱₜ");
+        Pointer<PlottingWindow> xSpaceGraph  = Slab::New<PlottingWindow>("ϕ(t,x)");
+        Pointer<PlottingWindow> ωkSpaceGraph = Slab::New<PlottingWindow>("ℱₜₓ");
 
-        PlottingWindow_ptr inverseDFTDisplay = Slab::New<PlottingWindow>("ℱₖ⁻¹[ℱ]");
-        R2toRFunctionArtist_ptr inverseDFTArtist = Slab::New<R2toRFunctionArtist>();
-        R2toR::NumericFunction_ptr inverseDFT;
+        Pointer<R2toRFunctionArtist> inv_kSpaceArtist = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toR::NumericFunction> inv_kSpace;
 
-        PlottingWindow_ptr timeDFTDisplay = Slab::New<PlottingWindow>("ℱₜ[ϕ](ω,x)");
-        R2toRFunctionArtist_ptr timeDFTArtist = Slab::New<R2toRFunctionArtist>();;
-        R2toR::NumericFunction_ptr timeDFT;
+        Pointer<R2toRFunctionArtist> ωSpaceArtist = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toR::NumericFunction> ωSpace;
+
+
+        Pointer<R2toRFunctionArtist> twoPointCorrArtist = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> timeFilteredArtist = Slab::New<R2toRFunctionArtist>();
+
+
+        Pointer<R2toRFunctionArtist> powerArtist        = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> amplitudesArtist   = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> phasesArtist       = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> realPartsArtist    = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> imagPartsArtist    = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toC::NumericFunction> dft2DFunction;
+
+        static auto FilterSpace(Pointer<const R2toR::NumericFunction> func, Real tMin, Real tMax) -> Pointer<R2toR::NumericFunction>;
+
+        void computeAll(Real t_0, Real t_f);
+        void computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes);
+        void computeTwoPointCorrelations();
 
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
-
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
-
         void computeTimeDFT(Real tMin, Real tMax);
 
     public:
@@ -38,8 +57,8 @@ namespace Slab::Models::KGRtoR {
 
         void draw() override;
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
-                                  const R2toRFunctionArtist_ptr &simHistoryGraph) override;
+        void setSimulationHistory(Pointer<const R2toR::NumericFunction> simulationHistory,
+                                  const Pointer<R2toRFunctionArtist> &simHistoryGraph) override;
 
         void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &functionArtist) override;

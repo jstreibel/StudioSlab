@@ -13,6 +13,6 @@
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
 
-#include "nuklear.h"
+#include "3rdParty/Nuklear/nuklear.h"
 
 #endif //STUDIOSLAB_NUKLEARINCLUDE_H

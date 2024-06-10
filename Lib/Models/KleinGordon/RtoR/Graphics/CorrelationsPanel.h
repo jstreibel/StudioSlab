@@ -14,10 +14,10 @@ namespace Slab::Models::KGRtoR {
     class CorrelationsPanel : public RtoRPanel {
         PlottingWindow DFT2DGraph;
 
-        R2toRFunctionArtist_ptr ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
-        R2toRFunctionArtist_ptr ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
-        R2toRFunctionArtist_ptr ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
-        R2toRFunctionArtist_ptr ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> ftPhasesArtist =     Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> ftRealPartsArtist =  Slab::New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> ftImagPartsArtist =  Slab::New<R2toRFunctionArtist>();
 
         R2toC::NumericFunction_ptr dftFunction;
 

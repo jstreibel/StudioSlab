@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_IMGUICOLORANDSTYLES_H
 #define STUDIOSLAB_IMGUICOLORANDSTYLES_H
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 namespace Slab::Core {
 

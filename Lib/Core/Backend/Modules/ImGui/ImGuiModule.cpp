@@ -2,25 +2,26 @@
 // Created by joao on 22/09/23.
 //
 
-#include "Graphics/OpenGL/Utils.h"
+#include "3rdParty/ImGui.h"
+
+#ifndef IMGUI_USE_WCHAR32
+#pragma error
+#endif
+
+// #include "Graphics/OpenGL/Utils.h"
 
 #include <filesystem>
 
 #include "ImGuiModule.h"
 
-#include "Core/Tools/Resources.h"
-
 #include "Core/Backend/BackendManager.h"
+#include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
-
-#define IMGUI_USE_WCHAR32
 
 #include "ImGuiColorAndStyles.h"
 
 #include "ImGuiModuleGLUT.h"
 #include "ImGuiModuleGLFW.h"
-
-#include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 
 // Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;

@@ -3,7 +3,7 @@
 //
 
 
-#include "3rdParty/Nuklear/NuklearSource.h"
+#include "3rdParty/NuklearSource.h"
 #define NK_GLFW_GL4_IMPLEMENTATION
 #include "Graphics/OpenGL/OpenGL.h"
 #include "3rdParty/Nuklear/nuklear_glfw_gl4.h"

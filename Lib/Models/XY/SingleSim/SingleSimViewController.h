@@ -11,7 +11,7 @@
 
 #include "Math/Thermal/ThermoUtils.h"
 
-#include "3rdParty/Nuklear/NuklearInclude.h"
+#include "3rdParty/NuklearInclude.h"
 
 #include "Math/Thermal/XYNetwork.h"
 #include "Math/Thermal/ViewControlBase.h"

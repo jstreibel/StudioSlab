@@ -6,8 +6,8 @@ add_subdirectory(freetype-gl)
 # add_subdirectory(MeshLib)
 
 set ( NUKLEAR_SOURCES
-		Nuklear/NuklearInclude.h
-		Nuklear/NuklearSource.h
+		NuklearInclude.h
+		NuklearSource.h
 )
 
 set ( RESAMPLE_SOURCE

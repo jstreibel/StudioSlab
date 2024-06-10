@@ -8,7 +8,7 @@
 #include "NuklearModule.h"
 
 #include "Core/Backend/SFML/SFMLListener.h"
-#include "3rdParty/Nuklear/NuklearInclude.h"
+#include "3rdParty/NuklearInclude.h"
 
 namespace Slab::Core {
 

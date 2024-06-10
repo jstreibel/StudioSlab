@@ -9,7 +9,7 @@
 #include "Core/Backend/Modules/Modules.h"
 
 #include "Core/Backend/Implementations.h"
-#include "3rdParty/Nuklear/NuklearInclude.h"
+#include "3rdParty/NuklearInclude.h"
 
 namespace Slab::Core {
 

@@ -4,49 +4,84 @@
 
 #include "RtoRFourierPanel.h"
 
+#include "Math/Function/R2toR/Calc/R2toRDFT.h"
+#include "Math/Function/R2toC/R2toC_to_R2toR.h"
+
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "imgui.h"
 #include "Graphics/Graph/Plotter.h"
 
 namespace Slab::Models::KGRtoR {
 
+    constexpr auto NoModeDiscard = false;
+
     RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, KGEnergy &hamiltonian, GUIWindow &guiWindow)
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
     {
-        inverseDFTArtist->setLabel("ℱₖ⁻¹(t, x)");
+        inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
         // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
 
-        timeDFTArtist->setLabel("ℱₜ(ω, x)");
-        timeDFTDisplay->addArtist(timeDFTArtist);
-        timeDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
-        timeDFTDisplay->getAxisArtist().setVerticalAxisLabel("ω");
+        ωSpaceArtist->setLabel("ℱₜ(ω, x)");
+        ωSpaceGraph->addArtist(ωSpaceArtist);
+        ωSpaceGraph->getAxisArtist().setHorizontalAxisLabel("x");
+        ωSpaceGraph->getAxisArtist().setVerticalAxisLabel("ω");
 
-        auto commonYMin = timeDFTDisplay->getRegion().getReference_yMin();
-        auto commonYMax = timeDFTDisplay->getRegion().getReference_yMax();
+        timeFilteredArtist->setLabel("ϕ[t ∈ (t₀,tₑ)]");
+        xSpaceGraph->addArtist(timeFilteredArtist);
+        xSpaceGraph->addArtist(inv_kSpaceArtist);
+        xSpaceGraph->addArtist(twoPointCorrArtist);
 
-        inverseDFTDisplay->getRegion().setReference_yMin(commonYMin);
-        inverseDFTDisplay->getRegion().setReference_yMax(commonYMax);
+        powerArtist     ->setLabel("ℙ=|ℱₜₓ|²");
+        amplitudesArtist->setLabel("|ℱₜₓ|");
+        phasesArtist    ->setLabel(   "arg{ℱₜₓ}");
+        realPartsArtist ->setLabel("ℜ{ℱₜₓ}");
+        imagPartsArtist ->setLabel("ℑ{ℱₜₓ}");
+
+        ωkSpaceGraph->addArtist(powerArtist);
+        ωkSpaceGraph->addArtist(amplitudesArtist);
+        ωkSpaceGraph->addArtist(phasesArtist);
+        ωkSpaceGraph->addArtist(realPartsArtist);
+        ωkSpaceGraph->addArtist(imagPartsArtist);
+
+
+        {
+            auto shared_xMin = ωSpaceGraph->getRegion().getReference_xMin();
+            auto shared_xMax = ωSpaceGraph->getRegion().getReference_xMax();
+            auto shared_tMin = kSpaceGraph->getRegion().getReference_yMin();
+            auto shared_tMax = kSpaceGraph->getRegion().getReference_yMax();
+
+            auto shared_ωMin = ωSpaceGraph->getRegion().getReference_yMin();
+            auto shared_ωMax = ωSpaceGraph->getRegion().getReference_yMax();
+            auto shared_kMin = kSpaceGraph->getRegion().getReference_xMin();
+            auto shared_kMax = kSpaceGraph->getRegion().getReference_xMax();
+
+            xSpaceGraph->getRegion().setReference_xMin(shared_xMin);
+            xSpaceGraph->getRegion().setReference_xMax(shared_xMax);
+            xSpaceGraph->getRegion().setReference_yMin(shared_tMin);
+            xSpaceGraph->getRegion().setReference_yMax(shared_tMax);
+
+            ωkSpaceGraph->getRegion().setReference_yMin(shared_ωMin);
+            ωkSpaceGraph->getRegion().setReference_yMax(shared_ωMax);
+            ωkSpaceGraph->getRegion().setReference_xMin(shared_kMin);
+            ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
+        }
+
+        addWindow(ωSpaceGraph);
+        addWindow(xSpaceGraph);
+        addWindow(ωkSpaceGraph, true);
+        addWindow(kSpaceGraph);
+
+        arrangeWindows();
     }
 
     void RtoRFourierPanel::draw() {
-        static bool firstRun = true;
-        if(firstRun) {
-            firstRun = false;
-            // auto windowRow = new WindowRow();
-            addWindow(timeDFTDisplay);
-            addWindow(simulationHistoryGraph);
-            addWindow(inverseDFTDisplay, true);
-            addWindow(spaceFTHistoryGraph);
-
-            arrangeWindows();
-        }
 
         guiWindow.begin();
 
-        if(ImGui::CollapsingHeader("Cutoff filter")){
+        if(ImGui::CollapsingHeader("k-filter")){
             //this->dftData
             fix kMax = M_PI/params.geth();
             auto k = (float)kFilterCutoff;
@@ -68,7 +103,6 @@ namespace Slab::Models::KGRtoR {
                 needRefresh = true;
             }
 
-
             if((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
                 if (selected == 1) {
                     RtoR::DFTInverse::LowPass lowPass(kFilterCutoff);
@@ -82,22 +116,29 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        if(ImGui::CollapsingHeader("Time FT")){
-            static auto t₀=.0f;
+        if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
+            static auto t_0 =.0f;
             static fix tMax =(float)RtoRPanel::params.gett();
             static auto t_f = tMax;
-            static auto autoUpdate = false;
+            static auto auto_update_Ft = false;
+            static auto auto_update_Ftx = false;
 
-            ImGui::Checkbox("Auto##time_dft", &autoUpdate);
+            ImGui::Checkbox("Auto ℱₜ##time_dft", &auto_update_Ft);
+            ImGui::Checkbox("Auto ℱₜₓ##tx_dft", &auto_update_Ftx);
 
-            ImGui::BeginDisabled(autoUpdate);
-            if(ImGui::Button("Compute"))
-                computeTimeDFT(t₀, t_f);
+            ImGui::BeginDisabled(auto_update_Ft);
+            if(ImGui::Button("Compute ℱₜ"))
+                computeTimeDFT(t_0, t_f);
+            ImGui::EndDisabled();
+            ImGui::BeginDisabled(auto_update_Ftx);
+            if(ImGui::Button("Compute ℱₜₓ"))
+                computeAll(t_0, t_f);
             ImGui::EndDisabled();
 
-            if(ImGui::SliderFloat("tₘᵢₙ", &t₀, .0f, t_f) | ImGui::SliderFloat("tₘₐₓ", &t_f, t₀, tMax))
-                if(autoUpdate) computeTimeDFT(t₀, t_f);
-
+            if(ImGui::SliderFloat("tₘᵢₙ", &t_0, .0f, t_f) | ImGui::SliderFloat("tₘₐₓ", &t_f, t_0, tMax)) {
+                if (auto_update_Ft) computeTimeDFT(t_0, t_f);
+                if (auto_update_Ftx) computeAll(t_0, t_f);
+            }
         }
 
         guiWindow.end();
@@ -112,24 +153,11 @@ namespace Slab::Models::KGRtoR {
 
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
 
-        spaceFTHistoryGraph = Slab::New<PlottingWindow>();
-        spaceFTHistoryGraph->addArtist(dftFunctionArtist);
+        kSpaceGraph->addArtist(dftFunctionArtist);
 
-        Graphics::Plotter::AddCurve(spaceFTHistoryGraph,
+        Graphics::Plotter::AddCurve(kSpaceGraph,
                                     Slab::DummyPointer(cutoffLine),
                                     PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
-
-        auto commonYMin = spaceFTHistoryGraph->getRegion().getReference_yMin();
-        auto commonYMax = spaceFTHistoryGraph->getRegion().getReference_yMax();
-
-        simulationHistoryGraph->getRegion().setReference_yMin(commonYMin);
-        simulationHistoryGraph->getRegion().setReference_yMax(commonYMax);
-
-        auto commonXMin = spaceFTHistoryGraph->getRegion().getReference_xMin();
-        auto commonXMax = spaceFTHistoryGraph->getRegion().getReference_xMax();
-
-        inverseDFTDisplay->getRegion().setReference_xMin(commonXMin);
-        inverseDFTDisplay->getRegion().setReference_xMax(commonXMax);
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
@@ -161,7 +189,7 @@ namespace Slab::Models::KGRtoR {
             ++_n;
         }
 
-        inverseDFTArtist->setFunction(rebuiltHistory);
+        inv_kSpaceArtist->setFunction(rebuiltHistory);
     }
 
     void RtoRFourierPanel::computeTimeDFT(Real t_0, Real t_f) {
@@ -178,7 +206,7 @@ namespace Slab::Models::KGRtoR {
 
         fix dk = 2*M_PI/Δt;
 
-        timeDFT = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        ωSpace = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor(t_0/dt);
@@ -196,28 +224,86 @@ namespace Slab::Models::KGRtoR {
                 fix A = pt.y;
                 fix ω = pt.x;
 
-                timeDFT->At(i, k) = A;
+                ωSpace->At(i, k) = A;
             }
         }
 
         Str timeInterval = ToStr(t_0) + " ≤ t ≤ " + ToStr(t_f);
-        timeDFTArtist->setFunction(timeDFT);
-        timeDFTArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
+        ωSpaceArtist->setFunction(ωSpace);
+        ωSpaceArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
     void RtoRFourierPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-        simulationHistoryGraph = Slab::New<PlottingWindow>();
-        simulationHistoryGraph->addArtist(simulationHistoryArtist);
-        simulationHistoryGraph->addArtist(inverseDFTArtist);
+        xSpaceGraph->addArtist(simulationHistoryArtist, -10);
+    }
 
-        auto commonXMin = timeDFTDisplay->getRegion().getReference_xMin();
-        auto commonXMax = timeDFTDisplay->getRegion().getReference_xMax();
+    void RtoRFourierPanel::computeAll(Real t_0, Real t_f) {
+        computeFullDFT2D(t_0, t_f, NoModeDiscard);
+        computeTwoPointCorrelations();
+    }
 
-        simulationHistoryGraph->getRegion().setReference_xMin(commonXMin);
-        simulationHistoryGraph->getRegion().setReference_xMax(commonXMax);
+    void RtoRFourierPanel::computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes) {
+        auto toFT = FilterSpace(simulationHistory, t_0, t_f);
+        timeFilteredArtist->setFunction(toFT);
+
+        // auto toFT = Make_FFTW_TestFunc();
+        // correlationGraph.addRtoRFunction(toFT, "choopsy");
+
+        if(discardRedundantModes)
+            dft2DFunction = R2toR::R2toRDFT::DFTReal_symmetric(*toFT);
+        else
+            dft2DFunction = R2toR::R2toRDFT::DFTReal(*toFT);
+
+        auto ftAmplitudes = Math::Convert(dft2DFunction, Math::Magnitude);
+        auto ftPhases     = Math::Convert(dft2DFunction, Math::Phase);
+        auto ftRealParts  = Math::Convert(dft2DFunction, Math::RealPart);
+        auto ftImagParts  = Math::Convert(dft2DFunction, Math::ImaginaryPart);
+
+        amplitudesArtist->setFunction(ftAmplitudes);
+        phasesArtist    ->setFunction(ftPhases);
+        realPartsArtist ->setFunction(ftRealParts);
+        imagPartsArtist ->setFunction(ftImagParts);
+    }
+
+    void RtoRFourierPanel::computeTwoPointCorrelations() {
+        if(dft2DFunction == nullptr) return;
+
+        auto powerSpectrum = Math::Convert(dft2DFunction, Math::PowerSpectrum);
+
+        // auto invDFT    = R2toR::R2toRDFT::DFTComplex(*dft2DFunction, R2toR::R2toRDFT::InverseFourier);
+        auto twoPtCorrFunction = R2toR::R2toRDFT::DFTReal(*powerSpectrum,
+                                                  R2toR::R2toRDFT::InverseFourier,
+                                                  R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
+
+        twoPointCorrArtist->setFunction(Math::Convert(twoPtCorrFunction, Math::RealPart));
+        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
+
+        powerArtist->setFunction(powerSpectrum);
+    }
+
+    Pointer<R2toR::NumericFunction>
+    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::NumericFunction> func, Real tMin, Real tMax) {
+        fix N = func->getN();
+        fix xMin = func->getDomain().xMin;
+        fix dx = func->getDomain().getLx()/N;
+
+        fix Mₜ = func->getM();
+        fix dt = func->getDomain().getLy()/Mₜ;
+        fix Δt = tMax-tMin;
+        fix __M = (Count)floor(Δt/dt);
+        fix M = __M%2==0 ? __M : __M-1;
+
+        auto out = New<R2toR::NumericFunction_CPU>(N, M, xMin, tMin, dx, Δt/(Real)M);
+
+        fix j₀ = floor(tMin/dt);
+
+        for (auto i = 0; i < N; ++i) for (auto j = 0; j < M; ++j)
+            out->At(i, j) = func->At(i, j₀+j);
+
+        return out;
     }
 
 

@@ -51,7 +51,7 @@ namespace Slab::Graphics {
         void invalidateTextureData();
         void repopulateTextureBuffer();
 
-        void drawGUI();
+        void drawGUI() override;
 
     public:
         explicit R2toRFunctionArtist();

@@ -4,7 +4,7 @@
 
 #include "NuklearModule.h"
 
-#include "3rdParty/Nuklear/NuklearSource.h"
+#include "3rdParty/NuklearSource.h"
 
 #include "NuklearSFMLModule.h"
 #include "NuklearGLFWModule.h"
