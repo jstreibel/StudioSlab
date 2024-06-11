@@ -7,22 +7,39 @@
 
 #include <Utils/Types.h>
 
+#include <atomic>
+
 namespace Slab::Core {
-
-    class Task;
-
-    class TaskListener {
-        void notifyTaskStarted(const Task&);
-        void notifyTaskFinished(const Task&);
-    };
 
     class Task {
     public:
-        virtual ~Task() = default;
+        enum TaskStatus {
+            NotInitialized,
+            Running,
+            Success,
+            Aborted
+        };
+
+    protected:
+        Str name;
+        std::atomic<bool> running = false;
+        TaskStatus status = NotInitialized;
 
         virtual bool run() = 0;
 
-        virtual void forceStop() = 0;
+    public:
+
+        Task() = delete;
+        explicit Task(Str name);
+        virtual ~Task() = default;
+
+        void start();
+
+        bool isRunning() const;
+        Str getName() const;
+        TaskStatus getStatus() const;
+
+        virtual void abort() = 0;
     };
 
     DefinePointer(Task)

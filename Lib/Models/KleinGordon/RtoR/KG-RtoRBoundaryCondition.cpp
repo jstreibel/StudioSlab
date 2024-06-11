@@ -37,7 +37,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void BoundaryCondition::apply(Base::EquationState &state, const floatt t) const {
-        auto kgState = dynamic_cast<EquationState&>(state);
+        auto &kgState = dynamic_cast<KGRtoR::EquationState&>(state);
 
         this->applyKG(kgState, t);
 

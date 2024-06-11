@@ -40,6 +40,7 @@ namespace Slab::Core {
 
     ImGuiModuleGLUT::~ImGuiModuleGLUT()  {
         ImGui_ImplGLUT_Shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
     }
 
     void ImGuiModuleGLUT::beginRender() {

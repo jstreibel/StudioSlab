@@ -13,19 +13,29 @@
 namespace Slab::Core {
 
         class TaskManagerModule : public Module {
-        private:
-            Vector<Task_ptr> tasks;
-            Vector<std::thread> threads;
+            typedef Pair<Task_ptr, Pointer<std::thread>> Job;
+            Vector<Job> jobs;
+
             std::mutex mtx;
 
+            enum DestructorPolicy {
+                AbortAll,
+                WaitAll
+            } destructorPolicy;
+
         public:
-            // Add a task to the manager and start it immediately in a new thread
-            void addTask(Task_ptr task);
-
-            void signalFinishAllTasks();
-
+            explicit TaskManagerModule(DestructorPolicy policy=AbortAll);
             // Destructor to join all threads
             ~TaskManagerModule() override;
+
+            static void Abort(Job job);
+
+            // Add a task to the manager and start it immediately in a new thread
+            Job addTask(Task_ptr task);
+
+            void abortAllTasks();
+
+
         };
 
 } // Slab::Core

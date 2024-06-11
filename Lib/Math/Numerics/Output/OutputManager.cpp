@@ -43,10 +43,7 @@ namespace Slab::Math {
     }
 
     void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
-        Log::Success() << "Simulation finished. Total time steps: "
-                       << theVeryLastOutputInformation.getSteps() << Log::Flush;
-
-        for (auto output: outputs) {
+        for (const auto& output: outputs) {
             if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
                 Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
 

@@ -23,6 +23,7 @@ namespace Slab::Math {
     }
 
     bool NumericTask::_cycle(size_t nCycles) {
+        if(forceStopFlag) return false;
 
         benchmarkData.startMeasure();
         stepper->step(dt, nCycles);
@@ -48,9 +49,7 @@ namespace Slab::Math {
             return false;
         }
 
-        _cycle(nCyclesToNextOutput);
-
-        return true;
+        return _cycle(nCyclesToNextOutput);
     }
 
     void NumericTask::output(bool force) {
@@ -72,6 +71,9 @@ namespace Slab::Math {
 
         while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
 
+        if(forceStopFlag)
+            return false;
+
         // Para cumprir com os steps quebrados faltantes:
         if (stepsConcluded < n) _cycle(n - stepsConcluded);
 
@@ -80,7 +82,7 @@ namespace Slab::Math {
         return true;
     }
 
-    void NumericTask::forceStop() {
+    void NumericTask::abort() {
         forceStopFlag = true;
     }
 

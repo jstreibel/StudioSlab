@@ -29,7 +29,8 @@ namespace Slab::Core {
     }
 
     ImGuiModuleGLFW::~ImGuiModuleGLFW() {
-        // ImGui_ImplGlfw_Shutdown();
+        ImGui_ImplOpenGL3_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
     }
 
     void ImGuiModuleGLFW::beginRender() {

@@ -56,14 +56,13 @@ namespace Slab::Core {
         colorThemes[currentTheme]();
     }
 
-    ImGuiModule::ImGuiModule(BackendImplementation backendImpl) {
+    ImGuiModule::ImGuiModule(BackendImplementation backendImpl) : Module("ImGui") {
         system = backendImpl;
 
         generalInitialization();
     }
 
     ImGuiModule::~ImGuiModule() {
-        ImGui_ImplOpenGL3_Shutdown();
         ImGui::DestroyContext();
     }
 

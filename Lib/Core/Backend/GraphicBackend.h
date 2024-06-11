@@ -42,6 +42,8 @@ namespace Slab::Core {
 
         auto getModules() -> const Vector<std::shared_ptr<Module>> &;
 
+        void unloadAllModules();
+
         auto isHeadless() const -> bool final;
     };
 

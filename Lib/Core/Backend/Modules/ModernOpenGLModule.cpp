@@ -8,7 +8,7 @@
 #include <GL/glew.h>
 
 namespace Slab::Core {
-    ModernOpenGLModule::ModernOpenGLModule() {
+    ModernOpenGLModule::ModernOpenGLModule() : Module("Modern OpenGL") {
         GLenum glewInitStatus = glewInit();
         if (glewInitStatus != GLEW_OK){
             Log::Error() << "Failed GLEW initialization: " << glewGetErrorString(glewInitStatus) << Log::Flush;

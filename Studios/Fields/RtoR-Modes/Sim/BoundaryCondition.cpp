@@ -13,7 +13,7 @@ Modes::SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, Real A, Re
 , ω(ω) {}
 
 void Modes::SignalBC::applyKG(Slab::Models::KGRtoR::EquationState &kgState, Slab::Real t) const {
-    if(t==0.0) KGRtoR::BoundaryCondition::apply(kgState, t);
+    if(t==0.0) KGRtoR::BoundaryCondition::applyKG(kgState, t);
 
     OUT ϕ   = kgState.getPhi();
     OUT 𝜕ₜϕ = kgState.getDPhiDt() ;

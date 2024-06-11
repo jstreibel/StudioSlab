@@ -13,4 +13,6 @@ namespace Slab::Core {
         Core::Animator::Update();
     }
 
+    RealTimeAnimationModule::RealTimeAnimationModule() : Module("Realtime Animation") {}
+
 } // Core

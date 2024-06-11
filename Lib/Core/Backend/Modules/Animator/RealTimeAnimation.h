@@ -11,6 +11,8 @@ namespace Slab::Core {
 
     class RealTimeAnimationModule : public Module {
     public:
+        explicit RealTimeAnimationModule();
+
         void beginRender() override;
     };
 

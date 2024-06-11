@@ -31,15 +31,7 @@ namespace Slab::Core {
 
     bool GraphicBackend::isHeadless() const { return false; }
 
-    GraphicBackend::~GraphicBackend() {
-        /*
-        auto mod = BackendManager::GetModule(Modules::TaskManager);
-
-        auto taskManager = dynamic_cast<TaskManagerModule*>(mod.get());
-
-        taskManager->signalFinishAllTasks();
-         */
-    }
+    GraphicBackend::~GraphicBackend() = default;
 
     void GraphicBackend::setMouseCursor(MouseCursor cursor) {
         switch (cursor) {
@@ -58,6 +50,10 @@ namespace Slab::Core {
         }
 
         NOT_IMPLEMENTED
+    }
+
+    void GraphicBackend::unloadAllModules() {
+        modules.clear();
     }
 
 

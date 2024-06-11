@@ -29,7 +29,6 @@ namespace Slab::Core {
         double p1=1.0,p2=1.0;
     public:
 
-
         static void Set(double& variable, double targetValue, double timeInSeconds);
 
         static bool Contains(const double &variable);

@@ -3,6 +3,14 @@
 //
 
 #include "Module.h"
+#include "Core/Tools/Log.h"
+
+#include <utility>
 
 namespace Slab::Core {
+    Module::Module(Str name) : name(std::move(name)) { }
+
+    Module::~Module() {
+        Log::Info() << "Destroying \"" << name << "\" module" << Log::Flush;
+    }
 } // Core

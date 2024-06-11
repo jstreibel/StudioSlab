@@ -29,7 +29,7 @@ namespace Slab::Math {
         const UInt totalSteps;
         UInt stepsConcluded;
 
-        bool forceStopFlag = false;
+        std::atomic<bool> forceStopFlag = false;
 
         BenchmarkData benchmarkData;
 
@@ -41,9 +41,12 @@ namespace Slab::Math {
 
         auto _cycleUntilOutputOrFinish() -> bool;
 
+    protected:
+        bool run() override;
     public:
         explicit NumericTask(Base::NumericalRecipe &recipe)
-                : numericalRecipe(recipe),
+                : Task("numeric task"),
+                  numericalRecipe(recipe),
                   stepper(recipe.buildStepper()),
                   outputManager(recipe.buildOutputManager()),
                   dt(recipe.getNumericParams().getdt()),
@@ -73,9 +76,7 @@ namespace Slab::Math {
 
         ~NumericTask() override;
 
-        bool run() override;
-
-        void forceStop() override;
+        void abort() override;
 
         auto getSteps() const -> size_t;
 

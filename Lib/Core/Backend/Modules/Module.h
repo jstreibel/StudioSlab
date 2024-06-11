@@ -6,14 +6,17 @@
 #define STUDIOSLAB_MODULE_H
 
 #include <memory> // Includes Shared Pointer
+#include "Utils/String.h"
 
 namespace Slab::Core {
 
     class Module {
+        Str name;
     public:
         typedef std::shared_ptr<Module> Ptr;
-
-        virtual ~Module() = default;
+        Module() = delete;
+        explicit Module(Str name);
+        virtual ~Module();
 
         virtual void beginRender() {};
         virtual void endRender() {};
