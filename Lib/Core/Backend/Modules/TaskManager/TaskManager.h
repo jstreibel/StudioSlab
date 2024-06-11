@@ -28,7 +28,7 @@ namespace Slab::Core {
             // Destructor to join all threads
             ~TaskManagerModule() override;
 
-            static void Abort(Job job);
+            static void Abort(const Job& job);
 
             // Add a task to the manager and start it immediately in a new thread
             Job addTask(Task_ptr task);

@@ -29,7 +29,7 @@ namespace Slab::Graphics {
 
         explicit BaseMonitor(const NumericConfig &params,
                              const Str& channelName="OpenGL monitor",
-                             int stepsBetweenDraws=1);
+                             int stepsBetweenDraws=10);
 
         GUIWindow &getGUIWindow();
 

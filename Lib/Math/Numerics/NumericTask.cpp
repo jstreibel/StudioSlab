@@ -65,21 +65,22 @@ namespace Slab::Math {
         return benchmarkData;
     }
 
-    bool NumericTask::run() {
+    TaskStatus NumericTask::run() {
         auto &p = numericalRecipe.getNumericParams();
         size_t n = p.getn();
 
         while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
 
         if(forceStopFlag)
-            return false;
+            return Aborted;
 
         // Para cumprir com os steps quebrados faltantes:
-        if (stepsConcluded < n) _cycle(n - stepsConcluded);
+        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded))
+            return InternalError;
 
         outputManager->notifyIntegrationFinished(getOutputInfo());
 
-        return true;
+        return Success;
     }
 
     void NumericTask::abort() {

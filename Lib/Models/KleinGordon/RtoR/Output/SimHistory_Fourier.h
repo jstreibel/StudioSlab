@@ -16,7 +16,7 @@
 namespace Slab::Models::KGRtoR {
 
     struct DFTInstantResult {
-        Real t;
+        Real t{};
         RtoR::DFTResult result;
     };
     typedef Vector<DFTInstantResult> DFTDataHistory;

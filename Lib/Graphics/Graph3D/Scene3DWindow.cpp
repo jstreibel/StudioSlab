@@ -41,22 +41,42 @@ namespace Slab::Graphics {
     }
 
     void Scene3DWindow::updateCamera() {
-        glm::vec3 target = glm::vec3(0.0f, 0.0f, 0.0f);
+        glm::vec3 target = camera.target;
         glm::vec3 up = glm::vec3(0.0f, 0.0f, 1.0f);
 
         fix r = cameraDist;
         fix θ = cameraAnglePolar;
         fix φ = cameraAngleAzimuth;
-        fix x = r*sin(θ)*cos(φ);
-        fix y = r*sin(θ)*sin(φ);
-        fix z = r*cos(θ);
+        fix x = target.x + r*sin(θ)*cos(φ);
+        fix y = target.y + r*sin(θ)*sin(φ);
+        fix z = target.z     + r*cos(θ);
 
         camera.pos = {x, y, z};
         camera.aspect = (float)getw()/(float)geth();
     }
 
     bool Scene3DWindow::notifyMouseMotion(int x, int y) {
-        if(Window::isMouseLeftClicked()) {
+        fix left = Window::isMouseLeftClicked();
+        fix center = Window::isMouseCenterClicked();
+        fix right = Window::isMouseRightClicked();
+
+        if(left && right) {
+            auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
+
+            fix dx = -(float)mouseState.dx * 1.e-2f;
+            fix dy =  (float)mouseState.dy * 1.e-2f;
+
+            auto fwd3d = camera.target - camera.pos;
+
+            auto fwd = glm::vec3(fwd3d.x, fwd3d.y, .0f);
+            fwd /= fwd.length();
+            auto side = glm::cross(fwd, camera.up);
+
+            camera.target += fwd*dy + side*dx;
+
+            return true;
+        }
+        else if(left) {
             auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
             fix dx = (float)mouseState.dx;
@@ -69,7 +89,7 @@ namespace Slab::Graphics {
 
             return true;
         }
-        else if(Window::isMouseRightClicked()) {
+        else if(right) {
             auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
             fix dy = (float)mouseState.dy;
@@ -78,7 +98,7 @@ namespace Slab::Graphics {
 
             return true;
         }
-        else if(Window::isMouseCenterClicked()) {
+        else if(center) {
             auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
 
             fix dy = (float)mouseState.dy;

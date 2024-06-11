@@ -15,19 +15,32 @@ namespace Slab::Models::KGRtoR {
     {
         addWindow(scene);
 
-        auto testy = Slab::New<Slab::Graphics::TestActor>();
-        testy->setLabel("Test Artie");
-        scene->addActor(testy);
+        // auto testy = Slab::New<Slab::Graphics::TestActor>();
+        // testy->setLabel("Test Artie");
+        // scene->addActor(testy);
     }
 
     void RtoRScenePanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                               const R2toRFunctionArtist_ptr &simHistoryArtist) {
+        /*
         auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(simulationHistory);
 
         functionActor->setLabel("ϕ(t,x)");
         scene->addActor(functionActor);
+         */
 
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+    }
+
+    void
+    RtoRScenePanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
+                                           const R2toRFunctionArtist_ptr &sftHistoryGraph) {
+        auto functionActor = Slab::New<Slab::Graphics::R2toRFunctionActor>(sftHistory);
+
+        functionActor->setLabel("ℱₓ(t,k)");
+        scene->addActor(functionActor);
+
+        RtoRPanel::setSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
     }
 
 } // Slab::Models::KGRtoR

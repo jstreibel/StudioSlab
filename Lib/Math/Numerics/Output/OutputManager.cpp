@@ -46,8 +46,6 @@ namespace Slab::Math {
         for (const auto& output: outputs) {
             if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
                 Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
-
-            Log::Info() << "Finished output channel '" << output->getName() << "'." << Log::Flush;
         }
 
 

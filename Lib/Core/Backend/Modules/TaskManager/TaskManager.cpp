@@ -16,11 +16,24 @@ namespace Slab::Core {
         auto funky = [&task]() {
             Log::Critical() << "Started job \"" << task->getName() << "\"." << Log::Flush;
             task->start();
-            if(task->getStatus() == Task::Success)
-                Log::Success() << "Finished job \"" << task->getName() << "\"." << Log::Flush;
-            else
-                Log::Warning() << "Job \"" << task->getName() << "\" not finished." << Log::Flush;
 
+            auto status = task->getStatus();
+
+            switch (status) {
+                case NotInitialized:
+                case Running:
+                    Log::WarningImportant() << "Job \"" << task->getName() << "\" finished with unexpected status." << Log::Flush;
+                    break;
+                case Success:
+                    Log::Success() << "Finished job \"" << task->getName() << "\"." << Log::Flush;
+                    break;
+                case InternalError:
+                    Log::Fail() << "Job \"" << task->getName() << "\" failed due to internal task error." << Log::Flush;
+                    break;
+                case Aborted:
+                    Log::Warning() << "Job \"" << task->getName() << "\" aborted." << Log::Flush;
+                    break;
+            }
         };
 
         auto thread = New<std::thread>(funky);
@@ -32,7 +45,14 @@ namespace Slab::Core {
     }
 
     TaskManagerModule::~TaskManagerModule() {
-        abortAllTasks();
+        if(destructorPolicy == WaitAll) {
+            for(const auto &job : jobs) {
+                auto thread = job.second;
+                if (thread->joinable()) thread->join();
+            }
+        }
+        else if(destructorPolicy == AbortAll)
+            abortAllTasks();
     }
 
     void TaskManagerModule::abortAllTasks() {
@@ -40,18 +60,18 @@ namespace Slab::Core {
             Abort(job);
     }
 
-    void TaskManagerModule::Abort(Job job) {
+    void TaskManagerModule::Abort(const Job& job) {
         auto &task = job.first;
         auto &thread = job.second;
 
-
         if(task->isRunning()) {
-            Log::Critical() << "Aborting task \"" << task->getName() << "\"." << Log::Flush;
             task->abort();
-            if(thread->joinable()) thread->join();
-            Log::Warning() << "Task \"" << task->getName() << "\" aborted." << Log::Flush;
-        } else if(thread->joinable()) {
-            Log::Error() << "Assertion error: joinable thread should be finished for job \"" << task->getName() << "\".";
+            Log::Info() << "Sent abort signal to task \"" << task->getName() << "\"." << Log::Flush;
+        }
+
+        if(thread->joinable()) {
+            Log::Info() << "Joining thread for task \"" << task->getName() << "\".";
+            thread->join();
         }
 
     }

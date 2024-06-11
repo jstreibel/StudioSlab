@@ -25,7 +25,7 @@ namespace Slab::Math {
     public:
         explicit Socket(const NumericConfig &, Str name = "", int nStepsInterval = 1, Str description = "");
 
-        virtual ~Socket() = default;
+        virtual ~Socket();
 
         std::shared_ptr<Socket> Ptr;
 

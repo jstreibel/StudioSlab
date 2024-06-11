@@ -6,9 +6,14 @@
 #define STUDIOSLAB_THREADS_H
 
 #include <mutex>
+#include <thread>
 
 namespace Slab {
     using Mutex = std::mutex;
+    using Thread = std::thread;
+
+    template<typename T>
+    using Atomic = std::atomic<T>;
 
     template<typename T>
     using LockGuard = std::lock_guard<Mutex>;

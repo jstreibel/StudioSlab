@@ -21,15 +21,18 @@ namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                            const Real phiMin, const Real phiMax, const Str &name, bool showEnergyHistoryAsDensities)
-            : Graphics::BaseMonitor(params, Str("ℝ↦ℝ ") + name), hamiltonian(hamiltonian) {
+            : Graphics::BaseMonitor(params, Str("ℝ↦ℝ ") + name, 10)
+            , hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
         fullHistoryArtist->setAffectGraphRanges(true);
+
         fullHistoryGraph->addArtist(fullHistoryArtist);
         fullHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
         fullHistoryGraph->setAutoReviewGraphRanges(true);
 
         fullSFTHistoryArtist->setLabel("ℱₓ(t,k)");
         fullSFTHistoryArtist->setAffectGraphRanges(true);
+
         fullSFTHistoryGraph->addArtist(fullSFTHistoryArtist);
         fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
         fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");
@@ -40,7 +43,7 @@ namespace Slab::Models::KGRtoR {
 
         addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
-        addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
+        // addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
         addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));
 

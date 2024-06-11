@@ -60,5 +60,9 @@ namespace Slab::Math {
 
     auto Socket::getName() const -> Str { return name; }
 
+    Socket::~Socket() {
+        Log::Info() << "Closed output channel '" << getName() << "'." << Log::Flush;
+    }
+
 
 }

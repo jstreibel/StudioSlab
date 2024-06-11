@@ -42,10 +42,10 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     protected:
-        bool run() override;
+        TaskStatus run() override;
     public:
         explicit NumericTask(Base::NumericalRecipe &recipe)
-                : Task("numeric task"),
+                : Task("Numeric Integration"),
                   numericalRecipe(recipe),
                   stepper(recipe.buildStepper()),
                   outputManager(recipe.buildOutputManager()),

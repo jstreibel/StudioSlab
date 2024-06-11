@@ -7,25 +7,24 @@
 
 #include <Utils/Types.h>
 
-#include <atomic>
+#include <Utils/Threads.h>
 
 namespace Slab::Core {
 
+    enum TaskStatus {
+        NotInitialized,
+        InternalError,
+        Running,
+        Success,
+        Aborted
+    };
+
     class Task {
-    public:
-        enum TaskStatus {
-            NotInitialized,
-            Running,
-            Success,
-            Aborted
-        };
+        Str name;
+        Atomic<TaskStatus> taskStatus = NotInitialized;
 
     protected:
-        Str name;
-        std::atomic<bool> running = false;
-        TaskStatus status = NotInitialized;
-
-        virtual bool run() = 0;
+        virtual TaskStatus run() = 0;
 
     public:
 
