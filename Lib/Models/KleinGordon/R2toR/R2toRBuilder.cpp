@@ -113,7 +113,7 @@ namespace Slab::Math::R2toR {
 
 #if USE_CUDA
         else if (simulationConfig.dev == GPU)
-            return new R2toR::NumericFunction_GPU(N, xLeft, h, h);
+            return New<R2toR::NumericFunction_GPU>(N, xLeft, h);
 #endif
 
         throw "Error while instantiating Field: device not recognized.";

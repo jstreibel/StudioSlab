@@ -4,10 +4,10 @@ set(MAPS_BASE_LIB_NAME ${STUDIOSLAB_MATH_BASE_LIB_NAME}-Maps)
 
 if( STUDIOSLAB_CUDA_SUPPORT )
 	set ( MAPS_CUDA_SOURCES
+			RtoR/Model/FunctionsCollection/SignumFunction.cu
+
             RtoR/Model/Operators/DerivativesGPU.cu
 			RtoR/Model/RtoRNumericFunctionGPU.cu
-
-			RtoR/Model/FunctionsCollection/SignumFunction.cu
 
             R2toR/Model/Operators/DerivativesGPU.cu
 			R2toR/Model/R2toRNumericFunctionGPU.cu
@@ -103,7 +103,7 @@ set ( R2TOR_SOURCES
 
 		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
 		R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
-		R2toR/FourierTransform.h R2toR/FourierTransform.cpp
+        R2toR/Calc/FourierTransform.h R2toR/Calc/FourierTransform.cpp
 
 		R2toR/Calc/R2toRDFT.cpp
 		R2toR/Calc/R2toRDFT.h
@@ -118,6 +118,8 @@ set(MAPS_SOURCES
 		${OTHER_MAPS_SOURCES}
 		${RTOR_SOURCES}
 		${R2TOR_SOURCES}
+		${MAPS_CUDA_SOURCES}
+
 		RtoR/Model/Operators/RtoRLaplacian.cpp
 		RtoR/Model/Operators/RtoRLaplacian.h
 		R2toR/Model/Operators/R2toRLaplacian.cpp

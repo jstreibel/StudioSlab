@@ -1,8 +1,6 @@
 //
 
 #include "RtoRNumericFunction.h"
-#include "Math/Function/NumericFunction.h"
-
 
 //
 // Created by joao on 29/08/2019.
@@ -16,9 +14,13 @@ namespace Slab::Math::RtoR {
                                                  toCopy.dev,
                                                  toCopy.laplacianType) {}
 
-    NumericFunction::NumericFunction(UInt N, Real xMin, Real xMax, device dev, LaplacianType laplacianType)
-            : Base::NumericFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N)}), dev), N(N),
-              xMin(xMin), xMax(xMax), laplacianType(laplacianType) {
+    NumericFunction::NumericFunction(UInt N, Real xMin, Real xMax, Device dev, LaplacianType laplacianType)
+    : Base::NumericFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N)}),
+                                        dev)
+    , N(N)
+    , xMin(xMin)
+    , xMax(xMax)
+    , laplacianType(laplacianType) {
 
     }
 

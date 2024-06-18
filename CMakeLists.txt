@@ -67,20 +67,20 @@ endif()
 
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-	set(CMAKE_CUDA_ARCHITECTURES 61)
+	enable_language( CUDA )
 
-	set(CUDAToolkit_ROOT /opt/nvidia/hpc_sdk/Linux_x86_64/23.9/cuda)
+	set(CMAKE_CUDA_ARCHITECTURES 61)
+	# set(CUDA_TOOLKIT_ROO /usr/local/cuda-12.5)
+	set(CUDA_DIR /usr/local/cuda-12.5)
+	include_directories(${CUDA_DIR}/include/)
+
+	set( CMAKE_CUDA_COMPILER /usr/local/cuda-12.5/bin/nvcc )
 
 	find_package( CUDA )
 	find_package( CUDAToolkit )
-	set( CMAKE_CUDA_COMPILER /opt/nvidia/hpc_sdk/Linux_x86_64/2023/compilers/bin/nvcc )
-	enable_language( CUDA )
-
-	#set(CUDA_DIR /opt/cuda)
-	#include_directories(/opt/cuda/include)
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
-	message(STATUS "StudioSlab CUDA support is ENABLED. CUDA architectures is ${CMAKE_CUDA_ARCHITECTURES}"  )
+	message(STATUS "StudioSlab CUDA support is ENABLED. Architecture(s): ${CMAKE_CUDA_ARCHITECTURES}"  )
 else()
 	add_compile_definitions(USE_CUDA=false)
 	message(STATUS "StudioSlab CUDA support is DISABLED")

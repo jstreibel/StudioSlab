@@ -9,38 +9,31 @@ set ( TOOLSET_SOURCES
 		)
 
 set ( SPACE_SOURCES
-        VectorSpace/Impl/ComplexSpace.cpp VectorSpace/Impl/ComplexSpace.h
+        VectorSpace/Impl/ComplexSpace.cpp 			VectorSpace/Impl/ComplexSpace.h
         VectorSpace/Impl/DiscreteSpace.cpp
         VectorSpace/Impl/DiscreteSpaceCPU.cpp
-        VectorSpace/Space.cpp VectorSpace/Space.h
-        VectorSpace/Measure.cpp VectorSpace/Measure.h
-        VectorSpace/HyperCube/AAHyperCube.cpp VectorSpace/HyperCube/AAHyperCube.h
+        VectorSpace/Space.cpp 						VectorSpace/Space.h
+        VectorSpace/Measure.cpp						VectorSpace/Measure.h
+        VectorSpace/HyperCube/AAHyperCube.cpp		VectorSpace/HyperCube/AAHyperCube.h
 		Function/AllBaseFunctions.h
-        VectorSpace/Impl/PointSet.cpp VectorSpace/Impl/PointSet.h
-        Point.cpp Point.h
-        VectorSpace/DimensionMetaData.cpp
-        VectorSpace/DimensionMetaData.h
-		VectorSpace/Algebra/Algebra.h
-		VectorSpace/Algebra/Operator.h
+        VectorSpace/Impl/PointSet.cpp 				VectorSpace/Impl/PointSet.h
+        Point.cpp 									Point.h
+        VectorSpace/DimensionMetaData.cpp	        VectorSpace/DimensionMetaData.h
         VectorSpace/Algebra/AlgebraTests.cpp
-        Numerics/Odeint/OdeintAlgebra.cpp
-        Numerics/Odeint/OdeintAlgebra.h
+        Numerics/Odeint/OdeintAlgebra.cpp	        Numerics/Odeint/OdeintAlgebra.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-set ( SPACE_SOURCES_CUDA VectorSpace/Impl/DiscreteSpaceGPU.cu)
+	set ( SPACE_SOURCES_CUDA VectorSpace/Impl/DiscreteSpaceGPU.cu)
 endif ()
 
 set ( EXPERIMENTAL_SOURCES
-		Formalism/Category.cpp
-		Formalism/Category.h
+		Formalism/Category.cpp		Formalism/Category.h
 
-		Formalism/Graph.cpp Formalism/Graph.h
-		Formalism/Set.cpp Formalism/Set.h
-		Formalism/MathObject.cpp
-		Formalism/MathObject.h
-		Formalism/Information.cpp
-		Formalism/Information.h
+		Formalism/Graph.cpp 		Formalism/Graph.h
+		Formalism/Set.cpp 			Formalism/Set.h
+		Formalism/MathObject.cpp	Formalism/MathObject.h
+		Formalism/Information.cpp	Formalism/Information.h
 
 		Formalism/Categories.h		Formalism/Categories.cpp
 )
@@ -55,8 +48,7 @@ set ( NUMERICS_SOURCES
 
 		Numerics/SimConfig/NumericConfig.cpp
 		Numerics/SimConfig/DeviceConfig.cpp
-		Numerics/SimConfig/SimulationConfig.cpp
-		Numerics/SimConfig/SimulationConfig.h
+		Numerics/SimConfig/SimulationConfig.cpp		Numerics/SimConfig/SimulationConfig.h
 
 		Numerics/Output/OutputManager.cpp
 

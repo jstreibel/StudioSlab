@@ -17,7 +17,7 @@ namespace Slab::Graphics {
     using namespace Math;
 
     class R2SectionArtist : public Artist {
-        R2toR::Function_ptr function2D;
+        R2toR::Function_constptr function2D;
         Vector<Pair<RtoR2::ParametricCurve_ptr, PlotStyle>> sections;
         Resolution samples=1024;
 
@@ -26,10 +26,14 @@ namespace Slab::Graphics {
         bool draw(const PlottingWindow &window) override;
 
         void setSamples(Resolution);
-        void setFunction(R2toR::Function_ptr);
+        void setFunction(R2toR::Function_constptr);
         auto getFunction() const -> R2toR::Function_constptr;
 
         void addSection(const RtoR2::ParametricCurve_ptr&, PlotStyle);
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
 
     };
 

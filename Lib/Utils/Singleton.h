@@ -28,7 +28,7 @@ namespace Slab {
         Singleton(const Singleton &) = delete;
 
         static T &GetInstance() {
-            if (Singleton::singleInstance == nullptr) singleInstance = new T();
+            if (Singleton::singleInstance == nullptr) singleInstance = new T();;
 
             return *singleInstance;
         }

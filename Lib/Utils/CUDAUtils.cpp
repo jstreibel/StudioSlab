@@ -6,13 +6,18 @@
 
 #include "Types.h"
 
+namespace Slab::CUDA {
+
 #if USE_CUDA
-void cew(cudaError err){
+    void cew(cudaError err) {
 
-    auto errStr = cudaGetErrorString(err);
+        auto errStr = cudaGetErrorString(err);
 
-    auto errMsg = Str("CUDA error ") + Str(errStr);
+        auto errMsg = Str("CUDA error ") + Str(errStr);
 
-    if (err != cudaError::cudaSuccess) throw errMsg;
-}
+        if (err != cudaError::cudaSuccess) throw errMsg;
+    }
+
 #endif
+
+}

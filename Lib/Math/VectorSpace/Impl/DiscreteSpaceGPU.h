@@ -6,7 +6,7 @@
 #define V_SHAPE_DISCRETESPACEGPU_H
 
 #include "DiscreteSpace.h"
-#include <Utils/DeviceConfig.h>
+#include "Utils/TypesGPU.h"
 
 
 namespace Slab::Math {
@@ -14,8 +14,8 @@ namespace Slab::Math {
 #if USE_CUDA || defined(__NVCC__) || defined(__CUDACC__)
 class DiscreteSpaceGPU : public DiscreteSpace {
 public:
-    DiscreteSpaceGPU(DimensionMetaData dim, Real h);
-    ~DiscreteSpaceGPU();
+    explicit DiscreteSpaceGPU(DimensionMetaData dim);
+    ~DiscreteSpaceGPU() override;
 
     auto Add      (const DiscreteSpace &toi) -> DiscreteSpace & override;
     auto Subtract (const DiscreteSpace &toi) -> DiscreteSpace & override;
@@ -23,7 +23,7 @@ public:
 
     auto StoreAddition       (const DiscreteSpace &toi1, const DiscreteSpace &toi2) -> DiscreteSpace & override;
     auto StoreSubtraction    (const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) -> DiscreteSpace & override;
-    auto StoreMultiplication (const DiscreteSpace &aoi1, const Real a)              -> DiscreteSpace & override;
+    auto StoreScalarMultiplication (const DiscreteSpace &, Real)                    -> DiscreteSpace & override;
 
     auto setToValue(const DiscreteSpace &param) -> void override;
 
@@ -51,13 +51,13 @@ public:
     };
     ~DiscreteSpaceGPU() {};
 
-    DiscreteSpace &Add(const DiscreteSpace &toi) override { return *this; };
+    DiscreteSpace &Add(const DiscreteSpace &toi) override { NOT_IMPLEMENTED_CLASS_METHOD };
 
-    DiscreteSpace &StoreAddition(const DiscreteSpace &toi1, const DiscreteSpace &toi2) override { return *this; };
+    DiscreteSpace &StoreAddition(const DiscreteSpace &toi1, const DiscreteSpace &toi2) override { NOT_IMPLEMENTED_CLASS_METHOD };
 
-    DiscreteSpace &StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) override { return *this; };
+    DiscreteSpace &StoreSubtraction(const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) override { NOT_IMPLEMENTED_CLASS_METHOD };
 
-    DiscreteSpace &Multiply(floatt a) override { return *this; };
+    DiscreteSpace &Multiply(floatt a) override { NOT_IMPLEMENTED_CLASS_METHOD };
 };
 #endif
 

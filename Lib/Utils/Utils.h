@@ -16,7 +16,7 @@ TO_TYPE NAME = static_cast<TO_TYPE>(OBJECT);
 #else
 #define SlabCast(NAME, TO_TYPE, OBJECT) \
 TO_TYPE NAME = dynamic_cast<TO_TYPE>(OBJECT); \
-if(&NAME == nullptr) throw "Bad cast.";
+if(&NAME == nullptr) throw Exception("Bad cast.");
 #endif
 
 #if USE_CUDA

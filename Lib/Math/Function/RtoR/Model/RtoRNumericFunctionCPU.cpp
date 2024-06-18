@@ -19,7 +19,7 @@ namespace Slab::Math::RtoR {
 
 
     NumericFunction_CPU::NumericFunction_CPU(const NumericFunction_CPU &toCopy)
-            : NumericFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.laplacianType) {
+            : NumericFunction(toCopy.N, toCopy.xMin, toCopy.xMax, Device::CPU, toCopy.laplacianType) {
 
         auto &toCopyX = toCopy.getSpace().getHostData(true);
 
@@ -28,7 +28,7 @@ namespace Slab::Math::RtoR {
     }
 
     NumericFunction_CPU::NumericFunction_CPU(const NumericFunction &toCopy)
-            : NumericFunction(toCopy.N, toCopy.xMin, toCopy.xMax, device::CPU, toCopy.getLaplacianType()) {
+            : NumericFunction(toCopy.N, toCopy.xMin, toCopy.xMax, Device::CPU, toCopy.getLaplacianType()) {
 
         auto &toCopyX = toCopy.getSpace().getHostData(true);
 
@@ -37,7 +37,7 @@ namespace Slab::Math::RtoR {
     }
 
     RtoR::NumericFunction_CPU::NumericFunction_CPU(UInt N, Real xLeft, Real xRight, LaplacianType laplacianType)
-            : NumericFunction(N, xLeft, xRight, device::CPU, laplacianType) {
+            : NumericFunction(N, xLeft, xRight, Device::CPU, laplacianType) {
 
     }
 

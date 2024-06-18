@@ -81,10 +81,10 @@ namespace Slab::Core {
                 p->addToOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix &same = InterfaceManager::getInstance().getParameter(p->getCLName());
+                fix same = InterfaceManager::getInstance().getParameter(p->getCLName());
                 Log::Error() << "Couldn't add CLI option '" << p->getFullCLName() << "' (" << p->getDescription()
                              << "): option already exists as '"
-                             << same.getFullCLName() << "' (" << same.getDescription() << ")." << Log::Flush;
+                             << same->getFullCLName() << "' (" << same->getDescription() << ")." << Log::Flush;
                 throw e;
             }
     }

@@ -7,7 +7,7 @@
 #include <memory>
 #include "Models/LangevinKleinGordon/LangevinKGSolver.h"
 #include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
-#include "Models/KleinGordon/RtoR/Graphics/RtoRStatisticalMonitor.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
 

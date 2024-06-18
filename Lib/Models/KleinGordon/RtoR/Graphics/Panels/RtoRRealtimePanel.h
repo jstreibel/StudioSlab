@@ -15,13 +15,15 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
-#include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
+#include "Graphics/ImGui/ImGuiWindow.h"
 
 namespace Slab::Models::KGRtoR {
 
     class RealtimePanel : public RtoRPanel {
         void updateEnergyData();
 
+        Graphics::ImGuiWindow imGuiWindow;
     protected:
         Graphics::PlottingWindow mFieldsGraph;
         Graphics::Artist_ptr vArtist;

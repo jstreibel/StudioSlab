@@ -143,17 +143,18 @@ namespace Slab::Core {
         return values;
     }
 
-    auto InterfaceManager::getParameter(const Str &name) const -> const Parameter & {
+    auto InterfaceManager::getParameter(const Str &name) const -> Pointer<const Parameter> {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters) {
-                if (name == parameter->getCLName())
-                    return *parameter;
+                if (name == parameter->getCLName() || name == parameter->getCLName(true))
+                    return parameter;
             }
         }
 
-        Parameter *nullParam = nullptr;
-        return *nullParam;
+        Log::Warning() << "InterfaceManager could not find parameter '" << name << "'." << Log::Flush;
+
+        return nullptr;
     }
 
 //auto InterfaceManager::NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr {

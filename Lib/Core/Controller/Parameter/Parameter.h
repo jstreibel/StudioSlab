@@ -28,6 +28,9 @@ namespace Slab::Core {
 
         virtual auto getValueVoid() const -> const void * = 0;
 
+        template<typename T>
+        const T& getValueAs() const { return *static_cast<const T*>(getValueVoid()); }
+
         auto getFullCLName() const -> Str;
 
         auto getCLName(bool longNameIfPresent = false) const -> Str;

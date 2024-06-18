@@ -18,24 +18,24 @@
 #include "Math/Numerics/Output/Format/ResolutionReductionFilter.h"
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
-
+#include "Math/Function/RtoR/Model/Operators/RtoRLaplacian.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionGPU.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Numerics/Method/RungeKutta4.h"
 
 #include "Output/SimHistory.h"
 #include "Output/SnapshotOutput.h"
 #include "Output/DFTSnapshotOutput.h"
 
 #include "Graphics/RtoRMonitor.h"
-#include "Math/Numerics/Method/RungeKutta4.h"
-#include "Math/Function/RtoR/Model/Operators/RtoRLaplacian.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
 #define SIGNUM_GORDON_POTENTIAL 2
 
-#define DONT_REGISTER_IMMEDIATELY false
+#define DONT_REGISTER_IMMEDIATELY false // line not to be touched
 
 
 namespace Slab::Models::KGRtoR {
@@ -172,9 +172,9 @@ namespace Slab::Models::KGRtoR {
         if (simulationConfig.dev == CPU)
             return New<RtoR::NumericFunction_CPU>(N, xLeft, xRight, laplacianType);
 
-#if USE_CUDA
+#if USE_CUDA == true
         else if(simulationConfig.dev==GPU)
-            return new RtoR::NumericFunctionGPU(N, xLeft, xRight, laplacianType);
+            return New<RtoR::NumericFunctionGPU>(N, xLeft, xRight, laplacianType);
 #endif
 
         throw Exception("Error while instantiating Field: device not recognized.");
@@ -191,12 +191,13 @@ namespace Slab::Models::KGRtoR {
         auto dphi = getBoundary();
 
 #if USE_CUDA == true
+        /*
         if(simulationConfig.dev == device::GPU) {
-            return new RtoR::SystemGordonGPU(simulationConfig.numericConfig, *dphi, *potential);
+            return New<RtoR::SystemGordonGPU>(simulationConfig.numericConfig, *dphi, *potential);
         }
+         */
 #endif
         auto &params = simulationConfig.numericConfig;
-
         auto Laplacian = New <Math::RtoR::RtoRLaplacian> ();
 
         auto solver = New<KGRtoRSolver>(params, dphi, Laplacian, potential, nonHomogenous);

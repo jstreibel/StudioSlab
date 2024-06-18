@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORSCENEPANEL_H
 #define STUDIOSLAB_RTORSCENEPANEL_H
 
-#include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 #include "Graphics/Graph3D/Scene3DWindow.h"
 
 namespace Slab::Models::KGRtoR {

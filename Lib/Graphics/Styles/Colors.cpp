@@ -84,5 +84,9 @@ namespace Slab::Graphics {
         return reinterpret_cast<const float*>(this);
     }
 
+    float *Color::asFloat4fv() {
+        return reinterpret_cast<float*>(this);
+    }
+
 
 }

@@ -26,7 +26,7 @@ namespace Slab::Math {
     };
 
 
-    auto DeviceConfig::getDevice() const -> device {
+    auto DeviceConfig::getDevice() const -> Device {
         return dev;
     }
 
@@ -54,11 +54,11 @@ namespace Slab::Math {
             int devCount;
             cudaError err;
 
-            cew(cudaGetDeviceCount(&devCount));
+            Slab::CUDA::cew(cudaGetDeviceCount(&devCount));
             cudaDeviceProp props;
             cudaGetDeviceProperties(&props, (int)dev_n);
 
-            cew(cudaSetDevice(dev_n - 1));
+            Slab::CUDA::cew(cudaSetDevice(dev_n - 1));
 
             Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << Log::Flush;
 

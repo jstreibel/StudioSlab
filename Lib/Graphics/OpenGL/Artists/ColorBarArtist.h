@@ -43,7 +43,7 @@ namespace Slab::Graphics::OpenGL {
 
         void updateTexture(int samples=1024);
     public:
-        explicit ColorBarArtist(RectI loc);
+        explicit ColorBarArtist(RectI loc={50,150, 50, 750});
 
         void setLocation(RectI loc);
         void setColorMap(const ColorMap& colorMap);

@@ -35,7 +35,9 @@ namespace Modes {
         mSpaceFourierModesGraph.addPointSet(modes,
             Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
             "A(ω)", DONT_AFFECT_RANGES);
+            */
 
+        /*
         if(CUSTOM_TICKS) {
             Graphics::AxisArtist::Ticks ticks;
             auto unit = mSpaceFourierModesGraph.getAxisArtist().getHorizontalUnit();
@@ -44,7 +46,6 @@ namespace Modes {
                 ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
             }
             this->mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisTicks(ticks);
-        }
-         */
+        }*/
     }
 } // Modes

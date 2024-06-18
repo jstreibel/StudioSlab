@@ -125,7 +125,6 @@ namespace Slab::Graphics {
     bool BaseMonitor::notifyRender() {
         assert(lastPacket.hasValidData());
 
-
         {
             writeStats();
             WindowPanel::notifyRender(); // draw();

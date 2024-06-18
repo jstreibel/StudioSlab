@@ -54,7 +54,7 @@ namespace Slab {
 
         Core::BackendManager::LoadModule(Core::RealTimeAnimation);
 
-        Log::Info() << "Created PlottingWindow '" << title << "'" << Log::Flush;
+        Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 
         addArtist(Slab::DummyPointer(axisArtist), 100);
         addArtist(Slab::DummyPointer(artistXHair), 10000);
@@ -74,6 +74,8 @@ namespace Slab {
         }
 
         content.emplace(zOrder, pArtist);
+
+        Log::Note() << "PlottingWindow '" << this->title << "' added artist '" << pArtist->getLabel() << "'." << Log::Flush;
     }
 
     bool Graphics::PlottingWindow::removeArtist(const Graphics::Artist_ptr &pArtist) {

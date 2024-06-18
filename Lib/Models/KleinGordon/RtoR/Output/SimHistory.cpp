@@ -8,10 +8,6 @@
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
-#if USE_CUDA
-#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
-#endif
-
 #define StepsInterval ((int) (simConfig.numericConfig.getn() / N_t))
 
 namespace Slab::Models::KGRtoR {
@@ -33,10 +29,14 @@ namespace Slab::Models::KGRtoR {
 #if USE_CUDA
         if(dataIsOnGPU)
         {
-            fieldData = new R2toR::NumericFunction_GPU(spaceResolution,
+            /* fieldData = new R2toR::NumericFunction_GPU(spaceResolution,
                                                         timeResolution,
                                                         params.getxMin(),
                                                         0.0, hp);
+                                                        */
+
+            NOT_IMPLEMENTED
+
         } else
 #endif
         {

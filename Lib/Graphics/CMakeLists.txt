@@ -121,6 +121,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/LegacyGL/SceneSetup.cpp
 		Graph/Artists/PlotRegion2D.cpp
 		Graph/Artists/PlotRegion2D.h
+        ImGui/ImGuiWindow.cpp
+        ImGui/ImGuiWindow.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

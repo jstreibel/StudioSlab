@@ -15,7 +15,7 @@
 namespace Slab::Math::R2toR {
 
     NumericFunction_CPU::NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy)
-        : NumericFunction(N, M, xMin, yMin, hx, hy, device::CPU) {
+        : NumericFunction(N, M, xMin, yMin, hx, hy, Device::CPU) {
 
     }
 

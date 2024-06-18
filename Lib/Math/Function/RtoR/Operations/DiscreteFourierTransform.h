@@ -8,6 +8,7 @@
 #include <memory>
 #include <utility>
 
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 
 namespace Slab::Math::RtoR {

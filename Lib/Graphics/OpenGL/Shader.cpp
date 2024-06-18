@@ -87,7 +87,7 @@ namespace Slab::Graphics::OpenGL {
 
         handle = ShaderLoader::Load(vertFilename, fragFilename);
 
-        Log::Info() << "Shader files '" << vertFilename
+        Log::Note() << "Shader files '" << vertFilename
                                 << "' and '" << fragFilename << "' loaded and compiled." << Log::Flush;
         auto &log = Log::Debug() << "Are active in this shader:";
 

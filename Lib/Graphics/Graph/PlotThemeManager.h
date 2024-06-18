@@ -22,6 +22,10 @@ namespace Slab::Graphics {
         static GraphTheme_ptr GetCurrent();
 
         bool notifyRender() override;
+
+        static Str GetDefault();
+        static bool SetTheme(const Str& theme);
+        static StrVector GetThemes();
     };
 
 } // Graphics

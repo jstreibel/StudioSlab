@@ -145,24 +145,35 @@ namespace Slab {
             glLineStipple(style.stippleFactor, style.stipplePattern);
         } else glEnable(GL_LINE_SMOOTH);
 
-        glBegin(GL_LINE_STRIP);
+        GLenum mode = GL_LINE_STRIP;
+        if(style.primitive==Point || style.primitive==VerticalLines) {
+            mode = GL_POINTS;
+            glPointSize(10*style.thickness);
+            glLineWidth(style.thickness);
+            glEnable(GL_POINT_SMOOTH);
+            glDisable(GL_LINE_STIPPLE);
+        }
+
+        if(style.primitive==VerticalLines) {
+            glBegin(GL_LINES);
+            {
+                for (Real s = sMin; s <= sMax; s += ds) {
+                    fix y0 = 0.0;
+                    fix y1 = scale * func(section(s));
+                    glVertex2d(s, y0);
+                    glVertex2d(s, y1);
+                }
+            }
+            glEnd();
+        }
+
+        glBegin(mode);
         {
             for (Real s = sMin; s <= sMax; s += ds)
                 glVertex2d(s, scale * func(section(s)));
         }
         glEnd();
 
-        // ****************** TESTE *********************
-        //glBegin(GL_LINES);
-        //{
-        //    const Real H= 20;
-        //    glVertex2d(0, -H);
-        //    glVertex2d(0,  H);
-//
-        //    glVertex2d(   1, -H);
-        //    glVertex2d(   1,  H);
-        //}
-        //glEnd();
     }
 
     void

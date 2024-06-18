@@ -42,7 +42,8 @@ namespace Slab::Models::KGRtoR {
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor",
                                   "realtime monitoring of simulation state")
             , mFieldsGraph(params.getxMin(), params.getxMax(), -1, 1, "Fields")
-            , mEnergyGraph("Energy") {
+            , mEnergyGraph("Energy")
+            , imGuiWindow(DummyPointer(mEnergyGraph)) {
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
         {
@@ -94,6 +95,8 @@ namespace Slab::Models::KGRtoR {
         int errorCount = 0;
 
         CHECK_GL_ERRORS(errorCount++)
+
+        // imGuiWindow.draw();
 
         // ************************ RT MONITOR**********************************
         guiWindow.begin();

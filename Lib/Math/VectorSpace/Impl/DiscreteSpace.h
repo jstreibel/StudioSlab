@@ -18,6 +18,8 @@ namespace Slab::Math {
 
     class DiscreteSpaceCPU;
 
+    class DeviceVector;
+
     class DiscreteSpace : public NumericAlgebra<DiscreteSpace> {
     public:
         using NumericAlgebra<DiscreteSpace>::operator=;

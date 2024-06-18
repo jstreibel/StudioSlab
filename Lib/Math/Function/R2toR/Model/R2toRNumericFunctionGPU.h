@@ -15,19 +15,19 @@ namespace Slab::Math::R2toR {
         NumericFunction_GPU *helper= nullptr;
 
     public:
-        NumericFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real h);
+        NumericFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
         NumericFunction_GPU(UInt N, Real sMin, Real h);
         ~NumericFunction_GPU() override;
 
         auto Laplacian        (NumericFunction &outFunc)            const -> NumericFunction & override;
 
-        auto Clone()                                                 const -> Type             * override;
-        auto CloneWithSize    (UInt N)                             const -> DiscrBase        * override;
+        auto Clone()                                                 const -> Pointer<Type>     override;
+        auto CloneWithSize    (UInt N)                             const -> Pointer<DiscrBase>  override;
 
         auto Set              (const MyBase &func)                         -> NumericFunction & override;
-        auto SetArb           (const NumericFunctionBase &func)           -> NumericFunction & override;
+        auto SetArb           (const NumericFunctionBase &func)            -> NumericFunction & override;
 
-        auto Apply(const FuncBase &func, DiscrBase &out)             const -> DiscrBase        & override;
+        auto Apply(const FuncBase &func, DiscrBase &out)             const -> DiscrBase       & override;
 
         auto Add              (const DiscrBase & toi)                      -> NumericFunction & override;
         auto StoreAddition    (const DiscrBase &, const DiscrBase&)        -> NumericFunction & override;

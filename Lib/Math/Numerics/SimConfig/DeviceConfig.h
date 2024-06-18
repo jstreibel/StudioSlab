@@ -2,7 +2,7 @@
 #define DEVICE_H
 
 #include "Utils/DeviceConfig.h"
-
+#include "Utils/TypesGPU.h"
 #include "Core/Controller/Interface/InterfaceOwner.h"
 #include "Core/Controller/Parameter/CommonParameters.h"
 
@@ -18,7 +18,7 @@ namespace Slab::Math {
 
     private:
 
-        device dev = device::CPU;
+        Device dev = Device::CPU;
         IntegerParameter::Ptr deviceChoice = IntegerParameter::New(1, "dev", "Device on which to run simulation.\n"
                                                                              "\t0: CPU \n"
                                                                              "\t1: GPU 0 \n"
@@ -35,7 +35,7 @@ namespace Slab::Math {
 
         bool operator!=(const int &RHS) const { return this->dev != RHS; }
 
-        auto getDevice() const -> device;
+        auto getDevice() const -> Device;
 
 
     };

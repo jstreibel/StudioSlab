@@ -28,6 +28,7 @@ namespace Slab::Graphics {
 
         std::array<Real32, 4> array() const;
         const float* asFloat4fv() const;
+        float* asFloat4fv();
 
         Color rgb() const;
 

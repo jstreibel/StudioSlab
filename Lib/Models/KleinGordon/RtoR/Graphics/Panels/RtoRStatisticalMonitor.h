@@ -16,7 +16,7 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-#include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h"
 #include "Utils/Threads.h"
 

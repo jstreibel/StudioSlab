@@ -18,16 +18,16 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
 		KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.cpp
 		KleinGordon/RtoR/Graphics/RtoRMonitor.cpp
-		KleinGordon/RtoR/Graphics/RtoRStatisticalMonitor.cpp
-		KleinGordon/RtoR/Graphics/RtoRStatisticalMonitor.h
-		KleinGordon/RtoR/Graphics/RtoRRealtimePanel.cpp
-		KleinGordon/RtoR/Graphics/RtoRRealtimePanel.h
+		KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.cpp
+		KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h
+		KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.cpp
+		KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h
 		KleinGordon/RtoR/Graphics/RtoRPanel.cpp
 		KleinGordon/RtoR/Graphics/RtoRPanel.h
-		KleinGordon/RtoR/Graphics/RtoRFourierPanel.cpp
-		KleinGordon/RtoR/Graphics/RtoRFourierPanel.h
-		KleinGordon/RtoR/Graphics/CorrelationsPanel.cpp
-		KleinGordon/RtoR/Graphics/CorrelationsPanel.h
+		KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.cpp
+		KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.h
+		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.cpp
+		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h
 
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
@@ -37,8 +37,10 @@ set ( KG_SOURCES
         LangevinKleinGordon/LangevinKGSolver.h	        LangevinKleinGordon/LangevinKGSolver.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
-        KleinGordon/RtoR/Graphics/RtoRScenePanel.cpp
-        KleinGordon/RtoR/Graphics/RtoRScenePanel.h
+		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.cpp
+		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h
+		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.cpp
+		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h
 )
 
 set ( XY_SOURCES
@@ -51,7 +53,7 @@ set ( XY_SOURCES
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
-	set ( KG_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu)
+	# set ( KG_SOURCES_CUDA KleinGordon/RtoR/KG-RtoRSystemGordonGPU.cu)
 endif ()
 
 

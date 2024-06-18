@@ -5,6 +5,7 @@
 #ifndef V_SHAPE_RTORFUNCTIONARBITRARYCPU_H
 #define V_SHAPE_RTORFUNCTIONARBITRARYCPU_H
 
+#include "RtoRFunction.h"
 #include "RtoRNumericFunction.h"
 
 namespace Slab::Math::RtoR {

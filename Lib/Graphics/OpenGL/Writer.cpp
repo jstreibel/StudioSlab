@@ -26,7 +26,10 @@ namespace Slab {
     Graphics::Writer::Writer(const Str &fontFile, float ptSize)
             : vertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
               program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
-        atlas = texture_atlas_new(512, 512, 1);
+
+        auto factor = ptSize/10;
+
+        atlas = texture_atlas_new(factor*512, factor*512, 1);
         font = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
 
         Core::Log::Critical() << "Writer being instantiated. Will start generating atlas now." << Core::Log::Flush;
@@ -58,7 +61,13 @@ namespace Slab {
 
         // "delete vertexBuffer;"
 
-        texture_font_delete(font);
+        Str name = font->filename;
+        try {
+            texture_font_delete(font); // TODO: problematik
+        } catch(...) {
+            Core::Log::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::Log::Flush;
+        }
+        font = nullptr;
     }
 
     void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Color color) {
@@ -71,7 +80,13 @@ namespace Slab {
             auto code_point = text + i;
 
             texture_glyph_t *glyph = texture_font_get_glyph(font, code_point);
-            if (glyph != nullptr) {
+
+            if(glyph == nullptr){
+                Core::Log::Error() << "Graphics::Writer could not load glyph '" << code_point << "' "
+                                   << "for font '" << font->filename << "'." << Core::Log::Flush;
+            }
+            else // if (glyph != nullptr)
+            {
                 float kerning = 0.0f;
                 if (i > 0)
                     kerning = texture_glyph_get_kerning(glyph, text + i - 1);

@@ -7,7 +7,7 @@
 
 #include <memory>
 #include <cstdint>
-#include <assert.h>
+#include <cassert>
 
 #ifndef __CUDACC__
 

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORFOURIERPANEL_H
 #define STUDIOSLAB_RTORFOURIERPANEL_H
 
-#include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"

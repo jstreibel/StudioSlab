@@ -36,7 +36,7 @@ namespace Slab::Core {
 
         auto getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>>;
 
-        auto getParameter(const Str &name) const -> const Parameter &;
+        auto getParameter(const Str &name) const -> Pointer<const Parameter>;
 
     };
 

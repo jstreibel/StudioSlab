@@ -44,8 +44,6 @@ namespace Slab::Graphics {
 
     typedef Slab::Pointer <PlottingTheme> GraphTheme_ptr;
 
-    GraphTheme_ptr NewTheme(const PlottingTheme &scheme);
-
 }
 
 #endif //STUDIOSLAB_PLOTTINGTHEME_H

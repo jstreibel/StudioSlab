@@ -9,7 +9,11 @@
 
 #include <cuda_runtime.h>
 
-void cew(cudaError err);
+namespace Slab::CUDA {
+
+    void cew(cudaError err);
+
+}
 
 #endif // USE_CUDA
 

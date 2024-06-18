@@ -35,6 +35,10 @@ namespace Slab::Math {
 
         Real x, y;
 
+        Real2D operator-(const Real2D &p) const {
+            return {x - p.x, y - p.y};
+        }
+
         Real2D &operator-(const Real2D &p) {
             x -= p.x;
             y -= p.y;

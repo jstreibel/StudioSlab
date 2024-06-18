@@ -5,10 +5,14 @@
 #include "PlotThemeManager.h"
 
 #include <memory>
+
+#include "Utils/Utils.h"
+
 #include "Core/Tools/Resources.h"
 
 #include "3rdParty/imgui/imgui.h"
 #include "Core/Backend/BackendManager.h"
+#include "Core/Tools/Log.h"
 
 #define FILLED true
 #define NOT_FILLED false
@@ -27,40 +31,68 @@ namespace Slab::Graphics {
     GraphTheme_ptr GetSchemeDark();
     GraphTheme_ptr GetSchemeDark2();
     GraphTheme_ptr GetSchemeHacker();
+    GraphTheme_ptr GetSchemePrintSmall();
     GraphTheme_ptr GetSchemePrint();
     GraphTheme_ptr GetSchemeLight();
     GraphTheme_ptr GetSchemeElegant();
 
-    std::map<Str, GraphTheme_ptr(*)()> stylesInitializers;
+    std::map<Str, GraphTheme_ptr(*)()> stylesInitializers = {{"Dark",       GetSchemeDark},
+                                                             {"Dark2",      GetSchemeDark2},
+                                                             {"Hacker",     GetSchemeHacker},
+                                                             {"Print",      GetSchemePrint},
+                                                             {"PrintSmall", GetSchemePrintSmall},
+                                                             {"Light",      GetSchemeLight},
+                                                             {"Elegant",    GetSchemeElegant}};
     std::map<Str, GraphTheme_ptr> loadedStyles;
 
     Str current;
 
-    GraphTheme_ptr LoadStyle(Str style) {
-        return loadedStyles[style] = stylesInitializers[style]();
+    Str PlotThemeManager::GetDefault() { return "Elegant"; }
+
+    GraphTheme_ptr LoadStyle(const Str& style) {
+        auto sty = loadedStyles[style];
+        if(sty == nullptr) {
+            auto initializer = stylesInitializers[style];
+
+            if(initializer != nullptr) {
+                sty = initializer();
+                loadedStyles[style] = sty;
+                Core::Log::Info() << "Loaded plotting theme '" << style << "'." << Core::Log::Flush;
+            } else {
+                auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
+                Str available_themes;
+                for(auto &theme : themes)
+                    available_themes += Str("'") + theme + "', ";
+                Core::Log::Warning() << "Trying to set plotting theme to '" << style
+                    << "', but theme couldn't be found. Available themes are: " << available_themes << Core::Log::Flush;
+
+                current = PlotThemeManager::GetDefault();
+            }
+        }
+
+        if(sty != nullptr && style != current) {
+            current = style;
+        }
+
+        return sty;
     }
 
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
-        stylesInitializers["Dark"]      = GetSchemeDark;
-        stylesInitializers["Dark2"]     = GetSchemeDark2;
-        stylesInitializers["Hacker"]    = GetSchemeHacker;
-        stylesInitializers["Print"]     = GetSchemePrint;
-        stylesInitializers["Light"]     = GetSchemeLight;
-        stylesInitializers["Elegant"]   = GetSchemeElegant;
-
-        current = "Dark";
-        // current = "Light";
-        // current = "Print";
-
         Core::BackendManager::GetGUIBackend().addEventListener(Slab::DummyPointer(*this));;
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {
-        PlotThemeManager::GetInstance();
+        // initialize, if not yet. This only serves so that theme choice shows up in main menu bar.
+        GetInstance();
+
+        if(current.empty()) {
+            current = GetDefault();
+        }
 
         auto style = loadedStyles[current];
-        if(style == nullptr)
+        if(style == nullptr) {
             style = LoadStyle(current);
+        }
 
         return style;
     }
@@ -88,6 +120,28 @@ namespace Slab::Graphics {
         return GUIEventListener::notifyRender();
     }
 
+    bool PlotThemeManager::SetTheme(const Str& theme) {
+        if(stylesInitializers[theme] == nullptr) {
+            Core::Log::Warning() << "While trying to set theme to '" << theme << "'. "
+                                 << "Falling back to '" << GetDefault() << "'." << Core::Log::Flush;
+
+            current = GetDefault();
+
+            return false;
+        } else {
+            current = theme;
+        }
+
+        return true;
+    }
+
+    StrVector PlotThemeManager::GetThemes() {
+        StrVector vecky;
+        for(auto &a : stylesInitializers)
+            vecky.push_back(a.first);
+
+        return vecky;
+    }
 
     GraphTheme_ptr GetSchemeDark () {
         Color graphTitleColor   = {1   ,1   ,1   ,1};
@@ -122,7 +176,7 @@ namespace Slab::Graphics {
 
         Graphics::clearColor = {};
 
-        return NewTheme(
+        return New<PlottingTheme>(PlottingTheme
                 {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme,
                  writer, writer, graphs});
 
@@ -151,14 +205,15 @@ namespace Slab::Graphics {
         auto XHairColor = axisColor;
         XHairColor.a = .89;
         auto XHairStyle = PlotStyle(axisColor);
-        XHairStyle.primitive = Dashed;
+        //XHairStyle.primitive = Dashed;
+        XHairStyle.primitive = Lines;
         XHairStyle.thickness = 1;
 
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 20);
-        return NewTheme(
+        return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
     }
@@ -186,14 +241,15 @@ namespace Slab::Graphics {
         auto XHairColor = axisColor;
         XHairColor.a = .89;
         auto XHairStyle = PlotStyle(axisColor);
-        XHairStyle.primitive = Dashed;
+        //XHairStyle.primitive = Dashed;
+        XHairStyle.primitive = Lines;
         XHairStyle.thickness = 1;
 
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
-        return NewTheme(
+        return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
     }
@@ -224,7 +280,8 @@ namespace Slab::Graphics {
         auto XHairColor = axisColor;
         XHairColor.a = .89;
         auto XHairStyle = PlotStyle(axisColor);
-        XHairStyle.primitive = Dashed;
+        //XHairStyle.primitive = Dashed;
+        XHairStyle.primitive = Lines;
         XHairStyle.thickness = 2;
         XHairStyle.filled = false;
 
@@ -232,9 +289,19 @@ namespace Slab::Graphics {
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 40);
-        return NewTheme(
+        return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
+    }
+
+    GraphTheme_ptr GetSchemePrintSmall() {
+        auto scheme = GetSchemePrint();
+
+        auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 70);
+        scheme->ticksWriter = writer;
+        scheme->labelsWriter = writer;
+
+        return scheme;
     }
 
     GraphTheme_ptr GetSchemeLight () {
@@ -259,7 +326,8 @@ namespace Slab::Graphics {
         auto XHairColor = axisColor;
         XHairColor.a = .89;
         auto XHairStyle = PlotStyle(axisColor);
-        XHairStyle.primitive = Dashed;
+        //XHairStyle.primitive = Dashed;
+        XHairStyle.primitive = Lines;
         XHairStyle.thickness = 1;
         XHairStyle.filled = false;
 
@@ -267,7 +335,8 @@ namespace Slab::Graphics {
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
-        return NewTheme(
+
+        return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
                  writer, graphs});
     }
@@ -310,9 +379,11 @@ namespace Slab::Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto labelsWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(19), 24);
+        // auto labelsWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(19), 24);
         auto ticksWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(18), 24);
-        return NewTheme({background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme,
+        auto& labelsWriter = ticksWriter;
+
+        return New<PlottingTheme>(PlottingTheme{background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme,
                          labelsWriter, ticksWriter, graphs});
     }
 

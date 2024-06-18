@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_CORRELATIONSPANEL_H
 #define STUDIOSLAB_CORRELATIONSPANEL_H
 
-#include "RtoRPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 

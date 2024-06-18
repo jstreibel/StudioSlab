@@ -6,11 +6,12 @@
 #include "RtoRMonitor.h"
 
 #include "Models/KleinGordon/KGSolver.h"
-#include "RtoRRealtimePanel.h"
-#include "RtoRFourierPanel.h"
-#include "CorrelationsPanel.h"
-#include "RtoRScenePanel.h"
-#include "RtoRStatisticalMonitor.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h"
+#include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h"
 
 
 // Ok to touch these:
@@ -43,6 +44,7 @@ namespace Slab::Models::KGRtoR {
 
         addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
+        addDataView(Slab::New<RtoRHistoryPanel>(params, guiWindow, hamiltonian));
         // addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
         addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));

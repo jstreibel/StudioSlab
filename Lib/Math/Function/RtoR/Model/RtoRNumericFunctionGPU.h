@@ -8,6 +8,7 @@
 #include "RtoRNumericFunction.h"
 
 namespace Slab::Math::RtoR {
+
 #if USE_CUDA == true
     class NumericFunctionGPU : public NumericFunction {
     public:
@@ -15,14 +16,15 @@ namespace Slab::Math::RtoR {
 
         NumericFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType);
 
-        auto Clone() const -> FunctionT * override;
+        auto Clone() const -> Pointer<FunctionT> override;
 
         /*! This function operates on the host and then transfers information to device. Therefore, it is
          * not efficient. */
-        Core::NumericFunction<Real,Real> &Apply(const FunctionT &func,
-                                                 Core::NumericFunction<Real, Real> &out) const override;
-        Core::NumericFunction<Real, Real> &Set(const MyBase &func) override;
+        Base::NumericFunction<Real,Real> &Apply(const FunctionT &func,
+                                                Base::NumericFunction<Real, Real> &out) const override;
+        Base::NumericFunction<Real, Real> &Set(const MyBase &func) override;
         NumericFunction &Laplacian(NumericFunction &outFunc) const override;
+
     };
 #endif
 }

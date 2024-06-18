@@ -22,7 +22,7 @@ namespace Slab::Math::Base {
         DiscreteSpace *space;
 
     protected:
-        device dev;
+        Device dev;
 
     public:
         using NumericAlgebra<Base::NumericFunction<InCategory, Real>>::operator=;
@@ -32,14 +32,14 @@ namespace Slab::Math::Base {
 
         Str myName() const override { return "general discrete"; }
 
-        NumericFunction(DimensionMetaData dim, device dev) : MyBase(nullptr, true), dev(dev) {
+        NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), dev(dev) {
             switch(dev){
-                case device::CPU:
+                case Device::CPU:
                     space = new DiscreteSpaceCPU(dim);
                     break;
 #if USE_CUDA
                 case device::GPU:
-                    space = new DiscreteSpaceGPU(dim, h);
+                    space = new DiscreteSpaceGPU(dim);
                     break;
 #endif
                 default:

@@ -32,6 +32,7 @@ namespace Slab::Graphics {
         void setBufferText(const Str &text, Point2D penLocation, Color color=White);
 
     public:
+        Writer() = delete;
         Writer(const Str &fontFile, float ptSize);
         virtual ~Writer();
 

@@ -18,6 +18,8 @@ namespace Slab::Models {
 
     class KGBuilder : public Base::NumericalRecipe {
     protected:
+        StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
+
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
         BoolParameter    takeDFTSnapshot                = BoolParameter(false,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
 

@@ -22,7 +22,7 @@ namespace Slab::Graphics {
             /* 1.00 */Color::FromBytes(40, 64, 139)
         },
         Color::FromBytes(255,255,255),
-        Color::FromBytes(0,0,0)
+        Color::FromBytes(.25*40, .25*64, .25*139)
     };
 
     auto BrBG = ColorMap(

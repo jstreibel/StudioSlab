@@ -35,21 +35,21 @@ namespace Modes {
 
         fix L = this->getNumericParams().getL();
 
-        fix A = this->A.getValue();
-        fix dk = 2*M_PI/L;
-        fix k = dk*this->k.getValue();
+        fix A_0 = this->A.getValue();
+        fix dk = M_PI/L;
+        fix k_0 = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
 
-        if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A,  ω);
+        if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A_0,  ω);
         if(*BCSelection == 1) {
-            fix A2 = A * 0.0;
+            fix A2 = A_0 * 0.0;
 
-            auto func1 = RtoR::Sine(A, k);
-            auto func2 = RtoR::Sine(A2, 2*k);
+            auto func1 = RtoR::Sine(A_0, k_0);
+            auto func2 = RtoR::Sine(A2, 2*k_0);
             auto f_0 = New <RtoR::FunctionSummable> (func1, func2);
 
-            auto ddtfunc1 = RtoR::Cosine(A*ω, k);
-            auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k);
+            auto ddtfunc1 = RtoR::Cosine(A*ω, k_0);
+            auto ddtfunc2 = RtoR::Cosine(A2*(2*ω), 2*k_0);
             auto ddtf_0 = New <RtoR::FunctionSummable> (ddtfunc1, ddtfunc2);
 
             return New <KGRtoR::BoundaryCondition> (prototype, f_0, ddtf_0);
@@ -81,6 +81,13 @@ namespace Modes {
                 break;
         }
 
+        fix A = this->A.getValue();
+        fix dk = M_PI/L;
+        fix k = dk*this->k.getValue();
+        fix ω = dk*this->omega.getValue();
+        Log::Info() << "Setting wavenumber κL/π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
+        Log::Info() << "Setting ang. freq  ωL/π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
+        Log::Info() << "Relation Aκ²=" << A*k*k << Log::Flush;
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
@@ -97,8 +104,8 @@ namespace Modes {
     Str Builder::suggestFileName() const {
         const auto SEPARATOR = " ";
 
-        StrVector params = {"A", "omega"};
-        if(*BCSelection == 1) params.emplace_back("wave_number");
+        StrVector params = {"A", "omega_n"};
+        if(*BCSelection == 1) params.emplace_back("harmonic");
 
         auto strParams = interface->toString(params, SEPARATOR);
         return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;

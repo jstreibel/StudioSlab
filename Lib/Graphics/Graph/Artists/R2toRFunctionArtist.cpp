@@ -23,7 +23,7 @@ namespace Slab::Graphics {
     R2toRFunctionArtist::R2toRFunctionArtist()
     : vertexBuffer("vertex:2f,tex_coord:2f")
     , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
-    , colorBar({50,150, 50, 750})
+    , colorBar()
     {
         updateColorBar();
 
@@ -65,9 +65,13 @@ namespace Slab::Graphics {
             const int left = -300;
             const int vpWidth = graph.getViewport().width();
             const int vpHeight = graph.getViewport().height();
-            const int cbarWidth = 100;
-            const int cbarHeight = 0.6 * vpHeight;
+            const int cbarWidth = -0.35 * left; // 27.334
+            const int cbarHeight = 0.96 * vpHeight;
             const int cbarTop = (vpHeight - cbarHeight) / 2;
+
+            //               icpx         gnu
+            // bench        27.334       27.992
+            // compile    2min 37sec   2min 44sec
 
             colorBar.setLocation({vpWidth + left,
                                   vpWidth + left + cbarWidth,

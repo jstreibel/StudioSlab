@@ -17,11 +17,11 @@ namespace Slab::Math {
 
 //
 // Created by joao on 30/09/2019.
-    R2toR::NumericFunction::NumericFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, device dev)
+    R2toR::NumericFunction::NumericFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, Device dev)
             : NumericFunctionBase(DimensionMetaData({N, M}, {hx, hy}), dev), N(N), M(M), xMin(xMin),
               xMax(xMin + (Real) N * hx), yMin(yMin), yMax(yMin + (Real) M * hy), hx(hx), hy(hy) {}
 
-    R2toR::NumericFunction::NumericFunction(const NumericConfig &p, device dev)
+    R2toR::NumericFunction::NumericFunction(const NumericConfig &p, Device dev)
             : R2toR::NumericFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), p.geth(), dev) {}
 
     Real R2toR::NumericFunction::operator()(Real2D r) const {

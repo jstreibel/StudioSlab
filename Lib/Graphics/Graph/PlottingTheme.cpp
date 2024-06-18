@@ -4,11 +4,9 @@
 
 #include "PlottingTheme.h"
 
-namespace Slab::Graphics {
+#include <utility>
 
-    GraphTheme_ptr NewTheme(const PlottingTheme &scheme) {
-        { return Slab::New<PlottingTheme>(scheme); }
-    }
+namespace Slab::Graphics {
 
     PlottingTheme::PlottingTheme(Color graphBackground,
                                  Color graphNumbersColor,
@@ -22,7 +20,7 @@ namespace Slab::Graphics {
                                  Vector<PlotStyle> plotStyles)
             : graphBackground(graphBackground), graphNumbersColor(graphNumbersColor), graphTitleColor(graphTitleColor),
               axisColor(axisColor), majorTickColor(majorTickColor), XHairStyle(XHairStyle), gridLines(gridStyle),
-              labelsWriter(std::move(labelsWriter)), ticksWriter(std::move(std::move(ticksWriter))),
+              labelsWriter(std::move(labelsWriter)), ticksWriter(std::move(ticksWriter)),
               funcPlotStyles(std::move(plotStyles)), vTickHeightinPixels(5), vAxisPaddingInPixels(80),
               hTickWidthInPixels(5), hAxisPaddingInPixels(30) {
 

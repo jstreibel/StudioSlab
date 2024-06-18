@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_GPUFRIENDLY_H
 #define V_SHAPE_GPUFRIENDLY_H
 
-#include <Utils/DeviceConfig.h>
+#include <Utils/TypesGPU.h>
 
 namespace Slab::Math::Base {
 #if USE_CUDA == true

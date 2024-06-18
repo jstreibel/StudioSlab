@@ -37,21 +37,11 @@ namespace Slab::Math {
 
         AlgebraProxy(const Algebra&a, const Algebra&b) : a(a), b(b) {};
 
-        Algebra &operator+(const Algebra &algebra) override {
-            NOT_IMPLEMENTED_CLASS_METHOD
-        }
-
-        Algebra &operator*(const Algebra &algebra) override {
-            NOT_IMPLEMENTED_CLASS_METHOD
-        }
-
-        Algebra &operator*(const Real &a) const override {
-            NOT_IMPLEMENTED_CLASS_METHOD
-        }
-
-        Algebra &operator*=(const Real &real) override {
-            NOT_IMPLEMENTED_CLASS_METHOD
-        }
+        Algebra &operator+(const Algebra &)    override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*(const Algebra &)    override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*(const Real &) const override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*(const Real &)       override { NOT_IMPLEMENTED_CLASS_METHOD }
+        Algebra &operator*=(const Real &)      override { NOT_IMPLEMENTED_CLASS_METHOD }
 
     };
 
