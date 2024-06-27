@@ -22,25 +22,25 @@ namespace Slab::Graphics {
 
     Color::Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
 
-    Color Color::permute(bool odd) const {
+    auto Color::permute(bool odd) const -> Color {
         if (odd) return {b, g, r, a};
 
         else return {b, r, g, a};
     }
 
-    Color Color::inverse(bool invertAlpha) const {
+    auto Color::inverse(bool invertAlpha) const -> Color {
         return {1-r, 1-g, 1-b, invertAlpha ? 1-a : a};
     }
 
-    Color Color::FromBytes(Byte r, Byte g, Byte b, Byte a) {
-        return {r / 255.f, g / 255.f, b / 255.f, a / 255.f};
+    auto Color::FromBytes(Byte r, Byte g, Byte b, Byte a) -> Color {
+        return {(float)r / 255.f, (float)g / 255.f, (float)b / 255.f, (float)a / 255.f};
     }
 
-    Color Color::FromHex(Str hex) {
+    auto Color::FromHex(Str hex) -> Color {
         const auto size = hex.length();
 
         if((size!=7 && size!=9) || hex[0] != '#')
-            throw Exception((Str("Wrong hex color format ") + hex).c_str());
+            throw Exception(Str("Wrong hex color format ") + hex);
 
         unsigned int rr, gg, bb, aa=255;
         StringStream ss;
@@ -63,12 +63,17 @@ namespace Slab::Graphics {
         auto b = static_cast<float>(bb) / 255.0f;
         auto a = static_cast<float>(aa) / 255.0f;
 
-        return Color(r, g, b, a);
+        return {r, g, b, a};
     }
 
-    Color Color::rgb() const { return {r, g, b, -1}; }
+    auto Color::rgb() const -> Color { return {r, g, b, a}; }
+    auto Color::brg() const -> Color { return {b, r, g, a}; }
+    auto Color::gbr() const -> Color { return {g, b, r, a}; }
+    auto Color::bgr() const -> Color { return {b, g, r, a}; }
+    auto Color::grb() const -> Color { return {g, r, b, a}; }
+    auto Color::rbg() const -> Color { return {r, b, r, a}; }
 
-    bool Color::operator==(const Color &rhs) const {
+    auto Color::operator==(const Color &rhs) const -> bool {
         fix eps = 1.e-4;
         return Common::AreEqual(r, rhs.r, eps) &&
                Common::AreEqual(g, rhs.g, eps) &&
@@ -76,17 +81,15 @@ namespace Slab::Graphics {
                Common::AreEqual(a, rhs.a, eps);
     }
 
-    std::array<Real32, 4> Color::array() const {
+    auto Color::array() const -> std::array<Real32, 4> {
         return std::array<Real32, 4>({r, g, b, a});
     }
 
-    const float *Color::asFloat4fv() const {
+    auto Color::asFloat4fv() const -> const float * {
         return reinterpret_cast<const float*>(this);
     }
 
-    float *Color::asFloat4fv() {
+    auto Color::asFloat4fv() -> float * {
         return reinterpret_cast<float*>(this);
     }
-
-
 }

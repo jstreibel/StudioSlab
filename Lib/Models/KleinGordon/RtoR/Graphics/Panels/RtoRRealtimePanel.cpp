@@ -43,23 +43,23 @@ namespace Slab::Models::KGRtoR {
                                   "realtime monitoring of simulation state")
             , mFieldsGraph(params.getxMin(), params.getxMax(), -1, 1, "Fields")
             , mEnergyGraph("Energy")
-            , imGuiWindow(DummyPointer(mEnergyGraph)) {
+            , imGuiWindow(Naked(mEnergyGraph)) {
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
         {
             auto sty = currStyle->funcPlotStyles.begin();
 
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                           Slab::DummyPointer(UHistoryData),
+            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
+                                           Slab::Naked(UHistoryData),
                                            *sty, "U/L");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                           Slab::DummyPointer(KHistoryData),
+            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
+                                           Slab::Naked(KHistoryData),
                                            *++sty, "K/L");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                           Slab::DummyPointer(WHistoryData),
+            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
+                                           Slab::Naked(WHistoryData),
                                            *++sty, "<(𝜕ₓϕ)²>/2=∫(𝜕ₓϕ)²dx/2L");
-            Graphics::Plotter::AddPointSet(Slab::DummyPointer(mEnergyGraph),
-                                           Slab::DummyPointer(VHistoryData),
+            Graphics::Plotter::AddPointSet(Slab::Naked(mEnergyGraph),
+                                           Slab::Naked(VHistoryData),
                                            *++sty, "<V(ϕ)>=∫V(ϕ)dx/L");
 
             mEnergyGraph.setAutoReviewGraphRanges(false);
@@ -69,19 +69,19 @@ namespace Slab::Models::KGRtoR {
 
         {
             fix V_str = hamiltonian.getThePotential()->symbol();
-            vArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph),
+            vArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
                                                          hamiltonian.getPotentialDensity(), V_style,
                                                          Str("V(ϕ)=") + V_str, 1024);
-            kArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph),
+            kArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
                                                          hamiltonian.getKineticDensity(), K_style, "K/L", 1024);
-            wArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph),
+            wArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
                                                          hamiltonian.getGradientDensity(), W_style, "(𝜕ₓϕ)²", 1024);
-            uArtist = Graphics::Plotter::AddRtoRFunction(Slab::DummyPointer(mFieldsGraph),
+            uArtist = Graphics::Plotter::AddRtoRFunction(Slab::Naked(mFieldsGraph),
                                                          hamiltonian.getEnergyDensity(), U_style, "E/L", 1024);
         }
 
-        addWindow(Slab::DummyPointer(mFieldsGraph));
-        addWindow(Slab::DummyPointer(mEnergyGraph));
+        addWindow(Slab::Naked(mFieldsGraph));
+        addWindow(Slab::Naked(mEnergyGraph));
 
         setColumnRelativeWidth(0, 0.4);
         setColumnRelativeWidth(1, -1);

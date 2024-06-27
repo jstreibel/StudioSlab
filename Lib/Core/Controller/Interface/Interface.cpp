@@ -63,7 +63,7 @@ namespace Slab::Core {
 
     void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
         for (auto param: parametersList)
-            addParameter(DummyPointer(*param));
+            addParameter(Naked(*param));
     }
 
 

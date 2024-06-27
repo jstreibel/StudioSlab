@@ -25,25 +25,33 @@ namespace Slab::Graphics {
     public:
         explicit Plotter(PlottingWindow_ptr);
 
-        PointSetArtist_ptr          addPointSet             (const Math::PointSet_ptr&,               PlotStyle,          Str name="", bool affectsGraphRanges=true);
-        ParametricCurve2DArtist_ptr addCurve                (const Math::RtoR2::ParametricCurve_ptr&, PlotStyle,   const Str& name);
-        RtoRFunctionArtist_ptr      addRtoRFunction         (const Math::RtoR::Function_ptr&,         PlotStyle,          Str name, Resolution samples);
-        RtoRFunctionArtist_ptr      addRtoRNumericFunction  (const Math::RtoR::NumericFunction_ptr&,  PlotStyle,          Str name);
-        R2toRFunctionArtist_ptr     addR2toRFunction        (const Math::R2toR::NumericFunction_ptr&,                     Str name);
-        HistoryArtist_ptr           addRtoRHistory          (const Math::R2toR::NumericFunction_ptr&,                     Str name);
-        R2SectionArtist_ptr         addR2Section            (const Math::R2toR::Function_constptr&,                       Str name);
+        auto addPointSet             (const Math::PointSet_ptr&,               PlotStyle,          Str name="", bool affectsGraphRanges=true, int zOrder=0) -> PointSetArtist_ptr;
+        auto addCurve                (const Math::RtoR2::ParametricCurve_ptr&, PlotStyle,   const Str& name, int zOrder=0) -> ParametricCurve2DArtist_ptr;
+        auto addRtoRFunction         (const Math::RtoR::Function_ptr&,         PlotStyle,          Str name, Resolution samples, int zOrder=0) -> RtoRFunctionArtist_ptr;
+        auto addRtoRNumericFunction  (const Math::RtoR::NumericFunction_ptr&,  PlotStyle,          Str name, int zOrder=0) -> RtoRFunctionArtist_ptr;
+        auto addR2toRFunction        (const Math::R2toR::NumericFunction_ptr&,                     Str name, int zOrder=0) -> R2toRFunctionArtist_ptr;
+        auto addRtoRHistory          (const Math::R2toR::NumericFunction_ptr&,                     Str name, int zOrder=0) -> HistoryArtist_ptr;
+        auto addR2Section            (const Math::R2toR::Function_constptr&,                       Str name, int zOrder=0) -> R2SectionArtist_ptr;
 
-        static PointSetArtist_ptr          AddPointSet     (const PlottingWindow_ptr&, const Math::PointSet_ptr&,
-                                                            PlotStyle,          Str name="", bool affectsGraphRanges=true);
-        static ParametricCurve2DArtist_ptr AddCurve        (const PlottingWindow_ptr&, const Math::RtoR2::ParametricCurve_ptr&,
-                                                            PlotStyle,          Str name);
-        static RtoRFunctionArtist_ptr      AddRtoRFunction (const PlottingWindow_ptr&, const Math::RtoR::Function_ptr&,
-                                                            PlotStyle,          Str name, Resolution samples);
-        static RtoRFunctionArtist_ptr      AddRtoRNumericFunction (PlottingWindow_ptr, const Math::RtoR::NumericFunction_ptr&,
-                                                                   PlotStyle,  Str name);
-        static R2toRFunctionArtist_ptr     AddR2toRFunction(const PlottingWindow_ptr&, const Math::R2toR::NumericFunction_ptr&,                     Str name);
-        static HistoryArtist_ptr           AddRtoRHistory  (const PlottingWindow_ptr&, const Math::R2toR::NumericFunction_ptr&,                     Str name);
-        static R2SectionArtist_ptr         AddR2Section    (const PlottingWindow_ptr&, const Math::R2toR::Function_constptr&,                             Str name);
+        static auto AddPointSet     (const PlottingWindow_ptr&, const Math::PointSet_ptr&,
+                                     PlotStyle, Str name="", bool affectsGraphRanges=true, int zOrder=0)
+                                     -> PointSetArtist_ptr;
+        static auto AddCurve        (const PlottingWindow_ptr&, const Math::RtoR2::ParametricCurve_ptr&,
+                                     PlotStyle, Str name, int zOrder=0)
+                                     -> ParametricCurve2DArtist_ptr;
+        static auto AddRtoRFunction (const PlottingWindow_ptr&, const Math::RtoR::Function_ptr&,
+                                     PlotStyle, Str name, Resolution samples, int zOrder=0)
+                                     -> RtoRFunctionArtist_ptr;
+        static auto AddRtoRNumericFunction (PlottingWindow_ptr, const Math::RtoR::NumericFunction_ptr&,
+                                            PlotStyle,  Str name, int zOrder=0)
+                                            -> RtoRFunctionArtist_ptr;
+        static auto AddR2toRFunction(const PlottingWindow_ptr&, const Math::R2toR::NumericFunction_ptr&,
+                                     Str name, int zOrder=0)
+                                     -> R2toRFunctionArtist_ptr;
+        static auto AddRtoRHistory  (const PlottingWindow_ptr&, const Math::R2toR::NumericFunction_ptr&, Str name, int zOrder=0)
+                                    -> HistoryArtist_ptr;
+        static auto AddR2Section    (const PlottingWindow_ptr&, const Math::R2toR::Function_constptr&, Str name, int zOrder=0)
+                                    -> R2SectionArtist_ptr;
     };
 
 } // Graphics

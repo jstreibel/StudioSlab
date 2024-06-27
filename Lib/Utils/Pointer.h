@@ -29,7 +29,7 @@ namespace Slab {
     }
 
     template<typename T>
-    Pointer<T> DummyPointer(T &instance) {
+    Pointer<T> Naked(T &instance) {
         return Pointer<T>(&instance, [](T*){});
     }
 

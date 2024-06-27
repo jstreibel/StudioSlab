@@ -18,17 +18,22 @@
 #define hPixelsToSpaceScale (region.width() / vp.width())
 #define vPixelsToSpaceScale (region.height() / vp.height())
 
+#define USE_ELEGANT_SCIENTIFIC false
+
 #define setupBuffer(buffer) \
     if     (numRegion> +2)  (buffer) << std::setprecision(0); \
     else if(numRegion> +1)  (buffer) << std::setprecision(1); \
     else                    (buffer) << std::setprecision(2); \
                                                               \
-    if     (numRegion< -1)  (buffer) << std::scientific;      \
+    if     (numRegion< -1){                                   \
+        (buffer) << std::scientific;                          \
+        if(iMin<0 && iMax>0) (buffer) << std::setprecision(0);\
+    }                                                         \
     else                    (buffer) << std::fixed;           \
                                                               \
     if     (mark < 0)       (buffer) << "";                   \
-    else (buffer) << " ";
-
+    else (buffer) << " ";                                     \
+                                                              \
 
 namespace Slab::Graphics {
 
@@ -202,7 +207,7 @@ namespace Slab::Graphics {
             buffer << mark;
 
             Str text = buffer.str();
-            if(numRegion < -1) text = elegantScientific(text);
+            if(numRegion < -1 && USE_ELEGANT_SCIENTIFIC) text = elegantScientific(text);
 
             loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             writer->write(text, loc, gtf);

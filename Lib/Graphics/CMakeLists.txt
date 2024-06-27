@@ -123,6 +123,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Artists/PlotRegion2D.h
         ImGui/ImGuiWindow.cpp
         ImGui/ImGuiWindow.h
+        Graph/Tool/PrintWindow.cpp
+        Graph/Tool/PrintWindow.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

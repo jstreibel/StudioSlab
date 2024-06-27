@@ -156,7 +156,7 @@ namespace Slab::Models::KGRtoR {
         kSpaceGraph->addArtist(dftFunctionArtist);
 
         Graphics::Plotter::AddCurve(kSpaceGraph,
-                                    Slab::DummyPointer(cutoffLine),
+                                    Slab::Naked(cutoffLine),
                                     PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
     }
 

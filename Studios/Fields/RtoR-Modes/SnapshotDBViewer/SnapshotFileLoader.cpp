@@ -15,11 +15,13 @@
 
 namespace Modes {
 
+    using Log = Core::Log;
+
     SnapshotFileLoader::SnapshotFileLoader(const Str &filename) {
         fieldPtr = Load(filename);
     }
 
-    auto SnapshotFileLoader::Load(const Str &filename) -> std::shared_ptr<RtoR::NumericFunction_CPU> {
+    auto SnapshotFileLoader::Load(const Str &filename) -> Pointer<Math::RtoR::NumericFunction_CPU> {
         auto dict = ReadPyDict(filename);
         auto data = ReadData(filename);
 
@@ -35,14 +37,14 @@ namespace Modes {
             if(!(dataArr.size() == N/2+1))
                 Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
 
-            fix Δk = 2 * Constants::pi / L;
+            fix Δk = 2 * Math::Constants::pi / L;
             xMin = 0.0;
             xMax = Δk*(Real)dataArr.size();
         }
 
-        auto field = new RtoR::NumericFunction_CPU(dataArr, xMin, xMax);
+        auto field = new Math::RtoR::NumericFunction_CPU(dataArr, xMin, xMax);
 
-        return std::shared_ptr<RtoR::NumericFunction_CPU>{field};
+        return std::shared_ptr<Math::RtoR::NumericFunction_CPU>{field};
     }
 
     auto SnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {

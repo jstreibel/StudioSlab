@@ -47,7 +47,10 @@ namespace Slab::Graphics {
 
     Str current;
 
-    Str PlotThemeManager::GetDefault() { return "Elegant"; }
+    Str PlotThemeManager::GetDefault() {
+        // return "Elegant";
+        return "Dark2";
+    }
 
     GraphTheme_ptr LoadStyle(const Str& style) {
         auto sty = loadedStyles[style];
@@ -78,7 +81,7 @@ namespace Slab::Graphics {
     }
 
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
-        Core::BackendManager::GetGUIBackend().addEventListener(Slab::DummyPointer(*this));;
+        Core::BackendManager::GetGUIBackend().addEventListener(Slab::Naked(*this));;
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

@@ -32,7 +32,7 @@ namespace Slab::Math::R2toR {
         using NumericAlgebra<NumericFunctionBase>::operator=;
 
         NumericFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, Device dev);
-        NumericFunction(const NumericConfig &, Device);
+        // NumericFunction(const NumericConfig &, Device);
 
         auto operator()(Real2D x) const -> Real override;
         auto operator()(Real2D x)       -> Real &;

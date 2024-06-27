@@ -20,17 +20,23 @@ namespace Slab::Graphics {
         Color(const Color &c) = default;
 
 
-        Color permute(bool odd=false) const;
-        Color inverse(bool invertAlpha=false) const;
+        auto permute(bool odd=false) const -> Color;
+        auto inverse(bool invertAlpha=false) const -> Color;
 
-        static Color FromBytes(Byte r, Byte g, Byte b, Byte a=0xff);
-        static Color FromHex(Str hex);
+        static auto FromBytes(Byte r, Byte g, Byte b, Byte a=0xff) -> Color;
+        static auto FromHex(Str hex) -> Color;
 
-        std::array<Real32, 4> array() const;
-        const float* asFloat4fv() const;
-        float* asFloat4fv();
+        auto array() const -> std::array<Real32, 4>;
+        auto asFloat4fv() const -> const float*;
+        auto asFloat4fv() -> float*;
 
-        Color rgb() const;
+        auto rgb() const -> Color;
+        auto brg() const -> Color;
+        auto gbr() const -> Color;
+        auto bgr() const -> Color;
+        auto grb() const -> Color;
+        auto rbg() const -> Color;
+
 
         bool operator==(const Color &rhs) const;
     };
@@ -39,22 +45,22 @@ namespace Slab::Graphics {
     extern Color Black;
     extern Color Red;
 
-    typedef struct {
+    using rgb = struct {
         Real r;       // a fraction between 0 and 1
         Real g;       // a fraction between 0 and 1
         Real b;       // a fraction between 0 and 1
-    } rgb;
+    };
 
-    typedef struct {
+    using hsv = struct {
         Real h;       // angle in degrees
         Real s;       // a fraction between 0 and 1
         Real v;       // a fraction between 0 and 1
-    } hsv;
+    };
 
-    static hsv   rgb2hsv(rgb in);
-    static rgb   hsv2rgb(hsv in);
+    static auto   rgb2hsv(rgb in) -> hsv;
+    static auto   hsv2rgb(hsv in) -> rgb;
 
-    hsv rgb2hsv(rgb in)
+    auto rgb2hsv(rgb in) -> hsv
     {
         hsv         out;
         Real      min, max, delta;
@@ -98,7 +104,7 @@ namespace Slab::Graphics {
         return out;
     }
 
-    rgb hsv2rgb(hsv in)
+    auto hsv2rgb(hsv in) -> rgb
     {
         Real      hh, p, q, t, ff;
         long        i;

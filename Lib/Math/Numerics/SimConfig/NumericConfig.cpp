@@ -12,17 +12,17 @@ namespace Slab::Math {
         interface->addParameters({N, L, xCenter, t, rdt, dimMode, h});
     }
 
-/*
-NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
-    N = p.N;
-    L = p.L;
-    t = p.t;
-    r = p.r;
-    h = p.h;
+    /*
+    NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
+        N = p.N;
+        L = p.L;
+        t = p.t;
+        r = p.r;
+        h = p.h;
 
-    xCenter = p.xCenter;
-    dimMode = p.dimMode;
-}*/
+        xCenter = p.xCenter;
+        dimMode = p.dimMode;
+    }*/
 
     auto NumericConfig::getN() const -> UInt { return **N; }
 
@@ -36,9 +36,7 @@ NumericParams::NumericParams(const NumericParams &p) : n(p.n), dt(p.dt) {
 
     auto NumericConfig::getr() const -> floatt { return **rdt; }
 
-    auto NumericConfig::getn() const -> UInt {
-        return n;
-    }
+    auto NumericConfig::getn() const -> UInt { return n; }
 
     auto NumericConfig::geth() const -> floatt {
         return **h;

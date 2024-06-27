@@ -18,6 +18,8 @@
 
 namespace Modes::DatabaseViewer {
 
+    using Log = Core::Log;
+
     class DirtyDBException : public Exception {
     public:
         explicit DirtyDBException(const Str &msg="") : Exception(Str("dirty snapshot database") + (!msg.empty()?": "+msg:""))  { }
@@ -54,7 +56,7 @@ namespace Modes::DatabaseViewer {
         for(int i=1; i<N-1; ++i){
             Real delta = values[i+1]-values[i];
 
-            if(!Common::areEqual(lastDelta, delta, eps)) {
+            if(!Common::AreEqual(lastDelta, delta, eps)) {
                 Log::Fail() << "DBParser deltas differ for "
                 << criticalParameter << "=" << values[i-1] << "; "
                 << criticalParameter << "=" << values[i] << "; " << criticalParameter << "=" << values[i+1]
@@ -124,7 +126,7 @@ namespace Modes::DatabaseViewer {
     auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
 
-    auto DBParser::buildFullField() const -> std::shared_ptr<R2toR::NumericFunction_CPU> {
+    auto DBParser::buildFullField() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
         IN sampleField = *fieldMap.begin()->second;
 
         fix N = fieldMap.size();
@@ -137,7 +139,7 @@ namespace Modes::DatabaseViewer {
         fix hk = (kMax-kMin)/(Real)M;
 
 
-        auto fullField = new R2toR::NumericFunction_CPU(N, M, ωMin, kMin, hω, hk);
+        auto fullField = new Math::R2toR::NumericFunction_CPU(N, M, ωMin, kMin, hω, hk);
 
         int i=0;
         for (auto &pair: fieldMap) {
@@ -149,7 +151,7 @@ namespace Modes::DatabaseViewer {
             ++i;
         }
 
-        return std::shared_ptr<R2toR::NumericFunction_CPU>(fullField);
+        return std::shared_ptr<Math::R2toR::NumericFunction_CPU>(fullField);
     }
 
     auto DBParser::getFieldMap() const -> const FieldMap & { return fieldMap; }

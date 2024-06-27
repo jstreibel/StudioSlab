@@ -10,9 +10,10 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 namespace Modes {
+    using namespace Slab;
 
     class SnapshotFileLoader {
-        std::shared_ptr<RtoR::NumericFunction_CPU> fieldPtr;
+        Pointer<Math::RtoR::NumericFunction_CPU> fieldPtr;
 
         static auto ReadPyDict(const Str& filePath) -> PythonUtils::PyDict;
         static auto ReadData(const Str& filePath) -> RealVector;
@@ -20,7 +21,7 @@ namespace Modes {
     public:
         SnapshotFileLoader(const Str &filename);
 
-        static auto Load(const Str &filename) -> std::shared_ptr<RtoR::NumericFunction_CPU>;
+        static auto Load(const Str &filename) -> Pointer<Math::RtoR::NumericFunction_CPU>;
     };
 
 } // Modes

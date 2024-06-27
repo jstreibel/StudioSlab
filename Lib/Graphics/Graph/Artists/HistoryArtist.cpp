@@ -16,7 +16,7 @@ namespace Slab::Graphics {
 
             auto textureData = getFieldTextureData();
 
-            helper = Slab::New<HistoryTexture2DUploadHelper>(Slab::DummyPointer(discreteFunc), textureData);
+            helper = Slab::New<HistoryTexture2DUploadHelper>(Slab::Naked(discreteFunc), textureData);
         }
 
         helper->uploadUpTo(t);

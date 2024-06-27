@@ -138,8 +138,8 @@ namespace Slab::Models::KGRtoR {
                 outputManager->addOutputChannel(simHistory);
                 outputManager->addOutputChannel(ftHistory);
 
-                outputOpenGL->setSimulationHistory(Slab::DummyPointer(simHistory->getData()));
-                outputOpenGL->setSpaceFourierHistory(Slab::DummyPointer(ftHistory->getData()),
+                outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
+                outputOpenGL->setSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
                                                      ftHistory->getDFTDataHistory());
             }
 

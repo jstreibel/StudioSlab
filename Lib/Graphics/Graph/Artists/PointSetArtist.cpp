@@ -16,14 +16,14 @@ namespace Slab::Graphics {
 
     }
 
-    bool PointSetArtist::draw(const PlottingWindow &graph2D) {
+    auto PointSetArtist::draw(const PlottingWindow &graph2D) -> bool {
         if(pointSet == nullptr) return true;
 
         return Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
     }
 
-    const RectR &PointSetArtist::getRegion() {
-        if(pointSet== nullptr || pointSet->getPoints().empty()) region = {-1,1,1,1};
+    auto PointSetArtist::getRegion() -> const RectR & {
+        if(pointSet== nullptr || pointSet->getPoints().empty()) region = {-1,1,-1,1};
         else {
             auto ptMax = pointSet->getMax();
             auto ptMin = pointSet->getMin();
@@ -32,6 +32,14 @@ namespace Slab::Graphics {
         }
 
         return Artist::getRegion();
+    }
+
+    auto PointSetArtist::setPointSet(Math::PointSet_ptr newPointSet) -> void {
+        pointSet = std::move(newPointSet);
+    }
+
+    auto PointSetArtist::setStyle(PlotStyle style) -> void {
+        plotStyle = style;
     }
 
 

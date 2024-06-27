@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
     Graphics::BaseMonitor::BaseMonitor(const NumericConfig &params, const Str &channelName, int stepsBetweenDraws)
             : Socket(params, channelName, stepsBetweenDraws), WindowPanel(HasMainMenu) {
-        addWindow(Slab::DummyPointer(guiWindow));
+        addWindow(Slab::Naked(guiWindow));
         setColumnRelativeWidth(0, 0.1);
 
         Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;

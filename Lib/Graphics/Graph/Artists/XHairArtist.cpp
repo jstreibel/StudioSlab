@@ -47,7 +47,7 @@ namespace Slab::Graphics {
         XHair.addPoint({XHairLocation.x, rect.yMin});
         XHair.addPoint({XHairLocation.x, rect.yMax});
 
-        return Graphics::OpenGL::Legacy::RenderPointSet(Slab::DummyPointer(XHair), currStyle->XHairStyle);
+        return Graphics::OpenGL::Legacy::RenderPointSet(Slab::Naked(XHair), currStyle->XHairStyle);
     }
 
 } // Graphics

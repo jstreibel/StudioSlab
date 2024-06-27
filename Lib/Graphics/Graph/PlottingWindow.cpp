@@ -56,8 +56,8 @@ namespace Slab {
 
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 
-        addArtist(Slab::DummyPointer(axisArtist), 100);
-        addArtist(Slab::DummyPointer(artistXHair), 10000);
+        addArtist(Slab::Naked(axisArtist), 100);
+        addArtist(Slab::Naked(artistXHair), 10000);
     }
 
     Graphics::PlottingWindow::PlottingWindow(Str title, bool autoReviewGraphLimits)
@@ -124,6 +124,7 @@ namespace Slab {
             else if (ImGui::MenuItem(Unique("Show interface"), NULL, showInterface)) {
                 showInterface = !showInterface;
             } else if (ImGui::MenuItem(Unique("Save graph"))) {
+
                 auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w * .5;
                 auto fileName = title + " " +
@@ -144,15 +145,23 @@ namespace Slab {
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {
 
-                for (IN cont: content) {
+                for (auto &cont: content) {
                     IN artie = cont.second;
 
                     if (artie.get() == &artistXHair) continue;
 
                     bool visible = artie->isVisible();
 
-                    if (ImGui::Checkbox(Unique(artie->getLabel()), &visible))
+                    if (ImGui::ArrowButton("##up", ImGuiDir_Up)); //++(cont.first);
+                    ImGui::SameLine();
+                    if (ImGui::ArrowButton("##down", ImGuiDir_Down)); // ImGui::Text("Down arrow clicked!");
+                    ImGui::SameLine();
+                    if (ImGui::Checkbox(Unique(artie->getLabel()), &visible)) {
                         artie->setVisibility(visible);
+                    }
+
+
+
                 }
 
                 for (IN cont: content) {

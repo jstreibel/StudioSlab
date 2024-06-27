@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         virtual auto getXHairInfo(const Point2D &XHairCoord) const -> Str;
 
         void setVisibility(bool);
-        bool isVisible() const;
+        auto isVisible() const -> bool;
         virtual bool wantsLegend() const;
 
         void setAffectGraphRanges(bool);

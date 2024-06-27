@@ -15,7 +15,9 @@
 
 
 namespace Modes::DatabaseViewer {
-    typedef std::map<Real, std::shared_ptr<RtoR::NumericFunction_CPU>> FieldMap;
+    using namespace Slab;
+
+    typedef std::map<Real, std::shared_ptr<Math::RtoR::NumericFunction_CPU>> FieldMap;
     class DBParser {
         Str rootDatabaseFolder;
         std::map<Real, Str> fileSet;
@@ -26,7 +28,7 @@ namespace Modes::DatabaseViewer {
         void checkIntervalConsistency();
 
     public:
-        typedef std::shared_ptr<Modes::DatabaseViewer::DBParser> Ptr;
+        using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;
 
         explicit DBParser(const Str& rootDBFolder, Str  criticalParameter);
 
@@ -36,7 +38,7 @@ namespace Modes::DatabaseViewer {
 
         auto getRootDatabaseFolder() const -> const Str&;
 
-        auto buildFullField() const -> std::shared_ptr<R2toR::NumericFunction_CPU>;
+        auto buildFullField() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
     };
 } // Modes::DatabaseViewer
 

@@ -42,10 +42,10 @@ namespace Slab::Math {
         RealParameter::Ptr rdt = RealParameter::New(-1, "r_dt", "Timestep 'r' parameter such that dt=r*h. If negative value, then it"
                                                              "is set to r=1/10.");
 
-        UInt n;
+        UInt n{};
 
     public:
-        NumericConfig(bool doRegister = true);
+        explicit NumericConfig(bool doRegister = true);
 
         NumericConfig(const NumericConfig &) = delete;
 

@@ -9,7 +9,11 @@
 
 
 namespace Modes {
-    std::unique_ptr<R2toR::NumericFunction_CPU> HistoryFileLoader::Load(const Str &filename) {
+    using namespace Slab;
+
+    using Log = Core::Log;
+
+    auto HistoryFileLoader::Load(const Str &filename) -> Pointer<Math::R2toR::NumericFunction_CPU> {
         std::ifstream inFile(filename, std::ios::binary);
         if (!inFile) throw Exception(Str("Error opening file '") + filename + "'");
 
@@ -37,11 +41,11 @@ namespace Modes {
         auto hx = L/(Real)N;
         auto hy = t/(Real)N;
 
-        auto *field = new R2toR::NumericFunction_CPU(N, M, xMin, t0, hx, hy);
+        auto field = New<Math::R2toR::NumericFunction_CPU>(N, M, xMin, t0, hx, hy);
 
         for (int i=0; i<N; ++i) for (int j=0; j<M; ++j) field->At(i, j) = data[i + j*N];
 
-        return std::unique_ptr<R2toR::NumericFunction_CPU>{field};
+        return field;
     }
 
     auto HistoryFileLoader::ReadPyDict(std::ifstream &file) -> PythonUtils::PyDict {
@@ -59,7 +63,8 @@ namespace Modes {
         IN outresT = pyDict["outresT"];
         IN dataType = pyDict["data_type"].first=="fp32" ? fp32 : pyDict["data_type"].first=="fp64" ? fp64 : throw Exception("Unknown data type in .oscb file");
         IN lct = pyDict["lines_contain_timestamp"].first;
-        bool lines_contain_timestamp = lct == "True" ? true : lct == "False" ? false : throw Exception("Unknown data type in .oscb file");
+        bool lines_contain_timestamp =
+                lct == "True" || !(lct == "False");// TODO: && throw Exception("Unknown data type in .oscb file");
         assert(outresX.second == PythonUtils::Integer);
         assert(outresT.second == PythonUtils::Integer);
         long N = strtol(outresX.first.c_str(), nullptr, 10);

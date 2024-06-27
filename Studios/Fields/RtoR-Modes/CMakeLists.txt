@@ -12,6 +12,7 @@ add_executable ( RtoR-Modes
         Sim/SquareWave.h
 )
 target_link_libraries ( RtoR-Modes Slab )
+message(NOTICE "Added executable RtoR-Modes")
 
 
 add_executable ( RtoR-SnapshotDBViewer
@@ -26,6 +27,4 @@ add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/SnapshotFileLoader.h
 )
 target_link_libraries ( RtoR-SnapshotDBViewer Slab )
-
-
-message(NOTICE "Added executable RtoR-Modes")
+message(NOTICE "Added executable RtoR-SnapshotDBViewer")

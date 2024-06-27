@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
                                   "panel for statistic analysis of simulation data"),
               hamiltonian(hamiltonian) {
 
-        addWindow(Slab::DummyPointer(mCorrelationGraph));
+        addWindow(Slab::Naked(mCorrelationGraph));
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
@@ -54,13 +54,13 @@ namespace Slab::Models::KGRtoR {
             auto mTemperaturesGraph = Slab::New<Graphics::PlottingWindow>("T");
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
-                                           Slab::DummyPointer(temperature1HistoryData),
+                                           Slab::Naked(temperature1HistoryData),
                                            (*style++).permuteColors(), "τₖ=2<K>/L");
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
-                                           Slab::DummyPointer(temperature2HistoryData),
+                                           Slab::Naked(temperature2HistoryData),
                                            (*style++).permuteColors(), "τ");
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
-                                           Slab::DummyPointer(temperature3HistoryData),
+                                           Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
             mTemperaturesGraph->getRegion().animate_xMax(params.gett());
@@ -88,16 +88,16 @@ namespace Slab::Models::KGRtoR {
 
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
             Graphics::Plotter::AddPointSet(mHistogramsGraphE,
-                                           Slab::DummyPointer(histogramEData),
+                                           Slab::Naked(histogramEData),
                                            *style++, "E");
             Graphics::Plotter::AddPointSet(mHistogramsGraphK,
-                                           Slab::DummyPointer(histogramKData),
+                                           Slab::Naked(histogramKData),
                                            *style++, "K");
             Graphics::Plotter::AddPointSet(mHistogramsGraphGrad,
-                                           Slab::DummyPointer(histogramGradData),
+                                           Slab::Naked(histogramGradData),
                                            *style++, "grad");
             Graphics::Plotter::AddPointSet(mHistogramsGraphV,
-                                           Slab::DummyPointer(histogramVData),
+                                           Slab::Naked(histogramVData),
                                            *style++, "V");
 
             auto *histogramsPanel = new Graphics::WindowPanel();
@@ -152,16 +152,16 @@ namespace Slab::Models::KGRtoR {
 
 
             histogram.Compute(hamiltonian.getKineticDensity(), nbins);
-            histogram.renderPDFToPointSet(DummyPointer(histogramKData), pretty);
+            histogram.renderPDFToPointSet(Naked(histogramKData), pretty);
 
             histogram.Compute(hamiltonian.getGradientDensity(), nbins);
-            histogram.renderPDFToPointSet(DummyPointer(histogramGradData), pretty);
+            histogram.renderPDFToPointSet(Naked(histogramGradData), pretty);
 
             histogram.Compute(hamiltonian.getPotentialDensity(), nbins);
-            histogram.renderPDFToPointSet(DummyPointer(histogramVData), pretty);
+            histogram.renderPDFToPointSet(Naked(histogramVData), pretty);
 
             histogram.Compute(hamiltonian.getEnergyDensity(), nbins);
-            histogram.renderPDFToPointSet(DummyPointer(histogramEData), pretty);
+            histogram.renderPDFToPointSet(Naked(histogramEData), pretty);
         }
 
         // *************************** MY BEAUTY *****************************

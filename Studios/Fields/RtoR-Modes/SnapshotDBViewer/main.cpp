@@ -15,17 +15,18 @@
 #include "Core/Tools/Log.h"
 
 #include "Core/Backend/GLFW/GLFWBackend.h"
-#include "Core/Backend/Program/DummyProgram.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "DBViewer.h"
 #include "DatabaseParser.h"
 
-class App : public AppBase {
-        MultiStringParameter snapshotDBFolders = MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
+using namespace Slab;
+
+class App : public Math::AppBase {
+        Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
                                                                                         "database folders");
 
-    StringParameter criticalParameter = StringParameter("omega", "param", "the critical param of the db set; should "
+    Core::StringParameter criticalParameter = Core::StringParameter("omega", "param", "the critical param of the db set; should "
                                                                           "be the only changing value both on the "
                                                                           "filenames and snapshot header");
 
@@ -34,14 +35,14 @@ public:
     : AppBase(argc, argv, false)
     {
         interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        InterfaceManager::getInstance().registerInterface(interface);
+        Core::InterfaceManager::getInstance().registerInterface(interface);
 
         Core::BackendManager::Startup(Core::GLFW);
 
         this->parseCLArgs();
     }
 
-    int run() override {
+    auto run() -> int override {
         auto dbLocations = *snapshotDBFolders;
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
@@ -49,10 +50,7 @@ public:
         auto viewer = std::make_shared<Modes::DatabaseViewer::DBViewer>(dbLocations, *criticalParameter);
         guiBackend.addEventListener(viewer);
 
-        auto program = new DummyProgram;
-        guiBackend.run(program);
-
-        delete program;
+        guiBackend.run();
 
         return 0;
     }
@@ -65,7 +63,7 @@ int run(int argc, const char** argv){
 }
 
 int main(int argc, const char* argv[]) {
-    return SafetyNet::jump(
+    return Slab::Core::SafetyNet::jump(
     [](int argc, const char **argv)
     {
         App app(argc, argv);

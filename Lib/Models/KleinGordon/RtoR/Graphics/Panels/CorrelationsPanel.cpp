@@ -132,8 +132,8 @@ namespace Slab::Models::KGRtoR {
         auto simulationHistoryGraph = Slab::New<PlottingWindow>();
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph);
-        addWindow(Slab::DummyPointer(correlationGraph));
-        addWindow(Slab::DummyPointer(DFT2DGraph), true);
+        addWindow(Slab::Naked(correlationGraph));
+        addWindow(Slab::Naked(DFT2DGraph), true);
     }
 
     void CorrelationsPanel::computeAll(bool discardRedundantModes) {
