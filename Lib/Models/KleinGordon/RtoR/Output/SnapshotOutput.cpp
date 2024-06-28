@@ -41,6 +41,12 @@ namespace Slab::Models::KGRtoR {
     bool SnapshotOutput::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
 
+        auto f = filterData(theVeryLastOutputInformation);
+
+        return OutputNumericFunction(Naked(f), outputFileName);
+    }
+
+    bool SnapshotOutput::OutputNumericFunction(const Pointer<RtoR::NumericFunction>& funky, const Str& outputFileName) {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
             Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Log::Flush;
@@ -51,14 +57,15 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << "   " << SEPARATOR;
+        outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << "   "
+        << SEPARATOR << std::flush;
 
-        auto f = filterData(theVeryLastOutputInformation);
-        auto &data = f.getSpace().getHostData(true);
+        auto &data = funky->getSpace().getHostData(true);
+        auto vecData = std::vector<double>(std::begin(data), std::end(data));
         outputFile.write(reinterpret_cast<const char*>(&data[0]), data.size()*sizeof(Real));
 
         outputFile.close();
-        Log::Success() << "Last moment snapshot saved to '" << outputFileName << "'." << Log::Flush;
+        Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Log::Flush;
 
         return true;
     }

@@ -22,7 +22,7 @@ namespace Slab::Math {
         const DiscreteSpace *phi = inputSpacePair.first;
         const DiscreteSpace *dPhi = inputSpacePair.second;
 
-        // TODO came to my mind: meta-operators?
+        // NOTE meta-operators came to mind
 
         DiscreteSpaceCPU *newPhi = nullptr;
         DiscreteSpaceCPU *newDPhi = nullptr;

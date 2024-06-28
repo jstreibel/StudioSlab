@@ -13,7 +13,7 @@
 
 namespace Slab::Core {
 
-    class NuklearModule : public Core::Module {
+    class NuklearModule : public Core::GraphicsModule {
         Core::BackendImplementation system;
     protected:
         nk_context *nkContext;

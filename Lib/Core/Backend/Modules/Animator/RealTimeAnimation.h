@@ -9,7 +9,7 @@
 
 namespace Slab::Core {
 
-    class RealTimeAnimationModule : public Module {
+    class RealTimeAnimationModule : public GraphicsModule {
     public:
         explicit RealTimeAnimationModule();
 

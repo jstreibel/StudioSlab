@@ -15,12 +15,12 @@ namespace Slab::Core {
         return eventTranslator.addGUIEventListener(listener);
     }
 
-    void GraphicBackend::addModule(const std::shared_ptr<Module> &module) {
-        modules.emplace_back(module);
+    void GraphicBackend::addGraphicsModule(const Pointer<GraphicsModule> &module) {
+        graphicModules.emplace_back(module);
     }
 
-    const Vector<std::shared_ptr<Module>> &GraphicBackend::getModules() {
-        return modules;
+    const Vector<Pointer<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
+        return graphicModules;
     }
 
     void GraphicBackend::setClearColor(Real _r, Real _g, Real _b) {
@@ -53,7 +53,7 @@ namespace Slab::Core {
     }
 
     void GraphicBackend::unloadAllModules() {
-        modules.clear();
+        graphicModules.clear();
     }
 
 

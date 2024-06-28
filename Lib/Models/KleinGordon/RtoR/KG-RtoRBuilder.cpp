@@ -30,6 +30,7 @@
 #include "Output/DFTSnapshotOutput.h"
 
 #include "Graphics/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/Output/CenterTimeDFTOutput.h"
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -39,6 +40,27 @@
 
 
 namespace Slab::Models::KGRtoR {
+
+    class Filter1D : public Math::SpaceFilterBase{
+        DimensionMetaData dim;
+    public:
+        explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
+
+        auto operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair override {
+            auto nakedData = outputInfo.GetNakedStateData<KGRtoR::EquationState>();
+
+            auto N_new = dim.getN(0);
+
+            auto phiSpace  = nakedData->getPhi()   .getSpace().hostCopy(N_new);
+            auto dphiSpace = nakedData->getDPhiDt().getSpace().hostCopy(N_new);
+
+            return {phiSpace, dphiSpace};
+        }
+
+        auto getOutputDim(const Real L) const -> DimensionMetaData override {
+            return dim;
+        }
+    };
 
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, Str generalDescription, bool doRegister)
             : Models::KGBuilder("RtoR-" + name, std::move(generalDescription),
@@ -78,19 +100,27 @@ namespace Slab::Models::KGRtoR {
            **************************************************************************************** */
         if (*takeSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
-            Utils::CheckFolderExists(snapshotsFolder);
+            Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
                     Slab::New<SnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
         }
-        if (*takeDFTSnapshot) {
+        if (*takeSpaceDFTSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
-            Utils::CheckFolderExists(snapshotsFolder);
+            Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
                     Slab::New<DFTSnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
+        }
+        if(*takeTimeDFTSnapshot) {
+            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            Utils::TouchFolder(snapshotsFolder);
+
+            auto snapshotFilename = snapshotsFolder + suggestFileName();
+            outputManager->addOutputChannel(
+                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, snapshotFilename));
         }
 
 
@@ -103,8 +133,9 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputHistory) {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
-            auto *spaceFilter = new ResolutionReductionFilter(
-                    DimensionMetaData({(unsigned) *outputResolution}, {L / *outputResolution}));
+            auto dimData = DimensionMetaData({(unsigned) *outputResolution}, {L / *outputResolution});
+            // auto *spaceFilter = new ResolutionReductionFilter(dimData);
+            auto *spaceFilter = new Filter1D(dimData);
 
             fix stepsInterval = UInt(N / (Nₒᵤₜ * r));
 

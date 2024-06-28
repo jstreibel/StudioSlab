@@ -135,7 +135,7 @@ namespace Slab::Core {
         glClearColor(me.r, me.g, me.b, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto &modules = me.getModules();
+        auto &modules = me.getGraphicsModules();
         for (auto &module: modules)
             module->beginRender();
 

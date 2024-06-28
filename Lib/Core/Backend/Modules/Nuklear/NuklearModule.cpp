@@ -16,7 +16,7 @@
 
 namespace Slab::Core {
     NuklearModule::NuklearModule(BackendImplementation system)
-    : Core::Module("Nuklear GUI")
+    : Core::GraphicsModule("Nuklear GUI")
     , system(system)
     , nkContext(nullptr)
     {

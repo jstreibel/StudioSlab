@@ -88,15 +88,15 @@ namespace Slab::Core {
             // glClearColor(0.75f,.75f, .65f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            for (auto &module: modules) module->beginRender();
+            for (auto &module: graphicModules) module->beginRender();
             for (auto &listener: GetInstance().listeners) listener->Render(systemWindow);
-            for (auto &module: modules) module->endRender();
+            for (auto &module: graphicModules) module->endRender();
 
             glfwSwapBuffers(systemWindow);
 
-            for (auto &module: modules) module->beginEvents();
+            for (auto &module: graphicModules) module->beginEvents();
             glfwPollEvents();
-            for (auto &module: modules) module->endEvents();
+            for (auto &module: graphicModules) module->endEvents();
         }
     }
 

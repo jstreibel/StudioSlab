@@ -8,7 +8,7 @@
 #include "String.h"
 
 namespace Slab::Utils {
-    void CheckFolderExists(const Str &folder);
+    void TouchFolder(const Str &folder);
 }
 
 #endif //STUDIOSLAB_FILES_H

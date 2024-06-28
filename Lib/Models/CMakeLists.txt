@@ -41,6 +41,8 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h
+        KleinGordon/RtoR/Output/CenterTimeDFTOutput.cpp
+        KleinGordon/RtoR/Output/CenterTimeDFTOutput.h
 )
 
 set ( XY_SOURCES

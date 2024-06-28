@@ -28,17 +28,15 @@ namespace Slab::Graphics {
     class PlottingWindow : public Window {
         static Count WindowCount;
         Count id;
-
-        bool showInterface = false;
-
-    protected:
-        typedef Int zOrder_t;
-
-    private:
         static std::map<Str, PlottingWindow*> graphMap;
 
-        typedef std::multimap<zOrder_t, Artist_ptr> ContentMap;
+    protected: typedef Int zOrder_t;
+    public:    typedef std::multimap<zOrder_t, Artist_ptr> ContentMap;
+
+    private:
         ContentMap content;
+
+        bool showInterface = false;
 
         bool popupOn = false;
         bool autoReviewGraphRanges=false;

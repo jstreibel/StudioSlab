@@ -10,7 +10,7 @@
 
 namespace Slab::Core {
 
-    class ImGuiModule : public Module {
+    class ImGuiModule : public GraphicsModule {
         static void generalInitialization();
         static void buildFonts();
 

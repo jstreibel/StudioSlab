@@ -71,6 +71,8 @@ namespace Slab::Graphics::OpenGL {
             glVertex2d(xMax, yMin);
             glEnd();
 
+            glDisable(GL_LINE_STIPPLE);
+            glLineWidth(1);
             glColor4fv(fgColor.asFloat4fv());
             glBegin(GL_LINE_LOOP);
             glVertex2d(xMin, yMin);

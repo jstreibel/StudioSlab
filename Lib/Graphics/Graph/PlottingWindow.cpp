@@ -34,6 +34,20 @@ namespace Slab {
     std::map<Str, Graphics::PlottingWindow *> Graphics::PlottingWindow::graphMap = {};
     Count Graphics::PlottingWindow::WindowCount = 0;
 
+    using Mappy = Graphics::PlottingWindow::ContentMap;
+    bool change_z_order(Mappy& mappy, Mappy::iterator &it, int z_order){
+        if(z_order == it->first) return false;
+
+        auto artist = it->second;
+        it = mappy.erase(it);
+        mappy.insert(std::make_pair(z_order, artist));
+
+        return true;
+    }
+    bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
+    bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
+
+
 #define Unique(label) \
     Str(Str(label) + "##" + ToStr(this->id)).c_str()
 
@@ -145,23 +159,30 @@ namespace Slab {
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {
 
-                for (auto &cont: content) {
-                    IN artie = cont.second;
+                for (auto it = content.begin(); it!=content.end(); ) {
+                    IN artie = it->second;
+                    if (artie.get() == &artistXHair){ ++it; continue; };
 
-                    if (artie.get() == &artistXHair) continue;
+                    bool increment_iterator = true;
+
+                    auto label = artie->getLabel();
+                    if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
+                        increment_iterator = !z_order_up(content, it);
+                    }
+                    ImGui::SameLine();
+                    ImGui::Text("z=%i", it->first);
+                    ImGui::SameLine();
+                    if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
+                        increment_iterator = !z_order_down(content, it);
+                    }
+                    ImGui::SameLine();
 
                     bool visible = artie->isVisible();
-
-                    if (ImGui::ArrowButton("##up", ImGuiDir_Up)); //++(cont.first);
-                    ImGui::SameLine();
-                    if (ImGui::ArrowButton("##down", ImGuiDir_Down)); // ImGui::Text("Down arrow clicked!");
-                    ImGui::SameLine();
                     if (ImGui::Checkbox(Unique(artie->getLabel()), &visible)) {
                         artie->setVisibility(visible);
                     }
 
-
-
+                    if(increment_iterator) ++it;
                 }
 
                 for (IN cont: content) {

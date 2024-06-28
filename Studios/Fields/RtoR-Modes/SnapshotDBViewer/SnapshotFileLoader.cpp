@@ -28,23 +28,36 @@ namespace Modes {
         RealArray dataArr(data.data(), data.size());
 
         char *endPtr;
-        auto N    = std::strtol(dict["N"].first.c_str(), &endPtr, 10);
-        auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
-        auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
-        auto xMax = xMin+L;
 
-        if(filename.rfind(".dft.snapshot")) {
-            if(!(dataArr.size() == N/2+1))
+        if(filename.rfind("time.dft.snapshot")) {
+            auto t = std::strtod(dict["t"].first.c_str(), &endPtr);
+            return New<Math::RtoR::NumericFunction_CPU>(dataArr, 0, t);
+        } else if(filename.rfind(".dft.snapshot")) {
+            auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
+            auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
+            auto xMax = xMin+L;
+
+            auto N    = std::strtol(dict["N"].first.c_str(), &endPtr, 10);
+
+            if(dataArr.size() != N / 2 + 1)
                 Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
 
             fix Δk = 2 * Math::Constants::pi / L;
             xMin = 0.0;
             xMax = Δk*(Real)dataArr.size();
+
+
+            return New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+        } else if(filename.rfind(".snapshot")) {
+            auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
+            auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
+            auto xMax = xMin+L;
+
+            return New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
         }
 
-        auto field = new Math::RtoR::NumericFunction_CPU(dataArr, xMin, xMax);
-
-        return std::shared_ptr<Math::RtoR::NumericFunction_CPU>{field};
+        Log::Error() << "Unknown format type " << filename << Log::Flush;
+        NOT_IMPLEMENTED
     }
 
     auto SnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {

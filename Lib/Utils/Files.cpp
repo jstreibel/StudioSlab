@@ -7,13 +7,13 @@
 
 #include <filesystem>
 
-void Slab::Utils::CheckFolderExists(const Str &dirPath) {
+void Slab::Utils::TouchFolder(const Str &folder) {
     namespace fs = std::filesystem;
 
-    if (!fs::exists(dirPath)) {
-        if (!fs::create_directories(dirPath))
-            throw fs::filesystem_error(Str("Failed creating path '") + dirPath +"'.",
-                                       dirPath,
+    if (!fs::exists(folder)) {
+        if (!fs::create_directories(folder))
+            throw fs::filesystem_error(Str("Failed creating path '") + folder + "'.",
+                                       folder,
                                        std::make_error_code(std::errc::permission_denied));
     }
 }

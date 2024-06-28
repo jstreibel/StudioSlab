@@ -8,11 +8,11 @@
 namespace Slab::Core {
 
     void RealTimeAnimationModule::beginRender() {
-        Module::beginRender();
+        GraphicsModule::beginRender();
 
         Core::Animator::Update();
     }
 
-    RealTimeAnimationModule::RealTimeAnimationModule() : Module("Realtime Animation") {}
+    RealTimeAnimationModule::RealTimeAnimationModule() : GraphicsModule("Realtime Animation") {}
 
 } // Core

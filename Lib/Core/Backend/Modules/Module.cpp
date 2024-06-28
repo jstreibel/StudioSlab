@@ -8,7 +8,8 @@
 #include <utility>
 
 namespace Slab::Core {
-    Module::Module(Str name) : name(std::move(name)) { }
+    Module::Module(Str name, bool reqGraphBack)
+    : name(std::move(name)), requiresGraphicsBackend(reqGraphBack) { }
 
     Module::~Module() {
         Log::Info() << "Destroying \"" << name << "\" module" << Log::Flush;

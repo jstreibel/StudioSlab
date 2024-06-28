@@ -21,7 +21,8 @@ namespace Slab::Models {
         StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
 
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
-        BoolParameter    takeDFTSnapshot                = BoolParameter(false,  "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
+        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
+        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot", "Take a time domain dft of field at xCenter.");
 
         RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
                                                                         "Force snapshot to be taken at some time prior to end (after will result in no output.");

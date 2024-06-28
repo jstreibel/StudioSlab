@@ -24,7 +24,7 @@ namespace Slab::Core {
 
     protected:
 
-        Vector<std::shared_ptr<Module>> modules;
+        Vector<Pointer<GraphicsModule>> graphicModules;
 
         Real r = 0, g = 0, b = 0;
     public:
@@ -38,9 +38,9 @@ namespace Slab::Core {
 
         void setClearColor(Real r, Real g, Real b);
 
-        void addModule(const std::shared_ptr<Module> &module);
+        void addGraphicsModule(const Pointer<GraphicsModule> &module);
 
-        auto getModules() -> const Vector<std::shared_ptr<Module>> &;
+        auto getGraphicsModules() -> const Vector<Pointer<GraphicsModule>> &;
 
         void unloadAllModules();
 

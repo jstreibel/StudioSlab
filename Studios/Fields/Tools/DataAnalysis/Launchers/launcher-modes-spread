@@ -79,14 +79,13 @@ f = '{:.6f}'.format
 
 for n in range(n_min, n_max+1):
     k = n*dk
-    omega = k
 
     arg_list = ["RtoR-Modes",
                 '-t' + f(t), '-L' + f(L), '-N'+str(N),
                 '-A' + f(A),
-                '--omega='+f(omega),
-                '-k'+f(k),
-                '--th=1', '--dft_snapshot', '--outN=2000', '--BC=1', '-V'+str(V), '--massSqr=1']
+                '-w'+f(n),
+                '-k'+f(n),
+                '--th=1', '--time_dft_snapshot', '--outN='+str(N), '--BC=1', '-V'+str(V), '--massSqr=1']
 
     sim_info = (n,k)
     sim_list.append((arg_list, sim_info))

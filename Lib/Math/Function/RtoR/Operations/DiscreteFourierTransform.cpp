@@ -5,6 +5,7 @@
 #include "DiscreteFourierTransform.h"
 
 #include "Math/Constants.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include <fftw3.h>
 #include <cstring>
@@ -91,6 +92,25 @@ namespace Slab::Math::RtoR {
         fftw_free(out);
 
         return result;
+    }
+
+    Pointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
+        auto mags = dftResult.getMagnitudes()->getPoints();
+
+        auto dk = mags[1].x-mags[0].x;
+        fix t = 2*M_PI/dk; //dk=2pi/L => L=2pi/dk
+        fix n = mags.size();
+
+        auto func = Slab::New<NumericFunction_CPU>(n, 0, t);
+        auto&space = func->getSpace().getHostData();
+        size_t i=0;
+        for(auto &pt : mags){
+            fix A = pt.y;
+            space[i] = A;
+            ++i;
+        }
+
+        return func;
     }
 
 } // R2toR

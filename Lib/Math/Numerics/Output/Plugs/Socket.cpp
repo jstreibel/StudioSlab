@@ -50,8 +50,7 @@ namespace Slab::Math {
         lastPacket = outData;
     }
 
-    auto Socket::notifyIntegrationHasFinished(
-            const OutputPacket &theVeryLastOutputInformation) -> bool {
+    auto Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
         lastPacket = theVeryLastOutputInformation;
         return true;
     }

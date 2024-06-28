@@ -24,13 +24,13 @@ namespace Modes::DatabaseViewer {
         FieldMap fieldMap;
         Str criticalParameter;
 
-        void readDatabase(const Str& folder);
+        void readDatabase();
         void checkIntervalConsistency();
 
     public:
         using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;
 
-        explicit DBParser(const Str& rootDBFolder, Str  criticalParameter);
+        explicit DBParser(Str  rootDBFolder, Str  criticalParameter);
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;

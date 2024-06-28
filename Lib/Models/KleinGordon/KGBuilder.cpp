@@ -28,7 +28,8 @@ namespace Slab::Models {
                                   &VisualMonitor,
                                   &VisualMonitor_startPaused,
                                   &takeSnapshot,
-                                  &takeDFTSnapshot,
+                                  &takeSpaceDFTSnapshot,
+                                  &takeTimeDFTSnapshot,
                                          /*, &snapshotTime, */ });
 
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);

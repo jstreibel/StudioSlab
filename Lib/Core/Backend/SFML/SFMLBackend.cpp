@@ -55,7 +55,7 @@ namespace Slab::Core {
         sf::Event event{};
         bool exitEvent = false;
 
-        for (auto &module: modules) module->beginEvents();
+        for (auto &module: graphicModules) module->beginEvents();
 
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -74,7 +74,7 @@ namespace Slab::Core {
             for (auto listener: sfmlListeners) listener->event(event);
         }
 
-        for (auto &module: modules) module->endEvents();
+        for (auto &module: graphicModules) module->endEvents();
 
     }
 
@@ -83,11 +83,11 @@ namespace Slab::Core {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (auto &module: modules) module->beginRender();
+        for (auto &module: graphicModules) module->beginRender();
 
         for (auto &l: sfmlListeners) l->render(window);
 
-        for (auto &module: modules) module->endRender();
+        for (auto &module: graphicModules) module->endRender();
 
         window->display();
     }

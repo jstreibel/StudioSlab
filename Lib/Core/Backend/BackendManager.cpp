@@ -90,11 +90,14 @@ namespace Slab::Core {
                 throw Exception("NodeJS module not implemented");
         }
 
-        Module::Ptr modulePtr = Module::Ptr(module);
-        auto &guiBackend = GetGUIBackend();
-        guiBackend.addModule(modulePtr);
+        if(module->requiresGraphicsBackend) {
+            auto graphModule = Pointer<GraphicsModule>(dynamic_cast<GraphicsModule*>(module));
 
-        loadedModules[moduleDescr] = modulePtr;
+            GetGUIBackend().addGraphicsModule(graphModule);
+            loadedModules[moduleDescr] = graphModule;
+        } else {
+            loadedModules[moduleDescr] = Pointer<Module>(module);
+        }
    }
 
 

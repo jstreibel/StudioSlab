@@ -26,6 +26,7 @@ namespace Modes::DatabaseViewer {
     , guiWindow()
     , allDataDisplay("All data")
     , fullParticularHistoryDisplay("Particular data")
+    , massesGraph("masses")
     {
         for(const auto &dbFilename : dbFilenames){
             auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);
@@ -46,9 +47,10 @@ namespace Modes::DatabaseViewer {
             style.lineColor = style.lineColor.brg();
             Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
                                            "ℑ[m=√(ω²-kₚₑₐₖ²)]");
-            style.lineColor = style.lineColor.brg();
-            style.thickness = 3.0;
-            Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style);
+            //style.lineColor = style.lineColor.brg();
+            //style.thickness = 3.0;
+            //Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style, "under X-hair");
+
             massesGraph.getAxisArtist().setHorizontalUnit(Math::Constants::π);
         }
 
@@ -127,14 +129,6 @@ namespace Modes::DatabaseViewer {
 
         }
         guiWindow.end();
-
-        if(ImGui::BeginMainMenuBar()) {
-            if(ImGui::BeginMenu("System")){
-                if(ImGui::MenuItem("Leave")) Core::BackendManager::GetBackend().terminate();
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
 
         WindowRow::draw();
     }
@@ -319,7 +313,8 @@ namespace Modes::DatabaseViewer {
 
         for (auto &dbParser: dbParsers) {
             auto fullField = dbParser->buildFullField();
-            auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
+            // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
+            auto dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto &cmap = Graphics::ColorMaps["blues"];
             auto artie = Graphics::Plotter::AddR2toRFunction(Naked(allDataDisplay), fullField, dbRootFolder);

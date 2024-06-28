@@ -28,13 +28,20 @@ namespace Modes::DatabaseViewer {
     fix DefaultDFTSnapshotsFolder = "./snapshots/";
     fix DefaultHistoriesFolder = "./histories/";
 
-    DBParser::DBParser(const Str& rootDBFolder, Str  criticalParameter)
+    DBParser::DBParser(Str rootDBFolder, Str criticalParameter)
     : criticalParameter(std::move(criticalParameter))
-    , rootDatabaseFolder(rootDBFolder)
+    , rootDatabaseFolder(std::move(rootDBFolder))
     {
-        Log::Info() << "Parsing database from " << rootDBFolder << Log::Flush;
+        if(rootDatabaseFolder=="./" || rootDatabaseFolder=="."){
+            fix pwd = Common::GetPWD();
+            fix splits = Common::SplitString(pwd, "/");
+            fix n = splits.size();
+            rootDatabaseFolder = "../" + (splits[n-1] + "/");
+        }
 
-        readDatabase(rootDBFolder);
+        Log::Info() << "Parsing database from " << rootDatabaseFolder << Log::Flush;
+
+        readDatabase();
 
         checkIntervalConsistency();
     }
@@ -68,7 +75,9 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBParser::readDatabase(const Str& dbPath) {
+    void DBParser::readDatabase() {
+        auto dbPath = rootDatabaseFolder;
+
         auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + DefaultDFTSnapshotsFolder);
 
         for (const auto &entry: snapshotsFolderIterator) {
@@ -92,7 +101,18 @@ namespace Modes::DatabaseViewer {
                     if (endPos != Str::npos) valueStr = valueStr.substr(0, endPos);
 
                     // Convert the string to a double
-                    double value = std::stod(valueStr);
+                    double value;
+                    try {
+                        value = std::stod(valueStr);
+                    } catch (std::exception &e) {
+                        Core::Log::ErrorFatal() << "std::exception: " << e.what();
+                        Core::Log::Info() << "@" << __PRETTY_FUNCTION__ << ":" << __LINE__;
+                        Core::Log::Info() << "While trying to convert string '" << valueStr << "' to double.";
+                        Core::Log::Info() << "While processing file '" << fileName << "." << Core::Log::Flush;
+
+                        throw DirtyDBException(Str("Database path: ") + dbPath);
+                    }
+
 
                     if(!fileSet[value].empty()) {
                         Log::Error() << "Value " << criticalParameter << "=" << value << " already exsists. "

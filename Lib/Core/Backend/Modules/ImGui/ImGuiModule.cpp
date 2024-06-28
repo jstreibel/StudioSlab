@@ -56,7 +56,7 @@ namespace Slab::Core {
         colorThemes[currentTheme]();
     }
 
-    ImGuiModule::ImGuiModule(BackendImplementation backendImpl) : Module("ImGui") {
+    ImGuiModule::ImGuiModule(BackendImplementation backendImpl) : GraphicsModule("ImGui") {
         system = backendImpl;
 
         generalInitialization();

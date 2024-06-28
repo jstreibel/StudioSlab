@@ -29,6 +29,9 @@ namespace Slab::Models::KGRtoR {
         SnapshotOutput(const NumericConfig &config, const Str &fileName);
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+
+        static bool
+        OutputNumericFunction(const Pointer<RtoR::NumericFunction>&, const Str& filename);
     };
 
 } // KleinGordon::RtoR

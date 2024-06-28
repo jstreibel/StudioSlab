@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="RtoR-SnapshotDBViewer" type="CMakeRunConfiguration" factoryName="Application" folderName="Fields" editBeforeRun="true" PROGRAM_PARAMS="--db_folders wide,uv_low,ir_high_res,ir_higher_res,ir_higher_res_local,uv,ultra_uv" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$USER_HOME$/Data/StudioSlab/SG1d/modes/signal/SGdb" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="RtoR-SnapshotDBViewer" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="RtoR-SnapshotDBViewer">
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>

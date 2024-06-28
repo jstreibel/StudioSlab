@@ -53,7 +53,7 @@ namespace Slab::Math::RtoR {
         }
 
         explicit DFTResult(bool functionIsReal=false, DFTModes re=Slab::New<Math::PointSet>(), DFTModes im=Slab::New<Math::PointSet>())
-        : re(re), im(im), inverseIsReal(functionIsReal)
+        : re(std::move(re)), im(std::move(im)), inverseIsReal(functionIsReal)
         {
 
         }
@@ -72,7 +72,10 @@ namespace Slab::Math::RtoR {
     public:
         static DFTResult Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax);
         static DFTResult Compute(const RtoR::NumericFunction &in);
+
+        static Pointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
     };
+
 
 } // RtoR
 

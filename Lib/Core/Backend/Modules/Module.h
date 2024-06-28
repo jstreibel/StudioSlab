@@ -11,12 +11,20 @@
 namespace Slab::Core {
 
     class Module {
-        Str name;
     public:
+        const Str name;
+        const bool requiresGraphicsBackend;
+
         typedef std::shared_ptr<Module> Ptr;
         Module() = delete;
-        explicit Module(Str name);
+        explicit Module(Str name, bool requiresGraphicsBackend=false);
         virtual ~Module();
+    };
+
+    class GraphicsModule : public Module {
+    public:
+        GraphicsModule() = delete;
+        explicit GraphicsModule(const Str &name) : Module(name, true) {}
 
         virtual void beginRender() {};
         virtual void endRender() {};
