@@ -23,10 +23,11 @@
 using namespace Slab;
 
 class App : public Math::AppBase {
-        Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
+    Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
                                                                                         "database folders");
 
-    Core::StringParameter criticalParameter = Core::StringParameter("omega_n", "param", "the critical param of the db set; should "
+    Core::StringParameter      criticalParameter = Core::StringParameter("harmonic", "param",
+                                                                         "the critical param of the db set; should "
                                                                           "be the only changing value both on the "
                                                                           "filenames and snapshot header");
 

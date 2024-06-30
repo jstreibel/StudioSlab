@@ -15,14 +15,11 @@
 
 namespace Slab::Graphics {
 
-    struct FlatFieldVertex {
-        float x, y;     // position
-        float s, t;     // texture
-    };
+
 
     R2toRFunctionArtist::R2toRFunctionArtist()
-    : vertexBuffer("vertex:2f,tex_coord:2f")
-    , program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+    : program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+    , textureKontraptions()
     , colorBar()
     {
         updateColorBar();
@@ -36,28 +33,31 @@ namespace Slab::Graphics {
         if (!validTextureData)
             repopulateTextureBuffer();
 
+        colorBar.getTexture()->bind();
+        program.use();
+
+        auto graphRect = graph.getRegion().getRect();
+        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
+
+        fix xScale = 2.f / w;
+        fix xTranslate = -1.0f - 2.0f * x / w;
+        fix yScale = 2.f / h;
+        fix yTranslate = -1.0f - 2.0f * y / h;
+
+        glm::mat3x3 transform = {
+                xScale, 0.0f, 0.0f,
+                0.0f, yScale, 0.0f,
+                xTranslate, yTranslate, 1.0f
+        };
+
+        for(auto &thingy : textureKontraptions.thingies)
         {
-            textureData->bind();
-            colorBar.getTexture()->bind();
-            program.use();
-
-            auto graphRect = graph.getRegion().getRect();
-            fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
-
-            fix xScale = 2.f / w;
-            fix xTranslate = -1.0f - 2.0f * x / w;
-            fix yScale = 2.f / h;
-            fix yTranslate = -1.0f - 2.0f * y / h;
-
-            glm::mat3x3 transform = {
-                    xScale, 0.0f, 0.0f,
-                    0.0f, yScale, 0.0f,
-                    xTranslate, yTranslate, 1.0f
-            };
-
+            auto texture_data  = thingy->texture;
+            texture_data->bind();
+            program.setUniform("field_data", texture_data->getTextureUnit());
             program.setUniform("transformMatrix", transform);
 
-            vertexBuffer.render(GL_TRIANGLES);
+            thingy->vertexBuffer->render(GL_TRIANGLES);
         }
 
         if(showColorBar)
@@ -92,15 +92,37 @@ namespace Slab::Graphics {
 
         auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
-        auto xRes = discreteFunc.getN();
-        auto yRes = discreteFunc.getM();
+        auto x_res = discreteFunc.getN();
+        auto y_res = discreteFunc.getM();
 
         discreteFunc.getSpace().syncHost();
 
-        for (int i=0;i<xRes;++i) for (int j=0;j<yRes;++j)
-            textureData->setValue(i, j, (Real32)discreteFunc.At(i, j));
+        fix max_size = OpenGL::Texture2D::GetMaxTextureSize();
 
-        textureData->upload();
+        fix cols = textureKontraptions.n;
+        fix rows = textureKontraptions.m;
+        for(auto col=0; col<cols; ++col) {
+            fix x_offset = col*max_size;
+            for(auto row=0; row<rows; ++row) {
+                fix y_offset = row*max_size;
+
+                auto current_image = textureKontraptions.get(col, row);
+                auto texture_data = current_image->texture;
+
+
+                fix tex_xres = texture_data->getWidth();
+                fix tex_yres = texture_data->getHeight();
+
+                for (int tex_i=0;tex_i<tex_xres;++tex_i) for (int tex_j=0;tex_j<tex_yres;++tex_j) {
+                    fix i = x_offset + tex_i;
+                    fix j = y_offset + tex_j;
+
+                    texture_data->setValue(tex_i, tex_j, (Real32) discreteFunc.At(i, j));
+                }
+
+                texture_data->upload();
+            }
+        }
 
         validTextureData = true;
     }
@@ -130,9 +152,11 @@ namespace Slab::Graphics {
                 ImGui::Text("ϕ ↦ μ(ϕ)/μ(ϕₛₐₜ)");
             }
 
-            bool antiAlias = textureData->getAntiAlias();
-            if (ImGui::Checkbox("Anti-alias display##", &antiAlias))
-                textureData->setAntiAlias(antiAlias);
+            if (ImGui::Checkbox("Anti-alias display##", &anti_alias))
+                for(auto &image : textureKontraptions.thingies) {
+                    image->texture->setAntiAlias(anti_alias);
+                }
+
 
 
             {
@@ -253,52 +277,11 @@ namespace Slab::Graphics {
         auto yRes = discreteFunc.getM();
 
         if(firstTime
-           || textureData->getWidth() != xRes
-           || textureData->getHeight() != yRes)
+        || textureKontraptions.computeFullWidth()  != xRes
+        || textureKontraptions.computeFullHeight() != yRes)
         {
-            textureData = Slab::New<OpenGL::Texture2D_Real>((int) xRes, (int) yRes);
-            textureData->setSWrap(Graphics::OpenGL::ClampToEdge);
-            textureData->setAntiAliasOff();
-            program.setUniform("field_data", textureData->getTextureUnit());
-
+            textureKontraptions = FieldTextureKontraption(xRes, yRes, region);
             updateColorBar();
-        }
-
-        {
-            auto domain = discreteFunc.getDomain();
-
-            auto hPixelSizeInTexCoord = 1. / xRes;
-            auto vPixelSizeInTexCoord = 1. / yRes;
-
-            auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
-            auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
-
-            auto si = 0.0f; // - hPixelSizeInTexCoord;
-            auto sf = 1.0f; // + hPixelSizeInTexCoord;
-            auto ti = 0.0f; // - vPixelSizeInTexCoord;
-            auto tf = 1.0f; // + vPixelSizeInTexCoord;
-
-            fix xMin_f = (float) (-.5*hTexturePixelSizeInSpaceCoord + domain.xMin);
-            fix xMax_f = (float) (+.5*hTexturePixelSizeInSpaceCoord + domain.xMax);
-            fix yMin_f = (float) (-.5*vTexturePixelSizeInSpaceCoord + domain.yMin);
-            fix yMax_f = (float) (+.5*vTexturePixelSizeInSpaceCoord + domain.yMax);
-
-            fix Lx = xMax_f-xMin_f;
-
-            vertexBuffer.clear();
-            GLuint indices[6] = {0, 1, 2, 0, 2, 3};
-
-            fix n=0;
-            for(int i=-n; i<=n; ++i) {
-                fix Δx = Lx*(float)i;
-                FlatFieldVertex vertices[4] = {
-                        {xMin_f+Δx, yMin_f, si, ti},
-                        {xMax_f+Δx, yMin_f, sf, ti},
-                        {xMax_f+Δx, yMax_f, sf, tf},
-                        {xMin_f+Δx, yMax_f, si, tf}};
-
-                vertexBuffer.pushBack(vertices, 4, indices, 6);
-            }
         }
 
         if(symmetricMaxMin) setColorMap(ColorMaps["BrBG"]);
@@ -361,9 +344,11 @@ namespace Slab::Graphics {
 
     }
 
-    void R2toRFunctionArtist::set_xPeriodicOn() { textureData->set_sPeriodicOn(); }
+    void R2toRFunctionArtist::set_xPeriodicOn() {
+        for(auto &img : textureKontraptions.thingies) img->texture->set_sPeriodicOn();
+    }
 
-    R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
+    // R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
 
     void R2toRFunctionArtist::adjustScale() {
         if(func == nullptr) return;

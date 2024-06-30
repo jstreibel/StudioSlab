@@ -15,6 +15,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
+#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
 
 namespace Slab::Graphics {
 
@@ -28,8 +29,6 @@ namespace Slab::Graphics {
             LogEpsilon
         };
 
-        typedef Slab::Pointer<Graphics::OpenGL::Texture2D_Real> FieldDataTexturePtr;
-
         bool validTextureData = false;
 
         Unit funcUnit;
@@ -42,10 +41,11 @@ namespace Slab::Graphics {
         bool showColorBar = true;
         Graphics::OpenGL::ColorBarArtist colorBar;
 
-        Graphics::OpenGL::VertexBuffer vertexBuffer;
+        FieldTextureKontraption textureKontraptions;
+        bool anti_alias=false;
+
         Graphics::OpenGL::Shader program;
         R2toR::Function_constptr func;
-        FieldDataTexturePtr   textureData;
 
         void updateColorBar();
         void invalidateTextureData();

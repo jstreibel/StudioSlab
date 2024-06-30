@@ -94,9 +94,7 @@ namespace Slab::Math::R2toR {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig, fileOutputStepsInterval > 0
-                                                            ? fileOutputStepsInterval * 25
-                                                            : int(simulationConfig.numericConfig.getn() / 40)));
+                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig));
         }
 
         return outputManager;

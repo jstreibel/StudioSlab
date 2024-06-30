@@ -5,9 +5,9 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(const NumericConfig &params, const Count n_steps_between_calls)
-            : Socket(params, "Console monitor output", n_steps_between_calls),
-              maxT(params.gett()) {
+    OutputConsoleMonitor::OutputConsoleMonitor(const NumericConfig &params)
+    : Socket(params, "Console monitor output", int(1000./params.getr()))
+    , maxT(params.gett()) {
 
     }
 

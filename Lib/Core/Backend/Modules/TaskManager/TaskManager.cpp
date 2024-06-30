@@ -70,9 +70,14 @@ namespace Slab::Core {
         }
 
         if(thread->joinable()) {
-            Log::Info() << "Joining thread for task \"" << task->getName() << "\".";
+            Log::Status() << "Waiting for task \"" << task->getName() << "\" thread to join...";
             thread->join();
+            Log::Success() << "Task \"" << task->getName() << "\" thread has joined main thread.";
         }
 
+    }
+
+    auto TaskManagerModule::hasRunningTasks() const -> bool {
+        return std::any_of(jobs.begin(), jobs.end(), [](const Job &job){ return job.first->isRunning(); });
     }
 } // Slab::Core

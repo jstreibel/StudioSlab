@@ -18,26 +18,36 @@ namespace Modes {
     using Log = Core::Log;
 
     SnapshotFileLoader::SnapshotFileLoader(const Str &filename) {
-        fieldPtr = Load(filename);
+        snapshotData = Load(filename);
     }
 
-    auto SnapshotFileLoader::Load(const Str &filename) -> Pointer<Math::RtoR::NumericFunction_CPU> {
-        auto dict = ReadPyDict(filename);
+    auto SnapshotFileLoader::Load(const Str &filename) -> SnapshotData {
+        auto metaData = ReadPyDict(filename);
         auto data = ReadData(filename);
 
         RealArray dataArr(data.data(), data.size());
 
         char *endPtr;
 
+        Pointer<Math::RtoR::NumericFunction_CPU> snapshotField;
+
+        SnapshotData::SnapshotDataType snapshotDataType = SnapshotData::unknownSnapshot;
+
         if(filename.rfind("time.dft.snapshot")) {
-            auto t = std::strtod(dict["t"].first.c_str(), &endPtr);
-            return New<Math::RtoR::NumericFunction_CPU>(dataArr, 0, t);
+            // auto t = std::strtod(metaData["t"].first.c_str(), &endPtr);
+            // auto dω = (2*M_PI/t);
+            auto dω = std::strtod(metaData["dohm"].first.c_str(), &endPtr);
+            auto n = dataArr.size();
+            auto Δω = Real(n)*dω;
+            Core::Log::Debug() << "Loaded time.dft.snapshot of Δω=" << Δω << Log::Flush;
+            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, 0, Δω);
+            snapshotDataType = SnapshotData::TimeDFTSnapshot;
         } else if(filename.rfind(".dft.snapshot")) {
-            auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
-            auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
+            auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
+            auto xMin = std::strtod(metaData["xMin"].first.c_str(), &endPtr);
             auto xMax = xMin+L;
 
-            auto N    = std::strtol(dict["N"].first.c_str(), &endPtr, 10);
+            auto N    = std::strtol(metaData["N"].first.c_str(), &endPtr, 10);
 
             if(dataArr.size() != N / 2 + 1)
                 Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
@@ -47,17 +57,21 @@ namespace Modes {
             xMax = Δk*(Real)dataArr.size();
 
 
-            return New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotDataType = SnapshotData::SpaceDFTSnapshot;
         } else if(filename.rfind(".snapshot")) {
-            auto L    = std::strtod(dict["L"].first.c_str(), &endPtr);
-            auto xMin = std::strtod(dict["xMin"].first.c_str(), &endPtr);
+            auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
+            auto xMin = std::strtod(metaData["xMin"].first.c_str(), &endPtr);
             auto xMax = xMin+L;
 
-            return New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotDataType = SnapshotData::SpaceSnapshot;
+        } else {
+            Log::Error() << "Unknown format type " << filename << Log::Flush;
+            NOT_IMPLEMENTED
         }
 
-        Log::Error() << "Unknown format type " << filename << Log::Flush;
-        NOT_IMPLEMENTED
+        return {snapshotField, metaData, filename, snapshotDataType};
     }
 
     auto SnapshotFileLoader::ReadPyDict(const Str& filePath) -> PythonUtils::PyDict {

@@ -121,7 +121,8 @@ namespace Modes::DatabaseViewer {
                 updateKGDispersion(isVisible);
 
             auto mass = (float)KG_mass;
-            if(ImGui::SliderFloat("mass", &mass, 0.0, 10.0)) {
+            if(ImGui::SliderFloat("mass##slider", &mass, 0.0, 10.0)
+             | ImGui::DragFloat("mass##drag", &mass, mass/1000.f, 0.f, 10.f)) {
                 KG_mass = mass;
                 isVisible = true;
                 updateKGDispersion(isVisible);
@@ -143,11 +144,17 @@ namespace Modes::DatabaseViewer {
             auto xMax_local = fullField->getDomain().xMax;
             if(xMax_local > xMax) xMax = xMax_local;
         }
+
+        fix mainDBType = dbParsers[0]->evaluateDatabaseType();
+        auto dispersionMode = mainDBType == SpaceDFTDBType ? Slab::Math::RtoR::k_AsFunctionOf_ω
+                            : mainDBType == TimeDFTDBType  ? Slab::Math::RtoR::ω_AsFunctionOf_k
+                            : Slab::Math::RtoR::k_AsFunctionOf_ω;
+
         KGRelation = Math::RtoR::FunctionRenderer::ToPointSet(
-                Math::RtoR::KGDispersionRelation(mass, Math::RtoR::KGDispersionRelation::k_AsFunctionOf_ω),
+                Math::RtoR::KGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
         KGRelation_high_k = Math::RtoR::FunctionRenderer::ToPointSet(
-                Math::RtoR::KGDispersionRelation_high_k(mass, Math::RtoR::KGDispersionRelation_high_k::k_AsFunctionOf_ω),
+                Math::RtoR::KGDispersionRelation_high_k(mass, dispersionMode),
                 0.0, xMax, 10000);
 
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
@@ -171,17 +178,17 @@ namespace Modes::DatabaseViewer {
             auto &fieldMap = dbParser->getFieldMap();
 
             for (auto &entry: fieldMap) {
-                IN field = *entry.second;
-                IN data = field.getSpace().getHostData();
+                IN field = entry.second.snapshotData.data;
+                IN data = field->getSpace().getHostData();
 
-                fix N = field.N;
-                fix kMin = field.xMin;
+                fix N = field->N;
+                fix kMin = field->xMin;
 
                 auto maxInfo = Utils::GetMax(data);
 
-                IN ω = entry.first;
+                IN ω = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
                 fix idx = (int)maxInfo.second;
-                fix Δk = field.xMax - field.xMin;
+                fix Δk = field->xMax - field->xMin;
 
                 auto k_avg = 0.0;
                 auto norm = 0.0;
@@ -240,8 +247,8 @@ namespace Modes::DatabaseViewer {
             ImGui::TableNextRow();
 
             ImGui::TableSetColumnIndex(0);
-            fix ω = entry.first;
-            ImGui::TextUnformatted(unit(ω, 4).c_str());
+            fix criticalParameterValue = entry.second.critical_parameter_value;
+            ImGui::TextUnformatted(unit(criticalParameterValue, 4).c_str());
 
             ImGui::TableSetColumnIndex(1);
             fix maxData = maxValues[i++];
@@ -249,7 +256,7 @@ namespace Modes::DatabaseViewer {
 
             ImGui::TableSetColumnIndex(2);
             fix idx = maxData.second;
-            IN field = *entry.second;
+            IN field = *entry.second.snapshotData.data;
             fix kMax = field.xMax;
             fix kMin = field.xMin;
             fix Δk = kMax-kMin;
@@ -257,7 +264,11 @@ namespace Modes::DatabaseViewer {
             ImGui::TextUnformatted(unit(k, 4).c_str());
 
             ImGui::TableSetColumnIndex(3);
-            fix m² = ω*ω - k*k;
+            auto type = entry.second.snapshotData.snapshotDataType;
+            fix signal = type==SnapshotData::SpaceDFTSnapshot ? 1 : type==SnapshotData::TimeDFTSnapshot?-1:0;
+            fix ω = entry.second.getScaledCriticalParameter();
+
+            fix m² = signal*(ω*ω - k*k);
             if(m²>=0)
                 ImGui::TextUnformatted(ToStr(sqrt(m²), 4).c_str());
             else
@@ -337,15 +348,16 @@ namespace Modes::DatabaseViewer {
         auto filename = files[index].second;
 
         ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");
+        ReplaceLastOccurrence(filename, ".time", "");
         ReplaceLastOccurrence(filename, "snapshots/", "./");
 
         using Log = Core::Log;
 
-        Log::Info() << "Find history" << Log::Flush;
+        Log::Info() << "Looking for history..." << Log::Flush;
         auto fieldHistory = fullHistoriesMap[filename];
 
         if(fieldHistory == nullptr) {
-            Log::Info() << "Not found. Loading history" << Log::Flush;
+            Log::Info() << "Not found. Loading history..." << Log::Flush;
             fieldHistory = HistoryFileLoader::Load(filename);
             fullHistoriesMap[filename] = fieldHistory;
         }

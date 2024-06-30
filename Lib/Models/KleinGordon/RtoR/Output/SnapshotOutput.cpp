@@ -46,7 +46,10 @@ namespace Slab::Models::KGRtoR {
         return OutputNumericFunction(Naked(f), outputFileName);
     }
 
-    bool SnapshotOutput::OutputNumericFunction(const Pointer<RtoR::NumericFunction>& funky, const Str& outputFileName) {
+    bool SnapshotOutput::OutputNumericFunction(const Pointer<RtoR::NumericFunction>& funky,
+                                               const Str& outputFileName,
+                                               Vector<Pair<Str,Str>> xtraPyDictEntries)
+    {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
             Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Log::Flush;
@@ -57,8 +60,10 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << "   "
-        << SEPARATOR << std::flush;
+        outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        for(auto entry : xtraPyDictEntries) // {key: value, key:value, }
+            outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
+        outputFile << "} " << SEPARATOR << std::flush;
 
         auto &data = funky->getSpace().getHostData(true);
         auto vecData = std::vector<double>(std::begin(data), std::end(data));

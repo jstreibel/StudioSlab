@@ -13,7 +13,7 @@ namespace Slab::Math {
         const Real maxT;
 
     public:
-        OutputConsoleMonitor(const NumericConfig &params, Count n_steps_between_calls);
+        OutputConsoleMonitor(const NumericConfig &params);
 
     public:
         bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;

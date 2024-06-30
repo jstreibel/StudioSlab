@@ -117,4 +117,8 @@ namespace Slab::PythonUtils {
 
         return resultMap;
     }
+
+    PyDictException::PyDictException(const std::string &msg) : Exception(msg) {
+
+    }
 }

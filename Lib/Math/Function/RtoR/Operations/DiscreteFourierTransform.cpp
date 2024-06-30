@@ -97,11 +97,11 @@ namespace Slab::Math::RtoR {
     Pointer<RtoR::NumericFunction> DFT::Magnitudes(const DFTResult &dftResult) {
         auto mags = dftResult.getMagnitudes()->getPoints();
 
-        auto dk = mags[1].x-mags[0].x;
-        fix t = 2*M_PI/dk; //dk=2pi/L => L=2pi/dk
+        auto Δk = mags.back().x;
+        Core::Log::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::Log::Flush;
         fix n = mags.size();
 
-        auto func = Slab::New<NumericFunction_CPU>(n, 0, t);
+        auto func = Slab::New<NumericFunction_CPU>(n, 0, Δk);
         auto&space = func->getSpace().getHostData();
         size_t i=0;
         for(auto &pt : mags){

@@ -12,12 +12,32 @@
 #include "Utils/Types.h"
 #include "Utils/PythonUtils.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "SnapshotFileLoader.h"
 
 
 namespace Modes::DatabaseViewer {
     using namespace Slab;
 
-    typedef std::map<Real, std::shared_ptr<Math::RtoR::NumericFunction_CPU>> FieldMap;
+    struct SnapshotEntry {
+        SnapshotData snapshotData;
+
+        Real critical_parameter_value;
+        Str critical_parameter_name;
+        Real scaling;
+
+        Real getScaledCriticalParameter() const { return critical_parameter_value*scaling; }
+    };
+
+    enum DatabaseType {
+        SpaceDFTDBType,
+        TimeDFTDBType,
+        SpaceDBType,
+        MixedDBType,
+        unknownDBType
+    };
+
+    using FieldMap = std::map<Real, SnapshotEntry>;
+
     class DBParser {
         Str rootDatabaseFolder;
         std::map<Real, Str> fileSet;
@@ -36,9 +56,12 @@ namespace Modes::DatabaseViewer {
         auto getFileSet() const -> const std::map<Real, Str>&;
         auto getFieldMap() const -> const FieldMap &;
 
+        DatabaseType evaluateDatabaseType() const;
+
         auto getRootDatabaseFolder() const -> const Str&;
 
         auto buildFullField() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
+
     };
 } // Modes::DatabaseViewer
 

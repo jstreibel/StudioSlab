@@ -125,6 +125,7 @@ add_library(${LIB_GRAPHICS} STATIC
         ImGui/ImGuiWindow.h
         Graph/Tool/PrintWindow.cpp
         Graph/Tool/PrintWindow.h
+		Graph/Tool/FieldTextureKontraption.cpp
 
 )
 target_link_libraries(${LIB_GRAPHICS}

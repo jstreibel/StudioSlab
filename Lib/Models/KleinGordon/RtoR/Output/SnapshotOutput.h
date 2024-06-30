@@ -31,7 +31,7 @@ namespace Slab::Models::KGRtoR {
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
         static bool
-        OutputNumericFunction(const Pointer<RtoR::NumericFunction>&, const Str& filename);
+        OutputNumericFunction(const Pointer<RtoR::NumericFunction>&, const Str& filename, Vector<Pair<Str,Str>> xtraPyDictEntries={});
     };
 
 } // KleinGordon::RtoR

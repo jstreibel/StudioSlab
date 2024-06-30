@@ -7,12 +7,14 @@
 #define k² (x*x)
 #define ω² (x*x)
 
-namespace Slab::Math {
+namespace Slab::Math::RtoR {
 
-    RtoR::KGDispersionRelation::KGDispersionRelation(Real mass, KGDRMode mode, Branch branch)
-            : m²(mass*mass), mode (mode), branch(branch) {}
+    KGDispersionRelation::KGDispersionRelation(Real mass,
+                                               KGDispersionRelationMode mode,
+                                               KGDispersionRelation::Branch branch)
+    : m²(mass*mass), mode (mode), branch(branch) {}
 
-    Real RtoR::KGDispersionRelation::operator()(Real x) const {
+    Real KGDispersionRelation::operator()(Real x) const {
         fix sign = branch == Positive ? 1. : -1.;
 
         switch (mode) {
@@ -25,7 +27,7 @@ namespace Slab::Math {
         NOT_IMPLEMENTED
     }
 
-    bool RtoR::KGDispersionRelation::domainContainsPoint(Real x) const {
+    bool KGDispersionRelation::domainContainsPoint(Real x) const {
         switch (mode) {
             case ω_AsFunctionOf_k:
                 return true;
@@ -36,10 +38,10 @@ namespace Slab::Math {
         NOT_IMPLEMENTED
     }
 
-    RtoR::KGDispersionRelation_high_k::KGDispersionRelation_high_k(Real mass, KGDRMode mode)
+    KGDispersionRelation_high_k::KGDispersionRelation_high_k(Real mass, KGDispersionRelationMode mode)
     : m²(mass*mass), mode(mode) {   }
 
-    Real RtoR::KGDispersionRelation_high_k::operator()(Real x) const {
+    Real KGDispersionRelation_high_k::operator()(Real x) const {
         const auto k = x;
         const auto ω = x;
         switch (mode) {
@@ -52,7 +54,7 @@ namespace Slab::Math {
         NOT_IMPLEMENTED
     }
 
-    auto RtoR::KGDispersionRelation_high_k::domainContainsPoint(Real x) const -> bool {
+    auto KGDispersionRelation_high_k::domainContainsPoint(Real x) const -> bool {
         return x != 0.0;
     }
 

@@ -102,6 +102,7 @@ namespace Slab::Models::KGRtoR {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
+
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
                     Slab::New<SnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
@@ -181,10 +182,9 @@ namespace Slab::Models::KGRtoR {
              * o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
+
             outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig, fileOutputStepsInterval > 0
-                                                                             ? fileOutputStepsInterval * 25
-                                                                             : int(p.getn() / 40)));
+                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig));
 
 
         return outputManager;

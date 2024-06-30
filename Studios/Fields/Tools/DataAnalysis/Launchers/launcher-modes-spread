@@ -9,7 +9,7 @@ Created on Thu May 10 19:19:17 2018
 import subprocess
 import os
 
-from numpy import pi
+from numpy import pi, sqrt
 import time
 from datetime import timedelta
 import argparse
@@ -41,7 +41,7 @@ parser.add_argument('--N', '-N',
                     type=int,
                     default=2 ** 12)
 parser.add_argument('--V', '-V',
-                    help="Potential (default: SG).",
+                    help="Potential (default: SG). 2:SG; 1:KG; 0:massless",
                     type=int,
                     default=SignumGordonPotential)
 parser.add_argument('--A', '-A',
@@ -58,6 +58,15 @@ parser.add_argument('--max_procs',
                     help="Maximum number of parallel running programs.",
                     type=int,
                     default=7)
+parser.add_argument('--r', '-r',
+                    help="The dt/h parameter of the simulation.",
+                    type=float,
+                    default=0.1)
+parser.add_argument('--adjust_omega_to_mass', '-m',
+                    help="Automatically adjust angular frequency to mass, and also the mass for the "
+                         "signum-Gordon potential.",
+                    action='store_true')
+parser.add_argument('--show_outputs', '-s', help="Show stdout and stderr from process.", action='store_true')
 
 
 args = parser.parse_args()
@@ -68,24 +77,38 @@ t = args.t
 L = args.L
 N = args.N
 V = args.V
-
-dk = 2*pi/L
+r = args.r
 
 A = args.A
 n_min, n_max = args.n_modes
 sim_list = []
 
+show_outputs = args.show_outputs
+
 f = '{:.6f}'.format
 
 for n in range(n_min, n_max+1):
-    k = n*dk
+    dk = 2 * pi / L
+    dohm = 2*pi / L  # yes, 'L'. This is how RtoR-Modes unpacks angular frequency harmonics.
 
+    k = n*dk
+    omega = n*dohm
+    mass_sqr = 1
+
+    if args.adjust_omega_to_mass:
+        if V == SignumGordonPotential:
+            mass_sqr = 4/(pi*A)
+
+        omega = sqrt(k**2+mass_sqr)
+
+    k_n = k / dk
+    omega_n = omega / dohm
     arg_list = ["RtoR-Modes",
                 '-t' + f(t), '-L' + f(L), '-N'+str(N),
                 '-A' + f(A),
-                '-w'+f(n),
-                '-k'+f(n),
-                '--th=1', '--time_dft_snapshot', '--outN='+str(N), '--BC=1', '-V'+str(V), '--massSqr=1']
+                '-w'+f(omega_n),
+                '-k'+f(k_n),
+                '--th=1', '--r_dt=' + f(r), '--time_dft_snapshot', '--outN='+str(N), '--BC=1', '-V'+str(V), '--massSqr='+str(mass_sqr)]
 
     sim_info = (n,k)
     sim_list.append((arg_list, sim_info))
@@ -104,7 +127,11 @@ while len(sim_list) or not (len(dead_procs) == total):
 
         print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')
 
-        proc = subprocess.Popen(program_call, stdout=subprocess.PIPE)
+        output = subprocess.DEVNULL
+        if show_outputs:
+            output = subprocess.PIPE
+
+        proc = subprocess.Popen(program_call, stdout=output, stderr=output, text=True)
         proc_tuples.append((proc, time.time()))
 
         print('PID', proc.pid, end=". ")
@@ -140,6 +167,14 @@ while len(sim_list) or not (len(dead_procs) == total):
                 print(out.decode('utf-8'))
                 print("\n\n\n")
 
-    time.sleep(.1)
+        elif show_outputs:
+            output = proc.stdout.readline().strip()
+            if output == '' and proc.poll() is not None:
+                pass
+            else:
+                print("({}) ".format(proc.pid) + output)
+
+    if not show_outputs:
+        time.sleep(.1)
 
 print('\n\nAll done.\n\n')

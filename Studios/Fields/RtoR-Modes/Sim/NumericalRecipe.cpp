@@ -65,10 +65,8 @@ namespace Modes {
 
     void Builder::notifyCLArgsSetupFinished() {
         InterfaceOwner::notifyCLArgsSetupFinished();
-        fix period = 2*Constants::pi / *omega;
         fix L = simulationConfig.numericConfig.getL();
         fix n = simulationConfig.numericConfig.getn();
-        fix res = (period/L)*n;
         fix a = simulationConfig.numericConfig.getr();
 
         switch (*BCSelection) {
@@ -85,6 +83,8 @@ namespace Modes {
         fix dk = M_PI/L;
         fix k = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
+        fix period = 2*Constants::pi / ω;
+        fix res = (period/L)*n;
         Log::Info() << "Setting wavenumber κL/π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
         Log::Info() << "Setting ang. freq  ωL/π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
         Log::Info() << "Relation Aκ²=" << A*k*k << Log::Flush;

@@ -19,14 +19,14 @@ namespace Slab::Graphics::OpenGL {
     , w(w)
     , h(h)
     {
-        GLint maxTextureSize;
-        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        auto maxTextureSize = GetMaxTextureSize();
+
         if(w>maxTextureSize || h>maxTextureSize) {
             Log::Error() << "Requested texture size " << w << "x" << h
                          << " too big: max texture size allowed is " << maxTextureSize << "x" << maxTextureSize
                          << Log::Flush;
 
-            throw "Texture too big";
+            throw Exception("Texture too big");
         }
 
         bind();
@@ -140,6 +140,12 @@ namespace Slab::Graphics::OpenGL {
         }
 
         return true;
+    }
+
+    GLint Texture2D::GetMaxTextureSize() {
+        GLint maxTextureSize;
+        glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+        return maxTextureSize;
     }
 
 } // OpenGL

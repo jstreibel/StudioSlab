@@ -9,6 +9,8 @@ namespace Slab::Core {
     public:
         ConsoleBackend();
 
+        ~ConsoleBackend() override;
+
         void run() override;
 
         void terminate() override;

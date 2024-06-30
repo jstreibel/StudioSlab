@@ -31,7 +31,9 @@ namespace Slab::Core {
 
     bool GraphicBackend::isHeadless() const { return false; }
 
-    GraphicBackend::~GraphicBackend() = default;
+    GraphicBackend::~GraphicBackend() {
+        Core::BackendManager::UnloadAllModules();
+    };
 
     void GraphicBackend::setMouseCursor(MouseCursor cursor) {
         switch (cursor) {

@@ -12,16 +12,30 @@
 namespace Modes {
     using namespace Slab;
 
+    namespace DatabaseViewer { class DBParser; }
+
+    struct SnapshotData {
+        Pointer<Math::RtoR::NumericFunction_CPU> data;
+        PythonUtils::PyDict metaData;
+        Str filename;
+        enum SnapshotDataType {
+            SpaceSnapshot,
+            TimeDFTSnapshot,
+            SpaceDFTSnapshot,
+            unknownSnapshot
+        } snapshotDataType;
+    };
+
     class SnapshotFileLoader {
-        Pointer<Math::RtoR::NumericFunction_CPU> fieldPtr;
+        SnapshotData snapshotData;
 
         static auto ReadPyDict(const Str& filePath) -> PythonUtils::PyDict;
         static auto ReadData(const Str& filePath) -> RealVector;
 
     public:
-        SnapshotFileLoader(const Str &filename);
+        explicit SnapshotFileLoader(const Str &filename);
 
-        static auto Load(const Str &filename) -> Pointer<Math::RtoR::NumericFunction_CPU>;
+        static auto Load(const Str &filename) -> SnapshotData;
     };
 
 } // Modes

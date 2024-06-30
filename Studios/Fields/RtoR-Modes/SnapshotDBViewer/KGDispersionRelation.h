@@ -9,20 +9,22 @@
 
 namespace Slab::Math::RtoR {
 
+    enum KGDispersionRelationMode {
+        ω_AsFunctionOf_k,
+        k_AsFunctionOf_ω
+    };
+
     class KGDispersionRelation : public RtoR::Function {
         Real m²;
     public:
-        enum KGDRMode {
-            ω_AsFunctionOf_k,
-            k_AsFunctionOf_ω
-        } mode;
+        KGDispersionRelationMode mode;
 
         enum Branch {
             Positive,
             Negative
         } branch;
 
-        KGDispersionRelation(Real mass, KGDRMode, Branch branch=Positive);
+        KGDispersionRelation(Real mass, KGDispersionRelationMode, Branch branch=Positive);
 
         Real operator()(Real x) const override;
 
@@ -32,12 +34,9 @@ namespace Slab::Math::RtoR {
     class KGDispersionRelation_high_k : public RtoR::Function {
         Real m²;
     public:
-        enum KGDRMode {
-            ω_AsFunctionOf_k,
-            k_AsFunctionOf_ω
-        } mode;
+        KGDispersionRelationMode mode;
 
-        explicit KGDispersionRelation_high_k(Real mass, KGDRMode);
+        explicit KGDispersionRelation_high_k(Real mass, KGDispersionRelationMode);
 
         Real operator()(Real k) const override;
 

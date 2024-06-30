@@ -17,6 +17,8 @@ namespace Slab::Graphics::OpenGL {
     public:
         Texture2D(GLsizei w, GLsizei h, InternalFormat format, GLenum textureUnit = GL_TEXTURE0);
 
+        static GLint GetMaxTextureSize();
+
         GLsizei getWidth() const;
         GLsizei getHeight() const;
 
