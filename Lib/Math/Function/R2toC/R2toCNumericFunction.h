@@ -29,7 +29,7 @@ namespace Slab::Math::R2toC {
         auto getData() -> ComplexArray&;
     };
 
-    DefinePointer(NumericFunction)
+    DefinePointers(NumericFunction)
 
 } // R2toC
 

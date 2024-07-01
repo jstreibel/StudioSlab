@@ -44,7 +44,7 @@ namespace Slab::Models::KGRtoR {
 
     };
 
-    DefinePointer(BoundaryCondition)
+    DefinePointers(BoundaryCondition)
 }
 
 

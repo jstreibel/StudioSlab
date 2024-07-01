@@ -14,8 +14,8 @@
 namespace Slab::Core {
 
     class SFMLBackend : public GraphicBackend {
-        Core::SFMLEventTranslator sfmlEventTranslator;
-        Vector<SFMLListener *> sfmlListeners;
+        Pointer<Core::SFMLEventTranslator> sfmlEventTranslator = New<Core::SFMLEventTranslator>();
+        Vector<Reference<SFMLListener>> sfmlListeners;
 
         sf::RenderWindow *window;
         sf::Font font;
@@ -32,7 +32,7 @@ namespace Slab::Core {
 
         sf::RenderWindow &getMainWindow();
 
-        bool addSFMLListener(SFMLListener *sfmlListener);
+        bool addSFMLListener(const Reference<SFMLListener>& sfmlListener);
 
         void run() override;
 

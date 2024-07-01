@@ -111,13 +111,13 @@ JackServer::JackServer() {
 
         auto port = Str(ports[i]);
 
-        if(Common::contains(connect_to_processed_output, port)) {
+        if(Contains(connect_to_processed_output, port)) {
             auto portName = jack_port_name(output_processed_port);
             jack_connect(client, portName, port.c_str());
             Log::Info() << "JackServer connected local output '" << portName << "' to '" << port << "' input." << Log::Flush;
         }
 
-        if(Common::contains(connect_to_input, port)) {
+        if(Contains(connect_to_input, port)) {
             auto portName = jack_port_name(input_port);
             jack_connect(client, port.c_str(), portName);
 

@@ -56,7 +56,7 @@ namespace Slab::Math::R2toR {
         Real min() const override;
     };
 
-    DefinePointer(NumericFunction)
+    DefinePointers(NumericFunction)
 }
 
 

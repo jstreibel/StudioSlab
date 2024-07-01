@@ -30,8 +30,6 @@ namespace Slab::Core {
         static void LoadModule(Modules);
         static Module::Ptr GetModule(Modules);
         static bool IsModuleLoaded(Modules);
-
-        static void UnloadAllModules();
     };
 
 

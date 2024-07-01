@@ -41,7 +41,7 @@ namespace Slab::Math::RtoR {
         LaplacianType laplacianType;
     };
 
-    DefinePointer(NumericFunction)
+    DefinePointers(NumericFunction)
 }
 
 #endif //V_SHAPE_RTORFUNCTIONARBITRARY_H

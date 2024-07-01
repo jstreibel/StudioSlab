@@ -62,9 +62,9 @@ namespace Slab::Math::R2toR {
 
     };
 
-    DefinePointer(Sampler)
+    DefinePointers(Sampler)
 
-    DefinePointer(Sampler1D)
+    DefinePointers(Sampler1D)
 
 } // R2toR
 

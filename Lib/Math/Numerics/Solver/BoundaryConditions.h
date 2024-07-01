@@ -23,7 +23,7 @@ namespace Slab::Math::Base {
         virtual void apply(EquationState &toFunction, Real t) const = 0;
     };
 
-    DefinePointer(BoundaryConditions)
+    DefinePointers(BoundaryConditions)
 }
 
 

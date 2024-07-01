@@ -67,8 +67,8 @@ namespace Slab::Core {
     }
 
 
-    void Interface::addSubInterface(Pointer<Interface> subInterface) {
-        if (Common::Contains(subInterfaces, subInterface))
+    void Interface::addSubInterface(const Pointer<Interface>& subInterface) {
+        if (Contains(subInterfaces, subInterface))
             throw Str("Error while inserting sub-interface '") + subInterface->getName()
                   + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
 
@@ -106,7 +106,7 @@ namespace Slab::Core {
             auto nameShort = param->getCLName(SHORT_NAME);
             auto nameLong = param->getCLName(LONG_NAME);
 
-            if (Common::Contains(paramNames, nameShort) || Common::Contains(paramNames, nameLong) ||
+            if (Contains(paramNames, nameShort) || Contains(paramNames, nameLong) ||
                 paramNames.empty()) {
                 bool isLong = !nameLong.empty();
                 ss << param->getCLName(isLong) << "=" << param->valueToString() << separator;

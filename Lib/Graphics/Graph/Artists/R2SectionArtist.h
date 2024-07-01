@@ -37,7 +37,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(R2SectionArtist)
+    DefinePointers(R2SectionArtist)
 
 } // Graphics
 

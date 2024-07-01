@@ -15,10 +15,10 @@
 namespace Slab::Core {
 
     class GUIEventListener {
-        Vector<GUIEventListener*> unmanagedDelegateResponders;
+        Vector<Reference<GUIEventListener>> delegateResponders;
 
     protected:
-        void addResponder(GUIEventListener *responder);
+        void addResponder(Reference<GUIEventListener> responder);
         bool hasResponders() const;
 
     public:
@@ -40,7 +40,7 @@ namespace Slab::Core {
 
     };
 
-    DefinePointer(GUIEventListener)
+    DefinePointers(GUIEventListener)
 }
 
 

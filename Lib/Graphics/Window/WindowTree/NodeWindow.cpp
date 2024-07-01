@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
         children.emplace_back(subWindow);
 
-        addResponder(subWindow);
+        addResponder(Naked(*subWindow));
     }
 
     void NodeWindow::arrange() {

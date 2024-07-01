@@ -36,7 +36,7 @@ namespace Slab::PythonUtils {
 
     template<typename T>
     ReturnType Get(Key key, const PyDict &from) {
-        if(!Common::Contains(from, key)) throw PyDictException(Str("Dictionary does not contain key '") + key + "'.");
+        if(!Contains(from, key)) throw PyDictException(Str("Dictionary does not contain key '") + key + "'.");
 
         auto value = from.at(key);
         char *endPtr;

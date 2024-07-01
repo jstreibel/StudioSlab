@@ -135,7 +135,7 @@ namespace Slab::Math::Base {
             throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
-        DefinePointer(FunctionT)
+        DefinePointers(FunctionT)
 
     };
 

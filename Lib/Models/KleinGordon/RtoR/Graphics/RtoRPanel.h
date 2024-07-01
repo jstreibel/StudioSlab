@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
 
     };
 
-    DefinePointer(RtoRPanel)
+    DefinePointers(RtoRPanel)
 
 } // Graphics
 

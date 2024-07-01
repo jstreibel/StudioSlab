@@ -3,6 +3,7 @@
 //
 
 #include "GLUTEventTranslator.h"
+#include "Utils/ReferenceIterator.h"
 #include <GL/freeglut.h>
 
 #include <map>
@@ -49,35 +50,35 @@ namespace Slab::Core {
     }
 
     bool GLUTEventTranslator::keyboard(unsigned char key, int x, int y) {
-        for(auto &listener : guiListeners)
-            if(listener->notifyKeyboard(static_cast<Core::KeyMap>(key), Core::Press, {})) return true;
+        auto key_cast = static_cast<Core::KeyMap>(key);
+        auto action = Core::Press;
+        auto mod_keys = ModKeys{};
 
-        return false;
+        return IterateReferences(guiListeners, Func(notifyKeyboard, key_cast, action, mod_keys));
     }
 
     bool GLUTEventTranslator::keyboardUp(unsigned char key, int x, int y) {
-        for(auto &listener : guiListeners)
-            if(listener->notifyKeyboard(static_cast<Core::KeyMap>(key), Core::Release, {})) return true;
+        auto key_cast = static_cast<Core::KeyMap>(key);
+        auto action = Core::Release;
+        auto mod_keys = ModKeys{};
 
-        return false;
+        return IterateReferences(guiListeners, Func(notifyKeyboard, key_cast, action, mod_keys));
     }
 
     bool GLUTEventTranslator::keyboardSpecial(int key, int x, int y) {
-        auto keyMap = translateFromGLUTSpecial(key);
+        auto key_cast = translateFromGLUTSpecial(key);
+        auto action = Core::Press;
+        auto mod_keys = ModKeys{};
 
-        for(auto &listener : guiListeners)
-             if(listener->notifyKeyboard(keyMap, Core::Press, {})) return true;
-
-        return false;
+        return IterateReferences(guiListeners, Func(notifyKeyboard, key_cast, action, mod_keys));
     }
 
     bool GLUTEventTranslator::keyboardSpecialUp(int key, int x, int y) {
-        auto keyMap = translateFromGLUTSpecial(key);
+        auto key_cast = translateFromGLUTSpecial(key);
+        auto action = Core::Release;
+        auto mod_keys = ModKeys{};
 
-        for(auto &listener : guiListeners)
-            if(listener->notifyKeyboard(keyMap, Core::Release, {})) return true;
-
-        return false;
+        return IterateReferences(guiListeners, Func(notifyKeyboard, key_cast, action, mod_keys));
     }
 
     bool GLUTEventTranslator::mouseButton(int button, int state, int x, int y) {
@@ -101,8 +102,11 @@ namespace Slab::Core {
                 {GLUT_DOWN, Core::Press   },
         };
 
-        for (auto &listener: guiListeners)
-            if(listener->notifyMouseButton(mouseMap[button], buttonStateMap[state], {})) return true;
+        auto button_map = mouseMap[button];
+        auto state_map = buttonStateMap[state];
+        auto mod_keys = ModKeys{};
+
+        IterateReferences(guiListeners, Func(notifyMouseButton, button_map, state_map, mod_keys));
 
         return false;
     }
@@ -127,11 +131,7 @@ namespace Slab::Core {
         mouseState.wheel_dx = dx;
         mouseState.wheel_dy = dy;
 
-        for (auto &listener: guiListeners) {
-            if (listener->notifyMouseWheel(dx, dy)) return true;
-        }
-
-        return false;
+        return IterateReferences(guiListeners, Func(notifyMouseWheel, dx, dy));
     }
 
     bool GLUTEventTranslator::mouseMotion(int x, int y) {
@@ -140,19 +140,17 @@ namespace Slab::Core {
         mouseState.x = x;
         mouseState.y = y;
 
-        for (auto &listener: guiListeners) if(listener->notifyMouseMotion(x, y)) return true;
-
-        return false;
+        return IterateReferences(guiListeners, Func(notifyMouseMotion, x, y));
     }
 
-    bool GLUTEventTranslator::render() { for (auto &listener: guiListeners) listener->notifyRender(); return false; }
+    bool GLUTEventTranslator::render() {
+        return IterateReferences(guiListeners, Func(notifyRender));
+    }
 
     bool GLUTEventTranslator::idle() { return false; }
 
     bool GLUTEventTranslator::reshape(int w, int h) {
-        for (auto &listener: guiListeners) listener->notifyScreenReshape(w, h);
-
-        return false;
+        return IterateReferences(guiListeners, Func(notifyScreenReshape, w, h));
     }
 
     const MouseState &GLUTEventTranslator::getMouseState() const {

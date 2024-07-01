@@ -44,7 +44,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(BaseMonitor)
+    DefinePointers(BaseMonitor)
 }
 
 #endif // OUTPUTOPENGL_H

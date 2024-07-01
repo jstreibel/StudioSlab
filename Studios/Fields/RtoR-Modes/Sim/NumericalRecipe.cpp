@@ -36,7 +36,7 @@ namespace Modes {
         fix L = this->getNumericParams().getL();
 
         fix A_0 = this->A.getValue();
-        fix dk = M_PI/L;
+        fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
 
@@ -80,13 +80,13 @@ namespace Modes {
         }
 
         fix A = this->A.getValue();
-        fix dk = M_PI/L;
+        fix dk = 2*M_PI/L;
         fix k = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
         fix period = 2*Constants::pi / ω;
         fix res = (period/L)*n;
-        Log::Info() << "Setting wavenumber κL/π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
-        Log::Info() << "Setting ang. freq  ωL/π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
+        Log::Info() << "Setting wavenumber κL/2π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
+        Log::Info() << "Setting ang. freq  ωL/2π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
         Log::Info() << "Relation Aκ²=" << A*k*k << Log::Flush;
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }

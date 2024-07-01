@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         void setGridSubdivs(int n);
     };
 
-    DefinePointer(R2toRFunctionActor)
+    DefinePointers(R2toRFunctionActor)
 
 } // Graphics
 

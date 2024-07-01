@@ -59,7 +59,7 @@ namespace Slab::Models::KGRtoR {
 
     };
 
-    DefinePointer(KGRtoRBuilder)
+    DefinePointers(KGRtoRBuilder)
 }
 
 #endif //STUDIOSLAB_KG_RTORBUILDER_H

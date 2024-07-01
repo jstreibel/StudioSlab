@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         bool draw(const PlottingWindow &d) override;
     };
 
-    DefinePointer(RtoRFunctionArtist)
+    DefinePointers(RtoRFunctionArtist)
 
 } // Graphics
 

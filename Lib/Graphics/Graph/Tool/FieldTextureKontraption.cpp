@@ -50,7 +50,10 @@ namespace Slab::Graphics {
         }
     }
 
-    FieldTextureKontraption::FieldTextureKontraption(Resolution full_xres, Resolution full_yres, RectR region) {
+    FieldTextureKontraption::FieldTextureKontraption(Resolution full_xres, Resolution full_yres, RectR region)
+    : xres(full_xres)
+    , yres(full_yres)
+    {
         fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
 
         n = full_xres / max_res + 1;
@@ -71,7 +74,7 @@ namespace Slab::Graphics {
         fix x_min = region.xMin;
         fix y_min = region.yMin;
 
-        thingies.clear();
+        blocks.clear();
 
         assert(n > 0 && m > 0);
 
@@ -88,33 +91,76 @@ namespace Slab::Graphics {
 
                 RectR sub_region = {x0, x0 + width, y0, y0 + height};
 
-                thingies.emplace_back(New<FieldTextureThingy>(x_res, y_res, sub_region));
+                blocks.emplace_back(New<FieldTextureThingy>(x_res, y_res, sub_region));
             }
         }
     }
 
-    Pointer<FieldTextureThingy> FieldTextureKontraption::get(int i, int j) {
+    Pointer<FieldTextureThingy> FieldTextureKontraption::getBlock(int i, int j) {
         assert(i < n && j < m);
 
-        return thingies[i + j * n];
+        return blocks[i + j * n];
     }
 
-    auto FieldTextureKontraption::computeFullWidth() const -> Resolution {
-        Resolution x_res = 0;
+    auto FieldTextureKontraption::get_xres() const -> Resolution {
+        // TODO: assert below
+        //Resolution x_res = 0;
+        //for (fix &thingy: blocks)
+        //    x_res += thingy->texture->getWidth();
+        // assert(x_res==xres);
 
-        for (fix &thingy: thingies)
-            x_res += thingy->texture->getWidth();
-
-        return x_res;
+        return xres;
     }
 
-    auto FieldTextureKontraption::computeFullHeight() const -> Resolution {
-        Resolution y_res = 0;
+    auto FieldTextureKontraption::get_yres() const -> Resolution {
+        // TODO: assert below
+        //Resolution y_res = 0;
+        //for (fix &thingy: blocks)
+        //    y_res += thingy->texture->getHeight();
+        //assert(y_res==yres);
 
-        for (fix &thingy: thingies)
-            y_res += thingy->texture->getHeight();
+        return yres;
+    }
 
-        return y_res;
+    void FieldTextureKontraption::setValue(int i, int j, Real value) {
+        fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
+
+        fix i_block = i/max_res;
+        fix j_block = j/max_res;
+
+        fix i_within = i%max_res;
+        fix j_within = j%max_res;
+
+        getBlock(i_block, j_block)->texture->setValue(i_within, j_within, (Real32)value);
+    }
+
+    bool FieldTextureKontraption::upload(Index j_begin, Count row_count) {
+        fix max_res = OpenGL::Texture2D::GetMaxTextureSize();
+
+        auto j_end = j_begin+row_count;
+
+        fix j_block_begin = j_begin/max_res;
+        fix j_block_end   = Common::min(j_end  /max_res, m);
+
+        if(j_block_begin==j_block_end) {
+            auto j_block = j_block_begin;
+            auto row = j_begin%max_res;
+
+            for(int i_block=0; i_block<n; ++i_block)
+                getBlock(i_block, j_block)->texture->upload(row, row_count);
+
+        } else {
+            for(int j_block = j_block_begin; j_block<=j_block_end; ++j_block) {
+                auto row   = j_block==j_block_begin ?      j_begin%max_res      : 0;
+                auto count =  j_block==j_block_end  ? row_count-j_block*max_res : 0; // count=0 uploads all
+
+                for(int i_block=0; i_block<n; ++i_block) {
+                    getBlock(i_block, j_block)->texture->upload(row, count);
+                }
+            }
+        }
+
+        return true;
     }
 
 }

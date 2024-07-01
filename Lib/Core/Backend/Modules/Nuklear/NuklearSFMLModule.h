@@ -7,6 +7,8 @@
 
 #include "NuklearModule.h"
 
+#include "Utils/Pointer.h"
+
 #include "Core/Backend/SFML/SFMLListener.h"
 #include "3rdParty/NuklearInclude.h"
 

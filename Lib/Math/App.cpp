@@ -33,9 +33,6 @@ namespace Slab::Math {
         // If tasks are still running after backend has finished around, we abort all tasks.
         taskManager->abortAllTasks();
 
-        // Unload all modules prior to backend being destroyed.
-        Core::BackendManager::UnloadAllModules();
-
         // Headless backend don't care about modules
         if(!backend.isHeadless())
             BackendManager::GetGUIBackend().unloadAllModules();

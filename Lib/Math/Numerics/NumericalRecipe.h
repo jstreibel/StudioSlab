@@ -28,7 +28,7 @@ namespace Slab::Math::Base {
         auto getNumericParams()             const -> const NumericConfig &;
     };
 
-    DefinePointer(NumericalRecipe)
+    DefinePointers(NumericalRecipe)
 
 }
 

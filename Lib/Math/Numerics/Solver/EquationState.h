@@ -33,7 +33,7 @@ namespace Slab::Math::Base {
         virtual void setData(const EquationState&) = 0;
     };
 
-    DefinePointer(EquationState)
+    DefinePointers(EquationState)
 }
 
 #endif //STUDIOSLAB_EQUATIONSTATE_H

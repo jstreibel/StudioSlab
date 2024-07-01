@@ -105,7 +105,7 @@ namespace Slab::Core {
             for (const auto &parameter: parameters) {
                 auto name = parameter->getCLName(longName);
 
-                if (Common::Contains(params, name))
+                if (Contains(params, name))
                     ss << name << "=" << parameter->valueToString() << separator;
             }
         }
@@ -135,7 +135,7 @@ namespace Slab::Core {
             for (const auto &parameter: parameters) {
                 auto name = parameter->getCLName();
 
-                if (Common::Contains(params, name))
+                if (Contains(params, name))
                     values.emplace_back(name, parameter->valueToString());
             }
         }

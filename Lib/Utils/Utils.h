@@ -31,6 +31,7 @@ void cew(cudaError err);
 #endif // USE_CUDA
 
 #include "String.h"
+#include "Containers.h"
 
 namespace Slab::Common {
     double RoundToMostSignificantDigits(double num, int digits = 3);
@@ -73,9 +74,7 @@ namespace Slab::Common {
 
     void PrintDensityThere(int x, int y, float dens);
 
-    bool Contains(auto container, const auto &element) {
-        return std::find(container.begin(), container.end(), element) != container.end();
-    }
+
     // template<typename T>
     // bool                    Contains(Vector<T> vec, const T &element) {
     //     return std::find(vec.begin(), vec.end(), element) != vec.end();
@@ -84,11 +83,6 @@ namespace Slab::Common {
     // bool                    Contains(std::set<T> set, const T &element) {
     //     return std::find(set.begin(), set.end(), element) != set.end();
     // }
-
-    template<typename T>
-    bool Find(auto container, bool(*compareFunc)(const T &)) {
-        return std::find_if(container.begin(), container.end(), compareFunc) != container.end();
-    }
 
     /**
      * Splits a string in 'maxTokens' tokens, separated by 'delimiter', starting from beginning of string.

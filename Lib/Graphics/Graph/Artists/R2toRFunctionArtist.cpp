@@ -50,7 +50,7 @@ namespace Slab::Graphics {
                 xTranslate, yTranslate, 1.0f
         };
 
-        for(auto &thingy : textureKontraptions.thingies)
+        for(auto &thingy : textureKontraptions->blocks)
         {
             auto texture_data  = thingy->texture;
             texture_data->bind();
@@ -99,14 +99,14 @@ namespace Slab::Graphics {
 
         fix max_size = OpenGL::Texture2D::GetMaxTextureSize();
 
-        fix cols = textureKontraptions.n;
-        fix rows = textureKontraptions.m;
+        fix cols = textureKontraptions->n;
+        fix rows = textureKontraptions->m;
         for(auto col=0; col<cols; ++col) {
             fix x_offset = col*max_size;
             for(auto row=0; row<rows; ++row) {
                 fix y_offset = row*max_size;
 
-                auto current_image = textureKontraptions.get(col, row);
+                auto current_image = textureKontraptions->getBlock(col, row);
                 auto texture_data = current_image->texture;
 
 
@@ -153,9 +153,8 @@ namespace Slab::Graphics {
             }
 
             if (ImGui::Checkbox("Anti-alias display##", &anti_alias))
-                for(auto &image : textureKontraptions.thingies) {
-                    image->texture->setAntiAlias(anti_alias);
-                }
+                for(auto &thingy : textureKontraptions->blocks)
+                    thingy->texture->setAntiAlias(anti_alias);
 
 
 
@@ -239,14 +238,19 @@ namespace Slab::Graphics {
         ImGui::EndChild();
     }
 
-    void R2toRFunctionArtist::setFunction(R2toR::Function_constptr function, const Unit &unit) {
-        if(func == function){
+    void R2toRFunctionArtist::setFunction(R2toR::Function_constptr functidon, const Unit &unit) {
+        if(func == functidon){
             funcUnit = unit;
             return;
         }
 
-        auto field_min = function->min();
-        auto field_max = function->max();
+        bool firstTime = func == nullptr;
+
+        func = std::move(functidon);
+        funcUnit = unit;
+
+        flagMinMaxAsDirty();
+        updateMinMax();
 
         if(Common::AreEqual(field_min, field_max)) field_max += 0.1;
 
@@ -259,10 +263,6 @@ namespace Slab::Graphics {
         program.setUniform("phi_sat", (GLfloat) cMap_saturationValue);
         colorBar.setSymmetric(symmetricMaxMin);
         colorBar.setPhiSaturation(cMap_saturationValue);
-
-        bool firstTime = func == nullptr;
-        func = std::move(function);
-        funcUnit = unit;
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
@@ -277,10 +277,10 @@ namespace Slab::Graphics {
         auto yRes = discreteFunc.getM();
 
         if(firstTime
-        || textureKontraptions.computeFullWidth()  != xRes
-        || textureKontraptions.computeFullHeight() != yRes)
+        || textureKontraptions->get_xres() != xRes
+        || textureKontraptions->get_yres() != yRes)
         {
-            textureKontraptions = FieldTextureKontraption(xRes, yRes, region);
+            textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
             updateColorBar();
         }
 
@@ -307,19 +307,17 @@ namespace Slab::Graphics {
     void R2toRFunctionArtist::updateColorBar() {
         if(func == nullptr) return;
 
-        fix field_min = func->min();
-        fix field_max = func->max();
-
-        auto &kappa = cMap_kappaArg;
+        updateMinMax();
 
         std::function<Real(Real)> g⁻¹;
 
         if(symmetricMaxMin) {
-            g⁻¹ = [field_min, field_max, &kappa](Real x) {
+
+            g⁻¹ = [this](Real x) {
                 x = x*(field_max-field_min)+field_min;
                 const auto s = SIGN(x);
 
-                return kappa*(exp(s*x) - 1);
+                return cMap_kappaArg*(exp(s*x) - 1);
             };
         } else {
             g⁻¹ = [](Real x) {
@@ -345,7 +343,7 @@ namespace Slab::Graphics {
     }
 
     void R2toRFunctionArtist::set_xPeriodicOn() {
-        for(auto &img : textureKontraptions.thingies) img->texture->set_sPeriodicOn();
+        for(auto &block : textureKontraptions->blocks) block->texture->set_sPeriodicOn();
     }
 
     // R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
@@ -353,8 +351,7 @@ namespace Slab::Graphics {
     void R2toRFunctionArtist::adjustScale() {
         if(func == nullptr) return;
 
-        fix field_min = func->min();
-        fix field_max = func->max();
+        updateMinMax();
 
         cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
 
@@ -398,6 +395,21 @@ namespace Slab::Graphics {
         }
 
         return info;
+    }
+
+    void R2toRFunctionArtist::flagMinMaxAsDirty() { dirty_minmax = true; }
+
+    void R2toRFunctionArtist::updateMinMax() {
+        if(!dirty_minmax || func == nullptr) return;
+
+        field_min = func->min();
+        field_max = func->max();
+
+        dirty_minmax = false;
+    }
+
+    auto R2toRFunctionArtist::getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption> {
+        return textureKontraptions;
     }
 
 

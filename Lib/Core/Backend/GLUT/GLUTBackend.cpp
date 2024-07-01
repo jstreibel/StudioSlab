@@ -4,6 +4,7 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
+#include "Utils/ReferenceIterator.h"
 // #include "GLUTUtils.h"
 
 #include <GL/freeglut.h>
@@ -46,7 +47,7 @@ namespace Slab::Core {
 
         glutSetOption(GLUT_ACTION_ON_WINDOW_CLOSE, GLUT_ACTION_CONTINUE_EXECUTION);
 
-        addGLUTListener(&eventTranslator);
+        addGLUTListener(eventTranslator);
 
         Log::Success() << "Initialized GLUTBackend. "
                        << "OpenGL version " << glGetString(GL_VERSION) << ". "
@@ -66,45 +67,39 @@ namespace Slab::Core {
 
         if (key == 27) glutLeaveMainLoop();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->keyboard(key, x, y)) return;
+        IterateReferences(me.glutListeners,
+                          Func(keyboard, key, x, y),
+                          StopOnFirstResponder);
     }
 
     void GLUTBackend::keyboardUp(unsigned char key, int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners) {
-            if (listener->keyboardUp(key, x, y)) return;
-        }
+        IterateReferences(me.glutListeners, Func(keyboardUp, key, x, y), StopOnFirstResponder);
     }
 
     void GLUTBackend::keyboardSpecial(int key, int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->keyboardSpecial(key, x, y)) return;
+        IterateReferences(me.glutListeners,Func(keyboardSpecial,key, x, y), StopOnFirstResponder);
     }
 
     void GLUTBackend::keyboardSpecialUp(int key, int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->keyboardSpecialUp(key, x, y)) return;
+        IterateReferences(me.glutListeners, Func(keyboardSpecialUp, key, x, y), IterateAll);
     }
 
     void GLUTBackend::mouseButton(int button, int state, int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->mouseButton(button, state, x, y))
-                return;
+        IterateReferences(me.glutListeners, Func(mouseButton, button, state, x, y), IterateAll);
     }
 
     void GLUTBackend::mouseWheel(int wheel, int direction, int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->mouseWheel(wheel, direction, x, y)) return;
+        IterateReferences(me.glutListeners, Func(mouseWheel, wheel, direction, x, y), StopOnFirstResponder);
     }
 
     void GLUTBackend::mousePassiveMotion(int x, int y) {
@@ -117,16 +112,13 @@ namespace Slab::Core {
             mouseState.y = y;
         }
 
-        for (auto &listener: me.glutListeners)
-            if (listener->mousePassiveMotion(x, y)) return;
-
+        IterateReferences(me.glutListeners, Func(mousePassiveMotion, x, y), IterateAll);
     }
 
     void GLUTBackend::mouseMotion(int x, int y) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->mouseMotion(x, y)) return;
+        IterateReferences(me.glutListeners, Func(mouseMotion, x, y));
     }
 
     void GLUTBackend::render() {
@@ -135,15 +127,12 @@ namespace Slab::Core {
         glClearColor(me.r, me.g, me.b, 1.0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto &modules = me.getGraphicsModules();
-        for (auto &module: modules)
-            module->beginRender();
+        auto modules = me.getGraphicsModules();
 
-        for (auto &listener: me.glutListeners)
-            if (listener->render()) break;
+        IterateReferences(modules, FuncRun(beginRender));
+        IterateReferences(me.glutListeners, FuncRun(render));
 
-        for (auto &module: modules)
-            module->endRender();
+        IterateReferences(modules, FuncRun(endRender));
 
         glutSwapBuffers();
         glutPostRedisplay();
@@ -152,13 +141,13 @@ namespace Slab::Core {
     void GLUTBackend::idleCall() {
         GET me = GetInstance();
 
-        for (auto &listener: me.glutListeners) listener->idle();
+        IterateReferences(me.glutListeners, FuncRun(idle));
     }
 
     void GLUTBackend::reshape(int w, int h) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.glutListeners) listener->reshape(w, h);
+        IterateReferences(me.glutListeners, FuncRun(reshape, w, h));
 
         glutPostRedisplay();
     }
@@ -175,9 +164,9 @@ namespace Slab::Core {
         return *dynamic_cast<GLUTBackend *>(&guiBackend);
     }
 
-    MouseState GLUTBackend::getMouseState() const { return eventTranslator.getMouseState(); }
+    MouseState GLUTBackend::getMouseState() const { return eventTranslator->getMouseState(); }
 
-    auto GLUTBackend::addGLUTListener(GLUTListener *glutListener) -> void {
+    auto GLUTBackend::addGLUTListener(Reference<GLUTListener> glutListener) -> void {
         glutListeners.emplace_back(glutListener);
     }
 

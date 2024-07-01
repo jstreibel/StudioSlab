@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(ParametricCurve2DArtist)
+    DefinePointers(ParametricCurve2DArtist)
 
 } // Graphics
 

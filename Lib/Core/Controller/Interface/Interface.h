@@ -63,7 +63,7 @@ namespace Slab::Core {
 
         auto getGeneralDescription() const -> Str;
 
-        void addSubInterface(Pointer<Interface> subInterface);
+        void addSubInterface(const Pointer<Interface>& subInterface);
 
         auto addListener(InterfaceListener *) -> void;
 
@@ -103,7 +103,7 @@ namespace Slab::Core {
         bool operator<(const Interface &other) const;
     };
 
-    DefinePointer(Interface)
+    DefinePointers(Interface)
 
 }
 

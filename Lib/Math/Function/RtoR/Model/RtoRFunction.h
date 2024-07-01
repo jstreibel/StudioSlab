@@ -14,8 +14,8 @@ namespace Slab::Math::RtoR {
     typedef Base::Functions<Real>::Function1D Function;
     typedef Base::Functions<Real>::Function1DSummable FunctionSummable;
 
-    DefinePointer(Function)
-    DefinePointer(FunctionSummable)
+    DefinePointers(Function)
+    DefinePointers(FunctionSummable)
 }
 
 /*

@@ -32,7 +32,7 @@ namespace Slab::Math::Base {
         EquationState &operator()(const EquationState &in, EquationState &out, Real t);
     };
 
-    DefinePointer(Solver)
+    DefinePointers(Solver)
 }
 
 #endif // HAMILTON_H

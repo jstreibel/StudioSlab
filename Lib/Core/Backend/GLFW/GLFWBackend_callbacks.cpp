@@ -8,18 +8,26 @@
 #include "GLFWBackend.h"
 #include "Core/Tools/Log.h"
 
+#include "Utils/ReferenceIterator.h"
+
 namespace Slab::Core {
 
     void GLFWBackend::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.listeners) if (listener->KeyboardEvent(window, key, scancode, action, mods)) break;
+        IterateReferences(me.listeners,
+                          Func(KeyboardEvent, window, key, scancode, action, mods),
+                          StopOnFirstResponder);
+
+        // for (auto &listener: me.listeners) if (listener->KeyboardEvent(window, key, scancode, action, mods)) break;
     }
 
     void GLFWBackend::window_char_callback(GLFWwindow *window, unsigned int value) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.listeners) if (listener->CharEvent(window, value)) break;
+        IterateReferences(me.listeners,
+                          Func(CharEvent, window, value),
+                          StopOnFirstResponder);
     }
 
     void GLFWBackend::cursor_position_callback(GLFWwindow *window, double xpos, double ypos) {
@@ -37,13 +45,17 @@ namespace Slab::Core {
         me.mouseState.dx = dx;
         me.mouseState.dy = dy;
 
-        for (auto &listener: me.listeners) if (listener->MouseMotion(window, xpos, ypos)) break;
+        IterateReferences(me.listeners,
+                          Func(MouseMotion, window, xpos, ypos),
+                          StopOnFirstResponder);
     }
 
     void GLFWBackend::cursor_enter_callback(GLFWwindow *window, int entered) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.listeners) listener->CursorEnter(window, entered);
+        IterateReferences(me.listeners,
+                          FuncRun(CursorEnter, window, entered),
+                          IterateAll);
     }
 
     void GLFWBackend::mouse_button_callback(GLFWwindow *window, int button, int action, int mods) {
@@ -53,8 +65,9 @@ namespace Slab::Core {
         if (button == GLFW_MOUSE_BUTTON_MIDDLE) me.mouseState.centerPressed = (action == GLFW_PRESS);
         if (button == GLFW_MOUSE_BUTTON_RIGHT) me.mouseState.rightPressed = (action == GLFW_PRESS);
 
-        for (auto &listener: me.listeners)
-            if (listener->MouseButton(window, button, action, mods)) break;
+        IterateReferences(me.listeners,
+                          Func(MouseButton, window, button, action, mods),
+                          IterateAll);
     }
 
     void GLFWBackend::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
@@ -63,8 +76,9 @@ namespace Slab::Core {
         me.mouseState.wheel_dx = xoffset;
         me.mouseState.wheel_dy = yoffset;
 
-        for (auto &listener: me.listeners)
-            if (listener->MouseWheel(window, xoffset, yoffset)) break;
+        IterateReferences(me.listeners,
+                          Func(MouseWheel, window, xoffset, yoffset),
+                          IterateAll);
     }
 
     void GLFWBackend::drop_callback(GLFWwindow *window, int count, const char **paths) {
@@ -81,28 +95,29 @@ namespace Slab::Core {
 
         auto &me = GetInstance();
 
-        for (auto &listener: me.listeners) listener->DroppedFiles(window, count, paths);
+        IterateReferences(me.listeners, Func(DroppedFiles, window, count, paths), IterateAll);
     }
 
     void GLFWBackend::window_size_callback(GLFWwindow *window, int width, int height) {
         auto &me = GetInstance();
 
-        for (auto &listener: me.listeners) listener->ScreenReshape(window, width, height);
+        IterateReferences(me.listeners, FuncRun(ScreenReshape, window, width, height), IterateAll);
     }
 
     auto GLFWBackend::getGLFWWindow() -> GLFWwindow & {
         return *systemWindow;
     }
 
-    void GLFWBackend::addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority) {
+    void GLFWBackend::addGLFWListener(Reference<Core::GLFWListener> glfwListener, bool highPriority) {
         if (highPriority) listeners.emplace_front(glfwListener);
         else listeners.emplace_back(glfwListener);
     }
 
-    bool GLFWBackend::addEventListener(const Core::GUIEventListener_ptr &listener) {
+    bool GLFWBackend::addEventListener(const Reference<Core::GUIEventListener> &listener) {
         int w, h;
         glfwGetWindowSize(systemWindow, &w, &h);
-        listener->notifyScreenReshape(w, h);
+
+        listener.lock()->notifyScreenReshape(w, h);
 
         return GraphicBackend::addEventListener(listener);
     }

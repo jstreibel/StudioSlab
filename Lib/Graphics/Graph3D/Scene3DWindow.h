@@ -46,7 +46,7 @@ namespace Slab::Graphics {
         bool addActor(const Actor_ptr& actor);
     };
 
-    DefinePointer(Scene3DWindow)
+    DefinePointers(Scene3DWindow)
 
 } // Graphics
 

@@ -4,10 +4,20 @@
 
 #include "GUIEventTranslator.h"
 
-bool Slab::Core::EventTranslator::addGUIEventListener(const Core::GUIEventListener_ptr &guiEventListener) {
-    if(Common::Contains(guiListeners, guiEventListener)) return false;
+namespace Slab::Core {
 
-    guiListeners.emplace_back(guiEventListener);
+    bool EventTranslator::addGUIEventListener(const Reference<GUIEventListener> &guiEventListener) {
+        auto in = guiEventListener.lock();
 
-    return true;
+        for(IN ref : guiListeners) {
+            auto ptr = ref.lock();
+            if (ptr == in)
+                return false;
+        }
+
+        guiListeners.emplace_back(guiEventListener);
+
+        return true;
+    }
+
 }

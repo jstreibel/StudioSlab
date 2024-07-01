@@ -47,7 +47,7 @@ namespace Slab::Models::KGRtoR {
         auto replicate() const -> Pointer<Base::EquationState> override;
     };
 
-    DefinePointer(EquationState)
+    DefinePointers(EquationState)
 }
 
 #endif //V_SHAPE_EQSTATERTOR_H

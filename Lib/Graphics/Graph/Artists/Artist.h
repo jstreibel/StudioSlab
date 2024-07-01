@@ -44,7 +44,7 @@ namespace Slab::Graphics {
         bool affectsGraphRanges() const;
     };
 
-    DefinePointer(Artist)
+    DefinePointers(Artist)
 }
 
 

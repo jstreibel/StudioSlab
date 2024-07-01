@@ -41,11 +41,15 @@ namespace Slab::Graphics {
         bool showColorBar = true;
         Graphics::OpenGL::ColorBarArtist colorBar;
 
-        FieldTextureKontraption textureKontraptions;
+        Pointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
         Graphics::OpenGL::Shader program;
         R2toR::Function_constptr func;
+
+        bool dirty_minmax = true;
+        Real field_min = 0.0;
+        Real field_max = 1.0;
 
         void updateColorBar();
         void invalidateTextureData();
@@ -61,6 +65,8 @@ namespace Slab::Graphics {
         bool hasGUI() override;
 
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
+        void updateMinMax();
+        void flagMinMaxAsDirty();
         auto getFunction() const -> R2toR::Function_constptr;
         void setColorMap(const ColorMap& colorMap);
         void set_xPeriodicOn();
@@ -69,10 +75,10 @@ namespace Slab::Graphics {
 
         void adjustScale();
 
-        auto getFieldTextureData() const -> FieldDataTexturePtr;
+        auto getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption>;
     };
 
-    DefinePointer(R2toRFunctionArtist)
+    DefinePointers(R2toRFunctionArtist)
 
 } // Graphics
 

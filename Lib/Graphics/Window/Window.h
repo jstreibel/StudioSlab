@@ -93,7 +93,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(Window)
+    DefinePointers(Window)
 
 }
 

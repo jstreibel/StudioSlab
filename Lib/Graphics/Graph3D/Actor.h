@@ -29,7 +29,7 @@ namespace Slab::Graphics {
         bool isVisible() const;
     };
 
-    DefinePointer(Actor)
+    DefinePointers(Actor)
 
 } // Graphics
 

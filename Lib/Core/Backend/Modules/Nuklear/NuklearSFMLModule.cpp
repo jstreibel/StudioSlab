@@ -21,7 +21,8 @@ namespace Slab::Core {
             auto &sfmlBackend = dynamic_cast<SFMLBackend &>(BackendManager::GetGUIBackend());
             renderWindow = &sfmlBackend.getMainWindow();
 
-            sfmlBackend.addSFMLListener(this);
+            static auto myReference = Naked(*this);
+            sfmlBackend.addSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
             Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "

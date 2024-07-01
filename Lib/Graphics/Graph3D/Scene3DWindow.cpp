@@ -122,7 +122,7 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::addActor(const Actor_ptr& actor) {
-        if(Common::Contains(content, actor)) return false;
+        if(Contains(content, actor)) return false;
 
         content.emplace_back(actor);
 

@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
     };
 
-    DefinePointer(RtoRScenePanel)
+    DefinePointers(RtoRScenePanel)
 
 } // Slab::Models::KGRtoR
 

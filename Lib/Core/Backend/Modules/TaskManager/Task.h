@@ -41,7 +41,7 @@ namespace Slab::Core {
         virtual void abort() = 0;
     };
 
-    DefinePointer(Task)
+    DefinePointers(Task)
 
 }
 

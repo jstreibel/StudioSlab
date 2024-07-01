@@ -4,6 +4,7 @@
 
 // Thanks https://www.glfw.org/docs/3.3/input_guide.html
 
+#include "Utils/ReferenceIterator.h"
 #include "Graphics/OpenGL/OpenGL.h"
 
 #include <GLFW/glfw3.h>
@@ -14,6 +15,8 @@
 
 
 namespace Slab::Core {
+
+    #define ExecFunc(funky) [](Pointer<GraphicsModule> module) {module->##funky; }
 
     bool finishFlag = false;
 
@@ -37,7 +40,7 @@ namespace Slab::Core {
     }
 
 
-    GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend", eventTranslator) {
+    GLFWBackend::GLFWBackend() : GraphicBackend("GLFW Backend", Naked(glfwEventTranslator)) {
         glfwSetErrorCallback(errorCallback);
 
         int major, minor, rev;
@@ -45,7 +48,7 @@ namespace Slab::Core {
 
         glfwInitHint(GLFW_JOYSTICK_HAT_BUTTONS, GLFW_FALSE);
 
-        if (!glfwInit()) throw Str("Error initializing GLFW");
+        if (!glfwInit()) throw Exception("Error initializing GLFW");
         Log::Success() << "GLFW runtime version " << major << "." << minor << "." << rev
                        << " initialized to compile version " << GLFW_VERSION_MAJOR << "." << GLFW_VERSION_MINOR << "."
                        << GLFW_VERSION_REVISION << "." << Log::Flush;
@@ -62,7 +65,8 @@ namespace Slab::Core {
         hResizeCursor   = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
         vResizeCursor   = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
 
-        addGLFWListener(&eventTranslator);
+        static auto glfwEventTranslator_ref = Naked(glfwEventTranslator);
+        addGLFWListener(glfwEventTranslator_ref);
     }
 
     GLFWBackend::~GLFWBackend() {
@@ -82,21 +86,23 @@ namespace Slab::Core {
     }
 
     void GLFWBackend::mainLoop() {
+
         while (!glfwWindowShouldClose(systemWindow) && !finishFlag) {
             // glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
             glClearColor(0.25f, .25f, .35f, 1.f);
             // glClearColor(0.75f,.75f, .65f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            for (auto &module: graphicModules) module->beginRender();
-            for (auto &listener: GetInstance().listeners) listener->Render(systemWindow);
-            for (auto &module: graphicModules) module->endRender();
+            auto window = systemWindow;
+            IterateReferences(graphicModules, FuncRun(beginRender));
+            IterateReferences(GetInstance().listeners, FuncRun(Render, window));
+            IterateReferences(graphicModules, FuncRun(endRender));
 
             glfwSwapBuffers(systemWindow);
 
-            for (auto &module: graphicModules) module->beginEvents();
+            IterateReferences(graphicModules, FuncRun(beginEvents));
             glfwPollEvents();
-            for (auto &module: graphicModules) module->endEvents();
+            IterateReferences(graphicModules, FuncRun(endEvents));
         }
     }
 

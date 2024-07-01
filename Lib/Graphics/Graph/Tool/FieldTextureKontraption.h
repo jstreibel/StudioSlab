@@ -22,16 +22,20 @@ namespace Slab::Graphics {
     };
 
     struct FieldTextureKontraption {
-        Vector <Pointer<FieldTextureThingy>> thingies={};
+        Vector <Pointer<FieldTextureThingy>> blocks={};
         Resolution n=0, m=0;
+        Resolution xres=0, yres=0;
 
         FieldTextureKontraption() = default;
         FieldTextureKontraption(Resolution full_xres, Resolution full_yres, RectR region);
 
-        Pointer <FieldTextureThingy> get(int i, int j);
+        void setValue(int i, int j, Real value);
+        Pointer <FieldTextureThingy> getBlock(int i, int j);
 
-        auto computeFullWidth() const -> Resolution;
-        auto computeFullHeight() const -> Resolution;
+        bool upload(Index begin, Count count);
+
+        auto get_xres() const -> Resolution;
+        auto get_yres() const -> Resolution;
     };
 
 }

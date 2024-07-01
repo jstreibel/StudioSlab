@@ -100,7 +100,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointer(PlottingWindow)
+    DefinePointers(PlottingWindow)
 
 }
 

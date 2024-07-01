@@ -3,6 +3,7 @@
 //
 
 #include "SFMLEventTranslator.h"
+#include "Utils/ReferenceIterator.h"
 
 #define For      for(auto &
 #define Each     listener
@@ -29,7 +30,7 @@ namespace Slab::Core {
             KeyState state = type == sf::Event::KeyPressed ? KeyState::Press : KeyState::Release;
             ModKeys modKeys{inkey.shift, inkey.control, inkey.alt, inkey.system, false, false };
 
-            For Each Listener -> notifyKeyboard(key, state, modKeys);
+            IterateReferences(guiListeners, Func(notifyKeyboard, key, state, modKeys));
         }
 
         else if(isMouseButton) {
@@ -51,21 +52,30 @@ namespace Slab::Core {
             sf::Keyboard::isKeyPressed(sf::Keyboard::LSystem) | sf::Keyboard::isKeyPressed(sf::Keyboard::RSystem),
             false, false);
 
-            For Each Listener ->notifyMouseButton(button, state, modKeys);
+            IterateReferences(guiListeners, Func(notifyMouseButton, button, state, modKeys), StopOnFirstResponder);
         }
 
-        else if(isMouseMovement)
-            For Each Listener ->notifyMouseMotion(event.mouseMove.x, event.mouseMove.y);
+        else if(isMouseMovement) {
+            fix x = event.mouseMove.x;
+            fix y = event.mouseMove.y;
+            IterateReferences(guiListeners,Func(notifyMouseMotion, x, y));
+        }
 
-        else if(isMouseWheel)
-            For Each Listener ->notifyMouseWheel(event.mouseWheelScroll.x, event.mouseWheelScroll.y);
+        else if(isMouseWheel){
+            fix x = event.mouseWheelScroll.x;
+            fix y = event.mouseWheelScroll.y;
+            IterateReferences(guiListeners,Func(notifyMouseWheel, x, y));
+        }
 
-        else if(isResize)
-            For Each Listener ->notifyScreenReshape((int)event.size.width, (int)event.size.height);
+        else if(isResize) {
+            fix w = event.size.width;
+            fix h = event.size.height;
+            IterateReferences(guiListeners,Func(notifyScreenReshape, w, h));
+        }
     }
 
     void SFMLEventTranslator::render(sf::RenderWindow *window) {
-        for(auto &listener : guiListeners) listener->notifyRender();
+        IterateReferences(guiListeners, Func(notifyRender));
     }
 
 

@@ -27,6 +27,7 @@ namespace Slab {
     typedef long long IntBig;
     typedef unsigned long UIntBig;
     typedef std::size_t Count;
+    typedef std::size_t Index;
     typedef std::size_t Resolution;
     typedef int_least64_t BigInt;
 

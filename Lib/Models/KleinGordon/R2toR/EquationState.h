@@ -25,7 +25,7 @@ namespace Slab::Math::R2toR {
         auto replicate() const -> Pointer<Base::EquationState> override;
     };
 
-    DefinePointer(EquationState)
+    DefinePointers(EquationState)
 
 }
 

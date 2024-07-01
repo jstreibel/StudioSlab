@@ -8,27 +8,28 @@
 #include "Utils/Numbers.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
+#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
 
 namespace Slab::Graphics {
 
     using namespace Math;
 
     class HistoryTexture2DUploadHelper {
-        typedef Slab::Pointer<OpenGL::Texture2D_Real> Texture2D_Real_Ptr;
         typedef Slab::Pointer<const R2toR::NumericFunction> NumericFunction_Ptr;
 
-        Texture2D_Real_Ptr textureData;
+        Pointer<FieldTextureKontraption> textureKontraption;
         NumericFunction_Ptr function;
 
         Count nextRow = 0;
         Real lastUpdatedTime = -1.0;
     public:
-        HistoryTexture2DUploadHelper(NumericFunction_Ptr history, Texture2D_Real_Ptr texture);
+        HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
+                                     Pointer<FieldTextureKontraption> texture);
 
         void uploadUpTo(const Real time);
     };
 
-    DefinePointer(HistoryTexture2DUploadHelper)
+    DefinePointers(HistoryTexture2DUploadHelper)
 
 } // Graphics
 

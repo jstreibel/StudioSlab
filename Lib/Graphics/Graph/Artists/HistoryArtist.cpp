@@ -14,11 +14,13 @@ namespace Slab::Graphics {
         if(helper == nullptr){
             auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
-            auto textureData = getFieldTextureData();
+            auto textureKontraption = getFieldTextureKontraption();
 
-            helper = Slab::New<HistoryTexture2DUploadHelper>(Slab::Naked(discreteFunc), textureData);
+            helper = Slab::New<HistoryTexture2DUploadHelper>(Slab::Naked(discreteFunc), textureKontraption);
         }
 
         helper->uploadUpTo(t);
+
+        flagMinMaxAsDirty();
     }
 } // Graphics

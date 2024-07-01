@@ -21,12 +21,14 @@
 
 namespace Slab::Core {
 
+    const bool HighPriority = true;
+
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(GLFW) {
         try {
             auto &glfwBackend = dynamic_cast<GLFWBackend&>(BackendManager::GetGUIBackend());
             renderWindow = &glfwBackend.getGLFWWindow();
 
-            glfwBackend.addGLFWListener(this);
+            glfwBackend.addGLFWListener(Naked(*this), HighPriority);
         } catch (std::bad_cast& e) {
             Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
                             "to be SFML." << Log::Flush;

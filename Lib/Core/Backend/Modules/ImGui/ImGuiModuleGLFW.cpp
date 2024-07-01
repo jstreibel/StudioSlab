@@ -25,7 +25,8 @@ namespace Slab::Core {
 
         ImGuiModule::finishInitialization();
 
-        backend->addGLFWListener(this, PRIORITIZE_ME);
+        static auto myReference = Naked(*this);
+        backend->addGLFWListener(myReference, PRIORITIZE_ME);
     }
 
     ImGuiModuleGLFW::~ImGuiModuleGLFW() {

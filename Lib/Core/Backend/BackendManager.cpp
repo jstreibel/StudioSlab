@@ -111,9 +111,5 @@ namespace Slab::Core {
         return loadedModules[moduleDescr] != nullptr;
     }
 
-    void BackendManager::UnloadAllModules() {
-        loadedModules.clear();
-    }
-
 
 } // Core

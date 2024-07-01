@@ -3,23 +3,28 @@
 //
 
 #include "GraphicBackend.h"
+
+#include <utility>
 #include "BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 namespace Slab::Core {
 
-    GraphicBackend::GraphicBackend(const Str &name, EventTranslator &eventTranslator)
-            : Backend(name), eventTranslator(eventTranslator) {}
+    GraphicBackend::GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator)
+    : Backend(name), eventTranslator(std::move(eventTranslator)) {}
 
-    auto GraphicBackend::addEventListener(const GUIEventListener_ptr &listener) -> bool {
-        return eventTranslator.addGUIEventListener(listener);
+    GraphicBackend::~GraphicBackend() {
+    };
+
+    auto GraphicBackend::addEventListener(const Reference<GUIEventListener> &listener) -> bool {
+        return eventTranslator->addGUIEventListener(listener);
     }
 
-    void GraphicBackend::addGraphicsModule(const Pointer<GraphicsModule> &module) {
+    void GraphicBackend::addGraphicsModule(const Reference<GraphicsModule> &module) {
         graphicModules.emplace_back(module);
     }
 
-    const Vector<Pointer<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
+    const Vector<Reference<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
         return graphicModules;
     }
 
@@ -30,10 +35,6 @@ namespace Slab::Core {
     }
 
     bool GraphicBackend::isHeadless() const { return false; }
-
-    GraphicBackend::~GraphicBackend() {
-        Core::BackendManager::UnloadAllModules();
-    };
 
     void GraphicBackend::setMouseCursor(MouseCursor cursor) {
         switch (cursor) {

@@ -58,7 +58,7 @@ namespace Slab::Math {
 
     };
 
-    DefinePointer(Socket)
+    DefinePointers(Socket)
 
     typedef Vector<Socket *> OutputCollection;
 

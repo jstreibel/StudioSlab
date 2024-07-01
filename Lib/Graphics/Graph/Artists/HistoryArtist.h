@@ -18,7 +18,7 @@ namespace Slab::Graphics {
         void set_t(Real);
     };
 
-    DefinePointer(HistoryArtist)
+    DefinePointers(HistoryArtist)
 
 } // Graphics
 

@@ -37,8 +37,8 @@ namespace Slab::Graphics {
     typedef Rect<int> RectI;
     typedef Rect<Real> RectR;
 
-    DefinePointer(RectI)
-    DefinePointer(RectR)
+    DefinePointers(RectI)
+    DefinePointers(RectR)
 
     struct Point2D {
         Point2D() = default;

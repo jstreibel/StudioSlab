@@ -11,24 +11,21 @@
 
 namespace Slab::Core {
 
-
-
     class GraphicBackend : public Backend {
-        EventTranslator &eventTranslator;
-
     protected:
-        GraphicBackend(const Str &name, EventTranslator &eventTranslator);
+        Pointer<EventTranslator> eventTranslator;
+        GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator);
 
     public:
         ~GraphicBackend() override;
 
     protected:
 
-        Vector<Pointer<GraphicsModule>> graphicModules;
+        Vector<Reference<GraphicsModule>> graphicModules;
 
         Real r = 0, g = 0, b = 0;
     public:
-        virtual auto addEventListener(const GUIEventListener_ptr &listener) -> bool;
+        virtual auto addEventListener(const Reference<GUIEventListener> &listener) -> bool;
 
         virtual auto getScreenHeight() const -> Real = 0;
 
@@ -38,9 +35,9 @@ namespace Slab::Core {
 
         void setClearColor(Real r, Real g, Real b);
 
-        void addGraphicsModule(const Pointer<GraphicsModule> &module);
+        void addGraphicsModule(const Reference<GraphicsModule> &module);
 
-        auto getGraphicsModules() -> const Vector<Pointer<GraphicsModule>> &;
+        auto getGraphicsModules() -> const Vector<Reference<GraphicsModule>> &;
 
         void unloadAllModules();
 

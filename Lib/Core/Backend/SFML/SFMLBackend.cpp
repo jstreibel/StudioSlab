@@ -6,6 +6,7 @@
 #include "COMPILE_CONFIG.h"
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/OpenGL/OpenGL.h"
+#include "Utils/ReferenceIterator.h"
 
 
 namespace Slab::Core {
@@ -26,7 +27,7 @@ namespace Slab::Core {
         window->setFramerateLimit(0);
         window->setPosition(sf::Vector2i(250, 250));
 
-        addSFMLListener(&sfmlEventTranslator);
+        addSFMLListener(sfmlEventTranslator);
     }
 
     void SFMLBackend::run() {
@@ -55,7 +56,7 @@ namespace Slab::Core {
         sf::Event event{};
         bool exitEvent = false;
 
-        for (auto &module: graphicModules) module->beginEvents();
+        IterateReferences(graphicModules, FuncRun(beginEvents));
 
         while (window->pollEvent(event)) {
             if (event.type == sf::Event::Closed)
@@ -71,11 +72,10 @@ namespace Slab::Core {
                 break;
             }
 
-            for (auto listener: sfmlListeners) listener->event(event);
+            IterateReferences(sfmlListeners, FuncRun(event, event));
         }
 
-        for (auto &module: graphicModules) module->endEvents();
-
+        IterateReferences(graphicModules, FuncRun(endEvents));
     }
 
     void SFMLBackend::_render() {
@@ -83,11 +83,12 @@ namespace Slab::Core {
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        for (auto &module: graphicModules) module->beginRender();
+        IterateReferences(graphicModules, FuncRun(beginRender));
 
-        for (auto &l: sfmlListeners) l->render(window);
+        auto win = window;
+        IterateReferences(sfmlListeners, FuncRun(render, win));
 
-        for (auto &module: graphicModules) module->endRender();
+        IterateReferences(graphicModules, FuncRun(endRender));
 
         window->display();
     }
@@ -105,13 +106,13 @@ namespace Slab::Core {
     }
 
     MouseState SFMLBackend::getMouseState() const {
-        NOT_IMPLEMENTED
+        NOT_IMPLEMENTED_CLASS_METHOD
 
         return MouseState();
     }
 
-    bool SFMLBackend::addSFMLListener(SFMLListener *sfmlListener) {
-        if (Common::Contains(sfmlListeners, sfmlListener)) return false;
+    bool SFMLBackend::addSFMLListener(const Reference<SFMLListener>& sfmlListener) {
+        if (ContainsReference(sfmlListeners, sfmlListener)) return false;
 
         sfmlListeners.emplace_back(sfmlListener);
 

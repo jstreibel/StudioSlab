@@ -22,7 +22,7 @@ namespace Slab::Math {
         auto getData() const -> Pointer<void>;
     };
 
-    DefinePointer(DataSet)
+    DefinePointers(DataSet)
 
 } // Slab::Math
 

@@ -33,7 +33,7 @@ namespace Slab::Math::RtoR2 {
         inline void set_s(Real min, Real max) { sMin = min; sMax = max; }
     };
 
-    DefinePointer(ParametricCurve)
+    DefinePointers(ParametricCurve)
 }
 
 

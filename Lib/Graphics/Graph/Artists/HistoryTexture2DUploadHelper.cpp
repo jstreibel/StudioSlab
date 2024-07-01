@@ -3,14 +3,16 @@
 //
 
 #include "HistoryTexture2DUploadHelper.h"
+#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
 
 #define min(a, b) ((a)<(b)?(a):(b))
 
 namespace Slab::Graphics {
 
-    HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(NumericFunction_Ptr history, Texture2D_Real_Ptr texture)
+    HistoryTexture2DUploadHelper::HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
+                                                               Pointer<FieldTextureKontraption> texture)
     : function(history)
-    , textureData(texture)
+    , textureKontraption(texture)
     {
 
     }
@@ -30,11 +32,12 @@ namespace Slab::Graphics {
         const auto N = function->getN();
         for(auto i=0; i<N; ++i)
             for(auto j=nextRow; j<=upToRow; ++j)
-                textureData->setValue(i,j, (Real32)function->At(i, j));
+                textureKontraption->setValue(i,j, (Real32)function->At(i, j));
 
         fix totalRows = upToRow-nextRow+1;
         if(totalRows<1) return;
-        if(!textureData->upload(nextRow, totalRows))
+
+        if(!textureKontraption->upload(nextRow, totalRows))
         {
             Log::Error( __PRETTY_FUNCTION__ + Str(" failed uploading texture from row ")) << nextRow << " up to row " << upToRow << ", both inclusive'"
                                                                                        << " which implies a total of " << totalRows

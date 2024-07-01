@@ -4,6 +4,8 @@
 
 #include "GLFWEventTranslator.h"
 
+#include "Utils/ReferenceIterator.h"
+
 // Don't touch:
 #define STOP_ON_FIRST_RESPONDER true
 #define TO_ALL_RESPONDERS false
@@ -34,22 +36,11 @@ namespace Slab::Core {
                 (mods & GLFW_MOD_NUM_LOCK) != 0,
         };
 
-        auto funky = [&mappedKey, &state, &modKeys](GUIEventListener_ptr& listener){
-            return listener->
-                    notifyKeyboard(mappedKey, state, modKeys);
-        };
-
-        PropagateEvents(STOP_ON_FIRST_RESPONDER)
+        return IterateReferences(guiListeners, Func(notifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
-
-        auto funky = [&](GUIEventListener_ptr& listener){
-            return listener->
-            notifyMouseMotion((int)xpos, (int)ypos);
-        };
-
-        PropagateEvents(STOP_ON_FIRST_RESPONDER)
+        return IterateReferences(guiListeners, Func(notifyMouseMotion, xpos, ypos), StopOnFirstResponder);
     }
 
     void GLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
@@ -68,24 +59,14 @@ namespace Slab::Core {
                 (mods & GLFW_MOD_NUM_LOCK) != 0,
         };
 
-        auto funky = [&](GUIEventListener_ptr& listener){
-            return listener->
-            notifyMouseButton(mappedButton, state, modKeys);
-        };
-
         if(state == Release)
-            PropagateEvents(TO_ALL_RESPONDERS)
+            return IterateReferences(guiListeners, Func(notifyMouseButton, mappedButton, state, modKeys), IterateAll);
         else
-            PropagateEvents(STOP_ON_FIRST_RESPONDER)
+            return IterateReferences(guiListeners, Func(notifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
-        auto funky = [&](GUIEventListener_ptr& listener){
-            return listener->
-            notifyMouseWheel(xoffset, yoffset);
-        };
-
-        PropagateEvents(STOP_ON_FIRST_RESPONDER)
+        return IterateReferences(guiListeners, Func(notifyMouseWheel, xoffset, yoffset), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
@@ -100,25 +81,15 @@ namespace Slab::Core {
             notifyFilesDropped(pathsVec);
         };
 
-        PropagateEvents(STOP_ON_FIRST_RESPONDER)
+        return IterateReferences(guiListeners, Func(notifyFilesDropped, pathsVec), StopOnFirstResponder);
     }
 
     void GLFWEventTranslator::Render(GLFWwindow *window) {
-        auto funky = [&](GUIEventListener_ptr& listener){
-            return listener->
-            notifyRender();
-        };
-
-        std::for_each(guiListeners.begin(), guiListeners.end(), funky);
+        IterateReferences(guiListeners, Func(notifyRender));
     }
 
     void GLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
-        auto funky = [&](GUIEventListener_ptr& listener){
-            return listener->
-            notifyScreenReshape(width, height);
-        };
-
-        std::for_each(guiListeners.begin(), guiListeners.end(), funky);
+        IterateReferences(guiListeners, Func(notifyScreenReshape, width, height));
     }
 
 

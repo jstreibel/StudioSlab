@@ -25,7 +25,7 @@ namespace Slab::Math::RtoR {
         Math::PointSet_ptr renderToPointSet(RenderingOptions options) override;
     };
 
-    DefinePointer(Section1D)
+    DefinePointers(Section1D)
 }
 
 

@@ -99,15 +99,12 @@ namespace Slab::Graphics {
     }
 
     auto Window::isMouseLeftClicked() const -> bool {
-        /*
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         fix &mouse = guiBackend.getMouseState();
+        return mouse.leftPressed;
 
-        if(!mouse.leftPressed) return false;
-         */
-
-        return mouseLeftButton==Core::Press;
+        // return mouseLeftButton==Core::Press;
     }
 
     auto Window::isMouseCenterClicked() const -> bool {

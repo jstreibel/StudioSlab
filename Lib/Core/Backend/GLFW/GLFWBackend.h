@@ -13,18 +13,18 @@
 #include "Core/Backend/GraphicBackend.h"
 #include "GLFWListener.h"
 #include "GLFWEventTranslator.h"
+#include "Utils/List.h"
 
 
 namespace Slab::Core {
 
 
     class GLFWBackend : public GraphicBackend {
-        GLFWEventTranslator eventTranslator;
-        std::list<GLFWListener *> listeners{};
+        GLFWEventTranslator glfwEventTranslator;
+        List<Reference<GLFWListener>> listeners{};
 
         MouseState mouseState;
 
-        Task *program = nullptr;
         GLFWwindow *systemWindow = nullptr;
 
         void mainLoop();
@@ -56,7 +56,7 @@ namespace Slab::Core {
 
         auto getGLFWWindow() -> GLFWwindow &;
 
-        void addGLFWListener(Core::GLFWListener *glfwListener, bool highPriority = false);
+        void addGLFWListener(Reference<Core::GLFWListener> glfwListener, bool highPriority = false);
 
         static bool GetKeyState(GLFWwindow *window, int key);
 
@@ -66,7 +66,7 @@ namespace Slab::Core {
 
         static bool GetMouseButtonState(GLFWwindow *window, int button);
 
-        auto addEventListener(const Core::GUIEventListener_ptr &listener) -> bool override;
+        auto addEventListener(const Reference<GUIEventListener> &listener) -> bool override;
 
         auto getMouseState() const -> MouseState override;
 

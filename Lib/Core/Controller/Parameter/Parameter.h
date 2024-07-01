@@ -45,7 +45,7 @@ namespace Slab::Core {
 
     };
 
-    DefinePointer(Parameter)
+    DefinePointers(Parameter)
 
     OStream &operator<<(OStream &out, const Parameter &b);
 

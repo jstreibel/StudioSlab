@@ -78,7 +78,7 @@ namespace Modes::DatabaseViewer {
             //fix L = PythonUtils::Get<Real>(Str("L"), metaData);
             fix L = std::strtod(metaData.at("L").first.c_str(), &endPtr);
             fix dk = 2*M_PI/L;
-            return dk/2; // k = n*dk = 2π/L * n
+            return dk; // k = n*dk = 2π/L * n
         }
 
         NOT_IMPLEMENTED

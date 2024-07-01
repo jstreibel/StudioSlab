@@ -41,7 +41,7 @@ namespace Slab::Math::RtoR2 {
 
     };
 
-    DefinePointer(StraightLine)
+    DefinePointers(StraightLine)
 
 }
 

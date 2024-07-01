@@ -13,7 +13,7 @@
 namespace Slab::Math::R2toR {
     typedef Base::Functions<Real>::Function2D Function;
 
-    DefinePointer(Function)
+    DefinePointers(Function)
 }
 
 #endif //V_SHAPE_R2TORFUNCTION_H

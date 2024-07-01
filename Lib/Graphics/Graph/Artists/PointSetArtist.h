@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         auto getRegion() -> const RectR & override;
     };
 
-    DefinePointer(PointSetArtist)
+    DefinePointers(PointSetArtist)
 
 } // Graphics
 
