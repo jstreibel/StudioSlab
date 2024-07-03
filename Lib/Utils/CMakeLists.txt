@@ -33,6 +33,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
             List.h
             CyclicIterator.h
             TypesGPU.h
+            Zip.h
     )
 endif ()
 

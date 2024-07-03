@@ -25,6 +25,12 @@ add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/HistoryFileLoader.h
         SnapshotDBViewer/SnapshotFileLoader.cpp
         SnapshotDBViewer/SnapshotFileLoader.h
+        ../Analysis/DataView.cpp
+        ../Analysis/DataView.h
+        ../Analysis/AnalysisMonitor.cpp
+        ../Analysis/AnalysisMonitor.h
+        ../Analysis/FourierAnalysis.cpp
+        ../Analysis/FourierAnalysis.h
 )
 target_link_libraries ( RtoR-SnapshotDBViewer Slab )
 message(NOTICE "Added executable RtoR-SnapshotDBViewer")

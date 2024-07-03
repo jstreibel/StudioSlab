@@ -104,6 +104,11 @@ namespace Modes {
         while (inFile.read(reinterpret_cast<char*>(&value), sizeof(double)))
             doubleData.emplace_back(value);
 
+        /*
+        RealVector doubleData(count);
+        inFile.read(reinterpret_cast<char*>(doubleData.data()), count*sizeof(double));
+        */
+
         inFile.close();
 
         return doubleData;

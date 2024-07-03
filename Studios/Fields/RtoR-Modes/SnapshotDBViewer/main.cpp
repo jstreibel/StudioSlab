@@ -19,6 +19,7 @@
 
 #include "DBViewer.h"
 #include "DatabaseParser.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 
 using namespace Slab;
 
@@ -40,6 +41,8 @@ public:
 
         Core::BackendManager::Startup(Core::GLFW);
 
+        // Graphics::PlotThemeManager::G
+
         this->parseCLArgs();
     }
 
@@ -48,7 +51,8 @@ public:
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-        auto viewer = std::make_shared<Modes::DatabaseViewer::DBViewer>(dbLocations, *criticalParameter);
+        auto viewer = Slab::New<Modes::DatabaseViewer::DBViewer>(dbLocations, *criticalParameter);
+
         guiBackend.addEventListener(viewer);
 
         guiBackend.run();

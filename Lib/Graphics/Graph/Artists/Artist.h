@@ -31,12 +31,12 @@ namespace Slab::Graphics {
 
         virtual const RectR &getRegion();
 
-        void setLabel(Str label);
-        auto getLabel() const -> Str;
+        virtual void setLabel(Str label);
+        virtual auto getLabel() const -> Str;
 
         virtual auto getXHairInfo(const Point2D &XHairCoord) const -> Str;
 
-        void setVisibility(bool);
+        virtual void setVisibility(bool);
         auto isVisible() const -> bool;
         virtual bool wantsLegend() const;
 

@@ -81,7 +81,8 @@ namespace Slab::Graphics {
     }
 
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
-        Core::BackendManager::GetGUIBackend().addEventListener(Slab::Naked(*this));;
+        static auto me = Naked(*this);
+        Core::BackendManager::GetGUIBackend().addEventListener(me);;
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

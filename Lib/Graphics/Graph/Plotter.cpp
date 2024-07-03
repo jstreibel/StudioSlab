@@ -9,28 +9,28 @@ namespace Slab::Graphics {
     Plotter::Plotter(Graphics::PlottingWindow_ptr win) : plottingWindow(win) {}
 
     PointSetArtist_ptr Plotter::addPointSet(const Math::PointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
-        return Plotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges);
+        return Plotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges, zOrder);
     }
 
     ParametricCurve2DArtist_ptr Plotter::addCurve(const RtoR2::ParametricCurve_ptr &data, PlotStyle style, const Str& name, int zOrder) {
-        return Plotter::AddCurve(plottingWindow, data, style, name);
+        return Plotter::AddCurve(plottingWindow, data, style, name, zOrder);
     }
 
     RtoRFunctionArtist_ptr
     Plotter::addRtoRFunction(const RtoR::Function_ptr &data, PlotStyle style, Str name, Resolution samples, int zOrder) {
-        return Plotter::AddRtoRFunction(plottingWindow, data, style, std::move(name), samples);
+        return Plotter::AddRtoRFunction(plottingWindow, data, style, std::move(name), samples, zOrder);
     }
 
     RtoRFunctionArtist_ptr Plotter::addRtoRNumericFunction(const RtoR::NumericFunction_ptr &data, PlotStyle style, Str name, int zOrder) {
-        return Plotter::AddRtoRNumericFunction(plottingWindow, data, style, std::move(name));
+        return Plotter::AddRtoRNumericFunction(plottingWindow, data, style, std::move(name), zOrder);
     }
 
     R2toRFunctionArtist_ptr Plotter::addR2toRFunction(const R2toR::NumericFunction_ptr &data, Str name, int zOrder) {
-        return Plotter::AddR2toRFunction(plottingWindow, data, std::move(name));
+        return Plotter::AddR2toRFunction(plottingWindow, data, std::move(name), zOrder);
     }
 
     HistoryArtist_ptr Plotter::addRtoRHistory(const R2toR::NumericFunction_ptr &data, Str name, int zOrder) {
-        return Plotter::AddRtoRHistory(plottingWindow, data, std::move(name));
+        return Plotter::AddRtoRHistory(plottingWindow, data, std::move(name), zOrder);
     }
 
     R2SectionArtist_ptr Plotter::addR2Section(const R2toR::Function_constptr &data, Str name, int zOrder) {
@@ -82,6 +82,9 @@ namespace Slab::Graphics {
 
         graph->addArtist(artist, zOrder);
 
+        auto cbar_artist = artist->getColorBarArtist();
+        graph->addArtist(cbar_artist, zOrder+6);
+
         return artist;
     }
 
@@ -92,6 +95,9 @@ namespace Slab::Graphics {
         artist->setFunction(function);
 
         graph->addArtist(artist, zOrder);
+
+        auto cbar_artist = artist->getColorBarArtist();
+        graph->addArtist(cbar_artist, zOrder+6);
 
         return artist;
     }

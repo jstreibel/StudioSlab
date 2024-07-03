@@ -8,6 +8,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include <utility>
+#include "PlotStyleGUI.h"
 
 namespace Slab::Graphics {
 
@@ -41,6 +42,12 @@ namespace Slab::Graphics {
     auto PointSetArtist::setStyle(PlotStyle style) -> void {
         plotStyle = style;
     }
+
+    void PointSetArtist::drawGUI() {
+        DrawPlotStyleGUI(plotStyle, getLabel());
+    }
+
+    bool PointSetArtist::hasGUI() { return true; }
 
 
 } // Graphics

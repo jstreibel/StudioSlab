@@ -19,7 +19,7 @@
 namespace Slab::Graphics {
 
     enum LinePrimitive {
-        Solid,
+        Solid=0,
         Dotted,
         Dashed,
         DotDashed,
@@ -28,7 +28,9 @@ namespace Slab::Graphics {
 
         Lines,
 
-        Point
+        Point,
+
+        __COUNT__
     };
 
     const Color Nil = Color(-1, -1, -1, -1);
@@ -52,8 +54,6 @@ namespace Slab::Graphics {
 
         GLint stippleFactor;
         GLshort stipplePattern;
-
-        bool visible;
     };
 }
 

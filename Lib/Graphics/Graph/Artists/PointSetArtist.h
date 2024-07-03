@@ -21,6 +21,10 @@ namespace Slab::Graphics {
 
         auto draw(const PlottingWindow &) -> bool override;
 
+        bool hasGUI() override;
+
+        void drawGUI() override;
+
         auto setPointSet(Math::PointSet_ptr) -> void;
         auto setStyle(PlotStyle style) -> void;
 

@@ -33,6 +33,24 @@ namespace Slab::Graphics::OpenGL {
     bool OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
         if( texture == nullptr ) return true;
 
+        {
+            const int left = -300;
+            const int vpWidth = graph.getViewport().width();
+            const int vpHeight = graph.getViewport().height();
+            const int cbarWidth = -0.35 * left;
+            const int cbarHeight = 0.96 * vpHeight;
+            const int cbarTop = (vpHeight - cbarHeight) / 2;
+
+            //               icpx         gnu
+            // bench        27.334       27.992
+            // compile    2min 37sec   2min 44sec
+
+            setLocation({vpWidth + left,
+                         vpWidth + left + cbarWidth,
+                         vpHeight - cbarTop,
+                         vpHeight - cbarTop - cbarHeight});
+        }
+
         auto style =  PlotThemeManager::GetCurrent();
         auto &writer = style->labelsWriter;
 

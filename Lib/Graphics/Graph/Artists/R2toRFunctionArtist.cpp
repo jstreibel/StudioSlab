@@ -20,11 +20,11 @@ namespace Slab::Graphics {
     R2toRFunctionArtist::R2toRFunctionArtist()
     : program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
     , textureKontraptions()
-    , colorBar()
+    , colorBar(New<OpenGL::ColorBarArtist>())
     {
         updateColorBar();
 
-        program.setUniform("colormap", colorBar.getTexture()->getTextureUnit());
+        program.setUniform("colormap", colorBar->getTexture()->getTextureUnit());
     }
 
     bool R2toRFunctionArtist::draw(const PlottingWindow &graph) {
@@ -33,7 +33,7 @@ namespace Slab::Graphics {
         if (!validTextureData)
             repopulateTextureBuffer();
 
-        colorBar.getTexture()->bind();
+        colorBar->getTexture()->bind();
         program.use();
 
         auto graphRect = graph.getRegion().getRect();
@@ -58,26 +58,6 @@ namespace Slab::Graphics {
             program.setUniform("transformMatrix", transform);
 
             thingy->vertexBuffer->render(GL_TRIANGLES);
-        }
-
-        if(showColorBar)
-        {
-            const int left = -300;
-            const int vpWidth = graph.getViewport().width();
-            const int vpHeight = graph.getViewport().height();
-            const int cbarWidth = -0.35 * left; // 27.334
-            const int cbarHeight = 0.96 * vpHeight;
-            const int cbarTop = (vpHeight - cbarHeight) / 2;
-
-            //               icpx         gnu
-            // bench        27.334       27.992
-            // compile    2min 37sec   2min 44sec
-
-            colorBar.setLocation({vpWidth + left,
-                                  vpWidth + left + cbarWidth,
-                                  vpHeight - cbarTop,
-                                  vpHeight - cbarTop - cbarHeight});
-            colorBar.draw(graph);
         }
 
         return true;
@@ -261,8 +241,8 @@ namespace Slab::Graphics {
 
         program.setUniform("symmetric", (GLboolean ) symmetricMaxMin);
         program.setUniform("phi_sat", (GLfloat) cMap_saturationValue);
-        colorBar.setSymmetric(symmetricMaxMin);
-        colorBar.setPhiSaturation(cMap_saturationValue);
+        colorBar->setSymmetric(symmetricMaxMin);
+        colorBar->setPhiSaturation(cMap_saturationValue);
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
@@ -325,20 +305,20 @@ namespace Slab::Graphics {
             };
         }
 
-        colorBar.setInverseScalingFunction(g⁻¹);
+        colorBar->setInverseScalingFunction(g⁻¹);
 
-        colorBar.setColorMap(cMap);
+        colorBar->setColorMap(cMap);
 
         program.setUniform("phi_sat", (float)cMap_saturationValue);
         program.setUniform("kappa", (float)cMap_kappaArg);
         program.setUniform("symmetric", symmetricMaxMin);
 
-        colorBar.setPhiMin(field_min);
-        colorBar.setPhiMax(field_max);
-        colorBar.setPhiSaturation(cMap_saturationValue);
-        colorBar.setKappa(cMap_kappaArg);
-        colorBar.setSymmetric(symmetricMaxMin);
-        colorBar.setMode(OpenGL::ColorBarMode::ValuesInSatRangeOnly);
+        colorBar->setPhiMin(field_min);
+        colorBar->setPhiMax(field_max);
+        colorBar->setPhiSaturation(cMap_saturationValue);
+        colorBar->setKappa(cMap_kappaArg);
+        colorBar->setSymmetric(symmetricMaxMin);
+        colorBar->setMode(OpenGL::ColorBarMode::ValuesInSatRangeOnly);
 
     }
 
@@ -346,6 +326,10 @@ namespace Slab::Graphics {
         for(auto &block : textureKontraptions->blocks) block->texture->set_sPeriodicOn();
     }
 
+    void R2toRFunctionArtist::setLabel(Str label) {
+        colorBar->setLabel(label + " (colorbar)");
+        Artist::setLabel(label);
+    }
     // R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
 
     void R2toRFunctionArtist::adjustScale() {
@@ -410,6 +394,10 @@ namespace Slab::Graphics {
 
     auto R2toRFunctionArtist::getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption> {
         return textureKontraptions;
+    }
+
+    auto R2toRFunctionArtist::getColorBarArtist() const -> Pointer<Graphics::OpenGL::ColorBarArtist> {
+        return colorBar;
     }
 
 

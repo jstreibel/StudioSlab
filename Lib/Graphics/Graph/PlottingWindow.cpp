@@ -22,7 +22,6 @@
 
 #define POPUP_ON_MOUSE_CALL false
 
-
 #include "Graphics/Graph/Shapes/Shape.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
@@ -70,8 +69,8 @@ namespace Slab {
 
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 
-        addArtist(Slab::Naked(axisArtist), 100);
-        addArtist(Slab::Naked(artistXHair), 10000);
+        addArtist(Slab::Naked(axisArtist), 5);
+        addArtist(Slab::Naked(artistXHair), 10);
     }
 
     Graphics::PlottingWindow::PlottingWindow(Str title, bool autoReviewGraphLimits)
@@ -109,8 +108,6 @@ namespace Slab {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
         Window::setBGColor(PlotThemeManager::GetCurrent()->graphBackground);
         Window::draw();
-
-        artistXHair.setVisibility(isMouseIn());
 
         if (autoReviewGraphRanges) reviewGraphRanges();
 
@@ -158,10 +155,8 @@ namespace Slab {
             ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {
-
                 for (auto it = content.begin(); it!=content.end(); ) {
                     IN artie = it->second;
-                    if (artie.get() == &artistXHair){ ++it; continue; };
 
                     bool increment_iterator = true;
 
@@ -187,8 +182,6 @@ namespace Slab {
 
                 for (IN cont: content) {
                     IN artie = cont.second;
-
-                    if (artie.get() == &artistXHair) continue;
 
                     if (artie->isVisible() && artie->hasGUI()) {
                         if (ImGui::CollapsingHeader(Unique(artie->getLabel())))

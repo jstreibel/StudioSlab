@@ -119,9 +119,16 @@ namespace Slab::Models::KGRtoR {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
+            RealVector x_locations={xMin+L/2};
+            if(auto k_param = InterfaceManager::getInstance().getParameter("k")){
+                auto k_n = k_param->getValueAs<Real>();
+
+                x_locations = {L/(4.*k_n)};
+            }
+
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
-                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, snapshotFilename));
+                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, snapshotFilename, x_locations));
         }
 
 

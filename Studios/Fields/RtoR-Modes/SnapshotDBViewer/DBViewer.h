@@ -52,9 +52,10 @@ namespace Modes::DatabaseViewer {
         int index_XHair=-1;
 
         Real KG_mass = 1.0;
+        int masses_avg_samples = 10;
         void updateKGDispersion(bool visible);
         void reloadData();
-        void computeMasses(int avRange);
+        void computeMasses();
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
 

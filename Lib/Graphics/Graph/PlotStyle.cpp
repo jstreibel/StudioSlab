@@ -18,8 +18,11 @@ namespace Slab::Graphics {
 
     PlotStyle::PlotStyle(Color color, LinePrimitive primitive, bool filled,
                          Color fillColor, float thickness)
-            : lineColor(color), primitive(primitive), filled(filled), fillColor(fillColor), thickness(thickness),
-              visible(true) {
+    : lineColor(color)
+    , primitive(primitive)
+    , filled(filled)
+    , fillColor(fillColor)
+    , thickness(thickness) {
         if (filled && fillColor == Nil) {
             this->fillColor = color;
             this->fillColor.a *= .25;

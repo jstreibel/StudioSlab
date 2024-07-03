@@ -42,10 +42,10 @@ namespace Slab::Graphics::OpenGL {
         ColorMap colorMap;
 
         void updateTexture(int samples=1024);
+        void setLocation(RectI loc);
     public:
         explicit ColorBarArtist(RectI loc={50,150, 50, 750});
 
-        void setLocation(RectI loc);
         void setColorMap(const ColorMap& colorMap);
         auto getTexture() -> CMapTexturePtr;
 

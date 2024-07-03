@@ -14,6 +14,8 @@ namespace Modes {
     using Log = Core::Log;
 
     RealVector remove_first_column(RealVector &vec, Int N, Int M) {
+        assert(vec.size()/N==M);
+
         auto N_new = N-1;
         RealVector new_vec(N_new * M);
 

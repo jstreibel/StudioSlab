@@ -21,6 +21,8 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
+    #define z_order(z) (z)
+
     DBViewer::DBViewer(const StrVector& dbFilenames, const Str &criticalParam)
     : WindowRow(HasMainMenu)
     , guiWindow()
@@ -61,19 +63,22 @@ namespace Modes::DatabaseViewer {
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation, style,
-                                                               "ω²-kₚₑₐₖ²-m²=0", false, 10);
+                                                               "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
             style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_high_k_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation_high_k,
-                                                                      style, "k=ω-½m²/ω+...", false, 10);
+                                                                      style, "k=ω-½m²/ω+...", false, z_order(2));
 
             style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
             style.primitive = Graphics::Point;
             style.thickness = 8;
             Graphics::Plotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
-                                           "main modes", false);
+                                           "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
+
+            allDataDisplay.getAxisArtist().setVerticalAxisLabel("ω");
+            allDataDisplay.getAxisArtist().setHorizontalAxisLabel("k");
 
             topRow.addWindow(Naked(allDataDisplay));
         }
@@ -109,6 +114,9 @@ namespace Modes::DatabaseViewer {
         guiWindow.begin();
 
         if(ImGui::CollapsingHeader("Dominant modes")) {
+            if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 100)){
+                computeMasses();
+            }
             drawTable(index_XHair);
 
             // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
@@ -172,7 +180,12 @@ namespace Modes::DatabaseViewer {
         KGRelation_high_k_artist->setLabel(Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
-    void DBViewer::computeMasses(int avRange) {
+    void DBViewer::computeMasses() {
+        maxValues.clear();
+        maxValuesPointSet.clear();
+        massesImag_pointSet.clear();
+        massesReal_pointSet.clear();
+
         for(auto &dbParser : dbParsers) {
 
             auto &fieldMap = dbParser->getFieldMap();
@@ -192,8 +205,10 @@ namespace Modes::DatabaseViewer {
 
                 auto k_avg = 0.0;
                 auto norm = 0.0;
-                int i = -avRange;
-                for (; i <= avRange; ++i) {
+                fix half_samples = masses_avg_samples/2;
+                fix leftover_samples = masses_avg_samples%2;
+                int i = -half_samples;
+                for (; i < half_samples+leftover_samples; ++i) {
                     int curr_idx = idx + i;
                     if (curr_idx < 0 || curr_idx >= N) continue;
 
@@ -335,7 +350,7 @@ namespace Modes::DatabaseViewer {
             fullFieldsArtist.emplace_back(artie);
         }
 
-        computeMasses(10);
+        computeMasses();
     }
 
     void DBViewer::loadDataUnderMouse() {

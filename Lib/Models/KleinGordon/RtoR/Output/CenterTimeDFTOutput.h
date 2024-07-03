@@ -11,7 +11,9 @@ namespace Slab::Models::KGRtoR {
 
     class CenterTimeDFTOutput : public Math::Socket {
         Str filename;
-        RealVector data;
+        Vector<RealVector> dataset;
+
+        Vector<Real> x_measure;
 
     protected:
         auto handleOutput(const Math::OutputPacket &packet) -> void override;
@@ -20,7 +22,7 @@ namespace Slab::Models::KGRtoR {
         auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
-        CenterTimeDFTOutput(const Math::NumericConfig &config, const Str &filename);
+        CenterTimeDFTOutput(const Math::NumericConfig &config, const Str &filename, Vector<Real> x_measure);
 
     };
 }
