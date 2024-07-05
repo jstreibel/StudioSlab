@@ -11,7 +11,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Core/Tools/Resources.h"
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
 
@@ -22,9 +22,6 @@ namespace Slab::Graphics {
     , textureKontraptions()
     , colorBar(New<OpenGL::ColorBarArtist>())
     {
-        updateColorBar();
-
-        program.setUniform("colormap", colorBar->getTexture()->getTextureUnit());
     }
 
     bool R2toRFunctionArtist::draw(const PlottingWindow &graph) {
@@ -187,28 +184,28 @@ namespace Slab::Graphics {
                         ImGui::SetItemDefaultFocus();
                 }
                 if (item_last_idx != item_current_idx)
-                    setColorMap(ColorMaps[selectedItem]);
+                    setColorMap(ColorMaps[selectedItem]->clone());
                 item_last_idx = item_current_idx;
                 ImGui::EndCombo();
             }
 
             ImGui::Text("ColorMap operations:");
             if (ImGui::Button("RGB->BRG")) {
-                cMap = cMap.brg();
+                *cMap = cMap->brg();
                 updateColorBar();
             }
             ImGui::SameLine();
             if (ImGui::Button("RGB->BGR")) {
-                cMap = cMap.bgr();
+                *cMap = cMap->bgr();
                 updateColorBar();
             }
             if (ImGui::Button("Inv")) {
-                cMap = cMap.inverse();
+                *cMap = cMap->inverse();
                 updateColorBar();
             }
             ImGui::SameLine();
             if (ImGui::Button("Rev")) {
-                cMap = cMap.reverse();
+                *cMap = cMap->reverse();
                 updateColorBar();
             }
 
@@ -259,15 +256,14 @@ namespace Slab::Graphics {
         if(firstTime
         || textureKontraptions->get_xres() != xRes
         || textureKontraptions->get_yres() != yRes)
-        {
             textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
-            updateColorBar();
+
+        if(cMap == nullptr) {
+            if (symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->clone());
+            else                 setColorMap(ColorMaps["blues"]->clone());
         }
 
-        if(symmetricMaxMin) setColorMap(ColorMaps["BrBG"]);
-        else {
-            setColorMap(ColorMaps["blues"]);
-        }
+        updateColorBar();
 
         invalidateTextureData();
         repopulateTextureBuffer();
@@ -275,13 +271,14 @@ namespace Slab::Graphics {
 
     auto R2toRFunctionArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
-    void R2toRFunctionArtist::setColorMap(const ColorMap &colorMap) {
+    void R2toRFunctionArtist::setColorMap(const Pointer<ColorMap> &colorMap) {
         cMap = colorMap;
 
-        symmetricMaxMin = cMap.getType() == ColorMap::Divergent;
+        symmetricMaxMin = cMap->getType() == ColorMap::Divergent;
         program.setUniform("symmetric", true);
 
         updateColorBar();
+
     }
 
     void R2toRFunctionArtist::updateColorBar() {
@@ -312,6 +309,7 @@ namespace Slab::Graphics {
         program.setUniform("phi_sat", (float)cMap_saturationValue);
         program.setUniform("kappa", (float)cMap_kappaArg);
         program.setUniform("symmetric", symmetricMaxMin);
+        program.setUniform("colormap", colorBar->getTexture()->getTextureUnit());
 
         colorBar->setPhiMin(field_min);
         colorBar->setPhiMax(field_max);

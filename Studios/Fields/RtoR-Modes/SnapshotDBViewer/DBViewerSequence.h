@@ -1,9 +1,9 @@
 //
-// Created by joao on 21/09/23.
+// Created by joao on 7/5/24.
 //
 
-#ifndef STUDIOSLAB_DBVIEWER_H
-#define STUDIOSLAB_DBVIEWER_H
+#ifndef STUDIOSLAB_DBVIEWERSEQUENCE_H
+#define STUDIOSLAB_DBVIEWERSEQUENCE_H
 
 #include "DatabaseParser.h"
 
@@ -20,14 +20,23 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewer : public Graphics::WindowRow {
+    class DBViewerSequence : public Graphics::WindowRow {
         Graphics::GUIWindow guiWindow;
         WindowRow topRow;
 
+        int current_database = -1;
+
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::PlottingWindow allDataDisplay;
-        Graphics::PlottingWindow fullParticularHistoryDisplay;
-        Graphics::R2toRFunctionArtist_ptr currentFullParticularHistoryArtist;
+        Graphics::PlottingWindow mashupDisplay;
+
+        using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
+        Vector<Pointer<SnapshotMashup>> allMashups;
+        Vector<Graphics::R2toRFunctionArtist_ptr> mashupArtists;
+        Vector<Utils::MaxInfo> maxValues;
+
+        Pointer<SnapshotMashup> currentMashup;
+        Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;
+
 
         Graphics::PlottingWindow massesGraph;
 
@@ -38,16 +47,7 @@ namespace Modes::DatabaseViewer {
         Graphics::PointSetArtist_ptr mainModesArtist;
 
         Pointer<Math::PointSet> KGRelation;
-        Pointer<Math::PointSet> KGRelation_high_k;
         Graphics::PointSetArtist_ptr KGRelation_artist;
-        Graphics::PointSetArtist_ptr KGRelation_high_k_artist;
-
-        using FullField_ptr = Pointer<Math::R2toR::NumericFunction_CPU>;
-        Vector<FullField_ptr> fullFields;
-        Vector<Graphics::R2toRFunctionArtist_ptr> fullFieldsArtist;
-        Vector<Utils::MaxInfo> maxValues;
-
-        std::map<Str, Pointer<Math::R2toR::NumericFunction_CPU>> fullHistoriesMap;
 
         int index_XHair=-1;
 
@@ -57,21 +57,15 @@ namespace Modes::DatabaseViewer {
         void reloadData();
         void computeMasses();
         void drawTable(int specialIndex);
-        void loadDataUnderMouse();
 
         Core::KeyState shiftKey = Core::Release;
     public:
-        explicit DBViewer(const StrVector& dbFilenames, const Str &criticalParam);
+        explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
         void draw() override;
 
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
-
-        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
-
-        bool notifyMouseMotion(int x, int y) override;
     };
 }
 
-
-#endif //STUDIOSLAB_DBVIEWER_H
+#endif //STUDIOSLAB_DBVIEWERSEQUENCE_H

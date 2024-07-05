@@ -38,7 +38,6 @@ namespace Slab::Graphics {
 
         virtual void setVisibility(bool);
         auto isVisible() const -> bool;
-        virtual bool wantsLegend() const;
 
         void setAffectGraphRanges(bool);
         bool affectsGraphRanges() const;

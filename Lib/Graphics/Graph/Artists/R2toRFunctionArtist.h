@@ -15,7 +15,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
-#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
+#include "Graphics/Graph/Util/FieldTextureKontraption.h"
 
 namespace Slab::Graphics {
 
@@ -33,7 +33,7 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        ColorMap cMap           = ColorMaps["BrBG"];
+        Pointer<ColorMap> cMap           = ColorMaps["BrBG"]->clone();
         Real cMap_kappaArg                =  1; // contrast
         Real cMap_saturationValue       =  1.1;
         bool symmetricMaxMin            = true;
@@ -70,7 +70,7 @@ namespace Slab::Graphics {
         void updateMinMax();
         void flagMinMaxAsDirty();
 
-        void setColorMap(const ColorMap& colorMap);
+        void setColorMap(const Pointer<ColorMap>& colorMap);
         auto getColorBarArtist() const -> Pointer<Graphics::OpenGL::ColorBarArtist>;
 
         void set_xPeriodicOn();

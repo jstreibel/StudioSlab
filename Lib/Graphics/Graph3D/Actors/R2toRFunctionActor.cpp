@@ -7,7 +7,7 @@
 #include "Core/Tools/Resources.h"
 
 #include "Graphics/Graph3D/Scene3DWindow.h"
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include <array>
 #include <cmath>

@@ -151,7 +151,7 @@ namespace Slab::Graphics::OpenGL {
 
         for(auto i=0; i<samples; ++i){
             fix s = (Real)(i-1)/(Real)(samples-2);
-            fix color = colorMap.mapValueToColor(s);
+            fix color = colorMap->mapValueToColor(s);
             texture->setColor(i, color);
         }
 
@@ -179,7 +179,7 @@ namespace Slab::Graphics::OpenGL {
         vertexBuffer.pushBack(vertices, 4, indices, 6);
     }
 
-    void ColorBarArtist::setColorMap(const ColorMap& map) {
+    void ColorBarArtist::setColorMap(const Pointer<const ColorMap>& map) {
         this->colorMap = map;
 
         textureDirty = true;

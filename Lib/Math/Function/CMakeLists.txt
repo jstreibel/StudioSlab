@@ -11,7 +11,6 @@ if( STUDIOSLAB_CUDA_SUPPORT )
 
             R2toR/Model/Operators/DerivativesGPU.cu
 			R2toR/Model/R2toRNumericFunctionGPU.cu
-
 			)
 
 	message(STATUS "Maps CUDA support is ENABLED.")
@@ -115,6 +114,7 @@ set ( R2TOR_SOURCES
 )
 
 set(MAPS_SOURCES
+		#${FUNCTION_SOURCES}
 		${OTHER_MAPS_SOURCES}
 		${RTOR_SOURCES}
 		${R2TOR_SOURCES}
@@ -125,20 +125,10 @@ set(MAPS_SOURCES
 		R2toR/Model/Operators/R2toRLaplacian.cpp
 		R2toR/Model/Operators/R2toRLaplacian.h
 
+		PARENT_SCOPE
 )
 
 # Maps
-
-
-add_library( ${MAPS_BASE_LIB_NAME} STATIC
-		${MAPS_SOURCES}
-		${FUNCTION_SOURCES}
-)
-target_link_libraries( ${MAPS_BASE_LIB_NAME} omp)
-
-message(NOTICE "Added sub-library " ${MAPS_BASE_LIB_NAME})
-
-
 
 # ℝ ↦ ℝ
 

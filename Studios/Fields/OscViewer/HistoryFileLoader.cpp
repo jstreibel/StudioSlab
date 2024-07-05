@@ -57,7 +57,7 @@ namespace Modes {
         auto xMin = xCenter - .5*L;
         auto xMax = xCenter + .5*L;
         auto hx = L/(Real)N;
-        auto hy = t/(Real)N;
+        auto hy = t/(Real)M;
 
         auto field = New<Math::R2toR::NumericFunction_CPU>(N, M, xMin, t0, hx, hy);
 

@@ -54,13 +54,13 @@ namespace Modes::DatabaseViewer {
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;
-        auto getFieldMap() const -> const FieldMap &;
+        auto getSnapshotMap() const -> const FieldMap &;
 
         DatabaseType evaluateDatabaseType() const;
 
         auto getRootDatabaseFolder() const -> const Str&;
 
-        auto buildFullField() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
+        auto buildSnapshotMashup() const -> Pointer<Math::R2toR::NumericFunction_CPU>;
 
     };
 } // Modes::DatabaseViewer

@@ -12,7 +12,7 @@
 
 namespace Slab::Math::R2toR {
 
-    class OutputShockwaveZeros : public OutputChannel {
+    class OutputShockwaveZeros /*: public OutputChannel */{
     private:
         std::fstream file;
         int outputResolution;
@@ -20,13 +20,13 @@ namespace Slab::Math::R2toR {
 
     public:
         OutputShockwaveZeros(int N, int outputResolution, Real t0=0);
-        ~OutputShockwaveZeros() override;
+        // ~OutputShockwaveZeros() override;
 
-        auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
+        // auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
 
     protected:
-        void _out(const OutputPacket &OutputInfo"") override;
+        // void _out(const OutputPacket &OutputInfo"") override;
     };
 
 }

@@ -39,14 +39,14 @@ namespace Slab::Graphics::OpenGL {
         ScalingFunction scalingFunction;
         ScalingFunction inverseScalingFunction;
 
-        ColorMap colorMap;
+        Pointer<const ColorMap> colorMap;
 
         void updateTexture(int samples=1024);
         void setLocation(RectI loc);
     public:
         explicit ColorBarArtist(RectI loc={50,150, 50, 750});
 
-        void setColorMap(const ColorMap& colorMap);
+        void setColorMap(const Pointer<const ColorMap>& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
         void setKappa(Real);

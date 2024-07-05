@@ -17,12 +17,11 @@ message(NOTICE "Added executable RtoR-Modes")
 
 add_executable ( RtoR-SnapshotDBViewer
         SnapshotDBViewer/main.cpp
-        SnapshotDBViewer/DBViewer.cpp
+        SnapshotDBViewer/DBViewerMulti.cpp
+        SnapshotDBViewer/DBViewerSequence.cpp
         SnapshotDBViewer/DatabaseParser.cpp
         SnapshotDBViewer/DatabaseParser.h
         SnapshotDBViewer/KGDispersionRelation.cpp
-        SnapshotDBViewer/HistoryFileLoader.cpp
-        SnapshotDBViewer/HistoryFileLoader.h
         SnapshotDBViewer/SnapshotFileLoader.cpp
         SnapshotDBViewer/SnapshotFileLoader.h
         ../Analysis/DataView.cpp
@@ -31,6 +30,7 @@ add_executable ( RtoR-SnapshotDBViewer
         ../Analysis/AnalysisMonitor.h
         ../Analysis/FourierAnalysis.cpp
         ../Analysis/FourierAnalysis.h
+        ../OscViewer/HistoryFileLoader.cpp
 )
 target_link_libraries ( RtoR-SnapshotDBViewer Slab )
 message(NOTICE "Added executable RtoR-SnapshotDBViewer")

@@ -18,10 +18,6 @@ namespace Slab::Graphics {
         return region;
     }
 
-    bool Artist::wantsLegend() const {
-        return false;
-    }
-
     void Artist::setLabel(Str newLabel) { label = newLabel; }
 
     auto Artist::getLabel() const -> Str { return label; }

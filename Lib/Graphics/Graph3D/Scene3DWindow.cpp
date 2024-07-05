@@ -7,7 +7,7 @@
 #include "Scene3DWindow.h"
 #include "Graphics/Graph3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 
 #define Unique(label) \

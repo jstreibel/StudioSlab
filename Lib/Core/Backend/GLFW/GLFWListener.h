@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLFWLISTENER_H
 #define STUDIOSLAB_GLFWLISTENER_H
 
-#include <GLFW/glfw3.h>
+#include "glfw.h"
 
 namespace Slab::Core {
 

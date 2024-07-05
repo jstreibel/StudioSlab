@@ -127,8 +127,9 @@ namespace Slab::Models::KGRtoR {
             }
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
+            TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, *timeDFTSnapshot_tStart, t};
             outputManager->addOutputChannel(
-                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, snapshotFilename, x_locations));
+                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, dftConfig));
         }
 
 

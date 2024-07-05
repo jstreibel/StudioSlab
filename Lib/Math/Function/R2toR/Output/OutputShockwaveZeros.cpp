@@ -2,14 +2,14 @@
 // Created by joao on 30/05/2021.
 //
 
-#include <Core/Math/Maps/R2toR/Model/FieldState.h>
+// #include <Core/Math/Maps/R2toR/Model/FieldState.h>
 #include <filesystem>
 #include "OutputShockwaveZeros.h"
-#include "View/Util/Printing.h"
+// #include "View/Util/Printing.h"
 
 using namespace Slab::Math::R2toR;
 
-typedef R2toR::FunctionArbitrary Func;
+// typedef R2toR::FunctionArbitrary Func;
 
 OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, Real t0) : outputResolution(outputResolution), t0(t0)
 {
@@ -47,12 +47,15 @@ OutputShockwaveZeros::OutputShockwaveZeros(int N, int outputResolution, Real t0)
                                                                  // = (L/Ndpi)/(a*L/N) = (1/a)*(N/Ndpi)
     */
 
-    letc NPoints = outputResolution;
-    const auto _nStepsBetweenRecordings = int((Real(N)/NPoints)/a);
-    this->nStepsBetweenRecordings = _nStepsBetweenRecordings > 0 ? _nStepsBetweenRecordings : 1;
+    NOT_IMPLEMENTED_CLASS_METHOD
+
+    // letc NPoints = outputResolution;
+    // const auto _nStepsBetweenRecordings = int((Real(N)/NPoints)/a);
+    // this->nStepsBetweenRecordings = _nStepsBetweenRecordings > 0 ? _nStepsBetweenRecordings : 1;
 }
 
 
+/*
 OutputShockwaveZeros::~OutputShockwaveZeros() {
     file.flush();
     file.close();
@@ -66,12 +69,10 @@ let OutputShockwaveZeros::notifyIntegrationHasFinished(const OutputPacket &theVe
     return true;
 }
 
-let OutputShockwaveZeros::description() const -> String {
-    return "output of the zeros of the shockwave, together with the zeros of the (expected) numerical shockwave";
-}
-
 void OutputShockwaveZeros::_out(const OutputPacket &OutputInfoOStream) {
+    NOT_IMPLEMENTED_CLASS_METHOD
 
+/*
     let &phi = OutputInfo.getFieldData<R2toR::FieldState>()->getPhi();
     let &dphidt = OutputInfo.getFieldData<R2toR::FieldState>()->getDPhiDt();
 
@@ -114,5 +115,7 @@ void OutputShockwaveZeros::_out(const OutputPacket &OutputInfoOStream) {
         if(std::signbit(f2) != std::signbit(f1))
             file << "(" << x << "," << t << "), ";
     }
+    *//*
 }
+*/
 

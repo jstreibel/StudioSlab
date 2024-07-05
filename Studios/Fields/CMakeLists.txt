@@ -40,6 +40,19 @@ message(NOTICE "Added executable Fields-RtoR")
 # ************************************************************************************************************
 
 
+add_executable (osc-viewer
+		OscViewer/main.cpp
+		OscViewer/HistoryFileLoader.cpp		OscViewer/HistoryFileLoader.h
+		OscViewer/OscViewer.cpp 			OscViewer/OscViewer.h
+)
+target_link_libraries (osc-viewer Slab )
+
+message(NOTICE "Added executable osc-viewer")
+
+
+# ************************************************************************************************************
+
+
 add_executable (Fields-RtoR-Thermal
 		RtoR-Thermal/MainRtoRThermal.cpp
 

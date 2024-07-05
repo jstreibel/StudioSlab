@@ -5,8 +5,7 @@
 #ifndef STUDIOSLAB_GLDEBUG_H
 #define STUDIOSLAB_GLDEBUG_H
 
-#include <GL/glew.h>
-#include <GL/gl.h>
+#include "OpenGL.h"
 
 namespace Slab::Graphics::OpenGL {
     void OpenGL_Debug_Callback(GLenum source, GLenum type, GLuint id,

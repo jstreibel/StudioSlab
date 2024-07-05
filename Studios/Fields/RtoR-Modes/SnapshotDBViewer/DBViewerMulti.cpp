@@ -2,14 +2,14 @@
 // Created by joao on 21/09/23.
 //
 
-#include "DBViewer.h"
+#include "DBViewerMulti.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Core/Backend/BackendManager.h"
 
 #include "KGDispersionRelation.h"
-#include "HistoryFileLoader.h"
+#include "../../OscViewer/HistoryFileLoader.h"
 
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
@@ -23,7 +23,7 @@ namespace Modes::DatabaseViewer {
 
     #define z_order(z) (z)
 
-    DBViewer::DBViewer(const StrVector& dbFilenames, const Str &criticalParam)
+    DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
     : WindowRow(HasMainMenu)
     , guiWindow()
     , allDataDisplay("All data")
@@ -86,7 +86,7 @@ namespace Modes::DatabaseViewer {
         {
             currentFullParticularHistoryArtist = Graphics::Plotter::AddR2toRFunction(
                     Naked(fullParticularHistoryDisplay), nullptr, "");
-            currentFullParticularHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"].inverse());
+            currentFullParticularHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
             // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
         }
 
@@ -101,7 +101,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewer::draw() {
+    void DBViewerMulti::draw() {
 
         fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
         fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
@@ -142,7 +142,7 @@ namespace Modes::DatabaseViewer {
         WindowRow::draw();
     }
 
-    void DBViewer::updateKGDispersion(bool visible) {
+    void DBViewerMulti::updateKGDispersion(bool visible) {
         Real mass = KG_mass;
 
         if(!visible) return;
@@ -180,7 +180,7 @@ namespace Modes::DatabaseViewer {
         KGRelation_high_k_artist->setLabel(Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
-    void DBViewer::computeMasses() {
+    void DBViewerMulti::computeMasses() {
         maxValues.clear();
         maxValuesPointSet.clear();
         massesImag_pointSet.clear();
@@ -188,7 +188,7 @@ namespace Modes::DatabaseViewer {
 
         for(auto &dbParser : dbParsers) {
 
-            auto &fieldMap = dbParser->getFieldMap();
+            auto &fieldMap = dbParser->getSnapshotMap();
 
             for (auto &entry: fieldMap) {
                 IN field = entry.second.snapshotData.data;
@@ -234,7 +234,7 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBViewer::drawTable(int specialIndex) {
+    void DBViewerMulti::drawTable(int specialIndex) {
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
@@ -255,7 +255,7 @@ namespace Modes::DatabaseViewer {
         ImGui::TableHeadersRow();
 
         fix unit = Math::Constants::π;
-        auto &fieldMap = dbParsers[0]->getFieldMap();
+        auto &fieldMap = dbParsers[0]->getSnapshotMap();
         int i=0;
         for (auto &entry : fieldMap)
         {
@@ -302,7 +302,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewer::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) -> bool {
+    auto DBViewerMulti::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) -> bool {
         if( key==Core::Key_LEFT_SHIFT  ) shiftKey = state;
 
         if( key==Core::Key_F5 && state==Core::Press ){
@@ -316,7 +316,7 @@ namespace Modes::DatabaseViewer {
         return WindowRow::notifyKeyboard(key, state, modKeys);
     }
 
-    auto DBViewer::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) -> bool {
+    auto DBViewerMulti::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) -> bool {
         static Timer timer;
         auto elTime = timer.getElTime_msec();
         if(button==Core::MouseButton_LEFT){
@@ -330,7 +330,7 @@ namespace Modes::DatabaseViewer {
         return WindowRow::notifyMouseButton(button, state, keys);
     }
 
-    void DBViewer::reloadData() {
+    void DBViewerMulti::reloadData() {
         if(!fullFields.empty()) NOT_IMPLEMENTED_CLASS_METHOD;
 
         for(auto &artie : fullFieldsArtist)
@@ -338,13 +338,13 @@ namespace Modes::DatabaseViewer {
         fullFieldsArtist.clear();
 
         for (auto &dbParser: dbParsers) {
-            auto fullField = dbParser->buildFullField();
+            auto fullField = dbParser->buildSnapshotMashup();
             // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
             auto dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto &cmap = Graphics::ColorMaps["blues"];
             auto artie = Graphics::Plotter::AddR2toRFunction(Naked(allDataDisplay), fullField, dbRootFolder);
-            artie->setColorMap(cmap);
+            artie->setColorMap(cmap->clone());
 
             fullFields.emplace_back(fullField);
             fullFieldsArtist.emplace_back(artie);
@@ -353,7 +353,7 @@ namespace Modes::DatabaseViewer {
         computeMasses();
     }
 
-    void DBViewer::loadDataUnderMouse() {
+    void DBViewerMulti::loadDataUnderMouse() {
         auto &fSet = dbParsers[0]->getFileSet();
 
         auto index = index_XHair-1;
@@ -390,7 +390,7 @@ namespace Modes::DatabaseViewer {
         Log::Info() << "Done\n" << Log::Flush;
     }
 
-    auto DBViewer::notifyMouseMotion(int x, int y) -> bool {
+    auto DBViewerMulti::notifyMouseMotion(int x, int y) -> bool {
         if( shiftKey == Core::Press ){
             loadDataUnderMouse();
             return true;

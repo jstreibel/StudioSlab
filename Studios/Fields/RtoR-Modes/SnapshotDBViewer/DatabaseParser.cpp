@@ -172,7 +172,7 @@ namespace Modes::DatabaseViewer {
     auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
     auto DBParser::getCriticalParameter() const -> Str { return criticalParameter; }
 
-    auto DBParser::buildFullField() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
+    auto DBParser::buildSnapshotMashup() const -> std::shared_ptr<Math::R2toR::NumericFunction_CPU> {
         IN sampleField = *fieldMap.begin()->second.snapshotData.data;
 
         fix N = fieldMap.size();
@@ -199,7 +199,7 @@ namespace Modes::DatabaseViewer {
         return std::shared_ptr<Math::R2toR::NumericFunction_CPU>(fullField);
     }
 
-    auto DBParser::getFieldMap() const -> const FieldMap & { return fieldMap; }
+    auto DBParser::getSnapshotMap() const -> const FieldMap & { return fieldMap; }
 
     auto DBParser::getRootDatabaseFolder() const -> const Str & { return rootDatabaseFolder; }
 

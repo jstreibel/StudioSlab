@@ -33,9 +33,6 @@ namespace Slab::Graphics {
         __COUNT__
     };
 
-    const Color Nil = Color(-1, -1, -1, -1);
-
-
     struct PlotStyle {
         explicit PlotStyle(Color color,
                            LinePrimitive primitive=Solid,

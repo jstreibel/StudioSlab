@@ -56,7 +56,7 @@ add_library(${LIB_GRAPHICS} STATIC
 
 		Graph/Artists/Artist.cpp
 		Graph/PlottingWindow.cpp
-		Graph/LabelingHelper.h				Graph/LabelingHelper.cpp
+		Graph/Artists/LabelsArtist.h Graph/Artists/LabelsArtist.cpp
 		Graph/PlottingWindow_Axis.cpp
 		Graph/PlotStyle.cpp
 		Graph/PlottingWindow_Events.cpp
@@ -68,8 +68,8 @@ add_library(${LIB_GRAPHICS} STATIC
 
 		Graph/Artists/R2toRFunctionArtist.h Graph/Artists/R2toRFunctionArtist.cpp
 
-		Graph/Artists/HistoryTexture2DUploadHelper.cpp
-		Graph/Artists/HistoryTexture2DUploadHelper.h
+		Graph/Util/HistoryTexture2DUploadHelper.cpp
+		Graph/Util/HistoryTexture2DUploadHelper.h
 
 		Graph3D/Scene3DWindow.cpp
         Graph3D/Scene3DWindow.h
@@ -97,8 +97,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Artists/PointSetArtist.h
 		Graph/Artists/ParametricCurve2DArtist.cpp
 		Graph/Artists/ParametricCurve2DArtist.h
-		Graph/PlotRegion.cpp
-		Graph/PlotRegion.h
+		Graph/Util/PlotRegion.cpp
+		Graph/Util/PlotRegion.h
 		Graph/Artists/RtoRFunctionArtist.cpp
 		Graph/Artists/RtoRFunctionArtist.h
 		Graph/Artists/HistoryArtist.cpp
@@ -112,22 +112,22 @@ add_library(${LIB_GRAPHICS} STATIC
 		Types3D.cpp
 		Types3D.h
 		OpenGL/LegacyGL/SceneSetup.h
-        Graph/Tool/MathTool.cpp
-        Graph/Tool/MathTool.h
+		Graph/Util/MathTool.cpp
+		Graph/Util/MathTool.h
 		Graph/Shapes/Shape.cpp
 		Graph/Shapes/Shape.h
 		OpenGL/LegacyGL/ShapeRenderer.cpp
 		OpenGL/LegacyGL/ShapeRenderer.h
 		OpenGL/LegacyGL/SceneSetup.cpp
-		Graph/Artists/PlotRegion2D.cpp
-		Graph/Artists/PlotRegion2D.h
+		Graph/Util/PlottingRegion2D.cpp
+		Graph/Util/PlottingRegion2D.h
         ImGui/ImGuiWindow.cpp
         ImGui/ImGuiWindow.h
-        Graph/Tool/PrintWindow.cpp
-        Graph/Tool/PrintWindow.h
-		Graph/Tool/FieldTextureKontraption.cpp
-        Graph/Artists/PlotStyleGUI.cpp
-        Graph/Artists/PlotStyleGUI.h
+		Graph/Util/PrintWindow.cpp
+		Graph/Util/PrintWindow.h
+		Graph/Util/FieldTextureKontraption.cpp
+		Graph/Util/PlotStyleGUI.cpp
+		Graph/Util/PlotStyleGUI.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

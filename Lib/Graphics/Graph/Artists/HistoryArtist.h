@@ -6,7 +6,7 @@
 #define STUDIOSLAB_HISTORYARTIST_H
 
 #include "R2toRFunctionArtist.h"
-#include "HistoryTexture2DUploadHelper.h"
+#include "Graphics/Graph/Util/HistoryTexture2DUploadHelper.h"
 
 namespace Slab::Graphics {
 

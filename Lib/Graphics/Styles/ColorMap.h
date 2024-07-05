@@ -11,9 +11,10 @@
 
 #include "Utils/Types.h"
 #include "Colors.h"
-#include "Graphics/Graph/PlotStyle.h"
 
 namespace Slab::Graphics {
+
+    using ColorSequence = Vector<Color>;
 
     class ColorMap {
     public:
@@ -32,10 +33,14 @@ namespace Slab::Graphics {
 
     public:
         ColorMap() = default;
-        ColorMap(Str name, ColorMapType, Vector<Color> colorSeq,
+        ColorMap(Str name,
+                 ColorMapType,
+                 ColorSequence colorSeq,
                  Color clipped=Nil,
                  Color saturated=Nil);
         ColorMap(const ColorMap &colorMap);
+
+        auto clone() const -> Pointer<ColorMap>;
 
         auto mapValueToColor(Real value) const -> Color;
 
@@ -51,7 +56,7 @@ namespace Slab::Graphics {
         auto getType() const -> ColorMapType;
     };
 
-    extern std::map<Str, ColorMap> ColorMaps;
+    extern std::map<Str, Pointer<const ColorMap>> ColorMaps;
 
 }
 

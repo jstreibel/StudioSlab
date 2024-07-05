@@ -44,6 +44,7 @@ namespace Slab::Graphics {
     extern Color White;
     extern Color Black;
     extern Color Red;
+    const Color Nil = Color(-1, -1, -1, -1);
 
     using rgb = struct {
         Real r;       // a fraction between 0 and 1

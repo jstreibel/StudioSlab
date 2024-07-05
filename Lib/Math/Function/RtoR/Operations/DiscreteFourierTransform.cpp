@@ -16,7 +16,7 @@
 namespace Slab::Math::RtoR {
 
     DFTResult DFT::Compute(const RtoR::NumericFunction &inFunc) {
-        if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
+        if(inFunc.getSpace().dataOnGPU()) throw Exception("DFT of GPU data is not implemented");
 
         fix N = (int)inFunc.N;
         fix h = inFunc.getSpace().getMetaData().geth(0);

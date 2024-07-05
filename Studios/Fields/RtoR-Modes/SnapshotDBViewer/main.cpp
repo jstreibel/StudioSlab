@@ -2,8 +2,6 @@
 // Created by joao on 21/09/23.
 //
 
-#include "Graphics/OpenGL/OpenGL.h"
-
 #include "Core/App/AppBase.h"
 #include "Core/App/CrashPad.h"
 
@@ -17,9 +15,8 @@
 #include "Core/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/BackendManager.h"
 
-#include "DBViewer.h"
-#include "DatabaseParser.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "DBViewerMulti.h"
+#include "DBViewerSequence.h"
 
 using namespace Slab;
 
@@ -51,7 +48,8 @@ public:
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-        auto viewer = Slab::New<Modes::DatabaseViewer::DBViewer>(dbLocations, *criticalParameter);
+        // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
+        auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
         guiBackend.addEventListener(viewer);
 

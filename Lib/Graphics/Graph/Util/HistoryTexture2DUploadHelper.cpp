@@ -3,7 +3,7 @@
 //
 
 #include "HistoryTexture2DUploadHelper.h"
-#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
+#include "Graphics/Graph/Util/FieldTextureKontraption.h"
 
 #define min(a, b) ((a)<(b)?(a):(b))
 

@@ -105,4 +105,10 @@ namespace Slab::Core {
 
         return false;
     }
+
+    void ImGuiModuleGLUT::endRender() {
+        ImGuiModule::endRender();
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
 } // Core

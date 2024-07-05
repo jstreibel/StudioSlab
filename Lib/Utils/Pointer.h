@@ -49,7 +49,8 @@ namespace Slab {
 
     template<typename T, typename... Args>
     Pointer<T> New(Args&&... args) {
-        return Pointer<T>(new T(std::forward<Args>(args)...));
+        // return Pointer<T>(new T(std::forward<Args>(args)...));
+        return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
 #define DefinePointers(Type) \

@@ -5,16 +5,16 @@
 #include "ColorMap.h"
 
 #include <utility>
-#include "Graphics/Graph/PlotStyle.h"
+// #include "Graphics/Graph/PlotStyle.h"
 
-#define Map(cMap) {cMap.getName(), cMap}
+#define Map(cMap) {cMap->getName(), cMap}
 
 namespace Slab::Graphics {
 
-    auto blues = ColorMap{
+    auto blues = New<ColorMap>(
         "blues",
         ColorMap::Sequential,
-        {
+        ColorSequence{
             /* 0.00 */Color::FromBytes(240, 255, 255),
             /* 0.25 */Color::FromBytes(175, 225, 255),
             /* 0.50 */Color::FromBytes(133, 205, 249),
@@ -23,12 +23,12 @@ namespace Slab::Graphics {
         },
         Color::FromBytes(255,255,255),
         Color::FromBytes(.25*40, .25*64, .25*139)
-    };
+    );
 
-    auto BrBG = ColorMap(
+    auto BrBG = New<ColorMap>(
         "BrBG",
         ColorMap::Divergent,
-        {
+        ColorSequence{
             Color{0.0, 0.23529411764705882, 0.18823529411764706},
             Color{0.9572472126105345, 0.9599384851980008, 0.9595540176855056},
             Color{0.32941176470588235, 0.18823529411764706, 0.0196078431372549}
@@ -36,10 +36,10 @@ namespace Slab::Graphics {
         Color{  0.00000000000000000, .5*0.23529411764705882, .5*0.18823529411764706},
         Color{.5*0.32941176470588235, .5*0.18823529411764706, .5*0.01960784313725490});
 
-    auto rainbow = ColorMap{
+    auto rainbow = New<ColorMap>(
         "rainbow",
         ColorMap::Cyclic,
-        {
+        ColorSequence{
             Color /* Red:    */ {1.0, 0.0, 0.0},
             Color /* Orange: */ {1.0, 0.5, 0.0},
             Color /* Yellow: */ {1.0, 1.0, 0.0},
@@ -47,11 +47,12 @@ namespace Slab::Graphics {
             Color /* Cyan  : */ {.0, 1.0, 1.0},
             Color /* Blue    */ {.0, .0, 1.0},
             Color /* Redagain*/ {1.0, .0, 0.0}}
-    };
+    );
 
-    std::map<Str, ColorMap> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
+    std::map<Str, Pointer<const ColorMap>> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
 
-    ColorMap::ColorMap(Str name, ColorMapType colorMapType,
+    ColorMap::ColorMap(Str name,
+                       ColorMapType colorMapType,
                        Vector<Color> colorSeq,
                        Color clipped,
                        Color saturated)
@@ -127,6 +128,10 @@ namespace Slab::Graphics {
             newColors.push_back(colors[i]);
 
         return {name+"_r", type, newColors, saturated, clipped};
+    }
+
+    auto ColorMap::clone() const -> Pointer<ColorMap> {
+        return New<ColorMap>(*this);
     }
 
 };

@@ -4,7 +4,7 @@
 
 #include "PlottingWindow.h"
 #include "Core/Tools/Log.h"
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/Animator/Animator.h"
 

@@ -6,7 +6,7 @@
 
 #include "Core/Tools/Log.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Math/Constants.h"
 #include "Math/Function/NativeFunction.h"
