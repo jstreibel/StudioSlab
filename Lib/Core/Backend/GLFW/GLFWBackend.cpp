@@ -7,7 +7,6 @@
 #include "Utils/ReferenceIterator.h"
 #include "Graphics/OpenGL/OpenGL.h"
 
-#include <GLFW/glfw3.h>
 #include "GLFWBackend.h"
 
 #include "Core/Tools/Log.h"
@@ -94,15 +93,23 @@ namespace Slab::Core {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             auto window = systemWindow;
-            IterateReferences(graphicModules, FuncRun(beginRender));
-            IterateReferences(GetInstance().listeners, FuncRun(Render, window));
-            IterateReferences(graphicModules, FuncRun(endRender));
+
+            static auto BeginRender = FuncRun(beginRender);
+            static auto EndRender   = FuncRun(endRender);
+
+            static auto Render      = FuncRun(Render, window);
+            static auto BeginEvents = FuncRun(beginEvents);
+            static auto EndEvents   = FuncRun(endEvents);
+
+            IterateReferences(graphicModules, BeginRender);
+            IterateReferences(listeners, Render);
+            IterateReferences(graphicModules, EndRender);
 
             glfwSwapBuffers(systemWindow);
 
-            IterateReferences(graphicModules, FuncRun(beginEvents));
+            IterateReferences(graphicModules, BeginEvents);
             glfwPollEvents();
-            IterateReferences(graphicModules, FuncRun(endEvents));
+            IterateReferences(graphicModules, EndEvents);
         }
     }
 

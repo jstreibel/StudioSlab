@@ -4,7 +4,7 @@
 
 #include "CorrelationsPanel.h"
 
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"

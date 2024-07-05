@@ -8,7 +8,7 @@
 #include "Utils/Numbers.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
-#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
+#include "Graphics/Graph/Util/FieldTextureKontraption.h"
 
 namespace Slab::Graphics {
 

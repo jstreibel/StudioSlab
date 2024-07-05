@@ -20,20 +20,31 @@ namespace Slab::Models {
     protected:
         StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
 
-        BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot", "Take a snapshot of simulation at the end.");
-        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot", "Take a snapshot of discrete Fourier transform (DFT) of field at the end.");
-        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot", "Take a time domain dft of field at xCenter.");
+        BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot",
+                                                                        "Take a snapshot of simulation at the end.");
+        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
+                                                                        "Take a snapshot of discrete Fourier transform "
+                                                                        "(DFT) of field at the end.");
+        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
+                                                                        "Take a time domain dft of field from "
+                                                                        "'--time_dft_tstart' until end.");
+        RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 , "time_dft_start",
+                                                                        "Time domain dft starting time.");
 
         RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
-                                                                        "Force snapshot to be taken at some time prior to end (after will result in no output.");
-        BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file", "Don't output history to file.");
+                                                                        "Force snapshot to be taken at some time prior "
+                                                                        "to end (after will result in no output.");
+        BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file",
+                                                                        "Don't output history to file.");
 
         IntegerParameter outputResolution               = IntegerParameter(512, "outN",
-                                                                           "Output resolution of space dimension in history output.");
-        BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor", "Monitor simulation visually.");
+                                                                           "Output resolution of space dimension in "
+                                                                           "history output.");
+        BoolParameter    VisualMonitor                  = BoolParameter(false, "g,visual_monitor",
+                                                                        "Monitor simulation visually.");
 
-        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused", "Start visual monitored "
-                                                                                                          "simulation paused.");
+        BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused",
+                                                                        "Start visual monitored simulation paused.");
 
     public:
         explicit KGBuilder(const Str& name="Klein-Gordon",

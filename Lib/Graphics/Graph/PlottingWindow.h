@@ -10,7 +10,7 @@
 
 #include "Utils/Utils.h"
 
-#include "LabelingHelper.h"
+#include "Graphics/Graph/Artists/LabelsArtist.h"
 
 #include "PlotStyle.h"
 
@@ -21,7 +21,7 @@
 
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
-#include "Graphics/Graph/Artists/PlotRegion2D.h"
+#include "Graphics/Graph/Util/PlottingRegion2D.h"
 
 namespace Slab::Graphics {
 
@@ -41,7 +41,7 @@ namespace Slab::Graphics {
         bool popupOn = false;
         bool autoReviewGraphRanges=false;
 
-        PlotRegion2D region;
+        PlottingRegion2D region;
 
         Real animationTimeSeconds = 0.2;
 
@@ -49,11 +49,6 @@ namespace Slab::Graphics {
 
     protected:
         Str title;
-
-        LabelingHelper labelingHelper;
-
-        virtual auto countDisplayItems() const -> Count;
-        void nameLabelDraw(const PlotStyle &style, const Str& label);
 
         void artistsDraw();
         void toggleShowInterface();
@@ -63,6 +58,7 @@ namespace Slab::Graphics {
 
         AxisArtist axisArtist;
         XHairArtist artistXHair;
+        LabelsArtist labelsArtist;
 
     public:
         explicit PlottingWindow(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
@@ -85,8 +81,10 @@ namespace Slab::Graphics {
         void setAutoReviewGraphRanges(bool);
         void reviewGraphRanges();
 
-        auto getRegion() const -> const PlotRegion2D&;
-        auto getRegion() -> PlotRegion2D&;
+        auto getRegion() const -> const PlottingRegion2D&;
+        auto getRegion() -> PlottingRegion2D&;
+
+        void requireLabelOverlay(const Str& label, const Pointer<PlotStyle>& style) const;
 
         void setAnimationTime(Real value);
         Real getAnimationTime() const;

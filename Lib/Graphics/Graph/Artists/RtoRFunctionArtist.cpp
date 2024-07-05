@@ -16,6 +16,8 @@ namespace Slab::Graphics {
     bool RtoRFunctionArtist::draw(const PlottingWindow &d) {
         if(function == nullptr) return true;
 
+        d.requireLabelOverlay(getLabel(), Naked(plotStyle));
+
         glLineWidth(plotStyle.thickness);
 
         auto graphRect = d.getRegion().getRect();

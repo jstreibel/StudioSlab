@@ -92,5 +92,11 @@ namespace Slab::Core {
 
     void ImGuiModuleGLFW::Render(GLFWwindow *window) { if (showDemos) ImGui::ShowDemoWindow(); }
 
+    void ImGuiModuleGLFW::endRender() {
+        ImGuiModule::endRender();
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
 
 } // Core

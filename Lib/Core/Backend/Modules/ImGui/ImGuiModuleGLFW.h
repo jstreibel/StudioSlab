@@ -19,6 +19,8 @@ namespace Slab::Core {
 
         void Render(GLFWwindow *window) override;
 
+        void endRender() override;
+
         bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;
 
         bool MouseMotion(GLFWwindow *window, double xpos, double ypos) override;

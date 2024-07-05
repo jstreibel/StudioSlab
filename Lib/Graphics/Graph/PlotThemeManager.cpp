@@ -10,7 +10,7 @@
 
 #include "Core/Tools/Resources.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 
@@ -80,9 +80,10 @@ namespace Slab::Graphics {
         return sty;
     }
 
+    Pointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
-        static auto me = Naked(*this);
-        Core::BackendManager::GetGUIBackend().addEventListener(me);;
+        mePointer = Naked(*this);
+        Core::BackendManager::GetGUIBackend().addEventListener(mePointer);
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

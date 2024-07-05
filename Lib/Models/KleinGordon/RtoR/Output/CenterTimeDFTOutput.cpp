@@ -15,15 +15,20 @@ namespace Slab::Models::KGRtoR {
 
     Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
     const Slab::Math::NumericConfig &config,
-    const Str &filename,
-    Vector<Real> x_measure={0.0})
-    : Socket(config, "Single-location time-DFT", Common::max(1, int(1./config.getr())), "outputs time DFT of center point of simulation")
-    , filename(filename + ".time.dft.simsnap")
-    , x_measure(x_measure)
-    , dataset(x_measure.size()) {}
+    TimeDFTOutputConfig dftConfig)
+    : Socket(config, "Single-location time-DFT", 10, "outputs time DFT of center point of simulation")
+    , filename(dftConfig.filename + ".time.dft.simsnap")
+    , x_measure(dftConfig.x_measure)
+    , dataset(dftConfig.x_measure.size())
+    , t_start(Common::max(dftConfig.t_start, 0.0))
+    , t_end(dftConfig.t_end)
+    , step_start((int)(t_start/params.gett() * params.getn()))
+    {    }
 
     void Slab::Models::KGRtoR::CenterTimeDFTOutput::handleOutput(const Slab::Math::OutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
+
+        if(packet.getSteps() < step_start) return;
 
         auto funky = packet.GetNakedStateData<KGRtoR::EquationState>();
 
@@ -43,7 +48,7 @@ namespace Slab::Models::KGRtoR {
 
         Vector<Pointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {
-            auto slice = New<Math::RtoR::NumericFunction_CPU>(RealArray(data.data(), data.size()), 0.0, t);
+            auto slice = New<Math::RtoR::NumericFunction_CPU>(RealArray(data.data(), data.size()), t_start, t_end);
             auto result = DFT::Compute(*slice.get());
             maggies.emplace_back(DFT::Magnitudes(result));
         }
@@ -54,13 +59,24 @@ namespace Slab::Models::KGRtoR {
             *average += maggie;
         }
 
-        *average *= 1./maggies.size();
+        *average *= 1./(Real)maggies.size();
 
         auto dω = average->getSpace().getMetaData().geth()[0];
-        using Entry = Pair<Str,Str>;
 
-        return SnapshotOutput::OutputNumericFunction(average, filename,
-                                                     {Entry("dohm", ToStr(dω))});
+        Vector<Pair<Str, Str>> py_entries;
+        py_entries.emplace_back("dohm",           ToStr(dω)         );
+        py_entries.emplace_back("ohm_mode_count", ToStr(average->N) );
+        py_entries.emplace_back("t_start",        ToStr(t_start)    );
+        py_entries.emplace_back("t_end",          ToStr(t_end)      );
+
+        return SnapshotOutput::OutputNumericFunction(average, filename, py_entries);
+    }
+
+    size_t CenterTimeDFTOutput::computeNextRecStep(UInt currStep) {
+        if(currStep < step_start)
+            return step_start;
+
+        return Socket::computeNextRecStep(currStep);
     }
 
 }

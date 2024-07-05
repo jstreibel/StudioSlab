@@ -6,7 +6,7 @@
 
 #include "Math/Function/NativeFunction.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 #include "Core/Backend/Modules/Animator/Animator.h"
 
 namespace Tests {

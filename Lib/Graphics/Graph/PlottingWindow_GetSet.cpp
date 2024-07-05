@@ -9,9 +9,9 @@
 
 namespace Slab {
 
-    auto Graphics::PlottingWindow::getRegion() const -> const Graphics::PlotRegion2D &
+    auto Graphics::PlottingWindow::getRegion() const -> const Graphics::PlottingRegion2D &
     { return region; }
-    auto Graphics::PlottingWindow::getRegion() -> Graphics::PlotRegion2D &
+    auto Graphics::PlottingWindow::getRegion() -> Graphics::PlottingRegion2D &
     { return region; }
 
     void Graphics::PlottingWindow::setAnimationTime(Real value) { animationTimeSeconds = value; }

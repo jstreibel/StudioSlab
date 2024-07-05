@@ -6,7 +6,7 @@
 
 #include <utility>
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"

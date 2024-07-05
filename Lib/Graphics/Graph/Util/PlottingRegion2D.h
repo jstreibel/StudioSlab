@@ -2,17 +2,17 @@
 // Created by joao on 6/8/24.
 //
 
-#ifndef STUDIOSLAB_PLOTREGION2D_H
-#define STUDIOSLAB_PLOTREGION2D_H
+#ifndef STUDIOSLAB_PLOTTINGREGION2D_H
+#define STUDIOSLAB_PLOTTINGREGION2D_H
 
 #include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
 
-    class PlotRegion2D {
+    class PlottingRegion2D {
         Pointer<Real> xMin, xMax, yMin, yMax;
     public:
-        PlotRegion2D(RectR);
+        explicit PlottingRegion2D(RectR);
 
         RectR getRect() const;
 
@@ -55,4 +55,4 @@ namespace Slab::Graphics {
 
 } // Slab::Graphics
 
-#endif //STUDIOSLAB_PLOTREGION2D_H
+#endif //STUDIOSLAB_PLOTTINGREGION2D_H

@@ -2,8 +2,7 @@
 // Created by joao on 21/09/23.
 //
 
-
-#include <GLFW/glfw3.h>
+#include "glfw.h"
 
 #include "GLFWBackend.h"
 #include "Core/Tools/Log.h"

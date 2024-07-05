@@ -9,7 +9,7 @@
 #include "Math/Formalism/Categories.h"
 #include "Texture.h"
 
-#include <GL/gl.h>
+#include "OpenGL.h"
 #include <glm/detail/type_mat4x4.hpp>
 
 #include <map>

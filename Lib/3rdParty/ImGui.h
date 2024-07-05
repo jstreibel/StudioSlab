@@ -8,6 +8,6 @@
 #define IMGUI_USE_WCHAR32
 
 #include "imgui/imgui.h"
-#include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
+//#include "3rdParty/imgui/backends/imgui_impl_opengl3.h"
 
 #endif // STUDIOSLAB_3RDPARTY_IMGUI_H

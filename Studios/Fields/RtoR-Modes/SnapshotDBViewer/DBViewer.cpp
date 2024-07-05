@@ -4,12 +4,12 @@
 
 #include "DBViewer.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Core/Backend/BackendManager.h"
 
 #include "KGDispersionRelation.h"
-#include "HistoryFileLoader.h"
+#include "../../OscViewer/HistoryFileLoader.h"
 
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"

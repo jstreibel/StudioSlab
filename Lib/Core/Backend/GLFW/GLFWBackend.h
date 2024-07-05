@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLFWBACKEND_H
 #define STUDIOSLAB_GLFWBACKEND_H
 
-#include <GLFW/glfw3.h>
+#include "glfw.h"
 #include <list>
 
 #include "Graphics/Types2D.h"

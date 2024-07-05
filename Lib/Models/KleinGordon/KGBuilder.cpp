@@ -30,6 +30,7 @@ namespace Slab::Models {
                                   &takeSnapshot,
                                   &takeSpaceDFTSnapshot,
                                   &takeTimeDFTSnapshot,
+                                  &timeDFTSnapshot_tStart
                                          /*, &snapshotTime, */ });
 
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);

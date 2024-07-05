@@ -8,7 +8,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include <utility>
-#include "PlotStyleGUI.h"
+#include "Graphics/Graph/Util/PlotStyleGUI.h"
 
 namespace Slab::Graphics {
 
@@ -19,6 +19,8 @@ namespace Slab::Graphics {
 
     auto PointSetArtist::draw(const PlottingWindow &graph2D) -> bool {
         if(pointSet == nullptr) return true;
+
+        graph2D.requireLabelOverlay(getLabel(), Naked(plotStyle));
 
         return Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
     }

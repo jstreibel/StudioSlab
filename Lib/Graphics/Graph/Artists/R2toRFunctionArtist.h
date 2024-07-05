@@ -15,7 +15,7 @@
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
-#include "Graphics/Graph/Tool/FieldTextureKontraption.h"
+#include "Graphics/Graph/Util/FieldTextureKontraption.h"
 
 namespace Slab::Graphics {
 

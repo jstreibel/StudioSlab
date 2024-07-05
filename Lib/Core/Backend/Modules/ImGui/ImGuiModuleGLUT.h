@@ -19,6 +19,8 @@ namespace Slab::Core {
 
         void beginRender() override;
 
+        void endRender() override;
+
         bool keyboard(unsigned char key, int x, int y) override;
         bool keyboardUp(unsigned char key, int x, int y) override;
         bool keyboardSpecial(int key, int x, int y) override;

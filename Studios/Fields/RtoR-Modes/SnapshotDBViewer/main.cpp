@@ -2,8 +2,6 @@
 // Created by joao on 21/09/23.
 //
 
-#include "Graphics/OpenGL/OpenGL.h"
-
 #include "Core/App/AppBase.h"
 #include "Core/App/CrashPad.h"
 
@@ -18,8 +16,6 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "DBViewer.h"
-#include "DatabaseParser.h"
-#include "Graphics/Graph/PlotThemeManager.h"
 
 using namespace Slab;
 

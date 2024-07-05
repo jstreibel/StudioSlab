@@ -8,7 +8,7 @@
 #include "PlotStyle.h"
 
 #include <utility>
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Utils/Printing.h"
 
@@ -54,6 +54,7 @@ namespace Slab {
             : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
+        labelsArtist.setLabel("Labels");
 
         if (title.empty()) title = Str("unnamed");
         Count n = 1;
@@ -70,7 +71,9 @@ namespace Slab {
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 
         addArtist(Slab::Naked(axisArtist), 5);
-        addArtist(Slab::Naked(artistXHair), 10);
+        addArtist(Slab::Naked(labelsArtist), 5);
+        addArtist(Slab::Naked(artistXHair), 6);
+
     }
 
     Graphics::PlottingWindow::PlottingWindow(Str title, bool autoReviewGraphLimits)
@@ -114,8 +117,6 @@ namespace Slab {
         setupOrtho();
 
         artistsDraw();
-
-        labelingHelper.setTotalItems(countDisplayItems());
 
         drawGUI();
     }
@@ -203,14 +204,6 @@ namespace Slab {
         currStyle->ticksWriter->reshape(vp.width(), vp.height());
     }
 
-    auto Graphics::PlottingWindow::countDisplayItems() const -> Count {
-        Count n = 0;
-        for (const auto &a: content)
-            if (a.second->wantsLegend()) ++n;
-
-        return n;
-    }
-
     void Graphics::PlottingWindow::artistsDraw() {
         for (const auto &[priority, artist]: content)
             if (artist->isVisible() && !artist->draw(*this))
@@ -219,15 +212,18 @@ namespace Slab {
 
     }
 
-    Graphics::AxisArtist &Graphics::PlottingWindow::getAxisArtist() {
-        return axisArtist;
+    Graphics::AxisArtist &
+    Graphics::PlottingWindow::getAxisArtist() { return axisArtist; }
+
+    void
+    Graphics::PlottingWindow::setAutoReviewGraphRanges(bool autoReview) { autoReviewGraphRanges = autoReview; }
+
+    void
+    Graphics::PlottingWindow::toggleShowInterface() { showInterface = !showInterface; }
+
+    void
+    Graphics::PlottingWindow::requireLabelOverlay(const Str& label, const Pointer<Graphics::PlotStyle>& style) const {
+        const_cast<LabelsArtist*>(&labelsArtist)->add(label, style);
     }
-
-    void Graphics::PlottingWindow::setAutoReviewGraphRanges(bool autoReview) {
-        autoReviewGraphRanges = autoReview;
-    }
-
-    void Graphics::PlottingWindow::toggleShowInterface() { showInterface = !showInterface; }
-
 
 }

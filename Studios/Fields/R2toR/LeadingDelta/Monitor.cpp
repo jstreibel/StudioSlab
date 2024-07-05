@@ -5,7 +5,7 @@
 #include "Monitor.h"
 #include "LeadingDelta.h"
 
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include "Math/Function/FunctionScale.h"
 #include "Math/Function/R2toR/Model/Energy.h"

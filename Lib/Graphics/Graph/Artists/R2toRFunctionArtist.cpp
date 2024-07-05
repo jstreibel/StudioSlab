@@ -11,7 +11,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Core/Tools/Resources.h"
-#include "imgui.h"
+#include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
 

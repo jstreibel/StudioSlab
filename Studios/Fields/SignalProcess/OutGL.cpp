@@ -8,7 +8,7 @@
 
 #include "Utils/RandUtils.h"
 #include "Utils/UtilsCollection/Resample.h"
-#include "3rdParty/imgui/imgui.h"
+#include "3rdParty/ImGui.h"
 
 #include <Maps/RtoR/Model/RtoRNumericFunctionCPU.h>
 

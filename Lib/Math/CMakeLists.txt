@@ -1,8 +1,6 @@
 
 set(STUDIOSLAB_MATH_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Math)
 
-add_subdirectory(Function)
-
 set ( TOOLSET_SOURCES
 		Constants.h
 		Toolset/NativeFunctions.h
@@ -95,7 +93,10 @@ set ( THERMO_SOURCES
         Numerics/Odeint/OdeintSignatureHelper.h
 )
 
+file(GLOB_RECURSE MAPS_SOURCES "./Function/*.cpp")
+
 add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
+		${MAPS_SOURCES} #from subdir
 		${TOOLSET_SOURCES}
 		${SPACE_SOURCES}
 		${SPACE_SOURCES_CUDA}
