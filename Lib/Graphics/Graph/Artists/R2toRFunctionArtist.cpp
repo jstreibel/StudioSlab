@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
 
     R2toRFunctionArtist::R2toRFunctionArtist()
-    : program(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag")
+    : program(New<OpenGL::Shader>(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag"))
     , textureKontraptions()
     , colorBar(New<OpenGL::ColorBarArtist>())
     {
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
             repopulateTextureBuffer();
 
         colorBar->getTexture()->bind();
-        program.use();
+        program->use();
 
         auto graphRect = graph.getRegion().getRect();
         fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
@@ -51,8 +51,8 @@ namespace Slab::Graphics {
         {
             auto texture_data  = thingy->texture;
             texture_data->bind();
-            program.setUniform("field_data", texture_data->getTextureUnit());
-            program.setUniform("transformMatrix", transform);
+            program->setUniform("field_data", texture_data->getTextureUnit());
+            program->setUniform("transformMatrix", transform);
 
             thingy->vertexBuffer->render(GL_TRIANGLES);
         }
@@ -221,8 +221,6 @@ namespace Slab::Graphics {
             return;
         }
 
-        bool firstTime = func == nullptr;
-
         func = std::move(functidon);
         funcUnit = unit;
 
@@ -236,8 +234,8 @@ namespace Slab::Graphics {
         if(field_min >= 0.0) symmetricMaxMin = false;
         else symmetricMaxMin = true;
 
-        program.setUniform("symmetric", (GLboolean ) symmetricMaxMin);
-        program.setUniform("phi_sat", (GLfloat) cMap_saturationValue);
+        program->setUniform("symmetric", (GLboolean ) symmetricMaxMin);
+        program->setUniform("phi_sat", (GLfloat) cMap_saturationValue);
         colorBar->setSymmetric(symmetricMaxMin);
         colorBar->setPhiSaturation(cMap_saturationValue);
 
@@ -253,14 +251,11 @@ namespace Slab::Graphics {
         auto xRes = discreteFunc.getN();
         auto yRes = discreteFunc.getM();
 
-        if(firstTime
-        || textureKontraptions->get_xres() != xRes
-        || textureKontraptions->get_yres() != yRes)
-            textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
+        textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
 
         if(cMap == nullptr) {
-            if (symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->clone());
-            else                 setColorMap(ColorMaps["blues"]->clone());
+            if (symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->inverse().clone());
+            else                 setColorMap(ColorMaps["blues"]->inverse().clone());
         }
 
         updateColorBar();
@@ -275,7 +270,10 @@ namespace Slab::Graphics {
         cMap = colorMap;
 
         symmetricMaxMin = cMap->getType() == ColorMap::Divergent;
-        program.setUniform("symmetric", true);
+        program->setUniform("symmetric", symmetricMaxMin);
+        if(!symmetricMaxMin) program->setUniform("eps", 1.1f/(float)colorBar->getSamples());
+        else program->setUniform("eps", .0f);
+
 
         updateColorBar();
 
@@ -306,10 +304,10 @@ namespace Slab::Graphics {
 
         colorBar->setColorMap(cMap);
 
-        program.setUniform("phi_sat", (float)cMap_saturationValue);
-        program.setUniform("kappa", (float)cMap_kappaArg);
-        program.setUniform("symmetric", symmetricMaxMin);
-        program.setUniform("colormap", colorBar->getTexture()->getTextureUnit());
+        program->setUniform("phi_sat", (float)cMap_saturationValue);
+        program->setUniform("kappa", (float)cMap_kappaArg);
+        program->setUniform("symmetric", symmetricMaxMin);
+        program->setUniform("colormap", colorBar->getTexture()->getTextureUnit());
 
         colorBar->setPhiMin(field_min);
         colorBar->setPhiMax(field_max);
@@ -397,6 +395,10 @@ namespace Slab::Graphics {
     auto R2toRFunctionArtist::getColorBarArtist() const -> Pointer<Graphics::OpenGL::ColorBarArtist> {
         return colorBar;
     }
+
+    void R2toRFunctionArtist::setProgram(Pointer<OpenGL::Shader> prog) { this->program = prog; }
+
+    auto R2toRFunctionArtist::getProgram() -> Pointer<OpenGL::Shader>  { return program; }
 
 
 } // Graphics

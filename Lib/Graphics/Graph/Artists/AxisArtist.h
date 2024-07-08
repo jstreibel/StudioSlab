@@ -29,6 +29,8 @@ namespace Slab::Graphics {
 
         Unit hUnit, vUnit;
         Real xSpacing=1, ySpacing=1;
+        float x_spacing_multiplier = 4.0;
+        float y_spacing_multiplier = 2.0;
 
         Str horizontalAxisLabel = "x";
         Str verticalAxisLabel = "y";
@@ -43,6 +45,10 @@ namespace Slab::Graphics {
         explicit AxisArtist(const Unit& horizontal, const Unit& vertical  );
 
         bool draw(const PlottingWindow &) override;
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
 
         void setHorizontalUnit(const Unit&);
         auto getHorizontalUnit() const -> const Unit&;

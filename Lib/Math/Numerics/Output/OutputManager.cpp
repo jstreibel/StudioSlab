@@ -38,8 +38,14 @@ namespace Slab::Math {
     void OutputManager::addOutputChannel(Socket_ptr out) {
         outputs.push_back(out);
 
-        Log::Status() << "Output manager added '" << out->getName() << "' output channel. Updates "
-                      << "every " << out->getnSteps() << " sim steps." << Log::Flush;
+        Log::Status() << "Output manager added "
+                      << Log::FGBlue    << out->getName()
+                      << Log::FGMagenta << " : "
+                      << Log::FGBlue    << out->getDescription()
+                      << Log::ResetFormatting << " output channel. Updates every "
+                      << Log::FGGreen << out->getnSteps()
+                      << Log::ResetFormatting << " sim steps."
+                      << Log::Flush;
     }
 
     void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {

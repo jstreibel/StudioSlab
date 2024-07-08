@@ -32,6 +32,7 @@ namespace Slab::Graphics::OpenGL {
         Shader shader;
         CMapTexturePtr texture;
         bool textureDirty = true;
+        Resolution samples = 16*1024;
         RectI rect;
 
         ColorBarParams params;
@@ -41,7 +42,7 @@ namespace Slab::Graphics::OpenGL {
 
         Pointer<const ColorMap> colorMap;
 
-        void updateTexture(int samples=1024);
+        void updateTexture();
         void setLocation(RectI loc);
     public:
         explicit ColorBarArtist(RectI loc={50,150, 50, 750});
@@ -55,6 +56,9 @@ namespace Slab::Graphics::OpenGL {
         void setPhiMax(Real);
         void setPhiMin(Real);
         void setMode(ColorBarMode);
+
+        auto getSamples() const -> Resolution;
+        void setSamples(Resolution samples);
 
         bool draw(const PlottingWindow &) override;
 

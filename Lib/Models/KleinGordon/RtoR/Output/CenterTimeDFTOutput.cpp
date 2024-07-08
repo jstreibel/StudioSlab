@@ -16,19 +16,23 @@ namespace Slab::Models::KGRtoR {
     Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
     const Slab::Math::NumericConfig &config,
     TimeDFTOutputConfig dftConfig)
-    : Socket(config, "Single-location time-DFT", 10, "outputs time DFT of center point of simulation")
+    : Socket(config, Str("Single-location time-DFT"), 10,
+             Str("t_start=")    + ToStr(Common::max(dftConfig.t_start, 0.0)) +
+             Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, config.gett())))
     , filename(dftConfig.filename + ".time.dft.simsnap")
     , x_measure(dftConfig.x_measure)
     , dataset(dftConfig.x_measure.size())
     , t_start(Common::max(dftConfig.t_start, 0.0))
-    , t_end(dftConfig.t_end)
-    , step_start((int)(t_start/params.gett() * params.getn()))
+    , t_end  (Common::min(dftConfig.t_end,   config.gett()))
+    , step_start((int)(t_start/params.gett() * (Real)params.getn()))
+    , step_end  ((int)(t_end  /params.gett() * (Real)params.getn()))
     {    }
 
     void Slab::Models::KGRtoR::CenterTimeDFTOutput::handleOutput(const Slab::Math::OutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
-        if(packet.getSteps() < step_start) return;
+        fix curr_step = packet.getSteps();
+        if(curr_step < step_start || curr_step > step_end) return;
 
         auto funky = packet.GetNakedStateData<KGRtoR::EquationState>();
 
@@ -40,11 +44,16 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
+    size_t CenterTimeDFTOutput::computeNextRecStep(UInt currStep) {
+        if(currStep < step_start)
+            return step_start;
+
+        return Socket::computeNextRecStep(currStep);
+    }
+
     bool CenterTimeDFTOutput::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         Socket::notifyIntegrationHasFinished(theVeryLastOutputInformation);
         using DFT = Slab::Math::RtoR::DFT;
-
-        fix t = theVeryLastOutputInformation.getSimTime();
 
         Vector<Pointer<RtoR::NumericFunction>> maggies;
         for(auto &data : dataset) {
@@ -70,13 +79,6 @@ namespace Slab::Models::KGRtoR {
         py_entries.emplace_back("t_end",          ToStr(t_end)      );
 
         return SnapshotOutput::OutputNumericFunction(average, filename, py_entries);
-    }
-
-    size_t CenterTimeDFTOutput::computeNextRecStep(UInt currStep) {
-        if(currStep < step_start)
-            return step_start;
-
-        return Socket::computeNextRecStep(currStep);
     }
 
 }

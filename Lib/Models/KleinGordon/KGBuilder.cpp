@@ -30,8 +30,11 @@ namespace Slab::Models {
                                   &takeSnapshot,
                                   &takeSpaceDFTSnapshot,
                                   &takeTimeDFTSnapshot,
-                                  &timeDFTSnapshot_tStart
-                                         /*, &snapshotTime, */ });
+                                  // &timeDFTSnapshot_tStart,
+                                  &timeDFTSnapshot_tLength,
+                                  &timeDFTSnapshot_tDelta,
+                                  // &snapshotTime,
+                                  });
 
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }

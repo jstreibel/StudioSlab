@@ -34,3 +34,16 @@ add_executable ( RtoR-SnapshotDBViewer
 )
 target_link_libraries ( RtoR-SnapshotDBViewer Slab )
 message(NOTICE "Added executable RtoR-SnapshotDBViewer")
+
+
+file(GLOB_RECURSE OSCPLOT_SOURCES
+        OscPlot/*
+)
+
+add_executable (osc-plot
+        ${OSCPLOT_SOURCES}
+        ../OscViewer/OscViewer.cpp
+)
+target_link_libraries (osc-plot Slab )
+
+message(NOTICE "Added executable osc-plot")

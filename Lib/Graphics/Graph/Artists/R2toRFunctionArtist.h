@@ -36,6 +36,7 @@ namespace Slab::Graphics {
         Pointer<ColorMap> cMap           = ColorMaps["BrBG"]->clone();
         Real cMap_kappaArg                =  1; // contrast
         Real cMap_saturationValue       =  1.1;
+        float eps                       = 0.0f;
         bool symmetricMaxMin            = true;
 
         bool showColorBar = true;
@@ -44,7 +45,7 @@ namespace Slab::Graphics {
         Pointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Graphics::OpenGL::Shader program;
+        Pointer<OpenGL::Shader> program;
         R2toR::Function_constptr func;
 
         bool dirty_minmax = true;
@@ -66,6 +67,9 @@ namespace Slab::Graphics {
 
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
+
+        void setProgram(Pointer<OpenGL::Shader> program);
+        auto getProgram() -> Pointer<OpenGL::Shader>;
 
         void updateMinMax();
         void flagMinMaxAsDirty();

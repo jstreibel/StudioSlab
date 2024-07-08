@@ -3,6 +3,7 @@
 //
 
 #include "Artist.h"
+#include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
 
@@ -27,10 +28,13 @@ namespace Slab::Graphics {
     }
 
     void Artist::drawGUI() {
+        // ImGui::InputText(UniqueName("Label"), )
     }
 
     bool Artist::hasGUI() {
         return false;
     }
+
+    Str Artist::UniqueName(const Str& name) const { return name + "##" + label; }
 
 }

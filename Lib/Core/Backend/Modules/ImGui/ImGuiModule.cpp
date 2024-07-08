@@ -128,6 +128,7 @@ namespace Slab::Core {
     ImGuiModule* ImGuiModule::BuildModule(BackendImplementation backendImplementation) {
         switch (backendImplementation) {
             case Uninitialized:
+                throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
             case Headless:
                 throw NotImplementedException("Headless ImGui module");
             case GLFW:

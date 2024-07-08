@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
         Vector<RealVector> dataset;
         Vector<Real> x_measure;
         Real t_start, t_end;
-        int step_start;
+        int step_start, step_end;
 
     protected:
         auto handleOutput(const Math::OutputPacket &packet) -> void override;

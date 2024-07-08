@@ -24,8 +24,7 @@ namespace Studios::Fields {
         using Function = Slab::Pointer<Slab::Math::R2toR::NumericFunction>;
 
         Function function;
-
-        Graphics::GUIWindow guiWindow;
+        R2toRFunctionArtist_ptr function_artist;
 
         Pointer<PlottingWindow> kSpaceGraph  = Slab::New<PlottingWindow>("ℱₓ");
         Pointer<PlottingWindow> ωSpaceGraph  = Slab::New<PlottingWindow>("ℱₜ");
@@ -52,14 +51,30 @@ namespace Studios::Fields {
 
         static auto FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax) -> Pointer<R2toR::NumericFunction>;
 
-        void computeAll(Real t_0, Real t_f);
-        void computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes);
+
+        bool auto_update_Ft = false;
+        bool auto_update_Ftx = false;
+        float t0;
+        float Δt;
+    protected:
+        void computeAll();
+        void computeFullDFT2D(bool discardRedundantModes);
         void computeTwoPointCorrelations();
 
+
+    private:
         Real kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
+    protected:
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
-        void computeTimeDFT(Real tMin, Real tMax);
+        void computeTimeDFT();
+
+        
+    protected:
+        bool is_Ft_auto_updating() const;
+        bool is_Ftx_auto_updating() const;
+
+        Graphics::GUIWindow guiWindow;
 
     public:
         explicit OscViewer();

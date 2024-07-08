@@ -86,7 +86,7 @@ namespace Slab::Math {
         unsigned maxDenominator;
     public:
 
-        Unit(Str symbol = "", Real val = 1.0, unsigned maxNumerator = 4, unsigned maxDenominator = 4);
+        explicit Unit(Str symbol = "", Real val = 1.0, unsigned maxNumerator = 4, unsigned maxDenominator = 4);
 
         Unit(const Unit &unit);
 

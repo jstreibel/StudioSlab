@@ -64,7 +64,7 @@ double absoluteValue(double value) {
     }
 
     inline Real UnitStep(const Real x, const Real eps = 0) {
-        return x < eps ? 0 : 1;
+        return x < eps ? 0.0 : 1.0;
     }
 
     DEVICES inline auto deltaGauss(Real x, Real eps) -> Real {

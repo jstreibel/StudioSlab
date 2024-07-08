@@ -32,12 +32,13 @@
 #include "Graphics/RtoRMonitor.h"
 #include "Models/KleinGordon/RtoR/Output/CenterTimeDFTOutput.h"
 
+constexpr const Slab::Count MAX_SNAPSHOTS = 200;
+
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
 #define SIGNUM_GORDON_POTENTIAL 2
 
 #define DONT_REGISTER_IMMEDIATELY false // line not to be touched
-
 
 namespace Slab::Models::KGRtoR {
 
@@ -116,20 +117,7 @@ namespace Slab::Models::KGRtoR {
                     Slab::New<DFTSnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
         }
         if(*takeTimeDFTSnapshot) {
-            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
-            Utils::TouchFolder(snapshotsFolder);
-
-            RealVector x_locations={xMin+L/2};
-            if(auto k_param = InterfaceManager::getInstance().getParameter("k")){
-                auto k_n = k_param->getValueAs<Real>();
-
-                x_locations = {L/(4.*k_n)};
-            }
-
-            auto snapshotFilename = snapshotsFolder + suggestFileName();
-            TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, *timeDFTSnapshot_tStart, t};
-            outputManager->addOutputChannel(
-                    Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, dftConfig));
+            addTimeDFTSnapshots(outputManager);
         }
 
 
@@ -197,6 +185,65 @@ namespace Slab::Models::KGRtoR {
 
         return outputManager;
 
+    }
+
+    void KGRtoRBuilder::addTimeDFTSnapshots(Pointer<OutputManager> outputManager) {
+        fix t = simulationConfig.numericConfig.gett();
+
+        fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
+        fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
+
+        Count snapshot_count = std::ceil(t / Δt);
+
+        if(snapshot_count>MAX_SNAPSHOTS)
+            throw Exception(
+                Str("Error generating time-domain dft snapshots. The value of '--") +
+                timeDFTSnapshot_tDelta.getCLName(true) + "' is " + timeDFTSnapshot_tDelta.valueToString() +
+                ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
+                ToStr(MAX_SNAPSHOTS) + " limit.");
+
+        RealVector x_locations;
+        {
+            fix L = simulationConfig.numericConfig.getL();
+            fix xMin = simulationConfig.numericConfig.getxMin();
+
+            if(auto k_param = InterfaceManager::getInstance().getParameter("k")){
+                auto k_n = k_param->getValueAs<Real>();
+                x_locations = {L/(4.*k_n)};
+            } else
+                x_locations={xMin+L/2};
+        }
+
+        if(snapshot_count==1) {
+            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            auto snapshotSocket = _newTimeDFTSnapshotOutput(snapshotsFolder, t-t_len, t, x_locations);
+            outputManager->addOutputChannel(snapshotSocket);
+
+            return;
+        }
+
+        int i=0;
+        do {
+            fix t_end   = t - i*Δt;
+            fix t_start = Common::max(t_end-t_len, 0.0);
+            const UInt decimal_places = t_end > 10 ? 0 : t_end>1 ? 1 : 0;
+
+            auto snapshotsFolder = Common::GetPWD() +
+                    "/snapshots_t" + ToStr(t_start, decimal_places) +  "-" + ToStr(t_end, decimal_places) + "/";
+            auto snapshotSocket = _newTimeDFTSnapshotOutput(snapshotsFolder, t_start, t_end, x_locations);
+            outputManager->addOutputChannel(snapshotSocket);
+        } while (snapshot_count >++ i);
+    }
+
+    Pointer<Socket>
+    KGRtoRBuilder::_newTimeDFTSnapshotOutput(Str folder, Real t_start, Real t_end, RealVector x_locations) {
+
+        Utils::TouchFolder(folder);
+
+        auto snapshotFilename = folder + suggestFileName();
+        TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
+
+        return Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, dftConfig);
     }
 
     RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
@@ -298,6 +345,8 @@ namespace Slab::Models::KGRtoR {
         auto voidSuggestion = NumericalRecipe::suggestFileName();
         return voidSuggestion + " " + strParams;
     }
+
+
 
 
 }

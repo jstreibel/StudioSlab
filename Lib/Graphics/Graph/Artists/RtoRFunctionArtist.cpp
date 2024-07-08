@@ -7,6 +7,7 @@
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include <utility>
+#include "Graphics/Graph/Util/PlotStyleGUI.h"
 
 namespace Slab::Graphics {
     RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, Count samples)
@@ -25,5 +26,15 @@ namespace Slab::Graphics {
                                                    graphRect.xMax, samples, 1);
 
         return true;
+    }
+
+    bool RtoRFunctionArtist::hasGUI() {
+        return true;
+    }
+
+    void RtoRFunctionArtist::drawGUI() {
+        DrawPlotStyleGUI(plotStyle, getLabel());
+
+        Artist::drawGUI();
     }
 } // Graphics

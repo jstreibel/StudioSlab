@@ -59,12 +59,6 @@ public:
     }
 };
 
-int run(int argc, const char** argv){
-    App app(argc, argv);
-
-    return app.run();
-}
-
 int main(int argc, const char* argv[]) {
     return Slab::Core::SafetyNet::jump(
     [](int argc, const char **argv)

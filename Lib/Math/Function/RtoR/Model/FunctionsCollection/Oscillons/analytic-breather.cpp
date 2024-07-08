@@ -101,7 +101,7 @@ namespace Slab::Math::RtoR {
 /* TODO: this is unnecessarily super-slow. Optimize.*/
     inline floatt tau(floatt xi) {
         // return pi_1*asin(ABS<floatt>(sin(pi*xi)));
-        return abs(xi - 1. - floor(xi - .5));
+        return fabs(xi - 1. - floor(xi - .5));
     }
 
     inline floatt sigma(floatt xi) {

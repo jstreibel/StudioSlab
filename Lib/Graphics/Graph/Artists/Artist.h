@@ -22,6 +22,8 @@ namespace Slab::Graphics {
     protected:
         RectR region{-1,1,-1,1};
 
+        Str UniqueName(const Str& name) const;
+
     public:
         Artist() = default;
 

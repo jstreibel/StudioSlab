@@ -200,7 +200,7 @@ namespace Modes::DatabaseViewer {
                 auto maxInfo = Utils::GetMax(data);
 
                 IN ω = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
-                fix idx = (int)maxInfo.second;
+                fix idx = (int)maxInfo.idx;
                 fix Δk = field->xMax - field->xMin;
 
                 auto k_avg = 0.0;
@@ -267,10 +267,10 @@ namespace Modes::DatabaseViewer {
 
             ImGui::TableSetColumnIndex(1);
             fix maxData = maxValues[i++];
-            ImGui::TextUnformatted(ToStr(maxData.first, 5).c_str());
+            ImGui::TextUnformatted(ToStr(maxData.value, 5).c_str());
 
             ImGui::TableSetColumnIndex(2);
-            fix idx = maxData.second;
+            fix idx = maxData.idx;
             IN field = *entry.second.snapshotData.data;
             fix kMax = field.xMax;
             fix kMin = field.xMin;

@@ -20,20 +20,40 @@ namespace Slab::Models {
     protected:
         StringParameter    plotTheme                    = StringParameter("Dark", "plot_theme", "Choose plotting theme.");
 
+
+
         BoolParameter    takeSnapshot                   = BoolParameter(false, "s,snapshot",
                                                                         "Take a snapshot of simulation at the end.");
-        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
-                                                                        "Take a snapshot of discrete Fourier transform "
-                                                                        "(DFT) of field at the end.");
-        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
-                                                                        "Take a time domain dft of field from "
-                                                                        "'--time_dft_tstart' until end.");
-        RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 , "time_dft_start",
-                                                                        "Time domain dft starting time.");
-
         RealParameter    snapshotTime                   = RealParameter(-1.0, "ss,snapshotTime",
                                                                         "Force snapshot to be taken at some time prior "
                                                                         "to end (after will result in no output.");
+
+
+
+        BoolParameter    takeSpaceDFTSnapshot           = BoolParameter(false, "dft_snapshot",
+                                                                        "Take a snapshot of discrete Fourier transform "
+                                                                        "(DFT) of field at the end.");
+
+
+        BoolParameter    takeTimeDFTSnapshot            = BoolParameter(false, "time_dft_snapshot",
+                                                                        "Take time domain dft's of field from "
+                                                                        "'--time_dft_tstart' until that plus "
+                                                                        "'time_dft_length', and repeat every "
+                                                                        "'time_dft_delta'.");
+        /*RealParameter    timeDFTSnapshot_tStart         = RealParameter(0.0 , "time_dft_start",
+                                                                        "Time domain dft starting time.");
+                                                                        */
+        RealParameter    timeDFTSnapshot_tLength        = RealParameter(-1., "time_dft_length",
+                                                                        "Length of time-domain dft snapshots. If left "
+                                                                        "negative, it is all from t=0.");
+        RealParameter    timeDFTSnapshot_tDelta         = RealParameter(-1., "time_dft_delta",
+                                                                         "Interval between each '--time_dft_snapshot'. "
+                                                                         "Leave negative for one single dft snapshot at "
+                                                                         "the end of the simulation.");
+
+
+
+
         BoolParameter    noHistoryToFile                = BoolParameter(false, "o,no_history_to_file",
                                                                         "Don't output history to file.");
 

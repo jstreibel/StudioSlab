@@ -70,7 +70,10 @@ namespace Slab {
         typedef Real MaxValue_type;
         typedef size_t MaxValue_index;
 
-        typedef std::pair<MaxValue_type, MaxValue_index> MaxInfo;
+        struct MaxInfo {
+            MaxValue_type value;
+            MaxValue_index idx;
+        };
 
         MaxInfo GetMax(const RealArray &arr);
 

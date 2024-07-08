@@ -141,16 +141,16 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    void ColorBarArtist::updateTexture(int samples) {
+    void ColorBarArtist::updateTexture() {
         if(!textureDirty) return;
 
-        if(texture==nullptr || texture->getSize()!=samples) {
-            texture = std::make_shared<OpenGL::Texture1D_Color>(samples, GL_TEXTURE1);
+        if(texture==nullptr || texture->getSize() != 16384) {
+            texture = std::make_shared<OpenGL::Texture1D_Color>(16384, GL_TEXTURE1);
             texture->setWrap(OpenGL::ClampToEdge);
         }
 
-        for(auto i=0; i<samples; ++i){
-            fix s = (Real)(i-1)/(Real)(samples-2);
+        for(auto i=0; i < 16384; ++i){
+            fix s = (Real)(i-1)/(Real)(16384 - 2);
             fix color = colorMap->mapValueToColor(s);
             texture->setColor(i, color);
         }
@@ -186,8 +186,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     auto ColorBarArtist::getTexture() -> CMapTexturePtr {
-        fix samples = 4*4096;
-        updateTexture(samples);
+        updateTexture();
 
         return texture;
     }
@@ -236,7 +235,16 @@ namespace Slab::Graphics::OpenGL {
         params.mode = mode;
     }
 
+    auto ColorBarArtist::getSamples() const -> Resolution {
+        return samples;
+    }
 
+    void ColorBarArtist::setSamples(Resolution new_sampling_size) {
+        if(new_sampling_size == samples) return;
+
+        samples = new_sampling_size;
+        textureDirty = true;
+    }
 
 
 } // OpenGL

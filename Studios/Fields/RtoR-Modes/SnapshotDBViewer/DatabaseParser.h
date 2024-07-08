@@ -18,6 +18,9 @@
 namespace Modes::DatabaseViewer {
     using namespace Slab;
 
+    fix DefaultDFTSnapshotsFolder = "./snapshots/";
+    fix DefaultHistoriesFolder = "./histories/";
+
     struct SnapshotEntry {
         SnapshotData snapshotData;
 
@@ -40,6 +43,7 @@ namespace Modes::DatabaseViewer {
 
     class DBParser {
         Str rootDatabaseFolder;
+        Str snapshotFolder;
         std::map<Real, Str> fileSet;
         FieldMap fieldMap;
         Str criticalParameter;
@@ -50,7 +54,9 @@ namespace Modes::DatabaseViewer {
     public:
         using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;
 
-        explicit DBParser(Str  rootDBFolder, Str  criticalParameter);
+        explicit DBParser(Str rootDBFolder,
+                          Str  criticalParameter,
+                          Str snapshotsFolder=DefaultDFTSnapshotsFolder);
 
         auto getCriticalParameter() const -> Str;
         auto getFileSet() const -> const std::map<Real, Str>&;

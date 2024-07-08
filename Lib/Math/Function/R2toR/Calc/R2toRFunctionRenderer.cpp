@@ -42,6 +42,8 @@ namespace Slab::Math::R2toR {
             }
         }
 
+        std::cout << std::flush;
+
         return out;
     }
 } // Graphics

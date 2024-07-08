@@ -4,6 +4,9 @@ set(STUDIOSLAB_MATH_BASE_LIB_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Math)
 set ( TOOLSET_SOURCES
 		Constants.h
 		Toolset/NativeFunctions.h
+		FunctionOperations/FunctionOperation.cpp
+		FunctionOperations/FunctionOperation.h
+		Toolset/FindPeak.cpp
 		)
 
 set ( SPACE_SOURCES
@@ -104,14 +107,12 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		${NUMERICS_SOURCES}
 		${DIFFEQS_SOURCES}
 		${THERMO_SOURCES}
-        FunctionOperations/FunctionOperation.cpp
-        FunctionOperations/FunctionOperation.h
+		Function/RtoR/Model/FunctionsCollection/NativeFunction.cpp
 )
 
 
 target_link_libraries(${STUDIOSLAB_MATH_BASE_LIB_NAME}
 		Slab-Core
-		${STUDIOSLAB_MATH_BASE_LIB_NAME}-Maps
 		fftw3
 		)
 

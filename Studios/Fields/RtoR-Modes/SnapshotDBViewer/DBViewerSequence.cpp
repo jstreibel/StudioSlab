@@ -12,9 +12,12 @@
 
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
+
 #include "Math/Function/RtoR/Model/RtoRFunctionSampler.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NativeFunction.h"
 
 #include "Graphics/Graph/Plotter.h"
+#include "Math/Toolset/FindPeak.h"
 
 namespace Modes::DatabaseViewer {
 
@@ -29,11 +32,19 @@ namespace Modes::DatabaseViewer {
     , massesGraph("masses")
     {
         for(const auto &dbFilename : dbFilenames) {
-            auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);
+            auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam, ".");
             dbParsers.emplace_back(parser);
         }
 
         this->addWindow(Naked(guiWindow));
+
+        {
+            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            style.filled = false;
+            style.primitive = Slab::Graphics::Solid;
+            auto funky = Math::RtoR::NativeFunction([](Real x) { return x; }).Clone();
+            Graphics::Plotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
+        }
 
         // Setup masses Re and Im pointsets.
         {
@@ -42,14 +53,16 @@ namespace Modes::DatabaseViewer {
             style.filled = false;
             style.thickness = 1.5;
             Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
-                                           "ℜ[m=√(ω²-kₚₑₐₖ²)]", true);
+                                           "m=sqrt(ωₚₑₐₖ²-k²)", true);
             style.lineColor = style.lineColor.brg();
             Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesImag_pointSet), style,
-                                           "ℑ[m=√(ω²-kₚₑₐₖ²)]");
+                                           "ℑ[m=√(ωₚₑₐₖ²-k²)]");
             //style.lineColor = style.lineColor.brg();
             //style.thickness = 3.0;
             //Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style, "under X-hair");
 
+            massesGraph.getAxisArtist().setVerticalAxisLabel("m");
+            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
             massesGraph.getAxisArtist().setHorizontalUnit(Math::Constants::π);
         }
 
@@ -103,15 +116,21 @@ namespace Modes::DatabaseViewer {
         guiWindow.begin();
 
         if(ImGui::SliderInt("Current database", &current_database, 0, mashupArtists.size()-1)) {
-            if(currentMeshupArtist != nullptr) mashupDisplay.removeArtist(currentMeshupArtist);
+            if(currentMeshupArtist != nullptr) {
+                mashupDisplay.removeArtist(currentMeshupArtist);
+                mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
+            }
 
             currentMashup = allMashups[current_database];
             currentMeshupArtist = mashupArtists[current_database];
             mashupDisplay.addArtist(currentMeshupArtist);
+            mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
+
+            computeMasses();
         }
 
         if(ImGui::CollapsingHeader("Dominant modes")) {
-            if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 100)){
+            if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 12)){
                 computeMasses();
             }
             drawTable(index_XHair);
@@ -163,60 +182,54 @@ namespace Modes::DatabaseViewer {
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
-        KGRelation_artist->setLabel(Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
+        KGRelation_artist->setLabel(Str("ω²-k²-1=0"));
     }
 
     void DBViewerSequence::computeMasses() {
+        assert(dbParsers.size() == allMashups.size());
+
         maxValues.clear();
         maxValuesPointSet.clear();
         massesImag_pointSet.clear();
         massesReal_pointSet.clear();
 
-        for(auto &dbParser : dbParsers) {
+        auto dbParser = dbParsers[current_database];
 
-            auto &fieldMap = dbParser->getSnapshotMap();
+        auto &fieldMap = dbParser->getSnapshotMap();
 
-            for (auto &entry: fieldMap) {
-                IN field = entry.second.snapshotData.data;
-                IN data = field->getSpace().getHostData();
+        for (auto &entry: fieldMap) {
+            IN snapshot_function1d = entry.second.snapshotData.data;
+            IN data = snapshot_function1d->getSpace().getHostData();
 
-                fix N = field->N;
-                fix kMin = field->xMin;
+            fix N = snapshot_function1d->N;
+            fix y_min = snapshot_function1d->xMin;
 
-                auto maxInfo = Utils::GetMax(data);
+            auto maxInfo = Utils::GetMax(data);
 
-                IN ω = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
-                fix idx = (int)maxInfo.second;
-                fix Δk = field->xMax - field->xMin;
+            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/(Real)(N-1);
 
-                auto k_avg = 0.0;
-                auto norm = 0.0;
-                fix half_samples = masses_avg_samples/2;
-                fix leftover_samples = masses_avg_samples%2;
-                int i = -half_samples;
-                for (; i < half_samples+leftover_samples; ++i) {
-                    int curr_idx = idx + i;
-                    if (curr_idx < 0 || curr_idx >= N) continue;
+            fix idx = (int)maxInfo.idx;
+            fix order = masses_avg_samples;
+            // auto y_peak = Slab::Math::nthOrderPeakPosition(data, idx, y_min, dy, order);
+            // auto y_peak = Slab::Math::parabolicPeakPosition(data, idx, y_min, dy);
+            // auto y_peak = Slab::Math::cubicPeakPosition(data, idx, y_min, dy);
+            auto y_peak = Slab::Math::avgPeakPosition(data, idx, y_min, dy, order);
 
-                    auto weight = data[curr_idx];
-                    auto k = Δk * (Real) (curr_idx) / (Real) N - kMin;
+            IN x = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
 
-                    k_avg += k * weight;
-                    norm += weight;
-                }
+            maxValues.emplace_back(maxInfo);
+            fix k = x;
+            fix ω = y_peak;
+            maxValuesPointSet.addPoint({k, ω});
 
-                auto k = k_avg / norm;
 
-                maxValues.emplace_back(maxInfo);
-                maxValuesPointSet.addPoint({ω, k});
+            fix m2 = ω * ω - k * k;
 
-                fix m2 = ω * ω - k * k;
-
-                if (m2>=0)
-                massesReal_pointSet.addPoint({ω, sqrt(m2)});
-                else
-                massesImag_pointSet.addPoint({ω, sqrt(-m2)});
-            }
+            // massesReal_pointSet.addPoint({ω, m2});
+            if (m2>=0)
+                massesReal_pointSet.addPoint({k, sqrt(m2)});
+            else
+                massesImag_pointSet.addPoint({k, sqrt(-m2)});
         }
     }
 
@@ -241,7 +254,7 @@ namespace Modes::DatabaseViewer {
         ImGui::TableHeadersRow();
 
         fix unit = Math::Constants::π;
-        auto &snapshotMap = dbParsers[0]->getSnapshotMap();
+        auto &snapshotMap = dbParsers[current_database]->getSnapshotMap();
         int i=0;
         for (auto &entry : snapshotMap)
         {
@@ -253,10 +266,10 @@ namespace Modes::DatabaseViewer {
 
             ImGui::TableSetColumnIndex(1);
             fix maxData = maxValues[i++];
-            ImGui::TextUnformatted(ToStr(maxData.first, 5).c_str());
+            ImGui::TextUnformatted(ToStr(maxData.value, 5).c_str());
 
             ImGui::TableSetColumnIndex(2);
-            fix idx = maxData.second;
+            fix idx = maxData.idx;
             IN field = *entry.second.snapshotData.data;
             fix kMax = field.xMax;
             fix kMin = field.xMin;
@@ -305,6 +318,8 @@ namespace Modes::DatabaseViewer {
         mashupArtists.clear();
 
         auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
+        Pointer<Graphics::OpenGL::Shader> prog;
+        Pointer<Graphics::OpenGL::ColorBarArtist> colorBarArtist = nullptr;
         for (auto &dbParser: dbParsers) {
             auto mashup = dbParser->buildSnapshotMashup();
             // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
@@ -314,6 +329,12 @@ namespace Modes::DatabaseViewer {
             artie->setLabel(dbRootFolder);
             artie->setFunction(mashup);
             artie->setColorMap(cmap);
+            if(prog == nullptr) {
+                prog = artie->getProgram();
+            }
+            else {
+                artie->setProgram(prog);
+            }
 
             allMashups.emplace_back(mashup);
             mashupArtists.emplace_back(artie);
@@ -326,6 +347,8 @@ namespace Modes::DatabaseViewer {
         currentMashup = allMashups[current_database];
         currentMeshupArtist = mashupArtists[current_database];
         mashupDisplay.addArtist(currentMeshupArtist);
+
+        mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
         computeMasses();
     }

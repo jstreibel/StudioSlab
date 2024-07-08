@@ -27,6 +27,9 @@ namespace Slab::Models::KGRtoR {
 
         bool periodicBC = false;          // Gambiarris
 
+        void addTimeDFTSnapshots(Pointer<OutputManager>);
+        auto _newTimeDFTSnapshotOutput(Str folder, Real t_start, Real t_end, RealVector x_locations) -> Pointer<Socket>;
+
     protected:
         virtual auto buildOpenGLOutput() -> void*;
 

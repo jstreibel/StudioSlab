@@ -2,17 +2,16 @@
 // Created by joao on 1/10/23.
 //
 
+#include "3rdParty/ImGui.h"
+
 #include "Utils/EncodingUtils.h"
 
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/OpenGL/OpenGL.h"
-#include "Graphics/OpenGL/Utils.h"
-#include "Graphics/OpenGL/Shader.h"
+#include "Graphics/Graph/PlotThemeManager.h"
 
 #include "AxisArtist.h"
 
 #include <utility>
-#include "Graphics/Graph/PlotThemeManager.h"
 
 
 #define hPixelsToSpaceScale (region.width() / vp.width())
@@ -58,20 +57,19 @@ namespace Slab::Graphics {
     }
 
     void AxisArtist::computeTicks(const PlottingWindow &graph) {
-        auto region = graph.getRegion();
-        auto vp = graph.getViewport();
+        const auto& region = graph.getRegion();
 
         auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
 
-        if(true){
+        {
             const Real Δy = region.height() / vUnit.value();
 
             const auto theLog = log10(Δy);
-            const auto spacing = 2*pow(10., floor(theLog) - 1.);
+            const auto spacing = pow(10., floor(theLog) - 1.);
             const auto theRest = theLog - floor(theLog);
-            const auto multiplier = floor(pow(10., theRest));
+            const auto multiplier = y_spacing_multiplier * floor(pow(10., theRest));
 
             ySpacing = multiplier * spacing;
         }
@@ -82,9 +80,9 @@ namespace Slab::Graphics {
             const auto Δx = region.width() / hUnit.value();
 
             const auto theLog = log10(Δx);
-            const auto spacing = 2*pow(10., floor(theLog) - 1.);
+            const auto spacing = pow(10., floor(theLog) - 1.);
             const auto theRest = theLog - floor(theLog);
-            const auto multiplier = 2 * floor(pow(10., theRest));
+            const auto multiplier = x_spacing_multiplier * floor(pow(10., theRest));
 
             xSpacing = multiplier * spacing;
 
@@ -103,7 +101,7 @@ namespace Slab::Graphics {
 
     void AxisArtist::drawXAxis(const PlottingWindow &graph) const {
         auto vp = graph.getViewport();
-        auto region = graph.getRegion();
+        const auto& region = graph.getRegion();
 
         auto currStyle = PlotThemeManager::GetCurrent();
 
@@ -176,7 +174,7 @@ namespace Slab::Graphics {
 
     void AxisArtist::drawYAxis(const PlottingWindow &graph) const {
         auto vp = graph.getViewport();
-        auto region = graph.getRegion();
+        const auto& region = graph.getRegion();
         auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
@@ -185,7 +183,7 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_STIPPLE);
 
         fix Δy = region.height();
-        fix xLocationOfYAxis = region.getXMin() + currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
+        fix xLocationOfYAxis = region.getXMin() + (Real)currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
         fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
         fix iMin = int(region.getYMin()/ySpacing);
         fix iMax = int(region.getYMax()/ySpacing);
@@ -199,15 +197,21 @@ namespace Slab::Graphics {
         for(int i=iMin; i<=iMax; ++i){
             auto mark = i*ySpacing;
 
+            auto label = vUnit(mark, 2);
+
             Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels};
-            buffer.str("");
 
-            setupBuffer(buffer);
+            Str text;
+            if(0) {
+                buffer.str("");
 
-            buffer << mark;
+                setupBuffer(buffer);
 
-            Str text = buffer.str();
-            if(numRegion < -1 && USE_ELEGANT_SCIENTIFIC) text = elegantScientific(text);
+                buffer << mark;
+
+                text = buffer.str();
+                if (numRegion < -1 && USE_ELEGANT_SCIENTIFIC) text = elegantScientific(text);
+            } else text = vUnit(mark, 2);
 
             loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             writer->write(text, loc, gtf);
@@ -262,12 +266,12 @@ namespace Slab::Graphics {
             const auto xMidpoint = region.getXMin();
             const auto yMidpoint = region.yCenter();
             const Point2D loc = {xMidpoint, yMidpoint};
-            auto writer = currStyle->labelsWriter;
+            auto labels_writer = currStyle->labelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
-            pen.x += .5*writer->getFontHeightInPixels();
+            pen.x += .5*labels_writer->getFontHeightInPixels();
 
-            writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor);
+            labels_writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor);
         }
 
     }
@@ -295,6 +299,22 @@ namespace Slab::Graphics {
 
     auto AxisArtist::getVerticalAxisLabel() const -> Str {
         return verticalAxisLabel;
+    }
+
+    bool AxisArtist::hasGUI() { return true; }
+
+    void AxisArtist::drawGUI() {
+        ImGui::SliderFloat(UniqueName("x label spacing factor").c_str(), &x_spacing_multiplier, 0.5, 10.0);
+        ImGui::SliderFloat(UniqueName("y label spacing factor").c_str(), &y_spacing_multiplier, 0.5, 10.0);
+
+        IntVector axis_padding{(int)PlotThemeManager::GetCurrent()->hAxisPaddingInPixels,
+                               (int)PlotThemeManager::GetCurrent()->vAxisPaddingInPixels};
+        if(ImGui::SliderInt2(UniqueName("Axis padding (in pixels)").c_str(), &axis_padding[0], 20, 640)){
+            PlotThemeManager::GetCurrent()->hAxisPaddingInPixels = axis_padding[0];
+            PlotThemeManager::GetCurrent()->vAxisPaddingInPixels = axis_padding[1];
+        };
+
+        Artist::drawGUI();
     }
 
 

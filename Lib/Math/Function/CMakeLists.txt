@@ -99,7 +99,7 @@ set ( R2TOR_SOURCES
 		#R2toR/View/OutputStructureBuilderR2ToR.cpp
 		#R2toR/View/LastOutputVtkVisualizer.cpp	R2toR/View/LastOutputVtkVisualizer.h
 
-
+		R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.cpp			  R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.h
 		R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.h R2toR/Model/FunctionsCollection/CorrelationFunction/CorrelationFunction.cpp
 		R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.h R2toR/Model/FunctionsCollection/CorrelationFunction/Sampler.cpp
         R2toR/Calc/FourierTransform.h R2toR/Calc/FourierTransform.cpp

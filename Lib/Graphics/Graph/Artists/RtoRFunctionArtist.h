@@ -23,6 +23,10 @@ namespace Slab::Graphics {
         RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
 
         bool draw(const PlottingWindow &d) override;
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
     };
 
     DefinePointers(RtoRFunctionArtist)

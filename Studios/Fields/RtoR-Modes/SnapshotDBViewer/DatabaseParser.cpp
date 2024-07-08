@@ -84,12 +84,10 @@ namespace Modes::DatabaseViewer {
         NOT_IMPLEMENTED
     }
 
-    fix DefaultDFTSnapshotsFolder = "./snapshots/";
-    fix DefaultHistoriesFolder = "./histories/";
-
-    DBParser::DBParser(Str rootDBFolder, Str criticalParameter)
+    DBParser::DBParser(Str rootDBFolder, Str criticalParameter, Str snapshotFolder)
     : criticalParameter(std::move(criticalParameter))
     , rootDatabaseFolder(std::move(rootDBFolder))
+    , snapshotFolder(snapshotFolder)
     {
         if(rootDatabaseFolder=="./" || rootDatabaseFolder=="."){
             fix pwd = Common::GetPWD();
@@ -137,7 +135,7 @@ namespace Modes::DatabaseViewer {
     void DBParser::readDatabase() {
         auto dbPath = rootDatabaseFolder;
 
-        auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + DefaultDFTSnapshotsFolder);
+        auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + snapshotFolder);
 
         for (const auto &entry: snapshotsFolderIterator) {
             auto fileName = entry.path().string();

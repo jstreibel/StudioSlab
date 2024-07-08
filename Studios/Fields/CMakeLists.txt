@@ -33,7 +33,6 @@ add_executable ( Fields-RtoR
 )
 target_link_libraries ( Fields-RtoR Slab )
 #set_property(TARGET Fields-RtoR PROPERTY CUDA_ARCHITECTURES 72)
-
 message(NOTICE "Added executable Fields-RtoR")
 
 

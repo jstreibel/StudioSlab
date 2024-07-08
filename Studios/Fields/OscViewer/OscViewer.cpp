@@ -127,28 +127,26 @@ namespace Studios::Fields {
         }
 
         if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
-            static fix t_min =(float)function->getDomain().yMin;
-            static fix t_max =(float)function->getDomain().yMax;
-            static auto t_0 = t_min;
-            static auto t_f = t_max;
-            static auto auto_update_Ft = false;
-            static auto auto_update_Ftx = false;
+            fix dt = function->getSpace().getMetaData().geth(1);
+            fix t_min =(float)function->getDomain().yMin;
+            fix t_max =(float)function->getDomain().yMax;
 
             ImGui::Checkbox("Auto ℱₜ##time_dft", &auto_update_Ft);
             ImGui::Checkbox("Auto ℱₜₓ##tx_dft", &auto_update_Ftx);
 
             ImGui::BeginDisabled(auto_update_Ft);
             if(ImGui::Button("Compute ℱₜ"))
-                computeTimeDFT(t_0, t_f);
+                computeTimeDFT();
             ImGui::EndDisabled();
             ImGui::BeginDisabled(auto_update_Ftx);
             if(ImGui::Button("Compute ℱₜₓ"))
-                computeAll(t_0, t_f);
+                computeAll();
             ImGui::EndDisabled();
 
-            if(ImGui::SliderFloat("tₘᵢₙ", &t_0, .0f, t_f) | ImGui::SliderFloat("tₘₐₓ", &t_f, t_0, t_max)) {
-                if (auto_update_Ft) computeTimeDFT(t_0, t_f);
-                if (auto_update_Ftx) computeAll(t_0, t_f);
+            if(ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max-Δt)
+             | ImGui::SliderFloat("Δt", &Δt, 10*(float)dt, t_max-t0)) {
+                if (auto_update_Ft) computeTimeDFT();
+                if (auto_update_Ftx) computeAll();
             }
         }
 
@@ -157,8 +155,14 @@ namespace Studios::Fields {
         WindowPanel::draw();
     }
 
-    auto OscViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin,
-                                Real tMax) -> Pointer<R2toR::NumericFunction> {
+    auto OscViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real t_0,
+                                Real t_f) -> Pointer<R2toR::NumericFunction> {
+
+        fix t_min = func->getDomain().yMin;
+        fix t_max = func->getDomain().yMax;
+
+        t_0 = Common::max(t_0, t_min);
+        t_f = Common::min(t_f, t_max);
 
         fix N = func->getN();
         fix xMin = func->getDomain().xMin;
@@ -166,13 +170,13 @@ namespace Studios::Fields {
 
         fix Mₜ = func->getM();
         fix dt = func->getDomain().getLy()/Mₜ;
-        fix Δt = tMax-tMin;
+        fix Δt = t_f-t_0;
         fix test_M = (Count)floor(Δt/dt);
         fix M = test_M%2==0 ? test_M : test_M-1;
 
-        auto out = New<Slab::Math::R2toR::NumericFunction_CPU>(N, M, xMin, tMin, dx, Δt/(Real)M);
+        auto out = New<Slab::Math::R2toR::NumericFunction_CPU>(N, M, xMin, t_0, dx, Δt/(Real)M);
 
-        fix j₀ = floor(tMin/dt);
+        fix j₀ = floor((t_0-t_min)/dt);
 
         for (auto i = 0; i < N; ++i) for (auto j = 0; j < M; ++j)
                 out->At(i, j) = func->At(i, j₀+j);
@@ -180,15 +184,19 @@ namespace Studios::Fields {
         return out;
     }
 
-    void OscViewer::computeAll(Real t_0, Real t_f) {
+    void OscViewer::computeAll() {
         if(function == nullptr) return;
 
-        computeFullDFT2D(t_0, t_f, KeepRedundantModes);
+
+        computeFullDFT2D(KeepRedundantModes);
         computeTwoPointCorrelations();
     }
 
-    void OscViewer::computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes) {
+    void OscViewer::computeFullDFT2D(bool discardRedundantModes) {
         if(function == nullptr) return;
+
+        Real t_0 = (Real)t0;
+        Real t_f = t_0 + (Real)Δt;
 
         auto toFT = FilterSpace(function, t_0, t_f);
         timeFilteredArtist->setFunction(toFT);
@@ -233,7 +241,9 @@ namespace Studios::Fields {
     void OscViewer::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
         if(function == nullptr) return;
 
-        Core::Log::Warning() << __PRETTY_FUNCTION__ << " not implemented.";
+
+
+
         /*
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
@@ -267,8 +277,16 @@ namespace Studios::Fields {
          */
     }
 
-    void OscViewer::computeTimeDFT(Real t_0, Real t_f) {
+    void OscViewer::computeTimeDFT() {
         if(function == nullptr) return;
+
+        Real t_0 = (Real)t0;
+        Real t_f = t_0 + (Real)Δt;
+
+        fix t_min = function->getDomain().yMin;
+
+        t_0 = Common::max(t_0, t_min);
+        t_f = Common::min(t_f, function->getDomain().yMax);
 
         fix N = function->getN();
         fix xMin = function->getDomain().xMin;
@@ -286,7 +304,7 @@ namespace Studios::Fields {
         ωSpace = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
-        fix j₀ = floor(t_0/dt);
+        fix j₀ = floor((t_0-t_min)/dt);
         for(auto i=0; i<N; ++i){
             auto &spaceData_temp = tempSpace.getSpace().getHostData(false);
 
@@ -315,12 +333,30 @@ namespace Studios::Fields {
     void OscViewer::setFunction(OscViewer::Function func) {
         function = std::move(func);
 
+        fix t_min = (float)function->getDomain().yMin;
+        fix t_max = (float)function->getDomain().yMax;
+        t0 = t_min;
+        Δt = t_max-t_min;
+
         cutoffLine = RtoR2::StraightLine({kFilterCutoff, function->getDomain().yMin-10.0},
                                          {kFilterCutoff, function->getDomain().yMax+10.0});
 
-        auto artist = Graphics::Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
-        artist->setAffectGraphRanges(true);
+        if(function_artist == nullptr) {
+            function_artist = Graphics::Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
+            function_artist->setAffectGraphRanges(true);
+        } else {
+            function_artist->setFunction(function);
+        }
+
         xSpaceGraph->reviewGraphRanges();
+    }
+
+    bool OscViewer::is_Ft_auto_updating() const {
+        return auto_update_Ft;
+    }
+
+    bool OscViewer::is_Ftx_auto_updating() const {
+        return auto_update_Ftx;
     }
 
 

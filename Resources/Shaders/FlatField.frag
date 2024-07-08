@@ -6,6 +6,7 @@ uniform sampler1D colormap;
 uniform float phi_sat;
 uniform float kappa;
 uniform bool symmetric = true;
+uniform float eps = .0f;
 
 in vec2 TexCoord;
 out vec4 FragColor;
@@ -43,7 +44,7 @@ float map_to_tex_coord(float phi){
 
 void main()
 {
-    float phi = texture2D(field_data, TexCoord).r;
+    float phi = eps + texture2D(field_data, TexCoord).r;
 
     vec4 color = texture(colormap, map_to_tex_coord(phi));
     FragColor = color;
