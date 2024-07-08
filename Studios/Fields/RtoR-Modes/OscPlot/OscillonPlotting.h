@@ -19,6 +19,7 @@ namespace Studios {
 
         Slab::Count n_oscillons = 10;
 
+        int seed                = 1;
         Slab::Resolution N      = 100;
         Slab::Resolution M      = 100;
         Slab::Real L            =    10.0;

@@ -45,7 +45,7 @@ namespace Studios {
     : Studios::Fields::OscViewer()
     {
         fix l = 1.0;
-        osc_params = Parameters{-l/2, -l/4, l, .0, .0, .0};
+        osc_params = Parameters{-l/2, l, .0, .0, .0};
         setupOscillons();
     }
 
@@ -53,10 +53,9 @@ namespace Studios {
         guiWindow.begin();
 
         if(ImGui::CollapsingHeader("Oscillon", ImGuiTreeNodeFlags_Framed)) {
-            fix c_max = .99f;
-
-            auto v = (float)osc_params.v;
+            // auto v = (float)osc_params.v;
             // auto u = (float)osc_params.u;
+            // auto alpha = (float)osc_params.alpha;
             auto l = (float)osc_params.l;
             auto n = (int)n_oscillons;
             auto N_ = (int)N;
@@ -64,13 +63,15 @@ namespace Studios {
             auto L_ = (float)L;
             auto t_ = (float)t;
 
-            if(ImGui::SliderFloat("L", &L_, 2.0, 50.0)
+            if(ImGui::SliderInt("seed", &seed, 1, 64*1024-1)
+             | ImGui::SliderFloat("L", &L_, 2.0, 50.0)
              | ImGui::SliderFloat("t", &t_, 2.0, 50.0)
              | ImGui::SliderInt("n", &n, 1, 1000)
              | ImGui::SliderInt("N", &N_, 100, 2000)
              | ImGui::SliderInt("M", &M_, 100, 2000)
+          // | ImGui::SliderFloat("α", &alpha, 0, l)
           // | ImGui::SliderFloat("u", &u, -c_max, c_max)
-             | ImGui::SliderFloat("v", &v, -c_max, c_max)
+          // | ImGui::SliderFloat("v", &v, -c_max, c_max)
              | ImGui::SliderFloat("λ", &l, 1e-2f, 1e1f)) {
                 L = L_;
                 t = t_;
@@ -78,7 +79,8 @@ namespace Studios {
                 x_min = -L/2;
                 t_min = -t/2;
 
-                osc_params.v = v;
+                // osc_params.alpha = alpha;
+                // osc_params.v = v;
                 // osc_params.u = u;
                 osc_params.l = l;
 
@@ -103,13 +105,17 @@ namespace Studios {
     void OscillonPlotting::setupOscillons() {
         using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
 
+        Slab::RandUtils::seed(seed);
+
+        fix c_max = .99f;
         FunctionSum many_osc;
         for(auto i=0; i<n_oscillons; ++i) {
-
-            osc_params.x0       = Slab::RandUtils::random(x_min-L/2, x_min+L+L/2-osc_params.l);
-            osc_params.u        = Slab::RandUtils::random(-.9,.9);
-            osc_params.v        = Slab::RandUtils::random(-.9,.9);
-            osc_params.alpha    = Slab::RandUtils::random(0,1);
+            fix u = Slab::RandUtils::random(-c_max,c_max);
+            fix inv_gamma = sqrt(1-u*u);
+            osc_params.x0       = Slab::RandUtils::random(x_min-L/2, x_min+L+L/2-inv_gamma*osc_params.l);
+            osc_params.u        = u;
+            osc_params.v        = 0;//Slab::RandUtils::random(-c_max,c_max);
+            osc_params.alpha    = Slab::RandUtils::random(0,osc_params.l);
 
             many_osc += AnalyticOscillon (osc_params);
         }

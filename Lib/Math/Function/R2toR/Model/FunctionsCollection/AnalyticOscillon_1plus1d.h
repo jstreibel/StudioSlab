@@ -6,14 +6,15 @@
 #define STUDIOSLAB_ANALYTICOSCILLON_1PLUS1D_H
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
 namespace Slab::Math::R2toR {
 
     class AnalyticOscillon_1plus1d : public R2toR::Function {
-
+        RtoR::AnalyticOscillon oscillon;
     public:
         struct OscillonParameters {
-            Real x0, t0, l, v, u, alpha;
+            Real x0, l, v, u, alpha;
         } oscParams;
 
         explicit AnalyticOscillon_1plus1d(OscillonParameters);

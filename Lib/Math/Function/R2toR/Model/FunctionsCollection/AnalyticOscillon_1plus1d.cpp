@@ -9,23 +9,23 @@
 namespace Slab::Math::R2toR {
 
     AnalyticOscillon_1plus1d::AnalyticOscillon_1plus1d(AnalyticOscillon_1plus1d::OscillonParameters parameters)
-    : oscParams(parameters) {   }
+    : oscillon(0, parameters.x0, parameters.l, parameters.v, parameters.u, parameters.alpha, false, false)
+    , oscParams(parameters) {   }
 
     Real AnalyticOscillon_1plus1d::operator()(Real2D x_mu) const {
         fix x = x_mu.x;
         fix t = x_mu.y;
 
-        fix α = oscParams.alpha;
-
-        fix l  = oscParams.l;
-        fix v  = oscParams.v;
-        fix u  = oscParams.u;
-
         fix x0 = oscParams.x0;
-        fix t0 = oscParams.t0;
+        fix u = oscParams.u;
+        fix ut = u*t;
+        fix x0ut = x0+ut;
+        fix λ = oscParams.l;
+        fix γ⁻¹ = sqrt(1-u*u);
 
-        RtoR::AnalyticOscillon oscillon(t-t0, x0, l, v, u, α, false, false);
-        // oscillon.set_t(t);
+        if(oscParams.v == 0.0) if(x < x0ut || x > (x0ut+λ*γ⁻¹)) return 0.0;
+
+        const_cast<RtoR::AnalyticOscillon*>(&oscillon)->set_t(t);
 
         return oscillon(x);
     }
