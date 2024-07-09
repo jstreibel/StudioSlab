@@ -28,6 +28,7 @@ public:
         auto &gui_backend = Slab::Core::BackendManager::GetGUIBackend();
 
         auto osc_plot = Slab::New<Studios::OscillonPlotting>();
+
         gui_backend.addEventListener(osc_plot);
 
         gui_backend.run();

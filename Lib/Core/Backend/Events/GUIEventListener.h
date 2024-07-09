@@ -19,6 +19,7 @@ namespace Slab::Core {
 
     protected:
         void addResponder(Reference<GUIEventListener> responder);
+        void removeResponder(Pointer<GUIEventListener> responder);
         bool hasResponders() const;
 
     public:

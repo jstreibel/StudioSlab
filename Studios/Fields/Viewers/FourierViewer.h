@@ -2,8 +2,8 @@
 // Created by joao on 7/3/24.
 //
 
-#ifndef STUDIOSLAB_OSCVIEWER_H
-#define STUDIOSLAB_OSCVIEWER_H
+#ifndef STUDIOSLAB_FOURIERVIEWER_H
+#define STUDIOSLAB_FOURIERVIEWER_H
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
@@ -14,16 +14,16 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
+#include "Viewer.h"
 
-namespace Studios::Fields {
+namespace Studios::Fields::Viewers {
 
     using namespace Slab;
     using namespace Slab::Graphics;
 
-    class OscViewer : public WindowPanel {
+    class FourierViewer : public Viewer {
         using Function = Slab::Pointer<Slab::Math::R2toR::NumericFunction>;
 
-        Function function;
         R2toRFunctionArtist_ptr function_artist;
 
         Pointer<PlottingWindow> kSpaceGraph  = Slab::New<PlottingWindow>("ℱₓ");
@@ -69,21 +69,19 @@ namespace Studios::Fields {
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
         void computeTimeDFT();
 
-        
+
     protected:
         bool is_Ft_auto_updating() const;
         bool is_Ftx_auto_updating() const;
 
-        Graphics::GUIWindow guiWindow;
-
     public:
-        explicit OscViewer();
+        explicit FourierViewer(Pointer<Graphics::GUIWindow>);
 
-        void setFunction(Function func);
+        void setFunction(Function func) override;
 
         void draw() override;
     };
 
 } // Studios::Fields
 
-#endif //STUDIOSLAB_OSCVIEWER_H
+#endif //STUDIOSLAB_FOURIERVIEWER_H

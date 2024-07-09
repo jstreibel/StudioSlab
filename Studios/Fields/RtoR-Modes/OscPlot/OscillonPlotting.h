@@ -6,21 +6,23 @@
 #define STUDIOSLAB_OSCILLONPLOTTING_H
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
-#include "../../OscViewer/OscViewer.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "../../Viewers/FourierViewer.h"
+#include "../../Viewers/MainViewer.h"
 
 namespace Studios {
 
-    class OscillonPlotting : public Studios::Fields::OscViewer {
+    class OscillonPlotting : public Studios::Fields::Viewers::MainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
-        using Function = Slab::Math::R2toR::NumericFunction_CPU;
-        using Parameters = Slab::Math::R2toR::AnalyticOscillon_1plus1d::OscillonParameters;
+        using Function         = Slab::Math::R2toR::NumericFunction_CPU;
+        using Parameters       = Slab::Math::R2toR::AnalyticOscillon_1plus1d::OscillonParameters;
 
         Slab::Count n_oscillons = 10;
 
         int seed                = 1;
-        float l_std        = 1./10;
+        float l_std             = 1./10;
+        Slab::Real c_max        = 1. - 1e-4f;
         Slab::Resolution N      = 100;
         Slab::Resolution M      = 100;
         Slab::Real L            =    10.0;

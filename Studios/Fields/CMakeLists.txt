@@ -40,9 +40,13 @@ message(NOTICE "Added executable Fields-RtoR")
 
 
 add_executable (osc-viewer
-		OscViewer/main.cpp
-		OscViewer/HistoryFileLoader.cpp		OscViewer/HistoryFileLoader.h
-		OscViewer/OscViewer.cpp 			OscViewer/OscViewer.h
+		Viewers/main.cpp
+		Viewers/HistoryFileLoader.cpp Viewers/HistoryFileLoader.h
+		Viewers/FourierViewer.cpp Viewers/FourierViewer.h
+		Viewers/MainViewer.cpp
+		Viewers/MainViewer.h
+		Viewers/Viewer.cpp
+		Viewers/Viewer.h
 )
 target_link_libraries (osc-viewer Slab )
 

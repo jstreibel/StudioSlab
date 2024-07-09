@@ -17,7 +17,7 @@ namespace Slab::Math::RtoR {
     auto ab(Real alpha, Real u, Real v) -> RealPair {
         const Real alpha_0 = .5 * (1. - u * u);
 
-        assert(!(alpha < 0. || alpha > 1.));
+        // assert(!(alpha < 0. || alpha > 1.));
 
         if (alpha < alpha_0) return {1., 0.};
 

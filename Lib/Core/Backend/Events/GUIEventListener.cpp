@@ -20,6 +20,18 @@ namespace Slab::Core {
         return !delegateResponders.empty();
     }
 
+    void GUIEventListener::removeResponder(Pointer<GUIEventListener> to_remove) {
+        auto responder = delegateResponders.begin();
+
+        while(responder != delegateResponders.end()) {
+            if(responder->lock() == to_remove)
+                responder = delegateResponders.erase(responder);
+            else
+                ++responder;
+        }
+
+    }
+
 
     bool GUIEventListener::notifyMouseMotion(int x, int y) {
         return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y));

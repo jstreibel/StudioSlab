@@ -9,7 +9,7 @@
 
 // #include "Graphics/OpenGL/OpenGL.h"
 
-#include "OscViewer.h"
+#include "FourierViewer.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -18,11 +18,11 @@
 
 #include <utility>
 
-namespace Studios::Fields {
+namespace Studios::Fields::Viewers {
 
     constexpr auto KeepRedundantModes = false;
 
-    OscViewer::OscViewer() : WindowPanel(Flags::HasMainMenu)
+    FourierViewer::FourierViewer(Pointer<Graphics::GUIWindow> gui_window) : Viewer(gui_window)
     {
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -74,21 +74,20 @@ namespace Studios::Fields {
             ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
         }
 
-        fix gui_window_width = 0.125f;
-        fix other_width = (1-gui_window_width)/2;
-        addWindow(Naked(guiWindow));
-        addWindow(ωSpaceGraph, true, other_width);
+        addWindow(ωSpaceGraph, false, 0.5);
         addWindow(xSpaceGraph);
-        addWindow(ωkSpaceGraph, true, other_width);
+        addWindow(ωkSpaceGraph, true, 0.5);
         addWindow(kSpaceGraph);
 
         arrangeWindows();
     }
 
-    void OscViewer::draw() {
+    void FourierViewer::draw() {
+        auto function = getFunction();
+
         if(function == nullptr) return;
 
-        guiWindow.begin();
+        beginGUI();
 
         if(ImGui::CollapsingHeader("k-filter")){
             //this->dftData
@@ -150,13 +149,13 @@ namespace Studios::Fields {
             }
         }
 
-        guiWindow.end();
+        endGUI();
 
         WindowPanel::draw();
     }
 
-    auto OscViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real t_0,
-                                Real t_f) -> Pointer<R2toR::NumericFunction> {
+    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real t_0,
+                                    Real t_f) -> Pointer<R2toR::NumericFunction> {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;
@@ -184,15 +183,17 @@ namespace Studios::Fields {
         return out;
     }
 
-    void OscViewer::computeAll() {
+    void FourierViewer::computeAll() {
+        auto function = getFunction();
         if(function == nullptr) return;
-
 
         computeFullDFT2D(KeepRedundantModes);
         computeTwoPointCorrelations();
     }
 
-    void OscViewer::computeFullDFT2D(bool discardRedundantModes) {
+    void FourierViewer::computeFullDFT2D(bool discardRedundantModes) {
+        auto function = getFunction();
+
         if(function == nullptr) return;
 
         Real t_0 = (Real)t0;
@@ -220,7 +221,7 @@ namespace Studios::Fields {
         imagPartsArtist ->setFunction(ftImagParts);
     }
 
-    void OscViewer::computeTwoPointCorrelations() {
+    void FourierViewer::computeTwoPointCorrelations() {
         // if(function == nullptr) return;
         if(dft2DFunction == nullptr) return;
 
@@ -238,11 +239,10 @@ namespace Studios::Fields {
 
     }
 
-    void OscViewer::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
+    void FourierViewer::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
+        auto function = getFunction();
+
         if(function == nullptr) return;
-
-
-
 
         /*
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
@@ -277,7 +277,9 @@ namespace Studios::Fields {
          */
     }
 
-    void OscViewer::computeTimeDFT() {
+    void FourierViewer::computeTimeDFT() {
+        auto function = getFunction();
+
         if(function == nullptr) return;
 
         Real t_0 = (Real)t0;
@@ -330,8 +332,10 @@ namespace Studios::Fields {
 
 
 
-    void OscViewer::setFunction(OscViewer::Function func) {
-        function = std::move(func);
+    void FourierViewer::setFunction(FourierViewer::Function func) {
+        Viewer::setFunction(func);
+
+        auto function = getFunction();
 
         fix t_min = (float)function->getDomain().yMin;
         fix t_max = (float)function->getDomain().yMax;
@@ -349,13 +353,16 @@ namespace Studios::Fields {
         }
 
         xSpaceGraph->reviewGraphRanges();
+
+        if (is_Ft_auto_updating()) computeTimeDFT();
+        if (is_Ftx_auto_updating()) computeAll();
     }
 
-    bool OscViewer::is_Ft_auto_updating() const {
+    bool FourierViewer::is_Ft_auto_updating() const {
         return auto_update_Ft;
     }
 
-    bool OscViewer::is_Ftx_auto_updating() const {
+    bool FourierViewer::is_Ftx_auto_updating() const {
         return auto_update_Ftx;
     }
 

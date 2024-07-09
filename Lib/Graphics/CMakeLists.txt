@@ -128,6 +128,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Util/FieldTextureKontraption.cpp
 		Graph/Util/PlotStyleGUI.cpp
 		Graph/Util/PlotStyleGUI.h
+        Window/WindowProxy.cpp
+        Window/WindowProxy.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

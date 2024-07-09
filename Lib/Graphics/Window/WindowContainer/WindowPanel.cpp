@@ -80,7 +80,6 @@ namespace Slab::Graphics {
             }
         }
 
-
         Vector<int> computedPositions(m);
         auto x = this->getx();
         for (int i = 0; i < m; ++i) {

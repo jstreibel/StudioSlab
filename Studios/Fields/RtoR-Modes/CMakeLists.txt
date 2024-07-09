@@ -30,7 +30,7 @@ add_executable ( RtoR-SnapshotDBViewer
         ../Analysis/AnalysisMonitor.h
         ../Analysis/FourierAnalysis.cpp
         ../Analysis/FourierAnalysis.h
-        ../OscViewer/HistoryFileLoader.cpp
+        ../Viewers/HistoryFileLoader.cpp
 )
 target_link_libraries ( RtoR-SnapshotDBViewer Slab )
 message(NOTICE "Added executable RtoR-SnapshotDBViewer")
@@ -42,7 +42,9 @@ file(GLOB_RECURSE OSCPLOT_SOURCES
 
 add_executable (osc-plot
         ${OSCPLOT_SOURCES}
-        ../OscViewer/OscViewer.cpp
+        ../Viewers/FourierViewer.cpp
+        ../Viewers/MainViewer.cpp
+        ../Viewers/Viewer.cpp
 )
 target_link_libraries (osc-plot Slab )
 

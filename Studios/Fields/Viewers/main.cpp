@@ -20,7 +20,7 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "HistoryFileLoader.h"
-#include "OscViewer.h"
+#include "FourierViewer.h"
 #include "Graphics/Graph/PlotThemeManager.h"
 
 using namespace Slab;

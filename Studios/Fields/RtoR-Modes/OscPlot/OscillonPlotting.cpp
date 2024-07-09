@@ -36,15 +36,18 @@ namespace Studios {
     };
 
     OscillonPlotting::OscillonPlotting()
-    : Studios::Fields::OscViewer()
+    : Studios::Fields::Viewers::MainViewer()
     {
         fix l = 1.0;
         osc_params = Parameters{-l/2, l, .0, .0, .0};
         setupOscillons();
+
+        auto fourier_viewer = Slab::New<Fields::Viewers::FourierViewer>(getGUIWindow());
+        addViewer(fourier_viewer);
     }
 
     void OscillonPlotting::draw() {
-        guiWindow.begin();
+        getGUIWindow()->begin();
 
         if(ImGui::CollapsingHeader("Oscillon", ImGuiTreeNodeFlags_Framed)) {
             // auto v = (float)osc_params.v;
@@ -57,6 +60,8 @@ namespace Studios {
             auto L_ = (float)L;
             auto t_ = (float)t;
 
+            auto _1_m_cmax = (float)(1.0-c_max);
+
             if(ImGui::SliderInt("seed", &seed, 1, 64*1024-1)
              | ImGui::SliderFloat("L", &L_, 2.0, 50.0)
              | ImGui::SliderFloat("t", &t_, 2.0, 50.0)
@@ -67,7 +72,8 @@ namespace Studios {
           // | ImGui::SliderFloat("u", &u, -c_max, c_max)
           // | ImGui::SliderFloat("v", &v, -c_max, c_max)
              | ImGui::SliderFloat("λ", &l, 1e-2f, 1e1f)
-             | ImGui::DragFloat("λ_std", &l_std, l*1e-3f, 1e-3f, 1e1f)) {
+             | ImGui::DragFloat("λ_std", &l_std, l*1e-3f, 1e-3f, 1e1f)
+             | ImGui::DragFloat("1-c_max", &_1_m_cmax, _1_m_cmax*1e-2f, 1e-6f, 1, "%.6f")) {
                 L = L_;
                 t = t_;
 
@@ -83,18 +89,17 @@ namespace Studios {
                 N = N_;
                 M = M_;
 
+                c_max = 1.0 - (Slab::Real)_1_m_cmax;
+
                 setupOscillons();
 
-                if (is_Ft_auto_updating()) computeTimeDFT();
-                if (is_Ftx_auto_updating()) computeAll();
             }
+            ImGui::Text("c_max=%f", c_max);
         }
 
+        getGUIWindow()->end();
 
-
-        guiWindow.end();
-
-        OscViewer::draw();
+        Studios::Fields::Viewers::MainViewer::draw();
     }
 
     void OscillonPlotting::setupOscillons() {
@@ -103,7 +108,6 @@ namespace Studios {
         Slab::RandUtils::SeedUniformReal(seed);
         auto Rand = Slab::RandUtils::RandomUniformReal;
 
-        fix c_max = .99f;
         FunctionSum many_osc;
         auto l = osc_params.l;
         auto l_vec = Slab::RandUtils::GenerateLognormalValues(n_oscillons, osc_params.l, l_std, seed);
