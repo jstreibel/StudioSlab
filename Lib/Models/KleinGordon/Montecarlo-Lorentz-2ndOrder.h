@@ -72,7 +72,7 @@ namespace Slab::Models::KGRtoR {
         bool shouldAccept(Real deltaE){
             if(deltaE<0) return true;
 
-            const Real r = RandUtils::random01();
+            const Real r = RandUtils::RandomUniform01();
 
             const Real z = ThermoUtils::BoltzmannWeight(T, deltaE);
 
@@ -101,10 +101,10 @@ namespace Slab::Models::KGRtoR {
 
             for (int ssf = 0; ssf < N; ++ssf) {
                 // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
-                const int i = RandUtils::RandInt() % N;
+                const int i = RandUtils::RandomUniformInt() % N;
 
                 const Real v = X[i];
-                const Real newVal = v + RandUtils::random(-.5,.5);
+                const Real newVal = v + RandUtils::RandomUniform(-.5, .5);
 
                 const Real deltaE = this->deltaE(phi, i, newVal, h);
 

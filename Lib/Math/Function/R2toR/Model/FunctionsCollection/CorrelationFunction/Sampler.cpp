@@ -61,10 +61,10 @@ namespace Slab::Math::R2toR {
     R2Vec RandomSampler::generateSamples() {
         using namespace RandUtils;
 
-        seed(1);
+        SeedUniformReal(1);
 
         auto samples = R2toR::R2Vec(get_nSamples());
-        for(OUT s : samples) s = {random(xMin, xMax), random(yMin, yMax)};
+        for(OUT s : samples) s = {RandomUniformReal(xMin, xMax), RandomUniformReal(yMin, yMax)};
 
         return samples;
     }

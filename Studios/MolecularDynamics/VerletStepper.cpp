@@ -21,8 +21,8 @@ namespace MolecularDynamics {
             auto lim = (.5 * L - .5 * CUTOFF_RADIUS);
 
             for (auto &_q: q) {
-                auto x = RandUtils::random(-lim, lim);
-                auto y = RandUtils::random(-lim, lim);
+                auto x = RandUtils::RandomUniform(-lim, lim);
+                auto y = RandUtils::RandomUniform(-lim, lim);
                 _q = Graphics::Point2D(x, y);
             }
 

@@ -53,7 +53,7 @@ namespace Studios::Fields::RtoRThermal {
         for (int i = 0; i < *n; i++) {
             auto tx = xLeft + ONE_plus * Real(i) * (oscLength) + osc_eps;
 
-            auto s = RandUtils::RandInt() % 2 ? 1. : -1.;
+            auto s = RandUtils::RandomUniformInt() % 2 ? 1. : -1.;
 
             dPhidt0 += RtoR::RegularDiracDelta(osc_eps, s * a, RtoR::RegularDiracDelta::Triangle, tx);
         }

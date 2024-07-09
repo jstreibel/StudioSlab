@@ -27,7 +27,7 @@ namespace Studios::Fields::RtoRThermal {
         auto scale = L / n;
         for (int i = 0; i < n; i++) {
             auto tx = xMin + 1.05 * Real(i) * scale;
-            auto t = RandUtils::random01();
+            auto t = RandUtils::RandomUniform01();
 
             auto oscRight = RtoR::AnalyticOscillon(t, tx, scale, 0.9999, 0.7, 0.132487, false, false);
             auto oscLeft = RtoR::AnalyticOscillon(t, -tx, scale, .53, .7, 0.9324265, true, false);

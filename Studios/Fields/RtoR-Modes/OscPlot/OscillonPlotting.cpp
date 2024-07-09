@@ -22,22 +22,16 @@ namespace Studios {
 
     class PeriodicInX : public R2Function {
         Slab::Pointer<R2Function> function;
-        Slab::Real x_min, L;
-
-        Slab::Math::Real2D wrap_periodic(Slab::Math::Real2D r) const {
-            fix x = x_min + fmod((r.x - x_min), L);
-            fix y = r.y;
-
-            return {x, y};
-        }
+        Slab::Real L;
 
     public:
-        PeriodicInX(Slab::Pointer<R2Function> func, Slab::Real x_min, Slab::Real L)
-        : function(func), x_min(x_min), L(L) { }
+        PeriodicInX(Slab::Pointer<R2Function> func, Slab::Real L)
+        : function(func), L(L) { }
 
         Slab::Real operator()(Slab::Math::Real2D r) const override {
-            auto x = wrap_periodic(r);
-            return (*function)(x);
+            auto L_vec = Slab::Math::Real2D(L, 0);
+
+            return (*function)(r) + (*function)(r+L_vec) + (*function)(r-L_vec);
         }
     };
 
@@ -72,7 +66,8 @@ namespace Studios {
           // | ImGui::SliderFloat("α", &alpha, 0, l)
           // | ImGui::SliderFloat("u", &u, -c_max, c_max)
           // | ImGui::SliderFloat("v", &v, -c_max, c_max)
-             | ImGui::SliderFloat("λ", &l, 1e-2f, 1e1f)) {
+             | ImGui::SliderFloat("λ", &l, 1e-2f, 1e1f)
+             | ImGui::DragFloat("λ_std", &l_std, l*1e-3f, 1e-3f, 1e1f)) {
                 L = L_;
                 t = t_;
 
@@ -105,22 +100,28 @@ namespace Studios {
     void OscillonPlotting::setupOscillons() {
         using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
 
-        Slab::RandUtils::seed(seed);
+        Slab::RandUtils::SeedUniformReal(seed);
+        auto Rand = Slab::RandUtils::RandomUniformReal;
 
         fix c_max = .99f;
         FunctionSum many_osc;
+        auto l = osc_params.l;
+        auto l_vec = Slab::RandUtils::GenerateLognormalValues(n_oscillons, osc_params.l, l_std, seed);
+
         for(auto i=0; i<n_oscillons; ++i) {
-            fix u = Slab::RandUtils::random(-c_max,c_max);
+            fix u = Rand(-c_max, c_max);
             fix inv_gamma = sqrt(1-u*u);
-            osc_params.x0       = Slab::RandUtils::random(x_min-L/2, x_min+L+L/2-inv_gamma*osc_params.l);
+            osc_params.x0       = Rand(x_min - L / 2, x_min + L + L / 2 - inv_gamma * osc_params.l);
             osc_params.u        = u;
             osc_params.v        = 0;//Slab::RandUtils::random(-c_max,c_max);
-            osc_params.alpha    = Slab::RandUtils::random(0,osc_params.l);
+            osc_params.alpha    = Rand(0, osc_params.l);
+            osc_params.l = l_vec[i];
 
             many_osc += AnalyticOscillon (osc_params);
         }
+        osc_params.l = l;
 
-        PeriodicInX periodic(Slab::Naked(many_osc), x_min, L);
+        PeriodicInX periodic(Slab::Naked(many_osc), L);
         rendered = Slab::New<Slab::Math::R2toR::NumericFunction_CPU>(N,                 M,
                                                                      x_min,             t_min,
                                                                      L/(Slab::Real)N,   t/(Slab::Real)M);

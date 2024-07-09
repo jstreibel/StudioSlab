@@ -10,15 +10,18 @@
 namespace Slab {
 
     namespace RandUtils {
-        void seed(int s);
+        void SeedUniformReal  (int s);
+        void SeedUniformUInt  (int s);
+        void SeedGaussianNoise(int s);
 
-        Real random01();
+        Real RandomUniformReal01();
+        Real RandomUniformReal(Real a, Real b);
+        unsigned RandomUniformUInt();
 
-        Real random(Real a, Real b);
+        double GaussianNoise(double mean, double standard_deviation);
 
-        unsigned RandInt();
+        std::vector<double> GenerateLognormalValues(int n, double x0, double x_std, int seed);
 
-        double GaussianNoise(Real mean = 0.0, Real standard_deviation = 1.0, bool reSeed = false, int seed = 1);
     }
 
     namespace LostAndFound {

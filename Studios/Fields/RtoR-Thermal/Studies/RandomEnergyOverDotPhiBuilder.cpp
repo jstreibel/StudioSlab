@@ -31,7 +31,7 @@ namespace Studios::Fields::RtoRThermal {
         if (1) {
             Real E_rand = .0;
             for (int i = 0; i < N; ++i) {
-                auto p_i = RandUtils::random01() - .5;
+                auto p_i = RandUtils::RandomUniform01() - .5;
 
                 p[i] = p_i;
                 E_rand += p_i * p_i;

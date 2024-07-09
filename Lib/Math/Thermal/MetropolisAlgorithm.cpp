@@ -35,14 +35,14 @@ namespace Slab::Math {
 
     void MetropolisAlgorithm::_shake(double h) {
         if (ic == Ferromagnetic) {
-            auto angle = 2 * M_PI * RandUtils::random01();
+            auto angle = 2 * M_PI * RandUtils::RandomUniformReal01();
 
             for (int k = 0; k < S.N; k++)
                 S.set(k, angle);
 
         } else if (ic == Paramagnetic) {
             for (int k = 0; k < S.N; k++) {
-                auto angle = 2 * M_PI * RandUtils::random01();
+                auto angle = 2 * M_PI * RandUtils::RandomUniformReal01();
                 S.set(k, angle);
             }
         }
@@ -52,7 +52,7 @@ namespace Slab::Math {
     inline bool MetropolisAlgorithm::shouldAccept(const Real deltaE) const {
         if (deltaE < 0) return true;
 
-        const double r = RandUtils::random01();
+        const double r = RandUtils::RandomUniformReal01();
 
         const double z = ThermoUtils::BoltzmannWeight(T, deltaE);
 
@@ -77,8 +77,8 @@ namespace Slab::Math {
         if (sweeping == Random) {
             for (int ssf = 0; ssf < S.N; ++ssf) {
                 // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
-                const int i = (int) RandUtils::RandInt() % S.L;
-                const int j = (int) RandUtils::RandInt() % S.L;
+                const int i = (int) RandUtils::RandomUniformUInt() % S.L;
+                const int j = (int) RandUtils::RandomUniformUInt() % S.L;
 
                 if (shouldOverrelax) {
                     //auto e0 = S.e(i, j),
@@ -91,7 +91,7 @@ namespace Slab::Math {
                     //std::cout << δ << " " << δ_N << std::endl;
                 }
 
-                auto deltaTh = δ * (RandUtils::random01() - .5);
+                auto deltaTh = δ * (RandUtils::RandomUniformReal01() - .5);
                 const double deltaE = S.ssrDeltaE(i, j, h, deltaTh);
 
                 if (shouldAccept(deltaE)) {
@@ -102,7 +102,7 @@ namespace Slab::Math {
         } else if (sweeping == Sequential) {
             for (int i = 0; i < S.L; ++i) {
                 for (int j = 0; j < S.L; ++j) {
-                    auto deltaTh = δ * (RandUtils::random01() - .5);
+                    auto deltaTh = δ * (RandUtils::RandomUniformReal01() - .5);
                     const double deltaE = S.ssrDeltaE(i, j, h, deltaTh);
                     if (shouldAccept(deltaE)) {
                         S.rotate(i, j, deltaE);
@@ -118,8 +118,8 @@ namespace Slab::Math {
 
         for (int ssf = 0; ssf < N; ++ssf) {
             const auto s1 =
-                    RandUtils::RandInt() % N; // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
-            const auto s2 = RandUtils::RandInt() % N;
+                    RandUtils::RandomUniformUInt() % N; // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
+            const auto s2 = RandUtils::RandomUniformUInt() % N;
 
             if (S.theta((int) s1) == S.theta((int) s2)) continue;
 

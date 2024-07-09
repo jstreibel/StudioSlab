@@ -8,28 +8,71 @@
 #include <random>
 
 namespace Slab::RandUtils {
-    std::mt19937 mt(2);
-    std::uniform_real_distribution<Real> realRandGen(0, 1);
+    std::mt19937 mt_uniform_real(1);
+    std::mt19937 mt_uniform_uint(1);
+    std::mt19937 mt_gaussian_noise(1);
 
-    std::uniform_int_distribution<unsigned int> uintRandGen(0, INT32_MAX);
+    std::uniform_real_distribution<Real> UniformRealRandGen(0, 1);
+    std::uniform_int_distribution<unsigned int> UniformUIntRandGen(0, INT32_MAX);
 
-    void seed(int s) {
-        mt.seed(s);
+    void SeedUniformReal  (int s) { mt_uniform_real  .seed(s); }
+    void SeedUniformUInt  (int s) { mt_uniform_uint  .seed(s); }
+    void SeedGaussianNoise(int s) { mt_gaussian_noise.seed(s); }
+
+    Real RandomUniformReal01() { return UniformRealRandGen(mt_uniform_real); }
+
+    Real RandomUniformReal(Real a, Real b){ return (b - a) * RandomUniformReal01() + a; }
+
+    unsigned RandomUniformUInt() { return UniformUIntRandGen(mt_uniform_uint); }
+
+    double GaussianNoise(double mean, double standard_deviation) {
+        std::normal_distribution<double> distribution(mean, standard_deviation);
+        return distribution(mt_gaussian_noise);
     }
 
-    Real random01() { return realRandGen(mt); }
 
-    Real random(Real a, Real b){ return (b-a)*random01() + a; }
+    // Function to solve for sigma using numerical methods
+    double solve_for_sigma(double mode, double std_dev) {
+        double left = 0.1, right = 5.0; // Reasonable initial range for sigma
+        double tol = 1e-6; // Tolerance for convergence
+        double sigma = 0;
 
-    unsigned RandInt() { return uintRandGen(mt); }
+        while (right - left > tol) {
+            sigma = (left + right) / 2;
+            double u = exp(sigma * sigma);
+            double lhs = (std_dev / mode) * (std_dev / mode);
+            double rhs = u * u * u * (u - 1);
+            if (lhs < rhs) {
+                right = sigma;
+            } else {
+                left = sigma;
+            }
+        }
 
-    double GaussianNoise(double mean, double standard_deviation, bool reSeed, int seed) {
-        static std::mt19937 generator(seed);
-        if(reSeed) generator.seed(seed);
+        return sigma;
+    }
 
-        std::normal_distribution<double> distribution(mean, standard_deviation);
+// Function to calculate mu and sigma
+    void calculate_parameters(double x0, double x_std, double& mu, double& sigma) {
+        sigma = solve_for_sigma(x0, x_std);
+        mu = log(x0) + sigma * sigma;
+    }
 
-        return distribution(generator);
+// Function to generate log-normal distribution values
+    std::vector<double> GenerateLognormalValues(int n, double x0, double x_std, int seed) {
+
+        double mu, sigma;
+        calculate_parameters(x0, x_std, mu, sigma);
+
+        std::mt19937 gen(seed);
+        std::lognormal_distribution<> d(mu, sigma);
+
+        std::vector<double> values(n);
+        for (int i = 0; i < n; ++i) {
+            values[i] = d(gen);
+        }
+
+        return values;
     }
 
 }
