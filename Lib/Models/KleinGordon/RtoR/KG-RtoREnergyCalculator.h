@@ -5,18 +5,15 @@
 #ifndef V_SHAPE_ENERGYCALCULATOR_H
 #define V_SHAPE_ENERGYCALCULATOR_H
 
-#include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunction.h"
 #include "KG-RtoREquationState.h"
-#include "KG-RtoRBuilder.h"
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
     class KGEnergy {
-        Base::NumericalRecipe &builder;
 
         RtoR::NumericFunction_ptr _oEnergyDensity;
         RtoR::NumericFunction_ptr _oKineticDensity;
@@ -28,9 +25,9 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function_ptr V_ptr;
 
     public:
-        KGEnergy(KGRtoRBuilder &builder, RtoR::Function_ptr potentialFunc);
+        KGEnergy(RtoR::Function_ptr potentialFunc);
 
-        const RtoR::NumericFunction &computeEnergies(const EquationState &field);
+        const RtoR::NumericFunction &computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi);
 
         RtoR::NumericFunction_ptr getEnergyDensity() const { return _oEnergyDensity; };
         RtoR::NumericFunction_ptr getKineticDensity() const { return _oKineticDensity; };

@@ -53,6 +53,16 @@ namespace Slab::Math::Base {
             return val;
         }
 
+        void clear() { funcs.clear(); };
+
+        Vector<Pointer<MyBase>>::iterator begin() { return funcs.begin(); }
+        Vector<Pointer<MyBase>>::iterator end() { return funcs.end(); }
+        Vector<Pointer<MyBase>>::const_iterator begin() const { return funcs.begin(); }
+        Vector<Pointer<MyBase>>::const_iterator end() const { return funcs.end(); }
+
+        Vector<Pointer<MyBase>> getFuncs() { return funcs; }
+        Vector<Pointer<const MyBase>> getFuncs() const { return funcs; }
+
     private:
         Vector<Pointer<MyBase>> funcs;
     };

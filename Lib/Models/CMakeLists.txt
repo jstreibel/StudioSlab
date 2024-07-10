@@ -16,7 +16,8 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
 		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
 		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
-		KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.cpp
+
+		KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.cpp
 		KleinGordon/RtoR/Graphics/RtoRMonitor.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h
@@ -29,6 +30,7 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h
 
+		KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.cpp
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp

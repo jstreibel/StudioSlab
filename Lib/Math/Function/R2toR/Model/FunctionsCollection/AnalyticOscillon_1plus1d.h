@@ -23,6 +23,8 @@ namespace Slab::Math::R2toR {
 
         void setParams(OscillonParameters);
 
+        void setBit(RtoR::AnalyticOscillon::Bit);
+
         Real operator()(Real2D x) const override;
     };
 

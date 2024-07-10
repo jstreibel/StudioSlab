@@ -21,9 +21,10 @@ namespace Slab::Math::R2toR {
         fix ut = u*t;
         fix x0ut = x0+ut;
         fix λ = oscParams.l;
-        fix γ⁻¹ = sqrt(1-u*u);
+        fix γ_inv = sqrt(1-u*u);
 
-        if(Common::AreEqual(oscParams.v, 0.0, 1.e-6)) if(x < x0ut || x > (x0ut+λ*γ⁻¹)) return 0.0;
+        if(Common::AreEqual(oscParams.v, 0.0, 1.e-3))
+        if(x < x0ut || x > (x0ut+λ*γ_inv)) return 0.0;
 
         const_cast<RtoR::AnalyticOscillon*>(&oscillon)->set_t(t);
 
@@ -36,6 +37,10 @@ namespace Slab::Math::R2toR {
 
     Pointer<Base::FunctionT<Real2D, Real>::Type> AnalyticOscillon_1plus1d::Clone() const {
         return New<AnalyticOscillon_1plus1d>(oscParams);
+    }
+
+    void AnalyticOscillon_1plus1d::setBit(RtoR::AnalyticOscillon::Bit bit) {
+        oscillon.setBit(bit);
     }
 
 } // Slab::Math::R2toR

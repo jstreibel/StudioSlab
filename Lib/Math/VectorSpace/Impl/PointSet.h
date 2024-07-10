@@ -34,7 +34,7 @@ namespace Slab::Math {
         void setPoints(Point2DVec points);
 
         const Point2DVec& getPoints() const;
-        Point2DVec& getPoints();
+        // Point2DVec& getPoints();
     };
 
     DefinePointers(PointSet)

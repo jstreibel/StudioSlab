@@ -72,5 +72,9 @@ namespace Slab::Math::RtoR {
 
     void AnalyticOscillon::set_t(Real t) { t0 = (t_0(alpha, -u) - t); }
 
+    void AnalyticOscillon::setBit(AnalyticOscillon::Bit bitty) {
+        bit = bitty;
+    }
+
 
 }

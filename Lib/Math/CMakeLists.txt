@@ -108,6 +108,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		${DIFFEQS_SOURCES}
 		${THERMO_SOURCES}
 		Function/RtoR/Model/FunctionsCollection/NativeFunction.cpp
+		Function/RtoR/Operations/FromR2toRNumeric.cpp
+		Function/RtoR/Operations/FromR2toRNumeric.h
 )
 
 

@@ -6,13 +6,7 @@
 
 #include "3rdParty/ImGui.h"
 
-#include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.h"
-
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Plotter.h"
-#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Calc/R2toRFunctionRenderer.h"
-#include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticShockwave2DRadialSymmetry.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Utils/RandUtils.h"
 
@@ -44,6 +38,9 @@ namespace Studios {
 
         auto fourier_viewer = Slab::New<Fields::Viewers::FourierViewer>(getGUIWindow());
         addViewer(fourier_viewer);
+
+        histograms_viewer = Slab::New<Fields::Viewers::HistogramsViewer_KG>(getGUIWindow());
+        addViewer(histograms_viewer);
     }
 
     void OscillonPlotting::draw() {
@@ -103,14 +100,13 @@ namespace Studios {
     }
 
     void OscillonPlotting::setupOscillons() {
-        using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
-
         Slab::RandUtils::SeedUniformReal(seed);
         auto Rand = Slab::RandUtils::RandomUniformReal;
 
-        FunctionSum many_osc;
         auto l = osc_params.l;
         auto l_vec = Slab::RandUtils::GenerateLognormalValues(n_oscillons, osc_params.l, l_std, seed);
+
+        many_osc.clear();
 
         for(auto i=0; i<n_oscillons; ++i) {
             fix u = Rand(-c_max, c_max);
@@ -125,13 +121,60 @@ namespace Studios {
         }
         osc_params.l = l;
 
-        PeriodicInX periodic(Slab::Naked(many_osc), L);
-        rendered = Slab::New<Slab::Math::R2toR::NumericFunction_CPU>(N,                 M,
-                                                                     x_min,             t_min,
-                                                                     L/(Slab::Real)N,   t/(Slab::Real)M);
-        Slab::Math::R2toR::R2toRFunctionRenderer::renderToDiscrete(periodic, rendered);
+        rendered_phi = renderOscillons();
+        this->setFunction(rendered_phi);
 
-        this->setFunction(rendered);
+        auto curr_viewer = getCurrentViewer();
+        if(curr_viewer != nullptr && curr_viewer == histograms_viewer) {
+            rendered_dphi = renderOscillonsTimeDerivative();
+            histograms_viewer->setFunctionDerivative(rendered_dphi);
+            histograms_viewer->updateHistograms();
+        } else
+            rendered_dphi = nullptr;
+    }
+
+    auto
+    OscillonPlotting::renderManyOsc() -> Slab::Pointer<OscillonPlotting::Function> {
+        PeriodicInX periodic(Slab::Naked(many_osc), L);
+        auto new_rendered = Slab::New<Slab::Math::R2toR::NumericFunction_CPU>(N,                 M,
+                                                                              x_min,             t_min,
+                                                                              L/(Slab::Real)N,   t/(Slab::Real)M);
+        Slab::Math::R2toR::R2toRFunctionRenderer::renderToDiscrete(periodic, new_rendered);
+
+        return new_rendered;
+    }
+
+    auto
+    OscillonPlotting::renderOscillons() -> Slab::Pointer<OscillonPlotting::Function> {
+        for(auto term : many_osc) {
+            auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
+
+            osc->setBit(Slab::Math::RtoR::AnalyticOscillon::phi);
+        }
+
+        return renderManyOsc();
+    }
+
+    auto
+    OscillonPlotting::renderOscillonsTimeDerivative() -> Slab::Pointer<OscillonPlotting::Function> {
+        for(auto term : many_osc) {
+            auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
+
+            osc->setBit(Slab::Math::RtoR::AnalyticOscillon::dPhiDt);
+        }
+
+        rendered_dphi = renderManyOsc();
+
+        return rendered_dphi;
+    }
+
+    bool OscillonPlotting::setCurrentViewer(Slab::Index i) {
+        auto value = MainViewer::setCurrentViewer(i);
+
+        if(getCurrentViewer() == histograms_viewer)
+            histograms_viewer->setFunctionDerivative(renderOscillonsTimeDerivative());
+
+        return value;
     }
 
 }

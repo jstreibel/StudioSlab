@@ -27,6 +27,8 @@ namespace Slab::Math::RtoR {
 
         AnalyticOscillon &swap();
 
+        void setBit(Bit bit);
+
     private:
         Real t0, x0, v, u, s1, s2, l, alpha;
         Bit bit;

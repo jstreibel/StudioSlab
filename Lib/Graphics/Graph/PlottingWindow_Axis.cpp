@@ -62,21 +62,25 @@ namespace Slab {
             if (aRegion.yMin < newRegion.yMin) newRegion.yMin = aRegion.yMin;
         }
 
-        /*
-        if(newRegion != region) {
-            region = newRegion;
+        if(Common::AreEqual(newRegion.xMin, newRegion.xMax)) newRegion.xMax = newRegion.xMin+1;
+        if(Common::AreEqual(newRegion.yMin, newRegion.yMax)) newRegion.yMax = newRegion.yMin+1;
 
+        {
             auto currStyle = PlotThemeManager::GetCurrent();
-            auto pix = PixelSizeInSpace(region, getViewport());
-            auto Δx = (Real)currStyle->hAxisPaddingInPixels * pix.x;
-            auto Δy = (Real)currStyle->hAxisPaddingInPixels * pix.y;
+            auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getViewport());
+            auto Δx = (Real) currStyle->hAxisPaddingInPixels * pix.x;
+            auto Δy = (Real) currStyle->hAxisPaddingInPixels * pix.y;
 
-            region.xMin -= 2*Δx;
-            region.xMax += 2*Δx;
-            region.yMin -= 2*Δy;
-            region.yMax += 2*Δy;
+            newRegion.xMin -= 2*Δx;
+            newRegion.xMax += 2*Δx;
+            newRegion.yMin -= 2*Δy;
+            newRegion.yMax += 2*Δy;
         }
-         */
+
+        region.animate_xMin(newRegion.xMin);
+        region.animate_xMax(newRegion.xMax);
+        region.animate_yMin(newRegion.yMin);
+        region.animate_yMax(newRegion.yMax);
     }
 
 

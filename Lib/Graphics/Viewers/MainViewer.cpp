@@ -67,5 +67,9 @@ namespace Studios::Fields::Viewers {
         return gui_window;
     }
 
+    auto MainViewer::getCurrentViewer() const -> Pointer<const Viewer> {
+        return current_viewer;
+    }
+
 
 } // Studios::Fields::Viewers

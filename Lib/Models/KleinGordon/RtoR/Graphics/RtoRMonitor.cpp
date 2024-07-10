@@ -155,7 +155,10 @@ namespace Slab::Models::KGRtoR {
 
     void Monitor::draw() {
         const EquationState &fieldState = *lastPacket.GetNakedStateData<EquationState>();
-        hamiltonian.computeEnergies(fieldState);
+
+        auto &phi = static_cast<RtoR::NumericFunction&>(fieldState.getPhi());
+        auto &ddtPhi = static_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());
+        hamiltonian.computeEnergies(phi, ddtPhi);
 
         updateHistoryGraph();
         updateSFTHistoryGraph();

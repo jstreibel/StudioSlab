@@ -8,6 +8,10 @@ add_library(${LIB_GRAPHICS} STATIC
 
 		OpenGL/LegacyGL/FunctionRenderer.cpp OpenGL/LegacyGL/FunctionRenderer.h
 
+		Viewers/Viewer.cpp
+		Viewers/MainViewer.cpp
+		Viewers/FourierViewer.cpp
+
 		Styles/ColorMap.h 		Styles/ColorMap.cpp
 		Styles/Colors.h       	Styles/Colors.cpp
 		Window/WindowStyles.h Window/WindowStyles.cpp

@@ -6,31 +6,53 @@
 #include "Math/Function/RtoR/Model/Operators/DerivativesCPU.h"
 #include "KG-RtoRBuilder.h"
 
+
 // #define USE_PERIODIC_BC
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    KGEnergy::KGEnergy(KGRtoRBuilder &builder, RtoR::Function_ptr potentialFunc)
-            : builder(builder), _oEnergyDensity(builder.newFunctionArbitrary())
-            , _oKineticDensity(   builder.newFunctionArbitrary() )
-            , _oGradientDensity(  builder.newFunctionArbitrary() )
-            , _oPotentialDensity( builder.newFunctionArbitrary() )
-            , V_ptr(potentialFunc) {
+    bool check_consistency(const RtoR::NumericFunction& a, const RtoR::NumericFunction& b) {
+        if(a.getSpace().getMetaData().getN(0) != b.getSpace().getMetaData().getN(0)){
+            Log::Error() << "a.N!=b.N <=> " << a.getSpace().getMetaData().getN(0) << "!=" << b.getSpace().getMetaData().getN(0) << Log::Flush;
+            return false;
+        }
 
+        if(!Common::AreEqual(a.xMin, b.xMin, 1.e-6)) {
+            Log::Error() << "a.x_min!=b.x_min <=> " << a.xMin << "!=" << b.xMin << Log::Flush;
+
+            return false;
+        }if(!Common::AreEqual(a.xMax, b.xMax, a.xMax*1.e-6)) {
+            Log::Error() << "a.x_max!=b.x_max <=> " << a.xMax << "!=" << b.xMax << Log::Flush;
+            return false;
+        }
+
+
+        return true;
     }
 
-    auto KGEnergy::computeEnergies(const EquationState &field) -> const RtoR::NumericFunction & {
-        auto &phi = static_cast<RtoR::NumericFunction&>(field.getPhi()),
-          &ddtPhi = static_cast<RtoR::NumericFunction&>(field.getDPhiDt());
+    KGEnergy::KGEnergy(RtoR::Function_ptr potentialFunc) : V_ptr(potentialFunc) {    }
 
-        auto &phiSpace = phi.getSpace(),
-                &ddtPhiSpace = ddtPhi.getSpace();
+    auto KGEnergy::computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi) -> const RtoR::NumericFunction & {
+        if(!check_consistency(phi, ddtPhi)) {
+            Log::Error() << Str("Inconsistency at ") + __PRETTY_FUNCTION__ + ":" + ToStr(__LINE__) << Log::Flush;
+            return *_oEnergyDensity;
+        }
 
-        RealArray &e = _oEnergyDensity->getSpace().getHostData();
-        RealArray &k = _oKineticDensity->getSpace().getHostData();
-        RealArray &g = _oGradientDensity->getSpace().getHostData();
+        if(_oEnergyDensity == nullptr || !check_consistency(*_oEnergyDensity, phi)) {
+            _oEnergyDensity   = DynamicPointerCast<RtoR::NumericFunction>(phi.Clone());
+            _oKineticDensity  = DynamicPointerCast<RtoR::NumericFunction>(phi.Clone());
+            _oGradientDensity = DynamicPointerCast<RtoR::NumericFunction>(phi.Clone());
+            _oPotentialDensity= DynamicPointerCast<RtoR::NumericFunction>(phi.Clone());
+        }
+
+        auto &phiSpace = phi   .getSpace(),
+          &ddtPhiSpace = ddtPhi.getSpace();
+
+        RealArray &e = _oEnergyDensity   ->getSpace().getHostData();
+        RealArray &k = _oKineticDensity  ->getSpace().getHostData();
+        RealArray &g = _oGradientDensity ->getSpace().getHostData();
         RealArray &v = _oPotentialDensity->getSpace().getHostData();
 
         fix &V_func = *V_ptr;
@@ -67,7 +89,7 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        Real dx = builder.getNumericParams().geth();
+        Real dx = phi.getSpace().getMetaData().geth(0);
         U *= dx;
         K *= dx;
         W *= dx;
@@ -83,7 +105,7 @@ namespace Slab::Models::KGRtoR {
         auto &func = *_oEnergyDensity;
 
         RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
-        Real dx = builder.getNumericParams().geth();
+        Real dx = _oEnergyDensity->getSpace().getMetaData().geth(0);
 
         UInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 

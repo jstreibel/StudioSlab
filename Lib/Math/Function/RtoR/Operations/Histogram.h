@@ -15,6 +15,7 @@ namespace Slab::Math::RtoR {
     public:
         Histogram();
 
+        void Compute(const RealArray &, int nbins=100);
         void Compute(RtoR::NumericFunction_constptr func, int nBins = 100);
 
         RtoR::Function *asPDFFunction() const;

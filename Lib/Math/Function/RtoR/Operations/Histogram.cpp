@@ -14,11 +14,8 @@ namespace Slab::Math::RtoR {
 
     }
 
-    void Histogram::Compute(RtoR::NumericFunction_constptr func, int _nBins) {
-
-        this->nBins = _nBins;
-
-        auto &F = func->getSpace().getHostData();
+    void Histogram::Compute(const RealArray &F, int nbins) {
+        this->nBins = nbins ;
 
         auto max = F[0];
         auto min = F[0];
@@ -42,6 +39,12 @@ namespace Slab::Math::RtoR {
 
         for (auto &v: F)
             bins[bin(v)]++;
+    }
+
+    void Histogram::Compute(RtoR::NumericFunction_constptr func, int _nBins) {
+        auto &F = func->getSpace().getHostData();
+
+        Compute(F, _nBins);
     }
 
     RtoR::Function *Histogram::asPDFFunction() const {
@@ -72,14 +75,11 @@ namespace Slab::Math::RtoR {
         const auto w = binWidth;
         const auto normFactor = N * w;
 
-        auto &points = pointSet->getPoints();
-        points.clear();
+        // auto &points = pointSet->getPoints();
+        // points.clear();
+        pointSet->clear();
 
-        if (beautiful) points.emplace_back(vMin, 0);
-
-        static Count debugCount;
-        static Count debugCount_last = 0;
-        debugCount = 0;
+        if (beautiful) pointSet->addPoint({vMin, 0});
 
         for (auto i = 0; i < nBins; ++i) {
             auto nHere = bins[i];
@@ -87,19 +87,12 @@ namespace Slab::Math::RtoR {
             auto x = vMin + i * w;
             auto y = (Real) nHere / normFactor;
 
-            points.emplace_back(x, y);
+            pointSet->addPoint({x, y});
             if (beautiful) {
-                points.emplace_back(x + w, y);
-                points.emplace_back(x + w, 0);
+                pointSet->addPoint({x + w, y});
+                pointSet->addPoint({x + w, 0});
             }
-
-            debugCount += nHere;
         }
-
-        if (debugCount != debugCount_last && debugCount_last != 0)
-            Core::Log::Info("Histogram counting error: ") << debugCount << Core::Log::Flush;
-
-        debugCount_last = debugCount;
 
         return pointSet;
     }

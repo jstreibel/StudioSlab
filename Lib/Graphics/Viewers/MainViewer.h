@@ -24,7 +24,8 @@ namespace Studios::Fields::Viewers {
 
         Pointer<Math::R2toR::NumericFunction> base_function;
 
-        bool setCurrentViewer(Index i);
+    protected:
+        virtual bool setCurrentViewer(Index i);
 
     public:
         explicit MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction=nullptr);
@@ -34,6 +35,8 @@ namespace Studios::Fields::Viewers {
         bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
 
         void setFunction(Pointer<Math::R2toR::NumericFunction>);
+
+        auto getCurrentViewer() const -> Pointer<const Viewer>;
 
         auto getGUIWindow() -> Pointer<Graphics::GUIWindow>;
 

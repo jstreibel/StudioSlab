@@ -64,7 +64,7 @@ namespace Slab::Graphics {
         explicit PlottingWindow(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
                                 Str title = "no_title");
 
-        explicit PlottingWindow(Str title, bool autoReviewGraphLimits=true);
+        explicit PlottingWindow(Str title, bool autoReviewGraphLimits=false);
 
         void draw() override;
 

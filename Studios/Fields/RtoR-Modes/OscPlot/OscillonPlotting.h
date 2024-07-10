@@ -8,14 +8,16 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
-#include "../../Viewers/FourierViewer.h"
-#include "../../Viewers/MainViewer.h"
+#include "Graphics/Viewers/FourierViewer.h"
+#include "Graphics/Viewers/MainViewer.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 
 namespace Studios {
 
     class OscillonPlotting : public Studios::Fields::Viewers::MainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
+        using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
         using Parameters       = Slab::Math::R2toR::AnalyticOscillon_1plus1d::OscillonParameters;
 
         Slab::Count n_oscillons = 10;
@@ -31,9 +33,21 @@ namespace Studios {
         Slab::Real t_min        = -t/2;
 
         Parameters osc_params;
-        Slab::Pointer<Function> rendered;
+        FunctionSum many_osc;
+        Slab::Pointer<Function> rendered_phi = nullptr;
+        Slab::Pointer<Function> rendered_dphi= nullptr;
+
+        Slab::Pointer<Fields::Viewers::HistogramsViewer_KG> histograms_viewer;
 
         void setupOscillons();
+        Slab::Pointer<Function> renderManyOsc();
+        Slab::Pointer<Function> renderOscillons();
+        Slab::Pointer<Function> renderOscillonsTimeDerivative();
+
+    protected:
+        bool setCurrentViewer(Slab::Index i) override;
+
+
     public:
         OscillonPlotting();
 

@@ -306,7 +306,7 @@ namespace Slab::Models::KGRtoR {
 
     void *KGRtoRBuilder::getHamiltonian() {
         static auto potential = RtoR::Function_ptr(getPotential());
-        static auto hamiltonian = new KGEnergy(*this, potential);
+        static auto hamiltonian = new KGEnergy(potential);
 
         return hamiltonian;
     }

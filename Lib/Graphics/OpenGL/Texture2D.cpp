@@ -31,16 +31,15 @@ namespace Slab::Graphics::OpenGL {
 
         bind();
 
-        Log::Critical() << "OpenGL::Texture is reserving GPU texture space to upload "
-                        << w << "x" << h << " pixels to." << Log::Flush;
+        // Log::Critical() << "OpenGL::Texture is reserving GPU texture space to upload " << w << "x" << h << " pixels to." << Log::Flush;
 
         // https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
         glTexImage2D(GL_TEXTURE_2D, 0, format, w, h, 0, UspecifiedFormat, UnspecifiedType, nullptr);
 
         setAntiAliasOn();
 
-        if(!checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
-            Log::Success() << "OpenGL::Texture reserved " << w << "x" << h << " GPU texture pixels." << Log::Flush;
+        if(checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
+            Log::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << Log::Flush;
     }
 
     GLsizei Texture2D::getWidth() const { return w; }
