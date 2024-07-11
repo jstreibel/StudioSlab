@@ -15,6 +15,8 @@ namespace Slab::Graphics {
         Pointer<GUIWindow> gui_window;
         Pointer<Math::R2toR::NumericFunction> base_function;
 
+        bool is_visible = false;
+
     protected:
         void beginGUI();
         void endGUI();
@@ -27,6 +29,7 @@ namespace Slab::Graphics {
 
         virtual void notifyBecameVisible();
         virtual void notifyBecameInvisible();
+        bool isVisible() const;
     };
 
 } // Studios::Fields::Viewers

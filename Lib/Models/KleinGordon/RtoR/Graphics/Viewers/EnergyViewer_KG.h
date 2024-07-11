@@ -44,6 +44,8 @@ namespace Slab::Models::KGRtoR {
 
         void setFunctionDerivative(FuncPointer pointer) override;
 
+        void notifyBecameVisible() override;
+
         void updateEnergy();
     };
 

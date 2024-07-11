@@ -51,10 +51,10 @@ namespace Slab::Models {
     void KGRtoR::EnergyViewer_KG::setFunctionDerivative(FuncPointer pointer) {
         KGViewer::setFunctionDerivative(pointer);
 
-        dfdt_artist->setFunction(getFunctionDerivative());
+        dfdt_artist->setFunction(pointer);
         dfdt_artist->setColorMap(Graphics::ColorMaps["BrBG"]->brg().inverse().clone());
 
-        if(areFunctionsConsistent()) updateEnergy();
+        if(isVisible() && areFunctionsConsistent()) updateEnergy();
     }
 
     void KGRtoR::EnergyViewer_KG::updateEnergy() {
@@ -144,5 +144,11 @@ namespace Slab::Models {
 
         total_energies_window->reviewGraphRanges();
         full_histories_window->reviewGraphRanges();
+    }
+
+    void KGRtoR::EnergyViewer_KG::notifyBecameVisible() {
+        Viewer::notifyBecameVisible();
+
+        if(areFunctionsConsistent()) updateEnergy();
     }
 } // Slab::Models

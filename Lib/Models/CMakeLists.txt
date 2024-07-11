@@ -49,6 +49,8 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h
 		KleinGordon/RtoR/Graphics/Viewers/KGViewer.cpp
 		KleinGordon/RtoR/Graphics/Viewers/KGViewer.h
+        KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.cpp
+        KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h
 )
 
 set ( XY_SOURCES

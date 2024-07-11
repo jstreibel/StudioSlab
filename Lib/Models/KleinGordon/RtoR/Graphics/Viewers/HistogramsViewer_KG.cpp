@@ -111,6 +111,12 @@ namespace Slab::Models::KGRtoR {
         Viewer::setFunction(function);
     }
 
+    void HistogramsViewer_KG::setFunctionDerivative(FuncPointer pointer) {
+        KGViewer::setFunctionDerivative(pointer);
+
+        if(isVisible() && areFunctionsConsistent()) updateHistograms();
+    }
+
     HistogramsViewer_KG::HarnessData
     HistogramsViewer_KG::harness() {
         auto f = getFunction();
@@ -165,9 +171,4 @@ namespace Slab::Models::KGRtoR {
         return data;
     }
 
-    void HistogramsViewer_KG::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
-
-        if(areFunctionsConsistent()) updateHistograms();
-    }
 } // Studios::Fields::Viewers

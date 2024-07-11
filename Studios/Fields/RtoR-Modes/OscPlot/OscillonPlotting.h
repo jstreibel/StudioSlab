@@ -11,14 +11,14 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 #include "Graphics/Viewers/FourierViewer.h"
-#include "Graphics/Viewers/MainViewer.h"
 
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 
 namespace Studios {
 
-    class OscillonPlotting : public Slab::Graphics::MainViewer {
+    class OscillonPlotting : public Slab::Models::KGRtoR::KGMainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
         using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
@@ -35,6 +35,7 @@ namespace Studios {
         Slab::Real t            =    10.0;
         Slab::Real x_min        = -L/2;
         Slab::Real t_min        = -t/2;
+        Slab::Real render_time  = .0;
 
         Parameters osc_params{};
         FunctionSum many_osc;
@@ -43,24 +44,22 @@ namespace Studios {
 
         Slab::Pointer<Slab::Models::KGRtoR::HistogramsViewer_KG> histograms_viewer;
         Slab::Pointer<Slab::Models::KGRtoR::EnergyViewer_KG> energy_viewer;
-        Slab::Vector<Slab::Pointer<Slab::Models::KGRtoR::KGViewer>> kg_viewers;
 
-
+        bool oscillons_dirty = true;
+        bool ddt_oscillons_dirty = true;
         void setupOscillons();
-        Slab::Pointer<Function> renderManyOsc();
-        Slab::Pointer<Function> renderOscillons();
-        Slab::Pointer<Function> renderOscillonsTimeDerivative();
 
-    protected:
-        bool setCurrentViewer(Slab::Index i) override;
-
+        Slab::Pointer<Function>
+        renderManyOsc();
+        void renderOscillons();
+        void renderOscillonsTimeDerivative();
 
     public:
         OscillonPlotting();
 
+        auto
+        getFunctionTimeDerivative() -> Slab::Pointer<Slab::Math::R2toR::NumericFunction> override;
         void draw() override;
-
-        void addKGViewer(const Slab::Pointer<Slab::Models::KGRtoR::KGViewer>&);
     };
 
 }

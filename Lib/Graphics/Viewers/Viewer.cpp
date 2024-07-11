@@ -24,11 +24,15 @@ namespace Slab::Graphics {
     void Viewer::endGUI() { gui_window->end(); }
 
     void Viewer::notifyBecameVisible() {
-
+        is_visible = true;
     }
 
     void Viewer::notifyBecameInvisible() {
+        is_visible = false;
+    }
 
+    bool Viewer::isVisible() const {
+        return is_visible;
     }
 
 

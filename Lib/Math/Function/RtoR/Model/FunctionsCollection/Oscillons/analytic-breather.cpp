@@ -63,6 +63,38 @@ namespace Slab::Math::RtoR {
     }
 
 /* (* Step funstions to cutt-off the partial solutions *) */
+    inline bool H_(floatt z) {
+        return z >= 0;
+    }
+
+    inline bool PiC_(floatt t, floatt x, floatt v) {
+        return H_(x - t) && H_(-x - t + 1.) && H_(x + t - .5 * (1. + v)) && H_(-x + t + .5 * (1. + v));
+    }
+
+    inline bool PiL1_(floatt t, floatt x, floatt v) {
+        return H_(t) && H_(x - t) && H_(-x - t + .5 * (1. + v));
+    }
+
+    inline bool PiL2_(floatt t, floatt x, floatt v) {
+        return H_(-x + t) && H_(-x - t + .5 * (1. + v)) && H_(x - v * t);
+    }
+
+    inline bool PiL3_(floatt t, floatt x, floatt v) {
+        return H_(-t + .5) && H_(-x + t) && H_(+x + t - .5 * (1. + v));
+    }
+
+    inline bool PiR1_(floatt t, floatt x, floatt v) {
+        return PiL1_(t, 1. - x, -v);
+    }
+
+    inline floatt PiR2_(floatt t, floatt x, floatt v) {
+        return PiL2_(t, 1. - x, -v);
+    }
+
+    inline floatt PiR3_(floatt t, floatt x, floatt v) {
+        return PiL3_(t, 1. - x, -v);
+    }
+
     inline floatt H(floatt z) {
         return UnitStep(z);
     }
@@ -266,8 +298,48 @@ namespace Slab::Math::RtoR {
                                                      u * sigma(xi) * dxvphiR3(tau(xi), -zeta, v));
     }
 
-/* (* A complete breather *) */
     floatt psi(floatt t, floatt x, floatt v, floatt u) {
+        fix t_ = xi;
+        fix tau_ = tau(t_);
+        fix x_ = zeta;
+
+        fix σ = sigma(t_);
+
+        if(PiC_ (tau_, x_, v)) return σ * vphiC (tau_, x_, v);
+        if(PiL1_(tau_, x_, v)) return σ * vphiL1(tau_, x_, v);
+        if(PiR1_(tau_, x_, v)) return σ * vphiR1(tau_, x_, v);
+        if(PiL2_(tau_, x_, v)) return σ * vphiL2(tau_, x_, v);
+        if(PiR2_(tau_, x_, v)) return σ * vphiR2(tau_, x_, v);
+        if(PiL3_(tau_, x_, v)) return σ * vphiL3(tau_, x_, v);
+        if(PiR3_(tau_, x_, v)) return σ * vphiR3(tau_, x_, v);
+
+        return .0;
+    }
+
+    floatt psi_(floatt t, floatt x, floatt v, floatt u) {
+        auto t_ = xi;
+        auto x_ = zeta;
+
+        auto psiC  = sigma(t_) * PiC (tau(t_), x_, v) * vphiC (tau(t_), x_, v);
+        auto psiL1 = sigma(t_) * PiL1(tau(t_), x_, v) * vphiL1(tau(t_), x_, v);
+        auto psiR1 = sigma(t_) * PiR1(tau(t_), x_, v) * vphiR1(tau(t_), x_, v);
+        auto psiL2 = sigma(t_) * PiL2(tau(t_), x_, v) * vphiL2(tau(t_), x_, v);
+        auto psiR2 = sigma(t_) * PiR2(tau(t_), x_, v) * vphiR2(tau(t_), x_, v);
+        auto psiL3 = sigma(t_) * PiL3(tau(t_), x_, v) * vphiL3(tau(t_), x_, v);
+        auto psiR3 = sigma(t_) * PiR3(tau(t_), x_, v) * vphiR3(tau(t_), x_, v);
+
+        return psiC +
+               psiL1+
+               psiR1+
+               psiL2+
+               psiR2+
+               psiL3+
+               psiR3;
+    }
+
+
+/* (* A complete breather *) */
+    floatt psi__(floatt t, floatt x, floatt v, floatt u) {
         return psiC(t, x, v, u) +
                psiL1(t, x, v, u) +
                psiR1(t, x, v, u) +

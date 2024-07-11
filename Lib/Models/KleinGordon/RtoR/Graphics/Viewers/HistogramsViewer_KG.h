@@ -54,7 +54,6 @@ namespace Slab::Models::KGRtoR {
         setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function)
         override;
 
-
         void setFunctionDerivative(FuncPointer pointer) override;
 
         void draw() override;

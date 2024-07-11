@@ -8,8 +8,6 @@
 
 #include "3rdParty/ImGui.h"
 
-#include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
-
 #include "Math/Function/R2toR/Calc/R2toRFunctionRenderer.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Utils/RandUtils.h"
@@ -34,7 +32,7 @@ namespace Studios {
     };
 
     OscillonPlotting::OscillonPlotting()
-    : Slab::Graphics::MainViewer()
+    : Slab::Models::KGRtoR::KGMainViewer()
     {
         fix l = 1.0;
         osc_params = Parameters{-l/2, l, .0, .0, .0};
@@ -99,6 +97,7 @@ namespace Studios {
 
             }
             ImGui::Text("c_max=%f", c_max);
+            ImGui::Text("render time=%f", render_time);
         }
 
         getGUIWindow()->end();
@@ -128,17 +127,19 @@ namespace Studios {
         }
         osc_params.l = l;
 
-        rendered_phi = renderOscillons();
+        oscillons_dirty = true;
+        ddt_oscillons_dirty = true;
+
+        Slab::Timer timer;
+        renderOscillons();
         this->setFunction(rendered_phi);
+        render_time = timer.getElTime_msec();
 
-        auto curr_viewer = getCurrentViewer();
-        if(Slab::Contains(kg_viewers, curr_viewer)) {
-            auto kg_viewer = Slab::DynamicPointerCast<Slab::Models::KGRtoR::KGViewer>(curr_viewer);
-
-            rendered_dphi = renderOscillonsTimeDerivative();
-            kg_viewer->setFunctionDerivative(rendered_dphi);
-        } else
-            rendered_dphi = nullptr;
+        auto kg_viewer = getCurrentKGViewer();
+        if(kg_viewer) {
+            renderOscillonsTimeDerivative();
+            this->setFunctionTimeDerivative(rendered_dphi);
+        }
     }
 
     auto
@@ -152,19 +153,23 @@ namespace Studios {
         return new_rendered;
     }
 
-    auto
-    OscillonPlotting::renderOscillons() -> Slab::Pointer<OscillonPlotting::Function> {
+    void OscillonPlotting::renderOscillons() {
+        if(!oscillons_dirty) return;
+
         for(auto term : many_osc) {
             auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
 
             osc->setBit(Slab::Math::RtoR::AnalyticOscillon::phi);
         }
 
-        return renderManyOsc();
+        rendered_phi = renderManyOsc();
+
+        oscillons_dirty = false;
     }
 
-    auto
-    OscillonPlotting::renderOscillonsTimeDerivative() -> Slab::Pointer<OscillonPlotting::Function> {
+    void OscillonPlotting::renderOscillonsTimeDerivative() {
+        if(!ddt_oscillons_dirty) return;
+
         for(const auto& term : many_osc) {
             auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
 
@@ -173,25 +178,14 @@ namespace Studios {
 
         rendered_dphi = renderManyOsc();
 
+        ddt_oscillons_dirty = false;
+    }
+
+    Slab::Pointer<Slab::Math::R2toR::NumericFunction> OscillonPlotting::getFunctionTimeDerivative() {
+        renderOscillonsTimeDerivative();
+
         return rendered_dphi;
     }
 
-    bool OscillonPlotting::setCurrentViewer(Slab::Index i) {
-        auto value = MainViewer::setCurrentViewer(i);
-
-        auto curr_viewer = getCurrentViewer();
-        if(Slab::Contains(kg_viewers, curr_viewer)) {
-            auto kg_viewer = Slab::DynamicPointerCast<Slab::Models::KGRtoR::KGViewer>(curr_viewer);
-
-            kg_viewer->setFunctionDerivative(renderOscillonsTimeDerivative());
-        }
-
-        return value;
-    }
-
-    void OscillonPlotting::addKGViewer(const Slab::Pointer<Slab::Models::KGRtoR::KGViewer>& kg_viewer) {
-        kg_viewers.emplace_back(kg_viewer);
-        addViewer(kg_viewer);
-    }
 
 }
