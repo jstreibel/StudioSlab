@@ -23,13 +23,14 @@ namespace Slab::Graphics {
             Sequential,
             Divergent,
             Cyclic,
+            Unknown
         };
 
     private:
         Vector<Color> colors;
         Color clipped, saturated;
         Str name;
-        ColorMapType type;
+        ColorMapType type = Unknown;
 
     public:
         ColorMap() = default;

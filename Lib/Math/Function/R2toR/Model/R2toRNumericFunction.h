@@ -15,6 +15,13 @@ namespace Slab::Math::R2toR {
         Real getLx() const { return xMax-xMin; }
         Real getLy() const { return yMax-yMin; }
         const Real xMin, xMax, yMin, yMax;
+
+        bool operator ==(const Domain &other) const {
+            return Common::AreEqual(xMin, other.xMin)
+                && Common::AreEqual(xMax, other.xMax)
+                && Common::AreEqual(yMin, other.yMin)
+                && Common::AreEqual(yMax, other.yMax);
+        }
     };
 
     typedef Base::FunctionT<Real, Real> FuncBase;
@@ -43,8 +50,11 @@ namespace Slab::Math::R2toR {
         auto domainContainsPoint(Real2D x) const -> bool override;
 
         virtual NumericFunction &Laplacian(NumericFunction &outFunc) const = 0;
-        virtual Real              At(UInt n, UInt m)               const = 0;
-        virtual Real             &At(UInt n, UInt m)                     = 0;
+
+        virtual const Real&
+        At(UInt n, UInt m) const = 0;
+        virtual Real&
+        At(UInt n, UInt m) = 0;
 
         auto getN()      const -> UInt;
         auto getM()      const -> UInt;

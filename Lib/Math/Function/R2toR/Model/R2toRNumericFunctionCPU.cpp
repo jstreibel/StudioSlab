@@ -37,7 +37,8 @@ namespace Slab::Math::R2toR {
         return myClone;
     }
 
-    Real NumericFunction_CPU::At(UInt n, UInt m) const {
+    const Real&
+    NumericFunction_CPU::At(UInt n, UInt m) const {
         assert(n<N && m<M);
 
         return getSpace().getHostData()[n + m * N];

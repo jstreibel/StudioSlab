@@ -6,13 +6,13 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 namespace Slab::Math::RtoR {
-    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<R2toR::NumericFunction> func, Index j) {
+    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<const R2toR::NumericFunction> func, Index j, NumericFunction::LaplacianType laplacian_type) {
         if(j > func->getM()-1) return nullptr;
 
         fix x_min = func->getDomain().xMin;
         fix x_max = func->getDomain().xMax;
         fix N = func->getN();
-        auto slice = New<RtoR::NumericFunction_CPU>(N, x_min, x_max);
+        auto slice = New<RtoR::NumericFunction_CPU>(N, x_min, x_max, laplacian_type);
 
         OUT slice_data = slice->getSpace().getHostData();
         fix in_data = &func->At(0, j);
@@ -22,7 +22,7 @@ namespace Slab::Math::RtoR {
         return slice;
     }
 
-    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<R2toR::NumericFunction> func, Real t) {
+    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction> func, Real t) {
         if(t > func->getDomain().yMax) return nullptr;
 
         fix dt = func->getDomain().getLy() / (func->getM()-1);

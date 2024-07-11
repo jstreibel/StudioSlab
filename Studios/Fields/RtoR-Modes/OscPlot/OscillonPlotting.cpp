@@ -4,7 +4,11 @@
 
 #include "OscillonPlotting.h"
 
+#include <utility>
+
 #include "3rdParty/ImGui.h"
+
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 
 #include "Math/Function/R2toR/Calc/R2toRFunctionRenderer.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
@@ -20,7 +24,7 @@ namespace Studios {
 
     public:
         PeriodicInX(Slab::Pointer<R2Function> func, Slab::Real L)
-        : function(func), L(L) { }
+        : function(std::move(func)), L(L) { }
 
         Slab::Real operator()(Slab::Math::Real2D r) const override {
             auto L_vec = Slab::Math::Real2D(L, 0);
@@ -30,17 +34,20 @@ namespace Studios {
     };
 
     OscillonPlotting::OscillonPlotting()
-    : Studios::Fields::Viewers::MainViewer()
+    : Slab::Graphics::MainViewer()
     {
         fix l = 1.0;
         osc_params = Parameters{-l/2, l, .0, .0, .0};
         setupOscillons();
 
-        auto fourier_viewer = Slab::New<Fields::Viewers::FourierViewer>(getGUIWindow());
+        auto fourier_viewer = Slab::New<Slab::Graphics::FourierViewer>(getGUIWindow());
         addViewer(fourier_viewer);
 
-        histograms_viewer = Slab::New<Fields::Viewers::HistogramsViewer_KG>(getGUIWindow());
-        addViewer(histograms_viewer);
+        histograms_viewer = Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(getGUIWindow());
+        addKGViewer(histograms_viewer);
+
+        energy_viewer = Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(getGUIWindow());
+        addKGViewer(energy_viewer);
     }
 
     void OscillonPlotting::draw() {
@@ -62,7 +69,7 @@ namespace Studios {
             if(ImGui::SliderInt("seed", &seed, 1, 64*1024-1)
              | ImGui::SliderFloat("L", &L_, 2.0, 50.0)
              | ImGui::SliderFloat("t", &t_, 2.0, 50.0)
-             | ImGui::SliderInt("n", &n, 1, 1000)
+             | ImGui::DragInt("n", &n, log(1.0f+n/500.f), 1, 1000)
              | ImGui::SliderInt("N", &N_, 100, 2000)
              | ImGui::SliderInt("M", &M_, 100, 2000)
           // | ImGui::SliderFloat("α", &alpha, 0, l)
@@ -83,8 +90,8 @@ namespace Studios {
                 osc_params.l = l;
 
                 n_oscillons = n;
-                N = N_;
-                M = M_;
+                N = N_%2 ? N_-1 : N_;
+                M = M_%2 ? M_-1 : M_;
 
                 c_max = 1.0 - (Slab::Real)_1_m_cmax;
 
@@ -96,7 +103,7 @@ namespace Studios {
 
         getGUIWindow()->end();
 
-        Studios::Fields::Viewers::MainViewer::draw();
+        Slab::Graphics::MainViewer::draw();
     }
 
     void OscillonPlotting::setupOscillons() {
@@ -125,10 +132,11 @@ namespace Studios {
         this->setFunction(rendered_phi);
 
         auto curr_viewer = getCurrentViewer();
-        if(curr_viewer != nullptr && curr_viewer == histograms_viewer) {
+        if(Slab::Contains(kg_viewers, curr_viewer)) {
+            auto kg_viewer = Slab::DynamicPointerCast<Slab::Models::KGRtoR::KGViewer>(curr_viewer);
+
             rendered_dphi = renderOscillonsTimeDerivative();
-            histograms_viewer->setFunctionDerivative(rendered_dphi);
-            histograms_viewer->updateHistograms();
+            kg_viewer->setFunctionDerivative(rendered_dphi);
         } else
             rendered_dphi = nullptr;
     }
@@ -157,7 +165,7 @@ namespace Studios {
 
     auto
     OscillonPlotting::renderOscillonsTimeDerivative() -> Slab::Pointer<OscillonPlotting::Function> {
-        for(auto term : many_osc) {
+        for(const auto& term : many_osc) {
             auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
 
             osc->setBit(Slab::Math::RtoR::AnalyticOscillon::dPhiDt);
@@ -171,10 +179,19 @@ namespace Studios {
     bool OscillonPlotting::setCurrentViewer(Slab::Index i) {
         auto value = MainViewer::setCurrentViewer(i);
 
-        if(getCurrentViewer() == histograms_viewer)
-            histograms_viewer->setFunctionDerivative(renderOscillonsTimeDerivative());
+        auto curr_viewer = getCurrentViewer();
+        if(Slab::Contains(kg_viewers, curr_viewer)) {
+            auto kg_viewer = Slab::DynamicPointerCast<Slab::Models::KGRtoR::KGViewer>(curr_viewer);
+
+            kg_viewer->setFunctionDerivative(renderOscillonsTimeDerivative());
+        }
 
         return value;
+    }
+
+    void OscillonPlotting::addKGViewer(const Slab::Pointer<Slab::Models::KGRtoR::KGViewer>& kg_viewer) {
+        kg_viewers.emplace_back(kg_viewer);
+        addViewer(kg_viewer);
     }
 
 }

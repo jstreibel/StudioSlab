@@ -18,11 +18,11 @@
 
 #include <utility>
 
-namespace Studios::Fields::Viewers {
+namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(Pointer<Graphics::GUIWindow> gui_window) : Viewer(gui_window)
+    FourierViewer::FourierViewer(Pointer<GUIWindow> gui_window) : Viewer(gui_window)
     {
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -173,7 +173,7 @@ namespace Studios::Fields::Viewers {
         fix test_M = (Count)floor(Δt/dt);
         fix M = test_M%2==0 ? test_M : test_M-1;
 
-        auto out = New<Slab::Math::R2toR::NumericFunction_CPU>(N, M, xMin, t_0, dx, Δt/(Real)M);
+        auto out = New<Math::R2toR::NumericFunction_CPU>(N, M, xMin, t_0, dx, Δt/(Real)M);
 
         fix j₀ = floor((t_0-t_min)/dt);
 
@@ -303,7 +303,7 @@ namespace Studios::Fields::Viewers {
 
         fix dk = 2*M_PI/Δt;
 
-        ωSpace = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        ωSpace = New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
         RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor((t_0-t_min)/dt);

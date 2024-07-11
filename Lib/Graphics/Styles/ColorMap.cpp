@@ -25,6 +25,20 @@ namespace Slab::Graphics {
         Color::FromBytes(.25*40, .25*64, .25*139)
     );
 
+    auto afmhot = New<ColorMap>(
+            "afmhot",
+            ColorMap::Sequential,
+            ColorSequence{
+                    /* 0.00 */Color(.0,.0,.0),
+                    /* 0.25 */Color(.5,.0,.0),
+                    /* 0.50 */Color(1.,.5,.0),
+                    /* 0.75 */Color(1.,1.,.5),
+                    /* 1.00 */Color(1.,1.,1.)
+            },
+            Color::FromBytes(0x1e,0x14,0x0a),
+            Color::FromBytes(223, 217, 255)
+    );
+
     auto BrBG = New<ColorMap>(
         "BrBG",
         ColorMap::Divergent,
@@ -49,7 +63,7 @@ namespace Slab::Graphics {
             Color /* Redagain*/ {1.0, .0, 0.0}}
     );
 
-    std::map<Str, Pointer<const ColorMap>> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow)};
+    std::map<Str, Pointer<const ColorMap>> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow), Map(afmhot)};
 
     ColorMap::ColorMap(Str name,
                        ColorMapType colorMapType,

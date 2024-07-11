@@ -13,11 +13,10 @@
 
 #include "Viewer.h"
 
-namespace Studios::Fields::Viewers {
-    using namespace Slab;
+namespace Slab::Graphics {
 
-    class MainViewer : public Graphics::WindowRow {
-        Pointer<Graphics::GUIWindow> gui_window = New<Graphics::GUIWindow>();
+    class MainViewer : public WindowRow {
+        Pointer<GUIWindow> gui_window = New<GUIWindow>();
 
         Vector<Pointer<Viewer>> viewers;
         Pointer<Viewer> current_viewer;
@@ -26,6 +25,8 @@ namespace Studios::Fields::Viewers {
 
     protected:
         virtual bool setCurrentViewer(Index i);
+
+        auto getCurrentViewer() -> Pointer<Viewer>;
 
     public:
         explicit MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction=nullptr);
@@ -38,9 +39,9 @@ namespace Studios::Fields::Viewers {
 
         auto getCurrentViewer() const -> Pointer<const Viewer>;
 
-        auto getGUIWindow() -> Pointer<Graphics::GUIWindow>;
+        auto getGUIWindow() -> Pointer<GUIWindow>;
 
-        void addViewer(Pointer<Viewer>);
+        void addViewer(const Pointer<Viewer>&);
     };
 
 } // Studios::Viewers

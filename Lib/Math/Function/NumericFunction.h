@@ -19,10 +19,10 @@ namespace Slab::Math::Base {
     class NumericFunction : public FunctionT<InCategory, OutCategory>,
                             public NumericAlgebra<NumericFunction<InCategory, OutCategory>>
     {
-        DiscreteSpace *space;
+        Pointer<DiscreteSpace> space;
 
     protected:
-        Device dev;
+        Device dev=CPU;
 
     public:
         using NumericAlgebra<Base::NumericFunction<InCategory, Real>>::operator=;
@@ -35,7 +35,7 @@ namespace Slab::Math::Base {
         NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), dev(dev) {
             switch(dev){
                 case Device::CPU:
-                    space = new DiscreteSpaceCPU(dim);
+                    space = New<DiscreteSpaceCPU>(dim);
                     break;
 #if USE_CUDA
                 case device::GPU:
@@ -43,12 +43,17 @@ namespace Slab::Math::Base {
                     break;
 #endif
                 default:
-                    throw "Unknown device in instantiation of FunctionArbitrary.";
+                    throw Exception("Unknown device in instantiation of FunctionArbitrary.");
             }
         };
-        virtual ~NumericFunction(){
-            delete space;
+
+        NumericFunction(const NumericFunction& to_clone)
+        : NumericFunction(to_clone.space.get()->getMetaData(), to_clone.dev) {
+
         }
+
+
+        virtual ~NumericFunction() = default;
 
         virtual Pointer<NumericFunction> CloneWithSize(UInt N) const { NOT_IMPLEMENTED }
         virtual NumericFunction &Set(const MyBase &func) = 0;

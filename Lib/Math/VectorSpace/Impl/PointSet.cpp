@@ -57,7 +57,9 @@ namespace Slab::Math {
 
     Count PointSet::count() const { return points.size(); }
 
-
+    void PointSet::addPoint(Real x, Real y) {
+        addPoint({x, y});
+    }
 
 
 }

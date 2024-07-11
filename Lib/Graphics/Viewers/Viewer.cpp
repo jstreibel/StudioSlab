@@ -4,19 +4,19 @@
 
 #include "Viewer.h"
 
-namespace Studios::Fields::Viewers {
+namespace Slab::Graphics {
 
-    Viewer::Viewer(Slab::Pointer<Slab::Graphics::GUIWindow> gui_window, Slab::Pointer<Slab::Math::R2toR::NumericFunction> func)
-    : Slab::Graphics::WindowPanel()
+    Viewer::Viewer(Pointer<GUIWindow> gui_window, Pointer<Math::R2toR::NumericFunction> func)
+    : Graphics::WindowPanel()
     , gui_window(std::move(gui_window))
     , base_function(func)
     {}
 
-    void Viewer::setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) {
+    void Viewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
         base_function = std::move(function);
     }
 
-    auto Viewer::getFunction() -> Slab::Pointer<Slab::Math::R2toR::NumericFunction> {
+    auto Viewer::getFunction() const -> Pointer<const Math::R2toR::NumericFunction> {
         return base_function;
     }
 

@@ -8,11 +8,13 @@
 #include "Graphics/Viewers/Viewer.h"
 #include "Graphics/Graph/PlottingWindow.h"
 
-namespace Studios::Fields::Viewers {
+#include "KGViewer.h"
+
+namespace Slab::Models::KGRtoR {
 
     using PlotWindow = Slab::Graphics::PlottingWindow;
 
-    class HistogramsViewer_KG : public Viewer {
+    class HistogramsViewer_KG : public KGViewer {
         Slab::Math::PointSet histogram_data_energy;
         Slab::Math::PointSet histogram_data_kinetic;
         Slab::Math::PointSet histogram_data_gradient;
@@ -28,15 +30,13 @@ namespace Studios::Fields::Viewers {
         Slab::Real t_min;
         Slab::Real t_delta;
 
-        FuncPointer ddt_base_function;
-
         Slab::Vector<Slab::Pointer<PlotWindow>> histogram_windows;
 
         struct HarnessData {
             using Array = Slab::Pointer<Slab::RealArray>;
             Array energy, kinetic, gradient, potential;
 
-            HarnessData(size_t sheer_size)
+            explicit HarnessData(size_t sheer_size)
             : energy   (Slab::New<Slab::RealArray>(sheer_size))
             , kinetic  (Slab::New<Slab::RealArray>(sheer_size))
             , gradient (Slab::New<Slab::RealArray>(sheer_size))
@@ -46,14 +46,16 @@ namespace Studios::Fields::Viewers {
         HarnessData harness();
 
     public:
-        HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &,
-                            const Slab::Pointer<Slab::Math::R2toR::NumericFunction> & = nullptr);
-
-        void setFunctionDerivative(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function);
+        explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &);
 
         void updateHistograms();
 
-        void setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) override;
+        void
+        setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function)
+        override;
+
+
+        void setFunctionDerivative(FuncPointer pointer) override;
 
         void draw() override;
     };

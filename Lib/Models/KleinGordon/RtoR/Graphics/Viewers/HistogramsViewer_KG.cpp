@@ -8,23 +8,19 @@
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Graph/Plotter.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-
 #include "Math/Function/RtoR/Operations/Histogram.h"
 #include "Math/Function/RtoR/Operations/FromR2toRNumeric.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 
-namespace Studios::Fields::Viewers {
+namespace Slab::Models::KGRtoR {
 
-    HistogramsViewer_KG::HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &gui_window,
-                                             const Slab::Pointer<Slab::Math::R2toR::NumericFunction> &function)
-    : Viewer(gui_window, function) {
+    HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
+    : KGViewer(gui_window) {
 
-        auto energy_window    = Slab::New<PlotWindow>("Energy histogram");
-        auto kinetic_window   = Slab::New<PlotWindow>("Kinetic energy histogram");
-        auto gradient_window  = Slab::New<PlotWindow>("Gradient energy histogram");
-        auto potential_window = Slab::New<PlotWindow>("Potential energy histogram");
+        auto energy_window    = New<PlotWindow>("Energy histogram");
+        auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram");
+        auto gradient_window  = New<PlotWindow>("Gradient energy histogram");
+        auto potential_window = New<PlotWindow>("Potential energy histogram");
 
         histogram_windows = {energy_window, kinetic_window, gradient_window, potential_window};
 
@@ -34,30 +30,20 @@ namespace Studios::Fields::Viewers {
         addWindow(potential_window, true);
         addWindow(kinetic_window);
 
-        auto style = Slab::Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-        Slab::Graphics::Plotter::AddPointSet(energy_window,
-                                       Slab::Naked(histogram_data_energy),
+        Graphics::Plotter::AddPointSet(energy_window,
+                                       Naked(histogram_data_energy),
                                        *style++, "E")->setAffectGraphRanges(true);
-        Slab::Graphics::Plotter::AddPointSet(kinetic_window,
-                                       Slab::Naked(histogram_data_kinetic),
+        Graphics::Plotter::AddPointSet(kinetic_window,
+                                       Naked(histogram_data_kinetic),
                                        *style++, "K")->setAffectGraphRanges(true);
-        Slab::Graphics::Plotter::AddPointSet(gradient_window,
-                                       Slab::Naked(histogram_data_gradient),
+        Graphics::Plotter::AddPointSet(gradient_window,
+                                       Naked(histogram_data_gradient),
                                        *style++, "grad")->setAffectGraphRanges(true);
-        Slab::Graphics::Plotter::AddPointSet(potential_window,
-                                       Slab::Naked(histogram_data_potential),
+        Graphics::Plotter::AddPointSet(potential_window,
+                                       Naked(histogram_data_potential),
                                        *style++, "V")->setAffectGraphRanges(true);
-
-        auto funky = getFunction();
-        if(funky != nullptr) {
-            auto domain = funky->getDomain();
-
-            t_min = domain.yMin;
-            t_delta = domain.yMax - t_min;
-        }
-
-
     }
 
     void HistogramsViewer_KG::draw() {
@@ -70,8 +56,8 @@ namespace Studios::Fields::Viewers {
         fix max_t = func->getDomain().yMax;
         auto dt = func->getDomain().getLy() / (func->getM()-1);
 
-        float t  = (float)t_min;
-        float Δt = (float)t_delta;
+        auto t  = (float)t_min;
+        auto Δt = (float)t_delta;
 
         if(ImGui::SliderInt("n bins", &nbins, 10, 2000)
          | ImGui::Checkbox("Pretty bars", &pretty)
@@ -92,7 +78,7 @@ namespace Studios::Fields::Viewers {
     void HistogramsViewer_KG::updateHistograms() {
         Slab::Math::RtoR::Histogram histogram;
 
-        if(getFunction() == nullptr || ddt_base_function == nullptr) {
+        if(getFunction() == nullptr || getFunctionDerivative() == nullptr) {
             Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
             return;
         }
@@ -111,13 +97,9 @@ namespace Studios::Fields::Viewers {
         histogram.Compute(*harnessed_data.potential, nbins);
         histogram.renderPDFToPointSet(Slab::Naked(histogram_data_potential), pretty);
 
-        for(auto h_win : histogram_windows)
+        for(const auto& h_win : histogram_windows)
             h_win->reviewGraphRanges();
 
-    }
-
-    void HistogramsViewer_KG::setFunctionDerivative(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) {
-        ddt_base_function = function;
     }
 
     void HistogramsViewer_KG::setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) {
@@ -141,26 +123,24 @@ namespace Studios::Fields::Viewers {
         fix j_begin = (size_t)floor((t_min-t0) / dt);
         fix j_end   = (size_t)floor((t_min+t_delta-t0) / dt);
 
-        Slab::Core::Log::Info() << "j_begin=" << j_begin << "    j_end=" << j_end << Slab::Core::Log::Flush;
-        Slab::Core::Log::Info() << "M=" << M << Slab::Core::Log::Flush;
-
         sheer_size = (j_end-j_begin+1) * f->getN();
 
         HistogramsViewer_KG::HarnessData data { sheer_size };
 
         auto Slicer = Slab::Math::RtoR::FromR2toR;
-        Slab::Math::RtoR::AbsFunction abs;
-        Slab::Models::KGRtoR::KGEnergy hamiltonian(Slab::Naked(abs));
+        auto laplacian_type = Math::RtoR::NumericFunction::Standard1D_PeriodicBorder;
 
         int k = 0;
         for(int j=j_begin; j<=j_end; ++j) {
-            auto phi = Slicer(getFunction(), j);
-            auto ddt_phi = Slicer(ddt_base_function, j);
+            auto phi = Slicer(getFunction(), j, laplacian_type);
+            auto ddt_phi = Slicer(getFunctionDerivative(), j, laplacian_type);
 
             if(phi==nullptr || ddt_phi==nullptr) {
                 Slab::Core::Log::Error() << "At " << __PRETTY_FUNCTION__ << ":" << __LINE__ << Slab::Core::Log::Flush;
                 return data;
             }
+
+            auto hamiltonian = getHamiltonian();
 
             hamiltonian.computeEnergies(*phi, *ddt_phi);
 
@@ -183,5 +163,11 @@ namespace Studios::Fields::Viewers {
         }
 
         return data;
+    }
+
+    void HistogramsViewer_KG::setFunctionDerivative(FuncPointer pointer) {
+        KGViewer::setFunctionDerivative(pointer);
+
+        if(areFunctionsConsistent()) updateHistograms();
     }
 } // Studios::Fields::Viewers

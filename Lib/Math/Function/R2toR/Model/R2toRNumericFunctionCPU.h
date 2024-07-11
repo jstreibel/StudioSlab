@@ -20,21 +20,29 @@ namespace Slab::Math::R2toR {
     public:
         NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
 
-        [[nodiscard]] Pointer<Base::NumericFunction<Real2D, Real>> CloneWithSize(UInt N) const override;
+        [[nodiscard]]
+        Pointer<Base::NumericFunction<Real2D, Real>>
+        CloneWithSize(UInt N) const override;
 
-        auto Clone() const -> Function_ptr override;
+        auto
+        Clone()
+        const -> Function_ptr override;
 
-        NumericFunction &Laplacian(NumericFunction &outFunc) const override;
+        NumericFunction &
+        Laplacian(NumericFunction &outFunc) const override;
 
-        Real At(UInt n, UInt m) const override;
+        const Real &
+        At(UInt n, UInt m) const override;
 
-        Real &At(UInt n, UInt m) override;
+        Real &
+        At(UInt n, UInt m) override;
 
-        NumericFunction_CPU &Set(const R2toR::Function &func) override;
+        NumericFunction_CPU &
+        Set(const R2toR::Function &func) override;
 
-
-
-        auto Apply(const FuncBase &func, DiscrBase &out) const -> DiscrBase & override;
+        auto
+        Apply(const FuncBase &func, DiscrBase &out)
+        const -> DiscrBase & override;
     };
 }
 

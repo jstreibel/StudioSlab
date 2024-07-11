@@ -26,7 +26,9 @@ namespace Slab::Math::RtoR {
         NumericFunction(UInt N, Real xMin, Real xMax, Device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
 
         virtual NumericFunction &Laplacian(NumericFunction &outFunc) const = 0;
-        LaplacianType getLaplacianType() const { return laplacianType; }
+
+        LaplacianType
+        getLaplacianType() const { return laplacianType; }
 
         Real mapIntToPos(UInt i) const;
         UInt mapPosToInt(Real x) const;

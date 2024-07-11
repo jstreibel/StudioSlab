@@ -45,6 +45,10 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h
         KleinGordon/RtoR/Output/CenterTimeDFTOutput.cpp
         KleinGordon/RtoR/Output/CenterTimeDFTOutput.h
+		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.cpp
+		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h
+		KleinGordon/RtoR/Graphics/Viewers/KGViewer.cpp
+		KleinGordon/RtoR/Graphics/Viewers/KGViewer.h
 )
 
 set ( XY_SOURCES

@@ -25,11 +25,11 @@ namespace Slab::Graphics {
         return Plotter::AddRtoRNumericFunction(plottingWindow, data, style, std::move(name), zOrder);
     }
 
-    R2toRFunctionArtist_ptr Plotter::addR2toRFunction(const R2toR::NumericFunction_ptr &data, Str name, int zOrder) {
+    R2toRFunctionArtist_ptr Plotter::addR2toRFunction(const R2toR::NumericFunction_constptr &data, Str name, int zOrder) {
         return Plotter::AddR2toRFunction(plottingWindow, data, std::move(name), zOrder);
     }
 
-    HistoryArtist_ptr Plotter::addRtoRHistory(const R2toR::NumericFunction_ptr &data, Str name, int zOrder) {
+    HistoryArtist_ptr Plotter::addRtoRHistory(const R2toR::NumericFunction_constptr &data, Str name, int zOrder) {
         return Plotter::AddRtoRHistory(plottingWindow, data, std::move(name), zOrder);
     }
 
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED
     }
 
-    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const PlottingWindow_ptr& graph, const R2toR::NumericFunction_ptr &function, Str label, int zOrder) {
+    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const PlottingWindow_ptr& graph, const R2toR::NumericFunction_constptr &function, Str label, int zOrder) {
         auto artist = Slab::New<R2toRFunctionArtist>();
         artist->setLabel(std::move(label));
 
@@ -88,7 +88,7 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    HistoryArtist_ptr Plotter::AddRtoRHistory(const PlottingWindow_ptr& graph, const R2toR::NumericFunction_ptr &function, Str label, int zOrder) {
+    HistoryArtist_ptr Plotter::AddRtoRHistory(const PlottingWindow_ptr& graph, const R2toR::NumericFunction_constptr &function, Str label, int zOrder) {
         auto artist = Slab::New<HistoryArtist>();
         artist->setLabel(std::move(label));
 

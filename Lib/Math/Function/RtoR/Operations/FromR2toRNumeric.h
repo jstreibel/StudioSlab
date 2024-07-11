@@ -9,9 +9,12 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math::RtoR {
-    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<R2toR::NumericFunction>, Index j);
+    Pointer<RtoR::NumericFunction> FromR2toR(
+            Pointer<const R2toR::NumericFunction>,
+            Index j,
+            NumericFunction::LaplacianType laplacian_type=NumericFunction::Standard1D_PeriodicBorder);
 
-    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<R2toR::NumericFunction>, Real t);
+    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction>, Real t);
 }
 
 #endif //STUDIOSLAB_FROMR2TORNUMERIC_H

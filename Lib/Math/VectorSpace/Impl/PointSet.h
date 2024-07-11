@@ -19,7 +19,8 @@ namespace Slab::Math {
 
     public:
         PointSet();
-        explicit PointSet(const Point2DVec& points);
+        explicit
+        PointSet(const Point2DVec& points);
         PointSet(const PointSet& pointSet);
 
         auto getMeasure() const -> const Measure override;
@@ -30,6 +31,7 @@ namespace Slab::Math {
         Count count() const;
 
         void clear();
+        void addPoint(Real x, Real y);
         void addPoint(const Point2D &point);
         void setPoints(Point2DVec points);
 

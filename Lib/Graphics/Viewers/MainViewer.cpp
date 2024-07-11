@@ -4,18 +4,20 @@
 
 #include "MainViewer.h"
 
-namespace Studios::Fields::Viewers {
+#include <utility>
+
+namespace Slab::Graphics {
 
     MainViewer::MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction)
     : Graphics::WindowRow(HasMainMenu)
-    , base_function(baseFunction) {
+    , base_function(std::move(baseFunction)) {
 
         addWindow(gui_window, Right, 0.175);
 
         arrangeWindows();
     }
 
-    void MainViewer::addViewer(Pointer<Viewer> viewer) {
+    void MainViewer::addViewer(const Pointer<Viewer>& viewer) {
         viewers.emplace_back(viewer);
         if(base_function!= nullptr) viewer->setFunction(base_function);
 
@@ -63,11 +65,15 @@ namespace Studios::Fields::Viewers {
         for(auto &viewer : viewers) viewer->setFunction(base_function);
     }
 
-    auto MainViewer::getGUIWindow() -> Pointer<Graphics::GUIWindow> {
+    auto MainViewer::getGUIWindow() -> Pointer<GUIWindow> {
         return gui_window;
     }
 
     auto MainViewer::getCurrentViewer() const -> Pointer<const Viewer> {
+        return current_viewer;
+    }
+
+    auto MainViewer::getCurrentViewer() -> Pointer<Viewer> {
         return current_viewer;
     }
 

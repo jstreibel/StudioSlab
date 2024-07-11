@@ -9,21 +9,21 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Graphics/Window/GUIWindow.h"
 
-namespace Studios::Fields::Viewers {
+namespace Slab::Graphics {
 
-    class Viewer : public Slab::Graphics::WindowPanel {
-        Slab::Pointer<Slab::Graphics::GUIWindow> gui_window;
-        Slab::Pointer<Slab::Math::R2toR::NumericFunction> base_function;
+    class Viewer : public WindowPanel {
+        Pointer<GUIWindow> gui_window;
+        Pointer<Math::R2toR::NumericFunction> base_function;
 
     protected:
         void beginGUI();
         void endGUI();
 
     public:
-        Viewer(Slab::Pointer<Slab::Graphics::GUIWindow>, Slab::Pointer<Slab::Math::R2toR::NumericFunction> = nullptr);
+        Viewer(Pointer<GUIWindow>, Slab::Pointer<Math::R2toR::NumericFunction> = nullptr);
 
-        virtual void setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function);
-        auto getFunction() -> Slab::Pointer<Slab::Math::R2toR::NumericFunction>;
+        virtual void setFunction(Pointer<Math::R2toR::NumericFunction> function);
+        auto getFunction() const -> Pointer<const Math::R2toR::NumericFunction>;
 
         virtual void notifyBecameVisible();
         virtual void notifyBecameInvisible();

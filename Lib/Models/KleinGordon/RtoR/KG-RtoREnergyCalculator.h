@@ -20,18 +20,18 @@ namespace Slab::Models::KGRtoR {
         RtoR::NumericFunction_ptr _oGradientDensity;
         RtoR::NumericFunction_ptr _oPotentialDensity;
 
-        Real U, K, W, V;
+        Real U=0, K=0, W=0, V=0;
 
         RtoR::Function_ptr V_ptr;
 
     public:
-        KGEnergy(RtoR::Function_ptr potentialFunc);
+        explicit KGEnergy(RtoR::Function_ptr potentialFunc);
 
         const RtoR::NumericFunction &computeEnergies(const RtoR::NumericFunction& phi, const RtoR::NumericFunction& ddtPhi);
 
-        RtoR::NumericFunction_ptr getEnergyDensity() const { return _oEnergyDensity; };
-        RtoR::NumericFunction_ptr getKineticDensity() const { return _oKineticDensity; };
-        RtoR::NumericFunction_ptr getGradientDensity() const { return _oGradientDensity; };
+        RtoR::NumericFunction_ptr getEnergyDensity()    const { return _oEnergyDensity; };
+        RtoR::NumericFunction_ptr getKineticDensity()   const { return _oKineticDensity; };
+        RtoR::NumericFunction_ptr getGradientDensity()  const { return _oGradientDensity; };
         RtoR::NumericFunction_ptr getPotentialDensity() const { return _oPotentialDensity; };
         RtoR::Function_constptr getThePotential() const { return V_ptr; }
 
