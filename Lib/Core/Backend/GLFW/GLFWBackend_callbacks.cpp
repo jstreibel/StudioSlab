@@ -17,8 +17,6 @@ namespace Slab::Core {
         IterateReferences(me.listeners,
                           Func(KeyboardEvent, window, key, scancode, action, mods),
                           StopOnFirstResponder);
-
-        // for (auto &listener: me.listeners) if (listener->KeyboardEvent(window, key, scancode, action, mods)) break;
     }
 
     void GLFWBackend::window_char_callback(GLFWwindow *window, unsigned int value) {
@@ -64,9 +62,11 @@ namespace Slab::Core {
         if (button == GLFW_MOUSE_BUTTON_MIDDLE) me.mouseState.centerPressed = (action == GLFW_PRESS);
         if (button == GLFW_MOUSE_BUTTON_RIGHT) me.mouseState.rightPressed = (action == GLFW_PRESS);
 
+        auto iteration_policy = action==GLFW_RELEASE ? IterateAll : StopOnFirstResponder;
+
         IterateReferences(me.listeners,
                           Func(MouseButton, window, button, action, mods),
-                          IterateAll);
+                          iteration_policy);
     }
 
     void GLFWBackend::scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
@@ -77,7 +77,7 @@ namespace Slab::Core {
 
         IterateReferences(me.listeners,
                           Func(MouseWheel, window, xoffset, yoffset),
-                          IterateAll);
+                          StopOnFirstResponder);
     }
 
     void GLFWBackend::drop_callback(GLFWwindow *window, int count, const char **paths) {

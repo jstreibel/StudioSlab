@@ -167,6 +167,8 @@ namespace Slab::Core {
                             currentTheme = theme.first;
                         }
                     }
+                    ImGui::MenuItem("---", nullptr, false, false);
+                    ImGui::MenuItem("Show ImGui demos", nullptr, &showDemos);
 
                     ImGui::EndMenu();
                 }
