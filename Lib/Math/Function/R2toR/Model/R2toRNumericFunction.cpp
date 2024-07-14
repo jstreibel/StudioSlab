@@ -74,12 +74,7 @@ namespace Slab::Math {
 
     R2toR::Domain R2toR::NumericFunction::getDomain() const { return {xMin, xMax, yMin, yMax}; }
 
-    Real R2toR::NumericFunction::diff(int dim, Real2D x) const {
-        const Real Lx = xMax - xMin;
-        const Real Ly = yMax - yMin;
-        int n = int((N - 1) * (x.x - xMin) / Lx);
-        int m = int((M - 1) * (x.y - yMin) / Ly);
-
+    auto R2toR::NumericFunction::diff(int dim, int n, int m) const -> Real {
         if (n < 1 || n > N - 1 || m < 1 || m > M - 1) return .0;
 
         getSpace().syncHost();
@@ -96,8 +91,23 @@ namespace Slab::Math {
             NOT_IMPLEMENTED;
     }
 
+    Real R2toR::NumericFunction::diff(int dim, Real2D x) const {
+        const Real Lx = xMax - xMin;
+        const Real Ly = yMax - yMin;
+        int n = int((N - 1) * (x.x - xMin) / Lx);
+        int m = int((M - 1) * (x.y - yMin) / Ly);
+
+        return diff(dim, n, m);
+    }
+
     R2toR::Function_ptr R2toR::NumericFunction::diff(int n) const {
-        NOT_IMPLEMENTED
+        auto my_diff = DynamicPointerCast<R2toR::NumericFunction>(Clone());
+
+        for(auto i=0; i<N; ++i)
+            for(auto j=0; j<M; ++j)
+                my_diff->At(i, j) = (*this).diff(n, i, j);
+
+        return my_diff;
     }
 
     Str R2toR::NumericFunction::myName() const {

@@ -9,7 +9,7 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "KGDispersionRelation.h"
-#include "../../OscViewer/HistoryFileLoader.h"
+#include "../../Viewers/HistoryFileLoader.h"
 
 #include "Graphics/Graph/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"

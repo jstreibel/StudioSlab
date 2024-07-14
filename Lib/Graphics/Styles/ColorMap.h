@@ -23,6 +23,7 @@ namespace Slab::Graphics {
             Sequential,
             Divergent,
             Cyclic,
+            Miscellaneous,
             Unknown
         };
 
@@ -45,6 +46,17 @@ namespace Slab::Graphics {
 
         auto mapValueToColor(Real value) const -> Color;
 
+        virtual auto
+        getColorCount() const -> Count;
+
+        virtual auto
+        getColor(int) const -> Color;
+
+        auto begin() -> ColorSequence::iterator;
+        auto end() -> ColorSequence::iterator;
+        auto begin() const -> ColorSequence::const_iterator;
+        auto end() const -> ColorSequence::const_iterator;
+
         auto brg() const -> ColorMap;
         auto bgr() const -> ColorMap;
         auto inverse() const -> ColorMap;
@@ -55,6 +67,9 @@ namespace Slab::Graphics {
 
         auto getName() const -> Str;
         auto getType() const -> ColorMapType;
+
+        static Str
+        CategoryToString(ColorMapType category);
     };
 
     extern std::map<Str, Pointer<const ColorMap>> ColorMaps;

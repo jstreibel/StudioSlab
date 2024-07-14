@@ -8,6 +8,7 @@
 #include "Graphics/Graph/PlotThemeManager.h"
 
 namespace Slab::Models {
+
     KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
@@ -25,13 +26,15 @@ namespace Slab::Models {
         potential_history_artist = Graphics::Plotter::AddPointSet(total_energies_window, potential_history,
                                                                   style, "|f|", true);
 
-        f_artist         = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "f(x,t)");
-        dfdt_artist      = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "dfdt(x,t)");
+        f_artist         = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "ϕ(x,t)");
+        dfdt_artist      = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T¹¹=𝜕ₜϕ");
 
-        energy_map_artist    = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "e(x,t)");
+        energy_map_artist    = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T⁰⁰=e(x,t)");
         kinetic_map_artist   = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "k(x,t)");
         grad_map_artist      = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "g(x,t)");
         potential_map_artist = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "v(x,t)");
+
+        momentum_flow_map_artist = Graphics::Plotter::AddR2toRFunction(full_histories_window, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
 
         energy_map_artist   ->setAffectGraphRanges(true);
         kinetic_map_artist  ->setAffectGraphRanges(true);
@@ -65,10 +68,12 @@ namespace Slab::Models {
 
         auto H = getHamiltonian();
 
-        auto energy_func    = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto kinetic_func   = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto grad_func      = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
-        auto potential_func = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto energy_func         = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto kinetic_func        = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto grad_func           = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+        auto potential_func      = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
+
+        auto momentum_flow_func  = DynamicPointerCast<R2toR::NumericFunction>(f->Clone());
 
         energy_history->clear();
         kinetic_history->clear();
@@ -140,7 +145,21 @@ namespace Slab::Models {
 
         potential_map_artist->setFunction(potential_func);
         potential_map_artist->setColorMap(Graphics::ColorMaps["afmhot"]->bgr().clone());
-        // H.computeEnergies(f, dfdt);
+
+        {
+            auto dfdx = DynamicPointerCast<R2toR::NumericFunction>(f->diff(0));
+            IN dfdx_data = dfdx->getSpace().getHostData(true);
+            IN dfdt_data = dfdt->getSpace().getHostData(true);
+
+            OUT mf_data = momentum_flow_func->getSpace().getHostData(true);
+
+            fix data_size = dfdx_data.size();
+            for(auto i=0; i<data_size; ++i)
+                mf_data[i] = - dfdt_data[i] * dfdx_data[i];
+
+            momentum_flow_map_artist->setFunction(momentum_flow_func);
+            momentum_flow_map_artist->setColorMap(Graphics::ColorMaps["cmocean:curl"]->clone());
+        }
 
         total_energies_window->reviewGraphRanges();
         full_histories_window->reviewGraphRanges();

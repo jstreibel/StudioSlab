@@ -22,10 +22,10 @@ namespace Slab::Graphics::OpenGL {
     const auto uf = +1.1f;
 
     ColorBarArtist::ColorBarArtist(RectI loc)
-            : vertexBuffer("inPosition:2f,inTexCoord:1f")
-            , shader(Core::Resources::ShadersFolder + "ColorBar.vert",
-                     Core::Resources::ShadersFolder + "ColorBar.frag")
-            , inverseScalingFunction([](Real x){ return x; })
+    : vertexBuffer("inPosition:2f,inTexCoord:1f")
+    , shader(Core::Resources::ShadersFolder + "ColorBar.vert",
+             Core::Resources::ShadersFolder + "ColorBar.frag")
+    , inverseScalingFunction([](Real x){ return x; })
     {
         setLocation(loc);
     }
@@ -35,10 +35,10 @@ namespace Slab::Graphics::OpenGL {
 
         {
             const int left = -300;
-            const int vpWidth = graph.getViewport().width();
+            const int vpWidth  = graph.getViewport().width();
             const int vpHeight = graph.getViewport().height();
             const int cbarWidth = -0.35 * left;
-            const int cbarHeight = 0.96 * vpHeight;
+            const int cbarHeight = int(0.96 * vpHeight);
             const int cbarTop = (vpHeight - cbarHeight) / 2;
 
             //               icpx         gnu
@@ -144,13 +144,22 @@ namespace Slab::Graphics::OpenGL {
     void ColorBarArtist::updateTexture() {
         if(!textureDirty) return;
 
-        if(texture==nullptr || texture->getSize() != 16384) {
-            texture = std::make_shared<OpenGL::Texture1D_Color>(16384, GL_TEXTURE1);
+        fix samples = colorMap->getColorCount()*100;
+
+        if(texture==nullptr || texture->getSize() != samples) {
+            texture = std::make_shared<OpenGL::Texture1D_Color>(samples, GL_TEXTURE1);
             texture->setWrap(OpenGL::ClampToEdge);
         }
 
-        for(auto i=0; i < 16384; ++i){
-            fix s = (Real)(i-1)/(Real)(16384 - 2);
+        /*
+        int i = 0;
+        for(fix color : *colorMap) {
+            texture->setColor(i++, color);
+        }
+         */
+
+        for(auto i=0; i < samples; ++i){
+            fix s = (Real)(i-1)/(Real)(samples - 2);
             fix color = colorMap->mapValueToColor(s);
             texture->setColor(i, color);
         }
@@ -193,57 +202,66 @@ namespace Slab::Graphics::OpenGL {
 
     void ColorBarArtist::setScalingFunction(std::function<Real(Real)> func) {
         scalingFunction = std::move(func);
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setInverseScalingFunction(std::function<Real(Real)> func) {
         inverseScalingFunction = std::move(func);
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setKappa(Real kappa) {
         shader.setUniform("kappa", (float)kappa);
 
         params.kappa = kappa;
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setPhiSaturation(Real phiSat) {
         shader.setUniform("phi_sat", (float)phiSat);
 
         params.phi_sat = phiSat;
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setSymmetric(bool symmetric) {
         shader.setUniform("symmetric", symmetric);
 
         params.symmetric = symmetric;
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setPhiMax(Real phiMax) {
         shader.setUniform("phi_max", (float)phiMax);
 
         params.phi_max = phiMax;
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setPhiMin(Real phiMin) {
         shader.setUniform("phi_min", (float)phiMin);
 
         params.phi_min = phiMin;
+
+        textureDirty = true;
     }
 
     void ColorBarArtist::setMode(ColorBarMode mode) {
         shader.setUniform("mode", (int)mode);
 
         params.mode = mode;
-    }
 
-    auto ColorBarArtist::getSamples() const -> Resolution {
-        return samples;
-    }
-
-    void ColorBarArtist::setSamples(Resolution new_sampling_size) {
-        if(new_sampling_size == samples) return;
-
-        samples = new_sampling_size;
         textureDirty = true;
+    }
+
+    Count ColorBarArtist::getSamples() const {
+        return colorMap->getColorCount();
     }
 
 

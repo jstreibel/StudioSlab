@@ -44,6 +44,7 @@ namespace Slab::Math::R2toR {
         auto operator()(Real2D x) const -> Real override;
         auto operator()(Real2D x)       -> Real &;
 
+        auto diff(int n, int i, int j) const -> Real;
         auto diff(int n, Real2D x) const -> Real        override;
         auto diff(int n)           const -> Function_ptr override;
 

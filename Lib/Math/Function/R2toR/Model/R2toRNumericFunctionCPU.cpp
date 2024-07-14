@@ -39,13 +39,17 @@ namespace Slab::Math::R2toR {
 
     const Real&
     NumericFunction_CPU::At(UInt n, UInt m) const {
-        assert(n<N && m<M);
+        // assert(n<N && m<M);
+        n %= N;
+        m %= M;
 
         return getSpace().getHostData()[n + m * N];
     }
 
     Real &NumericFunction_CPU::At(UInt n, UInt m) {
-        assert(n<N && m<M);
+        // assert(n<N && m<M);
+        n %= N;
+        m %= M;
         return getSpace().getHostData()[n + m * N];
     }
 

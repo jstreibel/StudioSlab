@@ -21,7 +21,7 @@ namespace Slab::Graphics {
             /* 0.75 */Color::FromBytes(0, 103, 139),
             /* 1.00 */Color::FromBytes(40, 64, 139)
         },
-        Color::FromBytes(255,255,255),
+        Nil,
         Color::FromBytes(.25*40, .25*64, .25*139)
     );
 
@@ -35,7 +35,7 @@ namespace Slab::Graphics {
                     /* 0.75 */Color(1.,1.,.5),
                     /* 1.00 */Color(1.,1.,1.)
             },
-            Color::FromBytes(0x1e,0x14,0x0a),
+            Nil,
             Color::FromBytes(223, 217, 255)
     );
 
@@ -63,7 +63,20 @@ namespace Slab::Graphics {
             Color /* Redagain*/ {1.0, .0, 0.0}}
     );
 
-    std::map<Str, Pointer<const ColorMap>> ColorMaps = {Map(blues), Map(BrBG), Map(rainbow), Map(afmhot)};
+    #include "colormaps/all_colormaps.inl"
+
+    std::map<Str, Pointer<const ColorMap>> ColorMaps_local = {
+            Map(blues),
+            Map(BrBG),
+            Map(rainbow),
+            Map(afmhot)};
+
+    using ColorMapMap = std::map<Str, Pointer<const ColorMap>>;
+    ColorMapMap ColorMaps = [](){
+        ColorMapMap full_map_of_colormaps(ColorMaps_local.begin(), ColorMaps_local.end());
+        full_map_of_colormaps.insert(ColorMaps_auto.begin(), ColorMaps_auto.end());
+        return full_map_of_colormaps;
+    } ();
 
     ColorMap::ColorMap(Str name,
                        ColorMapType colorMapType,
@@ -75,6 +88,7 @@ namespace Slab::Graphics {
             , colors(colorSeq)
             , clipped(clipped)
             , saturated(saturated) {
+
         if(clipped == Nil) this->clipped = colorSeq[0];
         if(saturated == Nil) this->saturated = colorSeq.back();
     }
@@ -108,8 +122,6 @@ namespace Slab::Graphics {
 
     auto ColorMap::getName() const -> Str          { return name; }
     auto ColorMap::getType() const -> ColorMapType { return type; }
-
-
 
     auto ColorMap::brg() const -> ColorMap {
         Vector<Color> newColors;
@@ -146,6 +158,42 @@ namespace Slab::Graphics {
 
     auto ColorMap::clone() const -> Pointer<ColorMap> {
         return New<ColorMap>(*this);
+    }
+
+    auto ColorMap::getColorCount() const -> Count {
+        return colors.size();
+    }
+
+    auto ColorMap::getColor(int i) const -> Color {
+        if(i<0) return clipped;
+        if(i>(getColorCount()-1)) return saturated;
+        return colors[i];
+    }
+
+    auto ColorMap::begin() -> ColorSequence::iterator {
+        return colors.begin();
+    }
+
+    auto ColorMap::end() -> ColorSequence::iterator {
+        return colors.end();
+    }
+
+    auto ColorMap::begin() const -> ColorSequence::const_iterator {
+        return colors.begin();
+    }
+
+    auto ColorMap::end() const -> ColorSequence::const_iterator {
+        return colors.end();
+    }
+
+    Str ColorMap::CategoryToString(ColorMap::ColorMapType category) {
+        switch (category) {
+            case ColorMap::Sequential:       return "sequential";
+            case ColorMap::Divergent:        return "divergent";
+            case ColorMap::Cyclic:           return "cyclic";
+            case ColorMap::Miscellaneous:    return "miscellaneous";
+            case ColorMap::Unknown: default: return "unknown";
+        }
     }
 
 };

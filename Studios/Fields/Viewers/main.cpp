@@ -20,8 +20,13 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "HistoryFileLoader.h"
+
 #include "Graphics/Viewers/FourierViewer.h"
 #include "Graphics/Graph/PlotThemeManager.h"
+
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 
 using namespace Slab;
 
@@ -44,11 +49,19 @@ public:
 
     auto run() -> int override {
         auto function = Modes::HistoryFileLoader::Load(*filename);
+        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
-        auto viewer = Slab::New<Studios::Fields::OscViewer>();
+        auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
+
+        auto gui_window = viewer->getGUIWindow();
+        viewer->addViewer(Slab::New<Graphics::FourierViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(gui_window));
+
         viewer->setFunction(function);
+        viewer->setFunctionTimeDerivative(ddt_function);
 
         guiBackend.addEventListener(viewer);
 

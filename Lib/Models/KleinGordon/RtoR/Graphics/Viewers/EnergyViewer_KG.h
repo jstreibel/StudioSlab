@@ -26,6 +26,7 @@ namespace Slab::Models::KGRtoR {
         Slab::Graphics::R2toRFunctionArtist_ptr kinetic_map_artist{};
         Slab::Graphics::R2toRFunctionArtist_ptr grad_map_artist{};
         Slab::Graphics::R2toRFunctionArtist_ptr potential_map_artist{};
+        Slab::Graphics::R2toRFunctionArtist_ptr momentum_flow_map_artist{};
 
         Slab::Graphics::PointSetArtist_ptr energy_history_artist{};
         Slab::Graphics::PointSetArtist_ptr kinetic_history_artist{};

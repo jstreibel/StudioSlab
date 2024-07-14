@@ -164,18 +164,27 @@ namespace Slab::Graphics {
 
 
         {
-            StrVector items;
-            for (const auto &cMapPair: ColorMaps)
-                items.emplace_back(cMapPair.first);
+            struct PairyPair {
+                Str colormap_name;
+                Str display_text;
+            };
+            Vector<PairyPair> items;
+            for (const auto &cMapPair: ColorMaps) {
+                auto str_category = ColorMap::CategoryToString(cMapPair.second->getType());
+                auto display_text = cMapPair.first + " [" + str_category + "]";
+                items.emplace_back(cMapPair.first, display_text);
+            }
+
             static int item_current_idx = 0; // Here we store our selection data as an index.
             static int item_last_idx = 0;
             Str selectedItem;
-            const char *combo_preview_value = items[item_current_idx].c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
+            const char *combo_preview_value = items[item_current_idx].display_text.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
             if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
                 for (int n = 0; n < items.size(); n++) {
                     const bool is_selected = (item_current_idx == n);
-                    if (ImGui::Selectable(items[n].c_str(), is_selected)) {
-                        selectedItem = items[n];
+
+                    if (ImGui::Selectable(items[n].display_text.c_str(), is_selected)) {
+                        selectedItem = items[n].colormap_name;
                         item_current_idx = n;
                     }
 
@@ -189,6 +198,8 @@ namespace Slab::Graphics {
                 ImGui::EndCombo();
             }
 
+            auto category = Str("Category: ") + ColorMap::CategoryToString(cMap->getType());
+            ImGui::Text(category.c_str(), nullptr);
             ImGui::Text("ColorMap operations:");
             if (ImGui::Button("RGB->BRG")) {
                 *cMap = cMap->brg();
@@ -209,7 +220,7 @@ namespace Slab::Graphics {
                 updateColorBar();
             }
 
-            ImGui::Checkbox("Show colorbar##", &showColorBar);
+            // ImGui::Checkbox("Show colorbar##", &showColorBar);
         }
 
         ImGui::EndChild();
@@ -269,11 +280,11 @@ namespace Slab::Graphics {
     void R2toRFunctionArtist::setColorMap(const Pointer<ColorMap> &colorMap) {
         cMap = colorMap;
 
-        symmetricMaxMin = cMap->getType() == ColorMap::Divergent;
+        symmetricMaxMin = cMap->getType() == ColorMap::Divergent | cMap->getType() == ColorMap::Miscellaneous;
         program->setUniform("symmetric", symmetricMaxMin);
-        if(!symmetricMaxMin) program->setUniform("eps", 1.1f/(float)colorBar->getSamples());
-        else program->setUniform("eps", .0f);
-
+        // if(!symmetricMaxMin) program->setUniform("eps", 1.1f/(float)colorBar->getSamples());
+        // else
+        program->setUniform("eps", .0f);
 
         updateColorBar();
 
