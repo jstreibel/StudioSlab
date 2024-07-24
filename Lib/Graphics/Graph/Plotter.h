@@ -40,7 +40,7 @@ namespace Slab::Graphics {
                                      PlotStyle, Str name, int zOrder=0)
                                      -> ParametricCurve2DArtist_ptr;
         static auto AddRtoRFunction (const PlottingWindow_ptr&, const Math::RtoR::Function_ptr&,
-                                     PlotStyle, Str name, Resolution samples, int zOrder=0)
+                                     PlotStyle, Str name, Resolution samples=1000, int zOrder=0)
                                      -> RtoRFunctionArtist_ptr;
         static auto AddRtoRNumericFunction (PlottingWindow_ptr, const Math::RtoR::NumericFunction_ptr&,
                                             PlotStyle,  Str name, int zOrder=0)

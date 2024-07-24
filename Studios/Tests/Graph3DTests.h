@@ -9,7 +9,7 @@
 
 namespace Tests {
 
-    class Graph3DTests : public Graphics::WindowRow {
+    class Graph3DTests : public Slab::Graphics::WindowRow {
     public:
         Graph3DTests();
 

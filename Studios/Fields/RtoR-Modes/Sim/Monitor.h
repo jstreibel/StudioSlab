@@ -18,7 +18,7 @@ namespace Modes {
         Monitor(const NumericConfig &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax, const Str &name,
                 bool showEnergyHistoryAsDensities=true);
 
-        void setInputModes(RealVector A, RealVector Ω);
+        void setInputModes(RealVector A, RealVector k, RealVector Ω);
     };
 
 } // Modes

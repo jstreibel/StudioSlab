@@ -10,8 +10,8 @@
 #include "Graphics/Window/Window.h"
 #include "Graphics/OpenGL/Writer.h"
 
-class GLFreeTypeTests : public Graphics::Window {
-    Graphics::Writer writer1, writer2;
+class GLFreeTypeTests : public Slab::Graphics::Window {
+    Slab::Graphics::Writer writer1, writer2;
 
 public:
     GLFreeTypeTests();

@@ -9,9 +9,11 @@
 
 #include "Core/Tools/Log.h"
 
+using namespace Slab;
+
 GLFreeTypeTests::GLFreeTypeTests()
-: writer1(Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
-, writer2(Resources::fontFileName(7), 22)
+: writer1(Core::Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
+, writer2(Core::Resources::fontFileName(7), 22)
 {   }
 
 void GLFreeTypeTests::draw() {

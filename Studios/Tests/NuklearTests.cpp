@@ -21,6 +21,9 @@
 #include "Core/Tools/Resources.h"
 
 namespace Tests {
+    using namespace Slab;
+
+
     file_browser browser;
     media media;
 
@@ -30,7 +33,7 @@ namespace Tests {
         {
             glEnable(GL_TEXTURE_2D);
 
-            auto baseFolder = Resources::IconsFolder + "/nuklear/";
+            auto baseFolder = Core::Resources::IconsFolder + "/nuklear/";
 
             media.icons.home =          icon_load((baseFolder + "home.png").c_str());
             media.icons.directory =     icon_load((baseFolder + "directory.png").c_str());

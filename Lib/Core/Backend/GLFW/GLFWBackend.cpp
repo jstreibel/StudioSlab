@@ -15,6 +15,8 @@
 
 namespace Slab::Core {
 
+    const auto FullScreen = false;
+
     #define ExecFunc(funky) [](Pointer<GraphicsModule> module) {module->##funky; }
 
     bool finishFlag = false;
@@ -123,15 +125,25 @@ namespace Slab::Core {
     GLFWwindow *GLFWBackend::newGLFWWindow() {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 
-        auto monitor = glfwGetPrimaryMonitor();
-        const GLFWvidmode *mode = glfwGetVideoMode(monitor);
-        GLFWwindow *window = glfwCreateWindow(mode->width, mode->height, "Studios Lab", monitor, nullptr);
+        GLFWwindow *window = nullptr;
+
+        if(FullScreen) {
+            auto monitor = glfwGetPrimaryMonitor();
+            const GLFWvidmode *mode = glfwGetVideoMode(monitor);
+            window = glfwCreateWindow(mode->width, mode->height, "Studios Lab", monitor, nullptr);
+        } else {
+            fix width = 3600;
+            fix height = 1800; //int(9./16. * width);
+
+            window = glfwCreateWindow(width, height, "Studios Lab", nullptr, nullptr);
+        }
+
         if (!window) {
             Log::Error() << "Failed creating GLFW window." << Log::Flush;
-            throw "GLFW error";
+            throw Exception("GLFW error");
         }
 
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);

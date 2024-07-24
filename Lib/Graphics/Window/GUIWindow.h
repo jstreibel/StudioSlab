@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_GUIWINDOW_H
 #define STUDIOSLAB_GUIWINDOW_H
 
+#include "3rdParty/ImGui.h"
 
 #include "Graphics/Utils.h"
 #include "Graphics/Window/Window.h"

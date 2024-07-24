@@ -10,7 +10,9 @@
 
 namespace Tests {
     Graph3DTests::Graph3DTests() {
-        auto graph3d = std::make_shared<Graphics::Graph3D>();
+        using namespace Slab;
+
+        auto graph3d = std::make_shared<Graphics::Scene3DWindow>();
 
         addWindow(graph3d);
 
@@ -21,9 +23,7 @@ namespace Tests {
         fix w = 10.;
         fix h = 10.;
 
-        auto funky = std::make_shared<R2toR::NumericFunction_CPU>(N, M,
-                                                                   xMin, yMin,
-                                                                   w/N, h/M);
+        auto funky = std::make_shared<Math::R2toR::NumericFunction_CPU>(N, M, xMin, yMin, w/N, h/M);
 
         for(auto i=0; i<funky->getN(); ++i)
             for(auto j=0; j<funky->getM(); ++j) {
@@ -36,7 +36,7 @@ namespace Tests {
                 funky->At(i, j) = exp(-(x*x + y*y));
             }
 
-        auto actor = std::make_shared<Graphics::Field2DActor>(funky);
+        auto actor = std::make_shared<Graphics::R2toRFunctionActor>(funky);
 
         graph3d->addActor(actor);
     }

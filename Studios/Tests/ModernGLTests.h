@@ -14,6 +14,8 @@
 
 namespace Tests {
 
+    using namespace Slab;
+
     class ModernGLTests : public Graphics::WindowRow {
         Graphics::OpenGL::Shader program;
         Graphics::OpenGL::VertexBuffer buffer;

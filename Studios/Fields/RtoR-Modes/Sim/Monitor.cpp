@@ -20,7 +20,7 @@ namespace Modes {
     {
     }
 
-    void Monitor::setInputModes(RealVector A, RealVector Ω) {
+    void Monitor::setInputModes(RealVector A, RealVector k, RealVector Ω) {
         assert(A.size() == Ω.size());
 
         fix N = A.size();

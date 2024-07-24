@@ -7,10 +7,10 @@
 #include "Graphics/Window/WindowTree/WindowTreeBuilder.h"
 #include "GLFreeTypeTests.h"
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/RtoR/GraphRtoR.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
-#include "FourierTestWindow.h"
+// #include "FourierTestWindow.h"
 
+using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
 : osc(0.0, -0.5, 0.75, 0.15, false, false)  {
@@ -27,8 +27,8 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
     window = new Graphics::Window;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Right);
 
-    window = new Tests::FourierTestWindow();
-    treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Above);
+    // window = new Tests::FourierTestWindow();
+    // treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Above);
 
     main = treeBuilder.getRoot();
 }

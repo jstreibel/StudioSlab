@@ -74,6 +74,13 @@ namespace Slab {
             return *yMax;
         }
 
+        void PlottingRegion2D::setLimits(Real x_min, Real x_max, Real y_min, Real y_max) {
+            *xMin = x_min;
+            *xMax = x_max;
+            *yMin = y_min;
+            *yMax = y_max;
+        }
+
 
     } // Slab
 } // Graphics

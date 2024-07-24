@@ -24,7 +24,9 @@
 #define Im 1
 
 namespace Tests {
-    fix π = (float)Constants::pi;
+    using namespace Slab;
+
+    fix π = (float)Math::Constants::pi;
 
     float A = 1;
     float ω = 1;
@@ -54,10 +56,10 @@ namespace Tests {
         } else return A*sin(ω*x);
     }
 
-    Core::NativeFunction<RtoR::Function> Func(func);
-    RtoR::InverseFourier FuncRebuilt;
-    RtoC::FourierModes fourierModes(DummyPtr(Func), 0, L, 100);
-    RtoR::ComplexMagnitude amplitudes(DummyPtr(fourierModes));
+    Math::Base::NativeFunction<Math::RtoR::Function> Func(func);
+    Math::RtoR::InverseFourier FuncRebuilt;
+    Math::RtoC::FourierModes fourierModes(Naked(Func), 0, L, 100);
+    Math::RtoR::ComplexMagnitude amplitudes(Naked(fourierModes));
 
     FourierTestWindow::FourierTestWindow()
     : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph", false, N_modes)

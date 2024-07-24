@@ -15,12 +15,14 @@ struct TestVertex {
 fix texDim = 4096;
 
 namespace Tests {
+    using namespace Slab;
+
     ModernGLTests::ModernGLTests()
-    : program(Resources::ShadersFolder + "tests.vert", Resources::ShadersFolder + "tests.frag")
+    : program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , realTexture(texDim, texDim)
-    , writer(Resources::fontFileName(4), 80)
+    , writer(Core::Resources::fontFileName(4), 80)
     {
         addWindow(std::make_shared<Window>());
 
@@ -43,7 +45,7 @@ namespace Tests {
             for(auto j=0; j<texDim; ++j){
                 fix y = j/(float)texDim;
                 fix r = sqrt(x*x + y*y);
-                fix color = Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
+                fix color = Graphics::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
                 realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }

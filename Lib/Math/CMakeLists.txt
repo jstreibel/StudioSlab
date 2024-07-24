@@ -110,6 +110,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Function/RtoR/Model/FunctionsCollection/NativeFunction.cpp
 		Function/RtoR/Operations/FromR2toRNumeric.cpp
 		Function/RtoR/Operations/FromR2toRNumeric.h
+		Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.cpp
+		Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.h
 )
 
 

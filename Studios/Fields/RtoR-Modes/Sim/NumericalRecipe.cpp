@@ -96,7 +96,11 @@ namespace Modes {
         fix amp = (*A) * 1.1;
         auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(KGRtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
 
-        monitor->setInputModes({*A}, {*omega});
+        fix L = simulationConfig.numericConfig.getL();
+        fix dk = 2*M_PI/L;
+        fix k = dk*this->k.getValue();
+        fix ω = dk*this->omega.getValue();
+        monitor->setInputModes({*A}, {k}, {ω});
 
         return monitor;
     }

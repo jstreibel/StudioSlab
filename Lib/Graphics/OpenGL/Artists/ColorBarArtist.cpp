@@ -4,6 +4,8 @@
 
 #include "ColorBarArtist.h"
 
+#include "3rdParty/ImGui.h"
+
 #include <utility>
 #include "Core/Tools/Resources.h"
 
@@ -33,42 +35,37 @@ namespace Slab::Graphics::OpenGL {
     bool OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
         if( texture == nullptr ) return true;
 
-        {
-            const int left = -300;
-            const int vpWidth  = graph.getViewport().width();
-            const int vpHeight = graph.getViewport().height();
-            const int cbarWidth = -0.35 * left;
-            const int cbarHeight = int(0.96 * vpHeight);
-            const int cbarTop = (vpHeight - cbarHeight) / 2;
+        const int vpWidth  = graph.getViewport().width();
+        const int vpHeight = graph.getViewport().height();
+        const int cbarHeight_pixels = int(cbarHeight_clamp * vpHeight);
+        if(autoColorBarTop)
+            cbarTop_pixels = (vpHeight - cbarHeight_pixels) / 2;
 
-            //               icpx         gnu
-            // bench        27.334       27.992
-            // compile    2min 37sec   2min 44sec
-
-            setLocation({vpWidth + left,
-                         vpWidth + left + cbarWidth,
-                         vpHeight - cbarTop,
-                         vpHeight - cbarTop - cbarHeight});
-        }
+        auto left_actual = left>=0 ? left : vpWidth+left;
+        // TODO it sucks to do this every time.
+        setLocation({left_actual,
+                     left_actual + cbarWidth_pixels,
+                     vpHeight - cbarTop_pixels,
+                     vpHeight - cbarTop_pixels - cbarHeight_pixels});
 
         auto style =  PlotThemeManager::GetCurrent();
         auto &writer = style->labelsWriter;
 
         OpenGL::Shader::remove();
+
+        // TODO this below also sucks.
         if(1) {
             // GAMBIARRAS
 
-            auto slack = 15.0;
+            auto xMin = (float)rect.xMin - (float)general_slack;
+            auto xMax = (float)rect.xMax + writer->getFontHeightInPixels()*(decimal_places) + (float)right_slack;
+            auto yMin = (float)rect.yMin + (float)general_slack;
+            auto yMax = (float)rect.yMax - (float)general_slack;
 
-            auto xMin = rect.xMin - slack;
-            auto xMax = rect.xMax + writer->getFontHeightInPixels()*6;
-            auto yMin = rect.yMin + slack;
-            auto yMax = rect.yMax - slack;
-
-            xMin = 2.f*(xMin/graph.getViewport().width()-.5f);
-            xMax = 2.f*(xMax/graph.getViewport().width()-.5f);
-            yMin = 2.f*(yMin/graph.getViewport().height()-.5f);
-            yMax = 2.f*(yMax/graph.getViewport().height()-.5f);
+            xMin = 2.f*(xMin/(float)graph.getViewport().width()-.5f);
+            xMax = 2.f*(xMax/(float)graph.getViewport().width()-.5f);
+            yMin = 2.f*(yMin/(float)graph.getViewport().height()-.5f);
+            yMax = 2.f*(yMax/(float)graph.getViewport().height()-.5f);
 
             glMatrixMode(GL_PROJECTION);
             glPushMatrix();
@@ -104,14 +101,13 @@ namespace Slab::Graphics::OpenGL {
             glPopMatrix();
         }
 
-        auto n=9;
         auto dx = rect.width();
         auto dy = rect.height();
         auto Δu = uf-ui;
         // writer->getFontHeightInPixels();
 
-        for(int i=0; i<n; ++i){
-            auto t = (Real(i)/Real(n-1));
+        for(int i=0; i<n_annotations; ++i){
+            auto t = (Real(i)/Real(n_annotations-1));
             auto yMeasure = t/Δu-ui; //(float(i)/float(n)) - ui;
 
             Real phi;
@@ -124,7 +120,7 @@ namespace Slab::Graphics::OpenGL {
                     phi = params.phi_sat * t;
             }
 
-            writer->write(ToStr(phi),
+            writer->write(ToStr(phi, decimal_places, scientific_notation),
                           {(float)rect.xMax+dx*0.1, (float)rect.yMax-yMeasure*dy}, style->graphTitleColor);
         }
 
@@ -186,6 +182,25 @@ namespace Slab::Graphics::OpenGL {
                 {xMin, yMin,   uf}};
 
         vertexBuffer.pushBack(vertices, 4, indices, 6);
+    }
+
+    void ColorBarArtist::drawGUI() {
+        Artist::drawGUI();
+
+        // ImGui::Checkbox("Auto top", &autoColorBarTop);
+        ImGui::SliderInt("x_loc", &left, -2000, 2000);
+        ImGui::SliderInt("y_loc", &cbarTop_pixels, 0, 2000);
+        ImGui::SliderInt("bar width", &cbarWidth_pixels, 10, 2000);
+        ImGui::SliderFloat("bar height %", &cbarHeight_clamp, 1e-1f, 1.f);
+        ImGui::SliderInt("general slack", &general_slack, 0, 500);
+        ImGui::SliderInt("right slack", &right_slack, 0, 500);
+
+        ImGui::NewLine();
+        ImGui::SliderInt("n annotations", &n_annotations, 3, 21);
+        ImGui::Checkbox("scientific notation", &scientific_notation);
+        ImGui::SliderInt("decimal places", &decimal_places, 0, 15);
+
+
     }
 
     void ColorBarArtist::setColorMap(const Pointer<const ColorMap>& map) {
@@ -263,6 +278,8 @@ namespace Slab::Graphics::OpenGL {
     Count ColorBarArtist::getSamples() const {
         return colorMap->getColorCount();
     }
+
+    bool ColorBarArtist::hasGUI() { return true; }
 
 
 } // OpenGL

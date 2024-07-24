@@ -6,19 +6,21 @@
 #define STUDIOSLAB_FOURIERTESTWINDOW_H
 
 #include "Graphics/Window/GUIWindow.h"
+#include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
-#include "Graphics/Graph/RtoR/GraphRtoR.h"
 
 namespace Tests {
 
-class FourierTestWindow : public Graphics::Window {
+    using namespace Slab;
+
+    class FourierTestWindow : public Graphics::Window {
         Graphics::WindowRow row;
         Graphics::WindowColumn col;
 
-        Graphics::GraphRtoR mFuncGraph;
+        Graphics::PlottingWindow mFuncGraph;
         Graphics::PlottingWindow mDFTGraph;
-        Graphics::GraphRtoR mFTGraph;
+        Graphics::PlottingWindow mFTGraph;
         Graphics::GUIWindow gui;
 
         void updateGraphs();

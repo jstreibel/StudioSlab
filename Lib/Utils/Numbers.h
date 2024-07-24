@@ -8,6 +8,7 @@
 #include "NativeTypes.h"
 
 #include <complex>
+#include <quadmath.h>
 
 namespace Slab {
 
@@ -16,6 +17,7 @@ namespace Slab {
     typedef floatt Real;
     typedef float Real32;
     typedef double Real64;
+    typedef __float128 Real128;
     typedef std::complex<Real> Complex;
 
     typedef unsigned char Byte;

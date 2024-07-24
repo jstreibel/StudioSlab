@@ -8,14 +8,15 @@
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/RtoR/GraphRtoR.h"
 
 
 namespace Tests {
 
+    using namespace Slab;
+
     class BezierTests : public Graphics::WindowRow {
         Graphics::GUIWindow stats;
-        Graphics::GraphRtoR graph;
+        Graphics::PlottingWindow graph;
 
         Math::PointSet currentPt;
 

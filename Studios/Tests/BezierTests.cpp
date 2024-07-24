@@ -5,11 +5,17 @@
 #include "BezierTests.h"
 
 #include "Math/Function/NativeFunction.h"
+#include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 #include "3rdParty/ImGui.h"
 #include "Core/Backend/Modules/Animator/Animator.h"
 
+#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Graph/PlotThemeManager.h"
+
 namespace Tests {
+    using namespace Slab;
+
     double startValue=0;
     double endValue=1;
 
@@ -31,28 +37,30 @@ namespace Tests {
 
 
     BezierTests::BezierTests() {
-        param1 = Core::Animator::GetBezierParams().first;
-        param2 = Core::Animator::GetBezierParams().second;
+        param1 = (float)Core::Animator::GetBezierParams().first;
+        param2 = (float)Core::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();
 
-        addWindow(DummyPtr(stats), Right, .15);
-        addWindow(DummyPtr(graph));
+        addWindow(Naked(stats), Right, .15);
+        addWindow(Naked(graph));
 
-        static Core::NativeFunction<RtoR::Function> function(cubicBezierInterpolation);
-        graph.addFunction(&function, "Bezier");
+        static Math::Base::NativeFunction<Math::RtoR::Function> function(cubicBezierInterpolation);
+        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        Graphics::Plotter::AddRtoRFunction(Naked(graph), Naked(function), style, "Bezier");
 
         fix lim = 1.e3;
         static Math::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
         static Math::PointSet vertLine2{{{1.0, -lim}, {1.0, lim}}};
-        graph.addPointSet(DummyPtr(vertLine1), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
-        graph.addPointSet(DummyPtr(vertLine2), StylesManager::GetCurrent()->funcPlotStyles[1], "", false);
-        auto style = StylesManager::GetCurrent()->funcPlotStyles[2];
-        style.primitive = Point;
+        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        Graphics::Plotter::AddPointSet(Naked(graph), Naked(vertLine1), style, "", false);
+        Graphics::Plotter::AddPointSet(Naked(graph), Naked(vertLine2), style, "", false);
+
+        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+        style.primitive = Slab::Graphics::Point;
         style.thickness = 10;
-        graph.addPointSet(DummyPtr(currentPt), style, "", false);
+        Graphics::Plotter::AddPointSet(Naked(graph), Naked(currentPt), style, "", false);
 
-        graph.setLimits({-.2,1.2,-.5,1.5});
-
+        graph.getRegion().setLimits(-.2, 1.2, -.5, 1.5);
     }
 
     void BezierTests::draw() {
@@ -67,26 +75,26 @@ namespace Tests {
 
         currentPt.clear();
         auto &r = graph.getRegion();
-        if(Core::Animator::Contains(r.xMin)){
-            auto &anim = Core::Animator::Get(r.xMin);
+        if(Core::Animator::Contains(*r.getReference_xMin())){
+            auto &anim = Core::Animator::Get(*r.getReference_xMin());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(r.xMax)){
-            auto &anim = Core::Animator::Get(r.xMax);
+        if(Core::Animator::Contains(*r.getReference_xMax())){
+            auto &anim = Core::Animator::Get(*r.getReference_xMax());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(r.yMin)){
-            auto &anim = Core::Animator::Get(r.yMin);
+        if(Core::Animator::Contains(*r.getReference_yMin())){
+            auto &anim = Core::Animator::Get(*r.getReference_yMin());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(r.yMax)){
-            auto &anim = Core::Animator::Get(r.yMax);
+        if(Core::Animator::Contains(*r.getReference_yMax())){
+            auto &anim = Core::Animator::Get(*r.getReference_yMax());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }

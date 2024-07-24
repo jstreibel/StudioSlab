@@ -36,17 +36,16 @@ namespace Slab::Math::Base {
 
 
     protected:
+        FunctionT() : discrete(false), myGPUFriendlyVersion(nullptr) {};
+
         /** If the function derived from this class has a GPUFriendly version, then it should provide it at instantiation
          * time, because a single copy of this function must be kept and be provided when needed. */
-        explicit FunctionT(const GPUFriendly *gpuFriendlyVersion = nullptr,
-                           bool isDiscrete = false)
-                          : myGPUFriendlyVersion(gpuFriendlyVersion), discrete(isDiscrete)
-                          {     }
+        explicit FunctionT(const GPUFriendly *gpuFriendlyVersion, bool isDiscrete = false)
+        : myGPUFriendlyVersion(gpuFriendlyVersion), discrete(isDiscrete)
+        {     }
 
         FunctionT(const FunctionT &toCopy)
-                          : myGPUFriendlyVersion(&toCopy.getGPUFriendlyVersion()),
-                          discrete(toCopy.discrete)
-                          {     }
+        : myGPUFriendlyVersion(&toCopy.getGPUFriendlyVersion()), discrete(toCopy.discrete) {     }
 
     public:
         virtual ~FunctionT() = default;

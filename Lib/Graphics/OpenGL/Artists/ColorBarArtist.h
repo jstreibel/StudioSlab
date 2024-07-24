@@ -34,6 +34,18 @@ namespace Slab::Graphics::OpenGL {
         bool textureDirty = true;
         RectI rect;
 
+        bool autoColorBarTop = true;
+        int general_slack = 15;
+        int right_slack = 0;
+        int left = -300;
+        int cbarWidth_pixels = -0.35 * left;
+        float cbarHeight_clamp = 0.96;
+        int cbarTop_pixels = 10;
+
+        int n_annotations = 9;
+        int decimal_places = 5;
+        bool scientific_notation = false;
+
         ColorBarParams params;
 
         ScalingFunction scalingFunction;
@@ -48,6 +60,10 @@ namespace Slab::Graphics::OpenGL {
 
         void setColorMap(const Pointer<const ColorMap>& colorMap);
         auto getTexture() -> CMapTexturePtr;
+
+        bool hasGUI() override;
+
+        void drawGUI() override;
 
         void setKappa(Real);
         void setPhiSaturation(Real);

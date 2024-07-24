@@ -11,8 +11,8 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 
-class WindowPanelTest : public Graphics::Window {
-    Graphics::WindowPanel *panel;
+class WindowPanelTest : public Slab::Graphics::Window {
+    Slab::Graphics::WindowPanel *panel;
 
 public:
     WindowPanelTest();

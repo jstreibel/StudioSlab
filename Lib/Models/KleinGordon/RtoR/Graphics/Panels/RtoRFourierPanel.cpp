@@ -4,6 +4,8 @@
 
 #include "RtoRFourierPanel.h"
 
+#include "Core/Controller/Interface/InterfaceManager.h"
+
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
 
@@ -24,6 +26,23 @@ namespace Slab::Models::KGRtoR {
         // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
 
+        // Custom ticks
+        auto unit = Constants::π;
+        kSpaceGraph->getAxisArtist().setHorizontalUnit(unit);
+        fix WaveNumber = InterfaceManager::getInstance().getParameter("harmonic");
+        if(WaveNumber != nullptr) {
+            Graphics::AxisArtist::Ticks ticks;
+            fix L = params.getL();
+            fix dk = 2*M_PI/L;
+            fix k = dk * WaveNumber->getValueAs<Real>();
+            for (int n = 1; n < 20; ++n) {
+                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
+            }
+            kSpaceGraph->getAxisArtist().setHorizontalAxisTicks(ticks);
+        }
+        kSpaceGraph->getAxisArtist().setHorizontalAxisLabel("k");
+        kSpaceGraph->getAxisArtist().setVerticalAxisLabel("t");
+
         ωSpaceArtist->setLabel("ℱₜ(ω, x)");
         ωSpaceGraph->addArtist(ωSpaceArtist);
         ωSpaceGraph->getAxisArtist().setHorizontalAxisLabel("x");
@@ -36,7 +55,7 @@ namespace Slab::Models::KGRtoR {
 
         powerArtist     ->setLabel("ℙ=|ℱₜₓ|²");
         amplitudesArtist->setLabel("|ℱₜₓ|");
-        phasesArtist    ->setLabel(   "arg{ℱₜₓ}");
+        phasesArtist    ->setLabel("arg{ℱₜₓ}");
         realPartsArtist ->setLabel("ℜ{ℱₜₓ}");
         imagPartsArtist ->setLabel("ℑ{ℱₜₓ}");
 
@@ -154,6 +173,7 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
 
         kSpaceGraph->addArtist(dftFunctionArtist);
+        kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
 
         Graphics::Plotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),

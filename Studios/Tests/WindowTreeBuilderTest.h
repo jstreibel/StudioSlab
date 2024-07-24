@@ -10,10 +10,10 @@
 #include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-class WindowTreeBuilderTest : public Graphics::Window {
-    Graphics::NodeWindow *main;
+class WindowTreeBuilderTest : public Slab::Graphics::Window {
+    Slab::Graphics::NodeWindow *main;
 
-    RtoR::AnalyticOscillon osc;
+    Slab::Math::RtoR::AnalyticOscillon osc;
 public:
     WindowTreeBuilderTest();
     void draw() override;
