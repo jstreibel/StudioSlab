@@ -133,8 +133,6 @@ namespace Slab::Graphics {
                 for(auto &thingy : textureKontraptions->blocks)
                     thingy->texture->setAntiAlias(anti_alias);
 
-
-
             {
                 auto cMap_saturationValue_f = (float) cMap_saturationValue;
                 auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
@@ -179,7 +177,7 @@ namespace Slab::Graphics {
             static int item_last_idx = 0;
             Str selectedItem;
             const char *combo_preview_value = items[item_current_idx].display_text.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
-            if (ImGui::BeginCombo("Colormaps", combo_preview_value, 0)) {
+            if (ImGui::BeginCombo(UniqueName("Colormaps").c_str(), combo_preview_value, 0)) {
                 for (int n = 0; n < items.size(); n++) {
                     const bool is_selected = (item_current_idx == n);
 

@@ -28,6 +28,12 @@ namespace Slab::Graphics{
         Pointer<PlottingWindow> xSpaceGraph  = New<PlottingWindow>("ϕ(t,x)");
         Pointer<PlottingWindow> ωkSpaceGraph = New<PlottingWindow>("ℱₜₓ");
 
+        Pointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> kSpace_phasesArtist       = New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> kSpace_realPartsArtist    = New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> kSpace_imagPartsArtist    = New<R2toRFunctionArtist>();
+
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = New<R2toRFunctionArtist>();
         Pointer<R2toR::NumericFunction> inv_kSpace;
 
@@ -68,6 +74,7 @@ namespace Slab::Graphics{
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
         void computeTimeDFT();
 
+        void computeSpaceDFT();
 
     protected:
         bool is_Ft_auto_updating() const;

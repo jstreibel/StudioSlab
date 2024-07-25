@@ -5,8 +5,11 @@
 #include <fftw3.h>
 #include "R2toRDFT.h"
 
+#include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
+
 // #define DONT_FIX_OUTPUT
 #include "FFTWDataMangling.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #define TO_FFTW(a) (reinterpret_cast<fftw_complex*>(a))
 #define TO_STD(a) (reinterpret_cast<Complex*>(a))
@@ -173,6 +176,46 @@ namespace Slab::Math::R2toR {
         fftw_free(data_dft);
 
         return FFTData{out};
+    }
+
+    auto
+    R2toRDFT::SpaceDFTReal(const NumericFunction &in) -> R2toRDFT::FFTData {
+        fix N = in.getN();
+        fix M = in.getM();
+
+        fix Δt = in.getDomain().getLy();
+        fix t_min = in.getDomain().yMin;
+
+        fix L = in.getDomain().getLx();
+        fix x_min = in.getDomain().xMin;
+        fix x_max = in.getDomain().xMax;
+        fix dk = 2*M_PI / L;
+        fix Δk = dk*N;
+        fix k_min = -Δk*.5;
+
+        auto space_dft_result = New<R2toC::NumericFunction>(N, M, k_min, t_min, Δk, Δt);
+
+        RtoR::NumericFunction_CPU temp_slice (N, x_min, x_max);
+
+        IN data = in.getSpace().getHostData(true);
+        OUT data_in = temp_slice.getSpace().getHostData(true);
+
+        for(int j=0; j<M; ++j) {
+            memcpy(&data_in[0], &data[0 + j*N], N*sizeof(Real));
+            auto result = RtoR::DFT::Compute(temp_slice);
+
+            IN re_pts = result.re->getPoints();
+            IN im_pts = result.im->getPoints();
+
+            auto *data_out = &space_dft_result->getData()[0 + j*N];
+            for(int i=0; i<re_pts.size(); ++i){
+                Complex a = {re_pts[i].y, im_pts[i].y};
+
+                data_out[i] = a;
+            }
+        }
+
+        return space_dft_result;
     }
 
 } // R2toR

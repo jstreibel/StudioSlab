@@ -16,8 +16,6 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Graphics/Graph/Plotter.h"
 
-#include <utility>
-
 namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
@@ -28,6 +26,22 @@ namespace Slab::Graphics {
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
         // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
+
+        {
+            kSpaceGraph->addArtist(kSpace_powerArtist, 2);
+            kSpaceGraph->addArtist(kSpace_amplitudesArtist, 3);
+            kSpaceGraph->addArtist(kSpace_phasesArtist, 0);
+            kSpaceGraph->addArtist(kSpace_imagPartsArtist, 1);
+            kSpaceGraph->addArtist(kSpace_realPartsArtist, 1);
+
+            kSpace_powerArtist->setLabel("|ℱₖ|²");
+            kSpace_amplitudesArtist->setLabel("|ℱₖ|");
+            kSpace_phasesArtist->setLabel("arg ℱₖ");
+            kSpace_imagPartsArtist->setLabel("ℑ ℱₖ");
+            kSpace_realPartsArtist->setLabel("ℜ ℱₖ");
+
+
+        }
 
         ωSpaceArtist->setLabel("ℱₜ(ω, x)");
         ωSpaceGraph->addArtist(ωSpaceArtist);
@@ -244,11 +258,19 @@ namespace Slab::Graphics {
 
         if(function == nullptr) return;
 
-        /*
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
         fix xMin = function->getDomain().xMin;
         fix L = function->getDomain().getLx();
+        fix N = function->getN();
+        fix M = function->getM();
+        IN data = function->getSpace().getHostData(true);
+        for(auto j=0; j<M; ++j) {
+
+        }
+
+
+        /*
         fix N = (*dftData)[0].result.modeCount();
         fix hx = L/N;
 
@@ -273,8 +295,8 @@ namespace Slab::Graphics {
             ++_n;
         }
 
-        inv_kSpaceArtist->setFunction(rebuiltHistory);
-         */
+         inv_kSpaceArtist->setFunction(rebuiltHistory);
+        */
     }
 
     void FourierViewer::computeTimeDFT() {
@@ -356,6 +378,8 @@ namespace Slab::Graphics {
 
         if (is_Ft_auto_updating()) computeTimeDFT();
         if (is_Ftx_auto_updating()) computeAll();
+
+        computeSpaceDFT();
     }
 
     bool FourierViewer::is_Ft_auto_updating() const {
@@ -364,6 +388,26 @@ namespace Slab::Graphics {
 
     bool FourierViewer::is_Ftx_auto_updating() const {
         return auto_update_Ftx;
+    }
+
+    void FourierViewer::computeSpaceDFT() {
+        auto function = getFunction();
+
+        if(function == nullptr) return;
+
+        auto space_dft = R2toR::R2toRDFT::SpaceDFTReal(*function);
+
+        auto power      = Math::Convert(space_dft, R2toC_to_R2toR_Mode::PowerSpectrum);
+        auto amplitudes = Math::Convert(space_dft, R2toC_to_R2toR_Mode::Magnitude);
+        auto phases     = Math::Convert(space_dft, R2toC_to_R2toR_Mode::Phase);
+        auto realParts  = Math::Convert(space_dft, R2toC_to_R2toR_Mode::RealPart);
+        auto imagParts  = Math::Convert(space_dft, R2toC_to_R2toR_Mode::ImaginaryPart);
+
+        kSpace_powerArtist->setFunction(power);
+        kSpace_amplitudesArtist->setFunction(amplitudes);
+        kSpace_phasesArtist->setFunction(phases);
+        kSpace_realPartsArtist->setFunction(realParts);
+        kSpace_imagPartsArtist->setFunction(imagParts);
     }
 
 

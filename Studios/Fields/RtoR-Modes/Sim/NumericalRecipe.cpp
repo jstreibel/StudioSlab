@@ -38,7 +38,8 @@ namespace Modes {
         fix A_0 = this->A.getValue();
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.getValue();
-        fix ω = dk*this->omega.getValue();
+        fix j = this->omega.getValue();
+        fix ω = dk*j;
 
         if(*BCSelection == 0) return New <Modes::SignalBC> (prototype, A_0,  ω);
         if(*BCSelection == 1) {
@@ -82,9 +83,17 @@ namespace Modes {
         fix A = this->A.getValue();
         fix dk = 2*M_PI/L;
         fix k = dk*this->k.getValue();
+        if(*omega < 0) {
+            fix m2 = *massSqr;
+            fix ohm_temp = sqrt(k*k + m2);
+            omega.setValue(ohm_temp/dk);
+
+            Log::Info() << "omega_n parameter is negative. Using KG dispersion relation for its value." << Log::Flush;
+        }
         fix ω = dk*this->omega.getValue();
         fix period = 2*Constants::pi / ω;
         fix res = (period/L)*n;
+
         Log::Info() << "Setting wavenumber κL/2π=" << this->k.getValue() << " ==> κ=" << k << Log::Flush;
         Log::Info() << "Setting ang. freq  ωL/2π=" << this->omega.getValue() << " ==> ω=" << ω << Log::Flush;
         Log::Info() << "Relation Aκ²=" << A*k*k << Log::Flush;

@@ -59,5 +59,7 @@ namespace Slab::Core {
         graphicModules.clear();
     }
 
+    void GraphicBackend::setSystemWindowTitle(Str title, int handle) { NOT_IMPLEMENTED_CLASS_METHOD }
+
 
 }

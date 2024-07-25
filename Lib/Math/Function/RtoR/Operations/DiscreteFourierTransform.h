@@ -70,8 +70,13 @@ namespace Slab::Math::RtoR {
      */
     class DFT {
     public:
-        static DFTResult Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax);
-        static DFTResult Compute(const RtoR::NumericFunction &in);
+        static auto
+        Compute(const RtoR::Function &in, NumberOfModes N, Real xMin, Real xMax)
+        -> DFTResult;
+
+        static auto
+        Compute(const RtoR::NumericFunction &in)
+        -> DFTResult;
 
         static Pointer<RtoR::NumericFunction> Magnitudes(const DFTResult&);
     };

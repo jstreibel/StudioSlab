@@ -23,6 +23,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
+#include "Math/Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
 
 #include "Output/SimHistory.h"
@@ -37,6 +38,7 @@ constexpr const Slab::Count MAX_SNAPSHOTS = 200;
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
 #define SIGNUM_GORDON_POTENTIAL 2
+#define REGULAR_SG_POTENTIAL    3
 
 #define DONT_REGISTER_IMMEDIATELY false // line not to be touched
 
@@ -66,7 +68,7 @@ namespace Slab::Models::KGRtoR {
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, Str generalDescription, bool doRegister)
             : Models::KGBuilder("RtoR-" + name, std::move(generalDescription),
                                              DONT_REGISTER_IMMEDIATELY) {
-        interface->addParameters({&Potential, &massSqr});
+        interface->addParameters({&Potential, &massSqr, &N_num});
 
         if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
     }
@@ -318,6 +320,10 @@ namespace Slab::Models::KGRtoR {
             return Slab::New<RtoR::HarmonicPotential>(*massSqr);
         } else if (*Potential == SIGNUM_GORDON_POTENTIAL) {
             return Slab::New<RtoR::AbsFunction>();
+        } else if (*Potential == REGULAR_SG_POTENTIAL) {
+            fix m2 = *massSqr;
+            fix A = 4/M_PI/m2;
+            return Slab::New<Slab::Math::RtoR::NonlinearKGPotential>(A, *N_num, 1.0);
         }
 
         throw Exception("Unknown potential");

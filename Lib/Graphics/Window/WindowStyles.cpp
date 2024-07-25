@@ -5,8 +5,8 @@
 #include "WindowStyles.h"
 
 namespace Slab::Graphics {
-    int hPadding = 10;
-    int vPadding = 10;
+    int hPadding = 3;
+    int vPadding = 3;
 
     int menuHeight = 40;
 

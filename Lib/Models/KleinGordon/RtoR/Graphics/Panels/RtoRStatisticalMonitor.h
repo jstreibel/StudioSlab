@@ -62,7 +62,6 @@ namespace Slab::Models::KGRtoR {
 
         void setTransientHint(Real);
 
-
         void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };

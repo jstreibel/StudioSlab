@@ -72,6 +72,8 @@ namespace Slab::Core {
 
         void setMouseCursor(MouseCursor cursor) override;
 
+        void setSystemWindowTitle(Str title, int handle) override;
+
         void run() override;
 
         void terminate() override;

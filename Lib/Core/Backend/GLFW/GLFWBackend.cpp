@@ -238,7 +238,12 @@ namespace Slab::Core {
             case Mouse_IBeamCursor:     glfwSetCursor(systemWindow, IBeamCursor);     break;
             case Mouse_CrossHairCursor: glfwSetCursor(systemWindow, crossHairCursor); break;
         }
+    }
 
+    void GLFWBackend::setSystemWindowTitle(Str title, int handle) {
+        if(handle != 0) NOT_IMPLEMENTED
+
+        glfwSetWindowTitle(systemWindow, title.c_str());
     }
 
 

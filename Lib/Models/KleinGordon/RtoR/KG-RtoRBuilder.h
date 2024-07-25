@@ -19,11 +19,14 @@ namespace Slab::Models::KGRtoR {
     using namespace Core;
 
     class KGRtoRBuilder : public Slab::Models::KGBuilder {
+    protected:
         IntegerParameter Potential = IntegerParameter(2, "V,potential", "Potential of wave equation:"
                                                                         "\n\t 0: massless"
                                                                         "\n\t 1: Klein-Gordon"
-                                                                        "\n\t 2: signum-Gordon" );
+                                                                        "\n\t 2: signum-Gordon"
+                                                                        "\n\t 3: regular SG expansion");
         RealParameter massSqr  = RealParameter(1.0, "M,massSqr",   "Squared mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen.");
+        IntegerParameter N_num = IntegerParameter(15, "O,N_num", "Order of regular SG expansion.");
 
         bool periodicBC = false;          // Gambiarris
 

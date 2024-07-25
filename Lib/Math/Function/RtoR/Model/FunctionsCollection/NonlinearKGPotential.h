@@ -11,60 +11,45 @@ namespace Slab::Math::RtoR {
 
     Real128 lambda(int n, int N);
 
-    template<typename RealType = Real>
-    class NonlinearKGPotential : public RtoR::Function {
-        Vector<RealType> coeffs;
+    class VPrime : public RtoR::Function {
+        RealVector coeffs;
         Count N;
-        RealType A;
+        Real A;
+        Real s;
 
-        inline RealType get_lambda(int n) const {
+        inline Real get_lambda(int n) const {
             return coeffs[(n-1)/2];
         }
-        static inline RealType
-        even_power(const RealType &x, const int &unchecked_even_n) {
-            auto n = unchecked_even_n;
 
-            auto result = 1.0;
-            while (n > 1) {
-                result *= x*x; // Square the base
-                n /= 2; // Divide n by 2
-            }
-            return result;
-        }
+        [[maybe_unused]] static inline Real
+        even_power(const Real &x, const int &unchecked_even_n);
+        static inline Real
+        odd_power(const Real &x, const int &unchecked_odd_n);
     public:
-        NonlinearKGPotential(Real A, int N)
-        : FunctionT(nullptr, false)
-        , coeffs(CalcCoefficients(N))
-        , N(N), A(A)
-        { }
+        VPrime(Real A, int N, Real s);
 
-        Real operator()(Real phi) const override {
-            RealType value=0;
+        Real operator()(Real phi) const override;
 
-            for(auto n=1; n<=N; n+=2) {
-                fix x = phi/A;
-                value += get_lambda(n)/(n+1) * even_power(x, n+1);
-            }
+        Real getA() const;
+        void setA(Real);
 
-            return value;
-        }
+        Real get_s() const;
+        void set_s(Real);
 
-        static Vector<RealType>
-        CalcCoefficients(int N) {
-            Vector<RealType> coeffs;
+        auto getN() const -> Count;
+        auto setN(Count N) -> void;
 
-            if(!(N%2)) throw Exception(Str(__PRETTY_FUNCTION__) + " works with odd-valued N.");
-            if  (N<0)  throw Exception(Str(__PRETTY_FUNCTION__) + " works with positive-valued N.");
 
-            for(auto n=1; n<=N; n+=2) {
-                fix i=(n-1)/2;
+        static RealVector
+        CalcCoefficients(int N, Real s);
+    };
 
-                fix sign = (i%2)*2. - 1.;
-                coeffs[i] = sign * lambda(n, N);
-            }
+    class NonlinearKGPotential : public VPrime {
+    public:
+        NonlinearKGPotential(Real A, Count N, Real s);
+        Real operator()(Real phi) const override;
 
-            return coeffs;
-        }
+        Pointer<Type> diff(int n) const override;
     };
 
 } // Slab::Math::RtoR

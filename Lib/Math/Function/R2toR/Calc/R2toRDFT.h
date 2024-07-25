@@ -15,7 +15,7 @@ namespace Slab::Math::R2toR {
         typedef R2toC::NumericFunction_ptr FFTData;
 
         enum DataPolicy {
-            Mangle,
+            Mangle, // slash Unmangle
             Keep,
             Auto
         };
@@ -25,14 +25,20 @@ namespace Slab::Math::R2toR {
             InverseFourier=1
         };
 
-        static auto DFTReal_symmetric(const R2toR::NumericFunction &in) -> FFTData;
+        static auto
+        DFTReal_symmetric(const R2toR::NumericFunction &in) -> FFTData;
 
-        static auto DFTReal   (const R2toR::NumericFunction &in, Transform transform=Fourier,
+        static auto
+        SpaceDFTReal(const R2toR::NumericFunction &in) -> FFTData;
+
+        static auto
+        DFTReal     (const R2toR::NumericFunction &in, Transform transform=Fourier,
                                DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
-        static auto DFTComplex(const R2toC::NumericFunction &in, Transform transform=Fourier,
+        static auto
+        DFTComplex(const R2toC::NumericFunction &in, Transform transform=Fourier,
                                DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
 
-        static auto DFT_inverse_symmetric(const R2toC::NumericFunction &in) -> FFTData;
+        // static auto DFT_inverse_symmetric(const R2toC::NumericFunction &in) -> FFTData;
 
 
 
