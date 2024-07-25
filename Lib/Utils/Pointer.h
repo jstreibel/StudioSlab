@@ -15,7 +15,10 @@ namespace Slab {
     using Pointer = std::shared_ptr<T>;
 
     template <typename T>
-    using Reference = std::weak_ptr<T>;
+    using Reference = Pointer<Pointer<T>>;
+
+    template <typename T>
+    using Volatile = std::weak_ptr<T>;
 
     template<typename Derived>
     inline auto DynamicPointerCast(auto base_pointer) {
@@ -60,8 +63,8 @@ namespace Slab {
 #define DefinePointers(Type) \
     typedef ::Slab::Pointer<Type> Type##_ptr; \
     typedef ::Slab::Pointer<const Type> Type##_constptr; \
-    typedef ::Slab::Reference<Type> Type##_ref;          \
-    typedef ::Slab::Reference<const Type> Type##_constref;
+    typedef ::Slab::Volatile<Type> Type##_ref;          \
+    typedef ::Slab::Volatile<const Type> Type##_constref;
 }
 
 #endif //STUDIOSLAB_POINTER_H

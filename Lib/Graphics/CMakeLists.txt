@@ -134,6 +134,10 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Util/PlotStyleGUI.h
         Window/WindowProxy.cpp
         Window/WindowProxy.h
+        Graph/Artists/Painters/Painter.cpp
+        Graph/Artists/Painters/Painter.h
+		Graph/Artists/Painters/Colormap1DPainter.cpp
+		Graph/Artists/Painters/Colormap1DPainter.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

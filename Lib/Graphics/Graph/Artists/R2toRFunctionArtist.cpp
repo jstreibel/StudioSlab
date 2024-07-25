@@ -15,8 +15,6 @@
 
 namespace Slab::Graphics {
 
-
-
     R2toRFunctionArtist::R2toRFunctionArtist()
     : program(New<OpenGL::Shader>(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag"))
     , textureKontraptions()
@@ -134,8 +132,8 @@ namespace Slab::Graphics {
                     thingy->texture->setAntiAlias(anti_alias);
 
             {
-                auto cMap_saturationValue_f = (float) cMap_saturationValue;
-                auto cMap_sqrtKappa_f = (float) sqrt(cMap_kappaArg);
+                auto cMap_saturationValue_f = (float) uniform_frag_saturationValue;
+                auto cMap_sqrtKappa_f       = (float) sqrt(uniform_frag_kappaArg);
 
                 if (ImGui::DragFloat("##",
                                      &cMap_saturationValue_f,
@@ -144,7 +142,7 @@ namespace Slab::Graphics {
                                      1.e5f,
                                      "%.2e"))
                 {
-                    cMap_saturationValue = cMap_saturationValue_f;
+                    uniform_frag_saturationValue = cMap_saturationValue_f;
 
                     updateColorBar();
                 }
@@ -153,7 +151,7 @@ namespace Slab::Graphics {
 
                 if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
                                      1e-10, 1e10, "%.1e")) {
-                    cMap_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
+                    uniform_frag_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
 
                     updateColorBar();
                 }
@@ -196,25 +194,25 @@ namespace Slab::Graphics {
                 ImGui::EndCombo();
             }
 
-            auto category = Str("Category: ") + ColorMap::CategoryToString(cMap->getType());
+            auto category = Str("Category: ") + ColorMap::CategoryToString(uniform_frag_cMap->getType());
             ImGui::Text(category.c_str(), nullptr);
             ImGui::Text("ColorMap operations:");
             if (ImGui::Button("RGB->BRG")) {
-                *cMap = cMap->brg();
+                *uniform_frag_cMap = uniform_frag_cMap->brg();
                 updateColorBar();
             }
             ImGui::SameLine();
             if (ImGui::Button("RGB->BGR")) {
-                *cMap = cMap->bgr();
+                *uniform_frag_cMap = uniform_frag_cMap->bgr();
                 updateColorBar();
             }
             if (ImGui::Button("Inv")) {
-                *cMap = cMap->inverse();
+                *uniform_frag_cMap = uniform_frag_cMap->inverse();
                 updateColorBar();
             }
             ImGui::SameLine();
             if (ImGui::Button("Rev")) {
-                *cMap = cMap->reverse();
+                *uniform_frag_cMap = uniform_frag_cMap->reverse();
                 updateColorBar();
             }
 
@@ -238,15 +236,15 @@ namespace Slab::Graphics {
 
         if(Common::AreEqual(field_min, field_max)) field_max += 0.1;
 
-        cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
+        uniform_frag_saturationValue = Common::max(abs(field_max), abs(field_min));
 
-        if(field_min >= 0.0) symmetricMaxMin = false;
-        else symmetricMaxMin = true;
+        if(field_min >= 0.0) uniform_frag_symmetricMaxMin = false;
+        else uniform_frag_symmetricMaxMin = true;
 
-        program->setUniform("symmetric", (GLboolean ) symmetricMaxMin);
-        program->setUniform("phi_sat", (GLfloat) cMap_saturationValue);
-        colorBar->setSymmetric(symmetricMaxMin);
-        colorBar->setPhiSaturation(cMap_saturationValue);
+        program->setUniform("symmetric", (GLboolean ) uniform_frag_symmetricMaxMin);
+        program->setUniform("phi_sat", (GLfloat) uniform_frag_saturationValue);
+        colorBar->setSymmetric(uniform_frag_symmetricMaxMin);
+        colorBar->setPhiSaturation(uniform_frag_saturationValue);
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
@@ -262,8 +260,8 @@ namespace Slab::Graphics {
 
         textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
 
-        if(cMap == nullptr) {
-            if (symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->inverse().clone());
+        if(uniform_frag_cMap == nullptr) {
+            if (uniform_frag_symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->inverse().clone());
             else                 setColorMap(ColorMaps["blues"]->inverse().clone());
         }
 
@@ -276,10 +274,12 @@ namespace Slab::Graphics {
     auto R2toRFunctionArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
     void R2toRFunctionArtist::setColorMap(const Pointer<ColorMap> &colorMap) {
-        cMap = colorMap;
+        uniform_frag_cMap = colorMap;
 
-        symmetricMaxMin = cMap->getType() == ColorMap::Divergent | cMap->getType() == ColorMap::Miscellaneous;
-        program->setUniform("symmetric", symmetricMaxMin);
+        uniform_frag_symmetricMaxMin
+        = uniform_frag_cMap->getType() == ColorMap::Divergent | uniform_frag_cMap->getType() == ColorMap::Miscellaneous;
+        program->setUniform("symmetric", uniform_frag_symmetricMaxMin);
+
         // if(!symmetricMaxMin) program->setUniform("eps", 1.1f/(float)colorBar->getSamples());
         // else
         program->setUniform("eps", .0f);
@@ -293,36 +293,35 @@ namespace Slab::Graphics {
 
         updateMinMax();
 
-        std::function<Real(Real)> g⁻¹;
+        std::function<Real(Real)> g_inverse;
 
-        if(symmetricMaxMin) {
-
-            g⁻¹ = [this](Real x) {
+        if(uniform_frag_symmetricMaxMin) {
+            g_inverse = [this](Real x) {
                 x = x*(field_max-field_min)+field_min;
                 const auto s = SIGN(x);
 
-                return cMap_kappaArg*(exp(s*x) - 1);
+                return uniform_frag_kappaArg*(exp(s*x) - 1);
             };
         } else {
-            g⁻¹ = [](Real x) {
+            g_inverse = [](Real x) {
                 return x;
             };
         }
 
-        colorBar->setInverseScalingFunction(g⁻¹);
+        colorBar->setInverseScalingFunction(g_inverse);
 
-        colorBar->setColorMap(cMap);
+        colorBar->setColorMap(uniform_frag_cMap);
 
-        program->setUniform("phi_sat", (float)cMap_saturationValue);
-        program->setUniform("kappa", (float)cMap_kappaArg);
-        program->setUniform("symmetric", symmetricMaxMin);
+        program->setUniform("phi_sat", (float)uniform_frag_saturationValue);
+        program->setUniform("kappa", (float)uniform_frag_kappaArg);
+        program->setUniform("symmetric", uniform_frag_symmetricMaxMin);
         program->setUniform("colormap", colorBar->getTexture()->getTextureUnit());
 
         colorBar->setPhiMin(field_min);
         colorBar->setPhiMax(field_max);
-        colorBar->setPhiSaturation(cMap_saturationValue);
-        colorBar->setKappa(cMap_kappaArg);
-        colorBar->setSymmetric(symmetricMaxMin);
+        colorBar->setPhiSaturation(uniform_frag_saturationValue);
+        colorBar->setKappa(uniform_frag_kappaArg);
+        colorBar->setSymmetric(uniform_frag_symmetricMaxMin);
         colorBar->setMode(OpenGL::ColorBarMode::ValuesInSatRangeOnly);
 
     }
@@ -342,7 +341,7 @@ namespace Slab::Graphics {
 
         updateMinMax();
 
-        cMap_saturationValue = Common::max(abs(field_max), abs(field_min));
+        uniform_frag_saturationValue = Common::max(abs(field_max), abs(field_min));
 
         updateColorBar();
     }

@@ -21,7 +21,7 @@ namespace Slab::Core {
 
     class GLFWBackend : public GraphicBackend {
         GLFWEventTranslator glfwEventTranslator;
-        List<Reference<GLFWListener>> listeners{};
+        List<Volatile<GLFWListener>> listeners{};
 
         MouseState mouseState;
 
@@ -56,7 +56,7 @@ namespace Slab::Core {
 
         auto getGLFWWindow() -> GLFWwindow &;
 
-        void addGLFWListener(Reference<Core::GLFWListener> glfwListener, bool highPriority = false);
+        void addGLFWListener(Volatile<Core::GLFWListener> glfwListener, bool highPriority = false);
 
         static bool GetKeyState(GLFWwindow *window, int key);
 
@@ -66,7 +66,7 @@ namespace Slab::Core {
 
         static bool GetMouseButtonState(GLFWwindow *window, int button);
 
-        auto addEventListener(const Reference<GUIEventListener> &listener) -> bool override;
+        auto addEventListener(const Volatile<GUIEventListener> &listener) -> bool override;
 
         auto getMouseState() const -> MouseState override;
 

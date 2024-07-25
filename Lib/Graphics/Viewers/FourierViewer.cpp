@@ -34,11 +34,17 @@ namespace Slab::Graphics {
             kSpaceGraph->addArtist(kSpace_imagPartsArtist, 1);
             kSpaceGraph->addArtist(kSpace_realPartsArtist, 1);
 
-            kSpace_powerArtist->setLabel("|ℱₖ|²");
-            kSpace_amplitudesArtist->setLabel("|ℱₖ|");
-            kSpace_phasesArtist->setLabel("arg ℱₖ");
-            kSpace_imagPartsArtist->setLabel("ℑ ℱₖ");
-            kSpace_realPartsArtist->setLabel("ℜ ℱₖ");
+            kSpace_powerArtist      ->setLabel("|ℱₖ|²");
+            kSpace_amplitudesArtist ->setLabel("|ℱₖ|");
+            kSpace_phasesArtist     ->setLabel("arg ℱₖ");
+            kSpace_imagPartsArtist  ->setLabel("ℑ ℱₖ");
+            kSpace_realPartsArtist  ->setLabel("ℜ ℱₖ");
+
+            kSpaceGraph->addArtist(kSpace_powerArtist      ->getColorBarArtist(), 6);
+            kSpaceGraph->addArtist(kSpace_amplitudesArtist ->getColorBarArtist(), 7);
+            kSpaceGraph->addArtist(kSpace_phasesArtist     ->getColorBarArtist(), 4);
+            kSpaceGraph->addArtist(kSpace_imagPartsArtist  ->getColorBarArtist(), 5);
+            kSpaceGraph->addArtist(kSpace_realPartsArtist  ->getColorBarArtist(), 5);
 
 
         }

@@ -166,7 +166,7 @@ namespace Slab::Core {
 
     MouseState GLUTBackend::getMouseState() const { return eventTranslator->getMouseState(); }
 
-    auto GLUTBackend::addGLUTListener(Reference<GLUTListener> glutListener) -> void {
+    auto GLUTBackend::addGLUTListener(Volatile<GLUTListener> glutListener) -> void {
         glutListeners.emplace_back(glutListener);
     }
 

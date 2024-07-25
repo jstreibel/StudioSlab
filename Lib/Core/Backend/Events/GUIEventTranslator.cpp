@@ -6,7 +6,7 @@
 
 namespace Slab::Core {
 
-    bool EventTranslator::addGUIEventListener(const Reference<GUIEventListener> &guiEventListener) {
+    bool EventTranslator::addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener) {
         auto in = guiEventListener.lock();
 
         for(IN ref : guiListeners) {

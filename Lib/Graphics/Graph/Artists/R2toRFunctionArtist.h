@@ -33,13 +33,12 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        Pointer<ColorMap> cMap           = ColorMaps["BrBG"]->clone();
-        Real cMap_kappaArg                =  1; // contrast
-        Real cMap_saturationValue       =  1.1;
-        float eps                       = 0.0f;
-        bool symmetricMaxMin            = true;
+        Pointer<ColorMap> uniform_frag_cMap = ColorMaps["BrBG"]->clone();
+        Real  uniform_frag_kappaArg         =  1; //  contrast
+        Real  uniform_frag_saturationValue  =  1.1;
+        float uniform_frag_eps              = 0.0f;
+        bool  uniform_frag_symmetricMaxMin  = true;
 
-        bool showColorBar = true;
         Pointer<Graphics::OpenGL::ColorBarArtist> colorBar;
 
         Pointer<FieldTextureKontraption> textureKontraptions;

@@ -10,7 +10,7 @@ namespace Slab::Core {
 
     GUIEventListener::GUIEventListener() = default;
 
-    void GUIEventListener::addResponder(Reference<GUIEventListener> responder) {
+    void GUIEventListener::addResponder(Volatile<GUIEventListener> responder) {
         assert(responder.lock().get() != this);
 
         delegateResponders.emplace_back(responder);

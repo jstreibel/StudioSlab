@@ -15,10 +15,10 @@ namespace Slab::Core {
 
     class EventTranslator {
     protected:
-        Vector<Reference<GUIEventListener>> guiListeners;
+        Vector<Volatile<GUIEventListener>> guiListeners;
 
     public:
-        bool addGUIEventListener(const Reference<GUIEventListener> &guiEventListener);
+        bool addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener);
 
     };
 

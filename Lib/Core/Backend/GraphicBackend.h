@@ -21,11 +21,11 @@ namespace Slab::Core {
 
     protected:
 
-        Vector<Reference<GraphicsModule>> graphicModules;
+        Vector<Volatile<GraphicsModule>> graphicModules;
 
         Real r = 0, g = 0, b = 0;
     public:
-        virtual auto addEventListener(const Reference<GUIEventListener> &listener) -> bool;
+        virtual auto addEventListener(const Volatile<GUIEventListener> &listener) -> bool;
 
         virtual auto getScreenHeight() const -> Real = 0;
         virtual auto getMouseState() const -> MouseState = 0;
@@ -34,9 +34,9 @@ namespace Slab::Core {
 
         void setClearColor(Real r, Real g, Real b);
 
-        void addGraphicsModule(const Reference<GraphicsModule> &module);
+        void addGraphicsModule(const Volatile<GraphicsModule> &module);
 
-        auto getGraphicsModules() -> const Vector<Reference<GraphicsModule>> &;
+        auto getGraphicsModules() -> const Vector<Volatile<GraphicsModule>> &;
 
         void unloadAllModules();
 

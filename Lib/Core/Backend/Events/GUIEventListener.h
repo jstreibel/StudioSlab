@@ -15,10 +15,10 @@
 namespace Slab::Core {
 
     class GUIEventListener {
-        Vector<Reference<GUIEventListener>> delegateResponders;
+        Vector<Volatile<GUIEventListener>> delegateResponders;
 
     protected:
-        void addResponder(Reference<GUIEventListener> responder);
+        void addResponder(Volatile<GUIEventListener> responder);
         void removeResponder(Pointer<GUIEventListener> responder);
         bool hasResponders() const;
 

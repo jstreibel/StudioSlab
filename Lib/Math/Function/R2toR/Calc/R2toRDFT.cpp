@@ -183,6 +183,8 @@ namespace Slab::Math::R2toR {
         fix N = in.getN();
         fix M = in.getM();
 
+        if(N%2) throw Exception("Space DFT for N%2!=0 is not implemented.");
+
         fix Δt = in.getDomain().getLy();
         fix t_min = in.getDomain().yMin;
 
@@ -193,6 +195,7 @@ namespace Slab::Math::R2toR {
         fix Δk = dk*N;
         fix k_min = -Δk*.5;
 
+        fix N_dft = N/2+1;
         auto space_dft_result = New<R2toC::NumericFunction>(N, M, k_min, t_min, Δk, Δt);
 
         RtoR::NumericFunction_CPU temp_slice (N, x_min, x_max);
@@ -211,7 +214,8 @@ namespace Slab::Math::R2toR {
             for(int i=0; i<re_pts.size(); ++i){
                 Complex a = {re_pts[i].y, im_pts[i].y};
 
-                data_out[i] = a;
+                data_out[N/2 + i - 1] = a;
+                data_out[N/2 - i    ] = conj(a);
             }
         }
 

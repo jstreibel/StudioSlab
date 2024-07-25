@@ -158,12 +158,12 @@ namespace Slab::Core {
         return *systemWindow;
     }
 
-    void GLFWBackend::addGLFWListener(Reference<Core::GLFWListener> glfwListener, bool highPriority) {
+    void GLFWBackend::addGLFWListener(Volatile<Core::GLFWListener> glfwListener, bool highPriority) {
         if (highPriority) listeners.emplace_front(glfwListener);
         else listeners.emplace_back(glfwListener);
     }
 
-    bool GLFWBackend::addEventListener(const Reference<Core::GUIEventListener> &listener) {
+    bool GLFWBackend::addEventListener(const Volatile<Core::GUIEventListener> &listener) {
         int w, h;
         glfwGetWindowSize(systemWindow, &w, &h);
 

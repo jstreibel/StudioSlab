@@ -16,15 +16,15 @@ namespace Slab::Core {
     GraphicBackend::~GraphicBackend() {
     };
 
-    auto GraphicBackend::addEventListener(const Reference<GUIEventListener> &listener) -> bool {
+    auto GraphicBackend::addEventListener(const Volatile<GUIEventListener> &listener) -> bool {
         return eventTranslator->addGUIEventListener(listener);
     }
 
-    void GraphicBackend::addGraphicsModule(const Reference<GraphicsModule> &module) {
+    void GraphicBackend::addGraphicsModule(const Volatile<GraphicsModule> &module) {
         graphicModules.emplace_back(module);
     }
 
-    const Vector<Reference<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
+    const Vector<Volatile<GraphicsModule>> &GraphicBackend::getGraphicsModules() {
         return graphicModules;
     }
 

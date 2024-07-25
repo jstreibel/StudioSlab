@@ -111,7 +111,7 @@ namespace Slab::Core {
         return MouseState();
     }
 
-    bool SFMLBackend::addSFMLListener(const Reference<SFMLListener>& sfmlListener) {
+    bool SFMLBackend::addSFMLListener(const Volatile<SFMLListener>& sfmlListener) {
         if (ContainsReference(sfmlListeners, sfmlListener)) return false;
 
         sfmlListeners.emplace_back(sfmlListener);

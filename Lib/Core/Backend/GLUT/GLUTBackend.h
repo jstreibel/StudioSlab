@@ -11,7 +11,7 @@ namespace Slab::Core {
 
     class GLUTBackend : public GraphicBackend {
         Pointer<GLUTEventTranslator> eventTranslator;
-        Vector<Reference<GLUTListener>> glutListeners;
+        Vector<Volatile<GLUTListener>> glutListeners;
 
         MouseState mouseState;
     public:
@@ -47,7 +47,7 @@ namespace Slab::Core {
 
         static void reshape(int w, int h);
 
-        auto addGLUTListener(Reference<GLUTListener> glutListener) -> void;
+        auto addGLUTListener(Volatile<GLUTListener> glutListener) -> void;
 
         auto getScreenHeight() const -> Real override;
 
