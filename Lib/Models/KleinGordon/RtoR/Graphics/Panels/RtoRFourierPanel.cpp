@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
 
         kSpaceGraph->addArtist(dftFunctionArtist);
-        kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
+        // kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
 
         Graphics::Plotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),

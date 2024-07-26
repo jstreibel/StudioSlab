@@ -16,6 +16,8 @@
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
 #include "Graphics/Graph/Util/FieldTextureKontraption.h"
+#include "Graphics/Graph/Artists/Painters/Painter.h"
+#include "Graphics/Graph/Artists/Painters/Colormap1DPainter.h"
 
 namespace Slab::Graphics {
 
@@ -33,23 +35,13 @@ namespace Slab::Graphics {
 
         Unit funcUnit;
 
-        Pointer<ColorMap> uniform_frag_cMap = ColorMaps["BrBG"]->clone();
-        Real  uniform_frag_kappaArg         =  1; //  contrast
-        Real  uniform_frag_saturationValue  =  1.1;
-        float uniform_frag_eps              = 0.0f;
-        bool  uniform_frag_symmetricMaxMin  = true;
-
-        Pointer<Graphics::OpenGL::ColorBarArtist> colorBar;
-
         Pointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Pointer<OpenGL::Shader> program;
+        Pointer<Colormap1DPainter> painter;
         R2toR::Function_constptr func;
 
-        bool dirty_minmax = true;
-        Real field_min = 0.0;
-        Real field_max = 1.0;
+
 
         void updateColorBar();
         void invalidateTextureData();
@@ -67,20 +59,14 @@ namespace Slab::Graphics {
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
 
-        void setProgram(Pointer<OpenGL::Shader> program);
-        auto getProgram() -> Pointer<OpenGL::Shader>;
+        void setPainter(Pointer<Colormap1DPainter> program);
+        auto getPainter() -> Pointer<Colormap1DPainter>;
 
-        void updateMinMax();
-        void flagMinMaxAsDirty();
-
-        void setColorMap(const Pointer<ColorMap>& colorMap);
-        auto getColorBarArtist() const -> Pointer<Graphics::OpenGL::ColorBarArtist>;
+        void updateMinMax(bool force=false);
 
         void set_xPeriodicOn();
 
         auto getXHairInfo(const Point2D &XHairCoord) const -> Str override;
-
-        void adjustScale();
 
         auto getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption>;
 

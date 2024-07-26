@@ -34,6 +34,7 @@ namespace Slab::Graphics::OpenGL {
 
         void bindTextures() const;
 
+        virtual
         void use() const;
         static void remove() ;
 

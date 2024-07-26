@@ -20,7 +20,5 @@ namespace Slab::Graphics {
         }
 
         helper->uploadUpTo(t);
-
-        flagMinMaxAsDirty();
     }
 } // Graphics

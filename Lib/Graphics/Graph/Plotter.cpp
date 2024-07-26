@@ -82,9 +82,6 @@ namespace Slab::Graphics {
 
         graph->addArtist(artist, zOrder);
 
-        auto cbar_artist = artist->getColorBarArtist();
-        graph->addArtist(cbar_artist, zOrder+6);
-
         return artist;
     }
 
@@ -95,9 +92,6 @@ namespace Slab::Graphics {
         artist->setFunction(function);
 
         graph->addArtist(artist, zOrder);
-
-        auto cbar_artist = artist->getColorBarArtist();
-        graph->addArtist(cbar_artist, zOrder+6);
 
         return artist;
     }

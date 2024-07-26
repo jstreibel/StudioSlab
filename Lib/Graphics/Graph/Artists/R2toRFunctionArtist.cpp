@@ -5,21 +5,18 @@
 #include "R2toRFunctionArtist.h"
 
 #include <memory>
-#include <functional>
-// #include <string_view>
+#include <utility>
 
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
-#include "Core/Tools/Resources.h"
 #include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
 
     R2toRFunctionArtist::R2toRFunctionArtist()
-    : program(New<OpenGL::Shader>(Resources::ShadersFolder+"FlatField.vert", Resources::ShadersFolder+"FlatField.frag"))
+    : painter(New<Colormap1DPainter>())
     , textureKontraptions()
-    , colorBar(New<OpenGL::ColorBarArtist>())
     {
+
     }
 
     bool R2toRFunctionArtist::draw(const PlottingWindow &graph) {
@@ -28,30 +25,12 @@ namespace Slab::Graphics {
         if (!validTextureData)
             repopulateTextureBuffer();
 
-        colorBar->getTexture()->bind();
-        program->use();
-
-        auto graphRect = graph.getRegion().getRect();
-        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
-
-        fix xScale = 2.f / w;
-        fix xTranslate = -1.0f - 2.0f * x / w;
-        fix yScale = 2.f / h;
-        fix yTranslate = -1.0f - 2.0f * y / h;
-
-        glm::mat3x3 transform = {
-                xScale, 0.0f, 0.0f,
-                0.0f, yScale, 0.0f,
-                xTranslate, yTranslate, 1.0f
-        };
+        painter->use();
+        painter->setRegion(graph.getRegion().getRect());
 
         for(auto &thingy : textureKontraptions->blocks)
         {
-            auto texture_data  = thingy->texture;
-            texture_data->bind();
-            program->setUniform("field_data", texture_data->getTextureUnit());
-            program->setUniform("transformMatrix", transform);
-
+            painter->setFieldDataTexture(thingy->texture);
             thingy->vertexBuffer->render(GL_TRIANGLES);
         }
 
@@ -67,9 +46,6 @@ namespace Slab::Graphics {
 
         auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
-        auto x_res = discreteFunc.getN();
-        auto y_res = discreteFunc.getM();
-
         discreteFunc.getSpace().syncHost();
 
         fix max_size = OpenGL::Texture2D::GetMaxTextureSize();
@@ -83,7 +59,6 @@ namespace Slab::Graphics {
 
                 auto current_image = textureKontraptions->getBlock(col, row);
                 auto texture_data = current_image->texture;
-
 
                 fix tex_xres = texture_data->getWidth();
                 fix tex_yres = texture_data->getHeight();
@@ -121,130 +96,28 @@ namespace Slab::Graphics {
         }
 
         {
-            {
-                ImGui::Text("σ := sign(ϕ)");
-                ImGui::Text("μ(ϕ) = σ ln(|ϕ|/κ + 1)");
-                ImGui::Text("ϕ ↦ μ(ϕ)/μ(ϕₛₐₜ)");
-            }
-
-            if (ImGui::Checkbox("Anti-alias display##", &anti_alias))
-                for(auto &thingy : textureKontraptions->blocks)
+            if (ImGui::Button("Anti-alias toggle##")) {
+                anti_alias = !anti_alias;
+                for (auto &thingy: textureKontraptions->blocks)
                     thingy->texture->setAntiAlias(anti_alias);
-
-            {
-                auto cMap_saturationValue_f = (float) uniform_frag_saturationValue;
-                auto cMap_sqrtKappa_f       = (float) sqrt(uniform_frag_kappaArg);
-
-                if (ImGui::DragFloat("##",
-                                     &cMap_saturationValue_f,
-                                     cMap_saturationValue_f*5e-3f,
-                                     1.e-5f,
-                                     1.e5f,
-                                     "%.2e"))
-                {
-                    uniform_frag_saturationValue = cMap_saturationValue_f;
-
-                    updateColorBar();
-                }
-                ImGui::SameLine();
-                if (ImGui::Button("ϕₛₐₜ")) adjustScale();
-
-                if (ImGui::DragFloat("√κ", &cMap_sqrtKappa_f, (float) cMap_sqrtKappa_f * 5e-3f,
-                                     1e-10, 1e10, "%.1e")) {
-                    uniform_frag_kappaArg = cMap_sqrtKappa_f*cMap_sqrtKappa_f;
-
-                    updateColorBar();
-                }
             }
         }
 
-
-        {
-            struct PairyPair {
-                Str colormap_name;
-                Str display_text;
-            };
-            Vector<PairyPair> items;
-            for (const auto &cMapPair: ColorMaps) {
-                auto str_category = ColorMap::CategoryToString(cMapPair.second->getType());
-                auto display_text = cMapPair.first + " [" + str_category + "]";
-                items.emplace_back(cMapPair.first, display_text);
-            }
-
-            static int item_current_idx = 0; // Here we store our selection data as an index.
-            static int item_last_idx = 0;
-            Str selectedItem;
-            const char *combo_preview_value = items[item_current_idx].display_text.c_str();  // Pass in the preview value visible before opening the combo (it could be anything)
-            if (ImGui::BeginCombo(UniqueName("Colormaps").c_str(), combo_preview_value, 0)) {
-                for (int n = 0; n < items.size(); n++) {
-                    const bool is_selected = (item_current_idx == n);
-
-                    if (ImGui::Selectable(items[n].display_text.c_str(), is_selected)) {
-                        selectedItem = items[n].colormap_name;
-                        item_current_idx = n;
-                    }
-
-                    // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-                    if (is_selected)
-                        ImGui::SetItemDefaultFocus();
-                }
-                if (item_last_idx != item_current_idx)
-                    setColorMap(ColorMaps[selectedItem]->clone());
-                item_last_idx = item_current_idx;
-                ImGui::EndCombo();
-            }
-
-            auto category = Str("Category: ") + ColorMap::CategoryToString(uniform_frag_cMap->getType());
-            ImGui::Text(category.c_str(), nullptr);
-            ImGui::Text("ColorMap operations:");
-            if (ImGui::Button("RGB->BRG")) {
-                *uniform_frag_cMap = uniform_frag_cMap->brg();
-                updateColorBar();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("RGB->BGR")) {
-                *uniform_frag_cMap = uniform_frag_cMap->bgr();
-                updateColorBar();
-            }
-            if (ImGui::Button("Inv")) {
-                *uniform_frag_cMap = uniform_frag_cMap->inverse();
-                updateColorBar();
-            }
-            ImGui::SameLine();
-            if (ImGui::Button("Rev")) {
-                *uniform_frag_cMap = uniform_frag_cMap->reverse();
-                updateColorBar();
-            }
-
-            // ImGui::Checkbox("Show colorbar##", &showColorBar);
-        }
+        painter->drawGUI();
+        updateMinMax();
 
         ImGui::EndChild();
     }
 
-    void R2toRFunctionArtist::setFunction(R2toR::Function_constptr functidon, const Unit &unit) {
-        if(func == functidon){
-            funcUnit = unit;
-            return;
-        }
-
-        func = std::move(functidon);
+    void R2toRFunctionArtist::setFunction(R2toR::Function_constptr funky, const Unit &unit) {
         funcUnit = unit;
 
-        flagMinMaxAsDirty();
-        updateMinMax();
+        if(func == funky)
+            return;
 
-        if(Common::AreEqual(field_min, field_max)) field_max += 0.1;
+        func = std::move(funky);
 
-        uniform_frag_saturationValue = Common::max(abs(field_max), abs(field_min));
-
-        if(field_min >= 0.0) uniform_frag_symmetricMaxMin = false;
-        else uniform_frag_symmetricMaxMin = true;
-
-        program->setUniform("symmetric", (GLboolean ) uniform_frag_symmetricMaxMin);
-        program->setUniform("phi_sat", (GLfloat) uniform_frag_saturationValue);
-        colorBar->setSymmetric(uniform_frag_symmetricMaxMin);
-        colorBar->setPhiSaturation(uniform_frag_saturationValue);
+        updateMinMax(true);
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
@@ -255,17 +128,10 @@ namespace Slab::Graphics {
             region = {𝒟.xMin, 𝒟.xMax, 𝒟.yMin, 𝒟.yMax};
         }
 
-        auto xRes = discreteFunc.getN();
-        auto yRes = discreteFunc.getM();
+        auto x_res = discreteFunc.getN();
+        auto y_res = discreteFunc.getM();
 
-        textureKontraptions = New<FieldTextureKontraption>(xRes, yRes, region);
-
-        if(uniform_frag_cMap == nullptr) {
-            if (uniform_frag_symmetricMaxMin) setColorMap(ColorMaps["BrBG"]->inverse().clone());
-            else                 setColorMap(ColorMaps["blues"]->inverse().clone());
-        }
-
-        updateColorBar();
+        textureKontraptions = New<FieldTextureKontraption>(x_res, y_res, region);
 
         invalidateTextureData();
         repopulateTextureBuffer();
@@ -273,77 +139,13 @@ namespace Slab::Graphics {
 
     auto R2toRFunctionArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
-    void R2toRFunctionArtist::setColorMap(const Pointer<ColorMap> &colorMap) {
-        uniform_frag_cMap = colorMap;
-
-        uniform_frag_symmetricMaxMin
-        = uniform_frag_cMap->getType() == ColorMap::Divergent | uniform_frag_cMap->getType() == ColorMap::Miscellaneous;
-        program->setUniform("symmetric", uniform_frag_symmetricMaxMin);
-
-        // if(!symmetricMaxMin) program->setUniform("eps", 1.1f/(float)colorBar->getSamples());
-        // else
-        program->setUniform("eps", .0f);
-
-        updateColorBar();
-
-    }
-
-    void R2toRFunctionArtist::updateColorBar() {
-        if(func == nullptr) return;
-
-        updateMinMax();
-
-        std::function<Real(Real)> g_inverse;
-
-        if(uniform_frag_symmetricMaxMin) {
-            g_inverse = [this](Real x) {
-                x = x*(field_max-field_min)+field_min;
-                const auto s = SIGN(x);
-
-                return uniform_frag_kappaArg*(exp(s*x) - 1);
-            };
-        } else {
-            g_inverse = [](Real x) {
-                return x;
-            };
-        }
-
-        colorBar->setInverseScalingFunction(g_inverse);
-
-        colorBar->setColorMap(uniform_frag_cMap);
-
-        program->setUniform("phi_sat", (float)uniform_frag_saturationValue);
-        program->setUniform("kappa", (float)uniform_frag_kappaArg);
-        program->setUniform("symmetric", uniform_frag_symmetricMaxMin);
-        program->setUniform("colormap", colorBar->getTexture()->getTextureUnit());
-
-        colorBar->setPhiMin(field_min);
-        colorBar->setPhiMax(field_max);
-        colorBar->setPhiSaturation(uniform_frag_saturationValue);
-        colorBar->setKappa(uniform_frag_kappaArg);
-        colorBar->setSymmetric(uniform_frag_symmetricMaxMin);
-        colorBar->setMode(OpenGL::ColorBarMode::ValuesInSatRangeOnly);
-
-    }
-
     void R2toRFunctionArtist::set_xPeriodicOn() {
         for(auto &block : textureKontraptions->blocks) block->texture->set_sPeriodicOn();
     }
 
     void R2toRFunctionArtist::setLabel(Str label) {
-        colorBar->setLabel(label + " (colorbar)");
+        painter->labelUpdateEvent(label);
         Artist::setLabel(label);
-    }
-    // R2toRFunctionArtist::FieldDataTexturePtr R2toRFunctionArtist::getFieldTextureData() const { return textureData; }
-
-    void R2toRFunctionArtist::adjustScale() {
-        if(func == nullptr) return;
-
-        updateMinMax();
-
-        uniform_frag_saturationValue = Common::max(abs(field_max), abs(field_min));
-
-        updateColorBar();
     }
 
     Str R2toRFunctionArtist::getXHairInfo(const Point2D &coords) const {
@@ -385,28 +187,22 @@ namespace Slab::Graphics {
         return info;
     }
 
-    void R2toRFunctionArtist::flagMinMaxAsDirty() { dirty_minmax = true; }
-
-    void R2toRFunctionArtist::updateMinMax() {
-        if(!dirty_minmax || func == nullptr) return;
-
-        field_min = func->min();
-        field_max = func->max();
-
-        dirty_minmax = false;
+    void R2toRFunctionArtist::updateMinMax(bool force) {
+        if(painter->dirtyMinMax() || force) painter->setMinMax(func->min(), func->max());
     }
 
-    auto R2toRFunctionArtist::getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption> {
-        return textureKontraptions;
+    auto
+    R2toRFunctionArtist::getFieldTextureKontraption() const
+    -> Pointer<FieldTextureKontraption> { return textureKontraptions; }
+
+    void
+    R2toRFunctionArtist::setPainter(Pointer<Colormap1DPainter> dPainter) {
+        painter = std::move(dPainter);
     }
 
-    auto R2toRFunctionArtist::getColorBarArtist() const -> Pointer<Graphics::OpenGL::ColorBarArtist> {
-        return colorBar;
-    }
-
-    void R2toRFunctionArtist::setProgram(Pointer<OpenGL::Shader> prog) { this->program = prog; }
-
-    auto R2toRFunctionArtist::getProgram() -> Pointer<OpenGL::Shader>  { return program; }
+    auto
+    R2toRFunctionArtist::getPainter()
+    -> Pointer<Colormap1DPainter> { return painter; }
 
 
 } // Graphics

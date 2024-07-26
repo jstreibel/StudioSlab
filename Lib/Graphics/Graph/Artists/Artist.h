@@ -31,6 +31,8 @@ namespace Slab::Graphics {
         virtual bool hasGUI();
         virtual void drawGUI();
 
+        virtual Vector<Pointer<Artist>> getSubArtists();
+
         virtual const RectR &getRegion();
 
         virtual void setLabel(Str label);

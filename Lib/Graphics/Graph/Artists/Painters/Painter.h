@@ -9,7 +9,7 @@
 
 namespace Slab::Graphics {
 
-    class Painter : public OpenGL::Shader {
+    class Painter : protected OpenGL::Shader {
     public:
         Painter(const Str &vertFilename, const Str &fragFilename);
 

@@ -37,4 +37,9 @@ namespace Slab::Graphics {
 
     Str Artist::UniqueName(const Str& name) const { return name + "##" + label; }
 
+    Vector<Pointer<Artist>> Artist::getSubArtists() {
+        return {};
+    }
+
+
 }

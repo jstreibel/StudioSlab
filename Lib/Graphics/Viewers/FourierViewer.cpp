@@ -39,14 +39,6 @@ namespace Slab::Graphics {
             kSpace_phasesArtist     ->setLabel("arg ℱₖ");
             kSpace_imagPartsArtist  ->setLabel("ℑ ℱₖ");
             kSpace_realPartsArtist  ->setLabel("ℜ ℱₖ");
-
-            kSpaceGraph->addArtist(kSpace_powerArtist      ->getColorBarArtist(), 6);
-            kSpaceGraph->addArtist(kSpace_amplitudesArtist ->getColorBarArtist(), 7);
-            kSpaceGraph->addArtist(kSpace_phasesArtist     ->getColorBarArtist(), 4);
-            kSpaceGraph->addArtist(kSpace_imagPartsArtist  ->getColorBarArtist(), 5);
-            kSpaceGraph->addArtist(kSpace_realPartsArtist  ->getColorBarArtist(), 5);
-
-
         }
 
         ωSpaceArtist->setLabel("ℱₜ(ω, x)");

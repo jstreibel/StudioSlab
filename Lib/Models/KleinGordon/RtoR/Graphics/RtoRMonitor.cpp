@@ -99,7 +99,7 @@ namespace Slab::Models::KGRtoR {
         simulationHistory = simHistory;
 
         fullHistoryArtist->setFunction(simulationHistory);
-        fullHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
+        // fullHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
 
         for (const auto &dataView: dataViews)
             dataView->setSimulationHistory(simHistory, fullHistoryArtist);
@@ -109,7 +109,7 @@ namespace Slab::Models::KGRtoR {
                                                const DFTDataHistory &_dftData) {
         spaceFTHistory = sftHistory;
         fullSFTHistoryArtist->setFunction(spaceFTHistory);
-        fullSFTHistoryArtist->setColorMap(Graphics::ColorMaps["blues"]->inverse().bgr().clone());
+        // fullSFTHistoryArtist->setColorMap(Graphics::ColorMaps["blues"]->inverse().bgr().clone());
         fullSFTHistoryGraph->getAxisArtist().setHorizontalUnit(Constants::π);
         fullSFTHistoryGraph->getAxisArtist().setHorizontalAxisLabel("k");
         fullSFTHistoryGraph->getAxisArtist().setVerticalAxisLabel("t");

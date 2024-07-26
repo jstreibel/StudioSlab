@@ -138,6 +138,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Graph/Artists/Painters/Painter.h
 		Graph/Artists/Painters/Colormap1DPainter.cpp
 		Graph/Artists/Painters/Colormap1DPainter.h
+		Graph/Artists/Painters/RealValued2DPainter.cpp
+		Graph/Artists/Painters/RealValued2DPainter.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

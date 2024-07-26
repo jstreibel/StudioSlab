@@ -48,14 +48,14 @@ namespace Slab::Models {
         Viewer::setFunction(function);
 
         f_artist->setFunction(getFunction());
-        f_artist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
+        // f_artist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
     }
 
     void KGRtoR::EnergyViewer_KG::setFunctionDerivative(FuncPointer pointer) {
         KGViewer::setFunctionDerivative(pointer);
 
         dfdt_artist->setFunction(pointer);
-        dfdt_artist->setColorMap(Graphics::ColorMaps["BrBG"]->brg().inverse().clone());
+        // dfdt_artist->setColorMap(Graphics::ColorMaps["BrBG"]->brg().inverse().clone());
 
         if(isVisible() && areFunctionsConsistent()) updateEnergy();
     }
@@ -135,16 +135,16 @@ namespace Slab::Models {
         }
 
         energy_map_artist   ->setFunction(energy_func);
-        energy_map_artist   ->setColorMap(Graphics::ColorMaps["afmhot"]->clone());
+        //energy_map_artist   ->setColorMap(Graphics::ColorMaps["afmhot"]->clone());
 
         kinetic_map_artist  ->setFunction(kinetic_func);
-        kinetic_map_artist  ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().clone());
+        //kinetic_map_artist  ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().clone());
 
         grad_map_artist     ->setFunction(grad_func);
-        grad_map_artist     ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().brg().clone());
+        //grad_map_artist     ->setColorMap(Graphics::ColorMaps["afmhot"]->brg().brg().clone());
 
         potential_map_artist->setFunction(potential_func);
-        potential_map_artist->setColorMap(Graphics::ColorMaps["afmhot"]->bgr().clone());
+        //potential_map_artist->setColorMap(Graphics::ColorMaps["afmhot"]->bgr().clone());
 
         {
             auto dfdx = DynamicPointerCast<R2toR::NumericFunction>(f->diff(0));
@@ -158,7 +158,7 @@ namespace Slab::Models {
                 mf_data[i] = - dfdt_data[i] * dfdx_data[i];
 
             momentum_flow_map_artist->setFunction(momentum_flow_func);
-            momentum_flow_map_artist->setColorMap(Graphics::ColorMaps["cmocean:curl"]->clone());
+            // momentum_flow_map_artist->setColorMap(Graphics::ColorMaps["cmocean:curl"]->clone());
         }
 
         total_energies_window->reviewGraphRanges();
