@@ -14,11 +14,9 @@
 namespace Slab::Graphics {
 
     Colormap1DPainter::Colormap1DPainter()
-    : Painter(Core::Resources::ShadersFolder+"FlatField.vert",
-              Core::Resources::ShadersFolder+"FlatField.frag")
+    : R2toRPainter(Core::Resources::ShadersFolder+"FlatField.frag")
     {
         setKappa(kappa);
-        setMinMax(field_min, field_max); // sets saturation + eps_offset + symmetric max min
     }
 
     void Colormap1DPainter::drawGUI() {
@@ -104,44 +102,15 @@ namespace Slab::Graphics {
         Painter::drawGUI();
     }
 
-    void Colormap1DPainter::setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> data) {
-        field_data = std::move(data);
-        field_data->bind();
-        setUniform("field_data", field_data->getTextureUnit());
-    }
-
     void Colormap1DPainter::setColormapTexture(Pointer<OpenGL::Texture1D_Color> texture) {
         cmap_texture = std::move(texture);
         setUniform("colormap", cmap_texture->getTextureUnit());
     }
 
-    void Colormap1DPainter::setTransform(glm::mat3x3 transf) {
-        this->transform = transf;
-        setUniform("transformMatrix", transform);
-    }
-
     void Colormap1DPainter::use() const {
-        if(field_data) field_data->bind();
         if(cmap_texture) cmap_texture->bind();
 
-        Shader::use();
-    }
-
-    void Colormap1DPainter::setRegion(Rect<Real> graphRect) {
-        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
-
-        fix xScale = 2.f / w;
-        fix xTranslate = -1.0f - 2.0f * x / w;
-        fix yScale = 2.f / h;
-        fix yTranslate = -1.0f - 2.0f * y / h;
-
-        glm::mat3x3 transf = {
-                xScale, 0.0f, 0.0f,
-                0.0f, yScale, 0.0f,
-                xTranslate, yTranslate, 1.0f
-        };
-
-        setTransform(transf);
+        R2toRPainter::use();
     }
 
     void Colormap1DPainter::updateColorbar() {

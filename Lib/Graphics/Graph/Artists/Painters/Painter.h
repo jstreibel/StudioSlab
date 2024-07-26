@@ -14,6 +14,8 @@ namespace Slab::Graphics {
         Painter(const Str &vertFilename, const Str &fragFilename);
 
         virtual void drawGUI();
+
+        void use() const override;
     };
 
 } // Slab::Graphics

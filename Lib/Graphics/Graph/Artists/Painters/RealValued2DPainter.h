@@ -6,11 +6,34 @@
 #define STUDIOSLAB_REALVALUED2DPAINTER_H
 
 #include "Painter.h"
+#include "Graphics/OpenGL/Texture2D_Real.h"
+#include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
 
     class R2toRPainter : public Painter {
+        Pointer<OpenGL::Texture2D_Real> field_data;
 
+        // Vertex
+        glm::mat3x3 transform = {1,0,0,
+                                 0,1,0,
+                                 0,0,1};
+        void setTransform(glm::mat3x3);
+
+    protected:
+        explicit R2toRPainter(const Str& frag_shader_source_file);
+    public:
+        R2toRPainter() = delete;
+
+        void use() const override;
+
+        virtual void
+        setFieldDataTexture(Pointer<OpenGL::Texture2D_Real>);
+
+        virtual void setRegion(RectR);
+        virtual bool dirtyMinMax() const;
+        virtual void setMinMax(Real, Real);
+        virtual void labelUpdateEvent(const Str&);
     };
 
 } // Slab::Graphics

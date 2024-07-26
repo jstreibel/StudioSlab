@@ -140,6 +140,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Artists/Painters/Colormap1DPainter.h
 		Graph/Artists/Painters/RealValued2DPainter.cpp
 		Graph/Artists/Painters/RealValued2DPainter.h
+		Graph/Artists/Painters/HeightmapShadingPainter.cpp
+		Graph/Artists/Painters/HeightmapShadingPainter.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

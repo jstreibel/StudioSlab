@@ -38,12 +38,9 @@ namespace Slab::Graphics {
         Pointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Pointer<Colormap1DPainter> painter;
+        Pointer<R2toRPainter> painter;
         R2toR::Function_constptr func;
 
-
-
-        void updateColorBar();
         void invalidateTextureData();
         void repopulateTextureBuffer();
 
@@ -59,8 +56,8 @@ namespace Slab::Graphics {
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
 
-        void setPainter(Pointer<Colormap1DPainter> program);
-        auto getPainter() -> Pointer<Colormap1DPainter>;
+        void setPainter(Pointer<R2toRPainter> program);
+        auto getPainter() -> Pointer<R2toRPainter>;
 
         void updateMinMax(bool force=false);
 

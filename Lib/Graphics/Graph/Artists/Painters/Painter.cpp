@@ -12,4 +12,8 @@ namespace Slab::Graphics {
 
     }
 
+    void Painter::use() const {
+        Shader::use();
+    }
+
 } // Slab::Graphics

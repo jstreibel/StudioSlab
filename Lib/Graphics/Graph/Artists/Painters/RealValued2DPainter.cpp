@@ -3,8 +3,57 @@
 //
 
 #include "RealValued2DPainter.h"
+#include "Core/Tools/Resources.h"
 
-namespace Slab {
-    namespace Graphics {
-    } // Slab
-} // Graphics
+#include <utility>
+
+namespace Slab::Graphics {
+
+    R2toRPainter::R2toRPainter(const Str& frag_shader_source_file)
+    : Painter(Core::Resources::ShadersFolder+"FlatField.vert",
+              frag_shader_source_file) {
+
+    }
+
+    bool R2toRPainter::dirtyMinMax() const { return false; }
+
+    void R2toRPainter::setMinMax(Real, Real) { }
+
+    void R2toRPainter::labelUpdateEvent(const Str &) { }
+
+    void R2toRPainter::use() const {
+        if(field_data) field_data->bind();
+
+        Painter::use();
+    }
+
+    void R2toRPainter::setRegion(RectR  graphRect) {
+        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
+
+        fix xScale = 2.f / w;
+        fix xTranslate = -1.0f - 2.0f * x / w;
+        fix yScale = 2.f / h;
+        fix yTranslate = -1.0f - 2.0f * y / h;
+
+        glm::mat3x3 transf = {
+                xScale, 0.0f, 0.0f,
+                0.0f, yScale, 0.0f,
+                xTranslate, yTranslate, 1.0f
+        };
+
+        setTransform(transf);
+    }
+
+    void R2toRPainter::setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> data) {
+        field_data = std::move(data);
+        field_data->bind();
+        setUniform("field_data", field_data->getTextureUnit());
+    }
+
+    void R2toRPainter::setTransform(glm::mat3x3 transf) {
+        this->transform = transf;
+        setUniform("transformMatrix", transform);
+    }
+
+
+} // Slab::Graphics

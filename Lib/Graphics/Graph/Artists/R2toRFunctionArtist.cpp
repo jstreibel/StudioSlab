@@ -9,14 +9,17 @@
 
 #include "Graphics/Graph/PlottingWindow.h"
 #include "3rdParty/ImGui.h"
+#include "Graphics/Graph/Artists/Painters/HeightmapShadingPainter.h"
+
 
 namespace Slab::Graphics {
 
     R2toRFunctionArtist::R2toRFunctionArtist()
     : painter(New<Colormap1DPainter>())
+    // : painter(New<HeightmapShadingPainter>())
     , textureKontraptions()
     {
-
+        updateMinMax();
     }
 
     bool R2toRFunctionArtist::draw(const PlottingWindow &graph) {
@@ -188,6 +191,7 @@ namespace Slab::Graphics {
     }
 
     void R2toRFunctionArtist::updateMinMax(bool force) {
+        if(func== nullptr) return;
         if(painter->dirtyMinMax() || force) painter->setMinMax(func->min(), func->max());
     }
 
@@ -196,13 +200,13 @@ namespace Slab::Graphics {
     -> Pointer<FieldTextureKontraption> { return textureKontraptions; }
 
     void
-    R2toRFunctionArtist::setPainter(Pointer<Colormap1DPainter> dPainter) {
+    R2toRFunctionArtist::setPainter(Pointer<R2toRPainter> dPainter) {
         painter = std::move(dPainter);
     }
 
     auto
     R2toRFunctionArtist::getPainter()
-    -> Pointer<Colormap1DPainter> { return painter; }
+    -> Pointer<R2toRPainter> { return painter; }
 
 
 } // Graphics
