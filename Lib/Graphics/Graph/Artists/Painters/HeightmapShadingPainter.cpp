@@ -39,9 +39,9 @@ namespace Slab::Graphics {
     void HeightmapShadingPainter::drawGUI() {
         if(ImGui::SliderFloat("scale##", &scale, 1e-1f, 1e2f))
             setScale(scale);
-        if(ImGui::SliderAngle("light zenith##", &light_zenith_rad))
+        if(ImGui::SliderAngle("light zenith##", &light_zenith_rad, 0.0f, +90.0f))
             setLightZenith(light_zenith_rad);
-        if(ImGui::SliderAngle("light azimuth##", &light_azimuth_rad))
+        if(ImGui::SliderAngle("light azimuth##", &light_azimuth_rad, 0.0f, +360.0f))
             setLightAzimuth(light_azimuth_rad);
 
         Painter::drawGUI();

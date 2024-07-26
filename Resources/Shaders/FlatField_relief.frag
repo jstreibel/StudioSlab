@@ -30,19 +30,17 @@ vec3 normal_from_heightmap(sampler2D height_data, vec2 tex_coord, vec2 texel_siz
 }
 
 void main() {
-    // Compute the surface normal using the gradients
     vec3 normal = normal_from_heightmap(field_data, TexCoord, dr, scale);
 
-    // Compute the dot product between the normal and the light direction
-    vec3 light_dir = cos(light_zenith) * vec3(cos(light_azimuth),
-                                              sin(light_azimuth),
-                                              tan(light_zenith));
+    const float cosz = cos(light_zenith);
+    const float sinz = sin(light_zenith);
+    vec3 light_dir = vec3(cosz * cos(light_azimuth),
+                          cosz * sin(light_azimuth),
+                          sinz);
     float lightIntensity = dot(normal, light_dir);
 
-    // Clamp the light intensity to the range [0, 1]
     lightIntensity = clamp(lightIntensity, 0.0, 1.0);
 
-    // Output the color based on the light intensity
     FragColor = vec4(vec3(lightIntensity), 1.0);
     // FragColor = vec4(vec3(normal), 1.0);
 }

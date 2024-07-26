@@ -18,6 +18,7 @@
 #include "Graphics/Graph/Util/FieldTextureKontraption.h"
 #include "Graphics/Graph/Artists/Painters/Painter.h"
 #include "Graphics/Graph/Artists/Painters/Colormap1DPainter.h"
+#include "Utils/Map.h"
 
 namespace Slab::Graphics {
 
@@ -38,7 +39,8 @@ namespace Slab::Graphics {
         Pointer<FieldTextureKontraption> textureKontraptions;
         bool anti_alias=false;
 
-        Pointer<R2toRPainter> painter;
+        Map<Str, Pointer<R2toRPainter>> painters;
+        Pointer<R2toRPainter> current_painter;
         R2toR::Function_constptr func;
 
         void invalidateTextureData();

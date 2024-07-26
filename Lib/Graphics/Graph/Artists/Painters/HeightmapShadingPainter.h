@@ -11,8 +11,8 @@
 namespace Slab::Graphics {
 
     class HeightmapShadingPainter : public R2toRPainter {
-        float light_zenith_rad = 0.0;
-        float light_azimuth_rad = 0.0;
+        float light_zenith_rad = M_PI/4;
+        float light_azimuth_rad = M_PI/4;
         float scale = 1;
         Math::Real2D dr = {1,1};
 

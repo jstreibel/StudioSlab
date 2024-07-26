@@ -15,10 +15,11 @@
 namespace Slab::Graphics {
 
     R2toRFunctionArtist::R2toRFunctionArtist()
-    : painter(New<Colormap1DPainter>())
-    // : painter(New<HeightmapShadingPainter>())
+    : painters({{"Colored", New<Colormap1DPainter>()},
+                {"Heightmap", New<HeightmapShadingPainter>()}})
     , textureKontraptions()
     {
+        current_painter = painters["Colored"];
         updateMinMax();
     }
 
@@ -28,12 +29,12 @@ namespace Slab::Graphics {
         if (!validTextureData)
             repopulateTextureBuffer();
 
-        painter->use();
-        painter->setRegion(graph.getRegion().getRect());
+        current_painter->use();
+        current_painter->setRegion(graph.getRegion().getRect());
 
         for(auto &thingy : textureKontraptions->blocks)
         {
-            painter->setFieldDataTexture(thingy->texture);
+            current_painter->setFieldDataTexture(thingy->texture);
             thingy->vertexBuffer->render(GL_TRIANGLES);
         }
 
@@ -91,7 +92,7 @@ namespace Slab::Graphics {
         auto myName = getLabel();
 
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
-        ImGui::BeginChild((myName).c_str(), {0,16*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
+        ImGui::BeginChild((myName).c_str(), {0,24*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
         if (func->isDiscrete()) {
             auto &dFunc = *dynamic_cast<const R2toR::NumericFunction *>(func.get());
@@ -106,7 +107,16 @@ namespace Slab::Graphics {
             }
         }
 
-        painter->drawGUI();
+        ImGui::BeginGroup();
+        for(const auto& painter : painters) {
+            auto name = UniqueName(painter.first);
+            if (ImGui::RadioButton(name.c_str(), current_painter==painter.second))
+                current_painter = painter.second;
+        }
+        ImGui::EndGroup();
+
+        ImGui::Separator();
+        current_painter->drawGUI();
         updateMinMax();
 
         ImGui::EndChild();
@@ -147,7 +157,8 @@ namespace Slab::Graphics {
     }
 
     void R2toRFunctionArtist::setLabel(Str label) {
-        painter->labelUpdateEvent(label);
+        for(const auto& painter : painters) painter.second->labelUpdateEvent(label);
+
         Artist::setLabel(label);
     }
 
@@ -192,7 +203,8 @@ namespace Slab::Graphics {
 
     void R2toRFunctionArtist::updateMinMax(bool force) {
         if(func== nullptr) return;
-        if(painter->dirtyMinMax() || force) painter->setMinMax(func->min(), func->max());
+
+        if(current_painter->dirtyMinMax() || force) current_painter->setMinMax(func->min(), func->max());
     }
 
     auto
@@ -201,12 +213,12 @@ namespace Slab::Graphics {
 
     void
     R2toRFunctionArtist::setPainter(Pointer<R2toRPainter> dPainter) {
-        painter = std::move(dPainter);
+        current_painter = std::move(dPainter);
     }
 
     auto
     R2toRFunctionArtist::getPainter()
-    -> Pointer<R2toRPainter> { return painter; }
+    -> Pointer<R2toRPainter> { return current_painter; }
 
 
 } // Graphics
