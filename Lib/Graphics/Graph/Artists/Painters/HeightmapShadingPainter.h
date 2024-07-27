@@ -13,7 +13,10 @@ namespace Slab::Graphics {
     class HeightmapShadingPainter : public R2toRPainter {
         float light_zenith_rad = M_PI/4;
         float light_azimuth_rad = M_PI/4;
+        float light_intensity = 1.0f;
+        int mode = 1;
         float scale = 1;
+        float sigma = 1;
         Math::Real2D dr = {1,1};
 
     public:
@@ -23,7 +26,10 @@ namespace Slab::Graphics {
 
         void setLightZenith(Real rads);
         void setLightAzimuth(Real rads);
+        void setLightIntensity(Real);
+        void setSigma(Real);
         void setScale(Real);
+        void setMode(int);
         void setTexelSize(const Math::Real2D&);
 
         void setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> pointer) override;
