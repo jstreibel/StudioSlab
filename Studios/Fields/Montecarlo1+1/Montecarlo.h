@@ -18,10 +18,12 @@
 
 namespace Montecarlo {
 
-    class Input : public RtoRBCInterface {
-        RealParameter T = RealParameter(1.e1, "Temperature,T", "System temperature");
-        RealParameter E = RealParameter{1., "E", "System energy"};
-        IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
+    using namespace Slab;
+
+    class Builder : public Core::RtoRBCInterface {
+        Core::RealParameter T = RealParameter(1.e1, "Temperature,T", "System temperature");
+        Core::RealParameter E = RealParameter{1., "E", "System energy"};
+        Core::IntegerParameter n = IntegerParameter{100, "n", "Number of initial oscillons"};
 
     protected:
         auto buildOpenGLOutput() -> RtoR::Monitor * override { return new Montecarlo::Monitor(numericParams); }

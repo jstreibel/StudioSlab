@@ -12,10 +12,10 @@
 
 #define NOT_IMPLEMENTED_CLASS_METHOD throw NotImplementedException( \
         Common::getClassName(this) +                   \
-        " (" + Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__) + ")");
+        " (" + Str(__PRETTY_FUNCTION__) + " FROM FILE " + (__FILE__) + ":" + ToStr(__LINE__) + ")");
 
 #define NOT_IMPLEMENTED throw NotImplementedException( \
-        Str(__PRETTY_FUNCTION__) + " @ line " + ToStr(__LINE__));
+        Str(__FILE__) + ":" + ToStr(__LINE__));
 
 class Exception : public std::exception {
 private:

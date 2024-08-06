@@ -39,7 +39,7 @@ namespace Slab::Lost::ThermoOutput {
     const float isingSpriteSize = (WinH- 3 * _border) / 2; //2l + 3b = H => 2l = H-3b => l = (H-3b)/2
     const int _graphsWidth = int(WinW-isingSpriteSize- (Cols+1+1) * _border) / Cols;
     const int _graphsHeight = int(WinH- (Rows+1) * _border) / Rows;
-    Real GAP = 15.0; // in degrees, used to view the Dirac strings between field twists.
+    Real GAP = .0; // in degrees, used to view the Dirac strings between field twists.
 
     // user input parameters to manip T and h.
     const float delta = .01;
@@ -47,7 +47,7 @@ namespace Slab::Lost::ThermoOutput {
     const float hRange = 1.5;
 
     // Program:
-    const float T_min=T_c-0.8816, T_max = T_c+0.5;
+    const float T_min=(float)T_c-0.8816f, T_max = (float)T_c+0.5f;
     const int transientToSamplesRatio=100;
 
     // Output
@@ -64,7 +64,7 @@ namespace Slab::Lost::ThermoOutput {
 
         timer.restart();
 
-        const float isingSpriteScale = isingSpriteSize/L;
+        const float isingSpriteScale = isingSpriteSize/(float)L;
 
         ViewerUtils::LoadFont(font);
 
@@ -89,7 +89,7 @@ namespace Slab::Lost::ThermoOutput {
         }
 
 
-        sf::IntRect subWindow(2 * _border + 2 * isingSpriteSize, (int)_border, _graphsWidth, _graphsHeight);
+        sf::IntRect subWindow((int) (2 * _border + 2 * isingSpriteSize), (int)_border, _graphsWidth, _graphsHeight);
 
         float xMin=0, xMax=(float)MCSteps; u_char gray=.4*255; sf::Color dashColor(gray, gray, gray);
         auto *_mag_t_view = new GraphAndAverageCalc(subWindow, {xMin, -1.1}, {xMax, 1.1}, MCSteps, transientSize, "t", "m", true);
@@ -97,41 +97,41 @@ namespace Slab::Lost::ThermoOutput {
         mag_t_View->addHorizontalDashedLine( 1, 200, dashColor);
         mag_t_View->addHorizontalDashedLine(-1, 200, dashColor);
 
-        subWindow.top += _border + subWindow.height;
+        subWindow.top += (int)_border + subWindow.height;
         auto *_en_t_View = new GraphAndAverageCalc(subWindow, {xMin, -5}, {xMax, 0.2}, MCSteps, transientSize, "t", "e", false);
         en_t_View = _en_t_View;
         en_t_View->addHorizontalDashedLine(-1, 200, dashColor);
         en_t_View->addHorizontalDashedLine(-2, 200, dashColor);
         en_t_View->addHorizontalDashedLine(-3, 200, dashColor);
         en_t_View->addHorizontalDashedLine(-4, 200, dashColor);
-        en_t_View->addVerticalDashedLine(transientSize);
+        en_t_View->addVerticalDashedLine((float)transientSize);
 
 
-        subWindow.top += _border + subWindow.height;
+        subWindow.top += (int)_border + subWindow.height;
         auto *_corr_t_View = new Graph(subWindow, {xMin, -1.1}, {xMax, 1.1}, "t", "C(t)/C(0)");
         corr_t_View = _corr_t_View;
-        corr_t_View->addHorizontalDashedLine(-1, 200, dashColor);
-        corr_t_View->addHorizontalDashedLine(-2, 200, dashColor);
-        corr_t_View->addHorizontalDashedLine(-3, 200, dashColor);
-        corr_t_View->addHorizontalDashedLine(-4, 200, dashColor);
-        corr_t_View->addVerticalDashedLine(transientSize);
+        corr_t_View->addHorizontalDashedLine(-1.f, 200, dashColor);
+        corr_t_View->addHorizontalDashedLine(-2.f, 200, dashColor);
+        corr_t_View->addHorizontalDashedLine(-3.f, 200, dashColor);
+        corr_t_View->addHorizontalDashedLine(-4.f, 200, dashColor);
+        corr_t_View->addVerticalDashedLine((float)transientSize);
 
 
-        subWindow.top += _border + subWindow.height;
+        subWindow.top += int(_border + subWindow.height);
         T_t_View = new Graph(subWindow, {xMin, 0}, {xMax, 5.5}, "t", "T");
-        T_t_View->addHorizontalDashedLine(T_c, 100, sf::Color::Magenta);
+        T_t_View->addHorizontalDashedLine((float)T_c, 100, sf::Color::Magenta);
         T_t_View->addHorizontalDashedLine(5, 200, dashColor);
         T_t_View->addHorizontalDashedLine(4, 200, dashColor);
         T_t_View->addHorizontalDashedLine(3, 200, dashColor);
         T_t_View->addHorizontalDashedLine(2, 200, dashColor);
         T_t_View->addHorizontalDashedLine(1, 200, dashColor);
-        T_t_View->addVerticalDashedLine(transientSize);
+        T_t_View->addVerticalDashedLine((float)transientSize);
 
-        subWindow.top += _border + subWindow.height;
+        subWindow.top += int(_border + (float)subWindow.height);
         h_t_View = new Graph(subWindow, {xMin, -hRange}, {xMax, +hRange}, "t", "h");
 
-        subWindow.top = _border;
-        subWindow.left += _border + subWindow.width;
+        subWindow.top = (int)_border;
+        subWindow.left += int(_border + (float)subWindow.width);
 
         //subWindow.top += border+subWindow.height;
         accepted_t_View = new Graph(subWindow, {0, -.1}, {static_cast<float>(MCSteps), 1.1}, "t", "Rejected/total ss change");

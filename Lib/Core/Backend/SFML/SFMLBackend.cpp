@@ -12,7 +12,7 @@
 namespace Slab::Core {
 
 
-    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", sfmlEventTranslator) {
+    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", New<Core::SFMLEventTranslator>()) {
 
         sf::ContextSettings contextSettings;
         contextSettings.depthBits = 24;
@@ -27,6 +27,8 @@ namespace Slab::Core {
         window->setFramerateLimit(0);
         window->setPosition(sf::Vector2i(250, 250));
 
+        auto eventTranslator = getEventTranslator();
+        sfmlEventTranslator = DynamicPointerCast<Core::SFMLEventTranslator>(eventTranslator);
         addSFMLListener(sfmlEventTranslator);
     }
 
@@ -40,36 +42,33 @@ namespace Slab::Core {
             auto elTimeMSec = (double) timer.getElapsedTime().asMilliseconds();
             if (elTimeMSec > frameInterval)
 #endif
-            {
-                _treatEvents();
-                _render();
+            off_sync.lock();
 
-                timer.restart();
-            }
+            _treatEvents();
+            _render();
+
+            timer.restart();
 
             running = window->isOpen();
+
+            off_sync.unlock();
         }
     }
 
     void SFMLBackend::_treatEvents() {
 
         sf::Event event{};
-        bool exitEvent = false;
 
         IterateReferences(graphicModules, FuncRun(beginEvents));
 
         while (window->pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                exitEvent = true;
+            if (event.type == sf::Event::Closed) {
+                terminate();
+                break;
+            }
             else if (event.type == sf::Event::KeyPressed) {
                 sf::Keyboard::Key key = event.key.code;
-                if (key == sf::Keyboard::Escape)
-                    exitEvent = true;
-            }
-
-            if (exitEvent) {
-                window->close();
-                break;
+                if (key == sf::Keyboard::Escape);
             }
 
             IterateReferences(sfmlListeners, FuncRun(event, event));
@@ -95,7 +94,7 @@ namespace Slab::Core {
 
     auto SFMLBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
-    Real SFMLBackend::getScreenHeight() const { throw Str(__PRETTY_FUNCTION__) + " not implemented "; }
+    Real SFMLBackend::getScreenHeight() const { NOT_IMPLEMENTED_CLASS_METHOD }
 
     SFMLBackend &SFMLBackend::GetInstance() {
         // assert(Core::BackendManager::GetImplementation() == Core::SFML);
@@ -108,7 +107,7 @@ namespace Slab::Core {
     MouseState SFMLBackend::getMouseState() const {
         NOT_IMPLEMENTED_CLASS_METHOD
 
-        return MouseState();
+        // return MouseState();
     }
 
     bool SFMLBackend::addSFMLListener(const Volatile<SFMLListener>& sfmlListener) {
@@ -124,7 +123,14 @@ namespace Slab::Core {
     }
 
     void SFMLBackend::terminate() {
+        off_sync.lock();
+
         window->close();
+        clearModules();
+        clearListeners();
+        sfmlEventTranslator->clear();
+
+        off_sync.unlock();
     }
 
 }

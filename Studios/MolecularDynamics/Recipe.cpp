@@ -35,13 +35,13 @@ namespace MolecularDynamics {
 
         auto outputManager = New <Math::OutputManager> (numericConfig);
 
-        outputManager->addOutputChannel(New <Math::OutputConsoleMonitor> (numericConfig, numericConfig.getn() / 5));
+        outputManager->addOutputChannel(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
-        Core::BackendManager::GetGUIBackend().addEventListener(Core::GUIEventListener_ptr(monitor));
+        Core::BackendManager::GetGUIBackend().addAndOwnEventListener(Core::GUIEventListener_ptr(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;

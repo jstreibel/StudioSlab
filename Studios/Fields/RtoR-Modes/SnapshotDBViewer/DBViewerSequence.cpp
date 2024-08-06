@@ -118,13 +118,13 @@ namespace Modes::DatabaseViewer {
         if(ImGui::SliderInt("Current database", &current_database, 0, mashupArtists.size()-1)) {
             if(currentMeshupArtist != nullptr) {
                 mashupDisplay.removeArtist(currentMeshupArtist);
-                mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
+                // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
             }
 
             currentMashup = allMashups[current_database];
             currentMeshupArtist = mashupArtists[current_database];
             mashupDisplay.addArtist(currentMeshupArtist);
-            mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
+            // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
             computeMasses();
         }
@@ -318,7 +318,7 @@ namespace Modes::DatabaseViewer {
         mashupArtists.clear();
 
         auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
-        Pointer<Graphics::OpenGL::Shader> prog;
+        Pointer<Graphics::R2toRPainter> rPainter;
         Pointer<Graphics::OpenGL::ColorBarArtist> colorBarArtist = nullptr;
         for (auto &dbParser: dbParsers) {
             auto mashup = dbParser->buildSnapshotMashup();
@@ -328,12 +328,12 @@ namespace Modes::DatabaseViewer {
             auto artie = New<Graphics::R2toRFunctionArtist>();
             artie->setLabel(dbRootFolder);
             artie->setFunction(mashup);
-            artie->setColorMap(cmap);
-            if(prog == nullptr) {
-                prog = artie->getProgram();
+            // artie->setColorMap(cmap);
+            if(rPainter == nullptr) {
+                rPainter = artie->getPainter();
             }
             else {
-                artie->setProgram(prog);
+                artie->setPainter(rPainter);
             }
 
             allMashups.emplace_back(mashup);
@@ -348,7 +348,7 @@ namespace Modes::DatabaseViewer {
         currentMeshupArtist = mashupArtists[current_database];
         mashupDisplay.addArtist(currentMeshupArtist);
 
-        mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
+        // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
         computeMasses();
     }

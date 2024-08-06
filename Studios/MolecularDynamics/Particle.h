@@ -100,7 +100,7 @@ namespace MolecularDynamics {
         Graphics::PointContainer &second() const { return data.second; }
 
         auto replicate() const -> Pointer<EquationState> override {
-
+            NOT_IMPLEMENTED_CLASS_METHOD
         }
 
         auto setData (const EquationState &eqState) -> void            override Operation(=)
@@ -124,7 +124,7 @@ namespace MolecularDynamics {
         }
 
         EquationState &StoreAddition(const EquationState &eqState1, const EquationState &eqState2) override {
-
+            NOT_IMPLEMENTED_CLASS_METHOD
         }
 
         EquationState &StoreSubtraction(const EquationState &eqState1, const EquationState &eqState2) override {

@@ -55,7 +55,7 @@ set ( KG_SOURCES
 
 set ( XY_SOURCES
 
-	XY/SingleSim/SingleSimViewController.h XY/SingleSim/SingleSimViewController.cpp
+	XY/SingleSim/SingleSimViewController.h 		XY/SingleSim/SingleSimViewController.cpp
 
 	XY/ManyHistories/QuenchViewController.cpp
 	XY/ManyHistories/HistoryViewController.cpp

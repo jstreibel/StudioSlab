@@ -17,7 +17,7 @@ namespace Slab::Core::Resources {
 
     const auto SystemFolder = "/usr/share/fonts/";
 
-    const StrVector fonts = {"imgui/Cousine-Regular.ttf"                 //  0
+    const StrVector fonts = { "imgui/Cousine-Regular.ttf"                //  0
                              ,"imgui/DroidSans.ttf"                      //  1
                              ,"imgui/Karla-Regular.ttf"                  //  2
                              ,"imgui/ProggyClean.ttf"                    //  3

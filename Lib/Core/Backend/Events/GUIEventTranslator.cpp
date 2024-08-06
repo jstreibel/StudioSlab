@@ -20,4 +20,8 @@ namespace Slab::Core {
         return true;
     }
 
+    void EventTranslator::clear() {
+        guiListeners.clear();
+    }
+
 }

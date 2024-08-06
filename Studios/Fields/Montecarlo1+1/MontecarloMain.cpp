@@ -11,8 +11,8 @@
 
 int main(int argc, const char **argv) {
 
-    auto montecarlo = Montecarlo::Input::Ptr(new Montecarlo::Input);
-    InterfaceManager::getInstance().registerInterface(montecarlo->getInterface());
+    auto montecarlo = Slab::New<Montecarlo::Input>();
+    // Slab::Core::InterfaceManager::getInstance().registerInterface(montecarlo->getInterface());
 
     SimulationsAppRtoR prog(argc, argv,  montecarlo);
 

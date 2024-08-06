@@ -86,7 +86,7 @@ namespace Modes::DatabaseViewer {
         {
             currentFullParticularHistoryArtist = Graphics::Plotter::AddR2toRFunction(
                     Naked(fullParticularHistoryDisplay), nullptr, "");
-            currentFullParticularHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
+            // currentFullParticularHistoryArtist->setColorMap(Graphics::ColorMaps["BrBG"]->inverse().clone());
             // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
         }
 
@@ -344,7 +344,7 @@ namespace Modes::DatabaseViewer {
 
             auto &cmap = Graphics::ColorMaps["blues"];
             auto artie = Graphics::Plotter::AddR2toRFunction(Naked(allDataDisplay), fullField, dbRootFolder);
-            artie->setColorMap(cmap->clone());
+            // artie->setColorMap(cmap->clone());
 
             fullFields.emplace_back(fullField);
             fullFieldsArtist.emplace_back(artie);

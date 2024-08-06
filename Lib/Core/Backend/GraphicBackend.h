@@ -13,19 +13,24 @@ namespace Slab::Core {
 
     class GraphicBackend : public Backend {
     protected:
+        Vector<Pointer<GUIEventListener>> thingsImProprietary;
         Pointer<EventTranslator> eventTranslator;
         GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator);
 
-    public:
-        ~GraphicBackend() override;
-
-    protected:
-
         Vector<Volatile<GraphicsModule>> graphicModules;
+
+        Pointer<EventTranslator>
+        getEventTranslator() { return eventTranslator; };
+
+        virtual void clearModules();
+        virtual void clearListeners();
 
         Real r = 0, g = 0, b = 0;
     public:
+        ~GraphicBackend() override;
+
         virtual auto addEventListener(const Volatile<GUIEventListener> &listener) -> bool;
+        virtual auto addAndOwnEventListener(const Pointer<GUIEventListener> &listener) -> bool;
 
         virtual auto getScreenHeight() const -> Real = 0;
         virtual auto getMouseState() const -> MouseState = 0;

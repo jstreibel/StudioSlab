@@ -13,11 +13,18 @@ namespace Slab::Core {
     GraphicBackend::GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator)
     : Backend(name), eventTranslator(std::move(eventTranslator)) {}
 
-    GraphicBackend::~GraphicBackend() {
-    };
+    GraphicBackend::~GraphicBackend() = default;
 
     auto GraphicBackend::addEventListener(const Volatile<GUIEventListener> &listener) -> bool {
         return eventTranslator->addGUIEventListener(listener);
+    }
+
+    auto GraphicBackend::addAndOwnEventListener(const Pointer<GUIEventListener> &listener) -> bool {
+        if(!addEventListener(listener)) return false;
+
+        thingsImProprietary.push_back(listener);
+
+        return true;
     }
 
     void GraphicBackend::addGraphicsModule(const Volatile<GraphicsModule> &module) {
@@ -60,6 +67,14 @@ namespace Slab::Core {
     }
 
     void GraphicBackend::setSystemWindowTitle(Str title, int handle) { NOT_IMPLEMENTED_CLASS_METHOD }
+
+    void GraphicBackend::clearModules() {
+        graphicModules.clear();
+    }
+
+    void GraphicBackend::clearListeners() {
+        thingsImProprietary.clear();
+    }
 
 
 }

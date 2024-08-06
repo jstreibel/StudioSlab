@@ -8,9 +8,7 @@ set (SOURCES
 
 add_executable ( XY ${SOURCES} )
 target_link_libraries ( XY
-        #Slab-Utils
-        Slab-Core
-        Slab-Math
+        Slab
 
         sfml-graphics
         sfml-window

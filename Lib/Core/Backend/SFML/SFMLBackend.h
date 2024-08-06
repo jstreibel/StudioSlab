@@ -14,13 +14,14 @@
 namespace Slab::Core {
 
     class SFMLBackend : public GraphicBackend {
-        Pointer<Core::SFMLEventTranslator> sfmlEventTranslator = New<Core::SFMLEventTranslator>();
+        Pointer<Core::SFMLEventTranslator> sfmlEventTranslator=nullptr;
         Vector<Volatile<SFMLListener>> sfmlListeners;
 
         sf::RenderWindow *window;
         sf::Font font;
         sf::Text text;
 
+        Mutex off_sync;
         bool running = true;
 
         void _treatEvents();

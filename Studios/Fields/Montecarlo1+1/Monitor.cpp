@@ -15,11 +15,13 @@
 
 #define max(a, b) ((a)>(b)?(a):(b))
 
-const Color T1_color = Color(0, 1, 0);
-const Color T2_color = Color(1, 0.45, 1);
-const Color T3_color = Color(1, 1, 0);
-
 namespace Montecarlo {
+
+    using Slab::Graphics::Color;
+
+    const Color T1_color = Color(0, 1, 0);
+    const Color T2_color = Color(1, 0.45, 1);
+    const Color T3_color = Color(1, 1, 0);
 
     Monitor::Monitor(const NumericConfig &params) : RtoR::Monitor(params, -10, 10) {
         temperature1History = RtoR::ResizableNumericFunction(0, 0.1);

@@ -6,24 +6,25 @@
 #define STUDIOSLAB_MONITOR_H
 
 
-#include "Models/KleinGordon/RtoR/RtoRMonitor.h"
+#include "Models/KleinGordon/RtoR/Graphics/RtoRMonitor.h"
+#include "Math/Function/RtoR/Model/RtoRResizableNumericFunction.h"
 
 namespace Montecarlo {
-    class Monitor : public RtoR::Monitor {
+class Monitor : public Slab::Models::KGRtoR::Monitor {
         public:
-        explicit Monitor(const NumericConfig &params);
+        explicit Monitor(const Slab::Math::NumericConfig &params);
         void draw() override;
 
     private:
-        RtoR::ResizableNumericFunction temperature1History;
-        RtoR::ResizableNumericFunction temperature2History;
-        RtoR::ResizableNumericFunction temperature3History;
+        Slab::Math::RtoR::ResizableNumericFunction temperature1History;
+        Slab::Math::RtoR::ResizableNumericFunction temperature2History;
+        Slab::Math::RtoR::ResizableNumericFunction temperature3History;
 
-        GraphRtoR *mTemperaturesGraph;
-        GraphRtoR *mHistogramsGraph;
-        GraphRtoR *mHistogramsGraph2;
-        GraphRtoR *mHistogramsGraph3;
-        GraphRtoR *mHistogramsGraph4;
+        Slab::Pointer<Slab::Graphics::PlottingWindow> mTemperaturesGraph;
+        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph;
+        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph2;
+        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph3;
+        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph4;
 
     };
 }

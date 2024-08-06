@@ -19,6 +19,7 @@ namespace Slab::Core {
 
     public:
         bool addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener);
+        void clear();
 
     };
 

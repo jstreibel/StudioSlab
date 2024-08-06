@@ -3,24 +3,24 @@
 //
 
 #include "XYApp.h"
+
 #include "Core/Backend/GraphicBackend.h"
 
 #include "Core/Backend/SFML/SFMLBackend.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Backend/Program/DummyProgram.h"
 
 #include "Math/Thermal/MetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
 
 #define DONT_SELF_REGISTER false
 
-XY::App::App(int argc, const char **argv) : AppBase(argc, argv, DONT_SELF_REGISTER) {
-    getInterface()->addParameters({&N, &T, &MCSteps, &transient});
+XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT_SELF_REGISTER) {
+    interface->addParameters({&N, &T, &MCSteps, &transient});
 
     registerToManager();
 
-    Core::BackendManager::Startup(Core::SFML);
-    Core::BackendManager::LoadModule(Core::Nuklear);
+    Slab::Core::BackendManager::Startup   (Slab::Core::SFML);
+    Slab::Core::BackendManager::LoadModule(Slab::Core::Nuklear);
 
     AppBase::parseCLArgs();
 }
@@ -28,21 +28,19 @@ XY::App::App(int argc, const char **argv) : AppBase(argc, argv, DONT_SELF_REGIST
 
 int XY::App::App::run() {
 
+    auto viewControl = Slab::New<Slab::Lost::ThermoOutput::SingleSimViewController>(*N, *MCSteps, *transient);
 
-    auto *viewControl = new ThermoOutput::SingleSimViewController(*N, *MCSteps, *transient);
-
-    MetropolisAlgorithm mcCalculator(*N, *T, .0,
-                                     MetropolisAlgorithm::Ferromagnetic,
-                                     MetropolisAlgorithm::Metropolis,
-                                     MetropolisAlgorithm::Random);
+    using Algorithm = Slab::Math::MetropolisAlgorithm;
+    Slab::Math::MetropolisAlgorithm mcCalculator(*N, *T, .0,
+                                     Algorithm::InitialConditions::Ferromagnetic,
+                                     Algorithm::Dynamic::Metropolis,
+                                     Algorithm::Sweeping::Random);
 
     viewControl->setAlgorithm(&mcCalculator);
 
-    auto &backend = dynamic_cast<SFMLBackend&>(Core::BackendManager::GetBackend());
+    auto &backend = dynamic_cast<Slab::Core::SFMLBackend&>(Slab::Core::BackendManager::GetBackend());
     backend.addSFMLListener(viewControl);
-    backend.run(new DummyProgram());
-
-    delete viewControl;
+    backend.run();
 
     return 0;
 }

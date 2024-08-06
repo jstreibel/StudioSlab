@@ -23,6 +23,7 @@ namespace Slab::Core {
         switch (system) {
             case Uninitialized:
             case VTK:
+            case Headless:
                 break;
             case GLFW:
             case GLUT:
