@@ -84,6 +84,9 @@ namespace Slab::Graphics {
         auto getRegion() const -> const PlottingRegion2D&;
         auto getRegion() -> PlottingRegion2D&;
 
+        void tieRegion_xMaxMin(const PlottingWindow&);
+        void tieRegion_yMaxMin(const PlottingWindow&);
+
         void requireLabelOverlay(const Str& label, const Pointer<PlotStyle>& style) const;
 
         void setAnimationTime(Real value);

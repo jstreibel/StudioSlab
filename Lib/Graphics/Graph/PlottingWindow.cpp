@@ -226,4 +226,14 @@ namespace Slab {
         const_cast<LabelsArtist*>(&labelsArtist)->add(label, style);
     }
 
+    void Graphics::PlottingWindow::tieRegion_xMaxMin(const Graphics::PlottingWindow &other) {
+        region.setReference_xMin(other.getRegion().getReference_xMin());
+        region.setReference_xMax(other.getRegion().getReference_xMax());
+    }
+
+    void Graphics::PlottingWindow::tieRegion_yMaxMin(const Graphics::PlottingWindow &other) {
+        region.setReference_yMin(other.getRegion().getReference_yMin());
+        region.setReference_yMax(other.getRegion().getReference_yMax());
+    }
+
 }

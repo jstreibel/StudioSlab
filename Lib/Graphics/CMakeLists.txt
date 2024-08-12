@@ -142,6 +142,10 @@ add_library(${LIB_GRAPHICS} STATIC
 		Graph/Artists/Painters/RealValued2DPainter.h
 		Graph/Artists/Painters/HeightmapShadingPainter.cpp
 		Graph/Artists/Painters/HeightmapShadingPainter.h
+        Viewers/HistoryViewer.cpp
+        Viewers/HistoryViewer.h
+		Viewers/ModesHistoryViewer.cpp
+		Viewers/ModesHistoryViewer.h
 
 )
 target_link_libraries(${LIB_GRAPHICS}

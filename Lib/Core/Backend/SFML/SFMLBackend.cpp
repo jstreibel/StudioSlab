@@ -12,7 +12,7 @@
 namespace Slab::Core {
 
 
-    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", New<Core::SFMLEventTranslator>()) {
+    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", (sfmlEventTranslator=New<Core::SFMLEventTranslator>())) {
 
         sf::ContextSettings contextSettings;
         contextSettings.depthBits = 24;
@@ -28,7 +28,7 @@ namespace Slab::Core {
         window->setPosition(sf::Vector2i(250, 250));
 
         auto eventTranslator = getEventTranslator();
-        sfmlEventTranslator = DynamicPointerCast<Core::SFMLEventTranslator>(eventTranslator);
+        // sfmlEventTranslator = DynamicPointerCast<Core::SFMLEventTranslator>(eventTranslator);
         addSFMLListener(sfmlEventTranslator);
     }
 
