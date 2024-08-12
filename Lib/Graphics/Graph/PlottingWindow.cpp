@@ -236,4 +236,8 @@ namespace Slab {
         region.setReference_yMax(other.getRegion().getReference_yMax());
     }
 
+    void Graphics::PlottingWindow::removeArtists(const Vector<Graphics::Artist_ptr> &artists) {
+        for(const auto& artist : artists) removeArtist(artist);
+    }
+
 }

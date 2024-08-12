@@ -16,12 +16,14 @@ namespace Slab::Graphics {
 
     ModesHistoryViewer::ModesHistoryViewer(const Pointer<GUIWindow> &guiWindow)
     : Viewer(guiWindow, nullptr)
+    , curves_artists(0)
     {
         xft_history_window = New<PlottingWindow>("Space DFT");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window);
 
         modes_window = New<PlottingWindow>("Modes");
+        modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
         addWindow(modes_window);
     }
 
@@ -32,12 +34,43 @@ namespace Slab::Graphics {
         fix dk = (float) (M_PI/getFunction()->getDomain().getLx());
         fix k_min = dk;
         fix k_max = dk * (float)getFunction()->getN();
-        if(ImGui::SliderFloat("base mode", &base_mode, k_min, k_max)) {
+        if(ImGui::SliderFloat("base mode##slider", &base_mode, k_min, k_max)
+        |  ImGui::DragFloat("base mode##drag", &base_mode, 1.e-4, k_min, k_max)
+        |  ImGui::SliderInt("n modes##modes viewer", &n_modes, 1, 15))
+            setupModes();
 
-        }
         endGUI();
 
         WindowPanel::draw();
+    }
+
+    void ModesHistoryViewer::setupModes() {
+        xft_history_window->removeArtists(curves_artists);
+        curves_artists.clear();
+        modes_artist->clearSections();
+
+        Vector<Pointer<Math::RtoR2::StraightLine>> sections;
+        fix t_0 = xFourierTransform->y0;
+        fix t_f = t_0 + xFourierTransform->Ly;
+
+        auto styles_begin = PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        auto styles_end = PlotThemeManager::GetCurrent()->funcPlotStyles.end();
+        auto style = styles_begin;
+
+        for(int i=0; i<n_modes; ++i) {
+            fix n = 2*i+1;
+
+            auto section = New<Math::RtoR2::StraightLine>(Real2D{base_mode*float(n), t_0},
+                                           Real2D{base_mode*float(n), t_f},
+                                           t_0, t_f);
+
+            modes_artist->addSection(section, *style);
+            auto curve_artist = Plotter::AddCurve(xft_history_window, section, *style, Str("mode ") + ToStr(n), 1);
+
+            curves_artists.emplace_back(curve_artist);
+
+            if (++style == styles_end) style = styles_begin;
+        }
     }
 
     void ModesHistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
@@ -57,9 +90,9 @@ namespace Slab::Graphics {
         xft_amplitudes = Math::Convert(xFourierTransform, Math::R2toC_to_R2toR_Mode::Magnitude);
 
         xft_amplitudes_artist->setFunction(xft_amplitudes);
-        // dft_section_artist->setFunction(xft_amplitudes);
+        modes_artist->setFunction(xft_amplitudes);
 
-        auto domain = xft_amplitudes->getDomain();
+        // auto domain = xft_amplitudes->getDomain();
         // if(dft_section == nullptr) {
         //     dft_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
         //                                            Real2D{domain.xMax, domain.yMin},
@@ -73,6 +106,8 @@ namespace Slab::Graphics {
         // }
 
         // dft_section_artist->setSamples(func->getN()*oversampling);
+
+        setupModes();
     }
 
     void ModesHistoryViewer::notifyBecameVisible() {

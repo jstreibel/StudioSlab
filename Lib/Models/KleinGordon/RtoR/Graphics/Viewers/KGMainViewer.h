@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KGMAINVIEWER_H
 #define STUDIOSLAB_KGMAINVIEWER_H
 
-#include "Graphics/Viewers/MainViewer.h"
+#include "Graphics/DataViewers/MainViewer.h"
 #include "KGViewer.h"
 
 namespace Slab::Models::KGRtoR {

@@ -30,6 +30,7 @@ namespace Slab::Graphics {
         auto getFunction() const -> R2toR::Function_constptr;
 
         void addSection(const RtoR2::ParametricCurve_ptr&, PlotStyle);
+        void clearSections();
 
         bool hasGUI() override;
 

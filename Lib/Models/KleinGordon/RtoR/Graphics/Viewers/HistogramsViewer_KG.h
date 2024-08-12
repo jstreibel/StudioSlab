@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_HISTOGRAMSVIEWER_KG_H
 #define STUDIOSLAB_HISTOGRAMSVIEWER_KG_H
 
-#include "Graphics/Viewers/Viewer.h"
+#include "Graphics/DataViewers/Viewers/Viewer.h"
 #include "Graphics/Graph/PlottingWindow.h"
 
 #include "KGViewer.h"

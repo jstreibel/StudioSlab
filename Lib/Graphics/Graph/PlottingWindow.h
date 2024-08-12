@@ -70,6 +70,7 @@ namespace Slab::Graphics {
 
         void addArtist(const Artist_ptr& pArtist, zOrder_t zOrder=0);
         bool removeArtist(const Artist_ptr& pArtist);
+        void removeArtists(const Vector<Artist_ptr> &artists);
 
         AxisArtist &getAxisArtist();
 

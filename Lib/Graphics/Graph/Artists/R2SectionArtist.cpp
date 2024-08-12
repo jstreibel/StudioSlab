@@ -70,4 +70,8 @@ namespace Slab::Graphics {
             }
         }
     }
+
+    void R2SectionArtist::clearSections() {
+        sections.clear();
+    }
 } // Graphics

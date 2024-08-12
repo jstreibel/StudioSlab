@@ -11,7 +11,7 @@
 #include "Graphics/Window/WindowProxy.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 
-#include "Viewer.h"
+#include "Graphics/DataViewers/Viewers/Viewer.h"
 
 namespace Slab::Graphics {
 

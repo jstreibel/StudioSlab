@@ -12,6 +12,7 @@
 
 #include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
 #include "Graphics/Graph/Artists/R2SectionArtist.h"
+#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
 
 namespace Slab::Graphics {
 
@@ -20,13 +21,18 @@ namespace Slab::Graphics {
         Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;
 
         Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
+        Pointer<R2SectionArtist> modes_artist = nullptr;
+
+        Vector<Pointer<Artist>> curves_artists;
 
         Pointer<PlottingWindow> xft_history_window;
         Pointer<PlottingWindow> modes_window;
 
+        int n_modes = 4;
         float base_mode = M_PI;
 
         void computeTransform();
+        void setupModes();
     public:
         explicit ModesHistoryViewer(const Pointer<GUIWindow> &);
 

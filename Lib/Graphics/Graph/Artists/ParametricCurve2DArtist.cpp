@@ -17,6 +17,8 @@ namespace Slab::Graphics {
     }
 
     bool ParametricCurve2DArtist::draw(const PlottingWindow &d) {
+        if(curve == nullptr) return false;
+
         auto pointSet = curve.get()->renderToPointSet();
 
         return OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
@@ -24,7 +26,7 @@ namespace Slab::Graphics {
     }
 
     void ParametricCurve2DArtist::setCurve(Slab::Pointer<RtoR2::ParametricCurve> curve) {
-        this->curve = curve;
+        this->curve = std::move(curve);
     }
 
 
