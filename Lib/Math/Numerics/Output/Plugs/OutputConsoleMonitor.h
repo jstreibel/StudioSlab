@@ -13,13 +13,13 @@ namespace Slab::Math {
         const Real maxT;
 
     public:
-        OutputConsoleMonitor(const NumericConfig &params);
+        explicit OutputConsoleMonitor(const NumericConfig &params);
 
     public:
         bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
 
     protected:
-        virtual void handleOutput(const OutputPacket &outputInfo);
+        virtual void handleOutput(const OutputPacket &outputInfo) override;
     };
 
 

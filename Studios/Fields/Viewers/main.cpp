@@ -27,6 +27,7 @@
 #include "Graphics/Graph/PlotThemeManager.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/HistoryViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 
@@ -61,6 +62,7 @@ public:
         auto gui_window = viewer->getGUIWindow();
         viewer->addViewer(Slab::New<Graphics::FourierViewer>(gui_window));
         viewer->addViewer(Slab::New<Graphics::HistoryViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistoryViewer>(gui_window));
         viewer->addViewer(Slab::New<Graphics::ModesHistoryViewer>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(gui_window));

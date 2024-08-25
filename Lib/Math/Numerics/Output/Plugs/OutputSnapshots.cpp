@@ -63,7 +63,7 @@ namespace Slab::Math {
 
                 /*
                 CustomStringSeparatedSOF formatter(", ");
-                file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() /*<< ", " *//* << "\"t\": "
+                file << "# {" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() *//*<< ", " *//* << "\"t\": "
                      << t
                      << ", \"phi\": (" << formatter(*spaceData.first) << ")"
                      << ", \"dPhiDt\": (" << formatter(*spaceData.second) << ")}";

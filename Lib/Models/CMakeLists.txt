@@ -37,20 +37,25 @@ set ( KG_SOURCES
         KleinGordon/R2toR/EquationState.cpp
 
         LangevinKleinGordon/LangevinKGSolver.h	        LangevinKleinGordon/LangevinKGSolver.cpp
+
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp
 		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
+
 		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h
+
         KleinGordon/RtoR/Output/CenterTimeDFTOutput.cpp
         KleinGordon/RtoR/Output/CenterTimeDFTOutput.h
+
 		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.cpp
 		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h
 		KleinGordon/RtoR/Graphics/Viewers/KGViewer.cpp
 		KleinGordon/RtoR/Graphics/Viewers/KGViewer.h
         KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.cpp
         KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h
+		KleinGordon/RtoR/Graphics/Viewers/HistoryViewer_KG.cpp	KleinGordon/RtoR/Graphics/Viewers/HistoryViewer_KG.h
 )
 
 set ( XY_SOURCES

@@ -27,7 +27,7 @@ namespace Slab::Math {
                   dPhi(nullptr),
                   _phi(nullptr),
                   _phiTemp(nullptr)
-                  /*dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE> *) builder.getBoundary()),
+                  *//*dPhi((const Base::BoundaryConditions<FIELD_STATE_TYPE> *) builder.getBoundary()),
                   _phi((FIELD_STATE_TYPE *) builder.newFieldState()),
                   _phiTemp((FIELD_STATE_TYPE *) builder.newFieldState()) *//*
                    {

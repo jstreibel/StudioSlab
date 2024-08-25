@@ -8,7 +8,7 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
-
+#include "Utils/Compiler.h"
 
 namespace Slab::Core {
 
@@ -16,6 +16,8 @@ namespace Slab::Core {
             : InterfaceOwner("App", 100, doRegister) {
         CLArgsManager::Initialize(argc, argv);
 
+        Log::Info() << "Compiler: " << USED_CXX_COMPILER << Log::Flush;
+        // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
         Log::Info() << "PWD: " << Common::GetPWD() << Log::Flush;
     }
 

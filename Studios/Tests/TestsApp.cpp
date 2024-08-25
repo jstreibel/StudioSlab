@@ -40,7 +40,6 @@ int TestsApp::run() {
     if(true) {
         Core::BackendManager::Startup(Core::GLFW);
 
-
         if(true)      test = New<Tests::VShapeExpansionTest>();
         else if(true)  test = New<Tests::Graph3DTests>();
         else if(true)  test = New<Tests::ModernGLTests>();

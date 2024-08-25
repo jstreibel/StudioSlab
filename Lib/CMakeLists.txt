@@ -22,7 +22,7 @@ target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}
         Slab-Graphics
         Slab-Models
 )
-target_compile_options(${STUDIOSLAB_BASE_LIB_NAME} PRIVATE -fmodules-ts)
+#target_compile_options(${STUDIOSLAB_BASE_LIB_NAME} PRIVATE -fmodules-ts)
 
 if (QUADMATH_LIB)
     message(STATUS "Found quadmath library: ${QUADMATH_LIB}")

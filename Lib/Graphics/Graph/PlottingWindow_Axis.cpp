@@ -49,6 +49,7 @@ namespace Slab {
             }
         }
 
+        bool unaffected = true;
         for (auto &a: content) {
             auto &artist = a.second;
 
@@ -56,15 +57,16 @@ namespace Slab {
 
             auto aRegion = artist->getRegion();
 
-            if (aRegion.xMax > newRegion.xMax) newRegion.xMax = aRegion.xMax;
-            if (aRegion.xMin < newRegion.xMin) newRegion.xMin = aRegion.xMin;
-            if (aRegion.yMax > newRegion.yMax) newRegion.yMax = aRegion.yMax;
-            if (aRegion.yMin < newRegion.yMin) newRegion.yMin = aRegion.yMin;
+            if (aRegion.xMax > newRegion.xMax){ newRegion.xMax = aRegion.xMax; unaffected = false; }
+            if (aRegion.xMin < newRegion.xMin){ newRegion.xMin = aRegion.xMin; unaffected = false; }
+            if (aRegion.yMax > newRegion.yMax){ newRegion.yMax = aRegion.yMax; unaffected = false; }
+            if (aRegion.yMin < newRegion.yMin){ newRegion.yMin = aRegion.yMin; unaffected = false; }
         }
 
         if(Common::AreEqual(newRegion.xMin, newRegion.xMax)) newRegion.xMax = newRegion.xMin+1;
         if(Common::AreEqual(newRegion.yMin, newRegion.yMax)) newRegion.yMax = newRegion.yMin+1;
 
+        if(!unaffected)
         {
             auto currStyle = PlotThemeManager::GetCurrent();
             auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getViewport());

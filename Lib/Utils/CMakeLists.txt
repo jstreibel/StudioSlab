@@ -35,6 +35,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
             TypesGPU.h
             Zip.h
             Map.h
+            Compiler.h
     )
 endif ()
 

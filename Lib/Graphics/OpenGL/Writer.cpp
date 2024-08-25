@@ -12,8 +12,77 @@
 #include "Core/Tools/Resources.h"
 // #define DEBUG_SHOW_ATLAS_TEXTURE
 
+#include <string>
+#include <map>
+#include <regex>
+
 
 namespace Slab {
+
+    Str parse_special(const Str& input) {
+        // Define a regex to find the sequences starting with ^
+        std::regex sequence_regex(R"(\^.)");
+        std::string output;
+
+        // Iterator for the regex matches
+        std::sregex_iterator current_match(input.begin(), input.end(), sequence_regex);
+        std::sregex_iterator last_match; // end iterator
+
+        // Variable to track the last position in the input string
+        std::size_t last_pos = 0;
+
+        while (current_match != last_match) {
+            // Get the match position
+            std::smatch match = *current_match;
+            std::size_t match_pos = match.position();
+
+            // Append the part of the input string before the match
+            output += input.substr(last_pos, match_pos - last_pos);
+
+            // Get the matched sequence
+            std::string key = match.str();
+
+            // Perform the substitution if the key exists in the map
+            auto it = char_map.find(key);
+            if (it != char_map.end()) {
+                output += it->second; // Append the substitution
+            } else {
+                output += key; // Append the original sequence if no substitution found
+            }
+
+            // Update last position
+            last_pos = match_pos + match.length();
+
+            // Move to the next match
+            current_match++;
+        }
+
+        // Append the rest of the input string after the last match
+        output += input.substr(last_pos);
+
+        return output;
+    }
+
+    Str parse_text(Str input) {
+        // Define the regular expression for the delimiters
+        //std::regex delimiter(R"(\{|\})");
+        std::regex delimiter(R"($)");
+
+        // Tokenize the string based on the delimiters
+        std::sregex_token_iterator iter(input.begin(), input.end(), delimiter, -1);
+        std::sregex_token_iterator end;
+
+        Str text;
+        bool is_within = false;
+        while (iter != end) {
+            if(is_within) text += parse_special(*iter++);
+            else text += *iter++;
+
+            is_within = !is_within;
+        }
+
+        return text;
+    }
 
     const Str shaderDir = Core::Resources::ShadersFolder + "rougier/";
 
@@ -132,7 +201,7 @@ namespace Slab {
     }
 
     void Graphics::Writer::write(const Str &text, Point2D pen, Color color) {
-        setBufferText(text, pen, color);
+        setBufferText(parse_text(text), pen, color);
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         drawBuffer();

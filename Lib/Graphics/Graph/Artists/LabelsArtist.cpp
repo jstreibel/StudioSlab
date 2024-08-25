@@ -76,7 +76,7 @@ namespace Slab::Graphics {
                 dy = -.060;
         auto xGap = 0.015,
                 yGap = -.025;
-        auto colWidth = 0.5;
+        auto colWidth = 1./Real(2*cols-1);
         auto xMin_label = .100 + (colWidth + xGap + dx) * float(col),
                 xMax_label = xMin_label + dx,
                 yMin_label = .975 + (yGap + dy) * float(row),

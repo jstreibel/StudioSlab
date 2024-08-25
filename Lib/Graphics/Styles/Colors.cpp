@@ -14,9 +14,7 @@ namespace Slab::Graphics {
     Color Black = {0,0,0,1};
     Color Red = {1,0,0,1};
 
-    Color::Color(): r(r), g(g), b(b), a(a) {
-
-    }
+    Color::Color() = default;
 
     Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 

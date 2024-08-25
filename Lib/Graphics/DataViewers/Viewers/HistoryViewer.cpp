@@ -17,11 +17,11 @@ namespace Slab::Graphics {
     HistoryViewer::HistoryViewer(const Pointer<GUIWindow> &gui_window, const Pointer<R2toR::NumericFunction> &function)
     : Viewer(gui_window, function)
     {
-        auto history_window = New<PlottingWindow>("Function");
+        history_window = New<PlottingWindow>("Function");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         addWindow(history_window);
 
-        auto xft_history_window = New<PlottingWindow>("Space DFT");
+        xft_history_window = New<PlottingWindow>("Space DFT");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window, true);
 
@@ -53,8 +53,12 @@ namespace Slab::Graphics {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[0];
-            section_artist->addSection(function_section, style);
+            auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone();
+            style->filled = false;
+            section_artist->addSection(function_section, style, "");
+
+            auto history_section_artist = Plotter::AddCurve(history_window, function_section, *style, "History section");
+            xft_history_window->addArtist(history_section_artist);
         } else {
             function_section->getx0().x = domain.xMin;
             function_section->getr().x = domain.getLx();
@@ -91,7 +95,7 @@ namespace Slab::Graphics {
                                                    Real2D{domain.xMax, domain.yMin},
                                                    domain.xMin, domain.xMax);
             auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[1];
-            dft_section_artist->addSection(dft_section, style);
+            dft_section_artist->addSection(dft_section, style.clone(), "dft section");
         } else {
             dft_section->getx0().x = domain.xMin;
             dft_section->getr().x = domain.getLx();
@@ -112,7 +116,8 @@ namespace Slab::Graphics {
         auto current_t = (float)curr_t;
         if(ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)){
             curr_t = (Real)current_t;
-            function_section->getr().y = dft_section->getr().y = curr_t;
+            function_section->getx0().y = dft_section->getx0().y = curr_t;
+            // function_section->getr().y = dft_section->getr().y = curr_t;
         }
 
         if(ImGui::SliderInt("oversampling", &oversampling, 1, 16)) {

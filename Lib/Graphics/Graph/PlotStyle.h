@@ -40,6 +40,8 @@ namespace Slab::Graphics {
                            Color fillColor=Nil,
                            float thickness=1.3);
 
+        Pointer<PlotStyle> clone();
+        
         PlotStyle permuteColors(bool odd=false) const;
 
         Color lineColor;

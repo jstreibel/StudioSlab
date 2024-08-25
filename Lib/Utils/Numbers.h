@@ -8,7 +8,7 @@
 #include "NativeTypes.h"
 
 #include <complex>
-#include <quadmath.h>
+// #include <quadmath.h>
 
 namespace Slab {
 
@@ -32,6 +32,9 @@ namespace Slab {
     typedef std::size_t Index;
     typedef std::size_t Resolution;
     typedef int_least64_t BigInt;
+
+    const Real Infinity = std::numeric_limits<double>::infinity();
+
 
     union DoubleAccess {
         double val;

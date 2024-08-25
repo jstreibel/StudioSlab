@@ -276,9 +276,9 @@ namespace Slab::Graphics {
         Color graph1b = red;
         Color graph1c = {.25 ,.25 ,.25 ,1};
 
-        Color graph1a_fill = {graph1a.rgb(), 1/3.};
-        Color graph1b_fill = {graph1b.rgb(), 0.1};
-        Color graph1c_fill = {graph1c.rgb(), .25};
+        Color graph1a_fill = {graph1a.rgb(), 1/3.f};
+        Color graph1b_fill = {graph1b.rgb(), 0.1f};
+        Color graph1c_fill = {graph1c.rgb(), .25f};
 
         Vector<PlotStyle> graphs = {
                 PlotStyle{graph1a, LinePrimitive::Solid, true, graph1a_fill, 3},

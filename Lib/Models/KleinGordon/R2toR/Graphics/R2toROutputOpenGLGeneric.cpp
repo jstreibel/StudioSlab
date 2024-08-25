@@ -26,7 +26,7 @@ namespace Slab::Math {
 
 
         mSectionGraph.addArtist(Slab::Naked(sectionArtist));
-        sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0]);
+        sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone(), "section 1");
 
         addWindow(Slab::Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }

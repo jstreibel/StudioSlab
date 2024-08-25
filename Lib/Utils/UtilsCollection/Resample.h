@@ -73,7 +73,7 @@ Vector<double> resample(const Vector<double>& input, double input_rate, double o
     return output;
 }
 
-/*
+
 Vector<int> grow(const Vector<int>& v, std::size_t k)
 {
     if (v.empty()) {

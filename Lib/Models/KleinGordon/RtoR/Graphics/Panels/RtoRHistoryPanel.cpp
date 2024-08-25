@@ -126,7 +126,7 @@ namespace Slab::Models::KGRtoR {
 
         auto sectionArtist = Graphics::Plotter::AddR2Section(xSection, simulationHistory, "ϕ");
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
-        sectionArtist->addSection(xLine, style);
+        sectionArtist->addSection(xLine, style.clone(), "ϕ(0,x)");
 
         xSpaceHistory->addArtist(simHistoryGraph);
     }
@@ -140,7 +140,7 @@ namespace Slab::Models::KGRtoR {
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
         style.primitive = VerticalLines;
         style.filled = false;
-        sectionArtist->addSection(kLine, style);
+        sectionArtist->addSection(kLine, style.clone(), "");
         sectionArtist->setSamples(sftHistory->getN());
 
         kSpaceHistory->addArtist(sftHistoryGraph);

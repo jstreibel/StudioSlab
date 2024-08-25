@@ -68,7 +68,7 @@ namespace Slab::Core {
             }
             else if (event.type == sf::Event::KeyPressed) {
                 sf::Keyboard::Key key = event.key.code;
-                if (key == sf::Keyboard::Escape);
+                // if (key == sf::Keyboard::Escape);
             }
 
             IterateReferences(sfmlListeners, FuncRun(event, event));

@@ -34,7 +34,6 @@ struct Link {
 /**
  * An Arrow is a Link with direction between two Mathematical Objects.
  */
- /*
 template <class A, class B>
 struct Arrow : private Link<A, B> {
 public:
@@ -52,11 +51,11 @@ public:
  * @tparam ObjectIPointTo
  */
 
- /*
 #include "Set.h"
 // Some forwards:
 template<class ObjectIPointTo> struct MOWA; // A MOWA is Mathematical Object With Arrows/
 
+/*
 class ObjectIPointTo;
 typedef Arrow<MOWA<ObjectIPointTo*>*, ObjectIPointTo> ArrowFromMe;
 template<class ObjectIPointTo>
@@ -69,20 +68,21 @@ struct MOWA : public Set<ArrowFromMe> {
 private:
     std::set<ArrowFromMe> arrows;
 };
-
+*/
 
 /**
  * A MOWA that points to another MOWA is an object that has a Category (because the definition of category is a set of
  * linked MOWA).
  *
  * I'll call it a MOWALink
- *//*
+ */
+ /*
 class MOWALink;
 
 class MOWALink : MOWA<MOWALink> {
 
 };
- */
+*/
 
 
 #endif //STUDIOSLAB_MATHOBJECT_H

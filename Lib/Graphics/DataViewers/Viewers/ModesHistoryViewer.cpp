@@ -24,6 +24,7 @@ namespace Slab::Graphics {
 
         modes_window = New<PlottingWindow>("Modes");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
+        modes_artist->setAffectGraphRanges(true);
         addWindow(modes_window);
     }
 
@@ -35,7 +36,7 @@ namespace Slab::Graphics {
         fix k_min = dk;
         fix k_max = dk * (float)getFunction()->getN();
         if(ImGui::SliderFloat("base mode##slider", &base_mode, k_min, k_max)
-        |  ImGui::DragFloat("base mode##drag", &base_mode, 1.e-4, k_min, k_max)
+        |  ImGui::DragFloat("base mode##drag", &base_mode, 1.e-4f*base_mode, k_min, k_max)
         |  ImGui::SliderInt("n modes##modes viewer", &n_modes, 1, 15))
             setupModes();
 
@@ -64,13 +65,17 @@ namespace Slab::Graphics {
                                            Real2D{base_mode*float(n), t_f},
                                            t_0, t_f);
 
-            modes_artist->addSection(section, *style);
-            auto curve_artist = Plotter::AddCurve(xft_history_window, section, *style, Str("mode ") + ToStr(n), 1);
+            auto name = Str("k=") + ToStr(n) + "k₀";
+
+            modes_artist->addSection(section, style->clone(), name);
+            auto curve_artist = Plotter::AddCurve(xft_history_window, section, *style, name, 1);
 
             curves_artists.emplace_back(curve_artist);
 
             if (++style == styles_end) style = styles_begin;
         }
+
+        modes_window->reviewGraphRanges();
     }
 
     void ModesHistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {

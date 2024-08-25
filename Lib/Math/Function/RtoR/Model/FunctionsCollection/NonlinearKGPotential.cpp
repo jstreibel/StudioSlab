@@ -26,7 +26,9 @@ namespace Slab::Math::RtoR {
 
         fix exponent = t1+t2+t3+t4+t5;
 
-        return expf128(exponent);
+        // TODO: make exp128 work with Intel compilers
+        // return expf128(exponent);
+        return exp(exponent);
     }
 
     VPrime::VPrime

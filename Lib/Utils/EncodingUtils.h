@@ -6,8 +6,11 @@
 #define STUDIOSLAB_ENCODINGUTILS_H
 
 #include "Types.h"
+#include <map>
 
 namespace Slab {
+
+    extern std::map<Str, Str> char_map;
 
     extern const char *glyphsToLoad;
 

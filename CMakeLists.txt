@@ -54,11 +54,16 @@ find_package( VTK COMPONENTS
 message(STATUS "VTK includes: ${VTK_USE_FILE}")
 message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
 
-
 if( STUDIOSLAB_OMP_SUPPORT )
 	find_package(OpenMP REQUIRED)
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fopenmp")
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -fopenmp")
+	if( CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM" )
+		set(OMP_FLAG "-qopenmp")
+	else()
+		set(OMP_FLAG "-fopenmp")
+	endif ()
+
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OMP_FLAG}")
+	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${OMP_FLAG}")
 
 	message(STATUS "StudioSlab OpenMP support is ENABLED."  )
 else()
@@ -107,18 +112,28 @@ endif ()
 
 
 if(STUDIOSLAB_FAST_COMPILE)
-	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0")
-	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O0")
-	message(STATUS "Using -O0 flag (for fast compile)")
+	#set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O0 -Rno-debug-disables-optimization")
+	#set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O0 -Rno-debug-disables-optimization")
+	#message(STATUS "Using -O0 flag (for fast compile)")
 
 elseif(CMAKE_BUILD_TYPE STREQUAL Release)
-		set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3")
-		set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
-		message(STATUS "Using -O3 flag")
+	if( CMAKE_CXX_COMPILER_ID STREQUAL "IntelLLVM" )
+		set(IntelFlags "-fp-model strict")
+	endif ()
+	set(ScientificPrecisionFlags "-fno-fast-math")
+
+	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -O3 ${ScientificPrecisionFlags} ${IntelFlags}")
+	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} -O3")
+	message(STATUS "Using -O3 flag")
 else()
-		message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
+	message(STATUS "Not using -O3 flag (CMake build type is ${CMAKE_BUILD_TYPE})")
 endif()
 
+message(STATUS "Building for ${CMAKE_SYSTEM_NAME} target system")
+message(STATUS "C compiler: ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
+message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER_ID} @ ${CMAKE_CXX_COMPILER}")
+add_compile_definitions(USED_C_COMPILER="${CMAKE_C_COMPILER}") # define preprocessor macro (very useful)
+add_compile_definitions(USED_CXX_COMPILER="${CMAKE_CXX_COMPILER}") # define preprocessor macro (very useful)
 
 link_directories(Build/lib)
 

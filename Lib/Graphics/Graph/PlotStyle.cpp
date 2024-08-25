@@ -51,10 +51,12 @@ namespace Slab::Graphics {
         }
     }
 
+    Pointer<PlotStyle> PlotStyle::clone() {
+        return New<PlotStyle>(lineColor, primitive, filled, fillColor, thickness);
+    }
+
     PlotStyle PlotStyle::permuteColors(bool odd) const {
         return PlotStyle(lineColor.permute(odd), primitive, filled, fillColor.permute(odd), thickness);
     }
-
-
 
 }

@@ -10,7 +10,7 @@
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon_1plus1d.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
-#include "Graphics/Viewers/FourierViewer.h"
+#include "Graphics/DataViewers/Viewers/FourierViewer.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"

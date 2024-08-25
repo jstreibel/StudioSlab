@@ -16,6 +16,9 @@
 namespace Slab::Graphics {
 
     class HistoryViewer : public Viewer {
+        Pointer<PlottingWindow> history_window = nullptr;
+        Pointer<PlottingWindow> xft_history_window = nullptr;
+
         Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
         Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;
 

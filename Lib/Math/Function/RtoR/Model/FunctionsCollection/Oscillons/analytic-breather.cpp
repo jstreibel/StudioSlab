@@ -87,11 +87,11 @@ namespace Slab::Math::RtoR {
         return PiL1_(t, 1. - x, -v);
     }
 
-    inline floatt PiR2_(floatt t, floatt x, floatt v) {
+    inline bool PiR2_(floatt t, floatt x, floatt v) {
         return PiL2_(t, 1. - x, -v);
     }
 
-    inline floatt PiR3_(floatt t, floatt x, floatt v) {
+    inline bool PiR3_(floatt t, floatt x, floatt v) {
         return PiL3_(t, 1. - x, -v);
     }
 
@@ -350,6 +350,26 @@ namespace Slab::Math::RtoR {
     }
 
     floatt dpsi(floatt t, floatt x, floatt v, floatt u) {
+        fix t_ = xi;
+        fix tau_ = tau(t_);
+        fix x_ = zeta;
+
+        fix γ = gamma(u);
+
+        fix σ = sigma(t_);
+
+        if(PiC_ (tau_, x_, v)) return γ * (dtvphiC(tau_, x_, v)  - u*σ * dxvphiC(tau_, x_, v));
+        if(PiL1_(tau_, x_, v)) return γ * (dtvphiL1(tau_, x_, v) - u*σ * dxvphiL1(tau_, x_, v));
+        if(PiR1_(tau_, x_, v)) return γ * (dtvphiR1(tau_, x_, v) - u*σ * dxvphiR1(tau_, x_, v));
+        if(PiL2_(tau_, x_, v)) return γ * (dtvphiL2(tau_, x_, v) - u*σ * dxvphiL2(tau_, x_, v));
+        if(PiR2_(tau_, x_, v)) return γ * (dtvphiR2(tau_, x_, v) - u*σ * dxvphiR2(tau_, x_, v));
+        if(PiL3_(tau_, x_, v)) return γ * (dtvphiL3(tau_, x_, v) - u*σ * dxvphiL3(tau_, x_, v));
+        if(PiR3_(tau_, x_, v)) return γ * (dtvphiR3(tau_, x_, v) - u*σ * dxvphiR3(tau_, x_, v));
+
+        return .0;
+    }
+
+    floatt dpsi__(floatt t, floatt x, floatt v, floatt u) {
         return dpsiC(t, x, v, u)
                + dpsiL1(t, x, v, u)
                + dpsiR1(t, x, v, u)
