@@ -29,14 +29,14 @@ namespace Slab::Graphics {
         ftgl::mat4 model{}, view{}, projection{};
 
         void drawBuffer();
-        void setBufferText(const Str &text, Point2D penLocation, Color color=White);
+        void setBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
 
     public:
         Writer() = delete;
         Writer(const Str &fontFile, float ptSize);
         virtual ~Writer();
 
-        void write(const Str &text, Point2D penLocation, Color color=White);
+        void write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
         Real getFontHeightInPixels() const;
         void reshape(int w, int h);
 

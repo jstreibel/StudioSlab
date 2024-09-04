@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         int i=0;
         for(auto &section_data : sections) {
             auto style = section_data.style;
-            ImGui::Text("%s%i", "Section ", ++i);
+            ImGui::SeparatorText((Str("Section ") + ToStr(++i)).c_str());
 
             ImGui::Checkbox((UniqueName("Visible")+section_data.name).c_str(), &section_data.visible);
 

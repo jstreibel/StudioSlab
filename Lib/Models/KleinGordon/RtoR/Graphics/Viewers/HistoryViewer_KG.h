@@ -7,6 +7,7 @@
 
 #include "KGViewer.h"
 
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
@@ -21,10 +22,15 @@ namespace Slab::Models::KGRtoR {
 
         Pointer<Graphics::R2toRFunctionArtist> function_artist = nullptr;
         Pointer<Graphics::R2toRFunctionArtist> ddt_function_artist = nullptr;
+        Pointer<Graphics::R2toRFunctionArtist> d2dt2_function_artist = nullptr;
+
         Pointer<Graphics::R2SectionArtist> function_section_artist = nullptr;
         Pointer<Graphics::R2SectionArtist> ddt_function_section_artist = nullptr;
+        Pointer<Graphics::R2SectionArtist> d2dt2_function_section_artist = nullptr;
 
         Pointer<RtoR2::StraightLine> function_section = nullptr;
+
+        Pointer<R2toR::NumericFunction> d2dt2_function = nullptr;
 
         int oversampling = 12;
         Real dt = -1;

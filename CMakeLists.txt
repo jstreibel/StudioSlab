@@ -132,7 +132,7 @@ endif()
 message(STATUS "Building for ${CMAKE_SYSTEM_NAME} target system")
 message(STATUS "C compiler: ${CMAKE_C_COMPILER_ID} @ ${CMAKE_C_COMPILER}")
 message(STATUS "C++ compiler: ${CMAKE_CXX_COMPILER_ID} @ ${CMAKE_CXX_COMPILER}")
-add_compile_definitions(USED_C_COMPILER="${CMAKE_C_COMPILER}") # define preprocessor macro (very useful)
+add_compile_definitions(USED_C_COMPILER="${CMAKE_C_COMPILER}") 	   # define preprocessor macro
 add_compile_definitions(USED_CXX_COMPILER="${CMAKE_CXX_COMPILER}") # define preprocessor macro (very useful)
 
 link_directories(Build/lib)

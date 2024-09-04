@@ -27,6 +27,8 @@ namespace Slab::Graphics {
         void drawXAxis(const PlottingWindow &graph) const;
         void drawYAxis(const PlottingWindow &graph) const;
 
+        int y_label_xoffset_in_pixels = 10;
+
         Unit hUnit, vUnit;
         Real xSpacing=1, ySpacing=1;
         float x_spacing_multiplier = 4.0;

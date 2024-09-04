@@ -19,10 +19,14 @@ namespace Slab::Graphics {
     , curves_artists(0)
     {
         xft_history_window = New<PlottingWindow>("Space DFT");
+        xft_history_window->getAxisArtist().setHorizontalAxisLabel("k");
+        xft_history_window->getAxisArtist().setVerticalAxisLabel("t");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window);
 
         modes_window = New<PlottingWindow>("Modes");
+        modes_window->getAxisArtist().setHorizontalAxisLabel("t");
+        modes_window->getAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
         modes_artist->setAffectGraphRanges(true);
         addWindow(modes_window);

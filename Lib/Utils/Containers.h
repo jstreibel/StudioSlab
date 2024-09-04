@@ -6,6 +6,7 @@
 #define STUDIOSLAB_CONTAINERS_H
 
 #include "Pointer.h"
+#include <algorithm>
 
 namespace Slab {
     template<typename T>

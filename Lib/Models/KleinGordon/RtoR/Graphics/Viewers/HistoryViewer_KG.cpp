@@ -19,12 +19,14 @@ namespace Slab::Models::KGRtoR {
     {
         history_window = New<Graphics::PlottingWindow>("Function");
         function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
-        ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "𝜕ₜϕ(t,x)");
+        ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
+        d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
         addWindow(history_window);
 
         slice_window = New<Graphics::PlottingWindow>("Slices");
         function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
-        ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "𝜕ₜϕ");
+        ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜ");
+        d2dt2_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");
 
         addWindowToColumn(slice_window, 0);
 
@@ -90,11 +92,21 @@ namespace Slab::Models::KGRtoR {
         KGViewer::setFunctionDerivative(pointer);
 
         auto funky = getFunctionDerivative();
+        d2dt2_function = DynamicPointerCast<R2toR::NumericFunction>(funky->diff(1));
+
         ddt_function_artist->setFunction(funky);
         ddt_function_section_artist->setFunction(funky);
         ddt_function_section_artist->clearSections();
+
+        d2dt2_function_artist->setFunction(d2dt2_function);
+        d2dt2_function_section_artist->setFunction(d2dt2_function);
+        d2dt2_function_section_artist->clearSections();
+
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1].clone();
-        ddt_function_section_artist->addSection(function_section, style, "𝜕ₜϕ");
+        ddt_function_section_artist->addSection(function_section, style, "ϕₜ");
+
+        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2].clone();
+        d2dt2_function_section_artist->addSection(function_section, style, "ϕₜₜ");
     }
 
 } // Slab::Graphics

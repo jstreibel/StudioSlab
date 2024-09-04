@@ -139,7 +139,7 @@ namespace Slab {
         font = nullptr;
     }
 
-    void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Color color) {
+    void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
         vertexBuffer.clear();
 
         size_t i;
@@ -160,24 +160,50 @@ namespace Slab {
                 if (i > 0)
                     kerning = texture_glyph_get_kerning(glyph, text + i - 1);
 
-                pen.x += kerning;
-                const int x0 = (int) (pen.x + glyph->offset_x);
-                const int y0 = (int) (pen.y + glyph->offset_y);
-                const int x1 = (int) (x0 + glyph->width);
-                const int y1 = (int) (y0 - glyph->height);
-                const float s0 = glyph->s0;
-                const float t0 = glyph->t0;
-                const float s1 = glyph->s1;
-                const float t1 = glyph->t1;
-                GLuint indices[6] = {0, 1, 2, 0, 2, 3};
-                vertex_t vertices[4] = {{(float) x0, (float) y0, 0, s0, t0, r, g, b, a},
-                                        {(float) x0, (float) y1, 0, s0, t1, r, g, b, a},
-                                        {(float) x1, (float) y1, 0, s1, t1, r, g, b, a},
-                                        {(float) x1, (float) y0, 0, s1, t0, r, g, b, a}};
+                if(vertical){
+                    pen.y += kerning;
 
-                vertexBuffer.pushBack(vertices, 4, indices, 6);
+                    const int x0 = (int) (pen.x - glyph->offset_y);
+                    const int y0 = (int) (pen.y + glyph->offset_x + glyph->width);
+                    const int x1 = (int) (x0 + glyph->height);
+                    const int y1 = (int) (y0 - glyph->width);
+                    const float s0 = glyph->s0;
+                    const float t0 = glyph->t0;
+                    const float s1 = glyph->s1;
+                    const float t1 = glyph->t1;
 
-                pen.x += glyph->advance_x;
+                    GLuint indices[6] = {0, 1, 2, 0, 2, 3};
+                    vertex_t vertices[4] = {{(float) x0, (float) y0, 0, s1, t0, r, g, b, a},
+                                            {(float) x0, (float) y1, 0, s0, t0, r, g, b, a},
+                                            {(float) x1, (float) y1, 0, s0, t1, r, g, b, a},
+                                            {(float) x1, (float) y0, 0, s1, t1, r, g, b, a}};
+
+                    vertexBuffer.pushBack(vertices, 4, indices, 6);
+
+                    pen.y += glyph->advance_x;
+                }
+                else {
+                    pen.x += kerning;
+
+                    const int x0 = (int) (pen.x + glyph->offset_x);
+                    const int y0 = (int) (pen.y + glyph->offset_y);
+                    const int x1 = (int) (x0 + glyph->width);
+                    const int y1 = (int) (y0 - glyph->height);
+                    const float s0 = glyph->s0;
+                    const float t0 = glyph->t0;
+                    const float s1 = glyph->s1;
+                    const float t1 = glyph->t1;
+
+                    GLuint indices[6] = {0, 1, 2, 0, 2, 3};
+                    vertex_t vertices[4] = {{(float) x0, (float) y0, 0, s0, t0, r, g, b, a},
+                                            {(float) x0, (float) y1, 0, s0, t1, r, g, b, a},
+                                            {(float) x1, (float) y1, 0, s1, t1, r, g, b, a},
+                                            {(float) x1, (float) y0, 0, s1, t0, r, g, b, a}};
+
+                    vertexBuffer.pushBack(vertices, 4, indices, 6);
+
+                    pen.x += glyph->advance_x;
+                }
             }
         }
     }
@@ -200,8 +226,8 @@ namespace Slab {
 
     }
 
-    void Graphics::Writer::write(const Str &text, Point2D pen, Color color) {
-        setBufferText(parse_text(text), pen, color);
+    void Graphics::Writer::write(const Str &text, Point2D pen, Color color, bool vertical) {
+        setBufferText(parse_text(text), pen, color, vertical);
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         drawBuffer();

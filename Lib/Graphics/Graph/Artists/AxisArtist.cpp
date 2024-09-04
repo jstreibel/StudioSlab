@@ -269,9 +269,9 @@ namespace Slab::Graphics {
             auto labels_writer = currStyle->labelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
-            pen.x += .5*labels_writer->getFontHeightInPixels();
+            pen.x += .5*labels_writer->getFontHeightInPixels() + y_label_xoffset_in_pixels;
 
-            labels_writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor);
+            labels_writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor, true);
         }
 
     }
@@ -313,6 +313,8 @@ namespace Slab::Graphics {
             PlotThemeManager::GetCurrent()->hAxisPaddingInPixels = axis_padding[0];
             PlotThemeManager::GetCurrent()->vAxisPaddingInPixels = axis_padding[1];
         };
+
+        ImGui::SliderInt(UniqueName("y label x-padding (in pixels)").c_str(), &y_label_xoffset_in_pixels, 0, 100);
 
         Artist::drawGUI();
     }

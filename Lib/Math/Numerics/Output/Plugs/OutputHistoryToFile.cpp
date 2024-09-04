@@ -26,7 +26,7 @@ namespace Slab::Math {
 
         if (!file) {
             Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
-            throw "OutputHistoryToFile couldn't open file.";
+            throw Exception("OutputHistoryToFile couldn't open file.");
         }
 
         Log::Info() << "Sim history data file is \'" << Common::GetPWD() << "/" << outFileName << "\'. " << Log::Flush;

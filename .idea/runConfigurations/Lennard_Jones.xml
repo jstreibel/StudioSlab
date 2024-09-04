@@ -1,7 +1,0 @@
-<component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Lennard-Jones" type="CMakeRunConfiguration" factoryName="Application" folderName="Molecular dynamics" editBeforeRun="true" PROGRAM_PARAMS="--model 0 -N 200 -L 100 --dt 1e-4 -k 2.5e1 -T 0e-3" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="true" PASS_PARENT_ENVS_2="true" PROJECT_NAME="StudioSlab" TARGET_NAME="MolDynamic" CONFIG_NAME="Release" RUN_TARGET_PROJECT_NAME="StudioSlab" RUN_TARGET_NAME="MolDynamic">
-    <method v="2">
-      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
-    </method>
-  </configuration>
-</component>

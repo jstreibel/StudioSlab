@@ -75,18 +75,33 @@ namespace Slab::Math {
     R2toR::Domain R2toR::NumericFunction::getDomain() const { return {xMin, xMax, yMin, yMax}; }
 
     auto R2toR::NumericFunction::diff(int dim, int n, int m) const -> Real {
-        if (n < 1 || n > N - 1 || m < 1 || m > M - 1) return .0;
+        if (n < 0 || n > N - 1 || m < 0 || m > M - 1) return .0;
 
         getSpace().syncHost();
         auto &X = getSpace().getHostData();
         // int j = n + m*N;
 
         if (dim == 0) {
-            const Real inv2h = .5 / hx;
-            return inv2h * (At(n + 1, m) - At(n - 1, m));
+            const Real s = .5 / hx;
+            fix LEFT = n==0 ? At(N-1, m) : At(n-1, m);
+            fix RIGHT = n==N-1 ? At(0, m) : At(n + 1, m);
+            return s * (RIGHT - LEFT);
         } else if (dim == 1) {
-            const Real inv2h = .5 / hy;
-            return inv2h * (At(n, m + 1) - At(n, m - 1));
+            Real s = .5 / hy;
+            auto TOP_m = m+1;
+            auto BOTTOM_m = m-1;
+            if(m==M-1) {
+                TOP_m = (int)M-1;
+                s *= 2;
+            } else if(m==0){
+                BOTTOM_m = 0;
+                s *= 2;
+            }
+
+            fix TOP = At(n, TOP_m);
+            fix BOTTOM = At(n, BOTTOM_m);
+
+            return s * (TOP - BOTTOM);
         } else
             NOT_IMPLEMENTED;
     }
