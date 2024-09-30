@@ -1,10 +1,144 @@
 
-
 set ( LIB_GRAPHICS ${STUDIOSLAB_BASE_LIB_NAME}-Graphics )
+
+
+# ************* NANOTEX *****************
+
+set ( NANOTEX_DIR ../3rdParty/NanoTeX)
+
+option(NANOTEX_HAVE_LOG "If enable log" ON)
+if (NANOTEX_HAVE_LOG)
+	add_definitions(-DHAVE_LOG)
+endif ()
+
+option(NANOTEX_GRAPHICS_DEBUG "If enable graphics debug" OFF)
+if (NANOTEX_GRAPHICS_DEBUG)
+	add_definitions(-DGRAPHICS_DEBUG)
+endif ()
+
+option(NANOTEX_MEM_CHECK "If compile for memory check only" OFF)
+if (NANOTEX_MEM_CHECK)
+	add_definitions(-DMEM_CHECK)
+endif ()
+
+find_package(Fontconfig REQUIRED)
+find_package(Fontconfig REQUIRED)
+#pkg_check_modules(GTKMM REQUIRED IMPORTED_TARGET gtkmm-3.0)
+#pkg_check_modules(GSVMM REQUIRED IMPORTED_TARGET gtksourceviewmm-3.0)
+pkg_check_modules(CairoMM REQUIRED IMPORTED_TARGET cairomm-1.0)
+pkg_check_modules(PangoMM REQUIRED IMPORTED_TARGET pangomm-1.4)
+
+set ( NANOTEX_LIBS
+		tinyxml2
+		Fontconfig::Fontconfig
+		PkgConfig::CairoMM
+		PkgConfig::PangoMM)
+
+set ( NANOTEX_SRC
+		# atom folder
+		${NANOTEX_DIR}/src/atom/atom_basic.cpp
+		${NANOTEX_DIR}/src/atom/atom_char.cpp
+		${NANOTEX_DIR}/src/atom/atom_impl.cpp
+		${NANOTEX_DIR}/src/atom/atom_matrix.cpp
+		${NANOTEX_DIR}/src/atom/atom_row.cpp
+		${NANOTEX_DIR}/src/atom/atom_space.cpp
+		${NANOTEX_DIR}/src/atom/colors_def.cpp
+		${NANOTEX_DIR}/src/atom/unit_conversion.cpp
+		# box folder
+		${NANOTEX_DIR}/src/box/box.cpp
+		${NANOTEX_DIR}/src/box/box_factory.cpp
+		${NANOTEX_DIR}/src/box/box_group.cpp
+		${NANOTEX_DIR}/src/box/box_single.cpp
+		# core folder
+		${NANOTEX_DIR}/src/core/core.cpp
+		${NANOTEX_DIR}/src/core/formula.cpp
+		${NANOTEX_DIR}/src/core/formula_def.cpp
+		${NANOTEX_DIR}/src/core/glue.cpp
+		${NANOTEX_DIR}/src/core/localized_num.cpp
+		${NANOTEX_DIR}/src/core/macro.cpp
+		${NANOTEX_DIR}/src/core/macro_def.cpp
+		${NANOTEX_DIR}/src/core/macro_impl.cpp
+		${NANOTEX_DIR}/src/core/parser.cpp
+		# fonts folder
+		${NANOTEX_DIR}/src/fonts/alphabet.cpp
+		${NANOTEX_DIR}/src/fonts/font_basic.cpp
+		${NANOTEX_DIR}/src/fonts/font_info.cpp
+		${NANOTEX_DIR}/src/fonts/fonts.cpp
+		# utils folder
+		${NANOTEX_DIR}/src/utils/string_utils.cpp
+		${NANOTEX_DIR}/src/utils/utf.cpp
+		${NANOTEX_DIR}/src/utils/utils.cpp
+		# res folder
+		${NANOTEX_DIR}/src/res/builtin/formula_mappings.res.cpp
+		${NANOTEX_DIR}/src/res/builtin/symbol_mapping.res.cpp
+		${NANOTEX_DIR}/src/res/builtin/tex_param.res.cpp
+		${NANOTEX_DIR}/src/res/builtin/tex_symbols.res.cpp
+		${NANOTEX_DIR}/src/res/font/bi10.def.cpp
+		${NANOTEX_DIR}/src/res/font/bx10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmbsy10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmbx10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmbxti10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmex10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmmi10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmmi10_unchanged.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmmib10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmmib10_unchanged.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmr10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmss10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmssbx10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmssi10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmsy10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmti10.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmti10_unchanged.def.cpp
+		${NANOTEX_DIR}/src/res/font/cmtt10.def.cpp
+		${NANOTEX_DIR}/src/res/font/dsrom10.def.cpp
+		${NANOTEX_DIR}/src/res/font/eufb10.def.cpp
+		${NANOTEX_DIR}/src/res/font/eufm10.def.cpp
+		${NANOTEX_DIR}/src/res/font/i10.def.cpp
+		${NANOTEX_DIR}/src/res/font/moustache.def.cpp
+		${NANOTEX_DIR}/src/res/font/msam10.def.cpp
+		${NANOTEX_DIR}/src/res/font/msbm10.def.cpp
+		${NANOTEX_DIR}/src/res/font/r10.def.cpp
+		${NANOTEX_DIR}/src/res/font/r10_unchanged.def.cpp
+		${NANOTEX_DIR}/src/res/font/rsfs10.def.cpp
+		${NANOTEX_DIR}/src/res/font/sb10.def.cpp
+		${NANOTEX_DIR}/src/res/font/sbi10.def.cpp
+		${NANOTEX_DIR}/src/res/font/si10.def.cpp
+		${NANOTEX_DIR}/src/res/font/special.def.cpp
+		${NANOTEX_DIR}/src/res/font/ss10.def.cpp
+		${NANOTEX_DIR}/src/res/font/stmary10.def.cpp
+		${NANOTEX_DIR}/src/res/font/tt10.def.cpp
+		${NANOTEX_DIR}/src/res/parser/font_parser.cpp
+		${NANOTEX_DIR}/src/res/parser/formula_parser.cpp
+		${NANOTEX_DIR}/src/res/reg/builtin_font_reg.cpp
+		${NANOTEX_DIR}/src/res/reg/builtin_syms_reg.cpp
+		${NANOTEX_DIR}/src/res/sym/amsfonts.def.cpp
+		${NANOTEX_DIR}/src/res/sym/amssymb.def.cpp
+		${NANOTEX_DIR}/src/res/sym/base.def.cpp
+		${NANOTEX_DIR}/src/res/sym/stmaryrd.def.cpp
+		${NANOTEX_DIR}/src/res/sym/symspecial.def.cpp
+
+		${NANOTEX_DIR}/src/latex.cpp
+		${NANOTEX_DIR}/src/render.cpp
+		OpenGL/TextureBuilder.cpp
+		OpenGL/TextureBuilder.h
+)
+
+# *********** END NANOTEX ***************
+
+
 
 add_library(${LIB_GRAPHICS} STATIC
         Types2D.h Types2D.cpp
 		Utils.cpp
+
+		${NANOTEX_SRC}
+		LaTeX/LaTeXRenderer.cpp
+		LaTeX/LaTeX.cpp
+		LaTeX/LaTeX.h
+		LaTeX/__depr/SlabTex_Factory.cpp
+		LaTeX/__depr/SlabTexGraphics.h
+		LaTeX/__depr/SlabTexGraphics.cpp
 
 		OpenGL/LegacyGL/FunctionRenderer.cpp OpenGL/LegacyGL/FunctionRenderer.h
 
@@ -146,7 +280,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp
 		DataViewers/Viewers/ModesHistoryViewer.h
-
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-GLFreetype
@@ -155,6 +288,8 @@ target_link_libraries(${LIB_GRAPHICS}
 		Slab-Core
 		Slab-Math
 
+		${NANOTEX_LIBS}
 )
+target_include_directories(${LIB_GRAPHICS} PUBLIC ${NANOTEX_DIR}/src)
 
 message(NOTICE "Added library " ${LIB_GRAPHICS})

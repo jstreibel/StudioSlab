@@ -12,12 +12,16 @@
 namespace Slab {
 
     typedef std::string Str;
+    typedef std::wstring WStr;
     typedef std::stringstream StringStream;
     typedef std::istringstream InStringStream;
     typedef std::vector<Str> StrVector;
 
     extern unsigned RealToStringDecimalPlaces;
     extern bool UseScientificNotation;
+
+    WStr StrToWStr(const Str& str);
+    Str WStrToStr(const WStr& wstr);
 
     void ReplaceLastOccurrence(Str &str, const Str &toReplace, const Str &replaceWith);
 

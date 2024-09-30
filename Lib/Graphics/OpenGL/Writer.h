@@ -16,6 +16,7 @@
 
 #include "Graphics/Styles/Colors.h"
 #include "Shader.h"
+#include "Utils/EncodingUtils.h"
 
 namespace Slab::Graphics {
 
@@ -31,17 +32,20 @@ namespace Slab::Graphics {
         void drawBuffer();
         void setBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
 
+        void uploadAtlas();
+
     public:
         Writer() = delete;
-        Writer(const Str &fontFile, float ptSize);
+        Writer(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
         virtual ~Writer();
 
         void write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
         Real getFontHeightInPixels() const;
         void reshape(int w, int h);
 
-
-
+        void scale(float sx, float sy);
+        void translate(float dx, float dy);
+        void resetTransforms();
     };
 
 }

@@ -18,6 +18,7 @@
 #include "NuklearTests.h"
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
+#include "LaTeXTests.h"
 
 
 #define DONT_REGISTER false
@@ -40,7 +41,8 @@ int TestsApp::run() {
     if(true) {
         Core::BackendManager::Startup(Core::GLFW);
 
-        if(true)      test = New<Tests::VShapeExpansionTest>();
+        if(true)       test = New<Tests::LaTeXTests>();
+        else if(true)  test = New<Tests::VShapeExpansionTest>();
         else if(true)  test = New<Tests::Graph3DTests>();
         else if(true)  test = New<Tests::ModernGLTests>();
         // else if(false) test = new Tests::BezierTests;

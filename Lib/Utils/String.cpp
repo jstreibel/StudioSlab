@@ -4,9 +4,62 @@
 
 #include "String.h"
 
+#define CONVERT_STRINGS_WITH_BOOST_LOCALE true
+
+#if CONVERT_STRINGS_WITH_BOOST_LOCALE==true
+#include <boost/locale.hpp>
+inline std::string wstring_to_string(const std::wstring& wstr) {
+    return boost::locale::conv::utf_to_utf<char>(wstr);
+}
+
+inline std::wstring string_to_wstring(const std::string& str) {
+    return boost::locale::conv::utf_to_utf<wchar_t>(str);
+}
+#else
+inline std::string wstring_to_string(const std::wstring& wstr) {
+    std::mbstate_t state = std::mbstate_t();
+        const wchar_t* src = wstr.data();
+        size_t len = 1 + std::wcsrtombs(nullptr, &src, 0, &state);
+
+        if (len == static_cast<size_t>(-1)) {
+            throw std::runtime_error("Failed to convert wide string to narrow string");
+        }
+
+        std::string narrow_string(len, '\0');
+        std::wcsrtombs(&narrow_string[0], &src, len, &state);
+
+        return narrow_string;
+}
+
+inline std::wstring string_to_wstring(const std::string& str) {
+    std::mbstate_t state = std::mbstate_t(); // Initialize conversion state
+        const char* src = str.data();            // Source string
+        size_t len = 1 + std::mbsrtowcs(nullptr, &src, 0, &state); // Get required length
+
+        if (len == static_cast<size_t>(-1)) {
+            throw std::runtime_error("Failed to convert narrow string to wide string");
+        }
+
+        std::wstring wide_string(len, L'\0');    // Create wide string buffer
+        std::mbsrtowcs(&wide_string[0], &src, len, &state); // Convert
+
+        return wide_string;
+}
+#endif
+
+
+
 namespace Slab {
     unsigned RealToStringDecimalPlaces = 2;
     bool UseScientificNotation = false;
+
+    WStr StrToWStr(const Str& str){
+        return string_to_wstring(str);
+    }
+
+    Str WStrToStr(const WStr& wstr) {
+        return wstring_to_string(wstr);
+    }
 
     void ReplaceLastOccurrence(Str &str, const Str &toReplace, const Str &replaceWith) {
         auto pos = str.rfind(toReplace);

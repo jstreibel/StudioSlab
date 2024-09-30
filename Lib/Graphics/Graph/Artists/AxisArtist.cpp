@@ -136,6 +136,7 @@ namespace Slab::Graphics {
 
             auto &ac = currStyle->axisColor;
             auto &tc = currStyle->majorTickColor;
+            glLineWidth(currStyle->majorGridLines.thickness);
             glBegin(GL_LINES);
             {
                 // Draw x-axis
@@ -235,28 +236,33 @@ namespace Slab::Graphics {
         }
         glEnd();
 
+
+        /* Minor grid lines */
         glEnable(GL_LINE_STIPPLE);
-        glLineStipple(2, 0x2727);
-        glLineStipple(2, 0x1249);
-        glLineStipple(2, 0x1111);
+        // glLineStipple(2, 0x2727);
+        glLineStipple(currStyle->minorGridLines.stippleFactor, currStyle->minorGridLines.stipplePattern);
+        // glLineStipple(2, 0x1111);
+        glLineWidth(currStyle->minorGridLines.thickness);
 
         glBegin(GL_LINES);
         {
             auto &ac = currStyle->axisColor;
-            auto &tc = currStyle->gridLines.lineColor;
+            auto &tc = currStyle->minorGridLines.lineColor;
 
             glColor4f(tc.r, tc.g, tc.b, tc.a);
 
             for(auto i = iMin; i<=iMax; ++i) {
+                if(i==0) continue;
+
                 Real mark = i*ySpacing;
                 glVertex3d(region.getXMin(), mark, 0);
                 glVertex3d(region.getXMax(), mark, 0);
             }
 
-            glColor4f(ac.r, ac.g, ac.b, ac.a);
+            // glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-            glVertex3d(region.getXMin(), 0, 0);
-            glVertex3d(region.getXMax(), 0, 0);
+            // glVertex3d(region.getXMin(), 0, 0);
+            // glVertex3d(region.getXMax(), 0, 0);
         }
         glEnd();
         glPopAttrib();
@@ -270,6 +276,7 @@ namespace Slab::Graphics {
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
             pen.x += .5*labels_writer->getFontHeightInPixels() + y_label_xoffset_in_pixels;
+            pen.y += y_label_yoffset_in_pixels;
 
             labels_writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor, true);
         }
@@ -314,7 +321,9 @@ namespace Slab::Graphics {
             PlotThemeManager::GetCurrent()->vAxisPaddingInPixels = axis_padding[1];
         };
 
-        ImGui::SliderInt(UniqueName("y label x-padding (in pixels)").c_str(), &y_label_xoffset_in_pixels, 0, 100);
+
+        ImGui::SliderInt(UniqueName("y label x-padding (in pixels)").c_str(), &y_label_xoffset_in_pixels, 0, 200);
+        ImGui::SliderInt(UniqueName("y label y-padding (in pixels)").c_str(), &y_label_yoffset_in_pixels, -500, 500);
 
         Artist::drawGUI();
     }

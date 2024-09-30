@@ -2,7 +2,7 @@ set (THIRDPARTY_LIB_BASE_NAME ${STUDIOSLAB_BASE_LIB_NAME}-3rdParty)
 
 
 add_subdirectory(freetype-gl)
-
+# add_subdirectory(NanoTeX)
 # add_subdirectory(MeshLib)
 
 set ( NUKLEAR_SOURCES
@@ -31,7 +31,6 @@ set ( IMGUI_SOURCE
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE})
 target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype GLU)
 message(NOTICE "Added library ${THIRDPARTY_LIB_BASE_NAME}-Imgui" )
-
 
 set ( GLFREETYPE_SOURCE
 		glfreetype/TextRenderer.hpp

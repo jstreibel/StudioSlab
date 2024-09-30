@@ -14,6 +14,7 @@ add_executable ( Tests
         Graph3DTests.h        Graph3DTests.cpp
 		VShapeExpansionTest.cpp
 		VShapeExpansionTest.h
+		LaTeXTests.cpp
 )
 target_link_libraries ( Tests ${SlabLibs} Slab )
 message(NOTICE "Added executable Tests")

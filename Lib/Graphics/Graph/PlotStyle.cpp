@@ -41,11 +41,11 @@ namespace Slab::Graphics {
                 stippleFactor = 2;
                 break;
             case Dashed:
-                stipplePattern = (GLshort) Common::BinaryToUInt(" o o o o o o o o", 'o', ' ');
-                stippleFactor = 10;
+                stipplePattern = (GLshort) Common::BinaryToUInt(" ooo ooo ooo ooo", ' ', 'o');
+                stippleFactor = 1;
                 break;
             case DotDashed:
-                stipplePattern = (GLshort) Common::BinaryToUInt("o  ooo  o  ooo  ", 'o', ' ');
+                stipplePattern = (GLshort) Common::BinaryToUInt("ooo o ooo o ooo ", ' ', 'o');
                 stippleFactor = 2;
                 break;
         }

@@ -18,6 +18,13 @@ namespace Slab::Graphics {
 
         Vector<Pair<Str, Pointer<PlotStyle>>> labelsRequired;
 
+        float dx = .080f,
+              dy = .060f;
+        float x_offset = .1f,
+              y_offset = .975f;
+        float xGap = 0.015f,
+              yGap = .025f;
+
         void setTotalItems(Count tot);
 
         Count row() const;

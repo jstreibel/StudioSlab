@@ -72,19 +72,15 @@ namespace Slab::Graphics {
         fix row = this->row();
         ++ (*this);
 
-        auto dx = .080,
-                dy = -.060;
-        auto xGap = 0.015,
-                yGap = -.025;
-        auto colWidth = 1./Real(2*cols-1);
-        auto xMin_label = .100 + (colWidth + xGap + dx) * float(col),
-                xMax_label = xMin_label + dx,
-                yMin_label = .975 + (yGap + dy) * float(row),
-                yMax_label = yMin_label + dy;
+        auto colWidth = 1.f/float(2*cols-1);
+        auto xMin_label = x_offset + (colWidth + xGap + dx) * float(col),
+             xMax_label = xMin_label + dx,
+             yMin_label = y_offset + ((-yGap) + (-dy)) * float(row),
+             yMax_label = yMin_label + (-dy);
 
         if (style.filled) {
             auto color = style.fillColor;
-            glColor4f(color.r, color.g, color.b, .5 * color.a);
+            glColor4f(color.r, color.g, color.b, .5f * color.a);
 
             glRectd(xMin_label, yMin_label, xMax_label, yMax_label);
         }
@@ -153,6 +149,15 @@ namespace Slab::Graphics {
 
     void LabelsArtist::drawGUI() {
         ImGui::SliderInt("Max cols", &max_cols, 1, 4);
+
+        ImGui::SliderFloat("Δx", &dx, .01f, .20f);
+        ImGui::SliderFloat("Δy", &dy, .01f, .20f);
+
+        ImGui::SliderFloat("x offset (%)", &x_offset, .0f, 1.f);
+        ImGui::SliderFloat("y offset (%)", &y_offset, .0f, 1.f);
+
+        ImGui::SliderFloat("gap x", &xGap, .01f, .20f);
+        ImGui::SliderFloat("gap y", &yGap, .01f, .20f);
     }
 
 

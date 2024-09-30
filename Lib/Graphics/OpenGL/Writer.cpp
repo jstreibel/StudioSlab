@@ -20,6 +20,8 @@
 namespace Slab {
 
     Str parse_special(const Str& input) {
+        if(1) return input;
+
         // Define a regex to find the sequences starting with ^
         std::regex sequence_regex(R"(\^.)");
         std::string output;
@@ -64,6 +66,8 @@ namespace Slab {
     }
 
     Str parse_text(Str input) {
+        if(1) return input;
+
         // Define the regular expression for the delimiters
         //std::regex delimiter(R"(\{|\})");
         std::regex delimiter(R"($)");
@@ -92,7 +96,7 @@ namespace Slab {
         float r, g, b, a; // color
     } vertex_t;
 
-    Graphics::Writer::Writer(const Str &fontFile, float ptSize)
+    Graphics::Writer::Writer(const Str &fontFile, float ptSize, const char *glyphsToPreload)
             : vertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
               program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
 
@@ -101,19 +105,15 @@ namespace Slab {
         atlas = texture_atlas_new(factor*512, factor*512, 1);
         font = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
 
+        if(font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
+
         Core::Log::Critical() << "Writer being instantiated. Will start generating atlas now." << Core::Log::Flush;
 
         Color white = {1, 1, 1, 1};
-        setBufferText(glyphsToLoad, {0, 0}, white);
-
         glGenTextures(1, &atlas->id);
-        glBindTexture(GL_TEXTURE_2D, atlas->id);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei) atlas->width, (GLsizei) atlas->height,
-                     0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
+
+        if(glyphsToPreload != nullptr)
+            setBufferText(glyphsToPreload, {0, 0}, white);
 
         mat4_set_identity(&projection);
         mat4_set_identity(&model);
@@ -132,11 +132,26 @@ namespace Slab {
 
         Str name = font->filename;
         try {
-            texture_font_delete(font); // TODO: problematik
+            Core::Log::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::Log::Flush;
+            //texture_font_delete(font); // TODO: problematik
         } catch(...) {
             Core::Log::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::Log::Flush;
         }
         font = nullptr;
+    }
+
+    void Graphics::Writer::uploadAtlas() {
+        if(font==nullptr || !font->atlas_dirty) return;
+
+        glBindTexture(GL_TEXTURE_2D, atlas->id);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei) atlas->width, (GLsizei) atlas->height,
+                     0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
+
+        font->atlas_dirty = 0;
     }
 
     void Graphics::Writer::setBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
@@ -206,6 +221,10 @@ namespace Slab {
                 }
             }
         }
+
+        if(font->atlas_dirty) {
+            uploadAtlas();
+        }
     }
 
     void Graphics::Writer::drawBuffer() {
@@ -227,6 +246,8 @@ namespace Slab {
     }
 
     void Graphics::Writer::write(const Str &text, Point2D pen, Color color, bool vertical) {
+        if(text.empty()) return;
+
         setBufferText(parse_text(text), pen, color, vertical);
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
@@ -239,6 +260,20 @@ namespace Slab {
     void Graphics::Writer::reshape(int w, int h) {
         mat4_set_orthographic(&projection, 0, (float) w, 0, (float) h, -1, 1);
     }
+
+    void Graphics::Writer::scale(float sx, float sy) {
+        mat4_scale(&view, sx, sy, 1);
+    }
+
+    void Graphics::Writer::translate(float dx, float dy) {
+        mat4_translate(&view, dx, dy, 0);
+    }
+
+    void Graphics::Writer::resetTransforms() {
+        mat4_set_identity(&view );
+    }
+
+
 
 
 }

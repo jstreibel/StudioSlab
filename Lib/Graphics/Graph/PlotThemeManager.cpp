@@ -50,6 +50,7 @@ namespace Slab::Graphics {
     Str PlotThemeManager::GetDefault() {
         // return "Elegant";
         return "Dark2";
+        // return "PrintSmall";
     }
 
     GraphTheme_ptr LoadStyle(const Str& style) {
@@ -185,7 +186,7 @@ namespace Slab::Graphics {
         Graphics::clearColor = {};
 
         return New<PlottingTheme>(PlottingTheme
-                {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme,
+                {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,
                  writer, writer, graphs});
 
     }
@@ -222,7 +223,8 @@ namespace Slab::Graphics {
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 20);
         return New<PlottingTheme>(PlottingTheme
-                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
+                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle,
+                 gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
     }
 
@@ -258,7 +260,7 @@ namespace Slab::Graphics {
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
         return New<PlottingTheme>(PlottingTheme
-                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
+                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
     }
 
@@ -293,17 +295,21 @@ namespace Slab::Graphics {
         XHairStyle.thickness = 2;
         XHairStyle.filled = false;
 
-        auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, Dashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 40);
         return New<PlottingTheme>(PlottingTheme
-                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
+                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
     }
 
     GraphTheme_ptr GetSchemePrintSmall() {
         auto scheme = GetSchemePrint();
+
+        scheme->hAxisPaddingInPixels = 120;
+        scheme->minorGridLines.thickness = 5;
+        scheme->minorGridLines.stippleFactor *= 5;
 
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 70);
         scheme->ticksWriter = writer;
@@ -345,7 +351,7 @@ namespace Slab::Graphics {
         auto writer = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(10), 24);
 
         return New<PlottingTheme>(PlottingTheme
-                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, writer,
+                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
     }
 
@@ -391,7 +397,7 @@ namespace Slab::Graphics {
         auto ticksWriter = std::make_shared<Graphics::Writer>(Core::Resources::fontFileName(18), 24);
         auto& labelsWriter = ticksWriter;
 
-        return New<PlottingTheme>(PlottingTheme{background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme,
+        return New<PlottingTheme>(PlottingTheme{background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,
                          labelsWriter, ticksWriter, graphs});
     }
 
