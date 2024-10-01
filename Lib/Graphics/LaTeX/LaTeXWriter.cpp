@@ -59,7 +59,7 @@ namespace Slab::Graphics::LaTeX {
         ftgl::mat4_set_identity(&model);
         ftgl::mat4_set_identity(&view);
 
-        ftgl::mat4_scale(&model, .25, .25, 1.0);
+        ftgl::mat4_scale(&model, .2, .2, 1.0);
     }
 
     LaTeXWriter::~LaTeXWriter() {
@@ -69,14 +69,14 @@ namespace Slab::Graphics::LaTeX {
     void LaTeXWriter::renderMath(const WStr& tex_math) {
         auto render = tex::LaTeX::parse(
                 tex_math,
-                600,
+                base_w,
                 40,
-                40 / 3.f,
+                16,
                 0xff000000);
 
         clearContext();
 
-        render->draw(*graphics2D, 0, 0);
+        render->draw(*graphics2D, 1, 1);
 
         uploadSurfaceToTexture();
     }
