@@ -30,8 +30,10 @@ namespace Slab::Graphics::OpenGL {
                          InternalFormat format,
                          GLenum textureUnit = GL_TEXTURE0);
 
+        virtual ~Texture();
+
         void activate() const;
-        void deactivate() const;
+        static void deactivate() ;
         void bind() const;
 
         auto getTarget() const -> Target;
@@ -42,7 +44,7 @@ namespace Slab::Graphics::OpenGL {
 
         void setBorderColor(Color color) const;
 
-        GLint getTextureUnit() const;
+        int getTextureUnit() const;
         GLuint getGLtextureUnit() const;
 
         void diagnose() const;

@@ -8,7 +8,7 @@
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/LaTeX/LaTeXRenderer.h"
+#include "Graphics/LaTeX/LaTeXWriter.h"
 
 namespace Tests {
 
@@ -18,7 +18,7 @@ namespace Tests {
 
         Slab::Graphics::Writer writer;
 
-        Slab::Graphics::LaTeX::LaTeXRenderer latexWriter;
+        Slab::Graphics::LaTeX::LaTeXWriter latexWriter;
 
     public:
         LaTeXTests();

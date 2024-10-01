@@ -8,7 +8,7 @@
 namespace Slab::Math::RtoR {
 
     Real AbsFunction::operator()(Real x) const {
-        return ABS(x);
+        return Abs(x);
     }
 
     Pointer<Function> AbsFunction::Clone() const {

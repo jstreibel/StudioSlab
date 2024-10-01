@@ -120,8 +120,8 @@ set ( NANOTEX_SRC
 
 		${NANOTEX_DIR}/src/latex.cpp
 		${NANOTEX_DIR}/src/render.cpp
-		OpenGL/TextureBuilder.cpp
-		OpenGL/TextureBuilder.h
+		OpenGL/CairoInterface.cpp
+		OpenGL/CairoInterface.h
 )
 
 # *********** END NANOTEX ***************
@@ -133,7 +133,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		Utils.cpp
 
 		${NANOTEX_SRC}
-		LaTeX/LaTeXRenderer.cpp
+		LaTeX/LaTeXWriter.cpp
 		LaTeX/LaTeX.cpp
 		LaTeX/LaTeX.h
 		LaTeX/__depr/SlabTex_Factory.cpp

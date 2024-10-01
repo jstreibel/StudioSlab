@@ -4,11 +4,10 @@
 
 #include "LaTeXTests.h"
 
+#include "Core/Tools/Log.h"
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph/PlottingWindow.h"
 #include "Graphics/Graph/PlotThemeManager.h"
-#include "Graphics/OpenGL/Writer.h"
 
 namespace Tests {
     using namespace Slab;
@@ -27,14 +26,14 @@ namespace Tests {
 
         constexpr int buffer_size = 64*1024;
         static char buffer[buffer_size];
-        ImGui::InputText("LaTeX stuff", buffer, buffer_size);
+        if(ImGui::InputText("LaTeX stuff", buffer, buffer_size)){
+            latexWriter.renderMath(StrToWStr(Str(buffer)));
+        }
 
         ImGui::End();
 
-        auto str_buffer = Str(buffer);
-        latexWriter.renderMath(StrToWStr(str_buffer));
-
-        writer.write(str_buffer, {200, 1100});
+        writer.write(Str(buffer), {200, 1100});
+        latexWriter.draw();
     }
 
     void LaTeXTests::notifyReshape(int w, int h) {

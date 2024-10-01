@@ -24,6 +24,9 @@ namespace Slab::Graphics::OpenGL {
     bool Texture2D_Color::setColor(int i, int j, Color color) {
         if(data == nullptr) return false;
 
+        assert(i>=0 && i<getWidth());
+        assert(j>=0 && j<getHeight());
+
         fix index = i*4 + j*getWidth()*4;
         ByteData_raw texel = &data[index];
 

@@ -39,7 +39,7 @@ namespace Slab::Math::RtoR {
         floatt V = 0;
         for (int n = -Ns; n <= Ns; ++n) {
             const floatt arg = x - 4.0 * floatt(n);
-            V += (ABS(arg) - 0.5 * arg * arg) * Hn(arg);
+            V += (Abs(arg) - 0.5 * arg * arg) * Hn(arg);
         }
 
         return V;

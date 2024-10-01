@@ -2,7 +2,7 @@
 // Created by joao on 9/30/24.
 //
 
-#include "TextureBuilder.h"
+#include "CairoInterface.h"
 #include "Texture2D_Color.h"
 
 namespace Slab::Graphics::OpenGL {

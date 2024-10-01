@@ -23,11 +23,15 @@ namespace Slab::Graphics::OpenGL {
         Core::Log::Debug() << "OpenGL::Texture " << handle << " generated. Texture unit: " << TextureUnitToString(textureUnit) << " (" << (textureUnit-GL_TEXTURE0) << ")" << Core::Log::Flush;
     }
 
+    Texture::~Texture() {
+        glDeleteTextures(1, &handle);
+    }
+
     void Texture::activate() const {
         glActiveTexture(getGLtextureUnit());
     }
 
-    void Texture::deactivate() const {
+    void Texture::deactivate() {
         glActiveTexture(GL_TEXTURE0);
     }
 
@@ -40,7 +44,7 @@ namespace Slab::Graphics::OpenGL {
 
     GLuint Texture::getHandle()         const { return handle; }
 
-    GLint Texture::getTextureUnit()     const { return (int)textureUnit-GL_TEXTURE0; }
+    int Texture::getTextureUnit()     const { return (int)textureUnit-GL_TEXTURE0; }
 
     GLuint Texture::getGLtextureUnit()  const { return textureUnit; }
 
@@ -123,6 +127,5 @@ namespace Slab::Graphics::OpenGL {
         // Restore previously bound texture
         glBindTexture(target, currentTexture);
     }
-
 
 } // OpenGL
