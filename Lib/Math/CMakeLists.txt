@@ -112,6 +112,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Function/RtoR/Operations/FromR2toRNumeric.h
 		Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.cpp
 		Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.h
+        Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.cpp
+        Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h
 )
 
 

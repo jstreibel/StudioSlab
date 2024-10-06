@@ -23,8 +23,7 @@ namespace Slab::Math::R2toR {
         fix λ = oscParams.l;
         fix γ_inv = sqrt(1-u*u);
 
-        if(Common::AreEqual(oscParams.v, 0.0, 1.e-3))
-        if(x < x0ut || x > (x0ut+λ*γ_inv)) return 0.0;
+        if(Common::AreEqual(oscParams.v, 0.0, 1.e-3) && x < x0ut || x > (x0ut+λ*γ_inv)) return 0.0;
 
         const_cast<RtoR::AnalyticOscillon*>(&oscillon)->set_t(t);
 

@@ -29,6 +29,7 @@ namespace Slab::Math::RtoR {
         Real a = p_ab.first;
         Real b = p_ab.second;
 
+        // -gamma * (alpha * u);
         return -gamma(u) / (1. + a * v * u) * ((1. - u * u) * v * b + alpha * (u + v * a));
     }
 

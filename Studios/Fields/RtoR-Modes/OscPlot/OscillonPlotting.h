@@ -15,11 +15,13 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
+#include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h"
 
 namespace Studios {
 
     class OscillonPlotting : public Slab::Models::KGRtoR::KGMainViewer {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
+        //using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon1p1_FourierImpl;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
         using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
         using Parameters       = Slab::Math::R2toR::AnalyticOscillon_1plus1d::OscillonParameters;
@@ -31,8 +33,8 @@ namespace Studios {
         Slab::Real c_max        = 1. - 1e-4f;
         Slab::Resolution N      = 100;
         Slab::Resolution M      = 100;
-        Slab::Real L            =    10.0;
-        Slab::Real t            =    10.0;
+        Slab::Real L            =  10.0;
+        Slab::Real t            =  10.0;
         Slab::Real x_min        = -L/2;
         Slab::Real t_min        = -t/2;
         Slab::Real render_time  = .0;

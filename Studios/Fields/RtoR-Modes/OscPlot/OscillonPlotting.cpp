@@ -110,7 +110,7 @@ namespace Studios {
         auto Rand = Slab::RandUtils::RandomUniformReal;
 
         auto l = osc_params.l;
-        auto l_vec = Slab::RandUtils::GenerateLognormalValues(n_oscillons, osc_params.l, l_std, seed);
+        auto l_vec = Slab::RandUtils::GenerateLognormalValues((int)n_oscillons, osc_params.l, l_std, seed);
 
         many_osc.clear();
 
@@ -156,7 +156,7 @@ namespace Studios {
     void OscillonPlotting::renderOscillons() {
         if(!oscillons_dirty) return;
 
-        for(auto term : many_osc) {
+        for(const auto& term : many_osc) {
             auto osc = Slab::DynamicPointerCast<AnalyticOscillon>(term);
 
             osc->setBit(Slab::Math::RtoR::AnalyticOscillon::phi);
