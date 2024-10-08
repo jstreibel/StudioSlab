@@ -45,6 +45,11 @@ namespace Slab::Graphics {
     bool R2SectionArtist::hasGUI() { return true; }
 
     void R2SectionArtist::drawGUI() {
+        auto samples_int = (int)samples;
+        if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samples_int, 100, 25000)){
+            samples = (Resolution)samples_int;
+        }
+
         int i=0;
         for(auto &section_data : sections) {
             auto style = section_data.style;

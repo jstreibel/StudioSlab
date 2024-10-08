@@ -12,9 +12,6 @@ namespace Slab::Math {
     RtoR::Section1D::Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve)
             : function(std::move(function)), curve(std::move(curve)) {}
 
-    RtoR::Section1D::Section1D(const R2toR::Function *function, const RtoR2::ParametricCurve *curve)
-            : Section1D(Slab::Naked(*function), Slab::Naked(*curve)) {}
-
     Real RtoR::Section1D::operator()(Real x) const {
         if (curve == nullptr || function == nullptr) return NaN;
 

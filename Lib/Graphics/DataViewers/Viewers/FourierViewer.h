@@ -52,11 +52,6 @@ namespace Slab::Graphics{
         Pointer<R2toRFunctionArtist> imagPartsArtist    = New<R2toRFunctionArtist>();
         Pointer<R2toC::NumericFunction> dft2DFunction;
 
-        static auto
-        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax)
-        -> Pointer<R2toR::NumericFunction>;
-
-
         bool auto_update_Ft = false;
         bool auto_update_Ftx = false;
         float t0;
@@ -81,6 +76,10 @@ namespace Slab::Graphics{
         bool is_Ftx_auto_updating() const;
 
     public:
+        static auto
+        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax)
+        -> Pointer<R2toR::NumericFunction>;
+
         explicit FourierViewer(Pointer<GUIWindow>);
 
         void setFunction(Function func) override;

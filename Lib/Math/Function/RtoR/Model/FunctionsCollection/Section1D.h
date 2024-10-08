@@ -17,8 +17,7 @@ namespace Slab::Math::RtoR {
         RtoR2::ParametricCurve_constptr curve;
 
     public:
-        explicit Section1D(const R2toR::Function *function= nullptr, const RtoR2::ParametricCurve *curve= nullptr);
-        Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve);
+        Section1D(R2toR::Function_constptr function=nullptr, RtoR2::ParametricCurve_constptr curve=nullptr);
 
         Real operator()(Real x) const override;
 

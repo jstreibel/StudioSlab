@@ -22,6 +22,8 @@ set ( SPACE_SOURCES
         VectorSpace/DimensionMetaData.cpp	        VectorSpace/DimensionMetaData.h
         VectorSpace/Algebra/AlgebraTests.cpp
         Numerics/Odeint/OdeintAlgebra.cpp	        Numerics/Odeint/OdeintAlgebra.h
+        Function/RtoR/Model/Operators/Diff.cpp
+        Function/RtoR/Model/Operators/Diff.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
