@@ -36,6 +36,8 @@ namespace Slab::Graphics {
     public:
         explicit ModesHistoryViewer(const Pointer<GUIWindow> &);
 
+        Str getName() const override;
+
         void draw() override;
 
         void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;

@@ -41,6 +41,8 @@ namespace Slab::Models::KGRtoR {
     public:
         explicit EnergyViewer_KG(const Pointer<Graphics::GUIWindow> &pointer);
 
+        Str getName() const override;
+
         void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
 
         void setFunctionDerivative(FuncPointer pointer) override;

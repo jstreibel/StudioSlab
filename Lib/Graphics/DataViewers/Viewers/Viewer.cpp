@@ -4,12 +4,14 @@
 
 #include "Viewer.h"
 
+#include <utility>
+
 namespace Slab::Graphics {
 
     Viewer::Viewer(Pointer<GUIWindow> gui_window, Pointer<Math::R2toR::NumericFunction> func)
     : Graphics::WindowPanel()
     , gui_window(std::move(gui_window))
-    , base_function(func)
+    , base_function(std::move(func))
     {}
 
     void Viewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {

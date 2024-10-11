@@ -170,4 +170,8 @@ namespace Slab::Models {
 
         if(areFunctionsConsistent()) updateEnergy();
     }
+
+    Str KGRtoR::EnergyViewer_KG::getName() const {
+        return "[KG] Stress-energy viewer";
+    }
 } // Slab::Models

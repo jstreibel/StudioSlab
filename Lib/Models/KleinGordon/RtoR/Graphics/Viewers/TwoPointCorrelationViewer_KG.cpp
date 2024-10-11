@@ -158,8 +158,8 @@ namespace Slab::Models::KGRtoR {
             if (ImGui::SliderFloat("β##timedomain", &beta, 1.1, 4)) {
                 funky.setβ(beta);
             }
-            if (ImGui::SliderFloat("ξ##spacedomain", &xi, xi_min, xi_max)
-                |  ImGui::DragFloat("ξ##spacedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
+            if (ImGui::SliderFloat("ξ##timedomain", &xi, xi_min, xi_max)
+              | ImGui::DragFloat("ξ##timedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
                 funky.setξ(xi);
             }
         }
@@ -212,5 +212,9 @@ namespace Slab::Models::KGRtoR {
         auto diff = New<Diff>(section_map, twoPointFunction->getSpace().getMetaData().geth(1)*1.2);
         *ddt2ptSection = Graphics::RtoRFunctionArtist(diff, Themes::GetCurrent()->funcPlotStyles[3], 1000);
 
+    }
+
+    Str TwoPointCorrelationViewer_KG::getName() const {
+        return "[KG] 2-point correlation viewer";
     }
 } // Slab::Models::KGRtoR

@@ -22,10 +22,12 @@ namespace Slab::Graphics {
         void endGUI();
 
     public:
-        Viewer(Pointer<GUIWindow>, Slab::Pointer<Math::R2toR::NumericFunction> = nullptr);
+        explicit Viewer(Pointer<GUIWindow>, Slab::Pointer<Math::R2toR::NumericFunction> = nullptr);
 
         virtual void setFunction(Pointer<Math::R2toR::NumericFunction> function);
         auto getFunction() const -> Pointer<const Math::R2toR::NumericFunction>;
+
+        virtual Str getName() const = 0;
 
         virtual void notifyBecameVisible();
         virtual void notifyBecameInvisible();

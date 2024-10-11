@@ -48,6 +48,8 @@ namespace Slab::Models::KGRtoR {
     public:
         explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &);
 
+        Str getName() const override;
+
         void updateHistograms();
 
         void

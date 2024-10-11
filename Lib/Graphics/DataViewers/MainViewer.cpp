@@ -27,6 +27,24 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::draw() {
+        if(ImGui::BeginMainMenuBar()){
+            if(ImGui::BeginMenu("Viewers")){
+                Index i=0;
+                for (auto &viewer: viewers) {
+                    auto name = viewer->getName();
+
+                    fix is_current = getCurrentViewer() == viewer;
+                    if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
+                        setCurrentViewer(i);
+
+                    ++i;
+                }
+
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
+        }
+
         WindowRow::draw();
     }
 

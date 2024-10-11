@@ -46,6 +46,8 @@ namespace Slab::Models::KGRtoR {
                                      const Pointer<R2toR::NumericFunction> &func = nullptr,
                                      const Pointer<R2toR::NumericFunction> &ddtFunc = nullptr);
 
+        Str getName() const override;
+
         void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
 
         void draw() override;

@@ -130,4 +130,8 @@ namespace Slab::Graphics {
         WindowPanel::draw();
     }
 
+    Str HistoryViewer::getName() const {
+        return "History viewer";
+    }
+
 } // Slab::Graphics

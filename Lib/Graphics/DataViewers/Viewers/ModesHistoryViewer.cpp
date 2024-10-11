@@ -125,4 +125,8 @@ namespace Slab::Graphics {
         if(xFourierTransform == nullptr) computeTransform();
     }
 
+    Str ModesHistoryViewer::getName() const {
+        return "Modes history viewer";
+    }
+
 } // Slab::Graphics

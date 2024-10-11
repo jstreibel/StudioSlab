@@ -109,4 +109,8 @@ namespace Slab::Models::KGRtoR {
         d2dt2_function_section_artist->addSection(function_section, style, "ϕₜₜ");
     }
 
+    Str HistoryViewer::getName() const {
+        return "[KG] History viewer";
+    }
+
 } // Slab::Graphics

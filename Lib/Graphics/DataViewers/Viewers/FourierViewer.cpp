@@ -408,5 +408,9 @@ namespace Slab::Graphics {
         kSpace_imagPartsArtist->setFunction(imagParts);
     }
 
+    Str FourierViewer::getName() const {
+        return "Fourier transforms viewer";
+    }
+
 
 } // Studios::Fields

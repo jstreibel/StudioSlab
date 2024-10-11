@@ -171,4 +171,8 @@ namespace Slab::Models::KGRtoR {
         return data;
     }
 
+    Str HistogramsViewer_KG::getName() const {
+        return "[KG] Histograms viewer";
+    }
+
 } // Studios::Fields::Viewers

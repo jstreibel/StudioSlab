@@ -38,6 +38,8 @@ namespace Slab::Graphics {
     public:
         explicit HistoryViewer(const Pointer<GUIWindow> &guiWindow, const Pointer<R2toR::NumericFunction> &function = nullptr);
 
+        Str getName() const override;
+
         void draw() override;
 
         void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;

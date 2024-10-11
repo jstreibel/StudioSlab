@@ -80,6 +80,8 @@ namespace Slab::Graphics{
         FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax)
         -> Pointer<R2toR::NumericFunction>;
 
+        Str getName() const override;
+
         explicit FourierViewer(Pointer<GUIWindow>);
 
         void setFunction(Function func) override;

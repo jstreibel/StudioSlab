@@ -39,6 +39,8 @@ namespace Slab::Models::KGRtoR {
     public:
         explicit HistoryViewer(const Pointer<Graphics::GUIWindow> &guiWindow);
 
+        Str getName() const override;
+
         void draw() override;
 
         void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;

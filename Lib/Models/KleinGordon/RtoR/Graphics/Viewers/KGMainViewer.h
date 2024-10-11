@@ -27,8 +27,6 @@ namespace Slab::Models::KGRtoR {
         setFunctionTimeDerivative(Pointer<R2toR::NumericFunction>);
         virtual Pointer<R2toR::NumericFunction>
         getFunctionTimeDerivative();
-
-
     };
 
 } // Slab::Models::KGRtoR
