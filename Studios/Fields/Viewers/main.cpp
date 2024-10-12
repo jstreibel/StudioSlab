@@ -31,6 +31,7 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TwoPointCorrelationViewer_KG.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 
 using namespace Slab;
 
@@ -63,6 +64,7 @@ public:
         auto gui_window = viewer->getGUIWindow();
         viewer->addViewer(Slab::New<Graphics::FourierViewer>(gui_window));
         viewer->addViewer(Slab::New<Graphics::HistoryViewer>(gui_window));
+        viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistoryViewer>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::TwoPointCorrelationViewer_KG>(gui_window));
         viewer->addViewer(Slab::New<Graphics::ModesHistoryViewer>(gui_window));

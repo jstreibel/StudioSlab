@@ -60,6 +60,8 @@ set ( KG_SOURCES
         KleinGordon/RtoR/Graphics/Viewers/TwoPointCorrelationViewer_KG.h
 		KleinGordon/RtoR/Analytic/TwoPointCorrelation.cpp
 		KleinGordon/RtoR/Analytic/TwoPointCorrelation.h
+        KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.cpp
+        KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h
 )
 
 set ( XY_SOURCES

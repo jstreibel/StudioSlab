@@ -32,7 +32,6 @@ namespace Slab::Core {
         static bool IsModuleLoaded(Modules);
     };
 
-
 } // Core
 
 #endif //STUDIOSLAB_BACKENDMANAGER_H

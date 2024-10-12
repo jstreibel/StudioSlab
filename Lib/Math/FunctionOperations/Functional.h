@@ -11,9 +11,7 @@ namespace Slab::Math {
 
     template < class FunctionType >
     class Functional {
-
     public:
-
         virtual Real operator[] (FunctionType &function) const = 0;
 
     };

@@ -12,13 +12,16 @@ namespace Slab::Math::Base {
 
     template<class InputFunctionCategory, class OutputFunctionCategory>
     class FunctionOperation {
+        /*
+         * TODO make this work
         static_assert(IsSlabFunction_v<InputFunctionCategory>,
-                "InputFunctionCategory must be an instance of Foo");
+                "InputFunctionCategory must be an instance of Slab::Function<DomainCategory,ImageCategory>");
         static_assert(IsSlabFunction_v<OutputFunctionCategory>,
-                "OutputFunctionCategory must be an instance of Foo");
+                "OutputFunctionCategory must be an instance of Slab::Function<DomainCategory,ImageCategory>");
+        */
 
     public:
-        Pointer<OutputFunctionCategory> operator[] (Pointer<InputFunctionCategory>) = 0;
+        virtual auto operator[] (Pointer<InputFunctionCategory>) -> Pointer<OutputFunctionCategory> = 0;
     };
 
 } // Slab::Math::Base

@@ -7,7 +7,9 @@ set ( TOOLSET_SOURCES
 		FunctionOperations/FunctionOperation.cpp
 		FunctionOperations/FunctionOperation.h
 		Toolset/FindPeak.cpp
-		)
+        Function/R2toR/Model/Operators/Integral.cpp
+        Function/R2toR/Model/Operators/Integral.h
+)
 
 set ( SPACE_SOURCES
         VectorSpace/Impl/ComplexSpace.cpp 			VectorSpace/Impl/ComplexSpace.h

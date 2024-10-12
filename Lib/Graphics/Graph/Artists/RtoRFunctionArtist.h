@@ -18,9 +18,10 @@ namespace Slab::Graphics {
         PlotStyle plotStyle;
         Count samples;
 
-
     public:
         RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
+
+        void setFunction(RtoR::Function_ptr);
 
         bool draw(const PlottingWindow &d) override;
 

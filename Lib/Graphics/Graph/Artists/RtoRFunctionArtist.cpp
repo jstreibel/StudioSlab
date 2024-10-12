@@ -9,6 +9,8 @@
 #include <utility>
 #include "Graphics/Graph/Util/PlotStyleGUI.h"
 
+#include "3rdParty/ImGui.h"
+
 namespace Slab::Graphics {
     RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, Count samples)
     : function(std::move(func)), plotStyle(plotStyle), samples(samples)
@@ -33,8 +35,16 @@ namespace Slab::Graphics {
     }
 
     void RtoRFunctionArtist::drawGUI() {
+        int samps = (int)samples;
+        if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samps, 100, 100000))
+            samples = (Count)samps;
+
         DrawPlotStyleGUI(plotStyle, getLabel());
 
         Artist::drawGUI();
+    }
+
+    void RtoRFunctionArtist::setFunction(RtoR::Function_ptr func) {
+        function = func;
     }
 } // Graphics

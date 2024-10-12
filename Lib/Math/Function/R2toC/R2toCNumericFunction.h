@@ -21,6 +21,8 @@ namespace Slab::Math::R2toC {
         NumericFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly);
         ~NumericFunction() = default;
 
+
+
         Complex operator()(Real2D x) const override;
         Complex &At(Real2D x);
         Complex &At(int i, int j);

@@ -16,6 +16,7 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CORE_APP_SOURCES}
 		${CORE_TOOLS_SOURCES}
 		${CORE_CONTROLLER_SOURCES}
+        Base.h
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}
