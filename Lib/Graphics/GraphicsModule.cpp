@@ -4,7 +4,14 @@
 
 #include "GraphicsModule.h"
 
-namespace Slab {
-    namespace Graphics {
-    } // Slab
-} // Graphics
+#include "3rdParty/ImGui.h"
+
+namespace Slab::Graphics {
+    SlabGraphicsModule::SlabGraphicsModule() : GraphicsModule("Slab:Graphics") {}
+
+    void SlabGraphicsModule::beginRender() {
+        GraphicsModule::beginRender();
+
+
+    }
+} // Slab::Graphics

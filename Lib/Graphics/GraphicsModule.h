@@ -5,10 +5,15 @@
 #ifndef STUDIOSLAB_GRAPHICSMODULE_H
 #define STUDIOSLAB_GRAPHICSMODULE_H
 
+#include "Core/Backend/Modules/Module.h"
+
 namespace Slab::Graphics {
 
-    class GraphicsModule {
+    class SlabGraphicsModule : public Core::GraphicsModule {
+    public:
+        explicit SlabGraphicsModule();
 
+        void beginRender() override;
     };
 
 } // Slab::Graphics

@@ -20,18 +20,20 @@ namespace Slab::Math {
         GPU
     };
 
-    class DataManager : public Singleton<DataManager> {
-        using DataSetType = Str;
-        using DataSetName = Str;
-        typedef Pair<DataSetType, DataSet_ptr> DataSetEntry;
+    using DataSetType = Str;
+    using DataSetName = Str;
+    using DataSetEntry = Pair<DataSetType, DataSet_ptr>;
 
+    class DataManager : public Singleton<DataManager> {
         Map<DataSetName, DataSet_ptr> dataSets;
 
     public:
         explicit DataManager();
 
+        static void AddData(DataSetName, Pointer<DataSet>);
         static Vector<DataSetName> GetAllDataEntries();
         static R2toR::NumericFunction_ptr NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation);
+        static DataSetEntry GetData(const DataSetName&);
     };
 
 } // Slab::Math

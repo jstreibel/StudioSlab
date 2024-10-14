@@ -36,6 +36,7 @@ if( STUDIOSLAB_CUDA_SUPPORT )
             Zip.h
             Map.h
             Compiler.h
+            Map.cpp
     )
 endif ()
 

@@ -32,6 +32,8 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TwoPointCorrelationViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
+#include "StudioSlab.h"
+#include "Math/MathModule.h"
 
 using namespace Slab;
 
@@ -45,7 +47,7 @@ public:
         interface->addParameters({&filename});
         Core::InterfaceManager::getInstance().registerInterface(interface);
 
-        Core::BackendManager::Startup(Core::GLFW);
+        Core::BackendManager::Startup("GLFW");
 
         Slab::Graphics::PlotThemeManager::GetInstance();
 
@@ -55,6 +57,10 @@ public:
     auto run() -> int override {
         auto function = Modes::HistoryFileLoader::Load(*filename);
         auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
+
+        auto &math_module = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
+        math_module.RegisterData(*filename, Slab::New<Math::NumericR2toRDataSet>(function));
+        math_module.RegisterData(*filename + " [time-derivative]", Slab::New<Math::NumericR2toRDataSet>(ddt_function));
 
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
         guiBackend.setSystemWindowTitle(*filename);

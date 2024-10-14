@@ -9,9 +9,7 @@
 
 #include "Backend.h"
 
-#include "Core/Backend/GLFW/GLFWBackend.h"
-#include "Core/Backend/SFML/SFMLBackend.h"
-#include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "Core/Tools/Log.h"
 
 namespace Slab::Core {
     Str BackendManager::backend_name = "Uninitialized";
@@ -48,9 +46,12 @@ namespace Slab::Core {
     }
 
     void BackendManager::LoadModule(const ModuleName& module_name) {
-        if(loadedModules[module_name] != nullptr) return;
+        if(Contains(loadedModules, module_name)) {
+            Log::Debug() << "Module '" << module_name << "' already loaded." << Log::Flush;
+            return;
+        }
 
-        if(availableModules.find(module_name)  == availableModules.end())
+        if(availableModules.find(module_name) == availableModules.end())
             throw Exception("Unkonwn module '" + module_name + "'");
 
         auto alloc_module = availableModules[module_name];
@@ -64,6 +65,8 @@ namespace Slab::Core {
         } else {
             loadedModules[module_name] = Pointer<Module>(module);
         }
+
+        Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }
 
     Module::Ptr BackendManager::GetModule(const ModuleName& module_name) {
@@ -78,10 +81,14 @@ namespace Slab::Core {
 
     void BackendManager::RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc) {
         BackendManager::availableBackends[name] = std::move(alloc);
+
+        Log::Info() << "Backend '" << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
     }
 
     void BackendManager::RegisterAvailableModule(const ModuleName &name, ModuleAllocator alloc) {
         BackendManager::availableModules[name] = std::move(alloc);
+
+        Log::Info() << "Module '"  << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
     }
 
     Str BackendManager::GetBackendName() {

@@ -3,6 +3,8 @@
 //
 
 #include "MainViewer.h"
+#include "StudioSlab.h"
+#include "Math/MathModule.h"
 
 #include <utility>
 
@@ -42,6 +44,22 @@ namespace Slab::Graphics {
 
                 ImGui::EndMenu();
             }
+
+            if(ImGui::BeginMenu("Datasets")){
+                auto &mathModule = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
+                auto entries = mathModule.GetDataEntries();
+
+                if(entries.empty()) {
+                    ImGui::MenuItem("No data available", nullptr, false, false);
+                } else {
+                    for (auto &name: entries) {
+                        if (ImGui::MenuItem(name.c_str(), nullptr, false, false)) {
+                        }
+                    }
+                }
+                ImGui::EndMenu();
+            }
+
             ImGui::EndMainMenuBar();
         }
 

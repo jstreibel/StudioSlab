@@ -10,11 +10,15 @@ namespace Slab::Math {
 
     DataManager::DataManager() : Singleton("Data Manager") {}
 
-        R2toR::NumericFunction_ptr DataManager::NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+    void DataManager::AddData(DataSetName name, Pointer<DataSet> dataSet) {
+        DataManager::GetInstance().dataSets[name] = dataSet;
+    }
+
+    R2toR::NumericFunction_ptr DataManager::NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
         fix hx = r.x/(Real)N;
         fix hy = r.y/(Real)M;
 
-
+/*
         Pointer<R2toR::NumericFunction> data;
         switch (loc) {
             case NativeMemory:
@@ -34,13 +38,27 @@ namespace Slab::Math {
         GetInstance().dataSets[uniqueName] = dataSet;
 
         return data;
+        */
+
+        NOT_IMPLEMENTED
     }
 
-    Vector<DataManager::DataSetName> DataManager::GetAllDataEntries() {
+    Vector<DataSetName> DataManager::GetAllDataEntries() {
         Vector<DataSetName> entries;
         for(auto &pair : GetInstance().dataSets)
             entries.emplace_back(pair.first);
 
         return entries;
     }
+
+    DataSetEntry DataManager::GetData(const DataSetName& name) {
+        auto &sets = DataManager::GetInstance().dataSets;
+        auto entry = sets.find(name);
+
+        if(entry == sets.end())
+            Log::Error("Could not find dataset '" + name + "'.") << Log::Flush;
+
+        return *entry;
+    }
+
 } // Slab::Math

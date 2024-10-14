@@ -7,22 +7,43 @@
 
 #include "Utils/String.h"
 #include "Utils/Pointer.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math {
 
+    using DataType = Str;
+
     class DataSet {
-        Str type;
-        Pointer<void> data;
+        DataType type;
 
     public:
-        DataSet(Pointer<void> data, Str type);
+        DataSet(DataType);
 
-        Str getType() const;
+        DataType getType() const;
 
-        auto getData() const -> Pointer<void>;
+        virtual auto
+        getData() const -> void* = 0;
     };
 
     DefinePointers(DataSet)
+
+    template<class DataClass>
+    class DataSetTemplate : public DataSet {
+        Pointer<DataClass> data;
+        DataSetTemplate() = delete;
+    public:
+        DataSetTemplate(DataType type, Pointer<DataClass> the_data) : DataSet(type), data(the_data)  {
+        }
+
+        auto getData() const -> void * override {
+            return dynamic_cast<void*>(&(*data));
+        }
+    };
+
+    class NumericR2toRDataSet : public DataSetTemplate<R2toR::NumericFunction> {
+    public:
+        explicit NumericR2toRDataSet(const Pointer<R2toR::NumericFunction> &theData);
+    };
 
 } // Slab::Math
 

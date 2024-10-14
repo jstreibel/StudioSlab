@@ -12,6 +12,6 @@ namespace Slab::Core {
     : name(std::move(name)), requiresGraphicsBackend(reqGraphBack) { }
 
     Module::~Module() {
-        Log::Info() << "Destroying \"" << name << "\" module" << Log::Flush;
+        Log::Info() << "Releasing module \'" << Log::FGBlue << name << Log::ResetFormatting << "\'." << Log::Flush;
     }
 } // Core

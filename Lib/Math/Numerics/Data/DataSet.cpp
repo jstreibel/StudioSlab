@@ -5,15 +5,13 @@
 #include "DataSet.h"
 
 namespace Slab::Math {
-    DataSet::DataSet(Pointer<void> data, Str type) : data(data), type(type) {
-
+    DataSet::DataSet(DataType type) : type(type) {
     }
 
     Str DataSet::getType() const {
         return type;
     }
 
-    auto DataSet::getData() const -> Pointer<void> {
-        return data;
-    }
+    NumericR2toRDataSet::NumericR2toRDataSet(const Pointer<R2toR::NumericFunction> &theData)
+    : DataSetTemplate("Data:Numeric:R2toR", theData) {}
 } // Slab::Math

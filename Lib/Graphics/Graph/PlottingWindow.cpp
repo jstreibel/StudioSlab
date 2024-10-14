@@ -153,9 +153,9 @@ namespace Slab {
             auto sh = Core::BackendManager::GetGUIBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
-            ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
 
-            if (ImGui::Begin(title.c_str(), &showInterface)) {
+            if (ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing|ImGuiWindowFlags_AlwaysAutoResize)) {
                 for (auto it = content.begin(); it!=content.end(); ) {
                     IN artie = it->second;
 

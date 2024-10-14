@@ -9,6 +9,8 @@
 
 namespace Slab {
     void Startup();
+
+    Core::Module &GetModule(Core::ModuleName);
 }
 
 #endif //STUDIOSLAB_STUDIOSLAB_H

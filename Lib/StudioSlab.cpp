@@ -16,6 +16,10 @@ namespace Slab {
         Graphics::Register();
     }
 
+    Core::Module& GetModule(Core::ModuleName name) {
+        return *Core::BackendManager::GetModule(name);
+    }
+
 
 }
 
