@@ -25,9 +25,3 @@
 [submodule "xy"]
 	path = xy
 	url = git@bitbucket.org:jstreibel/xy.git
-[submodule "Lib/3rdParty/freetype-gl"]
-	path = Lib/3rdParty/freetype-gl
-	url = https://github.com/rougier/freetype-gl.git
-[submodule "Lib/3rdParty/imgui"]
-	path = Lib/3rdParty/imgui
-	url = https://github.com/ocornut/imgui.git
