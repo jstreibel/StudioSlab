@@ -17,6 +17,10 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CORE_CONTROLLER_SOURCES}
         Base.h
 		Backend/Modules/Modules.cpp
+		Controller/Interface/Request.cpp
+		Controller/Interface/Request.h
+		Controller/Interface/Message.cpp
+		Controller/Interface/Message.h
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}

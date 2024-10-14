@@ -54,7 +54,7 @@ namespace Slab::Core {
     const Str Log::ErrorFormat = Log::ResetFormatting + Log::FGRed;
     const Str Log::ErrorFatalFormat = Log::ResetFormatting + Log::FGRed + Log::BoldFace;
 
-    Log::Log() : Singleton<Log>("Log"), InterfaceOwner(true) {};
+    Log::Log() : Singleton<Log>("Log"), CLInterfaceOwner(true) {};
 
     auto Log::GetSingleton() -> Log & {
         if (Singleton::singleInstance == nullptr) {
@@ -200,7 +200,7 @@ namespace Slab::Core {
     }
 
     void Log::notifyCLArgsSetupFinished() {
-        InterfaceOwner::notifyCLArgsSetupFinished();
+        CLInterfaceOwner::notifyCLArgsSetupFinished();
 
 
 #if !FORCE_VERBOSE

@@ -15,7 +15,7 @@
 namespace Slab::Core {
 
     AppBase::AppBase(int argc, const char **argv, bool doRegister)
-            : InterfaceOwner("App", 100, doRegister) {
+            : CLInterfaceOwner("App", 100, doRegister) {
         Slab::Startup();
 
         CLArgsManager::Initialize(argc, argv);

@@ -11,7 +11,7 @@
 #include "Utils/Timer.h"
 
 #include "Core/Controller/Parameter/CommonParameters.h"
-#include "Core/Controller/Interface/InterfaceOwner.h"
+#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
 #include "Utils/Singleton.h"
 
 #include <iostream>
@@ -21,7 +21,7 @@
 
 namespace Slab::Core {
 
-    class Log : public Singleton<Log>, InterfaceOwner {
+    class Log : public Singleton<Log>, CLInterfaceOwner {
         static Log *myInstance;
 
         BoolParameter::Ptr logDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");

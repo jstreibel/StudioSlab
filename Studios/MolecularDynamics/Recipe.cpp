@@ -23,7 +23,7 @@
 namespace MolecularDynamics {
     Recipe::Recipe()
     : NumericalRecipe("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
-    , molDynamicsInterface(New <Interface> ("Molecular dynamics 2-d", this, 100))
+    , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
         interface->addSubInterface(molDynamicsInterface);
@@ -74,7 +74,7 @@ namespace MolecularDynamics {
     }
 
     void Recipe::notifyCLArgsSetupFinished() {
-        InterfaceOwner::notifyCLArgsSetupFinished();
+        CLInterfaceOwner::notifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 

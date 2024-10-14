@@ -3,7 +3,7 @@
 //
 
 #include "App/CrashPad.h"
-#include "Core/Controller/Interface/InterfaceSelector.h"
+#include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 #include "LeadingDelta/LeadingDelta.h"
 
 #include "Math/App.h"

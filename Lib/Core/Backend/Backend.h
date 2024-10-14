@@ -5,18 +5,18 @@
 #include "Modules/Modules.h"
 #include "Modules/Module.h"
 
-#include "Core/Controller/Interface/InterfaceOwner.h"
+#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
 
 
 
 namespace Slab::Core {
 
-    class Backend : public InterfaceOwner {
+    class Backend : public CLInterfaceOwner {
         Str name;
 
     protected:
         explicit Backend(const Str& name)
-        : InterfaceOwner(Str(name)) {}
+        : CLInterfaceOwner(Str(name)) {}
 
     public:
         virtual ~Backend() = default;

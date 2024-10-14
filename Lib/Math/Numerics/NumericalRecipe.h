@@ -4,13 +4,13 @@
 #include "Math/Numerics/Method/Stepper.h"
 #include "Math/Numerics/Output/OutputManager.h"
 
-#include "Core/Controller/Interface/Interface.h"
+#include "Core/Controller/CommandLine/CLInterface.h"
 #include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Solver/Solver.h"
 
 namespace Slab::Math::Base {
 
-    class NumericalRecipe : public InterfaceOwner {
+    class NumericalRecipe : public CLInterfaceOwner {
     protected:
         SimulationConfig simulationConfig;
 

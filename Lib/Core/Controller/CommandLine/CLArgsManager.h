@@ -5,7 +5,7 @@
 #ifndef FIELDS_COMMANDLINEINTERFACEMANAGER_H
 #define FIELDS_COMMANDLINEINTERFACEMANAGER_H
 
-#include "Core/Controller/Interface/Interface.h"
+#include "CLInterface.h"
 #include "CLDefs.h"
 
 
@@ -30,7 +30,7 @@ namespace Slab::Core {
 
         static void Parse();
 
-        static auto BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void;
+        static auto BuildOptionsDescription(const CLInterface &anInterface, CLOptionsDescription &opts) -> void;
 
     };
 

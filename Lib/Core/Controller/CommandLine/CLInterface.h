@@ -6,6 +6,8 @@
 #define FIELDS_INTERFACE_H
 
 #include "Core/Controller/Parameter/Parameter.h"
+#include "Core/Controller/Interface/Request.h"
+#include "Core/Controller/Interface/Message.h"
 
 #include <set>
 
@@ -13,9 +15,9 @@ namespace Slab::Core {
 
     class InterfaceManager;
 
-    class InterfaceOwner;
+    class CLInterfaceOwner;
 
-    class InterfaceListener {
+    class CLInterfaceListener {
     public:
         /**
          * Notify listeners that this interface has finished being set up from command line.
@@ -26,29 +28,31 @@ namespace Slab::Core {
          * Notify listeners that all interfaces have finished being set up from command line.
          */
         virtual auto notifyAllCLArgsSetupFinished() -> void {};
+
+        virtual auto requestIssued(Request) -> Message {return {"[no answer]"};};
     };
 
-    class Interface final {
+    class CLInterface final {
         const int priority;
 
         friend InterfaceManager;
-        friend InterfaceOwner;
+        friend CLInterfaceOwner;
 
-        InterfaceOwner *owner = nullptr;
+        CLInterfaceOwner *owner = nullptr;
 
         Str name;
         Str descr = "<empty>";
         const Str delimiter = ",";
 
-        Vector<InterfaceListener *> listeners;
+        Vector<CLInterfaceListener *> listeners;
 
-    public:
+        Vector<Request> protocols;
     private:
         std::set<Parameter_ptr> parameters;
-        std::set<Pointer<Interface>> subInterfaces;
+        std::set<Pointer<CLInterface>> subInterfaces;
 
     public:
-        Interface(Str name, InterfaceOwner *owner, int priority);
+        CLInterface(Str name, CLInterfaceOwner *owner, int priority);
 
         /**
          * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
@@ -59,13 +63,15 @@ namespace Slab::Core {
          * @return an std::shared_ptr to an Interface.
          */
 
-        ~Interface();
+        ~CLInterface();
+
+        Message sendRequest(Request);
 
         auto getGeneralDescription() const -> Str;
 
-        void addSubInterface(const Pointer<Interface>& subInterface);
+        void addSubInterface(const Pointer<CLInterface>& subInterface);
 
-        auto addListener(InterfaceListener *) -> void;
+        auto addListener(CLInterfaceListener *) -> void;
 
         void addParameter(Parameter_ptr parameter);
 
@@ -73,13 +79,13 @@ namespace Slab::Core {
 
         void addParameters(std::initializer_list<Parameter *> parameters);
 
-        auto getSubInterfaces() const -> Vector<Pointer<Interface>>;
+        auto getSubInterfaces() const -> Vector<Pointer<CLInterface>>;
 
         auto getParameters() const -> Vector<Parameter_constptr>;
 
         auto getParameter(Str key) const -> Parameter_ptr;
 
-        auto getOwner() const -> InterfaceOwner *;
+        auto getOwner() const -> CLInterfaceOwner *;
 
         auto getName() const -> const Str &;
 
@@ -92,18 +98,18 @@ namespace Slab::Core {
          */
         auto toString(const StrVector &paramNames = {}, Str separator = " ", bool longName = true) const -> Str;
 
-        void setup(CLVariablesMap vm);
+        void setupFromCommandLine(CLVariablesMap vm);
 
-        bool operator==(const Interface &rhs) const;
+        bool operator==(const CLInterface &rhs) const;
 
         bool operator==(Str val) const;
 
-        bool operator!=(const Interface &rhs) const;
+        bool operator!=(const CLInterface &rhs) const;
 
-        bool operator<(const Interface &other) const;
+        bool operator<(const CLInterface &other) const;
     };
 
-    DefinePointers(Interface)
+    DefinePointers(CLInterface)
 
 }
 

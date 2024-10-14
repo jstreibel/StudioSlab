@@ -18,11 +18,13 @@ namespace Slab::Core {
     public:
         Parameter(const Str &commandLineArgName, const Str &description);
 
-        virtual auto addToOptionsGroup(CLODEasyInit &group) const -> void = 0;
+        virtual auto addToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
+        auto getFullCommandLineName() const -> Str;
+        auto getCommandLineArgumentName(bool longNameIfPresent = false) const -> Str;
 
         virtual auto valueToString() const -> Str = 0;
 
-        virtual void setValueFrom(VariableValue var) = 0;
+        virtual void setValueFromCommandLine(VariableValue var) = 0;
 
         virtual void setValue(const void *) = 0;
 
@@ -30,10 +32,6 @@ namespace Slab::Core {
 
         template<typename T>
         const T& getValueAs() const { return *static_cast<const T*>(getValueVoid()); }
-
-        auto getFullCLName() const -> Str;
-
-        auto getCLName(bool longNameIfPresent = false) const -> Str;
 
         auto getDescription() const -> Str;
 

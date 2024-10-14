@@ -5,29 +5,29 @@
 #ifndef V_SHAPE_COMMANDLINEINPUTMANAGER_H
 #define V_SHAPE_COMMANDLINEINPUTMANAGER_H
 
-#include "Interface.h"
-#include "InterfaceOwner.h"
+#include "CLInterface.h"
+#include "CLInterfaceOwner.h"
 #include "Core/Controller/Parameter/CommonParameters.h"
 
 
 namespace Slab::Core {
 
-    class InterfaceSelector : public InterfaceOwner {
+    class CLInterfaceSelector : public CLInterfaceOwner {
         int currentSelection = 0;
-        Vector<Interface_ptr> candidates;
+        Vector<CLInterface_ptr> candidates;
 
         IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
 
         auto generateHelpDescription() -> void;
 
     public:
-        InterfaceSelector(Str selectorName);
+        CLInterfaceSelector(Str selectorName);
 
-        void registerOption(Interface_ptr interface);
+        void registerOption(CLInterface_ptr interface);
 
-        auto preParse(int argc, const char **argv, bool registerInInterfaceManager = true) -> const InterfaceSelector &;
+        auto preParse(int argc, const char **argv, bool registerInInterfaceManager = true) -> const CLInterfaceSelector &;
 
-        auto getCurrentCandidate() const -> Interface_ptr;
+        auto getCurrentCandidate() const -> CLInterface_ptr;
 
     };
 

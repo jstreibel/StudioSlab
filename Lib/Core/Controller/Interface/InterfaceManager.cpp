@@ -18,7 +18,7 @@ namespace Slab::Core {
         return *instance;
     }
 
-    void InterfaceManager::registerInterface(const Pointer<Interface> &anInterface) {
+    void InterfaceManager::registerInterface(const Pointer<CLInterface> &anInterface) {
         auto &log = Log::Note();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName()
             << Log::ResetFormatting << "\" [ "
@@ -35,7 +35,7 @@ namespace Slab::Core {
             auto desc = p->getDescription();
             if (!desc.empty()) desc = " (" + desc + ")";
 
-            log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->getFullCLName() << Log::ResetFormatting << desc;
+            log << "\n\t\t\t\t\t\tParameter: " << Log::FGBlue << p->getFullCommandLineName() << Log::ResetFormatting << desc;
         }
 
         log << Log::Flush;
@@ -44,8 +44,8 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto InterfaceManager::getInterfaces() -> Vector<Pointer<const Interface>> {
-        Vector<Pointer<const Interface>> V(interfaces.size());
+    auto InterfaceManager::getInterfaces() -> Vector<Pointer<const CLInterface>> {
+        Vector<Pointer<const CLInterface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
 
@@ -73,7 +73,7 @@ namespace Slab::Core {
             // TODO passar (somehow) para as interfaces somente as variaveis que importam, e não todas o tempo todo.
             // Ocorre que, passando todas sempre, certas interfaces terao acesso a informacao que nao lhes interessa.
 
-            interface->setup(vm);
+            interface->setupFromCommandLine(vm);
         }
 
         for (const auto &interface: interfaces) {
@@ -90,7 +90,7 @@ namespace Slab::Core {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters)
-                ss << "\"" << parameter->getCLName(true) << "\": " << parameter->valueToString() << ", ";
+                ss << "\"" << parameter->getCommandLineArgumentName(true) << "\": " << parameter->valueToString() << ", ";
         }
 
         return ss.str();
@@ -103,7 +103,7 @@ namespace Slab::Core {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters) {
-                auto name = parameter->getCLName(longName);
+                auto name = parameter->getCommandLineArgumentName(longName);
 
                 if (Contains(params, name))
                     ss << name << "=" << parameter->valueToString() << separator;
@@ -133,7 +133,7 @@ namespace Slab::Core {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters) {
-                auto name = parameter->getCLName();
+                auto name = parameter->getCommandLineArgumentName();
 
                 if (Contains(params, name))
                     values.emplace_back(name, parameter->valueToString());
@@ -147,7 +147,7 @@ namespace Slab::Core {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters) {
-                if (name == parameter->getCLName() || name == parameter->getCLName(true))
+                if (name == parameter->getCommandLineArgumentName() || name == parameter->getCommandLineArgumentName(true))
                     return parameter;
             }
         }

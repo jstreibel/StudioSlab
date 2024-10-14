@@ -65,7 +65,7 @@ namespace Modes {
     }
 
     void Builder::notifyCLArgsSetupFinished() {
-        InterfaceOwner::notifyCLArgsSetupFinished();
+        CLInterfaceOwner::notifyCLArgsSetupFinished();
         fix L = simulationConfig.numericConfig.getL();
         fix n = simulationConfig.numericConfig.getn();
         fix a = simulationConfig.numericConfig.getr();

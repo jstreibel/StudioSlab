@@ -68,7 +68,7 @@ namespace Slab::Core {
         Log::Success() << "CLArgsManager finished parsing command line options." << Log::Flush;
     }
 
-    auto CLArgsManager::BuildOptionsDescription(const Interface &anInterface, CLOptionsDescription &opts) -> void {
+    auto CLArgsManager::BuildOptionsDescription(const CLInterface &anInterface, CLOptionsDescription &opts) -> void {
         auto desc = anInterface.getGeneralDescription();
         auto name = anInterface.getName() + (desc != "" ? Str(" (") + desc + ")" : "");
 
@@ -78,13 +78,13 @@ namespace Slab::Core {
 
         for (const auto p: paramMap)
             try {
-                p->addToOptionsGroup(group);
+                p->addToCommandLineOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = InterfaceManager::getInstance().getParameter(p->getCLName());
-                Log::Error() << "Couldn't add CLI option '" << p->getFullCLName() << "' (" << p->getDescription()
+                fix same = InterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
+                Log::Error() << "Couldn't add CLI option '" << p->getFullCommandLineName() << "' (" << p->getDescription()
                              << "): option already exists as '"
-                             << same->getFullCLName() << "' (" << same->getDescription() << ")." << Log::Flush;
+                             << same->getFullCommandLineName() << "' (" << same->getDescription() << ")." << Log::Flush;
                 throw e;
             }
     }

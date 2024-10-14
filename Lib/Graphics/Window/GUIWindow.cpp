@@ -85,8 +85,8 @@ namespace Slab::Graphics {
                 if (ImGui::TreeNode(text.c_str())) {
                     for (auto &param: interface->getParameters()) {
                         fix descr = param->getDescription();
-                        fix longName = param->getCLName(true);
-                        fix shortName = param->getCLName(false);
+                        fix longName = param->getCommandLineArgumentName(true);
+                        fix shortName = param->getCommandLineArgumentName(false);
 
                         auto name = Str("-");
                         if (longName.size() > 1) {

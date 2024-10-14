@@ -3,7 +3,7 @@
 //
 
 #include "App/CrashPad.h"
-#include "Core/Controller/Interface/InterfaceSelector.h"
+#include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 
 #include "Math/App.h"
 
@@ -17,7 +17,7 @@ int run(int argc, const char **argv){
     using namespace Slab::Math;
     using namespace Studios::Fields::RtoRThermal;
 
-    InterfaceSelector selector("Dynamic thermal");
+    CLInterfaceSelector selector("Dynamic thermal");
     Vector<Slab::Models::KGRtoR::KGRtoRBuilder*>
             options = { new StatisticalBuilder,
                         new MachineGunBuilder,

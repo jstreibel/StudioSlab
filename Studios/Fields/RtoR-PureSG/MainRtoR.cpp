@@ -1,7 +1,7 @@
 
 
 #include "App/CrashPad.h"
-#include "Core/Controller/Interface/InterfaceSelector.h"
+#include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 
 #include "Math/App.h"
 
@@ -16,7 +16,7 @@ int run(int argc, const char **argv) {
     using namespace Slab::Math;
     using namespace Slab::Models::KGRtoR;
 
-    InterfaceSelector selector("Simulation builder selector");
+    CLInterfaceSelector selector("Simulation builder selector");
 
     auto option1 = new Studios::PureSG::InputSymmetricOscillon();
     auto option2 = new Studios::PureSG::InputPerturbations();

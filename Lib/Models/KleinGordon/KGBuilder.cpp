@@ -58,7 +58,7 @@ namespace Slab::Models {
         }
 
 
-        InterfaceListener::notifyAllCLArgsSetupFinished();
+        CLInterfaceListener::notifyAllCLArgsSetupFinished();
     }
 
 

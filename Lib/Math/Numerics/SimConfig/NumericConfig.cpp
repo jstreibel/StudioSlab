@@ -7,7 +7,7 @@ namespace Slab::Math {
 
 
 
-    NumericConfig::NumericConfig(bool doRegister) : InterfaceOwner(
+    NumericConfig::NumericConfig(bool doRegister) : CLInterfaceOwner(
             "Numeric Parameters,The core parameters that define the simulation per-se", 0, doRegister) {
         interface->addParameters({N, L, xCenter, t, rdt, dimMode, h});
     }
@@ -47,14 +47,14 @@ namespace Slab::Math {
     }
 
     void NumericConfig::sett(Real tMax) const {
-        Log::Attention() << "Command line argument '" << t->getCLName(true) << "' "
+        Log::Attention() << "Command line argument '" << t->getCommandLineArgumentName(true) << "' "
                          << "being ignored and set to " << tMax << ";" << Log::Flush;
 
         t->setValue(tMax);
     }
 
     void NumericConfig::notifyCLArgsSetupFinished() {
-        InterfaceOwner::notifyCLArgsSetupFinished();
+        CLInterfaceOwner::notifyCLArgsSetupFinished();
 
         switch (**dimMode) {
             case 0:

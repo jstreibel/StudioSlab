@@ -199,9 +199,9 @@ namespace Slab::Models::KGRtoR {
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
-                Str("Error generating time-domain dft snapshots. The value of '--") +
-                timeDFTSnapshot_tDelta.getCLName(true) + "' is " + timeDFTSnapshot_tDelta.valueToString() +
-                ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
+                    Str("Error generating time-domain dft snapshots. The value of '--") +
+                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.valueToString() +
+                    ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
         RealVector x_locations;

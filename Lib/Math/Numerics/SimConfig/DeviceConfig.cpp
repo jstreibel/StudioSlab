@@ -12,7 +12,7 @@
 namespace Slab::Math {
     using namespace Slab::Core;
 
-    DeviceConfig::DeviceConfig(bool doRegister) : InterfaceOwner("Device options", 10, doRegister)
+    DeviceConfig::DeviceConfig(bool doRegister) : CLInterfaceOwner("Device options", 10, doRegister)
     {
         Log::Info() << "Device integration type is " << sizeof(Real)*8 << " bits." << Log::Flush;
 
@@ -31,7 +31,7 @@ namespace Slab::Math {
     }
 
     void DeviceConfig::notifyCLArgsSetupFinished() {
-        InterfaceOwner::notifyCLArgsSetupFinished();
+        CLInterfaceOwner::notifyCLArgsSetupFinished();
 
     #if USE_CUDA
         unsigned int dev_n = **deviceChoice;
@@ -75,7 +75,7 @@ namespace Slab::Math {
 
     void DeviceConfig::notifyAllCLArgsSetupFinished() {
 
-        InterfaceListener::notifyAllCLArgsSetupFinished();
+        CLInterfaceListener::notifyAllCLArgsSetupFinished();
     }
 
 

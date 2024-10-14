@@ -8,7 +8,7 @@
 #ifndef PARAMS_H_
 #define PARAMS_H_
 
-#include "Core/Controller/Interface/InterfaceOwner.h"
+#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
 #include "Core/Controller/Parameter/CommonParameters.h"
 #include "Utils/Types.h"
 #include "Utils/NativeTypes.h"
@@ -20,7 +20,7 @@ namespace Slab::Math {
 
     using namespace Core;
 
-    class NumericConfig : public InterfaceOwner {
+    class NumericConfig : public CLInterfaceOwner {
         IntegerParameter::Ptr N = IntegerParameter::New(1024, "N", "Discretization of space dimensions. "
                                                                    "Has to be POT for GPU");
         RealParameter::Ptr L = RealParameter::New(10., "L", "Space length");

@@ -24,7 +24,7 @@ namespace Slab::Core {
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::addToOptionsGroup(CLODEasyInit &add) const -> void {
+    auto ParameterTemplate<Type>::addToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
         auto value = CLOptions::value<Type>()->default_value(ToStr(val));
         add(fullCLName, description, value);
     }
@@ -41,7 +41,7 @@ namespace Slab::Core {
     const void *ParameterTemplate<Type>::getValueVoid() const { return &val; }
 
     template<class Type>
-    void ParameterTemplate<Type>::setValueFrom(VariableValue var) {
+    void ParameterTemplate<Type>::setValueFromCommandLine(VariableValue var) {
         try {
             this->val = var.as<Type>();
             // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;

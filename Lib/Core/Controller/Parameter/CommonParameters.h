@@ -28,9 +28,9 @@ namespace Slab::Core {
 
         auto valueToString() const -> Str override;
 
-        auto addToOptionsGroup(CLODEasyInit &base) const -> void override;
+        auto addToCommandLineOptionsGroup(CLODEasyInit &base) const -> void override;
 
-        void setValueFrom(VariableValue var) override;
+        void setValueFromCommandLine(VariableValue var) override;
 
         void setValue(const void *pVoid) override;
 

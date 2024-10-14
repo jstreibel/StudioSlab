@@ -4,12 +4,8 @@
 
 #include "GiNaCModule.h"
 
-namespace Slab {
-    namespace Math {
-        namespace GiNaC {
-            GiNaCModule::GiNaCModule() {
+namespace Slab::Math::GiNaC {
+    GiNaCModule::GiNaCModule() : Core::Module("Math:GiNaC") {
 
-            }
-        } // Slab
-    } // Math
-} // GiNaC
+    }
+} // Slab::Math::GiNaC

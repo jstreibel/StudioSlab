@@ -4,7 +4,7 @@
 
 #include "App/CrashPad.h"
 
-#include "Core/Controller/Interface/InterfaceSelector.h"
+#include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 #include "Math/Function/RtoR/App/FieldsApp-RtoR.h"
 
 #include "Signal.h"

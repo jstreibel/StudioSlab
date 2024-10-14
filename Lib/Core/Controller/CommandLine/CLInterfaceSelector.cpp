@@ -2,7 +2,7 @@
 // Created by joao on 09/09/2019.
 //
 
-#include "InterfaceSelector.h"
+#include "CLInterfaceSelector.h"
 
 #include <boost/algorithm/string.hpp>
 
@@ -15,19 +15,19 @@
 namespace Slab::Core {
 
 
-    InterfaceSelector::InterfaceSelector(Str name) : InterfaceOwner(name + " interface selector", -1, true) {
+    CLInterfaceSelector::CLInterfaceSelector(Str name) : CLInterfaceOwner(name + " interface selector", -1, true) {
         interface->addParameters({&selection});
     };
 
-    auto InterfaceSelector::getCurrentCandidate() const -> Interface_ptr {
+    auto CLInterfaceSelector::getCurrentCandidate() const -> Interface_ptr {
         if (currentSelection > candidates.size() - 1)
             throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
         return candidates[currentSelection];
     }
 
-    auto InterfaceSelector::preParse(int argc, const char **argv,
-                                     bool registerInInterfaceManager) -> const InterfaceSelector & {
+    auto CLInterfaceSelector::preParse(int argc, const char **argv,
+                                       bool registerInInterfaceManager) -> const CLInterfaceSelector & {
         typedef std::string str;
 
         const str simStr("--sim");
@@ -66,13 +66,13 @@ namespace Slab::Core {
         return *this;
     }
 
-    void InterfaceSelector::registerOption(Interface_ptr interface) {
+    void CLInterfaceSelector::registerOption(Interface_ptr interface) {
         candidates.push_back(interface);
 
         generateHelpDescription();
     }
 
-    auto InterfaceSelector::generateHelpDescription() -> void {
+    auto CLInterfaceSelector::generateHelpDescription() -> void {
         StringStream simsHelp;
         simsHelp << "Sim types:\n";
 

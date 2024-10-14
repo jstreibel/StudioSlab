@@ -16,11 +16,11 @@ namespace Slab::Core {
         longCLName = split.size() > 1 ? split[1] : "";
     }
 
-    auto Parameter::getFullCLName() const -> Str {
+    auto Parameter::getFullCommandLineName() const -> Str {
         return fullCLName;
     }
 
-    auto Parameter::getCLName(bool longNameIfPresent) const -> Str {
+    auto Parameter::getCommandLineArgumentName(bool longNameIfPresent) const -> Str {
         return (longNameIfPresent && longCLName != "") ? longCLName : shortCLName;
     }
 

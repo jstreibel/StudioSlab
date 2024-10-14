@@ -2,9 +2,9 @@
 // Created by joao on 10/13/21.
 //
 
-#include "Interface.h"
-#include "InterfaceOwner.h"
-#include "InterfaceManager.h"
+#include "CLInterface.h"
+#include "CLInterfaceOwner.h"
+#include "Core/Controller/Interface/InterfaceManager.h"
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
@@ -13,8 +13,9 @@
 
 namespace Slab::Core {
 
-    Interface::Interface(Str name, InterfaceOwner *owner, int priority)
-            : owner(owner), priority(priority) {
+    CLInterface::CLInterface(Str name, CLInterfaceOwner *owner, int priority)
+            : owner(owner), priority(priority), protocols(owner->getProtocols()) {
+
 
         auto tokens = Common::SplitString(name, delimiter, 2);
         this->name = tokens[0];
@@ -23,12 +24,15 @@ namespace Slab::Core {
         if (owner != nullptr) addListener(owner);
 
         Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
-        if (owner == nullptr)
+        if (owner == nullptr) {
             Log::Attention() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' is NOT owned."
                              << Log::Flush;
+
+            NOT_IMPLEMENTED
+        }
     }
 
-    auto Interface::getParameters() const -> Vector<Parameter_constptr> {
+    auto CLInterface::getParameters() const -> Vector<Parameter_constptr> {
         Vector<Parameter_constptr> constParameters;
 
         std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
@@ -36,38 +40,38 @@ namespace Slab::Core {
         return constParameters;
     }
 
-    auto Interface::getSubInterfaces() const -> Vector<Pointer<Interface>> {
-        Vector<Pointer<Interface>> interfaces;
+    auto CLInterface::getSubInterfaces() const -> Vector<Pointer<CLInterface>> {
+        Vector<Pointer<CLInterface>> interfaces;
 
         std::copy(subInterfaces.begin(), subInterfaces.end(), std::back_inserter(interfaces));
 
         return interfaces;
     }
 
-    void Interface::addParameter(Parameter_ptr parameter) {
+    void CLInterface::addParameter(Parameter_ptr parameter) {
         auto insertionSuccessful = parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
             throw "Error while inserting parameter in interface.";
         }
 
-        auto name = Str("\"") + parameter->getFullCLName() + "\"";
-        Log::Note() << "Parameter " << std::setw(25) << std::left << name << " registered to interface \"" << getName()
+        auto quotename = Str("\"") + parameter->getFullCommandLineName() + "\"";
+        Log::Note() << "Parameter " << std::setw(25) << std::left << quotename << " registered to interface \"" << getName()
                     << "\".";
     }
 
-    void Interface::addParameters(std::initializer_list<Parameter_ptr> parametersList) {
+    void CLInterface::addParameters(std::initializer_list<Parameter_ptr> parametersList) {
         for (auto param: parametersList)
             addParameter(param);
     }
 
-    void Interface::addParameters(std::initializer_list<Parameter *> parametersList) {
+    void CLInterface::addParameters(std::initializer_list<Parameter *> parametersList) {
         for (auto param: parametersList)
             addParameter(Naked(*param));
     }
 
 
-    void Interface::addSubInterface(const Pointer<Interface>& subInterface) {
+    void CLInterface::addSubInterface(const Pointer<CLInterface>& subInterface) {
         if (Contains(subInterfaces, subInterface))
             throw Str("Error while inserting sub-interface '") + subInterface->getName()
                   + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
@@ -78,12 +82,12 @@ namespace Slab::Core {
         }
     }
 
-    auto Interface::getGeneralDescription() const -> Str {
+    auto CLInterface::getGeneralDescription() const -> Str {
 
         return descr != "<empty>" ? descr : "";
     }
 
-    auto Interface::getParameter(Str key) const -> Parameter_ptr {
+    auto CLInterface::getParameter(Str key) const -> Parameter_ptr {
         auto compareFunc = [key](Parameter_ptr parameter) {
             return *parameter == key;
         };
@@ -93,7 +97,7 @@ namespace Slab::Core {
         return *result;
     }
 
-    auto Interface::toString(const StrVector &paramNames, Str separator, bool longName) const -> Str {
+    auto CLInterface::toString(const StrVector &paramNames, Str separator, bool longName) const -> Str {
         std::stringstream ss("");
 
         std::map<Str, int> paramCount;
@@ -103,13 +107,13 @@ namespace Slab::Core {
         fix SHORT_NAME = false;
 
         for (auto &param: parameters) {
-            auto nameShort = param->getCLName(SHORT_NAME);
-            auto nameLong = param->getCLName(LONG_NAME);
+            auto nameShort = param->getCommandLineArgumentName(SHORT_NAME);
+            auto nameLong = param->getCommandLineArgumentName(LONG_NAME);
 
             if (Contains(paramNames, nameShort) || Contains(paramNames, nameLong) ||
                 paramNames.empty()) {
                 bool isLong = !nameLong.empty();
-                ss << param->getCLName(isLong) << "=" << param->valueToString() << separator;
+                ss << param->getCommandLineArgumentName(isLong) << "=" << param->valueToString() << separator;
 
                 paramCount[isLong ? nameLong : nameShort]++;
             }
@@ -126,13 +130,13 @@ namespace Slab::Core {
         return str;
     }
 
-    void Interface::setup(CLVariablesMap vm) {
+    void CLInterface::setupFromCommandLine(CLVariablesMap vm) {
         try {
             for (auto param: parameters) {
-                auto key = param->getCLName(true);
+                auto key = param->getCommandLineArgumentName(true);
                 auto val = vm[key];
 
-                param->setValueFrom(val);
+                param->setValueFromCommandLine(val);
             }
 
             for (auto listener: listeners)
@@ -144,37 +148,45 @@ namespace Slab::Core {
         }
     }
 
-    bool Interface::operator==(const Interface &rhs) const {
+    bool CLInterface::operator==(const CLInterface &rhs) const {
         return std::tie(name, parameters, subInterfaces) ==
                std::tie(rhs.name, rhs.parameters, rhs.subInterfaces);
     }
 
-    bool Interface::operator==(Str str) const {
+    bool CLInterface::operator==(Str str) const {
         return name == str;
     }
 
-    bool Interface::operator!=(const Interface &rhs) const {
+    bool CLInterface::operator!=(const CLInterface &rhs) const {
         return !(rhs == *this);
     }
 
-    Interface::~Interface() {
+    CLInterface::~CLInterface() {
 
     }
 
-    auto Interface::addListener(InterfaceListener *newListener) -> void {
+    auto CLInterface::addListener(CLInterfaceListener *newListener) -> void {
         listeners.emplace_back(newListener);
     }
 
-    auto Interface::getOwner() const -> InterfaceOwner * {
+    auto CLInterface::getOwner() const -> CLInterfaceOwner * {
         return owner;
     }
 
-    auto Interface::getName() const -> const Str & {
+    auto CLInterface::getName() const -> const Str & {
         return name;
     }
 
-    bool Interface::operator<(const Interface &other) const {
+    bool CLInterface::operator<(const CLInterface &other) const {
         return priority < other.priority;
+    }
+
+    Message CLInterface::sendRequest(Request req) {
+        if(!Contains(protocols, req)) {
+            return {"[unknown request]"};
+        }
+
+        return owner->requestIssued(req);
     }
 
 

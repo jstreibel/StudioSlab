@@ -6,7 +6,7 @@
 #define FIELDS_INTERFACEMANAGER_H
 
 
-#include "Interface.h"
+#include "Core/Controller/CommandLine/CLInterface.h"
 
 
 namespace Slab::Core {
@@ -14,18 +14,18 @@ namespace Slab::Core {
     class InterfaceManager {
         static InterfaceManager *instance;
 
-        Vector<Pointer<Interface>> interfaces;
+        Vector<Pointer<CLInterface>> interfaces;
 
     public:
         static auto getInstance() -> InterfaceManager &;
 
         // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
-        void registerInterface(const Pointer<Interface> &anInterface);
+        void registerInterface(const Pointer<CLInterface> &anInterface);
 
-        auto getInterfaces() -> Vector<Pointer<const Interface>>;
+        auto getInterfaces() -> Vector<Pointer<const CLInterface>>;
 
-        auto getInterface(const char *string) -> Pointer<const Interface>;
+        auto getInterface(const char *string) -> Pointer<const CLInterface>;
 
         void feedInterfaces(const CLVariablesMap &vm);
 

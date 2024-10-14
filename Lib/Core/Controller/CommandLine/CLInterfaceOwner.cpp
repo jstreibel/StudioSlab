@@ -2,7 +2,7 @@
 // Created by joao on 09/06/23.
 //
 
-#include "InterfaceOwner.h"
+#include "CLInterfaceOwner.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Core/Tools/Log.h"
@@ -12,16 +12,16 @@
 
 namespace Slab::Core {
 
-    InterfaceOwner::InterfaceOwner(bool IKnowIMustCallLateStart) {
+    CLInterfaceOwner::CLInterfaceOwner(bool IKnowIMustCallLateStart) {
         if (!IKnowIMustCallLateStart) Log::WarningImportant("Remember to call LateStart!") << Log::Flush;
     }
 
-    InterfaceOwner::InterfaceOwner(Str interfaceName, int priority, bool doRegister) {
+    CLInterfaceOwner::CLInterfaceOwner(Str interfaceName, int priority, bool doRegister) {
         LateStart(interfaceName, priority, doRegister);
     }
 
-    void InterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister) {
-        interface = Slab::New<Interface>(interfaceName, this, priority);
+    void CLInterfaceOwner::LateStart(Str interfaceName, int priority, bool doRegister) {
+        interface = Slab::New<CLInterface>(interfaceName, this, priority);
 
         if (doRegister) registerToManager();
         else
@@ -29,7 +29,7 @@ namespace Slab::Core {
                          << "\" did NOT immediately register to InterfaceManager." << Log::Flush;
     }
 
-    void InterfaceOwner::notifyCLArgsSetupFinished() {
+    void CLInterfaceOwner::notifyCLArgsSetupFinished() {
         Log::Status() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
                       << " (priority " << interface->priority << ") "
                       << "has been setup from command-line." << Log::Flush;
@@ -39,24 +39,28 @@ namespace Slab::Core {
                                                                                     "values from command line:";
 
         for (auto &param: interface->getParameters())
-            info << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCLName() << ": "
+            info << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCommandLineName() << ": "
                  << param->valueToString();
 
         info << Log::Flush;
     }
 
-    auto InterfaceOwner::registerToManager() const -> void {
+    auto CLInterfaceOwner::registerToManager() const -> void {
         assert(interface != nullptr);
 
         InterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto InterfaceOwner::getInterface() -> Interface_ptr {
+    auto CLInterfaceOwner::getInterface() -> Interface_ptr {
         return interface;
     }
 
-    auto InterfaceOwner::getInterface() const -> Interface_ptr {
+    auto CLInterfaceOwner::getInterface() const -> Interface_ptr {
         return interface;
+    }
+
+    Vector<Request> CLInterfaceOwner::getProtocols() {
+        return Slab::Vector<Request>();
     }
 
 
