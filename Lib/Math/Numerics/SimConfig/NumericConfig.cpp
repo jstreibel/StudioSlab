@@ -1,4 +1,4 @@
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "NumericConfig.h"
 #include "Core/Tools/Log.h"
 

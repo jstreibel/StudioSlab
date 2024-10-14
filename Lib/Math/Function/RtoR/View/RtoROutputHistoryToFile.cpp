@@ -5,7 +5,7 @@
 #include "RtoROutputHistoryToFile.h"
 
 #include "Math/Numerics/Output/Format/BinarySOF.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include <iomanip>
 
@@ -89,7 +89,7 @@ namespace Slab::Math {
         oss << R"(, "data_channels": 2)";
         oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
 
-        oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << ", " << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
         const auto &s = oss.str();
 

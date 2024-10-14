@@ -6,7 +6,7 @@
 
 #include <boost/algorithm/string.hpp>
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "CLInterfaceManager.h"
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
@@ -19,7 +19,7 @@ namespace Slab::Core {
         interface->addParameters({&selection});
     };
 
-    auto CLInterfaceSelector::getCurrentCandidate() const -> Interface_ptr {
+    auto CLInterfaceSelector::getCurrentCandidate() const -> CLInterface_ptr {
         if (currentSelection > candidates.size() - 1)
             throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
@@ -56,7 +56,7 @@ namespace Slab::Core {
             Log::Info(
                     "InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
-            auto &interfaceManager = InterfaceManager::getInstance();
+            auto &interfaceManager = CLInterfaceManager::getInstance();
 
             interfaceManager.registerInterface(currSelection);
         }
@@ -66,7 +66,7 @@ namespace Slab::Core {
         return *this;
     }
 
-    void CLInterfaceSelector::registerOption(Interface_ptr interface) {
+    void CLInterfaceSelector::registerOption(CLInterface_ptr interface) {
         candidates.push_back(interface);
 
         generateHelpDescription();

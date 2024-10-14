@@ -2,7 +2,7 @@
 // Created by joao on 7/19/19.
 //
 
-#include "CommonParameters.h"
+#include "CommonCLParameters.h"
 
 // template<>
 // auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
@@ -16,32 +16,32 @@
 namespace Slab::Core {
 
     template<class Type>
-    ParameterTemplate<Type>::~ParameterTemplate() = default;
+    CLParameterTemplate<Type>::~CLParameterTemplate() = default;
 
     template<class Type>
-    auto ParameterTemplate<Type>::valueToString() const -> std::string {
+    auto CLParameterTemplate<Type>::valueToString() const -> std::string {
         return ToStr(val);
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::addToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
+    auto CLParameterTemplate<Type>::addToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
         auto value = CLOptions::value<Type>()->default_value(ToStr(val));
         add(fullCLName, description, value);
     }
 
     template<class Type>
-    void ParameterTemplate<Type>::setValue(const void *pVoid) {
+    void CLParameterTemplate<Type>::setValue(const void *pVoid) {
         val = *static_cast<const Type *>(pVoid);
     }
 
     template<class Type>
-    void ParameterTemplate<Type>::setValue(Type value) { this->val = value; }
+    void CLParameterTemplate<Type>::setValue(Type value) { this->val = value; }
 
     template<class Type>
-    const void *ParameterTemplate<Type>::getValueVoid() const { return &val; }
+    const void *CLParameterTemplate<Type>::getValueVoid() const { return &val; }
 
     template<class Type>
-    void ParameterTemplate<Type>::setValueFromCommandLine(VariableValue var) {
+    void CLParameterTemplate<Type>::setValueFromCommandLine(VariableValue var) {
         try {
             this->val = var.as<Type>();
             // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
@@ -55,56 +55,56 @@ namespace Slab::Core {
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::getValue() const -> Type {
+    auto CLParameterTemplate<Type>::getValue() const -> Type {
         return val;
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::operator*() -> Type & {
+    auto CLParameterTemplate<Type>::operator*() -> Type & {
         return val;
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::operator*() const -> const Type & {
+    auto CLParameterTemplate<Type>::operator*() const -> const Type & {
         return val;
     }
 
     template<class Type>
-    ParameterTemplate<Type>::operator Type() const {
+    CLParameterTemplate<Type>::operator Type() const {
         return val;
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::operator=(const Type &rhs) -> ParameterTemplate & {
+    auto CLParameterTemplate<Type>::operator=(const Type &rhs) -> CLParameterTemplate & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::operator=(Type &rhs) -> ParameterTemplate & {
+    auto CLParameterTemplate<Type>::operator=(Type &rhs) -> CLParameterTemplate & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto ParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
+    auto CLParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
         return val < rhs;
     }
 
     template
-    class ParameterTemplate<int>;
+    class CLParameterTemplate<int>;
 
     template
-    class ParameterTemplate<Real>;
+    class CLParameterTemplate<Real>;
 
     template
-    class ParameterTemplate<Str>;
+    class CLParameterTemplate<Str>;
 
     template
-    class ParameterTemplate<StrVector>;
+    class CLParameterTemplate<StrVector>;
 
     template
-    class ParameterTemplate<bool>;
+    class CLParameterTemplate<bool>;
 
 }
 

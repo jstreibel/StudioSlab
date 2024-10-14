@@ -2,7 +2,7 @@
 // Created by joao on 10/17/21.
 //
 
-#include "InterfaceManager.h"
+#include "CLInterfaceManager.h"
 
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
@@ -10,15 +10,15 @@
 
 namespace Slab::Core {
 
-    InterfaceManager *InterfaceManager::instance = nullptr;
+    CLInterfaceManager *CLInterfaceManager::instance = nullptr;
 
-    auto InterfaceManager::getInstance() -> InterfaceManager & {
-        if (instance == nullptr) instance = new InterfaceManager;
+    auto CLInterfaceManager::getInstance() -> CLInterfaceManager & {
+        if (instance == nullptr) instance = new CLInterfaceManager;
 
         return *instance;
     }
 
-    void InterfaceManager::registerInterface(const Pointer<CLInterface> &anInterface) {
+    void CLInterfaceManager::registerInterface(const Pointer<CLInterface> &anInterface) {
         auto &log = Log::Note();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName()
             << Log::ResetFormatting << "\" [ "
@@ -44,7 +44,7 @@ namespace Slab::Core {
             registerInterface(subInterface);
     }
 
-    auto InterfaceManager::getInterfaces() -> Vector<Pointer<const CLInterface>> {
+    auto CLInterfaceManager::getInterfaces() -> Vector<Pointer<const CLInterface>> {
         Vector<Pointer<const CLInterface>> V(interfaces.size());
 
         std::copy(interfaces.begin(), interfaces.end(), V.begin());
@@ -52,10 +52,10 @@ namespace Slab::Core {
         return V;
     }
 
-    void InterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
+    void CLInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
         Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const Interface_ptr &a, const Interface_ptr &b) { return *a < *b; };
+        auto comp = [](const CLInterface_ptr &a, const CLInterface_ptr &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
         auto &log = Log::Info();
@@ -84,7 +84,7 @@ namespace Slab::Core {
         Log::Success() << "InterfaceManager finished feeding interfaces." << Log::Flush;
     }
 
-    auto InterfaceManager::renderAsPythonDictionaryEntries() -> Str {
+    auto CLInterfaceManager::renderAsPythonDictionaryEntries() -> Str {
 
         StringStream ss;
         for (const auto &interface: interfaces) {
@@ -96,8 +96,8 @@ namespace Slab::Core {
         return ss.str();
     }
 
-    auto InterfaceManager::renderParametersToString(const StrVector &params, const Str &separator,
-                                                    bool longName) const -> Str {
+    auto CLInterfaceManager::renderParametersToString(const StrVector &params, const Str &separator,
+                                                      bool longName) const -> Str {
         StringStream ss;
 
         for (const auto &interface: interfaces) {
@@ -115,8 +115,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto InterfaceManager::getInterface(const char *target) -> Interface_constptr {
-        auto compFunc = [target](const Interface_constptr &anInterface) { return anInterface->operator==(target); };
+    auto CLInterfaceManager::getInterface(const char *target) -> CLInterface_constptr {
+        auto compFunc = [target](const CLInterface_constptr &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(interfaces.begin(), interfaces.end(), compFunc);
 
@@ -127,7 +127,7 @@ namespace Slab::Core {
         return *it;
     }
 
-    auto InterfaceManager::getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
+    auto CLInterfaceManager::getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>> {
         Vector<Pair<Str, Str>> values;
 
         for (const auto &interface: interfaces) {
@@ -143,7 +143,7 @@ namespace Slab::Core {
         return values;
     }
 
-    auto InterfaceManager::getParameter(const Str &name) const -> Pointer<const Parameter> {
+    auto CLInterfaceManager::getParameter(const Str &name) const -> Pointer<const CLParameter> {
         for (const auto &interface: interfaces) {
             auto parameters = interface->getParameters();
             for (const auto &parameter: parameters) {

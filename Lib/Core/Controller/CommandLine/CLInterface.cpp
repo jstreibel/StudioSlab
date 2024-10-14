@@ -4,7 +4,7 @@
 
 #include "CLInterface.h"
 #include "CLInterfaceOwner.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "CLInterfaceManager.h"
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
@@ -32,8 +32,8 @@ namespace Slab::Core {
         }
     }
 
-    auto CLInterface::getParameters() const -> Vector<Parameter_constptr> {
-        Vector<Parameter_constptr> constParameters;
+    auto CLInterface::getParameters() const -> Vector<CLParameter_constptr> {
+        Vector<CLParameter_constptr> constParameters;
 
         std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
 
@@ -48,7 +48,7 @@ namespace Slab::Core {
         return interfaces;
     }
 
-    void CLInterface::addParameter(Parameter_ptr parameter) {
+    void CLInterface::addParameter(CLParameter_ptr parameter) {
         auto insertionSuccessful = parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
@@ -60,12 +60,12 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void CLInterface::addParameters(std::initializer_list<Parameter_ptr> parametersList) {
+    void CLInterface::addParameters(std::initializer_list<CLParameter_ptr> parametersList) {
         for (auto param: parametersList)
             addParameter(param);
     }
 
-    void CLInterface::addParameters(std::initializer_list<Parameter *> parametersList) {
+    void CLInterface::addParameters(std::initializer_list<CLParameter *> parametersList) {
         for (auto param: parametersList)
             addParameter(Naked(*param));
     }
@@ -87,8 +87,8 @@ namespace Slab::Core {
         return descr != "<empty>" ? descr : "";
     }
 
-    auto CLInterface::getParameter(Str key) const -> Parameter_ptr {
-        auto compareFunc = [key](Parameter_ptr parameter) {
+    auto CLInterface::getParameter(Str key) const -> CLParameter_ptr {
+        auto compareFunc = [key](CLParameter_ptr parameter) {
             return *parameter == key;
         };
 

@@ -4,7 +4,7 @@
 
 #include "CLInterfaceOwner.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
 
 #include <iomanip>
@@ -48,14 +48,14 @@ namespace Slab::Core {
     auto CLInterfaceOwner::registerToManager() const -> void {
         assert(interface != nullptr);
 
-        InterfaceManager::getInstance().registerInterface(interface);
+        CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto CLInterfaceOwner::getInterface() -> Interface_ptr {
+    auto CLInterfaceOwner::getInterface() -> CLInterface_ptr {
         return interface;
     }
 
-    auto CLInterfaceOwner::getInterface() const -> Interface_ptr {
+    auto CLInterfaceOwner::getInterface() const -> CLInterface_ptr {
         return interface;
     }
 

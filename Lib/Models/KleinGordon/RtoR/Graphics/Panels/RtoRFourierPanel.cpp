@@ -4,7 +4,7 @@
 
 #include "RtoRFourierPanel.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
         // Custom ticks
         auto unit = Constants::π;
         kSpaceGraph->getAxisArtist().setHorizontalUnit(unit);
-        fix WaveNumber = InterfaceManager::getInstance().getParameter("harmonic");
+        fix WaveNumber = CLInterfaceManager::getInstance().getParameter("harmonic");
         if(WaveNumber != nullptr) {
             Graphics::AxisArtist::Ticks ticks;
             fix L = params.getL();

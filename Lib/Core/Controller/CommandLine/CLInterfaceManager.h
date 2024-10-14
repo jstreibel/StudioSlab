@@ -11,13 +11,13 @@
 
 namespace Slab::Core {
 
-    class InterfaceManager {
-        static InterfaceManager *instance;
+    class CLInterfaceManager {
+        static CLInterfaceManager *instance;
 
         Vector<Pointer<CLInterface>> interfaces;
 
     public:
-        static auto getInstance() -> InterfaceManager &;
+        static auto getInstance() -> CLInterfaceManager &;
 
         // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
@@ -36,7 +36,7 @@ namespace Slab::Core {
 
         auto getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>>;
 
-        auto getParameter(const Str &name) const -> Pointer<const Parameter>;
+        auto getParameter(const Str &name) const -> Pointer<const CLParameter>;
 
     };
 

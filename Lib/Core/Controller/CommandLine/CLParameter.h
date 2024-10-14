@@ -11,12 +11,12 @@
 
 namespace Slab::Core {
 
-    class Parameter {
+    class CLParameter {
     protected:
         Str shortCLName, longCLName, fullCLName, description;
 
     public:
-        Parameter(const Str &commandLineArgName, const Str &description);
+        CLParameter(const Str &commandLineArgName, const Str &description);
 
         virtual auto addToCommandLineOptionsGroup(CLODEasyInit &group) const -> void = 0;
         auto getFullCommandLineName() const -> Str;
@@ -37,17 +37,17 @@ namespace Slab::Core {
 
         void setDescription(Str newDescription);
 
-        bool operator<(const Parameter *rhs);
+        bool operator<(const CLParameter *rhs);
 
         bool operator==(Str str) const;
 
     };
 
-    DefinePointers(Parameter)
+    DefinePointers(CLParameter)
 
-    OStream &operator<<(OStream &out, const Parameter &b);
+    OStream &operator<<(OStream &out, const CLParameter &b);
 
-    OStream &operator<<(OStream &out, const Parameter *b);
+    OStream &operator<<(OStream &out, const CLParameter *b);
 
 
 }

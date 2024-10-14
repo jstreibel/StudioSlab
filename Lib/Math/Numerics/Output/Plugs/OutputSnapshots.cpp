@@ -8,7 +8,7 @@
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Core/Tools/Log.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include <fstream>
 #include <iomanip>

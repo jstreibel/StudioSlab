@@ -1,7 +1,7 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-#include "Parameter.h"
+#include "Core/Controller/CommandLine/CLParameter.h"
 
 // #define PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
@@ -9,22 +9,22 @@
 namespace Slab::Core {
 
     template<class Type>
-    class ParameterTemplate : public Parameter {
+    class CLParameterTemplate : public CLParameter {
     protected:
         Type val;
 
     public:
         typedef Type MyType;
 
-        typedef std::shared_ptr<ParameterTemplate> Ptr;
+        typedef std::shared_ptr<CLParameterTemplate> Ptr;
 
         static Ptr New(Type val, const Str &argName, const Str &descr) {
-            return std::make_unique<ParameterTemplate>(val, argName, descr);
+            return std::make_unique<CLParameterTemplate>(val, argName, descr);
         }
 
-        ParameterTemplate(Type val, const Str &argName, const Str &descr);
+        CLParameterTemplate(Type val, const Str &argName, const Str &descr);
 
-        ~ParameterTemplate();
+        ~CLParameterTemplate();
 
         auto valueToString() const -> Str override;
 
@@ -46,30 +46,35 @@ namespace Slab::Core {
 
         explicit operator Type() const;
 
-        auto operator=(const Type &rhs) -> ParameterTemplate &;
+        auto operator=(const Type &rhs) -> CLParameterTemplate &;
 
-        auto operator=(Type &rhs) -> ParameterTemplate &;
+        auto operator=(Type &rhs) -> CLParameterTemplate &;
 
-        auto operator=(const ParameterTemplate &rhs) -> Type;
+        auto operator=(const CLParameterTemplate &rhs) -> Type;
 
         auto operator<(const Type &rhs) -> bool;
 
     };
 
     template<class Type>
-    ParameterTemplate<Type>::ParameterTemplate(Type val, const Str &argName, const Str &description)
-            : Parameter(argName, description), val(val) {}
+    auto CLParameterTemplate<Type>::operator=(const CLParameterTemplate &rhs) -> Type {
+        return *this = rhs;
+    }
+
+    template<class Type>
+    CLParameterTemplate<Type>::CLParameterTemplate(Type val, const Str &argName, const Str &description)
+            : CLParameter(argName, description), val(val) {}
 
     template<class TypeA, class TypeB>
-    auto operator*(const ParameterTemplate<TypeA> &p1, const ParameterTemplate<TypeB> &p2) -> TypeA {
+    auto operator*(const CLParameterTemplate<TypeA> &p1, const CLParameterTemplate<TypeB> &p2) -> TypeA {
         return p1.getValue() * p2.getValue();
     }
 
     template<class TypeA, class TypeB>
-    auto operator*(const ParameterTemplate<TypeA> &p, const TypeB &val) -> TypeB { return p.getValue() * val; }
+    auto operator*(const CLParameterTemplate<TypeA> &p, const TypeB &val) -> TypeB { return p.getValue() * val; }
 
     template<class TypeA, class TypeB>
-    auto operator*(const TypeB &val, const ParameterTemplate<TypeA> &p) -> TypeB { return p * val; }
+    auto operator*(const TypeB &val, const CLParameterTemplate<TypeA> &p) -> TypeB { return p * val; }
 
 
 #ifdef PARAMETER_TEMPLATE_SOURCE_ON_HEADER
@@ -145,11 +150,11 @@ namespace Slab::Core {
 
 #endif // PARAMETER_TEMPLATE_SOURCE_ON_HEADER
 
-    typedef ParameterTemplate<int> IntegerParameter;
-    typedef ParameterTemplate<Real> RealParameter;
-    typedef ParameterTemplate<StrVector> MultiStringParameter;
-    typedef ParameterTemplate<Str> StringParameter;
-    typedef ParameterTemplate<bool> BoolParameter;
+    typedef CLParameterTemplate<int> IntegerParameter;
+    typedef CLParameterTemplate<Real> RealParameter;
+    typedef CLParameterTemplate<StrVector> MultiStringParameter;
+    typedef CLParameterTemplate<Str> StringParameter;
+    typedef CLParameterTemplate<bool> BoolParameter;
 
 
 }

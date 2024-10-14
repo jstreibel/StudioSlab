@@ -13,7 +13,7 @@
 #include "Utils/Printing.h"
 
 #include "Core/Backend/GLUT/GLUTBackend.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Core/Backend/BackendManager.h"
 #include "PlotThemeManager.h"
@@ -140,7 +140,7 @@ namespace Slab::Graphics {
                 auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w * .5;
                 auto fileName = title + " " +
-                                Core::InterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
+                                Core::CLInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                 ".png";
                 OpenGL::outputToPNG(this, fileName, w, (int) h);
             }

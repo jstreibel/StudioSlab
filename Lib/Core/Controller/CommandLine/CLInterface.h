@@ -5,7 +5,7 @@
 #ifndef FIELDS_INTERFACE_H
 #define FIELDS_INTERFACE_H
 
-#include "Core/Controller/Parameter/Parameter.h"
+#include "CLParameter.h"
 #include "Core/Controller/Interface/Request.h"
 #include "Core/Controller/Interface/Message.h"
 
@@ -13,7 +13,7 @@
 
 namespace Slab::Core {
 
-    class InterfaceManager;
+    class CLInterfaceManager;
 
     class CLInterfaceOwner;
 
@@ -35,7 +35,7 @@ namespace Slab::Core {
     class CLInterface final {
         const int priority;
 
-        friend InterfaceManager;
+        friend CLInterfaceManager;
         friend CLInterfaceOwner;
 
         CLInterfaceOwner *owner = nullptr;
@@ -48,7 +48,7 @@ namespace Slab::Core {
 
         Vector<Request> protocols;
     private:
-        std::set<Parameter_ptr> parameters;
+        std::set<CLParameter_ptr> parameters;
         std::set<Pointer<CLInterface>> subInterfaces;
 
     public:
@@ -73,17 +73,17 @@ namespace Slab::Core {
 
         auto addListener(CLInterfaceListener *) -> void;
 
-        void addParameter(Parameter_ptr parameter);
+        void addParameter(CLParameter_ptr parameter);
 
-        void addParameters(std::initializer_list<Parameter_ptr> parameters);
+        void addParameters(std::initializer_list<CLParameter_ptr> parameters);
 
-        void addParameters(std::initializer_list<Parameter *> parameters);
+        void addParameters(std::initializer_list<CLParameter *> parameters);
 
         auto getSubInterfaces() const -> Vector<Pointer<CLInterface>>;
 
-        auto getParameters() const -> Vector<Parameter_constptr>;
+        auto getParameters() const -> Vector<CLParameter_constptr>;
 
-        auto getParameter(Str key) const -> Parameter_ptr;
+        auto getParameter(Str key) const -> CLParameter_ptr;
 
         auto getOwner() const -> CLInterfaceOwner *;
 

@@ -11,7 +11,7 @@
 #include "Math/Constants.h"
 
 #include "Core/Tools/Log.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Monitor.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
@@ -27,7 +27,7 @@ namespace Modes {
     {
         interface->addParameters({&BCSelection, &A, &omega, &k, &driving_force});
 
-        if(doRegister) InterfaceManager::getInstance().registerInterface(interface);
+        if(doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
     Math::Base::BoundaryConditions_ptr Builder::getBoundary() {

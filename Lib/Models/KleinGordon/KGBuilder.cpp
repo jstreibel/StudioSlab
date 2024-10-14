@@ -4,7 +4,7 @@
 
 #include "KGBuilder.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
@@ -36,7 +36,7 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
-        if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
+        if (doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
     auto KGBuilder::buildStepper() -> Pointer<Stepper> {

@@ -5,9 +5,11 @@
 #ifndef STUDIOSLAB_SETS_H
 #define STUDIOSLAB_SETS_H
 
-namespace Utils {
+#include <set>
 
-
+namespace Slab {
+    template<typename A>
+    using Set = std::set<A>;
 }
 
 #endif //STUDIOSLAB_SETS_H

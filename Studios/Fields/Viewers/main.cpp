@@ -7,8 +7,8 @@
 #include "App/AppBase.h"
 #include "App/CrashPad.h"
 
-#include "Core/Controller/Parameter/CommonParameters.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -45,7 +45,7 @@ public:
             : AppBase(argc, argv, false)
     {
         interface->addParameters({&filename});
-        Core::InterfaceManager::getInstance().registerInterface(interface);
+        Core::CLInterfaceManager::getInstance().registerInterface(interface);
 
         Core::BackendManager::Startup("GLFW");
 

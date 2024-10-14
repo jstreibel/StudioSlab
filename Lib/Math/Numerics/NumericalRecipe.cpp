@@ -3,7 +3,7 @@
 //
 
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "NumericalRecipe.h"
 //#include "Math/Numerics/Method/Method-RK4.h"
@@ -25,7 +25,7 @@ namespace Slab::Math::Base {
         interface->addSubInterface(simulationConfig.dev.getInterface());
 
         if (doRegister) {
-            InterfaceManager::getInstance().registerInterface(interface);
+            CLInterfaceManager::getInstance().registerInterface(interface);
         }
 
         Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""

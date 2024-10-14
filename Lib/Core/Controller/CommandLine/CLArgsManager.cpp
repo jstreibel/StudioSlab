@@ -4,7 +4,7 @@
 
 #include "CLArgsManager.h"
 #include "CLDefs.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
 
 
@@ -47,7 +47,7 @@ namespace Slab::Core {
 
         allOptions.add_options("General")("help", "Print this help.");
 
-        auto interfaces = InterfaceManager::getInstance().getInterfaces();
+        auto interfaces = CLInterfaceManager::getInstance().getInterfaces();
         for (const auto interface: interfaces) {
             BuildOptionsDescription(*interface, allOptions);
             allOptions.add_options();
@@ -58,7 +58,7 @@ namespace Slab::Core {
 
         let result = allOptions.parse(argc, argv);
 
-        InterfaceManager::getInstance().feedInterfaces(result);
+        CLInterfaceManager::getInstance().feedInterfaces(result);
 
         if (result.count("help")) {
             std::cout << allOptions.help();
@@ -81,7 +81,7 @@ namespace Slab::Core {
                 p->addToCommandLineOptionsGroup(group);
             }
             catch (cxxopts::exceptions::option_already_exists &e) {
-                fix same = InterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
+                fix same = CLInterfaceManager::getInstance().getParameter(p->getCommandLineArgumentName());
                 Log::Error() << "Couldn't add CLI option '" << p->getFullCommandLineName() << "' (" << p->getDescription()
                              << "): option already exists as '"
                              << same->getFullCommandLineName() << "' (" << same->getDescription() << ")." << Log::Flush;

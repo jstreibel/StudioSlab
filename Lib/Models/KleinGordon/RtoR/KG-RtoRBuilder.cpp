@@ -9,7 +9,7 @@
 #include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
@@ -70,7 +70,7 @@ namespace Slab::Models::KGRtoR {
                                              DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr, &N_num});
 
-        if (doRegister) InterfaceManager::getInstance().registerInterface(interface);
+        if (doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
     auto KGRtoRBuilder::buildOutputManager() -> Pointer<OutputManager> {
@@ -209,7 +209,7 @@ namespace Slab::Models::KGRtoR {
             fix L = simulationConfig.numericConfig.getL();
             fix xMin = simulationConfig.numericConfig.getxMin();
 
-            if(auto k_param = InterfaceManager::getInstance().getParameter("k")){
+            if(auto k_param = CLInterfaceManager::getInstance().getParameter("k")){
                 auto k_n = k_param->getValueAs<Real>();
                 x_locations = {L/(4.*k_n)};
             } else

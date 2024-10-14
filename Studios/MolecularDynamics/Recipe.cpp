@@ -13,7 +13,7 @@
 #include "Recipe.h"
 
 #include "Core/Backend/SFML/SFMLBackend.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Core/Tools/Log.h"
@@ -27,7 +27,7 @@ namespace MolecularDynamics {
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
         interface->addSubInterface(molDynamicsInterface);
-        InterfaceManager::getInstance().registerInterface(interface);
+        CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
     Pointer<Math::OutputManager> Recipe::buildOutputManager() {

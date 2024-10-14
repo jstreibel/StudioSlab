@@ -2,49 +2,49 @@
 // Created by joao on 10/13/21.
 //
 
-#include "Parameter.h"
+#include "CLParameter.h"
 
 #include "Utils/Utils.h"
 
 
 namespace Slab::Core {
 
-    Parameter::Parameter(const Str &commandLineArgName, const Str &description)
+    CLParameter::CLParameter(const Str &commandLineArgName, const Str &description)
             : fullCLName(commandLineArgName), description(description) {
         auto split = Common::SplitString(fullCLName, ",", 2);
         shortCLName = split[0];
         longCLName = split.size() > 1 ? split[1] : "";
     }
 
-    auto Parameter::getFullCommandLineName() const -> Str {
+    auto CLParameter::getFullCommandLineName() const -> Str {
         return fullCLName;
     }
 
-    auto Parameter::getCommandLineArgumentName(bool longNameIfPresent) const -> Str {
+    auto CLParameter::getCommandLineArgumentName(bool longNameIfPresent) const -> Str {
         return (longNameIfPresent && longCLName != "") ? longCLName : shortCLName;
     }
 
-    auto Parameter::getDescription() const -> Str { return description; }
+    auto CLParameter::getDescription() const -> Str { return description; }
 
-    bool Parameter::operator<(const Parameter *rhs) {
+    bool CLParameter::operator<(const CLParameter *rhs) {
         return fullCLName < rhs->fullCLName;
     }
 
-    void Parameter::setDescription(Str newDescription) {
+    void CLParameter::setDescription(Str newDescription) {
         this->description = newDescription;
     }
 
-    bool Parameter::operator==(Str str) const {
+    bool CLParameter::operator==(Str str) const {
         return Common::SplitString(fullCLName, ",")[0] == str;
     }
 
 
-    OStream &operator<<(OStream &out, const Parameter &b) {
+    OStream &operator<<(OStream &out, const CLParameter &b) {
         out << b.valueToString();
         return out;
     }
 
-    OStream &operator<<(OStream &out, const Parameter *b) {
+    OStream &operator<<(OStream &out, const CLParameter *b) {
         out << b->valueToString();
         return out;
     }

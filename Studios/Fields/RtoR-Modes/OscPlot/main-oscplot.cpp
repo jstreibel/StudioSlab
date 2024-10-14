@@ -5,7 +5,7 @@
 #include "App/AppBase.h"
 #include "App/CrashPad.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
@@ -15,7 +15,7 @@ class App : public Slab::Core::AppBase {
 public:
     App(int argc, const char **argv) : AppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Slab::Core::InterfaceManager::getInstance().registerInterface(interface);
+        Slab::Core::CLInterfaceManager::getInstance().registerInterface(interface);
 
         Slab::Core::BackendManager::Startup("GLFW");
 

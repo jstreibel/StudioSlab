@@ -6,7 +6,7 @@
 
 #include "3rdParty/ImGui.h"
 #include "WindowStyles.h"
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 
@@ -72,7 +72,7 @@ namespace Slab::Graphics {
             }
         }
 
-        auto allInterfaces = Core::InterfaceManager::getInstance().getInterfaces();
+        auto allInterfaces = Core::CLInterfaceManager::getInstance().getInterfaces();
         if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
             for (auto &interface: allInterfaces) {

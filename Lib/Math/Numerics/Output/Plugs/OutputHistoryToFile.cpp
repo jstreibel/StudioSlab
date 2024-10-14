@@ -2,7 +2,7 @@
 #include "OutputHistoryToFile.h"
 #include "Core/Tools/Log.h"
 
-#include <Core/Controller/Interface/InterfaceManager.h>
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include <Utils/Timer.h>
 
@@ -101,7 +101,7 @@ namespace Slab::Math {
             oss << ") ";
         }
 
-        oss << ", " << InterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << ", " << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
         const auto &s = oss.str();
 

@@ -4,7 +4,7 @@
 
 #include "SnapshotOutput.h"
 
-#include "Core/Controller/Interface/InterfaceManager.h"
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
 
 #include "../KG-RtoREquationState.h"
@@ -60,7 +60,7 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << InterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        outputFile << "{" << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
         for(auto entry : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
         outputFile << "} " << SEPARATOR << std::flush;

@@ -3,7 +3,7 @@
 //
 
 #include <Core/App/CrashPad.h>
-#include <Core/Controller/Interface/InterfaceManager.h>
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Math/Function/RtoR/Controller/ThermalStudies/InputRandomEnergyOverDotPhi.h"
 
