@@ -122,6 +122,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		MathModule.h
 		SlabMath.cpp
 		SlabMath.h
+        GiNaC/GiNaCModule.cpp
+        GiNaC/GiNaCModule.h
 )
 
 

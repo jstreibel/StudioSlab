@@ -6,9 +6,11 @@
 #include "MathModule.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Math/GiNaC/GiNaCModule.h"
 
 namespace Slab::Math {
     void Register() {
         Core::BackendManager::RegisterAvailableModule<MathModule>("Math");
+        Core::BackendManager::RegisterAvailableModule<GiNaC::GiNaCModule>("Math:Symbolics");
     }
 }
