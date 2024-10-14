@@ -7,17 +7,17 @@
 
 
 #include "KGViewer.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
-#include "Graphics/Graph/Artists/PointSetArtist.h"
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/PointSetArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 namespace Slab::Models::KGRtoR {
 
     // Grapha34f ics::Viewer
     class EnergyViewer_KG : public KGViewer {
-        Graphics::PlottingWindow_ptr total_energies_window = New<Graphics::PlottingWindow>("Energy");
-        Graphics::PlottingWindow_ptr temperatures_window   = New<Graphics::PlottingWindow>("Temperature");
-        Graphics::PlottingWindow_ptr full_histories_window = New<Graphics::PlottingWindow>("Histories");
+        Pointer<Graphics::Plot2DWindow> total_energies_window = New<Graphics::Plot2DWindow>("Energy");
+        Pointer<Graphics::Plot2DWindow> temperatures_window   = New<Graphics::Plot2DWindow>("Temperature");
+        Pointer<Graphics::Plot2DWindow> full_histories_window = New<Graphics::Plot2DWindow>("Histories");
 
         Slab::Graphics::R2toRFunctionArtist_ptr f_artist{};
         Slab::Graphics::R2toRFunctionArtist_ptr dfdt_artist{};

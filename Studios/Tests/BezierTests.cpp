@@ -10,8 +10,8 @@
 #include "3rdParty/ImGui.h"
 #include "Core/Backend/Modules/Animator/Animator.h"
 
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Tests {
     using namespace Slab;

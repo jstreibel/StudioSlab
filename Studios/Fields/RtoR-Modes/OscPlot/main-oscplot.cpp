@@ -7,7 +7,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "OscillonPlotting.h"
 

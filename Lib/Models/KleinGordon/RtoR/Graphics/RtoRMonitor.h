@@ -9,8 +9,8 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/BaseMonitor.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/HistoryArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/HistoryArtist.h"
 
 #include "RtoRPanel.h"
 #include "Utils/Threads.h"
@@ -32,11 +32,11 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel_ptr currentDataView;
 
         R2toR::NumericFunction_constptr simulationHistory;
-        Graphics::PlottingWindow_ptr fullHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full field history");
+        Pointer<Graphics::Plot2DWindow> fullHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full field history");
         Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
         R2toR::NumericFunction_constptr spaceFTHistory;
-        Graphics::PlottingWindow_ptr fullSFTHistoryGraph = Slab::New<Graphics::PlottingWindow>("Full space FT history");
+        Pointer<Graphics::Plot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
         KGEnergy &hamiltonian;

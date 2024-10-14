@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FUNCTIONRENDERER_H
 #define V_SHAPE_FUNCTIONRENDERER_H
 
-#include "Graphics/Graph/PlotStyle.h"
+#include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/Utils.h"
 
 // TODO these #includes below shouldn't be THIS far from this file

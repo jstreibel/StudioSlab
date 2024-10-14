@@ -14,10 +14,10 @@ namespace Slab::Models::KGRtoR {
         Pointer<Math::RtoR2::StraightLine> xLine;
         Pointer<Math::RtoR2::StraightLine> kLine;
 
-        Pointer<Graphics::PlottingWindow> xSection;
-        Pointer<Graphics::PlottingWindow> xSpaceHistory;
-        Pointer<Graphics::PlottingWindow> kSection;
-        Pointer<Graphics::PlottingWindow> kSpaceHistory;
+        Pointer<Graphics::Plot2DWindow> xSection;
+        Pointer<Graphics::Plot2DWindow> xSpaceHistory;
+        Pointer<Graphics::Plot2DWindow> kSection;
+        Pointer<Graphics::Plot2DWindow> kSpaceHistory;
 
     public:
         RtoRHistoryPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);

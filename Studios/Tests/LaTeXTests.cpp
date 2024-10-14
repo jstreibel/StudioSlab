@@ -7,7 +7,7 @@
 #include "Core/Tools/Log.h"
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Tests {
     using namespace Slab;

@@ -6,7 +6,7 @@
 
 #include "Core/Controller/Interface/InterfaceManager.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Models {
 

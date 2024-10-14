@@ -4,8 +4,8 @@
 
 #include "EnergyViewer_KG.h"
 #include "Math/Function/RtoR/Operations/FromR2toRNumeric.h"
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Models {
 

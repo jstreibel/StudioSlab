@@ -6,7 +6,7 @@
 #define STUDIOSLAB_POINTSETRENDERER_H
 
 #include "Math/VectorSpace/Impl/PointSet.h"
-#include "Graphics/Graph/PlotStyle.h"
+#include "Graphics/Plot2D/PlotStyle.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {
     bool RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept;

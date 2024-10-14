@@ -8,7 +8,7 @@
 #include "Graphics/OpenGL/OpenGL.h"
 
 #include "Graphics/Window/Window.h"
-#include "Graphics/OpenGL/Writer.h"
+#include "Graphics/Utils/Writer.h"
 
 class GLFreeTypeTests : public Slab::Graphics::Window {
     Slab::Graphics::Writer writer1, writer2;

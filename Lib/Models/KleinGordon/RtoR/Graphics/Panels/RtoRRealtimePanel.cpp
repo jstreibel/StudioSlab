@@ -10,7 +10,7 @@
 #include "Core/Tools/Log.h"
 #include "Models/KleinGordon/KGSolver.h"
 #include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/Plotter.h"
 // #include "Math/Function/R2toR/DFT.h"
 
 // Don't touch these:
@@ -118,7 +118,7 @@ namespace Slab::Models::KGRtoR {
                                              const Graphics::R2toRFunctionArtist_ptr &simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
-        auto simulationHistoryGraph = Slab::New<Graphics::PlottingWindow>();
+        auto simulationHistoryGraph = Slab::New<Graphics::Plot2DWindow>();
         simulationHistoryGraph->addArtist(simHistoryGraph);
 
         addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
@@ -130,7 +130,7 @@ namespace Slab::Models::KGRtoR {
                                                const Graphics::R2toRFunctionArtist_ptr &sftHistoryArtist) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryArtist);
 
-        auto sftHistoryGraph = Slab::New<PlottingWindow>();
+        auto sftHistoryGraph = Slab::New<Plot2DWindow>();
         sftHistoryGraph->addArtist(sftHistoryArtist);
 
         addWindow(sftHistoryGraph);

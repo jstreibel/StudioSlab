@@ -6,8 +6,8 @@
 
 #include "HistoryViewer.h"
 
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -17,19 +17,19 @@ namespace Slab::Graphics {
     HistoryViewer::HistoryViewer(const Pointer<GUIWindow> &gui_window, const Pointer<R2toR::NumericFunction> &function)
     : Viewer(gui_window, function)
     {
-        history_window = New<PlottingWindow>("Function");
+        history_window = New<Plot2DWindow>("Function");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         addWindow(history_window);
 
-        xft_history_window = New<PlottingWindow>("Space DFT");
+        xft_history_window = New<Plot2DWindow>("Space DFT");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window, true);
 
-        auto slice_window = New<PlottingWindow>("Space instant");
+        auto slice_window = New<Plot2DWindow>("Space instant");
         section_artist = Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         addWindowToColumn(slice_window, 0);
 
-        auto dft_slice_window = New<PlottingWindow>("Space DFT instant");
+        auto dft_slice_window = New<Plot2DWindow>("Space DFT instant");
         dft_section_artist = Plotter::AddR2Section(dft_slice_window, nullptr, "ℱₓ[ϕ]");
         addWindowToColumn(dft_slice_window, 1);
 

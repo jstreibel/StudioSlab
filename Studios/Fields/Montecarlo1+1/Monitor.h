@@ -20,11 +20,11 @@ class Monitor : public Slab::Models::KGRtoR::Monitor {
         Slab::Math::RtoR::ResizableNumericFunction temperature2History;
         Slab::Math::RtoR::ResizableNumericFunction temperature3History;
 
-        Slab::Pointer<Slab::Graphics::PlottingWindow> mTemperaturesGraph;
-        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph;
-        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph2;
-        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph3;
-        Slab::Pointer<Slab::Graphics::PlottingWindow> mHistogramsGraph4;
+        Slab::Pointer<Slab::Graphics::Plot2DWindow> mTemperaturesGraph;
+        Slab::Pointer<Slab::Graphics::Plot2DWindow> mHistogramsGraph;
+        Slab::Pointer<Slab::Graphics::Plot2DWindow> mHistogramsGraph2;
+        Slab::Pointer<Slab::Graphics::Plot2DWindow> mHistogramsGraph3;
+        Slab::Pointer<Slab::Graphics::Plot2DWindow> mHistogramsGraph4;
 
     };
 }

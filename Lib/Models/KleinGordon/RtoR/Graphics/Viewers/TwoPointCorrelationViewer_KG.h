@@ -6,17 +6,17 @@
 #define STUDIOSLAB_TWOPOINTCORRELATIONVIEWER_KG_H
 
 #include "KGViewer.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 #include "Models/KleinGordon/RtoR/Analytic/TwoPointCorrelation.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
-#include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
 
 namespace Slab::Models::KGRtoR {
 
-    using PlottingWindow = Graphics::PlottingWindow;
+    using PlottingWindow = Graphics::Plot2DWindow;
     using FunctionArtist = Graphics::R2toRFunctionArtist;
     using SectionArtist = Graphics::R2SectionArtist;
     using SectionLine = Math::RtoR2::StraightLine;

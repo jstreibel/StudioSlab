@@ -10,8 +10,8 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"

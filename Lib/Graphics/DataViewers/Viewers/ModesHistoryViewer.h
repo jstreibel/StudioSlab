@@ -10,9 +10,9 @@
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
-#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Artists/ParametricCurve2DArtist.h"
 
 namespace Slab::Graphics {
 
@@ -25,8 +25,8 @@ namespace Slab::Graphics {
 
         Vector<Pointer<Artist>> curves_artists;
 
-        Pointer<PlottingWindow> xft_history_window;
-        Pointer<PlottingWindow> modes_window;
+        Pointer<Plot2DWindow> xft_history_window;
+        Pointer<Plot2DWindow> modes_window;
 
         int n_modes = 4;
         float base_mode = M_PI;

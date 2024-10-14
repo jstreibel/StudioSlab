@@ -122,6 +122,8 @@ set ( NANOTEX_SRC
 		${NANOTEX_DIR}/src/render.cpp
 		OpenGL/CairoInterface.cpp
 		OpenGL/CairoInterface.h
+		OpenGL/WriterOpenGL.cpp
+		OpenGL/WriterOpenGL.h
 )
 
 # *********** END NANOTEX ***************
@@ -136,9 +138,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		LaTeX/LaTeXWriter.cpp
 		LaTeX/LaTeX.cpp
 		LaTeX/LaTeX.h
-		LaTeX/__depr/SlabTex_Factory.cpp
-		LaTeX/__depr/SlabTexGraphics.h
-		LaTeX/__depr/SlabTexGraphics.cpp
 
 		OpenGL/LegacyGL/FunctionRenderer.cpp OpenGL/LegacyGL/FunctionRenderer.h
 
@@ -174,7 +173,7 @@ add_library(${LIB_GRAPHICS} STATIC
 
 		OpenGL/GLUTUtils.h OpenGL/GLUTUtils.cpp
 		OpenGL/Utils.h							OpenGL/Utils.cpp
-		OpenGL/Writer.h							OpenGL/Writer.cpp
+		Utils/Writer.h Utils/Writer.cpp
 		OpenGL/rougier/shader.h					OpenGL/rougier/shader.c
 		OpenGL/OpenGL.h
 		OpenGL/GLDebug.h						OpenGL/GLDebug.cpp
@@ -192,22 +191,22 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/Artists/ColorBarArtist.h			OpenGL/Artists/ColorBarArtist.cpp
 		OpenGL/LegacyGL/PointSetRenderer.h    	OpenGL/LegacyGL/PointSetRenderer.cpp
 
-		Graph/Artists/Artist.cpp
-		Graph/PlottingWindow.cpp
-		Graph/Artists/LabelsArtist.h Graph/Artists/LabelsArtist.cpp
-		Graph/PlottingWindow_Axis.cpp
-		Graph/PlotStyle.cpp
-		Graph/PlottingWindow_Events.cpp
-		Graph/PlottingWindow_GetSet.cpp
-		Graph/Artists/XHairArtist.h			Graph/Artists/XHairArtist.cpp
-		Graph/Artists/AxisArtist.h			Graph/Artists/AxisArtist.cpp
+        Plot2D/Artists/Artist.cpp
+		Plot2D/Plot2DWindow.cpp
+        Plot2D/Artists/LabelsArtist.h Plot2D/Artists/LabelsArtist.cpp
+		Plot2D/Plot2DWindow_Axis.cpp
+        Plot2D/PlotStyle.cpp
+		Plot2D/Plot2DWindow_Events.cpp
+		Plot2D/Plot2DWindow_GetSet.cpp
+        Plot2D/Artists/XHairArtist.h Plot2D/Artists/XHairArtist.cpp
+        Plot2D/Artists/AxisArtist.h Plot2D/Artists/AxisArtist.cpp
 
-		Graph/PlotThemeManager.h Graph/PlotThemeManager.cpp
+        Plot2D/PlotThemeManager.h Plot2D/PlotThemeManager.cpp
 
-		Graph/Artists/R2toRFunctionArtist.h Graph/Artists/R2toRFunctionArtist.cpp
+        Plot2D/Artists/R2toRFunctionArtist.h Plot2D/Artists/R2toRFunctionArtist.cpp
 
-		Graph/Util/HistoryTexture2DUploadHelper.cpp
-		Graph/Util/HistoryTexture2DUploadHelper.h
+        Plot2D/Util/HistoryTexture2DUploadHelper.cpp
+        Plot2D/Util/HistoryTexture2DUploadHelper.h
 
 		Graph3D/Scene3DWindow.cpp
         Graph3D/Scene3DWindow.h
@@ -229,53 +228,53 @@ add_library(${LIB_GRAPHICS} STATIC
 		SFML/Tools/GraphAndAverageCalc.cpp
 
 		SFML/ViewerUtils.cpp
-		Graph/PlottingTheme.cpp
-		Graph/PlottingTheme.h
-		Graph/Artists/PointSetArtist.cpp
-		Graph/Artists/PointSetArtist.h
-		Graph/Artists/ParametricCurve2DArtist.cpp
-		Graph/Artists/ParametricCurve2DArtist.h
-		Graph/Util/PlotRegion.cpp
-		Graph/Util/PlotRegion.h
-		Graph/Artists/RtoRFunctionArtist.cpp
-		Graph/Artists/RtoRFunctionArtist.h
-		Graph/Artists/HistoryArtist.cpp
-		Graph/Artists/HistoryArtist.h
-		Graph/Plotter.cpp
-		Graph/Plotter.h
-		Graph/Artists/R2SectionArtist.cpp
-		Graph/Artists/R2SectionArtist.h
+        Plot2D/PlottingTheme.cpp
+        Plot2D/PlottingTheme.h
+        Plot2D/Artists/PointSetArtist.cpp
+        Plot2D/Artists/PointSetArtist.h
+        Plot2D/Artists/ParametricCurve2DArtist.cpp
+        Plot2D/Artists/ParametricCurve2DArtist.h
+        Plot2D/Util/PlotRegion.cpp
+        Plot2D/Util/PlotRegion.h
+        Plot2D/Artists/RtoRFunctionArtist.cpp
+        Plot2D/Artists/RtoRFunctionArtist.h
+        Plot2D/Artists/HistoryArtist.cpp
+        Plot2D/Artists/HistoryArtist.h
+        Plot2D/Plotter.cpp
+        Plot2D/Plotter.h
+        Plot2D/Artists/R2SectionArtist.cpp
+        Plot2D/Artists/R2SectionArtist.h
         Window/WindowContainer/WindowContainer.cpp
         Window/WindowContainer/WindowContainer.h
 		Types3D.cpp
 		Types3D.h
 		OpenGL/LegacyGL/SceneSetup.h
-		Graph/Util/MathTool.cpp
-		Graph/Util/MathTool.h
-		Graph/Shapes/Shape.cpp
-		Graph/Shapes/Shape.h
+        Plot2D/Util/MathTool.cpp
+        Plot2D/Util/MathTool.h
+        Plot2D/Shapes/Shape.cpp
+        Plot2D/Shapes/Shape.h
 		OpenGL/LegacyGL/ShapeRenderer.cpp
 		OpenGL/LegacyGL/ShapeRenderer.h
 		OpenGL/LegacyGL/SceneSetup.cpp
-		Graph/Util/PlottingRegion2D.cpp
-		Graph/Util/PlottingRegion2D.h
+        Plot2D/Util/PlottingRegion2D.cpp
+        Plot2D/Util/PlottingRegion2D.h
         ImGui/ImGuiWindow.cpp
         ImGui/ImGuiWindow.h
-		Graph/Util/PrintWindow.cpp
-		Graph/Util/PrintWindow.h
-		Graph/Util/FieldTextureKontraption.cpp
-		Graph/Util/PlotStyleGUI.cpp
-		Graph/Util/PlotStyleGUI.h
+        Plot2D/Util/PrintWindow.cpp
+        Plot2D/Util/PrintWindow.h
+        Plot2D/Util/FieldTextureKontraption.cpp
+        Plot2D/Util/PlotStyleGUI.cpp
+        Plot2D/Util/PlotStyleGUI.h
         Window/WindowProxy.cpp
         Window/WindowProxy.h
-        Graph/Artists/Painters/Painter.cpp
-        Graph/Artists/Painters/Painter.h
-		Graph/Artists/Painters/Colormap1DPainter.cpp
-		Graph/Artists/Painters/Colormap1DPainter.h
-		Graph/Artists/Painters/RealValued2DPainter.cpp
-		Graph/Artists/Painters/RealValued2DPainter.h
-		Graph/Artists/Painters/HeightmapShadingPainter.cpp
-		Graph/Artists/Painters/HeightmapShadingPainter.h
+        Plot2D/Artists/Painters/Painter.cpp
+        Plot2D/Artists/Painters/Painter.h
+        Plot2D/Artists/Painters/Colormap1DPainter.cpp
+        Plot2D/Artists/Painters/Colormap1DPainter.h
+        Plot2D/Artists/Painters/RealValued2DPainter.cpp
+        Plot2D/Artists/Painters/RealValued2DPainter.h
+        Plot2D/Artists/Painters/HeightmapShadingPainter.cpp
+        Plot2D/Artists/Painters/HeightmapShadingPainter.h
 		DataViewers/Viewers/HistoryViewer.cpp
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp
@@ -284,6 +283,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		SlabGraphics.h
 		GraphicsModule.cpp
 		GraphicsModule.h
+		OpenGL/WriterOpenGL.cpp
+		OpenGL/WriterOpenGL.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-GLFreetype

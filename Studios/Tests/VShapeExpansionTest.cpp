@@ -4,8 +4,8 @@
 
 #include "VShapeExpansionTest.h"
 
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Tests {
     using namespace Slab;
@@ -14,7 +14,7 @@ namespace Tests {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 43, 1.0);
         derivs = potential->diff(0);
 
-        auto window = New<Graphics::PlottingWindow>("V-shape series test");
+        auto window = New<Graphics::Plot2DWindow>("V-shape series test");
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
         style.filled = false;
         Graphics::Plotter::AddRtoRFunction(window, potential, style, "KG V-shape");

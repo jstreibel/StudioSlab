@@ -7,8 +7,8 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 #include "Math/Function/RtoR/Operations/DFTInverse.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
@@ -23,10 +23,10 @@ namespace Slab::Graphics{
 
         R2toRFunctionArtist_ptr function_artist;
 
-        Pointer<PlottingWindow> kSpaceGraph  = New<PlottingWindow>("ℱₓ");
-        Pointer<PlottingWindow> ωSpaceGraph  = New<PlottingWindow>("ℱₜ");
-        Pointer<PlottingWindow> xSpaceGraph  = New<PlottingWindow>("ϕ(t,x)");
-        Pointer<PlottingWindow> ωkSpaceGraph = New<PlottingWindow>("ℱₜₓ");
+        Pointer<Plot2DWindow> kSpaceGraph  = New<Plot2DWindow>("ℱₓ");
+        Pointer<Plot2DWindow> ωSpaceGraph  = New<Plot2DWindow>("ℱₜ");
+        Pointer<Plot2DWindow> xSpaceGraph  = New<Plot2DWindow>("ϕ(t,x)");
+        Pointer<Plot2DWindow> ωkSpaceGraph = New<Plot2DWindow>("ℱₜₓ");
 
         Pointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
         Pointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();

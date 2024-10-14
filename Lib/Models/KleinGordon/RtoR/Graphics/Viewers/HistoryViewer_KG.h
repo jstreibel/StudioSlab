@@ -11,14 +11,14 @@
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 
 namespace Slab::Models::KGRtoR {
 
     class HistoryViewer : public KGViewer {
-        Pointer<Graphics::PlottingWindow> history_window = nullptr;
-        Pointer<Graphics::PlottingWindow> slice_window = nullptr;
+        Pointer<Graphics::Plot2DWindow> history_window = nullptr;
+        Pointer<Graphics::Plot2DWindow> slice_window = nullptr;
 
         Pointer<Graphics::R2toRFunctionArtist> function_artist = nullptr;
         Pointer<Graphics::R2toRFunctionArtist> ddt_function_artist = nullptr;

@@ -14,7 +14,7 @@
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/Plotter.h"
 
 namespace Slab::Graphics {
 

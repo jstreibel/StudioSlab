@@ -11,11 +11,11 @@
 #include "KGDispersionRelation.h"
 #include "../../Viewers/HistoryFileLoader.h"
 
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 #include "Math/Function/RtoR/Model/RtoRFunctionSampler.h"
 
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/Plotter.h"
 
 namespace Modes::DatabaseViewer {
 

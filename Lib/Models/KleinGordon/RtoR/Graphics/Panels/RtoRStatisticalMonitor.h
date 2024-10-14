@@ -7,7 +7,7 @@
 
 
 #include "Graphics/BaseMonitor.h"
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 #include "Math/Function/Function.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         RtoR2::StraightLine_ptr correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::NumericFunction_ptr mCorrelationComputed;
-        Graphics::PlottingWindow mCorrelationGraph;
+        Graphics::Plot2DWindow mCorrelationGraph;
 
         Real transientHint = -1.0;
 

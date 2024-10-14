@@ -7,8 +7,8 @@
 
 
 #include "Graphics/BaseMonitor.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 
 namespace Slab::Math::R2toR {
 
@@ -16,10 +16,10 @@ namespace Slab::Math::R2toR {
 
     class OutputOpenGL : public Graphics::BaseMonitor {
     protected:
-        Graphics::PlottingWindow mSectionGraph;
+        Graphics::Plot2DWindow mSectionGraph;
         Graphics::R2SectionArtist sectionArtist;
 
-        Graphics::PlottingWindow mFieldDisplay;
+        Graphics::Plot2DWindow mFieldDisplay;
 
     public:
         OutputOpenGL(const NumericConfig &params);

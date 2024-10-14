@@ -6,8 +6,8 @@
 
 #include "ModesHistoryViewer.h"
 
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -18,13 +18,13 @@ namespace Slab::Graphics {
     : Viewer(guiWindow, nullptr)
     , curves_artists(0)
     {
-        xft_history_window = New<PlottingWindow>("Space DFT");
+        xft_history_window = New<Plot2DWindow>("Space DFT");
         xft_history_window->getAxisArtist().setHorizontalAxisLabel("k");
         xft_history_window->getAxisArtist().setVerticalAxisLabel("t");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window);
 
-        modes_window = New<PlottingWindow>("Modes");
+        modes_window = New<Plot2DWindow>("Modes");
         modes_window->getAxisArtist().setHorizontalAxisLabel("t");
         modes_window->getAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");

@@ -7,9 +7,9 @@
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Model/Operators/Integral.h"
 
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/DataViewers/Viewers/FourierViewer.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
 
-        auto window = New<Graphics::PlottingWindow>("Time-DFT space-average");
+        auto window = New<Graphics::Plot2DWindow>("Time-DFT space-average");
         timeDFTAverageArtist =
                 Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->funcPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
         timeDFTAverageArtist->setAffectGraphRanges(true);

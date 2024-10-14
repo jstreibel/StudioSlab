@@ -3,7 +3,7 @@
 #include "R2toROutputOpenGLGeneric.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
 
 #define ADD_TO_NEW_COLUMN true

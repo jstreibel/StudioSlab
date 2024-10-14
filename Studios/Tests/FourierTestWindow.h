@@ -6,7 +6,7 @@
 #define STUDIOSLAB_FOURIERTESTWINDOW_H
 
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 
@@ -18,9 +18,9 @@ namespace Tests {
         Graphics::WindowRow row;
         Graphics::WindowColumn col;
 
-        Graphics::PlottingWindow mFuncGraph;
-        Graphics::PlottingWindow mDFTGraph;
-        Graphics::PlottingWindow mFTGraph;
+        Graphics::Plot2DWindow mFuncGraph;
+        Graphics::Plot2DWindow mDFTGraph;
+        Graphics::Plot2DWindow mFTGraph;
         Graphics::GUIWindow gui;
 
         void updateGraphs();

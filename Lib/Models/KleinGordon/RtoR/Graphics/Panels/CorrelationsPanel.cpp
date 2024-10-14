@@ -129,7 +129,7 @@ namespace Slab::Models::KGRtoR {
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<PlottingWindow>();
+        auto simulationHistoryGraph = Slab::New<Plot2DWindow>();
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph);
         addWindow(Slab::Naked(correlationGraph));

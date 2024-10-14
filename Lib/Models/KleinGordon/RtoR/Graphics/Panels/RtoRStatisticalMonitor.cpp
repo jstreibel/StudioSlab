@@ -9,8 +9,8 @@
 #include "Math/Function/RtoR/Operations/Histogram.h"
 
 #include "Core/Controller/Interface/InterfaceManager.h"
-#include "Graphics/Graph/PlotThemeManager.h"
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
 #include "Utils/Threads.h"
 
 #include <sstream>
@@ -51,7 +51,7 @@ namespace Slab::Models::KGRtoR {
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-            auto mTemperaturesGraph = Slab::New<Graphics::PlottingWindow>("T");
+            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T");
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
@@ -80,10 +80,10 @@ namespace Slab::Models::KGRtoR {
         }
 
         {
-            auto mHistogramsGraphK = Slab::New<Graphics::PlottingWindow>   ("k histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphGrad = Slab::New<Graphics::PlottingWindow>("w histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphV = Slab::New<Graphics::PlottingWindow>   ("v histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphE = Slab::New<Graphics::PlottingWindow>   ("e histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram", MANUAL_REVIEW_GRAPH_LIMITS);
 
 
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
@@ -118,7 +118,7 @@ namespace Slab::Models::KGRtoR {
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<PlottingWindow>();
+        auto simulationHistoryGraph = Slab::New<Plot2DWindow>();
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph, true, 0.20);
     }

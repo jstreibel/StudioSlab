@@ -6,8 +6,8 @@
 
 #include "HistoryViewer_KG.h"
 
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -17,13 +17,13 @@ namespace Slab::Models::KGRtoR {
     HistoryViewer::HistoryViewer(const Pointer<Graphics::GUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
-        history_window = New<Graphics::PlottingWindow>("Function");
+        history_window = New<Graphics::Plot2DWindow>("Function");
         function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
         d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
         addWindow(history_window);
 
-        slice_window = New<Graphics::PlottingWindow>("Slices");
+        slice_window = New<Graphics::Plot2DWindow>("Slices");
         function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜ");
         d2dt2_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");

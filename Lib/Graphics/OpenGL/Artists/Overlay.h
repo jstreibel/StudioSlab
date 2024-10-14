@@ -6,7 +6,7 @@
 #define STUDIOSLAB_OVERLAY_H
 
 
-#include "Graphics/Graph/Artists/Artist.h"
+#include "Graphics/Plot2D/Artists/Artist.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Shader.h"
 
@@ -19,7 +19,7 @@ namespace Slab::Graphics::OpenGL {
     public:
         explicit Overlay(RectI loc);
 
-        bool draw(const PlottingWindow &) override;
+        bool draw(const Plot2DWindow &) override;
     };
 
 }

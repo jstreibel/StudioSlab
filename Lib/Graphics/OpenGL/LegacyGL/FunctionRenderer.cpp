@@ -139,14 +139,14 @@ namespace Slab {
         auto c = style.lineColor;
         glColor4f(c.r, c.g, c.b, c.a);
 
-        if (style.primitive != Solid) {
+        if (style.getPrimitive() != Solid) {
             glDisable(GL_LINE_SMOOTH);
             glEnable(GL_LINE_STIPPLE);
-            glLineStipple(style.stippleFactor, style.stipplePattern);
+            glLineStipple(style.getStippleFactor(), style.getStipplePattern());
         } else glEnable(GL_LINE_SMOOTH);
 
         GLenum mode = GL_LINE_STRIP;
-        if(style.primitive==Point || style.primitive==VerticalLines) {
+        if(style.getPrimitive()==Point || style.getPrimitive()==VerticalLines) {
             mode = GL_POINTS;
             glPointSize(10*style.thickness);
             glLineWidth(style.thickness);
@@ -154,7 +154,7 @@ namespace Slab {
             glDisable(GL_LINE_STIPPLE);
         }
 
-        if(style.primitive==VerticalLines) {
+        if(style.getPrimitive()==VerticalLines) {
             glBegin(GL_LINES);
             {
                 for (Real s = sMin; s <= sMax; s += ds) {

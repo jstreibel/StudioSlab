@@ -5,7 +5,7 @@
 #include "ColorMap.h"
 
 #include <utility>
-// #include "Graphics/Graph/PlotStyle.h"
+// #include "Graphics/Plot2D/PlotStyle.h"
 
 #define Map(cMap) {cMap->getName(), cMap}
 

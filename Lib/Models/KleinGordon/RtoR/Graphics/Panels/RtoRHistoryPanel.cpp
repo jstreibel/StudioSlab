@@ -9,10 +9,10 @@
 
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
-#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
-#include "Graphics/Graph/PlotThemeManager.h"
-#include "Graphics/Graph/Plotter.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Artists/ParametricCurve2DArtist.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -35,14 +35,14 @@ namespace Slab::Models::KGRtoR {
         auto xArtie = New<Graphics::ParametricCurve2DArtist>(xLine, style);
         auto kArtie = New<Graphics::ParametricCurve2DArtist>(kLine, style);
 
-        xSection = New<PlottingWindow>("Spacial time slice");
-        xSpaceHistory = New<PlottingWindow>();
+        xSection = New<Plot2DWindow>("Spacial time slice");
+        xSpaceHistory = New<Plot2DWindow>();
         xSpaceHistory->addArtist(xArtie, 100);
         xSection->getRegion().setReference_xMax(xSpaceHistory->getRegion().getReference_xMax());
         xSection->getRegion().setReference_xMin(xSpaceHistory->getRegion().getReference_xMin());
 
-        kSection = New<PlottingWindow>("k-space time slice");
-        kSpaceHistory = New<PlottingWindow>();
+        kSection = New<Plot2DWindow>("k-space time slice");
+        kSpaceHistory = New<Plot2DWindow>();
         kSpaceHistory->addArtist(kArtie, 100);
         kSection->getRegion().setReference_xMax(kSpaceHistory->getRegion().getReference_xMax());
         kSection->getRegion().setReference_xMin(kSpaceHistory->getRegion().getReference_xMin());
@@ -138,7 +138,7 @@ namespace Slab::Models::KGRtoR {
 
         auto sectionArtist = Graphics::Plotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
-        style.primitive = VerticalLines;
+        style.setPrimitive(VerticalLines);
         style.filled = false;
         sectionArtist->addSection(kLine, style.clone(), "");
         sectionArtist->setSamples(sftHistory->getN());

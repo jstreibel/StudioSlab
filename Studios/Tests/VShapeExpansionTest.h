@@ -9,13 +9,13 @@
 
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 namespace Tests {
 
     class VShapeExpansionTest : public Slab::Graphics::WindowRow {
         Slab::Graphics::GUIWindow stats;
-        Slab::Graphics::PlottingWindow graph;
+        Slab::Graphics::Plot2DWindow graph;
 
         Slab::Pointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
         Slab::Pointer<Slab::Math::Base::FunctionT<Slab::Real, Slab::Real>> derivs;

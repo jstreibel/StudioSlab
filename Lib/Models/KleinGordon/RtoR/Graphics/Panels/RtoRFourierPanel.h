@@ -12,16 +12,16 @@
 #include "Math/Function/RtoR/Operations/DFTInverse.h"
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 
-#include "Graphics/Graph/Artists/ParametricCurve2DArtist.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/ParametricCurve2DArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 namespace Slab::Models::KGRtoR {
 
     class RtoRFourierPanel : public RtoRPanel {
-        Pointer<PlottingWindow> kSpaceGraph  = Slab::New<PlottingWindow>("ℱₓ");
-        Pointer<PlottingWindow> ωSpaceGraph  = Slab::New<PlottingWindow>("ℱₜ");
-        Pointer<PlottingWindow> xSpaceGraph  = Slab::New<PlottingWindow>("ϕ(t,x)");
-        Pointer<PlottingWindow> ωkSpaceGraph = Slab::New<PlottingWindow>("ℱₜₓ");
+        Pointer<Plot2DWindow> kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ");
+        Pointer<Plot2DWindow> ωSpaceGraph  = Slab::New<Plot2DWindow>("ℱₜ");
+        Pointer<Plot2DWindow> xSpaceGraph  = Slab::New<Plot2DWindow>("ϕ(t,x)");
+        Pointer<Plot2DWindow> ωkSpaceGraph = Slab::New<Plot2DWindow>("ℱₜₓ");
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = Slab::New<R2toRFunctionArtist>();
         Pointer<R2toR::NumericFunction> inv_kSpace;

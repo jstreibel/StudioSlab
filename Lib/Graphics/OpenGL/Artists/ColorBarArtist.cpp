@@ -9,8 +9,8 @@
 #include <utility>
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Graphics::OpenGL {
 
@@ -32,7 +32,7 @@ namespace Slab::Graphics::OpenGL {
         setLocation(loc);
     }
 
-    bool OpenGL::ColorBarArtist::draw(const PlottingWindow &graph) {
+    bool OpenGL::ColorBarArtist::draw(const Plot2DWindow &graph) {
         if( texture == nullptr ) return true;
 
         const int vpWidth  = graph.getViewport().width();

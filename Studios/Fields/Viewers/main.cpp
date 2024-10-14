@@ -24,7 +24,7 @@
 #include "Graphics/DataViewers/Viewers/FourierViewer.h"
 #include "Graphics/DataViewers/Viewers/HistoryViewer.h"
 #include "Graphics/DataViewers/Viewers/ModesHistoryViewer.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/KGMainViewer.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/HistoryViewer_KG.h"

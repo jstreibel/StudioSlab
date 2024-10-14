@@ -10,8 +10,8 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Section1D.h"
 
 #include "Graphics/BaseMonitor.h"
-#include "Graphics/Graph/PlotThemeManager.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 
@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
 
         Graphics::ImGuiWindow imGuiWindow;
     protected:
-        Graphics::PlottingWindow mFieldsGraph;
+        Graphics::Plot2DWindow mFieldsGraph;
         Graphics::Artist_ptr vArtist;
         Graphics::Artist_ptr kArtist;
         Graphics::Artist_ptr wArtist;
@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
         bool showGradientEnergy = false;
         bool showEnergyDensity = false;
 
-        Graphics::PlottingWindow mEnergyGraph;
+        Graphics::Plot2DWindow mEnergyGraph;
 
         void draw() override;
 

@@ -8,11 +8,11 @@
 #include "DatabaseParser.h"
 
 #include "Graphics/Window/WindowContainer/WindowRow.h"
-#include "Graphics/Graph/Artists/PointSetArtist.h"
+#include "Graphics/Plot2D/Artists/PointSetArtist.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Graphics/Graph/PlottingWindow.h"
-#include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
+#include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Core/Backend/Events/KeyMap.h"
 
@@ -25,11 +25,11 @@ namespace Modes::DatabaseViewer {
         WindowRow topRow;
 
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::PlottingWindow allDataDisplay;
-        Graphics::PlottingWindow fullParticularHistoryDisplay;
+        Graphics::Plot2DWindow allDataDisplay;
+        Graphics::Plot2DWindow fullParticularHistoryDisplay;
         Graphics::R2toRFunctionArtist_ptr currentFullParticularHistoryArtist;
 
-        Graphics::PlottingWindow massesGraph;
+        Graphics::Plot2DWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_TIMEFTVIEWER_H
 
 #include "KGViewer.h"
-#include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
 #include "Models/KleinGordon/RtoR/Analytic/TwoPointCorrelation.h"
 
 namespace Slab::Models::KGRtoR {

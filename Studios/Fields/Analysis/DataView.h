@@ -6,7 +6,7 @@
 #define STUDIOSLAB_DATAVIEW_H
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 

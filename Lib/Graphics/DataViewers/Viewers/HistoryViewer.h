@@ -10,14 +10,14 @@
 #include "Math/Function/R2toC/R2toCNumericFunction.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
-#include "Graphics/Graph/Artists/R2SectionArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 
 namespace Slab::Graphics {
 
     class HistoryViewer : public Viewer {
-        Pointer<PlottingWindow> history_window = nullptr;
-        Pointer<PlottingWindow> xft_history_window = nullptr;
+        Pointer<Plot2DWindow> history_window = nullptr;
+        Pointer<Plot2DWindow> xft_history_window = nullptr;
 
         Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
         Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;

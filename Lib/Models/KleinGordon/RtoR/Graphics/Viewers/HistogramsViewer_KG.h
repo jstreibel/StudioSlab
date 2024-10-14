@@ -6,13 +6,13 @@
 #define STUDIOSLAB_HISTOGRAMSVIEWER_KG_H
 
 #include "Graphics/DataViewers/Viewers/Viewer.h"
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 #include "KGViewer.h"
 
 namespace Slab::Models::KGRtoR {
 
-    using PlotWindow = Slab::Graphics::PlottingWindow;
+    using PlotWindow = Slab::Graphics::Plot2DWindow;
 
     class HistogramsViewer_KG : public KGViewer {
         Slab::Math::PointSet histogram_data_energy;

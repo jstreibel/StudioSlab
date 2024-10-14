@@ -7,11 +7,11 @@
 
 #include <utility>
 
-#include "Graphics/Graph/Artists/R2toRFunctionArtist.h"
+#include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
 #include "Graphics/Styles/ColorMap.h"
 
-#include "Graphics/Graph/PlottingWindow.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"

@@ -74,7 +74,7 @@ namespace Slab::Graphics::OpenGL {
 
         Count getSamples() const;
 
-        bool draw(const PlottingWindow &) override;
+        bool draw(const Plot2DWindow &) override;
 
         void setScalingFunction(std::function<Real(Real)>);
         void setInverseScalingFunction(std::function<Real(Real)>);

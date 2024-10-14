@@ -3,8 +3,8 @@
 //
 
 #include "TwoPointCorrelationViewer_KG.h"
-#include "Graphics/Graph/Plotter.h"
-#include "Graphics/Graph/PlotThemeManager.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Graphics/DataViewers/Viewers/FourierViewer.h"
