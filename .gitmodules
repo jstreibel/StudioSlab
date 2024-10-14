@@ -4,3 +4,6 @@
 [submodule "Lib/3rdParty/imgui"]
 	path = Lib/3rdParty/imgui
 	url = git@github.com:jstreibel/imgui.git
+[submodule "Lib/3rdParty/NanoTeX"]
+	path = Lib/3rdParty/NanoTeX
+	url = git@github.com:jstreibel/NanoTeX

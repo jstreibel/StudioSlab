@@ -6,6 +6,7 @@
 
 #include "Utils/EncodingUtils.h"
 
+#include "Graphics/OpenGL/Shader.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 

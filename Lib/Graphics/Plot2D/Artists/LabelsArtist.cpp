@@ -6,6 +6,7 @@
 
 #include "3rdParty/ImGui.h"
 
+#include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"

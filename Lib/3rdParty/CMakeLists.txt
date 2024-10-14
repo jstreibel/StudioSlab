@@ -29,5 +29,6 @@ set ( IMGUI_SOURCE
 		imgui/misc/freetype/imgui_freetype.cpp)
 
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE})
+add_compile_definitions(IMGUI_USE_WCHAR32)
 target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype GLU)
 message(NOTICE "Added library ${THIRDPARTY_LIB_BASE_NAME}-Imgui" )

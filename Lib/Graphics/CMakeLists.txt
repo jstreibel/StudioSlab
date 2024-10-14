@@ -287,7 +287,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/WriterOpenGL.h
 )
 target_link_libraries(${LIB_GRAPHICS}
-		Slab-3rdParty-GLFreetype
 		Slab-3rdParty-Imgui
 		Slab-Utils
 		Slab-Core

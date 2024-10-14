@@ -2,18 +2,19 @@
 // Created by joao on 20/05/24.
 //
 #include "PointSetRenderer.h"
+#include "Graphics/OpenGL/Shader.h"
 
 
-namespace Slab {
+namespace Slab::Graphics::OpenGL {
 
-    bool Graphics::OpenGL::Legacy::RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
+    bool Legacy::RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
         if(pSet== nullptr) return true;
 
         IN pts = pSet->getPoints();
 
         if(pts.empty()) return true;
 
-        OpenGL::Shader::remove();
+        Shader::remove();
 
         if (style.filled && !(style.getPrimitive() == Point || style.getPrimitive() == LinePrimitive::Lines)) {
             const auto color = style.fillColor;

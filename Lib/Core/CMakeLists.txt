@@ -22,7 +22,6 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}
 		Slab-Utils
 		Slab-3rdParty-Imgui
-		Slab-3rdParty-GLFreetype
 
 		freeimage
 		freetype-gl

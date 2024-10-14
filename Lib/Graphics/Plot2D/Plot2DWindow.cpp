@@ -15,7 +15,6 @@
 #include "Core/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
-#include "3rdParty/glfreetype/TextRenderer.hpp"
 #include "Core/Backend/BackendManager.h"
 #include "PlotThemeManager.h"
 #include "Artists/AxisArtist.h"
@@ -26,14 +25,14 @@
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
-namespace Slab {
+namespace Slab::Graphics {
 
     using Log = Core::Log;
 
-    std::map<Str, Graphics::Plot2DWindow *> Graphics::Plot2DWindow::graphMap = {};
-    Count Graphics::Plot2DWindow::WindowCount = 0;
+    std::map<Str, Plot2DWindow *> Plot2DWindow::graphMap = {};
+    Count Plot2DWindow::WindowCount = 0;
 
-    using Mappy = Graphics::Plot2DWindow::ContentMap;
+    using Mappy = Plot2DWindow::ContentMap;
     bool change_z_order(Mappy& mappy, Mappy::iterator &it, int z_order){
         if(z_order == it->first) return false;
 
@@ -50,7 +49,7 @@ namespace Slab {
 #define Unique(label) \
     Str(Str(label) + "##" + ToStr(this->id)).c_str()
 
-    Graphics::Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
+    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
             : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
@@ -76,12 +75,12 @@ namespace Slab {
 
     }
 
-    Graphics::Plot2DWindow::Plot2DWindow(Str title, bool autoReviewGraphLimits)
+    Plot2DWindow::Plot2DWindow(Str title, bool autoReviewGraphLimits)
             : Plot2DWindow(-1, 1, -1, 1, std::move(title)) {
         autoReviewGraphRanges = autoReviewGraphLimits;
     }
 
-    void Graphics::Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
+    void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
             Log::Error() << __PRETTY_FUNCTION__ << " trying to add "
                          << Log::FGBlue << "nullptr" << Log::ResetFormatting << " artist.";
@@ -94,7 +93,7 @@ namespace Slab {
         Log::Note() << "PlottingWindow '" << this->title << "' added artist '" << pArtist->getLabel() << "'." << Log::Flush;
     }
 
-    bool Graphics::Plot2DWindow::removeArtist(const Graphics::Artist_ptr &pArtist) {
+    bool Plot2DWindow::removeArtist(const Graphics::Artist_ptr &pArtist) {
         auto haveErased = false;
 
         for (auto item = content.begin(); item != content.end();) {
@@ -107,8 +106,9 @@ namespace Slab {
         return haveErased;
     }
 
-    void Graphics::Plot2DWindow::draw() {
+    void Plot2DWindow::draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
+
         Window::setBGColor(PlotThemeManager::GetCurrent()->graphBackground);
         Window::draw();
 

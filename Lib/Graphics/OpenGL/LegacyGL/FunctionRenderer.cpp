@@ -1,6 +1,8 @@
 //
 
 #include "FunctionRenderer.h"
+#include "Graphics/OpenGL/Shader.h"
+
 
 
 //

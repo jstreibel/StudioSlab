@@ -5,7 +5,15 @@
 #ifndef STUDIOSLAB_WRITEROPENGL_H
 #define STUDIOSLAB_WRITEROPENGL_H
 
+#include "Graphics/OpenGL/OpenGL.h"
+
 #include "Graphics/Utils/Writer.h"
+
+#include "Graphics/OpenGL/VertexBuffer.h"
+#include "Graphics/OpenGL/Shader.h"
+
+#include "3rdParty/freetype-gl/demos/mat4.h"
+#include "3rdParty/freetype-gl/freetype-gl.h"
 
 namespace Slab::Graphics::OpenGL {
 

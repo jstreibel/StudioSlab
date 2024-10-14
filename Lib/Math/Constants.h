@@ -5,6 +5,8 @@
 #ifndef STUDIOSLAB_CONSTANTS_H
 #define STUDIOSLAB_CONSTANTS_H
 
+#include "Math/Formalism/Categories.h"
+
 namespace Slab::Math::Constants {
 
 

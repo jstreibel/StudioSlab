@@ -5,17 +5,9 @@
 #ifndef STUDIOSLAB_WRITER_H
 #define STUDIOSLAB_WRITER_H
 
-
-#include "3rdParty/freetype-gl/demos/mat4.h"
-#include "3rdParty/freetype-gl/freetype-gl.h"
-
 #include "Graphics/Window/Window.h"
 
-#include "Graphics/OpenGL/OpenGL.h"
-#include "Graphics/OpenGL/VertexBuffer.h"
-
 #include "Graphics/Styles/Colors.h"
-#include "Graphics/OpenGL/Shader.h"
 #include "Utils/EncodingUtils.h"
 
 namespace Slab::Graphics {
