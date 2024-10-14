@@ -24,7 +24,7 @@ namespace Slab::Math {
         auto integrationTask = Slab::New<NumericTask>(*builder.get());
         auto &backend = Core::BackendManager::GetBackend();
 
-        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(BackendManager::GetModule(Modules::TaskManager).get());
+        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(BackendManager::GetModule("TaskManager").get());
 
         taskManager->addTask(integrationTask);
 

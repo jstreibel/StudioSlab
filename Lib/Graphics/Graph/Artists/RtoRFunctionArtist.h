@@ -23,6 +23,8 @@ namespace Slab::Graphics {
 
         void setFunction(RtoR::Function_ptr);
 
+        const RectR &getRegion() override;
+
         bool draw(const PlottingWindow &d) override;
 
         bool hasGUI() override;

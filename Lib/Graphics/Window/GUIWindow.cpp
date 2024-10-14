@@ -16,7 +16,7 @@ namespace Slab::Graphics {
         setClear(false);
         setDecorate(false);
 
-        Core::BackendManager::LoadModule(Core::ImGui);
+        Core::BackendManager::LoadModule("ImGui");
     }
 
 

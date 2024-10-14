@@ -56,8 +56,7 @@ namespace Slab::Core {
         colorThemes[currentTheme]();
     }
 
-    ImGuiModule::ImGuiModule(BackendImplementation backendImpl) : GraphicsModule("ImGui") {
-        system = backendImpl;
+    ImGuiModule::ImGuiModule() : GraphicsModule("ImGui") {
 
         generalInitialization();
     }
@@ -125,23 +124,23 @@ namespace Slab::Core {
         ImGui::GetIO().FontGlobalScale = 1;
     }
 
-    ImGuiModule* ImGuiModule::BuildModule(BackendImplementation backendImplementation) {
-        switch (backendImplementation) {
-            case Uninitialized:
-                throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
-            case Headless:
-                throw NotImplementedException("Headless ImGui module");
-            case GLFW:
-                return new ImGuiModuleGLFW();
-            case SFML:
-                throw NotImplementedException("SFML ImGui module");
-            case VTK:
-                throw NotImplementedException("VTK ImGui module");
-            case GLUT:
-                return new ImGuiModuleGLUT();
-        }
+    ImGuiModule* ImGuiModule::BuildModule() {
+        Str backendImpl = BackendManager::GetBackendName();
 
-        NOT_IMPLEMENTED
+        if(backendImpl == "Uninitialized")
+                throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
+        else if(backendImpl == "Headless")
+                throw NotImplementedException("Headless ImGui module");
+        else if(backendImpl == "GLFW")
+                return new ImGuiModuleGLFW();
+        else if(backendImpl == "SFML")
+                throw NotImplementedException("SFML ImGui module");
+        else if(backendImpl == "VTK")
+                throw NotImplementedException("VTK ImGui module");
+        else if(backendImpl == "GLUT")
+                return new ImGuiModuleGLUT();
+
+        NOT_IMPLEMENTED;
     }
 
     void ImGuiModule::beginRender() {

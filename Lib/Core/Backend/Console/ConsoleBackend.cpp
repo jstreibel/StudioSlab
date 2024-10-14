@@ -11,7 +11,7 @@ namespace Slab::Core {
     }
 
     void ConsoleBackend::run() {
-        auto taskManager = dynamic_cast<TaskManagerModule*>(BackendManager::GetModule(Modules::TaskManager).get());
+        auto taskManager = dynamic_cast<TaskManagerModule*>(BackendManager::GetModule("TaskManager").get());
 
         while(taskManager->hasRunningTasks());
     }

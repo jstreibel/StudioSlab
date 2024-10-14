@@ -6,6 +6,7 @@
 #define STUDIOSLAB_DATAMANAGER_H
 
 #include "Utils/Singleton.h"
+#include "Utils/Map.h"
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "DataSet.h"
@@ -14,14 +15,23 @@
 
 namespace Slab::Math {
 
+    enum DataLocation {
+        NativeMemory,
+        GPU
+    };
+
     class DataManager : public Singleton<DataManager> {
-        typedef Pair<Str, DataSet_ptr> DataSetEntry;
-        // Map<DataSetEntry> dataSets;
+        using DataSetType = Str;
+        using DataSetName = Str;
+        typedef Pair<DataSetType, DataSet_ptr> DataSetEntry;
+
+        Map<DataSetName, DataSet_ptr> dataSets;
 
     public:
         explicit DataManager();
 
-        static R2toR::NumericFunction_ptr NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r);
+        static Vector<DataSetName> GetAllDataEntries();
+        static R2toR::NumericFunction_ptr NewFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation);
     };
 
 } // Slab::Math

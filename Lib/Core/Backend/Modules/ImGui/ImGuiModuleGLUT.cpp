@@ -14,7 +14,7 @@
 fix SHOULD_INSTALL_CALLBACKS = false;
 
 namespace Slab::Core {
-    ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule(GLUT) {
+    ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule() {
         // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
         // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.

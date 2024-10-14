@@ -10,6 +10,8 @@
 namespace Slab::Core {
     Backend &GetBackend();
     GraphicBackend &GetGUIBackend();
+
+    void Register();
 }
 
 #endif //STUDIOSLAB_BASE_H

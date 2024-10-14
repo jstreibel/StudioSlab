@@ -43,6 +43,17 @@ namespace Slab {
         return Pointer<T>(&instance, [](T*){});
     }
 
+    /**
+     * Same as Naked.
+     * @tparam T
+     * @param instance
+     * @return
+     */
+    template<typename T>
+    Pointer<T> Dummy(T &instance) {
+        return Pointer<T>(&instance, [](T*){});
+    }
+
     template<typename T>
     Pointer<T> DummyPointer_const(T &instance) {
         return Pointer<const T>(&instance, [](T*){});

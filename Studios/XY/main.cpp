@@ -1,7 +1,7 @@
 
 #include "XYApp.h"
 
-#include "Core/App/CrashPad.h"
+#include "App/CrashPad.h"
 
 
 int run(int argc, const char *argv[]) {

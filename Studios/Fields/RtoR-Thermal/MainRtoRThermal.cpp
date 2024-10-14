@@ -2,7 +2,7 @@
 // Created by joao on 27/09/2021.
 //
 
-#include "Core/App/CrashPad.h"
+#include "App/CrashPad.h"
 #include "Core/Controller/Interface/InterfaceSelector.h"
 
 #include "Math/App.h"

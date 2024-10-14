@@ -10,10 +10,14 @@
 #include "Core/Tools/Log.h"
 #include "Utils/Compiler.h"
 
+#include "StudioSlab.h"
+
 namespace Slab::Core {
 
     AppBase::AppBase(int argc, const char **argv, bool doRegister)
             : InterfaceOwner("App", 100, doRegister) {
+        Slab::Startup();
+
         CLArgsManager::Initialize(argc, argv);
 
         Log::Info() << "Compiler: " << USED_CXX_COMPILER << Log::Flush;

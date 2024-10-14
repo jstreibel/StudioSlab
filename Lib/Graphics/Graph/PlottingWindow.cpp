@@ -66,7 +66,7 @@ namespace Slab {
         }
         PlottingWindow::graphMap[title] = this;
 
-        Core::BackendManager::LoadModule(Core::RealTimeAnimation);
+        Core::BackendManager::LoadModule("RealTimeAnimation");
 
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 

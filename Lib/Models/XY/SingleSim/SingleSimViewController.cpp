@@ -58,7 +58,7 @@ namespace Slab::Lost::ThermoOutput {
     {
 
 
-        auto nkModule_abstract = Core::BackendManager::GetModule(Core::Nuklear);
+        auto nkModule_abstract = Core::BackendManager::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Core::NuklearModule*>(nkModule_abstract.get());
         nkContext = nkModule.getContext();
 

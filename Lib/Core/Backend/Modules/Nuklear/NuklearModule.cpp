@@ -9,27 +9,22 @@
 #include "NuklearSFMLModule.h"
 #include "NuklearGLFWModule.h"
 
-#include "Utils/Exception.h"
 #include "Core/Backend/BackendManager.h"
 
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
 namespace Slab::Core {
-    NuklearModule::NuklearModule(BackendImplementation system)
+    NuklearModule::NuklearModule()
     : Core::GraphicsModule("Nuklear GUI")
-    , system(system)
     , nkContext(nullptr)
     {
-        switch (system) {
-            case Uninitialized:
-            case VTK:
-            case Headless:
-                break;
-            case GLFW:
-            case GLUT:
-            case SFML:
-                BackendManager::LoadModule(ModernOpenGL);
-        }
+        fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
+        fix opengl = Vector<Str>{"GLFW", "GLUT", "SFML"};
+
+        fix backend_name = BackendManager::GetBackendName();
+
+        if(Contains(non_opengl, backend_name))  NOT_IMPLEMENTED;
+        if(Contains(opengl, backend_name)) BackendManager::LoadModule("ModernOpenGL");
     }
 
     void NuklearModule::beginEvents() {
@@ -40,20 +35,16 @@ namespace Slab::Core {
         nk_input_end(nkContext);
     }
 
-    NuklearModule *NuklearModule::BuildModule(BackendImplementation backendImplementation) {
-        switch (backendImplementation) {
-            case Uninitialized:
-            case Headless:
-            case GLUT:
-            case VTK:
-                NOT_IMPLEMENTED
-            case GLFW:
-                return new NuklearGLFWModule();
-            case SFML:
-                return new NuklearSFMLModule();
-        }
+    NuklearModule *NuklearModule::BuildModule() {
+        auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
 
-        NOT_IMPLEMENTED
+        Str backendImpl = BackendManager::GetBackendName();
+        if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED;
+
+        if(backendImpl == "GLFW") return new NuklearGLFWModule();
+        if(backendImpl == "SFML") return new NuklearSFMLModule();
+
+        throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
     nk_context *NuklearModule::getContext() { return nkContext; };

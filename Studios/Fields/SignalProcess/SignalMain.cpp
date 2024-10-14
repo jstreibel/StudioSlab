@@ -2,7 +2,7 @@
 // Created by joao on 4/1/23.
 //
 
-#include "Core/App/CrashPad.h"
+#include "App/CrashPad.h"
 
 #include "Core/Controller/Interface/InterfaceSelector.h"
 #include "Math/Function/RtoR/App/FieldsApp-RtoR.h"

@@ -23,7 +23,7 @@ namespace Slab::Core {
 
     const bool HighPriority = true;
 
-    NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(GLFW) {
+    NuklearGLFWModule::NuklearGLFWModule() : NuklearModule() {
         try {
             auto &glfwBackend = dynamic_cast<GLFWBackend&>(BackendManager::GetGUIBackend());
             renderWindow = &glfwBackend.getGLFWWindow();

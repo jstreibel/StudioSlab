@@ -14,17 +14,16 @@
 namespace Slab::Core {
 
     class NuklearModule : public Core::GraphicsModule {
-        Core::BackendImplementation system;
     protected:
         nk_context *nkContext;
 
     public:
-        explicit NuklearModule(Core::BackendImplementation);
+        explicit NuklearModule();
 
         void beginEvents() override;
         void endEvents() override;
 
-        static NuklearModule *BuildModule(BackendImplementation);
+        static NuklearModule *BuildModule();
 
         nk_context *getContext();
 

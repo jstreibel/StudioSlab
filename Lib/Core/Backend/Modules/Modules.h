@@ -5,22 +5,13 @@
 #ifndef STUDIOSLAB_MODULES_H
 #define STUDIOSLAB_MODULES_H
 
+#include "Utils/String.h"
+#include "Utils/Arrays.h"
+#include "Module.h"
+
 namespace Slab::Core {
-    enum Modules {
-        ImGui,
-        Nuklear,
-        NanoGUI,
-
-        ModernOpenGL,
-
-        RealTimeAnimation,
-
-        TaskManager,
-
-        Jack,
-
-        NodeJS
-    };
+    using ModuleName = Str;
+    using ModuleAllocator = std::function<Module*(void)>;
 }
 
 #endif //STUDIOSLAB_MODULES_H

@@ -85,7 +85,7 @@ namespace Slab::Graphics {
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
         mePointer = Naked(*this);
 
-        Core::BackendManager::LoadModule(Core::ImGui);
+        Core::BackendManager::LoadModule("ImGui");
 
         Core::BackendManager::GetGUIBackend().addEventListener(mePointer);
     }

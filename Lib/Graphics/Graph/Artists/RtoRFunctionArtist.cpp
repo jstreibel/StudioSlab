@@ -47,4 +47,19 @@ namespace Slab::Graphics {
     void RtoRFunctionArtist::setFunction(RtoR::Function_ptr func) {
         function = func;
     }
+
+    const RectR &RtoRFunctionArtist::getRegion() {
+        try {
+            region.yMin = function->min();
+            region.yMax = function->max();
+            region.xMin = 0;
+            region.xMax = 10;
+        }
+        catch (...) {
+            
+        }
+        
+
+        return Artist::getRegion();
+    }
 } // Graphics

@@ -22,7 +22,11 @@ class NumericFunction_CPU : public RtoR::NumericFunction {
 
         [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::NumericFunction<Real, Real>> override;
 
-        auto Set(const RealArray &vec) -> NumericFunction_CPU &;
+    Real max() const override;
+
+    Real min() const override;
+
+    auto Set(const RealArray &vec) -> NumericFunction_CPU &;
         auto Set(const FunctionT &func) -> NumericFunction_CPU & override;
 
         auto Apply(const MyBase &func,

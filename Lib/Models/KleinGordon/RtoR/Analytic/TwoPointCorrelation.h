@@ -13,6 +13,12 @@ namespace Slab::Models::KGRtoR {
         Real c0;
         Real invξ;
         Real β;
+        Real u0;
+    public:
+        Real getU0() const;
+
+        void setU0(Real u0_new);
+
     public:
         enum Nature { Exponential, Power };
     private:
@@ -32,9 +38,9 @@ namespace Slab::Models::KGRtoR {
         void setNature(CorrelationDecay::Nature nat);
 
 
-        explicit CorrelationDecay(Real c0=1, Real ξ=1, Real β=2);
+        explicit CorrelationDecay(Real c0=1, Real ξ=1, Real β=2, Real u0=0);
 
-        Real operator()(Real x) const override;
+        Real operator()(Real u) const override;
     };
 
     class TwoPointCorrelation : public Math::RtoR::Function {

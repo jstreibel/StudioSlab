@@ -2,7 +2,7 @@
 // Created by joao on 8/6/23.
 //
 
-#include "Core/App/CrashPad.h"
+#include "App/CrashPad.h"
 #include "App.h"
 
 int run(int argc, const char *argv[]){

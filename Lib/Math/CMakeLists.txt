@@ -118,6 +118,10 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.h
         Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.cpp
         Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h
+		MathModule.cpp
+		MathModule.h
+		SlabMath.cpp
+		SlabMath.h
 )
 
 

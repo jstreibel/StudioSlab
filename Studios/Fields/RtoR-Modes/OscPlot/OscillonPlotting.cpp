@@ -12,6 +12,7 @@
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
 #include "Utils/RandUtils.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TwoPointCorrelationViewer_KG.h"
+#include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 
 
 namespace Studios {
@@ -41,6 +42,9 @@ namespace Studios {
 
         auto two_point_viewer = Slab::New<Slab::Models::KGRtoR::TwoPointCorrelationViewer_KG>(getGUIWindow());
         addKGViewer(two_point_viewer);
+
+        auto time_ft_space_avg_viewer = Slab::New<Slab::Models::KGRtoR::TimeFTViewer>(getGUIWindow());
+        addKGViewer(time_ft_space_avg_viewer);
 
         auto fourier_viewer = Slab::New<Slab::Graphics::FourierViewer>(getGUIWindow());
         addViewer(fourier_viewer);

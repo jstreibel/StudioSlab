@@ -7,6 +7,7 @@
 
 #include "KGViewer.h"
 #include "Graphics/Graph/Artists/RtoRFunctionArtist.h"
+#include "Models/KleinGordon/RtoR/Analytic/TwoPointCorrelation.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -15,6 +16,7 @@ namespace Slab::Models::KGRtoR {
         bool auto_update = false;
 
         Pointer<Graphics::RtoRFunctionArtist> timeDFTAverageArtist;
+        CorrelationDecay powerDecayCorrelation;
 
         void compute();
 

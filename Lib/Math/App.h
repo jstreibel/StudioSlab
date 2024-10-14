@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOLDYNAPP_H
 #define STUDIOSLAB_MOLDYNAPP_H
 
-#include "Core/App/AppBase.h"
+#include "App/AppBase.h"
 #include "Math/Numerics/NumericalRecipe.h"
 
 namespace Slab::Math {

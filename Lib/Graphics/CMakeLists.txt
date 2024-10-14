@@ -280,6 +280,10 @@ add_library(${LIB_GRAPHICS} STATIC
 		DataViewers/Viewers/HistoryViewer.h
 		DataViewers/Viewers/ModesHistoryViewer.cpp
 		DataViewers/Viewers/ModesHistoryViewer.h
+		SlabGraphics.cpp
+		SlabGraphics.h
+		GraphicsModule.cpp
+		GraphicsModule.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-GLFreetype

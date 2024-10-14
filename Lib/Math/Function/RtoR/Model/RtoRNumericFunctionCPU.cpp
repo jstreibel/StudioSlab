@@ -156,6 +156,14 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
+    Real NumericFunction_CPU::max() const {
+        return getSpace().getHostData().max();
+    }
+
+    Real NumericFunction_CPU::min() const {
+        return getSpace().getHostData().min();
+    }
+
 }
 
 #pragma clang diagnostic pop

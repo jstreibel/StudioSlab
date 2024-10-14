@@ -20,8 +20,8 @@ namespace Slab::Graphics {
 
     Scene3DWindow::Scene3DWindow() : id(++WindowCount)
     {
-        Core::BackendManager::LoadModule(Core::ImGui);
-        Core::BackendManager::LoadModule(Core::ModernOpenGL);
+        Core::BackendManager::LoadModule("ImGui");
+        Core::BackendManager::LoadModule("ModernOpenGL");
     }
 
     void Scene3DWindow::draw() {

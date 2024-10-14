@@ -2,8 +2,8 @@
 // Created by joao on 7/6/24.
 //
 
-#include "Core/App/AppBase.h"
-#include "Core/App/CrashPad.h"
+#include "App/AppBase.h"
+#include "App/CrashPad.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Controller/Interface/InterfaceManager.h"
 
@@ -17,7 +17,7 @@ public:
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Slab::Core::InterfaceManager::getInstance().registerInterface(interface);
 
-        Slab::Core::BackendManager::Startup(Slab::Core::GLFW);
+        Slab::Core::BackendManager::Startup("GLFW");
 
         Slab::Graphics::PlotThemeManager::GetInstance();
 

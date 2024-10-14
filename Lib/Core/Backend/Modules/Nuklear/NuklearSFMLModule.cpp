@@ -17,7 +17,7 @@
 namespace Slab::Core {
 
     NuklearSFMLModule::NuklearSFMLModule()
-            : NuklearModule(SFML) {
+            : NuklearModule() {
         try {
             auto &sfmlBackend = dynamic_cast<SFMLBackend &>(BackendManager::GetGUIBackend());
             renderWindow = &sfmlBackend.getMainWindow();

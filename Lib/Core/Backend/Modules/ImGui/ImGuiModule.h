@@ -14,17 +14,15 @@ namespace Slab::Core {
         static void generalInitialization();
         static void buildFonts();
 
-        BackendImplementation system;
-
     protected:
         bool showDemos = false;
 
         static void finishInitialization();
-        explicit ImGuiModule(BackendImplementation);
+        explicit ImGuiModule();
         ~ImGuiModule() override;
 
     public:
-        static ImGuiModule* BuildModule(BackendImplementation);
+        static ImGuiModule* BuildModule();
 
         void beginRender() override;
 

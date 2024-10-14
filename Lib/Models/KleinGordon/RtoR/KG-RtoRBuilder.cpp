@@ -82,8 +82,8 @@ namespace Slab::Models::KGRtoR {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldOutputHistory = !*noHistoryToFile;
 
-        if (*VisualMonitor) Core::BackendManager::Startup(Core::GLFW);
-        else                Core::BackendManager::Startup(Core::Headless);
+        if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
+        else                Core::BackendManager::Startup("Headless");
 
         const NumericConfig &p = simulationConfig.numericConfig;
 

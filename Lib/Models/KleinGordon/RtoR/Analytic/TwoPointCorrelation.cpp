@@ -5,13 +5,13 @@
 #include "TwoPointCorrelation.h"
 
 namespace Slab::Models::KGRtoR {
-    CorrelationDecay::CorrelationDecay(Real c0, Real ξ, Real β)
-    : c0(c0), invξ(1./ξ), β(β) {
+    CorrelationDecay::CorrelationDecay(Real c0, Real ξ, Real β, Real u0)
+    : c0(c0), invξ(1./ξ), β(β), u0(u0) {
 
     }
 
     Real CorrelationDecay::operator()(Real u) const {
-        fix fuiξ = invξ * fabs(u);
+        fix fuiξ = invξ * fabs(u-u0);
 
         if(nature==Exponential) {
             return c0 * exp(-β*fuiξ);
@@ -53,9 +53,13 @@ namespace Slab::Models::KGRtoR {
         CorrelationDecay::β = beta;
     }
 
+    Real CorrelationDecay::getU0() const {
+        return u0;
+    }
 
-
-
+    void CorrelationDecay::setU0(Real u0_new) {
+        CorrelationDecay::u0 = u0_new;
+    }
 
 
     TwoPointCorrelation::TwoPointCorrelation(Real c0, Real λ, Real ξ, Real β, Count n)

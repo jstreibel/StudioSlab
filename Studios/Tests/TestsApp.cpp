@@ -4,7 +4,7 @@
 
 #include "TestsApp.h"
 
-#include "Core/App/AppBase.h"
+#include "App/AppBase.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 
 #include "BezierTests.h"

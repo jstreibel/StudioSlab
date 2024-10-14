@@ -83,7 +83,7 @@ namespace Slab::Graphics::OpenGL {
     : vertFileName(vertFilename)
     , fragFileName(fragFilename)
     {
-        Core::BackendManager::LoadModule(Core::ModernOpenGL);
+        Core::BackendManager::LoadModule("ModernOpenGL");
 
         handle = ShaderLoader::Load(vertFilename, fragFilename);
 
@@ -111,7 +111,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Shader::remove() {
-        if(!Core::BackendManager::IsModuleLoaded(Core::ModernOpenGL)) return;
+        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
         glUseProgram(0);
     }
 

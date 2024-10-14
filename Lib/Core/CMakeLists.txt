@@ -6,7 +6,6 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY /home/joao/Developer/StudioSlab/Slab/bin)
 
 file(GLOB_RECURSE CORE_BACKEND_SOURCES "./Backend/*.cpp")
-file(GLOB_RECURSE CORE_APP_SOURCES "./App/*.cpp")
 file(GLOB_RECURSE CORE_CONTROLLER_SOURCES "./Controller/*.cpp")
 file(GLOB_RECURSE CORE_TOOLS_SOURCES "./Tools/*.cpp")
 
@@ -17,6 +16,7 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		${CORE_TOOLS_SOURCES}
 		${CORE_CONTROLLER_SOURCES}
         Base.h
+		Backend/Modules/Modules.cpp
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}
