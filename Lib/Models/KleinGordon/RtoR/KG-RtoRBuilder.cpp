@@ -19,7 +19,6 @@
 #include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Math/Function/RtoR/Model/Operators/RtoRLaplacian.h"
-#include "Math/Function/RtoR/Model/RtoRNumericFunctionGPU.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
@@ -87,7 +86,7 @@ namespace Slab::Models::KGRtoR {
 
         const NumericConfig &p = simulationConfig.numericConfig;
 
-        auto outputManager = New <OutputManager> (simulationConfig.numericConfig);
+        auto outputManager = New <OutputManager> (simulationConfig.numericConfig.getn());
 
         fix t = p.gett();
         fix N = (Real) p.getN();
@@ -108,7 +107,7 @@ namespace Slab::Models::KGRtoR {
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
-                    Slab::New<SnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
+                    Slab::New<SnapshotOutput>(snapshotFilename));
         }
         if (*takeSpaceDFTSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
@@ -116,7 +115,7 @@ namespace Slab::Models::KGRtoR {
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             outputManager->addOutputChannel(
-                    Slab::New<DFTSnapshotOutput>(simulationConfig.numericConfig, snapshotFilename));
+                    Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*takeTimeDFTSnapshot) {
             addTimeDFTSnapshots(outputManager);
@@ -138,7 +137,7 @@ namespace Slab::Models::KGRtoR {
 
             fix stepsInterval = UInt(N / (Nₒᵤₜ * r));
 
-            out = Slab::New<OutputHistoryToFile>(simulationConfig.numericConfig, stepsInterval, spaceFilter, t,
+            out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, t,
                                           outputFileName, outputFilter);
             fileOutputStepsInterval = out->getnSteps();
             outputManager->addOutputChannel(out);
@@ -175,15 +174,17 @@ namespace Slab::Models::KGRtoR {
 
             guiBackend.addEventListener(Graphics::Window_ptr(outputOpenGL));
             outputManager->addOutputChannel(outputOpenGL);
-        } else
+        } else {
             /* O objetivo de relacionar o numero de passos para
              * o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
 
-            outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig));
+            fix &conf = simulationConfig.numericConfig;
 
+            outputManager->addOutputChannel(
+                    Slab::New<OutputConsoleMonitor>(conf.getn(), conf.gett(), conf.getr()));
+        }
 
         return outputManager;
 
@@ -245,7 +246,8 @@ namespace Slab::Models::KGRtoR {
         auto snapshotFilename = folder + suggestFileName();
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
-        return Slab::New<CenterTimeDFTOutput>(simulationConfig.numericConfig, dftConfig);
+        fix &conf = simulationConfig.numericConfig;
+        return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {

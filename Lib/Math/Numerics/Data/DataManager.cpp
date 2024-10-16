@@ -56,7 +56,7 @@ namespace Slab::Math {
         auto entry = sets.find(name);
 
         if(entry == sets.end())
-            Log::Error("Could not find dataset '" + name + "'.") << Log::Flush;
+            Core::Log::Error("Could not find dataset '" + name + "'.") << Core::Log::Flush;
 
         return *entry;
     }

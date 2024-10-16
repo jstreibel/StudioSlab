@@ -2,7 +2,6 @@
 #define OUTPUT_H
 
 #include "Math/Numerics/Output/Util/OutputPacket.h"
-#include "Math/Numerics/SimConfig/NumericConfig.h"
 
 #define INT_BASED 1
 #define FLOAT_BASED 2
@@ -17,13 +16,12 @@ namespace Slab::Math {
 
     protected:
         OutputPacket lastPacket;
-        const NumericConfig &params;
         Str name, description;
 
         virtual auto handleOutput(const OutputPacket &) -> void = 0;
 
     public:
-        explicit Socket(const NumericConfig &, Str name = "", int nStepsInterval = 1, Str description = "");
+        explicit Socket(Str name = "", int nStepsInterval = 1, Str description = "");
 
         virtual ~Socket();
 

@@ -16,9 +16,11 @@
 
 namespace Slab::Math {
 
-    OutputSnapshot::OutputSnapshot(const NumericConfig &params, const Str &customFileDescription,
+    using Core::Log;
+
+    OutputSnapshot::OutputSnapshot(const Str &customFileDescription,
                                    const size_t T_fileNamePrecision)
-            : Socket(params, "Snapshot output", 1),
+            : Socket("Snapshot output", 1),
               customFileDescription(customFileDescription),
               T_fileNamePrecision(T_fileNamePrecision) {}
 

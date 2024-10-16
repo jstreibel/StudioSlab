@@ -6,7 +6,6 @@
 #define V_SHAPE_R2TORFUNCTIONARBITRARY_H
 
 #include "Math/Function/NumericFunction.h"
-#include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "R2toRFunction.h"
 
 namespace Slab::Math::R2toR {

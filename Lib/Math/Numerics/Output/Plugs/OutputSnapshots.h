@@ -14,7 +14,7 @@ namespace Slab::Math {
 
         size_t T_fileNamePrecision;
     public:
-        explicit OutputSnapshot(const NumericConfig &params, const Str &customFileDescription = "",
+        explicit OutputSnapshot(const Str &customFileDescription = "",
                        size_t fileNamePrecision = 4);
 
         ~OutputSnapshot() override;

@@ -27,7 +27,7 @@ namespace Slab::Math {
         size_t countTotal;
 
     public:
-        HistoryKeeper(const NumericConfig &params, size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
+        HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
 
         ~HistoryKeeper() override;
 

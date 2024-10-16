@@ -7,16 +7,11 @@
 namespace Slab::Math {
 
     class OutputManager {
-
     protected:
-
         Vector<Socket_ptr > outputs;
 
-        const NumericConfig &params;
-
     public:
-
-        OutputManager(const NumericConfig &params);
+        OutputManager(Count max_steps);
 
         ~OutputManager();
 

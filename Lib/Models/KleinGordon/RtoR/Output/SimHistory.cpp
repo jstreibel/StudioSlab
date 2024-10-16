@@ -4,8 +4,6 @@
 
 #include "SimHistory.h"
 
-#include <utility>
-
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 #define StepsInterval ((int) (simConfig.numericConfig.getn() / N_t))
@@ -16,10 +14,10 @@ namespace Slab::Models::KGRtoR {
 
     SimHistory::SimHistory(const SimulationConfig &simConfig, Resolution N_x, Resolution N_t,
                            Real xMin, Real L, const Str &name)
-            : Socket(simConfig.numericConfig, name, StepsInterval,
+            : Socket(name, StepsInterval,
                      "A specific history tracker designed to watch the full sim history through visual monitors.")
             , dataIsOnGPU(simConfig.dev == GPU)
-            , N_x((int)N_x), N_t((int)N_t) {
+            , max_steps(simConfig.numericConfig.getn()), max_t(simConfig.numericConfig.gett()), N_x((int)N_x), N_t((int)N_t) {
         fix t = simConfig.numericConfig.gett();
         fix timeResolution =(Real) N_t;
 
@@ -72,7 +70,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void SimHistory::handleOutput(const OutputPacket &packet) {
-        if (packet.getSimTime() >= params.gett())
+        if (packet.getSimTime() >= max_t)
             return;
 
         IN stateIn = packet.GetNakedStateData<KGRtoR::EquationState>();
@@ -86,7 +84,7 @@ namespace Slab::Models::KGRtoR {
         else
 #endif
         {
-            fix M_in = (double) params.getn();
+            fix M_in = (double) max_steps;
             fix M_out = (double) N_t;
             fix t_ratio = M_out / M_in;
 

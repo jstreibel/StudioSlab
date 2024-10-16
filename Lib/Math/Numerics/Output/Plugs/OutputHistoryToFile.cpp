@@ -15,14 +15,15 @@ namespace Slab::Math {
     const Str extension = ".osc";
 #define outputFilename std::move(outputFileName + extension + (outputFormatter->isBinary()?"b":""))
 
-    OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params,
-                                             UInt stepsInterval,
+    OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
                                              SpaceFilterBase *spaceFilter,
                                              Real endT,
                                              const Str &outputFileName, OutputFormatterBase *outputFormatter)
-            : HistoryKeeper(params, stepsInterval, spaceFilter, endT), outFileName(outputFilename),
+            : HistoryKeeper(stepsInterval, spaceFilter, endT), outFileName(outputFilename),
               outputFormatter(*outputFormatter) {
         file.open(outFileName, std::ios::out);
+
+        using Core::Log;
 
         if (!file) {
             Log::Error() << "OutputHistoryToFile couldn't open file '" << outFileName << "'" << Log::Flush;
@@ -53,6 +54,8 @@ namespace Slab::Math {
 
         Timer timer;
 
+        using Core::Log;
+
         for (size_t Ti = 0; Ti < count; Ti++) {
             if (timer.getElTime_sec() > 1) {
                 timer.reset();
@@ -81,8 +84,9 @@ namespace Slab::Math {
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
 
-
-        DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
+        fix dummyL = 1.23424;
+        NOT_IMPLEMENTED
+        DimensionMetaData recDim = spaceFilter.getOutputDim(dummyL);
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 
@@ -101,7 +105,7 @@ namespace Slab::Math {
             oss << ") ";
         }
 
-        oss << ", " << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << ", " << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
         const auto &s = oss.str();
 

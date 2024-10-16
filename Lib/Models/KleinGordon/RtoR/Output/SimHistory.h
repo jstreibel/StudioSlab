@@ -26,6 +26,8 @@ namespace Slab::Models::KGRtoR {
         virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <Real> &dataOut) -> void;
 
     protected:
+        const Count max_steps;
+        const Real max_t;
         const int N_t, N_x;
 
         auto handleOutput(const OutputPacket &packet) -> void override;

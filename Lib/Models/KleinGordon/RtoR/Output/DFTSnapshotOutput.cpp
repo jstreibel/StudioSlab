@@ -6,21 +6,22 @@
 #include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
 #include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 
-#define nConfig (params)
-#define NDFTModes (nConfig.getN()/2.+1.)
-#define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
+#define NDFTModes (N/2.+1.)
+#define kMaxDFT (NDFTModes*2*M_PI/L)
 
 namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    DFTSnapshotOutput::DFTSnapshotOutput(const NumericConfig &config, const Str &fileName)
-    : SnapshotOutput(config, fileName + ".dft", "DFT snapshot output", "outputs the DFT of the last simulation instant")
+    DFTSnapshotOutput::DFTSnapshotOutput(const Resolution N, const Real L, const Str &fileName)
+    : SnapshotOutput(fileName + ".dft", "DFT snapshot output", "outputs the DFT of the last simulation instant")
+    , N_DFT_modes(NDFTModes)
+    , k_max(kMaxDFT)
     {   }
 
 
     RtoR::NumericFunction_CPU DFTSnapshotOutput::filterData(const OutputPacket &packet) {
-        RtoR::NumericFunction_CPU dft((int)NDFTModes, 0.0, kMaxDFT);
+        RtoR::NumericFunction_CPU dft((int)N_DFT_modes, 0.0, k_max);
 
         IN kgState = *packet.GetNakedStateData<KGRtoR::EquationState>();
 

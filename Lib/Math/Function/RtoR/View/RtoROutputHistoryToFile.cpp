@@ -13,10 +13,12 @@ const int HEADER_SIZE_BYTES = 2048;
 
 namespace Slab::Math {
 
-    RtoR::OutputHistoryToFile::OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval,
+    using Core::Log;
+
+    RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
                                                    SpaceFilterBase *spaceFilter, Real endT,
                                                    Str outputFileName)
-            : HistoryKeeper(params, stepsInterval, spaceFilter, endT),
+            : HistoryKeeper(stepsInterval, spaceFilter, endT),
               outFileName(std::move(outputFileName)),
               outputFormatter(*(new BinarySOF())) {
         this->name = "Full (1+1) history output";
@@ -79,8 +81,9 @@ namespace Slab::Math {
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
 
-
-        DimensionMetaData recDim = spaceFilter.getOutputDim(params.getL());
+        fix DUMMYL = 2.12341234;
+        NOT_IMPLEMENTED
+        DimensionMetaData recDim = spaceFilter.getOutputDim(DUMMYL);
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 
@@ -89,7 +92,7 @@ namespace Slab::Math {
         oss << R"(, "data_channels": 2)";
         oss << R"str(, "data_channel_names": ("phi", "ddtphi") )str";
 
-        oss << ", " << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
+        oss << ", " << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries() << "}" << std::endl;
 
         const auto &s = oss.str();
 

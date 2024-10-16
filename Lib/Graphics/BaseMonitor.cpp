@@ -16,8 +16,10 @@
 
 namespace Slab::Graphics {
 
-    Graphics::BaseMonitor::BaseMonitor(const NumericConfig &params, const Str &channelName, int stepsBetweenDraws)
-            : Socket(params, channelName, stepsBetweenDraws), WindowPanel(HasMainMenu) {
+    using Core::Log;
+
+    Graphics::BaseMonitor::BaseMonitor(Real max_t, Count max_steps, const Str &channelName, int stepsBetweenDraws)
+            : Socket(channelName, stepsBetweenDraws), WindowPanel(HasMainMenu), max_t(max_t), max_steps(max_steps) {
         addWindow(Slab::Naked(guiWindow));
         setColumnRelativeWidth(0, 0.1);
 
@@ -33,9 +35,9 @@ namespace Slab::Graphics {
         static bool hasFinished = false;
         static bool isPaused = false;
         static Count lastStep = 0;
-        hasFinished = !(lastPacket.getSteps() < params.getn());
+        hasFinished = !(lastPacket.getSteps() < max_steps);
 
-        auto dt = params.getdt();
+        auto dt = Real(max_t)/max_steps;
         fix currStep = step;
 
         isPaused = currStep == lastStep;
@@ -44,10 +46,10 @@ namespace Slab::Graphics {
         auto elTime = timer.getElTime_msec();
         timer = Timer();
 
-        const auto &p = params;
-        const auto L = p.getL();
-        const auto N = p.getN();
-        const auto h = p.geth();
+        // const auto &p = params;
+        // const auto L = p.getL();
+        // const auto N = p.getN();
+        // const auto h = p.geth();
 
 
         fix FPS = 1e3 / elTime;           // Frames/samples per second
@@ -80,7 +82,7 @@ namespace Slab::Graphics {
             avgSPS /= (Real) total;
         }
 
-        fix stepsToFinish = params.getn() - step;
+        fix stepsToFinish = max_steps - step;
         fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : stepsToFinish / avgSPS);
         fix remainingTimeMin = timeToFinish / 60;
         fix remainingTimeSec = timeToFinish % 60;
@@ -94,8 +96,8 @@ namespace Slab::Graphics {
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
 
-        guiWindow.addVolatileStat(Str("t = ") + ToStr(t, 4) + "/" + ToStr(params.gett(), 4));
-        guiWindow.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(params.getn()));
+        guiWindow.addVolatileStat(Str("t = ") + ToStr(t, 4) + "/" + ToStr(max_t, 4));
+        guiWindow.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
         guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
         guiWindow.addVolatileStat("");
         guiWindow.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
@@ -115,9 +117,9 @@ namespace Slab::Graphics {
                 Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
         guiWindow.addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
         guiWindow.addVolatileStat(Str("<\\br>"));
-        guiWindow.addVolatileStat(Str("L = ") + ToStr(L));
-        guiWindow.addVolatileStat(Str("N = ") + ToStr(N));
-        guiWindow.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
+        // guiWindow.addVolatileStat(Str("L = ") + ToStr(L));
+        // guiWindow.addVolatileStat(Str("N = ") + ToStr(N));
+        // guiWindow.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
 
         lastStep = step;
     }

@@ -1,8 +1,6 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
-#include "Math/Numerics/SimConfig/NumericConfig.h"
-
 #include "Math/Numerics/Output/OutputManager.h"
 
 #include "Math/Numerics/Solver/Solver.h"

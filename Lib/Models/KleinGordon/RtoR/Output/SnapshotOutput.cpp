@@ -5,23 +5,19 @@
 #include "SnapshotOutput.h"
 
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
-#include "Core/Tools/Log.h"
-
-#include "../KG-RtoREquationState.h"
-
 
 namespace Slab::Models::KGRtoR {
 
     const Str suffix = ".simsnap";
 
-    SnapshotOutput::SnapshotOutput(const NumericConfig &config, const Str &fileName,
+    SnapshotOutput::SnapshotOutput(const Str &fileName,
                                    const Str &socketName, const Str &description)
-    : Socket(config, socketName, -1, description)
+    : Socket(socketName, -1, description)
     , outputFileName(fileName + suffix)
     {    }
 
-    SnapshotOutput::SnapshotOutput(const NumericConfig &config, const Str &fileName)
-    : SnapshotOutput(config, fileName, "Snapshot output", "outputs the last simulation instant")
+    SnapshotOutput::SnapshotOutput(const Str &fileName)
+    : SnapshotOutput(fileName, "Snapshot output", "outputs the last simulation instant")
     {    }
 
 
@@ -52,7 +48,7 @@ namespace Slab::Models::KGRtoR {
     {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
-            Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Log::Flush;
+            Core::Log::Error() << "Could not open '" << outputFileName << "' for snapshot output." << Core::Log::Flush;
             return false;
         }
 
@@ -60,7 +56,7 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        outputFile << "{" << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
         for(auto entry : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
         outputFile << "} " << SEPARATOR << std::flush;
@@ -70,7 +66,7 @@ namespace Slab::Models::KGRtoR {
         outputFile.write(reinterpret_cast<const char*>(&data[0]), data.size()*sizeof(Real));
 
         outputFile.close();
-        Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Log::Flush;
+        Core::Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::Log::Flush;
 
         return true;
     }

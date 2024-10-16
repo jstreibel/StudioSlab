@@ -11,16 +11,15 @@
 
 namespace Slab::Math {
 
-    R2toR::OutputOpenGL::OutputOpenGL(const NumericConfig &params)
-            : Graphics::BaseMonitor(params, "R2 -> R OpenGL output", 1), mSectionGraph(params.getxMin(),
-                                                                                       params.getxMax(),
-                                                                                       -1, 1,
-                                                                                       "Sections"),
-              mFieldDisplay() {
+    R2toR::OutputOpenGL::OutputOpenGL(Real t_max, Count max_steps, Real x_min, Real x_max, Real y_min, Real y_max)
+    : Graphics::BaseMonitor(t_max, max_steps, "R2 -> R OpenGL output", 1)
+    , mSectionGraph(x_min, x_max, -1, 1, "Sections")
+    , mFieldDisplay()
+    {
         addWindow(Slab::Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
 
-        auto yMin = params.getxMin(),
-                yMax = params.getxMax();
+        auto yMin = y_min,
+             yMax = y_max;
 
         auto line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
 

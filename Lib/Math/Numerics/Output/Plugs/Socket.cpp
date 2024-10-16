@@ -8,8 +8,8 @@
 
 namespace Slab::Math {
 
-    Socket::Socket(const NumericConfig &params, Str name, int nStepsInterval, Str description)
-            : intervalStepsBetweenOutputs(nStepsInterval), params(params), name(name), description(description),
+    Socket::Socket(Str name, int nStepsInterval, Str description)
+            : intervalStepsBetweenOutputs(nStepsInterval), name(name), description(description),
               nextRecStep(1) {}
 
 
@@ -60,7 +60,7 @@ namespace Slab::Math {
     auto Socket::getName() const -> Str { return name; }
 
     Socket::~Socket() {
-        Log::Info() << "Closed output channel '" << getName() << "'." << Log::Flush;
+        Core::Log::Info() << "Closed output channel '" << getName() << "'." << Core::Log::Flush;
     }
 
 

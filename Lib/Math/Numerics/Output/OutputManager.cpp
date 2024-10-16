@@ -5,7 +5,7 @@
 
 namespace Slab::Math {
 
-    OutputManager::OutputManager(const NumericConfig &params) : params(params), maxSteps(params.getn()) {}
+    OutputManager::OutputManager(Count max_steps) : maxSteps(max_steps) {}
 
     OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
@@ -38,20 +38,20 @@ namespace Slab::Math {
     void OutputManager::addOutputChannel(Socket_ptr out) {
         outputs.push_back(out);
 
-        Log::Status() << "Output manager added "
-                      << Log::FGBlue    << out->getName()
-                      << Log::FGMagenta << " : "
-                      << Log::FGBlue    << out->getDescription()
-                      << Log::ResetFormatting << " output channel. Updates every "
-                      << Log::FGGreen << out->getnSteps()
-                      << Log::ResetFormatting << " sim steps."
-                      << Log::Flush;
+        Core::Log::Status() << "Output manager added "
+                      << Core::Log::FGBlue    << out->getName()
+                      << Core::Log::FGMagenta << " : "
+                      << Core::Log::FGBlue    << out->getDescription()
+                      << Core::Log::ResetFormatting << " output channel. Updates every "
+                      << Core::Log::FGGreen << out->getnSteps()
+                      << Core::Log::ResetFormatting << " sim steps."
+                      << Core::Log::Flush;
     }
 
     void OutputManager::notifyIntegrationFinished(const OutputPacket &theVeryLastOutputInformation) {
         for (const auto& output: outputs) {
             if (!output->notifyIntegrationHasFinished(theVeryLastOutputInformation))
-                Log::Error() << "Error while finishing " << output->getName() << "..." << Log::Flush;
+                Core::Log::Error() << "Error while finishing " << output->getName() << "..." << Core::Log::Flush;
         }
 
 

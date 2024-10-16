@@ -38,7 +38,7 @@ namespace Slab::Math::R2toR {
         if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         else                Core::BackendManager::Startup("Headless");
 
-        auto outputManager = New <OutputManager> (simulationConfig.numericConfig);
+        auto outputManager = New <OutputManager> (simulationConfig.numericConfig.getn());
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
@@ -73,9 +73,7 @@ namespace Slab::Math::R2toR {
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            auto out = Slab::New<OutputHistoryToFile>(simulationConfig.numericConfig, stepsInterval,
-                                                                          spaceFilter, t, outputFileName,
-                                                                          outputFilter);
+            auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, t, outputFileName, outputFilter);
 
             fileOutputStepsInterval = out->getnSteps();
             outputManager->addOutputChannel(out);
@@ -93,8 +91,9 @@ namespace Slab::Math::R2toR {
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
+            IN conf = simulationConfig.numericConfig;
             outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(simulationConfig.numericConfig));
+                    New<OutputConsoleMonitor>(conf.getn(), conf.gett(), conf.getr()));
         }
 
         return outputManager;
@@ -128,7 +127,11 @@ namespace Slab::Math::R2toR {
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
-        return new R2toR::OutputOpenGL(simulationConfig.numericConfig);
+        // t_max, max_steps, x_min, x_max, y_min, y_max
+        IN conf = simulationConfig.numericConfig;
+        Real x_min = conf.getxMin();
+        Real x_max = conf.getxMax();
+        return new R2toR::OutputOpenGL(conf.gett(), conf.getn(), x_min, x_max, x_min, x_max);
     }
 
     auto Builder::newFieldState() -> R2toR::EquationState_ptr {

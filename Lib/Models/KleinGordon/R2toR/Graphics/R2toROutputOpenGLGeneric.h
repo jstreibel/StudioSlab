@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
         Graphics::Plot2DWindow mFieldDisplay;
 
     public:
-        OutputOpenGL(const NumericConfig &params);
+        OutputOpenGL(Real t_max, Count max_steps, Real x_min, Real x_max, Real y_min, Real y_max);
 
 
         void draw() override;

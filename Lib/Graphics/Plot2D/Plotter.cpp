@@ -107,7 +107,7 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    Message Plotter::sendRequest(Request request) {
+    Core::Message Plotter::sendRequest(Core::Request request) {
         return Interface::sendRequest(request);
     }
 

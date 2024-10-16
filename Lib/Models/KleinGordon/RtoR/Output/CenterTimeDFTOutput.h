@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     public:
-        CenterTimeDFTOutput(const Math::NumericConfig &config, TimeDFTOutputConfig timeDFTSnapshotConfig);
+        CenterTimeDFTOutput(Real t_max, Count max_steps, TimeDFTOutputConfig timeDFTSnapshotConfig);
 
     };
 }

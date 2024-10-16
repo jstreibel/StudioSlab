@@ -9,7 +9,6 @@
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h"
-#include "Models/KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h"
 
@@ -22,7 +21,7 @@ namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const NumericConfig &params, KGEnergy &hamiltonian,
                            const Real phiMin, const Real phiMax, const Str &name, bool showEnergyHistoryAsDensities)
-            : Graphics::BaseMonitor(params, Str("ℝ↦ℝ ") + name, 10)
+            : Graphics::BaseMonitor(params.gett(), params.getn(), Str("ℝ↦ℝ ") + name, 10)
             , hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
         fullHistoryArtist->setAffectGraphRanges(true);

@@ -3,13 +3,12 @@
 //
 
 #include "RtoRPanel.h"
-#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
 
 namespace Slab::Models::KGRtoR {
 
     RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
-            : Socket(params, name, 1, description)
+            : Socket(name, 1, description)
             , guiWindow(guiWindow)
             , params(params)
             , hamiltonian(hamiltonian)
@@ -24,11 +23,11 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRPanel::setSpaceFourierHistory(Math::R2toR::NumericFunction_constptr sftHistory,
-                                           const DFTDataHistory &dftData,
+                                           const DFTDataHistory &dftDataHistory,
                                            const Graphics::R2toRFunctionArtist_ptr& sftHistoryArtist) {
 
         spaceFTHistory = sftHistory;
-        this->dftData = &dftData;
+        this->dftData = &dftDataHistory;
         spaceFTHistoryArtist = sftHistoryArtist;
     }
 

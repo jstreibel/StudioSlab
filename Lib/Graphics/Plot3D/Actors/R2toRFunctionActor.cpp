@@ -45,8 +45,8 @@ namespace Slab::Graphics {
     R2toRFunctionActor::R2toRFunctionActor(R2toR::NumericFunction_constptr function)
     : func(std::move(function))
     , gridMetadata(R2toRFunctionActor::GridMetadata::FromNumericFunction(func))
-    , program(Resources::ShadersFolder + "FieldShading.vert",
-              Resources::ShadersFolder + "FieldShading.frag")
+    , program(Core::Resources::ShadersFolder + "FieldShading.vert",
+              Core::Resources::ShadersFolder + "FieldShading.frag")
     , vertexBuffer("position:2f,texcoord:2f")
     , texture((GLsizei)gridMetadata.gridN, (GLsizei)gridMetadata.gridM)
     {

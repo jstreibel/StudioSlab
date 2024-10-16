@@ -26,7 +26,7 @@ namespace Slab::Math {
 
     public:
 
-        OutputHistoryToFile(const NumericConfig &params, UInt stepsInterval, SpaceFilterBase *spaceFilter,
+        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter,
                             Real endT, const Str &outputFileName,
                             OutputFormatterBase *outputFormatter = new BinarySOF());
 

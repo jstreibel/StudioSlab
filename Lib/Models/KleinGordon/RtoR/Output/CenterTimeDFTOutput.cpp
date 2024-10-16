@@ -14,18 +14,17 @@
 namespace Slab::Models::KGRtoR {
 
     Slab::Models::KGRtoR::CenterTimeDFTOutput::CenterTimeDFTOutput(
-    const Slab::Math::NumericConfig &config,
-    TimeDFTOutputConfig dftConfig)
-    : Socket(config, Str("Single-location time-DFT"), 10,
+            Real t_max, Count max_steps, TimeDFTOutputConfig dftConfig)
+    : Socket(Str("Single-location time-DFT"), 10,
              Str("t_start=")    + ToStr(Common::max(dftConfig.t_start, 0.0)) +
-             Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, config.gett())))
+             Str(" ... t_end=") + ToStr(Common::min(dftConfig.t_end, t_max)))
     , filename(dftConfig.filename + ".time.dft.simsnap")
     , x_measure(dftConfig.x_measure)
     , dataset(dftConfig.x_measure.size())
     , t_start(Common::max(dftConfig.t_start, 0.0))
-    , t_end  (Common::min(dftConfig.t_end,   config.gett()))
-    , step_start((int)(t_start/params.gett() * (Real)params.getn()))
-    , step_end  ((int)(t_end  /params.gett() * (Real)params.getn()))
+    , t_end  (Common::min(dftConfig.t_end, t_max))
+    , step_start((int)(t_start/t_max * (Real)max_steps))
+    , step_end  ((int)(t_end  /t_max * (Real)max_steps))
     {    }
 
     void Slab::Models::KGRtoR::CenterTimeDFTOutput::handleOutput(const Slab::Math::OutputPacket &packet) {

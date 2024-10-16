@@ -24,9 +24,9 @@ namespace Slab::Models::KGRtoR {
 
         virtual auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU;
 
-        SnapshotOutput(const NumericConfig &config, const Str &fileName, const Str &socketName, const Str &description);
+        SnapshotOutput(const Str &fileName, const Str &socketName, const Str &description);
     public:
-        SnapshotOutput(const NumericConfig &config, const Str &fileName);
+        SnapshotOutput(const Str &fileName);
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
