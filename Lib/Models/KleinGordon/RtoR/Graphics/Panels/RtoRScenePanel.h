@@ -6,7 +6,7 @@
 #define STUDIOSLAB_RTORSCENEPANEL_H
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
-#include "Graphics/Graph3D/Scene3DWindow.h"
+#include "Graphics/Plot3D/Scene3DWindow.h"
 
 namespace Slab::Models::KGRtoR {
 

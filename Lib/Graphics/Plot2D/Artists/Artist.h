@@ -24,6 +24,8 @@ namespace Slab::Graphics {
 
         Str UniqueName(const Str& name) const;
 
+        Real preferred_w_by_h_ratio = -1;
+
     public:
         Artist() = default;
 
@@ -42,6 +44,8 @@ namespace Slab::Graphics {
 
         virtual void setVisibility(bool);
         auto isVisible() const -> bool;
+
+        Real getPreferredRatio() const;
 
         void setAffectGraphRanges(bool);
         bool affectsGraphRanges() const;

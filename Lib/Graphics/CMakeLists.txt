@@ -208,21 +208,21 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Util/HistoryTexture2DUploadHelper.cpp
         Plot2D/Util/HistoryTexture2DUploadHelper.h
 
-		Graph3D/Scene3DWindow.cpp
-        Graph3D/Scene3DWindow.h
-		Graph3D/Actor.cpp
-		Graph3D/Actor.h
-        Graph3D/Actors/R2toRFunctionActor.cpp
-        Graph3D/Actors/R2toRFunctionActor.h
+		Plot3D/Scene3DWindow.cpp
+		Plot3D/Scene3DWindow.h
+		Plot3D/Actor.cpp
+		Plot3D/Actor.h
+		Plot3D/Actors/R2toRFunctionActor.cpp
+		Plot3D/Actors/R2toRFunctionActor.h
 		OpenGL/ShaderLoader.cpp
 		OpenGL/ShaderLoader.h
 
 		MeshUtils.cpp
 		MeshUtils.h
-		Graph3D/Camera.cpp
-		Graph3D/Camera.h
-		Graph3D/Actors/TestActor.cpp
-		Graph3D/Actors/TestActor.h
+		Plot3D/Camera.cpp
+		Plot3D/Camera.h
+		Plot3D/Actors/TestActor.cpp
+		Plot3D/Actors/TestActor.h
 
 		SFML/Tools/Graph_deprydepr.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp

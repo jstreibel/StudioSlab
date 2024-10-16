@@ -41,5 +41,9 @@ namespace Slab::Graphics {
         return {};
     }
 
+    Real Artist::getPreferredRatio() const {
+        return preferred_w_by_h_ratio;
+    }
+
 
 }

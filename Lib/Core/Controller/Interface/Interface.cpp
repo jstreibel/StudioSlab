@@ -4,17 +4,18 @@
 
 #include <iomanip>
 #include "Interface.h"
+#include "InterfaceManager.h"
 #include "Core/Tools/Log.h"
+
 
 namespace Slab::Core {
 
     Interface::Interface(Str name)
-            : name(name) {
-    }
-
-    Interface::~Interface() {
+            : name(name), id(InterfaceManager::GenerateUniqueID()) {
 
     }
+
+    Interface::~Interface() = default;
 
     auto Interface::getParameters() const -> Vector<CLParameter_constptr> {
         Vector<CLParameter_constptr> constParameters;
@@ -50,6 +51,10 @@ namespace Slab::Core {
 
     Message Interface::sendRequest(Request req) {
         return {"[unknown request]"};
+    }
+
+    UniqueID Interface::getUniqueID() const {
+        return id;
     }
 
 

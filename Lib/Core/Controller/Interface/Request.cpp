@@ -9,4 +9,8 @@ namespace Slab::Core {
     bool Request::operator==(const Request &other) {
         return command==other.command;
     }
+
+    bool Request::operator==(const Command &received_command) {
+        return command==received_command;
+    }
 } // Slab::Core

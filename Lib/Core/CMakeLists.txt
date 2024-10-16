@@ -23,6 +23,10 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Interface/Message.h
 		Controller/Interface/Interface.cpp
 		Controller/Interface/Interface.h
+		Controller/Interface/Parameter.cpp
+		Controller/Interface/Parameter.h
+		Controller/Interface/InterfaceManager.cpp
+		Controller/Interface/InterfaceManager.h
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}

@@ -13,8 +13,12 @@ namespace Slab::Core {
 
     class InterfaceManager;
 
+    using UniqueID = UInt;
+
     class Interface {
         friend InterfaceManager;
+
+        const UniqueID id;
 
         Str name;
         Set<Pointer<CLParameter>> parameters;
@@ -26,6 +30,8 @@ namespace Slab::Core {
     public:
         Interface(Str name);
         ~Interface();
+
+        UniqueID getUniqueID() const;
 
         virtual
         Message sendRequest(Request);

@@ -1,20 +1,19 @@
 //
-// Created by joao on 11/10/23.
+// Created by joao on 4/10/23.
 //
 
-#include "TestActor.h"
+#include "R2toRFunctionActor.h"
 
 #include "Core/Tools/Resources.h"
 
-#include "Graphics/Graph3D/Scene3DWindow.h"
+#include "Graphics/Plot3D/Scene3DWindow.h"
 #include "3rdParty/ImGui.h"
 
 #include <array>
 #include <cmath>
+#include <utility>
 
 namespace Slab::Graphics {
-
-    using namespace Math;
 
     typedef std::array<float,2> vec2;
     typedef std::array<float,3> vec3;
@@ -32,63 +31,53 @@ namespace Slab::Graphics {
         std::array<float, 3> color() const { return {r, g, b}; }
     };
 
-    fix gridSubdivs = 8;
-    fix gridN = 64;
-    fix gridM = 64;
-    fix xMinSpace = -8.f;
-    fix yMinSpace = -8.f;
-    fix wSpace = 2.f*(float)fabs(xMinSpace);
-    fix hSpace = 2.f*(float)fabs(yMinSpace);
-
     fix zLight = 2.f;
     fix intensity = 2.f;
     fix a = intensity*(.5f);
     fix b = intensity*(1.f - a);
-    LightData testLight1 = { 1,  0, 0 + zLight, a, b, 0};
-    LightData testLight2 = { 0,  1, 0 + zLight, 0, a, b};
-    LightData testLight3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
+    LightData light1 = { 1,  0, 0 + zLight, a, b, 0};
+    LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
+    LightData light3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
     void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
                          float width, float height);
 
-    TestActor::TestActor()
-            : program(Core::Resources::ShadersFolder + "FieldShading.vert",
-                      Core::Resources::ShadersFolder + "FieldShading.frag")
-            , vertexBuffer("position:2f,texcoord:2f")
-            , texture(gridN, gridM)
+    R2toRFunctionActor::R2toRFunctionActor(R2toR::NumericFunction_constptr function)
+    : func(std::move(function))
+    , gridMetadata(R2toRFunctionActor::GridMetadata::FromNumericFunction(func))
+    , program(Resources::ShadersFolder + "FieldShading.vert",
+              Resources::ShadersFolder + "FieldShading.frag")
+    , vertexBuffer("position:2f,texcoord:2f")
+    , texture((GLsizei)gridMetadata.gridN, (GLsizei)gridMetadata.gridM)
     {
-        GenerateXYPLane(vertexBuffer, gridN+1, gridM+1, wSpace, hSpace);
+        gridMetadata.generateXYPlane(vertexBuffer);
 
-        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j) {
-                float x = wSpace*(float)j/(float)(gridM-1) + xMinSpace;
-                float y = hSpace*(float)i/(float)(gridN-1) + yMinSpace;
-                float r² = x*x+y*y;
-                float k = 4.0f;
-                texture.setValue(i, j, cosf(2*M_PI*sqrt(r²)/k)*std::exp(-r²/(k*k)));
-            }
+        rebuildTextureData();
 
-        texture.upload();
         texture.setAntiAliasOff();
         texture.setSWrap(OpenGL::ClampToEdge);
         texture.setTWrap(OpenGL::ClampToEdge);
 
         program.setUniform("field", texture.getTextureUnit());
 
-        program.setUniform("light1_position", testLight1.pos());
-        program.setUniform("light2_position", testLight2.pos());
-        program.setUniform("light3_position", testLight3.pos());
-        program.setUniform("light1_color", testLight1.color());
-        program.setUniform("light2_color", testLight2.color());
-        program.setUniform("light3_color", testLight3.color());
+        program.setUniform("light1_position", light1.pos());
+        program.setUniform("light2_position", light2.pos());
+        program.setUniform("light3_position", light3.pos());
+        program.setUniform("light1_color", light1.color());
+        program.setUniform("light2_color", light2.color());
+        program.setUniform("light3_color", light3.color());
 
+        const int gridSubdivs = 8;
         program.setUniform("gridSubdivs", gridSubdivs);
 
         program.setUniform("scale", 1.f);
 
+        fix gridN = gridMetadata.gridN;
+        fix gridM = gridMetadata.gridM;
         program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
     }
 
-    void TestActor::draw(const Scene3DWindow &graph3D) {
+    void R2toRFunctionActor::draw(const Scene3DWindow &graph3D) {
         texture.bind();
 
         auto camera = graph3D.getCamera();
@@ -104,16 +93,21 @@ namespace Slab::Graphics {
         vertexBuffer.render(GL_TRIANGLES);
     }
 
-    void TestActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
+    void R2toRFunctionActor::setAmbientLight(Color color) { program.setUniform("amb", color.array()); }
 
-    bool TestActor::hasGUI() {
+    void R2toRFunctionActor::setGridSubdivs(int n) { program.setUniform("gridSubdivs", n); }
+
+    bool R2toRFunctionActor::hasGUI() {
         return true;
     }
 
-    void TestActor::drawGUI() {
+    void R2toRFunctionActor::drawGUI() {
+        if(ImGui::Button("Rebuild texture data")) {
+            rebuildTextureData();
+        }
 
         static float scale = 1.0;
-        if(ImGui::SliderFloat("scale", &scale, .1f, 10.f))
+        if(ImGui::DragFloat("scale", &scale, scale*2.5e-2f, 1e-4f, 1e4f, "%.2e"))
             program.setUniform("scale", scale);
 
         static float gloomPowBase = 50.0;
@@ -123,30 +117,46 @@ namespace Slab::Graphics {
         if(ImGui::DragFloat("gloom multiplier", &gloomMultiplier, 0.1f, 0.1f, 10.f))
             program.setUniform("gloomMultiplier", gloomMultiplier);
 
+        static int gridSubdivs = 8;
+        if(ImGui::DragInt("Grid subdivs", &gridSubdivs, .1f, 0, 8))
+            setGridSubdivs(powf32x(2, gridSubdivs));
+
         const char *items[] = {"Color", "Normals", "Gloom"};
         static int current = 0;
         if(ImGui::Combo("Shading", &current, items, 3))
             program.setUniform("shading", current);
-
     }
 
+    void R2toRFunctionActor::rebuildTextureData() {
+        fix gridN = gridMetadata.gridN;
+        fix gridM = gridMetadata.gridM;
 
-    void GenerateXYPLane(OpenGL::VertexBuffer &buffer,
-                         int N, int M,
-                         float width, float height)
-    {
+        for(auto i=0; i<gridN; ++i) for(auto j=0; j<gridM; ++j)
+                texture.setValue(i, j, func->At(i, j));
+
+        texture.upload();
+    }
+
+    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
         Vector<GLuint> indices;
         Vector<Field2DVertex> vertices;
+
+        fix M = gridN;
+        fix N = gridM;
+        fix width = wSpace;
+        fix height = hSpace;
+        fix xMin = xMinSpace;
+        fix yMin = yMinSpace;
 
         fix xNormFactor = 1/float(M-1);
         fix yNormFactor = 1/float(N-1);
 
         for (int i = 0; i < N; ++i) {
             fix t = (float)i*yNormFactor;
-            fix y = t*height + yMinSpace;
+            fix y = t*height + yMin;
             for (int j = 0; j < M; ++j) {
                 fix s = (float)j*xNormFactor;
-                fix x = s*width + xMinSpace;
+                fix x = s*width + xMin;
 
                 vertices.push_back({x, y, s, t});
             }
@@ -174,4 +184,20 @@ namespace Slab::Graphics {
 
         buffer.pushBack(&vertices[0], vertices.size(), &indices[0], indices.size());
     }
+
+    R2toRFunctionActor::GridMetadata
+    R2toRFunctionActor::GridMetadata::FromNumericFunction(const R2toR::NumericFunction_constptr &func) {
+        fix D = func->getDomain();
+
+        R2toRFunctionActor::GridMetadata gridMetadata;
+        gridMetadata.gridN = (int)func->getN();
+        gridMetadata.gridM = (int)func->getM();
+        gridMetadata.xMinSpace = (float)D.xMin;
+        gridMetadata.yMinSpace = (float)D.yMin;
+        gridMetadata.wSpace = (float)(D.xMax - D.xMin);
+        gridMetadata.hSpace = (float)(D.yMax - D.yMin);
+
+        return gridMetadata;
+    }
+
 } // Graphics

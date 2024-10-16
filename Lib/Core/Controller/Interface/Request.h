@@ -15,6 +15,8 @@ namespace Slab::Core {
         Command command;
     public:
         bool operator==(const Request&);
+
+        bool operator==(const Command&);
     };
 
 } // Slab::Core
