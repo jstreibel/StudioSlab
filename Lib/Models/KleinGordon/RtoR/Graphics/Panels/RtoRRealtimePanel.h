@@ -17,6 +17,7 @@
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 #include "Graphics/ImGui/ImGuiWindow.h"
+#include "Models/KleinGordon/KGNumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -51,7 +52,7 @@ namespace Slab::Models::KGRtoR {
         void draw() override;
 
     public:
-        RealtimePanel(const NumericConfig &params,
+        RealtimePanel(const Pointer<KGNumericConfig> &params,
                       KGEnergy &hamiltonian,
                       Graphics::GUIWindow &guiWindow);
 

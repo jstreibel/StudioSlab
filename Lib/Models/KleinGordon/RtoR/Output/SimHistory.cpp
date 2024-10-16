@@ -6,19 +6,20 @@
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
-#define StepsInterval ((int) (simConfig.numericConfig.getn() / N_t))
+#define StepsInterval ((int) (max_steps / N_t))
 
 namespace Slab::Models::KGRtoR {
 
-// const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
+    // const auto nₒᵤₜ = (Resolution)(Nₒᵤₜ*t/L);
 
-    SimHistory::SimHistory(const SimulationConfig &simConfig, Resolution N_x, Resolution N_t,
+    using Core::Log;
+
+    SimHistory::SimHistory(Count max_steps, Real t_max, Resolution N_x, Resolution N_t,
                            Real xMin, Real L, const Str &name)
             : Socket(name, StepsInterval,
                      "A specific history tracker designed to watch the full sim history through visual monitors.")
-            , dataIsOnGPU(simConfig.dev == GPU)
-            , max_steps(simConfig.numericConfig.getn()), max_t(simConfig.numericConfig.gett()), N_x((int)N_x), N_t((int)N_t) {
-        fix t = simConfig.numericConfig.gett();
+            , max_steps(max_steps), max_t(t_max), N_x((int)N_x), N_t((int)N_t) {
+        fix t = t_max;
         fix timeResolution =(Real) N_t;
 
         fix hx = L / (Real) N_x;
@@ -55,7 +56,7 @@ namespace Slab::Models::KGRtoR {
     auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
         IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN f_in = static_cast<RtoR::NumericFunction&>(stateIn.getPhi());
+        IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
         IN in = f_in.getSpace().getHostData(true);
 
         fix N_in = f_in.N;

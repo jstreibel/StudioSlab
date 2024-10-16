@@ -7,8 +7,6 @@
 
 #include "RtoRHistoryPanel.h"
 
-#include "Math/Function/RtoR2/StraightLine.h"
-
 #include "Graphics/Plot2D/Artists/R2SectionArtist.h"
 #include "Graphics/Plot2D/Artists/ParametricCurve2DArtist.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
@@ -17,14 +15,14 @@
 namespace Slab::Models::KGRtoR {
 
     RtoRHistoryPanel::RtoRHistoryPanel
-    (const NumericConfig &params,
+    (const Pointer<KGNumericConfig> &params,
      GUIWindow &guiWindow,
      KGEnergy &hamiltonian)
     : RtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
     {
-        fix xMin = params.getxMin();
-        fix xMax = params.getxMax();
-        fix h = params.geth();
+        fix xMin = params->getxMin();
+        fix xMax = params->getxMax();
+        fix h = params->geth();
         fix kMin = 0;
         fix kMax = M_PI/h;
         xLine = New<Math::RtoR2::StraightLine>(Real2D{xMin, 0.0}, Real2D{xMax,0.0}, xMin, xMax);
@@ -67,9 +65,9 @@ namespace Slab::Models::KGRtoR {
 
                 ticks.push_back(Tick{0, "0"});
 
-                fix dk    = M_PI / params.getL();
+                fix dk    = M_PI / params->getL();
                 fix k_0 = dk * kParam->getValueAs<Real>();
-                auto k_max = M_PI / params.geth();
+                auto k_max = M_PI / params->geth();
 
                 Real k_val = k_0;
                 Real Δk = k_max / 50;
@@ -96,9 +94,9 @@ namespace Slab::Models::KGRtoR {
         auto t_max = (float)lastPacket.getSimTime();
         if(ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
            ImGui::DragFloat("t##choopsie", &t, 5.e-5f*t_max, 0, t_max)){
-            fix xMin = params.getxMin();
-            fix xMax = params.getxMax();
-            fix h = params.geth();
+            fix xMin = params->getxMin();
+            fix xMax = params->getxMax();
+            fix h = params->geth();
             fix kMin = 0;
             fix kMax = M_PI/h;
 

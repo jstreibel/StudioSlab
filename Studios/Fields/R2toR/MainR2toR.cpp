@@ -2,7 +2,7 @@
 // Created by joao on 10/8/21.
 //
 
-#include "App/CrashPad.h"
+#include "CrashPad.h"
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 #include "LeadingDelta/LeadingDelta.h"
 

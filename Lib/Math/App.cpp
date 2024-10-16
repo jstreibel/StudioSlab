@@ -24,7 +24,7 @@ namespace Slab::Math {
         auto integrationTask = Slab::New<NumericTask>(*builder.get());
         auto &backend = Core::BackendManager::GetBackend();
 
-        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(BackendManager::GetModule("TaskManager").get());
+        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(Core::BackendManager::GetModule("TaskManager").get());
 
         taskManager->addTask(integrationTask);
 
@@ -35,7 +35,7 @@ namespace Slab::Math {
 
         // Headless backend don't care about modules
         if(!backend.isHeadless())
-            BackendManager::GetGUIBackend().unloadAllModules();
+            Core::BackendManager::GetGUIBackend().unloadAllModules();
 
         return 0;
     }

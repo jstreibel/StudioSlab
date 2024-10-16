@@ -6,7 +6,7 @@
 #define STUDIOSLAB_APP_H
 
 
-#include "App/AppBase.h"
+#include "AppBase.h"
 #include "Recipe.h"
 #include "Core/Backend/SFML/SFMLBackend.h"
 #include "Math/Numerics/NumericTask.h"

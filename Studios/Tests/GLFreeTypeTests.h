@@ -9,9 +9,11 @@
 
 #include "Graphics/Window/Window.h"
 #include "Graphics/Utils/Writer.h"
+#include "Graphics/OpenGL/WriterOpenGL.h"
+using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
 class GLFreeTypeTests : public Slab::Graphics::Window {
-    Slab::Graphics::Writer writer1, writer2;
+    Writer writer1, writer2;
 
 public:
     GLFreeTypeTests();

@@ -37,11 +37,11 @@
 
 namespace Slab::Models::KGRtoR {
 
-    RealtimePanel::RealtimePanel(const NumericConfig &params, KGEnergy &hamiltonian,
+    RealtimePanel::RealtimePanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
                                        Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor",
                                   "realtime monitoring of simulation state")
-            , mFieldsGraph(params.getxMin(), params.getxMax(), -1, 1, "Fields")
+            , mFieldsGraph(params->getxMin(), params->getxMax(), -1, 1, "Fields")
             , mEnergyGraph("Energy")
             , imGuiWindow(Naked(mEnergyGraph)) {
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
@@ -144,7 +144,7 @@ namespace Slab::Models::KGRtoR {
         auto W = hamiltonian.getTotalGradientEnergy();
         auto V = hamiltonian.getTotalPotentialEnergy();
 
-        auto factor = 1.0 / params.getL();
+        auto factor = 1.0 / params->getL();
 
         UHistoryData.addPoint({t, U * factor});
         KHistoryData.addPoint({t, K * factor});

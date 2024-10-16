@@ -9,7 +9,7 @@
 #include <vector>
 #include "Utils/Types.h"
 
-#include "App/AppBase.h"
+#include "AppBase.h"
 #include "Core/Controller/Nuklear/NuklearSFML.h"
 #include "Graphics/SFML/Graph.h"
 

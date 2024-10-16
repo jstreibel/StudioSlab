@@ -4,7 +4,6 @@
 
 #include "ManyOscillonsBuilder.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
 #include "Utils/RandUtils.h"
 
 namespace Studios::Fields::RtoRThermal {
@@ -19,8 +18,8 @@ namespace Studios::Fields::RtoRThermal {
 
     auto ManyOscillonsBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
         int n = *nOscillons;
-        auto L = simulationConfig.numericConfig.getL();
-        auto xMin = simulationConfig.numericConfig.getxMin();
+        auto L = kg_numeric_config->getL();
+        auto xMin = kg_numeric_config->getxMin();
 
         RtoR::FunctionSummable initCondPhi, initCondDPhiDt;
 

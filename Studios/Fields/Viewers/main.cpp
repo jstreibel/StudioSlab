@@ -4,8 +4,8 @@
 
 #include "Graphics/OpenGL/OpenGL.h"
 
-#include "App/AppBase.h"
-#include "App/CrashPad.h"
+#include "AppBase.h"
+#include "CrashPad.h"
 
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
@@ -37,7 +37,7 @@
 
 using namespace Slab;
 
-class App : public Math::AppBase {
+class App : public Core::AppBase {
     Core::StringParameter      filename = Core::StringParameter("", "filename,f", ".oscb file.");
 
 public:

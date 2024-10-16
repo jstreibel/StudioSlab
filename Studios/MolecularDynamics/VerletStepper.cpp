@@ -12,10 +12,10 @@
 namespace MolecularDynamics {
 
     template<class Model>
-    VerletStepper<Model>::VerletStepper(Math::NumericConfig &params, Model mechModel)
-            : Stepper(), mechanicsModel(mechModel), q(params.getN()), p(params.getN()), state(New<State>(q, p)) {
-        const Count N = params.getN();
-        const Real L = params.getL();
+    VerletStepper<Model>::VerletStepper(Config c, Model mechModel)
+            : Stepper(), mechanicsModel(mechModel), q(c->getN()), p(c->getN()), state(New<State>(q, p)) {
+        const Count N = c->getN();
+        const Real L = c->getL();
 
         if (1) {
             auto lim = (.5 * L - .5 * CUTOFF_RADIUS);

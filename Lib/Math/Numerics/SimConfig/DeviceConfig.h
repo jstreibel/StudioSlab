@@ -17,7 +17,6 @@ namespace Slab::Math {
         auto notifyAllCLArgsSetupFinished() -> void override;
 
     private:
-
         Device dev = Device::CPU;
         IntegerParameter::Ptr deviceChoice = IntegerParameter::New(1, "dev", "Device on which to run simulation.\n"
                                                                              "\t0: CPU \n"

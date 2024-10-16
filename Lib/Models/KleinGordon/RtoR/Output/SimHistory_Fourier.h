@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
         auto transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void override;
 
     public:
-        explicit SimHistory_DFT(const SimulationConfig &simConfig, Resolution N_time);
+        explicit SimHistory_DFT(Count max_steps, Real t_max, Resolution N, Real L, Resolution N_time);
 
         const DFTDataHistory &getDFTDataHistory() const;
     };

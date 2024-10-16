@@ -18,7 +18,7 @@ const auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 
-    class NumericTask : public Task {
+    class NumericTask : public Core::Task {
         Base::NumericalRecipe &numericalRecipe;
         Stepper_ptr stepper;
         Pointer<OutputManager> outputManager;
@@ -29,7 +29,7 @@ namespace Slab::Math {
 
         std::atomic<bool> forceStopFlag = false;
 
-        BenchmarkData benchmarkData;
+        Core::BenchmarkData benchmarkData;
 
         void output(bool force = false);
 
@@ -40,17 +40,16 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     protected:
-        TaskStatus run() override;
+        Core::TaskStatus run() override;
     public:
         explicit NumericTask(Base::NumericalRecipe &recipe)
                 : Task("Numeric Integration"),
                   numericalRecipe(recipe),
                   stepper(recipe.buildStepper()),
                   outputManager(recipe.buildOutputManager()),
-                  dt(recipe.getNumericParams().getdt()),
-                  totalSteps(recipe.getNumericParams().getn()),
+                  totalSteps(recipe.getNumericConfig()->getn()),
                   stepsConcluded(0),
-                  benchmarkData(recipe.getNumericParams().getn()/100){
+                  benchmarkData(recipe.getNumericConfig()->getn()/100){
 #if ATTEMP_REALTIME
             {
                 // Declare a sched_param struct to hold the scheduling parameters.
@@ -80,7 +79,7 @@ namespace Slab::Math {
 
         auto getSimulationTime() const -> Real;
 
-        auto getBenchmarkData() const -> const BenchmarkData &;
+        auto getBenchmarkData() const -> const Core::BenchmarkData &;
 
     };
 

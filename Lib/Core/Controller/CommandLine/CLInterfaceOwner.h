@@ -15,7 +15,7 @@ namespace Slab::Core {
         Pointer<CLInterface> interface;
 
     public:
-        CLInterfaceOwner(bool IKnowIMustCallLateStart = false);
+        explicit CLInterfaceOwner(bool IKnowIMustCallLateStart = false);
 
         virtual
         Vector<Request> getProtocols();

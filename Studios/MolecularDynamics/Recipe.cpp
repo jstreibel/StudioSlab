@@ -22,7 +22,7 @@
 
 namespace MolecularDynamics {
     Recipe::Recipe()
-    : NumericalRecipe("2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
+    : NumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
     , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
@@ -31,11 +31,13 @@ namespace MolecularDynamics {
     }
 
     Pointer<Math::OutputManager> Recipe::buildOutputManager() {
-        auto &numericConfig = simulationConfig.numericConfig;
+        auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
-        auto outputManager = New <Math::OutputManager> (numericConfig);
+        auto outputManager = New <Math::OutputManager> (numeric_config->getn());
 
-        outputManager->addOutputChannel(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig));
+        outputManager->addOutputChannel(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn(),
+                                                                                      numericConfig->gett(),
+                                                                                      numericConfig->getr()));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
@@ -48,22 +50,22 @@ namespace MolecularDynamics {
     }
 
     Pointer<Math::Stepper> Recipe::buildStepper() {
-        auto &numericConfig = simulationConfig.numericConfig;
+        auto c = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
         fix T = *temperature;
         fix k = *dissipation;
 
         if (*model == 0) {
-            LennardJones lj(numericConfig);
+            LennardJones lj(c, T);
             lj.setDissipation(k);
             lj.setTemperature(T);
-            return New <MolecularDynamics::VerletStepper<LennardJones>>(numericConfig, lj);
+            return New <MolecularDynamics::VerletStepper<LennardJones>>(c, lj);
         }
         if (*model == 1) {
-            SoftDisk sd(numericConfig, 0);
+            SoftDisk sd(c, 0);
             sd.setDissipation(k);
             sd.setTemperature(T);
-            return New<MolecularDynamics::VerletStepper<SoftDisk>>(numericConfig, sd);
+            return New<MolecularDynamics::VerletStepper<SoftDisk>>(c, sd);
         }
 
         throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
@@ -78,7 +80,7 @@ namespace MolecularDynamics {
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 
-        simulationConfig.numericConfig.sett(-1);
+        DynamicPointerCast<Models::MolecularDynamics::MolDynNumericConfig>(getNumericConfig())->sett(-1);
     }
 
 } // MolecularDynamics

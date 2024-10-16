@@ -12,6 +12,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <Models/MolecularDynamics/MolDynNumericConfig.h>
 
 #define MOLS_HISTORY_SIZE 100
 
@@ -28,13 +29,18 @@ namespace MolecularDynamics {
         sf::Texture molTexture;
 
         // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
+
+        Count N;
+        float L;
     public:
         enum Model {
             LennardJones,
             SoftDisk
         };
 
-        Monitor(const Math::NumericConfig &params, Model model);
+        using Config = Models::MolecularDynamics::MolDynNumericConfig;
+
+        Monitor(Pointer<Config>, Model);
 
         void draw() override;
 

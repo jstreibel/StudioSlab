@@ -2,7 +2,7 @@
 // Created by joao on 1/09/23.
 //
 
-#include "App/CrashPad.h"
+#include "CrashPad.h"
 #include "Math/App.h"
 #include "Builder.h"
 

@@ -9,11 +9,14 @@
 #include "Hamiltonians/Hash/MoleculeSpaceHash.h"
 
 #include "Math/Numerics/SimConfig/NumericConfig.h"
+#include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
 
 namespace MolecularDynamics {
 
     using namespace Slab;
+
+    using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
     class NewtonMechanics {
         MoleculeSpaceHash spaceHash;
@@ -22,8 +25,6 @@ namespace MolecularDynamics {
         Real dissipation;
 
     protected:
-        const Math::NumericConfig &params;
-
         virtual void applyBoundaryConditions(Graphics::PointContainer &v_q);      // For velocity Verlet stepper
         virtual void applyBoundaryConditions(MoleculeContainer &m);     // For RK4 stepper
 
@@ -38,8 +39,11 @@ namespace MolecularDynamics {
          */
         virtual Graphics::Point2D F_nh(Real t) { return {0,0}; }
 
+        Pointer<Config> numeric_config;
+
     public:
-        explicit NewtonMechanics(const Math::NumericConfig &);
+
+        explicit NewtonMechanics(Pointer<Config> config);
 
         ~NewtonMechanics();
 

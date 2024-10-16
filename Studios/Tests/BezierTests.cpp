@@ -56,7 +56,7 @@ namespace Tests {
         Graphics::Plotter::AddPointSet(Naked(graph), Naked(vertLine2), style, "", false);
 
         style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
-        style.primitive = Slab::Graphics::Point;
+        style.setPrimitive(Slab::Graphics::Point);
         style.thickness = 10;
         Graphics::Plotter::AddPointSet(Naked(graph), Naked(currentPt), style, "", false);
 

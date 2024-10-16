@@ -4,20 +4,19 @@
 
 #include "SimHistory_Fourier.h"
 
-#define nConfig (simConfig.numericConfig)
-#define NDFTModes (nConfig.getN()/2+1)
-#define kMaxDFT (NDFTModes*2*M_PI/nConfig.getL())
+#define NDFTModes (N/2+1)
+#define kMaxDFT (Real(NDFTModes)*2*M_PI/L)
 
 
 namespace Slab::Models::KGRtoR {
 
-    SimHistory_DFT::SimHistory_DFT(const SimulationConfig &simConfig, Resolution N_time)
-            : SimHistory(simConfig, NDFTModes, N_time, 0, kMaxDFT, "SimulationHistory (k-space DFT)") {}
+    SimHistory_DFT::SimHistory_DFT(Count max_steps, Real t_max, Resolution N, Real L, Resolution N_time)
+            : SimHistory(max_steps, t_max, NDFTModes, N_time, 0, kMaxDFT, "SimulationHistory (k-space DFT)") {}
 
     auto SimHistory_DFT::transfer(const OutputPacket &input, ValarrayWrapper<Real> &dataOut) -> void {
         IN stateIn = *input.GetNakedStateData<KGRtoR::EquationState>();
 
-        IN phi = static_cast<RtoR::NumericFunction&>(stateIn.getPhi());
+        IN phi = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
 
         auto dftNewData = RtoR::DFT::Compute(phi);
 

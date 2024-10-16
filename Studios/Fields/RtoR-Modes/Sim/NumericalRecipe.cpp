@@ -10,7 +10,6 @@
 
 #include "Math/Constants.h"
 
-#include "Core/Tools/Log.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Monitor.h"
 #include "Models/KleinGordon/KGSolver.h"
@@ -33,7 +32,7 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr Builder::getBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
-        fix L = this->getNumericParams().getL();
+        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
 
         fix A_0 = this->A.getValue();
         fix dk = 2*M_PI/L;
@@ -66,9 +65,12 @@ namespace Modes {
 
     void Builder::notifyCLArgsSetupFinished() {
         CLInterfaceOwner::notifyCLArgsSetupFinished();
-        fix L = simulationConfig.numericConfig.getL();
-        fix n = simulationConfig.numericConfig.getn();
-        fix a = simulationConfig.numericConfig.getr();
+
+        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+
+        fix L = config->getL();
+        fix n = config->getn();
+        fix a = config->getr();
 
         switch (*BCSelection) {
             case 0:
@@ -101,11 +103,13 @@ namespace Modes {
     }
 
     void *Builder::buildOpenGLOutput() {
+        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+
 
         fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(simulationConfig.numericConfig, *(KGRtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
+        auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
 
-        fix L = simulationConfig.numericConfig.getL();
+        fix L = kg_numeric_config->getL();
         fix dk = 2*M_PI/L;
         fix k = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();

@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
         void updateEnergyData();
 
     public:
-        RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+        RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
 
         void draw() override;
 

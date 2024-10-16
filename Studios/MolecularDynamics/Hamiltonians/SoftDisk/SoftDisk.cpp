@@ -1,13 +1,15 @@
 
 #include "SoftDisk.h"
-#include "Hamiltonians/Hash/MoleculeSpaceHash.h"
 #include "SoftDiskParams.h"
 
 #include <cmath>
 
 namespace MolecularDynamics {
 
-    SoftDisk::SoftDisk(const Math::NumericConfig &p, Real T) : Langevin(p, T) {
+    using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
+
+    SoftDisk::SoftDisk(Pointer<Config> config, Real T)
+    : Langevin(config, T) {
 
     }
 
@@ -15,7 +17,7 @@ namespace MolecularDynamics {
         const Real SIGMA_SQR = σ * σ;
         Real normSqr;
 
-        const auto L = params.getL();
+        fix L = numeric_config->getL();
 
         const Graphics::Point2D points[] = {
                 q2 - q1,

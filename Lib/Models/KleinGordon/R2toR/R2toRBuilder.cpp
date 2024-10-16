@@ -9,7 +9,6 @@
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
-#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 #include "EquationState.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
@@ -29,7 +28,7 @@
 namespace Slab::Math::R2toR {
 
     Builder::Builder(const Str& name, Str description)
-            : Models::KGBuilder(name, std::move(description)) {    }
+            : Models::KGBuilder(New<Models::KGNumericConfig>(), name, std::move(description)) {    }
 
     Pointer<OutputManager> Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
@@ -38,15 +37,15 @@ namespace Slab::Math::R2toR {
         if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         else                Core::BackendManager::Startup("Headless");
 
-        auto outputManager = New <OutputManager> (simulationConfig.numericConfig.getn());
+        auto outputManager = New <OutputManager> (kg_numeric_config->getn());
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
         RtoR2::StraightLine section;
         auto angleDegrees = 22.5;
         {
-            const Real rMin = simulationConfig.numericConfig.getxMin();
-            const Real rMax = simulationConfig.numericConfig.getxMax();
+            const Real rMin = kg_numeric_config->getxMin();
+            const Real rMax = kg_numeric_config->getxMax();
             const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
             Rotation R;
@@ -56,9 +55,8 @@ namespace Slab::Math::R2toR {
 
 
         ///********************************************************************************************/
-        int fileOutputStepsInterval = -1;
         if (shouldTrackHistory) {
-            const Real t = simulationConfig.numericConfig.gett();
+            const Real t = kg_numeric_config->gett();
             const UInt outputResolutionX = *outputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
@@ -66,16 +64,15 @@ namespace Slab::Math::R2toR {
             SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
                     outputResolutionX, section);
 
-            const auto N = (Real) simulationConfig.numericConfig.getN();
+            const auto N = (Real) kg_numeric_config->getN();
             const Real Np = outputResolutionX;
-            const Real r = simulationConfig.numericConfig.getr();
+            const Real r = kg_numeric_config->getr();
             const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
             auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, t, outputFileName, outputFilter);
 
-            fileOutputStepsInterval = out->getnSteps();
             outputManager->addOutputChannel(out);
         }
         ///********************************************************************************************/
@@ -91,7 +88,7 @@ namespace Slab::Math::R2toR {
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
-            IN conf = simulationConfig.numericConfig;
+            IN conf = *kg_numeric_config;
             outputManager->addOutputChannel(
                     New<OutputConsoleMonitor>(conf.getn(), conf.gett(), conf.getr()));
         }
@@ -101,11 +98,11 @@ namespace Slab::Math::R2toR {
     }
 
     R2toR::NumericFunction_ptr Builder::newFunctionArbitrary() {
-        const size_t N = simulationConfig.numericConfig.getN();
-        const floatt xLeft = simulationConfig.numericConfig.getxMin();
-        fix h = simulationConfig.numericConfig.geth();
+        const size_t N = kg_numeric_config->getN();
+        const floatt xLeft = kg_numeric_config->getxMin();
+        fix h = kg_numeric_config->geth();
 
-        if (simulationConfig.dev == CPU)
+        if (device_config == CPU)
             return New<R2toR::NumericFunction_CPU>(N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
@@ -128,7 +125,7 @@ namespace Slab::Math::R2toR {
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
-        IN conf = simulationConfig.numericConfig;
+        IN conf = *kg_numeric_config;
         Real x_min = conf.getxMin();
         Real x_max = conf.getxMax();
         return new R2toR::OutputOpenGL(conf.gett(), conf.getn(), x_min, x_max, x_min, x_max);

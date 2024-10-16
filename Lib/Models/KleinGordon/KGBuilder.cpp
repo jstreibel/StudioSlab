@@ -7,11 +7,16 @@
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Math/Numerics/Method/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
+#include "KGNumericConfig.h"
 
 namespace Slab::Models {
 
-    KGBuilder::KGBuilder(const Str &name, Str generalDescription, bool doRegister)
-            : NumericalRecipe(name, std::move(generalDescription), DONT_REGISTER) {
+    KGBuilder::KGBuilder(const Pointer<KGNumericConfig>& numeric_config,
+                         const Str &name, const Str& generalDescription, bool doRegister)
+            : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
+            , kg_numeric_config(numeric_config){
+
+        CLInterfaceManager::getInstance().registerInterface(device_config.getInterface());
 
         auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
         auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
@@ -47,8 +52,8 @@ namespace Slab::Models {
 
 
     void KGBuilder::notifyAllCLArgsSetupFinished() {
-        auto nThreads = NumericalRecipe::simulationConfig.dev.get_nThreads();
-        auto N = NumericalRecipe::simulationConfig.numericConfig.getN();
+        auto nThreads = device_config.get_nThreads();
+        auto N = kg_numeric_config->getN(); // This is good for 2D too because it is computed in stripes.
         if (N % nThreads != 0)
             throw Exception("Bad assertion N%nThreads. Expected 0 got "
                             + ToStr(N % nThreads) + ".");

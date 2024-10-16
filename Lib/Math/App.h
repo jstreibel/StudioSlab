@@ -5,11 +5,11 @@
 #ifndef STUDIOSLAB_MOLDYNAPP_H
 #define STUDIOSLAB_MOLDYNAPP_H
 
-#include "App/AppBase.h"
+#include "AppBase.h"
 #include "Math/Numerics/NumericalRecipe.h"
 
 namespace Slab::Math {
-    class App : public AppBase {
+    class App : public Core::AppBase {
         Base::NumericalRecipe_ptr builder;
 
     public:

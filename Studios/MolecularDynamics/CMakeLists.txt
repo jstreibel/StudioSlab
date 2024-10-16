@@ -26,9 +26,6 @@ set (SOURCES
 
 add_executable ( MolDynamic ${SOURCES} )
 target_link_libraries ( MolDynamic
-		Slab-Utils
-		Slab-Core
-		Slab-Math
-		Slab-Graphics
+		Slab
 		boost_random
 )

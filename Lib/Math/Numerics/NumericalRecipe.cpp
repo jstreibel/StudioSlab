@@ -6,7 +6,6 @@
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "NumericalRecipe.h"
-//#include "Math/Numerics/Method/Method-RK4.h"
 
 #define GENERATE_FOR_NTHREADS(STEPPER_TYPE, N) \
 case (N): \
@@ -19,34 +18,25 @@ break;
 namespace Slab::Math::Base {
 
 
-    NumericalRecipe::NumericalRecipe(const Str &name, Str generalDescription, bool doRegister)
-            : CLInterfaceOwner(name, 100, DONT_REGISTER), simulationConfig(DONT_REGISTER), prefix(name) {
-        interface->addSubInterface(simulationConfig.numericConfig.getInterface());
-        interface->addSubInterface(simulationConfig.dev.getInterface());
+    NumericalRecipe::NumericalRecipe(const Pointer<NumericConfig>& numeric_config, const Str &name,
+                                     const Str& generalDescription, bool doRegister)
+            : CLInterfaceOwner(name, 100, DONT_REGISTER), numeric_config(numeric_config), name(name) {
+        interface->addSubInterface(numeric_config->getInterface());
 
         if (doRegister) {
-            CLInterfaceManager::getInstance().registerInterface(interface);
+            Core::CLInterfaceManager::getInstance().registerInterface(interface);
         }
 
-        Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
-                      << interface->getGeneralDescription() << "\" instantiated." << Log::Flush;
+        Core::Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
+                      << interface->getGeneralDescription() << "\" instantiated." << Core::Log::Flush;
     }
 
-    auto NumericalRecipe::getNumericParams() const -> const NumericConfig & {
-        return simulationConfig.numericConfig;
+    auto NumericalRecipe::getNumericConfig() const -> const Pointer<NumericConfig> & {
+        return numeric_config;
     }
-
-    // auto NumericalRecipe::getDevice() const -> const DeviceConfig & {
-    //     return simulationConfig.dev;
-    // }
 
     Str NumericalRecipe::suggestFileName() const {
-        const auto SEPARATOR = " ";
-        auto strParams = simulationConfig.numericConfig.getInterface()->toString({"L", "N"}, SEPARATOR);
-
-        auto str = prefix + SEPARATOR + strParams;
-
-        return str;
+        return name + " " + numeric_config->to_string();
     }
 
 

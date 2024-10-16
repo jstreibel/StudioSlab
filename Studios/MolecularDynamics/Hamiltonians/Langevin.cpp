@@ -1,12 +1,13 @@
 #include "Langevin.h"
 
-#include "Hamiltonians/SoftDisk/SoftDiskParams.h"
-
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
 namespace MolecularDynamics {
 
-    Langevin::Langevin(const Math::NumericConfig &p, Real T) : NewtonMechanics(p), T(T), dt(p.getdt()) {    }
+    using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
+
+    Langevin::Langevin(Pointer<Config> config, Real T)
+    : NewtonMechanics(config), T(T) {    }
 
     Graphics::Point2D Langevin::xi() {
         const Real z = FRANDOM, theta = 2.0 * M_PI * FRANDOM;
@@ -16,6 +17,8 @@ namespace MolecularDynamics {
     }
 
     Graphics::Point2D Langevin::F_nh(Real) {
+        fix dt = numeric_config->getdt();
+
         fix alpha = sqrt(2 * T / dt);
         return alpha * xi();
     }

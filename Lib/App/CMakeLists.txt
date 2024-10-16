@@ -1,2 +1,0 @@
-
-file(GLOB_RECURSE CORE_APP_SOURCES "../App/*.cpp")

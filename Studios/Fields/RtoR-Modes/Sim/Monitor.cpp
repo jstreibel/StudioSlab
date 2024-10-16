@@ -14,7 +14,7 @@
 #define CUSTOM_TICKS false
 
 namespace Modes {
-    Monitor::Monitor(const NumericConfig &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax,
+    Monitor::Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax,
                      const Str &name, bool showEnergyHistoryAsDensities)
     : Slab::Models::KGRtoR::Monitor(params, hamiltonian, phiMin, phiMax, name, showEnergyHistoryAsDensities)
     {

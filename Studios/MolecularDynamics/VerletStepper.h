@@ -8,7 +8,8 @@
 #include "Particle.h"
 
 #include "Math/Numerics/Method/Stepper.h"
-#include "Math/Numerics/SimConfig/NumericConfig.h"
+
+#include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
 namespace MolecularDynamics {
 
@@ -23,8 +24,9 @@ namespace MolecularDynamics {
         Count currStep=0;
 
     public:
+        using Config = Pointer<Models::MolecularDynamics::MolDynNumericConfig>;
 
-        explicit VerletStepper(Math::NumericConfig &params, NewtonMechanicsModel mechModel);
+        explicit VerletStepper(Config config, NewtonMechanicsModel mechModel);
 
         void step(const Real &dt, Count n_steps) override;
 

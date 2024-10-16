@@ -2,8 +2,8 @@
 // Created by joao on 7/6/24.
 //
 
-#include "App/AppBase.h"
-#include "App/CrashPad.h"
+#include "AppBase.h"
+#include "CrashPad.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 

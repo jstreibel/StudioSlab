@@ -40,7 +40,7 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    RtoRStatisticsPanel::RtoRStatisticsPanel(const NumericConfig &params, KGEnergy &hamiltonian,
+    RtoRStatisticsPanel::RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
                                              Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
                                   "panel for statistic analysis of simulation data"),
@@ -63,7 +63,7 @@ namespace Slab::Models::KGRtoR {
                                            Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
-            mTemperaturesGraph->getRegion().animate_xMax(params.gett());
+            mTemperaturesGraph->getRegion().animate_xMax(params->gett());
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             if (!TParam.empty()) {
                 auto T = std::stod(TParam[0].second);
                 auto pts = Math::Point2DVec({{-.1,                T},
-                                             {params.gett() + .1, T}});
+                                             {params->gett() + .1, T}});
                 auto Tstyle = (*style++).permuteColors();
                 Tstyle.filled = false;
                 Graphics::Plotter::AddPointSet(mTemperaturesGraph,
@@ -181,7 +181,7 @@ namespace Slab::Models::KGRtoR {
 
         if (ImGui::CollapsingHeader("Statistical")) {
             auto transient = (float)transientHint;
-            if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params.gett())) {
+            if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params->gett())) {
                 setTransientHint((Real) transient);
             }
         }
@@ -194,7 +194,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRStatisticsPanel::updateEnergyData() {
-        auto L = params.getL();
+        auto L = params->getL();
 
         fix t = lastPacket.getSimTime();
 

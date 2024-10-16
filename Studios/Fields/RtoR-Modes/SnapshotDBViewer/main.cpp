@@ -2,8 +2,8 @@
 // Created by joao on 21/09/23.
 //
 
-#include "App/AppBase.h"
-#include "App/CrashPad.h"
+#include "AppBase.h"
+#include "CrashPad.h"
 
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
@@ -20,7 +20,7 @@
 
 using namespace Slab;
 
-class App : public Math::AppBase {
+class App : public Core::AppBase {
     Core::MultiStringParameter snapshotDBFolders = Core::MultiStringParameter({"./"}, "db_folders", "the location of the snapshots "
                                                                                         "database folders");
 
@@ -36,7 +36,7 @@ public:
         interface->addParameters({&snapshotDBFolders, &criticalParameter});
         Core::CLInterfaceManager::getInstance().registerInterface(interface);
 
-        Core::BackendManager::Startup(Core::GLFW);
+        Core::BackendManager::Startup("GLFW");
 
         // Graphics::PlotThemeManager::G
 

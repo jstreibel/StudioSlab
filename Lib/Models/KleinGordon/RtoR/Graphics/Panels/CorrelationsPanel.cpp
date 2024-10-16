@@ -82,7 +82,7 @@ namespace Slab::Models::KGRtoR {
         return Slab::Pointer<R2toR::NumericFunction>{func};
     }
 
-    CorrelationsPanel::CorrelationsPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
+    CorrelationsPanel::CorrelationsPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
     : RtoRPanel(params, guiWindow, hamiltonian,
                 "Correlations",
                 "panel for computing and visualizing correlations over simulation history data")

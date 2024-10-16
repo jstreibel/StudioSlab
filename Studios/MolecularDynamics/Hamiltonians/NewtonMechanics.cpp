@@ -15,31 +15,28 @@
 
 namespace MolecularDynamics {
 
-    NewtonMechanics::NewtonMechanics(const Math::NumericConfig &p)
+    NewtonMechanics::NewtonMechanics(Pointer<Config> config)
     : dissipation(DISSIPATION_FACTOR)
-    , spaceHash(HASH_SUBDIVS, p.getL())
-    , params(p)
-    , flippedSides(new bool[p.getN()]) {
-        const auto L = params.getL();
-        const auto N = params.getN();
-
+    , spaceHash(HASH_SUBDIVS, config->getL())
+    , numeric_config(config)
+    , flippedSides(new bool[config->getN()]) {
         if(USE_NEW_EXPERIMENTAL_IMPLEMENTATION) {
-            if (spaceHash.totalLength() != L) {
+            if (spaceHash.totalLength() != config->getL()) {
                 Core::Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
                              << spaceHash.totalLength()
-                             << " while sim space is " << L;
+                             << " while sim space is " << config->getL();
 
-                throw "Hashspace inconsistency";
+                throw Exception("Hashspace inconsistency");
 
             } else if (spaceHash.l <= CUTOFF_RADIUS) {
                 Core::Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace box length is " << spaceHash.l
                              << " while molecule cutoff radius is " << CUTOFF_RADIUS << Core::Log::Flush;
 
-                throw "Hashspace inconsistency";
+                throw Exception("Hashspace inconsistency");
             }
         }
 
-        for(auto i=0; i<N; ++i)
+        for(auto i=0; i<config->getN(); ++i)
             flippedSides[i] = false;
     }
 
@@ -47,7 +44,7 @@ namespace MolecularDynamics {
 
 
     void NewtonMechanics::applyBoundaryConditions(Graphics::PointContainer & v_q) {
-        const auto L = params.getL();
+        fix L = numeric_config->getL();
 
         const Real hw = L * .5;
         int i = 0;
@@ -58,7 +55,7 @@ namespace MolecularDynamics {
             }
 
             if (q.y < -hw || q.y >= hw) {
-                q.y -= L* floor(q.y/L + .5);;
+                q.y -= L* floor(q.y/L + .5);
                 flippedSides[i] = true;
             }
 
@@ -67,7 +64,7 @@ namespace MolecularDynamics {
     }
 
     void NewtonMechanics::applyBoundaryConditions(MoleculeContainer &v_m) {
-        const auto L = params.getL();
+        fix L = numeric_config->getL();
 
         fix hw = L * .5;
         int i = 0;
@@ -80,7 +77,7 @@ namespace MolecularDynamics {
             }
 
             if (q.y < -hw || q.y >= hw) {
-                q.y -= L* floor(q.y/L + .5);;
+                q.y -= L* floor(q.y/L + .5);
                 flippedSides[i] = true;
             }
 

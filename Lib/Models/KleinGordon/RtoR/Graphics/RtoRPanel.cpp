@@ -6,7 +6,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    RtoRPanel::RtoRPanel(const Math::NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
+    RtoRPanel::RtoRPanel(Pointer<KGNumericConfig>params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
             : Socket(name, 1, description)
             , guiWindow(guiWindow)

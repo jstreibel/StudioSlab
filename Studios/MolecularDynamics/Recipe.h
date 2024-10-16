@@ -21,7 +21,7 @@ namespace MolecularDynamics {
                                                                     "\n\t\t0: Lennard-Jones"
                                                                     "\n\t\t1: Soft disk dynamics");
 
-        Interface_ptr molDynamicsInterface;
+        CLInterface_ptr molDynamicsInterface;
 
     public:
         Recipe();

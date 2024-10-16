@@ -35,8 +35,8 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto StatisticalBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
-        auto L = simulationConfig.numericConfig.getL(); // not good bc 'L' is not my parameter.
-        auto xLeft = simulationConfig.numericConfig.getxMin();
+        auto L = kg_numeric_config->getL(); // not good bc 'L' is not my parameter.
+        auto xLeft = kg_numeric_config->getxMin();
 
         auto oscLength = L / *n;
         auto oscEnergy = *E / *n;
@@ -44,7 +44,6 @@ namespace Studios::Fields::RtoRThermal {
         auto osc_eps = oscLength / 2;
         ////auto osc_eps = a*a / (3*oscEnergy);
         auto a = sqrt(3 * osc_eps * oscEnergy);
-        auto a0 = .5 * a;
 
 
         RtoR::FunctionSummable dPhidt0;

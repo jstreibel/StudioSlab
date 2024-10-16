@@ -6,7 +6,6 @@ include_directories(./ ./3rdParty/imgui /usr/include/freetype2/)
 # in order of dependency:
 add_subdirectory(3rdParty)
 
-
 add_subdirectory(Utils)
 add_subdirectory(Core)
 add_subdirectory(Math)
@@ -16,9 +15,9 @@ add_subdirectory(Models)
 find_library(QUADMATH_LIB quadmath)
 
 add_library(${STUDIOSLAB_BASE_LIB_NAME} STATIC
-        App/AppBase.cpp        App/AppBase.h
-        App/CrashPad.cpp       App/CrashPad.h
         StudioSlab.cpp         StudioSlab.h
+        AppBase.cpp            AppBase.h
+        CrashPad.cpp           CrashPad.h
 )
 
 target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}

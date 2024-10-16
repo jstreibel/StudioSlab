@@ -5,18 +5,19 @@
 #include "Math/Numerics/Output/OutputManager.h"
 
 #include "Core/Controller/CommandLine/CLInterface.h"
-#include "Math/Numerics/SimConfig/SimulationConfig.h"
+#include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "Math/Numerics/Solver/Solver.h"
+#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
 
 namespace Slab::Math::Base {
 
-    class NumericalRecipe : public CLInterfaceOwner {
+    class NumericalRecipe : public Core::CLInterfaceOwner {
     protected:
-        SimulationConfig simulationConfig;
+        Pointer<NumericConfig> numeric_config;
 
-        Str prefix;
+        Str name;
 
-        explicit NumericalRecipe(const Str& name, Str generalDescription, bool doRegister = false);
+        explicit NumericalRecipe(const Pointer<NumericConfig>& numeric_config, const Str& name, const Str& generalDescription, bool doRegister = false);
 
     public:
         virtual auto buildOutputManager()         -> Pointer<OutputManager> = 0;
@@ -25,7 +26,7 @@ namespace Slab::Math::Base {
 
         virtual auto suggestFileName()      const -> Str;
 
-        auto getNumericParams()             const -> const NumericConfig &;
+        auto getNumericConfig()             const -> const Pointer<NumericConfig> &;
     };
 
     DefinePointers(NumericalRecipe)

@@ -15,6 +15,7 @@
 
 #include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
 #include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
+#include "Models/KleinGordon/KGNumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -24,7 +25,7 @@ namespace Slab::Models::KGRtoR {
     class RtoRPanel : public WindowPanel, public Socket {
     protected:
         GUIWindow &guiWindow;
-        const NumericConfig &params;
+        Pointer<KGNumericConfig> params;
         KGEnergy &hamiltonian;
 
         R2toR::NumericFunction_constptr simulationHistory;
@@ -37,7 +38,7 @@ namespace Slab::Models::KGRtoR {
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        RtoRPanel(const NumericConfig &params,
+        RtoRPanel(Pointer<KGNumericConfig>params,
                   GUIWindow &guiWindow,
                   KGEnergy &hamiltonian,
                   const Str &name,

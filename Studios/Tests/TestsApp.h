@@ -6,7 +6,7 @@
 #define V_SHAPE_TESTSAPP_H
 
 
-#include <Core/App/AppBase.h>
+#include "AppBase.h"
 
 
 class TestsApp : public Slab::Core::AppBase {

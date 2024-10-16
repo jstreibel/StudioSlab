@@ -65,7 +65,7 @@ namespace Slab::Models::KGRtoR {
     };
 
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, Str generalDescription, bool doRegister)
-            : Models::KGBuilder("RtoR-" + name, std::move(generalDescription),
+            : Models::KGBuilder(New<KGNumericConfig>(false), "RtoR-" + name, std::move(generalDescription),
                                              DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr, &N_num});
 
@@ -84,18 +84,17 @@ namespace Slab::Models::KGRtoR {
         if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         else                Core::BackendManager::Startup("Headless");
 
-        const NumericConfig &p = simulationConfig.numericConfig;
+        const KGNumericConfig &p = dynamic_cast<KGNumericConfig&>(*numeric_config);
 
-        auto outputManager = New <OutputManager> (simulationConfig.numericConfig.getn());
+        auto outputManager = New <OutputManager> (p.getn());
 
         fix t = p.gett();
+        fix max_steps = p.getn();
         fix N = (Real) p.getN();
         fix L = p.getL();
         fix xMin = p.getxMin();
         fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
         fix r = p.getr();
-
-
 
         /* ****************************************************************************************
            *************************** SNAPSHOT OUTPUT ********************************************
@@ -156,13 +155,13 @@ namespace Slab::Models::KGRtoR {
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
-                auto simHistory = Slab::New<SimHistory>(simulationConfig,
+                auto simHistory = Slab::New<SimHistory>(max_steps, t,
                                                  (Resolution) Nₒᵤₜ,
                                                  (Resolution) nₒᵤₜ,
                                                  xMin,
                                                  L);
 
-                auto ftHistory = Slab::New<SimHistory_DFT>(simulationConfig, nₒᵤₜ);
+                auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
 
                 outputManager->addOutputChannel(simHistory);
                 outputManager->addOutputChannel(ftHistory);
@@ -180,10 +179,8 @@ namespace Slab::Models::KGRtoR {
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
 
-            fix &conf = simulationConfig.numericConfig;
-
             outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(conf.getn(), conf.gett(), conf.getr()));
+                    Slab::New<OutputConsoleMonitor>(max_steps, t, r));
         }
 
         return outputManager;
@@ -191,7 +188,9 @@ namespace Slab::Models::KGRtoR {
     }
 
     void KGRtoRBuilder::addTimeDFTSnapshots(Pointer<OutputManager> outputManager) {
-        fix t = simulationConfig.numericConfig.gett();
+        auto &c = *kg_numeric_config;
+
+        fix t = c.gett();
 
         fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
         fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
@@ -207,8 +206,8 @@ namespace Slab::Models::KGRtoR {
 
         RealVector x_locations;
         {
-            fix L = simulationConfig.numericConfig.getL();
-            fix xMin = simulationConfig.numericConfig.getxMin();
+            fix L = c.getL();
+            fix xMin = c.getxMin();
 
             if(auto k_param = CLInterfaceManager::getInstance().getParameter("k")){
                 auto k_n = k_param->getValueAs<Real>();
@@ -246,20 +245,22 @@ namespace Slab::Models::KGRtoR {
         auto snapshotFilename = folder + suggestFileName();
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
-        fix &conf = simulationConfig.numericConfig;
+        fix &conf = *kg_numeric_config;
         return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
     }
 
     RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
-        const size_t N = simulationConfig.numericConfig.getN();
-        const floatt xLeft = simulationConfig.numericConfig.getxMin();
-        const floatt xRight = xLeft + simulationConfig.numericConfig.getL();
+        fix &conf = *kg_numeric_config;
+
+        const size_t N = conf.getN();
+        const floatt xLeft = conf.getxMin();
+        const floatt xRight = xLeft + conf.getL();
 
         auto laplacianType = periodicBC
                              ? RtoR::NumericFunction::Standard1D_PeriodicBorder
                              : RtoR::NumericFunction::Standard1D_FixedBorder;
 
-        if (simulationConfig.dev == CPU)
+        if (device_config == CPU)
             return New<RtoR::NumericFunction_CPU>(N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA == true
@@ -287,7 +288,6 @@ namespace Slab::Models::KGRtoR {
         }
          */
 #endif
-        auto &params = simulationConfig.numericConfig;
         auto Laplacian = New <Math::RtoR::RtoRLaplacian> ();
 
         auto solver = New<KGRtoRSolver>(dphi, Laplacian, potential, nonHomogenous);
@@ -296,7 +296,8 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGRtoRBuilder::buildOpenGLOutput() -> void * {
-        return new Monitor(simulationConfig.numericConfig, *(KGEnergy *) getHamiltonian());
+        auto &conf = *kg_numeric_config;
+        return new Monitor(kg_numeric_config, *(KGEnergy *) getHamiltonian());
     }
 
     auto KGRtoRBuilder::getInitialState() -> KGRtoR::EquationState_ptr {

@@ -19,8 +19,8 @@ XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT
 
     registerToManager();
 
-    Slab::Core::BackendManager::Startup   (Slab::Core::SFML);
-    Slab::Core::BackendManager::LoadModule(Slab::Core::Nuklear);
+    Slab::Core::BackendManager::Startup   ("SFML");
+    Slab::Core::BackendManager::LoadModule("Nuklear");
 
     AppBase::parseCLArgs();
 }

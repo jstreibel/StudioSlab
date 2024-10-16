@@ -11,17 +11,20 @@
 #include "Graphics/Utils/Writer.h"
 #include "Graphics/OpenGL/Texture2D_Color.h"
 #include "Graphics/OpenGL/Texture2D_Real.h"
+#include "Graphics/OpenGL/WriterOpenGL.h"
 
 namespace Tests {
 
     using namespace Slab;
+
+    using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
     class ModernGLTests : public Graphics::WindowRow {
         Graphics::OpenGL::Shader program;
         Graphics::OpenGL::VertexBuffer buffer;
         Graphics::OpenGL::Texture2D_Color texture;
         Graphics::OpenGL::Texture2D_Real realTexture;
-        Graphics::Writer writer;
+        Writer writer;
 
         ftgl::mat4 model{}, view{}, projection{};
     public:

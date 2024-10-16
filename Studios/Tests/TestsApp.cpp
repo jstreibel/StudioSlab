@@ -4,7 +4,7 @@
 
 #include "TestsApp.h"
 
-#include "App/AppBase.h"
+#include "AppBase.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 
 #include "BezierTests.h"
@@ -39,7 +39,7 @@ int TestsApp::run() {
     Core::GraphicBackend *backend = nullptr;
 
     if(true) {
-        Core::BackendManager::Startup(Core::GLFW);
+        Core::BackendManager::Startup("GLFW");
 
         if(true)       test = New<Tests::LaTeXTests>();
         else if(true)  test = New<Tests::VShapeExpansionTest>();
@@ -55,7 +55,7 @@ int TestsApp::run() {
         backend->addEventListener(test);
 
     } else {
-        Core::BackendManager::Startup(Core::GLFW);
+        Core::BackendManager::Startup("GLFW");
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
         backend = &guiBackend;
         guiBackend.addEventListener(Core::GUIEventListener_ptr(new Tests::NuklearTests()));

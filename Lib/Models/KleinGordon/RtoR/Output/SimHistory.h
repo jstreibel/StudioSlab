@@ -5,8 +5,6 @@
 #ifndef STUDIOSLAB_SIMHISTORY_H
 #define STUDIOSLAB_SIMHISTORY_H
 
-
-#include "Math/Numerics/SimConfig/SimulationConfig.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
@@ -21,7 +19,6 @@ namespace Slab::Models::KGRtoR {
     class SimHistory : public Socket {
         R2toR::NumericFunction_ptr data;
         RealVector timestamps;
-        bool dataIsOnGPU;
 
         virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <Real> &dataOut) -> void;
 
@@ -33,7 +30,7 @@ namespace Slab::Models::KGRtoR {
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        SimHistory(const SimulationConfig &simConfig,
+        SimHistory(Count max_steps, Real t_max,
                    Resolution N_x,
                    Resolution N_t,
                    Real xMin,

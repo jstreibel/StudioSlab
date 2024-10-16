@@ -22,13 +22,14 @@ namespace MolecularDynamics {
 
 #define SFML_Backend dynamic_cast<Core::SFMLBackend&>(Core::BackendManager::GetGUIBackend())
 
-    Monitor::Monitor(const Math::NumericConfig &params, Model model)
-    : Socket(params, "Particle dynamics monitor", 10)
+    Monitor::Monitor(Pointer<Config> config, Model model)
+    : Socket("Particle dynamics monitor", 10)
     , Window(0, 0, 100, 100, HasMainMenu)
     , renderWindow(SFML_Backend.getRenderWindow())
-    , molShapes(2*params.getN())
+    , molShapes(2*N)
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()
+    , N(config->getN()), L(float(config->getL()))
     {
         sf::Color skyBlue(135, 206, 235, 255);
         sf::Color someRed(235, 206, 135, 255);
@@ -109,8 +110,7 @@ namespace MolecularDynamics {
         auto v_q = state->first();
         auto v_p = state->second();
 
-        const auto L = (float)params.getL(), O = .0f;;
-        const auto N = params.getN();
+        const auto O = .0f;
 
         const auto L_bitMore = (float)L * 1.2f;
         sf::Color bg(0 , 0, 0);

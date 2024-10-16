@@ -2,7 +2,6 @@
 
 
 #include "NumericTask.h"
-#include "Core/Tools/Log.h"
 
 #define ATTEMP_REALTIME false
 #if ATTEMP_REALTIME
@@ -11,6 +10,8 @@
 #endif
 
 namespace Slab::Math {
+
+    using Core::Log;
 
     NumericTask::~NumericTask() {
         Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
@@ -61,26 +62,25 @@ namespace Slab::Math {
 
     inline floatt NumericTask::getSimulationTime() const { return floatt(getSteps()) * dt; }
 
-    const BenchmarkData &NumericTask::getBenchmarkData() const {
+    const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
         return benchmarkData;
     }
 
-    TaskStatus NumericTask::run() {
-        auto &p = numericalRecipe.getNumericParams();
-        size_t n = p.getn();
+    Core::TaskStatus NumericTask::run() {
+        size_t n = numericalRecipe.getNumericConfig()->getn();
 
         while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
 
         if(forceStopFlag)
-            return Aborted;
+            return Core::Aborted;
 
         // Para cumprir com os steps quebrados faltantes:
         if (stepsConcluded < n) if(!_cycle(n - stepsConcluded))
-            return InternalError;
+            return Core::InternalError;
 
         outputManager->notifyIntegrationFinished(getOutputInfo());
 
-        return Success;
+        return Core::Success;
     }
 
     void NumericTask::abort() {

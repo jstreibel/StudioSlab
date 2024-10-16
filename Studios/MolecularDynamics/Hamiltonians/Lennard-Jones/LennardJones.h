@@ -5,16 +5,16 @@
 
 namespace MolecularDynamics {
 
-    class LennardJones : public Langevin {
-        const Real L;
+    using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 
+    class LennardJones : public Langevin {
     protected:
         Real U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
         Graphics::Point2D dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) override;
 
     public:
-        LennardJones(const Math::NumericConfig &);
+        LennardJones(Pointer<Config> config, Real T);
 
         static Real U(Real r);
     };

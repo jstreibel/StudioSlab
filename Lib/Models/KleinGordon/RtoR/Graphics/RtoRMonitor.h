@@ -14,6 +14,7 @@
 
 #include "RtoRPanel.h"
 #include "Utils/Threads.h"
+#include "Models/KleinGordon/KGNumericConfig.h"
 
 
 namespace Slab::Graphics {
@@ -51,7 +52,7 @@ namespace Slab::Models::KGRtoR {
         void handleOutput(const OutputPacket &outInfo) override;
 
     public:
-        Monitor(const NumericConfig &params,
+        Monitor(const Pointer<KGNumericConfig> &params,
                 KGEnergy &hamiltonian,
                 Real phiMin=-1,
                 Real phiMax=1,

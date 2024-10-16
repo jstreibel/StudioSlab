@@ -8,6 +8,8 @@
 #include <utility>
 
 #include "Math/Numerics/NumericalRecipe.h"
+#include "Math/Numerics/SimConfig/DeviceConfig.h"
+#include "KGNumericConfig.h"
 
 #define DONT_REGISTER false // don touch
 
@@ -66,9 +68,11 @@ namespace Slab::Models {
         BoolParameter    VisualMonitor_startPaused      = BoolParameter(false, "p,visual_monitor_paused",
                                                                         "Start visual monitored simulation paused.");
 
+        Pointer<KGNumericConfig> kg_numeric_config;
+        Math::DeviceConfig device_config;
     public:
-        explicit KGBuilder(const Str& name="Klein-Gordon",
-                  Str generalDescription="The Klein-Gordon scalar field equation builder",
+        explicit KGBuilder(const Pointer<KGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
+                  const Str& generalDescription="The Klein-Gordon scalar field equation builder",
                   bool doRegister=false);;
 
         virtual void* getHamiltonian() = 0;

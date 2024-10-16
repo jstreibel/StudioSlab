@@ -4,8 +4,6 @@
 
 #include "DBViewerSequence.h"
 
-#include "3rdParty/ImGui.h"
-
 #include "Core/Backend/BackendManager.h"
 
 #include "KGDispersionRelation.h"
@@ -41,7 +39,7 @@ namespace Modes::DatabaseViewer {
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
             style.filled = false;
-            style.primitive = Slab::Graphics::Solid;
+            style.setPrimitive(Slab::Graphics::Solid);
             auto funky = Math::RtoR::NativeFunction([](Real x) { return x; }).Clone();
             Graphics::Plotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
         }
@@ -49,7 +47,7 @@ namespace Modes::DatabaseViewer {
         // Setup masses Re and Im pointsets.
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
-            style.primitive = Graphics::VerticalLines;
+            style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
             Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(massesReal_pointSet), style,
@@ -77,7 +75,7 @@ namespace Modes::DatabaseViewer {
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
             style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
-            style.primitive = Graphics::Point;
+            style.setPrimitive(Graphics::Point);
             style.thickness = 8;
             Graphics::Plotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));

@@ -9,14 +9,17 @@
 #include "Graphics/Window/GUIWindow.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/LaTeX/LaTeXWriter.h"
+#include "Graphics/OpenGL/WriterOpenGL.h"
 
 namespace Tests {
+
+    using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
     class LaTeXTests : public Slab::Graphics::WindowRow {
         Slab::Graphics::GUIWindow stats;
         Slab::Graphics::Plot2DWindow graph;
 
-        Slab::Graphics::Writer writer;
+        Writer writer;
 
         Slab::Graphics::LaTeX::LaTeXWriter latexWriter;
 

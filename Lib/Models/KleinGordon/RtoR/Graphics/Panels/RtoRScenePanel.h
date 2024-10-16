@@ -14,7 +14,7 @@ namespace Slab::Models::KGRtoR {
         Graphics::Scene3DWindow_ptr scene;
 
     public:
-        RtoRScenePanel(const NumericConfig &params,
+        RtoRScenePanel(const Pointer<KGNumericConfig> &params,
                        GUIWindow &guiWindow,
                        KGEnergy &hamiltonian);
 

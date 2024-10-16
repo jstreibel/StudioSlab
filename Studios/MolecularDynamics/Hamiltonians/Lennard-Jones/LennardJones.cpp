@@ -1,7 +1,6 @@
 
 #include "LennardJones.h"
 #include "LennardJonesParams.h"
-#include "Particle.h"
 
 #include <cmath>
 
@@ -11,13 +10,14 @@
 #define POW13(A) (POW12(A)*A)
 
 
-MolecularDynamics::LennardJones::LennardJones(const Math::NumericConfig &p) : Langevin(p, 0), L(p.getL()) {
-
-}
+MolecularDynamics::LennardJones::LennardJones(Pointer<Config> config, Real T)
+: Langevin(config, T) {}
 
 inline Graphics::Point2D MolecularDynamics::LennardJones::dUdr(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
     Real sqrCutoffRadius = CUTOFF_RADIUS * CUTOFF_RADIUS;
     Real distSqr;
+
+    fix L = numeric_config->getL();
 
     const Graphics::Point2D points[] = {
             q2 - q1,
@@ -59,7 +59,8 @@ Real MolecularDynamics::LennardJones::U(Real r) {
 Real MolecularDynamics::LennardJones::U(const Graphics::Point2D &q1, const Graphics::Point2D &q2) {
     const Real SIGMA_SQR = σ * σ;
     Real distSqr;
-    const auto L = params.getL();
+
+    fix L = numeric_config->getL();
 
     const Graphics::Point2D points[] = {
             q2 - q1,

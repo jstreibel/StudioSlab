@@ -28,7 +28,7 @@ namespace Tests {
     media media;
 
     NuklearTests::NuklearTests() {
-        Core::BackendManager::LoadModule(Core::Nuklear);
+        Core::BackendManager::LoadModule("Nuklear");
 
         {
             glEnable(GL_TEXTURE_2D);
@@ -52,7 +52,7 @@ namespace Tests {
     }
 
     bool NuklearTests::notifyRender() {
-        auto& nkModule = dynamic_cast<Core::NuklearModule&>(*Core::BackendManager::GetModule(Core::Nuklear));
+        auto& nkModule = dynamic_cast<Core::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
         auto *nkContext =  nkModule.getContext();
 
         /* GUI */

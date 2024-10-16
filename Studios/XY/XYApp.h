@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_XYAPP_H
 #define STUDIOSLAB_XYAPP_H
 
-#include "App/AppBase.h"
+#include "AppBase.h"
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 
 namespace XY {

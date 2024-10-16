@@ -62,15 +62,22 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Analytic/TwoPointCorrelation.h
         KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.cpp
         KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h
+        KleinGordon/KGNumericConfig.cpp
+        KleinGordon/KGNumericConfig.h
 )
 
 set ( XY_SOURCES
 
-	XY/SingleSim/SingleSimViewController.h 		XY/SingleSim/SingleSimViewController.cpp
+	XY/SingleSim/SingleSimViewController.h
+		XY/SingleSim/SingleSimViewController.cpp
 
 	XY/ManyHistories/QuenchViewController.cpp
 	XY/ManyHistories/HistoryViewController.cpp
 
+)
+
+set ( MOLDYN_SOURCES
+		MolecularDynamics/MolDynNumericConfig.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )
@@ -80,6 +87,12 @@ endif ()
 
 set ( LIB_LOCAL_NAME ${STUDIOSLAB_BASE_LIB_NAME}-Models )
 
-add_library( ${LIB_LOCAL_NAME} STATIC ${KG_SOURCES} ${KG_SOURCES_CUDA} ${XY_SOURCES} )
+add_library( ${LIB_LOCAL_NAME} STATIC
+		${KG_SOURCES}
+		${KG_SOURCES_CUDA}
+		${XY_SOURCES}
+		${MOLDYN_SOURCES}
+)
+
 target_link_libraries(${LIB_LOCAL_NAME} Slab-Core Slab-Math Slab-Graphics )
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

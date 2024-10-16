@@ -17,9 +17,9 @@ namespace Slab::Models::KGRtoR {
 
     constexpr auto NoModeDiscard = false;
 
-    RtoRFourierPanel::RtoRFourierPanel(const NumericConfig &params, KGEnergy &hamiltonian, GUIWindow &guiWindow)
+    RtoRFourierPanel::RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, GUIWindow &guiWindow)
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
-    , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params.gett()+10.0})
+    , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -32,7 +32,7 @@ namespace Slab::Models::KGRtoR {
         fix WaveNumber = CLInterfaceManager::getInstance().getParameter("harmonic");
         if(WaveNumber != nullptr) {
             Graphics::AxisArtist::Ticks ticks;
-            fix L = params.getL();
+            fix L = params->getL();
             fix dk = 2*M_PI/L;
             fix k = dk * WaveNumber->getValueAs<Real>();
             for (int n = 1; n < 20; ++n) {
@@ -102,7 +102,7 @@ namespace Slab::Models::KGRtoR {
 
         if(ImGui::CollapsingHeader("k-filter")){
             //this->dftData
-            fix kMax = M_PI/params.geth();
+            fix kMax = M_PI/params->geth();
             auto k = (float)kFilterCutoff;
 
             static bool needRefresh = false;
@@ -115,7 +115,7 @@ namespace Slab::Models::KGRtoR {
 
             if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
                 kFilterCutoff = k;
-                fix t = params.gett();
+                fix t = params->gett();
                 cutoffLine.getx0() = {kFilterCutoff, -10.0};
                 cutoffLine.getr() = {0, 10.0+t};
 
@@ -137,7 +137,7 @@ namespace Slab::Models::KGRtoR {
 
         if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
             static auto t_0 =.0f;
-            static fix tMax =(float)RtoRPanel::params.gett();
+            static fix tMax =(float)RtoRPanel::params->gett();
             static auto t_f = tMax;
             static auto auto_update_Ft = false;
             static auto auto_update_Ftx = false;
@@ -183,8 +183,8 @@ namespace Slab::Models::KGRtoR {
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
-        fix xMin = RtoRPanel::params.getxMin();
-        fix L = RtoRPanel::params.getL();
+        fix xMin = RtoRPanel::params->getxMin();
+        fix L = RtoRPanel::params->getL();
         fix N = (*dftData)[0].result.modeCount();
         fix hx = L/N;
 

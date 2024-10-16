@@ -19,7 +19,7 @@ MolecularDynamics::Recipe recipe;
 MolecularDynamics::App::App(int argc, const char **argv)
 : AppBase(argc, argv)
 {
-    Core::BackendManager::Startup(Slab::Core::SFML);
+    Core::BackendManager::Startup("SFML");
 
     numericTask = Slab::New<Math::NumericTask> (recipe);
 
@@ -29,7 +29,7 @@ MolecularDynamics::App::App(int argc, const char **argv)
 
 int MolecularDynamics::App::run() {
 
-    auto taskManager = DynamicPointerCast<Core::TaskManagerModule>(Core::BackendManager::GetModule(Slab::Core::TaskManager));
+    auto taskManager = DynamicPointerCast<Core::TaskManagerModule>(Core::BackendManager::GetModule("TaskManager"));
     taskManager->addTask(numericTask);
 
     SFML_Backend.run();

@@ -29,7 +29,9 @@ namespace Studios::Fields::RtoRThermal {
         auto bc = getBoundary();
         auto pot = getPotential();
 
-        auto solver = New<Slab::Models::KGRtoR::LangevinKGSolver>(simulationConfig.numericConfig, bc, pot);
+        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+
+        auto solver = New<Slab::Models::KGRtoR::LangevinKGSolver>(bc, pot);
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 

@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         Pointer<Graphics::Plot2DWindow> kSpaceHistory;
 
     public:
-        RtoRHistoryPanel(const NumericConfig &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
+        RtoRHistoryPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
 
         void draw() override;
 

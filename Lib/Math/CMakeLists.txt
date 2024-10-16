@@ -53,7 +53,6 @@ set ( NUMERICS_SOURCES
 
 		Numerics/SimConfig/NumericConfig.cpp
 		Numerics/SimConfig/DeviceConfig.cpp
-		Numerics/SimConfig/SimulationConfig.cpp		Numerics/SimConfig/SimulationConfig.h
 
 		Numerics/Output/OutputManager.cpp
 
