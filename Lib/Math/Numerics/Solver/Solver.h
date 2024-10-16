@@ -5,19 +5,17 @@
 
 #include "Utils/Types.h"
 #include "EquationState.h"
-#include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "BoundaryConditions.h"
 
 namespace Slab::Math::Base {
 
     class Solver {
     protected:
-        const NumericConfig &params;
         BoundaryConditions_ptr du;
 
     public:
-        Solver(const NumericConfig &params, BoundaryConditions_ptr du)
-        : params(params), du(std::move(du)) {}
+        Solver(BoundaryConditions_ptr du)
+        : du(std::move(du)) {}
 
         virtual ~Solver() = default;
 

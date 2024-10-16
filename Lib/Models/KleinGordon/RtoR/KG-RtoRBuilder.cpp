@@ -290,7 +290,7 @@ namespace Slab::Models::KGRtoR {
         auto &params = simulationConfig.numericConfig;
         auto Laplacian = New <Math::RtoR::RtoRLaplacian> ();
 
-        auto solver = New<KGRtoRSolver>(params, dphi, Laplacian, potential, nonHomogenous);
+        auto solver = New<KGRtoRSolver>(dphi, Laplacian, potential, nonHomogenous);
 
         return solver;
     }

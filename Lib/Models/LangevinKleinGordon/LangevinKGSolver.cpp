@@ -15,10 +15,9 @@ namespace Slab::Models::KGRtoR {
         return RandUtils::GaussianNoise(.0, 1.0);
     }
 
-    LangevinKGSolver::LangevinKGSolver(const NumericConfig &params,
-                                       Base::BoundaryConditions_ptr du,
+    LangevinKGSolver::LangevinKGSolver(Base::BoundaryConditions_ptr du,
                                        const Pointer<Potential>& potential)
-    : KGRtoRSolver(params, du, New<RtoR::RtoRLaplacian>(), potential){
+    : KGRtoRSolver(du, New<RtoR::RtoRLaplacian>(), potential){
 
     }
 

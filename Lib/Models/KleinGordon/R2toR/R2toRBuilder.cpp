@@ -123,7 +123,7 @@ namespace Slab::Math::R2toR {
         using SolvySolver = Models::KGR2toR::KGR2toRSolver;
         auto Laplacian = New <R2toR::R2toRLaplacian>();
 
-        return New<SolvySolver>(simulationConfig.numericConfig, dphi, Laplacian, thePotential);
+        return New<SolvySolver>(dphi, Laplacian, thePotential);
     }
 
     auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {

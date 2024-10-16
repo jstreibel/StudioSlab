@@ -31,8 +31,7 @@ namespace Slab::Models::KGRtoR {
 
         void ComputeImpulses();
     public:
-        LangevinKGSolver(const NumericConfig &params,
-                         Base::BoundaryConditions_ptr du,
+        LangevinKGSolver(Base::BoundaryConditions_ptr du,
                          const Pointer<Potential>& potential);
 
         void setTemperature(Real value);

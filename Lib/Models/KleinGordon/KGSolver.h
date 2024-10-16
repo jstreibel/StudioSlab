@@ -25,12 +25,11 @@ namespace Slab::Models {
         using NonHomogenousFunc_ptr =   Pointer<NonHomogenousFunc>;
         using Operator =                Math::Operator<Field>;
 
-        KGSolver(const NumericConfig &params,
-               Base::BoundaryConditions_ptr du,
-               const Pointer<Operator> & O,
-               const Pointer<Potential>& potential,
-               NonHomogenousFunc_ptr nonHomogenousFunc=NonHomogenousFunc_ptr())
-        : Base::Solver(params, du)
+        KGSolver(Base::BoundaryConditions_ptr du,
+                 Pointer<Operator> O,
+                 Pointer<Potential> potential,
+                 NonHomogenousFunc_ptr nonHomogenousFunc=nullptr)
+        : Base::Solver(du)
         , O(O)
         , V(potential)
         , dVDPhi(potential->diff(0))
@@ -78,8 +77,6 @@ namespace Slab::Models {
             Lϕ = L*ϕᵢₙ;
             ϕᵢₙ .Apply(*dVDPhi, dVdϕ);
 
-            auto &fₑₓₜ = *f;
-
             /* ********
              * EQ 1
              * ********/
@@ -89,7 +86,11 @@ namespace Slab::Models {
              * EQ 2
              * ********/
             δₜϕₒᵤₜ = Lϕ - dVdϕ;
-            if(&fₑₓₜ != nullptr) δₜϕₒᵤₜ += fₑₓₜ;
+
+            if(f != nullptr) {
+                auto &fₑₓₜ = *f;
+                δₜϕₒᵤₜ += fₑₓₜ;
+            }
 
             return stateOut;
         }
