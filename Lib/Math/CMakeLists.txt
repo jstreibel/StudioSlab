@@ -129,6 +129,7 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 target_link_libraries(${STUDIOSLAB_MATH_BASE_LIB_NAME}
 		Slab-Core
 		fftw3
+		boost_random
 		)
 
 set_property(TARGET ${STUDIOSLAB_MATH_BASE_LIB_NAME} PROPERTY CUDA_STANDARD_REQUIRED 20)

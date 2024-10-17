@@ -78,6 +78,23 @@ set ( XY_SOURCES
 
 set ( MOLDYN_SOURCES
 		MolecularDynamics/MolDynNumericConfig.cpp
+
+		MolecularDynamics/Hamiltonians/NewtonMechanics.h 					MolecularDynamics/Hamiltonians/NewtonMechanics.cpp
+
+		MolecularDynamics/Hamiltonians/SoftDisk/SoftDisk.h 					MolecularDynamics/Hamiltonians/SoftDisk/SoftDisk.cpp
+		MolecularDynamics/Hamiltonians/Langevin.h							MolecularDynamics/Hamiltonians/Langevin.cpp
+		MolecularDynamics/Hamiltonians/SoftDisk/SoftDiskParams.h
+
+		MolecularDynamics/Hamiltonians/Lennard-Jones/LennardJones.h			MolecularDynamics/Hamiltonians/Lennard-Jones/LennardJones.cpp
+
+		MolecularDynamics/Hamiltonians/Hash/MoleculeSpaceHash.h				MolecularDynamics/Hamiltonians/Hash/MoleculeSpaceHash.cpp
+		MolecularDynamics/Hamiltonians/Hash/FixedSizeMoleculeContainer.h 	MolecularDynamics/Hamiltonians/Hash/FixedSizeMoleculeContainer.cpp
+		MolecularDynamics/Hamiltonians/Hash/HashParams.h
+
+		MolecularDynamics/Recipe.h 				  MolecularDynamics/Recipe.cpp
+		MolecularDynamics/VerletStepper.h 		  MolecularDynamics/VerletStepper.cpp
+		MolecularDynamics/Hamiltonians/Particle.h MolecularDynamics/Hamiltonians/Particle.cpp
+		MolecularDynamics/Monitor.h 			  MolecularDynamics/Monitor.cpp
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

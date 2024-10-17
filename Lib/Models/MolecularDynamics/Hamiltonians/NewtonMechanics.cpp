@@ -5,7 +5,7 @@
 #include <sstream>
 
 #include "NewtonMechanics.h"
-#include "Hash/HashParams.h"
+#include "Models/MolecularDynamics/Hamiltonians/Hash/HashParams.h"
 #include "Particle.h"
 #include "Core/Tools/Log.h"
 

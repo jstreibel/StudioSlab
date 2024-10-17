@@ -6,7 +6,7 @@
 
 #include "VerletStepper.h"
 #include "Utils/RandUtils.h"
-#include "Particle.h"
+#include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 
 namespace MolecularDynamics {

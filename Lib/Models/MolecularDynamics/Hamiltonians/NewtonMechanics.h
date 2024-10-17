@@ -6,7 +6,7 @@
 #define MOLEKUL_PLAY_NEWTONMECHANICS_H
 
 #include "Particle.h"
-#include "Hamiltonians/Hash/MoleculeSpaceHash.h"
+#include "Models/MolecularDynamics/Hamiltonians/Hash/MoleculeSpaceHash.h"
 
 #include "Math/Numerics/SimConfig/NumericConfig.h"
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"

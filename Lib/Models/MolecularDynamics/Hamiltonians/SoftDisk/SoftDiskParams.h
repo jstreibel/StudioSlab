@@ -5,7 +5,7 @@
 #ifndef MOLEKUL_PLAY_SOFTDISKPARAMS_H
 #define MOLEKUL_PLAY_SOFTDISKPARAMS_H
 
-#include "Particle.h"
+#include "../Particle.h"
 
 #include "Utils/Types.h"
 

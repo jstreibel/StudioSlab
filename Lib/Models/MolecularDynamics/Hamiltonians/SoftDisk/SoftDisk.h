@@ -1,7 +1,7 @@
 ﻿#ifndef SOFT_DISK_H
 #define SOFT_DISK_H
 
-#include "Hamiltonians/Langevin.h"
+#include "Models/MolecularDynamics/Hamiltonians/Langevin.h"
 #include "Utils/Types.h"
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 

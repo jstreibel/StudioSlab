@@ -5,7 +5,7 @@
 #include "Monitor.h"
 
 #include "Core/Backend/SFML/SFMLBackend.h"
-#include "Particle.h"
+#include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
 #include "Hamiltonians/Lennard-Jones/LennardJones.h"

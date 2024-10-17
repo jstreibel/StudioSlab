@@ -12,7 +12,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
-#include <Models/MolecularDynamics/MolDynNumericConfig.h>
+#include "MolDynNumericConfig.h"
 
 #define MOLS_HISTORY_SIZE 100
 

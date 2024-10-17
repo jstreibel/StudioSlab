@@ -5,7 +5,7 @@
 #ifndef MOLDYN_VERLET_STEPPER_H
 #define MOLDYN_VERLET_STEPPER_H
 
-#include "Particle.h"
+#include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Math/Numerics/Method/Stepper.h"
 

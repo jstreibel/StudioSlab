@@ -1,7 +1,7 @@
 ﻿#ifndef LENNARD_JONES_H
 #define LENNARD_JONES_H
 
-#include "Hamiltonians/Langevin.h"
+#include "Models/MolecularDynamics/Hamiltonians/Langevin.h"
 
 namespace MolecularDynamics {
 
