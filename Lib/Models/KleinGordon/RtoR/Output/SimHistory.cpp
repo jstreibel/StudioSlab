@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void SimHistory::handleOutput(const OutputPacket &packet) {
-        if (packet.getSimTime() >= max_t)
+        if (packet.getSteps() > max_steps)
             return;
 
         IN stateIn = packet.GetNakedStateData<KGRtoR::EquationState>();
@@ -96,7 +96,7 @@ namespace Slab::Models::KGRtoR {
             transfer(packet, instantData);
         }
 
-        timestamps.emplace_back(packet.getSimTime());
+        timesteps.emplace_back(packet.getSteps());
     }
 
     auto SimHistory::getData() const -> const R2toR::NumericFunction & {

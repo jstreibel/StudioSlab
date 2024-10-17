@@ -137,7 +137,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RealtimePanel::updateEnergyData() {
-        const auto t = lastPacket.getSimTime();
+        const auto t = lastPacket.getSteps()*params->getdt();
 
         auto U = hamiltonian.getTotalEnergy();
         auto K = hamiltonian.getTotalKineticEnergy();

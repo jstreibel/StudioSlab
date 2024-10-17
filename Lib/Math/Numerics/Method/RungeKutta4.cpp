@@ -6,10 +6,17 @@
 
 
 namespace Slab::Math {
-    RungeKutta4::RungeKutta4(const Pointer<Base::Solver> &solver, Slab::Count totalSwapStates)
-
-            : Stepper(), _H(solver), _f(solver->NewEqState()), _k1(solver->NewEqState()), _k2(solver->NewEqState()),
-              _k3(solver->NewEqState()), _k4(solver->NewEqState()), _temp(solver->NewEqState()), swapsIterator(swaps) {
+    RungeKutta4::RungeKutta4(const Pointer<Base::Solver> &solver, Real dt, Slab::Count totalSwapStates)
+    : Stepper()
+    , _H(solver)
+    , _f(solver->NewEqState())
+    , _k1(solver->NewEqState())
+    , _k2(solver->NewEqState())
+    , _k3(solver->NewEqState())
+    , _k4(solver->NewEqState())
+    , _temp(solver->NewEqState())
+    , swapsIterator(swaps)
+    , dt(dt) {
         for (auto i = 0; i < totalSwapStates; ++i)
             swaps.push_back(solver->NewEqState());
 
@@ -17,9 +24,6 @@ namespace Slab::Math {
     }
 
     void RungeKutta4::step(const Count n_steps) {
-        NOT_IMPLEMENTED
-        Real dt=1;
-
         auto swap = swapsIterator.next();
         swap->setData(*_f);
 

@@ -13,7 +13,10 @@ namespace MolecularDynamics {
 
     template<class Model>
     VerletStepper<Model>::VerletStepper(Config c, Model mechModel)
-            : Stepper(), mechanicsModel(mechModel), q(c->getN()), p(c->getN()), state(New<State>(q, p)) {
+            : Stepper()
+            , mechanicsModel(mechModel)
+            , q(c->getN()), p(c->getN()), state(New<State>(q, p))
+            , dt(c->getdt()){
         const Count N = c->getN();
         const Real L = c->getL();
 
@@ -47,7 +50,7 @@ namespace MolecularDynamics {
     }
 
     template<class Model>
-    void VerletStepper<Model>::step(const Real &dt, Count n_steps) {
+    void VerletStepper<Model>::step(Count n_steps) {
         static boost::numeric::odeint::velocity_verlet<Graphics::PointContainer> stepperVerlet;
 
         auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));

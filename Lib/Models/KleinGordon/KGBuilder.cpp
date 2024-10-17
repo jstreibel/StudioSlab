@@ -50,7 +50,7 @@ namespace Slab::Models {
     auto KGBuilder::buildStepper() -> Pointer<Stepper> {
         auto solver = buildEquationSolver();
 
-        return New <RungeKutta4> (solver);
+        return New <RungeKutta4> (solver, kg_numeric_config->getdt());
     }
 
 

@@ -18,7 +18,7 @@ namespace Slab::Models::KGRtoR {
 
     class SimHistory : public Socket {
         R2toR::NumericFunction_ptr data;
-        RealVector timestamps;
+        IntVector timesteps;
 
         virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <Real> &dataOut) -> void;
 

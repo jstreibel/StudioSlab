@@ -136,8 +136,7 @@ namespace Slab::Models::KGRtoR {
 
             fix stepsInterval = UInt(N / (Nₒᵤₜ * r));
 
-            out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, t,
-                                          outputFileName, outputFilter);
+            out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             fileOutputStepsInterval = out->getnSteps();
             outputManager->addOutputChannel(out);
         }

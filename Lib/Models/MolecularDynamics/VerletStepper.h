@@ -23,12 +23,14 @@ namespace MolecularDynamics {
         Pointer<State> state;
         Count currStep=0;
 
+        Real dt;
+
     public:
         using Config = Pointer<Models::MolecularDynamics::MolDynNumericConfig>;
 
         explicit VerletStepper(Config config, NewtonMechanicsModel mechModel);
 
-        void step(const Real &dt, Count n_steps) override;
+        void step(Count n_steps) override;
 
         auto getCurrentState() const -> Math::Base::EquationState_constptr override;
     };

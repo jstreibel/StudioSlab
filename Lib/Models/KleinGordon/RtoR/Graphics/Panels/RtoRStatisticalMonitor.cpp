@@ -196,7 +196,7 @@ namespace Slab::Models::KGRtoR {
     void RtoRStatisticsPanel::updateEnergyData() {
         auto L = params->getL();
 
-        fix t = lastPacket.getSimTime();
+        fix t = lastPacket.getSteps()*params->getdt();
 
         auto U = hamiltonian.getTotalEnergy();
         auto K = hamiltonian.getTotalKineticEnergy();

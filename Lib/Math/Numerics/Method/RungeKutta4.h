@@ -36,9 +36,10 @@ namespace Slab::Math {
 
         Count steps = 0;
 
+        Real dt;
     public:
 
-        explicit RungeKutta4(const Pointer<Base::Solver> &solver, Count totalSwapStates = 5);
+        explicit RungeKutta4(const Pointer<Base::Solver> &solver, Real dt, Count totalSwapStates = 5);
 
         ~RungeKutta4() override = default;
 

@@ -71,7 +71,7 @@ namespace Slab::Math::R2toR {
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);
 
-            auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, t, outputFileName, outputFilter);
+            auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
 
             outputManager->addOutputChannel(out);
         }

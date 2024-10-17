@@ -27,7 +27,6 @@ namespace Slab::Graphics {
     }
 
     void BaseMonitor::handleOutput(const OutputPacket &outInfo) {
-        t = outInfo.getSimTime();
         step = outInfo.getSteps();
     }
 
@@ -95,8 +94,7 @@ namespace Slab::Graphics {
         fix totalTimeMSecs = (totalTimeIn_msec % 1000);
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
-
-        guiWindow.addVolatileStat(Str("t = ") + ToStr(t, 4) + "/" + ToStr(max_t, 4));
+        
         guiWindow.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
         guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
         guiWindow.addVolatileStat("");

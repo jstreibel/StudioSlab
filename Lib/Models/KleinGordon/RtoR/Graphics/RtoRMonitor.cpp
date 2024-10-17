@@ -134,8 +134,9 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (lastPacket.getSteps() % (this->getnSteps() * 100));
+        fix dt = max_t/(Real)max_steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryArtist->set_t(lastPacket.getSimTime());
+            fullHistoryArtist->set_t(lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
 
     }
@@ -147,8 +148,9 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
+        fix dt = max_t/(Real)max_steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullSFTHistoryArtist->set_t(lastPacket.getSimTime());
+            fullSFTHistoryArtist->set_t(lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
     }
 

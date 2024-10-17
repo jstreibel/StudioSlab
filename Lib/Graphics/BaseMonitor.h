@@ -24,7 +24,6 @@ namespace Slab::Graphics {
         const Real max_t;
         const Count max_steps;
 
-        Real t=.0;
         size_t step=0;
 
     public:

@@ -20,7 +20,8 @@ namespace Slab::Models::KGRtoR {
 
         auto dftNewData = RtoR::DFT::Compute(phi);
 
-        auto result = DFTInstantResult{input.getSimTime(), dftNewData};
+        fix dt = max_t / (Real)max_steps;
+        auto result = DFTInstantResult{input.getSteps()*dt, dftNewData};
         dftDataHistory.emplace_back(result);
 
         fix pts = dftNewData.getMagnitudes()->getPoints();

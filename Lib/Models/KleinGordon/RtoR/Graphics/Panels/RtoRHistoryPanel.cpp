@@ -91,7 +91,7 @@ namespace Slab::Models::KGRtoR {
         guiWindow.begin();
 
         static float t=0;
-        auto t_max = (float)lastPacket.getSimTime();
+        auto t_max = (float)lastPacket.getSteps()*params->getdt();
         if(ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
            ImGui::DragFloat("t##choopsie", &t, 5.e-5f*t_max, 0, t_max)){
             fix xMin = params->getxMin();
