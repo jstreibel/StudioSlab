@@ -14,7 +14,7 @@ namespace Slab::Math {
         const Count total_steps;
 
     public:
-        explicit OutputConsoleMonitor(Count total_steps, Real max_t, Real r=1./10.);
+        explicit OutputConsoleMonitor(Count total_steps, Real max_t);
 
     public:
         bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;

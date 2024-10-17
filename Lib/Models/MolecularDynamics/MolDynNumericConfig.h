@@ -5,25 +5,19 @@
 #ifndef STUDIOSLAB_MOLDYNNUMERICCONFIG_H
 #define STUDIOSLAB_MOLDYNNUMERICCONFIG_H
 
-#include "Math/Numerics/SimConfig/NumericConfig.h"
+#include "Models/DynamicsNumericConfig.h"
 
 namespace Slab::Models::MolecularDynamics {
 
-    class MolDynNumericConfig : public Math::NumericConfig {
+    class MolDynNumericConfig : public DynamicsNumericConfig {
+        IntegerParameter::Ptr n = IntegerParameter::New(10000, "steps", "Total timesteps to simulate.");
+
     public:
+        MolDynNumericConfig(bool do_register=true);
+
         auto getn() const -> UInt override;
 
-        auto getN() const -> Count;
-
-        auto getL() const -> Real;
-
-        auto gett() const -> Real;
-
-        auto sett(Real) -> void;
-
         auto getdt() const -> Real;
-
-        auto getr() const -> Real;
 
         auto to_string() const -> Str override;
     };

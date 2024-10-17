@@ -5,15 +5,15 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(Count total_steps, Real max_t, Real r)
-    : Socket("Console monitor output", int(1000./r))
+    OutputConsoleMonitor::OutputConsoleMonitor(Count total_steps, Real max_t)
+    : Socket("Console monitor output", int(100.))
     , max_t(max_t), total_steps(total_steps) {
 
     }
 
     bool OutputConsoleMonitor::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) {
         // Isso aqui eh para aparecer o 100% completo (se nao fica uns quebrados).
-        OutputPacket dummyInfo = OutputPacket(nullptr, total_steps, max_t);
+        OutputPacket dummyInfo = OutputPacket(nullptr, total_steps);
 
         this->handleOutput(dummyInfo);
         return true;
@@ -27,11 +27,9 @@ namespace Slab::Math {
         auto currn = outputInfo.getSteps();
         static auto lastn = currn;
 
-        auto t = outputInfo.getSimTime();
         Core::Log::Info() << Core::Log::Flush;
-        Core::Log::Info() << (100 * t / max_t) << "% done" << Core::Log::Flush;
+        Core::Log::Info() << (100 * Real(currn) / total_steps) << "% done" << Core::Log::Flush;
         Core::Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Core::Log::Flush;
-        Core::Log::Info() << "t = " << t << "/" << max_t << Core::Log::Flush;
 
         auto expectedFinish = (Real)NAN;
         if (lastn != currn) {

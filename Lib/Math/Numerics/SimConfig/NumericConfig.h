@@ -12,6 +12,7 @@
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 #include "Utils/Types.h"
 #include "Utils/NativeTypes.h"
+#include "Utils/List.h"
 
 /* DEFAULTS */
 
@@ -20,7 +21,7 @@ namespace Slab::Math {
 
     class NumericConfig : public Core::CLInterfaceOwner {
     public:
-        explicit NumericConfig(bool doRegister = true, std::initializer_list<Pointer<Core::CLParameter>> p={});
+        explicit NumericConfig(bool do_register = true);
 
         NumericConfig(const NumericConfig &) = delete;
 

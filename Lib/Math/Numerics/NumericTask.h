@@ -23,7 +23,6 @@ namespace Slab::Math {
         Stepper_ptr stepper;
         Pointer<OutputManager> outputManager;
 
-        Real dt;
         const UInt totalSteps;
         UInt stepsConcluded;
 
@@ -76,8 +75,6 @@ namespace Slab::Math {
         void abort() override;
 
         auto getSteps() const -> size_t;
-
-        auto getSimulationTime() const -> Real;
 
         auto getBenchmarkData() const -> const Core::BenchmarkData &;
 

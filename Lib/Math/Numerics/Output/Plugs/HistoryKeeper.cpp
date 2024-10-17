@@ -10,10 +10,8 @@ namespace Slab::Math {
 
     const long long unsigned int ONE_GB = 1073741824;
 
-    HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter,
-                                 Real tEnd_)
+    HistoryKeeper::HistoryKeeper(size_t recordStepsInterval, SpaceFilterBase *filter)
             : Socket("History output", int(recordStepsInterval)), spaceFilter(*filter),
-              tEnd(tEnd_),
               count(0), countTotal(0) {
         // TODO: assert(ModelBuilder::getInstance().getParams().getN()>=outputResolutionX);
     }
@@ -35,10 +33,12 @@ namespace Slab::Math {
         return count * N * sizeof(Real);
     }
 
-    auto HistoryKeeper::shouldOutput(Real t, long unsigned timestep) -> bool {
-        const bool should = (/*t >= tStart && */t <= tEnd) && Socket::shouldOutput(t, timestep);
+    auto HistoryKeeper::shouldOutput(long unsigned timestep) -> bool {
+        // const bool should = (/*t >= tStart && */t <= tEnd) && Socket::shouldOutput(t, timestep);
 
-        return should;
+        // return should;
+
+        return Socket::shouldOutput(timestep);;
     }
 
     void HistoryKeeper::handleOutput(const OutputPacket &packet) {
@@ -52,7 +52,7 @@ namespace Slab::Math {
         }
 
         spaceDataHistory.emplace_back(spaceFilter(packet));
-        tHistory.push_back(packet.getSimTime());
+        stepHistory.push_back(packet.getSteps());
 
         ++count;
     }
@@ -67,9 +67,7 @@ namespace Slab::Math {
 
         oss << R"({, "outresT": " << (countTotal+count))";
 
-        NOT_IMPLEMENTED
-        fix dummyL = 12.123123; // = params.getL();
-        DimensionMetaData recDim = spaceFilter.getOutputDim(dummyL);
+        DimensionMetaData recDim = spaceFilter.getOutputDim();
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
         oss << R"(, "data_channels": 2)";

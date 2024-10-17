@@ -29,6 +29,10 @@ namespace Slab::Math::RtoR {
 
         void setBit(Bit bit);
 
+        Str symbol() const override;
+
+        Str myName() const override;
+
     private:
         Real t0, x0, v, u, s1, s2, l, alpha;
         Bit bit;

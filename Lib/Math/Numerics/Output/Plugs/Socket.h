@@ -39,14 +39,11 @@ namespace Slab::Math {
          * This function allows child classes to give additional info on whether info should be output, or completely
          * override this information. It is basically used by the class NumericalIntegration, which needs to know when to output
          * stuff.
-         * @param t The Real-valued time at which the requirer wants to know if output should be generated.
          * @param timestep The timestemp at which the requirer wants to know if output should be generated. Should match 't'
          * above.
          * @return
          */
-        virtual auto shouldOutput(Real t, long unsigned timestep) -> bool;
-
-        auto getLastSimTime() -> Real;
+        virtual auto shouldOutput(long unsigned timestep) -> bool;
 
         auto getnSteps() const -> int;
 

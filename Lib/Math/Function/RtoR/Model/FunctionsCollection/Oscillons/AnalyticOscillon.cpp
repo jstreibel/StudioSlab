@@ -77,5 +77,15 @@ namespace Slab::Math::RtoR {
         bit = bitty;
     }
 
+    Str AnalyticOscillon::symbol() const {
+        if(bit == dPhiDt) return "𝜕ₜOₗ(t,x)";
+
+        return "Oₗ(t,x)";
+    }
+
+    Str AnalyticOscillon::myName() const {
+        return "Oscillon";
+    }
+
 
 }

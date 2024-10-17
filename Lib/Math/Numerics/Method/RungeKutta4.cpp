@@ -16,7 +16,10 @@ namespace Slab::Math {
         _H->applyBC(*_f, .0, .0);
     }
 
-    void RungeKutta4::step(const Real &dt, const Count n_steps) {
+    void RungeKutta4::step(const Count n_steps) {
+        NOT_IMPLEMENTED
+        Real dt=1;
+
         auto swap = swapsIterator.next();
         swap->setData(*_f);
 

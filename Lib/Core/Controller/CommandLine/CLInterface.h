@@ -8,6 +8,7 @@
 #include "CLParameter.h"
 #include "Core/Controller/Interface/Request.h"
 #include "Core/Controller/Interface/Message.h"
+#include "Utils/List.h"
 
 #include <set>
 
@@ -75,9 +76,9 @@ namespace Slab::Core {
 
         void addParameter(CLParameter_ptr parameter);
 
-        void addParameters(std::initializer_list<CLParameter_ptr> parameters);
+        void addParameters(List<CLParameter_ptr> parameters);
 
-        void addParameters(std::initializer_list<CLParameter *> parameters);
+        void addParameters(List<CLParameter *> parameters);
 
         auto getSubInterfaces() const -> Vector<Pointer<CLInterface>>;
 

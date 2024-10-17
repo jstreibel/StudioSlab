@@ -59,7 +59,7 @@ namespace Slab::Models::KGRtoR {
             return {phiSpace, dphiSpace};
         }
 
-        auto getOutputDim(const Real L) const -> DimensionMetaData override {
+        auto getOutputDim() const -> DimensionMetaData override {
             return dim;
         }
     };
@@ -180,7 +180,7 @@ namespace Slab::Models::KGRtoR {
              * possa rodar diversos passos antes de fazer o output. */
 
             outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(max_steps, t, r));
+                    Slab::New<OutputConsoleMonitor>(max_steps, t));
         }
 
         return outputManager;
@@ -296,7 +296,6 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGRtoRBuilder::buildOpenGLOutput() -> void * {
-        auto &conf = *kg_numeric_config;
         return new Monitor(kg_numeric_config, *(KGEnergy *) getHamiltonian());
     }
 

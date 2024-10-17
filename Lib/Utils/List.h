@@ -13,6 +13,16 @@ namespace Slab {
 
     template<typename Tp>
     using BasicList = std::initializer_list<Tp>;
+
+    template<typename Tp>
+    List<Tp> Extend(List<Tp> list, List<Tp> more_items) {
+
+        List<Tp> extended_list(list);
+        for(auto &item : more_items)
+            extended_list.push_back(item);
+
+        return extended_list;
+    }
 }
 
 #endif //STUDIOSLAB_LIST_H

@@ -37,7 +37,7 @@ namespace Slab::Math {
          */
     }
 
-    auto ResolutionReductionFilter::getOutputDim(const Real L) const -> DimensionMetaData {
+    auto ResolutionReductionFilter::getOutputDim() const -> DimensionMetaData {
         return newDim;
     }
 

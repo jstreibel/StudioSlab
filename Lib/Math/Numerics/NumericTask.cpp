@@ -20,14 +20,14 @@ namespace Slab::Math {
     OutputPacket NumericTask::getOutputInfo() {
         auto currentState = stepper->getCurrentState();
 
-        return {currentState, stepsConcluded, getSimulationTime()};
+        return {currentState, stepsConcluded};
     }
 
     bool NumericTask::_cycle(size_t nCycles) {
         if(forceStopFlag) return false;
 
         benchmarkData.startMeasure();
-        stepper->step(dt, nCycles);
+        stepper->step(nCycles);
         benchmarkData.storeMeasure((int) nCycles);
 
         stepsConcluded += nCycles;
@@ -59,8 +59,6 @@ namespace Slab::Math {
     }
 
     size_t NumericTask::getSteps() const { return stepsConcluded; }
-
-    inline floatt NumericTask::getSimulationTime() const { return floatt(getSteps()) * dt; }
 
     const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
         return benchmarkData;

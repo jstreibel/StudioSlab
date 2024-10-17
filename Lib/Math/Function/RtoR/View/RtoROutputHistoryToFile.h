@@ -21,7 +21,7 @@ namespace Slab::Math::RtoR {
         OutputFormatterBase &outputFormatter;
 
     public:
-        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter, Real endT, Str  outputFileName);
+        OutputHistoryToFile(UInt stepsInterval, SpaceFilterBase *spaceFilter, Str  outputFileName);
 
         ~OutputHistoryToFile() override;
 

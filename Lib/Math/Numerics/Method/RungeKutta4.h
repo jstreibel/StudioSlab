@@ -42,7 +42,7 @@ namespace Slab::Math {
 
         ~RungeKutta4() override = default;
 
-        void step(const Real &dt, const Count n_steps) override;
+        void step(const Count n_steps) override;
 
         [[nodiscard]] auto getCurrentState() const -> Base::EquationState_constptr override;
 

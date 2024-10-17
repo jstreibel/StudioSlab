@@ -36,8 +36,7 @@ namespace MolecularDynamics {
         auto outputManager = New <Math::OutputManager> (numeric_config->getn());
 
         outputManager->addOutputChannel(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn(),
-                                                                                      numericConfig->gett(),
-                                                                                      numericConfig->getr()));
+                                                                                      numericConfig->gett()));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones

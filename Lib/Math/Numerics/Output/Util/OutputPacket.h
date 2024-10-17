@@ -14,15 +14,14 @@ namespace Slab::Math {
     class OutputPacket {
         Base::EquationState_constptr stateData = nullptr;
         size_t currentStep = 0;
-        Real t = 0.0;
 
     public:
         OutputPacket() = default;
-        OutputPacket(const OutputPacket &packet) : OutputPacket(packet.stateData, packet.currentStep, packet.t) {}
-        OutputPacket(Base::EquationState_constptr stateData, size_t currentStep, floatt t)
+        OutputPacket(const OutputPacket &packet) : OutputPacket(packet.stateData, packet.currentStep) {}
+        OutputPacket(Base::EquationState_constptr stateData, size_t currentStep)
         : stateData(std::move(stateData))
         , currentStep(currentStep)
-        , t(t) {}
+        {}
 
         /*!
          * Make a copy of this class. Note that the EqStateOutputInterface is _not_ copied (it is not owned by this class
@@ -45,8 +44,6 @@ namespace Slab::Math {
 
 
         inline auto getSteps()   const -> size_t { return currentStep; }
-
-        inline auto getSimTime() const -> Real   { return t; }
 
     };
 

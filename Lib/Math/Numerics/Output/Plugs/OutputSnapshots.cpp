@@ -38,12 +38,10 @@ namespace Slab::Math {
         filePhiNameStream.setf(std::ios::fixed, std::ios::floatfield);
         filePhiNameStream.precision(T_fileNamePrecision);
 
-        const Real t = outInfo.getSimTime();
-
         if (customFileDescription != "")
             filePhiNameStream << customFileDescription;
         else
-            filePhiNameStream << "./snapshot-t=" << t;
+            filePhiNameStream << "./snapshot-step=" << outInfo.getSteps();
         filePhiNameStream << ".oscs";
 
         Str fileName = filePhiNameStream.str();
@@ -51,7 +49,7 @@ namespace Slab::Math {
         log.setf(std::ios::fixed, std::ios::floatfield);
         log.precision(4);
 
-        log << "Saving snapshot for t = " << t << " in \'" << fileName << "\'... " << Log::Flush;
+        log << "Saving snapshot for step = " << outInfo.getSteps() << " in \'" << fileName << "\'... " << Log::Flush;
         {
             std::ofstream file;
             file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
@@ -87,7 +85,7 @@ namespace Slab::Math {
         Log::Success() << "Snapshot saved! File '" << fileName << "'" << Log::Flush;
     }
 
-    bool OutputSnapshot::shouldOutput(const Real, const long unsigned timeStep) {
+    bool OutputSnapshot::shouldOutput(const long unsigned timeStep) {
         for (const size_t step: snapSteps)
             if (step == timeStep) return true;
 

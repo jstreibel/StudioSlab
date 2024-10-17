@@ -49,16 +49,17 @@ namespace Slab::Graphics {
     }
 
     const RectR &RtoRFunctionArtist::getRegion() {
-        try {
-            region.yMin = function->min();
-            region.yMax = function->max();
-            region.xMin = 0;
-            region.xMax = 10;
+        if(function != nullptr) {
+            try {
+                region.yMin = function->min();
+                region.yMax = function->max();
+                region.xMin = 0;
+                region.xMax = 10;
+            }
+            catch (...) {
+
+            }
         }
-        catch (...) {
-            
-        }
-        
 
         return Artist::getRegion();
     }

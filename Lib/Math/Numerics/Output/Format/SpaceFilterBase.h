@@ -23,7 +23,7 @@ namespace Slab::Math {
          */
         virtual auto operator()(const OutputPacket &outputInfo) -> DiscreteSpacePair = 0;
 
-        virtual auto getOutputDim(const Real L) const -> DimensionMetaData = 0;
+        virtual auto getOutputDim() const -> DimensionMetaData = 0;
     };
 
     typedef SpaceFilterBase BypassFilter;

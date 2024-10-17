@@ -26,7 +26,7 @@ namespace Slab::Math {
                                                                "Number of threads, in case of CPU usage.");
 
     public:
-        DeviceConfig(bool doRegister = true);
+        explicit DeviceConfig(bool doRegister = true);
 
         auto get_nThreads() const -> unsigned int { return **nThreads; }
 

@@ -17,7 +17,7 @@ namespace Slab::Math {
 
         DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
 
-        auto getOutputDim(const Real L) const -> DimensionMetaData override;
+        auto getOutputDim() const -> DimensionMetaData override;
 
     private:
         DimensionMetaData newDim;

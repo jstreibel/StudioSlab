@@ -11,7 +11,7 @@ namespace Studios::PureSG {
 
     InputPerturbations::InputPerturbations()
             : Builder("Perturbations", "Perturbed oscillon in its reference frame") {
-        interface->addParameters({&l, &eps});
+        interface->addParameters({Naked(l), Naked(eps)});
     };
 
     auto InputPerturbations::getBoundary() -> Math::Base::BoundaryConditions_ptr {

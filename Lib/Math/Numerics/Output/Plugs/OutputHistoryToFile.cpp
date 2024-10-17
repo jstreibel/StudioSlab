@@ -17,10 +17,12 @@ namespace Slab::Math {
 
     OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
                                              SpaceFilterBase *spaceFilter,
-                                             Real endT,
-                                             const Str &outputFileName, OutputFormatterBase *outputFormatter)
-            : HistoryKeeper(stepsInterval, spaceFilter, endT), outFileName(outputFilename),
-              outputFormatter(*outputFormatter) {
+                                             const Str &outputFileName,
+                                             OutputFormatterBase *outputFormatter)
+    : HistoryKeeper(stepsInterval, spaceFilter)
+    , outFileName(outputFilename)
+    , outputFormatter(*outputFormatter)
+    {
         file.open(outFileName, std::ios::out);
 
         using Core::Log;
@@ -63,7 +65,7 @@ namespace Slab::Math {
                             << Log::Flush;
             }
 
-            file << outputFormatter(tHistory[int(Ti)]);
+            file << outputFormatter(stepHistory[int(Ti)]);
 
             const auto &fieldPair = spaceDataHistory[Ti];
             const DiscreteSpace &phiOut = *fieldPair.first;
@@ -81,12 +83,9 @@ namespace Slab::Math {
     void OutputHistoryToFile::_printHeaderToFile(Vector<std::string> channelNames) {
         std::ostringstream oss;
 
-
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
 
-        fix dummyL = 1.23424;
-        NOT_IMPLEMENTED
-        DimensionMetaData recDim = spaceFilter.getOutputDim(dummyL);
+        DimensionMetaData recDim = spaceFilter.getOutputDim();
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 

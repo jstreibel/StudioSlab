@@ -14,9 +14,8 @@ namespace Slab::Models {
     KGBuilder::KGBuilder(const Pointer<KGNumericConfig>& numeric_config,
                          const Str &name, const Str& generalDescription, bool doRegister)
             : NumericalRecipe(numeric_config, name, generalDescription, DONT_REGISTER)
-            , kg_numeric_config(numeric_config){
-
-        CLInterfaceManager::getInstance().registerInterface(device_config.getInterface());
+            , kg_numeric_config(numeric_config)
+            , device_config(DONT_REGISTER){
 
         auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
         auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
@@ -41,7 +40,11 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
-        if (doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
+        interface->addSubInterface(device_config.getInterface());
+
+        if (doRegister) {
+            registerToManager();
+        }
     }
 
     auto KGBuilder::buildStepper() -> Pointer<Stepper> {

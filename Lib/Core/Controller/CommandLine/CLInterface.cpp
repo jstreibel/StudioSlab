@@ -60,12 +60,12 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void CLInterface::addParameters(std::initializer_list<CLParameter_ptr> parametersList) {
+    void CLInterface::addParameters(List<CLParameter_ptr> parametersList) {
         for (auto param: parametersList)
             addParameter(param);
     }
 
-    void CLInterface::addParameters(std::initializer_list<CLParameter *> parametersList) {
+    void CLInterface::addParameters(List<CLParameter *> parametersList) {
         for (auto param: parametersList)
             addParameter(Naked(*param));
     }

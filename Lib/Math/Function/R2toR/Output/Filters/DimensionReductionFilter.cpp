@@ -12,8 +12,8 @@
 
 namespace Slab::Math::R2toR {
 
-    DimensionReductionFilter::DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine)
-            : line(alongLine), N_low(resolution) {
+    DimensionReductionFilter::DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, Real L)
+            : line(alongLine), N_low(resolution), L(L) {
         Core::Log::Info("DimensionReductionFilter") << " will interpolate straight line from " << alongLine.getx0()
                                               << " to " << (alongLine.getx0() + alongLine.getr()) << Core::Log::Flush;
     }
@@ -27,19 +27,14 @@ namespace Slab::Math::R2toR {
 
         f.getSpace().syncHost();
 
-        const R2toR::Domain domain = f.getDomain();
-        const auto L = domain.getLx();
         const auto delta_s = line.getΔs();
         const auto sMin = line.get_sMin();
-        DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim(L));
+        DiscreteSpaceCPU *newPhi = new DiscreteSpaceCPU(getOutputDim());
         auto &data = newPhi->getHostData();
 
         if (0) {
             const auto eps = 0.05;
-            auto is = outputInfo.getSimTime() > L / 2 - eps && outputInfo.getSimTime() < L / 2 + eps;
-            if (is) {
-                Core::Log::Debug("@t=") << outputInfo.getSimTime() << Core::Log::Flush;
-
+            if (false) {
                 auto N_ = 32;
                 auto dx = L / N_;
 
@@ -69,7 +64,7 @@ namespace Slab::Math::R2toR {
         return {newPhi, nullptr};
     }
 
-    DimensionMetaData DimensionReductionFilter::getOutputDim(Real L) const {
+    DimensionMetaData DimensionReductionFilter::getOutputDim() const {
         const Real h_low = L / N_low;
         return DimensionMetaData({N_low}, {h_low});
     }

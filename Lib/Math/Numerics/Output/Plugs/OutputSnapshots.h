@@ -30,7 +30,7 @@ namespace Slab::Math {
         virtual void _outputToFile(std::ofstream &file) = 0;
 
     protected:
-        bool shouldOutput(Real t, long unsigned timeStep) override;
+        bool shouldOutput(long unsigned timeStep) override;
 
         void handleOutput(const OutputPacket &outInfo) override {
             OutputSnapshot::doOutput(outInfo, customFileDescription, 4);

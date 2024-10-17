@@ -17,13 +17,14 @@ namespace Slab::Math::R2toR {
          * This classes reduces the dimension of a 2d space to 1d along a determined line
          * */
     public:
-        DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine);
+        DimensionReductionFilter(UInt resolution, RtoR2::StraightLine alongLine, Real L);
 
         DiscreteSpacePair operator()(const OutputPacket &outputInfo) override;
 
-        DimensionMetaData getOutputDim(Real L) const override;
+        DimensionMetaData getOutputDim() const override;
 
     private:
+        const Real L;
         const RtoR2::StraightLine line;
         const UInt N_low;
     };

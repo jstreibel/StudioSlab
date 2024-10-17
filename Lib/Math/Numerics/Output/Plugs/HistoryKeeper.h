@@ -19,21 +19,19 @@ namespace Slab::Math {
     protected:
         SpaceFilterBase &spaceFilter;
 
-        const Real tEnd;
-
         Vector<DiscreteSpacePair> spaceDataHistory; // pair: phi and dphidt
-        RealVector tHistory;
+        RealVector stepHistory;
         size_t count;
         size_t countTotal;
 
     public:
-        HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter, Real tEnd);
+        HistoryKeeper(size_t nStepsInterval, SpaceFilterBase *filter);
 
         ~HistoryKeeper() override;
 
         [[nodiscard]] auto getUtilMemLoadBytes() const -> long long unsigned int;
 
-        auto shouldOutput(Real t, long unsigned timestep) -> bool override;
+        auto shouldOutput(long unsigned timestep) -> bool override;
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 

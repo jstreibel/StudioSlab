@@ -14,7 +14,7 @@ namespace Slab::Math {
         virtual ~Stepper() = default;
 
     public:
-        virtual void step(const Real &dt, size_t n_steps) = 0;
+        virtual void step(size_t n_steps) = 0;
 
         virtual auto getCurrentState() const -> Base::EquationState_constptr = 0;
     };

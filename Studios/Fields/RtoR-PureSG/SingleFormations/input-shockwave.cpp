@@ -13,7 +13,7 @@
 namespace Studios::PureSG {
 
     InputShockwave::InputShockwave() : Builder("1d shockwave", "Shockwave in 1-dim") {
-        interface->addParameters({&a0, &E});
+        interface->addParameters({Naked(a0), Naked(E)});
     }
 
     auto InputShockwave::getBoundary() -> Math::Base::BoundaryConditions_ptr {

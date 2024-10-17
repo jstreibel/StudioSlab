@@ -16,9 +16,9 @@ namespace Slab::Math {
     using Core::Log;
 
     RtoR::OutputHistoryToFile::OutputHistoryToFile(UInt stepsInterval,
-                                                   SpaceFilterBase *spaceFilter, Real endT,
+                                                   SpaceFilterBase *spaceFilter,
                                                    Str outputFileName)
-            : HistoryKeeper(stepsInterval, spaceFilter, endT),
+            : HistoryKeeper(stepsInterval, spaceFilter),
               outFileName(std::move(outputFileName)),
               outputFormatter(*(new BinarySOF())) {
         this->name = "Full (1+1) history output";
@@ -57,7 +57,7 @@ namespace Slab::Math {
                             << Log::Flush;
             }
 
-            file << outputFormatter(tHistory[int(Ti)]);
+            file << outputFormatter(stepHistory[int(Ti)]);
 
             const auto &fieldPair = spaceDataHistory[Ti];
             const DiscreteSpace &phiOut = *fieldPair.first;
@@ -81,9 +81,7 @@ namespace Slab::Math {
 
         oss << R"(# {"Ver": 4, "lines_contain_timestamp": True, "outresT": )" << (countTotal + count);
 
-        fix DUMMYL = 2.12341234;
-        NOT_IMPLEMENTED
-        DimensionMetaData recDim = spaceFilter.getOutputDim(DUMMYL);
+        DimensionMetaData recDim = spaceFilter.getOutputDim();
         Str dimNames = "XYZUVWRSTABCDEFGHIJKLMNOPQ";
         for (UInt i = 0; i < recDim.getNDim(); i++) oss << ", \"outres" << dimNames[i] << "\": " << recDim.getN(i);
 

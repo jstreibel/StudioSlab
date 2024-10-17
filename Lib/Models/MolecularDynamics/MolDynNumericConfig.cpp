@@ -7,9 +7,16 @@
 namespace Slab {
     namespace Models {
         namespace MolecularDynamics {
+            MolDynNumericConfig::MolDynNumericConfig(bool do_register)
+            : DynamicsNumericConfig(false)
+            {
+                interface->addParameters({n});
+
+                if(do_register) registerToManager();
+            }
+
             UInt MolDynNumericConfig::getn() const {
-                NOT_IMPLEMENTED
-                return 0;
+                return **n;
             }
 
             Str MolDynNumericConfig::to_string() const {
@@ -17,33 +24,10 @@ namespace Slab {
                 return Slab::Str();
             }
 
-            auto MolDynNumericConfig::getN() const -> Count {
-                NOT_IMPLEMENTED
-                return 0;
-            }
-
-            auto MolDynNumericConfig::getL() const -> Real {
-                NOT_IMPLEMENTED
-                return 0;
-            }
-
-            auto MolDynNumericConfig::gett() const -> Real {
-                NOT_IMPLEMENTED
-                return 0;
-            }
-
-            auto MolDynNumericConfig::getr() const -> Real {
-                return .1;
-            }
-
             auto MolDynNumericConfig::getdt() const -> Real {
-                NOT_IMPLEMENTED
-                return 0;
+                return **t / **n;
             }
 
-            auto MolDynNumericConfig::sett(Real) -> void {
-                NOT_IMPLEMENTED;
-            }
         } // Slab
     } // Models
 } // MolecularDynamics

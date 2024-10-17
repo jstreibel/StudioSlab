@@ -12,9 +12,6 @@ namespace Slab::Math {
             : intervalStepsBetweenOutputs(nStepsInterval), name(name), description(description),
               nextRecStep(1) {}
 
-
-    auto Socket::getLastSimTime() -> Real { return lastPacket.getSimTime(); }
-
     auto Socket::getnSteps() const -> int { return intervalStepsBetweenOutputs; }
 
     auto Socket::setnSteps(int n) -> void {
@@ -33,9 +30,7 @@ namespace Slab::Math {
         return nextRecStep;
     }
 
-    auto Socket::shouldOutput(const Real t, const long unsigned timestep) -> bool {
-        (void) t;
-
+    auto Socket::shouldOutput(const long unsigned timestep) -> bool {
 #if SHOULD_OUTPUT___MODE == INT_BASED
         return !(timestep % intervalStepsBetweenOutputs);
 #elif SHOULD_OUTPUT___MODE == FLOAT_BASED

@@ -62,7 +62,7 @@ namespace Slab::Math::R2toR {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
             SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
-                    outputResolutionX, section);
+                    outputResolutionX, section, kg_numeric_config->getL());
 
             const auto N = (Real) kg_numeric_config->getN();
             const Real Np = outputResolutionX;
@@ -90,7 +90,7 @@ namespace Slab::Math::R2toR {
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             IN conf = *kg_numeric_config;
             outputManager->addOutputChannel(
-                    New<OutputConsoleMonitor>(conf.getn(), conf.gett(), conf.getr()));
+                    New<OutputConsoleMonitor>(conf.getn(), conf.gett()));
         }
 
         return outputManager;

@@ -109,6 +109,8 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		${KG_SOURCES_CUDA}
 		${XY_SOURCES}
 		${MOLDYN_SOURCES}
+		DynamicsNumericConfig.cpp
+		DynamicsNumericConfig.h
 )
 
 target_link_libraries(${LIB_LOCAL_NAME} Slab-Core Slab-Math Slab-Graphics )
