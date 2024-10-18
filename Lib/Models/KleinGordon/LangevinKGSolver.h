@@ -26,8 +26,8 @@ namespace Slab::Models::KGRtoR {
         RtoR::NumericFunction_ptr scaledImpulses   = nullptr;
 
         Real T=.0;
-        Real γ=.0;
-        Real α=.0;
+        Real γ=.0; // dissipation
+        Real α=.0; // helper: α=sqrt(2Tγ/dt);
 
         void ComputeImpulses();
     public:
