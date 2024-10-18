@@ -7,13 +7,13 @@
 
 #include "GLUTListener.h"
 
-#include "Core/Backend/Events/GUIEventTranslator.h"
-#include "Core/Backend/Events/MouseState.h"
+#include "Graphics/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Backend/Events/MouseState.h"
 
 namespace Slab::Core {
 
     class GLUTEventTranslator : public EventTranslator, public GLUTListener {
-        MouseState mouseState;
+        MouseState mouseState{};
 
     public:
         bool keyboard(unsigned char key, int x, int y) override;

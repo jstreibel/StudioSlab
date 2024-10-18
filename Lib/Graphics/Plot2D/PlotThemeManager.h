@@ -9,7 +9,7 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#include "Core/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/GUIEventListener.h"
 #include "PlottingTheme.h"
 
 namespace Slab::Graphics {

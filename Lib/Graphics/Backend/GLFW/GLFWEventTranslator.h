@@ -7,7 +7,7 @@
 
 #include "GLFWListener.h"
 
-#include "Core/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Backend/Events/GUIEventTranslator.h"
 
 namespace Slab::Core {
     class GLFWEventTranslator : public EventTranslator, public GLFWListener{

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SYSTEMWINDOW_H
 #define STUDIOSLAB_SYSTEMWINDOW_H
 
-#include "Core/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/GUIEventListener.h"
 
 namespace Slab::Core {
 

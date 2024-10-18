@@ -6,8 +6,8 @@
 #define STUDIOSLAB_GRAPHICBACKEND_H
 
 #include "Core/Backend/Backend.h"
-#include "Core/Backend/Events/MouseState.h"
-#include "Core/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Backend/Events/MouseState.h"
+#include "Graphics/Backend/Events/GUIEventTranslator.h"
 
 namespace Slab::Core {
 

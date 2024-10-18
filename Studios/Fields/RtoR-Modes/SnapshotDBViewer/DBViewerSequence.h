@@ -14,7 +14,7 @@
 #include "Graphics/Plot2D/Artists/RtoRFunctionArtist.h"
 #include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
-#include "Core/Backend/Events/KeyMap.h"
+#include "Graphics/Backend/Events/KeyMap.h"
 
 namespace Modes::DatabaseViewer {
 

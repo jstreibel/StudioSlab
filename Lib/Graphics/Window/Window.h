@@ -10,8 +10,8 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#include "Core/Backend/Events/GUIEventListener.h"
-#include "Core/Backend/Events/MouseState.h"
+#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Types2D.h"
 
 #include <vector>
