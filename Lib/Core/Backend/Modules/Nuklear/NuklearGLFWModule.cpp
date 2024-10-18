@@ -10,7 +10,7 @@
 
 #include "NuklearGLFWModule.h"
 
-#include "Core/Backend/GLFW/GLFWBackend.h"
+#include "Graphics/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 
@@ -25,7 +25,7 @@ namespace Slab::Core {
 
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule() {
         try {
-            auto &glfwBackend = dynamic_cast<GLFWBackend&>(BackendManager::GetGUIBackend());
+            auto &glfwBackend = dynamic_cast<GLFWBackend&>(BackendManager::GetBackend());
             renderWindow = &glfwBackend.getGLFWWindow();
 
             glfwBackend.addGLFWListener(Naked(*this), HighPriority);

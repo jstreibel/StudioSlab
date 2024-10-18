@@ -8,6 +8,8 @@
 #include "Graphics/Styles/Colors.h"
 #include "WindowStyles.h"
 
+#include "Graphics/SlabGraphics.h"
+
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "Core/Backend/Events/MouseState.h"
 #include "Graphics/Types2D.h"

@@ -11,9 +11,9 @@
 #include "Core/Tools/Resources.h"
 
 #include "3rdParty/ImGui.h"
-#include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
+#include "Core/SlabCore.h"
 
 #define FILLED true
 #define NOT_FILLED false
@@ -86,9 +86,9 @@ namespace Slab::Graphics {
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
         mePointer = Naked(*this);
 
-        Core::BackendManager::LoadModule("ImGui");
+        Core::LoadModule("ImGui");
 
-        Core::BackendManager::GetGUIBackend().addEventListener(mePointer);
+        Slab::Graphics::GetGraphicsBackend().addEventListener(mePointer);
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

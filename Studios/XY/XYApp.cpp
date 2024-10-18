@@ -4,9 +4,9 @@
 
 #include "XYApp.h"
 
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backend/GraphicBackend.h"
 
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/Thermal/MetropolisAlgorithm.h"

@@ -1,6 +1,8 @@
 #ifndef PLOTTINGUTILS_H
 #define PLOTTINGUTILS_H
 
+#include "Graphics/SlabGraphics.h"
+
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
 #include <Utils/Types.h>

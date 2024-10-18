@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_VTKBACKEND_H
 #define STUDIOSLAB_VTKBACKEND_H
 
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backend/GraphicBackend.h"
 
 namespace Slab::Core {
 

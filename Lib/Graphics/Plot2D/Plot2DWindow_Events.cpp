@@ -3,10 +3,11 @@
 //
 
 #include "Plot2DWindow.h"
+
+#include "Graphics/SlabGraphics.h"
+
 #include "Core/Tools/Log.h"
 #include "3rdParty/ImGui.h"
-#include "Core/Backend/BackendManager.h"
-#include "Core/Backend/Modules/Animator/Animator.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -41,7 +42,7 @@ namespace Slab {
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
         auto elRet = GUIEventListener::notifyMouseMotion(x, y);
 
-        auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
+        auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
 
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();

@@ -5,7 +5,7 @@
 #include "GraphicBackend.h"
 
 #include <utility>
-#include "BackendManager.h"
+#include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 namespace Slab::Core {
@@ -74,6 +74,19 @@ namespace Slab::Core {
 
     void GraphicBackend::clearListeners() {
         thingsImProprietary.clear();
+    }
+
+    void GraphicBackend::terminate() {
+        unloadAllModules();
+        clearListeners();
+    }
+
+    void GraphicBackend::notifyModuleLoaded(const Pointer<Module> &module) {
+        if(module->requiresGraphicsBackend) {
+            auto graphic_module = DynamicPointerCast<GraphicsModule>(module);
+
+            addGraphicsModule(graphic_module);
+        }
     }
 
 

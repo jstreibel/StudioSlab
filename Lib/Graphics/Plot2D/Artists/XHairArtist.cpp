@@ -3,7 +3,7 @@
 //
 
 #include "XHairArtist.h"
-#include "Core/Backend/BackendManager.h"
+#include "Graphics/SlabGraphics.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
@@ -13,7 +13,7 @@ namespace Slab::Graphics {
 
 
     auto getMouseViewportCoord(const RectI &vpRect) -> Point2D {
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
         fix hScreen = guiBackend.getScreenHeight();

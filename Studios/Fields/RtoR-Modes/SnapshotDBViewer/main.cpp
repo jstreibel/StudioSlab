@@ -12,7 +12,7 @@
 
 #include "Core/Tools/Log.h"
 
-#include "Core/Backend/GLFW/GLFWBackend.h"
+#include "Graphics/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "DBViewerMulti.h"
@@ -46,7 +46,7 @@ public:
     auto run() -> int override {
         auto dbLocations = *snapshotDBFolders;
 
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
         auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);

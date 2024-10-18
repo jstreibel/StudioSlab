@@ -147,7 +147,7 @@ namespace Slab::Models::KGRtoR {
            *************************** VISUAL MONITOR *********************************************
            **************************************************************************************** */
         if (shouldOutputOpenGL) {
-            auto &guiBackend = Core::BackendManager::GetGUIBackend();
+            auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
             auto outputOpenGL = Pointer<Monitor>((Monitor*)buildOpenGLOutput());
 

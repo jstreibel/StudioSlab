@@ -4,12 +4,12 @@
 
 #include "Graphics/OpenGL/OpenGL.h"
 
+#include "Graphics/SlabGraphics.h"
+
 #include "Window.h"
 #include "WindowStyles.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
-#include "Core/Backend/GraphicBackend.h"
 #include "Graphics/OpenGL/Shader.h"
-#include "Core/Backend/BackendManager.h"
 #include "Core/Tools/Log.h"
 
 
@@ -85,7 +85,7 @@ namespace Slab::Graphics {
     }
 
     auto Window::isMouseIn() const -> bool {
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
         auto hScreen = guiBackend.getScreenHeight();
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
 
     auto Window::isMouseLeftClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
         return mouse.leftPressed;
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
 
     auto Window::isMouseCenterClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
 
@@ -125,7 +125,7 @@ namespace Slab::Graphics {
 
     auto Window::isMouseRightClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
 
@@ -136,7 +136,7 @@ namespace Slab::Graphics {
     }
 
     auto Window::getMouseWindowCoord() const -> Point2D {
-        fix &mouse = Core::BackendManager::GetGUIBackend().getMouseState();
+        fix &mouse = Slab::Graphics::GetGraphicsBackend().getMouseState();
 
         fix xMouseLocal = mouse.x - windowRect.xMin;
         fix yMouseLocal = 1 - (mouse.y - windowRect.yMin);
@@ -145,7 +145,7 @@ namespace Slab::Graphics {
     }
 
     auto Window::getMouseViewportCoord() const -> Point2D {
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
         fix hScreen = guiBackend.getScreenHeight();

@@ -3,7 +3,7 @@
 //
 
 #include "Core/Backend/BackendManager.h"
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Tools/Log.h"
 
 #include "NuklearSFMLModule.h"
@@ -19,7 +19,7 @@ namespace Slab::Core {
     NuklearSFMLModule::NuklearSFMLModule()
             : NuklearModule() {
         try {
-            auto &sfmlBackend = dynamic_cast<SFMLBackend &>(BackendManager::GetGUIBackend());
+            auto &sfmlBackend = dynamic_cast<SFMLBackend &>(BackendManager::GetBackend());
             renderWindow = &sfmlBackend.getMainWindow();
 
             static auto myReference = Naked(*this);

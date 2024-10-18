@@ -11,7 +11,7 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
-
+#include "Graphics/SlabGraphics.h"
 
 namespace Slab::Core {
 
@@ -224,7 +224,7 @@ namespace Slab::Core {
     GLFWBackend &GLFWBackend::GetInstance() {
         // assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         return *dynamic_cast<GLFWBackend *>(&guiBackend);
     }

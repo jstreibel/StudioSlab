@@ -9,6 +9,7 @@
 
 namespace Slab {
     void Startup();
+    void Finish();
 
     Core::Module &GetModule(Core::ModuleName);
 }

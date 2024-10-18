@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SFMLBACKEND_H
 #define STUDIOSLAB_SFMLBACKEND_H
 
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backend/GraphicBackend.h"
 #include "SFMLListener.h"
 #include "SFMLEventTranslator.h"
 

@@ -7,6 +7,8 @@
 
 #include "Utils/Singleton.h"
 
+#include "Graphics/SlabGraphics.h"
+
 #include "Core/Backend/Events/GUIEventListener.h"
 #include "PlottingTheme.h"
 

@@ -4,6 +4,8 @@
 
 #include "Core/Tools/Log.h"
 
+#include "Graphics/SlabGraphics.h"
+
 #include "Plot2DWindow.h"
 #include "PlotStyle.h"
 
@@ -12,10 +14,9 @@
 
 #include "Utils/Printing.h"
 
-#include "Core/Backend/GLUT/GLUTBackend.h"
+#include "Graphics/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
-#include "Core/Backend/BackendManager.h"
 #include "PlotThemeManager.h"
 #include "Artists/AxisArtist.h"
 
@@ -24,6 +25,7 @@
 #include "Graphics/Plot2D/Shapes/Shape.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
+#include "Core/SlabCore.h"
 
 namespace Slab::Graphics {
 
@@ -65,7 +67,7 @@ namespace Slab::Graphics {
         }
         Plot2DWindow::graphMap[title] = this;
 
-        Core::BackendManager::LoadModule("RealTimeAnimation");
+        Core::LoadModule("RealTimeAnimation");
 
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
 
@@ -150,7 +152,7 @@ namespace Slab::Graphics {
 
         if (showInterface) {
             auto vp = getViewport();
-            auto sh = Core::BackendManager::GetGUIBackend().getScreenHeight();
+            auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);

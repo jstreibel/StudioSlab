@@ -5,11 +5,10 @@
 
 #include "BackendManager.h"
 
-#include <utility>
-
 #include "Backend.h"
-
 #include "Core/Tools/Log.h"
+
+#include <utility>
 
 namespace Slab::Core {
     Str BackendManager::backend_name = "Uninitialized";
@@ -26,6 +25,7 @@ namespace Slab::Core {
         return *BackendManager::instance;
     }
 
+    /*
     auto BackendManager::GetGUIBackend() -> GraphicBackend & {
         auto &backend = BackendManager::GetBackend();
 
@@ -33,6 +33,7 @@ namespace Slab::Core {
 
         return dynamic_cast<GraphicBackend&>(backend);
     }
+     */
 
     void BackendManager::Startup(const BackendName& backend_id) {
         if(BackendManager::instance != nullptr) throw Exception("Backend already initialized");
@@ -57,14 +58,9 @@ namespace Slab::Core {
         auto alloc_module = availableModules[module_name];
         auto module = Pointer<Module>(alloc_module());
 
-        if(module->requiresGraphicsBackend) {
-            auto graphModule = DynamicPointerCast<GraphicsModule>(module);
+        loadedModules[module_name] = Pointer<Module>(module);
 
-            GetGUIBackend().addGraphicsModule(graphModule);
-            loadedModules[module_name] = graphModule;
-        } else {
-            loadedModules[module_name] = Pointer<Module>(module);
-        }
+        GetBackend().notifyModuleLoaded(module);
 
         Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }
@@ -93,6 +89,11 @@ namespace Slab::Core {
 
     Str BackendManager::GetBackendName() {
         return backend_name;
+    }
+
+    void BackendManager::UnloadAllModules() {
+        Log::Warning() << "BackendManager was notified to unload all modules, but this is not yet implemented."
+                       << Log::Flush;
     }
 
 

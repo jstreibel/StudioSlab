@@ -16,7 +16,7 @@
 
 #include "Core/Tools/Log.h"
 
-#include "Core/Backend/GLFW/GLFWBackend.h"
+#include "Graphics/Backend/GLFW/GLFWBackend.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "HistoryFileLoader.h"
@@ -62,7 +62,7 @@ public:
         math_module.RegisterData(*filename, Slab::New<Math::NumericR2toRDataSet>(function));
         math_module.RegisterData(*filename + " [time-derivative]", Slab::New<Math::NumericR2toRDataSet>(ddt_function));
 
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend.setSystemWindowTitle(*filename);
 
         auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();

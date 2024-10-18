@@ -3,8 +3,9 @@
 //
 
 #include "SFMLBackend.h"
+#include "Graphics/SlabGraphics.h"
+
 #include "COMPILE_CONFIG.h"
-#include "Core/Backend/BackendManager.h"
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Utils/ReferenceIterator.h"
 
@@ -99,7 +100,7 @@ namespace Slab::Core {
     SFMLBackend &SFMLBackend::GetInstance() {
         // assert(Core::BackendManager::GetImplementation() == Core::SFML);
 
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         return *dynamic_cast<SFMLBackend *>(&guiBackend);
     }

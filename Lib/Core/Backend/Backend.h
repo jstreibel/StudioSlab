@@ -14,6 +14,8 @@ namespace Slab::Core {
     class Backend : public CLInterfaceOwner {
         Str name;
 
+        friend class BackendManager;
+        virtual void notifyModuleLoaded(const Pointer<Module>&) {};
     protected:
         explicit Backend(const Str& name)
         : CLInterfaceOwner(Str(name)) {}

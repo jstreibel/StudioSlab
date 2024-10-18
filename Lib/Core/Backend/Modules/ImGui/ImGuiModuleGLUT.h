@@ -5,8 +5,8 @@
 #ifndef STUDIOSLAB_IMGUIMODULEGLUT_H
 #define STUDIOSLAB_IMGUIMODULEGLUT_H
 
-#include "Core/Backend/GLUT/GLUTBackend.h"
-#include "Core/Backend/GLUT/GLUTListener.h"
+#include "Graphics/Backend/GLUT/GLUTBackend.h"
+#include "Graphics/Backend/GLUT/GLUTListener.h"
 
 #include "ImGuiModule.h"
 

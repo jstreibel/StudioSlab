@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_NUKLEARTESTS_H
 #define STUDIOSLAB_NUKLEARTESTS_H
 
-#include "Core/Backend/SFML/SFMLListener.h"
+#include "Graphics/Backend/SFML/SFMLListener.h"
 #include "Core/Backend/Events/GUIEventListener.h"
 
 namespace Tests {

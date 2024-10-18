@@ -6,7 +6,7 @@
 #define STUDIOSLAB_IMGUIMODULEGLFW_H
 
 #include "ImGuiModule.h"
-#include "Core/Backend/GLFW/GLFWListener.h"
+#include "Graphics/Backend/GLFW/GLFWListener.h"
 
 namespace Slab::Core {
 

@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/App/FieldsApp-RtoR.h"
 
 #include "Signal.h"
-#include "Core/Backend/GLUT/GLUTBackend.h"
+#include "Graphics/Backend/GLUT/GLUTBackend.h"
 #include "Core/Tools/Log.h"
 
 auto main(int argc, const char **argv) -> int {

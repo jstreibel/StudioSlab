@@ -12,6 +12,8 @@
 namespace Slab::Core {
 
     class GraphicBackend : public Backend {
+        void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
+
     protected:
         Vector<Pointer<GUIEventListener>> thingsImProprietary;
         Pointer<EventTranslator> eventTranslator;
@@ -26,6 +28,8 @@ namespace Slab::Core {
         virtual void clearListeners();
 
         Real r = 0, g = 0, b = 0;
+
+        void unloadAllModules();
     public:
         ~GraphicBackend() override;
 
@@ -43,7 +47,7 @@ namespace Slab::Core {
 
         auto getGraphicsModules() -> const Vector<Volatile<GraphicsModule>> &;
 
-        void unloadAllModules();
+        void terminate() override;
 
         auto isHeadless() const -> bool final;
     };

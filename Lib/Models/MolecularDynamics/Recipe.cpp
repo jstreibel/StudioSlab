@@ -12,7 +12,7 @@
 #include "Monitor.h"
 #include "Recipe.h"
 
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
@@ -42,7 +42,7 @@ namespace MolecularDynamics {
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
-        Core::BackendManager::GetGUIBackend().addAndOwnEventListener(Core::GUIEventListener_ptr(monitor));
+        Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(Core::GUIEventListener_ptr(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;

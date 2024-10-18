@@ -9,7 +9,7 @@
 
 #include "3rdParty/NuklearSource.h"
 
-#include "Core/Backend/GLFW/GLFWListener.h"
+#include "Graphics/Backend/GLFW/GLFWListener.h"
 #include "Utils/Types.h"
 #include <GLFW/glfw3.h>
 

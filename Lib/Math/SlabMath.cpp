@@ -13,4 +13,8 @@ namespace Slab::Math {
         Core::BackendManager::RegisterAvailableModule<MathModule>("Math");
         Core::BackendManager::RegisterAvailableModule<GiNaC::GiNaCModule>("Math:Symbolics");
     }
+
+    void Finish() {
+
+    }
 }

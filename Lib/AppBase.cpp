@@ -11,6 +11,7 @@
 #include "Utils/Compiler.h"
 
 #include "StudioSlab.h"
+#include "Core/SlabCore.h"
 
 namespace Slab::Core {
 
@@ -26,6 +27,7 @@ namespace Slab::Core {
     }
 
     AppBase::~AppBase() {
+        Core::Finish();
         Log::Info() << Common::getClassName(this) << " terminated." << Log::Flush;
     }
 

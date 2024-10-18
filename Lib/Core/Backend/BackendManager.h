@@ -11,7 +11,6 @@
 #include <utility>
 
 #include "Backend.h"
-#include "GraphicBackend.h"
 #include "Implementations.h"
 #include "Utils/Map.h"
 
@@ -28,18 +27,14 @@ namespace Slab::Core {
 
     public:
         static Backend& GetBackend();
-        static auto GetGUIBackend() -> GraphicBackend&;
 
         static void Startup(const Str& backend_name);
 
 
         static void RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc);;
-        template<class BackendClass>
-        static void RegisterAvailableBackend(const BackendName &name) {
-            RegisterAvailableBackend(name, [](){ return std::make_unique<BackendClass>(); });
-        };
 
         static void RegisterAvailableModule(const ModuleName &name, ModuleAllocator alloc);
+
         template<class ModuleClass>
         static void RegisterAvailableModule(const ModuleName &name) {
             RegisterAvailableModule(name, [](){ return new ModuleClass(); });
@@ -50,6 +45,8 @@ namespace Slab::Core {
         static bool IsModuleLoaded(const ModuleName&);
 
         static Str GetBackendName();
+
+        static void UnloadAllModules();
     };
 
 } // Core

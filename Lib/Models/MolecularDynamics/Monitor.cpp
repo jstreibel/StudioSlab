@@ -4,7 +4,7 @@
 
 #include "Monitor.h"
 
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Hamiltonians/Lennard-Jones/LennardJonesParams.h"
@@ -20,7 +20,7 @@ namespace MolecularDynamics {
 #define SHOW_DOT false
 #define SHOW_RADIUS true
 
-#define SFML_Backend dynamic_cast<Core::SFMLBackend&>(Core::BackendManager::GetGUIBackend())
+#define SFML_Backend dynamic_cast<Core::SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
 
     Monitor::Monitor(Pointer<Config> config, Model model)
     : Socket("Particle dynamics monitor", 10)

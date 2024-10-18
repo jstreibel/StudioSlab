@@ -128,9 +128,11 @@ set ( NANOTEX_SRC
 
 # *********** END NANOTEX ***************
 
-
+file(GLOB_RECURSE GRAPHIC_BACKENDS_SOURCES "./Backend/*.cpp")
 
 add_library(${LIB_GRAPHICS} STATIC
+		${GRAPHIC_BACKENDS_SOURCES}
+
         Types2D.h Types2D.cpp
 		Utils.cpp
 

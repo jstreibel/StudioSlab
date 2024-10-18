@@ -10,12 +10,12 @@ file(GLOB_RECURSE CORE_CONTROLLER_SOURCES "./Controller/*.cpp")
 file(GLOB_RECURSE CORE_TOOLS_SOURCES "./Tools/*.cpp")
 
 add_library(${STUDIOS_LIB_BASE_NAME} STATIC
-		Base.cpp
+		SlabCore.cpp
 		${CORE_BACKEND_SOURCES}
 		${CORE_APP_SOURCES}
 		${CORE_TOOLS_SOURCES}
 		${CORE_CONTROLLER_SOURCES}
-        Base.h
+		SlabCore.h
 		Backend/Modules/Modules.cpp
 		Controller/Interface/Request.cpp
 		Controller/Interface/Request.h
@@ -27,8 +27,8 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Interface/Parameter.h
 		Controller/Interface/InterfaceManager.cpp
 		Controller/Interface/InterfaceManager.h
-		Backend/SystemWindow.cpp
-		Backend/SystemWindow.h
+		../Graphics/Backend/SystemWindow.cpp
+		../Graphics/Backend/SystemWindow.h
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}

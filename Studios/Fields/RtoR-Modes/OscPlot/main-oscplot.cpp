@@ -25,7 +25,7 @@ public:
     }
 
     int run() override {
-        auto &gui_backend = Slab::Core::BackendManager::GetGUIBackend();
+        auto &gui_backend = Slab::Graphics::GetGraphicsBackend();
 
         auto osc_plot = Slab::New<Studios::OscillonPlotting>();
 

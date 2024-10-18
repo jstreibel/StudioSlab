@@ -2,12 +2,10 @@
 // Created by joao on 04/06/23.
 //
 
-#include "Base.h"
+#include "SlabCore.h"
 
 #include "Core/Backend/Console/ConsoleBackend.h"
-#include "Core/Backend/GLFW/GLFWBackend.h"
-#include "Core/Backend/GLUT/GLUTBackend.h"
-#include "Core/Backend/SFML/SFMLBackend.h"
+
 #include "Core/Backend/Modules/ImGui/ImGuiModule.h"
 #include "Core/Backend/Modules/Animator/RealTimeAnimation.h"
 #include "Core/Backend/Modules/Nuklear/NuklearModule.h"
@@ -23,23 +21,28 @@ namespace Slab::Core {
         return BackendManager::GetBackend();
     }
 
-    GraphicBackend &GetGUIBackend() {
-        return BackendManager::GetGUIBackend();
-    }
-
     void Register() {
         RegisterBackends();
         RegisterModules();
 
     }
 
+    void Finish() {
+        Core::BackendManager::UnloadAllModules();
+    }
+
+    void LoadModule(const ModuleName& module) {
+        BackendManager::LoadModule(module);
+    }
+
+    Pointer<Module> GetModule(const ModuleName &module) {
+        return BackendManager::GetModule(module);
+    }
+
     void RegisterBackends(){
-        BackendManager::RegisterAvailableBackend<ConsoleBackend>("Headless");
-        BackendManager::RegisterAvailableBackend<GLFWBackend>("GLFW");
-        BackendManager::RegisterAvailableBackend<GLUTBackend>("GLUT");
-        BackendManager::RegisterAvailableBackend<SFMLBackend>("SFML");
-        BackendManager::RegisterAvailableBackend<SFMLBackend>("Default");
-        BackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
+        BackendManager::RegisterAvailableBackend("Headless", [](){
+            return std::make_unique<ConsoleBackend>();
+        });
     };
     void RegisterModules(){
         BackendManager::RegisterAvailableModule("ImGui", []() { return ImGuiModule::BuildModule(); });

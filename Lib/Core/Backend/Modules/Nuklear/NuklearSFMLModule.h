@@ -9,7 +9,7 @@
 
 #include "Utils/Pointer.h"
 
-#include "Core/Backend/SFML/SFMLListener.h"
+#include "Graphics/Backend/SFML/SFMLListener.h"
 #include "3rdParty/NuklearInclude.h"
 
 namespace Slab::Core {

@@ -8,7 +8,7 @@
 
 #include "AppBase.h"
 #include "Models/MolecularDynamics/Recipe.h"
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Math/Numerics/NumericTask.h"
 
 namespace MolecularDynamics {

@@ -14,7 +14,7 @@
 #include "FourierTestWindow.h"
 #include "ModernGLTests.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Backend/SFML/SFMLBackend.h"
+#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "NuklearTests.h"
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
@@ -51,12 +51,12 @@ int TestsApp::run() {
         // else if(true)  test = new WindowPanelTest;
         // else test = new GLFreeTypeTests;
 
-        backend = &Core::BackendManager::GetGUIBackend();
+        backend = &Slab::Graphics::GetGraphicsBackend();
         backend->addEventListener(test);
 
     } else {
         Core::BackendManager::Startup("GLFW");
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
         backend = &guiBackend;
         guiBackend.addEventListener(Core::GUIEventListener_ptr(new Tests::NuklearTests()));
     }

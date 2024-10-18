@@ -4,7 +4,7 @@
 
 #include "ImGuiModuleGLFW.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Backend/GLFW/GLFWBackend.h"
+#include "Graphics/Backend/GLFW/GLFWBackend.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
@@ -15,7 +15,7 @@ fix PRIORITIZE_ME = true;
 namespace Slab::Core {
     ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule() {
 
-        auto backend = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetGUIBackend());
+        auto backend = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetBackend());
         if(backend == nullptr)
             throw StudioSlabRuntimeBackendInconsistency("while instantiating ImGui module (GLFW implementation)");
 

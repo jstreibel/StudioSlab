@@ -3,7 +3,7 @@
 //
 #include "StudioSlab.h"
 
-#include "Core/Base.h"
+#include "Core/SlabCore.h"
 #include "Graphics/SlabGraphics.h"
 #include "Math/SlabMath.h"
 
@@ -18,6 +18,12 @@ namespace Slab {
 
     Core::Module& GetModule(Core::ModuleName name) {
         return *Core::BackendManager::GetModule(name);
+    }
+
+    void Finish() {
+        Core::Finish();
+        Math::Finish();
+        Graphics::Finish();
     }
 
 

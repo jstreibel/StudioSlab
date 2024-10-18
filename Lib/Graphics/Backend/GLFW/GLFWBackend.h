@@ -10,7 +10,7 @@
 
 #include "Graphics/Types2D.h"
 
-#include "Core/Backend/GraphicBackend.h"
+#include "Graphics/Backend/GraphicBackend.h"
 #include "GLFWListener.h"
 #include "GLFWEventTranslator.h"
 #include "Utils/List.h"

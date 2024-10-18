@@ -11,6 +11,7 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 #include "Math/Numerics/NumericTask.h"
+#include "Core/SlabCore.h"
 
 
 namespace Slab::Math {
@@ -32,10 +33,6 @@ namespace Slab::Math {
 
         // If tasks are still running after backend has finished around, we abort all tasks.
         taskManager->abortAllTasks();
-
-        // Headless backend don't care about modules
-        if(!backend.isHeadless())
-            Core::BackendManager::GetGUIBackend().unloadAllModules();
 
         return 0;
     }

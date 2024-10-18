@@ -7,6 +7,8 @@
 
 namespace Slab::Math {
     void Register();
+
+    void Finish();
 }
 
 #endif //STUDIOSLAB_SLABMATH_H

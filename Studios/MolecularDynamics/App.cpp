@@ -4,13 +4,13 @@
 
 #include "App.h"
 
-#include "Core/Tools/Log.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
-#include "Math/Numerics/NumericTask.h"
-#include "Core/Backend/BackendManager.h"
+#include "Core/SlabCore.h"
 
-#define SFML_Backend dynamic_cast<SFMLBackend&>(Slab::Core::BackendManager::GetGUIBackend())
+#include "Graphics/SlabGraphics.h"
+
+#define SFML_Backend dynamic_cast<SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
 
 using namespace Slab;
 
@@ -29,7 +29,7 @@ MolecularDynamics::App::App(int argc, const char **argv)
 
 int MolecularDynamics::App::run() {
 
-    auto taskManager = DynamicPointerCast<Core::TaskManagerModule>(Core::BackendManager::GetModule("TaskManager"));
+    auto taskManager = DynamicPointerCast<Core::TaskManagerModule>(Slab::Core::GetModule("TaskManager"));
     taskManager->addTask(numericTask);
 
     SFML_Backend.run();

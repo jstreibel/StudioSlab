@@ -169,7 +169,7 @@ namespace Slab::Graphics {
         for (auto &winData: windowsList)
             if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y)) return true;
 
-        //auto mouseState = Core::BackendManager::GetGUIBackend().getMouseState();
+        //auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
         //if(mouseState.leftPressed){
         //    Log::Error() << "Resize not implemented" << Log::Flush;
         //    for(auto &winData : windowsList) {

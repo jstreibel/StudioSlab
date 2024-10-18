@@ -6,7 +6,7 @@
 
 #include "ImGuiWindow.h"
 
-#include "Core/Backend/BackendManager.h"
+#include "Graphics/SlabGraphics.h"
 
 #include <utility>
 
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
                 fix cMin = ImGui::GetWindowContentRegionMin();
                 fix cMax = ImGui::GetWindowContentRegionMax();
 
-                auto &backend = Slab::Core::BackendManager::GetGUIBackend();
+                auto &backend = Slab::Graphics::GetGraphicsBackend();
 
                 fix x = pos.x + cMin.x;
                 fix y = pos.y;

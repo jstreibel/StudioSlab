@@ -6,7 +6,7 @@
 #define ISING_SINGLESIMVIEWCONTROLLER_H
 
 #include "Utils/Types.h"
-#include "Core/Backend/SFML/SFMLListener.h"
+#include "Graphics/Backend/SFML/SFMLListener.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 
 #include "Math/Thermal/ThermoUtils.h"

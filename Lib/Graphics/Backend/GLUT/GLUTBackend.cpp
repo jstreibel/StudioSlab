@@ -2,7 +2,8 @@
 
 #include "GLUTBackend.h"
 
-#include "Core/Backend/BackendManager.h"
+#include "Graphics/SlabGraphics.h"
+
 #include "Core/Tools/Log.h"
 #include "Utils/ReferenceIterator.h"
 // #include "GLUTUtils.h"
@@ -159,7 +160,7 @@ namespace Slab::Core {
     GLUTBackend &GLUTBackend::GetInstance() {
         //assert(Core::BackendManager::GetImplementation() == Core::GLUT);
 
-        auto &guiBackend = Core::BackendManager::GetGUIBackend();
+        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         return *dynamic_cast<GLUTBackend *>(&guiBackend);
     }
