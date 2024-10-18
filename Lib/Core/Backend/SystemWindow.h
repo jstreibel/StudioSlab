@@ -10,12 +10,12 @@
 namespace Slab::Core {
 
     class SystemWindow {
-        Core::GUIEventListener
+        // Core::GUIEventListener
 
     public:
         virtual void addGUIEventListener();
 
-        virtual void addWindow()
+        virtual void addWindow();
     };
 
 } // Slab::Core
