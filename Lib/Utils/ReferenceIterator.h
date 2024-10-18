@@ -21,8 +21,8 @@ namespace Slab {
         StopOnFirstResponder=true
     };
 
-    template<Iterable Container, typename Func>
-    bool IterateReferences(Container& container, Func func, ReferenceIterationPolicy policy = IterateAll) {
+    template<Iterable Container, typename FuncTy>
+    bool IterateReferences(Container& container, FuncTy func, ReferenceIterationPolicy policy = IterateAll) {
         auto any_responded = false;
 
         auto it = container.begin();

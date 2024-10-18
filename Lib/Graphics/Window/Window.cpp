@@ -15,6 +15,8 @@
 
 namespace Slab::Graphics {
 
+    #define USE_GLOBAL_MOUSECLICK_POLICY false
+
     Window::Window(int x, int y, int w, int h, Flags flags)
             : backgroundColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
@@ -99,36 +101,38 @@ namespace Slab::Graphics {
     }
 
     auto Window::isMouseLeftClicked() const -> bool {
+#if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         fix &mouse = guiBackend.getMouseState();
         return mouse.leftPressed;
-
-        // return mouseLeftButton==Core::Press;
+#else
+        return mouseLeftButton==Core::Press;
+#endif
     }
 
     auto Window::isMouseCenterClicked() const -> bool {
-        /*
+#if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         fix &mouse = guiBackend.getMouseState();
 
         if(!mouse.centerPressed) return false;
-         */
-
+#else
         return mouseCenterButton==Core::Press;
+#endif
     }
 
     auto Window::isMouseRightClicked() const -> bool {
-        /*
+#if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Core::BackendManager::GetGUIBackend();
 
         fix &mouse = guiBackend.getMouseState();
 
         if(!mouse.rightPressed) return false;
-         */
-
+#else
         return mouseRightButton==Core::Press;
+#endif
     }
 
     auto Window::getMouseWindowCoord() const -> Point2D {
