@@ -4,7 +4,7 @@
 
 #include "GUIEventTranslator.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     bool EventTranslator::addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener) {
         auto in = guiEventListener.lock();

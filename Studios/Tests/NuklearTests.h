@@ -10,7 +10,7 @@
 
 namespace Tests {
 
-    class NuklearTests : public Slab::Core::GUIEventListener{
+    class NuklearTests : public Slab::Graphics::GUIEventListener{
     public:
         NuklearTests();
 

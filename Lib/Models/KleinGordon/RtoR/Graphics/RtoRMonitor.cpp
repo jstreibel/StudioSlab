@@ -82,11 +82,11 @@ namespace Slab::Models::KGRtoR {
         Graphics::BaseMonitor::handleOutput(outInfo);
     }
 
-    bool Monitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    bool Monitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
 
         char number = key - '0';
 
-        if (modKeys.nonePressed() && state == Core::Press && (number >= 1 && number <= 9)) {
+        if (modKeys.nonePressed() && state == KeyState::Press && (number >= 1 && number <= 9)) {
             setDataView(number - 1);
             return true;
         }

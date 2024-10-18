@@ -33,7 +33,7 @@ namespace Slab::Graphics {
 
         void draw() override;
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         void setFunction(Pointer<Math::R2toR::NumericFunction>);
 

@@ -289,9 +289,10 @@ add_library(${LIB_GRAPHICS} STATIC
 		SlabGraphics.cpp
 		SlabGraphics.h
 		GraphicsModule.cpp
-		GraphicsModule.h
+		SlabGraphicsModule.h
 		OpenGL/WriterOpenGL.cpp
 		OpenGL/WriterOpenGL.h
+		Modules/GraphicsModule.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

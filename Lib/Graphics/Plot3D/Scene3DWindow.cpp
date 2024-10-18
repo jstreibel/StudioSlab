@@ -160,8 +160,8 @@ namespace Slab::Graphics {
         }
     }
 
-    bool Scene3DWindow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        if(key == Core::Key_TAB && state == Core::Release) {
+    bool Scene3DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        if(key == KeyMap::Key_TAB && state == KeyState::Release) {
             showInterface = !showInterface;
             return true;
         }

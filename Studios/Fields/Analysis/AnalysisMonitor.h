@@ -21,7 +21,7 @@ namespace Studios::Fields {
 
         void addDataView(const Slab::Pointer<DataView>&);
 
-        bool notifyKeyboard(Slab::Core::KeyMap key, Slab::Core::KeyState state, Slab::Core::ModKeys modKeys) override;
+        bool notifyKeyboard(Slab::KeyMap key, Slab::KeyState state, Slab::ModKeys modKeys) override;
     };
 
 } // Studios::Fields

@@ -10,10 +10,10 @@
 #include "Utils/ReferenceIterator.h"
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
 
-    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", (sfmlEventTranslator=New<Core::SFMLEventTranslator>())) {
+    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", (sfmlEventTranslator=New<SFMLEventTranslator>())) {
 
         sf::ContextSettings contextSettings;
         contextSettings.depthBits = 24;

@@ -66,9 +66,9 @@ namespace Slab::Graphics {
         WindowRow::draw();
     }
 
-    bool MainViewer::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        if(key >= Slab::Core::Key_1 && key <= Slab::Core::Key_9)
-            if(setCurrentViewer(key - Slab::Core::Key_1)) return true;
+    bool MainViewer::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        if(key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
+            if(setCurrentViewer(key - KeyMap::Key_1)) return true;
 
         return WindowRow::notifyKeyboard(key, state, modKeys);
     }

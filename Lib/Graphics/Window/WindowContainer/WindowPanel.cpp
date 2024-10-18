@@ -164,7 +164,7 @@ namespace Slab::Graphics {
     }
 
     bool
-    WindowPanel::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    WindowPanel::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         // return GUIEventListener::notifyKeyboard(key, state, modKeys);
 
         auto responded = false;
@@ -174,8 +174,8 @@ namespace Slab::Graphics {
         return responded;
     }
 
-    bool WindowPanel::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
-                                        Core::ModKeys keys) {
+    bool WindowPanel::notifyMouseButton(MouseButton button, KeyState state,
+                                        ModKeys keys) {
         bool alwaysPropagate = false; // state==Core::Release;
 
         auto responded = false;

@@ -4,7 +4,7 @@
 
 #include "GLFWListener.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     bool GLFWListener::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         return false;

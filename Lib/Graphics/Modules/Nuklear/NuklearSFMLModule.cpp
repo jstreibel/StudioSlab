@@ -10,24 +10,25 @@
 #define NK_SFML_GL3_IMPLEMENTATION
 #include "3rdParty/Nuklear/nuklear_sfml_gl3.h"
 #include "Core/Tools/Resources.h"
+#include "Core/SlabCore.h"
 
 #define MAX_VERTEX_BUFFER (1024 * 1024)
 #define MAX_ELEMENT_BUFFER (1024 * 1024)
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     NuklearSFMLModule::NuklearSFMLModule()
             : NuklearModule() {
         try {
-            auto &sfmlBackend = dynamic_cast<SFMLBackend &>(BackendManager::GetBackend());
+            auto &sfmlBackend = dynamic_cast<SFMLBackend &>(Core::GetBackend());
             renderWindow = &sfmlBackend.getMainWindow();
 
             static auto myReference = Naked(*this);
             sfmlBackend.addSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
-            Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
-                            "to be SFML." << Log::Flush;
+            Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
+                            "to be SFML." << Core::Log::Flush;
             return;
         }
 
@@ -48,7 +49,7 @@ namespace Slab::Core {
         nk_sfml_font_stash_end();
 
         /* nk_style_load_all_cursors(ctx, atlas->cursors);*/
-        if(droid == nullptr) Log::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Log::Flush;
+        if(droid == nullptr) Core::Log::Error() << "Could not load font '" << font_filename << "'. Using default Nuklear font." << Core::Log::Flush;
         else nk_style_set_font(nkContext, &droid->handle);
     }
 

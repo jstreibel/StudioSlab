@@ -10,7 +10,7 @@
 #define Listener : guiListeners) listener
 // #define Do (WHAT) {listener-> WHAT ;};
 
-namespace Slab::Core {
+namespace Slab::Graphics {
     inline KeyMap mapFromSFML(sf::Event::KeyEvent);
 
     void SFMLEventTranslator::event(const sf::Event &event) {

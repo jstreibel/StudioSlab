@@ -15,23 +15,24 @@
 #include "Core/Tools/Log.h"
 
 #include "Core/Tools/Resources.h"
+#include "Core/SlabCore.h"
 
 #define MAX_VERTEX_BUFFER  (1024 * 1024)
 #define MAX_ELEMENT_BUFFER (1024 * 1024)
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     const bool HighPriority = true;
 
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule() {
         try {
-            auto &glfwBackend = dynamic_cast<GLFWBackend&>(BackendManager::GetBackend());
+            auto &glfwBackend = dynamic_cast<GLFWBackend&>(Core::GetBackend());
             renderWindow = &glfwBackend.getGLFWWindow();
 
             glfwBackend.addGLFWListener(Naked(*this), HighPriority);
         } catch (std::bad_cast& e) {
-            Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
-                            "to be SFML." << Log::Flush;
+            Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
+                            "to be SFML." << Core::Log::Flush;
             return;
         }
 
@@ -45,7 +46,7 @@ namespace Slab::Core {
         {
             struct nk_font_atlas *atlas;
             nk_glfw3_font_stash_begin(&atlas);
-            auto fontFolder = Resources::FontsFolder;
+            auto fontFolder = Core::Resources::FontsFolder;
             struct nk_font *droid =     nk_font_atlas_add_from_file(atlas, (fontFolder + "imgui/DroidSans.ttf").c_str(), 24, 0);
             // struct nk_font *roboto =    nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 14, 0);
             // struct nk_font *future =    nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13, 0);

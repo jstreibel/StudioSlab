@@ -16,7 +16,7 @@
 #include "Utils/List.h"
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
 
     class GLFWBackend : public GraphicBackend {
@@ -56,7 +56,7 @@ namespace Slab::Core {
 
         auto getGLFWWindow() -> GLFWwindow &;
 
-        void addGLFWListener(Volatile<Core::GLFWListener> glfwListener, bool highPriority = false);
+        void addGLFWListener(Volatile<Graphics::GLFWListener> glfwListener, bool highPriority = false);
 
         static bool GetKeyState(GLFWwindow *window, int key);
 

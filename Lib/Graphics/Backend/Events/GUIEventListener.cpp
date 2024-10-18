@@ -6,7 +6,7 @@
 #include "Utils/ReferenceIterator.h"
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     GUIEventListener::GUIEventListener() = default;
 

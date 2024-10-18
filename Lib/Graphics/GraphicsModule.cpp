@@ -2,7 +2,7 @@
 // Created by joao on 10/13/24.
 //
 
-#include "GraphicsModule.h"
+#include "SlabGraphicsModule.h"
 
 #include "3rdParty/ImGui.h"
 

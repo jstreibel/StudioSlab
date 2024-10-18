@@ -30,7 +30,7 @@ namespace Slab {
             window->notifyReshape(w, h);
         }
 
-        bool WindowProxy::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+        bool WindowProxy::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
             if(window == nullptr) return false;
 
             return window->notifyMouseButton(button, state, keys);
@@ -42,7 +42,7 @@ namespace Slab {
             return window->notifyRender();
         }
 
-        bool WindowProxy::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+        bool WindowProxy::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
             if(window == nullptr) return false;
 
             return window->notifyKeyboard(key, state, modKeys);

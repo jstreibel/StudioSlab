@@ -13,7 +13,7 @@
 
 #define FULLSCREEN true
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     GLUTBackend::GLUTBackend()
             : GraphicBackend("GLUT backend", eventTranslator) {
@@ -50,11 +50,11 @@ namespace Slab::Core {
 
         addGLUTListener(eventTranslator);
 
-        Log::Success() << "Initialized GLUTBackend. "
+        Core::Log::Success() << "Initialized GLUTBackend. "
                        << "OpenGL version " << glGetString(GL_VERSION) << ". "
-                       << "Current window: " << winHandle << Log::Flush;
+                       << "Current window: " << winHandle << Core::Log::Flush;
 
-        Log::Info() << "Initialized Imgui." << Log::Flush;
+        Core::Log::Info() << "Initialized Imgui." << Core::Log::Flush;
     }
 
     GLUTBackend::~GLUTBackend() = default;

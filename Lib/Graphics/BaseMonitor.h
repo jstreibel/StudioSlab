@@ -37,7 +37,7 @@ namespace Slab::Graphics {
 
         // ********************* From EventListener ************** //
         bool notifyRender() final ;
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
         // ********************* End EventListener *************** //
 
         // ********************* From Socket ********************* //

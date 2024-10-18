@@ -10,10 +10,11 @@
 
 #include "Core/Backend/Implementations.h"
 #include "3rdParty/NuklearInclude.h"
+#include "Graphics/Modules/GraphicsModule.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
-    class NuklearModule : public Core::GraphicsModule {
+    class NuklearModule : public GraphicsModule {
     protected:
         nk_context *nkContext;
 

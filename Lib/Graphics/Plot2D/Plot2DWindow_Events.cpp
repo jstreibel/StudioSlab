@@ -15,13 +15,13 @@
 namespace Slab {
 
     bool
-    Graphics::Plot2DWindow::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
+    Graphics::Plot2DWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         static auto time = Timer();
 
-        if (button == Core::MouseButton_RIGHT) {
-            if (state == Core::Press) {
+        if (button == MouseButton::MouseButton_RIGHT) {
+            if (state == KeyState::Press) {
                 time.reset();
-            } else if (state == Core::Release && time.getElTime_msec() < 200) {
+            } else if (state == KeyState::Release && time.getElTime_msec() < 200) {
                 popupOn = true;
 
                 auto popupName = Str("win_") + title + Str("_popup");
@@ -120,9 +120,9 @@ namespace Slab {
 
     void Graphics::Plot2DWindow::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
 
-    bool Graphics::Plot2DWindow::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
-        if(state==Core::Release) {
-            if(key == Core::Key_TAB) {
+    bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        if(state==KeyState::Release) {
+            if(key == KeyMap::Key_TAB) {
                 toggleShowInterface();
                 return true;
             }

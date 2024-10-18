@@ -11,7 +11,7 @@ namespace Slab::Graphics {
     void Register();
     void Finish();
 
-    Core::GraphicBackend& GetGraphicsBackend();
+    GraphicBackend& GetGraphicsBackend();
 }
 
 #endif //STUDIOSLAB_SLABGRAPHICS_H

@@ -12,7 +12,7 @@
 #include "Graphics/Backend/SFML/SFMLListener.h"
 #include "3rdParty/NuklearInclude.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class NuklearSFMLModule : public NuklearModule, public SFMLListener {
         sf::RenderWindow *renderWindow = nullptr;

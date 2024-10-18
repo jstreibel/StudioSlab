@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    class PlotThemeManager : public Singleton<PlotThemeManager>, public Core::GUIEventListener {
+    class PlotThemeManager : public Singleton<PlotThemeManager>, public GUIEventListener {
     protected:
         friend Singleton<PlotThemeManager>;
 

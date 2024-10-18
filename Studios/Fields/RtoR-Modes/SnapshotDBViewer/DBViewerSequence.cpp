@@ -299,8 +299,8 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) -> bool {
-        if( key==Core::Key_F5 && state==Core::Press ){
+    auto DBViewerSequence::notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
+        if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
         }

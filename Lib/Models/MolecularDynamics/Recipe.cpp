@@ -42,7 +42,7 @@ namespace MolecularDynamics {
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
-        Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(Core::GUIEventListener_ptr(monitor));
+        Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(Graphics::GUIEventListener_ptr(monitor));
         outputManager->addOutputChannel(monitor);
 
         return outputManager;

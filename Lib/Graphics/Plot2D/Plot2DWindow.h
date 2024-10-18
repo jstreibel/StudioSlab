@@ -93,10 +93,10 @@ namespace Slab::Graphics {
         void setAnimationTime(Real value);
         Real getAnimationTime() const;
 
-        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;
         bool notifyMouseMotion(int x, int y) override;
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         void notifyReshape(int newWinW, int newWinH) override;
 

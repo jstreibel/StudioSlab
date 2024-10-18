@@ -107,7 +107,7 @@ namespace Slab::Graphics {
         fix &mouse = guiBackend.getMouseState();
         return mouse.leftPressed;
 #else
-        return mouseLeftButton==Core::Press;
+        return mouseLeftButton==KeyState::Press;
 #endif
     }
 
@@ -119,7 +119,7 @@ namespace Slab::Graphics {
 
         if(!mouse.centerPressed) return false;
 #else
-        return mouseCenterButton==Core::Press;
+        return mouseCenterButton==KeyState::Press;
 #endif
     }
 
@@ -131,7 +131,7 @@ namespace Slab::Graphics {
 
         if(!mouse.rightPressed) return false;
 #else
-        return mouseRightButton==Core::Press;
+        return mouseRightButton==KeyState::Press;
 #endif
     }
 
@@ -192,10 +192,10 @@ namespace Slab::Graphics {
     auto Window::getBGColor() const -> const Color & { return backgroundColor; }
 
     bool
-    Window::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) {
-        if     (button == Core::MouseButton_LEFT)   mouseLeftButton   = state;
-        else if(button == Core::MouseButton_MIDDLE) mouseCenterButton = state;
-        else if(button == Core::MouseButton_RIGHT)  mouseRightButton  = state;
+    Window::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+        if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
+        else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
+        else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
 
         return GUIEventListener::notifyMouseButton(button, state, keys);
     }

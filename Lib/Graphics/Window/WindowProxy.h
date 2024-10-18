@@ -22,11 +22,11 @@ namespace Slab {
 
             void notifyReshape(int w, int h) override;
 
-            bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+            bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
             bool notifyRender() override;
 
-            bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+            bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
             bool notifyMouseMotion(int x, int y) override;
 

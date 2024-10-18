@@ -20,7 +20,7 @@ namespace MolecularDynamics {
 #define SHOW_DOT false
 #define SHOW_RADIUS true
 
-#define SFML_Backend dynamic_cast<Core::SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
+#define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
 
     Monitor::Monitor(Pointer<Config> config, Model model)
     : Socket("Particle dynamics monitor", 10)

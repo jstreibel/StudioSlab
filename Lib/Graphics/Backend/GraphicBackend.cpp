@@ -8,7 +8,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     GraphicBackend::GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator)
     : Backend(name), eventTranslator(std::move(eventTranslator)) {}
@@ -67,6 +67,8 @@ namespace Slab::Core {
     }
 
     void GraphicBackend::setSystemWindowTitle(Str title, int handle) { NOT_IMPLEMENTED_CLASS_METHOD }
+    void GraphicBackend::setSystemWindowTitle(Str title) { setSystemWindowTitle(title, 0); }
+
 
     void GraphicBackend::clearModules() {
         graphicModules.clear();
@@ -81,7 +83,7 @@ namespace Slab::Core {
         clearListeners();
     }
 
-    void GraphicBackend::notifyModuleLoaded(const Pointer<Module> &module) {
+    void GraphicBackend::notifyModuleLoaded(const Pointer<Core::Module> &module) {
         if(module->requiresGraphicsBackend) {
             auto graphic_module = DynamicPointerCast<GraphicsModule>(module);
 

@@ -8,10 +8,11 @@
 #include "Core/Backend/Backend.h"
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Modules/GraphicsModule.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
-    class GraphicBackend : public Backend {
+    class GraphicBackend : public Core::Backend {
         void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
 
     protected:
@@ -39,7 +40,8 @@ namespace Slab::Core {
         virtual auto getScreenHeight() const -> Real = 0;
         virtual auto getMouseState() const -> MouseState = 0;
         virtual void setMouseCursor(MouseCursor);
-        virtual void setSystemWindowTitle(Str title, int handle=0);
+        virtual void setSystemWindowTitle(Str title, int handle);
+        void setSystemWindowTitle(Str title);
 
         void setClearColor(Real r, Real g, Real b);
 

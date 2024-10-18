@@ -34,9 +34,9 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 int TestsApp::run() {
     using namespace Slab;
 
-    Pointer<Core::GUIEventListener> test;
+    Pointer<Graphics::GUIEventListener> test;
 
-    Core::GraphicBackend *backend = nullptr;
+    Graphics::GraphicBackend *backend = nullptr;
 
     if(true) {
         Core::BackendManager::Startup("GLFW");
@@ -58,7 +58,7 @@ int TestsApp::run() {
         Core::BackendManager::Startup("GLFW");
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
         backend = &guiBackend;
-        guiBackend.addEventListener(Core::GUIEventListener_ptr(new Tests::NuklearTests()));
+        guiBackend.addEventListener(Graphics::GUIEventListener_ptr(new Tests::NuklearTests()));
     }
 
     backend->run();

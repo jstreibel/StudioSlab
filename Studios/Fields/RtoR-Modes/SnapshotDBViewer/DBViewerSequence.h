@@ -58,13 +58,13 @@ namespace Modes::DatabaseViewer {
         void computeMasses();
         void drawTable(int specialIndex);
 
-        Core::KeyState shiftKey = Core::Release;
+        Graphics::KeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
         void draw() override;
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
     };
 }
 

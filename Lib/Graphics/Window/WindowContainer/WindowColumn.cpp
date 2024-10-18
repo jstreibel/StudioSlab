@@ -146,12 +146,12 @@ namespace Slab::Graphics {
     }
 
     bool
-    WindowColumn::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    WindowColumn::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn);
     }
 
-    bool WindowColumn::notifyMouseButton(Core::MouseButton button, Core::KeyState state,
-                                         Core::ModKeys keys) {
+    bool WindowColumn::notifyMouseButton(MouseButton button, KeyState state,
+                                         ModKeys keys) {
         if(state == Release)
             // PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate);
             PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);

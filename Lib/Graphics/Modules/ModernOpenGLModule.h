@@ -7,9 +7,9 @@
 
 #include "Core/Backend/Modules/Module.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
-    class ModernOpenGLModule : public Module {
+    class ModernOpenGLModule : public Core::Module {
     public:
         ModernOpenGLModule();
     };

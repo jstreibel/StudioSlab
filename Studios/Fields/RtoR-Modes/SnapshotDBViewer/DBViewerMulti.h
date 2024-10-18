@@ -59,15 +59,15 @@ namespace Modes::DatabaseViewer {
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
 
-        Core::KeyState shiftKey = Core::Release;
+        Graphics::KeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
 
         void draw() override;
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
 
-        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+        bool notifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
 
         bool notifyMouseMotion(int x, int y) override;
     };

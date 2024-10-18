@@ -22,9 +22,9 @@ namespace Slab::Math::R2toR {
 
         bool notifyMouseMotion(int x, int y) override;
 
-        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) override;
+        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         IntPair getWindowSizeHint() override;
 

@@ -9,7 +9,7 @@
 
 #include "Utils/ReferenceIterator.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     struct WindowedModeConfig {
         int x=10, y=10;
@@ -134,14 +134,14 @@ namespace Slab::Core {
     void GLFWBackend::drop_callback(GLFWwindow *window, int count, const char **paths) {
         StrVector pathsVec;
 
-        auto &log = Log::Info() << "Dropped files: ";
+        auto &log = Core::Log::Info() << "Dropped files: ";
         int i;
         for (i = 0; i < count; i++) {
             log << "\n\t\t" << paths[i];
             pathsVec.emplace_back(paths[i]);
         }
 
-        log << Log::Flush;
+        log << Core::Log::Flush;
 
         auto &me = GetInstance();
 
@@ -158,12 +158,12 @@ namespace Slab::Core {
         return *systemWindow;
     }
 
-    void GLFWBackend::addGLFWListener(Volatile<Core::GLFWListener> glfwListener, bool highPriority) {
+    void GLFWBackend::addGLFWListener(Volatile<GLFWListener> glfwListener, bool highPriority) {
         if (highPriority) listeners.emplace_front(glfwListener);
         else listeners.emplace_back(glfwListener);
     }
 
-    bool GLFWBackend::addEventListener(const Volatile<Core::GUIEventListener> &listener) {
+    bool GLFWBackend::addEventListener(const Volatile<GUIEventListener> &listener) {
         int w, h;
         glfwGetWindowSize(systemWindow, &w, &h);
 

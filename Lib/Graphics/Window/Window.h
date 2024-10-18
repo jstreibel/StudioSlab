@@ -20,7 +20,7 @@
 
 namespace Slab::Graphics {
 
-    class Window : public Core::GUIEventListener {
+    class Window : public GUIEventListener {
     public:
         typedef std::shared_ptr<Window> Ptr;
         enum Flags {
@@ -41,9 +41,9 @@ namespace Slab::Graphics {
 
         void setupWindow() const;
 
-        Core::KeyState mouseLeftButton = Core::Release;
-        Core::KeyState mouseCenterButton = Core::Release;
-        Core::KeyState mouseRightButton = Core::Release;
+        KeyState mouseLeftButton = KeyState::Release;
+        KeyState mouseCenterButton = KeyState::Release;
+        KeyState mouseRightButton = KeyState::Release;
 
     protected:
         Flags flags;
@@ -61,8 +61,8 @@ namespace Slab::Graphics {
 
         bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
 
-        bool notifyMouseButton(Core::MouseButton button, Core::KeyState state,
-                               Core::ModKeys keys) override;
+        bool notifyMouseButton(MouseButton button, KeyState state,
+                               ModKeys keys) override;
 
         bool notifyRender() override;
 

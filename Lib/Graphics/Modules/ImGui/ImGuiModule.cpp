@@ -8,7 +8,7 @@
 #pragma error
 #endif
 
-// #include "Graphics/OpenGL/Utils.h"
+#include "ImGuiColorAndStyles.h"
 
 #include <filesystem>
 
@@ -18,8 +18,6 @@
 #include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
 
-#include "ImGuiColorAndStyles.h"
-
 #include "ImGuiModuleGLUT.h"
 #include "ImGuiModuleGLFW.h"
 
@@ -27,19 +25,19 @@
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
 fix FONT_SIZE_PIXELS = 20.0f;
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707
 
     Str currentTheme = "Dark";
     std::map<Str, void(*)()> colorThemes = {
-            {"Native light", Slab::Core::SetColorThemeNativeLight},
-            {"Native dark", Slab::Core::SetColorThemeNativeDark},
-            {"Dark red", Slab::Core::SetColorThemeDarkRed},
-            {"Dark", Slab::Core::SetStyleDark},
-            {"Light", Slab::Core::SetStyleLight},
-            {"StudioSlab", Slab::Core::SetStyleStudioSlab}
+            {"Native light", SetColorThemeNativeLight},
+            {"Native dark",  SetColorThemeNativeDark},
+            {"Dark red",     SetColorThemeDarkRed},
+            {"Dark",         SetStyleDark},
+            {"Light",        SetStyleLight},
+            {"StudioSlab",   SetStyleStudioSlab}
     };
 
     void ImGuiModule::generalInitialization() {
@@ -94,16 +92,16 @@ namespace Slab::Core {
         static ImVector<ImWchar> vRanges;
         glyphRangesBuilder.BuildRanges(&vRanges);
 
-        auto &log = Log::Info() << "ImGui loading glyph ranges: ";
+        auto &log = Core::Log::Info() << "ImGui loading glyph ranges: ";
         int i = 0;
         for (auto &v: vRanges) {
             if (v == 0) break;
             log << std::hex << v << (++i % 2 ? "-" : " ");
         }
-        log << std::dec << Log::Flush;
+        log << std::dec << Core::Log::Flush;
 
         ImGuiIO &io = ImGui::GetIO();
-        auto fontName = Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
+        auto fontName = Core::Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
 
         if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
 
@@ -112,7 +110,7 @@ namespace Slab::Core {
 
         io.FontDefault = font;
 
-        Log::Info() << "ImGui using font '" << Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Log::Flush;
+        Core::Log::Info() << "ImGui using font '" << Core::Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
 
         //ImGui::PushFont(font);
     }
@@ -125,7 +123,7 @@ namespace Slab::Core {
     }
 
     ImGuiModule* ImGuiModule::BuildModule() {
-        Str backendImpl = BackendManager::GetBackendName();
+        Str backendImpl = Core::BackendManager::GetBackendName();
 
         if(backendImpl == "Uninitialized")
                 throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");

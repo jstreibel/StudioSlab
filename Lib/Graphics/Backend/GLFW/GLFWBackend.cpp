@@ -13,7 +13,9 @@
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/SlabGraphics.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
+
+    using namespace Core;
 
     const auto FullScreen = false;
 

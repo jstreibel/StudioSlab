@@ -4,7 +4,7 @@
 
 #include "ImGuiColorAndStyles.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     void SetColorThemeNativeLight() { ImGui::StyleColorsLight(); }
 

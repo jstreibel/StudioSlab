@@ -21,18 +21,6 @@ namespace Slab::Core {
         virtual ~Module();
     };
 
-    class GraphicsModule : public Module {
-    public:
-        GraphicsModule() = delete;
-        explicit GraphicsModule(const Str &name) : Module(name, true) {}
-
-        virtual void beginRender() {};
-        virtual void endRender() {};
-
-        virtual void beginEvents() {};
-        virtual void endEvents() {};
-    };
-
 } // Core
 
 #endif //STUDIOSLAB_MODULE_H

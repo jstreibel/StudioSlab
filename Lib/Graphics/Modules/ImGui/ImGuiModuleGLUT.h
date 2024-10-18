@@ -10,7 +10,7 @@
 
 #include "ImGuiModule.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class ImGuiModuleGLUT : public ImGuiModule, public GLUTListener {
     public:

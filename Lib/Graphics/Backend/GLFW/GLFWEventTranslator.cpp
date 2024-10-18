@@ -19,15 +19,15 @@
     }}
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     bool GLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
         // const int _scancode = glfwGetKeyScancode(GLFW_KEY_X); // scancodes table change with platform
 
-        auto mappedKey = static_cast<Core::KeyMap>(key);
-        auto state = static_cast<Core::KeyState>(action);
-        Core::ModKeys modKeys{
+        auto mappedKey = static_cast<KeyMap>(key);
+        auto state = static_cast<KeyState>(action);
+        ModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT) != 0,
                 (mods & GLFW_MOD_CONTROL) != 0,
                 (mods & GLFW_MOD_ALT) != 0,
@@ -48,9 +48,9 @@ namespace Slab::Core {
     }
 
     bool GLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
-        auto mappedButton = static_cast<Core::MouseButton>(button);
-        auto state = static_cast<Core::KeyState>(action);
-        Core::ModKeys modKeys{
+        auto mappedButton = static_cast<enum MouseButton>(button);
+        auto state = static_cast<KeyState>(action);
+        ModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT) != 0,
                 (mods & GLFW_MOD_CONTROL) != 0,
                 (mods & GLFW_MOD_ALT) != 0,

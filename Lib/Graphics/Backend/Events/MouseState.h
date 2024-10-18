@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOUSESTATE_H
 #define STUDIOSLAB_MOUSESTATE_H
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     enum MouseCursor {
         Mouse_ArrowCursor,

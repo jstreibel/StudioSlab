@@ -33,7 +33,7 @@ namespace Studios::Fields {
     }
 
     bool
-    AnalysisMonitor::notifyKeyboard(Slab::Core::KeyMap key, Slab::Core::KeyState state, Slab::Core::ModKeys modKeys) {
+    AnalysisMonitor::notifyKeyboard(Slab::KeyMap key, Slab::KeyState state, Slab::ModKeys modKeys) {
         if(state==Slab::Core::Release && modKeys.Mod_Alt) {
             int n = key - Slab::Core::Key_1 + 1;
 

@@ -10,7 +10,7 @@
 #include "Graphics/Backend/Events/GUIEventTranslator.h"
 #include "Graphics/Backend/Events/MouseState.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class GLUTEventTranslator : public EventTranslator, public GLUTListener {
         MouseState mouseState{};

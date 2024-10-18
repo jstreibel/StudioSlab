@@ -10,21 +10,22 @@
 #include "NuklearGLFWModule.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Core/SlabCore.h"
 
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
-namespace Slab::Core {
+namespace Slab::Graphics {
     NuklearModule::NuklearModule()
-    : Core::GraphicsModule("Nuklear GUI")
+    : GraphicsModule("Nuklear GUI")
     , nkContext(nullptr)
     {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
         fix opengl = Vector<Str>{"GLFW", "GLUT", "SFML"};
 
-        fix backend_name = BackendManager::GetBackendName();
+        fix backend_name = Core::BackendManager::GetBackendName();
 
         if(Contains(non_opengl, backend_name))  NOT_IMPLEMENTED;
-        if(Contains(opengl, backend_name)) BackendManager::LoadModule("ModernOpenGL");
+        if(Contains(opengl, backend_name)) Core::LoadModule("ModernOpenGL");
     }
 
     void NuklearModule::beginEvents() {
@@ -38,7 +39,7 @@ namespace Slab::Core {
     NuklearModule *NuklearModule::BuildModule() {
         auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
 
-        Str backendImpl = BackendManager::GetBackendName();
+        Str backendImpl = Core::BackendManager::GetBackendName();
         if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED;
 
         if(backendImpl == "GLFW") return new NuklearGLFWModule();

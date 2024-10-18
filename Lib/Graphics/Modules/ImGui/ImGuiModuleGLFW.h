@@ -8,7 +8,7 @@
 #include "ImGuiModule.h"
 #include "Graphics/Backend/GLFW/GLFWListener.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class ImGuiModuleGLFW : public ImGuiModule, public GLFWListener {
     public:

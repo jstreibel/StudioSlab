@@ -65,7 +65,7 @@ namespace Slab::Models::KGRtoR {
         virtual void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
                                             const DFTDataHistory &dftData);
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         void addDataView(const RtoRPanel_ptr&);
     };

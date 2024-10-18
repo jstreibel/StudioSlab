@@ -10,7 +10,7 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#define SFML_Backend dynamic_cast<SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
+#define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Graphics::GetGraphicsBackend())
 
 using namespace Slab;
 

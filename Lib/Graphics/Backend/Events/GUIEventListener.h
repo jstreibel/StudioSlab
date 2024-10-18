@@ -12,7 +12,7 @@
 #include "KeyMap.h"
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class GUIEventListener {
         Vector<Volatile<GUIEventListener>> delegateResponders;

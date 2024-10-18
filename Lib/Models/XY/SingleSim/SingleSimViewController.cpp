@@ -57,7 +57,7 @@ namespace Slab::Lost::ThermoOutput {
 
 
         auto nkModule_abstract = Core::GetModule("Nuklear");
-        auto &nkModule = *dynamic_cast<Core::NuklearModule*>(nkModule_abstract.get());
+        auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
         nkContext = nkModule.getContext();
 
         timer.restart();

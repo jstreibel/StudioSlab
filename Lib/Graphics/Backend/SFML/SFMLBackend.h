@@ -11,10 +11,10 @@
 
 #include <SFML/Graphics.hpp>
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class SFMLBackend : public GraphicBackend {
-        Pointer<Core::SFMLEventTranslator> sfmlEventTranslator=nullptr;
+        Pointer<SFMLEventTranslator> sfmlEventTranslator=nullptr;
         Vector<Volatile<SFMLListener>> sfmlListeners;
 
         sf::RenderWindow *window;

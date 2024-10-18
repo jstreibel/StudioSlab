@@ -14,7 +14,7 @@
 #include <GLFW/glfw3.h>
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class NuklearGLFWModule : public NuklearModule, public GLFWListener{
         GLFWwindow *renderWindow = nullptr;

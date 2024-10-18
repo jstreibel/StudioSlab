@@ -52,7 +52,7 @@ namespace Tests {
     }
 
     bool NuklearTests::notifyRender() {
-        auto& nkModule = dynamic_cast<Core::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
+        auto& nkModule = dynamic_cast<Graphics::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
         auto *nkContext =  nkModule.getContext();
 
         /* GUI */

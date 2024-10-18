@@ -134,7 +134,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    bool BaseMonitor::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) {
+    bool BaseMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         static fix baseNSteps = getnSteps();
         static let multiplier = 1;
 

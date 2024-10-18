@@ -80,7 +80,7 @@ namespace Slab::Math::R2toR {
 
         ///********************************************************************************************/
         if (shouldOutputOpenGL) {
-            GraphicBackend &backend = Slab::Graphics::GetGraphicsBackend();
+            auto &backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
             backend.addEventListener(glOut);

@@ -11,7 +11,7 @@
 #include "GUIEventListener.h"
 
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class EventTranslator {
     protected:

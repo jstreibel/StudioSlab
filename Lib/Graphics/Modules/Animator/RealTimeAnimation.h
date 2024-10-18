@@ -6,8 +6,9 @@
 #define STUDIOSLAB_REALTIMEANIMATION_H
 
 #include "Core/Backend/Modules/Module.h"
+#include "Graphics/Modules/GraphicsModule.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class RealTimeAnimationModule : public GraphicsModule {
     public:

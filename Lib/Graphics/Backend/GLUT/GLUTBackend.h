@@ -7,7 +7,7 @@
 #include "Graphics/Backend/Events/GUIEventListener.h"
 #include "Graphics/Backend/GraphicBackend.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class GLUTBackend : public GraphicBackend {
         Pointer<GLUTEventTranslator> eventTranslator;

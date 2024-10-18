@@ -41,7 +41,7 @@ namespace Slab::Graphics {
         bool notifyMouseMotion(int x, int y) override;
         bool notifyMouseWheel(double dx, double dy) override;
 
-        bool notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         bool addActor(const Actor_ptr& actor);
     };

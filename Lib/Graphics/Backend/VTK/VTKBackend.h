@@ -7,7 +7,7 @@
 
 #include "Graphics/Backend/GraphicBackend.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class VTKBackend : public GraphicBackend {
     public:

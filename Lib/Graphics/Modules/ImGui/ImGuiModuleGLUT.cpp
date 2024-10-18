@@ -13,7 +13,7 @@
 // Don't touch
 fix SHOULD_INSTALL_CALLBACKS = false;
 
-namespace Slab::Core {
+namespace Slab::Graphics {
     ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule() {
         // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
         // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
@@ -28,14 +28,14 @@ namespace Slab::Core {
         finishInitialization();
 
         try {
-            auto &glutBackend = dynamic_cast<GLUTBackend &>(BackendManager::GetBackend());
+            auto &glutBackend = dynamic_cast<GLUTBackend &>(Core::BackendManager::GetBackend());
             glutBackend.addGLUTListener(Naked(*this));
         } catch (std::bad_cast& bad_cast) {
             throw StudioSlabRuntimeBackendInconsistency("while building ImGui module. Expected GLUT backend, "
                                                         "got something else");
         }
 
-        Log::Status() << "Initialized ImGui module (GLUT implementation)" << Log::Flush;
+        Core::Log::Status() << "Initialized ImGui module (GLUT implementation)" << Core::Log::Flush;
     }
 
     ImGuiModuleGLUT::~ImGuiModuleGLUT()  {

@@ -302,13 +302,13 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerMulti::notifyKeyboard(Core::KeyMap key, Core::KeyState state, Core::ModKeys modKeys) -> bool {
-        if( key==Core::Key_LEFT_SHIFT  ) shiftKey = state;
+    auto DBViewerMulti::notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
+        if( key==Graphics::Key_LEFT_SHIFT  ) shiftKey = state;
 
-        if( key==Core::Key_F5 && state==Core::Press ){
+        if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;        }
-        else if( key==Core::Key_ESCAPE && state==Core::Press ){
+        else if( key==Graphics::Key_ESCAPE && state==Graphics::Press ){
             topRow.removeWindow(Naked(fullParticularHistoryDisplay));
             return true;
         }
@@ -316,12 +316,12 @@ namespace Modes::DatabaseViewer {
         return WindowRow::notifyKeyboard(key, state, modKeys);
     }
 
-    auto DBViewerMulti::notifyMouseButton(Core::MouseButton button, Core::KeyState state, Core::ModKeys keys) -> bool {
+    auto DBViewerMulti::notifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) -> bool {
         static Timer timer;
         auto elTime = timer.getElTime_msec();
-        if(button==Core::MouseButton_LEFT){
-            if(state==Core::Press) timer.reset();
-            else if(state==Core::Release && elTime < 200 && keys.Mod_Ctrl) {
+        if(button==Graphics::MouseButton_LEFT){
+            if(state==Graphics::Press) timer.reset();
+            else if(state==Graphics::Release && elTime < 200 && keys.Mod_Ctrl) {
                 loadDataUnderMouse();
                 return true;
             }
@@ -391,7 +391,7 @@ namespace Modes::DatabaseViewer {
     }
 
     auto DBViewerMulti::notifyMouseMotion(int x, int y) -> bool {
-        if( shiftKey == Core::Press ){
+        if( shiftKey == Graphics::Press ){
             loadDataUnderMouse();
             return true;
         };
