@@ -129,9 +129,14 @@ set ( NANOTEX_SRC
 # *********** END NANOTEX ***************
 
 file(GLOB_RECURSE GRAPHIC_BACKENDS_SOURCES "./Backend/*.cpp")
+file(GLOB_RECURSE GRAPHIC_MODULES_SOURCES "./Modules/*.cpp")
 
 add_library(${LIB_GRAPHICS} STATIC
 		${GRAPHIC_BACKENDS_SOURCES}
+		${GRAPHIC_MODULES_SOURCES}
+
+		Backend/SystemWindow.cpp
+		Backend/SystemWindow.h
 
         Types2D.h Types2D.cpp
 		Utils.cpp

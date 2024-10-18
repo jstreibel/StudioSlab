@@ -3,7 +3,7 @@
 //
 
 #include "PlottingRegion2D.h"
-#include "Core/Backend/Modules/Animator/Animator.h"
+#include "Graphics/Modules/Animator/Animator.h"
 
 namespace Slab {
     namespace Graphics {

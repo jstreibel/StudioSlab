@@ -10,13 +10,11 @@
 
 #include "Graphics/SFML/ViewerUtils.h"
 #include "Graphics/Styles/Colors.h"
-#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
+#include "Graphics/Modules/Nuklear/NuklearModule.h"
 
 #include <SFML/Graphics.hpp>
 
-#include "Core/Backend/BackendManager.h"
-
-
+#include "Core/SlabCore.h"
 
 
 #define COMPUTE_AVERAGES false
@@ -58,7 +56,7 @@ namespace Slab::Lost::ThermoOutput {
     {
 
 
-        auto nkModule_abstract = Core::BackendManager::GetModule("Nuklear");
+        auto nkModule_abstract = Core::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Core::NuklearModule*>(nkModule_abstract.get());
         nkContext = nkModule.getContext();
 

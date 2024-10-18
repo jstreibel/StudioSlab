@@ -27,8 +27,7 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Interface/Parameter.h
 		Controller/Interface/InterfaceManager.cpp
 		Controller/Interface/InterfaceManager.h
-		../Graphics/Backend/SystemWindow.cpp
-		../Graphics/Backend/SystemWindow.h
+
 )
 
 target_link_libraries(${STUDIOS_LIB_BASE_NAME}

@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 #include "3rdParty/ImGui.h"
-#include "Core/Backend/Modules/Animator/Animator.h"
+#include "Graphics/Modules/Animator/Animator.h"
 
 #include "Graphics/Plot2D/Plotter.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"

@@ -4,7 +4,7 @@
 
 #include "Plot2DWindow.h"
 
-#include "Core/Backend/Modules/Animator/Animator.h"
+#include "Graphics/Modules/Animator/Animator.h"
 
 
 namespace Slab {

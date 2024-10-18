@@ -7,7 +7,7 @@
 #include "NuklearTests.h"
 #include "Core/Backend/BackendManager.h"
 
-#include "Core/Backend/Modules/Nuklear/NuklearModule.h"
+#include "Graphics/Modules/Nuklear/NuklearModule.h"
 #include "3rdParty/Nuklear/nuklear_glfw_gl4.h"
 
 #define NK_ASSERT(a) assert((a))

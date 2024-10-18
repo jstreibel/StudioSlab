@@ -2,7 +2,7 @@
 // Created by joao on 7/3/24.
 //
 
-#include "Core/Backend/Modules/ImGui/ImGuiModule.h"
+#include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "3rdParty/ImGui.h"
