@@ -109,7 +109,7 @@ namespace Slab::Math::R2toR {
         fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
         fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::NumericFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto out = DataAlloc<R2toC::NumericFunction>("ℱ["+in.get_data_name()+"](ω,k)", N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
@@ -122,7 +122,7 @@ namespace Slab::Math::R2toR {
         fftw_free(data_src);
         fftw_free(data_dft);
 
-        return FFTData{out};
+        return out;
     }
 
     auto moveData(const fftw_complex *in, ComplexArray &out, UInt n, UInt M, Real scaleFactor) {
