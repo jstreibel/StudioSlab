@@ -3,11 +3,13 @@
 //
 
 #include "R2toCNumericFunction.h"
+#include "Math/Data/Data.h"
 
 namespace Slab::Math::R2toC {
 
     NumericFunction::NumericFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly)
-    : x0(x0), y0(y0)
+    : Data(generalName())
+    , x0(x0), y0(y0)
     , Lx(Lx), Ly(Ly)
     , N(N), M(M)
     , data(N*M) {
@@ -41,7 +43,11 @@ namespace Slab::Math::R2toC {
         return data;
     }
 
+    DataType NumericFunction::get_data_type() const {
+            DataType type = "Numeric:RegularGrid:ℝ²↦ℂ:CPU";
 
+            return type;
+    }
 
 
 } // R2toC

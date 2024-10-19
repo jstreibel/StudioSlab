@@ -13,6 +13,9 @@ namespace Slab {
     using Map = std::map<T, U>;
 
     template<typename T, typename U>
+    using HashMap = std::unordered_map<T, U>;
+
+    template<typename T, typename U>
     bool Contains(Map<T,U> map, T key){
         return map.find(key) != map.end();
     }

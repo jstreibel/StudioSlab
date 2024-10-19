@@ -153,9 +153,12 @@ namespace Studios {
     auto
     OscillonPlotting::renderManyOsc() -> Slab::Pointer<OscillonPlotting::Function> {
         PeriodicInX periodic(Slab::Naked(many_osc), L);
-        auto new_rendered = Slab::New<Slab::Math::R2toR::NumericFunction_CPU>(N,                 M,
-                                                                              x_min,             t_min,
-                                                                              L/(Slab::Real)N,   t/(Slab::Real)M);
+        auto new_rendered = Slab::Math::DataAlloc<Slab::Math::R2toR::NumericFunction_CPU>(
+                periodic.symbol() + " [rendered]",
+                N,                 M,
+                x_min,             t_min,
+                L/(Slab::Real)N,   t/(Slab::Real)M);
+
         Slab::Math::R2toR::R2toRFunctionRenderer::renderToDiscrete(periodic, new_rendered);
 
         return new_rendered;

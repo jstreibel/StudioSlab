@@ -83,7 +83,7 @@ namespace Slab::Math::RtoR {
         return "Oₗ(t,x)";
     }
 
-    Str AnalyticOscillon::myName() const {
+    Str AnalyticOscillon::generalName() const {
         return "Oscillon";
     }
 

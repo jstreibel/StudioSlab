@@ -12,7 +12,7 @@ namespace Slab::Math::RtoR {
 
     class DFTInverse {
     public:
-        typedef std::shared_ptr<RtoR::NumericFunction> DFTInverseFunction_ptr;
+        using DFTInverseFunction = RtoR::NumericFunction;
         struct Filter {
             Real kMax = 0.0;
             virtual Complex operator()(const Complex &A, Real k) { return A; };
@@ -29,7 +29,7 @@ namespace Slab::Math::RtoR {
             Complex operator()(const Complex &A, Real k) override;
         };
 
-        static DFTInverseFunction_ptr Compute(const DFTResult &dftResult,
+        static Pointer<DFTInverseFunction> Compute(const DFTResult &dftResult,
                                               Real xMin,
                                               Real L,
                                               Filter *filter=nullptr);

@@ -4,6 +4,7 @@
 
 #include "Histogram.h"
 #include "Core/Tools/Log.h"
+#include "Math/Data/DataAllocator.h"
 
 #define bin(v) int( round ( (v-vMin)/binWidth ) )
 
@@ -47,8 +48,8 @@ namespace Slab::Math::RtoR {
         Compute(F, _nBins);
     }
 
-    RtoR::Function *Histogram::asPDFFunction() const {
-        auto *func = new RtoR::NumericFunction_CPU(bins.size(), vMin, vMax);
+    Pointer<RtoR::Function> Histogram::asPDFFunction() const {
+        auto func = DataAlloc<RtoR::NumericFunction_CPU>("", bins.size(), vMin, vMax);
 
         auto &F = func->getSpace().getHostData();
 

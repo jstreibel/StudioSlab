@@ -118,6 +118,8 @@ namespace Slab::Math {
     R2toR::Function_ptr R2toR::NumericFunction::diff(int n) const {
         auto my_diff = DynamicPointerCast<R2toR::NumericFunction>(Clone());
 
+        my_diff->change_data_name(Map<int, Str>{{0, "𝜕ₓ"}, {1, "𝜕ₜ"}}[n] + this->get_data_name());
+
         for(auto i=0; i<N; ++i)
             for(auto j=0; j<M; ++j)
                 my_diff->At(i, j) = (*this).diff(n, i, j);
@@ -125,8 +127,8 @@ namespace Slab::Math {
         return my_diff;
     }
 
-    Str R2toR::NumericFunction::myName() const {
-        return Base::NumericFunction<Real2D, Real>::myName() + " 2D " + (dev == GPU ? "GPU" : "CPU");
+    Str R2toR::NumericFunction::generalName() const {
+        return Base::NumericFunction<Real2D, Real>::generalName() + " 2D " + (dev == GPU ? "GPU" : "CPU");
     }
 
     bool R2toR::NumericFunction::domainContainsPoint(Real2D x) const {

@@ -13,7 +13,7 @@ namespace Slab::Math::R2toR {
         fix yMin = domain.yMin;
         fix dx = domain.getLx() / N;
         fix dy = domain.getLy() / M;
-        auto discreteFunc = Slab::New<R2toR::NumericFunction_CPU>(N, M, xMin, yMin, dx, dy);
+        auto discreteFunc = DataAlloc<R2toR::NumericFunction_CPU>(function.symbol() + " [rendered]", N, M, xMin, yMin, dx, dy);
 
         return renderToDiscrete(function, discreteFunc, scale);
     }

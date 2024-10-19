@@ -31,7 +31,7 @@ namespace Slab::Math::RtoR {
 
         Str symbol() const override;
 
-        Str myName() const override;
+        Str generalName() const override;
 
     private:
         Real t0, x0, v, u, s1, s2, l, alpha;

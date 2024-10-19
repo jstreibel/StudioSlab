@@ -193,7 +193,7 @@ namespace Slab::Models::KGRtoR {
         fix n = dftData->size();
         fix ht = (t-tMin)/n;
 
-        auto rebuiltHistory = Slab::New<R2toR::NumericFunction_CPU>(N, n, xMin, tMin, hx, ht);
+        auto rebuiltHistory = DataAlloc<R2toR::NumericFunction_CPU>("ℱ⁻¹[dft_data]" , N, n, xMin, tMin, hx, ht);
 
         int _n = 0;
         for(auto &data : *dftData){
@@ -226,7 +226,7 @@ namespace Slab::Models::KGRtoR {
 
         fix dk = 2*M_PI/Δt;
 
-        ωSpace = Slab::New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        ωSpace = DataAlloc<R2toR::NumericFunction_CPU>("ℱₓ[ϕ](ω)", N, m, xMin, 0, dx, dk);
         RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor(t_0/dt);
@@ -316,7 +316,8 @@ namespace Slab::Models::KGRtoR {
         fix __M = (Count)floor(Δt/dt);
         fix M = __M%2==0 ? __M : __M-1;
 
-        auto out = New<R2toR::NumericFunction_CPU>(N, M, xMin, tMin, dx, Δt/(Real)M);
+        auto out = DataAlloc<R2toR::NumericFunction_CPU>(
+                func->get_data_name() + " t∈(" + ToStr(tMin) + "," + ToStr(tMax) + ")", N, M, xMin, tMin, dx, Δt / (Real)M);
 
         fix j₀ = floor(tMin/dt);
 

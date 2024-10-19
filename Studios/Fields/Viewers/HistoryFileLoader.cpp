@@ -59,7 +59,7 @@ namespace Modes {
         auto hx = L/(Real)N;
         auto hy = t/(Real)M;
 
-        auto field = New<Math::R2toR::NumericFunction_CPU>(N, M, xMin, t0, hx, hy);
+        auto field = Math::DataAlloc<Math::R2toR::NumericFunction_CPU>("ϕ(t,x)", N, M, xMin, t0, hx, hy);
 
         if(data.size() != N*M) {
             Log::Error() << "data.size() should yield NxM = " << N << "x" << M << " = " << N*M << " but was " << data.size() << Log::Flush;

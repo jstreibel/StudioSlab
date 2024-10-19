@@ -103,14 +103,14 @@ namespace Slab::Math::R2toR {
         fix h = kg_numeric_config->geth();
 
         if (device_config == CPU)
-            return New<R2toR::NumericFunction_CPU>(N, N, xLeft, xLeft, h, h);
+            return DataAlloc<R2toR::NumericFunction_CPU>("IntegrationData [CPU]", N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
         else if (simulationConfig.dev == GPU)
             return New<R2toR::NumericFunction_GPU>(N, xLeft, h);
 #endif
 
-        throw "Error while instantiating Field: device not recognized.";
+        throw Exception("Error while instantiating Field: device not recognized.");
     }
 
     Base::Solver_ptr Builder::buildEquationSolver() {

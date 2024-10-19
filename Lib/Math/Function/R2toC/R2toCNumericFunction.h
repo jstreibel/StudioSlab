@@ -7,10 +7,11 @@
 
 #include "Math/Function/Function.h"
 #include "Math/VectorSpace/Impl/ComplexSpace.h"
+#include "Math/Data/Data.h"
 
 namespace Slab::Math::R2toC {
 
-    class NumericFunction : public Base::FunctionT<Real2D, Complex>  {
+    class NumericFunction : public Base::FunctionT<Real2D, Complex>, public Data {
         ComplexArray data;
 
     public:
@@ -29,6 +30,8 @@ namespace Slab::Math::R2toC {
 
         auto getData() const -> const ComplexArray&;
         auto getData() -> ComplexArray&;
+
+        DataType get_data_type() const override;
     };
 
     DefinePointers(NumericFunction)

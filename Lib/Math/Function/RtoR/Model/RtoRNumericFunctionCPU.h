@@ -9,7 +9,7 @@
 #include "RtoRNumericFunction.h"
 
 namespace Slab::Math::RtoR {
-class NumericFunction_CPU : public RtoR::NumericFunction {
+    class NumericFunction_CPU : public RtoR::NumericFunction {
     public:
         NumericFunction_CPU(const NumericFunction_CPU& toCopy);
         explicit NumericFunction_CPU(const NumericFunction& toCopy);

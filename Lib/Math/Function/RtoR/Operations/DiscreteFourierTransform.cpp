@@ -6,6 +6,7 @@
 
 #include "Math/Constants.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
+#include "Math/Data/DataAllocator.h"
 
 #include <fftw3.h>
 #include <cstring>
@@ -101,7 +102,7 @@ namespace Slab::Math::RtoR {
         Core::Log::Debug() << "Computing magnitudes for dft result with Δk=" << Δk << Core::Log::Flush;
         fix n = mags.size();
 
-        auto func = Slab::New<NumericFunction_CPU>(n, 0, Δk);
+        auto func = DataAlloc<NumericFunction_CPU>("dft_result", n, 0, Δk);
         auto&space = func->getSpace().getHostData();
         size_t i=0;
         for(auto &pt : mags){

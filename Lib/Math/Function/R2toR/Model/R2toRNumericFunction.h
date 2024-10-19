@@ -59,7 +59,7 @@ namespace Slab::Math::R2toR {
         auto getN()      const -> UInt;
         auto getM()      const -> UInt;
         auto getDomain() const -> Domain;
-        auto myName()    const -> Str override;
+        auto generalName()    const -> Str override;
 
         Real max() const override;
 

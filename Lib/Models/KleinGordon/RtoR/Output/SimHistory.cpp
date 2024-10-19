@@ -47,7 +47,7 @@ namespace Slab::Models::KGRtoR {
 
 
             fix safeTimeResolution = timeResolution + 1;
-            data = New<R2toR::NumericFunction_CPU>(N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+            data = DataAlloc<R2toR::NumericFunction_CPU>("SimulatedHistory", N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
 
             Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
         }

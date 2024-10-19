@@ -185,7 +185,9 @@ namespace Slab::Graphics {
         fix test_M = (Count)floor(Δt/dt);
         fix M = test_M%2==0 ? test_M : test_M-1;
 
-        auto out = New<Math::R2toR::NumericFunction_CPU>(N, M, xMin, t_0, dx, Δt/(Real)M);
+        auto out = DataAlloc<Math::R2toR::NumericFunction_CPU>(
+                func->get_data_name() + " t∈(" + ToStr(t_0) + "," + ToStr(t_f) + ")",
+                N, M, xMin, t_0, dx, Δt/(Real)M);
 
         fix j₀ = floor((t_0-t_min)/dt);
 
@@ -323,7 +325,7 @@ namespace Slab::Graphics {
 
         fix dk = 2*M_PI/Δt;
 
-        ωSpace = New<R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        ωSpace = DataAlloc<R2toR::NumericFunction_CPU>("ω-space", N, m, xMin, 0, dx, dk);
         RtoR::NumericFunction_CPU tempSpace(M, .0, dk*M);
 
         fix j₀ = floor((t_0-t_min)/dt);

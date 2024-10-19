@@ -31,6 +31,7 @@
 
 #include "Graphics/RtoRMonitor.h"
 #include "Models/KleinGordon/RtoR/Output/CenterTimeDFTOutput.h"
+#include "Math/Data/DataAllocator.h"
 
 constexpr const Slab::Count MAX_SNAPSHOTS = 200;
 
@@ -260,7 +261,7 @@ namespace Slab::Models::KGRtoR {
                              : RtoR::NumericFunction::Standard1D_FixedBorder;
 
         if (device_config == CPU)
-            return New<RtoR::NumericFunction_CPU>(N, xLeft, xRight, laplacianType);
+            return Math::DataAlloc<RtoR::NumericFunction_CPU>("IntegrationData", N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA == true
         else if(simulationConfig.dev==GPU)

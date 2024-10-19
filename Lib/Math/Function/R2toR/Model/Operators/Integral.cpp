@@ -18,7 +18,7 @@ namespace Slab::Math::R2toR {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;
-        auto output = New<RtoR::NumericFunction_CPU>(M, t_min, t_max);
+        auto output = DataAlloc<RtoR::NumericFunction_CPU>("∫" + func->get_data_name() + " dy", M, t_min, t_max);
         OUT out_data = output->getSpace().getHostData(true);
 
         for(int j=0; j<M; ++j) {

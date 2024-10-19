@@ -10,6 +10,7 @@
 // #define DONT_FIX_OUTPUT
 #include "FFTWDataMangling.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
+#include "Math/Data/DataAllocator.h"
 
 #define TO_FFTW(a) (reinterpret_cast<fftw_complex*>(a))
 #define TO_STD(a) (reinterpret_cast<Complex*>(a))
@@ -196,7 +197,7 @@ namespace Slab::Math::R2toR {
         fix k_min = -Δk*.5;
 
         fix N_dft = N/2+1;
-        auto space_dft_result = New<R2toC::NumericFunction>(N, M, k_min, t_min, Δk, Δt);
+        auto space_dft_result = DataAlloc<R2toC::NumericFunction>(in.get_data_name(), N, M, k_min, t_min, Δk, Δt);
 
         RtoR::NumericFunction_CPU temp_slice (N, x_min, x_max);
 

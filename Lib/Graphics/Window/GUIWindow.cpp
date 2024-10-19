@@ -9,6 +9,8 @@
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
+#include "Math/SlabMath.h"
+
 
 namespace Slab::Graphics {
 
@@ -71,6 +73,25 @@ namespace Slab::Graphics {
 
             }
         }
+
+        auto allDataEntries = Math::EnumerateAllData();
+        if(!allDataEntries.empty() && ImGui::CollapsingHeader("Data")){
+            if(ImGui::BeginTable("DataTable", 1)) {
+                ImGui::TableSetupColumn("Name");
+                // ImGui::TableSetupColumn("Id");
+                ImGui::TableHeadersRow();
+
+                for (const auto& entry: allDataEntries) {
+                    ImGui::TableNextRow();
+                    ImGui::TableSetColumnIndex(0);
+
+                    ImGui::Text("%s", entry.c_str());
+                }
+
+                ImGui::EndTable();
+            }
+        }
+
 
         auto allInterfaces = Core::CLInterfaceManager::getInstance().getInterfaces();
         if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {

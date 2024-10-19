@@ -72,10 +72,8 @@ set ( NUMERICS_SOURCES
 
         Numerics/Solver/EquationState.h
 		Function/NativeFunction.h
-        Numerics/Data/DataManager.cpp
-        Numerics/Data/DataManager.h
-		Numerics/Data/DataSet.cpp
-		Numerics/Data/DataSet.h
+		Data/DataManager.cpp
+		Data/DataManager.h
         Numerics/Solver/Solver.cpp
         Numerics/Solver/EquationState.cpp
         Numerics/Solver/BoundaryConditions.cpp
@@ -123,6 +121,9 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		SlabMath.h
         GiNaC/GiNaCModule.cpp
         GiNaC/GiNaCModule.h
+		Data/DataAllocator.h
+		Data/Data.cpp
+		Data/Data.h
 )
 
 

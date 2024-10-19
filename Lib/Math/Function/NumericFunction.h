@@ -11,13 +11,16 @@
 #include "Math/VectorSpace/Impl/DiscreteSpaceCPU.h"
 #include "Math/VectorSpace/Impl/DiscreteSpaceGPU.h"
 #include "Core/Tools/Log.h"
+#include "Math/Data/Data.h"
+#include "Utils/Map.h"
 
 namespace Slab::Math::Base {
 
 
     template<class InCategory, class OutCategory>
     class NumericFunction : public FunctionT<InCategory, OutCategory>,
-                            public NumericAlgebra<NumericFunction<InCategory, OutCategory>>
+                            public NumericAlgebra<NumericFunction<InCategory, OutCategory>>,
+                            public Data
     {
         Pointer<DiscreteSpace> space;
 
@@ -30,9 +33,25 @@ namespace Slab::Math::Base {
         typedef FunctionT<InCategory, OutCategory> MyBase;
         typedef std::shared_ptr<NumericFunction<InCategory,OutCategory>> Ptr;
 
-        Str myName() const override { return "general discrete"; }
+        Str generalName() const override { return "general discrete"; }
 
-        NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), dev(dev) {
+        DataType get_data_type() const override {
+            DataType type = "Numeric:RegularGrid";
+
+            if(space == nullptr) return type;
+
+            fix d = space->getMetaData().getNDim();
+            ;
+
+            type += ":ℝ" + Map<UInt, Str>{{1, ""}, {2,"²"}, {3, "³"}}[d-1] +"↦ℝ";
+
+            if(space->dataOnGPU()) type += ":GPU";
+            else                   type += ":CPU";
+
+            return type;
+        }
+
+        NumericFunction(DimensionMetaData dim, Device dev) : MyBase(nullptr, true), Data(generalName()), dev(dev) {
             switch(dev){
                 case Device::CPU:
                     space = New<DiscreteSpaceCPU>(dim);

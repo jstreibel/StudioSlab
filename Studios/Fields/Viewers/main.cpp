@@ -58,10 +58,6 @@ public:
         auto function = Modes::HistoryFileLoader::Load(*filename);
         auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
 
-        auto &math_module = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
-        math_module.RegisterData(*filename, Slab::New<Math::NumericR2toRDataSet>(function));
-        math_module.RegisterData(*filename + " [time-derivative]", Slab::New<Math::NumericR2toRDataSet>(ddt_function));
-
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend.setSystemWindowTitle(*filename);
 

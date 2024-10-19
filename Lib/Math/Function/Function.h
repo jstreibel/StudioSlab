@@ -84,7 +84,7 @@ namespace Slab::Math::Base {
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
         virtual Str symbol() const { return "f(x)"; }
-        virtual Str myName() const { return Common::getClassName(this); }
+        virtual Str generalName() const { return Common::getClassName(this); }
 
         // RENDERING
         struct RenderingOptions {
@@ -126,12 +126,12 @@ namespace Slab::Math::Base {
 
         virtual Math::PointSet_ptr
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
-            throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
+            throw Str("Function '") + generalName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
         virtual bool
         renderToNumericFunction(NumericFunction<InputCategory, OutputCategory> *toFunc) const {
-            throw Str("Function '") + myName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
+            throw Str("Function '") + generalName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };
 
         DefinePointers(FunctionT)

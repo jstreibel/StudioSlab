@@ -9,7 +9,7 @@
 
 #include "R2toRNumericFunction.h"
 #include "R2toRFunction.h"
-
+#include "Math/Data/DataAllocator.h"
 
 
 namespace Slab::Math::R2toR {
@@ -44,6 +44,7 @@ namespace Slab::Math::R2toR {
         Apply(const FuncBase &func, DiscrBase &out)
         const -> DiscrBase & override;
     };
+
 }
 
 

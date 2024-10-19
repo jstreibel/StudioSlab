@@ -4,15 +4,17 @@
 
 #include "FromR2toRNumeric.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
+#include "Math/Data/DataAllocator.h"
 
 namespace Slab::Math::RtoR {
-    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<const R2toR::NumericFunction> func, Index j, NumericFunction::LaplacianType laplacian_type) {
+    Pointer<RtoR::NumericFunction> FromR2toR(Pointer<const R2toR::NumericFunction> func, Index j,
+                                             NumericFunction::LaplacianType laplacian_type) {
         if(j > func->getM()-1) return nullptr;
 
         fix x_min = func->getDomain().xMin;
         fix x_max = func->getDomain().xMax;
         fix N = func->getN();
-        auto slice = New<RtoR::NumericFunction_CPU>(N, x_min, x_max, laplacian_type);
+        auto slice = DataAlloc<RtoR::NumericFunction_CPU>(func->get_data_name() + " [slice@j=" + ToStr(j) + "]", N, x_min, x_max, laplacian_type);
 
         OUT slice_data = slice->getSpace().getHostData();
         fix in_data = &func->At(0, j);

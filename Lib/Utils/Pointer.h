@@ -22,12 +22,12 @@ namespace Slab {
 
     template<typename Derived>
     inline auto DynamicPointerCast(auto base_pointer) {
-        return std::dynamic_pointer_cast<Derived>(base_pointer);;
+        return std::dynamic_pointer_cast<Derived>(base_pointer);
     }
 
     template<typename Derived>
     inline auto ConstPointerCast(auto base_pointer) {
-        return std::const_pointer_cast<Derived>(base_pointer);;
+        return std::const_pointer_cast<Derived>(base_pointer);
     }
 
     template<typename T, typename... Args>

@@ -4,14 +4,11 @@
 
 #include "SnapshotFileLoader.h"
 
-#include "Utils/Exception.h"
-#include "Utils/PythonUtils.h"
-#include "Core/Tools/Log.h"
 #include "Math/Constants.h"
+#include "Math/Data/DataAllocator.h"
 
 
 #include <fstream>
-#include <iomanip>
 
 namespace Modes {
 
@@ -40,7 +37,7 @@ namespace Modes {
             auto n = dataArr.size();
             auto Δω = Real(n)*dω;
             Core::Log::Debug() << "Loaded time.dft.snapshot of Δω=" << Δω << Log::Flush;
-            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, 0, Δω);
+            snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, 0, Δω);
             snapshotDataType = SnapshotData::TimeDFTSnapshot;
         } else if(filename.rfind(".dft.snapshot")) {
             auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
@@ -57,14 +54,14 @@ namespace Modes {
             xMax = Δk*(Real)dataArr.size();
 
 
-            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);
             snapshotDataType = SnapshotData::SpaceDFTSnapshot;
         } else if(filename.rfind(".snapshot")) {
             auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
             auto xMin = std::strtod(metaData["xMin"].first.c_str(), &endPtr);
             auto xMax = xMin+L;
 
-            snapshotField = New<Math::RtoR::NumericFunction_CPU>(dataArr, xMin, xMax);
+            snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);
             snapshotDataType = SnapshotData::SpaceSnapshot;
         } else {
             Log::Error() << "Unknown format type " << filename << Log::Flush;

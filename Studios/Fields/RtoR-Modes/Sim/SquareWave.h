@@ -25,7 +25,7 @@ namespace Modes {
 
         Str symbol() const override;
 
-        Str myName() const override;
+        Str generalName() const override;
     };
 
 } // Modes

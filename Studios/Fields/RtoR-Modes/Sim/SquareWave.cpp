@@ -24,7 +24,7 @@ namespace Modes {
         return "Sqₜ(x)";
     }
 
-    Str SquareWave::myName() const {
+    Str SquareWave::generalName() const {
         return "Square wave";
     }
 

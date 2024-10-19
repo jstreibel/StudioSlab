@@ -10,7 +10,7 @@
 #define REAL_PART 0
 
 namespace Slab::Math::R2toR {
-    std::shared_ptr<R2toR::NumericFunction> FourierTransform::Compute(const R2toR::NumericFunction &inFunc) {
+    Pointer<R2toR::NumericFunction> FourierTransform::Compute(const R2toR::NumericFunction &inFunc) {
         if(inFunc.getSpace().dataOnGPU()) throw "DFT of GPU data is not implemented";
 
         fix N = inFunc.getN();
@@ -20,7 +20,9 @@ namespace Slab::Math::R2toR {
         fix hy = inFunc.getSpace().getMetaData().geth(1);
         fix outN = N;
         fix outM = M/2 + 1;
-        OUT fourierTransformedField = * new R2toR::NumericFunction_CPU(N, M, D.xMin, D.yMin, hx, hy);
+        auto fourierTransformedField =
+                DataAlloc<R2toR::NumericFunction_CPU>(Str("ℱ[")+inFunc.get_data_name()+"]",
+                                                        N, M, D.xMin, D.yMin, hx, hy);
 
 
         IN hostData = &inFunc.getSpace().getHostData()[0];
@@ -38,7 +40,7 @@ namespace Slab::Math::R2toR {
         for (auto k=0; k<outN; ++k) {
             for (auto l = 0; l < outM; l++) {
                 fix val = out[k+l*outN];
-                fourierTransformedField.At(k, l) = val[REAL_PART];
+                fourierTransformedField->At(k, l) = val[REAL_PART];
             }
         }
 
@@ -47,6 +49,6 @@ namespace Slab::Math::R2toR {
         fftw_free(in);
         fftw_free(out);
 
-        return std::shared_ptr<R2toR::NumericFunction>(&fourierTransformedField);
+        return fourierTransformedField;
     }
 } // R2toR

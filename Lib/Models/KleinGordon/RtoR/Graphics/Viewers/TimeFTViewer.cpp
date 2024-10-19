@@ -66,7 +66,7 @@ namespace Slab::Models::KGRtoR {
 
         fix dk = 2 * M_PI / δt;
 
-        auto ωSpace = New<Math::R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
+        auto ωSpace_temp = New<Math::R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
         Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(Real)M);
 
         fix j₀ = floor((t_0-t_min)/dt);
@@ -84,13 +84,13 @@ namespace Slab::Models::KGRtoR {
                 fix A = pt.y;
                 fix ω = pt.x;
 
-                ωSpace->At(i, k) = A;
+                ωSpace_temp->At(i, k) = A;
             }
         }
 
         Str timeInterval = ToStr(t_0) + " ≤ t ≤ " + ToStr(t_f);
         using Integral = R2toR::Integral;
-        auto avg_time_dft = Integral({Integral::Config::dx, true})[ωSpace];
+        auto avg_time_dft = Integral({Integral::Config::dx, true})[ωSpace_temp];
 
         timeDFTAverageArtist->setFunction(avg_time_dft);
         timeDFTAverageArtist->setLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);

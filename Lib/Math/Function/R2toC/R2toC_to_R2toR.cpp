@@ -7,6 +7,23 @@
 
 namespace Slab::Math {
 
+    inline Str applySymbol(Str to_symbol, Math::R2toC_to_R2toR_Mode mode) {
+        switch (mode) {
+            case Phase:
+                return "arg(" + to_symbol + ")";
+            case Magnitude:
+                return "|"+ to_symbol + "|";
+            case PowerSpectrum:
+                return "|"+ to_symbol + "|²";
+            case RealPart:
+                return "ℜ{" + to_symbol + "}";
+            case ImaginaryPart:
+                return "ℑ{" + to_symbol + "}";
+        }
+
+        return to_symbol;
+    }
+
     R2toR::NumericFunction_ptr
     Convert(const R2toC::NumericFunction_constptr &in, Math::R2toC_to_R2toR_Mode mode) {
         fix N = in->N,
@@ -16,7 +33,9 @@ namespace Slab::Math {
         fix xMin = in->x0;
         fix yMin = in->y0;
 
-        auto out = Slab::New<R2toR::NumericFunction_CPU>(N, M, xMin, yMin, Lx / N, Ly / M);
+
+        auto out = DataAlloc<R2toR::NumericFunction_CPU>(applySymbol(in->get_data_name(), mode),
+                                                         N, M, xMin, yMin, Lx / N, Ly / M);
 
         switch (mode) {
             case Phase:

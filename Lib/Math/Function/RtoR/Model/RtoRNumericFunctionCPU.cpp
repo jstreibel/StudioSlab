@@ -8,6 +8,7 @@
 #include "Math/Function/RtoR/Model/Operators/DerivativesCPU.h"
 
 #include "Utils/OMPUtils.h"
+#include "Math/Data/DataAllocator.h"
 
 // Created by joao on 17/09/2019.
 
@@ -16,7 +17,6 @@ namespace Slab::Math::RtoR {
 
 #define PERIODIC_BORDER true
 #define FIXED_BORDER false
-
 
     NumericFunction_CPU::NumericFunction_CPU(const NumericFunction_CPU &toCopy)
             : NumericFunction(toCopy.N, toCopy.xMin, toCopy.xMax, Device::CPU, toCopy.laplacianType) {
@@ -71,11 +71,11 @@ namespace Slab::Math::RtoR {
     }
 
     Function_ptr NumericFunction_CPU::Clone() const {
-        return New <NumericFunction_CPU> (*this);
+        return DataAlloc<NumericFunction_CPU> (this->get_data_name() + " [clone]", *this);
     }
 
     Pointer<Base::NumericFunction <Real, Real>> NumericFunction_CPU::CloneWithSize(UInt outN) const {
-        auto newFunc = New<NumericFunction_CPU>(outN, xMin, xMax, laplacianType);
+        auto newFunc = DataAlloc<NumericFunction_CPU>(this->get_data_name() + "[decimated " + ToStr(outN) + "/" + ToStr(this->N) + " clone]", outN, xMin, xMax, laplacianType);
 
         const RealArray &X = getSpace().getHostData();
         const Real inc_d = N / Real(outN);

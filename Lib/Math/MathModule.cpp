@@ -4,22 +4,24 @@
 
 #include "MathModule.h"
 
-#include "Numerics/Data/DataManager.h"
+#include <utility>
+
+#include "Data/DataManager.h"
 
 namespace Slab::Math {
     MathModule::MathModule() : Core::Module("Math") {
 
     }
 
-    void MathModule::RegisterData(const DataSetName &name, Pointer<DataSet> dataSet) {
-        DataManager::AddData(name, dataSet);
+    void MathModule::RegisterData(const DataName &name, Pointer<Data> data) {
+        DataManager::RegisterData(name, data);
     }
 
-    DataSetEntry MathModule::GetData(const DataSetName& name) {
+    DataWrap MathModule::GetData(const DataName& name) {
         return DataManager::GetData(name);
     }
 
-    Vector<DataSetName> MathModule::GetDataEntries() {
+    Vector<DataName> MathModule::GetDataEntries() {
         return DataManager::GetAllDataEntries();
     }
 
