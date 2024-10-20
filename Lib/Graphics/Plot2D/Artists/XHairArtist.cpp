@@ -34,9 +34,6 @@ namespace Slab::Graphics {
         XHair.addPoint({XHairLocation.x, region_rect.yMin});
         XHair.addPoint({XHairLocation.x, region_rect.yMax});
 
-        // glMatrixMode(GL_MODELVIEW);
-        // glLoadIdentity();
-
         OpenGL::Legacy::SetupOrtho(region_rect);
 
         return Graphics::OpenGL::Legacy::RenderPointSet(Slab::Naked(XHair), currStyle->XHairStyle);

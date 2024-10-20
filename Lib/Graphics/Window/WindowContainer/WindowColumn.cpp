@@ -6,6 +6,7 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/Window/WindowStyles.h"
 
 #include <algorithm>
 #include <numeric>
@@ -87,12 +88,17 @@ namespace Slab::Graphics {
             y += computedHeights[i];
         }
 
+        for (int i = 0; i < m; ++i) {
+            computed_yPositions[i] += Graphics::tiling_gap;
+            computedHeights[i] -= Graphics::tiling_gap;
+        }
+
         auto i = 0;
         for (auto &win: windows) {
-            win->setx(getx());
+            win->setx(getx() + Graphics::tiling_gap);
             win->sety(computed_yPositions[i]);
 
-            win->notifyReshape(getw(), computedHeights[i]);
+            win->notifyReshape(getw()-Graphics::tiling_gap, computedHeights[i]);
 
             i++;
         }

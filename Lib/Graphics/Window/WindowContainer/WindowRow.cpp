@@ -6,6 +6,7 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Core/Backend/BackendManager.h"
+#include "Graphics/Window/WindowStyles.h"
 
 #include <algorithm>
 #include <numeric>
@@ -93,7 +94,7 @@ namespace Slab::Graphics {
         if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relWidth = widths[i];
-                auto width = geth() * relWidth;
+                auto width = geth() * relWidth - 2*Graphics::tiling_gap;
                 computedWidths[i] = (int) width;
             }
         } else if (freeWidths != m) {
@@ -114,14 +115,19 @@ namespace Slab::Graphics {
             x += computedWidths[i];
         }
 
+        for (int i = 0; i < m; ++i) {
+            computed_xPositions[i] += Graphics::tiling_gap;
+            computedWidths[i]      -= Graphics::tiling_gap;
+        }
+
         auto i = 0;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 
             win.setx(computed_xPositions[i]);
-            win.sety(gety());
+            win.sety(gety() + Graphics::tiling_gap);
 
-            win.notifyReshape(computedWidths[i], geth());
+            win.notifyReshape(computedWidths[i], geth()-Graphics::tiling_gap);
 
             i++;
         }

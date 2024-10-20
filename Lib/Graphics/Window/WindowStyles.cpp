@@ -5,8 +5,7 @@
 #include "WindowStyles.h"
 
 namespace Slab::Graphics {
-    int hPadding = 3;
-    int vPadding = 3;
+    int tiling_gap = 3;
 
     int title_bar_height = 20;
     int border_size = 3;

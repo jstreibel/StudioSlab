@@ -8,8 +8,7 @@
 #include "Graphics/Styles/Colors.h"
 
 namespace Slab::Graphics {
-    extern int hPadding;
-    extern int vPadding;
+    extern int tiling_gap;
 
     extern int title_bar_height;
     extern int border_size;
