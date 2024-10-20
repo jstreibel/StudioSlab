@@ -84,8 +84,8 @@ namespace Slab::Graphics {
             {
                 glVertex2d(x, y);
                 glVertex2d(x+w, y);
-                glVertex2d(x+w, y-title_bar_height);
-                glVertex2d(x, y-title_bar_height);
+                glVertex2d(x+w, y+title_bar_height);
+                glVertex2d(x, y+title_bar_height);
             }
             glEnd();
         }

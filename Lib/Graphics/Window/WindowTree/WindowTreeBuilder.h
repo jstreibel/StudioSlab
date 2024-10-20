@@ -22,7 +22,7 @@ namespace Slab::Graphics {
         WindowTreeBuilder() = delete;
 
     public:
-        WindowTreeBuilder(int x, int y, int w, int h);
+        WindowTreeBuilder(RectI window_rect = Graphics::default_window_rect);
 
         enum Location {
             Above = Vertical, Right = Horizontal

@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(Int flags) : SlabWindow(100, 100, 800, 480, flags) {    }
+    WindowPanel::WindowPanel(Int flags) : SlabWindow(Graphics::default_window_rect, flags) {    }
 
     void WindowPanel::addWindow(const Pointer<SlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {

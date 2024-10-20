@@ -19,7 +19,7 @@ namespace Slab::Graphics {
     using Core::Log;
 
     Graphics::BaseMonitor::BaseMonitor(Real max_t, Count max_steps, const Str &channelName, int stepsBetweenDraws)
-            : Socket(channelName, stepsBetweenDraws), WindowPanel(HasMainMenu), max_t(max_t), max_steps(max_steps) {
+            : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_t(max_t), max_steps(max_steps) {
         addWindow(Slab::Naked(guiWindow));
         setColumnRelativeWidth(0, 0.1);
 

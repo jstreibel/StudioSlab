@@ -10,7 +10,7 @@ namespace Slab::Graphics {
     NodeWindow::NodeWindow(const SlabWindow &window) : SlabWindow(window) {
     }
 
-    NodeWindow::NodeWindow(int x, int y, int w, int h) : SlabWindow(x, y, w, h) {
+    NodeWindow::NodeWindow(RectI window_rect) : SlabWindow(window_rect) {
 
     }
 

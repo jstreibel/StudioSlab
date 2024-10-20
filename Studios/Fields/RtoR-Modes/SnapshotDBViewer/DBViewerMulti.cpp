@@ -24,7 +24,7 @@ namespace Modes::DatabaseViewer {
     #define z_order(z) (z)
 
     DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
-    : WindowRow(HasMainMenu)
+    : WindowRow()
     , guiWindow()
     , allDataDisplay("All data")
     , fullParticularHistoryDisplay("Particular data")

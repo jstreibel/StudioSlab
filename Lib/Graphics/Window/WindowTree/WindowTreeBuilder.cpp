@@ -7,9 +7,9 @@
 
 namespace Slab::Graphics {
 
-    WindowTreeBuilder::WindowTreeBuilder(int x, int y, int w, int h)
-            : root(new NodeWindow(x, y, w, h)), shape(x, y, w, h),
-              currentNode(new NodeWindow(x, y, w, h)) {
+    WindowTreeBuilder::WindowTreeBuilder(RectI window_rect)
+            : root(new NodeWindow(window_rect)), shape(window_rect),
+              currentNode(new NodeWindow(window_rect)) {
         root->addSubWindow(currentNode);
     }
 

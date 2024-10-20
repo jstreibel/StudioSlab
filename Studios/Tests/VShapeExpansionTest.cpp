@@ -10,7 +10,7 @@
 namespace Tests {
     using namespace Slab;
 
-    VShapeExpansionTest::VShapeExpansionTest() : Graphics::WindowRow(HasMainMenu) {
+    VShapeExpansionTest::VShapeExpansionTest() : Graphics::WindowRow() {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 43, 1.0);
         derivs = potential->diff(0);
 

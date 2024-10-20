@@ -10,6 +10,8 @@ namespace Slab::Graphics {
     int title_bar_height = 20;
     int border_size = 3;
 
+    RectI default_window_rect(200, 1000, 200, 750);
+
     int menuHeight = 42;
 
     // Color clearColor = {0.1, 0.1, 0.15, 1};

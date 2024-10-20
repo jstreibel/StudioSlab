@@ -14,8 +14,8 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
-    SlabWindow::SlabWindow(int x, int y, int w, int h, Int flags)
-            : flags(flags), windowRect(x, x + w, y, y + h) {}
+    SlabWindow::SlabWindow(RectI win_rect, Int flags)
+            : flags(flags), windowRect(win_rect) {}
 
     SlabWindow::~SlabWindow() = default;
 
@@ -143,8 +143,7 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindow::wantsFullscreen() const {
-        // return flags & WantsFullscreen;
-        return true;
+        return flags & WantsFullscreen;
     }
 
     void SlabWindow::setupParentSystemWindowHeight(Int h) {

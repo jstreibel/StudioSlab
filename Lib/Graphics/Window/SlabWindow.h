@@ -10,6 +10,7 @@
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/KeyMap.h"
 #include "Graphics/Types2D.h"
+#include "Graphics/Window/WindowStyles.h"
 
 #include <vector>
 #include <memory>
@@ -44,7 +45,7 @@ namespace Slab::Graphics {
         RectI windowRect;
 
     public:
-        explicit SlabWindow(int x = 100, int y = 100, int w = 800, int h = 480, Int flags=0x0);
+        explicit SlabWindow(RectI win_rect=Graphics::default_window_rect, Int flags=0x0);
         virtual ~SlabWindow();
 
         Int getFlags() const;

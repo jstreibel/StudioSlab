@@ -11,7 +11,7 @@
 namespace Slab::Graphics {
 
     MainViewer::MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction)
-    : Graphics::WindowRow(HasMainMenu)
+    : Graphics::WindowRow()
     , base_function(std::move(baseFunction)) {
 
         addWindow(gui_window, Right, 0.175);
