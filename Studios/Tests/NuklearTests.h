@@ -6,11 +6,11 @@
 #define STUDIOSLAB_NUKLEARTESTS_H
 
 #include "Graphics/Backend/SFML/SFMLListener.h"
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 
 namespace Tests {
 
-    class NuklearTests : public Slab::Graphics::GUIEventListener{
+    class NuklearTests : public Slab::Graphics::SystemWindowEventListener{
     public:
         NuklearTests();
 

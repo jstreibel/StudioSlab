@@ -69,7 +69,7 @@ namespace Slab {
         if(!unaffected)
         {
             auto currStyle = PlotThemeManager::GetCurrent();
-            auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getViewport());
+            auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getEffectiveViewport());
             auto Δx = (Real) currStyle->hAxisPaddingInPixels * pix.x;
             auto Δy = (Real) currStyle->hAxisPaddingInPixels * pix.y;
 

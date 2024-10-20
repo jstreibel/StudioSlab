@@ -9,12 +9,12 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "PlottingTheme.h"
 
 namespace Slab::Graphics {
 
-    class PlotThemeManager : public Singleton<PlotThemeManager>, public GUIEventListener {
+    class PlotThemeManager : public Singleton<PlotThemeManager>, public SystemWindowEventListener {
     protected:
         friend Singleton<PlotThemeManager>;
 

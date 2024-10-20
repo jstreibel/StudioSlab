@@ -14,18 +14,18 @@
 
 namespace Slab::Graphics {
 
-    class GUIEventListener {
-        Vector<Volatile<GUIEventListener>> delegateResponders;
+    class SystemWindowEventListener {
+        Vector<Volatile<SystemWindowEventListener>> delegateResponders;
 
     protected:
-        void addResponder(Volatile<GUIEventListener> responder);
-        void removeResponder(Pointer<GUIEventListener> responder);
+        void addResponder(Volatile<SystemWindowEventListener> responder);
+        void removeResponder(Pointer<SystemWindowEventListener> responder);
         bool hasResponders() const;
 
     public:
 
-        GUIEventListener();
-        virtual ~GUIEventListener() = default;
+        SystemWindowEventListener();
+        virtual ~SystemWindowEventListener() = default;
 
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
 
@@ -35,13 +35,13 @@ namespace Slab::Graphics {
 
         virtual bool notifyFilesDropped(StrVector paths);
 
-        virtual bool notifyScreenReshape(int w, int h);
+        virtual bool notifySystemWindowReshape(int w, int h);
 
         virtual bool notifyRender();
 
     };
 
-    DefinePointers(GUIEventListener)
+    DefinePointers(SystemWindowEventListener)
 }
 
 

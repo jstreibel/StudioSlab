@@ -2,25 +2,25 @@
 // Created by joao on 02/09/2021.
 //
 
-#include "GUIEventListener.h"
+#include "SystemWindowEventListener.h"
 #include "Utils/ReferenceIterator.h"
 
 
 namespace Slab::Graphics {
 
-    GUIEventListener::GUIEventListener() = default;
+    SystemWindowEventListener::SystemWindowEventListener() = default;
 
-    void GUIEventListener::addResponder(Volatile<GUIEventListener> responder) {
+    void SystemWindowEventListener::addResponder(Volatile<SystemWindowEventListener> responder) {
         assert(responder.lock().get() != this);
 
         delegateResponders.emplace_back(responder);
     }
 
-    bool GUIEventListener::hasResponders() const {
+    bool SystemWindowEventListener::hasResponders() const {
         return !delegateResponders.empty();
     }
 
-    void GUIEventListener::removeResponder(Pointer<GUIEventListener> to_remove) {
+    void SystemWindowEventListener::removeResponder(Pointer<SystemWindowEventListener> to_remove) {
         auto responder = delegateResponders.begin();
 
         while(responder != delegateResponders.end()) {
@@ -33,26 +33,26 @@ namespace Slab::Graphics {
     }
 
 
-    bool GUIEventListener::notifyMouseMotion(int x, int y) {
+    bool SystemWindowEventListener::notifyMouseMotion(int x, int y) {
         return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y));
     }
 
-    bool GUIEventListener::notifyScreenReshape(int w, int h) {
-        return IterateReferences(delegateResponders, FuncRun(notifyScreenReshape, w, h));
+    bool SystemWindowEventListener::notifySystemWindowReshape(int w, int h) {
+        return IterateReferences(delegateResponders, FuncRun(notifySystemWindowReshape, w, h));
     }
 
-    bool GUIEventListener::notifyRender(){
+    bool SystemWindowEventListener::notifyRender(){
         return IterateReferences(delegateResponders, FuncRun(notifyRender));
     }
 
-    bool GUIEventListener::
+    bool SystemWindowEventListener::
     notifyKeyboard(KeyMap key,
                    KeyState state,
                    ModKeys modKeys){
         return IterateReferences(delegateResponders, FuncRun(notifyKeyboard, key, state, modKeys));
     }
 
-    bool GUIEventListener::
+    bool SystemWindowEventListener::
     notifyMouseButton(MouseButton button,
                       KeyState state,
                       ModKeys mods) {
@@ -60,12 +60,12 @@ namespace Slab::Graphics {
     }
 
 
-    bool GUIEventListener::
+    bool SystemWindowEventListener::
     notifyMouseWheel(double dx, double dy) {
         return IterateReferences(delegateResponders, FuncRun(notifyMouseWheel, dx, dy));
     }
 
-    bool GUIEventListener::
+    bool SystemWindowEventListener::
     notifyFilesDropped(StrVector paths) {
         return IterateReferences(delegateResponders, FuncRun(notifyFilesDropped, paths));
     }

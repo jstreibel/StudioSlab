@@ -8,17 +8,17 @@
 #include <vector>
 #include <utility>
 
-#include "GUIEventListener.h"
+#include "SystemWindowEventListener.h"
 
 
 namespace Slab::Graphics {
 
     class EventTranslator {
     protected:
-        Vector<Volatile<GUIEventListener>> guiListeners;
+        Vector<Volatile<SystemWindowEventListener>> guiListeners;
 
     public:
-        bool addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener);
+        bool addGUIEventListener(const Volatile<SystemWindowEventListener> &guiEventListener);
         void clear();
 
     };

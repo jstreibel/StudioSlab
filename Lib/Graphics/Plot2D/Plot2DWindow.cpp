@@ -151,7 +151,7 @@ namespace Slab::Graphics {
         }
 
         if (showInterface) {
-            auto vp = getViewport();
+            auto vp = getEffectiveViewport();
             auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
@@ -200,7 +200,7 @@ namespace Slab::Graphics {
     void Graphics::Plot2DWindow::setupOrtho() const {
         OpenGL::Legacy::SetupOrtho(region.getRect());
 
-        auto vp = getViewport();
+        auto vp = getEffectiveViewport();
         auto currStyle = PlotThemeManager::GetCurrent();
         currStyle->labelsWriter->reshape(vp.width(), vp.height());
         currStyle->ticksWriter->reshape(vp.width(), vp.height());

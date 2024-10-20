@@ -66,7 +66,7 @@ namespace Slab::Graphics {
 
         static bool GetMouseButtonState(GLFWwindow *window, int button);
 
-        auto addEventListener(const Volatile<GUIEventListener> &listener) -> bool override;
+        auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool override;
 
         auto getMouseState() const -> MouseState override;
 

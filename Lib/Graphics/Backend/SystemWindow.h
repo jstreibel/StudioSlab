@@ -5,17 +5,19 @@
 #ifndef STUDIOSLAB_SYSTEMWINDOW_H
 #define STUDIOSLAB_SYSTEMWINDOW_H
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
+#include "Graphics/Window/Window.h"
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     class SystemWindow {
-        // Core::GUIEventListener
+        Vector<Pointer<SystemWindowEventListener>> eventListeners;
+        Vector<Pointer<Window>> slab_windows;
 
     public:
-        virtual void addGUIEventListener();
+        virtual void addEventListener(Pointer<SystemWindowEventListener>);
 
-        virtual void addWindow();
+        virtual void addSlabWindow(Pointer<Window>);
     };
 
 } // Slab::Core

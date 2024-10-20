@@ -108,13 +108,13 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return GUIEventListener::notifyMouseMotion(x, y);
+        return SystemWindowEventListener::notifyMouseMotion(x, y);
     }
 
     bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
-        return GUIEventListener::notifyMouseWheel(dx, dy);
+        return SystemWindowEventListener::notifyMouseWheel(dx, dy);
     }
 
     auto Scene3DWindow::getCamera() const -> const Camera & {
@@ -133,7 +133,7 @@ namespace Slab::Graphics {
         // auto popupName = title + Str(" window popup");
 
         if (showInterface) {
-            auto vp = getViewport();
+            auto vp = getEffectiveViewport();
             auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
@@ -166,7 +166,7 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return GUIEventListener::notifyKeyboard(key, state, modKeys);
+        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
     }
 
 

@@ -10,7 +10,7 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Types2D.h"
 
@@ -20,7 +20,9 @@
 
 namespace Slab::Graphics {
 
-    class Window : public GUIEventListener {
+    class Window : public SystemWindowEventListener {
+        friend class WindowManager;
+
     public:
         typedef std::shared_ptr<Window> Ptr;
         enum Flags {
@@ -57,18 +59,16 @@ namespace Slab::Graphics {
 
         virtual void draw();
 
-        virtual void notifyReshape(int w, int h);
-
-        bool notifyScreenReshape(int newScreenWidth, int newScreenHeight) final;
-
+        bool notifySystemWindowReshape(int newScreenWidth, int newScreenHeight) final;
         bool notifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;
-
         bool notifyRender() override;
 
-        void setDecorate(bool _decorate);
+        void setDecorate(bool);
 
-        void setClear(bool _clear);
+        virtual void notifyReshape(int w, int h);
+
+        void setClear(bool);
         auto getBGColor() const -> const Color&;
 
         auto isMouseIn() const -> bool;
@@ -78,9 +78,9 @@ namespace Slab::Graphics {
         auto getMouseWindowCoord() const -> Point2D;
         auto getMouseViewportCoord() const -> Point2D;
 
-        RectI getViewport() const;
+        RectI getEffectiveViewport() const;
 
-        const RectI &getWindowRect() const { return windowRect; };
+        const RectI &getTotalWindowRect() const { return windowRect; };
 
         inline auto getx() const -> int  { return windowRect.xMin; }
         inline auto gety() const -> int  { return windowRect.yMin; }

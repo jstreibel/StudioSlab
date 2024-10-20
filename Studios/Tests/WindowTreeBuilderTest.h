@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOWTREEBUILDERTEST_H
 
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 

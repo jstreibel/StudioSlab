@@ -44,7 +44,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     bool OpenGL::Overlay::draw(const Plot2DWindow &graph2D) {
-        auto vp = graph2D.getViewport();
+        auto vp = graph2D.getEffectiveViewport();
 
         shader.setUniform("vpWidth", vp.width());
         shader.setUniform("vpHeight", vp.height());

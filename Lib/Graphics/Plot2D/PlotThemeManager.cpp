@@ -127,7 +127,7 @@ namespace Slab::Graphics {
         }
 
 
-        return GUIEventListener::notifyRender();
+        return SystemWindowEventListener::notifyRender();
     }
 
     bool PlotThemeManager::SetTheme(const Str& theme) {

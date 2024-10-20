@@ -8,7 +8,7 @@ namespace Slab::Graphics {
     int hPadding = 3;
     int vPadding = 3;
 
-    int menuHeight = 40;
+    int menuHeight = 42;
 
     // Color clearColor = {0.1, 0.1, 0.15, 1};
     // Color clearColor = {0.9, 0.9, 0.85, 1};

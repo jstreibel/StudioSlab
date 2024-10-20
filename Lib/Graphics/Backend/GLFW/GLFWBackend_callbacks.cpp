@@ -163,11 +163,11 @@ namespace Slab::Graphics {
         else listeners.emplace_back(glfwListener);
     }
 
-    bool GLFWBackend::addEventListener(const Volatile<GUIEventListener> &listener) {
+    bool GLFWBackend::addEventListener(const Volatile<SystemWindowEventListener> &listener) {
         int w, h;
         glfwGetWindowSize(systemWindow, &w, &h);
 
-        listener.lock()->notifyScreenReshape(w, h);
+        listener.lock()->notifySystemWindowReshape(w, h);
 
         return GraphicBackend::addEventListener(listener);
     }

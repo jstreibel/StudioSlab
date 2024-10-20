@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_ZOOMPANROTATE_H
 #define V_SHAPE_ZOOMPANROTATE_H
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 
 #include "Graphics/OpenGL/OpenGL.h"
 #include <GL/glut.h>

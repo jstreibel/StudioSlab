@@ -16,7 +16,7 @@ namespace Slab::Graphics {
         void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
 
     protected:
-        Vector<Pointer<GUIEventListener>> thingsImProprietary;
+        Vector<Pointer<SystemWindowEventListener>> thingsImProprietary;
         Pointer<EventTranslator> eventTranslator;
         GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator);
 
@@ -34,8 +34,8 @@ namespace Slab::Graphics {
     public:
         ~GraphicBackend() override;
 
-        virtual auto addEventListener(const Volatile<GUIEventListener> &listener) -> bool;
-        virtual auto addAndOwnEventListener(const Pointer<GUIEventListener> &listener) -> bool;
+        virtual auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
+        virtual auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
 
         virtual auto getScreenHeight() const -> Real = 0;
         virtual auto getMouseState() const -> MouseState = 0;

@@ -150,7 +150,7 @@ namespace Slab::Graphics {
     bool GLUTEventTranslator::idle() { return false; }
 
     bool GLUTEventTranslator::reshape(int w, int h) {
-        return IterateReferences(guiListeners, Func(notifyScreenReshape, w, h));
+        return IterateReferences(guiListeners, Func(notifySystemWindowReshape, w, h));
     }
 
     const MouseState &GLUTEventTranslator::getMouseState() const {

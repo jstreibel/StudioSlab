@@ -28,7 +28,7 @@ namespace Slab::Graphics {
     bool XHairArtist::draw(const Plot2DWindow &graph2D) {
         if(!graph2D.isMouseIn()) return true;
 
-        auto vpRect = graph2D.getViewport();
+        auto vpRect = graph2D.getEffectiveViewport();
         auto region = graph2D.getRegion();
         auto rect = region.getRect();
 

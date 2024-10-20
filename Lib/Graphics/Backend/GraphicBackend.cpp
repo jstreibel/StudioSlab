@@ -15,11 +15,11 @@ namespace Slab::Graphics {
 
     GraphicBackend::~GraphicBackend() = default;
 
-    auto GraphicBackend::addEventListener(const Volatile<GUIEventListener> &listener) -> bool {
+    auto GraphicBackend::addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool {
         return eventTranslator->addGUIEventListener(listener);
     }
 
-    auto GraphicBackend::addAndOwnEventListener(const Pointer<GUIEventListener> &listener) -> bool {
+    auto GraphicBackend::addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool {
         if(!addEventListener(listener)) return false;
 
         thingsImProprietary.push_back(listener);

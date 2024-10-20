@@ -70,7 +70,7 @@ namespace Slab::Graphics {
         else if(isResize) {
             fix w = event.size.width;
             fix h = event.size.height;
-            IterateReferences(guiListeners,Func(notifyScreenReshape, w, h));
+            IterateReferences(guiListeners,Func(notifySystemWindowReshape, w, h));
         }
     }
 

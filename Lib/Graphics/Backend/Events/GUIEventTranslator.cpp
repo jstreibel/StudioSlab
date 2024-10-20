@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    bool EventTranslator::addGUIEventListener(const Volatile<GUIEventListener> &guiEventListener) {
+    bool EventTranslator::addGUIEventListener(const Volatile<SystemWindowEventListener> &guiEventListener) {
         auto in = guiEventListener.lock();
 
         for(IN ref : guiListeners) {

@@ -293,6 +293,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/WriterOpenGL.cpp
 		OpenGL/WriterOpenGL.h
 		Modules/GraphicsModule.h
+        Window/WindowManager.cpp
+        Window/WindowManager.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

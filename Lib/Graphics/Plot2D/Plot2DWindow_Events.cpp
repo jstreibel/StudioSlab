@@ -40,7 +40,7 @@ namespace Slab {
     }
 
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
-        auto elRet = GUIEventListener::notifyMouseMotion(x, y);
+        auto elRet = SystemWindowEventListener::notifyMouseMotion(x, y);
 
         auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
 
@@ -86,7 +86,7 @@ namespace Slab {
     }
 
     bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
-        GUIEventListener::notifyMouseWheel(dx, dy);
+        SystemWindowEventListener::notifyMouseWheel(dx, dy);
 
         constexpr const Real factor = 1.2;
         const Real d = pow(factor, -dy);
@@ -128,7 +128,7 @@ namespace Slab {
             }
         }
 
-        return GUIEventListener::notifyKeyboard(key, state, modKeys);
+        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
     }
 
 }

@@ -4,7 +4,7 @@
 #include "GLUTListener.h"
 #include "GLUTEventTranslator.h"
 
-#include "Graphics/Backend/Events/GUIEventListener.h"
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Backend/GraphicBackend.h"
 
 namespace Slab::Graphics {

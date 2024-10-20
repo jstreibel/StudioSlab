@@ -38,7 +38,7 @@ namespace Slab::Graphics {
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
-        auto vp = getViewport();
+        auto vp = getEffectiveViewport();
         glViewport(vp.xMin - 2, vp.yMin - 2, vp.width() + 4, vp.height() + 4);
 
         glMatrixMode(GL_MODELVIEW);
@@ -90,7 +90,7 @@ namespace Slab::Graphics {
         fix &mouse = guiBackend.getMouseState();
         auto hScreen = guiBackend.getScreenHeight();
 
-        auto rect = getViewport();
+        auto rect = getEffectiveViewport();
 
         fix x = rect.xMin;
         fix y = rect.yMin;
@@ -149,7 +149,7 @@ namespace Slab::Graphics {
 
         fix &mouse = guiBackend.getMouseState();
         fix hScreen = guiBackend.getScreenHeight();
-        auto vpRect = getViewport();
+        auto vpRect = getEffectiveViewport();
 
         fix xMouseLocal = mouse.x - vpRect.xMin;
         fix yMouseLocal = hScreen - mouse.y - vpRect.yMin;
@@ -157,8 +157,8 @@ namespace Slab::Graphics {
         return {(Real) xMouseLocal, (Real) yMouseLocal};
     }
 
-    bool Window::notifyScreenReshape(int newScreenWidth, int newScreenHeight) {
-        GUIEventListener::notifyScreenReshape(newScreenWidth, newScreenHeight);
+    bool Window::notifySystemWindowReshape(int newScreenWidth, int newScreenHeight) {
+        SystemWindowEventListener::notifySystemWindowReshape(newScreenWidth, newScreenHeight);
 
         this->notifyReshape(newScreenWidth, newScreenHeight);
 
@@ -174,10 +174,10 @@ namespace Slab::Graphics {
     bool Window::notifyRender() {
         this->draw();
 
-        return GUIEventListener::notifyRender();
+        return SystemWindowEventListener::notifyRender();
     }
 
-    RectI Window::getViewport() const {
+    RectI Window::getEffectiveViewport() const {
         int xtraPadding = flags & HasMainMenu ? Graphics::menuHeight : 0;
 
         auto _x = getx() + Graphics::hPadding,
@@ -197,6 +197,6 @@ namespace Slab::Graphics {
         else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
         else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
 
-        return GUIEventListener::notifyMouseButton(button, state, keys);
+        return SystemWindowEventListener::notifyMouseButton(button, state, keys);
     }
 }

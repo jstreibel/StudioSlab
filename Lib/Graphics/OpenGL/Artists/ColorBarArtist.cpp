@@ -35,8 +35,8 @@ namespace Slab::Graphics::OpenGL {
     bool OpenGL::ColorBarArtist::draw(const Plot2DWindow &graph) {
         if( texture == nullptr ) return true;
 
-        const int vpWidth  = graph.getViewport().width();
-        const int vpHeight = graph.getViewport().height();
+        const int vpWidth  = graph.getEffectiveViewport().width();
+        const int vpHeight = graph.getEffectiveViewport().height();
         const int cbarHeight_pixels = int(cbarHeight_clamp * vpHeight);
         if(autoColorBarTop)
             cbarTop_pixels = (vpHeight - cbarHeight_pixels) / 2;
@@ -62,10 +62,10 @@ namespace Slab::Graphics::OpenGL {
             auto yMin = (float)rect.yMin + (float)general_slack;
             auto yMax = (float)rect.yMax - (float)general_slack;
 
-            xMin = 2.f*(xMin/(float)graph.getViewport().width()-.5f);
-            xMax = 2.f*(xMax/(float)graph.getViewport().width()-.5f);
-            yMin = 2.f*(yMin/(float)graph.getViewport().height()-.5f);
-            yMax = 2.f*(yMax/(float)graph.getViewport().height()-.5f);
+            xMin = 2.f*(xMin/(float) graph.getEffectiveViewport().width() - .5f);
+            xMax = 2.f*(xMax/(float) graph.getEffectiveViewport().width() - .5f);
+            yMin = 2.f*(yMin/(float) graph.getEffectiveViewport().height() - .5f);
+            yMax = 2.f*(yMax/(float) graph.getEffectiveViewport().height() - .5f);
 
             glMatrixMode(GL_PROJECTION);
             glPushMatrix();
@@ -124,7 +124,7 @@ namespace Slab::Graphics::OpenGL {
                           {(float)rect.xMax+dx*0.1, (float)rect.yMax-yMeasure*dy}, style->graphTitleColor);
         }
 
-        auto vp = graph.getViewport();
+        auto vp = graph.getEffectiveViewport();
 
         texture->bind();
 

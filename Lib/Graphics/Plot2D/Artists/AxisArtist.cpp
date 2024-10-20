@@ -101,7 +101,7 @@ namespace Slab::Graphics {
     }
 
     void AxisArtist::drawXAxis(const Plot2DWindow &graph) const {
-        auto vp = graph.getViewport();
+        auto vp = graph.getEffectiveViewport();
         const auto& region = graph.getRegion();
 
         auto currStyle = PlotThemeManager::GetCurrent();
@@ -175,7 +175,7 @@ namespace Slab::Graphics {
     }
 
     void AxisArtist::drawYAxis(const Plot2DWindow &graph) const {
-        auto vp = graph.getViewport();
+        auto vp = graph.getEffectiveViewport();
         const auto& region = graph.getRegion();
         auto currStyle = PlotThemeManager::GetCurrent();
 

@@ -33,7 +33,7 @@ namespace Slab::Graphics {
 
         auto displayHeight = ImGui::GetIO().DisplaySize.y;
 
-        auto vp = getViewport();
+        auto vp = getEffectiveViewport();
         // const float w_ = float(getw()) - (float)2 * Graphics::hPadding,
         //             h_ = float(geth()) - (float)2 * Graphics::vPadding;
         // const float x_ = getx() + Graphics::hPadding,

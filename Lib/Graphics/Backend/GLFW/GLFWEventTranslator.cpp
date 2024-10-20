@@ -76,7 +76,7 @@ namespace Slab::Graphics {
         for (i = 0;  i < count;  i++)
             pathsVec.emplace_back(paths[i]);
 
-        auto funky = [&](GUIEventListener_ptr& listener){
+        auto funky = [&](Pointer<SystemWindowEventListener>& listener){
             return listener->
             notifyFilesDropped(pathsVec);
         };
@@ -89,7 +89,7 @@ namespace Slab::Graphics {
     }
 
     void GLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
-        IterateReferences(guiListeners, Func(notifyScreenReshape, width, height));
+        IterateReferences(guiListeners, Func(notifySystemWindowReshape, width, height));
     }
 
 
