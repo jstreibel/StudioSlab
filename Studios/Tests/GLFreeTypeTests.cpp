@@ -17,7 +17,7 @@ GLFreeTypeTests::GLFreeTypeTests()
 {   }
 
 void GLFreeTypeTests::draw() {
-    Window::draw();
+    SlabWindow::draw();
 
     glMatrixMode(GL_MODELVIEW);
     fix ratio = Real(getw())/geth();
@@ -51,7 +51,7 @@ void GLFreeTypeTests::draw() {
 }
 
 void GLFreeTypeTests::notifyReshape(int newWinW, int newWinH) {
-    Window::notifyReshape(newWinW, newWinH);
+    SlabWindow::notifyReshape(newWinW, newWinH);
 
     auto vp = getEffectiveViewport();
 

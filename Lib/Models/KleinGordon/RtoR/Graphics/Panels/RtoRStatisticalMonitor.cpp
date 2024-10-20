@@ -106,7 +106,7 @@ namespace Slab::Models::KGRtoR {
             histogramsPanel->addWindow(mHistogramsGraphK);
             histogramsPanel->addWindow(mHistogramsGraphE);
 
-            addWindow(Graphics::Window_ptr(histogramsPanel), true);
+            addWindow(Pointer<Graphics::SlabWindow>(histogramsPanel), true);
         }
 
         // setColumnRelativeWidth(0, 0.125);

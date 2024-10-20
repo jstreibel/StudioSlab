@@ -5,14 +5,14 @@
 #ifndef V_SHAPE_NODEWINDOW_H
 #define V_SHAPE_NODEWINDOW_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 #include <vector>
 
 
 namespace Slab::Graphics {
 
-    typedef Vector<Window *> WindowContainer;
+    typedef Vector<SlabWindow *> WindowContainer;
 
     class WindowTreeBuilder;
 
@@ -20,8 +20,8 @@ namespace Slab::Graphics {
         Horizontal, Vertical
     };
 
-    class NodeWindow : public Window {
-        Window *parent = nullptr;
+    class NodeWindow : public SlabWindow {
+        SlabWindow *parent = nullptr;
         NodeArrangement arrangement = Horizontal;
         WindowContainer children;
 
@@ -32,9 +32,9 @@ namespace Slab::Graphics {
 
         explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement = Horizontal);
 
-        explicit NodeWindow(const Window &window);
+        explicit NodeWindow(const SlabWindow &window);
 
-        void addSubWindow(Window *subWindow);
+        void addSubWindow(SlabWindow *subWindow);
 
         void arrange();
 

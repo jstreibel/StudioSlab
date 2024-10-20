@@ -6,19 +6,19 @@
 #define STUDIOSLAB_IMGUIWINDOW_H
 
 #include "Utils/Threads.h"
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 
 namespace Slab::Graphics {
 
-    class ImGuiWindow : public Window {
+    class ImGuiWindow : public SlabWindow {
         static Atomic<Count> count;
         Str id;
 
-        Pointer<Window> SlabWindow;
+        Pointer<SlabWindow> slab_window;
 
     public:
-        explicit ImGuiWindow(Pointer<Window> SlabWindow);
+        explicit ImGuiWindow(Pointer<SlabWindow>);
 
         void draw() override;
     };

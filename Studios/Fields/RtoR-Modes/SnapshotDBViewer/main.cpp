@@ -17,6 +17,7 @@
 
 #include "DBViewerMulti.h"
 #include "DBViewerSequence.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 using namespace Slab;
 
@@ -51,7 +52,9 @@ public:
         // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
         auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
-        guiBackend.addEventListener(viewer);
+        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+        wm->addSlabWindow(viewer);
+        guiBackend.addEventListener(wm);
 
         guiBackend.run();
 

@@ -31,12 +31,12 @@ namespace Slab::Graphics {
 
     using namespace Core;
 
-    void WindowColumn::addWindow(Window_ptr window, float windowHeight) {
+    void WindowColumn::addWindow(Pointer<SlabWindow> window, float windowHeight) {
         windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
 
-    bool WindowColumn::removeWindow(const Window_ptr& window) {
+    bool WindowColumn::removeWindow(const Pointer<SlabWindow>& window) {
 
         auto it = windows.begin();
         for(auto i=0; i<windows.size(); ++i){
@@ -126,7 +126,7 @@ namespace Slab::Graphics {
     }
 
     void WindowColumn::notifyReshape(int newWinW, int newWinH) {
-        Window::notifyReshape(newWinW, newWinH);
+        SlabWindow::notifyReshape(newWinW, newWinH);
 
         arrangeWindows();
     }
@@ -161,10 +161,6 @@ namespace Slab::Graphics {
 
     bool WindowColumn::notifyMouseWheel(double dx, double dy) {
         PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn);
-    }
-
-    bool WindowColumn::notifyFilesDropped(StrVector paths) {
-        PropagateEvent(notifyFilesDropped(paths), PropagateOnlyIfMouseIsIn);
     }
 
     bool WindowColumn::isEmpty() const {

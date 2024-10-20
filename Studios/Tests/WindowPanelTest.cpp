@@ -5,41 +5,41 @@
 
 #include "WindowPanelTest.h"
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "GLFreeTypeTests.h"
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest() : panel(new Slab::Graphics::WindowPanel) {
-    Window *window = nullptr;
+    SlabWindow *window = nullptr;
 
-    window = new Window();
-    typedef Window::Ptr Ptr;
+    window = new SlabWindow();
+    typedef Slab::Pointer<SlabWindow> Ptr;
     panel->addWindow(Ptr(window));
 
     if(true) {
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window));
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window));
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window), true);
 
-        window = new Window();
+        window = new SlabWindow();
         window = new GLFreeTypeTests;
         panel->addWindow(Ptr(window));
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window), true, 0.2);
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window));
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window));
 
-        window = new Window();
+        window = new SlabWindow();
         panel->addWindow(Ptr(window));
 
         panel->setColumnRelativeWidth(0, 0.2);

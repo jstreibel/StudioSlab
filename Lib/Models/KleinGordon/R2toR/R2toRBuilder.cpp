@@ -24,6 +24,7 @@
 
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
 #include "Math/Function/R2toR/Model/Operators/R2toRLaplacian.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 namespace Slab::Math::R2toR {
 
@@ -83,7 +84,9 @@ namespace Slab::Math::R2toR {
             auto &backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
-            backend.addEventListener(glOut);
+            auto wm = New<Graphics::SlabWindowManager>();
+            wm->addSlabWindow(glOut);
+            backend.addAndOwnEventListener(wm);
             outputManager->addOutputChannel(glOut);
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que

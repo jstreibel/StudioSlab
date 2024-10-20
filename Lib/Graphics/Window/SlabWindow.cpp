@@ -6,7 +6,7 @@
 
 #include "Graphics/SlabGraphics.h"
 
-#include "Window.h"
+#include "SlabWindow.h"
 #include "WindowStyles.h"
 #include "Graphics/OpenGL/GLUTUtils.h"
 #include "Graphics/OpenGL/Shader.h"
@@ -17,15 +17,28 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
-    Window::Window(int x, int y, int w, int h, Flags flags)
+    SlabWindow::SlabWindow(int x, int y, int w, int h, Flags flags)
             : backgroundColor(Graphics::clearColor), flags(flags),
               windowRect(x, x + w, y, y + h) {}
 
-    Window::~Window() = default;
+    SlabWindow::~SlabWindow() = default;
 
-    void Window::draw() { setupWindow(); }
+    void SlabWindow::draw() { setupWindow(); }
+    void SlabWindow::notifyReshape(int w, int h) { this->setSize(w, h); }
+    bool SlabWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+        if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
+        else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
+        else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
 
-    void Window::setupWindow() const {
+        return false;
+    }
+
+    bool SlabWindow::notifyMouseMotion(int x, int y) { return false; }
+    bool SlabWindow::notifyMouseWheel(double dx, double dy) { return false; }
+    bool SlabWindow::notifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
+                                    Slab::Graphics::ModKeys modKeys) { return false; }
+
+    void SlabWindow::setupWindow() const {
         OpenGL::Shader::remove();
         glDisable(GL_TEXTURE_2D);
 
@@ -53,7 +66,7 @@ namespace Slab::Graphics {
 
     }
 
-    void Window::_clear() const {
+    void SlabWindow::_clear() const {
         auto &bg = backgroundColor;
 
         glBegin(GL_QUADS);
@@ -67,7 +80,7 @@ namespace Slab::Graphics {
         glEnd();
     }
 
-    void Window::_decorate() const {
+    void SlabWindow::_decorate() const {
         glLineWidth(2.0f);
         glBegin(GL_LINE_LOOP);
         {
@@ -84,7 +97,7 @@ namespace Slab::Graphics {
         glEnd();
     }
 
-    auto Window::isMouseIn() const -> bool {
+    auto SlabWindow::isMouseIn() const -> bool {
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
@@ -100,7 +113,7 @@ namespace Slab::Graphics {
         return mouse.x > x && mouse.x < x + w && hScreen - mouse.y > y && hScreen - mouse.y < y + h;
     }
 
-    auto Window::isMouseLeftClicked() const -> bool {
+    auto SlabWindow::isMouseLeftClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -111,7 +124,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto Window::isMouseCenterClicked() const -> bool {
+    auto SlabWindow::isMouseCenterClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -123,7 +136,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto Window::isMouseRightClicked() const -> bool {
+    auto SlabWindow::isMouseRightClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -135,7 +148,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto Window::getMouseWindowCoord() const -> Point2D {
+    auto SlabWindow::getMouseWindowCoord() const -> Point2D {
         fix &mouse = Slab::Graphics::GetGraphicsBackend().getMouseState();
 
         fix xMouseLocal = mouse.x - windowRect.xMin;
@@ -144,7 +157,7 @@ namespace Slab::Graphics {
         return {(Real) xMouseLocal, (Real) yMouseLocal};
     }
 
-    auto Window::getMouseViewportCoord() const -> Point2D {
+    auto SlabWindow::getMouseViewportCoord() const -> Point2D {
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = guiBackend.getMouseState();
@@ -157,46 +170,28 @@ namespace Slab::Graphics {
         return {(Real) xMouseLocal, (Real) yMouseLocal};
     }
 
-    bool Window::notifySystemWindowReshape(int newScreenWidth, int newScreenHeight) {
-        SystemWindowEventListener::notifySystemWindowReshape(newScreenWidth, newScreenHeight);
 
-        this->notifyReshape(newScreenWidth, newScreenHeight);
 
-        return true;
-    }
+    void SlabWindow::setDecorate(bool _decorate) { this->decorate = _decorate; }
 
-    void Window::notifyReshape(int w, int h) { this->setSize(w, h); }
+    void SlabWindow::setClear(bool _clear) { this->clear = _clear; }
 
-    void Window::setDecorate(bool _decorate) { this->decorate = _decorate; }
-
-    void Window::setClear(bool _clear) { this->clear = _clear; }
-
-    bool Window::notifyRender() {
-        this->draw();
-
-        return SystemWindowEventListener::notifyRender();
-    }
-
-    RectI Window::getEffectiveViewport() const {
+    RectI SlabWindow::getEffectiveViewport() const {
         int xtraPadding = flags & HasMainMenu ? Graphics::menuHeight : 0;
 
         auto _x = getx() + Graphics::hPadding,
-                _y = gety() + Graphics::vPadding,
-                _w = getw() - 2 * Graphics::hPadding,
-                _h = geth() - 2 * Graphics::vPadding - xtraPadding;
+             _y = gety() + Graphics::vPadding,
+             _w = getw() - 2 * Graphics::hPadding,
+             _h = geth() - 2 * Graphics::vPadding - xtraPadding;
 
         return {_x, _x + _w, _y, _y + _h};
     }
 
-    void Window::setBGColor(Color color) { backgroundColor = color; }
-    auto Window::getBGColor() const -> const Color & { return backgroundColor; }
+    void SlabWindow::setBGColor(Color color) { backgroundColor = color; }
+    auto SlabWindow::getBGColor() const -> const Color & { return backgroundColor; }
 
-    bool
-    Window::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-        if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
-        else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
-        else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
-
-        return SystemWindowEventListener::notifyMouseButton(button, state, keys);
+    bool SlabWindow::isFullscreen() const {
+        return false;
     }
+
 }

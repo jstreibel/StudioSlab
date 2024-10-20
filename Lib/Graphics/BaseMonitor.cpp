@@ -122,16 +122,14 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    bool BaseMonitor::notifyRender() {
+    void BaseMonitor::draw() {
         assert(lastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::notifyRender(); // draw();
+            WindowPanel::draw(); // draw();
             frameTimer.reset();
         }
-
-        return true;
     }
 
     bool BaseMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {

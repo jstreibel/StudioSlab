@@ -7,12 +7,12 @@
 
 #include "Graphics/OpenGL/OpenGL.h"
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Graphics/Utils/Writer.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
-class GLFreeTypeTests : public Slab::Graphics::Window {
+class GLFreeTypeTests : public Slab::Graphics::SlabWindow {
     Writer writer1, writer2;
 
 public:

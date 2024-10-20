@@ -7,7 +7,7 @@
 
 #include "GLUTListener.h"
 
-#include "Graphics/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Backend/Events/MouseState.h"
 
 namespace Slab::Graphics {

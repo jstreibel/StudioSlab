@@ -7,10 +7,10 @@
 
 namespace Slab::Graphics {
 
-    NodeWindow::NodeWindow(const Window &window) : Window(window) {
+    NodeWindow::NodeWindow(const SlabWindow &window) : SlabWindow(window) {
     }
 
-    NodeWindow::NodeWindow(int x, int y, int w, int h) : Window(x, y, w, h) {
+    NodeWindow::NodeWindow(int x, int y, int w, int h) : SlabWindow(x, y, w, h) {
 
     }
 
@@ -20,7 +20,7 @@ namespace Slab::Graphics {
 
     }
 
-    void NodeWindow::addSubWindow(Window *subWindow) {
+    void NodeWindow::addSubWindow(SlabWindow *subWindow) {
         NodeWindow *nodeSub = dynamic_cast<NodeWindow *>(subWindow);
 
         if (nodeSub != nullptr) {
@@ -29,8 +29,6 @@ namespace Slab::Graphics {
         }
 
         children.emplace_back(subWindow);
-
-        addResponder(Naked(*subWindow));
     }
 
     void NodeWindow::arrange() {
@@ -63,7 +61,7 @@ namespace Slab::Graphics {
     }
 
     void NodeWindow::draw() {
-        if (children.empty()) Window::draw();
+        if (children.empty()) SlabWindow::draw();
 
         for (auto win: children)
             win->draw();

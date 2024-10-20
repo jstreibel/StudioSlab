@@ -20,11 +20,10 @@
 
 namespace Slab::Graphics {
 
-    class Window : public SystemWindowEventListener {
-        friend class WindowManager;
+    class SlabWindow {
+        friend class SlabWindowManager;
 
     public:
-        typedef std::shared_ptr<Window> Ptr;
         enum Flags {
             None = 0x0,
             HasMainMenu = 0x1
@@ -54,22 +53,16 @@ namespace Slab::Graphics {
         void setBGColor(Color color);
 
     public:
-        explicit Window(int x = 0, int y = 0, int w = 100, int h = 100, Flags flags = None);
-        virtual ~Window();
+        explicit SlabWindow(int x = 100, int y = 100, int w = 800, int h = 480, Flags flags = None);
+        virtual ~SlabWindow();
 
         virtual void draw();
-
-        bool notifySystemWindowReshape(int newScreenWidth, int newScreenHeight) final;
-        bool notifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
-        bool notifyRender() override;
-
-        void setDecorate(bool);
-
+        virtual bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys);
+        virtual bool notifyMouseMotion(int x, int y);
+        virtual bool notifyMouseWheel(double dx, double dy);
+        virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
         virtual void notifyReshape(int w, int h);
-
-        void setClear(bool);
-        auto getBGColor() const -> const Color&;
+        virtual bool isFullscreen() const;
 
         auto isMouseIn() const -> bool;
         auto isMouseLeftClicked() const -> bool;
@@ -77,6 +70,10 @@ namespace Slab::Graphics {
         auto isMouseRightClicked() const -> bool;
         auto getMouseWindowCoord() const -> Point2D;
         auto getMouseViewportCoord() const -> Point2D;
+
+        void setDecorate(bool);
+        void setClear(bool);
+        auto getBGColor() const -> const Color&;
 
         RectI getEffectiveViewport() const;
 
@@ -95,7 +92,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointers(Window)
+    DefinePointers(SlabWindow)
 
 }
 

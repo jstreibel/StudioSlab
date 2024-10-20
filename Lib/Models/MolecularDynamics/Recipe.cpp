@@ -18,7 +18,7 @@
 #include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
-
+#include "Graphics/Window/SlabWindowManager.h"
 
 namespace MolecularDynamics {
     Recipe::Recipe()
@@ -42,7 +42,10 @@ namespace MolecularDynamics {
                 ? MolecularDynamics::Monitor::Model::LennardJones
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
-        Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(Pointer<Graphics::SystemWindowEventListener>(monitor));
+
+        auto wm = New<Graphics::SlabWindowManager>();
+        wm->addSlabWindow(Pointer<Graphics::SlabWindow>(monitor));
+        Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(wm);
         outputManager->addOutputChannel(monitor);
 
         return outputManager;

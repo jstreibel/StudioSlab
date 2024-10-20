@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MONITOR_H
 #define STUDIOSLAB_MONITOR_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Math/Numerics/Output/Plugs/Socket.h"
 
 #include <SFML/Graphics.hpp>
@@ -20,7 +20,7 @@ namespace MolecularDynamics {
 
     using namespace Slab;
 
-    class Monitor : public Math::Socket, public Graphics::Window {
+    class Monitor : public Math::Socket, public Graphics::SlabWindow {
         sf::RenderWindow &renderWindow;
 
         Vector<sf::Vertex> molShapes;

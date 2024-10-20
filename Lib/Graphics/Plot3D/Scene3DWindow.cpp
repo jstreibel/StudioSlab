@@ -3,7 +3,6 @@
 //
 
 #include <glm/ext/matrix_transform.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
 #include "Scene3DWindow.h"
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
@@ -25,7 +24,7 @@ namespace Slab::Graphics {
     }
 
     void Scene3DWindow::draw() {
-        Window::draw();
+        SlabWindow::draw();
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -56,9 +55,9 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::notifyMouseMotion(int x, int y) {
-        fix left = Window::isMouseLeftClicked();
-        fix center = Window::isMouseCenterClicked();
-        fix right = Window::isMouseRightClicked();
+        fix left = SlabWindow::isMouseLeftClicked();
+        fix center = SlabWindow::isMouseCenterClicked();
+        fix right = SlabWindow::isMouseRightClicked();
 
         if(left && right) {
             auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
@@ -108,13 +107,13 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return SystemWindowEventListener::notifyMouseMotion(x, y);
+        return SlabWindow::notifyMouseMotion(x, y);
     }
 
     bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
-        return SystemWindowEventListener::notifyMouseWheel(dx, dy);
+        return SlabWindow::notifyMouseWheel(dx, dy);
     }
 
     auto Scene3DWindow::getCamera() const -> const Camera & {
@@ -166,7 +165,7 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
+        return SlabWindow::notifyKeyboard(key, state, modKeys);
     }
 
 

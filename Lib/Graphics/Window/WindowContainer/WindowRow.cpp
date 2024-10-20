@@ -31,8 +31,8 @@ fix PropagateOnlyIfMouseIsIn = false;
 
 namespace Slab::Graphics {
 
-    WindowRow::WindowRow(Window::Flags flags)
-            : Window(0, 0, 100, 100, flags) {
+    WindowRow::WindowRow(SlabWindow::Flags flags)
+            : SlabWindow(100, 100, 800, 480, flags) {
 
     }
 
@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         return widths;
     }
 
-    bool WindowRow::addWindow(const Window::Ptr &window, RelativePosition relPosition,
+    bool WindowRow::addWindow(const Pointer<SlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
         if (std::find_if(windowsList.begin(), windowsList.end(),
                          [&window](WinMetaData &winMetaData) {
@@ -71,7 +71,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::removeWindow(const Window::Ptr &window) {
+    void WindowRow::removeWindow(const Pointer<SlabWindow> &window) {
         windowsList.remove_if([&window](WinMetaData &toComp) {
             return toComp.window == window;
         });
@@ -160,7 +160,7 @@ namespace Slab::Graphics {
     }
 
     void WindowRow::notifyReshape(int w, int h) {
-        Window::notifyReshape(w, h);
+        SlabWindow::notifyReshape(w, h);
 
         arrangeWindows();
     }
@@ -195,10 +195,6 @@ namespace Slab::Graphics {
 
     bool WindowRow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
-    }
-
-    bool WindowRow::notifyFilesDropped(StrVector paths) {
-        PropagateEvent(notifyFilesDropped(paths), PropagateOnlyIfMouseIsIn)
     }
 
 }

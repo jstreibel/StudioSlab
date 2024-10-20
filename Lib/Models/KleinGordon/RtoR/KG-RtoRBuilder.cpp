@@ -32,6 +32,7 @@
 #include "Graphics/RtoRMonitor.h"
 #include "Models/KleinGordon/RtoR/Output/CenterTimeDFTOutput.h"
 #include "Math/Data/DataAllocator.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 constexpr const Slab::Count MAX_SNAPSHOTS = 200;
 
@@ -171,7 +172,9 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->getDFTDataHistory());
             }
 
-            guiBackend.addEventListener(Graphics::Window_ptr(outputOpenGL));
+            auto wm = New<Graphics::SlabWindowManager>();
+            wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
+            guiBackend.addAndOwnEventListener(wm);
             outputManager->addOutputChannel(outputOpenGL);
         } else {
             /* O objetivo de relacionar o numero de passos para

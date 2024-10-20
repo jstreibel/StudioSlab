@@ -6,6 +6,7 @@
 
 #include "AppBase.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 #include "BezierTests.h"
 #include "WindowPanelTest.h"
@@ -34,7 +35,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 int TestsApp::run() {
     using namespace Slab;
 
-    Pointer<Graphics::SystemWindowEventListener> test;
+    Pointer<Graphics::SlabWindow> test;
 
     Graphics::GraphicBackend *backend = nullptr;
 
@@ -52,7 +53,10 @@ int TestsApp::run() {
         // else test = new GLFreeTypeTests;
 
         backend = &Slab::Graphics::GetGraphicsBackend();
-        backend->addEventListener(test);
+
+        auto wm = New<Graphics::SlabWindowManager>();
+        wm->addSlabWindow(test);
+        backend->addEventListener(wm);
 
     } else {
         Core::BackendManager::Startup("GLFW");

@@ -86,7 +86,7 @@ namespace Slab {
         return success;
     }
 
-    bool Graphics::OpenGL::outputToPNG(Window *window, std::string fileName, int width, int height) {
+    bool Graphics::OpenGL::outputToPNG(SlabWindow *window, std::string fileName, int width, int height) {
         // Create texture:
         GLuint texColorBuffer;
         glGenTextures(1, &texColorBuffer);

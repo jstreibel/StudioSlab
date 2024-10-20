@@ -7,11 +7,11 @@
 
 
 #include <Graphics/Backend/Events/SystemWindowEventListener.h>
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 
-class WindowPanelTest : public Slab::Graphics::Window {
+class WindowPanelTest : public Slab::Graphics::SlabWindow {
     Slab::Graphics::WindowPanel *panel;
 
 public:

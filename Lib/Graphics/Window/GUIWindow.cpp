@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    GUIWindow::GUIWindow() : Window() {
+    GUIWindow::GUIWindow() : SlabWindow() {
         setClear(false);
         setDecorate(false);
 
@@ -28,7 +28,7 @@ namespace Slab::Graphics {
 
     void GUIWindow::draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
-        Window::draw();
+        SlabWindow::draw();
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         auto displayHeight = ImGui::GetIO().DisplaySize.y;

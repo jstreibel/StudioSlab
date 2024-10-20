@@ -10,6 +10,7 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "OscillonPlotting.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 class App : public Slab::Core::AppBase {
 public:
@@ -29,7 +30,9 @@ public:
 
         auto osc_plot = Slab::New<Studios::OscillonPlotting>();
 
-        gui_backend.addEventListener(osc_plot);
+        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+        wm->addSlabWindow(osc_plot);
+        gui_backend.addEventListener(wm);
 
         gui_backend.run();
 

@@ -2,7 +2,7 @@
 // Created by joao on 27/09/23.
 //
 
-#include "GUIEventTranslator.h"
+#include "SystemWindowEventTranslator.h"
 
 namespace Slab::Graphics {
 

@@ -24,7 +24,7 @@ namespace Tests {
     , realTexture(texDim, texDim)
     , writer(Core::Resources::fontFileName(4), 80)
     {
-        addWindow(std::make_shared<Window>());
+        addWindow(std::make_shared<SlabWindow>());
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 

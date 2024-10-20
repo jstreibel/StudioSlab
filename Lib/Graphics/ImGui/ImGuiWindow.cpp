@@ -15,9 +15,9 @@
 namespace Slab::Graphics {
     Atomic<Count> ImGuiWindow::count = 0;
 
-    ImGuiWindow::ImGuiWindow(Pointer<Window> SlabWindow)
+    ImGuiWindow::ImGuiWindow(Pointer<SlabWindow> slab_window)
     : id(Str("ImGuiWindow##") + ToStr(++count))
-    , SlabWindow(std::move(SlabWindow)) {
+    , slab_window(std::move(slab_window)) {
 
     }
 
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
 
     void ImGuiWindow::draw() {
         if(ImGui::Begin(id.c_str())) {
-            if (SlabWindow != nullptr) {
+            if (slab_window != nullptr) {
                 fix pos = ImGui::GetWindowPos();
                 fix dim = ImGui::GetWindowSize();
                 fix cMin = ImGui::GetWindowContentRegionMin();
@@ -38,25 +38,25 @@ namespace Slab::Graphics {
                 fix w = cMax.x - cMin.x;
                 fix h = cMax.y - cMin.y;
 
-                SlabWindow->setx(x);
-                SlabWindow->sety(backend.getScreenHeight() - (y + dim.y));
-                SlabWindow->notifyReshape((int) w, (int) h);
+                slab_window->setx(x);
+                slab_window->sety(backend.getScreenHeight() - (y + dim.y));
+                slab_window->notifyReshape((int) w, (int) h);
 
                 auto callback = [](const ImDrawList *parent_list, const ImDrawCmd *cmd) {
                     if (cmd->UserCallback == NULL) {
                         return;
                     }
 
-                    auto slabWindow = *static_cast<Pointer<Window>*>(cmd->UserCallbackData);
+                    auto slabWindow = *static_cast<Pointer<SlabWindow>*>(cmd->UserCallbackData);
                     slabWindow->draw();
                 };
-                ImGui::GetWindowDrawList()->AddCallback(callback, &SlabWindow);
+                ImGui::GetWindowDrawList()->AddCallback(callback, &slab_window);
             }
 
             ImGui::End();
         }
 
-        Window::draw();
+        SlabWindow::draw();
     }
 
 

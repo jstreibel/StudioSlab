@@ -5,16 +5,16 @@
 #ifndef STUDIOSLAB_WINDOWROW_H
 #define STUDIOSLAB_WINDOWROW_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 #include <list>
 
 
 namespace Slab::Graphics {
 
-    class WindowRow : public Window {
+    class WindowRow : public SlabWindow {
         struct WinMetaData {
-            Window::Ptr window;
+            Pointer<SlabWindow> window;
             Real width;
         };
 
@@ -25,15 +25,15 @@ namespace Slab::Graphics {
         bool assertConsistency() const;
 
     public:
-        WindowRow(Window::Flags flags = None);
+        WindowRow(SlabWindow::Flags flags = None);
 
         enum RelativePosition {
             Left, Right
         };
 
-        bool addWindow(const Window::Ptr &window, RelativePosition= Right, float windowWidth = -1);
+        bool addWindow(const Pointer<SlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
 
-        void removeWindow(const Window::Ptr &window);
+        void removeWindow(const Pointer<SlabWindow> &window);
 
         void arrangeWindows();
 
@@ -49,8 +49,6 @@ namespace Slab::Graphics {
         bool notifyMouseWheel(double dx, double dy) override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-
-        bool notifyFilesDropped(StrVector paths) override;
 
     };
 

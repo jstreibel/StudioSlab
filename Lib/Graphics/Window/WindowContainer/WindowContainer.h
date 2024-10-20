@@ -5,19 +5,19 @@
 #ifndef STUDIOSLAB_WINDOWCONTAINER_H
 #define STUDIOSLAB_WINDOWCONTAINER_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 #include <list>
 
 namespace Slab::Graphics {
 
-    class WindowContainer : public Window {
-        std::list<Window_ptr> windows;
+    class WindowContainer : public SlabWindow {
+        std::list<Pointer<SlabWindow>> windows;
 
     public:
         WindowContainer() = default;
 
-        bool removeWindow(const Window_ptr&);
+        bool removeWindow(const Pointer<SlabWindow>&);
         bool isEmpty() const;
 
         void draw() override;
@@ -26,7 +26,6 @@ namespace Slab::Graphics {
 
         void notifyReshape(int newWinW, int newWinH) override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-        bool notifyFilesDropped(StrVector paths) override;
         bool notifyMouseMotion(int x, int y) override;
         bool notifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;

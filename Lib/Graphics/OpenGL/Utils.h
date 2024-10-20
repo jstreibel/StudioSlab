@@ -6,7 +6,7 @@
 #define STUDIOSLAB_OPENGLUTILS_H
 
 #include "Graphics/Types2D.h"
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Graphics/OpenGL/OpenGL.h"
 
 
@@ -43,7 +43,7 @@ namespace Slab::Graphics::OpenGL {
 
     bool outputToPNG(FrameBuffer buffer, std::string fileName);
 
-    bool outputToPNG(Window *window, std::string fileName, int width, int height);
+    bool outputToPNG(SlabWindow *window, std::string fileName, int width, int height);
 
     void piccolos();
 

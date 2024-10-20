@@ -34,6 +34,7 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 #include "StudioSlab.h"
 #include "Math/MathModule.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 using namespace Slab;
 
@@ -76,7 +77,9 @@ public:
         viewer->setFunction(function);
         viewer->setFunctionTimeDerivative(ddt_function);
 
-        guiBackend.addEventListener(viewer);
+        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+        wm->addSlabWindow(viewer);
+        guiBackend.addEventListener(wm);
 
         guiBackend.run();
 

@@ -10,7 +10,7 @@
 #include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-class WindowTreeBuilderTest : public Slab::Graphics::Window {
+class WindowTreeBuilderTest : public Slab::Graphics::SlabWindow {
     Slab::Graphics::NodeWindow *main;
 
     Slab::Math::RtoR::AnalyticOscillon osc;

@@ -2,23 +2,23 @@
 // Created by joao on 10/19/24.
 //
 
-#ifndef STUDIOSLAB_WINDOWMANAGER_H
-#define STUDIOSLAB_WINDOWMANAGER_H
+#ifndef STUDIOSLAB_SLABWINDOWMANAGER_H
+#define STUDIOSLAB_SLABWINDOWMANAGER_H
 
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
-#include "Window.h"
+#include "SlabWindow.h"
 
 namespace Slab::Graphics {
 
-    class WindowManager : public SystemWindowEventListener {
-        List<Pointer<Window>> slab_windows;
+    class SlabWindowManager : public SystemWindowEventListener {
+        List<Pointer<SlabWindow>> slab_windows;
 
-        Pointer<Window> focused;
+        Pointer<SlabWindow> focused;
 
     public:
-        ~WindowManager() override = default;
+        ~SlabWindowManager() override = default;
 
-        void addSlabWindow(Pointer<Window>);
+        void addSlabWindow(Pointer<SlabWindow>);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
@@ -37,4 +37,4 @@ namespace Slab::Graphics {
 
 } // Slab::Graphics
 
-#endif //STUDIOSLAB_WINDOWMANAGER_H
+#endif //STUDIOSLAB_SLABWINDOWMANAGER_H

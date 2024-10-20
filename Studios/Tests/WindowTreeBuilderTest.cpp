@@ -16,15 +16,15 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
 : osc(0.0, -0.5, 0.75, 0.15, false, false)  {
     Graphics::WindowTreeBuilder treeBuilder(0, 0, 1500, 1500);
 
-    Graphics::Window *window = nullptr;
+    Graphics::SlabWindow *window = nullptr;
 
     window = new GLFreeTypeTests;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Above);
 
-    window = new Graphics::Window;
+    window = new Graphics::SlabWindow;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Right);
 
-    window = new Graphics::Window;
+    window = new Graphics::SlabWindow;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Right);
 
     // window = new Tests::FourierTestWindow();
@@ -43,7 +43,7 @@ void WindowTreeBuilderTest::draw() {
 }
 
 void WindowTreeBuilderTest::notifyReshape(int width, int height) {
-    Graphics::Window::notifyReshape(width, height);
+    Graphics::SlabWindow::notifyReshape(width, height);
     main->setSize(width,  height);
 
     main->arrange();

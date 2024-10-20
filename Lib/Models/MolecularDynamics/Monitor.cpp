@@ -24,7 +24,7 @@ namespace MolecularDynamics {
 
     Monitor::Monitor(Pointer<Config> config, Model model)
     : Socket("Particle dynamics monitor", 10)
-    , Window(0, 0, 100, 100, HasMainMenu)
+    , SlabWindow(100, 100, 800, 480, HasMainMenu)
     , renderWindow(SFML_Backend.getRenderWindow())
     , molShapes(2*N)
     , molShape(CUTOFF_RADIUS, 36)

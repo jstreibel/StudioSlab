@@ -35,10 +35,8 @@ namespace Slab::Graphics {
 
         GUIWindow &getGUIWindow();
 
-        // ********************* From EventListener ************** //
-        bool notifyRender() final ;
+        void draw() override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-        // ********************* End EventListener *************** //
 
         // ********************* From Socket ********************* //
         void handleOutput(const OutputPacket &outInfo) override;

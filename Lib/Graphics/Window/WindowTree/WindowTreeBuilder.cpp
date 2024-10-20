@@ -13,7 +13,7 @@ namespace Slab::Graphics {
         root->addSubWindow(currentNode);
     }
 
-    void WindowTreeBuilder::addWindow(Window *window, WindowTreeBuilder::Location location) {
+    void WindowTreeBuilder::addWindow(SlabWindow *window, WindowTreeBuilder::Location location) {
         auto arr = location == Right ? Horizontal : Vertical;
 
         if (currentNode->arrangement != arr) {

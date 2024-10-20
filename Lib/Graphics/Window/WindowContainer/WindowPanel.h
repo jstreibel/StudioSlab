@@ -6,7 +6,7 @@
 #define V_SHAPE_WINDOWPANEL_H
 
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 
 
@@ -16,7 +16,7 @@ namespace Slab::Graphics {
     typedef Vector<WindowColumn> WindowColumns;
 
 
-    class WindowPanel : public Window {
+    class WindowPanel : public SlabWindow {
         WindowColumns columns = WindowColumns(1);
         Vector<float> widths = {-1};
 
@@ -30,9 +30,9 @@ namespace Slab::Graphics {
     public:
         explicit WindowPanel(Flags flags = None);
 
-        void addWindow(const Window_ptr& window, bool newColumn = false, float newColumnWidth = -1);
+        void addWindow(const Pointer<SlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
-        bool removeWindow(const Window_ptr& window);
+        bool removeWindow(const Pointer<SlabWindow>& window);
 
         /**
          * Add window to column columnId.
@@ -40,7 +40,7 @@ namespace Slab::Graphics {
          * @param columnId zero-based index of column.
          * @return true if success, false otherwise.
          */
-        bool addWindowToColumn(const Window_ptr &window, int columnId);
+        bool addWindowToColumn(const Pointer<SlabWindow> &window, int columnId);
 
         /**
          * Set the the relative width of a column.
@@ -65,8 +65,6 @@ namespace Slab::Graphics {
         bool notifyMouseWheel(double dx, double dy) override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-
-        bool notifyFilesDropped(StrVector paths) override;
     };
 
 }

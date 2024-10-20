@@ -157,7 +157,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/WindowStyles.h Window/WindowStyles.cpp
 
 		Window/GUIWindow.cpp
-		Window/Window.cpp
+		Window/SlabWindow.cpp
 		Window/WindowContainer/WindowPanel.cpp
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp
@@ -294,7 +294,9 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/WriterOpenGL.h
 		Modules/GraphicsModule.h
         Window/WindowManager.cpp
-        Window/WindowManager.h
+        Window/SlabWindowManager.h
+        Window/Decorator.cpp
+        Window/Decorator.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

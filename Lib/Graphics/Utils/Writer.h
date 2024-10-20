@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_WRITER_H
 #define STUDIOSLAB_WRITER_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 #include "Graphics/Styles/Colors.h"
 #include "Utils/EncodingUtils.h"

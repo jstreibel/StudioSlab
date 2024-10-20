@@ -10,9 +10,9 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(Window::Flags flags) : Window(0, 0, 100, 100, flags) {    }
+    WindowPanel::WindowPanel(SlabWindow::Flags flags) : SlabWindow(100, 100, 800, 480, flags) {    }
 
-    void WindowPanel::addWindow(const Window_ptr& window, bool newColumn, float newColumnWidth) {
+    void WindowPanel::addWindow(const Pointer<SlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
             columns.emplace_back();
             widths.emplace_back(newColumnWidth);
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         column->addWindow(window);
     }
 
-    bool WindowPanel::removeWindow(const Window_ptr &windowToRemove) {
+    bool WindowPanel::removeWindow(const Pointer<SlabWindow> &windowToRemove) {
         int i=0;
         for(auto &column : columns){
             if(column.removeWindow(windowToRemove)) {
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowPanel::addWindowToColumn(const Window_ptr &window, int columnId) {
+    bool WindowPanel::addWindowToColumn(const Pointer<SlabWindow> &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];
@@ -158,7 +158,7 @@ namespace Slab::Graphics {
     void WindowPanel::notifyReshape(int newWinW, int newWinH) {
         int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
 
-        Window::notifyReshape(newWinW, newWinH-menuRoom);
+        SlabWindow::notifyReshape(newWinW, newWinH - menuRoom);
 
         arrangeWindows();
     }
@@ -192,12 +192,4 @@ namespace Slab::Graphics {
 
         return responded;
     }
-
-    bool WindowPanel::notifyFilesDropped(StrVector paths) {
-        auto responded = false;
-        for (auto &col: columns) if(col.isMouseIn()) responded = col.notifyFilesDropped(paths);
-
-        return responded;
-    }
-
 }

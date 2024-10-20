@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SCENE3DWINDOW_H
 #define STUDIOSLAB_SCENE3DWINDOW_H
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Actor.h"
 #include "Camera.h"
 
@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    class Scene3DWindow : public Window {
+    class Scene3DWindow : public SlabWindow {
         static Count WindowCount;
         Count id;
 
