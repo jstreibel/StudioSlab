@@ -10,8 +10,12 @@
 namespace Slab::Graphics {
 
     class Decorator {
+        int syswin_w, syswin_h;
+
     public:
         void operator()(const SlabWindow&);
+
+        void setSystemWindowShape(int w, int h);
     };
 
 } // Slab::Graphics

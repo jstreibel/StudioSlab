@@ -7,9 +7,6 @@
 #include "Graphics/SlabGraphics.h"
 
 #include "SlabWindow.h"
-#include "WindowStyles.h"
-#include "Graphics/OpenGL/GLUTUtils.h"
-#include "Graphics/OpenGL/Shader.h"
 #include "Core/Tools/Log.h"
 
 
@@ -17,9 +14,8 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
-    SlabWindow::SlabWindow(int x, int y, int w, int h, Flags flags)
-            : backgroundColor(Graphics::clearColor), flags(flags),
-              windowRect(x, x + w, y, y + h) {}
+    SlabWindow::SlabWindow(int x, int y, int w, int h, Int flags)
+            : flags(flags), windowRect(x, x + w, y, y + h) {}
 
     SlabWindow::~SlabWindow() = default;
 
@@ -39,62 +35,37 @@ namespace Slab::Graphics {
                                     Slab::Graphics::ModKeys modKeys) { return false; }
 
     void SlabWindow::setupWindow() const {
-        OpenGL::Shader::remove();
         glDisable(GL_TEXTURE_2D);
+        glDisable(GL_DEPTH_TEST);
+        glDepthMask(GL_FALSE);
+
+        /*
+        OpenGL::Shader::remove();
+
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
 
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
-        auto vp = getEffectiveViewport();
+        auto vp = getViewport();
         glViewport(vp.xMin - 2, vp.yMin - 2, vp.width() + 4, vp.height() + 4);
 
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+         */
 
-        if (clear)
-            this->_clear();
-        if (decorate)
-            this->_decorate();
+        fix vp = getViewport();
+        // y_opengl = windowHeight - y_top_left - viewportHeight
+        fix x = vp.xMin;
+        fix y = parent_systemwindow_h - vp.yMin - vp.height();
+        // fix y = vp.yMin;
+        fix w = vp.width();
+        fix h = vp.height();
+        glViewport(x, y, w, h);
 
-        glViewport(vp.xMin, vp.yMin, vp.width(), vp.height());
 
-    }
-
-    void SlabWindow::_clear() const {
-        auto &bg = backgroundColor;
-
-        glBegin(GL_QUADS);
-        {
-            glColor4d(bg.r, bg.g, bg.b, bg.a);
-            glVertex2f(-p, -p);
-            glVertex2f(p, -p);
-            glVertex2f(p, p);
-            glVertex2f(-p, p);
-        }
-        glEnd();
-    }
-
-    void SlabWindow::_decorate() const {
-        glLineWidth(2.0f);
-        glBegin(GL_LINE_LOOP);
-        {
-            auto bc = isMouseIn() ? Graphics::windowBorderColor_active
-                                  : Graphics::windowBorderColor_inactive;
-
-            glColor4d(bc.r, bc.g, bc.b, bc.a);
-
-            glVertex2f(-p, -p);
-            glVertex2f(p, -p);
-            glVertex2f(p, p);
-            glVertex2f(-p, p);
-        }
-        glEnd();
     }
 
     auto SlabWindow::isMouseIn() const -> bool {
@@ -103,7 +74,7 @@ namespace Slab::Graphics {
         fix &mouse = guiBackend.getMouseState();
         auto hScreen = guiBackend.getScreenHeight();
 
-        auto rect = getEffectiveViewport();
+        auto rect = getViewport();
 
         fix x = rect.xMin;
         fix y = rect.yMin;
@@ -162,7 +133,7 @@ namespace Slab::Graphics {
 
         fix &mouse = guiBackend.getMouseState();
         fix hScreen = guiBackend.getScreenHeight();
-        auto vpRect = getEffectiveViewport();
+        auto vpRect = getViewport();
 
         fix xMouseLocal = mouse.x - vpRect.xMin;
         fix yMouseLocal = hScreen - mouse.y - vpRect.yMin;
@@ -172,26 +143,39 @@ namespace Slab::Graphics {
 
 
 
-    void SlabWindow::setDecorate(bool _decorate) { this->decorate = _decorate; }
-
-    void SlabWindow::setClear(bool _clear) { this->clear = _clear; }
-
-    RectI SlabWindow::getEffectiveViewport() const {
-        int xtraPadding = flags & HasMainMenu ? Graphics::menuHeight : 0;
-
-        auto _x = getx() + Graphics::hPadding,
-             _y = gety() + Graphics::vPadding,
-             _w = getw() - 2 * Graphics::hPadding,
-             _h = geth() - 2 * Graphics::vPadding - xtraPadding;
-
-        return {_x, _x + _w, _y, _y + _h};
+    void SlabWindow::setDecorate(bool decorate) {
+        if(!decorate) flags |=  Flags::NoDecoration;
+        else           flags &= ~Flags::NoDecoration;
     }
 
-    void SlabWindow::setBGColor(Color color) { backgroundColor = color; }
-    auto SlabWindow::getBGColor() const -> const Color & { return backgroundColor; }
+    void SlabWindow::setClear(bool clear) {
+        if(!clear) flags |=  Flags::DontClear;
+        else       flags &= ~Flags::DontClear;
+    }
 
-    bool SlabWindow::isFullscreen() const {
-        return false;
+    RectI SlabWindow::getViewport() const {
+        return windowRect;
+    }
+
+    bool SlabWindow::hasMainMenu() const {
+        return flags & HasMainMenu;
+    }
+
+    bool SlabWindow::isActive() const {
+        return isMouseIn();
+    }
+
+    Int SlabWindow::getFlags() const {
+        return flags;
+    }
+
+    bool SlabWindow::wantsFullscreen() const {
+        // return flags & WantsFullscreen;
+        return true;
+    }
+
+    void SlabWindow::setupParentSystemWindowHeight(Int h) {
+        parent_systemwindow_h = h;
     }
 
 }

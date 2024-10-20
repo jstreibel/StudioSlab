@@ -111,7 +111,6 @@ namespace Slab::Graphics {
     void Plot2DWindow::draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
 
-        SlabWindow::setBGColor(PlotThemeManager::GetCurrent()->graphBackground);
         SlabWindow::draw();
 
         if (autoReviewGraphRanges) reviewGraphRanges();
@@ -151,7 +150,7 @@ namespace Slab::Graphics {
         }
 
         if (showInterface) {
-            auto vp = getEffectiveViewport();
+            auto vp = getViewport();
             auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
@@ -200,7 +199,7 @@ namespace Slab::Graphics {
     void Graphics::Plot2DWindow::setupOrtho() const {
         OpenGL::Legacy::SetupOrtho(region.getRect());
 
-        auto vp = getEffectiveViewport();
+        auto vp = getViewport();
         auto currStyle = PlotThemeManager::GetCurrent();
         currStyle->labelsWriter->reshape(vp.width(), vp.height());
         currStyle->ticksWriter->reshape(vp.width(), vp.height());

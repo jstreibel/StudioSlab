@@ -293,7 +293,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/WriterOpenGL.cpp
 		OpenGL/WriterOpenGL.h
 		Modules/GraphicsModule.h
-        Window/WindowManager.cpp
+        Window/SlabWindowManager.cpp
         Window/SlabWindowManager.h
         Window/Decorator.cpp
         Window/Decorator.h

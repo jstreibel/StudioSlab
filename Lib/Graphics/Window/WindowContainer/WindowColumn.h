@@ -31,6 +31,8 @@ namespace Slab::Graphics {
 
         void draw() override;
 
+        void setupParentSystemWindowHeight(Int anInt) override;
+
         void notifyReshape(int newWinW, int newWinH) override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;

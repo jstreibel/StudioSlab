@@ -167,5 +167,12 @@ namespace Slab::Graphics {
         return windows.empty();
     }
 
+    void WindowColumn::setupParentSystemWindowHeight(Int h) {
+        SlabWindow::setupParentSystemWindowHeight(h);
+
+        for(auto &win : windows)
+            win->setupParentSystemWindowHeight(h);
+    }
+
 
 }

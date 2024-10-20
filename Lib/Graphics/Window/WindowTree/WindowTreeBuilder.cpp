@@ -31,7 +31,7 @@ namespace Slab::Graphics {
     }
 
     NodeWindow *WindowTreeBuilder::getRoot() {
-        auto &myRect = shape.getTotalWindowRect();
+        auto myRect = shape.getViewport();
         currentNode->setx(myRect.xMin);
         currentNode->sety(myRect.yMin);
         currentNode->setSize(myRect.width(), myRect.height());

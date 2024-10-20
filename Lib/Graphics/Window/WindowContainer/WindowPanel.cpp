@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(SlabWindow::Flags flags) : SlabWindow(100, 100, 800, 480, flags) {    }
+    WindowPanel::WindowPanel(Int flags) : SlabWindow(100, 100, 800, 480, flags) {    }
 
     void WindowPanel::addWindow(const Pointer<SlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
@@ -156,9 +156,7 @@ namespace Slab::Graphics {
     }
 
     void WindowPanel::notifyReshape(int newWinW, int newWinH) {
-        int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
-
-        SlabWindow::notifyReshape(newWinW, newWinH - menuRoom);
+        SlabWindow::notifyReshape(newWinW, newWinH);
 
         arrangeWindows();
     }
@@ -192,4 +190,11 @@ namespace Slab::Graphics {
 
         return responded;
     }
+
+    void WindowPanel::setupParentSystemWindowHeight(Int h) {
+        SlabWindow::setupParentSystemWindowHeight(h);
+
+        for (auto &col: columns) col.setupParentSystemWindowHeight(h);
+    }
+
 }

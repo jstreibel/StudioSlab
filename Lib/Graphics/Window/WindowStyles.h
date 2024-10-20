@@ -11,6 +11,9 @@ namespace Slab::Graphics {
     extern int hPadding;
     extern int vPadding;
 
+    extern int title_bar_height;
+    extern int border_size;
+
     extern int menuHeight;
 
     extern Color clearColor;

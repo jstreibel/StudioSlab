@@ -6,7 +6,6 @@
 #define V_SHAPE_WINDOW_H
 
 #include "Graphics/Styles/Colors.h"
-#include "WindowStyles.h"
 
 #include "Graphics/SlabGraphics.h"
 
@@ -22,24 +21,20 @@ namespace Slab::Graphics {
 
     class SlabWindow {
         friend class SlabWindowManager;
+        int parent_systemwindow_h;
+
+    public:
+        virtual void setupParentSystemWindowHeight(Int);
 
     public:
         enum Flags {
-            None = 0x0,
-            HasMainMenu = 0x1
+            HasMainMenu  = 0x1,
+            NoDecoration = 0x2,
+            DontClear    = 0x4,
+            WantsFullscreen   = 0x8
         };
 
     private:
-        bool decorate = true;
-        bool clear = true;
-        Color backgroundColor;
-
-        static constexpr Real p = 0.999;
-
-        void _clear() const;
-
-        void _decorate() const;
-
         void setupWindow() const;
 
         KeyState mouseLeftButton = KeyState::Release;
@@ -47,14 +42,14 @@ namespace Slab::Graphics {
         KeyState mouseRightButton = KeyState::Release;
 
     protected:
-        Flags flags;
+        Int flags;
         RectI windowRect;
 
-        void setBGColor(Color color);
-
     public:
-        explicit SlabWindow(int x = 100, int y = 100, int w = 800, int h = 480, Flags flags = None);
+        explicit SlabWindow(int x = 100, int y = 100, int w = 800, int h = 480, Int flags=0x0);
         virtual ~SlabWindow();
+
+        Int getFlags() const;
 
         virtual void draw();
         virtual bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys);
@@ -62,7 +57,8 @@ namespace Slab::Graphics {
         virtual bool notifyMouseWheel(double dx, double dy);
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
         virtual void notifyReshape(int w, int h);
-        virtual bool isFullscreen() const;
+
+        bool wantsFullscreen() const;
 
         auto isMouseIn() const -> bool;
         auto isMouseLeftClicked() const -> bool;
@@ -71,13 +67,14 @@ namespace Slab::Graphics {
         auto getMouseWindowCoord() const -> Point2D;
         auto getMouseViewportCoord() const -> Point2D;
 
+        bool isActive() const;
+
         void setDecorate(bool);
         void setClear(bool);
-        auto getBGColor() const -> const Color&;
 
-        RectI getEffectiveViewport() const;
+        RectI getViewport() const;
 
-        const RectI &getTotalWindowRect() const { return windowRect; };
+        bool hasMainMenu() const;
 
         inline auto getx() const -> int  { return windowRect.xMin; }
         inline auto gety() const -> int  { return windowRect.yMin; }

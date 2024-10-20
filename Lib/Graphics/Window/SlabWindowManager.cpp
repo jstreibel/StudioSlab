@@ -4,9 +4,10 @@
 
 #include "SlabWindowManager.h"
 #include "Decorator.h"
+#include "WindowStyles.h"
 
 namespace Slab::Graphics {
-
+    static Decorator decorate;
 
     void SlabWindowManager::addSlabWindow(Pointer<SlabWindow> slab_window) {
         slab_windows.push_back(slab_window);
@@ -45,17 +46,23 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::notifySystemWindowReshape(int w, int h) {
-        if(focused == nullptr) return false;
+        decorate.setSystemWindowShape(w, h);
 
-        for(auto &slab_window : slab_windows) if(slab_window->isFullscreen()) slab_window->notifyReshape(w, h);
+        for(auto &slab_window : slab_windows) {
+            slab_window->setupParentSystemWindowHeight(h);
+
+            if (slab_window->wantsFullscreen()) {
+                slab_window->setx(0);
+                slab_window->sety(Graphics::menuHeight);
+                slab_window->notifyReshape(w, h - Graphics::menuHeight);
+            }
+        }
 
         return false;
     }
 
     bool SlabWindowManager::notifyRender() {
         if(focused == nullptr) return false;
-
-        static Decorator decorate;
 
         for(auto &slab_window : slab_windows) {
             decorate(*slab_window);

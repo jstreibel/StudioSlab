@@ -72,7 +72,7 @@ namespace Tests {
         }
 
         {
-            fix vp = getEffectiveViewport();
+            fix vp = getViewport();
             writer.reshape(vp.width(), vp.height());
             writer.write("VertexBuffer + Texture tests", {200, (double) geth() - 200});
         }

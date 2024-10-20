@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         bool assertConsistency() const;
 
     public:
-        WindowRow(SlabWindow::Flags flags = None);
+        explicit WindowRow(Int flags = 0x0);
 
         enum RelativePosition {
             Left, Right
@@ -49,6 +49,8 @@ namespace Slab::Graphics {
         bool notifyMouseWheel(double dx, double dy) override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+
+        void setupParentSystemWindowHeight(Int anInt) override;
 
     };
 

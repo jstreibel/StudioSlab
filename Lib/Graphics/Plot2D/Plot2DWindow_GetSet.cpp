@@ -19,7 +19,7 @@ namespace Slab {
     Real Graphics::Plot2DWindow::getAnimationTime() const { return animationTimeSeconds; }
 
     auto Graphics::Plot2DWindow::getLastXHairPosition() const -> Point2D {
-        auto vpRect = getEffectiveViewport();
+        auto vpRect = getViewport();
         fix mouseLocal = getMouseViewportCoord();
 
         return FromViewportToSpaceCoord(mouseLocal, region.getRect(), vpRect);

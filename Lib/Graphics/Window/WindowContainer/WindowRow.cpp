@@ -31,7 +31,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 
 namespace Slab::Graphics {
 
-    WindowRow::WindowRow(SlabWindow::Flags flags)
+    WindowRow::WindowRow(Int flags)
             : SlabWindow(100, 100, 800, 480, flags) {
 
     }
@@ -115,14 +115,13 @@ namespace Slab::Graphics {
         }
 
         auto i = 0;
-        int menuRoom = flags & HasMainMenu ? Graphics::menuHeight : 0;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 
             win.setx(computed_xPositions[i]);
             win.sety(gety());
 
-            win.notifyReshape(computedWidths[i], geth() - menuRoom);
+            win.notifyReshape(computedWidths[i], geth());
 
             i++;
         }
@@ -195,6 +194,13 @@ namespace Slab::Graphics {
 
     bool WindowRow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
+    }
+
+    void WindowRow::setupParentSystemWindowHeight(Int h) {
+        SlabWindow::setupParentSystemWindowHeight(h);
+
+        for(auto &win_data : windowsList) win_data.window->setupParentSystemWindowHeight(h);
+
     }
 
 }

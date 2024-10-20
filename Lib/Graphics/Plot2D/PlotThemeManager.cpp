@@ -14,6 +14,7 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Core/SlabCore.h"
+#include "Graphics/Window/WindowStyles.h"
 
 #define FILLED true
 #define NOT_FILLED false

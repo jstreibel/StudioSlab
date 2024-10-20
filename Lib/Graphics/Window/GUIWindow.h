@@ -24,9 +24,7 @@ namespace Slab::Graphics {
         void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 
         void draw() override;
-
         void begin() const;
-
         void end() const;
 
     };

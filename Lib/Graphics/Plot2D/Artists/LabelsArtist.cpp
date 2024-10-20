@@ -45,7 +45,7 @@ namespace Slab::Graphics {
     bool LabelsArtist::draw(const Plot2DWindow &window) {
         setTotalItems(labelsRequired.size());
 
-        auto viewport = window.getEffectiveViewport();
+        auto viewport = window.getViewport();
 
         for(auto &[label, style] : labelsRequired)
             draw_label(*style, label, viewport);

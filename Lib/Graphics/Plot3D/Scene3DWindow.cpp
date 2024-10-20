@@ -132,7 +132,7 @@ namespace Slab::Graphics {
         // auto popupName = title + Str(" window popup");
 
         if (showInterface) {
-            auto vp = getEffectiveViewport();
+            auto vp = getViewport();
             auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
 
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);

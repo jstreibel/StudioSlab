@@ -67,4 +67,11 @@ namespace Slab::Graphics {
             win->draw();
     }
 
+    void NodeWindow::setupParentSystemWindowHeight(Int h) {
+        SlabWindow::setupParentSystemWindowHeight(h);
+
+        for (auto win: children) win->setupParentSystemWindowHeight(h);
+
+    }
+
 }

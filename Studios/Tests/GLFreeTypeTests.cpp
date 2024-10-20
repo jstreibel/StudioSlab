@@ -53,7 +53,7 @@ void GLFreeTypeTests::draw() {
 void GLFreeTypeTests::notifyReshape(int newWinW, int newWinH) {
     SlabWindow::notifyReshape(newWinW, newWinH);
 
-    auto vp = getEffectiveViewport();
+    auto vp = getViewport();
 
     writer1.reshape(vp.width(), vp.height());
     writer2.reshape(vp.width(), vp.height());
