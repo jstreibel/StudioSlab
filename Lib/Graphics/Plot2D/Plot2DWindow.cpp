@@ -74,6 +74,7 @@ namespace Slab::Graphics {
         addArtist(Slab::Naked(axisArtist), 5);
         addArtist(Slab::Naked(labelsArtist), 5);
         addArtist(Slab::Naked(artistXHair), 6);
+        addArtist(Slab::Naked(bgArtist), -10);
 
     }
 
@@ -151,9 +152,9 @@ namespace Slab::Graphics {
 
         if (showInterface) {
             auto vp = getViewport();
-            auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
-
-            ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+            // auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
+            // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
 
             if (ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing)) {
@@ -197,6 +198,9 @@ namespace Slab::Graphics {
     }
 
     void Graphics::Plot2DWindow::setupOrtho() const {
+
+        OpenGL::Legacy::ResetModelview();
+
         OpenGL::Legacy::SetupOrtho(region.getRect());
 
         auto vp = getViewport();

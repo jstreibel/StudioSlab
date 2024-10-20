@@ -12,6 +12,7 @@
 #include "Monitor.h"
 #include "Recipe.h"
 
+#include "Graphics/SlabGraphics.h"
 #include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 

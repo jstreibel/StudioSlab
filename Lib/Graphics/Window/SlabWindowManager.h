@@ -7,6 +7,7 @@
 
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "SlabWindow.h"
+#include "Utils/List.h"
 
 namespace Slab::Graphics {
 

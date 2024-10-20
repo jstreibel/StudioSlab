@@ -40,7 +40,7 @@ namespace MolecularDynamics {
 
         using Config = Models::MolecularDynamics::MolDynNumericConfig;
 
-        Monitor(Pointer<Config>, Model);
+        Monitor(const Pointer<Config>&, Model);
 
         void draw() override;
 

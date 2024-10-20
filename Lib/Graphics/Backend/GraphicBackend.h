@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         virtual auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
         virtual auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
 
-        virtual auto getScreenHeight() const -> Real = 0;
+        // virtual auto getScreenHeight() const -> Real = 0;
         virtual auto getMouseState() const -> MouseState = 0;
         virtual void setMouseCursor(MouseCursor);
         virtual void setSystemWindowTitle(Str title, int handle);

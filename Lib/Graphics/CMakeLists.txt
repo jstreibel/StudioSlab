@@ -297,6 +297,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Window/SlabWindowManager.h
         Window/Decorator.cpp
         Window/Decorator.h
+        Plot2D/Artists/BackgroundArtist.cpp
+        Plot2D/Artists/BackgroundArtist.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

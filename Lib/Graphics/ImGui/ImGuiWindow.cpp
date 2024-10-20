@@ -38,8 +38,9 @@ namespace Slab::Graphics {
                 fix w = cMax.x - cMin.x;
                 fix h = cMax.y - cMin.y;
 
-                slab_window->setx(x);
-                slab_window->sety(backend.getScreenHeight() - (y + dim.y));
+                slab_window->setx((int)x);
+                // slab_window->sety(backend.getScreenHeight() - (y + dim.y));
+                slab_window->sety((int)y);
                 slab_window->notifyReshape((int) w, (int) h);
 
                 auto callback = [](const ImDrawList *parent_list, const ImDrawCmd *cmd) {

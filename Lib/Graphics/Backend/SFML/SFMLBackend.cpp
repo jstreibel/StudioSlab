@@ -95,7 +95,7 @@ namespace Slab::Graphics {
 
     auto SFMLBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
-    Real SFMLBackend::getScreenHeight() const { NOT_IMPLEMENTED_CLASS_METHOD }
+    // Real SFMLBackend::getScreenHeight() const { NOT_IMPLEMENTED_CLASS_METHOD }
 
     SFMLBackend &SFMLBackend::GetInstance() {
         // assert(Core::BackendManager::GetImplementation() == Core::SFML);

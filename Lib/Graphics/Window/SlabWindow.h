@@ -7,10 +7,8 @@
 
 #include "Graphics/Styles/Colors.h"
 
-#include "Graphics/SlabGraphics.h"
-
-#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Backend/Events/MouseState.h"
+#include "Graphics/Backend/Events/KeyMap.h"
 #include "Graphics/Types2D.h"
 
 #include <vector>
@@ -64,7 +62,6 @@ namespace Slab::Graphics {
         auto isMouseLeftClicked() const -> bool;
         auto isMouseCenterClicked() const -> bool;
         auto isMouseRightClicked() const -> bool;
-        auto getMouseWindowCoord() const -> Point2D;
         auto getMouseViewportCoord() const -> Point2D;
 
         bool isActive() const;

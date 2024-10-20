@@ -49,7 +49,7 @@ namespace Slab::Graphics {
 
         auto addGLUTListener(Volatile<GLUTListener> glutListener) -> void;
 
-        auto getScreenHeight() const -> Real override;
+        // auto getScreenHeight() const -> Real override;
 
         auto getMouseState() const -> MouseState override;
 

@@ -29,6 +29,10 @@ namespace Slab::Graphics {
     public:
         Artist() = default;
 
+        /**
+         * Tell artist to draw its content in argument window.
+         * @return true if ok, false if some problem was found.
+         */
         virtual bool draw(const Plot2DWindow &) = 0;
         virtual bool hasGUI();
         virtual void drawGUI();

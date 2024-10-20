@@ -7,6 +7,7 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
 #include "3rdParty/ImGui.h"
+#include "Graphics/SlabGraphics.h"
 
 
 #define Unique(label) \
@@ -58,6 +59,7 @@ namespace Slab::Graphics {
         fix left = SlabWindow::isMouseLeftClicked();
         fix center = SlabWindow::isMouseCenterClicked();
         fix right = SlabWindow::isMouseRightClicked();
+
 
         if(left && right) {
             auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
@@ -133,9 +135,9 @@ namespace Slab::Graphics {
 
         if (showInterface) {
             auto vp = getViewport();
-            auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
-
-            ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+            // auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
+            // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowPos({(float)vp.xMin, (float)vp.yMin}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {

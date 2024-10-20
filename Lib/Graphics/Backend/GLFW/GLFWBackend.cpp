@@ -117,12 +117,11 @@ namespace Slab::Graphics {
         }
     }
 
-    Real GLFWBackend::getScreenHeight() const {
-        int w, h;
-        glfwGetWindowSize(systemWindow, &w, &h);
-
-        return h;
-    }
+    // Real GLFWBackend::getScreenHeight() const {
+    //     int w, h;
+    //     glfwGetWindowSize(systemWindow, &w, &h);
+    //     return h;
+    // }
 
     GLFWwindow *GLFWBackend::newGLFWWindow() {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

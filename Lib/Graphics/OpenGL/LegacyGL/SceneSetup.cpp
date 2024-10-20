@@ -5,6 +5,8 @@
 #include "Graphics/OpenGL/OpenGL.h"
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/Types2D.h"
+#include "SceneSetup.h"
+
 
 namespace Slab::Graphics::OpenGL::Legacy {
 
@@ -21,6 +23,11 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glPushMatrix();
     }
 
+    void ResetModelview() {
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+    }
+
     void SetupOrtho(const RectR &region, Real zNear, Real zFar) {
         OpenGL::Shader::remove();
 
@@ -35,4 +42,6 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
     }
+
+
 }

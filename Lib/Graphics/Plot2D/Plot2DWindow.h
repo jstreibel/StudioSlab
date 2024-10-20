@@ -22,6 +22,7 @@
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
+#include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 
 namespace Slab::Graphics {
 
@@ -59,6 +60,7 @@ namespace Slab::Graphics {
         AxisArtist axisArtist;
         XHairArtist artistXHair;
         LabelsArtist labelsArtist;
+        BackgroundArtist bgArtist;
 
     public:
         explicit Plot2DWindow(Real xMin=-1, Real xMax=1, Real yMin=-1, Real yMax=1,
