@@ -31,12 +31,12 @@ namespace Slab {
                     popupOn = false;
                 }
 
-                Graphics::Window::notifyMouseButton(button, state, keys);
+                Graphics::SlabWindow::notifyMouseButton(button, state, keys);
                 return true;
             }
         }
 
-        return Graphics::Window::notifyMouseButton(button, state, keys);
+        return Graphics::SlabWindow::notifyMouseButton(button, state, keys);
     }
 
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
@@ -118,7 +118,7 @@ namespace Slab {
         return true;
     }
 
-    void Graphics::Plot2DWindow::notifyReshape(int newWinW, int newWinH) { Window::notifyReshape(newWinW, newWinH); }
+    void Graphics::Plot2DWindow::notifyReshape(int newWinW, int newWinH) { SlabWindow::notifyReshape(newWinW, newWinH); }
 
     bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         if(state==KeyState::Release) {

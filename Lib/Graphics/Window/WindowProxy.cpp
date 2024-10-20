@@ -6,11 +6,11 @@
 
 namespace Slab {
     namespace Graphics {
-        WindowProxy::WindowProxy() : Window() {
+        WindowProxy::WindowProxy() : SlabWindow() {
 
         }
 
-        void WindowProxy::setWindow(Pointer<Window> win) {
+        void WindowProxy::setWindow(Pointer<SlabWindow> win) {
             window = win;
 
             // window->setx(getx());

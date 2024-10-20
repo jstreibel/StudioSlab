@@ -5,20 +5,20 @@
 #ifndef STUDIOSLAB_WINDOWPROXY_H
 #define STUDIOSLAB_WINDOWPROXY_H
 
-#include "Window.h"
+#include "SlabWindow.h"
 
 namespace Slab {
     namespace Graphics {
 
-        class WindowProxy : public Window {
-            Pointer<Window> window;
+        class WindowProxy : public SlabWindow {
+            Pointer<SlabWindow> window;
 
         public:
             WindowProxy();
 
             void draw() override;
 
-            void setWindow(Pointer<Window>);
+            void setWindow(Pointer<SlabWindow>);
 
             void notifyReshape(int w, int h) override;
 

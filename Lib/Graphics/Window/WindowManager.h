@@ -6,19 +6,19 @@
 #define STUDIOSLAB_WINDOWMANAGER_H
 
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
-#include "Window.h"
+#include "SlabWindow.h"
 
 namespace Slab::Graphics {
 
     class WindowManager : public SystemWindowEventListener {
-        List<Pointer<Window>> slab_windows;
+        List<Pointer<SlabWindow>> slab_windows;
 
-        Pointer<Window> focused;
+        Pointer<SlabWindow> focused;
 
     public:
         ~WindowManager() override = default;
 
-        void addSlabWindow(Pointer<Window>);
+        void addSlabWindow(Pointer<SlabWindow>);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 

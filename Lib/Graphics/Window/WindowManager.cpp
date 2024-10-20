@@ -6,7 +6,7 @@
 
 namespace Slab {
     namespace Graphics {
-        void WindowManager::addSlabWindow(Pointer<Window> slab_window) {
+        void WindowManager::addSlabWindow(Pointer<SlabWindow> slab_window) {
             slab_windows.push_back(slab_window);
 
             if(focused == nullptr) focused = slab_window;

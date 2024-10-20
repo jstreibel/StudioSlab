@@ -6,7 +6,7 @@
 
 namespace Slab {
     namespace Graphics {
-        PrintWindow::PrintWindow(const Pointer<Window> &slabWindow) : ImGuiWindow(slabWindow) {
+        PrintWindow::PrintWindow(const Pointer<SlabWindow> &slabWindow) : ImGuiWindow(slabWindow) {
 
         }
     } // Slab

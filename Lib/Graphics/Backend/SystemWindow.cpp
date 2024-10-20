@@ -8,7 +8,7 @@ namespace Slab::Graphics {
 
     void SystemWindow::addEventListener(Pointer<SystemWindowEventListener> listener) {
         try {
-            auto window = DynamicPointerCast<Window>(listener);
+            auto window = DynamicPointerCast<SlabWindow>(listener);
 
             addSlabWindow(window);
             return;
@@ -20,7 +20,7 @@ namespace Slab::Graphics {
         eventListeners.push_back(listener);
     }
 
-    void SystemWindow::addSlabWindow(Pointer<Window> window) {
+    void SystemWindow::addSlabWindow(Pointer<SlabWindow> window) {
         slab_windows.push_back(window);
     }
 

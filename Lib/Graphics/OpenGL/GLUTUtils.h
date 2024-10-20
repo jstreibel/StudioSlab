@@ -32,18 +32,18 @@
 #define FONT_STROKE_DEFAULT FONT_STROKE_ROMAN
 
 namespace Slab::Graphics {
-    class Window;
+    class SlabWindow;
 }
 
 namespace Slab::Graphics::OpenGL::GLUT {
 
-    void write(const Window *window, float fontScale, float x, float y, std::string str,
+    void write(const SlabWindow *window, float fontScale, float x, float y, std::string str,
                void *font = FONT_STROKE_DEFAULT);
 
-    void writeOrtho(const Window *window, RectR region, float fontScale, float x, float y, std::string str,
+    void writeOrtho(const SlabWindow *window, RectR region, float fontScale, float x, float y, std::string str,
                     void *font = FONT_STROKE_DEFAULT);
 
-    void writeBitmap(const Window *window, float x, float y, std::string str,
+    void writeBitmap(const SlabWindow *window, float x, float y, std::string str,
                      void *font = FONT_BITMAP_DEFAULT);
 
     FrameBuffer getFrameBuffer(int x=0, int y=0, int w=-1, int h=-1);

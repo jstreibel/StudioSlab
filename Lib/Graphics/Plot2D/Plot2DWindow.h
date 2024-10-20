@@ -15,7 +15,7 @@
 #include "PlotStyle.h"
 
 #include "Graphics/Utils.h"
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Graphics/Utils/Writer.h"
 
@@ -25,7 +25,7 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow : public Window {
+    class Plot2DWindow : public SlabWindow {
         static Count WindowCount;
         Count id;
         static std::map<Str, Plot2DWindow*> graphMap;

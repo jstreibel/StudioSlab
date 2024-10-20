@@ -171,7 +171,7 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->getDFTDataHistory());
             }
 
-            guiBackend.addEventListener(Graphics::Window_ptr(outputOpenGL));
+            guiBackend.addEventListener(Pointer<Graphics::SlabWindow>(outputOpenGL));
             outputManager->addOutputChannel(outputOpenGL);
         } else {
             /* O objetivo de relacionar o numero de passos para

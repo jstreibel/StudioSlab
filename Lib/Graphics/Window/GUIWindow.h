@@ -8,14 +8,14 @@
 #include "3rdParty/ImGui.h"
 
 #include "Graphics/Utils.h"
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 #include "Utils/Types.h"
 
 
 namespace Slab::Graphics {
 
-    class GUIWindow : public Window {
+    class GUIWindow : public SlabWindow {
         Vector<Pair<Str, Color>> stats;
 
     public:

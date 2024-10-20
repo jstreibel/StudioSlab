@@ -14,7 +14,7 @@ namespace Tests {
 
     using namespace Slab;
 
-    class FourierTestWindow : public Graphics::Window {
+    class FourierTestWindow : public Graphics::SlabWindow {
         Graphics::WindowRow row;
         Graphics::WindowColumn col;
 

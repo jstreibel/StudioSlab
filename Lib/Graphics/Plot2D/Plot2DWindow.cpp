@@ -111,8 +111,8 @@ namespace Slab::Graphics {
     void Plot2DWindow::draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
 
-        Window::setBGColor(PlotThemeManager::GetCurrent()->graphBackground);
-        Window::draw();
+        SlabWindow::setBGColor(PlotThemeManager::GetCurrent()->graphBackground);
+        SlabWindow::draw();
 
         if (autoReviewGraphRanges) reviewGraphRanges();
 

@@ -6,14 +6,14 @@
 #define STUDIOSLAB_WINDOWCOLUMN_H
 
 #include <list>
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 
 
 
 namespace Slab::Graphics {
 
-    class WindowColumn : public Window {
-        std::list<Window_ptr> windows;
+    class WindowColumn : public SlabWindow {
+        std::list<Pointer<SlabWindow>> windows;
         RealVector heights;
 
         bool assertConsistency() const;
@@ -21,9 +21,9 @@ namespace Slab::Graphics {
     public:
         WindowColumn() = default;
 
-        void addWindow(Window_ptr window, float windowHeight = -1);
+        void addWindow(Pointer<SlabWindow> window, float windowHeight = -1);
 
-        bool removeWindow(const Window_ptr&);
+        bool removeWindow(const Pointer<SlabWindow>&);
 
         bool isEmpty() const;
 

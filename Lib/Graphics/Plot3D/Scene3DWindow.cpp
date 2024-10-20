@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     }
 
     void Scene3DWindow::draw() {
-        Window::draw();
+        SlabWindow::draw();
 
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -56,9 +56,9 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::notifyMouseMotion(int x, int y) {
-        fix left = Window::isMouseLeftClicked();
-        fix center = Window::isMouseCenterClicked();
-        fix right = Window::isMouseRightClicked();
+        fix left = SlabWindow::isMouseLeftClicked();
+        fix center = SlabWindow::isMouseCenterClicked();
+        fix right = SlabWindow::isMouseRightClicked();
 
         if(left && right) {
             auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();

@@ -12,7 +12,7 @@ namespace Slab {
 
         class PrintWindow : public ImGuiWindow {
         public:
-            explicit PrintWindow(const Pointer<Window> &slabWindow);
+            explicit PrintWindow(const Pointer<SlabWindow> &slabWindow);
         };
 
     } // Slab

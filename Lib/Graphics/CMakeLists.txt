@@ -157,7 +157,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/WindowStyles.h Window/WindowStyles.cpp
 
 		Window/GUIWindow.cpp
-		Window/Window.cpp
+		Window/SlabWindow.cpp
 		Window/WindowContainer/WindowPanel.cpp
 		Window/WindowTree/NodeWindow.cpp
 		Window/WindowTree/WindowTreeBuilder.cpp

@@ -20,11 +20,11 @@
 
 namespace Slab::Graphics {
 
-    class Window : public SystemWindowEventListener {
+    class SlabWindow : public SystemWindowEventListener {
         friend class WindowManager;
 
     public:
-        typedef std::shared_ptr<Window> Ptr;
+        typedef std::shared_ptr<SlabWindow> Ptr;
         enum Flags {
             None = 0x0,
             HasMainMenu = 0x1
@@ -54,8 +54,8 @@ namespace Slab::Graphics {
         void setBGColor(Color color);
 
     public:
-        explicit Window(int x = 0, int y = 0, int w = 100, int h = 100, Flags flags = None);
-        virtual ~Window();
+        explicit SlabWindow(int x = 0, int y = 0, int w = 100, int h = 100, Flags flags = None);
+        virtual ~SlabWindow();
 
         virtual void draw();
 
@@ -95,7 +95,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointers(Window)
+    DefinePointers(SlabWindow)
 
 }
 

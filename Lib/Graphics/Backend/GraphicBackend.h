@@ -7,7 +7,7 @@
 
 #include "Core/Backend/Backend.h"
 #include "Graphics/Backend/Events/MouseState.h"
-#include "Graphics/Backend/Events/GUIEventTranslator.h"
+#include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Modules/GraphicsModule.h"
 
 namespace Slab::Graphics {

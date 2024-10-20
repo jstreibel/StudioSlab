@@ -8,14 +8,14 @@
 #define V_SHAPE_WINDOWTREEBUILDER_H
 
 
-#include "Graphics/Window/Window.h"
+#include "Graphics/Window/SlabWindow.h"
 #include "NodeWindow.h"
 
 
 namespace Slab::Graphics {
 
     class WindowTreeBuilder {
-        Window shape;
+        SlabWindow shape;
         NodeWindow *root;
         NodeWindow *currentNode;
 
@@ -28,7 +28,7 @@ namespace Slab::Graphics {
             Above = Vertical, Right = Horizontal
         };
 
-        void addWindow(Window *window, Location location);
+        void addWindow(SlabWindow *window, Location location);
 
         NodeWindow *getRoot();
     };
