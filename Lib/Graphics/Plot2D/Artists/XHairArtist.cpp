@@ -29,13 +29,13 @@ namespace Slab::Graphics {
         currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, h - (Real)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
-        XHair.addPoint({region_rect.xMin, h-XHairLocation.y});
-        XHair.addPoint({region_rect.xMax, h-XHairLocation.y});
+        XHair.addPoint({region_rect.xMin, XHairLocation.y});
+        XHair.addPoint({region_rect.xMax, XHairLocation.y});
         XHair.addPoint({XHairLocation.x, region_rect.yMin});
         XHair.addPoint({XHairLocation.x, region_rect.yMax});
 
-        glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
+        // glMatrixMode(GL_MODELVIEW);
+        // glLoadIdentity();
 
         OpenGL::Legacy::SetupOrtho(region_rect);
 

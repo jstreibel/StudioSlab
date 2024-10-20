@@ -26,13 +26,17 @@ namespace Slab::Graphics {
                                      const RectI &viewport) {
         fix X = viewportCoord.x;
         fix Y = viewportCoord.y;
-        fix xMin = spaceRegion.xMin;
-        fix yMin = spaceRegion.yMin;
-        fix Δx = spaceRegion.width();
-        fix Δy = spaceRegion.height();
         fix W = viewport.width();
         fix H = viewport.height();
 
-        return {xMin + Δx*X/W, yMin + Δy*Y/H};
+        fix xMin = spaceRegion.xMin;
+        // fix yMin = spaceRegion.yMin;
+        fix yMax = spaceRegion.yMax;
+        fix Δx = spaceRegion.width();
+        fix Δy = spaceRegion.height();
+
+
+        return {xMin + Δx*X/W, yMax - Δy*Y/H};
+        // return {xMin + Δx*X/W, yMin + Δy*Y/H};
     }
 };

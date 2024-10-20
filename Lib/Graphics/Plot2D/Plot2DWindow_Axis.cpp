@@ -28,7 +28,7 @@ namespace Slab {
             if (artie->isVisible() && artie->getRegion().doesHit(coords.x, coords.y)) {
                 auto artLabel = artie->getXHairInfo(coords);
 
-                if (artLabel == "") continue;
+                if (artLabel.empty()) continue;
 
                 baseLabel += " --> " + artLabel;
             }
