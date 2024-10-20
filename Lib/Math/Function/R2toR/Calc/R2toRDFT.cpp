@@ -13,7 +13,7 @@
 #include "Math/Data/DataAllocator.h"
 
 #define TO_FFTW(a) (reinterpret_cast<fftw_complex*>(a))
-#define TO_STD(a) (reinterpret_cast<Complex*>(a))
+#define TO_STL(a) (reinterpret_cast<Complex*>(a))
 
 namespace Slab::Math::R2toR {
 
@@ -45,9 +45,9 @@ namespace Slab::Math::R2toR {
 
         // sign==1 => only mangle if inverse FT
 
-        MoveData(TO_STD(data_src_raw),
-                TO_STD(data_src),
-                N, M, 1.0,
+        MoveData(TO_STL(data_src_raw),
+                 TO_STL(data_src),
+                 N, M, 1.0,
                  resolveInputPolicy(inputPolicy, transform));
 
         auto plan = fftw_plan_dft_2d(M, N, TO_FFTW(data_src), data_dft, transform, FFTW_ESTIMATE);
@@ -62,12 +62,12 @@ namespace Slab::Math::R2toR {
         fix kₘₐₓ = dk * N; //  2π/Lₓ×N/2 if N even and 2π/Lₓ×(N-1)/2 if N odd
         fix ωₘₐₓ = dω * M; //  same as line above
 
-        auto out = new R2toC::NumericFunction(N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
+        auto out = DataAlloc<R2toC::NumericFunction>("ℱ["+in.get_data_name()+"](ω,k)", N, M, -kₘₐₓ, -ωₘₐₓ, 2*kₘₐₓ, 2*ωₘₐₓ);
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
-        MoveData(TO_STD(data_dft),
-                 TO_STD(data_out),
+        MoveData(TO_STL(data_dft),
+                 TO_STL(data_out),
                  N, M,
                  scale, resolveOutputPolicy(outputPolicy, transform));
 
@@ -93,7 +93,7 @@ namespace Slab::Math::R2toR {
         // -----
 
         MoveData(data_src_raw,
-                 TO_STD(data_src),
+                 TO_STL(data_src),
                  N, M, 1.0,
                  resolveInputPolicy(inputPolicy, transform));
 
@@ -113,10 +113,10 @@ namespace Slab::Math::R2toR {
         auto data_out = &out->getData()[0];
         fix scale = Lₓ*Lₜ/(N*M);
 
-        MoveData( TO_STD(data_dft),
-                 TO_STD(data_out),
+        MoveData(TO_STL(data_dft),
+                 TO_STL(data_out),
                  N, M, scale,
-                  resolveOutputPolicy(outputPolicy, transform));
+                 resolveOutputPolicy(outputPolicy, transform));
 
         fftw_destroy_plan(plan);
         fftw_free(data_src);
