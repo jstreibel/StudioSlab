@@ -111,7 +111,8 @@ namespace Slab::Graphics {
         for(auto &slab_window : slab_windows) {
             slab_window->setupParentSystemWindowHeight(h);
 
-            if (slab_window->wantsFullscreen()) {
+            if (slab_window->wantsFullscreen() || slab_windows.size()==1) {
+                slab_window->setDecorate(false);
                 slab_window->setx(0);
                 slab_window->sety(Graphics::menuHeight);
                 slab_window->notifyReshape(w, h - Graphics::menuHeight);
