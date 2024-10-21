@@ -66,14 +66,14 @@ namespace Slab::Graphics {
             if(first != slab_windows.end()) {
                 focused = *first;
                 if(decorate.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
-                    grabbed = focused;
+                    grabbed = {Point2D(mouse_state.x-focused->getx(), mouse_state.y-focused->gety()), focused};
                 } else {
-                    grabbed = nullptr;
+                    grabbed = {Point2D(), nullptr};
                 }
 
                 move_to_front(slab_windows, first);
             }
-        } else if(state==Release) grabbed = nullptr;
+        } else if(state==Release) grabbed = {Point2D(), nullptr};
 
         return focused->notifyMouseButton(button, state, keys);
     }
@@ -81,9 +81,11 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyMouseMotion(int x, int y, int dx, int dy) {
         if(focused == nullptr) return false;
 
-        if(grabbed != nullptr) {
-            grabbed->setx(x);
-            grabbed->sety(y);
+        if(grabbed.window != nullptr) {
+            auto p = grabbed.anchor;
+
+            grabbed.window->setx(x-(int)p.x);
+            grabbed.window->sety(y-(int)p.y);
 
             return true;
         }

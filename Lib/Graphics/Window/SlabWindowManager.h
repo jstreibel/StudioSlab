@@ -15,7 +15,8 @@ namespace Slab::Graphics {
         List<Pointer<SlabWindow>> slab_windows;
 
         Pointer<SlabWindow> focused;
-        Pointer<SlabWindow> grabbed;
+        using Anchor = Point2D;
+        struct {Anchor anchor; Pointer<SlabWindow> window;} grabbed;
 
     public:
         ~SlabWindowManager() override = default;
