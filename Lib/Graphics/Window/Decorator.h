@@ -10,13 +10,20 @@
 namespace Slab::Graphics {
 
     class Decorator {
-        int syswin_w, syswin_h;
+        int syswin_w=0, syswin_h=0;
 
     public:
         void operator()(const SlabWindow&);
 
         void setSystemWindowShape(int w, int h);
 
+        virtual
+        bool isMouseOverTitlebar(const SlabWindow&, int x_mouse, int y_mouse);
+
+        virtual
+        bool isMouseOverCorner(const SlabWindow&, int x_mouse, int y_mouse);
+
+        virtual
         bool isMouseOverGrabRegion(const SlabWindow&, int x_mouse, int y_mouse);
     };
 

@@ -65,15 +65,23 @@ namespace Slab::Graphics {
 
             if(first != slab_windows.end()) {
                 focused = *first;
-                if(decorate.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
-                    grabbed = {Point2D(mouse_state.x-focused->getx(), mouse_state.y-focused->gety()), focused};
+
+                if (decorate.isMouseOverTitlebar(*focused, mouse_state.x, mouse_state.y)) {
+                    grabbed = {Point2D(mouse_state.x - focused->getx(), mouse_state.y - focused->gety()),
+                               Grabbed::Titlebar,
+                               focused};
+                } else if(decorate.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
+                    grabbed = {Point2D(focused->getw()+focused->getx() - mouse_state.x,
+                                       focused->geth()+focused->gety() - mouse_state.y),
+                               Grabbed::Corner,
+                               focused};
                 } else {
-                    grabbed = {Point2D(), nullptr};
+                    grabbed = {Point2D(), Grabbed::None, nullptr};
                 }
 
                 move_to_front(slab_windows, first);
             }
-        } else if(state==Release) grabbed = {Point2D(), nullptr};
+        } else if(state==Release) grabbed = {Point2D(), Grabbed::None, nullptr};
 
         return focused->notifyMouseButton(button, state, keys);
     }
@@ -84,8 +92,14 @@ namespace Slab::Graphics {
         if(grabbed.window != nullptr) {
             auto p = grabbed.anchor;
 
-            grabbed.window->setx(x-(int)p.x);
-            grabbed.window->sety(y-(int)p.y);
+            if(grabbed.what == Grabbed::Titlebar) {
+                grabbed.window->setx(x - (int) p.x);
+                grabbed.window->sety(y - (int) p.y);
+            } else if(grabbed.what == Grabbed::Corner) {
+                fix w = x-grabbed.window->getx()+grabbed.anchor.x;
+                fix h = y-grabbed.window->gety()+grabbed.anchor.y;
+                grabbed.window->notifyReshape((int)w, (int)h);
+            }
 
             return true;
         }

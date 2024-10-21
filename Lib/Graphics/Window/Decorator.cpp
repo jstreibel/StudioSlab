@@ -11,6 +11,8 @@
 
 
 namespace Slab::Graphics {
+    constexpr int corner_size = 20;
+
     void Decorator::operator()(const SlabWindow &slab_window) {
         auto rect = slab_window.getViewport();
         auto flags = slab_window.getFlags();
@@ -88,6 +90,8 @@ namespace Slab::Graphics {
                 glVertex2d(x, y+title_bar_height);
             }
             glEnd();
+
+
         }
     }
 
@@ -96,13 +100,32 @@ namespace Slab::Graphics {
         syswin_h = h;
     }
 
-    bool Decorator::isMouseOverGrabRegion(const SlabWindow &window, int x_mouse, int y_mouse) {
+    bool Decorator::isMouseOverTitlebar(const SlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
-        auto x = rect.xMin - Graphics::border_size,
-             y = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
-             w = rect.width()  + 2*Graphics::border_size;
+        auto x_full = rect.xMin - Graphics::border_size,
+             y_full = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
+             w_full = rect.width()  + 2*Graphics::border_size;
 
-        return x_mouse>x && x_mouse<x+w && y_mouse>y && y_mouse<y+Graphics::title_bar_height;
+        return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Graphics::title_bar_height;    }
+
+    bool Decorator::isMouseOverCorner(const SlabWindow &window, int x_mouse, int y_mouse) {
+        fix rect = window.getViewport();
+
+        auto x_full = rect.xMin - Graphics::border_size,
+                y_full = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
+                h_full = rect.height() + 2*Graphics::border_size + Graphics::title_bar_height,
+                w_full = rect.width()  + 2*Graphics::border_size;
+
+        return x_mouse>x_full+w_full-corner_size
+            && x_mouse<x_full+w_full
+            && y_mouse<y_full+h_full
+            && y_mouse>y_full+h_full-corner_size;
     }
+
+    bool Decorator::isMouseOverGrabRegion(const SlabWindow &window, int x_mouse, int y_mouse) {
+        return isMouseOverTitlebar(window, x_mouse, y_mouse) || isMouseOverCorner(window, x_mouse, y_mouse);
+    }
+
+
 } // Slab::Graphics
