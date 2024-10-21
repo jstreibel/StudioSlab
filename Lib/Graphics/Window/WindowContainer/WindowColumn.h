@@ -43,6 +43,10 @@ namespace Slab::Graphics {
                                ModKeys keys) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
+
+        auto setx(int x) -> void override;
+
+        auto sety(int y) -> void override;
     };
 
 

@@ -14,7 +14,7 @@ using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
 : osc(0.0, -0.5, 0.75, 0.15, false, false)  {
-    Graphics::WindowTreeBuilder treeBuilder(0, 0, 1500, 1500);
+    Graphics::WindowTreeBuilder treeBuilder(Graphics::default_window_rect);
 
     Graphics::SlabWindow *window = nullptr;
 
@@ -44,7 +44,7 @@ void WindowTreeBuilderTest::draw() {
 
 void WindowTreeBuilderTest::notifyReshape(int width, int height) {
     Graphics::SlabWindow::notifyReshape(width, height);
-    main->setSize(width,  height);
+    main->notifyReshape(width,  height);
 
     main->arrange();
 }

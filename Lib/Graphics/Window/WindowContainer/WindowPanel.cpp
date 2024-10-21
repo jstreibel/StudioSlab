@@ -197,4 +197,16 @@ namespace Slab::Graphics {
         for (auto &col: columns) col.setupParentSystemWindowHeight(h);
     }
 
+    void WindowPanel::setx(int x) {
+        SlabWindow::setx(x);
+
+        arrangeWindows();
+    }
+
+    void WindowPanel::sety(int y) {
+        SlabWindow::sety(y);
+
+        arrangeWindows();
+    }
+
 }

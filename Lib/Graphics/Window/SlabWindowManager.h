@@ -15,6 +15,7 @@ namespace Slab::Graphics {
         List<Pointer<SlabWindow>> slab_windows;
 
         Pointer<SlabWindow> focused;
+        Pointer<SlabWindow> grabbed;
 
     public:
         ~SlabWindowManager() override = default;
@@ -25,7 +26,7 @@ namespace Slab::Graphics {
 
         bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
 

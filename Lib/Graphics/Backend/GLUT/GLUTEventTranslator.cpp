@@ -140,7 +140,10 @@ namespace Slab::Graphics {
         mouseState.x = x;
         mouseState.y = y;
 
-        return IterateReferences(guiListeners, Func(notifyMouseMotion, x, y));
+        fix dx = mouseState.dx;
+        fix dy = mouseState.dy;
+
+        return IterateReferences(guiListeners, Func(notifyMouseMotion, x, y, dx, dy));
     }
 
     bool GLUTEventTranslator::render() {

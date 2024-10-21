@@ -56,9 +56,17 @@ namespace Slab::Graphics {
         }
 
         else if(isMouseMovement) {
+            static auto last_x = 0, last_y = 0;
+
             fix x = event.mouseMove.x;
             fix y = event.mouseMove.y;
-            IterateReferences(guiListeners,Func(notifyMouseMotion, x, y));
+            fix dx = x-last_x;
+            fix dy = y-last_y;
+
+            last_x = x;
+            last_y = y;
+
+            IterateReferences(guiListeners,Func(notifyMouseMotion, x, y, dx, dy));
         }
 
         else if(isMouseWheel){

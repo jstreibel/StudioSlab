@@ -7,12 +7,12 @@
 namespace Slab::Graphics {
     int tiling_gap = 3;
 
-    int title_bar_height = 20;
+    int title_bar_height = 42;
     int border_size = 3;
 
     RectI default_window_rect(200, 1000, 200, 750);
 
-    int menuHeight = 42;
+    int menuHeight = title_bar_height;
 
     // Color clearColor = {0.1, 0.1, 0.15, 1};
     // Color clearColor = {0.9, 0.9, 0.85, 1};

@@ -63,4 +63,9 @@ namespace Slab::Graphics {
 
         return Artist::getRegion();
     }
+
+    void RtoRFunctionArtist::setStyle(PlotStyle sty) { plotStyle = sty; }
+
+    void RtoRFunctionArtist::setSampling(Count samps) { samples = samps; }
+
 } // Graphics

@@ -76,6 +76,7 @@ namespace Slab::Core {
     }
 
     void BackendManager::RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc) {
+
         BackendManager::availableBackends[name] = std::move(alloc);
 
         Log::Info() << "Backend '" << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;

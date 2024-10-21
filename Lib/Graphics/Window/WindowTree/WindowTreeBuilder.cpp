@@ -34,7 +34,7 @@ namespace Slab::Graphics {
         auto myRect = shape.getViewport();
         currentNode->setx(myRect.xMin);
         currentNode->sety(myRect.yMin);
-        currentNode->setSize(myRect.width(), myRect.height());
+        currentNode->notifyReshape(myRect.width(), myRect.height());
 
         currentNode->arrange();
 

@@ -20,7 +20,10 @@ namespace Slab::Graphics {
     SlabWindow::~SlabWindow() = default;
 
     void SlabWindow::draw() { setupWindow(); }
-    void SlabWindow::notifyReshape(int w, int h) { this->setSize(w, h); }
+    void SlabWindow::notifyReshape(int w, int h) {
+        windowRect.xMax = windowRect.xMin + w;
+        windowRect.yMax = windowRect.yMin + h;
+    }
     bool SlabWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
         else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
@@ -47,8 +50,6 @@ namespace Slab::Graphics {
         fix w = vp.width();
         fix h = vp.height();
         glViewport(x, y, w, h);
-
-
     }
 
     auto SlabWindow::isMouseIn() const -> bool {
@@ -148,6 +149,18 @@ namespace Slab::Graphics {
 
     void SlabWindow::setupParentSystemWindowHeight(Int h) {
         parent_systemwindow_h = h;
+    }
+
+    auto SlabWindow::setx(int x) -> void {
+        fix w=windowRect.width();
+        windowRect.xMin = x;
+        windowRect.xMax = x+w;
+    }
+
+    auto SlabWindow::sety(int y) -> void {
+        fix h=windowRect.height();
+        windowRect.yMin = y;
+        windowRect.yMax = y+h;
     }
 
 }

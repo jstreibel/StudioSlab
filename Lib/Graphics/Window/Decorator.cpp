@@ -95,4 +95,14 @@ namespace Slab::Graphics {
         syswin_w = w;
         syswin_h = h;
     }
+
+    bool Decorator::isMouseOverGrabRegion(const SlabWindow &window, int x_mouse, int y_mouse) {
+        fix rect = window.getViewport();
+
+        auto x = rect.xMin - Graphics::border_size,
+             y = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
+             w = rect.width()  + 2*Graphics::border_size;
+
+        return x_mouse>x && x_mouse<x+w && y_mouse>y && y_mouse<y+Graphics::title_bar_height;
+    }
 } // Slab::Graphics

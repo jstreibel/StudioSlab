@@ -40,7 +40,15 @@ namespace Slab::Graphics {
     }
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
-        return IterateReferences(guiListeners, Func(notifyMouseMotion, xpos, ypos), StopOnFirstResponder);
+        static auto last_x=0, last_y=0;
+
+        fix dx=xpos-last_x;
+        fix dy=ypos-last_y;
+
+        last_x = xpos;
+        last_y = ypos;
+
+        return IterateReferences(guiListeners, Func(notifyMouseMotion, xpos, ypos, dx, dy), StopOnFirstResponder);
     }
 
     void GLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {

@@ -78,12 +78,9 @@ namespace Slab::Graphics {
         inline auto gety() const -> int  { return windowRect.yMin; }
         inline auto getw() const -> int  { return windowRect.width(); }
         inline auto geth() const -> int  { return windowRect.height(); }
-        inline auto setx(int x)  -> void { windowRect.xMin = x; }
-        inline auto sety(int y)  -> void { windowRect.yMin = y; }
-        inline void setSize(int w, int h) {
-            windowRect.xMax = windowRect.xMin + w;
-            windowRect.yMax = windowRect.yMin + h;
-        }
+
+        virtual auto setx(int x)  -> void;
+        virtual auto sety(int y)  -> void;
 
     };
 

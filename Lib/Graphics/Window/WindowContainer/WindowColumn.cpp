@@ -180,5 +180,17 @@ namespace Slab::Graphics {
             win->setupParentSystemWindowHeight(h);
     }
 
+    void WindowColumn::setx(int x) {
+        SlabWindow::setx(x);
+
+        arrangeWindows();
+    }
+
+    void WindowColumn::sety(int y) {
+        SlabWindow::sety(y);
+
+        arrangeWindows();
+    }
+
 
 }

@@ -16,6 +16,8 @@ namespace Slab::Graphics {
         void operator()(const SlabWindow&);
 
         void setSystemWindowShape(int w, int h);
+
+        bool isMouseOverGrabRegion(const SlabWindow&, int x_mouse, int y_mouse);
     };
 
 } // Slab::Graphics

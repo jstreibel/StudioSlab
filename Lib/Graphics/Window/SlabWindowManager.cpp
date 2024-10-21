@@ -5,9 +5,41 @@
 #include "SlabWindowManager.h"
 #include "Decorator.h"
 #include "WindowStyles.h"
+#include "Graphics/SlabGraphics.h"
+#include <functional>
 
 namespace Slab::Graphics {
     static Decorator decorate;
+
+    template <typename T, typename Predicate>
+    typename std::list<T>::iterator find_first_if(std::list<T>& lst, Predicate pred) {
+        for(auto it = lst.begin(); it != lst.end(); ++it) {
+            if(pred(*it)) {
+                return it;
+            }
+        }
+        return lst.end();
+    }
+
+    // Function to move the first occurrence of a value to the front
+    template <typename T>
+    bool move_to_front(std::list<T>& lst, const T& value) {
+        auto it = std::find(lst.begin(), lst.end(), value);
+        if (it != lst.end()) {
+            lst.splice(lst.begin(), lst, it);
+            return true;
+        }
+        return false;
+    }
+
+    template <typename T>
+    bool move_to_front(std::list<T>& list, const typename std::list<T>::iterator& it) {
+        if (it != list.end()) {
+            list.splice(list.begin(), list, it);
+            return true;
+        }
+        return false;
+    }
 
     void SlabWindowManager::addSlabWindow(Pointer<SlabWindow> slab_window) {
         slab_windows.push_back(slab_window);
@@ -24,11 +56,37 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         if(focused == nullptr) return false;
 
+        if(button==MouseButton_LEFT && state==Press) {
+            auto mouse_state = Graphics::GetGraphicsBackend().getMouseState();
+
+            auto first = find_first_if(slab_windows, [mouse_state](const Pointer<SlabWindow> &window){
+                return window->isMouseIn() || decorate.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
+            });
+
+            if(first != slab_windows.end()) {
+                focused = *first;
+                if(decorate.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
+                    grabbed = focused;
+                } else {
+                    grabbed = nullptr;
+                }
+
+                move_to_front(slab_windows, first);
+            }
+        } else if(state==Release) grabbed = nullptr;
+
         return focused->notifyMouseButton(button, state, keys);
     }
 
-    bool SlabWindowManager::notifyMouseMotion(int x, int y) {
+    bool SlabWindowManager::notifyMouseMotion(int x, int y, int dx, int dy) {
         if(focused == nullptr) return false;
+
+        if(grabbed != nullptr) {
+            grabbed->setx(x);
+            grabbed->sety(y);
+
+            return true;
+        }
 
         return focused->notifyMouseMotion(x, y);
     }
@@ -64,13 +122,19 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyRender() {
         if(focused == nullptr) return false;
 
-        for(auto &slab_window : slab_windows) {
-            decorate(*slab_window);
-            slab_window->draw();
+        for (auto it = slab_windows.rbegin(); it != slab_windows.rend(); ++it) {
+            decorate(**it);
+            (*it)->draw();
         }
+
+        // for(auto &slab_window : slab_windows) {
+        //     decorate(*slab_window);
+        //     slab_window->draw();
+        // }
 
         return true;
     }
+
 
 
 } // Slab::Graphics

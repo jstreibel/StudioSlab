@@ -7,7 +7,7 @@ add_executable ( Tests
 		WindowTreeBuilderTest.cpp
 
 		GLFreeTypeTests.h     GLFreeTypeTests.cpp
-        #FourierTestWindow.h   FourierTestWindow.cpp
+        FourierTestWindow.h   FourierTestWindow.cpp
         BezierTests.h         BezierTests.cpp
         ModernGLTests.h       ModernGLTests.cpp
         NuklearTests.h        NuklearTests.cpp

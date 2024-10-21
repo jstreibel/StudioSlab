@@ -23,6 +23,10 @@ namespace Slab::Graphics {
 
         void setFunction(RtoR::Function_ptr);
 
+        void setStyle(PlotStyle);
+
+        void setSampling(Count);
+
         const RectR &getRegion() override;
 
         bool draw(const Plot2DWindow &d) override;

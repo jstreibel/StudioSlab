@@ -66,6 +66,10 @@ namespace Slab::Graphics {
         bool notifyMouseWheel(double dx, double dy) override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+
+        auto setx(int x) -> void override;
+
+        auto sety(int y) -> void override;
     };
 
 }

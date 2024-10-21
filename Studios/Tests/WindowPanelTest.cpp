@@ -54,7 +54,7 @@ void WindowPanelTest::draw() {
 }
 
 void WindowPanelTest::notifyReshape(int width, int height) {
-    panel->setSize(width, height);
+    panel->notifyReshape(width, height);
 
     panel->arrangeWindows();
 }

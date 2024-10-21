@@ -53,7 +53,7 @@ namespace Slab::Graphics {
 
             child->setx(getx() + i * dx);
             child->sety(gety() + i * dy);
-            child->setSize(childWidth, childHeight);
+            child->notifyReshape(childWidth, childHeight);
 
             auto cast = dynamic_cast<NodeWindow *>(child);
             if (cast != nullptr) cast->arrange();

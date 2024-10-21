@@ -33,8 +33,8 @@ namespace Slab::Graphics {
     }
 
 
-    bool SystemWindowEventListener::notifyMouseMotion(int x, int y) {
-        return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y));
+    bool SystemWindowEventListener::notifyMouseMotion(int x, int y, int dx, int dy) {
+        return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y, dx, dy));
     }
 
     bool SystemWindowEventListener::notifySystemWindowReshape(int w, int h) {

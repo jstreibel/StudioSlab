@@ -6,6 +6,7 @@
 
 #include "Core/Backend/Console/ConsoleBackend.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "StudioSlab.h"
 
 namespace Slab::Core {
 
@@ -27,6 +28,7 @@ namespace Slab::Core {
     }
 
     void LoadModule(const ModuleName& module) {
+        if(!Slab::IsStarted()) Slab::Startup();
         BackendManager::LoadModule(module);
     }
 

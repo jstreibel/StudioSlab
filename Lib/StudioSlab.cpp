@@ -10,10 +10,16 @@
 
 namespace Slab {
 
+    bool started = false;
+
     void Startup() {
+        if(IsStarted()) return;
+
         Core::Register();
         Math::Register();
         Graphics::Register();
+
+        started = true;
     }
 
     Core::Module& GetModule(Core::ModuleName name) {
@@ -24,6 +30,10 @@ namespace Slab {
         Core::Finish();
         Math::Finish();
         Graphics::Finish();
+    }
+
+    bool IsStarted() {
+        return started;
     }
 
 

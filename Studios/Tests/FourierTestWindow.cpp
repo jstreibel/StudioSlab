@@ -6,25 +6,24 @@
 
 #include "Core/Tools/Log.h"
 
-#include "3rdParty/ImGui.h"
-
-#include "Math/Constants.h"
 #include "Math/Function/NativeFunction.h"
 
-#include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/InverseFourier.h"
-// #include "Math/Function/MapsFunctionRenderer.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/ComplexMagnitude.h"
 #include "Math/Function/RtoC/FourierModes.h"
+#include "Graphics/Plot2D/Plotter.h"
+#include "Graphics/Plot2D/PlotThemeManager.h"
 
 #define Re 0
 #define Im 1
 
 namespace Tests {
     using namespace Slab;
+
+    using Plot = Graphics::Plotter;
 
     fix π = (float)Math::Constants::pi;
 
@@ -58,23 +57,41 @@ namespace Tests {
 
     Math::Base::NativeFunction<Math::RtoR::Function> Func(func);
     Math::RtoR::InverseFourier FuncRebuilt;
-    Math::RtoC::FourierModes fourierModes(Naked(Func), 0, L, 100);
-    Math::RtoR::ComplexMagnitude amplitudes(Naked(fourierModes));
+    Math::RtoC::FourierModes fourierModes(Dummy(Func), 0, L, 100);
+    Math::RtoR::ComplexMagnitude amplitudes(Dummy(fourierModes));
 
     FourierTestWindow::FourierTestWindow()
-    : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph", false, N_modes)
-    , mFTGraph(-1.1*ω, 1.1*ω, -0.1, 1.1, "", false, 200)
+    : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph")
+    , mFTGraph(-1.1*ω, 1.1*ω, -0.1, 1.1, "")
+    , theme(Graphics::PlotThemeManager::GetCurrent())
+    , realFTArtist(nullptr, theme->funcPlotStyles[0])
+    , imagFTArtist(nullptr, theme->funcPlotStyles[1])
+    , loc1Artist(nullptr, theme->funcPlotStyles[3])
+    , loc2Artist(nullptr, theme->funcPlotStyles[3])
+    , funcArtist(nullptr, theme->funcPlotStyles[0], 2000)
+    , rebuiltFuncArtist(nullptr, theme->
+    funcPlotStyles[1], 2000)
     {
         updateGraphs();
 
-        mFTGraph.addFunction(&amplitudes, Str("ℱ[") + funcSymbol + "](k)", StylesManager::GetCurrent()->funcPlotStyles[4]);
+        mFuncGraph.addArtist(Dummy(funcArtist));
+        mFuncGraph.addArtist(Dummy(rebuiltFuncArtist));
+        mFuncGraph.addArtist(Dummy(loc1Artist));
+        mFuncGraph.addArtist(Dummy(loc2Artist));
+        loc1Artist.setLabel("xₘᵢₙ");
+        loc2Artist.setLabel("xₘₐₓ");
 
-        row.addWindow(DummyPtr(gui), Graphics::WindowRow::Right, .25);
+        mDFTGraph.addArtist(Dummy(realFTArtist));
+        mDFTGraph.addArtist(Dummy(imagFTArtist));
 
-        col.addWindow(DummyPtr(mFTGraph));
-        col.addWindow(DummyPtr(mDFTGraph));
-        col.addWindow(DummyPtr(mFuncGraph));
-        row.addWindow(DummyPtr(col));
+        Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->funcPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
+
+        row.addWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
+
+        col.addWindow(Dummy(mFTGraph));
+        col.addWindow(Dummy(mDFTGraph));
+        col.addWindow(Dummy(mFuncGraph));
+        row.addWindow(Dummy(col));
     }
 
     void FourierTestWindow::draw() {
@@ -101,7 +118,7 @@ namespace Tests {
     }
 
     void FourierTestWindow::notifyReshape(int w, int h) {
-        Window::notifyReshape(w,h);
+        SlabWindow::notifyReshape(w,h);
 
         row.setx(getx());
         row.sety(gety());
@@ -110,8 +127,8 @@ namespace Tests {
     }
 
     void FourierTestWindow::updateGraphs() {
-        static RtoR::DFTResult modes;
-        using FFT = RtoR::DFT;
+        static Math::RtoR::DFTResult modes;
+        using FFT = Math::RtoR::DFT;
 
         fourierModes.setL(L);
         fourierModes.setNSamples(N_modes);
@@ -138,39 +155,40 @@ namespace Tests {
                 }
             }
 
-            auto style = StylesManager::GetCurrent()->funcPlotStyles[1];
+            auto style = theme->funcPlotStyles[1];
             style.lineColor.inverse();
             style.thickness = 2.5;
-            style.primitive = VerticalLines;
+            style.setPrimitive(Slab::Graphics::VerticalLines);
             style.filled = false;
             style.lineColor.a = 0.8;
-            mDFTGraph.clearPointSets();
-            mDFTGraph.addPointSet(modes.re, style, Str("ℑ(ℱ[") + funcSymbol + "(x)])", false);
 
-            style = StylesManager::GetCurrent()->funcPlotStyles[3];
+
+            realFTArtist.setPointSet(modes.re);
+            realFTArtist.setLabel(Str("ℑ(ℱ[") + funcSymbol + "(x)])");
+
+            style = theme->funcPlotStyles[3];
             style.lineColor.inverse();
             style.thickness = 2.5;
-            style.primitive = VerticalLines;
+            style.setPrimitive(Slab::Graphics::VerticalLines);
             style.filled = false;
             style.lineColor.a = 0.8;
-            mDFTGraph.addPointSet(modes.im, style, Str("ℜ(ℱ[") + funcSymbol + "(x)])", false);
+            imagFTArtist.setStyle(style);
+            imagFTArtist.setPointSet(modes.im);
+            imagFTArtist.setLabel(Str("ℜ(ℱ[") + funcSymbol + "(x)])");
 
 
             if (true) {
-                mDFTGraph.set_xMin(-2 * π);
-                mDFTGraph.set_xMax(2*ωₘₐₓ);
+                mDFTGraph.getRegion().set_x_limits(-2 * π, 2*ωₘₐₓ);
             } else {
                 auto min = modes.re->getMin();
                 auto max = modes.re->getMax();
                 auto Δx = max.x - min.x;
 
-                mDFTGraph.set_xMin(min.x - Δx * 0.15);
-                mDFTGraph.set_xMax(max.x + Δx * 0.15);
+                mDFTGraph.getRegion().set_x_limits(min.x - Δx * 0.15, max.x + Δx * 0.15);
             }
 
             if (true) {
-                mDFTGraph.set_yMax(1.25);
-                mDFTGraph.set_yMin(-1.25);
+                mDFTGraph.getRegion().set_y_limits(1.25, -1.25);
             } else {
                 auto min_Re = modes.re->getMin();
                 auto max_Re = modes.re->getMax();
@@ -185,29 +203,30 @@ namespace Tests {
                 fix range = std::max(range_Re, range_Im);
                 fix Δy = std::max(Δy_Re, Δy_Im);
 
-                mDFTGraph.set_yMin(-range - Δy * 0.15);
-                mDFTGraph.set_yMax(+range + Δy * 0.15);
+                mDFTGraph.getRegion().set_y_limits(-range - Δy * 0.15, +range + Δy * 0.15);
             }
         }
 
 
         {
-            mFuncGraph.clearFunctions();
-
-            auto style = StylesManager::GetCurrent()->funcPlotStyles[0].permuteColors(true);
+            auto style = theme->funcPlotStyles[0].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
-            mFuncGraph.addFunction(&Func, funcSymbol, style);
+            funcArtist.setFunction(Dummy(Func));
+            funcArtist.setLabel(funcSymbol);
+            funcArtist.setStyle(style);
 
-            style = StylesManager::GetCurrent()->funcPlotStyles[1].permuteColors(true);
+            style = theme->funcPlotStyles[1].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             FuncRebuilt.setModes(modes);
-            mFuncGraph.addFunction(&FuncRebuilt, Str("ℱ⁻¹[ℱ[")+funcSymbol+"(x)]]", style);
+            rebuiltFuncArtist.setFunction(Dummy(FuncRebuilt));
+            rebuiltFuncArtist.setLabel(Str("ℱ⁻¹[ℱ[")+funcSymbol+"(x)]]");
+            rebuiltFuncArtist.setStyle(style);
 
-            mFuncGraph.setResolution(N_modes);
-            mFuncGraph.set_xMin(-0.1 * L);
-            mFuncGraph.set_xMax(1.1 * L);
+            funcArtist.setSampling(N_modes);
+
+            mFuncGraph.getRegion().set_x_limits(-0.1 * L, 1.1 * L);
 
             static Math::PointSet L_loc1, L_loc2;
             static bool initd = false;
@@ -215,8 +234,8 @@ namespace Tests {
                 L_loc1.setPoints({{0.0, -2},
                                   {0.0, +2}});
 
-                mFuncGraph.addPointSet(DummyPtr(L_loc1), StylesManager::GetCurrent()->funcPlotStyles[3], "xₘᵢₙ", false);
-                mFuncGraph.addPointSet(DummyPtr(L_loc2), StylesManager::GetCurrent()->funcPlotStyles[3], "xₘₐₓ", false);
+                loc1Artist.setPointSet(Dummy(L_loc1));
+                loc2Artist.setPointSet(Dummy(L_loc2));
 
                 initd = true;
             }

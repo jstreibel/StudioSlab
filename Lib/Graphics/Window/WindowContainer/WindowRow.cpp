@@ -209,4 +209,16 @@ namespace Slab::Graphics {
 
     }
 
+    void WindowRow::setx(int x) {
+        SlabWindow::setx(x);
+
+        arrangeWindows();
+    }
+
+    void WindowRow::sety(int y) {
+        SlabWindow::sety(y);
+
+        arrangeWindows();
+    }
+
 }

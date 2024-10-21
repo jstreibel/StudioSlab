@@ -35,28 +35,45 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 int TestsApp::run() {
     using namespace Slab;
 
-    Pointer<Graphics::SlabWindow> test;
-
     Graphics::GraphicBackend *backend = nullptr;
 
     if(true) {
         Core::BackendManager::Startup("GLFW");
 
-        if(true)       test = New<Tests::LaTeXTests>();
-        else if(true)  test = New<Tests::VShapeExpansionTest>();
-        else if(true)  test = New<Tests::Graph3DTests>();
-        else if(true)  test = New<Tests::ModernGLTests>();
-        // else if(false) test = new Tests::BezierTests;
-        // else if(true)  test = new Tests::FourierTestWindow;
-        // else if(true)  test = new WindowTreeBuilderTest;
-        // else if(true)  test = new WindowPanelTest;
-        // else test = new GLFreeTypeTests;
+        auto wm = New<Graphics::SlabWindowManager>();
+
+        Pointer<Graphics::SlabWindow> temp;
+
+        temp = New<Tests::LaTeXTests>();
+        wm->addSlabWindow(temp);
+
+        temp = New<Tests::VShapeExpansionTest>();
+        wm->addSlabWindow(temp);
+
+        temp = New<Tests::Graph3DTests>();
+        wm->addSlabWindow(temp);
+
+        temp = New<Tests::ModernGLTests>();
+        wm->addSlabWindow(temp);
+
+        temp = New<Tests::BezierTests>();
+        wm->addSlabWindow(temp);
+
+        temp = New<Tests::FourierTestWindow>();
+        // wm->addSlabWindow(temp);
+
+        temp = New<WindowTreeBuilderTest>();
+        wm->addSlabWindow(temp);
+
+        temp = New<WindowPanelTest>();
+        wm->addSlabWindow(temp);
+
+        temp = New<GLFreeTypeTests>();
+        wm->addSlabWindow(temp);
 
         backend = &Slab::Graphics::GetGraphicsBackend();
 
-        auto wm = New<Graphics::SlabWindowManager>();
-        wm->addSlabWindow(test);
-        backend->addEventListener(wm);
+        backend->addAndOwnEventListener(wm);
 
     } else {
         Core::BackendManager::Startup("GLFW");

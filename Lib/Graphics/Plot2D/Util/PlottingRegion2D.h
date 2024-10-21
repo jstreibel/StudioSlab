@@ -24,6 +24,8 @@ namespace Slab::Graphics {
         void animate_yMax(Real);
 
         void setLimits(Real xMin, Real xMax, Real yMin, Real yMax);
+        void set_x_limits(Real x_min, Real x_max);
+        void set_y_limits(Real y_min, Real y_max);
 
         void setReference_xMin(Pointer<Real>);
         void setReference_xMax(Pointer<Real>);
