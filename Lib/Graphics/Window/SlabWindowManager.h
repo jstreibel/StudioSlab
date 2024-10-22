@@ -8,11 +8,14 @@
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "SlabWindow.h"
 #include "Utils/List.h"
+#include "Decorator.h"
 
 namespace Slab::Graphics {
 
     class SlabWindowManager : public SystemWindowEventListener {
         List<Pointer<SlabWindow>> slab_windows;
+
+        Decorator decorator;
 
         Pointer<SlabWindow> focused;
         using Anchor = Point2D;

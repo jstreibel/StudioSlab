@@ -12,9 +12,7 @@
 
 namespace Slab::Graphics {
 
-    // typedef Vector<Window::Ptr> WinCol;
     typedef Vector<WindowColumn> WindowColumns;
-
 
     class WindowPanel : public SlabWindow {
         WindowColumns columns = WindowColumns(1);

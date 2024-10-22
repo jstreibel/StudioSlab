@@ -20,4 +20,8 @@ namespace Slab::Core {
         return id;
     }
 
+    Str UniqueObject::get_id_str() const {
+        return Slab::ToStr(get_id());
+    }
+
 } // Slab::Core

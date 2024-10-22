@@ -7,12 +7,18 @@
 
 #include "SlabWindow.h"
 
+#include "Graphics/OpenGL/WriterOpenGL.h"
+
 namespace Slab::Graphics {
 
     class Decorator {
         int syswin_w=0, syswin_h=0;
 
+        OpenGL::WriterOpenGL writer;
+
     public:
+        Decorator();
+
         virtual
         void decorate(const SlabWindow&, int x_mouse, int y_mouse);
 

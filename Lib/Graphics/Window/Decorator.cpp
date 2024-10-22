@@ -8,10 +8,14 @@
 #include "Graphics/OpenGL/Shader.h"
 #include "WindowStyles.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
-
+#include "Core/Tools/Resources.h"
 
 namespace Slab::Graphics {
     constexpr int corner_size = 20;
+
+    Decorator::Decorator() : writer(Core::Resources::fontFileName(7), (float)int(Graphics::title_bar_height*0.6)) {
+
+    }
 
     void Decorator::decorate(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto rect = slab_window.getViewport();
@@ -104,12 +108,16 @@ namespace Slab::Graphics {
                 glEnd();
             }
 
+            fix h_font = writer.getFontHeightInPixels();
+            writer.write(slab_window.getTitle(), {(Real)x+20, syswin_h-(Real)y - .8*h_font}, {1,0,0});
         }
     }
 
     void Decorator::setSystemWindowShape(int w, int h) {
         syswin_w = w;
         syswin_h = h;
+
+        writer.reshape(w, h);
     }
 
     bool Decorator::isMouseOverTitlebar(const SlabWindow &window, int x_mouse, int y_mouse) {

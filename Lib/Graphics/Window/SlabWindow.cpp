@@ -14,8 +14,15 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
+    SlabWindow::SlabWindow(const Str& title, RectI win_rect, Int flags)
+    : flags(flags), windowRect(win_rect), title(title.empty() ? "[Window:" + ToStr(get_id()) + "]" : title) {}
+
     SlabWindow::SlabWindow(RectI win_rect, Int flags)
-            : flags(flags), windowRect(win_rect) {}
+            : SlabWindow("", win_rect, flags) {}
+
+    SlabWindow::SlabWindow() : SlabWindow("", default_window_rect, 0x0) {
+
+    }
 
     SlabWindow::~SlabWindow() = default;
 
@@ -135,6 +142,8 @@ namespace Slab::Graphics {
         return flags & HasMainMenu;
     }
 
+    Str SlabWindow::getTitle() const { return title; }
+
     Int SlabWindow::getFlags() const {
         return flags;
     }
@@ -164,6 +173,7 @@ namespace Slab::Graphics {
     void SlabWindow::notifyBecameInactive() { active = false; }
 
     bool SlabWindow::isActive() const { return active; }
+
 
 
 

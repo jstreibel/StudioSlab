@@ -11,7 +11,6 @@
 
 
 namespace Slab::Graphics {
-    static Decorator decorator;
 
     void SlabWindowManager::addSlabWindow(Pointer<SlabWindow> slab_window) {
         slab_windows.push_back(slab_window);
@@ -31,7 +30,7 @@ namespace Slab::Graphics {
         if(button==MouseButton_LEFT && state==Press) {
             auto mouse_state = Graphics::GetGraphicsBackend().getMouseState();
 
-            auto first = FindFirst_If(slab_windows, [mouse_state](const Pointer<SlabWindow> &window) {
+            auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<SlabWindow> &window) {
                 return window->isMouseIn() || decorator.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
             });
 

@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         auto grb() const -> Color;
         auto rbg() const -> Color;
 
-
+        Color operator*(const Real32) const;
         bool operator==(const Color &rhs) const;
     };
 

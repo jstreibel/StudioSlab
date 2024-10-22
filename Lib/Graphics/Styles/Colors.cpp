@@ -90,4 +90,8 @@ namespace Slab::Graphics {
     auto Color::asFloat4fv() -> float * {
         return reinterpret_cast<float*>(this);
     }
+
+    Color Color::operator*(const Real32 v) const {
+        return {v*r, v*g, v*b, v*a};
+    }
 }

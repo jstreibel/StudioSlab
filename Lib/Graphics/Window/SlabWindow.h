@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
     class SlabWindow : public Core::UniqueObject {
         friend class SlabWindowManager;
-        int parent_systemwindow_h;
+        int parent_systemwindow_h = 10;
 
     public:
         virtual void setupParentSystemWindowHeight(Int);
@@ -45,9 +45,13 @@ namespace Slab::Graphics {
         Int flags;
         bool active=false;
         RectI windowRect;
+        Str title;
 
     public:
-        explicit SlabWindow(RectI win_rect=Graphics::default_window_rect, Int flags=0x0);
+        explicit SlabWindow(const Str& title, RectI win_rect=Graphics::default_window_rect, Int flags=0x0);
+        SlabWindow(RectI win_rect, Int flags=0x0);
+        SlabWindow();
+
         virtual ~SlabWindow();
 
         Int getFlags() const;
@@ -70,6 +74,8 @@ namespace Slab::Graphics {
         auto isMouseCenterClicked() const -> bool;
         auto isMouseRightClicked() const -> bool;
         auto getMouseViewportCoord() const -> Point2D;
+
+        Str getTitle() const;
 
         void setDecorate(bool);
         void setClear(bool);
