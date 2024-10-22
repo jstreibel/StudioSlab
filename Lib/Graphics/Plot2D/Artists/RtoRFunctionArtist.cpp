@@ -10,6 +10,7 @@
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 
 #include "3rdParty/ImGui.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 namespace Slab::Graphics {
     RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, Count samples)
@@ -24,6 +25,7 @@ namespace Slab::Graphics {
         glLineWidth(plotStyle.thickness);
 
         auto graphRect = d.getRegion().getRect();
+        OpenGL::Legacy::SetupOrtho(graphRect);
         Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
                                                    graphRect.xMax, samples, 1);
 

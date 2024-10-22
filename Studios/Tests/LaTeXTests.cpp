@@ -13,7 +13,7 @@ namespace Tests {
     using namespace Slab;
 
     LaTeXTests::LaTeXTests()
-    : Slab::Graphics::WindowRow()
+    : Slab::Graphics::WindowRow("LaTeX tests")
     , latexWriter()
     , writer(Core::Resources::fontFileName(10), 19)
     {

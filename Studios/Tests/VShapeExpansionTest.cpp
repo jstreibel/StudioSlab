@@ -10,8 +10,8 @@
 namespace Tests {
     using namespace Slab;
 
-    VShapeExpansionTest::VShapeExpansionTest() : Graphics::WindowRow() {
-        potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 43, 1.0);
+    VShapeExpansionTest::VShapeExpansionTest() : Graphics::WindowRow("V-shape expansion test") {
+        potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 15, 1.0);
         derivs = potential->diff(0);
 
         auto window = New<Graphics::Plot2DWindow>("V-shape series test");

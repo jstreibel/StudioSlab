@@ -36,7 +36,7 @@ namespace Tests {
     }
 
 
-    BezierTests::BezierTests() {
+    BezierTests::BezierTests() : Graphics::WindowRow("Bezier test") {
         param1 = (float)Core::Animator::GetBezierParams().first;
         param2 = (float)Core::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();

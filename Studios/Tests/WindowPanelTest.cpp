@@ -9,7 +9,8 @@
 #include "GLFreeTypeTests.h"
 //#include <Studios/Graphics/Graph.h>
 
-WindowPanelTest::WindowPanelTest() : panel(new Slab::Graphics::WindowPanel) {
+WindowPanelTest::WindowPanelTest()
+: Slab::Graphics::SlabWindow("Panels test"), panel(new Slab::Graphics::WindowPanel) {
     SlabWindow *window = nullptr;
 
     window = new SlabWindow();

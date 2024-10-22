@@ -35,6 +35,15 @@ namespace Slab {
 
     const Real Infinity = std::numeric_limits<double>::infinity();
 
+    template<typename T>
+    inline T Max(const T&a, const T&b) {
+        return std::max(a, b);
+    }
+
+    template<typename T>
+    inline T Min(const T&a, const T&b) {
+        return std::min(a, b);
+    }
 
     union DoubleAccess {
         double val;

@@ -59,6 +59,7 @@ int TestsApp::run() {
         temp = New<Tests::BezierTests>();
         wm->addSlabWindow(temp);
 
+        // Lento:
         temp = New<Tests::FourierTestWindow>();
         // wm->addSlabWindow(temp);
 

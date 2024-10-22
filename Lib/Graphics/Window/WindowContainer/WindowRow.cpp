@@ -32,8 +32,8 @@ fix PropagateOnlyIfMouseIsIn = false;
 
 namespace Slab::Graphics {
 
-    WindowRow::WindowRow(Int flags)
-            : SlabWindow(Graphics::default_window_rect, flags) {
+    WindowRow::WindowRow(Str title, Int flags)
+            : SlabWindow(title, Graphics::default_window_rect, flags) {
 
     }
 

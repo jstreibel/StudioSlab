@@ -18,7 +18,8 @@ namespace Tests {
     using namespace Slab;
 
     ModernGLTests::ModernGLTests()
-    : program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
+    : Graphics::WindowRow("Modern OpenGL test")
+    , program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , realTexture(texDim, texDim)

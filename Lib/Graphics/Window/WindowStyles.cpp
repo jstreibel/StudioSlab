@@ -9,7 +9,7 @@ namespace Slab::Graphics {
 
     int tiling_gap = 3;
 
-    int title_bar_height = 42;
+    int title_bar_height = 34;
     Color titlebar_color = {232/255., 232/255., 232/255.};
 
     int menuHeight = title_bar_height;

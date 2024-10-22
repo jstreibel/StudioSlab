@@ -13,7 +13,8 @@
 using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
-: osc(0.0, -0.5, 0.75, 0.15, false, false)  {
+: Slab::Graphics::SlabWindow("Tree builder test")
+, osc(0.0, -0.5, 0.75, 0.15, false, false)  {
     Graphics::WindowTreeBuilder treeBuilder(Graphics::default_window_rect);
 
     Graphics::SlabWindow *window = nullptr;

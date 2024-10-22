@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         bool assertConsistency() const;
 
     public:
-        explicit WindowRow(Int flags = 0x0);
+        explicit WindowRow(Str title="", Int flags = 0x0);
 
         enum RelativePosition {
             Left, Right

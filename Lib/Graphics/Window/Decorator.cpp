@@ -13,7 +13,7 @@
 namespace Slab::Graphics {
     constexpr int corner_size = 20;
 
-    Decorator::Decorator() : writer(Core::Resources::fontFileName(7), (float)int(Graphics::title_bar_height*0.6)) {
+    Decorator::Decorator() : writer(Core::Resources::fontFileName(7), (float)floor(Graphics::title_bar_height*0.6)) {
 
     }
 

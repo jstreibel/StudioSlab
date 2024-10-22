@@ -61,7 +61,8 @@ namespace Tests {
     Math::RtoR::ComplexMagnitude amplitudes(Dummy(fourierModes));
 
     FourierTestWindow::FourierTestWindow()
-    : mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph")
+    : Graphics::SlabWindow("Fourier tests")
+    , mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph")
     , mFTGraph(-1.1*ω, 1.1*ω, -0.1, 1.1, "")
     , theme(Graphics::PlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->funcPlotStyles[0])

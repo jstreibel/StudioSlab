@@ -17,6 +17,8 @@ namespace Slab::Graphics {
 
         Decorator decorator;
 
+        Int w_system_window=10, h_system_window=10;
+
         Pointer<SlabWindow> focused;
         using Anchor = Point2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<SlabWindow> window;} grabbed;
@@ -26,7 +28,7 @@ namespace Slab::Graphics {
 
         void setFocus(const Pointer<SlabWindow>&);
 
-        void addSlabWindow(Pointer<SlabWindow>);
+        void addSlabWindow(const Pointer<SlabWindow>&);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
