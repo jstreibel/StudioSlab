@@ -11,6 +11,7 @@
 #include "Graphics/Backend/Events/KeyMap.h"
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/WindowStyles.h"
+#include "Core/Tools/UniqueObject.h"
 
 #include <vector>
 #include <memory>
@@ -18,7 +19,7 @@
 
 namespace Slab::Graphics {
 
-    class SlabWindow {
+    class SlabWindow : public Core::UniqueObject {
         friend class SlabWindowManager;
         int parent_systemwindow_h;
 
@@ -42,6 +43,7 @@ namespace Slab::Graphics {
 
     protected:
         Int flags;
+        bool active=false;
         RectI windowRect;
 
     public:
@@ -57,6 +59,10 @@ namespace Slab::Graphics {
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
         virtual void notifyReshape(int w, int h);
 
+        virtual void notifyBecameActive();
+        virtual void notifyBecameInactive();
+        bool isActive() const;
+
         bool wantsFullscreen() const;
 
         auto isMouseIn() const -> bool;
@@ -64,8 +70,6 @@ namespace Slab::Graphics {
         auto isMouseCenterClicked() const -> bool;
         auto isMouseRightClicked() const -> bool;
         auto getMouseViewportCoord() const -> Point2D;
-
-        bool isActive() const;
 
         void setDecorate(bool);
         void setClear(bool);

@@ -135,10 +135,6 @@ namespace Slab::Graphics {
         return flags & HasMainMenu;
     }
 
-    bool SlabWindow::isActive() const {
-        return isMouseIn();
-    }
-
     Int SlabWindow::getFlags() const {
         return flags;
     }
@@ -162,5 +158,13 @@ namespace Slab::Graphics {
         windowRect.yMin = y;
         windowRect.yMax = y+h;
     }
+
+    void SlabWindow::notifyBecameActive() { active = true; }
+
+    void SlabWindow::notifyBecameInactive() { active = false; }
+
+    bool SlabWindow::isActive() const { return active; }
+
+
 
 }

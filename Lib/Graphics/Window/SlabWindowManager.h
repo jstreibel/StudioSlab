@@ -21,6 +21,8 @@ namespace Slab::Graphics {
     public:
         ~SlabWindowManager() override = default;
 
+        void setFocus(const Pointer<SlabWindow>&);
+
         void addSlabWindow(Pointer<SlabWindow>);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;

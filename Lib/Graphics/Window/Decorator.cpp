@@ -13,7 +13,7 @@
 namespace Slab::Graphics {
     constexpr int corner_size = 20;
 
-    void Decorator::operator()(const SlabWindow &slab_window) {
+    void Decorator::decorate(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto rect = slab_window.getViewport();
         auto flags = slab_window.getFlags();
 
@@ -22,7 +22,6 @@ namespace Slab::Graphics {
 
         int xtra_padding = slab_window.hasMainMenu() ? Graphics::menuHeight : 0;
         fix title_height = should_decorate ? Graphics::title_bar_height : 0;
-
 
         auto x = rect.xMin - Graphics::border_size,
              y = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
@@ -51,7 +50,7 @@ namespace Slab::Graphics {
 
         // *** CLEAR ***********************************
         if(should_clear) {
-            auto &bg = Graphics::clearColor;
+            auto &bg = Graphics::windowBGColor;
 
             glBegin(GL_QUADS);
             {
@@ -67,12 +66,14 @@ namespace Slab::Graphics {
         // *** DECORATE ********************************
         if(should_decorate) {
             glLineWidth(2.0f);
+
+            // *** Borders ***
             glBegin(GL_LINE_LOOP);
             {
                 auto bc = slab_window.isActive() ? Graphics::windowBorderColor_active
                                                  : Graphics::windowBorderColor_inactive;
 
-                glColor4d(bc.r, bc.g, bc.b, bc.a);
+                glColor4fv(bc.asFloat4fv());
 
                 glVertex2d(x, y);
                 glVertex2d(x+w, y);
@@ -81,7 +82,8 @@ namespace Slab::Graphics {
             }
             glEnd();
 
-            glColor3f(.5, .5, 1);
+            // *** Title bar ***
+            glColor4fv(Graphics::titlebar_color.asFloat4fv());
             glBegin(GL_QUADS);
             {
                 glVertex2d(x, y);
@@ -91,6 +93,16 @@ namespace Slab::Graphics {
             }
             glEnd();
 
+            // *** Resize ***
+            if(isMouseOverCorner(slab_window, x_mouse, y_mouse)) {
+                glBegin(GL_TRIANGLES);
+                {
+                    glVertex2d(x + w - corner_size, y + h);
+                    glVertex2d(x + w, y + h);
+                    glVertex2d(x + w, y + h - corner_size);
+                }
+                glEnd();
+            }
 
         }
     }

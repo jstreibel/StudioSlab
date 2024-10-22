@@ -7,44 +7,16 @@
 #include "WindowStyles.h"
 #include "Graphics/SlabGraphics.h"
 #include <functional>
+#include <ranges>
+
 
 namespace Slab::Graphics {
-    static Decorator decorate;
-
-    template <typename T, typename Predicate>
-    typename std::list<T>::iterator find_first_if(std::list<T>& lst, Predicate pred) {
-        for(auto it = lst.begin(); it != lst.end(); ++it) {
-            if(pred(*it)) {
-                return it;
-            }
-        }
-        return lst.end();
-    }
-
-    // Function to move the first occurrence of a value to the front
-    template <typename T>
-    bool move_to_front(std::list<T>& lst, const T& value) {
-        auto it = std::find(lst.begin(), lst.end(), value);
-        if (it != lst.end()) {
-            lst.splice(lst.begin(), lst, it);
-            return true;
-        }
-        return false;
-    }
-
-    template <typename T>
-    bool move_to_front(std::list<T>& list, const typename std::list<T>::iterator& it) {
-        if (it != list.end()) {
-            list.splice(list.begin(), list, it);
-            return true;
-        }
-        return false;
-    }
+    static Decorator decorator;
 
     void SlabWindowManager::addSlabWindow(Pointer<SlabWindow> slab_window) {
         slab_windows.push_back(slab_window);
 
-        if(focused == nullptr) focused = slab_window;
+        if(focused == nullptr) setFocus(slab_window);
     }
 
     bool SlabWindowManager::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
@@ -59,18 +31,18 @@ namespace Slab::Graphics {
         if(button==MouseButton_LEFT && state==Press) {
             auto mouse_state = Graphics::GetGraphicsBackend().getMouseState();
 
-            auto first = find_first_if(slab_windows, [mouse_state](const Pointer<SlabWindow> &window){
-                return window->isMouseIn() || decorate.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
+            auto first = FindFirst_If(slab_windows, [mouse_state](const Pointer<SlabWindow> &window) {
+                return window->isMouseIn() || decorator.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
             });
 
             if(first != slab_windows.end()) {
-                focused = *first;
+                setFocus(*first);
 
-                if (decorate.isMouseOverTitlebar(*focused, mouse_state.x, mouse_state.y)) {
+                if (decorator.isMouseOverTitlebar(*focused, mouse_state.x, mouse_state.y)) {
                     grabbed = {Point2D(mouse_state.x - focused->getx(), mouse_state.y - focused->gety()),
                                Grabbed::Titlebar,
                                focused};
-                } else if(decorate.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
+                } else if(decorator.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
                     grabbed = {Point2D(focused->getw()+focused->getx() - mouse_state.x,
                                        focused->geth()+focused->gety() - mouse_state.y),
                                Grabbed::Corner,
@@ -78,8 +50,6 @@ namespace Slab::Graphics {
                 } else {
                     grabbed = {Point2D(), Grabbed::None, nullptr};
                 }
-
-                move_to_front(slab_windows, first);
             }
         } else if(state==Release) grabbed = {Point2D(), Grabbed::None, nullptr};
 
@@ -120,7 +90,7 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::notifySystemWindowReshape(int w, int h) {
-        decorate.setSystemWindowShape(w, h);
+        decorator.setSystemWindowShape(w, h);
 
         for(auto &slab_window : slab_windows) {
             slab_window->setupParentSystemWindowHeight(h);
@@ -139,19 +109,24 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyRender() {
         if(focused == nullptr) return false;
 
-        for (auto it = slab_windows.rbegin(); it != slab_windows.rend(); ++it) {
-            decorate(**it);
-            (*it)->draw();
+        for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
+            auto mouse = GetGraphicsBackend().getMouseState();
+            decorator.decorate(*slab_window, mouse.x, mouse.y);
+            slab_window->draw();
         }
-
-        // for(auto &slab_window : slab_windows) {
-        //     decorate(*slab_window);
-        //     slab_window->draw();
-        // }
 
         return true;
     }
 
+    void SlabWindowManager::setFocus(const Pointer<SlabWindow>& win) {
+        if(focused != nullptr) focused->notifyBecameInactive() ;
+
+        focused = win;
+        win->notifyBecameActive();
+
+        if(!Contains(slab_windows, win)) slab_windows.emplace_front(win);
+        else MoveToFront(slab_windows, focused);
+    }
 
 
 } // Slab::Graphics

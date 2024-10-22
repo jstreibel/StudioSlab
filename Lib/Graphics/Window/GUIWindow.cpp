@@ -139,7 +139,7 @@ namespace Slab::Graphics {
     void GUIWindow::begin() const {
         bool closable = false;
 
-        ImGui::Begin("Stats", &closable,
+        ImGui::Begin(unique("Stats").c_str(), &closable,
                      ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                      ImGuiWindowFlags_NoMove |
                      ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);

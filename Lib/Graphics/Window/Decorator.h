@@ -13,7 +13,8 @@ namespace Slab::Graphics {
         int syswin_w=0, syswin_h=0;
 
     public:
-        void operator()(const SlabWindow&);
+        virtual
+        void decorate(const SlabWindow&, int x_mouse, int y_mouse);
 
         void setSystemWindowShape(int w, int h);
 

@@ -9,18 +9,22 @@
 #include "Graphics/Types2D.h"
 
 namespace Slab::Graphics {
+    extern RectI default_window_rect;
+
     extern int tiling_gap;
 
     extern int title_bar_height;
-    extern int border_size;
+    extern Color titlebar_color;
 
-    extern RectI default_window_rect;
+    extern int border_size;
+    extern Color windowBorderColor_inactive;
+    extern Color windowBorderColor_active;
 
     extern int menuHeight;
 
-    extern Color clearColor;
-    extern Color windowBorderColor_inactive;
-    extern Color windowBorderColor_active;
+    extern Color windowBGColor;
+
+
 }
 
 #endif //V_SHAPE_WINDOWSTYLES_H
