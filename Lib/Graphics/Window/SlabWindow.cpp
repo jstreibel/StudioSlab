@@ -22,10 +22,6 @@ namespace Slab::Graphics {
             config.title = "[Window:" + ToStr(get_id()) + "]";
         }
 
-        if(config.parent_system_window==nullptr) {
-            auto sys_windows = GetGraphicsBackend().getSystemWindows();
-            if(!sys_windows.empty()) config.parent_system_window = sys_windows[0];
-        }
     }
 
     SlabWindow::~SlabWindow() = default;
@@ -53,9 +49,7 @@ namespace Slab::Graphics {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
-        if(config.parent_system_window==nullptr) return;
-
-        fix syswin_h = config.parent_system_window->getHeight();
+        fix syswin_h = GetGraphicsBackend().getSystemWindowHeight();
         fix vp = getViewport();
         //// y_opengl = windowHeight - y_top_left - viewportHeight
         fix x = vp.xMin;

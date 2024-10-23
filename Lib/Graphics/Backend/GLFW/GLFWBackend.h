@@ -62,6 +62,8 @@ namespace Slab::Graphics {
 
         static Graphics::Point2D GetCursorPosition(GLFWwindow *window);
 
+        Int getSystemWindowHeight() const override;
+
         static bool IsWindowHovered(GLFWwindow *window);
 
         static bool GetMouseButtonState(GLFWwindow *window, int button);

@@ -15,6 +15,7 @@ namespace Slab::Graphics {
 
     bool BackgroundArtist::draw(const Plot2DWindow &window) {
 
+        OpenGL::Legacy::PushScene();
         OpenGL::Legacy::SetupOrtho({0,1,0,1});
 
         auto c = PlotThemeManager::GetCurrent()->graphBackground;
@@ -26,6 +27,8 @@ namespace Slab::Graphics {
         glVertex2f(1,1);
         glVertex2f(0,1);
         glEnd();
+
+        OpenGL::Legacy::PopScene();
 
         return true;
     }

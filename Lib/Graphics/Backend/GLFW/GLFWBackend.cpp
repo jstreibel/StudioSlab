@@ -248,5 +248,12 @@ namespace Slab::Graphics {
         glfwSetWindowTitle(systemWindow, title.c_str());
     }
 
+    Int GLFWBackend::getSystemWindowHeight() const {
+        int w, h;
+        glfwGetWindowSize(systemWindow, &w, &h);
+
+        return h;
+    }
+
 
 }

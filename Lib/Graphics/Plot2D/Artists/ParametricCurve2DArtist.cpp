@@ -5,6 +5,8 @@
 #include "ParametricCurve2DArtist.h"
 #include "Graphics/OpenGL/LegacyGL/PointSetRenderer.h"
 
+#include "Graphics/Plot2D/Plot2DWindow.h"
+
 #include <utility>
 
 namespace Slab::Graphics {

@@ -153,8 +153,6 @@ namespace Slab::Graphics {
         glutPostRedisplay();
     }
 
-    // Real GLUTBackend::getScreenHeight() const { return glutGet(GLUT_WINDOW_HEIGHT); }
-
     GLUTBackend &GLUTBackend::GetInstance() {
         //assert(Core::BackendManager::GetImplementation() == Core::GLUT);
 
@@ -171,6 +169,10 @@ namespace Slab::Graphics {
 
     void GLUTBackend::terminate() {
         glutLeaveMainLoop();
+    }
+
+    Int GLUTBackend::getSystemWindowHeight() const {
+        return glutGet(GLUT_WINDOW_HEIGHT);
     }
 
 }

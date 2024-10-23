@@ -23,8 +23,6 @@ namespace Slab::Graphics {
 
         Vector<Volatile<GraphicsModule>> graphicModules;
 
-        Vector<Pointer<SystemWindow>> system_windows;
-
         Pointer<EventTranslator>
         getEventTranslator() { return eventTranslator; };
 
@@ -35,7 +33,6 @@ namespace Slab::Graphics {
 
         void unloadAllModules();
 
-        void registerSystemWindow(Pointer<SystemWindow>);
     public:
         ~GraphicBackend() override;
 
@@ -48,6 +45,8 @@ namespace Slab::Graphics {
         virtual void setSystemWindowTitle(Str title, int handle);
         void setSystemWindowTitle(Str title);
 
+        virtual Int getSystemWindowHeight() const = 0;
+
         void setClearColor(Real r, Real g, Real b);
 
         void addGraphicsModule(const Volatile<GraphicsModule> &module);
@@ -57,8 +56,6 @@ namespace Slab::Graphics {
         void terminate() override;
 
         auto isHeadless() const -> bool final;
-
-        Vector<Pointer<SystemWindow>> getSystemWindows();
     };
 
 }

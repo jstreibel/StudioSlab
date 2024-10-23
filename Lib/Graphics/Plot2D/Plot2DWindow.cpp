@@ -116,8 +116,6 @@ namespace Slab::Graphics {
 
         if (autoReviewGraphRanges) reviewGraphRanges();
 
-        setupOrtho();
-
         artistsDraw();
 
         drawGUI();
@@ -210,6 +208,8 @@ namespace Slab::Graphics {
     }
 
     void Graphics::Plot2DWindow::artistsDraw() {
+        setupOrtho();
+
         for (const auto &[priority, artist]: content)
             if (artist->isVisible() && !artist->draw(*this))
                 Core::Log::Error() << "In PlottingWindow \"" << title

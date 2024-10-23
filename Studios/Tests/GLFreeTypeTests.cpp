@@ -12,7 +12,7 @@
 using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
-: Slab::Graphics::SlabWindow({nullptr, "FreeType tests"})
+: Slab::Graphics::SlabWindow({"FreeType tests"})
 , writer1(Core::Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Core::Resources::fontFileName(7), 22)
 {   }

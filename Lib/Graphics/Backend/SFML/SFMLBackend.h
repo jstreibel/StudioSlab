@@ -41,7 +41,7 @@ namespace Slab::Graphics {
 
         auto getRenderWindow() -> sf::RenderWindow &;
 
-        // auto getScreenHeight() const -> Real override;
+        Int getSystemWindowHeight() const override;
 
         static SFMLBackend &GetInstance();
 

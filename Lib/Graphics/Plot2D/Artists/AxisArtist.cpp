@@ -50,8 +50,6 @@ namespace Slab::Graphics {
     bool AxisArtist::draw(const Plot2DWindow &graph) {
         glLineWidth(1.0);
 
-        OpenGL::Legacy::SetupOrtho(graph.getRegion().getRect());
-
         computeTicks(graph);
 
         drawXAxis(graph);
