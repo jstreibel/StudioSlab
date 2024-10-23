@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    GUIWindow::GUIWindow() : SlabWindow() {
+    GUIWindow::GUIWindow(Config config) : SlabWindow(config) {
         setClear(false);
         setDecorate(false);
 

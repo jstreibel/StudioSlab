@@ -67,7 +67,7 @@ namespace Slab::Graphics {
     }
 
     bool MainViewer::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
+        if(state==Press && key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
             if(setCurrentViewer(key - KeyMap::Key_1)) return true;
 
         return WindowRow::notifyKeyboard(key, state, modKeys);
@@ -88,8 +88,7 @@ namespace Slab::Graphics {
         addWindow(current_viewer, Right, -1);
 
         arrangeWindows();
-
-        new_viewer->notifyBecameVisible();
+        current_viewer->notifyBecameVisible();
         if (old_viewer != nullptr) old_viewer->notifyBecameInvisible();
 
         return true;

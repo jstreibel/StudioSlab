@@ -50,8 +50,6 @@ namespace Slab::Graphics {
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        void setupParentSystemWindowHeight(Int anInt) override;
-
         auto setx(int x) -> void override;
 
         auto sety(int y) -> void override;

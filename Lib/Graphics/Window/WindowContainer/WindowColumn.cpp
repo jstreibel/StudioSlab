@@ -19,7 +19,6 @@
 fix AlwaysPropagate = true;
 fix PropagateOnlyIfMouseIsIn = false;
 
-
 #define PropagateEvent(EVENT, PROPAGATE_ALWAYS){   \
     auto responded = false;     \
     for(auto &win : windows)    \
@@ -63,6 +62,7 @@ namespace Slab::Graphics {
 
         Vector<int> computedHeights(m, (int) (geth() / m));    // "if(freeHeights==m)"
 
+
         auto freeHeights = CountLessThanZero(heights);
         if (freeHeights == 0) {
             for (int i = 0; i < m; ++i) {
@@ -88,17 +88,18 @@ namespace Slab::Graphics {
             y += computedHeights[i];
         }
 
+        fix gap = Graphics::tiling_gap;
         for (int i = 0; i < m; ++i) {
-            computed_yPositions[i] += Graphics::tiling_gap;
-            computedHeights[i] -= Graphics::tiling_gap;
+            computed_yPositions[i] += gap;
+            computedHeights[i] -= gap;
         }
 
         auto i = 0;
         for (auto &win: windows) {
-            win->setx(getx() + Graphics::tiling_gap);
+            win->setx(getx() + gap);
             win->sety(computed_yPositions[i]);
 
-            win->notifyReshape(getw()-Graphics::tiling_gap, computedHeights[i]);
+            win->notifyReshape(getw()-gap, computedHeights[i]);
 
             i++;
         }
@@ -171,13 +172,6 @@ namespace Slab::Graphics {
 
     bool WindowColumn::isEmpty() const {
         return windows.empty();
-    }
-
-    void WindowColumn::setupParentSystemWindowHeight(Int h) {
-        SlabWindow::setupParentSystemWindowHeight(h);
-
-        for(auto &win : windows)
-            win->setupParentSystemWindowHeight(h);
     }
 
     void WindowColumn::setx(int x) {

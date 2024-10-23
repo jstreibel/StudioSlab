@@ -29,7 +29,11 @@ namespace Slab::Graphics {
             auto mouse_state = Graphics::GetGraphicsBackend().getMouseState();
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<SlabWindow> &window) {
-                return window->isMouseIn() || decorator.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
+                fix is_mouse_in = window->isMouseIn();
+                fix is_decorated = !(window->getFlags() & SlabWindow::NoDecoration);
+                fix is_mouse_over_grab_region = decorator.isMouseOverGrabRegion(*window, mouse_state.x, mouse_state.y);
+
+                return is_mouse_in || (is_mouse_over_grab_region && is_decorated);
             });
 
             if(first != slab_windows.end()) {
@@ -39,7 +43,7 @@ namespace Slab::Graphics {
                     grabbed = {Point2D(mouse_state.x - focused->getx(), mouse_state.y - focused->gety()),
                                Grabbed::Titlebar,
                                focused};
-                } else if(decorator.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y)) {
+                } else if(decorator.isMouseOverGrabRegion(*focused, mouse_state.x, mouse_state.y) && !focused->wantsFullscreen()) {
                     grabbed = {Point2D(focused->getw()+focused->getx() - mouse_state.x,
                                        focused->geth()+focused->gety() - mouse_state.y),
                                Grabbed::Corner,
@@ -59,11 +63,14 @@ namespace Slab::Graphics {
             auto p = grabbed.anchor;
 
             if(grabbed.what == Grabbed::Titlebar) {
-                fix x_max = w_system_window-.5*grabbed.window->getw();
-                fix y_max = h_system_window-.5*grabbed.window->geth();
+                fix x_min = -grabbed.window->getw() + 200;
+                fix y_min = -menu_height+title_bar_height-tiling_gap;
 
-                fix x_new = Min(Max(x - (int) p.x, 0                                     ), (int)x_max);
-                fix y_new = Min(Max(y - (int) p.y, menuHeight+title_bar_height-tiling_gap), (int)y_max);
+                fix x_max = w_system_window-200;
+                fix y_max = h_system_window-200;
+
+                fix x_new = Min(Max(x - (int) p.x, x_min), (int)x_max);
+                fix y_new = Min(Max(y - (int) p.y, y_min), (int)y_max);
 
                 grabbed.window->setx(x_new);
                 grabbed.window->sety(y_new);
@@ -100,13 +107,11 @@ namespace Slab::Graphics {
         decorator.setSystemWindowShape(w, h);
 
         for(auto &slab_window : slab_windows) {
-            slab_window->setupParentSystemWindowHeight(h);
-
             if (slab_window->wantsFullscreen() || slab_windows.size()==1) {
                 slab_window->setDecorate(false);
                 slab_window->setx(0);
-                slab_window->sety(Graphics::menuHeight);
-                slab_window->notifyReshape(w, h - Graphics::menuHeight);
+                slab_window->sety(Graphics::menu_height);
+                slab_window->notifyReshape(w, h - Graphics::menu_height);
             }
         }
 

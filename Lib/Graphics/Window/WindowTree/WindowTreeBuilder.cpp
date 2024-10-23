@@ -8,7 +8,7 @@
 namespace Slab::Graphics {
 
     WindowTreeBuilder::WindowTreeBuilder(RectI window_rect)
-            : root(new NodeWindow(window_rect)), shape("", window_rect),
+            : root(new NodeWindow(window_rect)), shape(window_rect),
               currentNode(new NodeWindow(window_rect)) {
         root->addSubWindow(currentNode);
     }
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
     }
 
     NodeWindow *WindowTreeBuilder::getRoot() {
-        auto myRect = shape.getViewport();
+        auto myRect = shape;
         currentNode->setx(myRect.xMin);
         currentNode->sety(myRect.yMin);
         currentNode->notifyReshape(myRect.width(), myRect.height());

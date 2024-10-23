@@ -83,6 +83,10 @@ namespace Slab::Graphics {
         clearListeners();
     }
 
+    void GraphicBackend::registerSystemWindow(Pointer<Slab::Graphics::SystemWindow> win) {
+        system_windows.emplace_back(win);
+    }
+
     void GraphicBackend::notifyModuleLoaded(const Pointer<Core::Module> &module) {
         if(module->requiresGraphicsBackend) {
             auto graphic_module = DynamicPointerCast<GraphicsModule>(module);
@@ -90,6 +94,8 @@ namespace Slab::Graphics {
             addGraphicsModule(graphic_module);
         }
     }
+
+    Vector<Pointer<SystemWindow>> GraphicBackend::getSystemWindows() { return system_windows; }
 
 
 }

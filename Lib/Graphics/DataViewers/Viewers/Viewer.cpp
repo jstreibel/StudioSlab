@@ -37,5 +37,4 @@ namespace Slab::Graphics {
         return is_visible;
     }
 
-
 } // Studios::Fields::Viewers

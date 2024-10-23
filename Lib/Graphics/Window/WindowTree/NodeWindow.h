@@ -40,8 +40,6 @@ namespace Slab::Graphics {
 
         void draw() override;
 
-        void setupParentSystemWindowHeight(Int anInt) override;
-
     };
 
 }

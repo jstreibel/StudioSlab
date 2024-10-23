@@ -12,6 +12,7 @@
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/SlabGraphics.h"
+#include "GLFWSystemWindow.h"
 
 namespace Slab::Graphics {
 

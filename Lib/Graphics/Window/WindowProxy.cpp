@@ -53,10 +53,5 @@ namespace Slab::Graphics {
         return window->notifyMouseWheel(dx, dy);
     }
 
-    void WindowProxy::setupParentSystemWindowHeight(Int h) {
-        SlabWindow::setupParentSystemWindowHeight(h);
-
-        window->setupParentSystemWindowHeight(h);
-    }
 
 } // Slab::Graphics

@@ -12,6 +12,7 @@
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Core/Tools/UniqueObject.h"
+#include "Graphics/Backend/SystemWindow.h"
 
 #include <vector>
 #include <memory>
@@ -21,17 +22,20 @@ namespace Slab::Graphics {
 
     class SlabWindow : public Core::UniqueObject {
         friend class SlabWindowManager;
-        int parent_systemwindow_h = 10;
-
-    public:
-        virtual void setupParentSystemWindowHeight(Int);
 
     public:
         enum Flags {
-            HasMainMenu  = 0x1,
+            // HasMainMenu  = 0x1,
             NoDecoration = 0x2,
             DontClear    = 0x4,
             WantsFullscreen   = 0x8
+        };
+
+        struct Config {
+            Pointer<SystemWindow> parent_system_window;
+            Str title;
+            RectI win_rect;
+            Int flags;
         };
 
     private:
@@ -42,15 +46,12 @@ namespace Slab::Graphics {
         KeyState mouseRightButton = KeyState::Release;
 
     protected:
-        Int flags;
+        Config config;
         bool active=false;
-        RectI windowRect;
-        Str title;
 
     public:
-        explicit SlabWindow(const Str& title, RectI win_rect=Graphics::default_window_rect, Int flags=0x0);
-        SlabWindow(RectI win_rect, Int flags=0x0);
-        SlabWindow();
+
+        explicit SlabWindow(Config c={nullptr, "", Graphics::default_window_rect, 0x0});
 
         virtual ~SlabWindow();
 
@@ -82,12 +83,10 @@ namespace Slab::Graphics {
 
         RectI getViewport() const;
 
-        bool hasMainMenu() const;
-
-        inline auto getx() const -> int  { return windowRect.xMin; }
-        inline auto gety() const -> int  { return windowRect.yMin; }
-        inline auto getw() const -> int  { return windowRect.width(); }
-        inline auto geth() const -> int  { return windowRect.height(); }
+        inline auto getx() const -> int  { return config.win_rect.xMin; }
+        inline auto gety() const -> int  { return config.win_rect.yMin; }
+        inline auto getw() const -> int  { return config.win_rect.width(); }
+        inline auto geth() const -> int  { return config.win_rect.height(); }
 
         virtual auto setx(int x)  -> void;
         virtual auto sety(int y)  -> void;

@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(Int flags = 0x0);
+        explicit WindowPanel(Config={});
 
         void addWindow(const Pointer<SlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
@@ -51,8 +51,6 @@ namespace Slab::Graphics {
 
 
         void draw() override;
-
-        void setupParentSystemWindowHeight(Int anInt) override;
 
         void notifyReshape(int newWinW, int newWinH) override;
 

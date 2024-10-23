@@ -1,3 +1,4 @@
+
 //
 // Created by joao on 02/09/2021.
 //
@@ -10,7 +11,7 @@ namespace Slab::Graphics {
     NodeWindow::NodeWindow(const SlabWindow &window) : SlabWindow(window) {
     }
 
-    NodeWindow::NodeWindow(RectI window_rect) : SlabWindow("", window_rect) {
+    NodeWindow::NodeWindow(RectI window_rect) : SlabWindow({nullptr, "", window_rect}) {
 
     }
 
@@ -65,13 +66,6 @@ namespace Slab::Graphics {
 
         for (auto win: children)
             win->draw();
-    }
-
-    void NodeWindow::setupParentSystemWindowHeight(Int h) {
-        SlabWindow::setupParentSystemWindowHeight(h);
-
-        for (auto win: children) win->setupParentSystemWindowHeight(h);
-
     }
 
 }

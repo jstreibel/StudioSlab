@@ -29,8 +29,6 @@ namespace Slab {
             bool notifyMouseMotion(int x, int y) override;
 
             bool notifyMouseWheel(double dx, double dy) override;
-
-            void setupParentSystemWindowHeight(Int anInt) override;
         };
 
     } // Slab

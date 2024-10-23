@@ -9,6 +9,7 @@
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Modules/GraphicsModule.h"
+#include "SystemWindow.h"
 
 namespace Slab::Graphics {
 
@@ -22,6 +23,8 @@ namespace Slab::Graphics {
 
         Vector<Volatile<GraphicsModule>> graphicModules;
 
+        Vector<Pointer<SystemWindow>> system_windows;
+
         Pointer<EventTranslator>
         getEventTranslator() { return eventTranslator; };
 
@@ -31,6 +34,8 @@ namespace Slab::Graphics {
         Real r = 0, g = 0, b = 0;
 
         void unloadAllModules();
+
+        void registerSystemWindow(Pointer<SystemWindow>);
     public:
         ~GraphicBackend() override;
 
@@ -52,6 +57,8 @@ namespace Slab::Graphics {
         void terminate() override;
 
         auto isHeadless() const -> bool final;
+
+        Vector<Pointer<SystemWindow>> getSystemWindows();
     };
 
 }

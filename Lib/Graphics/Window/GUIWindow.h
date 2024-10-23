@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         Vector<Pair<Str, Color>> stats;
 
     public:
-        explicit GUIWindow();
+        explicit GUIWindow(Config={});
 
         void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 

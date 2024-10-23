@@ -24,13 +24,13 @@ namespace Slab::Graphics {
         fix should_clear    = !(flags & SlabWindow::DontClear);
         fix should_decorate = !(flags & SlabWindow::NoDecoration);
 
-        int xtra_padding = slab_window.hasMainMenu() ? Graphics::menuHeight : 0;
         fix title_height = should_decorate ? Graphics::title_bar_height : 0;
+        fix borders_size = should_decorate ? Graphics::border_size : 0;
 
-        auto x = rect.xMin - Graphics::border_size,
-             y = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
-             w = rect.width()  + 2*Graphics::border_size,
-             h = rect.height() + 2*Graphics::border_size + xtra_padding + title_height;
+        auto x = rect.xMin - borders_size,
+             y = rect.yMin - borders_size - title_height,
+             w = rect.width()  + 2*borders_size,
+             h = rect.height() + 2*borders_size + title_height;
 
         // SETUP
         glViewport(0, 0, syswin_w, syswin_h);

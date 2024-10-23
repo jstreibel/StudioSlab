@@ -10,9 +10,10 @@ namespace Slab::Graphics {
     int tiling_gap = 3;
 
     int title_bar_height = 34;
+    // int title_bar_height = 20;
     Color titlebar_color = {232/255., 232/255., 232/255.};
 
-    int menuHeight = title_bar_height;
+    int menu_height = title_bar_height;
 
     int border_size = 3;
     //Color windowBorderColor_inactive = {0.2,0.2,0.30,1};
@@ -23,6 +24,4 @@ namespace Slab::Graphics {
     // Color clearColor = {0.9, 0.9, 0.85, 1};
     // Color windowBGColor = {246/255., 245/255., 244/255., 1};
     Color windowBGColor = {192/255., 181/255., 181/255., 1};
-
-
 }

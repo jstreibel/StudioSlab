@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(Int flags) : SlabWindow(Graphics::default_window_rect, flags) {    }
+    WindowPanel::WindowPanel(Config config) : SlabWindow(config) {    }
 
     void WindowPanel::addWindow(const Pointer<SlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
@@ -189,12 +189,6 @@ namespace Slab::Graphics {
             if (col.isMouseIn()) responded = col.notifyMouseWheel(dx, dy);
 
         return responded;
-    }
-
-    void WindowPanel::setupParentSystemWindowHeight(Int h) {
-        SlabWindow::setupParentSystemWindowHeight(h);
-
-        for (auto &col: columns) col.setupParentSystemWindowHeight(h);
     }
 
     void WindowPanel::setx(int x) {

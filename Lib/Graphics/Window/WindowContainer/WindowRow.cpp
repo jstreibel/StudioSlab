@@ -33,7 +33,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 namespace Slab::Graphics {
 
     WindowRow::WindowRow(Str title, Int flags)
-            : SlabWindow(title, Graphics::default_window_rect, flags) {
+            : SlabWindow({nullptr, title, Graphics::default_window_rect, flags}) {
 
     }
 
@@ -87,17 +87,20 @@ namespace Slab::Graphics {
 
         if (m == 0) return;
 
-        Vector<int> computedWidths(m, (int) (getw() / m));    // "if(freeWidths==m)"
+        Vector<int> computedWidths(m);
         auto widths = _widthsVector();
-
         auto freeWidths = CountLessThanZero(widths);
-        if (freeWidths == 0) {
+
+        if(freeWidths == m) {
+            computedWidths = Vector<int>(m, (int) (getw() / m));
+        }
+        else if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relWidth = widths[i];
                 auto width = geth() * relWidth - 2*Graphics::tiling_gap;
                 computedWidths[i] = (int) width;
             }
-        } else if (freeWidths != m) {
+        } else /*if (freeWidths != m)*/ {
             auto reservedWidth = SumLargerThanZero(widths);
             auto wFree = (float) getw() * (1 - reservedWidth) / (float) freeWidths;
 
@@ -109,25 +112,29 @@ namespace Slab::Graphics {
         }
 
         Vector<int> computed_xPositions(m);
-        auto x = this->getx();
-        for (int i = 0; i < m; ++i) {
-            computed_xPositions[i] = x;
-            x += computedWidths[i];
-        }
+        {
+            auto x = this->getx();
+            for (int i = 0; i < m; ++i) {
+                computed_xPositions[i] = x;
+                x += computedWidths[i];
+            }
 
-        for (int i = 0; i < m; ++i) {
-            computed_xPositions[i] += Graphics::tiling_gap;
-            computedWidths[i]      -= Graphics::tiling_gap;
+            for (int i = 0; i < m; ++i) {
+                computed_xPositions[i] += Graphics::tiling_gap;
+                computedWidths[i]      -= Graphics::tiling_gap;
+            }
         }
 
         auto i = 0;
+        fix y = gety() + Graphics::tiling_gap;
+        fix h = geth()-Graphics::tiling_gap;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 
             win.setx(computed_xPositions[i]);
-            win.sety(gety() + Graphics::tiling_gap);
+            win.sety(y);
 
-            win.notifyReshape(computedWidths[i], geth()-Graphics::tiling_gap);
+            win.notifyReshape(computedWidths[i], h);
 
             i++;
         }
@@ -200,13 +207,6 @@ namespace Slab::Graphics {
 
     bool WindowRow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
-    }
-
-    void WindowRow::setupParentSystemWindowHeight(Int h) {
-        SlabWindow::setupParentSystemWindowHeight(h);
-
-        for(auto &win_data : windowsList) win_data.window->setupParentSystemWindowHeight(h);
-
     }
 
     void WindowRow::setx(int x) {

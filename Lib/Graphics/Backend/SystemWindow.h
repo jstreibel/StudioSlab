@@ -5,19 +5,13 @@
 #ifndef STUDIOSLAB_SYSTEMWINDOW_H
 #define STUDIOSLAB_SYSTEMWINDOW_H
 
-#include "Graphics/Backend/Events/SystemWindowEventListener.h"
-#include "Graphics/Window/SlabWindow.h"
+#include "Utils/Numbers.h"
 
 namespace Slab::Graphics {
 
     class SystemWindow {
-        Vector<Pointer<SystemWindowEventListener>> eventListeners;
-        Vector<Pointer<SlabWindow>> slab_windows;
-
     public:
-        virtual void addEventListener(Pointer<SystemWindowEventListener>);
-
-        virtual void addSlabWindow(Pointer<SlabWindow>);
+        virtual Int getHeight() const = 0;
     };
 
 } // Slab::Core

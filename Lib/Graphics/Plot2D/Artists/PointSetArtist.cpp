@@ -9,6 +9,7 @@
 
 #include <utility>
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 namespace Slab::Graphics {
 
@@ -22,6 +23,7 @@ namespace Slab::Graphics {
 
         graph2D.requireLabelOverlay(getLabel(), Naked(plotStyle));
 
+        OpenGL::Legacy::SetupOrtho(graph2D.getRegion().getRect());
         return Graphics::OpenGL::Legacy::RenderPointSet(pointSet, plotStyle);
     }
 

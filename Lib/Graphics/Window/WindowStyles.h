@@ -20,7 +20,7 @@ namespace Slab::Graphics {
     extern Color windowBorderColor_inactive;
     extern Color windowBorderColor_active;
 
-    extern int menuHeight;
+    extern int menu_height;
 
     extern Color windowBGColor;
 

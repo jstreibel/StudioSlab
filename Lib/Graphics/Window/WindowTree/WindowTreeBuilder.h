@@ -15,7 +15,7 @@
 namespace Slab::Graphics {
 
     class WindowTreeBuilder {
-        SlabWindow shape;
+        RectI shape;
         NodeWindow *root;
         NodeWindow *currentNode;
 

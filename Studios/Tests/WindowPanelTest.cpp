@@ -10,7 +10,7 @@
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest()
-: Slab::Graphics::SlabWindow("Panels test"), panel(new Slab::Graphics::WindowPanel) {
+: Slab::Graphics::SlabWindow({nullptr, "Panels test"}), panel(new Slab::Graphics::WindowPanel) {
     SlabWindow *window = nullptr;
 
     window = new SlabWindow();

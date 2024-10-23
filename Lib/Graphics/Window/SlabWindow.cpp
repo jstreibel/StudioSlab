@@ -14,22 +14,26 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
-    SlabWindow::SlabWindow(const Str& title, RectI win_rect, Int flags)
-    : flags(flags), windowRect(win_rect), title(title.empty() ? "[Window:" + ToStr(get_id()) + "]" : title) {}
+    SlabWindow::
+    SlabWindow(Config cfg)
+    : config(cfg)
+    {
+        if(config.title.empty()){
+            config.title = "[Window:" + ToStr(get_id()) + "]";
+        }
 
-    SlabWindow::SlabWindow(RectI win_rect, Int flags)
-            : SlabWindow("", win_rect, flags) {}
-
-    SlabWindow::SlabWindow() : SlabWindow("", default_window_rect, 0x0) {
-
+        if(config.parent_system_window==nullptr) {
+            auto sys_windows = GetGraphicsBackend().getSystemWindows();
+            if(!sys_windows.empty()) config.parent_system_window = sys_windows[0];
+        }
     }
 
     SlabWindow::~SlabWindow() = default;
 
     void SlabWindow::draw() { setupWindow(); }
     void SlabWindow::notifyReshape(int w, int h) {
-        windowRect.xMax = windowRect.xMin + w;
-        windowRect.yMax = windowRect.yMin + h;
+        config.win_rect.xMax = config.win_rect.xMin + w;
+        config.win_rect.yMax = config.win_rect.yMin + h;
     }
     bool SlabWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
@@ -49,14 +53,18 @@ namespace Slab::Graphics {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
+        if(config.parent_system_window==nullptr) return;
+
+        fix syswin_h = config.parent_system_window->getHeight();
         fix vp = getViewport();
-        // y_opengl = windowHeight - y_top_left - viewportHeight
+        //// y_opengl = windowHeight - y_top_left - viewportHeight
         fix x = vp.xMin;
-        fix y = parent_systemwindow_h - vp.yMin - vp.height();
-        // fix y = vp.yMin;
+        fix y = syswin_h - vp.yMin - vp.height();
+        //// fix y = vp.yMin;
         fix w = vp.width();
         fix h = vp.height();
         glViewport(x, y, w, h);
+
     }
 
     auto SlabWindow::isMouseIn() const -> bool {
@@ -125,47 +133,39 @@ namespace Slab::Graphics {
 
 
     void SlabWindow::setDecorate(bool decorate) {
-        if(!decorate) flags |=  Flags::NoDecoration;
-        else           flags &= ~Flags::NoDecoration;
+        if(!decorate)  config.flags |=  Flags::NoDecoration;
+        else           config.flags &= ~Flags::NoDecoration;
     }
 
     void SlabWindow::setClear(bool clear) {
-        if(!clear) flags |=  Flags::DontClear;
-        else       flags &= ~Flags::DontClear;
+        if(!clear) config.flags |=  Flags::DontClear;
+        else       config.flags &= ~Flags::DontClear;
     }
 
     RectI SlabWindow::getViewport() const {
-        return windowRect;
+        return config.win_rect;
     }
 
-    bool SlabWindow::hasMainMenu() const {
-        return flags & HasMainMenu;
-    }
-
-    Str SlabWindow::getTitle() const { return title; }
+    Str SlabWindow::getTitle() const { return config.title; }
 
     Int SlabWindow::getFlags() const {
-        return flags;
+        return config.flags;
     }
 
     bool SlabWindow::wantsFullscreen() const {
-        return flags & WantsFullscreen;
-    }
-
-    void SlabWindow::setupParentSystemWindowHeight(Int h) {
-        parent_systemwindow_h = h;
+        return config.flags & WantsFullscreen;
     }
 
     auto SlabWindow::setx(int x) -> void {
-        fix w=windowRect.width();
-        windowRect.xMin = x;
-        windowRect.xMax = x+w;
+        fix w=config.win_rect.width();
+        config.win_rect.xMin = x;
+        config.win_rect.xMax = x+w;
     }
 
     auto SlabWindow::sety(int y) -> void {
-        fix h=windowRect.height();
-        windowRect.yMin = y;
-        windowRect.yMax = y+h;
+        fix h=config.win_rect.height();
+        config.win_rect.yMin = y;
+        config.win_rect.yMax = y+h;
     }
 
     void SlabWindow::notifyBecameActive() { active = true; }
