@@ -10,3 +10,6 @@
 [submodule "Lib/3rdParty/imgui-node-editor"]
 	path = Lib/3rdParty/imgui-node-editor
 	url = https://github.com/jstreibel/imgui-node-editor
+[submodule "Notebooks"]
+	path = Notebooks
+	url = https://github.com/jstreibel/Notebooks
