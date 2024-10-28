@@ -1,3 +1,0 @@
-<component name="DependencyValidationManager">
-  <scope name="Math" pattern="(file[StudioSlab]:Lib//*&amp;&amp;!file[StudioSlab]:Lib//3rdParty//*||file[StudioSlab]:Notebooks//*||file[StudioSlab]:Resources//*||file[StudioSlab]:Studios//*||file:CMakeLists.txt)&amp;&amp;!file[StudioSlab]:Lib/Mappings/*&amp;&amp;!file[StudioSlab]:Lib/Python/*&amp;&amp;!file[StudioSlab]:Lib/Models/*&amp;&amp;!file[StudioSlab]:Lib/Core/*&amp;&amp;!file:Lib/__init__.py&amp;&amp;!file[StudioSlab]:Lib/Utils/*&amp;&amp;!file[StudioSlab]:Lib/Mappings//*&amp;&amp;!file[StudioSlab]:Lib/Python//*&amp;&amp;!file[StudioSlab]:Lib/Models//*&amp;&amp;!file[StudioSlab]:Lib/Core//*&amp;&amp;!file[StudioSlab]:Lib/Utils//*" />
-</component>

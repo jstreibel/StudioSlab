@@ -7,3 +7,6 @@
 [submodule "Lib/3rdParty/NanoTeX"]
 	path = Lib/3rdParty/NanoTeX
 	url = git@github.com:jstreibel/NanoTeX
+[submodule "Lib/3rdParty/imgui-node-editor"]
+	path = Lib/3rdParty/imgui-node-editor
+	url = https://github.com/jstreibel/imgui-node-editor
