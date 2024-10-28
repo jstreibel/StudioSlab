@@ -6,18 +6,21 @@
 #include "Core/Tools/Log.h"
 
 
-void FixedSizeMoleculeContainer::reset() {
-    occupation = 0;
-}
+namespace Slab::Models::MolecularDynamics {
 
-void FixedSizeMoleculeContainer::add(VerletPointTriple triple) {
-    if(occupation > HASH_CONTAINER_SIZE) {
-        Core::Log::Error() << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
-        throw "FixedSizeMoleculeContainer max occupancy reached.";
+    void FixedSizeMoleculeContainer::reset() {
+        occupation = 0;
     }
 
-    triples[occupation] = triple;
+    void FixedSizeMoleculeContainer::add(VerletPointTriple triple) {
+        if (occupation > HASH_CONTAINER_SIZE) {
+            Core::Log::Error() << "Max occupancy reached: " << occupation << "/" << HASH_CONTAINER_SIZE << std::endl;
+            throw "FixedSizeMoleculeContainer max occupancy reached.";
+        }
 
-    occupation++;
+        triples[occupation] = triple;
+
+        occupation++;
+    }
+
 }
-

@@ -4,7 +4,7 @@
 
 #include "MoleculeSpaceHash.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     MoleculeSpaceHash::MoleculeSpaceHash(int linSubdivs, Real L) : n(linSubdivs), L(L), l(L / n), hashSpace(n * n) {
         if (n < 3) throw "Hash space linear subdivisions must be >= 3.";

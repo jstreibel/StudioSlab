@@ -9,7 +9,7 @@
 
 #include "Math/Numerics/NumericalRecipe.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
     using namespace Slab::Core;

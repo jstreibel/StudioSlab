@@ -4,30 +4,26 @@
 
 #include "MolDynNumericConfig.h"
 
-namespace Slab {
-    namespace Models {
-        namespace MolecularDynamics {
-            MolDynNumericConfig::MolDynNumericConfig(bool do_register)
-            : DynamicsNumericConfig(false)
-            {
-                interface->addParameters({n});
+namespace Slab::Models::MolecularDynamics {
+    MolDynNumericConfig::MolDynNumericConfig(bool do_register)
+    : DynamicsNumericConfig(false)
+    {
+        interface->addParameters({n});
 
-                if(do_register) registerToManager();
-            }
+        if(do_register) registerToManager();
+    }
 
-            UInt MolDynNumericConfig::getn() const {
-                return **n;
-            }
+    UInt MolDynNumericConfig::getn() const {
+        return **n;
+    }
 
-            Str MolDynNumericConfig::to_string() const {
-                NOT_IMPLEMENTED
-                return Slab::Str();
-            }
+    Str MolDynNumericConfig::to_string() const {
+        NOT_IMPLEMENTED
+        return Slab::Str();
+    }
 
-            auto MolDynNumericConfig::getdt() const -> Real {
-                return **t / **n;
-            }
+    auto MolDynNumericConfig::getdt() const -> Real {
+        return **t / **n;
+    }
 
-        } // Slab
-    } // Models
-} // MolecularDynamics
+} // Slab::Models::MolecularDynamics

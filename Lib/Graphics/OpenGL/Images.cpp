@@ -41,7 +41,7 @@ namespace Slab::Graphics{
         texture.Width  = width;
         texture.Height = height;
 
-        return reinterpret_cast<ImTextureID>(static_cast<std::intptr_t>(texture.TextureID));
+        return reinterpret_cast<SlabTextureID>(static_cast<std::intptr_t>(texture.TextureID));
     }
 
     void DestroyTexture(SlabTextureID texture)

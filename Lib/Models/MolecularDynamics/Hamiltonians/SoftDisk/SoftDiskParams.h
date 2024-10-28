@@ -9,6 +9,7 @@
 
 #include "Utils/Types.h"
 
+namespace Slab::Models::MolecularDynamics {
 
 // PARA FORMAR CLUSTERS:
 //#define N_MOLS 300
@@ -22,7 +23,8 @@
 #define σ CUTOFF_RADIUS // raio da interacao
 #define ALPHA 2 // expoente do potencial (quanto maior, mais soft)
 
-const Real Temperature = 10e-3;
+    const Real Temperature = 10e-3;
 
+}
 
 #endif //MOLEKUL_PLAY_SOFTDISKPARAMS_H

@@ -2,7 +2,7 @@
 
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 

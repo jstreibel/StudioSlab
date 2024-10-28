@@ -9,13 +9,13 @@
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     template<class Model>
     VerletStepper<Model>::VerletStepper(Config c, Model mechModel)
             : Stepper()
             , mechanicsModel(mechModel)
-            , q(c->getN()), p(c->getN()), state(New<State>(q, p))
+            , q(c->getN()), p(c->getN()), state(New<MoleculesState>(q, p))
             , dt(c->getdt()){
         const Count N = c->getN();
         const Real L = c->getL();

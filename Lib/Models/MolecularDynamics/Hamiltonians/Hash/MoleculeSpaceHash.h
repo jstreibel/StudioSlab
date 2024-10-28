@@ -8,7 +8,7 @@
 #include "FixedSizeMoleculeContainer.h"
 
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     class MoleculeSpaceHash {
     public:

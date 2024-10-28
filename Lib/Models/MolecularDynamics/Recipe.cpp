@@ -21,7 +21,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
     Recipe::Recipe()
     : NumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
     , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))

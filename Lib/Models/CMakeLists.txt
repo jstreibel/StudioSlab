@@ -95,6 +95,8 @@ set ( MOLDYN_SOURCES
 		MolecularDynamics/VerletStepper.h 		  MolecularDynamics/VerletStepper.cpp
 		MolecularDynamics/Hamiltonians/Particle.h MolecularDynamics/Hamiltonians/Particle.cpp
 		MolecularDynamics/Monitor.h 			  MolecularDynamics/Monitor.cpp
+		MolecularDynamics/Hamiltonians/MoleculesState.cpp
+		MolecularDynamics/Hamiltonians/MoleculesState.h
 )
 
 if( STUDIOSLAB_CUDA_SUPPORT )

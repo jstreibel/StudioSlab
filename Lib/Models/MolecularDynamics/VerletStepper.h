@@ -5,13 +5,14 @@
 #ifndef MOLDYN_VERLET_STEPPER_H
 #define MOLDYN_VERLET_STEPPER_H
 
+#include "Models/MolecularDynamics/Hamiltonians/MoleculesState.h"
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
 #include "Math/Numerics/Method/Stepper.h"
 
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 
@@ -20,7 +21,7 @@ namespace MolecularDynamics {
         NewtonMechanicsModel mechanicsModel;
 
         Graphics::PointContainer q, p;
-        Pointer<State> state;
+        Pointer<MoleculesState> state;
         Count currStep=0;
 
         Real dt;

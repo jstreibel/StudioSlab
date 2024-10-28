@@ -16,7 +16,7 @@
 
 #define MOLS_HISTORY_SIZE 100
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 

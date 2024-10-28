@@ -12,9 +12,7 @@
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
 
-namespace MolecularDynamics {
-
-    using namespace Slab;
+namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 

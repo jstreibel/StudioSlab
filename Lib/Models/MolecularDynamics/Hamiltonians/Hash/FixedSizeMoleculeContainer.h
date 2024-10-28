@@ -14,25 +14,28 @@
 #define get_p(triple) (*(triple.first.second))
 #define get_dpdt(triple) (*(triple.second))
 
-using namespace Slab;
+namespace Slab::Models::MolecularDynamics {
 
-class FixedSizeMoleculeContainer{
-public:
-    typedef Pair<const Graphics::Point2D*, const Graphics::Point2D*> PointRefPair;
-    typedef Pair<PointRefPair, Graphics::Point2D*> VerletPointTriple;
+    class FixedSizeMoleculeContainer {
+    public:
+        typedef Pair<const Graphics::Point2D *, const Graphics::Point2D *> PointRefPair;
+        typedef Pair<PointRefPair, Graphics::Point2D *> VerletPointTriple;
 
-public:
-    FixedSizeMoleculeContainer() = default;
+    public:
+        FixedSizeMoleculeContainer() = default;
 
-    void reset();
-    void add(VerletPointTriple triple);
-    inline int getOccupation() const {return occupation; }
+        void reset();
 
-    VerletPointTriple &getPair(unsigned n) { return triples[n]; }
+        void add(VerletPointTriple triple);
 
-private:
-    VerletPointTriple triples[HASH_CONTAINER_SIZE];
-    int occupation = 0;
-};
+        inline int getOccupation() const { return occupation; }
+
+        VerletPointTriple &getPair(unsigned n) { return triples[n]; }
+
+    private:
+        VerletPointTriple triples[HASH_CONTAINER_SIZE];
+        int occupation = 0;
+    };
+}
 
 #endif //MOLEKUL_PLAY_FIXEDSIZEMOLECULECONTAINER_H

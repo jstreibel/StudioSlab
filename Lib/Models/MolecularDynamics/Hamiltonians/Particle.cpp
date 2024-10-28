@@ -4,7 +4,7 @@
 
 #include "Particle.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     Molecule operator*(const Real &a, const Molecule &m) {
         return {a * m.m_q, a * m.m_p};

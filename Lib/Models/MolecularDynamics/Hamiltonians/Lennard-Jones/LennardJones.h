@@ -3,7 +3,7 @@
 
 #include "Models/MolecularDynamics/Hamiltonians/Langevin.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using Config = Slab::Models::MolecularDynamics::MolDynNumericConfig;
 

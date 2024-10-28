@@ -12,30 +12,30 @@
 
 #define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Graphics::GetGraphicsBackend())
 
-using namespace Slab;
+namespace Studios::MolecularDynamics {
 
-MolecularDynamics::Recipe recipe;
+    Slab::Models::MolecularDynamics::Recipe recipe;
 
-MolecularDynamics::App::App(int argc, const char **argv)
-: AppBase(argc, argv)
-{
-    Core::BackendManager::Startup("SFML");
+    MolecularDynamics::App::App(int argc, const char **argv)
+            : AppBase(argc, argv) {
+        Slab::Core::BackendManager::Startup("SFML");
 
-    numericTask = Slab::New<Math::NumericTask> (recipe);
+        numericTask = Slab::New<Slab::Math::NumericTask>(recipe);
 
 
-    CLArgsManager::Parse();
+        Slab::Core::CLArgsManager::Parse();
+    }
+
+    int MolecularDynamics::App::run() {
+
+        auto taskManager = Slab::DynamicPointerCast<Slab::Core::TaskManagerModule>(Slab::Core::GetModule("TaskManager"));
+        taskManager->addTask(numericTask);
+
+        Slab::Graphics::GetGraphicsBackend().run();
+
+        Slab::Core::Log::Info() << "MolecularDynamics finished." << Slab::Core::Log::Flush;
+
+        return true;
+    }
+
 }
-
-int MolecularDynamics::App::run() {
-
-    auto taskManager = DynamicPointerCast<Core::TaskManagerModule>(Slab::Core::GetModule("TaskManager"));
-    taskManager->addTask(numericTask);
-
-    SFML_Backend.run();
-
-    Log::Info() << "MolecularDynamics finished." << Log::Flush;
-
-    return true;
-}
-

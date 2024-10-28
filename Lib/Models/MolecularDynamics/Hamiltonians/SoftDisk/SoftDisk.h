@@ -5,7 +5,7 @@
 #include "Utils/Types.h"
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 

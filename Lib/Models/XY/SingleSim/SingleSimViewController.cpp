@@ -49,13 +49,11 @@ namespace Slab::Lost::ThermoOutput {
     const int transientToSamplesRatio=100;
 
     // Output
-    const std::string fileLoc = "/home/joao/Developer/StudiesC++/Ising/DataAndPlot/Workdir/";
+    const std::string fileLoc = "/home/joao/Data/StudioSlab/Ising/";
 
     SingleSimViewController::SingleSimViewController(const int L, int MCSteps, int transientSize)
         : MCSteps(MCSteps), transientSize(transientSize)
     {
-
-
         auto nkModule_abstract = Core::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
         nkContext = nkModule.getContext();

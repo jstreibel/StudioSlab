@@ -11,12 +11,10 @@
 #include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Math/Numerics/NumericTask.h"
 
-namespace MolecularDynamics {
+namespace Studios::MolecularDynamics {
 
-    using namespace Slab::Core;
-
-    class App : public AppBase {
-        Pointer<Slab::Math::NumericTask> numericTask;
+    class App : public Slab::Core::AppBase {
+        Slab::Pointer<Slab::Math::NumericTask> numericTask;
     public:
         App(int argc, const char *argv[]);
 

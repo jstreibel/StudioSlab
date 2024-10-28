@@ -15,8 +15,9 @@
 
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
+#include "Models/MolecularDynamics/Hamiltonians/MoleculesState.h"
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     #define SHOW_DOT false
     #define SHOW_RADIUS true
@@ -27,7 +28,7 @@ namespace MolecularDynamics {
     : Socket("Particle dynamics monitor", 10)
     , SlabWindow()
     , renderWindow(SFML_Backend.getRenderWindow())
-    , molShapes(2*N)
+    , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()
     , N(config->getN()), L(float(config->getL()))
@@ -107,7 +108,7 @@ namespace MolecularDynamics {
     void Monitor::draw() {
         // Window::draw();
 
-        auto state = lastPacket.GetNakedStateData<State>();
+        auto state = lastPacket.GetNakedStateData<MoleculesState>();
         auto v_q = state->first();
         auto v_p = state->second();
 

@@ -13,7 +13,7 @@
 #define USE_NEW_EXPERIMENTAL_IMPLEMENTATION false
 #define DISSIPATION_FACTOR 1e-3
 
-namespace MolecularDynamics {
+namespace Slab::Models::MolecularDynamics {
 
     NewtonMechanics::NewtonMechanics(Pointer<Config> config)
     : dissipation(DISSIPATION_FACTOR)

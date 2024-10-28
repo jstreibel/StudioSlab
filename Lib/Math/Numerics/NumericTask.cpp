@@ -13,6 +13,35 @@ namespace Slab::Math {
 
     using Core::Log;
 
+    NumericTask::NumericTask(Base::NumericalRecipe &recipe)
+            : Task("Numeric Integration"),
+              numericalRecipe(recipe),
+              stepper(recipe.buildStepper()),
+              outputManager(recipe.buildOutputManager()),
+              totalSteps(recipe.getNumericConfig()->getn()),
+              stepsConcluded(0),
+              benchmarkData(recipe.getNumericConfig()->getn()/100){
+#if ATTEMP_REALTIME
+        {
+                // Declare a sched_param struct to hold the scheduling parameters.
+                sched_param param;
+
+                // Set the priority value in the sched_param struct.
+                param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+
+                // Set the scheduling policy and priority of the current process.
+                int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+                if (ret == -1) {
+                    Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+                } else {
+                    Log::Info() << "Program running with realtime priority." << Log::Flush;
+                }
+            }
+#endif
+
+        this->output(FORCE_INITIAL_OUTPUT);
+    }
+
     NumericTask::~NumericTask() {
         Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
     }
@@ -84,6 +113,5 @@ namespace Slab::Math {
     void NumericTask::abort() {
         forceStopFlag = true;
     }
-
 
 }
