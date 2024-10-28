@@ -19,10 +19,10 @@ namespace Slab {
 
         RectR PlottingRegion2D::getRect() const {return {*xMin, *xMax, *yMin, *yMax}; }
 
-        void PlottingRegion2D::animate_xMin(Real val) { Core::Animator::Set(*xMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_xMax(Real val) { Core::Animator::Set(*xMax, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMin(Real val) { Core::Animator::Set(*yMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMax(Real val) { Core::Animator::Set(*yMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMin(Real val) { Graphics::Animator::Set(*xMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMax(Real val) { Graphics::Animator::Set(*xMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMin(Real val) { Graphics::Animator::Set(*yMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMax(Real val) { Graphics::Animator::Set(*yMax, val, animationTimeSeconds);}
 
         void PlottingRegion2D::setReference_xMin(Pointer<Real> ref) {
             if(ref == nullptr) ref = New<Real>(0.0);
@@ -52,10 +52,10 @@ namespace Slab {
         Real PlottingRegion2D::yCenter() const { return (*yMax + *yMin) * .5; }
 
         bool PlottingRegion2D::isAnimating() const {
-            return Core::Animator::Contains(*xMin) ||
-                   Core::Animator::Contains(*xMax) ||
-                   Core::Animator::Contains(*yMin) ||
-                   Core::Animator::Contains(*yMax);
+            return Animator::Contains(*xMin) ||
+                   Animator::Contains(*xMax) ||
+                   Animator::Contains(*yMin) ||
+                   Animator::Contains(*yMax);
         }
 
         Real PlottingRegion2D::getXMin() const {

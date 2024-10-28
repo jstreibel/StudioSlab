@@ -62,7 +62,7 @@ namespace Slab::Graphics {
     void GLFWBackend::key_callback(GLFWwindow *window, int key, int scancode, int action, int mods) {
         auto &me = GetInstance();
 
-        if(key == GLFW_KEY_F11 && action == GLFW_PRESS)
+        if(key == GLFW_KEY_F11 && mods==GLFW_MOD_SHIFT && action == GLFW_PRESS)
             toggle_window_fullscreen(window);
 
         IterateReferences(me.listeners,

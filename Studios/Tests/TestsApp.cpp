@@ -20,7 +20,7 @@
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
-
+#include "Nodes/ImGuiNodesTest3.h"
 
 #define DONT_REGISTER false
 
@@ -63,13 +63,22 @@ int TestsApp::run() {
         temp = New<Tests::FourierTestWindow>();
         // wm->addSlabWindow(temp);
 
-        temp = New<WindowTreeBuilderTest>();
-        wm->addSlabWindow(temp);
+        // temp = New<WindowTreeBuilderTest>();
+        // wm->addSlabWindow(temp);
 
-        temp = New<WindowPanelTest>();
-        wm->addSlabWindow(temp);
+        // temp = New<WindowPanelTest>();
+        // wm->addSlabWindow(temp);
 
-        temp = New<GLFreeTypeTests>();
+        // temp = New<GLFreeTypeTests>();
+        // wm->addSlabWindow(temp);
+
+        //temp = New<Tests::ImGuiNodesTest1>();
+        //wm->addSlabWindow(temp);
+
+        //temp = New<Tests::ImGuiNodesTest2>();
+        //wm->addSlabWindow(temp);
+
+        temp = New<Tests::ImGuiNodesTest3>();
         wm->addSlabWindow(temp);
 
         backend = &Slab::Graphics::GetGraphicsBackend();

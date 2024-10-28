@@ -8,36 +8,73 @@
 #include <cmath>
 #include <chrono>
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
     Animator &Animator::Instance() {
         static Animator instance;
         return instance;
     }
 
-    void Animator::Set(double &variable, double targetValue, double timeInSeconds) {
-        auto &animations = Instance().animations;
+    void Animator::Set(double &variable, double targetValue, double timeInSeconds,
+                       AnimStepCallback<double> onStep, AnimFinishCallback onFinish) {
+        auto &animations = Instance().double_animations;
 
-        animations[&variable] = {variable, targetValue, timeInSeconds};
+        animations[Dummy(variable)] = {variable, targetValue, timeInSeconds, onStep, onFinish};
+    }
+
+    void Animator::Set(Int &variable, Int targetValue, double timeInSeconds,
+                       AnimStepCallback<Int> onStep, std::function<void(void)> onFinish) {
+        auto &animations = Instance().int_animations;
+
+        animations[Dummy(variable)] = {variable, targetValue, timeInSeconds, onStep, onFinish};
+    }
+
+    void Animator::SetCallback(Int v0, Int targetValue, double timeInSeconds, AnimStepCallback<Int> onStep, AnimFinishCallback onFinish) {
+        auto &animations = Instance().int_animations;
+
+        animations[New<Int>(v0)] = {v0, targetValue, timeInSeconds, onStep, onFinish};
     }
 
     void Animator::Update() {
         auto now = std::chrono::steady_clock::now();
 
-        auto &animations = Animator::Instance().animations;
+        {
+            auto &animations = Animator::Instance().double_animations;
 
-        for (auto it = animations.begin(); it != animations.end();) {
-            auto& [var, anim] = *it;
-            auto t = anim.timer.getElTime_sec()/anim.timeInSeconds;
+            for (auto it = animations.begin(); it != animations.end();) {
+                auto &[var, anim] = *it;
+                auto t = anim.timer.getElTime_sec() / anim.timeInSeconds;
 
-            if (t >= 1) {
-                *var = anim.targetValue;
-                it = animations.erase(it);  // Remove the completed animation
-            } else {
-                fix a = anim.initialValue;
-                fix b = anim.targetValue;
-                *var = cubicBezierInterpolation(a, b, t);
-                ++it;
+                if (t >= 1) {
+                    *var = anim.targetValue;
+                    anim.finish_callback();
+                    it = animations.erase(it);  // Remove the completed animation
+                } else {
+                    fix a = anim.initialValue;
+                    fix b = anim.targetValue;
+                    *var = cubicBezierInterpolation(a, b, t);
+                    anim.step_callback(*var);
+                    ++it;
+                }
+            }
+        }{
+            auto &animations = Animator::Instance().int_animations;
+
+            for (auto it = animations.begin(); it != animations.end();) {
+                auto &[var, anim] = *it;
+                auto t = anim.timer.getElTime_sec() / anim.timeInSeconds;
+
+                if (t >= 1) {
+                    *var = anim.targetValue;
+                    anim.finish_callback();
+                    it = animations.erase(it);  // Remove the completed animation
+                } else {
+                    fix a = anim.initialValue;
+                    fix b = anim.targetValue;
+                    *var = cubicBezierInterpolation(a, b, t);
+                    anim.step_callback(*var);
+                    ++it;
+                }
             }
         }
 
@@ -61,7 +98,7 @@ namespace Slab::Core {
     }
 
     bool Animator::Contains(const double &variable) {
-        return Animator::Instance().animations.contains(const_cast<double*>(&variable));
+        return Animator::Instance().double_animations.contains(Dummy(const_cast<double&>(variable)));
     }
 
     void Animator::SetBezierParams(double p1, double p2) {
@@ -69,8 +106,8 @@ namespace Slab::Core {
         Instance().p2 = p2;
     }
 
-    auto Animator::Get(const double &variable) -> const Animation & {
-        return Animator::Instance().animations[const_cast<double*>(&variable)];
+    auto Animator::Get(const double &variable) -> const Animation<double> & {
+        return Animator::Instance().double_animations[Dummy(const_cast<double&>(variable))];
     }
 
     auto Animator::GetBezierParams() -> Pair<double, double> {

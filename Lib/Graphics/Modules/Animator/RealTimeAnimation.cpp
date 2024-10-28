@@ -10,7 +10,7 @@ namespace Slab::Graphics {
     void RealTimeAnimationModule::beginRender() {
         GraphicsModule::beginRender();
 
-        Core::Animator::Update();
+        Graphics::Animator::Update();
     }
 
     RealTimeAnimationModule::RealTimeAnimationModule() : GraphicsModule("Realtime Animation") {}

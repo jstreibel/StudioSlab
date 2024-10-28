@@ -13,22 +13,35 @@
 namespace Slab::Graphics {
 
     class SlabWindowManager : public SystemWindowEventListener {
-        List<Pointer<SlabWindow>> slab_windows;
+        struct WindowMetaInformation {
+            Pointer<SlabWindow> window= nullptr;
+            bool is_full_screen = false;
+            bool is_hidden = false;
+
+            bool operator<(const WindowMetaInformation &rhs) const;
+            bool operator>(const WindowMetaInformation &rhs) const;
+            bool operator<=(const WindowMetaInformation &rhs) const;
+            bool operator>=(const WindowMetaInformation &rhs) const;
+            bool operator==(const WindowMetaInformation &rhs) const;
+            bool operator==(const nullptr_t &rhs) const;
+        };
+
+        List<Pointer<WindowMetaInformation>> slab_windows;
 
         Decorator decorator;
 
         Int w_system_window=10, h_system_window=10;
 
-        Pointer<SlabWindow> focused;
+        Pointer<WindowMetaInformation> focused;
         using Anchor = Point2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<SlabWindow> window;} grabbed;
 
     public:
         ~SlabWindowManager() override = default;
 
-        void setFocus(const Pointer<SlabWindow>&);
+        void setFocus(Pointer<WindowMetaInformation>);
 
-        void addSlabWindow(const Pointer<SlabWindow>&);
+        void addSlabWindow(const Pointer<SlabWindow>&, bool hidden=false);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 

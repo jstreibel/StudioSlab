@@ -9,31 +9,54 @@
 #include "Utils/Timer.h"
 
 #include <unordered_map>
+#include <functional>
 
-namespace Slab::Core {
+namespace Slab::Graphics {
 
+    using AnimFinishCallback = std::function<void(void)>;
+
+    template<typename T>
+    using AnimStepCallback = std::function<void(T)>;
+
+    template <typename T>
     struct Animation {
-        double initialValue;
-        double targetValue;
+        T initialValue;
+        T targetValue;
         double timeInSeconds;
-        Timer timer;
+        AnimStepCallback<T> step_callback;
+        AnimFinishCallback finish_callback;
+
+        Timer timer; // inicializa sozinho
     };
+
+    template<typename T>
+    using AnimationMap = std::unordered_map<Pointer<T>, Animation<T>>;
 
     class Animator {
         static Animator& Instance();
         Animator() = default;
 
-        std::unordered_map<double*, Animation> animations;
+        AnimationMap<double> double_animations;
+        AnimationMap<int> int_animations;
+
         static double cubicBezierInterpolation(double startValue, double endValue, double t);
 
         double p1=1.0,p2=1.0;
     public:
 
-        static void Set(double& variable, double targetValue, double timeInSeconds);
+        static void Set(double& variable, double targetValue, double timeInSeconds,
+                        AnimStepCallback<double> onStep = [](double){},
+                        AnimFinishCallback onFinish=[](){});
+
+        static void Set(Int& variable, Int targetValue, double timeInSeconds,
+                        AnimStepCallback<Int> onStep = [](Int){},
+                        AnimFinishCallback onFinish=[](){});
+
+        static void SetCallback(Int v0, Int targetValue, double timeInSeconds, AnimStepCallback<Int> onStep, AnimFinishCallback onFinish=[](){});
 
         static bool Contains(const double &variable);
 
-        static auto Get(const double &variable) -> const Animation&;
+        static auto Get(const double &variable) -> const Animation<double>&;
 
         static void SetBezierParams(double p1, double p2);
 

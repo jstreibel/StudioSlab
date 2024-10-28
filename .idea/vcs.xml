@@ -5,5 +5,6 @@
     <mapping directory="$PROJECT_DIR$/Lib/3rdParty/NanoTeX" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Lib/3rdParty/freetype-gl" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/Lib/3rdParty/imgui" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/Lib/3rdParty/imgui-node-editor" vcs="Git" />
   </component>
 </project>

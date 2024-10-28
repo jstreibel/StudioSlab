@@ -37,8 +37,8 @@ namespace Tests {
 
 
     BezierTests::BezierTests() : Graphics::WindowRow("Bezier test") {
-        param1 = (float)Core::Animator::GetBezierParams().first;
-        param2 = (float)Core::Animator::GetBezierParams().second;
+        param1 = (float)Graphics::Animator::GetBezierParams().first;
+        param2 = (float)Graphics::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();
 
         addWindow(Naked(stats), Right, .15);
@@ -68,33 +68,33 @@ namespace Tests {
         if(ImGui::SliderFloat("param1", &param1, -1, 2)
          | ImGui::SliderFloat("param2", &param2, -1, 2)
          | ImGui::SliderFloat("time", &animTimeSeconds, 0.1, 5)){
-            Core::Animator::SetBezierParams(param1, param2);
+            Graphics::Animator::SetBezierParams(param1, param2);
             graph.setAnimationTime(animTimeSeconds);
         }
         stats.end();
 
         currentPt.clear();
         auto &r = graph.getRegion();
-        if(Core::Animator::Contains(*r.getReference_xMin())){
-            auto &anim = Core::Animator::Get(*r.getReference_xMin());
+        if(Graphics::Animator::Contains(*r.getReference_xMin())){
+            auto &anim = Graphics::Animator::Get(*r.getReference_xMin());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(*r.getReference_xMax())){
-            auto &anim = Core::Animator::Get(*r.getReference_xMax());
+        if(Graphics::Animator::Contains(*r.getReference_xMax())){
+            auto &anim = Graphics::Animator::Get(*r.getReference_xMax());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(*r.getReference_yMin())){
-            auto &anim = Core::Animator::Get(*r.getReference_yMin());
+        if(Graphics::Animator::Contains(*r.getReference_yMin())){
+            auto &anim = Graphics::Animator::Get(*r.getReference_yMin());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }
 
-        if(Core::Animator::Contains(*r.getReference_yMax())){
-            auto &anim = Core::Animator::Get(*r.getReference_yMax());
+        if(Graphics::Animator::Contains(*r.getReference_yMax())){
+            auto &anim = Graphics::Animator::Get(*r.getReference_yMax());
             fix t = anim.timer.getElTime_sec() / anim.timeInSeconds;
             currentPt.addPoint({t, cubicBezierInterpolation(t)});
         }

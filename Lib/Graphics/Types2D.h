@@ -22,6 +22,9 @@ namespace Slab::Graphics {
 
         bool doesHit(const T &x, const T &y) const { return x>=xMin && x<=xMax && y>=yMin && y<=yMax; }
 
+        Rect operator +(const Rect& rhs) const { return { xMin+rhs.xMin, xMax+rhs.xMax, yMin+rhs.yMin, yMax+rhs.yMax }; }
+        Rect operator *(const Real& a) const { return {T(a*xMin), T(a*xMax), T(a*yMin), T(a*yMax)}; }
+
         bool operator==(const Rect &rhs) const {
             return Common::AreEqual(xMin, rhs.xMin) &&
                    Common::AreEqual(xMax, rhs.xMax) &&
@@ -30,7 +33,7 @@ namespace Slab::Graphics {
         }
 
         bool operator!=(const Rect &rhs) const {
-            return !(rhs == *this);
+            return rhs != *this;
         }
     };
 

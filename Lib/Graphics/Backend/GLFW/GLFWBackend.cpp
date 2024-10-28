@@ -106,14 +106,12 @@ namespace Slab::Graphics {
             static auto BeginEvents = FuncRun(beginEvents);
             static auto EndEvents   = FuncRun(endEvents);
 
+            IterateReferences(graphicModules, BeginEvents);
+            glfwPollEvents();
             IterateReferences(graphicModules, BeginRender);
             IterateReferences(listeners, Render);
             IterateReferences(graphicModules, EndRender);
-
             glfwSwapBuffers(systemWindow);
-
-            IterateReferences(graphicModules, BeginEvents);
-            glfwPollEvents();
             IterateReferences(graphicModules, EndEvents);
         }
     }
