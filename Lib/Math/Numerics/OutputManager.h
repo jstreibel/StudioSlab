@@ -1,7 +1,7 @@
 #ifndef OUTPUTMANAGER_H
 #define OUTPUTMANAGER_H
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Socket.h"
 
 
 namespace Slab::Math {

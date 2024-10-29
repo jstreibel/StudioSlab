@@ -18,12 +18,12 @@ const auto FORCE_INITIAL_OUTPUT = true;
 namespace Slab::Math {
 
     class NumericTask : public Core::Task {
+        const UInt totalSteps;
+        UInt stepsConcluded;
+
         Base::NumericalRecipe &numericalRecipe;
         Stepper_ptr stepper;
         Pointer<OutputManager> outputManager;
-
-        const UInt totalSteps;
-        UInt stepsConcluded;
 
         std::atomic<bool> forceStopFlag = false;
 

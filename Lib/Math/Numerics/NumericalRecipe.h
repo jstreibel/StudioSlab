@@ -2,7 +2,7 @@
 #define SIMULATION_H
 
 #include "Stepper.h"
-#include "OutputManager.h"
+#include "Math/Numerics/Socket.h"
 
 #include "Core/Controller/CommandLine/CLInterface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
@@ -20,7 +20,7 @@ namespace Slab::Math::Base {
         explicit NumericalRecipe(const Pointer<NumericConfig>& numeric_config, const Str& name, const Str& generalDescription, bool doRegister = false);
 
     public:
-        virtual auto buildOutputManager()         -> Pointer<OutputManager> = 0;
+        virtual auto buildOutputSockets()         -> Vector<Pointer<Socket>> = 0;
         // virtual auto buildSolver()                -> Pointer<Base::LinearStepSolver> = 0;
         virtual auto buildStepper()               -> Pointer<Stepper> = 0;
 

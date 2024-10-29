@@ -14,7 +14,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
 #include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 
 

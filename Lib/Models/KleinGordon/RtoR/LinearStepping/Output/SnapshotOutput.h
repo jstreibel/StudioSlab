@@ -7,7 +7,7 @@
 
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 
 #include <fstream>
 

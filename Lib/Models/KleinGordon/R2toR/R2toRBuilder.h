@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
         public:
             Builder(const Str& name, Str description);
 
-            auto buildOutputManager()   -> Pointer<OutputManager> override;
+            auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
             auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
 
             auto newFunctionArbitrary() -> R2toR::NumericFunction_ptr ;

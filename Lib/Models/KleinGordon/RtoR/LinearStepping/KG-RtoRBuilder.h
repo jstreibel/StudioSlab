@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
 
         bool periodicBC = false;          // Gambiarris
 
-        void addTimeDFTSnapshots(Pointer<OutputManager>);
+        Vector<Pointer<Socket>> getTimeDFTSnapshots();
         auto _newTimeDFTSnapshotOutput(Str folder, Real t_start, Real t_end, RealVector x_locations) -> Pointer<Socket>;
 
     protected:
@@ -53,7 +53,7 @@ namespace Slab::Models::KGRtoR {
         RtoR::Function_ptr getPotential() const;
         virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
 
-        auto buildOutputManager()   -> Pointer<OutputManager> override;
+        auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
 
         auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
 

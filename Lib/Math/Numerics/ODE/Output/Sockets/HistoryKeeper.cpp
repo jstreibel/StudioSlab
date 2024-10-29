@@ -1,6 +1,6 @@
 #include "HistoryKeeper.h"
 
-#include "Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "Core/Tools/Log.h"
 
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"

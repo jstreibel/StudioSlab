@@ -8,6 +8,7 @@
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 
 #include "Math/Numerics/NumericalRecipe.h"
+#include "Math/Numerics/Socket.h"
 
 namespace Slab::Models::MolecularDynamics {
 
@@ -26,7 +27,7 @@ namespace Slab::Models::MolecularDynamics {
     public:
         Recipe();
 
-        auto buildOutputManager() -> Pointer<Math::OutputManager> override;
+        auto buildOutputSockets() -> Vector<Pointer<Math::Socket>> override;
 
         auto buildStepper() -> Pointer<Math::Stepper> override;
 

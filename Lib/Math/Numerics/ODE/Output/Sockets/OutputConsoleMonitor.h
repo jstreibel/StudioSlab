@@ -1,7 +1,7 @@
 #ifndef OUTPUTCONSOLEMONITOR_H
 #define OUTPUTCONSOLEMONITOR_H
 
-#include "Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "Utils/Timer.h"
 
 

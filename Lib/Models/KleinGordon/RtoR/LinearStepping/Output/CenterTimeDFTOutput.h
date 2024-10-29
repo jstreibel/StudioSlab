@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_CENTERTIMEDFTOUTPUT_H
 #define STUDIOSLAB_CENTERTIMEDFTOUTPUT_H
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 
 namespace Slab::Models::KGRtoR {
 

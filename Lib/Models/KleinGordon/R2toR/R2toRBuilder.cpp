@@ -31,14 +31,15 @@ namespace Slab::Math::R2toR {
     Builder::Builder(const Str& name, Str description)
             : Models::KGRecipe(New<Models::KGNumericConfig>(), name, std::move(description)) {    }
 
-    Pointer<OutputManager> Builder::buildOutputManager() {
+    Vector<Pointer<Socket>> Builder::buildOutputSockets() {
+        Vector<Pointer<Socket>> sockets;
+
+
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
 
         if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
         else                Core::BackendManager::Startup("Headless");
-
-        auto outputManager = New <OutputManager> (kg_numeric_config->getn());
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
@@ -74,7 +75,7 @@ namespace Slab::Math::R2toR {
 
             auto out = New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
 
-            outputManager->addOutputChannel(out);
+            sockets.emplace_back(out);
         }
         ///********************************************************************************************/
 
@@ -87,16 +88,15 @@ namespace Slab::Math::R2toR {
             auto wm = New<Graphics::SlabWindowManager>();
             wm->addSlabWindow(glOut);
             backend.addAndOwnEventListener(wm);
-            outputManager->addOutputChannel(glOut);
+            sockets.emplace_back(glOut);
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             IN conf = *kg_numeric_config;
-            outputManager->addOutputChannel(
-                    New<OutputConsoleMonitor>(conf.getn(), conf.gett()));
+            sockets.emplace_back(New<OutputConsoleMonitor>(conf.getn(), conf.gett()));
         }
 
-        return outputManager;
+        return sockets;
 
     }
 

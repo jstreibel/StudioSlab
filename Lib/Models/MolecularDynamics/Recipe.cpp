@@ -30,13 +30,13 @@ namespace Slab::Models::MolecularDynamics {
         CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
-    Pointer<Math::OutputManager> Recipe::buildOutputManager() {
+    Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
+        Vector<Pointer<Math::Socket>> sockets;
+
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
-        auto outputManager = New <Math::OutputManager> (numeric_config->getn());
-
-        outputManager->addOutputChannel(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn(),
-                                                                                      numericConfig->gett()));
+        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn(),
+                                                                           numericConfig->gett()));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
@@ -46,9 +46,9 @@ namespace Slab::Models::MolecularDynamics {
         auto wm = New<Graphics::SlabWindowManager>();
         wm->addSlabWindow(Pointer<Graphics::SlabWindow>(monitor));
         Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(wm);
-        outputManager->addOutputChannel(monitor);
+        sockets.emplace_back(monitor);
 
-        return outputManager;
+        return sockets;
     }
 
     Pointer<Math::Stepper> Recipe::buildStepper() {

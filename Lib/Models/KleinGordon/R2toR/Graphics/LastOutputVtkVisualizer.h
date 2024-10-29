@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_LASTOUTPUTVTKVISUALIZER_H
 #define STUDIOSLAB_LASTOUTPUTVTKVISUALIZER_H
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 
 namespace Slab::Math::R2toR {
 

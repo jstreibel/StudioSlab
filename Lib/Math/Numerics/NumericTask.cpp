@@ -15,12 +15,16 @@ namespace Slab::Math {
 
     NumericTask::NumericTask(Base::NumericalRecipe &recipe)
             : Task("Numeric Integration"),
+              totalSteps(recipe.getNumericConfig()->getn()),
               numericalRecipe(recipe),
               stepper(recipe.buildStepper()),
-              outputManager(recipe.buildOutputManager()),
-              totalSteps(recipe.getNumericConfig()->getn()),
+              outputManager(New<OutputManager>(totalSteps)),
               stepsConcluded(0),
               benchmarkData(recipe.getNumericConfig()->getn()/100){
+        auto sockets = recipe.buildOutputSockets();
+
+        for(auto &socket : sockets) outputManager->addOutputChannel(socket);
+
 #if ATTEMP_REALTIME
         {
                 // Declare a sched_param struct to hold the scheduling parameters.

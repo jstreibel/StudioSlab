@@ -1,7 +1,7 @@
 #ifndef OUTPUTSNAPSHOTS1D_H
 #define OUTPUTSNAPSHOTS1D_H
 
-#include "Socket.h"
+#include "Math/Numerics/Socket.h"
 
 
 namespace Slab::Math {

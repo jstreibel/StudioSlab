@@ -5,7 +5,7 @@
 #include "MetropolisR2toRRecipe.h"
 
 namespace Slab::Math {
-    Pointer<OutputManager> MetropolisR2toRRecipe::buildOutputManager() {
+    Vector<Pointer<Socket>> MetropolisR2toRRecipe::buildOutputSockets() {
 
         return {};
     }

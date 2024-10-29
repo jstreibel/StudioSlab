@@ -74,7 +74,9 @@ namespace Slab::Models::KGRtoR {
         if (doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
     }
 
-    auto KGRtoRBuilder::buildOutputManager() -> Pointer<OutputManager> {
+    auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
+        Vector<Pointer<Socket>> sockets;
+
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
 
@@ -87,8 +89,6 @@ namespace Slab::Models::KGRtoR {
         else                Core::BackendManager::Startup("Headless");
 
         const KGNumericConfig &p = dynamic_cast<KGNumericConfig&>(*numeric_config);
-
-        auto outputManager = New <OutputManager> (p.getn());
 
         fix t = p.gett();
         fix max_steps = p.getn();
@@ -107,19 +107,20 @@ namespace Slab::Models::KGRtoR {
 
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
-            outputManager->addOutputChannel(
-                    Slab::New<SnapshotOutput>(snapshotFilename));
+            sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
         if (*takeSpaceDFTSnapshot) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
-            outputManager->addOutputChannel(
-                    Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
+            sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*takeTimeDFTSnapshot) {
-            addTimeDFTSnapshots(outputManager);
+            auto time_dftsnapshots = getTimeDFTSnapshots();
+
+            for(auto &socket : time_dftsnapshots)
+                sockets.emplace_back(socket);
         }
 
 
@@ -140,7 +141,7 @@ namespace Slab::Models::KGRtoR {
 
             out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             fileOutputStepsInterval = out->getnSteps();
-            outputManager->addOutputChannel(out);
+            sockets.emplace_back(out);
         }
 
 
@@ -164,8 +165,8 @@ namespace Slab::Models::KGRtoR {
 
                 auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
 
-                outputManager->addOutputChannel(simHistory);
-                outputManager->addOutputChannel(ftHistory);
+                sockets.emplace_back(simHistory);
+                sockets.emplace_back(ftHistory);
 
                 outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
                 outputOpenGL->setSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
@@ -175,22 +176,21 @@ namespace Slab::Models::KGRtoR {
             auto wm = New<Graphics::SlabWindowManager>();
             wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
             guiBackend.addAndOwnEventListener(wm);
-            outputManager->addOutputChannel(outputOpenGL);
+            sockets.emplace_back(outputOpenGL);
         } else {
             /* O objetivo de relacionar o numero de passos para
              * o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
 
-            outputManager->addOutputChannel(
-                    Slab::New<OutputConsoleMonitor>(max_steps, t));
+            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, t));
         }
 
-        return outputManager;
+        return sockets;
 
     }
 
-    void KGRtoRBuilder::addTimeDFTSnapshots(Pointer<OutputManager> outputManager) {
+    Vector<Pointer<Socket>> KGRtoRBuilder::getTimeDFTSnapshots() {
         auto &c = *kg_numeric_config;
 
         fix t = c.gett();
@@ -222,12 +222,12 @@ namespace Slab::Models::KGRtoR {
         if(snapshot_count==1) {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             auto snapshotSocket = _newTimeDFTSnapshotOutput(snapshotsFolder, t-t_len, t, x_locations);
-            outputManager->addOutputChannel(snapshotSocket);
 
-            return;
+            return {snapshotSocket};
         }
 
         int i=0;
+        Vector<Pointer<Socket>> sockets;
         do {
             fix t_end   = t - i*Δt;
             fix t_start = Common::max(t_end-t_len, 0.0);
@@ -236,8 +236,10 @@ namespace Slab::Models::KGRtoR {
             auto snapshotsFolder = Common::GetPWD() +
                     "/snapshots_t" + ToStr(t_start, decimal_places) +  "-" + ToStr(t_end, decimal_places) + "/";
             auto snapshotSocket = _newTimeDFTSnapshotOutput(snapshotsFolder, t_start, t_end, x_locations);
-            outputManager->addOutputChannel(snapshotSocket);
+            sockets.emplace_back(snapshotSocket);
         } while (snapshot_count >++ i);
+
+        return sockets;
     }
 
     Pointer<Socket>

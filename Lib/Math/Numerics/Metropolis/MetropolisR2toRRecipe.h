@@ -11,7 +11,7 @@ namespace Slab::Math {
 
     class MetropolisR2toRRecipe : public Base::NumericalRecipe {
     public:
-        auto buildOutputManager() -> Pointer<OutputManager> override;
+        auto buildOutputSockets() -> Vector<Pointer<Socket>> override;
 
         auto buildStepper() -> Pointer<Stepper> override;
     };

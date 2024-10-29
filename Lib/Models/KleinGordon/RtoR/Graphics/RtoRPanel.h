@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORPANEL_H
 #define STUDIOSLAB_RTORPANEL_H
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"

@@ -6,7 +6,7 @@
 
 #include "JackServer.h"
 #include "OutGL.h"
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "RtoRBuilder.h"
 
 #include <Math/Numerics/Output/OutputManager.h>

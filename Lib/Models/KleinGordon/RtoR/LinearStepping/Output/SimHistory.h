@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SIMHISTORY_H
 #define STUDIOSLAB_SIMHISTORY_H
 
-#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Math/Numerics/Socket.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Bypass.h"
