@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_SIM_BUILDER_H
 #define STUDIOSLAB_SIM_BUILDER_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 #include "SquareWave.h"
 
 namespace Modes {

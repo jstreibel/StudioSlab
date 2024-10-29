@@ -12,7 +12,7 @@
 
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 #include "Monitor.h"
-#include "Models/KleinGordon/KGSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 #define DONT_REGISTER false

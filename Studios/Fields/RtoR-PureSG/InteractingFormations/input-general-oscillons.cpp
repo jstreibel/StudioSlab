@@ -4,9 +4,9 @@
 
 #include "input-general-oscillons.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 
 namespace Studios::PureSG {
 

@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_DYNAMICSNUMERICCONFIG_H
 #define STUDIOSLAB_DYNAMICSNUMERICCONFIG_H
 
-#include "Math/Numerics/SimConfig/NumericConfig.h"
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
 #include "Utils/List.h"
 

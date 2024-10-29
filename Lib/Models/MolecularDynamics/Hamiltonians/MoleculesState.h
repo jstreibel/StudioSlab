@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_MOLECULESSTATE_H
 #define STUDIOSLAB_MOLECULESSTATE_H
 
-#include "Math/Numerics/Solver/EquationState.h"
+#include "Math/Numerics/ODE/Solver/EquationState.h"
 #include "Graphics/Types2D.h"
 
 #include "OpDefs.h"

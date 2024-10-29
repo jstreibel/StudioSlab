@@ -8,7 +8,7 @@
 #include "Math/Numerics/NumericalRecipe.h"
 
 #include "Utils/NativeTypes.h"
-#include "Math/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
 #include "Models/KleinGordon/R2toR/R2toRBuilder.h"
 
 namespace Slab::Math::R2toR {

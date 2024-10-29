@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_THERMALBUILDER_H
 #define STUDIOSLAB_THERMALBUILDER_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 
 namespace Studios::Fields::RtoRThermal {
 
@@ -22,7 +22,7 @@ namespace Studios::Fields::RtoRThermal {
     public:
         Builder(const Str &name, const Str &generalDescription, bool doRegister=false);
 
-        auto buildEquationSolver() -> Base::Solver_ptr override;
+        auto buildSolver() -> Pointer<Base::LinearStepSolver> override;
 
         auto suggestFileName() const -> Str override;
 

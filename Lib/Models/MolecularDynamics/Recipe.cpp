@@ -13,10 +13,9 @@
 #include "Recipe.h"
 
 #include "Graphics/SlabGraphics.h"
-#include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
-#include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
@@ -72,10 +71,6 @@ namespace Slab::Models::MolecularDynamics {
         }
 
         throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
-    }
-
-    Math::Base::Solver_ptr Recipe::buildEquationSolver() {
-        throw Str(__PRETTY_FUNCTION__) + " not implemented.";
     }
 
     void Recipe::notifyCLArgsSetupFinished() {

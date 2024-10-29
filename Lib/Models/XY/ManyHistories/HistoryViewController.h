@@ -7,7 +7,7 @@
 
 #include "Math/Thermal/XYNetwork.h"
 #include "Math/Thermal/ThermoUtils.h"
-#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 
 #include "Graphics/SFML/Graph.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
@@ -52,7 +52,7 @@ namespace Slab::Lost {
             Lost::Graph *time_corr_view;
             Lost::Graph *space_corr_est_view;
 
-            typedef Pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+            typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
             sf::Image helperBitmap;
             Vector<sf::Drawable *> drawables;

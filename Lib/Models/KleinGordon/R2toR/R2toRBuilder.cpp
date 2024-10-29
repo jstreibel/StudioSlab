@@ -12,11 +12,11 @@
 #include "EquationState.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
-#include "Math/Numerics/Output/Format/OutputFormatterBase.h"
-#include "Math/Numerics/Output/Format/BinarySOF.h"
-#include "Math/Numerics/Output/Format/SpaceFilterBase.h"
-#include "Math/Numerics/Output/Plugs/OutputHistoryToFile.h"
-#include "Math/Numerics/Output/Plugs/OutputConsoleMonitor.h"
+#include "Math/Numerics/ODE/Output/Format/OutputFormatterBase.h"
+#include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
+#include "Math/Numerics/ODE/Output/Format/SpaceFilterBase.h"
+#include "Math/Numerics/ODE/Output/Sockets/OutputHistoryToFile.h"
+#include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/R2toR/Output/Filters/DimensionReductionFilter.h"
@@ -29,7 +29,7 @@
 namespace Slab::Math::R2toR {
 
     Builder::Builder(const Str& name, Str description)
-            : Models::KGBuilder(New<Models::KGNumericConfig>(), name, std::move(description)) {    }
+            : Models::KGRecipe(New<Models::KGNumericConfig>(), name, std::move(description)) {    }
 
     Pointer<OutputManager> Builder::buildOutputManager() {
         const auto shouldOutputOpenGL = *VisualMonitor;
@@ -116,7 +116,7 @@ namespace Slab::Math::R2toR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    Base::Solver_ptr Builder::buildEquationSolver() {
+    Pointer<Base::LinearStepSolver> Builder::buildSolver() {
         auto thePotential = New<RtoR::AbsFunction>();
         auto dphi = getBoundary();
 

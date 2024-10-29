@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_RTORMONITOR_BASE_H
 #define V_SHAPE_RTORMONITOR_BASE_H
 
-#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/BaseMonitor.h"
@@ -14,7 +14,7 @@
 
 #include "RtoRPanel.h"
 #include "Utils/Threads.h"
-#include "Models/KleinGordon/KGNumericConfig.h"
+#include "Models/KleinGordon/KG-NumericConfig.h"
 
 
 namespace Slab::Graphics {

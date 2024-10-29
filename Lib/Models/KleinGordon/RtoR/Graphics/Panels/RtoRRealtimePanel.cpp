@@ -8,7 +8,7 @@
 
 #include "3rdParty/ImGui.h"
 #include "Core/Tools/Log.h"
-#include "Models/KleinGordon/KGSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 #include "Math/Function/RtoR/Operations/DiscreteFourierTransform.h"
 #include "Graphics/Plot2D/Plotter.h"
 // #include "Math/Function/R2toR/DFT.h"

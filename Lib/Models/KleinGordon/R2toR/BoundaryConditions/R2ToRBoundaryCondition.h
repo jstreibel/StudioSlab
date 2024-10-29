@@ -6,7 +6,7 @@
 #define V_SHAPE_R2TORBOUNDARYCONDITION_H
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
-#include "Math/Numerics/Solver/BoundaryConditions.h"
+#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
 
 
 namespace Slab::Math::R2toR {

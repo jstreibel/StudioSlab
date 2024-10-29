@@ -6,7 +6,7 @@
 #define ISING_BASICSIM_H
 
 
-#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 
 #include <string>
 #include <iostream>

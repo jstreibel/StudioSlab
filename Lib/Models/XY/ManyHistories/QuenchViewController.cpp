@@ -23,7 +23,7 @@ namespace Slab::Lost::ThermoOutput {
     const int fontSize = 12;
 
     // Dynamic
-    const auto dynamic = MetropolisAlgorithm::Metropolis;
+    const auto dynamic = XYMetropolisAlgorithm::Metropolis;
 
     // Program:
     int MCSTEPS_BETWEEN_FRAMES = 1;
@@ -85,7 +85,7 @@ namespace Slab::Lost::ThermoOutput {
                  * ********** TODO: MAKE THIS WORK AGAIN *******************************************
                  * *********************************************************************************
                  */
-                auto calc = new MetropolisAlgorithm(L, T, .0, MetropolisAlgorithm::Ferromagnetic, dynamic, MetropolisAlgorithm::Random);
+                auto calc = new XYMetropolisAlgorithm(L, T, .0, XYMetropolisAlgorithm::Ferromagnetic, dynamic, XYMetropolisAlgorithm::Random);
 
                 drawables.push_back(sprite);
                 simulations.emplace_back(calc, texture);
@@ -310,8 +310,8 @@ namespace Slab::Lost::ThermoOutput {
         for(auto drawable : drawables)
             window.draw(*drawable);
 
-        auto sweep = simulations[0].first->sweeping==MetropolisAlgorithm::Random?"RANDOM":"SEQUENTIAL";
-        auto dynamicStr = dynamic==MetropolisAlgorithm::Metropolis?"METROPOLIS":"KAWASAKI";
+        auto sweep = simulations[0].first->sweeping == XYMetropolisAlgorithm::Random ? "RANDOM" : "SEQUENTIAL";
+        auto dynamicStr = dynamic == XYMetropolisAlgorithm::Metropolis ? "METROPOLIS" : "KAWASAKI";
         std::ostringstream textOutput;
         textOutput  << "Simulating with "<< sweep <<" sweep and " << dynamicStr << " algorithm.\n\n"
 

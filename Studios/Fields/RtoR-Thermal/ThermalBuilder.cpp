@@ -5,8 +5,8 @@
 #include "ThermalBuilder.h"
 
 #include <memory>
-#include "Models/KleinGordon/LangevinKGSolver.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/KG-LangevinSolver.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
@@ -25,13 +25,13 @@ namespace Studios::Fields::RtoRThermal {
         if(doRegister) registerToManager();
     }
 
-    auto Builder::buildEquationSolver() -> Base::Solver_ptr {
+    auto Builder::buildSolver() -> Pointer<Base::LinearStepSolver> {
         auto bc = getBoundary();
         auto pot = getPotential();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        auto solver = New<Slab::Models::KGRtoR::LangevinKGSolver>(bc, pot);
+        auto solver = New<Slab::Models::KGRtoR::KGLangevinSolver>(bc, pot);
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 

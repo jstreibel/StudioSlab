@@ -7,7 +7,7 @@
 
 #include "Math/Thermal/XYNetwork.h"
 #include "Math/Thermal/ThermoUtils.h"
-#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 #include "Math/Thermal/ViewControlBase.h"
 #include "Graphics/SFML/Graph.h"
@@ -39,7 +39,7 @@ namespace Slab::Lost::ThermoOutput {
 
         Vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
-        typedef Pair<MetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
+        typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 
         sf::Image helperBitmap;
         Vector<sf::Drawable *> drawables;

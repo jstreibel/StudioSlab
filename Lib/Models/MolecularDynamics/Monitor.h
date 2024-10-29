@@ -6,7 +6,7 @@
 #define STUDIOSLAB_MONITOR_H
 
 #include "Graphics/Window/SlabWindow.h"
-#include "Math/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Graphics/CircleShape.hpp>

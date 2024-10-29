@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_PURESG_BUILDER_H
 #define STUDIOSLAB_PURESG_BUILDER_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 
 namespace Studios::PureSG {
 

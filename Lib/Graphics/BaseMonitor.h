@@ -3,7 +3,7 @@
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 #include "Graphics/Window/GUIWindow.h"
-#include "Math/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/WindowContainer/WindowColumn.h"
 

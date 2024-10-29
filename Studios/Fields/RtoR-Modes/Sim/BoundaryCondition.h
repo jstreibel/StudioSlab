@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_BOUNDARYCONDITION_H
 #define STUDIOSLAB_BOUNDARYCONDITION_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "SquareWave.h"
 

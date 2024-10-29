@@ -28,8 +28,6 @@ namespace Slab::Models::MolecularDynamics {
 
         auto buildOutputManager() -> Pointer<Math::OutputManager> override;
 
-        auto buildEquationSolver() -> Math::Base::Solver_ptr override;
-
         auto buildStepper() -> Pointer<Math::Stepper> override;
 
         auto notifyCLArgsSetupFinished() -> void override;

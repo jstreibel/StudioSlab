@@ -5,8 +5,8 @@
 #ifndef FIELDS_RTOROUTPUTHISTORYTOFILE_H
 #define FIELDS_RTOROUTPUTHISTORYTOFILE_H
 
-#include "Math/Numerics/Output/Plugs/HistoryKeeper.h"
-#include "Math/Numerics/Output/Format/OutputFormatterBase.h"
+#include "Math/Numerics/ODE/Output/Sockets/HistoryKeeper.h"
+#include "Math/Numerics/ODE/Output/Format/OutputFormatterBase.h"
 
 #include <fstream>
 

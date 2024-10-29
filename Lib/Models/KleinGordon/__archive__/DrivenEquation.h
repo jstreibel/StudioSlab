@@ -7,8 +7,8 @@
 
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
-#include "Math/Numerics/Solver/Solver.h"
-#include "Models/KleinGordon/KGSolver.h"
+#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 #include "../../../../Studios/Fields/R2toR/LeadingDelta/RingDeltaFunc.h"
 
 namespace Slab::Math::R2toR {

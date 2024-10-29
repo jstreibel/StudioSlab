@@ -3,7 +3,7 @@
 #include "input-sym-oscillons.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 
 namespace Studios::PureSG {
     

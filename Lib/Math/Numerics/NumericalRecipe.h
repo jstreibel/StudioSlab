@@ -1,12 +1,12 @@
 #ifndef SIMULATION_H
 #define SIMULATION_H
 
-#include "Math/Numerics/Method/Stepper.h"
-#include "Math/Numerics/Output/OutputManager.h"
+#include "Stepper.h"
+#include "OutputManager.h"
 
 #include "Core/Controller/CommandLine/CLInterface.h"
-#include "Math/Numerics/SimConfig/NumericConfig.h"
-#include "Math/Numerics/Solver/Solver.h"
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
+#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
 #include "Core/Controller/CommandLine/CLInterfaceOwner.h"
 
 namespace Slab::Math::Base {
@@ -21,7 +21,7 @@ namespace Slab::Math::Base {
 
     public:
         virtual auto buildOutputManager()         -> Pointer<OutputManager> = 0;
-        virtual auto buildEquationSolver()        -> Solver_ptr = 0;
+        // virtual auto buildSolver()                -> Pointer<Base::LinearStepSolver> = 0;
         virtual auto buildStepper()               -> Pointer<Stepper> = 0;
 
         virtual auto suggestFileName()      const -> Str;

@@ -6,7 +6,7 @@
 #define V_SHAPE_DIMENSIONREDUCTIONFILTER_H
 
 
-#include "Math/Numerics/Output/Format/SpaceFilterBase.h"
+#include "Math/Numerics/ODE/Output/Format/SpaceFilterBase.h"
 #include "Math/Function/RtoR2/StraightLine.h"
 
 

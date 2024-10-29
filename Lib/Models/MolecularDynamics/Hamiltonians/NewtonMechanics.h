@@ -8,7 +8,7 @@
 #include "Particle.h"
 #include "Models/MolecularDynamics/Hamiltonians/Hash/MoleculeSpaceHash.h"
 
-#include "Math/Numerics/SimConfig/NumericConfig.h"
+#include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 
 

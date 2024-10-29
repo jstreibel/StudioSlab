@@ -2,9 +2,9 @@
 // Created by joao on 6/1/24.
 //
 
-#include "Math/Numerics/Odeint/OdeintSolver.h"
-#include "Math/Numerics/Odeint/OdeintState.h"
-#include "Math/Numerics/Odeint/OdeintToSlabState.h"
+#include "Math/Numerics/ODE/Odeint/OdeintSolver.h"
+#include "Math/Numerics/ODE/Odeint/OdeintState.h"
+#include "Math/Numerics/ODE/Odeint/OdeintToSlabState.h"
 
 class SolverTest : public Slab::Math::Odeint::OdeintSolver {
 public:

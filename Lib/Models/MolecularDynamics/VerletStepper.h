@@ -8,7 +8,7 @@
 #include "Models/MolecularDynamics/Hamiltonians/MoleculesState.h"
 #include "Models/MolecularDynamics/Hamiltonians/Particle.h"
 
-#include "Math/Numerics/Method/Stepper.h"
+#include "Math/Numerics/Stepper.h"
 
 #include "Models/MolecularDynamics/MolDynNumericConfig.h"
 

@@ -5,7 +5,7 @@
 
 #include "RtoRMonitor.h"
 
-#include "Models/KleinGordon/KGSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h"

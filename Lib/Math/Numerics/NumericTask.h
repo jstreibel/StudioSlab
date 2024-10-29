@@ -1,15 +1,14 @@
 #ifndef INTEGRATOR_H
 #define INTEGRATOR_H
 
-#include "Math/Numerics/Output/OutputManager.h"
+#include "OutputManager.h"
 
-#include "Math/Numerics/Solver/Solver.h"
+#include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
 
-#include "Math/Numerics/Solver/BoundaryConditions.h"
+#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
 
-#include "Math/Numerics/Method/Stepper.h"
-#include "Math/Numerics/Method/RungeKutta4.h"
-#include "Math/Numerics/Method/Method-MCBase.h"
+#include "Stepper.h"
+#include "NumericalRecipe.h"
 
 #include "Core/Backend/Modules/TaskManager/Task.h"
 #include "Core/Tools/BenchmarkData.h"

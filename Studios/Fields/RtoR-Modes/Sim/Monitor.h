@@ -7,7 +7,7 @@
 
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRMonitor.h"
-#include "Models/KleinGordon/KGNumericConfig.h"
+#include "Models/KleinGordon/KG-NumericConfig.h"
 
 namespace Modes {
 

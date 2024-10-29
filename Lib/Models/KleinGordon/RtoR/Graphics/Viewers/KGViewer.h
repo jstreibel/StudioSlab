@@ -6,7 +6,7 @@
 #define STUDIOSLAB_KGVIEWER_H
 
 #include "Graphics/DataViewers/Viewers/Viewer.h"
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Utils/Pointer.h"

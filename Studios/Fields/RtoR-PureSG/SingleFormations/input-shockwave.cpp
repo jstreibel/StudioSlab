@@ -4,7 +4,7 @@
 
 #include "Math/Function/RtoR/Model/FunctionsCollection/Shockwave/AnalyticShockwave1D.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 

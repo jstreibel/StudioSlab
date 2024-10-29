@@ -23,7 +23,7 @@ set ( SPACE_SOURCES
         Point.cpp 									Point.h
         VectorSpace/DimensionMetaData.cpp	        VectorSpace/DimensionMetaData.h
         VectorSpace/Algebra/AlgebraTests.cpp
-        Numerics/Odeint/OdeintAlgebra.cpp	        Numerics/Odeint/OdeintAlgebra.h
+		Numerics/ODE/Odeint/OdeintAlgebra.cpp Numerics/ODE/Odeint/OdeintAlgebra.h
         Function/RtoR/Model/Operators/Diff.cpp
         Function/RtoR/Model/Operators/Diff.h
 )
@@ -51,50 +51,52 @@ set ( NUMERICS_SOURCES
 		Numerics/NumericalRecipe.cpp
 		Numerics/NumericTask.cpp
 
-		Numerics/SimConfig/NumericConfig.cpp
-		Numerics/SimConfig/DeviceConfig.cpp
+		Numerics/ODE/SimConfig/NumericConfig.cpp
+		Numerics/ODE/SimConfig/DeviceConfig.cpp
 
-		Numerics/Output/OutputManager.cpp
+		Numerics/OutputManager.cpp
 
-		Numerics/Output/Plugs/Socket.cpp
-		Numerics/Output/Plugs/OutputConsoleMonitor.cpp
-		Numerics/Output/Plugs/HistoryKeeper.cpp
-		Numerics/Output/Plugs/OutputHistoryToFile.cpp
-		Numerics/Output/Plugs/OutputSnapshots.cpp
+		Numerics/ODE/Output/Sockets/Socket.cpp
+		Numerics/ODE/Output/Sockets/OutputConsoleMonitor.cpp
+		Numerics/ODE/Output/Sockets/HistoryKeeper.cpp
+		Numerics/ODE/Output/Sockets/OutputHistoryToFile.cpp
+		Numerics/ODE/Output/Sockets/OutputSnapshots.cpp
 
-		Numerics/Output/Format/BinarySOF.cpp
-		Numerics/Output/Format/CustomStringSeparatedSOF.cpp
-		Numerics/Output/Format/ResolutionReductionFilter.cpp
+		Numerics/ODE/Output/Format/BinarySOF.cpp
+		Numerics/ODE/Output/Format/CustomStringSeparatedSOF.cpp
+		Numerics/ODE/Output/Format/ResolutionReductionFilter.cpp
 
-		Numerics/Output/Util/ByteData.cpp
-		Numerics/Output/Util/FieldStateOutputInterface.cpp
-		Numerics/Output/Util/record-interval.cpp
+		Numerics/ODE/Output/Util/ByteData.cpp
+		Numerics/ODE/Output/Util/FieldStateOutputInterface.cpp
+		Numerics/ODE/Output/Util/record-interval.cpp
 
-        Numerics/Solver/EquationState.h
+		Numerics/Metropolis/MetropolisR2toRRecipe.cpp
+
+		Numerics/ODE/Solver/EquationState.h
 		Function/NativeFunction.h
 		Data/DataManager.cpp
 		Data/DataManager.h
-        Numerics/Solver/Solver.cpp
-        Numerics/Solver/EquationState.cpp
-        Numerics/Solver/BoundaryConditions.cpp
-        Numerics/Method/RungeKutta4.cpp
-		Numerics/Odeint/OdeintState.cpp
-		Numerics/Odeint/OdeintToSlabState.cpp
-		Numerics/Odeint/OdeintToSlabState.h
+		Numerics/ODE/Solver/LinearStepSolver.cpp
+		Numerics/ODE/Solver/EquationState.cpp
+		Numerics/ODE/Solver/BoundaryConditions.cpp
+		Numerics/ODE/Steppers/RungeKutta4.cpp
+		Numerics/ODE/Odeint/OdeintState.cpp
+		Numerics/ODE/Odeint/OdeintToSlabState.cpp
+		Numerics/ODE/Odeint/OdeintToSlabState.h
 )
 
 set ( THERMO_SOURCES
 		Thermal/ThermoUtils.cpp
 		Thermal/SpinNetwork.cpp
 
-		Thermal/MetropolisAlgorithm.cpp
+		Numerics/Metropolis/XYMetropolisAlgorithm.cpp
 
 		Thermal/XYNetwork.cpp
 
 		Function/SummableFunction.h
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
-        Numerics/Odeint/OdeintSignatureHelper.h
+		Numerics/ODE/Odeint/OdeintSignatureHelper.h
 )
 
 file(GLOB_RECURSE MAPS_SOURCES "./Function/*.cpp")
@@ -124,6 +126,13 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Data/DataAllocator.h
 		Data/Data.cpp
 		Data/Data.h
+		Numerics/Metropolis/R2toRMetropolisAlgorithm.cpp
+		Numerics/Metropolis/R2toRMetropolisAlgorithm.h
+		Numerics/Metropolis/MontecarloStepper.cpp
+		Numerics/Metropolis/MontecarloStepper.h
+		Numerics/Metropolis/Metropolis.cpp
+		Numerics/Metropolis/MetropolisR2toRRecipe.cpp
+		Numerics/Metropolis/MetropolisR2toRRecipe.h
 )
 
 

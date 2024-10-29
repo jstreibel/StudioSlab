@@ -9,7 +9,7 @@
 #include "Graphics/Backend/SFML/SFMLBackend.h"
 #include "Core/Backend/BackendManager.h"
 
-#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
 
 #define DONT_SELF_REGISTER false
@@ -30,11 +30,11 @@ int XY::App::App::run() {
 
     auto viewControl = Slab::New<Slab::Lost::ThermoOutput::SingleSimViewController>(*N, *MCSteps, *transient);
 
-    using Algorithm = Slab::Math::MetropolisAlgorithm;
-    Slab::Math::MetropolisAlgorithm mcCalculator(*N, *T, .0,
-                                     Algorithm::InitialConditions::Ferromagnetic,
-                                     Algorithm::Dynamic::Metropolis,
-                                     Algorithm::Sweeping::Random);
+    using Algorithm = Slab::Math::XYMetropolisAlgorithm;
+    Slab::Math::XYMetropolisAlgorithm mcCalculator(*N, *T, .0,
+                                                   Algorithm::InitialConditions::Ferromagnetic,
+                                                   Algorithm::Dynamic::Metropolis,
+                                                   Algorithm::Sweeping::Random);
 
     viewControl->setAlgorithm(&mcCalculator);
 

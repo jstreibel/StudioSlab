@@ -6,7 +6,7 @@
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Utils/RandUtils.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 
 
 namespace Studios::Fields::RtoRThermal {

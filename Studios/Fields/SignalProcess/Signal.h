@@ -8,14 +8,14 @@
 
 #include <jack/types.h>
 
-#include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Math/Numerics/Solver/BoundaryConditions.h"
-#include "Math/Numerics/Output/Plugs/Socket.h"
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Math/Numerics/ODE/Solver/BoundaryConditions.h"
+#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 
 
 const auto pi = 3.1415926535897932384626;

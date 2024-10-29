@@ -5,9 +5,9 @@
 #ifndef STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 #define STUDIOSLAB_MONTECARLO_LORENTZ_2NDORDER_H
 
-#include "Models/KleinGordon/KGSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoREquationState.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 
 #include "Utils/RandUtils.h"

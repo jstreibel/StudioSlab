@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_FIELDSTATER2TOR_H
 #define V_SHAPE_FIELDSTATER2TOR_H
 
-#include "Models/KleinGordon/KGState.h"
+#include "Models/KleinGordon/KG-State.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 namespace Slab::Math::R2toR {

@@ -1,21 +1,21 @@
 
 
 set ( KG_SOURCES
-        KleinGordon/KGBuilder.cpp
-		KleinGordon/KGBuilder.h
-		KleinGordon/KGSolver.h
-		KleinGordon/KGState.h
-		KleinGordon/KG-Langevin.h
+		KleinGordon/KG-Recipe.cpp
+		KleinGordon/KG-Recipe.h
+		KleinGordon/KG-Solver.h
+		KleinGordon/KG-State.h
+        KleinGordon/__archive__/KG-Langevin.h
 		KleinGordon/Montecarlo-Lorentz-2ndOrder.h
 
-		KleinGordon/RtoR/KG-RtoRBuilder.cpp
-		KleinGordon/RtoR/KG-RtoREnergyCalculator.cpp
-		KleinGordon/RtoR/KG-RtoREquationState.cpp
-		KleinGordon/RtoR/KG-RtoRBoundaryCondition.cpp
-		KleinGordon/RtoR/Output/SimHistory.h			KleinGordon/RtoR/Output/SimHistory.cpp
-		KleinGordon/RtoR/Output/SimHistory_Fourier.h	KleinGordon/RtoR/Output/SimHistory_Fourier.cpp
-		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
-		KleinGordon/RtoR/Output/SnapshotOutput.h		KleinGordon/RtoR/Output/SnapshotOutput.cpp
+        KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.cpp
+        KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp
+        KleinGordon/RtoR/LinearStepping/KG-RtoREquationState.cpp
+        KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.cpp
+        KleinGordon/RtoR/LinearStepping/Output/SimHistory.h KleinGordon/RtoR/LinearStepping/Output/SimHistory.cpp
+        KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.h KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.cpp
+        KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.h KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.cpp
+        KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.h KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.cpp
 
 		KleinGordon/RtoR/Graphics/Viewers/HistogramsViewer_KG.cpp
 		KleinGordon/RtoR/Graphics/RtoRMonitor.cpp
@@ -36,18 +36,18 @@ set ( KG_SOURCES
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
         KleinGordon/R2toR/EquationState.cpp
 
-		KleinGordon/LangevinKGSolver.h KleinGordon/LangevinKGSolver.cpp
+		KleinGordon/KG-LangevinSolver.h KleinGordon/KG-LangevinSolver.cpp
 
-		KleinGordon/RtoR/Output/DFTSnapshotOutput.cpp
-		KleinGordon/RtoR/Output/DFTSnapshotOutput.h
+        KleinGordon/RtoR/LinearStepping/Output/DFTSnapshotOutput.cpp
+        KleinGordon/RtoR/LinearStepping/Output/DFTSnapshotOutput.h
 
 		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRScenePanel.h
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.cpp
 		KleinGordon/RtoR/Graphics/Panels/RtoRHistoryPanel.h
 
-        KleinGordon/RtoR/Output/CenterTimeDFTOutput.cpp
-        KleinGordon/RtoR/Output/CenterTimeDFTOutput.h
+        KleinGordon/RtoR/LinearStepping/Output/CenterTimeDFTOutput.cpp
+        KleinGordon/RtoR/LinearStepping/Output/CenterTimeDFTOutput.h
 
 		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.cpp
 		KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h
@@ -62,8 +62,8 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Analytic/TwoPointCorrelation.h
         KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.cpp
         KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h
-        KleinGordon/KGNumericConfig.cpp
-        KleinGordon/KGNumericConfig.h
+		KleinGordon/KG-NumericConfig.cpp
+		KleinGordon/KG-NumericConfig.h
 )
 
 set ( XY_SOURCES

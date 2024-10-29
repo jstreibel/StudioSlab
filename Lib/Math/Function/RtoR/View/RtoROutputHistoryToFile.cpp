@@ -4,7 +4,7 @@
 
 #include "RtoROutputHistoryToFile.h"
 
-#include "Math/Numerics/Output/Format/BinarySOF.h"
+#include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include <iomanip>

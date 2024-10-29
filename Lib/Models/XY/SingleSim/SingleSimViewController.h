@@ -15,7 +15,7 @@
 
 #include "Math/Thermal/XYNetwork.h"
 #include "Math/Thermal/ViewControlBase.h"
-#include "Math/Thermal/MetropolisAlgorithm.h"
+#include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Math/Thermal/ThermoUtils.h"
 
 #include <SFML/Graphics.hpp>
@@ -58,7 +58,7 @@ namespace Slab::Lost::ThermoOutput {
 
         nk_context *nkContext = nullptr;
         sf::RenderWindow *window = nullptr;
-        MetropolisAlgorithm *algorithm = nullptr;
+        XYMetropolisAlgorithm *algorithm = nullptr;
 
     public:
 
@@ -69,7 +69,7 @@ namespace Slab::Lost::ThermoOutput {
 
         void render(sf::RenderWindow *window) override;
 
-        void setAlgorithm(MetropolisAlgorithm *algorithm);
+        void setAlgorithm(XYMetropolisAlgorithm *algorithm);
 
     private:
         void computeTimeCorrelations(int upToMCStep);

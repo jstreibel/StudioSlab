@@ -13,11 +13,11 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
 
 #include "Models/KleinGordon/RtoR/Graphics/RtoRPanel.h"
 #include "Graphics/ImGui/ImGuiWindow.h"
-#include "Models/KleinGordon/KGNumericConfig.h"
+#include "Models/KleinGordon/KG-NumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
 

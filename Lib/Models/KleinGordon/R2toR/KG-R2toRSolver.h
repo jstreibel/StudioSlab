@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KG_R2TORSOLVER_H
 #define STUDIOSLAB_KG_R2TORSOLVER_H
 
-#include "Models/KleinGordon/KGSolver.h"
+#include "Models/KleinGordon/KG-Solver.h"
 
 namespace Slab::Models::KGR2toR {
     typedef Models::KGSolver<Real2D> KGR2toRSolver;

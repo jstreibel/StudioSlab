@@ -6,7 +6,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/RegularDiracDelta.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBoundaryCondition.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBoundaryCondition.h"
 
 #include <math.h>
 #include "StatisticalBuilder.h"

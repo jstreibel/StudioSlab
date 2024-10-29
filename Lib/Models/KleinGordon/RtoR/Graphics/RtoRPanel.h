@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_RTORPANEL_H
 #define STUDIOSLAB_RTORPANEL_H
 
-#include "Math/Numerics/Output/Plugs/Socket.h"
+#include "Math/Numerics/ODE/Output/Sockets/Socket.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunction.h"
 
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
@@ -13,9 +13,9 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 #include "Graphics/Plot2D/Artists/R2toRFunctionArtist.h"
 
-#include "Models/KleinGordon/RtoR/KG-RtoREnergyCalculator.h"
-#include "Models/KleinGordon/RtoR/Output/SimHistory_Fourier.h"
-#include "Models/KleinGordon/KGNumericConfig.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory_Fourier.h"
+#include "Models/KleinGordon/KG-NumericConfig.h"
 
 namespace Slab::Models::KGRtoR {
 

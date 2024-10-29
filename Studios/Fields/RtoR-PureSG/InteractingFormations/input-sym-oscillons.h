@@ -1,7 +1,7 @@
 #ifndef SIMGENERALOSCILLON_H
 #define SIMGENERALOSCILLON_H
 
-#include "Models/KleinGordon/RtoR/KG-RtoRBuilder.h"
+#include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
 #include "../Builder.h"
 
 namespace Studios::PureSG {
