@@ -101,6 +101,12 @@ namespace Slab::Graphics {
         }
 
         {
+            ImGui::Checkbox(UniqueName("Mutable data").c_str(), &dataIsMutable);
+            if(ImGui::Button(UniqueName("Refresh data").c_str()))
+                invalidateTextureData();
+        }
+
+        {
             if (ImGui::Button("Anti-alias toggle##")) {
                 anti_alias = !anti_alias;
                 for (auto &thingy: textureKontraptions->blocks)

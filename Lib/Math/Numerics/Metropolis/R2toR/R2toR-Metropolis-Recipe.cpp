@@ -23,11 +23,11 @@ namespace Slab::Math {
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix N=100, M=100;
-            fix x_min=-5.0, y_min=0.0;
-            fix Lx=10.0, Ly=10.0;
+            fix N=60, M=60;
+            fix x_min=-2.0, y_min=0.0;
+            fix Lx=4.0, Ly=4.0;
 
-            field_data = New<R2toR::NumericFunction_CPU>(100, 100, x_min, y_min, Lx/Real(N-1), Ly/Real(M-1));
+            field_data = New<R2toR::NumericFunction_CPU>(N, M, x_min, y_min, Lx/Real(N-1), Ly/Real(M-1));
 
             DataManager::RegisterData("Stochastic field", field_data);
         }
@@ -44,7 +44,7 @@ namespace Slab::Math {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
-        console_monitor->setnSteps((int)total_steps/10);
+        console_monitor->setnSteps((int)1000);
 
         return {console_monitor};
     }
@@ -52,8 +52,8 @@ namespace Slab::Math {
     Pointer<Stepper> R2toRMetropolisRecipe::buildStepper() {
         R2toRMetropolisSetup setup;
 
-        Temperature T=0.2;
-        constexpr auto dϕ = 0.1;
+        Temperature T=1e-4;
+        constexpr auto dϕ = 5e-4;
 
         auto field = getField();
 
@@ -67,30 +67,37 @@ namespace Slab::Math {
             fix n = site.i;
             fix m = site.j;
 
-            fix N = field->At(n, m+1);
-            fix S = field->At(n, m-1);
+            fix N = field->At(n  , m+1);
+            fix S = field->At(n  , m-1);
             fix W = field->At(n-1, m);
             fix E = field->At(n+1, m);
-            fix C = field->At(n, m);
+            fix C = field->At(n  , m);
             fix φ = new_val;
 
-            fix kinetic_old = .5 * (sqr(N-C) + sqr(C-S));
-            fix grad_old    = .5 * (sqr(E-C) + sqr(C-W));
+            fix &meta_data =field->getSpace().getMetaData();
+            fix &hδt = meta_data.geth();
+            fix h = hδt[0];
+            fix δt = hδt[1];
+
+            fix kinetic_old = (.5/δt) * (sqr(N-C) + sqr(C-S));
+            fix grad_old    = (.5/h)  * (sqr(E-C) + sqr(C-W));
             fix pot_old     = Abs(C);
 
-            fix kinetic_new = .5 * (sqr(N-φ) + sqr(φ-S));
-            fix grad_new    = .5 * (sqr(E-φ) + sqr(φ-W));
+            fix kinetic_new = (.5/δt) * (sqr(N-φ) + sqr(φ-S));
+            fix grad_new    = (.5/h)  * (sqr(E-φ) + sqr(φ-W));
             fix pot_new     = Abs(φ);
 
-            fix &meta_data =field->getSpace().getMetaData();
-            fix δS = meta_data.geth(0)*meta_data.geth(1);
+            fix δS = h*δt;
 
             return δS*((kinetic_new-grad_new-pot_new) - (kinetic_old-grad_old-pot_old));
         };
 
-        setup.sample = [field](){
+        constexpr auto border_size = 2;
+
+        setup.sample_location = [field](){
             fix i = RandUtils::RandomUniformUInt()%field->getN();
-            fix j = RandUtils::RandomUniformUInt()%field->getM();
+            fix j = border_size + RandUtils::RandomUniformUInt()%(field->getM()-2*border_size);
+
             return RandomSite{i, j};
         };
 
@@ -99,10 +106,12 @@ namespace Slab::Math {
         };
 
         setup.should_accept = [T](Real ΔS){
-            return ΔS < 0;
+            fix prob = Min(1.0, exp(-ΔS/T));
+
+            return RandUtils::RandomUniformReal01()<prob;
         };
 
-        auto metropolis = New<R2toRMetropolis>(field, setup, T);
+        auto metropolis = New<R2toRMetropolis>(field, setup);
 
         return New<MontecarloStepper>(metropolis);
     }

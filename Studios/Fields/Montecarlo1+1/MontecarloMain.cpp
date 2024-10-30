@@ -22,12 +22,12 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 
     {
         using Oscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
-        field->Set(Oscillon({0, 1, 0, 0, 0}));
+        field->Set(Oscillon({-.5, 1, 0, 0, 0.64234}));
     }
 
     auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>();
     auto arts = Slab::Graphics::Plotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
-    // arts->setDataMutable(true);
+    arts->setDataMutable(true);
 
     // auto viewer = Slab::New<Slab::Graphics::MainViewer>();
     // viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
@@ -40,7 +40,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 }
 
 int run(int argc, const char **argv) {
-    constexpr auto max_steps = 10000;
+    constexpr auto max_steps = 1000000;
     auto mc_recipe = Slab::New<Slab::Math::R2toRMetropolisRecipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
 

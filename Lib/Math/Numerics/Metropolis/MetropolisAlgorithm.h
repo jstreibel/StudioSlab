@@ -12,10 +12,8 @@ namespace Slab::Math {
     using Temperature = Real;
 
     class MetropolisAlgorithm {
-        Temperature T=0;
-
     public:
-        explicit MetropolisAlgorithm(Temperature);
+        explicit MetropolisAlgorithm();
 
         virtual void step() = 0;
     };

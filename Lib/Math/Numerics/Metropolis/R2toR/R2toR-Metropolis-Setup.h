@@ -24,7 +24,7 @@ namespace Slab::Math {
     struct R2toRMetropolisSetup {
         ΔSFunction ΔS;
         ModifyFunction modify;
-        SamplerFunction sample;
+        SamplerFunction sample_location;
         ValueDrawerFunction draw_value;
         AcceptanceFunction should_accept;
     };

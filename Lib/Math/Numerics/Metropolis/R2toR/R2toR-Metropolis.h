@@ -16,7 +16,7 @@ namespace Slab::Math {
         R2toRMetropolisSetup algorithms;
 
     public:
-        R2toRMetropolis(const Pointer<R2toR::NumericFunction_CPU>&, R2toRMetropolisSetup, Temperature);
+        R2toRMetropolis(const Pointer<R2toR::NumericFunction_CPU>&, R2toRMetropolisSetup);
 
         void step() override;
     };

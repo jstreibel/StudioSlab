@@ -8,7 +8,7 @@
 
 namespace Slab::Math {
 
-    MetropolisAlgorithm::MetropolisAlgorithm(Temperature T) : T(T) {
+    MetropolisAlgorithm::MetropolisAlgorithm() {
     }
 
 
