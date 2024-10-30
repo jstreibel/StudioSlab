@@ -3,7 +3,7 @@
 #include "CrashPad.h"
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 
-#include "Math/App.h"
+#include "MathApp.h"
 
 #include "InteractingFormations/input-sym-oscillons.h"
 #include "InteractingFormations/input-general-oscillons.h"
@@ -34,7 +34,7 @@ int run(int argc, const char **argv) {
     auto input    = dynamic_cast<KGRtoRBuilder*>(selectedInterface->getOwner());
     auto inputPtr = KGRtoRBuilder_ptr(input);
 
-    auto prog = App(argc, argv, inputPtr);
+    auto prog = MathApp(argc, argv, inputPtr);
 
     return prog.run();
 }

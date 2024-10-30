@@ -33,6 +33,7 @@ namespace Slab::Graphics {
         };
 
         bool validTextureData = false;
+        bool dataIsMutable = false;
 
         Unit funcUnit;
 
@@ -57,6 +58,8 @@ namespace Slab::Graphics {
 
         void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
+
+        void setDataMutable(bool);
 
         void setPainter(Pointer<R2toRPainter> program);
         auto getPainter() -> Pointer<R2toRPainter>;

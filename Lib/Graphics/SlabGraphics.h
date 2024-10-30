@@ -8,7 +8,7 @@
 #include "Backend/GraphicBackend.h"
 
 namespace Slab::Graphics {
-    void Register();
+    void Startup();
     void Finish();
 
     GraphicBackend& GetGraphicsBackend();

@@ -11,17 +11,20 @@
 
 namespace Slab::Math::Base {
 
+    using OutputSockets = Vector<Pointer<Socket>>;
+
     class NumericalRecipe : public Core::CLInterfaceOwner {
     protected:
         Pointer<NumericConfig> numeric_config;
 
         Str name;
 
-        explicit NumericalRecipe(const Pointer<NumericConfig>& numeric_config, const Str& name, const Str& generalDescription, bool doRegister = false);
+        explicit NumericalRecipe(const Pointer<NumericConfig>& numeric_config,
+                                 const Str& name,
+                                 const Str& generalDescription, bool doRegister = false);
 
     public:
-        virtual auto buildOutputSockets()         -> Vector<Pointer<Socket>> = 0;
-        // virtual auto buildSolver()                -> Pointer<Base::LinearStepSolver> = 0;
+        virtual auto buildOutputSockets()         -> OutputSockets = 0;
         virtual auto buildStepper()               -> Pointer<Stepper> = 0;
 
         virtual auto suggestFileName()      const -> Str;

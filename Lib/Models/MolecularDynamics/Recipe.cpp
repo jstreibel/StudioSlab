@@ -12,12 +12,14 @@
 #include "Monitor.h"
 #include "Recipe.h"
 
-#include "Graphics/SlabGraphics.h"
+#include "Core/SlabCore.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
-
-#include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
+
+#include "Graphics/SlabGraphics.h"
+#include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
+
 #include "Graphics/Window/SlabWindowManager.h"
 
 namespace Slab::Models::MolecularDynamics {
@@ -27,7 +29,7 @@ namespace Slab::Models::MolecularDynamics {
     {
         molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
         interface->addSubInterface(molDynamicsInterface);
-        CLInterfaceManager::getInstance().registerInterface(interface);
+        Core::RegisterCLInterface(interface);
     }
 
     Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
@@ -35,8 +37,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto numericConfig = DynamicPointerCast<Slab::Models::MolecularDynamics::MolDynNumericConfig>(numeric_config);
 
-        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn(),
-                                                                           numericConfig->gett()));
+        sockets.emplace_back(Slab::New <Slab::Math::OutputConsoleMonitor> (numericConfig->getn()));
 
         MolecularDynamics::Monitor::Model simModel = *model==0
                 ? MolecularDynamics::Monitor::Model::LennardJones
@@ -70,7 +71,7 @@ namespace Slab::Models::MolecularDynamics {
             return New<MolecularDynamics::VerletStepper<SoftDisk>>(c, sd);
         }
 
-        throw Str("Unknown particle dynamics model '") + ToStr(*model) + "'.";
+        throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");
     }
 
     void Recipe::notifyCLArgsSetupFinished() {

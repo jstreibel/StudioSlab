@@ -53,6 +53,10 @@ namespace Slab::Graphics {
 
     Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
             : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
+
+        // Instantiate our dedicated Plot themes manager
+        PlotThemeManager::GetInstance();
+
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
         labelsArtist.setLabel("Labels");
@@ -67,6 +71,7 @@ namespace Slab::Graphics {
         }
         Plot2DWindow::graphMap[title] = this;
 
+        Core::LoadModule("ImGui");
         Core::LoadModule("RealTimeAnimation");
 
         Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;

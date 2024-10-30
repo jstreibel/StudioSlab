@@ -9,11 +9,12 @@
 #include "Math/Numerics/NumericalRecipe.h"
 
 namespace Slab::Math {
-    class App : public Core::AppBase {
+
+    class MathApp : public Core::AppBase {
         Base::NumericalRecipe_ptr builder;
 
     public:
-        App(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder);
+        MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder);
 
         auto run() -> int override;
 

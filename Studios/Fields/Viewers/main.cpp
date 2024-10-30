@@ -8,11 +8,10 @@
 #include "CrashPad.h"
 
 #include "Core/Controller/CommandLine/CommonCLParameters.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
-#include "Math/App.h"
+#include "MathApp.h"
 
 #include "Core/Tools/Log.h"
 
@@ -32,9 +31,10 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/EnergyViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TwoPointCorrelationViewer_KG.h"
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
-#include "StudioSlab.h"
-#include "Math/MathModule.h"
+
 #include "Graphics/Window/SlabWindowManager.h"
+#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/SlabCore.h"
 
 using namespace Slab;
 
@@ -46,13 +46,13 @@ public:
             : AppBase(argc, argv, false)
     {
         interface->addParameters({&filename});
-        Core::CLInterfaceManager::getInstance().registerInterface(interface);
+        Core::RegisterCLInterface(interface);
 
         Core::BackendManager::Startup("GLFW");
 
         Slab::Graphics::PlotThemeManager::GetInstance();
 
-        this->parseCLArgs();
+        Core::CLArgsManager::Parse(argc, argv);
     }
 
     auto run() -> int override {

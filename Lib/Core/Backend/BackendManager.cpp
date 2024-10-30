@@ -19,8 +19,10 @@ namespace Slab::Core {
     Map<BackendName, BackendAllocator> BackendManager::availableBackends{};
 
     Backend&  BackendManager::GetBackend() {
-        if (!BackendManager::instance) throw Exception("Backend must be initialized via BackendManager::Startup before call "
-                                             "to BackendManager::GetBackend");
+        if (!BackendManager::instance) {
+            BackendManager::Startup("Headless");
+            Log::Info() << "Backend initializing to default headless backend." << Log::Flush;
+        };
 
         return *BackendManager::instance;
     }

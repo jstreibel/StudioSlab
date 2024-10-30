@@ -6,15 +6,19 @@
 #define STUDIOSLAB_MONTECARLOSTEPPER_H
 
 #include "Math/Numerics/Stepper.h"
+#include "MetropolisAlgorithm.h"
 
 namespace Slab::Math {
 
     class MontecarloStepper : public Math::Stepper {
-
+        Pointer<MetropolisAlgorithm> algorithm;
     public:
+        explicit MontecarloStepper(Pointer<MetropolisAlgorithm> algorithm);
+        MontecarloStepper() = delete;
+
         void step(size_t n_steps) override;
 
-        auto getCurrentState() const -> Base::EquationState_constptr override;
+        auto getCurrentState() const -> Pointer<const Base::EquationState> override;
     };
 
 } // Slab::Math

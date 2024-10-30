@@ -9,9 +9,17 @@
 
 namespace Slab::Math {
 
+    class Data;
+
     using UniqueID = Count;
     using DataType = Str;
     using DataName = Str;
+    using DataChangeCallback = std::function<void(Pointer<Data>)>;
+
+    enum DataBehavior {
+        MutableData,
+        StaticData
+    };
 
     class Data {
         friend class DataManager;

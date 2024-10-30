@@ -5,7 +5,7 @@
 #include "CrashPad.h"
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 
-#include "Math/App.h"
+#include "MathApp.h"
 
 #include "Studies/ManyOscillonsBuilder.h"
 #include "Studies/MachineGunBuilder.h"
@@ -30,7 +30,7 @@ int run(int argc, const char **argv){
     auto selection = dynamic_cast<Slab::Models::KGRtoR::KGRtoRBuilder*>(
             selector.preParse(argc, argv).getCurrentCandidate()->getOwner());
 
-    auto prog = App(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(selection));
+    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(selection));
 
     return prog.run();
 }

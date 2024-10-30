@@ -11,6 +11,7 @@
 
 #include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
+#include "Core/Controller/CommandLine/CLArgsManager.h"
 
 #define DONT_SELF_REGISTER false
 
@@ -22,7 +23,7 @@ XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT
     Slab::Core::BackendManager::Startup   ("SFML");
     Slab::Core::BackendManager::LoadModule("Nuklear");
 
-    AppBase::parseCLArgs();
+    Slab::Core::CLArgsManager::Parse(argc, argv);
 }
 
 

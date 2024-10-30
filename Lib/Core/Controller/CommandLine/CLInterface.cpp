@@ -21,15 +21,9 @@ namespace Slab::Core {
         this->name = tokens[0];
         this->descr = tokens.size() > 1 ? tokens[1] : this->descr;
 
-        if (owner != nullptr) addListener(owner);
+        addListener(owner);
 
         Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
-        if (owner == nullptr) {
-            Log::Attention() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' is NOT owned."
-                             << Log::Flush;
-
-            NOT_IMPLEMENTED
-        }
     }
 
     auto CLInterface::getParameters() const -> Vector<CLParameter_constptr> {

@@ -17,6 +17,7 @@ find_library(QUADMATH_LIB quadmath)
 add_library(${STUDIOSLAB_BASE_LIB_NAME} STATIC
         StudioSlab.cpp         StudioSlab.h
         AppBase.cpp            AppBase.h
+        MathApp.cpp MathApp.h
         CrashPad.cpp           CrashPad.h
 )
 

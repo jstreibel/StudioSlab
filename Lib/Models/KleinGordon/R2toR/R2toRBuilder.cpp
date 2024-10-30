@@ -93,7 +93,7 @@ namespace Slab::Math::R2toR {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
              * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
             IN conf = *kg_numeric_config;
-            sockets.emplace_back(New<OutputConsoleMonitor>(conf.getn(), conf.gett()));
+            sockets.emplace_back(New<OutputConsoleMonitor>(conf.getn()));
         }
 
         return sockets;

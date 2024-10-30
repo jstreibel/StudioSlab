@@ -19,7 +19,7 @@ namespace Slab::Core {
     }
 
     void CLInterfaceManager::registerInterface(const Pointer<CLInterface> &anInterface) {
-        auto &log = Log::Note();
+        auto &log = Log::Info();
         log << "InterfaceManager registering interface \"" << Log::FGBlue << anInterface->getName()
             << Log::ResetFormatting << "\" [ "
             << "priority " << anInterface->priority << " ]";

@@ -8,13 +8,17 @@
 #include "Backend/BackendManager.h"
 
 namespace Slab::Core {
+    void Startup();
+    void Finish();
+
+    void StartBackend(const BackendName&);
     Backend &GetBackend();
 
     void LoadModule(const ModuleName&);
     Pointer<Module> GetModule(const ModuleName&);
 
-    void Register();
-    void Finish();
+    void RegisterCLInterface(const Pointer<CLInterface>&);
+    void ParseCLArgs(int, const char**);
 }
 
 #endif //STUDIOSLAB_SLABCORE_H

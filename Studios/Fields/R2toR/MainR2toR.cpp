@@ -6,7 +6,7 @@
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
 #include "LeadingDelta/LeadingDelta.h"
 
-#include "Math/App.h"
+#include "MathApp.h"
 
 int run(int argc, const char **argv) {
     auto input = new R2toR :: LeadingDelta :: Builder( );

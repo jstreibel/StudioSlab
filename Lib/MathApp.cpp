@@ -2,34 +2,33 @@
 // Created by joao on 7/30/23.
 //
 
-#include "App.h"
+#include "MathApp.h"
 
 #include <utility>
 
-#include "Core/Backend/Backend.h"
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 #include "Math/Numerics/NumericTask.h"
-#include "Core/SlabCore.h"
+#include "Core/Controller/CommandLine/CLArgsManager.h"
 
 
 namespace Slab::Math {
 
-    App::App(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder)
+    MathApp::MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder)
             : AppBase(argc, argv), builder(std::move(simBuilder)) {
-        parseCLArgs();
+        Core::CLArgsManager::Parse(argc, argv);
     }
 
-    auto App::run() -> int {
+    auto MathApp::run() -> int {
         auto integrationTask = Slab::New<NumericTask>(*builder.get());
-        auto &backend = Core::BackendManager::GetBackend();
 
-        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>(Core::BackendManager::GetModule("TaskManager").get());
+        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>
+                (Core::BackendManager::GetModule("TaskManager").get());
 
         taskManager->addTask(integrationTask);
 
-        backend.run();
+        Core::BackendManager::GetBackend().run();
 
         // If tasks are still running after backend has finished around, we abort all tasks.
         taskManager->abortAllTasks();

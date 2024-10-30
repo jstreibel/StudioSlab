@@ -3,7 +3,7 @@
 //
 
 #include "Core/Controller/CommandLine/CLInterfaceSelector.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/SlabCore.h"
 #include "Core/Tools/Log.h"
 #include "NumericalRecipe.h"
 
@@ -24,7 +24,7 @@ namespace Slab::Math::Base {
         interface->addSubInterface(numeric_config->getInterface());
 
         if (doRegister) {
-            Core::CLInterfaceManager::getInstance().registerInterface(interface);
+            Core::RegisterCLInterface(interface);
         }
 
         Core::Log::Status() << "SimulationBuilder '" << interface->getName() << "': \""
@@ -38,6 +38,5 @@ namespace Slab::Math::Base {
     Str NumericalRecipe::suggestFileName() const {
         return name + " " + numeric_config->to_string();
     }
-
 
 }

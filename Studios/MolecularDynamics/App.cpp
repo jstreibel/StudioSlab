@@ -23,7 +23,7 @@ namespace Studios::MolecularDynamics {
         numericTask = Slab::New<Slab::Math::NumericTask>(recipe);
 
 
-        Slab::Core::CLArgsManager::Parse();
+        Slab::Core::CLArgsManager::Parse(argc, argv);
     }
 
     int MolecularDynamics::App::run() {

@@ -28,7 +28,7 @@ TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv
 
     AppBase::registerToManager();
 
-    Slab::Core::CLArgsManager::Parse();
+    Slab::Core::CLArgsManager::Parse(argc, argv);
 }
 
 

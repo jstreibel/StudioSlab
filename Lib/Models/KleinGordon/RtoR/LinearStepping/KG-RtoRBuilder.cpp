@@ -9,6 +9,7 @@
 #include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
+#include "Core/SlabCore.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
@@ -71,7 +72,7 @@ namespace Slab::Models::KGRtoR {
                                DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr, &N_num});
 
-        if (doRegister) CLInterfaceManager::getInstance().registerInterface(interface);
+        if (doRegister) RegisterCLInterface(interface);
     }
 
     auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
@@ -183,7 +184,7 @@ namespace Slab::Models::KGRtoR {
              * ambos possam ficar sincronizados e o integrador
              * possa rodar diversos passos antes de fazer o output. */
 
-            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, t));
+            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps));
         }
 
         return sockets;

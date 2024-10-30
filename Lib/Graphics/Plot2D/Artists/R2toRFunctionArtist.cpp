@@ -26,8 +26,9 @@ namespace Slab::Graphics {
     bool R2toRFunctionArtist::draw(const Plot2DWindow &graph) {
         if (func == nullptr) return true;
 
-        if (!validTextureData)
-            repopulateTextureBuffer();
+        if(dataIsMutable) invalidateTextureData();
+
+        if (!validTextureData) repopulateTextureBuffer();
 
         current_painter->use();
         current_painter->setRegion(graph.getRegion().getRect());
@@ -134,8 +135,10 @@ namespace Slab::Graphics {
 
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
+
         auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
 
+        // 𝒟ℴ𝓂𝒶𝒾𝓃
         {
             auto 𝒟 = discreteFunc.getDomain();
             region = {𝒟.xMin, 𝒟.xMax, 𝒟.yMin, 𝒟.yMax};
@@ -219,6 +222,10 @@ namespace Slab::Graphics {
     auto
     R2toRFunctionArtist::getPainter()
     -> Pointer<R2toRPainter> { return current_painter; }
+
+    void R2toRFunctionArtist::setDataMutable(bool flag) {
+        dataIsMutable = flag;
+    }
 
 
 } // Graphics

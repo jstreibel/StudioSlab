@@ -12,23 +12,12 @@
 namespace Slab::Core {
 
     class CLArgsManager {
-        static CLArgsManager *singleton;
-
-        int argc;
-        const char **argv;
-
         CLArgsManager() = delete;
 
-        CLArgsManager(int argc, const char **argv);
-
     public:
-        static auto Initialize(int argc, const char **argv) -> CLArgsManager *;
-
-        static auto GetInstance() -> CLArgsManager *;
-
         static void ShowHelp();
 
-        static void Parse();
+        static void Parse(int argc, const char **argv);
 
         static auto BuildOptionsDescription(const CLInterface &anInterface, CLOptionsDescription &opts) -> void;
 

@@ -6,6 +6,7 @@
 
 #include "CLInterfaceManager.h"
 #include "Core/Tools/Log.h"
+#include "Core/SlabCore.h"
 
 #include <iomanip>
 
@@ -30,13 +31,14 @@ namespace Slab::Core {
     }
 
     void CLInterfaceOwner::notifyCLArgsSetupFinished() {
-        Log::Status() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
-                      << " (priority " << interface->priority << ") "
-                      << "has been setup from command-line." << Log::Flush;
+        // Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace << interface->getName() << Log::ResetFormatting
+        //               << " (priority " << interface->priority << ") "
+        //               << "has been setup from command-line." << Log::Flush;
 
         auto &info = Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace
-                                 << interface->getName() << Log::ResetFormatting << " initialized with the following "
-                                                                                    "values from command line:";
+                                 << interface->getName() << Log::ResetFormatting
+                                 << " (priority " << interface->priority
+                                 << ") initialized with the following values from command line:";
 
         for (auto &param: interface->getParameters())
             info << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCommandLineName() << ": "
@@ -48,7 +50,7 @@ namespace Slab::Core {
     auto CLInterfaceOwner::registerToManager() const -> void {
         assert(interface != nullptr);
 
-        CLInterfaceManager::getInstance().registerInterface(interface);
+        Core::RegisterCLInterface(interface);
     }
 
     auto CLInterfaceOwner::getInterface() -> CLInterface_ptr {

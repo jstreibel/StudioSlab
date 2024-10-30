@@ -18,6 +18,8 @@
 #include "DBViewerMulti.h"
 #include "DBViewerSequence.h"
 #include "Graphics/Window/SlabWindowManager.h"
+#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/SlabCore.h"
 
 using namespace Slab;
 
@@ -35,13 +37,13 @@ public:
     : AppBase(argc, argv, false)
     {
         interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Core::CLInterfaceManager::getInstance().registerInterface(interface);
+        Core::RegisterCLInterface(interface);
 
         Core::BackendManager::Startup("GLFW");
 
         // Graphics::PlotThemeManager::G
 
-        this->parseCLArgs();
+        Core::ParseCLArgs(argc, argv);
     }
 
     auto run() -> int override {

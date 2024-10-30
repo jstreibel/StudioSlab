@@ -8,7 +8,7 @@
 #include "Math/Data/Data.h"
 
 namespace Slab::Math {
-    void Register();
+    void Startup();
     void Finish();
 
     Vector<DataName> EnumerateAllData();

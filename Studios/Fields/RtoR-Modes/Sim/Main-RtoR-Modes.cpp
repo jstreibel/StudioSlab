@@ -3,7 +3,7 @@
 //
 
 #include "CrashPad.h"
-#include "Math/App.h"
+#include "MathApp.h"
 #include "Builder.h"
 
 int run(int argc, const char *argv[]) {
@@ -12,7 +12,7 @@ int run(int argc, const char *argv[]) {
 
     using namespace Slab::Math;
 
-    auto prog = App(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(builder));
+    auto prog = MathApp(argc, argv, Slab::Models::KGRtoR::KGRtoRBuilder_ptr(builder));
 
     return prog.run();
 }

@@ -4,9 +4,9 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(Count total_steps, Real max_t)
+    OutputConsoleMonitor::OutputConsoleMonitor(Count total_steps)
     : Socket("Console monitor output", int(100.))
-    , max_t(max_t), total_steps(total_steps) {
+    , total_steps(total_steps) {
 
     }
 

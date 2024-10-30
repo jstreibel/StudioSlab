@@ -28,8 +28,8 @@ namespace Slab::Math::R2toR {
         const Real incY_d = M / Real(outN);
         for(UInt n=0; n<outN; n++){
             for(UInt m=0; m<outN; m++){
-                const UInt myn = n*incX_d;
-                const UInt mym = m*incY_d;
+                fix myn = UInt(n*incX_d);
+                fix mym = UInt(m*incY_d);
                 myClone->At(n,m) = At(myn,mym);
             }
         }

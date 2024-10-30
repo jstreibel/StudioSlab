@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         if(focused == nullptr) return false;
 
-        fix anim_time = 0.5;
+        fix anim_time = 0.25;
 
         if(key==Key_F11 && state==Release){
             if(focused->is_full_screen) {

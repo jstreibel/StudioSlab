@@ -28,14 +28,16 @@ namespace Slab::Graphics {
         return new ModuleClass();
     };
 
-    void Register() {
-        Core::BackendManager::RegisterAvailableModule<SlabGraphicsModule>("Slab:Graphics");
-
+    void RegisterBackends() {
         Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<GLFWBackend>);
         Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
         Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<SFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<SFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
+    }
+
+    void RegisterModules() {
+        Core::BackendManager::RegisterAvailableModule<SlabGraphicsModule>("Slab:Graphics");
 
         Core::BackendManager::RegisterAvailableModule("ImGui",   [](){ return ImGuiModule::BuildModule(); });
         Core::BackendManager::RegisterAvailableModule("Nuklear", [](){ return NuklearModule::BuildModule(); });
@@ -46,6 +48,11 @@ namespace Slab::Graphics {
 
         Core::BackendManager::RegisterAvailableModule("Jack", []() {throw Exception("Jack module not implemented"); return nullptr; });
         Core::BackendManager::RegisterAvailableModule("NodeJS", []() {throw Exception("NodeJS module not implemented"); return nullptr; });
+    }
+
+    void Startup() {
+        RegisterBackends();
+        RegisterModules();
     }
 
     void Finish() {

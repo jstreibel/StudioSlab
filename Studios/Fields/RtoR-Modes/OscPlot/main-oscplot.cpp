@@ -5,24 +5,25 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 #include "Core/Backend/BackendManager.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
 #include "OscillonPlotting.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
+#include "Core/SlabCore.h"
+
 class App : public Slab::Core::AppBase {
 public:
     App(int argc, const char **argv) : AppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Slab::Core::CLInterfaceManager::getInstance().registerInterface(interface);
+        Slab::Core::RegisterCLInterface(interface);
 
         Slab::Core::BackendManager::Startup("GLFW");
 
         Slab::Graphics::PlotThemeManager::GetInstance();
 
-        this->parseCLArgs();
+        Slab::Core::ParseCLArgs(argc, argv);
     }
 
     int run() override {

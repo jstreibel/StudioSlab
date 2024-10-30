@@ -10,37 +10,11 @@
 
 namespace Slab::Core {
 
-    CLArgsManager *CLArgsManager::singleton = nullptr;
-
-    CLArgsManager::CLArgsManager(int argc, const char **argv)
-            : argc(argc), argv(argv) {
-
-        auto &log = Log::Status() << "CLArgsManager initialized with " << argc << " argument" << (argc > 1 ? "s" : "")
-                                  << ": " << Log::Flush;
-        for (int i = 0; i < argc; ++i)
-            log << "[" << argv[i] << "] ";
-
-        log << Log::Flush;
-    }
-
-    auto CLArgsManager::Initialize(int argc, const char **argv) -> CLArgsManager * {
-        if (singleton != nullptr) throw Str("CLArgsManager has already been initialized!");
-
-        CLArgsManager::singleton = new CLArgsManager(argc, argv);
-        return CLArgsManager::GetInstance();
-    }
-
-    auto CLArgsManager::GetInstance() -> CLArgsManager * {
-        if (singleton == nullptr) throw Str("CLArgsManager has not been initialized!");
-
-        return singleton;
-    }
-
     void CLArgsManager::ShowHelp() {
         throw "Show help not implemented";
     }
 
-    void CLArgsManager::Parse() {
+    void CLArgsManager::Parse(int argc, const char **argv) {
         Log::Critical() << "CLArgsManager started parsing command line options." << Log::Flush;
 
         CLOptionsDescription allOptions("Pendulum");
@@ -52,9 +26,6 @@ namespace Slab::Core {
             BuildOptionsDescription(*interface, allOptions);
             allOptions.add_options();
         }
-
-        fix argc = CLArgsManager::GetInstance()->argc;
-        fix argv = CLArgsManager::GetInstance()->argv;
 
         let result = allOptions.parse(argc, argv);
 

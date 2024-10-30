@@ -2,22 +2,22 @@
 // Created by joao on 10/28/24.
 //
 
-#include "R2toRMetropolisAlgorithm.h"
+#include "R2toR-Metropolis.h"
 
 #include <utility>
 #include "Utils/RandUtils.h"
 #include "Math/Thermal/ThermoUtils.h"
 
 namespace Slab::Math {
-    MetropolisAlgorithmR2toR::MetropolisAlgorithmR2toR(const Pointer<R2toR::NumericFunction_CPU>& function,
-                                                       MetropolisSetup setup, Temperature T)
-    : Metropolis(T)
+    R2toRMetropolis::R2toRMetropolis(const Pointer<R2toR::NumericFunction_CPU>& function,
+                                     R2toRMetropolisSetup setup, Temperature T)
+    : MetropolisAlgorithm(T)
     , function(function)
     , algorithms(std::move(setup))
     {
     }
 
-    void MetropolisAlgorithmR2toR::step() {
+    void R2toRMetropolis::step() {
         fix n = function->getN();
         fix m = function->getM();
         fix N = n*m;
@@ -26,7 +26,7 @@ namespace Slab::Math {
             fix site = algorithms.sample();
             fix new_value = algorithms.draw_value(site);
 
-            if(should_accept(algorithms.ΔE(site, new_value)))
+            if(algorithms.should_accept(algorithms.ΔS(site, new_value)))
                 algorithms.modify(site, new_value);
         }
     }

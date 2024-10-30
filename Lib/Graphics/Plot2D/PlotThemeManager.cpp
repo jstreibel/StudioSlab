@@ -85,6 +85,7 @@ namespace Slab::Graphics {
 
     Pointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager() : Singleton("Styles manager") {
+        // TODO isso eh gambiarra:
         mePointer = Naked(*this);
 
         Core::LoadModule("ImGui");

@@ -45,9 +45,6 @@ set ( EXPERIMENTAL_SOURCES
 
 
 set ( NUMERICS_SOURCES
-		App.cpp
-		App.h
-
 		Numerics/NumericalRecipe.cpp
 		Numerics/NumericTask.cpp
 
@@ -70,7 +67,7 @@ set ( NUMERICS_SOURCES
 		Numerics/ODE/Output/Util/FieldStateOutputInterface.cpp
 		Numerics/ODE/Output/Util/record-interval.cpp
 
-		Numerics/Metropolis/MetropolisR2toRRecipe.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.cpp
 
 		Numerics/ODE/Solver/EquationState.h
 		Function/NativeFunction.h
@@ -126,13 +123,15 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Data/DataAllocator.h
 		Data/Data.cpp
 		Data/Data.h
-		Numerics/Metropolis/R2toRMetropolisAlgorithm.cpp
-		Numerics/Metropolis/R2toRMetropolisAlgorithm.h
+		Numerics/Metropolis/R2toR/R2toR-Metropolis.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis.h
 		Numerics/Metropolis/MontecarloStepper.cpp
 		Numerics/Metropolis/MontecarloStepper.h
-		Numerics/Metropolis/Metropolis.cpp
-		Numerics/Metropolis/MetropolisR2toRRecipe.cpp
-		Numerics/Metropolis/MetropolisR2toRRecipe.h
+		Numerics/Metropolis/MetropolisAlgorithm.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.h
+		Numerics/Metropolis/R2toR/R2toR-Metropolis-Setup.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis-Config.cpp
 )
 
 

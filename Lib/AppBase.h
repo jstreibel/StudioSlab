@@ -17,8 +17,6 @@ namespace Slab::Core {
 
         virtual ~AppBase();
 
-        void parseCLArgs();
-
     public:
         virtual int run() = 0;
     };

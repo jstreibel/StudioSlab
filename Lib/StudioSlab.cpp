@@ -15,9 +15,9 @@ namespace Slab {
     void Startup() {
         if(IsStarted()) return;
 
-        Core::Register();
-        Math::Register();
-        Graphics::Register();
+        Core::Startup();
+        Math::Startup();
+        Graphics::Startup();
 
         started = true;
     }
