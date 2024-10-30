@@ -16,9 +16,26 @@ namespace Slab::Math {
         R2toRMetropolisSetup algorithms;
 
     public:
-        R2toRMetropolis(const Pointer<R2toR::NumericFunction_CPU>&, R2toRMetropolisSetup);
+        R2toRMetropolis(const Pointer<R2toR::NumericFunction_CPU>& function,
+                        R2toRMetropolisSetup setup)
+        : MetropolisAlgorithm()
+        , function(function)
+        , algorithms(std::move(setup))
+        {        }
 
-        void step() override;
+        void step() override {
+            fix n = function->getN();
+            fix m = function->getM();
+            fix N = n*m;
+
+            for(auto deltas=0; deltas<N; ++deltas) {
+                fix site = algorithms.sample_location();
+                fix new_value = algorithms.draw_value(site);
+
+                if(algorithms.should_accept(algorithms.ΔS(site, new_value)))
+                    algorithms.modify(site, new_value);
+            }
+        }
     };
 
 } // Slab::Math

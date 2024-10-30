@@ -23,6 +23,14 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
     {
         using Oscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         field->Set(Oscillon({-.5, 1, 0, 0, 0.64234}));
+
+        fix N = field->getN();
+        fix M = field->getM();
+
+        for(int i=1; i<N-1; ++i) {
+            for(int j=1; j<M-1; ++j)
+                field->At(i, j) = 0;
+        }
     }
 
     auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>();

@@ -41,7 +41,7 @@ inline Real SIGN(const Real &val){
 */
 
     template<class T>
-    inline T Abs(const T &a) { return a >= 0 ? a : -a; }
+    inline T Abs(const T &a) { return a > 0 ? a : -a; }
 
 /*
 union DoubleBits {
