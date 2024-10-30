@@ -23,7 +23,7 @@ namespace Slab::Math {
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix N=300, M=100;
+            fix N=300, M=300;
             fix x_min=-2.0, y_min=0.0;
             fix Lx=4.0, Ly=4.0/(Real(N)/Real(M));
 
@@ -55,7 +55,7 @@ namespace Slab::Math {
         R2toRMetropolisSetup setup;
 
         Temperature T=0;
-        constexpr auto dϕ = 5e-4;
+        constexpr auto dϕ = 1e-3;
 
         auto field = getField();
 
@@ -67,7 +67,7 @@ namespace Slab::Math {
         };
 
         if(T==0) setup.should_accept = acceptance_nonthermal;
-        else setup.should_accept = acceptance_thermal;
+        else     setup.should_accept = acceptance_thermal;
 
         setup.draw_value = [field](RandomSite site){
             fix old_val = field->At(site.i, site.j);
@@ -75,7 +75,7 @@ namespace Slab::Math {
             return RandUtils::RandomUniformReal(old_val-dϕ, old_val+dϕ);
         };
 
-        auto ΔS_fw_deriv     = [field](RandomSite site, NewValue new_val){
+        auto ΔS_fw_deriv     = [field](RandomSite site, NewValue new_val) {
             fix n = site.i;
             fix m = site.j;
 
@@ -103,7 +103,7 @@ namespace Slab::Math {
 
             return δS*((kinetic_new-grad_new-pot_new) - (kinetic_old-grad_old-pot_old));
         };
-        auto ΔS_sym_deriv    = [field](RandomSite site, NewValue new_val){
+        auto ΔS_sym_deriv    = [field](RandomSite site, NewValue new_val) {
             fix n = site.i;
             fix m = site.j;
 
@@ -131,7 +131,7 @@ namespace Slab::Math {
 
             return δS*((kinetic_new-grad_new-pot_new) - (kinetic_old-grad_old-pot_old));
         };
-        auto ΔS_sym_deriv_O2 = [field](RandomSite site, NewValue new_val){
+        auto ΔS_sym_deriv_O2 = [field](RandomSite site, NewValue new_val) {
             fix n = site.i;
             fix m = site.j;
 
@@ -205,11 +205,10 @@ namespace Slab::Math {
 
             return δS*((kinetic_new-grad_new-pot_new) - (kinetic_old-grad_old-pot_old));
         };
-        auto ΔS_gpt = [field](RandomSite site, NewValue new_val) {
+        auto ΔS_gpt          = [field](RandomSite site, NewValue new_val) {
             fix i = site.i;
             fix n = site.j;
 
-            fix N = field->getN();
             fix M = field->getM();
             IN data = field->getSpace().getHostData();
 
@@ -229,7 +228,6 @@ namespace Slab::Math {
             fix ΔxΔt = Δx*Δt;
 
 
-
             fix ΔS_kin = 0.5 * (  sqr(ϕ(i,n+1) - φ       )
                                 + sqr(φ        - ϕ(i,n-1))
                                 - sqr(ϕ(i,n+1) - ϕₒₗ     )
@@ -237,7 +235,7 @@ namespace Slab::Math {
                     * ΔxΔt / Δt2;
 
 
-            fix ΔS_grad = 0.5 * (  sqr(ϕ(i+1,n) - φ       )
+            fix ΔS_grad =-0.5 * (  sqr(ϕ(i+1,n) - φ       )
                                  + sqr(φ        - ϕ(i-1,n))
                                  - sqr(ϕ(i+1,n) - ϕₒₗ     )
                                  - sqr(ϕₒₗ      - ϕ(i-1,n)))
@@ -247,15 +245,62 @@ namespace Slab::Math {
 
             return ΔS_kin + ΔS_grad + ΔS_pot;
         };
+        auto ΔSₑ_gpt         = [field](RandomSite site, NewValue new_val) {
+            fix i = site.i;
+            fix n = site.j;
 
-        setup.ΔS = ΔS_gpt;
+            fix M = field->getM();
+            IN data = field->getSpace().getHostData();
 
-        constexpr auto h_border_size = 1;
-        constexpr auto v_border_size = 1;
+            auto ϕ = [M, &data](int i, int n) {
+                return data[i+n*M];
+            };
+
+            fix ϕₒₗ = ϕ(i,n);
+            fix φ = new_val;
+
+            fix &h2 = field->getSpace().getMetaData().geth();
+            fix Δx = h2[0];
+            fix Δt = h2[1];
+
+            fix Δx2 = Δx*Δx;
+            fix Δt2 = Δt*Δt;
+            fix ΔxΔt = Δx*Δt;
+
+
+            fix ΔE_kin = 0.5 * (  sqr(ϕ(i,n+1) - φ       )
+                                  + sqr(φ        - ϕ(i,n-1))
+                                  - sqr(ϕ(i,n+1) - ϕₒₗ     )
+                                  - sqr(ϕₒₗ      - ϕ(i,n-1)))
+                         * ΔxΔt / Δt2;
+
+
+            fix ΔE_grad = 0.5 * (  sqr(ϕ(i+1,n) - φ       )
+                                   + sqr(φ        - ϕ(i-1,n))
+                                   - sqr(ϕ(i+1,n) - ϕₒₗ     )
+                                   - sqr(ϕₒₗ      - ϕ(i-1,n)))
+                          * ΔxΔt / Δx2;
+
+            fix ΔE_pot = (Abs(φ) - Abs(ϕₒₗ))*ΔxΔt;
+
+            return ΔE_kin + ΔE_grad + ΔE_pot;
+        };
+
+        setup.ΔS = ΔSₑ_gpt;
+
+        constexpr auto h_border_size = 3;
+        constexpr auto v_border_size = 3;
 
         setup.sample_location = [field](){
-            fix i = h_border_size + RandUtils::RandomUniformUInt()%(field->getN()-2*h_border_size);
-            fix j = v_border_size + RandUtils::RandomUniformUInt()%(field->getM()-2*v_border_size);
+            if(0) {
+                fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
+                fix j = v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size);
+
+                return RandomSite{i, j};
+            }
+
+            fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
+            fix j = field->getM()-h_border_size-1;
 
             return RandomSite{i, j};
         };
