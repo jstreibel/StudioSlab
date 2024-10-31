@@ -55,7 +55,7 @@ namespace Slab::Math {
     Pointer<Stepper> R2toRMetropolisRecipe::buildStepper() {
         R2toRMetropolisSetup setup;
 
-        Temperature T=1   k        ;
+        Temperature T=1;
         constexpr auto δϕₘₐₓ = 5e1;
 
         auto field = getField();
