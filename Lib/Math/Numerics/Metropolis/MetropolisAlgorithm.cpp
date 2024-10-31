@@ -8,8 +8,4 @@
 
 namespace Slab::Math {
 
-    MetropolisAlgorithm::MetropolisAlgorithm() {
-    }
-
-
 }

@@ -123,15 +123,23 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Data/DataAllocator.h
 		Data/Data.cpp
 		Data/Data.h
-		Numerics/Metropolis/R2toR/R2toR-Metropolis.cpp
-		Numerics/Metropolis/R2toR/R2toR-Metropolis.h
 		Numerics/Metropolis/MontecarloStepper.cpp
 		Numerics/Metropolis/MontecarloStepper.h
 		Numerics/Metropolis/MetropolisAlgorithm.cpp
+
+		Numerics/Metropolis/RtoR/RtoR-Metropolis.h
+		Numerics/Metropolis/RtoR/RtoR-Metropolis-Recipe.cpp
+		Numerics/Metropolis/RtoR/RtoR-Metropolis-Recipe.h
+		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.cpp
+
+		Numerics/Metropolis/R2toR/R2toR-Metropolis.cpp
+		Numerics/Metropolis/R2toR/R2toR-Metropolis.h
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.cpp
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.h
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Setup.cpp
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Config.cpp
+		Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.cpp
+		Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.h
 )
 
 

@@ -8,6 +8,7 @@ add_subdirectory(MolecularDynamics)
 add_subdirectory(XY)
 add_subdirectory(Fields)
 add_subdirectory(Tests)
+add_subdirectory(FunctionalMinimization)
 add_subdirectory(Prototype)
 
 

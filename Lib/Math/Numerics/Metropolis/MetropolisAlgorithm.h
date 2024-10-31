@@ -13,7 +13,7 @@ namespace Slab::Math {
 
     class MetropolisAlgorithm {
     public:
-        explicit MetropolisAlgorithm();
+        explicit MetropolisAlgorithm() = default;
 
         virtual void step() = 0;
     };

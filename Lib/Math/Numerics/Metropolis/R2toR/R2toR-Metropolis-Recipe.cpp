@@ -12,8 +12,6 @@
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 #include "Math/Thermal/ThermoUtils.h"
 
-#include "Math/Toolset/NativeFunctions.h"
-
 
 namespace Slab::Math {
 

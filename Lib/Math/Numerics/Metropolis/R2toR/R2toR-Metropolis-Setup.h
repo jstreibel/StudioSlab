@@ -9,16 +9,16 @@
 #include <functional>
 
 namespace Slab::Math {
-    struct RandomSite{ UInt i; UInt j; };
+    using RandomSite = struct { UInt i; UInt j; };
 
     using Temperature = Real;
     using NewValue = Real;
     using ΔSValue = Real;
 
-    using ΔSFunction          = std::function<Real(RandomSite, NewValue)>;
+    using ΔSFunction          = std::function<ΔSValue(RandomSite, NewValue)>;
     using ModifyFunction      = std::function<void(RandomSite, NewValue)>;
     using SamplerFunction     = std::function<RandomSite()>;
-    using ValueDrawerFunction = std::function<Real(RandomSite)>;
+    using ValueDrawerFunction = std::function<NewValue(RandomSite)>;
     using AcceptanceFunction  = std::function<bool(ΔSValue)>;
 
     struct R2toRMetropolisSetup {
