@@ -6,16 +6,31 @@
 #define STUDIOSLAB_METROPOLISALGORITHM_H
 
 #include "Utils/Numbers.h"
+#include "Metropolis-Setup.h"
 
 namespace Slab::Math {
 
     using Temperature = Real;
 
+    template<typename SiteType, typename NewValueType>
     class MetropolisAlgorithm {
     public:
-        explicit MetropolisAlgorithm() = default;
+        using Setup = MetropolisSetup<SiteType, NewValueType>;
 
-        virtual void step() = 0;
+        explicit MetropolisAlgorithm(Setup setup) : algorithms(setup) { };
+
+        void step() {
+            for(IN site : algorithms.sample_locations()) {
+                fix new_value = algorithms.draw_value(site);
+
+                if(algorithms.should_accept(algorithms.Δ_δSδϕ(site, new_value)))
+                    algorithms.modify(site, new_value);
+            }
+        }
+
+    protected:
+        Setup algorithms;
+
     };
 
 

@@ -16,6 +16,7 @@
 #include "Math/Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.h"
 #include "MathApp.h"
 #include "Graphics/Plot2D/Plotter.h"
+#include "Utils/RandUtils.h"
 
 void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
@@ -33,7 +34,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 
         for(int i=cutoff_x; i<N-cutoff_x; ++i) {
             for(int j=cutoff_y; j<M-cutoff_y; ++j)
-                field->At(i, j) = 0;
+                field->At(i, j) = Slab::RandUtils::RandomUniformReal(-.125,.125);
         }
     }
 

@@ -3,7 +3,6 @@
 //
 
 #include "RtoR-Metropolis-Recipe.h"
-#include "RtoR-Metropolis.h"
 
 #include "Core/SlabCore.h"
 #include "Utils/RandUtils.h"
@@ -20,6 +19,20 @@ namespace Slab::Math {
     // Don't touch:
     #define DONT_REGISTER false
     #define DO_REGISTER true
+
+    class MetropolisRtoRConfig : public NumericConfig {
+        UInt max_steps;
+
+    public:
+        explicit MetropolisRtoRConfig(UInt max_steps)
+        : NumericConfig(DONT_REGISTER), max_steps(max_steps) {
+            // registerToManager();
+        }
+
+        auto getn() const -> UInt override{ return max_steps; };
+
+        auto to_string() const -> Str override{ return {}; };
+    };
 
     auto RtoRMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
@@ -51,7 +64,7 @@ namespace Slab::Math {
         RtoRMetropolisSetup setup;
 
         Temperature T=0;
-        constexpr auto δϕₘₐₓ = 1e-4;
+        constexpr auto δϕₘₐₓ = 1e1;
 
         auto field = getField();
 
@@ -127,9 +140,9 @@ namespace Slab::Math {
             field->getSpace().getHostData()[n] = value;
         };
 
-        auto metropolis = New<RtoRMetropolis>(field, setup);
+        auto metropolis = New<RtoRMetropolis>(setup);
 
-        return New<MontecarloStepper>(metropolis);
+        return New<MontecarloStepper<RandomSite, NewValue>>(metropolis);
     }
 
 } // Slab::Math

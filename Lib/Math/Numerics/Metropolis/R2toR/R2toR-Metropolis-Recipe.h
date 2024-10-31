@@ -8,11 +8,20 @@
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/Metropolis/Metropolis-Config.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Math/Numerics/Metropolis/Metropolis-Setup.h"
+#include "Math/Numerics/Metropolis/MetropolisAlgorithm.h"
 
 namespace Slab::Math {
 
+    struct RandomSite{ UInt i; UInt j; };
+    using NewValue = Real;
+    using R2toRMetropolis = MetropolisAlgorithm<RandomSite, NewValue>;
+
     class R2toRMetropolisRecipe : public Base::NumericalRecipe {
         Pointer<R2toR::NumericFunction_CPU> field_data;
+
+        using Site = struct{UInt i; UInt j;};
+        using R2toRMetropolisSetup = R2toRMetropolis::Setup;
 
     public:
         auto getField() -> Pointer<R2toR::NumericFunction_CPU>;

@@ -6,11 +6,13 @@
 #define STUDIOSLAB_R2TOR_METROPOLIS_RECIPE_H
 
 #include "Math/Numerics/NumericalRecipe.h"
-#include "Math/Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Math/Numerics/Metropolis/Metropolis-Setup.h"
+#include "Math/Numerics/Metropolis/MetropolisAlgorithm.h"
 
 namespace Slab::Math {
+
+    using RtoRMetropolis = MetropolisAlgorithm<UInt, Real>;
 
     class RtoRMetropolisRecipe : public Base::NumericalRecipe {
         Pointer<RtoR::NumericFunction_CPU> field_data;
