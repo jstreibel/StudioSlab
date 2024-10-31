@@ -28,8 +28,8 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
         fix N = field->getN();
         fix M = field->getM();
 
-        fix cutoff_x = N/4;
-        fix cutoff_y = M/4;
+        fix cutoff_x = 1; //N/4;
+        fix cutoff_y = 1; //M/4;
 
         for(int i=cutoff_x; i<N-cutoff_x; ++i) {
             for(int j=cutoff_y; j<M-cutoff_y; ++j)

@@ -25,9 +25,9 @@ namespace Slab::Math {
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix N=20, M=20;
-            fix x_min=-1.2, y_min=1.2;
-            fix Lx=-2*x_min, Ly=Lx; ///(Real(N)/Real(M));
+            fix x_min=-1.2, y_min=0.;
+            fix Lx=-2*x_min, Ly=4.; ///(Real(N)/Real(M));
+            fix N=30, M=N*int(Real(Ly)/Lx);
 
             field_data = DataAlloc<R2toR::NumericFunction_CPU>("Stochastic field",
                                                                N, M,
@@ -55,8 +55,8 @@ namespace Slab::Math {
     Pointer<Stepper> R2toRMetropolisRecipe::buildStepper() {
         R2toRMetropolisSetup setup;
 
-        Temperature T=0;
-        constexpr auto δϕₘₐₓ = 5e-2;
+        Temperature T=1   k        ;
+        constexpr auto δϕₘₐₓ = 5e1;
 
         auto field = getField();
 
@@ -306,8 +306,6 @@ namespace Slab::Math {
             fix Δx2 = Δx*Δx;
             fix Δt2 = Δt*Δt;
 
-            auto sign = Slab::Math::SIGN<Real>;
-
             Vector<RandomSite> affected_sites = {
                     {i, n},
                     {i+1, n}, {i - 1, n},
@@ -315,28 +313,25 @@ namespace Slab::Math {
 
             // fix 𝜕ₓ²ϕ =
 
-            auto δSδϕ_old = .0;
-            for(auto s : affected_sites) {
-                fix i = s.i;
-                fix n = s.j;
+            auto compute_δSδϕ = [affected_sites, Δx2, Δt2, ϕ](Real &δSδϕ) {
+                constexpr auto sign = Slab::Math::SIGN<Real>;
 
-                δSδϕ_old += sqr((ϕ(i  ,n+1) - 2.*ϕ(i,n) + ϕ(i  ,n-1))/Δt2
-                              - (ϕ(i+1,n  ) - 2.*ϕ(i,n) + ϕ(i-1,n  ))/Δx2
-                              + sign(ϕ(i,n)));
-            }
+                for(auto s : affected_sites) {
+                    fix iₗ = s.i;
+                    fix nₗ = s.j;
+
+                    δSδϕ += sqr((ϕ(iₗ  , nₗ + 1) - 2. * ϕ(iₗ, nₗ) + ϕ(iₗ  , nₗ - 1)) / Δt2
+                              - (ϕ(iₗ + 1, nₗ  ) - 2. * ϕ(iₗ, nₗ) + ϕ(iₗ - 1, nₗ  )) / Δx2
+                              + sign(ϕ(iₗ, nₗ)));
+                }
+            };
+
+            auto δSδϕ_old = .0;
+            compute_δSδϕ(δSδϕ_old);
 
             field->At(i,n) = φ;
             auto δSδϕ_new = .0;
-            for(auto s : affected_sites) {
-                fix i = s.i;
-                fix n = s.j;
-
-                δSδϕ_new += sqr((ϕ(i  ,n+1) - 2.*ϕ(i,n) + ϕ(i  ,n-1))/Δt2
-                              - (ϕ(i+1,n  ) - 2.*ϕ(i,n) + ϕ(i-1,n  ))/Δx2
-                                + sign(ϕ(i,n)));
-
-
-            }
+            compute_δSδϕ(δSδϕ_new);
             field->At(i,n) = ϕₒₗ;
 
             return δSδϕ_new-δSδϕ_old;
@@ -378,8 +373,8 @@ namespace Slab::Math {
 
         setup.Δ_δSδϕ = Δ_δSδϕ;
 
-        fix h_border_size = field->getN()/4;
-        fix v_border_size = field->getM()/4;;
+        fix h_border_size = 0; //field->getN()/4;
+        fix v_border_size = 1; //field->getM()/4;;
 
         setup.sample_location = [field,h_border_size,v_border_size](){
             fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
