@@ -14,16 +14,11 @@
 
 #include "Utils/Printing.h"
 
-#include "Graphics/Backend/GLUT/GLUTBackend.h"
 #include "Core/Controller/CommandLine/CLInterfaceManager.h"
 
 #include "PlotThemeManager.h"
 #include "Artists/AxisArtist.h"
 
-#define POPUP_ON_MOUSE_CALL false
-
-#include "Graphics/Plot2D/Shapes/Shape.h"
-#include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Core/SlabCore.h"
 
@@ -46,10 +41,6 @@ namespace Slab::Graphics {
     }
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
-
-
-#define Unique(label) \
-    Str(Str(label) + "##" + ToStr(this->id)).c_str()
 
     Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
             : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
@@ -130,17 +121,17 @@ namespace Slab::Graphics {
         auto popupName = title + Str(" window popup");
 
         if (popupOn && !POPUP_ON_MOUSE_CALL) {
-            ImGui::OpenPopup(Unique(popupName));
+            ImGui::OpenPopup(unique(popupName).c_str());
             popupOn = false;
         }
 
-        if (ImGui::BeginPopup(Unique(popupName))) {
+        if (ImGui::BeginPopup(unique(popupName).c_str())) {
             if(ImGui::MenuItem("Auto adjust", NULL, autoReviewGraphRanges)) {
                 autoReviewGraphRanges = !autoReviewGraphRanges;
             }
-            else if (ImGui::MenuItem(Unique("Show interface"), NULL, showInterface)) {
+            else if (ImGui::MenuItem(unique("Show interface").c_str(), NULL, showInterface)) {
                 showInterface = !showInterface;
-            } else if (ImGui::MenuItem(Unique("Save graph"))) {
+            } else if (ImGui::MenuItem(unique("Save graph").c_str())) {
 
                 auto w = Printing::getTotalHorizontalDots(.5);
                 auto h = w * .5;
@@ -179,7 +170,7 @@ namespace Slab::Graphics {
                     ImGui::SameLine();
 
                     bool visible = artie->isVisible();
-                    if (ImGui::Checkbox(Unique(artie->getLabel()), &visible)) {
+                    if (ImGui::Checkbox((unique(artie->getLabel())+"_checkbox").c_str() , &visible)) {
                         artie->setVisibility(visible);
                     }
 
@@ -190,7 +181,7 @@ namespace Slab::Graphics {
                     IN artie = cont.second;
 
                     if (artie->isVisible() && artie->hasGUI()) {
-                        if (ImGui::CollapsingHeader(Unique(artie->getLabel())))
+                        if (ImGui::CollapsingHeader((unique(artie->getLabel())).c_str()))
                             artie->drawGUI();
                     }
                 }

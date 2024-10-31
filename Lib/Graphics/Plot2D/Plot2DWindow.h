@@ -24,6 +24,8 @@
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 
+#define POPUP_ON_MOUSE_CALL false
+
 namespace Slab::Graphics {
 
     class Plot2DWindow : public SlabWindow {

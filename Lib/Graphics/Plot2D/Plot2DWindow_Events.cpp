@@ -9,9 +9,6 @@
 #include "Core/Tools/Log.h"
 #include "3rdParty/ImGui.h"
 
-#define POPUP_ON_MOUSE_CALL false
-
-
 namespace Slab {
 
     bool
