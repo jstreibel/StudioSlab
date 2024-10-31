@@ -2,7 +2,7 @@
 // Created by joao on 10/29/24.
 //
 
-#ifndef STUDIOSLAB_R2TOR_METROPOLIS_CONFIG_H
+#ifndef STUDIOSLAB_METROPOLIS_CONFIG_H
 #define STUDIOSLAB_R2TOR_METROPOLIS_CONFIG_H
 
 #include "Utils/Numbers.h"
@@ -23,4 +23,4 @@ namespace Slab::Math {
 
 }
 
-#endif //STUDIOSLAB_R2TOR_METROPOLIS_CONFIG_H
+#endif //STUDIOSLAB_METROPOLIS_CONFIG_H

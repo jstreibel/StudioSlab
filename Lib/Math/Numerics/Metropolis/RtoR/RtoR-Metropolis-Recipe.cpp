@@ -112,11 +112,15 @@ namespace Slab::Math {
 
         setup.Δ_δSδϕ = Δ_δSδϕ;
 
-        setup.sample_location = [field](){
+        setup.sample_locations = [field](){
             constexpr auto border_size = 1;
-            fix n = border_size + RandUtils::RandomUniformUInt() % (field->N - 2 * border_size);
 
-            return n;
+            Vector<RandomSite> samples(field->N);
+
+            for(auto &site : samples)
+                site = border_size + RandUtils::RandomUniformUInt() % (field->N - 2 * border_size);
+
+            return samples;
         };
 
         setup.modify = [field](RandomSite n, NewValue value){

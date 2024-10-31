@@ -7,9 +7,10 @@
 
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
 #include "Math/Numerics/Metropolis/MetropolisAlgorithm.h"
-#include "Metropolis-Setup.h"
+#include "Math/Numerics/Metropolis/Metropolis-Setup.h"
 
 namespace Slab::Math {
+
 
     class RtoRMetropolis : public MetropolisAlgorithm {
         using RtoRMetropolisSetup = MetropolisSetup<UInt, Real>;
@@ -26,10 +27,7 @@ namespace Slab::Math {
         {        }
 
         void step() override {
-            fix N = function->N;
-
-            for(auto deltas=0; deltas<N; ++deltas) {
-                fix site = algorithms.sample_location();
+            for(IN site : algorithms.sample_locations()) {
                 fix new_value = algorithms.draw_value(site);
 
                 if(algorithms.should_accept(algorithms.Δ_δSδϕ(site, new_value)))

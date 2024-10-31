@@ -8,7 +8,7 @@
 #include "Math/Numerics/NumericalRecipe.h"
 #include "Math/Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.h"
 #include "Math/Function/RtoR/Model/RtoRNumericFunctionCPU.h"
-#include "Metropolis-Setup.h"
+#include "Math/Numerics/Metropolis/Metropolis-Setup.h"
 
 namespace Slab::Math {
 

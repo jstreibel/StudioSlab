@@ -37,7 +37,7 @@ namespace Slab::Math {
     }
 
     R2toRMetropolisRecipe::R2toRMetropolisRecipe(UInt max_steps)
-    : Base::NumericalRecipe(New<MetropolisR2toRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
+    : Base::NumericalRecipe(New<MetropolisConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 
@@ -374,11 +374,15 @@ namespace Slab::Math {
         fix h_border_size = 0; //field->getN()/4;
         fix v_border_size = 1; //field->getM()/4;;
 
-        setup.sample_location = [field,h_border_size,v_border_size](){
-            fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
-            fix j = v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size);
+        setup.sample_locations = [field,h_border_size,v_border_size](){
 
-            return RandomSite{i, j};
+            Vector<RandomSite> sites(field->getN()*field->getM());
+
+            for(OUT site : sites)
+                site = {h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size),
+                        v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size)};
+
+            return sites;
         };
 
         setup.modify = [field](RandomSite site, NewValue value){

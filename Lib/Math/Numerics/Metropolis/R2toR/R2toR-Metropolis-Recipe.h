@@ -6,7 +6,7 @@
 #define STUDIOSLAB_R2TOR_METROPOLIS_RECIPE_H
 
 #include "Math/Numerics/NumericalRecipe.h"
-#include "Math/Numerics/Metropolis/R2toR/R2toR-Metropolis-Config.h"
+#include "Math/Numerics/Metropolis/Metropolis-Config.h"
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 
 namespace Slab::Math {

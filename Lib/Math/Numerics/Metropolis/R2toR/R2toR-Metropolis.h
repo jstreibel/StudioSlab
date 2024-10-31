@@ -7,9 +7,13 @@
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Numerics/Metropolis/MetropolisAlgorithm.h"
-#include "R2toR-Metropolis-Setup.h"
+#include "Math/Numerics/Metropolis/Metropolis-Setup.h"
 
 namespace Slab::Math {
+
+    struct RandomSite{ UInt i; UInt j; };
+    using NewValue = Real;
+    using R2toRMetropolisSetup = MetropolisSetup<RandomSite, NewValue>;
 
     class R2toRMetropolis : public MetropolisAlgorithm {
         Pointer<R2toR::NumericFunction> function;
@@ -24,12 +28,7 @@ namespace Slab::Math {
         {        }
 
         void step() override {
-            fix n = function->getN();
-            fix m = function->getM();
-            fix N = n*m;
-
-            for(auto deltas=0; deltas<N; ++deltas) {
-                fix site = algorithms.sample_location();
+            for(IN site : algorithms.sample_locations()) {
                 fix new_value = algorithms.draw_value(site);
 
                 if(algorithms.should_accept(algorithms.Δ_δSδϕ(site, new_value)))
