@@ -32,7 +32,7 @@ namespace Slab::Math {
                 fix site = algorithms.sample_location();
                 fix new_value = algorithms.draw_value(site);
 
-                if(algorithms.should_accept(algorithms.ΔS(site, new_value)))
+                if(algorithms.should_accept(algorithms.Δ_δSδϕ(site, new_value)))
                     algorithms.modify(site, new_value);
             }
         }

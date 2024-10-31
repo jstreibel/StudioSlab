@@ -12,6 +12,8 @@
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 #include "Math/Thermal/ThermoUtils.h"
 
+#include "Math/Toolset/NativeFunctions.h"
+
 
 namespace Slab::Math {
 
@@ -23,15 +25,14 @@ namespace Slab::Math {
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix N=300, M=300;
-            fix x_min=-2.0, y_min=0.0;
-            fix Lx=4.0, Ly=4.0/(Real(N)/Real(M));
+            fix N=20, M=20;
+            fix x_min=-1.2, y_min=1.2;
+            fix Lx=-2*x_min, Ly=Lx; ///(Real(N)/Real(M));
 
-            field_data = New<R2toR::NumericFunction_CPU>(N, M,
-                                                         x_min, y_min,
-                                                         Lx/Real(N-1), Ly/Real(M-1));
-
-            DataManager::RegisterData("Stochastic field", field_data);
+            field_data = DataAlloc<R2toR::NumericFunction_CPU>("Stochastic field",
+                                                               N, M,
+                                                               x_min, y_min,
+                                                               Lx/Real(N), Ly/Real(M));
         }
 
         return field_data;
@@ -55,24 +56,26 @@ namespace Slab::Math {
         R2toRMetropolisSetup setup;
 
         Temperature T=0;
-        constexpr auto dϕ = 1e-3;
+        constexpr auto δϕₘₐₓ = 5e-2;
 
         auto field = getField();
 
-        auto acceptance_thermal = [T](Real ΔS) {
-            return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔS / T));
-        };
-        auto acceptance_nonthermal = [](Real ΔS) {
-            return ΔS<0;
+        auto acceptance_thermal = [T](Real ΔE) {
+            return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
         };
 
-        if(T==0) setup.should_accept = acceptance_nonthermal;
-        else     setup.should_accept = acceptance_thermal;
+        auto acceptance_action = [](Real Δ_δSδϕ) {
+            return Δ_δSδϕ<0;
+        };
+
+
+        if(T!=0) setup.should_accept = acceptance_thermal;
+        else     setup.should_accept = acceptance_action;
 
         setup.draw_value = [field](RandomSite site){
             fix old_val = field->At(site.i, site.j);
 
-            return RandUtils::RandomUniformReal(old_val-dϕ, old_val+dϕ);
+            return RandUtils::RandomUniformReal(old_val-δϕₘₐₓ, old_val+δϕₘₐₓ);
         };
 
         auto ΔS_fw_deriv     = [field](RandomSite site, NewValue new_val) {
@@ -209,11 +212,11 @@ namespace Slab::Math {
             fix i = site.i;
             fix n = site.j;
 
-            fix M = field->getM();
+            fix N = field->getN();
             IN data = field->getSpace().getHostData();
 
-            auto ϕ = [M, &data](int i, int n) {
-                return data[i+n*M];
+            auto ϕ = [N, &data](int i, int n) {
+                return data[i+n*N];
             };
 
             fix ϕₒₗ = ϕ(i,n);
@@ -249,11 +252,11 @@ namespace Slab::Math {
             fix i = site.i;
             fix n = site.j;
 
-            fix M = field->getM();
+            fix N = field->getN();
             IN data = field->getSpace().getHostData();
 
-            auto ϕ = [M, &data](int i, int n) {
-                return data[i+n*M];
+            auto ϕ = [N, &data](int i, int n) {
+                return data[i+n*N];
             };
 
             fix ϕₒₗ = ϕ(i,n);
@@ -285,22 +288,102 @@ namespace Slab::Math {
 
             return ΔE_kin + ΔE_grad + ΔE_pot;
         };
+        auto Δ_δSδϕ          = [field](RandomSite site, NewValue new_val) {
+            fix i = site.i;
+            fix n = site.j;
 
-        setup.ΔS = ΔSₑ_gpt;
+            auto ϕ = [field](int i, int n) {
+                return field->At(i, n);
+            };
 
-        constexpr auto h_border_size = 3;
-        constexpr auto v_border_size = 3;
+            fix ϕₒₗ = ϕ(i,n);
+            fix φ = new_val;
 
-        setup.sample_location = [field](){
-            if(0) {
-                fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
-                fix j = v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size);
+            fix &h2 = field->getSpace().getMetaData().geth();
+            fix Δx = h2[0];
+            fix Δt = h2[1];
 
-                return RandomSite{i, j};
+            fix Δx2 = Δx*Δx;
+            fix Δt2 = Δt*Δt;
+
+            auto sign = Slab::Math::SIGN<Real>;
+
+            Vector<RandomSite> affected_sites = {
+                    {i, n},
+                    {i+1, n}, {i - 1, n},
+                    {i, n + 1}, {i, n - 1}};
+
+            // fix 𝜕ₓ²ϕ =
+
+            auto δSδϕ_old = .0;
+            for(auto s : affected_sites) {
+                fix i = s.i;
+                fix n = s.j;
+
+                δSδϕ_old += sqr((ϕ(i  ,n+1) - 2.*ϕ(i,n) + ϕ(i  ,n-1))/Δt2
+                              - (ϕ(i+1,n  ) - 2.*ϕ(i,n) + ϕ(i-1,n  ))/Δx2
+                              + sign(ϕ(i,n)));
             }
 
+            field->At(i,n) = φ;
+            auto δSδϕ_new = .0;
+            for(auto s : affected_sites) {
+                fix i = s.i;
+                fix n = s.j;
+
+                δSδϕ_new += sqr((ϕ(i  ,n+1) - 2.*ϕ(i,n) + ϕ(i  ,n-1))/Δt2
+                              - (ϕ(i+1,n  ) - 2.*ϕ(i,n) + ϕ(i-1,n  ))/Δx2
+                                + sign(ϕ(i,n)));
+
+
+            }
+            field->At(i,n) = ϕₒₗ;
+
+            return δSδϕ_new-δSδϕ_old;
+        };
+        auto Δ_δSδϕ_old      = [field](RandomSite site, NewValue new_val) {
+            fix i = site.i;
+            fix n = site.j;
+
+            auto ϕ = [field](int i_, int n_) {
+                return field->At(i_, n_);
+            };
+
+            fix ϕₒₗ = ϕ(i,n);
+            fix φ = new_val;
+
+            fix &h2 = field->getSpace().getMetaData().geth();
+            fix Δx = h2[0];
+            fix Δt = h2[1];
+
+            fix Δx2 = Δx*Δx;
+            fix Δt2 = Δt*Δt;
+            fix ΔtΔx = Δt*Δx;
+
+            auto sign = Slab::Math::SIGN<Real>;
+
+            // fix 𝜕ₓ²ϕ =
+
+            double δSδϕ_old = ((ϕ(i  ,n+1) - 2.*ϕₒₗ + ϕ(i  ,n-1))/Δt2
+                             - (ϕ(i+1,n  ) - 2.*ϕₒₗ + ϕ(i-1,n  ))/Δx2
+                             + sign(ϕₒₗ)) * ΔtΔx;
+
+
+            double δSδϕ_new = ((ϕ(i  ,n+1) - 2.*φ   + ϕ(i  ,n-1))/Δt2
+                             - (ϕ(i+1,n  ) - 2.*φ   + ϕ(i-1,n  ))/Δx2
+                             + sign(φ)) * ΔtΔx;
+
+            return Abs(δSδϕ_new)-Abs(δSδϕ_old);
+        };
+
+        setup.Δ_δSδϕ = Δ_δSδϕ;
+
+        fix h_border_size = field->getN()/4;
+        fix v_border_size = field->getM()/4;;
+
+        setup.sample_location = [field,h_border_size,v_border_size](){
             fix i = h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size);
-            fix j = field->getM()-h_border_size-1;
+            fix j = v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size);
 
             return RandomSite{i, j};
         };

@@ -22,29 +22,36 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 
     {
         using Oscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
-        field->Set(Oscillon({-.5, 1, 0, 0, 0.64234}));
+        fix l = 2.;
+        field->Set(Oscillon({-.5*l, l, 0, 0, 0.64234}));
 
         fix N = field->getN();
         fix M = field->getM();
 
-        fix cutoff = 3;
+        fix cutoff_x = N/4;
+        fix cutoff_y = M/4;
 
-        for(int i=cutoff; i<N-cutoff; ++i) {
-            for(int j=cutoff; j<M-cutoff; ++j)
+        for(int i=cutoff_x; i<N-cutoff_x; ++i) {
+            for(int j=cutoff_y; j<M-cutoff_y; ++j)
                 field->At(i, j) = 0;
         }
     }
 
     auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>();
+    plot_window->setx(1700);
+    plot_window->notifyReshape(1200, 800);
+    fix lims = field->getDomain();
+    plot_window->getRegion().setLimits(lims.xMin, lims.xMax, lims.yMin, lims.yMax);
     auto arts = Slab::Graphics::Plotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
     arts->setDataMutable(true);
 
-    // auto viewer = Slab::New<Slab::Graphics::MainViewer>();
-    // viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
-    // viewer->setFunction(field);
+    auto viewer = Slab::New<Slab::Graphics::MainViewer>();
+    viewer->addViewer(Slab::New<Slab::Graphics::FourierViewer>(viewer->getGUIWindow()));
+    viewer->setFunction(field);
 
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
     wm->addSlabWindow(plot_window);
+    wm->addSlabWindow(viewer);
 
     Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(wm);
 }

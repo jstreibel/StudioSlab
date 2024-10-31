@@ -22,7 +22,7 @@ namespace Slab::Math {
     using AcceptanceFunction  = std::function<bool(ΔSValue)>;
 
     struct R2toRMetropolisSetup {
-        ΔSFunction ΔS;
+        ΔSFunction Δ_δSδϕ;
         ModifyFunction modify;
         SamplerFunction sample_location;
         ValueDrawerFunction draw_value;
