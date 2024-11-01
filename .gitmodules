@@ -1,9 +1,6 @@
 [submodule "Lib/3rdParty/freetype-gl"]
 	path = Lib/3rdParty/freetype-gl
 	url = git@github.com:jstreibel/freetype-gl.git
-[submodule "Lib/3rdParty/imgui"]
-	path = Lib/3rdParty/imgui
-	url = git@github.com:jstreibel/imgui.git
 [submodule "Lib/3rdParty/NanoTeX"]
 	path = Lib/3rdParty/NanoTeX
 	url = git@github.com:jstreibel/NanoTeX
