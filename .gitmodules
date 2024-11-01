@@ -10,3 +10,6 @@
 [submodule "Notebooks"]
 	path = Notebooks
 	url = https://github.com/jstreibel/Notebooks
+[submodule "Lib/3rdParty/imgui"]
+	path = Lib/3rdParty/imgui
+	url = git@github.com:jstreibel/imgui-thedmd.git
