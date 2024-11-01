@@ -8,13 +8,14 @@
 
 #include "SingleSimViewController.h"
 
-#include "Graphics/SFML/ViewerUtils.h"
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Modules/Nuklear/NuklearModule.h"
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 #include "Core/SlabCore.h"
+#include "Core/Tools/Resources.h"
 
 
 #define COMPUTE_AVERAGES false
@@ -62,7 +63,8 @@ namespace Slab::Lost::ThermoOutput {
 
         const float isingSpriteScale = isingSpriteSize/(float)L;
 
-        ViewerUtils::LoadFont(font);
+        if (!font.loadFromFile(Slab::Core::Resources::fontFileName(10)))
+            throw "SFML error while loading font.";
 
         text = sf::Text("Ising", font, fontSize);
         text.setPosition(2 * _border + isingSpriteSize, _border);
@@ -133,10 +135,7 @@ namespace Slab::Lost::ThermoOutput {
         accepted_t_View = new Graph(subWindow, {0, -.1}, {static_cast<float>(MCSteps), 1.1}, "t", "Rejected/total ss change");
         accepted_t_View->addHorizontalDashedLine(1.0);
 
-
-
         /*
-         *
         subWindow.top += border+subWindow.height;
         mag_T_View = new Graph(subWindow, {T_min*0.9f, -.1}, {T_max*1.1f, 1.1}, "T", "<|m|>");
         mag_T_View->addVerticalDashedLine(T_c, 100, sf::Color::Magenta);
@@ -456,6 +455,8 @@ namespace Slab::Lost::ThermoOutput {
                    << "\n\n"
                    << (params.shouldOverrelax?"Is overrelaxing":"Not overrelaxing");
         text.setString(textOutput.str());
+
+        text.setString("O HAI!");
         window->draw(text);
 
 

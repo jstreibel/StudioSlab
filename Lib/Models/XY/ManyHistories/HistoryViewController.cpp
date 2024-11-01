@@ -4,7 +4,7 @@
 
 
 #include "HistoryViewController.h"
-#include "Graphics/SFML/ViewerUtils.h"
+#include "Core/Tools/Resources.h"
 #include <SFML/Graphics.hpp>
 #include <ostream>
 #include <iostream>
@@ -181,7 +181,7 @@ namespace Slab::Lost::ThermoOutput {
         {
             subWindow.top += rowHeight + _border;
 
-            ViewerUtils::LoadFont(font);
+            font.loadFromFile(Slab::Core::Resources::fontFileName(10));
 
             text = sf::Text("Ising", font, fontSize);
             text.setPosition(subWindow.left, subWindow.top);

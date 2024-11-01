@@ -14,7 +14,7 @@
 namespace Slab::Graphics {
 
     class SFMLBackend : public GraphicBackend {
-        Pointer<SFMLEventTranslator> sfmlEventTranslator=nullptr;
+        SFMLEventTranslator sfmlEventTranslator;
         Vector<Volatile<SFMLListener>> sfmlListeners;
 
         sf::RenderWindow *window;

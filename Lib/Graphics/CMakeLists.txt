@@ -234,7 +234,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		SFML/Tools/Graph_deprydepr.cpp
 		SFML/Tools/GraphAndAverageCalc.cpp
 
-		SFML/ViewerUtils.cpp
         Plot2D/PlottingTheme.cpp
         Plot2D/PlottingTheme.h
         Plot2D/Artists/PointSetArtist.cpp

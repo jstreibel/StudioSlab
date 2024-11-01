@@ -3,11 +3,11 @@
 //
 
 #include "Graph_deprydepr.h"
-#include "Graphics/SFML/ViewerUtils.h"
 
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Text.hpp>
 
+#include "Core/Tools/Resources.h"
 
 namespace Slab::Lost::ThermoOutput {
 
@@ -17,7 +17,8 @@ namespace Slab::Lost::ThermoOutput {
             : theData(sf::LinesStrip), scale(scale), rMin(rMin), rMax(rMax) {
         setPlacing(subWindow);
 
-        ViewerUtils::LoadFont(font);
+        if (!font.loadFromFile(Slab::Core::Resources::fontFileName(10)))
+            throw "SFML error while loading font.";
 
         int fontSize = 14;
 

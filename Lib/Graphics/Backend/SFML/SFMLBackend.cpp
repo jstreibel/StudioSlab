@@ -5,21 +5,20 @@
 #include "SFMLBackend.h"
 #include "Graphics/SlabGraphics.h"
 
-#include "COMPILE_CONFIG.h"
-#include "Graphics/OpenGL/OpenGL.h"
 #include "Utils/ReferenceIterator.h"
 
 
 namespace Slab::Graphics {
 
 
-    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", (sfmlEventTranslator=New<SFMLEventTranslator>())) {
+    SFMLBackend::SFMLBackend() : GraphicBackend("SFML backend", Naked(sfmlEventTranslator)) {
 
         sf::ContextSettings contextSettings;
-        contextSettings.depthBits = 24;
+        contextSettings.depthBits = 32;
         contextSettings.majorVersion = 4;
         contextSettings.minorVersion = 6;
         contextSettings.antialiasingLevel = 8;
+        contextSettings.sRgbCapable = true;
 
         window = new sf::RenderWindow(
                 sf::VideoMode(1920, 1080),
@@ -30,7 +29,8 @@ namespace Slab::Graphics {
 
         auto eventTranslator = getEventTranslator();
         // sfmlEventTranslator = DynamicPointerCast<Core::SFMLEventTranslator>(eventTranslator);
-        addSFMLListener(sfmlEventTranslator);
+        static auto sfmlEventTranslator_ref = Naked(sfmlEventTranslator);
+        addSFMLListener(sfmlEventTranslator_ref);
     }
 
     void SFMLBackend::run() {
@@ -38,21 +38,19 @@ namespace Slab::Graphics {
         sf::Clock timer;
         timer.restart();
         while (running) {
-#if LIMIT_SIM_SPEED == false
-            constexpr const auto frameInterval = _FRAME_INTERVAL_MSEC;
-            auto elTimeMSec = (double) timer.getElapsedTime().asMilliseconds();
-            if (elTimeMSec > frameInterval)
-#endif
-            off_sync.lock();
+            {
+                off_sync.lock();
 
-            _treatEvents();
-            _render();
+                _treatEvents();
+                _render();
 
-            timer.restart();
+                timer.restart();
 
-            running = window->isOpen();
+                running = window->isOpen();
 
-            off_sync.unlock();
+                off_sync.unlock();
+
+            }
         }
     }
 
@@ -96,8 +94,6 @@ namespace Slab::Graphics {
     auto SFMLBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
     SFMLBackend &SFMLBackend::GetInstance() {
-        // assert(Core::BackendManager::GetImplementation() == Core::SFML);
-
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         return *dynamic_cast<SFMLBackend *>(&guiBackend);
@@ -127,7 +123,7 @@ namespace Slab::Graphics {
         window->close();
         clearModules();
         clearListeners();
-        sfmlEventTranslator->clear();
+        sfmlEventTranslator.clear();
 
         off_sync.unlock();
     }
