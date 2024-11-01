@@ -13,7 +13,8 @@
 namespace Slab::Graphics {
     constexpr int corner_size = 20;
 
-    Decorator::Decorator() : writer(Core::Resources::fontFileName(7), (float)floor(Graphics::title_bar_height*0.6)) {
+    // Fontes candidatas: 9, 13
+    Decorator::Decorator() : writer(Core::Resources::fontFileName(14), (float)floor(Graphics::title_bar_height*.725)) {
 
     }
 
@@ -109,7 +110,8 @@ namespace Slab::Graphics {
             }
 
             fix h_font = writer.getFontHeightInPixels();
-            writer.write(slab_window.getTitle(), {(Real)x+20, syswin_h-(Real)y - .8*h_font}, {1,0,0});
+            auto color = Color(32./255,32./255,32./255, 1);
+            writer.write(slab_window.getTitle(), {(Real)x+20, syswin_h-(Real)y - .8*h_font}, color);
         }
     }
 
