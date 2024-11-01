@@ -13,8 +13,11 @@
 namespace Slab::Graphics {
     constexpr int corner_size = 20;
 
-    // Fontes candidatas: 9, 13
-    Decorator::Decorator() : writer(Core::Resources::fontFileName(14), (float)floor(Graphics::title_bar_height*.725)) {
+
+    #define Title_Height (int(Graphics::font_size*5./3))
+
+    // Fontes candidatas: 9, 13, 14
+    Decorator::Decorator() : writer(Core::Resources::fontFileName(10), (float)Graphics::font_size) {
 
     }
 
@@ -22,10 +25,10 @@ namespace Slab::Graphics {
         auto rect = slab_window.getViewport();
         auto flags = slab_window.getFlags();
 
-        fix should_clear    = !(flags & SlabWindow::DontClear);
+        fix should_clear    = false;!(flags & SlabWindow::DontClear);
         fix should_decorate = !(flags & SlabWindow::NoDecoration);
 
-        fix title_height = should_decorate ? Graphics::title_bar_height : 0;
+        fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
         fix borders_size = should_decorate ? Graphics::border_size : 0;
 
         auto x = rect.xMin - borders_size,
@@ -93,8 +96,8 @@ namespace Slab::Graphics {
             {
                 glVertex2d(x, y);
                 glVertex2d(x+w, y);
-                glVertex2d(x+w, y+title_bar_height);
-                glVertex2d(x, y+title_bar_height);
+                glVertex2d(x+w, y + Title_Height);
+                glVertex2d(x, y + Title_Height);
             }
             glEnd();
 
@@ -111,7 +114,7 @@ namespace Slab::Graphics {
 
             fix h_font = writer.getFontHeightInPixels();
             auto color = Color(32./255,32./255,32./255, 1);
-            writer.write(slab_window.getTitle(), {(Real)x+20, syswin_h-(Real)y - .8*h_font}, color);
+            writer.write(slab_window.getTitle(), {(Real)x+Graphics::font_size/2, syswin_h-(Real)y - h_font}, color);
         }
     }
 
@@ -126,17 +129,17 @@ namespace Slab::Graphics {
         fix rect = window.getViewport();
 
         auto x_full = rect.xMin - Graphics::border_size,
-             y_full = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
+             y_full = rect.yMin - Graphics::border_size - Title_Height,
              w_full = rect.width()  + 2*Graphics::border_size;
 
-        return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Graphics::title_bar_height;    }
+        return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Title_Height;    }
 
     bool Decorator::isMouseOverCorner(const SlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
         auto x_full = rect.xMin - Graphics::border_size,
-                y_full = rect.yMin - Graphics::border_size - Graphics::title_bar_height,
-                h_full = rect.height() + 2*Graphics::border_size + Graphics::title_bar_height,
+                y_full = rect.yMin - Graphics::border_size - Title_Height,
+                h_full = rect.height() + 2*Graphics::border_size + Title_Height,
                 w_full = rect.width()  + 2*Graphics::border_size;
 
         return x_mouse>x_full+w_full-corner_size

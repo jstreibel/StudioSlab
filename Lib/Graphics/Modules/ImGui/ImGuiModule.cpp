@@ -21,11 +21,14 @@
 #include "ImGuiModuleGLUT.h"
 #include "ImGuiModuleGLFW.h"
 
+#include "Graphics/Window/WindowStyles.h"
+
 // Touch
 fix FONT_INDEX_FOR_IMGUI = 10; //6;
-fix FONT_SIZE_PIXELS = 20.0f;
 
 namespace Slab::Graphics {
+
+#define FONT_SIZE_PIXELS Slab::Graphics::font_size
 
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707

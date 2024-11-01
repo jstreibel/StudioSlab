@@ -13,7 +13,7 @@ namespace Slab::Graphics {
 
     extern int tiling_gap;
 
-    extern int title_bar_height;
+    extern int font_size;
     extern Color titlebar_color;
 
     extern int border_size;

@@ -138,7 +138,7 @@ namespace Slab::Graphics {
 
             if(grabbed.what == Grabbed::Titlebar) {
                 fix x_min = -grabbed.window->getw() + 200;
-                fix y_min = -menu_height+title_bar_height-tiling_gap;
+                fix y_min = -menu_height + font_size - tiling_gap;
 
                 fix x_max = w_system_window-200;
                 fix y_max = h_system_window-200;
@@ -197,8 +197,8 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyRender() {
         for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
             auto mouse = GetGraphicsBackend().getMouseState();
-            decorator.decorate(*slab_window->window, mouse.x, mouse.y);
             slab_window->window->draw();
+            decorator.decorate(*slab_window->window, mouse.x, mouse.y);
         }
 
         return true;

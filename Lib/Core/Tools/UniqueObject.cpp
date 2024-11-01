@@ -13,7 +13,7 @@ namespace Slab::Core {
     }
 
     Str UniqueObject::unique(const Str& str) const {
-        return str + ToStr(id);
+        return str + "##" + ToStr(id);
     }
 
     Id UniqueObject::get_id() const {
