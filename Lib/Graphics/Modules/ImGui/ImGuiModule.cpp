@@ -159,7 +159,7 @@ namespace Slab::Graphics {
             }
 
             if(ImGui::BeginMenu("Style")) {
-                if(ImGui::BeginMenu("GUI")) {
+                if(ImGui::BeginMenu("ImGui")) {
                     for(const auto& theme : colorThemes) {
                         if (ImGui::MenuItem(theme.first.c_str(), nullptr,
                                             theme.first==currentTheme)) {

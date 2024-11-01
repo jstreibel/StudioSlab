@@ -25,7 +25,7 @@ namespace Slab::Graphics::OpenGL {
             : vertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
               program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
 
-        auto factor = ptSize/10;
+        auto factor = int(ceil(ptSize/30.));
 
         atlas = texture_atlas_new(factor*512, factor*512, 1);
         font = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
