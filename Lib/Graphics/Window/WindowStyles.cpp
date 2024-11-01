@@ -24,4 +24,6 @@ namespace Slab::Graphics {
     // Color clearColor = {0.9, 0.9, 0.85, 1};
     // Color windowBGColor = {246/255., 245/255., 244/255., 1};
     Color windowBGColor = {192/255., 181/255., 181/255., 1};
+
+    Color sysWindowBGColor = {21./255,34./255,51./255};
 }

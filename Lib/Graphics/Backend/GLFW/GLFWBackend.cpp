@@ -13,6 +13,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/SlabGraphics.h"
 #include "GLFWSystemWindow.h"
+#include "Graphics/Window/WindowStyles.h"
 
 namespace Slab::Graphics {
 
@@ -92,9 +93,8 @@ namespace Slab::Graphics {
     void GLFWBackend::mainLoop() {
 
         while (!glfwWindowShouldClose(systemWindow) && !finishFlag) {
-            // glClearColor((GLclampf)r, (GLclampf)g, (GLclampf)b, 1.f);
-            glClearColor(0.25f, .25f, .35f, 1.f);
-            // glClearColor(0.75f,.75f, .65f, 1.f);
+            auto clear_color = Graphics::sysWindowBGColor;
+            glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             auto window = systemWindow;

@@ -16,11 +16,16 @@ namespace Slab::Graphics {
 
         OpenGL::WriterOpenGL writer;
 
+        void setup();
+
     public:
         Decorator();
 
         virtual
-        void decorate(const SlabWindow&, int x_mouse, int y_mouse);
+        void begin_decoration(const SlabWindow&, int x_mouse, int y_mouse);
+
+        virtual
+        void finish_decoration(const SlabWindow&, int x_mouse, int y_mouse);
 
         void setSystemWindowShape(int w, int h);
 
@@ -32,6 +37,8 @@ namespace Slab::Graphics {
 
         virtual
         bool isMouseOverGrabRegion(const SlabWindow&, int x_mouse, int y_mouse);
+
+        int titlebar_height();
     };
 
 } // Slab::Graphics

@@ -23,6 +23,7 @@ namespace Slab::Graphics {
     extern int menu_height;
 
     extern Color windowBGColor;
+    extern Color sysWindowBGColor;
 
 
 }

@@ -21,21 +21,7 @@ namespace Slab::Graphics {
 
     }
 
-    void Decorator::decorate(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
-        auto rect = slab_window.getViewport();
-        auto flags = slab_window.getFlags();
-
-        fix should_clear    = false;!(flags & SlabWindow::DontClear);
-        fix should_decorate = !(flags & SlabWindow::NoDecoration);
-
-        fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
-        fix borders_size = should_decorate ? Graphics::border_size : 0;
-
-        auto x = rect.xMin - borders_size,
-             y = rect.yMin - borders_size - title_height,
-             w = rect.width()  + 2*borders_size,
-             h = rect.height() + 2*borders_size + title_height;
-
+    void Decorator::setup() {
         // SETUP
         glViewport(0, 0, syswin_w, syswin_h);
 
@@ -55,67 +41,101 @@ namespace Slab::Graphics {
         glLoadIdentity();
 
         OpenGL::Legacy::SetupOrtho({0, (Real)syswin_w, (Real)syswin_h, 0});
+    }
+
+    void Decorator::begin_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
+        auto flags = slab_window.getFlags();
+        fix should_clear    = !(flags & SlabWindow::DontClear);
+        fix should_decorate = !(flags & SlabWindow::NoDecoration);
+
+        if(!should_clear) return;
+
+        fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
+        fix borders_size = should_decorate ? Graphics::border_size : 0;
+
+        setup();
+
+        auto rect = slab_window.getViewport();
+        auto x = rect.xMin - borders_size,
+             y = rect.yMin - borders_size - title_height,
+             w = rect.width()  + 2*borders_size,
+             h = rect.height() + 2*borders_size + title_height;
 
         // *** CLEAR ***********************************
-        if(should_clear) {
-            auto &bg = Graphics::windowBGColor;
+        auto &bg = Graphics::windowBGColor;
 
-            glBegin(GL_QUADS);
-            {
-                glColor4d(bg.r, bg.g, bg.b, bg.a);
-                glVertex2d(x, y);
-                glVertex2d(x+w, y);
-                glVertex2d(x+w, y+h);
-                glVertex2d(x, y+h);
-            }
-            glEnd();
+        glBegin(GL_QUADS);
+        {
+            glColor4d(bg.r, bg.g, bg.b, bg.a);
+            glVertex2d(x, y);
+            glVertex2d(x+w, y);
+            glVertex2d(x+w, y+h);
+            glVertex2d(x, y+h);
         }
+        glEnd();
+    }
+
+    void Decorator::finish_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
+        auto flags = slab_window.getFlags();
+        fix should_decorate = !(flags & SlabWindow::NoDecoration);
+
+        if(!should_decorate) return;
+
+        fix title_height = Title_Height; // // 34 = 24x => x=34/24
+        fix borders_size = Graphics::border_size;
+
+        auto rect = slab_window.getViewport();
+        auto x = rect.xMin - borders_size,
+             y = rect.yMin - borders_size - title_height,
+             w = rect.width()  + 2*borders_size,
+             h = rect.height() + 2*borders_size + title_height;
+
+        setup();
 
         // *** DECORATE ********************************
-        if(should_decorate) {
-            glLineWidth(2.0f);
 
-            // *** Borders ***
-            glBegin(GL_LINE_LOOP);
-            {
-                auto bc = slab_window.isActive() ? Graphics::windowBorderColor_active
-                                                 : Graphics::windowBorderColor_inactive;
+        glLineWidth(2.0f);
 
-                glColor4fv(bc.asFloat4fv());
+        // *** Borders ***
+        glBegin(GL_LINE_LOOP);
+        {
+            auto bc = slab_window.isActive() ? Graphics::windowBorderColor_active
+                                             : Graphics::windowBorderColor_inactive;
 
-                glVertex2d(x, y);
-                glVertex2d(x+w, y);
-                glVertex2d(x+w, y+h);
-                glVertex2d(x, y+h);
-            }
-            glEnd();
+            glColor4fv(bc.asFloat4fv());
 
-            // *** Title bar ***
-            glColor4fv(Graphics::titlebar_color.asFloat4fv());
-            glBegin(GL_QUADS);
-            {
-                glVertex2d(x, y);
-                glVertex2d(x+w, y);
-                glVertex2d(x+w, y + Title_Height);
-                glVertex2d(x, y + Title_Height);
-            }
-            glEnd();
-
-            // *** Resize ***
-            if(isMouseOverCorner(slab_window, x_mouse, y_mouse)) {
-                glBegin(GL_TRIANGLES);
-                {
-                    glVertex2d(x + w - corner_size, y + h);
-                    glVertex2d(x + w, y + h);
-                    glVertex2d(x + w, y + h - corner_size);
-                }
-                glEnd();
-            }
-
-            fix h_font = writer.getFontHeightInPixels();
-            auto color = Color(32./255,32./255,32./255, 1);
-            writer.write(slab_window.getTitle(), {(Real)x+Graphics::font_size/2, syswin_h-(Real)y - h_font}, color);
+            glVertex2d(x, y);
+            glVertex2d(x+w, y);
+            glVertex2d(x+w, y+h);
+            glVertex2d(x, y+h);
         }
+        glEnd();
+
+        // *** Title bar ***
+        glColor4fv(Graphics::titlebar_color.asFloat4fv());
+        glBegin(GL_QUADS);
+        {
+            glVertex2d(x, y);
+            glVertex2d(x+w, y);
+            glVertex2d(x+w, y + Title_Height);
+            glVertex2d(x, y + Title_Height);
+        }
+        glEnd();
+
+        // *** Resize ***
+        if(isMouseOverCorner(slab_window, x_mouse, y_mouse)) {
+            glBegin(GL_TRIANGLES);
+            {
+                glVertex2d(x + w - corner_size, y + h);
+                glVertex2d(x + w, y + h);
+                glVertex2d(x + w, y + h - corner_size);
+            }
+            glEnd();
+        }
+
+        fix h_font = writer.getFontHeightInPixels();
+        auto color = Color(32./255,32./255,32./255, 1);
+        writer.write(slab_window.getTitle(), {(Real)x+Graphics::font_size/2, syswin_h-(Real)y - h_font}, color);
     }
 
     void Decorator::setSystemWindowShape(int w, int h) {
@@ -138,9 +158,9 @@ namespace Slab::Graphics {
         fix rect = window.getViewport();
 
         auto x_full = rect.xMin - Graphics::border_size,
-                y_full = rect.yMin - Graphics::border_size - Title_Height,
-                h_full = rect.height() + 2*Graphics::border_size + Title_Height,
-                w_full = rect.width()  + 2*Graphics::border_size;
+             y_full = rect.yMin - Graphics::border_size - Title_Height,
+             h_full = rect.height() + 2*Graphics::border_size + Title_Height,
+             w_full = rect.width()  + 2*Graphics::border_size;
 
         return x_mouse>x_full+w_full-corner_size
             && x_mouse<x_full+w_full
@@ -150,6 +170,10 @@ namespace Slab::Graphics {
 
     bool Decorator::isMouseOverGrabRegion(const SlabWindow &window, int x_mouse, int y_mouse) {
         return isMouseOverTitlebar(window, x_mouse, y_mouse) || isMouseOverCorner(window, x_mouse, y_mouse);
+    }
+
+    int Decorator::titlebar_height() {
+        return Title_Height;
     }
 
 
