@@ -12,9 +12,7 @@
 namespace Slab {
 
     void
-    Graphics::FunctionRenderer::renderFunction(const RtoR::NumericFunction &func, Color c, bool filled, Real scale) {
-        const Real xMin = func.xMin,
-                xMax = func.xMax;
+    Graphics::FunctionRenderer::renderFunction(const RtoR::NumericFunction &func, Color c, bool filled, Real xMin, Real xMax, Real scale) {
         const int N = func.N;
 
         renderFunction(func, c, filled, xMin, xMax, N, scale);

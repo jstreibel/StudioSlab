@@ -15,7 +15,7 @@ namespace Slab::Math::RtoR {
                                                  toCopy.laplacianType) {}
 
     NumericFunction::NumericFunction(UInt N, Real xMin, Real xMax, Device dev, LaplacianType laplacianType)
-    : Base::NumericFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N)}),
+    : Base::NumericFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N-1)}),
                                         dev)
     , N(N)
     , xMin(xMin)
@@ -37,9 +37,11 @@ namespace Slab::Math::RtoR {
 
     Real NumericFunction::operator()(Real x) const {
         const floatt L = xMax - xMin;
+        const floatt dx = getSpace().getMetaData().geth(0);
 
         // TODO: fazer essa conversao um pouco mais consciente.
-        int n = int(floor((N - 1) * (x - xMin) / L));
+        // int n = int(floor((N - 1) * (x - xMin) / L));
+        int n = int(floor((N - 1) * (x+.5*dx - xMin) / L));
 
         // TODO: fazer uma macro para colocar o que esta na linha logo abaixo, de forma que no modo Release isso
         //  nao seja incluido no codigo.

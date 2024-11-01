@@ -34,7 +34,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 
         for(int i=cutoff_x; i<N-cutoff_x; ++i) {
             for(int j=cutoff_y; j<M-cutoff_y; ++j)
-                field->At(i, j) = Slab::RandUtils::RandomUniformReal(-.125,.125);
+                field->At(i, j) = Slab::RandUtils::RandomUniformReal(-.125, .125);
         }
     }
 
@@ -58,7 +58,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
 }
 
 int run(int argc, const char **argv) {
-    constexpr auto max_steps = 1000000;
+    constexpr unsigned long max_steps = -1;
     auto mc_recipe = Slab::New<Slab::Math::R2toRMetropolisRecipe>(max_steps);
     Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
 

@@ -37,8 +37,8 @@ namespace Slab::Math {
     auto RtoRMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
-            fix t=1.6                                       ; ///(Real(N)/Real(M));
-            fix N=30;
+            fix t=2.;
+            fix N=21;
 
             field_data = New<RtoR::NumericFunction_CPU>(N, t_min, t_min+t);
         }
@@ -63,8 +63,8 @@ namespace Slab::Math {
     Pointer<Stepper> RtoRMetropolisRecipe::buildStepper() {
         RtoRMetropolisSetup setup;
 
-        Temperature T=0;
-        constexpr auto δϕₘₐₓ = 1e1;
+        Temperature T=0.0001;
+        constexpr auto δϕₘₐₓ = 5e-3;
 
         auto field = getField();
 

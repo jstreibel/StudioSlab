@@ -26,6 +26,7 @@ namespace Slab::Graphics {
 
         auto graphRect = d.getRegion().getRect();
         OpenGL::Legacy::SetupOrtho(graphRect);
+
         Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
                                                    graphRect.xMax, samples, 1);
 

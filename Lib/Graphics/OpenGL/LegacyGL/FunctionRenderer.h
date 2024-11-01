@@ -23,7 +23,7 @@ namespace Slab::Graphics {
     public:
 
         static void renderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
-                                             Real scale = 1.0);
+                                             Real xMin, Real xMax, Real scale = 1.0);
         static void renderFunction(          const RtoR::Function &func, Color c, bool filled,
                                              Real xMin, Real xMax, UInt resolution, Real scale = 1.0);
         static void renderFunction(          const R2toR::Function &func, Real xMin, Real yMin,

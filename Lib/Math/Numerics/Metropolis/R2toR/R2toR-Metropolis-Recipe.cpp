@@ -29,21 +29,21 @@ namespace Slab::Math {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
-        console_monitor->setnSteps((int)100);
+        console_monitor->setnSteps((int)1000);
 
         return {console_monitor};
     }
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix x_min=-1.2, y_min=0.;
-            fix Lx=-2*x_min, Ly=4.; ///(Real(N)/Real(M));
-            fix N=10, M=N*int(Real(Ly)/Lx);
+            fix x_min=-.5, y_min=0.;
+            fix L=-2*x_min, t=2.; ///(Real(N)/Real(M));
+            fix N=10, M=40;
 
             field_data = DataAlloc<R2toR::NumericFunction_CPU>("Stochastic field",
                                                                N, M,
                                                                x_min, y_min,
-                                                               Lx/Real(N), Ly/Real(M));
+                                                               L/Real(N), t/Real(M));
         }
 
         return field_data;
@@ -52,13 +52,14 @@ namespace Slab::Math {
     Pointer<Stepper> R2toRMetropolisRecipe::buildStepper() {
         R2toRMetropolisSetup setup;
 
-        Temperature T=0;
-        constexpr auto δϕₘₐₓ = 1.25e-2;
+        Temperature T=0.1;
+        constexpr auto δϕₘₐₓ = 1e-3;
 
         auto field = getField();
 
         auto acceptance_thermal = [T](Real ΔE) {
-            return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
+            auto rand = RandUtils::RandomUniformReal01;
+            return rand() < Min(1.0, exp(-ΔE / T));
         };
 
         auto acceptance_action = [](Real Δ_δSδϕ) {
@@ -75,7 +76,7 @@ namespace Slab::Math {
             return RandUtils::RandomUniformReal(old_val-δϕₘₐₓ, old_val+δϕₘₐₓ);
         };
 
-        auto Δ_δSδϕ          = [field](RandomSite site, NewValue new_val) {
+        setup.Δ_δSδϕ = [field](RandomSite site, NewValue new_val) {
             fix i = site.i;
             fix n = site.j;
 
@@ -96,63 +97,69 @@ namespace Slab::Math {
 
             auto N = field->getN();
             auto M = field->getM();
+
             Vector<RandomSite> affected_sites = {{i, n}};
 
-            if(i==1)        affected_sites.push_back({i + 1, n});
-            else if(i==N-2) affected_sites.push_back({i - 1, n});
-            else {          affected_sites.push_back({i + 1, n});
-                            affected_sites.push_back({i - 1, n});
+            if(0) {
+                affected_sites.push_back({i + 1, n});
+                affected_sites.push_back({i - 1, n});
+                affected_sites.push_back({i, n - 1});
+                affected_sites.push_back({i, n + 1});
+            } else {
+                if      (i == 1    ) affected_sites.push_back({i + 1, n});
+                else if (i == N - 2) affected_sites.push_back({i - 1, n});
+                else {
+                    affected_sites.push_back({i + 1, n});
+                    affected_sites.push_back({i - 1, n});
+                }
+                if (n == 1) affected_sites.push_back({i, n + 1});
+                else if (n == M - 2) affected_sites.push_back({i, n - 1});
+                else {
+                    affected_sites.push_back({i, n - 1});
+                    affected_sites.push_back({i, n + 1});
+                }
             }
-
-            if(n==1)        affected_sites.push_back({i, n + 1});
-            else if(n==M-2) affected_sites.push_back({i, n - 1});
-            else {          affected_sites.push_back({i, n - 1});
-                            affected_sites.push_back({i, n + 1});
-            }
-
-            auto compute_δSδϕ = [affected_sites, Δx2, Δt2, ϕ](Real &δSδϕ) {
-                constexpr auto sign = Slab::Math::SIGN<Real>;
+            constexpr auto sign = Slab::Math::SIGN<Real>;
+            auto compute_δSδϕ2 = [affected_sites, Δx2, Δt2, ϕ]() {
+                Real δSδϕ2 = .0;
 
                 for(auto s : affected_sites) {
                     fix iₗ = s.i;
                     fix nₗ = s.j;
 
-                    δSδϕ += sqr((ϕ(iₗ  , nₗ + 1) - 2. * ϕ(iₗ, nₗ) + ϕ(iₗ  , nₗ - 1)) / Δt2
-                              - (ϕ(iₗ + 1, nₗ  ) - 2. * ϕ(iₗ, nₗ) + ϕ(iₗ - 1, nₗ  )) / Δx2
-                              + sign(ϕ(iₗ, nₗ)));
+                    δSδϕ2 += sqr((ϕ(iₗ  , nₗ+1) - 2.*ϕ(iₗ, nₗ) + ϕ(iₗ  , nₗ-1)) / Δt2
+                                 - (ϕ(iₗ+1, nₗ  ) - 2.*ϕ(iₗ, nₗ) + ϕ(iₗ-1, nₗ  )) / Δx2
+                                 + sign(ϕ(iₗ, nₗ)));
                 }
+
+                return δSδϕ2;
             };
 
-            auto δSδϕ_old = .0;
-            compute_δSδϕ(δSδϕ_old);
-
+            auto δSδϕ2_old = compute_δSδϕ2();
             field->At(i,n) = φ;
-            auto δSδϕ_new = .0;
-            compute_δSδϕ(δSδϕ_new);
+            auto δSδϕ2_new = compute_δSδϕ2();
             field->At(i,n) = ϕₒₗ;
 
-            return sqrt(δSδϕ_new-δSδϕ_old)*ΔxΔt;
+            return δSδϕ2_new-δSδϕ2_old;
         };
 
-        setup.Δ_δSδϕ = Δ_δSδϕ;
+        setup.sample_locations = [field](){
+            constexpr auto h_border_size = 1;
+            constexpr auto v_border_size = 1; // zero means periodic
 
-        fix h_border_size = 0; //field->getN()/4;
-        fix v_border_size = 1; //field->getM()/4;;
-
-        setup.sample_locations = [field,h_border_size,v_border_size](){
+            static_assert(h_border_size<=1);
+            static_assert(v_border_size<=1);
 
             Vector<RandomSite> sites(field->getN()*field->getM());
 
             for(OUT site : sites)
-                site = {h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2 * h_border_size),
-                        v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2 * v_border_size)};
+                site = {h_border_size + RandUtils::RandomUniformUInt() % (field->getN() - 2*h_border_size),
+                        v_border_size + RandUtils::RandomUniformUInt() % (field->getM() - 2*v_border_size)};
 
             return sites;
         };
 
-        setup.modify = [field](RandomSite site, NewValue value){
-            field->At(site.i, site.j) = value;
-        };
+        setup.modify = [field](RandomSite site, NewValue value){ field->At(site.i, site.j) = value; };
 
         auto metropolis = New<R2toRMetropolis>(setup);
 
