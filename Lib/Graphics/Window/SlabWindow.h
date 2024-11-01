@@ -50,7 +50,7 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit SlabWindow(Config c={"", Graphics::default_window_rect, 0x0});
+        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0});
 
         virtual ~SlabWindow();
 

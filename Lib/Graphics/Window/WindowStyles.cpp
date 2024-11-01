@@ -4,7 +4,7 @@
 
 #include "WindowStyles.h"
 
-namespace Slab::Graphics {
+namespace Slab::Graphics::WindowStyle {
     RectI default_window_rect(200, 1000, 200, 750);
 
     int tiling_gap = 3;

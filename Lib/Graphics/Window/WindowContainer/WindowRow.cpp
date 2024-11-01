@@ -33,7 +33,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 namespace Slab::Graphics {
 
     WindowRow::WindowRow(Str title, Int flags)
-            : SlabWindow({title, Graphics::default_window_rect, flags}) {
+            : SlabWindow({title, WindowStyle::default_window_rect, flags}) {
 
     }
 
@@ -97,7 +97,7 @@ namespace Slab::Graphics {
         else if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relWidth = widths[i];
-                auto width = geth() * relWidth - 2*Graphics::tiling_gap;
+                auto width = geth() * relWidth - 2*WindowStyle::tiling_gap;
                 computedWidths[i] = (int) width;
             }
         } else /*if (freeWidths != m)*/ {
@@ -120,14 +120,14 @@ namespace Slab::Graphics {
             }
 
             for (int i = 0; i < m; ++i) {
-                computed_xPositions[i] += Graphics::tiling_gap;
-                computedWidths[i]      -= Graphics::tiling_gap;
+                computed_xPositions[i] += WindowStyle::tiling_gap;
+                computedWidths[i]      -= WindowStyle::tiling_gap;
             }
         }
 
         auto i = 0;
-        fix y = gety() + Graphics::tiling_gap;
-        fix h = geth()-Graphics::tiling_gap;
+        fix y = gety() + WindowStyle::tiling_gap;
+        fix h = geth() - WindowStyle::tiling_gap;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 

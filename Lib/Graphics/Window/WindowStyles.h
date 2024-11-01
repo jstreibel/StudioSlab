@@ -8,7 +8,7 @@
 #include "Graphics/Styles/Colors.h"
 #include "Graphics/Types2D.h"
 
-namespace Slab::Graphics {
+namespace Slab::Graphics::WindowStyle {
     extern RectI default_window_rect;
 
     extern int tiling_gap;

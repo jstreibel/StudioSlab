@@ -6,15 +6,12 @@
 
 #include <memory>
 
-#include "Utils/Utils.h"
-
 #include "Core/Tools/Resources.h"
 
 #include "3rdParty/ImGui.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Core/SlabCore.h"
-#include "Graphics/Window/WindowStyles.h"
 
 #define FILLED true
 #define NOT_FILLED false
@@ -186,7 +183,7 @@ namespace Slab::Graphics {
 
         auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 17);
 
-        Graphics::windowBGColor = {};
+        WindowStyle::windowBGColor = {};
 
         return New<PlottingTheme>(PlottingTheme
                 {background, graphNumbersColor, graphTitleColor, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,
@@ -360,9 +357,9 @@ namespace Slab::Graphics {
     }
 
     GraphTheme_ptr GetSchemeElegant() {
-        Graphics::windowBGColor = {.9, .9, .93, 1};
-        Graphics::windowBorderColor_inactive = {0.2,0.2,0.2,1};
-        Graphics::windowBorderColor_active   = {0. ,0. ,0. ,1};
+        WindowStyle::windowBGColor = {.9, .9, .93, 1};
+        WindowStyle::windowBorderColor_inactive = {0.2,0.2,0.2,1};
+        WindowStyle::windowBorderColor_active   = {0. ,0. ,0. ,1};
 
         Color graphTitleFont = {0,0,0,1};
         Color graphTicksFont = {0,0,0,1};

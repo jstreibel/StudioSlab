@@ -5,7 +5,6 @@
 #include "Graphics/OpenGL/OpenGL.h"
 
 #include "Decorator.h"
-#include "Graphics/OpenGL/Shader.h"
 #include "WindowStyles.h"
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Core/Tools/Resources.h"
@@ -14,10 +13,10 @@ namespace Slab::Graphics {
     constexpr int corner_size = 20;
 
 
-    #define Title_Height (int(Graphics::font_size*5./3))
+    #define Title_Height (int(WindowStyle::font_size*5./3))
 
     // Fontes candidatas: 9, 13, 14
-    Decorator::Decorator() : writer(Core::Resources::fontFileName(10), (float)Graphics::font_size) {
+    Decorator::Decorator() : writer(Core::Resources::fontFileName(10), (float)WindowStyle::font_size) {
 
     }
 
@@ -51,7 +50,7 @@ namespace Slab::Graphics {
         if(!should_clear) return;
 
         fix title_height = should_decorate ? Title_Height : 0; // // 34 = 24x => x=34/24
-        fix borders_size = should_decorate ? Graphics::border_size : 0;
+        fix borders_size = should_decorate ? WindowStyle::border_size : 0;
 
         setup();
 
@@ -62,7 +61,7 @@ namespace Slab::Graphics {
              h = rect.height() + 2*borders_size + title_height;
 
         // *** CLEAR ***********************************
-        auto &bg = Graphics::windowBGColor;
+        auto &bg = WindowStyle::windowBGColor;
 
         glBegin(GL_QUADS);
         {
@@ -82,7 +81,7 @@ namespace Slab::Graphics {
         if(!should_decorate) return;
 
         fix title_height = Title_Height; // // 34 = 24x => x=34/24
-        fix borders_size = Graphics::border_size;
+        fix borders_size = WindowStyle::border_size;
 
         auto rect = slab_window.getViewport();
         auto x = rect.xMin - borders_size,
@@ -99,8 +98,8 @@ namespace Slab::Graphics {
         // *** Borders ***
         glBegin(GL_LINE_LOOP);
         {
-            auto bc = slab_window.isActive() ? Graphics::windowBorderColor_active
-                                             : Graphics::windowBorderColor_inactive;
+            auto bc = slab_window.isActive() ? WindowStyle::windowBorderColor_active
+                                             : WindowStyle::windowBorderColor_inactive;
 
             glColor4fv(bc.asFloat4fv());
 
@@ -112,7 +111,7 @@ namespace Slab::Graphics {
         glEnd();
 
         // *** Title bar ***
-        glColor4fv(Graphics::titlebar_color.asFloat4fv());
+        glColor4fv(WindowStyle::titlebar_color.asFloat4fv());
         glBegin(GL_QUADS);
         {
             glVertex2d(x, y);
@@ -135,7 +134,7 @@ namespace Slab::Graphics {
 
         fix h_font = writer.getFontHeightInPixels();
         auto color = Color(32./255,32./255,32./255, 1);
-        writer.write(slab_window.getTitle(), {(Real)x+Graphics::font_size/2, syswin_h-(Real)y - h_font}, color);
+        writer.write(slab_window.getTitle(), {(Real)x+WindowStyle::font_size/2, syswin_h-(Real)y - h_font}, color);
     }
 
     void Decorator::setSystemWindowShape(int w, int h) {
@@ -148,19 +147,19 @@ namespace Slab::Graphics {
     bool Decorator::isMouseOverTitlebar(const SlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
-        auto x_full = rect.xMin - Graphics::border_size,
-             y_full = rect.yMin - Graphics::border_size - Title_Height,
-             w_full = rect.width()  + 2*Graphics::border_size;
+        auto x_full = rect.xMin - WindowStyle::border_size,
+             y_full = rect.yMin - WindowStyle::border_size - Title_Height,
+             w_full = rect.width()  + 2*WindowStyle::border_size;
 
         return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Title_Height;    }
 
     bool Decorator::isMouseOverCorner(const SlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
-        auto x_full = rect.xMin - Graphics::border_size,
-             y_full = rect.yMin - Graphics::border_size - Title_Height,
-             h_full = rect.height() + 2*Graphics::border_size + Title_Height,
-             w_full = rect.width()  + 2*Graphics::border_size;
+        auto x_full = rect.xMin - WindowStyle::border_size,
+             y_full = rect.yMin - WindowStyle::border_size - Title_Height,
+             h_full = rect.height() + 2*WindowStyle::border_size + Title_Height,
+             w_full = rect.width()  + 2*WindowStyle::border_size;
 
         return x_mouse>x_full+w_full-corner_size
             && x_mouse<x_full+w_full

@@ -93,7 +93,7 @@ namespace Slab::Graphics {
     void GLFWBackend::mainLoop() {
 
         while (!glfwWindowShouldClose(systemWindow) && !finishFlag) {
-            auto clear_color = Graphics::sysWindowBGColor;
+            auto clear_color = WindowStyle::sysWindowBGColor;
             glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 

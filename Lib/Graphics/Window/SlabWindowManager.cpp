@@ -29,10 +29,10 @@ namespace Slab::Graphics {
 
         if(key==Key_F11 && state==Release){
             if(focused->is_full_screen) {
-                fix w = default_window_rect.width();
-                fix h = default_window_rect.height();
-                fix x = default_window_rect.xMin;
-                fix y = default_window_rect.yMin;
+                fix w = WindowStyle::default_window_rect.width();
+                fix h = WindowStyle::default_window_rect.height();
+                fix x = WindowStyle::default_window_rect.xMin;
+                fix y = WindowStyle::default_window_rect.yMin;
 
                 RectI rect_f = {x, x+w, y, y+h};
                 RectI rect_0 = focused->window->config.win_rect;
@@ -60,9 +60,9 @@ namespace Slab::Graphics {
                 focused->is_full_screen = false;
             } else  {
                 fix w = w_system_window;
-                fix h = h_system_window - Graphics::menu_height;
+                fix h = h_system_window - WindowStyle::menu_height;
                 fix x = 0;
-                fix y = Graphics::menu_height;
+                fix y = WindowStyle::menu_height;
 
                 RectI rect_f = {x, x+w, y, y+h};
                 RectI rect_0 = focused->window->config.win_rect;
@@ -138,7 +138,7 @@ namespace Slab::Graphics {
 
             if(grabbed.what == Grabbed::Titlebar) {
                 fix x_min = -grabbed.window->getw() + 200;
-                fix y_min = decorator.titlebar_height() + menu_height;
+                fix y_min = decorator.titlebar_height() + WindowStyle::menu_height;
 
                 fix x_max = w_system_window-200;
                 fix y_max = h_system_window-200;
@@ -186,8 +186,8 @@ namespace Slab::Graphics {
                 meta->is_full_screen = true;
                 slab_window->setDecorate(false);
                 slab_window->setx(0);
-                slab_window->sety(Graphics::menu_height);
-                slab_window->notifyReshape(w, h - Graphics::menu_height);
+                slab_window->sety(WindowStyle::menu_height);
+                slab_window->notifyReshape(w, h - WindowStyle::menu_height);
             }
         }
 

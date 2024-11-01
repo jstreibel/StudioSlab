@@ -28,7 +28,7 @@ fix FONT_INDEX_FOR_IMGUI = 10; //6;
 
 namespace Slab::Graphics {
 
-#define FONT_SIZE_PIXELS Slab::Graphics::font_size
+#define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
     // ** THEMES everybody **
     // https://github.com/ocornut/imgui/issues/707

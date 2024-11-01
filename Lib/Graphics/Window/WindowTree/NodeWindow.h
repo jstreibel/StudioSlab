@@ -28,7 +28,7 @@ namespace Slab::Graphics {
     public:
         friend WindowTreeBuilder;
 
-        NodeWindow(RectI window_rect = Graphics::default_window_rect);
+        NodeWindow(RectI window_rect = WindowStyle::default_window_rect);
 
         explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement = Horizontal);
 
