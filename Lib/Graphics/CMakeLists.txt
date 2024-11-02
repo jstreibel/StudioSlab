@@ -302,6 +302,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Backend/GLFW/GLFWSystemWindow.h
 		OpenGL/Images.cpp
 		OpenGL/Images.h
+        Utils/ImageLoad.cpp
+        Utils/ImageLoad.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

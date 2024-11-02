@@ -6,7 +6,7 @@
 #define STUDIOSLAB_TEST2DEFS_H
 
 #include "3rdParty/ImGui.h"
-// #include "3rdParty/imgui/imgui_internal.h"
+#include "3rdParty/imgui/imgui_internal.h"
 
 #include "utilities/drawing.h"
 #include "utilities/builders.h"
@@ -15,14 +15,7 @@
 
 #include <map>
 
-namespace Tests {
-
-    ImVec2 operator+(const ImVec2& a, const ImVec2& b) { return {a.x+b.x, a.y+b.y}; }
-
-    ImVec2 operator-(const ImVec2& a, const ImVec2& b) { return {a.x-b.x, a.y-b.y}; }
-
-    ImVec2 operator*(const ImVec2& a, const float&b) { return {b*a.x, b*a.y}; }
-
+namespace Tests::Blueprints {
     static inline ImRect ImGui_GetItemRect()
     {
         return ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
@@ -91,7 +84,7 @@ namespace Tests {
     struct Pin
     {
         ed::PinId   ID;
-        Tests::Node*     Node;
+        Blueprints::Node*     Node;
         std::string Name;
         PinType     Type;
         PinKind     Kind;

@@ -43,6 +43,7 @@ set ( IMGUI_SOURCE
 add_library(${THIRDPARTY_LIB_BASE_NAME}-Imgui STATIC ${IMGUI_SOURCE} ${IMGUI_NODE_EDITOR_SOURCE})
 target_include_directories(${THIRDPARTY_LIB_BASE_NAME}-Imgui PUBLIC imgui imgui-node-editor)
 add_compile_definitions(IMGUI_USE_WCHAR32)
+add_compile_definitions(IMGUI_DEFINE_MATH_OPERATORS)
 target_link_libraries(${THIRDPARTY_LIB_BASE_NAME}-Imgui freetype GLU)
 message(NOTICE "Added library ${THIRDPARTY_LIB_BASE_NAME}-Imgui" )
 

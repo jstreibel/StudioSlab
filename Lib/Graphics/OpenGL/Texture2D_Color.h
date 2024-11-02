@@ -18,6 +18,7 @@ namespace Slab::Graphics::OpenGL {
         ByteData_raw data = nullptr;
 
     public:
+
         Texture2D_Color(GLsizei width, GLsizei height);
 
         bool setColor(int i, int j, Color color);

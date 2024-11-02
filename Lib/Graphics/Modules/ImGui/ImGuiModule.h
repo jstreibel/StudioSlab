@@ -7,18 +7,23 @@
 
 #include "Core/Backend/Implementations.h"
 #include "Core/Backend/Modules/Module.h"
+
 #include "Graphics/Modules/GraphicsModule.h"
+
+#include "3rdParty/ImGui.h"
 
 namespace Slab::Graphics {
 
     class ImGuiModule : public GraphicsModule {
-        static void generalInitialization();
-        static void buildFonts();
+        void generalInitialization();
+        void buildFonts();
+
+        ImGuiContext *m_Context = nullptr;
 
     protected:
         bool showDemos = false;
 
-        static void finishInitialization();
+        void finishInitialization();
         explicit ImGuiModule();
         ~ImGuiModule() override;
 
@@ -28,6 +33,8 @@ namespace Slab::Graphics {
         void beginRender() override;
 
         void endRender() override;
+
+        ImGuiContext* getContext();
     };
 
 } // Core

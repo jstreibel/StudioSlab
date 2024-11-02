@@ -18,11 +18,11 @@ add_executable ( Tests
 		#Nodes/ImGuiNodesTest1.cpp
 		#Nodes/ImGuiNodesTest1.h
 
-		#Nodes/ImGuiNodesTest2.cpp
-		#Nodes/ImGuiNodesTest2.h
-		#Nodes/utilities/builders.cpp
-		#Nodes/utilities/drawing.cpp
-		#Nodes/utilities/widgets.cpp
+		Nodes/ImGuiNodesTest2.cpp
+		Nodes/ImGuiNodesTest2.h
+		Nodes/utilities/builders.cpp
+		Nodes/utilities/drawing.cpp
+		Nodes/utilities/widgets.cpp
 		#Nodes/utilities/layout.cpp
 		#Nodes/utilities/layout.h
 

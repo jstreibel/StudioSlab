@@ -47,7 +47,8 @@ namespace Slab::Graphics {
         // Setup Dear ImGui context
 
         IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
+
+        m_Context = ImGui::CreateContext();
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -109,6 +110,9 @@ namespace Slab::Graphics {
         if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
 
         ImFontConfig fontConfig;
+        fontConfig.OversampleH = 4;
+        fontConfig.OversampleV = 4;
+        fontConfig.PixelSnapH = false;
         auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), FONT_SIZE_PIXELS, &fontConfig, &vRanges[0]);
 
         io.FontDefault = font;
@@ -182,6 +186,10 @@ namespace Slab::Graphics {
 
     void ImGuiModule::endRender() {
         ImGui::Render();
+    }
+
+    ImGuiContext *ImGuiModule::getContext() {
+        return m_Context;
     }
 
 

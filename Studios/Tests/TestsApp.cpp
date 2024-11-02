@@ -20,6 +20,7 @@
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
+#include "Nodes/ImGuiNodesTest2.h"
 #include "Nodes/ImGuiNodesTest3.h"
 
 #define DONT_REGISTER false
@@ -75,8 +76,8 @@ int TestsApp::run() {
         //temp = New<Tests::ImGuiNodesTest1>();
         //wm->addSlabWindow(temp);
 
-        //temp = New<Tests::ImGuiNodesTest2>();
-        //wm->addSlabWindow(temp);
+        temp = New<Tests::Blueprints::ImGuiNodesTest2>();
+        wm->addSlabWindow(temp);
 
         temp = New<Tests::ImGuiNodesTest3>();
         wm->addSlabWindow(temp);

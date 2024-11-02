@@ -14,6 +14,7 @@
 
 
 namespace Slab::Graphics::OpenGL {
+
     Texture2D_Color::Texture2D_Color(GLsizei w, GLsizei h)
     : Texture2D(w, h, InternalFormat::RGBA)
     , data((ByteData_raw)malloc(w*h*4))
