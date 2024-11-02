@@ -35,8 +35,8 @@ namespace Tests::Blueprints {
             config.PixelSnapH = false;
 
             auto fonts_folder = Slab::Core::Resources::FontsFolder + "Blueprints/";
-            m_DefaultFont = io.Fonts->AddFontFromFileTTF((fonts_folder + "Play-Regular.ttf").c_str(), 18.0f, &config);
-            m_HeaderFont = io.Fonts->AddFontFromFileTTF((fonts_folder + "Cuprum-Bold.ttf").c_str(), 20.0f, &config);
+            io.Fonts->AddFontFromFileTTF((fonts_folder + "Play-Regular.ttf").c_str(), 18.0f, &config);
+            io.Fonts->AddFontFromFileTTF((fonts_folder + "Cuprum-Bold.ttf").c_str(), 20.0f, &config);
 
             // io.Fonts->Build();
         }

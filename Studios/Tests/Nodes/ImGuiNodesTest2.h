@@ -24,8 +24,6 @@ namespace Tests::Blueprints {
         // std::unique_ptr<Platform>   m_Platform;
         // std::unique_ptr<Renderer>   m_Renderer;
         ImGuiContext*               m_Context = nullptr;
-        ImFont*                     m_DefaultFont = nullptr;
-        ImFont*                     m_HeaderFont = nullptr;
 
         // From Blueprints example:
         int                  m_NextId = 1;
