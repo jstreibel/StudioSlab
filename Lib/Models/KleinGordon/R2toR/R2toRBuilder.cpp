@@ -82,12 +82,12 @@ namespace Slab::Math::R2toR {
 
         ///********************************************************************************************/
         if (shouldOutputOpenGL) {
-            auto &backend = Slab::Graphics::GetGraphicsBackend();
+            auto backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
             auto wm = New<Graphics::SlabWindowManager>();
             wm->addSlabWindow(glOut);
-            backend.addAndOwnEventListener(wm);
+            backend->addAndOwnEventListener(wm);
             sockets.emplace_back(glOut);
         } else {
             /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que

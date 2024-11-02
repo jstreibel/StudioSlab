@@ -58,7 +58,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
     wm->addSlabWindow(plot_window);
 
-    Slab::Graphics::GetGraphicsBackend().addAndOwnEventListener(wm);
+    Slab::Graphics::GetGraphicsBackend()->addAndOwnEventListener(wm);
 }
 
 int run(int argc, const char **argv) {
@@ -75,5 +75,5 @@ int run(int argc, const char **argv) {
 }
 
 int main(int argc, const char **argv) {
-    return Slab::Core::SafetyNet::jump(run, argc, argv);
+    return Slab::SafetyNet::jump(run, argc, argv);
 }

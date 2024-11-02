@@ -22,12 +22,12 @@ namespace Slab::Models::MolecularDynamics {
     #define SHOW_DOT false
     #define SHOW_RADIUS true
 
-    #define SFML_Backend dynamic_cast<Graphics::SFMLBackend&>(Slab::Graphics::GetGraphicsBackend())
+    #define SFML_Backend DynamicPointerCast<Graphics::SFMLBackend>(Slab::Graphics::GetGraphicsBackend())
 
     Monitor::Monitor(const Pointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
     , SlabWindow()
-    , renderWindow(SFML_Backend.getRenderWindow())
+    , renderWindow(SFML_Backend->getRenderWindow())
     , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()

@@ -39,7 +39,7 @@ namespace Slab {
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
         auto elRet = SlabWindow::notifyMouseMotion(x, y);
 
-        auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
+        auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
 
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();

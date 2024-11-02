@@ -49,7 +49,7 @@ namespace Slab::Graphics {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
-        fix syswin_h = GetGraphicsBackend().getSystemWindowHeight();
+        fix syswin_h = GetGraphicsBackend()->getSystemWindowHeight();
         fix vp = getViewport();
         //// y_opengl = windowHeight - y_top_left - viewportHeight
         fix x = vp.xMin;
@@ -62,9 +62,9 @@ namespace Slab::Graphics {
     }
 
     auto SlabWindow::isMouseIn() const -> bool {
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        fix &mouse = guiBackend.getMouseState();
+        fix &mouse = guiBackend->getMouseState();
 
         auto rect = getViewport();
 
@@ -112,9 +112,9 @@ namespace Slab::Graphics {
     }
 
     auto SlabWindow::getMouseViewportCoord() const -> Point2D {
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        fix &mouse = guiBackend.getMouseState();
+        fix &mouse = guiBackend->getMouseState();
         auto vpRect = getViewport();
 
         fix xMouseLocal = mouse.x - vpRect.xMin;

@@ -12,19 +12,19 @@
 
 namespace Slab::Core {
     Str BackendManager::backend_name = "Uninitialized";
-    std::unique_ptr<Backend> BackendManager::instance = nullptr;
+    std::shared_ptr<Backend> BackendManager::instance = nullptr;
 
     Map<ModuleName, ModuleAllocator> BackendManager::availableModules{};
     Map<ModuleName , std::shared_ptr<Module>> BackendManager::loadedModules{};
     Map<BackendName, BackendAllocator> BackendManager::availableBackends{};
 
-    Backend&  BackendManager::GetBackend() {
+    Pointer<Backend>  BackendManager::GetBackend() {
         if (!BackendManager::instance) {
             BackendManager::Startup("Headless");
             Log::Info() << "Backend initializing to default headless backend." << Log::Flush;
         };
 
-        return *BackendManager::instance;
+        return BackendManager::instance;
     }
 
     /*
@@ -62,7 +62,7 @@ namespace Slab::Core {
 
         loadedModules[module_name] = Pointer<Module>(module);
 
-        GetBackend().notifyModuleLoaded(module);
+        GetBackend()->notifyModuleLoaded(module);
 
         Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }

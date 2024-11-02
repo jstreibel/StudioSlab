@@ -28,8 +28,8 @@ namespace Slab::Graphics {
         finishInitialization();
 
         try {
-            auto &glutBackend = dynamic_cast<GLUTBackend &>(Core::BackendManager::GetBackend());
-            glutBackend.addGLUTListener(Naked(*this));
+            auto glutBackend = DynamicPointerCast<GLUTBackend>(Core::BackendManager::GetBackend());
+            glutBackend->addGLUTListener(Naked(*this));
         } catch (std::bad_cast& bad_cast) {
             throw StudioSlabRuntimeBackendInconsistency("while building ImGui module. Expected GLUT backend, "
                                                         "got something else");

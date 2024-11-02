@@ -19,6 +19,8 @@ add_library(${STUDIOSLAB_BASE_LIB_NAME} STATIC
         AppBase.cpp            AppBase.h
         MathApp.cpp MathApp.h
         CrashPad.cpp           CrashPad.h
+        Application.cpp
+        Application.h
 )
 
 target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME}

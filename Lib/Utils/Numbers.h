@@ -31,6 +31,7 @@ namespace Slab {
     typedef std::size_t Count;
     typedef std::size_t Index;
     typedef std::size_t Resolution;
+    constexpr Resolution UndefinedResolution = (unsigned)-1;
     typedef int_least64_t BigInt;
 
     const Real Infinity = std::numeric_limits<double>::infinity();

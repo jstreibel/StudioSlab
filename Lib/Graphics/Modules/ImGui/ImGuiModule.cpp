@@ -157,7 +157,7 @@ namespace Slab::Graphics {
         ImGui::BeginMainMenuBar();
         {
             if(ImGui::BeginMenu("Menu")) {
-                if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend().terminate();
+                if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend()->terminate();
 
                 ImGui::EndMenu();
             }

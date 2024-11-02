@@ -156,9 +156,9 @@ namespace Slab::Graphics {
     GLUTBackend &GLUTBackend::GetInstance() {
         //assert(Core::BackendManager::GetImplementation() == Core::GLUT);
 
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *dynamic_cast<GLUTBackend *>(&guiBackend);
+        return *DynamicPointerCast<GLUTBackend>(guiBackend);
     }
 
     MouseState GLUTBackend::getMouseState() const { return eventTranslator->getMouseState(); }

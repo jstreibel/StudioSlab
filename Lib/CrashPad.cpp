@@ -21,7 +21,9 @@
 #endif
 
 
-namespace Slab::Core::SafetyNet {
+namespace Slab::SafetyNet {
+
+    using namespace Core;
 
     void none() {
 #ifndef RELEASE_COMPILE
@@ -50,6 +52,29 @@ namespace Slab::Core::SafetyNet {
         {
             FORMAT = Log::BGRed + Log::BoldFace + Log::FGBlack;
             return pFunction(argc, argv);
+        }
+#if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
+        catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
+        catch (Str &e)                                          LogException("Exception (std::string)",  e,        none)
+        catch (cxxopts::exceptions::invalid_option_syntax &e)   LogException("Invalid option syntax",    e.what(), showHelp)
+        catch (cxxopts::exceptions::no_such_option &e)          LogException("No such option",           e.what(), showHelp)
+        catch (cxxopts::exceptions::option_already_exists &e)   LogException("Option already exists",    e.what(), showHelp)
+        catch (cxxopts::exceptions::incorrect_argument_type &e) LogException("Incorrect argument type",  e.what(), showHelp)
+        catch (std::bad_cast &e)                                LogException("Bad cast",                 e.what(), none)
+        catch (cxxopts::exceptions::exception &e)               LogException("Parsing exception",        e.what(), none)
+        catch (std::exception &e)                               LogException("Exception std::exception", e.what(), none)
+        catch (...)                                             LogException("Unknown exception",        "...",    none)
+#endif
+    }
+
+    int Jump(Application& app) {
+#if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
+        try
+#endif
+        {
+            app.Create();
+            FORMAT = Log::BGRed + Log::BoldFace + Log::FGBlack;
+            return app.Run();
         }
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
         catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)

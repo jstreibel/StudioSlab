@@ -3,7 +3,7 @@ project(MarylouStrings)
 
 set(CMAKE_CXX_STANDARD 20)
 
-set(LIBDIR ../../../Lib)
+set(LIBDIR ../../../../Lib)
 include_directories($LIBDIR)
 
 set(EXTERNAL_SRC
@@ -12,7 +12,7 @@ set(EXTERNAL_SRC
 
 add_executable(MarylouStrings
         Integrator.cpp
-		main.cpp
+        main.cpp
 		${EXTERNAL_SRC} )
 
 target_link_libraries(MarylouStrings

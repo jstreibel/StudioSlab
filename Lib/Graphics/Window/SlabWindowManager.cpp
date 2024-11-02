@@ -100,7 +100,7 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
 
         if(button==MouseButton_LEFT && state==Press) {
-            auto mouse_state = Graphics::GetGraphicsBackend().getMouseState();
+            auto mouse_state = Graphics::GetGraphicsBackend()->getMouseState();
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->window->isMouseIn();
@@ -196,7 +196,7 @@ namespace Slab::Graphics {
 
     bool SlabWindowManager::notifyRender() {
         for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
-            auto mouse = GetGraphicsBackend().getMouseState();
+            auto mouse = GetGraphicsBackend()->getMouseState();
             decorator.begin_decoration(*slab_window->window, mouse.x, mouse.y);
             slab_window->window->draw();
             decorator.finish_decoration(*slab_window->window, mouse.x, mouse.y);

@@ -19,14 +19,14 @@ namespace Slab::Core {
     // Singleton manager for backends
     class BackendManager {
         static BackendName backend_name;
-        static std::unique_ptr<Backend> instance;
+        static std::shared_ptr<Backend> instance;
         static std::map<ModuleName, std::shared_ptr<Module>> loadedModules;
 
         static Map<BackendName, BackendAllocator> availableBackends;
         static Map<ModuleName, ModuleAllocator> availableModules;
 
     public:
-        static Backend& GetBackend();
+        static Pointer<Backend> GetBackend();
 
         static void Startup(const Str& backend_name);
 

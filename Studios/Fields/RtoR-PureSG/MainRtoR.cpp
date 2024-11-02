@@ -40,7 +40,7 @@ int run(int argc, const char **argv) {
 }
 
 auto main(int argc, const char **argv) -> int {
-    return Slab::Core::SafetyNet::jump(run, argc, argv);
+    return Slab::SafetyNet::jump(run, argc, argv);
 }
 
 

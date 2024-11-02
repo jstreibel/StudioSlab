@@ -2,8 +2,8 @@
 // Created by joao on 8/6/23.
 //
 
-#ifndef STUDIOSLAB_APP_H
-#define STUDIOSLAB_APP_H
+#ifndef STUDIOSLAB_MOLDYN_APP_H
+#define STUDIOSLAB_MOLDYN_APP_H
 
 
 #include "AppBase.h"
@@ -23,4 +23,4 @@ namespace Studios::MolecularDynamics {
 }
 
 
-#endif //STUDIOSLAB_APP_H
+#endif //STUDIOSLAB_MOLDYN_APP_H

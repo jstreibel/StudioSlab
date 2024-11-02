@@ -59,8 +59,8 @@ namespace Slab::Graphics {
 
     }
 
-    GraphicBackend& GetGraphicsBackend() {
-        return dynamic_cast<GraphicBackend&>(Core::BackendManager::GetBackend());
+    Pointer<GraphicBackend> GetGraphicsBackend() {
+        return DynamicPointerCast<GraphicBackend>(Core::BackendManager::GetBackend());
     }
 
 }

@@ -31,7 +31,7 @@ namespace Studios::MolecularDynamics {
         auto taskManager = Slab::DynamicPointerCast<Slab::Core::TaskManagerModule>(Slab::Core::GetModule("TaskManager"));
         taskManager->addTask(numericTask);
 
-        Slab::Graphics::GetGraphicsBackend().run();
+        Slab::Graphics::GetGraphicsBackend()->run();
 
         Slab::Core::Log::Info() << "MolecularDynamics finished." << Slab::Core::Log::Flush;
 

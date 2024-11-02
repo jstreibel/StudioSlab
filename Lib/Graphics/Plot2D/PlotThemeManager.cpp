@@ -87,7 +87,7 @@ namespace Slab::Graphics {
 
         Core::LoadModule("ImGui");
 
-        Slab::Graphics::GetGraphicsBackend().addEventListener(mePointer);
+        Slab::Graphics::GetGraphicsBackend()->addEventListener(mePointer);
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

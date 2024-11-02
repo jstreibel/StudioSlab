@@ -27,15 +27,15 @@ public:
     }
 
     int run() override {
-        auto &gui_backend = Slab::Graphics::GetGraphicsBackend();
+        auto gui_backend = Slab::Graphics::GetGraphicsBackend();
 
         auto osc_plot = Slab::New<Studios::OscillonPlotting>();
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
         wm->addSlabWindow(osc_plot);
-        gui_backend.addEventListener(wm);
+        gui_backend->addEventListener(wm);
 
-        gui_backend.run();
+        gui_backend->run();
 
         return 0;
     }
@@ -51,5 +51,5 @@ int main(int argc, const char **argv) {
                 return app.run();
             };
 
-    return Slab::Core::SafetyNet::jump(run, argc, argv);
+    return Slab::SafetyNet::jump(run, argc, argv);
 }

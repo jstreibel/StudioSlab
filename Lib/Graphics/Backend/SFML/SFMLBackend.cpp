@@ -94,9 +94,9 @@ namespace Slab::Graphics {
     auto SFMLBackend::getRenderWindow() -> sf::RenderWindow & { return *window; }
 
     SFMLBackend &SFMLBackend::GetInstance() {
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *dynamic_cast<SFMLBackend *>(&guiBackend);
+        return *DynamicPointerCast<SFMLBackend>(guiBackend);
     }
 
     MouseState SFMLBackend::getMouseState() const {

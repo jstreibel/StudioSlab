@@ -12,7 +12,7 @@ namespace Slab::Core {
     void Finish();
 
     void StartBackend(const BackendName&);
-    Backend &GetBackend();
+    Pointer<Backend> GetBackend();
 
     void LoadModule(const ModuleName&);
     Pointer<Module> GetModule(const ModuleName&);

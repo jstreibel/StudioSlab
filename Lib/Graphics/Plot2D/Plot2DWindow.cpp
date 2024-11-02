@@ -146,7 +146,7 @@ namespace Slab::Graphics {
 
         if (showInterface) {
             auto vp = getViewport();
-            // auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
+            // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
             // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);

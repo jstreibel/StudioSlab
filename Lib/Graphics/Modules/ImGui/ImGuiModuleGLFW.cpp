@@ -15,7 +15,7 @@ fix PRIORITIZE_ME = true;
 namespace Slab::Graphics {
     ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule() {
 
-        auto backend = dynamic_cast<GLFWBackend*>(&Core::BackendManager::GetBackend());
+        auto backend = DynamicPointerCast<GLFWBackend>(Core::BackendManager::GetBackend());
         if(backend == nullptr)
             throw StudioSlabRuntimeBackendInconsistency("while instantiating ImGui module (GLFW implementation)");
 

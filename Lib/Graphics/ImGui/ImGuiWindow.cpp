@@ -31,7 +31,7 @@ namespace Slab::Graphics {
                 fix cMin = ImGui::GetWindowContentRegionMin();
                 fix cMax = ImGui::GetWindowContentRegionMax();
 
-                auto &backend = Slab::Graphics::GetGraphicsBackend();
+                auto backend = Slab::Graphics::GetGraphicsBackend();
 
                 fix x = pos.x + cMin.x;
                 fix y = pos.y;

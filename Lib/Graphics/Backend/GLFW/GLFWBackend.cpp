@@ -223,9 +223,9 @@ namespace Slab::Graphics {
     GLFWBackend &GLFWBackend::GetInstance() {
         // assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        return *dynamic_cast<GLFWBackend *>(&guiBackend);
+        return *DynamicPointerCast<GLFWBackend>(guiBackend);
     }
 
     void GLFWBackend::setMouseCursor(MouseCursor cursor) {

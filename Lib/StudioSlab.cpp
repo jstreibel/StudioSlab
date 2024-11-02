@@ -6,7 +6,7 @@
 #include "Core/SlabCore.h"
 #include "Graphics/SlabGraphics.h"
 #include "Math/SlabMath.h"
-
+#include "CrashPad.h"
 
 namespace Slab {
 
@@ -34,6 +34,16 @@ namespace Slab {
 
     bool IsStarted() {
         return started;
+    }
+
+    Pointer<Core::Backend> CreatePlatform(Core::BackendName platform) {
+        Core::BackendManager::Startup(platform);
+
+        return Core::BackendManager::GetBackend();
+    }
+
+    int Run(Application &application) {
+        return SafetyNet::Jump(application);
     }
 
 

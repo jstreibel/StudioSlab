@@ -59,8 +59,8 @@ public:
         auto function = Modes::HistoryFileLoader::Load(*filename);
         auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
 
-        auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
-        guiBackend.setSystemWindowTitle(*filename);
+        auto guiBackend = Slab::Graphics::GetGraphicsBackend();
+        guiBackend->setSystemWindowTitle(*filename);
 
         auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
 
@@ -79,9 +79,9 @@ public:
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
         wm->addSlabWindow(viewer);
-        guiBackend.addEventListener(wm);
+        guiBackend->addEventListener(wm);
 
-        guiBackend.run();
+        guiBackend->run();
 
         return 0;
     }
@@ -94,7 +94,7 @@ int run(int argc, const char** argv){
 }
 
 int main(int argc, const char* argv[]) {
-    return Slab::Core::SafetyNet::jump(
+    return Slab::SafetyNet::jump(
             [](int argc, const char **argv)
             {
                 App app(argc, argv);

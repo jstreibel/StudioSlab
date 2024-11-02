@@ -62,7 +62,7 @@ namespace Slab::Graphics {
 
 
         if(left && right) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
+            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
 
             fix dx = -(float)mouseState.dx * 1.e-2f;
             fix dy =  (float)mouseState.dy * 1.e-2f;
@@ -78,7 +78,7 @@ namespace Slab::Graphics {
             return true;
         }
         else if(left) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
+            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
 
             fix dx = (float)mouseState.dx;
             fix dy = (float)mouseState.dy;
@@ -91,7 +91,7 @@ namespace Slab::Graphics {
             return true;
         }
         else if(right) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
+            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
 
             fix dy = (float)mouseState.dy;
 
@@ -100,7 +100,7 @@ namespace Slab::Graphics {
             return true;
         }
         else if(center) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend().getMouseState();
+            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
 
             fix dy = (float)mouseState.dy;
 
@@ -135,7 +135,7 @@ namespace Slab::Graphics {
 
         if (showInterface) {
             auto vp = getViewport();
-            // auto sh = Slab::Graphics::GetGraphicsBackend().getScreenHeight();
+            // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
             // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)vp.yMin}, ImGuiCond_Appearing);
             ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);

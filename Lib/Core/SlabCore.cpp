@@ -19,7 +19,7 @@ namespace Slab::Core {
         BackendManager::Startup(name);
     }
 
-    Backend &GetBackend() {
+    Pointer<Backend> GetBackend() {
         return BackendManager::GetBackend();
     }
 

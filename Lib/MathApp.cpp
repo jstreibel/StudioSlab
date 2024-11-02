@@ -28,7 +28,7 @@ namespace Slab::Math {
 
         taskManager->addTask(integrationTask);
 
-        Core::BackendManager::GetBackend().run();
+        Core::BackendManager::GetBackend()->run();
 
         // If tasks are still running after backend has finished around, we abort all tasks.
         taskManager->abortAllTasks();

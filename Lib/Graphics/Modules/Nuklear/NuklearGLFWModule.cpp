@@ -26,10 +26,10 @@ namespace Slab::Graphics {
 
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule() {
         try {
-            auto &glfwBackend = dynamic_cast<GLFWBackend&>(Core::GetBackend());
-            renderWindow = &glfwBackend.getGLFWWindow();
+            auto glfwBackend = DynamicPointerCast<GLFWBackend>(Core::GetBackend());
+            renderWindow = &glfwBackend->getGLFWWindow();
 
-            glfwBackend.addGLFWListener(Naked(*this), HighPriority);
+            glfwBackend->addGLFWListener(Naked(*this), HighPriority);
         } catch (std::bad_cast& e) {
             Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
                             "to be SFML." << Core::Log::Flush;
