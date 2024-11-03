@@ -17,7 +17,7 @@ namespace Slab::Graphics {
         ~SlabImGuiContext() = default;
 
         void NewFrame();
-        void Render();
+        void EndFrame(bool render=true);
     };
 
 } // Slab::Graphics
