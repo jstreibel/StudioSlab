@@ -10,6 +10,8 @@
 // #include "Graphics/OpenGL/OpenGL.h"
 
 #include "FourierViewer.h"
+
+#include <utility>
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -20,7 +22,7 @@ namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(Pointer<GUIWindow> gui_window) : Viewer(gui_window)
+    FourierViewer::FourierViewer(Pointer<GUIWindow> gui_window) : Viewer(std::move(gui_window))
     {
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
@@ -101,65 +103,67 @@ namespace Slab::Graphics {
 
         beginGUI();
 
-        if(ImGui::CollapsingHeader("k-filter")){
-            //this->dftData
-            fix kMax = M_PI/function->getSpace().getMetaData().geth(0);
-            auto k = (float)kFilterCutoff;
+        gui_window->AddExternalDraw([this, &function]() {
+            if (ImGui::CollapsingHeader("k-filter")) {
+                //this->dftData
+                fix kMax = M_PI / function->getSpace().getMetaData().geth(0);
+                auto k = (float) kFilterCutoff;
 
-            static bool needRefresh = false;
-            static int selected = 0;
-            static bool autoRefresh = false;
-            if(ImGui::Checkbox("Auto##space_dft", &autoRefresh) && autoRefresh) needRefresh = true;
+                static bool needRefresh = false;
+                static int selected = 0;
+                static bool autoRefresh = false;
+                if (ImGui::Checkbox("Auto##space_dft", &autoRefresh) && autoRefresh) needRefresh = true;
 
-            if(ImGui::RadioButton("High-pass", &selected, 0) | ImGui::RadioButton("Low-pass", &selected, 1))
-                needRefresh = true;
+                if (ImGui::RadioButton("High-pass", &selected, 0) | ImGui::RadioButton("Low-pass", &selected, 1))
+                    needRefresh = true;
 
-            if(ImGui::SliderFloat("cutoff k", &k, 0.0, (float)kMax)){
-                kFilterCutoff = k;
-                fix t_min = function->getDomain().yMin;
-                fix t_max = function->getDomain().yMax;
-                cutoffLine.getx0() = {kFilterCutoff, t_min-10.0};
-                cutoffLine.getr() = {0, t_max+10.0};
+                if (ImGui::SliderFloat("cutoff k", &k, 0.0, (float) kMax)) {
+                    kFilterCutoff = k;
+                    fix t_min = function->getDomain().yMin;
+                    fix t_max = function->getDomain().yMax;
+                    cutoffLine.getx0() = {kFilterCutoff, t_min - 10.0};
+                    cutoffLine.getr() = {0, t_max + 10.0};
 
-                needRefresh = true;
-            }
-
-            if((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
-                if (selected == 1) {
-                    RtoR::DFTInverse::LowPass lowPass((int)kFilterCutoff);
-                    refreshInverseDFT(&lowPass);
-                } else if (selected == 0) {
-                    RtoR::DFTInverse::HighPass highPass((int)kFilterCutoff);
-                    refreshInverseDFT(&highPass);
+                    needRefresh = true;
                 }
 
-                needRefresh = false;
+                if ((autoRefresh || ImGui::Button("Compute ℱₖ⁻¹")) && needRefresh) {
+                    if (selected == 1) {
+                        RtoR::DFTInverse::LowPass lowPass((int) kFilterCutoff);
+                        refreshInverseDFT(&lowPass);
+                    } else if (selected == 0) {
+                        RtoR::DFTInverse::HighPass highPass((int) kFilterCutoff);
+                        refreshInverseDFT(&highPass);
+                    }
+
+                    needRefresh = false;
+                }
             }
-        }
 
-        if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
-            fix dt = function->getSpace().getMetaData().geth(1);
-            fix t_min =(float)function->getDomain().yMin;
-            fix t_max =(float)function->getDomain().yMax;
+            if (ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
+                fix dt = function->getSpace().getMetaData().geth(1);
+                fix t_min = (float) function->getDomain().yMin;
+                fix t_max = (float) function->getDomain().yMax;
 
-            ImGui::Checkbox("Auto ℱₜ##time_dft", &auto_update_Ft);
-            ImGui::Checkbox("Auto ℱₜₓ##tx_dft", &auto_update_Ftx);
+                ImGui::Checkbox("Auto ℱₜ##time_dft", &auto_update_Ft);
+                ImGui::Checkbox("Auto ℱₜₓ##tx_dft", &auto_update_Ftx);
 
-            ImGui::BeginDisabled(auto_update_Ft);
-            if(ImGui::Button("Compute ℱₜ"))
-                computeTimeDFT();
-            ImGui::EndDisabled();
-            ImGui::BeginDisabled(auto_update_Ftx);
-            if(ImGui::Button("Compute ℱₜₓ"))
-                computeAll();
-            ImGui::EndDisabled();
+                ImGui::BeginDisabled(auto_update_Ft);
+                if (ImGui::Button("Compute ℱₜ"))
+                    computeTimeDFT();
+                ImGui::EndDisabled();
+                ImGui::BeginDisabled(auto_update_Ftx);
+                if (ImGui::Button("Compute ℱₜₓ"))
+                    computeAll();
+                ImGui::EndDisabled();
 
-            if(ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max-Δt)
-             | ImGui::SliderFloat("Δt", &Δt, 10*(float)dt, t_max-t0)) {
-                if (auto_update_Ft) computeTimeDFT();
-                if (auto_update_Ftx) computeAll();
+                if (ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max - Δt)
+                    | ImGui::SliderFloat("Δt", &Δt, 10 * (float) dt, t_max - t0)) {
+                    if (auto_update_Ft) computeTimeDFT();
+                    if (auto_update_Ftx) computeAll();
+                }
             }
-        }
+        });
 
         endGUI();
 

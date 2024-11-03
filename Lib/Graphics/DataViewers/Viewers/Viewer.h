@@ -12,12 +12,13 @@
 namespace Slab::Graphics {
 
     class Viewer : public WindowPanel {
-        Pointer<GUIWindow> gui_window;
         Pointer<Math::R2toR::NumericFunction> base_function;
 
         bool is_visible = false;
 
     protected:
+        Pointer<GUIWindow> gui_window;
+
         void beginGUI();
         void endGUI();
 

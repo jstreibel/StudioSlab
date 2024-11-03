@@ -28,6 +28,10 @@ namespace Slab::Graphics {
         auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
 
         imgui_module.NewFrame();
+
+        for(auto &external_draw : external_draws) external_draw();
+
+        external_draws.clear();
     }
 
     void SlabImGuiContext::Render() {
@@ -42,6 +46,10 @@ namespace Slab::Graphics {
 
     void SlabImGuiContext::Bind() {
         ImGui::SetCurrentContext(context);
+    }
+
+    void SlabImGuiContext::AddExternalDraw(const ExternalDraw& external_draw) {
+        external_draws.emplace_back(external_draw);
     }
 
 } // Slab::Graphics

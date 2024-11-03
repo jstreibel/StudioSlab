@@ -8,16 +8,28 @@
 #include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "3rdParty/ImGui.h"
 
+#include "Utils/Arrays.h"
+
+#include <functional>
+
 namespace Slab::Graphics {
+
+    using ExternalDraw = std::function<void(void)>;
 
     class SlabImGuiContext : public GUIContext {
         ImGuiContext *context = nullptr;
+
+        Vector<ExternalDraw> external_draws;
+
+
     public:
         explicit SlabImGuiContext(ImGuiContext *context);
         ~SlabImGuiContext() = default;
 
         ImGuiContext *
         getNativeContext();
+
+        void AddExternalDraw(const ExternalDraw&);
 
         void Bind();
         void NewFrame() override;

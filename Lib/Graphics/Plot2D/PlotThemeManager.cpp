@@ -13,6 +13,9 @@
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Core/SlabCore.h"
 
+#include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "StudioSlab.h"
+
 #define FILLED true
 #define NOT_FILLED false
 
@@ -107,24 +110,28 @@ namespace Slab::Graphics {
     }
 
     bool PlotThemeManager::notifyRender() {
-        if(ImGui::BeginMainMenuBar()){
-            if(ImGui::BeginMenu("Style")){
-                if(ImGui::BeginMenu("Graphs")) {
-                    for (auto &stylePair: stylesInitializers) {
-                        auto name = stylePair.first;
+        auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
+        imgui_module.GetMainContext()->AddExternalDraw(
+                []() {
+                    if(ImGui::BeginMainMenuBar()){
+                        if(ImGui::BeginMenu("Style")){
+                            if(ImGui::BeginMenu("Graphs")) {
+                                for (auto &stylePair: stylesInitializers) {
+                                    auto name = stylePair.first;
 
-                        if (ImGui::MenuItem(name.c_str(), nullptr, current == name))
-                            current = name;
+                                    if (ImGui::MenuItem(name.c_str(), nullptr, current == name))
+                                        current = name;
+                                }
+
+                                ImGui::EndMenu();
+                            }
+
+                            ImGui::EndMenu();
+                        }
+                        ImGui::EndMainMenuBar();
                     }
-
-                    ImGui::EndMenu();
                 }
-
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-
+                );
 
         return SystemWindowEventListener::notifyRender();
     }

@@ -21,7 +21,7 @@ namespace Slab::Graphics {
     class ImGuiModule : public GraphicsModule {
         static void buildFonts();
 
-        Context m_SlabContext = nullptr;
+        Context m_MainContext = nullptr;
 
         ContextInitializer initializeContext;
 
@@ -45,11 +45,11 @@ namespace Slab::Graphics {
 
         static ImGuiModule* BuildModule();
 
+        Context GetMainContext();
+
         void beginRender() override;
 
         void endRender() override;
-
-        Pointer<SlabImGuiContext> getContext();
     };
 
 } // Core

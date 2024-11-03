@@ -21,6 +21,8 @@
 
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Core/SlabCore.h"
+#include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "StudioSlab.h"
 
 namespace Slab::Graphics {
 
@@ -47,6 +49,8 @@ namespace Slab::Graphics {
 
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
+
+        gui_context = Slab::GetModule<ImGuiModule>("ImGui").createContext();
 
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
@@ -120,6 +124,8 @@ namespace Slab::Graphics {
     void Graphics::Plot2DWindow::drawGUI() {
         auto popupName = title + Str(" window popup");
 
+        gui_context->NewFrame();
+
         if (popupOn && !POPUP_ON_MOUSE_CALL) {
             ImGui::OpenPopup(unique(popupName).c_str());
             popupOn = false;
@@ -189,6 +195,8 @@ namespace Slab::Graphics {
 
             ImGui::End();
         }
+
+        gui_context->Render();
     }
 
     void Graphics::Plot2DWindow::setupOrtho() const {

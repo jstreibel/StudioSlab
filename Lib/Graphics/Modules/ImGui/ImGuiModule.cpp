@@ -49,7 +49,7 @@ namespace Slab::Graphics {
     , initializeContext(std::move(contextInitializer)) {
         IMGUI_CHECKVERSION();
 
-        m_SlabContext = createContext();
+        m_MainContext = createContext();
 
     }
 
@@ -133,7 +133,7 @@ namespace Slab::Graphics {
     }
 
     void ImGuiModule::beginRender() {
-        m_SlabContext->NewFrame();
+        m_MainContext->NewFrame();
 
         if (showDemos)
             ImGui::ShowDemoWindow();
@@ -167,15 +167,11 @@ namespace Slab::Graphics {
             ImGui::EndMainMenuBar();
         }
 
-        m_SlabContext->Render();
+        if(contexts.size() > 1) m_MainContext->Render();
     }
 
     void ImGuiModule::endRender() {
-        // m_SlabContext->Render();
-    }
-
-    Pointer<SlabImGuiContext> ImGuiModule::getContext() {
-        return m_SlabContext;
+        if(contexts.size() == 1) m_MainContext->Render();
     }
 
     void ImGuiModule::NewFrame() { ImGui::NewFrame(); }
@@ -236,17 +232,9 @@ namespace Slab::Graphics {
         return new_context;
     }
 
-    // void ImGuiModule::initializeContext(ImGuiContext *context) {
-    //     ImGui::SetCurrentContext(context);
-//
-    //     ImGuiIO &io = ImGui::GetIO();
-    //     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-//
-    //     // Setup Dear ImGui style
-    //     SetStyleStudioSlab();   // For sizes
-    //     colorThemes[currentTheme]();
-//
-    // }
+    Context ImGuiModule::GetMainContext() {
+        return m_MainContext;
+    }
 
 
 } // Core

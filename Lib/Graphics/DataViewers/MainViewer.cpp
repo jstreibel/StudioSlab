@@ -5,6 +5,7 @@
 #include "MainViewer.h"
 #include "StudioSlab.h"
 #include "Math/MathModule.h"
+#include "Graphics/Modules/ImGui/ImGuiModule.h"
 
 #include <utility>
 
@@ -29,39 +30,45 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::draw() {
-        if(ImGui::BeginMainMenuBar()){
-            if(ImGui::BeginMenu("Viewers")){
-                Index i=0;
-                for (auto &viewer: viewers) {
-                    auto name = viewer->getName();
+        auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
 
-                    fix is_current = getCurrentViewer() == viewer;
-                    if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
-                        setCurrentViewer(i);
+        gui_module.GetMainContext()->AddExternalDraw(
+                [this](){
+                    if(ImGui::BeginMainMenuBar()){
+                        if(ImGui::BeginMenu("Viewers")){
+                            Index i=0;
+                            for (auto &viewer: viewers) {
+                                auto name = viewer->getName();
 
-                    ++i;
-                }
+                                fix is_current = getCurrentViewer() == viewer;
+                                if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
+                                    setCurrentViewer(i);
 
-                ImGui::EndMenu();
-            }
+                                ++i;
+                            }
 
-            if(ImGui::BeginMenu("Datasets")){
-                auto &mathModule = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
-                auto entries = mathModule.GetDataEntries();
-
-                if(entries.empty()) {
-                    ImGui::MenuItem("No data available", nullptr, false, false);
-                } else {
-                    for (auto &name: entries) {
-                        if (ImGui::MenuItem(name.c_str(), nullptr, false, false)) {
+                            ImGui::EndMenu();
                         }
+
+                        if(ImGui::BeginMenu("Datasets")){
+                            auto &mathModule = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
+                            auto entries = mathModule.GetDataEntries();
+
+                            if(entries.empty()) {
+                                ImGui::MenuItem("No data available", nullptr, false, false);
+                            } else {
+                                for (auto &name: entries) {
+                                    if (ImGui::MenuItem(name.c_str(), nullptr, false, false)) {
+                                    }
+                                }
+                            }
+                            ImGui::EndMenu();
+                        }
+
+                        ImGui::EndMainMenuBar();
                     }
                 }
-                ImGui::EndMenu();
-            }
-
-            ImGui::EndMainMenuBar();
-        }
+                );
 
         WindowRow::draw();
     }

@@ -11,6 +11,7 @@
 #include "Graphics/Window/SlabWindow.h"
 
 #include "Utils/Types.h"
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 
 namespace Slab::Graphics {
@@ -18,10 +19,14 @@ namespace Slab::Graphics {
     class GUIWindow : public SlabWindow {
         Vector<Pair<Str, Color>> stats;
 
+        Pointer<SlabImGuiContext> gui_context;
+
     public:
         explicit GUIWindow(Config={});
 
         void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
+
+        void AddExternalDraw(const ExternalDraw&);
 
         void draw() override;
         void begin() const;

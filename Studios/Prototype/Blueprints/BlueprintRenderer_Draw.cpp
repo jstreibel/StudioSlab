@@ -9,7 +9,7 @@
 namespace Slab::Blueprints {
     static inline ImRect ImGui_GetItemRect()
     {
-        return ImRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax());
+        return {ImGui::GetItemRectMin(), ImGui::GetItemRectMax()};
     }
 
     static inline ImRect ImRect_Expanded(const ImRect& rect, float x, float y)
@@ -25,9 +25,9 @@ namespace Slab::Blueprints {
     void BlueprintRenderer::Draw() {
         m_Context->NewFrame();
         // // ImGui::NewFrame();
-//
+
         DoDrawing();
-//
+
         m_Context->Render();
     }
 

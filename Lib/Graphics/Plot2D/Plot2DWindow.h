@@ -23,6 +23,7 @@
 #include "Artists/XHairArtist.h"
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 #define POPUP_ON_MOUSE_CALL false
 
@@ -49,6 +50,8 @@ namespace Slab::Graphics {
         Real animationTimeSeconds = 0.2;
 
         Math::PointSet XHair;
+
+        Pointer<SlabImGuiContext> gui_context;
 
     protected:
         Str title;
