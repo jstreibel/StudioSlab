@@ -34,11 +34,6 @@ namespace Slab::Graphics {
         ImGui_ImplGlfw_Shutdown();
     }
 
-    void ImGuiModuleGLFW::beginRender() {
-        ImGuiModule::beginRender();
-    }
-
-
 
     bool ImGuiModuleGLFW::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
@@ -84,19 +79,19 @@ namespace Slab::Graphics {
         io.DisplaySize = ImVec2((float) width, (float) height);
     }
 
-    void ImGuiModuleGLFW::endRender() {
-        ImGuiModule::endRender();
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
-
-    void ImGuiModuleGLFW::newFrame() {
+    void ImGuiModuleGLFW::NewFrame() {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
 
-        ImGuiModule::newFrame();
+        ImGuiModule::NewFrame();
 
         //ImGui::NewFrame();
 
+    }
+
+    void ImGuiModuleGLFW::RenderFrame() {
+        ImGuiModule::RenderFrame();
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
 } // Core

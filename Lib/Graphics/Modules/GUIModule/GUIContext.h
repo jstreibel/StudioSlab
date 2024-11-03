@@ -10,7 +10,7 @@ namespace Slab::Graphics {
     class GUIContext {
     public:
         virtual void NewFrame() = 0;
-        virtual void EndFrame(bool render=true) = 0;
+        virtual void Render() = 0;
 
     };
 

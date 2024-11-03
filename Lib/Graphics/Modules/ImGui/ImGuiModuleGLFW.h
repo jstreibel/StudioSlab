@@ -16,13 +16,11 @@ namespace Slab::Graphics {
         ~ImGuiModuleGLFW() override;
 
     protected:
-        void newFrame() override;
+        void NewFrame() override;
+
+        void RenderFrame() override;
 
     public:
-
-        void beginRender() override;
-
-        void endRender() override;
 
         bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;
 

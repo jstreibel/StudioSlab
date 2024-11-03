@@ -23,6 +23,15 @@ namespace Slab::Blueprints {
     }
 
     void BlueprintRenderer::Draw() {
+        // m_Context->NewFrame();
+        // ImGui::NewFrame();
+
+        DoDrawing();
+
+        // m_Context->Render();
+    }
+
+    void BlueprintRenderer::DoDrawing() {
         // auto& io = ImGui::GetIO();
         auto window_flags = 0;// ImGuiWindowFlags_NoTitleBar |
         // ImGuiWindowFlags_NoResize |

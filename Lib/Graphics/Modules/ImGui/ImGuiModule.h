@@ -19,8 +19,12 @@ namespace Slab::Graphics {
         void generalInitialization();
         void buildFonts();
 
-        // ImGuiContext *m_Context = nullptr;
-        Pointer<SlabImGuiContext> m_SlabContext = nullptr;
+        using Context = Pointer<SlabImGuiContext>;
+
+        ImGuiContext *main_context = nullptr;
+        Context m_SlabContext = nullptr;
+
+        Vector<Context> contexts;
 
     protected:
         bool showDemos = false;
@@ -31,7 +35,11 @@ namespace Slab::Graphics {
 
     public:
         virtual
-        void newFrame();
+        void NewFrame();
+        virtual
+        void RenderFrame();
+        // virtual
+        // void endFrame(bool do_render=true);
 
         Pointer<SlabImGuiContext> createContext();
 

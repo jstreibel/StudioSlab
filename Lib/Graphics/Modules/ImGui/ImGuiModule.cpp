@@ -182,22 +182,33 @@ namespace Slab::Graphics {
 
             ImGui::EndMainMenuBar();
         }
+
+        // m_SlabContext->EndFrame(false);
     }
 
     void ImGuiModule::endRender() {
-        ImGui::Render();
+        m_SlabContext->Render();
     }
 
     Pointer<SlabImGuiContext> ImGuiModule::getContext() {
         return m_SlabContext;
     }
 
-    void ImGuiModule::newFrame() {
+    void ImGuiModule::NewFrame() {
         ImGui::NewFrame();
     }
 
+    void ImGuiModule::RenderFrame() {
+        ImGui::Render();
+    }
+
     Pointer<SlabImGuiContext> ImGuiModule::createContext() {
-        return New<SlabImGuiContext>(ImGui::CreateContext());
+        if(main_context == nullptr) main_context = ImGui::CreateContext();
+
+        auto new_context = New<SlabImGuiContext>(main_context);
+        contexts.emplace_back(new_context);
+
+        return new_context;
     }
 
 

@@ -12,12 +12,14 @@
 #include "BlueprintTypes.h"
 #include "Graphics/OpenGL/Images.h"
 #include "Blueprint.h"
+#include "Graphics/Modules/ImGui/ImGuiContext.h"
 
 namespace Slab::Blueprints {
 
     class BlueprintRenderer {
         ed::EditorContext* m_Editor = nullptr;
 
+        Pointer<Graphics::SlabImGuiContext> m_Context;
         const int            m_PinIconSize = 24;
         ImTextureID          m_HeaderBackground = nullptr;
         ImTextureID          m_SaveIcon = nullptr;
@@ -33,6 +35,8 @@ namespace Slab::Blueprints {
         float GetTouchProgress(ed::NodeId id);
 
         void UpdateTouch();
+
+        void DoDrawing();
 
     public:
         explicit BlueprintRenderer(Pointer<Blueprint> blueprint);

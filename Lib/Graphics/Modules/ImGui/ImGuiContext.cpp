@@ -26,27 +26,14 @@ namespace Slab::Graphics {
     void SlabImGuiContext::NewFrame() {
         ImGui::SetCurrentContext(context);
 
-        auto &module = Slab::GetModule("ImGui");
-        auto &imgui_module = dynamic_cast<ImGuiModule&>(module);
+        auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
 
-        imgui_module.newFrame();
+        imgui_module.NewFrame();
     }
 
-    void SlabImGuiContext::EndFrame(bool should_render) {
-        if(ImGui::GetCurrentContext() != context) throw Exception("Calling GUI EndFrame on non-bound context.");
-
-        auto &module = Slab::GetModule("ImGui");
-        auto &imgui_module = dynamic_cast<ImGuiModule&>(module);
-
-        NOT_IMPLEMENTED
-
-        // if(!should_render){
-        //     imgui_module.EndFrame();
-//
-        //     return;
-        // }
-//
-        // imgui_module.Render();
+    void SlabImGuiContext::Render() {
+        auto &module = Slab::GetModule<ImGuiModule>("ImGui");
+        module.RenderFrame();
     }
 
 } // Slab::Graphics
