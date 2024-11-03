@@ -19,7 +19,7 @@ namespace Tests::Blueprints {
     {
         // m_Context = ed::CreateEditor();
         auto ImGuiModule = Slab::DynamicPointerCast<Slab::Graphics::ImGuiModule>(Slab::Core::GetModule("ImGui"));
-        m_Context = ImGuiModule->getContext();
+        // m_Context = ImGuiModule->getContext();
 
         /***** "RecreateFontAtlas" ******/
         {
@@ -133,12 +133,6 @@ namespace Tests::Blueprints {
             // m_Renderer->Destroy();
 
             // m_Platform->ApplicationStop();
-
-            if (m_Context)
-            {
-                ImGui::DestroyContext(m_Context);
-                m_Context= nullptr;
-            }
         };
 
         // releaseTexture(m_RestoreIcon);

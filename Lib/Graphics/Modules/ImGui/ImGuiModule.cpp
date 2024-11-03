@@ -48,7 +48,6 @@ namespace Slab::Graphics {
 
         IMGUI_CHECKVERSION();
 
-        m_Context = ImGui::CreateContext();
         m_SlabContext = createContext();
 
         ImGuiIO &io = ImGui::GetIO();
@@ -150,7 +149,6 @@ namespace Slab::Graphics {
     }
 
     void ImGuiModule::beginRender() {
-        // ImGui::SetCurrentContext(m_Context);
         m_SlabContext->NewFrame();
 
         if (showDemos)
@@ -190,8 +188,8 @@ namespace Slab::Graphics {
         ImGui::Render();
     }
 
-    ImGuiContext *ImGuiModule::getContext() {
-        return m_Context;
+    Pointer<SlabImGuiContext> ImGuiModule::getContext() {
+        return m_SlabContext;
     }
 
     void ImGuiModule::newFrame() {
@@ -199,7 +197,7 @@ namespace Slab::Graphics {
     }
 
     Pointer<SlabImGuiContext> ImGuiModule::createContext() {
-        return New<SlabImGuiContext>(m_Context);
+        return New<SlabImGuiContext>(ImGui::CreateContext());
     }
 
 

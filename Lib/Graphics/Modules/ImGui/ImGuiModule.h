@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         void generalInitialization();
         void buildFonts();
 
-        ImGuiContext *m_Context = nullptr;
+        // ImGuiContext *m_Context = nullptr;
         Pointer<SlabImGuiContext> m_SlabContext = nullptr;
 
     protected:
@@ -41,7 +41,7 @@ namespace Slab::Graphics {
 
         void endRender() override;
 
-        ImGuiContext* getContext();
+        Pointer<SlabImGuiContext> getContext();
     };
 
 } // Core
