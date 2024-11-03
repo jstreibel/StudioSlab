@@ -14,7 +14,10 @@
 fix SHOULD_INSTALL_CALLBACKS = false;
 
 namespace Slab::Graphics {
-    ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule() {
+
+    static auto initializer = [](ImGuiContext *context) {
+        ImGui::SetCurrentContext(context);
+
         // FIXME: Consider reworking this example to install our own GLUT funcs + forward calls ImGui_ImplGLUT_XXX ones, instead of using ImGui_ImplGLUT_InstallFuncs().
         // Install GLUT handlers (glutReshapeFunc(), glutMotionFunc(), glutPassiveMotionFunc(), glutMouseFunc(), glutKeyboardFunc() etc.)
         // You can read the io.WantCaptureMouse, io.WantCaptureKeyboard flags to tell if dear imgui wants to use your inputs.
@@ -24,9 +27,9 @@ namespace Slab::Graphics {
         ImGui_ImplGLUT_Init();
         ImGui_ImplOpenGL3_Init();
         if (SHOULD_INSTALL_CALLBACKS) ImGui_ImplGLUT_InstallFuncs();
+    };
 
-        finishInitialization();
-
+    ImGuiModuleGLUT::ImGuiModuleGLUT() : ImGuiModule(initializer) {
         try {
             auto glutBackend = DynamicPointerCast<GLUTBackend>(Core::BackendManager::GetBackend());
             glutBackend->addGLUTListener(Naked(*this));

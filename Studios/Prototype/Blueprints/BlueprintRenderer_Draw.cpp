@@ -23,12 +23,12 @@ namespace Slab::Blueprints {
     }
 
     void BlueprintRenderer::Draw() {
-        // m_Context->NewFrame();
-        // ImGui::NewFrame();
-
+        m_Context->NewFrame();
+        // // ImGui::NewFrame();
+//
         DoDrawing();
-
-        // m_Context->Render();
+//
+        m_Context->Render();
     }
 
     void BlueprintRenderer::DoDrawing() {

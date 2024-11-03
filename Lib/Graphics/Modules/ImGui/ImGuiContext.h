@@ -13,11 +13,15 @@ namespace Slab::Graphics {
     class SlabImGuiContext : public GUIContext {
         ImGuiContext *context = nullptr;
     public:
-        SlabImGuiContext(ImGuiContext *context);
+        explicit SlabImGuiContext(ImGuiContext *context);
         ~SlabImGuiContext() = default;
 
-        void NewFrame();
-        void Render();
+        ImGuiContext *
+        getNativeContext();
+
+        void Bind();
+        void NewFrame() override;
+        void Render() override;
     };
 
 } // Slab::Graphics

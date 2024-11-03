@@ -11,6 +11,7 @@
 #include "ImGuiColorAndStyles.h"
 
 #include <filesystem>
+#include <utility>
 
 #include "ImGuiModule.h"
 
@@ -43,29 +44,16 @@ namespace Slab::Graphics {
             {"StudioSlab",   SetStyleStudioSlab}
     };
 
-    void ImGuiModule::generalInitialization() {
-        // Setup Dear ImGui context
-
+    ImGuiModule::ImGuiModule(ContextInitializer contextInitializer)
+    : GraphicsModule("ImGui")
+    , initializeContext(std::move(contextInitializer)) {
         IMGUI_CHECKVERSION();
 
         m_SlabContext = createContext();
 
-        ImGuiIO &io = ImGui::GetIO();
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-
-        // Setup Dear ImGui style
-        SetStyleStudioSlab();   // For sizes
-        colorThemes[currentTheme]();
     }
 
-    ImGuiModule::ImGuiModule() : GraphicsModule("ImGui") {
-
-        generalInitialization();
-    }
-
-    ImGuiModule::~ImGuiModule() {
-        ImGui::DestroyContext();
-    }
+    ImGuiModule::~ImGuiModule() = default;
 
     void ImGuiModule::buildFonts()
     {
@@ -117,17 +105,13 @@ namespace Slab::Graphics {
 
         io.FontDefault = font;
 
+        io.Fonts->Build();
+
         Core::Log::Info() << "ImGui using font '" << Core::Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
 
         //ImGui::PushFont(font);
     }
 
-    void ImGuiModule::finishInitialization() {
-        buildFonts();
-
-        ImGui::GetStyle().ScaleAllSizes(1.25);
-        ImGui::GetIO().FontGlobalScale = 1;
-    }
 
     ImGuiModule* ImGuiModule::BuildModule() {
         Str backendImpl = Core::BackendManager::GetBackendName();
@@ -183,33 +167,86 @@ namespace Slab::Graphics {
             ImGui::EndMainMenuBar();
         }
 
-        // m_SlabContext->EndFrame(false);
+        m_SlabContext->Render();
     }
 
     void ImGuiModule::endRender() {
-        m_SlabContext->Render();
+        // m_SlabContext->Render();
     }
 
     Pointer<SlabImGuiContext> ImGuiModule::getContext() {
         return m_SlabContext;
     }
 
-    void ImGuiModule::NewFrame() {
-        ImGui::NewFrame();
-    }
+    void ImGuiModule::NewFrame() { ImGui::NewFrame(); }
 
-    void ImGuiModule::RenderFrame() {
-        ImGui::Render();
-    }
+    void ImGuiModule::RenderFrame() { ImGui::Render(); }
 
     Pointer<SlabImGuiContext> ImGuiModule::createContext() {
-        if(main_context == nullptr) main_context = ImGui::CreateContext();
+        if(0) {
+            static ImGuiContext *main_context = nullptr;
 
-        auto new_context = New<SlabImGuiContext>(main_context);
+            if (main_context == nullptr) {
+                main_context = ImGui::CreateContext();
+
+                ImGui::SetCurrentContext(main_context);
+
+                ImGuiIO &io = ImGui::GetIO();
+                io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+                // Setup Dear ImGui style
+                SetStyleStudioSlab();   // For sizes
+                colorThemes[currentTheme]();
+
+                initializeContext(main_context);
+
+                buildFonts();
+
+                ImGui::GetStyle().ScaleAllSizes(1.25);
+                ImGui::GetIO().FontGlobalScale = 1;
+            }
+
+            auto new_context = New<SlabImGuiContext>(main_context);
+            contexts.emplace_back(new_context);
+
+            return new_context;
+        }
+
+        auto context = ImGui::CreateContext();
+
+        ImGui::SetCurrentContext(context);
+
+        ImGuiIO &io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+
+        // Setup Dear ImGui style
+        SetStyleStudioSlab();   // For sizes
+        colorThemes[currentTheme]();
+
+        initializeContext(context);
+
+        buildFonts();
+
+        ImGui::GetStyle().ScaleAllSizes(1.25);
+        ImGui::GetIO().FontGlobalScale = 1;
+
+        auto new_context = New<SlabImGuiContext>(context);
         contexts.emplace_back(new_context);
 
         return new_context;
     }
+
+    // void ImGuiModule::initializeContext(ImGuiContext *context) {
+    //     ImGui::SetCurrentContext(context);
+//
+    //     ImGuiIO &io = ImGui::GetIO();
+    //     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+//
+    //     // Setup Dear ImGui style
+    //     SetStyleStudioSlab();   // For sizes
+    //     colorThemes[currentTheme]();
+//
+    // }
 
 
 } // Core

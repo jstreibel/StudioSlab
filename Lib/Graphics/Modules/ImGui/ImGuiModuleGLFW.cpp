@@ -13,7 +13,8 @@ fix DONT_INSTALL_CALLBACKS = false;
 fix PRIORITIZE_ME = true;
 
 namespace Slab::Graphics {
-    ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule() {
+    static auto initializer = [](ImGuiContext*) {
+        // ImGuiModule::initializeContext(context);
 
         auto backend = DynamicPointerCast<GLFWBackend>(Core::BackendManager::GetBackend());
         if(backend == nullptr)
@@ -22,8 +23,12 @@ namespace Slab::Graphics {
         auto &window = backend->getGLFWWindow();
         ImGui_ImplGlfw_InitForOpenGL(&window, DONT_INSTALL_CALLBACKS);
         ImGui_ImplOpenGL3_Init();
+    };
 
-        ImGuiModule::finishInitialization();
+    ImGuiModuleGLFW::ImGuiModuleGLFW() : ImGuiModule(initializer) {
+        auto backend = DynamicPointerCast<GLFWBackend>(Core::BackendManager::GetBackend());
+        if(backend == nullptr)
+            throw StudioSlabRuntimeBackendInconsistency("while instantiating ImGui module (GLFW implementation)");
 
         static auto myReference = Naked(*this);
         backend->addGLFWListener(myReference, PRIORITIZE_ME);
@@ -49,9 +54,17 @@ namespace Slab::Graphics {
     }
 
     bool ImGuiModuleGLFW::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
-        ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
+        bool mouse_captured = false;
 
-        return ImGui::GetIO().WantCaptureMouse;
+        for(const auto& context : contexts) {
+            context->Bind();
+
+            ImGui_ImplGlfw_CursorPosCallback(window, xpos, ypos);
+
+            if(ImGui::GetIO().WantCaptureMouse) mouse_captured = true;
+        }
+
+        return mouse_captured;
     }
 
     void ImGuiModuleGLFW::CursorEnter(GLFWwindow *window, int entered) {
@@ -59,9 +72,17 @@ namespace Slab::Graphics {
     }
 
     bool ImGuiModuleGLFW::MouseButton(GLFWwindow *window, int button, int action, int mods) {
-        ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+        bool mouse_captured = false;
 
-        return ImGui::GetIO().WantCaptureMouse;
+        for(const auto& context : contexts) {
+            context->Bind();
+
+            ImGui_ImplGlfw_MouseButtonCallback(window, button, action, mods);
+
+            if(ImGui::GetIO().WantCaptureMouse) mouse_captured = true;
+        }
+
+        return mouse_captured;
     }
 
     bool ImGuiModuleGLFW::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
@@ -94,4 +115,5 @@ namespace Slab::Graphics {
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
+
 } // Core

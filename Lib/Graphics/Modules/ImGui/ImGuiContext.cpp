@@ -9,9 +9,8 @@
 
 namespace Slab::Graphics {
 
-    SlabImGuiContext::SlabImGuiContext(ImGuiContext *context) : context(context) {
-
-    }
+    SlabImGuiContext::SlabImGuiContext(ImGuiContext *context)
+    : context(context) {    }
 
     // SlabImGuiContext::SlabImGuiContext() {
     //     context = ImGui::CreateContext();
@@ -33,7 +32,16 @@ namespace Slab::Graphics {
 
     void SlabImGuiContext::Render() {
         auto &module = Slab::GetModule<ImGuiModule>("ImGui");
+
         module.RenderFrame();
+    }
+
+    ImGuiContext *SlabImGuiContext::getNativeContext() {
+        return context;
+    }
+
+    void SlabImGuiContext::Bind() {
+        ImGui::SetCurrentContext(context);
     }
 
 } // Slab::Graphics

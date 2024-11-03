@@ -107,11 +107,13 @@ namespace Slab::Graphics {
 
             IterateReferences(graphicModules, BeginEvents);
             glfwPollEvents();
+            IterateReferences(graphicModules, EndEvents);
+
             IterateReferences(graphicModules, BeginRender);
             IterateReferences(listeners,      Render);
             IterateReferences(graphicModules, EndRender);
+            
             glfwSwapBuffers(systemWindow);
-            IterateReferences(graphicModules, EndEvents);
         }
     }
 

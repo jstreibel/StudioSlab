@@ -10,6 +10,7 @@
 #include "Utilities/widgets.h"
 #include "Core/Tools/Resources.h"
 #include "StudioSlab.h"
+#include "Graphics/Modules/ImGui/ImGuiModule.h"
 
 
 namespace Slab::Blueprints {
@@ -22,7 +23,8 @@ namespace Slab::Blueprints {
     : blueprint(std::move(blueprint)) {
         // Blueprints "OnStart()"
 
-        Slab::GetModule("ImGui");
+        auto &module = Slab::GetModule<Graphics::ImGuiModule>("ImGui");
+        m_Context = module.createContext();
 
         ed::Config config;
 
