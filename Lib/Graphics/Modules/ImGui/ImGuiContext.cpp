@@ -26,8 +26,7 @@ namespace Slab::Graphics {
     void SlabImGuiContext::NewFrame() {
         ImGui::SetCurrentContext(context);
 
-        auto &module = Slab::GetModule("ImGui");
-        auto &imgui_module = dynamic_cast<ImGuiModule&>(module);
+        auto &imgui_module = Slab::GetModule<ImGuiModule&>("ImGui");
 
         imgui_module.newFrame();
     }
@@ -47,6 +46,10 @@ namespace Slab::Graphics {
         // }
 //
         // imgui_module.Render();
+    }
+
+    void SlabImGuiContext::Render() {
+        ImGui::Render();
     }
 
 } // Slab::Graphics

@@ -34,11 +34,6 @@ namespace Slab::Graphics {
         ImGui_ImplGlfw_Shutdown();
     }
 
-    void ImGuiModuleGLFW::beginRender() {
-        ImGuiModule::beginRender();
-    }
-
-
 
     bool ImGuiModuleGLFW::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);

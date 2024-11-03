@@ -20,8 +20,6 @@ namespace Slab::Graphics {
 
     public:
 
-        void beginRender() override;
-
         void endRender() override;
 
         bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;

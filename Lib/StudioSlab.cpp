@@ -22,10 +22,6 @@ namespace Slab {
         started = true;
     }
 
-    Core::Module& GetModule(Core::ModuleName name) {
-        return *Core::BackendManager::GetModule(name);
-    }
-
     void Finish() {
         Core::Finish();
         Math::Finish();

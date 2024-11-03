@@ -19,7 +19,6 @@ namespace Slab::Graphics {
         void generalInitialization();
         void buildFonts();
 
-        // ImGuiContext *m_Context = nullptr;
         Pointer<SlabImGuiContext> m_SlabContext = nullptr;
 
     protected:
@@ -32,6 +31,8 @@ namespace Slab::Graphics {
     public:
         virtual
         void newFrame();
+        // virtual
+        // void endFrame(bool do_render=true);
 
         Pointer<SlabImGuiContext> createContext();
 

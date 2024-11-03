@@ -18,6 +18,7 @@ namespace Slab::Graphics {
 
         void NewFrame();
         void EndFrame(bool render=true);
+        void Render();
     };
 
 } // Slab::Graphics

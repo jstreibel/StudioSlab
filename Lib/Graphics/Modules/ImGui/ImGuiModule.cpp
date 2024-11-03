@@ -182,10 +182,12 @@ namespace Slab::Graphics {
 
             ImGui::EndMainMenuBar();
         }
+
+        // m_SlabContext->EndFrame(false);
     }
 
     void ImGuiModule::endRender() {
-        ImGui::Render();
+        m_SlabContext->Render();
     }
 
     Pointer<SlabImGuiContext> ImGuiModule::getContext() {
@@ -195,6 +197,10 @@ namespace Slab::Graphics {
     void ImGuiModule::newFrame() {
         ImGui::NewFrame();
     }
+
+    // void ImGuiModule::endFrame(bool do_render) {
+    //     // if(do_render) Render();
+    // }
 
     Pointer<SlabImGuiContext> ImGuiModule::createContext() {
         return New<SlabImGuiContext>(ImGui::CreateContext());
