@@ -43,7 +43,7 @@ namespace Slab::Blueprints {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, windowBorderSize);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, windowRounding);
 
-        //OnFrame(io.DeltaTime);
+        // "OnFrame(io.DeltaTime);":
         {
 
             UpdateTouch();
@@ -86,8 +86,8 @@ namespace Slab::Blueprints {
             /****** ALGUMAS DEFINICOES ************************/
             if(blueprint == nullptr) NOT_IMPLEMENTED
 
-            auto m_Nodes = blueprint->GetNodes();
-            auto m_Links = blueprint->GetLinks();
+            auto &m_Nodes = blueprint->GetNodes();
+            auto &m_Links = blueprint->GetLinks();
             auto CanCreateLink = [this](Pin*a, Pin*b){
                 return blueprint->CanCreateLink(a,b);
             };

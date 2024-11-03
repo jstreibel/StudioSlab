@@ -26,9 +26,8 @@ namespace Slab::Blueprints {
             return {static_cast<unsigned long>(GetNextId())};
         }
 
-        Vector<Node> GetNodes();
-
-        Vector<Link> GetLinks();
+        auto GetNodes() -> Vector<Node>&;
+        auto GetLinks() -> Vector<Link>&;
 
         Node* FindNode(ed::NodeId id);
 

@@ -6,11 +6,11 @@
 
 namespace Slab::Blueprints {
 
-    Vector<Node> Blueprint::GetNodes() {
+    auto Blueprint::GetNodes() -> Vector<Node>&{
         return m_Nodes;
     }
 
-    Vector<Link> Blueprint::GetLinks() {
+    auto Blueprint::GetLinks() -> Vector<Link>&{
         return m_Links;
     }
 
