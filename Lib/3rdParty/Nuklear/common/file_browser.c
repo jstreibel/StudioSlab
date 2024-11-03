@@ -10,7 +10,6 @@
 #endif
 
 #include "Graphics/OpenGL/OpenGL.h"
-#define STB_IMAGE_IMPLEMENTATION
 #include "3rdParty/stb_image.h"
 
 struct icons {

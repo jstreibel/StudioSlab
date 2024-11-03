@@ -11,6 +11,7 @@
 #include "Graphics/Modules/GraphicsModule.h"
 
 #include "3rdParty/ImGui.h"
+#include "ImGuiContext.h"
 
 namespace Slab::Graphics {
 
@@ -19,6 +20,7 @@ namespace Slab::Graphics {
         void buildFonts();
 
         ImGuiContext *m_Context = nullptr;
+        Pointer<SlabImGuiContext> m_SlabContext = nullptr;
 
     protected:
         bool showDemos = false;
@@ -28,6 +30,11 @@ namespace Slab::Graphics {
         ~ImGuiModule() override;
 
     public:
+        virtual
+        void newFrame();
+
+        Pointer<SlabImGuiContext> createContext();
+
         static ImGuiModule* BuildModule();
 
         void beginRender() override;

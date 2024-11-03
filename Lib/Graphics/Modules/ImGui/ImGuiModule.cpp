@@ -49,6 +49,7 @@ namespace Slab::Graphics {
         IMGUI_CHECKVERSION();
 
         m_Context = ImGui::CreateContext();
+        m_SlabContext = createContext();
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
@@ -149,7 +150,8 @@ namespace Slab::Graphics {
     }
 
     void ImGuiModule::beginRender() {
-        ImGui::NewFrame();
+        // ImGui::SetCurrentContext(m_Context);
+        m_SlabContext->NewFrame();
 
         if (showDemos)
             ImGui::ShowDemoWindow();
@@ -190,6 +192,14 @@ namespace Slab::Graphics {
 
     ImGuiContext *ImGuiModule::getContext() {
         return m_Context;
+    }
+
+    void ImGuiModule::newFrame() {
+        ImGui::NewFrame();
+    }
+
+    Pointer<SlabImGuiContext> ImGuiModule::createContext() {
+        return New<SlabImGuiContext>(m_Context);
     }
 
 

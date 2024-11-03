@@ -35,11 +35,6 @@ namespace Slab::Graphics {
     }
 
     void ImGuiModuleGLFW::beginRender() {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-
-        //ImGui::NewFrame();
-
         ImGuiModule::beginRender();
     }
 
@@ -93,5 +88,15 @@ namespace Slab::Graphics {
         ImGuiModule::endRender();
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+    }
+
+    void ImGuiModuleGLFW::newFrame() {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+
+        ImGuiModule::newFrame();
+
+        //ImGui::NewFrame();
+
     }
 } // Core

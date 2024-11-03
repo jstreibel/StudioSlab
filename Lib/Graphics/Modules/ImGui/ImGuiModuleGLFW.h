@@ -15,6 +15,11 @@ namespace Slab::Graphics {
         explicit ImGuiModuleGLFW();
         ~ImGuiModuleGLFW() override;
 
+    protected:
+        void newFrame() override;
+
+    public:
+
         void beginRender() override;
 
         void endRender() override;
