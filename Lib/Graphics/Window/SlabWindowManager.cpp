@@ -118,8 +118,8 @@ namespace Slab::Graphics {
                                Grabbed::Titlebar,
                                focused->window};
                 } else if(decorator.isMouseOverGrabRegion(*focused->window, mouse_state.x, mouse_state.y) && !focused->window->wantsFullscreen()) {
-                    grabbed = {Point2D(focused->window->getw()+focused->window->getx() - mouse_state.x,
-                                       focused->window->geth()+focused->window->gety() - mouse_state.y),
+                    grabbed = {Point2D(focused->window->GetWidth() + focused->window->getx() - mouse_state.x,
+                                       focused->window->GetHeight() + focused->window->gety() - mouse_state.y),
                                Grabbed::Corner,
                                focused->window};
                 } else {
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
             auto p = grabbed.anchor;
 
             if(grabbed.what == Grabbed::Titlebar) {
-                fix x_min = -grabbed.window->getw() + 200;
+                fix x_min = -grabbed.window->GetWidth() + 200;
                 fix y_min = decorator.titlebar_height() + WindowStyle::menu_height;
 
                 fix x_max = w_system_window-200;
@@ -150,8 +150,11 @@ namespace Slab::Graphics {
                 grabbed.window->sety(y_new);
 
             } else if(grabbed.what == Grabbed::Corner) {
-                fix w = Max(x-grabbed.window->getx()+grabbed.anchor.x, 500.);
-                fix h = Max(y-grabbed.window->gety()+grabbed.anchor.y, 230.);
+                auto min_width = grabbed.window->min_width;
+                auto min_height = grabbed.window->min_height;
+
+                fix w = Max(x-grabbed.window->getx()+grabbed.anchor.x, (Real)min_width);
+                fix h = Max(y-grabbed.window->gety()+grabbed.anchor.y, (Real)min_height);
 
                 grabbed.window->notifyReshape((int)w, (int)h);
             }

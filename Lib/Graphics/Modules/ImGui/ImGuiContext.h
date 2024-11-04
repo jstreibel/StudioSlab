@@ -29,6 +29,8 @@ namespace Slab::Graphics {
         ImGuiContext *
         getNativeContext();
 
+        Real getFontSize() const;
+
         void AddExternalDraw(const ExternalDraw&);
 
         void Bind();

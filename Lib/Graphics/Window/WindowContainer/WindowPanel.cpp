@@ -62,20 +62,20 @@ namespace Slab::Graphics {
         Vector<int> computedWidths(m);
         auto freeWidths = countFreeWidths();
         if (freeWidths == m) {
-            for (auto &w: computedWidths) w = this->getw() / m;
+            for (auto &w: computedWidths) w = this->GetWidth() / m;
         } else if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relWidth = this->widths[i];
-                auto width = this->getw() * relWidth;
+                auto width = this->GetWidth() * relWidth;
                 computedWidths[i] = width;
             }
         } else {
             auto reservedWidth = computeReservedWidth();
-            auto dxFree = this->getw() * (1 - reservedWidth) / freeWidths;
+            auto dxFree = this->GetWidth() * (1 - reservedWidth) / freeWidths;
 
             for (int i = 0; i < m; ++i) {
                 auto relWidth = this->widths[i];
-                auto width = relWidth > 0 ? this->getw() * relWidth : dxFree;
+                auto width = relWidth > 0 ? this->GetWidth() * relWidth : dxFree;
                 computedWidths[i] = width;
             }
         }
@@ -89,7 +89,7 @@ namespace Slab::Graphics {
 
         auto i = 0;
         auto y = this->gety();
-        auto h = this->geth();
+        auto h = this->GetHeight();
         for (auto &column: columns) {
             column.setx(computedPositions[i]);
             column.sety(y);

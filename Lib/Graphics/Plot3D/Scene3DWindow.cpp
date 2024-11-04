@@ -52,7 +52,7 @@ namespace Slab::Graphics {
         fix z = target.z     + r*cos(θ);
 
         camera.pos = {x, y, z};
-        camera.aspect = (float)getw()/(float)geth();
+        camera.aspect = (float) GetWidth() / (float) GetHeight();
     }
 
     bool Scene3DWindow::notifyMouseMotion(int x, int y) {

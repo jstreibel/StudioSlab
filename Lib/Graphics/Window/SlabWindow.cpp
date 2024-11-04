@@ -150,6 +150,18 @@ namespace Slab::Graphics {
         return config.flags & WantsFullscreen;
     }
 
+    void SlabWindow::SetMinimumWidth(Slab::Resolution minw) {
+        min_width = minw;
+
+        if(min_width > GetWidth()) notifyReshape((int)min_width, GetHeight());
+    }
+
+    void SlabWindow::SetMinimumHeight(Slab::Resolution minh) {
+        min_height = minh;
+
+        if(min_height > GetHeight()) notifyReshape(GetWidth(), (int)min_height);
+    }
+
     auto SlabWindow::setx(int x) -> void {
         fix w=config.win_rect.width();
         config.win_rect.xMin = x;

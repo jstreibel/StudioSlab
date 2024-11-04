@@ -115,8 +115,8 @@ namespace Slab {
         } else {
             auto xOld = window->getx();
             auto yOld = window->gety();
-            auto wOld = window->getw();
-            auto hOld = window->geth();
+            auto wOld = window->GetWidth();
+            auto hOld = window->GetHeight();
 
             window->setx(0);
             window->sety(0);

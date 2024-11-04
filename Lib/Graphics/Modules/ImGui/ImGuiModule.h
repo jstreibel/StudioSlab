@@ -41,6 +41,8 @@ namespace Slab::Graphics {
         // virtual
         // void endFrame(bool do_render=true);
 
+        float getFontSize() const;
+
         Pointer<SlabImGuiContext> createContext();
 
         static ImGuiModule* BuildModule();

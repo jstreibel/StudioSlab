@@ -6,6 +6,7 @@
 #include "Utils/Exception.h"
 #include "ImGuiModule.h"
 #include "StudioSlab.h"
+#include "3rdParty/imgui/imgui_internal.h"
 
 namespace Slab::Graphics {
 
@@ -50,6 +51,12 @@ namespace Slab::Graphics {
 
     void SlabImGuiContext::AddExternalDraw(const ExternalDraw& external_draw) {
         external_draws.emplace_back(external_draw);
+    }
+
+    Real SlabImGuiContext::getFontSize() const {
+        auto &module = Slab::GetModule<ImGuiModule>("ImGui");
+
+        return module.getFontSize();
     }
 
 } // Slab::Graphics

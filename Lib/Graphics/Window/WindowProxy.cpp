@@ -14,7 +14,7 @@ namespace Slab::Graphics {
 
         // window->setx(getx());
         // window->sety(gety());
-        window->notifyReshape(getw(), geth());
+        window->notifyReshape(GetWidth(), GetHeight());
     }
 
     void WindowProxy::draw() {

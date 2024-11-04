@@ -103,12 +103,13 @@ namespace Slab::Graphics {
 
     void FourierViewer::draw() {
         auto function = getFunction();
-
         if(function == nullptr) return;
 
         beginGUI();
 
-        gui_window->AddExternalDraw([this, &function]() {
+        gui_window->AddExternalDraw([this]() {
+            auto function = getFunction();
+
             if (ImGui::CollapsingHeader("k-filter")) {
                 //this->dftData
                 fix kMax = M_PI / function->getSpace().getMetaData().geth(0);

@@ -46,6 +46,7 @@ namespace Slab::Graphics {
 
     protected:
         Config config;
+        Resolution min_width=800, min_height=450;
         bool active=false;
 
     public:
@@ -84,8 +85,11 @@ namespace Slab::Graphics {
 
         inline auto getx() const -> int  { return config.win_rect.xMin; }
         inline auto gety() const -> int  { return config.win_rect.yMin; }
-        inline auto getw() const -> int  { return config.win_rect.width(); }
-        inline auto geth() const -> int  { return config.win_rect.height(); }
+        inline auto GetWidth() const -> int  { return config.win_rect.width(); }
+        inline auto GetHeight() const -> int  { return config.win_rect.height(); }
+        void SetMinimumWidth(Resolution);
+        void SetMinimumHeight(Resolution);
+
 
         virtual auto setx(int x)  -> void;
         virtual auto sety(int y)  -> void;

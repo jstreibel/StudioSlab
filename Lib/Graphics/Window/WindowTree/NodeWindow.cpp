@@ -35,8 +35,8 @@ namespace Slab::Graphics {
     void NodeWindow::arrange() {
         auto n = children.size();
 
-        auto childWidth = getw();
-        auto childHeight = geth();
+        auto childWidth = GetWidth();
+        auto childHeight = GetHeight();
 
         auto dx = childWidth / n;
         auto dy = childHeight / n;

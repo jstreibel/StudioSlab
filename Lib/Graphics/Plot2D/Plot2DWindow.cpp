@@ -162,10 +162,12 @@ namespace Slab::Graphics {
                     auto vp = getViewport();
                     // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
                     // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
-                    ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Appearing);
+                    ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Always);
                     ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
 
-                    began = ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing);
+                    ImGui::SetNextWindowBgAlpha(0.65);
+                    began = ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing
+                    | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
                 } else {
                     bool closable = false;
 
@@ -204,9 +206,10 @@ namespace Slab::Graphics {
                     }
 
                     if(!gui_context_is_local) {
-                        ImGui::BeginChild(unique(title + " :)").c_str(), {0, 0},
+                        auto avail_region = ImGui::GetContentRegionAvail();
+                        ImGui::BeginChild(unique(title + " :)").c_str(), {avail_region.x, 0},
                                           ImGuiChildFlags_Border
-                                          | ImGuiChildFlags_AutoResizeX);
+                                          | ImGuiChildFlags_AutoResizeY);
                     }
 
                     for (IN cont: content) {

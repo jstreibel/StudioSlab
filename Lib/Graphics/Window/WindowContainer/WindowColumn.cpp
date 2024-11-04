@@ -60,23 +60,23 @@ namespace Slab::Graphics {
 
         if (m == 0) return;
 
-        Vector<int> computedHeights(m, (int) (geth() / m));    // "if(freeHeights==m)"
+        Vector<int> computedHeights(m, (int) (GetHeight() / m));    // "if(freeHeights==m)"
 
 
         auto freeHeights = CountLessThanZero(heights);
         if (freeHeights == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relHeight = heights[i];
-                auto height = geth() * relHeight;
+                auto height = GetHeight() * relHeight;
                 computedHeights[i] = (int) height;
             }
         } else if (freeHeights != m) {
             auto reservedHeight = SumLargerThanZero(heights);
-            auto hFree = (float) geth() * (1 - reservedHeight) / (float) freeHeights;
+            auto hFree = (float) GetHeight() * (1 - reservedHeight) / (float) freeHeights;
 
             for (int i = 0; i < m; ++i) {
                 auto relHeight = heights[i];
-                auto height = relHeight > 0 ? geth() * relHeight : hFree;
+                auto height = relHeight > 0 ? GetHeight() * relHeight : hFree;
                 computedHeights[i] = (int) height;
             }
         }
@@ -99,7 +99,7 @@ namespace Slab::Graphics {
             win->setx(getx() + gap);
             win->sety(computed_yPositions[i]);
 
-            win->notifyReshape(getw()-gap, computedHeights[i]);
+            win->notifyReshape(GetWidth() - gap, computedHeights[i]);
 
             i++;
         }

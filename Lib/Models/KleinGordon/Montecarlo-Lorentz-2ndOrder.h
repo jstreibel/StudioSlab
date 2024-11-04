@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         unsigned accepted = 0;
 
         Real E(const NumericFunction &phi){
-            const auto h = phi.getSpace().geth();
+            const auto h = phi.getSpace().GetHeight();
             const auto inv_2h = .5/h;
             const auto &X = phi.getSpace().getHostData();
             const auto &N = phi.N;
@@ -96,7 +96,7 @@ namespace Slab::Models::KGRtoR {
             auto &dPhidt = fieldState.getDPhiDt();
 
             auto N = phi.N_modes;
-            auto h = phi.getSpace().geth();
+            auto h = phi.getSpace().GetHeight();
             auto &X = phi.getSpace().getHostData();
 
             for (int ssf = 0; ssf < N; ++ssf) {

@@ -12,7 +12,7 @@
 #include <numeric>
 
 #define CountLessThanZero(vec) std::count_if(begin(vec), end(vec), [](float x) { return x < 0; });
-#define SumLargerThanZero(vec) std::accumulate(begin(vec), end(vec), 0.0f, [](float acc, float x) { return x > 0 ? acc + x : acc; });
+#define SumLargerThanZero(vec) std::accumulate(begin(vec), end(vec), 0.0f, [this](float acc, float x) { return x > 0 ? acc + (x<=1?x:x/GetWidth()) : acc; });
 
 
 
@@ -92,22 +92,30 @@ namespace Slab::Graphics {
         auto freeWidths = CountLessThanZero(widths);
 
         if(freeWidths == m) {
-            computedWidths = Vector<int>(m, (int) (getw() / m));
+            computedWidths = Vector<int>(m, (int) (GetWidth() / m));
         }
         else if (freeWidths == 0) {
             for (int i = 0; i < m; ++i) {
-                auto relWidth = widths[i];
-                auto width = geth() * relWidth - 2*WindowStyle::tiling_gap;
-                computedWidths[i] = (int) width;
+                auto input_width = widths[i];
+                int computed_width = input_width < 1. ? int(GetHeight() * computed_width) : int(computed_width);
+                computedWidths[i] = (int) computed_width;
             }
         } else /*if (freeWidths != m)*/ {
             auto reservedWidth = SumLargerThanZero(widths);
-            auto wFree = (float) getw() * (1 - reservedWidth) / (float) freeWidths;
+            auto wFree = (float) GetWidth() * (1 - reservedWidth) / (float) freeWidths;
 
             for (int i = 0; i < m; ++i) {
-                auto relWidth = widths[i];
-                auto width = relWidth > 0 ? getw() * relWidth : wFree;
-                computedWidths[i] = (int) width;
+                auto input_width = widths[i];
+                int computed_width;
+                if(input_width > 0) {
+                    if(input_width <= 1)
+                        computed_width = GetWidth() * input_width;
+                    else
+                        computed_width = (int)input_width;
+                } else
+                    computed_width = wFree;
+
+                computedWidths[i] = (int) computed_width;
             }
         }
 
@@ -127,7 +135,7 @@ namespace Slab::Graphics {
 
         auto i = 0;
         fix y = gety() + WindowStyle::tiling_gap;
-        fix h = geth() - WindowStyle::tiling_gap;
+        fix h = GetHeight() - WindowStyle::tiling_gap;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 

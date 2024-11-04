@@ -236,5 +236,9 @@ namespace Slab::Graphics {
         return m_MainContext;
     }
 
+    float ImGuiModule::getFontSize() const {
+        return FONT_SIZE_PIXELS;
+    }
+
 
 } // Core

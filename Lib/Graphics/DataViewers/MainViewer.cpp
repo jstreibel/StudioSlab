@@ -14,8 +14,14 @@ namespace Slab::Graphics {
     MainViewer::MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction)
     : Graphics::WindowRow()
     , base_function(std::move(baseFunction)) {
+        auto font_size = gui_window->GetGUIContext()->getFontSize();
 
-        addWindow(gui_window, Right, 0.175);
+        auto gui_size = 22*font_size;
+
+        addWindow(gui_window, Right, gui_size);
+
+        SetMinimumHeight(2.2*gui_size);
+        SetMinimumWidth(4*gui_size);
 
         arrangeWindows();
     }

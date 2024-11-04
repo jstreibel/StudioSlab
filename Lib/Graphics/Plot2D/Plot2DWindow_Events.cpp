@@ -44,8 +44,8 @@ namespace Slab {
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();
 
-            const Real dxClampd = -mouseState.dx / (Real) getw();
-            const Real dyClampd = mouseState.dy / (Real) geth();
+            const Real dxClampd = -mouseState.dx / (Real) GetWidth();
+            const Real dyClampd = mouseState.dy / (Real) GetHeight();
             const Real wGraph = rect.width();
             const Real hGraph = rect.height();
             const Real dxGraph = wGraph * dxClampd;

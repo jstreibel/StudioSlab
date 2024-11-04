@@ -25,7 +25,7 @@ namespace Slab {
         fix w = region.xMax - region.xMin;
         fix h = region.yMax - region.yMin;
         fix regionRatio = w / (Real) h;
-        fix windowRatio = window->getw() / (Real) window->geth();
+        fix windowRatio = window->GetWidth() / (Real) window->GetHeight();
 
         fix baseScale = h * 2.0e-4;
 
