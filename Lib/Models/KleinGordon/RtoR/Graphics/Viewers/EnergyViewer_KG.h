@@ -15,9 +15,9 @@ namespace Slab::Models::KGRtoR {
 
     // Grapha34f ics::Viewer
     class EnergyViewer_KG : public KGViewer {
-        Pointer<Graphics::Plot2DWindow> total_energies_window = New<Graphics::Plot2DWindow>("Energy");
-        Pointer<Graphics::Plot2DWindow> temperatures_window   = New<Graphics::Plot2DWindow>("Temperature");
-        Pointer<Graphics::Plot2DWindow> full_histories_window = New<Graphics::Plot2DWindow>("Histories");
+        Pointer<Graphics::Plot2DWindow> total_energies_window = New<Graphics::Plot2DWindow>("Energy", gui_window->GetGUIContext());
+        Pointer<Graphics::Plot2DWindow> temperatures_window   = New<Graphics::Plot2DWindow>("Temperature", gui_window->GetGUIContext());
+        Pointer<Graphics::Plot2DWindow> full_histories_window = New<Graphics::Plot2DWindow>("Histories", gui_window->GetGUIContext());
 
         Slab::Graphics::R2toRFunctionArtist_ptr f_artist{};
         Slab::Graphics::R2toRFunctionArtist_ptr dfdt_artist{};

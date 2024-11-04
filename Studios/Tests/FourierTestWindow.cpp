@@ -62,16 +62,17 @@ namespace Tests {
 
     FourierTestWindow::FourierTestWindow()
     : Graphics::SlabWindow({"Fourier tests"})
-    , mFuncGraph(xMin, xMax, -3.25*A, 3.25*A, "func graph")
-    , mFTGraph(-1.1*ω, 1.1*ω, -0.1, 1.1, "")
     , theme(Graphics::PlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->funcPlotStyles[0])
     , imagFTArtist(nullptr, theme->funcPlotStyles[1])
     , loc1Artist(nullptr, theme->funcPlotStyles[3])
     , loc2Artist(nullptr, theme->funcPlotStyles[3])
     , funcArtist(nullptr, theme->funcPlotStyles[0], 2000)
-    , rebuiltFuncArtist(nullptr, theme->
-    funcPlotStyles[1], 2000)
+    , rebuiltFuncArtist(nullptr, theme->funcPlotStyles[1], 2000)
+    , gui()
+    , mDFTGraph("DFT", gui.GetGUIContext())
+    , mFuncGraph("func graph", gui.GetGUIContext())
+    , mFTGraph("", gui.GetGUIContext())
     {
         updateGraphs();
 
@@ -79,8 +80,11 @@ namespace Tests {
         mFuncGraph.addArtist(Dummy(rebuiltFuncArtist));
         mFuncGraph.addArtist(Dummy(loc1Artist));
         mFuncGraph.addArtist(Dummy(loc2Artist));
+        mFuncGraph.getRegion().setLimits(xMin, xMax, -3.25*A, 3.25*A);
         loc1Artist.setLabel("xₘᵢₙ");
         loc2Artist.setLabel("xₘₐₓ");
+
+        mFTGraph.getRegion().setLimits(-1.1*ω, 1.1*ω, -0.1, 1.1);
 
         mDFTGraph.addArtist(Dummy(realFTArtist));
         mDFTGraph.addArtist(Dummy(imagFTArtist));

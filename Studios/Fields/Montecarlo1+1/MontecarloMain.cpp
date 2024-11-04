@@ -38,7 +38,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU> field) {
         }
     }
 
-    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>();
+    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Field plot", nullptr);
     plot_window->setx(1700);
     plot_window->notifyReshape(1200, 800);
     fix lims = field->getDomain();

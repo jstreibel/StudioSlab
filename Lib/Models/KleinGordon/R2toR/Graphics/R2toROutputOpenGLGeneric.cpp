@@ -13,8 +13,8 @@ namespace Slab::Math {
 
     R2toR::OutputOpenGL::OutputOpenGL(Real t_max, Count max_steps, Real x_min, Real x_max, Real y_min, Real y_max)
     : Graphics::BaseMonitor(t_max, max_steps, "R2 -> R OpenGL output", 1)
-    , mSectionGraph(x_min, x_max, -1, 1, "Sections")
-    , mFieldDisplay()
+    , mSectionGraph("Sections", nullptr)
+    , mFieldDisplay("Field", nullptr)
     {
         addWindow(Slab::Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
 

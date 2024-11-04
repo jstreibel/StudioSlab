@@ -22,14 +22,14 @@ namespace Slab::Models::KGRtoR {
     {
         twoPointArtist->setLabel("avg[ϕ(x)ϕ(x+r)]");
 
-        auto twoPointWindow = New<PlottingWindow>("Two-point correlation");
+        auto twoPointWindow = New<PlottingWindow>("Two-point correlation", gui_window->GetGUIContext());
         twoPointWindow->addArtist(twoPointArtist);
         addWindow(twoPointWindow);
 
         sectionArtist->setLabel("avg[ϕ(x)ϕ(x+r)] | r=(0,t)");
         sectionArtist->addSection(time_slice, Themes::GetCurrent()->funcPlotStyles[0].clone(), "x=0");
         sectionArtist->addSection(space_slice, Themes::GetCurrent()->funcPlotStyles[1].clone(), "t=0");
-        auto timeSliceWindow = New<PlottingWindow>("Two-point time slice");
+        auto timeSliceWindow = New<PlottingWindow>("Two-point time slice", gui_window->GetGUIContext());
         timeSliceWindow->addArtist(sectionArtist);
         Plotter::AddRtoRFunction(timeSliceWindow, Naked(twoPointCorrelationAnalytic),
                                  Themes::GetCurrent()->funcPlotStyles[1], "Analytic, x=0");

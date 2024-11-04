@@ -28,6 +28,8 @@ namespace Slab::Graphics {
 
         void AddExternalDraw(const ExternalDraw&);
 
+        Pointer<SlabImGuiContext> GetGUIContext();
+
         void draw() override;
         void begin() const;
         void end() const;

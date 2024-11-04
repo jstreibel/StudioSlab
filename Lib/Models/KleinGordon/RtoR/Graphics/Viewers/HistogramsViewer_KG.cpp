@@ -17,10 +17,10 @@ namespace Slab::Models::KGRtoR {
     HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
     : KGViewer(gui_window) {
 
-        auto energy_window    = New<PlotWindow>("Energy histogram");
-        auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram");
-        auto gradient_window  = New<PlotWindow>("Gradient energy histogram");
-        auto potential_window = New<PlotWindow>("Potential energy histogram");
+        auto energy_window    = New<PlotWindow>("Energy histogram", gui_window->GetGUIContext());
+        auto kinetic_window   = New<PlotWindow>("Kinetic energy histogram", gui_window->GetGUIContext());
+        auto gradient_window  = New<PlotWindow>("Gradient energy histogram", gui_window->GetGUIContext());
+        auto potential_window = New<PlotWindow>("Potential energy histogram", gui_window->GetGUIContext());
 
         histogram_windows = {energy_window, kinetic_window, gradient_window, potential_window};
 

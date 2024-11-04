@@ -41,8 +41,8 @@ namespace Slab::Models::KGRtoR {
                                        Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ realtime monitor",
                                   "realtime monitoring of simulation state")
-            , mFieldsGraph(params->getxMin(), params->getxMax(), -1, 1, "Fields")
-            , mEnergyGraph("Energy")
+            , mFieldsGraph("Fields", guiWindow.GetGUIContext())
+            , mEnergyGraph("Energy", guiWindow.GetGUIContext())
             , imGuiWindow(Naked(mEnergyGraph)) {
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
@@ -118,7 +118,7 @@ namespace Slab::Models::KGRtoR {
                                              const Graphics::R2toRFunctionArtist_ptr &simHistoryGraph) {
         RtoRPanel::setSimulationHistory(simHistory, simHistoryGraph);
 
-        auto simulationHistoryGraph = Slab::New<Graphics::Plot2DWindow>();
+        auto simulationHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Simulation history", guiWindow.GetGUIContext());
         simulationHistoryGraph->addArtist(simHistoryGraph);
 
         addWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
@@ -130,7 +130,7 @@ namespace Slab::Models::KGRtoR {
                                                const Graphics::R2toRFunctionArtist_ptr &sftHistoryArtist) {
         RtoRPanel::setSpaceFourierHistory(sftHistory, dftData, sftHistoryArtist);
 
-        auto sftHistoryGraph = Slab::New<Plot2DWindow>();
+        auto sftHistoryGraph = Slab::New<Plot2DWindow>("Space Fourier transform", guiWindow.GetGUIContext());
         sftHistoryGraph->addArtist(sftHistoryArtist);
 
         addWindow(sftHistoryGraph);

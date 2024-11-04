@@ -16,6 +16,7 @@ namespace Tests {
     : Slab::Graphics::WindowRow("LaTeX tests")
     , latexWriter()
     , writer(Core::Resources::fontFileName(10), 19)
+    , graph("Graph", stats.GetGUIContext())
     {
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
         style.filled = false;

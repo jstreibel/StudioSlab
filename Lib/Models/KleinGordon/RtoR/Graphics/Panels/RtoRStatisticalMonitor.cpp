@@ -20,7 +20,6 @@
 #define max(a, b) ((a)>(b)?(a):(b))
 #define min(a, b) ((a)<(b)?(a):(b))
 #define ADD_NEW_COLUMN true
-#define MANUAL_REVIEW_GRAPH_LIMITS false
 #define FIRST_TIMER(code)           \
     static bool firstTimer = true;  \
     if (firstTimer) {               \
@@ -42,16 +41,16 @@ namespace Slab::Models::KGRtoR {
 
     RtoRStatisticsPanel::RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
                                              Graphics::GUIWindow &guiWindow)
-            : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel",
-                                  "panel for statistic analysis of simulation data"),
-              hamiltonian(hamiltonian) {
+            : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
+            , hamiltonian(hamiltonian)
+            , mCorrelationGraph("Correlations", guiWindow.GetGUIContext()){
 
         addWindow(Slab::Naked(mCorrelationGraph));
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T");
+            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T", guiWindow.GetGUIContext());
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
@@ -80,10 +79,10 @@ namespace Slab::Models::KGRtoR {
         }
 
         {
-            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram", MANUAL_REVIEW_GRAPH_LIMITS);
-            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram", MANUAL_REVIEW_GRAPH_LIMITS);
+            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram", guiWindow.GetGUIContext());
+            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram", guiWindow.GetGUIContext());
+            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram", guiWindow.GetGUIContext());
+            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram", guiWindow.GetGUIContext());
 
 
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
@@ -118,7 +117,7 @@ namespace Slab::Models::KGRtoR {
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>();
+        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history", guiWindow.GetGUIContext());
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph, true, 0.20);
     }

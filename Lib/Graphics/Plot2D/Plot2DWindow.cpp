@@ -44,13 +44,20 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
-            : region{{xMin, xMax, yMin, yMax}}, title(std::move(_title)), axisArtist(), id(++WindowCount) {
-
+    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, Pointer<SlabImGuiContext> GUI_context)
+    : region{{xMin, xMax, yMin, yMax}}
+    , gui_context(std::move(GUI_context))
+    , title(std::move(_title))
+    , axisArtist()
+    , id(++WindowCount)
+    {
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
 
-        gui_context = Slab::GetModule<ImGuiModule>("ImGui").createContext();
+        if(this->gui_context == nullptr) {
+            gui_context_is_local = true;
+            this->gui_context = Slab::GetModule<ImGuiModule>("ImGui").createContext();
+        }
 
         axisArtist.setLabel("Axis");
         artistXHair.setLabel("X-hair");
@@ -78,10 +85,8 @@ namespace Slab::Graphics {
 
     }
 
-    Plot2DWindow::Plot2DWindow(Str title, bool autoReviewGraphLimits)
-            : Plot2DWindow(-1, 1, -1, 1, std::move(title)) {
-        autoReviewGraphRanges = autoReviewGraphLimits;
-    }
+    Plot2DWindow::Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context)
+            : Plot2DWindow(-1, 1, -1, 1, std::move(title), gui_context) {    }
 
     void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
@@ -122,81 +127,110 @@ namespace Slab::Graphics {
     }
 
     void Graphics::Plot2DWindow::drawGUI() {
-        auto popupName = title + Str(" window popup");
+        auto draw_call = [this](){
+            auto popupName = title + Str(" window popup");
 
-        gui_context->NewFrame();
+            if (popupOn && !POPUP_ON_MOUSE_CALL) {
 
-        if (popupOn && !POPUP_ON_MOUSE_CALL) {
-            ImGui::OpenPopup(unique(popupName).c_str());
-            popupOn = false;
-        }
-
-        if (ImGui::BeginPopup(unique(popupName).c_str())) {
-            if(ImGui::MenuItem("Auto adjust", NULL, autoReviewGraphRanges)) {
-                autoReviewGraphRanges = !autoReviewGraphRanges;
-            }
-            else if (ImGui::MenuItem(unique("Show interface").c_str(), NULL, showInterface)) {
-                showInterface = !showInterface;
-            } else if (ImGui::MenuItem(unique("Save graph").c_str())) {
-
-                auto w = Printing::getTotalHorizontalDots(.5);
-                auto h = w * .5;
-                auto fileName = title + " " +
-                                Core::CLInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
-                                ".png";
-                OpenGL::outputToPNG(this, fileName, w, (int) h);
+                ImGui::OpenPopup(unique(popupName).c_str());
+                popupOn = false;
             }
 
-            ImGui::EndPopup();
-        }
+            if (ImGui::BeginPopup(unique(popupName).c_str())) {
+                if(ImGui::MenuItem("Auto adjust", NULL, autoReviewGraphRanges)) {
+                    autoReviewGraphRanges = !autoReviewGraphRanges;
+                }
+                else if (ImGui::MenuItem(unique("Show interface").c_str(), NULL, showInterface)) {
+                    showInterface = !showInterface;
+                } else if (ImGui::MenuItem(unique("Save graph").c_str())) {
 
-        if (showInterface) {
-            auto vp = getViewport();
-            // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
-            // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
-            ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Appearing);
-            ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
-
-            if (ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing)) {
-                for (auto it = content.begin(); it!=content.end(); ) {
-                    IN artie = it->second;
-
-                    bool increment_iterator = true;
-
-                    auto label = artie->getLabel();
-                    if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
-                        increment_iterator = !z_order_up(content, it);
-                    }
-                    ImGui::SameLine();
-                    ImGui::Text("z=%i", it->first);
-                    ImGui::SameLine();
-                    if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
-                        increment_iterator = !z_order_down(content, it);
-                    }
-                    ImGui::SameLine();
-
-                    bool visible = artie->isVisible();
-                    if (ImGui::Checkbox((unique(artie->getLabel())+"_checkbox").c_str() , &visible)) {
-                        artie->setVisibility(visible);
-                    }
-
-                    if(increment_iterator) ++it;
+                    auto w = Printing::getTotalHorizontalDots(.5);
+                    auto h = w * .5;
+                    auto fileName = title + " " +
+                                    Core::CLInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
+                                    ".png";
+                    OpenGL::outputToPNG(this, fileName, w, (int) h);
                 }
 
-                for (IN cont: content) {
-                    IN artie = cont.second;
-
-                    if (artie->isVisible() && artie->hasGUI()) {
-                        if (ImGui::CollapsingHeader((unique(artie->getLabel())).c_str()))
-                            artie->drawGUI();
-                    }
-                }
+                ImGui::EndPopup();
             }
 
-            ImGui::End();
-        }
+            if (showInterface) {
+                bool began = false;
 
-        gui_context->Render();
+                if(gui_context_is_local) {
+                    auto vp = getViewport();
+                    // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
+                    // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
+                    ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Appearing);
+                    ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
+
+                    began = ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing);
+                } else {
+                    bool closable = false;
+
+                    ImGui::Begin("Stats", &closable,
+                                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
+                                 ImGuiWindowFlags_NoMove |
+                                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+
+                    began = ImGui::CollapsingHeader(unique(title).c_str(), &showInterface);
+                }
+
+                if (began) {
+                    for (auto it = content.begin(); it!=content.end(); ) {
+                        IN artie = it->second;
+
+                        bool increment_iterator = true;
+
+                        auto label = artie->getLabel();
+                        if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
+                            increment_iterator = !z_order_up(content, it);
+                        }
+                        ImGui::SameLine();
+                        ImGui::Text("z=%i", it->first);
+                        ImGui::SameLine();
+                        if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
+                            increment_iterator = !z_order_down(content, it);
+                        }
+                        ImGui::SameLine();
+
+                        bool visible = artie->isVisible();
+                        if (ImGui::Checkbox((unique(artie->getLabel())+"_checkbox").c_str() , &visible)) {
+                            artie->setVisibility(visible);
+                        }
+
+                        if(increment_iterator) ++it;
+                    }
+
+                    if(!gui_context_is_local) {
+                        ImGui::BeginChild(unique(title + " :)").c_str(), {0, 0},
+                                          ImGuiChildFlags_Border
+                                          | ImGuiChildFlags_AutoResizeX);
+                    }
+
+                    for (IN cont: content) {
+                        IN artie = cont.second;
+
+                        if (artie->isVisible() && artie->hasGUI()) {
+                            if (ImGui::CollapsingHeader((unique(artie->getLabel())).c_str()))
+                                artie->drawGUI();
+                        }
+                    }
+
+                    if(!gui_context_is_local) ImGui::EndChild();
+                }
+
+                ImGui::End();
+            }};
+
+        if(gui_context_is_local) {
+            gui_context->NewFrame();
+            draw_call();
+            gui_context->Render();
+        } else {
+            gui_context->AddExternalDraw(draw_call);
+        }
     }
 
     void Graphics::Plot2DWindow::setupOrtho() const {

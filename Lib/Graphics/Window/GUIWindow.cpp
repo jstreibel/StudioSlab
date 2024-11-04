@@ -50,14 +50,11 @@ namespace Slab::Graphics {
 
             auto flags = ImGuiTreeNodeFlags_DefaultOpen;
             if (!stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
-
-                auto i = 0;
                 for (const auto &stat: stats) {
                     const auto text = stat.first;
 
                     if (text == "<\\br>") {
                         ImGui::Separator();
-                        i = 0;
                         continue;
                     }
 
@@ -142,7 +139,7 @@ namespace Slab::Graphics {
         gui_context->AddExternalDraw([this]() {
             bool closable = false;
 
-            ImGui::Begin(unique("Stats").c_str(), &closable,
+            ImGui::Begin("Stats", &closable,
                          ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
                          ImGuiWindowFlags_NoMove |
                          ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
@@ -153,5 +150,9 @@ namespace Slab::Graphics {
     }
 
     void GUIWindow::AddExternalDraw(const ExternalDraw& draw) { gui_context->AddExternalDraw(draw); }
+
+    Pointer<SlabImGuiContext> GUIWindow::GetGUIContext() {
+        return gui_context;
+    }
 
 }

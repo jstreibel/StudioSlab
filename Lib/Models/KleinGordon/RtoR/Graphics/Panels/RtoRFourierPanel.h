@@ -18,10 +18,10 @@
 namespace Slab::Models::KGRtoR {
 
     class RtoRFourierPanel : public RtoRPanel {
-        Pointer<Plot2DWindow> kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ");
-        Pointer<Plot2DWindow> ωSpaceGraph  = Slab::New<Plot2DWindow>("ℱₜ");
-        Pointer<Plot2DWindow> xSpaceGraph  = Slab::New<Plot2DWindow>("ϕ(t,x)");
-        Pointer<Plot2DWindow> ωkSpaceGraph = Slab::New<Plot2DWindow>("ℱₜₓ");
+        Pointer<Plot2DWindow> kSpaceGraph;
+        Pointer<Plot2DWindow> ωSpaceGraph;
+        Pointer<Plot2DWindow> xSpaceGraph;
+        Pointer<Plot2DWindow> ωkSpaceGraph;
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = Slab::New<R2toRFunctionArtist>();
         Pointer<R2toR::NumericFunction> inv_kSpace;

@@ -26,9 +26,9 @@ namespace Modes::DatabaseViewer {
     DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
     : WindowRow()
     , guiWindow()
-    , allDataDisplay("All data")
-    , fullParticularHistoryDisplay("Particular data")
-    , massesGraph("masses")
+    , allDataDisplay("All data", guiWindow.GetGUIContext())
+    , fullParticularHistoryDisplay("Particular data", guiWindow.GetGUIContext())
+    , massesGraph("masses", guiWindow.GetGUIContext())
     {
         for(const auto &dbFilename : dbFilenames){
             auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);

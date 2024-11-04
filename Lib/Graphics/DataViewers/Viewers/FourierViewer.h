@@ -23,10 +23,10 @@ namespace Slab::Graphics{
 
         R2toRFunctionArtist_ptr function_artist;
 
-        Pointer<Plot2DWindow> kSpaceGraph  = New<Plot2DWindow>("ℱₓ");
-        Pointer<Plot2DWindow> ωSpaceGraph  = New<Plot2DWindow>("ℱₜ");
-        Pointer<Plot2DWindow> xSpaceGraph  = New<Plot2DWindow>("ϕ(t,x)");
-        Pointer<Plot2DWindow> ωkSpaceGraph = New<Plot2DWindow>("ℱₜₓ");
+        Pointer<Plot2DWindow> kSpaceGraph;
+        Pointer<Plot2DWindow> ωSpaceGraph;
+        Pointer<Plot2DWindow> xSpaceGraph;
+        Pointer<Plot2DWindow> ωkSpaceGraph;
 
         Pointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
         Pointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();
@@ -54,8 +54,8 @@ namespace Slab::Graphics{
 
         bool auto_update_Ft = false;
         bool auto_update_Ftx = false;
-        float t0;
-        float Δt;
+        float t0=0.f;
+        float Δt=1.f;
     protected:
         void computeAll();
         void computeFullDFT2D(bool discardRedundantModes);
