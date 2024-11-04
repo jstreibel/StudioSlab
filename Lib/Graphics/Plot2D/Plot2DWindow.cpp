@@ -155,8 +155,9 @@ namespace Slab::Graphics {
                 ImGui::EndPopup();
             }
 
-            if (showInterface) {
-                bool began = false;
+            if (showInterface || !gui_context_is_local)
+            {
+                bool began;
 
                 if(gui_context_is_local) {
                     auto vp = getViewport();
@@ -176,7 +177,11 @@ namespace Slab::Graphics {
                                  ImGuiWindowFlags_NoMove |
                                  ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
-                    began = ImGui::CollapsingHeader(unique(title).c_str(), &showInterface);
+                    ImGuiTreeNodeFlags flags = 0;
+                    if(isMouseIn()) {
+                        flags = ImGuiTreeNodeFlags_Selected;
+                    }
+                    began = ImGui::CollapsingHeader(unique(title).c_str(), flags);
                 }
 
                 if (began) {
