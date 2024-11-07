@@ -5,12 +5,13 @@
 #ifndef STUDIOSLAB_GUICONTEXT_H
 #define STUDIOSLAB_GUICONTEXT_H
 
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
+
 namespace Slab::Graphics {
 
-    class GUIContext {
+    class GUIContext : public SystemWindowEventListener {
     public:
         virtual void NewFrame() = 0;
-        virtual void Render() = 0;
 
     };
 

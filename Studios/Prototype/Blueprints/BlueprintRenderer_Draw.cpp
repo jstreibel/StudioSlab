@@ -28,7 +28,7 @@ namespace Slab::Blueprints {
 
         DoDrawing();
 
-        m_Context->Render();
+        m_Context->notifyRender();
     }
 
     void BlueprintRenderer::DoDrawing() {

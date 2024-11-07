@@ -38,12 +38,12 @@ namespace Slab::Graphics {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         begin();
-        gui_context->AddExternalDraw([this](){
+        gui_context->AddDrawCall([this]() {
             auto vp = getViewport();
-            const auto w_ = (float)vp.width(),
-                    h_ = (float)vp.height();
-            const auto x_ = (float)vp.xMin,
-                    y_ = (float)vp.yMin;
+            const auto w_ = (float) vp.width(),
+                    h_ = (float) vp.height();
+            const auto x_ = (float) vp.xMin,
+                    y_ = (float) vp.yMin;
 
             ImGui::SetWindowPos(ImVec2{x_, y_});
             ImGui::SetWindowSize(ImVec2{w_, h_});
@@ -59,7 +59,7 @@ namespace Slab::Graphics {
                     }
 
                     const auto c = stat.second;
-                    if(c.r<0 || c.g<0 || c.b<0 || c.a<0) {
+                    if (c.r < 0 || c.g < 0 || c.b < 0 || c.a < 0) {
                         ImGui::Text("%s", text.c_str());
                     } else {
                         const auto color = ImVec4(c.r, c.g, c.b, c.a);
@@ -70,13 +70,13 @@ namespace Slab::Graphics {
             }
 
             auto allDataEntries = Math::EnumerateAllData();
-            if(!allDataEntries.empty() && ImGui::CollapsingHeader("Data")){
-                if(ImGui::BeginTable("DataTable", 1)) {
+            if (!allDataEntries.empty() && ImGui::CollapsingHeader("Data")) {
+                if (ImGui::BeginTable("DataTable", 1)) {
                     ImGui::TableSetupColumn("Name");
                     // ImGui::TableSetupColumn("Id");
                     ImGui::TableHeadersRow();
 
-                    for (const auto& entry: allDataEntries) {
+                    for (const auto &entry: allDataEntries) {
                         ImGui::TableNextRow();
                         ImGui::TableSetColumnIndex(0);
 
@@ -132,11 +132,11 @@ namespace Slab::Graphics {
         end();
 
         gui_context->NewFrame();
-        gui_context->Render();
+        gui_context->notifyRender();
     }
 
     void GUIWindow::begin() const {
-        gui_context->AddExternalDraw([this]() {
+        gui_context->AddDrawCall([this]() {
             bool closable = false;
 
             ImGui::Begin("Stats", &closable,
@@ -146,10 +146,11 @@ namespace Slab::Graphics {
         });
     }
 
-    void GUIWindow::end() const { gui_context->AddExternalDraw([]() { ImGui::End(); });
+    void GUIWindow::end() const {
+        gui_context->AddDrawCall([]() { ImGui::End(); });
     }
 
-    void GUIWindow::AddExternalDraw(const ExternalDraw& draw) { gui_context->AddExternalDraw(draw); }
+    void GUIWindow::AddExternalDraw(const DrawCall& draw) { gui_context->AddDrawCall(draw); }
 
     Pointer<SlabImGuiContext> GUIWindow::GetGUIContext() {
         return gui_context;

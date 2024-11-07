@@ -36,9 +36,9 @@ namespace Slab::Math {
 
     auto R2toRMetropolisRecipe::getField() -> Pointer<R2toR::NumericFunction_CPU> {
         if(field_data == nullptr){
-            fix x_min=-.5, y_min=0.;
+            fix x_min=-.6, y_min=0.;
             fix L=-2*x_min, t=2.; ///(Real(N)/Real(M));
-            fix N=10, M=40;
+            fix N=6, M=6;
 
             field_data = DataAlloc<R2toR::NumericFunction_CPU>("Stochastic field",
                                                                N, M,
@@ -53,7 +53,7 @@ namespace Slab::Math {
         R2toRMetropolisSetup setup;
 
         Temperature T=0.1;
-        constexpr auto δϕₘₐₓ = 1e-3;
+        constexpr auto δϕₘₐₓ = 2e-4;
 
         auto field = getField();
 

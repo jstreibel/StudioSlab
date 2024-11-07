@@ -167,11 +167,11 @@ namespace Slab::Graphics {
             ImGui::EndMainMenuBar();
         }
 
-        if(contexts.size() > 1) m_MainContext->Render();
+        if(contexts.size() > 1) m_MainContext->notifyRender();
     }
 
     void ImGuiModule::endRender() {
-        if(contexts.size() == 1) m_MainContext->Render();
+        if(contexts.size() == 1) m_MainContext->notifyRender();
     }
 
     void ImGuiModule::NewFrame() { ImGui::NewFrame(); }

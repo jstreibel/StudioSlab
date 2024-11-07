@@ -4,7 +4,5 @@
 
 #include "GUIContext.h"
 
-namespace Slab {
-    namespace Graphics {
-    } // Slab
-} // Graphics
+namespace Slab::Graphics {
+} // Slab::Graphics

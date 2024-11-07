@@ -9,7 +9,7 @@
 
 namespace Slab::Graphics {
 
-    class GraphicsModule : public Core::Module {
+class GraphicsModule : public Core::Module {
     public:
         GraphicsModule() = delete;
         explicit GraphicsModule(const Str &name) : Module(name, true) {}

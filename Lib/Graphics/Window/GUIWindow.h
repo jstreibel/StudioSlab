@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
         void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 
-        void AddExternalDraw(const ExternalDraw&);
+        void AddExternalDraw(const DrawCall&);
 
         Pointer<SlabImGuiContext> GetGUIContext();
 

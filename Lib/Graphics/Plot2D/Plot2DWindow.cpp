@@ -235,9 +235,9 @@ namespace Slab::Graphics {
         if(gui_context_is_local) {
             gui_context->NewFrame();
             draw_call();
-            gui_context->Render();
+            gui_context->notifyRender();
         } else {
-            gui_context->AddExternalDraw(draw_call);
+            gui_context->AddDrawCall(draw_call);
         }
     }
 

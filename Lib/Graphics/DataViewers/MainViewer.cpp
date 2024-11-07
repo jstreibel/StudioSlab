@@ -38,11 +38,11 @@ namespace Slab::Graphics {
     void MainViewer::draw() {
         auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
 
-        gui_module.GetMainContext()->AddExternalDraw(
-                [this](){
-                    if(ImGui::BeginMainMenuBar()){
-                        if(ImGui::BeginMenu("Viewers")){
-                            Index i=0;
+        gui_module.GetMainContext()->AddDrawCall(
+                [this]() {
+                    if (ImGui::BeginMainMenuBar()) {
+                        if (ImGui::BeginMenu("Viewers")) {
+                            Index i = 0;
                             for (auto &viewer: viewers) {
                                 auto name = viewer->getName();
 
@@ -56,11 +56,11 @@ namespace Slab::Graphics {
                             ImGui::EndMenu();
                         }
 
-                        if(ImGui::BeginMenu("Datasets")){
-                            auto &mathModule = dynamic_cast<Math::MathModule&>(Slab::GetModule("Math"));
+                        if (ImGui::BeginMenu("Datasets")) {
+                            auto &mathModule = dynamic_cast<Math::MathModule &>(Slab::GetModule("Math"));
                             auto entries = mathModule.GetDataEntries();
 
-                            if(entries.empty()) {
+                            if (entries.empty()) {
                                 ImGui::MenuItem("No data available", nullptr, false, false);
                             } else {
                                 for (auto &name: entries) {
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
                         ImGui::EndMainMenuBar();
                     }
                 }
-                );
+        );
 
         WindowRow::draw();
     }

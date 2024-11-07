@@ -14,28 +14,38 @@
 
 namespace Slab::Graphics {
 
-    using ExternalDraw = std::function<void(void)>;
+    using DrawCall = std::function<void(void)>;
 
     class SlabImGuiContext : public GUIContext {
         ImGuiContext *context = nullptr;
 
-        Vector<ExternalDraw> external_draws;
+        Vector<DrawCall> external_draws;
 
 
     public:
         explicit SlabImGuiContext(ImGuiContext *context);
-        ~SlabImGuiContext() = default;
-
-        ImGuiContext *
-        getNativeContext();
+        ~SlabImGuiContext() override = default;
 
         Real getFontSize() const;
 
-        void AddExternalDraw(const ExternalDraw&);
-
         void Bind();
         void NewFrame() override;
-        void Render() override;
+
+        void AddDrawCall(const DrawCall&);
+
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+
+        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+
+        bool notifyMouseWheel(double dx, double dy) override;
+
+        bool notifyFilesDropped(StrVector paths) override;
+
+        bool notifySystemWindowReshape(int w, int h) override;
+
+        bool notifyRender() override;
     };
 
 } // Slab::Graphics

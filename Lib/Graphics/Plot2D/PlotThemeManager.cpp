@@ -111,11 +111,11 @@ namespace Slab::Graphics {
 
     bool PlotThemeManager::notifyRender() {
         auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
-        imgui_module.GetMainContext()->AddExternalDraw(
+        imgui_module.GetMainContext()->AddDrawCall(
                 []() {
-                    if(ImGui::BeginMainMenuBar()){
-                        if(ImGui::BeginMenu("Style")){
-                            if(ImGui::BeginMenu("Graphs")) {
+                    if (ImGui::BeginMainMenuBar()) {
+                        if (ImGui::BeginMenu("Style")) {
+                            if (ImGui::BeginMenu("Graphs")) {
                                 for (auto &stylePair: stylesInitializers) {
                                     auto name = stylePair.first;
 
@@ -131,7 +131,7 @@ namespace Slab::Graphics {
                         ImGui::EndMainMenuBar();
                     }
                 }
-                );
+        );
 
         return SystemWindowEventListener::notifyRender();
     }
