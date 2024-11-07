@@ -45,6 +45,8 @@ namespace Slab::Graphics {
     }
 
     Real SlabImGuiContext::getFontSize() const {
+        (void)this; // get rid of annoying "this method can be made static" warning.
+
         auto &module = Slab::GetModule<ImGuiModule>("ImGui");
 
         return module.getFontSize();
@@ -55,6 +57,7 @@ namespace Slab::Graphics {
     }
 
     bool SlabImGuiContext::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+
         return SystemWindowEventListener::notifyMouseButton(button, state, keys);
     }
 
