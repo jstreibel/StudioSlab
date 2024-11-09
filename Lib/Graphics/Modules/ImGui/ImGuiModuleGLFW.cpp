@@ -7,6 +7,7 @@
 #include "Graphics/Backend/GLFW/GLFWBackend.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#include "Graphics/Backend/GLFW/GLFWSystemWindow.h"
 
 // Don't touch
 fix DONT_INSTALL_CALLBACKS = false;
@@ -20,8 +21,8 @@ namespace Slab::Graphics {
         if(backend == nullptr)
             throw StudioSlabRuntimeBackendInconsistency("while instantiating ImGui module (GLFW implementation)");
 
-        auto &window = backend->getGLFWWindow();
-        ImGui_ImplGlfw_InitForOpenGL(&window, DONT_INSTALL_CALLBACKS);
+        auto window = (GLFWwindow*)backend->GetMainSystemWindow()->getRawPlatformWindowPointer();
+        ImGui_ImplGlfw_InitForOpenGL(window, DONT_INSTALL_CALLBACKS);
         ImGui_ImplOpenGL3_Init();
     };
 
@@ -31,7 +32,8 @@ namespace Slab::Graphics {
             throw StudioSlabRuntimeBackendInconsistency("while instantiating ImGui module (GLFW implementation)");
 
         static auto myReference = Naked(*this);
-        backend->addGLFWListener(myReference, PRIORITIZE_ME);
+        DynamicPointerCast<GLFWSystemWindow>
+                (backend->GetMainSystemWindow())->addGLFWListener(myReference, PRIORITIZE_ME);
     }
 
     ImGuiModuleGLFW::~ImGuiModuleGLFW() {
@@ -100,20 +102,7 @@ namespace Slab::Graphics {
         io.DisplaySize = ImVec2((float) width, (float) height);
     }
 
-    void ImGuiModuleGLFW::NewFrame() {
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
 
-        ImGuiModule::NewFrame();
 
-        //ImGui::NewFrame();
-
-    }
-
-    void ImGuiModuleGLFW::RenderFrame() {
-        ImGuiModule::RenderFrame();
-
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    }
 
 } // Core

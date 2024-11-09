@@ -19,7 +19,6 @@
 #include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
 
-#include "ImGuiModuleGLUT.h"
 #include "ImGuiModuleGLFW.h"
 
 #include "Graphics/Window/WindowStyles.h"
@@ -126,13 +125,13 @@ namespace Slab::Graphics {
                 throw NotImplementedException("SFML ImGui module");
         else if(backendImpl == "VTK")
                 throw NotImplementedException("VTK ImGui module");
-        else if(backendImpl == "GLUT")
-                return new ImGuiModuleGLUT();
+        // else if(backendImpl == "GLUT")
+        //         return new ImGuiModuleGLUT();
 
         NOT_IMPLEMENTED;
     }
 
-    void ImGuiModule::beginRender() {
+    void ImGuiModule::Update() {
         m_MainContext->NewFrame();
 
         if (showDemos)
@@ -167,16 +166,8 @@ namespace Slab::Graphics {
             ImGui::EndMainMenuBar();
         }
 
-        if(contexts.size() > 1) m_MainContext->notifyRender();
+        m_MainContext->notifyRender();
     }
-
-    void ImGuiModule::endRender() {
-        if(contexts.size() == 1) m_MainContext->notifyRender();
-    }
-
-    void ImGuiModule::NewFrame() { ImGui::NewFrame(); }
-
-    void ImGuiModule::RenderFrame() { ImGui::Render(); }
 
     Pointer<SlabImGuiContext> ImGuiModule::createContext() {
         if(0) {

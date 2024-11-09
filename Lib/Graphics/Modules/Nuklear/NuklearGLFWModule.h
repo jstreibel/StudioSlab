@@ -11,7 +11,6 @@
 
 #include "Graphics/Backend/GLFW/GLFWListener.h"
 #include "Utils/Types.h"
-#include <GLFW/glfw3.h>
 
 
 namespace Slab::Graphics {
@@ -23,8 +22,6 @@ namespace Slab::Graphics {
     public:
         NuklearGLFWModule();
         ~NuklearGLFWModule() override;
-
-        void endRender() override;
 
         void beginEvents() override;
 

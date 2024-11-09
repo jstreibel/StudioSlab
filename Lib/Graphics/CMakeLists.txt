@@ -304,6 +304,9 @@ add_library(${LIB_GRAPHICS} STATIC
 		OpenGL/Images.h
         Utils/ImageLoad.cpp
         Utils/ImageLoad.h
+		Backend/SFML/SFMLSystemWindow.cpp
+		Backend/SFML/SFMLSystemWindow.h
+		Backend/Events/MouseState.cpp
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

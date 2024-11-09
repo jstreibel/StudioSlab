@@ -14,8 +14,7 @@ class GraphicsModule : public Core::Module {
         GraphicsModule() = delete;
         explicit GraphicsModule(const Str &name) : Module(name, true) {}
 
-        virtual void beginRender() {};
-        virtual void endRender() {};
+        virtual void Update() {};
 
         virtual void beginEvents() {};
         virtual void endEvents() {};

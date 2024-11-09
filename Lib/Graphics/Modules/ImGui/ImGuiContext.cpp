@@ -7,6 +7,8 @@
 #include "ImGuiModule.h"
 #include "StudioSlab.h"
 #include "3rdParty/imgui/imgui_internal.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "backends/imgui_impl_glfw.h"
 
 namespace Slab::Graphics {
 
@@ -26,9 +28,9 @@ namespace Slab::Graphics {
     void SlabImGuiContext::NewFrame() {
         ImGui::SetCurrentContext(context);
 
-        auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
-
-        imgui_module.NewFrame();
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame(); // Necessario!!
+        ImGui::NewFrame();
 
         for(auto &external_draw : external_draws) external_draw();
 
@@ -53,11 +55,19 @@ namespace Slab::Graphics {
     }
 
     bool SlabImGuiContext::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        Bind();
+
+        ImGuiIO& io = ImGui::GetIO();
+
+        // io.AddKeyEvent(ImGuiMod_Ctrl,  (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS));
+        // io.AddKeyEvent(ImGuiMod_Shift, (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)   == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)   == GLFW_PRESS));
+        // io.AddKeyEvent(ImGuiMod_Alt,   (glfwGetKey(window, GLFW_KEY_LEFT_ALT)     == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_ALT)     == GLFW_PRESS));
+        // io.AddKeyEvent(ImGuiMod_Super, (glfwGetKey(window, GLFW_KEY_LEFT_SUPER)   == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_SUPER)   == GLFW_PRESS));
+
         return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
     }
 
     bool SlabImGuiContext::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-
         return SystemWindowEventListener::notifyMouseButton(button, state, keys);
     }
 
@@ -78,9 +88,9 @@ namespace Slab::Graphics {
     }
 
     bool SlabImGuiContext::notifyRender() {
-        auto &module = Slab::GetModule<ImGuiModule>("ImGui");
+        ImGui::Render();
 
-        module.RenderFrame();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         return true;
     }

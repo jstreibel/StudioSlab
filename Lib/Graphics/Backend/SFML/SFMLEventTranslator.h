@@ -15,6 +15,8 @@ namespace Slab::Graphics {
         void event(const sf::Event &event) override;
 
         void render(sf::RenderWindow *window) override;
+
+
     };
 
 } // Core

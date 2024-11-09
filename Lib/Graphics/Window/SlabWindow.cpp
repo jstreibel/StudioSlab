@@ -7,6 +7,8 @@
 #include "Graphics/SlabGraphics.h"
 
 #include "SlabWindow.h"
+
+#include <utility>
 #include "Core/Tools/Log.h"
 
 
@@ -15,13 +17,16 @@ namespace Slab::Graphics {
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
     SlabWindow::
-    SlabWindow(Config cfg)
-    : config(cfg)
+    SlabWindow(Config cfg, const Pointer<SystemWindow>& parent_syswin)
+    : config(std::move(cfg))
+    , parent_system_window(parent_syswin)
     {
         if(config.title.empty()){
             config.title = "[Window:" + ToStr(get_id()) + "]";
         }
 
+        if(parent_system_window == nullptr)
+            parent_system_window = GetGraphicsBackend()->GetMainSystemWindow();
     }
 
     SlabWindow::~SlabWindow() = default;
@@ -49,7 +54,7 @@ namespace Slab::Graphics {
         glDisable(GL_DEPTH_TEST);
         glDepthMask(GL_FALSE);
 
-        fix syswin_h = GetGraphicsBackend()->getSystemWindowHeight();
+        fix syswin_h = parent_system_window->getHeight();
         fix vp = getViewport();
         //// y_opengl = windowHeight - y_top_left - viewportHeight
         fix x = vp.xMin;
@@ -64,7 +69,7 @@ namespace Slab::Graphics {
     auto SlabWindow::isMouseIn() const -> bool {
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        fix &mouse = guiBackend->getMouseState();
+        fix &mouse = parent_system_window->getMouseState();
 
         auto rect = getViewport();
 
@@ -73,7 +78,7 @@ namespace Slab::Graphics {
         fix w = rect.width();
         fix h = rect.height();
 
-        return mouse.x > x && mouse.x < x + w && mouse.y > y && mouse.y < y + h;
+        return mouse->x > x && mouse->x < x + w && mouse->y > y && mouse->y < y + h;
     }
 
     auto SlabWindow::isMouseLeftClicked() const -> bool {
@@ -114,12 +119,12 @@ namespace Slab::Graphics {
     auto SlabWindow::getMouseViewportCoord() const -> Point2D {
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-        fix &mouse = guiBackend->getMouseState();
+        fix &mouse = parent_system_window->getMouseState();
         auto vpRect = getViewport();
 
-        fix xMouseLocal = mouse.x - vpRect.xMin;
+        fix xMouseLocal = mouse->x - vpRect.xMin;
         // fix yMouseLocal = parent_systemwindow_h - mouse.y - vpRect.yMin;
-        fix yMouseLocal = mouse.y - vpRect.yMin;
+        fix yMouseLocal = mouse->y - vpRect.yMin;
 
         return {(Real) xMouseLocal, (Real) yMouseLocal};
     }

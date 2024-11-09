@@ -23,6 +23,9 @@ namespace Slab::Graphics {
     class SlabWindow : public Core::UniqueObject {
         friend class SlabWindowManager;
 
+    protected:
+        Pointer<SystemWindow> parent_system_window = nullptr;
+
     public:
         enum Flags {
             // HasMainMenu  = 0x1,
@@ -51,7 +54,8 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0});
+        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0},
+                            const Pointer<SystemWindow>& parent_system_window=nullptr);
 
         virtual ~SlabWindow();
 

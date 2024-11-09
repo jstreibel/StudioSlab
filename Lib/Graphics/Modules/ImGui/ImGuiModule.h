@@ -34,13 +34,6 @@ namespace Slab::Graphics {
         ~ImGuiModule() override;
 
     public:
-        virtual
-        void NewFrame();
-        virtual
-        void RenderFrame();
-        // virtual
-        // void endFrame(bool do_render=true);
-
         float getFontSize() const;
 
         Pointer<SlabImGuiContext> createContext();
@@ -49,9 +42,7 @@ namespace Slab::Graphics {
 
         Context GetMainContext();
 
-        void beginRender() override;
-
-        void endRender() override;
+        void Update() override;
     };
 
 } // Core

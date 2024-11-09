@@ -46,14 +46,14 @@ namespace Slab {
     Int Application::Run() {
         auto self = Dummy(*this);
 
-        m_Platform->addEventListener(self);
+        m_Platform->GetMainSystemWindow()->addEventListener(self);
         m_Platform->run();
 
         return 0;
     }
 
     void Application::SetTitle(Str title) {
-        m_Platform->setSystemWindowTitle(std::move(title));
+        m_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
     }
 
     auto Application::GetName() const -> Str {

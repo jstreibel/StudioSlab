@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLFWLISTENER_H
 #define STUDIOSLAB_GLFWLISTENER_H
 
-#include "glfw.h"
+class GLFWwindow;
 
 namespace Slab::Graphics {
 

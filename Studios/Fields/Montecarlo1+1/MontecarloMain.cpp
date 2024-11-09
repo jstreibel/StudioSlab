@@ -54,7 +54,7 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
     wm->addSlabWindow(plot_window);
     wm->addSlabWindow(viewer);
 
-    Slab::Graphics::GetGraphicsBackend()->addAndOwnEventListener(wm);
+    Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(wm);
 }
 
 int run(int argc, const char **argv) {

@@ -33,7 +33,7 @@ public:
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
         wm->addSlabWindow(osc_plot);
-        gui_backend->addEventListener(wm);
+        gui_backend->GetMainSystemWindow()->addEventListener(wm);
 
         gui_backend->run();
 

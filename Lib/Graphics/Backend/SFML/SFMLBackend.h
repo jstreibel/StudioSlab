@@ -1,5 +1,5 @@
 //
-// Created by joao on 11/4/21.
+// Created by joao on 11/4/21.52c01.
 //
 
 #ifndef STUDIOSLAB_SFMLBACKEND_H
@@ -15,37 +15,21 @@ namespace Slab::Graphics {
 
     class SFMLBackend : public GraphicBackend {
         SFMLEventTranslator sfmlEventTranslator;
-        Vector<Volatile<SFMLListener>> sfmlListeners;
-
-        sf::RenderWindow *window;
-        sf::Font font;
-        sf::Text text;
-
         Mutex off_sync;
-        bool running = true;
-
-        void _treatEvents();
-
-        void _render();
 
     public:
         SFMLBackend();
-
-        sf::RenderWindow &getMainWindow();
-
-        bool addSFMLListener(const Volatile<SFMLListener>& sfmlListener);
 
         void run() override;
 
         void terminate() override;
 
-        auto getRenderWindow() -> sf::RenderWindow &;
+    protected:
+        Pointer<SystemWindow> CreateSystemWindow(const Str &title) override;
 
-        Int getSystemWindowHeight() const override;
+    public:
 
         static SFMLBackend &GetInstance();
-
-        auto getMouseState() const -> MouseState override;
     };
 
 }

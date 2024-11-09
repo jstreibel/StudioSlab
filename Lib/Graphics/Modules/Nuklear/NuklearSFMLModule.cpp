@@ -11,6 +11,7 @@
 #include "3rdParty/Nuklear/nuklear_sfml_gl3.h"
 #include "Core/Tools/Resources.h"
 #include "Core/SlabCore.h"
+#include "Graphics/Backend/SFML/SFMLSystemWindow.h"
 
 #define MAX_VERTEX_BUFFER (1024 * 1024)
 #define MAX_ELEMENT_BUFFER (1024 * 1024)
@@ -21,10 +22,11 @@ namespace Slab::Graphics {
             : NuklearModule() {
         try {
             auto sfmlBackend = DynamicPointerCast<SFMLBackend>(Core::GetBackend());
-            renderWindow = &sfmlBackend->getMainWindow();
+            // renderWindow = &sfmlBackend->GetMainSystemWindow();
 
             static auto myReference = Naked(*this);
-            sfmlBackend->addSFMLListener(myReference);
+            DynamicPointerCast<SFMLSystemWindow>
+                    (sfmlBackend->GetMainSystemWindow())->addSFMLListener(myReference);
 
         } catch (std::bad_cast &e) {
             Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
@@ -59,7 +61,10 @@ namespace Slab::Graphics {
         nk_sfml_handle_event(&const_cast<sf::Event &>(event));
     }
 
-    void NuklearSFMLModule::endRender() {
+
+    void NuklearSFMLModule::Update() {
+        GraphicsModule::Update();
+
         /* IMPORTANT: `nk_sfml_render` modifies some global OpenGL state
         * with blending, scissor, face culling and depth test and defaults everything
         * back into a default state. Make sure to either save and restore or

@@ -13,7 +13,6 @@ namespace Slab::Graphics {
     public:
         explicit SlabGraphicsModule();
 
-        void beginRender() override;
     };
 
 } // Slab::Graphics

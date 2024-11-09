@@ -12,6 +12,8 @@
 #include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Graphics/Backend/SFML/SFMLSystemWindow.h"
+#include "Graphics/SlabGraphics.h"
 
 #define DONT_SELF_REGISTER false
 
@@ -39,8 +41,9 @@ int XY::App::App::run() {
 
     viewControl->setAlgorithm(&mcCalculator);
 
-    auto backend = Slab::DynamicPointerCast<Slab::Graphics::SFMLBackend>(Slab::Core::BackendManager::GetBackend());
-    backend->addSFMLListener(viewControl);
+    auto backend = Slab::Graphics::GetGraphicsBackend();
+    Slab::DynamicPointerCast<Slab::Graphics::SFMLSystemWindow>
+            (backend->GetMainSystemWindow())->addSFMLListener(viewControl);
     backend->run();
 
     return 0;

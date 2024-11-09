@@ -6,8 +6,6 @@
 #define STUDIOSLAB_GRAPHICBACKEND_H
 
 #include "Core/Backend/Backend.h"
-#include "Graphics/Backend/Events/MouseState.h"
-#include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 #include "Graphics/Modules/GraphicsModule.h"
 #include "SystemWindow.h"
 
@@ -17,37 +15,26 @@ namespace Slab::Graphics {
         void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
 
     protected:
-        Vector<Pointer<SystemWindowEventListener>> thingsImProprietary;
-        Pointer<EventTranslator> eventTranslator;
-        GraphicBackend(const Str &name, Pointer<EventTranslator> eventTranslator);
+
+        explicit GraphicBackend(const Str &name);
 
         Vector<Volatile<GraphicsModule>> graphicModules;
-
-        Pointer<EventTranslator>
-        getEventTranslator() { return eventTranslator; };
+        Vector<Pointer<SystemWindow>> system_windows;
 
         virtual void clearModules();
-        virtual void clearListeners();
-
-        Real r = 0, g = 0, b = 0;
-
         void unloadAllModules();
+
+        virtual
+        Pointer<SystemWindow> CreateSystemWindow(const Str& title) = 0;
 
     public:
         ~GraphicBackend() override;
 
-        virtual auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
-        virtual auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
+        Pointer<SystemWindow>
+        NewSystemWindow(const Str& title);
 
-        // virtual auto getScreenHeight() const -> Real = 0;
-        virtual auto getMouseState() const -> MouseState = 0;
-        virtual void setMouseCursor(MouseCursor);
-        virtual void setSystemWindowTitle(Str title, int handle);
-        void setSystemWindowTitle(Str title);
-
-        virtual Int getSystemWindowHeight() const = 0;
-
-        void setClearColor(Real r, Real g, Real b);
+        Pointer<SystemWindow>
+        GetMainSystemWindow();
 
         void addGraphicsModule(const Volatile<GraphicsModule> &module);
 

@@ -9,9 +9,4 @@
 namespace Slab::Graphics {
     SlabGraphicsModule::SlabGraphicsModule() : GraphicsModule("Slab:Graphics") {}
 
-    void SlabGraphicsModule::beginRender() {
-        GraphicsModule::beginRender();
-
-
-    }
 } // Slab::Graphics

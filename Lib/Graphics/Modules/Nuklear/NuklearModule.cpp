@@ -48,6 +48,6 @@ namespace Slab::Graphics {
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    nk_context *NuklearModule::getContext() { return nkContext; };
+    nk_context *NuklearModule::getContext() { return nkContext; }
 
 } // Core

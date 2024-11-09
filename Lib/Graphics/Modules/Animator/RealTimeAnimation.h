@@ -14,7 +14,7 @@ namespace Slab::Graphics {
     public:
         explicit RealTimeAnimationModule();
 
-        void beginRender() override;
+        void Update() override;
     };
 
 } // Core

@@ -84,13 +84,13 @@ int TestsApp::run() {
 
         backend = Slab::Graphics::GetGraphicsBackend();
 
-        backend->addAndOwnEventListener(wm);
+        backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
 
     } else {
         Core::BackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         backend = guiBackend;
-        guiBackend->addEventListener(Pointer<Graphics::SystemWindowEventListener>(new Tests::NuklearTests()));
+        guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::SystemWindowEventListener>(new Tests::NuklearTests()));
     }
 
     backend->run();

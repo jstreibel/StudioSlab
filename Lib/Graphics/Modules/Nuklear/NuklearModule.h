@@ -22,6 +22,7 @@ namespace Slab::Graphics {
         explicit NuklearModule();
 
         void beginEvents() override;
+
         void endEvents() override;
 
         static NuklearModule *BuildModule();

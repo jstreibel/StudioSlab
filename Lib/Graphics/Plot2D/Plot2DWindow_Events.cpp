@@ -39,13 +39,13 @@ namespace Slab {
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
         auto elRet = SlabWindow::notifyMouseMotion(x, y);
 
-        auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
+        auto mouseState = parent_system_window->getMouseState();
 
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();
 
-            const Real dxClampd = -mouseState.dx / (Real) GetWidth();
-            const Real dyClampd = mouseState.dy / (Real) GetHeight();
+            const Real dxClampd = -mouseState->dx / (Real) GetWidth();
+            const Real dyClampd = mouseState->dy / (Real) GetHeight();
             const Real wGraph = rect.width();
             const Real hGraph = rect.height();
             const Real dxGraph = wGraph * dxClampd;
@@ -61,8 +61,8 @@ namespace Slab {
 
         if (isMouseRightClicked()) {
             constexpr const Real factor = 0.01;
-            const Real dx = 1 - factor * mouseState.dx;
-            const Real dy = 1 + factor * mouseState.dy;
+            const Real dx = 1 - factor * mouseState->dx;
+            const Real dy = 1 + factor * mouseState->dy;
 
             const Real x0 = region.xCenter();
             const Real y0 = region.yCenter();
@@ -92,7 +92,7 @@ namespace Slab {
 
         // If not animating region at all
         if (!region.isAnimating())
-        targetRegion = region.getRect();
+            targetRegion = region.getRect();
 
         const Real x0 = targetRegion.xCenter();
         const Real hw = .5 * targetRegion.width() * d;

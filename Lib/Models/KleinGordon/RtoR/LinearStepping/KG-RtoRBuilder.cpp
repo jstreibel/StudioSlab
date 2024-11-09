@@ -176,7 +176,7 @@ namespace Slab::Models::KGRtoR {
 
             auto wm = New<Graphics::SlabWindowManager>();
             wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
-            guiBackend->addAndOwnEventListener(wm);
+            guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(outputOpenGL);
         } else {
             /* O objetivo de relacionar o numero de passos para

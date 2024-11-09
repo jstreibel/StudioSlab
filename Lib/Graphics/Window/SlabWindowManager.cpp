@@ -11,6 +11,7 @@
 #include "Graphics/Modules/Animator/Animator.h"
 
 #include <ranges>
+#include <utility>
 
 
 namespace Slab::Graphics {
@@ -100,12 +101,14 @@ namespace Slab::Graphics {
     bool SlabWindowManager::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
 
         if(button==MouseButton_LEFT && state==Press) {
-            auto mouse_state = Graphics::GetGraphicsBackend()->getMouseState();
+            auto mouse_state = parent_system_window->getMouseState();
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->window->isMouseIn();
                 fix is_decorated = !(meta->window->getFlags() & SlabWindow::NoDecoration);
-                fix is_mouse_over_grab_region = decorator.isMouseOverGrabRegion(*meta->window, mouse_state.x, mouse_state.y);
+                fix is_mouse_over_grab_region = decorator.isMouseOverGrabRegion(*meta->window,
+                                                                                mouse_state->x,
+                                                                                mouse_state->y);
 
                 return is_mouse_in || (is_mouse_over_grab_region && is_decorated);
             });
@@ -113,13 +116,14 @@ namespace Slab::Graphics {
             if(first != slab_windows.end()) {
                 setFocus(*first);
 
-                if (decorator.isMouseOverTitlebar(*focused->window, mouse_state.x, mouse_state.y)) {
-                    grabbed = {Point2D(mouse_state.x - focused->window->getx(), mouse_state.y - focused->window->gety()),
+                if (decorator.isMouseOverTitlebar(*focused->window, mouse_state->x, mouse_state->y)) {
+                    grabbed = {Point2D(mouse_state->x - focused->window->getx(), mouse_state->y - focused->window->gety()),
                                Grabbed::Titlebar,
                                focused->window};
-                } else if(decorator.isMouseOverGrabRegion(*focused->window, mouse_state.x, mouse_state.y) && !focused->window->wantsFullscreen()) {
-                    grabbed = {Point2D(focused->window->GetWidth() + focused->window->getx() - mouse_state.x,
-                                       focused->window->GetHeight() + focused->window->gety() - mouse_state.y),
+                } else if(decorator.isMouseOverGrabRegion(*focused->window, mouse_state->x, mouse_state->y)
+                      && !focused->window->wantsFullscreen()) {
+                    grabbed = {Point2D(focused->window->GetWidth() + focused->window->getx() - mouse_state->x,
+                                       focused->window->GetHeight() + focused->window->gety() - mouse_state->y),
                                Grabbed::Corner,
                                focused->window};
                 } else {
@@ -199,10 +203,10 @@ namespace Slab::Graphics {
 
     bool SlabWindowManager::notifyRender() {
         for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
-            auto mouse = GetGraphicsBackend()->getMouseState();
-            decorator.begin_decoration(*slab_window->window, mouse.x, mouse.y);
+            auto mouse = parent_system_window->getMouseState();
+            decorator.begin_decoration(*slab_window->window, mouse->x, mouse->y);
             slab_window->window->draw();
-            decorator.finish_decoration(*slab_window->window, mouse.x, mouse.y);
+            decorator.finish_decoration(*slab_window->window, mouse->x, mouse->y);
         }
 
         return true;
@@ -219,6 +223,10 @@ namespace Slab::Graphics {
         else MoveToFront(slab_windows, focused);
     }
 
+    SlabWindowManager::SlabWindowManager(Pointer<SystemWindow> parent_syswin)
+    : parent_system_window(parent_syswin==nullptr ?
+                            GetGraphicsBackend()->GetMainSystemWindow() :
+                            std::move(parent_syswin)) {    }
 
     bool
     SlabWindowManager::WindowMetaInformation::operator<(const SlabWindowManager::WindowMetaInformation &rhs) const {

@@ -7,7 +7,6 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
 #include "3rdParty/ImGui.h"
-#include "Graphics/SlabGraphics.h"
 
 
 #define Unique(label) \
@@ -62,15 +61,14 @@ namespace Slab::Graphics {
 
 
         if(left && right) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
+            auto mouseState = parent_system_window->getMouseState();
 
-            fix dx = -(float)mouseState.dx * 1.e-2f;
-            fix dy =  (float)mouseState.dy * 1.e-2f;
+            fix dx = -(float)mouseState->dx * 1.e-2f;
+            fix dy =  (float)mouseState->dy * 1.e-2f;
 
             auto fwd3d = camera.target - camera.pos;
 
-            auto fwd = glm::vec3(fwd3d.x, fwd3d.y, .0f);
-            fwd /= fwd.length();
+            auto fwd = glm::normalize(glm::vec3(fwd3d.x, fwd3d.y, .0f));
             auto side = glm::cross(fwd, camera.up);
 
             camera.target += fwd*dy + side*dx;
@@ -78,10 +76,10 @@ namespace Slab::Graphics {
             return true;
         }
         else if(left) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
+            auto mouseState = parent_system_window->getMouseState();
 
-            fix dx = (float)mouseState.dx;
-            fix dy = (float)mouseState.dy;
+            fix dx = (float)mouseState->dx;
+            fix dy = (float)mouseState->dy;
 
             cameraAngleAzimuth -= dx*.0025f;
             cameraAnglePolar   -= dy*.0025f;
@@ -91,18 +89,18 @@ namespace Slab::Graphics {
             return true;
         }
         else if(right) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
+            auto mouseState = parent_system_window->getMouseState();
 
-            fix dy = (float)mouseState.dy;
+            fix dy = (float)mouseState->dy;
 
             cameraDist += dy*.01f;
 
             return true;
         }
         else if(center) {
-            auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
+            auto mouseState = parent_system_window->getMouseState();
 
-            fix dy = (float)mouseState.dy;
+            fix dy = (float)mouseState->dy;
 
             camera.yFov += dy*.005f;
 

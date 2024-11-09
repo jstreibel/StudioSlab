@@ -22,8 +22,7 @@ namespace Slab::Graphics {
 
         void event(const sf::Event &event) override;
 
-        void endRender() override;
-
+        void Update() override;
 
     };
 

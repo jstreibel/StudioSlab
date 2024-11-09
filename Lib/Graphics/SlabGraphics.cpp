@@ -8,7 +8,6 @@
 #include "SlabGraphicsModule.h"
 
 #include "Graphics/Backend/GLFW/GLFWBackend.h"
-#include "Graphics/Backend/GLUT/GLUTBackend.h"
 #include "Graphics/Backend/SFML/SFMLBackend.h"
 
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
@@ -30,7 +29,7 @@ namespace Slab::Graphics {
 
     void RegisterBackends() {
         Core::BackendManager::RegisterAvailableBackend("GLFW",    BackendAllocator<GLFWBackend>);
-        Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
+        //Core::BackendManager::RegisterAvailableBackend("GLUT",    BackendAllocator<GLUTBackend>);
         Core::BackendManager::RegisterAvailableBackend("SFML",    BackendAllocator<SFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("Default", BackendAllocator<SFMLBackend>);
         Core::BackendManager::RegisterAvailableBackend("VTK", [] () { throw Exception("VTKBackend not implemented"); return nullptr; }) ;
