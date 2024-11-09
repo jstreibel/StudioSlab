@@ -21,7 +21,6 @@ namespace Slab::Graphics {
 
         Vector<DrawCall> external_draws;
 
-
     public:
         explicit SlabImGuiContext(ImGuiContext *context);
         ~SlabImGuiContext() override = default;

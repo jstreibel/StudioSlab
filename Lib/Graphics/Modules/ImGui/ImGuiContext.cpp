@@ -9,6 +9,7 @@
 #include "3rdParty/imgui/imgui_internal.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_glfw.h"
+#include "Slab-ImGui-Interop.h"
 
 namespace Slab::Graphics {
 
@@ -59,12 +60,14 @@ namespace Slab::Graphics {
 
         ImGuiIO& io = ImGui::GetIO();
 
-        // io.AddKeyEvent(ImGuiMod_Ctrl,  (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_CONTROL) == GLFW_PRESS));
-        // io.AddKeyEvent(ImGuiMod_Shift, (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT)   == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT)   == GLFW_PRESS));
-        // io.AddKeyEvent(ImGuiMod_Alt,   (glfwGetKey(window, GLFW_KEY_LEFT_ALT)     == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_ALT)     == GLFW_PRESS));
-        // io.AddKeyEvent(ImGuiMod_Super, (glfwGetKey(window, GLFW_KEY_LEFT_SUPER)   == GLFW_PRESS) || (glfwGetKey(window, GLFW_KEY_RIGHT_SUPER)   == GLFW_PRESS));
+        io.AddKeyEvent(ImGuiMod_Ctrl,  modKeys.Mod_Ctrl == Press);
+        io.AddKeyEvent(ImGuiMod_Shift, modKeys.Mod_Shift == Press);
+        io.AddKeyEvent(ImGuiMod_Alt,   modKeys.Mod_Alt == Press);
+        io.AddKeyEvent(ImGuiMod_Super, modKeys.Mod_Super == Press);
 
-        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
+        io.AddKeyEvent(SlabToImGuiTranslate(key), state == Press);
+
+        return io.WantCaptureKeyboard;
     }
 
     bool SlabImGuiContext::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {

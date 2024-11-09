@@ -307,6 +307,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Backend/SFML/SFMLSystemWindow.cpp
 		Backend/SFML/SFMLSystemWindow.h
 		Backend/Events/MouseState.cpp
+		Modules/ImGui/Slab-ImGui-Interop.h
+		Modules/ImGui/Slab-ImGui-Interop.cpp
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

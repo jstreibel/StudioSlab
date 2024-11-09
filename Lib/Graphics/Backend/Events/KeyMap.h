@@ -35,12 +35,12 @@ namespace Slab::Graphics {
     };
 
     struct ModKeys {
-        bool Mod_Shift = false;
-        bool Mod_Ctrl = false;
-        bool Mod_Alt = false;
-        bool Mod_Super = false;
-        bool Mod_CapsLock = false;
-        bool Mod_NumLock = false;
+        KeyState Mod_Shift = Release;
+        KeyState Mod_Ctrl = Release;
+        KeyState Mod_Alt = Release;
+        KeyState Mod_Super = Release;
+        KeyState Mod_CapsLock = Release;
+        KeyState Mod_NumLock = Release;
 
         auto nonePressed() const -> bool {
             return !(Mod_Shift | Mod_Ctrl | Mod_Alt | Mod_Super | Mod_CapsLock | Mod_NumLock);
