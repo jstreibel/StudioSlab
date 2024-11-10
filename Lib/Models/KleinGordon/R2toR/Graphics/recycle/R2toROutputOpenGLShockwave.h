@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
 
         void draw() override;
 
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
         bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 

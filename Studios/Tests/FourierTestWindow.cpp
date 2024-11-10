@@ -250,8 +250,8 @@ namespace Tests {
         }
     }
 
-    bool FourierTestWindow::notifyMouseMotion(int x, int y) {
-        return row.notifyMouseMotion(x,y);
+    bool FourierTestWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
+        return row.notifyMouseMotion(x, y, dx, dy);
     }
 
     bool FourierTestWindow::notifyMouseWheel(double dx, double dy) {

@@ -19,7 +19,6 @@ namespace Slab::Graphics {
 
     class ImGuiModule : public GraphicsModule {
         Context m_MainContext = nullptr;
-
         CallSet call_set;
 
     protected:

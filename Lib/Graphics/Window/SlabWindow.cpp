@@ -44,7 +44,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabWindow::notifyMouseMotion(int x, int y) { return false; }
+    bool SlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) { return false; }
     bool SlabWindow::notifyMouseWheel(double dx, double dy) { return false; }
     bool SlabWindow::notifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
                                     Slab::Graphics::ModKeys modKeys) { return false; }

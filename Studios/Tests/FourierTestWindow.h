@@ -43,7 +43,7 @@ namespace Tests {
 
         void notifyReshape(int w, int h) override;
 
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
     };

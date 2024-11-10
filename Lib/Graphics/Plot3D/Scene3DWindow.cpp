@@ -54,7 +54,7 @@ namespace Slab::Graphics {
         camera.aspect = (float) GetWidth() / (float) GetHeight();
     }
 
-    bool Scene3DWindow::notifyMouseMotion(int x, int y) {
+    bool Scene3DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
         fix left = SlabWindow::isMouseLeftClicked();
         fix center = SlabWindow::isMouseCenterClicked();
         fix right = SlabWindow::isMouseRightClicked();
@@ -107,7 +107,7 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return SlabWindow::notifyMouseMotion(x, y);
+        return SlabWindow::notifyMouseMotion(x, y, dx, dy);
     }
 
     bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {

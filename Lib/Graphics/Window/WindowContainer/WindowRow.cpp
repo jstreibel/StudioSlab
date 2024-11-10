@@ -185,9 +185,9 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    bool WindowRow::notifyMouseMotion(int x, int y) {
+    bool WindowRow::notifyMouseMotion(int x, int y, int dx, int dy) {
         for (auto &winData: windowsList)
-            if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y)) return true;
+            if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y, dx, dy)) return true;
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){

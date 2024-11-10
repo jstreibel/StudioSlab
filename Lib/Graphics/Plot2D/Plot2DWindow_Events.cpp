@@ -36,8 +36,8 @@ namespace Slab {
         return Graphics::SlabWindow::notifyMouseButton(button, state, keys);
     }
 
-    bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y) {
-        auto elRet = SlabWindow::notifyMouseMotion(x, y);
+    bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
+        auto elRet = SlabWindow::notifyMouseMotion(x, y, dx, dy);
 
         auto mouseState = parent_system_window->getMouseState();
 

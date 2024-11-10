@@ -213,7 +213,7 @@ bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseButton(int button, int dir, i
     return true;
 }
 
-bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseMotion(int x, int y) {
+bool R2toR::OutputOpenGLShockwaveAt_t0::notifyMouseMotion(int x, int y, int dx, int dy) {
     zpr.zprMouseMotion(x, y);
 
     return true;

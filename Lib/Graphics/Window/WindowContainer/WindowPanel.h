@@ -54,7 +54,7 @@ namespace Slab::Graphics {
 
         void notifyReshape(int newWinW, int newWinH) override;
 
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
         bool notifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;

@@ -148,9 +148,9 @@ namespace Slab::Graphics {
         throw ss.str();
     }
 
-    bool WindowPanel::notifyMouseMotion(int x, int y) {
+    bool WindowPanel::notifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
-        for (auto &col: columns) if (col.isMouseIn()) responded = col.notifyMouseMotion(x, y);
+        for (auto &col: columns) if (col.isMouseIn()) responded = col.notifyMouseMotion(x, y, dx, dy);
 
         return responded;
     }

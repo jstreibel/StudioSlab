@@ -22,7 +22,7 @@ namespace Slab::Math::R2toR {
 
         bool notifyMouseButton(int button, int dir, int x, int y) override;
 
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
         bool notifyKeyboardSpecial(int key, int x, int y) override;
 

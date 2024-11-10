@@ -41,10 +41,10 @@ namespace Slab::Graphics {
         return window->notifyKeyboard(key, state, modKeys);
     }
 
-    bool WindowProxy::notifyMouseMotion(int x, int y) {
+    bool WindowProxy::notifyMouseMotion(int x, int y, int dx, int dy) {
         if(window == nullptr) return false
         ;
-        return window->notifyMouseMotion(x, y);
+        return window->notifyMouseMotion(x, y, dx, dy);
     }
 
     bool WindowProxy::notifyMouseWheel(double dx, double dy) {

@@ -63,7 +63,7 @@ namespace Slab::Graphics {
 
         virtual void draw();
         virtual bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys);
-        virtual bool notifyMouseMotion(int x, int y);
+        virtual bool notifyMouseMotion(int x, int y, int dx, int dy);
         virtual bool notifyMouseWheel(double dx, double dy);
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
         virtual void notifyReshape(int w, int h);

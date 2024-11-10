@@ -103,7 +103,7 @@ namespace Slab::Graphics {
 
         bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;
-        bool notifyMouseMotion(int x, int y) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         void notifyReshape(int newWinW, int newWinH) override;

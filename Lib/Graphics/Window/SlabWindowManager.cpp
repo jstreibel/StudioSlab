@@ -168,7 +168,7 @@ namespace Slab::Graphics {
 
         if(focused == nullptr) return false;
 
-        return focused->window->notifyMouseMotion(x, y);
+        return focused->window->notifyMouseMotion(x, y, dx, dy);
     }
 
     bool SlabWindowManager::notifyMouseWheel(double dx, double dy) {

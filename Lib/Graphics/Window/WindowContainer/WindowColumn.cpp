@@ -138,11 +138,11 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    bool WindowColumn::notifyMouseMotion(int x, int y) {
+    bool WindowColumn::notifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
         for(auto &win : windows)
         if(win->isMouseIn() ){
-            responded = win->notifyMouseMotion(x,y);
+            responded = win->notifyMouseMotion(x,y,dx,dy);
         }
 
         if(!responded) {
