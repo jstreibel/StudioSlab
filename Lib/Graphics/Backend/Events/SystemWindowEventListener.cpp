@@ -32,6 +32,9 @@ namespace Slab::Graphics {
 
     }
 
+    void SystemWindowEventListener::cursorEntered(bool entered) {
+        IterateReferences(delegateResponders, FuncRun(cursorEntered, entered));
+    }
 
     bool SystemWindowEventListener::notifyMouseMotion(int x, int y, int dx, int dy) {
         return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y, dx, dy));
@@ -45,11 +48,14 @@ namespace Slab::Graphics {
         return IterateReferences(delegateResponders, FuncRun(notifyRender));
     }
 
-    bool SystemWindowEventListener::
-    notifyKeyboard(KeyMap key,
-                   KeyState state,
-                   ModKeys modKeys){
+    bool SystemWindowEventListener::notifyKeyboard(KeyMap key,
+                                                   KeyState state,
+                                                   ModKeys modKeys){
         return IterateReferences(delegateResponders, FuncRun(notifyKeyboard, key, state, modKeys));
+    }
+
+    bool SystemWindowEventListener::notifyCharacter(UInt codepoint) {
+        return IterateReferences(delegateResponders, FuncRun(notifyCharacter, codepoint));
     }
 
     bool SystemWindowEventListener::

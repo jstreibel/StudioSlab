@@ -10,31 +10,8 @@
 
 namespace Slab::Graphics {
 
-    class ImGuiModuleGLFW : public ImGuiModule, public GLFWListener {
-    public:
-        explicit ImGuiModuleGLFW();
-        ~ImGuiModuleGLFW() override;
+    class ImGuiModuleGLFW : public ImGuiModule { public: explicit ImGuiModuleGLFW(); };
 
-    public:
-
-        bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;
-
-        bool CharEvent(GLFWwindow *window, Codepoint value) override;
-
-        bool MouseMotion(GLFWwindow *window, double xpos, double ypos) override;
-
-        void CursorEnter(GLFWwindow *window, int entered) override;
-
-        bool MouseButton(GLFWwindow *window, int button, int action, int mods) override;
-
-        bool MouseWheel(GLFWwindow *window, double xoffset, double yoffset) override;
-
-        bool DroppedFiles(GLFWwindow *window, int count, const char **paths) override;
-
-        void ScreenReshape(GLFWwindow *window, int width, int height) override;
-
-    };
-
-} // Core
+} // Slab::Graphics
 
 #endif //STUDIOSLAB_IMGUIMODULEGLFW_H

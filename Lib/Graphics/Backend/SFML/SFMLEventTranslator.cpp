@@ -28,7 +28,13 @@ namespace Slab::Graphics {
 
             KeyMap key = mapFromSFML(inkey);
             KeyState state = type == sf::Event::KeyPressed ? KeyState::Press : KeyState::Release;
-            ModKeys modKeys{inkey.shift, inkey.control, inkey.alt, inkey.system, false, false };
+            ModKeys modKeys{
+                inkey.shift ? Press : Release,
+                inkey.control ? Press : Release,
+                inkey.alt ? Press : Release,
+                inkey.system ? Press : Release,
+                Release,
+                Release};
 
             IterateReferences(syswin_listeners, Func(notifyKeyboard, key, state, modKeys));
         }
@@ -46,11 +52,11 @@ namespace Slab::Graphics {
             KeyState state = type == sf::Event::MouseButtonPressed ? Press : Release;
 
             auto modKeys = ModKeys(
-            sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) | sf::Keyboard::isKeyPressed(sf::Keyboard::RShift),
-            sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) | sf::Keyboard::isKeyPressed(sf::Keyboard::RControl),
-            sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) | sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt),
-            sf::Keyboard::isKeyPressed(sf::Keyboard::LSystem) | sf::Keyboard::isKeyPressed(sf::Keyboard::RSystem),
-            false, false);
+                (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) | sf::Keyboard::isKeyPressed(sf::Keyboard::RShift))     ? Press : Release,
+                (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl) | sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) ? Press : Release,
+                (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) | sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt))         ? Press : Release,
+                (sf::Keyboard::isKeyPressed(sf::Keyboard::LSystem) | sf::Keyboard::isKeyPressed(sf::Keyboard::RSystem))   ? Press : Release,
+                Release, Release);
 
             IterateReferences(syswin_listeners, Func(notifyMouseButton, button, state, modKeys), StopOnFirstResponder);
         }

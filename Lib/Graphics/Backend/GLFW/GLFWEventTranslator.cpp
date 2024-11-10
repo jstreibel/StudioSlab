@@ -32,15 +32,19 @@ namespace Slab::Graphics {
         auto mappedKey = static_cast<KeyMap>(key);
         auto state = static_cast<KeyState>(action);
         ModKeys modKeys{
-                (mods & GLFW_MOD_SHIFT) != 0,
-                (mods & GLFW_MOD_CONTROL) != 0,
-                (mods & GLFW_MOD_ALT) != 0,
-                (mods & GLFW_MOD_SUPER) != 0,
-                (mods & GLFW_MOD_CAPS_LOCK) != 0,
-                (mods & GLFW_MOD_NUM_LOCK) != 0,
+                (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
+                (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
+                (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,
+                (mods & GLFW_MOD_SUPER)     != 0 ? Press : Release,
+                (mods & GLFW_MOD_CAPS_LOCK) != 0 ? Press : Release,
+                (mods & GLFW_MOD_NUM_LOCK)  != 0 ? Press : Release,
         };
 
         return IterateReferences(syswin_listeners, Func(notifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
+    }
+
+    bool GLFWEventTranslator::CharacterEvent(GLFWwindow *, UInt codepoint) {
+        return false;
     }
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
@@ -63,12 +67,12 @@ namespace Slab::Graphics {
         auto mappedButton = static_cast<enum MouseButton>(button);
         auto state = static_cast<KeyState>(action);
         ModKeys modKeys{
-                (mods & GLFW_MOD_SHIFT) != 0,
-                (mods & GLFW_MOD_CONTROL) != 0,
-                (mods & GLFW_MOD_ALT) != 0,
-                (mods & GLFW_MOD_SUPER) != 0,
-                (mods & GLFW_MOD_CAPS_LOCK) != 0,
-                (mods & GLFW_MOD_NUM_LOCK) != 0,
+                (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
+                (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
+                (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,
+                (mods & GLFW_MOD_SUPER)     != 0 ? Press : Release,
+                (mods & GLFW_MOD_CAPS_LOCK) != 0 ? Press : Release,
+                (mods & GLFW_MOD_NUM_LOCK)  != 0 ? Press : Release,
         };
 
         if(state == Release)

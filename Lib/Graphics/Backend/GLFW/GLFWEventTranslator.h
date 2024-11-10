@@ -14,12 +14,13 @@ namespace Slab::Graphics {
     public:
         GLFWEventTranslator();
 
-        bool KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) override;
-        bool MouseMotion(GLFWwindow *window, double xpos, double ypos) override;
-        void CursorEnter(GLFWwindow *window, int entered) override;
-        bool MouseButton(GLFWwindow *window, int button, int action, int mods) override;
-        bool MouseWheel(GLFWwindow *window, double xoffset, double yoffset) override;
-        bool DroppedFiles(GLFWwindow *window, int count, const char **paths) override;
+        bool KeyboardEvent(GLFWwindow *, int key, int scancode, int action, int mods) override;
+        bool CharacterEvent(GLFWwindow*, UInt codepoint);
+        bool MouseMotion(GLFWwindow *, double xpos, double ypos) override;
+        void CursorEnter(GLFWwindow *, int entered) override;
+        bool MouseButton(GLFWwindow *, int button, int action, int mods) override;
+        bool MouseWheel(GLFWwindow *, double xoffset, double yoffset) override;
+        bool DroppedFiles(GLFWwindow *, int count, const char **paths) override;
 
         void Render(GLFWwindow *window) override;
 

@@ -187,47 +187,6 @@ namespace Slab::Graphics {
         return h;
     }
 
-    // bool GLFWBackend::GetKeyState(GLFWwindow *window, int key) {
-    //     fix state = glfwGetKey(window, key);
-//
-    //     /*
-    //         Keys:
-    //         GLFW_KEY_7
-    //         GLFW_KEY_8
-    //         GLFW_KEY_9
-    //         GLFW_KEY_SEMICOLON
-    //         GLFW_KEY_EQUAL
-    //         GLFW_KEY_A
-    //         GLFW_KEY_B
-    //         etc.
-//
-    //         States:
-    //         GLFW_PRESS or GLFW_RELEASE
-//
-    //         The GLFW_KEY_LAST constant holds the highest value of any named key.
-    //      */
-//
-    //     return state;
-    // }
-
-    // Graphics::Point2D GLFWBackend::GetCursorPosition(GLFWwindow *window) {
-    //     double xpos, ypos;
-    //     glfwGetCursorPos(window, &xpos, &ypos);
-//
-    //     return {xpos, ypos};
-    // }
-
-    // bool GLFWBackend::IsWindowHovered(GLFWwindow *window) {
-    //     return glfwGetWindowAttrib(window, GLFW_HOVERED);
-    // }
-
-    // bool GLFWBackend::GetMouseButtonState(GLFWwindow *window, int button) {
-//     // button: GLFW_MOUSE_BUTTON_LEFT, etc.
-//     // state: GLFW_PRESS or GLFW_RELEASE
-//     fix state = glfwGetMouseButton(window, button);
-//     return state;
-// }
-
     void GLFWSystemWindow::addGLFWListener(const Volatile<Graphics::GLFWListener>& glfwListener, bool highPriority) {
         if (highPriority) glfw_listeners.emplace_front(glfwListener);
         else glfw_listeners.emplace_back(glfwListener);

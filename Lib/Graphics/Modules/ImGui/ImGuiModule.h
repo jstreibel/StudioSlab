@@ -16,25 +16,21 @@
 namespace Slab::Graphics {
 
     using Context = Pointer<SlabImGuiContext>;
-    using ContextInitializer = std::function<void(ImGuiContext*)>;
 
     class ImGuiModule : public GraphicsModule {
-        static void buildFonts();
-
         Context m_MainContext = nullptr;
 
-        ContextInitializer initializeContext;
+        CallSet call_set;
 
     protected:
         Vector<Context> contexts;
 
         bool showDemos = false;
 
-        explicit ImGuiModule(ContextInitializer);
+        explicit ImGuiModule(CallSet);
         ~ImGuiModule() override;
 
     public:
-        float getFontSize() const;
 
         Pointer<SlabImGuiContext> createContext();
 
