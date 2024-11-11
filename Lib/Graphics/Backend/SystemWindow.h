@@ -33,6 +33,7 @@ namespace Slab::Graphics {
         virtual Int getHeight() const = 0;
         virtual Int getWidth() const = 0;
         virtual void Render() = 0;
+        virtual bool ShouldClose() const = 0;
 
         void* getRawPlatformWindowPointer();
 
@@ -41,7 +42,6 @@ namespace Slab::Graphics {
 
         auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);
-        virtual void setSystemWindowTitle(Str title, int handle);
 
         void setSystemWindowTitle(Str title);
     };

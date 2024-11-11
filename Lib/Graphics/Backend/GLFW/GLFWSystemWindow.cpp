@@ -204,8 +204,7 @@ namespace Slab::Graphics {
     }
 
     void GLFWSystemWindow::Render() {
-        if(window_ptr==nullptr || glfwWindowShouldClose((GLFWwindow*)window_ptr))
-            return;
+        if(window_ptr==nullptr) return;
 
         glfwMakeContextCurrent((GLFWwindow*)window_ptr);
 
@@ -219,6 +218,10 @@ namespace Slab::Graphics {
         IterateReferences(glfw_listeners, Render);
 
         glfwSwapBuffers((GLFWwindow*)window_ptr);
+    }
+
+    bool GLFWSystemWindow::ShouldClose() const {
+        return glfwWindowShouldClose((GLFWwindow*)window_ptr) != 0;
     }
 
 

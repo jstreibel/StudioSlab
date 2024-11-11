@@ -33,6 +33,8 @@ namespace Slab::Graphics {
 
         Int getWidth() const override;
 
+        bool ShouldClose() const override;
+
         void Render() override;
 
         void Close();

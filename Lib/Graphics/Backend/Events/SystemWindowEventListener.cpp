@@ -5,10 +5,17 @@
 #include "SystemWindowEventListener.h"
 #include "Utils/ReferenceIterator.h"
 
+#include "Graphics/Backend/SystemWindow.h"
 
 namespace Slab::Graphics {
 
     SystemWindowEventListener::SystemWindowEventListener() = default;
+
+    void SystemWindowEventListener::setParentSystemWindow(SystemWindow* syswin) {
+        parent_system_window = syswin;
+
+        notifySystemWindowReshape(syswin->getWidth(), syswin->getHeight());
+    }
 
     void SystemWindowEventListener::addResponder(Volatile<SystemWindowEventListener> responder) {
         assert(responder.lock().get() != this);

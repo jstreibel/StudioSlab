@@ -36,9 +36,12 @@ namespace Slab::Graphics {
 
         Int getHeight() const override;
 
+        bool ShouldClose() const override;
+
         void addGLFWListener(const Volatile<Graphics::GLFWListener>& glfwListener, bool highPriority = false);
 
         void setMouseCursor(MouseCursor cursor) override;
+
 
         static void window_focus_callback(GLFWwindow *window, int focused);
         static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

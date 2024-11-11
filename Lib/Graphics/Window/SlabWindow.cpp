@@ -17,16 +17,15 @@ namespace Slab::Graphics {
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
     SlabWindow::
-    SlabWindow(Config cfg, const Pointer<SystemWindow>& parent_syswin)
+    SlabWindow(Config cfg)
     : config(std::move(cfg))
-    , parent_system_window(parent_syswin)
     {
         if(config.title.empty()){
             config.title = "[Window:" + ToStr(get_id()) + "]";
         }
 
         if(parent_system_window == nullptr)
-            parent_system_window = GetGraphicsBackend()->GetMainSystemWindow();
+            parent_system_window = &*GetGraphicsBackend()->GetMainSystemWindow();
     }
 
     SlabWindow::~SlabWindow() = default;
@@ -132,13 +131,13 @@ namespace Slab::Graphics {
 
 
     void SlabWindow::setDecorate(bool decorate) {
-        if(!decorate)  config.flags |=  Flags::NoDecoration;
-        else           config.flags &= ~Flags::NoDecoration;
+        if(!decorate)  config.flags |=  SlabWindowNoDecoration;
+        else           config.flags &= ~SlabWindowNoDecoration;
     }
 
     void SlabWindow::setClear(bool clear) {
-        if(!clear) config.flags |=  Flags::DontClear;
-        else       config.flags &= ~Flags::DontClear;
+        if(!clear) config.flags |=  SlabWindowDontClear;
+        else       config.flags &= ~SlabWindowDontClear;
     }
 
     RectI SlabWindow::getViewport() const {
@@ -152,7 +151,7 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindow::wantsFullscreen() const {
-        return config.flags & WantsFullscreen;
+        return config.flags & SlabWindowWantsFullscreen;
     }
 
     void SlabWindow::SetMinimumWidth(Slab::Resolution minw) {
@@ -185,7 +184,9 @@ namespace Slab::Graphics {
 
     bool SlabWindow::isActive() const { return active; }
 
-
+    bool SlabWindow::notifySystemWindowReshape(int w, int h) {
+        return SystemWindowEventListener::notifySystemWindowReshape(w, h);
+    }
 
 
 }

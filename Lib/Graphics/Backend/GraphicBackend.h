@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         explicit GraphicBackend(const Str &name);
 
         Vector<Volatile<GraphicsModule>> graphicModules;
-        Vector<Pointer<SystemWindow>> system_windows;
+        List<Pointer<SystemWindow>> system_windows;
 
         virtual void clearModules();
         void unloadAllModules();

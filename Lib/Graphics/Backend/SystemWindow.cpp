@@ -20,7 +20,8 @@ namespace Slab::Graphics {
      auto SystemWindow::addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool {
          if(listener.expired()) throw Exception("Expired pointer");
 
-         listener.lock()->notifySystemWindowReshape(getWidth(), getHeight());
+         listener.lock()->setParentSystemWindow(this);
+         // listener.lock()->notifySystemWindowReshape(getWidth(), getHeight());
 
         return event_translator->addGUIEventListener(listener);
     }
@@ -34,7 +35,7 @@ namespace Slab::Graphics {
     }
 
     void SystemWindow::setMouseCursor(MouseCursor cursor) {
-
+        NOT_IMPLEMENTED
         switch (cursor) {
             case Mouse_ArrowCursor:
                 break;
@@ -53,16 +54,20 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED
     }
 
-    void SystemWindow::setSystemWindowTitle(Str title, int handle) {
-
-    }
-
     void SystemWindow::setSystemWindowTitle(Str title) {
-
+        NOT_IMPLEMENTED
     }
 
     void SystemWindow::clearListeners() {
+        for(auto &listener : thingsImProprietary)
+            listener->setParentSystemWindow(nullptr);
+
         thingsImProprietary.clear();
+
+        for(auto &listener : event_translator->syswin_listeners)
+            if(auto ptr = listener.lock()) ptr->setParentSystemWindow(nullptr);
+
+        event_translator->clear();
     }
 
     void *SystemWindow::getRawPlatformWindowPointer() {

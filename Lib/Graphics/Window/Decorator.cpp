@@ -44,8 +44,8 @@ namespace Slab::Graphics {
 
     void Decorator::begin_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.getFlags();
-        fix should_clear    = !(flags & SlabWindow::DontClear);
-        fix should_decorate = !(flags & SlabWindow::NoDecoration);
+        fix should_clear    = !(flags & SlabWindowDontClear);
+        fix should_decorate = !(flags & SlabWindowNoDecoration);
 
         if(!should_clear) return;
 
@@ -76,7 +76,7 @@ namespace Slab::Graphics {
 
     void Decorator::finish_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.getFlags();
-        fix should_decorate = !(flags & SlabWindow::NoDecoration);
+        fix should_decorate = !(flags & SlabWindowNoDecoration);
 
         if(!should_decorate) return;
 

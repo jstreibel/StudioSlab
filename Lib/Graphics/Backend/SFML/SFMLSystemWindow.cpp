@@ -54,7 +54,7 @@ namespace Slab::Graphics {
         off_sync.lock();
         while (sfml_native_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
-                Close();
+                sfml_native_window->close();
                 break;
             }
             else if (event.type == sf::Event::KeyPressed) {
@@ -78,10 +78,15 @@ namespace Slab::Graphics {
     void SFMLSystemWindow::Close() {
         off_sync.lock();
 
-        // window->close();
-        // clearListeners();
+        NOT_IMPLEMENTED
+        sfml_native_window->close();
+        clearListeners();
 
         off_sync.unlock();
+    }
+
+    bool SFMLSystemWindow::ShouldClose() const {
+        return !sfml_native_window->isOpen();;
     }
 
 

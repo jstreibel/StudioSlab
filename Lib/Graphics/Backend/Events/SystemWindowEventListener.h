@@ -14,10 +14,16 @@
 
 namespace Slab::Graphics {
 
+    class SystemWindow;
+
     class SystemWindowEventListener {
         Vector<Volatile<SystemWindowEventListener>> delegateResponders;
+        friend class SystemWindow;
+        void setParentSystemWindow(SystemWindow *);
 
     protected:
+        SystemWindow* parent_system_window = nullptr;
+
         void addResponder(Volatile<SystemWindowEventListener> responder);
         void removeResponder(Pointer<SystemWindowEventListener> responder);
         bool hasResponders() const;

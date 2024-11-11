@@ -42,8 +42,8 @@ namespace Slab::Graphics {
     }
 
     bool WindowProxy::notifyMouseMotion(int x, int y, int dx, int dy) {
-        if(window == nullptr) return false
-        ;
+        if(window == nullptr) return false;
+
         return window->notifyMouseMotion(x, y, dx, dy);
     }
 

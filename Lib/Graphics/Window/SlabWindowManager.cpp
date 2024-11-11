@@ -105,7 +105,7 @@ namespace Slab::Graphics {
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->window->isMouseIn();
-                fix is_decorated = !(meta->window->getFlags() & SlabWindow::NoDecoration);
+                fix is_decorated = !(meta->window->getFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = decorator.isMouseOverGrabRegion(*meta->window,
                                                                                 mouse_state->x,
                                                                                 mouse_state->y);

@@ -20,19 +20,17 @@
 
 namespace Slab::Graphics {
 
-    class SlabWindow : public Core::UniqueObject {
+    enum SlabWindowFlags {
+        // HasMainMenu  = 0x1,
+        SlabWindowNoDecoration = 0x2,
+        SlabWindowDontClear    = 0x4,
+        SlabWindowWantsFullscreen   = 0x8
+    };
+
+    class SlabWindow : protected Core::UniqueObject, public SystemWindowEventListener {
         friend class SlabWindowManager;
 
-    protected:
-        Pointer<SystemWindow> parent_system_window = nullptr;
-
     public:
-        enum Flags {
-            // HasMainMenu  = 0x1,
-            NoDecoration = 0x2,
-            DontClear    = 0x4,
-            WantsFullscreen   = 0x8
-        };
 
         struct Config {
             Str title;
@@ -54,22 +52,24 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0},
-                            const Pointer<SystemWindow>& parent_system_window=nullptr);
+        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0});
 
-        virtual ~SlabWindow();
+        ~SlabWindow() override;
 
         Int getFlags() const;
 
         virtual void draw();
-        virtual bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys);
-        virtual bool notifyMouseMotion(int x, int y, int dx, int dy);
-        virtual bool notifyMouseWheel(double dx, double dy);
-        virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
-        virtual void notifyReshape(int w, int h);
+        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool notifyMouseWheel(double dx, double dy) override;
+        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
+        bool notifySystemWindowReshape(int w, int h) final;
+
+        virtual void notifyReshape(int w, int h);
         virtual void notifyBecameActive();
         virtual void notifyBecameInactive();
+
         bool isActive() const;
 
         bool wantsFullscreen() const;

@@ -68,8 +68,15 @@ namespace Slab::Graphics {
             glfwPollEvents();
             IterateReferences(graphicModules, EndEvents);
 
-            for (auto &window: system_windows)
-                window->Render();
+            for (auto window=system_windows.begin(); window!=system_windows.end();) {
+                if((*window)->ShouldClose()) {
+                    window = system_windows.erase(window);
+                    continue;
+                }
+
+                (*window)->Render();
+                ++window;
+            }
         }
     }
 
