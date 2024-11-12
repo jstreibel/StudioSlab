@@ -56,6 +56,8 @@ namespace Slab::Graphics {
 
         ~SlabWindow() override;
 
+        bool notifySystemWindowReshape(int w, int h) final;
+
         Int getFlags() const;
 
         virtual void draw();
@@ -63,8 +65,6 @@ namespace Slab::Graphics {
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
         bool notifyMouseWheel(double dx, double dy) override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-
-        bool notifySystemWindowReshape(int w, int h) final;
 
         virtual void notifyReshape(int w, int h);
         virtual void notifyBecameActive();

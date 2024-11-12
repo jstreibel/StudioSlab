@@ -10,30 +10,31 @@
 
 #include <algorithm>
 #include <numeric>
+#include <utility>
 
 #define CountLessThanZero(vec) std::count_if(begin(vec), end(vec), [](float x) { return x < 0; });
 #define SumLargerThanZero(vec) std::accumulate(begin(vec), end(vec), 0.0f, [this](float acc, float x) { return x > 0 ? acc + (x<=1?x:x/GetWidth()) : acc; });
-
-
 
 // Don't touch
 fix AlwaysPropagate = true;
 fix PropagateOnlyIfMouseIsIn = false;
 
-#define PropagateEvent(EVENT, PROPAGATE_ALWAYS) \
-    {                                            \
-    auto responded = false;     \
-    for(auto &winData : windowsList)    \
+#define PropagateEvent(EVENT, PROPAGATE_ALWAYS){                                           \
+    auto responded = false;                                                                \
+                                                                                           \
+    responded = SlabWindow::EVENT;                                                         \
+                                                                                           \
+    for(auto &winData : windowsList)                                                       \
         if(winData.window->isMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
-                                \
-    return responded;                           \
-    }
+                                                                                           \
+    return responded;                                                                      \
+}
 
 
 namespace Slab::Graphics {
 
     WindowRow::WindowRow(Str title, Int flags)
-            : SlabWindow({title, WindowStyle::default_window_rect, flags}) {
+            : SlabWindow({std::move(title), WindowStyle::default_window_rect, flags}) {
 
     }
 
@@ -89,7 +90,7 @@ namespace Slab::Graphics {
 
         Vector<int> computedWidths(m);
         auto widths = _widthsVector();
-        auto freeWidths = CountLessThanZero(widths);
+        auto freeWidths = CountLessThanZero(widths)
 
         if(freeWidths == m) {
             computedWidths = Vector<int>(m, (int) (GetWidth() / m));
@@ -101,7 +102,7 @@ namespace Slab::Graphics {
                 computedWidths[i] = (int) computed_width;
             }
         } else /*if (freeWidths != m)*/ {
-            auto reservedWidth = SumLargerThanZero(widths);
+            auto reservedWidth = SumLargerThanZero(widths)
             auto wFree = (float) GetWidth() * (1 - reservedWidth) / (float) freeWidths;
 
             for (int i = 0; i < m; ++i) {
@@ -109,11 +110,11 @@ namespace Slab::Graphics {
                 int computed_width;
                 if(input_width > 0) {
                     if(input_width <= 1)
-                        computed_width = GetWidth() * input_width;
+                        computed_width = (int)(GetWidth() * input_width);
                     else
                         computed_width = (int)input_width;
                 } else
-                    computed_width = wFree;
+                    computed_width = (int)wFree;
 
                 computedWidths[i] = (int) computed_width;
             }
@@ -151,8 +152,8 @@ namespace Slab::Graphics {
     bool WindowRow::assertConsistency() const {
         auto widths = _widthsVector();
 
-        auto reserverdWidth = SumLargerThanZero(widths);
-        auto freeWidths = CountLessThanZero(widths);
+        auto reserverdWidth = SumLargerThanZero(widths)
+        auto freeWidths = CountLessThanZero(widths)
 
         using namespace Common;
 
@@ -179,7 +180,7 @@ namespace Slab::Graphics {
         }
     }
 
-    void WindowRow::notifyReshape(int w, int h) {
+    void WindowRow::notifyReshape(int w, int h)  {
         SlabWindow::notifyReshape(w, h);
 
         arrangeWindows();
@@ -187,7 +188,8 @@ namespace Slab::Graphics {
 
     bool WindowRow::notifyMouseMotion(int x, int y, int dx, int dy) {
         for (auto &winData: windowsList)
-            if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y, dx, dy)) return true;
+            if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y, dx, dy))
+                return true;
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){
@@ -203,8 +205,8 @@ namespace Slab::Graphics {
     bool WindowRow::notifyMouseButton(MouseButton button, KeyState state,
                                       ModKeys keys) {
         if(state == KeyState::Release)
-            // PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate)
-            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
+            PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate)
+            // PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
         else
             PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }

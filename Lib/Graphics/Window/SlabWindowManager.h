@@ -42,7 +42,7 @@ namespace Slab::Graphics {
         explicit SlabWindowManager(Pointer<SystemWindow> parent_syswin = nullptr);
         ~SlabWindowManager() override = default;
 
-        void setFocus(Pointer<WindowMetaInformation>);
+        void setFocus(const Pointer<WindowMetaInformation>&);
 
         void addSlabWindow(const Pointer<SlabWindow>&, bool hidden=false);
 

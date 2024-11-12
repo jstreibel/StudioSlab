@@ -44,7 +44,8 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title, Pointer<SlabImGuiContext> GUI_context)
+    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax,
+                               Str _title, Pointer<SlabImGuiContext> GUI_context)
     : region{{xMin, xMax, yMin, yMax}}
     , gui_context(std::move(GUI_context))
     , title(std::move(_title))
@@ -56,7 +57,8 @@ namespace Slab::Graphics {
 
         if(this->gui_context == nullptr) {
             gui_context_is_local = true;
-            this->gui_context = Slab::GetModule<ImGuiModule>("ImGui").createContext();
+            gui_context = Slab::GetModule<ImGuiModule>("ImGui").createContext();
+            addResponder(gui_context);
         }
 
         axisArtist.setLabel("Axis");
@@ -137,10 +139,10 @@ namespace Slab::Graphics {
             }
 
             if (ImGui::BeginPopup(unique(popupName).c_str())) {
-                if(ImGui::MenuItem("Auto adjust", NULL, autoReviewGraphRanges)) {
+                if(ImGui::MenuItem("Auto adjust", nullptr, autoReviewGraphRanges)) {
                     autoReviewGraphRanges = !autoReviewGraphRanges;
                 }
-                else if (ImGui::MenuItem(unique("Show interface").c_str(), NULL, showInterface)) {
+                else if (ImGui::MenuItem(unique("Show interface").c_str(), nullptr, showInterface)) {
                     showInterface = !showInterface;
                 } else if (ImGui::MenuItem(unique("Save graph").c_str())) {
 

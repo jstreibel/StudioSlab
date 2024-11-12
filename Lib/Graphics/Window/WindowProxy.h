@@ -7,31 +7,17 @@
 
 #include "SlabWindow.h"
 
-namespace Slab {
-    namespace Graphics {
+namespace Slab::Graphics {
 
-        class WindowProxy : public SlabWindow {
-            Pointer<SlabWindow> window;
+    class WindowProxy : public SlabWindow {
+        Pointer<SlabWindow> window;
 
-        public:
-            WindowProxy();
+    public:
+        WindowProxy();
 
-            void draw() override;
+        void setWindow(Pointer<SlabWindow>);
+    };
 
-            void setWindow(Pointer<SlabWindow>);
-
-            void notifyReshape(int w, int h) override;
-
-            bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
-
-            bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-
-            bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-
-            bool notifyMouseWheel(double dx, double dy) override;
-        };
-
-    } // Slab
-} // Graphics
+} // Slab::Graphics
 
 #endif //STUDIOSLAB_WINDOWPROXY_H

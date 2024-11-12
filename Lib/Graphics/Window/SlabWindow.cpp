@@ -40,13 +40,19 @@ namespace Slab::Graphics {
         else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
         else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
 
-        return false;
+        return SystemWindowEventListener::notifyMouseButton(button, state, keys);
     }
 
-    bool SlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) { return false; }
-    bool SlabWindow::notifyMouseWheel(double dx, double dy) { return false; }
+    bool SlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
+        return SystemWindowEventListener::notifyMouseMotion(x, y, dx, dy);
+    }
+    bool SlabWindow::notifyMouseWheel(double dx, double dy) {
+        return SystemWindowEventListener::notifyMouseWheel(dx, dy);
+    }
     bool SlabWindow::notifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
-                                    Slab::Graphics::ModKeys modKeys) { return false; }
+                                    Slab::Graphics::ModKeys modKeys) {
+        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
+    }
 
     void SlabWindow::setupWindow() const {
         glDisable(GL_TEXTURE_2D);
@@ -185,7 +191,10 @@ namespace Slab::Graphics {
     bool SlabWindow::isActive() const { return active; }
 
     bool SlabWindow::notifySystemWindowReshape(int w, int h) {
-        return SystemWindowEventListener::notifySystemWindowReshape(w, h);
+        notifyReshape(w, h);
+        // return SystemWindowEventListener::notifySystemWindowReshape(w, h);
+
+        return false;
     }
 
 

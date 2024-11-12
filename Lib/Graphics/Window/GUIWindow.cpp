@@ -25,6 +25,8 @@ namespace Slab::Graphics {
         Core::BackendManager::LoadModule("ImGui");
         auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
         gui_context = gui_module.createContext();
+
+        addResponder(gui_context);
     }
 
 

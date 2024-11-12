@@ -61,13 +61,13 @@ namespace Slab {
 
         if (isMouseRightClicked()) {
             constexpr const Real factor = 0.01;
-            const Real dx = 1 - factor * mouseState->dx;
-            const Real dy = 1 + factor * mouseState->dy;
+            const Real dw = 1 - factor * dx;
+            const Real dh = 1 + factor * dy;
 
             const Real x0 = region.xCenter();
             const Real y0 = region.yCenter();
-            const Real hw = .5 * region.width() * dx;
-            const Real hh = .5 * region.height() * dy;
+            const Real hw = .5 * region.width()  * dw;
+            const Real hh = .5 * region.height() * dh;
 
             region = {
                     x0 - hw,

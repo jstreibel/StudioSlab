@@ -6,7 +6,6 @@
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/Utils.h"
 #include "Core/Backend/BackendManager.h"
-#include "Graphics/Window/WindowStyles.h"
 
 #include <algorithm>
 #include <numeric>
@@ -19,19 +18,23 @@
 fix AlwaysPropagate = true;
 fix PropagateOnlyIfMouseIsIn = false;
 
-#define PropagateEvent(EVENT, PROPAGATE_ALWAYS){   \
-    auto responded = false;     \
-    for(auto &win : windows)    \
+#define PropagateEvent(EVENT, PROPAGATE_ALWAYS){                         \
+    auto responded = false;                                              \
+                                                                         \
+    responded = SlabWindow::EVENT;                                       \
+                                                                         \
+    for(auto &win : windows)                                             \
         if(win->isMouseIn() || PROPAGATE_ALWAYS) responded = win->EVENT; \
-                                \
-    return responded;}
+                                                                         \
+    return responded;                                                    \
+}
 
 
 namespace Slab::Graphics {
 
     using namespace Core;
 
-    void WindowColumn::addWindow(Pointer<SlabWindow> window, float windowHeight) {
+    void WindowColumn::addWindow(const Pointer<SlabWindow>& window, float windowHeight) {
         windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
@@ -54,7 +57,7 @@ namespace Slab::Graphics {
     }
 
     void WindowColumn::arrangeWindows() {
-        if (!assertConsistency()) throw "WindowRow inconsistency";
+        if (!assertConsistency()) throw Exception("WindowRow inconsistency");
 
         auto m = windows.size();
 
@@ -62,8 +65,7 @@ namespace Slab::Graphics {
 
         Vector<int> computedHeights(m, (int) (GetHeight() / m));    // "if(freeHeights==m)"
 
-
-        auto freeHeights = CountLessThanZero(heights);
+        auto freeHeights = CountLessThanZero(heights)
         if (freeHeights == 0) {
             for (int i = 0; i < m; ++i) {
                 auto relHeight = heights[i];
@@ -71,7 +73,7 @@ namespace Slab::Graphics {
                 computedHeights[i] = (int) height;
             }
         } else if (freeHeights != m) {
-            auto reservedHeight = SumLargerThanZero(heights);
+            auto reservedHeight = SumLargerThanZero(heights)
             auto hFree = (float) GetHeight() * (1 - reservedHeight) / (float) freeHeights;
 
             for (int i = 0; i < m; ++i) {
@@ -106,8 +108,8 @@ namespace Slab::Graphics {
     }
 
     bool WindowColumn::assertConsistency() const {
-        auto reservedHeight = SumLargerThanZero(heights);
-        auto freeHeights = CountLessThanZero(heights);
+        auto reservedHeight = SumLargerThanZero(heights)
+        auto freeHeights = CountLessThanZero(heights)
 
         using namespace Common;
 
@@ -145,29 +147,27 @@ namespace Slab::Graphics {
             responded = win->notifyMouseMotion(x,y,dx,dy);
         }
 
-        if(!responded) {
+        if(responded) return true;
 
-        }
-
-        return responded;
+        return SlabWindow::notifyMouseMotion(x, y, dx, dy);
     }
 
     bool
     WindowColumn::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn);
+        PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowColumn::notifyMouseButton(MouseButton button, KeyState state,
                                          ModKeys keys) {
         if(state == Release)
-            // PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate);
-            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);
+            PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate)
+            // PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);
 
-        PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);
+        PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowColumn::notifyMouseWheel(double dx, double dy) {
-        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn);
+        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowColumn::isEmpty() const {

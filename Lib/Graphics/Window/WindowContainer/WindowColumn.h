@@ -21,7 +21,7 @@ namespace Slab::Graphics {
     public:
         WindowColumn() = default;
 
-        void addWindow(Pointer<SlabWindow> window, float windowHeight = -1);
+        void addWindow(const Pointer<SlabWindow>& window, float windowHeight = -1);
 
         bool removeWindow(const Pointer<SlabWindow>&);
 

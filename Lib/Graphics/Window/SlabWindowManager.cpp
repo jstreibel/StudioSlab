@@ -212,7 +212,7 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void SlabWindowManager::setFocus(Pointer<WindowMetaInformation> meta) {
+    void SlabWindowManager::setFocus(const Pointer<WindowMetaInformation>& meta) {
         if(focused != nullptr) focused->window->notifyBecameInactive();
 
         focused = meta;
