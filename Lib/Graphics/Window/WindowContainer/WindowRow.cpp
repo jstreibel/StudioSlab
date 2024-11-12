@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <ranges>
 #include <utility>
 
 #define CountLessThanZero(vec) std::count_if(begin(vec), end(vec), [](float x) { return x < 0; });
@@ -171,7 +172,8 @@ namespace Slab::Graphics {
     }
 
     void WindowRow::draw() {
-        for (auto &winData: windowsList) {
+
+        for (auto & winData : std::ranges::reverse_view(windowsList)) {
             auto &window = *winData.window;
 
             window.draw();
