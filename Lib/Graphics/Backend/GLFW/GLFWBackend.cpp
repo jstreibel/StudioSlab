@@ -59,16 +59,21 @@ namespace Slab::Graphics {
 
     void GLFWBackend::mainLoop() {
 
-        static auto BeginEvents = FuncRun(beginEvents);
-        static auto EndEvents   = FuncRun(endEvents);
+        // static auto BeginEvents = FuncRun(beginEvents);
+        // static auto EndEvents   = FuncRun(endEvents);
+        static auto Update   = FuncRun(Update);
 
         while(!system_windows.empty()) {
 
-            IterateReferences(graphicModules, BeginEvents);
+            //IterateReferences(graphicModules, BeginEvents);
             glfwPollEvents();
-            IterateReferences(graphicModules, EndEvents);
+            //IterateReferences(graphicModules, EndEvents);
 
-            for (auto window=system_windows.begin(); window!=system_windows.end();) {
+            IterateReferences(graphicModules, Update);
+
+            auto window=system_windows.begin();
+            auto end = system_windows.end();
+            while (window != end) {
                 if((*window)->ShouldClose()) {
                     window = system_windows.erase(window);
                     continue;

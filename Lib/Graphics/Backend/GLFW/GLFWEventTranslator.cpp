@@ -43,8 +43,8 @@ namespace Slab::Graphics {
         return IterateReferences(syswin_listeners, Func(notifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::CharacterEvent(GLFWwindow *, UInt codepoint) {
-        return false;
+    bool GLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
+        return IterateReferences(syswin_listeners, Func(notifyCharacter, codepoint), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {

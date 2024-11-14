@@ -11,7 +11,6 @@ namespace Studios:: PureSG {
 
     void *Builder::buildOpenGLOutput() {
         return new Monitor(kg_numeric_config, *(KGEnergy*)getHamiltonian());
-
     }
 
 

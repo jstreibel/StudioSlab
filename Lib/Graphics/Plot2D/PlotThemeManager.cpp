@@ -109,27 +109,28 @@ namespace Slab::Graphics {
     }
 
     bool PlotThemeManager::notifyRender() {
-        auto &imgui_module = Slab::GetModule<ImGuiModule>("ImGui");
-        imgui_module.GetMainContext()->AddDrawCall(
-                []() {
-                    if (ImGui::BeginMainMenuBar()) {
-                        if (ImGui::BeginMenu("Style")) {
-                            if (ImGui::BeginMenu("Graphs")) {
-                                for (auto &stylePair: stylesInitializers) {
-                                    auto name = stylePair.first;
+        auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->getGUIContext().lock();
 
-                                    if (ImGui::MenuItem(name.c_str(), nullptr, current == name))
-                                        current = name;
-                                }
+        if(gui_context != nullptr) gui_context->AddDrawCall(
+            []() {
+                if (ImGui::BeginMainMenuBar()) {
+                    if (ImGui::BeginMenu("Style")) {
+                        if (ImGui::BeginMenu("Graphs")) {
+                            for (auto &stylePair: stylesInitializers) {
+                                auto name = stylePair.first;
 
-                                ImGui::EndMenu();
+                                if (ImGui::MenuItem(name.c_str(), nullptr, current == name))
+                                    current = name;
                             }
 
                             ImGui::EndMenu();
                         }
-                        ImGui::EndMainMenuBar();
+
+                        ImGui::EndMenu();
                     }
+                    ImGui::EndMainMenuBar();
                 }
+            }
         );
 
         return SystemWindowEventListener::notifyRender();

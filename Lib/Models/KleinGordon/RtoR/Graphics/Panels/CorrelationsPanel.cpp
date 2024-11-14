@@ -108,17 +108,20 @@ namespace Slab::Models::KGRtoR {
         correlationGraph.getAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::draw() {        guiWindow.begin();
+    void CorrelationsPanel::draw() {
+        guiWindow.begin();
 
-        if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
-            static auto discardRedundant = false;
-            // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
-            //     this->computeAll(discardRedundant);
-            // }
+        guiWindow.AddExternalDraw([this]() {
+            if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
+                static auto discardRedundant = false;
+                // if(ImGui::Checkbox("Discard redundant modes", &discardRedundant)) {
+                //     this->computeAll(discardRedundant);
+                // }
 
-            if (ImGui::Button("Compute"))
-                this->computeAll(discardRedundant);
-        }
+                if (ImGui::Button("Compute"))
+                    this->computeAll(discardRedundant);
+            }
+        });
 
         guiWindow.end();
 

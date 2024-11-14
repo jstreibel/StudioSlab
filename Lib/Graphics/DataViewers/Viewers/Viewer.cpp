@@ -22,9 +22,6 @@ namespace Slab::Graphics {
         return base_function;
     }
 
-    void Viewer::beginGUI() { gui_window->begin(); }
-    void Viewer::endGUI() { gui_window->end(); }
-
     void Viewer::notifyBecameVisible() {
         is_visible = true;
     }

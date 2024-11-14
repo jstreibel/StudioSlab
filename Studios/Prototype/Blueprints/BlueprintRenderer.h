@@ -16,7 +16,7 @@
 
 namespace Slab::Blueprints {
 
-    class BlueprintRenderer {
+    class BlueprintRenderer : public Graphics::SystemWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
         Pointer<Graphics::SlabImGuiContext> m_Context;
@@ -49,7 +49,7 @@ namespace Slab::Blueprints {
 
         void ShowLeftPane(float paneWidth);
 
-        void Draw();
+        bool notifyRender() override;
 
     };
 

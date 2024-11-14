@@ -19,9 +19,6 @@ namespace Slab::Graphics {
     protected:
         Pointer<GUIWindow> gui_window;
 
-        void beginGUI();
-        void endGUI();
-
     public:
         explicit Viewer(Pointer<GUIWindow>, Slab::Pointer<Math::R2toR::NumericFunction> = nullptr);
 

@@ -88,7 +88,7 @@ namespace Slab::Models::KGRtoR {
         fix lambda_min = 1e-2f;
         fix lambda_max = 1e+2f;
 
-        beginGUI();
+        gui_window->begin();
         ImGui::SeparatorText("Space-domain analytic 2-point correlation");
         {
             auto &funky = powerDecayCorrelation;
@@ -180,7 +180,7 @@ namespace Slab::Models::KGRtoR {
                 computeTwoPointCorrelation();
         }
 
-        endGUI();
+        gui_window->end();
 
         WindowPanel::draw();
     }

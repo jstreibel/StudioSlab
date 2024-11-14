@@ -106,26 +106,29 @@ namespace Slab::Graphics {
     }
 
     void HistoryViewer::draw() {
-        auto func = getFunction();
+        if(getFunction()== nullptr) return;
 
-        if(func== nullptr) return;
+        gui_window->begin();
 
-        beginGUI();
-        fix t_min = (float)func->getDomain().yMin;
-        fix t_max = (float)func->getDomain().yMax;
-        auto current_t = (float)curr_t;
-        if(ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)){
-            curr_t = (Real)current_t;
-            function_section->getx0().y = dft_section->getx0().y = curr_t;
-            // function_section->getr().y = dft_section->getr().y = curr_t;
-        }
+        gui_window->AddExternalDraw([this]() {
+            auto func = getFunction();
 
-        if(ImGui::SliderInt("oversampling", &oversampling, 1, 16)) {
-            section_artist->setSamples(func->getN()*oversampling);
-            dft_section_artist->setSamples(xft_amplitudes->getN()*oversampling);
-        }
+            fix t_min = (float) func->getDomain().yMin;
+            fix t_max = (float) func->getDomain().yMax;
+            auto current_t = (float) curr_t;
+            if (ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)) {
+                curr_t = (Real) current_t;
+                function_section->getx0().y = dft_section->getx0().y = curr_t;
+                // function_section->getr().y = dft_section->getr().y = curr_t;
+            }
 
-        endGUI();
+            if (ImGui::SliderInt("oversampling", &oversampling, 1, 16)) {
+                section_artist->setSamples(func->getN() * oversampling);
+                dft_section_artist->setSamples(xft_amplitudes->getN() * oversampling);
+            }
+        });
+
+        gui_window->end();
 
         WindowPanel::draw();
     }

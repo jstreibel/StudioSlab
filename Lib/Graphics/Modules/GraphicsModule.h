@@ -7,17 +7,17 @@
 
 #include "Core/Backend/Modules/Module.h"
 
+#include "Graphics/Backend/Events/SystemWindowEventListener.h"
+
 namespace Slab::Graphics {
 
-class GraphicsModule : public Core::Module {
+    class GraphicsModule : public Core::Module, public SystemWindowEventListener {
     public:
         GraphicsModule() = delete;
         explicit GraphicsModule(const Str &name) : Module(name, true) {}
 
-        virtual void Update() {};
-
-        virtual void beginEvents() {};
-        virtual void endEvents() {};
+        virtual
+        void Update() {};
     };
 
 } // Slab::Graphics

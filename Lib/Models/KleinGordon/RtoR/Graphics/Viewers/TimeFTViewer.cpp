@@ -100,7 +100,7 @@ namespace Slab::Models::KGRtoR {
         auto function = getFunction();
         if(function== nullptr){ WindowPanel::draw(); return;}
 
-        beginGUI();
+        gui_window->begin();
 
         ImGui::SeparatorText("Space-domain analytic 2-point correlation");
         {
@@ -166,7 +166,7 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        endGUI();
+        gui_window->end();
 
         WindowPanel::draw();
     }

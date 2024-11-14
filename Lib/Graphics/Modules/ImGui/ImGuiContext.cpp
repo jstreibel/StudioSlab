@@ -84,7 +84,7 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    SlabImGuiContext::SlabImGuiContext(CallSet calls)
+    SlabImGuiContext::SlabImGuiContext(RawSystemWindowPointer raw_syswin_ptr, CallSet calls)
     : call_set(std::move(calls)) {
         context = ImGui::CreateContext();
 
@@ -93,8 +93,7 @@ namespace Slab::Graphics {
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-        auto system_window = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-        call_set.Init(*system_window);
+        call_set.Init(raw_syswin_ptr);
 
         buildFonts();
 
@@ -118,18 +117,18 @@ namespace Slab::Graphics {
         call_set.NewFrame();
         ImGui::NewFrame();
 
-        for(auto &external_draw : external_draws) external_draw();
+        FlushDrawCalls();
+    }
 
-        external_draws.clear();
+    void SlabImGuiContext::Render() const {
+        ImGui::Render();
+
+        call_set.Draw();
     }
 
 
     void SlabImGuiContext::Bind() {
         ImGui::SetCurrentContext(context);
-    }
-
-    void SlabImGuiContext::AddDrawCall(const DrawCall& draw_call) {
-        external_draws.emplace_back(draw_call);
     }
 
     Real SlabImGuiContext::getFontSize() const {
@@ -215,10 +214,9 @@ namespace Slab::Graphics {
     }
 
     bool SlabImGuiContext::notifyRender() {
-        ImGui::Render();
+        NewFrame();
 
-        call_set.Draw();
-
+        Render();
         return true;
     }
 

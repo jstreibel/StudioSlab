@@ -143,10 +143,12 @@ namespace Slab::Models::KGRtoR {
             static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
             guiWindow.begin();
-            if (ImGui::CollapsingHeader("Probability density functions")) {
-                ImGui::SliderInt("n bins", &nbins, 10, 2000);
-                ImGui::Checkbox("Pretty bars", &pretty);
-            }
+            guiWindow.AddExternalDraw([]() {
+                if (ImGui::CollapsingHeader("Probability density functions")) {
+                    ImGui::SliderInt("n bins", &nbins, 10, 2000);
+                    ImGui::Checkbox("Pretty bars", &pretty);
+                }
+            });
             guiWindow.end();
 
 
@@ -178,12 +180,14 @@ namespace Slab::Models::KGRtoR {
     void RtoRStatisticsPanel::drawGUI() {
         guiWindow.begin();
 
-        if (ImGui::CollapsingHeader("Statistical")) {
-            auto transient = (float)transientHint;
-            if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params->gett())) {
-                setTransientHint((Real) transient);
+        guiWindow.AddExternalDraw([this]() {
+            if (ImGui::CollapsingHeader("Statistical")) {
+                auto transient = (float) transientHint;
+                if (ImGui::SliderFloat("Transient hint", &transient, .0f, (float) params->gett())) {
+                    setTransientHint((Real) transient);
+                }
             }
-        }
+        });
 
         guiWindow.end();
     }

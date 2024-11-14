@@ -66,10 +66,7 @@ namespace Slab::Graphics {
     NuklearGLFWModule::~NuklearGLFWModule() { nk_glfw3_shutdown(); }
 
     // void NuklearGLFWModule::endRender() { nk_glfw3_render(NK_ANTI_ALIASING_ON); }
-
-    void NuklearGLFWModule::beginEvents() {
-        nk_glfw3_new_frame();
-    }
+    // void NuklearGLFWModule::beginEvents() { nk_glfw3_new_frame(); }
 
 
     bool NuklearGLFWModule::CharEvent(GLFWwindow *window, Codepoint value) {

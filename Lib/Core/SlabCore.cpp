@@ -32,12 +32,11 @@ namespace Slab::Core {
         Core::BackendManager::UnloadAllModules();
     }
 
-    void LoadModule(const ModuleName& module) {
-        if(!Slab::IsStarted()) Slab::Startup();
-        BackendManager::LoadModule(module);
+    void LoadModule(const ModuleName &name) {
+        GetModule(name);
     }
-
     Pointer<Module> GetModule(const ModuleName &module) {
+        if(!Slab::IsStarted()) Slab::Startup();
         return BackendManager::GetModule(module);
     }
 

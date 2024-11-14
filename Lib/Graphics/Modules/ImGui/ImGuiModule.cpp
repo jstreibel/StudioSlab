@@ -16,7 +16,6 @@
 #include "ImGuiModule.h"
 
 #include "Core/Backend/BackendManager.h"
-#include "Core/Tools/Resources.h"
 #include "Core/Tools/Log.h"
 
 #include "ImGuiModuleGLFW.h"
@@ -39,15 +38,12 @@ namespace Slab::Graphics {
     };
 
     ImGuiModule::ImGuiModule(CallSet calls)
-    : GraphicsModule("ImGui")
+    : GUIModule("ImGui")
     , call_set(std::move(calls)) {
         IMGUI_CHECKVERSION();
 
-        m_MainContext = createContext();
-
+        // m_MainContext = GetMainContext();
     }
-
-    ImGuiModule::~ImGuiModule() = default;
 
 
     ImGuiModule* ImGuiModule::BuildModule() {
@@ -70,45 +66,47 @@ namespace Slab::Graphics {
     }
 
     void ImGuiModule::Update() {
-        m_MainContext->NewFrame();
+        /*
 
         if (showDemos)
-            ImGui::ShowDemoWindow();
+            m_MainContext->AddDrawCall([](){ImGui::ShowDemoWindow();});
 
-        ImGui::BeginMainMenuBar();
-        {
-            if(ImGui::BeginMenu("Menu")) {
-                if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend()->terminate();
-
-                ImGui::EndMenu();
-            }
-
-            if(ImGui::BeginMenu("Style")) {
-                if(ImGui::BeginMenu("ImGui")) {
-                    for(const auto& theme : colorThemes) {
-                        if (ImGui::MenuItem(theme.first.c_str(), nullptr,
-                                            theme.first==currentTheme)) {
-                            theme.second();
-                            currentTheme = theme.first;
-                        }
-                    }
-                    ImGui::MenuItem("---", nullptr, false, false);
-                    ImGui::MenuItem("Show ImGui demos", nullptr, &showDemos);
+        m_MainContext->AddDrawCall([this]() {
+            ImGui::BeginMainMenuBar();
+            {
+                if(ImGui::BeginMenu("Menu")) {
+                    if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend()->terminate();
 
                     ImGui::EndMenu();
                 }
 
-                ImGui::EndMenu();
+                if(ImGui::BeginMenu("Style")) {
+                    if(ImGui::BeginMenu("ImGui")) {
+                        for(const auto& theme : colorThemes) {
+                            if (ImGui::MenuItem(theme.first.c_str(), nullptr,
+                                                theme.first==currentTheme)) {
+                                theme.second();
+                                currentTheme = theme.first;
+                            }
+                        }
+                        ImGui::MenuItem("---", nullptr, false, false);
+                        ImGui::MenuItem("Show ImGui demos", nullptr, &showDemos);
+
+                        ImGui::EndMenu();
+                    }
+
+                    ImGui::EndMenu();
+                }
+
+                ImGui::EndMainMenuBar();
             }
+        });
 
-            ImGui::EndMainMenuBar();
-        }
-
-        m_MainContext->notifyRender();
+         */
     }
 
-    Pointer<SlabImGuiContext> ImGuiModule::createContext() {
-        auto new_context = New<SlabImGuiContext>(call_set);
+    Pointer<GUIContext> ImGuiModule::createContext(RawSystemWindowPointer raw_window_ptr) {
+        auto new_context = New<SlabImGuiContext>(raw_window_ptr, call_set);
 
         // Setup Dear ImGui style
         SetStyleStudioSlab();   // For sizes
@@ -119,9 +117,14 @@ namespace Slab::Graphics {
         return new_context;
     }
 
-    Context ImGuiModule::GetMainContext() {
-        return m_MainContext;
-    }
+    // Context ImGuiModule::GetMainContext() {
+    //     if(m_MainContext== nullptr){
+    //         m_MainContext = DynamicPointerCast<SlabImGuiContext>(createContext());
+    //         GetGraphicsBackend()->GetMainSystemWindow()->addEventListener(m_MainContext);
+    //     }
+//
+    //     return m_MainContext;
+    // }
 
 
 } // Core

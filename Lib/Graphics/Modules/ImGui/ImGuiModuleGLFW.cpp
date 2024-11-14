@@ -13,9 +13,8 @@ fix PRIORITIZE_ME = true;
 
 namespace Slab::Graphics {
 
-    static CallSet::InitContextCall Init = [](Slab::Graphics::SystemWindow &window) {
-        auto glfw_window = (GLFWwindow*)window.getRawPlatformWindowPointer();
-        ImGui_ImplGlfw_InitForOpenGL(glfw_window, DONT_INSTALL_CALLBACKS);
+    static CallSet::InitContextCall Init = [](RawSystemWindowPointer raw_syswin_ptr) {
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)raw_syswin_ptr, DONT_INSTALL_CALLBACKS);
         ImGui_ImplOpenGL3_Init();
 
         return;

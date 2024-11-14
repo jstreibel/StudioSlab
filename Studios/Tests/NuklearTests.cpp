@@ -19,6 +19,7 @@
 #include "3rdParty/Nuklear/common/node_editor.c"
 #include "3rdParty/Nuklear/common/file_browser.c"
 #include "Core/Tools/Resources.h"
+#include "Core/SlabCore.h"
 
 namespace Tests {
     using namespace Slab;
@@ -28,7 +29,7 @@ namespace Tests {
     media media;
 
     NuklearTests::NuklearTests() {
-        Core::BackendManager::LoadModule("Nuklear");
+        Core::LoadModule("Nuklear");
 
         {
             glEnable(GL_TEXTURE_2D);

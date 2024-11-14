@@ -15,7 +15,6 @@ namespace Slab::Core {
         const Str name;
         const bool requiresGraphicsBackend;
 
-        typedef std::shared_ptr<Module> Ptr;
         Module() = delete;
         explicit Module(Str name, bool requiresGraphicsBackend=false);
         virtual ~Module();

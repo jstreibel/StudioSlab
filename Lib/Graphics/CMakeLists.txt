@@ -309,6 +309,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Backend/Events/MouseState.cpp
 		Modules/ImGui/Slab-ImGui-Interop.h
 		Modules/ImGui/Slab-ImGui-Interop.cpp
+        Modules/GUIModule/GUIModule.cpp
+        Modules/GUIModule/GUIModule.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

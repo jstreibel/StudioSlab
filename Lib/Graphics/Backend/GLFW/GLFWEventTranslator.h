@@ -15,7 +15,7 @@ namespace Slab::Graphics {
         GLFWEventTranslator();
 
         bool KeyboardEvent(GLFWwindow *, int key, int scancode, int action, int mods) override;
-        bool CharacterEvent(GLFWwindow*, UInt codepoint);
+        bool CharEvent(GLFWwindow*, UInt codepoint) override;
         bool MouseMotion(GLFWwindow *, double xpos, double ypos) override;
         void CursorEnter(GLFWwindow *, int entered) override;
         bool MouseButton(GLFWwindow *, int button, int action, int mods) override;

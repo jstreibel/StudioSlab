@@ -47,7 +47,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void HistogramsViewer_KG::draw() {
-        beginGUI();
+        gui_window->begin();
 
         fix func = getFunction();
         if(func == nullptr) return;
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
 
         ImGui::Text("Sheer data size: %i", (int)sheer_size);
 
-        endGUI();
+        gui_window->end();
         WindowPanel::draw();
     }
 

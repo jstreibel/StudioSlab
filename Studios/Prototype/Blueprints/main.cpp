@@ -14,12 +14,6 @@ public:
     App(int argc, char *argv[]) : Slab::Application("Blueprints prototype", argc, argv) {
     }
 
-    bool notifyRender() override {
-        blueprint_renderer->Draw();
-
-        return true;
-    }
-
 protected:
     Slab::Pointer<Slab::Platform> CreatePlatform() override {
         return Slab::DynamicPointerCast<Slab::Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
@@ -34,6 +28,7 @@ protected:
 
         blueprint = Slab::New<Blueprint>();
         blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint);
+        addResponder(blueprint_renderer);
 
         Node* node;
         node = blueprint->SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));

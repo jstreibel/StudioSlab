@@ -5,4 +5,13 @@
 #include "GUIContext.h"
 
 namespace Slab::Graphics {
+    void GUIContext::AddDrawCall(const DrawCall& draw_call) {
+        draw_calls.emplace_back(draw_call);
+    }
+
+    void GUIContext::FlushDrawCalls() {
+        for(auto &external_draw : draw_calls) external_draw();
+
+        draw_calls.clear();
+    }
 } // Slab::Graphics

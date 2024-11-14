@@ -15,10 +15,8 @@
 
 namespace Slab::Graphics {
 
-    using DrawCall = std::function<void(void)>;
-
     struct CallSet {
-        using InitContextCall = std::function<void(SystemWindow&)>;
+        using InitContextCall = std::function<void(RawSystemWindowPointer)>;
         using KillContextCall = std::function<void(void)>;
         using NewFrameCall    = std::function<void(void)>;
 
@@ -31,20 +29,17 @@ namespace Slab::Graphics {
     class SlabImGuiContext : public GUIContext {
         ImGuiContext *context = nullptr;
 
-        Vector<DrawCall> external_draws;
-
         CallSet call_set;
 
     public:
-        explicit SlabImGuiContext(CallSet);
+        explicit SlabImGuiContext(RawSystemWindowPointer, CallSet);
         ~SlabImGuiContext() override = default;
 
         Real getFontSize() const;
 
         void Bind();
         void NewFrame() override;
-
-        void AddDrawCall(const DrawCall&);
+        void Render() const;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 

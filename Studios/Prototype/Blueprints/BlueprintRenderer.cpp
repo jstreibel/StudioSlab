@@ -11,6 +11,7 @@
 #include "Core/Tools/Resources.h"
 #include "StudioSlab.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
+#include "Graphics/SlabGraphics.h"
 
 
 namespace Slab::Blueprints {
@@ -24,7 +25,9 @@ namespace Slab::Blueprints {
         // Blueprints "OnStart()"
 
         auto &module = Slab::GetModule<Graphics::ImGuiModule>("ImGui");
-        m_Context = module.createContext();
+        auto raw_syswin_ptr = parent_system_window->getRawPlatformWindowPointer();
+        m_Context = DynamicPointerCast<Graphics::SlabImGuiContext>(module.createContext(raw_syswin_ptr));
+        addResponder(m_Context);
 
         ed::Config config;
 
@@ -41,7 +44,7 @@ namespace Slab::Blueprints {
                 return 0;
 
             if (data != nullptr)
-                memcpy(data, node->State.data(), node->State.size());
+                memcpy((void*)data, (void*)(node->State.data()), node->State.size());
             return node->State.size();
         };
 

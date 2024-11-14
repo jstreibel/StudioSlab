@@ -3,11 +3,16 @@
 //
 
 #include "SystemWindow.h"
+#include "Core/SlabCore.h"
+#include "StudioSlab.h"
+#include "Graphics/Modules/GUIModule/GUIModule.h"
+
+#include <utility>
 
 namespace Slab::Graphics {
 
     SystemWindow::SystemWindow(void *window_ptr, Pointer<EventTranslator> evt_translator)
-    : event_translator(evt_translator)
+    : event_translator(std::move(evt_translator))
     , window_ptr(window_ptr)
     , mouse_state(New<MouseState>()){
 
@@ -15,6 +20,9 @@ namespace Slab::Graphics {
         // methods SystemWindow::GetWidth and SystemWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
         event_translator->addGUIEventListener(mouse_state);
+
+        auto &guiModule = Slab::GetModule<GUIModule>("GUI");
+        guiContext = guiModule.createContext(window_ptr);
     }
 
      auto SystemWindow::addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool {
@@ -54,7 +62,7 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED
     }
 
-    void SystemWindow::setSystemWindowTitle(Str title) {
+    void SystemWindow::setSystemWindowTitle(const Str& title) {
         NOT_IMPLEMENTED
     }
 
@@ -70,12 +78,16 @@ namespace Slab::Graphics {
         event_translator->clear();
     }
 
-    void *SystemWindow::getRawPlatformWindowPointer() {
+    RawSystemWindowPointer SystemWindow::getRawPlatformWindowPointer() {
         return window_ptr;
     }
 
     auto SystemWindow::getMouseState() const -> Pointer<const MouseState> {
         return mouse_state;
+    }
+
+    Volatile<GUIContext> SystemWindow::getGUIContext() {
+        return guiContext;
     }
 
 

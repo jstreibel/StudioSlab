@@ -25,11 +25,13 @@ namespace Slab::Core {
         static Map<BackendName, BackendAllocator> availableBackends;
         static Map<ModuleName, ModuleAllocator> availableModules;
 
+        static ModuleName ParseName(const ModuleName&);
+        static void LoadModule(const ModuleName&);
+
     public:
         static Pointer<Backend> GetBackend();
 
         static void Startup(const Str& backend_name);
-
 
         static void RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc);;
 
@@ -40,8 +42,8 @@ namespace Slab::Core {
             RegisterAvailableModule(name, [](){ return new ModuleClass(); });
         };
 
-        static void LoadModule(const ModuleName&);
-        static Module::Ptr GetModule(const ModuleName&);
+        static Pointer<Module> GetModule(const ModuleName&);
+        static bool IsModuleAvailable(const ModuleName&);
         static bool IsModuleLoaded(const ModuleName&);
 
         static Str GetBackendName();

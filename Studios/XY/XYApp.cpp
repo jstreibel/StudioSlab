@@ -14,6 +14,7 @@
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 #include "Graphics/Backend/SFML/SFMLSystemWindow.h"
 #include "Graphics/SlabGraphics.h"
+#include "Core/SlabCore.h"
 
 #define DONT_SELF_REGISTER false
 
@@ -22,8 +23,8 @@ XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT
 
     registerToManager();
 
-    Slab::Core::BackendManager::Startup   ("SFML");
-    Slab::Core::BackendManager::LoadModule("Nuklear");
+    Slab::Core::BackendManager::Startup("SFML");
+    Slab::Core::LoadModule("Nuklear");
 
     Slab::Core::CLArgsManager::Parse(argc, argv);
 }

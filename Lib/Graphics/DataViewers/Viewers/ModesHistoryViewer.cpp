@@ -35,16 +35,19 @@ namespace Slab::Graphics {
     void ModesHistoryViewer::draw() {
         if(getFunction() == nullptr) return;
 
-        beginGUI();
-        fix dk = (float) (M_PI/getFunction()->getDomain().getLx());
-        fix k_min = dk;
-        fix k_max = dk * (float)getFunction()->getN();
-        if(ImGui::SliderFloat("base mode##slider", &base_mode, k_min, k_max)
-        |  ImGui::DragFloat("base mode##drag", &base_mode, 1.e-4f*base_mode, k_min, k_max)
-        |  ImGui::SliderInt("n modes##modes viewer", &n_modes, 1, 15))
-            setupModes();
+        gui_window->begin();
 
-        endGUI();
+        gui_window->AddExternalDraw([this]() {
+            fix dk = (float) (M_PI / getFunction()->getDomain().getLx());
+            fix k_min = dk;
+            fix k_max = dk * (float) getFunction()->getN();
+            if (ImGui::SliderFloat("base mode##slider", &base_mode, k_min, k_max)
+                | ImGui::DragFloat("base mode##drag", &base_mode, 1.e-4f * base_mode, k_min, k_max)
+                | ImGui::SliderInt("n modes##modes viewer", &n_modes, 1, 15))
+                setupModes();
+        });
+
+        gui_window->end();
 
         WindowPanel::draw();
     }

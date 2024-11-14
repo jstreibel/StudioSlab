@@ -23,7 +23,7 @@ namespace Slab::Graphics {
         NuklearGLFWModule();
         ~NuklearGLFWModule() override;
 
-        void beginEvents() override;
+        // void beginEvents() override;
 
         bool CharEvent(GLFWwindow *window, Codepoint value) override;
 

@@ -90,27 +90,29 @@ namespace Slab::Models::KGRtoR {
     void RtoRHistoryPanel::draw() {
         guiWindow.begin();
 
-        static float t=0;
-        auto t_max = (float)lastPacket.getSteps()*params->getdt();
-        if(ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
-           ImGui::DragFloat("t##choopsie", &t, 5.e-5f*t_max, 0, t_max)){
-            fix xMin = params->getxMin();
-            fix xMax = params->getxMax();
-            fix h = params->geth();
-            fix kMin = 0;
-            fix kMax = M_PI/h;
+        guiWindow.AddExternalDraw([this]() {
+            static float t = 0;
+            auto t_max = (float) lastPacket.getSteps() * params->getdt();
+            if (ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
+                ImGui::DragFloat("t##choopsie", &t, 5.e-5f * t_max, 0, t_max)) {
+                fix xMin = params->getxMin();
+                fix xMax = params->getxMax();
+                fix h = params->geth();
+                fix kMin = 0;
+                fix kMax = M_PI / h;
 
-            fix x_0 = Real2D{xMin, t};
-            fix x_f = Real2D{xMax, t};
-            fix k_0 = Real2D{kMin, t};
-            fix k_f = Real2D{kMax, t};
+                fix x_0 = Real2D{xMin, t};
+                fix x_f = Real2D{xMax, t};
+                fix k_0 = Real2D{kMin, t};
+                fix k_f = Real2D{kMax, t};
 
-            xLine->getx0() = x_0;
-            xLine->getr() = x_f-x_0;
+                xLine->getx0() = x_0;
+                xLine->getr() = x_f - x_0;
 
-            kLine->getx0() = k_0;
-            kLine->getr() = k_f-k_0;
-        }
+                kLine->getx0() = k_0;
+                kLine->getr() = k_f - k_0;
+            }
+        });
 
 
         guiWindow.end();

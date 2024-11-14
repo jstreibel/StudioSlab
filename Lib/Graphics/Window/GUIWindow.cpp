@@ -14,6 +14,7 @@
 #include "Math/SlabMath.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
+#include "Core/SlabCore.h"
 
 
 namespace Slab::Graphics {
@@ -22,9 +23,9 @@ namespace Slab::Graphics {
         setClear(false);
         setDecorate(false);
 
-        Core::BackendManager::LoadModule("ImGui");
         auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
-        gui_context = gui_module.createContext();
+        auto raw_syswin_ptr = parent_system_window->getRawPlatformWindowPointer();
+        gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.createContext(raw_syswin_ptr));
 
         addResponder(gui_context);
     }
@@ -134,7 +135,7 @@ namespace Slab::Graphics {
         end();
 
         gui_context->NewFrame();
-        gui_context->notifyRender();
+        gui_context->Render();
     }
 
     void GUIWindow::begin() const {

@@ -49,13 +49,9 @@ namespace Slab::Core {
     }
 
     void BackendManager::LoadModule(const ModuleName& module_name) {
-        if(Contains(loadedModules, module_name)) {
-            Log::Debug() << "Module '" << module_name << "' already loaded." << Log::Flush;
-            return;
-        }
+        if(IsModuleLoaded(module_name)) return;
 
-        if(availableModules.find(module_name) == availableModules.end())
-            throw Exception("Unkonwn module '" + module_name + "'");
+        if(!IsModuleAvailable(module_name)) throw Exception("Unkonwn module '" + module_name + "'");
 
         auto alloc_module = availableModules[module_name];
         auto module = Pointer<Module>(alloc_module());
@@ -67,14 +63,42 @@ namespace Slab::Core {
         Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }
 
-    Module::Ptr BackendManager::GetModule(const ModuleName& module_name) {
-        LoadModule(module_name);
+    ModuleName BackendManager::ParseName(const ModuleName& requested_module_name) {
+        if(IsModuleAvailable(requested_module_name)) return requested_module_name;
 
-        return loadedModules[module_name];
+        auto split_reqmod_name = Split(requested_module_name, ":");
+        if(split_reqmod_name.size() != 1) goto bad;
+
+        for(const auto& pair : availableModules) {
+            auto name = pair.first;
+
+            auto split_name = Split(name, ":");
+
+            if(split_name.size() == 1) continue;
+
+            // The first registered module of this kind is the default.
+            // For example, from {'GUI:ImGui', 'GUI:Nuklear', 'GUI:Nanogui'}, the module returned for the 'GUI' request
+            // is the first, 'GUI:ImGui'.
+            if(Contains(split_name, requested_module_name)) return name;
+        }
+
+        bad:
+        throw Exception("Unknown module '" + requested_module_name + "'");
+    }
+
+    Pointer<Module> BackendManager::GetModule(const ModuleName& module_name) {
+        auto parsed_name = ParseName(module_name);
+
+        if(!IsModuleLoaded(parsed_name)) LoadModule(parsed_name);
+
+        return loadedModules[parsed_name];
+    }
+    bool BackendManager::IsModuleAvailable(const ModuleName &module_name) {
+        return Contains(availableModules, module_name);
     }
 
     bool BackendManager::IsModuleLoaded(const ModuleName& module_name) {
-        return loadedModules[module_name] != nullptr;
+        return Contains(loadedModules, module_name);
     }
 
     void BackendManager::RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc) {

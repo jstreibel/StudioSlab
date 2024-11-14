@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
 
         if(func== nullptr) return;
 
-        beginGUI();
+        gui_window->begin();
         fix t_min = (float)func->getDomain().yMin;
         fix t_max = (float)func->getDomain().yMax;
         auto current_t = (float)(curr_ti*dt);
@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
             function_section_artist->setSamples(func->getN() * oversampling);
         }
 
-        endGUI();
+        gui_window->end();
 
         WindowPanel::draw();
     }

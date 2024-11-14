@@ -9,6 +9,7 @@
 #include "Utils.h"
 #include "Core/Backend/BackendManager.h"
 #include "ShaderLoader.h"
+#include "Core/SlabCore.h"
 
 #include <array>
 
@@ -83,7 +84,7 @@ namespace Slab::Graphics::OpenGL {
     : vertFileName(vertFilename)
     , fragFileName(fragFilename)
     {
-        Core::BackendManager::LoadModule("ModernOpenGL");
+        Core::LoadModule("ModernOpenGL");
 
         handle = ShaderLoader::Load(vertFilename, fragFilename);
 

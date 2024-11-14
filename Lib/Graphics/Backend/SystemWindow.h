@@ -12,15 +12,19 @@
 #include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "Graphics/Backend/Events/MouseState.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
+#include "Graphics/Modules/GUIModule/GUIContext.h"
 
 namespace Slab::Graphics {
 
+    using RawSystemWindowPointer = void*;
+
     class SystemWindow {
         Vector<Pointer<SystemWindowEventListener>> thingsImProprietary;
+        Pointer<GUIContext> guiContext = nullptr;
 
     protected:
         Pointer<EventTranslator> event_translator;
-        void* window_ptr;
+        RawSystemWindowPointer window_ptr;
 
         virtual void clearListeners();
 
@@ -35,7 +39,9 @@ namespace Slab::Graphics {
         virtual void Render() = 0;
         virtual bool ShouldClose() const = 0;
 
-        void* getRawPlatformWindowPointer();
+        Volatile<GUIContext> getGUIContext();
+
+        RawSystemWindowPointer getRawPlatformWindowPointer();
 
         auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
         auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
@@ -43,7 +49,7 @@ namespace Slab::Graphics {
         auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);
 
-        void setSystemWindowTitle(Str title);
+        void setSystemWindowTitle(const Str& title);
     };
 
 } // Slab::Core

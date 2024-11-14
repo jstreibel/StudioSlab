@@ -22,10 +22,10 @@ namespace Slab::Graphics {
         while (!system_windows.empty()) {
             off_sync.lock();
 
-            IterateReferences(graphicModules, FuncRun(beginEvents));
+            // IterateReferences(graphicModules, FuncRun(beginEvents));
             for(const auto& system_window : system_windows)
                 DynamicPointerCast<SFMLSystemWindow>(system_window)->PollEvents();
-            IterateReferences(graphicModules, FuncRun(endEvents));
+            // IterateReferences(graphicModules, FuncRun(endEvents));
 
             for(const auto& system_window : system_windows)
                 system_window->Render();

@@ -7,6 +7,7 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 #include "Core/Backend/BackendManager.h"
 #include "3rdParty/ImGui.h"
+#include "Core/SlabCore.h"
 
 
 #define Unique(label) \
@@ -19,8 +20,8 @@ namespace Slab::Graphics {
 
     Scene3DWindow::Scene3DWindow() : id(++WindowCount)
     {
-        Core::BackendManager::LoadModule("ImGui");
-        Core::BackendManager::LoadModule("ModernOpenGL");
+        Core::LoadModule("ImGui");
+        Core::LoadModule("ModernOpenGL");
     }
 
     void Scene3DWindow::draw() {

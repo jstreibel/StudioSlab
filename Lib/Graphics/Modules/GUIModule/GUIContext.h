@@ -9,10 +9,17 @@
 
 namespace Slab::Graphics {
 
+    using DrawCall = std::function<void(void)>;
+
     class GUIContext : public SystemWindowEventListener {
+    protected:
+        Vector<DrawCall> draw_calls;
+
+        void FlushDrawCalls();
     public:
         virtual void NewFrame() = 0;
 
+        void AddDrawCall(const DrawCall&);
     };
 
 } // Slab::Graphics

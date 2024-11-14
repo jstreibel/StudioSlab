@@ -122,6 +122,9 @@ namespace Slab::Graphics {
             throw Exception("GLFW error");
         }
 
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(1);
+
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
         Log::Info() << "Mouse buttons and keyboard keys sticky mode " << Log::FGGreen << "ENABLED" << Log::Flush;
@@ -129,7 +132,7 @@ namespace Slab::Graphics {
         fix RAW_MOUSE_MODE = false;
         if (RAW_MOUSE_MODE && glfwRawMouseMotionSupported()) {
             // When the cursor is disabled, raw (unscaled and unaccelerated) mouse motion can be enabled if available.
-            // If supported, raw mouse motion can be enabled or disabled per-window and at any time but it will only be
+            // If supported, raw mouse motion can be enabled or disabled per-window and at any time, but it will only be
             // provided when the cursor is disabled.
             glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
             glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);

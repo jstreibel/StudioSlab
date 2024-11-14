@@ -100,13 +100,17 @@ namespace Slab::Models::KGRtoR {
 
         // ************************ RT MONITOR**********************************
         guiWindow.begin();
-        if (ImGui::CollapsingHeader("Real-time monitor")) {
+        guiWindow.AddExternalDraw([this, V_str]() {
+            if (ImGui::CollapsingHeader("Real-time monitor")) {
 
-            if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &showPot)) { vArtist->setVisibility(showPot); }
-            if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy)) { kArtist->setVisibility(showKineticEnergy); }
-            if (ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy)) { wArtist->setVisibility(showGradientEnergy); }
-            if (ImGui::Checkbox("Show e", &showEnergyDensity)) { uArtist->setVisibility(showEnergyDensity); }
-        }
+                if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &showPot)) { vArtist->setVisibility(showPot); }
+                if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &showKineticEnergy)) { kArtist->setVisibility(showKineticEnergy); }
+                if (ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &showGradientEnergy)) {
+                    wArtist->setVisibility(showGradientEnergy);
+                }
+                if (ImGui::Checkbox("Show e", &showEnergyDensity)) { uArtist->setVisibility(showEnergyDensity); }
+            }
+        });
         guiWindow.end();
 
         CHECK_GL_ERRORS(errorCount++)

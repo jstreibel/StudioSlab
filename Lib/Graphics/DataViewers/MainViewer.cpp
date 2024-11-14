@@ -38,9 +38,11 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::draw() {
-        auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
+        auto gui_context = parent_system_window->getGUIContext().lock();
 
-        gui_module.GetMainContext()->AddDrawCall(
+        if(gui_context == nullptr) return;
+
+        gui_context->AddDrawCall(
                 [this]() {
                     if (ImGui::BeginMainMenuBar()) {
                         if (ImGui::BeginMenu("Viewers")) {

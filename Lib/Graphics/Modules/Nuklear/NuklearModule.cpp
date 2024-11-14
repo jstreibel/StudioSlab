@@ -28,13 +28,13 @@ namespace Slab::Graphics {
         if(Contains(opengl, backend_name)) Core::LoadModule("ModernOpenGL");
     }
 
-    void NuklearModule::beginEvents() {
-        nk_input_begin(nkContext);
-    }
-
-    void NuklearModule::endEvents() {
-        nk_input_end(nkContext);
-    }
+    // void NuklearModule::beginEvents() {
+    //     nk_input_begin(nkContext);
+    // }
+//
+    // void NuklearModule::endEvents() {
+    //     nk_input_end(nkContext);
+    // }
 
     NuklearModule *NuklearModule::BuildModule() {
         auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
