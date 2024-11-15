@@ -5,6 +5,7 @@
 #include "StudioSlab.h"
 #include "Blueprint.h"
 #include "BlueprintRenderer.h"
+#include "Graphics/SlabGraphics.h"
 
 class App : public Slab::Application {
     Slab::Pointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
@@ -27,7 +28,8 @@ protected:
         using namespace Slab::Blueprints;
 
         blueprint = Slab::New<Blueprint>();
-        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint);
+        auto main_platform_window = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint, main_platform_window.get());
         addResponder(blueprint_renderer);
 
         Node* node;

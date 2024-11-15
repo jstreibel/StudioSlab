@@ -20,8 +20,9 @@ namespace Slab::Blueprints {
 
     using ax::Widgets::IconType;
 
-    BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint)
-    : blueprint(std::move(blueprint)) {
+    BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint, Graphics::ParentSystemWindow parent_syswin)
+    : Graphics::SystemWindowEventListener(parent_syswin)
+    , blueprint(std::move(blueprint)) {
         // Blueprints "OnStart()"
 
         auto &module = Slab::GetModule<Graphics::ImGuiModule>("ImGui");

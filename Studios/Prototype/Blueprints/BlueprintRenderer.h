@@ -39,7 +39,7 @@ namespace Slab::Blueprints {
         void DoDrawing();
 
     public:
-        explicit BlueprintRenderer(Pointer<Blueprint> blueprint);
+        explicit BlueprintRenderer(Pointer<Blueprint> blueprint, Graphics::ParentSystemWindow);
 
         ImColor GetIconColor(PinType type);;
 

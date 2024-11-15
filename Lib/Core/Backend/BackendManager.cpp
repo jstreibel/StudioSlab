@@ -120,8 +120,7 @@ namespace Slab::Core {
     }
 
     void BackendManager::UnloadAllModules() {
-        Log::Warning() << "BackendManager was notified to unload all modules, but this is not yet implemented."
-                       << Log::Flush;
+        loadedModules.clear();
     }
 
 
