@@ -109,7 +109,7 @@ namespace Slab::Graphics {
             Vector<MainMenuLeafEntry> entries;
             for (auto &stylePair: stylesInitializers) {
                 auto name = stylePair.first;
-                entries.emplace_back(name, nullptr, current == name);
+                entries.emplace_back(name, "", current == name);
             }
 
             gui_context->AddMainMenuItem(MainMenuItem{
