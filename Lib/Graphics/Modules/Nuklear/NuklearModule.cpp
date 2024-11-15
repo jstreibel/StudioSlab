@@ -15,8 +15,8 @@
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
 namespace Slab::Graphics {
-    NuklearModule::NuklearModule()
-    : GraphicsModule("Nuklear GUI")
+    NuklearModule::NuklearModule(ParentSystemWindow parent)
+    : GraphicsModule("Nuklear GUI", parent)
     , nkContext(nullptr)
     {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
@@ -24,7 +24,7 @@ namespace Slab::Graphics {
 
         fix backend_name = Core::BackendManager::GetBackendName();
 
-        if(Contains(non_opengl, backend_name))  NOT_IMPLEMENTED;
+        if(Contains(non_opengl, backend_name))  NOT_IMPLEMENTED
         if(Contains(opengl, backend_name)) Core::LoadModule("ModernOpenGL");
     }
 
@@ -40,7 +40,7 @@ namespace Slab::Graphics {
         auto not_implemented = Vector<Str>{"Uninitialized", "VTK", "Headless", "GLUT"};
 
         Str backendImpl = Core::BackendManager::GetBackendName();
-        if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED;
+        if(Contains(not_implemented, backendImpl)) NOT_IMPLEMENTED
 
         if(backendImpl == "GLFW") return new NuklearGLFWModule();
         if(backendImpl == "SFML") return new NuklearSFMLModule();

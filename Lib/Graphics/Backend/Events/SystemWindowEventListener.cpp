@@ -9,7 +9,8 @@
 
 namespace Slab::Graphics {
 
-    SystemWindowEventListener::SystemWindowEventListener() = default;
+    SystemWindowEventListener::SystemWindowEventListener(ParentSystemWindow parent)
+    : parent_system_window(parent) {};
 
     void SystemWindowEventListener::setParentSystemWindow(SystemWindow* syswin) {
         parent_system_window = syswin;
@@ -17,7 +18,7 @@ namespace Slab::Graphics {
         notifySystemWindowReshape(syswin->getWidth(), syswin->getHeight());
     }
 
-    void SystemWindowEventListener::addResponder(Volatile<SystemWindowEventListener> responder) {
+    void SystemWindowEventListener::addResponder(const Volatile<SystemWindowEventListener>& responder) {
         assert(responder.lock().get() != this);
 
         delegateResponders.emplace_back(responder);
@@ -27,7 +28,7 @@ namespace Slab::Graphics {
         return !delegateResponders.empty();
     }
 
-    void SystemWindowEventListener::removeResponder(Pointer<SystemWindowEventListener> to_remove) {
+    void SystemWindowEventListener::removeResponder(const Pointer<SystemWindowEventListener>& to_remove) {
         auto responder = delegateResponders.begin();
 
         while(responder != delegateResponders.end()) {

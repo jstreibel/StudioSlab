@@ -14,7 +14,8 @@ namespace Slab::Graphics {
     class GraphicsModule : public Core::Module, public SystemWindowEventListener {
     public:
         GraphicsModule() = delete;
-        explicit GraphicsModule(const Str &name) : Module(name, true) {}
+        explicit GraphicsModule(const Str &name, ParentSystemWindow parent=nullptr)
+        : Module(name, true), SystemWindowEventListener(parent) {}
 
         virtual
         void Update() {};

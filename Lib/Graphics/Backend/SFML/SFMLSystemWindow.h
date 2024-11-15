@@ -24,6 +24,10 @@ namespace Slab::Graphics {
         Mutex off_sync;
 
         void PollEvents();
+
+    protected:
+        void Cycle() override;
+
     public:
         SFMLSystemWindow();
 
@@ -35,9 +39,7 @@ namespace Slab::Graphics {
 
         bool ShouldClose() const override;
 
-        void Render() override;
-
-        void Close();
+        void SignalClose() override;
     };
 
 } // Slab::Graphics

@@ -16,6 +16,8 @@ namespace Slab::Graphics {
 
     class SystemWindow;
 
+    using ParentSystemWindow = SystemWindow*;
+
     class SystemWindowEventListener {
         Vector<Volatile<SystemWindowEventListener>> delegateResponders;
         friend class SystemWindow;
@@ -24,13 +26,13 @@ namespace Slab::Graphics {
     protected:
         SystemWindow* parent_system_window = nullptr;
 
-        void addResponder(Volatile<SystemWindowEventListener> responder);
-        void removeResponder(Pointer<SystemWindowEventListener> responder);
+        void addResponder(const Volatile<SystemWindowEventListener>& responder);
+        void removeResponder(const Pointer<SystemWindowEventListener>& responder);
         bool hasResponders() const;
 
     public:
 
-        SystemWindowEventListener();
+        explicit SystemWindowEventListener(ParentSystemWindow parent = nullptr);
         virtual ~SystemWindowEventListener() = default;
 
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);

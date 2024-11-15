@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         nk_context *nkContext;
 
     public:
-        explicit NuklearModule();
+        explicit NuklearModule(ParentSystemWindow);
 
         // void beginEvents() override;
         // void endEvents() override;

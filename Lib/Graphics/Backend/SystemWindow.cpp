@@ -6,6 +6,7 @@
 #include "Core/SlabCore.h"
 #include "StudioSlab.h"
 #include "Graphics/Modules/GUIModule/GUIModule.h"
+#include "Graphics/SlabGraphics.h"
 
 #include <utility>
 
@@ -14,15 +15,12 @@ namespace Slab::Graphics {
     SystemWindow::SystemWindow(void *window_ptr, Pointer<EventTranslator> evt_translator)
     : event_translator(std::move(evt_translator))
     , window_ptr(window_ptr)
-    , mouse_state(New<MouseState>()){
+    , mouse_state(New<MouseState>(this)){
 
         // Add event listener manually because SystemWindow::addEventListener calls the pure abstract
         // methods SystemWindow::GetWidth and SystemWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
         event_translator->addGUIEventListener(mouse_state);
-
-        auto &guiModule = Slab::GetModule<GUIModule>("GUI");
-        guiContext = guiModule.createContext(window_ptr);
     }
 
      auto SystemWindow::addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool {
@@ -78,7 +76,7 @@ namespace Slab::Graphics {
         event_translator->clear();
     }
 
-    RawSystemWindowPointer SystemWindow::getRawPlatformWindowPointer() {
+    RawPaltformWindow_Ptr SystemWindow::getRawPlatformWindowPointer() {
         return window_ptr;
     }
 
@@ -87,7 +85,20 @@ namespace Slab::Graphics {
     }
 
     Volatile<GUIContext> SystemWindow::getGUIContext() {
+        if(guiContext == nullptr)
+            GetGraphicsBackend()->SetupGUI(this);
+
         return guiContext;
+    }
+
+    void SystemWindow::Render() {
+        if(guiContext != nullptr) {
+            guiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
+                                                     {MainMenuLeafEntry{"Close", "Alt+F4"}},
+                                                     [this](const Str&){ this->SignalClose(); }});
+        }
+
+        Cycle();
     }
 
 

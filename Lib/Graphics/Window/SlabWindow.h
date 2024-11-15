@@ -36,6 +36,7 @@ namespace Slab::Graphics {
             Str title;
             RectI win_rect;
             Int flags;
+            ParentSystemWindow parent_syswin;
         };
 
     private:

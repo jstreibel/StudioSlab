@@ -7,6 +7,8 @@
 #include <utility>
 #include "Core/Backend/BackendManager.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
+#include "StudioSlab.h"
+#include "Graphics/Modules/GUIModule/GUIModule.h"
 
 namespace Slab::Graphics {
 
@@ -59,5 +61,22 @@ namespace Slab::Graphics {
         if(system_windows.empty()) return NewSystemWindow("Main window");
 
         return system_windows.front();
+    }
+
+    void GraphicBackend::SetupGUI(SystemWindow *sys_win) {
+        if(sys_win->guiContext != nullptr) return;
+
+        for(const auto& win : system_windows) {
+            if(win.get() == sys_win) {
+                auto &guiModule = Slab::GetModule<GUIModule>("GUI");
+
+                win->guiContext = guiModule.createContext(win.get());
+                win->addEventListener(win->guiContext);
+
+                return;
+            }
+        }
+
+        throw Exception("Failed to setup GUI for platform window: window not found in backend data.");
     }
 }

@@ -30,13 +30,9 @@ namespace Slab::Graphics {
 
     public:
 
-        Pointer<GUIContext> createContext(RawSystemWindowPointer) override;
+        Pointer<GUIContext> createContext(ParentSystemWindow) override;
 
         static ImGuiModule* BuildModule();
-
-        // Context GetMainContext();
-
-        void Update() override;
     };
 
 } // Core

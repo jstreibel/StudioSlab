@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
     SlabWindow::
     SlabWindow(Config cfg)
-    : config(std::move(cfg))
+    : SystemWindowEventListener(cfg.parent_syswin), config(std::move(cfg))
     {
         if(config.title.empty()){
             config.title = "[Window:" + ToStr(get_id()) + "]";

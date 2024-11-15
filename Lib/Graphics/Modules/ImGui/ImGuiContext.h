@@ -16,6 +16,8 @@
 namespace Slab::Graphics {
 
     struct CallSet {
+        using RawSystemWindowPointer = void*;
+
         using InitContextCall = std::function<void(RawSystemWindowPointer)>;
         using KillContextCall = std::function<void(void)>;
         using NewFrameCall    = std::function<void(void)>;
@@ -32,10 +34,12 @@ namespace Slab::Graphics {
         CallSet call_set;
 
     public:
-        explicit SlabImGuiContext(RawSystemWindowPointer, CallSet);
+        explicit SlabImGuiContext(ParentSystemWindow, CallSet);
         ~SlabImGuiContext() override = default;
 
         Real getFontSize() const;
+
+        void AddMainMenuItem(MainMenuItem) override;
 
         void Bind();
         void NewFrame() override;

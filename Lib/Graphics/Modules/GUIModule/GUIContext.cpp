@@ -5,6 +5,10 @@
 #include "GUIContext.h"
 
 namespace Slab::Graphics {
+
+    GUIContext::GUIContext(ParentSystemWindow parent)
+    : SystemWindowEventListener(parent) { }
+
     void GUIContext::AddDrawCall(const DrawCall& draw_call) {
         draw_calls.emplace_back(draw_call);
     }
@@ -14,4 +18,5 @@ namespace Slab::Graphics {
 
         draw_calls.clear();
     }
+
 } // Slab::Graphics

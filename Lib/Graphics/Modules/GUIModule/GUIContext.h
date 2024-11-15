@@ -11,15 +11,33 @@ namespace Slab::Graphics {
 
     using DrawCall = std::function<void(void)>;
 
+    using MainMenuAction = std::function<void(Str leaf_entry)>;
+    using MainMenuLocation = Vector<Str>;
+    struct MainMenuLeafEntry {
+        Str label;
+        Str shortcut;
+        bool selected=false;
+        bool enabled=true;
+    };
+    struct MainMenuItem {
+        MainMenuLocation location;
+        Vector<MainMenuLeafEntry> items;
+        MainMenuAction action=[](const Str&){};
+    };
+
     class GUIContext : public SystemWindowEventListener {
     protected:
         Vector<DrawCall> draw_calls;
 
         void FlushDrawCalls();
     public:
+        explicit GUIContext(ParentSystemWindow);
+
         virtual void NewFrame() = 0;
 
         void AddDrawCall(const DrawCall&);
+
+        virtual void AddMainMenuItem(MainMenuItem) = 0;
     };
 
 } // Slab::Graphics

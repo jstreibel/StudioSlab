@@ -30,12 +30,13 @@ namespace Slab::Graphics {
         explicit GLFWSystemWindow();
         ~GLFWSystemWindow();
 
-        void Render() override;
+        void Cycle() override;
 
         Int getWidth() const override;
 
         Int getHeight() const override;
 
+        void SignalClose() override;
         bool ShouldClose() const override;
 
         void addGLFWListener(const Volatile<Graphics::GLFWListener>& glfwListener, bool highPriority = false);

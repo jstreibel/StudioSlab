@@ -25,11 +25,14 @@ namespace Slab::Graphics {
 
     const bool HighPriority = true;
 
-    NuklearGLFWModule::NuklearGLFWModule() : NuklearModule() {
+    NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(nullptr) {
         try {
             auto glfwBackend = DynamicPointerCast<GLFWBackend>(GetGraphicsBackend());
             auto system_window = DynamicPointerCast<GLFWSystemWindow>(glfwBackend->GetMainSystemWindow());
             renderWindow = (GLFWwindow*)system_window->getRawPlatformWindowPointer();
+
+            // Notice how this way of working with calling main system window is very deprecated.
+            NOT_IMPLEMENTED
 
             static auto me = Naked(*this);
 

@@ -39,7 +39,7 @@ namespace Slab::Graphics {
         return (Int)sfml_native_window->getSize().y;
     }
 
-    void SFMLSystemWindow::Render() {
+    void SFMLSystemWindow::Cycle() {
         sfml_native_window->clear();
 
         auto win = sfml_native_window;
@@ -55,6 +55,7 @@ namespace Slab::Graphics {
         while (sfml_native_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 sfml_native_window->close();
+                clearListeners();
                 break;
             }
             else if (event.type == sf::Event::KeyPressed) {
@@ -75,10 +76,9 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void SFMLSystemWindow::Close() {
+    void SFMLSystemWindow::SignalClose() {
         off_sync.lock();
 
-        NOT_IMPLEMENTED
         sfml_native_window->close();
         clearListeners();
 

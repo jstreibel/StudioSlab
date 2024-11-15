@@ -25,8 +25,7 @@ namespace Slab::Blueprints {
         // Blueprints "OnStart()"
 
         auto &module = Slab::GetModule<Graphics::ImGuiModule>("ImGui");
-        auto raw_syswin_ptr = parent_system_window->getRawPlatformWindowPointer();
-        m_Context = DynamicPointerCast<Graphics::SlabImGuiContext>(module.createContext(raw_syswin_ptr));
+        m_Context = DynamicPointerCast<Graphics::SlabImGuiContext>(module.createContext(parent_system_window));
         addResponder(m_Context);
 
         ed::Config config;

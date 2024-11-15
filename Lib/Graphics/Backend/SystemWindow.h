@@ -16,32 +16,38 @@
 
 namespace Slab::Graphics {
 
-    using RawSystemWindowPointer = void*;
+    using RawPaltformWindow_Ptr = void*;
 
     class SystemWindow {
+        friend class GraphicBackend;
+
         Vector<Pointer<SystemWindowEventListener>> thingsImProprietary;
         Pointer<GUIContext> guiContext = nullptr;
 
     protected:
         Pointer<EventTranslator> event_translator;
-        RawSystemWindowPointer window_ptr;
+        RawPaltformWindow_Ptr window_ptr;
 
         virtual void clearListeners();
 
         Pointer<MouseState> mouse_state = nullptr;
 
+        virtual void Cycle() = 0;
     public:
         explicit SystemWindow(void *window_ptr, Pointer<EventTranslator>);
         ~SystemWindow() = default;
 
+        void Render();
+
         virtual Int getHeight() const = 0;
         virtual Int getWidth() const = 0;
-        virtual void Render() = 0;
+
+        virtual void SignalClose() = 0;
         virtual bool ShouldClose() const = 0;
 
         Volatile<GUIContext> getGUIContext();
 
-        RawSystemWindowPointer getRawPlatformWindowPointer();
+        RawPaltformWindow_Ptr getRawPlatformWindowPointer();
 
         auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
         auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;

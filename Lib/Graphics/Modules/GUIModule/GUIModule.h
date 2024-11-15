@@ -10,14 +10,12 @@
 
 namespace Slab::Graphics {
 
-    using RawSystemWindowPointer = void*;
-
     class GUIModule : public GraphicsModule {
     public:
-        explicit GUIModule(const Str& name);
+        explicit GUIModule(const Str& name, ParentSystemWindow);
         ~GUIModule() override = default;
 
-        virtual auto createContext(RawSystemWindowPointer) -> Pointer<GUIContext> = 0;
+        virtual auto createContext(ParentSystemWindow) -> Pointer<GUIContext> = 0;
 
     };
 

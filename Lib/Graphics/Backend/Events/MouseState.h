@@ -21,6 +21,8 @@ namespace Slab::Graphics {
 
     class MouseState : public SystemWindowEventListener {
     public:
+        explicit MouseState(ParentSystemWindow);
+
         int x = 0,
             y = 0;
 

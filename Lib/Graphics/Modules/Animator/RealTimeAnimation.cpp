@@ -12,6 +12,6 @@ namespace Slab::Graphics {
         Graphics::Animator::Update();
     }
 
-    RealTimeAnimationModule::RealTimeAnimationModule() : GraphicsModule("Realtime Animation") {}
+    RealTimeAnimationModule::RealTimeAnimationModule() : GraphicsModule("Realtime Animation", nullptr) {}
 
 } // Core

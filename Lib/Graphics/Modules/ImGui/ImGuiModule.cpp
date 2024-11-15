@@ -38,7 +38,7 @@ namespace Slab::Graphics {
     };
 
     ImGuiModule::ImGuiModule(CallSet calls)
-    : GUIModule("ImGui")
+    : GUIModule("ImGui", nullptr)
     , call_set(std::move(calls)) {
         IMGUI_CHECKVERSION();
 
@@ -65,48 +65,8 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED;
     }
 
-    void ImGuiModule::Update() {
-        /*
-
-        if (showDemos)
-            m_MainContext->AddDrawCall([](){ImGui::ShowDemoWindow();});
-
-        m_MainContext->AddDrawCall([this]() {
-            ImGui::BeginMainMenuBar();
-            {
-                if(ImGui::BeginMenu("Menu")) {
-                    if(ImGui::MenuItem("Quit", "Alt+F4")) Core::BackendManager::GetBackend()->terminate();
-
-                    ImGui::EndMenu();
-                }
-
-                if(ImGui::BeginMenu("Style")) {
-                    if(ImGui::BeginMenu("ImGui")) {
-                        for(const auto& theme : colorThemes) {
-                            if (ImGui::MenuItem(theme.first.c_str(), nullptr,
-                                                theme.first==currentTheme)) {
-                                theme.second();
-                                currentTheme = theme.first;
-                            }
-                        }
-                        ImGui::MenuItem("---", nullptr, false, false);
-                        ImGui::MenuItem("Show ImGui demos", nullptr, &showDemos);
-
-                        ImGui::EndMenu();
-                    }
-
-                    ImGui::EndMenu();
-                }
-
-                ImGui::EndMainMenuBar();
-            }
-        });
-
-         */
-    }
-
-    Pointer<GUIContext> ImGuiModule::createContext(RawSystemWindowPointer raw_window_ptr) {
-        auto new_context = New<SlabImGuiContext>(raw_window_ptr, call_set);
+    Pointer<GUIContext> ImGuiModule::createContext(ParentSystemWindow parentSystemWindow) {
+        auto new_context = New<SlabImGuiContext>(parentSystemWindow, call_set);
 
         // Setup Dear ImGui style
         SetStyleStudioSlab();   // For sizes

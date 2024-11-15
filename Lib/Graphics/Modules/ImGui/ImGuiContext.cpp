@@ -84,8 +84,8 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    SlabImGuiContext::SlabImGuiContext(RawSystemWindowPointer raw_syswin_ptr, CallSet calls)
-    : call_set(std::move(calls)) {
+    SlabImGuiContext::SlabImGuiContext(ParentSystemWindow system_window, CallSet calls)
+    : GUIContext(system_window), call_set(std::move(calls)) {
         context = ImGui::CreateContext();
 
         ImGui::SetCurrentContext(context);
@@ -93,7 +93,7 @@ namespace Slab::Graphics {
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-        call_set.Init(raw_syswin_ptr);
+        call_set.Init(system_window->getRawPlatformWindowPointer());
 
         buildFonts();
 
@@ -218,6 +218,38 @@ namespace Slab::Graphics {
 
         Render();
         return true;
+    }
+
+    void add_item(int curr_depth, const MainMenuItem& items) {
+        fix& loc = items.location;
+        fix max_depth = loc.size();
+
+        if (ImGui::BeginMenu(loc[curr_depth].c_str())) {
+            if (curr_depth < max_depth-1)
+                add_item(curr_depth+1, items);
+            else {
+                auto action = items.action;
+                for(auto &item : items.items) {
+                    auto label = item.label.c_str();
+                    auto shortcut = item.shortcut.c_str();
+
+                    if (ImGui::MenuItem(label, shortcut, item.selected, item.enabled))
+                        action(item.label);
+                }
+            }
+
+            ImGui::EndMenu();
+        }
+    };
+
+    void SlabImGuiContext::AddMainMenuItem(MainMenuItem item) {
+        AddDrawCall([item](){
+            if(ImGui::BeginMainMenuBar()) {
+                add_item(0, item);
+
+                ImGui::EndMainMenuBar();
+            }
+        });
     }
 
 } // Slab::Graphics
