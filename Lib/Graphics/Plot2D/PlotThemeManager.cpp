@@ -121,30 +121,6 @@ namespace Slab::Graphics {
             });
         }
 
-        /*
-        if(gui_context != nullptr) gui_context->AddDrawCall(
-            []() {
-                if (ImGui::BeginMainMenuBar()) {
-                    if (ImGui::BeginMenu("Style")) {
-                        if (ImGui::BeginMenu("Graphs")) {
-                            for (auto &stylePair: stylesInitializers) {
-                                auto name = stylePair.first;
-
-                                if (ImGui::MenuItem(name.c_str(), nullptr, current == name))
-                                    current = name;
-                            }
-
-                            ImGui::EndMenu();
-                        }
-
-                        ImGui::EndMenu();
-                    }
-                    ImGui::EndMainMenuBar();
-                }
-            }
-        );
-         */
-
         return SystemWindowEventListener::notifyRender();
     }
 

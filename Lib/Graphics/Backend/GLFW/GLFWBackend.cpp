@@ -64,11 +64,6 @@ namespace Slab::Graphics {
         static auto Update   = FuncRun(Update);
 
         while(!system_windows.empty()) {
-
-            //IterateReferences(graphicModules, BeginEvents);
-            glfwPollEvents();
-            //IterateReferences(graphicModules, EndEvents);
-
             IterateReferences(graphicModules, Update);
 
             auto window=system_windows.begin();

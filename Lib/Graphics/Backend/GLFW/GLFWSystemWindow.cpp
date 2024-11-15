@@ -122,8 +122,8 @@ namespace Slab::Graphics {
             throw Exception("GLFW error");
         }
 
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
+        // glfwMakeContextCurrent(window);
+        // glfwSwapInterval(1);
 
         glfwSetInputMode(window, GLFW_STICKY_KEYS, GLFW_TRUE);
         glfwSetInputMode(window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
@@ -210,6 +210,8 @@ namespace Slab::Graphics {
         if(window_ptr==nullptr) return;
 
         glfwMakeContextCurrent((GLFWwindow*)window_ptr);
+
+        glfwPollEvents();
 
         auto clear_color = WindowStyle::sysWindowBGColor;
         glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);

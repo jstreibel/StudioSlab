@@ -20,13 +20,14 @@ namespace Slab {
 
         void reset() { timer = CPUTimer(); }
 
-        Real getElTime_sec() const { return timer.elapsed().wall * 1e-9; }
+        Real getElTime_sec()   const { return (Real)timer.elapsed().wall * 1e-9; }
 
-        Real getElTime_msec() const { return timer.elapsed().wall * 1e-6; }
+        Real getElTime_msec()  const { return (Real)timer.elapsed().wall * 1e-6; }
 
-        Real getElTime_musec() const { return timer.elapsed().wall * 1e-3; }
+        Real getElTime_musec() const { return (Real)timer.elapsed().wall * 1e-3; }
 
-        Real getElTime_nsec() const { return timer.elapsed().wall; }
+        boost::timer::nanosecond_type
+        getElTime_nsec()  const { return timer.elapsed().wall; }
 
         void stop() { timer.stop(); }
 

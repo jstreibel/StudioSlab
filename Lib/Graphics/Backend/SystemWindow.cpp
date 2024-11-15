@@ -3,10 +3,14 @@
 //
 
 #include "SystemWindow.h"
-#include "Core/SlabCore.h"
 #include "StudioSlab.h"
+
+#include "Core/SlabCore.h"
+#include "3rdParty/ImGui.h"
+
 #include "Graphics/Modules/GUIModule/GUIModule.h"
 #include "Graphics/SlabGraphics.h"
+#include "Core/Tools/Log.h"
 
 #include <utility>
 
@@ -93,9 +97,21 @@ namespace Slab::Graphics {
 
     void SystemWindow::Render() {
         if(guiContext != nullptr) {
+            static auto show_metrics = false;
+
+            auto action = [this](const Str& item){
+                if(item == "Close")        SignalClose();
+                else
+                if(item == "Show metrics") show_metrics = true;
+            };
+
             guiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
-                                                     {MainMenuLeafEntry{"Close", "Alt+F4"}},
-                                                     [this](const Str&){ this->SignalClose(); }});
+                                                     {MainMenuLeafEntry{"Show metrics", "Alt+m", show_metrics},
+                                                      MainMenuLeafEntry{"Close", "Alt+F4"}
+                                                      },
+                                                     action});
+
+            if(show_metrics) guiContext->AddDrawCall([](){ ImGui::ShowMetricsWindow(&show_metrics); });
         }
 
         Cycle();
