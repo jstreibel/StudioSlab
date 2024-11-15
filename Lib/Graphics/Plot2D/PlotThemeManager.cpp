@@ -8,16 +8,11 @@
 
 #include "Core/Tools/Resources.h"
 
-#include "3rdParty/ImGui.h"
 #include "Core/Tools/Log.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
 #include "Core/SlabCore.h"
 
-#include "Graphics/Modules/ImGui/ImGuiModule.h"
-#include "StudioSlab.h"
-
 #define FILLED true
-#define NOT_FILLED false
 
 // Rainbow
 // Red: #FF0000
@@ -47,8 +42,6 @@ namespace Slab::Graphics {
                                                              {"Elegant",    GetSchemeElegant}};
     std::map<Str, GraphTheme_ptr> loadedStyles;
 
-    Str current;
-
     Str PlotThemeManager::GetDefault() {
         // return "Elegant";
         return "Dark2";
@@ -72,12 +65,12 @@ namespace Slab::Graphics {
                 Core::Log::Warning() << "Trying to set plotting theme to '" << style
                     << "', but theme couldn't be found. Available themes are: " << available_themes << Core::Log::Flush;
 
-                current = PlotThemeManager::GetDefault();
+                PlotThemeManager::GetInstance().current = PlotThemeManager::GetDefault();
             }
         }
 
-        if(sty != nullptr && style != current) {
-            current = style;
+        if(sty != nullptr && style != PlotThemeManager::GetInstance().current) {
+            PlotThemeManager::GetInstance().current = style;
         }
 
         return sty;
@@ -86,7 +79,7 @@ namespace Slab::Graphics {
     Pointer<PlotThemeManager> mePointer=nullptr;
     PlotThemeManager::PlotThemeManager()
     : Singleton("Styles manager"){
-        Core::LoadModule("ImGui");
+        Core::LoadModule("GUI");
 
         // TODO isso eh gambiarra:
         mePointer = Naked(*this);
@@ -97,13 +90,13 @@ namespace Slab::Graphics {
         // initialize, if not yet. This only serves so that theme choice shows up in main menu bar.
         GetInstance();
 
-        if(current.empty()) {
-            current = GetDefault();
+        if(PlotThemeManager::GetInstance().current.empty()) {
+            PlotThemeManager::GetInstance().current = GetDefault();
         }
 
-        auto style = loadedStyles[current];
+        auto style = loadedStyles[PlotThemeManager::GetInstance().current];
         if(style == nullptr) {
-            style = LoadStyle(current);
+            style = LoadStyle(PlotThemeManager::GetInstance().current);
         }
 
         return style;
@@ -112,6 +105,23 @@ namespace Slab::Graphics {
     bool PlotThemeManager::notifyRender() {
         auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->getGUIContext().lock();
 
+        if(gui_context != nullptr) {
+            Vector<MainMenuLeafEntry> entries;
+            for (auto &stylePair: stylesInitializers) {
+                auto name = stylePair.first;
+                entries.emplace_back(name, nullptr, current == name);
+            }
+
+            gui_context->AddMainMenuItem(MainMenuItem{
+                    MainMenuLocation{"Style", "Graphs"},
+                    entries,
+                    [](const Str &name) {
+                        PlotThemeManager::GetInstance().current = name;
+                    }
+            });
+        }
+
+        /*
         if(gui_context != nullptr) gui_context->AddDrawCall(
             []() {
                 if (ImGui::BeginMainMenuBar()) {
@@ -133,6 +143,7 @@ namespace Slab::Graphics {
                 }
             }
         );
+         */
 
         return SystemWindowEventListener::notifyRender();
     }
@@ -142,11 +153,11 @@ namespace Slab::Graphics {
             Core::Log::Warning() << "While trying to set theme to '" << theme << "'. "
                                  << "Falling back to '" << GetDefault() << "'." << Core::Log::Flush;
 
-            current = GetDefault();
+            PlotThemeManager::GetInstance().current = GetDefault();
 
             return false;
         } else {
-            current = theme;
+            PlotThemeManager::GetInstance().current = theme;
         }
 
         return true;

@@ -38,7 +38,8 @@ namespace Slab::Core {
      */
 
     void BackendManager::Startup(const BackendName& backend_id) {
-        if(BackendManager::instance != nullptr) throw Exception("Backend already initialized");
+        if(BackendManager::instance != nullptr)
+            throw Exception("Backend already initialized");
         if(availableBackends.find(backend_id) == availableBackends.end() )
             throw Exception("Unknown backend '" + backend_id + "'");
 

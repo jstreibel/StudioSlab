@@ -8,6 +8,7 @@
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "KG-NumericConfig.h"
+#include "Core/SlabCore.h"
 
 namespace Slab::Models {
 
@@ -62,8 +63,10 @@ namespace Slab::Models {
                             + ToStr(N % nThreads) + ".");
 
         if(*VisualMonitor) {
+            Core::StartBackend("GLFW");
             Graphics::PlotThemeManager::SetTheme(*plotTheme);
         }
+        else Core::BackendManager::Startup("Headless");
 
 
         CLInterfaceListener::notifyAllCLArgsSetupFinished();
