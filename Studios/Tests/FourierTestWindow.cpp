@@ -30,16 +30,16 @@ namespace Tests {
     float A = 1;
     float ω = 1;
     float ωₚₑₐₖ[2] = {0.0, ω};
-    int N_modes = 1000;
+    int N_modes = 10;
     float L = 2*π;
     fix ωₘₐₓ = 6*π;
     fix xMin = - .1*L;
     fix xMax =  1.1*L;
 
-    float ω₀ = 0.0;
+    float ω_0= 0.0;
     int decimation = 1;
 
-    int N_sqrWave = 20;
+    int N_sqrWave = 10;
 
 
     const char* funcSymbol = "sin";
@@ -61,7 +61,7 @@ namespace Tests {
     Math::RtoR::ComplexMagnitude amplitudes(Dummy(fourierModes));
 
     FourierTestWindow::FourierTestWindow()
-    : Graphics::SlabWindow({"Fourier tests"})
+    : Graphics::WindowRow({"Fourier tests"})
     , theme(Graphics::PlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->funcPlotStyles[0])
     , imagFTArtist(nullptr, theme->funcPlotStyles[1])
@@ -91,44 +91,41 @@ namespace Tests {
 
         Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->funcPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
 
-        row.addWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
+        addWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
 
         col.addWindow(Dummy(mFTGraph));
         col.addWindow(Dummy(mDFTGraph));
         col.addWindow(Dummy(mFuncGraph));
-        row.addWindow(Dummy(col));
+
+        addWindow(Dummy(col));
+
+        // static auto gui_ptr = Dummy(gui);
+        // addResponder(gui_ptr);
     }
 
     void FourierTestWindow::draw() {
         gui.begin();
-        if( ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
-          | ImGui::SliderFloat("L", &L, 0.1, ωₘₐₓ)
-          | ImGui::DragInt("N", &N_modes, (float)N_modes / 20.f, 1, 20000)
-          | ImGui::DragInt("Nₛ", &N_sqrWave, 1, 1, 100)
-          | ImGui::SliderFloat("ω₀", &ω₀, 0, ωₘₐₓ)
-          | ImGui::SliderInt("dec", &decimation, 1, N_modes))
-            updateGraphs();
+        gui.AddExternalDraw([this]() {
 
+            if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
+                | ImGui::SliderFloat("L", &L, 0.1, ωₘₐₓ)
+                | ImGui::DragInt("N", &N_modes, (float) N_modes / 20.f, 1, 20000)
+                | ImGui::DragInt("Nₛ", &N_sqrWave, 1, 1, 100)
+                | ImGui::SliderFloat("ω₀", &ω_0, 0, ωₘₐₓ)
+            | ImGui::SliderInt("dec", &decimation, 1, N_modes))
+            updateGraphs();
+        });
 
         gui.end();
 
-        gui.addVolatileStat(Str("L = ")    + ToStr(L /π, 2) + "π = " + ToStr(L) );
-        gui.addVolatileStat(Str("ω = ")    + ToStr(ω /π, 2) + "π = " + ToStr(ω, 2));
-        gui.addVolatileStat(Str("Re(ωₚₑₐₖ) = ")   + ToStr(ωₚₑₐₖ[Re]/π, 2) + "π = " + ToStr(ωₚₑₐₖ[Re], 2));
-        gui.addVolatileStat(Str("Im(ωₚₑₐₖ) = ")    + ToStr(ωₚₑₐₖ[Im]/π, 2) + "π = " + ToStr(ωₚₑₐₖ[Im], 2));
-        gui.addVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re]/ω, 2) );
-        gui.addVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im]/ω, 2) );
+        gui.addVolatileStat(Str("L = ") + ToStr(L / π, 2) + "π = " + ToStr(L));
+        gui.addVolatileStat(Str("ω = ") + ToStr(ω / π, 2) + "π = " + ToStr(ω, 2));
+        gui.addVolatileStat(Str("Re(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Re] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Re], 2));
+        gui.addVolatileStat(Str("Im(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Im] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Im], 2));
+        gui.addVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
+        gui.addVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
-        row.draw();
-    }
-
-    void FourierTestWindow::notifyReshape(int w, int h) {
-        SlabWindow::notifyReshape(w,h);
-
-        row.setx(getx());
-        row.sety(gety());
-
-        row.notifyReshape(w, h);
+        WindowRow::draw();
     }
 
     void FourierTestWindow::updateGraphs() {
@@ -156,7 +153,7 @@ namespace Tests {
                 fix Aₖ = abs(pt.y);
                 if (A_max < Aₖ) {
                     A_max = Aₖ;
-                    ωₚₑₐₖ[Im] = pt.x;
+                    ωₚₑₐₖ[Im] = (float)pt.x;
                 }
             }
 
@@ -250,13 +247,6 @@ namespace Tests {
         }
     }
 
-    bool FourierTestWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        return row.notifyMouseMotion(x, y, dx, dy);
-    }
-
-    bool FourierTestWindow::notifyMouseWheel(double dx, double dy) {
-        return row.notifyMouseWheel(dx, dy);
-    }
 
 
 } // Tests

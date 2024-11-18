@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->getDFTDataHistory());
             }
 
-            auto wm = New<Graphics::SlabWindowManager>();
+            auto wm = New<Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
             wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
             guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(outputOpenGL);

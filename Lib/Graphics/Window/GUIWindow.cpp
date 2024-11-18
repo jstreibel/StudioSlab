@@ -24,6 +24,8 @@ namespace Slab::Graphics {
         auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
         gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.createContext(parent_system_window));
 
+        if(gui_context == nullptr) throw Exception("Failed to get GUIContext.");
+
         addResponder(gui_context);
     }
 

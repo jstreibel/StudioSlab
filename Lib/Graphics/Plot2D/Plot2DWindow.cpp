@@ -89,7 +89,7 @@ namespace Slab::Graphics {
     }
 
     Plot2DWindow::Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context)
-            : Plot2DWindow(-1, 1, -1, 1, std::move(title), gui_context) {    }
+            : Plot2DWindow(-1, 1, -1, 1, std::move(title), std::move(gui_context)) {    }
 
     void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {

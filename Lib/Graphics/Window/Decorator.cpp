@@ -20,7 +20,7 @@ namespace Slab::Graphics {
 
     }
 
-    void Decorator::setup() {
+    void Decorator::setup() const {
         // SETUP
         glViewport(0, 0, syswin_w, syswin_h);
 
@@ -31,12 +31,9 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_STIPPLE);
 
         glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
+        // glDepthMask(GL_FALSE);
 
         glMatrixMode(GL_MODELVIEW);
-        glLoadIdentity();
-
-        glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
 
         OpenGL::Legacy::SetupOrtho({0, (Real)syswin_w, (Real)syswin_h, 0});

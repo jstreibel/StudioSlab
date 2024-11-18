@@ -54,7 +54,7 @@ public:
         // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
         auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
-        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
+        auto wm = Slab::New<Slab::Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
         wm->addSlabWindow(viewer);
         guiBackend->GetMainSystemWindow()->addEventListener(wm);
 

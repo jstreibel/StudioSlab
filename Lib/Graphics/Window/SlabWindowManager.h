@@ -26,8 +26,6 @@ namespace Slab::Graphics {
             bool operator==(const nullptr_t &rhs) const;
         };
 
-        Pointer<SystemWindow> parent_system_window;
-
         List<Pointer<WindowMetaInformation>> slab_windows;
 
         Decorator decorator;
@@ -39,7 +37,7 @@ namespace Slab::Graphics {
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<SlabWindow> window;} grabbed;
 
     public:
-        explicit SlabWindowManager(Pointer<SystemWindow> parent_syswin = nullptr);
+        explicit SlabWindowManager(SystemWindow* parent_syswin=nullptr);
         ~SlabWindowManager() override = default;
 
         void setFocus(const Pointer<WindowMetaInformation>&);

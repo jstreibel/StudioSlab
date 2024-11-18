@@ -66,16 +66,14 @@ namespace Slab::Graphics {
         while(!system_windows.empty()) {
             IterateReferences(graphicModules, Update);
 
-            auto window=system_windows.begin();
-            auto end = system_windows.end();
-            while (window != end) {
-                if((*window)->ShouldClose()) {
-                    window = system_windows.erase(window);
+            for(auto it = system_windows.begin(); it != system_windows.end();) {
+                if((*it)->ShouldClose()) {
+                    it = system_windows.erase(it);
                     continue;
                 }
 
-                (*window)->Render();
-                ++window;
+                (*it)->Render();
+                it++;
             }
         }
     }
@@ -90,8 +88,6 @@ namespace Slab::Graphics {
 
     Pointer<SystemWindow> GLFWBackend::CreateSystemWindow(const Str& title) {
         Pointer<GLFWSystemWindow> system_window = New<GLFWSystemWindow>();
-
-        system_windows.emplace_back(system_window);
 
         return system_window;
     }

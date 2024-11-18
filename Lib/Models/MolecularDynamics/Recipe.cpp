@@ -44,9 +44,11 @@ namespace Slab::Models::MolecularDynamics {
                 : MolecularDynamics::Monitor::Model::SoftDisk;
         auto monitor = New <MolecularDynamics::Monitor>(numericConfig, simModel);
 
-        auto wm = New<Graphics::SlabWindowManager>();
+        auto main_syswin = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
+
+        auto wm = New<Graphics::SlabWindowManager>(main_syswin.get());
         wm->addSlabWindow(Pointer<Graphics::SlabWindow>(monitor));
-        Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(wm);
+        main_syswin->addAndOwnEventListener(wm);
         sockets.emplace_back(monitor);
 
         return sockets;

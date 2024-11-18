@@ -15,6 +15,9 @@
 
 
 namespace Slab::Graphics {
+    SlabWindowManager::SlabWindowManager(SystemWindow *parent_syswin)
+    : SystemWindowEventListener(parent_syswin) {    }
+
     void SlabWindowManager::addSlabWindow(const Pointer<SlabWindow>& slab_window, bool hidden) {
         auto meta = New<WindowMetaInformation>(slab_window, false, hidden);
 
@@ -100,7 +103,7 @@ namespace Slab::Graphics {
 
     bool SlabWindowManager::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
 
-        if(button==MouseButton_LEFT && state==Press) {
+        if(state==Press) {
             auto mouse_state = parent_system_window->getMouseState();
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
@@ -212,7 +215,8 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void SlabWindowManager::setFocus(const Pointer<WindowMetaInformation>& meta) {
+    void SlabWindowManager::setFocus(const Pointer<WindowMetaInformation>& meta)
+    {
         if(focused != nullptr) focused->window->notifyBecameInactive();
 
         focused = meta;
@@ -223,33 +227,28 @@ namespace Slab::Graphics {
         else MoveToFront(slab_windows, focused);
     }
 
-    SlabWindowManager::SlabWindowManager(Pointer<SystemWindow> parent_syswin)
-    : parent_system_window(parent_syswin==nullptr ?
-                            GetGraphicsBackend()->GetMainSystemWindow() :
-                            std::move(parent_syswin)) {    }
-
     bool
-    SlabWindowManager::WindowMetaInformation::operator<(const SlabWindowManager::WindowMetaInformation &rhs) const {
+    SlabWindowManager::WindowMetaInformation::operator<(const WindowMetaInformation &rhs) const {
         return window < rhs.window;
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator>(const SlabWindowManager::WindowMetaInformation &rhs) const {
+    SlabWindowManager::WindowMetaInformation::operator>(const WindowMetaInformation &rhs) const {
         return rhs < *this;
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator<=(const SlabWindowManager::WindowMetaInformation &rhs) const {
+    SlabWindowManager::WindowMetaInformation::operator<=(const WindowMetaInformation &rhs) const {
         return !(rhs < *this);
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator>=(const SlabWindowManager::WindowMetaInformation &rhs) const {
+    SlabWindowManager::WindowMetaInformation::operator>=(const WindowMetaInformation &rhs) const {
         return !(*this < rhs);
     }
 
     bool
-    SlabWindowManager::WindowMetaInformation::operator==(const SlabWindowManager::WindowMetaInformation &rhs) const {
+    SlabWindowManager::WindowMetaInformation::operator==(const WindowMetaInformation &rhs) const {
         return window==rhs.window;
     }
 

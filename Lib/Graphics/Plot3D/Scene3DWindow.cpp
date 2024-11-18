@@ -22,14 +22,18 @@ namespace Slab::Graphics {
     {
         Core::LoadModule("ImGui");
         Core::LoadModule("ModernOpenGL");
+
+        setClear(false);
     }
 
     void Scene3DWindow::draw() {
         SlabWindow::draw();
 
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
         glDepthMask(GL_TRUE);
+        glDepthFunc(GL_LESS);
+        // glDepthFunc(GL_GREATER);
+        // glDepthFunc(GL_ALWAYS);
 
         updateCamera();
 
@@ -62,26 +66,19 @@ namespace Slab::Graphics {
 
 
         if(left && right) {
-            auto mouseState = parent_system_window->getMouseState();
-
-            fix dx = -(float)mouseState->dx * 1.e-2f;
-            fix dy =  (float)mouseState->dy * 1.e-2f;
+            fix scaled_dx = -dx * 1.e-2f;
+            fix scaled_dy =  dy * 1.e-2f;
 
             auto fwd3d = camera.target - camera.pos;
 
             auto fwd = glm::normalize(glm::vec3(fwd3d.x, fwd3d.y, .0f));
             auto side = glm::cross(fwd, camera.up);
 
-            camera.target += fwd*dy + side*dx;
+            camera.target += fwd*scaled_dy + side*scaled_dx;
 
             return true;
         }
         else if(left) {
-            auto mouseState = parent_system_window->getMouseState();
-
-            fix dx = (float)mouseState->dx;
-            fix dy = (float)mouseState->dy;
-
             cameraAngleAzimuth -= dx*.0025f;
             cameraAnglePolar   -= dy*.0025f;
 
@@ -90,19 +87,11 @@ namespace Slab::Graphics {
             return true;
         }
         else if(right) {
-            auto mouseState = parent_system_window->getMouseState();
-
-            fix dy = (float)mouseState->dy;
-
             cameraDist += dy*.01f;
 
             return true;
         }
         else if(center) {
-            auto mouseState = parent_system_window->getMouseState();
-
-            fix dy = (float)mouseState->dy;
-
             camera.yFov += dy*.005f;
 
             return true;

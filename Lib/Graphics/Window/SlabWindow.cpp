@@ -30,11 +30,15 @@ namespace Slab::Graphics {
 
     SlabWindow::~SlabWindow() = default;
 
-    void SlabWindow::draw() { setupWindow(); }
+    void SlabWindow::draw() {
+        setupWindow();
+    }
+
     void SlabWindow::notifyReshape(int w, int h) {
         config.win_rect.xMax = config.win_rect.xMin + w;
         config.win_rect.yMax = config.win_rect.yMin + h;
     }
+
     bool SlabWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
         else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
@@ -46,29 +50,28 @@ namespace Slab::Graphics {
     bool SlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
         return SystemWindowEventListener::notifyMouseMotion(x, y, dx, dy);
     }
+
     bool SlabWindow::notifyMouseWheel(double dx, double dy) {
         return SystemWindowEventListener::notifyMouseWheel(dx, dy);
     }
+
     bool SlabWindow::notifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
                                     Slab::Graphics::ModKeys modKeys) {
         return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
     }
 
     void SlabWindow::setupWindow() const {
-        glDisable(GL_TEXTURE_2D);
-        glDisable(GL_DEPTH_TEST);
-        glDepthMask(GL_FALSE);
-
         fix syswin_h = parent_system_window->getHeight();
+
         fix vp = getViewport();
-        //// y_opengl = windowHeight - y_top_left - viewportHeight
+
         fix x = vp.xMin;
         fix y = syswin_h - vp.yMin - vp.height();
-        //// fix y = vp.yMin;
+
         fix w = vp.width();
         fix h = vp.height();
-        glViewport(x, y, w, h);
 
+        glViewport(x, y, w, h);
     }
 
     auto SlabWindow::isMouseIn() const -> bool {
@@ -150,7 +153,9 @@ namespace Slab::Graphics {
         return config.win_rect;
     }
 
-    Str SlabWindow::getTitle() const { return config.title; }
+    Str SlabWindow::getTitle() const {
+        return config.title;
+    }
 
     Int SlabWindow::getFlags() const {
         return config.flags;
@@ -184,11 +189,11 @@ namespace Slab::Graphics {
         config.win_rect.yMax = y+h;
     }
 
-    void SlabWindow::notifyBecameActive() { active = true; }
+    void SlabWindow::notifyBecameActive()   { active = true; }
 
     void SlabWindow::notifyBecameInactive() { active = false; }
 
-    bool SlabWindow::isActive() const { return active; }
+    bool SlabWindow::isActive() const       { return active; }
 
     bool SlabWindow::notifySystemWindowReshape(int w, int h) {
         notifyReshape(w, h);
@@ -196,6 +201,20 @@ namespace Slab::Graphics {
 
         return false;
     }
+
+    bool SlabWindow::notifyRender() {
+        draw();
+
+        return SystemWindowEventListener::notifyRender();
+    }
+
+    auto SlabWindow::getx() const -> int { return config.win_rect.xMin; }
+
+    auto SlabWindow::gety() const -> int { return config.win_rect.yMin; }
+
+    auto SlabWindow::GetWidth() const -> int { return config.win_rect.width(); }
+
+    auto SlabWindow::GetHeight() const -> int { return config.win_rect.height(); }
 
 
 }

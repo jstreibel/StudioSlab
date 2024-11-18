@@ -17,16 +17,15 @@ namespace Tests {
 
     using namespace Slab;
 
-    class FourierTestWindow : public Graphics::SlabWindow {
+    class FourierTestWindow : public Graphics::WindowRow {
         Pointer<Graphics::PlottingTheme> theme;
 
-        Graphics::WindowRow row;
         Graphics::WindowColumn col;
 
+        Graphics::GUIWindow gui;
         Graphics::Plot2DWindow mFuncGraph;
         Graphics::Plot2DWindow mDFTGraph;
         Graphics::Plot2DWindow mFTGraph;
-        Graphics::GUIWindow gui;
 
         Graphics::PointSetArtist realFTArtist;
         Graphics::PointSetArtist imagFTArtist;
@@ -40,12 +39,6 @@ namespace Tests {
         FourierTestWindow();
 
         void draw() override;
-
-        void notifyReshape(int w, int h) override;
-
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-
-        bool notifyMouseWheel(double dx, double dy) override;
     };
 
 } // Tests

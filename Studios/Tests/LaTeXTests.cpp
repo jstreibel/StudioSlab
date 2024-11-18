@@ -23,15 +23,20 @@ namespace Tests {
     }
 
     void LaTeXTests::draw() {
-        ImGui::Begin("LaTeX");
-
-        constexpr int buffer_size = 64*1024;
+        constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
-        if(ImGui::InputText("LaTeX stuff", buffer, buffer_size)){
-            latexWriter.renderMath(StrToWStr(Str(buffer)));
-        }
 
-        ImGui::End();
+        stats.AddExternalDraw([this]()
+        {
+            ImGui::Begin("LaTeX");
+
+
+            if (ImGui::InputText("LaTeX stuff", buffer, buffer_size)) {
+                latexWriter.renderMath(StrToWStr(Str(buffer)));
+            }
+
+            ImGui::End();
+        });
 
         writer.write(Str(buffer), {200, 1100});
         latexWriter.draw();

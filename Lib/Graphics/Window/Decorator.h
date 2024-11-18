@@ -16,7 +16,7 @@ namespace Slab::Graphics {
 
         OpenGL::WriterOpenGL writer;
 
-        void setup();
+        void setup() const;
 
     public:
         Decorator();

@@ -29,17 +29,19 @@ namespace Tests {
     void VShapeExpansionTest::draw() {
         stats.begin();
 
-        auto A = (float)potential->getA();
-        auto s = (float)potential->get_s();
-        auto N = (int)potential->getN();
+        stats.AddExternalDraw([this](){
+            auto A = (float) potential->getA();
+            auto s = (float) potential->get_s();
+            auto N = (int) potential->getN();
 
-        if(ImGui::SliderFloat("A₀", &A, 0.1, 10)) potential->setA ((Real)A);
-        if(ImGui::SliderFloat("s",  &s,-3,    3)) potential->set_s((Real)s);
-        if(ImGui::SliderInt("N", &N, 1, 55, "%d")) {
-            if(!(N%2)) --N;
+            if (ImGui::SliderFloat("A₀", &A, 0.1, 10)) potential->setA((Real) A);
+            if (ImGui::SliderFloat("s", &s, -3, 3)) potential->set_s((Real) s);
+            if (ImGui::SliderInt("N", &N, 1, 55, "%d")) {
+                if (!(N % 2)) --N;
 
-            potential->setN(N);
-        }
+                potential->setN(N);
+            }
+        });
 
         stats.end();
 

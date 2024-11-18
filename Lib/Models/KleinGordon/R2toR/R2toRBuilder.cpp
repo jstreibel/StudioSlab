@@ -85,7 +85,8 @@ namespace Slab::Math::R2toR {
             auto backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
-            auto wm = New<Graphics::SlabWindowManager>();
+
+            auto wm = New<Graphics::SlabWindowManager>(backend->GetMainSystemWindow().get());
             wm->addSlabWindow(glOut);
             backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(glOut);

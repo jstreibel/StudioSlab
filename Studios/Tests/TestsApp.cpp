@@ -20,8 +20,6 @@
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
-#include "Nodes/ImGuiNodesTest2.h"
-#include "Nodes/ImGuiNodesTest3.h"
 
 #define DONT_REGISTER false
 
@@ -41,7 +39,10 @@ int TestsApp::run() {
     if(true) {
         Core::BackendManager::Startup("GLFW");
 
+        backend = Slab::Graphics::GetGraphicsBackend();
+        auto main_syswin = backend->GetMainSystemWindow();
         auto wm = New<Graphics::SlabWindowManager>();
+        main_syswin->addAndOwnEventListener(wm);
 
         Pointer<Graphics::SlabWindow> temp;
 
@@ -51,18 +52,17 @@ int TestsApp::run() {
         temp = New<Tests::VShapeExpansionTest>();
         wm->addSlabWindow(temp);
 
-        temp = New<Tests::Graph3DTests>();
+        temp = New<Tests::ModernGLTests>();
         wm->addSlabWindow(temp);
 
-        temp = New<Tests::ModernGLTests>();
+        temp = New<Tests::Graph3DTests>();
         wm->addSlabWindow(temp);
 
         temp = New<Tests::BezierTests>();
         wm->addSlabWindow(temp);
 
-        // Lento:
         temp = New<Tests::FourierTestWindow>();
-        // wm->addSlabWindow(temp);
+        wm->addSlabWindow(temp);
 
         // temp = New<WindowTreeBuilderTest>();
         // wm->addSlabWindow(temp);
@@ -73,18 +73,11 @@ int TestsApp::run() {
         // temp = New<GLFreeTypeTests>();
         // wm->addSlabWindow(temp);
 
-        //temp = New<Tests::ImGuiNodesTest1>();
-        //wm->addSlabWindow(temp);
+        // temp = New<Tests::ImGuiNodesTest1>();
+        // wm->addSlabWindow(temp);
 
-        temp = New<Tests::Blueprints::ImGuiNodesTest2>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::ImGuiNodesTest3>();
-        wm->addSlabWindow(temp);
-
-        backend = Slab::Graphics::GetGraphicsBackend();
-
-        backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
+        // temp = New<Tests::ImGuiNodesTest3>();
+        // wm->addSlabWindow(temp);
 
     } else {
         Core::BackendManager::Startup("GLFW");
