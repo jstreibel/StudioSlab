@@ -33,11 +33,16 @@ namespace Slab::Graphics {
     public:
         explicit GUIContext(ParentSystemWindow);
 
+        virtual void Bind() = 0;
         virtual void NewFrame() = 0;
+        virtual void Render() const = 0;
 
         void AddDrawCall(const DrawCall&);
 
         virtual void AddMainMenuItem(MainMenuItem) = 0;
+
+        virtual
+        void* GetContextPointer() = 0;
     };
 
 } // Slab::Graphics

@@ -6,7 +6,9 @@
 #define ISING_SINGLESIMVIEWCONTROLLER_H
 
 #include "Utils/Types.h"
+
 #include "Graphics/Backend/SFML/SFMLListener.h"
+#include "Graphics/Modules/GUIModule/GUIContext.h"
 #include "Graphics/SFML/Tools/GraphAndAverageCalc.h"
 
 #include "Math/Thermal/ThermoUtils.h"
@@ -56,7 +58,7 @@ namespace Slab::Lost::ThermoOutput {
         int currStep = 0;
         Vector<ThermoOutput::OutputData> history;
 
-        nk_context *nkContext = nullptr;
+        std::shared_ptr<Graphics::GUIContext> nkContext = nullptr;
         sf::RenderWindow *window = nullptr;
         XYMetropolisAlgorithm *algorithm = nullptr;
 

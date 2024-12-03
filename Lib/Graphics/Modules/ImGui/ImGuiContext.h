@@ -41,9 +41,11 @@ namespace Slab::Graphics {
 
         void AddMainMenuItem(MainMenuItem) override;
 
-        void Bind();
+        void Bind() override;
         void NewFrame() override;
-        void Render() const;
+        void Render() const override;
+
+        void *GetContextPointer() override;
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 

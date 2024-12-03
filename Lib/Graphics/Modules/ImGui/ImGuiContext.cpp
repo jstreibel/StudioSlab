@@ -252,4 +252,8 @@ namespace Slab::Graphics {
         });
     }
 
+    void *SlabImGuiContext::GetContextPointer() {
+        return context;
+    }
+
 } // Slab::Graphics

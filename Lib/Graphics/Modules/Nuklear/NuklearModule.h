@@ -10,14 +10,11 @@
 
 #include "Core/Backend/Implementations.h"
 #include "3rdParty/NuklearInclude.h"
-#include "Graphics/Modules/GraphicsModule.h"
+#include "Graphics/Modules/GUIModule/GUIModule.h"
 
 namespace Slab::Graphics {
 
-    class NuklearModule : public GraphicsModule {
-    protected:
-        nk_context *nkContext;
-
+    class NuklearModule : public GUIModule {
     public:
         explicit NuklearModule(ParentSystemWindow);
 
@@ -26,7 +23,7 @@ namespace Slab::Graphics {
 
         static NuklearModule *BuildModule();
 
-        nk_context *getContext();
+        auto createContext(ParentSystemWindow window) -> Pointer<GUIContext> override;
 
     };
 

@@ -311,6 +311,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		Modules/ImGui/Slab-ImGui-Interop.cpp
         Modules/GUIModule/GUIModule.cpp
         Modules/GUIModule/GUIModule.h
+        Modules/Nuklear/NuklearContext.cpp
+        Modules/Nuklear/NuklearContext.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

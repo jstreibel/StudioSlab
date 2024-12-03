@@ -16,8 +16,7 @@
 
 namespace Slab::Graphics {
     NuklearModule::NuklearModule(ParentSystemWindow parent)
-    : GraphicsModule("Nuklear GUI", parent)
-    , nkContext(nullptr)
+    : GUIModule("Nuklear GUI", parent)
     {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
         fix opengl = Vector<Str>{"GLFW", "GLUT", "SFML"};
@@ -48,6 +47,9 @@ namespace Slab::Graphics {
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    nk_context *NuklearModule::getContext() { return nkContext; }
+    Pointer<GUIContext> NuklearModule::createContext(ParentSystemWindow window) {
+
+        return Slab::Pointer<GUIContext>();
+    }
 
 } // Core

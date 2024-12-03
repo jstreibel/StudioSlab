@@ -24,6 +24,7 @@ XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT
     registerToManager();
 
     Slab::Core::BackendManager::Startup("SFML");
+    // Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     Slab::Core::LoadModule("Nuklear");
 
     Slab::Core::CLArgsManager::Parse(argc, argv);

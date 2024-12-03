@@ -16,6 +16,7 @@
 
 #include "Core/SlabCore.h"
 #include "Core/Tools/Resources.h"
+#include "Graphics/SlabGraphics.h"
 
 
 #define COMPUTE_AVERAGES false
@@ -55,10 +56,10 @@ namespace Slab::Lost::ThermoOutput {
     SingleSimViewController::SingleSimViewController(const int L, int MCSteps, int transientSize)
         : MCSteps(MCSteps), transientSize(transientSize)
     {
+        auto main_syswin = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
         auto nkModule_abstract = Core::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
-        nkContext = nkModule.getContext();
-
+        nkContext = nkModule.createContext(main_syswin.get());
         timer.restart();
 
         const float isingSpriteScale = isingSpriteSize/(float)L;
@@ -358,60 +359,61 @@ namespace Slab::Lost::ThermoOutput {
         updateIsingGraph();
         drawEverything(params, data);
 
-        if(nk_begin(nkContext, "Manips",
-                    nk_rect(isingSpriteSize+ 2 * _border, isingSpriteSize, _graphsWidth, _graphsHeight),
+        auto context = (nk_context*)nkContext->GetContextPointer();
+        if(nk_begin(context, "Manips",
+                    nk_rect(isingSpriteSize+ 2 * _border, isingSpriteSize, (float)_graphsWidth, (float)_graphsHeight),
                     NK_WINDOW_BORDER | NK_WINDOW_MOVABLE | NK_WINDOW_TITLE)){
 
-            nk_layout_row_begin(nkContext, NK_STATIC, 30, 2);
+            nk_layout_row_begin(context, NK_STATIC, 30, 2);
 
             auto lw = 60.f;
             std::stringstream ss;
 
-            nk_layout_row_push(nkContext, lw);
+            nk_layout_row_push(context, lw);
             ss.str("");
             ss << "T = " << std::setprecision(3) << params.T;
-            nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
+            nk_label(context, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
+            nk_layout_row_push(context, 0.75f*(float)_graphsWidth - lw);
             static auto fT = (float)params.T;
-            if (nk_slider_float(nkContext, 0.f, &fT, 5.f, 0.001f)) {
+            if (nk_slider_float(context, 0.f, &fT, 5.f, 0.001f)) {
                 params.T = fT;
             }
 
 
-            nk_layout_row_push(nkContext, lw);
+            nk_layout_row_push(context, lw);
             ss.str("");
             ss << "d = " << std::setprecision(3) << params.δ;
-            nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
+            nk_label(context, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
+            nk_layout_row_push(context, 0.75f*(float)_graphsWidth - lw);
             static auto fδ = (float)params.δ;
-            if (nk_slider_float(nkContext, 0.0f, &fδ, 2*M_PI, 0.001f)) {
+            if (nk_slider_float(context, 0.0f, &fδ, 2*M_PI, 0.001f)) {
                 params.δ = fδ;
             }
 
 
-            nk_layout_row_push(nkContext, lw);
+            nk_layout_row_push(context, lw);
             ss.str("");
             ss << "b = " << std::setprecision(3) << b;
-            nk_label(nkContext, ss.str().c_str(), NK_TEXT_LEFT);
+            nk_label(context, ss.str().c_str(), NK_TEXT_LEFT);
 
-            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
+            nk_layout_row_push(context, 0.75f*(float)_graphsWidth - lw);
             fδ = (float)params.δ;
-            if (nk_slider_float(nkContext, -100, &b, 20, 0.001f)) {
+            if (nk_slider_float(context, -100, &b, 20, 0.001f)) {
                 params.δ = fδ;
             }
 
 
-            nk_layout_row_push(nkContext, 0.75f*(float)_graphsWidth - lw);
+            nk_layout_row_push(context, 0.75f*(float)_graphsWidth - lw);
 
             nk_bool shouldNotOverrelax = !params.shouldOverrelax;
-            if(nk_checkbox_text(nkContext, "Overrelax", 9, &shouldNotOverrelax))
+            if(nk_checkbox_text(context, "Overrelax", 9, &shouldNotOverrelax))
                 params.shouldOverrelax = !shouldNotOverrelax;
 
-            nk_layout_row_end(nkContext);
+            nk_layout_row_end(context);
         }
-        nk_end(nkContext);
+        nk_end(context);
     }
 
 

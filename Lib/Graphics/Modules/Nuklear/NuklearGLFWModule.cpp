@@ -26,44 +26,7 @@ namespace Slab::Graphics {
     const bool HighPriority = true;
 
     NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(nullptr) {
-        try {
-            auto glfwBackend = DynamicPointerCast<GLFWBackend>(GetGraphicsBackend());
-            auto system_window = DynamicPointerCast<GLFWSystemWindow>(glfwBackend->GetMainSystemWindow());
-            renderWindow = (GLFWwindow*)system_window->getRawPlatformWindowPointer();
 
-            // Notice how this way of working with calling main system window is very deprecated.
-            NOT_IMPLEMENTED
-
-            static auto me = Naked(*this);
-
-            system_window->addGLFWListener(me, HighPriority);
-        } catch (std::bad_cast& e) {
-            Core::Log::Error() << "Trying to instantiate Nuklear SFML module, but backend doesn't seem "
-                            "to be SFML." << Core::Log::Flush;
-            return;
-        }
-
-        nkContext = nk_glfw3_init(renderWindow,
-                                  NK_GLFW3_DEFAULT,
-                                  MAX_VERTEX_BUFFER,
-                                  MAX_ELEMENT_BUFFER);
-
-        /* Load Fonts: if none of these are loaded a default font will be used  */
-        /* Load Cursor: if you uncomment cursor loading please hide the cursor */
-        {
-            struct nk_font_atlas *atlas;
-            nk_glfw3_font_stash_begin(&atlas);
-            auto fontFolder = Core::Resources::FontsFolder;
-            struct nk_font *droid =     nk_font_atlas_add_from_file(atlas, (fontFolder + "imgui/DroidSans.ttf").c_str(), 24, 0);
-            // struct nk_font *roboto =    nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 14, 0);
-            // struct nk_font *future =    nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13, 0);
-            // struct nk_font *clean =     nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12, 0);
-            // struct nk_font *tiny =      nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10, 0);
-            // struct nk_font *cousine =   nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13, 0);
-            nk_glfw3_font_stash_end();
-            /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
-            nk_style_set_font(nkContext, &droid->handle);
-        }
     }
 
     NuklearGLFWModule::~NuklearGLFWModule() { nk_glfw3_shutdown(); }
