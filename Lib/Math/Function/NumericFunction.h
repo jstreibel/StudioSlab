@@ -57,8 +57,8 @@ namespace Slab::Math::Base {
                     space = New<DiscreteSpaceCPU>(dim);
                     break;
 #if USE_CUDA
-                case device::GPU:
-                    space = new DiscreteSpaceGPU(dim);
+                case Device::GPU:
+                    space = New<DiscreteSpaceGPU>(dim);
                     break;
 #endif
                 default:

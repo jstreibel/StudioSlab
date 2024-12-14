@@ -16,21 +16,16 @@ namespace Slab {
 }
 
 #if USE_CUDA == true
+
 // #define __forceinline__ __inline__ __attribute__((always_inline))
 #include <cuda_runtime.h>
 #include <thrust/host_vector.h>
-#ifdef __CUDACC__
 #include <thrust/device_vector.h>
-#endif
 #include <thrust/execution_policy.h>
 
-namespace Slab::CUDA {
-#ifdef __CUDACC__
-    typedef thrust::device_vector<floatt> DeviceVector;
-#endif
-    typedef thrust::host_vector<floatt> HostVector;
 
-}
+typedef thrust::device_vector<floatt> DeviceVector;
+typedef thrust::host_vector<floatt> HostVector;
 
 #else  // USE_CUDA
 namespace Slab::CUDA {

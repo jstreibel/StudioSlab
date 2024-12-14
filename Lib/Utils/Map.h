@@ -6,6 +6,7 @@
 #define STUDIOSLAB_MAP_H
 
 #include <map>
+#include <unordered_map>
 
 namespace Slab {
 

@@ -37,7 +37,7 @@ if (QUADMATH_LIB)
     target_compile_definitions(${STUDIOSLAB_BASE_LIB_NAME} PRIVATE HAS_QUADMATH)
     target_link_libraries(${STUDIOSLAB_BASE_LIB_NAME} ${QUADMATH_LIB})
 else()
-    message(status "Quadmath library NOT found. Some features may be unavailable.")
+    message(STATUS "Quadmath library NOT found. Some features may be unavailable.")
 endif()
 
 message(NOTICE "Added library " ${STUDIOSLAB_BASE_LIB_NAME})

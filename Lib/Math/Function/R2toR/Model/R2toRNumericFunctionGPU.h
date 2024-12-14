@@ -36,8 +36,8 @@ namespace Slab::Math::R2toR {
 
         auto operator+=(const MyBase &func)                                -> DiscrBase        & override;
 
-        auto At               (UInt n, UInt m)                   const -> Real               override;
-        auto At               (UInt n, UInt m)                         -> Real             & override;
+        auto At (UInt n, UInt m) const -> const Real & override;
+        auto At (UInt n, UInt m)       -> Real & override;
 
     };
 

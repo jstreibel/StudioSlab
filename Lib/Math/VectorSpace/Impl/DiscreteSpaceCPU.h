@@ -12,7 +12,7 @@ namespace Slab::Math {
 
     class DiscreteSpaceCPU : public DiscreteSpace {
     public:
-        DiscreteSpaceCPU(DimensionMetaData dim);
+        explicit DiscreteSpaceCPU(DimensionMetaData dim);
 
         auto Add(const DiscreteSpace &toi) -> DiscreteSpace & override;
 

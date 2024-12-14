@@ -13,12 +13,14 @@
 #include "Core/Tools/Log.h"
 #include "Math/VectorSpace/DimensionMetaData.h"
 
+#ifdef USE_CUDA
+#include "Utils/TypesGPU.h"
+#else
+class DeviceVector;
+#endif
 
 namespace Slab::Math {
-
     class DiscreteSpaceCPU;
-
-    class DeviceVector;
 
     class DiscreteSpace : public NumericAlgebra<DiscreteSpace> {
     public:

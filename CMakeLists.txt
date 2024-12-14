@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
+
+
 # Enable modules if supported by the compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmodules-ts")
@@ -72,20 +74,26 @@ endif()
 
 
 if( STUDIOSLAB_CUDA_SUPPORT )
+	set(CMAKE_CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER})
+	set(CMAKE_CUDA_ARCHITECTURES 61)
+
 	enable_language( CUDA )
 
-	set(CMAKE_CUDA_ARCHITECTURES 61)
 	# set(CUDA_TOOLKIT_ROO /usr/local/cuda-12.5)
-	set(CUDA_DIR /usr/local/cuda-12.5)
-	include_directories(${CUDA_DIR}/include/)
+	# set(CUDA_DIR /usr/local/cuda-12.5)
+	# set(CUDA_DIR /usr/local/cuda-12.6)
+	include_directories(${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES})
 
-	set( CMAKE_CUDA_COMPILER /usr/local/cuda-12.5/bin/nvcc )
+	# set( CMAKE_CUDA_COMPILER /usr/local/cuda-12.6/bin/nvcc )
 
-	find_package( CUDA )
-	find_package( CUDAToolkit )
+	# find_package( CUDA )
+	# find_package( CUDAToolkit )
 
 	add_compile_definitions(USE_CUDA=true) # define preprocessor macro (very useful)
-	message(STATUS "StudioSlab CUDA support is ENABLED. Architecture(s): ${CMAKE_CUDA_ARCHITECTURES}"  )
+
+	message(STATUS "StudioSlab CUDA support is ENABLED:")
+	message("  --> Include directory: ${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+	message("  --> Architecture(s): ${CMAKE_CUDA_ARCHITECTURES}"  )
 else()
 	add_compile_definitions(USE_CUDA=false)
 	message(STATUS "StudioSlab CUDA support is DISABLED")

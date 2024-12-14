@@ -25,7 +25,7 @@ namespace Slab::Math::Base {
     class GPUFriendly {
     public:
 #if USE_CUDA == true
-        virtual void GPUApply(const DeviceVector &in, DeviceVector &out) const = 0;
+    virtual void GPUApply(const DeviceVector &in, DeviceVector &out) const = 0;
 
 #else
 #endif
