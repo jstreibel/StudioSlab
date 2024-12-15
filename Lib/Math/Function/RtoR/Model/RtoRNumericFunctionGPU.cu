@@ -15,7 +15,7 @@
 namespace Slab::Math::RtoR {
 
     NumericFunctionGPU::NumericFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType)
-            : NumericFunction(N, xMin, xMax, device::GPU, laplacianType) {
+            : NumericFunction(N, xMin, xMax, Device::GPU, laplacianType) {
 
     }
 
@@ -85,14 +85,13 @@ namespace Slab::Math::RtoR {
         return outFunc;
     }
 
-    Str NumericFunctionGPU::myName() const {
-        return "ℝ ↦ ℝ GPU discrete";
-    }
-
     Pointer<Base::FunctionT <Real, Real>> NumericFunctionGPU::Clone() const {
         return New<NumericFunctionGPU>(N, xMin, xMax, laplacianType);
     }
 
 
+    Str NumericFunctionGPU::generalName() const {
+        return "ℝ↦ℝ GPU discrete";
+    }
 }
 //#pragma clang diagnostic pop

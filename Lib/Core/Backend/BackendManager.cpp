@@ -106,13 +106,13 @@ namespace Slab::Core {
 
         BackendManager::availableBackends[name] = std::move(alloc);
 
-        Log::Info() << "Backend '" << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
+        Log::Note() << "Backend '" << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
     }
 
     void BackendManager::RegisterAvailableModule(const ModuleName &name, ModuleAllocator alloc) {
         BackendManager::availableModules[name] = std::move(alloc);
 
-        Log::Info() << "Module '"  << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
+        Log::Note() << "Module '"  << Log::FGBlue << name << Log::ResetFormatting << "' available." << Log::Flush;
     }
 
     Str BackendManager::GetBackendName() {

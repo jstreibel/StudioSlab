@@ -48,7 +48,7 @@ namespace Slab::Math::R2toR {
         NOT_IMPLEMENTED_CLASS_METHOD
     }
 
-    Real R2toR::NumericFunction_GPU::At(UInt n, UInt m) const {
+    const Real &R2toR::NumericFunction_GPU::At(UInt n, UInt m) const {
         assert(n < N && m < M);
 
         return getSpace().getHostData()[n + m * N];

@@ -72,5 +72,11 @@ namespace Slab::Models {
         CLInterfaceListener::notifyAllCLArgsSetupFinished();
     }
 
+    void KGRecipe::setupForCurrentThread() {
+        NumericalRecipe::setupForCurrentThread();
+
+        device_config.setupForThread();
+    }
+
 
 }

@@ -27,9 +27,6 @@ namespace Slab::Math::R2toR {
     protected:
         virtual void apply_KGR2toR(EquationState &fieldState, Real t) const;
     };
-
-    DefinePointers(BoundaryCondition)
-
 }
 
 

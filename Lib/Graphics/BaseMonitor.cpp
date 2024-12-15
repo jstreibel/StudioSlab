@@ -18,8 +18,8 @@ namespace Slab::Graphics {
 
     using Core::Log;
 
-    Graphics::BaseMonitor::BaseMonitor(Real max_t, Count max_steps, const Str &channelName, int stepsBetweenDraws)
-            : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_t(max_t), max_steps(max_steps) {
+    Graphics::BaseMonitor::BaseMonitor(Count max_steps, const Str &channelName, int stepsBetweenDraws)
+            : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_steps(max_steps) {
         addWindow(Slab::Naked(guiWindow));
         setColumnRelativeWidth(0, 0.1);
 
@@ -36,7 +36,6 @@ namespace Slab::Graphics {
         static Count lastStep = 0;
         hasFinished = !(lastPacket.getSteps() < max_steps);
 
-        auto dt = Real(max_t)/max_steps;
         fix currStep = step;
 
         isPaused = currStep == lastStep;
@@ -82,7 +81,7 @@ namespace Slab::Graphics {
         }
 
         fix stepsToFinish = max_steps - step;
-        fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : stepsToFinish / avgSPS);
+        fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : (Real)stepsToFinish / avgSPS);
         fix remainingTimeMin = timeToFinish / 60;
         fix remainingTimeSec = timeToFinish % 60;
 
@@ -96,7 +95,7 @@ namespace Slab::Graphics {
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
         
         guiWindow.addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
-        guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
+        // guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
         guiWindow.addVolatileStat("");
         guiWindow.addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
         guiWindow.addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));

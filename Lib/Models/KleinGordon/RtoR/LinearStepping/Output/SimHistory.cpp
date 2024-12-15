@@ -25,32 +25,17 @@ namespace Slab::Models::KGRtoR {
         fix hx = L / (Real) N_x;
         fix ht = t / timeResolution;
 
-#if USE_CUDA
-        if(dataIsOnGPU)
-        {
-            /* fieldData = new R2toR::NumericFunction_GPU(spaceResolution,
-                                                        timeResolution,
-                                                        params.getxMin(),
-                                                        0.0, hp);
-                                                        */
+        auto sizeMB = Real((Real) N_x * timeResolution * sizeof(Real)) / (1024 * 1024.);
 
-            NOT_IMPLEMENTED
-
-        } else
-#endif
-        {
-            auto sizeMB = Real((Real) N_x * timeResolution * sizeof(Real)) / (1024 * 1024.);
-
-            Log::Critical() << name << " is about to allocate " << sizeMB
-                            << "MB of data to store full " << N_x << 'x' << (int) timeResolution + 1
-                            << "x8 bytes simulation history." << Log::Flush;
+        Log::Critical() << name << " is about to allocate " << sizeMB
+                        << "MB of data to store full " << N_x << 'x' << (int) timeResolution + 1
+                        << "x8 bytes simulation history." << Log::Flush;
 
 
-            fix safeTimeResolution = timeResolution + 1;
-            data = DataAlloc<R2toR::NumericFunction_CPU>("SimulatedHistory", N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
+        fix safeTimeResolution = timeResolution + 1;
+        data = DataAlloc<R2toR::NumericFunction_CPU>("SimulatedHistory", N_x, (int) safeTimeResolution, xMin, 0.0, hx, ht);
 
-            Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
-        }
+        Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
 
     auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
@@ -79,22 +64,15 @@ namespace Slab::Models::KGRtoR {
 
         assert(&stateIn != nullptr);
 
-#if USE_CUDA
-        if(dataIsOnGPU)
-            throw "SimHistory::handleOutput with GPU data is not implemented";
-        else
-#endif
-        {
-            fix M_in = (double) max_steps;
-            fix M_out = (double) N_t;
-            fix t_ratio = M_out / M_in;
+        fix M_in = (double) max_steps;
+        fix M_out = (double) N_t;
+        fix t_ratio = M_out / M_in;
 
-            fix j_in = packet.getSteps();
-            fix j_out = int(floor(j_in * t_ratio));
-            ValarrayWrapper<Real> instantData(&data->At(0, j_out), data->getN());
+        fix j_in = packet.getSteps();
+        fix j_out = int(floor((Real)j_in * t_ratio));
+        ValarrayWrapper<Real> instantData(&data->At(0, j_out), data->getN());
 
-            transfer(packet, instantData);
-        }
+        transfer(packet, instantData);
 
         timesteps.emplace_back(packet.getSteps());
     }

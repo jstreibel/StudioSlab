@@ -1,4 +1,5 @@
 #include "hamilton-gpu.h"
+/*
 #include "sim/fields/field-gpu.h"
 
 #include "sim/math/derivatives-gpu.cuh"
@@ -84,7 +85,7 @@ Field &Hamilton_GPU::dT_F(const Field &phi, Field &out, const floatt dT,
 }
 
 floatt Hamilton_GPU::E(const Field &phi) {
-    /*
+    *//*
     const Field_CPU &field = static_cast<const Field_Cuda&>(phi);
 
     const floatt *_phi = &(field.phi[0]);
@@ -110,14 +111,14 @@ floatt Hamilton_GPU::E(const Field &phi) {
     }
 
     return 0.5*(term1 + derivs.geth()*(2*term2 + term3 + term4));
-    */
+    *//*
 
     return 0;
 }
 
 floatt Hamilton_GPU::Hdens(const Field &phi, const floatt x) const
 {
-    /*
+    *//*
     const Field_CPU &field = static_cast<const Field_CPU&>(phi);
 
     const Field_CPU::FieldOutType *_phi = &(field.phi[0]);
@@ -136,7 +137,7 @@ floatt Hamilton_GPU::Hdens(const Field &phi, const floatt x) const
     floatt term4 = dphidx0*dphidx0;
 
     return term1 + term2 + term3 + term4;
-    */
+    *//*
 
     return 0;
-}
+} */

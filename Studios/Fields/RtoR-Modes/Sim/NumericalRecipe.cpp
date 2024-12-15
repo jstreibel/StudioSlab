@@ -106,14 +106,14 @@ namespace Modes {
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
 
-        fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), -amp, +amp, "Modes monitor");
+        // fix amp = (*A) * 1.1;
+        auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), "Modes monitor");
 
         fix L = kg_numeric_config->getL();
         fix dk = 2*M_PI/L;
-        fix k = dk*this->k.getValue();
+        fix k_ = dk*this->k.getValue();
         fix ω = dk*this->omega.getValue();
-        monitor->setInputModes({*A}, {k}, {ω});
+        monitor->setInputModes({*A}, {k_}, {ω});
 
         return monitor;
     }

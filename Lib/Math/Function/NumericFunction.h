@@ -41,7 +41,6 @@ namespace Slab::Math::Base {
             if(space == nullptr) return type;
 
             fix d = space->getMetaData().getNDim();
-            ;
 
             type += ":ℝ" + Map<UInt, Str>{{1, ""}, {2,"²"}, {3, "³"}}[d-1] +"↦ℝ";
 

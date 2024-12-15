@@ -28,6 +28,8 @@ namespace Slab::Math {
     public:
         explicit DeviceConfig(bool doRegister = true);
 
+        void setupForThread();
+
         auto get_nThreads() const -> unsigned int { return **nThreads; }
 
         bool operator==(const int &RHS) const { return this->dev == RHS; }

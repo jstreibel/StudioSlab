@@ -15,6 +15,7 @@
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
 
+#include "Math/Data/DataAllocator.h"
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
 #include "Math/Numerics/ODE/Output/Format/ResolutionReductionFilter.h"
 #include "Math/Numerics/ODE/Output/Sockets/OutputHistoryToFile.h"
@@ -24,15 +25,15 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/IntegerPowerFunctions.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NonlinearKGPotential.h"
+#include "Math/Function/RtoR/Model/RtoRNumericFunctionGPU.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/SimHistory.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/SnapshotOutput.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/DFTSnapshotOutput.h"
-
 #include "Models/KleinGordon/RtoR/Graphics/RtoRMonitor.h"
 #include "Models/KleinGordon/RtoR/LinearStepping/Output/CenterTimeDFTOutput.h"
-#include "Math/Data/DataAllocator.h"
+
 #include "Graphics/Window/SlabWindowManager.h"
 
 constexpr const Slab::Count MAX_SNAPSHOTS = 200;
@@ -270,7 +271,7 @@ namespace Slab::Models::KGRtoR {
             return Math::DataAlloc<RtoR::NumericFunction_CPU>("IntegrationData", N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA == true
-        else if(simulationConfig.dev==GPU)
+        else if(device_config == Device::GPU)
             return New<RtoR::NumericFunctionGPU>(N, xLeft, xRight, laplacianType);
 #endif
 

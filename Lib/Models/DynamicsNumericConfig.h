@@ -22,7 +22,7 @@ namespace Slab::Models {
                                                            "Note that this value can be overriden by simulation.");
 
     public:
-        DynamicsNumericConfig(bool do_register);
+        explicit DynamicsNumericConfig(bool do_register);
 
         auto getN() const -> UInt;
         auto getL() const -> Real;

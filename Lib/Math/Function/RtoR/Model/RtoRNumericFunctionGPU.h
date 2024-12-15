@@ -12,8 +12,6 @@ namespace Slab::Math::RtoR {
 #if USE_CUDA == true
     class NumericFunctionGPU : public NumericFunction {
     public:
-        Str myName() const override;
-
         NumericFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType);
 
         auto Clone() const -> Pointer<FunctionT> override;
@@ -25,6 +23,7 @@ namespace Slab::Math::RtoR {
         Base::NumericFunction<Real, Real> &Set(const MyBase &func) override;
         NumericFunction &Laplacian(NumericFunction &outFunc) const override;
 
+        Str generalName() const override;
     };
 #endif
 }

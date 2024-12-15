@@ -2,6 +2,7 @@
 #define DERIVATIVESGPU_CUH
 
 #include "Utils/DeviceConfig.h"
+#include "Utils/TypesGPU.h"
 #include "Utils/Types.h"
 
 #include <cuda_runtime_api.h>

@@ -5,6 +5,8 @@
 
 #include "RtoRMonitor.h"
 
+#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+
 #include "Models/KleinGordon/KG-Solver.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRFourierPanel.h"
@@ -19,9 +21,8 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Monitor::Monitor(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian,
-                           const Real phiMin, const Real phiMax, const Str &name, bool showEnergyHistoryAsDensities)
-            : Graphics::BaseMonitor(params->gett(), params->getn(), Str("ℝ↦ℝ ") + name, 10)
+    Monitor::Monitor(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
+            : Graphics::BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
             , hamiltonian(hamiltonian) {
         fullHistoryArtist->setLabel("ϕ(t,x)");
         fullHistoryArtist->setAffectGraphRanges(true);
@@ -84,7 +85,7 @@ namespace Slab::Models::KGRtoR {
 
     bool Monitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
 
-        char number = key - '0';
+        auto number = key - '0';
 
         if (modKeys.nonePressed() && state == KeyState::Press && (number >= 1 && number <= 9)) {
             setDataView(number - 1);
@@ -94,7 +95,7 @@ namespace Slab::Models::KGRtoR {
         return BaseMonitor::notifyKeyboard(key, state, modKeys);
     }
 
-    void Monitor::setSimulationHistory(R2toR::NumericFunction_constptr simHistory) {
+    void Monitor::setSimulationHistory(const Pointer<const R2toR::NumericFunction> &simHistory) {
         simulationHistory = simHistory;
 
         fullHistoryArtist->setFunction(simulationHistory);
@@ -104,7 +105,7 @@ namespace Slab::Models::KGRtoR {
             dataView->setSimulationHistory(simHistory, fullHistoryArtist);
     }
 
-    void Monitor::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
+    void Monitor::setSpaceFourierHistory(const Pointer<const R2toR::NumericFunction> &sftHistory,
                                                const DFTDataHistory &_dftData) {
         spaceFTHistory = sftHistory;
         fullSFTHistoryArtist->setFunction(spaceFTHistory);
@@ -123,7 +124,7 @@ namespace Slab::Models::KGRtoR {
         static bool isSetup = false;
         if (not isSetup && lastPacket.hasValidData()) {
 
-            auto &phi = static_cast<RtoR::NumericFunction&>
+            auto &phi = dynamic_cast<RtoR::NumericFunction&>
                     (lastPacket.GetNakedStateData<EquationState>()->getPhi());
 
             if (phi.getLaplacianType() == RtoR::NumericFunction::Standard1D_PeriodicBorder)
@@ -134,9 +135,10 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (lastPacket.getSteps() % (this->getnSteps() * 100));
-        fix dt = max_t/(Real)max_steps;
+        fix dt = CLInterfaceManager::getInstance().getParameter("dt")->getValueAs<Real>();
+        // fix dt = max_t/(Real)max_steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryArtist->set_t(lastPacket.getSteps()*dt);
+            fullHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
 
     }
@@ -148,23 +150,24 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
-        fix dt = max_t/(Real)max_steps;
+        // fix dt = max_t/(Real)max_steps;
+        fix dt = CLInterfaceManager::getInstance().getParameter("dt")->getValueAs<Real>();
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullSFTHistoryArtist->set_t(lastPacket.getSteps()*dt);
+            fullSFTHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
     }
 
     void Monitor::draw() {
         const EquationState &fieldState = *lastPacket.GetNakedStateData<EquationState>();
 
-        auto &phi = static_cast<RtoR::NumericFunction&>(fieldState.getPhi());
-        auto &ddtPhi = static_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());
+        auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
+        auto &ddtPhi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getDPhiDt());
         hamiltonian.computeEnergies(phi, ddtPhi);
 
         updateHistoryGraph();
         updateSFTHistoryGraph();
 
-        WindowPanel::draw();
+        Slab::Graphics::BaseMonitor::draw();
     }
 
 

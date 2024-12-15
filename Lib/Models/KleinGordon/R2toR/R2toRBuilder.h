@@ -11,26 +11,28 @@
 #include "Models/KleinGordon/KG-Recipe.h"
 #include "Models/KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.h"
 
-namespace Slab::Math::R2toR {
+namespace Slab::Models::KGR2toR {
+
+    using namespace Slab::Math;
 
     class Builder : public Models::KGRecipe {
-            Str name = "";
+        Str name;
 
-        protected:
-            virtual auto buildOpenGLOutput() -> R2toR::OutputOpenGL*;
+    protected:
+        virtual auto buildOpenGLOutput() -> OutputOpenGL*;
 
-        public:
-            Builder(const Str& name, Str description);
+    public:
+        Builder(const Str& name, const Str& description, bool do_register=false);
 
-            auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
-            auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
+        auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
+        auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
 
-            auto newFunctionArbitrary() -> R2toR::NumericFunction_ptr ;
-            auto newFieldState()        -> R2toR::EquationState_ptr;
+        auto newFunctionArbitrary() -> R2toR::NumericFunction_ptr ;
+        auto newFieldState()        -> R2toR::EquationState_ptr;
 
-            auto getInitialState()      -> R2toR::EquationState_ptr;
+        auto getInitialState()      -> R2toR::EquationState_ptr;
 
-            virtual auto getBoundary() -> Base::BoundaryConditions_ptr = 0;
+        virtual auto getBoundary() -> Base::BoundaryConditions_ptr = 0;
 
 
     };

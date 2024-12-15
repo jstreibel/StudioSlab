@@ -41,7 +41,7 @@ protected:
 private:
     bool hostIsUpdated = false;
     RealArray &XHost = data;
-    DeviceVector &XDev;
+    DeviceVector XDev;
 };
 #else
 class DiscreteSpaceGPU : public DiscreteSpace {

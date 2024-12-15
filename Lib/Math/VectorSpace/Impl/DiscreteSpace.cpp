@@ -15,7 +15,8 @@ namespace Slab::Math {
 
 
     DiscreteSpace::DiscreteSpace(const DimensionMetaData &dim)
-            : dimensionMetaData(dim), data(dim.computeFullDiscreteSize()) {}
+    : dimensionMetaData(dim)
+    , data(dim.computeFullDiscreteSize()) {}
 
     DiscreteSpace::~DiscreteSpace() {}
 

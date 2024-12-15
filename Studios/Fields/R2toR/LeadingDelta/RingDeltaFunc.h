@@ -12,46 +12,51 @@
 
 #include "Math/Function/R2toR/Model/FunctionsCollection/R2ToRRegularDelta.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
+#include "Math/Formalism/Categories.h"
+#include "Math/Function/R2toR/Model/R2toRFunction.h"
 
-#define delta(r, eps) deltaRect(r, eps)
+#define delta(r, eps) Slab::Math::deltaRect(r, eps)
 
-namespace Slab::Math::R2toR {
-    namespace LeadingDelta {
 
-        typedef Core::NumericFunction<Real2D, Real> ArbFunc;
+namespace Studios::Fields::R2toRLeadingDelta {
 
-        class RingDeltaFunc : public R2toR::Function {
-        protected:
-            Real eps, a, dt;
-            Real radius;
-            bool asTheta;
+    using Real = Slab::Real;
+    using Real2D = Slab::Math::Real2D;
+    using Str = Slab::Str;
 
-        public:
-            typedef std::shared_ptr<RingDeltaFunc> Ptr;
+    using ArbFunc = Slab::Math::Base::NumericFunction<Slab::Math::Real2D, Slab::Real>;
 
-            auto getEps   ()                   const -> Real;
-            auto setEps   (Real eps)                 -> void;
-            auto getA     ()                   const -> Real;
-            auto setA     (Real a)                   -> void;
-            auto getRadius()                   const -> Real;
-            auto setRadius(Real _radius)             -> void;
-            auto domainContainsPoint(Real2D x) const -> bool override;
-            auto myName()                      const -> Str  override ;
+    class RingDeltaFunc : public Slab::Math::R2toR::Function {
+    protected:
+        Slab::Real eps, a, dt;
+        Slab::Real radius;
+        bool asTheta;
 
-            /**
-             * Constructor
-             * @param eps the delta 'ϵ' parameter;
-             * @param height the multiplier in front of the delta.
-             * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
-             * is the actual simulation timestep.
-             */
-            RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta);
-            auto operator()(Real2D x) const -> Real override;
+    public:
+        auto getEps   ()                   const -> Real;
+        auto setEps   (Real eps)                 -> void;
+        auto getA     ()                   const -> Real;
+        auto setA     (Real a)                   -> void;
+        auto getRadius()                   const -> Real;
+        auto setRadius(Real _radius)             -> void;
+        auto domainContainsPoint(Real2D x) const -> bool override;
 
-            bool renderToNumericFunction(ArbFunc *toFunc) const override;
-        };
+        Str generalName() const override;
 
-    }
+        /**
+         * Constructor
+         * @param eps the delta 'ϵ' parameter;
+         * @param height the multiplier in front of the delta.
+         * @param dt the minimum 't' to consider (because 't' appears in a denominator). Recommended value
+         * is the actual simulation timestep.
+         */
+        RingDeltaFunc(Real eps, Real a, Real dt, bool asTheta);
+        auto operator()(Real2D x) const -> Real override;
+
+        bool renderToNumericFunction(ArbFunc *toFunc) const override;
+    };
+
 }
+
 
 #endif //STUDIOSLAB_RINGDELTAFUNC_H

@@ -42,30 +42,16 @@ namespace Slab::Math {
         this->dev = dev_n == 0 ? CPU : (dev_n == 1 || dev_n == 2 ? GPU : UNKNOWN);
 
         if (dev == UNKNOWN) {
-            throw (Str("Unkown device ") + std::to_string(dev_n) + Str(".")).c_str();
-        } else if (dev == CPU) {
+            throw Exception(Str("Unkown device ") + std::to_string(dev_n) + Str("."));
+        } else if (dev == Device::CPU) {
             omp_set_num_threads(**nThreads);
 
             Log::Info() << "Running on CPU @ " << *nThreads << " thread"
                         << (**nThreads > 1 ? "s." : ".") << Log::Flush;
 
-        } else if (dev == GPU) {
+        } else if (dev == Device::GPU) {
     #if USE_CUDA
-            int devCount;
-            cudaError err;
-
-            Slab::CUDA::cew(cudaGetDeviceCount(&devCount));
-            cudaDeviceProp props;
-            cudaGetDeviceProperties(&props, (int)dev_n);
-
-            Slab::CUDA::cew(cudaSetDevice(dev_n - 1));
-
-            Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << Log::Flush;
-
-            if (**nThreads > 1) {
-                Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
-                *nThreads = 1;
-            }
+            setupForThread();
     #else
             throw "Code was not compiled with GPU support. And this exception should never "
                   "in a logical universe have happened.";
@@ -73,10 +59,37 @@ namespace Slab::Math {
         }
     }
 
+    void DeviceConfig::setupForThread() {
+        #if USE_CUDA
+        unsigned int dev_n = **deviceChoice;
+        #else
+        return;
+        #endif
+
+        int devCount;
+        cudaError err;
+
+        Slab::CUDA::cew(cudaGetDeviceCount(&devCount));
+        cudaDeviceProp props{};
+        cudaGetDeviceProperties(&props, (int)dev_n - 1);
+
+        Slab::CUDA::cew(  cudaSetDevice((int)dev_n - 1));
+        // Slab::CUDA::cew(cudaSetDevice(2));
+
+        Log::Info() << "Running on GPU " << dev_n << "/" << devCount << ", " << Str(props.name) << Log::Flush;
+
+        if (**nThreads > 1) {
+            Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
+            *nThreads = 1;
+        }
+    }
+
     void DeviceConfig::notifyAllCLArgsSetupFinished() {
 
         CLInterfaceListener::notifyAllCLArgsSetupFinished();
     }
+
+
 
 
 }

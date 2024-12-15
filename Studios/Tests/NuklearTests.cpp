@@ -54,7 +54,9 @@ namespace Tests {
 
     bool NuklearTests::notifyRender() {
         auto& nkModule = dynamic_cast<Graphics::NuklearModule&>(*Core::BackendManager::GetModule("Nuklear"));
-        auto *nkContext =  nkModule.getContext();
+        NOT_IMPLEMENTED
+        // auto *nkContext =  nkModule.getContext();
+        nk_context *nkContext; // dumb var
 
         /* GUI */
         struct nk_colorf bg = {0.10f, 0.18f, 0.24f, 1.0f};

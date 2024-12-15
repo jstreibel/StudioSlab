@@ -10,12 +10,12 @@ namespace Slab::Math {
 
     DiscreteSpaceGPU::DiscreteSpaceGPU(DimensionMetaData dim)
     : DiscreteSpace(dim)
-    , XDev(*new DeviceVector(dim.computeFullDiscreteSize())) {
+    , XDev(dim.computeFullDiscreteSize())
+    {
+
     }
 
-    DiscreteSpaceGPU::~DiscreteSpaceGPU() {
-        delete &XDev;
-    }
+    DiscreteSpaceGPU::~DiscreteSpaceGPU() = default;
 
     DiscreteSpace &DiscreteSpaceGPU::Add(const DiscreteSpace &inSpace) {
         auto &inSpaceGPU = dynamic_cast <const DiscreteSpaceGPU &>(inSpace);

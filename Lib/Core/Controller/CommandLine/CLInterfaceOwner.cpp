@@ -35,16 +35,16 @@ namespace Slab::Core {
         //               << " (priority " << interface->priority << ") "
         //               << "has been setup from command-line." << Log::Flush;
 
-        auto &info = Log::Info() << "Interface " << Log::FGCyan << Log::BoldFace
+        auto &note = Log::Note() << "Interface " << Log::FGCyan << Log::BoldFace
                                  << interface->getName() << Log::ResetFormatting
                                  << " (priority " << interface->priority
                                  << ") initialized with the following values from command line:";
 
         for (auto &param: interface->getParameters())
-            info << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCommandLineName() << ": "
+            note << "\n\t\t\t\t\t\t--" << std::left << std::setw(20) << param->getFullCommandLineName() << ": "
                  << param->valueToString();
 
-        info << Log::Flush;
+        note << Log::Flush;
     }
 
     auto CLInterfaceOwner::registerToManager() const -> void {

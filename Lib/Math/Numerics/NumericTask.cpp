@@ -98,16 +98,16 @@ namespace Slab::Math {
     }
 
     Core::TaskStatus NumericTask::run() {
+        numericalRecipe.setupForCurrentThread();
+
         size_t n = numericalRecipe.getNumericConfig()->getn();
 
         while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
 
-        if(forceStopFlag)
-            return Core::Aborted;
+        if(forceStopFlag)                                       return Core::Aborted;
 
         // Para cumprir com os steps quebrados faltantes:
-        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded))
-            return Core::InternalError;
+        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded)) return Core::InternalError;
 
         outputManager->notifyIntegrationFinished(getOutputInfo());
 

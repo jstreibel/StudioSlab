@@ -73,9 +73,11 @@ namespace Slab::Models {
     public:
         explicit KGRecipe(const Pointer<KGNumericConfig>& numeric_config, const Str& name="Klein-Gordon",
                           const Str& generalDescription="The Klein-Gordon scalar field equation builder",
-                          bool doRegister=false);;
+                          bool doRegister=false);
 
         virtual void* getHamiltonian() = 0;
+
+        void setupForCurrentThread() override;
 
         Pointer<Stepper> buildStepper() override;
 

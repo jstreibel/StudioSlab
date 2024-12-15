@@ -1,6 +1,7 @@
 #ifndef HamiltonGPU_H
 #define HamiltonGPU_H
 
+/*
 #include "Core/Base/System.h"
 #include "sim/fields/field-gpu.h"
 #include <thrust/device_vector.h>
@@ -26,5 +27,6 @@ private:
     Field_Cuda *temp;
     const size_t N;
 };
+ */
 
 #endif // HamiltonGPU_H

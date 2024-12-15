@@ -23,7 +23,7 @@ namespace Slab::Core {
 
         addListener(owner);
 
-        Log::Status() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
+        Log::Note() << "Interface '" << Log::FGGreen << name << Log::ResetFormatting << "' created. " << Log::Flush;
     }
 
     auto CLInterface::getParameters() const -> Vector<CLParameter_constptr> {

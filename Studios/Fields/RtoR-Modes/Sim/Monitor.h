@@ -18,10 +18,9 @@ namespace Modes {
 
     class Monitor : public Slab::Models::KGRtoR::Monitor {
     public:
-        Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax, const Str &name,
-                bool showEnergyHistoryAsDensities=true);
+        Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, const Str &name);
 
-        void setInputModes(RealVector A, RealVector k, RealVector Ω);
+        void setInputModes(RealVector A, const RealVector& k, RealVector Ω);
     };
 
 } // Modes

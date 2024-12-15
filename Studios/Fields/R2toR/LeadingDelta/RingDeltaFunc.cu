@@ -17,8 +17,8 @@ struct IsRingDeltaDomain
 
 struct RingThetaGPU
 {
-    typedef Real argument_type;
-    typedef Real result_type;
+    typedef Slab::Real argument_type;
+    typedef Slab::Real result_type;
 
     const double a, t;
     const double rMin, dx;
@@ -34,7 +34,7 @@ struct RingThetaGPU
             , data(data)
     {           }
 
-    __device__ Real operator()(int idx) {
+    __device__ Slab::Real operator()(int idx) {
         double x = rMin + (idx % N) * dx;
         double y = rMin + (idx / N) * dx;
 
@@ -48,8 +48,8 @@ struct RingThetaGPU
 
 struct RingDeltaGPU
 {
-    typedef Real argument_type;
-    typedef Real result_type;
+    typedef Slab::Real argument_type;
+    typedef Slab::Real result_type;
 
     const double eps, a, a_eps, eps_1, t;
     const double rMin, step;
@@ -68,7 +68,7 @@ struct RingDeltaGPU
     , data(data)
     {           }
 
-    __device__ Real operator()(int idx) {
+    __device__ Slab::Real operator()(int idx) {
         double x = rMin + (idx % N) * step;
         double y = rMin + (idx / N) * step;
 
@@ -83,16 +83,19 @@ struct RingDeltaGPU
 };
 
 
-bool R2toR::LeadingDelta::RingDeltaFunc::renderToNumericFunction(Core::NumericFunction<Real2D, Real> *toFunc) const {
-    auto &func = *dynamic_cast<R2toR::NumericFunction*>(toFunc);
+bool Studios::Fields::R2toRLeadingDelta::RingDeltaFunc::renderToNumericFunction(
+        Slab::Math::Base::NumericFunction<Real2D, Real> *toFunc) const {
+    auto &func = *dynamic_cast<Slab::Math::R2toR::NumericFunction*>(toFunc);
 
     auto &outputSpace = toFunc->getSpace();
-    const auto N = outputSpace.getDim().getN(0);
-    const auto h = outputSpace.geth();
+    fix &meta_data = outputSpace.getMetaData();
+
+    const auto N = meta_data.getN(0);
+    const auto h = outputSpace.getMetaData().geth(0);
     const auto xMin = func.getDomain().xMin;
 
     thrust::counting_iterator<int> sequence_begin(0);
-    thrust::counting_iterator<int> sequence_end(N * N);
+    thrust::counting_iterator<int> sequence_end((int)(N * N));
 
     DeviceVector &deviceData = outputSpace.getDeviceData();
 

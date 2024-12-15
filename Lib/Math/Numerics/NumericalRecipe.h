@@ -24,6 +24,8 @@ namespace Slab::Math::Base {
                                  const Str& generalDescription, bool doRegister = false);
 
     public:
+        virtual void setupForCurrentThread() {};
+
         virtual auto buildOutputSockets()         -> OutputSockets = 0;
         virtual auto buildStepper()               -> Pointer<Stepper> = 0;
 

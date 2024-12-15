@@ -21,7 +21,6 @@ namespace Slab::Graphics {
         Timer frameTimer = Timer();
         GUIWindow guiWindow;
 
-        const Real max_t;
         const Count max_steps;
 
         size_t step=0;
@@ -29,7 +28,7 @@ namespace Slab::Graphics {
     public:
         typedef std::shared_ptr<BaseMonitor> Ptr;
 
-        explicit BaseMonitor(Real max_t, Count max_steps,
+        explicit BaseMonitor(Count max_steps,
                              const Str& channelName="OpenGL monitor",
                              int stepsBetweenDraws=10);
 

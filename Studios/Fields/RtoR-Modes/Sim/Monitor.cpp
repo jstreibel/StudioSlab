@@ -14,13 +14,13 @@
 #define CUSTOM_TICKS false
 
 namespace Modes {
-    Monitor::Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian, Real phiMin, Real phiMax,
-                     const Str &name, bool showEnergyHistoryAsDensities)
-    : Slab::Models::KGRtoR::Monitor(params, hamiltonian, phiMin, phiMax, name, showEnergyHistoryAsDensities)
+    Monitor::Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian,
+                     const Str &name)
+    : Slab::Models::KGRtoR::Monitor(params, hamiltonian, name)
     {
     }
 
-    void Monitor::setInputModes(RealVector A, RealVector k, RealVector Ω) {
+    void Monitor::setInputModes(RealVector A, const RealVector& k, RealVector Ω) {
         assert(A.size() == Ω.size());
 
         fix N = A.size();

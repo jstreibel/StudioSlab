@@ -17,6 +17,10 @@ namespace Slab::Graphics {
         sections.emplace_back(section, style, name);
     }
 
+    Vector<R2SectionArtist::SectionData> &R2SectionArtist::getSections() {
+        return sections;
+    }
+
     bool R2SectionArtist::draw(const Plot2DWindow &window) {
         if(function2D == nullptr) return true;
 
@@ -114,4 +118,6 @@ namespace Slab::Graphics {
 
         return Artist::getRegion();
     }
+
+
 } // Graphics

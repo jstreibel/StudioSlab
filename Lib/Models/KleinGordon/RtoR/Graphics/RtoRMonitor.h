@@ -1,3 +1,4 @@
+
 //
 // Created by joao on 23/09/2019.
 //
@@ -56,15 +57,12 @@ namespace Slab::Models::KGRtoR {
     public:
         Monitor(const Pointer<KGNumericConfig> &params,
                 KGEnergy &hamiltonian,
-                Real phiMin=-1,
-                Real phiMax=1,
-                const Str& name = "general graphic monitor",
-                bool showEnergyHistoryAsDensities=false);
+                const Str& name = "general graphic monitor");
 
         void draw() override;
 
-        virtual void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory);
-        virtual void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
+        virtual void setSimulationHistory  (const Pointer<const R2toR::NumericFunction> &simulationHistory);
+        virtual void setSpaceFourierHistory(const Pointer<const R2toR::NumericFunction> &sftHistory,
                                             const DFTDataHistory &dftData);
 
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;

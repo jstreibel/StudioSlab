@@ -28,9 +28,7 @@ typedef thrust::device_vector<floatt> DeviceVector;
 typedef thrust::host_vector<floatt> HostVector;
 
 #else  // USE_CUDA
-namespace Slab::CUDA {
-    typedef class Dummy {} DeviceVector;
-}
+typedef class Dummy {} DeviceVector;
 #endif // USE_CUDA
 
 #endif //STUDIOSLAB_TYPESGPU_H

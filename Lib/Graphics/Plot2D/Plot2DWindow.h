@@ -72,7 +72,7 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context);
+        explicit Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context = nullptr);
 
         void draw() override;
 

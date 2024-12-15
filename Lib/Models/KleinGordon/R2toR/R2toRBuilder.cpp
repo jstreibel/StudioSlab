@@ -4,8 +4,6 @@
 
 #include "R2toRBuilder.h"
 
-#include <utility>
-
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
@@ -25,11 +23,12 @@
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
 #include "Math/Function/R2toR/Model/Operators/R2toRLaplacian.h"
 #include "Graphics/Window/SlabWindowManager.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 
-namespace Slab::Math::R2toR {
+namespace Slab::Models::KGR2toR {
 
-    Builder::Builder(const Str& name, Str description)
-            : Models::KGRecipe(New<Models::KGNumericConfig>(), name, std::move(description)) {    }
+    Builder::Builder(const Str& name, const Str& description, bool do_register)
+            : Models::KGRecipe(New<Models::KGNumericConfig>(false), name, description, do_register) {    }
 
     Vector<Pointer<Socket>> Builder::buildOutputSockets() {
         Vector<Pointer<Socket>> sockets;
@@ -38,8 +37,8 @@ namespace Slab::Math::R2toR {
         const auto shouldOutputOpenGL = *VisualMonitor;
         const auto shouldTrackHistory = !*noHistoryToFile;
 
-        if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
-        else                Core::BackendManager::Startup("Headless");
+        // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
+        // else                Core::BackendManager::Startup("Headless");
 
         // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
 
@@ -50,6 +49,8 @@ namespace Slab::Math::R2toR {
             const Real rMax = kg_numeric_config->getxMax();
             const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
+            using Rotation = Math::R2toR::Rotation;
+
             Rotation R;
             R = Rotation(M_PI*angleDegrees/180);
             section = RtoR2::StraightLine(R * x0, R * xf);
@@ -58,12 +59,12 @@ namespace Slab::Math::R2toR {
 
         ///********************************************************************************************/
         if (shouldTrackHistory) {
-            const Real t = kg_numeric_config->gett();
+            // const Real t = kg_numeric_config->gett();
             const UInt outputResolutionX = *outputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
 
-            SpaceFilterBase *spaceFilter = new DimensionReductionFilter(
+            SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
                     outputResolutionX, section, kg_numeric_config->getL());
 
             const auto N = (Real) kg_numeric_config->getN();
@@ -110,7 +111,7 @@ namespace Slab::Math::R2toR {
             return DataAlloc<R2toR::NumericFunction_CPU>("IntegrationData [CPU]", N, N, xLeft, xLeft, h, h);
 
 #if USE_CUDA
-        else if (simulationConfig.dev == GPU)
+        else if (device_config == Device::GPU)
             return New<R2toR::NumericFunction_GPU>(N, xLeft, h);
 #endif
 
@@ -127,12 +128,10 @@ namespace Slab::Math::R2toR {
         return New<SolvySolver>(dphi, Laplacian, thePotential);
     }
 
-    auto Builder::buildOpenGLOutput() -> R2toR::OutputOpenGL * {
+    auto Builder::buildOpenGLOutput() -> OutputOpenGL * {
         // t_max, max_steps, x_min, x_max, y_min, y_max
         IN conf = *kg_numeric_config;
-        Real x_min = conf.getxMin();
-        Real x_max = conf.getxMax();
-        return new R2toR::OutputOpenGL(conf.gett(), conf.getn(), x_min, x_max, x_min, x_max);
+        return new OutputOpenGL(conf.getn());
     }
 
     auto Builder::newFieldState() -> R2toR::EquationState_ptr {
@@ -153,4 +152,4 @@ namespace Slab::Math::R2toR {
 
         return u_0;
     }
-};
+}

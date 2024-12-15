@@ -38,6 +38,7 @@ namespace Slab::Graphics {
         auto getFunction() const -> R2toR::Function_constptr;
 
         void addSection(const RtoR2::ParametricCurve_ptr&, const Pointer<PlotStyle>&, const Str& name);
+        Vector<SectionData>& getSections();
         void clearSections();
 
         const RectR &getRegion() override;
