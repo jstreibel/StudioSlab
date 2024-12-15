@@ -77,7 +77,7 @@ namespace Slab::Models::KGRtoR {
         py_entries.emplace_back("t_start",        ToStr(t_start)    );
         py_entries.emplace_back("t_end",          ToStr(t_end)      );
 
-        return SnapshotOutput::OutputNumericFunction(average, filename, py_entries);
+        return SnapshotOutput::OutputNumericFunction(average->getSpace(), filename, py_entries);
     }
 
 }

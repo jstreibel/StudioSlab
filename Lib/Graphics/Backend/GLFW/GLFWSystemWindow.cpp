@@ -233,5 +233,13 @@ namespace Slab::Graphics {
         glfwSetWindowShouldClose((GLFWwindow*)window_ptr, GLFW_TRUE);
     }
 
+    void GLFWSystemWindow::setSystemWindowTitle(const Str &title) {
+        auto window = (GLFWwindow*)window_ptr;
+
+        glfwSetWindowTitle(window, title.c_str());
+
+        SystemWindow::setSystemWindowTitle(title);
+    }
+
 
 } // Slab::Graphics

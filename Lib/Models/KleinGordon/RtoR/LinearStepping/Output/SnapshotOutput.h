@@ -26,12 +26,12 @@ namespace Slab::Models::KGRtoR {
 
         SnapshotOutput(const Str &fileName, const Str &socketName, const Str &description);
     public:
-        SnapshotOutput(const Str &fileName);
+        explicit SnapshotOutput(const Str &fileName);
 
         auto notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool override;
 
         static bool
-        OutputNumericFunction(const Pointer<RtoR::NumericFunction>&, const Str& filename, Vector<Pair<Str,Str>> xtraPyDictEntries={});
+        OutputNumericFunction(const Math::DiscreteSpace&, const Str& filename, const Vector<Pair<Str,Str>>& xtraPyDictEntries={});
     };
 
 } // KleinGordon::RtoR

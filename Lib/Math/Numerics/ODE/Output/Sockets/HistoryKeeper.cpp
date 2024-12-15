@@ -27,7 +27,7 @@ namespace Slab::Math {
 
         if(spaceDataHistory.empty()) return 0;
 
-        IN reference = spaceDataHistory.front().second;
+        IN reference = spaceDataHistory.front().first;
         fix N = reference->getTotalDiscreteSites();
 
         return count * N * sizeof(Real);

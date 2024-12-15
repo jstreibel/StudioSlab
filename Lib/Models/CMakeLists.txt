@@ -31,6 +31,7 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h
 
 		KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.cpp
+		KleinGordon/R2toR/Graphics/LastOutputVtkVisualizer.cpp
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
@@ -113,7 +114,15 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		${MOLDYN_SOURCES}
 		DynamicsNumericConfig.cpp
 		DynamicsNumericConfig.h
+		KleinGordon/R2toR/Output/KG2DSnapshotOutput.cpp
+		KleinGordon/R2toR/Output/KG2DSnapshotOutput.h
 )
 
-target_link_libraries(${LIB_LOCAL_NAME} Slab-Core Slab-Math Slab-Graphics )
+target_link_libraries(${LIB_LOCAL_NAME}
+		Slab-Core
+		Slab-Math
+		Slab-Graphics
+
+		${VTK_LIBRARIES}
+)
 message(NOTICE "Added library " ${LIB_LOCAL_NAME})

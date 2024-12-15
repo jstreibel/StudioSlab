@@ -12,16 +12,17 @@
 
 #include <fstream>
 #include <iomanip>
+#include <utility>
 
 
 namespace Slab::Math {
 
     using Core::Log;
 
-    OutputSnapshot::OutputSnapshot(const Str &customFileDescription,
+    OutputSnapshot::OutputSnapshot(Str customFileDescription,
                                    const size_t T_fileNamePrecision)
             : Socket("Snapshot output", 1),
-              customFileDescription(customFileDescription),
+              customFileDescription(std::move(customFileDescription)),
               T_fileNamePrecision(T_fileNamePrecision) {}
 
     OutputSnapshot::~OutputSnapshot() = default;

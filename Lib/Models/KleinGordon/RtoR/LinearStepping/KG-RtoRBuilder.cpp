@@ -107,7 +107,6 @@ namespace Slab::Models::KGRtoR {
             auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
-
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }

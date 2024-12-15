@@ -7,49 +7,51 @@
 #include "Models/KleinGordon/R2toR/EquationState.h"
 #include "Graphics/Styles/Colors.h"
 
+#include <vtk/vtkSmartPointer.h>
+#include <vtk/vtkStructuredPoints.h>
+#include <vtk/vtkFloatArray.h>
+#include <vtk/vtkActor.h>
 
-#include <vtkSmartPointer.h>
-#include <vtkStructuredPoints.h>
-#include <vtkFloatArray.h>
-#include <vtkActor.h>
+#include <vtk/vtkProperty.h>
+#include <vtk/vtkTextProperty.h>
 
-#include <vtkProperty.h>
-#include <vtkTextProperty.h>
+#include <vtk/vtkRenderer.h>
+#include <vtk/vtkRenderWindow.h>
+#include <vtk/vtkRenderWindowInteractor.h>
 
-#include <vtkRenderer.h>
-#include <vtkRenderWindow.h>
-#include <vtkRenderWindowInteractor.h>
+#include <vtk/vtkLookupTable.h>
+#include <vtk/vtkPoints.h>
+#include <vtk/vtkPointData.h>
+#include <vtk/vtkCellData.h>
+#include <vtk/vtkPolyDataMapper.h>
+#include <vtk/vtkScalarBarActor.h>
+#include <vtk/vtkOrientationMarkerWidget.h>
+#include <vtk/vtkStructuredGrid.h>
+#include <vtk/vtkTransform.h>
+#include <vtk/vtkStructuredGridGeometryFilter.h>
 
-#include <vtkLookupTable.h>
-#include <vtkPoints.h>
-#include <vtkPointData.h>
-#include <vtkCellData.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkScalarBarActor.h>
-#include <vtkOrientationMarkerWidget.h>
-#include <vtkStructuredGrid.h>
-#include <vtkTransform.h>
-#include <vtkStructuredGridGeometryFilter.h>
-
-#include <vtkCubeAxesActor.h>
-#include <vtkColorTransferFunction.h>
+#include <vtk/vtkCubeAxesActor.h>
+#include <vtk/vtkColorTransferFunction.h>
 
 #define vtkPtrNew(ofClass) vtkSmartPointer<ofClass>::New()
 
-namespace Slab::Math::R2toR {
+namespace Slab::Models::KGR2toR {
 
-    LastOutputVTKVisualizer::LastOutputVTKVisualizer(const NumericParams &params, int outN)
-    : Socket(params, "LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
+    using namespace Core;
+
+    LastOutputVTKVisualizer::LastOutputVTKVisualizer(Count total_steps, int outN)
+    : Math::Socket("LastOutVTKViz", -1, "VTK visualization of the last simulation output.")
     , outN(outN) {
 
     }
 
     bool showA();
-    bool showB(const NumericParams &params, const OutputPacket packet, int outN);
+    bool showB(const OutputPacket& packet, int outN);
+
 
     bool LastOutputVTKVisualizer::notifyIntegrationHasFinished(const OutputPacket &lastOut) {
         Log::Info("LastOutputVTKVisualizer") << " will now output;" << Log::Flush;
-        return showB(params, lastOut, outN);
+        return showB(lastOut, outN);
     }
 
     Real logAbs(Real val, Real eps){
@@ -62,7 +64,7 @@ namespace Slab::Math::R2toR {
         return eps * (exp(abs(val)) - 1.0) * sign;
     }
 
-    bool showB(const NumericParams &params, const OutputPacket packet, int outN) {
+    bool showB(const OutputPacket& packet, int outN) {
         auto zPassiveScale = 2.0;
         double zMin=10., zMax=-10.;
         const auto eps_log = 1.2-2;
@@ -75,11 +77,13 @@ namespace Slab::Math::R2toR {
         heights->SetNumberOfComponents(1);
 
         {
-            auto &phi = packet.getEqStateData<R2toR::EquationState>()->getPhi();
+            auto &phi = packet.GetNakedStateData<R2toR::EquationState>()->getPhi();
             phi.getSpace().syncHost();
 
-            auto L = params.getL();
-            auto xMin = params.getxMin();
+            fix h = phi.getSpace().getMetaData().geth(0);
+            fix N = phi.getSpace().getMetaData().getN(0);
+            auto L = h*N;
+            auto xMin = .5*L;
             auto dx = L/(double)outN;
 
             // Fill the points and heights with data from your matrix
@@ -265,5 +269,6 @@ namespace Slab::Math::R2toR {
 
         return true;
     }
+
 } // R2toR
 

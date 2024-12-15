@@ -43,6 +43,8 @@ namespace Slab::Graphics {
 
         void setMouseCursor(MouseCursor cursor) override;
 
+        void setSystemWindowTitle(const Str &title) override;
+
 
         static void window_focus_callback(GLFWwindow *window, int focused);
         static void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods);

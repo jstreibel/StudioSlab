@@ -65,7 +65,8 @@ namespace Slab::Graphics {
     }
 
     void SystemWindow::setSystemWindowTitle(const Str& title) {
-        NOT_IMPLEMENTED
+        Core::Log::Warning() << "Could not set SystemWindow title to \"" << title << "\": Current SystemWindow implementation does allow for changing window title." << Core::Log::Flush;
+
     }
 
     void SystemWindow::clearListeners() {

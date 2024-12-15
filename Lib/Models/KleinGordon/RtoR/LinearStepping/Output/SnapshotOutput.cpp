@@ -39,12 +39,12 @@ namespace Slab::Models::KGRtoR {
 
         auto f = filterData(theVeryLastOutputInformation);
 
-        return OutputNumericFunction(Naked(f), outputFileName);
+        return OutputNumericFunction(f.getSpace(), outputFileName);
     }
 
-    bool SnapshotOutput::OutputNumericFunction(const Pointer<RtoR::NumericFunction>& funky,
+    bool SnapshotOutput::OutputNumericFunction(const Math::DiscreteSpace& space,
                                                const Str& outputFileName,
-                                               Vector<Pair<Str,Str>> xtraPyDictEntries)
+                                               const Vector<Pair<Str,Str>>& xtraPyDictEntries)
     {
         std::ofstream outputFile(outputFileName, std::ios::out | std::ios::binary);
         if(!outputFile){
@@ -57,13 +57,13 @@ namespace Slab::Models::KGRtoR {
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
         outputFile << "{" << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
-        for(auto entry : xtraPyDictEntries) // {key: value, key:value, }
+        for(const auto& entry : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
         outputFile << "} " << SEPARATOR << std::flush;
 
-        auto &data = funky->getSpace().getHostData(true);
+        auto &data = space.getHostData(true);
         auto vecData = std::vector<double>(std::begin(data), std::end(data));
-        outputFile.write(reinterpret_cast<const char*>(&data[0]), data.size()*sizeof(Real));
+        outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(Real)));
 
         outputFile.close();
         Core::Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::Log::Flush;

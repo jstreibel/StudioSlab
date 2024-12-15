@@ -35,6 +35,7 @@ find_package( GLUT )
 find_package( OpenGL )
 
 set( CMAKE_PREFIX_PATH /usr/share/cmake/Modules)
+#find_package( VTK REQUIRED )
 find_package( VTK COMPONENTS
 		CommonColor
 		CommonComputationalGeometry
@@ -48,13 +49,17 @@ find_package( VTK COMPONENTS
 		FiltersCore
 		FiltersGeneral
 		FiltersSources
+		FiltersGeometry
 		ImagingCore
 		InteractionStyle
 		RenderingCore
-		#RenderingOpenGL
+		RenderingAnnotation
+		#RenderingOpenGL2
 )
 message(STATUS "VTK includes: ${VTK_USE_FILE}")
 message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
+
+
 
 if( STUDIOSLAB_OMP_SUPPORT )
 	find_package(OpenMP REQUIRED)

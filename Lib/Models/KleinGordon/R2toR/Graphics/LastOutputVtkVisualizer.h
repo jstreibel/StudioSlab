@@ -7,17 +7,17 @@
 
 #include "Math/Numerics/Socket.h"
 
-namespace Slab::Math::R2toR {
+namespace Slab::Models::KGR2toR {
 
-    class LastOutputVTKVisualizer : public Socket {
+    class LastOutputVTKVisualizer : public Math::Socket {
         int outN;
     protected:
-        auto handleOutput(const OutputPacket &packet) -> void override {};
+        auto handleOutput(const Math::OutputPacket &packet) -> void override {};
 
     public:
-        LastOutputVTKVisualizer(const NumericConfig &params, int outN=256);
+        explicit LastOutputVTKVisualizer(Count total_steps, int outN=256);
 
-        auto notifyIntegrationHasFinished(const OutputPacket &) -> bool override;
+        auto notifyIntegrationHasFinished(const Math::OutputPacket &) -> bool override;
 
     };
 } // R2toR

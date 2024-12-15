@@ -3,27 +3,31 @@
 //
 
 #include "R2toRBuilder.h"
+#include "EquationState.h"
+
+#include "Utils/Files.h"
 
 #include "Core/Backend/BackendManager.h"
-
-#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
-#include "EquationState.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 
 #include "Math/Numerics/ODE/Output/Format/OutputFormatterBase.h"
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
 #include "Math/Numerics/ODE/Output/Format/SpaceFilterBase.h"
 #include "Math/Numerics/ODE/Output/Sockets/OutputHistoryToFile.h"
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
-
+#include "Math/Function/RtoR/Model/FunctionsCollection/AbsFunction.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/NullFunction.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h"
+#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
 #include "Math/Function/R2toR/Output/Filters/DimensionReductionFilter.h"
 #include "Math/Function/R2toR/Model/FunctionsCollection/FunctionAzimuthalSymmetry.h"
-
-#include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
 #include "Math/Function/R2toR/Model/Operators/R2toRLaplacian.h"
+
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Math/Function/R2toR/Model/R2toRNumericFunctionGPU.h"
+
+#include "Models/KleinGordon/R2toR/Graphics/LastOutputVtkVisualizer.h"
+#include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
+#include "Models/KleinGordon/R2toR/Output/KG2DSnapshotOutput.h"
+
 
 namespace Slab::Models::KGR2toR {
 
@@ -33,33 +37,39 @@ namespace Slab::Models::KGR2toR {
     Vector<Pointer<Socket>> Builder::buildOutputSockets() {
         Vector<Pointer<Socket>> sockets;
 
+        ///********************************************************************************************/
+        if(*takeSnapshot) {
+            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            Utils::TouchFolder(snapshotsFolder);
 
-        const auto shouldOutputOpenGL = *VisualMonitor;
-        const auto shouldTrackHistory = !*noHistoryToFile;
+            auto snapshotFilename = snapshotsFolder + suggestFileName() + ".kg2d.snapshot.oscb";
 
-        // if (*VisualMonitor) Core::BackendManager::Startup("GLFW");
-        // else                Core::BackendManager::Startup("Headless");
+            sockets.emplace_back(Slab::New<KG2DSnapshotOutput>(snapshotFilename));
 
-        // outputManager->addOutputChannel(new LastOutputVTKVisualizer(numericParams, numericParams.getN()));
-
-        RtoR2::StraightLine section;
-        auto angleDegrees = 22.5;
-        {
-            const Real rMin = kg_numeric_config->getxMin();
-            const Real rMax = kg_numeric_config->getxMax();
-            const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
-
-            using Rotation = Math::R2toR::Rotation;
-
-            Rotation R;
-            R = Rotation(M_PI*angleDegrees/180);
-            section = RtoR2::StraightLine(R * x0, R * xf);
+            sockets.emplace_back(New<LastOutputVTKVisualizer>(kg_numeric_config->getN()));
         }
+        ///********************************************************************************************/
+
 
 
         ///********************************************************************************************/
-        if (shouldTrackHistory) {
+        if (!*noHistoryToFile) {
             // const Real t = kg_numeric_config->gett();
+
+            RtoR2::StraightLine section;
+            auto angleDegrees = 22.5;
+            {
+                const Real rMin = kg_numeric_config->getxMin();
+                const Real rMax = kg_numeric_config->getxMax();
+                const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
+
+                using Rotation = Math::R2toR::Rotation;
+
+                Rotation R;
+                R = Rotation(M_PI*angleDegrees/180);
+                section = RtoR2::StraightLine(R * x0, R * xf);
+            }
+
             const UInt outputResolutionX = *outputResolution;
 
             OutputFormatterBase *outputFilter = new BinarySOF;
@@ -82,7 +92,7 @@ namespace Slab::Models::KGR2toR {
 
 
         ///********************************************************************************************/
-        if (shouldOutputOpenGL) {
+        if (*VisualMonitor) {
             auto backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
@@ -91,12 +101,8 @@ namespace Slab::Models::KGR2toR {
             wm->addSlabWindow(glOut);
             backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(glOut);
-        } else {
-            /* O objetivo de relacionar o numero de passos para o Console Monitor com o do file output eh para que
-             * ambos possam ficar sincronizados e o integrador possa rodar diversos passos antes de fazer o output. */
-            IN conf = *kg_numeric_config;
-            sockets.emplace_back(New<OutputConsoleMonitor>(conf.getn()));
         }
+        else sockets.emplace_back(New<OutputConsoleMonitor>(kg_numeric_config->getn()));
 
         return sockets;
 

@@ -55,6 +55,7 @@ namespace Slab::Graphics {
         auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);
 
+        virtual
         void setSystemWindowTitle(const Str& title);
     };
 
