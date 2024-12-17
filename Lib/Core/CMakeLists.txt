@@ -29,6 +29,7 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
 		Controller/Interface/InterfaceManager.h
         Tools/UniqueObject.cpp
         Tools/UniqueObject.h
+		Backend/Backend.cpp
 
 )
 

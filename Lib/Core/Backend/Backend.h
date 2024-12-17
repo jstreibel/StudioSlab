@@ -12,13 +12,13 @@
 namespace Slab::Core {
 
     class Backend : public CLInterfaceOwner {
+        friend class BackendManager;
+
         Str name;
 
-        friend class BackendManager;
         virtual void notifyModuleLoaded(const Pointer<Module>&) {};
     protected:
-        explicit Backend(const Str& name)
-        : CLInterfaceOwner(Str(name)) {}
+        explicit Backend(const Str& name);
 
     public:
         virtual ~Backend() = default;
@@ -28,7 +28,6 @@ namespace Slab::Core {
         Str getName() const {return name;}
 
         virtual auto isHeadless() const -> bool { return true; }
-
     };
 }
 

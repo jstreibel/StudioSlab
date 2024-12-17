@@ -24,7 +24,9 @@
 
 #include "Graphics/Window/SlabWindowManager.h"
 
+#ifdef USE_VTK
 #include "Models/KleinGordon/R2toR/Graphics/LastOutputVtkVisualizer.h"
+#endif
 #include "Models/KleinGordon/R2toR/KG-R2toRSolver.h"
 #include "Models/KleinGordon/R2toR/Output/KG2DSnapshotOutput.h"
 
@@ -46,7 +48,9 @@ namespace Slab::Models::KGR2toR {
 
             sockets.emplace_back(Slab::New<KG2DSnapshotOutput>(snapshotFilename));
 
+            #ifdef USE_VTK
             sockets.emplace_back(New<LastOutputVTKVisualizer>(kg_numeric_config->getN()));
+            #endif
         }
         ///********************************************************************************************/
 

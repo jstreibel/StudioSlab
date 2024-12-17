@@ -3,10 +3,11 @@ cmake_minimum_required(VERSION 3.26)
 option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
 option( STUDIOSLAB_OMP_SUPPORT "Enable OpenMP support in StudioSlab libraries" ON )
 option( STUDIOSLAB_SFML2_SUPPORT "Enable SFML 2 support in StudioSlab" ON )
+option( STUDIOSLAB_VTK_SUPPORT "Enable VTK support in StudioSlab libraries" OFF )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
 option( STUDIOSLAB_FAST_COMPILE "Disable O3 etc." OFF)
 
-
+set( STUDIOSLAB_VTK_SUPPORT ON )
 
 project(StudioSlab CXX C )
 
@@ -35,8 +36,10 @@ find_package( GLUT )
 find_package( OpenGL )
 
 set( CMAKE_PREFIX_PATH /usr/share/cmake/Modules)
-#find_package( VTK REQUIRED )
-find_package( VTK COMPONENTS
+
+if ( STUDIOSLAB_VTK_SUPPORT )
+	find_package( VTK REQUIRED )
+	find_package( VTK COMPONENTS
 		CommonColor
 		CommonComputationalGeometry
 		CommonCore
@@ -53,12 +56,21 @@ find_package( VTK COMPONENTS
 		ImagingCore
 		InteractionStyle
 		RenderingCore
+		RenderingUI
 		RenderingAnnotation
-		#RenderingOpenGL2
-)
-message(STATUS "VTK includes: ${VTK_USE_FILE}")
-message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
+		RenderingOpenGL2
+		RenderingGL2PSOpenGL2
+		RenderingContextOpenGL2
+		RenderingFreeType
+	)
+	message(STATUS "StudioSlab VTK support is ENABLED."  )
+	message(STATUS "VTK includes: ${VTK_USE_FILE}")
+	message(STATUS "VTK libraries: ${VTK_LIBRARIES}")
 
+	add_compile_definitions(USE_VTK=true) # define preprocessor macro (very useful)
+else ()
+	message(STATUS "StudioSlab VTK support is DISABLED."  )
+endif ()
 
 
 if( STUDIOSLAB_OMP_SUPPORT )

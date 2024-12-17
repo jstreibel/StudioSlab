@@ -59,7 +59,8 @@ namespace Slab::Models::KGRtoR {
         outputFile << "{" << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
         for(const auto& entry : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
-        outputFile << "} " << SEPARATOR << std::flush;
+        outputFile.seekp(-2, std::ios_base::cur);
+        outputFile << "}" << SEPARATOR << std::flush;
 
         auto &data = space.getHostData(true);
         auto vecData = std::vector<double>(std::begin(data), std::end(data));

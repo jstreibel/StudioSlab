@@ -16,8 +16,9 @@ namespace Slab::Models::KGR2toR {
 
     public:
         explicit LastOutputVTKVisualizer(Count total_steps, int outN=256);
+        ~LastOutputVTKVisualizer() override;
 
-        auto notifyIntegrationHasFinished(const Math::OutputPacket &) -> bool override;
+        auto notifyIntegrationHasFinished(const Math::OutputPacket &theVeryLastOutputInformation) -> bool override;
 
     };
 } // R2toR

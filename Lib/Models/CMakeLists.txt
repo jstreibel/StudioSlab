@@ -31,7 +31,6 @@ set ( KG_SOURCES
 		KleinGordon/RtoR/Graphics/Panels/CorrelationsPanel.h
 
 		KleinGordon/R2toR/Graphics/R2toROutputOpenGLGeneric.cpp
-		KleinGordon/R2toR/Graphics/LastOutputVtkVisualizer.cpp
 		KleinGordon/R2toR/R2toRBuilder.cpp
 		KleinGordon/R2toR/R2toRBuilder.h
 		KleinGordon/R2toR/BoundaryConditions/R2ToRBoundaryCondition.cpp
@@ -66,6 +65,10 @@ set ( KG_SOURCES
 		KleinGordon/KG-NumericConfig.cpp
 		KleinGordon/KG-NumericConfig.h
 )
+
+if(STUDIOSLAB_VTK_SUPPORT)
+	set(MODELS_VTK_SOURCES KleinGordon/R2toR/Graphics/LastOutputVtkVisualizer.cpp)
+endif ()
 
 set ( XY_SOURCES
 
@@ -112,6 +115,9 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		${KG_SOURCES_CUDA}
 		${XY_SOURCES}
 		${MOLDYN_SOURCES}
+
+		${MODELS_VTK_SOURCES}
+
 		DynamicsNumericConfig.cpp
 		DynamicsNumericConfig.h
 		KleinGordon/R2toR/Output/KG2DSnapshotOutput.cpp

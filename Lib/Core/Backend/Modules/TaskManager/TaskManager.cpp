@@ -10,7 +10,20 @@ namespace Slab::Core {
     TaskManagerModule::TaskManagerModule(TaskManagerModule::DestructorPolicy policy)
     : Module("Task Manager"), destructorPolicy(policy) {    }
 
-    TaskManagerModule::Job TaskManagerModule::addTask(Task_ptr task) {
+    TaskManagerModule::~TaskManagerModule() {
+        if(destructorPolicy == WaitAll) {
+            for(const auto &job : jobs) {
+                auto thread = job.second;
+                if (thread->joinable()) thread->join();
+
+                auto task = job.first;
+            }
+        }
+        else if(destructorPolicy == AbortAll)
+            abortAllTasks();
+    }
+
+    auto TaskManagerModule::addTask(Task_ptr task) -> TaskManagerModule::Job {
         std::lock_guard<std::mutex> lock(mtx);
 
         auto funky = [&task]() {
@@ -42,17 +55,6 @@ namespace Slab::Core {
         jobs.emplace_back(job);
 
         return job;
-    }
-
-    TaskManagerModule::~TaskManagerModule() {
-        if(destructorPolicy == WaitAll) {
-            for(const auto &job : jobs) {
-                auto thread = job.second;
-                if (thread->joinable()) thread->join();
-            }
-        }
-        else if(destructorPolicy == AbortAll)
-            abortAllTasks();
     }
 
     void TaskManagerModule::abortAllTasks() {
