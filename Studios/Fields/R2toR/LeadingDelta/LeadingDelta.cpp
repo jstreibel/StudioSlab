@@ -44,7 +44,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
                 ringDelta->setRadius(t);
                 ringDelta->renderToNumericFunction(&ϕₜ);
             } else {
-                const bool AS_THETA = false;
+                const bool AS_THETA = true;
 
                 if(AS_THETA) {
                     const auto radius = t;

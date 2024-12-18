@@ -301,7 +301,7 @@ namespace Slab::Models::KGR2toR {
         const auto font_max = (int)(24*1.5);
         const double zPassiveScale = 2.0;
         double zMin = 10.0, zMax = -10.0;
-        const double eps_log = 1.2 - 2; // -0.8 just as in your code
+        const double eps_log = 1.e-1; // -0.8 just as in your code
 
         // Create a vtkPoints object
         auto points = vtkPtrNew(vtkPoints);
