@@ -109,8 +109,6 @@ namespace Slab::Models::KGRtoR {
     }
 
     void CorrelationsPanel::draw() {
-        guiWindow.begin();
-
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
                 static auto discardRedundant = false;
@@ -122,8 +120,6 @@ namespace Slab::Models::KGRtoR {
                     this->computeAll(discardRedundant);
             }
         });
-
-        guiWindow.end();
 
         WindowPanel::draw();
     }

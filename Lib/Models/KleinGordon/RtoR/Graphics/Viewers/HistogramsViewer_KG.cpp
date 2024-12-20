@@ -47,31 +47,30 @@ namespace Slab::Models::KGRtoR {
     }
 
     void HistogramsViewer_KG::draw() {
-        gui_window->begin();
+        gui_window->AddExternalDraw([this](){
+            fix func = getFunction();
+            if(func == nullptr) return;
 
-        fix func = getFunction();
-        if(func == nullptr) return;
+            fix min_t = func->getDomain().yMin;
+            fix max_t = func->getDomain().yMax;
+            auto dt = func->getDomain().getLy() / (func->getM()-1);
 
-        fix min_t = func->getDomain().yMin;
-        fix max_t = func->getDomain().yMax;
-        auto dt = func->getDomain().getLy() / (func->getM()-1);
+            auto t  = (float)t_min;
+            auto Δt = (float)t_delta;
 
-        auto t  = (float)t_min;
-        auto Δt = (float)t_delta;
+            if(ImGui::SliderInt("n bins", &nbins, 10, 2000)
+               | ImGui::Checkbox("Pretty bars", &pretty)
+               | ImGui::SliderFloat("t##histogram", &t, min_t, max_t-t_delta)
+               | ImGui::SliderFloat("Δt##histogram", &Δt, dt, max_t-t)) {
+                t_min = (Slab::Real)t;
+                t_delta = (Slab::Real)Δt;
 
-        if(ImGui::SliderInt("n bins", &nbins, 10, 2000)
-         | ImGui::Checkbox("Pretty bars", &pretty)
-         | ImGui::SliderFloat("t##histogram", &t, min_t, max_t-t_delta)
-         | ImGui::SliderFloat("Δt##histogram", &Δt, dt, max_t-t)) {
-            t_min = (Slab::Real)t;
-            t_delta = (Slab::Real)Δt;
+                updateHistograms();
+            }
 
-            updateHistograms();
-        }
+            ImGui::Text("Sheer data size: %i", (int)sheer_size);
+        });
 
-        ImGui::Text("Sheer data size: %i", (int)sheer_size);
-
-        gui_window->end();
         WindowPanel::draw();
     }
 

@@ -35,8 +35,6 @@ namespace Slab::Graphics {
     void ModesHistoryViewer::draw() {
         if(getFunction() == nullptr) return;
 
-        gui_window->begin();
-
         gui_window->AddExternalDraw([this]() {
             fix dk = (float) (M_PI / getFunction()->getDomain().getLx());
             fix k_min = dk;
@@ -46,8 +44,6 @@ namespace Slab::Graphics {
                 | ImGui::SliderInt("n modes##modes viewer", &n_modes, 1, 15))
                 setupModes();
         });
-
-        gui_window->end();
 
         WindowPanel::draw();
     }

@@ -34,27 +34,26 @@ namespace Slab::Models::KGRtoR {
     }
 
     void HistoryViewer::draw() {
-        auto func = getFunction();
+        if(getFunction() == nullptr) return;
 
-        if(func== nullptr) return;
+        gui_window->AddExternalDraw([this](){
+            auto func = getFunction();
 
-        gui_window->begin();
-        fix t_min = (float)func->getDomain().yMin;
-        fix t_max = (float)func->getDomain().yMax;
-        auto current_t = (float)(curr_ti*dt);
-        if(ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)){
-            curr_ti = floor(current_t/dt);
-            function_section->getx0().y = current_t;
-        }
-        if(ImGui::DragInt("tᵢ##HistoryViewer(2)", &curr_ti, 1e-1f, 0, getFunction()->getM())){
-            function_section->getx0().y = curr_ti*dt;
-        }
+            fix t_min = (float)func->getDomain().yMin;
+            fix t_max = (float)func->getDomain().yMax;
+            auto current_t = (float)(curr_ti*dt);
+            if(ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)){
+                curr_ti = floor(current_t/dt);
+                function_section->getx0().y = current_t;
+            }
+            if(ImGui::DragInt("tᵢ##HistoryViewer(2)", &curr_ti, 1e-1f, 0, getFunction()->getM())){
+                function_section->getx0().y = curr_ti*dt;
+            }
 
-        if(ImGui::SliderInt("oversampling", &oversampling, 1, 16)) {
-            function_section_artist->setSamples(func->getN() * oversampling);
-        }
-
-        gui_window->end();
+            if(ImGui::SliderInt("oversampling", &oversampling, 1, 16)) {
+                function_section_artist->setSamples(func->getN() * oversampling);
+            }
+        });
 
         WindowPanel::draw();
     }

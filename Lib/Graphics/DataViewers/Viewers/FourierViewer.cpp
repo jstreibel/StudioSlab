@@ -105,8 +105,6 @@ namespace Slab::Graphics {
         auto function = getFunction();
         if(function == nullptr) return;
 
-        gui_window->begin();
-
         gui_window->AddExternalDraw([this]() {
             auto function = getFunction();
 
@@ -170,8 +168,6 @@ namespace Slab::Graphics {
                 }
             }
         });
-
-        gui_window->end();
 
         WindowPanel::draw();
     }

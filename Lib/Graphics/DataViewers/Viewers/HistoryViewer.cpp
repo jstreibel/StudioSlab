@@ -108,8 +108,6 @@ namespace Slab::Graphics {
     void HistoryViewer::draw() {
         if(getFunction()== nullptr) return;
 
-        gui_window->begin();
-
         gui_window->AddExternalDraw([this]() {
             auto func = getFunction();
 
@@ -127,8 +125,6 @@ namespace Slab::Graphics {
                 dft_section_artist->setSamples(xft_amplitudes->getN() * oversampling);
             }
         });
-
-        gui_window->end();
 
         WindowPanel::draw();
     }

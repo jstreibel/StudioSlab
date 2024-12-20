@@ -79,108 +79,109 @@ namespace Slab::Models::KGRtoR {
     }
 
     void TwoPointCorrelationViewer_KG::draw() {
-        auto function = getFunction();
+        if(getFunction() == nullptr) return;
 
-        fix c0_min=1e-5f;
-        fix c0_max=1e5f;
-        fix xi_min = 1e-3f;
-        fix xi_max = 1e+3f;
-        fix lambda_min = 1e-2f;
-        fix lambda_max = 1e+2f;
+        gui_window->AddExternalDraw([this](){
+            auto function = getFunction();
 
-        gui_window->begin();
-        ImGui::SeparatorText("Space-domain analytic 2-point correlation");
-        {
-            auto &funky = powerDecayCorrelation;
-            ImGui::BeginGroup();
+            fix c0_min=1e-5f;
+            fix c0_max=1e5f;
+            fix xi_min = 1e-3f;
+            fix xi_max = 1e+3f;
+            fix lambda_min = 1e-2f;
+            fix lambda_max = 1e+2f;
+
+            ImGui::SeparatorText("Space-domain analytic 2-point correlation");
             {
-                using Nature = CorrelationDecay::Nature;
-                Nature nature = funky.getNature();
+                auto &funky = powerDecayCorrelation;
+                ImGui::BeginGroup();
+                {
+                    using Nature = CorrelationDecay::Nature;
+                    Nature nature = funky.getNature();
 
-                if (ImGui::RadioButton("Exponential##spacedomain", nature == Nature::Exponential)) {
-                    funky.setNature(CorrelationDecay::Exponential);
+                    if (ImGui::RadioButton("Exponential##spacedomain", nature == Nature::Exponential)) {
+                        funky.setNature(CorrelationDecay::Exponential);
+                    }
+                    if (ImGui::RadioButton("Power##spacedomain", nature == Nature::Power)) {
+                        funky.setNature(CorrelationDecay::Power);
+                    }
                 }
-                if (ImGui::RadioButton("Power##spacedomain", nature == Nature::Power)) {
-                    funky.setNature(CorrelationDecay::Power);
+                ImGui::EndGroup();
+
+                auto c0 = (float) funky.get_c0();
+                auto xi = (float) (funky.getξ());
+                auto beta = (float) funky.getβ();
+
+                if (ImGui::SliderFloat("c₀##spacedomain", &c0, c0_min, c0_max)
+                    |  ImGui::DragFloat("c₀##spacedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
+                    funky.set_c0(c0);
+                }
+                if (ImGui::SliderFloat("β##spacedomain", &beta, 1.01, 4)) {
+                    funky.setβ(beta);
+                }
+                if (ImGui::SliderFloat("ξ##spacedomain", &xi, xi_min, xi_max)
+                    |  ImGui::DragFloat("ξ##spacedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
+                    funky.setξ(xi);
                 }
             }
-            ImGui::EndGroup();
 
-            auto c0 = (float) funky.get_c0();
-            auto xi = (float) (funky.getξ());
-            auto beta = (float) funky.getβ();
-
-            if (ImGui::SliderFloat("c₀##spacedomain", &c0, c0_min, c0_max)
-             |  ImGui::DragFloat("c₀##spacedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
-                funky.set_c0(c0);
-            }
-            if (ImGui::SliderFloat("β##spacedomain", &beta, 1.01, 4)) {
-                funky.setβ(beta);
-            }
-            if (ImGui::SliderFloat("ξ##spacedomain", &xi, xi_min, xi_max)
-             |  ImGui::DragFloat("ξ##spacedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
-                funky.setξ(xi);
-            }
-        }
-
-        ImGui::SeparatorText("Time-domain analytic 2-point correlation");
-        {
-            auto &funky = twoPointCorrelationAnalytic;
-
-            ImGui::BeginGroup();
+            ImGui::SeparatorText("Time-domain analytic 2-point correlation");
             {
-                using Nature = CorrelationDecay::Nature;
-                Nature nature = funky.getNature();
+                auto &funky = twoPointCorrelationAnalytic;
 
-                if (ImGui::RadioButton("Exponential##timedomain", nature == Nature::Exponential)) {
-                    funky.setNature(CorrelationDecay::Exponential);
+                ImGui::BeginGroup();
+                {
+                    using Nature = CorrelationDecay::Nature;
+                    Nature nature = funky.getNature();
+
+                    if (ImGui::RadioButton("Exponential##timedomain", nature == Nature::Exponential)) {
+                        funky.setNature(CorrelationDecay::Exponential);
+                    }
+                    if (ImGui::RadioButton("Power##timedomain", nature == Nature::Power)) {
+                        funky.setNature(CorrelationDecay::Power);
+                    }
                 }
-                if (ImGui::RadioButton("Power##timedomain", nature == Nature::Power)) {
-                    funky.setNature(CorrelationDecay::Power);
+                ImGui::EndGroup();
+
+
+                auto c0 = (float) funky.get_c0();
+                auto lambda = (float) funky.getλ();
+                auto xi = (float) funky.getξ();
+                auto beta = (float) funky.getβ();
+
+                if (ImGui::SliderFloat("c₀##timedomain", &c0, c0_min, c0_max)
+                    | ImGui::DragFloat("c₀##timedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
+                    funky.set_c0(c0);
+                }
+                if (ImGui::SliderFloat("λ##timedomain:analytic", &lambda, lambda_min, lambda_max)
+                    | ImGui::DragFloat("λ##timedomain:analytic:drag", &lambda, lambda_min, lambda_max, lambda/1000, "%.4f") ) {
+                    funky.setλ(lambda);
+                }
+                if (ImGui::SliderFloat("β##timedomain", &beta, 1.1, 4)) {
+                    funky.setβ(beta);
+                }
+                if (ImGui::SliderFloat("ξ##timedomain", &xi, xi_min, xi_max)
+                    | ImGui::DragFloat("ξ##timedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
+                    funky.setξ(xi);
                 }
             }
-            ImGui::EndGroup();
 
+            ImGui::SeparatorText("Numeric 2-point correlation");
+            if(function!= nullptr) {
+                fix t_min = (float) function->getDomain().yMin;
+                fix t_max = (float) function->getDomain().yMax;
+                fix dt = function->getSpace().getMetaData().geth(1);
 
-            auto c0 = (float) funky.get_c0();
-            auto lambda = (float) funky.getλ();
-            auto xi = (float) funky.getξ();
-            auto beta = (float) funky.getβ();
+                if (ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max - Δt)
+                    | ImGui::SliderFloat("Δt", &Δt, 10 * (float) dt, t_max - t0)) {
+                    if (auto_update_Ftx) computeTwoPointCorrelation();
+                }
 
-            if (ImGui::SliderFloat("c₀##timedomain", &c0, c0_min, c0_max)
-                | ImGui::DragFloat("c₀##timedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
-                funky.set_c0(c0);
+                ImGui::Checkbox("Auto compute##2pt_corr", &auto_update_Ftx);
+                if(ImGui::Button("Compute <ϕ(x)ϕ(x+r)>"))
+                    computeTwoPointCorrelation();
             }
-            if (ImGui::SliderFloat("λ##timedomain:analytic", &lambda, lambda_min, lambda_max)
-              | ImGui::DragFloat("λ##timedomain:analytic:drag", &lambda, lambda_min, lambda_max, lambda/1000, "%.4f") ) {
-                funky.setλ(lambda);
-            }
-            if (ImGui::SliderFloat("β##timedomain", &beta, 1.1, 4)) {
-                funky.setβ(beta);
-            }
-            if (ImGui::SliderFloat("ξ##timedomain", &xi, xi_min, xi_max)
-              | ImGui::DragFloat("ξ##timedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
-                funky.setξ(xi);
-            }
-        }
-
-        ImGui::SeparatorText("Numeric 2-point correlation");
-        if(function!= nullptr) {
-            fix t_min = (float) function->getDomain().yMin;
-            fix t_max = (float) function->getDomain().yMax;
-            fix dt = function->getSpace().getMetaData().geth(1);
-
-            if (ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max - Δt)
-                | ImGui::SliderFloat("Δt", &Δt, 10 * (float) dt, t_max - t0)) {
-                if (auto_update_Ftx) computeTwoPointCorrelation();
-            }
-
-            ImGui::Checkbox("Auto compute##2pt_corr", &auto_update_Ftx);
-            if(ImGui::Button("Compute <ϕ(x)ϕ(x+r)>"))
-                computeTwoPointCorrelation();
-        }
-
-        gui_window->end();
+        });
 
         WindowPanel::draw();
     }

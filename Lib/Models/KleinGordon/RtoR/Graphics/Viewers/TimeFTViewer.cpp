@@ -100,73 +100,73 @@ namespace Slab::Models::KGRtoR {
         auto function = getFunction();
         if(function== nullptr){ WindowPanel::draw(); return;}
 
-        gui_window->begin();
+        gui_window->AddExternalDraw([this](){
+            auto function = getFunction();
 
-        ImGui::SeparatorText("Space-domain analytic 2-point correlation");
-        {
-            auto &funky = powerDecayCorrelation;
-            ImGui::BeginGroup();
+            ImGui::SeparatorText("Space-domain analytic 2-point correlation");
             {
-                using Nature = CorrelationDecay::Nature;
-                Nature nature = funky.getNature();
+                auto &funky = powerDecayCorrelation;
+                ImGui::BeginGroup();
+                {
+                    using Nature = CorrelationDecay::Nature;
+                    Nature nature = funky.getNature();
 
-                if (ImGui::RadioButton("Exponential##spacedomain", nature == Nature::Exponential)) {
-                    funky.setNature(CorrelationDecay::Exponential);
+                    if (ImGui::RadioButton("Exponential##spacedomain", nature == Nature::Exponential)) {
+                        funky.setNature(CorrelationDecay::Exponential);
+                    }
+                    if (ImGui::RadioButton("Power##spacedomain", nature == Nature::Power)) {
+                        funky.setNature(CorrelationDecay::Power);
+                    }
                 }
-                if (ImGui::RadioButton("Power##spacedomain", nature == Nature::Power)) {
-                    funky.setNature(CorrelationDecay::Power);
+                ImGui::EndGroup();
+
+                auto u0 = (float) funky.getU0();
+                auto c0 = (float) funky.get_c0();
+                auto xi = (float) (funky.getξ());
+                auto beta = (float) funky.getβ();
+
+                fix u0_min = -1e3f;
+                fix u0_max = +1e3f;
+                fix c0_min=1e-5f;
+                fix c0_max=1e5f;
+                fix xi_min = 1e-3f;
+                fix xi_max = 1e+3f;
+
+                if (ImGui::SliderFloat("u₀##timeftspaceintegral", &u0, u0_min, u0_max)
+                    |  ImGui::DragFloat("u₀##timeftspaceintegral:drag", &u0, u0 / 1000, u0_min, u0_max, "%.5f")) {
+                    funky.setU0(u0);
+                }
+                if (ImGui::SliderFloat("c₀##timeftspaceintegral", &c0, c0_min, c0_max)
+                    |  ImGui::DragFloat("c₀##timeftspaceintegral:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
+                    funky.set_c0(c0);
+                }
+                if (ImGui::SliderFloat("β##timeftspaceintegral", &beta, 1.01, 4)) {
+                    funky.setβ(beta);
+                }
+                if (ImGui::SliderFloat("ξ##timeftspaceintegral", &xi, xi_min, xi_max)
+                    |  ImGui::DragFloat("ξ##timeftspaceintegral:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
+                    funky.setξ(xi);
                 }
             }
-            ImGui::EndGroup();
 
-            auto u0 = (float) funky.getU0();
-            auto c0 = (float) funky.get_c0();
-            auto xi = (float) (funky.getξ());
-            auto beta = (float) funky.getβ();
+            if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
+                fix dt = function->getSpace().getMetaData().geth(1);
+                fix t_min =(float)function->getDomain().yMin;
+                fix t_max =(float)function->getDomain().yMax;
 
-            fix u0_min = -1e3f;
-            fix u0_max = +1e3f;
-            fix c0_min=1e-5f;
-            fix c0_max=1e5f;
-            fix xi_min = 1e-3f;
-            fix xi_max = 1e+3f;
+                ImGui::Checkbox("Auto update##time_dft_space_integral", &auto_update);
 
-            if (ImGui::SliderFloat("u₀##timeftspaceintegral", &u0, u0_min, u0_max)
-               |  ImGui::DragFloat("u₀##timeftspaceintegral:drag", &u0, u0 / 1000, u0_min, u0_max, "%.5f")) {
-                funky.setU0(u0);
+                ImGui::BeginDisabled(auto_update);
+                if(ImGui::Button("Compute"))
+                    compute();
+                ImGui::EndDisabled();
+
+                if(ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max-Δt)
+                   | ImGui::SliderFloat("Δt", &Δt, 10*(float)dt, t_max-t0)) {
+                    if (auto_update) compute();
+                }
             }
-            if (ImGui::SliderFloat("c₀##timeftspaceintegral", &c0, c0_min, c0_max)
-                |  ImGui::DragFloat("c₀##timeftspaceintegral:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
-                funky.set_c0(c0);
-            }
-            if (ImGui::SliderFloat("β##timeftspaceintegral", &beta, 1.01, 4)) {
-                funky.setβ(beta);
-            }
-            if (ImGui::SliderFloat("ξ##timeftspaceintegral", &xi, xi_min, xi_max)
-                |  ImGui::DragFloat("ξ##timeftspaceintegral:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
-                funky.setξ(xi);
-            }
-        }
-
-        if(ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
-            fix dt = function->getSpace().getMetaData().geth(1);
-            fix t_min =(float)function->getDomain().yMin;
-            fix t_max =(float)function->getDomain().yMax;
-
-            ImGui::Checkbox("Auto update##time_dft_space_integral", &auto_update);
-
-            ImGui::BeginDisabled(auto_update);
-            if(ImGui::Button("Compute"))
-                compute();
-            ImGui::EndDisabled();
-
-            if(ImGui::SliderFloat("tₘᵢₙ", &t0, t_min, t_max-Δt)
-             | ImGui::SliderFloat("Δt", &Δt, 10*(float)dt, t_max-t0)) {
-                if (auto_update) compute();
-            }
-        }
-
-        gui_window->end();
+        });
 
         WindowPanel::draw();
     }

@@ -152,7 +152,11 @@ namespace Slab::Graphics {
         gui_context->AddDrawCall([]() { ImGui::End(); });
     }
 
-    void GUIWindow::AddExternalDraw(const DrawCall& draw) { gui_context->AddDrawCall(draw); }
+    void GUIWindow::AddExternalDraw(const DrawCall& draw) {
+        this->begin();
+        gui_context->AddDrawCall(draw);
+        this->end();
+    }
 
     Pointer<SlabImGuiContext> GUIWindow::GetGUIContext() {
         return gui_context;

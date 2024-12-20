@@ -88,8 +88,6 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRHistoryPanel::draw() {
-        guiWindow.begin();
-
         guiWindow.AddExternalDraw([this]() {
             static float t = 0;
             auto t_max = (float) lastPacket.getSteps() * params->getdt();
@@ -113,9 +111,6 @@ namespace Slab::Models::KGRtoR {
                 kLine->getr() = k_f - k_0;
             }
         });
-
-
-        guiWindow.end();
 
         RtoRPanel::draw();
     }

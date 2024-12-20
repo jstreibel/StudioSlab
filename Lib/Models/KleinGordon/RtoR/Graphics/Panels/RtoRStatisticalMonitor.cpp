@@ -142,15 +142,12 @@ namespace Slab::Models::KGRtoR {
             static auto nbins = 200;
             static auto pretty = HISTOGRAM_SHOULD_BE_PRETTY;
 
-            guiWindow.begin();
             guiWindow.AddExternalDraw([]() {
                 if (ImGui::CollapsingHeader("Probability density functions")) {
                     ImGui::SliderInt("n bins", &nbins, 10, 2000);
                     ImGui::Checkbox("Pretty bars", &pretty);
                 }
             });
-            guiWindow.end();
-
 
             histogram.Compute(hamiltonian.getKineticDensity(), nbins);
             histogram.renderPDFToPointSet(Naked(histogramKData), pretty);
@@ -178,8 +175,6 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRStatisticsPanel::drawGUI() {
-        guiWindow.begin();
-
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("Statistical")) {
                 auto transient = (float) transientHint;
@@ -188,8 +183,6 @@ namespace Slab::Models::KGRtoR {
                 }
             }
         });
-
-        guiWindow.end();
     }
 
     void RtoRStatisticsPanel::setTransientHint(Real value) {

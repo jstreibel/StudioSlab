@@ -6,6 +6,7 @@
 
 #include <fstream>
 #include <iomanip>
+#include <filesystem>
 
 
 namespace Modes {
@@ -32,8 +33,18 @@ namespace Modes {
     }
 
     auto HistoryFileLoader::Load(const Str &filename) -> Pointer<Math::R2toR::NumericFunction_CPU> {
+        fix base_msg = Str("Error opening file '") + filename + "'";
+
+        if(!std::filesystem::exists(filename)) throw Exception(base_msg + ": file does not exist.");
+
         std::ifstream inFile(filename, std::ios::binary);
-        if (!inFile) throw Exception(Str("Error opening file '") + filename + "'");
+        if (!inFile) {
+            if (inFile.eof())  throw Exception(base_msg + ": file seems empty.");
+            if (inFile.bad())  throw Exception(base_msg + ": A serious I/O error occurred.");
+            if (inFile.fail()) throw Exception(base_msg + ": Logical error on i/o operation.");
+
+            throw Exception(base_msg + ": unkown error.");
+        }
 
         auto pyDict = ReadPyDict(inFile);
         auto data = ReadData(inFile, pyDict);

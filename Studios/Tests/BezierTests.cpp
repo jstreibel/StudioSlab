@@ -66,8 +66,6 @@ namespace Tests {
     }
 
     void BezierTests::draw() {
-        stats.begin();
-
         stats.AddExternalDraw([this](){
             if(ImGui::SliderFloat("param1", &param1, -1, 2)
              | ImGui::SliderFloat("param2", &param2, -1, 2)
@@ -75,7 +73,6 @@ namespace Tests {
                 Graphics::Animator::SetBezierParams(param1, param2);
                 graph.setAnimationTime(animTimeSeconds);
             }});
-        stats.end();
 
         currentPt.clear();
         auto &r = graph.getRegion();

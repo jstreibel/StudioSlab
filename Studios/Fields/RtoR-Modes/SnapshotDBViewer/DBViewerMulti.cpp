@@ -111,33 +111,32 @@ namespace Modes::DatabaseViewer {
 
         index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
 
-        guiWindow.begin();
+        guiWindow.AddExternalDraw([this](){
+            if(ImGui::CollapsingHeader("Dominant modes")) {
+                if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 100)){
+                    computeMasses();
+                }
+                drawTable(index_XHair);
 
-        if(ImGui::CollapsingHeader("Dominant modes")) {
-            if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 100)){
-                computeMasses();
-            }
-            drawTable(index_XHair);
-
-            // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
-        }
-
-        if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
-            static bool isVisible = false;
-
-            if(ImGui::Checkbox("Visible", &isVisible))
-                updateKGDispersion(isVisible);
-
-            auto mass = (float)KG_mass;
-            if(ImGui::SliderFloat("mass##slider", &mass, 0.0, 10.0)
-             | ImGui::DragFloat("mass##drag", &mass, mass/1000.f, 0.f, 10.f)) {
-                KG_mass = mass;
-                isVisible = true;
-                updateKGDispersion(isVisible);
+                // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
             }
 
-        }
-        guiWindow.end();
+            if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
+                static bool isVisible = false;
+
+                if(ImGui::Checkbox("Visible", &isVisible))
+                    updateKGDispersion(isVisible);
+
+                auto mass = (float)KG_mass;
+                if(ImGui::SliderFloat("mass##slider", &mass, 0.0, 10.0)
+                   | ImGui::DragFloat("mass##drag", &mass, mass/1000.f, 0.f, 10.f)) {
+                    KG_mass = mass;
+                    isVisible = true;
+                    updateKGDispersion(isVisible);
+                }
+
+            }
+        });
 
         WindowRow::draw();
     }

@@ -21,6 +21,8 @@ namespace Slab::Graphics {
 
         Pointer<SlabImGuiContext> gui_context;
 
+        void begin() const;
+        void end() const;
     public:
         explicit GUIWindow(Config={});
 
@@ -31,9 +33,6 @@ namespace Slab::Graphics {
         Pointer<SlabImGuiContext> GetGUIContext();
 
         void draw() override;
-        void begin() const;
-        void end() const;
-
     };
 
 

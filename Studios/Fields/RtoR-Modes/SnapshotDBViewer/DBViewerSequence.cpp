@@ -111,46 +111,45 @@ namespace Modes::DatabaseViewer {
 
         index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
 
-        guiWindow.begin();
+        guiWindow.AddExternalDraw([this](){
+            if(ImGui::SliderInt("Current database", &current_database, 0, (int)mashupArtists.size()-1)) {
+                if(currentMeshupArtist != nullptr) {
+                    mashupDisplay.removeArtist(currentMeshupArtist);
+                    // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
+                }
 
-        if(ImGui::SliderInt("Current database", &current_database, 0, mashupArtists.size()-1)) {
-            if(currentMeshupArtist != nullptr) {
-                mashupDisplay.removeArtist(currentMeshupArtist);
-                // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
-            }
+                currentMashup = allMashups[current_database];
+                currentMeshupArtist = mashupArtists[current_database];
+                mashupDisplay.addArtist(currentMeshupArtist);
+                // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
-            currentMashup = allMashups[current_database];
-            currentMeshupArtist = mashupArtists[current_database];
-            mashupDisplay.addArtist(currentMeshupArtist);
-            // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
-
-            computeMasses();
-        }
-
-        if(ImGui::CollapsingHeader("Dominant modes")) {
-            if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 12)){
                 computeMasses();
             }
-            drawTable(index_XHair);
 
-            // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
-        }
+            if(ImGui::CollapsingHeader("Dominant modes")) {
+                if(ImGui::SliderInt("avg range", &masses_avg_samples, 1, 12)){
+                    computeMasses();
+                }
+                drawTable(index_XHair);
 
-        if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
-            static bool isVisible = false;
-
-            if(ImGui::Checkbox("Visible", &isVisible))
-                updateKGDispersion(isVisible);
-
-            auto mass = (float)KG_mass;
-            if(ImGui::SliderFloat("mass##slider", &mass, 0.0, 10.0)
-               | ImGui::DragFloat("mass##drag", &mass, mass/1000.f, 0.f, 10.f)) {
-                KG_mass = mass;
-                isVisible = true;
-                updateKGDispersion(isVisible);
+                // if(index_XHair>=0 && index_XHair<=fullFields[0]->getN()){ underXHair.addPoint({ω_XHair, }); };
             }
-        }
-        guiWindow.end();
+
+            if(ImGui::CollapsingHeader("Klein-Gordon dispersion relation")){
+                static bool isVisible = false;
+
+                if(ImGui::Checkbox("Visible", &isVisible))
+                    updateKGDispersion(isVisible);
+
+                auto mass = (float)KG_mass;
+                if(ImGui::SliderFloat("mass##slider", &mass, 0.0, 10.0)
+                   | ImGui::DragFloat("mass##drag", &mass, mass/1000.f, 0.f, 10.f)) {
+                    KG_mass = mass;
+                    isVisible = true;
+                    updateKGDispersion(isVisible);
+                }
+            }
+        });
 
         WindowRow::draw();
     }

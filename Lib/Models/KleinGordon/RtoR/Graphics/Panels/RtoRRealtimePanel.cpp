@@ -99,7 +99,6 @@ namespace Slab::Models::KGRtoR {
         // imGuiWindow.draw();
 
         // ************************ RT MONITOR**********************************
-        guiWindow.begin();
         guiWindow.AddExternalDraw([this, V_str]() {
             if (ImGui::CollapsingHeader("Real-time monitor")) {
 
@@ -111,7 +110,6 @@ namespace Slab::Models::KGRtoR {
                 if (ImGui::Checkbox("Show e", &showEnergyDensity)) { uArtist->setVisibility(showEnergyDensity); }
             }
         });
-        guiWindow.end();
 
         CHECK_GL_ERRORS(errorCount++)
 

@@ -27,8 +27,6 @@ namespace Tests {
     }
 
     void VShapeExpansionTest::draw() {
-        stats.begin();
-
         stats.AddExternalDraw([this](){
             auto A = (float) potential->getA();
             auto s = (float) potential->get_s();
@@ -42,8 +40,6 @@ namespace Tests {
                 potential->setN(N);
             }
         });
-
-        stats.end();
 
         WindowRow::draw();
     }

@@ -103,8 +103,6 @@ namespace Slab::Models::KGRtoR {
 
     void RtoRFourierPanel::draw() {
 
-        guiWindow.begin();
-
         guiWindow.AddExternalDraw([this](){
             if (ImGui::CollapsingHeader("k-filter")) {
                 //this->dftData
@@ -166,8 +164,6 @@ namespace Slab::Models::KGRtoR {
                 }
             }
         });
-
-        guiWindow.end();
 
         WindowPanel::draw();
     }

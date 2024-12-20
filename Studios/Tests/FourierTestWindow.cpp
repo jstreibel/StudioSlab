@@ -104,7 +104,6 @@ namespace Tests {
     }
 
     void FourierTestWindow::draw() {
-        gui.begin();
         gui.AddExternalDraw([this]() {
 
             if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
@@ -115,8 +114,6 @@ namespace Tests {
             | ImGui::SliderInt("dec", &decimation, 1, N_modes))
             updateGraphs();
         });
-
-        gui.end();
 
         gui.addVolatileStat(Str("L = ") + ToStr(L / π, 2) + "π = " + ToStr(L));
         gui.addVolatileStat(Str("ω = ") + ToStr(ω / π, 2) + "π = " + ToStr(ω, 2));
