@@ -34,13 +34,11 @@ namespace Slab::Models::KGRtoR {
         RtoRPanel_ptr currentDataView;
 
         R2toR::NumericFunction_constptr simulationHistory;
-        Pointer<Graphics::Plot2DWindow> fullHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full field history",
-                                                                                             nullptr);
+        Pointer<Graphics::Plot2DWindow> fullHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full field history");
         Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
         R2toR::NumericFunction_constptr spaceFTHistory;
-        Pointer<Graphics::Plot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full space FT history",
-                                                                                                nullptr);
+        Pointer<Graphics::Plot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
 
         KGEnergy &hamiltonian;

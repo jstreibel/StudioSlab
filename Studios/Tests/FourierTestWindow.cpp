@@ -70,9 +70,9 @@ namespace Tests {
     , funcArtist(nullptr, theme->funcPlotStyles[0], 2000)
     , rebuiltFuncArtist(nullptr, theme->funcPlotStyles[1], 2000)
     , gui()
-    , mDFTGraph("DFT", gui.GetGUIContext())
-    , mFuncGraph("func graph", gui.GetGUIContext())
-    , mFTGraph("", gui.GetGUIContext())
+    , mDFTGraph("DFT")
+    , mFuncGraph("func graph")
+    , mFTGraph("")
     {
         updateGraphs();
 

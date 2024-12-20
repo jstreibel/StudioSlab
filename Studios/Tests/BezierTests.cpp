@@ -38,7 +38,7 @@ namespace Tests {
 
     BezierTests::BezierTests()
     : Graphics::WindowRow("Bezier test")
-    , graph("Graph", stats.GetGUIContext()) {
+    , graph("Graph") {
         param1 = (float)Graphics::Animator::GetBezierParams().first;
         param2 = (float)Graphics::Animator::GetBezierParams().second;
         animTimeSeconds = graph.getAnimationTime();

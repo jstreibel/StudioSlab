@@ -44,10 +44,8 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax,
-                               Str _title, Pointer<SlabImGuiContext> GUI_context)
+    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
     : region{{xMin, xMax, yMin, yMax}}
-    , gui_context(std::move(GUI_context))
     , title(std::move(_title))
     , axisArtist()
     , id(++WindowCount)
@@ -88,8 +86,8 @@ namespace Slab::Graphics {
 
     }
 
-    Plot2DWindow::Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context)
-            : Plot2DWindow(-1, 1, -1, 1, std::move(title), std::move(gui_context)) {    }
+    Plot2DWindow::Plot2DWindow(Str title)
+            : Plot2DWindow(-1, 1, -1, 1, std::move(title)) {    }
 
     void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {

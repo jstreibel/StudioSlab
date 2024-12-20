@@ -13,8 +13,8 @@ namespace Slab::Models::KGR2toR {
 
     OutputOpenGL::OutputOpenGL(Count max_steps)
     : Graphics::BaseMonitor(max_steps, "R2 -> R OpenGL output", 1)
-    , mSectionGraph("Sections", nullptr)
-    , mFieldDisplay("Field", nullptr)
+    , mSectionGraph("Sections")
+    , mFieldDisplay("Field")
     {
         addWindow(Slab::Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
         mSectionGraph.addArtist(Slab::Naked(sectionArtist));

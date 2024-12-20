@@ -51,7 +51,7 @@ namespace Slab::Graphics {
 
         Math::PointSet XHair;
 
-        bool gui_context_is_local = false;
+        bool gui_context_is_local;
         Pointer<SlabImGuiContext> gui_context;
 
     protected:
@@ -68,11 +68,11 @@ namespace Slab::Graphics {
         LabelsArtist labelsArtist;
         BackgroundArtist bgArtist;
 
-        Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str title = "no_title", Pointer<SlabImGuiContext> gui_context= nullptr);
+        Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str title = "no_title");
 
     public:
 
-        explicit Plot2DWindow(Str title, Pointer<SlabImGuiContext> gui_context = nullptr);
+        explicit Plot2DWindow(Str title);
 
         void draw() override;
 

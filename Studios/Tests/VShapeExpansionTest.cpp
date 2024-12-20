@@ -12,11 +12,11 @@ namespace Tests {
 
     VShapeExpansionTest::VShapeExpansionTest()
     : Graphics::WindowRow("V-shape expansion test")
-    , graph("", stats.GetGUIContext()) {
+    , graph("") {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 15, 1.0);
         derivs = potential->diff(0);
 
-        auto window = New<Graphics::Plot2DWindow>("V-shape series test", stats.GetGUIContext());
+        auto window = New<Graphics::Plot2DWindow>("V-shape series test");
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
         style.filled = false;
         Graphics::Plotter::AddRtoRFunction(window, potential, style, "KG V-shape");

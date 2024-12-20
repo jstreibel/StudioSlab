@@ -24,10 +24,10 @@ namespace Slab::Graphics {
 
     FourierViewer::FourierViewer(Pointer<GUIWindow> gui_window) : Viewer(std::move(gui_window))
     {
-        kSpaceGraph  = New<Plot2DWindow>("ℱₓ", this->gui_window->GetGUIContext());
-        ωSpaceGraph  = New<Plot2DWindow>("ℱₜ", this->gui_window->GetGUIContext());
-        xSpaceGraph  = New<Plot2DWindow>("ϕ(t,x)", this->gui_window->GetGUIContext());
-        ωkSpaceGraph = New<Plot2DWindow>("ℱₜₓ", this->gui_window->GetGUIContext());
+        kSpaceGraph  = New<Plot2DWindow>("ℱₓ");
+        ωSpaceGraph  = New<Plot2DWindow>("ℱₜ");
+        xSpaceGraph  = New<Plot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = New<Plot2DWindow>("ℱₜₓ");
 
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);

@@ -47,7 +47,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
         trajectory = New<Poly>(coeffs);
     }
 
-    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Plot", nullptr);
+    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Plot");
     plot_window->setx(1700);
     plot_window->notifyReshape(1200, 800);
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->funcPlotStyles[0], "functional");

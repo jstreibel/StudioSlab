@@ -21,10 +21,10 @@ namespace Slab::Models::KGRtoR {
     : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
-        kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ", guiWindow.GetGUIContext());
-        ωSpaceGraph  = Slab::New<Plot2DWindow>("ℱₜ", guiWindow.GetGUIContext());
-        xSpaceGraph  = Slab::New<Plot2DWindow>("ϕ(t,x)", guiWindow.GetGUIContext());
-        ωkSpaceGraph = Slab::New<Plot2DWindow>("ℱₜₓ", guiWindow.GetGUIContext());
+        kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ");
+        ωSpaceGraph  = Slab::New<Plot2DWindow>("ℱₜ");
+        xSpaceGraph  = Slab::New<Plot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = Slab::New<Plot2DWindow>("ℱₜₓ");
 
         inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);

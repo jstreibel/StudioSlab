@@ -43,14 +43,14 @@ namespace Slab::Models::KGRtoR {
                                              Graphics::GUIWindow &guiWindow)
             : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ statistics panel", "panel for statistic analysis of simulation data")
             , hamiltonian(hamiltonian)
-            , mCorrelationGraph("Correlations", guiWindow.GetGUIContext()){
+            , mCorrelationGraph("Correlations"){
 
         addWindow(Slab::Naked(mCorrelationGraph));
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
 
-            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T", guiWindow.GetGUIContext());
+            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T");
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
@@ -79,10 +79,10 @@ namespace Slab::Models::KGRtoR {
         }
 
         {
-            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram", guiWindow.GetGUIContext());
-            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram", guiWindow.GetGUIContext());
-            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram", guiWindow.GetGUIContext());
-            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram", guiWindow.GetGUIContext());
+            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram");
+            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram");
+            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram");
+            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram");
 
 
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
@@ -117,7 +117,7 @@ namespace Slab::Models::KGRtoR {
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history", guiWindow.GetGUIContext());
+        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
         addWindow(simulationHistoryGraph, true, 0.20);
     }
