@@ -150,7 +150,7 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(key == KeyMap::Key_TAB && state == KeyState::Release) {
+        if(key == KeyMap::Key_TAB && state == KeyState::Release && modKeys.Mod_Shift == Press) {
             showInterface = !showInterface;
             return true;
         }

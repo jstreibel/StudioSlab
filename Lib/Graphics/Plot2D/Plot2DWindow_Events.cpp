@@ -119,7 +119,7 @@ namespace Slab {
 
     bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         if(state==KeyState::Release) {
-            if(key == KeyMap::Key_TAB) {
+            if(key == KeyMap::Key_TAB && modKeys.Mod_Shift == Press) {
                 toggleShowInterface();
                 return true;
             }

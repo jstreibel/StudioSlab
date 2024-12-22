@@ -313,6 +313,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Modules/GUIModule/GUIModule.h
         Modules/Nuklear/NuklearContext.cpp
         Modules/Nuklear/NuklearContext.h
+		DataViewers/Viewers/Viewer3D.cpp
+		DataViewers/Viewers/Viewer3D.h
 )
 target_link_libraries(${LIB_GRAPHICS}
 		Slab-3rdParty-Imgui

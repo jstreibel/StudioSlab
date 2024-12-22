@@ -35,6 +35,7 @@
 #include "Graphics/Window/SlabWindowManager.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 #include "Core/SlabCore.h"
+#include "Graphics/DataViewers/Viewers/Viewer3D.h"
 
 using namespace Slab;
 
@@ -73,6 +74,7 @@ public:
         viewer->addViewer(Slab::New<Graphics::ModesHistoryViewer>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::HistogramsViewer_KG>(gui_window));
         viewer->addKGViewer(Slab::New<Slab::Models::KGRtoR::EnergyViewer_KG>(gui_window));
+        viewer->addViewer(Slab::New<Slab::Graphics::Viewer3D>(gui_window));
 
         viewer->setFunction(function);
         viewer->setFunctionTimeDerivative(ddt_function);

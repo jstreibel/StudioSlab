@@ -1,6 +1,6 @@
 
 
-add_executable ( RtoR-Modes
+add_executable ( Fields-RtoR-Modes
         Sim/Main-RtoR-Modes.cpp
         Sim/NumericalRecipe.cpp
         Sim/Builder.h
@@ -11,7 +11,7 @@ add_executable ( RtoR-Modes
         Sim/SquareWave.cpp
         Sim/SquareWave.h
 )
-target_link_libraries ( RtoR-Modes Slab )
+target_link_libraries ( Fields-RtoR-Modes Slab )
 message(NOTICE "Added executable RtoR-Modes")
 
 

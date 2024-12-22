@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.30)
 
 option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
 option( STUDIOSLAB_OMP_SUPPORT "Enable OpenMP support in StudioSlab libraries" ON )
@@ -7,16 +7,11 @@ option( STUDIOSLAB_VTK_SUPPORT "Enable VTK support in StudioSlab libraries" OFF 
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
 option( STUDIOSLAB_FAST_COMPILE "Disable O3 etc." OFF)
 
-set( STUDIOSLAB_VTK_SUPPORT ON )
-
 project(StudioSlab CXX C )
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-
-
 
 # Enable modules if supported by the compiler
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
