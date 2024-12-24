@@ -106,7 +106,7 @@ namespace Slab::Core {
 
             if (Contains(paramNames, nameShort) || Contains(paramNames, nameLong) ||
                 paramNames.empty()) {
-                bool isLong = !nameLong.empty();
+                bool isLong = !nameLong.empty() && longName;
                 ss << param->getCommandLineArgumentName(isLong) << "=" << param->valueToString() << separator;
 
                 paramCount[isLong ? nameLong : nameShort]++;

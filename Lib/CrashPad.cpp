@@ -5,6 +5,7 @@
 #include "CrashPad.h"
 #include "Core/Tools/Log.h"
 
+#include "Utils/Exception.h"
 #include "Utils/STDLibInclude.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 
@@ -56,6 +57,8 @@ namespace Slab::SafetyNet {
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
         catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
         catch (Str &e)                                          LogException("Exception (std::string)",  e,        none)
+        catch (NotImplementedException &e)                      LogException("Slab::NotImplementedException",  e.what(), none)
+        catch (Exception &e)                                    LogException("Slab::Exception"        ,  e.what(), none)
         catch (cxxopts::exceptions::invalid_option_syntax &e)   LogException("Invalid option syntax",    e.what(), showHelp)
         catch (cxxopts::exceptions::no_such_option &e)          LogException("No such option",           e.what(), showHelp)
         catch (cxxopts::exceptions::option_already_exists &e)   LogException("Option already exists",    e.what(), showHelp)
@@ -79,6 +82,8 @@ namespace Slab::SafetyNet {
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
         catch (const char *e)                                   LogException("Exception (const char*)",  e,        none)
         catch (Str &e)                                          LogException("Exception (std::string)",  e,        none)
+        catch (NotImplementedException &e)                      LogException("Slab::NotImplementedException",  e.what(), none)
+        catch (Exception &e)                                    LogException("Slab::Exception"        ,  e.what(), none)
         catch (cxxopts::exceptions::invalid_option_syntax &e)   LogException("Invalid option syntax",    e.what(), showHelp)
         catch (cxxopts::exceptions::no_such_option &e)          LogException("No such option",           e.what(), showHelp)
         catch (cxxopts::exceptions::option_already_exists &e)   LogException("Option already exists",    e.what(), showHelp)

@@ -90,6 +90,8 @@ namespace Slab::Models::KGRtoR {
             fix xi_max = 1e+3f;
             fix lambda_min = 1e-2f;
             fix lambda_max = 1e+2f;
+            fix beta_min = 1.;
+            fix beta_max = 10.;
 
             ImGui::SeparatorText("Space-domain analytic 2-point correlation");
             {
@@ -116,7 +118,7 @@ namespace Slab::Models::KGRtoR {
                     |  ImGui::DragFloat("c₀##spacedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
                     funky.set_c0(c0);
                 }
-                if (ImGui::SliderFloat("β##spacedomain", &beta, 1.01, 4)) {
+                if (ImGui::SliderFloat("β##spacedomain", &beta, beta_min, beta_max)) {
                     funky.setβ(beta);
                 }
                 if (ImGui::SliderFloat("ξ##spacedomain", &xi, xi_min, xi_max)
@@ -148,21 +150,26 @@ namespace Slab::Models::KGRtoR {
                 auto lambda = (float) funky.getλ();
                 auto xi = (float) funky.getξ();
                 auto beta = (float) funky.getβ();
+                auto ϕ0 = (float) funky.getΦ0();
 
                 if (ImGui::SliderFloat("c₀##timedomain", &c0, c0_min, c0_max)
                     | ImGui::DragFloat("c₀##timedomain:drag", &c0, c0 / 1000, c0_min, c0_max, "%.5f")) {
                     funky.set_c0(c0);
                 }
                 if (ImGui::SliderFloat("λ##timedomain:analytic", &lambda, lambda_min, lambda_max)
-                    | ImGui::DragFloat("λ##timedomain:analytic:drag", &lambda, lambda_min, lambda_max, lambda/1000, "%.4f") ) {
+                    | ImGui::DragFloat("λ##timedomain:analytic:drag", &lambda, lambda/1000, lambda_min, lambda_max, "%.4f") ) {
                     funky.setλ(lambda);
                 }
-                if (ImGui::SliderFloat("β##timedomain", &beta, 1.1, 4)) {
+                if (ImGui::SliderFloat("β##timedomain", &beta, beta_min, beta_max)) {
                     funky.setβ(beta);
                 }
                 if (ImGui::SliderFloat("ξ##timedomain", &xi, xi_min, xi_max)
                     | ImGui::DragFloat("ξ##timedomain:drag", &xi, xi / 1000, xi_min, xi_max, "%.3f")) {
                     funky.setξ(xi);
+                }
+                auto a = ϕ0/((float)M_PI);
+                if (ImGui::SliderFloat("ϕ₀##timedomain", &a, -2.f, 2.f, "%.3fπ")) {
+                    funky.setΦ0(a*M_PI);
                 }
             }
 
@@ -212,6 +219,7 @@ namespace Slab::Models::KGRtoR {
         using Diff = Math::RtoR::Diff;
         auto diff = New<Diff>(section_map, twoPointFunction->getSpace().getMetaData().geth(1)*1.2);
         *ddt2ptSection = Graphics::RtoRFunctionArtist(diff, Themes::GetCurrent()->funcPlotStyles[3], 1000);
+        ddt2ptSection->setLabel("𝜕ₜ (avg[ϕ(x)ϕ(x+r)] | r=(0,t))");
 
     }
 

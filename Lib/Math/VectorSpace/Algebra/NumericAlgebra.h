@@ -46,13 +46,16 @@ namespace Slab::Math {
         class ScalarMultiplicationProxy {
             friend NumericAlgebra<Ty>;
             const NumericAlgebra<Ty> &a;
-            const Real &b;
-            ScalarMultiplicationProxy(const NumericAlgebra<Ty> &a, const Real &b)
+            const Real b;
+            ScalarMultiplicationProxy(const NumericAlgebra<Ty> &a, Real b)
             : a(a), b(b) {}
 
             const Ty& get_a() const { return static_cast<const Ty&>(a); }
             const Real& get_b() const { return b; }
         };
+
+        DefineOperation(Addition, +)
+        DefineOperation(Subtraction, -)
 
     public:
         /*
@@ -76,6 +79,11 @@ namespace Slab::Math {
          * operators += and *= are sufficient for
          */
         Ty &operator+=(const Ty &a)     { return this->Add(a); }
+        Ty &operator+=(const AdditionProxy &proxy)     {
+            // TODO: must be a way to make this quicker
+            this->Add(proxy.get_a());
+            return this->Add(proxy.get_b());
+        }
         Ty &operator*=(Real a)  { return this->Multiply(a); }
 
         Ty &operator-=(const Ty &a) { return this->Subtract(a); }
@@ -93,9 +101,6 @@ namespace Slab::Math {
 
             return oppy.operateAndStoreResult(typey, g);
         }
-
-        DefineOperation(Addition, +)
-        DefineOperation(Subtraction, -)
     };
 }
 

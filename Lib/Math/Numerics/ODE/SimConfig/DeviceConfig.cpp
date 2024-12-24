@@ -66,6 +66,8 @@ namespace Slab::Math {
         return;
         #endif
 
+        if(dev_n==0) return;
+
         int devCount;
         cudaError err;
 

@@ -43,10 +43,19 @@ namespace Slab::Models::KGRtoR {
         Real operator()(Real u) const override;
     };
 
+
+
+
     class TwoPointCorrelation : public Math::RtoR::Function {
         CorrelationDecay c;
         Real λ;
         Count n_max;
+        Real ϕ_0 = .0;
+    public:
+        Real getΦ0() const;
+
+        void setΦ0(Real φ0);
+
     public:
         Real get_c0() const;
         void set_c0(Real c0);

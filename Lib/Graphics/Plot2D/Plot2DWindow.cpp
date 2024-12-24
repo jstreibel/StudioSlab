@@ -129,7 +129,7 @@ namespace Slab::Graphics {
 
     void Graphics::Plot2DWindow::drawGUI() {
         auto draw_call = [this](){
-            auto popupName = title + Str(" window popup");
+            auto popupName = unique(title + Str(" window popup"));
 
             if (popupOn && !POPUP_ON_MOUSE_CALL) {
 

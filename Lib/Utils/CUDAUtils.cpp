@@ -15,7 +15,7 @@ namespace Slab::CUDA {
 
         auto errMsg = Str("CUDA error ") + Str(errStr);
 
-        if (err != cudaError::cudaSuccess) throw errMsg;
+        if (err != cudaError::cudaSuccess) throw Exception(errMsg);
     }
 
 #endif

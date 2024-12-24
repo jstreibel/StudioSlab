@@ -120,6 +120,8 @@ namespace Studios {
 
         many_osc.clear();
 
+
+
         for(auto i=0; i<n_oscillons; ++i) {
             fix u = Rand(-c_max, c_max);
             fix inv_gamma = sqrt(1-u*u);

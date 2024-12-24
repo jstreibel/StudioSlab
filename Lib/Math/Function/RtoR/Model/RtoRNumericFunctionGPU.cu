@@ -50,7 +50,7 @@ namespace Slab::Math::RtoR {
 
     Base::NumericFunction <Real, Real> &NumericFunctionGPU::Apply(const RtoR::Function &func,
                                                                   Base::NumericFunction <Real, Real> &out) const {
-        assert(out.isGPUFriendly());
+        // TODO: assert that 'out' is on the GPU;
 
         const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU &>(getSpace());
         auto &outSpace = dynamic_cast<DiscreteSpaceGPU &>(out.getSpace());
@@ -90,8 +90,26 @@ namespace Slab::Math::RtoR {
     }
 
 
+
     Str NumericFunctionGPU::generalName() const {
         return "ℝ↦ℝ GPU discrete";
+    }
+
+    Base::NumericFunction<Real, Real> &NumericFunctionGPU::operator+=(const Base::FunctionT<Real, Real> &func) {
+        if(func.isDiscrete()) {
+            IN func_discrete = dynamic_cast<const NumericFunctionGPU&>(func);
+            return Base::NumericFunction<double, double>::StoreAddition(*this, func_discrete);
+        }
+
+        NOT_IMPLEMENTED
+
+        if(!func.isGPUFriendly()) throw Exception(Str("Trying to operate on GPU with non-GPU-friendly function ")
+            + func.symbol() + " '" + func.generalName() + "'.");
+
+        auto &gpu_func = func.getGPUFriendlyVersion();
+        auto &device_data = getSpace().getDeviceData();
+
+        return NumericFunction::operator+=(func);
     }
 }
 //#pragma clang diagnostic pop

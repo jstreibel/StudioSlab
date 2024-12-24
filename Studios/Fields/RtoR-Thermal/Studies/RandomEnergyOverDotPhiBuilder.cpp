@@ -50,8 +50,6 @@ namespace Studios::Fields::RtoRThermal {
 
             auto phi = RtoR::NullFunction();
 
-            // TODO: consertar vazamento de memoria com instanciacao do dotPhi;
-
             return New<Slab::Models::KGRtoR::BoundaryCondition>(proto, RtoR::NullFunction().Clone(), dotPhi);
 
         } else {

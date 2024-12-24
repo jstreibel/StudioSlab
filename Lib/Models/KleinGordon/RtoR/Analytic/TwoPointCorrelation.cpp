@@ -75,7 +75,7 @@ namespace Slab::Models::KGRtoR {
         for(Count n=1; n<=n_max; n+=2) {
             fix inv_ncube = 1./Real(n*n*n);
 
-            sum += sign*inv_ncube*cos(2*M_PI*Real(n)*u/λ);
+            sum += sign*inv_ncube*cos(2*M_PI*Real(n)*u/λ - ϕ_0);
             sign += -1;
         }
 
@@ -100,6 +100,10 @@ namespace Slab::Models::KGRtoR {
 
     CorrelationDecay::Nature TwoPointCorrelation::getNature() const { return c.getNature(); }
     void TwoPointCorrelation::setNature(CorrelationDecay::Nature nature) { c.setNature(nature); }
+
+    Real TwoPointCorrelation::getΦ0() const { return ϕ_0; }
+
+    void TwoPointCorrelation::setΦ0(Real φ0) { ϕ_0 = φ0; }
 
 
 } // Slab::Models::KGRtoR

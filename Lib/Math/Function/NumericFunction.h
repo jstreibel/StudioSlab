@@ -29,6 +29,8 @@ namespace Slab::Math::Base {
 
     public:
         using NumericAlgebra<Base::NumericFunction<InCategory, Real>>::operator=;
+        using NumericAlgebra<NumericFunction>::operator+=;
+
         typedef NumericFunction<InCategory, OutCategory> MyType;
         typedef FunctionT<InCategory, OutCategory> MyBase;
         typedef std::shared_ptr<NumericFunction<InCategory,OutCategory>> Ptr;
@@ -83,8 +85,7 @@ namespace Slab::Math::Base {
 
         virtual NumericFunction &operator=(const MyBase &func) { this->Set(func); return *this; }
         virtual NumericFunction &operator=(const NumericFunction &func) { this->SetArb(func); return *this; }
-        // virtual NumericFunction &operator*(const Real &val) { this->Multiply(val); return *this; }
-        virtual NumericFunction &operator+=(const MyBase &func) { throw Str("ArbitraryFunction operator += not implemented"); };
+        virtual NumericFunction &operator+=(const MyBase &func) { NOT_IMPLEMENTED_CLASS_METHOD };
 
         //ArbitraryFunction& operator-=(const ArbitraryFunction& rhs);
         //ArbitraryFunction& operator*=(const ArbitraryFunction& rhs);

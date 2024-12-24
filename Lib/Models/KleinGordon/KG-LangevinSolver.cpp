@@ -68,26 +68,28 @@ namespace Slab::Models::KGRtoR {
 #pragma omp barrier
 
         {
-            IN pi = kgStateIn.getDPhiDt();
+            IN π = kgStateIn.getDPhiDt();
             OUT dissipation = *temp1;
 
-            dissipation = pi * (-γ);
+            dissipation = π * (-γ);
 
             (*scaledImpulses) = *langevinImpulses * α;
 
-            /*
             OUT F = kgStateOut.getDPhiDt();
+
+            F += *scaledImpulses + dissipation;
+
+            /*
             OUT F_ext = *temp2;
             F_ext.StoreAddition(*scaledImpulses, dissipation) *= dt;
-
             F.Add(F_ext);
              */
 
-            OUT F = kgStateOut.getDPhiDt();
+            /*
             OUT F_ext = *temp2;
             F_ext = *scaledImpulses + dissipation;
-
             F += F_ext;
+             */
         }
 
         return kgStateOut;

@@ -10,9 +10,10 @@
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRStatisticalMonitor.h"
 #include "../RtoR-Modes/Sim/Monitor.h"
 
-
+// Don't touch:
 #define DONT_SELF_REGISTER false
 #define SHORT_NAME false
+#define LONG_NAME true
 
 namespace Studios::Fields::RtoRThermal {
 
@@ -41,9 +42,10 @@ namespace Studios::Fields::RtoRThermal {
     Str Builder::suggestFileName() const {
         auto str = NumericalRecipe::suggestFileName();
 
-        auto extra = interface->toString({"T", "k"}, " ", SHORT_NAME);
+        auto extra1 = interface->toString({"T", "k"}, " ", SHORT_NAME);
+        auto extra2 = interface->toString({"E", "n"}, " ", LONG_NAME);
 
-        return str + " " + extra;
+        return str + " " + extra1 + " " + extra2;
     }
 
 

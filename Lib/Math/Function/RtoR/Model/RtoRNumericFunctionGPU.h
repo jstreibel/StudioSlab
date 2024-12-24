@@ -21,7 +21,11 @@ namespace Slab::Math::RtoR {
         Base::NumericFunction<Real,Real> &Apply(const FunctionT &func,
                                                 Base::NumericFunction<Real, Real> &out) const override;
         Base::NumericFunction<Real, Real> &Set(const MyBase &func) override;
+
+        Base::NumericFunction<Real, Real> &operator+=(const MyBase &func) override;
+
         NumericFunction &Laplacian(NumericFunction &outFunc) const override;
+
 
         Str generalName() const override;
     };
