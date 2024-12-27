@@ -35,27 +35,28 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto StatisticalBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
-        auto L = kg_numeric_config->getL(); // not good bc 'L' is not my parameter.
+        auto L = kg_numeric_config->getL();
         auto xLeft = kg_numeric_config->getxMin();
 
-        auto oscLength = L / *n;
-        auto oscEnergy = *E / *n;
+        auto l = L / *n;
+        auto ϵ = *E / *n;
 
-        auto osc_eps = oscLength / 2;
-        ////auto osc_eps = a*a / (3*oscEnergy);
-        auto a = sqrt(3 * osc_eps * oscEnergy);
-
+        auto ε = l * .5;
+        auto a = sqrt(1.5 * ε * ϵ);
 
         RtoR::FunctionSummable dPhidt0;
 
         const auto ONE_plus = 1. + 1.e-10;
         for (int i = 0; i < *n; i++) {
-            auto tx = xLeft + ONE_plus * Real(i) * (oscLength) + osc_eps;
+            auto tx = xLeft + ONE_plus*Real(i)*l + ε;
 
-            auto s = RandUtils::RandomUniformUInt() % 2 ? 1. : -1.;
+            auto σ = RandUtils::RandomUniformUInt() % 2 ? 1. : -1.;
 
-            dPhidt0 += RtoR::RegularDiracDelta(osc_eps, s * a, RtoR::RegularDiracDelta::Triangle, tx);
+            dPhidt0 += RtoR::RegularDiracDelta(ε, σ*a, RtoR::RegularDiracDelta::Triangle, tx);
         }
+
+        Log::Info() << "Built IC with " << *n << " impulses, each with width 2ε=" << 2*ε << ", height a=" << a
+                    << " and total energy E=" << *n*(2*a*a/(3.*ε)) << Log::Flush;
 
         using namespace Slab::Models::KGRtoR;
         auto proto = newFieldState();

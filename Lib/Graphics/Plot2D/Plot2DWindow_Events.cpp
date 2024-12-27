@@ -13,6 +13,8 @@ namespace Slab {
 
     bool
     Graphics::Plot2DWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+        if(Graphics::SlabWindow::notifyMouseButton(button, state, keys)) return true;
+
         static auto time = Timer();
 
         if (button == MouseButton::MouseButton_RIGHT) {
@@ -33,12 +35,13 @@ namespace Slab {
             }
         }
 
-        return Graphics::SlabWindow::notifyMouseButton(button, state, keys);
+        return false;
     }
 
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        auto elRet = SlabWindow::notifyMouseMotion(x, y, dx, dy);
+        if(SlabWindow::notifyMouseMotion(x, y, dx, dy)) return true;
 
+        bool elRet = false;
         auto mouseState = parent_system_window->getMouseState();
 
         if (isMouseLeftClicked()) {
@@ -83,7 +86,7 @@ namespace Slab {
     }
 
     bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
-        SlabWindow::notifyMouseWheel(dx, dy);
+        if(SlabWindow::notifyMouseWheel(dx, dy)) return true;
 
         constexpr const Real factor = 1.2;
         const Real d = pow(factor, -dy);
@@ -115,9 +118,9 @@ namespace Slab {
         return true;
     }
 
-    void Graphics::Plot2DWindow::notifyReshape(int newWinW, int newWinH) { SlabWindow::notifyReshape(newWinW, newWinH); }
-
     bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        if(SlabWindow::notifyKeyboard(key, state, modKeys)) return true;
+
         if(state==KeyState::Release) {
             if(key == KeyMap::Key_TAB && modKeys.Mod_Shift == Press) {
                 toggleShowInterface();
@@ -125,7 +128,7 @@ namespace Slab {
             }
         }
 
-        return SlabWindow::notifyKeyboard(key, state, modKeys);
+        return false;
     }
 
 }

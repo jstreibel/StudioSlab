@@ -70,11 +70,13 @@ message(NOTICE "Added executable Fields-RtoR-Thermal")
 # ************************************************************************************************************
 
 
-add_executable ( Fields-Montecarlo
-		Montecarlo1+1/MontecarloMain.cpp )
-target_link_libraries (Fields-Montecarlo Slab )
+add_executable ( Fields-RtoR-Montecarlo-Action Montecarlo1+1/Main-RtoRActionMontecarlo.cpp)
+target_link_libraries (Fields-RtoR-Montecarlo-Action Slab )
+message(NOTICE "Added executable Fields-RtoR-Montecarlo-Action")
 
-message(NOTICE "Added executable Fields-Montecarlo")
+add_executable ( Fields-RtoR-Montecarlo-Hamiltonian Montecarlo1+1/Main-RtoRHamiltonianMetropolis.cpp)
+target_link_libraries (Fields-RtoR-Montecarlo-Hamiltonian Slab )
+message(NOTICE "Added executable Fields-RtoR-Montecarlo-Hamiltonian")
 
 
 # ************************************************************************************************************

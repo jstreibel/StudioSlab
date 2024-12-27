@@ -27,12 +27,17 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto Builder::buildSolver() -> Pointer<Base::LinearStepSolver> {
-        auto bc = getBoundary();
-        auto pot = getPotential();
+        if(!(*temperature>0)) {
+            Log::Info() << "Temperature is set to ZERO. Using usual non-stochastic Klein-Gordon solver." << Log::Flush;
+            return KGRtoR::KGRtoRBuilder::buildSolver();
+        }
 
-        auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
+        auto ϕ_at_𝜕Ω = getBoundary();
+        auto V = getPotential();
 
-        auto solver = New<Slab::Models::KGRtoR::KGLangevinSolver>(bc, pot);
+        using Solver = Slab::Models::KGRtoR::KGLangevinSolver;
+        auto solver = New<Solver>(ϕ_at_𝜕Ω, V);
+
         solver->setTemperature(*temperature);
         solver->setDissipationCoefficient(*dissipation);
 

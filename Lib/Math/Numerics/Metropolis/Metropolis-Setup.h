@@ -24,7 +24,7 @@ namespace Slab::Math {
         using ValueDrawerFunction = std::function<NewValue(RandomSite)>;
         using AcceptanceFunction  = std::function<bool(ΔSValue)>;
 
-        ΔSFunction          Δ_δSδϕ;
+        ΔSFunction          ΔS;
         ModifyFunction      modify;
         SamplerFunction     sample_locations;
         ValueDrawerFunction draw_value;

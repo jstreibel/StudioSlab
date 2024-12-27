@@ -24,7 +24,10 @@ namespace Slab::Math::Base {
                                  const Str& generalDescription, bool doRegister = false);
 
     public:
-        virtual void setupForCurrentThread() {};
+        /**
+         * This is mostly used because GPU needs to be set up from the thread it is operated by.
+         */
+        virtual void setupForCurrentThread() { };
 
         virtual auto buildOutputSockets()         -> OutputSockets = 0;
         virtual auto buildStepper()               -> Pointer<Stepper> = 0;

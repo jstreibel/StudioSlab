@@ -45,42 +45,42 @@ namespace Slab::Graphics {
     }
 
     bool SystemWindowEventListener::notifyMouseMotion(int x, int y, int dx, int dy) {
-        return IterateReferences(delegateResponders, FuncRun(notifyMouseMotion, x, y, dx, dy));
+        return IterateReferences(delegateResponders, Func(notifyMouseMotion, x, y, dx, dy));
     }
 
     bool SystemWindowEventListener::notifySystemWindowReshape(int w, int h) {
-        return IterateReferences(delegateResponders, FuncRun(notifySystemWindowReshape, w, h));
+        return IterateReferences(delegateResponders, Func(notifySystemWindowReshape, w, h));
     }
 
     bool SystemWindowEventListener::notifyRender(){
-        return IterateReferences(delegateResponders, FuncRun(notifyRender));
+        return IterateReferences(delegateResponders, Func(notifyRender));
     }
 
     bool SystemWindowEventListener::notifyKeyboard(KeyMap key,
                                                    KeyState state,
                                                    ModKeys modKeys){
-        return IterateReferences(delegateResponders, FuncRun(notifyKeyboard, key, state, modKeys));
+        return IterateReferences(delegateResponders, Func(notifyKeyboard, key, state, modKeys));
     }
 
     bool SystemWindowEventListener::notifyCharacter(UInt codepoint) {
-        return IterateReferences(delegateResponders, FuncRun(notifyCharacter, codepoint));
+        return IterateReferences(delegateResponders, Func(notifyCharacter, codepoint));
     }
 
     bool SystemWindowEventListener::
     notifyMouseButton(MouseButton button,
                       KeyState state,
                       ModKeys mods) {
-        return IterateReferences(delegateResponders, FuncRun(notifyMouseButton, button, state, mods));
+        return IterateReferences(delegateResponders, Func(notifyMouseButton, button, state, mods));
     }
 
 
     bool SystemWindowEventListener::
     notifyMouseWheel(double dx, double dy) {
-        return IterateReferences(delegateResponders, FuncRun(notifyMouseWheel, dx, dy));
+        return IterateReferences(delegateResponders, Func(notifyMouseWheel, dx, dy));
     }
 
     bool SystemWindowEventListener::
     notifyFilesDropped(StrVector paths) {
-        return IterateReferences(delegateResponders, FuncRun(notifyFilesDropped, paths));
+        return IterateReferences(delegateResponders, Func(notifyFilesDropped, paths));
     }
 }

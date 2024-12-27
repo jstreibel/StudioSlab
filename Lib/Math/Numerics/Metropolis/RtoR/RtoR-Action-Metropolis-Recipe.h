@@ -14,14 +14,14 @@ namespace Slab::Math {
 
     using RtoRMetropolis = MetropolisAlgorithm<UInt, Real>;
 
-    class RtoRMetropolisRecipe : public Base::NumericalRecipe {
+    class RtoRActionMetropolisRecipe : public Base::NumericalRecipe {
         Pointer<RtoR::NumericFunction_CPU> field_data;
         using RtoRMetropolisSetup = MetropolisSetup<UInt, Real>;
 
     public:
         auto getField() -> Pointer<RtoR::NumericFunction_CPU>;
 
-        explicit RtoRMetropolisRecipe(UInt max_steps);
+        explicit RtoRActionMetropolisRecipe(UInt max_steps);
 
         auto buildOutputSockets() -> Vector<Pointer<Socket>> override;
 

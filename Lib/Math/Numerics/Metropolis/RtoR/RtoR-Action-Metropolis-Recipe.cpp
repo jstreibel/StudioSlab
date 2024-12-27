@@ -2,7 +2,7 @@
 // Created by joao on 10/28/24.
 //
 
-#include "RtoR-Metropolis-Recipe.h"
+#include "RtoR-Action-Metropolis-Recipe.h"
 
 #include "Core/SlabCore.h"
 #include "Utils/RandUtils.h"
@@ -10,31 +10,14 @@
 #include "Math/Numerics/Metropolis/MontecarloStepper.h"
 #include "Math/Numerics/ODE/Output/Sockets/OutputConsoleMonitor.h"
 #include "Math/Thermal/ThermoUtils.h"
+#include "RtoR-Metropolis-Config.h"
 
 
 namespace Slab::Math {
 
     // inline Real sqr(const Real &v){ return v*v; }
 
-    // Don't touch:
-    #define DONT_REGISTER false
-    #define DO_REGISTER true
-
-    class MetropolisRtoRConfig : public NumericConfig {
-        UInt max_steps;
-
-    public:
-        explicit MetropolisRtoRConfig(UInt max_steps)
-        : NumericConfig(DONT_REGISTER), max_steps(max_steps) {
-            // registerToManager();
-        }
-
-        auto getn() const -> UInt override{ return max_steps; };
-
-        auto to_string() const -> Str override{ return {}; };
-    };
-
-    auto RtoRMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
+    auto RtoRActionMetropolisRecipe::getField() -> Pointer<RtoR::NumericFunction_CPU> {
         if(field_data == nullptr){
             fix t_min=0.;
             fix t=2.;
@@ -46,12 +29,12 @@ namespace Slab::Math {
         return field_data;
     }
 
-    RtoRMetropolisRecipe::RtoRMetropolisRecipe(UInt max_steps)
+    RtoRActionMetropolisRecipe::RtoRActionMetropolisRecipe(UInt max_steps)
     : Base::NumericalRecipe(New<MetropolisRtoRConfig>(max_steps), "Metropolis R2->R", "", DONT_REGISTER) {
         // Core::RegisterCLInterface(interface);
     }
 
-    Vector<Pointer<Socket>> RtoRMetropolisRecipe::buildOutputSockets() {
+    Vector<Pointer<Socket>> RtoRActionMetropolisRecipe::buildOutputSockets() {
         fix total_steps = getNumericConfig()->getn();
 
         auto console_monitor = New<OutputConsoleMonitor>(total_steps);
@@ -60,7 +43,7 @@ namespace Slab::Math {
         return {console_monitor};
     }
 
-    Pointer<Stepper> RtoRMetropolisRecipe::buildStepper() {
+    Pointer<Stepper> RtoRActionMetropolisRecipe::buildStepper() {
         RtoRMetropolisSetup setup;
 
         Temperature T=1E-2;
@@ -123,7 +106,7 @@ namespace Slab::Math {
             return (δSδq_new-δSδq_old)*Δt;
         };
 
-        setup.Δ_δSδϕ = Δ_δSδϕ;
+        setup.ΔS = Δ_δSδϕ;
 
         setup.sample_locations = [field](){
             constexpr auto border_size = 1;

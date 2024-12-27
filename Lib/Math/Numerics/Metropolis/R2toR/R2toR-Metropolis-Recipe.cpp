@@ -76,7 +76,7 @@ namespace Slab::Math {
             return RandUtils::RandomUniformReal(old_val-δϕₘₐₓ, old_val+δϕₘₐₓ);
         };
 
-        setup.Δ_δSδϕ = [field](RandomSite site, NewValue new_val) {
+        setup.ΔS = [field](RandomSite site, NewValue new_val) {
             fix i = site.i;
             fix n = site.j;
 

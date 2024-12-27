@@ -106,8 +106,6 @@ namespace Slab::Graphics {
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        void notifyReshape(int newWinW, int newWinH) override;
-
     };
 
     DefinePointers(Plot2DWindow)

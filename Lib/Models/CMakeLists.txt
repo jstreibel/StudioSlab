@@ -6,7 +6,7 @@ set ( KG_SOURCES
 		KleinGordon/KG-Solver.h
 		KleinGordon/KG-State.h
         KleinGordon/__archive__/KG-Langevin.h
-		KleinGordon/Montecarlo-Lorentz-2ndOrder.h
+        KleinGordon/RtoR-Montecarlo/Montecarlo-Lorentz-2ndOrder.h
 
         KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.cpp
         KleinGordon/RtoR/LinearStepping/KG-RtoREnergyCalculator.cpp

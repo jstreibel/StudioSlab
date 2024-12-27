@@ -94,6 +94,9 @@ set ( THERMO_SOURCES
 		Function/CommonFunctions.h
 		Function/FunctionProduct.h
 		Numerics/ODE/Odeint/OdeintSignatureHelper.h
+        ../Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.cpp
+		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.cpp
+		Numerics/Metropolis/RtoR/RtoR-Metropolis-Config.h
 )
 
 file(GLOB_RECURSE MAPS_SOURCES "./Function/*.cpp")
@@ -128,8 +131,8 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 		Numerics/Metropolis/MetropolisAlgorithm.cpp
 		Numerics/Metropolis/Metropolis-Config.cpp
 
-		Numerics/Metropolis/RtoR/RtoR-Metropolis-Recipe.cpp
-		Numerics/Metropolis/RtoR/RtoR-Metropolis-Recipe.h
+        Numerics/Metropolis/RtoR/RtoR-Action-Metropolis-Recipe.cpp
+        Numerics/Metropolis/RtoR/RtoR-Action-Metropolis-Recipe.h
 
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.cpp
 		Numerics/Metropolis/R2toR/R2toR-Metropolis-Recipe.h
