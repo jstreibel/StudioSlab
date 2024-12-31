@@ -12,7 +12,10 @@ The root folder contains the base CMakeFiles. This includes all C++ targets.
 A few screenshots:
 
 ![Two-point function analysis](https://github.com/user-attachments/assets/4cb6300c-596c-4fe0-a8cd-d747d061831c)
+<p style="text-align: center;">Two-point function (low-left) of thermalized 1+1 dimensional signum-Gordon field.</p>
 
 ![Momentum](https://github.com/user-attachments/assets/a770e7e7-1305-4c8c-8a57-6e00715ae4c2)
+<p style="text-align: center;">Field momentum.</p>
 
 ![Histograms](https://github.com/user-attachments/assets/c9aff204-0976-4819-bdc0-6f19eb51f0fa)
+<p style="text-align: center;">Histograms.</p>
