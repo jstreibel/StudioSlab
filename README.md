@@ -11,7 +11,7 @@ The root folder contains the base CMakeFiles. This includes all C++ targets.
 
 A few screenshots:
 
-Two-point function (low-left) of thermalized 1+1 dimensional signum-Gordon field:
+Two-point function (low-left) of quantum 1+1 dimensional signum-Gordon field, plus some of its Fourier space data:
 ![Two-point function analysis](https://github.com/user-attachments/assets/4cb6300c-596c-4fe0-a8cd-d747d061831c)
 
 Field momentum:
