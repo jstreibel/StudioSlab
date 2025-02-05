@@ -23,7 +23,7 @@ namespace Studios {
         using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon_1plus1d;
         // using AnalyticOscillon = Slab::Math::R2toR::AnalyticOscillon1p1_FourierImpl;
         using Function         = Slab::Math::R2toR::NumericFunction_CPU;
-        using FunctionSum = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
+        using FunctionSum      = Slab::Math::Base::SummableFunction<Slab::Math::Real2D, Slab::Real>;
         using Parameters       = Slab::Math::R2toR::AnalyticOscillon_1plus1d::OscillonParameters;
 
         Slab::Count n_oscillons = 10;

@@ -33,6 +33,7 @@ namespace Slab::Graphics{
         Pointer<R2toRFunctionArtist> kSpace_phasesArtist       = New<R2toRFunctionArtist>();
         Pointer<R2toRFunctionArtist> kSpace_realPartsArtist    = New<R2toRFunctionArtist>();
         Pointer<R2toRFunctionArtist> kSpace_imagPartsArtist    = New<R2toRFunctionArtist>();
+        Pointer<R2toRFunctionArtist> kSpace_Ak2                = New<R2toRFunctionArtist>();
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = New<R2toRFunctionArtist>();
         Pointer<R2toR::NumericFunction> inv_kSpace;

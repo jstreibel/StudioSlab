@@ -14,7 +14,7 @@ namespace Slab::Math::RtoR {
             phi, dPhiDt
         };
     public:
-        AnalyticOscillon(const AnalyticOscillon &);
+        // AnalyticOscillon(const AnalyticOscillon &);
 
         AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);
         AnalyticOscillon(Real t, Real x0, Real l, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit = phi);

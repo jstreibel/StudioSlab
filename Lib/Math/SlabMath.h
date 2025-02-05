@@ -6,12 +6,13 @@
 #define STUDIOSLAB_SLABMATH_H
 
 #include "Math/Data/Data.h"
+#include "Math/Data/DataManager.h"
 
 namespace Slab::Math {
     void Startup();
     void Finish();
 
-    Vector<DataName> EnumerateAllData();
+    Vector<DataManager::EntryDescription> EnumerateAllData();
 }
 
 #endif //STUDIOSLAB_SLABMATH_H

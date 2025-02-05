@@ -18,7 +18,7 @@ namespace Slab::Math {
 
     }
 
-    Vector<DataName> EnumerateAllData() {
+    Vector<DataManager::EntryDescription> EnumerateAllData() {
         return DataManager::GetAllDataEntries();
     }
 }

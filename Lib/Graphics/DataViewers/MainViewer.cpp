@@ -68,7 +68,7 @@ namespace Slab::Graphics {
                                 ImGui::MenuItem("No data available", nullptr, false, false);
                             } else {
                                 for (auto &name: entries) {
-                                    if (ImGui::MenuItem(name.c_str(), nullptr, false, false)) {
+                                    if (ImGui::MenuItem(name.name.c_str(), nullptr, false, false)) {
                                     }
                                 }
                             }

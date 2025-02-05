@@ -414,6 +414,8 @@ namespace Slab::Graphics {
         kSpace_phasesArtist->setFunction(phases);
         kSpace_realPartsArtist->setFunction(realParts);
         kSpace_imagPartsArtist->setFunction(imagParts);
+
+
     }
 
     Str FourierViewer::getName() const {

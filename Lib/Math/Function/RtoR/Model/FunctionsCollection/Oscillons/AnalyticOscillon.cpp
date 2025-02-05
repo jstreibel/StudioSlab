@@ -37,10 +37,10 @@ namespace Slab::Math::RtoR {
         return gamma(u) * alpha;
     }
 
-    AnalyticOscillon::AnalyticOscillon(const AnalyticOscillon &copy)
-    : t0(copy.t0), x0(copy.x0), l(copy.l), v(copy.v), u(copy.u), alpha(copy.alpha)
-    , s1(copy.s1), s2(copy.s2), bit(copy.bit)
-    {    }
+    // AnalyticOscillon::AnalyticOscillon(const AnalyticOscillon &copy)
+    // : t0(copy.t0), x0(copy.x0), l(copy.l), v(copy.v), u(copy.u), alpha(copy.alpha)
+    // , s1(copy.s1), s2(copy.s2), bit(copy.bit)
+    // {    }
 
     AnalyticOscillon::AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit)
             : t0(t_0(alpha, -u) - t), x0(x_0(alpha, -u, v)), l(1), v(v), u(u), s1(phiMirrored ? -1 : 1),

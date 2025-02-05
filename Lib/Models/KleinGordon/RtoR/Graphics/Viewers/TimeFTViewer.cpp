@@ -13,6 +13,8 @@
 
 namespace Slab::Models::KGRtoR {
 
+    Str TimeFTViewer::getName() const { return "Time-DFT space-average viewer"; }
+
     TimeFTViewer::TimeFTViewer(const Pointer<Graphics::GUIWindow> &pointer,
                                const Pointer<R2toR::NumericFunction> &func,
                                const Pointer<R2toR::NumericFunction> &ddtFunc)
@@ -69,11 +71,11 @@ namespace Slab::Models::KGRtoR {
         auto ωSpace_temp = New<Math::R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
         Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(Real)M);
 
-        fix j₀ = floor((t_0-t_min)/dt);
+        fix j_0 = (Int)floor((t_0-t_min)/dt);
         for(auto i=0; i<N; ++i){
             auto &spaceData_temp = tempSpace.getSpace().getHostData(false);
 
-            for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j₀+j);
+            for(auto j=0; j<M; ++j) spaceData_temp[j] = function->At(i, j_0+j);
 
             auto dftMagnitudes = RtoR::DFT::Compute(tempSpace).getMagnitudes();
 
@@ -183,8 +185,6 @@ namespace Slab::Models::KGRtoR {
     void TimeFTViewer::setFunctionDerivative(FuncPointer pointer) {
         KGViewer::setFunctionDerivative(pointer);
     }
-
-    Str TimeFTViewer::getName() const { return "Time-DFT space-average viewer"; }
 
     void TimeFTViewer::notifyBecameVisible() {
         Viewer::notifyBecameVisible();

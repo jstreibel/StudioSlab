@@ -24,6 +24,8 @@ namespace Slab::Math {
         HashMap<DataName, DataWrap> data_map;
 
     public:
+        struct EntryDescription { DataName name; DataType type; };
+
         explicit DataManager();
 
         static DataName
@@ -33,7 +35,7 @@ namespace Slab::Math {
 
         static auto
         GetAllDataEntries()
-        -> Vector<DataName>;
+        -> Vector<EntryDescription>;
 
         static auto
         AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation)

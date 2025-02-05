@@ -21,7 +21,7 @@ namespace Slab::Math {
         return DataManager::GetData(name);
     }
 
-    Vector<DataName> MathModule::GetDataEntries() {
+    Vector<DataManager::EntryDescription> MathModule::GetDataEntries() {
         return DataManager::GetAllDataEntries();
     }
 

@@ -69,10 +69,10 @@ namespace Slab::Math {
         });
     }
 
-    Vector<DataName> DataManager::GetAllDataEntries() {
-        Vector<DataName> entries;
+    Vector<DataManager::EntryDescription> DataManager::GetAllDataEntries() {
+        Vector<DataManager::EntryDescription> entries;
         for(auto &entry : GetInstance().data_map)
-            entries.emplace_back(entry.first);
+            entries.emplace_back(EntryDescription(entry.first, entry.second.get_type()) );
 
         return entries;
     }

@@ -73,16 +73,20 @@ namespace Slab::Graphics {
 
             auto allDataEntries = Math::EnumerateAllData();
             if (!allDataEntries.empty() && ImGui::CollapsingHeader("Data")) {
-                if (ImGui::BeginTable("DataTable", 1)) {
+                if (ImGui::BeginTable("DataTable", 2, ImGuiTableFlags_Resizable.)) {
+                    ImGui::TableSetupColumn("Type");
                     ImGui::TableSetupColumn("Name");
                     // ImGui::TableSetupColumn("Id");
                     ImGui::TableHeadersRow();
 
                     for (const auto &entry: allDataEntries) {
                         ImGui::TableNextRow();
-                        ImGui::TableSetColumnIndex(0);
 
-                        ImGui::Text("%s", entry.c_str());
+                        ImGui::TableSetColumnIndex(0);
+                        ImGui::Text("%s", entry.type.c_str());
+
+                        ImGui::TableSetColumnIndex(1);
+                        ImGui::Text("%s", entry.name.c_str());
                     }
 
                     ImGui::EndTable();

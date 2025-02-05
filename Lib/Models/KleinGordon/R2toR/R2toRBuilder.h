@@ -23,6 +23,7 @@ namespace Slab::Models::KGR2toR {
 
     public:
         Builder(const Str& name, const Str& description, bool do_register=false);
+        virtual ~Builder() = default;
 
         auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
         auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
