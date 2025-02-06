@@ -20,6 +20,7 @@
 #include "Graph3DTests.h"
 #include "VShapeExpansionTest.h"
 #include "LaTeXTests.h"
+#include "ImGuiUITest.h"
 
 #define DONT_REGISTER false
 
@@ -44,25 +45,13 @@ int TestsApp::run() {
         auto wm = New<Graphics::SlabWindowManager>();
         main_syswin->addAndOwnEventListener(wm);
 
-        Pointer<Graphics::SlabWindow> temp;
-
-        temp = New<Tests::LaTeXTests>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::VShapeExpansionTest>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::ModernGLTests>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::Graph3DTests>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::BezierTests>();
-        wm->addSlabWindow(temp);
-
-        temp = New<Tests::FourierTestWindow>();
-        wm->addSlabWindow(temp);
+        wm->addSlabWindow(New<Tests::LaTeXTests>());
+        wm->addSlabWindow(New<Tests::VShapeExpansionTest>());
+        wm->addSlabWindow(New<Tests::ModernGLTests>());
+        wm->addSlabWindow(New<Tests::Graph3DTests>());
+        wm->addSlabWindow(New<Tests::BezierTests>());
+        wm->addSlabWindow(New<Tests::FourierTestWindow>());
+        wm->addSlabWindow(Tests::GetImGuiTestWindow());
 
         // temp = New<WindowTreeBuilderTest>();
         // wm->addSlabWindow(temp);

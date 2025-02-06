@@ -73,7 +73,7 @@ namespace Slab::Graphics {
 
             auto allDataEntries = Math::EnumerateAllData();
             if (!allDataEntries.empty() && ImGui::CollapsingHeader("Data")) {
-                if (ImGui::BeginTable("DataTable", 2, ImGuiTableFlags_Resizable.)) {
+                if (ImGui::BeginTable("DataTable", 2, ImGuiTableFlags_Resizable)) {
                     ImGui::TableSetupColumn("Type");
                     ImGui::TableSetupColumn("Name");
                     // ImGui::TableSetupColumn("Id");

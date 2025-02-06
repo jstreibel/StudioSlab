@@ -8,23 +8,32 @@
 
 #include "Graphics/SlabGraphics.h"
 
+#include "Core/SlabCore.h"
+
 #include <utility>
+#include <Graphics/Modules/ImGui/ImGuiModule.h>
 
 #define MyName
 
 namespace Slab::Graphics {
     Atomic<Count> ImGuiWindow::count = 0;
 
-    ImGuiWindow::ImGuiWindow(Pointer<SlabWindow> slab_window)
+    ImGuiWindow::ImGuiWindow(Pointer<SlabWindow> slabwindow, Pointer<SlabImGuiContext> imguicontext)
     : id(Str("ImGuiWindow##") + ToStr(++count))
-    , slab_window(std::move(slab_window)) {
+    , slab_window(std::move(slabwindow))
+    , imgui_context(std::move(imguicontext)){
+        if (imgui_context == nullptr) {
+            auto imgui_module = Core::GetModule<ImGuiModule>("ImGui");
 
+            imgui_context = DynamicPointerCast<SlabImGuiContext>(imgui_module->createContext(slab_window->getConfig().parent_syswin));
+        }
     }
 
-
-
     void ImGuiWindow::draw() {
-        if(ImGui::Begin(id.c_str())) {
+        imgui_context->NewFrame();
+
+        imgui_context->AddDrawCall([this]() {
+            if(ImGui::Begin(id.c_str())) {
             if (slab_window != nullptr) {
                 fix pos = ImGui::GetWindowPos();
                 fix dim = ImGui::GetWindowSize();
@@ -44,7 +53,7 @@ namespace Slab::Graphics {
                 slab_window->notifyReshape((int) w, (int) h);
 
                 auto callback = [](const ImDrawList *parent_list, const ImDrawCmd *cmd) {
-                    if (cmd->UserCallback == NULL) {
+                    if (cmd->UserCallback == nullptr) {
                         return;
                     }
 
@@ -56,6 +65,9 @@ namespace Slab::Graphics {
 
             ImGui::End();
         }
+        });
+
+        imgui_context->Render();
 
         SlabWindow::draw();
     }

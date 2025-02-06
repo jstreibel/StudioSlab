@@ -21,7 +21,7 @@
 
 namespace Slab::Graphics {
 
-    class Plotter : public Core::Interface {
+    class Plotter final : public Core::Interface {
         Pointer<Plot2DWindow> plottingWindow;
 
     public:

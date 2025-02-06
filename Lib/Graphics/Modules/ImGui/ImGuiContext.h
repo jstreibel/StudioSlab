@@ -28,7 +28,7 @@ namespace Slab::Graphics {
         NewFrameCall    NewFrame;
     };
 
-    class SlabImGuiContext : public GUIContext {
+    class SlabImGuiContext final : public GUIContext {
         ImGuiContext *context = nullptr;
 
         CallSet call_set;

@@ -45,10 +45,10 @@ namespace Slab::Graphics {
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
     Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
-    : region{{xMin, xMax, yMin, yMax}}
+    : id(++WindowCount)
+    , region{{xMin, xMax, yMin, yMax}}
     , title(std::move(_title))
     , axisArtist()
-    , id(++WindowCount)
     {
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();

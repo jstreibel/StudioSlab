@@ -5,6 +5,8 @@
 #ifndef V_SHAPE_WINDOW_H
 #define V_SHAPE_WINDOW_H
 
+#include <crude_json.h>
+
 #include "Graphics/Styles/Colors.h"
 
 #include "Graphics/Backend/Events/MouseState.h"
@@ -33,6 +35,11 @@ namespace Slab::Graphics {
     public:
 
         struct Config {
+            Config(const Str &title="",
+                RectI win_rect=WindowStyle::default_window_rect,
+                Int flags=0x0,
+                ParentSystemWindow parent_syswin=nullptr);
+
             Str title;
             RectI win_rect;
             Int flags;
@@ -53,9 +60,11 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit SlabWindow(Config c={"", WindowStyle::default_window_rect, 0x0});
+        explicit SlabWindow(Config c=Config());
 
         ~SlabWindow() override;
+
+        auto getConfig() -> Config&;
 
         auto notifySystemWindowReshape(int w, int h)           -> bool final;
         auto notifyRender()                                    -> bool final;

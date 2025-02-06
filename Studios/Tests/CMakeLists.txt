@@ -15,6 +15,8 @@ add_executable ( Tests
 		VShapeExpansionTest.cpp
 		VShapeExpansionTest.h
 		LaTeXTests.cpp
+		ImGuiUITest.cpp
+		ImGuiUITest.h
 )
 target_link_libraries ( Tests ${SlabLibs} Slab )
 message(NOTICE "Added executable Tests")

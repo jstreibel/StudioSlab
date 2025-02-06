@@ -29,7 +29,8 @@ namespace Slab::Core {
 
     public:
         Interface(Str name);
-        ~Interface();
+
+        virtual ~Interface();
 
         UniqueID getUniqueID() const;
 

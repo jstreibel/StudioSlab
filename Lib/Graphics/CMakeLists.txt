@@ -287,7 +287,7 @@ add_library(${LIB_GRAPHICS} STATIC
 		DataViewers/Viewers/ModesHistoryViewer.h
 		SlabGraphics.cpp
 		SlabGraphics.h
-		GraphicsModule.cpp
+        SlabGraphicsModule.cpp
 		SlabGraphicsModule.h
 		OpenGL/WriterOpenGL.cpp
 		OpenGL/WriterOpenGL.h

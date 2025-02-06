@@ -16,6 +16,15 @@ namespace Slab::Graphics {
 
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
+
+    SlabWindow::Config::Config(const Str &title, RectI win_rect, Int flags, ParentSystemWindow parent_syswin)
+    : title(title), win_rect(win_rect), flags(flags), parent_syswin(parent_syswin) {
+        if (parent_syswin == nullptr) {
+            this->parent_syswin = &*GetGraphicsBackend()->GetMainSystemWindow();
+        }
+    }
+
+
     SlabWindow::
     SlabWindow(Config cfg)
     : SystemWindowEventListener(cfg.parent_syswin), config(std::move(cfg))
@@ -29,6 +38,10 @@ namespace Slab::Graphics {
     }
 
     SlabWindow::~SlabWindow() = default;
+
+    auto SlabWindow::getConfig() -> Config& {
+        return config;
+    }
 
     void SlabWindow::draw() {
         setupWindow();

@@ -17,6 +17,14 @@ namespace Slab::Core {
     void LoadModule(const ModuleName&);
     Pointer<Module> GetModule(const ModuleName&);
 
+    template <typename ModuleType>
+    Pointer<ModuleType>
+    GetModule(const ModuleName& name) {
+        auto module_raw = GetModule(name);
+
+        return DynamicPointerCast<ModuleType>(module_raw);
+    }
+
     void RegisterCLInterface(const Pointer<CLInterface>&);
     void ParseCLArgs(int, const char**);
 }
