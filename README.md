@@ -1,7 +1,7 @@
 # Studios Slab
 ## Aka "the anything bagel"
-
-This repo is where I've amalgamated most of my physics PhD code. Path integrals but also classical field simulation of non-differentiable potentials and (as studies) some montecarlo of magnetic models and soft matter.
+ 
+This repo is where I've amalgamated most of my physics PhD code. Discrete time-advancement of (classic) Klein-Gordon-like field theories (with non-differentiable potentials) and also path integrals of their quantum counterparts in a stochastic formalism. Also, as studies, montecarlo of magnetic models and Langevin dynamics of soft matter.
 
 It is mostly C++ but, because jupyter notebooks get so big, github thinks it is mostly Jupiter.
 
