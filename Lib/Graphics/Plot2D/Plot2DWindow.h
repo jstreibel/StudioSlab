@@ -6,9 +6,6 @@
 #define STUDIOSLAB_PLOT2DWINDOW_H
 
 #include <memory>
-#include <list>
-
-#include "Utils/Utils.h"
 
 #include "Graphics/Plot2D/Artists/LabelsArtist.h"
 
@@ -16,7 +13,6 @@
 
 #include "Graphics/Utils.h"
 #include "Graphics/Window/SlabWindow.h"
-#include "Graphics/OpenGL/Utils.h"
 #include "Graphics/Utils/Writer.h"
 
 #include "Artists/AxisArtist.h"

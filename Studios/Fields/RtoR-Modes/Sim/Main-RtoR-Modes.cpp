@@ -4,11 +4,11 @@
 
 #include "CrashPad.h"
 #include "MathApp.h"
-#include "Builder.h"
+#include "NumericalRecipe.h"
 
 int run(int argc, const char *argv[]) {
 
-    auto builder = new Modes::Builder();
+    auto builder = new Modes::NumericalRecipe();
 
     using namespace Slab::Math;
 

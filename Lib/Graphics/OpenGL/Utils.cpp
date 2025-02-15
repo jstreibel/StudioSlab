@@ -12,6 +12,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <utility>
 
 #define CHECK_GL_ERRORS(strMark) \
     {                    \
@@ -77,6 +78,8 @@ namespace Slab {
 
 
         bool success = FreeImage_Save(FIF_PNG, image, fileName.c_str(), PNG_DEFAULT);
+        // bool success = FreeImage_Save(FIF_JPEG, image, fileName.c_str(), JPEG_QUALITYSUPERB);
+
         if (!success)
             Log::Error() << "Failed to save the image." << Log::Flush;
         else Log::Success() << "Image \"" << fileName << "\" saved successfully!" << Log::Flush;
@@ -124,7 +127,10 @@ namespace Slab {
 
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // auto gui_state = window->isGUIEnabled();
+            // window->setGUIState(DISABLED);
             window->draw();
+            // window->setGUIState(gui_state);
 
             window->setx(xOld);
             window->sety(yOld);
@@ -134,7 +140,7 @@ namespace Slab {
 
             auto buffer = GLUT::getFrameBuffer(0, 0, width, height);
 
-            outputToPNG(buffer, fileName);
+            outputToPNG(buffer, std::move(fileName));
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

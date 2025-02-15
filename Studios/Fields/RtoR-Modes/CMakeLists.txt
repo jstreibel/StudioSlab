@@ -3,7 +3,7 @@
 add_executable ( Fields-RtoR-Modes
         Sim/Main-RtoR-Modes.cpp
         Sim/NumericalRecipe.cpp
-        Sim/Builder.h
+        Sim/NumericalRecipe.h
         Sim/Monitor.cpp
         Sim/Monitor.h
         Sim/BoundaryCondition.cpp

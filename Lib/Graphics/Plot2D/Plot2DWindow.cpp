@@ -10,6 +10,8 @@
 #include "PlotStyle.h"
 
 #include <utility>
+#include <sys/stat.h>
+
 #include "3rdParty/ImGui.h"
 
 #include "Utils/Printing.h"
@@ -128,6 +130,11 @@ namespace Slab::Graphics {
     }
 
     void Graphics::Plot2DWindow::drawGUI() {
+        static bool bypass_gui = false; // When outputting to png, the whole draw for this window (including this
+        if (bypass_gui) { return; }     // function) is performed on top of the current draw. We thus bypass the gui
+                                        // draw to not get ImGui santity check "Forgot to call Render() or EndFrame()
+                                        // at the end of the previous frame?"
+
         auto draw_call = [this](){
             auto popupName = unique(title + Str(" window popup"));
 
@@ -150,7 +157,9 @@ namespace Slab::Graphics {
                     auto fileName = title + " " +
                                     Core::CLInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                     ".png";
+                    bypass_gui = true;
                     OpenGL::outputToPNG(this, fileName, w, (int) h);
+                    bypass_gui = false;
                 }
 
                 ImGui::EndPopup();

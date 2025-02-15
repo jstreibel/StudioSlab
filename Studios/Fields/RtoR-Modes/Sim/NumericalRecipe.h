@@ -14,28 +14,30 @@ namespace Modes {
     using namespace Slab::Math;
 
 
-    class Builder : public Slab::Models::KGRtoR::KGRtoRBuilder {
+    class NumericalRecipe : public Slab::Models::KGRtoR::KGRtoRBuilder {
         IntegerParameter BCSelection = IntegerParameter(0,    "BC",              "Boundary conditions selection:"
                                                                                 "\n\t0: sine signal with 'omega' angular frequency in vacuum IC."
                                                                                 "\n\t1: IC sine wave with 'omega' angular frequency and 'wave_number' wave number."
                                                                                 "\n\t2: Dead.");
-        RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
-        // RealParameter omega          = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
-        RealParameter omega          = RealParameter(1.0, "w,omega_n", "Angular frequency 'ω' harmonic. Computed as ω=2πj/L.");
-        // RealParameter k              = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
-        RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
+        // RealParameter A              = RealParameter   (1.0,  "A",               "Amplitude of input sine wave");
+        // // RealParameter omega          = RealParameter   (1.0,  "w,omega",         "Angular frequency of input sine wave");
+        // RealParameter omega          = RealParameter(1.0, "w,omega_n", "Angular frequency 'ω' harmonic. Computed as ω=2πj/L.");
+        // // RealParameter k              = RealParameter   (1.0,  "k,wave_number",   "Wave number of input sine wave, if Wave BC is selected.");
+        //RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
+
+        RealParameter Ak2              = RealParameter   (1.0,  "j,Ak2", "Parameter (iota), ι=Ak²");
+        RealParameter lambda           = RealParameter   (1.0,  "l,wavelength", "Input wavelength");
         BoolParameter driving_force  = BoolParameter   (false,"F,driving_force", "Compute with non-homogenous driving force.");
 
         Pointer<Modes::SquareWave> squareWave;
     protected:
         auto buildOpenGLOutput() -> void * override;
 
-
     public:
         auto suggestFileName() const -> Str override;
 
     public:
-        explicit Builder(bool doRegister=true);
+        explicit NumericalRecipe(bool doRegister=true);
 
         auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 

@@ -2,7 +2,7 @@
 // Created by joao on 1/09/23.
 //
 
-#include "Builder.h"
+#include "NumericalRecipe.h"
 
 #include <memory>
 
@@ -19,17 +19,19 @@
 
 namespace Modes {
 
-    using namespace Slab::Models;
+    // using namespace Slab::Models;
 
-    Builder::Builder(bool doRegister)
+    NumericalRecipe::NumericalRecipe(bool doRegister)
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        interface->addParameters({&BCSelection, &A, &omega, &k, &driving_force});
+        // interface->addParameters({&BCSelection, &A, &omega, &k, &driving_force});
+        interface->addParameters({&BCSelection, &Ak2, &lambda, &driving_force});
+
 
         if(doRegister) RegisterCLInterface(interface);
     }
 
-    Math::Base::BoundaryConditions_ptr Builder::getBoundary() {
+    Math::Base::BoundaryConditions_ptr NumericalRecipe::getBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
         fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
@@ -63,7 +65,7 @@ namespace Modes {
         throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
-    void Builder::notifyCLArgsSetupFinished() {
+    void NumericalRecipe::notifyCLArgsSetupFinished() {
         CLInterfaceOwner::notifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
@@ -102,7 +104,7 @@ namespace Modes {
         Log::Info() << Log::BGWhite+Log::FGBlack << "  Technical sine resolution is " << res << " steps/cycle (" << int(res*a) << " sites/linear period)  " << Log::ResetFormatting << Log::Flush;
     }
 
-    void *Builder::buildOpenGLOutput() {
+    void *NumericalRecipe::buildOpenGLOutput() {
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
 
@@ -118,7 +120,7 @@ namespace Modes {
         return monitor;
     }
 
-    Str Builder::suggestFileName() const {
+    Str NumericalRecipe::suggestFileName() const {
         const auto SEPARATOR = " ";
 
         StrVector params = {"A", "omega_n"};
@@ -128,7 +130,7 @@ namespace Modes {
         return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> Builder::getNonHomogenous() {
+    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe::getNonHomogenous() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;
