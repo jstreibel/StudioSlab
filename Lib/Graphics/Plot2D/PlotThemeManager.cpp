@@ -307,7 +307,7 @@ namespace Slab::Graphics {
         scheme->minorGridLines.thickness = 5;
         scheme->minorGridLines.setStippleFactor(scheme->minorGridLines.getStippleFactor()*5);
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 70);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
         scheme->ticksWriter = writer;
         scheme->labelsWriter = writer;
 

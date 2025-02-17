@@ -29,6 +29,9 @@ namespace Slab::Models::KGRtoR {
 
         void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
+
+        auto get_kSectionWindow() -> Pointer<Graphics::Plot2DWindow>;;
+
     };
 
 } // Slab::Models::RGRtoR

@@ -153,6 +153,14 @@ namespace Slab::Core {
         }
 
         Log::Warning() << "InterfaceManager could not find parameter '" << name << "'." << Log::Flush;
+        Log::Info() << "Available parameters:" << Log::Flush;
+        for (const auto &interface: interfaces) {
+            auto parameters = interface->getParameters();
+            for (const auto &parameter: parameters) {
+                Log::Info() << "\t[" << interface->getName() << "] " << parameter->getCommandLineArgumentName(true) << ": " << parameter->valueToString() << Log::Flush;
+            }
+        }
+
 
         return nullptr;
     }

@@ -38,6 +38,7 @@ namespace Slab::Graphics {
         Str horizontalAxisLabel = "x";
         Str verticalAxisLabel = "y";
 
+        bool elegant = false;
         bool hTicksManual=false;
         Ticks hTicks;
         bool vTicksManual=false;

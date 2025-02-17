@@ -14,6 +14,8 @@
 #include <iostream>
 #include <utility>
 
+#include "Shader.h"
+
 #define CHECK_GL_ERRORS(strMark) \
     {                    \
         GLenum err;                                                 \
@@ -116,25 +118,46 @@ namespace Slab {
 
             retVal = false;
         } else {
-            auto xOld = window->getx();
-            auto yOld = window->gety();
-            auto wOld = window->GetWidth();
-            auto hOld = window->GetHeight();
+            const auto xOld = window->getx();
+            const auto yOld = window->gety();
+            const auto wOld = window->GetWidth();
+            const auto hOld = window->GetHeight();
 
-            window->setx(0);
-            window->sety(0);
-            window->notifyReshape(width, height);
+            // This offset is how frame is drawn around window.
+            window->setx(2);
+            window->sety(2);
+            window->notifyReshape(width-4, height-4);
 
+            glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
 
             // auto gui_state = window->isGUIEnabled();
             // window->setGUIState(DISABLED);
+            window->overrideSystemWindowHeight(height);
             window->draw();
+            window->overrideSystemWindowHeight(-1);
             // window->setGUIState(gui_state);
 
             window->setx(xOld);
             window->sety(yOld);
             window->notifyReshape(wOld, hOld);
+
+            // Frame:
+            // OpenGL::Shader::remove();
+            // glMatrixMode(GL_PROJECTION);
+            // glLoadIdentity();
+            // glMatrixMode(GL_MODELVIEW);
+            // glLoadIdentity();
+            // glEnable(GL_BLEND);
+            // glEnable(GL_LINE_SMOOTH);
+            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            // glLineWidth(5);
+            // glColor3i(0, 0, 0);
+            // glBegin(GL_LINES);
+            {
+                // glVertex2f(..)
+            }
+            // glEnd();
 
             glFlush();
 

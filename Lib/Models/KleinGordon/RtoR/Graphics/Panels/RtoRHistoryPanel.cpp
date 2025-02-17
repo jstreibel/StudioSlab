@@ -141,5 +141,7 @@ namespace Slab::Models::KGRtoR {
         kSpaceHistory->addArtist(sftHistoryGraph);
     }
 
-
+    auto RtoRHistoryPanel::get_kSectionWindow() -> Pointer<Graphics::Plot2DWindow> {
+        return kSection;
+    }
 } // Slab::Models::RGRtoR

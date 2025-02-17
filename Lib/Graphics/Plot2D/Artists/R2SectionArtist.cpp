@@ -9,6 +9,7 @@
 
 #include <utility>
 #include "3rdParty/ImGui.h"
+#include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 
 namespace Slab::Graphics {
     void R2SectionArtist::setFunction(R2toR::Function_constptr func)  { function2D = std::move(func); }
@@ -50,8 +51,9 @@ namespace Slab::Graphics {
 
     void R2SectionArtist::drawGUI() {
         auto samples_int = (int)samples;
-        if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samples_int, 100, 25000)){
-            samples = (Resolution)samples_int;
+        if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samples_int, 100, 25000)
+         | ImGui::DragInt(UniqueName("Samples (fine)").c_str(), &samples_int, 1)) {
+            samples = static_cast<Resolution>(samples_int);
         }
 
         int i=0;
@@ -61,31 +63,7 @@ namespace Slab::Graphics {
 
             ImGui::Checkbox((UniqueName("Visible")+section_data.name).c_str(), &section_data.visible);
 
-            ImGui::SliderFloat("Line thickness", &style->thickness, 0.1, 25);
-
-            static bool colorPickerActive = false;
-            if(ImGui::Button("Line color"))
-                colorPickerActive = !colorPickerActive;
-
-            auto uniqueName = this->getLabel() + Str(" line color picker");
-
-            if(colorPickerActive && ImGui::Begin(uniqueName.c_str(), &colorPickerActive)) {
-                ImGui::ColorPicker4("Line color", style->lineColor.asFloat4fv(), 0);
-                ImGui::End();
-            }
-
-            ImGui::Checkbox("Filled", &style->filled);
-            if(style->filled) {
-                static bool fillColorPickerActive = false;
-                if(ImGui::Button("Fill color"))
-                    fillColorPickerActive = !fillColorPickerActive;
-
-                uniqueName = this->getLabel() + Str(" fill color picker");
-                if(fillColorPickerActive && ImGui::Begin(uniqueName.c_str(), &fillColorPickerActive)){
-                    ImGui::ColorPicker4("Fill color", style->fillColor.asFloat4fv(), 0);
-                    ImGui::End();
-                }
-            }
+            DrawPlotStyleGUI(*(section_data.style), section_data.name);
         }
     }
 

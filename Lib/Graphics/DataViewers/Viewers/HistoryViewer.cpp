@@ -14,14 +14,21 @@
 
 namespace Slab::Graphics {
 
+    Str HistoryViewer::getName() const {
+        return "History viewer";
+    }
+
     HistoryViewer::HistoryViewer(const Pointer<GUIWindow> &gui_window, const Pointer<R2toR::NumericFunction> &function)
     : Viewer(gui_window, function)
     {
         history_window = New<Plot2DWindow>("Function");
+        history_window->getAxisArtist().setVerticalAxisLabel("");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         addWindow(history_window);
 
         xft_history_window = New<Plot2DWindow>("Space DFT");
+        xft_history_window->getAxisArtist().setVerticalAxisLabel("A");
+        xft_history_window->getAxisArtist().setHorizontalAxisLabel("k");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         addWindow(xft_history_window, true);
 
@@ -37,8 +44,6 @@ namespace Slab::Graphics {
 
         xft_history_window->tieRegion_xMaxMin(*dft_slice_window);
         xft_history_window->tieRegion_yMaxMin(*history_window);
-
-
     }
 
     void HistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
@@ -91,9 +96,12 @@ namespace Slab::Graphics {
 
         auto domain = xft_amplitudes->getDomain();
         if(dft_section == nullptr) {
-            dft_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
+            // dft_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
+            //                                        Real2D{domain.xMax, domain.yMin},
+            //                                        domain.xMin, domain.xMax);
+            dft_section = New<RtoR2::StraightLine>(Real2D{0, domain.yMin},
                                                    Real2D{domain.xMax, domain.yMin},
-                                                   domain.xMin, domain.xMax);
+                                                   0, domain.xMax);
             auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[1];
             dft_section_artist->addSection(dft_section, style.clone(), "dft section");
         } else {
@@ -127,10 +135,6 @@ namespace Slab::Graphics {
         });
 
         WindowPanel::draw();
-    }
-
-    Str HistoryViewer::getName() const {
-        return "History viewer";
     }
 
 } // Slab::Graphics

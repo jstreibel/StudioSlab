@@ -24,7 +24,7 @@ namespace Slab::Models::KGRtoR {
     class RealtimePanel : public RtoRPanel {
         void updateEnergyData();
 
-        Graphics::ImGuiWindow imGuiWindow;
+        // Graphics::ImGuiWindow imGuiWindow;
     protected:
         Graphics::Plot2DWindow mFieldsGraph;
         Graphics::Artist_ptr vArtist;

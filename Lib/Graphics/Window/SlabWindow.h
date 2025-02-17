@@ -56,6 +56,7 @@ namespace Slab::Graphics {
     protected:
         Config config;
         Resolution min_width=800, min_height=450;
+        Int h_override = -1;
         bool active=false;
 
     public:
@@ -68,6 +69,13 @@ namespace Slab::Graphics {
 
         auto notifySystemWindowReshape(int w, int h)           -> bool final;
         auto notifyRender()                                    -> bool final;
+
+        /**
+         *  Override the value used to compute viewport positions in OpenGL environments.
+         *
+         * @param override_h the value to override the system window height. Set to negative to stop override.
+         */
+        void overrideSystemWindowHeight(int override_h);
 
         auto notifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
         auto notifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;

@@ -16,6 +16,7 @@
 #include "RtoRPanel.h"
 #include "Utils/Threads.h"
 #include "Models/KleinGordon/KG-NumericConfig.h"
+#include "Panels/RtoRHistoryPanel.h"
 
 
 namespace Slab::Graphics {
@@ -30,6 +31,7 @@ namespace Slab::Models::KGRtoR {
     class KGEnergy;
 
     class Monitor : public Graphics::BaseMonitor {
+    protected:
         Vector<RtoRPanel_ptr> dataViews;
         RtoRPanel_ptr currentDataView;
 
@@ -40,6 +42,8 @@ namespace Slab::Models::KGRtoR {
         R2toR::NumericFunction_constptr spaceFTHistory;
         Pointer<Graphics::Plot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Full space FT history");
         Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+
+        Slab::Pointer<RtoRHistoryPanel> historyPanel;
 
         KGEnergy &hamiltonian;
 

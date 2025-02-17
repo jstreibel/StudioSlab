@@ -27,7 +27,7 @@ namespace Slab::Graphics {
             "Points",
     };
 
-    const char* get_item(void*, int index) {
+    const char* get_item(void*, const int index) {
         return LinePrimitive_strings[index];
     }
 
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         auto primitive = (int)plot_style.getPrimitive();
 
         if(ImGui::Combo(Unique("Primitive"), &primitive, get_item, nullptr, LinePrimitive::__COUNT__))
-            plot_style.setPrimitive((LinePrimitive)primitive);
+            plot_style.setPrimitive(static_cast<LinePrimitive>(primitive));
 
         ImGui::Checkbox(Unique("Filled"), &plot_style.filled);
         ImGui::DragFloat(Unique("Thickness"), &plot_style.thickness, plot_style.thickness*0.01f, 0.1f, 3e2f, "%.1f");

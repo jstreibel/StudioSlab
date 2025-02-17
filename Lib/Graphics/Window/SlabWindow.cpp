@@ -74,7 +74,7 @@ namespace Slab::Graphics {
     }
 
     void SlabWindow::setupWindow() const {
-        fix syswin_h = parent_system_window->getHeight();
+        fix syswin_h = h_override < 0 ? parent_system_window->getHeight() : h_override;
 
         fix vp = getViewport();
 
@@ -190,13 +190,13 @@ namespace Slab::Graphics {
         if(min_height > GetHeight()) notifyReshape(GetWidth(), (int)min_height);
     }
 
-    auto SlabWindow::setx(int x) -> void {
+    auto SlabWindow::setx(const int x) -> void {
         fix w=config.win_rect.width();
         config.win_rect.xMin = x;
         config.win_rect.xMax = x+w;
     }
 
-    auto SlabWindow::sety(int y) -> void {
+    auto SlabWindow::sety(const int y) -> void {
         fix h=config.win_rect.height();
         config.win_rect.yMin = y;
         config.win_rect.yMax = y+h;
@@ -208,7 +208,7 @@ namespace Slab::Graphics {
 
     bool SlabWindow::isActive() const       { return active; }
 
-    bool SlabWindow::notifySystemWindowReshape(int w, int h) {
+    bool SlabWindow::notifySystemWindowReshape(const int w, const int h) {
         notifyReshape(w, h);
         // return SystemWindowEventListener::notifySystemWindowReshape(w, h);
 
@@ -219,6 +219,10 @@ namespace Slab::Graphics {
         draw();
 
         return SystemWindowEventListener::notifyRender();
+    }
+
+    void SlabWindow::overrideSystemWindowHeight(const int override_h) {
+        h_override = override_h;
     }
 
     auto SlabWindow::getx() const -> int { return config.win_rect.xMin; }

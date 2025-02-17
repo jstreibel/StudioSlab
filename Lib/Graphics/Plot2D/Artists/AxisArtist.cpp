@@ -19,8 +19,6 @@
 #define hPixelsToSpaceScale (region.width() / vp.width())
 #define vPixelsToSpaceScale (region.height() / vp.height())
 
-#define USE_ELEGANT_SCIENTIFIC false
-
 #define setupBuffer(buffer) \
     if     (numRegion> +2)  (buffer) << std::setprecision(0); \
     else if(numRegion> +1)  (buffer) << std::setprecision(1); \
@@ -45,7 +43,10 @@ namespace Slab::Graphics {
     AxisArtist::AxisArtist(const Unit& horizontal, const Unit& vertical)
     : hUnit(horizontal)
     , vUnit(vertical)
-    {    }
+    {
+        horizontalAxisLabel.reserve(256);
+        verticalAxisLabel.reserve(256);
+    }
 
     bool AxisArtist::draw(const Plot2DWindow &graph) {
         glLineWidth(1.0);
@@ -205,7 +206,7 @@ namespace Slab::Graphics {
             Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels};
 
             Str text;
-            if(0) {
+            if(1) {
                 buffer.str("");
 
                 setupBuffer(buffer);
@@ -213,7 +214,7 @@ namespace Slab::Graphics {
                 buffer << mark;
 
                 text = buffer.str();
-                if (numRegion < -1 && USE_ELEGANT_SCIENTIFIC) text = elegantScientific(text);
+                if (numRegion < -1 && elegant) text = elegantScientific(text);
             } else text = vUnit(mark, 2);
 
             loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);
@@ -313,6 +314,11 @@ namespace Slab::Graphics {
     bool AxisArtist::hasGUI() { return true; }
 
     void AxisArtist::drawGUI() {
+        ImGui::InputText(UniqueName("Horizontal label").c_str(), &horizontalAxisLabel[0], horizontalAxisLabel.capacity());
+        ImGui::InputText(UniqueName("Vertical label").c_str(), &verticalAxisLabel[0], verticalAxisLabel.capacity());
+
+        ImGui::Checkbox(UniqueName("Elegant scientific notation").c_str(), &elegant);
+
         ImGui::SliderFloat(UniqueName("x label spacing factor").c_str(), &x_spacing_multiplier, 0.5, 10.0);
         ImGui::SliderFloat(UniqueName("y label spacing factor").c_str(), &y_spacing_multiplier, 0.5, 10.0);
 

@@ -26,7 +26,8 @@ namespace Modes {
         //RealParameter k              = RealParameter(1.0, "k,harmonic", "Harmonic number 'n' of input sine wave. Wavenumber is computed as k=2πn/L ");
 
         RealParameter Ak2              = RealParameter   (1.0,  "j,Ak2", "Parameter (iota), ι=Ak²");
-        RealParameter lambda           = RealParameter   (1.0,  "l,wavelength", "Input wavelength");
+        IntegerParameter wavelengths   = IntegerParameter(1,    "wavelengths", "Integer number of wavelengths within L");
+        RealParameter mass             = RealParameter   (-1.0,  "mass", "Mass of for computing angular frequency. If negative, mass is set to 4k²/(πι)");
         BoolParameter driving_force  = BoolParameter   (false,"F,driving_force", "Compute with non-homogenous driving force.");
 
         Pointer<Modes::SquareWave> squareWave;

@@ -6,12 +6,14 @@
 
 #include <memory>
 
+#include "Graphics/Plot2D/PlotThemeManager.h"
+
 // Don't touch
 #define ODD true
 #define DONT_AFFECT_RANGES false
 
 // Options
-#define CUSTOM_TICKS false
+#define CUSTOM_TICKS true
 
 namespace Modes {
     Monitor::Monitor(const Pointer<KGNumericConfig> &params, Slab::Models::KGRtoR::KGEnergy &hamiltonian,
@@ -31,21 +33,17 @@ namespace Modes {
             modes->addPoint({ω, A[i]});
         }
 
-        /*
-        mSpaceFourierModesGraph.addPointSet(modes,
-            Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
-            "A(ω)", DONT_AFFECT_RANGES);
-            */
+        // fullSFTHistoryArtist.addPointSet(modes,
+        //     Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].permuteColors(ODD),
+        //     "A(ω)", DONT_AFFECT_RANGES);
 
-        /*
         if(CUSTOM_TICKS) {
             Graphics::AxisArtist::Ticks ticks;
-            auto unit = mSpaceFourierModesGraph.getAxisArtist().getHorizontalUnit();
-            fix k = Ω[0];
+            auto unit = Constants::π;
             for (int n = 1; n < 20; ++n) {
-                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
+                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
             }
-            this->mFullSpaceFTHistoryDisplay.getAxisArtist().setHorizontalAxisTicks(ticks);
-        }*/
+            this->historyPanel->get_kSectionWindow()->getAxisArtist().setHorizontalAxisTicks(ticks);
+        }
     }
 } // Modes

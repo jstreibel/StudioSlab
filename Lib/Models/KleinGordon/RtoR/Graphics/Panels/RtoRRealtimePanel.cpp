@@ -43,7 +43,8 @@ namespace Slab::Models::KGRtoR {
                                   "realtime monitoring of simulation state")
             , mFieldsGraph("Fields")
             , mEnergyGraph("Energy")
-            , imGuiWindow(Naked(mEnergyGraph)) {
+            // , imGuiWindow(Naked(mEnergyGraph))
+    {
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
         {

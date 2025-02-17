@@ -44,8 +44,8 @@ namespace Slab::Models::KGRtoR {
 
         addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
-        addDataView(Slab::New<RtoRHistoryPanel>(params, guiWindow, hamiltonian));
-        // addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
+        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, guiWindow, hamiltonian));
+        //addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
         addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, guiWindow));
         addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));
 
@@ -135,8 +135,10 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (lastPacket.getSteps() % (this->getnSteps() * 100));
-        fix dt = CLInterfaceManager::getInstance().getParameter("dt")->getValueAs<Real>();
-        // fix dt = max_t/(Real)max_steps;
+
+        fix t = CLInterfaceManager::getInstance().getParameter("t")->getValueAs<Real>();
+        fix steps = CLInterfaceManager::getInstance().getParameter("m")->getValueAs<Int>();
+        fix dt = t/(Real)steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
             fullHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
@@ -150,8 +152,9 @@ namespace Slab::Models::KGRtoR {
 
         static Real stepMod, lastStepMod = 0;
         stepMod = (Real) (step % (this->getnSteps() * 100));
-        // fix dt = max_t/(Real)max_steps;
-        fix dt = CLInterfaceManager::getInstance().getParameter("dt")->getValueAs<Real>();
+        fix h = CLInterfaceManager::getInstance().getParameter("h")->getValueAs<Real>();
+        fix r = CLInterfaceManager::getInstance().getParameter("r_dt")->getValueAs<Real>();
+        fix dt = h*r;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
             fullSFTHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
