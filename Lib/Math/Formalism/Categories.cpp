@@ -58,10 +58,10 @@ namespace Slab::Math {
 
     Rational::Rational() = default;
 
-    Rational::Rational(Int numerator, Int denominator)
+    Rational::Rational(const Int numerator, const Int denominator)
             : numerator(numerator), denominator(denominator) {}
 
-    Rational::Rational(Real val, Real epsilon, Int maxIter)
+    Rational::Rational(const Real val, const Real epsilon, const Int maxIter)
             : Rational(floatToRational(val, epsilon, maxIter)) {}
 
     Str Rational::ToString() const {
@@ -79,16 +79,17 @@ namespace Slab::Math {
         return Category::ToString();
     }
 
-    Str Unit::operator()(const Real &val, Count rounding) const {
-        if (Common::AreEqual(baseValue, 1) && sym.empty()) return ToStr(val, (int) rounding);
+    Str Unit::operator()(const Real &val, const Count rounding) const {
+        if (Common::AreEqual(baseValue, 1) && sym.empty()) return ToStr(val, static_cast<int>(rounding));
 
-        fix reVal = val / baseValue;
+        fix norm_val = val / baseValue;
+        fix norm_val_rounded = Common::RoundToMostSignificantDigits(norm_val, static_cast<int>(rounding));
 
-        Rational rational(Common::RoundToMostSignificantDigits(reVal, (int) rounding));
+        const Rational rational(norm_val_rounded);
 
         if (std::abs(rational.numerator) > maxNumerator
             || std::abs(rational.denominator) > maxDenominator)
-            return ToStr(reVal, (int) rounding) + sym;
+            return ToStr(norm_val, static_cast<int>(rounding)) + sym;
 
         auto unitVal = sym;
         if (std::abs(rational.numerator) != 1) unitVal = ToStr(rational.numerator) + unitVal;

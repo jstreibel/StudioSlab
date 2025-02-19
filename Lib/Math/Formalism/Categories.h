@@ -65,18 +65,18 @@ namespace Slab::Math {
         Real x, y, z;
     };
 
-    class Rational : public Category {
+    class Rational final : public Category {
     public:
         Rational();
 
         Rational(Int numerator, Int denominator);
 
-        Rational(Real val, Real epsilon = 1e-9, Int maxIter = 1000);
+        explicit Rational(Real val, Real epsilon = 1e-9, Int maxIter = 1000);
 
         Str ToString() const override;
 
-        Int numerator;
-        Int denominator;
+        Int numerator = 0;
+        Int denominator = 1;
     };
 
     class Unit : public Category {

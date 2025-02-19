@@ -130,6 +130,7 @@ namespace Slab::Common {
 
     Str GetPWD() { return std::filesystem::current_path(); }
 
+    /*
     double RoundToMostSignificantDigits(double num, int digits) {
         if (num == 0.0) return 0.0;
 
@@ -140,4 +141,10 @@ namespace Slab::Common {
 
         return round(scaledNum * pow(10.0, digits)) / pow(10.0, digits) / scale;
     }
+    */
+    double RoundToMostSignificantDigits(const double num, const int digits) {
+        const double factor = std::pow(10.0, digits);
+        return std::round(num * factor) / factor;
+    }
+
 }

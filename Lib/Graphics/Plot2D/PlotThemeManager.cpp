@@ -187,15 +187,15 @@ namespace Slab::Graphics {
     }
 
     GraphTheme_ptr GetSchemeDark2 () {
-        Color graphTitleFont =  {1,1,1,1};
-        Color graphTicksFont =  {1,1,1,.8};
-        Color background =      {0.05,0.05,0.08,1};
+        const Color graphTitleFont =  {1,1,1,1};
+        const Color graphTicksFont =  {1,1,1,.8};
+        const Color background =      {0.05,0.05,0.08,1};
 
-        Color axisColor =       {1,1,1,.25};
-        Color tickColor =       {1,1,1,.25};
+        const Color axisColor =       {1,1,1,.25};
+        const Color tickColor =       {1,1,1,.25};
 
         // https://www.learnui.design/tools/data-color-picker.html
-        Vector<PlotStyle> graphs = {
+        const Vector<PlotStyle> graphs = {
                 PlotStyle{Color::FromHex("#003f5c"), LinePrimitive::Solid, true, Nil, 1.5},
                 PlotStyle{Color::FromHex("#2f4b7c"), LinePrimitive::Solid, true, Nil, 1.5},
                 PlotStyle{Color::FromHex("#665191"), LinePrimitive::Solid, true, Nil, 1.5},
@@ -216,6 +216,7 @@ namespace Slab::Graphics {
 
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
+        gridLinesScheme.thickness = 1;
 
         auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 20);
         return New<PlottingTheme>(PlottingTheme
@@ -291,12 +292,13 @@ namespace Slab::Graphics {
         XHairStyle.thickness = 2;
         XHairStyle.filled = false;
 
-        auto gridLinesScheme = PlotStyle(tickColor, Dashed, false, Nil, 0.8);
+        auto gridLinesScheme = PlotStyle(tickColor, Dashed, false, Nil, 1);
         gridLinesScheme.lineColor.a = 0.15;
 
         auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 40);
         return New<PlottingTheme>(PlottingTheme
-                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
+                {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle,
+gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
     }
 
@@ -304,10 +306,13 @@ namespace Slab::Graphics {
         auto scheme = GetSchemePrint();
 
         scheme->hAxisPaddingInPixels = 120;
-        scheme->minorGridLines.thickness = 5;
+        scheme->minorGridLines.thickness = 0.8;
         scheme->minorGridLines.setStippleFactor(scheme->minorGridLines.getStippleFactor()*5);
+        scheme->hTickWidthInPixels = 5;
+        scheme->vTickHeightinPixels = 15;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
+        auto writer = std::make_shared<
+Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
         scheme->ticksWriter = writer;
         scheme->labelsWriter = writer;
 

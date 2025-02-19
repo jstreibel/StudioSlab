@@ -91,7 +91,7 @@ namespace Modes::DatabaseViewer {
         mashupDisplay.getRegion().setReference_xMin(massesGraph.getRegion().getReference_xMin());
         mashupDisplay.getRegion().setReference_xMax(massesGraph.getRegion().getReference_xMax());
 
-        Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
+        const Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 

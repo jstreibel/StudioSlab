@@ -32,6 +32,8 @@ namespace Slab::Math {
     class Category // : public Set<ObjectWithArrows<ObjectWithArrows>>
     {
     public:
+        virtual ~Category() = default;
+
         virtual Str ToString() const { return "<Category::ToString not implemented>"; }
     };
 

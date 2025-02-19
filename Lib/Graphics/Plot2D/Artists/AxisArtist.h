@@ -41,6 +41,7 @@ namespace Slab::Graphics {
         bool elegant = false;
         bool hTicksManual=false;
         Ticks hTicks;
+        float hTickHeightMultiplier = 2.0;
         bool vTicksManual=false;
         Ticks vTicks;
 

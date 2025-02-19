@@ -103,16 +103,16 @@ namespace Slab::Graphics {
     }
 
     void AxisArtist::drawXAxis(const Plot2DWindow &graph) const {
-        auto vp = graph.getViewport();
+        const auto vp = graph.getViewport();
         const auto& region = graph.getRegion();
 
-        auto currStyle = PlotThemeManager::GetCurrent();
+        const auto currStyle = PlotThemeManager::GetCurrent();
 
         auto writer = currStyle->ticksWriter;
         fix fontHeight = writer->getFontHeightInPixels();
 
-        fix vTickHeightInSpace = 2.0*(Real)currStyle->vTickHeightinPixels * vPixelsToSpaceScale;
-        fix vGraphPaddingInSpace = (Real)currStyle->vAxisPaddingInPixels * vPixelsToSpaceScale;
+        fix vTickHeightInSpace = hTickHeightMultiplier*static_cast<Real>(currStyle->vTickHeightinPixels) * vPixelsToSpaceScale;
+        fix vGraphPaddingInSpace = static_cast<Real>(currStyle->vAxisPaddingInPixels) * vPixelsToSpaceScale;
 
         fix yLocationOfXAxis = region.getYMin() < -vGraphPaddingInSpace
                                            ? 0
@@ -120,7 +120,7 @@ namespace Slab::Graphics {
 
         fix yLocationOfLabels = yLocationOfXAxis -1.1 * (vTickHeightInSpace+fontHeight) * vPixelsToSpaceScale;
 
-        auto &gtfColor = currStyle->graphNumbersColor;
+        const auto &gtfColor = currStyle->graphNumbersColor;
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
@@ -128,17 +128,18 @@ namespace Slab::Graphics {
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
         // Write numbers
-        for (auto &hTick : hTicks) {
-            auto pen = FromSpaceToViewportCoord({hTick.mark, yLocationOfLabels}, region.getRect(), vp);
-            writer->write(hTick.label, pen, gtfColor);
+        for (const auto &[mark, label] : hTicks) {
+            const auto pen = FromSpaceToViewportCoord({mark, yLocationOfLabels},
+                region.getRect(), vp);
+            writer->write(label, pen, gtfColor);
         }
 
         // Draw axes
         {
             OpenGL::Shader::remove();
 
-            auto &ac = currStyle->axisColor;
-            auto &tc = currStyle->majorTickColor;
+            const auto &ac = currStyle->axisColor;
+            const auto &tc = currStyle->majorTickColor;
             glLineWidth(currStyle->majorGridLines.thickness);
             glBegin(GL_LINES);
             {
@@ -147,12 +148,15 @@ namespace Slab::Graphics {
 
                 glVertex3d(region.getXMin(), yLocationOfXAxis, 0);
                 glVertex3d(region.getXMax(), yLocationOfXAxis, 0);
+            }
+            glEnd();
 
-
-                // Draw ticks
+            // Draw ticks
+            glLineWidth(static_cast<GLfloat>(currStyle->hTickWidthInPixels));
+            glBegin(GL_LINES);
+            {
                 glColor4f(tc.r, tc.g, tc.b, tc.a);
-                for (auto &hTick : hTicks){
-                    Real mark = hTick.mark;
+                for (const auto &[mark, label] : hTicks){
                     glVertex3d(mark, -vTickHeightInSpace, 0);
                     glVertex3d(mark, +vTickHeightInSpace, 0);
                 }
@@ -189,8 +193,8 @@ namespace Slab::Graphics {
         fix Δy = region.height();
         fix xLocationOfYAxis = region.getXMin() + (Real)currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
         fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
-        fix iMin = int(region.getYMin()/ySpacing);
-        fix iMax = int(region.getYMax()/ySpacing);
+        fix iMin = static_cast<int>(region.getYMin() / ySpacing);
+        fix iMax = static_cast<int>(region.getYMax() / ySpacing);
 
         StringStream buffer;
 
@@ -203,10 +207,10 @@ namespace Slab::Graphics {
 
             auto label = vUnit(mark, 2);
 
-            Point2D loc = {float(xLocationOfYAxis), float(mark)+yOffsetOfLabels};
+            Point2D loc = {static_cast<float>(xLocationOfYAxis), static_cast<float>(mark)+yOffsetOfLabels};
 
             Str text;
-            if(1) {
+            if(vUnit.symbol().empty()) {
                 buffer.str("");
 
                 setupBuffer(buffer);
@@ -228,6 +232,7 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_SMOOTH);
 
         glDisable(GL_LINE_STIPPLE);
+        /*
         glBegin(GL_LINES);
         {
             auto &ac = currStyle->axisColor;
@@ -238,7 +243,7 @@ namespace Slab::Graphics {
             glVertex3d(region.getXMax(), 0, 0);
         }
         glEnd();
-
+        */
 
         /* Minor grid lines */
         glEnable(GL_LINE_STIPPLE);
@@ -249,7 +254,7 @@ namespace Slab::Graphics {
 
         glBegin(GL_LINES);
         {
-            auto &ac = currStyle->axisColor;
+            // auto &ac = currStyle->axisColor;
             auto &tc = currStyle->minorGridLines.lineColor;
 
             glColor4f(tc.r, tc.g, tc.b, tc.a);
@@ -332,6 +337,7 @@ namespace Slab::Graphics {
 
         ImGui::SliderInt(UniqueName("y label x-padding (in pixels)").c_str(), &y_label_xoffset_in_pixels, 0, 200);
         ImGui::SliderInt(UniqueName("y label y-padding (in pixels)").c_str(), &y_label_yoffset_in_pixels, -500, 500);
+        ImGui::SliderFloat(UniqueName("x-label tick height multiplier").c_str(), &hTickHeightMultiplier, 1, 20);
 
         Artist::drawGUI();
     }
