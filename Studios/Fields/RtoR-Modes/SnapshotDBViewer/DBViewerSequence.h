@@ -56,7 +56,7 @@ namespace Modes::DatabaseViewer {
         void updateKGDispersion(bool visible);
         void reloadData();
         void computeMasses();
-        void drawTable(int specialIndex);
+        void drawTable(int specialIndex) const;
 
         Graphics::KeyState shiftKey = Graphics::Release;
     public:

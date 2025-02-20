@@ -16,7 +16,7 @@ namespace Slab::Graphics {
 
     using ColorSequence = Vector<Color>;
 
-    class ColorMap {
+    class ColorMap final {
     public:
         /* https://matplotlib.org/stable/users/explain/colors/colormaps.html */
         enum ColorMapType {
@@ -41,6 +41,7 @@ namespace Slab::Graphics {
                  Color clipped=Nil,
                  Color saturated=Nil);
         ColorMap(const ColorMap &colorMap);
+        virtual ~ColorMap() = default;
 
         auto clone() const -> Pointer<ColorMap>;
 

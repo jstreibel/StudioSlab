@@ -26,8 +26,8 @@ namespace Slab::Graphics {
         ImGui::Text("ϕ ↦ μ(ϕ)/μ(ϕₛₐₜ)");
 
         {
-            fix speed = saturation_value*5e-3f;
-            if (ImGui::DragFloat("##", &saturation_value, speed, 1.e-5f, 1.e5f, "%.2e"))
+            if (fix speed = saturation_value*5e-3f;
+                ImGui::DragFloat("##", &saturation_value, speed, 1.e-5f, 1.e5f, "%.2e"))
                 setSaturation(saturation_value);
             ImGui::SameLine();
             if (ImGui::Button("ϕₛₐₜ")) dirty_minmax = true;
@@ -162,7 +162,7 @@ namespace Slab::Graphics {
         updateColorbar();
     }
 
-    void Colormap1DPainter::setSymmetricMaxMin(bool is) {
+    void Colormap1DPainter::setSymmetricMaxMin(const bool is) {
         symmetric_maxmin = is;
         setUniform("symmetric", (GLboolean ) symmetric_maxmin);
         colorbarArtist->setSymmetric(symmetric_maxmin);
@@ -181,13 +181,17 @@ namespace Slab::Graphics {
         updateColorbar();
     }
 
-    void Colormap1DPainter::setKappa(Real) {
+    auto Colormap1DPainter::getColorBarArtist() -> Pointer<OpenGL::ColorBarArtist> {
+        return colorbarArtist;
+    }
+
+    void Colormap1DPainter::setKappa(Real) const {
         this->setUniform("kappa", kappa);
         colorbarArtist->setKappa(kappa);
     }
 
-    void Colormap1DPainter::setSaturation(Real sat) {
-        saturation_value = (float)sat;
+    void Colormap1DPainter::setSaturation(const Real sat) {
+        saturation_value = static_cast<float>(sat);
 
         setUniform("phi_sat", saturation_value);
         colorbarArtist->setPhiSaturation(saturation_value);
@@ -195,11 +199,11 @@ namespace Slab::Graphics {
 
     void Colormap1DPainter::setEpsilon(Real eps) {
 
-        eps_offset = (float)eps;
+        eps_offset = static_cast<float>(eps);
         setUniform("eps", eps_offset);
     }
 
     void Colormap1DPainter::labelUpdateEvent(const Str &label) {
-        colorbarArtist->setLabel(label + " [colorbar]");
+        colorbarArtist->setLabel("[colorbar] " + label);
     }
 } // Slab::Graphics

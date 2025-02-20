@@ -15,9 +15,9 @@
 namespace Slab::Graphics {
 
     R2toRFunctionArtist::R2toRFunctionArtist()
-    : painters({{"Colored", New<Colormap1DPainter>()},
-                {"Heightmap", New<HeightmapShadingPainter>()}})
-    , textureKontraptions()
+    : textureKontraptions()
+    , painters({{"Colored", New<Colormap1DPainter>()},
+        {"Heightmap", New<HeightmapShadingPainter>()}})
     {
         current_painter = painters["Colored"];
         updateMinMax();
@@ -90,7 +90,7 @@ namespace Slab::Graphics {
             return;
         }
 
-        auto myName = getLabel();
+        const auto myName = getLabel();
 
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
         ImGui::BeginChild((myName).c_str(), {0,24*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
@@ -115,10 +115,10 @@ namespace Slab::Graphics {
         }
 
         ImGui::BeginGroup();
-        for(const auto& painter : painters) {
-            auto name = UniqueName(painter.first);
-            if (ImGui::RadioButton(name.c_str(), current_painter==painter.second))
-                current_painter = painter.second;
+        for(const auto&[raw_name, painter] : painters) {
+            auto name = UniqueName(raw_name);
+            if (ImGui::RadioButton(name.c_str(), current_painter==painter))
+                current_painter = painter;
         }
         ImGui::EndGroup();
 
@@ -161,11 +161,12 @@ namespace Slab::Graphics {
 
     auto R2toRFunctionArtist::getFunction() const -> R2toR::Function_constptr { return func; }
 
-    void R2toRFunctionArtist::set_xPeriodicOn() {
-        for(auto &block : textureKontraptions->blocks) block->texture->set_sPeriodicOn();
+    void R2toRFunctionArtist::set_xPeriodicOn() const {
+        for(const auto &block : textureKontraptions->blocks)
+            block->texture->set_sPeriodicOn();
     }
 
-    void R2toRFunctionArtist::setLabel(Str label) {
+    void R2toRFunctionArtist::setLabel(const Str label) {
         for(const auto& painter : painters) painter.second->labelUpdateEvent(label);
 
         Artist::setLabel(label);
@@ -179,16 +180,16 @@ namespace Slab::Graphics {
 
         auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(*func);
 
-        auto xRes = discreteFunc.getN();
-        auto yRes = discreteFunc.getM();
+        fix xRes = discreteFunc.getN();
+        fix yRes = discreteFunc.getM();
 
-        auto domain = discreteFunc.getDomain();
+        fix domain = discreteFunc.getDomain();
 
-        auto hPixelSizeInTexCoord = 1. / xRes;
-        auto vPixelSizeInTexCoord = 1. / yRes;
+        fix hPixelSizeInTexCoord = 1. / xRes;
+        fix vPixelSizeInTexCoord = 1. / yRes;
 
-        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
-        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
+        fix hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * domain.getLx();
+        fix vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * domain.getLy();
 
         fix rMin = Real2D{coords.x + .5 * hTexturePixelSizeInSpaceCoord,
                           coords.y + .5 * vTexturePixelSizeInSpaceCoord};
@@ -210,7 +211,7 @@ namespace Slab::Graphics {
         return info;
     }
 
-    void R2toRFunctionArtist::updateMinMax(bool force) {
+    void R2toRFunctionArtist::updateMinMax(const bool force) const {
         if(func== nullptr) return;
 
         if(current_painter->dirtyMinMax() || force) current_painter->setMinMax(func->min(), func->max());
@@ -229,7 +230,11 @@ namespace Slab::Graphics {
     R2toRFunctionArtist::getPainter()
     -> Pointer<R2toRPainter> { return current_painter; }
 
-    void R2toRFunctionArtist::setDataMutable(bool flag) {
+    auto R2toRFunctionArtist::getPainter(const Str &name) -> Pointer<R2toRPainter> {
+        return painters[name];
+    }
+
+    void R2toRFunctionArtist::setDataMutable(const bool flag) {
         dataIsMutable = flag;
     }
 

@@ -30,6 +30,8 @@ namespace Slab::Graphics::OpenGL {
         Str fragFileName;
 
     public:
+        virtual ~Shader() = default;
+
         Shader(const Str& vertFilename, const Str& fragFilename);
 
         void bindTextures() const;

@@ -19,7 +19,7 @@
 
 namespace Slab::Graphics {
 
-    class Colormap1DPainter : public R2toRPainter {
+    class Colormap1DPainter final : public R2toRPainter {
         Pointer<OpenGL::Texture1D_Color> cmap_texture;
         Pointer<ColorMap> colormap = ColorMaps["BrBG"]->clone();
         Pointer<OpenGL::ColorBarArtist> colorbarArtist = New<OpenGL::ColorBarArtist>();
@@ -35,7 +35,7 @@ namespace Slab::Graphics {
         float eps_offset = 0.0f;
         bool symmetric_maxmin = true;
 
-        void setKappa(Real);
+        void setKappa(Real) const;
         void setSaturation(Real);
         void setEpsilon(Real);
         void setSymmetricMaxMin(bool);
@@ -46,6 +46,8 @@ namespace Slab::Graphics {
         Colormap1DPainter();
 
         void setColorMap(const Pointer<ColorMap> &colorMap);
+
+        auto getColorBarArtist() -> Pointer<OpenGL::ColorBarArtist>;
 
         void labelUpdateEvent(const Str&) override;
 

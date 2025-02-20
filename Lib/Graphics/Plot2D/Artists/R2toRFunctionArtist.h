@@ -9,14 +9,11 @@
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/VertexBuffer.h"
 #include "Graphics/OpenGL/Texture1D_Color.h"
-#include "Graphics/OpenGL/Artists/ColorBarArtist.h"
 #include "Graphics/Styles/ColorMap.h"
-#include "Graphics/OpenGL/Texture2D_Real.h"
 
 #include "Math/Function/R2toR/Model/R2toRFunction.h"
 #include "Math/Constants.h"
 #include "Graphics/Plot2D/Util/FieldTextureKontraption.h"
-#include "Graphics/Plot2D/Artists/Painters/Painter.h"
 #include "Graphics/Plot2D/Artists/Painters/Colormap1DPainter.h"
 #include "Utils/Map.h"
 
@@ -52,21 +49,22 @@ namespace Slab::Graphics {
     public:
         explicit R2toRFunctionArtist();
 
-        bool draw(const Plot2DWindow &d) override;
+        bool draw(const Plot2DWindow &) override;
 
         bool hasGUI() override;
 
-        void setFunction(R2toR::Function_constptr function, const Unit& unit=Constants::One);
+        void setFunction(R2toR::Function_constptr, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
 
         void setDataMutable(bool);
 
-        void setPainter(Pointer<R2toRPainter> program);
+        void setPainter(Pointer<R2toRPainter>);
         auto getPainter() -> Pointer<R2toRPainter>;
+        auto getPainter(const Str &name) -> Pointer<R2toRPainter>;
 
-        void updateMinMax(bool force=false);
+        void updateMinMax(bool force=false) const;
 
-        void set_xPeriodicOn();
+        void set_xPeriodicOn() const;
 
         auto getXHairInfo(const Point2D &XHairCoord) const -> Str override;
 

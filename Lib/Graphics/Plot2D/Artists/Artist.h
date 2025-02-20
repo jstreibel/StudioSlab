@@ -27,6 +27,8 @@ namespace Slab::Graphics {
         Real preferred_w_by_h_ratio = -1;
 
     public:
+        virtual ~Artist() = default;
+
         Artist() = default;
 
         /**

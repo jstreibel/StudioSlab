@@ -33,6 +33,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     bool OpenGL::ColorBarArtist::draw(const Plot2DWindow &graph) {
+        updateTexture();
         if( texture == nullptr ) return true;
 
         const int vpWidth  = graph.getViewport().width();
@@ -187,7 +188,9 @@ namespace Slab::Graphics::OpenGL {
     void ColorBarArtist::drawGUI() {
         Artist::drawGUI();
 
-        // ImGui::Checkbox("Auto top", &autoColorBarTop);
+        ImGui::Checkbox("Auto top", &autoColorBarTop);
+        ImGui::NewLine();
+
         ImGui::SliderInt("x_loc", &left, -2000, 2000);
         ImGui::SliderInt("y_loc", &cbarTop_pixels, 0, 2000);
         ImGui::SliderInt("bar width", &cbarWidth_pixels, 10, 2000);
@@ -267,7 +270,7 @@ namespace Slab::Graphics::OpenGL {
         textureDirty = true;
     }
 
-    void ColorBarArtist::setMode(ColorBarMode mode) {
+    void ColorBarArtist::setMode(const ColorBarMode mode) {
         shader.setUniform("mode", (int)mode);
 
         params.mode = mode;

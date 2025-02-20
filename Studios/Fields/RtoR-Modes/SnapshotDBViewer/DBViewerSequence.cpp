@@ -4,6 +4,8 @@
 
 #include "DBViewerSequence.h"
 
+#include <cub/detail/nvtx3.hpp>
+
 #include "Core/Backend/BackendManager.h"
 
 #include "KGDispersionRelation.h"
@@ -109,10 +111,11 @@ namespace Modes::DatabaseViewer {
         fix N = currentMashup->getN();
         fix ωMin = -1.5*dx+currentMashup->getDomain().xMin;
 
-        index_XHair =  (int)(N*(ω_XHair-ωMin)/(L+dx));
+        index_XHair =  static_cast<int>(N * (ω_XHair - ωMin) / (L + dx));
 
         guiWindow.AddExternalDraw([this](){
-            if(ImGui::SliderInt("Current database", &current_database, 0, (int)mashupArtists.size()-1)) {
+            if(ImGui::SliderInt("Current database", &current_database, 0,
+                static_cast<int>(mashupArtists.size())-1)) {
                 if(currentMeshupArtist != nullptr) {
                     mashupDisplay.removeArtist(currentMeshupArtist);
                     // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
@@ -155,18 +158,18 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
-        Real mass = KG_mass;
+        const Real mass = KG_mass;
 
         if(!visible) return;
 
         auto xMax = 0.0;
-        for(auto &mashup : allMashups){
-            auto xMax_local = mashup->getDomain().xMax;
-            if(xMax_local > xMax) xMax = xMax_local;
+        for(const auto &mashup : allMashups){
+            if(const auto xMax_local = mashup->getDomain().xMax; xMax_local > xMax)
+                xMax = xMax_local;
         }
 
         fix mainDBType = dbParsers[0]->evaluateDatabaseType();
-        auto dispersionMode = mainDBType == SpaceDFTDBType ? Slab::Math::RtoR::k_AsFunctionOf_ω
+        const auto dispersionMode = mainDBType == SpaceDFTDBType ? Slab::Math::RtoR::k_AsFunctionOf_ω
                                                            : mainDBType == TimeDFTDBType  ? Slab::Math::RtoR::ω_AsFunctionOf_k
                                                                                           : Slab::Math::RtoR::k_AsFunctionOf_ω;
 
@@ -230,17 +233,17 @@ namespace Modes::DatabaseViewer {
         }
     }
 
-    void DBViewerSequence::drawTable(int specialIndex) {
+    void DBViewerSequence::drawTable(int specialIndex) const {
 
         static ImGuiTableFlags flags = ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_ScrollY;
         // const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
         const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
-        static ImVec2 outer_size_value = ImVec2(0.0f, TEXT_BASE_HEIGHT * 20);
+        static auto outer_size_value = ImVec2(0.0f, TEXT_BASE_HEIGHT * 20);
 
-        fix columns = 4;
+        constexpr auto columns = 4;
         if (!ImGui::BeginTable("table1", columns, flags, outer_size_value)) return;
 
-        Str paramName = dbParsers[0]->getCriticalParameter();
+        const Str paramName = dbParsers[0]->getCriticalParameter();
 
         ImGui::TableSetupColumn((paramName + " (x axis)").c_str());
         ImGui::TableSetupColumn("Aₘₐₓ");
@@ -262,16 +265,15 @@ namespace Modes::DatabaseViewer {
             ImGui::TextUnformatted(unit(criticalParameterValue, 4).c_str());
 
             ImGui::TableSetColumnIndex(1);
-            fix maxData = maxValues[i++];
-            ImGui::TextUnformatted(ToStr(maxData.value, 5).c_str());
+            const auto [value, idx] = maxValues[i++];
+            ImGui::TextUnformatted(ToStr(value, 5).c_str());
 
             ImGui::TableSetColumnIndex(2);
-            fix idx = maxData.idx;
             IN field = *entry.second.snapshotData.data;
             fix kMax = field.xMax;
             fix kMin = field.xMin;
             fix Δk = kMax-kMin;
-            fix k = Δk*(Real)idx/(Real)field.N - kMin;
+            fix k = Δk*static_cast<Real>(idx)/static_cast<Real>(field.N) - kMin;
             ImGui::TextUnformatted(unit(k, 4).c_str());
 
             ImGui::TableSetColumnIndex(3);
@@ -279,8 +281,7 @@ namespace Modes::DatabaseViewer {
             fix signal = type==SnapshotData::SpaceDFTSnapshot ? 1 : type==SnapshotData::TimeDFTSnapshot?-1:0;
             fix ω = entry.second.getScaledCriticalParameter();
 
-            fix m2 = signal*(ω*ω - k*k);
-            if(m2>=0)
+            if(fix m2 = signal*(ω*ω - k*k); m2>=0)
                 ImGui::TextUnformatted(ToStr(sqrt(m2), 4).c_str());
             else
                 ImGui::TextColored({0.75f,.25f,.25f,1.f}, (ToStr(sqrt(-m2), 4)+"𝕚").c_str(), nullptr);
@@ -314,20 +315,23 @@ namespace Modes::DatabaseViewer {
             mashupDisplay.removeArtist(artie);
         mashupArtists.clear();
 
-        auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
+        const auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
         Pointer<Graphics::R2toRPainter> rPainter;
-        Pointer<Graphics::OpenGL::ColorBarArtist> colorBarArtist = nullptr;
-        for (auto &dbParser: dbParsers) {
+        for (IN dbParser: dbParsers) {
             auto mashup = dbParser->buildSnapshotMashup();
             // auto dbRootFolder = ReplaceAll(dbParser->getRootDatabaseFolder(), "./", "");
-            auto dbRootFolder = dbParser->getRootDatabaseFolder();
+            fix dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto artie = New<Graphics::R2toRFunctionArtist>();
             artie->setLabel(dbRootFolder);
             artie->setFunction(mashup);
-            // artie->setColorMap(cmap);
             if(rPainter == nullptr) {
-                rPainter = artie->getPainter();
+                const auto colorPainter = DynamicPointerCast<Slab::Graphics::Colormap1DPainter>(artie->getPainter("Colored"));
+                colorPainter->setColorMap(cmap);
+                rPainter = colorPainter;
+
+                auto colorBarArtist = colorPainter->getColorBarArtist();
+                mashupDisplay.addArtist(colorBarArtist, 10);
             }
             else {
                 artie->setPainter(rPainter);
