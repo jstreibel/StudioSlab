@@ -174,8 +174,8 @@ namespace Slab::Graphics {
     void Colormap1DPainter::setColorMap(const Pointer<ColorMap> &colorMap) {
         colormap = colorMap;
 
-        auto type = colormap->getType();
-        bool sym = type == ColorMap::Divergent | type == ColorMap::Miscellaneous;
+        const auto type = colormap->getType();
+        const bool sym = type == ColorMap::Divergent | type == ColorMap::Miscellaneous;
         setSymmetricMaxMin(sym);
 
         updateColorbar();

@@ -114,7 +114,8 @@ for n in range(n_min, n_max+1):
     k_n = k / dk
 
     omega_n = omega / dohm
-    arg_list = ["RtoR-Modes",
+    arg_list = ["Fields-RtoR-Modes-wkA",
+                '--dev=0',
                 '-t' + f(t), '-L' + f(L), '-N'+str(N),
                 '-A' + f(A),
                 '-w'+f(omega_n),
@@ -138,11 +139,10 @@ while len(sim_list) or not (len(dead_procs) == total):
         sim_info_str = utils.yellow('n=%i k=%.5f' % (sim[1]))
         program_call = sim[0]
 
-        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')
+        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, ' '.join(program_call), end='. ')
 
-        output = subprocess.DEVNULL
-        if show_outputs:
-            output = subprocess.PIPE
+        #output = subprocess.DEVNULL
+        output = subprocess.PIPE
 
         proc = subprocess.Popen(program_call, stdout=output, stderr=output, text=True)
         proc_tuples.append((proc, time.time()))
@@ -177,7 +177,11 @@ while len(sim_list) or not (len(dead_procs) == total):
             if not success:
                 out, err = proc.communicate()
                 print("\n\n\n")
-                print(out.decode('utf-8'))
+                #print(out.decode('utf-8'))
+                print(out)
+                print("\nErr:\n")
+                #print(err.decode('utf-8'))
+                print(err)
                 print("\n\n\n")
 
         elif show_outputs:

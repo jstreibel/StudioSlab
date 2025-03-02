@@ -4,11 +4,16 @@
 
 #include "CrashPad.h"
 #include "MathApp.h"
-#include "NumericalRecipe.h"
+#include "NumericalRecipe_Ak2.h"
+#include "NumericalRecipe_wkA.h"
 
 int run(int argc, const char *argv[]) {
 
-    auto builder = new Modes::NumericalRecipe();
+#ifdef FIELDS_MODES_wkA
+    auto builder = new Modes::NumericalRecipe_wkA();
+#else
+    auto builder = new Modes::NumericalRecipe_Ak2();
+#endif
 
     using namespace Slab::Math;
 
