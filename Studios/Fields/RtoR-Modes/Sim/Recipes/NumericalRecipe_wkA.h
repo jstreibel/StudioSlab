@@ -2,11 +2,11 @@
 // Created by joao on 1/09/23.
 //
 
-#ifndef STUDIOSLAB_SIM_BUILDER_WKA_H
-#define STUDIOSLAB_SIM_BUILDER_WKA_H
+#ifndef STUDIOSLAB_MODES_WKA_BUILDER_H
+#define STUDIOSLAB_MODES_WKA_BUILDER_H
 
 #include "Models/KleinGordon/RtoR/LinearStepping/KG-RtoRBuilder.h"
-#include "SquareWave.h"
+#include "../SquareWave.h"
 
 namespace Modes {
 
@@ -47,4 +47,4 @@ namespace Modes {
 
 } // Modes
 
-#endif //STUDIOSLAB_SIM_BUILDER_WKA_H
+#endif //STUDIOSLAB_MODES_WKA_BUILDER_H

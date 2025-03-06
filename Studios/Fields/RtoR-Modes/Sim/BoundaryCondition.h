@@ -15,7 +15,7 @@ namespace Modes {
 
 
 
-    class SignalBC : public KGRtoR::BoundaryCondition {
+    class SignalBC final : public KGRtoR::BoundaryCondition {
     protected:
         void applyKG(KGRtoR::EquationState &, Real t) const override;
 
@@ -27,7 +27,7 @@ namespace Modes {
 
 
 
-    class DrivenBC : public KGRtoR::BoundaryCondition {
+    class DrivenBC final : public KGRtoR::BoundaryCondition {
         Slab::Pointer<Modes::SquareWave> sqrWave;
 
     protected:

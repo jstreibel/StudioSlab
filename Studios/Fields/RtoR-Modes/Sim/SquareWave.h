@@ -17,7 +17,7 @@ namespace Modes {
         Real len=1;
         Real k=2*M_PI/len;
     public:
-        SquareWave(Real wavelength);
+        explicit SquareWave(Real wavelength);
 
         Real operator()(Real x) const override;
 

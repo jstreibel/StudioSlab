@@ -4,6 +4,8 @@
 
 #include "String.h"
 
+#include "Types.h"
+
 #define CONVERT_STRINGS_WITH_BOOST_LOCALE true
 
 #if CONVERT_STRINGS_WITH_BOOST_LOCALE==true
@@ -113,6 +115,14 @@ namespace Slab {
 
         return tokens;
 
+    }
+
+    bool StrEndsWith(const Str &str, const StrVector &suffixes) {
+        for (fix &suffix : suffixes) {
+            if (str.ends_with(suffix)) return true;
+        }
+
+        return false;
     }
 
     Str ToStr(const double &a_value, unsigned int decimalPlaces, bool useScientificNotation) {

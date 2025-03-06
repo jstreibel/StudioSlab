@@ -42,11 +42,11 @@ namespace Slab::Core {
         return interfaces;
     }
 
-    void CLInterface::addParameter(CLParameter_ptr parameter) {
+    void CLInterface::addParameter(const CLParameter_ptr& parameter) {
         auto insertionSuccessful = parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
-            throw "Error while inserting parameter in interface.";
+            throw Exception("Error while inserting parameter in interface.");
         }
 
         auto quotename = Str("\"") + parameter->getFullCommandLineName() + "\"";
@@ -54,25 +54,25 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void CLInterface::addParameters(List<CLParameter_ptr> parametersList) {
-        for (auto param: parametersList)
+    void CLInterface::addParameters(const List<CLParameter_ptr>& parametersList) {
+        for (const auto& param: parametersList)
             addParameter(param);
     }
 
-    void CLInterface::addParameters(List<CLParameter *> parametersList) {
-        for (auto param: parametersList)
+    void CLInterface::addParameters(const List<CLParameter *>& parametersList) {
+        for (const auto param: parametersList)
             addParameter(Naked(*param));
     }
 
 
     void CLInterface::addSubInterface(const Pointer<CLInterface>& subInterface) {
         if (Contains(subInterfaces, subInterface))
-            throw Str("Error while inserting sub-interface '") + subInterface->getName()
-                  + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already");
+            throw Exception(Str("Error while inserting sub-interface '") + subInterface->getName()
+                  + Str("' in interface '") + this->getName() + Str("': interface contains sub interface already"));
 
         if (!subInterfaces.insert(subInterface).second) {
-            throw Str("Error while inserting sub-interface '") + subInterface->getName()
-                  + Str("' in interface '") + this->getName() + Str("': not specified");
+            throw Exception(Str("Error while inserting sub-interface '") + subInterface->getName()
+                  + Str("' in interface '") + this->getName() + Str("': not specified"));
         }
     }
 
@@ -81,17 +81,17 @@ namespace Slab::Core {
         return descr != "<empty>" ? descr : "";
     }
 
-    auto CLInterface::getParameter(Str key) const -> CLParameter_ptr {
-        auto compareFunc = [key](CLParameter_ptr parameter) {
+    auto CLInterface::getParameter(const Str& key) const -> CLParameter_ptr {
+        auto compareFunc = [key](const CLParameter_ptr& parameter) {
             return *parameter == key;
         };
 
-        auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);
+        fix result = std::ranges::find_if(parameters, compareFunc);
 
         return *result;
     }
 
-    auto CLInterface::toString(const StrVector &paramNames, Str separator, bool longName) const -> Str {
+    auto CLInterface::toString(const StrVector &paramNames, const Str& separator, bool longName) const -> Str {
         std::stringstream ss("");
 
         std::map<Str, int> paramCount;

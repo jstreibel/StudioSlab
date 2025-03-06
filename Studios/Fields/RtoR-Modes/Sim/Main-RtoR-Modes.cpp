@@ -4,13 +4,17 @@
 
 #include "CrashPad.h"
 #include "MathApp.h"
-#include "NumericalRecipe_Ak2.h"
-#include "NumericalRecipe_wkA.h"
+
+#include "Recipes/NumericalRecipe_Ak2.h"
+#include "Recipes/NumericalRecipe_wkA.h"
+#include "Recipes/Signal_Ak2_Recipe.h"
 
 int run(int argc, const char *argv[]) {
 
 #ifdef FIELDS_MODES_wkA
     auto builder = new Modes::NumericalRecipe_wkA();
+#elif defined FIELDS_SIGNAL_Ak2
+    auto builder = new Modes::Signal_Ak2_Recipe();
 #else
     auto builder = new Modes::NumericalRecipe_Ak2();
 #endif

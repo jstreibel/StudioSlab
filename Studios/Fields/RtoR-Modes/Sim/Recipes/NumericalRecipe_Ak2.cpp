@@ -6,12 +6,12 @@
 
 #include <memory>
 
-#include "BoundaryCondition.h"
+#include "../BoundaryCondition.h"
 
 #include "Math/Constants.h"
 
 #include "Core/SlabCore.h"
-#include "Monitor.h"
+#include "../Monitor.h"
 #include "Models/KleinGordon/KG-Solver.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
@@ -25,7 +25,6 @@ namespace Modes {
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         interface->addParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
-
 
         if(doRegister) RegisterCLInterface(interface);
     }

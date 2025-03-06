@@ -38,13 +38,13 @@ namespace Slab::Math::RtoR {
 
             return *this;
         } else {
-            SlabCast(inFunc, const RtoR::NumericFunction&, func);
+            // SlabCast(inFunc, const RtoR::NumericFunction&, func);
 
             NOT_IMPLEMENTED
             // return RtoR::NumericFunction::Set(inFunc);
         }
 
-        throw "Leftism has won, if you see this exception.";
+        throw Exception("Leftism has won, if you see this exception.");
     }
 
 

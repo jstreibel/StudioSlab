@@ -32,7 +32,7 @@ namespace Modes::DatabaseViewer {
     , massesGraph("masses")
     {
         for(const auto &dbFilename : dbFilenames) {
-            auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam, ".");
+            auto parser = New<DBParser>(dbFilename, criticalParam, ".");
             dbParsers.emplace_back(parser);
         }
 
@@ -193,11 +193,10 @@ namespace Modes::DatabaseViewer {
         massesImag_pointSet.clear();
         massesReal_pointSet.clear();
 
-        auto dbParser = dbParsers[current_database];
+        const auto dbParser = dbParsers[current_database];
 
-        auto &fieldMap = dbParser->getSnapshotMap();
-
-        for (auto &entry: fieldMap) {
+        for (auto &fieldMap = dbParser->getSnapshotMap();
+             auto &entry: fieldMap) {
             IN snapshot_function1d = entry.second.snapshotData.data;
             IN data = snapshot_function1d->getSpace().getHostData();
 
@@ -208,12 +207,12 @@ namespace Modes::DatabaseViewer {
 
             fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/(Real)(N-1);
 
-            fix idx = (int)maxInfo.idx;
+            fix idx = static_cast<int>(maxInfo.idx);
             fix order = masses_avg_samples;
             // auto y_peak = Slab::Math::nthOrderPeakPosition(data, idx, y_min, dy, order);
             // auto y_peak = Slab::Math::parabolicPeakPosition(data, idx, y_min, dy);
             // auto y_peak = Slab::Math::cubicPeakPosition(data, idx, y_min, dy);
-            auto y_peak = Slab::Math::avgPeakPosition(data, idx, y_min, dy, order);
+            const auto y_peak = Slab::Math::avgPeakPosition(data, idx, y_min, dy, order);
 
             IN x = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
 
@@ -223,10 +222,8 @@ namespace Modes::DatabaseViewer {
             maxValuesPointSet.addPoint({k, ω});
 
 
-            fix m2 = ω * ω - k * k;
-
             // massesReal_pointSet.addPoint({ω, m2});
-            if (m2>=0)
+            if (fix m2 = ω * ω - k * k; m2>=0)
                 massesReal_pointSet.addPoint({k, sqrt(m2)});
             else
                 massesImag_pointSet.addPoint({k, sqrt(-m2)});

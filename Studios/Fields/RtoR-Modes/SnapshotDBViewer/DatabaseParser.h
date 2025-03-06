@@ -49,7 +49,7 @@ namespace Modes::DatabaseViewer {
         Str criticalParameter;
 
         void readDatabase();
-        void checkIntervalConsistency();
+        void checkIntervalConsistency() const;
 
     public:
         using Ptr = Pointer<Modes::DatabaseViewer::DBParser>;

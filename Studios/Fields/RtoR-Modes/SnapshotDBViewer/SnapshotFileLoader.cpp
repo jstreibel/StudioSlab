@@ -30,34 +30,36 @@ namespace Modes {
 
         SnapshotData::SnapshotDataType snapshotDataType = SnapshotData::unknownSnapshot;
 
-        if(filename.rfind("time.dft.snapshot")) {
+        if(filename.ends_with("time.dft.simsnap")
+        || filename.ends_with("time.dft.snapshot")) {
             // auto t = std::strtod(metaData["t"].first.c_str(), &endPtr);
             // auto dω = (2*M_PI/t);
-            auto dω = std::strtod(metaData["dohm"].first.c_str(), &endPtr);
-            auto n = dataArr.size();
-            auto Δω = Real(n)*dω;
+            fix dω = std::strtod(metaData["dohm"].first.c_str(), &endPtr);
+            fix n = dataArr.size();
+            fix Δω = static_cast<Real>(n)*dω;
             Core::Log::Debug() << "Loaded time.dft.snapshot of Δω=" << Δω << Log::Flush;
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, 0, Δω);
             snapshotDataType = SnapshotData::TimeDFTSnapshot;
-        } else if(filename.rfind(".dft.snapshot")) {
-            auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
+        } else if(filename.ends_with(".dft.simsnap")
+               || filename.ends_with(".dft.snapshot")) {
+            fix L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
             auto xMin = std::strtod(metaData["xMin"].first.c_str(), &endPtr);
             auto xMax = xMin+L;
 
-            auto N    = std::strtol(metaData["N"].first.c_str(), &endPtr, 10);
-
-            if(dataArr.size() != N / 2 + 1)
+            if(fix N = std::strtol(metaData["N"].first.c_str(), &endPtr, 10);
+                dataArr.size() != N / 2 + 1)
                 Log::Error() << "Expected DFT array size was " << N/2+1 << ", found " << dataArr.size() << Log::Flush;
 
             fix Δk = 2 * Math::Constants::pi / L;
             xMin = 0.0;
-            xMax = Δk*(Real)dataArr.size();
+            xMax = Δk*static_cast<Real>(dataArr.size());
 
 
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);
             snapshotDataType = SnapshotData::SpaceDFTSnapshot;
-        } else if(filename.rfind(".snapshot")) {
-            auto L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
+        } else if(filename.ends_with(".simsnap")
+               || filename.ends_with(".snapshot")) {
+            fix L    = std::strtod(metaData["L"].first.c_str(), &endPtr);
             auto xMin = std::strtod(metaData["xMin"].first.c_str(), &endPtr);
             auto xMax = xMin+L;
 
@@ -65,7 +67,7 @@ namespace Modes {
             snapshotDataType = SnapshotData::SpaceSnapshot;
         } else {
             Log::Error() << "Unknown format type " << filename << Log::Flush;
-            NOT_IMPLEMENTED
+            throw Exception("Unknown file format");
         }
 
         return {snapshotField, metaData, filename, snapshotDataType};

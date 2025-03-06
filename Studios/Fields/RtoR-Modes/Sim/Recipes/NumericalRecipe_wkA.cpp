@@ -6,12 +6,12 @@
 
 #include <memory>
 
-#include "BoundaryCondition.h"
+#include "../BoundaryCondition.h"
 
 #include "Math/Constants.h"
 
 #include "Core/SlabCore.h"
-#include "Monitor.h"
+#include "../Monitor.h"
 #include "Models/KleinGordon/KG-Solver.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
@@ -25,7 +25,6 @@ namespace Modes {
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
         interface->addParameters({&BCSelection, &omega, &k, &A, &driving_force});
-
 
         if(doRegister) RegisterCLInterface(interface);
     }
@@ -82,9 +81,9 @@ namespace Modes {
             case 2:
                 this->setLaplacianPeriodicBC();
                 break;
+            default: NOT_IMPLEMENTED;
         }
 
-        fix A_0 = this->A.getValue();
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.getValue();
         if(*omega < 0) {
@@ -113,9 +112,7 @@ namespace Modes {
 
 
         // fix amp = (*A) * 1.1;
-        auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), "Modes monitor");
-
-        fix L = config->getL();
+        auto monitor = new Modes::Monitor(config, *static_cast<KGRtoR::KGEnergy *>(getHamiltonian()), "Modes monitor");
 
         fix k_0 = *k;
         fix A_0 = *A;

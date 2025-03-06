@@ -1,0 +1,148 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu May 10 19:19:17 2018
+
+@author: johnny
+"""
+
+import subprocess
+import os
+
+from numpy import unique, linspace
+import time
+from datetime import timedelta
+import argparse
+import ast
+
+import sys
+script_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.dirname(script_dir)
+print(parent_dir)
+sys.path.append(parent_dir)
+
+from Utils import utils as utils
+
+isfile = os.path.isfile
+
+SignumGordonPotential = 2
+
+pi = 3.141592654
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--t', '-t',
+                    help="Total simulation time per simulation.",
+                    type=float,
+                    default=2*pi)
+parser.add_argument('--N', '-N',
+                    help="Simulation resolution.",
+                    type=int,
+                    default=2 ** 12)
+parser.add_argument('--V', '-V',
+                    help="Potential (default: SG).",
+                    type=int,
+                    default=SignumGordonPotential)
+parser.add_argument('--A', '-A',
+                    help="Amplitude of oscillation.",
+                    type=float,
+                    default=1.0)
+parser.add_argument('--omega', '-w',
+                    help="Sweep ω in n steps of Δω (ω_init, Δω , steps). Example \'--omega 3.14 0.31 11\' will sweep "
+                         "\'ω\' from 3.14 to 6.28 in 11 steps of width 0.31.",
+                    nargs=3,
+                    type=float,
+                    default=(0, 0, 1))
+parser.add_argument('--max_procs',
+                    help="Maximum number of parallel running programs.",
+                    type=int,
+                    default=7)
+parser.add_argument('--show_outputs', '-s', help="Show stdout and stderr from process.", action='store_true')
+
+
+args = parser.parse_args()
+
+MAX_PROCS = args.max_procs
+
+t = args.t
+L = t
+N = args.N
+V = args.V
+
+show_outputs = args.show_outputs
+
+A = args.A
+omega_min, omega_max, omega_steps = args.omega
+omega_steps = int(omega_steps)
+sim_list = []
+
+f = '{:.6f}'.format
+for omega in unique(linspace(omega_min, omega_max, omega_steps)):
+    arg_list = ["Fields-RtoR-Signal",
+                '--dev=0', '-t' + f(t), '-L' + f(L), '-N'+str(N),
+                '-A' + f(A),
+                '--omega='+f(omega),
+                '--th=1', '--dft_snapshot', '--outN=2000', '-V'+str(V)]
+
+    sim_info = (omega, A)
+    sim_list.append((arg_list, sim_info))
+
+
+proc_tuples = []
+dead_procs = []
+total = len(sim_list)
+total_time = 0.0
+n = 0
+while len(sim_list) or not (len(dead_procs) == total):
+    while not len(proc_tuples) == MAX_PROCS and len(sim_list):
+        sim = sim_list.pop()
+        sim_info_str = utils.yellow('ω=%.5f A=%.5f' % (sim[1]))
+        program_call = sim[0]
+
+        print(total - len(sim_list), '/', total, ' STARTING with', sim_info_str, program_call, end='. ')
+
+        proc = subprocess.Popen(program_call, stdout=subprocess.PIPE, text=True)
+        proc_tuples.append((proc, time.time()))
+
+        print('PID', proc.pid, end=". ")
+
+        print("")
+
+    for proc_tuple in proc_tuples:
+        proc = proc_tuple[0]
+        poll = proc.poll()
+        if proc.returncode is not None:
+            el_time = time.time() - proc_tuple[1]
+            total_time += el_time
+
+            n += 1
+
+            dead_procs.append((proc, el_time))
+            proc_tuples.remove(proc_tuple)
+
+            success = proc.returncode == 0
+
+            ret_code_string = utils.okfail('return code ' + str(proc.returncode), not success)
+            avg_string = utils.blue('Avg ' + f(total_time / n))
+            expected_string = utils.Bblue(
+                'expected ~' + str(timedelta(seconds=(total_time / n) * (len(sim_list) / MAX_PROCS))))
+
+            print('FINISHED', proc.pid, ret_code_string,
+                  'approx. elapsed time', f(el_time), 'sec.', avg_string,
+                  expected_string)
+
+            if not success:
+                out, err = proc.communicate()
+                print("\n\n\n")
+                print(out)
+                print("\n\n\n")
+
+        elif show_outputs:
+            output = proc.stdout.readline().strip()
+            if output == '' and proc.poll() is not None:
+                pass
+            else:
+                print("({}) ".format(proc.pid) + output)
+
+    time.sleep(.1)
+
+print('\n\nAll done.\n\n')

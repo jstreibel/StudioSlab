@@ -29,6 +29,8 @@ namespace Slab {
 
     StrVector Split(const Str &input, const Str &separator);
 
+    bool StrEndsWith(const Str &str, const StrVector &suffixes);
+
     StrVector GetLines(const char *);
 
     StrVector GetLines(const Str &);

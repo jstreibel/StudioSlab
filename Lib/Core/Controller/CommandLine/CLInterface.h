@@ -74,17 +74,17 @@ namespace Slab::Core {
 
         auto addListener(CLInterfaceListener *) -> void;
 
-        void addParameter(CLParameter_ptr parameter);
+        void addParameter(const CLParameter_ptr& parameter);
 
-        void addParameters(List<CLParameter_ptr> parameters);
+        void addParameters(const List<CLParameter_ptr>& parameters);
 
-        void addParameters(List<CLParameter *> parameters);
+        void addParameters(const List<CLParameter *>& parameters);
 
         auto getSubInterfaces() const -> Vector<Pointer<CLInterface>>;
 
         auto getParameters() const -> Vector<CLParameter_constptr>;
 
-        auto getParameter(Str key) const -> CLParameter_ptr;
+        auto getParameter(const Str& key) const -> CLParameter_ptr;
 
         auto getOwner() const -> CLInterfaceOwner *;
 
@@ -97,7 +97,7 @@ namespace Slab::Core {
          * @param longName Whether to use long parameter name, if available.
          * @return A formated string, with all parameters and their values.
          */
-        auto toString(const StrVector &paramNames = {}, Str separator = " ", bool longName = true) const -> Str;
+        auto toString(const StrVector &paramNames = {}, const Str& separator = " ", bool longName = true) const -> Str;
 
         void setupFromCommandLine(CLVariablesMap vm);
 

@@ -20,7 +20,7 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerSequence : public Graphics::WindowRow {
+    class DBViewerSequence final : public Graphics::WindowRow {
         Graphics::GUIWindow guiWindow;
         WindowRow topRow;
 

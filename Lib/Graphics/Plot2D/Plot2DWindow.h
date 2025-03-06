@@ -25,7 +25,7 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow : public SlabWindow {
+    class Plot2DWindow final : public SlabWindow {
         static Count WindowCount;
         Count id;
         static std::map<Str, Plot2DWindow*> graphMap;

@@ -27,7 +27,7 @@ namespace Modes::DatabaseViewer {
 
     [[nodiscard]]
     double parse_filename_for_critical_parameter_value(const Str& fileName, const Str& criticalParameter) {
-        std::size_t pos = fileName.rfind(criticalParameter);
+        const std::size_t pos = fileName.rfind(criticalParameter);
         if(pos == Str::npos)
             throw DirtyDBException(Str("Database file '") + fileName + "' "
                                        + "does not contain critical parameter '" + criticalParameter + "'; "
@@ -43,8 +43,8 @@ namespace Modes::DatabaseViewer {
         auto valueStr = fileName.substr(equalsPos + 1);
 
         // Find the end of the double-formatted value (assuming it ends with an underscore)
-        StrVector terminators = {"time.dft.simsnap", ".dft.simsnap", ".simsnap", " "};
-        Count endPos;
+        const StrVector terminators = {"time.dft.simsnap", ".dft.simsnap", ".simsnap", " "};
+        Count endPos = 0;
         for(auto &term : terminators) {
             endPos = valueStr.find(term);
             if(endPos != Str::npos) break;
@@ -84,10 +84,10 @@ namespace Modes::DatabaseViewer {
         NOT_IMPLEMENTED
     }
 
-    DBParser::DBParser(Str rootDBFolder, Str criticalParameter, Str snapshotFolder)
-    : criticalParameter(std::move(criticalParameter))
-    , rootDatabaseFolder(std::move(rootDBFolder))
-    , snapshotFolder(snapshotFolder)
+    DBParser::DBParser(Str rootDBFolder, Str criticalParameter, Str snapshotsFolder)
+    : rootDatabaseFolder(std::move(rootDBFolder))
+    , snapshotFolder(std::move(snapshotsFolder))
+    , criticalParameter(std::move(criticalParameter))
     {
         if(rootDatabaseFolder=="./" || rootDatabaseFolder=="."){
             fix pwd = Common::GetPWD();
@@ -103,13 +103,13 @@ namespace Modes::DatabaseViewer {
         checkIntervalConsistency();
     }
 
-    void DBParser::checkIntervalConsistency() {
+    void DBParser::checkIntervalConsistency() const {
         RealVector values;
 
-        for(auto &entry : fileSet) {
-            values.emplace_back(entry.first);
+        for(IN [value, filename] : fileSet) {
+            values.emplace_back(value);
 
-            // ReadPyDict(entry.second);
+            // ReadPyDict(filename);
         }
 
         fix N = values.size();
@@ -133,11 +133,10 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBParser::readDatabase() {
-        auto dbPath = rootDatabaseFolder;
+        fix dbPath = rootDatabaseFolder;
 
-        auto snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + snapshotFolder);
-
-        for (const auto &entry: snapshotsFolderIterator) {
+        for (fix snapshotsFolderIterator = std::filesystem::directory_iterator(dbPath + "/" + snapshotFolder);
+            const auto &entry: snapshotsFolderIterator) {
             auto fileName = entry.path().string();
 
             auto value = parse_filename_for_critical_parameter_value(fileName, criticalParameter);
@@ -153,7 +152,7 @@ namespace Modes::DatabaseViewer {
             auto snapshotData = SnapshotFileLoader::Load(fileName);
             fix scaling = get_scaling_for_critical_parameter(criticalParameter, snapshotData.metaData);
 
-            auto snapshotEntry = SnapshotEntry{snapshotData, value, criticalParameter, scaling};
+            const auto snapshotEntry = SnapshotEntry{snapshotData, value, criticalParameter, scaling};
 
             fileSet[value] = fileName;
             fieldMap[value] = snapshotEntry;
@@ -162,9 +161,9 @@ namespace Modes::DatabaseViewer {
         Log::Success() << "Extracted critical parameter '" << criticalParameter
                        << "' from database. Relation is below." << Log::Flush;
 
-        for(auto &entry : fileSet)
-            Log::Debug() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << entry.first << " from "
-                        << entry.second << Log::Flush;
+        for(auto &[value, filename] : fileSet)
+            Log::Debug() << "Extracted value " << criticalParameter << "=" << std::left << std::setw(10) << value << " from "
+                        << filename << Log::Flush;
     }
 
     auto DBParser::getFileSet()           const -> const std::map<Real, Str> & { return fileSet; }
@@ -179,8 +178,8 @@ namespace Modes::DatabaseViewer {
         fix ωMax = fieldMap.rbegin()->second.getScaledCriticalParameter();
         fix kMin = sampleField.xMin;
         fix kMax = sampleField.xMax;
-        fix hω = (ωMax-ωMin)/(Real)N;
-        fix hk = (kMax-kMin)/(Real)M;
+        fix hω = (ωMax-ωMin)/static_cast<Real>(N);
+        fix hk = (kMax-kMin)/static_cast<Real>(M);
 
 
         auto fullField = new Math::R2toR::NumericFunction_CPU(N, M, ωMin, kMin, hω, hk);
@@ -214,7 +213,8 @@ namespace Modes::DatabaseViewer {
             case SnapshotData::SpaceSnapshot:       return SpaceDBType;
             case SnapshotData::TimeDFTSnapshot:     return TimeDFTDBType;
             case SnapshotData::SpaceDFTSnapshot:    return SpaceDFTDBType;
-            case SnapshotData::unknownSnapshot: default: ;
+            case SnapshotData::unknownSnapshot:
+            default: ;
         }
 
         return unknownDBType;
