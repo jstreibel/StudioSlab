@@ -16,7 +16,7 @@ namespace Slab::Math {
         void handleOutput(const OutputPacket &outputInfo) override;
 
     public:
-        explicit OutputConsoleMonitor(Count total_steps);
+        explicit OutputConsoleMonitor(Count total_steps, Count steps_interval=100);
         bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
     };
 

@@ -20,6 +20,8 @@ namespace Slab::Core {
 
     class CLInterfaceListener {
     public:
+        virtual ~CLInterfaceListener() = default;
+
         /**
          * Notify listeners that this interface has finished being set up from command line.
          */

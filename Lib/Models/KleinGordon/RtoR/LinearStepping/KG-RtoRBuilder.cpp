@@ -47,7 +47,7 @@ constexpr const Slab::Count MAX_SNAPSHOTS = 200;
 
 namespace Slab::Models::KGRtoR {
 
-    class Filter1D : public Math::SpaceFilterBase{
+    class Filter1D final : public Math::SpaceFilterBase{
         DimensionMetaData dim;
     public:
         explicit Filter1D(DimensionMetaData dim) : dim(std::move(dim)) {}
@@ -68,8 +68,8 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    KGRtoRBuilder::KGRtoRBuilder(const Str &name, Str generalDescription, bool doRegister)
-            : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, std::move(generalDescription),
+    KGRtoRBuilder::KGRtoRBuilder(const Str &name, const Str& generalDescription, bool doRegister)
+            : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
         interface->addParameters({&Potential, &massSqr, &N_num});
 
@@ -94,7 +94,7 @@ namespace Slab::Models::KGRtoR {
 
         fix t = p.gett();
         fix max_steps = p.getn();
-        fix N = (Real) p.getN();
+        fix N = static_cast<Real>(p.getN());
         fix L = p.getL();
         fix xMin = p.getxMin();
         fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
@@ -104,14 +104,14 @@ namespace Slab::Models::KGRtoR {
            *************************** SNAPSHOT OUTPUT ********************************************
            **************************************************************************************** */
         if (*takeSnapshot) {
-            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
             sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
         if (*takeSpaceDFTSnapshot) {
-            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
@@ -129,19 +129,16 @@ namespace Slab::Models::KGRtoR {
         /* ****************************************************************************************
            *************************** HISTORY OUTPUT *********************************************
            **************************************************************************************** */
-        int fileOutputStepsInterval = -1;
-        Socket_ptr out;
         if (shouldOutputHistory) {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
-            auto dimData = DimensionMetaData({(unsigned) *outputResolution}, {L / *outputResolution});
+            const auto dimData = DimensionMetaData({(unsigned) *outputResolution}, {L / *outputResolution});
             // auto *spaceFilter = new ResolutionReductionFilter(dimData);
             auto *spaceFilter = new Filter1D(dimData);
 
-            fix stepsInterval = UInt(N / (Nₒᵤₜ * r));
+            fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
-            out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
-            fileOutputStepsInterval = out->getnSteps();
+            Socket_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
             sockets.emplace_back(out);
         }
 
@@ -153,13 +150,13 @@ namespace Slab::Models::KGRtoR {
         if (shouldOutputOpenGL) {
             auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
-            auto outputOpenGL = Pointer<Monitor>((Monitor*)buildOpenGLOutput());
+            auto outputOpenGL = Pointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
 
             if (t > 0) {
                 fix nₒᵤₜ = ((Nₒᵤₜ / L) * t);
 
                 auto simHistory = Slab::New<SimHistory>(max_steps, t,
-                                                 (Resolution) Nₒᵤₜ,
+                                                 static_cast<Resolution>(Nₒᵤₜ),
                                                  (Resolution) nₒᵤₜ,
                                                  xMin,
                                                  L);
@@ -174,17 +171,12 @@ namespace Slab::Models::KGRtoR {
                                                      ftHistory->getDFTDataHistory());
             }
 
-            auto wm = New<Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
+            const auto wm = New<Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
             wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
             guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(outputOpenGL);
         } else {
-            /* O objetivo de relacionar o numero de passos para
-             * o Console Monitor com o do file output eh para que
-             * ambos possam ficar sincronizados e o integrador
-             * possa rodar diversos passos antes de fazer o output. */
-
-            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps));
+            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
         }
 
         return sockets;
@@ -244,18 +236,18 @@ namespace Slab::Models::KGRtoR {
     }
 
     Pointer<Socket>
-    KGRtoRBuilder::_newTimeDFTSnapshotOutput(Str folder, Real t_start, Real t_end, RealVector x_locations) {
+    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const Real t_start, const Real t_end, const RealVector &x_locations) const {
 
         Utils::TouchFolder(folder);
 
-        auto snapshotFilename = folder + suggestFileName();
+        const auto snapshotFilename = folder + suggestFileName();
         TimeDFTOutputConfig dftConfig = {snapshotFilename, x_locations, t_start, t_end};
 
         fix &conf = *kg_numeric_config;
         return Slab::New<CenterTimeDFTOutput>(conf.gett(), conf.getn(), dftConfig);
     }
 
-    RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() {
+    RtoR::NumericFunction_ptr KGRtoRBuilder::newFunctionArbitrary() const {
         fix &conf = *kg_numeric_config;
 
         const size_t N = conf.getN();
@@ -277,7 +269,7 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Error while instantiating Field: device not recognized.");
     }
 
-    EquationState_ptr KGRtoRBuilder::newFieldState() {
+    EquationState_ptr KGRtoRBuilder::newFieldState() const {
         return New<EquationState>(this->newFunctionArbitrary(),
                                        this->newFunctionArbitrary());
     }
@@ -302,10 +294,10 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGRtoRBuilder::buildOpenGLOutput() -> void * {
-        return new Monitor(kg_numeric_config, *(KGEnergy *) getHamiltonian());
+        return new Monitor(kg_numeric_config, *static_cast<KGEnergy *>(getHamiltonian()));
     }
 
-    auto KGRtoRBuilder::getInitialState() -> KGRtoR::EquationState_ptr {
+    auto KGRtoRBuilder::getInitialState() const -> KGRtoR::EquationState_ptr {
         auto u_0 = newFieldState();
 
         u_0->setPhi(RtoR::NullFunction());
@@ -324,11 +316,14 @@ namespace Slab::Models::KGRtoR {
     RtoR::Function_ptr KGRtoRBuilder::getPotential() const {
         if (*Potential == MASSLESS_WAVE_EQ) {
             return Slab::New<RtoR::NullFunction>();
-        } else if (*Potential == KLEIN_GORDON_POTENTIAL) {
+        }
+        if (*Potential == KLEIN_GORDON_POTENTIAL) {
             return Slab::New<RtoR::HarmonicPotential>(*massSqr);
-        } else if (*Potential == SIGNUM_GORDON_POTENTIAL) {
+        }
+        if (*Potential == SIGNUM_GORDON_POTENTIAL) {
             return Slab::New<RtoR::AbsFunction>();
-        } else if (*Potential == REGULAR_SG_POTENTIAL) {
+        }
+        if (*Potential == REGULAR_SG_POTENTIAL) {
             fix m2 = *massSqr;
             fix A = 4/M_PI/m2;
             return Slab::New<Slab::Math::RtoR::NonlinearKGPotential>(A, *N_num, 1.0);

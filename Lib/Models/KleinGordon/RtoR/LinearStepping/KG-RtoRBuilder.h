@@ -31,7 +31,7 @@ namespace Slab::Models::KGRtoR {
         bool periodicBC = false;          // Gambiarris
 
         Vector<Pointer<Socket>> getTimeDFTSnapshots();
-        auto _newTimeDFTSnapshotOutput(Str folder, Real t_start, Real t_end, RealVector x_locations) -> Pointer<Socket>;
+        auto _newTimeDFTSnapshotOutput(const Str& folder, Real t_start, Real t_end, const RealVector &x_locations) const -> Pointer<Socket>;
 
     protected:
         virtual auto buildOpenGLOutput() -> void*;
@@ -45,7 +45,7 @@ namespace Slab::Models::KGRtoR {
 
     public:
         explicit KGRtoRBuilder(const Str& name,
-                           Str generalDescription,
+                           const Str& generalDescription,
                            bool doRegister=false);
 
         virtual ~KGRtoRBuilder() = default;
@@ -59,10 +59,10 @@ namespace Slab::Models::KGRtoR {
 
         void *getHamiltonian() override;
 
-        auto getInitialState()      -> KGRtoR::EquationState_ptr;
+        auto getInitialState() const      -> KGRtoR::EquationState_ptr;
         virtual auto getBoundary()  -> Base::BoundaryConditions_ptr = 0;
-        auto newFunctionArbitrary() -> Math::RtoR::NumericFunction_ptr;
-        auto newFieldState()        -> KGRtoR::EquationState_ptr;
+        auto newFunctionArbitrary() const -> Math::RtoR::NumericFunction_ptr;
+        auto newFieldState() const        -> KGRtoR::EquationState_ptr;
 
     };
 

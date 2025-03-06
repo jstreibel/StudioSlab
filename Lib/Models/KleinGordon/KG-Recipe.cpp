@@ -18,7 +18,7 @@ namespace Slab::Models {
             , kg_numeric_config(numeric_config)
             , device_config(DONT_REGISTER){
 
-        auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
+        const auto default_theme = Slab::Graphics::PlotThemeManager::GetDefault();
         auto themes = Slab::Graphics::PlotThemeManager::GetThemes();
         Str available_themes = plotTheme.getDescription() + " Available themes are: ";
         for(auto &theme : themes)

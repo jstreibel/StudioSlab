@@ -4,8 +4,8 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(Count total_steps)
-    : Socket("Console monitor output", int(100.))
+    OutputConsoleMonitor::OutputConsoleMonitor(const Count total_steps, Count steps_interval)
+    : Socket("Console monitor output", static_cast<int>(steps_interval))
     , total_steps(total_steps) {
 
     }
@@ -27,7 +27,7 @@ namespace Slab::Math {
         static auto lastn = currn;
 
         Core::Log::Info() << Core::Log::Flush;
-        Core::Log::Info() << (100 * Real(currn) / total_steps) << "% done" << Core::Log::Flush;
+        Core::Log::Info() << (100 * static_cast<Real>(currn) / total_steps) << "% done" << Core::Log::Flush;
         Core::Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Core::Log::Flush;
 
         auto expectedFinish = (Real)NAN;
