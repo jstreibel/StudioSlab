@@ -83,9 +83,6 @@ namespace Modes::DatabaseViewer {
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 
-            mashupDisplay.getAxisArtist().setVerticalAxisLabel("ω");
-            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("k");
-
             topRow.addWindow(Naked(mashupDisplay));
         }
 
@@ -194,6 +191,7 @@ namespace Modes::DatabaseViewer {
         massesReal_pointSet.clear();
 
         const auto dbParser = dbParsers[current_database];
+        fix db_type = dbParser->evaluateDatabaseType();
 
         for (auto &fieldMap = dbParser->getSnapshotMap();
              auto &entry: fieldMap) {
@@ -205,7 +203,7 @@ namespace Modes::DatabaseViewer {
 
             auto maxInfo = Utils::GetMax(data);
 
-            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/(Real)(N-1);
+            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/static_cast<Real>(N - 1);
 
             fix idx = static_cast<int>(maxInfo.idx);
             fix order = masses_avg_samples;
@@ -217,16 +215,25 @@ namespace Modes::DatabaseViewer {
             IN x = entry.second.getScaledCriticalParameter(); // this is the critical parameter!! The fundamental one that changes from snapshot to snapshot.
 
             maxValues.emplace_back(maxInfo);
-            fix k = x;
-            fix ω = y_peak;
-            maxValuesPointSet.addPoint({k, ω});
 
+            Real ω;
+            Real k;
+
+            maxValuesPointSet.addPoint({x, y_peak});
+
+            if (db_type==SpaceDFTDBType) {
+                ω = x;
+                k = y_peak;
+            } else if (db_type==TimeDFTDBType) {
+                k = x;
+                ω = y_peak;
+            } else NOT_IMPLEMENTED
 
             // massesReal_pointSet.addPoint({ω, m2});
             if (fix m2 = ω * ω - k * k; m2>=0)
-                massesReal_pointSet.addPoint({k, sqrt(m2)});
+                massesReal_pointSet.addPoint({x, sqrt(m2)});
             else
-                massesImag_pointSet.addPoint({k, sqrt(-m2)});
+                massesImag_pointSet.addPoint({x, sqrt(-m2)});
         }
     }
 
@@ -296,7 +303,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerSequence::notifyKeyboard(const Graphics::KeyMap key, const Graphics::KeyState state, const Graphics::ModKeys modKeys) -> bool {
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
@@ -323,7 +330,7 @@ namespace Modes::DatabaseViewer {
             artie->setLabel(dbRootFolder);
             artie->setFunction(mashup);
             if(rPainter == nullptr) {
-                const auto colorPainter = DynamicPointerCast<Slab::Graphics::Colormap1DPainter>(artie->getPainter("Colored"));
+                const auto colorPainter = DynamicPointerCast<Slab::Graphics::Colormap1DPainter>(artie->getPainter("Colormap"));
                 colorPainter->setColorMap(cmap);
                 rPainter = colorPainter;
 
@@ -347,6 +354,21 @@ namespace Modes::DatabaseViewer {
         mashupDisplay.addArtist(currentMeshupArtist);
 
         // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
+
+        if (fix db_type = dbParsers[0]->evaluateDatabaseType();
+            db_type == SpaceDFTDBType) {
+            mashupDisplay.getAxisArtist().setVerticalAxisLabel("k");
+            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("ω");
+
+            massesGraph.getAxisArtist().setHorizontalAxisLabel("ω");
+        }
+        else if (db_type == TimeDFTDBType) {
+            mashupDisplay.getAxisArtist().setVerticalAxisLabel("ω");
+            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("k");
+
+            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
+        }
+        else throw Exception("Unknown db type");
 
         computeMasses();
     }

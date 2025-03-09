@@ -27,7 +27,7 @@ namespace Slab::Graphics::OpenGL {
         ColorBarMode mode;
     };
 
-    class ColorBarArtist : public Artist {
+    class ColorBarArtist final : public Artist {
         VertexBuffer vertexBuffer;
         Shader shader;
         CMapTexturePtr texture;

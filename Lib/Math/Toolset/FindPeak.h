@@ -9,21 +9,20 @@
 #include "Utils/Arrays.h"
 
 namespace Slab::Math {
-
-    double avgPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx, int n) {
-        n = std::min(n, 2*(int)idx); // n tq ser <= 2*idx &&
+    inline double avgPeakPosition(const std::valarray<double>& y_vec, const size_t idx, const double x_min, const double dx, int n) {
+        n = std::min(n, 2*static_cast<int>(idx)); // n tq ser <= 2*idx &&
 
         fix odd = !(n%2);
 
-        int i_start = -n/2;
-        int i_end = n/2;
+        const int i_start = -n/2;
+        const int i_end = n/2;
 
         auto x_avg = .0;
         auto y_avg = .0;
         for(auto i=i_start; i<=i_end; ++i) {
             if(odd && i==0) continue;
             fix y_i = y_vec[idx + i];
-            fix x_i = x_min + dx*((Real)idx + (Real)i);
+            fix x_i = x_min + dx*(static_cast<Real>(idx) + static_cast<Real>(i));
             x_avg += x_i*y_i;
             y_avg += y_i;
         }
@@ -31,7 +30,7 @@ namespace Slab::Math {
         return x_avg / y_avg;
     }
 
-    double parabolicPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx) {
+    inline double parabolicPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx) {
         if (idx == 0 || idx >= y_vec.size() - 1) {
             throw std::invalid_argument("Index out of range for parabolic interpolation.");
         }
@@ -51,7 +50,7 @@ namespace Slab::Math {
         return x_peak;
     }
 
-    double cubicPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx) {
+    inline double cubicPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx) {
         if (idx < 1 || idx >= y_vec.size() - 2) {
             throw std::invalid_argument("Index out of range for cubic interpolation.");
         }
@@ -121,8 +120,7 @@ namespace Slab::Math {
     }
 
 
-
-    double nthOrderPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx, int n) {
+    inline double nthOrderPeakPosition(const std::valarray<double>& y_vec, size_t idx, double x_min, double dx, int n) {
         n = std::min(n, 2*(int)idx); // n tq ser <= 2*idx &&
 
         if (idx >= y_vec.size() - n / 2) {

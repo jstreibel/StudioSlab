@@ -74,13 +74,15 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED
     }
 
-    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const Pointer<Plot2DWindow>& graph, const R2toR::NumericFunction_constptr &function, Str label, int zOrder) {
+    R2toRFunctionArtist_ptr Plotter::AddR2toRFunction(const Pointer<Plot2DWindow>& graph, const R2toR::NumericFunction_constptr &function, Str name, const int zOrder) {
         auto artist = Slab::New<R2toRFunctionArtist>();
-        artist->setLabel(std::move(label));
-
+        artist->setLabel(std::move(name));
         artist->setFunction(function);
-
         graph->addArtist(artist, zOrder);
+
+        fix cmap_painter = DynamicPointerCast<Colormap1DPainter>(artist->getPainter("Colormap"));
+        fix colorbar = cmap_painter->getColorBarArtist();
+        graph->addArtist(colorbar, 10);
 
         return artist;
     }

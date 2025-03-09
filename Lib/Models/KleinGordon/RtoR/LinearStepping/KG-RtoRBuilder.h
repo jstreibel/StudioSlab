@@ -27,13 +27,15 @@ namespace Slab::Models::KGRtoR {
                                                                         "\n\t 3: regular SG expansion");
         RealParameter massSqr  = RealParameter(1.0, "M,massSqr",   "Squared mass of the Klein-Gordon potential (on-shell ω²-k²-m²=0), if chosen.");
         IntegerParameter N_num = IntegerParameter(15, "O,N_num", "Order of regular SG expansion.");
+        IntegerParameter BoundaryConditions = IntegerParameter(0, "b,boundary_condition", "Boundary space conditions (affects Laplacian): "
+                                                                        "\n\t 0: fixed"
+                                                                        "\n\t 1: periodic");
 
-        bool periodicBC = false;          // Gambiarris
+        bool force_periodicBC = false;          // Gambiarris (ish)
 
         Vector<Pointer<Socket>> getTimeDFTSnapshots();
         auto _newTimeDFTSnapshotOutput(const Str& folder, Real t_start, Real t_end, const RealVector &x_locations) const -> Pointer<Socket>;
 
-    protected:
         virtual auto buildOpenGLOutput() -> void*;
 
         void setLaplacianPeriodicBC();    // Gambiarris

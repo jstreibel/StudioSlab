@@ -16,7 +16,7 @@ namespace Slab::Models::KGRtoR {
         Real t_end;
     };
 
-    class CenterTimeDFTOutput : public Math::Socket {
+    class CenterTimeDFTOutput final : public Math::Socket {
         Str filename;
         Vector<RealVector> dataset;
         Vector<Real> x_measure;

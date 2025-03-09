@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, const Str& generalDescription, bool doRegister)
             : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
-        interface->addParameters({&Potential, &massSqr, &N_num});
+        interface->addParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
 
         if (doRegister) RegisterCLInterface(interface);
     }
@@ -191,7 +191,7 @@ namespace Slab::Models::KGRtoR {
         fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
         fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
 
-        Count snapshot_count = std::ceil(t / Δt);
+        const Count snapshot_count = std::ceil(t / Δt);
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
@@ -205,15 +205,15 @@ namespace Slab::Models::KGRtoR {
             fix L = c.getL();
             fix xMin = c.getxMin();
 
-            if(auto k_param = CLInterfaceManager::getInstance().getParameter("k")){
-                auto k_n = k_param->getValueAs<Real>();
+            if(fix k_param = CLInterfaceManager::getInstance().getParameter("k")){
+                fix k_n = k_param->getValueAs<Real>();
                 x_locations = {L/(4.*k_n)};
             } else
                 x_locations={xMin+L/2};
         }
 
         if(snapshot_count==1) {
-            auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
+            fix snapshotsFolder = Common::GetPWD() + "/snapshots/";
             auto snapshotSocket = _newTimeDFTSnapshotOutput(snapshotsFolder, t-t_len, t, x_locations);
 
             return {snapshotSocket};
@@ -254,7 +254,7 @@ namespace Slab::Models::KGRtoR {
         const floatt xLeft = conf.getxMin();
         const floatt xRight = xLeft + conf.getL();
 
-        auto laplacianType = periodicBC
+        auto laplacianType = force_periodicBC || *BoundaryConditions == 1
                              ? RtoR::NumericFunction::Standard1D_PeriodicBorder
                              : RtoR::NumericFunction::Standard1D_FixedBorder;
 
@@ -262,7 +262,7 @@ namespace Slab::Models::KGRtoR {
             return Math::DataAlloc<RtoR::NumericFunction_CPU>("IntegrationData", N, xLeft, xRight, laplacianType);
 
 #if USE_CUDA == true
-        else if(device_config == Device::GPU)
+        if(device_config == Device::GPU)
             return New<RtoR::NumericFunctionGPU>(N, xLeft, xRight, laplacianType);
 #endif
 
@@ -337,21 +337,21 @@ namespace Slab::Models::KGRtoR {
     }
 
     void KGRtoRBuilder::setLaplacianPeriodicBC() {
-        Log::Info() << "KGBuilder Laplacian set to PERIODIC borders." << Log::Flush;
-        periodicBC = true;
+        Log::Attention() << "KGBuilder Laplacian forced to PERIODIC borders." << Log::Flush;
+        force_periodicBC = true;
     }
 
     void KGRtoRBuilder::setLaplacianFixedBC() {
-        Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
-        periodicBC = false;
+        // Log::Info() << "KGBuilder Laplacian set to FIXED borders." << Log::Flush;
+        force_periodicBC = false;
     }
 
-    bool KGRtoRBuilder::usesPeriodicBC() const { return periodicBC; }
+    bool KGRtoRBuilder::usesPeriodicBC() const { return force_periodicBC; }
 
     Str KGRtoRBuilder::suggestFileName() const {
-        auto strParams = interface->toString({"massSqr"}, " ");
+        const auto strParams = interface->toString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
-        auto voidSuggestion = NumericalRecipe::suggestFileName();
+        const auto voidSuggestion = NumericalRecipe::suggestFileName();
         return voidSuggestion + " " + strParams;
     }
 

@@ -12,13 +12,13 @@ namespace Slab::Models::KGRtoR {
 
     using namespace Slab::Math;
 
-    class DFTSnapshotOutput : public SnapshotOutput {
+    class DFTSnapshotOutput final : public SnapshotOutput {
     protected:
         const Count N_DFT_modes;
         const Real k_max;
         auto filterData(const OutputPacket &packet) -> RtoR::NumericFunction_CPU override;
     public:
-        DFTSnapshotOutput(const Resolution N, const Real L, const Str &fileName);
+        DFTSnapshotOutput(Resolution N, Real L, const Str &fileName);
     };
 } // KleinGordon::RtoR
 

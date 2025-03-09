@@ -57,13 +57,13 @@ namespace Slab::Models::KGRtoR {
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
         outputFile << "{" << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
-        for(const auto& entry : xtraPyDictEntries) // {key: value, key:value, }
-            outputFile << "\"" << entry.first << "\": " << entry.second << ", ";
+        for(const auto&[key, value] : xtraPyDictEntries) // {key: value, key:value, }
+            outputFile << "\"" << key << "\": " << value << ", ";
         outputFile.seekp(-2, std::ios_base::cur);
         outputFile << "}" << SEPARATOR << std::flush;
 
         auto &data = space.getHostData(true);
-        auto vecData = std::vector<double>(std::begin(data), std::end(data));
+        auto vecData = std::vector(std::begin(data), std::end(data));
         outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(Real)));
 
         outputFile.close();

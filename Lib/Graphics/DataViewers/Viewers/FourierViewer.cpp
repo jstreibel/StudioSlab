@@ -72,15 +72,15 @@ namespace Slab::Graphics {
 
 
         {
-            auto shared_xMin = ωSpaceGraph->getRegion().getReference_xMin();
-            auto shared_xMax = ωSpaceGraph->getRegion().getReference_xMax();
-            auto shared_tMin = kSpaceGraph->getRegion().getReference_yMin();
-            auto shared_tMax = kSpaceGraph->getRegion().getReference_yMax();
+            fix shared_xMin = ωSpaceGraph->getRegion().getReference_xMin();
+            fix shared_xMax = ωSpaceGraph->getRegion().getReference_xMax();
+            fix shared_tMin = kSpaceGraph->getRegion().getReference_yMin();
+            fix shared_tMax = kSpaceGraph->getRegion().getReference_yMax();
 
-            auto shared_ωMin = ωSpaceGraph->getRegion().getReference_yMin();
-            auto shared_ωMax = ωSpaceGraph->getRegion().getReference_yMax();
-            auto shared_kMin = kSpaceGraph->getRegion().getReference_xMin();
-            auto shared_kMax = kSpaceGraph->getRegion().getReference_xMax();
+            fix shared_ωMin = ωSpaceGraph->getRegion().getReference_yMin();
+            fix shared_ωMax = ωSpaceGraph->getRegion().getReference_yMax();
+            fix shared_kMin = kSpaceGraph->getRegion().getReference_xMin();
+            fix shared_kMax = kSpaceGraph->getRegion().getReference_xMax();
 
             xSpaceGraph->getRegion().setReference_xMin(shared_xMin);
             xSpaceGraph->getRegion().setReference_xMax(shared_xMax);
@@ -172,14 +172,14 @@ namespace Slab::Graphics {
         WindowPanel::draw();
     }
 
-    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real t_0,
-                                    Real t_f) -> Pointer<R2toR::NumericFunction> {
+    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin,
+                                    Real tMax) -> Pointer<R2toR::NumericFunction> {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;
 
-        t_0 = Common::max(t_0, t_min);
-        t_f = Common::min(t_f, t_max);
+        tMin = Common::max(tMin, t_min);
+        tMax = Common::min(tMax, t_max);
 
         fix N = func->getN();
         fix xMin = func->getDomain().xMin;
@@ -187,15 +187,15 @@ namespace Slab::Graphics {
 
         fix Mₜ = func->getM();
         fix dt = func->getDomain().getLy()/Mₜ;
-        fix Δt = t_f-t_0;
-        fix test_M = (Count)floor(Δt/dt);
+        fix Δt = tMax-tMin;
+        fix test_M = static_cast<Count>(floor(Δt / dt));
         fix M = test_M%2==0 ? test_M : test_M-1;
 
         auto out = DataAlloc<Math::R2toR::NumericFunction_CPU>(
-                func->get_data_name() + " t∈(" + ToStr(t_0) + "," + ToStr(t_f) + ")",
-                N, M, xMin, t_0, dx, Δt/(Real)M);
+                func->get_data_name() + " t∈(" + ToStr(tMin) + "," + ToStr(tMax) + ")",
+                N, M, xMin, tMin, dx, Δt/static_cast<Real>(M));
 
-        fix j₀ = floor((t_0-t_min)/dt);
+        fix j₀ = static_cast<UInt>(floor((tMin-t_min)/dt));
 
         for (auto i = 0; i < N; ++i) for (auto j = 0; j < M; ++j)
                 out->At(i, j) = func->At(i, j₀+j);
@@ -204,20 +204,19 @@ namespace Slab::Graphics {
     }
 
     void FourierViewer::computeAll() {
-        auto function = getFunction();
-        if(function == nullptr) return;
+        if(fix function = getFunction(); function == nullptr) return;
 
         computeFullDFT2D(KeepRedundantModes);
         computeTwoPointCorrelations();
     }
 
     void FourierViewer::computeFullDFT2D(bool discardRedundantModes) {
-        auto function = getFunction();
+        const auto function = getFunction();
 
         if(function == nullptr) return;
 
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        fix t_0 = static_cast<Real>(t0);
+        fix t_f = t_0 + static_cast<Real>(Δt);
 
         auto toFT = FilterSpace(function, t_0, t_f);
         timeFilteredArtist->setFunction(toFT);
@@ -360,13 +359,13 @@ namespace Slab::Graphics {
 
 
 
-    void FourierViewer::setFunction(FourierViewer::Function func) {
+    void FourierViewer::setFunction(const FourierViewer::Function func) {
         Viewer::setFunction(func);
 
-        auto function = getFunction();
+        fix function = getFunction();
 
-        fix t_min = (float)function->getDomain().yMin;
-        fix t_max = (float)function->getDomain().yMax;
+        fix t_min = static_cast<float>(function->getDomain().yMin);
+        fix t_max = static_cast<float>(function->getDomain().yMax);
         t0 = t_min;
         Δt = t_max-t_min;
 
@@ -374,7 +373,7 @@ namespace Slab::Graphics {
                                          {kFilterCutoff, function->getDomain().yMax+10.0});
 
         if(function_artist == nullptr) {
-            function_artist = Graphics::Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
+            function_artist = Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
             function_artist->setAffectGraphRanges(true);
         } else {
             function_artist->setFunction(function);

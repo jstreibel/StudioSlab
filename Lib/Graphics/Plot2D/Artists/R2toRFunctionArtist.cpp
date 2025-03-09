@@ -16,10 +16,10 @@ namespace Slab::Graphics {
 
     R2toRFunctionArtist::R2toRFunctionArtist()
     : textureKontraptions()
-    , painters({{"Colored", New<Colormap1DPainter>()},
+    , painters({{"Colormap", New<Colormap1DPainter>()},
         {"Heightmap", New<HeightmapShadingPainter>()}})
     {
-        current_painter = painters["Colored"];
+        current_painter = painters["Colormap"];
         updateMinMax();
     }
 
