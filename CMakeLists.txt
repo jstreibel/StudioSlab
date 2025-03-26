@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
 
-option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" ON )
-option( STUDIOSLAB_OMP_SUPPORT "Enable OpenMP support in StudioSlab libraries" ON )
+option( STUDIOSLAB_CUDA_SUPPORT "Enable CUDA support in StudioSlab libraries" OFF )
+option( STUDIOSLAB_OMP_SUPPORT "Enable OpenMP support in StudioSlab libraries" OFF )
 option( STUDIOSLAB_SFML2_SUPPORT "Enable SFML 2 support in StudioSlab" ON )
 option( STUDIOSLAB_VTK_SUPPORT "Enable VTK support in StudioSlab libraries" OFF )
 option( STUDIOSLAB_USE_SINGLE_PRECISION "Use single precision instead of doubles." OFF)
@@ -79,8 +79,13 @@ if( STUDIOSLAB_OMP_SUPPORT )
 	set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${OMP_FLAG}")
 	set(CMAKE_EXE_LINKER_FLAGS  "${CMAKE_EXE_LINKER_FLAGS} ${OMP_FLAG}")
 
+	add_compile_definitions(OMP_SUPPORT=true)
+
 	message(STATUS "StudioSlab OpenMP support is ENABLED."  )
 else()
+
+	add_compile_definitions(OMP_SUPPORT=false)
+
 	message(STATUS "StudioSlab OpenMP support is DISABLED."  )
 endif()
 

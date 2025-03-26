@@ -44,7 +44,7 @@ namespace Tests {
 
     const char* funcSymbol = "sin";
 
-    Real func(Real x) {
+    Real func(const Real x) {
         if(0) {
             Real val = 0.0;
             for (int i = 0; i < N_sqrWave; ++i) {

@@ -16,9 +16,9 @@ namespace Slab::Models {
     class KGSolver : public Base::LinearStepSolver {
     public:
         typedef KGState<InCategory>     FieldState;
-        typedef FieldState::Field       Field;
-        typedef FieldState::FieldBase   FieldBase;
-        typedef FieldState::OutCategory OutCategory;
+        typedef typename FieldState::Field       Field;
+        typedef typename FieldState::FieldBase   FieldBase;
+        typedef typename FieldState::OutCategory OutCategory;
 
         using Potential =               Base::FunctionT<OutCategory, OutCategory>;
         using NonHomogenousFunc =       FieldBase;

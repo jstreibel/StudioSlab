@@ -21,7 +21,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class KGLangevinSolver : public KGRtoRSolver {
+    class KGLangevinSolver final : public KGRtoRSolver {
         RtoR::NumericFunction_ptr langevinImpulses = nullptr;
         RtoR::NumericFunction_ptr scaledImpulses   = nullptr;
 

@@ -2,8 +2,8 @@
 // Created by joao on 05/09/2019.
 //
 
-#ifndef V_SHAPE_BOUNDARYCONDITIONS_H
-#define V_SHAPE_BOUNDARYCONDITIONS_H
+#ifndef V_SHAPE_BOUNDARY_CONDITIONS_H
+#define V_SHAPE_BOUNDARY_CONDITIONS_H
 
 #include <utility>
 #include "Utils/Types.h"
@@ -16,10 +16,11 @@ namespace Slab::Math::Base {
         Pointer<const EquationState> prototype;
 
     public:
+        virtual ~BoundaryConditions() = default;
 
         explicit BoundaryConditions(Pointer<const EquationState> prototype);
 
-        EquationState_ptr newEqState() const;
+        [[nodiscard]] EquationState_ptr newEqState() const;
 
         virtual void apply(EquationState &toFunction, Real t) const = 0;
     };
@@ -28,4 +29,4 @@ namespace Slab::Math::Base {
 }
 
 
-#endif //V_SHAPE_BOUNDARYCONDITIONS_H
+#endif //V_SHAPE_BOUNDARY_CONDITIONS_H

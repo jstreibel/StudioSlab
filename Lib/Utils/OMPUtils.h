@@ -13,7 +13,7 @@ namespace Slab {
 
     IntPair getBeginAndEndForThreadedFor(int N);
 
-#ifndef FORCE_NO_OMP
+#if OMP_SUPPORT==true
 
 #define OMP_GET_BEGIN_END(beginVarName, endVarName, NSites) \
     IntPair be = getBeginAndEndForThreadedFor(NSites); \

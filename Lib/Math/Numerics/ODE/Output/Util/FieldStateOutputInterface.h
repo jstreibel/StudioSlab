@@ -14,6 +14,8 @@ namespace Slab::Math {
 
     class EqStateOutputInterface {
     public:
+        virtual ~EqStateOutputInterface() = default;
+
         static enum Formats {
             SpaceSeparated,
             PythonDictionaryEntry
@@ -30,7 +32,7 @@ namespace Slab::Math {
         virtual void outputdPhiDt(OStream &out,
                                   Str separator) const { throw "EqStateOutputInterface::outputDPhiDt(...) not implemented."; }
 
-        virtual EqStateOutputInterface *Copy(UInt N) const = 0;
+        [[nodiscard]] virtual EqStateOutputInterface *Copy(UInt N) const = 0;
 
         friend OStream &operator<<(OStream &stream, const EqStateOutputInterface &oStreamReady) {
             Str sep = format == SpaceSeparated ? " " : ", ";

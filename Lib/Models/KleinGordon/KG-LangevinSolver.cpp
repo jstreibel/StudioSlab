@@ -58,6 +58,7 @@ namespace Slab::Models::KGRtoR {
             langevinImpulses = DynamicPointerCast <RtoR::NumericFunction> (kgStateIn.getPhi().Clone());
             scaledImpulses   = DynamicPointerCast <RtoR::NumericFunction> (kgStateIn.getPhi().Clone());
 
+            langevinImpulses->Set(RtoR::NullFunction());
             scaledImpulses->Set(RtoR::NullFunction());
         }
 
@@ -73,7 +74,9 @@ namespace Slab::Models::KGRtoR {
 
             dissipation = π * (-γ);
 
-            (*scaledImpulses) = *langevinImpulses * α;
+            (*scaledImpulses) = *langevinImpulses * α
+
+            ;
 
             OUT F = kgStateOut.getDPhiDt();
 

@@ -8,7 +8,7 @@
 #include "Math/Function/RtoR/Model/RtoRFunction.h"
 
 namespace Slab::Math::RtoR {
-    class AbsFunction : public RtoR::Function {
+    class AbsFunction final : public RtoR::Function {
     public:
         Real operator()(Real x) const override;
 

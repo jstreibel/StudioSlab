@@ -42,9 +42,11 @@ namespace Slab::Math {
         this->dev = dev_n == 0 ? CPU : (dev_n == 1 || dev_n == 2 ? GPU : UNKNOWN);
 
         if (dev == UNKNOWN) {
-            throw Exception(Str("Unkown device ") + std::to_string(dev_n) + Str("."));
+            throw Exception(Str("Unknown device ") + std::to_string(dev_n) + Str("."));
         } else if (dev == Device::CPU) {
+            #if OMP_SUPPORT == true
             omp_set_num_threads(**nThreads);
+            #endif
 
             Log::Info() << "Running on CPU @ " << *nThreads << " thread"
                         << (**nThreads > 1 ? "s." : ".") << Log::Flush;
@@ -53,8 +55,8 @@ namespace Slab::Math {
     #if USE_CUDA
             setupForThread();
     #else
-            throw "Code was not compiled with GPU support. And this exception should never "
-                  "in a logical universe have happened.";
+            throw Exception("Code was not compiled with GPU support. And this exception should never "
+                  "in a logical universe have happened.");
     #endif
         }
     }
@@ -62,12 +64,7 @@ namespace Slab::Math {
     void DeviceConfig::setupForThread() {
         #if USE_CUDA
         unsigned int dev_n = **deviceChoice;
-        #else
-        return;
-        #endif
-
         if(dev_n==0) return;
-
         int devCount;
         cudaError err;
 
@@ -84,6 +81,7 @@ namespace Slab::Math {
             Log::Attention() << "Ignoring n_threads argument (using GPU)." << Log::Flush;
             *nThreads = 1;
         }
+        #endif
     }
 
     void DeviceConfig::notifyAllCLArgsSetupFinished() {

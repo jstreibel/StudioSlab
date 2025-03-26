@@ -11,15 +11,15 @@ namespace Slab::Math::Base {
 
     class LinearStepSolver {
     protected:
-        BoundaryConditions_ptr du;
+        Pointer<BoundaryConditions> du;
 
     public:
-        explicit LinearStepSolver(BoundaryConditions_ptr du)
+        explicit LinearStepSolver(Pointer<BoundaryConditions> du)
         : du(std::move(du)) {}
 
         virtual ~LinearStepSolver() = default;
 
-        virtual auto NewEqState() const -> EquationState_ptr;
+        [[nodiscard]] virtual auto NewEqState() const -> EquationState_ptr;
 
         virtual EquationState& applyBC(EquationState &state, Real t, Real dt);
         virtual EquationState& F(const EquationState &in, EquationState &out, Real t) = 0;

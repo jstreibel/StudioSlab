@@ -16,6 +16,8 @@ namespace Slab::Math::Base {
 
     class EquationState : public StateAlgebra {
     public:
+        virtual ~EquationState() = default;
+
         // using EquationAlgebra::operator-;
         // using EquationAlgebra::operator+;
         using StateAlgebra::operator=;
@@ -24,7 +26,7 @@ namespace Slab::Math::Base {
          * Produce a replica of this EquationState with all parameters replicated, except for the state data itself.
          * @return the replica.
          */
-        virtual auto replicate() const -> Pointer<EquationState> = 0;
+        [[nodiscard]] virtual auto replicate() const -> Pointer<EquationState> = 0;
 
         /**
          * Sets this EquationState's data to match that of other state. Notice that both state's parameters (dimensions,

@@ -2,7 +2,7 @@
 // Created by joao on 11/1/24.
 //
 
-#include <stb_image.h>
+#include "3rdParty/stb_image.h"
 #include "ImageLoad.h"
 
 namespace Slab::Graphics::Image {

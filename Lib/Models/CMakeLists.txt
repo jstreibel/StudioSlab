@@ -122,6 +122,14 @@ add_library( ${LIB_LOCAL_NAME} STATIC
 		DynamicsNumericConfig.h
 		KleinGordon/R2toR/Output/KG2DSnapshotOutput.cpp
 		KleinGordon/R2toR/Output/KG2DSnapshotOutput.h
+		Stochastic-Path-Integral/SPI-Recipe.cpp
+		Stochastic-Path-Integral/SPI-Recipe.h
+		Stochastic-Path-Integral/SPI-State.cpp
+		Stochastic-Path-Integral/SPI-State.h
+		Stochastic-Path-Integral/SPI-Solver.cpp
+		Stochastic-Path-Integral/SPI-Solver.h
+		Stochastic-Path-Integral/SPI-BC.cpp
+		Stochastic-Path-Integral/SPI-BC.h
 )
 
 target_link_libraries(${LIB_LOCAL_NAME}

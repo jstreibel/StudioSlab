@@ -6,7 +6,7 @@
 #define STUDIOSLAB_NATIVEFUNCTION_H
 
 
-#include "Function.h"
+// #include "Function.h"
 
 namespace Slab::Math::Base {
 

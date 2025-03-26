@@ -43,7 +43,10 @@ endif ()
 set ( UTILS_LIB ${STUDIOSLAB_BASE_LIB_NAME}-Utils )
 
 add_library(${UTILS_LIB} STATIC ${UTIL_SOURCES} ${UTIL_INTERFACES} )
-target_link_libraries(${UTILS_LIB} omp boost_timer )
+if ( STUDIOSLAB_OMP_SUPPORT )
+	target_link_libraries(${UTILS_LIB} omp)
+endif ()
+target_link_libraries(${UTILS_LIB} boost_timer )
 target_sources(${UTILS_LIB} PRIVATE ${UTIL_INTERFACES})
 target_compile_options(${UTILS_LIB}
 		PRIVATE

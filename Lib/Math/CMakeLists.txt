@@ -139,6 +139,9 @@ add_library(${STUDIOSLAB_MATH_BASE_LIB_NAME} STATIC
 
 		Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.cpp
 		Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.h
+		Function/R2toR/Model/FunctionsCollection/NullFunction.h
+		Numerics/ODE/Steppers/Euler.cpp
+		Numerics/ODE/Steppers/Euler.h
 )
 
 

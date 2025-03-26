@@ -34,6 +34,14 @@ namespace Slab::Math {
         const = 0;
 
     public:
+        virtual ~Operator() = default;
+
+        /**
+         *
+         * @param elleyOh the group element(s) this operator is acting upon.
+         * @return an OperatorActionProxy. The reason for this is that the operation is only executed (only
+         * gets CPU time) when its output memory location is provided.
+         */
         virtual OperatorActionProxy
         operator *
         (const Group &elleyOh) const

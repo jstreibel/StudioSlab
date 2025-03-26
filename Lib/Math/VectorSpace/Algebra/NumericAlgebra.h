@@ -41,6 +41,10 @@ namespace Slab::Math {
 
     template<class Ty>
     class NumericAlgebra {
+    protected:
+        ~NumericAlgebra() = default;
+
+    private:
         using Oppy = Operator<Ty>;
 
         class ScalarMultiplicationProxy {
