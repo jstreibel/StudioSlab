@@ -12,7 +12,7 @@
 
 namespace Slab::Graphics {
 
-    class SlabWindowManager : public SystemWindowEventListener {
+    class SlabWindowManager final : public SystemWindowEventListener {
         struct WindowMetaInformation {
             Pointer<SlabWindow> window= nullptr;
             bool is_full_screen = false;

@@ -20,5 +20,7 @@ namespace Slab::Graphics {
             throw Exception("Failed GLEW initialization");
         }
         Core::Log::Success() << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << Core::Log::Flush;
+
+        Core::Log::Info() << "Supported OpenGL version " << glGetString(GL_VERSION) << Core::Log::Flush;
     }
 } // Core

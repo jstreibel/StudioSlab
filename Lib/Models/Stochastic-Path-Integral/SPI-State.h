@@ -27,6 +27,8 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         EquationState & Multiply(Real a) override;
 
+        [[nodiscard]] auto category() const -> Str override;
+
         [[nodiscard]] auto replicate() const -> Pointer<EquationState> override;
 
         [[nodiscard]] auto getPhi() const -> Pointer<Math::R2toR::NumericFunction>;

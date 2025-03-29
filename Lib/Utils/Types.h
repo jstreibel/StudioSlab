@@ -23,6 +23,7 @@ namespace Slab {
 #define IN  const auto&
 #define GET auto&
 #define fix     const auto
+#define Fix     constexpr auto
 #define look    const auto *
 
     template <typename T1, typename T2>

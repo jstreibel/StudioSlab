@@ -5,8 +5,7 @@
 #ifndef STUDIOSLAB_SYSTEMWINDOWEVENTTRANSLATOR_H
 #define STUDIOSLAB_SYSTEMWINDOWEVENTTRANSLATOR_H
 
-#include <vector>
-#include <utility>
+#include <Utils/List.h>
 
 #include "SystemWindowEventListener.h"
 
@@ -16,7 +15,7 @@ namespace Slab::Graphics {
     class EventTranslator {
         friend class SystemWindow;
     protected:
-        Vector<Volatile<SystemWindowEventListener>> syswin_listeners;
+        List<Volatile<SystemWindowEventListener>> sysWin_listeners;
 
     public:
         EventTranslator();

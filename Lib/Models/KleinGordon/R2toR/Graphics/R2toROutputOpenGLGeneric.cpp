@@ -1,6 +1,9 @@
 //
 
 #include "R2toROutputOpenGLGeneric.h"
+
+#include <chrono>
+
 #include "Math/Function/RtoR2/StraightLine.h"
 
 #include "Graphics/Plot2D/PlotThemeManager.h"
@@ -12,26 +15,42 @@
 namespace Slab::Models::KGR2toR {
 
     OutputOpenGL::OutputOpenGL(Count max_steps)
-    : Graphics::BaseMonitor(max_steps, "R2 -> R OpenGL output", 1)
+    : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")
     {
-        addWindow(Slab::Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
+        addWindow(Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
         mSectionGraph.addArtist(Slab::Naked(sectionArtist));
 
-        addWindow(Slab::Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
+        addWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
     void OutputOpenGL::draw() {
-        Graphics::BaseMonitor::draw();
+        if (!lastPacket.hasValidData()) return;
+
+        BaseMonitor::draw();
 
         if (sectionArtist.getFunction() == nullptr) {
-            IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();
+            fix cat = lastPacket.getStateCategory();
+            if (cat == "2nd-order|R2->R") {
+                IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();
 
-            auto &phi = state.getPhi();
+                auto &phi = state.getPhi();
 
-            // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
-            sectionArtist.setFunction(Slab::Naked(phi));
+                // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
+                sectionArtist.setFunction(Naked(phi));
+            }
+
+            else if (cat == "2nd-order|R2->R") {
+                // IN state = *lastPacket.GetNakedStateData<Models::Stoch SPIStg::EquationState>();
+
+                auto &phi = state.getPhi();
+
+                // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
+                sectionArtist.setFunction(Naked(phi));
+            }
+
+
         } else if (sectionArtist.getSections().empty()) {
             IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();
             auto &phi = dynamic_cast<R2toR::NumericFunction&>(state.getPhi());

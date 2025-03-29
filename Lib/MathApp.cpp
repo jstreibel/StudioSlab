@@ -11,19 +11,21 @@
 
 #include "Math/Numerics/NumericTask.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Graphics/Modules/GraphicsModule.h"
 
 
 namespace Slab::Math {
 
     MathApp::MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder)
             : AppBase(argc, argv), builder(std::move(simBuilder)) {
+
         Core::CLArgsManager::Parse(argc, argv);
     }
 
     auto MathApp::run() -> int {
-        auto integrationTask = Slab::New<NumericTask>(*builder.get());
+        const auto integrationTask = Slab::New<NumericTask>(builder);
 
-        auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>
+        const auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>
                 (Core::BackendManager::GetModule("TaskManager").get());
 
         taskManager->addTask(integrationTask);

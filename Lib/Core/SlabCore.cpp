@@ -52,9 +52,10 @@ namespace Slab::Core {
         BackendManager::RegisterAvailableBackend("Headless", [](){
             return std::make_unique<ConsoleBackend>();
         });
-    };
+    }
+
     void RegisterModules(){
         BackendManager::RegisterAvailableModule<TaskManagerModule>("TaskManager");
-    };
+    }
 
 }

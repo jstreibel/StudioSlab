@@ -15,35 +15,42 @@
 
 namespace Slab::Models::StochasticPathIntegrals {
 
-    SPIRecipe::SPIRecipe(const Pointer<NumericConfig> &numeric_config, const Str &name,
-        const Str &generalDescription, bool doRegister)
-    : NumericalRecipe(numeric_config, name, generalDescription, false) {
+    const auto my_name = "Stochastic Path Integrals Recipe";
+    const auto my_description = "Recipe for generating relevant field configurations in the (1+1) dimensional, real valued "
+        "fields quantum path integral formalism.";
 
-        this->getInterface()->addParameters({&L, &t, &N, &dT, &nT});
-
-        if (doRegister) registerToManager();
+    SPIRecipe::SPIRecipe(const Pointer<SPINumericConfig> &numeric_config)
+    : NumericalRecipe(numeric_config, my_name, my_description, true)
+    , SPI_NumericConfig(numeric_config) {
     }
 
     auto SPIRecipe::buildOutputSockets() -> Base::OutputSockets {
         Base::OutputSockets sockets;
 
-        auto monitor = New<KGR2toR::OutputOpenGL>(*nT);
+        auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->getn());
+        Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(monitor);
+        sockets.emplace_back(monitor);
 
         return sockets;
     }
 
     auto SPIRecipe::buildStepper() -> Pointer<Stepper> {
-        fix xMin = - *L/2;
-        fix h = *L / *N;
-        fix tMin = 0.0;
-        fix M = static_cast<Int>(floor(*t / h));
+        fix L = SPI_NumericConfig->getL();
+        fix t = SPI_NumericConfig->gett();
+        fix N = SPI_NumericConfig->getN();
+        fix dT = SPI_NumericConfig->getdT();
 
-        auto phi = New<R2toR::NumericFunction_CPU>(*N, M, xMin, tMin, h, h);
+        fix xMin = - L/2;
+        fix h = L / N;
+        Fix tMin = 0.0;
+        fix M = static_cast<Int>(floor(t / h));
+
+        auto phi = New<R2toR::NumericFunction_CPU>(N, M, xMin, tMin, h, h);
         auto prototypeState = New<SPIState>(phi);
 
         auto du = New<SPIBC>(prototypeState);
         auto solver = New<SPISolver>(du);
 
-        return New<Euler>(solver, *dT);
+        return New<Euler>(solver, dT);
     }
 } // StochasticPathIntegrals::Models::Slab

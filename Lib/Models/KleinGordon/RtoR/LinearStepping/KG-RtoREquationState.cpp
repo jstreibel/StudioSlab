@@ -13,5 +13,7 @@ namespace Slab::Models::KGRtoR {
         return New<EquationState>(clone1, clone2);
     }
 
-
+    auto EquationState::category() const -> Str {
+        return "2nd-order|R->R";
+    }
 }

@@ -36,7 +36,7 @@ namespace Slab {
 
     template <typename T>
     bool MoveToFront(List<T>& lst, const T& value) {
-        auto it = std::find(lst.begin(), lst.end(), value);
+        auto it = std::ranges::find(lst.begin(), lst.end(), value);
         if (it != lst.end()) {
             lst.splice(lst.begin(), lst, it);
             return true;

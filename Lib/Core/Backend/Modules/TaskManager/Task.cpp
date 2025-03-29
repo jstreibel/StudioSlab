@@ -8,19 +8,34 @@
 
 namespace Slab::Core {
 
-    Task::Task(Str name) : name(std::move(name)) { }
+    Task::Task(Str name) : m_name(std::move(name)), m_continueFlag(false) {
+    }
 
     void Task::start() {
-        taskStatus = Running;
-        taskStatus = run();
+        m_taskStatus = TaskRunning;
+        m_threadStatus = ThreadRunning;
+
+        m_taskStatus = run();
+
+        std::unique_lock lock(m_finishMutex);
+        m_threadStatus = ThreadWaitingRelease;
+        m_releaseCondition.wait(lock, [this] { return m_continueFlag; });
+        m_threadStatus = ThreadFinished;
     }
 
-    bool Task::isRunning() const { return taskStatus==Running; }
+    bool Task::isTaskRunning() const { return m_taskStatus==TaskRunning; }
 
-    Str Task::getName() const { return name; }
+    Str Task::getName() const { return m_name; }
 
     TaskStatus Task::getStatus() const {
-        return taskStatus;
+        return m_taskStatus;
     }
 
+    void Task::release() {
+        {
+            std::lock_guard lock(m_finishMutex);
+            m_continueFlag = true;
+        }
+        m_releaseCondition.notify_all();
+    }
 }

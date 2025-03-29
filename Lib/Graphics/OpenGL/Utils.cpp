@@ -291,5 +291,4 @@ namespace Slab {
         return typeMap[type];
     }
 
-
 }

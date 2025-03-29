@@ -158,9 +158,9 @@ namespace Slab::Graphics {
     : SystemWindow(NewGLFWWindow(), New<GLFWEventTranslator>())
     {
 
-        glfwSetWindowUserPointer((GLFWwindow*)window_ptr, this);
+        glfwSetWindowUserPointer(static_cast<GLFWwindow *>(window_ptr), this);
 
-        glfwMakeContextCurrent((GLFWwindow*)window_ptr);
+        glfwMakeContextCurrent(static_cast<GLFWwindow *>(window_ptr));
 
         arrowCursor     = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
         IBeamCursor     = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
@@ -217,12 +217,12 @@ namespace Slab::Graphics {
         glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto window = (GLFWwindow*)window_ptr;
+        auto window = static_cast<GLFWwindow *>(window_ptr);
         static auto Render = FuncRun(Render, window);
 
         IterateReferences(glfw_listeners, Render);
 
-        glfwSwapBuffers((GLFWwindow*)window_ptr);
+        glfwSwapBuffers(static_cast<GLFWwindow *>(window_ptr));
     }
 
     bool GLFWSystemWindow::ShouldClose() const {

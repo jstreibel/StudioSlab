@@ -63,7 +63,7 @@ namespace Slab::Graphics {
         return system_windows.front();
     }
 
-    void GraphicBackend::SetupGUI(SystemWindow *sys_win) {
+    void GraphicBackend::SetupGUI(const SystemWindow *sys_win) const {
         if(sys_win->guiContext != nullptr) return;
 
         for(const auto& win : system_windows) {

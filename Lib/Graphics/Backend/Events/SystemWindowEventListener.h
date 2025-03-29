@@ -28,12 +28,13 @@ namespace Slab::Graphics {
 
         void addResponder(const Volatile<SystemWindowEventListener>& responder);
         void removeResponder(const Pointer<SystemWindowEventListener>& responder);
-        bool hasResponders() const;
+        [[nodiscard]] bool hasResponders() const;
 
     public:
 
-        explicit SystemWindowEventListener(ParentSystemWindow parent = nullptr);
-        virtual ~SystemWindowEventListener() = default;
+        explicit SystemWindowEventListener(ParentSystemWindow parent);
+        explicit SystemWindowEventListener();
+        virtual ~SystemWindowEventListener();
 
         virtual bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
         virtual bool notifyCharacter(UInt codepoint);

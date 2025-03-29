@@ -5,9 +5,7 @@
 #include "Graphics/Window/GUIWindow.h"
 #include "Math/Numerics/Socket.h"
 #include "Graphics/Window/WindowContainer/WindowRow.h"
-#include "Graphics/Window/WindowContainer/WindowColumn.h"
 
-#include <iostream>
 #include <vector>
 
 namespace Slab::Graphics {
@@ -19,7 +17,7 @@ namespace Slab::Graphics {
 
     protected:
         Timer frameTimer = Timer();
-        GUIWindow guiWindow;
+        Pointer<GUIWindow> guiWindow = New<GUIWindow>();
 
         const Count max_steps;
 
@@ -32,7 +30,7 @@ namespace Slab::Graphics {
                              const Str& channelName="OpenGL monitor",
                              int stepsBetweenDraws=10);
 
-        GUIWindow &getGUIWindow();
+        [[nodiscard]] GUIWindow &getGUIWindow() const;
 
         void draw() override;
         bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;

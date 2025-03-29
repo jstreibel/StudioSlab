@@ -12,7 +12,7 @@
 namespace Slab::Math {
 
     class OutputPacket {
-        Base::EquationState_constptr stateData = nullptr;
+        Pointer<const Base::EquationState> stateData = nullptr;
         size_t currentStep = 0;
 
     public:
@@ -42,12 +42,15 @@ namespace Slab::Math {
             return dynamic_cast<const EqStateType*>(nakedState);
         }
 
+        [[nodiscard]] Str getStateCategory() const {
+            if (stateData == nullptr) { return ""; }
 
-        inline auto getSteps()   const -> size_t { return currentStep; }
+            return stateData->category();
+        };
+
+        [[nodiscard]] inline auto getSteps()   const -> size_t { return currentStep; }
 
     };
-
-
 }
 
 #endif // OUTPUTINFO_H

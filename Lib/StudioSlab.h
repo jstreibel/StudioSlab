@@ -18,7 +18,7 @@ namespace Slab {
     int Run(Application&);
 
     template<typename AppType>
-    int Run(int argc, char **argv) {
+    int Run(const int argc, const char **argv) {
         AppType app(argc, argv);
 
         return Run(app);

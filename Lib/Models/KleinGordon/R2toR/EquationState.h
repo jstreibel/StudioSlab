@@ -12,17 +12,18 @@ namespace Slab::Math::R2toR {
 
     class EquationState : public Models::KGState<Real2D> {
     public:
-        EquationState(NumericFunction_ptr phi, NumericFunction_ptr dPhiDt)
+        EquationState(const NumericFunction_ptr &phi, const NumericFunction_ptr &dPhiDt)
         : Models::KGState<Real2D>(phi, dPhiDt)
         {
         }
 
-        EqStateOutputInterface *Copy(UInt N) const override {
-            throw "Not implemented";
-            return nullptr;
+        [[nodiscard]] EqStateOutputInterface *Copy(UInt N) const override {
+            NOT_IMPLEMENTED_CLASS_METHOD
         }
 
-        auto replicate() const -> Pointer<Base::EquationState> override;
+        [[nodiscard]] auto replicate() const -> Pointer<Base::EquationState> override;
+
+        [[nodiscard]] auto category() const -> Str override;
     };
 
     DefinePointers(EquationState)

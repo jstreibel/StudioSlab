@@ -35,15 +35,16 @@ namespace Slab::Graphics {
         virtual void Cycle() = 0;
     public:
         explicit SystemWindow(void *window_ptr, Pointer<EventTranslator>);
-        ~SystemWindow() = default;
+
+        virtual ~SystemWindow() = default;
 
         void Render();
 
-        virtual Int getHeight() const = 0;
-        virtual Int getWidth() const = 0;
+        [[nodiscard]] virtual Int getHeight() const = 0;
+        [[nodiscard]] virtual Int getWidth() const = 0;
 
         virtual void SignalClose() = 0;
-        virtual bool ShouldClose() const = 0;
+        [[nodiscard]] virtual bool ShouldClose() const = 0;
 
         Volatile<GUIContext> getGUIContext();
 
@@ -52,7 +53,7 @@ namespace Slab::Graphics {
         auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
         auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
 
-        auto getMouseState() const -> Pointer<const MouseState>;
+        [[nodiscard]] auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);
 
         virtual

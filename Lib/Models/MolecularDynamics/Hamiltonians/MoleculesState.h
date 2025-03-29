@@ -29,8 +29,10 @@ namespace Slab::Models::MolecularDynamics {
     public:
         MoleculesState(Graphics::PointContainer &q, Graphics::PointContainer &p) : data(q, p) {};
 
-        Graphics::PointContainer &first() const { return data.first; }
-        Graphics::PointContainer &second() const { return data.second; }
+        [[nodiscard]] Graphics::PointContainer &first() const { return data.first; }
+        [[nodiscard]] Graphics::PointContainer &second() const { return data.second; }
+
+        [[nodiscard]] auto category() const -> Str override;
 
         auto replicate() const -> Pointer<EquationState> override {
             NOT_IMPLEMENTED_CLASS_METHOD

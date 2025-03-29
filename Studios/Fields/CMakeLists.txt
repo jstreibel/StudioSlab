@@ -16,6 +16,12 @@ add_subdirectory(RtoR-Modes)
 #
 #message(NOTICE "Added executable Signals-RtoR")
 
+# ************************************************************************************************************
+
+add_executable( Fields-SPI
+		QuantumSG/qsg_main.cpp)
+target_link_libraries( Fields-SPI Slab )
+message(NOTICE "Added executable Fields-SPI")
 
 # ************************************************************************************************************
 

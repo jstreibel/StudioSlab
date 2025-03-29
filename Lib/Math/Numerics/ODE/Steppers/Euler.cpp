@@ -6,8 +6,12 @@
 
 namespace Slab::Math {
     Euler::Euler(const Pointer<Base::LinearStepSolver> &solver, Real dt)
-        : _H(solver), dt(dt)
+    : _H(solver)
+    , dt(dt)
+    , _f(solver->NewEqState())
+    , _temp(solver->NewEqState())
     {
+
     }
 
     void Euler::step(size_t n_steps) {

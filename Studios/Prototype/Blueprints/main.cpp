@@ -12,7 +12,7 @@ class App : public Slab::Application {
     Slab::Pointer<Slab::Blueprints::Blueprint> blueprint;
 
 public:
-    App(int argc, char *argv[]) : Slab::Application("Blueprints prototype", argc, argv) {
+    App(const int argc, const char *argv[]) : Slab::Application("Blueprints prototype", argc, argv) {
     }
 
 protected:
@@ -68,6 +68,6 @@ protected:
     }
 };
 
-int main(int argc, char *argv[]) {
+int main(const int argc, const char **argv) {
     return Slab::Run<App>(argc, argv);
 }

@@ -18,7 +18,7 @@ namespace Slab {
 
     template<typename T, typename U>
     bool Contains(Map<T,U> map, T key){
-        return map.find(key) != map.end();
+        return map.contains(key);
     }
 
 

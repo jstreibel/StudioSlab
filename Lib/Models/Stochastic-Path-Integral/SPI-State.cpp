@@ -7,30 +7,32 @@
 namespace Slab::Models::StochasticPathIntegrals {
     SPIState::SPIState(Pointer<Math::R2toR::NumericFunction> data): data(std::move(data)) {}
 
-#define MyCast(a) dynamic_cast<const Math::R2toR::NumericFunction&>((a))
+#define MathCast(a) DynamicPointerCast<Math::R2toR::NumericFunction>((a))
+#define MyCast(a) dynamic_cast<const SPIState&>((a))
+#define GetData(a) (*(MyCast(a).getPhi()))
 
     Math::Base::EquationState & SPIState::StoreAddition(const EquationState &a, const EquationState &b) {
-        data->StoreAddition(MyCast(a), MyCast(b));
+        data->StoreAddition(GetData(a), GetData(b));
         return *this;
     }
 
     Math::Base::EquationState & SPIState::StoreSubtraction(const EquationState &a, const EquationState &b) {
-        data->StoreSubtraction(MyCast(a), MyCast(b));
+        data->StoreSubtraction(GetData(a), GetData(b));
         return *this;
     }
 
     Math::Base::EquationState & SPIState::Add(const EquationState &a) {
-        data->Add(MyCast(a));
+        data->Add(GetData(a));
         return *this;
     }
 
     Math::Base::EquationState & SPIState::Subtract(const EquationState &a) {
-        data->Subtract(MyCast(a));
+        data->Subtract(GetData(a));
         return *this;
     }
 
     Math::Base::EquationState & SPIState::StoreScalarMultiplication(const EquationState &a, Real c) {
-        data->StoreScalarMultiplication(MyCast(a), c);
+        data->StoreScalarMultiplication(GetData(a), c);
         return *this;
     }
 
@@ -39,8 +41,12 @@ namespace Slab::Models::StochasticPathIntegrals {
         return *this;
     }
 
+    auto SPIState::category() const -> Str {
+        return "1st-order|R2->R";
+    }
+
     auto SPIState::replicate() const -> Pointer<EquationState> {
-        return New<SPIState>(DynamicPointerCast<Math::R2toR::NumericFunction>(data->Clone()));
+        return New<SPIState>(MathCast(data->Clone()));
     }
 
     auto SPIState::getPhi() const -> Pointer<Math::R2toR::NumericFunction> {
@@ -52,7 +58,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     }
 
     void SPIState::setData(const EquationState &a) {
-        auto brother_state = dynamic_cast<const SPIState&>(a);
+        auto brother_state = MyCast(a);
         auto numeric_data =
             DynamicPointerCast<Math::R2toR::NumericFunction::MyType>(brother_state.data);
 

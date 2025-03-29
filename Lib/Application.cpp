@@ -12,16 +12,18 @@
 #include <utility>
 
 namespace Slab {
-    int arg_count;
-    char **arg_values;
 
-    Application::Application(Str name, int argc, char *argv[])
-    : m_Name(std::move(name))
+
+    Pointer<Platform> Application::CreatePlatform() {
+        return Slab::DynamicPointerCast<Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
+    }
+
+    Application::Application(Str name, const int argc, const char *argv[])
+    : arg_count (argc)
+    , arg_values( argv)
+    , m_Name(std::move(name))
     {
-        Slab::Startup();
-
-        arg_count = argc;
-        arg_values = argv;
+        Startup();
 
         Core::Log::Info() << "Compiler: " << USED_CXX_COMPILER << Core::Log::Flush;
         // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;
@@ -29,14 +31,15 @@ namespace Slab {
     }
 
     Application::~Application() {
-        m_Platform->terminate();
+        if (p_Platform != nullptr) p_Platform->terminate();
+
         Core::BackendManager::UnloadAllModules();
     }
 
     bool Application::Create(Resolution width, Resolution height) {
-        Slab::Core::ParseCLArgs(arg_count, const_cast<const char **>(arg_values));
+        Core::ParseCLArgs(arg_count, const_cast<const char **>(arg_values));
 
-        m_Platform = CreatePlatform();
+        p_Platform = CreatePlatform();
 
         OnStart();
 
@@ -44,16 +47,16 @@ namespace Slab {
     }
 
     Int Application::Run() {
-        auto self = Dummy(*this);
+        const auto self = Dummy(*this);
 
-        m_Platform->GetMainSystemWindow()->addEventListener(self);
-        m_Platform->run();
+        p_Platform->GetMainSystemWindow()->addEventListener(self);
+        p_Platform->run();
 
         return 0;
     }
 
-    void Application::SetTitle(Str title) {
-        m_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
+    void Application::SetTitle(Str title) const {
+        p_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
     }
 
     auto Application::GetName() const -> Str {

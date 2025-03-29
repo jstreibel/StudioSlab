@@ -17,17 +17,18 @@ const auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 
-    class NumericTask : public Core::Task {
-        const UInt totalSteps;
+    class NumericTask final : public Core::Task {
+        Pointer<Base::NumericalRecipe> recipe;
+
+        UInt totalSteps;
         UInt stepsConcluded;
 
-        Base::NumericalRecipe &numericalRecipe;
         Stepper_ptr stepper;
         Pointer<OutputManager> outputManager;
 
         std::atomic<bool> forceStopFlag = false;
 
-        Core::BenchmarkData benchmarkData;
+        Pointer<Core::BenchmarkData> benchmarkData;
 
         void output(bool force = false);
 
@@ -40,9 +41,12 @@ namespace Slab::Math {
     protected:
         Core::TaskStatus run() override;
     public:
-        explicit NumericTask(Base::NumericalRecipe &recipe);
+        explicit NumericTask(const Pointer<Base::NumericalRecipe> &recipe, bool pre_init=true);
 
         ~NumericTask() override;
+
+        void init();
+        auto isInitialized() const -> bool;
 
         void abort() override;
 

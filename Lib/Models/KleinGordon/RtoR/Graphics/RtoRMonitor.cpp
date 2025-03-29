@@ -42,12 +42,12 @@ namespace Slab::Models::KGRtoR {
 
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
-        addDataView(Slab::New<RealtimePanel>(params, hamiltonian, guiWindow));
-        addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, guiWindow));
-        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, guiWindow, hamiltonian));
+        addDataView(Slab::New<RealtimePanel>(params, hamiltonian, *guiWindow));
+        addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *guiWindow));
+        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, *guiWindow, hamiltonian));
         //addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
-        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, guiWindow));
-        addDataView(Slab::New<RtoRScenePanel>(params, guiWindow, hamiltonian));
+        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, *guiWindow));
+        addDataView(Slab::New<RtoRScenePanel>(params, *guiWindow, hamiltonian));
 
         setDataView(0);
     }

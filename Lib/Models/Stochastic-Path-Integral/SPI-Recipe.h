@@ -8,30 +8,17 @@
 #include <Core/Controller/CommandLine/CLInterface.h>
 #include <Math/Numerics/NumericalRecipe.h>
 
+#include "SPINumericConfig.h"
+
 namespace Slab::Models::StochasticPathIntegrals {
+
     /*!
      * Stochastic path-integral recipe
      */
-    class SPIRecipe : public Slab::Math::Base::NumericalRecipe {
-
-        Core::RealParameter L = Core::RealParameter(1.0, "L,length", "Space length");
-        Core::RealParameter t = Core::RealParameter(1.0, "t,time", "Time interval");
-        Core::RealParameter N = Core::RealParameter(1.0, "N,site_count", "Total sites in space "
-                                                                         "direction. Time sites are computed "
-                                                                         "proportionally from this.");
-        Core::RealParameter dT = Core::RealParameter(0.1, "d,dT", "Stochastic time-step size");
-        Core::IntegerParameter nT = Core::IntegerParameter(1000, "n,stochastic_time_steps",
-            "Stochastic time-steps to be taken until expected end of transient");
-
+    class SPIRecipe : public Math::Base::NumericalRecipe {
+        Pointer<SPINumericConfig> SPI_NumericConfig;
         public:
-        explicit SPIRecipe(const Pointer<Math::NumericConfig> &numeric_config,
-                           const Str &name="Stochastic Path Integrals",
-                           const Str &generalDescription="Recipe for generating relevant field configurations in the "
-                                                         "(1+1) dimensional, real valued fields quantum path integral "
-                                                         "formalism.",
-                           bool doRegister=true);
-
-
+        explicit SPIRecipe(const Pointer<SPINumericConfig> &numeric_config = New<SPINumericConfig>());
 
         auto buildOutputSockets() -> Math::Base::OutputSockets override;
 

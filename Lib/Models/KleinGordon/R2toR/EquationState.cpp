@@ -13,4 +13,7 @@ namespace Slab::Math::R2toR {
         return New<R2toR::EquationState>(clone1, clone2);
     }
 
+    auto EquationState::category() const -> Str {
+        return "2nd-order|R2->R";
+    }
 }

@@ -16,7 +16,8 @@
 
 namespace Slab::Graphics {
     SlabWindowManager::SlabWindowManager(SystemWindow *parent_syswin)
-    : SystemWindowEventListener(parent_syswin) {    }
+        : SystemWindowEventListener(parent_syswin), grabbed() {
+    }
 
     void SlabWindowManager::addSlabWindow(const Pointer<SlabWindow>& slab_window, bool hidden) {
         auto meta = New<WindowMetaInformation>(slab_window, false, hidden);

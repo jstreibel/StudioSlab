@@ -20,8 +20,7 @@ namespace Studios::MolecularDynamics {
             : AppBase(argc, argv) {
         Slab::Core::BackendManager::Startup("SFML");
 
-        numericTask = Slab::New<Slab::Math::NumericTask>(recipe);
-
+        numericTask = Slab::New<Slab::Math::NumericTask>(Slab::Dummy(recipe));
 
         Slab::Core::CLArgsManager::Parse(argc, argv);
     }

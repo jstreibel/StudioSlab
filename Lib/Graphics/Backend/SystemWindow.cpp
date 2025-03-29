@@ -75,7 +75,7 @@ namespace Slab::Graphics {
 
         thingsImProprietary.clear();
 
-        for(auto &listener : event_translator->syswin_listeners)
+        for(auto &listener : event_translator->sysWin_listeners)
             if(auto ptr = listener.lock()) ptr->setParentSystemWindow(nullptr);
 
         event_translator->clear();

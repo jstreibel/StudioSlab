@@ -28,8 +28,10 @@ namespace Slab::Core {
 
         auto subInterfaces = anInterface->getSubInterfaces();
         if (!subInterfaces.empty())
-            for (const auto &subInterface: subInterfaces)
-                log << "\n\t\t\t\t\t\tSub-interface: " << subInterface->getName();
+            for (const auto &subInterface: subInterfaces) {
+                fix name = subInterface->getName();
+                log << "\n\t\t\t\t\t\tSub-interface: " << name;
+            }
 
         for (const auto &p: anInterface->getParameters()) {
             auto desc = p->getDescription();

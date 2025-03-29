@@ -1,6 +1,3 @@
-
-
-
 #include "NumericTask.h"
 
 #define ATTEMP_REALTIME false
@@ -13,41 +10,54 @@ namespace Slab::Math {
 
     using Core::Log;
 
-    NumericTask::NumericTask(Base::NumericalRecipe &recipe)
-            : Task("Numeric Integration"),
-              totalSteps(recipe.getNumericConfig()->getn()),
-              numericalRecipe(recipe),
-              stepper(recipe.buildStepper()),
-              outputManager(New<OutputManager>(totalSteps)),
-              stepsConcluded(0),
-              benchmarkData(recipe.getNumericConfig()->getn()/100){
-        auto sockets = recipe.buildOutputSockets();
+    NumericTask::NumericTask(const Pointer <Base::NumericalRecipe> &recipe, const bool pre_init)
+    : Task("Numeric Integration")
+    , recipe(recipe)
+    , totalSteps(0)
+    , stepsConcluded(0)
+    , stepper(nullptr) {
+        if (pre_init) init();
+    }
 
-        for(auto &socket : sockets) outputManager->addOutputChannel(socket);
+    NumericTask::~NumericTask() {
+        Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
+    }
+
+    void NumericTask::init() {
+        if (isInitialized()) { throw Exception("Numeric task already initialized"); }
+
+        totalSteps = recipe->getNumericConfig()->getn();
+        stepsConcluded = 0;
+        stepper = recipe->buildStepper();
+        outputManager = New<OutputManager>(totalSteps);
+        benchmarkData = New<Core::BenchmarkData>(totalSteps/100);
+        for(auto sockets = recipe->buildOutputSockets();
+            const auto &socket : sockets)
+            outputManager->addOutputChannel(socket);
 
 #if ATTEMP_REALTIME
         {
-                // Declare a sched_param struct to hold the scheduling parameters.
-                sched_param param;
+            // Declare a sched_param struct to hold the scheduling parameters.
+            sched_param param;
 
-                // Set the priority value in the sched_param struct.
-                param.sched_priority = sched_get_priority_max(SCHED_FIFO);
+            // Set the priority value in the sched_param struct.
+            param.sched_priority = sched_get_priority_max(SCHED_FIFO);
 
-                // Set the scheduling policy and priority of the current process.
-                int ret = sched_setscheduler(0, SCHED_FIFO, &param);
-                if (ret == -1) {
-                    Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
-                } else {
-                    Log::Info() << "Program running with realtime priority." << Log::Flush;
-                }
+            // Set the scheduling policy and priority of the current process.
+            int ret = sched_setscheduler(0, SCHED_FIFO, &param);
+            if (ret == -1) {
+                Log::Error() << "Couldn't set realtime scheduling: " << std::strerror(errno) << Log::Flush;
+            } else {
+                Log::Info() << "Program running with realtime priority." << Log::Flush;
             }
+        }
 #endif
 
         this->output(FORCE_INITIAL_OUTPUT);
     }
 
-    NumericTask::~NumericTask() {
-        Log::Note() << "Avg. integration time: " << benchmarkData << Log::Flush;
+    auto NumericTask::isInitialized() const -> bool {
+        return stepper != nullptr;
     }
 
     OutputPacket NumericTask::getOutputInfo() {
@@ -59,9 +69,9 @@ namespace Slab::Math {
     bool NumericTask::_cycle(size_t nCycles) {
         if(forceStopFlag) return false;
 
-        benchmarkData.startMeasure();
+        benchmarkData->startMeasure();
         stepper->step(nCycles);
-        benchmarkData.storeMeasure((int) nCycles);
+        benchmarkData->storeMeasure(static_cast<int>(nCycles));
 
         stepsConcluded += nCycles;
 
@@ -86,7 +96,7 @@ namespace Slab::Math {
         return _cycle(nCyclesToNextOutput);
     }
 
-    void NumericTask::output(bool force) {
+    void NumericTask::output(const bool force) {
         OutputPacket info = getOutputInfo();
         outputManager->output(info, force);
     }
@@ -94,24 +104,26 @@ namespace Slab::Math {
     size_t NumericTask::getSteps() const { return stepsConcluded; }
 
     const Core::BenchmarkData &NumericTask::getBenchmarkData() const {
-        return benchmarkData;
+        return *benchmarkData;
     }
 
     Core::TaskStatus NumericTask::run() {
-        numericalRecipe.setupForCurrentThread();
+        if (!isInitialized()) init();
 
-        size_t n = numericalRecipe.getNumericConfig()->getn();
+        recipe->setupForCurrentThread();
 
-        while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish());
+        const size_t n = totalSteps;
 
-        if(forceStopFlag)                                       return Core::Aborted;
+        while (!forceStopFlag && stepsConcluded < n && _cycleUntilOutputOrFinish()) { }
+
+        if(forceStopFlag)                                       return Core::TaskAborted;
 
         // Para cumprir com os steps quebrados faltantes:
-        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded)) return Core::InternalError;
+        if (stepsConcluded < n) if(!_cycle(n - stepsConcluded)) return Core::TaskError;
 
         outputManager->notifyIntegrationFinished(getOutputInfo());
 
-        return Core::Success;
+        return Core::TaskSuccess;
     }
 
     void NumericTask::abort() {

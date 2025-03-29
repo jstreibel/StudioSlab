@@ -6,6 +6,8 @@
 #define STUDIOSLAB_REFERENCEITERATOR_H
 
 #include <iterator>
+#include <Core/Tools/Log.h>
+
 #include "Containers.h"
 
 namespace Slab {
@@ -28,14 +30,16 @@ namespace Slab {
         auto it = container.begin();
         while (it != container.end()) {
             if (auto sharedPtr = it->lock()) {
-                bool responded = func(sharedPtr);
+                const bool responded = func(sharedPtr);
                 any_responded |= responded;
 
                 if(responded && policy==StopOnFirstResponder) break;
 
                 ++it;
             }
-            else it = container.erase(it); // Remove expired pointer and get the next iterator
+            else {
+                it = container.erase(it); // Remove expired pointer and get the next iterator
+            }
         }
 
         return any_responded;

@@ -10,7 +10,7 @@
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 
 namespace Slab::Graphics {
-    class GLFWEventTranslator : public EventTranslator, public GLFWListener{
+    class GLFWEventTranslator final : public EventTranslator, public GLFWListener{
     public:
         GLFWEventTranslator();
 

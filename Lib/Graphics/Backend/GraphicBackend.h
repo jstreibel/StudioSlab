@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         Pointer<SystemWindow>
         GetMainSystemWindow();
 
-        void SetupGUI(SystemWindow *);
+        void SetupGUI(const SystemWindow *) const;
 
         void addGraphicsModule(const Volatile<GraphicsModule> &module);
 

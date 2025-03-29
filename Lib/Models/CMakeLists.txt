@@ -64,6 +64,8 @@ set ( KG_SOURCES
         KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h
 		KleinGordon/KG-NumericConfig.cpp
 		KleinGordon/KG-NumericConfig.h
+		Stochastic-Path-Integral/SPINumericConfig.cpp
+		Stochastic-Path-Integral/SPINumericConfig.h
 )
 
 if(STUDIOSLAB_VTK_SUPPORT)

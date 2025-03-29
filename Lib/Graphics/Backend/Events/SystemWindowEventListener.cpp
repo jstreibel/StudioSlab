@@ -3,14 +3,22 @@
 //
 
 #include "SystemWindowEventListener.h"
+
+#include <crude_json.h>
+#include <Core/Tools/Log.h>
+
 #include "Utils/ReferenceIterator.h"
 
 #include "Graphics/Backend/SystemWindow.h"
 
 namespace Slab::Graphics {
 
+    SystemWindowEventListener::SystemWindowEventListener() : parent_system_window(nullptr) { }
+
     SystemWindowEventListener::SystemWindowEventListener(ParentSystemWindow parent)
-    : parent_system_window(parent) {};
+    : parent_system_window(parent) {}
+
+    SystemWindowEventListener::~SystemWindowEventListener() = default;
 
     void SystemWindowEventListener::setParentSystemWindow(SystemWindow* syswin) {
         parent_system_window = syswin;

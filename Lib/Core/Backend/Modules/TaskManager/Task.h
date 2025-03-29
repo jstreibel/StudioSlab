@@ -12,16 +12,27 @@
 namespace Slab::Core {
 
     enum TaskStatus {
-        NotInitialized,
-        InternalError,
-        Running,
-        Success,
-        Aborted
+        TaskNotInitialized,
+        TaskRunning,
+        TaskSuccess,
+        TaskError,
+        TaskAborted
+    };
+
+    enum ThreadStatus {
+        ThreadNotInitialized,
+        ThreadRunning,
+        ThreadWaitingRelease,
+        ThreadFinished
     };
 
     class Task {
-        Str name;
-        Atomic<TaskStatus> taskStatus = NotInitialized;
+        Str                  m_name;
+        Atomic<TaskStatus>   m_taskStatus = TaskNotInitialized;
+        Atomic<ThreadStatus> m_threadStatus = ThreadNotInitialized;
+        Mutex                m_finishMutex;
+        Condition            m_releaseCondition;
+        bool                 m_continueFlag = false;
 
     protected:
         virtual TaskStatus run() = 0;
@@ -32,13 +43,22 @@ namespace Slab::Core {
         explicit Task(Str name);
         virtual ~Task() = default;
 
+        /**
+         * The entirety of the thread work starts and ends here.
+         */
         void start();
 
-        bool isRunning() const;
-        Str getName() const;
-        TaskStatus getStatus() const;
+        [[nodiscard]] bool isTaskRunning() const;
+        [[nodiscard]] bool isThreadRunning() const;
+        [[nodiscard]] Str getName() const;
+        [[nodiscard]] TaskStatus getStatus() const;
 
         virtual void abort() = 0;
+
+        /**
+         * When the Task finishes running, it waits until it is released to finish.s
+         */
+        void release();
     };
 
     DefinePointers(Task)

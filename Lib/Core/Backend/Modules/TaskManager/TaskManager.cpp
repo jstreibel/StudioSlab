@@ -12,7 +12,7 @@ namespace Slab::Core {
 
     TaskManagerModule::~TaskManagerModule() {
         if(destructorPolicy == WaitAll) {
-            for(const auto &job : jobs) {
+            for(const auto &job : m_jobs) {
                 auto thread = job.second;
                 if (thread->joinable()) thread->join();
 
@@ -23,42 +23,43 @@ namespace Slab::Core {
             abortAllTasks();
     }
 
-    auto TaskManagerModule::addTask(Task_ptr task) -> TaskManagerModule::Job {
-        std::lock_guard<std::mutex> lock(mtx);
-
-        auto funky = [&task]() {
-            Log::Critical() << "Started job \"" << task->getName() << "\"." << Log::Flush;
+    auto TaskManagerModule::addTask(const Task_ptr& task) -> TaskManagerModule::Job {
+        auto funky = [task]() {
             task->start();
 
-            auto status = task->getStatus();
-
-            switch (status) {
-                case NotInitialized:
-                case Running:
-                    Log::WarningImportant() << "Job \"" << task->getName() << "\" finished with unexpected status." << Log::Flush;
+            switch (task->getStatus()) {
+                case TaskNotInitialized:
+                case TaskRunning:
+                    // Task should not be running after finished...
+                    Log::Error() << "Job \"" << task->getName() << "\" finished with unexpected status." << Log::Flush;
                     break;
-                case Success:
+                case TaskSuccess:
                     Log::Success() << "Finished job \"" << task->getName() << "\"." << Log::Flush;
                     break;
-                case InternalError:
-                    Log::Fail() << "Job \"" << task->getName() << "\" failed due to internal task error." << Log::Flush;
+                case TaskError:
+                    Log::Fail() << "Job \"" << task->getName() << "\" failed (internal task error)." << Log::Flush;
                     break;
-                case Aborted:
+                case TaskAborted:
                     Log::Warning() << "Job \"" << task->getName() << "\" aborted." << Log::Flush;
                     break;
             }
         };
 
         auto thread = New<std::thread>(funky);
+        Log::Critical() << "Started job \"" << task->getName() << "\" on thread "
+                        << "[id " << thread->get_id() << "] [handle " << thread->native_handle() << "] " << Log::Flush;
         auto job = Job(task, thread);
 
-        jobs.emplace_back(job);
+        {
+            std::lock_guard lock(m_addJobMutex); // make sure things go smooth on adding tasks
+            m_jobs.emplace_back(job);
+        }
 
         return job;
     }
 
     void TaskManagerModule::abortAllTasks() {
-        for(const auto& job : jobs)
+        for(const auto& job : m_jobs)
             Abort(job);
     }
 
@@ -66,7 +67,7 @@ namespace Slab::Core {
         auto &task = job.first;
         auto &thread = job.second;
 
-        if(task->isRunning()) {
+        if(task->isTaskRunning()) {
             task->abort();
             Log::Info() << "Sent abort signal to task \"" << task->getName() << "\"." << Log::Flush;
         }
@@ -80,6 +81,6 @@ namespace Slab::Core {
     }
 
     auto TaskManagerModule::hasRunningTasks() const -> bool {
-        return std::any_of(jobs.begin(), jobs.end(), [](const Job &job){ return job.first->isRunning(); });
+        return std::ranges::any_of(m_jobs, [](const Job &job){ return job.first->isTaskRunning(); });
     }
 } // Slab::Core

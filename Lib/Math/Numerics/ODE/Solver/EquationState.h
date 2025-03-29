@@ -29,6 +29,12 @@ namespace Slab::Math::Base {
         [[nodiscard]] virtual auto replicate() const -> Pointer<EquationState> = 0;
 
         /**
+         * Gets the (unique) category of the EquationState: first order R->R, second order, etc.
+         * @return a string with the unique category of the EquationState
+         */
+        [[nodiscard]] virtual auto category() const -> Str = 0;
+
+        /**
          * Sets this EquationState's data to match that of other state. Notice that both state's parameters (dimensions,
          * discretization, etc.) should be equal, as well as (of course) their type.
          */
