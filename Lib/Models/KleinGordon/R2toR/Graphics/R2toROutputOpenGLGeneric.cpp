@@ -42,12 +42,13 @@ namespace Slab::Models::KGR2toR {
             }
 
             else if (cat == "2nd-order|R2->R") {
+                NOT_IMPLEMENTED
                 // IN state = *lastPacket.GetNakedStateData<Models::Stoch SPIStg::EquationState>();
 
-                auto &phi = state.getPhi();
+                // auto &phi = state.getPhi();
 
                 // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
-                sectionArtist.setFunction(Naked(phi));
+                // sectionArtist.setFunction(Naked(phi));
             }
 
 
