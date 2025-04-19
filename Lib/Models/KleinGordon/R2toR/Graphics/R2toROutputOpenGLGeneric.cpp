@@ -8,11 +8,30 @@
 
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Models/KleinGordon/R2toR/EquationState.h"
+#include "Models/Stochastic-Path-Integral/SPI-State.h"
 
 #define ADD_TO_NEW_COLUMN true
 
 
 namespace Slab::Models::KGR2toR {
+
+    auto getPhi(const OutputPacket& packet) {
+        fix category = packet.getStateCategory();
+        if (category == "2nd-order|R2->R") {
+            IN state = *packet.GetNakedStateData<R2toR::EquationState>();
+
+            // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
+            return Naked( dynamic_cast<R2toR::NumericFunction&>(state.getPhi()));
+        }
+
+        if (category == "1st-order|R2->R") {
+            IN state = *packet.GetNakedStateData<StochasticPathIntegrals::SPIState>();
+
+            return state.getPhi();
+        }
+
+        NOT_IMPLEMENTED
+    }
 
     OutputOpenGL::OutputOpenGL(Count max_steps)
     : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
@@ -31,35 +50,16 @@ namespace Slab::Models::KGR2toR {
         BaseMonitor::draw();
 
         if (sectionArtist.getFunction() == nullptr) {
-            fix cat = lastPacket.getStateCategory();
-            if (cat == "2nd-order|R2->R") {
-                IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();
-
-                auto &phi = state.getPhi();
-
-                // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
-                sectionArtist.setFunction(Naked(phi));
-            }
-
-            else if (cat == "2nd-order|R2->R") {
-                NOT_IMPLEMENTED
-                // IN state = *lastPacket.GetNakedStateData<Models::Stoch SPIStg::EquationState>();
-
-                // auto &phi = state.getPhi();
-
-                // TODO: this is insanely dangerous: this naked pointer could be gone at any moment afaik
-                // sectionArtist.setFunction(Naked(phi));
-            }
-
+            auto phi = getPhi(lastPacket);
+            sectionArtist.setFunction(phi);
 
         } else if (sectionArtist.getSections().empty()) {
-            IN state = *lastPacket.GetNakedStateData<R2toR::EquationState>();
-            auto &phi = dynamic_cast<R2toR::NumericFunction&>(state.getPhi());
+            fix phi = getPhi(lastPacket);
 
-            auto yMin = phi.getDomain().yMin,
-                 yMax = phi.getDomain().yMax;
+            auto yMin = phi->getDomain().yMin,
+                 yMax = phi->getDomain().yMax;
 
-            auto line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
+            fix line = Slab::New<RtoR2::StraightLine>(Real2D{0, yMin}, Real2D{0, yMax}, yMin, yMax);
 
             sectionArtist.addSection(line, Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone(), "section 1");
         }

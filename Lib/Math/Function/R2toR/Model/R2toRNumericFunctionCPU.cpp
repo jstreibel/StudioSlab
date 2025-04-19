@@ -84,7 +84,10 @@ namespace Slab::Math::R2toR {
     #else
                 const Real dx = At(n - 1, m) + At(n + 1, m);
                 const Real dy = At(n, m - 1) + At(n, m + 1);
-                outFunc.At(n, m) = invhsqr * ((dx + dy) - 4. * At(n, m));
+
+                OUT out = outFunc.At(n, m);
+                fix dϕ = invhsqr * ((dx + dy) - 4. * At(n, m));
+                out = dϕ;
     #endif
             }
         }

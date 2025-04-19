@@ -1,0 +1,15 @@
+# ignore build artifacts
+/Build/
+/dist/
+/*.o
+/*.so
+/*.a
+
+# ignore IDE files
+.vscode/
+.idea/
+
+# git metadata
+.git
+.gitignore
+.gitmodules

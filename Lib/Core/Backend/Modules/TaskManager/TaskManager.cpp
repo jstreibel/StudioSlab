@@ -67,6 +67,8 @@ namespace Slab::Core {
         auto &task = job.first;
         auto &thread = job.second;
 
+        job.first->release();
+
         if(task->isTaskRunning()) {
             task->abort();
             Log::Info() << "Sent abort signal to task \"" << task->getName() << "\"." << Log::Flush;

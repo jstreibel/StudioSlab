@@ -5,12 +5,18 @@
 #include "SPI-Recipe.h"
 
 #include <Math/Function/R2toR/Model/R2toRNumericFunctionCPU.h>
+#include <Math/Numerics/ODE/Odeint/OdeintRK4.h>
+#include <Math/Numerics/ODE/Steppers/RungeKutta4.h>
 
 #include "SPI-Solver.h"
 #include "SPI-State.h"
 #include "SPI-BC.h"
+
 #include "Math/Function/R2toR/Model/FunctionsCollection/AnalyticOscillon1p1_FourierImpl.h"
 #include "Math/Numerics/ODE/Steppers/Euler.h"
+
+#include "Graphics/Window/SlabWindowManager.h"
+
 #include "Models/KleinGordon/R2toR/R2toRBuilder.h"
 
 namespace Slab::Models::StochasticPathIntegrals {
@@ -28,7 +34,10 @@ namespace Slab::Models::StochasticPathIntegrals {
         Base::OutputSockets sockets;
 
         auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->getn());
-        Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(monitor);
+        auto manager = Slab::New<Graphics::SlabWindowManager>();
+        manager->addSlabWindow(monitor);
+
+        Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(manager);
         sockets.emplace_back(monitor);
 
         return sockets;
@@ -52,5 +61,9 @@ namespace Slab::Models::StochasticPathIntegrals {
         auto solver = New<SPISolver>(du);
 
         return New<Euler>(solver, dT);
+
+        // return New<Odeint::StepperRK4>();
+
+        // return New<RungeKutta4>(solver, dT);
     }
 } // StochasticPathIntegrals::Models::Slab

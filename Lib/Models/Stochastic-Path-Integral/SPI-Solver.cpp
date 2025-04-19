@@ -73,7 +73,7 @@ namespace Slab::Models::StochasticPathIntegrals {
 
 #pragma omp barrier
         {
-            fix &η = *langevinImpulses;
+            fix &eta = *langevinImpulses;
             // fix &δSₑ = *temp1;
             fix &L = *O;
             GET Lϕ = *temp1;
@@ -82,10 +82,10 @@ namespace Slab::Models::StochasticPathIntegrals {
             Lϕ = L*ϕᵢₙ;
             ϕᵢₙ .Apply(*dVdϕ_ptr, dVdϕ);
 
-            // ϕ(τ+1) = ϕ(t) + Δτ() ( Δ²ϕ(τ) + V'(ϕ(τ)) - √(2/Δτ)η )
+            // ϕ(τ+1) = ϕ(t) + Δτ × ( Δ²ϕ(τ) + V'(ϕ(τ)) - √(2/Δτ)eta )
 
             ϕₒᵤₜ = Lϕ + dVdϕ;
-            ϕₒᵤₜ -= η ;
+            ϕₒᵤₜ -= eta ;
         }
 #pragma omp barrier
 
