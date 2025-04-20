@@ -9,11 +9,9 @@
 #include "Utils/STDLibInclude.h"
 #include "Core/Controller/CommandLine/CLArgsManager.h"
 
-#include <cxxopts.hpp>
+#include "3rdParty/cxxopts.hpp"
 
 #include <boost/stacktrace.hpp>
-#include <iostream>
-#include <stdexcept>
 
 #define WITH_STACK_TRACE
 

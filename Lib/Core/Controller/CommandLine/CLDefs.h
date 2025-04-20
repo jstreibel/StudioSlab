@@ -6,7 +6,7 @@
 #define V_SHAPE_COMMANDLINEGENERAL_H
 
 
-#include <cxxopts.hpp>
+#include "3rdParty/cxxopts.hpp"
 
 namespace CLOptions = cxxopts;
 using CLVariablesMap = cxxopts::ParseResult;

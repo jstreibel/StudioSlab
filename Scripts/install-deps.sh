@@ -58,16 +58,16 @@ case "$PM" in
       libfreetype6-dev libglew-dev
       libfontconfig1-dev libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale-dev libboost-random-dev libboost-timer-dev
-      freeglut3-dev libglfw3-dev libcxxopts-dev
+      freeglut3-dev libglfw3-dev
       libfftw3-dev libtinyxml2-dev libglm-dev libfreeimageplus-dev
     )
     DEPLOY_PKGS=(
-      libsfml2.5
+      libsfml-dev
       libgl1-mesa-glx libegl1-mesa
       libfreetype6 libglew2.2
-      libfontconfig1 libcairomm-1.0-1 libpangomm-1.4-1
+      libfontconfig1 libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale1.74.0 libboost-random1.74.0 libboost-timer1.74.0
-      freeglut3 libglfw3 libfftw3-3 libtinyxml2-6 libglm0 libfreeimageplus3
+      freeglut3 libglfw3 libfftw3-3 libtinyxml2-dev libglm-dev libfreeimageplus3
     )
     ;;
 
@@ -78,7 +78,7 @@ case "$PM" in
       freetype-devel glew-devel fontconfig-devel
       cairomm-devel pangomm-devel
       boost-locale-devel boost-random-devel boost-timer-devel
-      freeglut-devel glfw-devel cxxopts-devel
+      freeglut-devel glfw-devel
       fftw-devel tinyxml2-devel glm-devel freeimageplus-devel
     )
     DEPLOY_PKGS=(
@@ -94,7 +94,7 @@ case "$PM" in
     DEV_PKGS=(
       base-devel cmake git
       sfml mesa freetype2 glew fontconfig cairomm pangomm
-      boost freeglut glfw cxxopts fftw tinyxml2 glm freeimageplus
+      boost freeglut glfw fftw tinyxml2 glm freeimageplus
     )
     DEPLOY_PKGS=(
       sfml mesa freetype2 glew fontconfig cairomm pangomm
@@ -122,7 +122,7 @@ case "$PM" in
       freetype2-devel libGLEW-devel fontconfig-devel
       cairomm-devel pangomm-devel
       libboost_locale-devel libboost_random-devel libboost_timer-devel
-      freeglut-devel libglfw3-devel cxxopts-devel
+      freeglut-devel libglfw3-devel
       fftw3-devel tinyxml2-devel glm-devel libfreeimageplus-devel
     )
     DEPLOY_PKGS=(

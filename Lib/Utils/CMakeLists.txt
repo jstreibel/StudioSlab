@@ -50,7 +50,7 @@ target_link_libraries(${UTILS_LIB} boost_timer )
 target_sources(${UTILS_LIB} PRIVATE ${UTIL_INTERFACES})
 target_compile_options(${UTILS_LIB}
 		PRIVATE
-		-std=c++20
+		#-std=c++20
 )
 
 
