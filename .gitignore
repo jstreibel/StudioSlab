@@ -36,9 +36,11 @@ Lib/Docs/*
 
 BUILD
 venv
-./Build/
 Build/
 Lib/Docs/
+
+cmake-build-debug
+cmake-build-release
 
 *__pycache__*
 
@@ -49,7 +51,8 @@ Lib/Docs/
 /Notebooks/2021-11-04-Template-21-56.xopt
 /Notebooks/.ipynb_checkpoints/Untitled-checkpoint.ipynb
 
-/.idea/*
+,idea
+.idea/*
 
 /Slab/bin/Fields-RtoR
 /Slab/bin/Fields-RtoR-PeriodicBC

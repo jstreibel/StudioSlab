@@ -54,20 +54,22 @@ case "$PM" in
     DEV_PKGS=(
       build-essential cmake git
       libsfml-dev
-      libgl1-mesa-dev libegl1-mesa-dev
-      libfreetype6-dev libglew-dev
+      #libgl1-mesa-dev libegl1-mesa-dev
+      libgl-dev freeglut3-dev libglfw3-dev
+      libfreetype6-dev libglew-dev libglm-dev
       libfontconfig1-dev libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale-dev libboost-random-dev libboost-timer-dev
-      freeglut3-dev libglfw3-dev
-      libfftw3-dev libtinyxml2-dev libglm-dev libfreeimageplus-dev
+      libfftw3-dev libtinyxml2-dev libfreeimageplus-dev
     )
     DEPLOY_PKGS=(
       libsfml-dev
-      libgl1-mesa-glx libegl1-mesa
-      libfreetype6 libglew2.2
+      #libglx-mesa0
+      libfreetype6
+      #freeglut3
+      libglew2.2 libglfw3 libglm-dev
       libfontconfig1 libcairomm-1.0-dev libpangomm-1.4-dev
       libboost-locale1.74.0 libboost-random1.74.0 libboost-timer1.74.0
-      freeglut3 libglfw3 libfftw3-3 libtinyxml2-dev libglm-dev libfreeimageplus3
+      libfftw3-bin libtinyxml2-10 libfreeimageplus3
     )
     ;;
 
