@@ -11,9 +11,9 @@ It also contains most of my coding projects of all sorts and own libraries of co
 The root folder contains the base CMakeFiles. It automatically includes all C++ targets.
 
 ### Installation
-There are two ways to install this repo: via git or via Docker.
+There are two ways to install this repo: via Git or via Docker.
 
-#### Via git
+#### Manually (for development), via Git
 
 Assuming you're using Ubuntu, you'll need git to pull this repo:
 
@@ -58,7 +58,17 @@ Then, build the project:
 
 #### Via Docker
 
-...to be written.
+Install Docker, and NVidia Container Toolkit, then run, on project root, run:
+
+`docker build -t studioslab .`
+
+If all goes well, you should be able to run the container's entrypoint (FieldsRtoR) with:
+
+`docker run -it studioslab`
+
+### Usage
+
+... to be written.
 
 ### Screenshots
 
