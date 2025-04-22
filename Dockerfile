@@ -37,5 +37,5 @@ RUN chmod +x /install-deps.sh \
 COPY --from=builder /opt/StudioSlab/Build/bin/* /usr/local/bin/
 
 USER nobody:nogroup
-ENTRYPOINT ["/usr/local/bin/FieldsRtoR"]
+ENTRYPOINT ["/usr/local/bin/Fields-RtoR"]
 CMD ["--help"]
