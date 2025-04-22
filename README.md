@@ -6,9 +6,7 @@ This is a well-organized collection of physics code and general use libraries.
 
 It contains discrete time-advancement of (classic) Klein-Gordon-like field theories (with non-differentiable potentials) and also path integrals of their quantum counterparts in a stochastic formalism. Also, as studies, montecarlo of magnetic models and Langevin dynamics of soft matter.
 
-It also contains most of my coding projects of all sorts and own libraries of common functionality.
-
-The root folder contains the base CMakeFiles. It automatically includes all C++ targets.
+It also contains random coding projects of all sorts.
 
 ### Installation
 There are two ways to install this repo: via Git or via Docker.
