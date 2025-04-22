@@ -1,10 +1,10 @@
 # Studios Slab
 ## A.K.A. "the anything bagel"
-### Intro 
+### Intro
 
-This repo is where I've amalgamated most of my physics PhD code. Discrete time-advancement of (classic) Klein-Gordon-like field theories (with non-differentiable potentials) and also path integrals of their quantum counterparts in a stochastic formalism. Also, as studies, montecarlo of magnetic models and Langevin dynamics of soft matter.
+This is a well-organized collection of physics code and general use libraries.
 
-It is mostly C++ but, because jupyter notebooks get so big, github thinks it is mostly Jupiter.
+It contains discrete time-advancement of (classic) Klein-Gordon-like field theories (with non-differentiable potentials) and also path integrals of their quantum counterparts in a stochastic formalism. Also, as studies, montecarlo of magnetic models and Langevin dynamics of soft matter.
 
 It also contains most of my coding projects of all sorts and own libraries of common functionality.
 
@@ -74,3 +74,6 @@ Then, build the project:
 
 ![Histograms](https://github.com/user-attachments/assets/c9aff204-0976-4819-bdc0-6f19eb51f0fa)
 
+### History
+
+This repo is where I've amalgamated most of my physics PhD code.
