@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.26)
+cmake_minimum_required(VERSION 3.22)
 
 # "Reproduce CUDA incompatibility with latest g++"
 set( REPRODUCE_CUDA_INCOMPATIBILITY_ERROR  OFF )

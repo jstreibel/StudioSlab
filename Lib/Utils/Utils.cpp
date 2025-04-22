@@ -24,7 +24,7 @@ namespace Slab::Common {
     }
 
     char GetDensityChar(float dens, bool useLongSeq) {
-        static constexpr const Str shortSeq = Str(".:-=+*#%@");
+        static const Str shortSeq = Str(".:-=+*#%@");
         static const Str longSeq = Str(R"($@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,"^`'. )");
 
         Str seq = useLongSeq ? longSeq : shortSeq;
