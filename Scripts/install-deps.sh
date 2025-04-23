@@ -61,6 +61,7 @@ case "$PM" in
       libboost-locale1.83-dev libboost-random1.83-dev libboost-timer1.83-dev
       libfftw3-dev libtinyxml2-dev
       libfreeimage-dev libfreeimageplus-dev
+      catch2
     )
     DEPLOY_PKGS=(
       libsfml-dev
