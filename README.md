@@ -58,11 +58,15 @@ Then, build the project:
 
 Install Docker, and NVidia Container Toolkit, then run, on project root, run:
 
-`docker build -t studioslab .`
+`docker build -t studioslab:latest.`
 
 If all goes well, you should be able to run the container's entrypoint (Fields-RtoR) with:
 
-`docker run -it studioslab`
+`docker run -it --gpus all studioslab:latest`
+
+As a primer, you can run the container's entrypoint with:
+
+`docker run -it --gpus studioslab:latest -og`
 
 ### Usage
 
