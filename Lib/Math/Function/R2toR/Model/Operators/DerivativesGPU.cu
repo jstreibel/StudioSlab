@@ -24,15 +24,17 @@ namespace Slab::Math::R2toR {
 
         __host__ __device__
         inline Real operator()(const thrust::tuple<Real, Real, Real, Real, Real> &d) const {
-            // Kernel
-            //  1  / 0  1  0 \
-            // --- | 1  4  1 |
-            //  h² \ 0  1  0 /
+            /* Kernel
+             *  1  / 0  1  0 \
+             * --- | 1  4  1 |
+             *  h² \ 0  1  0 /
+            */
 
-            // Campo
-            // / x00 x01 x02 \    /     x01     \    /   N   \
-            // | x10 x11 x12 |    | x10 x11 x12 |    | W C E |
-            // \ x20 x21 x22 /    \     x21     /    \   S   /
+            /* Campo
+             * / x00 x01 x02 \    /     x01     \    /   N   \
+             * | x10 x11 x12 |    | x10 x11 x12 |    | W C E |
+             * \ x20 x21 x22 /    \     x21     /    \   S   /
+             */
             const Real x01 = thrust::get<0>(d);
             const Real x10 = thrust::get<1>(d);
             const Real x11 = thrust::get<2>(d);
