@@ -17,9 +17,9 @@ namespace Slab::Core {
         Id id;
 
     public:
-        Id get_id() const;
-        Str get_id_str() const;
-        Str unique(const Str&) const;
+        [[nodiscard]] Id get_id() const;
+        [[nodiscard]] Str get_id_str() const;
+        [[nodiscard]] Str unique(const Str&) const;
 
         UniqueObject();
 

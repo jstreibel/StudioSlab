@@ -4,9 +4,6 @@
 
 #include "Plot2DWindow.h"
 
-#include "Graphics/Modules/Animator/Animator.h"
-
-
 namespace Slab {
 
     auto Graphics::Plot2DWindow::getRegion() const -> const Graphics::PlottingRegion2D &

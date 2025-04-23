@@ -36,7 +36,8 @@ Lib/Docs/*
 
 BUILD
 venv
-Build/
+Build/bin
+Build/lib
 Lib/Docs/
 
 cmake-build-debug
