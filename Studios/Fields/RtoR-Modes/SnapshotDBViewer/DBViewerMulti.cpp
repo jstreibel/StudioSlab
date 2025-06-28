@@ -142,7 +142,7 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewerMulti::updateKGDispersion(bool visible) {
-        Real mass = KG_mass;
+        DevFloat mass = KG_mass;
 
         if(!visible) return;
 
@@ -212,7 +212,7 @@ namespace Modes::DatabaseViewer {
                     if (curr_idx < 0 || curr_idx >= N) continue;
 
                     auto weight = data[curr_idx];
-                    auto k = Δk * (Real) (curr_idx) / (Real) N - kMin;
+                    auto k = Δk * (DevFloat) (curr_idx) / (DevFloat) N - kMin;
 
                     k_avg += k * weight;
                     norm += weight;
@@ -274,7 +274,7 @@ namespace Modes::DatabaseViewer {
             fix kMax = field.xMax;
             fix kMin = field.xMin;
             fix Δk = kMax-kMin;
-            fix k = Δk*(Real)idx/(Real)field.N - kMin;
+            fix k = Δk*(DevFloat)idx/(DevFloat)field.N - kMin;
             ImGui::TextUnformatted(unit(k, 4).c_str());
 
             ImGui::TableSetColumnIndex(3);
@@ -358,7 +358,7 @@ namespace Modes::DatabaseViewer {
         auto index = index_XHair-1;
         if(index<0 || index>=fSet.size()) return;
 
-        Vector<Pair<Real, Str>> files(fSet.begin(), fSet.end());
+        Vector<Pair<DevFloat, Str>> files(fSet.begin(), fSet.end());
         auto filename = files[index].second;
 
         ReplaceLastOccurrence(filename, ".dft.simsnap", ".oscb");

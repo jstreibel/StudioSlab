@@ -10,11 +10,11 @@
 namespace Slab::Math::RtoR {
     class AbsFunction final : public RtoR::Function {
     public:
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         Pointer<FunctionT> diff(int n) const override;
 
-        Pointer<FunctionT<Real, Real>> Clone() const override;
+        Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
         Str symbol() const override;
     };

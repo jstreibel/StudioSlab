@@ -29,10 +29,10 @@ namespace Slab::Graphics {
         FieldTextureKontraption() = default;
         FieldTextureKontraption(Resolution full_xres, Resolution full_yres, RectR region);
 
-        void setValue(int i, int j, Real value);
+        void setValue(int i, int j, DevFloat value);
         Pointer <FieldTextureThingy> getBlock(int i, int j);
 
-        bool upload(Index begin, Count count);
+        bool upload(Index begin, CountType count);
 
         auto get_xres() const -> Resolution;
         auto get_yres() const -> Resolution;

@@ -19,12 +19,12 @@ namespace Slab::Lost::ThermoOutput {
 
         const int accepted=0, rejected=0;
 
-        OutputData(XYNetwork &S, Real h, int acceptedCount=0, int rejectedCount=0)
+        OutputData(XYNetwork &S, DevFloat h, int acceptedCount=0, int rejectedCount=0)
         : S(S)
         , accepted(acceptedCount)
         , rejected(rejectedCount)
         {
-            Real E = S.E(h), M = S.M();
+            DevFloat E = S.E(h), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -33,8 +33,8 @@ namespace Slab::Lost::ThermoOutput {
             m2=M*M/N;
         }
 
-        OutputData(const XYNetwork &S, Real h) : S(S) {
-            Real E = S.E(double(h)), M = S.M();
+        OutputData(const XYNetwork &S, DevFloat h) : S(S) {
+            DevFloat E = S.E(double(h)), M = S.M();
 
             N = (double)S.N;
             e=E/N;
@@ -43,16 +43,16 @@ namespace Slab::Lost::ThermoOutput {
             m2=m*m;
         }
 
-        Real e, m, e2, m2, N;
+        DevFloat e, m, e2, m2, N;
     };
 
 
     // Tambem conhecido como parametros termodinamicos
     struct SystemParams {
-        SystemParams(Real &T, Real &h, Real &δ, bool &shouldRun, bool &shouldOverrelax)
+        SystemParams(DevFloat &T, DevFloat &h, DevFloat &δ, bool &shouldRun, bool &shouldOverrelax)
                 : T(T), h(h), δ(δ), shouldRun(shouldRun), shouldOverrelax(shouldOverrelax) {}
 
-        Real &T, &h, &δ;
+        DevFloat &T, &h, &δ;
         bool &shouldRun;
         bool &shouldOverrelax;
     };

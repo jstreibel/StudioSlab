@@ -106,7 +106,7 @@ namespace Slab::Graphics::OpenGL {
          */
         ~VertexBuffer();
 
-        Count getSize() const;
+        CountType getSize() const;
 
         Str ToString() const;
 

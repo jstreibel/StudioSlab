@@ -11,7 +11,7 @@ namespace Slab::Math {
     using Core::Log;
 
     NumericTask::NumericTask(const Pointer <Base::NumericalRecipe> &recipe, const bool pre_init)
-    : Task("Numeric Integration")
+    : FTask("Numeric Integration")
     , recipe(recipe)
     , totalSteps(0)
     , stepsConcluded(0)
@@ -69,9 +69,9 @@ namespace Slab::Math {
     bool NumericTask::_cycle(size_t nCycles) {
         if(forceStopFlag) return false;
 
-        benchmarkData->startMeasure();
+        benchmarkData->StartMeasure();
         stepper->step(nCycles);
-        benchmarkData->storeMeasure(static_cast<int>(nCycles));
+        benchmarkData->StoreMeasure(static_cast<int>(nCycles));
 
         stepsConcluded += nCycles;
 
@@ -107,7 +107,7 @@ namespace Slab::Math {
         return *benchmarkData;
     }
 
-    Core::TaskStatus NumericTask::run() {
+    Core::ETaskStatus NumericTask::Run() {
         if (!isInitialized()) init();
 
         recipe->setupForCurrentThread();
@@ -126,7 +126,7 @@ namespace Slab::Math {
         return Core::TaskSuccess;
     }
 
-    void NumericTask::abort() {
+    void NumericTask::Abort() {
         forceStopFlag = true;
     }
 

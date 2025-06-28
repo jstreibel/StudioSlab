@@ -114,17 +114,17 @@ namespace Slab::Graphics {
     }
 
     void Colormap1DPainter::updateColorbar() {
-        std::function<Real(Real)> g_inverse;
+        std::function<DevFloat(DevFloat)> g_inverse;
 
         if(true) {
-            g_inverse = [this](Real x) {
+            g_inverse = [this](DevFloat x) {
                 x = x*(field_max-field_min)+field_min;
                 const auto s = Math::SIGN(x);
 
                 return kappa*(exp(s*x) - 1);
             };
         } else {
-            g_inverse = [](Real x) {
+            g_inverse = [](DevFloat x) {
                 return x;
             };
         }
@@ -146,7 +146,7 @@ namespace Slab::Graphics {
         return dirty_minmax;
     }
 
-    void Colormap1DPainter::setMinMax(Real min, Real max) {
+    void Colormap1DPainter::setMinMax(DevFloat min, DevFloat max) {
         field_min = min;
         field_max = max;
 
@@ -185,19 +185,19 @@ namespace Slab::Graphics {
         return colorbarArtist;
     }
 
-    void Colormap1DPainter::setKappa(Real) const {
+    void Colormap1DPainter::setKappa(DevFloat) const {
         this->setUniform("kappa", kappa);
         colorbarArtist->setKappa(kappa);
     }
 
-    void Colormap1DPainter::setSaturation(const Real sat) {
+    void Colormap1DPainter::setSaturation(const DevFloat sat) {
         saturation_value = static_cast<float>(sat);
 
         setUniform("phi_sat", saturation_value);
         colorbarArtist->setPhiSaturation(saturation_value);
     }
 
-    void Colormap1DPainter::setEpsilon(Real eps) {
+    void Colormap1DPainter::setEpsilon(DevFloat eps) {
 
         eps_offset = static_cast<float>(eps);
         setUniform("eps", eps_offset);

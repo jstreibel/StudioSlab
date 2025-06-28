@@ -59,8 +59,8 @@ namespace Slab::Models::MolecularDynamics {
                     else if(r < 0.5*1.12*σ && SHOW_DOT)
                         molImg.setPixel(i, j, sf::Color(255, 255, 255, 255));
                     else if(!SHOW_DOT){
-                        Real U;
-                        Real factor;
+                        DevFloat U;
+                        DevFloat factor;
 
                         if     (model == Model::LennardJones){ U = LennardJones::U(r); factor = U/ε; }
                         else if(model == Model::SoftDisk)    { U = SoftDisk::    U(r); factor = U; }

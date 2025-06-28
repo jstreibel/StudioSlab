@@ -39,7 +39,7 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    bool Texture2D_Color::upload(UInt row0, Count nRows) {
+    bool Texture2D_Color::upload(UInt row0, CountType nRows) {
         if(data == nullptr) return false;
 
         assert(getInternalFormat() == GL_RGBA);

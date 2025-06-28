@@ -9,7 +9,7 @@
 
 namespace Slab::Math::R2toR {
 
-    Sampler::Sampler(Count nSamples) : nSamples(nSamples) { }
+    Sampler::Sampler(CountType nSamples) : nSamples(nSamples) { }
 
     auto Sampler::invalidateSamples() -> void { valid = false; }
 
@@ -21,9 +21,9 @@ namespace Slab::Math::R2toR {
         return samples;
     }
 
-    auto Sampler::get_nSamples() const -> Count { return nSamples; }
+    auto Sampler::get_nSamples() const -> CountType { return nSamples; }
 
-    auto Sampler::set_nSamples(Count n) -> void {
+    auto Sampler::set_nSamples(CountType n) -> void {
         if(n != nSamples) invalidateSamples();
 
         nSamples = n;
@@ -45,7 +45,7 @@ namespace Slab::Math::R2toR {
         auto Δs = curve.getΔs();
         auto sMin = curve.get_sMin();
         for(auto i=0; i<n; ++i) {
-            fix sNorm = i/(Real)n;
+            fix sNorm = i/(DevFloat)n;
             fix s = sMin + sNorm*Δs;
 
             samples.emplace_back(curve(s));
@@ -55,7 +55,7 @@ namespace Slab::Math::R2toR {
     }
 
 
-    RandomSampler::RandomSampler(Real2D min, Real2D max, Count nSamples)
+    RandomSampler::RandomSampler(Real2D min, Real2D max, CountType nSamples)
     : Sampler(nSamples) , xMin(min.x), xMax(max.x) , yMin(min.y), yMax(max.y) { }
 
     R2Vec RandomSampler::generateSamples() {

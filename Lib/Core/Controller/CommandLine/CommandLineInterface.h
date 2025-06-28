@@ -1,0 +1,121 @@
+//
+// Created by joao on 10/13/21.
+//
+
+#ifndef FIELDS_INTERFACE_H
+#define FIELDS_INTERFACE_H
+
+#include "CommandLineParameter.h"
+#include "Core/Controller/Interface/Request.h"
+#include "Core/Controller/Interface/Message.h"
+#include "Utils/List.h"
+
+#include <set>
+
+namespace Slab::Core {
+
+    class FCommandLineInterfaceManager;
+
+    class FCommandLineInterfaceOwner;
+
+    class FCommandLineInterfaceListener {
+    public:
+        virtual ~FCommandLineInterfaceListener() = default;
+
+        /**
+         * Notify listeners that this interface has finished being set up from command line.
+         */
+        virtual auto NotifyCLArgsSetupFinished() -> void {};
+
+        /**
+         * Notify listeners that all interfaces have finished being set up from command line.
+         */
+        virtual auto notifyAllCLArgsSetupFinished() -> void {};
+
+        virtual auto requestIssued(FRequest) -> FMessage {return FMessage{"[no answer]"};};
+    };
+
+    class FCommandLineInterface final {
+    public:
+        FCommandLineInterface(const Str& Name, FCommandLineInterfaceOwner *pOwner, int Priority);
+
+        /**
+         * Instantiate a new interface. It won't be registered in the InterfaceManager, but that can
+         * be done manually through InterfaceManager::registerInterface(...) method.
+         * @param name The name of the interface being created. Use ',' as a separator to add a description to
+         * the interface. For example name="Render options,Some rendering options for the user."
+         * @param owner The owner of this interface. It can be nullptr, but its up to the user to deal with that.
+         * @return an std::shared_ptr to an Interface.
+         */
+
+        ~FCommandLineInterface();
+
+        [[nodiscard]] FMessage SendRequest(FRequest) const;
+
+        [[nodiscard]] auto GetGeneralDescription() const -> Str;
+
+        void AddSubInterface(const Pointer<FCommandLineInterface>& subInterface);
+
+        auto AddListener(FCommandLineInterfaceListener *) -> void;
+
+        void AddParameter(const FCommandLineParameter_ptr& parameter);
+
+        void AddParameters(const List<FCommandLineParameter_ptr>& parameters);
+
+        void AddParameters(const List<FCommandLineParameter *>& parameters);
+
+        [[nodiscard]] auto GetSubInterfaces() const -> Vector<Pointer<FCommandLineInterface>>;
+
+        [[nodiscard]] auto GetParameters() const -> Vector<FCommandLineParameter_constptr>;
+
+        [[nodiscard]] auto GetParameter(const Str& key) const -> FCommandLineParameter_ptr;
+
+        [[nodiscard]] auto GetOwner() const -> FCommandLineInterfaceOwner *;
+
+        [[nodiscard]] auto GetName() const -> const Str &;
+
+        /**
+         *
+         * @param ParamNames Parameters to turn into 'separator' separated string. All parameters if none is specified.
+         * @param Separator Speparator string between argumens.
+         * @param LongName Whether to use long parameter name, if available.
+         * @return A formated string, with all parameters and their values.
+         */
+        [[nodiscard]] auto ToString(const StrVector &ParamNames = {}, const Str& Separator = " ", bool LongName = true) const -> Str;
+
+        void SetupFromCommandLine(CLVariablesMap vm);
+
+        bool operator==(const FCommandLineInterface &rhs) const;
+
+        bool operator==(Str Value) const;
+
+        bool operator!=(const FCommandLineInterface &RHS) const;
+
+        bool operator<(const FCommandLineInterface &RHS) const;
+
+
+    private:
+        const int Priority;
+
+        friend FCommandLineInterfaceManager;
+        friend FCommandLineInterfaceOwner;
+
+        FCommandLineInterfaceOwner *pOwner = nullptr;
+
+        Str Name;
+        Str Description = "<empty>";
+        const Str Delimiter = ",";
+
+        Vector<FCommandLineInterfaceListener *> Listeners;
+
+        Vector<FRequest> Protocols;
+
+        std::set<FCommandLineParameter_ptr> Parameters;
+        std::set<Pointer<FCommandLineInterface>> SubInterfaces;
+    };
+
+    DefinePointers(FCommandLineInterface)
+
+}
+
+#endif //FIELDS_INTERFACE_H

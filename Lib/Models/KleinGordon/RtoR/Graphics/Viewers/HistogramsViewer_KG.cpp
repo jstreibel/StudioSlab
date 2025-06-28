@@ -62,8 +62,8 @@ namespace Slab::Models::KGRtoR {
                | ImGui::Checkbox("Pretty bars", &pretty)
                | ImGui::SliderFloat("t##histogram", &t, min_t, max_t-t_delta)
                | ImGui::SliderFloat("Δt##histogram", &Δt, dt, max_t-t)) {
-                t_min = (Slab::Real)t;
-                t_delta = (Slab::Real)Δt;
+                t_min = (Slab::DevFloat)t;
+                t_delta = (Slab::DevFloat)Δt;
 
                 updateHistograms();
             }
@@ -159,10 +159,10 @@ namespace Slab::Models::KGRtoR {
             auto *grad_data      = &(*data.gradient) [k];
             auto *potential_data = &(*data.potential)[k];
 
-            memcpy(energy_data,    energy,    N*sizeof(Slab::Real));
-            memcpy(kinetic_data,   kinetic,   N*sizeof(Slab::Real));
-            memcpy(grad_data,      grad,      N*sizeof(Slab::Real));
-            memcpy(potential_data, potential, N*sizeof(Slab::Real));
+            memcpy(energy_data,    energy,    N*sizeof(Slab::DevFloat));
+            memcpy(kinetic_data,   kinetic,   N*sizeof(Slab::DevFloat));
+            memcpy(grad_data,      grad,      N*sizeof(Slab::DevFloat));
+            memcpy(potential_data, potential, N*sizeof(Slab::DevFloat));
 
             k+=N;
         }

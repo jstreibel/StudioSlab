@@ -14,7 +14,7 @@
 namespace Slab::Graphics {
 
     class ImGuiWindow : public SlabWindow {
-        static Atomic<Count> count;
+        static Atomic<CountType> count;
         Str id;
 
         Pointer<SlabWindow> slab_window;

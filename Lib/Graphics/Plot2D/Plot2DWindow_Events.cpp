@@ -47,12 +47,12 @@ namespace Slab {
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();
 
-            const Real dxClampd = -mouseState->dx / (Real) GetWidth();
-            const Real dyClampd = mouseState->dy / (Real) GetHeight();
-            const Real wGraph = rect.width();
-            const Real hGraph = rect.height();
-            const Real dxGraph = wGraph * dxClampd;
-            const Real dyGraph = hGraph * dyClampd;
+            const DevFloat dxClampd = -mouseState->dx / (DevFloat) GetWidth();
+            const DevFloat dyClampd = mouseState->dy / (DevFloat) GetHeight();
+            const DevFloat wGraph = rect.width();
+            const DevFloat hGraph = rect.height();
+            const DevFloat dxGraph = wGraph * dxClampd;
+            const DevFloat dyGraph = hGraph * dyClampd;
 
             region = RectR{rect.xMin + dxGraph,
                            rect.xMax + dxGraph,
@@ -63,14 +63,14 @@ namespace Slab {
         }
 
         if (isMouseRightClicked()) {
-            constexpr const Real factor = 0.01;
-            const Real dw = 1 - factor * dx;
-            const Real dh = 1 + factor * dy;
+            constexpr const DevFloat factor = 0.01;
+            const DevFloat dw = 1 - factor * dx;
+            const DevFloat dh = 1 + factor * dy;
 
-            const Real x0 = region.xCenter();
-            const Real y0 = region.yCenter();
-            const Real hw = .5 * region.width()  * dw;
-            const Real hh = .5 * region.height() * dh;
+            const DevFloat x0 = region.xCenter();
+            const DevFloat y0 = region.yCenter();
+            const DevFloat hw = .5 * region.width()  * dw;
+            const DevFloat hh = .5 * region.height() * dh;
 
             region = {
                     x0 - hw,
@@ -88,8 +88,8 @@ namespace Slab {
     bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
         if(SlabWindow::notifyMouseWheel(dx, dy)) return true;
 
-        constexpr const Real factor = 1.2;
-        const Real d = pow(factor, -dy);
+        constexpr const DevFloat factor = 1.2;
+        const DevFloat d = pow(factor, -dy);
 
         static auto targetRegion = region.getRect();
 
@@ -97,8 +97,8 @@ namespace Slab {
         if (!region.isAnimating())
             targetRegion = region.getRect();
 
-        const Real x0 = targetRegion.xCenter();
-        const Real hw = .5 * targetRegion.width() * d;
+        const DevFloat x0 = targetRegion.xCenter();
+        const DevFloat hw = .5 * targetRegion.width() * d;
 
         targetRegion.xMin = x0 - hw;
         targetRegion.xMax = x0 + hw;
@@ -106,8 +106,8 @@ namespace Slab {
         region.animate_xMin(targetRegion.xMin);
         region.animate_xMax(targetRegion.xMax);
 
-        const Real y0 = targetRegion.yCenter();
-        const Real hh = .5 * targetRegion.height() * d;
+        const DevFloat y0 = targetRegion.yCenter();
+        const DevFloat hh = .5 * targetRegion.height() * d;
 
         targetRegion.yMin = y0 - hh;
         targetRegion.yMax = y0 + hh;

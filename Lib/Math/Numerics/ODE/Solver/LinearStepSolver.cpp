@@ -7,12 +7,12 @@
 
 namespace Slab::Math::Base {
 
-    EquationState &LinearStepSolver::applyBC(EquationState &state, Real t, Real dt) {
+    EquationState &LinearStepSolver::applyBC(EquationState &state, DevFloat t, DevFloat dt) {
         du->apply(state, t);
         return state;
     }
 
-    EquationState &LinearStepSolver::operator()(const EquationState &in, EquationState &out, Real t) {
+    EquationState &LinearStepSolver::operator()(const EquationState &in, EquationState &out, DevFloat t) {
         return this->F(in, out, t);
     }
 

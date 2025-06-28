@@ -12,16 +12,16 @@ namespace Slab::RandUtils {
     std::mt19937 mt_uniform_uint(1);
     std::mt19937 mt_gaussian_noise(1);
 
-    std::uniform_real_distribution<Real> UniformRealRandGen(0, 1);
+    std::uniform_real_distribution<DevFloat> UniformRealRandGen(0, 1);
     std::uniform_int_distribution<unsigned int> UniformUIntRandGen(0, INT32_MAX);
 
     void SeedUniformReal  (int s) { mt_uniform_real  .seed(s); }
     void SeedUniformUInt  (int s) { mt_uniform_uint  .seed(s); }
     void SeedGaussianNoise(int s) { mt_gaussian_noise.seed(s); }
 
-    Real RandomUniformReal01() { return UniformRealRandGen(mt_uniform_real); }
+    DevFloat RandomUniformReal01() { return UniformRealRandGen(mt_uniform_real); }
 
-    Real RandomUniformReal(Real a, Real b){ return (b - a) * RandomUniformReal01() + a; }
+    DevFloat RandomUniformReal(DevFloat a, DevFloat b){ return (b - a) * RandomUniformReal01() + a; }
 
     unsigned RandomUniformUInt() { return UniformUIntRandGen(mt_uniform_uint); }
 

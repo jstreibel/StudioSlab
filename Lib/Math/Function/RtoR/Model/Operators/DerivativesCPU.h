@@ -9,17 +9,17 @@ namespace Slab::Math::RtoR {
 
     class DerivativeCPU : public RtoR::Function {
 
-        auto dfdx_fixed_3s(const UInt &X) const -> Real;
-        auto dfdx_fixed_5s(const UInt &X) const -> Real;
-        auto dfdx_periodic_3s(const UInt &X) const -> Real;
-        auto dfdx_loose_3s(UInt X) const -> Real;
+        auto dfdx_fixed_3s(const UInt &X) const -> DevFloat;
+        auto dfdx_fixed_5s(const UInt &X) const -> DevFloat;
+        auto dfdx_periodic_3s(const UInt &X) const -> DevFloat;
+        auto dfdx_loose_3s(UInt X) const -> DevFloat;
 
-        auto d2fdx2_fixed_3s(const UInt &X) const -> Real;
-        auto d2fdx2_fixed_5s(UInt X) const -> Real;
-        auto d2fdx2_periodic_3s(const UInt &X) const -> Real;
+        auto d2fdx2_fixed_3s(const UInt &X) const -> DevFloat;
+        auto d2fdx2_fixed_5s(UInt X) const -> DevFloat;
+        auto d2fdx2_periodic_3s(const UInt &X) const -> DevFloat;
 
         const RealArray *f_;
-        const Real h, inv12h, inv2h, invhsqr, inv12hsqr;
+        const DevFloat h, inv12h, inv2h, invhsqr, inv12hsqr;
         const UInt N;
 
         bool periodic;
@@ -37,7 +37,7 @@ namespace Slab::Math::RtoR {
         auto dfdx_v(RealArray_O &out) -> RealArray &;
         auto d2fdx2_v(RealArray_O &out) -> RealArray &;
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
     };
 }
 

@@ -6,20 +6,20 @@
 
 #include "Core/Backend/Console/ConsoleBackend.h"
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "StudioSlab.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 
 namespace Slab::Core {
 
     void RegisterBackends();
     void RegisterModules();
 
-    void StartBackend(const BackendName &name) {
+    void StartBackend(const FBackendIdentifier &name) {
         BackendManager::Startup(name);
     }
 
-    Pointer<Backend> GetBackend() {
+    Pointer<FBackend> GetBackend() {
         return BackendManager::GetBackend();
     }
 
@@ -32,16 +32,16 @@ namespace Slab::Core {
         Core::BackendManager::UnloadAllModules();
     }
 
-    void LoadModule(const ModuleName &name) {
+    void LoadModule(const FModuleIdentifier &name) {
         GetModule(name);
     }
-    Pointer<Module> GetModule(const ModuleName &module) {
+    Pointer<SlabModule> GetModule(const FModuleIdentifier &module) {
         if(!Slab::IsStarted()) Slab::Startup();
         return BackendManager::GetModule(module);
     }
 
-    void RegisterCLInterface(const Pointer<CLInterface>& interface) {
-        CLInterfaceManager::getInstance().registerInterface(interface);
+    void RegisterCLInterface(const Pointer<FCommandLineInterface>& interface) {
+        FCommandLineInterfaceManager::getInstance().registerInterface(interface);
     }
 
     void ParseCLArgs(int argc, const char **argv) {
@@ -50,12 +50,12 @@ namespace Slab::Core {
 
     void RegisterBackends(){
         BackendManager::RegisterAvailableBackend("Headless", [](){
-            return std::make_unique<ConsoleBackend>();
+            return std::make_unique<FConsoleBackend>();
         });
     }
 
     void RegisterModules(){
-        BackendManager::RegisterAvailableModule<TaskManagerModule>("TaskManager");
+        BackendManager::RegisterAvailableModule<MTaskManager>("TaskManager");
     }
 
 }

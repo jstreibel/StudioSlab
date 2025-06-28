@@ -40,9 +40,9 @@ namespace Modes {
 
         auto getBoundary() -> Slab::Math::Base::BoundaryConditions_ptr override;
 
-        Pointer<Base::FunctionT<Real, Real>> getNonHomogenous() override;
+        Pointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous() override;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
     };
 
 } // Modes

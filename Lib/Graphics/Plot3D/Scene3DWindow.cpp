@@ -16,7 +16,7 @@
 
 namespace Slab::Graphics {
 
-    Count Scene3DWindow::WindowCount = 0;
+    CountType Scene3DWindow::WindowCount = 0;
 
     Scene3DWindow::Scene3DWindow() : id(++WindowCount)
     {

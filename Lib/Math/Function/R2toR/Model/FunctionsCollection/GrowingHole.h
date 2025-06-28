@@ -10,14 +10,14 @@
 
 namespace Slab::Math::R2toR {
     class GrowingHoleFunc : public R2toR::Function {
-        Real t;
-        Real height;
+        DevFloat t;
+        DevFloat height;
     public:
-        GrowingHoleFunc(Real height = 1, Real t = .0);
+        GrowingHoleFunc(DevFloat height = 1, DevFloat t = .0);
 
-        void setTime(Real t);
+        void setTime(DevFloat t);
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
 
         bool domainContainsPoint(Real2D x) const override;
     };

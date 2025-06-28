@@ -24,16 +24,16 @@ namespace Modes {
     NumericalRecipe_Ak2::NumericalRecipe_Ak2(bool doRegister)
     : KGRtoR::KGRtoRBuilder("Modes", "Test SG response to different modes and amplitudes of harmonic oscillation", DONT_REGISTER)
     {
-        interface->addParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
+        Interface->AddParameters({&BCSelection, &Ak2, &wavelengths, &driving_force});
 
-        if(doRegister) RegisterCLInterface(interface);
+        if(doRegister) RegisterCLInterface(Interface);
     }
 
     Math::Base::BoundaryConditions_ptr NumericalRecipe_Ak2::getBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
         fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
-        fix λ = L / (Real)*wavelengths;;
+        fix λ = L / (DevFloat)*wavelengths;;
         fix ι = *Ak2;
         fix k = 2*M_PI/λ;
         fix A = ι/(k*k);
@@ -63,8 +63,8 @@ namespace Modes {
         throw Exception(Str("Unknown initial condition ") + ToStr(*BCSelection));
     }
 
-    void NumericalRecipe_Ak2::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void NumericalRecipe_Ak2::NotifyCLArgsSetupFinished() {
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
@@ -129,11 +129,11 @@ namespace Modes {
         StrVector params = {"Ak2", "wavelengths"};
         // if(*BCSelection == 1) params.emplace_back("harmonic");
 
-        auto strParams = interface->toString(params, SEPARATOR);
+        auto strParams = Interface->ToString(params, SEPARATOR);
         return KGRtoR::KGRtoRBuilder::suggestFileName() + SEPARATOR + strParams;
     }
 
-    Pointer<Base::FunctionT<Real, Real>> NumericalRecipe_Ak2::getNonHomogenous() {
+    Pointer<Base::FunctionT<DevFloat, DevFloat>> NumericalRecipe_Ak2::getNonHomogenous() {
         if(*driving_force && squareWave == nullptr) squareWave = Slab::New<Modes::SquareWave>(1);
 
         return squareWave;

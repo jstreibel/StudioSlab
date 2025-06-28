@@ -12,37 +12,37 @@
 
 namespace Slab::Core {
 
-        class TaskManagerModule : public Module {
-            typedef Pair<Task_ptr, Pointer<std::thread>> Job;
-            Vector<Job> m_jobs;
+        class MTaskManager final : public SlabModule {
+            typedef Pair<FTask_ptr, Pointer<std::thread>> Job;
+            Vector<Job> Jobs;
 
-            std::mutex m_addJobMutex;
+            std::mutex AddJobMutex;
 
-            enum DestructorPolicy {
+            enum EDestructorPolicy {
                 AbortAll,
                 WaitAll
             } destructorPolicy;
 
         public:
-            explicit TaskManagerModule(DestructorPolicy policy=AbortAll);
+            explicit MTaskManager(EDestructorPolicy Policy=AbortAll);
             // Destructor to join all threads
-            ~TaskManagerModule() override;
+            ~MTaskManager() override;
 
-            [[nodiscard]] auto hasRunningTasks() const -> bool;
+            [[nodiscard]] auto HasRunningTasks() const -> bool;
 
             /**
              * Signals all finished jobs to end their threads in a safe manner.
              */
-            void pruneThreads();
+            void PruneThreads();
 
-            static void Abort(const Job& job);
+            static void Abort(const Job& Job);
 
             /**
              * Add a task to the manager and start it immediately in a new thread.
              */
-            Job addTask(const Pointer<Task>& task);
+            Job AddTask(const Pointer<FTask>& Task);
 
-            void abortAllTasks();
+            void AbortAllTasks() const;
 
 
         };

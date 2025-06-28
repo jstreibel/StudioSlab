@@ -15,7 +15,7 @@ namespace Tests {
     LaTeXTests::LaTeXTests()
     : Slab::Graphics::WindowRow("LaTeX tests")
     , latexWriter()
-    , writer(Core::Resources::fontFileName(10), 19)
+    , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
     {
         auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];

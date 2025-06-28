@@ -41,16 +41,16 @@ namespace Slab::Models::KGRtoR {
         Pointer<R2toRFunctionArtist> imagPartsArtist    = Slab::New<R2toRFunctionArtist>();
         Pointer<R2toC::NumericFunction> dft2DFunction;
 
-        static auto FilterSpace(Pointer<const R2toR::NumericFunction> func, Real tMin, Real tMax) -> Pointer<R2toR::NumericFunction>;
+        static auto FilterSpace(Pointer<const R2toR::NumericFunction> func, DevFloat tMin, DevFloat tMax) -> Pointer<R2toR::NumericFunction>;
 
-        void computeAll(Real t_0, Real t_f);
-        void computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes);
+        void computeAll(DevFloat t_0, DevFloat t_f);
+        void computeFullDFT2D(DevFloat t_0, DevFloat t_f, bool discardRedundantModes);
         void computeTwoPointCorrelations();
 
-        Real kFilterCutoff = 0.0;
+        DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
-        void computeTimeDFT(Real tMin, Real tMax);
+        void computeTimeDFT(DevFloat tMin, DevFloat tMax);
 
     public:
         RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, GUIWindow &guiWindow);

@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
 
 
     void MoveData(const auto *in_data, Complex *out_data,
-                  int N, int M, Real scale,
+                  int N, int M, DevFloat scale,
                   DataMoveMangleMode mode, bool isNSymmetric = NON_SYMMETRIC_DATA);
 
 #define UNMANGLE_i_out \
@@ -73,7 +73,7 @@ namespace Slab::Math::R2toR {
         return i;
     }
 
-    void MoveData(const auto *in_data, Complex *out_data, int N, int M, Real scale, DataMoveMangleMode mode,
+    void MoveData(const auto *in_data, Complex *out_data, int N, int M, DevFloat scale, DataMoveMangleMode mode,
                   bool isNSymmetric) {
         if (isNSymmetric) NOT_IMPLEMENTED
 

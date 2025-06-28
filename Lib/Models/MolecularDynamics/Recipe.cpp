@@ -13,7 +13,7 @@
 #include "Recipe.h"
 
 #include "Core/SlabCore.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 
@@ -25,11 +25,11 @@
 namespace Slab::Models::MolecularDynamics {
     Recipe::Recipe()
     : NumericalRecipe(New<Slab::Models::MolecularDynamics::MolDynNumericConfig>(), "2D Molecular Dynamics", "Builder for 2-d molecular dynamics simulations", false)
-    , molDynamicsInterface(New <CLInterface> ("Molecular dynamics 2-d", this, 100))
+    , molDynamicsInterface(New <FCommandLineInterface> ("Molecular dynamics 2-d", this, 100))
     {
-        molDynamicsInterface->addParameters({&temperature, &dissipation, &model});
-        interface->addSubInterface(molDynamicsInterface);
-        Core::RegisterCLInterface(interface);
+        molDynamicsInterface->AddParameters({&temperature, &dissipation, &model});
+        Interface->AddSubInterface(molDynamicsInterface);
+        Core::RegisterCLInterface(Interface);
     }
 
     Vector<Pointer<Math::Socket>> Recipe::buildOutputSockets() {
@@ -76,8 +76,8 @@ namespace Slab::Models::MolecularDynamics {
         throw Exception(Str("Unknown particle dynamics model '") + ToStr(*model) + "'.");
     }
 
-    void Recipe::notifyCLArgsSetupFinished() {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    void Recipe::NotifyCLArgsSetupFinished() {
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         Log::Attention("ParticleDynamics::Builder ") << "will ignore NumericParams '-t' argument and set it to negative.";
 

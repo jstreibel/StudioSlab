@@ -8,12 +8,12 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/Trigonometric.h"
 
 namespace Modes {
-    SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const Real A, const Real ω)
+    SignalBC::SignalBC(const KGRtoR::EquationState_ptr &prototype, const DevFloat A, const DevFloat ω)
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ())
     , A(A)
     , ω(ω) {}
 
-    void SignalBC::applyKG(KGRtoR::EquationState &kgState, const Real t) const {
+    void SignalBC::applyKG(KGRtoR::EquationState &kgState, const DevFloat t) const {
         if(t==0.0) BoundaryCondition::applyKG(kgState, t);
 
         OUT ϕ   = kgState.getPhi();
@@ -27,7 +27,7 @@ namespace Modes {
     : BoundaryCondition(prototype, New <RtoR::NullFunction> (), New <RtoR::NullFunction> ()),
       sqrWave(std::move(sqrWave)) { }
 
-    void DrivenBC::applyKG(KGRtoR::EquationState &toFunction, Real t) const {
+    void DrivenBC::applyKG(KGRtoR::EquationState &toFunction, DevFloat t) const {
         if(sqrWave != nullptr) sqrWave->set_t(t);
 
         BoundaryCondition::apply(toFunction, t);

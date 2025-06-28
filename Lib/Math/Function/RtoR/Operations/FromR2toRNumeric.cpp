@@ -24,7 +24,7 @@ namespace Slab::Math::RtoR {
         return slice;
     }
 
-    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction> func, Real t) {
+    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction> func, DevFloat t) {
         if(t > func->getDomain().yMax) return nullptr;
 
         fix dt = func->getDomain().getLy() / (func->getM()-1);

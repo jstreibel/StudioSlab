@@ -30,6 +30,8 @@ add_library(${STUDIOS_LIB_BASE_NAME} STATIC
         Tools/UniqueObject.cpp
         Tools/UniqueObject.h
 		Backend/Backend.cpp
+        FObject.cpp
+        FObject.h
 
 )
 

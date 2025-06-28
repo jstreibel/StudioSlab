@@ -13,31 +13,31 @@ namespace Slab::Math::RtoR {
     public:
         NumericFunction_CPU(const NumericFunction_CPU& toCopy);
         explicit NumericFunction_CPU(const NumericFunction& toCopy);
-        NumericFunction_CPU(UInt N, Real xLeft, Real xRight,
+        NumericFunction_CPU(UInt N, DevFloat xLeft, DevFloat xRight,
                              NumericFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
-        NumericFunction_CPU(RealArray_I& data, Real xLeft, Real xRight,
+        NumericFunction_CPU(RealArray_I& data, DevFloat xLeft, DevFloat xRight,
                              NumericFunction::LaplacianType laplacianType=LaplacianType::Standard1D_FixedBorder);
 
         [[nodiscard]] auto Clone() const -> Function_ptr override;
 
-        [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::NumericFunction<Real, Real>> override;
+        [[nodiscard]] auto CloneWithSize(UInt N) const -> Pointer<Base::NumericFunction<DevFloat, DevFloat>> override;
 
-    Real max() const override;
+    DevFloat max() const override;
 
-    Real min() const override;
+    DevFloat min() const override;
 
     auto Set(const RealArray &vec) -> NumericFunction_CPU &;
         auto Set(const FunctionT &func) -> NumericFunction_CPU & override;
 
         auto Apply(const MyBase &func,
-                   Base::NumericFunction<Real, Real> &out)
-                   const -> Base::NumericFunction<Real, Real> & override;
+                   Base::NumericFunction<DevFloat, DevFloat> &out)
+                   const -> Base::NumericFunction<DevFloat, DevFloat> & override;
 
         auto Laplacian(NumericFunction &outFunc) const -> NumericFunction & override;
 
-        Base::NumericFunction<Real, Real> &operator+=(const MyBase &func) override;
+        Base::NumericFunction<DevFloat, DevFloat> &operator+=(const MyBase &func) override;
 
-        Real integrate() const override;
+        DevFloat integrate() const override;
 
     };
 }

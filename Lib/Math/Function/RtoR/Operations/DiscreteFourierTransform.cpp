@@ -56,9 +56,9 @@ namespace Slab::Math::RtoR {
         return result;
     }
 
-    DFTResult DFT::Compute(const Function &f, NumberOfModes N, Real xMin, Real xMax) {
+    DFTResult DFT::Compute(const Function &f, NumberOfModes N, DevFloat xMin, DevFloat xMax) {
         fix L = xMax - xMin;
-        fix dx = L / (Real) N;
+        fix dx = L / (DevFloat) N;
 
         auto in = (double *) fftw_malloc(sizeof(double) * N);
 

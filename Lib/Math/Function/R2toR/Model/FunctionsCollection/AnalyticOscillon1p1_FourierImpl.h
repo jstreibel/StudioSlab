@@ -13,10 +13,10 @@
 namespace Slab::Math::R2toR {
 
     class AnalyticOscillon1p1_FourierImpl  : public R2toR::Function {
-        Real (*f)(Int, Real, Real);
+        DevFloat (*f)(Int, DevFloat, DevFloat);
 
-        Real x_max, x_min;
-        Real gamma;
+        DevFloat x_max, x_min;
+        DevFloat gamma;
 
     public:
         using Bit = RtoR::AnalyticOscillon::Bit;
@@ -27,7 +27,7 @@ namespace Slab::Math::R2toR {
 
         explicit AnalyticOscillon1p1_FourierImpl(const Parameters &parameters={0,1,0,0,0}, Int n_max=7);
 
-        Real operator()(Real2D x) const override;
+        DevFloat operator()(Real2D x) const override;
 
         auto Clone() const -> Pointer<Type> override;
 

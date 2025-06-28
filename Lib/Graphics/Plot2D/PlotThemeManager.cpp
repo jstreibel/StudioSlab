@@ -176,7 +176,7 @@ namespace Slab::Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 17);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 17);
 
         WindowStyle::windowBGColor = {};
 
@@ -218,7 +218,7 @@ namespace Slab::Graphics {
         gridLinesScheme.lineColor.a = 0.15;
         gridLinesScheme.thickness = 1;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 20);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 20);
         return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle,
                  gridLinesScheme, gridLinesScheme, writer,
@@ -255,7 +255,7 @@ namespace Slab::Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 24);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 24);
         return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
                  writer, graphs});
@@ -295,7 +295,7 @@ namespace Slab::Graphics {
         auto gridLinesScheme = PlotStyle(tickColor, Dashed, false, Nil, 1);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 40);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 40);
         return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle,
 gridLinesScheme, gridLinesScheme, writer,
@@ -312,7 +312,7 @@ gridLinesScheme, gridLinesScheme, writer,
         scheme->vTickHeightinPixels = 15;
 
         auto writer = std::make_shared<
-Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
+Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90);
         scheme->ticksWriter = writer;
         scheme->labelsWriter = writer;
 
@@ -349,7 +349,7 @@ Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
         auto gridLinesScheme = PlotStyle(tickColor, DotDashed, false, Nil, 0.8);
         gridLinesScheme.lineColor.a = 0.15;
 
-        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 24);
+        auto writer = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 24);
 
         return New<PlottingTheme>(PlottingTheme
                 {background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme, writer,
@@ -395,7 +395,7 @@ Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(10), 90);
         gridLinesScheme.lineColor.a = 0.15;
 
         // auto labelsWriter = std::make_shared<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(19), 24);
-        auto ticksWriter = New<Graphics::OpenGL::WriterOpenGL>(Core::Resources::fontFileName(18), 24);
+        auto ticksWriter = New<Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(18), 24);
         auto& labelsWriter = ticksWriter;
 
         return New<PlottingTheme>(PlottingTheme{background, graphTicksFont, graphTitleFont, axisColor, tickColor, XHairStyle, gridLinesScheme, gridLinesScheme,

@@ -4,7 +4,7 @@
 
 #include "RtoRFourierPanel.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "Math/Function/R2toR/Calc/R2toRDFT.h"
 #include "Math/Function/R2toC/R2toC_to_R2toR.h"
@@ -34,12 +34,12 @@ namespace Slab::Models::KGRtoR {
         // Custom ticks
         auto unit = Constants::π;
         kSpaceGraph->getAxisArtist().setHorizontalUnit(unit);
-        fix WaveNumber = CLInterfaceManager::getInstance().getParameter("harmonic");
+        fix WaveNumber = FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
         if(WaveNumber != nullptr) {
             Graphics::AxisArtist::Ticks ticks;
             fix L = params->getL();
             fix dk = 2*M_PI/L;
-            fix k = dk * WaveNumber->getValueAs<Real>();
+            fix k = dk * WaveNumber->getValueAs<DevFloat>();
             for (int n = 1; n < 20; ++n) {
                 ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
             }
@@ -207,7 +207,7 @@ namespace Slab::Models::KGRtoR {
             auto *out = &rebuiltHistory->At(0, _n);
             auto *in = &func->getSpace().getHostData(true)[0];
 
-            memcpy(out, in, N*sizeof(Real));
+            memcpy(out, in, N*sizeof(DevFloat));
 
             ++_n;
         }
@@ -215,7 +215,7 @@ namespace Slab::Models::KGRtoR {
         inv_kSpaceArtist->setFunction(rebuiltHistory);
     }
 
-    void RtoRFourierPanel::computeTimeDFT(Real t_0, Real t_f) {
+    void RtoRFourierPanel::computeTimeDFT(DevFloat t_0, DevFloat t_f) {
         fix N = simulationHistory->getN();
         fix xMin = simulationHistory->getDomain().xMin;
         fix dx = simulationHistory->getDomain().getLx()/N;
@@ -223,7 +223,7 @@ namespace Slab::Models::KGRtoR {
         fix Mₜ = simulationHistory->getM();
         fix dt = simulationHistory->getDomain().getLy()/Mₜ;
         fix Δt = t_f-t_0;
-        fix __M = (Count)floor(Δt/dt);
+        fix __M = (CountType)floor(Δt/dt);
         fix M = __M%2==0 ? __M : __M-1;
         fix m = M/2 + 1;
 
@@ -263,12 +263,12 @@ namespace Slab::Models::KGRtoR {
         xSpaceGraph->addArtist(simulationHistoryArtist, -10);
     }
 
-    void RtoRFourierPanel::computeAll(Real t_0, Real t_f) {
+    void RtoRFourierPanel::computeAll(DevFloat t_0, DevFloat t_f) {
         computeFullDFT2D(t_0, t_f, NoModeDiscard);
         computeTwoPointCorrelations();
     }
 
-    void RtoRFourierPanel::computeFullDFT2D(Real t_0, Real t_f, bool discardRedundantModes) {
+    void RtoRFourierPanel::computeFullDFT2D(DevFloat t_0, DevFloat t_f, bool discardRedundantModes) {
         auto toFT = FilterSpace(simulationHistory, t_0, t_f);
         timeFilteredArtist->setFunction(toFT);
 
@@ -308,7 +308,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     Pointer<R2toR::NumericFunction>
-    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::NumericFunction> func, Real tMin, Real tMax) {
+    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::NumericFunction> func, DevFloat tMin, DevFloat tMax) {
         fix N = func->getN();
         fix xMin = func->getDomain().xMin;
         fix dx = func->getDomain().getLx()/N;
@@ -316,11 +316,11 @@ namespace Slab::Models::KGRtoR {
         fix Mₜ = func->getM();
         fix dt = func->getDomain().getLy()/Mₜ;
         fix Δt = tMax-tMin;
-        fix __M = (Count)floor(Δt/dt);
+        fix __M = (CountType)floor(Δt/dt);
         fix M = __M%2==0 ? __M : __M-1;
 
         auto out = DataAlloc<R2toR::NumericFunction_CPU>(
-                func->get_data_name() + " t∈(" + ToStr(tMin) + "," + ToStr(tMax) + ")", N, M, xMin, tMin, dx, Δt / (Real)M);
+                func->get_data_name() + " t∈(" + ToStr(tMin) + "," + ToStr(tMax) + ")", N, M, xMin, tMin, dx, Δt / (DevFloat)M);
 
         fix j₀ = floor(tMin/dt);
 

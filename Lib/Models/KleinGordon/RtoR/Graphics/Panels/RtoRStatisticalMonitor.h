@@ -30,16 +30,16 @@ namespace Slab::Models::KGRtoR {
         R2toR::NumericFunction_ptr mCorrelationComputed;
         Graphics::Plot2DWindow mCorrelationGraph;
 
-        Real transientHint = -1.0;
+        DevFloat transientHint = -1.0;
 
         KGEnergy &hamiltonian;
 
-        Real u=.0;
+        DevFloat u=.0;
 
-        Real barϕ=.0;
-        Real tau=.0;
-        Real tau_indirect=.0;
-        Real tau_avg=.0;
+        DevFloat barϕ=.0;
+        DevFloat tau=.0;
+        DevFloat tau_indirect=.0;
+        DevFloat tau_avg=.0;
 
         Math::PointSet temperature1HistoryData;
         Math::PointSet temperature2HistoryData;
@@ -60,7 +60,7 @@ namespace Slab::Models::KGRtoR {
 
         void draw() override;
 
-        void setTransientHint(Real);
+        void setTransientHint(DevFloat);
 
         void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;

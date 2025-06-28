@@ -24,8 +24,8 @@ namespace Slab {
                                             void *font) {
         fix w = region.xMax - region.xMin;
         fix h = region.yMax - region.yMin;
-        fix regionRatio = w / (Real) h;
-        fix windowRatio = window->GetWidth() / (Real) window->GetHeight();
+        fix regionRatio = w / (DevFloat) h;
+        fix windowRatio = window->GetWidth() / (DevFloat) window->GetHeight();
 
         fix baseScale = h * 2.0e-4;
 

@@ -32,7 +32,7 @@ namespace Slab::Math::RtoR {
 
         if (vMax == vMin) return;
 
-        binWidth = (vMax - vMin) / Real(nBins - 1);
+        binWidth = (vMax - vMin) / DevFloat(nBins - 1);
 
         bins.clear();
         bins.resize(nBins, 0);
@@ -55,7 +55,7 @@ namespace Slab::Math::RtoR {
 
         assert(F.size() == bins.size() && bins.size() == nBins);
 
-        auto N = Real(count);
+        auto N = DevFloat(count);
         auto normFactor = N * binWidth;
 
         for (auto i = 0; i < nBins; ++i)
@@ -72,7 +72,7 @@ namespace Slab::Math::RtoR {
     auto Histogram::renderPDFToPointSet(PointSet_ptr pointSet, bool beautiful) const -> PointSet_ptr {
         if(pointSet == nullptr) pointSet = Slab::New<PointSet>();
 
-        const auto N = Real(count);
+        const auto N = DevFloat(count);
         const auto w = binWidth;
         const auto normFactor = N * w;
 
@@ -86,7 +86,7 @@ namespace Slab::Math::RtoR {
             auto nHere = bins[i];
 
             auto x = vMin + i * w;
-            auto y = (Real) nHere / normFactor;
+            auto y = (DevFloat) nHere / normFactor;
 
             pointSet->addPoint({x, y});
             if (beautiful) {
@@ -98,7 +98,7 @@ namespace Slab::Math::RtoR {
         return pointSet;
     }
 
-    auto Histogram::integrate() const -> Real {
+    auto Histogram::integrate() const -> DevFloat {
         let sum = .0;
 
         for (fix density: bins)

@@ -1,33 +1,32 @@
 #ifndef BACKEND_H
 #define BACKEND_H
 
-#include "Core/Backend/Modules/TaskManager/Task.h"
 #include "Modules/Modules.h"
 #include "Modules/Module.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
 
 
 
 namespace Slab::Core {
 
-    class Backend : public CLInterfaceOwner {
+    class FBackend : public FCommandLineInterfaceOwner {
         friend class BackendManager;
 
-        Str name;
+        Str Name;
 
-        virtual void notifyModuleLoaded(const Pointer<Module>&) {};
+        virtual void notifyModuleLoaded(const Pointer<SlabModule>&) {};
     protected:
-        explicit Backend(const Str& name);
+        explicit FBackend(const Str& Name);
 
     public:
-        virtual ~Backend() = default;
-        virtual void run() = 0;
-        virtual void terminate() = 0;
+        ~FBackend() override;
+        virtual void Run() = 0;
+        virtual void Terminate() = 0;
 
-        Str getName() const {return name;}
+        [[nodiscard]] Str GetName() const {return Name;}
 
-        virtual auto isHeadless() const -> bool { return true; }
+        [[nodiscard]] virtual auto IsHeadless() const -> bool { return true; }
     };
 }
 

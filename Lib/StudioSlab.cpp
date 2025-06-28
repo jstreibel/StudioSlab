@@ -32,7 +32,7 @@ namespace Slab {
         return started;
     }
 
-    Pointer<Core::Backend> CreatePlatform(Core::BackendName platform) {
+    Pointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier platform) {
         Core::BackendManager::Startup(platform);
 
         return Core::BackendManager::GetBackend();

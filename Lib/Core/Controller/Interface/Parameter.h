@@ -13,17 +13,18 @@ namespace Slab::Core {
 
     class Parameter {
     public:
+        virtual ~Parameter() = default;
         virtual
-        auto getValueAsString() const -> Str = 0;
+        auto GetValueAsString() const -> Str = 0;
 
         virtual
-        auto setValueFromString(Str value) -> void = 0;
+        auto SetValueFromString(Str value) -> void = 0;
 
         virtual
-        auto getValueVoid() const -> const void * = 0;
+        auto GetValueVoid() const -> const void * = 0;
 
         template<typename T>
-        const T& getValueAs() const { return *static_cast<const T*>(getValueVoid()); }
+        const T& GetValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
     };
 
 } // Slab::Core

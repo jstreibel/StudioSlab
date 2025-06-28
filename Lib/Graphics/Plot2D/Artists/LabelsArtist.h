@@ -12,8 +12,8 @@
 namespace Slab::Graphics {
 
     class LabelsArtist : public Artist {
-        Count currItem=0;
-        Count cols = 1;
+        CountType currItem=0;
+        CountType cols = 1;
         int max_cols = 4;
 
         Vector<Pair<Str, Pointer<PlotStyle>>> labelsRequired;
@@ -25,10 +25,10 @@ namespace Slab::Graphics {
         float xGap = 0.015f,
               yGap = .025f;
 
-        void setTotalItems(Count tot);
+        void setTotalItems(CountType tot);
 
-        Count row() const;
-        Count col() const;
+        CountType row() const;
+        CountType col() const;
 
         LabelsArtist& operator++();
 

@@ -20,13 +20,13 @@ namespace Studios {
 
     class PeriodicInX : public R2Function {
         Slab::Pointer<R2Function> function;
-        Slab::Real L;
+        Slab::DevFloat L;
 
     public:
-        PeriodicInX(Slab::Pointer<R2Function> func, Slab::Real L)
+        PeriodicInX(Slab::Pointer<R2Function> func, Slab::DevFloat L)
         : function(std::move(func)), L(L) { }
 
-        Slab::Real operator()(Slab::Math::Real2D r) const override {
+        Slab::DevFloat operator()(Slab::Math::Real2D r) const override {
             auto L_vec = Slab::Math::Real2D(L, 0);
 
             return (*function)(r) + (*function)(r+L_vec) + (*function)(r-L_vec);
@@ -98,7 +98,7 @@ namespace Studios {
                     N = N_%2 ? N_-1 : N_;
                     M = M_%2 ? M_-1 : M_;
 
-                    c_max = 1.0 - (Slab::Real)_1_m_cmax;
+                    c_max = 1.0 - (Slab::DevFloat)_1_m_cmax;
 
                     setupOscillons();
 
@@ -157,7 +157,7 @@ namespace Studios {
                 periodic.symbol() + " [rendered]",
                 N,                 M,
                 x_min,             t_min,
-                L/(Slab::Real)N,   t/(Slab::Real)M);
+                L/(Slab::DevFloat)N,   t/(Slab::DevFloat)M);
 
         Slab::Math::R2toR::R2toRFunctionRenderer::renderToDiscrete(periodic, new_rendered);
 

@@ -10,14 +10,14 @@
 namespace Slab::Models::KGRtoR {
 
     class CorrelationDecay : public Math::RtoR::Function {
-        Real c0;
-        Real invξ;
-        Real β;
-        Real u0;
+        DevFloat c0;
+        DevFloat invξ;
+        DevFloat β;
+        DevFloat u0;
     public:
-        Real getU0() const;
+        DevFloat getU0() const;
 
-        void setU0(Real u0_new);
+        void setU0(DevFloat u0_new);
 
     public:
         enum Nature { Exponential, Power };
@@ -25,22 +25,22 @@ namespace Slab::Models::KGRtoR {
         Nature nature = Power;
     public:
 
-        Real get_c0() const;
-        void set_c0(Real c0);
+        DevFloat get_c0() const;
+        void set_c0(DevFloat c0);
 
-        Real getξ() const;
-        void setξ(Real invξ);
+        DevFloat getξ() const;
+        void setξ(DevFloat invξ);
 
-        Real getβ() const;
-        void setβ(Real β);
+        DevFloat getβ() const;
+        void setβ(DevFloat β);
 
         Nature getNature() const;
         void setNature(CorrelationDecay::Nature nat);
 
 
-        explicit CorrelationDecay(Real c0=1, Real ξ=1, Real β=2, Real u0=0);
+        explicit CorrelationDecay(DevFloat c0=1, DevFloat ξ=1, DevFloat β=2, DevFloat u0=0);
 
-        Real operator()(Real u) const override;
+        DevFloat operator()(DevFloat u) const override;
     };
 
 
@@ -48,37 +48,37 @@ namespace Slab::Models::KGRtoR {
 
     class TwoPointCorrelation : public Math::RtoR::Function {
         CorrelationDecay c;
-        Real λ;
-        Count n_max;
-        Real ϕ_0 = .0;
+        DevFloat λ;
+        CountType n_max;
+        DevFloat ϕ_0 = .0;
     public:
-        Real getΦ0() const;
+        DevFloat getΦ0() const;
 
-        void setΦ0(Real φ0);
+        void setΦ0(DevFloat φ0);
 
     public:
-        Real get_c0() const;
-        void set_c0(Real c0);
+        DevFloat get_c0() const;
+        void set_c0(DevFloat c0);
 
         CorrelationDecay::Nature getNature() const;
         void setNature(CorrelationDecay::Nature);
 
-        Real getλ() const;
-        void setλ(Real λ);
+        DevFloat getλ() const;
+        void setλ(DevFloat λ);
 
-        Real getξ() const;
-        void setξ(Real ξ);
+        DevFloat getξ() const;
+        void setξ(DevFloat ξ);
 
-        Real getβ() const;
-        void setβ(Real β);
+        DevFloat getβ() const;
+        void setβ(DevFloat β);
 
-        Count getNMax() const;
-        void setNMax(Count nMax);
+        CountType getNMax() const;
+        void setNMax(CountType nMax);
 
     public:
-        explicit TwoPointCorrelation(Real c0=1, Real λ=1, Real ξ=4, Real β=2, Count n=15);
+        explicit TwoPointCorrelation(DevFloat c0=1, DevFloat λ=1, DevFloat ξ=4, DevFloat β=2, CountType n=15);
 
-        Real operator()(Real u) const override;
+        DevFloat operator()(DevFloat u) const override;
     };
 
 } // Slab::Models::KGRtoR

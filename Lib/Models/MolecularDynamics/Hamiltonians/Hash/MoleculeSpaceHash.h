@@ -12,13 +12,13 @@ namespace Slab::Models::MolecularDynamics {
 
     class MoleculeSpaceHash {
     public:
-        MoleculeSpaceHash(int linSubdivs, Real L);
+        MoleculeSpaceHash(int linSubdivs, DevFloat L);
 
         void ComputeHash(const Graphics::PointContainer &v_q,
                          const Graphics::PointContainer &v_p,
                          Graphics::PointContainer &dpdt);
 
-        Real totalLength() const;
+        DevFloat totalLength() const;
 
         FixedSizeMoleculeContainer &get(int i, int j);
 
@@ -26,7 +26,7 @@ namespace Slab::Models::MolecularDynamics {
 
 
         const int n;
-        const Real L, l;
+        const DevFloat L, l;
         Vector<FixedSizeMoleculeContainer> hashSpace;
 
     };

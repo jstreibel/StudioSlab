@@ -16,8 +16,8 @@
 namespace Slab::Graphics {
 
     class Scene3DWindow : public SlabWindow {
-        static Count WindowCount;
-        Count id;
+        static CountType WindowCount;
+        CountType id;
 
         Str title = "No title";
 

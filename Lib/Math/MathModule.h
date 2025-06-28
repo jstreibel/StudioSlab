@@ -9,7 +9,7 @@
 #include "Math/Data/DataManager.h"
 
 namespace Slab::Math {
-    class MathModule : public Core::Module {
+    class MathModule : public Core::SlabModule {
     public:
         MathModule();
 

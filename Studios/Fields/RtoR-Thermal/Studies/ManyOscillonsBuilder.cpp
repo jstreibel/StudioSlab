@@ -13,7 +13,7 @@ namespace Studios::Fields::RtoRThermal {
 
     ManyOscillonsBuilder::ManyOscillonsBuilder()
             : Builder("Many oscillons", "General scattering of many oscillons.") {
-        interface->addParameters({&nOscillons});
+        Interface->AddParameters({&nOscillons});
     }
 
     auto ManyOscillonsBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
@@ -25,7 +25,7 @@ namespace Studios::Fields::RtoRThermal {
 
         auto scale = L / n;
         for (int i = 0; i < n; i++) {
-            auto tx = xMin + 1.05 * Real(i) * scale;
+            auto tx = xMin + 1.05 * DevFloat(i) * scale;
             auto t = RandUtils::RandomUniformReal01();
 
             auto oscRight = RtoR::AnalyticOscillon(t, tx, scale, 0.9999, 0.7, 0.132487, false, false);

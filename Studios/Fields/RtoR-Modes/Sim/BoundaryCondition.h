@@ -17,12 +17,12 @@ namespace Modes {
 
     class SignalBC final : public KGRtoR::BoundaryCondition {
     protected:
-        void applyKG(KGRtoR::EquationState &, Real t) const override;
+        void applyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
-        Real A, ω;
+        DevFloat A, ω;
 
-        SignalBC(const KGRtoR::EquationState_ptr &prototype, Real A, Real ω);
+        SignalBC(const KGRtoR::EquationState_ptr &prototype, DevFloat A, DevFloat ω);
     };
 
 
@@ -31,7 +31,7 @@ namespace Modes {
         Slab::Pointer<Modes::SquareWave> sqrWave;
 
     protected:
-        void applyKG(KGRtoR::EquationState &, Real t) const override;
+        void applyKG(KGRtoR::EquationState &, DevFloat t) const override;
 
     public:
         DrivenBC(const KGRtoR::EquationState_ptr &prototype, Slab::Pointer<Modes::SquareWave> sqrWave);

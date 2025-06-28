@@ -35,7 +35,7 @@ namespace Slab::Graphics::OpenGL {
 
         void set_sPeriodicOn() const;
 
-        bool upload(UInt from=0, Count n=0);
+        bool upload(UInt from=0, CountType n=0);
 
         GLsizei getSize() const;
     };

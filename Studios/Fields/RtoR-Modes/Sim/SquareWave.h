@@ -13,15 +13,15 @@ namespace Modes {
     using namespace Slab::Math;
 
     class SquareWave : public RtoR::Function {
-        Real t=0;
-        Real len=1;
-        Real k=2*M_PI/len;
+        DevFloat t=0;
+        DevFloat len=1;
+        DevFloat k=2*M_PI/len;
     public:
-        explicit SquareWave(Real wavelength);
+        explicit SquareWave(DevFloat wavelength);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
-        void set_t(Real t);
+        void set_t(DevFloat t);
 
         Str symbol() const override;
 

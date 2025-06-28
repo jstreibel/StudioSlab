@@ -16,7 +16,7 @@ namespace Slab::Graphics {
     #define Title_Height (int(WindowStyle::font_size*5./3))
 
     // Fontes candidatas: 9, 13, 14
-    Decorator::Decorator() : writer(Core::Resources::fontFileName(10), (float)WindowStyle::font_size) {
+    Decorator::Decorator() : writer(Core::Resources::GetIndexedFontFileName(10), (float)WindowStyle::font_size) {
 
     }
 
@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        OpenGL::Legacy::SetupOrtho({0, (Real)syswin_w, (Real)syswin_h, 0});
+        OpenGL::Legacy::SetupOrtho({0, (DevFloat)syswin_w, (DevFloat)syswin_h, 0});
     }
 
     void Decorator::begin_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
@@ -131,7 +131,7 @@ namespace Slab::Graphics {
 
         fix h_font = writer.getFontHeightInPixels();
         auto color = Color(32./255,32./255,32./255, 1);
-        writer.write(slab_window.getTitle(), {(Real)x+WindowStyle::font_size/2, syswin_h-(Real)y - h_font}, color);
+        writer.write(slab_window.getTitle(), {(DevFloat)x+WindowStyle::font_size/2, syswin_h-(DevFloat)y - h_font}, color);
     }
 
     void Decorator::setSystemWindowShape(int w, int h) {

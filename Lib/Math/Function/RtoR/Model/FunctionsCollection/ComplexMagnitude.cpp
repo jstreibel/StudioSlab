@@ -10,7 +10,7 @@ namespace Slab::Math::RtoR {
     ComplexMagnitude::ComplexMagnitude(RtoC::Function_ptr func)
     : RtoCFunction(std::move(func)) {    }
 
-    Real ComplexMagnitude::operator()(Real x) const {
+    DevFloat ComplexMagnitude::operator()(DevFloat x) const {
         auto &func = *RtoCFunction;
 
         return abs(func(x));

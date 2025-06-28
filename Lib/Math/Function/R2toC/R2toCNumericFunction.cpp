@@ -7,7 +7,7 @@
 
 namespace Slab::Math::R2toC {
 
-    NumericFunction::NumericFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly)
+    NumericFunction::NumericFunction(Resolution N, Resolution M, DevFloat x0, DevFloat y0, DevFloat Lx, DevFloat Ly)
     : Data(generalName())
     , x0(x0), y0(y0)
     , Lx(Lx), Ly(Ly)

@@ -15,8 +15,8 @@ namespace Slab::Math {
         using NewValue = OutCategory;
         using RandomSite = SiteType;
 
-        using Temperature = Real;
-        using ΔSValue = Real;
+        using Temperature = DevFloat;
+        using ΔSValue = DevFloat;
 
         using ΔSFunction          = std::function<ΔSValue(RandomSite, NewValue)>;
         using ModifyFunction      = std::function<void(RandomSite, NewValue)>;

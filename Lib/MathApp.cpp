@@ -10,30 +10,30 @@
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
 
 #include "Math/Numerics/NumericTask.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Graphics/Modules/GraphicsModule.h"
 
 
 namespace Slab::Math {
 
-    MathApp::MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr simBuilder)
-            : AppBase(argc, argv), builder(std::move(simBuilder)) {
+    MathApp::MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr SimBuilder)
+            : AppBase(argc, argv), Builder(std::move(SimBuilder)) {
 
         Core::CLArgsManager::Parse(argc, argv);
     }
 
     auto MathApp::run() -> int {
-        const auto integrationTask = Slab::New<NumericTask>(builder);
+        const auto integrationTask = Slab::New<NumericTask>(Builder);
 
-        const auto taskManager = dynamic_cast<Slab::Core::TaskManagerModule*>
+        const auto TaskManager = dynamic_cast<Slab::Core::MTaskManager*>
                 (Core::BackendManager::GetModule("TaskManager").get());
 
-        taskManager->addTask(integrationTask);
+        TaskManager->AddTask(integrationTask);
 
-        Core::BackendManager::GetBackend()->run();
+        Core::BackendManager::GetBackend()->Run();
 
         // If tasks are still running after backend has finished around, we abort all tasks.
-        taskManager->abortAllTasks();
+        TaskManager->AbortAllTasks();
 
         return 0;
     }

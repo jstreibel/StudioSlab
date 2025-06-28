@@ -10,7 +10,7 @@
 #include "Models/KleinGordon/KG-Solver.h"
 
 namespace Slab::Models::KGRtoR {
-    using KGRtoRSolver = Models::KGSolver<Real>;
+    using KGRtoRSolver = Models::KGSolver<DevFloat>;
 }
 
 #endif //STUDIOSLAB_KG_RTORSOLVER_H

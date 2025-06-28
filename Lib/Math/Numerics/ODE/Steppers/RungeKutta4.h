@@ -34,16 +34,16 @@ namespace Slab::Math {
         Vector<Base::EquationState_ptr> swaps;
         CyclicIterator<Base::EquationState_ptr> swapsIterator;
 
-        Count steps = 0;
+        CountType steps = 0;
 
-        Real dt;
+        DevFloat dt;
     public:
 
-        explicit RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, Real dt, Count totalSwapStates = 5);
+        explicit RungeKutta4(const Pointer<Base::LinearStepSolver> &solver, DevFloat dt, CountType totalSwapStates = 5);
 
         ~RungeKutta4() override = default;
 
-        void step(const Count n_steps) override;
+        void step(const CountType n_steps) override;
 
         [[nodiscard]] auto getCurrentState() const -> Base::EquationState_constptr override;
 

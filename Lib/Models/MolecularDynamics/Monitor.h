@@ -30,7 +30,7 @@ namespace Slab::Models::MolecularDynamics {
 
         // Vector<sf::Vertex[MOLS_HISTORY_SIZE]> moleculesHistory;
 
-        Count N;
+        CountType N;
         float L;
     public:
         enum Model {

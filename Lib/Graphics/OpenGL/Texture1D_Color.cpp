@@ -54,7 +54,7 @@ namespace Slab::Graphics::OpenGL {
         return true;
     }
 
-    bool Texture1D_Color::upload(UInt start, Count n) {
+    bool Texture1D_Color::upload(UInt start, CountType n) {
         if(data == nullptr) return false;
 
         bind();

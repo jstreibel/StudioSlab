@@ -42,7 +42,7 @@ namespace Slab::Math::Odeint {
                                      OdeintOperation<6, T>) = 0;
     };
 
-    class OdeintStateWrapper : public OdeintState<Real> {
+    class OdeintStateWrapper : public OdeintState<DevFloat> {
         std::shared_ptr<OdeintState> odeintState = nullptr;
 
     public:
@@ -50,32 +50,32 @@ namespace Slab::Math::Odeint {
 
         explicit OdeintStateWrapper(const std::shared_ptr<OdeintState> &state);
 
-        void applyOperation1(OdeintOperation<1, Real> operation) override;
+        void applyOperation1(OdeintOperation<1, DevFloat> operation) override;
 
         void applyOperation2(const OdeintState &state2,
-                             OdeintOperation<2, Real> operation) override;
+                             OdeintOperation<2, DevFloat> operation) override;
 
         void applyOperation3(const OdeintState &state2,
                              const OdeintState &state3,
-                             OdeintOperation<3, Real> operation) override;
+                             OdeintOperation<3, DevFloat> operation) override;
 
         void applyOperation4(const OdeintState &state2,
                              const OdeintState &state3,
                              const OdeintState &state4,
-                             OdeintOperation<4, Real> operation) override;
+                             OdeintOperation<4, DevFloat> operation) override;
 
         void applyOperation5(const OdeintState &state2,
                              const OdeintState &state3,
                              const OdeintState &state4,
                              const OdeintState &state5,
-                             OdeintOperation<5, Real> operation) override;
+                             OdeintOperation<5, DevFloat> operation) override;
 
         void applyOperation6(const OdeintState &state2,
                              const OdeintState &state3,
                              const OdeintState &state4,
                              const OdeintState &state5,
                              const OdeintState &state6,
-                             OdeintOperation<6, Real> operation) override;
+                             OdeintOperation<6, DevFloat> operation) override;
     };
 
 

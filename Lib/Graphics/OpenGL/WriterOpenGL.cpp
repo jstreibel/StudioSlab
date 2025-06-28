@@ -180,7 +180,7 @@ namespace Slab::Graphics::OpenGL {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
     }
 
-    Real WriterOpenGL::getFontHeightInPixels() const { return font->height; }
+    DevFloat WriterOpenGL::getFontHeightInPixels() const { return font->height; }
 
     void WriterOpenGL::reshape(int w, int h) {
         mat4_set_orthographic(&projection, 0, (float) w, 0, (float) h, -1, 1);

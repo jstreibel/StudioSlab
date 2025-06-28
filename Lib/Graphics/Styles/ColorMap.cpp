@@ -96,7 +96,7 @@ namespace Slab::Graphics {
     ColorMap::ColorMap(const ColorMap &colorMap)
             : ColorMap(colorMap.name, colorMap.type, colorMap.colors, colorMap.clipped, colorMap.saturated) {}
 
-    auto ColorMap::mapValueToColor(Real value) const -> Color {
+    auto ColorMap::mapValueToColor(DevFloat value) const -> Color {
         if (colors.empty())
             return {0.0, 0.0, 0.0, 0.0};
         if (value <= 0.0)
@@ -104,9 +104,9 @@ namespace Slab::Graphics {
         if (value >= 1.0)
             return saturated;
 
-        Real interval = 1.0 / static_cast<double>(colors.size() - 1);
+        DevFloat interval = 1.0 / static_cast<double>(colors.size() - 1);
         auto index = static_cast<size_t>(value / interval);
-        Real t = (value - (Real)index * interval) / interval;
+        DevFloat t = (value - (DevFloat)index * interval) / interval;
 
         const Color& color1 = colors[index];
         const Color& color2 = colors[index + 1];
@@ -160,7 +160,7 @@ namespace Slab::Graphics {
         return New<ColorMap>(*this);
     }
 
-    auto ColorMap::getColorCount() const -> Count {
+    auto ColorMap::getColorCount() const -> CountType {
         return colors.size();
     }
 

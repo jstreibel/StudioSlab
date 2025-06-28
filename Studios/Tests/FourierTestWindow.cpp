@@ -44,12 +44,12 @@ namespace Tests {
 
     const char* funcSymbol = "sin";
 
-    Real func(const Real x) {
+    DevFloat func(const DevFloat x) {
         if(0) {
-            Real val = 0.0;
+            DevFloat val = 0.0;
             for (int i = 0; i < N_sqrWave; ++i) {
                 int n = 2 * i + 1;
-                val += sin(n * ω * x) / (Real) n;
+                val += sin(n * ω * x) / (DevFloat) n;
             }
             return 2 * val / π;
         } else return A*sin(ω*x);
@@ -137,7 +137,7 @@ namespace Tests {
             modes = FFT::Compute(Func, N_modes, 0, L);
 
             ωₚₑₐₖ[Re] = 0.0;
-            Real A_max = 0.0;
+            DevFloat A_max = 0.0;
             for (const auto &pt: modes.re->getPoints()) {
                 fix Aₖ = abs(pt.y);
                 if (A_max < Aₖ) {

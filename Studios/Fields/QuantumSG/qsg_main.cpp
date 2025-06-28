@@ -32,11 +32,11 @@ public:
 protected:
     Slab::Pointer<Slab::Graphics::MainViewer> main_viewer;
     void OnStart() override {
-        GET task_manager = Slab::GetModule<Slab::Core::TaskManagerModule>("TaskManager");
+        GET task_manager = Slab::GetModule<Slab::Core::MTaskManager>("TaskManager");
 
         numeric_task->init();
 
-        auto job = task_manager.addTask(numeric_task);
+        auto job = task_manager.AddTask(numeric_task);
     };
 };
 

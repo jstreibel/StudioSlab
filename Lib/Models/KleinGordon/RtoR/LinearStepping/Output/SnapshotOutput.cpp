@@ -4,7 +4,7 @@
 
 #include "SnapshotOutput.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 namespace Slab::Models::KGRtoR {
 
@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
-        outputFile << "{" << Core::CLInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
+        outputFile << "{" << Core::FCommandLineInterfaceManager::getInstance().renderAsPythonDictionaryEntries();
         for(const auto&[key, value] : xtraPyDictEntries) // {key: value, key:value, }
             outputFile << "\"" << key << "\": " << value << ", ";
         outputFile.seekp(-2, std::ios_base::cur);
@@ -64,7 +64,7 @@ namespace Slab::Models::KGRtoR {
 
         auto &data = space.getHostData(true);
         auto vecData = std::vector(std::begin(data), std::end(data));
-        outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(Real)));
+        outputFile.write(reinterpret_cast<const char*>(&data[0]), (long)(data.size()*sizeof(DevFloat)));
 
         outputFile.close();
         Core::Log::Success() << "Snapshot saved to '" << outputFileName << "'." << Core::Log::Flush;

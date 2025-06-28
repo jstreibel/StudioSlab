@@ -35,7 +35,7 @@ namespace Slab::Math {
         return data;
     }
 
-    auto CustomStringSeparatedSOF::operator()(const Real &out) const -> ByteData {
+    auto CustomStringSeparatedSOF::operator()(const DevFloat &out) const -> ByteData {
         std::ostringstream oss;
 
         oss << out << sep;

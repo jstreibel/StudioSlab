@@ -16,7 +16,7 @@
 
 namespace Slab::Math {
 
-    typedef Vector<Real> StateType;
+    typedef Vector<DevFloat> StateType;
 
     class XYNetwork {
         StateType ThetaField;
@@ -30,17 +30,17 @@ namespace Slab::Math {
 
         int ij_to_k_abs(int i, int j) const;
 
-        Real theta(int k) const;
+        DevFloat theta(int k) const;
 
-        Real theta(int i, int j) const;
+        DevFloat theta(int i, int j) const;
 
-        Real E(Real h) const;
+        DevFloat E(DevFloat h) const;
 
-        Real M() const;
+        DevFloat M() const;
 
         bool areNeighbors(int i1, int j1, int i2, int j2) const;
 
-        void set(int k, Real value);
+        void set(int k, DevFloat value);
 
         /**
          * Calculates energy density at site i, j with h=0;
@@ -48,7 +48,7 @@ namespace Slab::Math {
          * @param j
          * @return
          */
-        Real e(int i, int j) const;
+        DevFloat e(int i, int j) const;
 
         /**
          * Calculates a proposed single-spin-rotate delta angle energy difference.
@@ -57,7 +57,7 @@ namespace Slab::Math {
          * @param h
          * @return
          */
-        Real ssrDeltaE(int i, int j, Real h, Real delta) const;
+        DevFloat ssrDeltaE(int i, int j, DevFloat h, DevFloat delta) const;
 
         /**
          * Calculates a proposed single-spin-overrelaxation with rotation delta angle energy difference.
@@ -66,7 +66,7 @@ namespace Slab::Math {
          * @param h
          * @return
          */
-        Real ssorrDeltaE(int i, int j, Real h, Real delta) const;
+        DevFloat ssorrDeltaE(int i, int j, DevFloat h, DevFloat delta) const;
 
         void overrelax(int i, int j);
 
@@ -79,9 +79,9 @@ namespace Slab::Math {
          */
         double tseDeltaE(int s1, int s2, double h) const;
 
-        void rotate(int k, Real angle);
+        void rotate(int k, DevFloat angle);
 
-        void rotate(int i, int j, Real angle);
+        void rotate(int i, int j, DevFloat angle);
 
         void operator=(StateType S);
         //void operator = (const Vector<long double> S);

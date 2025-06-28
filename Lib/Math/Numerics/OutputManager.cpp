@@ -5,7 +5,7 @@
 
 namespace Slab::Math {
 
-    OutputManager::OutputManager(Count max_steps) : maxSteps(max_steps) {}
+    OutputManager::OutputManager(CountType max_steps) : maxSteps(max_steps) {}
 
     OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
@@ -23,7 +23,7 @@ namespace Slab::Math {
 
 
     auto OutputManager::computeNStepsToNextOutput(UInt currStep) -> UInt {
-        Count nSteps = maxSteps;
+        CountType nSteps = maxSteps;
 
         for (auto &socket: outputs) {
             const size_t nextRecStep = socket->computeNextRecStep(currStep);

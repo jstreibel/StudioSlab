@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_KG_NUMERICCONFIG_H
 #define STUDIOSLAB_KG_NUMERICCONFIG_H
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 #include "Models/DynamicsNumericConfig.h"
 
 namespace Slab::Models {
@@ -39,17 +39,17 @@ namespace Slab::Models {
 
         auto getn() const -> UInt override;
 
-        auto getdt() const -> Real;
+        auto getdt() const -> DevFloat;
 
-        auto getr() const -> Real;
+        auto getr() const -> DevFloat;
 
-        auto getxMin() const -> Real;
+        auto getxMin() const -> DevFloat;
 
-        auto getxMax() const -> Real;
+        auto getxMax() const -> DevFloat;
 
-        auto geth() const -> Real;
+        auto geth() const -> DevFloat;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
 
 
     };

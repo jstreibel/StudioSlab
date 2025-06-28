@@ -26,8 +26,8 @@ namespace Slab::Graphics {
         void setColormapTexture(Pointer<OpenGL::Texture1D_Color>);
 
         bool dirty_minmax = true;
-        Real field_min = 0.0;
-        Real field_max = 1.0;
+        DevFloat field_min = 0.0;
+        DevFloat field_max = 1.0;
 
         // Fragment
         float kappa = 1; //  contrast
@@ -35,9 +35,9 @@ namespace Slab::Graphics {
         float eps_offset = 0.0f;
         bool symmetric_maxmin = true;
 
-        void setKappa(Real) const;
-        void setSaturation(Real);
-        void setEpsilon(Real);
+        void setKappa(DevFloat) const;
+        void setSaturation(DevFloat);
+        void setEpsilon(DevFloat);
         void setSymmetricMaxMin(bool);
 
         void updateColorbar();
@@ -55,7 +55,7 @@ namespace Slab::Graphics {
         void use() const override;
 
         bool dirtyMinMax() const override;
-        void setMinMax(Real, Real) override;
+        void setMinMax(DevFloat, DevFloat) override;
     };
 
 } // Slab::Graphics

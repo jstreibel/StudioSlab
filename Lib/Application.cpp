@@ -31,7 +31,7 @@ namespace Slab {
     }
 
     Application::~Application() {
-        if (p_Platform != nullptr) p_Platform->terminate();
+        if (p_Platform != nullptr) p_Platform->Terminate();
 
         Core::BackendManager::UnloadAllModules();
     }
@@ -50,7 +50,7 @@ namespace Slab {
         const auto self = Dummy(*this);
 
         p_Platform->GetMainSystemWindow()->addEventListener(self);
-        p_Platform->run();
+        p_Platform->Run();
 
         return 0;
     }

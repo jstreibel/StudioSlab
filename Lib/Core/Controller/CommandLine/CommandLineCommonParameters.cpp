@@ -2,7 +2,7 @@
 // Created by joao on 7/19/19.
 //
 
-#include "CommonCLParameters.h"
+#include "CommandLineCommonParameters.h"
 
 // template<>
 // auto ParameterTemplate<bool>::addToOptionsGroup(CLODEasyInit &add) const -> void {
@@ -16,32 +16,32 @@
 namespace Slab::Core {
 
     template<class Type>
-    CLParameterTemplate<Type>::~CLParameterTemplate() = default;
+    TCommandLineParameter<Type>::~TCommandLineParameter() = default;
 
     template<class Type>
-    auto CLParameterTemplate<Type>::valueToString() const -> std::string {
+    auto TCommandLineParameter<Type>::ValueToString() const -> std::string {
         return ToStr(val);
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::addToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
+    auto TCommandLineParameter<Type>::AddToCommandLineOptionsGroup(CLODEasyInit &add) const -> void {
         auto value = CLOptions::value<Type>()->default_value(ToStr(val));
         add(fullCLName, description, value);
     }
 
     template<class Type>
-    void CLParameterTemplate<Type>::setValue(const void *pVoid) {
+    void TCommandLineParameter<Type>::SetValue(const void *pVoid) {
         val = *static_cast<const Type *>(pVoid);
     }
 
     template<class Type>
-    void CLParameterTemplate<Type>::setValue(Type value) { this->val = value; }
+    void TCommandLineParameter<Type>::SetValue(Type value) { this->val = value; }
 
     template<class Type>
-    const void *CLParameterTemplate<Type>::getValueVoid() const { return &val; }
+    const void *TCommandLineParameter<Type>::GetValueVoid() const { return &val; }
 
     template<class Type>
-    void CLParameterTemplate<Type>::setValueFromCommandLine(VariableValue var) {
+    void TCommandLineParameter<Type>::SetValueFromCommandLine(VariableValue var) {
         try {
             this->val = var.as<Type>();
             // std::cout << "Parameter " << commandLineArgName << " being attributed value " << val << " from command line." << std::endl;
@@ -55,56 +55,56 @@ namespace Slab::Core {
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::getValue() const -> Type {
+    auto TCommandLineParameter<Type>::GetValue() const -> Type {
         return val;
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::operator*() -> Type & {
+    auto TCommandLineParameter<Type>::operator*() -> Type & {
         return val;
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::operator*() const -> const Type & {
+    auto TCommandLineParameter<Type>::operator*() const -> const Type & {
         return val;
     }
 
     template<class Type>
-    CLParameterTemplate<Type>::operator Type() const {
+    TCommandLineParameter<Type>::operator Type() const {
         return val;
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::operator=(const Type &rhs) -> CLParameterTemplate & {
+    auto TCommandLineParameter<Type>::operator=(const Type &rhs) -> TCommandLineParameter & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::operator=(Type &rhs) -> CLParameterTemplate & {
+    auto TCommandLineParameter<Type>::operator=(Type &rhs) -> TCommandLineParameter & {
         val = rhs;
         return *this;
     }
 
     template<class Type>
-    auto CLParameterTemplate<Type>::operator<(const Type &rhs) -> bool {
+    auto TCommandLineParameter<Type>::operator<(const Type &rhs) -> bool {
         return val < rhs;
     }
 
     template
-    class CLParameterTemplate<int>;
+    class TCommandLineParameter<int>;
 
     template
-    class CLParameterTemplate<Real>;
+    class TCommandLineParameter<DevFloat>;
 
     template
-    class CLParameterTemplate<Str>;
+    class TCommandLineParameter<Str>;
 
     template
-    class CLParameterTemplate<StrVector>;
+    class TCommandLineParameter<StrVector>;
 
     template
-    class CLParameterTemplate<bool>;
+    class TCommandLineParameter<bool>;
 
 }
 

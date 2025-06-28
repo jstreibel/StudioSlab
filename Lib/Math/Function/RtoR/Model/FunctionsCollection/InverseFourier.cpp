@@ -5,13 +5,13 @@
 #include "InverseFourier.h"
 
 namespace Slab::Math::RtoR {
-    Real InverseFourier::operator()(Real x) const {
+    DevFloat InverseFourier::operator()(DevFloat x) const {
         auto N = modes.re->getPoints().size();
 
         IN re = modes.re->getPoints();
         IN im = modes.im->getPoints();
 
-        Real val = 0.0;
+        DevFloat val = 0.0;
 
         // First term must be 1/2
         {

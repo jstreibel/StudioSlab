@@ -10,11 +10,11 @@
 namespace Slab::Math::RtoR {
 
     class RtoRPolynomial : public RtoR::Function {
-        Vector<Real> coeffs;
+        Vector<DevFloat> coeffs;
     public:
-        RtoRPolynomial(Vector<Real> coeffs);
+        RtoRPolynomial(Vector<DevFloat> coeffs);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
     };
 
 } // Slab::Math::RtoR

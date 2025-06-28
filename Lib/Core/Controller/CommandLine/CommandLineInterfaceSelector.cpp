@@ -2,11 +2,11 @@
 // Created by joao on 09/09/2019.
 //
 
-#include "CLInterfaceSelector.h"
+#include "CommandLineInterfaceSelector.h"
 
 #include <boost/algorithm/string.hpp>
 
-#include "CLInterfaceManager.h"
+#include "CommandLineInterfaceManager.h"
 #include "Utils/Utils.h"
 #include "Core/Tools/Log.h"
 
@@ -15,11 +15,11 @@
 namespace Slab::Core {
 
 
-    CLInterfaceSelector::CLInterfaceSelector(Str name) : CLInterfaceOwner(name + " interface selector", -1, true) {
-        interface->addParameters({&selection});
+    CLInterfaceSelector::CLInterfaceSelector(Str name) : FCommandLineInterfaceOwner(name + " interface selector", -1, true) {
+        Interface->AddParameters({&selection});
     };
 
-    auto CLInterfaceSelector::getCurrentCandidate() const -> CLInterface_ptr {
+    auto CLInterfaceSelector::getCurrentCandidate() const -> FCommandLineInterface_ptr {
         if (currentSelection > candidates.size() - 1)
             throw Str("Unknown sim type: ") + ToStr(currentSelection);
 
@@ -48,15 +48,15 @@ namespace Slab::Core {
         }
 
         auto currSelection = getCurrentCandidate();
-        Log::Critical() << "InterfaceSelector '" << interface->getName()
+        Log::Critical() << "InterfaceSelector '" << Interface->GetName()
                         << "' has pre-parsed its options. Selection is '"
-                        << currSelection->getName() << "'." << Log::Flush;
+                        << currSelection->GetName() << "'." << Log::Flush;
 
         if (registerInInterfaceManager) {
             Log::Info(
                     "InterfaceSelector is registering selected interface (and sub-interfaces if present) in InterfaceManager.");
 
-            auto &interfaceManager = CLInterfaceManager::getInstance();
+            auto &interfaceManager = FCommandLineInterfaceManager::getInstance();
 
             interfaceManager.registerInterface(currSelection);
         }
@@ -66,7 +66,7 @@ namespace Slab::Core {
         return *this;
     }
 
-    void CLInterfaceSelector::registerOption(CLInterface_ptr interface) {
+    void CLInterfaceSelector::registerOption(FCommandLineInterface_ptr interface) {
         candidates.push_back(interface);
 
         generateHelpDescription();
@@ -80,7 +80,7 @@ namespace Slab::Core {
         for (int i = 0; i < candidates.size(); i++) {
             auto cand = candidates[i];
             if (*cand == *curr) simsHelp << Log::BoldFace << Log::FGBlue;
-            simsHelp << i << ". " << cand->getName();
+            simsHelp << i << ". " << cand->GetName();
             if (*cand == *curr) simsHelp << Log::ResetFormatting;
             simsHelp << "\n";
         }

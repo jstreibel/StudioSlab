@@ -46,7 +46,7 @@ namespace Slab::Models::MolecularDynamics {
     void NewtonMechanics::applyBoundaryConditions(Graphics::PointContainer & v_q) {
         fix L = numeric_config->getL();
 
-        const Real hw = L * .5;
+        const DevFloat hw = L * .5;
         int i = 0;
         for (auto &q : v_q) {
             if (q.x < -hw || q.x >= hw) {
@@ -86,14 +86,14 @@ namespace Slab::Models::MolecularDynamics {
     }
 
 
-    Real NewtonMechanics::computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p) {
-        Real K = .0;
+    DevFloat NewtonMechanics::computeEnergy(const Graphics::PointContainer &v_q, Graphics::PointContainer &v_p) {
+        DevFloat K = .0;
         for (auto &p : v_p)
             K += p.lengthSqr();
         K *= .5;
 
         const size_t N = v_q.size();
-        Real _U = 0.0;
+        DevFloat _U = 0.0;
         for (size_t i = 0; i < N - 1; i++) {
             const Graphics::Point2D &q1 = v_q[i];
             for (size_t j = i; j < N; j++) {
@@ -243,7 +243,7 @@ namespace Slab::Models::MolecularDynamics {
         #endif
     }
 
-    void NewtonMechanics::operator()(const MoleculeContainer &v_m, MoleculeContainer &v_dmdt, const Real) {
+    void NewtonMechanics::operator()(const MoleculeContainer &v_m, MoleculeContainer &v_dmdt, const DevFloat) {
         const auto N = v_m.size();
 
         assert(N == v_dmdt.size());
@@ -274,7 +274,7 @@ namespace Slab::Models::MolecularDynamics {
         return flippedSides;
     }
 
-    auto NewtonMechanics::setDissipation(Real k) -> void {
+    auto NewtonMechanics::setDissipation(DevFloat k) -> void {
         dissipation = k;
     }
 

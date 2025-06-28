@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     class WindowRow : public SlabWindow {
         struct WinMetaData {
             Pointer<SlabWindow> window;
-            Real width;
+            DevFloat width;
         };
 
         std::list<WinMetaData> windowsList;

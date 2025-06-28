@@ -30,7 +30,7 @@ namespace Slab::Graphics {
     : SystemWindowEventListener(cfg.parent_syswin), config(std::move(cfg))
     {
         if(config.title.empty()){
-            config.title = "[Window:" + ToStr(get_id()) + "]";
+            config.title = "[Window:" + ToStr(GetId()) + "]";
         }
 
         if(parent_system_window == nullptr)
@@ -147,7 +147,7 @@ namespace Slab::Graphics {
         // fix yMouseLocal = parent_systemwindow_h - mouse.y - vpRect.yMin;
         fix yMouseLocal = mouse->y - vpRect.yMin;
 
-        return {(Real) xMouseLocal, (Real) yMouseLocal};
+        return {(DevFloat) xMouseLocal, (DevFloat) yMouseLocal};
     }
 
 

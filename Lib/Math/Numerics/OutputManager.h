@@ -11,7 +11,7 @@ namespace Slab::Math {
         Vector<Socket_ptr > outputs;
 
     public:
-        explicit OutputManager(Count max_steps);
+        explicit OutputManager(CountType max_steps);
 
         ~OutputManager();
 

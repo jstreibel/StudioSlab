@@ -11,8 +11,8 @@
 
 namespace Slab::Graphics {
 
-    class GraphicBackend : public Core::Backend {
-        void notifyModuleLoaded(const Pointer<Slab::Core::Module> &pointer) override;
+    class GraphicBackend : public Core::FBackend {
+        void notifyModuleLoaded(const Pointer<Slab::Core::SlabModule> &pointer) override;
 
     protected:
 
@@ -42,9 +42,9 @@ namespace Slab::Graphics {
 
         auto getGraphicsModules() -> const Vector<Volatile<GraphicsModule>> &;
 
-        void terminate() override;
+        void Terminate() override;
 
-        auto isHeadless() const -> bool final;
+        auto IsHeadless() const -> bool final;
     };
 
 }

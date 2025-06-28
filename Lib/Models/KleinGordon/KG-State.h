@@ -25,7 +25,7 @@ namespace Slab::Models {
     class KGState : public Base::EquationState, public EqStateOutputInterface {
     public:
         typedef Base::EquationState State;
-        typedef Real OutCategory;
+        typedef DevFloat OutCategory;
         typedef Base::NumericFunction<InCategory, OutCategory> Field;
         typedef Base::FunctionT<InCategory, OutCategory> FieldBase;
         typedef Pointer<Field> Field_ptr;
@@ -78,7 +78,7 @@ namespace Slab::Models {
 
             return *this;
         }
-        State &StoreScalarMultiplication(const State &state, const Real a) override {
+        State &StoreScalarMultiplication(const State &state, const DevFloat a) override {
             auto &kgState = dynamic_cast<const KGState&>(state);
             phi->StoreScalarMultiplication(kgState.getPhi(), a);
             dPhiDt->StoreScalarMultiplication(kgState.getDPhiDt(), a);

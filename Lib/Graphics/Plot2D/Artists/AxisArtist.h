@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     class AxisArtist : public Artist {
     public:
         struct Tick {
-            Real mark;
+            DevFloat mark;
             Str label;
         };
 
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
         int y_label_yoffset_in_pixels = 0;
 
         Unit hUnit, vUnit;
-        Real xSpacing=1, ySpacing=1;
+        DevFloat xSpacing=1, ySpacing=1;
         float x_spacing_multiplier = 4.0;
         float y_spacing_multiplier = 2.0;
 

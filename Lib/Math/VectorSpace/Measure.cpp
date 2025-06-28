@@ -12,7 +12,7 @@ namespace Slab::Math {
 
     }
 
-    Real Measure::operator*() {
+    DevFloat Measure::operator*() {
         auto v = 1.;
         for (auto lv: linearValues)
             v *= lv;

@@ -9,17 +9,17 @@
 
 namespace Slab::Core {
 
-    class DummyTask : public Task {
+    class FDummyTask : public FTask {
     public:
-        bool cycle(CycleOptions options) override { return false; }
+        FDummyTask() : FTask("Dummy") { }
 
-        bool run() override {
-            return false;
-        }
-
-
+        auto Run() -> bool override;
     };
 
+    inline auto FDummyTask::Run() -> bool
+    {
+        return false;
+    }
 }
 
 #endif //STUDIOSLAB_DUMMYPROGRAM_H

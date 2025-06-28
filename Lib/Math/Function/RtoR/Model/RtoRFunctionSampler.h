@@ -11,7 +11,7 @@
 namespace Slab::Math::RtoR {
     class FunctionRenderer{
     public:
-        static auto ToPointSet(const RtoR::Function &func, Real xMin, Real xMax, UInt resolution, Real scale=1.0) -> Math::PointSet_ptr;
+        static auto ToPointSet(const RtoR::Function &func, DevFloat xMin, DevFloat xMax, UInt resolution, DevFloat scale=1.0) -> Math::PointSet_ptr;
         static auto ToNumericFunction(const RtoR::Function &func, RtoR::NumericFunction &output);
     };
 }

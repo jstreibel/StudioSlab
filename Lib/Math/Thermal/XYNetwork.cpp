@@ -33,17 +33,17 @@ namespace Slab::Math {
         return j + i * L;
     }
 
-    Real XYNetwork::theta(int i, int j) const {
+    DevFloat XYNetwork::theta(int i, int j) const {
         const int k = ij_to_k_periodic(i, j);
         return theta(k);
     }
 
-    Real XYNetwork::theta(int k) const {
+    DevFloat XYNetwork::theta(int k) const {
         return ThetaField[k];
     }
 
-    Real XYNetwork::E(Real h) const {
-        Real soma = 0;
+    DevFloat XYNetwork::E(DevFloat h) const {
+        DevFloat soma = 0;
         for (int i = 0; i < L; i++)
             for (int j = 0; j < L; j++) {
                 float th = theta(i, j);
@@ -56,11 +56,11 @@ namespace Slab::Math {
         return soma;
     }
 
-    Real XYNetwork::M() const {
+    DevFloat XYNetwork::M() const {
         // obs m_i=s_i
 
-        Real magx = 0;
-        Real magy = 0;
+        DevFloat magx = 0;
+        DevFloat magy = 0;
         for (int i = 0; i < L; i++)
             for (int j = 0; j < L; j++) {
                 auto th = theta(i, j);
@@ -80,7 +80,7 @@ namespace Slab::Math {
         return false;
     }
 
-    Real XYNetwork::ssrDeltaE(int i, int j, Real h, Real delta) const {
+    DevFloat XYNetwork::ssrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
         auto thC = theta(i, j);
 
         auto thN = theta(i, j - 1),
@@ -98,7 +98,7 @@ namespace Slab::Math {
         return vizN_deltaE + vizS_deltaE + vizE_deltaE + vizW_deltaE;
     }
 
-    Real XYNetwork::ssorrDeltaE(int i, int j, Real h, Real delta) const {
+    DevFloat XYNetwork::ssorrDeltaE(int i, int j, DevFloat h, DevFloat delta) const {
         throw "Not implemented.";
         return 0;
     }
@@ -150,22 +150,22 @@ namespace Slab::Math {
         return (dE1 + dE2);
     }
 
-    void XYNetwork::rotate(int k, Real angle) {
+    void XYNetwork::rotate(int k, DevFloat angle) {
         ThetaField[k] += angle;
     }
 
-    void XYNetwork::rotate(int i, int j, Real angle) {
+    void XYNetwork::rotate(int i, int j, DevFloat angle) {
         rotate(ij_to_k_abs(i, j), angle);
     }
 
     void XYNetwork::operator=(const StateType S) { this->ThetaField = S; }
 
 
-    void XYNetwork::set(int k, Real value) {
+    void XYNetwork::set(int k, DevFloat value) {
         ThetaField[k] = value;
     }
 
-    Real XYNetwork::e(int i, int j) const {
+    DevFloat XYNetwork::e(int i, int j) const {
         auto thC = theta(i, j);
 
         auto thN = theta(i, j - 1),

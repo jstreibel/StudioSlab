@@ -17,18 +17,18 @@
 namespace Slab::Core {
 
     class ThreadPool {
-        Vector<std::thread> workers;
-        std::queue<std::function<void()>> tasks;
-        Mutex queueMutex;
-        std::condition_variable condition;
-        bool terminate = false;
+        Vector<std::thread> Workers;
+        std::queue<std::function<void()>> Tasks;
+        Mutex QueueMutex;
+        std::condition_variable Condition;
+        bool bTerminate = false;
 
     public:
-        ThreadPool(size_t numThreads);
+        ThreadPool(size_t NumThreads);
 
         ~ThreadPool();
 
-        void enqueue(std::function<void()> task);
+        void Enqueue(std::function<void()> task);
 
     };
 

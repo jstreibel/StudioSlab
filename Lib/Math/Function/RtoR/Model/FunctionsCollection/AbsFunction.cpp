@@ -7,7 +7,7 @@
 
 namespace Slab::Math::RtoR {
 
-    Real AbsFunction::operator()(Real x) const {
+    DevFloat AbsFunction::operator()(DevFloat x) const {
         return Abs(x);
     }
 

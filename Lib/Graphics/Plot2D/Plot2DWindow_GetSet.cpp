@@ -11,9 +11,9 @@ namespace Slab {
     auto Graphics::Plot2DWindow::getRegion() -> Graphics::PlottingRegion2D &
     { return region; }
 
-    void Graphics::Plot2DWindow::setAnimationTime(Real value) { animationTimeSeconds = value; }
+    void Graphics::Plot2DWindow::setAnimationTime(DevFloat value) { animationTimeSeconds = value; }
 
-    Real Graphics::Plot2DWindow::getAnimationTime() const { return animationTimeSeconds; }
+    DevFloat Graphics::Plot2DWindow::getAnimationTime() const { return animationTimeSeconds; }
 
     auto Graphics::Plot2DWindow::getLastXHairPosition() const -> Point2D {
         auto vpRect = getViewport();

@@ -8,7 +8,7 @@
 
 #include "3rdParty/ImGui.h"
 #include "WindowStyles.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
 #include "Math/SlabMath.h"
@@ -94,18 +94,18 @@ namespace Slab::Graphics {
             }
 
 
-            auto allInterfaces = Core::CLInterfaceManager::getInstance().getInterfaces();
+            auto allInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
             if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
                 for (auto &interface: allInterfaces) {
-                    fix generalDescription = interface->getGeneralDescription();
+                    fix generalDescription = interface->GetGeneralDescription();
 
-                    fix text = interface->getName() +
+                    fix text = interface->GetName() +
                                (!generalDescription.empty() ? "(" + generalDescription + ")" : "");
 
 
                     if (ImGui::TreeNode(text.c_str())) {
-                        for (auto &param: interface->getParameters()) {
+                        for (auto &param: interface->GetParameters()) {
                             fix descr = param->getDescription();
                             fix longName = param->getCommandLineArgumentName(true);
                             fix shortName = param->getCommandLineArgumentName(false);
@@ -118,7 +118,7 @@ namespace Slab::Graphics {
 
                             ImGui::Text("%s", name.c_str());
 
-                            ImGui::Text("\tValue: %s", param->valueToString().c_str());
+                            ImGui::Text("\tValue: %s", param->ValueToString().c_str());
 
                             if (!descr.empty())
                                 ImGui::Text("\tDescr.: %s", descr.c_str());

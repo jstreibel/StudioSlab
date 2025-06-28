@@ -10,7 +10,7 @@
 
 #include "Core/Backend/BackendManager.h"
 #include "Core/SlabCore.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "KG-RtoRSolver.h"
 #include "KG-RtoRBoundaryCondition.h"
@@ -36,7 +36,7 @@
 
 #include "Graphics/Window/SlabWindowManager.h"
 
-constexpr const Slab::Count MAX_SNAPSHOTS = 200;
+constexpr const Slab::CountType MAX_SNAPSHOTS = 200;
 
 #define MASSLESS_WAVE_EQ        0
 #define KLEIN_GORDON_POTENTIAL  1
@@ -71,9 +71,9 @@ namespace Slab::Models::KGRtoR {
     KGRtoRBuilder::KGRtoRBuilder(const Str &name, const Str& generalDescription, bool doRegister)
             : Models::KGRecipe(New<KGNumericConfig>(false), "RtoR-" + name, generalDescription,
                                DONT_REGISTER_IMMEDIATELY) {
-        interface->addParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
+        Interface->AddParameters({&Potential, &massSqr, &N_num, &BoundaryConditions});
 
-        if (doRegister) RegisterCLInterface(interface);
+        if (doRegister) RegisterCLInterface(Interface);
     }
 
     auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
@@ -94,7 +94,7 @@ namespace Slab::Models::KGRtoR {
 
         fix t = p.gett();
         fix max_steps = p.getn();
-        fix N = static_cast<Real>(p.getN());
+        fix N = static_cast<DevFloat>(p.getN());
         fix L = p.getL();
         fix xMin = p.getxMin();
         fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
@@ -191,12 +191,12 @@ namespace Slab::Models::KGRtoR {
         fix Δt    = *timeDFTSnapshot_tDelta  <= 0 ? t : *timeDFTSnapshot_tDelta;
         fix t_len = *timeDFTSnapshot_tLength <= 0 ? t : *timeDFTSnapshot_tLength;
 
-        const Count snapshot_count = std::ceil(t / Δt);
+        const CountType snapshot_count = std::ceil(t / Δt);
 
         if(snapshot_count>MAX_SNAPSHOTS)
             throw Exception(
                     Str("Error generating time-domain dft snapshots. The value of '--") +
-                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.valueToString() +
+                            timeDFTSnapshot_tDelta.getCommandLineArgumentName(true) + "' is " + timeDFTSnapshot_tDelta.ValueToString() +
                     ", yielding a snapshot count of " + ToStr(snapshot_count) + ", which is above the " +
                 ToStr(MAX_SNAPSHOTS) + " limit.");
 
@@ -205,8 +205,8 @@ namespace Slab::Models::KGRtoR {
             fix L = c.getL();
             fix xMin = c.getxMin();
 
-            if(fix k_param = CLInterfaceManager::getInstance().getParameter("k")){
-                fix k_n = k_param->getValueAs<Real>();
+            if(fix k_param = FCommandLineInterfaceManager::getInstance().getParameter("k")){
+                fix k_n = k_param->getValueAs<DevFloat>();
                 x_locations = {L/(4.*k_n)};
             } else
                 x_locations={xMin+L/2};
@@ -236,7 +236,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     Pointer<Socket>
-    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const Real t_start, const Real t_end, const RealVector &x_locations) const {
+    KGRtoRBuilder::_newTimeDFTSnapshotOutput(const Str& folder, const DevFloat t_start, const DevFloat t_end, const RealVector &x_locations) const {
 
         Utils::TouchFolder(folder);
 
@@ -332,7 +332,7 @@ namespace Slab::Models::KGRtoR {
         throw Exception("Unknown potential");
     }
 
-    Pointer<Base::FunctionT<Real, Real>> KGRtoRBuilder::getNonHomogenous() {
+    Pointer<Base::FunctionT<DevFloat, DevFloat>> KGRtoRBuilder::getNonHomogenous() {
         return {};
     }
 
@@ -349,7 +349,7 @@ namespace Slab::Models::KGRtoR {
     bool KGRtoRBuilder::usesPeriodicBC() const { return force_periodicBC; }
 
     Str KGRtoRBuilder::suggestFileName() const {
-        const auto strParams = interface->toString({"massSqr"}, " ");
+        const auto strParams = Interface->ToString({"massSqr"}, " ");
         Log::Debug() << strParams << Log::Flush;
         const auto voidSuggestion = NumericalRecipe::suggestFileName();
         return voidSuggestion + " " + strParams;

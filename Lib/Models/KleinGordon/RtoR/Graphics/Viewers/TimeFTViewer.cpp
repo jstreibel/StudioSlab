@@ -47,8 +47,8 @@ namespace Slab::Models::KGRtoR {
 
         if(function == nullptr) return;
 
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        DevFloat t_0 = (DevFloat)t0;
+        DevFloat t_f = t_0 + (DevFloat)Δt;
 
         fix t_min = function->getDomain().yMin;
 
@@ -62,14 +62,14 @@ namespace Slab::Models::KGRtoR {
         fix Mₜ = function->getM();
         fix dt = function->getDomain().getLy()/Mₜ;
         fix δt = t_f - t_0;
-        fix M_ = (Count)floor(δt / dt);
+        fix M_ = (CountType)floor(δt / dt);
         fix M = M_%2==0 ? M_ : M_-1;
         fix m = M/2 + 1;
 
         fix dk = 2 * M_PI / δt;
 
         auto ωSpace_temp = New<Math::R2toR::NumericFunction_CPU>(N, m, xMin, 0, dx, dk);
-        Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(Real)M);
+        Math::RtoR::NumericFunction_CPU tempSpace(M, .0, dk*(DevFloat)M);
 
         fix j_0 = (Int)floor((t_0-t_min)/dt);
         for(auto i=0; i<N; ++i){

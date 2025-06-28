@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         explicit SlabImGuiContext(ParentSystemWindow, CallSet);
         ~SlabImGuiContext() override = default;
 
-        Real getFontSize() const;
+        DevFloat getFontSize() const;
 
         void AddMainMenuItem(MainMenuItem) override;
 

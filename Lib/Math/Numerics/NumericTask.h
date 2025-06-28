@@ -17,7 +17,7 @@ const auto FORCE_INITIAL_OUTPUT = true;
 
 namespace Slab::Math {
 
-    class NumericTask final : public Core::Task {
+    class NumericTask final : public Core::FTask {
         Pointer<Base::NumericalRecipe> recipe;
 
         UInt totalSteps;
@@ -39,7 +39,7 @@ namespace Slab::Math {
         auto _cycleUntilOutputOrFinish() -> bool;
 
     protected:
-        Core::TaskStatus run() override;
+        Core::ETaskStatus Run() override;
     public:
         explicit NumericTask(const Pointer<Base::NumericalRecipe> &recipe, bool pre_init=true);
 
@@ -48,7 +48,7 @@ namespace Slab::Math {
         void init();
         auto isInitialized() const -> bool;
 
-        void abort() override;
+        void Abort() override;
 
         auto getSteps() const -> size_t;
 

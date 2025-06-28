@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         auto label = graph2D.getXHairLabel(XHairLocation);
 
         auto currStyle = PlotThemeManager::GetCurrent();
-        currStyle->ticksWriter->write(label, {(Real)mouseLocal.x+20, h - (Real)mouseLocal.y+20}, currStyle->graphNumbersColor);
+        currStyle->ticksWriter->write(label, {(DevFloat)mouseLocal.x+20, h - (DevFloat)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
         XHair.addPoint({region_rect.xMin, XHairLocation.y});

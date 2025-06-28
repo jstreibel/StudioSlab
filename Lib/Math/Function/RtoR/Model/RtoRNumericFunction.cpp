@@ -14,8 +14,8 @@ namespace Slab::Math::RtoR {
                                                  toCopy.dev,
                                                  toCopy.laplacianType) {}
 
-    NumericFunction::NumericFunction(UInt N, Real xMin, Real xMax, Device dev, LaplacianType laplacianType)
-    : Base::NumericFunction<Real, Real>(DimensionMetaData({N}, {(xMax - xMin) / Real(N-1)}),
+    NumericFunction::NumericFunction(UInt N, DevFloat xMin, DevFloat xMax, Device dev, LaplacianType laplacianType)
+    : Base::NumericFunction<DevFloat, DevFloat>(DimensionMetaData({N}, {(xMax - xMin) / DevFloat(N-1)}),
                                         dev)
     , N(N)
     , xMin(xMin)
@@ -24,18 +24,18 @@ namespace Slab::Math::RtoR {
 
     }
 
-    auto NumericFunction::mapIntToPos(UInt i) const -> Real {
+    auto NumericFunction::mapIntToPos(UInt i) const -> DevFloat {
         const floatt L = xMax - xMin;
-        const Real h_2 = .5 * getSpace().getMetaData().geth(0);
-        return (L * Real(i) / Real(N - 1) + xMin) + h_2;
+        const DevFloat h_2 = .5 * getSpace().getMetaData().geth(0);
+        return (L * DevFloat(i) / DevFloat(N - 1) + xMin) + h_2;
     }
 
-    auto NumericFunction::mapPosToInt(Real x) const -> UInt {
-        const Real h = getSpace().getMetaData().geth(0);
+    auto NumericFunction::mapPosToInt(DevFloat x) const -> UInt {
+        const DevFloat h = getSpace().getMetaData().geth(0);
         return UInt((x - xMin) / h);
     }
 
-    Real NumericFunction::operator()(Real x) const {
+    DevFloat NumericFunction::operator()(DevFloat x) const {
         const floatt L = xMax - xMin;
         const floatt dx = getSpace().getMetaData().geth(0);
 

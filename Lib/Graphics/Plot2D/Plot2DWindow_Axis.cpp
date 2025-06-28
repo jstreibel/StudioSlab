@@ -70,8 +70,8 @@ namespace Slab {
         {
             auto currStyle = PlotThemeManager::GetCurrent();
             auto pix = Slab::Graphics::PixelSizeInSpace(newRegion, getViewport());
-            auto Δx = (Real) currStyle->hAxisPaddingInPixels * pix.x;
-            auto Δy = (Real) currStyle->hAxisPaddingInPixels * pix.y;
+            auto Δx = (DevFloat) currStyle->hAxisPaddingInPixels * pix.x;
+            auto Δy = (DevFloat) currStyle->hAxisPaddingInPixels * pix.y;
 
             newRegion.xMin -= 2*Δx;
             newRegion.xMax += 2*Δx;

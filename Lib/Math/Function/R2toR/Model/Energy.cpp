@@ -8,7 +8,7 @@
 
 namespace Slab::Math::R2toR {
 
-    Real KleinGordon::Energy::operator[](const R2toR::EquationState &function) const {
+    DevFloat KleinGordon::Energy::operator[](const R2toR::EquationState &function) const {
         const auto &phi      = static_cast<R2toR::NumericFunction&> (function.getPhi());
         const auto &dphidt   = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
         const auto &phiSpace = phi.getSpace();
@@ -44,7 +44,7 @@ namespace Slab::Math::R2toR {
         return K + D + V;
     }
 
-    Real KleinGordon::Energy::computeRadial_method1(const R2toR::EquationState &function, Real upToRadius) {
+    DevFloat KleinGordon::Energy::computeRadial_method1(const R2toR::EquationState &function, DevFloat upToRadius) {
         const auto &phi = static_cast<R2toR::NumericFunction&> (function.getPhi());
         const auto &dphidt = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
         const auto &phiSpace = phi.getSpace();
@@ -90,7 +90,7 @@ namespace Slab::Math::R2toR {
         return K + D + V;
     }
 
-    Real KleinGordon::Energy::computeRadial_method2(const R2toR::EquationState &function, Real upToRadius) {
+    DevFloat KleinGordon::Energy::computeRadial_method2(const R2toR::EquationState &function, DevFloat upToRadius) {
         const auto &phi = static_cast<R2toR::NumericFunction&> (function.getPhi());
         const auto &dphidt = static_cast<R2toR::NumericFunction&> (function.getDPhiDt());
 

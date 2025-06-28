@@ -53,7 +53,7 @@ namespace Slab::Graphics {
                 constexpr Int N=10000;
                 Animator::SetCallback(0, N, anim_time,
                                       [&window, rect_0, Δrect](Int i) {
-                                          fix s = (Real(i)/N);
+                                          fix s = (DevFloat(i)/N);
                                            fix rect = rect_0 + Δrect*s ;
 
                                           window->setx(rect.xMin);
@@ -83,7 +83,7 @@ namespace Slab::Graphics {
 
                 Animator::SetCallback(0, N, anim_time,
                     [&window, rect_0, Δrect](Int i) {
-                        fix s = (Real(i)/N);
+                        fix s = (DevFloat(i)/N);
                         fix rect = rect_0 + Δrect*s ;
 
                         window->setx(rect.xMin);
@@ -161,8 +161,8 @@ namespace Slab::Graphics {
                 auto min_width = grabbed.window->min_width;
                 auto min_height = grabbed.window->min_height;
 
-                fix w = Max(x-grabbed.window->getx()+grabbed.anchor.x, (Real)min_width);
-                fix h = Max(y-grabbed.window->gety()+grabbed.anchor.y, (Real)min_height);
+                fix w = Max(x-grabbed.window->getx()+grabbed.anchor.x, (DevFloat)min_width);
+                fix h = Max(y-grabbed.window->gety()+grabbed.anchor.y, (DevFloat)min_height);
 
                 grabbed.window->notifyReshape((int)w, (int)h);
             }
@@ -253,7 +253,8 @@ namespace Slab::Graphics {
         return window==rhs.window;
     }
 
-    bool SlabWindowManager::WindowMetaInformation::operator==(nullptr_t const &rhs) const {
+    bool SlabWindowManager::WindowMetaInformation::operator==(std::
+        nullptr_t const &rhs) const {
         return window==rhs;
     }
 } // Slab::Graphics

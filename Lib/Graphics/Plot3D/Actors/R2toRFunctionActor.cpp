@@ -74,7 +74,7 @@ namespace Slab::Graphics {
 
         fix gridN = gridMetadata.gridN;
         fix gridM = gridMetadata.gridM;
-        program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
+        program.setUniform("texelSize", Real2D(1./(DevFloat)gridM, 1./(DevFloat)gridN));
     }
 
     void R2toRFunctionActor::draw(const Scene3DWindow &graph3D) {

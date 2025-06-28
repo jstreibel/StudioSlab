@@ -67,7 +67,7 @@ namespace Slab::Graphics {
         auto writer = currStyle->ticksWriter;
 
         {
-            const Real Δy = region.height() / vUnit.value();
+            const DevFloat Δy = region.height() / vUnit.value();
 
             const auto theLog = log10(Δy);
             const auto spacing = pow(10., floor(theLog) - 1.);
@@ -111,8 +111,8 @@ namespace Slab::Graphics {
         auto writer = currStyle->ticksWriter;
         fix fontHeight = writer->getFontHeightInPixels();
 
-        fix vTickHeightInSpace = hTickHeightMultiplier*static_cast<Real>(currStyle->vTickHeightinPixels) * vPixelsToSpaceScale;
-        fix vGraphPaddingInSpace = static_cast<Real>(currStyle->vAxisPaddingInPixels) * vPixelsToSpaceScale;
+        fix vTickHeightInSpace = hTickHeightMultiplier*static_cast<DevFloat>(currStyle->vTickHeightinPixels) * vPixelsToSpaceScale;
+        fix vGraphPaddingInSpace = static_cast<DevFloat>(currStyle->vAxisPaddingInPixels) * vPixelsToSpaceScale;
 
         fix yLocationOfXAxis = region.getYMin() < -vGraphPaddingInSpace
                                            ? 0
@@ -191,7 +191,7 @@ namespace Slab::Graphics {
         glDisable(GL_LINE_STIPPLE);
 
         fix Δy = region.height();
-        fix xLocationOfYAxis = region.getXMin() + (Real)currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
+        fix xLocationOfYAxis = region.getXMin() + (DevFloat)currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
         fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
         fix iMin = static_cast<int>(region.getYMin() / ySpacing);
         fix iMax = static_cast<int>(region.getYMax() / ySpacing);
@@ -262,7 +262,7 @@ namespace Slab::Graphics {
             for(auto i = iMin; i<=iMax; ++i) {
                 if(i==0) continue;
 
-                Real mark = i*ySpacing;
+                DevFloat mark = i*ySpacing;
                 glVertex3d(region.getXMin(), mark, 0);
                 glVertex3d(region.getXMax(), mark, 0);
             }

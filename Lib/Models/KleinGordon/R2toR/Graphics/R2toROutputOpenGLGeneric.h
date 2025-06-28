@@ -24,7 +24,7 @@ namespace Slab::Models::KGR2toR {
 
     public:
 
-        explicit OutputOpenGL(Count max_steps);
+        explicit OutputOpenGL(CountType max_steps);
 
         void draw() override;
 

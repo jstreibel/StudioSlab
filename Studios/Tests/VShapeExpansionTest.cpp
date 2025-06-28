@@ -32,8 +32,8 @@ namespace Tests {
             auto s = (float) potential->get_s();
             auto N = (int) potential->getN();
 
-            if (ImGui::SliderFloat("A₀", &A, 0.1, 10)) potential->setA((Real) A);
-            if (ImGui::SliderFloat("s", &s, -3, 3)) potential->set_s((Real) s);
+            if (ImGui::SliderFloat("A₀", &A, 0.1, 10)) potential->setA((DevFloat) A);
+            if (ImGui::SliderFloat("s", &s, -3, 3)) potential->set_s((DevFloat) s);
             if (ImGui::SliderInt("N", &N, 1, 55, "%d")) {
                 if (!(N % 2)) --N;
 

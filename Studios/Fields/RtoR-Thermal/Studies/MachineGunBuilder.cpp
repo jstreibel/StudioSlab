@@ -13,7 +13,7 @@ namespace Studios::Fields::RtoRThermal {
     using namespace Slab::Math;
 
     MachineGunBuilder::MachineGunBuilder() : Builder("Machinegun", "Machinegun scattering") {
-        interface->addParameters({&v1, &n});
+        Interface->AddParameters({&v1, &n});
 
     }
 
@@ -28,7 +28,7 @@ namespace Studios::Fields::RtoRThermal {
         initCondDPhiDt += BigOne.swap();
 
         for (int i = 0; i < *n; i++) {
-            auto tx = Real(i) * .2;
+            auto tx = DevFloat(i) * .2;
 
             auto tiny = RtoR::AnalyticOscillon(.0, tx, scaleSmall, 0, .75, 0.2634, false, false);
 

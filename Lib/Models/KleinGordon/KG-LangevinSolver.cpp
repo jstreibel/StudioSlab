@@ -11,7 +11,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    Real ξ() {
+    DevFloat ξ() {
         return RandUtils::GaussianNoise(.0, 1.0);
     }
 
@@ -42,7 +42,7 @@ namespace Slab::Models::KGRtoR {
         space.upload();
     }
 
-    void KGLangevinSolver::startStep_KG(const FieldState &kgState, Real t, Real dt) {
+    void KGLangevinSolver::startStep_KG(const FieldState &kgState, DevFloat t, DevFloat dt) {
         KGRtoRSolver::startStep_KG(kgState, t, dt);
 
         α = sqrt(2 * T * γ / dt);
@@ -51,7 +51,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     KGLangevinSolver::FieldState &
-    KGLangevinSolver::F_KG(const FieldState &kgStateIn, FieldState &kgStateOut, Real t) {
+    KGLangevinSolver::F_KG(const FieldState &kgStateIn, FieldState &kgStateOut, DevFloat t) {
         if (langevinImpulses == nullptr) {
             assert(scaledImpulses == nullptr);
 
@@ -98,9 +98,9 @@ namespace Slab::Models::KGRtoR {
         return kgStateOut;
     }
 
-    void KGLangevinSolver::setTemperature(Real value) { T = value; }
+    void KGLangevinSolver::setTemperature(DevFloat value) { T = value; }
 
-    void KGLangevinSolver::setDissipationCoefficient(Real value) { γ = value; }
+    void KGLangevinSolver::setDissipationCoefficient(DevFloat value) { γ = value; }
 
 
 

@@ -10,13 +10,13 @@ namespace Slab::Math {
     class OutputConsoleMonitor : public Socket {
     private:
         Timer timer = Timer();
-        const Count total_steps;
+        const CountType total_steps;
 
     protected:
         void handleOutput(const OutputPacket &outputInfo) override;
 
     public:
-        explicit OutputConsoleMonitor(Count total_steps, Count steps_interval=100);
+        explicit OutputConsoleMonitor(CountType total_steps, CountType steps_interval=100);
         bool notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) override;
     };
 

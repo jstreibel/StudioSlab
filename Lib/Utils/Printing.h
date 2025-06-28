@@ -9,10 +9,10 @@
 
 namespace Slab::Printing {
     auto getDPI() -> int;
-    auto getTextWidthInches() -> Real;
+    auto getTextWidthInches() -> DevFloat;
 
-    auto getTotalHorizontalDots(Real proportionOfTextWidth) -> int;
-    auto getTotalVerticalDots(Real proportionOfTextWidth) -> int;
+    auto getTotalHorizontalDots(DevFloat proportionOfTextWidth) -> int;
+    auto getTotalVerticalDots(DevFloat proportionOfTextWidth) -> int;
 }
 
 

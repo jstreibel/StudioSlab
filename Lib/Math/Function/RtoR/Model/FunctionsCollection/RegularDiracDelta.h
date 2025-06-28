@@ -11,10 +11,10 @@
 
 namespace Slab::Math::RtoR {
     class RegularDiracDelta : public RtoR::Function {
-        Real (*delta)(Real, Real);
+        DevFloat (*delta)(DevFloat, DevFloat);
 
-        const Real a, eps;
-        Real tx;
+        const DevFloat a, eps;
+        DevFloat tx;
 
     public:
         enum Regularization {
@@ -28,7 +28,7 @@ namespace Slab::Math::RtoR {
 
     public:
 
-        RegularDiracDelta(Real eps, Real a, Regularization reg=Triangle, Real tx=0)
+        RegularDiracDelta(DevFloat eps, DevFloat a, Regularization reg=Triangle, DevFloat tx=0)
          : a(a), eps(eps), tx(tx), reg(reg) {
             switch (reg) {
                 case Gaussian:
@@ -43,10 +43,10 @@ namespace Slab::Math::RtoR {
             }
         }
 
-        void setTranslation(Real _tx) { tx = _tx; }
-        Real getTranslation() const { return tx; }
+        void setTranslation(DevFloat _tx) { tx = _tx; }
+        DevFloat getTranslation() const { return tx; }
 
-        auto operator()(Real x) const -> Real override {
+        auto operator()(DevFloat x) const -> DevFloat override {
             x-=tx;
 
             return a * delta(x, eps);

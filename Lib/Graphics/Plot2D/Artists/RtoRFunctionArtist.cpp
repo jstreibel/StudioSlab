@@ -13,7 +13,7 @@
 #include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 
 namespace Slab::Graphics {
-    RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, Count samples)
+    RtoRFunctionArtist::RtoRFunctionArtist(RtoR::Function_ptr func, PlotStyle plotStyle, CountType samples)
     : function(std::move(func)), plotStyle(plotStyle), samples(samples)
     {    }
 
@@ -40,7 +40,7 @@ namespace Slab::Graphics {
     void RtoRFunctionArtist::drawGUI() {
         int samps = (int)samples;
         if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samps, 100, 100000))
-            samples = (Count)samps;
+            samples = (CountType)samps;
 
         DrawPlotStyleGUI(plotStyle, getLabel());
 
@@ -69,6 +69,6 @@ namespace Slab::Graphics {
 
     void RtoRFunctionArtist::setStyle(PlotStyle sty) { plotStyle = sty; }
 
-    void RtoRFunctionArtist::setSampling(Count samps) { samples = samps; }
+    void RtoRFunctionArtist::setSampling(CountType samps) { samples = samps; }
 
 } // Graphics

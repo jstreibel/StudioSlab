@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics::OpenGL {
     typedef std::shared_ptr<Graphics::OpenGL::Texture1D_Color> CMapTexturePtr;
-    typedef std::function<Real(Real)> ScalingFunction;
+    typedef std::function<DevFloat(DevFloat)> ScalingFunction;
 
     enum ColorBarMode {
         AllFieldValues=0,
@@ -19,10 +19,10 @@ namespace Slab::Graphics::OpenGL {
     };
 
     struct ColorBarParams {
-        Real kappa;
-        Real phi_sat;
-        Real phi_max;
-        Real phi_min;
+        DevFloat kappa;
+        DevFloat phi_sat;
+        DevFloat phi_max;
+        DevFloat phi_min;
         bool symmetric;
         ColorBarMode mode;
     };
@@ -65,19 +65,19 @@ namespace Slab::Graphics::OpenGL {
 
         void drawGUI() override;
 
-        void setKappa(Real);
-        void setPhiSaturation(Real);
+        void setKappa(DevFloat);
+        void setPhiSaturation(DevFloat);
         void setSymmetric(bool);
-        void setPhiMax(Real);
-        void setPhiMin(Real);
+        void setPhiMax(DevFloat);
+        void setPhiMin(DevFloat);
         void setMode(ColorBarMode);
 
-        Count getSamples() const;
+        CountType getSamples() const;
 
         bool draw(const Plot2DWindow &) override;
 
-        void setScalingFunction(std::function<Real(Real)>);
-        void setInverseScalingFunction(std::function<Real(Real)>);
+        void setScalingFunction(std::function<DevFloat(DevFloat)>);
+        void setInverseScalingFunction(std::function<DevFloat(DevFloat)>);
     };
 
 } // OpenGL

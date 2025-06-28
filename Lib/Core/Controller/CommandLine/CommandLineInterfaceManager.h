@@ -6,26 +6,26 @@
 #define FIELDS_INTERFACEMANAGER_H
 
 
-#include "Core/Controller/CommandLine/CLInterface.h"
+#include "Core/Controller/CommandLine/CommandLineInterface.h"
 
 
 namespace Slab::Core {
 
-    class CLInterfaceManager {
-        static CLInterfaceManager *instance;
+    class FCommandLineInterfaceManager {
+        static FCommandLineInterfaceManager *instance;
 
-        Vector<Pointer<CLInterface>> interfaces;
+        Vector<Pointer<FCommandLineInterface>> interfaces;
 
     public:
-        static auto getInstance() -> CLInterfaceManager &;
+        static auto getInstance() -> FCommandLineInterfaceManager &;
 
         // static auto NewInterface(String name, InterfaceOwner *owner) -> Interface::Ptr;
 
-        void registerInterface(const Pointer<CLInterface> &anInterface);
+        void registerInterface(const Pointer<FCommandLineInterface> &anInterface);
 
-        auto getInterfaces() -> Vector<Pointer<const CLInterface>>;
+        auto getInterfaces() -> Vector<Pointer<const FCommandLineInterface>>;
 
-        auto getInterface(const char *string) -> Pointer<const CLInterface>;
+        auto getInterface(const char *string) -> Pointer<const FCommandLineInterface>;
 
         void feedInterfaces(const CLVariablesMap &vm);
 
@@ -36,7 +36,7 @@ namespace Slab::Core {
 
         auto getParametersValues(const StrVector &params) const -> Vector<Pair<Str, Str>>;
 
-        auto getParameter(const Str &name) const -> Pointer<const CLParameter>;
+        auto getParameter(const Str &name) const -> Pointer<const FCommandLineParameter>;
 
     };
 

@@ -127,7 +127,7 @@ namespace Slab::Lost::ThermoOutput {
         {
             subWindow.top += rowHeight + _border;
 
-            font.loadFromFile(Slab::Core::Resources::fontFileName(10));
+            font.loadFromFile(Slab::Core::Resources::GetIndexedFontFileName(10));
             text = sf::Text("Ising", font, fontSize);
             text.setPosition(subWindow.left, subWindow.top);
 
@@ -139,8 +139,8 @@ namespace Slab::Lost::ThermoOutput {
     void QuenchViewController::_stepSims() {
         ++MCStep;
 
-        Real mag = .0;
-        Real e = .0;
+        DevFloat mag = .0;
+        DevFloat e = .0;
         int i=0;
         for (auto sim : simulations) {
             auto calc = sim.first;
@@ -173,7 +173,7 @@ namespace Slab::Lost::ThermoOutput {
         if(MCStep < tau_eq) return true;
         else if(MCStep > MCSteps) return false;
 
-        const Real ΔT = 1.0 / total_measures;
+        const DevFloat ΔT = 1.0 / total_measures;
         if(!((MCStep-tau_eq)%(3*tau_corr))){
             auto e=0., e2=0., m=0., m2=0., m4=0.;
 

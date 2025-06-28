@@ -8,34 +8,39 @@
 
 namespace Slab::Core {
 
-    Task::Task(Str name) : m_name(std::move(name)), m_continueFlag(false) {
+    FTask::FTask(Str name) : Name(std::move(name)), bContinueFlag(false) {
     }
 
-    void Task::start() {
-        m_taskStatus = TaskRunning;
-        m_threadStatus = ThreadRunning;
+    void FTask::start() {
+        TaskStatus = TaskRunning;
+        ThreadStatus = ThreadRunning;
 
-        m_taskStatus = run();
+        TaskStatus = Run();
 
-        std::unique_lock lock(m_finishMutex);
-        m_threadStatus = ThreadWaitingRelease;
-        m_releaseCondition.wait(lock, [this] { return m_continueFlag; });
-        m_threadStatus = ThreadFinished;
+        std::unique_lock lock(FinishMutex);
+        ThreadStatus = ThreadWaitingRelease;
+        ReleaseCondition.wait(lock, [this] { return bContinueFlag; });
+        ThreadStatus = ThreadFinished;
     }
 
-    bool Task::isTaskRunning() const { return m_taskStatus==TaskRunning; }
+    bool FTask::IsTaskRunning() const { return TaskStatus==TaskRunning; }
 
-    Str Task::getName() const { return m_name; }
-
-    TaskStatus Task::getStatus() const {
-        return m_taskStatus;
+    bool FTask::IsThreadRunning() const
+    {
+        NOT_IMPLEMENTED_CLASS_METHOD
     }
 
-    void Task::release() {
+    Str FTask::GetName() const { return Name; }
+
+    ETaskStatus FTask::GetStatus() const {
+        return TaskStatus;
+    }
+
+    void FTask::Release() {
         {
-            std::lock_guard lock(m_finishMutex);
-            m_continueFlag = true;
+            std::lock_guard lock(FinishMutex);
+            bContinueFlag = true;
         }
-        m_releaseCondition.notify_all();
+        ReleaseCondition.notify_all();
     }
 }

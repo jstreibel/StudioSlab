@@ -6,11 +6,13 @@
 
 namespace Slab::Core {
 
-    bool Request::operator==(const Request &other) {
-        return command==other.command;
+    bool FRequest::operator==(const FRequest &other) const
+    {
+        return Command == other.Command;
     }
 
-    bool Request::operator==(const Command &received_command) {
-        return command==received_command;
+    bool FRequest::operator==(const FCommand &ReceivedCommand) const
+    {
+        return Command == ReceivedCommand;
     }
 } // Slab::Core

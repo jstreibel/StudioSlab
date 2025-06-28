@@ -14,17 +14,17 @@
 
 namespace Slab::Math {
 
-    Real avg(const RealVector &v) {
-        const Real zero = 0.0;
-        const Real N = v.size();
+    DevFloat avg(const RealVector &v) {
+        const DevFloat zero = 0.0;
+        const DevFloat N = v.size();
         return std::accumulate(v.begin(), v.end(), zero) / N;
     }
 
 
     XYMetropolisAlgorithm::XYMetropolisAlgorithm(
             int L,
-            Real T,
-            Real h,
+            DevFloat T,
+            DevFloat h,
             InitialConditions ic,
             Dynamic dynamic,
             Sweeping sweeping)
@@ -49,7 +49,7 @@ namespace Slab::Math {
     }
 
 
-    inline bool XYMetropolisAlgorithm::shouldAccept(const Real deltaE) const {
+    inline bool XYMetropolisAlgorithm::shouldAccept(const DevFloat deltaE) const {
         if (deltaE < 0) return true;
 
         const double r = RandUtils::RandomUniformReal01();
@@ -134,11 +134,11 @@ namespace Slab::Math {
     }
 
 
-    void XYMetropolisAlgorithm::set_T(Real T) {
+    void XYMetropolisAlgorithm::set_T(DevFloat T) {
         this->T = T;
     }
 
-    void XYMetropolisAlgorithm::set_h(Real h) {
+    void XYMetropolisAlgorithm::set_h(DevFloat h) {
         this->h = h;
     }
 

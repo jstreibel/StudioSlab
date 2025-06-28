@@ -33,7 +33,7 @@ namespace Slab::Models::KGR2toR {
         NOT_IMPLEMENTED
     }
 
-    OutputOpenGL::OutputOpenGL(Count max_steps)
+    OutputOpenGL::OutputOpenGL(CountType max_steps)
     : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")
     , mFieldDisplay("Field")

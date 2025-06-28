@@ -21,10 +21,10 @@ namespace Slab::Models::StochasticPathIntegrals {
     public:
         SPINumericConfig();
 
-        auto getL() const -> Real;
-        auto gett() const -> Real;
+        auto getL() const -> DevFloat;
+        auto gett() const -> DevFloat;
         auto getN() const -> UInt;
-        auto getdT() const -> Real;
+        auto getdT() const -> DevFloat;
         auto getn() const -> UInt override;
 
         auto to_string() const -> Str override;

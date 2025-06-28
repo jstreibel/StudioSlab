@@ -9,11 +9,11 @@
 namespace Slab::Math {
 
     // Function to interpolate using Lagrange's method
-    Real LagrangeInterpolate(const RealVector& x, const RealVector& y, Real t, int order) {
+    DevFloat LagrangeInterpolate(const RealVector& x, const RealVector& y, DevFloat t, int order) {
         int n = x.size();
-        Real result = 0.0;
+        DevFloat result = 0.0;
         for (int i = 0; i < order + 1; ++i) {
-            Real term = y[i];
+            DevFloat term = y[i];
             for (int j = 0; j < order + 1; ++j) {
                 if (i != j) {
                     term *= (t - x[j]) / (x[i] - x[j]);
@@ -25,15 +25,15 @@ namespace Slab::Math {
     }
 
     // Derivative of the Lagrange polynomial
-    Real LagrangeDerivative(const RealVector& x, const RealVector& y, Real t, int order) {
+    DevFloat LagrangeDerivative(const RealVector& x, const RealVector& y, DevFloat t, int order) {
         int n = x.size();
-        Real result = 0.0;
+        DevFloat result = 0.0;
         for (int i = 0; i < order + 1; ++i) {
-            Real term = y[i];
-            Real sum = 0.0;
+            DevFloat term = y[i];
+            DevFloat sum = 0.0;
             for (int j = 0; j < order + 1; ++j) {
                 if (i != j) {
-                    Real prod = 1.0;
+                    DevFloat prod = 1.0;
                     for (int k = 0; k < order + 1; ++k) {
                         if (k != i && k != j) {
                             prod *= (t - x[k]) / (x[i] - x[k]);
@@ -48,12 +48,12 @@ namespace Slab::Math {
     }
 
     // Function to find the peak using Newton's method
-    Real FindPeak(const RealVector& x, const RealVector& y, Real initial_guess, int order) {
-        Real t = initial_guess;
+    DevFloat FindPeak(const RealVector& x, const RealVector& y, DevFloat initial_guess, int order) {
+        DevFloat t = initial_guess;
         for (int i = 0; i < 100; ++i) {
-            Real f = LagrangeInterpolate(x, y, t, order);
-            Real f_prime = LagrangeDerivative(x, y, t, order);
-            Real t_new = t - f / f_prime;
+            DevFloat f = LagrangeInterpolate(x, y, t, order);
+            DevFloat f_prime = LagrangeDerivative(x, y, t, order);
+            DevFloat t_new = t - f / f_prime;
             if (std::fabs(t_new - t) < 1e-6) break;
             t = t_new;
         }

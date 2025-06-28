@@ -4,16 +4,16 @@
 #include "Stepper.h"
 #include "Math/Numerics/Socket.h"
 
-#include "Core/Controller/CommandLine/CLInterface.h"
+#include "Core/Controller/CommandLine/CommandLineInterface.h"
 #include "Math/Numerics/ODE/SimConfig/NumericConfig.h"
 #include "Math/Numerics/ODE/Solver/LinearStepSolver.h"
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
 
 namespace Slab::Math::Base {
 
     using OutputSockets = Vector<Pointer<Socket>>;
 
-    class NumericalRecipe : public Core::CLInterfaceOwner {
+    class NumericalRecipe : public Core::FCommandLineInterfaceOwner {
     protected:
         Pointer<NumericConfig> numeric_config;
 

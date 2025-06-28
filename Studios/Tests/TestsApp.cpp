@@ -5,7 +5,7 @@
 #include "TestsApp.h"
 
 #include "AppBase.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
 #include "BezierTests.h"
@@ -26,7 +26,7 @@
 
 TestsApp:: TestsApp(int argc, const char**argv) : Slab::Core::AppBase(argc, argv, DONT_REGISTER) {
 
-    AppBase::registerToManager();
+    AppBase::RegisterToManager();
 
     Slab::Core::CLArgsManager::Parse(argc, argv);
 }
@@ -75,7 +75,7 @@ int TestsApp::run() {
         guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::SystemWindowEventListener>(new Tests::NuklearTests()));
     }
 
-    backend->run();
+    backend->Run();
 
     return 0;
 }

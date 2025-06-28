@@ -38,14 +38,14 @@ namespace Slab::Models {
 
         ~KGSolver() override = default;
 
-        void startStep(const Base::EquationState &state, Real t, Real dt) final {
+        void startStep(const Base::EquationState &state, DevFloat t, DevFloat dt) final {
             Base::LinearStepSolver::startStep(state, t, dt);
 
             IN kgState = dynamic_cast<const FieldState&>(state);
             this->startStep_KG(kgState, t, dt);
         }
 
-        Base::EquationState & F(const Base::EquationState &stateIn, Base::EquationState &stateOut, Real t) final {
+        Base::EquationState & F(const Base::EquationState &stateIn, Base::EquationState &stateOut, DevFloat t) final {
             auto &kgStateIn  = dynamic_cast<const FieldState&>(stateIn );
             auto &kgStateOut = dynamic_cast<      FieldState&>(stateOut);
 
@@ -55,7 +55,7 @@ namespace Slab::Models {
     protected:
 
         virtual void
-        startStep_KG(const FieldState &state, Real t, Real dt) {
+        startStep_KG(const FieldState &state, DevFloat t, DevFloat dt) {
             if(temp1 == nullptr){
                 assert(temp2 == nullptr);
 
@@ -65,7 +65,7 @@ namespace Slab::Models {
         }
 
         virtual FieldState &
-        F_KG(const FieldState &stateIn, FieldState &stateOut, Real t) {
+        F_KG(const FieldState &stateIn, FieldState &stateOut, DevFloat t) {
             const auto &ϕᵢₙ  = stateIn .getPhi();
             const auto &δₜϕᵢₙ = stateIn .getDPhiDt();
             auto       &ϕₒᵤₜ  = stateOut.getPhi();

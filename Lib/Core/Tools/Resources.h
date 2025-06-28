@@ -6,10 +6,11 @@
 #define STUDIOSLAB_RESOURCES_H
 
 #include "Utils/Types.h"
+#include "Utils/String.h"
 
 namespace Slab::Core::Resources {
 
-    const auto Folder = std::string("/home/joao/Developer/StudioSlab/Resources/");
+    const auto Folder = Str("/home/joao/Developer/StudioSlab/Resources/");
 
     const auto NanoTeXFolder = Folder + "NanoTeX/";
     const auto FontsFolder = Folder + "Fonts/";
@@ -18,7 +19,7 @@ namespace Slab::Core::Resources {
 
     const auto SystemFolder = "/usr/share/fonts/";
 
-    const StrVector fonts = { "imgui/Cousine-Regular.ttf"                //  0
+    const StrVector ExportedFonts = { "imgui/Cousine-Regular.ttf"                //  0
                              ,"imgui/DroidSans.ttf"                      //  1
                              ,"imgui/Karla-Regular.ttf"                  //  2
                              ,"imgui/ProggyClean.ttf"                    //  3
@@ -48,7 +49,7 @@ namespace Slab::Core::Resources {
                              ,"NewComputerModern/NewCM10-Italic.otf"     // 19 (math symbols confirmed)
     };
 
-    Str fontFileName(int index);
+    Str GetIndexedFontFileName(int Index);
 
 }
 

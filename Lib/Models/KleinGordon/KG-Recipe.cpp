@@ -4,7 +4,7 @@
 
 #include "KG-Recipe.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Math/Numerics/ODE/Steppers/RungeKutta4.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "KG-NumericConfig.h"
@@ -25,9 +25,9 @@ namespace Slab::Models {
             available_themes += Str("'") + theme + "', ";
 
         plotTheme.setDescription(available_themes);
-        plotTheme.setValue(default_theme);
+        plotTheme.SetValue(default_theme);
 
-        interface->addParameters({&plotTheme,
+        Interface->AddParameters({&plotTheme,
                                   &noHistoryToFile,
                                   &outputResolution,
                                   &VisualMonitor,
@@ -41,10 +41,10 @@ namespace Slab::Models {
                                   // &snapshotTime,
                                   });
 
-        interface->addSubInterface(device_config.getInterface());
+        Interface->AddSubInterface(device_config.GetInterface());
 
         if (doRegister) {
-            registerToManager();
+            RegisterToManager();
         }
     }
 
@@ -69,7 +69,7 @@ namespace Slab::Models {
         else Core::BackendManager::Startup("Headless");
 
 
-        CLInterfaceListener::notifyAllCLArgsSetupFinished();
+        FCommandLineInterfaceListener::notifyAllCLArgsSetupFinished();
     }
 
     void KGRecipe::setupForCurrentThread() {

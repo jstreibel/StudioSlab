@@ -27,8 +27,8 @@ namespace Tests {
 
         for(auto i=0; i<funky->getN(); ++i)
             for(auto j=0; j<funky->getM(); ++j) {
-                fix s = (Real)i/(funky->getN()-1);
-                fix t = (Real)j/(funky->getM()-1);
+                fix s = (DevFloat)i/(funky->getN()-1);
+                fix t = (DevFloat)j/(funky->getM()-1);
 
                 fix x = s*funky->getDomain().getLx() + xMin;
                 fix y = t*funky->getDomain().getLy() + yMin;

@@ -1,7 +1,7 @@
 
 
 #include "CrashPad.h"
-#include "Core/Controller/CommandLine/CLInterfaceSelector.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceSelector.h"
 
 #include "MathApp.h"
 
@@ -24,14 +24,14 @@ int run(int argc, const char **argv) {
     auto option3 = new Studios::PureSG::InputShockwave();
     auto option4 = new Studios::PureSG::InputSingleOscillon();
 
-    /* sim 0 */selector.registerOption(option0->getInterface());
-    /* sim 1 */selector.registerOption(option1->getInterface());
-    /* sim 2 */selector.registerOption(option2->getInterface());
-    /* sim 3 */selector.registerOption(option3->getInterface());
-    /* sim 4 */selector.registerOption(option4->getInterface());
+    /* sim 0 */selector.registerOption(option0->GetInterface());
+    /* sim 1 */selector.registerOption(option1->GetInterface());
+    /* sim 2 */selector.registerOption(option2->GetInterface());
+    /* sim 3 */selector.registerOption(option3->GetInterface());
+    /* sim 4 */selector.registerOption(option4->GetInterface());
 
     auto selectedInterface = selector.preParse(argc, argv).getCurrentCandidate();
-    auto input    = dynamic_cast<KGRtoRBuilder*>(selectedInterface->getOwner());
+    auto input    = dynamic_cast<KGRtoRBuilder*>(selectedInterface->GetOwner());
     auto inputPtr = KGRtoRBuilder_ptr(input);
 
     auto prog = MathApp(argc, argv, inputPtr);

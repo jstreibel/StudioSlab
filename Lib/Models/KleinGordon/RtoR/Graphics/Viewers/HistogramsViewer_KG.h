@@ -25,10 +25,10 @@ namespace Slab::Models::KGRtoR {
 
         int nbins = 200;
         bool pretty = true;
-        Slab::Count sheer_size;
+        Slab::CountType sheer_size;
 
-        Slab::Real t_min;
-        Slab::Real t_delta;
+        Slab::DevFloat t_min;
+        Slab::DevFloat t_delta;
 
         Slab::Vector<Slab::Pointer<PlotWindow>> histogram_windows;
 

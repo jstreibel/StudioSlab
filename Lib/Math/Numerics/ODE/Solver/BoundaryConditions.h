@@ -22,7 +22,7 @@ namespace Slab::Math::Base {
 
         [[nodiscard]] EquationState_ptr newEqState() const;
 
-        virtual void apply(EquationState &toFunction, Real t) const = 0;
+        virtual void apply(EquationState &toFunction, DevFloat t) const = 0;
     };
 
     DefinePointers(BoundaryConditions)

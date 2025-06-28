@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    Plotter::Plotter(Pointer<Graphics::Plot2DWindow> win) : Core::Interface("Plot2D:Plotter"), plottingWindow(win) {}
+    Plotter::Plotter(Pointer<Graphics::Plot2DWindow> win) : Core::FInterface("Plot2D:Plotter"), plottingWindow(win) {}
 
     PointSetArtist_ptr Plotter::addPointSet(const Math::PointSet_ptr &data, PlotStyle style, Str name, bool affectsGraphRanges, int zOrder) {
         return Plotter::AddPointSet(plottingWindow, data, style, std::move(name), affectsGraphRanges, zOrder);
@@ -109,8 +109,8 @@ namespace Slab::Graphics {
         return artist;
     }
 
-    Core::Message Plotter::sendRequest(Core::Request request) {
-        return Interface::sendRequest(request);
+    Core::FMessage Plotter::SendRequest(Core::FRequest request) {
+        return FInterface::SendRequest(request);
     }
 
 

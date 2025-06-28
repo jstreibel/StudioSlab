@@ -34,7 +34,7 @@ namespace Slab::Models::KGRtoR {
         bool force_periodicBC = false;          // Gambiarris (ish)
 
         Vector<Pointer<Socket>> getTimeDFTSnapshots();
-        auto _newTimeDFTSnapshotOutput(const Str& folder, Real t_start, Real t_end, const RealVector &x_locations) const -> Pointer<Socket>;
+        auto _newTimeDFTSnapshotOutput(const Str& folder, DevFloat t_start, DevFloat t_end, const RealVector &x_locations) const -> Pointer<Socket>;
 
         virtual auto buildOpenGLOutput() -> void*;
 
@@ -53,7 +53,7 @@ namespace Slab::Models::KGRtoR {
         virtual ~KGRtoRBuilder() = default;
 
         RtoR::Function_ptr getPotential() const;
-        virtual Pointer<Base::FunctionT<Real, Real>> getNonHomogenous();
+        virtual Pointer<Base::FunctionT<DevFloat, DevFloat>> getNonHomogenous();
 
         auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
 

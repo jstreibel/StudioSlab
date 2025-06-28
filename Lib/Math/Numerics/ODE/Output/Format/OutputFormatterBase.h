@@ -20,7 +20,7 @@ namespace Slab::Math {
 
         virtual auto operator()(const DiscreteSpace &fOut) const -> ByteData = 0;
 
-        virtual auto operator()(const Real &out) const -> ByteData = 0;
+        virtual auto operator()(const DevFloat &out) const -> ByteData = 0;
 
         virtual auto isBinary() const -> bool = 0;
 

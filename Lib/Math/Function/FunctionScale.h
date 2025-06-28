@@ -14,16 +14,16 @@ namespace Slab::Math::Base {
         typedef FunctionT<InputCategory, OutputCategory> MyBase;
 
         const MyBase &A;
-        Real scale;
+        DevFloat scale;
 
     public:
-        Scale(const MyBase &a, Real scale)
+        Scale(const MyBase &a, DevFloat scale)
                 : FunctionT<InputCategory, OutputCategory>(&a.getGPUFriendlyVersion(), a.isDiscrete()),
                   A(a), scale(scale) { }
 
         Scale(const Scale &toCopy) : Scale(toCopy.A, toCopy.scale) { }
 
-        friend MyBase::Ptr operator*(const MyBase &a, Real scale) {
+        friend MyBase::Ptr operator*(const MyBase &a, DevFloat scale) {
             return std::make_unique(a, scale);
         }
 

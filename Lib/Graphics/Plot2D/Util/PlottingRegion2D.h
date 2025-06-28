@@ -10,7 +10,7 @@
 namespace Slab::Graphics {
 
     class PlottingRegion2D {
-        Pointer<Real> xMin, xMax, yMin, yMax;
+        Pointer<DevFloat> xMin, xMax, yMin, yMax;
     public:
         explicit PlottingRegion2D(RectR);
 
@@ -18,34 +18,34 @@ namespace Slab::Graphics {
 
         bool isAnimating() const;
 
-        void animate_xMin(Real);
-        void animate_xMax(Real);
-        void animate_yMin(Real);
-        void animate_yMax(Real);
+        void animate_xMin(DevFloat);
+        void animate_xMax(DevFloat);
+        void animate_yMin(DevFloat);
+        void animate_yMax(DevFloat);
 
-        void setLimits(Real xMin, Real xMax, Real yMin, Real yMax);
-        void set_x_limits(Real x_min, Real x_max);
-        void set_y_limits(Real y_min, Real y_max);
+        void setLimits(DevFloat xMin, DevFloat xMax, DevFloat yMin, DevFloat yMax);
+        void set_x_limits(DevFloat x_min, DevFloat x_max);
+        void set_y_limits(DevFloat y_min, DevFloat y_max);
 
-        void setReference_xMin(Pointer<Real>);
-        void setReference_xMax(Pointer<Real>);
-        void setReference_yMin(Pointer<Real>);
-        void setReference_yMax(Pointer<Real>);
+        void setReference_xMin(Pointer<DevFloat>);
+        void setReference_xMax(Pointer<DevFloat>);
+        void setReference_yMin(Pointer<DevFloat>);
+        void setReference_yMax(Pointer<DevFloat>);
 
-        auto getReference_xMin() const -> Pointer<Real>;
-        auto getReference_xMax() const -> Pointer<Real>;
-        auto getReference_yMin() const -> Pointer<Real>;
-        auto getReference_yMax() const -> Pointer<Real>;
+        auto getReference_xMin() const -> Pointer<DevFloat>;
+        auto getReference_xMax() const -> Pointer<DevFloat>;
+        auto getReference_yMin() const -> Pointer<DevFloat>;
+        auto getReference_yMax() const -> Pointer<DevFloat>;
 
-        Real getXMin() const;
-        Real getXMax() const;
-        Real getYMin() const;
-        Real getYMax() const;
+        DevFloat getXMin() const;
+        DevFloat getXMax() const;
+        DevFloat getYMin() const;
+        DevFloat getYMax() const;
 
-        Real height() const;
-        Real width() const;
-        Real xCenter() const;
-        Real yCenter() const;
+        DevFloat height() const;
+        DevFloat width() const;
+        DevFloat xCenter() const;
+        DevFloat yCenter() const;
 
         void operator=(const RectR& rectR) {
             *xMin = rectR.xMin;

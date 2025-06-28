@@ -85,7 +85,7 @@ namespace Slab::Graphics {
 
         program.setUniform("scale", 1.f);
 
-        program.setUniform("texelSize", Real2D(1./(Real)gridM, 1./(Real)gridN));
+        program.setUniform("texelSize", Real2D(1./(DevFloat)gridM, 1./(DevFloat)gridN));
     }
 
     void TestActor::draw(const Scene3DWindow &graph3D) {

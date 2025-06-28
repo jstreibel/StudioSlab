@@ -88,7 +88,7 @@ namespace Slab::Graphics::OpenGL {
                 << " shader;\n";
 
             log << "Messages:" << Log::FGYellow;
-            std::set<Count> problematicLines;
+            std::set<CountType> problematicLines;
             for(auto &message : messages) {
                 log << "\n" << message;
                 auto lineNumberStr = message.substr(2, 2);
@@ -99,7 +99,7 @@ namespace Slab::Graphics::OpenGL {
 
             log << Log::ResetFormatting << "\n\n";
             log << "Source:\n" << Log::BGBlue;
-            Count lineNumber = 1;
+            CountType lineNumber = 1;
             auto srcLines = GetLines(source);
             for(auto &line : srcLines) {
                 if(problematicLines.contains(lineNumber))

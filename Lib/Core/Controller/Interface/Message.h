@@ -9,12 +9,12 @@
 
 namespace Slab::Core {
 
-    using Content = Str;
+    using FContent = Str;
 
-    class Message {
-        Content message;
+    class FMessage {
+        FContent Message;
     public:
-        Message(Content);
+        explicit FMessage(FContent);
     };
 
 } // Slab::Core

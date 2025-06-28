@@ -22,8 +22,8 @@ namespace Slab::Math {
         if (nextRecStep > currStep)
             return nextRecStep;
 
-        fix n = (Real) intervalStepsBetweenOutputs;
-        fix m = (Real) (currStep + 1);
+        fix n = (DevFloat) intervalStepsBetweenOutputs;
+        fix m = (DevFloat) (currStep + 1);
 
         nextRecStep = (int) (n * std::ceil(m / n));
 

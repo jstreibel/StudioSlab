@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glLoadIdentity();
     }
 
-    void SetupOrtho(const RectR &region, Real zNear, Real zFar) {
+    void SetupOrtho(const RectR &region, DevFloat zNear, DevFloat zFar) {
         OpenGL::Shader::remove();
 
         glMatrixMode(GL_PROJECTION);

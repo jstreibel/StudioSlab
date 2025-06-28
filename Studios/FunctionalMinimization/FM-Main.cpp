@@ -43,7 +43,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 
         using namespace Slab;
         using Poly = Math::RtoR::RtoRPolynomial;
-        Vector<Real> coeffs = {(q_0-v_avg*t_0-t_0*t_f), (v_avg + .5*(t_f+t_0)), -1/2.};
+        Vector<DevFloat> coeffs = {(q_0-v_avg*t_0-t_0*t_f), (v_avg + .5*(t_f+t_0)), -1/2.};
         trajectory = New<Poly>(coeffs);
     }
 
@@ -64,7 +64,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
 int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
     auto mc_recipe = Slab::New<Slab::Math::RtoRActionMetropolisRecipe>(max_steps);
-    Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
+    Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
     auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
 

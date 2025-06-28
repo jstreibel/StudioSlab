@@ -10,13 +10,13 @@
 #define FRANDOM (random()/(RAND_MAX+1.0))
 
 namespace Slab::Models::KGRtoR {
-    Real xi() {
-        const Real z = FRANDOM;
+    DevFloat xi() {
+        const DevFloat z = FRANDOM;
 
-        const Real r = sqrt(-2.0 * log(1.0 - z));
+        const DevFloat r = sqrt(-2.0 * log(1.0 - z));
 
-        static Real signs[] = {-1,1};
-        const Real sign = signs[random()%2];
+        static DevFloat signs[] = {-1,1};
+        const DevFloat sign = signs[random()%2];
 
         return sign*r;
     }
@@ -29,8 +29,8 @@ namespace Slab::Models::KGRtoR {
         NumericFunction &langevinImpulses;
         NumericFunction &scaledImpulses;
 
-        Real T=0.01;
-        Real alpha = 1.0;
+        DevFloat T=0.01;
+        DevFloat alpha = 1.0;
     public:
         LorentzLangevin_2ndOrder(const NumericConfig &params, EqBoundaryCondition &du,
                                  KGSolver::PotentialFunc &potential, NumericFunction &langevinImpulses,
@@ -44,7 +44,7 @@ namespace Slab::Models::KGRtoR {
         // , langevinImpulses(*builder.NewFunctionArbitrary<NumericFunction>())
         // , scaledImpulses(  *builder.NewFunctionArbitrary<NumericFunction>()) { }
 
-        void startStep(Real t, Real dt) override{
+        void startStep(DevFloat t, DevFloat dt) override{
             KGSolver::startStep(t, dt);
 
             ComputeLangevin();
@@ -60,9 +60,9 @@ namespace Slab::Models::KGRtoR {
                 x = xi();
         }
 
-        void setTemperature(Real value) {T = value;}
+        void setTemperature(DevFloat value) {T = value;}
 
-        EqState &dtF(const EqState &fieldStateIn, EqState &fieldStateOut, Real t, Real dt) override {
+        EqState &dtF(const EqState &fieldStateIn, EqState &fieldStateOut, DevFloat t, DevFloat dt) override {
             const NumericFunction &iPhi = fieldStateIn.getPhi();
             const NumericFunction &iDPhi = fieldStateIn.getDPhiDt();
             NumericFunction &oPhi = fieldStateOut.getPhi();

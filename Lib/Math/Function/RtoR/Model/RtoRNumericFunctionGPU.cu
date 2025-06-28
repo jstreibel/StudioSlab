@@ -14,12 +14,12 @@
 
 namespace Slab::Math::RtoR {
 
-    NumericFunctionGPU::NumericFunctionGPU(UInt N, Real xMin, Real xMax, LaplacianType laplacianType)
+    NumericFunctionGPU::NumericFunctionGPU(UInt N, DevFloat xMin, DevFloat xMax, LaplacianType laplacianType)
             : NumericFunction(N, xMin, xMax, Device::GPU, laplacianType) {
 
     }
 
-    Base::NumericFunction <Real, Real> &NumericFunctionGPU::Set(const RtoR::Function &func) {
+    Base::NumericFunction <DevFloat, DevFloat> &NumericFunctionGPU::Set(const RtoR::Function &func) {
         auto &spaceGPU = dynamic_cast<DiscreteSpaceGPU &>(getSpace());
 
         auto &XHost = spaceGPU.getHostData(false);
@@ -48,8 +48,8 @@ namespace Slab::Math::RtoR {
     }
 
 
-    Base::NumericFunction <Real, Real> &NumericFunctionGPU::Apply(const RtoR::Function &func,
-                                                                  Base::NumericFunction <Real, Real> &out) const {
+    Base::NumericFunction <DevFloat, DevFloat> &NumericFunctionGPU::Apply(const RtoR::Function &func,
+                                                                  Base::NumericFunction <DevFloat, DevFloat> &out) const {
         // TODO: assert that 'out' is on the GPU;
 
         const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU &>(getSpace());
@@ -85,7 +85,7 @@ namespace Slab::Math::RtoR {
         return outFunc;
     }
 
-    Pointer<Base::FunctionT <Real, Real>> NumericFunctionGPU::Clone() const {
+    Pointer<Base::FunctionT <DevFloat, DevFloat>> NumericFunctionGPU::Clone() const {
         return New<NumericFunctionGPU>(N, xMin, xMax, laplacianType);
     }
 
@@ -95,7 +95,7 @@ namespace Slab::Math::RtoR {
         return "ℝ↦ℝ GPU discrete";
     }
 
-    Base::NumericFunction<Real, Real> &NumericFunctionGPU::operator+=(const Base::FunctionT<Real, Real> &func) {
+    Base::NumericFunction<DevFloat, DevFloat> &NumericFunctionGPU::operator+=(const Base::FunctionT<DevFloat, DevFloat> &func) {
         if(func.isDiscrete()) {
             IN func_discrete = dynamic_cast<const NumericFunctionGPU&>(func);
             return Base::NumericFunction<double, double>::StoreAddition(*this, func_discrete);

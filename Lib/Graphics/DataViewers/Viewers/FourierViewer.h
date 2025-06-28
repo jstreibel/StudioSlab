@@ -64,7 +64,7 @@ namespace Slab::Graphics{
 
 
     private:
-        Real kFilterCutoff = 0.0;
+        DevFloat kFilterCutoff = 0.0;
         RtoR2::StraightLine cutoffLine;
     protected:
         void refreshInverseDFT(RtoR::DFTInverse::Filter *filter);
@@ -78,7 +78,7 @@ namespace Slab::Graphics{
 
     public:
         static auto
-        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin, Real tMax)
+        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, DevFloat tMin, DevFloat tMax)
         -> Pointer<R2toR::NumericFunction>;
 
         Str getName() const override;

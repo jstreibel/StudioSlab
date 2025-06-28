@@ -19,7 +19,7 @@ namespace Slab::Math::R2toR {
 
 
     class Sampler {
-        Count nSamples=500;
+        CountType nSamples=500;
         bool valid = false;
 
         R2Vec samples;
@@ -28,14 +28,14 @@ namespace Slab::Math::R2toR {
 
 
     public:
-        explicit Sampler(Count nSamples=500);;
+        explicit Sampler(CountType nSamples=500);;
 
         auto getSamples() -> R2Vec;
 
         auto invalidateSamples() -> void;
 
-        auto get_nSamples() const   -> Count;
-        auto set_nSamples(Count n)  -> void;
+        auto get_nSamples() const   -> CountType;
+        auto set_nSamples(CountType n)  -> void;
 
     };
 
@@ -54,11 +54,11 @@ namespace Slab::Math::R2toR {
 
 
     class RandomSampler : public Sampler {
-        Real xMin, xMax, yMin, yMax;
+        DevFloat xMin, xMax, yMin, yMax;
         auto generateSamples() -> R2Vec override;
 
     public:
-        RandomSampler(Real2D min, Real2D max, Count nSamples=500);
+        RandomSampler(Real2D min, Real2D max, CountType nSamples=500);
 
     };
 

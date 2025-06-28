@@ -181,7 +181,7 @@ namespace Slab::Lost::ThermoOutput {
         {
             subWindow.top += rowHeight + _border;
 
-            font.loadFromFile(Slab::Core::Resources::fontFileName(10));
+            font.loadFromFile(Slab::Core::Resources::GetIndexedFontFileName(10));
 
             text = sf::Text("Ising", font, fontSize);
             text.setPosition(subWindow.left, subWindow.top);
@@ -203,8 +203,8 @@ namespace Slab::Lost::ThermoOutput {
         ++MCStep;
 
         auto N = L * L;
-        Real mag_ferro = .0, mag_para = .0;
-        Real e = .0;
+        DevFloat mag_ferro = .0, mag_para = .0;
+        DevFloat e = .0;
         int i=0;
         for (auto sim : simulations) {
             auto calc = sim.first;

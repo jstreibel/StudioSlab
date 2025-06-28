@@ -8,17 +8,17 @@
 namespace Slab::Math::R2toR {
 
 
-    Rotation::Rotation(Real angleRad) : angle(angleRad) {
+    Rotation::Rotation(DevFloat angleRad) : angle(angleRad) {
 
     }
 
     Real2D Rotation::operator*(const Real2D &x) const {
-        const Real c = cos(angle), s = sin(angle);
+        const DevFloat c = cos(angle), s = sin(angle);
 
         return {c * x.x - s * x.y, s * x.x + c * x.y};
     }
 
-    Rotation Rotation::ByAngle(Real angleRad) {
+    Rotation Rotation::ByAngle(DevFloat angleRad) {
         return Rotation(angleRad);
     }
 

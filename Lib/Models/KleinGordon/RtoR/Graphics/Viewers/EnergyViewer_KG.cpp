@@ -106,7 +106,7 @@ namespace Slab::Models {
                 double *in = &H.getEnergyDensity()->getSpace().getHostData(true)[0];
                 double *out = &energy_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -114,7 +114,7 @@ namespace Slab::Models {
                 double *in = &H.getKineticDensity()->getSpace().getHostData(true)[0];
                 double *out = &kinetic_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -122,7 +122,7 @@ namespace Slab::Models {
                 double *in = &H.getGradientDensity()->getSpace().getHostData(true)[0];
                 double *out = &grad_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
 
             {
@@ -130,7 +130,7 @@ namespace Slab::Models {
                 double *in = &H.getPotentialDensity()->getSpace().getHostData(true)[0];
                 double *out = &potential_func->At(0, j);
 
-                memcpy(out, in, sizeof(Real) * N);
+                memcpy(out, in, sizeof(DevFloat) * N);
             }
         }
 

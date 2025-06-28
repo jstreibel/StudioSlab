@@ -27,10 +27,10 @@ namespace Slab::Graphics::OpenGL {
                     auto pLeft = pts[i];
                     auto pRite = pts[i + 1];
 
-                    const Real xmin = pLeft.x;
-                    const Real xmax = pRite.x;
+                    const DevFloat xmin = pLeft.x;
+                    const DevFloat xmax = pRite.x;
 
-                    const Real ymin = 0,
+                    const DevFloat ymin = 0,
                             ymax1 = pLeft.y,
                             ymax2 = pRite.y;
 

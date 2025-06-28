@@ -12,17 +12,17 @@ namespace Studios::PureSG {
     InputSymmetricOscillon::InputSymmetricOscillon()
             : PureSG::Builder("Symmetric scattering",
                               "Symmetric / antisymmetric oscillon scattering in (1+1) dimensions.") {
-        interface->addParameters({&v, &V, &alpha, &isAntiSymmetric});
+        Interface->AddParameters({&v, &V, &alpha, &isAntiSymmetric});
     }
 
     auto InputSymmetricOscillon::getBoundary() -> Math::Base::BoundaryConditions_ptr {
         auto initCondPhi    = New <RtoR::FunctionSummable> ();
         auto initCondDPhiDt = New <RtoR::FunctionSummable> ();
 
-        RtoR::AnalyticOscillon oscRight = RtoR::AnalyticOscillon(0.0, v.getValue(), V.getValue(), alpha.getValue(),
+        RtoR::AnalyticOscillon oscRight = RtoR::AnalyticOscillon(0.0, v.GetValue(), V.GetValue(), alpha.GetValue(),
                                                                  false, false);
-        RtoR::AnalyticOscillon oscLeft = RtoR::AnalyticOscillon(0.0, v.getValue(), V.getValue(), alpha.getValue(),
-                                                                true, isAntiSymmetric.getValue());
+        RtoR::AnalyticOscillon oscLeft = RtoR::AnalyticOscillon(0.0, v.GetValue(), V.GetValue(), alpha.GetValue(),
+                                                                true, isAntiSymmetric.GetValue());
 
         *initCondPhi += oscRight + oscLeft;
         *initCondDPhiDt += oscRight.swap() + oscLeft.swap();

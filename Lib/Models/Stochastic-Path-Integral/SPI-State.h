@@ -23,9 +23,9 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         EquationState & Subtract(const EquationState &) override;
 
-        EquationState & StoreScalarMultiplication(const EquationState &, Real a) override;
+        EquationState & StoreScalarMultiplication(const EquationState &, DevFloat a) override;
 
-        EquationState & Multiply(Real a) override;
+        EquationState & Multiply(DevFloat a) override;
 
         [[nodiscard]] auto category() const -> Str override;
 

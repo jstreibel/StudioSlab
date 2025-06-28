@@ -48,12 +48,12 @@ namespace Slab::Models::MolecularDynamics {
             return *this;
         }
 
-        EquationState &StoreScalarMultiplication(const EquationState &eqState, Real a) override {
+        EquationState &StoreScalarMultiplication(const EquationState &eqState, DevFloat a) override {
             StoreScalarOperation(*)
             return *this;
         }
 
-        EquationState &Multiply(Real a) override {
+        EquationState &Multiply(DevFloat a) override {
             ScalarOperation(*=)
             return *this;
         }

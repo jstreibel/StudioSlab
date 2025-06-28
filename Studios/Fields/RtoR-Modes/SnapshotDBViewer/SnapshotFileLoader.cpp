@@ -36,7 +36,7 @@ namespace Modes {
             // auto dω = (2*M_PI/t);
             fix dω = std::strtod(metaData["dohm"].first.c_str(), &endPtr);
             fix n = dataArr.size();
-            fix Δω = static_cast<Real>(n)*dω;
+            fix Δω = static_cast<DevFloat>(n)*dω;
             Core::Log::Debug() << "Loaded time.dft.snapshot of Δω=" << Δω << Log::Flush;
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, 0, Δω);
             snapshotDataType = SnapshotData::TimeDFTSnapshot;
@@ -52,7 +52,7 @@ namespace Modes {
 
             fix Δk = 2 * Math::Constants::pi / L;
             xMin = 0.0;
-            xMax = Δk*static_cast<Real>(dataArr.size());
+            xMax = Δk*static_cast<DevFloat>(dataArr.size());
 
 
             snapshotField = Math::DataAlloc<Math::RtoR::NumericFunction_CPU>("SnapshotField", dataArr, xMin, xMax);

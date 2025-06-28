@@ -8,7 +8,6 @@
 #include "Modules/Modules.h"
 
 #include <memory>
-#include <utility>
 
 #include "Backend.h"
 #include "Implementations.h"
@@ -18,33 +17,33 @@ namespace Slab::Core {
 
     // Singleton manager for backends
     class BackendManager {
-        static BackendName backend_name;
-        static std::shared_ptr<Backend> instance;
-        static std::map<ModuleName, std::shared_ptr<Module>> loadedModules;
+        static FBackendIdentifier BackendName;
+        static std::shared_ptr<FBackend> instance;
+        static std::map<FModuleIdentifier, std::shared_ptr<SlabModule>> LoadedModules;
 
-        static Map<BackendName, BackendAllocator> availableBackends;
-        static Map<ModuleName, ModuleAllocator> availableModules;
+        static Map<FBackendIdentifier, FBackendAllocator> AvailableBackends;
+        static Map<FModuleIdentifier, FModuleAllocator> AvailableModules;
 
-        static ModuleName ParseName(const ModuleName&);
-        static void LoadModule(const ModuleName&);
+        static FModuleIdentifier ParseName(const FModuleIdentifier&);
+        static void LoadModule(const FModuleIdentifier&);
 
     public:
-        static Pointer<Backend> GetBackend();
+        static Pointer<FBackend> GetBackend();
 
-        static void Startup(const Str& backend_name);
+        static void Startup(const Str& BackendName);
 
-        static void RegisterAvailableBackend(const BackendName &name, BackendAllocator alloc);;
+        static void RegisterAvailableBackend(const FBackendIdentifier &Name, FBackendAllocator Alloc);;
 
-        static void RegisterAvailableModule(const ModuleName &name, ModuleAllocator alloc);
+        static void RegisterAvailableModule(const FModuleIdentifier &Name, FModuleAllocator Alloc);
 
         template<class ModuleClass>
-        static void RegisterAvailableModule(const ModuleName &name) {
-            RegisterAvailableModule(name, [](){ return new ModuleClass(); });
+        static void RegisterAvailableModule(const FModuleIdentifier &Name) {
+            RegisterAvailableModule(Name, [](){ return new ModuleClass(); });
         };
 
-        static Pointer<Module> GetModule(const ModuleName&);
-        static bool IsModuleAvailable(const ModuleName&);
-        static bool IsModuleLoaded(const ModuleName&);
+        static Pointer<SlabModule> GetModule(const FModuleIdentifier&);
+        static bool IsModuleAvailable(const FModuleIdentifier&);
+        static bool IsModuleLoaded(const FModuleIdentifier&);
 
         static Str GetBackendName();
 

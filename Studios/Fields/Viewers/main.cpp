@@ -7,7 +7,7 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -33,7 +33,7 @@
 #include "Models/KleinGordon/RtoR/Graphics/Viewers/TimeFTViewer.h"
 
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 #include "Graphics/DataViewers/Viewers/Viewer3D.h"
 
@@ -46,8 +46,8 @@ public:
     App(int argc, const char **argv)
             : AppBase(argc, argv, false)
     {
-        interface->addParameters({&filename});
-        Core::RegisterCLInterface(interface);
+        Interface->AddParameters({&filename});
+        Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
 
@@ -83,7 +83,7 @@ public:
         wm->addSlabWindow(viewer);
         guiBackend->GetMainSystemWindow()->addEventListener(wm);
 
-        guiBackend->run();
+        guiBackend->Run();
 
         return 0;
     }

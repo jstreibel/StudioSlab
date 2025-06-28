@@ -28,10 +28,10 @@ namespace Slab::Math {
         auto getMax() const -> Point2D;
         auto getMin() const -> Point2D;
 
-        Count count() const;
+        CountType count() const;
 
         void clear();
-        void addPoint(Real x, Real y);
+        void addPoint(DevFloat x, DevFloat y);
         void addPoint(const Point2D &point);
         void setPoints(Point2DVec points);
 

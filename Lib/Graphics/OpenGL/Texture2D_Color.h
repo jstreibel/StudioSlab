@@ -23,7 +23,7 @@ namespace Slab::Graphics::OpenGL {
 
         bool setColor(int i, int j, Color color);
 
-        bool upload(UInt row=0, Count nRows=0);
+        bool upload(UInt row=0, CountType nRows=0);
     };
 
 } // OpenGL

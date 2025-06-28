@@ -9,7 +9,7 @@
 
 namespace Slab::Graphics {
 
-    class ModernOpenGLModule : public Core::Module {
+    class ModernOpenGLModule : public Core::SlabModule {
     public:
         ModernOpenGLModule();
     };

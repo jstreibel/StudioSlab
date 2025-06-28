@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
     , rightdPhiDtBoundaryCondition(rightdPhiDtBoundaryCondition) { }
 
 
-    void BoundaryCondition::applyKG(EquationState &kgState, Real t) const {
+    void BoundaryCondition::applyKG(EquationState &kgState, DevFloat t) const {
         if (t == 0.0) {
             kgState.setPhi(*initialPhiCondition);
             kgState.setDPhiDt(*initialdPhiDtCondition);

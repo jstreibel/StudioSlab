@@ -5,7 +5,7 @@
 #include "App.h"
 
 #include "Core/Backend/Modules/TaskManager/TaskManager.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 
 #include "Graphics/SlabGraphics.h"
@@ -27,10 +27,10 @@ namespace Studios::MolecularDynamics {
 
     int MolecularDynamics::App::run() {
 
-        auto taskManager = Slab::DynamicPointerCast<Slab::Core::TaskManagerModule>(Slab::Core::GetModule("TaskManager"));
-        taskManager->addTask(numericTask);
+        auto taskManager = Slab::DynamicPointerCast<Slab::Core::MTaskManager>(Slab::Core::GetModule("TaskManager"));
+        taskManager->AddTask(numericTask);
 
-        Slab::Graphics::GetGraphicsBackend()->run();
+        Slab::Graphics::GetGraphicsBackend()->Run();
 
         Slab::Core::Log::Info() << "MolecularDynamics finished." << Slab::Core::Log::Flush;
 

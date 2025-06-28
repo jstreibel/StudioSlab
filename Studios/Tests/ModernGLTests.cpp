@@ -23,7 +23,7 @@ namespace Tests {
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , realTexture(texDim, texDim)
-    , writer(Core::Resources::fontFileName(4), 80)
+    , writer(Core::Resources::GetIndexedFontFileName(4), 80)
     {
         addWindow(std::make_shared<SlabWindow>());
 

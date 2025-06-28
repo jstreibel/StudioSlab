@@ -14,7 +14,7 @@ namespace Slab::Math::RtoR {
 
         MAKE_GPU_FRIENDLY(SignumFunction)
 
-        Real operator()(Real x) const override {
+        DevFloat operator()(DevFloat x) const override {
             return SIGN(x);
         }
 

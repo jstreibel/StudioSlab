@@ -17,7 +17,7 @@ class App : public Slab::Core::AppBase {
 public:
     App(int argc, const char **argv) : AppBase(argc, argv, false) {
         // interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Slab::Core::RegisterCLInterface(interface);
+        Slab::Core::RegisterCLInterface(Interface);
 
         Slab::Core::BackendManager::Startup("GLFW");
 
@@ -35,7 +35,7 @@ public:
         wm->addSlabWindow(osc_plot);
         gui_backend->GetMainSystemWindow()->addEventListener(wm);
 
-        gui_backend->run();
+        gui_backend->Run();
 
         return 0;
     }

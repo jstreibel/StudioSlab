@@ -65,7 +65,7 @@ namespace Slab::Graphics {
         log << std::dec << Core::Log::Flush;
 
         ImGuiIO &io = ImGui::GetIO();
-        auto fontName = Core::Resources::fontFileName(FONT_INDEX_FOR_IMGUI);
+        auto fontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
 
         if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
 
@@ -79,7 +79,7 @@ namespace Slab::Graphics {
 
         io.Fonts->Build();
 
-        Core::Log::Info() << "ImGui using font '" << Core::Resources::fonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
+        Core::Log::Info() << "ImGui using font '" << Core::Resources::ExportedFonts[FONT_INDEX_FOR_IMGUI] << "'." << Core::Log::Flush;
 
         //ImGui::PushFont(font);
     }
@@ -131,7 +131,7 @@ namespace Slab::Graphics {
         ImGui::SetCurrentContext(context);
     }
 
-    Real SlabImGuiContext::getFontSize() const {
+    DevFloat SlabImGuiContext::getFontSize() const {
         (void)this; // get rid of annoying "this method can be made static" warning.
 
         return FONT_SIZE_PIXELS;

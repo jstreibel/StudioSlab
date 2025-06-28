@@ -23,19 +23,19 @@ namespace Slab::Graphics {
     public:
 
         static void renderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
-                                             Real xMin, Real xMax, Real scale = 1.0);
+                                             DevFloat xMin, DevFloat xMax, DevFloat scale = 1.0);
         static void renderFunction(          const RtoR::Function &func, Color c, bool filled,
-                                             Real xMin, Real xMax, UInt resolution, Real scale = 1.0);
-        static void renderFunction(          const R2toR::Function &func, Real xMin, Real yMin,
-                                             Real L, UInt nLines, UInt linesRes, Real scale = 1.0);
+                                             DevFloat xMin, DevFloat xMax, UInt resolution, DevFloat scale = 1.0);
+        static void renderFunction(          const R2toR::Function &func, DevFloat xMin, DevFloat yMin,
+                                             DevFloat L, UInt nLines, UInt linesRes, DevFloat scale = 1.0);
 
 
         static void renderSection(           const R2toR::Function &func, const RtoR2::ParametricCurve &section,
-                                             PlotStyle style, UInt resolution, Real scale=1.0);
+                                             PlotStyle style, UInt resolution, DevFloat scale=1.0);
         static void renderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
-                                             Real xMin, Real xMax, UInt resolution);
+                                             DevFloat xMin, DevFloat xMax, UInt resolution);
         static void renderVerticalSection(   const R2toR::Function &func, Color c, bool filled,
-                                             Real yMin, Real yMax, UInt resolution);
+                                             DevFloat yMin, DevFloat yMax, UInt resolution);
 
 
     };

@@ -6,7 +6,7 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    MoleculeSpaceHash::MoleculeSpaceHash(int linSubdivs, Real L) : n(linSubdivs), L(L), l(L / n), hashSpace(n * n) {
+    MoleculeSpaceHash::MoleculeSpaceHash(int linSubdivs, DevFloat L) : n(linSubdivs), L(L), l(L / n), hashSpace(n * n) {
         if (n < 3) throw "Hash space linear subdivisions must be >= 3.";
     }
 
@@ -53,7 +53,7 @@ namespace Slab::Models::MolecularDynamics {
         return hashSpace[i + j * n];
     }
 
-    Real MoleculeSpaceHash::totalLength() const {
+    DevFloat MoleculeSpaceHash::totalLength() const {
         return L;
     }
 

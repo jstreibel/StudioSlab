@@ -137,8 +137,8 @@ namespace Slab::Graphics::OpenGL {
         state = 0;
     }
 
-    Count VertexBuffer::getSize() const {
-        return (Count)ftgl::vector_size( items );
+    CountType VertexBuffer::getSize() const {
+        return (CountType)ftgl::vector_size( items );
     }
 
     Str VertexBuffer::ToString() const {

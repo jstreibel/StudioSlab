@@ -7,20 +7,20 @@
 namespace Slab::Core {
 
 
-    ConsoleBackend::ConsoleBackend() : Backend("Console backend") {
+    FConsoleBackend::FConsoleBackend() : FBackend("Console backend") {
     }
 
-    void ConsoleBackend::run() {
-        auto taskManager = dynamic_cast<TaskManagerModule*>(BackendManager::GetModule("TaskManager").get());
+    void FConsoleBackend::Run() {
+        auto TaskManager = dynamic_cast<MTaskManager*>(BackendManager::GetModule("TaskManager").get());
 
-        while(taskManager->hasRunningTasks());
+        while(TaskManager->HasRunningTasks());
     }
 
-    void ConsoleBackend::terminate() {
+    void FConsoleBackend::Terminate() {
 
     }
 
-    ConsoleBackend::~ConsoleBackend() {
+    FConsoleBackend::~FConsoleBackend() {
         Core::Log::Info() << "Destroying ConsoleBackend." << Log::Flush;
     }
 

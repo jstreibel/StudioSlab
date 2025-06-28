@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     SFMLBackend::SFMLBackend()
     : GraphicBackend("SFML backend") {    }
 
-    void SFMLBackend::run() {
+    void SFMLBackend::Run() {
 
         sf::Clock timer;
         timer.restart();
@@ -42,7 +42,7 @@ namespace Slab::Graphics {
         return *DynamicPointerCast<SFMLBackend>(guiBackend);
     }
 
-    void SFMLBackend::terminate() {
+    void SFMLBackend::Terminate() {
         off_sync.lock();
 
         // window->close();

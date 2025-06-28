@@ -10,13 +10,13 @@
 namespace Slab::Math::RtoR {
 
     struct Sign {
-        typedef Real argument_type;
-        typedef Real result_type;
+        typedef DevFloat argument_type;
+        typedef DevFloat result_type;
 
         // __thrust_exec_check_disable__
-        __host__ __device__ Real
+        __host__ __device__ DevFloat
 
-        operator()(const Real &x) const {
+        operator()(const DevFloat &x) const {
             return x < 0.0 ? -1.0 : (x > 0.0 ? 1.0 : 0.0);
         }
     }; // end Sign

@@ -26,8 +26,8 @@
 namespace Slab::Graphics {
 
     class Plot2DWindow final : public SlabWindow {
-        static Count WindowCount;
-        Count id;
+        static CountType WindowCount;
+        CountType id;
         static std::map<Str, Plot2DWindow*> graphMap;
 
     protected: typedef Int zOrder_t;
@@ -43,7 +43,7 @@ namespace Slab::Graphics {
 
         PlottingRegion2D region;
 
-        Real animationTimeSeconds = 0.2;
+        DevFloat animationTimeSeconds = 0.2;
 
         Math::PointSet XHair;
 
@@ -64,7 +64,7 @@ namespace Slab::Graphics {
         LabelsArtist labelsArtist;
         BackgroundArtist bgArtist;
 
-        Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str title = "no_title");
+        Plot2DWindow(DevFloat xMin, DevFloat xMax, DevFloat yMin, DevFloat yMax, Str title = "no_title");
 
     public:
 
@@ -94,8 +94,8 @@ namespace Slab::Graphics {
 
         void requireLabelOverlay(const Str& label, const Pointer<PlotStyle>& style) const;
 
-        void setAnimationTime(Real value);
-        Real getAnimationTime() const;
+        void setAnimationTime(DevFloat value);
+        DevFloat getAnimationTime() const;
 
         bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;

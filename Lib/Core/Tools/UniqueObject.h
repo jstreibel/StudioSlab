@@ -10,19 +10,18 @@
 
 namespace Slab::Core {
 
-    using Id = UInt;
+    using IdType = UInt;
 
     class UniqueObject {
-        static Count count;
-        Id id;
+        static CountType Count;
+        IdType Id;
 
     public:
-        [[nodiscard]] Id get_id() const;
-        [[nodiscard]] Str get_id_str() const;
-        [[nodiscard]] Str unique(const Str&) const;
+        [[nodiscard]] IdType GetId() const;
+        [[nodiscard]] Str GetIdString() const;
+        [[nodiscard]] Str AddUniqueIdToString(const Str&) const;
 
         UniqueObject();
-
 
     };
 

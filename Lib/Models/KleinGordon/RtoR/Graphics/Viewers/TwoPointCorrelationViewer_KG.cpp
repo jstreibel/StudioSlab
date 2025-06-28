@@ -198,8 +198,8 @@ namespace Slab::Models::KGRtoR {
         if(function == nullptr) return;
 
         // Fourier transform *********************************************************************************
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        DevFloat t_0 = (DevFloat)t0;
+        DevFloat t_f = t_0 + (DevFloat)Δt;
         auto toFT = Graphics::FourierViewer::FilterSpace(function, t_0, t_f);
         auto dft2DFunction = Math::R2toR::R2toRDFT::DFTReal(*toFT);
 

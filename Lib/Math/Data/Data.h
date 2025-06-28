@@ -11,7 +11,7 @@ namespace Slab::Math {
 
     class Data;
 
-    using UniqueID = Count;
+    using UniqueID = CountType;
     using DataType = Str;
     using DataName = Str;
     using DataChangeCallback = std::function<void(Pointer<Data>)>;
@@ -24,7 +24,7 @@ namespace Slab::Math {
     class Data {
         friend class DataManager;
 
-        static Count n;
+        static CountType n;
         const UniqueID id;
         DataName data_name;
 

@@ -14,7 +14,7 @@ namespace Slab::Math::RtoR {
             Index j,
             NumericFunction::LaplacianType laplacian_type=NumericFunction::Standard1D_PeriodicBorder);
 
-    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction>, Real t);
+    Pointer<RtoR::NumericFunction> FromR2toRAt(Pointer<const R2toR::NumericFunction>, DevFloat t);
 }
 
 #endif //STUDIOSLAB_FROMR2TORNUMERIC_H

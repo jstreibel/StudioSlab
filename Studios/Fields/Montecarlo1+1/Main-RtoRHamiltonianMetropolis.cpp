@@ -41,7 +41,7 @@ int run(int argc, const char **argv) {
     constexpr unsigned max_steps = -1;
     using Recipe = Slab::Models::KGRtoR::Metropolis::RtoRHamiltonianMetropolisHastingsRecipe;
     auto mc_recipe = Slab::New<Recipe>(max_steps);
-    Slab::Core::RegisterCLInterface(mc_recipe->getInterface());
+    Slab::Core::RegisterCLInterface(mc_recipe->GetInterface());
 
     auto prog = Slab::New<Slab::Math::MathApp> (argc, argv, mc_recipe);
 

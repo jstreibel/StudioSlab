@@ -12,11 +12,11 @@
 
 namespace Slab::Math {
 
-    using RtoRMetropolis = MetropolisAlgorithm<UInt, Real>;
+    using RtoRMetropolis = MetropolisAlgorithm<UInt, DevFloat>;
 
     class RtoRActionMetropolisRecipe : public Base::NumericalRecipe {
         Pointer<RtoR::NumericFunction_CPU> field_data;
-        using RtoRMetropolisSetup = MetropolisSetup<UInt, Real>;
+        using RtoRMetropolisSetup = MetropolisSetup<UInt, DevFloat>;
 
     public:
         auto getField() -> Pointer<RtoR::NumericFunction_CPU>;

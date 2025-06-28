@@ -11,7 +11,7 @@
 
 #include "Math/Numerics/Metropolis/XYMetropolisAlgorithm.h"
 #include "Models/XY/SingleSim/SingleSimViewController.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Graphics/Backend/SFML/SFMLSystemWindow.h"
 #include "Graphics/SlabGraphics.h"
 #include "Core/SlabCore.h"
@@ -19,9 +19,9 @@
 #define DONT_SELF_REGISTER false
 
 XY::App::App(int argc, const char **argv) : Slab::Core::AppBase(argc, argv, DONT_SELF_REGISTER) {
-    interface->addParameters({&N, &T, &MCSteps, &transient});
+    Interface->AddParameters({&N, &T, &MCSteps, &transient});
 
-    registerToManager();
+    RegisterToManager();
 
     Slab::Core::BackendManager::Startup("SFML");
     // Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
@@ -46,7 +46,7 @@ int XY::App::App::run() {
     auto backend = Slab::Graphics::GetGraphicsBackend();
     Slab::DynamicPointerCast<Slab::Graphics::SFMLSystemWindow>
             (backend->GetMainSystemWindow())->addSFMLListener(viewControl);
-    backend->run();
+    backend->Run();
 
     return 0;
 }

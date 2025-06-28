@@ -4,7 +4,7 @@
 
 namespace Slab::Math {
 
-    OutputConsoleMonitor::OutputConsoleMonitor(const Count total_steps, Count steps_interval)
+    OutputConsoleMonitor::OutputConsoleMonitor(const CountType total_steps, CountType steps_interval)
     : Socket("Console monitor output", static_cast<int>(steps_interval))
     , total_steps(total_steps) {
 
@@ -19,7 +19,7 @@ namespace Slab::Math {
     }
 
     void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo) {
-        static Vector<Real> measures;
+        static Vector<DevFloat> measures;
         auto elTime = timer.getElTime_sec();
 
         auto n = total_steps;
@@ -27,12 +27,12 @@ namespace Slab::Math {
         static auto lastn = currn;
 
         Core::Log::Info() << Core::Log::Flush;
-        Core::Log::Info() << (100 * static_cast<Real>(currn) / total_steps) << "% done" << Core::Log::Flush;
+        Core::Log::Info() << (100 * static_cast<DevFloat>(currn) / total_steps) << "% done" << Core::Log::Flush;
         Core::Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Core::Log::Flush;
 
-        auto expectedFinish = (Real)NAN;
+        auto expectedFinish = (DevFloat)NAN;
         if (lastn != currn) {
-            Real stepsPerSec;
+            DevFloat stepsPerSec;
 
             measures.emplace_back(elTime);
 
@@ -42,11 +42,11 @@ namespace Slab::Math {
             auto countMin = count > MAX_AVG_SAMPLES ? count - MAX_AVG_SAMPLES : 0;
             auto total = count - countMin;
             for (int index = (int)countMin; index < count; index++) avg += measures[index];
-            avg /= (Real)total;
+            avg /= (DevFloat)total;
 
-            stepsPerSec = (Real)(currn - lastn) / avg;
+            stepsPerSec = (DevFloat)(currn - lastn) / avg;
 
-            expectedFinish = (Real)(n - currn) / stepsPerSec;
+            expectedFinish = (DevFloat)(n - currn) / stepsPerSec;
 
             Core::Log::Info() << "Avg " << stepsPerSec << " steps/s in last " << total << " measures" << Core::Log::Flush;
             Core::Log::Info() << "El time since last step: " << elTime << "s" << Core::Log::Flush;

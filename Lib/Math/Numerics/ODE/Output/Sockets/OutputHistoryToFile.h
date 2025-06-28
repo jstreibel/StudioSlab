@@ -2,7 +2,7 @@
 #define OUTPUTFILE1D_H
 
 #include "HistoryKeeper.h"
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
 
 #include "Math/Numerics/ODE/Output/Format/BinarySOF.h"
 

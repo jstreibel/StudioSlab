@@ -6,7 +6,7 @@
 #include "DataManager.h"
 
 namespace Slab::Math {
-    Count Data::n = 0;
+    CountType Data::n = 0;
 
     Data::Data(DataName name) : id(name=="[invalid]" ? 0 : ++n /* zero is reserved */), data_name(name) {}
 

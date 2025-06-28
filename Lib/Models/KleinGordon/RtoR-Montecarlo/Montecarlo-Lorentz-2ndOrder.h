@@ -24,16 +24,16 @@ namespace Slab::Models::KGRtoR {
 
 
     class MontecarloLangevin_2ndOrder : public LorentzInvariant {
-        Real T=1.e-3;
+        DevFloat T=1.e-3;
         unsigned accepted = 0;
 
-        Real E(const NumericFunction &phi){
+        DevFloat E(const NumericFunction &phi){
             const auto h = phi.getSpace().GetHeight();
             const auto inv_2h = .5/h;
             const auto &X = phi.getSpace().getHostData();
             const auto &N = phi.N;
 
-            Real E_h = .0;
+            DevFloat E_h = .0;
             for(auto i=0; i<N; ++i){
                 const auto &x_left = X[i==0   ? N-1 : i-1];
                 const auto &x = X[i];
@@ -49,7 +49,7 @@ namespace Slab::Models::KGRtoR {
         }
 
         NumericFunction *temp;
-        Real deltaE(NumericFunction &phi, const int site, const Real newVal, const Real h){
+        DevFloat deltaE(NumericFunction &phi, const int site, const DevFloat newVal, const DevFloat h){
             NumericFunction &phiNew = *temp;
 
             phiNew.SetArb(phi);
@@ -69,12 +69,12 @@ namespace Slab::Models::KGRtoR {
             //return (1/h) * (C-v) * (v - L + C - R) + h*(V(C) - V(v));
         }
 
-        bool shouldAccept(Real deltaE){
+        bool shouldAccept(DevFloat deltaE){
             if(deltaE<0) return true;
 
-            const Real r = RandUtils::RandomUniform01();
+            const DevFloat r = RandUtils::RandomUniform01();
 
-            const Real z = ThermoUtils::BoltzmannWeight(T, deltaE);
+            const DevFloat z = ThermoUtils::BoltzmannWeight(T, deltaE);
 
             return (r<z);
         }
@@ -82,16 +82,16 @@ namespace Slab::Models::KGRtoR {
         explicit MontecarloLangevin_2ndOrder(Core::Simulation::Builder &builder, RtoR::Function &potential)
             : LorentzInvariant(potential), temp(Numerics::Allocator::NewFunctionArbitrary<NumericFunction>()) { }
 
-        void startStep(Real t, Real dt) override{
+        void startStep(DevFloat t, DevFloat dt) override{
             DifferentialEquation::startStep(t, dt);
             accepted = 0;
         }
 
-        void setTemperature(Real value) {T = value;}
-        Real getTemperature() { return T; }
+        void setTemperature(DevFloat value) {T = value;}
+        DevFloat getTemperature() { return T; }
 
 
-        FieldState &dtF(const FieldState &null, FieldState &fieldState, Real t, Real dt) override {
+        FieldState &dtF(const FieldState &null, FieldState &fieldState, DevFloat t, DevFloat dt) override {
             auto &phi = fieldState.getPhi();
             auto &dPhidt = fieldState.getDPhiDt();
 
@@ -103,10 +103,10 @@ namespace Slab::Models::KGRtoR {
                 // sorteio usando prob. (uniforme) do sitio estar na linha i:  P_i=1/L
                 const int i = RandUtils::RandomUniformInt() % N;
 
-                const Real v = X[i];
-                const Real newVal = v + RandUtils::RandomUniform(-.5, .5);
+                const DevFloat v = X[i];
+                const DevFloat newVal = v + RandUtils::RandomUniform(-.5, .5);
 
-                const Real deltaE = this->deltaE(phi, i, newVal, h);
+                const DevFloat deltaE = this->deltaE(phi, i, newVal, h);
 
                 if (shouldAccept(deltaE)) {
                     X[i] = newVal;

@@ -24,7 +24,7 @@ namespace Slab::Models::MolecularDynamics {
         Graphics::Point2D m_q, m_p;
     };
 
-    Molecule operator*(const Real &a, const Molecule &m);
+    Molecule operator*(const DevFloat &a, const Molecule &m);
 
     Molecule operator+(const Molecule &a, const Molecule &b);
 

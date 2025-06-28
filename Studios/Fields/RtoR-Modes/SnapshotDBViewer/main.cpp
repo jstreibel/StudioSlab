@@ -5,8 +5,8 @@
 #include "AppBase.h"
 #include "CrashPad.h"
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -18,7 +18,7 @@
 #include "DBViewerMulti.h"
 #include "DBViewerSequence.h"
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 #include "Core/SlabCore.h"
 
 using namespace Slab;
@@ -36,8 +36,8 @@ public:
     App(int argc, const char **argv)
     : AppBase(argc, argv, false)
     {
-        interface->addParameters({&snapshotDBFolders, &criticalParameter});
-        Core::RegisterCLInterface(interface);
+        Interface->AddParameters({&snapshotDBFolders, &criticalParameter});
+        Core::RegisterCLInterface(Interface);
 
         Core::BackendManager::Startup("GLFW");
 
@@ -58,7 +58,7 @@ public:
         wm->addSlabWindow(viewer);
         guiBackend->GetMainSystemWindow()->addEventListener(wm);
 
-        guiBackend->run();
+        guiBackend->Run();
 
         return 0;
     }

@@ -63,8 +63,8 @@ namespace Slab::Models::KGR2toR {
             RtoR2::StraightLine section;
             auto angleDegrees = 22.5;
             {
-                const Real rMin = kg_numeric_config->getxMin();
-                const Real rMax = kg_numeric_config->getxMax();
+                const DevFloat rMin = kg_numeric_config->getxMin();
+                const DevFloat rMax = kg_numeric_config->getxMax();
                 const Real2D x0 = {rMin, .0}, xf = {rMax, .0};
 
                 using Rotation = Math::R2toR::Rotation;
@@ -81,9 +81,9 @@ namespace Slab::Models::KGR2toR {
             SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
                     outputResolutionX, section, kg_numeric_config->getL());
 
-            const auto N = (Real) kg_numeric_config->getN();
-            const Real Np = outputResolutionX;
-            const Real r = kg_numeric_config->getr();
+            const auto N = (DevFloat) kg_numeric_config->getN();
+            const DevFloat Np = outputResolutionX;
+            const DevFloat r = kg_numeric_config->getr();
             const auto stepsInterval = UInt(N / (Np * r));
 
             auto outputFileName = this->suggestFileName() + " section_tx_angle=" + ToStr(angleDegrees, 1);

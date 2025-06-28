@@ -12,9 +12,9 @@
 
 namespace Slab::Core {
 
-    using BackendName = Str;
+    using FBackendIdentifier = Str;
 
-    using BackendAllocator = std::function<std::unique_ptr<Backend>(void)>;
+    using FBackendAllocator = std::function<std::unique_ptr<FBackend>(void)>;
 }
 
 #endif //STUDIOSLAB_IMPLEMENTATIONS_H

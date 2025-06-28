@@ -15,12 +15,12 @@ namespace Slab::Math {
         Base::EquationState_ptr _f;
         Base::EquationState_ptr _temp;
 
-        Count step_counter = 0;
+        CountType step_counter = 0;
 
-        Real dt;
+        DevFloat dt;
 
     public:
-        explicit Euler(const Pointer<Base::LinearStepSolver> &solver, Real dt);
+        explicit Euler(const Pointer<Base::LinearStepSolver> &solver, DevFloat dt);
 
         void step(size_t n_steps) override;
 

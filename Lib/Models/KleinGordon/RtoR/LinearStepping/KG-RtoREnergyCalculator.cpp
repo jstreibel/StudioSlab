@@ -72,9 +72,9 @@ namespace Slab::Models::KGRtoR {
             derivatves.dfdx_v(dΦdx);
 
             for (int i = 0; i < N; i++) {
-                const Real xcAbs = V_func(Φ[i]),
+                const DevFloat xcAbs = V_func(Φ[i]),
                         dϕdt = dΦdt[i];
-                const Real dϕdx = dΦdx[i];
+                const DevFloat dϕdx = dΦdx[i];
 
                 k[i] = .5 * dϕdt * dϕdt;
                 g[i] = .5 * dϕdx * dϕdx;
@@ -89,7 +89,7 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        Real dx = phi.getSpace().getMetaData().geth(0);
+        DevFloat dx = phi.getSpace().getMetaData().geth(0);
         U *= dx;
         K *= dx;
         W *= dx;
@@ -98,18 +98,18 @@ namespace Slab::Models::KGRtoR {
         return *_oEnergyDensity;
     }
 
-    auto KGEnergy::getTotalEnergy() const -> Real { return U; }
+    auto KGEnergy::getTotalEnergy() const -> DevFloat { return U; }
 
 
-    auto KGEnergy::integrateEnergy(Real xmin, Real xmax) -> Real {
+    auto KGEnergy::integrateEnergy(DevFloat xmin, DevFloat xmax) -> DevFloat {
         auto &func = *_oEnergyDensity;
 
         RealArray &E_v = _oEnergyDensity->getSpace().getHostData();
-        Real dx = _oEnergyDensity->getSpace().getMetaData().geth(0);
+        DevFloat dx = _oEnergyDensity->getSpace().getMetaData().geth(0);
 
         UInt iMin = func.mapPosToInt(xmin), iMax = func.mapPosToInt(xmax);
 
-        Real E = 0;
+        DevFloat E = 0;
         for (UInt i = iMin; i < iMax; ++i)
             E += E_v[i];
 
@@ -118,11 +118,11 @@ namespace Slab::Models::KGRtoR {
         return 0;
     }
 
-    Real KGEnergy::getTotalKineticEnergy() const { return K; }
+    DevFloat KGEnergy::getTotalKineticEnergy() const { return K; }
 
-    Real KGEnergy::getTotalGradientEnergy() const { return W; }
+    DevFloat KGEnergy::getTotalGradientEnergy() const { return W; }
 
-    Real KGEnergy::getTotalPotentialEnergy() const { return V; }
+    DevFloat KGEnergy::getTotalPotentialEnergy() const { return V; }
 
 
 }

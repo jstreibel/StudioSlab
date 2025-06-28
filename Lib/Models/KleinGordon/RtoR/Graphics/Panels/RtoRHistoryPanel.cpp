@@ -3,7 +3,7 @@
 //
 
 #include "3rdParty/ImGui.h"
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "RtoRHistoryPanel.h"
 
@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
         addWindow(kSection);
 
         {
-            auto kParam = Core::CLInterfaceManager::getInstance().getParameter("harmonic");
+            auto kParam = Core::FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
 
             if(kParam != nullptr) {
                 using Tick = Graphics::AxisArtist::Tick;
@@ -66,11 +66,11 @@ namespace Slab::Models::KGRtoR {
                 ticks.push_back(Tick{0, "0"});
 
                 fix dk    = M_PI / params->getL();
-                fix k_0 = dk * kParam->getValueAs<Real>();
+                fix k_0 = dk * kParam->getValueAs<DevFloat>();
                 auto k_max = M_PI / params->geth();
 
-                Real k_val = k_0;
-                Real Δk = k_max / 50;
+                DevFloat k_val = k_0;
+                DevFloat Δk = k_max / 50;
                 do {
                     ticks.push_back(Tick{k_val, unit(k_val, 0)});
                     k_val += Δk;

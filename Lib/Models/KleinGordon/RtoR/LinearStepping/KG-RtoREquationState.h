@@ -14,11 +14,11 @@ namespace Slab::Models::KGRtoR {
 
 
 
-    class EquationState : public Models::KGState<Real> {
-        typedef Models::KGState<Real>::Field_ptr Field_ptr;
+    class EquationState : public Models::KGState<DevFloat> {
+        typedef Models::KGState<DevFloat>::Field_ptr Field_ptr;
     public:
         EquationState(Field_ptr phi, Field_ptr dPhiDt)
-        : Models::KGState<Real>(std::move(phi), std::move(dPhiDt)) {}
+        : Models::KGState<DevFloat>(std::move(phi), std::move(dPhiDt)) {}
 
         void outputPhi(OStream &out, Str separator) const override {
             const RealArray &vPhi = getPhi().getSpace().getHostData();

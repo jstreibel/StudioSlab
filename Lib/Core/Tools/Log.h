@@ -7,11 +7,10 @@
 
 
 #include "Utils/Types.h"
-#include "Utils/Utils.h"
 #include "Utils/Timer.h"
 
-#include "Core/Controller/CommandLine/CommonCLParameters.h"
-#include "Core/Controller/CommandLine/CLInterfaceOwner.h"
+#include "Core/Controller/CommandLine/CommandLineCommonParameters.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceOwner.h"
 #include "Utils/Singleton.h"
 
 #include <iostream>
@@ -21,32 +20,32 @@
 
 namespace Slab::Core {
 
-    class Log : public Singleton<Log>, CLInterfaceOwner {
-        static Log *myInstance;
+    class Log : public Singleton<Log>, FCommandLineInterfaceOwner {
+        static Log *pMyInstance;
 
-        BoolParameter::Ptr logDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");
-        BoolParameter::Ptr logNotes = BoolParameter::New(false, "log_notes", "Show note messages.");
-        BoolParameter::Ptr verbose = BoolParameter::New(false, "verbose", "Show note and debug messages.");
+        BoolParameter::Ptr LogDebug = BoolParameter::New(false, "log_debug", "Show debug messages.");
+        BoolParameter::Ptr LogNotes = BoolParameter::New(false, "log_notes", "Show note messages.");
+        BoolParameter::Ptr Verbose = BoolParameter::New(false, "verbose", "Show note and debug messages.");
 
         Log();
 
-        Str prefix();
+        Str Prefix();
 
-        Str postfix();
+        Str Postfix();
 
-        OStream *mainStream = &std::cout;
-        bool manageMainStream = false;
+        OStream *pMainStream = &std::cout;
+        bool bManageMainStream = false;
 #if FORCE_VERBOSE
         OStream *notesStream = &std::cout; bool manageNotesStream = false;
         OStream *debugStream = &std::cout; bool manageDebugStream = false;
 #else
-        OStream *notesStream = new StringStream;
-        bool manageNotesStream = true;
-        OStream *debugStream = new StringStream;
-        bool manageDebugStream = true;
+        OStream *pNotesStream = new StringStream;
+        bool bManageNotesStream = true;
+        OStream *pDebugStream = new StringStream;
+        bool bManageDebugStream = true;
 #endif
 
-        Timer timer;
+        Timer Timer;
 
     public:
         static auto GetSingleton() -> Log &;
@@ -152,28 +151,28 @@ namespace Slab::Core {
 
         friend OStream &operator<<(OStream &os, const FlushClass &flush);
 
-        enum TextPosition {
+        enum ETextPosition {
             Left, Right
         };
 
         class FormattingClass {
         public:
-            Count len{};
-            TextPosition textPosition = Left;
+            CountType Len{};
+            ETextPosition TextPosition = Left;
 
-            const FormattingClass &operator()(Count len);
+            const FormattingClass &operator()(CountType Len);
 
-            const FormattingClass &operator()(TextPosition);
+            const FormattingClass &operator()(ETextPosition);
         };
 
         friend FormattingClass;
         static FormattingClass Format;
 
-        friend OStream &operator<<(OStream &os, const FormattingClass &flush);
+        friend OStream &operator<<(OStream &OS, const FormattingClass &Flush);
 
         static auto FlushAll() -> void;
 
-        auto notifyCLArgsSetupFinished() -> void override;
+        auto NotifyCLArgsSetupFinished() -> void override;
 
     };
 

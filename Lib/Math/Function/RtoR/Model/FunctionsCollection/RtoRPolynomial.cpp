@@ -6,11 +6,11 @@
 
 namespace Slab::Math::RtoR {
 
-    RtoRPolynomial::RtoRPolynomial(Vector<Real> coeffs) : coeffs(coeffs) {
+    RtoRPolynomial::RtoRPolynomial(Vector<DevFloat> coeffs) : coeffs(coeffs) {
 
     }
 
-    Real RtoRPolynomial::operator()(Real x) const {
+    DevFloat RtoRPolynomial::operator()(DevFloat x) const {
         double result = 0.0;
 
         // Iterate from the highest degree term to the lowest

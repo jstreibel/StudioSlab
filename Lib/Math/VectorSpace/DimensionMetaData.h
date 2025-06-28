@@ -27,11 +27,11 @@ namespace Slab::Math {
 
         auto getN() const -> const UIntArray & { return N; }
 
-        auto geth(UInt dim) const -> const Real & { return h[dim]; }
+        auto geth(UInt dim) const -> const DevFloat & { return h[dim]; }
 
         auto geth() const -> const RealArray & { return h; }
 
-        auto getL(UInt dim) const -> Real { return N[dim] * h[dim]; }
+        auto getL(UInt dim) const -> DevFloat { return N[dim] * h[dim]; }
 
         UInt computeFullDiscreteSize() const;
 

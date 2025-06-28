@@ -10,12 +10,12 @@
 
 namespace Slab::Math {
 
-    RtoR::AnalyticShockwave1D::AnalyticShockwave1D(Real a0) {
+    RtoR::AnalyticShockwave1D::AnalyticShockwave1D(DevFloat a0) {
         const auto N = 20;
 
         ak = {a0};
 
-        Vector<Real> &xk = this->xk;
+        Vector<DevFloat> &xk = this->xk;
         auto bk = [&xk](const int k) {
             auto val = 1.;
 
@@ -46,20 +46,20 @@ namespace Slab::Math {
         }
 
         for (int k = 0; k < N; k++) {
-            Real a = a0;
+            DevFloat a = a0;
             for (int i = 1; i <= k + 1; i++) a *= xk[i - 1];
             ak.push_back(a);
         }
 
         zk = {2 * a0};
         for (int k = 1; k <= N; k++) {
-            Real z = 2 * ak[k] - zk[k - 1];
+            DevFloat z = 2 * ak[k] - zk[k - 1];
             zk.push_back(z);
         }
 
     }
 
-    Real RtoR::AnalyticShockwave1D::Wk(Real z, int k) const {
+    DevFloat RtoR::AnalyticShockwave1D::Wk(DevFloat z, int k) const {
         if (k == -1) return z > -ak[0] && z < 0 ? z + ak[0] : .0;
 
         const auto a_k = ak[k];
@@ -72,7 +72,7 @@ namespace Slab::Math {
         return sign * (z + a_k + z_k * log(abs(z) / a_k));
     }
 
-    Real RtoR::AnalyticShockwave1D::operator()(Real x) const {
+    DevFloat RtoR::AnalyticShockwave1D::operator()(DevFloat x) const {
         auto z = .25 * (x * x - t * t);
         auto phi = .0;
 
@@ -88,7 +88,7 @@ namespace Slab::Math {
         return false;
     }
 
-    void RtoR::AnalyticShockwave1D::setT(Real t) {
+    void RtoR::AnalyticShockwave1D::setT(DevFloat t) {
         AnalyticShockwave1D::t = t;
     }
 

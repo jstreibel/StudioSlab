@@ -47,15 +47,15 @@ namespace Slab::Graphics {
     const Color Nil = Color(-1, -1, -1, -1);
 
     using rgb = struct {
-        Real r;       // a fraction between 0 and 1
-        Real g;       // a fraction between 0 and 1
-        Real b;       // a fraction between 0 and 1
+        DevFloat r;       // a fraction between 0 and 1
+        DevFloat g;       // a fraction between 0 and 1
+        DevFloat b;       // a fraction between 0 and 1
     };
 
     using hsv = struct {
-        Real h;       // angle in degrees
-        Real s;       // a fraction between 0 and 1
-        Real v;       // a fraction between 0 and 1
+        DevFloat h;       // angle in degrees
+        DevFloat s;       // a fraction between 0 and 1
+        DevFloat v;       // a fraction between 0 and 1
     };
 
     static auto   rgb2hsv(rgb in) -> hsv;
@@ -64,7 +64,7 @@ namespace Slab::Graphics {
     auto rgb2hsv(rgb in) -> hsv
     {
         hsv         out;
-        Real      min, max, delta;
+        DevFloat      min, max, delta;
 
         min = in.r < in.g ? in.r : in.g;
         min = min  < in.b ? min  : in.b;
@@ -107,7 +107,7 @@ namespace Slab::Graphics {
 
     auto hsv2rgb(hsv in) -> rgb
     {
-        Real      hh, p, q, t, ff;
+        DevFloat      hh, p, q, t, ff;
         long        i;
         rgb         out;
 

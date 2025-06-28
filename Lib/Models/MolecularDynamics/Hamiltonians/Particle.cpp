@@ -6,7 +6,7 @@
 
 namespace Slab::Models::MolecularDynamics {
 
-    Molecule operator*(const Real &a, const Molecule &m) {
+    Molecule operator*(const DevFloat &a, const Molecule &m) {
         return {a * m.m_q, a * m.m_p};
     }
 

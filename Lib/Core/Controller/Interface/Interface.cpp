@@ -2,7 +2,6 @@
 // Created by joao on 10/14/24.
 //
 
-#include <iomanip>
 #include "Interface.h"
 #include "InterfaceManager.h"
 #include "Core/Tools/Log.h"
@@ -10,51 +9,52 @@
 
 namespace Slab::Core {
 
-    Interface::Interface(Str name)
-            : name(name), id(InterfaceManager::GenerateUniqueID()) {
+    FInterface::FInterface(const Str& Name)
+            : Name(Name), Id(FInterfaceManager::GenerateUniqueID()) {
 
     }
 
-    Interface::~Interface() = default;
+    FInterface::~FInterface() = default;
 
-    auto Interface::getParameters() const -> Vector<CLParameter_constptr> {
-        Vector<CLParameter_constptr> constParameters;
+    auto FInterface::GetParameters() const -> Vector<FCommandLineParameter_constptr> {
+        Vector<FCommandLineParameter_constptr> constParameters;
 
-        std::copy(parameters.begin(), parameters.end(), std::back_inserter(constParameters));
+        std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
 
         return constParameters;
     }
 
-    void Interface::addParameter(CLParameter_ptr parameter) {
-        auto insertionSuccessful = parameters.insert(parameter).second;
+    void FInterface::AddParameter(FCommandLineParameter_ptr Parameter) {
+        auto insertionSuccessful = Parameters.insert(Parameter).second;
 
         if (!insertionSuccessful) {
-            throw "Error while inserting parameter in interface.";
+            throw Exception("Error while inserting parameter in interface.");
         }
 
-        auto quotename = Str("\"") + parameter->getFullCommandLineName() + "\"";
+        auto quotename = Str("\"") + Parameter->getFullCommandLineName() + "\"";
     }
-    void Interface::addParameters(std::initializer_list<CLParameter_ptr> parametersList) {
-        for (auto param: parametersList)
-            addParameter(param);
+    void FInterface::AddParameters(std::initializer_list<FCommandLineParameter_ptr> ParametersList) {
+        for (const auto& Param: ParametersList)
+            AddParameter(Param);
     }
 
-    auto Interface::getParameter(Str key) const -> CLParameter_ptr {
-        auto compareFunc = [key](CLParameter_ptr parameter) {
-            return *parameter == key;
+    auto FInterface::GetParameter(const Str& Key) const -> FCommandLineParameter_ptr {
+        auto compareFunc = [Key](const FCommandLineParameter_ptr& Parameter) {
+            return *Parameter == Key;
         };
 
-        auto result = std::find_if(parameters.begin(), parameters.end(), compareFunc);
+        auto result = std::find_if(Parameters.begin(), Parameters.end(), compareFunc);
 
         return *result;
     }
 
-    Message Interface::sendRequest(Request req) {
-        return {"[unknown request]"};
+    FMessage FInterface::SendRequest(FRequest Request)
+    {
+        return FMessage{"[unknown request]"};
     }
 
-    UniqueID Interface::getUniqueID() const {
-        return id;
+    UniqueID FInterface::GetUniqueID() const {
+        return Id;
     }
 
 

@@ -53,9 +53,9 @@ namespace Slab::Lost {
         virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const override;
 
     public:
-        virtual void manipulationOfParametersHasHappened(Real previousParamValue, Real sigmaFactor);
+        virtual void manipulationOfParametersHasHappened(DevFloat previousParamValue, DevFloat sigmaFactor);
 
-        Vector<Pair<Real, Real>> getData() const;
+        Vector<Pair<DevFloat, DevFloat>> getData() const;
         void clearData();
     };
 }

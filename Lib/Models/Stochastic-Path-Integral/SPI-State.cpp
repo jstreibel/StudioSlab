@@ -31,12 +31,12 @@ namespace Slab::Models::StochasticPathIntegrals {
         return *this;
     }
 
-    Math::Base::EquationState & SPIState::StoreScalarMultiplication(const EquationState &a, Real c) {
+    Math::Base::EquationState & SPIState::StoreScalarMultiplication(const EquationState &a, DevFloat c) {
         data->StoreScalarMultiplication(GetData(a), c);
         return *this;
     }
 
-    Math::Base::EquationState & SPIState::Multiply(Real a) {
+    Math::Base::EquationState & SPIState::Multiply(DevFloat a) {
         data->Multiply(a);
         return *this;
     }

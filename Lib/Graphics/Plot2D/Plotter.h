@@ -21,13 +21,13 @@
 
 namespace Slab::Graphics {
 
-    class Plotter final : public Core::Interface {
+    class Plotter final : public Core::FInterface {
         Pointer<Plot2DWindow> plottingWindow;
 
     public:
         explicit Plotter(Pointer<Plot2DWindow>);
 
-        Core::Message sendRequest(Core::Request request) override;
+        Core::FMessage SendRequest(Core::FRequest request) override;
 
         auto addPointSet             (const Math::PointSet_ptr&,               PlotStyle,          Str name="", bool affectsGraphRanges=true, int zOrder=0) -> PointSetArtist_ptr;
         auto addCurve                (const Math::RtoR2::ParametricCurve_ptr&, PlotStyle,   const Str& name, int zOrder=0) -> ParametricCurve2DArtist_ptr;

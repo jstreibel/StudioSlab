@@ -22,16 +22,16 @@ namespace Slab::Models::MolecularDynamics {
 
         Graphics::PointContainer q, p;
         Pointer<MoleculesState> state;
-        Count currStep=0;
+        CountType currStep=0;
 
-        Real dt;
+        DevFloat dt;
 
     public:
         using Config = Pointer<Models::MolecularDynamics::MolDynNumericConfig>;
 
         explicit VerletStepper(Config config, NewtonMechanicsModel mechModel);
 
-        void step(Count n_steps) override;
+        void step(CountType n_steps) override;
 
         auto getCurrentState() const -> Math::Base::EquationState_constptr override;
     };

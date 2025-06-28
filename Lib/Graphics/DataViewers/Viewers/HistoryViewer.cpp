@@ -123,7 +123,7 @@ namespace Slab::Graphics {
             fix t_max = (float) func->getDomain().yMax;
             auto current_t = (float) curr_t;
             if (ImGui::SliderFloat("t##HistoryViewer", &current_t, t_min, t_max)) {
-                curr_t = (Real) current_t;
+                curr_t = (DevFloat) current_t;
                 function_section->getx0().y = dft_section->getx0().y = curr_t;
                 // function_section->getr().y = dft_section->getr().y = curr_t;
             }

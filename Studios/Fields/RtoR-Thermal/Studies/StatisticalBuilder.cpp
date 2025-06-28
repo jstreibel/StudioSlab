@@ -20,7 +20,7 @@ namespace Studios::Fields::RtoRThermal {
 
     StatisticalBuilder::StatisticalBuilder()
             : Builder("Statistical", "Energy and density of oscillons statistical input") {
-        interface->addParameters({&E, &n});
+        Interface->AddParameters({&E, &n});
     }
 
     auto StatisticalBuilder::getDetailedDescription() -> Str {
@@ -48,7 +48,7 @@ namespace Studios::Fields::RtoRThermal {
 
         const auto ONE_plus = 1. + 1.e-10;
         for (int i = 0; i < *n; i++) {
-            auto tx = xLeft + ONE_plus*Real(i)*l + ε;
+            auto tx = xLeft + ONE_plus*DevFloat(i)*l + ε;
 
             auto σ = RandUtils::RandomUniformUInt() % 2 ? 1. : -1.;
 

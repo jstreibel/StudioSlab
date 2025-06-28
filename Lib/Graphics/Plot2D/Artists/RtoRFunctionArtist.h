@@ -16,16 +16,16 @@ namespace Slab::Graphics {
     class RtoRFunctionArtist : public Artist {
         RtoR::Function_ptr function;
         PlotStyle plotStyle;
-        Count samples;
+        CountType samples;
 
     public:
-        RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, Count samples);
+        RtoRFunctionArtist(RtoR::Function_ptr, PlotStyle, CountType samples);
 
         void setFunction(RtoR::Function_ptr);
 
         void setStyle(PlotStyle);
 
-        void setSampling(Count);
+        void setSampling(CountType);
 
         const RectR &getRegion() override;
 

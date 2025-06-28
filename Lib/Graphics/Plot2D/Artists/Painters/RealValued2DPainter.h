@@ -32,7 +32,7 @@ namespace Slab::Graphics {
 
         virtual void setRegion(RectR);
         virtual bool dirtyMinMax() const;
-        virtual void setMinMax(Real, Real);
+        virtual void setMinMax(DevFloat, DevFloat);
         virtual void labelUpdateEvent(const Str&);
     };
 

@@ -18,12 +18,12 @@
 namespace Slab::Graphics {
 
     template<class BackendClass>
-    std::unique_ptr<Core::Backend> BackendAllocator() {
+    std::unique_ptr<Core::FBackend> BackendAllocator() {
         return std::make_unique<BackendClass>();
     };
 
     template<class ModuleClass>
-    Core::Module* ModuleAllocator() {
+    Core::SlabModule* ModuleAllocator() {
         return new ModuleClass();
     };
 

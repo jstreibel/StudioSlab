@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
 
     protected:
 
-        virtual void applyKG(EquationState &kgState, Real t) const;
+        virtual void applyKG(EquationState &kgState, DevFloat t) const;
 
     public:
         BoundaryCondition(const KGRtoR::EquationState_constptr &prototype,
@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
 
         virtual ~BoundaryCondition();
 
-        void apply(Base::EquationState &state, Real t) const final;
+        void apply(Base::EquationState &state, DevFloat t) const final;
 
 
 

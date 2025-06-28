@@ -12,7 +12,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
     void PushScene();
 
     void ResetModelview();
-    void SetupOrtho(const RectR &region, Real zNear=-1.0, Real zFar=1.0);
+    void SetupOrtho(const RectR &region, DevFloat zNear=-1.0, DevFloat zFar=1.0);
 
     void PopScene();
 }

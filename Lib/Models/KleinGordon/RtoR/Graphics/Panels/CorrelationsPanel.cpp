@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
 
     class SomeCurve : public RtoR2::ParametricCurve {
     public:
-        Real2D operator()(Real t) const override {
+        Real2D operator()(DevFloat t) const override {
             fix Δkₓ = 2*M_PI/L1 * N;
             fix Δkₜ = 2*M_PI/L2 * M;
 
@@ -60,13 +60,13 @@ namespace Slab::Models::KGRtoR {
 
         for(int i=0; i<N; ++i){
             for(int j=0; j<M; ++j) {
-                fix x = L1 * i / (Real) N - xCenter;
-                fix y = L2 * j / (Real) M - yCenter;
+                fix x = L1 * i / (DevFloat) N - xCenter;
+                fix y = L2 * j / (DevFloat) M - yCenter;
                 fix r = sqrt(x * x + y * y);
 
-                Real val=0.0;
+                DevFloat val=0.0;
                 for (int n = 1; n <= n_modes; ++n) {
-                    fix t = (n-1)/(Real)n_modes;
+                    fix t = (n-1)/(DevFloat)n_modes;
 
                     auto k = someCurve(t);
                     fix k1 = k.x;

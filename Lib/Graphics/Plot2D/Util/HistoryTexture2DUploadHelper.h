@@ -20,13 +20,13 @@ namespace Slab::Graphics {
         Pointer<FieldTextureKontraption> textureKontraption;
         NumericFunction_Ptr function;
 
-        Count nextRow = 0;
-        Real lastUpdatedTime = -1.0;
+        CountType nextRow = 0;
+        DevFloat lastUpdatedTime = -1.0;
     public:
         HistoryTexture2DUploadHelper(NumericFunction_Ptr history,
                                      Pointer<FieldTextureKontraption> texture);
 
-        void uploadUpTo(const Real time);
+        void uploadUpTo(const DevFloat time);
     };
 
     DefinePointers(HistoryTexture2DUploadHelper)

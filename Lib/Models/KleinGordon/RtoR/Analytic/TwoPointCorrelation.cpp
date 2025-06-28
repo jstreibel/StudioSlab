@@ -5,12 +5,12 @@
 #include "TwoPointCorrelation.h"
 
 namespace Slab::Models::KGRtoR {
-    CorrelationDecay::CorrelationDecay(Real c0, Real ξ, Real β, Real u0)
+    CorrelationDecay::CorrelationDecay(DevFloat c0, DevFloat ξ, DevFloat β, DevFloat u0)
     : c0(c0), invξ(1./ξ), β(β), u0(u0) {
 
     }
 
-    Real CorrelationDecay::operator()(Real u) const {
+    DevFloat CorrelationDecay::operator()(DevFloat u) const {
         fix fuiξ = invξ * fabs(u-u0);
 
         if(nature==Exponential) {
@@ -29,53 +29,53 @@ namespace Slab::Models::KGRtoR {
     CorrelationDecay::Nature CorrelationDecay::getNature() const { return nature; }
     void CorrelationDecay::setNature(CorrelationDecay::Nature nat) { nature = nat; }
 
-    Real CorrelationDecay::get_c0() const {
+    DevFloat CorrelationDecay::get_c0() const {
         return c0;
     }
 
-    void CorrelationDecay::set_c0(Real c_0) {
+    void CorrelationDecay::set_c0(DevFloat c_0) {
         CorrelationDecay::c0 = c_0;
     }
 
-    Real CorrelationDecay::getξ() const {
+    DevFloat CorrelationDecay::getξ() const {
         return 1./invξ;
     }
 
-    void CorrelationDecay::setξ(Real ξ) {
+    void CorrelationDecay::setξ(DevFloat ξ) {
         CorrelationDecay::invξ = 1. / ξ;
     }
 
-    Real CorrelationDecay::getβ() const {
+    DevFloat CorrelationDecay::getβ() const {
         return β;
     }
 
-    void CorrelationDecay::setβ(Real beta) {
+    void CorrelationDecay::setβ(DevFloat beta) {
         CorrelationDecay::β = beta;
     }
 
-    Real CorrelationDecay::getU0() const {
+    DevFloat CorrelationDecay::getU0() const {
         return u0;
     }
 
-    void CorrelationDecay::setU0(Real u0_new) {
+    void CorrelationDecay::setU0(DevFloat u0_new) {
         CorrelationDecay::u0 = u0_new;
     }
 
 
-    TwoPointCorrelation::TwoPointCorrelation(Real c0, Real λ, Real ξ, Real β, Count n)
+    TwoPointCorrelation::TwoPointCorrelation(DevFloat c0, DevFloat λ, DevFloat ξ, DevFloat β, CountType n)
     : c(c0, ξ, β), λ(λ), n_max(n) {
 
     }
 
-    Real TwoPointCorrelation::operator()(Real u) const {
+    DevFloat TwoPointCorrelation::operator()(DevFloat u) const {
         constexpr auto inv_picube = 32./(M_PI*M_PI*M_PI);
-        Real sum = .0;
+        DevFloat sum = .0;
 
         int sign = 1;
-        for(Count n=1; n<=n_max; n+=2) {
-            fix inv_ncube = 1./Real(n*n*n);
+        for(CountType n=1; n<=n_max; n+=2) {
+            fix inv_ncube = 1./DevFloat(n*n*n);
 
-            sum += sign*inv_ncube*cos(2*M_PI*Real(n)*u/λ - ϕ_0);
+            sum += sign*inv_ncube*cos(2*M_PI*DevFloat(n)*u/λ - ϕ_0);
             sign += -1;
         }
 
@@ -83,27 +83,27 @@ namespace Slab::Models::KGRtoR {
         return inv_picube * c(u) * sum;
     }
 
-    Real TwoPointCorrelation::getλ() const { return λ; }
-    void TwoPointCorrelation::setλ(Real lambda) { TwoPointCorrelation::λ = lambda; }
+    DevFloat TwoPointCorrelation::getλ() const { return λ; }
+    void TwoPointCorrelation::setλ(DevFloat lambda) { TwoPointCorrelation::λ = lambda; }
 
-    Real TwoPointCorrelation::getξ() const { return c.getξ(); }
-    void TwoPointCorrelation::setξ(Real ξ) { c.setξ(ξ); }
+    DevFloat TwoPointCorrelation::getξ() const { return c.getξ(); }
+    void TwoPointCorrelation::setξ(DevFloat ξ) { c.setξ(ξ); }
 
-    Real TwoPointCorrelation::getβ() const { return c.getβ(); }
-    void TwoPointCorrelation::setβ(Real beta) { c.setβ(beta); }
+    DevFloat TwoPointCorrelation::getβ() const { return c.getβ(); }
+    void TwoPointCorrelation::setβ(DevFloat beta) { c.setβ(beta); }
 
-    Count TwoPointCorrelation::getNMax() const { return n_max; }
-    void TwoPointCorrelation::setNMax(Count nMax) { n_max = nMax; }
+    CountType TwoPointCorrelation::getNMax() const { return n_max; }
+    void TwoPointCorrelation::setNMax(CountType nMax) { n_max = nMax; }
 
-    Real TwoPointCorrelation::get_c0() const { return c.get_c0(); }
-    void TwoPointCorrelation::set_c0(Real c0) { c.set_c0(c0); }
+    DevFloat TwoPointCorrelation::get_c0() const { return c.get_c0(); }
+    void TwoPointCorrelation::set_c0(DevFloat c0) { c.set_c0(c0); }
 
     CorrelationDecay::Nature TwoPointCorrelation::getNature() const { return c.getNature(); }
     void TwoPointCorrelation::setNature(CorrelationDecay::Nature nature) { c.setNature(nature); }
 
-    Real TwoPointCorrelation::getΦ0() const { return ϕ_0; }
+    DevFloat TwoPointCorrelation::getΦ0() const { return ϕ_0; }
 
-    void TwoPointCorrelation::setΦ0(Real φ0) { ϕ_0 = φ0; }
+    void TwoPointCorrelation::setΦ0(DevFloat φ0) { ϕ_0 = φ0; }
 
 
 } // Slab::Models::KGRtoR

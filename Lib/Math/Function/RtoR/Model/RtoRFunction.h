@@ -11,8 +11,8 @@
 #include "Math/Function/CommonFunctions.h"
 
 namespace Slab::Math::RtoR {
-    typedef Base::Functions<Real>::Function1D Function;
-    typedef Base::Functions<Real>::Function1DSummable FunctionSummable;
+    typedef Base::Functions<DevFloat>::Function1D Function;
+    typedef Base::Functions<DevFloat>::Function1DSummable FunctionSummable;
 
     DefinePointers(Function)
     DefinePointers(FunctionSummable)

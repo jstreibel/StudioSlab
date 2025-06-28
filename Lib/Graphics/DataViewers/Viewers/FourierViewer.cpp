@@ -172,8 +172,8 @@ namespace Slab::Graphics {
         WindowPanel::draw();
     }
 
-    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, Real tMin,
-                                    Real tMax) -> Pointer<R2toR::NumericFunction> {
+    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, DevFloat tMin,
+                                    DevFloat tMax) -> Pointer<R2toR::NumericFunction> {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;
@@ -188,12 +188,12 @@ namespace Slab::Graphics {
         fix Mₜ = func->getM();
         fix dt = func->getDomain().getLy()/Mₜ;
         fix Δt = tMax-tMin;
-        fix test_M = static_cast<Count>(floor(Δt / dt));
+        fix test_M = static_cast<CountType>(floor(Δt / dt));
         fix M = test_M%2==0 ? test_M : test_M-1;
 
         auto out = DataAlloc<Math::R2toR::NumericFunction_CPU>(
                 func->get_data_name() + " t∈(" + ToStr(tMin) + "," + ToStr(tMax) + ")",
-                N, M, xMin, tMin, dx, Δt/static_cast<Real>(M));
+                N, M, xMin, tMin, dx, Δt/static_cast<DevFloat>(M));
 
         fix j₀ = static_cast<UInt>(floor((tMin-t_min)/dt));
 
@@ -215,8 +215,8 @@ namespace Slab::Graphics {
 
         if(function == nullptr) return;
 
-        fix t_0 = static_cast<Real>(t0);
-        fix t_f = t_0 + static_cast<Real>(Δt);
+        fix t_0 = static_cast<DevFloat>(t0);
+        fix t_f = t_0 + static_cast<DevFloat>(Δt);
 
         auto toFT = FilterSpace(function, t_0, t_f);
         timeFilteredArtist->setFunction(toFT);
@@ -309,8 +309,8 @@ namespace Slab::Graphics {
 
         if(function == nullptr) return;
 
-        Real t_0 = (Real)t0;
-        Real t_f = t_0 + (Real)Δt;
+        DevFloat t_0 = (DevFloat)t0;
+        DevFloat t_f = t_0 + (DevFloat)Δt;
 
         fix t_min = function->getDomain().yMin;
 
@@ -324,7 +324,7 @@ namespace Slab::Graphics {
         fix Mₜ = function->getM();
         fix dt = function->getDomain().getLy()/Mₜ;
         fix Δt = t_f-t_0;
-        fix __M = (Count)floor(Δt/dt);
+        fix __M = (CountType)floor(Δt/dt);
         fix M = __M%2==0 ? __M : __M-1;
         fix m = M/2 + 1;
 

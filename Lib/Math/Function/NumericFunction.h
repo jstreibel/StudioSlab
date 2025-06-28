@@ -28,7 +28,7 @@ namespace Slab::Math::Base {
         Device dev=CPU;
 
     public:
-        using NumericAlgebra<Base::NumericFunction<InCategory, Real>>::operator=;
+        using NumericAlgebra<Base::NumericFunction<InCategory, DevFloat>>::operator=;
         using NumericAlgebra<NumericFunction>::operator+=;
 
         typedef NumericFunction<InCategory, OutCategory> MyType;
@@ -125,7 +125,7 @@ namespace Slab::Math::Base {
 
         NumericFunction<InCategory, OutCategory> &
         StoreScalarMultiplication(const NumericFunction<InCategory, OutCategory> &aoi1,
-                            const Real a) override {
+                            const DevFloat a) override {
             space->StoreScalarMultiplication(*aoi1.space, a);
             return *this;
         }

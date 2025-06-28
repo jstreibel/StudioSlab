@@ -37,7 +37,7 @@ namespace Slab::Graphics::OpenGL {
         virtual ~WriterOpenGL();
 
         void write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false) override;
-        Real getFontHeightInPixels() const override;
+        DevFloat getFontHeightInPixels() const override;
         void reshape(int w, int h) override;
 
         void scale(float sx, float sy) override;

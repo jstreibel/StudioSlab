@@ -5,34 +5,34 @@
 
 namespace Slab::Math {
 
-    RecordInterval::RecordInterval(const Real beginT, const Real endT,
-                                   const Real x)
+    RecordInterval::RecordInterval(const DevFloat beginT, const DevFloat endT,
+                                   const DevFloat x)
             : beginT(beginT), endT(endT), x(x) {
         //assert(endT>beginT);
     }
 
-    Real RecordInterval::deltaT() const { return endT - beginT; }
+    DevFloat RecordInterval::deltaT() const { return endT - beginT; }
 
-    void RecordInterval::add(Real f, Real t) {
+    void RecordInterval::add(DevFloat f, DevFloat t) {
         //assert((t>=beginT) && (t<=endT));
 
         fVals.push_back(f);
         tVals.push_back(t);
     }
 
-    bool RecordInterval::contains(const Real T) const {
+    bool RecordInterval::contains(const DevFloat T) const {
         return (T >= beginT) && (T <= endT);
     }
 
-    const Real &RecordInterval::operator()(const Real &) {
+    const DevFloat &RecordInterval::operator()(const DevFloat &) {
         //assert((t>=beginT) && (t<=endT));
 
         throw "Not implemented";
     }
 
-    const Vector<Real> &RecordInterval::getFVals() const { return fVals; }
+    const Vector<DevFloat> &RecordInterval::getFVals() const { return fVals; }
 
-    const Vector<Real> &RecordInterval::getTVals() const { return tVals; }
+    const Vector<DevFloat> &RecordInterval::getTVals() const { return tVals; }
 
 
 }

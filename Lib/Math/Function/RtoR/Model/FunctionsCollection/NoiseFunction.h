@@ -9,12 +9,12 @@
 
 namespace Slab::Math::RtoR {
     class NoiseFunction : public RtoR::Function {
-        Real min, max;
+        DevFloat min, max;
 
     public:
-        NoiseFunction(Real min, Real max);
+        NoiseFunction(DevFloat min, DevFloat max);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
     };
 

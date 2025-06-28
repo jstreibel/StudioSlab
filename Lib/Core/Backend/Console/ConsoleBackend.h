@@ -5,15 +5,15 @@
 
 namespace Slab::Core {
 
-    class ConsoleBackend : public Backend {
+    class FConsoleBackend : public FBackend {
     public:
-        ConsoleBackend();
+        FConsoleBackend();
 
-        ~ConsoleBackend() override;
+        ~FConsoleBackend() override;
 
-        void run() override;
+        void Run() override;
 
-        void terminate() override;
+        void Terminate() override;
     };
 }
 

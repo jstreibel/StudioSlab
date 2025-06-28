@@ -6,7 +6,7 @@
 
 namespace Slab::Graphics {
 
-    void HistoryArtist::set_t(Real t) {
+    void HistoryArtist::set_t(DevFloat t) {
         auto func = this->getFunction();
 
         if(func == nullptr) return;

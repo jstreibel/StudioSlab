@@ -97,7 +97,7 @@ namespace Slab::Graphics::OpenGL {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     }
 
-    bool Texture2D::uploadData(UInt row0, Count nRows, PixelDataFormat dataFormat,
+    bool Texture2D::uploadData(UInt row0, CountType nRows, PixelDataFormat dataFormat,
                                PixelDataType dataType, const void *dataBegin) {
         assert(row0<getHeight());
         assert(getTarget() == GL_TEXTURE_2D);

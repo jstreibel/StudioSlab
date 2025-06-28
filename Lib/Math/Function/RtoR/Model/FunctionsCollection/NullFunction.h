@@ -10,10 +10,10 @@
 namespace Slab::Math::RtoR {
     class NullFunction : public RtoR::Function {
         public:
-            inline Real operator()(Real x) const override { return 0.0; }
+            inline DevFloat operator()(DevFloat x) const override { return 0.0; }
 
             Function_ptr diff(int n) const override { if(n==0) return New <NullFunction> (); else throw Exception("No diff NullFunc n>0"); }
-            Real diff(int n, Real x) const override { if(n==0) return 0.0; else throw "No diff NullFunc n>0"; }
+            DevFloat diff(int n, DevFloat x) const override { if(n==0) return 0.0; else throw "No diff NullFunc n>0"; }
 
             Function_ptr Clone() const override { return New <NullFunction> (); }
 

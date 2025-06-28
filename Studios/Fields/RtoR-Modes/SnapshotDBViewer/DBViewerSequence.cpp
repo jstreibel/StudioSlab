@@ -42,7 +42,7 @@ namespace Modes::DatabaseViewer {
             auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
             style.filled = false;
             style.setPrimitive(Slab::Graphics::Solid);
-            auto funky = Math::RtoR::NativeFunction([](Real x) { return x; }).Clone();
+            auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
             Graphics::Plotter::AddRtoRFunction(Naked(mashupDisplay), funky, style, "m=0", 1000, 3);
         }
 
@@ -155,7 +155,7 @@ namespace Modes::DatabaseViewer {
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
-        const Real mass = KG_mass;
+        const DevFloat mass = KG_mass;
 
         if(!visible) return;
 
@@ -203,7 +203,7 @@ namespace Modes::DatabaseViewer {
 
             auto maxInfo = Utils::GetMax(data);
 
-            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/static_cast<Real>(N - 1);
+            fix dy = (snapshot_function1d->xMax - snapshot_function1d->xMin)/static_cast<DevFloat>(N - 1);
 
             fix idx = static_cast<int>(maxInfo.idx);
             fix order = masses_avg_samples;
@@ -216,8 +216,8 @@ namespace Modes::DatabaseViewer {
 
             maxValues.emplace_back(maxInfo);
 
-            Real ω;
-            Real k;
+            DevFloat ω;
+            DevFloat k;
 
             maxValuesPointSet.addPoint({x, y_peak});
 
@@ -277,7 +277,7 @@ namespace Modes::DatabaseViewer {
             fix kMax = field.xMax;
             fix kMin = field.xMin;
             fix Δk = kMax-kMin;
-            fix k = Δk*static_cast<Real>(idx)/static_cast<Real>(field.N) - kMin;
+            fix k = Δk*static_cast<DevFloat>(idx)/static_cast<DevFloat>(field.N) - kMin;
             ImGui::TextUnformatted(unit(k, 4).c_str());
 
             ImGui::TableSetColumnIndex(3);

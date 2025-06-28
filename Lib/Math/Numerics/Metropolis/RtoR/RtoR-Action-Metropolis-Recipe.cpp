@@ -51,11 +51,11 @@ namespace Slab::Math {
 
         auto field = getField();
 
-        auto acceptance_thermal = [T](Real ΔE) {
+        auto acceptance_thermal = [T](DevFloat ΔE) {
             return RandUtils::RandomUniformReal01() < Min(1.0, exp(-ΔE / T));
         };
 
-        auto acceptance_action = [](Real Δ_δSδϕ) {
+        auto acceptance_action = [](DevFloat Δ_δSδϕ) {
             return Δ_δSδϕ<0;
         };
 
@@ -87,8 +87,8 @@ namespace Slab::Math {
             else if(n==N-2) affected_sites = {n, n-1};
             else affected_sites = {n+1, n, n-1};
 
-            auto compute_δSδq = [affected_sites, Δt2, q](Real &δSδϕ) {
-                constexpr auto sign = Slab::Math::SIGN<Real>;
+            auto compute_δSδq = [affected_sites, Δt2, q](DevFloat &δSδϕ) {
+                constexpr auto sign = Slab::Math::SIGN<DevFloat>;
                 for(auto nₗ : affected_sites) {
                     δSδϕ += sqr((q(nₗ + 1) - 2. * q(nₗ) + q(nₗ - 1)) / Δt2
                               + sign(q(nₗ)));

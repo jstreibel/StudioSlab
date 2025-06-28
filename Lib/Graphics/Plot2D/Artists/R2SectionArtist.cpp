@@ -82,7 +82,7 @@ namespace Slab::Graphics {
 
         for(const auto& section : sections) {
             for (int i = 0; i < samples; ++i) {
-                auto s = s_min + (i / (Real) samples) * (s_max - s_min);
+                auto s = s_min + (i / (DevFloat) samples) * (s_max - s_min);
 
                 auto r = (*section.section)(s);
                 auto val = (*function2D)(r);

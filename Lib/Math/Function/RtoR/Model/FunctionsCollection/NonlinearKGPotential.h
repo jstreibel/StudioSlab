@@ -13,41 +13,41 @@ namespace Slab::Math::RtoR {
 
     class VPrime : public RtoR::Function {
         RealVector coeffs;
-        Count N;
-        Real A;
-        Real s;
+        CountType N;
+        DevFloat A;
+        DevFloat s;
 
-        inline Real get_lambda(int n) const {
+        inline DevFloat get_lambda(int n) const {
             return coeffs[(n-1)/2];
         }
 
-        [[maybe_unused]] static inline Real
-        even_power(const Real &x, const int &unchecked_even_n);
-        static inline Real
-        odd_power(const Real &x, const int &unchecked_odd_n);
+        [[maybe_unused]] static inline DevFloat
+        even_power(const DevFloat &x, const int &unchecked_even_n);
+        static inline DevFloat
+        odd_power(const DevFloat &x, const int &unchecked_odd_n);
     public:
-        VPrime(Real A, int N, Real s);
+        VPrime(DevFloat A, int N, DevFloat s);
 
-        Real operator()(Real phi) const override;
+        DevFloat operator()(DevFloat phi) const override;
 
-        Real getA() const;
-        void setA(Real);
+        DevFloat getA() const;
+        void setA(DevFloat);
 
-        Real get_s() const;
-        void set_s(Real);
+        DevFloat get_s() const;
+        void set_s(DevFloat);
 
-        auto getN() const -> Count;
-        auto setN(Count N) -> void;
+        auto getN() const -> CountType;
+        auto setN(CountType N) -> void;
 
 
         static RealVector
-        CalcCoefficients(int N, Real s);
+        CalcCoefficients(int N, DevFloat s);
     };
 
     class NonlinearKGPotential : public VPrime {
     public:
-        NonlinearKGPotential(Real A, Count N, Real s);
-        Real operator()(Real phi) const override;
+        NonlinearKGPotential(DevFloat A, CountType N, DevFloat s);
+        DevFloat operator()(DevFloat phi) const override;
 
         Pointer<Type> diff(int n) const override;
     };

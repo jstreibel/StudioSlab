@@ -37,7 +37,7 @@ namespace Slab::Lost::ThermoOutput {
         Lost::Graph *m_t_view;
         Lost::Graph *T_t_view;
 
-        Vector<Real> av_e, av_e2, av_m, av_m2, av_m4, T_values;
+        Vector<DevFloat> av_e, av_e2, av_m, av_m2, av_m4, T_values;
 
         typedef Pair<XYMetropolisAlgorithm *, sf::Texture *> ModelViewDataPair;
 

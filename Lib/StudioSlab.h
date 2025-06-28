@@ -24,10 +24,10 @@ namespace Slab {
         return Run(app);
     }
 
-    Pointer<Core::Backend> CreatePlatform(Core::BackendName);
+    Pointer<Core::FBackend> CreatePlatform(Core::FBackendIdentifier);
 
-    template<typename ModuleType = Core::Module>
-    ModuleType &GetModule(const Core::ModuleName &name){
+    template<typename ModuleType = Core::SlabModule>
+    ModuleType &GetModule(const Core::FModuleIdentifier &name){
         return dynamic_cast<ModuleType&>(*Core::BackendManager::GetModule(name));
     }
 }

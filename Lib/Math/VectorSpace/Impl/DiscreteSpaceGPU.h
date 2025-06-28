@@ -23,7 +23,7 @@ public:
 
     auto StoreAddition       (const DiscreteSpace &toi1, const DiscreteSpace &toi2) -> DiscreteSpace & override;
     auto StoreSubtraction    (const DiscreteSpace &aoi1, const DiscreteSpace &aoi2) -> DiscreteSpace & override;
-    auto StoreScalarMultiplication (const DiscreteSpace &, Real)                    -> DiscreteSpace & override;
+    auto StoreScalarMultiplication (const DiscreteSpace &, DevFloat)                    -> DiscreteSpace & override;
 
     auto setToValue(const DiscreteSpace &param) -> void override;
 

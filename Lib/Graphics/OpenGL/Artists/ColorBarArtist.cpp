@@ -27,7 +27,7 @@ namespace Slab::Graphics::OpenGL {
     : vertexBuffer("inPosition:2f,inTexCoord:1f")
     , shader(Core::Resources::ShadersFolder + "ColorBar.vert",
              Core::Resources::ShadersFolder + "ColorBar.frag")
-    , inverseScalingFunction([](Real x){ return x; })
+    , inverseScalingFunction([](DevFloat x){ return x; })
     {
         setLocation(loc);
     }
@@ -108,10 +108,10 @@ namespace Slab::Graphics::OpenGL {
         // writer->getFontHeightInPixels();
 
         for(int i=0; i<n_annotations; ++i){
-            auto t = (Real(i)/Real(n_annotations-1));
+            auto t = (DevFloat(i)/DevFloat(n_annotations-1));
             auto yMeasure = t/Δu-ui; //(float(i)/float(n)) - ui;
 
-            Real phi;
+            DevFloat phi;
             if(params.mode == ColorBarMode::AllFieldValues)
                 phi = t*(params.phi_max-params.phi_min)+params.phi_min;
             else if(params.mode == ColorBarMode::ValuesInSatRangeOnly) {
@@ -156,7 +156,7 @@ namespace Slab::Graphics::OpenGL {
          */
 
         for(auto i=0; i < samples; ++i){
-            fix s = (Real)(i-1)/(Real)(samples - 2);
+            fix s = (DevFloat)(i-1)/(DevFloat)(samples - 2);
             fix color = colorMap->mapValueToColor(s);
             texture->setColor(i, color);
         }
@@ -218,19 +218,19 @@ namespace Slab::Graphics::OpenGL {
         return texture;
     }
 
-    void ColorBarArtist::setScalingFunction(std::function<Real(Real)> func) {
+    void ColorBarArtist::setScalingFunction(std::function<DevFloat(DevFloat)> func) {
         scalingFunction = std::move(func);
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setInverseScalingFunction(std::function<Real(Real)> func) {
+    void ColorBarArtist::setInverseScalingFunction(std::function<DevFloat(DevFloat)> func) {
         inverseScalingFunction = std::move(func);
 
         textureDirty = true;
     }
 
-    void ColorBarArtist::setKappa(Real kappa) {
+    void ColorBarArtist::setKappa(DevFloat kappa) {
         shader.setUniform("kappa", (float)kappa);
 
         params.kappa = kappa;
@@ -238,7 +238,7 @@ namespace Slab::Graphics::OpenGL {
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiSaturation(Real phiSat) {
+    void ColorBarArtist::setPhiSaturation(DevFloat phiSat) {
         shader.setUniform("phi_sat", (float)phiSat);
 
         params.phi_sat = phiSat;
@@ -254,7 +254,7 @@ namespace Slab::Graphics::OpenGL {
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiMax(Real phiMax) {
+    void ColorBarArtist::setPhiMax(DevFloat phiMax) {
         shader.setUniform("phi_max", (float)phiMax);
 
         params.phi_max = phiMax;
@@ -262,7 +262,7 @@ namespace Slab::Graphics::OpenGL {
         textureDirty = true;
     }
 
-    void ColorBarArtist::setPhiMin(Real phiMin) {
+    void ColorBarArtist::setPhiMin(DevFloat phiMin) {
         shader.setUniform("phi_min", (float)phiMin);
 
         params.phi_min = phiMin;
@@ -278,7 +278,7 @@ namespace Slab::Graphics::OpenGL {
         textureDirty = true;
     }
 
-    Count ColorBarArtist::getSamples() const {
+    CountType ColorBarArtist::getSamples() const {
         return colorMap->getColorCount();
     }
 

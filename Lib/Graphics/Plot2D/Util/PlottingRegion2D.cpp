@@ -8,48 +8,48 @@
 namespace Slab {
     namespace Graphics {
 
-        Real animationTimeSeconds = 0.2;
+        DevFloat animationTimeSeconds = 0.2;
 
         PlottingRegion2D::PlottingRegion2D(RectR rect) {
-            xMin = New<Real>(rect.xMin);
-            xMax = New<Real>(rect.xMax);
-            yMin = New<Real>(rect.yMin);
-            yMax = New<Real>(rect.xMax);
+            xMin = New<DevFloat>(rect.xMin);
+            xMax = New<DevFloat>(rect.xMax);
+            yMin = New<DevFloat>(rect.yMin);
+            yMax = New<DevFloat>(rect.xMax);
         }
 
         RectR PlottingRegion2D::getRect() const {return {*xMin, *xMax, *yMin, *yMax}; }
 
-        void PlottingRegion2D::animate_xMin(Real val) { Graphics::Animator::Set(*xMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_xMax(Real val) { Graphics::Animator::Set(*xMax, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMin(Real val) { Graphics::Animator::Set(*yMin, val, animationTimeSeconds);}
-        void PlottingRegion2D::animate_yMax(Real val) { Graphics::Animator::Set(*yMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMin(DevFloat val) { Graphics::Animator::Set(*xMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_xMax(DevFloat val) { Graphics::Animator::Set(*xMax, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMin(DevFloat val) { Graphics::Animator::Set(*yMin, val, animationTimeSeconds);}
+        void PlottingRegion2D::animate_yMax(DevFloat val) { Graphics::Animator::Set(*yMax, val, animationTimeSeconds);}
 
-        void PlottingRegion2D::setReference_xMin(Pointer<Real> ref) {
-            if(ref == nullptr) ref = New<Real>(0.0);
+        void PlottingRegion2D::setReference_xMin(Pointer<DevFloat> ref) {
+            if(ref == nullptr) ref = New<DevFloat>(0.0);
             xMin = ref;
         }
-        void PlottingRegion2D::setReference_xMax(Pointer<Real> ref) {
-            if(ref == nullptr) ref = New<Real>(1.0);
+        void PlottingRegion2D::setReference_xMax(Pointer<DevFloat> ref) {
+            if(ref == nullptr) ref = New<DevFloat>(1.0);
             xMax = ref;
         }
-        void PlottingRegion2D::setReference_yMin(Pointer<Real> ref) {
-            if(ref == nullptr) ref = New<Real>(0.0);
+        void PlottingRegion2D::setReference_yMin(Pointer<DevFloat> ref) {
+            if(ref == nullptr) ref = New<DevFloat>(0.0);
             yMin = ref;
         }
-        void PlottingRegion2D::setReference_yMax(Pointer<Real> ref) {
-            if(ref == nullptr) ref = New<Real>(1.0);
+        void PlottingRegion2D::setReference_yMax(Pointer<DevFloat> ref) {
+            if(ref == nullptr) ref = New<DevFloat>(1.0);
             yMax = ref;
         }
 
-        auto PlottingRegion2D::getReference_xMin() const -> Pointer<Real> { return xMin; }
-        auto PlottingRegion2D::getReference_xMax() const -> Pointer<Real> { return xMax; }
-        auto PlottingRegion2D::getReference_yMin() const -> Pointer<Real> { return yMin; }
-        auto PlottingRegion2D::getReference_yMax() const -> Pointer<Real> { return yMax; }
+        auto PlottingRegion2D::getReference_xMin() const -> Pointer<DevFloat> { return xMin; }
+        auto PlottingRegion2D::getReference_xMax() const -> Pointer<DevFloat> { return xMax; }
+        auto PlottingRegion2D::getReference_yMin() const -> Pointer<DevFloat> { return yMin; }
+        auto PlottingRegion2D::getReference_yMax() const -> Pointer<DevFloat> { return yMax; }
 
-        Real PlottingRegion2D::width()   const { return *xMax - *xMin; }
-        Real PlottingRegion2D::height()  const { return *yMax - *yMin; }
-        Real PlottingRegion2D::xCenter() const { return (*xMax + *xMin) * .5; }
-        Real PlottingRegion2D::yCenter() const { return (*yMax + *yMin) * .5; }
+        DevFloat PlottingRegion2D::width()   const { return *xMax - *xMin; }
+        DevFloat PlottingRegion2D::height()  const { return *yMax - *yMin; }
+        DevFloat PlottingRegion2D::xCenter() const { return (*xMax + *xMin) * .5; }
+        DevFloat PlottingRegion2D::yCenter() const { return (*yMax + *yMin) * .5; }
 
         bool PlottingRegion2D::isAnimating() const {
             return Animator::Contains(*xMin) ||
@@ -58,35 +58,35 @@ namespace Slab {
                    Animator::Contains(*yMax);
         }
 
-        Real PlottingRegion2D::getXMin() const {
+        DevFloat PlottingRegion2D::getXMin() const {
             return *xMin;
         }
 
-        Real PlottingRegion2D::getXMax() const {
+        DevFloat PlottingRegion2D::getXMax() const {
             return *xMax;
         }
 
-        Real PlottingRegion2D::getYMin() const {
+        DevFloat PlottingRegion2D::getYMin() const {
             return *yMin;
         }
 
-        Real PlottingRegion2D::getYMax() const {
+        DevFloat PlottingRegion2D::getYMax() const {
             return *yMax;
         }
 
-        void PlottingRegion2D::setLimits(Real x_min, Real x_max, Real y_min, Real y_max) {
+        void PlottingRegion2D::setLimits(DevFloat x_min, DevFloat x_max, DevFloat y_min, DevFloat y_max) {
             *xMin = x_min;
             *xMax = x_max;
             *yMin = y_min;
             *yMax = y_max;
         }
 
-        void PlottingRegion2D::set_x_limits(Real x_min, Real x_max) {
+        void PlottingRegion2D::set_x_limits(DevFloat x_min, DevFloat x_max) {
             *xMin = x_min;
             *xMax = x_max;
         }
 
-        void PlottingRegion2D::set_y_limits(Real y_min, Real y_max) {
+        void PlottingRegion2D::set_y_limits(DevFloat y_min, DevFloat y_max) {
             *yMin = y_min;
             *yMax = y_max;
         }

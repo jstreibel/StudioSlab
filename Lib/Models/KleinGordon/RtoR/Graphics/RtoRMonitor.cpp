@@ -5,7 +5,7 @@
 
 #include "RtoRMonitor.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "Models/KleinGordon/KG-Solver.h"
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
@@ -133,14 +133,14 @@ namespace Slab::Models::KGRtoR {
             isSetup = true;
         }
 
-        static Real stepMod, lastStepMod = 0;
-        stepMod = (Real) (lastPacket.getSteps() % (this->getnSteps() * 100));
+        static DevFloat stepMod, lastStepMod = 0;
+        stepMod = (DevFloat) (lastPacket.getSteps() % (this->getnSteps() * 100));
 
-        fix t = CLInterfaceManager::getInstance().getParameter("t")->getValueAs<Real>();
-        fix steps = CLInterfaceManager::getInstance().getParameter("m")->getValueAs<Int>();
-        fix dt = t/(Real)steps;
+        fix t = FCommandLineInterfaceManager::getInstance().getParameter("t")->getValueAs<DevFloat>();
+        fix steps = FCommandLineInterfaceManager::getInstance().getParameter("m")->getValueAs<Int>();
+        fix dt = t/(DevFloat)steps;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
+            fullHistoryArtist->set_t((DevFloat)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
 
     }
@@ -150,13 +150,13 @@ namespace Slab::Models::KGRtoR {
 
         fix step = lastPacket.getSteps();
 
-        static Real stepMod, lastStepMod = 0;
-        stepMod = (Real) (step % (this->getnSteps() * 100));
-        fix h = CLInterfaceManager::getInstance().getParameter("h")->getValueAs<Real>();
-        fix r = CLInterfaceManager::getInstance().getParameter("r_dt")->getValueAs<Real>();
+        static DevFloat stepMod, lastStepMod = 0;
+        stepMod = (DevFloat) (step % (this->getnSteps() * 100));
+        fix h = FCommandLineInterfaceManager::getInstance().getParameter("h")->getValueAs<DevFloat>();
+        fix r = FCommandLineInterfaceManager::getInstance().getParameter("r_dt")->getValueAs<DevFloat>();
         fix dt = h*r;
         if (stepMod < lastStepMod || UPDATE_HISTORY_EVERY_STEP)
-            fullSFTHistoryArtist->set_t((Real)lastPacket.getSteps()*dt);
+            fullSFTHistoryArtist->set_t((DevFloat)lastPacket.getSteps()*dt);
         lastStepMod = stepMod;
     }
 

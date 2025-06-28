@@ -24,11 +24,11 @@ namespace Slab::Math::RtoR {
 
         auto renderPDFToPointSet(PointSet_ptr out, bool beautiful = true) const -> PointSet_ptr;
 
-        auto integrate() const -> Real;
+        auto integrate() const -> DevFloat;
 
         int nBins;
-        Real vMax, vMin;
-        Real binWidth;
+        DevFloat vMax, vMin;
+        DevFloat binWidth;
 
     private:
         unsigned long count;

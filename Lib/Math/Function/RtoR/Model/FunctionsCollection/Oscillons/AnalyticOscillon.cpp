@@ -10,12 +10,12 @@
 
 namespace Slab::Math::RtoR {
 
-    auto gamma(Real u) -> Real {
+    auto gamma(DevFloat u) -> DevFloat {
         return 1. / sqrt(1. - u * u);
     }
 
-    auto ab(Real alpha, Real u, Real v) -> RealPair {
-        const Real alpha_0 = .5 * (1. - u * u);
+    auto ab(DevFloat alpha, DevFloat u, DevFloat v) -> RealPair {
+        const DevFloat alpha_0 = .5 * (1. - u * u);
 
         // assert(!(alpha < 0. || alpha > 1.));
 
@@ -24,16 +24,16 @@ namespace Slab::Math::RtoR {
         return {-1., 1.};
     }
 
-    auto x_0(Real alpha, Real u, Real v) -> Real {
+    auto x_0(DevFloat alpha, DevFloat u, DevFloat v) -> DevFloat {
         RealPair p_ab = ab(alpha, u, v);
-        Real a = p_ab.first;
-        Real b = p_ab.second;
+        DevFloat a = p_ab.first;
+        DevFloat b = p_ab.second;
 
         // -gamma * (alpha * u);
         return -gamma(u) / (1. + a * v * u) * ((1. - u * u) * v * b + alpha * (u + v * a));
     }
 
-    auto t_0(Real alpha, Real u) -> Real {
+    auto t_0(DevFloat alpha, DevFloat u) -> DevFloat {
         return gamma(u) * alpha;
     }
 
@@ -42,20 +42,20 @@ namespace Slab::Math::RtoR {
     // , s1(copy.s1), s2(copy.s2), bit(copy.bit)
     // {    }
 
-    AnalyticOscillon::AnalyticOscillon(Real t, Real v, Real u, Real alpha, bool xMirrored, bool phiMirrored, Bit bit)
+    AnalyticOscillon::AnalyticOscillon(DevFloat t, DevFloat v, DevFloat u, DevFloat alpha, bool xMirrored, bool phiMirrored, Bit bit)
             : t0(t_0(alpha, -u) - t), x0(x_0(alpha, -u, v)), l(1), v(v), u(u), s1(phiMirrored ? -1 : 1),
               s2(xMirrored ? -1 : 1), alpha(alpha), bit(bit) {
 
     }
 
-    AnalyticOscillon::AnalyticOscillon(Real t, Real x0, Real l, Real v, Real u, Real alpha, bool xMirrored,
+    AnalyticOscillon::AnalyticOscillon(DevFloat t, DevFloat x0, DevFloat l, DevFloat v, DevFloat u, DevFloat alpha, bool xMirrored,
                                        bool phiMirrored, AnalyticOscillon::Bit bit)
             : t0(t_0(alpha, -u) - t), x0(x_0(alpha, -u, v) + x0), l(l), v(v), u(u), s1(phiMirrored ? -1 : 1),
               s2(xMirrored ? -1 : 1), alpha(alpha), bit(bit) {
 
     }
 
-    auto AnalyticOscillon::operator()(Real x) const -> Real {
+    auto AnalyticOscillon::operator()(DevFloat x) const -> DevFloat {
         if (bit == dPhiDt) return s1 * l * dpsi(t0 / l, (s2 * x - x0) / l, v, -u);
 
         return s1 * l * l * psi(t0 / l, (s2 * x - x0) / l, v, -u);
@@ -71,7 +71,7 @@ namespace Slab::Math::RtoR {
         return *this;
     }
 
-    void AnalyticOscillon::set_t(Real t) { t0 = (t_0(alpha, -u) - t); }
+    void AnalyticOscillon::set_t(DevFloat t) { t0 = (t_0(alpha, -u) - t); }
 
     void AnalyticOscillon::setBit(AnalyticOscillon::Bit bitty) {
         bit = bitty;

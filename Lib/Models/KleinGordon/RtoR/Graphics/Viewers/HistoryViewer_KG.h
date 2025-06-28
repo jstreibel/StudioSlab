@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         Pointer<R2toR::NumericFunction> d2dt2_function = nullptr;
 
         int oversampling = 12;
-        Real dt = -1;
+        DevFloat dt = -1;
         int curr_ti = 0;
 
     public:

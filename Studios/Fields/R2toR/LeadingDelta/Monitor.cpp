@@ -24,7 +24,7 @@ Slab::Math::R2toR::FunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::Null
 
 namespace Studios::Fields::R2toRLeadingDelta {
 
-    OutGL::OutGL(Count max_steps, Pointer<Slab::Math::R2toR::Function> drivingFunction)
+    OutGL::OutGL(CountType max_steps, Pointer<Slab::Math::R2toR::Function> drivingFunction)
             : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction)),
               mTotalEnergyGraph("Total energy"), mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio"),
               mSpeedsGraph("Time-derivatives"), mEnergyDensityGraph("Energy-densities") {
@@ -76,8 +76,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
         // const auto N = p.getN();
         // const auto h = p.geth();
 
-        const auto ldInterface = CLInterfaceManager::getInstance().getInterface("Leading Delta");
-        const auto epsilon = *(Real *) ldInterface->getParameter("eps")->getValueVoid();
+        const auto ldInterface = FCommandLineInterfaceManager::getInstance().getInterface("Leading Delta");
+        const auto epsilon = *(Real *) ldInterface->GetParameter("eps")->GetValueVoid();
 
         static auto lastStep = 0;
         static auto energyIntegrationRadius = (float) (-epsilon);

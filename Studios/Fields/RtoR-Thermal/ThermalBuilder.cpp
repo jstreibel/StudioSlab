@@ -19,11 +19,11 @@ namespace Studios::Fields::RtoRThermal {
 
     Builder::Builder(const Str &name, const Str &generalDescription, bool doRegister)
     : KGRtoRBuilder(name, generalDescription, DONT_SELF_REGISTER) {
-        interface->addParameters({&temperature, &dissipation, &transientGuess});
+        Interface->AddParameters({&temperature, &dissipation, &transientGuess});
 
         setLaplacianPeriodicBC();
 
-        if(doRegister) registerToManager();
+        if(doRegister) RegisterToManager();
     }
 
     auto Builder::buildSolver() -> Pointer<Base::LinearStepSolver> {
@@ -47,8 +47,8 @@ namespace Studios::Fields::RtoRThermal {
     Str Builder::suggestFileName() const {
         auto str = NumericalRecipe::suggestFileName();
 
-        auto extra1 = interface->toString({"T", "k"}, " ", SHORT_NAME);
-        auto extra2 = interface->toString({"E", "n"}, " ", LONG_NAME);
+        auto extra1 = Interface->ToString({"T", "k"}, " ", SHORT_NAME);
+        auto extra2 = Interface->ToString({"E", "n"}, " ", LONG_NAME);
 
         return str + " " + extra1 + " " + extra2;
     }

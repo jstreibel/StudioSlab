@@ -23,7 +23,7 @@ namespace Slab::Models::MolecularDynamics {
 #define σ CUTOFF_RADIUS // raio da interacao
 #define ALPHA 2 // expoente do potencial (quanto maior, mais soft)
 
-    const Real Temperature = 10e-3;
+    const DevFloat Temperature = 10e-3;
 
 }
 

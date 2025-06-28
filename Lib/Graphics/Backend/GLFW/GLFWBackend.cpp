@@ -48,11 +48,11 @@ namespace Slab::Graphics {
         Log::Info() << "GLFWBackend terminated." << Log::Flush;
     }
 
-    void GLFWBackend::run() {
+    void GLFWBackend::Run() {
         mainLoop();
     }
 
-    void GLFWBackend::terminate() {
+    void GLFWBackend::Terminate() {
         // glfwSetWindowShouldClose(systemWindow, GLFW_TRUE);
         finishFlag = true;
     }

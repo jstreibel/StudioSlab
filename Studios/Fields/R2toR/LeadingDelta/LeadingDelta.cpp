@@ -82,12 +82,12 @@ namespace Studios::Fields::R2toRLeadingDelta {
     Builder::Builder(bool do_register) : Models::KGR2toR::Builder("Leading Delta", "simulation builder for (2+1)-d "
                                                                      "signum-Gordon shockwave as the "
                                                                      "trail of a driving delta.", false) {
-        interface->addParameters({&W_0, &eps, &deltaDuration});
+        Interface->AddParameters({&W_0, &eps, &deltaDuration});
 
-        if(do_register) registerToManager();
+        if(do_register) RegisterToManager();
     }
-    auto Builder::notifyCLArgsSetupFinished()    ->       void {
-        CLInterfaceOwner::notifyCLArgsSetupFinished();
+    auto Builder::NotifyCLArgsSetupFinished()    ->       void {
+        FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto &p = *kg_numeric_config;
         const Real L = p.getL();
@@ -116,7 +116,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
     Str Builder::suggestFileName() const {
         auto fname = NumericalRecipe::suggestFileName();
 
-        return fname + " " + interface->toString({"W", "eps", "delta_duration"});
+        return fname + " " + Interface->ToString({"W", "eps", "delta_duration"});
     }
 
     void *Builder::getHamiltonian() {

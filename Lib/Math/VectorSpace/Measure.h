@@ -16,7 +16,7 @@ namespace Slab::Math {
     public:
         Measure(RealVector linearValues);
 
-        Real operator*();
+        DevFloat operator*();
     };
 
 }

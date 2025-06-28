@@ -4,9 +4,9 @@
 
 #include "AppBase.h"
 
-#include "Core/Controller/CommandLine/CLArgsManager.h"
+#include "Core/Controller/CommandLine/CommandLineArgsManager.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Tools/Log.h"
 #include "Utils/Compiler.h"
 
@@ -16,7 +16,7 @@
 namespace Slab::Core {
 
     AppBase::AppBase(int argc, const char **argv, bool doRegister)
-            : CLInterfaceOwner("App", 100, doRegister) {
+            : FCommandLineInterfaceOwner("App", 100, doRegister) {
         Slab::Startup();
 
         Log::Info() << "Compiler: " << USED_CXX_COMPILER << Log::Flush;

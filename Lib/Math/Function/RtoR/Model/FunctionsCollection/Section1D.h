@@ -19,7 +19,7 @@ namespace Slab::Math::RtoR {
     public:
         Section1D(R2toR::Function_constptr function=nullptr, RtoR2::ParametricCurve_constptr curve=nullptr);
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         Math::PointSet_ptr renderToPointSet(RenderingOptions options) override;
     };

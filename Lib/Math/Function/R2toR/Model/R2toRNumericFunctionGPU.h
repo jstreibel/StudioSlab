@@ -15,8 +15,8 @@ namespace Slab::Math::R2toR {
         NumericFunction_GPU *helper= nullptr;
 
     public:
-        NumericFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
-        NumericFunction_GPU(UInt N, Real sMin, Real h);
+        NumericFunction_GPU(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy);
+        NumericFunction_GPU(UInt N, DevFloat sMin, DevFloat h);
         ~NumericFunction_GPU() override;
 
         auto Laplacian        (NumericFunction &outFunc)            const -> NumericFunction & override;
@@ -36,8 +36,8 @@ namespace Slab::Math::R2toR {
 
         auto operator+=(const MyBase &func)                                -> DiscrBase        & override;
 
-        auto At (UInt n, UInt m) const -> const Real & override;
-        auto At (UInt n, UInt m)       -> Real & override;
+        auto At (UInt n, UInt m) const -> const DevFloat & override;
+        auto At (UInt n, UInt m)       -> DevFloat & override;
 
     };
 

@@ -33,7 +33,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     public:
 
-        OutGL(Count max_steps, Pointer<R2toR::Function> drivingFunction);
+        OutGL(CountType max_steps, Pointer<R2toR::Function> drivingFunction);
 
         auto draw() -> void override;
 

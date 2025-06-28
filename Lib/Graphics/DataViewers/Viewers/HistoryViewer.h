@@ -29,7 +29,7 @@ namespace Slab::Graphics {
         Pointer<R2SectionArtist> dft_section_artist = nullptr;
 
         int oversampling = 12;
-        Real curr_t = .0;
+        DevFloat curr_t = .0;
 
         Pointer<RtoR2::StraightLine> function_section = nullptr;
         Pointer<RtoR2::StraightLine> dft_section = nullptr;

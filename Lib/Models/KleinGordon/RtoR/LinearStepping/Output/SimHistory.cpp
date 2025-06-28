@@ -14,18 +14,18 @@ namespace Slab::Models::KGRtoR {
 
     using Core::Log;
 
-    SimHistory::SimHistory(Count max_steps, Real t_max, Resolution N_x, Resolution N_t,
-                           Real xMin, Real L, const Str &name)
+    SimHistory::SimHistory(CountType max_steps, DevFloat t_max, Resolution N_x, Resolution N_t,
+                           DevFloat xMin, DevFloat L, const Str &name)
             : Socket(name, StepsInterval,
                      "A specific history tracker designed to watch the full sim history through visual monitors.")
             , max_steps(max_steps), max_t(t_max), N_x((int)N_x), N_t((int)N_t) {
         fix t = t_max;
-        fix timeResolution =(Real) N_t;
+        fix timeResolution =(DevFloat) N_t;
 
-        fix hx = L / (Real) N_x;
+        fix hx = L / (DevFloat) N_x;
         fix ht = t / timeResolution;
 
-        auto sizeMB = Real((Real) N_x * timeResolution * sizeof(Real)) / (1024 * 1024.);
+        auto sizeMB = DevFloat((DevFloat) N_x * timeResolution * sizeof(DevFloat)) / (1024 * 1024.);
 
         Log::Critical() << name << " is about to allocate " << sizeMB
                         << "MB of data to store full " << N_x << 'x' << (int) timeResolution + 1
@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
 
-    auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<Real> &dataOut) -> void {
+    auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<DevFloat> &dataOut) -> void {
         IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
@@ -69,8 +69,8 @@ namespace Slab::Models::KGRtoR {
         fix t_ratio = M_out / M_in;
 
         fix j_in = packet.getSteps();
-        fix j_out = int(floor((Real)j_in * t_ratio));
-        ValarrayWrapper<Real> instantData(&data->At(0, j_out), data->getN());
+        fix j_out = int(floor((DevFloat)j_in * t_ratio));
+        ValarrayWrapper<DevFloat> instantData(&data->At(0, j_out), data->getN());
 
         transfer(packet, instantData);
 

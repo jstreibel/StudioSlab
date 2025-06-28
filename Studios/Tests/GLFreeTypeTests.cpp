@@ -13,17 +13,17 @@ using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
 : Slab::Graphics::SlabWindow({"FreeType tests"})
-, writer1(Core::Resources::fontFileName(17), 24) // Math symb: 6; 10; 17
-, writer2(Core::Resources::fontFileName(7), 22)
+, writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
+, writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
 void GLFreeTypeTests::draw() {
     SlabWindow::draw();
 
     glMatrixMode(GL_MODELVIEW);
-    fix ratio = Real(GetWidth()) / GetHeight();
+    fix ratio = DevFloat(GetWidth()) / GetHeight();
     glScaled(1/ratio, 1, 1);
-    static Real angle = 0.0;
+    static DevFloat angle = 0.0;
     glRotated(angle, 0, 0, 1);
     angle+=0.1;
 

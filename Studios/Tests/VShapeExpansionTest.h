@@ -18,7 +18,7 @@ namespace Tests {
         Slab::Graphics::Plot2DWindow graph;
 
         Slab::Pointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
-        Slab::Pointer<Slab::Math::Base::FunctionT<Slab::Real, Slab::Real>> derivs;
+        Slab::Pointer<Slab::Math::Base::FunctionT<Slab::DevFloat, Slab::DevFloat>> derivs;
 
     public:
         VShapeExpansionTest();

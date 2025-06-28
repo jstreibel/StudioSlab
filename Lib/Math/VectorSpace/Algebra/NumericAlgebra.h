@@ -50,12 +50,12 @@ namespace Slab::Math {
         class ScalarMultiplicationProxy {
             friend NumericAlgebra<Ty>;
             const NumericAlgebra<Ty> &a;
-            const Real b;
-            ScalarMultiplicationProxy(const NumericAlgebra<Ty> &a, Real b)
+            const DevFloat b;
+            ScalarMultiplicationProxy(const NumericAlgebra<Ty> &a, DevFloat b)
             : a(a), b(b) {}
 
             const Ty& get_a() const { return static_cast<const Ty&>(a); }
-            const Real& get_b() const { return b; }
+            const DevFloat& get_b() const { return b; }
         };
 
         DefineOperation(Addition, +)
@@ -76,8 +76,8 @@ namespace Slab::Math {
         virtual Ty &Add                   (const Ty &) = 0;
         virtual Ty &Subtract              (const Ty &) = 0;
 
-        virtual Ty &StoreScalarMultiplication   (const Ty &, Real a) = 0;
-        virtual Ty &Multiply              (Real a) = 0;
+        virtual Ty &StoreScalarMultiplication   (const Ty &, DevFloat a) = 0;
+        virtual Ty &Multiply              (DevFloat a) = 0;
 
         /*** *** ***
          * operators += and *= are sufficient for
@@ -88,11 +88,11 @@ namespace Slab::Math {
             this->Add(proxy.get_a());
             return this->Add(proxy.get_b());
         }
-        Ty &operator*=(Real a)  { return this->Multiply(a); }
+        Ty &operator*=(DevFloat a)  { return this->Multiply(a); }
 
         Ty &operator-=(const Ty &a) { return this->Subtract(a); }
 
-        virtual ScalarMultiplicationProxy operator * (Real a) const { return ScalarMultiplicationProxy(*this, a); }
+        virtual ScalarMultiplicationProxy operator * (DevFloat a) const { return ScalarMultiplicationProxy(*this, a); }
         Ty& operator=(const ScalarMultiplicationProxy &proxy) {
             return this->StoreScalarMultiplication(proxy.get_a(), proxy.get_b());
         }

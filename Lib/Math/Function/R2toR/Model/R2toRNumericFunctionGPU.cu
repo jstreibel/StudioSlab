@@ -11,12 +11,12 @@
 namespace Slab::Math::R2toR {
 
 
-    NumericFunction_GPU::NumericFunction_GPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy)
+    NumericFunction_GPU::NumericFunction_GPU(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy)
             : R2toR::NumericFunction(N, M, xMin, yMin, hx, hy, GPU) {
 
     }
 
-    NumericFunction_GPU::NumericFunction_GPU(UInt N, Real sMin, Real h)
+    NumericFunction_GPU::NumericFunction_GPU(UInt N, DevFloat sMin, DevFloat h)
             : NumericFunction_GPU(N, N, sMin, sMin, h, h) {
 
     }
@@ -39,22 +39,22 @@ namespace Slab::Math::R2toR {
 
 //
 // Created by joao on 27/09/2019.
-    Pointer<Base::FunctionT <Real2D, Real>> R2toR::NumericFunction_GPU::Clone() const {
+    Pointer<Base::FunctionT <Real2D, DevFloat>> R2toR::NumericFunction_GPU::Clone() const {
         auto &h = getSpace().getMetaData().geth();
         return New<NumericFunction_GPU>(N, M, xMin, yMin, h[0], h[1]);
     }
 
-    Pointer<Base::NumericFunction<Real2D, Real>> R2toR::NumericFunction_GPU::CloneWithSize(UInt N) const {
+    Pointer<Base::NumericFunction<Real2D, DevFloat>> R2toR::NumericFunction_GPU::CloneWithSize(UInt N) const {
         NOT_IMPLEMENTED_CLASS_METHOD
     }
 
-    const Real &R2toR::NumericFunction_GPU::At(UInt n, UInt m) const {
+    const DevFloat &R2toR::NumericFunction_GPU::At(UInt n, UInt m) const {
         assert(n < N && m < M);
 
         return getSpace().getHostData()[n + m * N];
     }
 
-    Real &R2toR::NumericFunction_GPU::At(UInt n, UInt m) {
+    DevFloat &R2toR::NumericFunction_GPU::At(UInt n, UInt m) {
         assert(n < N && m < M);
 
         return getSpace().getHostData()[n + m * N];
@@ -95,14 +95,14 @@ namespace Slab::Math::R2toR {
     }
 
     NumericFunction &
-    R2toR::NumericFunction_GPU::SetArb(const Base::NumericFunction <Real2D, Real> &func) {
+    R2toR::NumericFunction_GPU::SetArb(const Base::NumericFunction <Real2D, DevFloat> &func) {
         getSpace().setToValue(func.getSpace());
 
         return *this;
     }
 
-    Base::NumericFunction <Real2D, Real> &NumericFunction_GPU::Apply(const Base::FunctionT <Real, Real> &func,
-                                                                     Base::NumericFunction <Real2D, Real> &out) const {
+    Base::NumericFunction <Real2D, DevFloat> &NumericFunction_GPU::Apply(const Base::FunctionT <DevFloat, DevFloat> &func,
+                                                                     Base::NumericFunction <Real2D, DevFloat> &out) const {
         assert(func.isGPUFriendly());
 
         const auto &mySpace = dynamic_cast<const DiscreteSpaceGPU &>(getSpace());

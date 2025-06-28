@@ -5,15 +5,15 @@
 #include "InterfaceManager.h"
 
 namespace Slab::Core {
-    InterfaceManager::InterfaceManager() : Singleton<InterfaceManager>("Interface Manager"){
+    FInterfaceManager::FInterfaceManager() : Singleton<FInterfaceManager>("Interface Manager"){
 
     }
 
-    void InterfaceManager::addInterface(Pointer<Interface>) {
+    void FInterfaceManager::AddInterface(Pointer<FInterface>) {
 
     }
 
-    UniqueID InterfaceManager::GenerateUniqueID() {
-        return ++GetInstance().currentInterface;
+    UniqueID FInterfaceManager::GenerateUniqueID() {
+        return ++GetInstance().CurrentInterface;
     }
 } // Slab::Core

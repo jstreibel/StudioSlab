@@ -17,7 +17,7 @@ namespace Slab::Graphics {
 
     bool R2toRPainter::dirtyMinMax() const { return false; }
 
-    void R2toRPainter::setMinMax(Real, Real) { }
+    void R2toRPainter::setMinMax(DevFloat, DevFloat) { }
 
     void R2toRPainter::labelUpdateEvent(const Str &) { }
 

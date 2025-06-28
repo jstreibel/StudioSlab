@@ -31,9 +31,9 @@ namespace Slab::Graphics {
 
         ~GLFWBackend() override;
 
-        void run() override;
+        void Run() override;
 
-        void terminate() override;
+        void Terminate() override;
 
         // auto getScreenHeight() const -> Real override;
     };

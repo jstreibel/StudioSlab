@@ -15,11 +15,11 @@ namespace Slab::Math::R2toC {
         ComplexArray data;
 
     public:
-        const Real x0, y0;
-        const Real Lx, Ly;
+        const DevFloat x0, y0;
+        const DevFloat Lx, Ly;
         const Resolution N, M;
 
-        NumericFunction(Resolution N, Resolution M, Real x0, Real y0, Real Lx, Real Ly);
+        NumericFunction(Resolution N, Resolution M, DevFloat x0, DevFloat y0, DevFloat Lx, DevFloat Ly);
         ~NumericFunction() = default;
 
 

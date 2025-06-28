@@ -17,16 +17,16 @@ namespace Slab::Math {
 
 //
 // Created by joao on 30/09/2019.
-    R2toR::NumericFunction::NumericFunction(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy, Device dev)
+    R2toR::NumericFunction::NumericFunction(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy, Device dev)
             : NumericFunctionBase(DimensionMetaData({N, M}, {hx, hy}), dev), N(N), M(M), xMin(xMin),
-              xMax(xMin + (Real) N * hx), yMin(yMin), yMax(yMin + (Real) M * hy), hx(hx), hy(hy) {}
+              xMax(xMin + (DevFloat) N * hx), yMin(yMin), yMax(yMin + (DevFloat) M * hy), hx(hx), hy(hy) {}
 
     // R2toR::NumericFunction::NumericFunction(const NumericConfig &p, Device dev)
     //         : R2toR::NumericFunction(p.getN(), p.getN(), p.getxMin(), p.getxMin(), p.geth(), p.geth(), dev) {}
 
-    Real R2toR::NumericFunction::operator()(Real2D r) const {
-        const Real Lx = xMax - xMin;
-        const Real Ly = yMax - yMin;
+    DevFloat R2toR::NumericFunction::operator()(Real2D r) const {
+        const DevFloat Lx = xMax - xMin;
+        const DevFloat Ly = yMax - yMin;
         fix x = r.x;
         fix y = r.y;
 
@@ -53,9 +53,9 @@ namespace Slab::Math {
         return At(n, m);
     }
 
-    auto R2toR::NumericFunction::operator()(Real2D r) -> Real & {
-        const Real Lx = xMax - xMin;
-        const Real Ly = yMax - yMin;
+    auto R2toR::NumericFunction::operator()(Real2D r) -> DevFloat & {
+        const DevFloat Lx = xMax - xMin;
+        const DevFloat Ly = yMax - yMin;
         fix x = r.x;
         fix y = r.y;
 
@@ -74,7 +74,7 @@ namespace Slab::Math {
 
     R2toR::Domain R2toR::NumericFunction::getDomain() const { return {xMin, xMax, yMin, yMax}; }
 
-    auto R2toR::NumericFunction::diff(int dim, int n, int m) const -> Real {
+    auto R2toR::NumericFunction::diff(int dim, int n, int m) const -> DevFloat {
         if (n < 0 || n > N - 1 || m < 0 || m > M - 1) return .0;
 
         getSpace().syncHost();
@@ -82,12 +82,12 @@ namespace Slab::Math {
         // int j = n + m*N;
 
         if (dim == 0) {
-            const Real s = .5 / hx;
+            const DevFloat s = .5 / hx;
             fix LEFT = n==0 ? At(N-1, m) : At(n-1, m);
             fix RIGHT = n==N-1 ? At(0, m) : At(n + 1, m);
             return s * (RIGHT - LEFT);
         } else if (dim == 1) {
-            Real s = .5 / hy;
+            DevFloat s = .5 / hy;
             auto TOP_m = m+1;
             auto BOTTOM_m = m-1;
             if(m==M-1) {
@@ -106,9 +106,9 @@ namespace Slab::Math {
             NOT_IMPLEMENTED;
     }
 
-    Real R2toR::NumericFunction::diff(int dim, Real2D x) const {
-        const Real Lx = xMax - xMin;
-        const Real Ly = yMax - yMin;
+    DevFloat R2toR::NumericFunction::diff(int dim, Real2D x) const {
+        const DevFloat Lx = xMax - xMin;
+        const DevFloat Ly = yMax - yMin;
         int n = int((N - 1) * (x.x - xMin) / Lx);
         int m = int((M - 1) * (x.y - yMin) / Ly);
 
@@ -128,18 +128,18 @@ namespace Slab::Math {
     }
 
     Str R2toR::NumericFunction::generalName() const {
-        return Base::NumericFunction<Real2D, Real>::generalName() + " 2D " + (dev == GPU ? "GPU" : "CPU");
+        return Base::NumericFunction<Real2D, DevFloat>::generalName() + " 2D " + (dev == GPU ? "GPU" : "CPU");
     }
 
     bool R2toR::NumericFunction::domainContainsPoint(Real2D x) const {
         return x.x >= xMin && x.x <= xMax && x.y >= yMin && x.y <= yMax;
     }
 
-    Real R2toR::NumericFunction::max() const {
+    DevFloat R2toR::NumericFunction::max() const {
         return getSpace().getHostData(true).max();
     }
 
-    Real R2toR::NumericFunction::min() const {
+    DevFloat R2toR::NumericFunction::min() const {
         return getSpace().getHostData(true).min();
     }
 

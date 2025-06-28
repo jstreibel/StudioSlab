@@ -14,24 +14,24 @@ namespace Slab::Math::RtoR {
     public:
         using DFTInverseFunction = RtoR::NumericFunction;
         struct Filter {
-            Real kMax = 0.0;
-            virtual Complex operator()(const Complex &A, Real k) { return A; };
+            DevFloat kMax = 0.0;
+            virtual Complex operator()(const Complex &A, DevFloat k) { return A; };
         };
 
         struct LowPass : public Filter {
-            Real kThreshold;
+            DevFloat kThreshold;
             explicit LowPass(int kThreshold);
-            Complex operator()(const Complex &A, Real k) override;
+            Complex operator()(const Complex &A, DevFloat k) override;
         };
         struct HighPass : public Filter {
-            Real kThreshold;
+            DevFloat kThreshold;
             explicit HighPass(int kThreshold);
-            Complex operator()(const Complex &A, Real k) override;
+            Complex operator()(const Complex &A, DevFloat k) override;
         };
 
         static Pointer<DFTInverseFunction> Compute(const DFTResult &dftResult,
-                                              Real xMin,
-                                              Real L,
+                                              DevFloat xMin,
+                                              DevFloat L,
                                               Filter *filter=nullptr);
     };
 

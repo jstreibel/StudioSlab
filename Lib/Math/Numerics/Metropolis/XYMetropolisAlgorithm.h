@@ -38,17 +38,17 @@ namespace Slab::Math {
         bool shouldRun = true;
 
     private:
-        Real T;
-        Real h;
+        DevFloat T;
+        DevFloat h;
 
-        Real δ = 2 * M_PI;
+        DevFloat δ = 2 * M_PI;
 
         /** Total single-spin change accepted during last MCStep.  */
         int _totalAcceptedSSCLastMCStep = 0;
 
         XYNetwork S;
 
-        bool shouldAccept(Real deltaE) const;
+        bool shouldAccept(DevFloat deltaE) const;
 
 
         void MCStepMetropolis();
@@ -69,16 +69,16 @@ namespace Slab::Math {
          * @param dynamic
          * @param sweeping
          */
-        explicit XYMetropolisAlgorithm(int L, Real T, Real h,
+        explicit XYMetropolisAlgorithm(int L, DevFloat T, DevFloat h,
                                        InitialConditions ic,
                                        Dynamic dynamic,
                                        Sweeping sweeping);
 
         ~XYMetropolisAlgorithm() = default;
 
-        void set_T(Real T);
+        void set_T(DevFloat T);
 
-        void set_h(Real h);
+        void set_h(DevFloat h);
 
         void MCStep();
 

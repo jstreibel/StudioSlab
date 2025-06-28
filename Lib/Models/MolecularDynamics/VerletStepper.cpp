@@ -17,8 +17,8 @@ namespace Slab::Models::MolecularDynamics {
             , mechanicsModel(mechModel)
             , q(c->getN()), p(c->getN()), state(New<MoleculesState>(q, p))
             , dt(c->getdt()){
-        const Count N = c->getN();
-        const Real L = c->getL();
+        const CountType N = c->getN();
+        const DevFloat L = c->getL();
 
         if (1) {
             auto lim = (.5 * L - .5 * CUTOFF_RADIUS);
@@ -50,13 +50,13 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     template<class Model>
-    void VerletStepper<Model>::step(Count n_steps) {
+    void VerletStepper<Model>::step(CountType n_steps) {
         static boost::numeric::odeint::velocity_verlet<Graphics::PointContainer> stepperVerlet;
 
         auto pointPairMolecules = std::make_pair(std::ref(q), std::ref(p));
 
         for (auto i = 0; i < n_steps; ++i) {
-            const auto t = dt * (Real) currStep;
+            const auto t = dt * (DevFloat) currStep;
 
             stepperVerlet.do_step(mechanicsModel, pointPairMolecules, t, dt);
 

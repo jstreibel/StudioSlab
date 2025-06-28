@@ -13,7 +13,7 @@
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
 namespace Slab::Graphics {
-    void LabelsArtist::setTotalItems(Count tot) {
+    void LabelsArtist::setTotalItems(CountType tot) {
         currItem=0;
 
         switch (tot) {
@@ -37,8 +37,8 @@ namespace Slab::Graphics {
         }
     }
 
-    Count LabelsArtist::row() const { return currItem / cols; }
-    Count LabelsArtist::col() const { return currItem % cols; }
+    CountType LabelsArtist::row() const { return currItem / cols; }
+    CountType LabelsArtist::col() const { return currItem % cols; }
 
     LabelsArtist &LabelsArtist::operator++() { currItem++; return *this; }
 

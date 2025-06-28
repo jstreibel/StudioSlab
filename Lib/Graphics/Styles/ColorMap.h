@@ -45,10 +45,10 @@ namespace Slab::Graphics {
 
         auto clone() const -> Pointer<ColorMap>;
 
-        auto mapValueToColor(Real value) const -> Color;
+        auto mapValueToColor(DevFloat value) const -> Color;
 
         virtual auto
-        getColorCount() const -> Count;
+        getColorCount() const -> CountType;
 
         virtual auto
         getColor(int) const -> Color;

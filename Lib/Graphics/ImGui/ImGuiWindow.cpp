@@ -16,7 +16,7 @@
 #define MyName
 
 namespace Slab::Graphics {
-    Atomic<Count> ImGuiWindow::count = 0;
+    Atomic<CountType> ImGuiWindow::count = 0;
 
     ImGuiWindow::ImGuiWindow(Pointer<SlabWindow> slabwindow, Pointer<SlabImGuiContext> imguicontext)
     : id(Str("ImGuiWindow##") + ToStr(++count))

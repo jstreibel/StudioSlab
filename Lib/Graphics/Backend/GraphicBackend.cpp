@@ -13,7 +13,7 @@
 namespace Slab::Graphics {
 
     GraphicBackend::GraphicBackend(const Str &name)
-    : Backend(name) {}
+    : FBackend(name) {}
 
     GraphicBackend::~GraphicBackend() = default;
 
@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         return graphicModules;
     }
 
-    bool GraphicBackend::isHeadless() const { return false; }
+    bool GraphicBackend::IsHeadless() const { return false; }
 
     Pointer<SystemWindow> GraphicBackend::NewSystemWindow(const Str&title) {
         auto win = this->CreateSystemWindow(title);
@@ -45,12 +45,12 @@ namespace Slab::Graphics {
         graphicModules.clear();
     }
 
-    void GraphicBackend::terminate() {
+    void GraphicBackend::Terminate() {
         unloadAllModules();
     }
 
-    void GraphicBackend::notifyModuleLoaded(const Pointer<Core::Module> &module) {
-        if(module->requiresGraphicsBackend) {
+    void GraphicBackend::notifyModuleLoaded(const Pointer<Core::SlabModule> &module) {
+        if(module->bRequiresGraphicsBackend) {
             auto graphic_module = DynamicPointerCast<GraphicsModule>(module);
 
             addGraphicsModule(graphic_module);

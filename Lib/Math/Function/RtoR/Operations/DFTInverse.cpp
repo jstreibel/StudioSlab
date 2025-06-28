@@ -12,7 +12,7 @@
 namespace Slab::Math::RtoR {
 
     DFTInverse::LowPass::LowPass(int kThreshold) : kThreshold(kThreshold)   {    }
-    Complex DFTInverse::LowPass::operator()(const Complex &A, Real k) {
+    Complex DFTInverse::LowPass::operator()(const Complex &A, DevFloat k) {
         fix fabsk = fabs(k);
         if(fabsk>kMax) kMax = fabsk;
 
@@ -21,7 +21,7 @@ namespace Slab::Math::RtoR {
         return A;
     }
     DFTInverse::HighPass::HighPass(int kThreshold) : kThreshold(kThreshold) {    }
-    Complex DFTInverse::HighPass::operator()(const Complex &A, Real k) {
+    Complex DFTInverse::HighPass::operator()(const Complex &A, DevFloat k) {
         fix fabsk = fabs(k);
         if(fabsk>kMax) kMax = fabsk;
 
@@ -31,8 +31,8 @@ namespace Slab::Math::RtoR {
     }
 
     Pointer<DFTInverse::DFTInverseFunction> DFTInverse::Compute(const DFTResult &dftResult,
-                                                           Real xMin,
-                                                           Real L,
+                                                           DevFloat xMin,
+                                                           DevFloat L,
                                                            Filter *filter)
 
     {

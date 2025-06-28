@@ -12,9 +12,9 @@
 
 namespace Slab::Math::RtoR {
 
-    class NumericFunction : public Base::NumericFunction<Real, Real> {
+    class NumericFunction : public Base::NumericFunction<DevFloat, DevFloat> {
     public:
-        using NumericAlgebra<Base::NumericFunction<Real, Real>>::operator=;
+        using NumericAlgebra<Base::NumericFunction<DevFloat, DevFloat>>::operator=;
 
         enum LaplacianType {
             Standard1D_FixedBorder,
@@ -23,21 +23,21 @@ namespace Slab::Math::RtoR {
         };
 
         NumericFunction(const NumericFunction &toCopy);
-        NumericFunction(UInt N, Real xMin, Real xMax, Device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
+        NumericFunction(UInt N, DevFloat xMin, DevFloat xMax, Device dev, LaplacianType laplacianType = LaplacianType::Standard1D_FixedBorder);
 
         virtual NumericFunction &Laplacian(NumericFunction &outFunc) const = 0;
 
         LaplacianType
         getLaplacianType() const { return laplacianType; }
 
-        Real mapIntToPos(UInt i) const;
-        UInt mapPosToInt(Real x) const;
+        DevFloat mapIntToPos(UInt i) const;
+        UInt mapPosToInt(DevFloat x) const;
 
-        Real operator()(Real x) const override;
+        DevFloat operator()(DevFloat x) const override;
 
         const UInt N;
-        const Real xMin;
-        const Real xMax;
+        const DevFloat xMin;
+        const DevFloat xMax;
 
     protected:
         LaplacianType laplacianType;

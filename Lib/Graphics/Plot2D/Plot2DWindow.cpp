@@ -16,7 +16,7 @@
 
 #include "Utils/Printing.h"
 
-#include "Core/Controller/CommandLine/CLInterfaceManager.h"
+#include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 
 #include "PlotThemeManager.h"
 #include "Artists/AxisArtist.h"
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
     using Log = Core::Log;
 
     std::map<Str, Plot2DWindow *> Plot2DWindow::graphMap = {};
-    Count Plot2DWindow::WindowCount = 0;
+    CountType Plot2DWindow::WindowCount = 0;
 
     using Mappy = Plot2DWindow::ContentMap;
     bool change_z_order(Mappy& mappy, Mappy::iterator &it, int z_order){
@@ -46,7 +46,7 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(Real xMin, Real xMax, Real yMin, Real yMax, Str _title)
+    Plot2DWindow::Plot2DWindow(DevFloat xMin, DevFloat xMax, DevFloat yMin, DevFloat yMax, Str _title)
     : id(++WindowCount)
     , region{{xMin, xMax, yMin, yMax}}
     , title(std::move(_title))
@@ -67,7 +67,7 @@ namespace Slab::Graphics {
         labelsArtist.setLabel("Labels");
 
         if (title.empty()) title = Str("unnamed");
-        Count n = 1;
+        CountType n = 1;
         {
             Str uniqueTitle = title;
             while (Plot2DWindow::graphMap.count(uniqueTitle))
@@ -136,26 +136,26 @@ namespace Slab::Graphics {
                                         // at the end of the previous frame?"
 
         auto draw_call = [this](){
-            auto popupName = unique(title + Str(" window popup"));
+            auto popupName = AddUniqueIdToString(title + Str(" window popup"));
 
             if (popupOn && !POPUP_ON_MOUSE_CALL) {
 
-                ImGui::OpenPopup(unique(popupName).c_str());
+                ImGui::OpenPopup(AddUniqueIdToString(popupName).c_str());
                 popupOn = false;
             }
 
-            if (ImGui::BeginPopup(unique(popupName).c_str())) {
+            if (ImGui::BeginPopup(AddUniqueIdToString(popupName).c_str())) {
                 if(ImGui::MenuItem("Auto adjust", nullptr, autoReviewGraphRanges)) {
                     autoReviewGraphRanges = !autoReviewGraphRanges;
                 }
-                else if (ImGui::MenuItem(unique("Show interface").c_str(), nullptr, showInterface)) {
+                else if (ImGui::MenuItem(AddUniqueIdToString("Show interface").c_str(), nullptr, showInterface)) {
                     showInterface = !showInterface;
-                } else if (ImGui::MenuItem(unique("Save graph").c_str())) {
+                } else if (ImGui::MenuItem(AddUniqueIdToString("Save graph").c_str())) {
 
                     auto w = Printing::getTotalHorizontalDots(.5);
                     auto h = w * .5;
                     auto fileName = title + " " +
-                                    Core::CLInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
+                                    Core::FCommandLineInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                     ".png";
                     bypass_gui = true;
                     OpenGL::outputToPNG(this, fileName, w, (int) h);
@@ -191,7 +191,7 @@ namespace Slab::Graphics {
                     if(isMouseIn()) {
                         flags = ImGuiTreeNodeFlags_Selected;
                     }
-                    began = ImGui::CollapsingHeader(unique(title).c_str(), flags);
+                    began = ImGui::CollapsingHeader(AddUniqueIdToString(title).c_str(), flags);
                 }
 
                 if (began) {
@@ -213,7 +213,7 @@ namespace Slab::Graphics {
                         ImGui::SameLine();
 
                         bool visible = artie->isVisible();
-                        if (ImGui::Checkbox((unique(artie->getLabel())+"_checkbox").c_str() , &visible)) {
+                        if (ImGui::Checkbox((AddUniqueIdToString(artie->getLabel())+"_checkbox").c_str() , &visible)) {
                             artie->setVisibility(visible);
                         }
 
@@ -222,7 +222,7 @@ namespace Slab::Graphics {
 
                     if(!gui_context_is_local) {
                         auto avail_region = ImGui::GetContentRegionAvail();
-                        ImGui::BeginChild(unique(title + " :)").c_str(), {avail_region.x, 0},
+                        ImGui::BeginChild(AddUniqueIdToString(title + " :)").c_str(), {avail_region.x, 0},
                                           ImGuiChildFlags_Border
                                           | ImGuiChildFlags_AutoResizeY);
                     }
@@ -231,7 +231,7 @@ namespace Slab::Graphics {
                         IN artie = cont.second;
 
                         if (artie->isVisible() && artie->hasGUI()) {
-                            if (ImGui::CollapsingHeader((unique(artie->getLabel())).c_str()))
+                            if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->getLabel())).c_str()))
                                 artie->drawGUI();
                         }
                     }

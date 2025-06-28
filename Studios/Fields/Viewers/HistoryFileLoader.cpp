@@ -67,8 +67,8 @@ namespace Modes {
         auto xCenter = strtod(pyDict["xCenter"].first.c_str(), nullptr);
         auto xMin = xCenter - .5*L;
         auto xMax = xCenter + .5*L;
-        auto hx = L/(Real)N;
-        auto hy = t/(Real)M;
+        auto hx = L/(DevFloat)N;
+        auto hy = t/(DevFloat)M;
 
         auto field = Math::DataAlloc<Math::R2toR::NumericFunction_CPU>("ϕ(t,x)", N, M, xMin, t0, hx, hy);
 

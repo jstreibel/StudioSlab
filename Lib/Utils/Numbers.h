@@ -14,11 +14,11 @@ namespace Slab {
 
     const auto HUGE_NUMBER = ((unsigned long long) 0) - 1;
 
-    typedef floatt Real;
+    typedef floatt DevFloat;
     typedef float Real32;
     typedef double Real64;
     typedef __float128 Real128;
-    typedef std::complex<Real> Complex;
+    typedef std::complex<DevFloat> Complex;
 
     typedef unsigned char Byte;
     typedef unsigned char *ByteData_raw;
@@ -28,13 +28,13 @@ namespace Slab {
     typedef unsigned int UInt;
     typedef long long IntBig;
     typedef unsigned long UIntBig;
-    typedef std::size_t Count;
+    typedef std::size_t CountType;
     typedef std::size_t Index;
     typedef std::size_t Resolution;
     constexpr Resolution UndefinedResolution = (unsigned)-1;
     typedef int_least64_t BigInt;
 
-    const Real Infinity = std::numeric_limits<double>::infinity();
+    const DevFloat Infinity = std::numeric_limits<double>::infinity();
 
     template<typename T>
     inline T Max(const T&a, const T&b) {

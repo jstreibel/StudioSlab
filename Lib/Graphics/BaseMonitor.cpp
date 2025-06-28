@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
     using Core::Log;
 
-    BaseMonitor::BaseMonitor(Count max_steps, const Str &channelName, int stepsBetweenDraws)
+    BaseMonitor::BaseMonitor(CountType max_steps, const Str &channelName, int stepsBetweenDraws)
             : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_steps(max_steps) {
         addWindow(guiWindow);
         setColumnRelativeWidth(0, 0.1);
@@ -33,7 +33,7 @@ namespace Slab::Graphics {
     void BaseMonitor::writeStats() {
         static bool hasFinished = false;
         static bool isPaused = false;
-        static Count lastStep = 0;
+        static CountType lastStep = 0;
         hasFinished = !(lastPacket.getSteps() < max_steps);
 
         fix currStep = step;
@@ -52,15 +52,15 @@ namespace Slab::Graphics {
 
         fix FPS = 1e3 / elTime;           // Frames/samples per second
         fix SPs = currStep - lastStep;  // Steps per frame/sample
-        fix SPS = (Real) SPs * FPS;        // Steps per second
+        fix SPS = (DevFloat) SPs * FPS;        // Steps per second
 
         auto avgFPS = .0;
         auto avgSPS = .0; // careful with division by zero below
         auto avgSPs = .0;
         if (step > 0) {
-            static Vector<Real> FPSmeasures;
-            static Vector<Real> SPsmeasures; // steps per sample
-            static Vector<Real> SPSmeasures; // steps per second
+            static Vector<DevFloat> FPSmeasures;
+            static Vector<DevFloat> SPsmeasures; // steps per sample
+            static Vector<DevFloat> SPSmeasures; // steps per second
 
             FPSmeasures.emplace_back(FPS);
             SPsmeasures.emplace_back(SPs);
@@ -75,13 +75,13 @@ namespace Slab::Graphics {
                 avgSPs += SPsmeasures[index];
                 avgSPS += SPSmeasures[index];
             }
-            avgFPS /= (Real) total;
-            avgSPs /= (Real) total;
-            avgSPS /= (Real) total;
+            avgFPS /= (DevFloat) total;
+            avgSPs /= (DevFloat) total;
+            avgSPS /= (DevFloat) total;
         }
 
         fix stepsToFinish = max_steps - step;
-        fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : (Real)stepsToFinish / avgSPS);
+        fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : (DevFloat)stepsToFinish / avgSPS);
         fix remainingTimeMin = timeToFinish / 60;
         fix remainingTimeSec = timeToFinish % 60;
 

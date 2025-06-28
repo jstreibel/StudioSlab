@@ -14,7 +14,7 @@
 namespace Slab::Math {
 
     struct RandomSite{ UInt i; UInt j; };
-    using NewValue = Real;
+    using NewValue = DevFloat;
     using R2toRMetropolis = MetropolisAlgorithm<RandomSite, NewValue>;
 
     class R2toRMetropolisRecipe : public Base::NumericalRecipe {

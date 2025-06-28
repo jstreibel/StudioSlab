@@ -18,14 +18,14 @@ namespace Slab::Math::R2toR {
 
     class Rotation : public Transform {
     public:
-        explicit Rotation(Real angleRad = .0);
+        explicit Rotation(DevFloat angleRad = .0);
 
         Real2D operator*(const Real2D &x) const override;
 
-        static Rotation ByAngle(Real angleRad);
+        static Rotation ByAngle(DevFloat angleRad);
 
     private:
-        Real angle;
+        DevFloat angle;
     };
 
     class Translation : public Transform {

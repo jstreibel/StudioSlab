@@ -17,7 +17,7 @@ namespace Slab::Lost::ThermoOutput {
             : theData(sf::LinesStrip), scale(scale), rMin(rMin), rMax(rMax) {
         setPlacing(subWindow);
 
-        if (!font.loadFromFile(Slab::Core::Resources::fontFileName(10)))
+        if (!font.loadFromFile(Slab::Core::Resources::GetIndexedFontFileName(10)))
             throw "SFML error while loading font.";
 
         int fontSize = 14;

@@ -9,14 +9,14 @@
 
 namespace Slab::Core {
 
-    using Command = Str;
+    using FCommand = Str;
 
-    class Request {
-        Command command;
+    class FRequest {
+        FCommand Command;
     public:
-        bool operator==(const Request&);
+        bool operator==(const FRequest&) const;
 
-        bool operator==(const Command&);
+        bool operator==(const FCommand&) const;
     };
 
 } // Slab::Core

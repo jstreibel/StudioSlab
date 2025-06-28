@@ -43,7 +43,7 @@ namespace Slab::Math {
             field_data = DataAlloc<R2toR::NumericFunction_CPU>("Stochastic field",
                                                                N, M,
                                                                x_min, y_min,
-                                                               L/Real(N), t/Real(M));
+                                                               L/DevFloat(N), t/DevFloat(M));
         }
 
         return field_data;
@@ -57,12 +57,12 @@ namespace Slab::Math {
 
         auto field = getField();
 
-        auto acceptance_thermal = [T](Real ΔE) {
+        auto acceptance_thermal = [T](DevFloat ΔE) {
             auto rand = RandUtils::RandomUniformReal01;
             return rand() < Min(1.0, exp(-ΔE / T));
         };
 
-        auto acceptance_action = [](Real Δ_δSδϕ) {
+        auto acceptance_action = [](DevFloat Δ_δSδϕ) {
             return Δ_δSδϕ<0;
         };
 
@@ -119,9 +119,9 @@ namespace Slab::Math {
                     affected_sites.push_back({i, n + 1});
                 }
             }
-            constexpr auto sign = Slab::Math::SIGN<Real>;
+            constexpr auto sign = Slab::Math::SIGN<DevFloat>;
             auto compute_δSδϕ2 = [affected_sites, Δx2, Δt2, ϕ]() {
-                Real δSδϕ2 = .0;
+                DevFloat δSδϕ2 = .0;
 
                 for(auto s : affected_sites) {
                     fix iₗ = s.i;
