@@ -95,7 +95,7 @@ namespace Slab::Models::KGRtoR {
         fix t = p.gett();
         fix max_steps = p.getn();
         fix N = static_cast<DevFloat>(p.getN());
-        fix L = p.getL();
+        fix L = p.GetL();
         fix xMin = p.getxMin();
         fix Nₒᵤₜ = *outputResolution > N ? N : *outputResolution;
         fix r = p.getr();
@@ -167,12 +167,13 @@ namespace Slab::Models::KGRtoR {
                 sockets.emplace_back(ftHistory);
 
                 outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
-                outputOpenGL->setSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
-                                                     ftHistory->getDFTDataHistory());
+                outputOpenGL->SetSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
+                                                     ftHistory->GetDFTDataHistory());
             }
 
-            const auto wm = New<Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
-            wm->addSlabWindow(Pointer<Graphics::SlabWindow>(outputOpenGL));
+            const auto wm = New<SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
+            auto Window = Pointer<FSlabWindow>(outputOpenGL);
+            wm->AddSlabWindow(Window, false);
             guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(outputOpenGL);
         } else {
@@ -202,7 +203,7 @@ namespace Slab::Models::KGRtoR {
 
         RealVector x_locations;
         {
-            fix L = c.getL();
+            fix L = c.GetL();
             fix xMin = c.getxMin();
 
             if(fix k_param = FCommandLineInterfaceManager::getInstance().getParameter("k")){
@@ -252,7 +253,7 @@ namespace Slab::Models::KGRtoR {
 
         const size_t N = conf.getN();
         const floatt xLeft = conf.getxMin();
-        const floatt xRight = xLeft + conf.getL();
+        const floatt xRight = xLeft + conf.GetL();
 
         auto laplacianType = force_periodicBC || *BoundaryConditions == 1
                              ? RtoR::NumericFunction::Standard1D_PeriodicBorder

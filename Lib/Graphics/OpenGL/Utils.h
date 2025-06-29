@@ -43,7 +43,7 @@ namespace Slab::Graphics::OpenGL {
 
     bool outputToPNG(FrameBuffer buffer, std::string fileName);
 
-    bool outputToPNG(SlabWindow *window, std::string fileName, int width, int height);
+    bool outputToPNG(FSlabWindow *window, std::string fileName, int width, int height);
 
     void piccolos();
 

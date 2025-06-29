@@ -35,7 +35,7 @@ namespace Studios::Fields::RtoRThermal {
     }
 
     auto StatisticalBuilder::getBoundary() -> Base::BoundaryConditions_ptr {
-        auto L = kg_numeric_config->getL();
+        auto L = kg_numeric_config->GetL();
         auto xLeft = kg_numeric_config->getxMin();
 
         auto l = L / *n;

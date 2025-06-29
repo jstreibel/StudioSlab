@@ -6,9 +6,9 @@
 
 namespace Slab::Graphics {
 
-    MouseState::MouseState(Slab::Graphics::ParentSystemWindow parent) : SystemWindowEventListener(parent) {}
+    MouseState::MouseState(Slab::Graphics::ParentSystemWindow parent) : FSystemWindowEventListener(parent) {}
 
-    bool MouseState::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+    bool MouseState::NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         mod_keys = keys;
 
         switch (button) {

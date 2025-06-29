@@ -9,7 +9,7 @@
 
 namespace Slab::Math {
 
-    RtoR::Section1D::Section1D(R2toR::Function_constptr function, RtoR2::ParametricCurve_constptr curve)
+    RtoR::Section1D::Section1D(Pointer<const R2toR::Function> function, Pointer<const RtoR2::ParametricCurve> curve)
             : function(std::move(function)), curve(std::move(curve)) {}
 
     DevFloat RtoR::Section1D::operator()(DevFloat x) const {
@@ -21,7 +21,7 @@ namespace Slab::Math {
         return func(c(x));
     }
 
-    Math::PointSet_ptr RtoR::Section1D::renderToPointSet(FunctionT<DevFloat, DevFloat>::RenderingOptions options) {
+    Pointer<Math::PointSet> RtoR::Section1D::renderToPointSet(FunctionT<DevFloat, DevFloat>::RenderingOptions options) {
         if (curve == nullptr || function == nullptr) return {};
 
         return RtoR::FunctionRenderer::ToPointSet(*this, options.xMin, options.xMax, options.n);

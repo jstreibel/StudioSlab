@@ -23,12 +23,12 @@ namespace Slab::Math {
         auto elTime = timer.getElTime_sec();
 
         auto n = total_steps;
-        auto currn = outputInfo.getSteps();
+        auto currn = outputInfo.GetSteps();
         static auto lastn = currn;
 
         Core::Log::Info() << Core::Log::Flush;
         Core::Log::Info() << (100 * static_cast<DevFloat>(currn) / total_steps) << "% done" << Core::Log::Flush;
-        Core::Log::Info() << "Step " << outputInfo.getSteps() << "/" << n << Core::Log::Flush;
+        Core::Log::Info() << "Step " << outputInfo.GetSteps() << "/" << n << Core::Log::Flush;
 
         auto expectedFinish = (DevFloat)NAN;
         if (lastn != currn) {

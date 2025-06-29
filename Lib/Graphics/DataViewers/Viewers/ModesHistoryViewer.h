@@ -18,7 +18,7 @@ namespace Slab::Graphics {
 
     class ModesHistoryViewer : public Viewer {
         Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
-        Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;
+        Pointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
 
         Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
         Pointer<R2SectionArtist> modes_artist = nullptr;
@@ -34,15 +34,15 @@ namespace Slab::Graphics {
         void computeTransform();
         void setupModes();
     public:
-        explicit ModesHistoryViewer(const Pointer<GUIWindow> &);
+        explicit ModesHistoryViewer(const Pointer<FGUIWindow> &);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void draw() override;
+        void Draw() override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void notifyBecameVisible() override;
+        void NotifyBecameVisible() override;
     };
 
 } // Slab::Graphics

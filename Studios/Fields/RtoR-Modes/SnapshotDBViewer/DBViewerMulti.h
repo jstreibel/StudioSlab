@@ -21,7 +21,7 @@ namespace Modes::DatabaseViewer {
     using namespace Slab;
 
     class DBViewerMulti : public Graphics::WindowRow {
-        Graphics::GUIWindow guiWindow;
+        Graphics::FGUIWindow guiWindow;
         WindowRow topRow;
 
         Vector<DBParser::Ptr> dbParsers;
@@ -63,11 +63,11 @@ namespace Modes::DatabaseViewer {
     public:
         explicit DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void draw() override;
+        void Draw() override;
 
-        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
 
-        bool notifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
+        bool NotifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
     };

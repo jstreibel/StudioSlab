@@ -90,8 +90,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
         FCommandLineInterfaceOwner::NotifyCLArgsSetupFinished();
 
         auto &p = *kg_numeric_config;
-        const Real L = p.getL();
-        const Real dt = p.getdt();
+        const Real L = p.GetL();
+        const Real dt = p.Getdt();
         const auto W₀ = *W_0;
         auto coef = W₀;
 

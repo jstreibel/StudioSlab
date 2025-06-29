@@ -24,7 +24,7 @@ namespace Slab::Models {
         return **h;
     }
 
-    auto KGNumericConfig::getdt() const -> floatt {
+    auto KGNumericConfig::Getdt() const -> floatt {
         return **rdt * **h;
     }
 

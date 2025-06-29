@@ -91,7 +91,7 @@ namespace Slab {
         return success;
     }
 
-    bool Graphics::OpenGL::outputToPNG(SlabWindow *window, std::string fileName, int width, int height) {
+    bool Graphics::OpenGL::outputToPNG(FSlabWindow *window, std::string fileName, int width, int height) {
         // Create texture:
         GLuint texColorBuffer;
         glGenTextures(1, &texColorBuffer);
@@ -124,9 +124,9 @@ namespace Slab {
             const auto hOld = window->GetHeight();
 
             // This offset is how frame is drawn around window.
-            window->setx(2);
-            window->sety(2);
-            window->notifyReshape(width-4, height-4);
+            window->Set_x(2);
+            window->Set_y(2);
+            window->NotifyReshape(width-4, height-4);
 
             glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
@@ -134,13 +134,13 @@ namespace Slab {
             // auto gui_state = window->isGUIEnabled();
             // window->setGUIState(DISABLED);
             window->overrideSystemWindowHeight(height);
-            window->draw();
+            window->Draw();
             window->overrideSystemWindowHeight(-1);
             // window->setGUIState(gui_state);
 
-            window->setx(xOld);
-            window->sety(yOld);
-            window->notifyReshape(wOld, hOld);
+            window->Set_x(xOld);
+            window->Set_y(yOld);
+            window->NotifyReshape(wOld, hOld);
 
             // Frame:
             // OpenGL::Shader::remove();

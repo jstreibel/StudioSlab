@@ -29,7 +29,7 @@ namespace Slab::Graphics {
         SlabWindowWantsFullscreen   = 0x8
     };
 
-    class SlabWindow : protected Core::UniqueObject, public SystemWindowEventListener {
+    class FSlabWindow : protected Core::UniqueObject, public FSystemWindowEventListener {
         friend class SlabWindowManager;
 
     public:
@@ -61,9 +61,9 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit SlabWindow(Config c=Config());
+        explicit FSlabWindow(Config c=Config());
 
-        ~SlabWindow() override;
+        ~FSlabWindow() override;
 
         auto getConfig() -> Config&;
 
@@ -77,17 +77,17 @@ namespace Slab::Graphics {
          */
         void overrideSystemWindowHeight(int override_h);
 
-        auto notifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
+        auto NotifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
         auto notifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
         auto notifyMouseWheel(double dx, double dy)            -> bool override;
-        auto notifyKeyboard(KeyMap, KeyState, ModKeys)         -> bool override;
+        auto NotifyKeyboard(KeyMap, KeyState, ModKeys)         -> bool override;
 
-        virtual auto draw()                                    -> void;
-        virtual auto notifyReshape(int w, int h)               -> void;
+        virtual auto Draw()                                    -> void;
+        virtual auto NotifyReshape(int w, int h)               -> void;
         virtual auto notifyBecameActive()                      -> void;
         virtual auto notifyBecameInactive()                    -> void;
-        virtual auto setx(int x)                               -> void;
-        virtual auto sety(int y)                               -> void;
+        virtual auto Set_x(int x)                               -> void;
+        virtual auto Set_y(int y)                               -> void;
 
         auto getFlags()                                  const -> Int;
         auto isActive()                                  const -> bool;
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         auto SetMinimumHeight(Resolution)                      -> void;
     };
 
-    DefinePointers(SlabWindow)
+    DefinePointers(FSlabWindow)
 
 }
 

@@ -7,14 +7,14 @@
 #include <utility>
 
 namespace Slab::Graphics {
-    WindowProxy::WindowProxy() : SlabWindow() {
+    WindowProxy::WindowProxy() : FSlabWindow() {
 
     }
 
-    void WindowProxy::setWindow(Pointer<SlabWindow> win) {
+    void WindowProxy::setWindow(Pointer<FSlabWindow> win) {
         window = std::move(win);
 
-        window->notifyReshape(GetWidth(), GetHeight());
+        window->NotifyReshape(GetWidth(), GetHeight());
 
         addResponder(window);
     }

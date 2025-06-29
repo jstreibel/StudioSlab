@@ -16,7 +16,7 @@ namespace Slab::Math::RtoR {
 
         Pointer<FunctionT<DevFloat, DevFloat>> Clone() const override;
 
-        Str symbol() const override;
+        Str Symbol() const override;
     };
 }
 

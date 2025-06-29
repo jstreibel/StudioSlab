@@ -60,8 +60,8 @@ namespace Studios {
         OscillonPlotting();
 
         auto
-        getFunctionTimeDerivative() -> Slab::Pointer<Slab::Math::R2toR::NumericFunction> override;
-        void draw() override;
+        getFunctionTimeDerivative() -> Slab::Pointer<Slab::Math::R2toR::FNumericFunction> override;
+        void Draw() override;
     };
 
 }

@@ -11,7 +11,7 @@ namespace Slab::Math {
     PointSet::PointSet() : Space(2) {}
 
     PointSet::PointSet(const Point2DVec &points) : PointSet() {
-        for (const auto &p: points) addPoint(p);
+        for (const auto &p: points) AddPoint(p);
     }
 
     PointSet::PointSet(const PointSet &pointSet)
@@ -29,7 +29,7 @@ namespace Slab::Math {
         return min;
     }
 
-    void PointSet::addPoint(const Point2D &point) {
+    void PointSet::AddPoint(const Point2D &point) {
         if (points.empty()) {
             min = point;
             max = point;
@@ -57,8 +57,8 @@ namespace Slab::Math {
 
     CountType PointSet::count() const { return points.size(); }
 
-    void PointSet::addPoint(DevFloat x, DevFloat y) {
-        addPoint({x, y});
+    void PointSet::AddPoint(DevFloat x, DevFloat y) {
+        AddPoint({x, y});
     }
 
 

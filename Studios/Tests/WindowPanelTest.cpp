@@ -10,52 +10,52 @@
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest()
-: Slab::Graphics::SlabWindow({"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
-    SlabWindow *window = nullptr;
+: Slab::Graphics::FSlabWindow({"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
+    FSlabWindow *window = nullptr;
 
-    window = new SlabWindow();
-    typedef Slab::Pointer<SlabWindow> Ptr;
-    panel->addWindow(Ptr(window));
+    window = new FSlabWindow();
+    typedef Slab::Pointer<FSlabWindow> Ptr;
+    panel->AddWindow(Ptr(window));
 
     if(true) {
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window), true);
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window), true);
 
-        window = new SlabWindow();
+        window = new FSlabWindow();
         window = new GLFreeTypeTests;
-        panel->addWindow(Ptr(window));
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window), true, 0.2);
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window), true, 0.2);
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window));
 
-        window = new SlabWindow();
-        panel->addWindow(Ptr(window));
+        window = new FSlabWindow();
+        panel->AddWindow(Ptr(window));
 
-        panel->setColumnRelativeWidth(0, 0.2);
+        panel->SetColumnRelativeWidth(0, 0.2);
     }
 
     panel->arrangeWindows();
 }
 
 
-void WindowPanelTest::draw() {
-    panel->draw();
+void WindowPanelTest::Draw() {
+    panel->Draw();
 }
 
-void WindowPanelTest::notifyReshape(int width, int height) {
-    panel->notifyReshape(width, height);
+void WindowPanelTest::NotifyReshape(int width, int height) {
+    panel->NotifyReshape(width, height);
 
     panel->arrangeWindows();
 }

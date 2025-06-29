@@ -16,60 +16,60 @@
 #define MyName
 
 namespace Slab::Graphics {
-    Atomic<CountType> ImGuiWindow::count = 0;
+    Atomic<CountType> ImGuiWindow::Count = 0;
 
-    ImGuiWindow::ImGuiWindow(Pointer<SlabWindow> slabwindow, Pointer<SlabImGuiContext> imguicontext)
-    : id(Str("ImGuiWindow##") + ToStr(++count))
-    , slab_window(std::move(slabwindow))
-    , imgui_context(std::move(imguicontext)){
-        if (imgui_context == nullptr) {
+    ImGuiWindow::ImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<SlabImGuiContext> Context)
+    : Id(Str("ImGuiWindow##") + ToStr(++Count))
+    , SlabWindow(std::move(SlabWindow))
+    , Context(std::move(Context))
+    {
+        if (Context == nullptr) {
             auto imgui_module = Core::GetModule<ImGuiModule>("ImGui");
 
-            imgui_context = DynamicPointerCast<SlabImGuiContext>(imgui_module->createContext(slab_window->getConfig().parent_syswin));
+            Context = DynamicPointerCast<SlabImGuiContext>(imgui_module->createContext(SlabWindow->getConfig().parent_syswin));
         }
     }
 
-    void ImGuiWindow::draw() {
-        imgui_context->NewFrame();
+    void ImGuiWindow::Draw() {
+        Context->NewFrame();
 
-        imgui_context->AddDrawCall([this]() {
-            if(ImGui::Begin(id.c_str())) {
-            if (slab_window != nullptr) {
+        Context->AddDrawCall([this]() {
+            if(ImGui::Begin(Id.c_str())) {
+            if (SlabWindow != nullptr) {
                 fix pos = ImGui::GetWindowPos();
                 fix dim = ImGui::GetWindowSize();
                 fix cMin = ImGui::GetWindowContentRegionMin();
                 fix cMax = ImGui::GetWindowContentRegionMax();
 
-                auto backend = Slab::Graphics::GetGraphicsBackend();
+                auto Backend = GetGraphicsBackend();
 
                 fix x = pos.x + cMin.x;
                 fix y = pos.y;
                 fix w = cMax.x - cMin.x;
                 fix h = cMax.y - cMin.y;
 
-                slab_window->setx((int)x);
+                SlabWindow->Set_x((int)x);
                 // slab_window->sety(backend.getScreenHeight() - (y + dim.y));
-                slab_window->sety((int)y);
-                slab_window->notifyReshape((int) w, (int) h);
+                SlabWindow->Set_y((int)y);
+                SlabWindow->NotifyReshape((int) w, (int) h);
 
-                auto callback = [](const ImDrawList *parent_list, const ImDrawCmd *cmd) {
-                    if (cmd->UserCallback == nullptr) {
-                        return;
-                    }
+                auto Callback = [](const ImDrawList */*ParentList*/, const ImDrawCmd *DrawCommand)
+                {
+                    if (DrawCommand->UserCallback == nullptr) return;
 
-                    auto slabWindow = *static_cast<Pointer<SlabWindow>*>(cmd->UserCallbackData);
-                    slabWindow->draw();
+                    const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
+                    SlabWindow->Draw();
                 };
-                ImGui::GetWindowDrawList()->AddCallback(callback, &slab_window);
+                ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
             }
 
             ImGui::End();
         }
         });
 
-        imgui_context->Render();
+        Context->Render();
 
-        SlabWindow::draw();
+        FSlabWindow::Draw();
     }
 
 

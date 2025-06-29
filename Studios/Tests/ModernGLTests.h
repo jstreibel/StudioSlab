@@ -30,7 +30,7 @@ namespace Tests {
     public:
         ModernGLTests();
 
-        void draw() override;
+        void Draw() override;
 
     };
 

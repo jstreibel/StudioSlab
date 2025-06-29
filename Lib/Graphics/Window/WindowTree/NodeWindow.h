@@ -12,7 +12,7 @@
 
 namespace Slab::Graphics {
 
-    typedef Vector<SlabWindow *> WindowContainer;
+    typedef Vector<FSlabWindow *> WindowContainer;
 
     class WindowTreeBuilder;
 
@@ -20,8 +20,8 @@ namespace Slab::Graphics {
         Horizontal, Vertical
     };
 
-    class NodeWindow : public SlabWindow {
-        SlabWindow *parent = nullptr;
+    class NodeWindow : public FSlabWindow {
+        FSlabWindow *parent = nullptr;
         NodeArrangement arrangement = Horizontal;
         WindowContainer children;
 
@@ -32,13 +32,13 @@ namespace Slab::Graphics {
 
         explicit NodeWindow(NodeWindow *parent, NodeArrangement arrangement = Horizontal);
 
-        explicit NodeWindow(const SlabWindow &window);
+        explicit NodeWindow(const FSlabWindow &window);
 
-        void addSubWindow(SlabWindow *subWindow);
+        void addSubWindow(FSlabWindow *subWindow);
 
         void arrange();
 
-        void draw() override;
+        void Draw() override;
 
     };
 

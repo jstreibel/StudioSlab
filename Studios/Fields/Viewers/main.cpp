@@ -58,7 +58,7 @@ public:
 
     auto run() -> int override {
         auto function = Modes::HistoryFileLoader::Load(*filename);
-        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::NumericFunction>(function->diff(1));
+        auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         guiBackend->GetMainSystemWindow()->setSystemWindowTitle(*filename);
@@ -80,7 +80,7 @@ public:
         viewer->setFunctionTimeDerivative(ddt_function);
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-        wm->addSlabWindow(viewer);
+        wm->AddSlabWindow(viewer, false);
         guiBackend->GetMainSystemWindow()->addEventListener(wm);
 
         guiBackend->Run();

@@ -52,7 +52,7 @@ namespace Slab::Math {
         }
 
         spaceDataHistory.emplace_back(spaceFilter(packet));
-        stepHistory.push_back(packet.getSteps());
+        stepHistory.push_back(packet.GetSteps());
 
         ++count;
     }

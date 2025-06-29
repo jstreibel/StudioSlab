@@ -11,7 +11,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class CorrelationsPanel : public RtoRPanel {
+    class CorrelationsPanel : public FRtoRPanel {
         Plot2DWindow DFT2DGraph;
 
         Pointer<R2toRFunctionArtist> ftAmplitudesArtist = Slab::New<R2toRFunctionArtist>();
@@ -30,12 +30,12 @@ namespace Slab::Models::KGRtoR {
 
 
     public:
-        CorrelationsPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian);
+        CorrelationsPanel(const Pointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Graphics

@@ -12,7 +12,7 @@ namespace Slab::Math::R2toR {
 
 
     NumericFunction_GPU::NumericFunction_GPU(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy)
-            : R2toR::NumericFunction(N, M, xMin, yMin, hx, hy, GPU) {
+            : R2toR::FNumericFunction(N, M, xMin, yMin, hx, hy, GPU) {
 
     }
 
@@ -25,7 +25,7 @@ namespace Slab::Math::R2toR {
         delete helper;
     }
 
-    R2toR::NumericFunction &R2toR::NumericFunction_GPU::Laplacian(R2toR::NumericFunction &outFunc) const {
+    R2toR::FNumericFunction &R2toR::NumericFunction_GPU::Laplacian(R2toR::FNumericFunction &outFunc) const {
         // assert(getSpace().isCompatible(outFunc.getSpace()))
 
         SlabCast(inSpace, const DiscreteSpaceGPU&, getSpace())
@@ -60,12 +60,12 @@ namespace Slab::Math::R2toR {
         return getSpace().getHostData()[n + m * N];
     }
 
-    NumericFunction &
+    FNumericFunction &
     R2toR::NumericFunction_GPU::Set(const MyBase &func) {
         auto &space = getSpace();
 
         if (func.isDiscrete()) {
-            auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(func);
+            auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction &>(func);
             return SetArb(discreteFunc);
         }
 
@@ -94,7 +94,7 @@ namespace Slab::Math::R2toR {
         return *this;
     }
 
-    NumericFunction &
+    FNumericFunction &
     R2toR::NumericFunction_GPU::SetArb(const Base::NumericFunction <Real2D, DevFloat> &func) {
         getSpace().setToValue(func.getSpace());
 
@@ -118,14 +118,14 @@ namespace Slab::Math::R2toR {
         return out;
     }
 
-    NumericFunction &
+    FNumericFunction &
     R2toR::NumericFunction_GPU::Add(const R2toR::DiscrBase &toi) {
         getSpace().Add(toi.getSpace());
 
         return *this;
     }
 
-    NumericFunction &
+    FNumericFunction &
     R2toR::NumericFunction_GPU::StoreAddition(const R2toR::DiscrBase &toi1,
                                               const R2toR::DiscrBase &toi2) {
         getSpace().StoreAddition(toi1.getSpace(), toi2.getSpace());
@@ -133,7 +133,7 @@ namespace Slab::Math::R2toR {
         return *this;
     }
 
-    NumericFunction &
+    FNumericFunction &
     R2toR::NumericFunction_GPU::StoreSubtraction(const R2toR::DiscrBase &aoi1,
                                                  const R2toR::DiscrBase &aoi2) {
         getSpace().StoreSubtraction(aoi1.getSpace(), aoi2.getSpace());
@@ -141,7 +141,7 @@ namespace Slab::Math::R2toR {
         return *this;
     }
 
-    NumericFunction &R2toR::NumericFunction_GPU::Multiply(floatt a) {
+    FNumericFunction &R2toR::NumericFunction_GPU::Multiply(floatt a) {
         getSpace().Multiply(a);
 
         return *this;

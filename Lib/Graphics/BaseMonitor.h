@@ -17,7 +17,7 @@ namespace Slab::Graphics {
 
     protected:
         Timer frameTimer = Timer();
-        Pointer<GUIWindow> guiWindow = New<GUIWindow>();
+        Pointer<FGUIWindow> guiWindow = New<FGUIWindow>();
 
         const CountType max_steps;
 
@@ -30,10 +30,10 @@ namespace Slab::Graphics {
                              const Str& channelName="OpenGL monitor",
                              int stepsBetweenDraws=10);
 
-        [[nodiscard]] GUIWindow &getGUIWindow() const;
+        [[nodiscard]] FGUIWindow &getGUIWindow() const;
 
-        void draw() override;
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        void Draw() override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         // ********************* From Socket ********************* //
         void handleOutput(const OutputPacket &outInfo) override;

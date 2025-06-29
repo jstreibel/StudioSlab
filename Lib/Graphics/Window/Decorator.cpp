@@ -39,7 +39,7 @@ namespace Slab::Graphics {
         OpenGL::Legacy::SetupOrtho({0, (DevFloat)syswin_w, (DevFloat)syswin_h, 0});
     }
 
-    void Decorator::begin_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
+    void Decorator::begin_decoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.getFlags();
         fix should_clear    = !(flags & SlabWindowDontClear);
         fix should_decorate = !(flags & SlabWindowNoDecoration);
@@ -71,7 +71,7 @@ namespace Slab::Graphics {
         glEnd();
     }
 
-    void Decorator::finish_decoration(const SlabWindow &slab_window, int x_mouse, int y_mouse) {
+    void Decorator::finish_decoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
         auto flags = slab_window.getFlags();
         fix should_decorate = !(flags & SlabWindowNoDecoration);
 
@@ -141,7 +141,7 @@ namespace Slab::Graphics {
         writer.reshape(w, h);
     }
 
-    bool Decorator::isMouseOverTitlebar(const SlabWindow &window, int x_mouse, int y_mouse) {
+    bool Decorator::isMouseOverTitlebar(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
         auto x_full = rect.xMin - WindowStyle::border_size,
@@ -150,7 +150,7 @@ namespace Slab::Graphics {
 
         return x_mouse>x_full && x_mouse<x_full+w_full && y_mouse>y_full && y_mouse<y_full+Title_Height;    }
 
-    bool Decorator::isMouseOverCorner(const SlabWindow &window, int x_mouse, int y_mouse) {
+    bool Decorator::isMouseOverCorner(const FSlabWindow &window, int x_mouse, int y_mouse) {
         fix rect = window.getViewport();
 
         auto x_full = rect.xMin - WindowStyle::border_size,
@@ -164,7 +164,7 @@ namespace Slab::Graphics {
             && y_mouse>y_full+h_full-corner_size;
     }
 
-    bool Decorator::isMouseOverGrabRegion(const SlabWindow &window, int x_mouse, int y_mouse) {
+    bool Decorator::isMouseOverGrabRegion(const FSlabWindow &window, int x_mouse, int y_mouse) {
         return isMouseOverTitlebar(window, x_mouse, y_mouse) || isMouseOverCorner(window, x_mouse, y_mouse);
     }
 

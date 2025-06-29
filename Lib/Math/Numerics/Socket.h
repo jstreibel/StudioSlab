@@ -15,7 +15,7 @@ namespace Slab::Math {
         int intervalStepsBetweenOutputs; // Number of steps between recordings.
 
     protected:
-        OutputPacket lastPacket;
+        OutputPacket LastPacket;
         Str name, description;
 
         virtual auto handleOutput(const OutputPacket &) -> void = 0;

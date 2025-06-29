@@ -12,8 +12,8 @@
 namespace Slab {
 
     bool
-    Graphics::Plot2DWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
-        if(Graphics::SlabWindow::notifyMouseButton(button, state, keys)) return true;
+    Graphics::Plot2DWindow::NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+        if(Graphics::FSlabWindow::NotifyMouseButton(button, state, keys)) return true;
 
         static auto time = Timer();
 
@@ -30,7 +30,7 @@ namespace Slab {
                     popupOn = false;
                 }
 
-                Graphics::SlabWindow::notifyMouseButton(button, state, keys);
+                Graphics::FSlabWindow::NotifyMouseButton(button, state, keys);
                 return true;
             }
         }
@@ -39,7 +39,7 @@ namespace Slab {
     }
 
     bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        if(SlabWindow::notifyMouseMotion(x, y, dx, dy)) return true;
+        if(FSlabWindow::notifyMouseMotion(x, y, dx, dy)) return true;
 
         bool elRet = false;
         auto mouseState = parent_system_window->getMouseState();
@@ -86,7 +86,7 @@ namespace Slab {
     }
 
     bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
-        if(SlabWindow::notifyMouseWheel(dx, dy)) return true;
+        if(FSlabWindow::notifyMouseWheel(dx, dy)) return true;
 
         constexpr const DevFloat factor = 1.2;
         const DevFloat d = pow(factor, -dy);
@@ -118,8 +118,8 @@ namespace Slab {
         return true;
     }
 
-    bool Graphics::Plot2DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(SlabWindow::notifyKeyboard(key, state, modKeys)) return true;
+    bool Graphics::Plot2DWindow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        if(FSlabWindow::NotifyKeyboard(key, state, modKeys)) return true;
 
         if(state==KeyState::Release) {
             if(key == KeyMap::Key_TAB && modKeys.Mod_Shift == Press) {

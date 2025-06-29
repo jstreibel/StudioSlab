@@ -39,7 +39,7 @@ namespace Modes::DatabaseViewer {
         this->addWindow(Naked(guiWindow));
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.filled = false;
             style.setPrimitive(Slab::Graphics::Solid);
             auto funky = Math::RtoR::NativeFunction([](DevFloat x) { return x; }).Clone();
@@ -48,7 +48,7 @@ namespace Modes::DatabaseViewer {
 
         // Setup masses Re and Im pointsets.
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
@@ -61,22 +61,22 @@ namespace Modes::DatabaseViewer {
             //style.thickness = 3.0;
             //Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style, "under X-hair");
 
-            massesGraph.getAxisArtist().setVerticalAxisLabel("m");
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
-            massesGraph.getAxisArtist().setHorizontalUnit(Math::Constants::π);
+            massesGraph.GetAxisArtist().setVerticalAxisLabel("m");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
+            massesGraph.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
         }
 
         // Setup mashup display
         {
-            mashupDisplay.getAxisArtist().setVerticalUnit(Math::Constants::π);
-            mashupDisplay.getAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+            mashupDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
+            mashupDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(mashupDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Point);
             style.thickness = 8;
             Graphics::Plotter::AddPointSet(Naked(mashupDisplay), Naked(maxValuesPointSet), style,
@@ -99,7 +99,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerSequence::draw() {
+    void DBViewerSequence::Draw() {
         if(currentMeshupArtist == nullptr) return;
 
         fix ω_XHair = mashupDisplay.getLastXHairPosition().x;
@@ -151,7 +151,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::draw();
+        WindowRow::Draw();
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
@@ -174,7 +174,7 @@ namespace Modes::DatabaseViewer {
                 Math::RtoR::KGDispersionRelation(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);
@@ -219,7 +219,7 @@ namespace Modes::DatabaseViewer {
             DevFloat ω;
             DevFloat k;
 
-            maxValuesPointSet.addPoint({x, y_peak});
+            maxValuesPointSet.AddPoint({x, y_peak});
 
             if (db_type==SpaceDFTDBType) {
                 ω = x;
@@ -231,9 +231,9 @@ namespace Modes::DatabaseViewer {
 
             // massesReal_pointSet.addPoint({ω, m2});
             if (fix m2 = ω * ω - k * k; m2>=0)
-                massesReal_pointSet.addPoint({x, sqrt(m2)});
+                massesReal_pointSet.AddPoint({x, sqrt(m2)});
             else
-                massesImag_pointSet.addPoint({x, sqrt(-m2)});
+                massesImag_pointSet.AddPoint({x, sqrt(-m2)});
         }
     }
 
@@ -303,13 +303,13 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::notifyKeyboard(const Graphics::KeyMap key, const Graphics::KeyState state, const Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerSequence::NotifyKeyboard(const Graphics::KeyMap key, const Graphics::KeyState state, const Graphics::ModKeys modKeys) -> bool {
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
         }
 
-        return WindowRow::notifyKeyboard(key, state, modKeys);
+        return WindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     void DBViewerSequence::reloadData() {
@@ -357,16 +357,16 @@ namespace Modes::DatabaseViewer {
 
         if (fix db_type = dbParsers[0]->evaluateDatabaseType();
             db_type == SpaceDFTDBType) {
-            mashupDisplay.getAxisArtist().setVerticalAxisLabel("k");
-            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("ω");
+            mashupDisplay.GetAxisArtist().setVerticalAxisLabel("k");
+            mashupDisplay.GetAxisArtist().SetHorizontalAxisLabel("ω");
 
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("ω");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("ω");
         }
         else if (db_type == TimeDFTDBType) {
-            mashupDisplay.getAxisArtist().setVerticalAxisLabel("ω");
-            mashupDisplay.getAxisArtist().setHorizontalAxisLabel("k");
+            mashupDisplay.GetAxisArtist().setVerticalAxisLabel("ω");
+            mashupDisplay.GetAxisArtist().SetHorizontalAxisLabel("k");
 
-            massesGraph.getAxisArtist().setHorizontalAxisLabel("k");
+            massesGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
         }
         else throw Exception("Unknown db type");
 

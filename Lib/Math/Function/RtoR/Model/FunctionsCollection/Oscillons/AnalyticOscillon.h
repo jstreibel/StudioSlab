@@ -29,7 +29,7 @@ namespace Slab::Math::RtoR {
 
         void setBit(Bit bit);
 
-        Str symbol() const override;
+        Str Symbol() const override;
 
         Str generalName() const override;
 

@@ -22,7 +22,7 @@ namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(Pointer<GUIWindow> gui_window) : Viewer(std::move(gui_window))
+    FourierViewer::FourierViewer(Pointer<FGUIWindow> gui_window) : Viewer(std::move(gui_window))
     {
         kSpaceGraph  = New<Plot2DWindow>("ℱₓ");
         ωSpaceGraph  = New<Plot2DWindow>("ℱₜ");
@@ -50,8 +50,8 @@ namespace Slab::Graphics {
 
         ωSpaceArtist->setLabel("ℱₜ(ω, x)");
         ωSpaceGraph->addArtist(ωSpaceArtist);
-        ωSpaceGraph->getAxisArtist().setHorizontalAxisLabel("x");
-        ωSpaceGraph->getAxisArtist().setVerticalAxisLabel("ω");
+        ωSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("x");
+        ωSpaceGraph->GetAxisArtist().setVerticalAxisLabel("ω");
 
         timeFilteredArtist->setLabel("ϕ[t ∈ (t₀,tₑ)]");
         xSpaceGraph->addArtist(timeFilteredArtist);
@@ -93,15 +93,15 @@ namespace Slab::Graphics {
             ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
         }
 
-        addWindow(ωSpaceGraph, false, 0.5);
-        addWindow(xSpaceGraph);
-        addWindow(ωkSpaceGraph, true, 0.5);
-        addWindow(kSpaceGraph);
+        AddWindow(ωSpaceGraph, false, 0.5);
+        AddWindow(xSpaceGraph);
+        AddWindow(ωkSpaceGraph, true, 0.5);
+        AddWindow(kSpaceGraph);
 
         arrangeWindows();
     }
 
-    void FourierViewer::draw() {
+    void FourierViewer::Draw() {
         auto function = getFunction();
         if(function == nullptr) return;
 
@@ -169,11 +169,11 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
-    auto FourierViewer::FilterSpace(const Pointer<const R2toR::NumericFunction>& func, DevFloat tMin,
-                                    DevFloat tMax) -> Pointer<R2toR::NumericFunction> {
+    auto FourierViewer::FilterSpace(const Pointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
+                                    DevFloat tMax) -> Pointer<R2toR::FNumericFunction> {
 
         fix t_min = func->getDomain().yMin;
         fix t_max = func->getDomain().yMax;
@@ -359,8 +359,8 @@ namespace Slab::Graphics {
 
 
 
-    void FourierViewer::setFunction(const FourierViewer::Function func) {
-        Viewer::setFunction(func);
+    void FourierViewer::SetFunction(const FourierViewer::Function func) {
+        Viewer::SetFunction(func);
 
         fix function = getFunction();
 
@@ -402,11 +402,11 @@ namespace Slab::Graphics {
 
         auto space_dft = R2toR::R2toRDFT::SpaceDFTReal(*function);
 
-        auto power      = Math::Convert(space_dft, R2toC_to_R2toR_Mode::PowerSpectrum);
-        auto amplitudes = Math::Convert(space_dft, R2toC_to_R2toR_Mode::Magnitude);
-        auto phases     = Math::Convert(space_dft, R2toC_to_R2toR_Mode::Phase);
-        auto realParts  = Math::Convert(space_dft, R2toC_to_R2toR_Mode::RealPart);
-        auto imagParts  = Math::Convert(space_dft, R2toC_to_R2toR_Mode::ImaginaryPart);
+        auto power      = Math::Convert(space_dft, ER2toC_to_R2toR_Mode::PowerSpectrum);
+        auto amplitudes = Math::Convert(space_dft, ER2toC_to_R2toR_Mode::Magnitude);
+        auto phases     = Math::Convert(space_dft, ER2toC_to_R2toR_Mode::Phase);
+        auto realParts  = Math::Convert(space_dft, ER2toC_to_R2toR_Mode::RealPart);
+        auto imagParts  = Math::Convert(space_dft, ER2toC_to_R2toR_Mode::ImaginaryPart);
 
         kSpace_powerArtist->setFunction(power);
         kSpace_amplitudesArtist->setFunction(amplitudes);
@@ -417,7 +417,7 @@ namespace Slab::Graphics {
 
     }
 
-    Str FourierViewer::getName() const {
+    Str FourierViewer::GetName() const {
         return "Fourier transforms viewer";
     }
 

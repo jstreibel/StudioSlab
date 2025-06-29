@@ -8,10 +8,10 @@
 
 namespace Slab::Graphics {
 
-    NodeWindow::NodeWindow(const SlabWindow &window) : SlabWindow(window) {
+    NodeWindow::NodeWindow(const FSlabWindow &window) : FSlabWindow(window) {
     }
 
-    NodeWindow::NodeWindow(RectI window_rect) : SlabWindow({"", window_rect}) {
+    NodeWindow::NodeWindow(RectI window_rect) : FSlabWindow({"", window_rect}) {
 
     }
 
@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
     }
 
-    void NodeWindow::addSubWindow(SlabWindow *subWindow) {
+    void NodeWindow::addSubWindow(FSlabWindow *subWindow) {
         NodeWindow *nodeSub = dynamic_cast<NodeWindow *>(subWindow);
 
         if (nodeSub != nullptr) {
@@ -52,20 +52,20 @@ namespace Slab::Graphics {
         for (auto i = 0; i < n; ++i) {
             auto child = children[i];
 
-            child->setx(getx() + i * dx);
-            child->sety(gety() + i * dy);
-            child->notifyReshape(childWidth, childHeight);
+            child->Set_x(getx() + i * dx);
+            child->Set_y(gety() + i * dy);
+            child->NotifyReshape(childWidth, childHeight);
 
             auto cast = dynamic_cast<NodeWindow *>(child);
             if (cast != nullptr) cast->arrange();
         }
     }
 
-    void NodeWindow::draw() {
-        if (children.empty()) SlabWindow::draw();
+    void NodeWindow::Draw() {
+        if (children.empty()) FSlabWindow::Draw();
 
         for (auto win: children)
-            win->draw();
+            win->Draw();
     }
 
 }

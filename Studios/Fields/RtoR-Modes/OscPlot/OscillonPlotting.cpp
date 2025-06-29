@@ -56,7 +56,7 @@ namespace Studios {
         addKGViewer(energy_viewer);
     }
 
-    void OscillonPlotting::draw() {
+    void OscillonPlotting::Draw() {
         getGUIWindow()->AddExternalDraw([this](){
             if(ImGui::CollapsingHeader("Oscillon", ImGuiTreeNodeFlags_Framed)) {
                 // auto v = (float)osc_params.v;
@@ -108,7 +108,7 @@ namespace Studios {
             }
         });
 
-        Slab::Graphics::MainViewer::draw();
+        Slab::Graphics::MainViewer::Draw();
     }
 
     void OscillonPlotting::setupOscillons() {
@@ -154,7 +154,7 @@ namespace Studios {
     OscillonPlotting::renderManyOsc() -> Slab::Pointer<OscillonPlotting::Function> {
         PeriodicInX periodic(Slab::Naked(many_osc), L);
         auto new_rendered = Slab::Math::DataAlloc<Slab::Math::R2toR::NumericFunction_CPU>(
-                periodic.symbol() + " [rendered]",
+                periodic.Symbol() + " [rendered]",
                 N,                 M,
                 x_min,             t_min,
                 L/(Slab::DevFloat)N,   t/(Slab::DevFloat)M);
@@ -192,7 +192,7 @@ namespace Studios {
         ddt_oscillons_dirty = false;
     }
 
-    Slab::Pointer<Slab::Math::R2toR::NumericFunction> OscillonPlotting::getFunctionTimeDerivative() {
+    Slab::Pointer<Slab::Math::R2toR::FNumericFunction> OscillonPlotting::getFunctionTimeDerivative() {
         renderOscillonsTimeDerivative();
 
         return rendered_dphi;

@@ -31,7 +31,7 @@ namespace Slab::Math {
         return name;
     }
 
-    Pointer<R2toR::NumericFunction> DataManager::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
+    Pointer<R2toR::FNumericFunction> DataManager::AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation loc) {
         fix hx = r.x/(DevFloat)N;
         fix hy = r.y/(DevFloat)M;
 

@@ -2,8 +2,8 @@
 // Created by joao on 16/04/24.
 //
 
-#ifndef STUDIOSLAB_RTORSTATISTICALMONITOR_H
-#define STUDIOSLAB_RTORSTATISTICALMONITOR_H
+#ifndef STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H
+#define STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H
 
 
 #include "Graphics/BaseMonitor.h"
@@ -23,11 +23,12 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class RtoRStatisticsPanel : public RtoRPanel {
+    class RtoRStatisticsPanel final : public FRtoRPanel {
 
-        RtoR2::StraightLine_ptr correlationLine;
+        Pointer<RtoR2::StraightLine>
+ correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
-        R2toR::NumericFunction_ptr mCorrelationComputed;
+        R2toR::FNumericFunction_ptr mCorrelationComputed;
         Graphics::Plot2DWindow mCorrelationGraph;
 
         DevFloat transientHint = -1.0;
@@ -56,16 +57,17 @@ namespace Slab::Models::KGRtoR {
         void updateEnergyData();
 
     public:
-        RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::GUIWindow &guiWindow);
+        RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
-        void draw() override;
+        void Draw() override;
 
-        void setTransientHint(DevFloat);
+        void SetTransientHint(DevFloat);
 
-        void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
     };
 }
 
 
-#endif //STUDIOSLAB_RTORSTATISTICALMONITOR_H
+#endif //STUDIOSLAB_RTOR_STATISTICAL_MONITOR_H

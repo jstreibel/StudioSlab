@@ -13,7 +13,7 @@ namespace Slab::Graphics {
         root->addSubWindow(currentNode);
     }
 
-    void WindowTreeBuilder::addWindow(SlabWindow *window, WindowTreeBuilder::Location location) {
+    void WindowTreeBuilder::addWindow(FSlabWindow *window, WindowTreeBuilder::Location location) {
         auto arr = location == Right ? Horizontal : Vertical;
 
         if (currentNode->arrangement != arr) {
@@ -32,9 +32,9 @@ namespace Slab::Graphics {
 
     NodeWindow *WindowTreeBuilder::getRoot() {
         auto myRect = shape;
-        currentNode->setx(myRect.xMin);
-        currentNode->sety(myRect.yMin);
-        currentNode->notifyReshape(myRect.width(), myRect.height());
+        currentNode->Set_x(myRect.xMin);
+        currentNode->Set_y(myRect.yMin);
+        currentNode->NotifyReshape(myRect.width(), myRect.height());
 
         currentNode->arrange();
 

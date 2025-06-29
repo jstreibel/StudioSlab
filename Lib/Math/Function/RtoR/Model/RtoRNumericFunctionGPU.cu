@@ -104,7 +104,7 @@ namespace Slab::Math::RtoR {
         NOT_IMPLEMENTED
 
         if(!func.isGPUFriendly()) throw Exception(Str("Trying to operate on GPU with non-GPU-friendly function ")
-            + func.symbol() + " '" + func.generalName() + "'.");
+            + func.Symbol() + " '" + func.generalName() + "'.");
 
         auto &gpu_func = func.getGPUFriendlyVersion();
         auto &device_data = getSpace().getDeviceData();

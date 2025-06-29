@@ -23,7 +23,7 @@ namespace Modes {
 
         void set_t(DevFloat t);
 
-        Str symbol() const override;
+        Str Symbol() const override;
 
         Str generalName() const override;
     };

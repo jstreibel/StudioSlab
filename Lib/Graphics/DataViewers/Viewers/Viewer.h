@@ -12,22 +12,22 @@
 namespace Slab::Graphics {
 
     class Viewer : public WindowPanel {
-        Pointer<Math::R2toR::NumericFunction> base_function;
+        Pointer<Math::R2toR::FNumericFunction> base_function;
 
         bool is_visible = false;
 
     protected:
-        Pointer<GUIWindow> gui_window;
+        Pointer<FGUIWindow> gui_window;
 
     public:
-        explicit Viewer(Pointer<GUIWindow>, Slab::Pointer<Math::R2toR::NumericFunction> = nullptr);
+        explicit Viewer(Pointer<FGUIWindow>, Slab::Pointer<Math::R2toR::FNumericFunction> = nullptr);
 
-        virtual void setFunction(Pointer<Math::R2toR::NumericFunction> function);
-        auto getFunction() const -> Pointer<const Math::R2toR::NumericFunction>;
+        virtual void SetFunction(Pointer<Math::R2toR::FNumericFunction> function);
+        auto getFunction() const -> Pointer<const Math::R2toR::FNumericFunction>;
 
-        virtual Str getName() const = 0;
+        virtual Str GetName() const = 0;
 
-        virtual void notifyBecameVisible();
+        virtual void NotifyBecameVisible();
         virtual void notifyBecameInvisible();
         bool isVisible() const;
     };

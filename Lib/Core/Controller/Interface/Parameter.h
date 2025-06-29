@@ -11,20 +11,20 @@ namespace Slab::Core {
 
     using Id = Str;
 
-    class Parameter {
+    class FParameter {
     public:
-        virtual ~Parameter() = default;
-        virtual
-        auto GetValueAsString() const -> Str = 0;
+        virtual ~FParameter() = default;
 
-        virtual
-        auto SetValueFromString(Str value) -> void = 0;
+        virtual auto GetValueAsString()            const -> Str          = 0;
 
-        virtual
-        auto GetValueVoid() const -> const void * = 0;
+        virtual auto SetValueFromString(Str value)       -> void         = 0;
+
+        virtual auto GetValueVoid()                const -> const void * = 0;
 
         template<typename T>
         const T& GetValueAs() const { return *static_cast<const T*>(GetValueVoid()); }
+
+        virtual bool operator==(const Str& Str) const = 0;
     };
 
 } // Slab::Core

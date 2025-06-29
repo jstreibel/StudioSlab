@@ -121,7 +121,7 @@ namespace Slab::Graphics {
             });
         }
 
-        return SystemWindowEventListener::notifyRender();
+        return FSystemWindowEventListener::notifyRender();
     }
 
     bool PlotThemeManager::SetTheme(const Str& theme) {

@@ -22,7 +22,7 @@ namespace Tests {
 
         Graphics::WindowColumn col;
 
-        Graphics::GUIWindow gui;
+        Graphics::FGUIWindow gui;
         Graphics::Plot2DWindow mFuncGraph;
         Graphics::Plot2DWindow mDFTGraph;
         Graphics::Plot2DWindow mFTGraph;
@@ -38,7 +38,7 @@ namespace Tests {
     public:
         FourierTestWindow();
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Tests

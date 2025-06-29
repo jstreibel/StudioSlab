@@ -20,7 +20,7 @@ namespace Slab::Graphics {
         Pointer<Plot2DWindow> xft_history_window = nullptr;
 
         Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
-        Pointer<Math::R2toR::NumericFunction> xft_amplitudes = nullptr;
+        Pointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
 
         Pointer<R2toRFunctionArtist> function_artist = nullptr;
         Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
@@ -36,15 +36,15 @@ namespace Slab::Graphics {
 
         void computeTransform();
     public:
-        explicit HistoryViewer(const Pointer<GUIWindow> &guiWindow, const Pointer<R2toR::NumericFunction> &function = nullptr);
+        explicit HistoryViewer(const Pointer<FGUIWindow> &guiWindow, const Pointer<R2toR::FNumericFunction> &function = nullptr);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void draw() override;
+        void Draw() override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void notifyBecameVisible() override;
+        void NotifyBecameVisible() override;
     };
 
 } // Slab::Graphics

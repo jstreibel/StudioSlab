@@ -10,7 +10,7 @@ namespace Slab::Math {
     OutputManager::~OutputManager() = default; // No need to destroy output objects in vectors;
 
     void OutputManager::output(OutputPacket &infoVolatile, bool force) {
-        const size_t steps = infoVolatile.getSteps();
+        const size_t steps = infoVolatile.GetSteps();
 
         for (auto &out : outputs) {
             auto shouldOutput = out->shouldOutput(steps) || force;

@@ -16,9 +16,9 @@ namespace Slab::Models::KGRtoR {
 
     RtoRHistoryPanel::RtoRHistoryPanel
     (const Pointer<KGNumericConfig> &params,
-     GUIWindow &guiWindow,
+     FGUIWindow &guiWindow,
      KGEnergy &hamiltonian)
-    : RtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
+    : FRtoRPanel(params, guiWindow, hamiltonian, "Histories", "Panel to view 1-d sections of histories.")
     {
         fix xMin = params->getxMin();
         fix xMax = params->getxMax();
@@ -28,7 +28,7 @@ namespace Slab::Models::KGRtoR {
         xLine = New<Math::RtoR2::StraightLine>(Real2D{xMin, 0.0}, Real2D{xMax,0.0}, xMin, xMax);
         kLine = New<Math::RtoR2::StraightLine>(Real2D{kMin, 0.0}, Real2D{kMax,0.0}, kMin, kMax);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.thickness = 3;
         auto xArtie = New<Graphics::ParametricCurve2DArtist>(xLine, style);
         auto kArtie = New<Graphics::ParametricCurve2DArtist>(kLine, style);
@@ -44,16 +44,16 @@ namespace Slab::Models::KGRtoR {
         kSpaceHistory->addArtist(kArtie, 100);
         kSection->getRegion().setReference_xMax(kSpaceHistory->getRegion().getReference_xMax());
         kSection->getRegion().setReference_xMin(kSpaceHistory->getRegion().getReference_xMin());
-        kSection->getAxisArtist().setHorizontalAxisLabel("k");
-        kSection->getAxisArtist().setVerticalAxisLabel("A");
+        kSection->GetAxisArtist().SetHorizontalAxisLabel("k");
+        kSection->GetAxisArtist().setVerticalAxisLabel("A");
 
         xSpaceHistory->getRegion().setReference_yMin(kSpaceHistory->getRegion().getReference_yMin());
         xSpaceHistory->getRegion().setReference_yMax(kSpaceHistory->getRegion().getReference_yMax());
 
-        addWindow(xSpaceHistory);
-        addWindow(xSection);
-        addWindow(kSpaceHistory, true);
-        addWindow(kSection);
+        AddWindow(xSpaceHistory);
+        AddWindow(xSection);
+        AddWindow(kSpaceHistory, true);
+        AddWindow(kSection);
 
         {
             auto kParam = Core::FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
@@ -65,7 +65,7 @@ namespace Slab::Models::KGRtoR {
 
                 ticks.push_back(Tick{0, "0"});
 
-                fix dk    = M_PI / params->getL();
+                fix dk    = M_PI / params->GetL();
                 fix k_0 = dk * kParam->getValueAs<DevFloat>();
                 auto k_max = M_PI / params->geth();
 
@@ -76,26 +76,26 @@ namespace Slab::Models::KGRtoR {
                     k_val += Δk;
                 } while (k_val < k_max);
 
-                auto &axisArtist1 = kSpaceHistory->getAxisArtist();
+                auto &axisArtist1 = kSpaceHistory->GetAxisArtist();
                 axisArtist1.setHorizontalUnit(unit);
                 axisArtist1.setHorizontalAxisTicks(ticks);
 
-                auto &axisArtist2 = kSection     ->getAxisArtist();
+                auto &axisArtist2 = kSection     ->GetAxisArtist();
                 axisArtist2.setHorizontalUnit(unit);
                 axisArtist2.setHorizontalAxisTicks(ticks);
             }
         }
     }
 
-    void RtoRHistoryPanel::draw() {
+    void RtoRHistoryPanel::Draw() {
         guiWindow.AddExternalDraw([this]() {
             static float t = 0;
-            auto t_max = (float) lastPacket.getSteps() * params->getdt();
+            auto t_max = (float) LastPacket.GetSteps() * Params->Getdt();
             if (ImGui::SliderFloat("t##poopsie", &t, 0, t_max) |
                 ImGui::DragFloat("t##choopsie", &t, 5.e-5f * t_max, 0, t_max)) {
-                fix xMin = params->getxMin();
-                fix xMax = params->getxMax();
-                fix h = params->geth();
+                fix xMin = Params->getxMin();
+                fix xMax = Params->getxMax();
+                fix h = Params->geth();
                 fix kMin = 0;
                 fix kMax = M_PI / h;
 
@@ -112,27 +112,29 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        RtoRPanel::draw();
+        FRtoRPanel::Draw();
     }
 
-    void RtoRHistoryPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void RtoRHistoryPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryGraph) {
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryGraph);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryGraph);
 
         auto sectionArtist = Graphics::Plotter::AddR2Section(xSection, simulationHistory, "ϕ");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         sectionArtist->addSection(xLine, style.clone(), "ϕ(0,x)");
 
         xSpaceHistory->addArtist(simHistoryGraph);
     }
 
     void
-    RtoRHistoryPanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
+    RtoRHistoryPanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+ sftHistory, const FDFTDataHistory &history,
                                              const R2toRFunctionArtist_ptr &sftHistoryGraph) {
-        RtoRPanel::setSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
+        FRtoRPanel::SetSpaceFourierHistory(sftHistory, history, sftHistoryGraph);
 
         auto sectionArtist = Graphics::Plotter::AddR2Section(kSection, sftHistory, "ℱₓ(k)");
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.setPrimitive(VerticalLines);
         style.filled = false;
         sectionArtist->addSection(kLine, style.clone(), "");

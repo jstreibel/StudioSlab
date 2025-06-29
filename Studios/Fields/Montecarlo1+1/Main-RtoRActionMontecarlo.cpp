@@ -39,8 +39,8 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
     }
 
     auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Field plot");
-    plot_window->setx(1700);
-    plot_window->notifyReshape(1200, 800);
+    plot_window->Set_x(1700);
+    plot_window->NotifyReshape(1200, 800);
     fix lims = field->getDomain();
     plot_window->getRegion().setLimits(lims.xMin, lims.xMax, lims.yMin, lims.yMax);
     auto arts = Slab::Graphics::Plotter::AddR2toRFunction(plot_window, field, "ϕ(t,x)");
@@ -51,8 +51,8 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
     viewer->setFunction(field);
 
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-    wm->addSlabWindow(plot_window);
-    wm->addSlabWindow(viewer);
+    wm->AddSlabWindow(plot_window, false);
+    wm->AddSlabWindow(viewer, false);
 
     auto main_syswin = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
     main_syswin->addAndOwnEventListener(wm);

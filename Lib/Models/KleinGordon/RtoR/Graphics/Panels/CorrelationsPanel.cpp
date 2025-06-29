@@ -54,7 +54,7 @@ namespace Slab::Models::KGRtoR {
         }
     };
 
-    R2toR::NumericFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
+    R2toR::FNumericFunction_ptr Make_FFTW_TestFunc(int n_modes=150){
 
         SomeCurve someCurve;
 
@@ -79,11 +79,11 @@ namespace Slab::Models::KGRtoR {
             }
         }
 
-        return Slab::Pointer<R2toR::NumericFunction>{func};
+        return Slab::Pointer<R2toR::FNumericFunction>{func};
     }
 
-    CorrelationsPanel::CorrelationsPanel(const Pointer<KGNumericConfig> &params, GUIWindow &guiWindow, KGEnergy &hamiltonian)
-    : RtoRPanel(params, guiWindow, hamiltonian,
+    CorrelationsPanel::CorrelationsPanel(const Pointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian)
+    : FRtoRPanel(params, guiWindow, hamiltonian,
                 "Correlations",
                 "panel for computing and visualizing correlations over simulation history data")
     , DFT2DGraph("Spacetime Fourier transform")
@@ -100,15 +100,15 @@ namespace Slab::Models::KGRtoR {
         DFT2DGraph.addArtist(ftRealPartsArtist);
         DFT2DGraph.addArtist(ftImagPartsArtist);
 
-        DFT2DGraph.getAxisArtist().setHorizontalAxisLabel("k");
-        DFT2DGraph.getAxisArtist().setVerticalAxisLabel("ω");
+        DFT2DGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
+        DFT2DGraph.GetAxisArtist().setVerticalAxisLabel("ω");
 
         correlationGraph.addArtist(twoPointCorrArtist);
-        correlationGraph.getAxisArtist().setHorizontalAxisLabel("x");
-        correlationGraph.getAxisArtist().setVerticalAxisLabel("t");
+        correlationGraph.GetAxisArtist().SetHorizontalAxisLabel("x");
+        correlationGraph.GetAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::draw() {
+    void CorrelationsPanel::Draw() {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
                 static auto discardRedundant = false;
@@ -121,18 +121,18 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
-    void CorrelationsPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void CorrelationsPanel::SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
         auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
         simulationHistoryGraph->addArtist(simulationHistoryArtist);
-        addWindow(simulationHistoryGraph);
-        addWindow(Slab::Naked(correlationGraph));
-        addWindow(Slab::Naked(DFT2DGraph), true);
+        AddWindow(simulationHistoryGraph);
+        AddWindow(Slab::Naked(correlationGraph));
+        AddWindow(Slab::Naked(DFT2DGraph), true);
     }
 
     void CorrelationsPanel::computeAll(bool discardRedundantModes) {

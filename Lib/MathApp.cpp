@@ -16,16 +16,16 @@
 
 namespace Slab::Math {
 
-    MathApp::MathApp(int argc, const char **argv, Base::NumericalRecipe_ptr SimBuilder)
-            : AppBase(argc, argv), Builder(std::move(SimBuilder)) {
+    MathApp::MathApp(int argc, const char **argv, Pointer<Base::NumericalRecipe> SimBuilder)
+            : AppBase(argc, argv), Recipe(std::move(SimBuilder)) {
 
         Core::CLArgsManager::Parse(argc, argv);
     }
 
     auto MathApp::run() -> int {
-        const auto integrationTask = Slab::New<NumericTask>(Builder);
+        const auto integrationTask = Slab::New<NumericTask>(Recipe);
 
-        const auto TaskManager = dynamic_cast<Slab::Core::MTaskManager*>
+        const auto TaskManager = dynamic_cast<Core::MTaskManager*>
                 (Core::BackendManager::GetModule("TaskManager").get());
 
         TaskManager->AddTask(integrationTask);

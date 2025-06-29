@@ -31,8 +31,8 @@ namespace Slab::Math {
         CountType count() const;
 
         void clear();
-        void addPoint(DevFloat x, DevFloat y);
-        void addPoint(const Point2D &point);
+        void AddPoint(DevFloat x, DevFloat y);
+        void AddPoint(const Point2D &point);
         void setPoints(Point2DVec points);
 
         const Point2DVec& getPoints() const;

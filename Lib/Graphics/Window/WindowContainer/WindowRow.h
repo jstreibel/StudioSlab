@@ -12,9 +12,9 @@
 
 namespace Slab::Graphics {
 
-    class WindowRow : public SlabWindow {
+    class WindowRow : public FSlabWindow {
         struct WinMetaData {
-            Pointer<SlabWindow> window;
+            Pointer<FSlabWindow> window;
             DevFloat width;
         };
 
@@ -31,28 +31,28 @@ namespace Slab::Graphics {
             Left, Right
         };
 
-        bool addWindow(const Pointer<SlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
+        bool addWindow(const Pointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
 
-        void removeWindow(const Pointer<SlabWindow> &window);
+        void removeWindow(const Pointer<FSlabWindow> &window);
 
         void arrangeWindows();
 
-        void draw() override;
+        void Draw() override;
 
-        void notifyReshape(int w, int h) override;
+        void NotifyReshape(int w, int h) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state,
+        bool NotifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        auto setx(int x) -> void override;
+        auto Set_x(int x) -> void override;
 
-        auto sety(int y) -> void override;
+        auto Set_y(int y) -> void override;
 
     };
 

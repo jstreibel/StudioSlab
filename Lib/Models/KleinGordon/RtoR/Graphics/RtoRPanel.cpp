@@ -6,24 +6,24 @@
 
 namespace Slab::Models::KGRtoR {
 
-    RtoRPanel::RtoRPanel(Pointer<KGNumericConfig>params, GUIWindow &guiWindow, KGEnergy &hamiltonian,
+    FRtoRPanel::FRtoRPanel(Pointer<KGNumericConfig>params, FGUIWindow &guiWindow, KGEnergy &hamiltonian,
                          const Str &name, const Str &description)
             : Socket(name, 1, description)
             , guiWindow(guiWindow)
-            , params(params)
-            , hamiltonian(hamiltonian)
+            , Params(params)
+            , Hamiltonian(hamiltonian)
     {
 
     }
 
-    void RtoRPanel::setSimulationHistory(Math::R2toR::NumericFunction_constptr simHistory,
+    void FRtoRPanel::SetSimulationHistory(Math::R2toR::FNumericFunction_constptr simHistory,
                                          const Graphics::R2toRFunctionArtist_ptr& simHistoryArtist) {
         simulationHistory = simHistory;
         simulationHistoryArtist = simHistoryArtist;
     }
 
-    void RtoRPanel::setSpaceFourierHistory(Math::R2toR::NumericFunction_constptr sftHistory,
-                                           const DFTDataHistory &dftDataHistory,
+    void FRtoRPanel::SetSpaceFourierHistory(Math::R2toR::FNumericFunction_constptr sftHistory,
+                                           const FDFTDataHistory &dftDataHistory,
                                            const Graphics::R2toRFunctionArtist_ptr& sftHistoryArtist) {
 
         spaceFTHistory = sftHistory;
@@ -31,15 +31,15 @@ namespace Slab::Models::KGRtoR {
         spaceFTHistoryArtist = sftHistoryArtist;
     }
 
-    void RtoRPanel::handleOutput(const Math::OutputPacket &packet) {
+    void FRtoRPanel::handleOutput(const Math::OutputPacket &packet) {
 
     }
 
-    void RtoRPanel::notifyBecameVisible() {
+    void FRtoRPanel::notifyBecameVisible() {
 
     }
 
-    void RtoRPanel::notifyBecameInvisible() {
+    void FRtoRPanel::notifyBecameInvisible() {
 
     }
 

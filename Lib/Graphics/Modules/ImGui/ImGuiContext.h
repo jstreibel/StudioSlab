@@ -47,13 +47,13 @@ namespace Slab::Graphics {
 
         void *GetContextPointer() override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         bool notifyCharacter(UInt codepoint) override;
 
         void cursorEntered(bool b) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 

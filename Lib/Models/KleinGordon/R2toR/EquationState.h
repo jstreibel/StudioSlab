@@ -12,7 +12,7 @@ namespace Slab::Math::R2toR {
 
     class EquationState : public Models::KGState<Real2D> {
     public:
-        EquationState(const NumericFunction_ptr &phi, const NumericFunction_ptr &dPhiDt)
+        EquationState(const FNumericFunction_ptr &phi, const FNumericFunction_ptr &dPhiDt)
         : Models::KGState<Real2D>(phi, dPhiDt)
         {
         }

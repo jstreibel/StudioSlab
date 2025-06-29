@@ -27,12 +27,12 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
 
     auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Plot");
-    plot_window->setx(1700);
-    plot_window->notifyReshape(1200, 800);
-    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->funcPlotStyles[0], "functional");
+    plot_window->Set_x(1700);
+    plot_window->NotifyReshape(1200, 800);
+    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->FuncPlotStyles[0], "functional");
 
     auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-    wm->addSlabWindow(plot_window);
+    wm->AddSlabWindow(plot_window, false);
 
     Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(wm);
 }

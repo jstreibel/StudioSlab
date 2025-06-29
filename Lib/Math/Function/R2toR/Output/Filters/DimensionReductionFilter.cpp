@@ -20,7 +20,7 @@ namespace Slab::Math::R2toR {
 
     DiscreteSpacePair DimensionReductionFilter::operator()(const OutputPacket &outputInfo) {
         IN kgState = *outputInfo.GetNakedStateData<R2toR::EquationState>();
-        auto &f = dynamic_cast<R2toR::NumericFunction&>(kgState.getPhi());
+        auto &f = dynamic_cast<R2toR::FNumericFunction&>(kgState.getPhi());
         // const DiscreteSpace &dPhiSpace = *outputInfo.getSpaceData().second;
 
         if (f.getSpace().getMetaData().getNDim() != 2) throw "Is rong.";

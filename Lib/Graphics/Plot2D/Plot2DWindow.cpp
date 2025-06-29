@@ -117,10 +117,10 @@ namespace Slab::Graphics {
         return haveErased;
     }
 
-    void Plot2DWindow::draw() {
+    void Plot2DWindow::Draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
 
-        SlabWindow::draw();
+        FSlabWindow::Draw();
 
         if (autoReviewGraphRanges) reviewGraphRanges();
 
@@ -274,10 +274,10 @@ namespace Slab::Graphics {
     }
 
     Graphics::AxisArtist &
-    Graphics::Plot2DWindow::getAxisArtist() { return axisArtist; }
+    Graphics::Plot2DWindow::GetAxisArtist() { return axisArtist; }
 
     void
-    Graphics::Plot2DWindow::setAutoReviewGraphRanges(bool autoReview) { autoReviewGraphRanges = autoReview; }
+    Graphics::Plot2DWindow::SetAutoReviewGraphRanges(bool autoReview) { autoReviewGraphRanges = autoReview; }
 
     void
     Graphics::Plot2DWindow::toggleShowInterface() { showInterface = !showInterface; }

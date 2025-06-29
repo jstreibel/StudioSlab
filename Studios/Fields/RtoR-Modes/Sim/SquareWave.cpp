@@ -20,7 +20,7 @@ namespace Modes {
         // return 4*M_1_PI*val;
     }
 
-    Str SquareWave::symbol() const {
+    Str SquareWave::Symbol() const {
         return "Sqₜ(x)";
     }
 

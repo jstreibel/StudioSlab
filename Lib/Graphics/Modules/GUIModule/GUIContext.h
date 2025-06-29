@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         MainMenuAction action=[](const Str&){};
     };
 
-    class GUIContext : public SystemWindowEventListener {
+    class GUIContext : public FSystemWindowEventListener {
     protected:
         Vector<DrawCall> draw_calls;
 

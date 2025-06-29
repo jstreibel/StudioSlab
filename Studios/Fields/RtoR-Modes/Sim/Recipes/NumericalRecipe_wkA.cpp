@@ -32,7 +32,7 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr NumericalRecipe_wkA::getBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
+        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
         fix A_0 = this->A.GetValue();
         fix dk = 2*M_PI/L;
         fix k_0 = dk*this->k.GetValue();
@@ -69,7 +69,7 @@ namespace Modes {
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix n = config->getn();
         fix a = config->getr();
 

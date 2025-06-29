@@ -16,7 +16,7 @@
 
 namespace Slab::Graphics {
 
-    class GUIWindow : public SlabWindow {
+    class FGUIWindow : public FSlabWindow {
         Vector<Pair<Str, Color>> stats;
 
         Pointer<SlabImGuiContext> gui_context;
@@ -24,7 +24,7 @@ namespace Slab::Graphics {
         void begin() const;
         void end() const;
     public:
-        explicit GUIWindow(Config={});
+        explicit FGUIWindow(Config={});
 
         void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 
@@ -32,7 +32,7 @@ namespace Slab::Graphics {
 
         Pointer<SlabImGuiContext> GetGUIContext();
 
-        void draw() override;
+        void Draw() override;
     };
 
 

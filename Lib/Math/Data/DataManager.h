@@ -39,7 +39,7 @@ namespace Slab::Math {
 
         static auto
         AllocFunctionR2toRDDataSet(Str uniqueName, Resolution N, Resolution M, Real2D rMin, Real2D r, DataLocation)
-        -> Pointer<R2toR::NumericFunction>;
+        -> Pointer<R2toR::FNumericFunction>;
 
         static DataWrap GetData(const DataName&);
 

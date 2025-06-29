@@ -17,7 +17,7 @@ namespace Slab::Math::RtoR {
 
             Function_ptr Clone() const override { return New <NullFunction> (); }
 
-        Str symbol() const override {
+        Str Symbol() const override {
             return "∅";
         }
     };

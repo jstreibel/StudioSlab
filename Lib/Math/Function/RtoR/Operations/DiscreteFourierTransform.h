@@ -36,7 +36,7 @@ namespace Slab::Math::RtoR {
 
                 fix A = sqrt(Re_A*Re_A+Im_A*Im_A);
 
-                amps->addPoint({ω, A});
+                amps->AddPoint({ω, A});
             }
 
             return amps;

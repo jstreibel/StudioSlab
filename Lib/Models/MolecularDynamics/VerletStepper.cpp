@@ -18,7 +18,7 @@ namespace Slab::Models::MolecularDynamics {
             , q(c->getN()), p(c->getN()), state(New<MoleculesState>(q, p))
             , dt(c->getdt()){
         const CountType N = c->getN();
-        const DevFloat L = c->getL();
+        const DevFloat L = c->GetL();
 
         if (1) {
             auto lim = (.5 * L - .5 * CUTOFF_RADIUS);

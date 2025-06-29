@@ -49,7 +49,7 @@ namespace Slab::Graphics {
 
         assert(func->isDiscrete());
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction&>(*func);
 
         discreteFunc.getSpace().syncHost();
 
@@ -96,7 +96,7 @@ namespace Slab::Graphics {
         ImGui::BeginChild((myName).c_str(), {0,24*TEXT_BASE_HEIGHT}, true/*, ImGuiWindowFlags_AlwaysAutoResize*/);
 
         if (func->isDiscrete()) {
-            auto &dFunc = *dynamic_cast<const R2toR::NumericFunction *>(func.get());
+            auto &dFunc = *dynamic_cast<const R2toR::FNumericFunction *>(func.get());
             ImGui::Text("%ix%i elements", dFunc.getN(), dFunc.getM());
         }
 
@@ -142,7 +142,7 @@ namespace Slab::Graphics {
         if(!func->isDiscrete()) NOT_IMPLEMENTED
 
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction&>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction&>(*func);
 
         // 𝒟ℴ𝓂𝒶𝒾𝓃
         {
@@ -178,7 +178,7 @@ namespace Slab::Graphics {
         fix r = Real2D{coords.x, coords.y};
         assert(func->domainContainsPoint(r));
 
-        auto &discreteFunc = dynamic_cast<const R2toR::NumericFunction &>(*func);
+        auto &discreteFunc = dynamic_cast<const R2toR::FNumericFunction &>(*func);
 
         fix xRes = discreteFunc.getN();
         fix yRes = discreteFunc.getM();

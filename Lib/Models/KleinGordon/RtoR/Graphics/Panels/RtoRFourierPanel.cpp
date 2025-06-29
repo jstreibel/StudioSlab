@@ -17,8 +17,8 @@ namespace Slab::Models::KGRtoR {
 
     constexpr auto NoModeDiscard = false;
 
-    RtoRFourierPanel::RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, GUIWindow &guiWindow)
-    : RtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
+    RtoRFourierPanel::RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow)
+    : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
         kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ");
@@ -33,25 +33,25 @@ namespace Slab::Models::KGRtoR {
 
         // Custom ticks
         auto unit = Constants::π;
-        kSpaceGraph->getAxisArtist().setHorizontalUnit(unit);
+        kSpaceGraph->GetAxisArtist().setHorizontalUnit(unit);
         fix WaveNumber = FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
         if(WaveNumber != nullptr) {
             Graphics::AxisArtist::Ticks ticks;
-            fix L = params->getL();
+            fix L = params->GetL();
             fix dk = 2*M_PI/L;
             fix k = dk * WaveNumber->getValueAs<DevFloat>();
             for (int n = 1; n < 20; ++n) {
                 ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
             }
-            kSpaceGraph->getAxisArtist().setHorizontalAxisTicks(ticks);
+            kSpaceGraph->GetAxisArtist().setHorizontalAxisTicks(ticks);
         }
-        kSpaceGraph->getAxisArtist().setHorizontalAxisLabel("k");
-        kSpaceGraph->getAxisArtist().setVerticalAxisLabel("t");
+        kSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
+        kSpaceGraph->GetAxisArtist().setVerticalAxisLabel("t");
 
         ωSpaceArtist->setLabel("ℱₜ(ω, x)");
         ωSpaceGraph->addArtist(ωSpaceArtist);
-        ωSpaceGraph->getAxisArtist().setHorizontalAxisLabel("x");
-        ωSpaceGraph->getAxisArtist().setVerticalAxisLabel("ω");
+        ωSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("x");
+        ωSpaceGraph->GetAxisArtist().setVerticalAxisLabel("ω");
 
         timeFilteredArtist->setLabel("ϕ[t ∈ (t₀,tₑ)]");
         xSpaceGraph->addArtist(timeFilteredArtist);
@@ -93,20 +93,20 @@ namespace Slab::Models::KGRtoR {
             ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
         }
 
-        addWindow(ωSpaceGraph);
-        addWindow(xSpaceGraph);
-        addWindow(ωkSpaceGraph, true);
-        addWindow(kSpaceGraph);
+        AddWindow(ωSpaceGraph);
+        AddWindow(xSpaceGraph);
+        AddWindow(ωkSpaceGraph, true);
+        AddWindow(kSpaceGraph);
 
         arrangeWindows();
     }
 
-    void RtoRFourierPanel::draw() {
+    void RtoRFourierPanel::Draw() {
 
         guiWindow.AddExternalDraw([this](){
             if (ImGui::CollapsingHeader("k-filter")) {
                 //this->dftData
-                fix kMax = M_PI / params->geth();
+                fix kMax = M_PI / Params->geth();
                 auto k = (float) kFilterCutoff;
 
                 static bool needRefresh = false;
@@ -119,7 +119,7 @@ namespace Slab::Models::KGRtoR {
 
                 if (ImGui::SliderFloat("cutoff k", &k, 0.0, (float) kMax)) {
                     kFilterCutoff = k;
-                    fix t = params->gett();
+                    fix t = Params->gett();
                     cutoffLine.getx0() = {kFilterCutoff, -10.0};
                     cutoffLine.getr() = {0, 10.0 + t};
 
@@ -141,7 +141,7 @@ namespace Slab::Models::KGRtoR {
 
             if (ImGui::CollapsingHeader("t-filter, ℱₜ & ℱₜₓ")) {
                 static auto t_0 = .0f;
-                static fix tMax = (float) RtoRPanel::params->gett();
+                static fix tMax = (float) FRtoRPanel::Params->gett();
                 static auto t_f = tMax;
                 static auto auto_update_Ft = false;
                 static auto auto_update_Ftx = false;
@@ -165,30 +165,31 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
     void
-    RtoRFourierPanel::setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
-                                             const DFTDataHistory &dftDataHistory,
+    RtoRFourierPanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+ sftHistory,
+                                             const FDFTDataHistory &dftDataHistory,
                                              const R2toRFunctionArtist_ptr &dftFunctionArtist) {
 
-        RtoRPanel::setSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
+        FRtoRPanel::SetSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
 
         kSpaceGraph->addArtist(dftFunctionArtist);
         // kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
 
         Graphics::Plotter::AddCurve(kSpaceGraph,
                                     Slab::Naked(cutoffLine),
-                                    PlotThemeManager::GetCurrent()->funcPlotStyles[0], "k cutoff");
+                                    PlotThemeManager::GetCurrent()->FuncPlotStyles[0], "k cutoff");
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
         assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
-        fix xMin = RtoRPanel::params->getxMin();
-        fix L = RtoRPanel::params->getL();
-        fix N = (*dftData)[0].result.modeCount();
+        fix xMin = FRtoRPanel::Params->getxMin();
+        fix L = FRtoRPanel::Params->GetL();
+        fix N = (*dftData)[0].Result.modeCount();
         fix hx = L/N;
 
         fix tMin = (*dftData)[0].t;
@@ -201,7 +202,7 @@ namespace Slab::Models::KGRtoR {
         int _n = 0;
         for(auto &data : *dftData){
 
-            auto func = RtoR::DFTInverse::Compute(data.result, xMin, L,
+            auto func = RtoR::DFTInverse::Compute(data.Result, xMin, L,
                                                   filter);
 
             auto *out = &rebuiltHistory->At(0, _n);
@@ -256,9 +257,10 @@ namespace Slab::Models::KGRtoR {
         ωSpaceArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
-    void RtoRFourierPanel::setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+    void RtoRFourierPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
+ simulationHistory,
                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
-        RtoRPanel::setSimulationHistory(simulationHistory, simHistoryArtist);
+        FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
         xSpaceGraph->addArtist(simulationHistoryArtist, -10);
     }
@@ -307,8 +309,8 @@ namespace Slab::Models::KGRtoR {
         powerArtist->setFunction(powerSpectrum);
     }
 
-    Pointer<R2toR::NumericFunction>
-    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::NumericFunction> func, DevFloat tMin, DevFloat tMax) {
+    Pointer<R2toR::FNumericFunction>
+    RtoRFourierPanel::FilterSpace(Pointer<const R2toR::FNumericFunction> func, DevFloat tMin, DevFloat tMax) {
         fix N = func->getN();
         fix xMin = func->getDomain().xMin;
         fix dx = func->getDomain().getLx()/N;

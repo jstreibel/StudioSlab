@@ -21,20 +21,20 @@ namespace Slab::Models::KGRtoR {
         void compute();
 
     public:
-        TimeFTViewer(const Pointer<Graphics::GUIWindow> &guiWindow,
-                     const Pointer<R2toR::NumericFunction> &func=nullptr,
-                     const Pointer<R2toR::NumericFunction> &ddtFunc=nullptr);
+        TimeFTViewer(const Pointer<Graphics::FGUIWindow> &guiWindow,
+                     const Pointer<R2toR::FNumericFunction> &func=nullptr,
+                     const Pointer<R2toR::FNumericFunction> &ddtFunc=nullptr);
 
-        void draw() override;
+        void Draw() override;
 
-        void notifyBecameVisible() override;
+        void NotifyBecameVisible() override;
 
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void setFunctionDerivative(FuncPointer pointer) override;
+        void SetFunctionDerivative(FuncPointer pointer) override;
 
-        Str getName() const override;
+        Str GetName() const override;
     };
 
 } // Slab::Models::KGRtoR

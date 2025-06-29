@@ -20,21 +20,21 @@ namespace Slab::Graphics {
 
     BaseMonitor::BaseMonitor(CountType max_steps, const Str &channelName, int stepsBetweenDraws)
             : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_steps(max_steps) {
-        addWindow(guiWindow);
-        setColumnRelativeWidth(0, 0.1);
+        AddWindow(guiWindow);
+        SetColumnRelativeWidth(0, 0.1);
 
         Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
     }
 
     void BaseMonitor::handleOutput(const OutputPacket &outInfo) {
-        step = outInfo.getSteps();
+        step = outInfo.GetSteps();
     }
 
     void BaseMonitor::writeStats() {
         static bool hasFinished = false;
         static bool isPaused = false;
         static CountType lastStep = 0;
-        hasFinished = !(lastPacket.getSteps() < max_steps);
+        hasFinished = !(LastPacket.GetSteps() < max_steps);
 
         fix currStep = step;
 
@@ -121,17 +121,17 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    void BaseMonitor::draw() {
+    void BaseMonitor::Draw() {
         assert(lastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::draw(); // draw();
+            WindowPanel::Draw(); // draw();
             frameTimer.reset();
         }
     }
 
-    bool BaseMonitor::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool BaseMonitor::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         static fix baseNSteps = getnSteps();
         static let multiplier = 1;
 
@@ -161,10 +161,10 @@ namespace Slab::Graphics {
             }
         }
 
-        return WindowPanel::notifyKeyboard(key, state, modKeys);
+        return WindowPanel::NotifyKeyboard(key, state, modKeys);
     }
 
-    GUIWindow &BaseMonitor::getGUIWindow() const {
+    FGUIWindow &BaseMonitor::getGUIWindow() const {
         return *guiWindow;
     }
 

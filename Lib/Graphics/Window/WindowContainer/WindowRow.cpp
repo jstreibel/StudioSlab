@@ -23,7 +23,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 #define PropagateEvent(EVENT, PROPAGATE_ALWAYS){                                           \
     auto responded = false;                                                                \
                                                                                            \
-    responded = SlabWindow::EVENT;                                                         \
+    responded = FSlabWindow::EVENT;                                                         \
                                                                                            \
     for(auto &winData : windowsList)                                                       \
         if(winData.window->isMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
@@ -35,7 +35,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 namespace Slab::Graphics {
 
     WindowRow::WindowRow(Str title, Int flags)
-            : SlabWindow({std::move(title), WindowStyle::default_window_rect, flags}) {
+            : FSlabWindow({std::move(title), WindowStyle::default_window_rect, flags}) {
 
     }
 
@@ -51,7 +51,7 @@ namespace Slab::Graphics {
         return widths;
     }
 
-    bool WindowRow::addWindow(const Pointer<SlabWindow> &window, RelativePosition relPosition,
+    bool WindowRow::addWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
         if (std::find_if(windowsList.begin(), windowsList.end(),
                          [&window](WinMetaData &winMetaData) {
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::removeWindow(const Pointer<SlabWindow> &window) {
+    void WindowRow::removeWindow(const Pointer<FSlabWindow> &window) {
         windowsList.remove_if([&window](WinMetaData &toComp) {
             return toComp.window == window;
         });
@@ -141,10 +141,10 @@ namespace Slab::Graphics {
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
 
-            win.setx(computed_xPositions[i]);
-            win.sety(y);
+            win.Set_x(computed_xPositions[i]);
+            win.Set_y(y);
 
-            win.notifyReshape(computedWidths[i], h);
+            win.NotifyReshape(computedWidths[i], h);
 
             i++;
         }
@@ -171,19 +171,19 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::draw() {
+    void WindowRow::Draw() {
 
         for (auto & winData : std::ranges::reverse_view(windowsList)) {
             auto &window = *winData.window;
 
-            window.draw();
+            window.Draw();
             OpenGL::checkGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
         }
     }
 
-    void WindowRow::notifyReshape(int w, int h)  {
-        SlabWindow::notifyReshape(w, h);
+    void WindowRow::NotifyReshape(int w, int h)  {
+        FSlabWindow::NotifyReshape(w, h);
 
         arrangeWindows();
     }
@@ -204,31 +204,31 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowRow::notifyMouseButton(MouseButton button, KeyState state,
+    bool WindowRow::NotifyMouseButton(MouseButton button, KeyState state,
                                       ModKeys keys) {
         if(state == KeyState::Release)
-            PropagateEvent(notifyMouseButton(button, state, keys), AlwaysPropagate)
+            PropagateEvent(NotifyMouseButton(button, state, keys), AlwaysPropagate)
             // PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
         else
-            PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
+            PropagateEvent(NotifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowRow::notifyMouseWheel(double dx, double dy) {
         PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowRow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        PropagateEvent(notifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
+    bool WindowRow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+        PropagateEvent(NotifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
-    void WindowRow::setx(int x) {
-        SlabWindow::setx(x);
+    void WindowRow::Set_x(int x) {
+        FSlabWindow::Set_x(x);
 
         arrangeWindows();
     }
 
-    void WindowRow::sety(int y) {
-        SlabWindow::sety(y);
+    void WindowRow::Set_y(int y) {
+        FSlabWindow::Set_y(y);
 
         arrangeWindows();
     }

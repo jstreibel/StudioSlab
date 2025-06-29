@@ -32,7 +32,7 @@ namespace Modes {
     Math::Base::BoundaryConditions_ptr NumericalRecipe_Ak2::getBoundary() {
         auto prototype = KGRtoR::KGRtoRBuilder::newFieldState();
 
-        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->getL();
+        fix L = DynamicPointerCast<KGNumericConfig>(getNumericConfig())->GetL();
         fix λ = L / (DevFloat)*wavelengths;;
         fix ι = *Ak2;
         fix k = 2*M_PI/λ;
@@ -68,7 +68,7 @@ namespace Modes {
 
         auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix n = config->getn();
         fix a = config->getr();
 
@@ -110,7 +110,7 @@ namespace Modes {
         // fix amp = (*A) * 1.1;
         auto monitor = new Modes::Monitor(config, *(KGRtoR::KGEnergy*)getHamiltonian(), "Modes monitor");
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix λ = L / *wavelengths;
         fix ι = *Ak2;
         fix k = 2*M_PI/λ;

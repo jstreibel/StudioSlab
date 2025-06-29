@@ -7,12 +7,12 @@
 #include "BlueprintRenderer.h"
 #include "Graphics/SlabGraphics.h"
 
-class App : public Slab::Application {
+class App : public Slab::FApplication {
     Slab::Pointer<Slab::Blueprints::BlueprintRenderer> blueprint_renderer;
     Slab::Pointer<Slab::Blueprints::Blueprint> blueprint;
 
 public:
-    App(const int argc, const char *argv[]) : Slab::Application("Blueprints prototype", argc, argv) {
+    App(const int argc, const char *argv[]) : Slab::FApplication("Blueprints prototype", argc, argv) {
     }
 
 protected:
@@ -23,7 +23,7 @@ protected:
 
 
     void OnStart() override {
-        Application::OnStart();
+        FApplication::OnStart();
 
         using namespace Slab::Blueprints;
 

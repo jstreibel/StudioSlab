@@ -28,7 +28,7 @@ namespace Slab::Graphics {
             Above = Vertical, Right = Horizontal
         };
 
-        void addWindow(SlabWindow *window, Location location);
+        void addWindow(FSlabWindow *window, Location location);
 
         NodeWindow *getRoot();
     };

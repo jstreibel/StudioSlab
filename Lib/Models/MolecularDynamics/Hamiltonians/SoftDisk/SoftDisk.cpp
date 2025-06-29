@@ -17,7 +17,7 @@ namespace Slab::Models::MolecularDynamics {
         const DevFloat SIGMA_SQR = σ * σ;
         DevFloat normSqr;
 
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         const Graphics::Point2D points[] = {
                 q2 - q1,

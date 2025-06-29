@@ -20,7 +20,7 @@ namespace Slab::Models::KGRtoR {
         Slab::Math::PointSet histogram_data_gradient;
         Slab::Math::PointSet histogram_data_potential;
 
-        using Func = Slab::Math::R2toR::NumericFunction;
+        using Func = Slab::Math::R2toR::FNumericFunction;
         using FuncPointer = Slab::Pointer<Func>;
 
         int nbins = 200;
@@ -46,19 +46,19 @@ namespace Slab::Models::KGRtoR {
         HarnessData harness();
 
     public:
-        explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::GUIWindow> &);
+        explicit HistogramsViewer_KG(const Slab::Pointer<Slab::Graphics::FGUIWindow> &);
 
-        Str getName() const override;
+        Str GetName() const override;
 
         void updateHistograms();
 
         void
-        setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function)
+        SetFunction(Slab::Pointer<Slab::Math::R2toR::FNumericFunction> function)
         override;
 
-        void setFunctionDerivative(FuncPointer pointer) override;
+        void SetFunctionDerivative(FuncPointer pointer) override;
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Studios::Fields::Viewers

@@ -12,13 +12,13 @@
 using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
-: Slab::Graphics::SlabWindow({"FreeType tests"})
+: Slab::Graphics::FSlabWindow({"FreeType tests"})
 , writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
-void GLFreeTypeTests::draw() {
-    SlabWindow::draw();
+void GLFreeTypeTests::Draw() {
+    FSlabWindow::Draw();
 
     glMatrixMode(GL_MODELVIEW);
     fix ratio = DevFloat(GetWidth()) / GetHeight();
@@ -51,8 +51,8 @@ void GLFreeTypeTests::draw() {
 
 }
 
-void GLFreeTypeTests::notifyReshape(int newWinW, int newWinH) {
-    SlabWindow::notifyReshape(newWinW, newWinH);
+void GLFreeTypeTests::NotifyReshape(int newWinW, int newWinH) {
+    FSlabWindow::NotifyReshape(newWinW, newWinH);
 
     auto vp = getViewport();
 

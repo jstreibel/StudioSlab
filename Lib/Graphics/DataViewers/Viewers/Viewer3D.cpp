@@ -6,18 +6,18 @@
 
 namespace Slab::Graphics {
 
-    Viewer3D::Viewer3D(Pointer<GUIWindow> gui_window) : Viewer(gui_window) {
+    Viewer3D::Viewer3D(Pointer<FGUIWindow> gui_window) : Viewer(gui_window) {
         scene3DWindow = New<Scene3DWindow>();
 
-        addWindow(scene3DWindow);
+        AddWindow(scene3DWindow);
     }
 
-    Str Viewer3D::getName() const { return "3D viewer"; }
+    Str Viewer3D::GetName() const { return "3D viewer"; }
 
-    void Viewer3D::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
+    void Viewer3D::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
         if(getFunction() != nullptr) throw Exception("Viewer3D already set-up with function.");
 
-        Viewer::setFunction(function);
+        Viewer::SetFunction(function);
 
         sceneActor = New<R2toRFunctionActor>(function);
         scene3DWindow->addActor(sceneActor);

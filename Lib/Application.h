@@ -13,7 +13,7 @@ namespace Slab {
 
     using Platform = Graphics::GraphicBackend;
 
-    class Application : public Graphics::SystemWindowEventListener {
+    class FApplication : public Graphics::FSystemWindowEventListener {
         const int arg_count;
         const char **arg_values;
 
@@ -28,8 +28,8 @@ namespace Slab {
         virtual bool CanClose() { return true; };
 
     public:
-        Application(Str name, const int argc, const char *argv[]);
-        ~Application() override;
+        FApplication(Str name, const int argc, const char *argv[]);
+        ~FApplication() override;
 
         bool Create(Resolution width=UndefinedResolution, Resolution height=UndefinedResolution);
         Int Run();

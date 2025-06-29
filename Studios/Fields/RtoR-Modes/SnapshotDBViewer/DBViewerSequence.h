@@ -21,7 +21,7 @@ namespace Modes::DatabaseViewer {
     using namespace Slab;
 
     class DBViewerSequence final : public Graphics::WindowRow {
-        Graphics::GUIWindow guiWindow;
+        Graphics::FGUIWindow guiWindow;
         WindowRow topRow;
 
         int current_database = -1;
@@ -62,9 +62,9 @@ namespace Modes::DatabaseViewer {
     public:
         explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void draw() override;
+        void Draw() override;
 
-        bool notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
     };
 }
 

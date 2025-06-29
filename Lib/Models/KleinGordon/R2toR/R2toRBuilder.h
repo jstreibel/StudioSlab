@@ -28,7 +28,7 @@ namespace Slab::Models::KGR2toR {
         auto buildOutputSockets()   -> Vector<Pointer<Socket>> override;
         auto buildSolver()  -> Pointer<Base::LinearStepSolver> override;
 
-        auto newFunctionArbitrary() -> R2toR::NumericFunction_ptr ;
+        auto newFunctionArbitrary() -> R2toR::FNumericFunction_ptr ;
         auto newFieldState()        -> R2toR::EquationState_ptr;
 
         auto getInitialState()      -> R2toR::EquationState_ptr;

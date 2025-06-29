@@ -16,19 +16,19 @@ namespace Slab::Models::KGRtoR {
         auto kg_viewer = getCurrentKGViewer();
         if(kg_viewer){
             ddtbase_function = getFunctionTimeDerivative();
-            kg_viewer->setFunctionDerivative(ddtbase_function);
+            kg_viewer->SetFunctionDerivative(ddtbase_function);
         }
 
         return value;
     }
 
-    void KGMainViewer::setFunctionTimeDerivative(Pointer<R2toR::NumericFunction> func) {
+    void KGMainViewer::setFunctionTimeDerivative(Pointer<R2toR::FNumericFunction> func) {
         ddtbase_function = std::move(func);
 
-        for(auto &kg_viewer : kg_viewers) kg_viewer->setFunctionDerivative(ddtbase_function);
+        for(auto &kg_viewer : kg_viewers) kg_viewer->SetFunctionDerivative(ddtbase_function);
     }
 
-    Pointer<R2toR::NumericFunction> KGMainViewer::getFunctionTimeDerivative() {
+    Pointer<R2toR::FNumericFunction> KGMainViewer::getFunctionTimeDerivative() {
         return ddtbase_function;
     }
 

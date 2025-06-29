@@ -30,7 +30,7 @@ namespace Slab::Models::KGRtoR {
     void Slab::Models::KGRtoR::CenterTimeDFTOutput::handleOutput(const Slab::Math::OutputPacket &packet) {
         assert(x_measure.size() == dataset.size());
 
-        fix curr_step = packet.getSteps();
+        fix curr_step = packet.GetSteps();
         if(curr_step < step_start || curr_step > step_end) return;
 
         auto funky = packet.GetNakedStateData<KGRtoR::EquationState>();

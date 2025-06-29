@@ -34,19 +34,19 @@ namespace Studios::Fields::R2toRLeadingDelta {
         using Plotter = Graphics::Plotter;
 
         Plotter::AddPointSet(Dummy(mEnergyRatioGraph), energyRatioData,
-                                       theme->funcPlotStyles[0], "Numeric/analytic energy");
+                                       theme->FuncPlotStyles[0], "Numeric/analytic energy");
         addWindowToColumn(Dummy(mEnergyRatioGraph), 0);
 
         numericEnergyData  = New<PointSet>();
         analyticEnergyData = New<PointSet>();
 
-        Plotter::AddPointSet(Dummy(mEnergyGraph), numericEnergyData, theme->funcPlotStyles[0], "Numeric energy");
-        Plotter::AddPointSet(Dummy(mEnergyGraph), analyticEnergyData,theme->funcPlotStyles[1], "Analytic energy");
+        Plotter::AddPointSet(Dummy(mEnergyGraph), numericEnergyData, theme->FuncPlotStyles[0], "Numeric energy");
+        Plotter::AddPointSet(Dummy(mEnergyGraph), analyticEnergyData,theme->FuncPlotStyles[1], "Analytic energy");
         addWindowToColumn(Dummy(mEnergyGraph), 0);
 
 
         totalEnergyData = New<PointSet>();
-        Plotter::AddPointSet(Dummy(mTotalEnergyGraph), totalEnergyData, theme->funcPlotStyles[0], "Total analytic energy");
+        Plotter::AddPointSet(Dummy(mTotalEnergyGraph), totalEnergyData, theme->FuncPlotStyles[0], "Total analytic energy");
         addWindowToColumn(Dummy(mTotalEnergyGraph), 0);
 
         // auto line = new RtoR2::StraightLine({0, xMin},
@@ -60,8 +60,8 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     }
 
-    void OutGL::draw() {
-        if (!lastPacket.hasValidData()) return;
+    void OutGL::Draw() {
+        if (!LastPacket.hasValidData()) return;
 
         static auto timer = Timer();
         // auto elTime = timer.getElTime_msec();
@@ -69,7 +69,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         auto &rd = *ringDelta1;
 
-        auto &eqState = *lastPacket.GetNakedStateData<R2toR::EquationState>();
+        auto &eqState = *LastPacket.GetNakedStateData<R2toR::EquationState>();
 
         // const auto &p = params;
         // const auto L = p.getL();

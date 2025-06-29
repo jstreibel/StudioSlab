@@ -5,6 +5,7 @@
 #ifndef STUDIOSLAB_INTERFACE_H
 #define STUDIOSLAB_INTERFACE_H
 
+#include "Parameter.h"
 #include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Utils/Sets.h"
 #include "Utils/List.h"
@@ -25,18 +26,18 @@ namespace Slab::Core {
         virtual
         FMessage SendRequest(FRequest);
 
-        [[nodiscard]] auto GetParameters() const -> Vector<Pointer<const FCommandLineParameter>>;
-        [[nodiscard]] auto GetParameter(const Str& Key) const -> Pointer<FCommandLineParameter>;
+        [[nodiscard]] auto GetParameters() const -> Vector<Pointer<const FParameter>>;
+        [[nodiscard]] auto GetParameter(const Str& Key) const -> Pointer<FParameter>;
 
     protected:
-        void AddParameter(Pointer<FCommandLineParameter> Parameter);
-        void AddParameters(BasicList<Pointer<FCommandLineParameter>> parameters);
+        void AddParameter(const Pointer<FParameter>& Parameter);
+        void AddParameters(BasicList<Pointer<FParameter>> parameters);
 
     private:
         friend FInterfaceManager;
         const UniqueID Id;
         Str Name;
-        Set<Pointer<FCommandLineParameter>> Parameters;
+        Set<Pointer<FParameter>> Parameters;
 
     };
 

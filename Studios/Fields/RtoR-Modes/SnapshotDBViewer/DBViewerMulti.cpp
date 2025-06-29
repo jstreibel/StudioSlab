@@ -40,7 +40,7 @@ namespace Modes::DatabaseViewer {
         Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
         {
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
             style.setPrimitive(Graphics::VerticalLines);
             style.filled = false;
             style.thickness = 1.5;
@@ -53,32 +53,32 @@ namespace Modes::DatabaseViewer {
             //style.thickness = 3.0;
             //Graphics::Plotter::AddPointSet(Naked(massesGraph), Naked(underXHair), style, "under X-hair");
 
-            massesGraph.getAxisArtist().setHorizontalUnit(Math::Constants::π);
+            massesGraph.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
         }
 
         {
-            allDataDisplay.getAxisArtist().setVerticalUnit(Math::Constants::π);
-            allDataDisplay.getAxisArtist().setHorizontalUnit(Math::Constants::π);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+            allDataDisplay.GetAxisArtist().setVerticalUnit(Math::Constants::π);
+            allDataDisplay.GetAxisArtist().setHorizontalUnit(Math::Constants::π);
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation, style,
                                                                "ω²-kₚₑₐₖ²-m²=0", false, z_order(1));
-            style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             style.thickness = 3;
             style.filled = false;
             KGRelation_high_k_artist = Graphics::Plotter::AddPointSet(Naked(allDataDisplay), KGRelation_high_k,
                                                                       style, "k=ω-½m²/ω+...", false, z_order(2));
 
-            style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+            style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
             style.setPrimitive(Graphics::Point);
             style.thickness = 8;
             Graphics::Plotter::AddPointSet(Naked(allDataDisplay), Naked(maxValuesPointSet), style,
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 
-            allDataDisplay.getAxisArtist().setVerticalAxisLabel("ω");
-            allDataDisplay.getAxisArtist().setHorizontalAxisLabel("k");
+            allDataDisplay.GetAxisArtist().setVerticalAxisLabel("ω");
+            allDataDisplay.GetAxisArtist().SetHorizontalAxisLabel("k");
 
             topRow.addWindow(Naked(allDataDisplay));
         }
@@ -101,7 +101,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerMulti::draw() {
+    void DBViewerMulti::Draw() {
 
         fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
         fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
@@ -138,7 +138,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::draw();
+        WindowRow::Draw();
     }
 
     void DBViewerMulti::updateKGDispersion(bool visible) {
@@ -164,14 +164,14 @@ namespace Modes::DatabaseViewer {
                 Math::RtoR::KGDispersionRelation_high_k(mass, dispersionMode),
                 0.0, xMax, 10000);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         style.thickness = 3;
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
         KGRelation_artist->setLabel(Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
 
-        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2];
+        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
         style.thickness = 3;
         style.filled = false;
         KGRelation_high_k_artist->setStyle(style);
@@ -221,14 +221,14 @@ namespace Modes::DatabaseViewer {
                 auto k = k_avg / norm;
 
                 maxValues.emplace_back(maxInfo);
-                maxValuesPointSet.addPoint({ω, k});
+                maxValuesPointSet.AddPoint({ω, k});
 
                 fix m² = ω * ω - k * k;
 
                 if (m²>=0)
-                massesReal_pointSet.addPoint({ω, sqrt(m²)});
+                massesReal_pointSet.AddPoint({ω, sqrt(m²)});
                 else
-                massesImag_pointSet.addPoint({ω, sqrt(-m²)});
+                massesImag_pointSet.AddPoint({ω, sqrt(-m²)});
             }
         }
     }
@@ -301,7 +301,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerMulti::notifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerMulti::NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
         if( key==Graphics::Key_LEFT_SHIFT  ) shiftKey = state;
 
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
@@ -312,10 +312,10 @@ namespace Modes::DatabaseViewer {
             return true;
         }
 
-        return WindowRow::notifyKeyboard(key, state, modKeys);
+        return WindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
-    auto DBViewerMulti::notifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) -> bool {
+    auto DBViewerMulti::NotifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) -> bool {
         static Timer timer;
         auto elTime = timer.getElTime_msec();
         if(button==Graphics::MouseButton_LEFT){
@@ -326,7 +326,7 @@ namespace Modes::DatabaseViewer {
             }
         }
 
-        return WindowRow::notifyMouseButton(button, state, keys);
+        return WindowRow::NotifyMouseButton(button, state, keys);
     }
 
     void DBViewerMulti::reloadData() {

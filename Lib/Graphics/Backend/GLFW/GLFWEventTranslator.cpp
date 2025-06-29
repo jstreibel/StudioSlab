@@ -40,7 +40,7 @@ namespace Slab::Graphics {
                 (mods & GLFW_MOD_NUM_LOCK)  != 0 ? Press : Release,
         };
 
-        return IterateReferences(sysWin_listeners, Func(notifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
+        return IterateReferences(sysWin_listeners, Func(NotifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
@@ -76,9 +76,9 @@ namespace Slab::Graphics {
         };
 
         if(state == Release)
-            return IterateReferences(sysWin_listeners, Func(notifyMouseButton, mappedButton, state, modKeys), IterateAll);
+            return IterateReferences(sysWin_listeners, Func(NotifyMouseButton, mappedButton, state, modKeys), IterateAll);
         else
-            return IterateReferences(sysWin_listeners, Func(notifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
+            return IterateReferences(sysWin_listeners, Func(NotifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
     }
 
     bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
@@ -92,7 +92,7 @@ namespace Slab::Graphics {
         for (i = 0;  i < count;  i++)
             pathsVec.emplace_back(paths[i]);
 
-        auto funky = [&](Pointer<SystemWindowEventListener>& listener){
+        auto funky = [&](Pointer<FSystemWindowEventListener>& listener){
             return listener->
             notifyFilesDropped(pathsVec);
         };

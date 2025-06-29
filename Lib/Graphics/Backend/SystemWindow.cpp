@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         event_translator->addGUIEventListener(mouse_state);
     }
 
-     auto SystemWindow::addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool {
+     auto SystemWindow::addEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool {
          if(listener.expired()) throw Exception("Expired pointer");
 
          listener.lock()->setParentSystemWindow(this);
@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         return event_translator->addGUIEventListener(listener);
     }
 
-    auto SystemWindow::addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool {
+    auto SystemWindow::addAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool {
         if(!addEventListener(listener)) return false;
 
         thingsImProprietary.push_back(listener);

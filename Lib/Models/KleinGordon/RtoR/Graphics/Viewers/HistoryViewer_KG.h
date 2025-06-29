@@ -30,22 +30,22 @@ namespace Slab::Models::KGRtoR {
 
         Pointer<RtoR2::StraightLine> function_section = nullptr;
 
-        Pointer<R2toR::NumericFunction> d2dt2_function = nullptr;
+        Pointer<R2toR::FNumericFunction> d2dt2_function = nullptr;
 
         int oversampling = 12;
         DevFloat dt = -1;
         int curr_ti = 0;
 
     public:
-        explicit HistoryViewer(const Pointer<Graphics::GUIWindow> &guiWindow);
+        explicit HistoryViewer(const Pointer<Graphics::FGUIWindow> &guiWindow);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void draw() override;
+        void Draw() override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void setFunctionDerivative(FuncPointer pointer) override;
+        void SetFunctionDerivative(FuncPointer pointer) override;
     };
 
 } // Slab::Models::KGRtoR

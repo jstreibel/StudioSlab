@@ -58,7 +58,7 @@ namespace Slab::Graphics {
         void setHorizontalUnit(const Unit&);
         auto getHorizontalUnit() const -> const Unit&;
 
-        void setHorizontalAxisLabel(const Str &label);
+        void SetHorizontalAxisLabel(const Str &label);
         auto getHorizontalAxisLabel() const -> Str;
 
         void setVerticalUnit(const Unit&);

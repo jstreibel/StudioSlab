@@ -17,7 +17,7 @@
 
 namespace Slab::Graphics {
 
-    GUIWindow::GUIWindow(Config config) : SlabWindow(std::move(config)) {
+    FGUIWindow::FGUIWindow(Config config) : FSlabWindow(std::move(config)) {
         setClear(false);
         setDecorate(false);
 
@@ -30,13 +30,13 @@ namespace Slab::Graphics {
     }
 
 
-    void GUIWindow::addVolatileStat(const Str &stat, const Color color) {
+    void FGUIWindow::addVolatileStat(const Str &stat, const Color color) {
         stats.emplace_back(stat, color);
     }
 
-    void GUIWindow::draw() {
+    void FGUIWindow::Draw() {
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
-        SlabWindow::draw();
+        FSlabWindow::Draw();
         OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         begin();
@@ -141,7 +141,7 @@ namespace Slab::Graphics {
         gui_context->Render();
     }
 
-    void GUIWindow::begin() const {
+    void FGUIWindow::begin() const {
         gui_context->AddDrawCall([this]() {
             bool closable = false;
 
@@ -152,17 +152,17 @@ namespace Slab::Graphics {
         });
     }
 
-    void GUIWindow::end() const {
+    void FGUIWindow::end() const {
         gui_context->AddDrawCall([]() { ImGui::End(); });
     }
 
-    void GUIWindow::AddExternalDraw(const DrawCall& draw) {
+    void FGUIWindow::AddExternalDraw(const DrawCall& draw) {
         this->begin();
         gui_context->AddDrawCall(draw);
         this->end();
     }
 
-    Pointer<SlabImGuiContext> GUIWindow::GetGUIContext() {
+    Pointer<SlabImGuiContext> FGUIWindow::GetGUIContext() {
         return gui_context;
     }
 

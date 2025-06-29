@@ -11,23 +11,23 @@
 
 namespace Slab::Graphics {
 
-    class WindowContainer : public SlabWindow {
-        std::list<Pointer<SlabWindow>> windows;
+    class WindowContainer : public FSlabWindow {
+        std::list<Pointer<FSlabWindow>> windows;
 
     public:
         WindowContainer() = default;
 
-        bool removeWindow(const Pointer<SlabWindow>&);
+        bool removeWindow(const Pointer<FSlabWindow>&);
         bool isEmpty() const;
 
-        void draw() override;
+        void Draw() override;
 
         virtual void arrangeWindows() = 0;
 
-        void notifyReshape(int newWinW, int newWinH) override;
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        void NotifyReshape(int newWinW, int newWinH) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool notifyMouseButton(MouseButton button, KeyState state,
+        bool NotifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;
     };

@@ -8,7 +8,7 @@ namespace Slab::Graphics {
 
     EventTranslator::EventTranslator() = default;
 
-    bool EventTranslator::addGUIEventListener(const Volatile<SystemWindowEventListener> &guiEventListener) {
+    bool EventTranslator::addGUIEventListener(const Volatile<FSystemWindowEventListener> &guiEventListener) {
         const auto in = guiEventListener.lock();
 
         for(IN ref : sysWin_listeners) {

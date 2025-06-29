@@ -17,14 +17,14 @@ namespace Slab::Models::MolecularDynamics {
 
     NewtonMechanics::NewtonMechanics(Pointer<Config> config)
     : dissipation(DISSIPATION_FACTOR)
-    , spaceHash(HASH_SUBDIVS, config->getL())
+    , spaceHash(HASH_SUBDIVS, config->GetL())
     , numeric_config(config)
     , flippedSides(new bool[config->getN()]) {
         if(USE_NEW_EXPERIMENTAL_IMPLEMENTATION) {
-            if (spaceHash.totalLength() != config->getL()) {
+            if (spaceHash.totalLength() != config->GetL()) {
                 Core::Log::ErrorFatal() << "NewtonMechanics Hashspace inconsistency. Hashspace total width is "
                              << spaceHash.totalLength()
-                             << " while sim space is " << config->getL();
+                             << " while sim space is " << config->GetL();
 
                 throw Exception("Hashspace inconsistency");
 
@@ -44,7 +44,7 @@ namespace Slab::Models::MolecularDynamics {
 
 
     void NewtonMechanics::applyBoundaryConditions(Graphics::PointContainer & v_q) {
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         const DevFloat hw = L * .5;
         int i = 0;
@@ -64,7 +64,7 @@ namespace Slab::Models::MolecularDynamics {
     }
 
     void NewtonMechanics::applyBoundaryConditions(MoleculeContainer &v_m) {
-        fix L = numeric_config->getL();
+        fix L = numeric_config->GetL();
 
         fix hw = L * .5;
         int i = 0;

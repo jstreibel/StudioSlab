@@ -42,11 +42,11 @@ namespace Slab::Math {
 
     void Socket::output(const OutputPacket &outData) {
         handleOutput(outData);
-        lastPacket = outData;
+        LastPacket = outData;
     }
 
     auto Socket::notifyIntegrationHasFinished(const OutputPacket &theVeryLastOutputInformation) -> bool {
-        lastPacket = theVeryLastOutputInformation;
+        LastPacket = theVeryLastOutputInformation;
         return true;
     }
 

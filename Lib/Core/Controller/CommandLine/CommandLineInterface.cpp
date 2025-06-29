@@ -25,8 +25,8 @@ namespace Slab::Core {
         Log::Note() << "Interface '" << Log::FGGreen << Name << Log::ResetFormatting << "' created. " << Log::Flush;
     }
 
-    auto FCommandLineInterface::GetParameters() const -> Vector<FCommandLineParameter_constptr> {
-        Vector<FCommandLineParameter_constptr> constParameters;
+    auto FCommandLineInterface::GetParameters() const -> Vector<Pointer<const FCommandLineParameter>> {
+        Vector<Pointer<const FCommandLineParameter>> constParameters;
 
         std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
 
@@ -41,7 +41,7 @@ namespace Slab::Core {
         return interfaces;
     }
 
-    void FCommandLineInterface::AddParameter(const FCommandLineParameter_ptr& parameter) {
+    void FCommandLineInterface::AddParameter(const Pointer<FCommandLineParameter>& parameter) {
         auto insertionSuccessful = Parameters.insert(parameter).second;
 
         if (!insertionSuccessful) {
@@ -53,7 +53,7 @@ namespace Slab::Core {
                     << "\".";
     }
 
-    void FCommandLineInterface::AddParameters(const List<FCommandLineParameter_ptr>& parametersList) {
+    void FCommandLineInterface::AddParameters(const List<Pointer<FCommandLineParameter>>& parametersList) {
         for (const auto& param: parametersList)
             AddParameter(param);
     }
@@ -80,8 +80,8 @@ namespace Slab::Core {
         return Description != "<empty>" ? Description : "";
     }
 
-    auto FCommandLineInterface::GetParameter(const Str& key) const -> FCommandLineParameter_ptr {
-        auto compareFunc = [key](const FCommandLineParameter_ptr& parameter) {
+    auto FCommandLineInterface::GetParameter(const Str& key) const -> Pointer<FCommandLineParameter> {
+        auto compareFunc = [key](const Pointer<FCommandLineParameter>& parameter) {
             return *parameter == key;
         };
 

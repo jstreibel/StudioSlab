@@ -32,7 +32,7 @@ public:
         auto osc_plot = Slab::New<Studios::OscillonPlotting>();
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
-        wm->addSlabWindow(osc_plot);
+        wm->AddSlabWindow(osc_plot, false);
         gui_backend->GetMainSystemWindow()->addEventListener(wm);
 
         gui_backend->Run();

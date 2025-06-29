@@ -14,11 +14,11 @@
 namespace Slab {
 
 
-    Pointer<Platform> Application::CreatePlatform() {
+    Pointer<Platform> FApplication::CreatePlatform() {
         return Slab::DynamicPointerCast<Graphics::GraphicBackend>(Slab::CreatePlatform("GLFW"));
     }
 
-    Application::Application(Str name, const int argc, const char *argv[])
+    FApplication::FApplication(Str name, const int argc, const char *argv[])
     : arg_count (argc)
     , arg_values( argv)
     , m_Name(std::move(name))
@@ -30,13 +30,13 @@ namespace Slab {
         Core::Log::Info() << "PWD: " << Common::GetPWD() << Core::Log::Flush;
     }
 
-    Application::~Application() {
+    FApplication::~FApplication() {
         if (p_Platform != nullptr) p_Platform->Terminate();
 
         Core::BackendManager::UnloadAllModules();
     }
 
-    bool Application::Create(Resolution width, Resolution height) {
+    bool FApplication::Create(Resolution width, Resolution height) {
         Core::ParseCLArgs(arg_count, const_cast<const char **>(arg_values));
 
         p_Platform = CreatePlatform();
@@ -46,7 +46,7 @@ namespace Slab {
         return true;
     }
 
-    Int Application::Run() {
+    Int FApplication::Run() {
         const auto self = Dummy(*this);
 
         p_Platform->GetMainSystemWindow()->addEventListener(self);
@@ -55,11 +55,11 @@ namespace Slab {
         return 0;
     }
 
-    void Application::SetTitle(Str title) const {
+    void FApplication::SetTitle(Str title) const {
         p_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
     }
 
-    auto Application::GetName() const -> Str {
+    auto FApplication::GetName() const -> Str {
         return m_Name;
     }
 

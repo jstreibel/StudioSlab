@@ -14,23 +14,23 @@
 
 namespace Slab::Graphics {
 
-    Str HistoryViewer::getName() const {
+    Str HistoryViewer::GetName() const {
         return "History viewer";
     }
 
-    HistoryViewer::HistoryViewer(const Pointer<GUIWindow> &gui_window, const Pointer<R2toR::NumericFunction> &function)
+    HistoryViewer::HistoryViewer(const Pointer<FGUIWindow> &gui_window, const Pointer<R2toR::FNumericFunction> &function)
     : Viewer(gui_window, function)
     {
         history_window = New<Plot2DWindow>("Function");
-        history_window->getAxisArtist().setVerticalAxisLabel("");
+        history_window->GetAxisArtist().setVerticalAxisLabel("");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
-        addWindow(history_window);
+        AddWindow(history_window);
 
         xft_history_window = New<Plot2DWindow>("Space DFT");
-        xft_history_window->getAxisArtist().setVerticalAxisLabel("A");
-        xft_history_window->getAxisArtist().setHorizontalAxisLabel("k");
+        xft_history_window->GetAxisArtist().setVerticalAxisLabel("A");
+        xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
-        addWindow(xft_history_window, true);
+        AddWindow(xft_history_window, true);
 
         auto slice_window = New<Plot2DWindow>("Space instant");
         section_artist = Plotter::AddR2Section(slice_window, nullptr, "ϕ");
@@ -46,8 +46,8 @@ namespace Slab::Graphics {
         xft_history_window->tieRegion_yMaxMin(*history_window);
     }
 
-    void HistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
         auto funky = getFunction();
         function_artist->setFunction(funky);
@@ -58,7 +58,7 @@ namespace Slab::Graphics {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone();
+            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
             style->filled = false;
             section_artist->addSection(function_section, style, "");
 
@@ -77,8 +77,8 @@ namespace Slab::Graphics {
         if(this->isVisible()) computeTransform();
     }
 
-    void HistoryViewer::notifyBecameVisible() {
-        Viewer::notifyBecameVisible();
+    void HistoryViewer::NotifyBecameVisible() {
+        Viewer::NotifyBecameVisible();
 
         if(xFourierTransform == nullptr) computeTransform();
     }
@@ -89,7 +89,7 @@ namespace Slab::Graphics {
 
         xFourierTransform = Math::R2toR::R2toRDFT::SpaceDFTReal(*func);
 
-        xft_amplitudes = Math::Convert(xFourierTransform, Math::R2toC_to_R2toR_Mode::Magnitude);
+        xft_amplitudes = Math::Convert(xFourierTransform, Math::ER2toC_to_R2toR_Mode::Magnitude);
 
         xft_amplitudes_artist->setFunction(xft_amplitudes);
         dft_section_artist->setFunction(xft_amplitudes);
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
             dft_section = New<RtoR2::StraightLine>(Real2D{0, domain.yMin},
                                                    Real2D{domain.xMax, domain.yMin},
                                                    0, domain.xMax);
-            auto style = PlotThemeManager::GetCurrent()->funcPlotStyles[1];
+            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
             dft_section_artist->addSection(dft_section, style.clone(), "dft section");
         } else {
             dft_section->getx0().x = domain.xMin;
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         dft_section_artist->setSamples(func->getN()*oversampling);
     }
 
-    void HistoryViewer::draw() {
+    void HistoryViewer::Draw() {
         if(getFunction()== nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -134,7 +134,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
 } // Slab::Graphics

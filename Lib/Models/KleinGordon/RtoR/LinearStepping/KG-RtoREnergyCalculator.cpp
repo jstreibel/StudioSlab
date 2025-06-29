@@ -98,7 +98,7 @@ namespace Slab::Models::KGRtoR {
         return *_oEnergyDensity;
     }
 
-    auto KGEnergy::getTotalEnergy() const -> DevFloat { return U; }
+    auto KGEnergy::GetTotalEnergy() const -> DevFloat { return U; }
 
 
     auto KGEnergy::integrateEnergy(DevFloat xmin, DevFloat xmax) -> DevFloat {
@@ -118,11 +118,11 @@ namespace Slab::Models::KGRtoR {
         return 0;
     }
 
-    DevFloat KGEnergy::getTotalKineticEnergy() const { return K; }
+    DevFloat KGEnergy::GetTotalKineticEnergy() const { return K; }
 
-    DevFloat KGEnergy::getTotalGradientEnergy() const { return W; }
+    DevFloat KGEnergy::GetTotalGradientEnergy() const { return W; }
 
-    DevFloat KGEnergy::getTotalPotentialEnergy() const { return V; }
+    DevFloat KGEnergy::GetTotalPotentialEnergy() const { return V; }
 
 
 }

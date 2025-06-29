@@ -35,7 +35,7 @@ namespace Slab::Graphics {
         std::shared_ptr <Graphics::Writer> labelsWriter;
         std::shared_ptr <Graphics::Writer> ticksWriter;
 
-        Vector <PlotStyle> funcPlotStyles;
+        Vector <PlotStyle> FuncPlotStyles;
 
         Resolution vTickHeightinPixels;
         Resolution vAxisPaddingInPixels;

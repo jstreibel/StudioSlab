@@ -13,7 +13,8 @@
 namespace Studios::Fields {
 
     class DataView : public Slab::Graphics::WindowPanel {
-        using DataFunction = Slab::Math::R2toR::NumericFunction_constptr;
+        using DataFunction = Slab::Math::Pointer<const R2toR::FNumericFunction>
+;
         using DataArtist = Slab::Graphics::R2toRFunctionArtist_ptr;
 
         DataFunction function;

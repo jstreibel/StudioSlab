@@ -13,19 +13,19 @@
 using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
-: Slab::Graphics::SlabWindow({"Tree builder test"})
+: Slab::Graphics::FSlabWindow({"Tree builder test"})
 , osc(0.0, -0.5, 0.75, 0.15, false, false)  {
     Graphics::WindowTreeBuilder treeBuilder(Graphics::WindowStyle::default_window_rect);
 
-    Graphics::SlabWindow *window = nullptr;
+    Graphics::FSlabWindow *window = nullptr;
 
     window = new GLFreeTypeTests;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Above);
 
-    window = new Graphics::SlabWindow;
+    window = new Graphics::FSlabWindow;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Right);
 
-    window = new Graphics::SlabWindow;
+    window = new Graphics::FSlabWindow;
     treeBuilder.addWindow(window, Graphics::WindowTreeBuilder::Right);
 
     // window = new Tests::FourierTestWindow();
@@ -35,17 +35,17 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
 }
 
 
-void WindowTreeBuilderTest::draw() {
+void WindowTreeBuilderTest::Draw() {
     static Timer timer;
 
     osc.set_t(timer.getElTime_sec());
 
-    main->draw();
+    main->Draw();
 }
 
-void WindowTreeBuilderTest::notifyReshape(int width, int height) {
-    Graphics::SlabWindow::notifyReshape(width, height);
-    main->notifyReshape(width,  height);
+void WindowTreeBuilderTest::NotifyReshape(int width, int height) {
+    Graphics::FSlabWindow::NotifyReshape(width, height);
+    main->NotifyReshape(width,  height);
 
     main->arrange();
 }

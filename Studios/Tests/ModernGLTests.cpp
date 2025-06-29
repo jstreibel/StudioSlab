@@ -25,7 +25,7 @@ namespace Tests {
     , realTexture(texDim, texDim)
     , writer(Core::Resources::GetIndexedFontFileName(4), 80)
     {
-        addWindow(std::make_shared<SlabWindow>());
+        addWindow(std::make_shared<FSlabWindow>());
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
@@ -60,8 +60,8 @@ namespace Tests {
                                                0,0,1});
     }
 
-    void ModernGLTests::draw() {
-        WindowRow::draw();
+    void ModernGLTests::Draw() {
+        WindowRow::Draw();
 
         {
             // texture.bind();

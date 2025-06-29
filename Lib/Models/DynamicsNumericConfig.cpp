@@ -18,7 +18,7 @@ namespace Slab::Models {
 
     auto DynamicsNumericConfig::getN() const -> UInt { return **N; }
 
-    auto DynamicsNumericConfig::getL() const -> floatt { return **L; }
+    auto DynamicsNumericConfig::GetL() const -> floatt { return **L; }
 
     auto DynamicsNumericConfig::gett() const -> floatt { return **t; }
 

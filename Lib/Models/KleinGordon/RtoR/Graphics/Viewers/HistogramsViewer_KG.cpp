@@ -14,7 +14,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::GUIWindow> &gui_window)
+    HistogramsViewer_KG::HistogramsViewer_KG(const Pointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window) {
 
         auto energy_window    = New<PlotWindow>("Energy histogram");
@@ -24,13 +24,13 @@ namespace Slab::Models::KGRtoR {
 
         histogram_windows = {energy_window, kinetic_window, gradient_window, potential_window};
 
-        addWindow(gradient_window);
-        addWindow(energy_window);
+        AddWindow(gradient_window);
+        AddWindow(energy_window);
 
-        addWindow(potential_window, true);
-        addWindow(kinetic_window);
+        AddWindow(potential_window, true);
+        AddWindow(kinetic_window);
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles.begin();
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
         Graphics::Plotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),
@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
                                        *style++, "V")->setAffectGraphRanges(true);
     }
 
-    void HistogramsViewer_KG::draw() {
+    void HistogramsViewer_KG::Draw() {
         gui_window->AddExternalDraw([this](){
             fix func = getFunction();
             if(func == nullptr) return;
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
     void HistogramsViewer_KG::updateHistograms() {
@@ -101,17 +101,17 @@ namespace Slab::Models::KGRtoR {
 
     }
 
-    void HistogramsViewer_KG::setFunction(Slab::Pointer<Slab::Math::R2toR::NumericFunction> function) {
+    void HistogramsViewer_KG::SetFunction(Slab::Pointer<Slab::Math::R2toR::FNumericFunction> function) {
         auto domain = function->getDomain();
 
         t_min = domain.yMin;
         t_delta = domain.yMax-t_min;
 
-        Viewer::setFunction(function);
+        Viewer::SetFunction(function);
     }
 
-    void HistogramsViewer_KG::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
+    void HistogramsViewer_KG::SetFunctionDerivative(FuncPointer pointer) {
+        KGViewer::SetFunctionDerivative(pointer);
 
         if(isVisible() && areFunctionsConsistent()) updateHistograms();
     }
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
         return data;
     }
 
-    Str HistogramsViewer_KG::getName() const {
+    Str HistogramsViewer_KG::GetName() const {
         return "[KG] Histograms viewer";
     }
 

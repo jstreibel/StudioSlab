@@ -9,9 +9,9 @@
 
 namespace Slab {
     template <typename T>
-    class CyclicIterator {
+    class TCyclicIterator {
     public:
-        CyclicIterator(const std::vector<T>& elements) : elements_(elements), current_index_(0) {}
+        explicit TCyclicIterator(const std::vector<T>& elements) : elements_(elements), current_index_(0) {}
 
         T next() {
             if (elements_.empty()) {

@@ -80,7 +80,7 @@ namespace Slab::Math::RtoR {
         // points.clear();
         pointSet->clear();
 
-        if (beautiful) pointSet->addPoint({vMin, 0});
+        if (beautiful) pointSet->AddPoint({vMin, 0});
 
         for (auto i = 0; i < nBins; ++i) {
             auto nHere = bins[i];
@@ -88,10 +88,10 @@ namespace Slab::Math::RtoR {
             auto x = vMin + i * w;
             auto y = (DevFloat) nHere / normFactor;
 
-            pointSet->addPoint({x, y});
+            pointSet->AddPoint({x, y});
             if (beautiful) {
-                pointSet->addPoint({x + w, y});
-                pointSet->addPoint({x + w, 0});
+                pointSet->AddPoint({x + w, y});
+                pointSet->AddPoint({x + w, 0});
             }
         }
 

@@ -18,11 +18,11 @@ namespace Tests {
     , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
     {
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0];
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
     }
 
-    void LaTeXTests::draw() {
+    void LaTeXTests::Draw() {
         constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
 
@@ -42,8 +42,8 @@ namespace Tests {
         latexWriter.draw();
     }
 
-    void LaTeXTests::notifyReshape(int w, int h) {
+    void LaTeXTests::NotifyReshape(int w, int h) {
         writer.reshape(w, h);
-        WindowRow::notifyReshape(w, h);
+        WindowRow::NotifyReshape(w, h);
     }
 } // Tests

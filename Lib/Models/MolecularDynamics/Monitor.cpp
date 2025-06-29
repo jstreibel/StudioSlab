@@ -26,12 +26,12 @@ namespace Slab::Models::MolecularDynamics {
 
     Monitor::Monitor(const Pointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
-    , SlabWindow()
+    , FSlabWindow()
     , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->getRawPlatformWindowPointer())
     , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()
-    , N(config->getN()), L(float(config->getL()))
+    , N(config->getN()), L(float(config->GetL()))
     {
         sf::Color skyBlue(135, 206, 235, 255);
         sf::Color someRed(235, 206, 135, 255);
@@ -105,10 +105,10 @@ namespace Slab::Models::MolecularDynamics {
 
     void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
 
-    void Monitor::draw() {
+    void Monitor::Draw() {
         // Window::draw();
 
-        auto state = lastPacket.GetNakedStateData<MoleculesState>();
+        auto state = LastPacket.GetNakedStateData<MoleculesState>();
         auto v_q = state->first();
         auto v_p = state->second();
 

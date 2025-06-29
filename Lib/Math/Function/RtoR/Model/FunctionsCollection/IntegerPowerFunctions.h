@@ -17,7 +17,7 @@ namespace Slab::Math::RtoR {
 
         Function_ptr Clone() const override { return New <HarmonicDerivative> (m_sqr); }
 
-        Str symbol() const override {
+        Str Symbol() const override {
             return "m²ϕ   m=" + ToStr(sqrt(m_sqr), 2);
         }
 
@@ -40,7 +40,7 @@ namespace Slab::Math::RtoR {
             return New <HarmonicPotential> ();
         }
 
-        Str symbol() const override {
+        Str Symbol() const override {
             return "½m²ϕ²   m=" + ToStr(sqrt(m_sqr), 2);
         }
     };

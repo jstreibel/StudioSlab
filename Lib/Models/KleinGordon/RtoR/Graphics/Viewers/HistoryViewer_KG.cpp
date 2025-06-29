@@ -14,14 +14,14 @@
 
 namespace Slab::Models::KGRtoR {
 
-    HistoryViewer::HistoryViewer(const Pointer<Graphics::GUIWindow> &gui_window)
+    HistoryViewer::HistoryViewer(const Pointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
         history_window = New<Graphics::Plot2DWindow>("Function");
         function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
         d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
-        addWindow(history_window);
+        AddWindow(history_window);
 
         slice_window = New<Graphics::Plot2DWindow>("Slices");
         function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         history_window->tieRegion_xMaxMin(*slice_window);
     }
 
-    void HistoryViewer::draw() {
+    void HistoryViewer::Draw() {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -55,11 +55,11 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::draw();
+        WindowPanel::Draw();
     }
 
-    void HistoryViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
-        Viewer::setFunction(function);
+    void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
+        Viewer::SetFunction(function);
 
         dt = function->getDomain().getLy() / (DevFloat)function->getM();
 
@@ -72,7 +72,7 @@ namespace Slab::Models::KGRtoR {
             function_section = New<RtoR2::StraightLine>(Real2D{domain.xMin, domain.yMin},
                                                         Real2D{domain.xMax, domain.yMin},
                                                         domain.xMin, domain.xMax);
-            auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[0].clone();
+            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0].clone();
             style->filled = false;
             function_section_artist->addSection(function_section, style, "ϕ");
 
@@ -87,11 +87,11 @@ namespace Slab::Models::KGRtoR {
         function_section_artist->setSamples(funky->getN() * oversampling);
     }
 
-    void HistoryViewer::setFunctionDerivative(FuncPointer pointer) {
-        KGViewer::setFunctionDerivative(pointer);
+    void HistoryViewer::SetFunctionDerivative(FuncPointer pointer) {
+        KGViewer::SetFunctionDerivative(pointer);
 
         auto funky = getFunctionDerivative();
-        d2dt2_function = DynamicPointerCast<R2toR::NumericFunction>(funky->diff(1));
+        d2dt2_function = DynamicPointerCast<R2toR::FNumericFunction>(funky->diff(1));
 
         ddt_function_artist->setFunction(funky);
         ddt_function_section_artist->setFunction(funky);
@@ -101,14 +101,14 @@ namespace Slab::Models::KGRtoR {
         d2dt2_function_section_artist->setFunction(d2dt2_function);
         d2dt2_function_section_artist->clearSections();
 
-        auto style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[1].clone();
+        auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1].clone();
         ddt_function_section_artist->addSection(function_section, style, "ϕₜ");
 
-        style = Graphics::PlotThemeManager::GetCurrent()->funcPlotStyles[2].clone();
+        style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2].clone();
         d2dt2_function_section_artist->addSection(function_section, style, "ϕₜₜ");
     }
 
-    Str HistoryViewer::getName() const {
+    Str HistoryViewer::GetName() const {
         return "[KG] History viewer";
     }
 

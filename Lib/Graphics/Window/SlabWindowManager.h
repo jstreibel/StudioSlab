@@ -5,16 +5,16 @@
 #ifndef STUDIOSLAB_SLABWINDOWMANAGER_H
 #define STUDIOSLAB_SLABWINDOWMANAGER_H
 
-#include "Graphics/Backend/Events/SystemWindowEventListener.h"
 #include "SlabWindow.h"
 #include "Utils/List.h"
 #include "Decorator.h"
+#include "WindowManager.h"
 
 namespace Slab::Graphics {
 
-    class SlabWindowManager final : public SystemWindowEventListener {
+    class SlabWindowManager final : public FWindowManager {
         struct WindowMetaInformation {
-            Pointer<SlabWindow> window= nullptr;
+            Pointer<FSlabWindow> window= nullptr;
             bool is_full_screen = false;
             bool is_hidden = false;
 
@@ -34,19 +34,19 @@ namespace Slab::Graphics {
 
         Pointer<WindowMetaInformation> focused;
         using Anchor = Point2D;
-        struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<SlabWindow> window;} grabbed;
+        struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<FSlabWindow> window;} Grabbed;
 
     public:
-        explicit SlabWindowManager(SystemWindow* parent_syswin=nullptr);
+        explicit SlabWindowManager(SystemWindow* Parent=nullptr);
         ~SlabWindowManager() override = default;
 
         void setFocus(const Pointer<WindowMetaInformation>&);
 
-        void addSlabWindow(const Pointer<SlabWindow>&, bool hidden=false);
+        void AddSlabWindow(const Pointer<FSlabWindow>&, bool hidden) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
@@ -57,6 +57,7 @@ namespace Slab::Graphics {
         bool notifySystemWindowReshape(int w, int h) override;
 
         bool notifyRender() override;
+
     };
 
 } // Slab::Graphics

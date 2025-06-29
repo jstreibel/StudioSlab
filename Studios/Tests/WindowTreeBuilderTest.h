@@ -10,15 +10,15 @@
 #include "Graphics/Window/WindowTree/NodeWindow.h"
 #include "Math/Function/RtoR/Model/FunctionsCollection/Oscillons/AnalyticOscillon.h"
 
-class WindowTreeBuilderTest : public Slab::Graphics::SlabWindow {
+class WindowTreeBuilderTest : public Slab::Graphics::FSlabWindow {
     Slab::Graphics::NodeWindow *main;
 
     Slab::Math::RtoR::AnalyticOscillon osc;
 public:
     WindowTreeBuilderTest();
-    void draw() override;
+    void Draw() override;
 
-    void notifyReshape(int width, int height) override;
+    void NotifyReshape(int width, int height) override;
 
 };
 

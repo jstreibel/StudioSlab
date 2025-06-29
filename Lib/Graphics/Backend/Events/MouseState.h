@@ -19,7 +19,7 @@ namespace Slab::Graphics {
         Mouse_VResizeCursor,
     };
 
-    class MouseState : public SystemWindowEventListener {
+    class MouseState : public FSystemWindowEventListener {
     public:
         explicit MouseState(ParentSystemWindow);
 
@@ -41,7 +41,7 @@ namespace Slab::Graphics {
         Timer since_center_pressed;
         Timer since_right_pressed;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 

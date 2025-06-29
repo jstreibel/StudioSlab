@@ -16,7 +16,7 @@ namespace Slab::Math::R2toR {
 
     typedef floatt Real;
 
-    class NumericFunction_CPU : public NumericFunction {
+    class NumericFunction_CPU : public FNumericFunction {
     public:
         NumericFunction_CPU(UInt N, UInt M, Real xMin, Real yMin, Real hx, Real hy);
 
@@ -28,8 +28,8 @@ namespace Slab::Math::R2toR {
         Clone()
         const -> Function_ptr override;
 
-        NumericFunction &
-        Laplacian(NumericFunction &outFunc) const override;
+        FNumericFunction &
+        Laplacian(FNumericFunction &outFunc) const override;
 
         const Real &
         At(UInt n, UInt m) const override;

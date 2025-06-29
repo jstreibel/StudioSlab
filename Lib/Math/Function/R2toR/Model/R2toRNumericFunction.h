@@ -26,7 +26,7 @@ namespace Slab::Math::R2toR {
     typedef Base::FunctionT<DevFloat, DevFloat> FuncBase;
     typedef Base::NumericFunction<Real2D, DevFloat> DiscrBase;
 
-    class NumericFunction : public Base::NumericFunction<Real2D,DevFloat> {
+    class FNumericFunction : public Base::NumericFunction<Real2D,DevFloat> {
     protected:
         const UInt N, M;
         const DevFloat xMin, xMax,
@@ -37,7 +37,7 @@ namespace Slab::Math::R2toR {
         typedef Base::NumericFunction <Real2D, DevFloat> NumericFunctionBase;
         using NumericAlgebra<NumericFunctionBase>::operator=;
 
-        NumericFunction(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy, Device dev);
+        FNumericFunction(UInt N, UInt M, DevFloat xMin, DevFloat yMin, DevFloat hx, DevFloat hy, Device dev);
         // NumericFunction(const NumericConfig &, Device);
 
         auto operator()(Real2D x) const -> DevFloat override;
@@ -49,7 +49,7 @@ namespace Slab::Math::R2toR {
 
         auto domainContainsPoint(Real2D x) const -> bool override;
 
-        virtual NumericFunction &Laplacian(NumericFunction &outFunc) const = 0;
+        virtual FNumericFunction &Laplacian(FNumericFunction &outFunc) const = 0;
 
         virtual const DevFloat&
         At(UInt n, UInt m) const = 0;
@@ -66,7 +66,7 @@ namespace Slab::Math::R2toR {
         DevFloat min() const override;
     };
 
-    DefinePointers(NumericFunction)
+    DefinePointers(FNumericFunction)
 }
 
 

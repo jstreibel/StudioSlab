@@ -21,7 +21,7 @@ namespace Slab::Models::KGRtoR {
     using SectionArtist = Graphics::R2SectionArtist;
     using SectionLine = Math::RtoR2::StraightLine;
     using Section = Math::RtoR::Section1D;
-    using Function = Math::R2toR::NumericFunction;
+    using Function = Math::R2toR::FNumericFunction;
 
     class TwoPointCorrelationViewer_KG : public KGViewer {
         Pointer<FunctionArtist> twoPointArtist = New<FunctionArtist>();
@@ -42,15 +42,15 @@ namespace Slab::Models::KGRtoR {
         float Δt{1};
         void computeTwoPointCorrelation();
     public:
-        explicit TwoPointCorrelationViewer_KG(const Pointer<Graphics::GUIWindow> &guiWindow,
-                                     const Pointer<R2toR::NumericFunction> &func = nullptr,
-                                     const Pointer<R2toR::NumericFunction> &ddtFunc = nullptr);
+        explicit TwoPointCorrelationViewer_KG(const Pointer<Graphics::FGUIWindow> &guiWindow,
+                                     const Pointer<R2toR::FNumericFunction> &func = nullptr,
+                                     const Pointer<R2toR::FNumericFunction> &ddtFunc = nullptr);
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction> function) override;
+        void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Slab::Models::KGRtoR

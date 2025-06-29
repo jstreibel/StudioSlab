@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics {
 
-    MainViewer::MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction)
+    MainViewer::MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction)
     : Graphics::WindowRow()
     , base_function(std::move(baseFunction)) {
 
@@ -30,14 +30,14 @@ namespace Slab::Graphics {
 
     void MainViewer::addViewer(const Pointer<Viewer>& viewer) {
         viewers.emplace_back(viewer);
-        if(base_function!= nullptr) viewer->setFunction(base_function);
+        if(base_function!= nullptr) viewer->SetFunction(base_function);
 
         if(viewers.size()==1)
             setCurrentViewer(0);
 
     }
 
-    void MainViewer::draw() {
+    void MainViewer::Draw() {
         auto gui_context = parent_system_window->getGUIContext().lock();
 
         if(gui_context == nullptr) return;
@@ -48,7 +48,7 @@ namespace Slab::Graphics {
                         if (ImGui::BeginMenu("Viewers")) {
                             Index i = 0;
                             for (auto &viewer: viewers) {
-                                auto name = viewer->getName();
+                                auto name = viewer->GetName();
 
                                 fix is_current = getCurrentViewer() == viewer;
                                 if (ImGui::MenuItem(name.c_str(), nullptr, is_current))
@@ -80,14 +80,14 @@ namespace Slab::Graphics {
                 }
         );
 
-        WindowRow::draw();
+        WindowRow::Draw();
     }
 
-    bool MainViewer::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool MainViewer::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         if(state==Press && key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
             if(setCurrentViewer(key - KeyMap::Key_1)) return true;
 
-        return WindowRow::notifyKeyboard(key, state, modKeys);
+        return WindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     bool MainViewer::setCurrentViewer(Index i) {
@@ -105,19 +105,19 @@ namespace Slab::Graphics {
         addWindow(current_viewer, Right, -1);
 
         arrangeWindows();
-        current_viewer->notifyBecameVisible();
+        current_viewer->NotifyBecameVisible();
         if (old_viewer != nullptr) old_viewer->notifyBecameInvisible();
 
         return true;
     }
 
-    void MainViewer::setFunction(Pointer<Math::R2toR::NumericFunction> function) {
+    void MainViewer::setFunction(Pointer<Math::R2toR::FNumericFunction> function) {
         base_function = std::move(function);
 
-        for(auto &viewer : viewers) viewer->setFunction(base_function);
+        for(auto &viewer : viewers) viewer->SetFunction(base_function);
     }
 
-    auto MainViewer::getGUIWindow() -> Pointer<GUIWindow> {
+    auto MainViewer::getGUIWindow() -> Pointer<FGUIWindow> {
         return gui_window;
     }
 

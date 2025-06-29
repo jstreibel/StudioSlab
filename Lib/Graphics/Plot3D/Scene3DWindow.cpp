@@ -26,8 +26,8 @@ namespace Slab::Graphics {
         setClear(false);
     }
 
-    void Scene3DWindow::draw() {
-        SlabWindow::draw();
+    void Scene3DWindow::Draw() {
+        FSlabWindow::Draw();
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
@@ -60,9 +60,9 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        fix left = SlabWindow::isMouseLeftClicked();
-        fix center = SlabWindow::isMouseCenterClicked();
-        fix right = SlabWindow::isMouseRightClicked();
+        fix left = FSlabWindow::isMouseLeftClicked();
+        fix center = FSlabWindow::isMouseCenterClicked();
+        fix right = FSlabWindow::isMouseRightClicked();
 
 
         if(left && right) {
@@ -97,13 +97,13 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return SlabWindow::notifyMouseMotion(x, y, dx, dy);
+        return FSlabWindow::notifyMouseMotion(x, y, dx, dy);
     }
 
     bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
-        return SlabWindow::notifyMouseWheel(dx, dy);
+        return FSlabWindow::notifyMouseWheel(dx, dy);
     }
 
     auto Scene3DWindow::getCamera() const -> const Camera & {
@@ -149,13 +149,13 @@ namespace Slab::Graphics {
         }
     }
 
-    bool Scene3DWindow::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool Scene3DWindow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         if(key == KeyMap::Key_TAB && state == KeyState::Release && modKeys.Mod_Shift == Press) {
             showInterface = !showInterface;
             return true;
         }
 
-        return SlabWindow::notifyKeyboard(key, state, modKeys);
+        return FSlabWindow::NotifyKeyboard(key, state, modKeys);
     }
 
 

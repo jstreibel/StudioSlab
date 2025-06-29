@@ -23,7 +23,7 @@ namespace Slab::Core {
             AbortAllTasks();
     }
 
-    auto MTaskManager::AddTask(const FTask_ptr& Task) -> MTaskManager::Job {
+    auto MTaskManager::AddTask(const FTaskPointer& Task) -> MTaskManager::Job {
         auto funky = [Task]() {
             Task->start();
 

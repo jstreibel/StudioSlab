@@ -83,7 +83,7 @@ namespace Slab::Math::Base {
 
         bool isGPUFriendly() const { return (&getGPUFriendlyVersion()) != nullptr; }
 
-        virtual Str symbol() const { return "f(x)"; }
+        virtual Str Symbol() const { return "f(x)"; }
         virtual Str generalName() const { return Common::getClassName(this); }
 
         // RENDERING
@@ -124,7 +124,7 @@ namespace Slab::Math::Base {
             InputCategory xMin, xMax;
         };
 
-        virtual Math::PointSet_ptr
+        virtual Pointer<PointSet>
         renderToPointSet(RenderingOptions options = RenderingOptions()) {
             throw Str("Function '") + generalName() + "' method " + __PRETTY_FUNCTION__ + " not implemented.";
         };

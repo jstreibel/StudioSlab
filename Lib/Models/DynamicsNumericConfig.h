@@ -25,7 +25,7 @@ namespace Slab::Models {
         explicit DynamicsNumericConfig(bool do_register);
 
         auto getN() const -> UInt;
-        auto getL() const -> DevFloat;
+        auto GetL() const -> DevFloat;
 
         auto gett() const -> DevFloat;
         auto sett(DevFloat) -> void;

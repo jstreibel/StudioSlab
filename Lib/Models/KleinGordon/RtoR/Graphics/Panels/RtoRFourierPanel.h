@@ -17,17 +17,17 @@
 
 namespace Slab::Models::KGRtoR {
 
-    class RtoRFourierPanel : public RtoRPanel {
+    class RtoRFourierPanel : public FRtoRPanel {
         Pointer<Plot2DWindow> kSpaceGraph;
         Pointer<Plot2DWindow> ωSpaceGraph;
         Pointer<Plot2DWindow> xSpaceGraph;
         Pointer<Plot2DWindow> ωkSpaceGraph;
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> inv_kSpace;
+        Pointer<R2toR::FNumericFunction> inv_kSpace;
 
         Pointer<R2toRFunctionArtist> ωSpaceArtist = Slab::New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> ωSpace;
+        Pointer<R2toR::FNumericFunction> ωSpace;
 
 
         Pointer<R2toRFunctionArtist> twoPointCorrArtist = Slab::New<R2toRFunctionArtist>();
@@ -41,7 +41,7 @@ namespace Slab::Models::KGRtoR {
         Pointer<R2toRFunctionArtist> imagPartsArtist    = Slab::New<R2toRFunctionArtist>();
         Pointer<R2toC::NumericFunction> dft2DFunction;
 
-        static auto FilterSpace(Pointer<const R2toR::NumericFunction> func, DevFloat tMin, DevFloat tMax) -> Pointer<R2toR::NumericFunction>;
+        static auto FilterSpace(Pointer<const R2toR::FNumericFunction> func, DevFloat tMin, DevFloat tMax) -> Pointer<R2toR::FNumericFunction>;
 
         void computeAll(DevFloat t_0, DevFloat t_f);
         void computeFullDFT2D(DevFloat t_0, DevFloat t_f, bool discardRedundantModes);
@@ -53,14 +53,15 @@ namespace Slab::Models::KGRtoR {
         void computeTimeDFT(DevFloat tMin, DevFloat tMax);
 
     public:
-        RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, GUIWindow &guiWindow);
+        RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow);
 
-        void draw() override;
+        void Draw() override;
 
-        void setSimulationHistory(Pointer<const R2toR::NumericFunction> simulationHistory,
+        void SetSimulationHistory(Pointer<const R2toR::FNumericFunction> simulationHistory,
                                   const Pointer<R2toRFunctionArtist> &simHistoryGraph) override;
 
-        void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory, const DFTDataHistory &history,
+        void SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
+ sftHistory, const FDFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &functionArtist) override;
     };
 

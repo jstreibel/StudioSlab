@@ -16,12 +16,12 @@
 namespace Slab::Graphics {
 
     class MainViewer : public WindowRow {
-        Pointer<GUIWindow> gui_window = New<GUIWindow>();
+        Pointer<FGUIWindow> gui_window = New<FGUIWindow>();
 
         Vector<Pointer<Viewer>> viewers;
         Pointer<Viewer> current_viewer;
 
-        Pointer<Math::R2toR::NumericFunction> base_function;
+        Pointer<Math::R2toR::FNumericFunction> base_function;
 
     protected:
         virtual bool setCurrentViewer(Index i);
@@ -29,17 +29,17 @@ namespace Slab::Graphics {
         auto getCurrentViewer() -> Pointer<Viewer>;
 
     public:
-        explicit MainViewer(Pointer<Math::R2toR::NumericFunction> baseFunction=nullptr);
+        explicit MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
 
-        void draw() override;
+        void Draw() override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        void setFunction(Pointer<Math::R2toR::NumericFunction>);
+        void setFunction(Pointer<Math::R2toR::FNumericFunction>);
 
         auto getCurrentViewer() const -> Pointer<const Viewer>;
 
-        auto getGUIWindow() -> Pointer<GUIWindow>;
+        auto getGUIWindow() -> Pointer<FGUIWindow>;
 
         void addViewer(const Pointer<Viewer>&);
     };

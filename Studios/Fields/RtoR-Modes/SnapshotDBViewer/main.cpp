@@ -55,7 +55,7 @@ public:
         const auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
         const auto wm = Slab::New<Slab::Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
-        wm->addSlabWindow(viewer);
+        wm->AddSlabWindow(viewer, false);
         guiBackend->GetMainSystemWindow()->addEventListener(wm);
 
         guiBackend->Run();

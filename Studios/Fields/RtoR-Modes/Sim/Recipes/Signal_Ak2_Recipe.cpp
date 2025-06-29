@@ -38,7 +38,7 @@ namespace Modes {
 
         const auto config = DynamicPointerCast<KGNumericConfig>(getNumericConfig());
 
-        fix L = config->getL();
+        fix L = config->GetL();
         fix n = config->getn();
         fix a = config->getr();
 

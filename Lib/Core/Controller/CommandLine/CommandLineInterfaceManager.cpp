@@ -57,7 +57,7 @@ namespace Slab::Core {
     void FCommandLineInterfaceManager::feedInterfaces(const CLVariablesMap &vm) {
         Log::Critical() << "InterfaceManager started feeding interfaces." << Log::Flush;
 
-        auto comp = [](const FCommandLineInterface_ptr &a, const FCommandLineInterface_ptr &b) { return *a < *b; };
+        auto comp = [](const Pointer<FCommandLineInterface> &a, const Pointer<FCommandLineInterface> &b) { return *a < *b; };
         std::sort(interfaces.begin(), interfaces.end(), comp);
 
         auto &log = Log::Info();
@@ -117,8 +117,8 @@ namespace Slab::Core {
         return str.ends_with(separator) ? str.substr(0, str.length() - separator.length()) : str;
     }
 
-    auto FCommandLineInterfaceManager::getInterface(const char *target) -> FCommandLineInterface_constptr {
-        auto compFunc = [target](const FCommandLineInterface_constptr &anInterface) { return anInterface->operator==(target); };
+    auto FCommandLineInterfaceManager::getInterface(const char *target) -> Pointer<const FCommandLineInterface> {
+        auto compFunc = [target](const Pointer<const FCommandLineInterface> &anInterface) { return anInterface->operator==(target); };
 
         auto it = std::find_if(interfaces.begin(), interfaces.end(), compFunc);
 

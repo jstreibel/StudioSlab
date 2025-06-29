@@ -53,11 +53,11 @@ namespace Slab::Core {
         Core::RegisterCLInterface(Interface);
     }
 
-    auto FCommandLineInterfaceOwner::GetInterface() -> FCommandLineInterface_ptr {
+    auto FCommandLineInterfaceOwner::GetInterface() -> Pointer<FCommandLineInterface> {
         return Interface;
     }
 
-    auto FCommandLineInterfaceOwner::GetInterface() const -> FCommandLineInterface_ptr {
+    auto FCommandLineInterfaceOwner::GetInterface() const -> Pointer<FCommandLineInterface> {
         return Interface;
     }
 

@@ -42,8 +42,8 @@ namespace Slab::Math::RtoR {
 
             fix ω = Δk * n;
 
-            result.re->addPoint({ω, A_Re});
-            result.im->addPoint({ω, A_Im});
+            result.re->AddPoint({ω, A_Re});
+            result.im->AddPoint({ω, A_Im});
         }
 
 
@@ -84,8 +84,8 @@ namespace Slab::Math::RtoR {
 
             fix ω = Δk * n;
 
-            result.re->addPoint({ω, A_Re});
-            result.im->addPoint({ω, A_Im});
+            result.re->AddPoint({ω, A_Re});
+            result.im->AddPoint({ω, A_Im});
         }
 
         fftw_destroy_plan(p);

@@ -32,7 +32,7 @@ namespace Slab::Math {
         Base::EquationState_ptr _temp;
 
         Vector<Base::EquationState_ptr> swaps;
-        CyclicIterator<Base::EquationState_ptr> swapsIterator;
+        TCyclicIterator<Base::EquationState_ptr> swapsIterator;
 
         CountType steps = 0;
 

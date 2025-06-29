@@ -17,10 +17,10 @@ namespace Slab::Models::KGRtoR {
     using namespace Slab::Math;
 
     class SimHistory : public Socket {
-        R2toR::NumericFunction_ptr data;
+        R2toR::FNumericFunction_ptr data;
         IntVector timesteps;
 
-        virtual auto transfer(const OutputPacket &packet, ValarrayWrapper <DevFloat> &dataOut) -> void;
+        virtual auto Transfer(const OutputPacket &packet, ValarrayWrapper <DevFloat> &dataOut) -> void;
 
     protected:
         const CountType max_steps;
@@ -37,7 +37,7 @@ namespace Slab::Models::KGRtoR {
                    DevFloat L,
                    const Str &name = "SimulationHistory");
 
-        auto getData() const -> const R2toR::NumericFunction &;
+        auto getData() const -> const R2toR::FNumericFunction &;
 
     };
 

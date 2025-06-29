@@ -16,7 +16,7 @@
 
 namespace Slab::Blueprints {
 
-    class BlueprintRenderer : public Graphics::SystemWindowEventListener {
+    class BlueprintRenderer : public Graphics::FSystemWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
         Pointer<Graphics::SlabImGuiContext> m_Context;

@@ -78,7 +78,7 @@ namespace Slab::Math::R2toR {
         return FFTData{out};
     }
 
-    auto R2toRDFT::DFTReal(const NumericFunction &in, Transform transform,
+    auto R2toRDFT::DFTReal(const FNumericFunction &in, Transform transform,
                            DataPolicy inputPolicy, DataPolicy outputPolicy) -> FFTData {
         fix M = (int)in.getM();
         fix N = (int)in.getN();
@@ -139,7 +139,7 @@ namespace Slab::Math::R2toR {
         }
     }
 
-    auto R2toRDFT::DFTReal_symmetric(const NumericFunction &toTransform) -> FFTData {
+    auto R2toRDFT::DFTReal_symmetric(const FNumericFunction &toTransform) -> FFTData {
         if(toTransform.getN()%2) throw Exception("can't FT real data with odd number of sites in space dimension");
 
         NOT_IMPLEMENTED
@@ -180,7 +180,7 @@ namespace Slab::Math::R2toR {
     }
 
     auto
-    R2toRDFT::SpaceDFTReal(const NumericFunction &in) -> R2toRDFT::FFTData {
+    R2toRDFT::SpaceDFTReal(const FNumericFunction &in) -> R2toRDFT::FFTData {
         fix N = in.getN();
         fix M = in.getM();
 

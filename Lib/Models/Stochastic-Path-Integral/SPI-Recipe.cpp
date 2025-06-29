@@ -35,7 +35,7 @@ namespace Slab::Models::StochasticPathIntegrals {
 
         auto monitor = New<KGR2toR::OutputOpenGL>(SPI_NumericConfig->getn());
         auto manager = Slab::New<Graphics::SlabWindowManager>();
-        manager->addSlabWindow(monitor);
+        manager->AddSlabWindow(monitor, false);
 
         Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(manager);
         sockets.emplace_back(monitor);

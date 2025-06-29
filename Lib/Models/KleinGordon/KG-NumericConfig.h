@@ -39,7 +39,7 @@ namespace Slab::Models {
 
         auto getn() const -> UInt override;
 
-        auto getdt() const -> DevFloat;
+        auto Getdt() const -> DevFloat;
 
         auto getr() const -> DevFloat;
 

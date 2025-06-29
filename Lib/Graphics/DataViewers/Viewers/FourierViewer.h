@@ -19,7 +19,7 @@
 namespace Slab::Graphics{
 
     class FourierViewer : public Viewer {
-        using Function = Pointer<Math::R2toR::NumericFunction>;
+        using Function = Pointer<Math::R2toR::FNumericFunction>;
 
         R2toRFunctionArtist_ptr function_artist;
 
@@ -36,10 +36,10 @@ namespace Slab::Graphics{
         Pointer<R2toRFunctionArtist> kSpace_Ak2                = New<R2toRFunctionArtist>();
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> inv_kSpace;
+        Pointer<R2toR::FNumericFunction> inv_kSpace;
 
         Pointer<R2toRFunctionArtist> ωSpaceArtist = New<R2toRFunctionArtist>();
-        Pointer<R2toR::NumericFunction> ωSpace;
+        Pointer<R2toR::FNumericFunction> ωSpace;
 
 
         Pointer<R2toRFunctionArtist> twoPointCorrArtist = New<R2toRFunctionArtist>();
@@ -78,16 +78,16 @@ namespace Slab::Graphics{
 
     public:
         static auto
-        FilterSpace(const Pointer<const R2toR::NumericFunction>& func, DevFloat tMin, DevFloat tMax)
-        -> Pointer<R2toR::NumericFunction>;
+        FilterSpace(const Pointer<const R2toR::FNumericFunction>& func, DevFloat tMin, DevFloat tMax)
+        -> Pointer<R2toR::FNumericFunction>;
 
-        Str getName() const override;
+        Str GetName() const override;
 
-        explicit FourierViewer(Pointer<GUIWindow>);
+        explicit FourierViewer(Pointer<FGUIWindow>);
 
-        void setFunction(Function func) override;
+        void SetFunction(Function func) override;
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Studios::Fields

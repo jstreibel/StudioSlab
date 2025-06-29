@@ -10,9 +10,9 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(Config config) : SlabWindow(config) {    }
+    WindowPanel::WindowPanel(Config config) : FSlabWindow(config) {    }
 
-    void WindowPanel::addWindow(const Pointer<SlabWindow>& window, bool newColumn, float newColumnWidth) {
+    void WindowPanel::AddWindow(const Pointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {
             columns.emplace_back();
             widths.emplace_back(newColumnWidth);
@@ -27,7 +27,7 @@ namespace Slab::Graphics {
         column->addWindow(window);
     }
 
-    bool WindowPanel::removeWindow(const Pointer<SlabWindow> &windowToRemove) {
+    bool WindowPanel::removeWindow(const Pointer<FSlabWindow> &windowToRemove) {
         int i=0;
         for(auto &column : columns){
             if(column.removeWindow(windowToRemove)) {
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowPanel::addWindowToColumn(const Pointer<SlabWindow> &window, int columnId) {
+    bool WindowPanel::addWindowToColumn(const Pointer<FSlabWindow> &window, int columnId) {
         if (columns.size() - 1 < columnId) return false;
 
         auto *column = &columns[columnId];
@@ -91,25 +91,25 @@ namespace Slab::Graphics {
         auto y = this->gety();
         auto h = this->GetHeight();
         for (auto &column: columns) {
-            column.setx(computedPositions[i]);
-            column.sety(y);
+            column.Set_x(computedPositions[i]);
+            column.Set_y(y);
             auto w = computedWidths[i];
 
-            column.notifyReshape(w, h);
+            column.NotifyReshape(w, h);
 
             ++i;
         }
     }
 
-    void WindowPanel::setColumnRelativeWidth(int column, float relWidth) {
+    void WindowPanel::SetColumnRelativeWidth(int column, float relWidth) {
         widths[column] = relWidth;
 
         assertConsistency();
     }
 
-    void WindowPanel::draw() {
+    void WindowPanel::Draw() {
         for (auto &column: columns)
-            column.draw();
+            column.Draw();
     }
 
     float WindowPanel::computeReservedWidth() const {
@@ -155,30 +155,30 @@ namespace Slab::Graphics {
         return responded;
     }
 
-    void WindowPanel::notifyReshape(int newWinW, int newWinH) {
-        SlabWindow::notifyReshape(newWinW, newWinH);
+    void WindowPanel::NotifyReshape(int newWinW, int newWinH) {
+        FSlabWindow::NotifyReshape(newWinW, newWinH);
 
         arrangeWindows();
     }
 
     bool
-    WindowPanel::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    WindowPanel::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         // return GUIEventListener::notifyKeyboard(key, state, modKeys);
 
         auto responded = false;
         for (auto &col: columns)
-            if (col.isMouseIn()) responded = col.notifyKeyboard(key, state, modKeys);
+            if (col.isMouseIn()) responded = col.NotifyKeyboard(key, state, modKeys);
 
         return responded;
     }
 
-    bool WindowPanel::notifyMouseButton(MouseButton button, KeyState state,
+    bool WindowPanel::NotifyMouseButton(MouseButton button, KeyState state,
                                         ModKeys keys) {
         bool alwaysPropagate = false; // state==Core::Release;
 
         auto responded = false;
         for (auto &col: columns)
-            if(col.isMouseIn() || alwaysPropagate) responded = col.notifyMouseButton(button, state, keys);
+            if(col.isMouseIn() || alwaysPropagate) responded = col.NotifyMouseButton(button, state, keys);
 
         return responded;
     }
@@ -191,14 +191,14 @@ namespace Slab::Graphics {
         return responded;
     }
 
-    void WindowPanel::setx(int x) {
-        SlabWindow::setx(x);
+    void WindowPanel::Set_x(int x) {
+        FSlabWindow::Set_x(x);
 
         arrangeWindows();
     }
 
-    void WindowPanel::sety(int y) {
-        SlabWindow::sety(y);
+    void WindowPanel::Set_y(int y) {
+        FSlabWindow::Set_y(y);
 
         arrangeWindows();
     }

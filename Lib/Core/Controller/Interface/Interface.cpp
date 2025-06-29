@@ -16,30 +16,28 @@ namespace Slab::Core {
 
     FInterface::~FInterface() = default;
 
-    auto FInterface::GetParameters() const -> Vector<FCommandLineParameter_constptr> {
-        Vector<FCommandLineParameter_constptr> constParameters;
+    auto FInterface::GetParameters() const -> Vector<Pointer<const FParameter>> {
+        Vector<Pointer<const FParameter>> ConstParameters;
 
-        std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(constParameters));
+        std::copy(Parameters.begin(), Parameters.end(), std::back_inserter(ConstParameters));
 
-        return constParameters;
+        return ConstParameters;
     }
 
-    void FInterface::AddParameter(FCommandLineParameter_ptr Parameter) {
+    void FInterface::AddParameter(const Pointer<FParameter>& Parameter) {
         auto insertionSuccessful = Parameters.insert(Parameter).second;
 
         if (!insertionSuccessful) {
             throw Exception("Error while inserting parameter in interface.");
         }
-
-        auto quotename = Str("\"") + Parameter->getFullCommandLineName() + "\"";
     }
-    void FInterface::AddParameters(std::initializer_list<FCommandLineParameter_ptr> ParametersList) {
+    void FInterface::AddParameters(std::initializer_list<Pointer<FParameter>> ParametersList) {
         for (const auto& Param: ParametersList)
             AddParameter(Param);
     }
 
-    auto FInterface::GetParameter(const Str& Key) const -> FCommandLineParameter_ptr {
-        auto compareFunc = [Key](const FCommandLineParameter_ptr& Parameter) {
+    auto FInterface::GetParameter(const Str& Key) const -> Pointer<FParameter> {
+        auto compareFunc = [Key](const Pointer<FParameter>& Parameter) {
             return *Parameter == Key;
         };
 

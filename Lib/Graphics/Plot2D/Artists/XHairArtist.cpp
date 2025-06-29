@@ -29,10 +29,10 @@ namespace Slab::Graphics {
         currStyle->ticksWriter->write(label, {(DevFloat)mouseLocal.x+20, h - (DevFloat)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
-        XHair.addPoint({region_rect.xMin, XHairLocation.y});
-        XHair.addPoint({region_rect.xMax, XHairLocation.y});
-        XHair.addPoint({XHairLocation.x, region_rect.yMin});
-        XHair.addPoint({XHairLocation.x, region_rect.yMax});
+        XHair.AddPoint({region_rect.xMin, XHairLocation.y});
+        XHair.AddPoint({region_rect.xMax, XHairLocation.y});
+        XHair.AddPoint({XHairLocation.x, region_rect.yMin});
+        XHair.AddPoint({XHairLocation.x, region_rect.yMax});
 
         OpenGL::Legacy::SetupOrtho(region_rect);
 

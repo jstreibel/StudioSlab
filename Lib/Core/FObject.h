@@ -2,17 +2,16 @@
 // Created by joao on 6/28/25.
 //
 
-#ifndef FOBJECT_H
-#define FOBJECT_H
+#ifndef OBJECT_H
+#define OBJECT_H
+
+#include "Controller/Interface/Interface.h"
 #include "Utils/String.h"
 
 namespace Slab::Core {
 
-    class FObject {
-    protected:
-        Str Name;
-    };
+    using FObject = FInterface;
 
 } // Slab::Core
 
-#endif //FOBJECT_H
+#endif // OBJECT_H

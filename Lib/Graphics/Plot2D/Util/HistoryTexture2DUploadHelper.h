@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     using namespace Math;
 
     class HistoryTexture2DUploadHelper {
-        typedef Slab::Pointer<const R2toR::NumericFunction> NumericFunction_Ptr;
+        typedef Slab::Pointer<const R2toR::FNumericFunction> NumericFunction_Ptr;
 
         Pointer<FieldTextureKontraption> textureKontraption;
         NumericFunction_Ptr function;

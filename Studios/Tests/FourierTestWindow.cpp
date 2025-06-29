@@ -63,12 +63,12 @@ namespace Tests {
     FourierTestWindow::FourierTestWindow()
     : Graphics::WindowRow({"Fourier tests"})
     , theme(Graphics::PlotThemeManager::GetCurrent())
-    , realFTArtist(nullptr, theme->funcPlotStyles[0])
-    , imagFTArtist(nullptr, theme->funcPlotStyles[1])
-    , loc1Artist(nullptr, theme->funcPlotStyles[3])
-    , loc2Artist(nullptr, theme->funcPlotStyles[3])
-    , funcArtist(nullptr, theme->funcPlotStyles[0], 2000)
-    , rebuiltFuncArtist(nullptr, theme->funcPlotStyles[1], 2000)
+    , realFTArtist(nullptr, theme->FuncPlotStyles[0])
+    , imagFTArtist(nullptr, theme->FuncPlotStyles[1])
+    , loc1Artist(nullptr, theme->FuncPlotStyles[3])
+    , loc2Artist(nullptr, theme->FuncPlotStyles[3])
+    , funcArtist(nullptr, theme->FuncPlotStyles[0], 2000)
+    , rebuiltFuncArtist(nullptr, theme->FuncPlotStyles[1], 2000)
     , gui()
     , mDFTGraph("DFT")
     , mFuncGraph("func graph")
@@ -89,7 +89,7 @@ namespace Tests {
         mDFTGraph.addArtist(Dummy(realFTArtist));
         mDFTGraph.addArtist(Dummy(imagFTArtist));
 
-        Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->funcPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
+        Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->FuncPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
 
         addWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
 
@@ -103,7 +103,7 @@ namespace Tests {
         // addResponder(gui_ptr);
     }
 
-    void FourierTestWindow::draw() {
+    void FourierTestWindow::Draw() {
         gui.AddExternalDraw([this]() {
 
             if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
@@ -122,7 +122,7 @@ namespace Tests {
         gui.addVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
         gui.addVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
-        WindowRow::draw();
+        WindowRow::Draw();
     }
 
     void FourierTestWindow::updateGraphs() {
@@ -154,7 +154,7 @@ namespace Tests {
                 }
             }
 
-            auto style = theme->funcPlotStyles[1];
+            auto style = theme->FuncPlotStyles[1];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.setPrimitive(Slab::Graphics::VerticalLines);
@@ -165,7 +165,7 @@ namespace Tests {
             realFTArtist.setPointSet(modes.re);
             realFTArtist.setLabel(Str("ℑ(ℱ[") + funcSymbol + "(x)])");
 
-            style = theme->funcPlotStyles[3];
+            style = theme->FuncPlotStyles[3];
             style.lineColor.inverse();
             style.thickness = 2.5;
             style.setPrimitive(Slab::Graphics::VerticalLines);
@@ -208,14 +208,14 @@ namespace Tests {
 
 
         {
-            auto style = theme->funcPlotStyles[0].permuteColors(true);
+            auto style = theme->FuncPlotStyles[0].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             funcArtist.setFunction(Dummy(Func));
             funcArtist.setLabel(funcSymbol);
             funcArtist.setStyle(style);
 
-            style = theme->funcPlotStyles[1].permuteColors(true);
+            style = theme->FuncPlotStyles[1].permuteColors(true);
             style.filled = false;
             style.thickness = 5;
             FuncRebuilt.setModes(modes);

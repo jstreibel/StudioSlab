@@ -41,7 +41,7 @@ namespace Tests {
         graph3d->addActor(actor);
     }
 
-    void Graph3DTests::draw() {
-        WindowRow::draw();
+    void Graph3DTests::Draw() {
+        WindowRow::Draw();
     }
 } // Tests

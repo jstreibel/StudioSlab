@@ -26,13 +26,13 @@ namespace Slab::Math::R2toR {
         };
 
         static auto
-        DFTReal_symmetric(const R2toR::NumericFunction &in) -> FFTData;
+        DFTReal_symmetric(const R2toR::FNumericFunction &in) -> FFTData;
 
         static auto
-        SpaceDFTReal(const R2toR::NumericFunction &in) -> FFTData;
+        SpaceDFTReal(const R2toR::FNumericFunction &in) -> FFTData;
 
         static auto
-        DFTReal     (const R2toR::NumericFunction &in, Transform transform=Fourier,
+        DFTReal     (const R2toR::FNumericFunction &in, Transform transform=Fourier,
                                DataPolicy inputPolicy=Auto, DataPolicy outputPolicy=Auto) -> FFTData;
         static auto
         DFTComplex(const R2toC::NumericFunction &in, Transform transform=Fourier,

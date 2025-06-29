@@ -21,7 +21,7 @@ namespace Slab::Blueprints {
     using ax::Widgets::IconType;
 
     BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint, Graphics::ParentSystemWindow parent_syswin)
-    : Graphics::SystemWindowEventListener(parent_syswin)
+    : Graphics::FSystemWindowEventListener(parent_syswin)
     , blueprint(std::move(blueprint)) {
         // Blueprints "OnStart()"
 

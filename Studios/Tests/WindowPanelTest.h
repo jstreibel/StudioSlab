@@ -11,14 +11,14 @@
 #include "Graphics/Window/WindowContainer/WindowPanel.h"
 
 
-class WindowPanelTest : public Slab::Graphics::SlabWindow {
+class WindowPanelTest : public Slab::Graphics::FSlabWindow {
     Slab::Graphics::WindowPanel *panel;
 
 public:
     WindowPanelTest();
-    void draw() override;
+    void Draw() override;
 
-    void notifyReshape(int width, int height) override;
+    void NotifyReshape(int width, int height) override;
 
 };
 

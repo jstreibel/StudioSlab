@@ -22,32 +22,32 @@ namespace Slab::Models::KGRtoR {
     using namespace Math;
     using namespace Graphics;
 
-    class RtoRPanel : public WindowPanel, public Socket {
+    class FRtoRPanel : public WindowPanel, public Socket {
     protected:
-        GUIWindow &guiWindow;
-        Pointer<KGNumericConfig> params;
-        KGEnergy &hamiltonian;
+        FGUIWindow &guiWindow;
+        Pointer<KGNumericConfig> Params;
+        KGEnergy &Hamiltonian;
 
-        R2toR::NumericFunction_constptr simulationHistory;
+        R2toR::FNumericFunction_constptr simulationHistory;
         R2toRFunctionArtist_ptr simulationHistoryArtist{};
 
-        R2toR::NumericFunction_constptr spaceFTHistory;
+        R2toR::FNumericFunction_constptr spaceFTHistory;
         R2toRFunctionArtist_ptr spaceFTHistoryArtist{};
-        const DFTDataHistory *dftData{};
+        const FDFTDataHistory *dftData{};
 
         auto handleOutput(const OutputPacket &packet) -> void override;
 
     public:
-        RtoRPanel(Pointer<KGNumericConfig>params,
-                  GUIWindow &guiWindow,
+        FRtoRPanel(Pointer<KGNumericConfig>params,
+                  FGUIWindow &guiWindow,
                   KGEnergy &hamiltonian,
                   const Str &name,
                   const Str &description);
 
-        virtual void setSimulationHistory(R2toR::NumericFunction_constptr simulationHistory,
+        virtual void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                           const R2toRFunctionArtist_ptr &simHistoryGraph);
-        virtual void setSpaceFourierHistory(R2toR::NumericFunction_constptr sftHistory,
-                                            const DFTDataHistory &,
+        virtual void SetSpaceFourierHistory(R2toR::FNumericFunction_constptr sftHistory,
+                                            const FDFTDataHistory &,
                                             const R2toRFunctionArtist_ptr &sftHistoryGraph);
 
         virtual void notifyBecameVisible();
@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
 
     };
 
-    DefinePointers(RtoRPanel)
+    DefinePointers(FRtoRPanel)
 
 } // Graphics
 

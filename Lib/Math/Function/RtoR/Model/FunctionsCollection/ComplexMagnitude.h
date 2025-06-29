@@ -11,9 +11,9 @@
 namespace Slab::Math::RtoR {
 
     class ComplexMagnitude : public RtoR::Function {
-        RtoC::Function_ptr RtoCFunction;
+        Pointer<RtoC::Function> RtoCFunction;
     public:
-        explicit ComplexMagnitude(RtoC::Function_ptr func);
+        explicit ComplexMagnitude(Pointer<RtoC::Function> func);
 
         DevFloat operator()(DevFloat x) const override;
 

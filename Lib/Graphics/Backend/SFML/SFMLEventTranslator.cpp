@@ -36,7 +36,7 @@ namespace Slab::Graphics {
                 Release,
                 Release};
 
-            IterateReferences(sysWin_listeners, Func(notifyKeyboard, key, state, modKeys));
+            IterateReferences(sysWin_listeners, Func(NotifyKeyboard, key, state, modKeys));
         }
 
         else if(isMouseButton) {
@@ -58,7 +58,7 @@ namespace Slab::Graphics {
                 (sf::Keyboard::isKeyPressed(sf::Keyboard::LSystem) | sf::Keyboard::isKeyPressed(sf::Keyboard::RSystem))   ? Press : Release,
                 Release, Release);
 
-            IterateReferences(sysWin_listeners, Func(notifyMouseButton, button, state, modKeys), StopOnFirstResponder);
+            IterateReferences(sysWin_listeners, Func(NotifyMouseButton, button, state, modKeys), StopOnFirstResponder);
         }
 
         else if(isMouseMovement) {

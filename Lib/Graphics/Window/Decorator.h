@@ -22,21 +22,21 @@ namespace Slab::Graphics {
         Decorator();
 
         virtual
-        void begin_decoration(const SlabWindow&, int x_mouse, int y_mouse);
+        void begin_decoration(const FSlabWindow&, int x_mouse, int y_mouse);
 
         virtual
-        void finish_decoration(const SlabWindow&, int x_mouse, int y_mouse);
+        void finish_decoration(const FSlabWindow&, int x_mouse, int y_mouse);
 
         void setSystemWindowShape(int w, int h);
 
         virtual
-        bool isMouseOverTitlebar(const SlabWindow&, int x_mouse, int y_mouse);
+        bool isMouseOverTitlebar(const FSlabWindow&, int x_mouse, int y_mouse);
 
         virtual
-        bool isMouseOverCorner(const SlabWindow&, int x_mouse, int y_mouse);
+        bool isMouseOverCorner(const FSlabWindow&, int x_mouse, int y_mouse);
 
         virtual
-        bool isMouseOverGrabRegion(const SlabWindow&, int x_mouse, int y_mouse);
+        bool isMouseOverGrabRegion(const FSlabWindow&, int x_mouse, int y_mouse);
 
         int titlebar_height();
     };

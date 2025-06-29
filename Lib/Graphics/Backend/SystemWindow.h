@@ -21,7 +21,7 @@ namespace Slab::Graphics {
     class SystemWindow {
         friend class GraphicBackend;
 
-        Vector<Pointer<SystemWindowEventListener>> thingsImProprietary;
+        Vector<Pointer<FSystemWindowEventListener>> thingsImProprietary;
         Pointer<GUIContext> guiContext = nullptr;
 
     protected:
@@ -50,8 +50,8 @@ namespace Slab::Graphics {
 
         RawPaltformWindow_Ptr getRawPlatformWindowPointer();
 
-        auto addEventListener(const Volatile<SystemWindowEventListener> &listener) -> bool;
-        auto addAndOwnEventListener(const Pointer<SystemWindowEventListener> &listener) -> bool;
+        auto addEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool;
+        auto addAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool;
 
         [[nodiscard]] auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);

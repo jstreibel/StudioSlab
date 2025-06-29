@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace Slab::Math::RtoR {
-    ComplexMagnitude::ComplexMagnitude(RtoC::Function_ptr func)
+    ComplexMagnitude::ComplexMagnitude(Pointer<RtoC::Function> func)
     : RtoCFunction(std::move(func)) {    }
 
     DevFloat ComplexMagnitude::operator()(DevFloat x) const {

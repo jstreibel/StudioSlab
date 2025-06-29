@@ -15,7 +15,7 @@ namespace Tests {
     using namespace Slab;
 
     class BezierTests : public Graphics::WindowRow {
-        Graphics::GUIWindow stats;
+        Graphics::FGUIWindow stats;
         Graphics::Plot2DWindow graph;
 
         Math::PointSet currentPt;
@@ -23,7 +23,7 @@ namespace Tests {
     public:
         BezierTests();
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Tests

@@ -13,7 +13,8 @@
 namespace Slab::Core {
 
         class MTaskManager final : public SlabModule {
-            typedef Pair<FTask_ptr, Pointer<std::thread>> Job;
+            using FTaskPointer = Pointer<FTask>;
+            typedef Pair<FTaskPointer, Pointer<std::thread>> Job;
             Vector<Job> Jobs;
 
             std::mutex AddJobMutex;

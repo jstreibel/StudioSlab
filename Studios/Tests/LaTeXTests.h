@@ -16,7 +16,7 @@ namespace Tests {
     using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
     class LaTeXTests : public Slab::Graphics::WindowRow {
-        Slab::Graphics::GUIWindow stats;
+        Slab::Graphics::FGUIWindow stats;
         Slab::Graphics::Plot2DWindow graph;
 
         Writer writer;
@@ -26,9 +26,9 @@ namespace Tests {
     public:
         LaTeXTests();
 
-        void draw() override;
+        void Draw() override;
 
-        void notifyReshape(int w, int h) override;
+        void NotifyReshape(int w, int h) override;
     };
 
 } // Tests

@@ -12,8 +12,8 @@
 
 namespace Slab::Graphics {
 
-    class WindowColumn : public SlabWindow {
-        std::list<Pointer<SlabWindow>> windows;
+    class WindowColumn : public FSlabWindow {
+        std::list<Pointer<FSlabWindow>> windows;
         RealVector heights;
 
         bool assertConsistency() const;
@@ -21,30 +21,30 @@ namespace Slab::Graphics {
     public:
         WindowColumn() = default;
 
-        void addWindow(const Pointer<SlabWindow>& window, float windowHeight = -1);
+        void addWindow(const Pointer<FSlabWindow>& window, float windowHeight = -1);
 
-        bool removeWindow(const Pointer<SlabWindow>&);
+        bool removeWindow(const Pointer<FSlabWindow>&);
 
         bool isEmpty() const;
 
         void arrangeWindows();
 
-        void draw() override;
+        void Draw() override;
 
-        void notifyReshape(int newWinW, int newWinH) override;
+        void NotifyReshape(int newWinW, int newWinH) override;
 
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseButton(MouseButton button, KeyState state,
+        bool NotifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;
 
         bool notifyMouseWheel(double dx, double dy) override;
 
-        auto setx(int x) -> void override;
+        auto Set_x(int x) -> void override;
 
-        auto sety(int y) -> void override;
+        auto Set_y(int y) -> void override;
     };
 
 

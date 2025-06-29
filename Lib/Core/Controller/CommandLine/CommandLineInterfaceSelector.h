@@ -14,7 +14,7 @@ namespace Slab::Core {
 
     class CLInterfaceSelector : public FCommandLineInterfaceOwner {
         int currentSelection = 0;
-        Vector<FCommandLineInterface_ptr> candidates;
+        Vector<Pointer<FCommandLineInterface>> candidates;
 
         IntegerParameter selection = IntegerParameter(0, "sim", "Sim type selection");
 
@@ -23,11 +23,11 @@ namespace Slab::Core {
     public:
         CLInterfaceSelector(Str selectorName);
 
-        void registerOption(FCommandLineInterface_ptr interface);
+        void registerOption(Pointer<FCommandLineInterface> interface);
 
         auto preParse(int argc, const char **argv, bool registerInInterfaceManager = true) -> const CLInterfaceSelector &;
 
-        auto getCurrentCandidate() const -> FCommandLineInterface_ptr;
+        auto getCurrentCandidate() const -> Pointer<FCommandLineInterface>;
 
     };
 

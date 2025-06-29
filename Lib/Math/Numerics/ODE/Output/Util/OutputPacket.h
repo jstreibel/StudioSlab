@@ -48,7 +48,7 @@ namespace Slab::Math {
             return stateData->category();
         };
 
-        [[nodiscard]] inline auto getSteps()   const -> size_t { return currentStep; }
+        [[nodiscard]] inline auto GetSteps()   const -> size_t { return currentStep; }
 
     };
 }

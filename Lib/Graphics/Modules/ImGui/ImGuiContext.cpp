@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         return FONT_SIZE_PIXELS;
     }
 
-    bool SlabImGuiContext::notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool SlabImGuiContext::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -170,7 +170,7 @@ namespace Slab::Graphics {
         io.AddFocusEvent(entered);
     }
 
-    bool SlabImGuiContext::notifyMouseButton(MouseButton button, KeyState state, ModKeys modKeys) {
+    bool SlabImGuiContext::NotifyMouseButton(MouseButton button, KeyState state, ModKeys modKeys) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();

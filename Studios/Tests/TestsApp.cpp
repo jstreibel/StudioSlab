@@ -45,13 +45,13 @@ int TestsApp::run() {
         auto wm = New<Graphics::SlabWindowManager>();
         main_syswin->addAndOwnEventListener(wm);
 
-        wm->addSlabWindow(New<Tests::LaTeXTests>());
-        wm->addSlabWindow(New<Tests::VShapeExpansionTest>());
-        wm->addSlabWindow(New<Tests::ModernGLTests>());
-        wm->addSlabWindow(New<Tests::Graph3DTests>());
-        wm->addSlabWindow(New<Tests::BezierTests>());
-        wm->addSlabWindow(New<Tests::FourierTestWindow>());
-        wm->addSlabWindow(Tests::GetImGuiTestWindow());
+        wm->AddSlabWindow(New<Tests::LaTeXTests>(), false);
+        wm->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
+        wm->AddSlabWindow(New<Tests::ModernGLTests>(), false);
+        wm->AddSlabWindow(New<Tests::Graph3DTests>(), false);
+        wm->AddSlabWindow(New<Tests::BezierTests>(), false);
+        wm->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
+        wm->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 
         // temp = New<WindowTreeBuilderTest>();
         // wm->addSlabWindow(temp);
@@ -72,7 +72,7 @@ int TestsApp::run() {
         Core::BackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         backend = guiBackend;
-        guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::SystemWindowEventListener>(new Tests::NuklearTests()));
+        guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::FSystemWindowEventListener>(new Tests::NuklearTests()));
     }
 
     backend->Run();

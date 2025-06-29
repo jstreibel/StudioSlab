@@ -38,7 +38,7 @@ namespace Slab::Models::KGRtoR {
         Log::Success() << name << " allocated " << sizeMB << " of data." << Log::Flush;
     }
 
-    auto SimHistory::transfer(const OutputPacket &packet, ValarrayWrapper<DevFloat> &dataOut) -> void {
+    auto SimHistory::Transfer(const OutputPacket &packet, ValarrayWrapper<DevFloat> &dataOut) -> void {
         IN stateIn = *packet.GetNakedStateData<KGRtoR::EquationState>();
 
         IN f_in = dynamic_cast<RtoR::NumericFunction&>(stateIn.getPhi());
@@ -56,7 +56,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void SimHistory::handleOutput(const OutputPacket &packet) {
-        if (packet.getSteps() > max_steps)
+        if (packet.GetSteps() > max_steps)
             return;
 
         IN stateIn = packet.GetNakedStateData<KGRtoR::EquationState>();
@@ -68,16 +68,16 @@ namespace Slab::Models::KGRtoR {
         fix M_out = (double) N_t;
         fix t_ratio = M_out / M_in;
 
-        fix j_in = packet.getSteps();
+        fix j_in = packet.GetSteps();
         fix j_out = int(floor((DevFloat)j_in * t_ratio));
         ValarrayWrapper<DevFloat> instantData(&data->At(0, j_out), data->getN());
 
-        transfer(packet, instantData);
+        Transfer(packet, instantData);
 
-        timesteps.emplace_back(packet.getSteps());
+        timesteps.emplace_back(packet.GetSteps());
     }
 
-    auto SimHistory::getData() const -> const R2toR::NumericFunction & {
+    auto SimHistory::getData() const -> const R2toR::FNumericFunction & {
         return *data;
     }
 

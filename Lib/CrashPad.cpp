@@ -68,7 +68,7 @@ namespace Slab::SafetyNet {
 #endif
     }
 
-    int Jump(Application& app) {
+    int Jump(FApplication& app) {
 #if defined(RELEASE_COMPILE) || defined(WITH_STACK_TRACE)
         try
 #endif

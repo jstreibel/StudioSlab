@@ -19,7 +19,7 @@ namespace Slab::Math::RtoR {
         return New<SignumFunction>();
     }
 
-    Str AbsFunction::symbol() const {
+    Str AbsFunction::Symbol() const {
         return "|ϕ|";
     }
 

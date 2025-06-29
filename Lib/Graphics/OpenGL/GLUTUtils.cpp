@@ -6,7 +6,7 @@
 
 namespace Slab {
 
-    void Graphics::OpenGL::GLUT::write(const SlabWindow *win, const float fontScale, const float x, const float y,
+    void Graphics::OpenGL::GLUT::write(const FSlabWindow *win, const float fontScale, const float x, const float y,
                                        std::string str, void *font) {
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
@@ -19,7 +19,7 @@ namespace Slab {
         glPopMatrix();
     }
 
-    void Graphics::OpenGL::GLUT::writeOrtho(const SlabWindow *window, RectR region, float fontScale, float x, float y,
+    void Graphics::OpenGL::GLUT::writeOrtho(const FSlabWindow *window, RectR region, float fontScale, float x, float y,
                                             std::string str,
                                             void *font) {
         fix w = region.xMax - region.xMin;
@@ -46,7 +46,7 @@ namespace Slab {
         glPopMatrix();
     }
 
-    void Graphics::OpenGL::GLUT::writeBitmap(const SlabWindow *window, float x, float y, std::string str, void *font) {
+    void Graphics::OpenGL::GLUT::writeBitmap(const FSlabWindow *window, float x, float y, std::string str, void *font) {
         glRasterPos2f(x, y);
         for (char c: str) glutBitmapCharacter(font, c);
     }

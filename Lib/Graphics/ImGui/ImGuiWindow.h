@@ -13,17 +13,17 @@
 
 namespace Slab::Graphics {
 
-    class ImGuiWindow : public SlabWindow {
-        static Atomic<CountType> count;
-        Str id;
+    class ImGuiWindow : public FSlabWindow {
+        static Atomic<CountType> Count;
+        Str Id;
 
-        Pointer<SlabWindow> slab_window;
-        Pointer<SlabImGuiContext> imgui_context;
+        Pointer<FSlabWindow> SlabWindow;
+        Pointer<SlabImGuiContext> Context;
 
     public:
-        explicit ImGuiWindow(Pointer<SlabWindow>, Pointer<SlabImGuiContext> imgui_context=nullptr);
+        explicit ImGuiWindow(Pointer<FSlabWindow>, Pointer<SlabImGuiContext> Context=nullptr);
 
-        void draw() override;
+        void Draw() override;
 
 
     };

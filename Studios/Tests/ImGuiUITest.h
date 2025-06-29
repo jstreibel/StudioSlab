@@ -10,7 +10,7 @@
 
 namespace Tests {
 
-    Slab::Pointer<Slab::Graphics::SlabWindow> GetImGuiTestWindow();
+    Slab::Pointer<Slab::Graphics::FSlabWindow> GetImGuiTestWindow();
 
 } // Tests
 

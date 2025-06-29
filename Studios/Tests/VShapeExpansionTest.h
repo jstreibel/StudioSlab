@@ -14,7 +14,7 @@
 namespace Tests {
 
     class VShapeExpansionTest : public Slab::Graphics::WindowRow {
-        Slab::Graphics::GUIWindow stats;
+        Slab::Graphics::FGUIWindow stats;
         Slab::Graphics::Plot2DWindow graph;
 
         Slab::Pointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
@@ -23,7 +23,7 @@ namespace Tests {
     public:
         VShapeExpansionTest();
 
-        void draw() override;
+        void Draw() override;
     };
 
 } // Tests

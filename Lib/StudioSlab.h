@@ -9,13 +9,13 @@
 #include "Application.h"
 
 namespace Slab {
-    class Application;
+    class FApplication;
 
     void Startup();
     void Finish();
     bool IsStarted();
 
-    int Run(Application&);
+    int Run(FApplication&);
 
     template<typename AppType>
     int Run(const int argc, const char **argv) {

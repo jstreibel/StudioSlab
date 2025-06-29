@@ -12,15 +12,15 @@
 #include "Graphics/OpenGL/WriterOpenGL.h"
 using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
 
-class GLFreeTypeTests : public Slab::Graphics::SlabWindow {
+class GLFreeTypeTests : public Slab::Graphics::FSlabWindow {
     Writer writer1, writer2;
 
 public:
     GLFreeTypeTests();
 
-    void draw() override;
+    void Draw() override;
 
-    void notifyReshape(int newWinW, int newWinH) override;
+    void NotifyReshape(int newWinW, int newWinH) override;
 };
 
 

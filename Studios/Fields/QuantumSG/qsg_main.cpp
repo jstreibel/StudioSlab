@@ -16,13 +16,13 @@
 #include "Models/KleinGordon/RtoR/Graphics/Panels/RtoRRealtimePanel.h"
 #include "Models/Stochastic-Path-Integral/SPI-Recipe.h"
 
-class SPIApp final : public Slab::Application {
+class SPIApp final : public Slab::FApplication {
     Slab::Pointer<Slab::Models::StochasticPathIntegrals::SPIRecipe> recipe;
     Slab::Pointer<Slab::Math::NumericTask> numeric_task;
 
 public:
     SPIApp(const int argc, const char *argv[])
-    : Application("SPI-App", argc, argv)
+    : FApplication("SPI-App", argc, argv)
     , recipe(Slab::New<Slab::Models::StochasticPathIntegrals::SPIRecipe>())
     , numeric_task(Slab::New<Slab::Math::NumericTask>(recipe, false))
     {    }

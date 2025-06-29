@@ -295,7 +295,7 @@ namespace Slab::Graphics {
 
     void AxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
 
-    void AxisArtist::setHorizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
+    void AxisArtist::SetHorizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
 
     void AxisArtist::setVerticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
 

@@ -79,7 +79,7 @@ namespace Slab::Models::KGR2toR {
             OutputFormatterBase *outputFilter = new BinarySOF;
 
             SpaceFilterBase *spaceFilter = new Slab::Math::R2toR::DimensionReductionFilter(
-                    outputResolutionX, section, kg_numeric_config->getL());
+                    outputResolutionX, section, kg_numeric_config->GetL());
 
             const auto N = (DevFloat) kg_numeric_config->getN();
             const DevFloat Np = outputResolutionX;
@@ -102,7 +102,7 @@ namespace Slab::Models::KGR2toR {
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
             auto wm = New<Graphics::SlabWindowManager>(backend->GetMainSystemWindow().get());
-            wm->addSlabWindow(glOut);
+            wm->AddSlabWindow(glOut, false);
             backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
             sockets.emplace_back(glOut);
         }
@@ -112,7 +112,7 @@ namespace Slab::Models::KGR2toR {
 
     }
 
-    R2toR::NumericFunction_ptr Builder::newFunctionArbitrary() {
+    R2toR::FNumericFunction_ptr Builder::newFunctionArbitrary() {
         const size_t N = kg_numeric_config->getN();
         const floatt xLeft = kg_numeric_config->getxMin();
         fix h = kg_numeric_config->geth();

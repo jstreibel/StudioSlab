@@ -16,7 +16,7 @@ namespace Slab::Models::StochasticPathIntegrals {
     class SPISolver : public Math::Base::LinearStepSolver {
         using SPINumericFunction = Math::Base::NumericFunction<Math::Real2D, DevFloat>;
 
-        Pointer<Math::R2toR::NumericFunction> langevinImpulses = nullptr;
+        Pointer<Math::R2toR::FNumericFunction> langevinImpulses = nullptr;
         void ComputeImpulses(DevFloat dτ) const;
 
         Pointer<Math::Operator<SPINumericFunction>> O;

@@ -17,7 +17,7 @@ namespace Slab::Graphics {
     #define USE_GLOBAL_MOUSECLICK_POLICY false
 
 
-    SlabWindow::Config::Config(const Str &title, RectI win_rect, Int flags, ParentSystemWindow parent_syswin)
+    FSlabWindow::Config::Config(const Str &title, RectI win_rect, Int flags, ParentSystemWindow parent_syswin)
     : title(title), win_rect(win_rect), flags(flags), parent_syswin(parent_syswin) {
         if (parent_syswin == nullptr) {
             this->parent_syswin = &*GetGraphicsBackend()->GetMainSystemWindow();
@@ -25,9 +25,9 @@ namespace Slab::Graphics {
     }
 
 
-    SlabWindow::
-    SlabWindow(Config cfg)
-    : SystemWindowEventListener(cfg.parent_syswin), config(std::move(cfg))
+    FSlabWindow::
+    FSlabWindow(Config cfg)
+    : FSystemWindowEventListener(cfg.parent_syswin), config(std::move(cfg))
     {
         if(config.title.empty()){
             config.title = "[Window:" + ToStr(GetId()) + "]";
@@ -37,43 +37,43 @@ namespace Slab::Graphics {
             parent_system_window = &*GetGraphicsBackend()->GetMainSystemWindow();
     }
 
-    SlabWindow::~SlabWindow() = default;
+    FSlabWindow::~FSlabWindow() = default;
 
-    auto SlabWindow::getConfig() -> Config& {
+    auto FSlabWindow::getConfig() -> Config& {
         return config;
     }
 
-    void SlabWindow::draw() {
+    void FSlabWindow::Draw() {
         setupWindow();
     }
 
-    void SlabWindow::notifyReshape(int w, int h) {
+    void FSlabWindow::NotifyReshape(int w, int h) {
         config.win_rect.xMax = config.win_rect.xMin + w;
         config.win_rect.yMax = config.win_rect.yMin + h;
     }
 
-    bool SlabWindow::notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+    bool FSlabWindow::NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
         if     (button == MouseButton::MouseButton_LEFT)   mouseLeftButton   = state;
         else if(button == MouseButton::MouseButton_MIDDLE) mouseCenterButton = state;
         else if(button == MouseButton::MouseButton_RIGHT)  mouseRightButton  = state;
 
-        return SystemWindowEventListener::notifyMouseButton(button, state, keys);
+        return FSystemWindowEventListener::NotifyMouseButton(button, state, keys);
     }
 
-    bool SlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        return SystemWindowEventListener::notifyMouseMotion(x, y, dx, dy);
+    bool FSlabWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
+        return FSystemWindowEventListener::notifyMouseMotion(x, y, dx, dy);
     }
 
-    bool SlabWindow::notifyMouseWheel(double dx, double dy) {
-        return SystemWindowEventListener::notifyMouseWheel(dx, dy);
+    bool FSlabWindow::notifyMouseWheel(double dx, double dy) {
+        return FSystemWindowEventListener::notifyMouseWheel(dx, dy);
     }
 
-    bool SlabWindow::notifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
+    bool FSlabWindow::NotifyKeyboard(Slab::Graphics::KeyMap key, Slab::Graphics::KeyState state,
                                     Slab::Graphics::ModKeys modKeys) {
-        return SystemWindowEventListener::notifyKeyboard(key, state, modKeys);
+        return FSystemWindowEventListener::NotifyKeyboard(key, state, modKeys);
     }
 
-    void SlabWindow::setupWindow() const {
+    void FSlabWindow::setupWindow() const {
         fix syswin_h = h_override < 0 ? parent_system_window->getHeight() : h_override;
 
         fix vp = getViewport();
@@ -87,7 +87,7 @@ namespace Slab::Graphics {
         glViewport(x, y, w, h);
     }
 
-    auto SlabWindow::isMouseIn() const -> bool {
+    auto FSlabWindow::isMouseIn() const -> bool {
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = parent_system_window->getMouseState();
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
         return mouse->x > x && mouse->x < x + w && mouse->y > y && mouse->y < y + h;
     }
 
-    auto SlabWindow::isMouseLeftClicked() const -> bool {
+    auto FSlabWindow::isMouseLeftClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto SlabWindow::isMouseCenterClicked() const -> bool {
+    auto FSlabWindow::isMouseCenterClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -125,7 +125,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto SlabWindow::isMouseRightClicked() const -> bool {
+    auto FSlabWindow::isMouseRightClicked() const -> bool {
 #if USE_GLOBAL_MOUSECLICK_POLICY==true
         auto &guiBackend = Slab::Graphics::GetGraphicsBackend();
 
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
 #endif
     }
 
-    auto SlabWindow::getMouseViewportCoord() const -> Point2D {
+    auto FSlabWindow::getMouseViewportCoord() const -> Point2D {
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 
         fix &mouse = parent_system_window->getMouseState();
@@ -152,86 +152,86 @@ namespace Slab::Graphics {
 
 
 
-    void SlabWindow::setDecorate(bool decorate) {
+    void FSlabWindow::setDecorate(bool decorate) {
         if(!decorate)  config.flags |=  SlabWindowNoDecoration;
         else           config.flags &= ~SlabWindowNoDecoration;
     }
 
-    void SlabWindow::setClear(bool clear) {
+    void FSlabWindow::setClear(bool clear) {
         if(!clear) config.flags |=  SlabWindowDontClear;
         else       config.flags &= ~SlabWindowDontClear;
     }
 
-    RectI SlabWindow::getViewport() const {
+    RectI FSlabWindow::getViewport() const {
         return config.win_rect;
     }
 
-    Str SlabWindow::getTitle() const {
+    Str FSlabWindow::getTitle() const {
         return config.title;
     }
 
-    Int SlabWindow::getFlags() const {
+    Int FSlabWindow::getFlags() const {
         return config.flags;
     }
 
-    bool SlabWindow::wantsFullscreen() const {
+    bool FSlabWindow::wantsFullscreen() const {
         return config.flags & SlabWindowWantsFullscreen;
     }
 
-    void SlabWindow::SetMinimumWidth(Slab::Resolution minw) {
+    void FSlabWindow::SetMinimumWidth(Slab::Resolution minw) {
         min_width = minw;
 
-        if(min_width > GetWidth()) notifyReshape((int)min_width, GetHeight());
+        if(min_width > GetWidth()) NotifyReshape((int)min_width, GetHeight());
     }
 
-    void SlabWindow::SetMinimumHeight(Slab::Resolution minh) {
+    void FSlabWindow::SetMinimumHeight(Slab::Resolution minh) {
         min_height = minh;
 
-        if(min_height > GetHeight()) notifyReshape(GetWidth(), (int)min_height);
+        if(min_height > GetHeight()) NotifyReshape(GetWidth(), (int)min_height);
     }
 
-    auto SlabWindow::setx(const int x) -> void {
+    auto FSlabWindow::Set_x(const int x) -> void {
         fix w=config.win_rect.width();
         config.win_rect.xMin = x;
         config.win_rect.xMax = x+w;
     }
 
-    auto SlabWindow::sety(const int y) -> void {
+    auto FSlabWindow::Set_y(const int y) -> void {
         fix h=config.win_rect.height();
         config.win_rect.yMin = y;
         config.win_rect.yMax = y+h;
     }
 
-    void SlabWindow::notifyBecameActive()   { active = true; }
+    void FSlabWindow::notifyBecameActive()   { active = true; }
 
-    void SlabWindow::notifyBecameInactive() { active = false; }
+    void FSlabWindow::notifyBecameInactive() { active = false; }
 
-    bool SlabWindow::isActive() const       { return active; }
+    bool FSlabWindow::isActive() const       { return active; }
 
-    bool SlabWindow::notifySystemWindowReshape(const int w, const int h) {
-        notifyReshape(w, h);
+    bool FSlabWindow::notifySystemWindowReshape(const int w, const int h) {
+        NotifyReshape(w, h);
         // return SystemWindowEventListener::notifySystemWindowReshape(w, h);
 
         return false;
     }
 
-    bool SlabWindow::notifyRender() {
-        draw();
+    bool FSlabWindow::notifyRender() {
+        Draw();
 
-        return SystemWindowEventListener::notifyRender();
+        return FSystemWindowEventListener::notifyRender();
     }
 
-    void SlabWindow::overrideSystemWindowHeight(const int override_h) {
+    void FSlabWindow::overrideSystemWindowHeight(const int override_h) {
         h_override = override_h;
     }
 
-    auto SlabWindow::getx() const -> int { return config.win_rect.xMin; }
+    auto FSlabWindow::getx() const -> int { return config.win_rect.xMin; }
 
-    auto SlabWindow::gety() const -> int { return config.win_rect.yMin; }
+    auto FSlabWindow::gety() const -> int { return config.win_rect.yMin; }
 
-    auto SlabWindow::GetWidth() const -> int { return config.win_rect.width(); }
+    auto FSlabWindow::GetWidth() const -> int { return config.win_rect.width(); }
 
-    auto SlabWindow::GetHeight() const -> int { return config.win_rect.height(); }
+    auto FSlabWindow::GetHeight() const -> int { return config.win_rect.height(); }
 
 
 }

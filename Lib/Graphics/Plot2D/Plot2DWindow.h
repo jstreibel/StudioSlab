@@ -25,7 +25,7 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow final : public SlabWindow {
+    class Plot2DWindow final : public FSlabWindow {
         static CountType WindowCount;
         CountType id;
         static std::map<Str, Plot2DWindow*> graphMap;
@@ -70,20 +70,20 @@ namespace Slab::Graphics {
 
         explicit Plot2DWindow(Str title);
 
-        void draw() override;
+        void Draw() override;
 
         void addArtist(const Artist_ptr& pArtist, zOrder_t zOrder=0);
         bool removeArtist(const Artist_ptr& pArtist);
         void removeArtists(const Vector<Artist_ptr> &artists);
 
-        AxisArtist &getAxisArtist();
+        AxisArtist &GetAxisArtist();
 
         auto getLastXHairPosition() const -> Point2D;
         virtual Str getXHairLabel(const Point2D &coords) const;
 
         void setupOrtho() const;
 
-        void setAutoReviewGraphRanges(bool);
+        void SetAutoReviewGraphRanges(bool);
         void reviewGraphRanges();
 
         auto getRegion() const -> const PlottingRegion2D&;
@@ -97,10 +97,10 @@ namespace Slab::Graphics {
         void setAnimationTime(DevFloat value);
         DevFloat getAnimationTime() const;
 
-        bool notifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
         bool notifyMouseWheel(double dx, double dy) override;
         bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool notifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
     };
 

@@ -20,7 +20,7 @@ namespace Slab::Models::MolecularDynamics {
 
     using namespace Slab;
 
-    class Monitor : public Math::Socket, public Graphics::SlabWindow {
+    class Monitor : public Math::Socket, public Graphics::FSlabWindow {
         sf::RenderWindow &renderWindow;
 
         Vector<sf::Vertex> molShapes;
@@ -42,7 +42,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Monitor(const Pointer<Config>&, Model);
 
-        void draw() override;
+        void Draw() override;
 
     protected:
         auto handleOutput(const Math::OutputPacket &packet) -> void override;

@@ -7,7 +7,7 @@
 namespace Slab::Graphics {
 
     GUIContext::GUIContext(ParentSystemWindow parent)
-    : SystemWindowEventListener(parent) { }
+    : FSystemWindowEventListener(parent) { }
 
     void GUIContext::AddDrawCall(const DrawCall& draw_call) {
         draw_calls.emplace_back(draw_call);
