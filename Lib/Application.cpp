@@ -19,8 +19,8 @@ namespace Slab {
     }
 
     FApplication::FApplication(Str name, const int argc, const char *argv[])
-    : arg_count (argc)
-    , arg_values( argv)
+    : ArgCount (argc)
+    , ArgValues( argv)
     , m_Name(std::move(name))
     {
         Startup();
@@ -37,7 +37,7 @@ namespace Slab {
     }
 
     bool FApplication::Create(Resolution width, Resolution height) {
-        Core::ParseCLArgs(arg_count, const_cast<const char **>(arg_values));
+        Core::ParseCLArgs(ArgCount, const_cast<const char **>(ArgValues));
 
         p_Platform = CreatePlatform();
 

@@ -14,8 +14,8 @@ namespace Slab {
     using Platform = Graphics::GraphicBackend;
 
     class FApplication : public Graphics::FSystemWindowEventListener {
-        const int arg_count;
-        const char **arg_values;
+        const int ArgCount;
+        const char **ArgValues;
 
         Str m_Name;
         Pointer<Platform> p_Platform;

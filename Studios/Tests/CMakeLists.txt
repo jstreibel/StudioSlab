@@ -24,3 +24,7 @@ message(NOTICE "Added executable Tests")
 add_executable(OdeintInteropTest SlabOdeintInteropTest.cpp)
 target_link_libraries ( OdeintInteropTest ${SlabLibs} Slab )
 message(NOTICE "Added executable OdeintInteropTest")
+
+add_executable( SlabImGUIWindowManagerTest ImGuiWindowManagerTests/SlabImGUITestsMain.cpp )
+target_link_libraries( SlabImGUIWindowManagerTest Slab )
+message(NOTICE "Added executable SlabImGUIWindowManagerTest")
