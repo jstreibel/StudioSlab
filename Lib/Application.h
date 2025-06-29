@@ -24,6 +24,8 @@ namespace Slab {
         virtual
         Pointer<Platform> CreatePlatform();
 
+        Pointer<Platform> GetPlatform() { return p_Platform; }
+
         virtual void OnStart() { };
         virtual bool CanClose() { return true; };
 

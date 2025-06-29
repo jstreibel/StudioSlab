@@ -4,6 +4,9 @@
 
 #include "Application.h"
 #include "StudioSlab.h"
+#include "../BezierTests.h"
+#include "Core/Tools/Log.h"
+#include "Graphics/Window/SlabWindowManager.h"
 
 class FImGuiTest final : public Slab::FApplication
 {
@@ -12,6 +15,18 @@ public:
         : FApplication("Slab ImGui WindowManager Tests", argc, argv)
     {
 
+    }
+
+protected:
+    void OnStart() override
+    {
+        auto Platform = GetPlatform();
+        auto MainSystemWindow = Platform->GetMainSystemWindow();
+
+        Slab::Pointer<Slab::Graphics::FWindowManager> WM = Slab::New<Slab::Graphics::SlabWindowManager>();
+        MainSystemWindow->addAndOwnEventListener(WM);
+
+        WM->AddSlabWindow(Slab::New<Tests::BezierTests>());
     }
 };
 
