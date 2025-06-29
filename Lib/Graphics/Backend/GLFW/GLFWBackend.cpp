@@ -41,7 +41,7 @@ namespace Slab::Graphics {
     }
 
     GLFWBackend::~GLFWBackend() {
-        system_windows.clear();
+        SystemWindows.clear();
 
         glfwTerminate();
 
@@ -63,12 +63,12 @@ namespace Slab::Graphics {
         // static auto EndEvents   = FuncRun(endEvents);
         static auto Update   = FuncRun(Update);
 
-        while(!system_windows.empty()) {
+        while(!SystemWindows.empty()) {
             IterateReferences(graphicModules, Update);
 
-            for(auto it = system_windows.begin(); it != system_windows.end();) {
+            for(auto it = SystemWindows.begin(); it != SystemWindows.end();) {
                 if((*it)->ShouldClose()) {
-                    it = system_windows.erase(it);
+                    it = SystemWindows.erase(it);
                     continue;
                 }
 

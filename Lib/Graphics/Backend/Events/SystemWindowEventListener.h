@@ -16,7 +16,7 @@ namespace Slab::Graphics {
 
     class SystemWindow;
 
-    using ParentSystemWindow = SystemWindow*;
+    using FOwnerSystemWindow = SystemWindow*;
 
     class FSystemWindowEventListener {
         Vector<Volatile<FSystemWindowEventListener>> delegateResponders;
@@ -26,29 +26,29 @@ namespace Slab::Graphics {
     protected:
         SystemWindow* parent_system_window = nullptr;
 
-        void addResponder(const Volatile<FSystemWindowEventListener>& responder);
-        void removeResponder(const Pointer<FSystemWindowEventListener>& responder);
-        [[nodiscard]] bool hasResponders() const;
+        void AddResponder(const Volatile<FSystemWindowEventListener>& responder);
+        void RemoveResponder(const Pointer<FSystemWindowEventListener>& responder);
+        [[nodiscard]] bool HasResponders() const;
 
     public:
 
-        explicit FSystemWindowEventListener(ParentSystemWindow parent);
+        explicit FSystemWindowEventListener(FOwnerSystemWindow parent);
         explicit FSystemWindowEventListener();
         virtual ~FSystemWindowEventListener();
 
         virtual bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
-        virtual bool notifyCharacter(UInt codepoint);
+        virtual bool NotifyCharacter(UInt codepoint);
 
-        virtual void cursorEntered(bool);
+        virtual void CursorEntered(bool);
         virtual bool NotifyMouseButton(MouseButton, KeyState, ModKeys);
-        virtual bool notifyMouseMotion(int x, int y, int dx, int dy);
-        virtual bool notifyMouseWheel(double dx, double dy);
+        virtual bool NotifyMouseMotion(int x, int y, int dx, int dy);
+        virtual bool NotifyMouseWheel(double dx, double dy);
 
-        virtual bool notifyFilesDropped(StrVector paths);
+        virtual bool NotifyFilesDropped(StrVector paths);
 
-        virtual bool notifySystemWindowReshape(int w, int h);
+        virtual bool NotifySystemWindowReshape(int w, int h);
 
-        virtual bool notifyRender();
+        virtual bool NotifyRender();
 
     };
 

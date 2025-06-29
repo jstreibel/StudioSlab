@@ -177,7 +177,7 @@ namespace Slab::Graphics {
             auto &window = *winData.window;
 
             window.Draw();
-            OpenGL::checkGLErrors(
+            OpenGL::CheckGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
         }
     }
@@ -188,9 +188,9 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    bool WindowRow::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool WindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         for (auto &winData: windowsList)
-            if (winData.window->isMouseIn() && winData.window->notifyMouseMotion(x, y, dx, dy))
+            if (winData.window->isMouseIn() && winData.window->NotifyMouseMotion(x, y, dx, dy))
                 return true;
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
@@ -213,8 +213,8 @@ namespace Slab::Graphics {
             PropagateEvent(NotifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowRow::notifyMouseWheel(double dx, double dy) {
-        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
+    bool WindowRow::NotifyMouseWheel(double dx, double dy) {
+        PropagateEvent(NotifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowRow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {

@@ -102,8 +102,8 @@ namespace Slab::Graphics {
         return style;
     }
 
-    bool PlotThemeManager::notifyRender() {
-        auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->getGUIContext().lock();
+    bool PlotThemeManager::NotifyRender() {
+        auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
 
         if(gui_context != nullptr) {
             Vector<MainMenuLeafEntry> entries;
@@ -121,7 +121,7 @@ namespace Slab::Graphics {
             });
         }
 
-        return FSystemWindowEventListener::notifyRender();
+        return FSystemWindowEventListener::NotifyRender();
     }
 
     bool PlotThemeManager::SetTheme(const Str& theme) {

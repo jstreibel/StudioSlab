@@ -16,21 +16,21 @@
 
 namespace Slab::Graphics {
 
-    using RawPaltformWindow_Ptr = void*;
+    using RawPlatformWindow_Ptr = void*;
 
     class SystemWindow {
         friend class GraphicBackend;
 
-        Vector<Pointer<FSystemWindowEventListener>> thingsImProprietary;
-        Pointer<GUIContext> guiContext = nullptr;
+        Vector<Pointer<FSystemWindowEventListener>> Stash;
+        Pointer<GUIContext> GuiContext = nullptr;
 
     protected:
         Pointer<FEventTranslator> EventTranslator;
-        RawPaltformWindow_Ptr window_ptr;
+        RawPlatformWindow_Ptr r_Window;
 
-        virtual void clearListeners();
+        virtual void ClearListeners();
 
-        Pointer<MouseState> mouse_state = nullptr;
+        Pointer<FMouseState> MouseState = nullptr;
 
         virtual void Cycle() = 0;
     public:
@@ -40,24 +40,24 @@ namespace Slab::Graphics {
 
         void Render();
 
-        [[nodiscard]] virtual Int getHeight() const = 0;
-        [[nodiscard]] virtual Int getWidth() const = 0;
+        [[nodiscard]] virtual Int GetHeight() const = 0;
+        [[nodiscard]] virtual Int GetWidth() const = 0;
 
         virtual void SignalClose() = 0;
         [[nodiscard]] virtual bool ShouldClose() const = 0;
 
-        Volatile<GUIContext> getGUIContext();
+        Pointer<GUIContext> GetGUIContext();
 
-        RawPaltformWindow_Ptr getRawPlatformWindowPointer();
+        RawPlatformWindow_Ptr GetRawPlatformWindowPointer() const;
 
         auto AddEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool;
         auto AddAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool;
 
-        [[nodiscard]] auto getMouseState() const -> Pointer<const MouseState>;
-        virtual void setMouseCursor(MouseCursor);
+        [[nodiscard]] auto GetMouseState() const -> Pointer<const FMouseState>;
+        virtual void SetMouseCursor(MouseCursor);
 
         virtual
-        void setSystemWindowTitle(const Str& title);
+        void SetSystemWindowTitle(const Str& title);
     };
 
 } // Slab::Core

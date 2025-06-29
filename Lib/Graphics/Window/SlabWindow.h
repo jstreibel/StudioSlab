@@ -5,7 +5,7 @@
 #ifndef V_SHAPE_WINDOW_H
 #define V_SHAPE_WINDOW_H
 
-#include <crude_json.h>
+// #include <crude_json.h>
 
 #include "Graphics/Styles/Colors.h"
 
@@ -38,16 +38,16 @@ namespace Slab::Graphics {
             Config(const Str &title="",
                 RectI win_rect=WindowStyle::default_window_rect,
                 Int flags=0x0,
-                ParentSystemWindow parent_syswin=nullptr);
+                FOwnerSystemWindow Owner=nullptr);
 
             Str title;
             RectI win_rect;
             Int flags;
-            ParentSystemWindow parent_syswin;
+            FOwnerSystemWindow Owner;
         };
 
     private:
-        void setupWindow() const;
+        void SetupWindow() const;
 
         KeyState mouseLeftButton   = KeyState::Release;
         KeyState mouseCenterButton = KeyState::Release;
@@ -67,8 +67,8 @@ namespace Slab::Graphics {
 
         auto getConfig() -> Config&;
 
-        auto notifySystemWindowReshape(int w, int h)           -> bool final;
-        auto notifyRender()                                    -> bool final;
+        auto NotifySystemWindowReshape(int w, int h)           -> bool final;
+        auto NotifyRender()                                    -> bool final;
 
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.
@@ -78,8 +78,8 @@ namespace Slab::Graphics {
         void overrideSystemWindowHeight(int override_h);
 
         auto NotifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
-        auto notifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
-        auto notifyMouseWheel(double dx, double dy)            -> bool override;
+        auto NotifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
+        auto NotifyMouseWheel(double dx, double dy)            -> bool override;
         auto NotifyKeyboard(KeyMap, KeyState, ModKeys)         -> bool override;
 
         virtual auto Draw()                                    -> void;
@@ -100,8 +100,8 @@ namespace Slab::Graphics {
 
         auto getTitle()                                  const -> Str;
 
-        auto setDecorate(bool)                                 -> void;
-        auto setClear(bool)                                    -> void;
+        auto SetDecorate(bool)                                 -> void;
+        auto SetClear(bool)                                    -> void;
 
         RectI getViewport() const;
 

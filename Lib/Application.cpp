@@ -56,7 +56,7 @@ namespace Slab {
     }
 
     void FApplication::SetTitle(Str title) const {
-        p_Platform->GetMainSystemWindow()->setSystemWindowTitle(std::move(title));
+        p_Platform->GetMainSystemWindow()->SetSystemWindowTitle(std::move(title));
     }
 
     auto FApplication::GetName() const -> Str {

@@ -46,20 +46,27 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(DevFloat xMin, DevFloat xMax, DevFloat yMin, DevFloat yMax, Str _title)
+    Plot2DWindow::Plot2DWindow(
+        DevFloat xMin,
+        DevFloat xMax,
+        DevFloat yMin,
+        DevFloat yMax,
+        Str _title,
+        const Pointer<SlabImGuiContext>& GuiContext)
     : id(++WindowCount)
     , region{{xMin, xMax, yMin, yMax}}
     , title(std::move(_title))
     , axisArtist()
+    , gui_context(GuiContext)
     {
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
 
         if(this->gui_context == nullptr) {
             gui_context_is_local = true;
-            auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
+            auto &gui_module = Slab::GetModule<FImGuiModule>("ImGui");
             gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.CreateContext(parent_system_window));
-            addResponder(gui_context);
+            AddResponder(gui_context);
         }
 
         axisArtist.setLabel("Axis");
@@ -88,8 +95,8 @@ namespace Slab::Graphics {
 
     }
 
-    Plot2DWindow::Plot2DWindow(Str title)
-            : Plot2DWindow(-1, 1, -1, 1, std::move(title)) {    }
+    Plot2DWindow::Plot2DWindow(Str title, Pointer<SlabImGuiContext> GuiContext)
+            : Plot2DWindow(-1, 1, -1, 1, std::move(title), std::move(GuiContext)) {    }
 
     void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
@@ -118,7 +125,7 @@ namespace Slab::Graphics {
     }
 
     void Plot2DWindow::Draw() {
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
 
         FSlabWindow::Draw();
 
@@ -243,9 +250,9 @@ namespace Slab::Graphics {
             }};
 
         if(gui_context_is_local) {
-            gui_context->NewFrame();
-            draw_call();
-            gui_context->Render();
+            // gui_context->NewFrame();
+            // draw_call();
+            // gui_context->Render();
         } else {
             gui_context->AddDrawCall(draw_call);
         }

@@ -26,7 +26,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define HISTOGRAM_SHOULD_BE_PRETTY false
@@ -165,11 +165,11 @@ namespace Slab::Models::KGRtoR {
 
         // *************************** MY BEAUTY *****************************
 
-        guiWindow.addVolatileStat("<\\br>");
+        guiWindow.AddVolatileStat("<\\br>");
         for (const auto &p: FCommandLineInterfaceManager::getInstance().getParametersValues({"T", "k", "i"})) {
             auto name = p.first;
             if (name == "i") name = "transient";
-            guiWindow.addVolatileStat(name + " = " + p.second);
+            guiWindow.AddVolatileStat(name + " = " + p.second);
         }
 
         FRtoRPanel::Draw();
@@ -212,20 +212,20 @@ namespace Slab::Models::KGRtoR {
 
         std::ostringstream ss;
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
-        guiWindow.addVolatileStat("<\\br>");
-        guiWindow.addVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
-        guiWindow.addVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
+        guiWindow.AddVolatileStat("<\\br>");
+        guiWindow.AddVolatileStat(Str("U = ") + ToStr(U), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("K = ") + ToStr(K), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("W = ") + ToStr(W), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("V = ") + ToStr(V), (style++)->lineColor);
+        guiWindow.AddVolatileStat(Str("u = U/L = ") + ToStr(u, 2));
 
         style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
         fix decimalPlaces = 3;
-        guiWindow.addVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τₖ = <dotϕ^2> = 2K/L = ") + ToStr(tau, decimalPlaces),
                                   (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τ = u - barφ/2 = ") + ToStr(tau_indirect, decimalPlaces),
                                   (style++)->lineColor.permute());
-        guiWindow.addVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
+        guiWindow.AddVolatileStat(Str("τ₂ = barphi + w = ") + ToStr((barϕ + 2 * W / L), decimalPlaces),
                                   (style++)->lineColor.permute());
         // guiWindow.addVolatileStat(Str("(τₖ+τ₂)/2 = ") + ToStr((tau_avg), decimalPlaces),  (style++)->lineColor);
     }

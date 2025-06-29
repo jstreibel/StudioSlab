@@ -23,7 +23,7 @@ namespace Slab::Graphics {
         Core::LoadModule("ImGui");
         Core::LoadModule("ModernOpenGL");
 
-        setClear(false);
+        SetClear(false);
     }
 
     void Scene3DWindow::Draw() {
@@ -59,7 +59,7 @@ namespace Slab::Graphics {
         camera.aspect = (float) GetWidth() / (float) GetHeight();
     }
 
-    bool Scene3DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool Scene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         fix left = FSlabWindow::isMouseLeftClicked();
         fix center = FSlabWindow::isMouseCenterClicked();
         fix right = FSlabWindow::isMouseRightClicked();
@@ -97,13 +97,13 @@ namespace Slab::Graphics {
             return true;
         }
 
-        return FSlabWindow::notifyMouseMotion(x, y, dx, dy);
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
     }
 
-    bool Scene3DWindow::notifyMouseWheel(double dx, double dy) {
+    bool Scene3DWindow::NotifyMouseWheel(double dx, double dy) {
         camera.yFov += .01f*camera.yFov*(float)dy;
 
-        return FSlabWindow::notifyMouseWheel(dx, dy);
+        return FSlabWindow::NotifyMouseWheel(dx, dy);
     }
 
     auto Scene3DWindow::getCamera() const -> const Camera & {

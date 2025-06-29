@@ -38,7 +38,7 @@ namespace Slab::Graphics::OpenGL {
 
         setAntiAliasOn();
 
-        if(checkGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
+        if(CheckGLErrors("reserve " + ToStr(w) + "x" + ToStr(h) + " GPU texture pixels"))
             Log::Error() << "OpenGL::Texture failed reserving " << w << "x" << h << " GPU texture pixels." << Log::Flush;
     }
 
@@ -108,7 +108,7 @@ namespace Slab::Graphics::OpenGL {
         fix nCols = w;
         fix level = 0;
 
-        checkGLErrors(__PRETTY_FUNCTION__);
+        CheckGLErrors(__PRETTY_FUNCTION__);
 
         fix internalFormat = getInternalFormat();
 
@@ -124,7 +124,7 @@ namespace Slab::Graphics::OpenGL {
                             (GLsizei) nCols,   (GLsizei) nRows,
                             dataFormat, dataType, dataBegin);
 
-        if(checkGLErrors(__PRETTY_FUNCTION__, false)) {
+        if(CheckGLErrors(__PRETTY_FUNCTION__, false)) {
             Log::Error() << "OpenGL::Texture failed to upload " << w << "x" << h
                          << " data to target " << TargetToString(getTarget())
                          << " with internal format " << InternalFormatToString(getInternalFormat())

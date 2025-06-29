@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    struct CallSet {
+    struct FCallSet {
         using RawSystemWindowPointer = void*;
 
         using InitContextCall = std::function<void(RawSystemWindowPointer)>;
@@ -24,44 +24,44 @@ namespace Slab::Graphics {
 
         InitContextCall Init;
         KillContextCall End;
-        DrawCall        Draw;
+        FDrawCall       Draw;
         NewFrameCall    NewFrame;
     };
 
     class SlabImGuiContext final : public GUIContext {
-        ImGuiContext *context = nullptr;
+        ImGuiContext *r_Context = nullptr;
 
-        CallSet call_set;
-
-    public:
-        explicit SlabImGuiContext(ParentSystemWindow, CallSet);
-        ~SlabImGuiContext() override = default;
-
-        DevFloat getFontSize() const;
-
-        void AddMainMenuItem(MainMenuItem) override;
+        FCallSet CallSet;
 
         void Bind() override;
         void NewFrame() override;
         void Render() const override;
 
+    public:
+        explicit SlabImGuiContext(FOwnerSystemWindow, FCallSet);
+        ~SlabImGuiContext() override = default;
+
+        DevFloat GetFontSize() const;
+
+        void AddMainMenuItem(MainMenuItem) override;
+
         void *GetContextPointer() override;
 
         bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
-        bool notifyCharacter(UInt codepoint) override;
+        bool NotifyCharacter(UInt codepoint) override;
 
-        void cursorEntered(bool b) override;
+        void CursorEntered(bool b) override;
 
         bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool notifySystemWindowReshape(int w, int h) override;
+        bool NotifySystemWindowReshape(int w, int h) override;
 
-        bool notifyRender() override;
+        bool NotifyRender() override;
     };
 
 } // Slab::Graphics

@@ -15,13 +15,13 @@ namespace Tests {
     using namespace Slab;
 
     class BezierTests : public Graphics::WindowRow {
-        Graphics::FGUIWindow stats;
-        Graphics::Plot2DWindow graph;
+        Graphics::FGUIWindow Stats;
+        Graphics::Plot2DWindow Graph;
 
-        Math::PointSet currentPt;
+        Math::PointSet CurrentPoint;
 
     public:
-        BezierTests();
+        explicit BezierTests(const Pointer<Graphics::SlabImGuiContext>& GuiContext);
 
         void Draw() override;
     };

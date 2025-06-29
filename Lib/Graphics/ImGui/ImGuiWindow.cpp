@@ -13,61 +13,73 @@
 #include <utility>
 #include <Graphics/Modules/ImGui/ImGuiModule.h>
 
+#include "3rdParty/freetype-gl/vertex-attribute.h"
+
 #define MyName
 
 namespace Slab::Graphics {
-    Atomic<CountType> ImGuiWindow::Count = 0;
+    Atomic<CountType> FImGuiWindow::Count = 0;
 
-    ImGuiWindow::ImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<SlabImGuiContext> Context)
+    FImGuiWindow::FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<SlabImGuiContext> Context)
     : Id(Str("ImGuiWindow##") + ToStr(++Count))
     , SlabWindow(std::move(SlabWindow))
     , Context(std::move(Context))
     {
-        if (Context == nullptr) {
-            auto imgui_module = Core::GetModule<ImGuiModule>("ImGui");
+        assert(this->Context != nullptr && "Context is null");
 
-            Context = DynamicPointerCast<SlabImGuiContext>(imgui_module->CreateContext(SlabWindow->getConfig().parent_syswin));
-        }
+        // this->SlabWindow->SetClear(false);
+        // this->SlabWindow->SetDecorate(false);
     }
 
-    void ImGuiWindow::Draw() {
-        Context->NewFrame();
+    void FImGuiWindow::Draw() {
+        // This should be called in case of a local context, which is not the case
+        // Context->NewFrame();
 
         Context->AddDrawCall([this]() {
-            if(ImGui::Begin(Id.c_str())) {
-            if (SlabWindow != nullptr) {
-                fix pos = ImGui::GetWindowPos();
-                fix dim = ImGui::GetWindowSize();
-                fix cMin = ImGui::GetWindowContentRegionMin();
-                fix cMax = ImGui::GetWindowContentRegionMax();
+
+            ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
+            if(ImGui::Begin((Str("ImGuiWrappedSlabWindow") + Id).c_str())) {
+                if (SlabWindow == nullptr) { ImGui::End(); return; }
+
+                fix Pos = ImGui::GetWindowPos();
+                fix Dim = ImGui::GetWindowSize();
+                fix ContentMin = ImGui::GetWindowContentRegionMin();
+                fix ContentMax = ImGui::GetWindowContentRegionMax();
 
                 auto Backend = GetGraphicsBackend();
 
-                fix x = pos.x + cMin.x;
-                fix y = pos.y;
-                fix w = cMax.x - cMin.x;
-                fix h = cMax.y - cMin.y;
+                fix w = ContentMax.x - ContentMin.x;
+                fix h = ContentMax.y - ContentMin.y;
+                fix x = Pos.x + ContentMin.x;
+                fix y = Pos.y + ContentMin.y;
+                // constexpr auto Min = 400;
+                // fix w = dim.x > Min ? dim.x : Min;
+                // fix h = dim.y > Min ? dim.y : Min;
 
-                SlabWindow->Set_x((int)x);
+                SlabWindow->Set_x(static_cast<int>(x));
                 // slab_window->sety(backend.getScreenHeight() - (y + dim.y));
-                SlabWindow->Set_y((int)y);
-                SlabWindow->NotifyReshape((int) w, (int) h);
+                SlabWindow->Set_y(static_cast<int>(y));
+                SlabWindow->NotifyReshape(static_cast<int>(w), static_cast<int>(h));
 
-                auto Callback = [](const ImDrawList */*ParentList*/, const ImDrawCmd *DrawCommand)
+                auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
                 {
                     if (DrawCommand->UserCallback == nullptr) return;
 
                     const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
+
+                    glPushAttrib(GL_VIEWPORT_BIT);
                     SlabWindow->Draw();
+                    glPopAttrib();
                 };
+
                 ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
             }
 
             ImGui::End();
-        }
+
         });
 
-        Context->Render();
+        // Context->Render();
 
         FSlabWindow::Draw();
     }

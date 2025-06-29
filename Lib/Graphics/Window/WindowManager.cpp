@@ -12,7 +12,7 @@ namespace Graphics {
 
     void FWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& slab_window)
     {
-        AddSlabWindow(slab_window, false);
+        this->AddSlabWindow(slab_window, false);
     }
 } // Graphics
 } // Slab

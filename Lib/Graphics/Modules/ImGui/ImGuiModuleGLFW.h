@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    class ImGuiModuleGLFW : public ImGuiModule { public: explicit ImGuiModuleGLFW(); };
+    class ImGuiModuleGLFW : public FImGuiModule { public: explicit ImGuiModuleGLFW(); };
 
 } // Slab::Graphics
 

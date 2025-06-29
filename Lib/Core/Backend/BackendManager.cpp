@@ -59,7 +59,7 @@ namespace Slab::Core {
 
         LoadedModules[module_name] = Pointer<SlabModule>(module);
 
-        GetBackend()->notifyModuleLoaded(module);
+        GetBackend()->NotifyModuleLoaded(module);
 
         Log::Info() << "Loaded module '" << Log::FGBlue << module_name << Log::ResetFormatting << "'." << Log::Flush;
     }

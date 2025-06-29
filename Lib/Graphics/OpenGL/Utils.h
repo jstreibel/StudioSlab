@@ -16,7 +16,7 @@ namespace Slab::Graphics::OpenGL {
      * @param hint Hint to recent operations.
      * @return True if error was found, false otherwise.
      */
-    bool checkGLErrors(const Str& hint, bool raiseException=false);
+    bool CheckGLErrors(const Str& hint, bool raiseException=false);
 
     struct FrameBuffer {
         typedef uint8_t DataType;

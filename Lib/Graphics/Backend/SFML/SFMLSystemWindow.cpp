@@ -26,16 +26,16 @@ namespace Slab::Graphics {
 
     SFMLSystemWindow::SFMLSystemWindow()
     : SystemWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
-    , sfml_native_window((sf::RenderWindow*)window_ptr)
+    , sfml_native_window((sf::RenderWindow*)r_Window)
     {
         addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
     }
 
-    Int SFMLSystemWindow::getWidth() const {
+    Int SFMLSystemWindow::GetWidth() const {
         return (Int)sfml_native_window->getSize().x;
     }
 
-    Int SFMLSystemWindow::getHeight() const {
+    Int SFMLSystemWindow::GetHeight() const {
         return (Int)sfml_native_window->getSize().y;
     }
 
@@ -55,7 +55,7 @@ namespace Slab::Graphics {
         while (sfml_native_window->pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 sfml_native_window->close();
-                clearListeners();
+                ClearListeners();
                 break;
             }
             else if (event.type == sf::Event::KeyPressed) {
@@ -80,7 +80,7 @@ namespace Slab::Graphics {
         off_sync.lock();
 
         sfml_native_window->close();
-        clearListeners();
+        ClearListeners();
 
         off_sync.unlock();
     }

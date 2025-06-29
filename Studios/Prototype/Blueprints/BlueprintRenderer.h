@@ -39,7 +39,7 @@ namespace Slab::Blueprints {
         void DoDrawing();
 
     public:
-        explicit BlueprintRenderer(Pointer<Blueprint> blueprint, Graphics::ParentSystemWindow);
+        explicit BlueprintRenderer(Pointer<Blueprint> blueprint, Graphics::FOwnerSystemWindow);
 
         ImColor GetIconColor(PinType type);;
 
@@ -49,7 +49,7 @@ namespace Slab::Blueprints {
 
         void ShowLeftPane(float paneWidth);
 
-        bool notifyRender() override;
+        bool NotifyRender() override;
 
     };
 

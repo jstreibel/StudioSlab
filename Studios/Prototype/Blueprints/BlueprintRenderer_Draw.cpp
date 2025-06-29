@@ -22,13 +22,13 @@ namespace Slab::Blueprints {
         return result;
     }
 
-    bool BlueprintRenderer::notifyRender() {
-        m_Context->NewFrame();
-        // // ImGui::NewFrame();
+    bool BlueprintRenderer::NotifyRender() {
+        // m_Context->NewFrame();
+        // // // ImGui::NewFrame();
 
         DoDrawing();
 
-        m_Context->Render();
+        // m_Context->Render();
 
         return true;
     }

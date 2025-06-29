@@ -64,11 +64,17 @@ namespace Slab::Graphics {
         LabelsArtist labelsArtist;
         BackgroundArtist bgArtist;
 
-        Plot2DWindow(DevFloat xMin, DevFloat xMax, DevFloat yMin, DevFloat yMax, Str title = "no_title");
+        Plot2DWindow(
+            DevFloat xMin,
+            DevFloat xMax,
+            DevFloat yMin,
+            DevFloat yMax,
+            Str title,
+            const Pointer<SlabImGuiContext>& GuiContext);
 
     public:
 
-        explicit Plot2DWindow(Str title);
+        explicit Plot2DWindow(Str title, Pointer<SlabImGuiContext> guiContext=nullptr);
 
         void Draw() override;
 
@@ -98,8 +104,8 @@ namespace Slab::Graphics {
         DevFloat getAnimationTime() const;
 
         bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
-        bool notifyMouseWheel(double dx, double dy) override;
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
         bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 
     };

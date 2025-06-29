@@ -61,7 +61,7 @@ public:
         auto ddt_function = DynamicPointerCast<Slab::Math::R2toR::FNumericFunction>(function->diff(1));
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
-        guiBackend->GetMainSystemWindow()->setSystemWindowTitle(*filename);
+        guiBackend->GetMainSystemWindow()->SetSystemWindowTitle(*filename);
 
         auto viewer = Slab::New<Slab::Models::KGRtoR::KGMainViewer>();
 

@@ -174,10 +174,10 @@ namespace Slab::Graphics::OpenGL {
         if(text.empty()) return;
 
         setBufferText(text, pen, color, vertical);
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         drawBuffer();
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
     }
 
     DevFloat WriterOpenGL::getFontHeightInPixels() const { return font->height; }

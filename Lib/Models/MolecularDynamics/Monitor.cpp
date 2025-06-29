@@ -27,7 +27,7 @@ namespace Slab::Models::MolecularDynamics {
     Monitor::Monitor(const Pointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
     , FSlabWindow()
-    , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->getRawPlatformWindowPointer())
+    , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->GetRawPlatformWindowPointer())
     , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
     , molTexture()

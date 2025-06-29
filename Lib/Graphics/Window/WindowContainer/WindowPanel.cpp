@@ -148,9 +148,9 @@ namespace Slab::Graphics {
         throw ss.str();
     }
 
-    bool WindowPanel::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool WindowPanel::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
-        for (auto &col: columns) if (col.isMouseIn()) responded = col.notifyMouseMotion(x, y, dx, dy);
+        for (auto &col: columns) if (col.isMouseIn()) responded = col.NotifyMouseMotion(x, y, dx, dy);
 
         return responded;
     }
@@ -183,10 +183,10 @@ namespace Slab::Graphics {
         return responded;
     }
 
-    bool WindowPanel::notifyMouseWheel(double dx, double dy) {
+    bool WindowPanel::NotifyMouseWheel(double dx, double dy) {
         auto responded = false;
         for (auto &col: columns)
-            if (col.isMouseIn()) responded = col.notifyMouseWheel(dx, dy);
+            if (col.isMouseIn()) responded = col.NotifyMouseWheel(dx, dy);
 
         return responded;
     }

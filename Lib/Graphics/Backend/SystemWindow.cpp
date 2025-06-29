@@ -18,13 +18,13 @@ namespace Slab::Graphics {
 
     SystemWindow::SystemWindow(void *window_ptr, Pointer<FEventTranslator> EventTranslator)
     : EventTranslator(std::move(EventTranslator))
-    , window_ptr(window_ptr)
-    , mouse_state(New<MouseState>(this)){
+    , r_Window(window_ptr)
+    , MouseState(New<FMouseState>(this)){
 
         // Add event listener manually because SystemWindow::addEventListener calls the pure abstract
         // methods SystemWindow::GetWidth and SystemWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
-        this->EventTranslator->AddGUIEventListener(mouse_state);
+        this->EventTranslator->AddGUIEventListener(MouseState);
     }
 
      auto SystemWindow::AddEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool {
@@ -44,12 +44,12 @@ namespace Slab::Graphics {
     auto SystemWindow::AddAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool {
         if(!AddEventListener(listener)) return false;
 
-        thingsImProprietary.push_back(listener);
+        Stash.push_back(listener);
 
         return true;
     }
 
-    void SystemWindow::setMouseCursor(MouseCursor cursor) {
+    void SystemWindow::SetMouseCursor(MouseCursor cursor) {
         NOT_IMPLEMENTED
         switch (cursor) {
             case Mouse_ArrowCursor:
@@ -69,55 +69,56 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED
     }
 
-    void SystemWindow::setSystemWindowTitle(const Str& title) {
+    void SystemWindow::SetSystemWindowTitle(const Str& title) {
         Core::Log::Warning() << "Could not set SystemWindow title to \"" << title << "\": Current SystemWindow implementation does allow for changing window title." << Core::Log::Flush;
 
     }
 
-    void SystemWindow::clearListeners() {
-        for(auto &listener : thingsImProprietary)
+    void SystemWindow::ClearListeners() {
+        for(auto &listener : Stash)
             listener->SetParentSystemWindow(nullptr);
 
-        thingsImProprietary.clear();
+        Stash.clear();
 
-        for(auto &listener : EventTranslator->sysWin_listeners)
+        for(auto &listener : EventTranslator->SysWinListeners)
             if(auto ptr = listener.lock()) ptr->SetParentSystemWindow(nullptr);
 
         EventTranslator->clear();
     }
 
-    RawPaltformWindow_Ptr SystemWindow::getRawPlatformWindowPointer() {
-        return window_ptr;
+    RawPlatformWindow_Ptr SystemWindow::GetRawPlatformWindowPointer() const
+    {
+        return r_Window;
     }
 
-    auto SystemWindow::getMouseState() const -> Pointer<const MouseState> {
-        return mouse_state;
+    auto SystemWindow::GetMouseState() const -> Pointer<const FMouseState> {
+        return MouseState;
     }
 
-    Volatile<GUIContext> SystemWindow::getGUIContext() {
-        if(guiContext == nullptr)
+    Pointer<GUIContext> SystemWindow::GetGUIContext() {
+        if(GuiContext == nullptr)
             GetGraphicsBackend()->SetupGUI(this);
 
-        return guiContext;
+        return GuiContext;
     }
 
     void SystemWindow::Render() {
-        if(guiContext != nullptr) {
-            static auto show_metrics = false;
+        if(GuiContext != nullptr) {
+            static auto ShowMetrics = false;
 
             auto action = [this](const Str& item){
                 if(item == "Close")        SignalClose();
                 else
-                if(item == "Show metrics") show_metrics = true;
+                if(item == "Show metrics") ShowMetrics = true;
             };
 
-            guiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
-                                                     {MainMenuLeafEntry{"Show metrics", "Alt+m", show_metrics},
+            GuiContext->AddMainMenuItem(MainMenuItem{MainMenuLocation{"Window"},
+                                                     {MainMenuLeafEntry{"Show metrics", "Alt+m", ShowMetrics},
                                                       MainMenuLeafEntry{"Close", "Alt+F4"}
                                                       },
                                                      action});
 
-            if(show_metrics) guiContext->AddDrawCall([](){ ImGui::ShowMetricsWindow(&show_metrics); });
+            if(ShowMetrics) GuiContext->AddDrawCall([](){ ImGui::ShowMetricsWindow(&ShowMetrics); });
         }
 
         Cycle();

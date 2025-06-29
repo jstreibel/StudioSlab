@@ -266,8 +266,6 @@ add_library(${LIB_GRAPHICS} STATIC
         Plot2D/Util/PlottingRegion2D.h
         ImGui/ImGuiWindow.cpp
         ImGui/ImGuiWindow.h
-        Plot2D/Util/PrintWindow.cpp
-        Plot2D/Util/PrintWindow.h
         Plot2D/Util/FieldTextureKontraption.cpp
         Plot2D/Util/PlotStyleGUI.cpp
         Plot2D/Util/PlotStyleGUI.h

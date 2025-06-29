@@ -38,11 +38,11 @@ namespace Slab {
         return false;
     }
 
-    bool Graphics::Plot2DWindow::notifyMouseMotion(int x, int y, int dx, int dy) {
-        if(FSlabWindow::notifyMouseMotion(x, y, dx, dy)) return true;
+    bool Graphics::Plot2DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+        if(FSlabWindow::NotifyMouseMotion(x, y, dx, dy)) return true;
 
         bool elRet = false;
-        auto mouseState = parent_system_window->getMouseState();
+        auto mouseState = parent_system_window->GetMouseState();
 
         if (isMouseLeftClicked()) {
             const auto rect = region.getRect();
@@ -85,8 +85,8 @@ namespace Slab {
         return elRet;
     }
 
-    bool Graphics::Plot2DWindow::notifyMouseWheel(double dx, double dy) {
-        if(FSlabWindow::notifyMouseWheel(dx, dy)) return true;
+    bool Graphics::Plot2DWindow::NotifyMouseWheel(double dx, double dy) {
+        if(FSlabWindow::NotifyMouseWheel(dx, dy)) return true;
 
         constexpr const DevFloat factor = 1.2;
         const DevFloat d = pow(factor, -dy);

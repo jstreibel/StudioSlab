@@ -35,7 +35,7 @@ namespace Slab::Graphics {
         // else nk_style_set_font(nkContext, &droid->handle);
 
 
-        context = nk_glfw3_init((GLFWwindow*)window->getRawPlatformWindowPointer(),
+        context = nk_glfw3_init((GLFWwindow*)window->GetRawPlatformWindowPointer(),
                                 NK_GLFW3_DEFAULT, Max_Vertex_Buffer, Max_Element_Buffer);
 
         /* Load Fonts: if none of these are loaded a default font will be used  */

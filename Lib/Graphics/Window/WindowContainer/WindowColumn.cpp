@@ -129,7 +129,7 @@ namespace Slab::Graphics {
     void WindowColumn::Draw() {
         for (auto &win: windows) {
             win->Draw();
-            OpenGL::checkGLErrors(
+            OpenGL::CheckGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
         }
     }
@@ -140,16 +140,16 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    bool WindowColumn::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool WindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
         for(auto &win : windows)
         if(win->isMouseIn() ){
-            responded = win->notifyMouseMotion(x,y,dx,dy);
+            responded = win->NotifyMouseMotion(x,y,dx,dy);
         }
 
         if(responded) return true;
 
-        return FSlabWindow::notifyMouseMotion(x, y, dx, dy);
+        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
     }
 
     bool
@@ -166,8 +166,8 @@ namespace Slab::Graphics {
         PropagateEvent(NotifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowColumn::notifyMouseWheel(double dx, double dy) {
-        PropagateEvent(notifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
+    bool WindowColumn::NotifyMouseWheel(double dx, double dy) {
+        PropagateEvent(NotifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
     bool WindowColumn::isEmpty() const {

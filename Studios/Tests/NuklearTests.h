@@ -14,7 +14,7 @@ namespace Tests {
     public:
         NuklearTests();
 
-        bool notifyRender() override;
+        bool NotifyRender() override;
     };
 
 } // Tests

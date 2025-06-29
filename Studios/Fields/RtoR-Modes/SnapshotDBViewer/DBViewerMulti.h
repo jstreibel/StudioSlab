@@ -69,7 +69,7 @@ namespace Modes::DatabaseViewer {
 
         bool NotifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
     };
 }
 

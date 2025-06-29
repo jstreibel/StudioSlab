@@ -86,7 +86,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         // auto dt = params.getdt();
 
-        #define AddStat(stat) getGUIWindow().addVolatileStat(stat)
+        #define AddStat(stat) getGUIWindow().AddVolatileStat(stat)
 
         AddStat(Str("eps = ") + ToStr(epsilon, 4, true));
         // AddStat(Str("eps/h = ") + ToStr(epsilon / h, 4));

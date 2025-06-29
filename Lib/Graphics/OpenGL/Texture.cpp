@@ -7,7 +7,7 @@
 #include "Core/Tools/Log.h"
 #include "Utils.h"
 
-#define CHECK_GL_ERRORS(count) checkGLErrors(Str(__PRETTY_FUNCTION__) \
+#define CHECK_GL_ERRORS(count) CheckGLErrors(Str(__PRETTY_FUNCTION__) \
     + " from " + Common::getClassName(this)                                        \
     + " (check " + ToStr((count)) + ")");
 

@@ -15,32 +15,44 @@
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
+constexpr bool MAKE_LOCAL_CONTEXT = false;
+
 namespace Slab::Graphics {
 
     FGUIWindow::FGUIWindow(Config config) : FSlabWindow(std::move(config)) {
-        setClear(false);
-        setDecorate(false);
+        SetClear(false);
+        SetDecorate(false);
 
-        auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
-        gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.CreateContext(parent_system_window));
+        if constexpr (MAKE_LOCAL_CONTEXT)
+        {
+            auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
+            GuiContext = DynamicPointerCast<SlabImGuiContext>(GuiModule.CreateContext(parent_system_window));
 
-        if(gui_context == nullptr) throw Exception("Failed to get GUIContext.");
+            if(GuiContext == nullptr) throw Exception("Failed to get GUIContext.");
 
-        addResponder(gui_context);
+            AddResponder(GuiContext);
+        }
+        else
+        {
+            auto Context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+            if(Context == nullptr) throw Exception("Failed to get GUIContext.");
+
+            GuiContext = DynamicPointerCast<SlabImGuiContext>(Context);
+        }
     }
 
 
-    void FGUIWindow::addVolatileStat(const Str &stat, const Color color) {
+    void FGUIWindow::AddVolatileStat(const Str &stat, const Color color) {
         stats.emplace_back(stat, color);
     }
 
     void FGUIWindow::Draw() {
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
         FSlabWindow::Draw();
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
-        begin();
-        gui_context->AddDrawCall([this]() {
+        Begin();
+        GuiContext->AddDrawCall([this]() {
             auto vp = getViewport();
             const auto w_ = (float) vp.width(),
                     h_ = (float) vp.height();
@@ -135,14 +147,17 @@ namespace Slab::Graphics {
             stats.clear();
         });
 
-        end();
+        End();
 
-        gui_context->NewFrame();
-        gui_context->Render();
+        if constexpr (MAKE_LOCAL_CONTEXT)
+        {
+            // GuiContext->NewFrame();
+            // GuiContext->Render();
+        }
     }
 
-    void FGUIWindow::begin() const {
-        gui_context->AddDrawCall([this]() {
+    void FGUIWindow::Begin() const {
+        GuiContext->AddDrawCall([this]() {
             bool closable = false;
 
             ImGui::Begin("Stats", &closable,
@@ -152,18 +167,18 @@ namespace Slab::Graphics {
         });
     }
 
-    void FGUIWindow::end() const {
-        gui_context->AddDrawCall([]() { ImGui::End(); });
+    void FGUIWindow::End() const {
+        GuiContext->AddDrawCall([]() { ImGui::End(); });
     }
 
-    void FGUIWindow::AddExternalDraw(const DrawCall& draw) {
-        this->begin();
-        gui_context->AddDrawCall(draw);
-        this->end();
+    void FGUIWindow::AddExternalDraw(const FDrawCall& draw) {
+        this->Begin();
+        GuiContext->AddDrawCall(draw);
+        this->End();
     }
 
     Pointer<SlabImGuiContext> FGUIWindow::GetGUIContext() {
-        return gui_context;
+        return GuiContext;
     }
 
 }

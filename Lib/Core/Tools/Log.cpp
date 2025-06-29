@@ -187,7 +187,7 @@ namespace Slab::Core {
 
     auto Log::Fail(const Str &str) -> OStream & { return Fail() << str << Log::Flush; }
 
-    auto Log::Warning(const Str &str) -> OStream & { return Info() << str << Log::Flush; }
+    auto Log::Warning(const Str &str) -> OStream & { return Warning() << str << Log::Flush; }
 
     auto Log::WarningImportant(const Str &str) -> OStream & { return Warning() << str << Log::Flush; }
 

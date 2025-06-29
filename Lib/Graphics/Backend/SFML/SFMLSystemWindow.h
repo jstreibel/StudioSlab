@@ -33,9 +33,9 @@ namespace Slab::Graphics {
 
         bool addSFMLListener(const Volatile<SFMLListener>& sfmlListener);
 
-        Int getHeight() const override;
+        Int GetHeight() const override;
 
-        Int getWidth() const override;
+        Int GetWidth() const override;
 
         bool ShouldClose() const override;
 

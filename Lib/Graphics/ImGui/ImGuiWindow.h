@@ -13,7 +13,9 @@
 
 namespace Slab::Graphics {
 
-    class ImGuiWindow : public FSlabWindow {
+    class
+
+    FImGuiWindow final : public FSlabWindow {
         static Atomic<CountType> Count;
         Str Id;
 
@@ -21,7 +23,7 @@ namespace Slab::Graphics {
         Pointer<SlabImGuiContext> Context;
 
     public:
-        explicit ImGuiWindow(Pointer<FSlabWindow>, Pointer<SlabImGuiContext> Context=nullptr);
+        explicit FImGuiWindow(Pointer<FSlabWindow>, Pointer<SlabImGuiContext> Context);
 
         void Draw() override;
 

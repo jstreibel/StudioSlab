@@ -19,16 +19,16 @@ namespace Slab::Graphics {
     class FGUIWindow : public FSlabWindow {
         Vector<Pair<Str, Color>> stats;
 
-        Pointer<SlabImGuiContext> gui_context;
+        Pointer<SlabImGuiContext> GuiContext;
 
-        void begin() const;
-        void end() const;
+        void Begin() const;
+        void End() const;
     public:
         explicit FGUIWindow(Config={});
 
-        void addVolatileStat(const Str &stat, Color color = {-1, -1, -1});
+        void AddVolatileStat(const Str &stat, Color color = {-1, -1, -1});
 
-        void AddExternalDraw(const DrawCall&);
+        void AddExternalDraw(const FDrawCall&);
 
         Pointer<SlabImGuiContext> GetGUIContext();
 

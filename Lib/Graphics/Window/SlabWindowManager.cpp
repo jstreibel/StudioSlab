@@ -61,7 +61,7 @@ namespace Slab::Graphics {
                                           window->NotifyReshape(rect.width(), rect.height());
                                       });
 
-                focused->window->setDecorate(true);
+                focused->window->SetDecorate(true);
                 focused->is_full_screen = false;
             } else  {
                 fix w = w_system_window;
@@ -91,7 +91,7 @@ namespace Slab::Graphics {
                         window->NotifyReshape(rect.width(), rect.height());
                     },
                     [window](){
-                        window->setDecorate(false);
+                        window->SetDecorate(false);
                 });
 
                 focused->is_full_screen = true;
@@ -105,7 +105,7 @@ namespace Slab::Graphics {
     bool SlabWindowManager::NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
 
         if(state==Press) {
-            auto mouse_state = parent_system_window->getMouseState();
+            auto mouse_state = parent_system_window->GetMouseState();
 
             auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
                 fix is_mouse_in = meta->window->isMouseIn();
@@ -140,7 +140,7 @@ namespace Slab::Graphics {
         return focused->window->NotifyMouseButton(button, state, keys);
     }
 
-    bool SlabWindowManager::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool SlabWindowManager::NotifyMouseMotion(int x, int y, int dx, int dy) {
         if(Grabbed.window != nullptr) {
             auto p = Grabbed.anchor;
 
@@ -172,20 +172,20 @@ namespace Slab::Graphics {
 
         if(focused == nullptr) return false;
 
-        return focused->window->notifyMouseMotion(x, y, dx, dy);
+        return focused->window->NotifyMouseMotion(x, y, dx, dy);
     }
 
-    bool SlabWindowManager::notifyMouseWheel(double dx, double dy) {
+    bool SlabWindowManager::NotifyMouseWheel(double dx, double dy) {
         if(focused == nullptr) return false;
 
-        return focused->window->notifyMouseWheel(dx, dy);
+        return focused->window->NotifyMouseWheel(dx, dy);
     }
 
-    bool SlabWindowManager::notifyFilesDropped(StrVector paths) {
+    bool SlabWindowManager::NotifyFilesDropped(StrVector paths) {
         return false;
     }
 
-    bool SlabWindowManager::notifySystemWindowReshape(int w, int h) {
+    bool SlabWindowManager::NotifySystemWindowReshape(int w, int h) {
         w_system_window = w;
         h_system_window = h;
 
@@ -195,7 +195,7 @@ namespace Slab::Graphics {
             auto slab_window = meta->window;
             if (meta->is_full_screen || slab_window->wantsFullscreen() || slab_windows.size()==1) {
                 meta->is_full_screen = true;
-                slab_window->setDecorate(false);
+                slab_window->SetDecorate(false);
                 slab_window->Set_x(0);
                 slab_window->Set_y(WindowStyle::menu_height);
                 slab_window->NotifyReshape(w, h - WindowStyle::menu_height);
@@ -205,9 +205,9 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabWindowManager::notifyRender() {
+    bool SlabWindowManager::NotifyRender() {
         for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
-            auto mouse = parent_system_window->getMouseState();
+            auto mouse = parent_system_window->GetMouseState();
             decorator.begin_decoration(*slab_window->window, mouse->x, mouse->y);
             slab_window->window->Draw();
             decorator.finish_decoration(*slab_window->window, mouse->x, mouse->y);

@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     class FEventTranslator {
         friend class SystemWindow;
     protected:
-        List<Volatile<FSystemWindowEventListener>> sysWin_listeners;
+        List<Volatile<FSystemWindowEventListener>> SysWinListeners;
 
     public:
         FEventTranslator();

@@ -22,7 +22,7 @@
         firstTimer = false;         \
         code                        \
     }
-#define CHECK_GL_ERRORS(count) Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
+#define CHECK_GL_ERRORS(count) Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " from " + Common::getClassName(this) + " (" + ToStr((count)) + ")");
 
 // Ok to touch these:
 #define HISTOGRAM_SHOULD_BE_PRETTY false

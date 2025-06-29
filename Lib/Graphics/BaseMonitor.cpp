@@ -94,26 +94,26 @@ namespace Slab::Graphics {
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
         
-        guiWindow->addVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
+        guiWindow->AddVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
         // guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
-        guiWindow->addVolatileStat("");
-        guiWindow->addVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
-        guiWindow->addVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
-        guiWindow->addVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
+        guiWindow->AddVolatileStat("");
+        guiWindow->AddVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
+        guiWindow->AddVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
+        guiWindow->AddVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
         if (currStep != lastStep || hasFinished)
-            guiWindow->addVolatileStat(Str("Finish in ")
+            guiWindow->AddVolatileStat(Str("Finish in ")
                                       + (remainingTimeMin < 10 ? "0" : "")
                                       + ToStr(remainingTimeMin) + "m"
                                       + (remainingTimeSec < 10 ? "0" : "")
                                       + ToStr(remainingTimeSec) + "s");
         else
-            guiWindow->addVolatileStat(Str("Finish in ∞s"));
+            guiWindow->AddVolatileStat(Str("Finish in ∞s"));
         fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";
         fix elTimeSecs_str = (totalTimeSecs < 10 ? "0" : "") + ToStr(totalTimeSecs) + "s";
         fix elTimeMSecs_str =
                 Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
-        guiWindow->addVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
-        guiWindow->addVolatileStat(Str("<\\br>"));
+        guiWindow->AddVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
+        guiWindow->AddVolatileStat(Str("<\\br>"));
         // guiWindow.addVolatileStat(Str("L = ") + ToStr(L));
         // guiWindow.addVolatileStat(Str("N = ") + ToStr(N));
         // guiWindow.addVolatileStat(Str("h = ") + ToStr(h, 4, true));

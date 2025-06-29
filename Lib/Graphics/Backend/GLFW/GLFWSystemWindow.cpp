@@ -158,9 +158,9 @@ namespace Slab::Graphics {
     : SystemWindow(NewGLFWWindow(), New<GLFWEventTranslator>())
     {
 
-        glfwSetWindowUserPointer(static_cast<GLFWwindow *>(window_ptr), this);
+        glfwSetWindowUserPointer(static_cast<GLFWwindow *>(r_Window), this);
 
-        glfwMakeContextCurrent(static_cast<GLFWwindow *>(window_ptr));
+        glfwMakeContextCurrent(static_cast<GLFWwindow *>(r_Window));
 
         arrowCursor     = glfwCreateStandardCursor(GLFW_ARROW_CURSOR);
         IBeamCursor     = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
@@ -173,19 +173,19 @@ namespace Slab::Graphics {
     }
 
     GLFWSystemWindow::~GLFWSystemWindow() {
-        glfwDestroyWindow((GLFWwindow*)window_ptr);
+        glfwDestroyWindow((GLFWwindow*)r_Window);
     }
 
-    Int GLFWSystemWindow::getWidth() const {
+    Int GLFWSystemWindow::GetWidth() const {
         int w, h;
-        glfwGetWindowSize((GLFWwindow*)window_ptr, &w, &h);
+        glfwGetWindowSize((GLFWwindow*)r_Window, &w, &h);
 
         return w;
     }
 
-    Int GLFWSystemWindow::getHeight() const {
+    Int GLFWSystemWindow::GetHeight() const {
         int w, h;
-        glfwGetWindowSize((GLFWwindow*)window_ptr, &w, &h);
+        glfwGetWindowSize((GLFWwindow*)r_Window, &w, &h);
 
         return h;
     }
@@ -195,21 +195,21 @@ namespace Slab::Graphics {
         else glfw_listeners.emplace_back(glfwListener);
     }
 
-    void GLFWSystemWindow::setMouseCursor(MouseCursor cursor) {
+    void GLFWSystemWindow::SetMouseCursor(MouseCursor cursor) {
         switch (cursor) {
-            case Mouse_ArrowCursor:     glfwSetCursor((GLFWwindow*)window_ptr, arrowCursor);     break;
-            case Mouse_VResizeCursor:   glfwSetCursor((GLFWwindow*)window_ptr, vResizeCursor);   break;
-            case Mouse_HResizeCursor:   glfwSetCursor((GLFWwindow*)window_ptr, hResizeCursor);   break;
-            case Mouse_HandCursor:      glfwSetCursor((GLFWwindow*)window_ptr, handCursor);      break;
-            case Mouse_IBeamCursor:     glfwSetCursor((GLFWwindow*)window_ptr, IBeamCursor);     break;
-            case Mouse_CrossHairCursor: glfwSetCursor((GLFWwindow*)window_ptr, crossHairCursor); break;
+            case Mouse_ArrowCursor:     glfwSetCursor((GLFWwindow*)r_Window, arrowCursor);     break;
+            case Mouse_VResizeCursor:   glfwSetCursor((GLFWwindow*)r_Window, vResizeCursor);   break;
+            case Mouse_HResizeCursor:   glfwSetCursor((GLFWwindow*)r_Window, hResizeCursor);   break;
+            case Mouse_HandCursor:      glfwSetCursor((GLFWwindow*)r_Window, handCursor);      break;
+            case Mouse_IBeamCursor:     glfwSetCursor((GLFWwindow*)r_Window, IBeamCursor);     break;
+            case Mouse_CrossHairCursor: glfwSetCursor((GLFWwindow*)r_Window, crossHairCursor); break;
         }
     }
 
     void GLFWSystemWindow::Cycle() {
-        if(window_ptr==nullptr) return;
+        if(r_Window==nullptr) return;
 
-        glfwMakeContextCurrent((GLFWwindow*)window_ptr);
+        glfwMakeContextCurrent((GLFWwindow*)r_Window);
 
         glfwPollEvents();
 
@@ -217,28 +217,28 @@ namespace Slab::Graphics {
         glClearColor(clear_color.r, clear_color.g, clear_color.b, clear_color.a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        auto window = static_cast<GLFWwindow *>(window_ptr);
+        auto window = static_cast<GLFWwindow *>(r_Window);
         static auto Render = FuncRun(Render, window);
 
         IterateReferences(glfw_listeners, Render);
 
-        glfwSwapBuffers(static_cast<GLFWwindow *>(window_ptr));
+        glfwSwapBuffers(static_cast<GLFWwindow *>(r_Window));
     }
 
     bool GLFWSystemWindow::ShouldClose() const {
-        return glfwWindowShouldClose((GLFWwindow*)window_ptr) != 0;
+        return glfwWindowShouldClose((GLFWwindow*)r_Window) != 0;
     }
 
     void GLFWSystemWindow::SignalClose() {
-        glfwSetWindowShouldClose((GLFWwindow*)window_ptr, GLFW_TRUE);
+        glfwSetWindowShouldClose((GLFWwindow*)r_Window, GLFW_TRUE);
     }
 
-    void GLFWSystemWindow::setSystemWindowTitle(const Str &title) {
-        auto window = (GLFWwindow*)window_ptr;
+    void GLFWSystemWindow::SetSystemWindowTitle(const Str &title) {
+        auto window = (GLFWwindow*)r_Window;
 
         glfwSetWindowTitle(window, title.c_str());
 
-        SystemWindow::setSystemWindowTitle(title);
+        SystemWindow::SetSystemWindowTitle(title);
     }
 
 

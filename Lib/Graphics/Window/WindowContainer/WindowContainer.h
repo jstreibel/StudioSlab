@@ -26,10 +26,10 @@ namespace Slab::Graphics {
 
         void NotifyReshape(int newWinW, int newWinH) override;
         bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
         bool NotifyMouseButton(MouseButton button, KeyState state,
                                ModKeys keys) override;
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
     };
 
 } // Slab::Graphics

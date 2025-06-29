@@ -56,7 +56,7 @@ namespace Slab::Graphics {
     }
 
     void LabelsArtist::draw_label(PlotStyle &style, const Str& label, const RectI &viewport) {
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         OpenGL::Shader::remove();
 
@@ -86,7 +86,7 @@ namespace Slab::Graphics {
             glRectd(xMin_label, yMin_label, xMax_label, yMax_label);
         }
 
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
 
         {
             auto color = style.lineColor;
@@ -118,7 +118,7 @@ namespace Slab::Graphics {
             }
         }
 
-        OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__) + " (2)");
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (2)");
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);

@@ -49,7 +49,7 @@ int TestsApp::run() {
         wm->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
         wm->AddSlabWindow(New<Tests::ModernGLTests>(), false);
         wm->AddSlabWindow(New<Tests::Graph3DTests>(), false);
-        wm->AddSlabWindow(New<Tests::BezierTests>(), false);
+        wm->AddSlabWindow(New<Tests::BezierTests>(nullptr), false);
         wm->AddSlabWindow(New<Tests::FourierTestWindow>(), false);
         wm->AddSlabWindow(Tests::GetImGuiTestWindow(), false);
 

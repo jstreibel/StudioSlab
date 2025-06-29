@@ -36,7 +36,7 @@ namespace Slab::Graphics::OpenGL {
 
         fix sizeMB = size*4/(1024*1024.);
         glTexImage1D(Texture_1D, 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
-        if(!checkGLErrors("after trying to reserve texture in gpu"))
+        if(!CheckGLErrors("after trying to reserve texture in gpu"))
             Log::Note() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 

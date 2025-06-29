@@ -15,12 +15,12 @@ namespace Slab::Graphics {
     : Graphics::WindowRow()
     , base_function(std::move(baseFunction)) {
 
-        auto font_size = gui_window->GetGUIContext()->getFontSize();
+        auto font_size = gui_window->GetGUIContext()->GetFontSize();
 
         auto gui_size = 22*font_size;
 
         addWindow(gui_window, Right, (float)gui_size);
-        addResponder(gui_window);
+        AddResponder(gui_window);
 
         SetMinimumHeight((Resolution)(2.2*gui_size));
         SetMinimumWidth((Resolution)(4*gui_size));
@@ -38,7 +38,7 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::Draw() {
-        auto gui_context = parent_system_window->getGUIContext().lock();
+        auto gui_context = parent_system_window->GetGUIContext();
 
         if(gui_context == nullptr) return;
 

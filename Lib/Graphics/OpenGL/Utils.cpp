@@ -20,7 +20,7 @@
     {                    \
         GLenum err;                                                 \
         while((err = glGetError()) != GL_NO_ERROR)                  \
-            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): " << gluErrorString(err) << Log::Flush; \
+            Log::Warning() << "OpenGL error " << err << " (" << (strMark) << "): \"" << gluErrorString(err) << "\"" << Log::Flush; \
                                                                     \
     }
 
@@ -28,7 +28,7 @@ namespace Slab {
 
     using Log = Core::Log;
 
-    bool Graphics::OpenGL::checkGLErrors(const Str &hint, bool raiseException) {
+    bool Graphics::OpenGL::CheckGLErrors(const Str &hint, bool raiseException) {
         bool bad = false;
 
         GLenum err;

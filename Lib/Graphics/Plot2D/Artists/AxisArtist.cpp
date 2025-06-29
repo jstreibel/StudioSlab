@@ -177,7 +177,7 @@ namespace Slab::Graphics {
             writer->write(horizontalAxisLabel, pen , currStyle->graphTitleColor);
         }
 
-        Graphics::OpenGL::checkGLErrors(Str(__PRETTY_FUNCTION__));
+        Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
     void AxisArtist::drawYAxis(const Plot2DWindow &graph) const {

@@ -43,7 +43,7 @@ namespace Slab::Graphics {
 
             for (auto it = animations.begin(); it != animations.end();) {
                 auto &[var, anim] = *it;
-                auto t = anim.timer.getElTime_sec() / anim.timeInSeconds;
+                auto t = anim.Timer.getElTime_sec() / anim.TimeInSeconds;
 
                 if (t >= 1) {
                     *var = anim.targetValue;
@@ -62,7 +62,7 @@ namespace Slab::Graphics {
 
             for (auto it = animations.begin(); it != animations.end();) {
                 auto &[var, anim] = *it;
-                auto t = anim.timer.getElTime_sec() / anim.timeInSeconds;
+                auto t = anim.Timer.getElTime_sec() / anim.TimeInSeconds;
 
                 if (t >= 1) {
                     *var = anim.targetValue;

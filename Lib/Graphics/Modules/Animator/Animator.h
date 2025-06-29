@@ -22,11 +22,11 @@ namespace Slab::Graphics {
     struct Animation {
         T initialValue;
         T targetValue;
-        double timeInSeconds;
+        double TimeInSeconds;
         AnimStepCallback<T> step_callback;
         AnimFinishCallback finish_callback;
 
-        Timer timer; // inicializa sozinho
+        Timer Timer; // inicializa sozinho
     };
 
     template<typename T>

@@ -14,16 +14,16 @@
 
 namespace Slab::Graphics {
 
-    class NuklearModule : public GUIModule {
+    class NuklearModule : public FGUIModule {
     public:
-        explicit NuklearModule(ParentSystemWindow);
+        explicit NuklearModule(FOwnerSystemWindow);
 
         // void beginEvents() override;
         // void endEvents() override;
 
         static NuklearModule *BuildModule();
 
-        auto CreateContext(ParentSystemWindow window) -> Pointer<GUIContext> override;
+        auto CreateContext(FOwnerSystemWindow window) -> Pointer<GUIContext> override;
 
     };
 

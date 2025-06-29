@@ -32,18 +32,18 @@ namespace Slab::Graphics {
 
         void Cycle() override;
 
-        Int getWidth() const override;
+        Int GetWidth() const override;
 
-        Int getHeight() const override;
+        Int GetHeight() const override;
 
         void SignalClose() override;
         bool ShouldClose() const override;
 
         void addGLFWListener(const Volatile<Graphics::GLFWListener>& glfwListener, bool highPriority = false);
 
-        void setMouseCursor(MouseCursor cursor) override;
+        void SetMouseCursor(MouseCursor cursor) override;
 
-        void setSystemWindowTitle(const Str &title) override;
+        void SetSystemWindowTitle(const Str &title) override;
 
 
         static void window_focus_callback(GLFWwindow *window, int focused);

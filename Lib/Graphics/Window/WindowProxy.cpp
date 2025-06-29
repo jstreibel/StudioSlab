@@ -16,7 +16,7 @@ namespace Slab::Graphics {
 
         window->NotifyReshape(GetWidth(), GetHeight());
 
-        addResponder(window);
+        AddResponder(window);
     }
 
 } // Slab::Graphics

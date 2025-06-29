@@ -30,7 +30,7 @@ protected:
         blueprint = Slab::New<Blueprint>();
         auto main_platform_window = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
         blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint, main_platform_window.get());
-        addResponder(blueprint_renderer);
+        AddResponder(blueprint_renderer);
 
         Node* node;
         node = blueprint->SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));

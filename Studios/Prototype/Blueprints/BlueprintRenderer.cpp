@@ -20,14 +20,14 @@ namespace Slab::Blueprints {
 
     using ax::Widgets::IconType;
 
-    BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint, Graphics::ParentSystemWindow parent_syswin)
+    BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint, Graphics::FOwnerSystemWindow parent_syswin)
     : Graphics::FSystemWindowEventListener(parent_syswin)
     , blueprint(std::move(blueprint)) {
         // Blueprints "OnStart()"
 
-        auto &module = Slab::GetModule<Graphics::ImGuiModule>("ImGui");
+        auto &module = Slab::GetModule<Graphics::FImGuiModule>("ImGui");
         m_Context = DynamicPointerCast<Graphics::SlabImGuiContext>(module.CreateContext(parent_system_window));
-        addResponder(m_Context);
+        AddResponder(m_Context);
 
         ed::Config config;
 

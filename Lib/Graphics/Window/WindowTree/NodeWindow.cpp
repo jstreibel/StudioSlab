@@ -26,7 +26,7 @@ namespace Slab::Graphics {
 
         if (nodeSub != nullptr) {
             nodeSub->parent = this;
-            nodeSub->setClear(false);
+            nodeSub->SetClear(false);
         }
 
         children.emplace_back(subWindow);

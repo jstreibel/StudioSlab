@@ -389,13 +389,13 @@ namespace Modes::DatabaseViewer {
         Log::Info() << "Done\n" << Log::Flush;
     }
 
-    auto DBViewerMulti::notifyMouseMotion(int x, int y, int dx, int dy) -> bool {
+    auto DBViewerMulti::NotifyMouseMotion(int x, int y, int dx, int dy) -> bool {
         if( shiftKey == Graphics::Press ){
             loadDataUnderMouse();
             return true;
         };
 
-        return WindowRow::notifyMouseMotion(x, y, dx, dy);
+        return WindowRow::NotifyMouseMotion(x, y, dx, dy);
     }
 
 }

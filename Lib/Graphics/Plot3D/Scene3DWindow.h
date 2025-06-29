@@ -38,8 +38,8 @@ namespace Slab::Graphics {
         void Draw() override;
         auto getCamera() const -> const Camera&;
 
-        bool notifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool notifyMouseWheel(double dx, double dy) override;
+        bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
+        bool NotifyMouseWheel(double dx, double dy) override;
 
         bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
 

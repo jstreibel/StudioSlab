@@ -115,12 +115,12 @@ namespace Tests {
             updateGraphs();
         });
 
-        gui.addVolatileStat(Str("L = ") + ToStr(L / π, 2) + "π = " + ToStr(L));
-        gui.addVolatileStat(Str("ω = ") + ToStr(ω / π, 2) + "π = " + ToStr(ω, 2));
-        gui.addVolatileStat(Str("Re(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Re] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Re], 2));
-        gui.addVolatileStat(Str("Im(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Im] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Im], 2));
-        gui.addVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
-        gui.addVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
+        gui.AddVolatileStat(Str("L = ") + ToStr(L / π, 2) + "π = " + ToStr(L));
+        gui.AddVolatileStat(Str("ω = ") + ToStr(ω / π, 2) + "π = " + ToStr(ω, 2));
+        gui.AddVolatileStat(Str("Re(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Re] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Re], 2));
+        gui.AddVolatileStat(Str("Im(ωₚₑₐₖ) = ") + ToStr(ωₚₑₐₖ[Im] / π, 2) + "π = " + ToStr(ωₚₑₐₖ[Im], 2));
+        gui.AddVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
+        gui.AddVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
         WindowRow::Draw();
     }

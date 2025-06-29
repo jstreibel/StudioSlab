@@ -84,21 +84,23 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    SlabImGuiContext::SlabImGuiContext(ParentSystemWindow system_window, CallSet calls)
-    : GUIContext(system_window), call_set(std::move(calls)) {
-        context = ImGui::CreateContext();
+    SlabImGuiContext::SlabImGuiContext(FOwnerSystemWindow system_window, FCallSet calls)
+    : GUIContext(system_window), CallSet(std::move(calls)) {
+        r_Context = ImGui::CreateContext();
 
-        ImGui::SetCurrentContext(context);
+        ImGui::SetCurrentContext(r_Context);
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-        call_set.Init(system_window->getRawPlatformWindowPointer());
+        CallSet.Init(system_window->GetRawPlatformWindowPointer());
 
         buildFonts();
 
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
+
+        Core::Log::Info() << "Created ImGui context." << Core::Log::Flush;
     }
 
     // SlabImGuiContext::SlabImGuiContext() {
@@ -112,9 +114,9 @@ namespace Slab::Graphics {
     //}
 
     void SlabImGuiContext::NewFrame() {
-        ImGui::SetCurrentContext(context);
+        ImGui::SetCurrentContext(r_Context);
 
-        call_set.NewFrame();
+        CallSet.NewFrame();
         ImGui::NewFrame();
 
         FlushDrawCalls();
@@ -123,15 +125,15 @@ namespace Slab::Graphics {
     void SlabImGuiContext::Render() const {
         ImGui::Render();
 
-        call_set.Draw();
+        CallSet.Draw();
     }
 
 
     void SlabImGuiContext::Bind() {
-        ImGui::SetCurrentContext(context);
+        ImGui::SetCurrentContext(r_Context);
     }
 
-    DevFloat SlabImGuiContext::getFontSize() const {
+    DevFloat SlabImGuiContext::GetFontSize() const {
         (void)this; // get rid of annoying "this method can be made static" warning.
 
         return FONT_SIZE_PIXELS;
@@ -152,7 +154,7 @@ namespace Slab::Graphics {
         return io.WantCaptureKeyboard;
     }
 
-    bool SlabImGuiContext::notifyCharacter(UInt codepoint) {
+    bool SlabImGuiContext::NotifyCharacter(UInt codepoint) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -162,7 +164,7 @@ namespace Slab::Graphics {
         return io.WantTextInput;
     }
 
-    void SlabImGuiContext::cursorEntered(bool entered) {
+    void SlabImGuiContext::CursorEntered(bool entered) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -185,7 +187,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::notifyMouseMotion(int x, int y, int dx, int dy) {
+    bool SlabImGuiContext::NotifyMouseMotion(int x, int y, int dx, int dy) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -195,7 +197,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::notifyMouseWheel(double dx, double dy) {
+    bool SlabImGuiContext::NotifyMouseWheel(double dx, double dy) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -205,7 +207,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::notifySystemWindowReshape(int w, int h) {
+    bool SlabImGuiContext::NotifySystemWindowReshape(int w, int h) {
         ImGuiIO& io = ImGui::GetIO();
 
         io.DisplaySize = ImVec2((float)w, (float)h);
@@ -213,28 +215,24 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabImGuiContext::notifyRender() {
+    bool SlabImGuiContext::NotifyRender() {
         NewFrame();
-
         Render();
         return true;
     }
 
-    void add_item(int curr_depth, const MainMenuItem& items) {
-        fix& loc = items.location;
-        fix max_depth = loc.size();
+    void AddItem(const int CurrentDepth, const MainMenuItem& Item) {
+        fix& Location = Item.Location;
+        fix MaxDepth = Location.size();
 
-        if (ImGui::BeginMenu(loc[curr_depth].c_str())) {
-            if (curr_depth < max_depth-1)
-                add_item(curr_depth+1, items);
+        if (ImGui::BeginMenu(Location[CurrentDepth].c_str())) {
+            if (CurrentDepth < MaxDepth-1)
+                AddItem(CurrentDepth+1, Item);
             else {
-                auto action = items.action;
-                for(auto &item : items.items) {
-                    auto label = item.label.c_str();
-                    auto shortcut = item.shortcut.c_str();
-
-                    if (ImGui::MenuItem(label, shortcut, item.selected, item.enabled))
-                        action(item.label);
+                auto action = Item.Action;
+                for(const auto & [Label, Shortcut, Selected, Enabled] : Item.SubItems) {
+                    if (ImGui::MenuItem(Label.c_str(), Shortcut.c_str(), Selected, Enabled))
+                        action(Label);
                 }
             }
 
@@ -245,7 +243,7 @@ namespace Slab::Graphics {
     void SlabImGuiContext::AddMainMenuItem(MainMenuItem item) {
         AddDrawCall([item](){
             if(ImGui::BeginMainMenuBar()) {
-                add_item(0, item);
+                AddItem(0, item);
 
                 ImGui::EndMainMenuBar();
             }
@@ -253,7 +251,7 @@ namespace Slab::Graphics {
     }
 
     void *SlabImGuiContext::GetContextPointer() {
-        return context;
+        return r_Context;
     }
 
 } // Slab::Graphics

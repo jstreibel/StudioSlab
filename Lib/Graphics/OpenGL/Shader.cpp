@@ -21,7 +21,7 @@
     }
 
 #define CHECK_UNIFORM_ERRORS \
-    checkGLErrors(Str("uniform '") + name + "' @ " + __PRETTY_FUNCTION__);
+    CheckGLErrors(Str("uniform '") + name + "' @ " + __PRETTY_FUNCTION__);
 
 namespace Slab::Graphics::OpenGL {
 
@@ -40,15 +40,15 @@ namespace Slab::Graphics::OpenGL {
             GLsizei length;
             GLint size;
             GLenum type;
-            GLchar name[maxLength]; // Variable to hold the uniform name
+            Vector<GLchar> Name(maxLength); // Variable to hold the uniform name
 
-            glGetActiveUniform(handle, (GLuint)i, maxLength, &length, &size, &type, name);
+            glGetActiveUniform(handle, (GLuint)i, maxLength, &length, &size, &type, &Name[0]);
 
-            GLint location = glGetUniformLocation(handle, name);
+            GLint location = glGetUniformLocation(handle, &Name[0]);
 
             log << "\n\t\t\t\t\t"
                 << (i+1) << "/" << numActiveUniforms << " @ location " << location << " : \""
-                << name << "\" (" << GLTypeToGLSLType(type) << ")";
+                << &Name[0] << "\" (" << GLTypeToGLSLType(type) << ")";
         }
     }
 
@@ -63,17 +63,17 @@ namespace Slab::Graphics::OpenGL {
             GLint size;
             GLenum type;
             GLsizei length;
-            GLchar name[maxLength]; // Variable to hold the uniform name
+            Vector<GLchar> Name(maxLength); // Variable to hold the uniform name
 
             // Get information about the i-th active attribute
-            glGetActiveAttrib(program, i, maxLength, &length, &size, &type, name);
+            glGetActiveAttrib(program, i, maxLength, &length, &size, &type, &Name[0]);
 
             // Get the location of the attribute
-            GLint location = glGetAttribLocation(program, name);
+            GLint location = glGetAttribLocation(program, &Name[0]);
 
             log << "\n\t\t\t\t\t"
                 << (i+1) << "/" << numAttributes << " @ location " << location << " : \""
-                << name << "\" (" << GLTypeToGLSLType(type) << ")" ;
+                << &Name[0] << "\" (" << GLTypeToGLSLType(type) << ")" ;
         }
     }
 
@@ -125,7 +125,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform1i(loc, value);
 
-        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
     }
 
     void Shader::setUniform(const Str& name, GLfloat value) const {
@@ -137,7 +137,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform1f(loc, value);
 
-        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
     }
 
     void Shader::setUniform(const Str &name, Real2D vec2) const {
@@ -149,7 +149,7 @@ namespace Slab::Graphics::OpenGL {
 
         glUniform2f(loc, (GLfloat)vec2.x, (GLfloat)vec2.y);
 
-        checkGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
     }
 
     void Shader::setUniform(const Str& name, const glm::mat4 &mat4) const {
