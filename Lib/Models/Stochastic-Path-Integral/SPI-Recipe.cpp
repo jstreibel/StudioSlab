@@ -37,7 +37,7 @@ namespace Slab::Models::StochasticPathIntegrals {
         auto manager = Slab::New<Graphics::SlabWindowManager>();
         manager->AddSlabWindow(monitor, false);
 
-        Graphics::GetGraphicsBackend()->GetMainSystemWindow()->addAndOwnEventListener(manager);
+        Graphics::GetGraphicsBackend()->GetMainSystemWindow()->AddAndOwnEventListener(manager);
         sockets.emplace_back(monitor);
 
         return sockets;

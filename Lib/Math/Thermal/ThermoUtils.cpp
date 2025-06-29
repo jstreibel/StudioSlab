@@ -38,7 +38,7 @@ namespace Slab::Math::ThermoUtils {
     }
 
     /**
-     * Fast compute of deltaE using lookup table. IMPORTANT: external field h must be ZERO! Function WILL NOT assert
+     * Fast compute of deltaE using lookup table. Important: external field h must be ZERO! Function will not assert
      * this. DeltaE should be one of -8, -4, 0, 4, 8.
      * @param deltaE the energy difference.
      * @return

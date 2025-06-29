@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         if (Context == nullptr) {
             auto imgui_module = Core::GetModule<ImGuiModule>("ImGui");
 
-            Context = DynamicPointerCast<SlabImGuiContext>(imgui_module->createContext(SlabWindow->getConfig().parent_syswin));
+            Context = DynamicPointerCast<SlabImGuiContext>(imgui_module->CreateContext(SlabWindow->getConfig().parent_syswin));
         }
     }
 

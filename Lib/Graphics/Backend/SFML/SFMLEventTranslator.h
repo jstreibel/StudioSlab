@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    class SFMLEventTranslator : public EventTranslator, public SFMLListener {
+    class SFMLEventTranslator : public FEventTranslator, public SFMLListener {
     public:
         void event(const sf::Event &event) override;
 

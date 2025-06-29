@@ -83,7 +83,7 @@ namespace Slab::Graphics {
 
         // TODO isso eh gambiarra:
         mePointer = Naked(*this);
-        GetGraphicsBackend()->GetMainSystemWindow()->addEventListener(mePointer);
+        GetGraphicsBackend()->GetMainSystemWindow()->AddEventListener(mePointer);
     }
 
     GraphTheme_ptr PlotThemeManager::GetCurrent() {

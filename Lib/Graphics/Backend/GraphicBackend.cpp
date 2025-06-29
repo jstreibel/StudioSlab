@@ -70,8 +70,8 @@ namespace Slab::Graphics {
             if(win.get() == sys_win) {
                 auto &guiModule = Slab::GetModule<GUIModule>("GUI");
 
-                win->guiContext = guiModule.createContext(win.get());
-                win->addEventListener(win->guiContext);
+                win->guiContext = guiModule.CreateContext(win.get());
+                win->AddEventListener(win->guiContext);
 
                 return;
             }

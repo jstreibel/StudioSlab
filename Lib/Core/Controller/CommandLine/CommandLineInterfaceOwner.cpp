@@ -48,7 +48,7 @@ namespace Slab::Core {
     }
 
     auto FCommandLineInterfaceOwner::RegisterToManager() const -> void {
-        assert(interface != nullptr);
+        assert(Interface != nullptr);
 
         Core::RegisterCLInterface(Interface);
     }

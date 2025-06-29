@@ -49,7 +49,7 @@ namespace Slab {
     Int FApplication::Run() {
         const auto self = Dummy(*this);
 
-        p_Platform->GetMainSystemWindow()->addEventListener(self);
+        p_Platform->GetMainSystemWindow()->AddEventListener(self);
         p_Platform->Run();
 
         return 0;

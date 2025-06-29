@@ -103,7 +103,7 @@ namespace Slab::Models::KGR2toR {
 
             auto wm = New<Graphics::SlabWindowManager>(backend->GetMainSystemWindow().get());
             wm->AddSlabWindow(glOut, false);
-            backend->GetMainSystemWindow()->addAndOwnEventListener(wm);
+            backend->GetMainSystemWindow()->AddAndOwnEventListener(wm);
             sockets.emplace_back(glOut);
         }
         else sockets.emplace_back(New<OutputConsoleMonitor>(kg_numeric_config->getn()));

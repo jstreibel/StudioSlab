@@ -122,7 +122,7 @@ namespace Slab::Graphics {
     }
 
     void BaseMonitor::Draw() {
-        assert(lastPacket.hasValidData());
+        assert(LastPacket.hasValidData());
 
         {
             writeStats();

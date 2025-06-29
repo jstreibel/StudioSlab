@@ -23,7 +23,7 @@ namespace Slab::Graphics {
 
         static NuklearModule *BuildModule();
 
-        auto createContext(ParentSystemWindow window) -> Pointer<GUIContext> override;
+        auto CreateContext(ParentSystemWindow window) -> Pointer<GUIContext> override;
 
     };
 

@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         Pointer<GUIContext> guiContext = nullptr;
 
     protected:
-        Pointer<EventTranslator> event_translator;
+        Pointer<FEventTranslator> EventTranslator;
         RawPaltformWindow_Ptr window_ptr;
 
         virtual void clearListeners();
@@ -34,7 +34,7 @@ namespace Slab::Graphics {
 
         virtual void Cycle() = 0;
     public:
-        explicit SystemWindow(void *window_ptr, Pointer<EventTranslator>);
+        explicit SystemWindow(void *window_ptr, Pointer<FEventTranslator>);
 
         virtual ~SystemWindow() = default;
 
@@ -50,8 +50,8 @@ namespace Slab::Graphics {
 
         RawPaltformWindow_Ptr getRawPlatformWindowPointer();
 
-        auto addEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool;
-        auto addAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool;
+        auto AddEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool;
+        auto AddAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool;
 
         [[nodiscard]] auto getMouseState() const -> Pointer<const MouseState>;
         virtual void setMouseCursor(MouseCursor);

@@ -48,7 +48,7 @@ namespace Slab::Models::MolecularDynamics {
 
         auto wm = New<Graphics::SlabWindowManager>(main_syswin.get());
         wm->AddSlabWindow(Pointer<Graphics::FSlabWindow>(monitor), false);
-        main_syswin->addAndOwnEventListener(wm);
+        main_syswin->AddAndOwnEventListener(wm);
         sockets.emplace_back(monitor);
 
         return sockets;

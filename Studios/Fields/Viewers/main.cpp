@@ -81,7 +81,7 @@ public:
 
         auto wm = Slab::New<Slab::Graphics::SlabWindowManager>();
         wm->AddSlabWindow(viewer, false);
-        guiBackend->GetMainSystemWindow()->addEventListener(wm);
+        guiBackend->GetMainSystemWindow()->AddEventListener(wm);
 
         guiBackend->Run();
 

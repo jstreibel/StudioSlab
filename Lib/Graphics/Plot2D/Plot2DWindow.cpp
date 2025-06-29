@@ -58,7 +58,7 @@ namespace Slab::Graphics {
         if(this->gui_context == nullptr) {
             gui_context_is_local = true;
             auto &gui_module = Slab::GetModule<ImGuiModule>("ImGui");
-            gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.createContext(parent_system_window));
+            gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.CreateContext(parent_system_window));
             addResponder(gui_context);
         }
 

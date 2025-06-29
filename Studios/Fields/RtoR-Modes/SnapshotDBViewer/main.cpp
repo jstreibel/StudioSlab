@@ -56,7 +56,7 @@ public:
 
         const auto wm = Slab::New<Slab::Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
         wm->AddSlabWindow(viewer, false);
-        guiBackend->GetMainSystemWindow()->addEventListener(wm);
+        guiBackend->GetMainSystemWindow()->AddEventListener(wm);
 
         guiBackend->Run();
 

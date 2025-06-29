@@ -174,7 +174,7 @@ namespace Slab::Models::KGRtoR {
             const auto wm = New<SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
             auto Window = Pointer<FSlabWindow>(outputOpenGL);
             wm->AddSlabWindow(Window, false);
-            guiBackend->GetMainSystemWindow()->addAndOwnEventListener(wm);
+            guiBackend->GetMainSystemWindow()->AddAndOwnEventListener(wm);
             sockets.emplace_back(outputOpenGL);
         } else {
             sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));

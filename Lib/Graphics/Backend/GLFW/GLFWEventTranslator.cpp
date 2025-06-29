@@ -23,7 +23,7 @@
 
 namespace Slab::Graphics {
 
-    GLFWEventTranslator::GLFWEventTranslator() : EventTranslator() {}
+    GLFWEventTranslator::GLFWEventTranslator() : FEventTranslator() {}
 
     bool GLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE

@@ -43,7 +43,7 @@ int TestsApp::run() {
         backend = Slab::Graphics::GetGraphicsBackend();
         auto main_syswin = backend->GetMainSystemWindow();
         auto wm = New<Graphics::SlabWindowManager>();
-        main_syswin->addAndOwnEventListener(wm);
+        main_syswin->AddAndOwnEventListener(wm);
 
         wm->AddSlabWindow(New<Tests::LaTeXTests>(), false);
         wm->AddSlabWindow(New<Tests::VShapeExpansionTest>(), false);
@@ -72,7 +72,7 @@ int TestsApp::run() {
         Core::BackendManager::Startup("GLFW");
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
         backend = guiBackend;
-        guiBackend->GetMainSystemWindow()->addEventListener(Pointer<Graphics::FSystemWindowEventListener>(new Tests::NuklearTests()));
+        guiBackend->GetMainSystemWindow()->AddEventListener(Pointer<Graphics::FSystemWindowEventListener>(new Tests::NuklearTests()));
     }
 
     backend->Run();

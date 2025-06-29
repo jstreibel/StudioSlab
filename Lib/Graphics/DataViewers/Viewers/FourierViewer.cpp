@@ -263,7 +263,7 @@ namespace Slab::Graphics {
 
         if(function == nullptr) return;
 
-        assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
+        assert((sizeof(DevFloat)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
         fix xMin = function->getDomain().xMin;
         fix L = function->getDomain().getLx();

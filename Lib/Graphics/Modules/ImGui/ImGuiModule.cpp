@@ -65,7 +65,7 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED;
     }
 
-    Pointer<GUIContext> ImGuiModule::createContext(ParentSystemWindow parentSystemWindow) {
+    Pointer<GUIContext> ImGuiModule::CreateContext(ParentSystemWindow parentSystemWindow) {
         auto new_context = New<SlabImGuiContext>(parentSystemWindow, call_set);
 
         // Setup Dear ImGui style

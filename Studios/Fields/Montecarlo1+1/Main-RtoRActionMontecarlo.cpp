@@ -55,7 +55,7 @@ void setup_viewer(const Slab::Pointer<Slab::Math::R2toR::NumericFunction_CPU>& f
     wm->AddSlabWindow(viewer, false);
 
     auto main_syswin = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-    main_syswin->addAndOwnEventListener(wm);
+    main_syswin->AddAndOwnEventListener(wm);
 }
 
 int run(int argc, const char **argv) {

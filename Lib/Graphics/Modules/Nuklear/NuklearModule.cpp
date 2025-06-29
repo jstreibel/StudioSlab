@@ -47,7 +47,7 @@ namespace Slab::Graphics {
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    Pointer<GUIContext> NuklearModule::createContext(ParentSystemWindow window) {
+    Pointer<GUIContext> NuklearModule::CreateContext(ParentSystemWindow window) {
 
         return Slab::Pointer<GUIContext>();
     }

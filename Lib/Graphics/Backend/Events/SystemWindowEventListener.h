@@ -21,7 +21,7 @@ namespace Slab::Graphics {
     class FSystemWindowEventListener {
         Vector<Volatile<FSystemWindowEventListener>> delegateResponders;
         friend class SystemWindow;
-        void setParentSystemWindow(SystemWindow *);
+        void SetParentSystemWindow(SystemWindow *);
 
     protected:
         SystemWindow* parent_system_window = nullptr;

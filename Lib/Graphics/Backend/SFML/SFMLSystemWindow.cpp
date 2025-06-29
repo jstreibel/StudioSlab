@@ -28,7 +28,7 @@ namespace Slab::Graphics {
     : SystemWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
     , sfml_native_window((sf::RenderWindow*)window_ptr)
     {
-        addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(event_translator));
+        addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
     }
 
     Int SFMLSystemWindow::getWidth() const {

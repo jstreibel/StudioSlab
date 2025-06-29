@@ -16,28 +16,33 @@
 
 namespace Slab::Graphics {
 
-    SystemWindow::SystemWindow(void *window_ptr, Pointer<EventTranslator> evt_translator)
-    : event_translator(std::move(evt_translator))
+    SystemWindow::SystemWindow(void *window_ptr, Pointer<FEventTranslator> EventTranslator)
+    : EventTranslator(std::move(EventTranslator))
     , window_ptr(window_ptr)
     , mouse_state(New<MouseState>(this)){
 
         // Add event listener manually because SystemWindow::addEventListener calls the pure abstract
         // methods SystemWindow::GetWidth and SystemWindow::GetHeight, yielding an exception upon being
         // called (even implicitly) by the constructor.
-        event_translator->addGUIEventListener(mouse_state);
+        this->EventTranslator->AddGUIEventListener(mouse_state);
     }
 
-     auto SystemWindow::addEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool {
-         if(listener.expired()) throw Exception("Expired pointer");
+     auto SystemWindow::AddEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool {
+        if (auto ListenerRef = listener.lock())
+        {
+            ListenerRef->SetParentSystemWindow(this);
+            // listener.lock()->notifySystemWindowReshape(getWidth(), getHeight());
+        }
+        else
+        {
+            throw Exception("Expired pointer");
+        }
 
-         listener.lock()->setParentSystemWindow(this);
-         // listener.lock()->notifySystemWindowReshape(getWidth(), getHeight());
-
-        return event_translator->addGUIEventListener(listener);
+        return EventTranslator->AddGUIEventListener(listener);
     }
 
-    auto SystemWindow::addAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool {
-        if(!addEventListener(listener)) return false;
+    auto SystemWindow::AddAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool {
+        if(!AddEventListener(listener)) return false;
 
         thingsImProprietary.push_back(listener);
 
@@ -71,14 +76,14 @@ namespace Slab::Graphics {
 
     void SystemWindow::clearListeners() {
         for(auto &listener : thingsImProprietary)
-            listener->setParentSystemWindow(nullptr);
+            listener->SetParentSystemWindow(nullptr);
 
         thingsImProprietary.clear();
 
-        for(auto &listener : event_translator->sysWin_listeners)
-            if(auto ptr = listener.lock()) ptr->setParentSystemWindow(nullptr);
+        for(auto &listener : EventTranslator->sysWin_listeners)
+            if(auto ptr = listener.lock()) ptr->SetParentSystemWindow(nullptr);
 
-        event_translator->clear();
+        EventTranslator->clear();
     }
 
     RawPaltformWindow_Ptr SystemWindow::getRawPlatformWindowPointer() {

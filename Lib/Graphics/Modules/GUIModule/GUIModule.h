@@ -15,7 +15,7 @@ namespace Slab::Graphics {
         explicit GUIModule(const Str& name, ParentSystemWindow);
         ~GUIModule() override = default;
 
-        virtual auto createContext(ParentSystemWindow) -> Pointer<GUIContext> = 0;
+        virtual auto CreateContext(ParentSystemWindow) -> Pointer<GUIContext> = 0;
 
     };
 

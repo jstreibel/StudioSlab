@@ -20,7 +20,7 @@ namespace Slab::Graphics {
 
     FSystemWindowEventListener::~FSystemWindowEventListener() = default;
 
-    void FSystemWindowEventListener::setParentSystemWindow(SystemWindow* syswin) {
+    void FSystemWindowEventListener::SetParentSystemWindow(SystemWindow* syswin) {
         parent_system_window = syswin;
 
         notifySystemWindowReshape(syswin->getWidth(), syswin->getHeight());

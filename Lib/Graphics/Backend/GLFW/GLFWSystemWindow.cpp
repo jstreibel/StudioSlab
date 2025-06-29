@@ -169,7 +169,7 @@ namespace Slab::Graphics {
         hResizeCursor   = glfwCreateStandardCursor(GLFW_HRESIZE_CURSOR);
         vResizeCursor   = glfwCreateStandardCursor(GLFW_VRESIZE_CURSOR);
 
-        addGLFWListener(DynamicPointerCast<GLFWEventTranslator>(event_translator));
+        addGLFWListener(DynamicPointerCast<GLFWEventTranslator>(EventTranslator));
     }
 
     GLFWSystemWindow::~GLFWSystemWindow() {

@@ -6,6 +6,7 @@
 #include "StudioSlab.h"
 #include "../BezierTests.h"
 #include "Core/Tools/Log.h"
+#include "Graphics/ImGui/ImGuiWindowManager.h"
 #include "Graphics/Window/SlabWindowManager.h"
 
 class FImGuiTest final : public Slab::FApplication
@@ -20,11 +21,19 @@ public:
 protected:
     void OnStart() override
     {
-        auto Platform = GetPlatform();
+        const auto Platform = GetPlatform();
         auto MainSystemWindow = Platform->GetMainSystemWindow();
 
-        Slab::Pointer<Slab::Graphics::FWindowManager> WM = Slab::New<Slab::Graphics::SlabWindowManager>();
-        MainSystemWindow->addAndOwnEventListener(WM);
+        auto& ImGuiModule = Slab::GetModule<Slab::Graphics::ImGuiModule>("GUI:ImGui");
+        auto GUIContext = ImGuiModule.CreateContext(&*MainSystemWindow);
+        auto ImGuiContext =
+            Slab::DynamicPointerCast
+            <Slab::Graphics::SlabImGuiContext>
+            (GUIContext);
+
+        // Slab::Pointer<Slab::Graphics::FWindowManager> WM = Slab::New<Slab::Graphics::SlabWindowManager>();
+        const Slab::Pointer<Slab::Graphics::FWindowManager> WM = Slab::New<Slab::Graphics::FImGuiWindowManager>(&*MainSystemWindow, ImGuiContext);
+        MainSystemWindow->AddAndOwnEventListener(WM);
 
         WM->AddSlabWindow(Slab::New<Tests::BezierTests>());
     }

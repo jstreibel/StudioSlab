@@ -185,7 +185,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     void RtoRFourierPanel::refreshInverseDFT(RtoR::DFTInverse::Filter *filter) {
-        assert((sizeof(Real)==sizeof(double)) && " make sure this code is compatible with fftw3");
+        assert((sizeof(DevFloat)==sizeof(double)) && " make sure this code is compatible with fftw3");
 
         fix xMin = FRtoRPanel::Params->getxMin();
         fix L = FRtoRPanel::Params->GetL();
