@@ -43,28 +43,37 @@ namespace Slab::Graphics {
 
 
     void FGUIWindow::AddVolatileStat(const Str &stat, const Color color) {
-        stats.emplace_back(stat, color);
+        Stats.emplace_back(stat, color);
     }
 
-    void FGUIWindow::Draw() {
-        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (-1)");
-        FSlabWindow::Draw();
-        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+    void FGUIWindow::ImmediateDraw() {
+        FSlabWindow::ImmediateDraw();
+
+        if constexpr (MAKE_LOCAL_CONTEXT)
+        {
+            GuiContext->NewFrame();
+            GuiContext->Render();
+        }
+    }
+
+    void FGUIWindow::RegisterDeferredDrawCalls()
+    {
+        FSlabWindow::RegisterDeferredDrawCalls();
 
         Begin();
         GuiContext->AddDrawCall([this]() {
-            auto vp = getViewport();
-            const auto w_ = (float) vp.width(),
-                    h_ = (float) vp.height();
-            const auto x_ = (float) vp.xMin,
-                    y_ = (float) vp.yMin;
+            auto Viewport = GetViewport();
+            const auto VpWidth = (float) Viewport.GetWidth(),
+                    VpHeight = (float) Viewport.GetHeight();
+            const auto Vp_x = (float) Viewport.xMin,
+                    Vp_y = (float) Viewport.yMin;
 
-            ImGui::SetWindowPos(ImVec2{x_, y_});
-            ImGui::SetWindowSize(ImVec2{w_, h_});
+            ImGui::SetWindowPos(ImVec2{Vp_x, Vp_y});
+            ImGui::SetWindowSize(ImVec2{VpWidth, VpHeight});
 
             auto flags = ImGuiTreeNodeFlags_DefaultOpen;
-            if (!stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
-                for (const auto &stat: stats) {
+            if (!Stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
+                for (const auto &stat: Stats) {
                     const auto text = stat.first;
 
                     if (text == "<\\br>") {
@@ -106,18 +115,18 @@ namespace Slab::Graphics {
             }
 
 
-            auto allInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
-            if (!allInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
+            if (auto AllInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
+                !AllInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
-                for (auto &interface: allInterfaces) {
-                    fix generalDescription = interface->GetGeneralDescription();
+                for (auto &Interface: AllInterfaces) {
+                    fix generalDescription = Interface->GetGeneralDescription();
 
-                    fix text = interface->GetName() +
+                    fix text = Interface->GetName() +
                                (!generalDescription.empty() ? "(" + generalDescription + ")" : "");
 
 
                     if (ImGui::TreeNode(text.c_str())) {
-                        for (auto &param: interface->GetParameters()) {
+                        for (auto &param: Interface->GetParameters()) {
                             fix descr = param->getDescription();
                             fix longName = param->getCommandLineArgumentName(true);
                             fix shortName = param->getCommandLineArgumentName(false);
@@ -144,21 +153,17 @@ namespace Slab::Graphics {
 
             }
 
-            stats.clear();
+            Stats.clear();
         });
-
         End();
-
-        if constexpr (MAKE_LOCAL_CONTEXT)
-        {
-            // GuiContext->NewFrame();
-            // GuiContext->Render();
-        }
     }
 
     void FGUIWindow::Begin() const {
-        GuiContext->AddDrawCall([this]() {
+        GuiContext->AddDrawCall([this] {
             bool closable = false;
+
+            // ImGui::SetNextWindowPos(ImVec2(this->Get_x(), this->Get_y()), ImGuiCond_Always);
+            // ImGui::SetNextWindowSize(ImVec2(this->GetWidth(), this->GetHeight()), ImGuiCond_Always);
 
             ImGui::Begin("Stats", &closable,
                          ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
@@ -171,7 +176,8 @@ namespace Slab::Graphics {
         GuiContext->AddDrawCall([]() { ImGui::End(); });
     }
 
-    void FGUIWindow::AddExternalDraw(const FDrawCall& draw) {
+    void FGUIWindow::AddExternalDraw(const FDrawCall& draw) const
+    {
         this->Begin();
         GuiContext->AddDrawCall(draw);
         this->End();

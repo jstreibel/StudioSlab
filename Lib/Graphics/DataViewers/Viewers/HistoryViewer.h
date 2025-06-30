@@ -16,8 +16,8 @@
 namespace Slab::Graphics {
 
     class HistoryViewer : public Viewer {
-        Pointer<Plot2DWindow> history_window = nullptr;
-        Pointer<Plot2DWindow> xft_history_window = nullptr;
+        Pointer<FPlot2DWindow> history_window = nullptr;
+        Pointer<FPlot2DWindow> xft_history_window = nullptr;
 
         Pointer<Math::R2toC::NumericFunction> xFourierTransform = nullptr;
         Pointer<Math::R2toR::FNumericFunction> xft_amplitudes = nullptr;
@@ -40,7 +40,7 @@ namespace Slab::Graphics {
 
         Str GetName() const override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 

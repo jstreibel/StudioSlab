@@ -35,7 +35,7 @@ namespace Modes::DatabaseViewer {
             dbParsers.emplace_back(parser);
         }
 
-        this->addWindow(Naked(guiWindow));
+        this->AddWindow(Naked(guiWindow));
 
         Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
 
@@ -80,7 +80,7 @@ namespace Modes::DatabaseViewer {
             allDataDisplay.GetAxisArtist().setVerticalAxisLabel("ω");
             allDataDisplay.GetAxisArtist().SetHorizontalAxisLabel("k");
 
-            topRow.addWindow(Naked(allDataDisplay));
+            topRow.AddWindow(Naked(allDataDisplay));
         }
 
         {
@@ -90,20 +90,20 @@ namespace Modes::DatabaseViewer {
             // topRow.addWindow(DummyPtr(fullParticularHistoryDisplay));
         }
 
-        allDataDisplay.getRegion().setReference_xMin(massesGraph.getRegion().getReference_xMin());
-        allDataDisplay.getRegion().setReference_xMax(massesGraph.getRegion().getReference_xMax());
+        allDataDisplay.GetRegion().setReference_xMin(massesGraph.GetRegion().getReference_xMin());
+        allDataDisplay.GetRegion().setReference_xMax(massesGraph.GetRegion().getReference_xMax());
 
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
-        addWindow(winCol, WindowRow::Left, .8);
+        AddWindow(winCol, WindowRow::Left, .8);
 
         reloadData();
     }
 
-    void DBViewerMulti::Draw() {
+    void DBViewerMulti::ImmediateDraw() {
 
-        fix ω_XHair = allDataDisplay.getLastXHairPosition().x;
+        fix ω_XHair = allDataDisplay.GetLastXHairPosition().x;
         fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
         fix L = fullFields[0]->getDomain().getLx();
         fix N = fullFields[0]->getN();
@@ -138,7 +138,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::Draw();
+        WindowRow::ImmediateDraw();
     }
 
     void DBViewerMulti::updateKGDispersion(bool visible) {
@@ -169,14 +169,14 @@ namespace Modes::DatabaseViewer {
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
-        KGRelation_artist->setLabel(Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
+        KGRelation_artist->SetLabel(Str("ω²-kₚₑₐₖ²-m²=0   (Klein-Gordon with m=") + ToStr(mass) + ")");
 
         style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[2];
         style.thickness = 3;
         style.filled = false;
         KGRelation_high_k_artist->setStyle(style);
         KGRelation_high_k_artist->setPointSet(KGRelation_high_k);
-        KGRelation_high_k_artist->setLabel(Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
+        KGRelation_high_k_artist->SetLabel(Str("k=ω-½m²/ω+...   (Klein-Gordon high-k approx with m=") + ToStr(mass) + ")");
     }
 
     void DBViewerMulti::computeMasses() {
@@ -301,7 +301,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerMulti::NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerMulti::NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) -> bool {
         if( key==Graphics::Key_LEFT_SHIFT  ) shiftKey = state;
 
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
@@ -315,7 +315,7 @@ namespace Modes::DatabaseViewer {
         return WindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
-    auto DBViewerMulti::NotifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) -> bool {
+    auto DBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
         static Timer timer;
         auto elTime = timer.getElTime_msec();
         if(button==Graphics::MouseButton_LEFT){
@@ -333,7 +333,7 @@ namespace Modes::DatabaseViewer {
         if(!fullFields.empty()) NOT_IMPLEMENTED_CLASS_METHOD;
 
         for(auto &artie : fullFieldsArtist)
-            allDataDisplay.removeArtist(artie);
+            allDataDisplay.RemoveArtist(artie);
         fullFieldsArtist.clear();
 
         for (auto &dbParser: dbParsers) {
@@ -381,10 +381,10 @@ namespace Modes::DatabaseViewer {
         omegaStr = Split(omegaStr, "=")[1];
 
         currentFullParticularHistoryArtist->setFunction(fieldHistory);
-        currentFullParticularHistoryArtist->setLabel(Str("ω=") + omegaStr);
+        currentFullParticularHistoryArtist->SetLabel(Str("ω=") + omegaStr);
 
         Log::Info() << "Add window" << Log::Flush;
-        topRow.addWindow(Naked(fullParticularHistoryDisplay));
+        topRow.AddWindow(Naked(fullParticularHistoryDisplay));
 
         Log::Info() << "Done\n" << Log::Flush;
     }

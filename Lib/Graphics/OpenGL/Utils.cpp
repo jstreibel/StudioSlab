@@ -118,8 +118,8 @@ namespace Slab {
 
             retVal = false;
         } else {
-            const auto xOld = window->getx();
-            const auto yOld = window->gety();
+            const auto xOld = window->Get_x();
+            const auto yOld = window->Get_y();
             const auto wOld = window->GetWidth();
             const auto hOld = window->GetHeight();
 
@@ -134,7 +134,7 @@ namespace Slab {
             // auto gui_state = window->isGUIEnabled();
             // window->setGUIState(DISABLED);
             window->overrideSystemWindowHeight(height);
-            window->Draw();
+            window->ImmediateDraw();
             window->overrideSystemWindowHeight(-1);
             // window->setGUIState(gui_state);
 

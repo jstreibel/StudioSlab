@@ -20,7 +20,7 @@ namespace Slab::Math {
 
     void OutputConsoleMonitor::handleOutput(const OutputPacket &outputInfo) {
         static Vector<DevFloat> measures;
-        auto elTime = timer.getElTime_sec();
+        auto elTime = timer.GetElapsedTime_Seconds();
 
         auto n = total_steps;
         auto currn = outputInfo.GetSteps();

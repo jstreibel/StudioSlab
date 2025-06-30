@@ -35,7 +35,7 @@ namespace Slab::Graphics::OpenGL {
         glActiveTexture(GL_TEXTURE0);
     }
 
-    void Texture::bind() const {
+    void Texture::Bind() const {
         activate();
         CHECK_GL_ERRORS(0)
         glBindTexture(target, handle);
@@ -56,7 +56,7 @@ namespace Slab::Graphics::OpenGL {
     auto Texture::getData() const -> const PixelData & { return *pixelData; }
 
     void Texture::setData(const PixelData &data) {
-        bind();
+        Bind();
 
         if(data.nDim == 1){
             assert(target == GL_TEXTURE_1D);

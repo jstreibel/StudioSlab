@@ -7,14 +7,12 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    bool Legacy::RenderPointSet(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
+    bool Legacy::RenderPointSett(const Math::PointSet_constptr& pSet, PlotStyle style) noexcept {
         if(pSet== nullptr) return true;
 
         IN pts = pSet->getPoints();
 
         if(pts.empty()) return true;
-
-        Shader::remove();
 
         if (style.filled && !(style.getPrimitive() == Point || style.getPrimitive() == Lines)) {
             const auto color = style.fillColor;

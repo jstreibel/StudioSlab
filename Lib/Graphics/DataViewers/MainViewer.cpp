@@ -19,7 +19,7 @@ namespace Slab::Graphics {
 
         auto gui_size = 22*font_size;
 
-        addWindow(gui_window, Right, (float)gui_size);
+        AddWindow(gui_window, Right, (float)gui_size);
         AddResponder(gui_window);
 
         SetMinimumHeight((Resolution)(2.2*gui_size));
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
 
     }
 
-    void MainViewer::Draw() {
+    void MainViewer::ImmediateDraw() {
         auto gui_context = parent_system_window->GetGUIContext();
 
         if(gui_context == nullptr) return;
@@ -80,12 +80,12 @@ namespace Slab::Graphics {
                 }
         );
 
-        WindowRow::Draw();
+        WindowRow::ImmediateDraw();
     }
 
-    bool MainViewer::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(state==Press && key >= KeyMap::Key_1 && key <= KeyMap::Key_9)
-            if(setCurrentViewer(key - KeyMap::Key_1)) return true;
+    bool MainViewer::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+        if(state==Press && key >= EKeyMap::Key_1 && key <= EKeyMap::Key_9)
+            if(setCurrentViewer(key - EKeyMap::Key_1)) return true;
 
         return WindowRow::NotifyKeyboard(key, state, modKeys);
     }
@@ -102,7 +102,7 @@ namespace Slab::Graphics {
 
         current_viewer = new_viewer;
 
-        addWindow(current_viewer, Right, -1);
+        AddWindow(current_viewer, Right, -1);
 
         arrangeWindows();
         current_viewer->NotifyBecameVisible();

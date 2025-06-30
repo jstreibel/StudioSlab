@@ -35,8 +35,12 @@ protected:
             (GUIContext);
 
 
-        // Slab::Pointer<Slab::Graphics::FWindowManager> WM = Slab::New<Slab::Graphics::SlabWindowManager>();
-        const auto WM = Slab::New<Slab::Graphics::FImGuiWindowManager>(&*MainSystemWindow, ImGuiContext);
+        Slab::Pointer<Slab::Graphics::FWindowManager> WM;
+        if constexpr (false)
+            WM = Slab::New<Slab::Graphics::SlabWindowManager>();
+        else
+            WM = Slab::New<Slab::Graphics::FImGuiWindowManager>(&*MainSystemWindow, ImGuiContext);
+
         MainSystemWindow->AddAndOwnEventListener(WM);
         const auto Window = Slab::New<Tests::BezierTests>(ImGuiContext);
         // Slab::Graphics::FSlabWindow::Config config;

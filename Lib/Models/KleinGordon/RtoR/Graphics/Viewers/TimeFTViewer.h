@@ -25,7 +25,7 @@ namespace Slab::Models::KGRtoR {
                      const Pointer<R2toR::FNumericFunction> &func=nullptr,
                      const Pointer<R2toR::FNumericFunction> &ddtFunc=nullptr);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void NotifyBecameVisible() override;
 

@@ -25,7 +25,7 @@ namespace Tests {
     , realTexture(texDim, texDim)
     , writer(Core::Resources::GetIndexedFontFileName(4), 80)
     {
-        addWindow(std::make_shared<FSlabWindow>());
+        AddWindow(std::make_shared<FSlabWindow>());
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
@@ -55,27 +55,27 @@ namespace Tests {
         texture.upload();
         realTexture.upload();
 
-        program.setUniform("transformMatrix", {1,0,0,
+        program.SetUniform("transformMatrix", {1,0,0,
                                                0,1,0,
                                                0,0,1});
     }
 
-    void ModernGLTests::Draw() {
-        WindowRow::Draw();
+    void ModernGLTests::ImmediateDraw() {
+        WindowRow::ImmediateDraw();
 
         {
             // texture.bind();
-            realTexture.bind();
-            program.use();
-            program.setUniform("texture", 0);
+            realTexture.Bind();
+            program.Use();
+            program.SetUniform("texture", 0);
 
             buffer.render(GL_TRIANGLES);
         }
 
         {
-            fix vp = getViewport();
-            writer.reshape(vp.width(), vp.height());
-            writer.write("VertexBuffer + Texture tests", {200, (double) GetHeight() - 200});
+            fix vp = GetViewport();
+            writer.Reshape(vp.GetWidth(), vp.GetHeight());
+            writer.Write("VertexBuffer + Texture tests", {200, (double) GetHeight() - 200});
         }
     }
 } // Tests

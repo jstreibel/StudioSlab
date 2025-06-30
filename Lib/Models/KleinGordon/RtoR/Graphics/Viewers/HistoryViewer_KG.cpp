@@ -17,23 +17,23 @@ namespace Slab::Models::KGRtoR {
     HistoryViewer::HistoryViewer(const Pointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
     {
-        history_window = New<Graphics::Plot2DWindow>("Function");
+        history_window = New<Graphics::FPlot2DWindow>("Function");
         function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         ddt_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜ(t,x)");
         d2dt2_function_artist = Graphics::Plotter::AddR2toRFunction(history_window, nullptr, "ϕₜₜ(t,x)");
         AddWindow(history_window);
 
-        slice_window = New<Graphics::Plot2DWindow>("Slices");
+        slice_window = New<Graphics::FPlot2DWindow>("Slices");
         function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         ddt_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜ");
         d2dt2_function_section_artist = Graphics::Plotter::AddR2Section(slice_window, nullptr, "ϕₜₜ");
 
         addWindowToColumn(slice_window, 0);
 
-        history_window->tieRegion_xMaxMin(*slice_window);
+        history_window->TieRegion_xMaxMin(*slice_window);
     }
 
-    void HistoryViewer::Draw() {
+    void HistoryViewer::ImmediateDraw() {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {

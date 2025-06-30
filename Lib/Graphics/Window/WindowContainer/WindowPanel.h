@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(Config={});
+        explicit WindowPanel(Config=Config());
 
         void AddWindow(const Pointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
@@ -50,18 +50,18 @@ namespace Slab::Graphics {
         void arrangeWindows();
 
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool NotifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state,
+                               EModKeys keys) override;
 
         bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         auto Set_x(int x) -> void override;
 

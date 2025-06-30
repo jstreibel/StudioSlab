@@ -50,7 +50,7 @@ namespace Slab::Models::KGRtoR {
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
 
-            auto mTemperaturesGraph = Slab::New<Graphics::Plot2DWindow>("T");
+            auto mTemperaturesGraph = Slab::New<Graphics::FPlot2DWindow>("T");
 
             Graphics::Plotter::AddPointSet(mTemperaturesGraph,
                                            Slab::Naked(temperature1HistoryData),
@@ -62,7 +62,7 @@ namespace Slab::Models::KGRtoR {
                                            Slab::Naked(temperature3HistoryData),
                                            (*style++).permuteColors(), "τ₂");
             // mTemperaturesGraph.addPointSet(DummyPtr(temperature4HistoryData), (*style++), "(τₖ+τ₂)/2");
-            mTemperaturesGraph->getRegion().animate_xMax(params->gett());
+            mTemperaturesGraph->GetRegion().animate_xMax(params->gett());
 
             addWindowToColumn(mTemperaturesGraph, 0);
 
@@ -79,10 +79,10 @@ namespace Slab::Models::KGRtoR {
         }
 
         {
-            auto mHistogramsGraphK = Slab::New<Graphics::Plot2DWindow>   ("k histogram");
-            auto mHistogramsGraphGrad = Slab::New<Graphics::Plot2DWindow>("w histogram");
-            auto mHistogramsGraphV = Slab::New<Graphics::Plot2DWindow>   ("v histogram");
-            auto mHistogramsGraphE = Slab::New<Graphics::Plot2DWindow>   ("e histogram");
+            auto mHistogramsGraphK = Slab::New<Graphics::FPlot2DWindow>   ("k histogram");
+            auto mHistogramsGraphGrad = Slab::New<Graphics::FPlot2DWindow>("w histogram");
+            auto mHistogramsGraphV = Slab::New<Graphics::FPlot2DWindow>   ("v histogram");
+            auto mHistogramsGraphE = Slab::New<Graphics::FPlot2DWindow>   ("e histogram");
 
 
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
@@ -118,14 +118,14 @@ namespace Slab::Models::KGRtoR {
                                                    const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(simulationHistoryArtist);
+        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history");
+        simulationHistoryGraph->AddArtist(simulationHistoryArtist);
         AddWindow(simulationHistoryGraph, true, 0.20);
     }
 
 
 
-    void RtoRStatisticsPanel::Draw() {
+    void RtoRStatisticsPanel::ImmediateDraw() {
         int errorCount = 0;
         CHECK_GL_ERRORS(errorCount++)
 
@@ -172,7 +172,7 @@ namespace Slab::Models::KGRtoR {
             guiWindow.AddVolatileStat(name + " = " + p.second);
         }
 
-        FRtoRPanel::Draw();
+        FRtoRPanel::ImmediateDraw();
     }
 
     void RtoRStatisticsPanel::drawGUI() {

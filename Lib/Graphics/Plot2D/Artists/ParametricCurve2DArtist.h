@@ -13,14 +13,14 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class ParametricCurve2DArtist : public Artist {
+    class ParametricCurve2DArtist : public FArtist {
         Slab::Pointer<RtoR2::ParametricCurve> curve;
         PlotStyle plotStyle;
 
     public:
         ParametricCurve2DArtist(Slab::Pointer<RtoR2::ParametricCurve>, PlotStyle);
 
-        bool draw(const Plot2DWindow &d) override;
+        bool Draw(const FPlot2DWindow &d) override;
 
         void setCurve(Slab::Pointer<RtoR2::ParametricCurve>);
 

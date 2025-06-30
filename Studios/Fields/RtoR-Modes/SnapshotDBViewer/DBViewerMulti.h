@@ -25,11 +25,11 @@ namespace Modes::DatabaseViewer {
         WindowRow topRow;
 
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::Plot2DWindow allDataDisplay;
-        Graphics::Plot2DWindow fullParticularHistoryDisplay;
+        Graphics::FPlot2DWindow allDataDisplay;
+        Graphics::FPlot2DWindow fullParticularHistoryDisplay;
         Graphics::R2toRFunctionArtist_ptr currentFullParticularHistoryArtist;
 
-        Graphics::Plot2DWindow massesGraph;
+        Graphics::FPlot2DWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;
@@ -59,15 +59,15 @@ namespace Modes::DatabaseViewer {
         void drawTable(int specialIndex);
         void loadDataUnderMouse();
 
-        Graphics::KeyState shiftKey = Graphics::Release;
+        Graphics::EKeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
-        bool NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
 
-        bool NotifyMouseButton(Graphics::MouseButton button, Graphics::KeyState state, Graphics::ModKeys keys) override;
+        bool NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
     };

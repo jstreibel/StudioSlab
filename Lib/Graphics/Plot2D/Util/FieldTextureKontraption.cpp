@@ -19,8 +19,8 @@ namespace Slab::Graphics {
         auto hPixelSizeInTexCoord = 1. / x_res;
         auto vPixelSizeInTexCoord = 1. / y_res;
 
-        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * sub_region.width();
-        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * sub_region.height();
+        auto hTexturePixelSizeInSpaceCoord = hPixelSizeInTexCoord * sub_region.GetWidth();
+        auto vTexturePixelSizeInSpaceCoord = vPixelSizeInTexCoord * sub_region.GetHeight();
 
         auto si = 0.0f; // - hPixelSizeInTexCoord;
         auto sf = 1.0f; // + hPixelSizeInTexCoord;
@@ -62,8 +62,8 @@ namespace Slab::Graphics {
         fix x_leftover = (int) full_xres % max_res;
         fix y_leftover = (int) full_yres % max_res;
 
-        fix dx = region.width()  / (DevFloat)full_xres;
-        fix dy = region.height() / (DevFloat)full_yres;
+        fix dx = region.GetWidth()  / (DevFloat)full_xres;
+        fix dy = region.GetHeight() / (DevFloat)full_yres;
 
         fix Δx = dx * (DevFloat)max_res;
         fix Δy = dy * (DevFloat)max_res;

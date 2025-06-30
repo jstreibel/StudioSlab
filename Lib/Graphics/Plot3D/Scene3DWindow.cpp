@@ -26,8 +26,8 @@ namespace Slab::Graphics {
         SetClear(false);
     }
 
-    void Scene3DWindow::Draw() {
-        FSlabWindow::Draw();
+    void Scene3DWindow::ImmediateDraw() {
+        FSlabWindow::ImmediateDraw();
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
@@ -60,9 +60,9 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        fix left = FSlabWindow::isMouseLeftClicked();
-        fix center = FSlabWindow::isMouseCenterClicked();
-        fix right = FSlabWindow::isMouseRightClicked();
+        fix left = FSlabWindow::IsMouseLeftClicked();
+        fix center = FSlabWindow::IsMouseCenterClicked();
+        fix right = FSlabWindow::IsMouseRightClicked();
 
 
         if(left && right) {
@@ -122,11 +122,11 @@ namespace Slab::Graphics {
         // auto popupName = title + Str(" window popup");
 
         if (showInterface) {
-            auto vp = getViewport();
+            auto vp = GetViewport();
             // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
             // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
             ImGui::SetNextWindowPos({(float)vp.xMin, (float)vp.yMin}, ImGuiCond_Appearing);
-            ImGui::SetNextWindowSize({(float)vp.width()*.20f, (float)vp.height()}, ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize({(float)vp.GetWidth()*.20f, (float)vp.GetHeight()}, ImGuiCond_Appearing);
 
             if (ImGui::Begin(title.c_str(), &showInterface)) {
 
@@ -149,8 +149,8 @@ namespace Slab::Graphics {
         }
     }
 
-    bool Scene3DWindow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
-        if(key == KeyMap::Key_TAB && state == KeyState::Release && modKeys.Mod_Shift == Press) {
+    bool Scene3DWindow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+        if(key == EKeyMap::Key_TAB && state == EKeyState::Release && modKeys.Mod_Shift == Press) {
             showInterface = !showInterface;
             return true;
         }

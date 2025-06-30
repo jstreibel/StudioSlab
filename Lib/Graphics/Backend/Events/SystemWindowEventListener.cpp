@@ -64,9 +64,9 @@ namespace Slab::Graphics {
         return IterateReferences(delegateResponders, Func(NotifyRender));
     }
 
-    bool FSystemWindowEventListener::NotifyKeyboard(KeyMap key,
-                                                   KeyState state,
-                                                   ModKeys modKeys){
+    bool FSystemWindowEventListener::NotifyKeyboard(EKeyMap key,
+                                                   EKeyState state,
+                                                   EModKeys modKeys){
         return IterateReferences(delegateResponders, Func(NotifyKeyboard, key, state, modKeys));
     }
 
@@ -75,9 +75,9 @@ namespace Slab::Graphics {
     }
 
     bool FSystemWindowEventListener::
-    NotifyMouseButton(MouseButton button,
-                      KeyState state,
-                      ModKeys mods) {
+    NotifyMouseButton(EMouseButton button,
+                      EKeyState state,
+                      EModKeys mods) {
         return IterateReferences(delegateResponders, Func(NotifyMouseButton, button, state, mods));
     }
 

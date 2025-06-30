@@ -20,17 +20,17 @@ namespace Slab::Models::KGRtoR {
                                                                const Pointer<R2toR::FNumericFunction> &ddtFunc)
     : KGViewer(guiWindow, func, ddtFunc)
     {
-        twoPointArtist->setLabel("avg[ϕ(x)ϕ(x+r)]");
+        twoPointArtist->SetLabel("avg[ϕ(x)ϕ(x+r)]");
 
         auto twoPointWindow = New<PlottingWindow>("Two-point correlation");
-        twoPointWindow->addArtist(twoPointArtist);
+        twoPointWindow->AddArtist(twoPointArtist);
         AddWindow(twoPointWindow);
 
-        sectionArtist->setLabel("avg[ϕ(x)ϕ(x+r)] | r=(0,t)");
+        sectionArtist->SetLabel("avg[ϕ(x)ϕ(x+r)] | r=(0,t)");
         sectionArtist->addSection(time_slice, Themes::GetCurrent()->FuncPlotStyles[0].clone(), "x=0");
         sectionArtist->addSection(space_slice, Themes::GetCurrent()->FuncPlotStyles[1].clone(), "t=0");
         auto timeSliceWindow = New<PlottingWindow>("Two-point time slice");
-        timeSliceWindow->addArtist(sectionArtist);
+        timeSliceWindow->AddArtist(sectionArtist);
         Plotter::AddRtoRFunction(timeSliceWindow, Naked(twoPointCorrelationAnalytic),
                                  Themes::GetCurrent()->FuncPlotStyles[1], "Analytic, x=0");
         Plotter::AddRtoRFunction(timeSliceWindow, Naked(powerDecayCorrelation),
@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TwoPointCorrelationViewer_KG::Draw() {
+    void TwoPointCorrelationViewer_KG::ImmediateDraw() {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -190,7 +190,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void TwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {
@@ -219,7 +219,7 @@ namespace Slab::Models::KGRtoR {
         using Diff = Math::RtoR::Diff;
         auto diff = New<Diff>(section_map, twoPointFunction->getSpace().getMetaData().geth(1)*1.2);
         *ddt2ptSection = Graphics::RtoRFunctionArtist(diff, Themes::GetCurrent()->FuncPlotStyles[3], 1000);
-        ddt2ptSection->setLabel("𝜕ₜ (avg[ϕ(x)ϕ(x+r)] | r=(0,t))");
+        ddt2ptSection->SetLabel("𝜕ₜ (avg[ϕ(x)ϕ(x+r)] | r=(0,t))");
 
     }
 

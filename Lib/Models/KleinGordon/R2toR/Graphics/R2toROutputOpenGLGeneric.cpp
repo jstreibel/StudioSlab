@@ -39,15 +39,15 @@ namespace Slab::Models::KGR2toR {
     , mFieldDisplay("Field")
     {
         AddWindow(Naked(mSectionGraph), ADD_TO_NEW_COLUMN, .50);
-        mSectionGraph.addArtist(Slab::Naked(sectionArtist));
+        mSectionGraph.AddArtist(Slab::Naked(sectionArtist));
 
         AddWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
-    void OutputOpenGL::Draw() {
+    void OutputOpenGL::ImmediateDraw() {
         if (!LastPacket.hasValidData()) return;
 
-        BaseMonitor::Draw();
+        BaseMonitor::ImmediateDraw();
 
         if (sectionArtist.getFunction() == nullptr) {
             auto phi = getPhi(LastPacket);

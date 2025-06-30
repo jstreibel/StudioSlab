@@ -33,22 +33,22 @@ namespace Slab::Models::KGRtoR {
         auto xArtie = New<Graphics::ParametricCurve2DArtist>(xLine, style);
         auto kArtie = New<Graphics::ParametricCurve2DArtist>(kLine, style);
 
-        xSection = New<Plot2DWindow>("Spacial time slice");
-        xSpaceHistory = New<Plot2DWindow>("Position space history");
-        xSpaceHistory->addArtist(xArtie, 100);
-        xSection->getRegion().setReference_xMax(xSpaceHistory->getRegion().getReference_xMax());
-        xSection->getRegion().setReference_xMin(xSpaceHistory->getRegion().getReference_xMin());
+        xSection = New<FPlot2DWindow>("Spacial time slice");
+        xSpaceHistory = New<FPlot2DWindow>("Position space history");
+        xSpaceHistory->AddArtist(xArtie, 100);
+        xSection->GetRegion().setReference_xMax(xSpaceHistory->GetRegion().getReference_xMax());
+        xSection->GetRegion().setReference_xMin(xSpaceHistory->GetRegion().getReference_xMin());
 
-        kSection = New<Plot2DWindow>("k-space time slice");
-        kSpaceHistory = New<Plot2DWindow>("Momentum space history");
-        kSpaceHistory->addArtist(kArtie, 100);
-        kSection->getRegion().setReference_xMax(kSpaceHistory->getRegion().getReference_xMax());
-        kSection->getRegion().setReference_xMin(kSpaceHistory->getRegion().getReference_xMin());
+        kSection = New<FPlot2DWindow>("k-space time slice");
+        kSpaceHistory = New<FPlot2DWindow>("Momentum space history");
+        kSpaceHistory->AddArtist(kArtie, 100);
+        kSection->GetRegion().setReference_xMax(kSpaceHistory->GetRegion().getReference_xMax());
+        kSection->GetRegion().setReference_xMin(kSpaceHistory->GetRegion().getReference_xMin());
         kSection->GetAxisArtist().SetHorizontalAxisLabel("k");
         kSection->GetAxisArtist().setVerticalAxisLabel("A");
 
-        xSpaceHistory->getRegion().setReference_yMin(kSpaceHistory->getRegion().getReference_yMin());
-        xSpaceHistory->getRegion().setReference_yMax(kSpaceHistory->getRegion().getReference_yMax());
+        xSpaceHistory->GetRegion().setReference_yMin(kSpaceHistory->GetRegion().getReference_yMin());
+        xSpaceHistory->GetRegion().setReference_yMax(kSpaceHistory->GetRegion().getReference_yMax());
 
         AddWindow(xSpaceHistory);
         AddWindow(xSection);
@@ -59,9 +59,9 @@ namespace Slab::Models::KGRtoR {
             auto kParam = Core::FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
 
             if(kParam != nullptr) {
-                using Tick = Graphics::AxisArtist::Tick;
+                using Tick = Graphics::FAxisArtist::Tick;
                 auto unit = Constants::π;
-                Graphics::AxisArtist::Ticks ticks;
+                Graphics::FAxisArtist::Ticks ticks;
 
                 ticks.push_back(Tick{0, "0"});
 
@@ -87,7 +87,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void RtoRHistoryPanel::Draw() {
+    void RtoRHistoryPanel::ImmediateDraw() {
         guiWindow.AddExternalDraw([this]() {
             static float t = 0;
             auto t_max = (float) LastPacket.GetSteps() * Params->Getdt();
@@ -112,7 +112,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        FRtoRPanel::Draw();
+        FRtoRPanel::ImmediateDraw();
     }
 
     void RtoRHistoryPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
@@ -124,7 +124,7 @@ namespace Slab::Models::KGRtoR {
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
         sectionArtist->addSection(xLine, style.clone(), "ϕ(0,x)");
 
-        xSpaceHistory->addArtist(simHistoryGraph);
+        xSpaceHistory->AddArtist(simHistoryGraph);
     }
 
     void
@@ -140,10 +140,10 @@ namespace Slab::Models::KGRtoR {
         sectionArtist->addSection(kLine, style.clone(), "");
         sectionArtist->setSamples(sftHistory->getN());
 
-        kSpaceHistory->addArtist(sftHistoryGraph);
+        kSpaceHistory->AddArtist(sftHistoryGraph);
     }
 
-    auto RtoRHistoryPanel::get_kSectionWindow() -> Pointer<Graphics::Plot2DWindow> {
+    auto RtoRHistoryPanel::get_kSectionWindow() -> Pointer<Graphics::FPlot2DWindow> {
         return kSection;
     }
 } // Slab::Models::RGRtoR

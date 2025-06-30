@@ -42,7 +42,7 @@ namespace Slab::Models::MolecularDynamics {
 
         Monitor(const Pointer<Config>&, Model);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
     protected:
         auto handleOutput(const Math::OutputPacket &packet) -> void override;

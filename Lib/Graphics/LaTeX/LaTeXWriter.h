@@ -23,7 +23,7 @@ namespace Slab::Graphics::LaTeX {
         Pointer<tex::Graphics2D> graphics2D;
 
         OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::Shader program;
+        OpenGL::FShader program;
         Pointer<OpenGL::Texture2D_Color> texture;
 
         Cairo::RefPtr<Cairo::ImageSurface> cairo_surface;

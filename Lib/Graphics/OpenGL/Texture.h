@@ -34,7 +34,7 @@ namespace Slab::Graphics::OpenGL {
 
         void activate() const;
         static void deactivate() ;
-        void bind() const;
+        void Bind() const;
 
         auto getTarget() const -> Target;
         auto getInternalFormat() const -> InternalFormat;

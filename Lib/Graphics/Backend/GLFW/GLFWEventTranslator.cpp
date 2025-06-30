@@ -29,9 +29,9 @@ namespace Slab::Graphics {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
         // const int _scancode = glfwGetKeyScancode(GLFW_KEY_X); // scancodes table change with platform
 
-        auto mappedKey = static_cast<KeyMap>(key);
-        auto state = static_cast<KeyState>(action);
-        ModKeys modKeys{
+        auto mappedKey = static_cast<EKeyMap>(key);
+        auto state = static_cast<EKeyState>(action);
+        EModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
                 (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
                 (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,
@@ -64,9 +64,9 @@ namespace Slab::Graphics {
     }
 
     bool GLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
-        auto mappedButton = static_cast<enum MouseButton>(button);
-        auto state = static_cast<KeyState>(action);
-        ModKeys modKeys{
+        auto mappedButton = static_cast<enum EMouseButton>(button);
+        auto state = static_cast<EKeyState>(action);
+        EModKeys modKeys{
                 (mods & GLFW_MOD_SHIFT)     != 0 ? Press : Release,
                 (mods & GLFW_MOD_CONTROL)   != 0 ? Press : Release,
                 (mods & GLFW_MOD_ALT)       != 0 ? Press : Release,

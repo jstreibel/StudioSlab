@@ -14,7 +14,7 @@ namespace Tests {
 
         auto graph3d = New<Graphics::Scene3DWindow>();
 
-        addWindow(graph3d);
+        AddWindow(graph3d);
 
         fix N = 5;
         fix M = 5;
@@ -41,7 +41,7 @@ namespace Tests {
         graph3d->addActor(actor);
     }
 
-    void Graph3DTests::Draw() {
-        WindowRow::Draw();
+    void Graph3DTests::ImmediateDraw() {
+        WindowRow::ImmediateDraw();
     }
 } // Tests

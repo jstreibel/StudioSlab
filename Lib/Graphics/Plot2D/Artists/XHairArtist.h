@@ -10,10 +10,10 @@
 
 namespace Slab::Graphics {
 
-    class XHairArtist : public Artist {
+    class XHairArtist : public FArtist {
         Math::PointSet XHair;
     public:
-        bool draw(const Plot2DWindow &window) override;
+        bool Draw(const FPlot2DWindow &window) override;
     };
 
 } // Graphics

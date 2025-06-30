@@ -24,17 +24,17 @@ namespace Slab::Models::KGRtoR {
     Monitor::Monitor(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
             : Graphics::BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
             , hamiltonian(hamiltonian) {
-        fullHistoryArtist->setLabel("ϕ(t,x)");
-        fullHistoryArtist->setAffectGraphRanges(true);
+        fullHistoryArtist->SetLabel("ϕ(t,x)");
+        fullHistoryArtist->SetAffectGraphRanges(true);
 
-        fullHistoryGraph->addArtist(fullHistoryArtist);
+        fullHistoryGraph->AddArtist(fullHistoryArtist);
         fullHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
         fullHistoryGraph->SetAutoReviewGraphRanges(true);
 
-        fullSFTHistoryArtist->setLabel("ℱₓ(t,k)");
-        fullSFTHistoryArtist->setAffectGraphRanges(true);
+        fullSFTHistoryArtist->SetLabel("ℱₓ(t,k)");
+        fullSFTHistoryArtist->SetAffectGraphRanges(true);
 
-        fullSFTHistoryGraph->addArtist(fullSFTHistoryArtist);
+        fullSFTHistoryGraph->AddArtist(fullSFTHistoryArtist);
         fullSFTHistoryGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
         fullSFTHistoryGraph->GetAxisArtist().setVerticalAxisLabel("t");
         fullSFTHistoryGraph->SetAutoReviewGraphRanges(true);
@@ -84,11 +84,11 @@ namespace Slab::Models::KGRtoR {
         Graphics::BaseMonitor::handleOutput(outInfo);
     }
 
-    bool Monitor::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool Monitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
 
         auto number = key - '0';
 
-        if (modKeys.nonePressed() && state == KeyState::Press && (number >= 1 && number <= 9)) {
+        if (modKeys.nonePressed() && state == EKeyState::Press && (number >= 1 && number <= 9)) {
             setDataView(number - 1);
             return true;
         }
@@ -161,7 +161,7 @@ namespace Slab::Models::KGRtoR {
         lastStepMod = stepMod;
     }
 
-    void Monitor::Draw() {
+    void Monitor::ImmediateDraw() {
         const EquationState &fieldState = *LastPacket.GetNakedStateData<EquationState>();
 
         auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
@@ -171,7 +171,7 @@ namespace Slab::Models::KGRtoR {
         updateHistoryGraph();
         updateSFTHistoryGraph();
 
-        Slab::Graphics::BaseMonitor::Draw();
+        Slab::Graphics::BaseMonitor::ImmediateDraw();
     }
 
 

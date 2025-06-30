@@ -8,7 +8,7 @@ namespace Slab::Graphics {
 
     FMouseState::FMouseState(Slab::Graphics::FOwnerSystemWindow parent) : FSystemWindowEventListener(parent) {}
 
-    bool FMouseState::NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) {
+    bool FMouseState::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
         mod_keys = keys;
 
         switch (button) {

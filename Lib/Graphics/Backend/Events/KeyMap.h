@@ -11,7 +11,7 @@ namespace Slab::Graphics {
      * KeySpace is the same value as GLFW_KEY_SPACE
      */
 
-    enum MouseButton{
+    enum EMouseButton{
         MouseButton_1        = 0,
         MouseButton_2        = 1,
         MouseButton_3        = 2,
@@ -28,26 +28,26 @@ namespace Slab::Graphics {
         MouseButton_LAST     = MouseButton_8,
     };
 
-    enum KeyState {
+    enum EKeyState {
         Release = 0,
         Press   = 1,
         Repeat  = 2,
     };
 
-    struct ModKeys {
-        KeyState Mod_Shift = Release;
-        KeyState Mod_Ctrl = Release;
-        KeyState Mod_Alt = Release;
-        KeyState Mod_Super = Release;
-        KeyState Mod_CapsLock = Release;
-        KeyState Mod_NumLock = Release;
+    struct EModKeys {
+        EKeyState Mod_Shift = Release;
+        EKeyState Mod_Ctrl = Release;
+        EKeyState Mod_Alt = Release;
+        EKeyState Mod_Super = Release;
+        EKeyState Mod_CapsLock = Release;
+        EKeyState Mod_NumLock = Release;
 
         auto nonePressed() const -> bool {
             return !(Mod_Shift | Mod_Ctrl | Mod_Alt | Mod_Super | Mod_CapsLock | Mod_NumLock);
         }
     };
 
-    enum KeyMap {
+    enum EKeyMap {
         /* The unknown key */
         Key_UNKNOWN         = -1,
 

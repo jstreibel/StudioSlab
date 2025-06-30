@@ -22,7 +22,7 @@ namespace Slab::Graphics {
             : graphBackground(graphBackground), graphNumbersColor(graphNumbersColor), graphTitleColor(graphTitleColor),
               axisColor(axisColor), majorTickColor(majorTickColor), XHairStyle(XHairStyle),
               majorGridLines(majorGridStyle), minorGridLines(minorGridStyle),
-              labelsWriter(std::move(labelsWriter)), ticksWriter(std::move(ticksWriter)),
+              LabelsWriter(std::move(labelsWriter)), TicksWriter(std::move(ticksWriter)),
               FuncPlotStyles(std::move(plotStyles)), vTickHeightinPixels(5), vAxisPaddingInPixels(80),
               hTickWidthInPixels(5), hAxisPaddingInPixels(30) {
 

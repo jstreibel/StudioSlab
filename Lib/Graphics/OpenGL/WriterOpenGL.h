@@ -22,27 +22,28 @@ namespace Slab::Graphics::OpenGL {
         ftgl::texture_atlas_t *atlas = nullptr;
 
         OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::Shader program;
+        OpenGL::FShader program;
 
         ftgl::mat4 model{}, view{}, projection{};
 
-        void drawBuffer();
-        void setBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
+        void DrawBuffer();
+        void SetBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
 
-        void uploadAtlas();
+        void UploadAtlas() const;
 
     public:
         WriterOpenGL() = delete;
         WriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
         virtual ~WriterOpenGL();
 
-        void write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false) override;
-        DevFloat getFontHeightInPixels() const override;
-        void reshape(int w, int h) override;
+        void Write(const Str& text, Point2D penLocation, Color color = White,
+                   bool vertical = false) override;
+        [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
+        void Reshape(int w, int h) override;
 
-        void scale(float sx, float sy) override;
-        void translate(float dx, float dy) override;
-        void resetTransforms() override;
+        void Scale(float sx, float sy) override;
+        void Translate(float dx, float dy) override;
+        void ResetTransforms() override;
     };
 
 } // Slab::Graphics::OpenGL

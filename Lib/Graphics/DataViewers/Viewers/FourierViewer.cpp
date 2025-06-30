@@ -24,73 +24,73 @@ namespace Slab::Graphics {
 
     FourierViewer::FourierViewer(Pointer<FGUIWindow> gui_window) : Viewer(std::move(gui_window))
     {
-        kSpaceGraph  = New<Plot2DWindow>("ℱₓ");
-        ωSpaceGraph  = New<Plot2DWindow>("ℱₜ");
-        xSpaceGraph  = New<Plot2DWindow>("ϕ(t,x)");
-        ωkSpaceGraph = New<Plot2DWindow>("ℱₜₓ");
+        kSpaceGraph  = New<FPlot2DWindow>("ℱₓ");
+        ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ");
+        xSpaceGraph  = New<FPlot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = New<FPlot2DWindow>("ℱₜₓ");
 
-        inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
+        inv_kSpaceArtist->SetLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
         // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
 
         {
-            kSpaceGraph->addArtist(kSpace_powerArtist, 2);
-            kSpaceGraph->addArtist(kSpace_amplitudesArtist, 3);
-            kSpaceGraph->addArtist(kSpace_phasesArtist, 0);
-            kSpaceGraph->addArtist(kSpace_imagPartsArtist, 1);
-            kSpaceGraph->addArtist(kSpace_realPartsArtist, 1);
+            kSpaceGraph->AddArtist(kSpace_powerArtist, 2);
+            kSpaceGraph->AddArtist(kSpace_amplitudesArtist, 3);
+            kSpaceGraph->AddArtist(kSpace_phasesArtist, 0);
+            kSpaceGraph->AddArtist(kSpace_imagPartsArtist, 1);
+            kSpaceGraph->AddArtist(kSpace_realPartsArtist, 1);
 
-            kSpace_powerArtist      ->setLabel("|ℱₖ|²");
-            kSpace_amplitudesArtist ->setLabel("|ℱₖ|");
-            kSpace_phasesArtist     ->setLabel("arg ℱₖ");
-            kSpace_imagPartsArtist  ->setLabel("ℑ ℱₖ");
-            kSpace_realPartsArtist  ->setLabel("ℜ ℱₖ");
+            kSpace_powerArtist      ->SetLabel("|ℱₖ|²");
+            kSpace_amplitudesArtist ->SetLabel("|ℱₖ|");
+            kSpace_phasesArtist     ->SetLabel("arg ℱₖ");
+            kSpace_imagPartsArtist  ->SetLabel("ℑ ℱₖ");
+            kSpace_realPartsArtist  ->SetLabel("ℜ ℱₖ");
         }
 
-        ωSpaceArtist->setLabel("ℱₜ(ω, x)");
-        ωSpaceGraph->addArtist(ωSpaceArtist);
+        ωSpaceArtist->SetLabel("ℱₜ(ω, x)");
+        ωSpaceGraph->AddArtist(ωSpaceArtist);
         ωSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("x");
         ωSpaceGraph->GetAxisArtist().setVerticalAxisLabel("ω");
 
-        timeFilteredArtist->setLabel("ϕ[t ∈ (t₀,tₑ)]");
-        xSpaceGraph->addArtist(timeFilteredArtist);
-        xSpaceGraph->addArtist(inv_kSpaceArtist);
-        xSpaceGraph->addArtist(twoPointCorrArtist);
+        timeFilteredArtist->SetLabel("ϕ[t ∈ (t₀,tₑ)]");
+        xSpaceGraph->AddArtist(timeFilteredArtist);
+        xSpaceGraph->AddArtist(inv_kSpaceArtist);
+        xSpaceGraph->AddArtist(twoPointCorrArtist);
 
-        powerArtist     ->setLabel("ℙ=|ℱₜₓ|²");
-        amplitudesArtist->setLabel("|ℱₜₓ|");
-        phasesArtist    ->setLabel("arg{ℱₜₓ}");
-        realPartsArtist ->setLabel("ℜ{ℱₜₓ}");
-        imagPartsArtist ->setLabel("ℑ{ℱₜₓ}");
+        powerArtist     ->SetLabel("ℙ=|ℱₜₓ|²");
+        amplitudesArtist->SetLabel("|ℱₜₓ|");
+        phasesArtist    ->SetLabel("arg{ℱₜₓ}");
+        realPartsArtist ->SetLabel("ℜ{ℱₜₓ}");
+        imagPartsArtist ->SetLabel("ℑ{ℱₜₓ}");
 
-        ωkSpaceGraph->addArtist(powerArtist);
-        ωkSpaceGraph->addArtist(amplitudesArtist);
-        ωkSpaceGraph->addArtist(phasesArtist);
-        ωkSpaceGraph->addArtist(realPartsArtist);
-        ωkSpaceGraph->addArtist(imagPartsArtist);
+        ωkSpaceGraph->AddArtist(powerArtist);
+        ωkSpaceGraph->AddArtist(amplitudesArtist);
+        ωkSpaceGraph->AddArtist(phasesArtist);
+        ωkSpaceGraph->AddArtist(realPartsArtist);
+        ωkSpaceGraph->AddArtist(imagPartsArtist);
 
 
         {
-            fix shared_xMin = ωSpaceGraph->getRegion().getReference_xMin();
-            fix shared_xMax = ωSpaceGraph->getRegion().getReference_xMax();
-            fix shared_tMin = kSpaceGraph->getRegion().getReference_yMin();
-            fix shared_tMax = kSpaceGraph->getRegion().getReference_yMax();
+            fix shared_xMin = ωSpaceGraph->GetRegion().getReference_xMin();
+            fix shared_xMax = ωSpaceGraph->GetRegion().getReference_xMax();
+            fix shared_tMin = kSpaceGraph->GetRegion().getReference_yMin();
+            fix shared_tMax = kSpaceGraph->GetRegion().getReference_yMax();
 
-            fix shared_ωMin = ωSpaceGraph->getRegion().getReference_yMin();
-            fix shared_ωMax = ωSpaceGraph->getRegion().getReference_yMax();
-            fix shared_kMin = kSpaceGraph->getRegion().getReference_xMin();
-            fix shared_kMax = kSpaceGraph->getRegion().getReference_xMax();
+            fix shared_ωMin = ωSpaceGraph->GetRegion().getReference_yMin();
+            fix shared_ωMax = ωSpaceGraph->GetRegion().getReference_yMax();
+            fix shared_kMin = kSpaceGraph->GetRegion().getReference_xMin();
+            fix shared_kMax = kSpaceGraph->GetRegion().getReference_xMax();
 
-            xSpaceGraph->getRegion().setReference_xMin(shared_xMin);
-            xSpaceGraph->getRegion().setReference_xMax(shared_xMax);
-            xSpaceGraph->getRegion().setReference_yMin(shared_tMin);
-            xSpaceGraph->getRegion().setReference_yMax(shared_tMax);
+            xSpaceGraph->GetRegion().setReference_xMin(shared_xMin);
+            xSpaceGraph->GetRegion().setReference_xMax(shared_xMax);
+            xSpaceGraph->GetRegion().setReference_yMin(shared_tMin);
+            xSpaceGraph->GetRegion().setReference_yMax(shared_tMax);
 
-            ωkSpaceGraph->getRegion().setReference_yMin(shared_ωMin);
-            ωkSpaceGraph->getRegion().setReference_yMax(shared_ωMax);
-            ωkSpaceGraph->getRegion().setReference_xMin(shared_kMin);
-            ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
+            ωkSpaceGraph->GetRegion().setReference_yMin(shared_ωMin);
+            ωkSpaceGraph->GetRegion().setReference_yMax(shared_ωMax);
+            ωkSpaceGraph->GetRegion().setReference_xMin(shared_kMin);
+            ωkSpaceGraph->GetRegion().setReference_xMax(shared_kMax);
         }
 
         AddWindow(ωSpaceGraph, false, 0.5);
@@ -101,7 +101,7 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    void FourierViewer::Draw() {
+    void FourierViewer::ImmediateDraw() {
         auto function = getFunction();
         if(function == nullptr) return;
 
@@ -169,7 +169,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     auto FourierViewer::FilterSpace(const Pointer<const R2toR::FNumericFunction>& func, DevFloat tMin,
@@ -252,7 +252,7 @@ namespace Slab::Graphics {
                                                           R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
         twoPointCorrArtist->setFunction(Math::Convert(twoPtCorrFunction, Math::RealPart));
-        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
+        twoPointCorrArtist->SetLabel("ℱ⁻¹[P], P≡|ℱ|²");
 
         powerArtist->setFunction(powerSpectrum);
 
@@ -354,7 +354,7 @@ namespace Slab::Graphics {
 
         Str timeInterval = ToStr(t_0) + " ≤ t ≤ " + ToStr(t_f);
         ωSpaceArtist->setFunction(ωSpace);
-        ωSpaceArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
+        ωSpaceArtist->SetLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
 
@@ -374,12 +374,12 @@ namespace Slab::Graphics {
 
         if(function_artist == nullptr) {
             function_artist = Plotter::AddR2toRFunction(xSpaceGraph, function, "ϕ");
-            function_artist->setAffectGraphRanges(true);
+            function_artist->SetAffectGraphRanges(true);
         } else {
             function_artist->setFunction(function);
         }
 
-        xSpaceGraph->reviewGraphRanges();
+        xSpaceGraph->ReviewGraphRanges();
 
         if (is_Ft_auto_updating()) computeTimeDFT();
         if (is_Ftx_auto_updating()) computeAll();

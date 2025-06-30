@@ -32,8 +32,8 @@ namespace Slab::Graphics {
 
         [[nodiscard]] FGUIWindow &getGUIWindow() const;
 
-        void Draw() override;
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        void ImmediateDraw() override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         // ********************* From Socket ********************* //
         void handleOutput(const OutputPacket &outInfo) override;

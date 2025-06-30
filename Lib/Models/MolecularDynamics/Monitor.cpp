@@ -105,7 +105,7 @@ namespace Slab::Models::MolecularDynamics {
 
     void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
 
-    void Monitor::Draw() {
+    void Monitor::ImmediateDraw() {
         // Window::draw();
 
         auto state = LastPacket.GetNakedStateData<MoleculesState>();

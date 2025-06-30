@@ -29,7 +29,7 @@ namespace Slab::Graphics::OpenGL {
             throw Exception("Texture too big");
         }
 
-        bind();
+        Bind();
 
         // Log::Critical() << "OpenGL::Texture is reserving GPU texture space to upload " << w << "x" << h << " pixels to." << Log::Flush;
 
@@ -52,7 +52,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::setAntiAliasOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -61,7 +61,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::setAntiAliasOff() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -74,25 +74,25 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture2D::set_sPeriodicOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, WrapMode::Repeat);
     }
 
     void Texture2D::setSWrap(WrapMode wrapMode) {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapMode);
     }
 
     void Texture2D::set_tPeriodicOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, WrapMode::Repeat);
     }
 
     void Texture2D::setTWrap(WrapMode wrapMode) {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapMode);
     }
@@ -112,7 +112,7 @@ namespace Slab::Graphics::OpenGL {
 
         fix internalFormat = getInternalFormat();
 
-        bind();
+        Bind();
 
         if(row0==0 && nRows==w)
             glTexImage2D(getTarget(), level, internalFormat,

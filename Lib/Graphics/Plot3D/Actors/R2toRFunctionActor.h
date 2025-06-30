@@ -29,7 +29,7 @@ namespace Slab::Graphics {
             float hSpace = 2.f*(float)fabsf(yMinSpace);
         } gridMetadata;
 
-        OpenGL::Shader program;
+        OpenGL::FShader program;
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 

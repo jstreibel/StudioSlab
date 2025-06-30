@@ -38,10 +38,10 @@ namespace Modes {
         //     "A(ω)", DONT_AFFECT_RANGES);
 
         if(CUSTOM_TICKS) {
-            Graphics::AxisArtist::Ticks ticks;
+            Graphics::FAxisArtist::Ticks ticks;
             auto unit = Constants::π;
             for (int n = 1; n < 20; ++n) {
-                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
+                ticks.push_back(Graphics::FAxisArtist::Tick{(2 * n - 1) * k[0], unit((2 * n - 1) * k[0], 0)});
             }
             this->historyPanel->get_kSectionWindow()->GetAxisArtist().setHorizontalAxisTicks(ticks);
         }

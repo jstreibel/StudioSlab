@@ -113,13 +113,13 @@ namespace Slab::Graphics::LaTeX {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        texture->bind();
+        texture->Bind();
 
-        program.use();
-        program.setUniform("texture", (GLint) texture->getGLtextureUnit() - GL_TEXTURE0);
-        program.setUniform4x4("model", model.data);
-        program.setUniform4x4("view", view.data);
-        program.setUniform4x4("projection", projection.data);
+        program.Use();
+        program.SetUniform("texture", (GLint) texture->getGLtextureUnit() - GL_TEXTURE0);
+        program.SetUniform4x4("model", model.data);
+        program.SetUniform4x4("view", view.data);
+        program.SetUniform4x4("projection", projection.data);
 
         vertexBuffer.render(GL_TRIANGLES);
     }

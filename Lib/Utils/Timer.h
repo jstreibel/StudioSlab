@@ -20,7 +20,7 @@ namespace Slab {
 
         void reset() { timer = CPUTimer(); }
 
-        DevFloat getElTime_sec()   const { return (DevFloat)timer.elapsed().wall * 1e-9; }
+        DevFloat GetElapsedTime_Seconds()   const { return (DevFloat)timer.elapsed().wall * 1e-9; }
 
         DevFloat getElTime_msec()  const { return (DevFloat)timer.elapsed().wall * 1e-6; }
 

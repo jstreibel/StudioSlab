@@ -59,7 +59,7 @@ namespace Slab::Math {
         using Core::Log;
 
         for (size_t Ti = 0; Ti < count; Ti++) {
-            if (timer.getElTime_sec() > 1) {
+            if (timer.GetElapsedTime_Seconds() > 1) {
                 timer.reset();
                 Log::Info() << std::setprecision(3) << "Flushing " << (DevFloat) Ti / DevFloat(count) * 100.0 << "%    "
                             << Log::Flush;

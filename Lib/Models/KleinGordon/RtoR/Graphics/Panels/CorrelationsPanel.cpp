@@ -90,25 +90,25 @@ namespace Slab::Models::KGRtoR {
     , correlationGraph("Two-point correlation")
     {
 
-        ftAmplitudesArtist->setLabel("|ℱₜₓ[ϕ](ω,k)|");
-        ftPhasesArtist->setLabel(   "arg{ℱₜₓ[ϕ](ω,k)}");
-        ftRealPartsArtist->setLabel("ℜ{ℱₜₓ[ϕ](ω,k)}");
-        ftImagPartsArtist->setLabel("ℑ{ℱₜₓ[ϕ](ω,k)}");
+        ftAmplitudesArtist->SetLabel("|ℱₜₓ[ϕ](ω,k)|");
+        ftPhasesArtist->SetLabel(   "arg{ℱₜₓ[ϕ](ω,k)}");
+        ftRealPartsArtist->SetLabel("ℜ{ℱₜₓ[ϕ](ω,k)}");
+        ftImagPartsArtist->SetLabel("ℑ{ℱₜₓ[ϕ](ω,k)}");
 
-        DFT2DGraph.addArtist(ftAmplitudesArtist);
-        DFT2DGraph.addArtist(ftPhasesArtist);
-        DFT2DGraph.addArtist(ftRealPartsArtist);
-        DFT2DGraph.addArtist(ftImagPartsArtist);
+        DFT2DGraph.AddArtist(ftAmplitudesArtist);
+        DFT2DGraph.AddArtist(ftPhasesArtist);
+        DFT2DGraph.AddArtist(ftRealPartsArtist);
+        DFT2DGraph.AddArtist(ftImagPartsArtist);
 
         DFT2DGraph.GetAxisArtist().SetHorizontalAxisLabel("k");
         DFT2DGraph.GetAxisArtist().setVerticalAxisLabel("ω");
 
-        correlationGraph.addArtist(twoPointCorrArtist);
+        correlationGraph.AddArtist(twoPointCorrArtist);
         correlationGraph.GetAxisArtist().SetHorizontalAxisLabel("x");
         correlationGraph.GetAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::Draw() {
+    void CorrelationsPanel::ImmediateDraw() {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
                 static auto discardRedundant = false;
@@ -121,15 +121,15 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void CorrelationsPanel::SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                                  const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        auto simulationHistoryGraph = Slab::New<Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(simulationHistoryArtist);
+        auto simulationHistoryGraph = Slab::New<FPlot2DWindow>("Simulation history");
+        simulationHistoryGraph->AddArtist(simulationHistoryArtist);
         AddWindow(simulationHistoryGraph);
         AddWindow(Slab::Naked(correlationGraph));
         AddWindow(Slab::Naked(DFT2DGraph), true);
@@ -173,7 +173,7 @@ namespace Slab::Models::KGRtoR {
                                                   R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
         twoPointCorrArtist->setFunction(Math::Convert(invPowDFT, Math::RealPart));
-        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
+        twoPointCorrArtist->SetLabel("ℱ⁻¹[P], P≡|ℱ|²");
     }
 
 

@@ -9,6 +9,7 @@
 
 #include <utility>
 #include "3rdParty/ImGui.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Plot2D/Util/PlotStyleGUI.h"
 
 namespace Slab::Graphics {
@@ -22,7 +23,7 @@ namespace Slab::Graphics {
         return sections;
     }
 
-    bool R2SectionArtist::draw(const Plot2DWindow &window) {
+    bool R2SectionArtist::Draw(const FPlot2DWindow &PlotWindow) {
         if(function2D == nullptr) return true;
 
         for (const auto& section_data : sections) {
@@ -32,9 +33,12 @@ namespace Slab::Graphics {
             auto style = section_data.style;
             auto name = section_data.name;
 
-            FunctionRenderer::renderSection(*function2D, *section, *style, samples);
+            OpenGL::Legacy::PushLegacyMode();
+            OpenGL::Legacy::SetupOrtho(PlotWindow.GetRegion().getRect());
+            OpenGL::Legacy::FunctionRenderere::RenderSection(*function2D, *section, *style, samples);
+            OpenGL::Legacy::RestoreFromLegacyMode();
 
-            window.requireLabelOverlay(name, style);
+            PlotWindow.RequireLabelOverlay(name, style);
         }
 
         return true;
@@ -47,9 +51,9 @@ namespace Slab::Graphics {
         return function2D;
     }
 
-    bool R2SectionArtist::hasGUI() { return true; }
+    bool R2SectionArtist::HasGUI() { return true; }
 
-    void R2SectionArtist::drawGUI() {
+    void R2SectionArtist::DrawGUI() {
         auto samples_int = (int)samples;
         if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samples_int, 100, 25000)
          | ImGui::DragInt(UniqueName("Samples (fine)").c_str(), &samples_int, 1)) {
@@ -71,8 +75,8 @@ namespace Slab::Graphics {
         sections.clear();
     }
 
-    const RectR &R2SectionArtist::getRegion() {
-        if(sections.empty() || function2D==nullptr) return Artist::getRegion();
+    const RectR &R2SectionArtist::GetRegion() {
+        if(sections.empty() || function2D==nullptr) return FArtist::GetRegion();
 
         auto s_min = sections[0].section->get_sMin();
         auto s_max = sections[0].section->get_sMax();
@@ -94,7 +98,7 @@ namespace Slab::Graphics {
 
         region = {s_min, s_max, val_min, val_max};
 
-        return Artist::getRegion();
+        return FArtist::GetRegion();
     }
 
 

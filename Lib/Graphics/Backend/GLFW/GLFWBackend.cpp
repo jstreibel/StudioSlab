@@ -49,7 +49,7 @@ namespace Slab::Graphics {
     }
 
     void GLFWBackend::Run() {
-        mainLoop();
+        MainLoop();
     }
 
     void GLFWBackend::Terminate() {
@@ -57,7 +57,7 @@ namespace Slab::Graphics {
         finishFlag = true;
     }
 
-    void GLFWBackend::mainLoop() {
+    void GLFWBackend::MainLoop() {
 
         // static auto BeginEvents = FuncRun(beginEvents);
         // static auto EndEvents   = FuncRun(endEvents);
@@ -73,13 +73,13 @@ namespace Slab::Graphics {
                 }
 
                 (*it)->Render();
-                it++;
+                ++it;
             }
         }
     }
 
     GLFWBackend &GLFWBackend::GetInstance() {
-        // assert(Core::BackendManager::GetImplementation() == Core::GLFW);
+        // TODO: assert(Core::BackendManager::GetImplementation() == Core::GLFW);
 
         auto guiBackend = Slab::Graphics::GetGraphicsBackend();
 

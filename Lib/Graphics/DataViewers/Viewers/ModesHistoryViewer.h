@@ -23,10 +23,10 @@ namespace Slab::Graphics {
         Pointer<R2toRFunctionArtist> xft_amplitudes_artist = nullptr;
         Pointer<R2SectionArtist> modes_artist = nullptr;
 
-        Vector<Pointer<Artist>> curves_artists;
+        Vector<Pointer<FArtist>> curves_artists;
 
-        Pointer<Plot2DWindow> xft_history_window;
-        Pointer<Plot2DWindow> modes_window;
+        Pointer<FPlot2DWindow> xft_history_window;
+        Pointer<FPlot2DWindow> modes_window;
 
         int n_modes = 4;
         float base_mode = M_PI;
@@ -38,7 +38,7 @@ namespace Slab::Graphics {
 
         Str GetName() const override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 

@@ -35,13 +35,13 @@ namespace Slab::Graphics {
              centerPressed = false,
              rightPressed = false;
 
-        ModKeys mod_keys;
+        EModKeys mod_keys;
 
         Timer since_left_pressed;
         Timer since_center_pressed;
         Timer since_right_pressed;
 
-        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 

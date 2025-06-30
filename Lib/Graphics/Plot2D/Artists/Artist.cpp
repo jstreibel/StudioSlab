@@ -7,41 +7,41 @@
 
 namespace Slab::Graphics {
 
-    void Artist::setVisibility(bool vis) { visible = vis; }
+    void FArtist::SetVisibility(bool vis) { visible = vis; }
 
-    bool Artist::isVisible() const { return visible; }
+    bool FArtist::IsVisible() const { return visible; }
 
-    void Artist::setAffectGraphRanges(bool affects) { affectGraphRanges = affects; }
+    void FArtist::SetAffectGraphRanges(bool affects) { affectGraphRanges = affects; }
 
-    bool Artist::affectsGraphRanges() const { return affectGraphRanges; }
+    bool FArtist::AffectsGraphRanges() const { return affectGraphRanges; }
 
-    const RectR &Artist::getRegion() {
+    const RectR &FArtist::GetRegion() {
         return region;
     }
 
-    void Artist::setLabel(Str newLabel) { label = newLabel; }
+    void FArtist::SetLabel(Str newLabel) { label = newLabel; }
 
-    auto Artist::getLabel() const -> Str { return label; }
+    auto FArtist::GetLabel() const -> Str { return label; }
 
-    auto Artist::getXHairInfo(const Point2D &XHairCoord) const -> Str {
+    auto FArtist::GetXHairInfo(const Point2D &XHairCoord) const -> Str {
         return Str();
     }
 
-    void Artist::drawGUI() {
+    void FArtist::DrawGUI() {
         // ImGui::InputText(UniqueName("Label"), )
     }
 
-    bool Artist::hasGUI() {
+    bool FArtist::HasGUI() {
         return false;
     }
 
-    Str Artist::UniqueName(const Str& name) const { return name + "##" + label; }
+    Str FArtist::UniqueName(const Str& name) const { return name + "##" + label; }
 
-    Vector<Pointer<Artist>> Artist::getSubArtists() {
+    Vector<Pointer<FArtist>> FArtist::GetSubArtists() {
         return {};
     }
 
-    DevFloat Artist::getPreferredRatio() const {
+    DevFloat FArtist::GetPreferredRatio() const {
         return preferred_w_by_h_ratio;
     }
 

@@ -38,11 +38,11 @@ namespace Slab::Models::KGRtoR {
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
 
     protected:
-        Plot2DWindow FieldsGraph;
-        Artist_ptr vArtist;
-        Artist_ptr kArtist;
-        Artist_ptr wArtist;
-        Artist_ptr uArtist;
+        FPlot2DWindow FieldsGraph;
+        FArtist_ptr vArtist;
+        FArtist_ptr kArtist;
+        FArtist_ptr wArtist;
+        FArtist_ptr uArtist;
 
         PointSet UHistoryData;
         PointSet KHistoryData;
@@ -59,9 +59,9 @@ namespace Slab::Models::KGRtoR {
         bool bShowGradientEnergy = false;
         bool bShowEnergyDensity = false;
 
-        Plot2DWindow EnergyGraph;
+        FPlot2DWindow EnergyGraph;
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
     private:
         void UpdateEnergyData();

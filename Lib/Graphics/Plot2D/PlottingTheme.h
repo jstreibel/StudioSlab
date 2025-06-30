@@ -32,8 +32,8 @@ namespace Slab::Graphics {
         PlotStyle majorGridLines;
         PlotStyle minorGridLines;
 
-        std::shared_ptr <Graphics::Writer> labelsWriter;
-        std::shared_ptr <Graphics::Writer> ticksWriter;
+        std::shared_ptr <Graphics::Writer> LabelsWriter;
+        std::shared_ptr <Graphics::Writer> TicksWriter;
 
         Vector <PlotStyle> FuncPlotStyles;
 

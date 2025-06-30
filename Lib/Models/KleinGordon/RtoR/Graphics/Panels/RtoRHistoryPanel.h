@@ -14,15 +14,15 @@ namespace Slab::Models::KGRtoR {
         Pointer<Math::RtoR2::StraightLine> xLine;
         Pointer<Math::RtoR2::StraightLine> kLine;
 
-        Pointer<Graphics::Plot2DWindow> xSection;
-        Pointer<Graphics::Plot2DWindow> xSpaceHistory;
-        Pointer<Graphics::Plot2DWindow> kSection;
-        Pointer<Graphics::Plot2DWindow> kSpaceHistory;
+        Pointer<Graphics::FPlot2DWindow> xSection;
+        Pointer<Graphics::FPlot2DWindow> xSpaceHistory;
+        Pointer<Graphics::FPlot2DWindow> kSection;
+        Pointer<Graphics::FPlot2DWindow> kSpaceHistory;
 
     public:
         RtoRHistoryPanel(const Pointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
  simulationHistory,
@@ -32,7 +32,7 @@ namespace Slab::Models::KGRtoR {
  sftHistory, const FDFTDataHistory &history,
                                     const R2toRFunctionArtist_ptr &sftHistoryGraph) override;
 
-        auto get_kSectionWindow() -> Pointer<Graphics::Plot2DWindow>;;
+        auto get_kSectionWindow() -> Pointer<Graphics::FPlot2DWindow>;;
 
     };
 

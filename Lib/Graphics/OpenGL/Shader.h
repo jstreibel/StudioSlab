@@ -23,38 +23,36 @@ namespace Slab::Graphics::OpenGL {
         FragmentShader = GL_FRAGMENT_SHADER
     };
 
-    class Shader {
-        GLuint handle;
-        std::map<GLuint, std::shared_ptr<Texture>> textureUnits;
-        Str vertFileName;
-        Str fragFileName;
+    class FShader {
+        GLuint Handle;
+        std::map<GLuint, std::shared_ptr<Texture>> TextureUnits;
+        Str VertFileName;
+        Str FragFileName;
 
     public:
-        virtual ~Shader() = default;
+        virtual ~FShader() = default;
 
-        Shader(const Str& vertFilename, const Str& fragFilename);
+        FShader(const Str& vertFilename, const Str& fragFilename);
 
-        void bindTextures() const;
+        void BindTextures() const;
 
-        virtual
-        void use() const;
-        static void remove() ;
+        virtual void Use() const;
 
-        auto getHandle() const -> GLuint {return handle; };
+        auto GetHandle() const -> GLuint {return Handle; };
 
-        void setUniform(const Str& name, GLint value) const;
-        void setUniform(const Str& name, GLfloat value) const;
-        void setUniform(const Str& name, Real2D vec2) const;
-        void setUniform(const Str& name, const glm::vec3& vec3) const;
-        void setUniform(const Str& name, const glm::vec4& vec4) const;
-        void setUniform(const Str& name, const glm::mat3& mat3) const;
-        void setUniform(const Str& name, const glm::mat4& mat4) const;
-        void setUniform(const Str& name, Texture& texture);
+        void SetUniform(const Str& Name, GLint Value) const;
+        void SetUniform(const Str& Name, GLfloat Value) const;
+        void SetUniform(const Str& Name, const Real2D& Vec2) const;
+        void SetUniform(const Str& Name, const glm::vec3& Vec3) const;
+        void SetUniform(const Str& Name, const glm::vec4& Vec4) const;
+        void SetUniform(const Str& Name, const glm::mat3& Mat3) const;
+        void SetUniform(const Str& Name, const glm::mat4& Mat4) const;
+        void SetUniform(const Str& Name, Texture& texture);
 
-        void setUniform(const Str& name, std::array<float, 3> vec3) const;
-        void setUniform(const Str& name, std::array<float, 4> vec4) const;
-        void setUniform3x3(const Str& name, const float* mat3) const;
-        void setUniform4x4(const Str& name, const float* mat4) const;
+        void SetUniform(const Str& Name, std::array<float, 3> Vec3) const;
+        void SetUniform(const Str& Name, std::array<float, 4> Vec4) const;
+        void SetUniform3x3(const Str& Name, const float* Mat3) const;
+        void SetUniform4x4(const Str& Name, const float* Mat4) const;
 
     };
 

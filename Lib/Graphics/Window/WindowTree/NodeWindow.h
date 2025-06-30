@@ -38,7 +38,7 @@ namespace Slab::Graphics {
 
         void arrange();
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
     };
 

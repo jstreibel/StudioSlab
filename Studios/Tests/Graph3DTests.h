@@ -13,7 +13,7 @@ namespace Tests {
     public:
         Graph3DTests();
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Tests

@@ -21,29 +21,29 @@ namespace Slab::Graphics {
     HistoryViewer::HistoryViewer(const Pointer<FGUIWindow> &gui_window, const Pointer<R2toR::FNumericFunction> &function)
     : Viewer(gui_window, function)
     {
-        history_window = New<Plot2DWindow>("Function");
+        history_window = New<FPlot2DWindow>("Function");
         history_window->GetAxisArtist().setVerticalAxisLabel("");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         AddWindow(history_window);
 
-        xft_history_window = New<Plot2DWindow>("Space DFT");
+        xft_history_window = New<FPlot2DWindow>("Space DFT");
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("A");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window, true);
 
-        auto slice_window = New<Plot2DWindow>("Space instant");
+        auto slice_window = New<FPlot2DWindow>("Space instant");
         section_artist = Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         addWindowToColumn(slice_window, 0);
 
-        auto dft_slice_window = New<Plot2DWindow>("Space DFT instant");
+        auto dft_slice_window = New<FPlot2DWindow>("Space DFT instant");
         dft_section_artist = Plotter::AddR2Section(dft_slice_window, nullptr, "ℱₓ[ϕ]");
         addWindowToColumn(dft_slice_window, 1);
 
-        history_window->tieRegion_xMaxMin(*slice_window);
+        history_window->TieRegion_xMaxMin(*slice_window);
 
-        xft_history_window->tieRegion_xMaxMin(*dft_slice_window);
-        xft_history_window->tieRegion_yMaxMin(*history_window);
+        xft_history_window->TieRegion_xMaxMin(*dft_slice_window);
+        xft_history_window->TieRegion_yMaxMin(*history_window);
     }
 
     void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {
@@ -63,7 +63,7 @@ namespace Slab::Graphics {
             section_artist->addSection(function_section, style, "");
 
             auto history_section_artist = Plotter::AddCurve(history_window, function_section, *style, "History section");
-            xft_history_window->addArtist(history_section_artist);
+            xft_history_window->AddArtist(history_section_artist);
         } else {
             function_section->getx0().x = domain.xMin;
             function_section->getr().x = domain.getLx();
@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         dft_section_artist->setSamples(func->getN()*oversampling);
     }
 
-    void HistoryViewer::Draw() {
+    void HistoryViewer::ImmediateDraw() {
         if(getFunction()== nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -134,7 +134,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
 } // Slab::Graphics

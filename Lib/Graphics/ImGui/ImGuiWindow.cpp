@@ -31,16 +31,25 @@ namespace Slab::Graphics {
         // this->SlabWindow->SetDecorate(false);
     }
 
-    void FImGuiWindow::Draw() {
+    void FImGuiWindow::ImmediateDraw() {
         // This should be called in case of a local context, which is not the case
         // Context->NewFrame();
 
+        // Context->Render();
+
+        // FSlabWindow::Draw();
+    }
+
+    void FImGuiWindow::RegisterDeferredDrawCalls()
+    {
+        FSlabWindow::RegisterDeferredDrawCalls();
+
         Context->AddDrawCall([this]() {
+            if (SlabWindow == nullptr) return;
 
             ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
-            if(ImGui::Begin((Str("ImGuiWrappedSlabWindow") + Id).c_str())) {
-                if (SlabWindow == nullptr) { ImGui::End(); return; }
-
+            fix WindowFlags = ImGuiWindowFlags_NoCollapse;
+            if(ImGui::Begin((Str("ImGui-wrapped SlabWindow") + Id).c_str(), nullptr, WindowFlags)) {
                 fix Pos = ImGui::GetWindowPos();
                 fix Dim = ImGui::GetWindowSize();
                 fix ContentMin = ImGui::GetWindowContentRegionMin();
@@ -61,28 +70,32 @@ namespace Slab::Graphics {
                 SlabWindow->Set_y(static_cast<int>(y));
                 SlabWindow->NotifyReshape(static_cast<int>(w), static_cast<int>(h));
 
-                auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
+                if constexpr (true)
                 {
-                    if (DrawCommand->UserCallback == nullptr) return;
+                    // Further defer
+                    auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
+                    {
+                        if (DrawCommand->UserCallback == nullptr) return;
 
-                    const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
+                        const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
 
+                        glPushAttrib(GL_VIEWPORT_BIT);
+                        SlabWindow->ImmediateDraw();
+                        glPopAttrib();
+                    };
+
+                    ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
+                } else
+                {
                     glPushAttrib(GL_VIEWPORT_BIT);
-                    SlabWindow->Draw();
+                    SlabWindow->ImmediateDraw();
                     glPopAttrib();
-                };
-
-                ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
+                }
             }
 
             ImGui::End();
-
         });
 
-        // Context->Render();
-
-        FSlabWindow::Draw();
+        SlabWindow->RegisterDeferredDrawCalls();
     }
-
-
 } // Slab::Graphics

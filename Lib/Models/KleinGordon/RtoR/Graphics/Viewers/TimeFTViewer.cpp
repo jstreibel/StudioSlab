@@ -22,13 +22,13 @@ namespace Slab::Models::KGRtoR {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
 
-        auto window = New<Graphics::Plot2DWindow>("Time-DFT space-average");
+        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average");
         timeDFTAverageArtist =
                 Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->FuncPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
-        timeDFTAverageArtist->setAffectGraphRanges(true);
+        timeDFTAverageArtist->SetAffectGraphRanges(true);
         auto pdcArtist =
                 Plotter::AddRtoRFunction(window, Dummy(powerDecayCorrelation), Themes::GetCurrent()->FuncPlotStyles[3], "Analytic", 4000);
-        pdcArtist->setAffectGraphRanges(false);
+        pdcArtist->SetAffectGraphRanges(false);
 
         AddWindow(window);
 
@@ -95,12 +95,12 @@ namespace Slab::Models::KGRtoR {
         auto avg_time_dft = Integral({Integral::Config::dx, true})[ωSpace_temp];
 
         timeDFTAverageArtist->setFunction(avg_time_dft);
-        timeDFTAverageArtist->setLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
+        timeDFTAverageArtist->SetLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
     }
 
-    void TimeFTViewer::Draw() {
+    void TimeFTViewer::ImmediateDraw() {
         auto function = getFunction();
-        if(function== nullptr){ WindowPanel::Draw(); return;}
+        if(function== nullptr){ WindowPanel::ImmediateDraw(); return;}
 
         gui_window->AddExternalDraw([this](){
             auto function = getFunction();
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void TimeFTViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {

@@ -21,12 +21,12 @@ namespace Slab::Models::KGRtoR {
     : FRtoRPanel(params, guiWindow, hamiltonian, "ℝ↦ℝ Fourier panel", "Fourier analysis panel")
     , cutoffLine({kFilterCutoff, -10.0}, {kFilterCutoff, params->gett()+10.0})
     {
-        kSpaceGraph  = Slab::New<Plot2DWindow>("ℱₓ");
-        ωSpaceGraph  = Slab::New<Plot2DWindow>("ℱₜ");
-        xSpaceGraph  = Slab::New<Plot2DWindow>("ϕ(t,x)");
-        ωkSpaceGraph = Slab::New<Plot2DWindow>("ℱₜₓ");
+        kSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₓ");
+        ωSpaceGraph  = Slab::New<FPlot2DWindow>("ℱₜ");
+        xSpaceGraph  = Slab::New<FPlot2DWindow>("ϕ(t,x)");
+        ωkSpaceGraph = Slab::New<FPlot2DWindow>("ℱₜₓ");
 
-        inv_kSpaceArtist->setLabel("ℱₖ⁻¹(t, x)");
+        inv_kSpaceArtist->SetLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);
         // inverseDFTDisplay->getAxisArtist().setHorizontalAxisLabel("x");
         // inverseDFTDisplay->getAxisArtist().setVerticalAxisLabel("t");
@@ -36,61 +36,61 @@ namespace Slab::Models::KGRtoR {
         kSpaceGraph->GetAxisArtist().setHorizontalUnit(unit);
         fix WaveNumber = FCommandLineInterfaceManager::getInstance().getParameter("harmonic");
         if(WaveNumber != nullptr) {
-            Graphics::AxisArtist::Ticks ticks;
+            Graphics::FAxisArtist::Ticks ticks;
             fix L = params->GetL();
             fix dk = 2*M_PI/L;
             fix k = dk * WaveNumber->getValueAs<DevFloat>();
             for (int n = 1; n < 20; ++n) {
-                ticks.push_back(Graphics::AxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
+                ticks.push_back(Graphics::FAxisArtist::Tick{(2 * n - 1) * k, unit((2 * n - 1) * k, 0)});
             }
             kSpaceGraph->GetAxisArtist().setHorizontalAxisTicks(ticks);
         }
         kSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("k");
         kSpaceGraph->GetAxisArtist().setVerticalAxisLabel("t");
 
-        ωSpaceArtist->setLabel("ℱₜ(ω, x)");
-        ωSpaceGraph->addArtist(ωSpaceArtist);
+        ωSpaceArtist->SetLabel("ℱₜ(ω, x)");
+        ωSpaceGraph->AddArtist(ωSpaceArtist);
         ωSpaceGraph->GetAxisArtist().SetHorizontalAxisLabel("x");
         ωSpaceGraph->GetAxisArtist().setVerticalAxisLabel("ω");
 
-        timeFilteredArtist->setLabel("ϕ[t ∈ (t₀,tₑ)]");
-        xSpaceGraph->addArtist(timeFilteredArtist);
-        xSpaceGraph->addArtist(inv_kSpaceArtist);
-        xSpaceGraph->addArtist(twoPointCorrArtist);
+        timeFilteredArtist->SetLabel("ϕ[t ∈ (t₀,tₑ)]");
+        xSpaceGraph->AddArtist(timeFilteredArtist);
+        xSpaceGraph->AddArtist(inv_kSpaceArtist);
+        xSpaceGraph->AddArtist(twoPointCorrArtist);
 
-        powerArtist     ->setLabel("ℙ=|ℱₜₓ|²");
-        amplitudesArtist->setLabel("|ℱₜₓ|");
-        phasesArtist    ->setLabel("arg{ℱₜₓ}");
-        realPartsArtist ->setLabel("ℜ{ℱₜₓ}");
-        imagPartsArtist ->setLabel("ℑ{ℱₜₓ}");
+        powerArtist     ->SetLabel("ℙ=|ℱₜₓ|²");
+        amplitudesArtist->SetLabel("|ℱₜₓ|");
+        phasesArtist    ->SetLabel("arg{ℱₜₓ}");
+        realPartsArtist ->SetLabel("ℜ{ℱₜₓ}");
+        imagPartsArtist ->SetLabel("ℑ{ℱₜₓ}");
 
-        ωkSpaceGraph->addArtist(powerArtist);
-        ωkSpaceGraph->addArtist(amplitudesArtist);
-        ωkSpaceGraph->addArtist(phasesArtist);
-        ωkSpaceGraph->addArtist(realPartsArtist);
-        ωkSpaceGraph->addArtist(imagPartsArtist);
+        ωkSpaceGraph->AddArtist(powerArtist);
+        ωkSpaceGraph->AddArtist(amplitudesArtist);
+        ωkSpaceGraph->AddArtist(phasesArtist);
+        ωkSpaceGraph->AddArtist(realPartsArtist);
+        ωkSpaceGraph->AddArtist(imagPartsArtist);
 
 
         {
-            auto shared_xMin = ωSpaceGraph->getRegion().getReference_xMin();
-            auto shared_xMax = ωSpaceGraph->getRegion().getReference_xMax();
-            auto shared_tMin = kSpaceGraph->getRegion().getReference_yMin();
-            auto shared_tMax = kSpaceGraph->getRegion().getReference_yMax();
+            auto shared_xMin = ωSpaceGraph->GetRegion().getReference_xMin();
+            auto shared_xMax = ωSpaceGraph->GetRegion().getReference_xMax();
+            auto shared_tMin = kSpaceGraph->GetRegion().getReference_yMin();
+            auto shared_tMax = kSpaceGraph->GetRegion().getReference_yMax();
 
-            auto shared_ωMin = ωSpaceGraph->getRegion().getReference_yMin();
-            auto shared_ωMax = ωSpaceGraph->getRegion().getReference_yMax();
-            auto shared_kMin = kSpaceGraph->getRegion().getReference_xMin();
-            auto shared_kMax = kSpaceGraph->getRegion().getReference_xMax();
+            auto shared_ωMin = ωSpaceGraph->GetRegion().getReference_yMin();
+            auto shared_ωMax = ωSpaceGraph->GetRegion().getReference_yMax();
+            auto shared_kMin = kSpaceGraph->GetRegion().getReference_xMin();
+            auto shared_kMax = kSpaceGraph->GetRegion().getReference_xMax();
 
-            xSpaceGraph->getRegion().setReference_xMin(shared_xMin);
-            xSpaceGraph->getRegion().setReference_xMax(shared_xMax);
-            xSpaceGraph->getRegion().setReference_yMin(shared_tMin);
-            xSpaceGraph->getRegion().setReference_yMax(shared_tMax);
+            xSpaceGraph->GetRegion().setReference_xMin(shared_xMin);
+            xSpaceGraph->GetRegion().setReference_xMax(shared_xMax);
+            xSpaceGraph->GetRegion().setReference_yMin(shared_tMin);
+            xSpaceGraph->GetRegion().setReference_yMax(shared_tMax);
 
-            ωkSpaceGraph->getRegion().setReference_yMin(shared_ωMin);
-            ωkSpaceGraph->getRegion().setReference_yMax(shared_ωMax);
-            ωkSpaceGraph->getRegion().setReference_xMin(shared_kMin);
-            ωkSpaceGraph->getRegion().setReference_xMax(shared_kMax);
+            ωkSpaceGraph->GetRegion().setReference_yMin(shared_ωMin);
+            ωkSpaceGraph->GetRegion().setReference_yMax(shared_ωMax);
+            ωkSpaceGraph->GetRegion().setReference_xMin(shared_kMin);
+            ωkSpaceGraph->GetRegion().setReference_xMax(shared_kMax);
         }
 
         AddWindow(ωSpaceGraph);
@@ -101,7 +101,7 @@ namespace Slab::Models::KGRtoR {
         arrangeWindows();
     }
 
-    void RtoRFourierPanel::Draw() {
+    void RtoRFourierPanel::ImmediateDraw() {
 
         guiWindow.AddExternalDraw([this](){
             if (ImGui::CollapsingHeader("k-filter")) {
@@ -165,7 +165,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void
@@ -176,7 +176,7 @@ namespace Slab::Models::KGRtoR {
 
         FRtoRPanel::SetSpaceFourierHistory(sftHistory, dftDataHistory, dftFunctionArtist);
 
-        kSpaceGraph->addArtist(dftFunctionArtist);
+        kSpaceGraph->AddArtist(dftFunctionArtist);
         // kSpaceGraph->addArtist(dftFunctionArtist->getColorBarArtist());
 
         Graphics::Plotter::AddCurve(kSpaceGraph,
@@ -254,7 +254,7 @@ namespace Slab::Models::KGRtoR {
 
         Str timeInterval = ToStr(t_0) + " ≤ t ≤ " + ToStr(t_f);
         ωSpaceArtist->setFunction(ωSpace);
-        ωSpaceArtist->setLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
+        ωSpaceArtist->SetLabel(Str("ℱₜ[ϕ](ω,x), ") + timeInterval);
     }
 
     void RtoRFourierPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
@@ -262,7 +262,7 @@ namespace Slab::Models::KGRtoR {
                                                 const R2toRFunctionArtist_ptr &simHistoryArtist) {
         FRtoRPanel::SetSimulationHistory(simulationHistory, simHistoryArtist);
 
-        xSpaceGraph->addArtist(simulationHistoryArtist, -10);
+        xSpaceGraph->AddArtist(simulationHistoryArtist, -10);
     }
 
     void RtoRFourierPanel::computeAll(DevFloat t_0, DevFloat t_f) {
@@ -304,7 +304,7 @@ namespace Slab::Models::KGRtoR {
                                                   R2toR::R2toRDFT::Auto, R2toR::R2toRDFT::Mangle);
 
         twoPointCorrArtist->setFunction(Math::Convert(twoPtCorrFunction, Math::RealPart));
-        twoPointCorrArtist->setLabel("ℱ⁻¹[P], P≡|ℱ|²");
+        twoPointCorrArtist->SetLabel("ℱ⁻¹[P], P≡|ℱ|²");
 
         powerArtist->setFunction(powerSpectrum);
     }

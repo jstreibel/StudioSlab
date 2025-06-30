@@ -16,8 +16,8 @@
 #include <utility>
 
 
-#define hPixelsToSpaceScale (region.width() / vp.width())
-#define vPixelsToSpaceScale (region.height() / vp.height())
+#define hPixelsToSpaceScale (region.width() / vp.GetWidth())
+#define vPixelsToSpaceScale (region.height() / vp.GetHeight())
 
 #define setupBuffer(buffer) \
     if     (numRegion> +2)  (buffer) << std::setprecision(0); \
@@ -36,11 +36,11 @@
 
 namespace Slab::Graphics {
 
-    AxisArtist::AxisArtist()
-    : AxisArtist(Constants::One, Constants::One)
+    FAxisArtist::FAxisArtist()
+    : FAxisArtist(Constants::One, Constants::One)
     {    }
 
-    AxisArtist::AxisArtist(const Unit& horizontal, const Unit& vertical)
+    FAxisArtist::FAxisArtist(const Unit& horizontal, const Unit& vertical)
     : hUnit(horizontal)
     , vUnit(vertical)
     {
@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         verticalAxisLabel.reserve(256);
     }
 
-    bool AxisArtist::draw(const Plot2DWindow &graph) {
+    bool FAxisArtist::Draw(const FPlot2DWindow &graph) {
         glLineWidth(1.0);
 
         computeTicks(graph);
@@ -59,12 +59,12 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void AxisArtist::computeTicks(const Plot2DWindow &graph) {
-        const auto& region = graph.getRegion();
+    void FAxisArtist::computeTicks(const FPlot2DWindow &graph) {
+        const auto& region = graph.GetRegion();
 
         auto currStyle = PlotThemeManager::GetCurrent();
 
-        auto writer = currStyle->ticksWriter;
+        auto writer = currStyle->TicksWriter;
 
         {
             const DevFloat Δy = region.height() / vUnit.value();
@@ -102,14 +102,14 @@ namespace Slab::Graphics {
         }
     }
 
-    void AxisArtist::drawXAxis(const Plot2DWindow &graph) const {
-        const auto vp = graph.getViewport();
-        const auto& region = graph.getRegion();
+    void FAxisArtist::drawXAxis(const FPlot2DWindow &graph) const {
+        const auto vp = graph.GetViewport();
+        const auto& region = graph.GetRegion();
 
         const auto currStyle = PlotThemeManager::GetCurrent();
 
-        auto writer = currStyle->ticksWriter;
-        fix fontHeight = writer->getFontHeightInPixels();
+        auto writer = currStyle->TicksWriter;
+        fix fontHeight = writer->GetFontHeightInPixels();
 
         fix vTickHeightInSpace = hTickHeightMultiplier*static_cast<DevFloat>(currStyle->vTickHeightinPixels) * vPixelsToSpaceScale;
         fix vGraphPaddingInSpace = static_cast<DevFloat>(currStyle->vAxisPaddingInPixels) * vPixelsToSpaceScale;
@@ -127,41 +127,47 @@ namespace Slab::Graphics {
 
         glColor4f(gtfColor.r, gtfColor.g, gtfColor.b, gtfColor.a);
 
-        // Write numbers
-        for (const auto &[mark, label] : hTicks) {
+
+            // Write numbers
+        for (const auto &[mark, label] : hTicks)
+        {
             const auto pen = FromSpaceToViewportCoord({mark, yLocationOfLabels},
                 region.getRect(), vp);
-            writer->write(label, pen, gtfColor);
+            writer->Write(label, pen, gtfColor);
         }
 
-        // Draw axes
+
         {
-            OpenGL::Shader::remove();
-
-            const auto &ac = currStyle->axisColor;
-            const auto &tc = currStyle->majorTickColor;
-            glLineWidth(currStyle->majorGridLines.thickness);
-            glBegin(GL_LINES);
+            // Draw axes
+            OpenGL::Legacy::PushLegacyMode();
+            OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
             {
-                // Draw x-axis
-                glColor4f(ac.r, ac.g, ac.b, ac.a);
+                const auto &ac = currStyle->axisColor;
+                const auto &tc = currStyle->majorTickColor;
+                glLineWidth(currStyle->majorGridLines.thickness);
+                glBegin(GL_LINES);
+                {
+                    // Draw x-axis
+                    glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-                glVertex3d(region.getXMin(), yLocationOfXAxis, 0);
-                glVertex3d(region.getXMax(), yLocationOfXAxis, 0);
-            }
-            glEnd();
-
-            // Draw ticks
-            glLineWidth(static_cast<GLfloat>(currStyle->hTickWidthInPixels));
-            glBegin(GL_LINES);
-            {
-                glColor4f(tc.r, tc.g, tc.b, tc.a);
-                for (const auto &[mark, label] : hTicks){
-                    glVertex3d(mark, -vTickHeightInSpace, 0);
-                    glVertex3d(mark, +vTickHeightInSpace, 0);
+                    glVertex3d(region.getXMin(), yLocationOfXAxis, 0);
+                    glVertex3d(region.getXMax(), yLocationOfXAxis, 0);
                 }
+                glEnd();
+
+                // Draw ticks
+                glLineWidth(static_cast<GLfloat>(currStyle->hTickWidthInPixels));
+                glBegin(GL_LINES);
+                {
+                    glColor4f(tc.r, tc.g, tc.b, tc.a);
+                    for (const auto &[mark, label] : hTicks){
+                        glVertex3d(mark, -vTickHeightInSpace, 0);
+                        glVertex3d(mark, +vTickHeightInSpace, 0);
+                    }
+                }
+                glEnd();
             }
-            glEnd();
+            OpenGL::Legacy::RestoreFromLegacyMode();
         }
 
         // Draw axis name
@@ -169,30 +175,31 @@ namespace Slab::Graphics {
             const auto xMidpoint = region.xCenter();
             const auto yMidpoint = region.getYMin();
             const Point2D loc = {xMidpoint, yMidpoint};
-            writer = currStyle->labelsWriter;
+            writer = currStyle->LabelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
-            pen.y += writer->getFontHeightInPixels();
+            pen.y += writer->GetFontHeightInPixels();
 
-            writer->write(horizontalAxisLabel, pen , currStyle->graphTitleColor);
+            writer->Write(horizontalAxisLabel, pen , currStyle->graphTitleColor);
         }
 
         Graphics::OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__));
     }
 
-    void AxisArtist::drawYAxis(const Plot2DWindow &graph) const {
-        auto vp = graph.getViewport();
-        const auto& region = graph.getRegion();
+    void FAxisArtist::drawYAxis(const FPlot2DWindow &graph) const
+    {
+        auto vp = graph.GetViewport();
+        const auto& region = graph.GetRegion();
         auto currStyle = PlotThemeManager::GetCurrent();
 
-        auto writer = currStyle->ticksWriter;
+        auto writer = currStyle->TicksWriter;
 
         glEnable(GL_LINE_SMOOTH);
         glDisable(GL_LINE_STIPPLE);
 
         fix Δy = region.height();
         fix xLocationOfYAxis = region.getXMin() + (DevFloat)currStyle->hAxisPaddingInPixels*hPixelsToSpaceScale;
-        fix yOffsetOfLabels = 0.2*writer->getFontHeightInPixels()* vPixelsToSpaceScale;
+        fix yOffsetOfLabels = 0.2*writer->GetFontHeightInPixels()* vPixelsToSpaceScale;
         fix iMin = static_cast<int>(region.getYMin() / ySpacing);
         fix iMax = static_cast<int>(region.getYMax() / ySpacing);
 
@@ -222,103 +229,106 @@ namespace Slab::Graphics {
             } else text = vUnit(mark, 2);
 
             loc = FromSpaceToViewportCoord(loc, region.getRect(), vp);
-            writer->write(text, loc, gtf);
+            writer->Write(text, loc, gtf);
         }
 
 
-        OpenGL::Shader::remove();
-
-        glPushAttrib(GL_ENABLE_BIT);
-        glDisable(GL_LINE_SMOOTH);
-
-        glDisable(GL_LINE_STIPPLE);
-        /*
-        glBegin(GL_LINES);
+        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::SetupOrtho(graph.GetRegion().getRect());
         {
-            auto &ac = currStyle->axisColor;
+            glPushAttrib(GL_ENABLE_BIT);
+            glDisable(GL_LINE_SMOOTH);
 
-            glColor4f(ac.r, ac.g, ac.b, ac.a);
+            glDisable(GL_LINE_STIPPLE);
+            /*
+            glBegin(GL_LINES);
+            {
+                auto &ac = currStyle->axisColor;
 
-            glVertex3d(region.getXMin(), 0, 0);
-            glVertex3d(region.getXMax(), 0, 0);
-        }
-        glEnd();
-        */
+                glColor4f(ac.r, ac.g, ac.b, ac.a);
 
-        /* Minor grid lines */
-        glEnable(GL_LINE_STIPPLE);
-        // glLineStipple(2, 0x2727);
-        glLineStipple(currStyle->minorGridLines.getStippleFactor(), currStyle->minorGridLines.getStipplePattern());
-        // glLineStipple(2, 0x1111);
-        glLineWidth(currStyle->minorGridLines.thickness);
-
-        glBegin(GL_LINES);
-        {
-            // auto &ac = currStyle->axisColor;
-            auto &tc = currStyle->minorGridLines.lineColor;
-
-            glColor4f(tc.r, tc.g, tc.b, tc.a);
-
-            for(auto i = iMin; i<=iMax; ++i) {
-                if(i==0) continue;
-
-                DevFloat mark = i*ySpacing;
-                glVertex3d(region.getXMin(), mark, 0);
-                glVertex3d(region.getXMax(), mark, 0);
+                glVertex3d(region.getXMin(), 0, 0);
+                glVertex3d(region.getXMax(), 0, 0);
             }
+            glEnd();
+            */
 
-            // glColor4f(ac.r, ac.g, ac.b, ac.a);
+            /* Minor grid lines */
+            glEnable(GL_LINE_STIPPLE);
+            // glLineStipple(2, 0x2727);
+            glLineStipple(currStyle->minorGridLines.getStippleFactor(), currStyle->minorGridLines.getStipplePattern());
+            // glLineStipple(2, 0x1111);
+            glLineWidth(currStyle->minorGridLines.thickness);
 
-            // glVertex3d(region.getXMin(), 0, 0);
-            // glVertex3d(region.getXMax(), 0, 0);
+            glBegin(GL_LINES);
+            {
+                // auto &ac = currStyle->axisColor;
+                auto &tc = currStyle->minorGridLines.lineColor;
+
+                glColor4f(tc.r, tc.g, tc.b, tc.a);
+
+                for(auto i = iMin; i<=iMax; ++i) {
+                    if(i==0) continue;
+
+                    DevFloat mark = i*ySpacing;
+                    glVertex3d(region.getXMin(), mark, 0);
+                    glVertex3d(region.getXMax(), mark, 0);
+                }
+
+                // glColor4f(ac.r, ac.g, ac.b, ac.a);
+
+                // glVertex3d(region.getXMin(), 0, 0);
+                // glVertex3d(region.getXMax(), 0, 0);
+            }
+            glEnd();
+            glPopAttrib();
         }
-        glEnd();
-        glPopAttrib();
+        OpenGL::Legacy::RestoreFromLegacyMode();
 
         // Draw axis name
         {
             const auto xMidpoint = region.getXMin();
             const auto yMidpoint = region.yCenter();
             const Point2D loc = {xMidpoint, yMidpoint};
-            auto labels_writer = currStyle->labelsWriter;
+            auto labels_writer = currStyle->LabelsWriter;
 
             auto pen = FromSpaceToViewportCoord(loc, region.getRect(), vp);
-            pen.x += .5*labels_writer->getFontHeightInPixels() + y_label_xoffset_in_pixels;
+            pen.x += .5*labels_writer->GetFontHeightInPixels() + y_label_xoffset_in_pixels;
             pen.y += y_label_yoffset_in_pixels;
 
-            labels_writer->write(verticalAxisLabel, pen , currStyle->graphTitleColor, true);
+            labels_writer->Write(verticalAxisLabel, pen , currStyle->graphTitleColor, true);
         }
 
     }
 
-    void AxisArtist::setHorizontalUnit(const Unit &unit) { hUnit = unit; }
+    void FAxisArtist::setHorizontalUnit(const Unit &unit) { hUnit = unit; }
 
-    void AxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
+    void FAxisArtist::setVerticalUnit(const Unit &unit) { vUnit = unit; }
 
-    void AxisArtist::SetHorizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
+    void FAxisArtist::SetHorizontalAxisLabel(const Str &label) { horizontalAxisLabel = label; }
 
-    void AxisArtist::setVerticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
+    void FAxisArtist::setVerticalAxisLabel  (const Str &label) { verticalAxisLabel   = label; }
 
-    void AxisArtist::setHorizontalAxisTicks(AxisArtist::Ticks ticks) {
+    void FAxisArtist::setHorizontalAxisTicks(FAxisArtist::Ticks ticks) {
         hTicksManual = true;
         hTicks = std::move(ticks);
     }
 
-    auto AxisArtist::getHorizontalUnit() const -> const Unit & { return hUnit; }
+    auto FAxisArtist::getHorizontalUnit() const -> const Unit & { return hUnit; }
 
-    auto AxisArtist::getVerticalUnit() const -> const Unit & { return vUnit; }
+    auto FAxisArtist::getVerticalUnit() const -> const Unit & { return vUnit; }
 
-    auto AxisArtist::getHorizontalAxisLabel() const -> Str {
+    auto FAxisArtist::getHorizontalAxisLabel() const -> Str {
         return horizontalAxisLabel;
     }
 
-    auto AxisArtist::getVerticalAxisLabel() const -> Str {
+    auto FAxisArtist::getVerticalAxisLabel() const -> Str {
         return verticalAxisLabel;
     }
 
-    bool AxisArtist::hasGUI() { return true; }
+    bool FAxisArtist::HasGUI() { return true; }
 
-    void AxisArtist::drawGUI() {
+    void FAxisArtist::DrawGUI() {
         ImGui::InputText(UniqueName("Horizontal label").c_str(), &horizontalAxisLabel[0], horizontalAxisLabel.capacity());
         ImGui::InputText(UniqueName("Vertical label").c_str(), &verticalAxisLabel[0], verticalAxisLabel.capacity());
 
@@ -339,7 +349,7 @@ namespace Slab::Graphics {
         ImGui::SliderInt(UniqueName("y label y-padding (in pixels)").c_str(), &y_label_yoffset_in_pixels, -500, 500);
         ImGui::SliderFloat(UniqueName("x-label tick height multiplier").c_str(), &hTickHeightMultiplier, 1, 20);
 
-        Artist::drawGUI();
+        FArtist::DrawGUI();
     }
 
 

@@ -35,13 +35,13 @@ namespace Slab::Graphics {
     public:
         Scene3DWindow();
 
-        void Draw() override;
+        void ImmediateDraw() override;
         auto getCamera() const -> const Camera&;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
         bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         bool addActor(const Actor_ptr& actor);
     };

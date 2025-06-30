@@ -22,7 +22,7 @@ namespace Tests {
         style.filled = false;
     }
 
-    void LaTeXTests::Draw() {
+    void LaTeXTests::ImmediateDraw() {
         constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
 
@@ -38,12 +38,12 @@ namespace Tests {
             ImGui::End();
         });
 
-        writer.write(Str(buffer), {200, 1100});
+        writer.Write(Str(buffer), {200, 1100});
         latexWriter.draw();
     }
 
     void LaTeXTests::NotifyReshape(int w, int h) {
-        writer.reshape(w, h);
+        writer.Reshape(w, h);
         WindowRow::NotifyReshape(w, h);
     }
 } // Tests

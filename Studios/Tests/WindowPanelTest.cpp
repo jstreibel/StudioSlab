@@ -10,7 +10,7 @@
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest()
-: Slab::Graphics::FSlabWindow({"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
+: FSlabWindow(Config{"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
     FSlabWindow *window = nullptr;
 
     window = new FSlabWindow();
@@ -50,8 +50,8 @@ WindowPanelTest::WindowPanelTest()
 }
 
 
-void WindowPanelTest::Draw() {
-    panel->Draw();
+void WindowPanelTest::ImmediateDraw() {
+    panel->ImmediateDraw();
 }
 
 void WindowPanelTest::NotifyReshape(int width, int height) {

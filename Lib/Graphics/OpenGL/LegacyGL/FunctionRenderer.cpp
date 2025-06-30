@@ -9,25 +9,23 @@
 // Created by joao on 27/09/2019.
 
 
-namespace Slab {
+namespace Slab::Graphics::OpenGL::Legacy {
 
     void
-    Graphics::FunctionRenderer::renderFunction(const RtoR::NumericFunction &func, Color c, bool filled, DevFloat xMin, DevFloat xMax, DevFloat scale) {
+    FunctionRenderere::RenderFunction(const RtoR::NumericFunction &func, Color c, bool filled, DevFloat xMin, DevFloat xMax, DevFloat scale) {
         const int N = func.N;
 
-        renderFunction(func, c, filled, xMin, xMax, N, scale);
+        RenderFunction(func, c, filled, xMin, xMax, N, scale);
     }
 
     void
-    Graphics::FunctionRenderer::renderFunction(const RtoR::Function &func, Color c, bool filled, DevFloat xMin, DevFloat xMax,
+    FunctionRenderere::RenderFunction(const RtoR::Function &func, Color c, bool filled, DevFloat xMin, DevFloat xMax,
                                                UInt resolution, DevFloat scale) {
         const DevFloat dx = (xMax - xMin) / DevFloat(resolution);
         const DevFloat xBegin = xMin;
         const DevFloat xEnd = xMax;
 
         if (dx == .0) return;
-
-        Graphics::OpenGL::Shader::remove();
 
         if (filled) {
             glColor4f(c.r, c.g, c.b, c.a / 3.0);
@@ -62,15 +60,13 @@ namespace Slab {
     }
 
     void
-    Graphics::FunctionRenderer::renderFunction(const R2toR::Function &func, DevFloat xMin, DevFloat yMin, DevFloat L, UInt nLines,
+    FunctionRenderere::RenderFunction(const R2toR::Function &func, DevFloat xMin, DevFloat yMin, DevFloat L, UInt nLines,
                                                UInt linesRes, DevFloat scale) {
         const DevFloat xMax = xMin + L;
         const DevFloat yMax = yMin + L;
 
         const DevFloat dx = (xMax - xMin) / nLines,
                 dy = (yMax - yMin) / linesRes;
-
-        Graphics::OpenGL::Shader::remove();
 
         glPointSize(2);
         glLineWidth(1.5);
@@ -101,12 +97,10 @@ namespace Slab {
         }
     }
 
-    void Graphics::FunctionRenderer::renderSection(const R2toR::Function &func, const RtoR2::ParametricCurve &section,
+    void FunctionRenderere::RenderSection(const R2toR::Function &func, const RtoR2::ParametricCurve &section,
                                                    PlotStyle style, UInt resolution, DevFloat scale) {
         const auto ds = section.getΔs() / DevFloat(resolution);
         const auto sMin = section.get_sMin(), sMax = section.get_sMax();
-
-        Graphics::OpenGL::Shader::remove();
 
         glLineWidth(style.thickness);
 
@@ -177,14 +171,13 @@ namespace Slab {
     }
 
     void
-    Graphics::FunctionRenderer::renderHorizontalSection(const R2toR::Function &func, Color c, bool filled, DevFloat xMin,
+    FunctionRenderere::RenderHorizontalSection(const R2toR::Function &func, Color c, bool filled, DevFloat xMin,
                                                         DevFloat xMax,
                                                         UInt resolution) {
         const DevFloat dx = (xMax - xMin) / DevFloat(resolution);
         const DevFloat xBegin = xMin;
         const DevFloat xEnd = xMax;
         if (filled) {
-            Graphics::OpenGL::Shader::remove();
 
             glColor4f(c.r, c.g, c.b, c.a / 3.0);
             glBegin(GL_QUADS);
@@ -216,10 +209,9 @@ namespace Slab {
         glEnd();
     }
 
-    void Graphics::FunctionRenderer::renderVerticalSection(const R2toR::Function &func, Color c, bool filled, DevFloat yMin,
+    void FunctionRenderere::RenderVerticalSection(const R2toR::Function &func, Color c, bool filled, DevFloat yMin,
                                                            DevFloat yMax,
                                                            UInt resolution) {
-        Graphics::OpenGL::Shader::remove();
 
         const DevFloat dy = (yMax - yMin) / DevFloat(resolution);
         const DevFloat yBegin = yMin;

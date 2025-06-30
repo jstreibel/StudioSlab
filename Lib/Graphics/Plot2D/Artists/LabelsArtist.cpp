@@ -8,12 +8,13 @@
 
 #include "Graphics/OpenGL/Shader.h"
 #include "Graphics/OpenGL/Utils.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/Plot2D/PlotStyle.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 #include "Graphics/Plot2D/Plot2DWindow.h"
 
 namespace Slab::Graphics {
-    void LabelsArtist::setTotalItems(CountType tot) {
+    void FLabelsArtist::setTotalItems(CountType tot) {
         currItem=0;
 
         switch (tot) {
@@ -37,15 +38,15 @@ namespace Slab::Graphics {
         }
     }
 
-    CountType LabelsArtist::row() const { return currItem / cols; }
-    CountType LabelsArtist::col() const { return currItem % cols; }
+    CountType FLabelsArtist::row() const { return currItem / cols; }
+    CountType FLabelsArtist::col() const { return currItem % cols; }
 
-    LabelsArtist &LabelsArtist::operator++() { currItem++; return *this; }
+    FLabelsArtist &FLabelsArtist::operator++() { currItem++; return *this; }
 
-    bool LabelsArtist::draw(const Plot2DWindow &window) {
+    bool FLabelsArtist::Draw(const FPlot2DWindow &window) {
         setTotalItems(labelsRequired.size());
 
-        auto viewport = window.getViewport();
+        auto viewport = window.GetViewport();
 
         for(auto &[label, style] : labelsRequired)
             draw_label(*style, label, viewport);
@@ -55,10 +56,10 @@ namespace Slab::Graphics {
         return true;
     }
 
-    void LabelsArtist::draw_label(PlotStyle &style, const Str& label, const RectI &viewport) {
+    void FLabelsArtist::draw_label(PlotStyle &style, const Str& label, const RectI &viewport) {
         OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
-        OpenGL::Shader::remove();
+        OpenGL::Legacy::PushLegacyMode();
 
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -129,26 +130,28 @@ namespace Slab::Graphics {
         auto c = currStyle->graphNumbersColor;
         Point2D loc = {xMax_label + xGap, .5 * (yMax_label + yMin_label)};
 
-        auto writer = currStyle->labelsWriter;
+        auto writer = currStyle->LabelsWriter;
         loc = FromSpaceToViewportCoord(loc, {0, 1, 0, 1}, viewport);
-        writer->write(label, {loc.x, loc.y}, c);
+        writer->Write(label, {loc.x, loc.y}, c);
 
         glMatrixMode(GL_MODELVIEW);
         glPopMatrix();
 
         glMatrixMode(GL_PROJECTION);
         glPopMatrix();
+
+        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
     void
-    LabelsArtist::add(const Str& label, const Pointer<PlotStyle>& style)
+    FLabelsArtist::add(const Str& label, const Pointer<PlotStyle>& style)
     { labelsRequired.emplace_back(label, style); }
 
-    bool LabelsArtist::hasGUI() {
+    bool FLabelsArtist::HasGUI() {
         return true;
     }
 
-    void LabelsArtist::drawGUI() {
+    void FLabelsArtist::DrawGUI() {
         ImGui::SliderInt("Max cols", &max_cols, 1, 4);
 
         ImGui::SliderFloat("Δx", &dx, .01f, .20f);

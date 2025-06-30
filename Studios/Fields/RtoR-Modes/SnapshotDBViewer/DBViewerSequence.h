@@ -27,7 +27,7 @@ namespace Modes::DatabaseViewer {
         int current_database = -1;
 
         Vector<DBParser::Ptr> dbParsers;
-        Graphics::Plot2DWindow mashupDisplay;
+        Graphics::FPlot2DWindow mashupDisplay;
 
         using SnapshotMashup = Math::R2toR::NumericFunction_CPU;
         Vector<Pointer<SnapshotMashup>> allMashups;
@@ -38,7 +38,7 @@ namespace Modes::DatabaseViewer {
         Graphics::R2toRFunctionArtist_ptr currentMeshupArtist;
 
 
-        Graphics::Plot2DWindow massesGraph;
+        Graphics::FPlot2DWindow massesGraph;
 
         Math::PointSet maxValuesPointSet;
         Math::PointSet massesReal_pointSet;
@@ -58,13 +58,13 @@ namespace Modes::DatabaseViewer {
         void computeMasses();
         void drawTable(int specialIndex) const;
 
-        Graphics::KeyState shiftKey = Graphics::Release;
+        Graphics::EKeyState shiftKey = Graphics::Release;
     public:
         explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
-        bool NotifyKeyboard(Graphics::KeyMap key, Graphics::KeyState state, Graphics::ModKeys modKeys) override;
+        bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
     };
 }
 

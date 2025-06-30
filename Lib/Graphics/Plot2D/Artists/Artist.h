@@ -11,9 +11,9 @@
 
 namespace Slab::Graphics {
 
-    class Plot2DWindow;
+    class FPlot2DWindow;
 
-    class Artist {
+    class FArtist {
         Str label = "<unnamed artist>";
 
         bool visible = true;
@@ -27,37 +27,37 @@ namespace Slab::Graphics {
         DevFloat preferred_w_by_h_ratio = -1;
 
     public:
-        virtual ~Artist() = default;
+        virtual ~FArtist() = default;
 
-        Artist() = default;
+        FArtist() = default;
 
         /**
          * Tell artist to draw its content in argument window.
          * @return true if ok, false if some problem was found.
          */
-        virtual bool draw(const Plot2DWindow &) = 0;
-        virtual bool hasGUI();
-        virtual void drawGUI();
+        virtual bool Draw(const FPlot2DWindow &) = 0;
+        virtual bool HasGUI();
+        virtual void DrawGUI();
 
-        virtual Vector<Pointer<Artist>> getSubArtists();
+        virtual Vector<Pointer<FArtist>> GetSubArtists();
 
-        virtual const RectR &getRegion();
+        virtual const RectR &GetRegion();
 
-        virtual void setLabel(Str label);
-        virtual auto getLabel() const -> Str;
+        virtual void SetLabel(Str label);
+        virtual auto GetLabel() const -> Str;
 
-        virtual auto getXHairInfo(const Point2D &XHairCoord) const -> Str;
+        virtual auto GetXHairInfo(const Point2D &XHairCoord) const -> Str;
 
-        virtual void setVisibility(bool);
-        auto isVisible() const -> bool;
+        virtual void SetVisibility(bool);
+        auto IsVisible() const -> bool;
 
-        DevFloat getPreferredRatio() const;
+        DevFloat GetPreferredRatio() const;
 
-        void setAffectGraphRanges(bool);
-        bool affectsGraphRanges() const;
+        void SetAffectGraphRanges(bool);
+        bool AffectsGraphRanges() const;
     };
 
-    DefinePointers(Artist)
+    DefinePointers(FArtist)
 }
 
 

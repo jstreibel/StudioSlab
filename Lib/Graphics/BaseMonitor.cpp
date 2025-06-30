@@ -121,17 +121,17 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    void BaseMonitor::Draw() {
+    void BaseMonitor::ImmediateDraw() {
         assert(LastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::Draw(); // draw();
+            WindowPanel::ImmediateDraw(); // draw();
             frameTimer.reset();
         }
     }
 
-    bool BaseMonitor::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool BaseMonitor::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         static fix baseNSteps = getnSteps();
         static let multiplier = 1;
 

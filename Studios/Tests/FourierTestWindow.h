@@ -23,9 +23,9 @@ namespace Tests {
         Graphics::WindowColumn col;
 
         Graphics::FGUIWindow gui;
-        Graphics::Plot2DWindow mFuncGraph;
-        Graphics::Plot2DWindow mDFTGraph;
-        Graphics::Plot2DWindow mFTGraph;
+        Graphics::FPlot2DWindow mFuncGraph;
+        Graphics::FPlot2DWindow mDFTGraph;
+        Graphics::FPlot2DWindow mFTGraph;
 
         Graphics::PointSetArtist realFTArtist;
         Graphics::PointSetArtist imagFTArtist;
@@ -38,7 +38,7 @@ namespace Tests {
     public:
         FourierTestWindow();
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Tests

@@ -29,7 +29,7 @@ namespace Slab::Models::KGRtoR {
  correlationLine;
         RtoR::Section1D_ptr mSpaceCorrelation;
         R2toR::FNumericFunction_ptr mCorrelationComputed;
-        Graphics::Plot2DWindow mCorrelationGraph;
+        Graphics::FPlot2DWindow mCorrelationGraph;
 
         DevFloat transientHint = -1.0;
 
@@ -59,7 +59,7 @@ namespace Slab::Models::KGRtoR {
     public:
         RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetTransientHint(DevFloat);
 

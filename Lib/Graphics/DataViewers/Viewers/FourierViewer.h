@@ -23,10 +23,10 @@ namespace Slab::Graphics{
 
         R2toRFunctionArtist_ptr function_artist;
 
-        Pointer<Plot2DWindow> kSpaceGraph;
-        Pointer<Plot2DWindow> ωSpaceGraph;
-        Pointer<Plot2DWindow> xSpaceGraph;
-        Pointer<Plot2DWindow> ωkSpaceGraph;
+        Pointer<FPlot2DWindow> kSpaceGraph;
+        Pointer<FPlot2DWindow> ωSpaceGraph;
+        Pointer<FPlot2DWindow> xSpaceGraph;
+        Pointer<FPlot2DWindow> ωkSpaceGraph;
 
         Pointer<R2toRFunctionArtist> kSpace_powerArtist        = New<R2toRFunctionArtist>();
         Pointer<R2toRFunctionArtist> kSpace_amplitudesArtist   = New<R2toRFunctionArtist>();
@@ -87,7 +87,7 @@ namespace Slab::Graphics{
 
         void SetFunction(Function func) override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Studios::Fields

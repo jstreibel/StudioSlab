@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
     using namespace Math;
 
-    class R2toRFunctionArtist : public Artist {
+    class R2toRFunctionArtist : public FArtist {
         enum Scale {
             Linear,
             Log,
@@ -44,14 +44,14 @@ namespace Slab::Graphics {
         void invalidateTextureData();
         void repopulateTextureBuffer();
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
     public:
         explicit R2toRFunctionArtist();
 
-        bool draw(const Plot2DWindow &) override;
+        bool Draw(const FPlot2DWindow &) override;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
         void setFunction(R2toR::Function_constptr, const Unit& unit=Constants::One);
         auto getFunction() const -> R2toR::Function_constptr;
@@ -66,11 +66,11 @@ namespace Slab::Graphics {
 
         void set_xPeriodicOn() const;
 
-        auto getXHairInfo(const Point2D &XHairCoord) const -> Str override;
+        auto GetXHairInfo(const Point2D &XHairCoord) const -> Str override;
 
         auto getFieldTextureKontraption() const -> Pointer<FieldTextureKontraption>;
 
-        void setLabel(Str label) override;
+        void SetLabel(Str label) override;
     };
 
     DefinePointers(R2toRFunctionArtist)

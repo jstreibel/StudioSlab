@@ -34,19 +34,19 @@ namespace Slab::Models::KGRtoR {
 
         Graphics::Plotter::AddPointSet(energy_window,
                                        Naked(histogram_data_energy),
-                                       *style++, "E")->setAffectGraphRanges(true);
+                                       *style++, "E")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(kinetic_window,
                                        Naked(histogram_data_kinetic),
-                                       *style++, "K")->setAffectGraphRanges(true);
+                                       *style++, "K")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(gradient_window,
                                        Naked(histogram_data_gradient),
-                                       *style++, "grad")->setAffectGraphRanges(true);
+                                       *style++, "grad")->SetAffectGraphRanges(true);
         Graphics::Plotter::AddPointSet(potential_window,
                                        Naked(histogram_data_potential),
-                                       *style++, "V")->setAffectGraphRanges(true);
+                                       *style++, "V")->SetAffectGraphRanges(true);
     }
 
-    void HistogramsViewer_KG::Draw() {
+    void HistogramsViewer_KG::ImmediateDraw() {
         gui_window->AddExternalDraw([this](){
             fix func = getFunction();
             if(func == nullptr) return;
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void HistogramsViewer_KG::updateHistograms() {
@@ -97,7 +97,7 @@ namespace Slab::Models::KGRtoR {
         histogram.renderPDFToPointSet(Slab::Naked(histogram_data_potential), pretty);
 
         for(const auto& h_win : histogram_windows)
-            h_win->reviewGraphRanges();
+            h_win->ReviewGraphRanges();
 
     }
 

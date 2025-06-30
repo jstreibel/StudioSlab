@@ -38,7 +38,7 @@ namespace Slab::Graphics::OpenGL {
         glGenTextures(1, &atlas->id);
 
         if(glyphsToPreload != nullptr)
-            setBufferText(glyphsToPreload, {0, 0}, white);
+            SetBufferText(glyphsToPreload, {0, 0}, white);
 
         mat4_set_identity(&projection);
         mat4_set_identity(&model);
@@ -65,7 +65,8 @@ namespace Slab::Graphics::OpenGL {
         font = nullptr;
     }
 
-    void WriterOpenGL::uploadAtlas() {
+    void WriterOpenGL::UploadAtlas() const
+    {
         if(font==nullptr || !font->atlas_dirty) return;
 
         glBindTexture(GL_TEXTURE_2D, atlas->id);
@@ -79,7 +80,7 @@ namespace Slab::Graphics::OpenGL {
         font->atlas_dirty = 0;
     }
 
-    void WriterOpenGL::setBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
+    void WriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
         vertexBuffer.clear();
 
         size_t i;
@@ -148,11 +149,11 @@ namespace Slab::Graphics::OpenGL {
         }
 
         if(font->atlas_dirty) {
-            uploadAtlas();
+            UploadAtlas();
         }
     }
 
-    void WriterOpenGL::drawBuffer() {
+    void WriterOpenGL::DrawBuffer() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -160,41 +161,43 @@ namespace Slab::Graphics::OpenGL {
         glActiveTexture(textureUnit);
         glBindTexture(GL_TEXTURE_2D, atlas->id);
 
-        program.use();
-        program.setUniform("texture", textureUnit - GL_TEXTURE0);
-        program.setUniform4x4("model", model.data);
-        program.setUniform4x4("view", view.data);
-        program.setUniform4x4("projection", projection.data);
+        program.Use();
+        program.SetUniform("texture", textureUnit - GL_TEXTURE0);
+        program.SetUniform4x4("model", model.data);
+        program.SetUniform4x4("view", view.data);
+        program.SetUniform4x4("projection", projection.data);
 
         vertexBuffer.render(GL_TRIANGLES);
 
     }
 
-    void WriterOpenGL::write(const Str &text, Point2D pen, Color color, bool vertical) {
+    void WriterOpenGL::Write(const Str &text, Point2D pen, Color color, bool vertical) {
+        return;
+
         if(text.empty()) return;
 
-        setBufferText(text, pen, color, vertical);
+        SetBufferText(text, pen, color, vertical);
         OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
-        drawBuffer();
+        DrawBuffer();
         OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
     }
 
-    DevFloat WriterOpenGL::getFontHeightInPixels() const { return font->height; }
+    DevFloat WriterOpenGL::GetFontHeightInPixels() const { return font->height; }
 
-    void WriterOpenGL::reshape(int w, int h) {
+    void WriterOpenGL::Reshape(int w, int h) {
         mat4_set_orthographic(&projection, 0, (float) w, 0, (float) h, -1, 1);
     }
 
-    void WriterOpenGL::scale(float sx, float sy) {
+    void WriterOpenGL::Scale(float sx, float sy) {
         mat4_scale(&view, sx, sy, 1);
     }
 
-    void WriterOpenGL::translate(float dx, float dy) {
+    void WriterOpenGL::Translate(float dx, float dy) {
         mat4_translate(&view, dx, dy, 0);
     }
 
-    void WriterOpenGL::resetTransforms() {
+    void WriterOpenGL::ResetTransforms() {
         mat4_set_identity(&view );
     }
 } // Slab::Graphics::OpenGL

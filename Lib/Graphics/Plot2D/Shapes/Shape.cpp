@@ -4,7 +4,9 @@
 
 #include "Shape.h"
 #include "Graphics/OpenGL/OpenGL.h"
+#include "Graphics/OpenGL/LegacyGL/SceneSetup.h"
 #include "Graphics/OpenGL/LegacyGL/ShapeRenderer.h"
+#include "Graphics/Plot2D/Plot2DWindow.h"
 
 namespace Slab::Graphics {
 
@@ -14,8 +16,11 @@ namespace Slab::Graphics {
 
 
 
-    void RectangleShape::draw(const Plot2DWindow &window) {
-        ::Slab::Graphics::OpenGL::Legacy::RenderRectangle(*this);
+    void RectangleShape::draw(const FPlot2DWindow &window) {
+        OpenGL::Legacy::PushLegacyMode();
+        OpenGL::Legacy::SetupOrtho(window.GetRegion().getRect());
+        OpenGL::Legacy::RenderRectanglee(*this);
+        OpenGL::Legacy::RestoreFromLegacyMode();
     }
 
 

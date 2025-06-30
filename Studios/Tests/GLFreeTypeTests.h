@@ -18,7 +18,7 @@ class GLFreeTypeTests : public Slab::Graphics::FSlabWindow {
 public:
     GLFreeTypeTests();
 
-    void Draw() override;
+    void ImmediateDraw() override;
 
     void NotifyReshape(int newWinW, int newWinH) override;
 };

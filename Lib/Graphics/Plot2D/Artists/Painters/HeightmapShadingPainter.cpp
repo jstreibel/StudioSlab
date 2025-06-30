@@ -30,12 +30,12 @@ namespace Slab::Graphics {
 
     void HeightmapShadingPainter::setScale(DevFloat s) {
         scale = (float)s;
-        setUniform("scale", scale);
+        SetUniform("scale", scale);
     }
 
     void HeightmapShadingPainter::setTexelSize(const Math::Real2D& size) {
         dr = size;
-        setUniform("dr", dr);
+        SetUniform("dr", dr);
     }
 
     void HeightmapShadingPainter::drawGUI() {
@@ -62,27 +62,27 @@ namespace Slab::Graphics {
 
     void HeightmapShadingPainter::setLightZenith(DevFloat zenith) {
         light_zenith_rad = (float)zenith;
-        setUniform("light_zenith", light_zenith_rad);
+        SetUniform("light_zenith", light_zenith_rad);
     }
 
     void HeightmapShadingPainter::setLightAzimuth(DevFloat azimuth) {
         light_azimuth_rad = (float)azimuth;
-        setUniform("light_azimuth", light_azimuth_rad);
+        SetUniform("light_azimuth", light_azimuth_rad);
     }
 
     void HeightmapShadingPainter::setLightIntensity(DevFloat intensity) {
         light_intensity = (float)intensity;
-        setUniform("light_intensity", light_intensity);
+        SetUniform("light_intensity", light_intensity);
     }
 
     void HeightmapShadingPainter::setMode(int m) {
         mode = m;
-        setUniform("mode", mode);
+        SetUniform("mode", mode);
     }
 
     void HeightmapShadingPainter::setSigma(DevFloat s) {
         sigma = s;
-        setUniform("sigma", sigma);
+        SetUniform("sigma", sigma);
     }
 
 } // Slab::Graphics

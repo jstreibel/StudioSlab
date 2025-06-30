@@ -17,7 +17,7 @@ namespace Tests {
 
     class LaTeXTests : public Slab::Graphics::WindowRow {
         Slab::Graphics::FGUIWindow stats;
-        Slab::Graphics::Plot2DWindow graph;
+        Slab::Graphics::FPlot2DWindow graph;
 
         Writer writer;
 
@@ -26,7 +26,7 @@ namespace Tests {
     public:
         LaTeXTests();
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void NotifyReshape(int w, int h) override;
     };

@@ -91,7 +91,7 @@ namespace Slab::Models::KGRtoR {
         SetColumnRelativeWidth(1, -1);
     }
 
-    void FRealtimePanel::Draw() {
+    void FRealtimePanel::ImmediateDraw() {
         UpdateEnergyData();
 
         fix V_str = Hamiltonian.GetThePotential()->Symbol();
@@ -106,18 +106,18 @@ namespace Slab::Models::KGRtoR {
         guiWindow.AddExternalDraw([this, V_str]() {
             if (ImGui::CollapsingHeader("Real-time monitor")) {
 
-                if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &bShowPot)) { vArtist->setVisibility(bShowPot); }
-                if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &bShowKineticEnergy)) { kArtist->setVisibility(bShowKineticEnergy); }
+                if (ImGui::Checkbox(("Show V(ϕ)=" + V_str).c_str(), &bShowPot)) { vArtist->SetVisibility(bShowPot); }
+                if (ImGui::Checkbox("Show (𝜕ₜϕ)²/2", &bShowKineticEnergy)) { kArtist->SetVisibility(bShowKineticEnergy); }
                 if (ImGui::Checkbox("Show (𝜕ₓϕ)²/2", &bShowGradientEnergy)) {
-                    wArtist->setVisibility(bShowGradientEnergy);
+                    wArtist->SetVisibility(bShowGradientEnergy);
                 }
-                if (ImGui::Checkbox("Show e", &bShowEnergyDensity)) { uArtist->setVisibility(bShowEnergyDensity); }
+                if (ImGui::Checkbox("Show e", &bShowEnergyDensity)) { uArtist->SetVisibility(bShowEnergyDensity); }
             }
         });
 
         CHECK_GL_ERRORS(ErrorCount++)
 
-        FRtoRPanel::Draw();
+        FRtoRPanel::ImmediateDraw();
     }
 
     void FRealtimePanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
@@ -125,8 +125,8 @@ namespace Slab::Models::KGRtoR {
                                              const Graphics::R2toRFunctionArtist_ptr &SimHistoryGraph) {
         FRtoRPanel::SetSimulationHistory(SimHistory, SimHistoryGraph);
 
-        auto simulationHistoryGraph = Slab::New<Graphics::Plot2DWindow>("Simulation history");
-        simulationHistoryGraph->addArtist(SimHistoryGraph);
+        auto simulationHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Simulation history");
+        simulationHistoryGraph->AddArtist(SimHistoryGraph);
 
         AddWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
         SetColumnRelativeWidth(1, -1);
@@ -138,8 +138,8 @@ namespace Slab::Models::KGRtoR {
                                                const R2toRFunctionArtist_ptr &SftHistoryArtist) {
         FRtoRPanel::SetSpaceFourierHistory(SftHistory, DFTData, SftHistoryArtist);
 
-        auto sftHistoryGraph = Slab::New<Plot2DWindow>("Space Fourier transform");
-        sftHistoryGraph->addArtist(SftHistoryArtist);
+        auto sftHistoryGraph = Slab::New<FPlot2DWindow>("Space Fourier transform");
+        sftHistoryGraph->AddArtist(SftHistoryArtist);
 
         AddWindow(sftHistoryGraph);
     }
@@ -166,10 +166,10 @@ namespace Slab::Models::KGRtoR {
         auto yMax = max(UHistoryData.getMax().y,
                         min(KHistoryData.getMax().y, min(WHistoryData.getMax().y, VHistoryData.getMax().y)));
 
-        EnergyGraph.getRegion().animate_yMax(yMax);
-        EnergyGraph.getRegion().animate_yMin(yMin);
+        EnergyGraph.GetRegion().animate_yMax(yMax);
+        EnergyGraph.GetRegion().animate_yMin(yMin);
 
-        EnergyGraph.getRegion().animate_xMax(xMax);
+        EnergyGraph.GetRegion().animate_xMax(xMax);
     }
 
 }

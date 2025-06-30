@@ -9,10 +9,25 @@
 
 namespace Slab::Graphics::OpenGL::Legacy {
 
+    void PushLegacyMode();
+
+    void RestoreFromLegacyMode();
+
+    bool IsInLegacyMode();
+
     void PushScene();
 
-    void ResetModelview();
+    void ResetModelView();
+
+    /**
+     * This function expects OpenGL to be operating in Legacy mode.
+     * @param region
+     * @param zNear
+     * @param zFar
+     */
     void SetupOrtho(const RectR &region, DevFloat zNear=-1.0, DevFloat zFar=1.0);
+
+    void SetupOrthoI(const RectI &region, DevFloat zNear=-1.0, DevFloat zFar=1.0);
 
     void PopScene();
 }

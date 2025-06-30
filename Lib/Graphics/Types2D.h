@@ -14,8 +14,8 @@ namespace Slab::Graphics {
     struct TRect {
         T xMin, xMax, yMin, yMax;
 
-        T width() const {return xMax-xMin; }
-        T height() const {return yMax - yMin; }
+        T GetWidth() const {return xMax-xMin; }
+        T GetHeight() const {return yMax - yMin; }
 
         T yCenter() const { return .5 * (yMax + yMin); }
         T xCenter() const { return .5 * (xMax + xMin); }

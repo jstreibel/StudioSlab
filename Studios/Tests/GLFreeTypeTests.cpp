@@ -12,13 +12,13 @@
 using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
-: Slab::Graphics::FSlabWindow({"FreeType tests"})
+: Slab::Graphics::FSlabWindow(Config{"FreeType tests"})
 , writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
-void GLFreeTypeTests::Draw() {
-    FSlabWindow::Draw();
+void GLFreeTypeTests::ImmediateDraw() {
+    FSlabWindow::ImmediateDraw();
 
     glMatrixMode(GL_MODELVIEW);
     fix ratio = DevFloat(GetWidth()) / GetHeight();
@@ -39,12 +39,12 @@ void GLFreeTypeTests::Draw() {
     }
 
     {
-        writer1.write(Str("Angle = ") + ToStr(angle) + Str("deg"), {40, 40});
+        writer1.Write(Str("Angle = ") + ToStr(angle) + Str("deg"), {40, 40});
 
-        writer2.write(Str("Hell yeah!"), {40, 80});
+        writer2.Write(Str("Hell yeah!"), {40, 80});
 
-        writer1.write(Str("ℑ(ℱ[ϕ])  ℜ(ℱ[ϕ])  ℐ π² ϵᵢⱼₖ 𝕬𝕭𝕮  𝕬𝕭𝕮"), {40, 120});
-        writer1.write(Str("αβγδεζηθικλμνξοπρστυφχψω"), {40, 160});
+        writer1.Write(Str("ℑ(ℱ[ϕ])  ℜ(ℱ[ϕ])  ℐ π² ϵᵢⱼₖ 𝕬𝕭𝕮  𝕬𝕭𝕮"), {40, 120});
+        writer1.Write(Str("αβγδεζηθικλμνξοπρστυφχψω"), {40, 160});
 
     }
 
@@ -54,8 +54,8 @@ void GLFreeTypeTests::Draw() {
 void GLFreeTypeTests::NotifyReshape(int newWinW, int newWinH) {
     FSlabWindow::NotifyReshape(newWinW, newWinH);
 
-    auto vp = getViewport();
+    auto vp = GetViewport();
 
-    writer1.reshape(vp.width(), vp.height());
-    writer2.reshape(vp.width(), vp.height());
+    writer1.Reshape(vp.GetWidth(), vp.GetHeight());
+    writer2.Reshape(vp.GetWidth(), vp.GetHeight());
 }

@@ -15,7 +15,7 @@ namespace Tests {
 
     class VShapeExpansionTest : public Slab::Graphics::WindowRow {
         Slab::Graphics::FGUIWindow stats;
-        Slab::Graphics::Plot2DWindow graph;
+        Slab::Graphics::FPlot2DWindow graph;
 
         Slab::Pointer<Slab::Math::RtoR::NonlinearKGPotential> potential;
         Slab::Pointer<Slab::Math::Base::FunctionT<Slab::DevFloat, Slab::DevFloat>> derivs;
@@ -23,7 +23,7 @@ namespace Tests {
     public:
         VShapeExpansionTest();
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Tests

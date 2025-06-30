@@ -36,11 +36,11 @@ namespace Slab::Graphics {
         explicit FSystemWindowEventListener();
         virtual ~FSystemWindowEventListener();
 
-        virtual bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys);
+        virtual bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys);
         virtual bool NotifyCharacter(UInt codepoint);
 
         virtual void CursorEntered(bool);
-        virtual bool NotifyMouseButton(MouseButton, KeyState, ModKeys);
+        virtual bool NotifyMouseButton(EMouseButton, EKeyState, EModKeys);
         virtual bool NotifyMouseMotion(int x, int y, int dx, int dy);
         virtual bool NotifyMouseWheel(double dx, double dy);
 

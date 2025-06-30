@@ -16,7 +16,7 @@ class WindowTreeBuilderTest : public Slab::Graphics::FSlabWindow {
     Slab::Math::RtoR::AnalyticOscillon osc;
 public:
     WindowTreeBuilderTest();
-    void Draw() override;
+    void ImmediateDraw() override;
 
     void NotifyReshape(int width, int height) override;
 

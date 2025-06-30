@@ -13,7 +13,7 @@
 namespace Slab::Graphics {
 
     class TestActor : public Actor {
-        OpenGL::Shader program;
+        OpenGL::FShader program;
         OpenGL::VertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 

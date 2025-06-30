@@ -11,7 +11,7 @@
 
 namespace Slab::Graphics {
 
-    class LabelsArtist : public Artist {
+    class FLabelsArtist : public FArtist {
         CountType currItem=0;
         CountType cols = 1;
         int max_cols = 4;
@@ -27,21 +27,21 @@ namespace Slab::Graphics {
 
         void setTotalItems(CountType tot);
 
-        CountType row() const;
-        CountType col() const;
+        [[nodiscard]] CountType row() const;
+        [[nodiscard]] CountType col() const;
 
-        LabelsArtist& operator++();
+        FLabelsArtist& operator++();
 
         void draw_label(PlotStyle &style, const Str& label, const RectI &viewport);
 
     public:
 
-        bool draw(const Plot2DWindow &window) override;
+        bool Draw(const FPlot2DWindow &window) override;
         void add(const Str& label, const Pointer<PlotStyle>& style);
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
     };
 
 }

@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
 
             return;
         }
-        bind();
+        Bind();
 
         setAntiAliasOn();
 
@@ -57,7 +57,7 @@ namespace Slab::Graphics::OpenGL {
     bool Texture1D_Color::upload(UInt start, CountType n) {
         if(data == nullptr) return false;
 
-        bind();
+        Bind();
 
         if(start==0 && n==0) {
             glTexImage1D(getTarget(), 0, GL_RGBA, size, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -82,7 +82,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture1D_Color::setAntiAliasOn() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -91,7 +91,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void Texture1D_Color::setAntiAliasOff() {
-        bind();
+        Bind();
 
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         glTexParameteri(GL_TEXTURE_1D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -104,7 +104,7 @@ namespace Slab::Graphics::OpenGL {
     void Texture1D_Color::set_sPeriodicOn() const { setWrap(Repeat); }
 
     void Texture1D_Color::setWrap(OpenGL::WrapMode mode) const {
-        bind();
+        Bind();
 
         glTexParameteri(getTarget(), GL_TEXTURE_WRAP_S, mode);
     }

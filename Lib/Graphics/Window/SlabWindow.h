@@ -35,10 +35,10 @@ namespace Slab::Graphics {
     public:
 
         struct Config {
-            Config(const Str &title="",
-                RectI win_rect=WindowStyle::default_window_rect,
-                Int flags=0x0,
-                FOwnerSystemWindow Owner=nullptr);
+            explicit Config(const Str &title="",
+                            RectI win_rect=WindowStyle::default_window_rect,
+                            Int flags=0x0,
+                            FOwnerSystemWindow Owner=nullptr);
 
             Str title;
             RectI win_rect;
@@ -49,9 +49,9 @@ namespace Slab::Graphics {
     private:
         void SetupWindow() const;
 
-        KeyState mouseLeftButton   = KeyState::Release;
-        KeyState mouseCenterButton = KeyState::Release;
-        KeyState mouseRightButton  = KeyState::Release;
+        EKeyState mouseLeftButton   = EKeyState::Release;
+        EKeyState mouseCenterButton = EKeyState::Release;
+        EKeyState mouseRightButton  = EKeyState::Release;
 
     protected:
         Config config;
@@ -77,36 +77,44 @@ namespace Slab::Graphics {
          */
         void overrideSystemWindowHeight(int override_h);
 
-        auto NotifyMouseButton(MouseButton, KeyState, ModKeys) -> bool override;
+        auto NotifyMouseButton(EMouseButton, EKeyState, EModKeys) -> bool override;
         auto NotifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
         auto NotifyMouseWheel(double dx, double dy)            -> bool override;
-        auto NotifyKeyboard(KeyMap, KeyState, ModKeys)         -> bool override;
+        auto NotifyKeyboard(EKeyMap, EKeyState, EModKeys)         -> bool override;
 
-        virtual auto Draw()                                    -> void;
+        /**
+         * This function is called when the window should render it's content immediately to its output.
+         */
+        virtual auto ImmediateDraw()                           -> void;
+        /**
+         * Here the window has the opportunity to register callbacks and other things (e.g. ImGui window list
+         * draw callback commands).
+         */
+        virtual auto RegisterDeferredDrawCalls()                 -> void;
         virtual auto NotifyReshape(int w, int h)               -> void;
         virtual auto notifyBecameActive()                      -> void;
         virtual auto notifyBecameInactive()                    -> void;
-        virtual auto Set_x(int x)                               -> void;
-        virtual auto Set_y(int y)                               -> void;
+        virtual auto Set_x(int x)                              -> void;
+        virtual auto Set_y(int y)                              -> void;
 
         auto getFlags()                                  const -> Int;
         auto isActive()                                  const -> bool;
         auto wantsFullscreen()                           const -> bool;
-        auto isMouseIn()                                 const -> bool;
-        auto isMouseLeftClicked()                        const -> bool;
-        auto isMouseCenterClicked()                      const -> bool;
-        auto isMouseRightClicked()                       const -> bool;
-        auto getMouseViewportCoord()                     const -> Point2D;
+        auto IsMouseIn()                                 const -> bool;
+        auto IsMouseLeftClicked()                        const -> bool;
+        auto IsMouseCenterClicked()                      const -> bool;
+        auto IsMouseRightClicked()                       const -> bool;
+        auto GetMouseViewportCoord()                     const -> Point2D;
 
-        auto getTitle()                                  const -> Str;
+        auto GetTitle()                                  const -> Str;
 
         auto SetDecorate(bool)                                 -> void;
         auto SetClear(bool)                                    -> void;
 
-        RectI getViewport() const;
+        RectI GetViewport() const;
 
-        auto getx()                                      const -> int;
-        auto gety()                                      const -> int;
+        auto Get_x()                                      const -> int;
+        auto Get_y()                                      const -> int;
         auto GetWidth()                                  const -> int;
         auto GetHeight()                                 const -> int;
         auto SetMinimumWidth(Resolution)                       -> void;

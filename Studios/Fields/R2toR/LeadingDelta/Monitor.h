@@ -19,23 +19,23 @@ namespace Studios::Fields::R2toRLeadingDelta {
         Pointer<R2toR::Function> drivingFunction;
 
         Pointer<PointSet> totalEnergyData;
-        Graphics::Plot2DWindow mTotalEnergyGraph;
+        Graphics::FPlot2DWindow mTotalEnergyGraph;
 
         Pointer<PointSet> numericEnergyData;
         Pointer<PointSet> analyticEnergyData;
-        Graphics::Plot2DWindow mEnergyGraph;
+        Graphics::FPlot2DWindow mEnergyGraph;
 
         Pointer<PointSet> energyRatioData;
-        Graphics::Plot2DWindow mEnergyRatioGraph;
+        Graphics::FPlot2DWindow mEnergyRatioGraph;
 
-        Graphics::Plot2DWindow mSpeedsGraph;
-        Graphics::Plot2DWindow mEnergyDensityGraph;
+        Graphics::FPlot2DWindow mSpeedsGraph;
+        Graphics::FPlot2DWindow mEnergyDensityGraph;
 
     public:
 
         OutGL(CountType max_steps, Pointer<R2toR::Function> drivingFunction);
 
-        auto Draw() -> void override;
+        auto ImmediateDraw() -> void override;
 
     };
 }

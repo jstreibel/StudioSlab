@@ -11,7 +11,7 @@ namespace Slab::Graphics {
     NodeWindow::NodeWindow(const FSlabWindow &window) : FSlabWindow(window) {
     }
 
-    NodeWindow::NodeWindow(RectI window_rect) : FSlabWindow({"", window_rect}) {
+    NodeWindow::NodeWindow(RectI window_rect) : FSlabWindow(Config{"", window_rect}) {
 
     }
 
@@ -52,8 +52,8 @@ namespace Slab::Graphics {
         for (auto i = 0; i < n; ++i) {
             auto child = children[i];
 
-            child->Set_x(getx() + i * dx);
-            child->Set_y(gety() + i * dy);
+            child->Set_x(Get_x() + i * dx);
+            child->Set_y(Get_y() + i * dy);
             child->NotifyReshape(childWidth, childHeight);
 
             auto cast = dynamic_cast<NodeWindow *>(child);
@@ -61,11 +61,11 @@ namespace Slab::Graphics {
         }
     }
 
-    void NodeWindow::Draw() {
-        if (children.empty()) FSlabWindow::Draw();
+    void NodeWindow::ImmediateDraw() {
+        if (children.empty()) FSlabWindow::ImmediateDraw();
 
         for (auto win: children)
-            win->Draw();
+            win->ImmediateDraw();
     }
 
 }

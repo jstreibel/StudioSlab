@@ -8,7 +8,7 @@
 #include "Graphics/Plot2D/Shapes/Shape.h"
 
 namespace Slab::Graphics::OpenGL::Legacy {
-    void RenderRectangle(const RectangleShape &);
+    void RenderRectanglee(const RectangleShape &);
 }
 
 #endif //STUDIOSLAB_SHAPERENDERER_H

@@ -13,7 +13,7 @@ namespace Tests {
     Slab::Pointer<Slab::Graphics::FSlabWindow> GetImGuiTestWindow() {
         using Plotter = Slab::Graphics::Plotter;
         auto theme = Slab::Graphics::PlotThemeManager::GetCurrent();
-        auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Test Window");
+        auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Test Window");
 
         const auto funky = Slab::New<Slab::Math::RtoR::RtoRPolynomial>(Slab::RealVector{0.25, 1.25});
         Plotter::AddRtoRFunction(plot_window, funky, theme->FuncPlotStyles[0], "A poly");

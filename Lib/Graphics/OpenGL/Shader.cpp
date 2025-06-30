@@ -12,16 +12,19 @@
 #include "Core/SlabCore.h"
 
 #include <array>
+#include <ranges>
+
+#include "crude_json.h"
 
 #define CHECK_UNIFORM_EXISTS \
     if(loc == -1){               \
-    Log::Error("While setting uniform '") << name << "'. Uniform not found, " \
+    Log::Error("While setting uniform '") << Name << "'. Uniform not found, " \
         << "might have been pruned by shader compiler."; \
     return; \
     }
 
 #define CHECK_UNIFORM_ERRORS \
-    CheckGLErrors(Str("uniform '") + name + "' @ " + __PRETTY_FUNCTION__);
+    CheckGLErrors(Str("uniform '") + Name + "' @ " + __PRETTY_FUNCTION__);
 
 namespace Slab::Graphics::OpenGL {
 
@@ -42,7 +45,7 @@ namespace Slab::Graphics::OpenGL {
             GLenum type;
             Vector<GLchar> Name(maxLength); // Variable to hold the uniform name
 
-            glGetActiveUniform(handle, (GLuint)i, maxLength, &length, &size, &type, &Name[0]);
+            glGetActiveUniform(handle, static_cast<GLuint>(i), maxLength, &length, &size, &type, &Name[0]);
 
             GLint location = glGetUniformLocation(handle, &Name[0]);
 
@@ -80,90 +83,85 @@ namespace Slab::Graphics::OpenGL {
 
 
 
-    Shader::Shader(const Str& vertFilename, const Str& fragFilename)
-    : vertFileName(vertFilename)
-    , fragFileName(fragFilename)
+    FShader::FShader(const Str& vertFilename, const Str& fragFilename)
+    : VertFileName(vertFilename)
+    , FragFileName(fragFilename)
     {
         Core::LoadModule("ModernOpenGL");
 
-        handle = ShaderLoader::Load(vertFilename, fragFilename);
+        Handle = ShaderLoader::Load(vertFilename, fragFilename);
 
         Log::Note() << "Shader files '" << vertFilename
                                 << "' and '" << fragFilename << "' loaded and compiled." << Log::Flush;
         auto &log = Log::Debug() << "Are active in this shader:";
 
         log << "\n\t\t\t\tUniforms:";
-        ListShaderUniforms(handle, log);
+        ListShaderUniforms(Handle, log);
 
         log << "\n\t\t\t\tVertex attributes:";
-        ListShaderAttributes(handle, log);
+        ListShaderAttributes(Handle, log);
         log << Log::Flush;
     }
 
-    void Shader::bindTextures() const {
-        for(auto &texUnit : textureUnits)
-            texUnit.second->bind();
+    void FShader::BindTextures() const {
+        for(const auto& TexturePtr : TextureUnits | std::views::values)
+            TexturePtr->Bind();
     }
 
-    void Shader::use() const {
-        bindTextures();
+    void FShader::Use() const {
+        BindTextures();
 
-        glUseProgram(handle);
+        glUseProgram(Handle);
     }
 
-    void Shader::remove() {
-        if(!Core::BackendManager::IsModuleLoaded("ModernOpenGL")) return;
-        glUseProgram(0);
-    }
+    void FShader::SetUniform(const Str& Name, GLint Value) const {
+        this->Use();
 
-    void Shader::setUniform(const Str& name, GLint value) const {
-        this->use();
-
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
-        glUniform1i(loc, value);
+        glUniform1i(loc, Value);
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Value));
     }
 
-    void Shader::setUniform(const Str& name, GLfloat value) const {
-        this->use();
+    void FShader::SetUniform(const Str& Name, GLfloat Value) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
-        glUniform1f(loc, value);
+        glUniform1f(loc, Value);
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(value));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Value));
     }
 
-    void Shader::setUniform(const Str &name, Real2D vec2) const {
-        this->use();
+    void FShader::SetUniform(const Str &Name, const Real2D& Vec2) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
-        glUniform2f(loc, (GLfloat)vec2.x, (GLfloat)vec2.y);
+        glUniform2f(loc, static_cast<GLfloat>(Vec2.x), static_cast<GLfloat>(Vec2.y));
 
-        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + name + Log::FGBlue + "' = " + ToStr(vec2.x) + " " + ToStr(vec2.y));
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " : '" + Log::FGGreen + Name + Log::FGBlue + "' = " + ToStr(Vec2.x) + " " + ToStr(Vec2.y));
     }
 
-    void Shader::setUniform(const Str& name, const glm::mat4 &mat4) const {
-        auto matrixData = (const float*)glm::value_ptr(mat4);
-        setUniform4x4(name, matrixData);
+    void FShader::SetUniform(const Str& Name, const glm::mat4 &Mat4) const {
+        auto matrixData = (const float*)glm::value_ptr(Mat4);
+        SetUniform4x4(Name, matrixData);
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, const glm::vec3 &vec3) const {
-        this->use();
+    void FShader::SetUniform(const Str &Name, const glm::vec3 &Vec3) const {
+        this->Use();
 
-        IN data = glm::value_ptr(vec3);
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        IN data = glm::value_ptr(Vec3);
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
@@ -172,11 +170,11 @@ namespace Slab::Graphics::OpenGL {
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, const glm::vec4 &vec4) const {
-        this->use();
+    void FShader::SetUniform(const Str &Name, const glm::vec4 &Vec4) const {
+        this->Use();
 
-        IN data = glm::value_ptr(vec4);
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        IN data = glm::value_ptr(Vec4);
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
@@ -185,69 +183,69 @@ namespace Slab::Graphics::OpenGL {
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, const glm::mat3 &mat3) const {
-        auto matrixData = (const float*)glm::value_ptr(mat3);
+    void FShader::SetUniform(const Str &Name, const glm::mat3 &Mat3) const {
+        auto matrixData = (const float*)glm::value_ptr(Mat3);
 
-        setUniform3x3(name, matrixData);
+        SetUniform3x3(Name, matrixData);
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, Texture& texture) {
-        this->use();
+    void FShader::SetUniform(const Str &Name, Texture& texture) {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
         glUniform1i(loc, texture.getTextureUnit());
 
-        textureUnits[texture.getTextureUnit()] = Slab::Naked(texture);
+        TextureUnits[texture.getTextureUnit()] = Slab::Naked(texture);
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, std::array<float, 3> vec3) const {
-        this->use();
+    void FShader::SetUniform(const Str &Name, const std::array<float, 3> Vec3) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
         CHECK_UNIFORM_EXISTS
 
-        glUniform3fv( loc, 1, vec3.data());
+        glUniform3fv( loc, 1, Vec3.data());
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform(const Str &name, std::array<float, 4> vec4) const {
-        this->use();
+    void FShader::SetUniform(const Str &Name, const std::array<float, 4> Vec4) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
-        glUniform4fv( loc, 1, vec4.data());
+        glUniform4fv( loc, 1, Vec4.data());
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform3x3(const Str &name, const float *mat3) const {
-        this->use();
+    void FShader::SetUniform3x3(const Str &Name, const float *Mat3) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
-        glUniformMatrix3fv( loc, 1, GL_FALSE, mat3);
+        glUniformMatrix3fv( loc, 1, GL_FALSE, Mat3);
 
         CHECK_UNIFORM_ERRORS
     }
 
-    void Shader::setUniform4x4(const Str &name, const float *mat4) const {
-        this->use();
+    void FShader::SetUniform4x4(const Str &Name, const float *Mat4) const {
+        this->Use();
 
-        fix loc = glGetUniformLocation(handle, name.c_str());
+        fix loc = glGetUniformLocation(Handle, Name.c_str());
 
         CHECK_UNIFORM_EXISTS
 
-        glUniformMatrix4fv( loc, 1, GL_FALSE, mat4);
+        glUniformMatrix4fv( loc, 1, GL_FALSE, Mat4);
 
         CHECK_UNIFORM_ERRORS
     }

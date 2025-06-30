@@ -31,24 +31,24 @@ namespace Slab::Graphics {
             Left, Right
         };
 
-        bool addWindow(const Pointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
+        bool AddWindow(const Pointer<FSlabWindow> &window, RelativePosition= Right, float windowWidth = -1);
 
         void removeWindow(const Pointer<FSlabWindow> &window);
 
         void arrangeWindows();
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void NotifyReshape(int w, int h) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
-        bool NotifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state,
+                               EModKeys keys) override;
 
         bool NotifyMouseWheel(double dx, double dy) override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         auto Set_x(int x) -> void override;
 

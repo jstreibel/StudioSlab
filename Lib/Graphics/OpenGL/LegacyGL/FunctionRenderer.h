@@ -15,26 +15,26 @@
 #include "Math/Function/RtoR2/StraightLine.h"
 
 
-namespace Slab::Graphics {
+namespace Slab::Graphics::OpenGL::Legacy {
 
     using namespace Math;
 
-    class FunctionRenderer {
+    class FunctionRenderere {
     public:
 
-        static void renderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
+        static void RenderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
                                              DevFloat xMin, DevFloat xMax, DevFloat scale = 1.0);
-        static void renderFunction(          const RtoR::Function &func, Color c, bool filled,
+        static void RenderFunction(          const RtoR::Function &func, Color c, bool filled,
                                              DevFloat xMin, DevFloat xMax, UInt resolution, DevFloat scale = 1.0);
-        static void renderFunction(          const R2toR::Function &func, DevFloat xMin, DevFloat yMin,
+        static void RenderFunction(          const R2toR::Function &func, DevFloat xMin, DevFloat yMin,
                                              DevFloat L, UInt nLines, UInt linesRes, DevFloat scale = 1.0);
 
 
-        static void renderSection(           const R2toR::Function &func, const RtoR2::ParametricCurve &section,
+        static void RenderSection(           const R2toR::Function &func, const RtoR2::ParametricCurve &section,
                                              PlotStyle style, UInt resolution, DevFloat scale=1.0);
-        static void renderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
+        static void RenderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
                                              DevFloat xMin, DevFloat xMax, UInt resolution);
-        static void renderVerticalSection(   const R2toR::Function &func, Color c, bool filled,
+        static void RenderVerticalSection(   const R2toR::Function &func, Color c, bool filled,
                                              DevFloat yMin, DevFloat yMax, UInt resolution);
 
 

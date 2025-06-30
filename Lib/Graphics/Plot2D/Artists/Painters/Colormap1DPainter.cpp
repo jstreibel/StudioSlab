@@ -104,13 +104,13 @@ namespace Slab::Graphics {
 
     void Colormap1DPainter::setColormapTexture(Pointer<OpenGL::Texture1D_Color> texture) {
         cmap_texture = std::move(texture);
-        setUniform("colormap", cmap_texture->getTextureUnit());
+        SetUniform("colormap", cmap_texture->getTextureUnit());
     }
 
-    void Colormap1DPainter::use() const {
-        if(cmap_texture) cmap_texture->bind();
+    void Colormap1DPainter::Use() const {
+        if(cmap_texture) cmap_texture->Bind();
 
-        R2toRPainter::use();
+        R2toRPainter::Use();
     }
 
     void Colormap1DPainter::updateColorbar() {
@@ -164,7 +164,7 @@ namespace Slab::Graphics {
 
     void Colormap1DPainter::setSymmetricMaxMin(const bool is) {
         symmetric_maxmin = is;
-        setUniform("symmetric", (GLboolean ) symmetric_maxmin);
+        SetUniform("symmetric", (GLboolean ) symmetric_maxmin);
         colorbarArtist->setSymmetric(symmetric_maxmin);
 
         // if(symmetric_maxmin) setEpsilon(1.1f/(float)colorBar->getSamples()) else
@@ -186,24 +186,24 @@ namespace Slab::Graphics {
     }
 
     void Colormap1DPainter::setKappa(DevFloat) const {
-        this->setUniform("kappa", kappa);
+        this->SetUniform("kappa", kappa);
         colorbarArtist->setKappa(kappa);
     }
 
     void Colormap1DPainter::setSaturation(const DevFloat sat) {
         saturation_value = static_cast<float>(sat);
 
-        setUniform("phi_sat", saturation_value);
+        SetUniform("phi_sat", saturation_value);
         colorbarArtist->setPhiSaturation(saturation_value);
     }
 
     void Colormap1DPainter::setEpsilon(DevFloat eps) {
 
         eps_offset = static_cast<float>(eps);
-        setUniform("eps", eps_offset);
+        SetUniform("eps", eps_offset);
     }
 
     void Colormap1DPainter::labelUpdateEvent(const Str &label) {
-        colorbarArtist->setLabel("[colorbar] " + label);
+        colorbarArtist->SetLabel("[colorbar] " + label);
     }
 } // Slab::Graphics

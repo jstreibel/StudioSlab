@@ -18,21 +18,21 @@ namespace Slab::Graphics {
     : Viewer(guiWindow, nullptr)
     , curves_artists(0)
     {
-        xft_history_window = New<Plot2DWindow>("Space DFT");
+        xft_history_window = New<FPlot2DWindow>("Space DFT");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("t");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window);
 
-        modes_window = New<Plot2DWindow>("Modes");
+        modes_window = New<FPlot2DWindow>("Modes");
         modes_window->GetAxisArtist().SetHorizontalAxisLabel("t");
         modes_window->GetAxisArtist().setVerticalAxisLabel("|ℱₓ[ϕ]|");
         modes_artist = Plotter::AddR2Section(modes_window, nullptr, "Modes artist");
-        modes_artist->setAffectGraphRanges(true);
+        modes_artist->SetAffectGraphRanges(true);
         AddWindow(modes_window);
     }
 
-    void ModesHistoryViewer::Draw() {
+    void ModesHistoryViewer::ImmediateDraw() {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -45,11 +45,11 @@ namespace Slab::Graphics {
                 setupModes();
         });
 
-        WindowPanel::Draw();
+        WindowPanel::ImmediateDraw();
     }
 
     void ModesHistoryViewer::setupModes() {
-        xft_history_window->removeArtists(curves_artists);
+        xft_history_window->RemoveArtists(curves_artists);
         curves_artists.clear();
         modes_artist->clearSections();
 
@@ -78,7 +78,7 @@ namespace Slab::Graphics {
             if (++style == styles_end) style = styles_begin;
         }
 
-        modes_window->reviewGraphRanges();
+        modes_window->ReviewGraphRanges();
     }
 
     void ModesHistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {

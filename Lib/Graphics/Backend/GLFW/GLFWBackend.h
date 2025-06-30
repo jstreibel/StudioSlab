@@ -21,7 +21,7 @@ namespace Slab::Graphics {
 
 
     class GLFWBackend : public GraphicBackend {
-        void mainLoop();
+        void MainLoop();
 
         static GLFWBackend &GetInstance();
 

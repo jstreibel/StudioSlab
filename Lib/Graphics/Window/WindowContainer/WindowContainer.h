@@ -20,15 +20,15 @@ namespace Slab::Graphics {
         bool removeWindow(const Pointer<FSlabWindow>&);
         bool isEmpty() const;
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         virtual void arrangeWindows() = 0;
 
         void NotifyReshape(int newWinW, int newWinH) override;
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
-        bool NotifyMouseButton(MouseButton button, KeyState state,
-                               ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state,
+                               EModKeys keys) override;
         bool NotifyMouseWheel(double dx, double dy) override;
     };
 

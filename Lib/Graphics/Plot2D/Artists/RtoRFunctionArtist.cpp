@@ -17,41 +17,43 @@ namespace Slab::Graphics {
     : function(std::move(func)), plotStyle(plotStyle), samples(samples)
     {    }
 
-    bool RtoRFunctionArtist::draw(const Plot2DWindow &d) {
+    bool RtoRFunctionArtist::Draw(const FPlot2DWindow &d) {
         if(function == nullptr) return true;
 
-        d.requireLabelOverlay(getLabel(), Naked(plotStyle));
+        d.RequireLabelOverlay(GetLabel(), Naked(plotStyle));
 
         glLineWidth(plotStyle.thickness);
 
-        auto graphRect = d.getRegion().getRect();
+        auto graphRect = d.GetRegion().getRect();
+
+        OpenGL::Legacy::PushLegacyMode();
         OpenGL::Legacy::SetupOrtho(graphRect);
-
-        Graphics::FunctionRenderer::renderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
+        OpenGL::Legacy::FunctionRenderere::RenderFunction(*function, plotStyle.lineColor, plotStyle.filled, graphRect.xMin,
                                                    graphRect.xMax, samples, 1);
+        OpenGL::Legacy::RestoreFromLegacyMode();
 
         return true;
     }
 
-    bool RtoRFunctionArtist::hasGUI() {
+    bool RtoRFunctionArtist::HasGUI() {
         return true;
     }
 
-    void RtoRFunctionArtist::drawGUI() {
+    void RtoRFunctionArtist::DrawGUI() {
         int samps = (int)samples;
         if(ImGui::SliderInt(UniqueName("Samples").c_str(), &samps, 100, 100000))
             samples = (CountType)samps;
 
-        DrawPlotStyleGUI(plotStyle, getLabel());
+        DrawPlotStyleGUI(plotStyle, GetLabel());
 
-        Artist::drawGUI();
+        FArtist::DrawGUI();
     }
 
     void RtoRFunctionArtist::setFunction(RtoR::Function_ptr func) {
         function = func;
     }
 
-    const RectR &RtoRFunctionArtist::getRegion() {
+    const RectR &RtoRFunctionArtist::GetRegion() {
         if(function != nullptr) {
             try {
                 region.yMin = function->min();
@@ -64,7 +66,7 @@ namespace Slab::Graphics {
             }
         }
 
-        return Artist::getRegion();
+        return FArtist::GetRegion();
     }
 
     void RtoRFunctionArtist::setStyle(PlotStyle sty) { plotStyle = sty; }

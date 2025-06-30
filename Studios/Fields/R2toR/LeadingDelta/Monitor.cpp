@@ -60,7 +60,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
     }
 
-    void OutGL::Draw() {
+    void OutGL::ImmediateDraw() {
         if (!LastPacket.hasValidData()) return;
 
         static auto timer = Timer();

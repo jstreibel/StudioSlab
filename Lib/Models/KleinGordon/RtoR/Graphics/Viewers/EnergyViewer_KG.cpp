@@ -36,10 +36,10 @@ namespace Slab::Models {
 
         MomentumFlowMapArtist = Graphics::Plotter::AddR2toRFunction(FullHistoriesWindow, nullptr, "T⁰¹=-𝜕ₓϕ𝜕ₜϕ");
 
-        EnergyMapArtist   ->setAffectGraphRanges(true);
-        KineticMapArtist  ->setAffectGraphRanges(true);
-        GradMapArtist     ->setAffectGraphRanges(true);
-        PotentialMapArtist->setAffectGraphRanges(true);
+        EnergyMapArtist   ->SetAffectGraphRanges(true);
+        KineticMapArtist  ->SetAffectGraphRanges(true);
+        GradMapArtist     ->SetAffectGraphRanges(true);
+        PotentialMapArtist->SetAffectGraphRanges(true);
 
 
     }
@@ -161,8 +161,8 @@ namespace Slab::Models {
             // momentum_flow_map_artist->setColorMap(Graphics::ColorMaps["cmocean:curl"]->clone());
         }
 
-        TotalEnergiesWindow->reviewGraphRanges();
-        FullHistoriesWindow->reviewGraphRanges();
+        TotalEnergiesWindow->ReviewGraphRanges();
+        FullHistoriesWindow->ReviewGraphRanges();
     }
 
     void KGRtoR::EnergyViewer_KG::NotifyBecameVisible() {

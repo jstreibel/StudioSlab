@@ -7,6 +7,9 @@
 #include "Graphics/SlabGraphics.h"
 
 #include "Plot2DWindow.h"
+
+#include <ranges>
+
 #include "PlotStyle.h"
 
 #include <utility>
@@ -25,15 +28,16 @@
 #include "Core/SlabCore.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
+#include "Graphics/OpenGL/Shader.h"
 
 namespace Slab::Graphics {
 
     using Log = Core::Log;
 
-    std::map<Str, Plot2DWindow *> Plot2DWindow::graphMap = {};
-    CountType Plot2DWindow::WindowCount = 0;
+    std::map<Str, FPlot2DWindow *> FPlot2DWindow::GraphMap = {};
+    CountType FPlot2DWindow::WindowCount = 0;
 
-    using Mappy = Plot2DWindow::ContentMap;
+    using Mappy = FPlot2DWindow::ContentMap;
     bool change_z_order(Mappy& mappy, Mappy::iterator &it, int z_order){
         if(z_order == it->first) return false;
 
@@ -46,59 +50,60 @@ namespace Slab::Graphics {
     bool z_order_up  (Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first+1); }
     bool z_order_down(Mappy& mappy, Mappy::iterator it) { return change_z_order(mappy, it, it->first-1); }
 
-    Plot2DWindow::Plot2DWindow(
+    FPlot2DWindow::FPlot2DWindow(
         DevFloat xMin,
         DevFloat xMax,
         DevFloat yMin,
         DevFloat yMax,
         Str _title,
-        const Pointer<SlabImGuiContext>& GuiContext)
-    : id(++WindowCount)
-    , region{{xMin, xMax, yMin, yMax}}
-    , title(std::move(_title))
-    , axisArtist()
-    , gui_context(GuiContext)
+        const Pointer<SlabImGuiContext>& ArgGuiContext)
+    : Id(++WindowCount)
+    , Region{{xMin, xMax, yMin, yMax}}
+    , Title(std::move(_title))
+    , AxisArtist()
+    , GuiContext(ArgGuiContext)
     {
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
 
-        if(this->gui_context == nullptr) {
-            gui_context_is_local = true;
-            auto &gui_module = Slab::GetModule<FImGuiModule>("ImGui");
-            gui_context = DynamicPointerCast<SlabImGuiContext>(gui_module.CreateContext(parent_system_window));
-            AddResponder(gui_context);
+        if(this->GuiContext == nullptr)
+        {
+            bGuiContextIsLocal = true;
+            auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
+            GuiContext = DynamicPointerCast<SlabImGuiContext>(GuiModule.CreateContext(parent_system_window));
+            AddResponder(GuiContext);
         }
 
-        axisArtist.setLabel("Axis");
-        artistXHair.setLabel("X-hair");
-        labelsArtist.setLabel("Labels");
+        AxisArtist.SetLabel("Axis");
+        ArtistXHair.SetLabel("X-hair");
+        LabelsArtist.SetLabel("Labels");
 
-        if (title.empty()) title = Str("unnamed");
+        if (Title.empty()) Title = Str("unnamed");
         CountType n = 1;
         {
-            Str uniqueTitle = title;
-            while (Plot2DWindow::graphMap.count(uniqueTitle))
-                uniqueTitle = title + "(" + ToStr(++n) + ")";
-            title = uniqueTitle;
+            Str UniqueTitle = Title;
+            while (GraphMap.contains(UniqueTitle))
+                UniqueTitle = Title + "(" + ToStr(++n) + ")";
+            Title = UniqueTitle;
         }
-        Plot2DWindow::graphMap[title] = this;
+        GraphMap[Title] = this;
 
         Core::LoadModule("ImGui");
         Core::LoadModule("RealTimeAnimation");
 
-        Log::Note() << "Created PlottingWindow '" << title << "'" << Log::Flush;
+        Log::Note() << "Created PlottingWindow '" << Title << "'" << Log::Flush;
 
-        addArtist(Slab::Naked(axisArtist), 5);
-        addArtist(Slab::Naked(labelsArtist), 5);
-        addArtist(Slab::Naked(artistXHair), 6);
-        addArtist(Slab::Naked(bgArtist), -10);
+        AddArtist(Naked(AxisArtist), 5);
+        AddArtist(Naked(LabelsArtist), 5);
+        AddArtist(Naked(ArtistXHair), 6);
+        AddArtist(Naked(bgArtist), -10);
 
     }
 
-    Plot2DWindow::Plot2DWindow(Str title, Pointer<SlabImGuiContext> GuiContext)
-            : Plot2DWindow(-1, 1, -1, 1, std::move(title), std::move(GuiContext)) {    }
+    FPlot2DWindow::FPlot2DWindow(Str title, const Pointer<SlabImGuiContext>& GuiContext)
+    : FPlot2DWindow(-1, 1, -1, 1, std::move(title), GuiContext) {    }
 
-    void Plot2DWindow::addArtist(const Artist_ptr &pArtist, zOrder_t zOrder) {
+    void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
             Log::Error() << __PRETTY_FUNCTION__ << " trying to add "
                          << Log::FGBlue << "nullptr" << Log::ResetFormatting << " artist.";
@@ -106,17 +111,19 @@ namespace Slab::Graphics {
             return;
         }
 
-        content.emplace(zOrder, pArtist);
+        Content.emplace(zOrder, pArtist);
 
-        Log::Note() << "PlottingWindow '" << this->title << "' added artist '" << pArtist->getLabel() << "'." << Log::Flush;
+        Log::Note()
+        << "PlottingWindow '" << this->Title << "' added artist '"
+        << pArtist->GetLabel() << "'." << Log::Flush;
     }
 
-    bool Plot2DWindow::removeArtist(const Graphics::Artist_ptr &pArtist) {
+    bool FPlot2DWindow::RemoveArtist(const Graphics::FArtist_ptr &pArtist) {
         auto haveErased = false;
 
-        for (auto item = content.begin(); item != content.end();) {
+        for (auto item = Content.begin(); item != Content.end();) {
             if (item->second == pArtist) {
-                item = content.erase(item);
+                item = Content.erase(item);
                 haveErased = true;
             } else ++item;
         }
@@ -124,44 +131,49 @@ namespace Slab::Graphics {
         return haveErased;
     }
 
-    void Plot2DWindow::Draw() {
-        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + title + "'");
+    void FPlot2DWindow::ImmediateDraw() {
+        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + Title + "'");
 
-        FSlabWindow::Draw();
+        FSlabWindow::ImmediateDraw();
 
-        if (autoReviewGraphRanges) reviewGraphRanges();
+        if (AutoReviewGraphRanges) ReviewGraphRanges();
 
-        artistsDraw();
-
-        drawGUI();
+        ArtistsDraw();
     }
 
-    void Graphics::Plot2DWindow::drawGUI() {
+    void FPlot2DWindow::RegisterDeferredDrawCalls()
+    {
+        FSlabWindow::RegisterDeferredDrawCalls();
+
+        RegisterGUIDraws();
+    }
+
+    void FPlot2DWindow::RegisterGUIDraws() {
         static bool bypass_gui = false; // When outputting to png, the whole draw for this window (including this
         if (bypass_gui) { return; }     // function) is performed on top of the current draw. We thus bypass the gui
                                         // draw to not get ImGui santity check "Forgot to call Render() or EndFrame()
                                         // at the end of the previous frame?"
 
-        auto draw_call = [this](){
-            auto popupName = AddUniqueIdToString(title + Str(" window popup"));
+        auto draw_call = [this] {
+            auto popupName = AddUniqueIdToString(Title + Str(" window popup"));
 
-            if (popupOn && !POPUP_ON_MOUSE_CALL) {
+            if (PopupOn && !POPUP_ON_MOUSE_CALL) {
 
                 ImGui::OpenPopup(AddUniqueIdToString(popupName).c_str());
-                popupOn = false;
+                PopupOn = false;
             }
 
             if (ImGui::BeginPopup(AddUniqueIdToString(popupName).c_str())) {
-                if(ImGui::MenuItem("Auto adjust", nullptr, autoReviewGraphRanges)) {
-                    autoReviewGraphRanges = !autoReviewGraphRanges;
+                if(ImGui::MenuItem("Auto adjust", nullptr, AutoReviewGraphRanges)) {
+                    AutoReviewGraphRanges = !AutoReviewGraphRanges;
                 }
-                else if (ImGui::MenuItem(AddUniqueIdToString("Show interface").c_str(), nullptr, showInterface)) {
-                    showInterface = !showInterface;
+                else if (ImGui::MenuItem(AddUniqueIdToString("Show interface").c_str(), nullptr, ShowInterface)) {
+                    ShowInterface = !ShowInterface;
                 } else if (ImGui::MenuItem(AddUniqueIdToString("Save graph").c_str())) {
 
                     auto w = Printing::getTotalHorizontalDots(.5);
                     auto h = w * .5;
-                    auto fileName = title + " " +
+                    auto fileName = Title + " " +
                                     Core::FCommandLineInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                     ".png";
                     bypass_gui = true;
@@ -172,140 +184,162 @@ namespace Slab::Graphics {
                 ImGui::EndPopup();
             }
 
-            if (showInterface || !gui_context_is_local)
+            if (ShowInterface || !bGuiContextIsLocal)
             {
-                bool began;
+                bool Began;
 
-                if(gui_context_is_local) {
-                    auto vp = getViewport();
+                if(bGuiContextIsLocal) {
+                    const auto Viewport = GetViewport();
                     // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
                     // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
-                    ImGui::SetNextWindowPos({(float)vp.xMin, (float)(vp.yMin)}, ImGuiCond_Always);
-                    ImGui::SetNextWindowSize({.0f, (float)vp.height()}, ImGuiCond_Always);
-
+                    ImGui::SetNextWindowPos(
+                        {
+                            static_cast<float>(Viewport.xMin),
+                            static_cast<float>(Viewport.yMin)
+                        },
+                        ImGuiCond_Always);
+                    ImGui::SetNextWindowSize(
+                        {
+                            .0f,
+                            static_cast<float>(Viewport.GetHeight())
+                        },
+                        ImGuiCond_Always);
                     ImGui::SetNextWindowBgAlpha(0.65);
-                    began = ImGui::Begin(title.c_str(), &showInterface, ImGuiWindowFlags_NoFocusOnAppearing
+                    Began = ImGui::Begin(Title.c_str(), &ShowInterface, ImGuiWindowFlags_NoFocusOnAppearing
                     | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
                 } else {
-                    bool closable = false;
+                    bool Closable = false;
 
-                    ImGui::Begin("Stats", &closable,
-                                 ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                                 ImGuiWindowFlags_NoMove |
-                                 ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+                    const auto Viewport = GetViewport();
+                    ImGui::SetNextWindowPos(
+                        {
+                            static_cast<float>(Viewport.xMin+200),
+                            static_cast<float>(Viewport.yMin+200)
+                        },
+                        ImGuiCond_Appearing);
+                    ImGui::SetNextWindowSize(
+                        {
+                            static_cast<float>(Viewport.GetWidth()),
+                            static_cast<float>(Viewport.GetHeight())
+                        },
+                        ImGuiCond_Appearing);
 
-                    ImGuiTreeNodeFlags flags = 0;
-                    if(isMouseIn()) {
-                        flags = ImGuiTreeNodeFlags_Selected;
-                    }
-                    began = ImGui::CollapsingHeader(AddUniqueIdToString(title).c_str(), flags);
+                    ImGui::SetNextWindowBgAlpha(0.65);
+
+                    constexpr auto Flags =
+                        // ImGuiWindowFlags_NoCollapse |
+                        ImGuiWindowFlags_NoResize |
+                        // ImGuiWindowFlags_NoMove |
+                        ImGuiWindowFlags_NoTitleBar |
+                        ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+                    Began = ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), &Closable, Flags);
                 }
 
-                if (began) {
-                    for (auto it = content.begin(); it!=content.end(); ) {
+                if (Began) {
+                    for (auto it = Content.begin(); it!=Content.end(); ) {
                         IN artie = it->second;
 
                         bool increment_iterator = true;
 
-                        auto label = artie->getLabel();
+                        auto label = artie->GetLabel();
                         if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
-                            increment_iterator = !z_order_up(content, it);
+                            increment_iterator = !z_order_up(Content, it);
                         }
                         ImGui::SameLine();
                         ImGui::Text("z=%i", it->first);
                         ImGui::SameLine();
                         if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
-                            increment_iterator = !z_order_down(content, it);
+                            increment_iterator = !z_order_down(Content, it);
                         }
                         ImGui::SameLine();
 
-                        bool visible = artie->isVisible();
-                        if (ImGui::Checkbox((AddUniqueIdToString(artie->getLabel())+"_checkbox").c_str() , &visible)) {
-                            artie->setVisibility(visible);
+                        bool visible = artie->IsVisible();
+                        if (ImGui::Checkbox((AddUniqueIdToString(artie->GetLabel())+"_checkbox").c_str() , &visible)) {
+                            artie->SetVisibility(visible);
                         }
 
                         if(increment_iterator) ++it;
                     }
 
-                    if(!gui_context_is_local) {
+                    if(!bGuiContextIsLocal) {
                         auto avail_region = ImGui::GetContentRegionAvail();
-                        ImGui::BeginChild(AddUniqueIdToString(title + " :)").c_str(), {avail_region.x, 0},
+                        ImGui::BeginChild(AddUniqueIdToString(Title + " :)").c_str(), {avail_region.x, 0},
                                           ImGuiChildFlags_Border
                                           | ImGuiChildFlags_AutoResizeY);
                     }
 
-                    for (IN cont: content) {
+                    for (IN cont: Content) {
                         IN artie = cont.second;
 
-                        if (artie->isVisible() && artie->hasGUI()) {
-                            if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->getLabel())).c_str()))
-                                artie->drawGUI();
+                        if (artie->IsVisible() && artie->HasGUI()) {
+                            if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->GetLabel())).c_str()))
+                                artie->DrawGUI();
                         }
                     }
 
-                    if(!gui_context_is_local) ImGui::EndChild();
+                    if(!bGuiContextIsLocal) ImGui::EndChild();
                 }
 
                 ImGui::End();
             }};
 
-        if(gui_context_is_local) {
-            // gui_context->NewFrame();
-            // draw_call();
-            // gui_context->Render();
+        if(bGuiContextIsLocal) {
+            GuiContext->NewFrame();
+            draw_call();
+            GuiContext->Render();
         } else {
-            gui_context->AddDrawCall(draw_call);
+            GuiContext->AddDrawCall(draw_call);
         }
     }
 
-    void Graphics::Plot2DWindow::setupOrtho() const {
-
-        OpenGL::Legacy::ResetModelview();
-
-        OpenGL::Legacy::SetupOrtho(region.getRect());
-
-        auto vp = getViewport();
-        auto currStyle = PlotThemeManager::GetCurrent();
-        currStyle->labelsWriter->reshape(vp.width(), vp.height());
-        currStyle->ticksWriter->reshape(vp.width(), vp.height());
+    void FPlot2DWindow::SetupOrtho() const {
+        fix Viewport = GetViewport();
+        fix CurrentStyle = PlotThemeManager::GetCurrent();
+        CurrentStyle->LabelsWriter->Reshape(Viewport.GetWidth(), Viewport.GetHeight());
+        CurrentStyle->TicksWriter->Reshape(Viewport.GetWidth(), Viewport.GetHeight());
     }
 
-    void Graphics::Plot2DWindow::artistsDraw() {
-        setupOrtho();
+    void FPlot2DWindow::ArtistsDraw() {
+        SetupOrtho();
 
-        for (const auto &[priority, artist]: content)
-            if (artist->isVisible() && !artist->draw(*this))
-                Core::Log::Error() << "In PlottingWindow \"" << title
-                << "\" while drawing Artist \"" << artist->getLabel() << "\"" << Core::Log::Flush;
-
+        for (const auto& Artist : Content | std::views::values)
+        {
+            if (Artist->IsVisible() && !Artist->Draw(*this))
+            {
+                Core::Log::Error()
+                << "In PlottingWindow \"" << Title
+                << "\" while drawing Artist \"" << Artist->GetLabel() << "\"" << Core::Log::Flush;
+            }
+        }
     }
 
-    Graphics::AxisArtist &
-    Graphics::Plot2DWindow::GetAxisArtist() { return axisArtist; }
+    FAxisArtist &
+    FPlot2DWindow::GetAxisArtist() { return AxisArtist; }
 
     void
-    Graphics::Plot2DWindow::SetAutoReviewGraphRanges(bool autoReview) { autoReviewGraphRanges = autoReview; }
+    FPlot2DWindow::SetAutoReviewGraphRanges(bool autoReview) { AutoReviewGraphRanges = autoReview; }
 
     void
-    Graphics::Plot2DWindow::toggleShowInterface() { showInterface = !showInterface; }
+    FPlot2DWindow::toggleShowInterface() { ShowInterface = !ShowInterface; }
 
     void
-    Graphics::Plot2DWindow::requireLabelOverlay(const Str& label, const Pointer<Graphics::PlotStyle>& style) const {
-        const_cast<LabelsArtist*>(&labelsArtist)->add(label, style);
+    FPlot2DWindow::RequireLabelOverlay(const Str& label, const Pointer<Graphics::PlotStyle>& style) const {
+        const_cast<FLabelsArtist*>(&LabelsArtist)->add(label, style);
     }
 
-    void Graphics::Plot2DWindow::tieRegion_xMaxMin(const Graphics::Plot2DWindow &other) {
-        region.setReference_xMin(other.getRegion().getReference_xMin());
-        region.setReference_xMax(other.getRegion().getReference_xMax());
+    void FPlot2DWindow::TieRegion_xMaxMin(const Graphics::FPlot2DWindow &other) {
+        Region.setReference_xMin(other.GetRegion().getReference_xMin());
+        Region.setReference_xMax(other.GetRegion().getReference_xMax());
     }
 
-    void Graphics::Plot2DWindow::tieRegion_yMaxMin(const Graphics::Plot2DWindow &other) {
-        region.setReference_yMin(other.getRegion().getReference_yMin());
-        region.setReference_yMax(other.getRegion().getReference_yMax());
+    void FPlot2DWindow::TieRegion_yMaxMin(const Graphics::FPlot2DWindow &other) {
+        Region.setReference_yMin(other.GetRegion().getReference_yMin());
+        Region.setReference_yMax(other.GetRegion().getReference_yMax());
     }
 
-    void Graphics::Plot2DWindow::removeArtists(const Vector<Graphics::Artist_ptr> &artists) {
-        for(const auto& artist : artists) removeArtist(artist);
+    void FPlot2DWindow::RemoveArtists(const Vector<Graphics::FArtist_ptr> &artists) {
+        for(const auto& artist : artists) RemoveArtist(artist);
     }
 
 }

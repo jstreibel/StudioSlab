@@ -76,34 +76,34 @@ namespace Tests {
     {
         updateGraphs();
 
-        mFuncGraph.addArtist(Dummy(funcArtist));
-        mFuncGraph.addArtist(Dummy(rebuiltFuncArtist));
-        mFuncGraph.addArtist(Dummy(loc1Artist));
-        mFuncGraph.addArtist(Dummy(loc2Artist));
-        mFuncGraph.getRegion().setLimits(xMin, xMax, -3.25*A, 3.25*A);
-        loc1Artist.setLabel("xₘᵢₙ");
-        loc2Artist.setLabel("xₘₐₓ");
+        mFuncGraph.AddArtist(Dummy(funcArtist));
+        mFuncGraph.AddArtist(Dummy(rebuiltFuncArtist));
+        mFuncGraph.AddArtist(Dummy(loc1Artist));
+        mFuncGraph.AddArtist(Dummy(loc2Artist));
+        mFuncGraph.GetRegion().setLimits(xMin, xMax, -3.25*A, 3.25*A);
+        loc1Artist.SetLabel("xₘᵢₙ");
+        loc2Artist.SetLabel("xₘₐₓ");
 
-        mFTGraph.getRegion().setLimits(-1.1*ω, 1.1*ω, -0.1, 1.1);
+        mFTGraph.GetRegion().setLimits(-1.1*ω, 1.1*ω, -0.1, 1.1);
 
-        mDFTGraph.addArtist(Dummy(realFTArtist));
-        mDFTGraph.addArtist(Dummy(imagFTArtist));
+        mDFTGraph.AddArtist(Dummy(realFTArtist));
+        mDFTGraph.AddArtist(Dummy(imagFTArtist));
 
         Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->FuncPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
 
-        addWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
+        AddWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
 
         col.addWindow(Dummy(mFTGraph));
         col.addWindow(Dummy(mDFTGraph));
         col.addWindow(Dummy(mFuncGraph));
 
-        addWindow(Dummy(col));
+        AddWindow(Dummy(col));
 
         // static auto gui_ptr = Dummy(gui);
         // addResponder(gui_ptr);
     }
 
-    void FourierTestWindow::Draw() {
+    void FourierTestWindow::ImmediateDraw() {
         gui.AddExternalDraw([this]() {
 
             if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
@@ -122,7 +122,7 @@ namespace Tests {
         gui.AddVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
         gui.AddVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
-        WindowRow::Draw();
+        WindowRow::ImmediateDraw();
     }
 
     void FourierTestWindow::updateGraphs() {
@@ -163,7 +163,7 @@ namespace Tests {
 
 
             realFTArtist.setPointSet(modes.re);
-            realFTArtist.setLabel(Str("ℑ(ℱ[") + funcSymbol + "(x)])");
+            realFTArtist.SetLabel(Str("ℑ(ℱ[") + funcSymbol + "(x)])");
 
             style = theme->FuncPlotStyles[3];
             style.lineColor.inverse();
@@ -173,21 +173,21 @@ namespace Tests {
             style.lineColor.a = 0.8;
             imagFTArtist.setStyle(style);
             imagFTArtist.setPointSet(modes.im);
-            imagFTArtist.setLabel(Str("ℜ(ℱ[") + funcSymbol + "(x)])");
+            imagFTArtist.SetLabel(Str("ℜ(ℱ[") + funcSymbol + "(x)])");
 
 
             if (true) {
-                mDFTGraph.getRegion().set_x_limits(-2 * π, 2*ωₘₐₓ);
+                mDFTGraph.GetRegion().set_x_limits(-2 * π, 2*ωₘₐₓ);
             } else {
                 auto min = modes.re->getMin();
                 auto max = modes.re->getMax();
                 auto Δx = max.x - min.x;
 
-                mDFTGraph.getRegion().set_x_limits(min.x - Δx * 0.15, max.x + Δx * 0.15);
+                mDFTGraph.GetRegion().set_x_limits(min.x - Δx * 0.15, max.x + Δx * 0.15);
             }
 
             if (true) {
-                mDFTGraph.getRegion().set_y_limits(1.25, -1.25);
+                mDFTGraph.GetRegion().set_y_limits(1.25, -1.25);
             } else {
                 auto min_Re = modes.re->getMin();
                 auto max_Re = modes.re->getMax();
@@ -202,7 +202,7 @@ namespace Tests {
                 fix range = std::max(range_Re, range_Im);
                 fix Δy = std::max(Δy_Re, Δy_Im);
 
-                mDFTGraph.getRegion().set_y_limits(-range - Δy * 0.15, +range + Δy * 0.15);
+                mDFTGraph.GetRegion().set_y_limits(-range - Δy * 0.15, +range + Δy * 0.15);
             }
         }
 
@@ -212,7 +212,7 @@ namespace Tests {
             style.filled = false;
             style.thickness = 5;
             funcArtist.setFunction(Dummy(Func));
-            funcArtist.setLabel(funcSymbol);
+            funcArtist.SetLabel(funcSymbol);
             funcArtist.setStyle(style);
 
             style = theme->FuncPlotStyles[1].permuteColors(true);
@@ -220,12 +220,12 @@ namespace Tests {
             style.thickness = 5;
             FuncRebuilt.setModes(modes);
             rebuiltFuncArtist.setFunction(Dummy(FuncRebuilt));
-            rebuiltFuncArtist.setLabel(Str("ℱ⁻¹[ℱ[")+funcSymbol+"(x)]]");
+            rebuiltFuncArtist.SetLabel(Str("ℱ⁻¹[ℱ[")+funcSymbol+"(x)]]");
             rebuiltFuncArtist.setStyle(style);
 
             funcArtist.setSampling(N_modes);
 
-            mFuncGraph.getRegion().set_x_limits(-0.1 * L, 1.1 * L);
+            mFuncGraph.GetRegion().set_x_limits(-0.1 * L, 1.1 * L);
 
             static Math::PointSet L_loc1, L_loc2;
             static bool initd = false;

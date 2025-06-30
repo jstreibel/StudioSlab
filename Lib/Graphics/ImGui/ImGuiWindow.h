@@ -25,10 +25,10 @@ namespace Slab::Graphics {
     public:
         explicit FImGuiWindow(Pointer<FSlabWindow>, Pointer<SlabImGuiContext> Context);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
-
-    };
+        auto RegisterDeferredDrawCalls() -> void override;
+};
 
 } // Slab::Graphics
 

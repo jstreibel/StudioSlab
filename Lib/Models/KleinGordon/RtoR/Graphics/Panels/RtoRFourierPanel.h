@@ -18,10 +18,10 @@
 namespace Slab::Models::KGRtoR {
 
     class RtoRFourierPanel : public FRtoRPanel {
-        Pointer<Plot2DWindow> kSpaceGraph;
-        Pointer<Plot2DWindow> ωSpaceGraph;
-        Pointer<Plot2DWindow> xSpaceGraph;
-        Pointer<Plot2DWindow> ωkSpaceGraph;
+        Pointer<FPlot2DWindow> kSpaceGraph;
+        Pointer<FPlot2DWindow> ωSpaceGraph;
+        Pointer<FPlot2DWindow> xSpaceGraph;
+        Pointer<FPlot2DWindow> ωkSpaceGraph;
 
         Pointer<R2toRFunctionArtist> inv_kSpaceArtist = Slab::New<R2toRFunctionArtist>();
         Pointer<R2toR::FNumericFunction> inv_kSpace;
@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
     public:
         RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetSimulationHistory(Pointer<const R2toR::FNumericFunction> simulationHistory,
                                   const Pointer<R2toRFunctionArtist> &simHistoryGraph) override;

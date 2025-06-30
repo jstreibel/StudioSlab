@@ -10,7 +10,7 @@
 #include "Graphics/Backend/Events/KeyMap.h"
 
 namespace Slab::Graphics {
-    ImGuiKey SlabToImGuiTranslate(KeyMap);
+    ImGuiKey SlabToImGuiTranslate(EKeyMap);
 }
 
 #endif //STUDIOSLAB_SLAB_IMGUI_INTEROP_H

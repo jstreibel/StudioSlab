@@ -17,8 +17,8 @@
 namespace Slab::Models::KGRtoR {
 
     class HistoryViewer : public KGViewer {
-        Pointer<Graphics::Plot2DWindow> history_window = nullptr;
-        Pointer<Graphics::Plot2DWindow> slice_window = nullptr;
+        Pointer<Graphics::FPlot2DWindow> history_window = nullptr;
+        Pointer<Graphics::FPlot2DWindow> slice_window = nullptr;
 
         Pointer<Graphics::R2toRFunctionArtist> function_artist = nullptr;
         Pointer<Graphics::R2toRFunctionArtist> ddt_function_artist = nullptr;
@@ -41,7 +41,7 @@ namespace Slab::Models::KGRtoR {
 
         Str GetName() const override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 

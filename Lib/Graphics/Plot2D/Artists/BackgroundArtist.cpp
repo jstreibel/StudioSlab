@@ -9,11 +9,13 @@
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
 namespace Slab::Graphics {
-    BackgroundArtist::BackgroundArtist() {
-        setLabel("Background");
+    BackgroundArtist::BackgroundArtist() : FArtist() {
+        SetLabel("Background");
     }
 
-    bool BackgroundArtist::draw(const Plot2DWindow &window) {
+    bool BackgroundArtist::Draw(const FPlot2DWindow &window) {
+
+        OpenGL::Legacy::PushLegacyMode();
 
         OpenGL::Legacy::PushScene();
         OpenGL::Legacy::SetupOrtho({0,1,0,1});
@@ -29,6 +31,8 @@ namespace Slab::Graphics {
         glEnd();
 
         OpenGL::Legacy::PopScene();
+
+        OpenGL::Legacy::RestoreFromLegacyMode();
 
         return true;
     }

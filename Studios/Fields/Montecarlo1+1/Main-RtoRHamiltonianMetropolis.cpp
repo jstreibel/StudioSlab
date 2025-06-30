@@ -26,7 +26,7 @@ using Themes = Slab::Graphics::PlotThemeManager;
 void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     Slab::Core::StartBackend("GLFW");
 
-    auto plot_window = Slab::New<Slab::Graphics::Plot2DWindow>("Plot");
+    auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Plot");
     plot_window->Set_x(1700);
     plot_window->NotifyReshape(1200, 800);
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->FuncPlotStyles[0], "functional");

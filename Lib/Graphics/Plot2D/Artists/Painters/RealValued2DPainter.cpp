@@ -21,14 +21,14 @@ namespace Slab::Graphics {
 
     void R2toRPainter::labelUpdateEvent(const Str &) { }
 
-    void R2toRPainter::use() const {
-        if(field_data) field_data->bind();
+    void R2toRPainter::Use() const {
+        if(field_data) field_data->Bind();
 
-        Painter::use();
+        Painter::Use();
     }
 
     void R2toRPainter::setRegion(RectR  graphRect) {
-        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.width(), h = graphRect.height();
+        fix x = graphRect.xMin, y = graphRect.yMin, w = graphRect.GetWidth(), h = graphRect.GetHeight();
 
         fix xScale = 2.f / w;
         fix xTranslate = -1.0f - 2.0f * x / w;
@@ -46,13 +46,13 @@ namespace Slab::Graphics {
 
     void R2toRPainter::setFieldDataTexture(Pointer<OpenGL::Texture2D_Real> data) {
         field_data = std::move(data);
-        field_data->bind();
-        setUniform("field_data", field_data->getTextureUnit());
+        field_data->Bind();
+        SetUniform("field_data", field_data->getTextureUnit());
     }
 
     void R2toRPainter::setTransform(glm::mat3x3 transf) {
         this->transform = transf;
-        setUniform("transformMatrix", transform);
+        SetUniform("transformMatrix", transform);
     }
 
 

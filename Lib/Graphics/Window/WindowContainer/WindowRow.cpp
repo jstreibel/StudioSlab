@@ -26,7 +26,7 @@ fix PropagateOnlyIfMouseIsIn = false;
     responded = FSlabWindow::EVENT;                                                         \
                                                                                            \
     for(auto &winData : windowsList)                                                       \
-        if(winData.window->isMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
+        if(winData.window->IsMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
                                                                                            \
     return responded;                                                                      \
 }
@@ -35,7 +35,7 @@ fix PropagateOnlyIfMouseIsIn = false;
 namespace Slab::Graphics {
 
     WindowRow::WindowRow(Str title, Int flags)
-            : FSlabWindow({std::move(title), WindowStyle::default_window_rect, flags}) {
+            : FSlabWindow(Config{std::move(title), WindowStyle::default_window_rect, flags}) {
 
     }
 
@@ -51,7 +51,7 @@ namespace Slab::Graphics {
         return widths;
     }
 
-    bool WindowRow::addWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
+    bool WindowRow::AddWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
         if (std::find_if(windowsList.begin(), windowsList.end(),
                          [&window](WinMetaData &winMetaData) {
@@ -123,7 +123,7 @@ namespace Slab::Graphics {
 
         Vector<int> computed_xPositions(m);
         {
-            auto x = this->getx();
+            auto x = this->Get_x();
             for (int i = 0; i < m; ++i) {
                 computed_xPositions[i] = x;
                 x += computedWidths[i];
@@ -136,7 +136,7 @@ namespace Slab::Graphics {
         }
 
         auto i = 0;
-        fix y = gety() + WindowStyle::tiling_gap;
+        fix y = Get_y() + WindowStyle::tiling_gap;
         fix h = GetHeight() - WindowStyle::tiling_gap;
         for (auto &winMData: windowsList) {
             OUT win = *winMData.window;
@@ -171,12 +171,12 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::Draw() {
+    void WindowRow::ImmediateDraw() {
 
         for (auto & winData : std::ranges::reverse_view(windowsList)) {
             auto &window = *winData.window;
 
-            window.Draw();
+            window.ImmediateDraw();
             OpenGL::CheckGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
         }
@@ -190,7 +190,7 @@ namespace Slab::Graphics {
 
     bool WindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         for (auto &winData: windowsList)
-            if (winData.window->isMouseIn() && winData.window->NotifyMouseMotion(x, y, dx, dy))
+            if (winData.window->IsMouseIn() && winData.window->NotifyMouseMotion(x, y, dx, dy))
                 return true;
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
@@ -204,9 +204,9 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowRow::NotifyMouseButton(MouseButton button, KeyState state,
-                                      ModKeys keys) {
-        if(state == KeyState::Release)
+    bool WindowRow::NotifyMouseButton(EMouseButton button, EKeyState state,
+                                      EModKeys keys) {
+        if(state == EKeyState::Release)
             PropagateEvent(NotifyMouseButton(button, state, keys), AlwaysPropagate)
             // PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
         else
@@ -217,7 +217,7 @@ namespace Slab::Graphics {
         PropagateEvent(NotifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowRow::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    bool WindowRow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         PropagateEvent(NotifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 

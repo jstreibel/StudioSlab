@@ -34,7 +34,7 @@ namespace Slab::Graphics {
         auto myRect = shape;
         currentNode->Set_x(myRect.xMin);
         currentNode->Set_y(myRect.yMin);
-        currentNode->NotifyReshape(myRect.width(), myRect.height());
+        currentNode->NotifyReshape(myRect.GetWidth(), myRect.GetHeight());
 
         currentNode->arrange();
 

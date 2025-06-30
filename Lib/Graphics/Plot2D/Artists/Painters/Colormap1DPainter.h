@@ -52,7 +52,7 @@ namespace Slab::Graphics {
         void labelUpdateEvent(const Str&) override;
 
         void drawGUI() override;
-        void use() const override;
+        void Use() const override;
 
         bool dirtyMinMax() const override;
         void setMinMax(DevFloat, DevFloat) override;

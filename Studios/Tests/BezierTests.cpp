@@ -21,9 +21,9 @@ namespace Tests {
 
     float param1 = .25;
     float param2 = .75;
-    float animTimeSeconds = 1.0;
+    float AnimTimeSeconds = 1.0;
 
-    double cubicBezierInterpolation(double t) {
+    double CubicBezierInterpolation(DevFloat t) {
         // Cubic Bézier curve with control points P0, P1, P2, P3
 
         double P0 = startValue;
@@ -37,18 +37,15 @@ namespace Tests {
 
 
     BezierTests::BezierTests(const Pointer<Graphics::SlabImGuiContext>& GuiContext)
-    : WindowRow("Bezier test")
+    : FSlabWindow(Config("Bezier Tests"))
     , Graph("Graph", GuiContext) {
-        param1 = (float)Graphics::Animator::GetBezierParams().first;
-        param2 = (float)Graphics::Animator::GetBezierParams().second;
-        animTimeSeconds = Graph.getAnimationTime();
+        param1 = static_cast<float>(Graphics::Animator::GetBezierParams().first);
+        param2 = static_cast<float>(Graphics::Animator::GetBezierParams().second);
+        AnimTimeSeconds = Graph.GetAnimationTime();
 
-        addWindow(Naked(Stats), Right, .15);
-        addWindow(Naked(Graph));
-
-        static Math::Base::NativeFunction<Math::RtoR::Function> function(cubicBezierInterpolation);
+        static Math::Base::NativeFunction<Math::RtoR::Function> s_function(CubicBezierInterpolation);
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[1];
-        Graphics::Plotter::AddRtoRFunction(Naked(Graph), Naked(function), style, "Bezier");
+        Graphics::Plotter::AddRtoRFunction(Naked(Graph), Naked(s_function), style, "Bezier");
 
         fix lim = 1.e3;
         static Math::PointSet vertLine1{{{0.0, -lim}, {0.0, lim}}};
@@ -62,44 +59,60 @@ namespace Tests {
         style.thickness = 10;
         Graphics::Plotter::AddPointSet(Naked(Graph), Naked(CurrentPoint), style, "", false);
 
-        Graph.getRegion().setLimits(-.2, 1.2, -.5, 1.5);
+        Graph.GetRegion().setLimits(-.2, 1.2, -.5, 1.5);
     }
 
-    void BezierTests::Draw() {
-        Stats.AddExternalDraw([this](){
-            if(ImGui::SliderFloat("param1", &param1, -1, 2)
-             | ImGui::SliderFloat("param2", &param2, -1, 2)
-             | ImGui::SliderFloat("time", &animTimeSeconds, 0.1, 5)){
-                Graphics::Animator::SetBezierParams(param1, param2);
-                Graph.setAnimationTime(animTimeSeconds);
-            }});
+    void BezierTests::ImmediateDraw() {
+        FSlabWindow::ImmediateDraw();
 
         CurrentPoint.clear();
-        const auto &GraphRegion = Graph.getRegion();
+        const auto &GraphRegion = Graph.GetRegion();
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMin());
-            fix t = Animation.Timer.getElTime_sec() / Animation.TimeInSeconds;
-            CurrentPoint.AddPoint({t, cubicBezierInterpolation(t)});
+            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMax())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_xMax());
-            fix t = Animation.Timer.getElTime_sec() / Animation.TimeInSeconds;
-            CurrentPoint.AddPoint({t, cubicBezierInterpolation(t)});
+            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_yMin())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMin());
-            fix t = Animation.Timer.getElTime_sec() / Animation.TimeInSeconds;
-            CurrentPoint.AddPoint({t, cubicBezierInterpolation(t)});
+            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
         if(Graphics::Animator::Contains(*GraphRegion.getReference_yMax())){
             auto &Animation = Graphics::Animator::Get(*GraphRegion.getReference_yMax());
-            fix t = Animation.Timer.getElTime_sec() / Animation.TimeInSeconds;
-            CurrentPoint.AddPoint({t, cubicBezierInterpolation(t)});
+            fix t = Animation.Timer.GetElapsedTime_Seconds() / Animation.TimeInSeconds;
+            CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        WindowRow::Draw();
+        Graph.ImmediateDraw();
+        Stats.ImmediateDraw();
+
+    }
+
+    void BezierTests::RegisterDeferredDrawCalls()
+    {
+        FSlabWindow::RegisterDeferredDrawCalls();
+
+        Stats.Set_x(this->Get_x()-100);
+        Stats.Set_y(this->Get_y());
+
+        Stats.AddExternalDraw([this]{
+            if(ImGui::SliderFloat("param1", &param1, -1, 2)
+             | ImGui::SliderFloat("param2", &param2, -1, 2)
+             | ImGui::SliderFloat("time", &AnimTimeSeconds, 0.1, 5)){
+                Graphics::Animator::SetBezierParams(param1, param2);
+                Graph.SetAnimationTime(AnimTimeSeconds);
+            }});
+
+        Stats.RegisterDeferredDrawCalls();
+
+        Graph.RegisterDeferredDrawCalls();
     }
 } // Tests

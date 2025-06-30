@@ -31,9 +31,9 @@ namespace Slab::Graphics {
     public:
         explicit MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         void setFunction(Pointer<Math::R2toR::FNumericFunction>);
 

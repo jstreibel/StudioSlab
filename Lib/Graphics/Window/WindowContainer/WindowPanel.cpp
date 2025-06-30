@@ -81,14 +81,14 @@ namespace Slab::Graphics {
         }
 
         Vector<int> computedPositions(m);
-        auto x = this->getx();
+        auto x = this->Get_x();
         for (int i = 0; i < m; ++i) {
             computedPositions[i] = x;
             x += computedWidths[i];
         }
 
         auto i = 0;
-        auto y = this->gety();
+        auto y = this->Get_y();
         auto h = this->GetHeight();
         for (auto &column: columns) {
             column.Set_x(computedPositions[i]);
@@ -107,9 +107,9 @@ namespace Slab::Graphics {
         assertConsistency();
     }
 
-    void WindowPanel::Draw() {
+    void WindowPanel::ImmediateDraw() {
         for (auto &column: columns)
-            column.Draw();
+            column.ImmediateDraw();
     }
 
     float WindowPanel::computeReservedWidth() const {
@@ -150,7 +150,7 @@ namespace Slab::Graphics {
 
     bool WindowPanel::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
-        for (auto &col: columns) if (col.isMouseIn()) responded = col.NotifyMouseMotion(x, y, dx, dy);
+        for (auto &col: columns) if (col.IsMouseIn()) responded = col.NotifyMouseMotion(x, y, dx, dy);
 
         return responded;
     }
@@ -162,23 +162,23 @@ namespace Slab::Graphics {
     }
 
     bool
-    WindowPanel::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    WindowPanel::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         // return GUIEventListener::notifyKeyboard(key, state, modKeys);
 
         auto responded = false;
         for (auto &col: columns)
-            if (col.isMouseIn()) responded = col.NotifyKeyboard(key, state, modKeys);
+            if (col.IsMouseIn()) responded = col.NotifyKeyboard(key, state, modKeys);
 
         return responded;
     }
 
-    bool WindowPanel::NotifyMouseButton(MouseButton button, KeyState state,
-                                        ModKeys keys) {
+    bool WindowPanel::NotifyMouseButton(EMouseButton button, EKeyState state,
+                                        EModKeys keys) {
         bool alwaysPropagate = false; // state==Core::Release;
 
         auto responded = false;
         for (auto &col: columns)
-            if(col.isMouseIn() || alwaysPropagate) responded = col.NotifyMouseButton(button, state, keys);
+            if(col.IsMouseIn() || alwaysPropagate) responded = col.NotifyMouseButton(button, state, keys);
 
         return responded;
     }
@@ -186,7 +186,7 @@ namespace Slab::Graphics {
     bool WindowPanel::NotifyMouseWheel(double dx, double dy) {
         auto responded = false;
         for (auto &col: columns)
-            if (col.isMouseIn()) responded = col.NotifyMouseWheel(dx, dy);
+            if (col.IsMouseIn()) responded = col.NotifyMouseWheel(dx, dy);
 
         return responded;
     }

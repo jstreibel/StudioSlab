@@ -27,9 +27,9 @@ namespace Slab::Graphics::OpenGL {
         ColorBarMode mode;
     };
 
-    class ColorBarArtist final : public Artist {
+    class ColorBarArtist final : public FArtist {
         VertexBuffer vertexBuffer;
-        Shader shader;
+        FShader shader;
         CMapTexturePtr texture;
         bool textureDirty = true;
         RectI rect;
@@ -61,9 +61,9 @@ namespace Slab::Graphics::OpenGL {
         void setColorMap(const Pointer<const ColorMap>& colorMap);
         auto getTexture() -> CMapTexturePtr;
 
-        bool hasGUI() override;
+        bool HasGUI() override;
 
-        void drawGUI() override;
+        void DrawGUI() override;
 
         void setKappa(DevFloat);
         void setPhiSaturation(DevFloat);
@@ -74,7 +74,7 @@ namespace Slab::Graphics::OpenGL {
 
         CountType getSamples() const;
 
-        bool draw(const Plot2DWindow &) override;
+        bool Draw(const FPlot2DWindow &) override;
 
         void setScalingFunction(std::function<DevFloat(DevFloat)>);
         void setInverseScalingFunction(std::function<DevFloat(DevFloat)>);

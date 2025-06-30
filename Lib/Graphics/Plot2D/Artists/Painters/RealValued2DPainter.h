@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     public:
         R2toRPainter() = delete;
 
-        void use() const override;
+        void Use() const override;
 
         virtual void
         setFieldDataTexture(Pointer<OpenGL::Texture2D_Real>);

@@ -33,10 +33,6 @@ namespace Slab::Graphics {
 
         FCallSet CallSet;
 
-        void Bind() override;
-        void NewFrame() override;
-        void Render() const override;
-
     public:
         explicit SlabImGuiContext(FOwnerSystemWindow, FCallSet);
         ~SlabImGuiContext() override = default;
@@ -47,13 +43,13 @@ namespace Slab::Graphics {
 
         void *GetContextPointer() override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         bool NotifyCharacter(UInt codepoint) override;
 
         void CursorEntered(bool b) override;
 
-        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
@@ -62,6 +58,10 @@ namespace Slab::Graphics {
         bool NotifySystemWindowReshape(int w, int h) override;
 
         bool NotifyRender() override;
+
+        void Bind() override;
+        void NewFrame() override;
+        void Render() const override;
     };
 
 } // Slab::Graphics

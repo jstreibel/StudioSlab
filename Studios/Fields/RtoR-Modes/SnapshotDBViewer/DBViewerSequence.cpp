@@ -36,7 +36,7 @@ namespace Modes::DatabaseViewer {
             dbParsers.emplace_back(parser);
         }
 
-        this->addWindow(Naked(guiWindow));
+        this->AddWindow(Naked(guiWindow));
 
         {
             auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
@@ -83,26 +83,26 @@ namespace Modes::DatabaseViewer {
                                            "main modes", false, z_order(2));
             // allDataDisplay.setColorMap(Graphics::ColorMaps["blues"]);
 
-            topRow.addWindow(Naked(mashupDisplay));
+            topRow.AddWindow(Naked(mashupDisplay));
         }
 
         // Link mashup and masses display x limits
-        mashupDisplay.getRegion().setReference_xMin(massesGraph.getRegion().getReference_xMin());
-        mashupDisplay.getRegion().setReference_xMax(massesGraph.getRegion().getReference_xMax());
+        mashupDisplay.GetRegion().setReference_xMin(massesGraph.GetRegion().getReference_xMin());
+        mashupDisplay.GetRegion().setReference_xMax(massesGraph.GetRegion().getReference_xMax());
 
         const Pointer<Graphics::WindowColumn> winCol(new Graphics::WindowColumn);
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
-        addWindow(winCol, WindowRow::Left, .8);
+        AddWindow(winCol, WindowRow::Left, .8);
 
         reloadData();
     }
 
-    void DBViewerSequence::Draw() {
+    void DBViewerSequence::ImmediateDraw() {
         if(currentMeshupArtist == nullptr) return;
 
-        fix ω_XHair = mashupDisplay.getLastXHairPosition().x;
+        fix ω_XHair = mashupDisplay.GetLastXHairPosition().x;
         fix dx = currentMashup->getSpace().getMetaData().geth(0);
         fix L = currentMashup->getDomain().getLx();
         fix N = currentMashup->getN();
@@ -114,13 +114,13 @@ namespace Modes::DatabaseViewer {
             if(ImGui::SliderInt("Current database", &current_database, 0,
                 static_cast<int>(mashupArtists.size())-1)) {
                 if(currentMeshupArtist != nullptr) {
-                    mashupDisplay.removeArtist(currentMeshupArtist);
+                    mashupDisplay.RemoveArtist(currentMeshupArtist);
                     // mashupDisplay.removeArtist(currentMeshupArtist->getColorBarArtist());
                 }
 
                 currentMashup = allMashups[current_database];
                 currentMeshupArtist = mashupArtists[current_database];
-                mashupDisplay.addArtist(currentMeshupArtist);
+                mashupDisplay.AddArtist(currentMeshupArtist);
                 // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 
                 computeMasses();
@@ -151,7 +151,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::Draw();
+        WindowRow::ImmediateDraw();
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
@@ -179,7 +179,7 @@ namespace Modes::DatabaseViewer {
         style.filled = false;
         KGRelation_artist->setStyle(style);
         KGRelation_artist->setPointSet(KGRelation);
-        KGRelation_artist->setLabel(Str("ω²-k²-1=0"));
+        KGRelation_artist->SetLabel(Str("ω²-k²-1=0"));
     }
 
     void DBViewerSequence::computeMasses() {
@@ -303,7 +303,7 @@ namespace Modes::DatabaseViewer {
         ImGui::EndTable();
     }
 
-    auto DBViewerSequence::NotifyKeyboard(const Graphics::KeyMap key, const Graphics::KeyState state, const Graphics::ModKeys modKeys) -> bool {
+    auto DBViewerSequence::NotifyKeyboard(const Graphics::EKeyMap key, const Graphics::EKeyState state, const Graphics::EModKeys modKeys) -> bool {
         if( key==Graphics::Key_F5 && state==Graphics::Press ){
             reloadData();
             return true;
@@ -316,7 +316,7 @@ namespace Modes::DatabaseViewer {
         if(!allMashups.empty()) NOT_IMPLEMENTED
 
         for(auto &artie : mashupArtists)
-            mashupDisplay.removeArtist(artie);
+            mashupDisplay.RemoveArtist(artie);
         mashupArtists.clear();
 
         const auto cmap = Graphics::ColorMaps["blues"]->inverse().clone();
@@ -327,7 +327,7 @@ namespace Modes::DatabaseViewer {
             fix dbRootFolder = dbParser->getRootDatabaseFolder();
 
             auto artie = New<Graphics::R2toRFunctionArtist>();
-            artie->setLabel(dbRootFolder);
+            artie->SetLabel(dbRootFolder);
             artie->setFunction(mashup);
             if(rPainter == nullptr) {
                 const auto colorPainter = DynamicPointerCast<Slab::Graphics::Colormap1DPainter>(artie->getPainter("Colormap"));
@@ -335,7 +335,7 @@ namespace Modes::DatabaseViewer {
                 rPainter = colorPainter;
 
                 auto colorBarArtist = colorPainter->getColorBarArtist();
-                mashupDisplay.addArtist(colorBarArtist, 10);
+                mashupDisplay.AddArtist(colorBarArtist, 10);
             }
             else {
                 artie->setPainter(rPainter);
@@ -347,11 +347,11 @@ namespace Modes::DatabaseViewer {
 
         if(current_database < 0 && !mashupArtists.empty()) current_database = 0;
         if(currentMeshupArtist != nullptr)
-            mashupDisplay.removeArtist(currentMeshupArtist);
+            mashupDisplay.RemoveArtist(currentMeshupArtist);
 
         currentMashup = allMashups[current_database];
         currentMeshupArtist = mashupArtists[current_database];
-        mashupDisplay.addArtist(currentMeshupArtist);
+        mashupDisplay.AddArtist(currentMeshupArtist);
 
         // mashupDisplay.addArtist(currentMeshupArtist->getColorBarArtist());
 

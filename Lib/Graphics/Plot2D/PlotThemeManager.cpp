@@ -313,8 +313,8 @@ gridLinesScheme, gridLinesScheme, writer,
 
         auto writer = std::make_shared<
 Graphics::OpenGL::WriterOpenGL>(Core::Resources::GetIndexedFontFileName(10), 90);
-        scheme->ticksWriter = writer;
-        scheme->labelsWriter = writer;
+        scheme->TicksWriter = writer;
+        scheme->LabelsWriter = writer;
 
         return scheme;
     }

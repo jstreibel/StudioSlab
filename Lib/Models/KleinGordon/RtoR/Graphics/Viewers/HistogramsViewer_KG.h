@@ -12,7 +12,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using PlotWindow = Slab::Graphics::Plot2DWindow;
+    using PlotWindow = Slab::Graphics::FPlot2DWindow;
 
     class HistogramsViewer_KG : public KGViewer {
         Slab::Math::PointSet histogram_data_energy;
@@ -58,7 +58,7 @@ namespace Slab::Models::KGRtoR {
 
         void SetFunctionDerivative(FuncPointer pointer) override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Studios::Fields::Viewers

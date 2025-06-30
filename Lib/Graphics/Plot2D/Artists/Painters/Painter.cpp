@@ -6,14 +6,14 @@
 
 namespace Slab::Graphics {
     Painter::Painter(const Str &vertFilename, const Str &fragFilename)
-    : Shader(vertFilename, fragFilename) {  }
+    : FShader(vertFilename, fragFilename) {  }
 
     void Painter::drawGUI() {
 
     }
 
-    void Painter::use() const {
-        Shader::use();
+    void Painter::Use() const {
+        FShader::Use();
     }
 
 } // Slab::Graphics

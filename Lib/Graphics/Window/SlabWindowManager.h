@@ -2,8 +2,8 @@
 // Created by joao on 10/19/24.
 //
 
-#ifndef STUDIOSLAB_SLABWINDOWMANAGER_H
-#define STUDIOSLAB_SLABWINDOWMANAGER_H
+#ifndef STUDIOSLAB_SLAB_WINDOW_MANAGER_H
+#define STUDIOSLAB_SLAB_WINDOW_MANAGER_H
 
 #include "SlabWindow.h"
 #include "Utils/List.h"
@@ -44,9 +44,9 @@ namespace Slab::Graphics {
 
         void AddSlabWindow(const Pointer<FSlabWindow>&, bool hidden) override;
 
-        bool NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) override;
+        bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
-        bool NotifyMouseButton(MouseButton button, KeyState state, ModKeys keys) override;
+        bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;
 
@@ -62,4 +62,4 @@ namespace Slab::Graphics {
 
 } // Slab::Graphics
 
-#endif //STUDIOSLAB_SLABWINDOWMANAGER_H
+#endif //STUDIOSLAB_SLAB_WINDOW_MANAGER_H

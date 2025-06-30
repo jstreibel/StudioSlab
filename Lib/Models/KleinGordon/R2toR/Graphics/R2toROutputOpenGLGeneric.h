@@ -16,17 +16,17 @@ namespace Slab::Models::KGR2toR {
 
     protected:
 
-        Graphics::Plot2DWindow mSectionGraph;
+        Graphics::FPlot2DWindow mSectionGraph;
 
         Graphics::R2SectionArtist sectionArtist;
 
-        Graphics::Plot2DWindow mFieldDisplay;
+        Graphics::FPlot2DWindow mFieldDisplay;
 
     public:
 
         explicit OutputOpenGL(CountType max_steps);
 
-        void Draw() override;
+        void ImmediateDraw() override;
 
     };
 

@@ -12,14 +12,16 @@ namespace Slab::Math::Base {
 
     template<typename BaseFunction>
     class NativeFunction : public BaseFunction {
-        BaseFunction::OutCategory (*nativeFunction)(BaseFunction::InCategory);
+        typename BaseFunction::OutCategory (*nativeFunction)(typename BaseFunction::InCategory);
 
     public:
-        explicit NativeFunction(BaseFunction::OutCategory (*nativeFunction)(typename BaseFunction::InCategory))
-        : BaseFunction(nullptr, false)
-        , nativeFunction(nativeFunction) {}
+        explicit NativeFunction(
+            typename BaseFunction::OutCategory(* native_function)(typename BaseFunction::InCategory))
+            : nativeFunction(native_function)
+        {
+        }
 
-        BaseFunction::OutCategory operator()(BaseFunction::InCategory x) const override {
+        typename BaseFunction::OutCategory operator()(typename BaseFunction::InCategory x) const override {
             return nativeFunction(x);
         }
 

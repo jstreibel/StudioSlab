@@ -16,7 +16,7 @@
 
 namespace Slab::Models::KGRtoR {
 
-    using PlottingWindow = Graphics::Plot2DWindow;
+    using PlottingWindow = Graphics::FPlot2DWindow;
     using FunctionArtist = Graphics::R2toRFunctionArtist;
     using SectionArtist = Graphics::R2SectionArtist;
     using SectionLine = Math::RtoR2::StraightLine;
@@ -50,7 +50,7 @@ namespace Slab::Models::KGRtoR {
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void Draw() override;
+        void ImmediateDraw() override;
     };
 
 } // Slab::Models::KGRtoR

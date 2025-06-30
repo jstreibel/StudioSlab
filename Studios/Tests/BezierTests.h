@@ -14,16 +14,18 @@ namespace Tests {
 
     using namespace Slab;
 
-    class BezierTests : public Graphics::WindowRow {
+    class BezierTests : public Graphics::FSlabWindow {
         Graphics::FGUIWindow Stats;
-        Graphics::Plot2DWindow Graph;
+        Graphics::FPlot2DWindow Graph;
 
         Math::PointSet CurrentPoint;
 
     public:
         explicit BezierTests(const Pointer<Graphics::SlabImGuiContext>& GuiContext);
 
-        void Draw() override;
+        void ImmediateDraw() override;
+
+        auto RegisterDeferredDrawCalls() -> void override;
     };
 
 } // Tests

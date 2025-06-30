@@ -24,7 +24,7 @@ fix PropagateOnlyIfMouseIsIn = false;
     responded = FSlabWindow::EVENT;                                       \
                                                                          \
     for(auto &win : windows)                                             \
-        if(win->isMouseIn() || PROPAGATE_ALWAYS) responded = win->EVENT; \
+        if(win->IsMouseIn() || PROPAGATE_ALWAYS) responded = win->EVENT; \
                                                                          \
     return responded;                                                    \
 }
@@ -84,7 +84,7 @@ namespace Slab::Graphics {
         }
 
         Vector<int> computed_yPositions(m);
-        auto y = this->gety();
+        auto y = this->Get_y();
         for (int i = 0; i < m; ++i) {
             computed_yPositions[i] = y;
             y += computedHeights[i];
@@ -98,7 +98,7 @@ namespace Slab::Graphics {
 
         auto i = 0;
         for (auto &win: windows) {
-            win->Set_x(getx() + gap);
+            win->Set_x(Get_x() + gap);
             win->Set_y(computed_yPositions[i]);
 
             win->NotifyReshape(GetWidth() - gap, computedHeights[i]);
@@ -126,9 +126,9 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowColumn::Draw() {
+    void WindowColumn::ImmediateDraw() {
         for (auto &win: windows) {
-            win->Draw();
+            win->ImmediateDraw();
             OpenGL::CheckGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
         }
@@ -143,7 +143,7 @@ namespace Slab::Graphics {
     bool WindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
         auto responded = false;
         for(auto &win : windows)
-        if(win->isMouseIn() ){
+        if(win->IsMouseIn() ){
             responded = win->NotifyMouseMotion(x,y,dx,dy);
         }
 
@@ -153,12 +153,12 @@ namespace Slab::Graphics {
     }
 
     bool
-    WindowColumn::NotifyKeyboard(KeyMap key, KeyState state, ModKeys modKeys) {
+    WindowColumn::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         PropagateEvent(NotifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowColumn::NotifyMouseButton(MouseButton button, KeyState state,
-                                         ModKeys keys) {
+    bool WindowColumn::NotifyMouseButton(EMouseButton button, EKeyState state,
+                                         EModKeys keys) {
         if(state == Release)
             PropagateEvent(NotifyMouseButton(button, state, keys), AlwaysPropagate)
             // PropagateEvent(notifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn);

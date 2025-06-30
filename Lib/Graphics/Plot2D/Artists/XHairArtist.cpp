@@ -11,22 +11,22 @@
 
 namespace Slab::Graphics {
 
-    bool XHairArtist::draw(const Plot2DWindow &graph2D) {
-        if(!graph2D.isMouseIn()) return true;
+    bool XHairArtist::Draw(const FPlot2DWindow &graph2D) {
+        if(!graph2D.IsMouseIn()) return true;
 
-        auto vpRect = graph2D.getViewport();
-        const auto& region = graph2D.getRegion();
+        auto vpRect = graph2D.GetViewport();
+        const auto& region = graph2D.GetRegion();
         auto region_rect = region.getRect();
 
-        fix mouseLocal = graph2D.getMouseViewportCoord();
-        fix h = vpRect.height();
+        fix mouseLocal = graph2D.GetMouseViewportCoord();
+        fix h = vpRect.GetHeight();
 
         auto XHairLocation = FromViewportToSpaceCoord(mouseLocal, region_rect, vpRect);
 
-        auto label = graph2D.getXHairLabel(XHairLocation);
+        auto label = graph2D.GetXHairLabel(XHairLocation);
 
         auto currStyle = PlotThemeManager::GetCurrent();
-        currStyle->ticksWriter->write(label, {(DevFloat)mouseLocal.x+20, h - (DevFloat)mouseLocal.y+20}, currStyle->graphNumbersColor);
+        currStyle->TicksWriter->Write(label, {(DevFloat)mouseLocal.x+20, h - (DevFloat)mouseLocal.y+20}, currStyle->graphNumbersColor);
 
         XHair.clear();
         XHair.AddPoint({region_rect.xMin, XHairLocation.y});
@@ -34,9 +34,12 @@ namespace Slab::Graphics {
         XHair.AddPoint({XHairLocation.x, region_rect.yMin});
         XHair.AddPoint({XHairLocation.x, region_rect.yMax});
 
+        OpenGL::Legacy::PushLegacyMode();
         OpenGL::Legacy::SetupOrtho(region_rect);
+        bool bResult = OpenGL::Legacy::RenderPointSett(Naked(XHair), currStyle->XHairStyle);
+        OpenGL::Legacy::RestoreFromLegacyMode();
 
-        return Graphics::OpenGL::Legacy::RenderPointSet(Slab::Naked(XHair), currStyle->XHairStyle);
+        return bResult;
     }
 
 } // Graphics

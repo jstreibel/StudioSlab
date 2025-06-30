@@ -13,7 +13,7 @@
 using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
-: Slab::Graphics::FSlabWindow({"Tree builder test"})
+: FSlabWindow(Config{"Tree builder test"})
 , osc(0.0, -0.5, 0.75, 0.15, false, false)  {
     Graphics::WindowTreeBuilder treeBuilder(Graphics::WindowStyle::default_window_rect);
 
@@ -35,12 +35,12 @@ WindowTreeBuilderTest::WindowTreeBuilderTest()
 }
 
 
-void WindowTreeBuilderTest::Draw() {
+void WindowTreeBuilderTest::ImmediateDraw() {
     static Timer timer;
 
-    osc.set_t(timer.getElTime_sec());
+    osc.set_t(timer.GetElapsedTime_Seconds());
 
-    main->Draw();
+    main->ImmediateDraw();
 }
 
 void WindowTreeBuilderTest::NotifyReshape(int width, int height) {

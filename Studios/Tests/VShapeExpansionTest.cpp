@@ -16,17 +16,17 @@ namespace Tests {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 15, 1.0);
         derivs = potential->diff(0);
 
-        auto window = New<Graphics::Plot2DWindow>("V-shape series test");
+        auto window = New<Graphics::FPlot2DWindow>("V-shape series test");
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
         Graphics::Plotter::AddRtoRFunction(window, potential, style, "KG V-shape");
         Graphics::Plotter::AddRtoRFunction(window, derivs, style, "V'");
 
-        addWindow(Naked(stats), Right, 0.15);
-        addWindow(window);
+        AddWindow(Naked(stats), Right, 0.15);
+        AddWindow(window);
     }
 
-    void VShapeExpansionTest::Draw() {
+    void VShapeExpansionTest::ImmediateDraw() {
         stats.AddExternalDraw([this](){
             auto A = (float) potential->getA();
             auto s = (float) potential->get_s();
@@ -41,6 +41,6 @@ namespace Tests {
             }
         });
 
-        WindowRow::Draw();
+        WindowRow::ImmediateDraw();
     }
 } // Tests
