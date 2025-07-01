@@ -39,7 +39,7 @@ namespace Slab::Graphics {
         explicit FImGuiContext(FCallSet);
         ~FImGuiContext() override = default;
 
-        DevFloat GetFontSize() const;
+        [[nodiscard]] DevFloat GetFontSize() const;
 
         void AddMainMenuItem(MainMenuItem) override;
 

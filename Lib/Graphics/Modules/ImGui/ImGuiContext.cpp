@@ -98,6 +98,8 @@ namespace Slab::Graphics {
 
         CallSet.Init(CallSet);
 
+        BuildFonts();
+
         Core::Log::Info() << "Created ImGui context." << Core::Log::Flush;
     }
 
