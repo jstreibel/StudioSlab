@@ -290,7 +290,7 @@ namespace Slab::Graphics::OpenGL {
         }
     }
 
-    void VertexBuffer::render(GLenum primitive) {
+    void VertexBuffer::Render(GLenum primitive) {
         size_t vcount = vertices->size;
         size_t icount = indices->size;
 

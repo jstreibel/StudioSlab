@@ -36,7 +36,7 @@ namespace Slab::Graphics {
         for(auto &thingy : textureKontraptions->blocks)
         {
             current_painter->setFieldDataTexture(thingy->texture);
-            thingy->vertexBuffer->render(GL_TRIANGLES);
+            thingy->vertexBuffer->Render(GL_TRIANGLES);
         }
 
         return true;

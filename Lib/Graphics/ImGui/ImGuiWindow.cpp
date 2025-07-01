@@ -14,6 +14,7 @@
 #include <Graphics/Modules/ImGui/ImGuiModule.h>
 
 #include "3rdParty/freetype-gl/vertex-attribute.h"
+#include "Graphics/OpenGL/GLStateGuard.h"
 
 #define MyName
 
@@ -75,6 +76,8 @@ namespace Slab::Graphics {
                     // Further defer
                     auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
                     {
+                        OpenGL::FGLStateGuard StateGuard{};
+
                         if (DrawCommand->UserCallback == nullptr) return;
 
                         const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);

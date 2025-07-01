@@ -90,7 +90,7 @@ namespace Slab::Graphics {
         program.SetUniform("modelview", view*model);
         program.SetUniform("projection", proj);
 
-        vertexBuffer.render(GL_TRIANGLES);
+        vertexBuffer.Render(GL_TRIANGLES);
     }
 
     void R2toRFunctionActor::setAmbientLight(Color color) { program.SetUniform("amb", color.array()); }

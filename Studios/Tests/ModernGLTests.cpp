@@ -69,7 +69,7 @@ namespace Tests {
             program.Use();
             program.SetUniform("texture", 0);
 
-            buffer.render(GL_TRIANGLES);
+            buffer.Render(GL_TRIANGLES);
         }
 
         {

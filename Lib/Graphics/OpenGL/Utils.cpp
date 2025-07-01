@@ -43,7 +43,7 @@ namespace Slab {
         return bad;
     }
 
-    void Graphics::OpenGL::drawOrthoNormalized(RectR rect) {
+    void Graphics::OpenGL::DrawOrthoNormalized(RectR rect) {
         // TODO ultra-provisório
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -62,7 +62,7 @@ namespace Slab {
         glPopMatrix();
     }
 
-    bool Graphics::OpenGL::outputToPNG(FrameBuffer buffer,
+    bool Graphics::OpenGL::OutputToPNG(FrameBuffer buffer,
                                        std::string fileName) {
         const auto w = buffer.w, h = buffer.h;
         const auto bpp = buffer.GetBitsPerPixel();
@@ -91,7 +91,7 @@ namespace Slab {
         return success;
     }
 
-    bool Graphics::OpenGL::outputToPNG(FSlabWindow *window, std::string fileName, int width, int height) {
+    bool Graphics::OpenGL::OutputToPNG(FSlabWindow *window, std::string fileName, int width, int height) {
         // Create texture:
         GLuint texColorBuffer;
         glGenTextures(1, &texColorBuffer);
@@ -163,7 +163,7 @@ namespace Slab {
 
             auto buffer = GLUT::getFrameBuffer(0, 0, width, height);
 
-            outputToPNG(buffer, std::move(fileName));
+            OutputToPNG(buffer, std::move(fileName));
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);

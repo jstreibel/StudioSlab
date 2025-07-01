@@ -11,7 +11,8 @@
 
 
 namespace Slab::Graphics::OpenGL {
-    /**
+
+        /**
      * Checks and logs all stacked OpenGL errors.
      * @param hint Hint to recent operations.
      * @return True if error was found, false otherwise.
@@ -39,11 +40,13 @@ namespace Slab::Graphics::OpenGL {
         const void *getPixelData() const { return &pixels[0]; };
     };
 
-    void drawOrthoNormalized(RectR rect);
 
-    bool outputToPNG(FrameBuffer buffer, std::string fileName);
 
-    bool outputToPNG(FSlabWindow *window, std::string fileName, int width, int height);
+    void DrawOrthoNormalized(RectR rect);
+
+    bool OutputToPNG(FrameBuffer buffer, std::string fileName);
+
+    bool OutputToPNG(FSlabWindow *window, std::string fileName, int width, int height);
 
     void piccolos();
 

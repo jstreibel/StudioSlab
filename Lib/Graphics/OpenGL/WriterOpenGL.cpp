@@ -22,8 +22,8 @@ namespace Slab::Graphics::OpenGL {
     } vertex_t;
 
     WriterOpenGL::WriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload)
-            : vertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
-              program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
+            : VertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
+              Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
 
         auto factor = int(ceil(ptSize/30.));
 
@@ -81,7 +81,7 @@ namespace Slab::Graphics::OpenGL {
     }
 
     void WriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
-        vertexBuffer.clear();
+        VertexBuffer.clear();
 
         size_t i;
         float r = color.r, g = color.g, b = color.b, a = color.a;
@@ -119,7 +119,7 @@ namespace Slab::Graphics::OpenGL {
                                             {(float) x1, (float) y1, 0, s0, t1, r, g, b, a},
                                             {(float) x1, (float) y0, 0, s1, t1, r, g, b, a}};
 
-                    vertexBuffer.pushBack(vertices, 4, indices, 6);
+                    VertexBuffer.pushBack(vertices, 4, indices, 6);
 
                     pen.y += glyph->advance_x;
                 }
@@ -141,7 +141,7 @@ namespace Slab::Graphics::OpenGL {
                                             {(float) x1, (float) y1, 0, s1, t1, r, g, b, a},
                                             {(float) x1, (float) y0, 0, s1, t0, r, g, b, a}};
 
-                    vertexBuffer.pushBack(vertices, 4, indices, 6);
+                    VertexBuffer.pushBack(vertices, 4, indices, 6);
 
                     pen.x += glyph->advance_x;
                 }
@@ -157,30 +157,28 @@ namespace Slab::Graphics::OpenGL {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        fix textureUnit = GL_TEXTURE0;
-        glActiveTexture(textureUnit);
+        constexpr auto TextureUnit = GL_TEXTURE0;
+        glActiveTexture(TextureUnit);
         glBindTexture(GL_TEXTURE_2D, atlas->id);
 
-        program.Use();
-        program.SetUniform("texture", textureUnit - GL_TEXTURE0);
-        program.SetUniform4x4("model", model.data);
-        program.SetUniform4x4("view", view.data);
-        program.SetUniform4x4("projection", projection.data);
+        Program.Use();
+        Program.SetUniform("texture", TextureUnit - GL_TEXTURE0);
+        Program.SetUniform4x4("model", model.data);
+        Program.SetUniform4x4("view", view.data);
+        Program.SetUniform4x4("projection", projection.data);
 
-        vertexBuffer.render(GL_TRIANGLES);
+        VertexBuffer.Render(GL_TRIANGLES);
 
     }
 
     void WriterOpenGL::Write(const Str &text, Point2D pen, Color color, bool vertical) {
-        return;
-
         if(text.empty()) return;
 
         SetBufferText(text, pen, color, vertical);
-        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (0)");
 
         DrawBuffer();
-        OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
+        CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
     }
 
     DevFloat WriterOpenGL::GetFontHeightInPixels() const { return font->height; }

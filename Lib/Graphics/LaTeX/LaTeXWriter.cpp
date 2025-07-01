@@ -121,7 +121,7 @@ namespace Slab::Graphics::LaTeX {
         program.SetUniform4x4("view", view.data);
         program.SetUniform4x4("projection", projection.data);
 
-        vertexBuffer.render(GL_TRIANGLES);
+        vertexBuffer.Render(GL_TRIANGLES);
     }
 
     void LaTeXWriter::clearContext() {

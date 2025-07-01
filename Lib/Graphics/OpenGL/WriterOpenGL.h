@@ -21,8 +21,8 @@ namespace Slab::Graphics::OpenGL {
         ftgl::texture_font_t *font = nullptr;
         ftgl::texture_atlas_t *atlas = nullptr;
 
-        OpenGL::VertexBuffer vertexBuffer;
-        OpenGL::FShader program;
+        OpenGL::VertexBuffer VertexBuffer;
+        OpenGL::FShader Program;
 
         ftgl::mat4 model{}, view{}, projection{};
 

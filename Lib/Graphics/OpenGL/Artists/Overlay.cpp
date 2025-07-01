@@ -49,7 +49,7 @@ namespace Slab::Graphics::OpenGL {
         shader.SetUniform("vpWidth", vp.GetWidth());
         shader.SetUniform("vpHeight", vp.GetHeight());
 
-        vertexBuffer.render(GL_TRIANGLES);
+        vertexBuffer.Render(GL_TRIANGLES);
 
         return true;
     }

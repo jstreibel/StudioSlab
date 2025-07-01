@@ -177,7 +177,7 @@ namespace Slab::Graphics {
                                     Core::FCommandLineInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                     ".png";
                     bypass_gui = true;
-                    OpenGL::outputToPNG(this, fileName, w, (int) h);
+                    OpenGL::OutputToPNG(this, fileName, w, (int) h);
                     bypass_gui = false;
                 }
 

@@ -112,7 +112,7 @@ namespace Slab::Graphics::OpenGL {
 
         void clear();
 
-        void render(GLenum mode);
+        void Render(GLenum mode);
 
         size_t insert(size_t index,
                       const void * vertices, size_t vcount,
