@@ -49,16 +49,17 @@ public:
     auto run() -> int override {
         auto dbLocations = *snapshotDBFolders;
 
-        const auto guiBackend = Slab::Graphics::GetGraphicsBackend();
+        const auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
         // auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerMulti>(dbLocations, *criticalParameter);
-        const auto viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
+        const auto Viewer = Slab::New<Modes::DatabaseViewer::DBViewerSequence>(dbLocations, *criticalParameter);
 
-        const auto wm = Slab::New<Slab::Graphics::SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
-        wm->AddSlabWindow(viewer, false);
-        guiBackend->GetMainSystemWindow()->AddEventListener(wm);
 
-        guiBackend->Run();
+        const auto WindowManager = Slab::New<Graphics::SlabWindowManager>();
+        GuiBackend->GetMainSystemWindow()->AddEventListener(WindowManager);
+
+        WindowManager->AddSlabWindow(Viewer, false);
+        GuiBackend->Run();
 
         return 0;
     }

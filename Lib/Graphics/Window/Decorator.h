@@ -14,7 +14,7 @@ namespace Slab::Graphics {
     class Decorator {
         int syswin_w=0, syswin_h=0;
 
-        OpenGL::WriterOpenGL writer;
+        OpenGL::FWriterOpenGL writer;
 
         void setup() const;
 
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         void begin_decoration(const FSlabWindow&, int x_mouse, int y_mouse);
 
         virtual
-        void finish_decoration(const FSlabWindow&, int x_mouse, int y_mouse);
+        void FinishDecoration(const FSlabWindow&, int x_mouse, int y_mouse);
 
         void setSystemWindowShape(int w, int h);
 

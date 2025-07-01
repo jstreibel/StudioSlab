@@ -15,32 +15,31 @@
 
 
 namespace Slab::Graphics {
-    SlabWindowManager::SlabWindowManager(SystemWindow *Parent)
-        : FWindowManager(Parent), Grabbed() {
-    }
+    Fix AnimationTimeInSeconds = 0.25;
+
+    SlabWindowManager::SlabWindowManager() : FWindowManager(), Grabbed() {   }
 
     void SlabWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& slab_window, bool hidden) {
-        auto meta = New<WindowMetaInformation>(slab_window, false, hidden);
+        const auto MetaWinData = New<WindowMetaInformation>(slab_window, false, hidden);
 
-        slab_windows.push_back(meta);
+        SlabWindows.push_back(MetaWinData);
 
-        if(focused == nullptr) setFocus(meta);
+        if(CurrentlyFocused == nullptr) SetFocus(MetaWinData);
     }
 
     bool SlabWindowManager::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
-        if(focused == nullptr) return false;
+        if(CurrentlyFocused == nullptr) return false;
 
-        fix anim_time = 0.25;
-
-        if(key==Key_F11 && state==Release){
-            if(focused->is_full_screen) {
-                fix w = WindowStyle::default_window_rect.GetWidth();
-                fix h = WindowStyle::default_window_rect.GetHeight();
-                fix x = WindowStyle::default_window_rect.xMin;
-                fix y = WindowStyle::default_window_rect.yMin;
+        if(key==Key_F11 && state==Release)
+        {
+            if(CurrentlyFocused->is_full_screen) {
+                fix w = WindowStyle::DefaultWindowRect.GetWidth();
+                fix h = WindowStyle::DefaultWindowRect.GetHeight();
+                fix x = WindowStyle::DefaultWindowRect.xMin;
+                fix y = WindowStyle::DefaultWindowRect.yMin;
 
                 RectI rect_f = {x, x+w, y, y+h};
-                RectI rect_0 = focused->window->config.win_rect;
+                RectI rect_0 = CurrentlyFocused->Window->Config.WinRect;
                 RectI Δrect = rect_f+rect_0*(-1.0);
 
                 // auto &rect = focused.window->config.win_rect;
@@ -49,9 +48,9 @@ namespace Slab::Graphics {
                 // Animator::Set(rect.xMax, x+w, anim_time);
                 // Animator::Set(rect.yMax, y+h, anim_time);
 
-                auto &window = focused->window;
+                auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
-                Animator::SetCallback(0, N, anim_time,
+                Animator::SetCallback(0, N, AnimationTimeInSeconds,
                                       [&window, rect_0, Δrect](Int i) {
                                           fix s = (DevFloat(i)/N);
                                            fix rect = rect_0 + Δrect*s ;
@@ -61,8 +60,8 @@ namespace Slab::Graphics {
                                           window->NotifyReshape(rect.GetWidth(), rect.GetHeight());
                                       });
 
-                focused->window->SetDecorate(true);
-                focused->is_full_screen = false;
+                CurrentlyFocused->Window->SetDecorate(true);
+                CurrentlyFocused->is_full_screen = false;
             } else  {
                 fix w = w_system_window;
                 fix h = h_system_window - WindowStyle::menu_height;
@@ -70,7 +69,7 @@ namespace Slab::Graphics {
                 fix y = WindowStyle::menu_height;
 
                 RectI rect_f = {x, x+w, y, y+h};
-                RectI rect_0 = focused->window->config.win_rect;
+                RectI rect_0 = CurrentlyFocused->Window->Config.WinRect;
                 RectI Δrect = rect_f+rect_0*(-1.0);
 
                 // Animator::Set(rect.xMin, x, anim_time);
@@ -78,10 +77,10 @@ namespace Slab::Graphics {
                 // Animator::Set(rect.xMax, x+w, anim_time);
                 // Animator::Set(rect.yMax, y+h, anim_time);
 
-                auto &window = focused->window;
+                auto &window = CurrentlyFocused->Window;
                 constexpr Int N=10000;
 
-                Animator::SetCallback(0, N, anim_time,
+                Animator::SetCallback(0, N, AnimationTimeInSeconds,
                     [&window, rect_0, Δrect](Int i) {
                         fix s = (DevFloat(i)/N);
                         fix rect = rect_0 + Δrect*s ;
@@ -94,50 +93,53 @@ namespace Slab::Graphics {
                         window->SetDecorate(false);
                 });
 
-                focused->is_full_screen = true;
+                CurrentlyFocused->is_full_screen = true;
             }
 
         }
 
-        return focused->window->NotifyKeyboard(key, state, modKeys);
+        return CurrentlyFocused->Window->NotifyKeyboard(key, state, modKeys);
     }
 
     bool SlabWindowManager::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
 
         if(state==Press) {
-            auto mouse_state = parent_system_window->GetMouseState();
+            IN OwnerWindow = w_ParentPlatformWindow.lock();
+            if(OwnerWindow == nullptr) return false;
 
-            auto first = FindFirst_If(slab_windows, [mouse_state, this](const Pointer<WindowMetaInformation> &meta) {
-                fix is_mouse_in = meta->window->IsMouseIn();
-                fix is_decorated = !(meta->window->getFlags() & SlabWindowNoDecoration);
-                fix is_mouse_over_grab_region = decorator.isMouseOverGrabRegion(*meta->window,
-                                                                                mouse_state->x,
-                                                                                mouse_state->y);
+            auto MouseState = OwnerWindow->GetMouseState();
+
+            const auto First = FindFirst_If(SlabWindows, [MouseState, this](const Pointer<WindowMetaInformation> &meta) {
+                fix is_mouse_in = meta->Window->IsMouseIn();
+                fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
+                fix is_mouse_over_grab_region = Decorator.isMouseOverGrabRegion(*meta->Window,
+                                                                                MouseState->x,
+                                                                                MouseState->y);
 
                 return is_mouse_in || (is_mouse_over_grab_region && is_decorated);
             });
 
-            if(first != slab_windows.end()) {
-                setFocus(*first);
+            if(First != SlabWindows.end()) {
+                SetFocus(*First);
 
-                if (decorator.isMouseOverTitlebar(*focused->window, mouse_state->x, mouse_state->y)) {
-                    Grabbed = {Point2D(mouse_state->x - focused->window->Get_x(), mouse_state->y - focused->window->Get_y()),
+                if (Decorator.isMouseOverTitlebar(*CurrentlyFocused->Window, MouseState->x, MouseState->y)) {
+                    Grabbed = {Point2D(MouseState->x - CurrentlyFocused->Window->Get_x(), MouseState->y - CurrentlyFocused->Window->Get_y()),
                                Grabbed::Titlebar,
-                               focused->window};
-                } else if(decorator.isMouseOverGrabRegion(*focused->window, mouse_state->x, mouse_state->y)
-                      && !focused->window->wantsFullscreen()) {
-                    Grabbed = {Point2D(focused->window->GetWidth() + focused->window->Get_x() - mouse_state->x,
-                                       focused->window->GetHeight() + focused->window->Get_y() - mouse_state->y),
+                               CurrentlyFocused->Window};
+                } else if(Decorator.isMouseOverGrabRegion(*CurrentlyFocused->Window, MouseState->x, MouseState->y)
+                      && !CurrentlyFocused->Window->WantsFullscreen()) {
+                    Grabbed = {Point2D(CurrentlyFocused->Window->GetWidth() + CurrentlyFocused->Window->Get_x() - MouseState->x,
+                                       CurrentlyFocused->Window->GetHeight() + CurrentlyFocused->Window->Get_y() - MouseState->y),
                                Grabbed::Corner,
-                               focused->window};
+                               CurrentlyFocused->Window};
                 } else {
                     Grabbed = {Point2D(), Grabbed::None, nullptr};
                 }
             }
         } else if(state==Release) Grabbed = {Point2D(), Grabbed::None, nullptr};
 
-        if(focused == nullptr) return false;
-        return focused->window->NotifyMouseButton(button, state, keys);
+        if(CurrentlyFocused == nullptr) return false;
+        return CurrentlyFocused->Window->NotifyMouseButton(button, state, keys);
     }
 
     bool SlabWindowManager::NotifyMouseMotion(int x, int y, int dx, int dy) {
@@ -146,7 +148,7 @@ namespace Slab::Graphics {
 
             if(Grabbed.what == Grabbed::Titlebar) {
                 fix x_min = -Grabbed.window->GetWidth() + 200;
-                fix y_min = decorator.titlebar_height() + WindowStyle::menu_height;
+                fix y_min = Decorator.titlebar_height() + WindowStyle::menu_height;
 
                 fix x_max = w_system_window-200;
                 fix y_max = h_system_window-200;
@@ -158,8 +160,8 @@ namespace Slab::Graphics {
                 Grabbed.window->Set_y(y_new);
 
             } else if(Grabbed.what == Grabbed::Corner) {
-                auto min_width = Grabbed.window->min_width;
-                auto min_height = Grabbed.window->min_height;
+                auto min_width = Grabbed.window->MinWidth;
+                auto min_height = Grabbed.window->MinHeight;
 
                 fix w = Max(x-Grabbed.window->Get_x()+Grabbed.anchor.x, (DevFloat)min_width);
                 fix h = Max(y-Grabbed.window->Get_y()+Grabbed.anchor.y, (DevFloat)min_height);
@@ -170,15 +172,15 @@ namespace Slab::Graphics {
             return true;
         }
 
-        if(focused == nullptr) return false;
+        if(CurrentlyFocused == nullptr) return false;
 
-        return focused->window->NotifyMouseMotion(x, y, dx, dy);
+        return CurrentlyFocused->Window->NotifyMouseMotion(x, y, dx, dy);
     }
 
     bool SlabWindowManager::NotifyMouseWheel(double dx, double dy) {
-        if(focused == nullptr) return false;
+        if(CurrentlyFocused == nullptr) return false;
 
-        return focused->window->NotifyMouseWheel(dx, dy);
+        return CurrentlyFocused->Window->NotifyMouseWheel(dx, dy);
     }
 
     bool SlabWindowManager::NotifyFilesDropped(StrVector paths) {
@@ -189,11 +191,11 @@ namespace Slab::Graphics {
         w_system_window = w;
         h_system_window = h;
 
-        decorator.setSystemWindowShape(w, h);
+        Decorator.setSystemWindowShape(w, h);
 
-        for(auto &meta : slab_windows) {
-            auto slab_window = meta->window;
-            if (meta->is_full_screen || slab_window->wantsFullscreen() || slab_windows.size()==1) {
+        for(auto &meta : SlabWindows) {
+            auto slab_window = meta->Window;
+            if (meta->is_full_screen || slab_window->WantsFullscreen() || SlabWindows.size()==1) {
                 meta->is_full_screen = true;
                 slab_window->SetDecorate(false);
                 slab_window->Set_x(0);
@@ -206,31 +208,34 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifyRender() {
-        for (auto & slab_window : std::ranges::reverse_view(slab_windows)) {
-            auto mouse = parent_system_window->GetMouseState();
-            decorator.begin_decoration(*slab_window->window, mouse->x, mouse->y);
-            slab_window->window->ImmediateDraw();
-            decorator.finish_decoration(*slab_window->window, mouse->x, mouse->y);
+        IN OwnerWindow = w_ParentPlatformWindow.lock();
+        if(OwnerWindow == nullptr) return false;
+
+        for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
+            const auto Mouse = OwnerWindow->GetMouseState();
+            Decorator.begin_decoration(*MetaSlabWindow->Window, Mouse->x, Mouse->y);
+            MetaSlabWindow->Window->ImmediateDraw();
+            Decorator.FinishDecoration(*MetaSlabWindow->Window, Mouse->x, Mouse->y);
         }
 
         return true;
     }
 
-    void SlabWindowManager::setFocus(const Pointer<WindowMetaInformation>& meta)
+    void SlabWindowManager::SetFocus(const Pointer<WindowMetaInformation>& meta)
     {
-        if(focused != nullptr) focused->window->notifyBecameInactive();
+        if(CurrentlyFocused != nullptr) CurrentlyFocused->Window->NotifyBecameInactive();
 
-        focused = meta;
-        meta->window->notifyBecameActive();
+        CurrentlyFocused = meta;
+        meta->Window->NotifyBecameActive();
         meta->is_hidden = false;
 
-        if(!Contains(slab_windows, meta)) slab_windows.emplace_front(meta);
-        else MoveToFront(slab_windows, focused);
+        if(!Contains(SlabWindows, meta)) SlabWindows.emplace_front(meta);
+        else MoveToFront(SlabWindows, CurrentlyFocused);
     }
 
     bool
     SlabWindowManager::WindowMetaInformation::operator<(const WindowMetaInformation &rhs) const {
-        return window < rhs.window;
+        return Window < rhs.Window;
     }
 
     bool
@@ -250,11 +255,11 @@ namespace Slab::Graphics {
 
     bool
     SlabWindowManager::WindowMetaInformation::operator==(const WindowMetaInformation &rhs) const {
-        return window==rhs.window;
+        return Window==rhs.Window;
     }
 
     bool SlabWindowManager::WindowMetaInformation::operator==(std::
         nullptr_t const &rhs) const {
-        return window==rhs;
+        return Window==rhs;
     }
 } // Slab::Graphics

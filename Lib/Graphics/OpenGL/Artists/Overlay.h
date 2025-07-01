@@ -13,7 +13,7 @@
 namespace Slab::Graphics::OpenGL {
 
     class Overlay : public FArtist {
-        VertexBuffer vertexBuffer;
+        FVertexBuffer vertexBuffer;
         FShader shader;
 
     public:

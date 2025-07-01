@@ -32,7 +32,7 @@ namespace Slab::Graphics::OpenGL {
          Patches = GL_PATCHES
     };
 
-    class VertexBuffer {
+    class FVertexBuffer {
         /** Format of the vertex buffer. */
         Str format;
 
@@ -97,14 +97,14 @@ namespace Slab::Graphics::OpenGL {
          * @param  format a string describing vertex format.
          * @return        an empty vertex buffer.
          */
-        explicit VertexBuffer(Str format);
+        explicit FVertexBuffer(Str format);
 
         /**
          * Deletes vertex buffer and releases GPU memory.
          *
          * @param  self  a vertex buffer
          */
-        ~VertexBuffer();
+        ~FVertexBuffer();
 
         CountType getSize() const;
 

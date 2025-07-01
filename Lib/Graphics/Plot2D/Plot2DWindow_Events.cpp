@@ -4,8 +4,6 @@
 
 #include "Plot2DWindow.h"
 
-#include "Graphics/SlabGraphics.h"
-
 #include "Core/Tools/Log.h"
 #include "3rdParty/ImGui.h"
 
@@ -41,14 +39,17 @@ namespace Slab {
     bool Graphics::FPlot2DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         if(FSlabWindow::NotifyMouseMotion(x, y, dx, dy)) return true;
 
-        bool elRet = false;
-        auto mouseState = parent_system_window->GetMouseState();
+        IN ParentWin = w_ParentPlatformWindow.lock();
+        if (ParentWin == nullptr) return false;
+
+        bool bReturnValue = false;
+        const auto MouseState = ParentWin->GetMouseState();
 
         if (IsMouseLeftClicked()) {
             const auto rect = Region.getRect();
 
-            const DevFloat dxClampd = -mouseState->dx / (DevFloat) GetWidth();
-            const DevFloat dyClampd = mouseState->dy / (DevFloat) GetHeight();
+            const DevFloat dxClampd = -MouseState->dx / (DevFloat) GetWidth();
+            const DevFloat dyClampd = MouseState->dy / (DevFloat) GetHeight();
             const DevFloat wGraph = rect.GetWidth();
             const DevFloat hGraph = rect.GetHeight();
             const DevFloat dxGraph = wGraph * dxClampd;
@@ -59,7 +60,7 @@ namespace Slab {
                            rect.yMin + dyGraph,
                            rect.yMax + dyGraph};
 
-            elRet = true;
+            bReturnValue = true;
         }
 
         if (IsMouseRightClicked()) {
@@ -79,10 +80,10 @@ namespace Slab {
                     y0 + hh
             };
 
-            elRet = true;
+            bReturnValue = true;
         }
 
-        return elRet;
+        return bReturnValue;
     }
 
     bool Graphics::FPlot2DWindow::NotifyMouseWheel(double dx, double dy) {

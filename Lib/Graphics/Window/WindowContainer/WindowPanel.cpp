@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    WindowPanel::WindowPanel(Config config) : FSlabWindow(config) {    }
+    WindowPanel::WindowPanel(FConfig config) : FSlabWindow(config) {    }
 
     void WindowPanel::AddWindow(const Pointer<FSlabWindow>& window, bool newColumn, float newColumnWidth) {
         if (newColumn) {

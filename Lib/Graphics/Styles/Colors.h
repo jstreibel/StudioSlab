@@ -9,42 +9,42 @@
 #include "Utils/Types.h"
 
 namespace Slab::Graphics {
-    struct Color
+    struct FColor
     {
     public:
         float r, g, b, a;
 
-        Color();
-        Color(float r, float g, float b, float a=1.);
-        Color(Color rgb, float a);
-        Color(const Color &c) = default;
+        FColor();
+        FColor(float r, float g, float b, float a=1.);
+        FColor(FColor rgb, float a);
+        FColor(const FColor &c) = default;
 
 
-        auto permute(bool odd=false) const -> Color;
-        auto inverse(bool invertAlpha=false) const -> Color;
+        auto permute(bool odd=false) const -> FColor;
+        auto inverse(bool invertAlpha=false) const -> FColor;
 
-        static auto FromBytes(Byte r, Byte g, Byte b, Byte a=0xff) -> Color;
-        static auto FromHex(Str hex) -> Color;
+        static auto FromBytes(Byte r, Byte g, Byte b, Byte a=0xff) -> FColor;
+        static auto FromHex(Str hex) -> FColor;
 
         auto array() const -> std::array<Real32, 4>;
         auto asFloat4fv() const -> const float*;
         auto asFloat4fv() -> float*;
 
-        auto rgb() const -> Color;
-        auto brg() const -> Color;
-        auto gbr() const -> Color;
-        auto bgr() const -> Color;
-        auto grb() const -> Color;
-        auto rbg() const -> Color;
+        auto rgb() const -> FColor;
+        auto brg() const -> FColor;
+        auto gbr() const -> FColor;
+        auto bgr() const -> FColor;
+        auto grb() const -> FColor;
+        auto rbg() const -> FColor;
 
-        Color operator*(const Real32) const;
-        bool operator==(const Color &rhs) const;
+        FColor operator*(const Real32) const;
+        bool operator==(const FColor &rhs) const;
     };
 
-    extern Color White;
-    extern Color Black;
-    extern Color Red;
-    const Color Nil = Color(-1, -1, -1, -1);
+    extern FColor White;
+    extern FColor Black;
+    extern FColor Red;
+    const FColor Nil = FColor(-1, -1, -1, -1);
 
     using rgb = struct {
         DevFloat r;       // a fraction between 0 and 1

@@ -15,7 +15,7 @@
 
 namespace Slab::Graphics {
 
-    class MainViewer : public WindowRow {
+    class MainViewer : public FWindowRow {
         Pointer<FGUIWindow> gui_window = New<FGUIWindow>();
 
         Vector<Pointer<Viewer>> viewers;

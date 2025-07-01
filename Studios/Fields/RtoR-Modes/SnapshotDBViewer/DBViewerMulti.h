@@ -20,9 +20,9 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerMulti : public Graphics::WindowRow {
+    class DBViewerMulti : public Graphics::FWindowRow {
         Graphics::FGUIWindow guiWindow;
-        WindowRow topRow;
+        FWindowRow topRow;
 
         Vector<DBParser::Ptr> dbParsers;
         Graphics::FPlot2DWindow allDataDisplay;

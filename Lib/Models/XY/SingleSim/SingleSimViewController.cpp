@@ -59,7 +59,7 @@ namespace Slab::Lost::ThermoOutput {
         auto main_syswin = Graphics::GetGraphicsBackend()->GetMainSystemWindow();
         auto nkModule_abstract = Core::GetModule("Nuklear");
         auto &nkModule = *dynamic_cast<Graphics::NuklearModule*>(nkModule_abstract.get());
-        nkContext = nkModule.CreateContext(main_syswin.get());
+        nkContext = nkModule.CreateContext(main_syswin);
         timer.restart();
 
         const float isingSpriteScale = isingSpriteSize/(float)L;

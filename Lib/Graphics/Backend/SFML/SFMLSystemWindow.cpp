@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     }
 
     SFMLSystemWindow::SFMLSystemWindow()
-    : SystemWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
+    : FPlatformWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
     , sfml_native_window((sf::RenderWindow*)r_Window)
     {
         addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
@@ -68,7 +68,7 @@ namespace Slab::Graphics {
         off_sync.unlock();
     }
 
-    bool SFMLSystemWindow::addSFMLListener(const Volatile<SFMLListener> &sfmlListener) {
+    bool SFMLSystemWindow::addSFMLListener(const TVolatile<SFMLListener> &sfmlListener) {
         if (ContainsReference(sfml_listeners, sfmlListener)) return false;
 
         sfml_listeners.emplace_back(sfmlListener);

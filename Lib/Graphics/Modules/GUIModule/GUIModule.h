@@ -12,10 +12,10 @@ namespace Slab::Graphics {
 
     class FGUIModule : public GraphicsModule {
     public:
-        explicit FGUIModule(const Str& name, FOwnerSystemWindow);
+        explicit FGUIModule(const Str& name);
         ~FGUIModule() override = default;
 
-        virtual auto CreateContext(FOwnerSystemWindow) -> Pointer<GUIContext> = 0;
+        virtual auto CreateContext(FOwnerPlatformWindow) -> Pointer<GUIContext> = 0;
 
     };
 

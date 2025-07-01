@@ -9,7 +9,7 @@
 #include "Graphics/Plot3D/Actors/R2toRFunctionActor.h"
 
 namespace Tests {
-    Graph3DTests::Graph3DTests() : Slab::Graphics::WindowRow("Plot3D test") {
+    Graph3DTests::Graph3DTests() : Slab::Graphics::FWindowRow("Plot3D test") {
         using namespace Slab;
 
         auto graph3d = New<Graphics::Scene3DWindow>();
@@ -42,6 +42,6 @@ namespace Tests {
     }
 
     void Graph3DTests::ImmediateDraw() {
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 } // Tests

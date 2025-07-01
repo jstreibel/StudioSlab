@@ -21,12 +21,17 @@
 namespace Slab::Graphics {
     Atomic<CountType> FImGuiWindow::Count = 0;
 
-    FImGuiWindow::FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<SlabImGuiContext> Context)
-    : Id(Str("ImGuiWindow##") + ToStr(++Count))
+    FImGuiWindow::FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context)
+    : FSlabWindow(SlabWindow->GetConfig())
+    , Id(Str("ImGuiWindow##") + ToStr(++Count))
     , SlabWindow(std::move(SlabWindow))
     , Context(std::move(Context))
     {
-        assert(this->Context != nullptr && "Context is null");
+        if (this->Context == nullptr)
+        {
+            auto GUIContext = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+            this->Context = DynamicPointerCast<FImGuiContext>(GUIContext);
+        }
 
         // this->SlabWindow->SetClear(false);
         // this->SlabWindow->SetDecorate(false);
@@ -45,18 +50,21 @@ namespace Slab::Graphics {
     {
         FSlabWindow::RegisterDeferredDrawCalls();
 
+        SlabWindow->RegisterDeferredDrawCalls();
+
         Context->AddDrawCall([this]() {
             if (SlabWindow == nullptr) return;
 
             ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
-            fix WindowFlags = ImGuiWindowFlags_NoCollapse;
-            if(ImGui::Begin((Str("ImGui-wrapped SlabWindow") + Id).c_str(), nullptr, WindowFlags)) {
+            if(Fix WindowFlags = ImGuiWindowFlags_NoCollapse;
+               ImGui::Begin((Str("ImGui-wrapped SlabWindow") + Id).c_str(), nullptr, WindowFlags))
+            {
                 fix Pos = ImGui::GetWindowPos();
-                fix Dim = ImGui::GetWindowSize();
+                // fix Dim = ImGui::GetWindowSize();
                 fix ContentMin = ImGui::GetWindowContentRegionMin();
                 fix ContentMax = ImGui::GetWindowContentRegionMax();
 
-                auto Backend = GetGraphicsBackend();
+                // auto Backend = GetGraphicsBackend();
 
                 fix w = ContentMax.x - ContentMin.x;
                 fix h = ContentMax.y - ContentMin.y;
@@ -71,34 +79,25 @@ namespace Slab::Graphics {
                 SlabWindow->Set_y(static_cast<int>(y));
                 SlabWindow->NotifyReshape(static_cast<int>(w), static_cast<int>(h));
 
-                if constexpr (true)
+                // Further defer
+                auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
                 {
-                    // Further defer
-                    auto Callback = [](const ImDrawList *ParentList, const ImDrawCmd *DrawCommand)
-                    {
-                        OpenGL::FGLStateGuard StateGuard{};
+                    OpenGL::FGLStateGuard StateGuard{};
 
-                        if (DrawCommand->UserCallback == nullptr) return;
+                    if (DrawCommand->UserCallback == nullptr) return;
 
-                        const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
+                    const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
 
-                        glPushAttrib(GL_VIEWPORT_BIT);
-                        SlabWindow->ImmediateDraw();
-                        glPopAttrib();
-                    };
-
-                    ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
-                } else
-                {
                     glPushAttrib(GL_VIEWPORT_BIT);
                     SlabWindow->ImmediateDraw();
                     glPopAttrib();
-                }
+                };
+
+                ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
             }
 
             ImGui::End();
         });
-
-        SlabWindow->RegisterDeferredDrawCalls();
     }
+
 } // Slab::Graphics

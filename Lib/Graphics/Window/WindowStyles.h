@@ -9,21 +9,21 @@
 #include "Graphics/Types2D.h"
 
 namespace Slab::Graphics::WindowStyle {
-    extern RectI default_window_rect;
+    extern RectI DefaultWindowRect;
 
     extern int tiling_gap;
 
     extern int font_size;
-    extern Color titlebar_color;
+    extern FColor titlebar_color;
 
     extern int border_size;
-    extern Color windowBorderColor_inactive;
-    extern Color windowBorderColor_active;
+    extern FColor windowBorderColor_inactive;
+    extern FColor windowBorderColor_active;
 
     extern int menu_height;
 
-    extern Color windowBGColor;
-    extern Color sysWindowBGColor;
+    extern FColor windowBGColor;
+    extern FColor PlatformWindow_BackgroundColor;
 
 
 }

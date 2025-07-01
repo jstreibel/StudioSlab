@@ -10,7 +10,7 @@
 
 namespace Tests {
 
-    class NuklearTests : public Slab::Graphics::FSystemWindowEventListener{
+    class NuklearTests : public Slab::Graphics::FPlatformWindowEventListener{
     public:
         NuklearTests();
 

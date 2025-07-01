@@ -6,9 +6,6 @@
 
 namespace Slab {
 namespace Graphics {
-    FWindowManager::FWindowManager(SystemWindow* Parent) : FSystemWindowEventListener(Parent)
-    {
-    }
 
     void FWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& slab_window)
     {

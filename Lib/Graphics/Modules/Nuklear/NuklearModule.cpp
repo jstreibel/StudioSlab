@@ -15,8 +15,8 @@
 // https://immediate-mode-ui.github.io/Nuklear/doc/index.html
 
 namespace Slab::Graphics {
-    NuklearModule::NuklearModule(FOwnerSystemWindow parent)
-    : FGUIModule("Nuklear GUI", parent)
+    NuklearModule::NuklearModule()
+    : FGUIModule("Nuklear GUI")
     {
         fix non_opengl = Vector<Str>{"Uninitialized", "VTK", "Headless"};
         fix opengl = Vector<Str>{"GLFW", "GLUT", "SFML"};
@@ -47,8 +47,8 @@ namespace Slab::Graphics {
         throw Exception("Unknown module " + backendImpl + " @ " + __PRETTY_FUNCTION__);
     }
 
-    Pointer<GUIContext> NuklearModule::CreateContext(FOwnerSystemWindow window) {
-
+    Pointer<GUIContext> NuklearModule::CreateContext(FOwnerPlatformWindow window) {
+        NOT_IMPLEMENTED_CLASS_METHOD
         return Slab::Pointer<GUIContext>();
     }
 

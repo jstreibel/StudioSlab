@@ -20,9 +20,9 @@ namespace Modes::DatabaseViewer {
 
     using namespace Slab;
 
-    class DBViewerSequence final : public Graphics::WindowRow {
+    class DBViewerSequence final : public Graphics::FWindowRow {
         Graphics::FGUIWindow guiWindow;
-        WindowRow topRow;
+        FWindowRow topRow;
 
         int current_database = -1;
 

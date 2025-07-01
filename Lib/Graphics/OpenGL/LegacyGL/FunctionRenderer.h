@@ -22,9 +22,9 @@ namespace Slab::Graphics::OpenGL::Legacy {
     class FunctionRenderere {
     public:
 
-        static void RenderFunction(          const RtoR::NumericFunction &func, Color c, bool filled,
+        static void RenderFunction(          const RtoR::NumericFunction &func, FColor c, bool filled,
                                              DevFloat xMin, DevFloat xMax, DevFloat scale = 1.0);
-        static void RenderFunction(          const RtoR::Function &func, Color c, bool filled,
+        static void RenderFunction(          const RtoR::Function &func, FColor c, bool filled,
                                              DevFloat xMin, DevFloat xMax, UInt resolution, DevFloat scale = 1.0);
         static void RenderFunction(          const R2toR::Function &func, DevFloat xMin, DevFloat yMin,
                                              DevFloat L, UInt nLines, UInt linesRes, DevFloat scale = 1.0);
@@ -32,9 +32,9 @@ namespace Slab::Graphics::OpenGL::Legacy {
 
         static void RenderSection(           const R2toR::Function &func, const RtoR2::ParametricCurve &section,
                                              PlotStyle style, UInt resolution, DevFloat scale=1.0);
-        static void RenderHorizontalSection( const R2toR::Function &func, Color c, bool filled,
+        static void RenderHorizontalSection( const R2toR::Function &func, FColor c, bool filled,
                                              DevFloat xMin, DevFloat xMax, UInt resolution);
-        static void RenderVerticalSection(   const R2toR::Function &func, Color c, bool filled,
+        static void RenderVerticalSection(   const R2toR::Function &func, FColor c, bool filled,
                                              DevFloat yMin, DevFloat yMax, UInt resolution);
 
 

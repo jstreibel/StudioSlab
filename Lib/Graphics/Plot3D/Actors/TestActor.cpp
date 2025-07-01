@@ -48,7 +48,7 @@ namespace Slab::Graphics {
     LightData testLight2 = { 0,  1, 0 + zLight, 0, a, b};
     LightData testLight3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
-    void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
+    void GenerateXYPLane(OpenGL::FVertexBuffer &buffer, int N, int M,
                          float width, float height);
 
     TestActor::TestActor()
@@ -104,7 +104,7 @@ namespace Slab::Graphics {
         vertexBuffer.Render(GL_TRIANGLES);
     }
 
-    void TestActor::setAmbientLight(Color color) { program.SetUniform("amb", color.array()); }
+    void TestActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
 
     bool TestActor::hasGUI() {
         return true;
@@ -131,7 +131,7 @@ namespace Slab::Graphics {
     }
 
 
-    void GenerateXYPLane(OpenGL::VertexBuffer &buffer,
+    void GenerateXYPLane(OpenGL::FVertexBuffer &buffer,
                          int N, int M,
                          float width, float height)
     {

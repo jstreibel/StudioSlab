@@ -50,11 +50,11 @@ namespace Slab::Math {
     };
 
     class DataWrap {
-        Volatile<Data> data;
+        TVolatile<Data> data;
 
     public:
         DataWrap() = default;
-        explicit DataWrap(Volatile<Data>);
+        explicit DataWrap(TVolatile<Data>);
 
         UniqueID get_id() const;
         DataName get_name() const;

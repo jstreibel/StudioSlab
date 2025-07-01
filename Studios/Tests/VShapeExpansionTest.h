@@ -13,7 +13,7 @@
 
 namespace Tests {
 
-    class VShapeExpansionTest : public Slab::Graphics::WindowRow {
+    class VShapeExpansionTest : public Slab::Graphics::FWindowRow {
         Slab::Graphics::FGUIWindow stats;
         Slab::Graphics::FPlot2DWindow graph;
 

@@ -48,7 +48,7 @@ namespace Slab::Graphics::OpenGL {
 
     GLuint Texture::getGLtextureUnit()  const { return textureUnit; }
 
-    void Texture::setBorderColor(Color color) const {
+    void Texture::setBorderColor(FColor color) const {
         float borderColor[] = { color.r, color.g, color.b, color.a };
         glTexParameterfv(target, GL_TEXTURE_BORDER_COLOR, borderColor);
     }

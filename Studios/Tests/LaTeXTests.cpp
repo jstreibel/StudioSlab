@@ -13,7 +13,7 @@ namespace Tests {
     using namespace Slab;
 
     LaTeXTests::LaTeXTests()
-    : Slab::Graphics::WindowRow("LaTeX tests")
+    : Slab::Graphics::FWindowRow("LaTeX tests")
     , latexWriter()
     , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
@@ -44,6 +44,6 @@ namespace Tests {
 
     void LaTeXTests::NotifyReshape(int w, int h) {
         writer.Reshape(w, h);
-        WindowRow::NotifyReshape(w, h);
+        FWindowRow::NotifyReshape(w, h);
     }
 } // Tests

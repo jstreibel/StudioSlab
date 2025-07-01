@@ -11,7 +11,7 @@ namespace Tests {
     using namespace Slab;
 
     VShapeExpansionTest::VShapeExpansionTest()
-    : Graphics::WindowRow("V-shape expansion test")
+    : Graphics::FWindowRow("V-shape expansion test")
     , graph("") {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 15, 1.0);
         derivs = potential->diff(0);
@@ -41,6 +41,6 @@ namespace Tests {
             }
         });
 
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 } // Tests

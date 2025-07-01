@@ -26,7 +26,7 @@ namespace Modes::DatabaseViewer {
 #define z_order(z) (z)
 
     DBViewerSequence::DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
-    : WindowRow()
+    : FWindowRow()
     , guiWindow()
     , mashupDisplay("All data")
     , massesGraph("masses")
@@ -94,7 +94,7 @@ namespace Modes::DatabaseViewer {
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
-        AddWindow(winCol, WindowRow::Left, .8);
+        AddWindow(winCol, FWindowRow::Left, .8);
 
         reloadData();
     }
@@ -151,7 +151,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {
@@ -309,7 +309,7 @@ namespace Modes::DatabaseViewer {
             return true;
         }
 
-        return WindowRow::NotifyKeyboard(key, state, modKeys);
+        return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     void DBViewerSequence::reloadData() {

@@ -12,7 +12,8 @@ class App : public Slab::FApplication {
     Slab::Pointer<Slab::Blueprints::Blueprint> blueprint;
 
 public:
-    App(const int argc, const char *argv[]) : Slab::FApplication("Blueprints prototype", argc, argv) {
+    App(const int argc, const char *argv[])
+    : Slab::FApplication("Blueprints prototype", argc, argv) {
     }
 
 protected:
@@ -29,8 +30,9 @@ protected:
 
         blueprint = Slab::New<Blueprint>();
         auto main_platform_window = Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow();
-        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint, main_platform_window.get());
-        AddResponder(blueprint_renderer);
+        blueprint_renderer = Slab::New<BlueprintRenderer>(blueprint);
+        main_platform_window->AddEventListener(blueprint_renderer);
+        // AddResponder(blueprint_renderer);
 
         Node* node;
         node = blueprint->SpawnInputActionNode();      ed::SetNodePosition(node->ID, ImVec2(-252, 220));

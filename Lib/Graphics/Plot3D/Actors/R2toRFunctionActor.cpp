@@ -39,7 +39,7 @@ namespace Slab::Graphics {
     LightData light2 = { 0,  1, 0 + zLight, 0, a, b};
     LightData light3 = {-M_SQRT1_2, -M_SQRT1_2, 0 + zLight, b, 0, a};
 
-    void GenerateXYPLane(OpenGL::VertexBuffer &buffer, int N, int M,
+    void GenerateXYPLane(OpenGL::FVertexBuffer &buffer, int N, int M,
                          float width, float height);
 
     R2toRFunctionActor::R2toRFunctionActor(R2toR::FNumericFunction_constptr function)
@@ -93,7 +93,7 @@ namespace Slab::Graphics {
         vertexBuffer.Render(GL_TRIANGLES);
     }
 
-    void R2toRFunctionActor::setAmbientLight(Color color) { program.SetUniform("amb", color.array()); }
+    void R2toRFunctionActor::setAmbientLight(FColor color) { program.SetUniform("amb", color.array()); }
 
     void R2toRFunctionActor::setGridSubdivs(int n) { program.SetUniform("gridSubdivs", n); }
 
@@ -137,7 +137,7 @@ namespace Slab::Graphics {
         texture.upload();
     }
 
-    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::VertexBuffer &buffer) const {
+    void R2toRFunctionActor::GridMetadata::generateXYPlane(OpenGL::FVertexBuffer &buffer) const {
         Vector<GLuint> indices;
         Vector<Field2DVertex> vertices;
 

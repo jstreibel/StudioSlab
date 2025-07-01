@@ -13,7 +13,7 @@
 
 namespace Slab::Graphics {
 
-    using Context = Pointer<SlabImGuiContext>;
+    using Context = Pointer<FImGuiContext>;
 
     class FImGuiModule : public FGUIModule {
         // Context m_MainContext = nullptr;
@@ -30,7 +30,7 @@ namespace Slab::Graphics {
 
     public:
 
-        Pointer<GUIContext> CreateContext(FOwnerSystemWindow) override;
+        Pointer<GUIContext> CreateContext(FOwnerPlatformWindow) override;
 
         static FImGuiModule* BuildModule();
     };

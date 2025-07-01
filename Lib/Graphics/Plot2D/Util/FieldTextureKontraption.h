@@ -18,7 +18,7 @@ namespace Slab::Graphics {
         FieldTextureThingy(int x_res, int y_res, RectR sub_region);
 
         FieldDataTexturePtr texture = nullptr;
-        Pointer<Graphics::OpenGL::VertexBuffer> vertexBuffer = nullptr;
+        Pointer<Graphics::OpenGL::FVertexBuffer> vertexBuffer = nullptr;
     };
 
     struct FieldTextureKontraption {

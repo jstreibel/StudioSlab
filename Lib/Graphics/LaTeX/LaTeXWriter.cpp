@@ -46,7 +46,7 @@ namespace Slab::Graphics::LaTeX {
         const float t0 = 0.0;
         const float s1 = 1.0;
         const float t1 = 1.0;
-        Color color = {1, 1, 1};
+        FColor color = {1, 1, 1};
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
         vertex_t vertices[4] = {{x0, y1, 0, s0, t0, color.r, color.g, color.b, color.a},
                                 {x0, y0, 0, s0, t1, color.r, color.g, color.b, color.a},
@@ -101,7 +101,7 @@ namespace Slab::Graphics::LaTeX {
                 auto r = color[2];
                 auto a = color[3];
 
-                texture->setColor(i, j, Color(a/255.0f, 0, 0, 0));
+                texture->setColor(i, j, FColor(a/255.0f, 0, 0, 0));
             }
         }
 

@@ -4,13 +4,18 @@
 
 #include "ImGuiWindowManager.h"
 
+#include "Graphics/SlabGraphics.h"
+
 namespace Slab::Graphics {
 
-    FImGuiWindowManager::FImGuiWindowManager(SystemWindow* Parent, const Pointer<SlabImGuiContext>& Context)
-    : FWindowManager(Parent)
-    , Context(Context)
+    FImGuiWindowManager::FImGuiWindowManager(const Pointer<FImGuiContext>& Context)
+    : Context(Context)
     {
-
+        if (this->Context == nullptr)
+        {
+            auto GUIContext = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+            this->Context = DynamicPointerCast<FImGuiContext>(GUIContext);
+        }
     }
 
     void FImGuiWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& SlabWindow, bool Hidden)

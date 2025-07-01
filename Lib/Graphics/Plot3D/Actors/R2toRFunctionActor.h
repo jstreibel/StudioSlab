@@ -20,7 +20,7 @@ namespace Slab::Graphics {
 
         struct GridMetadata {
             static auto FromNumericFunction(const R2toR::FNumericFunction_constptr&) -> GridMetadata;
-            auto generateXYPlane(OpenGL::VertexBuffer &buffer) const -> void;
+            auto generateXYPlane(OpenGL::FVertexBuffer &buffer) const -> void;
             int gridN = 64;
             int gridM = 64;
             float xMinSpace = -8.f;
@@ -30,7 +30,7 @@ namespace Slab::Graphics {
         } gridMetadata;
 
         OpenGL::FShader program;
-        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::Texture2D_Real texture;
 
         void rebuildTextureData();
@@ -44,7 +44,7 @@ namespace Slab::Graphics {
 
         void drawGUI() override;
 
-        void setAmbientLight(Color color);
+        void setAmbientLight(FColor color);
         void setGridSubdivs(int n);
     };
 

@@ -14,7 +14,7 @@
 #include "Graphics/Types2D.h"
 #include "Graphics/Window/WindowStyles.h"
 #include "Core/Tools/UniqueObject.h"
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 #include <vector>
 #include <memory>
@@ -29,43 +29,60 @@ namespace Slab::Graphics {
         SlabWindowWantsFullscreen   = 0x8
     };
 
-    class FSlabWindow : protected Core::UniqueObject, public FSystemWindowEventListener {
+    class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
         friend class SlabWindowManager;
 
     public:
 
-        struct Config {
-            explicit Config(const Str &title="",
-                            RectI win_rect=WindowStyle::default_window_rect,
-                            Int flags=0x0,
-                            FOwnerSystemWindow Owner=nullptr);
+        struct FConfig {
+            FConfig() = delete;
+            explicit FConfig(
+                Str Title="",
+                RectI WinRect=WindowStyle::DefaultWindowRect,
+                Int Flags=0x0);
 
-            Str title;
-            RectI win_rect;
-            Int flags;
-            FOwnerSystemWindow Owner;
+            Str Title = "";
+            RectI WinRect = WindowStyle::DefaultWindowRect;
+            Int Flags = 0x0;
+
+            /**
+             * This is the same Owner as the super class FPlatformWindowEventListener::w_ParentPlatformWindow.
+             * While FPlatformWindowEventListener itself does not use its parent platform window, FSlabWindow
+             * does use it. So, if a subclass does not need w_ParentPlatformWindow, it can hide its
+             * implicit usage by private'ing the following methods:
+             *
+             * SetupViewport()
+             * IsMouseIn()
+             * GetMouseViewportCoord()
+             */
+            FOwnerPlatformWindow Owner;
         };
 
     private:
-        void SetupWindow() const;
+        /**
+         * Sets a viewport region in the current platform window for drawing.
+         * Makes use of w_ParentWindowPlatform.
+         * @return False if no w_ParentWindowPlatform is set. True otherwise.
+         */
+        [[nodiscard]] virtual bool SetupViewport() const;
 
-        EKeyState mouseLeftButton   = EKeyState::Release;
-        EKeyState mouseCenterButton = EKeyState::Release;
-        EKeyState mouseRightButton  = EKeyState::Release;
+        EKeyState MouseLeftButton   = EKeyState::Release;
+        EKeyState MouseCenterButton = EKeyState::Release;
+        EKeyState MouseRightButton  = EKeyState::Release;
 
     protected:
-        Config config;
-        Resolution min_width=800, min_height=450;
-        Int h_override = -1;
-        bool active=false;
+        FConfig Config;
+        Resolution MinWidth=800, MinHeight=450;
+        Int HeightOverride = -1;
+        bool Active=false;
 
     public:
 
-        explicit FSlabWindow(Config c=Config());
+        explicit FSlabWindow(FConfig ConfigArg);
 
         ~FSlabWindow() override;
 
-        auto getConfig() -> Config&;
+        auto GetConfig() -> FConfig&;
 
         auto NotifySystemWindowReshape(int w, int h)           -> bool final;
         auto NotifyRender()                                    -> bool final;
@@ -73,9 +90,9 @@ namespace Slab::Graphics {
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.
          *
-         * @param override_h the value to override the system window height. Set to negative to stop override.
+         * @param Height the value to override the system window height. Set to negative to stop override.
          */
-        void overrideSystemWindowHeight(int override_h);
+        void OverrideSystemWindowHeight(int Height);
 
         auto NotifyMouseButton(EMouseButton, EKeyState, EModKeys) -> bool override;
         auto NotifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
@@ -90,31 +107,31 @@ namespace Slab::Graphics {
          * Here the window has the opportunity to register callbacks and other things (e.g. ImGui window list
          * draw callback commands).
          */
-        virtual auto RegisterDeferredDrawCalls()                 -> void;
+        virtual auto RegisterDeferredDrawCalls()               -> void;
+
         virtual auto NotifyReshape(int w, int h)               -> void;
-        virtual auto notifyBecameActive()                      -> void;
-        virtual auto notifyBecameInactive()                    -> void;
+        virtual auto NotifyBecameActive()                      -> void;
+        virtual auto NotifyBecameInactive()                    -> void;
         virtual auto Set_x(int x)                              -> void;
         virtual auto Set_y(int y)                              -> void;
 
-        auto getFlags()                                  const -> Int;
-        auto isActive()                                  const -> bool;
-        auto wantsFullscreen()                           const -> bool;
-        auto IsMouseIn()                                 const -> bool;
+        auto GetFlags()                                  const -> Int;
+        auto IsActive()                                  const -> bool;
+        auto WantsFullscreen()                           const -> bool;
+        virtual auto IsMouseIn()                         const -> bool;
         auto IsMouseLeftClicked()                        const -> bool;
         auto IsMouseCenterClicked()                      const -> bool;
         auto IsMouseRightClicked()                       const -> bool;
-        auto GetMouseViewportCoord()                     const -> Point2D;
+        virtual auto GetMouseViewportCoord()             const -> Point2D;
 
         auto GetTitle()                                  const -> Str;
 
         auto SetDecorate(bool)                                 -> void;
         auto SetClear(bool)                                    -> void;
 
-        RectI GetViewport() const;
-
-        auto Get_x()                                      const -> int;
-        auto Get_y()                                      const -> int;
+        auto GetViewport()                               const -> RectI;
+        auto Get_x()                                     const -> int;
+        auto Get_y()                                     const -> int;
         auto GetWidth()                                  const -> int;
         auto GetHeight()                                 const -> int;
         auto SetMinimumWidth(Resolution)                       -> void;

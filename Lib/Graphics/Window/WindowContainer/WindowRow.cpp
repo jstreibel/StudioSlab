@@ -34,12 +34,12 @@ fix PropagateOnlyIfMouseIsIn = false;
 
 namespace Slab::Graphics {
 
-    WindowRow::WindowRow(Str title, Int flags)
-            : FSlabWindow(Config{std::move(title), WindowStyle::default_window_rect, flags}) {
+    FWindowRow::FWindowRow(Str Title, Int Flags)
+            : FSlabWindow(FConfig{{}, std::move(Title), WindowStyle::DefaultWindowRect, Flags}) {
 
     }
 
-    RealVector WindowRow::_widthsVector() const {
+    RealVector FWindowRow::_widthsVector() const {
         auto widths = RealVector(windowsList.size());
 
         auto i = 0;
@@ -51,7 +51,7 @@ namespace Slab::Graphics {
         return widths;
     }
 
-    bool WindowRow::AddWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
+    bool FWindowRow::AddWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
         if (std::find_if(windowsList.begin(), windowsList.end(),
                          [&window](WinMetaData &winMetaData) {
@@ -74,7 +74,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::removeWindow(const Pointer<FSlabWindow> &window) {
+    void FWindowRow::removeWindow(const Pointer<FSlabWindow> &window) {
         windowsList.remove_if([&window](WinMetaData &toComp) {
             return toComp.window == window;
         });
@@ -82,7 +82,7 @@ namespace Slab::Graphics {
         arrangeWindows();
     }
 
-    void WindowRow::arrangeWindows() {
+    void FWindowRow::arrangeWindows() {
         if (!assertConsistency()) throw Exception("WindowRow inconsistency");
 
         auto m = windowsList.size();
@@ -150,7 +150,7 @@ namespace Slab::Graphics {
         }
     }
 
-    bool WindowRow::assertConsistency() const {
+    bool FWindowRow::assertConsistency() const {
         auto widths = _widthsVector();
 
         auto reserverdWidth = SumLargerThanZero(widths)
@@ -171,7 +171,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void WindowRow::ImmediateDraw() {
+    void FWindowRow::ImmediateDraw() {
 
         for (auto & winData : std::ranges::reverse_view(windowsList)) {
             auto &window = *winData.window;
@@ -182,13 +182,13 @@ namespace Slab::Graphics {
         }
     }
 
-    void WindowRow::NotifyReshape(int w, int h)  {
+    void FWindowRow::NotifyReshape(int w, int h)  {
         FSlabWindow::NotifyReshape(w, h);
 
         arrangeWindows();
     }
 
-    bool WindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FWindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         for (auto &winData: windowsList)
             if (winData.window->IsMouseIn() && winData.window->NotifyMouseMotion(x, y, dx, dy))
                 return true;
@@ -204,7 +204,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool WindowRow::NotifyMouseButton(EMouseButton button, EKeyState state,
+    bool FWindowRow::NotifyMouseButton(EMouseButton button, EKeyState state,
                                       EModKeys keys) {
         if(state == EKeyState::Release)
             PropagateEvent(NotifyMouseButton(button, state, keys), AlwaysPropagate)
@@ -213,21 +213,21 @@ namespace Slab::Graphics {
             PropagateEvent(NotifyMouseButton(button, state, keys), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowRow::NotifyMouseWheel(double dx, double dy) {
+    bool FWindowRow::NotifyMouseWheel(double dx, double dy) {
         PropagateEvent(NotifyMouseWheel(dx, dy), PropagateOnlyIfMouseIsIn)
     }
 
-    bool WindowRow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FWindowRow::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         PropagateEvent(NotifyKeyboard(key, state, modKeys), PropagateOnlyIfMouseIsIn)
     }
 
-    void WindowRow::Set_x(int x) {
+    void FWindowRow::Set_x(int x) {
         FSlabWindow::Set_x(x);
 
         arrangeWindows();
     }
 
-    void WindowRow::Set_y(int y) {
+    void FWindowRow::Set_y(int y) {
         FSlabWindow::Set_y(y);
 
         arrangeWindows();

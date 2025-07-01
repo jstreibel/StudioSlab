@@ -17,11 +17,11 @@ namespace Tests {
 
     using namespace Slab;
 
-    using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
+    using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
-    class ModernGLTests : public Graphics::WindowRow {
+    class ModernGLTests : public Graphics::FWindowRow {
         Graphics::OpenGL::FShader program;
-        Graphics::OpenGL::VertexBuffer buffer;
+        Graphics::OpenGL::FVertexBuffer buffer;
         Graphics::OpenGL::Texture2D_Color texture;
         Graphics::OpenGL::Texture2D_Real realTexture;
         Writer writer;

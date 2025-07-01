@@ -17,7 +17,7 @@ namespace Slab::Graphics {
         Writer() = default;
         virtual ~Writer() = default;
 
-        virtual void Write(const Str &text, Point2D penLocation, Color color=White, bool vertical=false) = 0;
+        virtual void Write(const Str &text, Point2D penLocation, FColor color=White, bool vertical=false) = 0;
         [[nodiscard]] virtual DevFloat GetFontHeightInPixels() const = 0;
         virtual void Reshape(int w, int h) {};
 

@@ -18,8 +18,7 @@
 
 namespace Slab::Graphics {
 
-    NuklearSFMLModule::NuklearSFMLModule()
-            : NuklearModule(nullptr) {
+    NuklearSFMLModule::NuklearSFMLModule() {
         try {
             auto sfmlBackend = DynamicPointerCast<SFMLBackend>(Core::GetBackend());
             // renderWindow = &sfmlBackend->GetMainSystemWindow();

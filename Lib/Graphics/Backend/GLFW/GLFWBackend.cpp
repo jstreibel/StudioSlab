@@ -11,7 +11,7 @@
 #include "Core/Tools/Log.h"
 #include "Core/Backend/BackendManager.h"
 #include "Graphics/SlabGraphics.h"
-#include "GLFWSystemWindow.h"
+#include "GLFWPlatformWindow.h"
 
 namespace Slab::Graphics {
 
@@ -64,7 +64,7 @@ namespace Slab::Graphics {
         static auto Update   = FuncRun(Update);
 
         while(!SystemWindows.empty()) {
-            IterateReferences(graphicModules, Update);
+            IterateReferences(GraphicModules, Update);
 
             for(auto it = SystemWindows.begin(); it != SystemWindows.end();) {
                 if((*it)->ShouldClose()) {
@@ -86,9 +86,10 @@ namespace Slab::Graphics {
         return *DynamicPointerCast<GLFWBackend>(guiBackend);
     }
 
-    Pointer<SystemWindow> GLFWBackend::CreateSystemWindow(const Str& title) {
-        Pointer<GLFWSystemWindow> system_window = New<GLFWSystemWindow>();
+    Pointer<FPlatformWindow> GLFWBackend::CreatePlatformWindow(const Str& title) {
+        Pointer<FGLFWPlatformWindow> NewPlatformWindow = New<FGLFWPlatformWindow>();
+        NewPlatformWindow->ProvideSelfReference(NewPlatformWindow);
 
-        return system_window;
+        return NewPlatformWindow;
     }
 }

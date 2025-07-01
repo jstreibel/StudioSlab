@@ -14,7 +14,7 @@ namespace Slab::Graphics {
     class FImGuiWindowManager final : public FWindowManager {
 
     public:
-        explicit FImGuiWindowManager(SystemWindow* Parent, const Pointer<SlabImGuiContext>&);
+        explicit FImGuiWindowManager(const Pointer<FImGuiContext>& Context=nullptr);
 
         void AddSlabWindow(const Pointer<FSlabWindow>&, bool Hidden) override;
         bool NotifyRender() override;
@@ -23,7 +23,7 @@ namespace Slab::Graphics {
         FImGuiWindowManager() = delete;
 
         Vector<Pointer<FImGuiWindow>> Windows;
-        Pointer<SlabImGuiContext> Context;
+        Pointer<FImGuiContext> Context;
     };
 
 } // Slab::Graphics

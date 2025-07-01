@@ -27,9 +27,9 @@ namespace Slab::Graphics {
     fix FONT_INDEX_FOR_IMGUI = 10; //6;
 #define FONT_SIZE_PIXELS Slab::Graphics::WindowStyle::font_size
 
-    void buildFonts()
+    void BuildFonts()
     {
-        static const ImWchar ranges[] =
+        static const ImWchar WideCharacterRanges[] =
                 {
                         0x0020, 0x007F, // Basic Latin
                         0x00B0, 0x00BF, // Superscript / subscript
@@ -46,34 +46,34 @@ namespace Slab::Graphics {
                         0x1D400, 0x1D7FF, // Mathematical alphanumeric symbols
                         0,
                 };
-        ImFontGlyphRangesBuilder glyphRangesBuilder;
-        glyphRangesBuilder.AddRanges(ranges);
+        ImFontGlyphRangesBuilder GlyphRangesBuilder;
+        GlyphRangesBuilder.AddRanges(WideCharacterRanges);
         for (ImWchar c: {ImWchar(0x1D62) /* subscript 'i'*/,
                          ImWchar(0x21A6),
                 /*ImWchar("⟨"[0]),
                 ImWchar("⟩"[0])*/}
-                ) glyphRangesBuilder.AddChar(c);
+                ) GlyphRangesBuilder.AddChar(c);
         static ImVector<ImWchar> vRanges;
-        glyphRangesBuilder.BuildRanges(&vRanges);
+        GlyphRangesBuilder.BuildRanges(&vRanges);
 
-        auto &log = Core::Log::Info() << "ImGui loading glyph ranges: ";
+        auto &Log = Core::Log::Info() << "ImGui loading glyph ranges: ";
         int i = 0;
         for (auto &v: vRanges) {
             if (v == 0) break;
-            log << std::hex << v << (++i % 2 ? "-" : " ");
+            Log << std::hex << v << (++i % 2 ? "-" : " ");
         }
-        log << std::dec << Core::Log::Flush;
+        Log << std::dec << Core::Log::Flush;
 
         ImGuiIO &io = ImGui::GetIO();
-        auto fontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
+        auto FontName = Core::Resources::GetIndexedFontFileName(FONT_INDEX_FOR_IMGUI);
 
-        if (!std::filesystem::exists(fontName)) throw Exception(Str("Font ") + fontName + " does not exist.");
+        if (!std::filesystem::exists(FontName)) throw Exception(Str("Font ") + FontName + " does not exist.");
 
-        ImFontConfig fontConfig;
-        fontConfig.OversampleH = 4;
-        fontConfig.OversampleV = 4;
-        fontConfig.PixelSnapH = false;
-        auto font = io.Fonts->AddFontFromFileTTF(fontName.c_str(), FONT_SIZE_PIXELS, &fontConfig, &vRanges[0]);
+        ImFontConfig FontConfig;
+        FontConfig.OversampleH = 4;
+        FontConfig.OversampleV = 4;
+        FontConfig.PixelSnapH = false;
+        auto font = io.Fonts->AddFontFromFileTTF(FontName.c_str(), FONT_SIZE_PIXELS, &FontConfig, &vRanges[0]);
 
         io.FontDefault = font;
 
@@ -84,18 +84,14 @@ namespace Slab::Graphics {
         //ImGui::PushFont(font);
     }
 
-    SlabImGuiContext::SlabImGuiContext(FOwnerSystemWindow system_window, FCallSet calls)
-    : GUIContext(system_window), CallSet(std::move(calls)) {
+    FImGuiContext::FImGuiContext(FCallSet calls)
+    : CallSet(std::move(calls)) {
         r_Context = ImGui::CreateContext();
 
         ImGui::SetCurrentContext(r_Context);
 
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-
-        CallSet.Init(system_window->GetRawPlatformWindowPointer());
-
-        buildFonts();
 
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
@@ -113,7 +109,7 @@ namespace Slab::Graphics {
     //    ImGui::DestroyContext(context);
     //}
 
-    void SlabImGuiContext::NewFrame() {
+    void FImGuiContext::NewFrame() {
         ImGui::SetCurrentContext(r_Context);
 
         CallSet.NewFrame();
@@ -122,24 +118,34 @@ namespace Slab::Graphics {
         FlushDrawCalls();
     }
 
-    void SlabImGuiContext::Render() const {
+    void FImGuiContext::Render() const {
         ImGui::Render();
 
         CallSet.Draw();
     }
 
 
-    void SlabImGuiContext::Bind() {
+    void FImGuiContext::Bind() {
         ImGui::SetCurrentContext(r_Context);
     }
 
-    DevFloat SlabImGuiContext::GetFontSize() const {
+    void FImGuiContext::SetParentPlatformWindow(const FOwnerPlatformWindow NewOwner)
+    {
+        GUIContext::SetParentPlatformWindow(NewOwner);
+
+        if (IN Owner = NewOwner.lock())
+            CallSet.Init(Owner->GetRawPlatformWindowPointer());
+
+        BuildFonts();
+    }
+
+    DevFloat FImGuiContext::GetFontSize() const {
         (void)this; // get rid of annoying "this method can be made static" warning.
 
         return FONT_SIZE_PIXELS;
     }
 
-    bool SlabImGuiContext::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
+    bool FImGuiContext::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -154,7 +160,7 @@ namespace Slab::Graphics {
         return io.WantCaptureKeyboard;
     }
 
-    bool SlabImGuiContext::NotifyCharacter(UInt codepoint) {
+    bool FImGuiContext::NotifyCharacter(UInt codepoint) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -164,7 +170,7 @@ namespace Slab::Graphics {
         return io.WantTextInput;
     }
 
-    void SlabImGuiContext::CursorEntered(bool entered) {
+    void FImGuiContext::CursorEntered(bool entered) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -172,7 +178,7 @@ namespace Slab::Graphics {
         io.AddFocusEvent(entered);
     }
 
-    bool SlabImGuiContext::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys modKeys) {
+    bool FImGuiContext::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys modKeys) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -187,7 +193,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FImGuiContext::NotifyMouseMotion(int x, int y, int dx, int dy) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -197,7 +203,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::NotifyMouseWheel(double dx, double dy) {
+    bool FImGuiContext::NotifyMouseWheel(double dx, double dy) {
         Bind();
 
         ImGuiIO& io = ImGui::GetIO();
@@ -207,7 +213,7 @@ namespace Slab::Graphics {
         return io.WantCaptureMouse;
     }
 
-    bool SlabImGuiContext::NotifySystemWindowReshape(int w, int h) {
+    bool FImGuiContext::NotifySystemWindowReshape(int w, int h) {
         ImGuiIO& io = ImGui::GetIO();
 
         io.DisplaySize = ImVec2((float)w, (float)h);
@@ -215,7 +221,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabImGuiContext::NotifyRender() {
+    bool FImGuiContext::NotifyRender() {
         NewFrame();
         Render();
         return true;
@@ -240,7 +246,7 @@ namespace Slab::Graphics {
         }
     };
 
-    void SlabImGuiContext::AddMainMenuItem(MainMenuItem item) {
+    void FImGuiContext::AddMainMenuItem(MainMenuItem item) {
         AddDrawCall([item](){
             if(ImGui::BeginMainMenuBar()) {
                 AddItem(0, item);
@@ -250,7 +256,7 @@ namespace Slab::Graphics {
         });
     }
 
-    void *SlabImGuiContext::GetContextPointer() {
+    void *FImGuiContext::GetContextPointer() {
         return r_Context;
     }
 

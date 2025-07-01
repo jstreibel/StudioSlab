@@ -5,7 +5,7 @@
 #ifndef STUDIOSLAB_GLFWSYSTEMWINDOW_H
 #define STUDIOSLAB_GLFWSYSTEMWINDOW_H
 
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 
 #include "glfw.h"
@@ -16,8 +16,10 @@
 
 namespace Slab::Graphics {
 
-    class GLFWSystemWindow : public SystemWindow {
-        List<Volatile<GLFWListener>> glfw_listeners{};
+    class FGLFWPlatformWindow : public FPlatformWindow {
+        friend class GLFWBackend;
+
+        List<TVolatile<FGLFWListener>> GLFWListeners{};
 
         GLFWcursor* arrowCursor;
         GLFWcursor* IBeamCursor;
@@ -27,8 +29,8 @@ namespace Slab::Graphics {
         GLFWcursor* vResizeCursor;
 
     public:
-        explicit GLFWSystemWindow();
-        ~GLFWSystemWindow();
+        explicit FGLFWPlatformWindow();
+        ~FGLFWPlatformWindow() override;
 
         void Cycle() override;
 
@@ -39,9 +41,9 @@ namespace Slab::Graphics {
         void SignalClose() override;
         bool ShouldClose() const override;
 
-        void addGLFWListener(const Volatile<Graphics::GLFWListener>& glfwListener, bool highPriority = false);
+        void AddGLFWListener(const TVolatile<Graphics::FGLFWListener>& glfwListener, bool HighPriority = false);
 
-        void SetMouseCursor(MouseCursor cursor) override;
+        void SetMouseCursor(FMouseCursor Cursor) override;
 
         void SetSystemWindowTitle(const Str &title) override;
 

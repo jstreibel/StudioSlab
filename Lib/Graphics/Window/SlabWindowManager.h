@@ -14,7 +14,7 @@ namespace Slab::Graphics {
 
     class SlabWindowManager final : public FWindowManager {
         struct WindowMetaInformation {
-            Pointer<FSlabWindow> window= nullptr;
+            Pointer<FSlabWindow> Window= nullptr;
             bool is_full_screen = false;
             bool is_hidden = false;
 
@@ -26,21 +26,21 @@ namespace Slab::Graphics {
             bool operator==(const std::nullptr_t &rhs) const;
         };
 
-        List<Pointer<WindowMetaInformation>> slab_windows;
+        List<Pointer<WindowMetaInformation>> SlabWindows;
 
-        Decorator decorator;
+        Decorator Decorator;
 
         Int w_system_window=10, h_system_window=10;
 
-        Pointer<WindowMetaInformation> focused;
+        Pointer<WindowMetaInformation> CurrentlyFocused;
         using Anchor = Point2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<FSlabWindow> window;} Grabbed;
 
     public:
-        explicit SlabWindowManager(SystemWindow* Parent=nullptr);
+        explicit SlabWindowManager();
         ~SlabWindowManager() override = default;
 
-        void setFocus(const Pointer<WindowMetaInformation>&);
+        void SetFocus(const Pointer<WindowMetaInformation>&);
 
         void AddSlabWindow(const Pointer<FSlabWindow>&, bool hidden) override;
 

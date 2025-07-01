@@ -10,7 +10,7 @@
 #include "Graphics/Window/SlabWindow.h"
 #include "Graphics/Utils/Writer.h"
 #include "Graphics/OpenGL/WriterOpenGL.h"
-using Writer = Slab::Graphics::OpenGL::WriterOpenGL;
+using Writer = Slab::Graphics::OpenGL::FWriterOpenGL;
 
 class GLFreeTypeTests : public Slab::Graphics::FSlabWindow {
     Writer writer1, writer2;

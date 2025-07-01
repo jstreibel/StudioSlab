@@ -135,8 +135,8 @@ add_library(${LIB_GRAPHICS} STATIC
 		${GRAPHIC_BACKENDS_SOURCES}
 		${GRAPHIC_MODULES_SOURCES}
 
-		Backend/SystemWindow.cpp
-		Backend/SystemWindow.h
+		Backend/PlatformWindow.cpp
+		Backend/PlatformWindow.h
 
         Types2D.h Types2D.cpp
 		Utils.cpp
@@ -159,8 +159,6 @@ add_library(${LIB_GRAPHICS} STATIC
 		Window/GUIWindow.cpp
 		Window/SlabWindow.cpp
 		Window/WindowContainer/WindowPanel.cpp
-		Window/WindowTree/NodeWindow.cpp
-		Window/WindowTree/WindowTreeBuilder.cpp
 
 		Window/WindowContainer/WindowRow.cpp
 		Window/WindowContainer/WindowRow.h
@@ -296,8 +294,8 @@ add_library(${LIB_GRAPHICS} STATIC
         Window/Decorator.h
         Plot2D/Artists/BackgroundArtist.cpp
         Plot2D/Artists/BackgroundArtist.h
-        Backend/GLFW/GLFWSystemWindow.cpp
-        Backend/GLFW/GLFWSystemWindow.h
+		Backend/GLFW/GLFWPlatformWindow.cpp
+		Backend/GLFW/GLFWPlatformWindow.h
 		OpenGL/Images.cpp
 		OpenGL/Images.h
         Utils/ImageLoad.cpp

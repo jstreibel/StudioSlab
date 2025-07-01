@@ -19,14 +19,14 @@ constexpr bool MAKE_LOCAL_CONTEXT = false;
 
 namespace Slab::Graphics {
 
-    FGUIWindow::FGUIWindow(Config config) : FSlabWindow(std::move(config)) {
+    FGUIWindow::FGUIWindow(FConfig config) : FSlabWindow(std::move(config)) {
         SetClear(false);
         SetDecorate(false);
 
         if constexpr (MAKE_LOCAL_CONTEXT)
         {
             auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
-            GuiContext = DynamicPointerCast<SlabImGuiContext>(GuiModule.CreateContext(parent_system_window));
+            GuiContext = DynamicPointerCast<FImGuiContext>(GuiModule.CreateContext(w_ParentPlatformWindow));
 
             if(GuiContext == nullptr) throw Exception("Failed to get GUIContext.");
 
@@ -37,12 +37,12 @@ namespace Slab::Graphics {
             auto Context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
             if(Context == nullptr) throw Exception("Failed to get GUIContext.");
 
-            GuiContext = DynamicPointerCast<SlabImGuiContext>(Context);
+            GuiContext = DynamicPointerCast<FImGuiContext>(Context);
         }
     }
 
 
-    void FGUIWindow::AddVolatileStat(const Str &stat, const Color color) {
+    void FGUIWindow::AddVolatileStat(const Str &stat, const FColor color) {
         Stats.emplace_back(stat, color);
     }
 
@@ -183,7 +183,7 @@ namespace Slab::Graphics {
         this->End();
     }
 
-    Pointer<SlabImGuiContext> FGUIWindow::GetGUIContext() {
+    Pointer<FImGuiContext> FGUIWindow::GetGUIContext() {
         return GuiContext;
     }
 

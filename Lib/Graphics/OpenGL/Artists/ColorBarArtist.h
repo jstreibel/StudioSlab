@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
     };
 
     class ColorBarArtist final : public FArtist {
-        VertexBuffer vertexBuffer;
+        FVertexBuffer vertexBuffer;
         FShader shader;
         CMapTexturePtr texture;
         bool textureDirty = true;

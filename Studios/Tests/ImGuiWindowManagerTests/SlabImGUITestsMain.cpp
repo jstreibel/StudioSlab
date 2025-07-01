@@ -31,17 +31,18 @@ protected:
         const auto GUIContext = MainSystemWindow->GetGUIContext();
         auto ImGuiContext =
             Slab::DynamicPointerCast
-            <Slab::Graphics::SlabImGuiContext>
+            <Slab::Graphics::FImGuiContext>
             (GUIContext);
 
 
-        Slab::Pointer<Slab::Graphics::FWindowManager> WM;
+        Slab::Pointer<Slab::Graphics::FWindowManager> WindowManager;
         if constexpr (false)
-            WM = Slab::New<Slab::Graphics::SlabWindowManager>();
+            WindowManager = Slab::New<Slab::Graphics::SlabWindowManager>();
         else
-            WM = Slab::New<Slab::Graphics::FImGuiWindowManager>(&*MainSystemWindow, ImGuiContext);
+            WindowManager = Slab::New<Slab::Graphics::FImGuiWindowManager>(ImGuiContext);
 
-        MainSystemWindow->AddAndOwnEventListener(WM);
+        MainSystemWindow->AddAndOwnEventListener(WindowManager);
+
         const auto Window = Slab::New<Tests::BezierTests>(ImGuiContext);
         // Slab::Graphics::FSlabWindow::Config config;
         // config.parent_syswin = &*MainSystemWindow;
@@ -49,7 +50,7 @@ protected:
         // config.win_rect = Slab::Graphics::RectI(100, 700, 100, 600);
         // const auto Window = Slab::New<Slab::Graphics::FSlabWindow>(config);
 
-        WM->AddSlabWindow(Window, false);
+        WindowManager->AddSlabWindow(Window, false);
     }
 };
 

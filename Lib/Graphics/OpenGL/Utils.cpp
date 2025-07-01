@@ -133,9 +133,9 @@ namespace Slab {
 
             // auto gui_state = window->isGUIEnabled();
             // window->setGUIState(DISABLED);
-            window->overrideSystemWindowHeight(height);
+            window->OverrideSystemWindowHeight(height);
             window->ImmediateDraw();
-            window->overrideSystemWindowHeight(-1);
+            window->OverrideSystemWindowHeight(-1);
             // window->setGUIState(gui_state);
 
             window->Set_x(xOld);

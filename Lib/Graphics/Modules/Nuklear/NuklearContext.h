@@ -13,8 +13,6 @@ namespace Slab::Graphics {
     class NuklearContext : public GUIContext {
         nk_context *context;
     public:
-        explicit NuklearContext(SystemWindow *window);
-
         void Bind() override;
 
         void NewFrame() override;
@@ -25,7 +23,8 @@ namespace Slab::Graphics {
 
         void AddMainMenuItem(MainMenuItem item) override;
 
-
+    protected:
+        void SetParentPlatformWindow(FOwnerPlatformWindow) override;
     };
 
 } // Slab::Graphics

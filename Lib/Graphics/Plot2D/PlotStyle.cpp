@@ -16,8 +16,8 @@
 
 namespace Slab::Graphics {
 
-    PlotStyle::PlotStyle(Color color, LinePrimitive primitive, bool filled,
-                         Color fillColor, float thickness)
+    PlotStyle::PlotStyle(FColor color, LinePrimitive primitive, bool filled,
+                         FColor fillColor, float thickness)
     : lineColor(color)
     , filled(filled)
     , fillColor(fillColor)

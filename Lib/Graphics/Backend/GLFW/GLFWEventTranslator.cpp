@@ -23,9 +23,9 @@
 
 namespace Slab::Graphics {
 
-    GLFWEventTranslator::GLFWEventTranslator() : FEventTranslator() {}
+    FGLFWEventTranslator::FGLFWEventTranslator() : FEventTranslator() {}
 
-    bool GLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
+    bool FGLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
         // const int _scancode = glfwGetKeyScancode(GLFW_KEY_X); // scancodes table change with platform
 
@@ -43,11 +43,11 @@ namespace Slab::Graphics {
         return IterateReferences(SysWinListeners, Func(NotifyKeyboard, mappedKey, state, modKeys), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
+    bool FGLFWEventTranslator::CharEvent(GLFWwindow *, UInt codepoint) {
         return IterateReferences(SysWinListeners, Func(NotifyCharacter, codepoint), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
+    bool FGLFWEventTranslator::MouseMotion(GLFWwindow *window, double xpos, double ypos) {
         static auto last_x=0, last_y=0;
 
         fix dx=xpos-last_x;
@@ -59,11 +59,11 @@ namespace Slab::Graphics {
         return IterateReferences(SysWinListeners, Func(NotifyMouseMotion, xpos, ypos, dx, dy), StopOnFirstResponder);
     }
 
-    void GLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
-        GLFWListener::CursorEnter(window, entered);
+    void FGLFWEventTranslator::CursorEnter(GLFWwindow *window, int entered) {
+        FGLFWListener::CursorEnter(window, entered);
     }
 
-    bool GLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
+    bool FGLFWEventTranslator::MouseButton(GLFWwindow *window, int button, int action, int mods) {
         auto mappedButton = static_cast<enum EMouseButton>(button);
         auto state = static_cast<EKeyState>(action);
         EModKeys modKeys{
@@ -81,18 +81,18 @@ namespace Slab::Graphics {
             return IterateReferences(SysWinListeners, Func(NotifyMouseButton, mappedButton, state, modKeys), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
+    bool FGLFWEventTranslator::MouseWheel(GLFWwindow *window, double xoffset, double yoffset) {
         return IterateReferences(SysWinListeners, Func(NotifyMouseWheel, xoffset, yoffset), StopOnFirstResponder);
     }
 
-    bool GLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
+    bool FGLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
         StrVector pathsVec;
 
         int i;
         for (i = 0;  i < count;  i++)
             pathsVec.emplace_back(paths[i]);
 
-        auto funky = [&](Pointer<FSystemWindowEventListener>& listener){
+        auto funky = [&](Pointer<FPlatformWindowEventListener>& listener){
             return listener->
             NotifyFilesDropped(pathsVec);
         };
@@ -100,11 +100,11 @@ namespace Slab::Graphics {
         return IterateReferences(SysWinListeners, Func(NotifyFilesDropped, pathsVec), StopOnFirstResponder);
     }
 
-    void GLFWEventTranslator::Render(GLFWwindow *window) {
+    void FGLFWEventTranslator::Render(GLFWwindow *window) {
         IterateReferences(SysWinListeners, Func(NotifyRender));
     }
 
-    void GLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
+    void FGLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {
         IterateReferences(SysWinListeners, Func(NotifySystemWindowReshape, width, height));
     }
 

@@ -10,7 +10,7 @@
 //#include <Studios/Graphics/Graph.h>
 
 WindowPanelTest::WindowPanelTest()
-: FSlabWindow(Config{"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
+: FSlabWindow(FConfig{"Panels test"}), panel(new Slab::Graphics::WindowPanel) {
     FSlabWindow *window = nullptr;
 
     window = new FSlabWindow();

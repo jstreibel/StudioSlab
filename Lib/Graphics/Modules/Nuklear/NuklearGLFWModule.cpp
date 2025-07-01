@@ -16,7 +16,7 @@
 
 #include "Core/Tools/Resources.h"
 #include "Graphics/SlabGraphics.h"
-#include "Graphics/Backend/GLFW/GLFWSystemWindow.h"
+#include "Graphics/Backend/GLFW/GLFWPlatformWindow.h"
 
 #define MAX_VERTEX_BUFFER  (1024 * 1024)
 #define MAX_ELEMENT_BUFFER (1024 * 1024)
@@ -24,10 +24,6 @@
 namespace Slab::Graphics {
 
     const bool HighPriority = true;
-
-    NuklearGLFWModule::NuklearGLFWModule() : NuklearModule(nullptr) {
-
-    }
 
     NuklearGLFWModule::~NuklearGLFWModule() { nk_glfw3_shutdown(); }
 

@@ -31,7 +31,7 @@ namespace Slab::Math {
 
 
 
-    DataWrap::DataWrap(Volatile<Data> data) : data(data) { }
+    DataWrap::DataWrap(TVolatile<Data> data) : data(data) { }
 
     UniqueID DataWrap::get_id() const {
         if(!is_valid()) return 0;

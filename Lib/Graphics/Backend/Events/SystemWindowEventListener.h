@@ -14,27 +14,28 @@
 
 namespace Slab::Graphics {
 
-    class SystemWindow;
+    class FPlatformWindow;
 
-    using FOwnerSystemWindow = SystemWindow*;
+    using FOwnerPlatformWindow = TVolatile<FPlatformWindow>;
 
-    class FSystemWindowEventListener {
-        Vector<Volatile<FSystemWindowEventListener>> delegateResponders;
-        friend class SystemWindow;
-        void SetParentSystemWindow(SystemWindow *);
+    class FPlatformWindowEventListener {
+        Vector<TVolatile<FPlatformWindowEventListener>> delegateResponders;
+        friend class FPlatformWindow;
 
+        int Priority;
     protected:
-        SystemWindow* parent_system_window = nullptr;
+        TVolatile<FPlatformWindow> w_ParentPlatformWindow;
 
-        void AddResponder(const Volatile<FSystemWindowEventListener>& responder);
-        void RemoveResponder(const Pointer<FSystemWindowEventListener>& responder);
+        virtual void SetParentPlatformWindow(FOwnerPlatformWindow);
+
+        void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
+        void RemoveResponder(const Pointer<FPlatformWindowEventListener>& responder);
         [[nodiscard]] bool HasResponders() const;
 
     public:
 
-        explicit FSystemWindowEventListener(FOwnerSystemWindow parent);
-        explicit FSystemWindowEventListener();
-        virtual ~FSystemWindowEventListener();
+        explicit FPlatformWindowEventListener(const FOwnerPlatformWindow& ParentPlatformWindow={});
+        virtual ~FPlatformWindowEventListener();
 
         virtual bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys);
         virtual bool NotifyCharacter(UInt codepoint);
@@ -52,7 +53,7 @@ namespace Slab::Graphics {
 
     };
 
-    DefinePointers(FSystemWindowEventListener)
+    DefinePointers(FPlatformWindowEventListener)
 }
 
 

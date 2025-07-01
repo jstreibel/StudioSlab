@@ -61,7 +61,7 @@ namespace Tests {
     Math::RtoR::ComplexMagnitude amplitudes(Dummy(fourierModes));
 
     FourierTestWindow::FourierTestWindow()
-    : Graphics::WindowRow({"Fourier tests"})
+    : Graphics::FWindowRow({"Fourier tests"})
     , theme(Graphics::PlotThemeManager::GetCurrent())
     , realFTArtist(nullptr, theme->FuncPlotStyles[0])
     , imagFTArtist(nullptr, theme->FuncPlotStyles[1])
@@ -91,7 +91,7 @@ namespace Tests {
 
         Plot::AddRtoRFunction(Dummy(mFTGraph), Naked(amplitudes), theme->FuncPlotStyles[4], Str("ℱ[") + funcSymbol + "](k)");
 
-        AddWindow(Dummy(gui), Graphics::WindowRow::Right, .25);
+        AddWindow(Dummy(gui), Graphics::FWindowRow::Right, .25);
 
         col.addWindow(Dummy(mFTGraph));
         col.addWindow(Dummy(mDFTGraph));
@@ -122,7 +122,7 @@ namespace Tests {
         gui.AddVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
         gui.AddVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 
     void FourierTestWindow::updateGraphs() {

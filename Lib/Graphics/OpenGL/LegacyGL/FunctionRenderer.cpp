@@ -12,14 +12,14 @@
 namespace Slab::Graphics::OpenGL::Legacy {
 
     void
-    FunctionRenderere::RenderFunction(const RtoR::NumericFunction &func, Color c, bool filled, DevFloat xMin, DevFloat xMax, DevFloat scale) {
+    FunctionRenderere::RenderFunction(const RtoR::NumericFunction &func, FColor c, bool filled, DevFloat xMin, DevFloat xMax, DevFloat scale) {
         const int N = func.N;
 
         RenderFunction(func, c, filled, xMin, xMax, N, scale);
     }
 
     void
-    FunctionRenderere::RenderFunction(const RtoR::Function &func, Color c, bool filled, DevFloat xMin, DevFloat xMax,
+    FunctionRenderere::RenderFunction(const RtoR::Function &func, FColor c, bool filled, DevFloat xMin, DevFloat xMax,
                                                UInt resolution, DevFloat scale) {
         const DevFloat dx = (xMax - xMin) / DevFloat(resolution);
         const DevFloat xBegin = xMin;
@@ -171,7 +171,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
     }
 
     void
-    FunctionRenderere::RenderHorizontalSection(const R2toR::Function &func, Color c, bool filled, DevFloat xMin,
+    FunctionRenderere::RenderHorizontalSection(const R2toR::Function &func, FColor c, bool filled, DevFloat xMin,
                                                         DevFloat xMax,
                                                         UInt resolution) {
         const DevFloat dx = (xMax - xMin) / DevFloat(resolution);
@@ -209,7 +209,7 @@ namespace Slab::Graphics::OpenGL::Legacy {
         glEnd();
     }
 
-    void FunctionRenderere::RenderVerticalSection(const R2toR::Function &func, Color c, bool filled, DevFloat yMin,
+    void FunctionRenderere::RenderVerticalSection(const R2toR::Function &func, FColor c, bool filled, DevFloat yMin,
                                                            DevFloat yMax,
                                                            UInt resolution) {
 

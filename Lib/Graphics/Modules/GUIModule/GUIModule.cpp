@@ -5,8 +5,8 @@
 #include "GUIModule.h"
 
 namespace Slab::Graphics {
-    FGUIModule::FGUIModule(const Str& name, FOwnerSystemWindow parent)
-    : GraphicsModule(name, parent) {
+    FGUIModule::FGUIModule(const Str& name)
+    : GraphicsModule(name) {
 
     }
 } // Slab::Graphics

@@ -14,7 +14,7 @@
 
 namespace Slab::Graphics {
 
-    class PlotThemeManager : public Singleton<PlotThemeManager>, public FSystemWindowEventListener {
+    class PlotThemeManager : public Singleton<PlotThemeManager>, public FPlatformWindowEventListener {
     protected:
         friend Singleton<PlotThemeManager>;
         friend GraphTheme_ptr LoadStyle(const Str& style);

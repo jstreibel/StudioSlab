@@ -19,7 +19,7 @@ namespace Slab::Graphics {
     using Core::Log;
 
     BaseMonitor::BaseMonitor(CountType max_steps, const Str &channelName, int stepsBetweenDraws)
-            : Socket(channelName, stepsBetweenDraws), WindowPanel(), max_steps(max_steps) {
+            : Socket(channelName, stepsBetweenDraws), WindowPanel(FConfig{{}}), max_steps(max_steps) {
         AddWindow(guiWindow);
         SetColumnRelativeWidth(0, 0.1);
 

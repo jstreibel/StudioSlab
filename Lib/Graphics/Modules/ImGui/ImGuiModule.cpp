@@ -38,7 +38,7 @@ namespace Slab::Graphics {
     };
 
     FImGuiModule::FImGuiModule(FCallSet calls)
-    : FGUIModule("ImGui", nullptr)
+    : FGUIModule("ImGui")
     , CallSet(std::move(calls)) {
         IMGUI_CHECKVERSION();
 
@@ -63,8 +63,8 @@ namespace Slab::Graphics {
         NOT_IMPLEMENTED;
     }
 
-    Pointer<GUIContext> FImGuiModule::CreateContext(FOwnerSystemWindow ParentSystemWindow) {
-        auto NewContext = New<SlabImGuiContext>(ParentSystemWindow, CallSet);
+    Pointer<GUIContext> FImGuiModule::CreateContext(FOwnerPlatformWindow ParentSystemWindow) {
+        auto NewContext = New<FImGuiContext>(CallSet);
 
         // Setup Dear ImGui style
         SetStyleStudioSlab();   // For sizes

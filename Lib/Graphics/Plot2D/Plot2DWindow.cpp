@@ -56,7 +56,7 @@ namespace Slab::Graphics {
         DevFloat yMin,
         DevFloat yMax,
         Str _title,
-        const Pointer<SlabImGuiContext>& ArgGuiContext)
+        const Pointer<FImGuiContext>& ArgGuiContext)
     : Id(++WindowCount)
     , Region{{xMin, xMax, yMin, yMax}}
     , Title(std::move(_title))
@@ -70,7 +70,7 @@ namespace Slab::Graphics {
         {
             bGuiContextIsLocal = true;
             auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
-            GuiContext = DynamicPointerCast<SlabImGuiContext>(GuiModule.CreateContext(parent_system_window));
+            GuiContext = DynamicPointerCast<FImGuiContext>(GuiModule.CreateContext(w_ParentPlatformWindow));
             AddResponder(GuiContext);
         }
 
@@ -100,7 +100,7 @@ namespace Slab::Graphics {
 
     }
 
-    FPlot2DWindow::FPlot2DWindow(Str title, const Pointer<SlabImGuiContext>& GuiContext)
+    FPlot2DWindow::FPlot2DWindow(Str title, const Pointer<FImGuiContext>& GuiContext)
     : FPlot2DWindow(-1, 1, -1, 1, std::move(title), GuiContext) {    }
 
     void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {

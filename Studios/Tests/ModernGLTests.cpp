@@ -18,7 +18,7 @@ namespace Tests {
     using namespace Slab;
 
     ModernGLTests::ModernGLTests()
-    : Graphics::WindowRow("Modern OpenGL test")
+    : Graphics::FWindowRow("Modern OpenGL test")
     , program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
@@ -46,7 +46,7 @@ namespace Tests {
             for(auto j=0; j<texDim; ++j){
                 fix y = j/(float)texDim;
                 fix r = sqrt(x*x + y*y);
-                fix color = Graphics::Color(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
+                fix color = Graphics::FColor(.5f + .5f*sinf(2*M_PI*r), .5f + .5f*cosf(2*M_PI*r), 1);
                 texture.setColor(i, j, color);
                 realTexture.setValue(i, j, .5f+.5f*cosf(8*M_PI*r));
             }
@@ -61,7 +61,7 @@ namespace Tests {
     }
 
     void ModernGLTests::ImmediateDraw() {
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
 
         {
             // texture.bind();

@@ -2,8 +2,8 @@
 // Created by joao on 10/14/24.
 //
 
-#ifndef STUDIOSLAB_WRITEROPENGL_H
-#define STUDIOSLAB_WRITEROPENGL_H
+#ifndef STUDIOSLAB_WRITER_OPENGL_H
+#define STUDIOSLAB_WRITER_OPENGL_H
 
 #include "Graphics/OpenGL/OpenGL.h"
 
@@ -17,26 +17,26 @@
 
 namespace Slab::Graphics::OpenGL {
 
-    class WriterOpenGL : public Writer {
-        ftgl::texture_font_t *font = nullptr;
-        ftgl::texture_atlas_t *atlas = nullptr;
+    class FWriterOpenGL final : public Writer {
+        ftgl::texture_font_t *Font = nullptr;
+        ftgl::texture_atlas_t *Atlas = nullptr;
 
-        OpenGL::VertexBuffer VertexBuffer;
+        OpenGL::FVertexBuffer VertexBuffer;
         OpenGL::FShader Program;
 
-        ftgl::mat4 model{}, view{}, projection{};
+        ftgl::mat4 m_Model{}, m_View{}, m_Projection{};
 
         void DrawBuffer();
-        void SetBufferText(const Str &text, Point2D penLocation, Color color=White, bool vertical=false);
+        void SetBufferText(const Str &Text, Point2D PenLocation, FColor Color=White, bool Rotate90Degrees=false);
 
         void UploadAtlas() const;
 
     public:
-        WriterOpenGL() = delete;
-        WriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
-        virtual ~WriterOpenGL();
+        FWriterOpenGL() = delete;
+        FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload=nullptr);
+        ~FWriterOpenGL() override;
 
-        void Write(const Str& text, Point2D penLocation, Color color = White,
+        void Write(const Str& text, Point2D penLocation, FColor color = White,
                    bool vertical = false) override;
         [[nodiscard]] DevFloat GetFontHeightInPixels() const override;
         void Reshape(int w, int h) override;
@@ -48,4 +48,4 @@ namespace Slab::Graphics::OpenGL {
 
 } // Slab::Graphics::OpenGL
 
-#endif //STUDIOSLAB_WRITEROPENGL_H
+#endif //STUDIOSLAB_WRITER_OPENGL_H

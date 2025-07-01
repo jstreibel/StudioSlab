@@ -28,7 +28,7 @@ namespace Slab::Graphics::OpenGL {
                 auto g = float(color[2])/255.0f;
                 auto b = float(color[3])/255.0f;
 
-                texture->setColor(i, j, Color(r, g, b, a));
+                texture->setColor(i, j, FColor(r, g, b, a));
             }
         }
 

@@ -6,7 +6,7 @@
 #define STUDIOSLAB_IMGUICONTEXT_H
 
 #include "Graphics/Modules/GUIModule/GUIContext.h"
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 #include "3rdParty/ImGui.h"
 
 #include "Utils/Arrays.h"
@@ -28,14 +28,17 @@ namespace Slab::Graphics {
         NewFrameCall    NewFrame;
     };
 
-    class SlabImGuiContext final : public GUIContext {
+    class FImGuiContext final : public GUIContext {
         ImGuiContext *r_Context = nullptr;
 
         FCallSet CallSet;
 
+    protected:
+        void SetParentPlatformWindow(FOwnerPlatformWindow) override;
+
     public:
-        explicit SlabImGuiContext(FOwnerSystemWindow, FCallSet);
-        ~SlabImGuiContext() override = default;
+        explicit FImGuiContext(FCallSet);
+        ~FImGuiContext() override = default;
 
         DevFloat GetFontSize() const;
 

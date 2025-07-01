@@ -10,9 +10,9 @@
 #include "Graphics/Backend/Events/SystemWindowEventTranslator.h"
 
 namespace Slab::Graphics {
-    class GLFWEventTranslator final : public FEventTranslator, public GLFWListener{
+    class FGLFWEventTranslator final : public FEventTranslator, public FGLFWListener{
     public:
-        GLFWEventTranslator();
+        FGLFWEventTranslator();
 
         bool KeyboardEvent(GLFWwindow *, int key, int scancode, int action, int mods) override;
         bool CharEvent(GLFWwindow*, UInt codepoint) override;

@@ -21,79 +21,79 @@ namespace Slab::Graphics::OpenGL {
         float r, g, b, a; // color
     } vertex_t;
 
-    WriterOpenGL::WriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload)
+    FWriterOpenGL::FWriterOpenGL(const Str &fontFile, float ptSize, const char *glyphsToPreload)
             : VertexBuffer("vertex:3f,tex_coord:2f,color:4f"),
               Program(shaderDir + "v3f-t2f-c4f.vert", shaderDir + "v3f-t2f-c4f.frag") {
 
         auto factor = int(ceil(ptSize/30.));
 
-        atlas = texture_atlas_new(factor*512, factor*512, 1);
-        font = texture_font_new_from_file(atlas, ptSize, fontFile.c_str());
+        Atlas = texture_atlas_new(factor*512, factor*512, 1);
+        Font = texture_font_new_from_file(Atlas, ptSize, fontFile.c_str());
 
-        if(font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
+        if(Font == nullptr) throw Exception(Str("Bad font file: ") + fontFile);
 
         Core::Log::Critical() << "WriterOpenGL being instantiated. Will start generating atlas now." << Core::Log::Flush;
 
-        Color white = {1, 1, 1, 1};
-        glGenTextures(1, &atlas->id);
+        FColor white = {1, 1, 1, 1};
+        glGenTextures(1, &Atlas->id);
 
         if(glyphsToPreload != nullptr)
             SetBufferText(glyphsToPreload, {0, 0}, white);
 
-        mat4_set_identity(&projection);
-        mat4_set_identity(&model);
-        mat4_set_identity(&view);
+        mat4_set_identity(&m_Projection);
+        mat4_set_identity(&m_Model);
+        mat4_set_identity(&m_View);
 
         Core::Log::Success() << "WriterOpenGL with font '" << fontFile << "' with size " << ptSize << "pts instantiated."
                              << Core::Log::Flush;
     }
 
-    WriterOpenGL::~WriterOpenGL() {
-        glDeleteTextures(1, &atlas->id);
-        atlas->id = 0;
-        texture_atlas_delete(atlas);
+    FWriterOpenGL::~FWriterOpenGL() {
+        glDeleteTextures(1, &Atlas->id);
+        Atlas->id = 0;
+        texture_atlas_delete(Atlas);
 
         // "delete vertexBuffer;"
 
-        Str name = font->filename;
+        Str name = Font->filename;
         try {
             Core::Log::Warning() << "TODO: fix problematic font deletion. Font '" << name << "' was not deleted." << Core::Log::Flush;
             //texture_font_delete(font); // TODO: problematik
         } catch(...) {
             Core::Log::Warning() << "Deletion of font '" << name << "' did not go smooth." << Core::Log::Flush;
         }
-        font = nullptr;
+        Font = nullptr;
     }
 
-    void WriterOpenGL::UploadAtlas() const
+    void FWriterOpenGL::UploadAtlas() const
     {
-        if(font==nullptr || !font->atlas_dirty) return;
+        if(Font==nullptr || !Font->atlas_dirty) return;
 
-        glBindTexture(GL_TEXTURE_2D, atlas->id);
+        glBindTexture(GL_TEXTURE_2D, Atlas->id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei) atlas->width, (GLsizei) atlas->height,
-                     0, GL_RED, GL_UNSIGNED_BYTE, atlas->data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, (GLsizei) Atlas->width, (GLsizei) Atlas->height,
+                     0, GL_RED, GL_UNSIGNED_BYTE, Atlas->data);
 
-        font->atlas_dirty = 0;
+        Font->atlas_dirty = 0;
     }
 
-    void WriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, Color color, bool vertical) {
+    void FWriterOpenGL::SetBufferText(const Str &textStr, Point2D pen, FColor Color, bool Rotate90Degrees) {
         VertexBuffer.clear();
 
         size_t i;
-        float r = color.r, g = color.g, b = color.b, a = color.a;
+        float r = Color.r, g = Color.g, b = Color.b, a = Color.a;
         auto text = textStr.c_str();
         for (i = 0; i < strlen(text); i += utf8_characterByteSize(text + i)) {
             auto code_point = text + i;
 
-            texture_glyph_t *glyph = texture_font_get_glyph(font, code_point);
+            texture_glyph_t *glyph = texture_font_get_glyph(Font, code_point);
 
             if(glyph == nullptr){
                 Core::Log::Error() << "Graphics::OpenGL::WriterOpenGL could not load glyph '" << code_point << "' "
-                                   << "for font '" << font->filename << "'." << Core::Log::Flush;
+                                   << "for font '" << Font->filename << "'." << Core::Log::Flush;
             }
             else // if (glyph != nullptr)
             {
@@ -101,7 +101,7 @@ namespace Slab::Graphics::OpenGL {
                 if (i > 0)
                     kerning = texture_glyph_get_kerning(glyph, text + i - 1);
 
-                if(vertical){
+                if(Rotate90Degrees){
                     pen.y += kerning;
 
                     const int x0 = (int) (pen.x - glyph->offset_y);
@@ -148,30 +148,30 @@ namespace Slab::Graphics::OpenGL {
             }
         }
 
-        if(font->atlas_dirty) {
+        if(Font->atlas_dirty) {
             UploadAtlas();
         }
     }
 
-    void WriterOpenGL::DrawBuffer() {
+    void FWriterOpenGL::DrawBuffer() {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         constexpr auto TextureUnit = GL_TEXTURE0;
         glActiveTexture(TextureUnit);
-        glBindTexture(GL_TEXTURE_2D, atlas->id);
+        glBindTexture(GL_TEXTURE_2D, Atlas->id);
 
         Program.Use();
         Program.SetUniform("texture", TextureUnit - GL_TEXTURE0);
-        Program.SetUniform4x4("model", model.data);
-        Program.SetUniform4x4("view", view.data);
-        Program.SetUniform4x4("projection", projection.data);
+        Program.SetUniform4x4("model", m_Model.data);
+        Program.SetUniform4x4("view", m_View.data);
+        Program.SetUniform4x4("projection", m_Projection.data);
 
         VertexBuffer.Render(GL_TRIANGLES);
 
     }
 
-    void WriterOpenGL::Write(const Str &text, Point2D pen, Color color, bool vertical) {
+    void FWriterOpenGL::Write(const Str &text, Point2D pen, FColor color, bool vertical) {
         if(text.empty()) return;
 
         SetBufferText(text, pen, color, vertical);
@@ -181,21 +181,21 @@ namespace Slab::Graphics::OpenGL {
         CheckGLErrors(Str(__PRETTY_FUNCTION__) + " (1)");
     }
 
-    DevFloat WriterOpenGL::GetFontHeightInPixels() const { return font->height; }
+    DevFloat FWriterOpenGL::GetFontHeightInPixels() const { return Font->height; }
 
-    void WriterOpenGL::Reshape(int w, int h) {
-        mat4_set_orthographic(&projection, 0, (float) w, 0, (float) h, -1, 1);
+    void FWriterOpenGL::Reshape(int w, int h) {
+        mat4_set_orthographic(&m_Projection, 0, (float) w, 0, (float) h, -1, 1);
     }
 
-    void WriterOpenGL::Scale(float sx, float sy) {
-        mat4_scale(&view, sx, sy, 1);
+    void FWriterOpenGL::Scale(float sx, float sy) {
+        mat4_scale(&m_View, sx, sy, 1);
     }
 
-    void WriterOpenGL::Translate(float dx, float dy) {
-        mat4_translate(&view, dx, dy, 0);
+    void FWriterOpenGL::Translate(float dx, float dy) {
+        mat4_translate(&m_View, dx, dy, 0);
     }
 
-    void WriterOpenGL::ResetTransforms() {
-        mat4_set_identity(&view );
+    void FWriterOpenGL::ResetTransforms() {
+        mat4_set_identity(&m_View );
     }
 } // Slab::Graphics::OpenGL

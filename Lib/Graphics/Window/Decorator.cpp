@@ -43,7 +43,7 @@ namespace Slab::Graphics {
     }
 
     void Decorator::begin_decoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        auto flags = slab_window.getFlags();
+        auto flags = slab_window.GetFlags();
         fix should_clear    = !(flags & SlabWindowDontClear);
         fix should_decorate = !(flags & SlabWindowNoDecoration);
 
@@ -74,8 +74,8 @@ namespace Slab::Graphics {
         glEnd();
     }
 
-    void Decorator::finish_decoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
-        auto flags = slab_window.getFlags();
+    void Decorator::FinishDecoration(const FSlabWindow &slab_window, int x_mouse, int y_mouse) {
+        auto flags = slab_window.GetFlags();
         fix should_decorate = !(flags & SlabWindowNoDecoration);
 
         if(!should_decorate) return;
@@ -98,7 +98,7 @@ namespace Slab::Graphics {
         // *** Borders ***
         glBegin(GL_LINE_LOOP);
         {
-            auto bc = slab_window.isActive() ? WindowStyle::windowBorderColor_active
+            auto bc = slab_window.IsActive() ? WindowStyle::windowBorderColor_active
                                              : WindowStyle::windowBorderColor_inactive;
 
             glColor4fv(bc.asFloat4fv());
@@ -133,7 +133,7 @@ namespace Slab::Graphics {
         }
 
         fix h_font = writer.GetFontHeightInPixels();
-        auto color = Color(32./255,32./255,32./255, 1);
+        auto color = FColor(32./255,32./255,32./255, 1);
         writer.Write(slab_window.GetTitle(), {(DevFloat)x+WindowStyle::font_size/2, syswin_h-(DevFloat)y - h_font}, color);
     }
 

@@ -52,7 +52,7 @@ namespace Slab::Graphics {
         off_sync.unlock();
     }
 
-    Pointer<SystemWindow> SFMLBackend::CreateSystemWindow(const Str &title) {
+    Pointer<FPlatformWindow> SFMLBackend::CreatePlatformWindow(const Str &title) {
         return New<SFMLSystemWindow>();
     }
 

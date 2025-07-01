@@ -42,7 +42,7 @@ namespace Slab::Graphics::OpenGL {
         void setData(const PixelData &data);
         auto getData() const -> const PixelData&;
 
-        void setBorderColor(Color color) const;
+        void setBorderColor(FColor color) const;
 
         int getTextureUnit() const;
         GLuint getGLtextureUnit() const;

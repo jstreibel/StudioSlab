@@ -97,13 +97,15 @@ namespace Slab::Models::KGR2toR {
 
         ///********************************************************************************************/
         if (*VisualMonitor) {
-            auto backend = Slab::Graphics::GetGraphicsBackend();
+            auto Backend = Slab::Graphics::GetGraphicsBackend();
 
             auto glOut = Graphics::BaseMonitor_ptr(this->buildOpenGLOutput());
 
-            auto wm = New<Graphics::SlabWindowManager>(backend->GetMainSystemWindow().get());
-            wm->AddSlabWindow(glOut, false);
-            backend->GetMainSystemWindow()->AddAndOwnEventListener(wm);
+            const auto WindowManager = New<Graphics::SlabWindowManager>();
+            Backend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
+
+            WindowManager->AddSlabWindow(glOut, false);
+
             sockets.emplace_back(glOut);
         }
         else sockets.emplace_back(New<OutputConsoleMonitor>(kg_numeric_config->getn()));

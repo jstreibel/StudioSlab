@@ -17,20 +17,20 @@
 namespace Slab::Graphics {
 
     class FGUIWindow : public FSlabWindow {
-        Vector<Pair<Str, Color>> Stats;
+        Vector<Pair<Str, FColor>> Stats;
 
-        Pointer<SlabImGuiContext> GuiContext;
+        Pointer<FImGuiContext> GuiContext;
 
         void Begin() const;
         void End() const;
     public:
-        explicit FGUIWindow(Config=Config{});
+        explicit FGUIWindow(FConfig);
 
-        void AddVolatileStat(const Str &stat, Color color = {-1, -1, -1});
+        void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 
         void AddExternalDraw(const FDrawCall&) const;
 
-        Pointer<SlabImGuiContext> GetGUIContext();
+        Pointer<FImGuiContext> GetGUIContext();
 
         void ImmediateDraw() override;
 

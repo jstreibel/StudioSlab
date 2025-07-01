@@ -20,10 +20,15 @@ namespace Slab::Graphics {
         Str Id;
 
         Pointer<FSlabWindow> SlabWindow;
-        Pointer<SlabImGuiContext> Context;
+        Pointer<FImGuiContext> Context;
 
     public:
-        explicit FImGuiWindow(Pointer<FSlabWindow>, Pointer<SlabImGuiContext> Context);
+        /**
+         * @param SlabWindow The window to wrap with an ImGui window.
+         * @param Context The ImGui context within which to show this window. If nullptr, then the
+         * main context from the main window is used.
+         */
+        explicit FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
 
         void ImmediateDraw() override;
 

@@ -24,7 +24,7 @@ namespace Modes::DatabaseViewer {
     #define z_order(z) (z)
 
     DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
-    : WindowRow()
+    : FWindowRow()
     , guiWindow()
     , allDataDisplay("All data")
     , fullParticularHistoryDisplay("Particular data")
@@ -96,7 +96,7 @@ namespace Modes::DatabaseViewer {
         winCol->addWindow(Naked(massesGraph));
         winCol->addWindow(Naked(topRow), 0.75);
 
-        AddWindow(winCol, WindowRow::Left, .8);
+        AddWindow(winCol, FWindowRow::Left, .8);
 
         reloadData();
     }
@@ -138,7 +138,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 
     void DBViewerMulti::updateKGDispersion(bool visible) {
@@ -312,7 +312,7 @@ namespace Modes::DatabaseViewer {
             return true;
         }
 
-        return WindowRow::NotifyKeyboard(key, state, modKeys);
+        return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     auto DBViewerMulti::NotifyMouseButton(Graphics::EMouseButton button, Graphics::EKeyState state, Graphics::EModKeys keys) -> bool {
@@ -326,7 +326,7 @@ namespace Modes::DatabaseViewer {
             }
         }
 
-        return WindowRow::NotifyMouseButton(button, state, keys);
+        return FWindowRow::NotifyMouseButton(button, state, keys);
     }
 
     void DBViewerMulti::reloadData() {
@@ -395,7 +395,7 @@ namespace Modes::DatabaseViewer {
             return true;
         };
 
-        return WindowRow::NotifyMouseMotion(x, y, dx, dy);
+        return FWindowRow::NotifyMouseMotion(x, y, dx, dy);
     }
 
 }

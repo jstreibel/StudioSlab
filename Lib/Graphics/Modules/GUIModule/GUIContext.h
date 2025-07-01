@@ -25,13 +25,15 @@ namespace Slab::Graphics {
         MainMenuAction Action=[](const Str&){};
     };
 
-    class GUIContext : public FSystemWindowEventListener {
+    class GUIContext : public FPlatformWindowEventListener {
     protected:
         Vector<FDrawCall> DrawCalls;
 
         void FlushDrawCalls();
+
+
     public:
-        explicit GUIContext(FOwnerSystemWindow);
+        explicit GUIContext();
 
         virtual void Bind() = 0;
         virtual void NewFrame() = 0;

@@ -5,6 +5,7 @@
 #include "BlueprintRenderer.h"
 
 #include "3rdParty/ImGui.h"
+#include "Core/Tools/Resources.h"
 
 namespace Slab::Blueprints {
     static inline ImRect ImGui_GetItemRect()
@@ -972,4 +973,5 @@ namespace Slab::Blueprints {
         ImGui::End();
         ImGui::PopStyleVar(2);
     }
+
 }

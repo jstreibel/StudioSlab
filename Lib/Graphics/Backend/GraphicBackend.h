@@ -7,7 +7,7 @@
 
 #include "Core/Backend/Backend.h"
 #include "Graphics/Modules/GraphicsModule.h"
-#include "SystemWindow.h"
+#include "PlatformWindow.h"
 
 namespace Slab::Graphics {
 
@@ -18,29 +18,29 @@ namespace Slab::Graphics {
 
         explicit GraphicBackend(const Str &name);
 
-        Vector<Volatile<GraphicsModule>> graphicModules;
-        List<Pointer<SystemWindow>> SystemWindows;
+        Vector<TVolatile<GraphicsModule>> GraphicModules;
+        List<Pointer<FPlatformWindow>> SystemWindows;
 
         virtual void ClearModules();
         void UnloadAllModules();
 
         virtual
-        Pointer<SystemWindow> CreateSystemWindow(const Str& title) = 0;
+        Pointer<FPlatformWindow> CreatePlatformWindow(const Str& title) = 0;
 
     public:
         ~GraphicBackend() override;
 
-        Pointer<SystemWindow>
+        Pointer<FPlatformWindow>
         NewSystemWindow(const Str& title);
 
-        Pointer<SystemWindow>
+        Pointer<FPlatformWindow>
         GetMainSystemWindow();
 
-        void SetupGUI(const SystemWindow *) const;
+        void SetupGUI(const FPlatformWindow *) const;
 
-        void AddGraphicsModule(const Volatile<GraphicsModule> &module);
+        void AddGraphicsModule(const TVolatile<GraphicsModule> &module);
 
-        auto GetGraphicsModules() -> const Vector<Volatile<GraphicsModule>> &;
+        auto GetGraphicsModules() -> const Vector<TVolatile<GraphicsModule>> &;
 
         void Terminate() override;
 

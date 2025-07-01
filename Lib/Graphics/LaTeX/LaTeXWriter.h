@@ -22,7 +22,7 @@ namespace Slab::Graphics::LaTeX {
     class LaTeXWriter {
         Pointer<tex::Graphics2D> graphics2D;
 
-        OpenGL::VertexBuffer vertexBuffer;
+        OpenGL::FVertexBuffer vertexBuffer;
         OpenGL::FShader program;
         Pointer<OpenGL::Texture2D_Color> texture;
 

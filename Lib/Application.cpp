@@ -23,7 +23,7 @@ namespace Slab {
     , ArgValues( argv)
     , m_Name(std::move(name))
     {
-        Startup();
+        Slab::Startup();
 
         Core::Log::Info() << "Compiler: " << USED_CXX_COMPILER << Core::Log::Flush;
         // Log::Info() << "Compiler: " << COMPILER_NAME << Log::Flush;

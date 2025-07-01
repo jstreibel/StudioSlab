@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(Config=Config());
+        explicit WindowPanel(FConfig);
 
         void AddWindow(const Pointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 

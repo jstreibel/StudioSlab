@@ -10,7 +10,7 @@
 
 namespace Slab::Graphics {
 
-    enum MouseCursor {
+    enum FMouseCursor {
         Mouse_ArrowCursor,
         Mouse_IBeamCursor,
         Mouse_CrossHairCursor,
@@ -19,10 +19,8 @@ namespace Slab::Graphics {
         Mouse_VResizeCursor,
     };
 
-    class FMouseState : public FSystemWindowEventListener {
+    class FMouseState final : public FPlatformWindowEventListener {
     public:
-        explicit FMouseState(FOwnerSystemWindow);
-
         int x = 0,
             y = 0;
 

@@ -13,16 +13,16 @@
 namespace Slab::Graphics {
 
     class FEventTranslator {
-        friend class SystemWindow;
+        friend class FPlatformWindow;
     protected:
-        List<Volatile<FSystemWindowEventListener>> SysWinListeners;
+        List<TVolatile<FPlatformWindowEventListener>> SysWinListeners;
 
     public:
         FEventTranslator();
         virtual ~FEventTranslator() = default;
 
 
-        bool AddGUIEventListener(const Volatile<FSystemWindowEventListener> &guiEventListener);
+        bool AddGUIEventListener(const TVolatile<FPlatformWindowEventListener> &GuiEventListener);
         void clear();
 
     };

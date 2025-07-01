@@ -12,7 +12,7 @@
 
 namespace Slab::Graphics {
 
-    class WindowRow : public FSlabWindow {
+    class FWindowRow : public FSlabWindow {
         struct WinMetaData {
             Pointer<FSlabWindow> window;
             DevFloat width;
@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         bool assertConsistency() const;
 
     public:
-        explicit WindowRow(Str title="", Int flags = 0x0);
+        explicit FWindowRow(Str Title="", Int Flags = 0x0);
 
         enum RelativePosition {
             Left, Right

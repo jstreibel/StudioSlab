@@ -77,7 +77,7 @@ namespace Slab::Models::KGRtoR {
     }
 
     auto KGRtoRBuilder::buildOutputSockets() -> Vector<Pointer<Socket>> {
-        Vector<Pointer<Socket>> sockets;
+        Vector<Pointer<Socket>> Sockets;
 
         UseScientificNotation = false;
         RealToStringDecimalPlaces = 7;
@@ -108,20 +108,20 @@ namespace Slab::Models::KGRtoR {
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
-            sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
+            Sockets.emplace_back(Slab::New<SnapshotOutput>(snapshotFilename));
         }
         if (*takeSpaceDFTSnapshot) {
             const auto snapshotsFolder = Common::GetPWD() + "/snapshots/";
             Utils::TouchFolder(snapshotsFolder);
 
             auto snapshotFilename = snapshotsFolder + suggestFileName();
-            sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
+            Sockets.emplace_back(Slab::New<DFTSnapshotOutput>(N, L, snapshotFilename));
         }
         if(*takeTimeDFTSnapshot) {
             auto time_dftsnapshots = getTimeDFTSnapshots();
 
             for(auto &socket : time_dftsnapshots)
-                sockets.emplace_back(socket);
+                Sockets.emplace_back(socket);
         }
 
 
@@ -139,7 +139,7 @@ namespace Slab::Models::KGRtoR {
             fix stepsInterval = static_cast<UInt>(N / (Nₒᵤₜ * r));
 
             Socket_ptr out = Slab::New<OutputHistoryToFile>(stepsInterval, spaceFilter, outputFileName, outputFilter);
-            sockets.emplace_back(out);
+            Sockets.emplace_back(out);
         }
 
 
@@ -148,7 +148,7 @@ namespace Slab::Models::KGRtoR {
            *************************** VISUAL MONITOR *********************************************
            **************************************************************************************** */
         if (shouldOutputOpenGL) {
-            auto guiBackend = Slab::Graphics::GetGraphicsBackend();
+            auto GuiBackend = Slab::Graphics::GetGraphicsBackend();
 
             auto outputOpenGL = Pointer<Monitor>(static_cast<Monitor *>(buildOpenGLOutput()));
 
@@ -163,24 +163,26 @@ namespace Slab::Models::KGRtoR {
 
                 auto ftHistory = Slab::New<SimHistory_DFT>(max_steps, t, N, L, nₒᵤₜ);
 
-                sockets.emplace_back(simHistory);
-                sockets.emplace_back(ftHistory);
+                Sockets.emplace_back(simHistory);
+                Sockets.emplace_back(ftHistory);
 
                 outputOpenGL->setSimulationHistory(Slab::Naked(simHistory->getData()));
                 outputOpenGL->SetSpaceFourierHistory(Slab::Naked(ftHistory->getData()),
                                                      ftHistory->GetDFTDataHistory());
             }
 
-            const auto wm = New<SlabWindowManager>(guiBackend->GetMainSystemWindow().get());
+            const auto WindowManager = New<SlabWindowManager>();
+            GuiBackend->GetMainSystemWindow()->AddAndOwnEventListener(WindowManager);
+
             auto Window = Pointer<FSlabWindow>(outputOpenGL);
-            wm->AddSlabWindow(Window, false);
-            guiBackend->GetMainSystemWindow()->AddAndOwnEventListener(wm);
-            sockets.emplace_back(outputOpenGL);
+            WindowManager->AddSlabWindow(Window, false);
+
+            Sockets.emplace_back(outputOpenGL);
         } else {
-            sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
+            Sockets.emplace_back(Slab::New<OutputConsoleMonitor>(max_steps, max_steps/2));
         }
 
-        return sockets;
+        return Sockets;
 
     }
 

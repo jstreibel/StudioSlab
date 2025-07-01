@@ -126,6 +126,10 @@ namespace Slab::Graphics {
         return false;
     }
 
+    WindowColumn::WindowColumn() : FSlabWindow(FConfig{{}, "<col>"})
+    {
+    }
+
     void WindowColumn::ImmediateDraw() {
         for (auto &win: windows) {
             win->ImmediateDraw();

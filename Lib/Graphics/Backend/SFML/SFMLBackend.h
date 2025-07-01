@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         void Terminate() override;
 
     protected:
-        Pointer<SystemWindow> CreateSystemWindow(const Str &title) override;
+        Pointer<FPlatformWindow> CreatePlatformWindow(const Str &title) override;
 
     public:
 

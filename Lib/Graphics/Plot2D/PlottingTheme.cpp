@@ -8,11 +8,11 @@
 
 namespace Slab::Graphics {
 
-    PlottingTheme::PlottingTheme(Color graphBackground,
-                                 Color graphNumbersColor,
-                                 Color graphTitleColor,
-                                 Color axisColor,
-                                 Color majorTickColor,
+    PlottingTheme::PlottingTheme(FColor graphBackground,
+                                 FColor graphNumbersColor,
+                                 FColor graphTitleColor,
+                                 FColor axisColor,
+                                 FColor majorTickColor,
                                  PlotStyle XHairStyle,
                                  PlotStyle majorGridStyle,
                                  PlotStyle minorGridStyle,

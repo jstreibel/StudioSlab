@@ -18,8 +18,10 @@ namespace Slab::Graphics {
 
         bool assertConsistency() const;
 
+
+
     public:
-        WindowColumn() = default;
+        WindowColumn();
 
         void addWindow(const Pointer<FSlabWindow>& window, float windowHeight = -1);
 

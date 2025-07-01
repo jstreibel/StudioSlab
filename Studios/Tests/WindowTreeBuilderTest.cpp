@@ -13,9 +13,9 @@
 using namespace Slab;
 
 WindowTreeBuilderTest::WindowTreeBuilderTest()
-: FSlabWindow(Config{"Tree builder test"})
+: FSlabWindow(FConfig{"Tree builder test"})
 , osc(0.0, -0.5, 0.75, 0.15, false, false)  {
-    Graphics::WindowTreeBuilder treeBuilder(Graphics::WindowStyle::default_window_rect);
+    Graphics::WindowTreeBuilder treeBuilder(Graphics::WindowStyle::DefaultWindowRect);
 
     Graphics::FSlabWindow *window = nullptr;
 

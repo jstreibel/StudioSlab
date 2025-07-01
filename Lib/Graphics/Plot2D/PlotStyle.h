@@ -49,10 +49,10 @@ namespace Slab::Graphics {
         void setStipplePattern(GLshort);
         auto getStipplePattern() -> GLshort;
 
-        explicit PlotStyle(Color color,
+        explicit PlotStyle(FColor color,
                            LinePrimitive primitive=Solid,
                            bool filled=true,
-                           Color fillColor=Nil,
+                           FColor fillColor=Nil,
                            float thickness=1.3);
 
         Pointer<PlotStyle> clone();
@@ -60,8 +60,8 @@ namespace Slab::Graphics {
         PlotStyle permuteColors(bool odd=false) const;
 
         bool filled;
-        Color lineColor;
-        Color fillColor;
+        FColor lineColor;
+        FColor fillColor;
         float thickness;
 
 

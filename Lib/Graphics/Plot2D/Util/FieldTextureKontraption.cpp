@@ -34,7 +34,7 @@ namespace Slab::Graphics {
 
         fix Lx = xMax_f-xMin_f;
 
-        vertexBuffer = New<OpenGL::VertexBuffer>("vertex:2f,tex_coord:2f");
+        vertexBuffer = New<OpenGL::FVertexBuffer>("vertex:2f,tex_coord:2f");
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
         fix n=0;

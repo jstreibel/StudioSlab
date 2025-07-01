@@ -10,13 +10,14 @@
 
 namespace Slab::Graphics {
 
-    class FWindowManager : public FSystemWindowEventListener {
-        public:
-        FWindowManager() = delete;
-        explicit FWindowManager(SystemWindow *Parent);
+    class FWindowManager : public FPlatformWindowEventListener {
+
+    public:
 
         void AddSlabWindow(const Pointer<FSlabWindow>&);
+
         virtual void AddSlabWindow(const Pointer<FSlabWindow>&, bool hidden) = 0;
+
     };
 
 } // Slab::Graphics

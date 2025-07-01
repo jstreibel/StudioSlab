@@ -10,31 +10,31 @@
 
 
 namespace Slab::Graphics {
-    Color White = {1,1,1,1};
-    Color Black = {0,0,0,1};
-    Color Red = {1,0,0,1};
+    FColor White = {1,1,1,1};
+    FColor Black = {0,0,0,1};
+    FColor Red = {1,0,0,1};
 
-    Color::Color() = default;
+    FColor::FColor() = default;
 
-    Color::Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
+    FColor::FColor(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
-    Color::Color(Color rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
+    FColor::FColor(FColor rgb, float a) : r(rgb.r), g(rgb.g), b(rgb.b), a(a) {}
 
-    auto Color::permute(bool odd) const -> Color {
+    auto FColor::permute(bool odd) const -> FColor {
         if (odd) return {b, g, r, a};
 
         else return {b, r, g, a};
     }
 
-    auto Color::inverse(bool invertAlpha) const -> Color {
+    auto FColor::inverse(bool invertAlpha) const -> FColor {
         return {1-r, 1-g, 1-b, invertAlpha ? 1-a : a};
     }
 
-    auto Color::FromBytes(Byte r, Byte g, Byte b, Byte a) -> Color {
+    auto FColor::FromBytes(Byte r, Byte g, Byte b, Byte a) -> FColor {
         return {(float)r / 255.f, (float)g / 255.f, (float)b / 255.f, (float)a / 255.f};
     }
 
-    auto Color::FromHex(Str hex) -> Color {
+    auto FColor::FromHex(Str hex) -> FColor {
         const auto size = hex.length();
 
         if((size!=7 && size!=9) || hex[0] != '#')
@@ -64,14 +64,14 @@ namespace Slab::Graphics {
         return {r, g, b, a};
     }
 
-    auto Color::rgb() const -> Color { return {r, g, b, a}; }
-    auto Color::brg() const -> Color { return {b, r, g, a}; }
-    auto Color::gbr() const -> Color { return {g, b, r, a}; }
-    auto Color::bgr() const -> Color { return {b, g, r, a}; }
-    auto Color::grb() const -> Color { return {g, r, b, a}; }
-    auto Color::rbg() const -> Color { return {r, b, r, a}; }
+    auto FColor::rgb() const -> FColor { return {r, g, b, a}; }
+    auto FColor::brg() const -> FColor { return {b, r, g, a}; }
+    auto FColor::gbr() const -> FColor { return {g, b, r, a}; }
+    auto FColor::bgr() const -> FColor { return {b, g, r, a}; }
+    auto FColor::grb() const -> FColor { return {g, r, b, a}; }
+    auto FColor::rbg() const -> FColor { return {r, b, r, a}; }
 
-    auto Color::operator==(const Color &rhs) const -> bool {
+    auto FColor::operator==(const FColor &rhs) const -> bool {
         fix eps = 1.e-4;
         return Common::AreEqual(r, rhs.r, eps) &&
                Common::AreEqual(g, rhs.g, eps) &&
@@ -79,19 +79,19 @@ namespace Slab::Graphics {
                Common::AreEqual(a, rhs.a, eps);
     }
 
-    auto Color::array() const -> std::array<Real32, 4> {
+    auto FColor::array() const -> std::array<Real32, 4> {
         return std::array<Real32, 4>({r, g, b, a});
     }
 
-    auto Color::asFloat4fv() const -> const float * {
+    auto FColor::asFloat4fv() const -> const float * {
         return reinterpret_cast<const float*>(this);
     }
 
-    auto Color::asFloat4fv() -> float * {
+    auto FColor::asFloat4fv() -> float * {
         return reinterpret_cast<float*>(this);
     }
 
-    Color Color::operator*(const Real32 v) const {
+    FColor FColor::operator*(const Real32 v) const {
         return {v*r, v*g, v*b, v*a};
     }
 }

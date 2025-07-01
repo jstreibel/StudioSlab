@@ -12,7 +12,7 @@
 namespace Slab::Graphics {
 
     MainViewer::MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction)
-    : Graphics::WindowRow()
+    : Graphics::FWindowRow()
     , base_function(std::move(baseFunction)) {
 
         auto font_size = gui_window->GetGUIContext()->GetFontSize();
@@ -38,11 +38,14 @@ namespace Slab::Graphics {
     }
 
     void MainViewer::ImmediateDraw() {
-        auto gui_context = parent_system_window->GetGUIContext();
+        IN OwnerWindow = w_ParentPlatformWindow.lock();
+        if (OwnerWindow == nullptr) return;
 
-        if(gui_context == nullptr) return;
+        IN GuiContext = OwnerWindow->GetGUIContext();
 
-        gui_context->AddDrawCall(
+        if(GuiContext == nullptr) return;
+
+        GuiContext->AddDrawCall(
                 [this]() {
                     if (ImGui::BeginMainMenuBar()) {
                         if (ImGui::BeginMenu("Viewers")) {
@@ -80,14 +83,14 @@ namespace Slab::Graphics {
                 }
         );
 
-        WindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw();
     }
 
     bool MainViewer::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {
         if(state==Press && key >= EKeyMap::Key_1 && key <= EKeyMap::Key_9)
             if(setCurrentViewer(key - EKeyMap::Key_1)) return true;
 
-        return WindowRow::NotifyKeyboard(key, state, modKeys);
+        return FWindowRow::NotifyKeyboard(key, state, modKeys);
     }
 
     bool MainViewer::setCurrentViewer(Index i) {

@@ -40,7 +40,7 @@ namespace Slab::Graphics::OpenGL {
             Log::Note() << "OpenGL::Texture allocated " << sizeMB << "MB of GPU texture data." << Log::Flush;
     }
 
-    bool Texture1D_Color::setColor(int i, Color color) {
+    bool Texture1D_Color::setColor(int i, FColor color) {
         if(data == nullptr) return false;
 
         fix index = i*4;

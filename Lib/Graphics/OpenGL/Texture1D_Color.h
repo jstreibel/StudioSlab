@@ -24,7 +24,7 @@ namespace Slab::Graphics::OpenGL {
     public:
         Texture1D_Color(GLsizei length, GLenum textureUnit = GL_TEXTURE0);
 
-        bool setColor(int i, Color color);
+        bool setColor(int i, FColor color);
 
         void setWrap(OpenGL::WrapMode) const;
 

@@ -11,11 +11,11 @@
 namespace Slab::Graphics {
 
     struct PlottingTheme {
-        PlottingTheme(Color graphBackground,
-                      Color graphNumbersColor,
-                      Color graphTitleColor,
-                      Color axisColor,
-                      Color majorTickColor,
+        PlottingTheme(FColor graphBackground,
+                      FColor graphNumbersColor,
+                      FColor graphTitleColor,
+                      FColor axisColor,
+                      FColor majorTickColor,
                       PlotStyle XHairStyle,
                       PlotStyle majorGridStyle,
                       PlotStyle minorGridStyle,
@@ -23,11 +23,11 @@ namespace Slab::Graphics {
                       std::shared_ptr <Graphics::Writer> ticksWriter,
                       Vector <PlotStyle> plotStyles);
 
-        Color graphBackground;
-        Color graphNumbersColor;
-        Color graphTitleColor;
-        Color axisColor;
-        Color majorTickColor;
+        FColor graphBackground;
+        FColor graphNumbersColor;
+        FColor graphTitleColor;
+        FColor axisColor;
+        FColor majorTickColor;
         PlotStyle XHairStyle;
         PlotStyle majorGridLines;
         PlotStyle minorGridLines;

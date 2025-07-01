@@ -48,7 +48,7 @@ namespace Slab::Graphics {
         Math::PointSet XHair;
 
         bool bGuiContextIsLocal;
-        Pointer<SlabImGuiContext> GuiContext;
+        Pointer<FImGuiContext> GuiContext;
 
         void SetupOrtho() const;
 
@@ -72,11 +72,11 @@ namespace Slab::Graphics {
             DevFloat yMin,
             DevFloat yMax,
             Str title,
-            const Pointer<SlabImGuiContext>& ArgGuiContext);
+            const Pointer<FImGuiContext>& ArgGuiContext);
 
     public:
 
-        explicit FPlot2DWindow(Str title, const Pointer<SlabImGuiContext>& guiContext=nullptr);
+        explicit FPlot2DWindow(Str title, const Pointer<FImGuiContext>& guiContext=nullptr);
 
         void ImmediateDraw() override;
         auto RegisterDeferredDrawCalls() -> void override;

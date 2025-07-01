@@ -12,7 +12,7 @@ namespace Slab::Lost {
 
     Graph::Graph(sf::IntRect subWindow, sf::Vector2f rMin, sf::Vector2f rMax,
                  const Str xAxisLabel, const Str yAxisLabel, sf::PrimitiveType primitiveType)
-            : theData(primitiveType), scale(scale), rMin(rMin), rMax(rMax) {
+            : theData(primitiveType), scale(1.0, 1.0), rMin(rMin), rMax(rMax) {
         setPlacing(subWindow);
 
         if (!font.loadFromFile("/home/joao/Developer/StudioSlab/Resources/Fonts/static/EBGaramond-Regular.ttf")) {

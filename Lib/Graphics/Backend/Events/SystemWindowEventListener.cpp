@@ -7,36 +7,40 @@
 // #include <crude_json.h>
 #include <Core/Tools/Log.h>
 
+#include "Graphics/SlabGraphics.h"
 #include "Utils/ReferenceIterator.h"
 
-#include "Graphics/Backend/SystemWindow.h"
+#include "Graphics/Backend/PlatformWindow.h"
 
 namespace Slab::Graphics {
 
-    FSystemWindowEventListener::FSystemWindowEventListener() : parent_system_window(nullptr) { }
-
-    FSystemWindowEventListener::FSystemWindowEventListener(FOwnerSystemWindow parent)
-    : parent_system_window(parent) {}
-
-    FSystemWindowEventListener::~FSystemWindowEventListener() = default;
-
-    void FSystemWindowEventListener::SetParentSystemWindow(SystemWindow* syswin) {
-        parent_system_window = syswin;
-
-        NotifySystemWindowReshape(syswin->GetWidth(), syswin->GetHeight());
+    FPlatformWindowEventListener::FPlatformWindowEventListener(const FOwnerPlatformWindow& ParentPlatformWindow)
+    : Priority(0), w_ParentPlatformWindow(ParentPlatformWindow)
+    {
     }
 
-    void FSystemWindowEventListener::AddResponder(const Volatile<FSystemWindowEventListener>& responder) {
+    FPlatformWindowEventListener::~FPlatformWindowEventListener() = default;
+
+    void FPlatformWindowEventListener::SetParentPlatformWindow(const FOwnerPlatformWindow Parent) {
+        w_ParentPlatformWindow = Parent;
+
+        if (const auto ParentPtr = Parent.lock())
+        {
+            NotifySystemWindowReshape(ParentPtr->GetWidth(), ParentPtr->GetHeight());
+        }
+    }
+
+    void FPlatformWindowEventListener::AddResponder(const TVolatile<FPlatformWindowEventListener>& responder) {
         assert(responder.lock().get() != this);
 
         delegateResponders.emplace_back(responder);
     }
 
-    bool FSystemWindowEventListener::HasResponders() const {
+    bool FPlatformWindowEventListener::HasResponders() const {
         return !delegateResponders.empty();
     }
 
-    void FSystemWindowEventListener::RemoveResponder(const Pointer<FSystemWindowEventListener>& to_remove) {
+    void FPlatformWindowEventListener::RemoveResponder(const Pointer<FPlatformWindowEventListener>& to_remove) {
         auto responder = delegateResponders.begin();
 
         while(responder != delegateResponders.end()) {
@@ -48,33 +52,33 @@ namespace Slab::Graphics {
 
     }
 
-    void FSystemWindowEventListener::CursorEntered(bool entered) {
+    void FPlatformWindowEventListener::CursorEntered(bool entered) {
         IterateReferences(delegateResponders, FuncRun(CursorEntered, entered));
     }
 
-    bool FSystemWindowEventListener::NotifyMouseMotion(int x, int y, int dx, int dy) {
+    bool FPlatformWindowEventListener::NotifyMouseMotion(int x, int y, int dx, int dy) {
         return IterateReferences(delegateResponders, Func(NotifyMouseMotion, x, y, dx, dy));
     }
 
-    bool FSystemWindowEventListener::NotifySystemWindowReshape(int w, int h) {
+    bool FPlatformWindowEventListener::NotifySystemWindowReshape(int w, int h) {
         return IterateReferences(delegateResponders, Func(NotifySystemWindowReshape, w, h));
     }
 
-    bool FSystemWindowEventListener::NotifyRender(){
+    bool FPlatformWindowEventListener::NotifyRender(){
         return IterateReferences(delegateResponders, Func(NotifyRender));
     }
 
-    bool FSystemWindowEventListener::NotifyKeyboard(EKeyMap key,
+    bool FPlatformWindowEventListener::NotifyKeyboard(EKeyMap key,
                                                    EKeyState state,
                                                    EModKeys modKeys){
         return IterateReferences(delegateResponders, Func(NotifyKeyboard, key, state, modKeys));
     }
 
-    bool FSystemWindowEventListener::NotifyCharacter(UInt codepoint) {
+    bool FPlatformWindowEventListener::NotifyCharacter(UInt codepoint) {
         return IterateReferences(delegateResponders, Func(NotifyCharacter, codepoint));
     }
 
-    bool FSystemWindowEventListener::
+    bool FPlatformWindowEventListener::
     NotifyMouseButton(EMouseButton button,
                       EKeyState state,
                       EModKeys mods) {
@@ -82,12 +86,12 @@ namespace Slab::Graphics {
     }
 
 
-    bool FSystemWindowEventListener::
+    bool FPlatformWindowEventListener::
     NotifyMouseWheel(double dx, double dy) {
         return IterateReferences(delegateResponders, Func(NotifyMouseWheel, dx, dy));
     }
 
-    bool FSystemWindowEventListener::
+    bool FPlatformWindowEventListener::
     NotifyFilesDropped(StrVector paths) {
         return IterateReferences(delegateResponders, Func(NotifyFilesDropped, paths));
     }

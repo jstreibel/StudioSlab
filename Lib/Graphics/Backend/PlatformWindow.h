@@ -18,13 +18,17 @@ namespace Slab::Graphics {
 
     using RawPlatformWindow_Ptr = void*;
 
-    class SystemWindow {
+    class FPlatformWindow {
         friend class GraphicBackend;
 
-        Vector<Pointer<FSystemWindowEventListener>> Stash;
+        Vector<Pointer<FPlatformWindowEventListener>> Stash;
         Pointer<GUIContext> GuiContext = nullptr;
 
+        TVolatile<FPlatformWindow> SelfReference;
+
     protected:
+        virtual bool ProvideSelfReference(const TVolatile<FPlatformWindow>&);
+
         Pointer<FEventTranslator> EventTranslator;
         RawPlatformWindow_Ptr r_Window;
 
@@ -34,9 +38,10 @@ namespace Slab::Graphics {
 
         virtual void Cycle() = 0;
     public:
-        explicit SystemWindow(void *window_ptr, Pointer<FEventTranslator>);
+        FPlatformWindow() = delete;
+        explicit FPlatformWindow(void *window_ptr, Pointer<FEventTranslator>);
 
-        virtual ~SystemWindow() = default;
+        virtual ~FPlatformWindow() = default;
 
         void Render();
 
@@ -50,11 +55,11 @@ namespace Slab::Graphics {
 
         RawPlatformWindow_Ptr GetRawPlatformWindowPointer() const;
 
-        auto AddEventListener(const Volatile<FSystemWindowEventListener> &listener) -> bool;
-        auto AddAndOwnEventListener(const Pointer<FSystemWindowEventListener> &listener) -> bool;
+        auto AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool;
+        auto AddAndOwnEventListener(const Pointer<FPlatformWindowEventListener> &Listener) -> bool;
 
         [[nodiscard]] auto GetMouseState() const -> Pointer<const FMouseState>;
-        virtual void SetMouseCursor(MouseCursor);
+        virtual void SetMouseCursor(FMouseCursor);
 
         virtual
         void SetSystemWindowTitle(const Str& title);

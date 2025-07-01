@@ -9,7 +9,7 @@
 namespace Slab::Graphics {
 
     Viewer::Viewer(Pointer<FGUIWindow> gui_window, Pointer<Math::R2toR::FNumericFunction> func)
-    : Graphics::WindowPanel()
+    : Graphics::WindowPanel(FConfig{{}})
     , gui_window(std::move(gui_window))
     , base_function(std::move(func))
     {}

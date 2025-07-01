@@ -13,7 +13,7 @@ namespace Slab {
 
     using Platform = Graphics::GraphicBackend;
 
-    class FApplication : public Graphics::FSystemWindowEventListener {
+    class FApplication : public Graphics::FPlatformWindowEventListener {
         const int ArgCount;
         const char **ArgValues;
 

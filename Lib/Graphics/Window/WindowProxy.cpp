@@ -7,7 +7,7 @@
 #include <utility>
 
 namespace Slab::Graphics {
-    WindowProxy::WindowProxy() : FSlabWindow() {
+    WindowProxy::WindowProxy(FConfig ConfigArg) : FSlabWindow(ConfigArg) {
 
     }
 
