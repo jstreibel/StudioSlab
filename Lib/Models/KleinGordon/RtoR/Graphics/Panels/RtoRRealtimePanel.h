@@ -61,7 +61,7 @@ namespace Slab::Models::KGRtoR {
 
         FPlot2DWindow EnergyGraph;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
     private:
         void UpdateEnergyData();

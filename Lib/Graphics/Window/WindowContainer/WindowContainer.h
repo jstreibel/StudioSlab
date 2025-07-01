@@ -20,7 +20,7 @@ namespace Slab::Graphics {
         bool removeWindow(const Pointer<FSlabWindow>&);
         bool isEmpty() const;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         virtual void arrangeWindows() = 0;
 

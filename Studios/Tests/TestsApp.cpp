@@ -10,7 +10,6 @@
 
 #include "BezierTests.h"
 #include "WindowPanelTest.h"
-#include "WindowTreeBuilderTest.h"
 #include "GLFreeTypeTests.h"
 #include "FourierTestWindow.h"
 #include "ModernGLTests.h"

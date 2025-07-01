@@ -22,6 +22,15 @@ namespace Slab::Graphics {
         Pointer<FSlabWindow> SlabWindow;
         Pointer<FImGuiContext> Context;
 
+        /**
+         * Thread carefully, o lander
+         */
+        struct FCallbackData
+        {
+            FSlabWindow* SlabWindow;
+            const FPlatformWindow* PlatformWindow;
+        } CallBackData;
+
     public:
         /**
          * @param SlabWindow The window to wrap with an ImGui window.
@@ -30,9 +39,9 @@ namespace Slab::Graphics {
          */
         explicit FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
-        auto RegisterDeferredDrawCalls() -> void override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 };
 
 } // Slab::Graphics

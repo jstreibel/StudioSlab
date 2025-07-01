@@ -24,7 +24,7 @@ namespace Slab::Graphics {
         void Begin() const;
         void End() const;
     public:
-        explicit FGUIWindow(FConfig);
+        explicit FGUIWindow(FSlabWindowConfig);
 
         void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 
@@ -32,9 +32,7 @@ namespace Slab::Graphics {
 
         Pointer<FImGuiContext> GetGUIContext();
 
-        void ImmediateDraw() override;
-
-        auto RegisterDeferredDrawCalls() -> void override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
     };
 
 

@@ -32,7 +32,7 @@ namespace Slab::Graphics {
         AddWindow(modes_window);
     }
 
-    void ModesHistoryViewer::ImmediateDraw() {
+    void ModesHistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -45,7 +45,7 @@ namespace Slab::Graphics {
                 setupModes();
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void ModesHistoryViewer::setupModes() {

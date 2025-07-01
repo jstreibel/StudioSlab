@@ -10,8 +10,16 @@
 
 namespace Slab::Graphics {
 
-    class SFMLEventTranslator : public FEventTranslator, public SFMLListener {
+    class SFMLSystemWindow;
+
+    class SFMLEventTranslator final : public FEventTranslator, public SFMLListener {
+        SFMLSystemWindow *Owner;
+
     public:
+        SFMLEventTranslator() = delete;
+
+        explicit SFMLEventTranslator(SFMLSystemWindow* owner);
+
         void event(const sf::Event &event) override;
 
         void render(sf::RenderWindow *window) override;

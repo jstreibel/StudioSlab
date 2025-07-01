@@ -30,7 +30,7 @@ namespace Tests {
     public:
         ModernGLTests();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
     };
 

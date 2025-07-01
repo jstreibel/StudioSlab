@@ -36,6 +36,8 @@ namespace Slab::Graphics {
         using Anchor = Point2D;
         struct Grabbed {Anchor anchor; enum What {None, Titlebar, Corner} what; Pointer<FSlabWindow> window;} Grabbed;
 
+        Pointer<FMouseState> MouseState;
+
     public:
         explicit SlabWindowManager();
         ~SlabWindowManager() override = default;
@@ -56,7 +58,7 @@ namespace Slab::Graphics {
 
         bool NotifySystemWindowReshape(int w, int h) override;
 
-        bool NotifyRender() override;
+        bool NotifyRender(const FPlatformWindow&) override;
 
     };
 

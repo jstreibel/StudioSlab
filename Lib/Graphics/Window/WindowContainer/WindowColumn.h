@@ -13,7 +13,7 @@
 namespace Slab::Graphics {
 
     class WindowColumn : public FSlabWindow {
-        std::list<Pointer<FSlabWindow>> windows;
+        std::list<Pointer<FSlabWindow>> Windows;
         RealVector heights;
 
         bool assertConsistency() const;
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
 
         void arrangeWindows();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 

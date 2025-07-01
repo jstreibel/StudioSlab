@@ -50,7 +50,7 @@ namespace Slab::Models::KGRtoR {
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Slab::Models::KGRtoR

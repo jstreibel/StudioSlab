@@ -38,7 +38,7 @@ namespace Slab::Graphics {
 
         Str GetName() const override;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void SetFunction(Pointer<Math::R2toR::FNumericFunction> function) override;
 

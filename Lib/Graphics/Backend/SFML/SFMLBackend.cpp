@@ -13,7 +13,9 @@ namespace Slab::Graphics {
 
 
     SFMLBackend::SFMLBackend()
-    : GraphicBackend("SFML backend") {    }
+        : GraphicBackend("SFML backend")
+    {
+    }
 
     void SFMLBackend::Run() {
 

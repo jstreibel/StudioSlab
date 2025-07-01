@@ -98,9 +98,9 @@ namespace Slab::Models::KGRtoR {
         timeDFTAverageArtist->SetLabel(Str("∫dx ϕ(ω,x), ") + timeInterval);
     }
 
-    void TimeFTViewer::ImmediateDraw() {
+    void TimeFTViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
-        if(function== nullptr){ WindowPanel::ImmediateDraw(); return;}
+        if(function== nullptr){ WindowPanel::ImmediateDraw(PlatformWindow); return;}
 
         gui_window->AddExternalDraw([this](){
             auto function = getFunction();
@@ -170,7 +170,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void TimeFTViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {

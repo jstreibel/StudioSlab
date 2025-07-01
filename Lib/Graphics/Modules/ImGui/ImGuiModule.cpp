@@ -19,6 +19,7 @@
 #include "Core/Tools/Log.h"
 
 #include "ImGuiModuleGLFW.h"
+#include "Graphics/SlabGraphics.h"
 
 #include "Graphics/Window/WindowStyles.h"
 
@@ -47,18 +48,30 @@ namespace Slab::Graphics {
 
 
     FImGuiModule* FImGuiModule::BuildModule() {
-        if(const Str strBackendImpl = Core::BackendManager::GetBackendName(); strBackendImpl == "Uninitialized")
+        const Str BackendImplName = Core::BackendManager::GetBackendName();
+
+        if(BackendImplName == "Uninitialized")
+        {
             throw NotImplementedException("ImGui must be built with a GUI backend already initialized.");
-        else if(strBackendImpl == "Headless")
+        }
+
+        auto RawPlatformWindowPtr = GetGraphicsBackend()->GetMainSystemWindow()->GetRawPlatformWindowPointer();
+
+        if(BackendImplName == "Headless")
             throw NotImplementedException("Headless ImGui module");
-        else if(strBackendImpl == "GLFW")
-            return new ImGuiModuleGLFW();
-        else if(strBackendImpl == "SFML")
+        if(BackendImplName == "GLFW")
+        {
+            return new ImGuiModuleGLFW(static_cast<GLFWwindow*>(RawPlatformWindowPtr));
+        }
+        if(BackendImplName == "SFML")
             throw NotImplementedException("SFML ImGui module");
-        else if(strBackendImpl == "VTK")
+        if(BackendImplName == "VTK")
             throw NotImplementedException("VTK ImGui module");
-        // else if(backendImpl == "GLUT")
-        //         return new ImGuiModuleGLUT();
+        if(BackendImplName == "GLUT")
+        {
+            // return new ImGuiModuleGLUT();
+            NOT_IMPLEMENTED;
+        }
 
         NOT_IMPLEMENTED;
     }

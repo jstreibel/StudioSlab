@@ -12,7 +12,7 @@
 namespace Slab::Graphics {
 
     MainViewer::MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction)
-    : Graphics::FWindowRow()
+    : gui_window(New<FGUIWindow>(FSlabWindowConfig("Main Viewer")))
     , base_function(std::move(baseFunction)) {
 
         auto font_size = gui_window->GetGUIContext()->GetFontSize();
@@ -37,11 +37,9 @@ namespace Slab::Graphics {
 
     }
 
-    void MainViewer::ImmediateDraw() {
-        IN OwnerWindow = w_ParentPlatformWindow.lock();
-        if (OwnerWindow == nullptr) return;
-
-        IN GuiContext = OwnerWindow->GetGUIContext();
+    void MainViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        // TODO: No const_cast here
+        IN GuiContext = const_cast<FPlatformWindow&>(PlatformWindow).GetGUIContext();
 
         if(GuiContext == nullptr) return;
 
@@ -83,7 +81,7 @@ namespace Slab::Graphics {
                 }
         );
 
-        FWindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     bool MainViewer::NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) {

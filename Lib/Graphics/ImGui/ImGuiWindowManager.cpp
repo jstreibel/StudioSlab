@@ -24,14 +24,17 @@ namespace Slab::Graphics {
         Windows.emplace_back(WrapperWindow);
     }
 
-    bool FImGuiWindowManager::NotifyRender()
+    bool FImGuiWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow)
     {
-        // We don't want to call FWindowManager::NotifyRender(); because, while 'Context' is this
-        // class's delegate responder, we don't want it to be the delegate responder to NotifyRender
+        // **********************
+        // Important!
+        // We don't want to call FWindowManager::NotifyRender(const FPlatformWindow&);
+        // this is because, while 'Context' is this class's delegate responder, we don't
+        // want it to be the delegate responder to NotifyRender
 
         for (const auto& WrapperWindow : Windows)
         {
-            WrapperWindow->NotifyRender();
+            WrapperWindow->NotifyRender(PlatformWindow);
         }
 
         return true;

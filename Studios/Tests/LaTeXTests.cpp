@@ -17,12 +17,13 @@ namespace Tests {
     , latexWriter()
     , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
+    , stats(Graphics::FSlabWindowConfig{"Stats"})
     {
         auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles[0];
         style.filled = false;
     }
 
-    void LaTeXTests::ImmediateDraw() {
+    void LaTeXTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         constexpr int buffer_size = 64 * 1024;
         static char buffer[buffer_size];
 

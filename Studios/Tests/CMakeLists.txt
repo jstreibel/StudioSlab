@@ -4,7 +4,6 @@ add_executable ( Tests
 		TestsMain.cpp
 		TestsApp.cpp
 		WindowPanelTest.cpp
-		WindowTreeBuilderTest.cpp
 
 		GLFreeTypeTests.h     GLFreeTypeTests.cpp
         FourierTestWindow.h   FourierTestWindow.cpp

@@ -29,15 +29,19 @@ namespace Slab::Graphics {
 
         int wheel_dx = 0, wheel_dy = 0;
 
-        bool leftPressed = false,
-             centerPressed = false,
-             rightPressed = false;
+        EKeyState Left   = Release;
+        EKeyState Center = Release;
+        EKeyState Right  = Release;
+
+        bool IsLeftPressed() const { return Left != Release; }
+        bool IsCenterPressed() const { return Center != Release; }
+        bool IsRightPressed() const { return Right != Release; }
 
         EModKeys mod_keys;
 
-        Timer since_left_pressed;
-        Timer since_center_pressed;
-        Timer since_right_pressed;
+        Timer SinceLeftPressed;
+        Timer SinceCenterPressed;
+        Timer SinceRightPressed;
 
         bool NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) override;
 

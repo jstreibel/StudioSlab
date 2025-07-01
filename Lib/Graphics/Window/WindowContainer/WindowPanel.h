@@ -26,7 +26,7 @@ namespace Slab::Graphics {
         void assertConsistency() const;
 
     public:
-        explicit WindowPanel(FConfig);
+        explicit WindowPanel(FSlabWindowConfig);
 
         void AddWindow(const Pointer<FSlabWindow>& window, bool newColumn = false, float newColumnWidth = -1);
 
@@ -47,10 +47,10 @@ namespace Slab::Graphics {
          */
         void SetColumnRelativeWidth(int column, float relWidth);
 
-        void arrangeWindows();
+        void ArrangeWindows();
 
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void NotifyReshape(int newWinW, int newWinH) override;
 

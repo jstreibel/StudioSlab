@@ -18,12 +18,14 @@ namespace Slab::Graphics {
 
     using Core::Log;
 
-    BaseMonitor::BaseMonitor(CountType max_steps, const Str &channelName, int stepsBetweenDraws)
-            : Socket(channelName, stepsBetweenDraws), WindowPanel(FConfig{{}}), max_steps(max_steps) {
-        AddWindow(guiWindow);
+    BaseMonitor::BaseMonitor(const CountType MaxSteps, const Str &ChannelName, int StepsBetweenDraws)
+    : Socket(ChannelName, StepsBetweenDraws), WindowPanel(FSlabWindowConfig{{}}), MaxSteps(MaxSteps)
+    , GuiWindow(New<FGUIWindow>(FSlabWindowConfig(ChannelName)))
+    {
+        AddWindow(GuiWindow);
         SetColumnRelativeWidth(0, 0.1);
 
-        Log::Status() << "Graphic monitor '" << channelName << "'. instantiated " << Log::Flush;
+        Log::Status() << "Graphic monitor '" << ChannelName << "'. instantiated " << Log::Flush;
     }
 
     void BaseMonitor::handleOutput(const OutputPacket &outInfo) {
@@ -34,7 +36,7 @@ namespace Slab::Graphics {
         static bool hasFinished = false;
         static bool isPaused = false;
         static CountType lastStep = 0;
-        hasFinished = !(LastPacket.GetSteps() < max_steps);
+        hasFinished = !(LastPacket.GetSteps() < MaxSteps);
 
         fix currStep = step;
 
@@ -80,7 +82,7 @@ namespace Slab::Graphics {
             avgSPS /= (DevFloat) total;
         }
 
-        fix stepsToFinish = max_steps - step;
+        fix stepsToFinish = MaxSteps - step;
         fix timeToFinish = (int) (avgSPS == 0.0 ? 0.0 : (DevFloat)stepsToFinish / avgSPS);
         fix remainingTimeMin = timeToFinish / 60;
         fix remainingTimeSec = timeToFinish % 60;
@@ -94,26 +96,26 @@ namespace Slab::Graphics {
         fix totalTimeSecs = (totalTimeIn_msec / 1000) % 60;
         fix totalTimeMins = (totalTimeIn_msec / 1000) / 60;
         
-        guiWindow->AddVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(max_steps));
+        GuiWindow->AddVolatileStat(Str("step = ") + ToStr(step) + "/" + ToStr(MaxSteps));
         // guiWindow.addVolatileStat(Str("dt = ") + ToStr(dt, 2, true));
-        guiWindow->AddVolatileStat("");
-        guiWindow->AddVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
-        guiWindow->AddVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
-        guiWindow->AddVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
+        GuiWindow->AddVolatileStat("");
+        GuiWindow->AddVolatileStat(Str("Steps/sample: ") + ToStr(avgSPs) + " (" + ToStr(getnSteps()) + ")");
+        GuiWindow->AddVolatileStat(Str("Steps/sec: ") + ToStr(avgSPS, 0));
+        GuiWindow->AddVolatileStat(Str("FPS (samples/sec): ") + ToStr(avgFPS, 1));
         if (currStep != lastStep || hasFinished)
-            guiWindow->AddVolatileStat(Str("Finish in ")
+            GuiWindow->AddVolatileStat(Str("Finish in ")
                                       + (remainingTimeMin < 10 ? "0" : "")
                                       + ToStr(remainingTimeMin) + "m"
                                       + (remainingTimeSec < 10 ? "0" : "")
                                       + ToStr(remainingTimeSec) + "s");
         else
-            guiWindow->AddVolatileStat(Str("Finish in ∞s"));
+            GuiWindow->AddVolatileStat(Str("Finish in ∞s"));
         fix elTimeMins_str = (totalTimeMins < 10 ? "0" : "") + ToStr(totalTimeMins) + "m";
         fix elTimeSecs_str = (totalTimeSecs < 10 ? "0" : "") + ToStr(totalTimeSecs) + "s";
         fix elTimeMSecs_str =
                 Str(totalTimeMSecs < 100 ? "0" : "") + (totalTimeMSecs < 10 ? "0" : "") + ToStr(totalTimeMSecs) + "ms";
-        guiWindow->AddVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
-        guiWindow->AddVolatileStat(Str("<\\br>"));
+        GuiWindow->AddVolatileStat(Str("El. time ") + elTimeMins_str + elTimeSecs_str + elTimeMSecs_str);
+        GuiWindow->AddVolatileStat(Str("<\\br>"));
         // guiWindow.addVolatileStat(Str("L = ") + ToStr(L));
         // guiWindow.addVolatileStat(Str("N = ") + ToStr(N));
         // guiWindow.addVolatileStat(Str("h = ") + ToStr(h, 4, true));
@@ -121,12 +123,12 @@ namespace Slab::Graphics {
         lastStep = step;
     }
 
-    void BaseMonitor::ImmediateDraw() {
+    void BaseMonitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         assert(LastPacket.hasValidData());
 
         {
             writeStats();
-            WindowPanel::ImmediateDraw(); // draw();
+            WindowPanel::ImmediateDraw(PlatformWindow); // draw();
             frameTimer.reset();
         }
     }
@@ -165,7 +167,7 @@ namespace Slab::Graphics {
     }
 
     FGUIWindow &BaseMonitor::getGUIWindow() const {
-        return *guiWindow;
+        return *GuiWindow;
     }
 
 

@@ -12,13 +12,13 @@
 using namespace Slab;
 
 GLFreeTypeTests::GLFreeTypeTests()
-: Slab::Graphics::FSlabWindow(FConfig{"FreeType tests"})
+: Slab::Graphics::FSlabWindow(Graphics::FSlabWindowConfig{"FreeType tests"})
 , writer1(Core::Resources::GetIndexedFontFileName(17), 24) // Math symb: 6; 10; 17
 , writer2(Core::Resources::GetIndexedFontFileName(7), 22)
 {   }
 
-void GLFreeTypeTests::ImmediateDraw() {
-    FSlabWindow::ImmediateDraw();
+void GLFreeTypeTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+    FSlabWindow::ImmediateDraw(PlatformWindow);
 
     glMatrixMode(GL_MODELVIEW);
     fix ratio = DevFloat(GetWidth()) / GetHeight();

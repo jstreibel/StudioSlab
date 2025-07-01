@@ -25,7 +25,7 @@ namespace Slab::Graphics {
     public:
         static GraphTheme_ptr GetCurrent();
 
-        bool NotifyRender() override;
+        bool NotifyRender(const FPlatformWindow&) override;
 
         static Str GetDefault();
         static bool SetTheme(const Str& theme);

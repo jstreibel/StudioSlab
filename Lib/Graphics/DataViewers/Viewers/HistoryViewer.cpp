@@ -113,7 +113,7 @@ namespace Slab::Graphics {
         dft_section_artist->setSamples(func->getN()*oversampling);
     }
 
-    void HistoryViewer::ImmediateDraw() {
+    void HistoryViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         if(getFunction()== nullptr) return;
 
         gui_window->AddExternalDraw([this]() {
@@ -134,7 +134,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
 } // Slab::Graphics

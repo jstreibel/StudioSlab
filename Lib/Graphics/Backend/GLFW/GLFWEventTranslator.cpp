@@ -7,6 +7,7 @@
 #include "Utils/ReferenceIterator.h"
 
 #include "glfw.h"
+#include "GLFWPlatformWindow.h"
 
 // Don't touch:
 #define STOP_ON_FIRST_RESPONDER true
@@ -23,7 +24,8 @@
 
 namespace Slab::Graphics {
 
-    FGLFWEventTranslator::FGLFWEventTranslator() : FEventTranslator() {}
+    FGLFWEventTranslator::FGLFWEventTranslator(FGLFWPlatformWindow *Owner)
+    : Owner(Owner) {}
 
     bool FGLFWEventTranslator::KeyboardEvent(GLFWwindow *window, int key, int scancode, int action, int mods) {
         // action: GLFW_PRESS, GLFW_REPEAT or GLFW_RELEASE
@@ -85,23 +87,20 @@ namespace Slab::Graphics {
         return IterateReferences(SysWinListeners, Func(NotifyMouseWheel, xoffset, yoffset), StopOnFirstResponder);
     }
 
-    bool FGLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **paths) {
-        StrVector pathsVec;
+    bool FGLFWEventTranslator::DroppedFiles(GLFWwindow *window, int count, const char **Paths_raw) {
+        StrVector PathsVec;
 
-        int i;
-        for (i = 0;  i < count;  i++)
-            pathsVec.emplace_back(paths[i]);
+        for (int i = 0;  i < count;  i++)
+            PathsVec.emplace_back(Paths_raw[i]);
 
-        auto funky = [&](Pointer<FPlatformWindowEventListener>& listener){
-            return listener->
-            NotifyFilesDropped(pathsVec);
-        };
-
-        return IterateReferences(SysWinListeners, Func(NotifyFilesDropped, pathsVec), StopOnFirstResponder);
+        return IterateReferences(SysWinListeners, Func(NotifyFilesDropped, PathsVec), StopOnFirstResponder);
     }
 
     void FGLFWEventTranslator::Render(GLFWwindow *window) {
-        IterateReferences(SysWinListeners, Func(NotifyRender));
+        auto Funky = [this] (const auto &obj) {
+            return obj->NotifyRender(*Owner);
+        };
+        IterateReferences(SysWinListeners, Funky);
     }
 
     void FGLFWEventTranslator::ScreenReshape(GLFWwindow *window, int width, int height) {

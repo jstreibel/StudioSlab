@@ -26,7 +26,7 @@ namespace Tests {
     public:
         LaTeXTests();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
         void NotifyReshape(int w, int h) override;
     };

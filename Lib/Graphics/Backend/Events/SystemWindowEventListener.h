@@ -23,10 +23,8 @@ namespace Slab::Graphics {
         friend class FPlatformWindow;
 
         int Priority;
-    protected:
-        TVolatile<FPlatformWindow> w_ParentPlatformWindow;
 
-        virtual void SetParentPlatformWindow(FOwnerPlatformWindow);
+    protected:
 
         void AddResponder(const TVolatile<FPlatformWindowEventListener>& responder);
         void RemoveResponder(const Pointer<FPlatformWindowEventListener>& responder);
@@ -34,7 +32,7 @@ namespace Slab::Graphics {
 
     public:
 
-        explicit FPlatformWindowEventListener(const FOwnerPlatformWindow& ParentPlatformWindow={});
+        explicit FPlatformWindowEventListener();
         virtual ~FPlatformWindowEventListener();
 
         virtual bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys);
@@ -49,7 +47,7 @@ namespace Slab::Graphics {
 
         virtual bool NotifySystemWindowReshape(int w, int h);
 
-        virtual bool NotifyRender();
+        virtual bool NotifyRender(const FPlatformWindow&);
 
     };
 

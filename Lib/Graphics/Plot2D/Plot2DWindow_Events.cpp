@@ -39,13 +39,10 @@ namespace Slab {
     bool Graphics::FPlot2DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
         if(FSlabWindow::NotifyMouseMotion(x, y, dx, dy)) return true;
 
-        IN ParentWin = w_ParentPlatformWindow.lock();
-        if (ParentWin == nullptr) return false;
-
         bool bReturnValue = false;
-        const auto MouseState = ParentWin->GetMouseState();
+        const auto MouseState = GetMouseState();
 
-        if (IsMouseLeftClicked()) {
+        if (MouseState->IsLeftPressed()) {
             const auto rect = Region.getRect();
 
             const DevFloat dxClampd = -MouseState->dx / (DevFloat) GetWidth();
@@ -63,7 +60,7 @@ namespace Slab {
             bReturnValue = true;
         }
 
-        if (IsMouseRightClicked()) {
+        if (MouseState->IsRightPressed()) {
             constexpr const DevFloat factor = 0.01;
             const DevFloat dw = 1 - factor * dx;
             const DevFloat dh = 1 + factor * dy;

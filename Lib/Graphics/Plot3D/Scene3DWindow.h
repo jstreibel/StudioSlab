@@ -35,7 +35,7 @@ namespace Slab::Graphics {
     public:
         Scene3DWindow();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
         auto getCamera() const -> const Camera&;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;

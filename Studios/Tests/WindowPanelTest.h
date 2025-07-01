@@ -16,7 +16,7 @@ class WindowPanelTest : public Slab::Graphics::FSlabWindow {
 
 public:
     WindowPanelTest();
-    void ImmediateDraw() override;
+    void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
 
     void NotifyReshape(int width, int height) override;
 

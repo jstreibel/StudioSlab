@@ -42,12 +42,12 @@ namespace Slab::Models::KGRtoR {
 
         auto currStyle = Graphics::PlotThemeManager::GetCurrent();
 
-        addDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *guiWindow));
-        addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *guiWindow));
-        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, *guiWindow, hamiltonian));
+        addDataView(Slab::New<FRealtimePanel>(params, hamiltonian, *GuiWindow));
+        addDataView(Slab::New<RtoRFourierPanel>(params, hamiltonian, *GuiWindow));
+        addDataView(historyPanel = Slab::New<RtoRHistoryPanel>(params, *GuiWindow, hamiltonian));
         //addDataView(Slab::New<CorrelationsPanel>(params, guiWindow, hamiltonian));
-        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, *guiWindow));
-        addDataView(Slab::New<RtoRScenePanel>(params, *guiWindow, hamiltonian));
+        addDataView(Slab::New<RtoRStatisticsPanel>(params, hamiltonian, *GuiWindow));
+        addDataView(Slab::New<RtoRScenePanel>(params, *GuiWindow, hamiltonian));
 
         setDataView(0);
     }
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
 
         AddWindow(currentDataView, true, -1);
 
-        arrangeWindows();
+        ArrangeWindows();
 
         newDataView->notifyBecameVisible();
         if (oldDataView != nullptr) oldDataView->notifyBecameInvisible();
@@ -161,7 +161,7 @@ namespace Slab::Models::KGRtoR {
         lastStepMod = stepMod;
     }
 
-    void Monitor::ImmediateDraw() {
+    void Monitor::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         const EquationState &fieldState = *LastPacket.GetNakedStateData<EquationState>();
 
         auto &phi = dynamic_cast<RtoR::NumericFunction&>(fieldState.getPhi());
@@ -171,7 +171,7 @@ namespace Slab::Models::KGRtoR {
         updateHistoryGraph();
         updateSFTHistoryGraph();
 
-        Slab::Graphics::BaseMonitor::ImmediateDraw();
+        Slab::Graphics::BaseMonitor::ImmediateDraw(PlatformWindow);
     }
 
 

@@ -6,21 +6,21 @@
 
 namespace Slab::Graphics {
 
-    bool FMouseState::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
-        mod_keys = keys;
+    bool FMouseState::NotifyMouseButton(EMouseButton Which, EKeyState State, EModKeys ModKeys) {
+        this->mod_keys = ModKeys;
 
-        switch (button) {
+        switch (Which) {
             case MouseButton_LEFT:
-                leftPressed = state==Press;
-                since_left_pressed.reset();
+                Left = State;
+                SinceLeftPressed.reset();
                 break;
             case MouseButton_MIDDLE:
-                centerPressed = state==Press;
-                since_center_pressed.reset();
+                Center = State;
+                SinceCenterPressed.reset();
                 break;
             case MouseButton_RIGHT:
-                rightPressed = state==Press;
-                since_right_pressed.reset();
+                Right = State;
+                SinceRightPressed.reset();
                 break;
             case MouseButton_4:
                 break;

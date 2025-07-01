@@ -69,7 +69,7 @@ namespace Tests {
     , loc2Artist(nullptr, theme->FuncPlotStyles[3])
     , funcArtist(nullptr, theme->FuncPlotStyles[0], 2000)
     , rebuiltFuncArtist(nullptr, theme->FuncPlotStyles[1], 2000)
-    , gui()
+    , gui(Graphics::FSlabWindowConfig{"GUI"})
     , mDFTGraph("DFT")
     , mFuncGraph("func graph")
     , mFTGraph("")
@@ -103,7 +103,7 @@ namespace Tests {
         // addResponder(gui_ptr);
     }
 
-    void FourierTestWindow::ImmediateDraw() {
+    void FourierTestWindow::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         gui.AddExternalDraw([this]() {
 
             if (ImGui::SliderFloat("ω", &ω, 0.1, ωₘₐₓ)
@@ -122,7 +122,7 @@ namespace Tests {
         gui.AddVolatileStat(Str("Re(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Re] / ω, 2));
         gui.AddVolatileStat(Str("Im(ωₚₑₐₖ)/ω = ") + ToStr(ωₚₑₐₖ[Im] / ω, 2));
 
-        FWindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     void FourierTestWindow::updateGraphs() {

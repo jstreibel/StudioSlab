@@ -8,6 +8,7 @@
 #include "Core/Backend/BackendManager.h"
 #include "3rdParty/ImGui.h"
 #include "Core/SlabCore.h"
+#include "utils/enums.h"
 
 
 #define Unique(label) \
@@ -18,7 +19,9 @@ namespace Slab::Graphics {
 
     CountType Scene3DWindow::WindowCount = 0;
 
-    Scene3DWindow::Scene3DWindow() : id(++WindowCount)
+    Scene3DWindow::Scene3DWindow()
+    : FSlabWindow(FSlabWindowConfig(Str("Scene3D (" + ToStr(WindowCount+1) +")")))
+    , id(++WindowCount)
     {
         Core::LoadModule("ImGui");
         Core::LoadModule("ModernOpenGL");
@@ -26,8 +29,8 @@ namespace Slab::Graphics {
         SetClear(false);
     }
 
-    void Scene3DWindow::ImmediateDraw() {
-        FSlabWindow::ImmediateDraw();
+    void Scene3DWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        FSlabWindow::ImmediateDraw(PlatformWindow);
 
         glEnable(GL_DEPTH_TEST);
         glDepthMask(GL_TRUE);
@@ -60,12 +63,11 @@ namespace Slab::Graphics {
     }
 
     bool Scene3DWindow::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        fix left = FSlabWindow::IsMouseLeftClicked();
-        fix center = FSlabWindow::IsMouseCenterClicked();
-        fix right = FSlabWindow::IsMouseRightClicked();
+        FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
 
+        fix Mouse = GetMouseState();
 
-        if(left && right) {
+        if(Mouse->IsLeftPressed() && Mouse->IsRightPressed()) {
             fix scaled_dx = -dx * 1.e-2f;
             fix scaled_dy =  dy * 1.e-2f;
 
@@ -78,26 +80,29 @@ namespace Slab::Graphics {
 
             return true;
         }
-        else if(left) {
-            cameraAngleAzimuth -= dx*.0025f;
-            cameraAnglePolar   -= dy*.0025f;
 
-            cameraAnglePolar = std::min(std::max(cameraAnglePolar, 1.e-5f), (1.f-1.e-5f)*(float)M_PI);
+        if(Mouse->IsLeftPressed()) {
+            cameraAngleAzimuth -= .0025f * dx;
+            cameraAnglePolar   -= .0025f * dy;
+
+            cameraAnglePolar = std::min(std::max(cameraAnglePolar, 1.e-5f), (1.f-1.e-5f)*static_cast<float>(M_PI));
 
             return true;
         }
-        else if(right) {
+
+        if(Mouse->IsRightPressed()) {
             cameraDist += dy*.01f;
 
             return true;
         }
-        else if(center) {
+
+        if(Mouse->IsCenterPressed()) {
             camera.yFov += dy*.005f;
 
             return true;
         }
 
-        return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
+        return false;
     }
 
     bool Scene3DWindow::NotifyMouseWheel(double dx, double dy) {

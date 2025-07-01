@@ -27,7 +27,7 @@ namespace Modes::DatabaseViewer {
 
     DBViewerSequence::DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
     : FWindowRow()
-    , guiWindow()
+    , guiWindow(Graphics::FSlabWindowConfig{"GUI"})
     , mashupDisplay("All data")
     , massesGraph("masses")
     {
@@ -99,7 +99,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerSequence::ImmediateDraw() {
+    void DBViewerSequence::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(currentMeshupArtist == nullptr) return;
 
         fix ω_XHair = mashupDisplay.GetLastXHairPosition().x;
@@ -151,7 +151,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        FWindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     void DBViewerSequence::updateKGDispersion(bool visible) {

@@ -18,14 +18,14 @@ namespace Tests {
     using namespace Slab;
 
     ModernGLTests::ModernGLTests()
-    : Graphics::FWindowRow("Modern OpenGL test")
+    : FWindowRow("Modern OpenGL test")
     , program(Core::Resources::ShadersFolder + "tests.vert", Core::Resources::ShadersFolder + "tests.frag")
     , buffer("vertex:2f,tex_coord:2f")
     , texture(texDim, texDim)
     , realTexture(texDim, texDim)
     , writer(Core::Resources::GetIndexedFontFileName(4), 80)
     {
-        AddWindow(std::make_shared<FSlabWindow>());
+        AddWindow(Slab::New<FSlabWindow>(Graphics::FSlabWindowConfig{"Modern OpenGL Tests"}));
 
         GLuint indices[6] = {0, 1, 2, 0, 2, 3};
 
@@ -60,8 +60,8 @@ namespace Tests {
                                                0,0,1});
     }
 
-    void ModernGLTests::ImmediateDraw() {
-        FWindowRow::ImmediateDraw();
+    void ModernGLTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+        FWindowRow::ImmediateDraw(PlatformWindow);
 
         {
             // texture.bind();
@@ -75,7 +75,7 @@ namespace Tests {
         {
             fix vp = GetViewport();
             writer.Reshape(vp.GetWidth(), vp.GetHeight());
-            writer.Write("VertexBuffer + Texture tests", {200, (double) GetHeight() - 200});
+            writer.Write("VertexBuffer + Texture tests", {200, GetHeight() - 200});
         }
     }
 } // Tests

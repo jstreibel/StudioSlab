@@ -13,7 +13,7 @@ namespace Tests {
     public:
         Graph3DTests();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

@@ -87,7 +87,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void RtoRHistoryPanel::ImmediateDraw() {
+    void RtoRHistoryPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         guiWindow.AddExternalDraw([this]() {
             static float t = 0;
             auto t_max = (float) LastPacket.GetSteps() * Params->Getdt();
@@ -112,7 +112,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        FRtoRPanel::ImmediateDraw();
+        FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
     void RtoRHistoryPanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>

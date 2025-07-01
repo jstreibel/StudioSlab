@@ -18,7 +18,7 @@ namespace Slab::Graphics {
             DevFloat width;
         };
 
-        std::list<WinMetaData> windowsList;
+        std::list<WinMetaData> WindowsList;
 
         RealVector _widthsVector() const;
 
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
 
         void arrangeWindows();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void NotifyReshape(int w, int h) override;
 

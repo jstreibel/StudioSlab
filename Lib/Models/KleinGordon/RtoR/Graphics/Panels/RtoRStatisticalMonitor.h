@@ -59,7 +59,7 @@ namespace Slab::Models::KGRtoR {
     public:
         RtoRStatisticsPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, Graphics::FGUIWindow &guiWindow);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void SetTransientHint(DevFloat);
 

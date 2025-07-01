@@ -38,7 +38,7 @@ namespace Tests {
     public:
         FourierTestWindow();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

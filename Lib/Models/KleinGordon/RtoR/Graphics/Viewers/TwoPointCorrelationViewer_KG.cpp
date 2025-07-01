@@ -78,7 +78,7 @@ namespace Slab::Models::KGRtoR {
         }
     }
 
-    void TwoPointCorrelationViewer_KG::ImmediateDraw() {
+    void TwoPointCorrelationViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -190,7 +190,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void TwoPointCorrelationViewer_KG::computeTwoPointCorrelation() {

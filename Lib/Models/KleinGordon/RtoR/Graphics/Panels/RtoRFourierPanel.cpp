@@ -98,10 +98,10 @@ namespace Slab::Models::KGRtoR {
         AddWindow(ωkSpaceGraph, true);
         AddWindow(kSpaceGraph);
 
-        arrangeWindows();
+        ArrangeWindows();
     }
 
-    void RtoRFourierPanel::ImmediateDraw() {
+    void RtoRFourierPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
 
         guiWindow.AddExternalDraw([this](){
             if (ImGui::CollapsingHeader("k-filter")) {
@@ -165,7 +165,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void

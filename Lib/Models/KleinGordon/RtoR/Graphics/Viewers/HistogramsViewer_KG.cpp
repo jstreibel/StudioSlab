@@ -46,7 +46,7 @@ namespace Slab::Models::KGRtoR {
                                        *style++, "V")->SetAffectGraphRanges(true);
     }
 
-    void HistogramsViewer_KG::ImmediateDraw() {
+    void HistogramsViewer_KG::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         gui_window->AddExternalDraw([this](){
             fix func = getFunction();
             if(func == nullptr) return;
@@ -71,7 +71,7 @@ namespace Slab::Models::KGRtoR {
             ImGui::Text("Sheer data size: %i", (int)sheer_size);
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void HistogramsViewer_KG::updateHistograms() {

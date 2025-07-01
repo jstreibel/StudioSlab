@@ -25,7 +25,7 @@ namespace Modes::DatabaseViewer {
 
     DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
     : FWindowRow()
-    , guiWindow()
+    , guiWindow(Graphics::FSlabWindowConfig("GUI"))
     , allDataDisplay("All data")
     , fullParticularHistoryDisplay("Particular data")
     , massesGraph("masses")
@@ -101,7 +101,7 @@ namespace Modes::DatabaseViewer {
         reloadData();
     }
 
-    void DBViewerMulti::ImmediateDraw() {
+    void DBViewerMulti::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
 
         fix ω_XHair = allDataDisplay.GetLastXHairPosition().x;
         fix dx = fullFields[0]->getSpace().getMetaData().geth(0);
@@ -138,7 +138,7 @@ namespace Modes::DatabaseViewer {
             }
         });
 
-        FWindowRow::ImmediateDraw();
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     void DBViewerMulti::updateKGDispersion(bool visible) {

@@ -102,7 +102,7 @@ namespace Slab::Graphics {
         return style;
     }
 
-    bool PlotThemeManager::NotifyRender() {
+    bool PlotThemeManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         auto gui_context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
 
         if(gui_context != nullptr) {
@@ -121,7 +121,7 @@ namespace Slab::Graphics {
             });
         }
 
-        return FPlatformWindowEventListener::NotifyRender();
+        return FPlatformWindowEventListener::NotifyRender(PlatformWindow);
     }
 
     bool PlotThemeManager::SetTheme(const Str& theme) {

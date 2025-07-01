@@ -23,9 +23,9 @@ namespace Tests {
     public:
         explicit BezierTests(const Pointer<Graphics::FImGuiContext>& GuiContext);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
-        auto RegisterDeferredDrawCalls() -> void override;
+        auto RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow) -> void override;
     };
 
 } // Tests

@@ -58,7 +58,7 @@ namespace Slab::Models::KGRtoR {
 
         void SetFunctionDerivative(FuncPointer pointer) override;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
     };
 
 } // Studios::Fields::Viewers

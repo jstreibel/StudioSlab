@@ -15,6 +15,9 @@ namespace Slab {
     using Pointer = std::shared_ptr<T>;
 
     template <typename T>
+    using TUnique = std::unique_ptr<T>;
+
+    template <typename T>
     using Reference = Pointer<Pointer<T>>;
 
     template <typename T>

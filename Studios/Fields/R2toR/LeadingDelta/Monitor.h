@@ -35,7 +35,7 @@ namespace Studios::Fields::R2toRLeadingDelta {
 
         OutGL(CountType max_steps, Pointer<R2toR::Function> drivingFunction);
 
-        auto ImmediateDraw() -> void override;
+        auto ImmediateDraw(const Graphics::FPlatformWindow&) -> void override;
 
     };
 }

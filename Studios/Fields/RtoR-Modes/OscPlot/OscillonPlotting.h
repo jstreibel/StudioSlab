@@ -61,7 +61,7 @@ namespace Studios {
 
         auto
         getFunctionTimeDerivative() -> Slab::Pointer<Slab::Math::R2toR::FNumericFunction> override;
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 }

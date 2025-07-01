@@ -6,6 +6,7 @@
 
 #include "3rdParty/ImGui.h"
 #include "Core/Tools/Resources.h"
+#include "Graphics/OpenGL/Images.h"
 
 namespace Slab::Blueprints {
     static inline ImRect ImGui_GetItemRect()
@@ -23,7 +24,7 @@ namespace Slab::Blueprints {
         return result;
     }
 
-    bool BlueprintRenderer::NotifyRender() {
+    bool BlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
         // m_Context->NewFrame();
         // // // ImGui::NewFrame();
 
@@ -127,8 +128,8 @@ namespace Slab::Blueprints {
                 auto cursorTopLeft = ImGui::GetCursorScreenPos();
 
                 util::BlueprintNodeBuilder builder(m_HeaderBackground,
-                                                   Slab::Graphics::GetTextureWidth(m_HeaderBackground),
-                                                   Slab::Graphics::GetTextureHeight(m_HeaderBackground));
+                                                   Graphics::GetTextureWidth(m_HeaderBackground),
+                                                   Graphics::GetTextureHeight(m_HeaderBackground));
 
                 for (auto &node: m_Nodes) {
                     if (node.Type != NodeType::Blueprint && node.Type != NodeType::Simple)

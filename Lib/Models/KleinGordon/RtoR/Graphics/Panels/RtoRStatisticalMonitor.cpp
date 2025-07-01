@@ -85,27 +85,27 @@ namespace Slab::Models::KGRtoR {
             auto mHistogramsGraphE = Slab::New<Graphics::FPlot2DWindow>   ("e histogram");
 
 
-            auto style = Graphics::PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
-            Graphics::Plotter::AddPointSet(mHistogramsGraphE,
+            auto style = PlotThemeManager::GetCurrent()->FuncPlotStyles.begin();
+            Plotter::AddPointSet(mHistogramsGraphE,
                                            Slab::Naked(histogramEData),
                                            *style++, "E");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphK,
+            Plotter::AddPointSet(mHistogramsGraphK,
                                            Slab::Naked(histogramKData),
                                            *style++, "K");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphGrad,
+            Plotter::AddPointSet(mHistogramsGraphGrad,
                                            Slab::Naked(histogramGradData),
                                            *style++, "grad");
-            Graphics::Plotter::AddPointSet(mHistogramsGraphV,
+            Plotter::AddPointSet(mHistogramsGraphV,
                                            Slab::Naked(histogramVData),
                                            *style++, "V");
 
-            auto *histogramsPanel = new Graphics::WindowPanel();
+            auto *histogramsPanel = new WindowPanel(FSlabWindowConfig{"Histograms"});
             histogramsPanel->AddWindow(mHistogramsGraphV);
             histogramsPanel->AddWindow(mHistogramsGraphGrad);
             histogramsPanel->AddWindow(mHistogramsGraphK);
             histogramsPanel->AddWindow(mHistogramsGraphE);
 
-            AddWindow(Pointer<Graphics::FSlabWindow>(histogramsPanel), true);
+            AddWindow(Pointer<FSlabWindow>(histogramsPanel), true);
         }
 
         // setColumnRelativeWidth(0, 0.125);
@@ -125,7 +125,7 @@ namespace Slab::Models::KGRtoR {
 
 
 
-    void RtoRStatisticsPanel::ImmediateDraw() {
+    void RtoRStatisticsPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         int errorCount = 0;
         CHECK_GL_ERRORS(errorCount++)
 
@@ -172,7 +172,7 @@ namespace Slab::Models::KGRtoR {
             guiWindow.AddVolatileStat(name + " = " + p.second);
         }
 
-        FRtoRPanel::ImmediateDraw();
+        FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
     void RtoRStatisticsPanel::drawGUI() {

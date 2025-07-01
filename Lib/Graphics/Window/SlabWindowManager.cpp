@@ -17,7 +17,13 @@
 namespace Slab::Graphics {
     Fix AnimationTimeInSeconds = 0.25;
 
-    SlabWindowManager::SlabWindowManager() : FWindowManager(), Grabbed() {   }
+    SlabWindowManager::SlabWindowManager()
+    : FWindowManager()
+    , Grabbed()
+    , MouseState(New<FMouseState>())
+    {
+        AddResponder(MouseState);
+    }
 
     void SlabWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& slab_window, bool hidden) {
         const auto MetaWinData = New<WindowMetaInformation>(slab_window, false, hidden);
@@ -102,15 +108,11 @@ namespace Slab::Graphics {
     }
 
     bool SlabWindowManager::NotifyMouseButton(EMouseButton button, EKeyState state, EModKeys keys) {
+        FWindowManager::NotifyMouseButton(button, state, keys); // Update delegates
 
         if(state==Press) {
-            IN OwnerWindow = w_ParentPlatformWindow.lock();
-            if(OwnerWindow == nullptr) return false;
-
-            auto MouseState = OwnerWindow->GetMouseState();
-
-            const auto First = FindFirst_If(SlabWindows, [MouseState, this](const Pointer<WindowMetaInformation> &meta) {
-                fix is_mouse_in = meta->Window->IsMouseIn();
+            const auto First = FindFirst_If(SlabWindows, [this](const Pointer<WindowMetaInformation> &meta) {
+                fix is_mouse_in = meta->Window->IsMouseInside();
                 fix is_decorated = !(meta->Window->GetFlags() & SlabWindowNoDecoration);
                 fix is_mouse_over_grab_region = Decorator.isMouseOverGrabRegion(*meta->Window,
                                                                                 MouseState->x,
@@ -207,15 +209,11 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool SlabWindowManager::NotifyRender() {
-        IN OwnerWindow = w_ParentPlatformWindow.lock();
-        if(OwnerWindow == nullptr) return false;
-
+    bool SlabWindowManager::NotifyRender(const FPlatformWindow& PlatformWindow) {
         for (IN MetaSlabWindow : std::ranges::reverse_view(SlabWindows)) {
-            const auto Mouse = OwnerWindow->GetMouseState();
-            Decorator.begin_decoration(*MetaSlabWindow->Window, Mouse->x, Mouse->y);
-            MetaSlabWindow->Window->ImmediateDraw();
-            Decorator.FinishDecoration(*MetaSlabWindow->Window, Mouse->x, Mouse->y);
+            Decorator.begin_decoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
+            MetaSlabWindow->Window->ImmediateDraw(PlatformWindow);
+            Decorator.FinishDecoration(*MetaSlabWindow->Window, MouseState->x, MouseState->y);
         }
 
         return true;

@@ -44,10 +44,10 @@ namespace Slab::Models::KGR2toR {
         AddWindow(Naked(mFieldDisplay), ADD_TO_NEW_COLUMN, .25);
     }
 
-    void OutputOpenGL::ImmediateDraw() {
+    void OutputOpenGL::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if (!LastPacket.hasValidData()) return;
 
-        BaseMonitor::ImmediateDraw();
+        BaseMonitor::ImmediateDraw(PlatformWindow);
 
         if (sectionArtist.getFunction() == nullptr) {
             auto phi = getPhi(LastPacket);

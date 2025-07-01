@@ -17,9 +17,11 @@ namespace Slab {
 
     auto Graphics::FPlot2DWindow::GetLastXHairPosition() const -> Point2D {
         auto vpRect = GetViewport();
-        fix mouseLocal = GetMouseViewportCoord();
 
-        return FromViewportToSpaceCoord(mouseLocal, Region.getRect(), vpRect);
+        auto Mouse = GetMouseState();
+        fix MouseLocal = FromPlatformWindowToViewportCoords({Mouse->x, Mouse->y});;
+
+        return FromViewportToSpaceCoord(MouseLocal, Region.getRect(), vpRect);
     }
 
 

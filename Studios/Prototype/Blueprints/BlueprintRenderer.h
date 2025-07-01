@@ -7,10 +7,7 @@
 
 #include <map>
 
-#include "3rdParty/ImGui.h"
-
 #include "BlueprintTypes.h"
-#include "Graphics/OpenGL/Images.h"
 #include "Blueprint.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
 
@@ -19,7 +16,7 @@ namespace Slab::Blueprints {
     class BlueprintRenderer : public Graphics::FPlatformWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
-        Pointer<Graphics::FImGuiContext> m_Context;
+        // Pointer<Graphics::FImGuiContext> m_Context;
         const int            m_PinIconSize = 24;
         ImTextureID          m_HeaderBackground = nullptr;
         ImTextureID          m_SaveIcon = nullptr;
@@ -38,9 +35,6 @@ namespace Slab::Blueprints {
 
         void DoDrawing();
 
-protected:
-        void SetParentPlatformWindow(Graphics::FOwnerPlatformWindow) override;
-
     public:
         explicit BlueprintRenderer(Pointer<Blueprint> blueprint);
 
@@ -48,11 +42,11 @@ protected:
 
         void DrawPinIcon(const Pin& pin, bool connected, int alpha);;
 
-        void ShowStyleEditor(bool* show = nullptr);
+        static void ShowStyleEditor(bool* show = nullptr);
 
         void ShowLeftPane(float paneWidth);
 
-        bool NotifyRender() override;
+        bool NotifyRender(const Graphics::FPlatformWindow&) override;
 
     };
 

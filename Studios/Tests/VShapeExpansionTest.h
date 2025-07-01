@@ -23,7 +23,7 @@ namespace Tests {
     public:
         VShapeExpansionTest();
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

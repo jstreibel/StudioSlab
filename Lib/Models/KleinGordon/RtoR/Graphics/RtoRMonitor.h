@@ -64,7 +64,7 @@ namespace Slab::Models::KGRtoR {
                 KGEnergy &hamiltonian,
                 const Str& name = "general graphic monitor");
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         virtual void setSimulationHistory  (const Pointer<const R2toR::FNumericFunction> &simulationHistory);
         virtual void SetSpaceFourierHistory(const Pointer<const R2toR::FNumericFunction> &sftHistory,

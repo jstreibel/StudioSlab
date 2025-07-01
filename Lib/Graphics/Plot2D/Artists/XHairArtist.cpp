@@ -11,22 +11,26 @@
 
 namespace Slab::Graphics {
 
-    bool XHairArtist::Draw(const FPlot2DWindow &graph2D) {
-        if(!graph2D.IsMouseIn()) return true;
+    bool XHairArtist::Draw(const FPlot2DWindow &PlotWindow) {
+        if(!PlotWindow.IsMouseInside()) return true;
 
-        auto vpRect = graph2D.GetViewport();
-        const auto& region = graph2D.GetRegion();
+        auto vpRect = PlotWindow.GetViewport();
+        const auto& region = PlotWindow.GetRegion();
         auto region_rect = region.getRect();
 
-        fix mouseLocal = graph2D.GetMouseViewportCoord();
+        fix MouseLocal = PlotWindow.GetMouseViewportCoord();
         fix h = vpRect.GetHeight();
 
-        auto XHairLocation = FromViewportToSpaceCoord(mouseLocal, region_rect, vpRect);
+        auto XHairLocation = FromViewportToSpaceCoord(MouseLocal, region_rect, vpRect);
 
-        auto label = graph2D.GetXHairLabel(XHairLocation);
+        auto label = PlotWindow.GetXHairLabel(XHairLocation);
 
         auto currStyle = PlotThemeManager::GetCurrent();
-        currStyle->TicksWriter->Write(label, {(DevFloat)mouseLocal.x+20, h - (DevFloat)mouseLocal.y+20}, currStyle->graphNumbersColor);
+        currStyle->TicksWriter->Write(label,
+            {
+                MouseLocal.x + 20,
+                h - MouseLocal.y + 20
+            }, currStyle->graphNumbersColor);
 
         XHair.clear();
         XHair.AddPoint({region_rect.xMin, XHairLocation.y});

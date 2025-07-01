@@ -96,6 +96,8 @@ namespace Slab::Graphics {
         // ImGui::GetStyle().ScaleAllSizes(1.25);
         ImGui::GetIO().FontGlobalScale = 1;
 
+        CallSet.Init(CallSet);
+
         Core::Log::Info() << "Created ImGui context." << Core::Log::Flush;
     }
 
@@ -127,16 +129,6 @@ namespace Slab::Graphics {
 
     void FImGuiContext::Bind() {
         ImGui::SetCurrentContext(r_Context);
-    }
-
-    void FImGuiContext::SetParentPlatformWindow(const FOwnerPlatformWindow NewOwner)
-    {
-        GUIContext::SetParentPlatformWindow(NewOwner);
-
-        if (IN Owner = NewOwner.lock())
-            CallSet.Init(Owner->GetRawPlatformWindowPointer());
-
-        BuildFonts();
     }
 
     DevFloat FImGuiContext::GetFontSize() const {
@@ -221,7 +213,7 @@ namespace Slab::Graphics {
         return false;
     }
 
-    bool FImGuiContext::NotifyRender() {
+    bool FImGuiContext::NotifyRender(const FPlatformWindow&) {
         NewFrame();
         Render();
         return true;

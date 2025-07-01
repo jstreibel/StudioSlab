@@ -25,8 +25,8 @@ namespace Slab::Graphics {
     }
 
     SFMLSystemWindow::SFMLSystemWindow()
-    : FPlatformWindow(new_sfml_native_window(), New<SFMLEventTranslator>())
-    , sfml_native_window((sf::RenderWindow*)r_Window)
+    : FPlatformWindow(new_sfml_native_window(), New<SFMLEventTranslator>(this))
+    , sfml_native_window(static_cast<sf::RenderWindow*>(r_Window))
     {
         addSFMLListener(DynamicPointerCast<SFMLEventTranslator>(EventTranslator));
     }

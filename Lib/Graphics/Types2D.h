@@ -45,7 +45,8 @@ namespace Slab::Graphics {
 
     struct Point2D {
         Point2D() = default;
-        Point2D(DevFloat x, DevFloat y) : x(x), y(y) {}
+        Point2D(const DevFloat x, const DevFloat y) : x(x), y(y) {}
+        Point2D(const Int x, const Int y) : x(static_cast<DevFloat>(x)), y(static_cast<DevFloat>(y)) {}
         Point2D(const Point2D& p) = default;
 
         Point2D operator +  (const Point2D &p) const {return {x+p.x, y+p.y}; };

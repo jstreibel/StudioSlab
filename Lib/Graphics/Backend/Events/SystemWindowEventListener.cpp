@@ -14,13 +14,14 @@
 
 namespace Slab::Graphics {
 
-    FPlatformWindowEventListener::FPlatformWindowEventListener(const FOwnerPlatformWindow& ParentPlatformWindow)
-    : Priority(0), w_ParentPlatformWindow(ParentPlatformWindow)
+    FPlatformWindowEventListener::FPlatformWindowEventListener( )
+    : Priority(0)
     {
     }
 
     FPlatformWindowEventListener::~FPlatformWindowEventListener() = default;
 
+    /*
     void FPlatformWindowEventListener::SetParentPlatformWindow(const FOwnerPlatformWindow Parent) {
         w_ParentPlatformWindow = Parent;
 
@@ -28,7 +29,7 @@ namespace Slab::Graphics {
         {
             NotifySystemWindowReshape(ParentPtr->GetWidth(), ParentPtr->GetHeight());
         }
-    }
+    }*/
 
     void FPlatformWindowEventListener::AddResponder(const TVolatile<FPlatformWindowEventListener>& responder) {
         assert(responder.lock().get() != this);
@@ -64,8 +65,12 @@ namespace Slab::Graphics {
         return IterateReferences(delegateResponders, Func(NotifySystemWindowReshape, w, h));
     }
 
-    bool FPlatformWindowEventListener::NotifyRender(){
-        return IterateReferences(delegateResponders, Func(NotifyRender));
+    bool FPlatformWindowEventListener::NotifyRender(const FPlatformWindow& PlatformWindow){
+        auto Funky = [&PlatformWindow] (const auto &obj) {
+            return obj->NotifyRender(PlatformWindow);
+        };
+
+        return IterateReferences(delegateResponders, Funky);
     }
 
     bool FPlatformWindowEventListener::NotifyKeyboard(EKeyMap key,

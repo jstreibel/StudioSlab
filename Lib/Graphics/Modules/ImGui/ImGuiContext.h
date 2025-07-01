@@ -18,9 +18,11 @@ namespace Slab::Graphics {
     struct FCallSet {
         using RawSystemWindowPointer = void*;
 
-        using InitContextCall = std::function<void(RawSystemWindowPointer)>;
+        using InitContextCall = std::function<void(const FCallSet& Call)>;
         using KillContextCall = std::function<void(void)>;
         using NewFrameCall    = std::function<void(void)>;
+
+        RawSystemWindowPointer r_SystemWindow;
 
         InitContextCall Init;
         KillContextCall End;
@@ -32,9 +34,6 @@ namespace Slab::Graphics {
         ImGuiContext *r_Context = nullptr;
 
         FCallSet CallSet;
-
-    protected:
-        void SetParentPlatformWindow(FOwnerPlatformWindow) override;
 
     public:
         explicit FImGuiContext(FCallSet);
@@ -60,7 +59,7 @@ namespace Slab::Graphics {
 
         bool NotifySystemWindowReshape(int w, int h) override;
 
-        bool NotifyRender() override;
+        bool NotifyRender(const FPlatformWindow&) override;
 
         void Bind() override;
         void NewFrame() override;

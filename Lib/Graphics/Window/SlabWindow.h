@@ -29,63 +29,40 @@ namespace Slab::Graphics {
         SlabWindowWantsFullscreen   = 0x8
     };
 
+    struct FSlabWindowConfig {
+        explicit FSlabWindowConfig(
+            Str Title="",
+            RectI WinRect=WindowStyle::DefaultWindowRect,
+            Int Flags=0x0);
+
+        Str Title;
+        RectI WinRect = WindowStyle::DefaultWindowRect;
+        Int Flags = 0x0;
+    };
+
     class FSlabWindow : protected Core::UniqueObject, public FPlatformWindowEventListener {
         friend class SlabWindowManager;
 
-    public:
+        [[nodiscard]] bool SetupViewport(const FPlatformWindow& PlatformWindow) const;
 
-        struct FConfig {
-            FConfig() = delete;
-            explicit FConfig(
-                Str Title="",
-                RectI WinRect=WindowStyle::DefaultWindowRect,
-                Int Flags=0x0);
-
-            Str Title = "";
-            RectI WinRect = WindowStyle::DefaultWindowRect;
-            Int Flags = 0x0;
-
-            /**
-             * This is the same Owner as the super class FPlatformWindowEventListener::w_ParentPlatformWindow.
-             * While FPlatformWindowEventListener itself does not use its parent platform window, FSlabWindow
-             * does use it. So, if a subclass does not need w_ParentPlatformWindow, it can hide its
-             * implicit usage by private'ing the following methods:
-             *
-             * SetupViewport()
-             * IsMouseIn()
-             * GetMouseViewportCoord()
-             */
-            FOwnerPlatformWindow Owner;
-        };
-
-    private:
-        /**
-         * Sets a viewport region in the current platform window for drawing.
-         * Makes use of w_ParentWindowPlatform.
-         * @return False if no w_ParentWindowPlatform is set. True otherwise.
-         */
-        [[nodiscard]] virtual bool SetupViewport() const;
-
-        EKeyState MouseLeftButton   = EKeyState::Release;
-        EKeyState MouseCenterButton = EKeyState::Release;
-        EKeyState MouseRightButton  = EKeyState::Release;
+        Pointer<FMouseState> MouseState;
 
     protected:
-        FConfig Config;
+        FSlabWindowConfig Config;
         Resolution MinWidth=800, MinHeight=450;
         Int HeightOverride = -1;
         bool Active=false;
 
     public:
 
-        explicit FSlabWindow(FConfig ConfigArg);
+        explicit FSlabWindow(FSlabWindowConfig ConfigArg);
 
         ~FSlabWindow() override;
 
-        auto GetConfig() -> FConfig&;
+        auto GetConfig() -> FSlabWindowConfig&;
 
         auto NotifySystemWindowReshape(int w, int h)           -> bool final;
-        auto NotifyRender()                                    -> bool final;
+        auto NotifyRender(const FPlatformWindow&)              -> bool final;
 
         /**
          *  Override the value used to compute viewport positions in OpenGL environments.
@@ -94,20 +71,15 @@ namespace Slab::Graphics {
          */
         void OverrideSystemWindowHeight(int Height);
 
-        auto NotifyMouseButton(EMouseButton, EKeyState, EModKeys) -> bool override;
-        auto NotifyMouseMotion(int x, int y, int dx, int dy)   -> bool override;
-        auto NotifyMouseWheel(double dx, double dy)            -> bool override;
-        auto NotifyKeyboard(EKeyMap, EKeyState, EModKeys)         -> bool override;
-
         /**
          * This function is called when the window should render it's content immediately to its output.
          */
-        virtual auto ImmediateDraw()                           -> void;
+        virtual auto ImmediateDraw(const FPlatformWindow&)     -> void;
         /**
          * Here the window has the opportunity to register callbacks and other things (e.g. ImGui window list
          * draw callback commands).
          */
-        virtual auto RegisterDeferredDrawCalls()               -> void;
+        virtual auto RegisterDeferredDrawCalls(const FPlatformWindow&)               -> void;
 
         virtual auto NotifyReshape(int w, int h)               -> void;
         virtual auto NotifyBecameActive()                      -> void;
@@ -115,16 +87,19 @@ namespace Slab::Graphics {
         virtual auto Set_x(int x)                              -> void;
         virtual auto Set_y(int y)                              -> void;
 
-        auto GetFlags()                                  const -> Int;
-        auto IsActive()                                  const -> bool;
-        auto WantsFullscreen()                           const -> bool;
-        virtual auto IsMouseIn()                         const -> bool;
-        auto IsMouseLeftClicked()                        const -> bool;
-        auto IsMouseCenterClicked()                      const -> bool;
-        auto IsMouseRightClicked()                       const -> bool;
-        virtual auto GetMouseViewportCoord()             const -> Point2D;
+        [[nodiscard]] auto GetFlags()                    const -> Int;
+        [[nodiscard]] auto IsActive()                    const -> bool;
+        [[nodiscard]] auto WantsFullscreen()             const -> bool;
 
-        auto GetTitle()                                  const -> Str;
+        [[nodiscard]] auto GetMouseState()               const -> Pointer<const FMouseState>;
+        [[nodiscard]] auto IsMouseInside()               const -> bool;
+        [[nodiscard]] auto GetMouseViewportCoord()       const -> Point2D;
+        [[nodiscard]] virtual
+        auto IsPointWithin(const Point2D&)               const -> bool;
+        [[nodiscard]] virtual
+        auto FromPlatformWindowToViewportCoords(const Point2D&) const -> Point2D;
+
+        [[nodiscard]] auto GetTitle()                    const -> Str;
 
         auto SetDecorate(bool)                                 -> void;
         auto SetClear(bool)                                    -> void;

@@ -13,8 +13,8 @@ fix PRIORITIZE_ME = true;
 
 namespace Slab::Graphics {
 
-    static FCallSet::InitContextCall Init = [](RawPlatformWindow_Ptr raw_syswin_ptr) {
-        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)raw_syswin_ptr, DONT_INSTALL_CALLBACKS);
+    static FCallSet::InitContextCall Init = [](const FCallSet& Call) {
+        ImGui_ImplGlfw_InitForOpenGL((GLFWwindow*)Call.r_SystemWindow, DONT_INSTALL_CALLBACKS);
         ImGui_ImplOpenGL3_Init();
 
         return;
@@ -34,6 +34,7 @@ namespace Slab::Graphics {
         ImGui_ImplGlfw_NewFrame();
     };
 
-    ImGuiModuleGLFW::ImGuiModuleGLFW() : FImGuiModule(FCallSet{Init, End, Draw, NewFrame}) {  }
+    ImGuiModuleGLFW::ImGuiModuleGLFW(GLFWwindow* Window)
+    : FImGuiModule(FCallSet{Window, Init, End, Draw, NewFrame}) {  }
 
 } // Core

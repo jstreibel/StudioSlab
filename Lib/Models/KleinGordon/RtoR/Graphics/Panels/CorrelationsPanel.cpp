@@ -108,7 +108,7 @@ namespace Slab::Models::KGRtoR {
         correlationGraph.GetAxisArtist().setVerticalAxisLabel("t");
     }
 
-    void CorrelationsPanel::ImmediateDraw() {
+    void CorrelationsPanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         guiWindow.AddExternalDraw([this]() {
             if (ImGui::CollapsingHeader("ℱₜₓ and ⟨ϕ(t,x)ϕ(t′,x′)⟩")) {
                 static auto discardRedundant = false;
@@ -121,7 +121,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void CorrelationsPanel::SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,

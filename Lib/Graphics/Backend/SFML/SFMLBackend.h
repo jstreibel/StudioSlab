@@ -14,7 +14,6 @@
 namespace Slab::Graphics {
 
     class SFMLBackend : public GraphicBackend {
-        SFMLEventTranslator sfmlEventTranslator;
         sf::Mutex off_sync;
 
     public:

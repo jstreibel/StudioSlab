@@ -21,29 +21,29 @@ fix AlwaysPropagate = true;
 fix PropagateOnlyIfMouseIsIn = false;
 
 #define PropagateEvent(EVENT, PROPAGATE_ALWAYS){                                           \
-    auto responded = false;                                                                \
+    auto Responded = false;                                                                \
                                                                                            \
-    responded = FSlabWindow::EVENT;                                                         \
+    Responded = FSlabWindow::EVENT;                                                         \
                                                                                            \
-    for(auto &winData : windowsList)                                                       \
-        if(winData.window->IsMouseIn() || PROPAGATE_ALWAYS) responded = winData.window->EVENT; \
+    for(auto &WinData : WindowsList)                                                       \
+        if(WinData.window->IsMouseInside() || PROPAGATE_ALWAYS) Responded = WinData.window->EVENT; \
                                                                                            \
-    return responded;                                                                      \
+    return Responded;                                                                      \
 }
 
 
 namespace Slab::Graphics {
 
     FWindowRow::FWindowRow(Str Title, Int Flags)
-            : FSlabWindow(FConfig{{}, std::move(Title), WindowStyle::DefaultWindowRect, Flags}) {
+            : FSlabWindow(FSlabWindowConfig{std::move(Title), WindowStyle::DefaultWindowRect, Flags}) {
 
     }
 
     RealVector FWindowRow::_widthsVector() const {
-        auto widths = RealVector(windowsList.size());
+        auto widths = RealVector(WindowsList.size());
 
         auto i = 0;
-        for (auto &winData: windowsList) {
+        for (auto &winData: WindowsList) {
             widths[i] = winData.width;
             ++i;
         }
@@ -53,20 +53,20 @@ namespace Slab::Graphics {
 
     bool FWindowRow::AddWindow(const Pointer<FSlabWindow> &window, RelativePosition relPosition,
                               float windowWidth) {
-        if (std::find_if(windowsList.begin(), windowsList.end(),
-                         [&window](WinMetaData &winMetaData) {
-                             return winMetaData.window == window;
-                         }) != windowsList.end()) {
+        if (std::ranges::find_if(WindowsList,
+                                 [&window](WinMetaData &winMetaData) {
+                                     return winMetaData.window == window;
+                                 }) != WindowsList.end()) {
             return false;
         }
 
         switch (relPosition) {
             case Left:
-                windowsList.push_front({window, windowWidth});
+                WindowsList.push_front({window, windowWidth});
                 arrangeWindows();
                 return true;
             case Right:
-                windowsList.push_back({window, windowWidth});
+                WindowsList.push_back({window, windowWidth});
                 arrangeWindows();
                 return true;
         }
@@ -75,7 +75,7 @@ namespace Slab::Graphics {
     }
 
     void FWindowRow::removeWindow(const Pointer<FSlabWindow> &window) {
-        windowsList.remove_if([&window](WinMetaData &toComp) {
+        WindowsList.remove_if([&window](WinMetaData &toComp) {
             return toComp.window == window;
         });
 
@@ -85,7 +85,7 @@ namespace Slab::Graphics {
     void FWindowRow::arrangeWindows() {
         if (!assertConsistency()) throw Exception("WindowRow inconsistency");
 
-        auto m = windowsList.size();
+        auto m = WindowsList.size();
 
         if (m == 0) return;
 
@@ -138,7 +138,7 @@ namespace Slab::Graphics {
         auto i = 0;
         fix y = Get_y() + WindowStyle::tiling_gap;
         fix h = GetHeight() - WindowStyle::tiling_gap;
-        for (auto &winMData: windowsList) {
+        for (auto &winMData: WindowsList) {
             OUT win = *winMData.window;
 
             win.Set_x(computed_xPositions[i]);
@@ -171,12 +171,12 @@ namespace Slab::Graphics {
         return false;
     }
 
-    void FWindowRow::ImmediateDraw() {
+    void FWindowRow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
 
-        for (auto & winData : std::ranges::reverse_view(windowsList)) {
+        for (auto & winData : std::ranges::reverse_view(WindowsList)) {
             auto &window = *winData.window;
 
-            window.ImmediateDraw();
+            window.ImmediateDraw(PlatformWindow);
             OpenGL::CheckGLErrors(
                     Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(&window));
         }
@@ -189,9 +189,11 @@ namespace Slab::Graphics {
     }
 
     bool FWindowRow::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        for (auto &winData: windowsList)
-            if (winData.window->IsMouseIn() && winData.window->NotifyMouseMotion(x, y, dx, dy))
+        for (auto & [Window, Width]: WindowsList)
+        {
+            if (Window->IsMouseInside() && Window->NotifyMouseMotion(x, y, dx, dy))
                 return true;
+        }
 
         //auto mouseState = Slab::Graphics::GetGraphicsBackend()->getMouseState();
         //if(mouseState.leftPressed){

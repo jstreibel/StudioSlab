@@ -22,7 +22,7 @@ namespace Slab::Models::KGRtoR {
     public:
         RtoRHistoryPanel(const Pointer<KGNumericConfig> &params, FGUIWindow &guiWindow, KGEnergy &hamiltonian);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
  simulationHistory,

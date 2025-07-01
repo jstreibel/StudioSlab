@@ -24,7 +24,7 @@ namespace Slab::Graphics {
         void AddMainMenuItem(MainMenuItem item) override;
 
     protected:
-        void SetParentPlatformWindow(FOwnerPlatformWindow) override;
+        void SetParentPlatformWindow(FOwnerPlatformWindow);
     };
 
 } // Slab::Graphics

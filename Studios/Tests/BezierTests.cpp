@@ -38,6 +38,7 @@ namespace Tests {
 
     BezierTests::BezierTests(const Pointer<Graphics::FImGuiContext>& GuiContext)
     : FWindowRow("Bezier Tests")
+    , Stats(Graphics::FSlabWindowConfig("Stats"))
     , Graph("Graph", GuiContext) {
         Param1 = static_cast<float>(Graphics::Animator::GetBezierParams().first);
         Param2 = static_cast<float>(Graphics::Animator::GetBezierParams().second);
@@ -64,8 +65,8 @@ namespace Tests {
         AddWindow(Dummy(Graph));
     }
 
-    void BezierTests::ImmediateDraw() {
-        FSlabWindow::ImmediateDraw();
+    void BezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
+        FSlabWindow::ImmediateDraw(PlatformWindow);
 
         CurrentPoint.clear();
         const auto &GraphRegion = Graph.GetRegion();
@@ -93,14 +94,14 @@ namespace Tests {
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        Graph.ImmediateDraw();
-        Stats.ImmediateDraw();
+        Graph.ImmediateDraw(PlatformWindow);
+        Stats.ImmediateDraw(PlatformWindow);
 
     }
 
-    void BezierTests::RegisterDeferredDrawCalls()
+    void BezierTests::RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow)
     {
-        FSlabWindow::RegisterDeferredDrawCalls();
+        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
         Stats.Set_x(this->Get_x()-100);
         Stats.Set_y(this->Get_y());
@@ -113,8 +114,8 @@ namespace Tests {
                 Graph.SetAnimationTime(AnimTimeSeconds);
             }});
 
-        Stats.RegisterDeferredDrawCalls();
+        Stats.RegisterDeferredDrawCalls(PlatformWindow);
 
-        Graph.RegisterDeferredDrawCalls();
+        Graph.RegisterDeferredDrawCalls(PlatformWindow);
     }
 } // Tests

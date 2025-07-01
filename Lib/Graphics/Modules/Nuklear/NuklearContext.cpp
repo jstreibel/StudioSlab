@@ -23,8 +23,6 @@ namespace Slab::Graphics {
 
     void NuklearContext::SetParentPlatformWindow(FOwnerPlatformWindow NewOwner)
     {
-        GUIContext::SetParentPlatformWindow(NewOwner);
-
         // nkContext = nk_sfml_init(renderWindow);
         // /* Load Fonts: if none of these are loaded a default font will be used  */
         // /* Load Cursor: if you uncomment cursor loading please hide the cursor */

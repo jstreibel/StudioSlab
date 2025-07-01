@@ -13,7 +13,7 @@ namespace Slab::Graphics {
         Pointer<FSlabWindow> window;
 
     public:
-        WindowProxy(FSlabWindow::FConfig ConfigArg);
+        explicit WindowProxy(FSlabWindowConfig ConfigArg);
 
         void setWindow(Pointer<FSlabWindow>);
     };

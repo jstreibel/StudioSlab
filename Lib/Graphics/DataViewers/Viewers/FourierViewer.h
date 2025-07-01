@@ -87,7 +87,7 @@ namespace Slab::Graphics{
 
         void SetFunction(Function func) override;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
     };
 
 } // Studios::Fields

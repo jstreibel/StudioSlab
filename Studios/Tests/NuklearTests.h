@@ -14,7 +14,7 @@ namespace Tests {
     public:
         NuklearTests();
 
-        bool NotifyRender() override;
+        bool NotifyRender(const Slab::Graphics::FPlatformWindow&) override;
     };
 
 } // Tests

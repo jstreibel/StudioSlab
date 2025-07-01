@@ -15,30 +15,16 @@
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
-constexpr bool MAKE_LOCAL_CONTEXT = false;
-
 namespace Slab::Graphics {
 
-    FGUIWindow::FGUIWindow(FConfig config) : FSlabWindow(std::move(config)) {
+    FGUIWindow::FGUIWindow(FSlabWindowConfig config) : FSlabWindow(std::move(config)) {
         SetClear(false);
         SetDecorate(false);
 
-        if constexpr (MAKE_LOCAL_CONTEXT)
-        {
-            auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
-            GuiContext = DynamicPointerCast<FImGuiContext>(GuiModule.CreateContext(w_ParentPlatformWindow));
+        auto Context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
+        if(Context == nullptr) throw Exception("Failed to get GUIContext.");
 
-            if(GuiContext == nullptr) throw Exception("Failed to get GUIContext.");
-
-            AddResponder(GuiContext);
-        }
-        else
-        {
-            auto Context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
-            if(Context == nullptr) throw Exception("Failed to get GUIContext.");
-
-            GuiContext = DynamicPointerCast<FImGuiContext>(Context);
-        }
+        GuiContext = DynamicPointerCast<FImGuiContext>(Context);
     }
 
 
@@ -46,19 +32,9 @@ namespace Slab::Graphics {
         Stats.emplace_back(stat, color);
     }
 
-    void FGUIWindow::ImmediateDraw() {
-        FSlabWindow::ImmediateDraw();
-
-        if constexpr (MAKE_LOCAL_CONTEXT)
-        {
-            GuiContext->NewFrame();
-            GuiContext->Render();
-        }
-    }
-
-    void FGUIWindow::RegisterDeferredDrawCalls()
+    void FGUIWindow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
     {
-        FSlabWindow::RegisterDeferredDrawCalls();
+        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
         Begin();
         GuiContext->AddDrawCall([this]() {

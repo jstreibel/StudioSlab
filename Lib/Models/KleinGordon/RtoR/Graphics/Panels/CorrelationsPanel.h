@@ -35,7 +35,7 @@ namespace Slab::Models::KGRtoR {
         void SetSimulationHistory(R2toR::FNumericFunction_constptr simulationHistory,
                                   const R2toRFunctionArtist_ptr &simHistoryArtist) override;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
     };
 
 } // Graphics

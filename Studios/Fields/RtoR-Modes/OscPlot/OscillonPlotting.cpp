@@ -56,7 +56,7 @@ namespace Studios {
         addKGViewer(energy_viewer);
     }
 
-    void OscillonPlotting::ImmediateDraw() {
+    void OscillonPlotting::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
         getGUIWindow()->AddExternalDraw([this](){
             if(ImGui::CollapsingHeader("Oscillon", ImGuiTreeNodeFlags_Framed)) {
                 // auto v = (float)osc_params.v;
@@ -108,7 +108,7 @@ namespace Studios {
             }
         });
 
-        Slab::Graphics::MainViewer::ImmediateDraw();
+        Slab::Graphics::MainViewer::ImmediateDraw(PlatformWindow);
     }
 
     void OscillonPlotting::setupOscillons() {

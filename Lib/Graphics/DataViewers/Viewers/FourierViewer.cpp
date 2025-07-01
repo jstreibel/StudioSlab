@@ -98,10 +98,10 @@ namespace Slab::Graphics {
         AddWindow(ωkSpaceGraph, true, 0.5);
         AddWindow(kSpaceGraph);
 
-        arrangeWindows();
+        ArrangeWindows();
     }
 
-    void FourierViewer::ImmediateDraw() {
+    void FourierViewer::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         auto function = getFunction();
         if(function == nullptr) return;
 
@@ -169,7 +169,7 @@ namespace Slab::Graphics {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     auto FourierViewer::FilterSpace(const Pointer<const R2toR::FNumericFunction>& func, DevFloat tMin,

@@ -17,22 +17,22 @@ namespace Slab::Graphics {
 
     protected:
         Timer frameTimer = Timer();
-        Pointer<FGUIWindow> guiWindow = New<FGUIWindow>();
+        Pointer<FGUIWindow> GuiWindow;
 
-        const CountType max_steps;
+        const CountType MaxSteps;
 
         size_t step=0;
 
     public:
         typedef std::shared_ptr<BaseMonitor> Ptr;
 
-        explicit BaseMonitor(CountType max_steps,
-                             const Str& channelName="OpenGL monitor",
-                             int stepsBetweenDraws=10);
+        explicit BaseMonitor(CountType MaxSteps,
+                             const Str& ChannelName="OpenGL monitor",
+                             int StepsBetweenDraws=10);
 
         [[nodiscard]] FGUIWindow &getGUIWindow() const;
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
         // ********************* From Socket ********************* //

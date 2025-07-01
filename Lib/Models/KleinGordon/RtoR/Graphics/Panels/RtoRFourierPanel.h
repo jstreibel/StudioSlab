@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
     public:
         RtoRFourierPanel(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, FGUIWindow &guiWindow);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         void SetSimulationHistory(Pointer<const R2toR::FNumericFunction> simulationHistory,
                                   const Pointer<R2toRFunctionArtist> &simHistoryGraph) override;

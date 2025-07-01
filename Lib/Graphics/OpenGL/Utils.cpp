@@ -110,7 +110,6 @@ namespace Slab {
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texColorBuffer, 0);
 
-
         // Check..
         auto retVal = true;
         if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
@@ -131,33 +130,19 @@ namespace Slab {
             glClearColor(0,0,0,0);
             glClear(GL_COLOR_BUFFER_BIT);
 
-            // auto gui_state = window->isGUIEnabled();
-            // window->setGUIState(DISABLED);
             window->OverrideSystemWindowHeight(height);
-            window->ImmediateDraw();
+
+            // *********************************************
+            // DANGER! Be careful with this little one.
+            FPlatformWindow *DummyDanger = nullptr;
+            // ReSharper disable once CppDFANullDereference
+            window->ImmediateDraw(*DummyDanger);
             window->OverrideSystemWindowHeight(-1);
-            // window->setGUIState(gui_state);
+            // END DANGER
 
             window->Set_x(xOld);
             window->Set_y(yOld);
             window->NotifyReshape(wOld, hOld);
-
-            // Frame:
-            // OpenGL::Shader::remove();
-            // glMatrixMode(GL_PROJECTION);
-            // glLoadIdentity();
-            // glMatrixMode(GL_MODELVIEW);
-            // glLoadIdentity();
-            // glEnable(GL_BLEND);
-            // glEnable(GL_LINE_SMOOTH);
-            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            // glLineWidth(5);
-            // glColor3i(0, 0, 0);
-            // glBegin(GL_LINES);
-            {
-                // glVertex2f(..)
-            }
-            // glEnd();
 
             glFlush();
 

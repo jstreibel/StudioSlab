@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         // this->SlabWindow->SetDecorate(false);
     }
 
-    void FImGuiWindow::ImmediateDraw() {
+    void FImGuiWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         // This should be called in case of a local context, which is not the case
         // Context->NewFrame();
 
@@ -46,11 +46,14 @@ namespace Slab::Graphics {
         // FSlabWindow::Draw();
     }
 
-    void FImGuiWindow::RegisterDeferredDrawCalls()
+    void FImGuiWindow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
     {
-        FSlabWindow::RegisterDeferredDrawCalls();
+        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
-        SlabWindow->RegisterDeferredDrawCalls();
+        SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
+
+        CallBackData.SlabWindow = SlabWindow.get();
+        CallBackData.PlatformWindow = &PlatformWindow;
 
         Context->AddDrawCall([this]() {
             if (SlabWindow == nullptr) return;
@@ -86,14 +89,14 @@ namespace Slab::Graphics {
 
                     if (DrawCommand->UserCallback == nullptr) return;
 
-                    const auto SlabWindow = *static_cast<Pointer<FSlabWindow>*>(DrawCommand->UserCallbackData);
+                    const auto& [SlabWindow, PlatformWindow] = *static_cast<FCallbackData*>(DrawCommand->UserCallbackData);
 
                     glPushAttrib(GL_VIEWPORT_BIT);
-                    SlabWindow->ImmediateDraw();
+                    SlabWindow->ImmediateDraw(*PlatformWindow);
                     glPopAttrib();
                 };
 
-                ImGui::GetWindowDrawList()->AddCallback(Callback, &SlabWindow);
+                ImGui::GetWindowDrawList()->AddCallback(Callback, &CallBackData);
             }
 
             ImGui::End();

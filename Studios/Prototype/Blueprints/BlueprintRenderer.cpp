@@ -12,6 +12,7 @@
 #include "StudioSlab.h"
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "Graphics/SlabGraphics.h"
+#include "Graphics/OpenGL/Images.h"
 
 
 namespace Slab::Blueprints {
@@ -21,22 +22,8 @@ namespace Slab::Blueprints {
     using ax::Widgets::IconType;
 
     BlueprintRenderer::BlueprintRenderer(Pointer<Slab::Blueprints::Blueprint> blueprint)
-    : blueprint(std::move(blueprint)) {
-
-    }
-
-    void BlueprintRenderer::SetParentPlatformWindow(Graphics::FOwnerPlatformWindow PlatformWindow)
+    : blueprint(std::move(blueprint))
     {
-        FPlatformWindowEventListener::SetParentPlatformWindow(PlatformWindow);
-
-        IN OwnerWindow = PlatformWindow.lock();
-        if (OwnerWindow == nullptr) return;
-
-        // Blueprints "OnStart()"
-
-        m_Context = DynamicPointerCast<Graphics::FImGuiContext>(OwnerWindow->GetGUIContext());
-        AddResponder(m_Context);
-
         ed::Config config;
 
         config.SettingsFile = "Blueprints.json";
@@ -75,10 +62,10 @@ namespace Slab::Blueprints {
         m_Editor = ed::CreateEditor(&config);
         ed::SetCurrentEditor(m_Editor);
 
-        auto location = Slab::Core::Resources::Folder + "Blueprints/";
-        m_HeaderBackground = Slab::Graphics::LoadTexture(location + "BlueprintBackground.png");
-        m_SaveIcon         = Slab::Graphics::LoadTexture(location + "ic_save_white_24dp.png");
-        m_RestoreIcon      = Slab::Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
+        auto location = Core::Resources::Folder + "Blueprints/";
+        m_HeaderBackground = Graphics::LoadTexture(location + "BlueprintBackground.png");
+        m_SaveIcon         = Graphics::LoadTexture(location + "ic_save_white_24dp.png");
+        m_RestoreIcon      = Graphics::LoadTexture(location + "ic_restore_white_24dp.png");
     }
 
     void BlueprintRenderer::TouchNode(ed::NodeId id) {

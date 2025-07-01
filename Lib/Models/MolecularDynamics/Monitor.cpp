@@ -26,7 +26,7 @@ namespace Slab::Models::MolecularDynamics {
 
     Monitor::Monitor(const Pointer<Config>& config, Model model)
     : Socket("Particle dynamics monitor", 10)
-    , FSlabWindow()
+    , FSlabWindow(Graphics::FSlabWindowConfig("Particle Dynamics Monitor"))
     , renderWindow(*(sf::RenderWindow*)SFML_Backend->GetMainSystemWindow()->GetRawPlatformWindowPointer())
     , molShapes(2*config->getN())
     , molShape(CUTOFF_RADIUS, 36)
@@ -105,7 +105,7 @@ namespace Slab::Models::MolecularDynamics {
 
     void Monitor::handleOutput(const Math::OutputPacket &packet) {    }
 
-    void Monitor::ImmediateDraw() {
+    void Monitor::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         // Window::draw();
 
         auto state = LastPacket.GetNakedStateData<MoleculesState>();

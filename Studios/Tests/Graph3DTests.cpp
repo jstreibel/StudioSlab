@@ -41,7 +41,7 @@ namespace Tests {
         graph3d->addActor(actor);
     }
 
-    void Graph3DTests::ImmediateDraw() {
-        FWindowRow::ImmediateDraw();
+    void Graph3DTests::ImmediateDraw(const Slab::Graphics::FPlatformWindow& PlatformWindow) {
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 } // Tests

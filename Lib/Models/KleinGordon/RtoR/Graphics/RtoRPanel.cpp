@@ -6,12 +6,17 @@
 
 namespace Slab::Models::KGRtoR {
 
-    FRtoRPanel::FRtoRPanel(Pointer<KGNumericConfig>params, FGUIWindow &guiWindow, KGEnergy &hamiltonian,
-                         const Str &name, const Str &description)
-            : Socket(name, 1, description)
-            , guiWindow(guiWindow)
-            , Params(params)
-            , Hamiltonian(hamiltonian)
+    FRtoRPanel::FRtoRPanel(
+        Pointer<KGNumericConfig>params,
+        FGUIWindow &guiWindow,
+        KGEnergy &hamiltonian,
+        const Str &name,
+        const Str &description)
+    : Socket(name, 1, description)
+    , WindowPanel(FSlabWindowConfig(name))
+    , guiWindow(guiWindow)
+    , Params(params)
+    , Hamiltonian(hamiltonian)
     {
 
     }

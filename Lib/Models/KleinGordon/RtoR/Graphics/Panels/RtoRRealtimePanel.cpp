@@ -91,7 +91,7 @@ namespace Slab::Models::KGRtoR {
         SetColumnRelativeWidth(1, -1);
     }
 
-    void FRealtimePanel::ImmediateDraw() {
+    void FRealtimePanel::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         UpdateEnergyData();
 
         fix V_str = Hamiltonian.GetThePotential()->Symbol();
@@ -117,7 +117,7 @@ namespace Slab::Models::KGRtoR {
 
         CHECK_GL_ERRORS(ErrorCount++)
 
-        FRtoRPanel::ImmediateDraw();
+        FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
     void FRealtimePanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>

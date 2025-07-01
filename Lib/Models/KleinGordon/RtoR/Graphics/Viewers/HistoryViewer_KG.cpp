@@ -33,7 +33,7 @@ namespace Slab::Models::KGRtoR {
         history_window->TieRegion_xMaxMin(*slice_window);
     }
 
-    void HistoryViewer::ImmediateDraw() {
+    void HistoryViewer::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
         if(getFunction() == nullptr) return;
 
         gui_window->AddExternalDraw([this](){
@@ -55,7 +55,7 @@ namespace Slab::Models::KGRtoR {
             }
         });
 
-        WindowPanel::ImmediateDraw();
+        WindowPanel::ImmediateDraw(PlatformWindow);
     }
 
     void HistoryViewer::SetFunction(Pointer<Math::R2toR::FNumericFunction> function) {

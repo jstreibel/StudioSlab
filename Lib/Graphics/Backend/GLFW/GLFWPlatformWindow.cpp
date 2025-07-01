@@ -156,7 +156,7 @@ namespace Slab::Graphics {
     }
 
     FGLFWPlatformWindow::FGLFWPlatformWindow()
-    : FPlatformWindow(NewGLFWWindow(), New<FGLFWEventTranslator>())
+    : FPlatformWindow(NewGLFWWindow(), New<FGLFWEventTranslator>(this))
     {
 
         glfwSetWindowUserPointer(static_cast<GLFWwindow *>(r_Window), this);

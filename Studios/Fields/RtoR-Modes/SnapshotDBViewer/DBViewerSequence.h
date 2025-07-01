@@ -62,7 +62,7 @@ namespace Modes::DatabaseViewer {
     public:
         explicit DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const Graphics::FPlatformWindow&) override;
 
         bool NotifyKeyboard(Graphics::EKeyMap key, Graphics::EKeyState state, Graphics::EModKeys modKeys) override;
     };

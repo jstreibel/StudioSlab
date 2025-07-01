@@ -5,6 +5,8 @@
 #include "SFMLEventTranslator.h"
 #include "Utils/ReferenceIterator.h"
 
+#include "SFMLSystemWindow.h"
+
 #define For      for(auto &
 #define Each     listener
 #define Listener : guiListeners) listener
@@ -12,6 +14,10 @@
 
 namespace Slab::Graphics {
     inline EKeyMap mapFromSFML(sf::Event::KeyEvent);
+
+    SFMLEventTranslator::SFMLEventTranslator(SFMLSystemWindow* owner): Owner(owner)
+    {
+    }
 
     void SFMLEventTranslator::event(const sf::Event &event) {
         fix type = event.type;
@@ -89,7 +95,10 @@ namespace Slab::Graphics {
     }
 
     void SFMLEventTranslator::render(sf::RenderWindow *window) {
-        IterateReferences(SysWinListeners, Func(NotifyRender));
+        auto Funky = [this] (const auto &obj) {
+            return obj->NotifyRender(*Owner);
+        };
+        IterateReferences(SysWinListeners, Funky);
     }
 
 

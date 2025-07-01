@@ -3,7 +3,6 @@
 //
 
 #include "PlatformWindow.h"
-#include "StudioSlab.h"
 
 #include "Core/SlabCore.h"
 #include "3rdParty/ImGui.h"
@@ -29,16 +28,6 @@ namespace Slab::Graphics {
     }
 
      auto FPlatformWindow::AddEventListener(const TVolatile<FPlatformWindowEventListener> &Listener) const -> bool {
-        if (const auto ListenerRef = Listener.lock())
-        {
-            ListenerRef->SetParentPlatformWindow(SelfReference);
-            // ListenerRef->NotifySystemWindowReshape(getWidth(), getHeight());
-        }
-        else
-        {
-            throw Exception("Expired pointer");
-        }
-
         return EventTranslator->AddGUIEventListener(Listener);
     }
 
@@ -95,13 +84,7 @@ namespace Slab::Graphics {
     }
 
     void FPlatformWindow::ClearListeners() {
-        for(const auto &Listener : Stash) Listener->SetParentPlatformWindow({});
-
         Stash.clear();
-
-        for(auto &Listener : EventTranslator->SysWinListeners)
-            if(const auto Ptr = Listener.lock()) Ptr->SetParentPlatformWindow({});
-
         EventTranslator->clear();
     }
 

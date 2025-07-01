@@ -23,8 +23,8 @@ fix PropagateOnlyIfMouseIsIn = false;
                                                                          \
     responded = FSlabWindow::EVENT;                                       \
                                                                          \
-    for(auto &win : windows)                                             \
-        if(win->IsMouseIn() || PROPAGATE_ALWAYS) responded = win->EVENT; \
+    for(auto &win : Windows)                                             \
+        if(win->IsMouseInside() || PROPAGATE_ALWAYS) responded = win->EVENT; \
                                                                          \
     return responded;                                                    \
 }
@@ -35,16 +35,16 @@ namespace Slab::Graphics {
     using namespace Core;
 
     void WindowColumn::addWindow(const Pointer<FSlabWindow>& window, float windowHeight) {
-        windows.emplace_back(window);
+        Windows.emplace_back(window);
         heights.emplace_back(windowHeight);
     }
 
     bool WindowColumn::removeWindow(const Pointer<FSlabWindow>& window) {
 
-        auto it = windows.begin();
-        for(auto i=0; i<windows.size(); ++i){
+        auto it = Windows.begin();
+        for(auto i=0; i<Windows.size(); ++i){
             if(*it == window) {
-                windows.remove(*it);
+                Windows.remove(*it);
                 heights.erase(heights.begin()+i);
 
                 return true;
@@ -59,7 +59,7 @@ namespace Slab::Graphics {
     void WindowColumn::arrangeWindows() {
         if (!assertConsistency()) throw Exception("WindowRow inconsistency");
 
-        auto m = windows.size();
+        auto m = Windows.size();
 
         if (m == 0) return;
 
@@ -97,7 +97,7 @@ namespace Slab::Graphics {
         }
 
         auto i = 0;
-        for (auto &win: windows) {
+        for (auto &win: Windows) {
             win->Set_x(Get_x() + gap);
             win->Set_y(computed_yPositions[i]);
 
@@ -126,15 +126,15 @@ namespace Slab::Graphics {
         return false;
     }
 
-    WindowColumn::WindowColumn() : FSlabWindow(FConfig{{}, "<col>"})
+    WindowColumn::WindowColumn() : FSlabWindow(FSlabWindowConfig{"<col>"})
     {
     }
 
-    void WindowColumn::ImmediateDraw() {
-        for (auto &win: windows) {
-            win->ImmediateDraw();
+    void WindowColumn::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+        for (auto &Win: Windows) {
+            Win->ImmediateDraw(PlatformWindow);
             OpenGL::CheckGLErrors(
-                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(win.get()));
+                    Str(__PRETTY_FUNCTION__) + " drawing " + Common::getClassName(Win.get()));
         }
     }
 
@@ -145,13 +145,12 @@ namespace Slab::Graphics {
     }
 
     bool WindowColumn::NotifyMouseMotion(int x, int y, int dx, int dy) {
-        auto responded = false;
-        for(auto &win : windows)
-        if(win->IsMouseIn() ){
-            responded = win->NotifyMouseMotion(x,y,dx,dy);
+        auto Responded = false;
+        for(auto &Win : Windows) if(Win->IsPointWithin(Point2D{DevFloat(x) ,DevFloat(y)}) ){
+            Responded = Win->NotifyMouseMotion(x,y,dx,dy);
         }
 
-        if(responded) return true;
+        if(Responded) return true;
 
         return FSlabWindow::NotifyMouseMotion(x, y, dx, dy);
     }
@@ -175,7 +174,7 @@ namespace Slab::Graphics {
     }
 
     bool WindowColumn::isEmpty() const {
-        return windows.empty();
+        return Windows.empty();
     }
 
     void WindowColumn::Set_x(int x) {

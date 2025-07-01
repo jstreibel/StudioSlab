@@ -57,10 +57,10 @@ namespace Slab::Graphics {
         DevFloat yMax,
         Str _title,
         const Pointer<FImGuiContext>& ArgGuiContext)
-    : Id(++WindowCount)
+    : FSlabWindow(FSlabWindowConfig(_title))
+    , Id(++WindowCount)
     , Region{{xMin, xMax, yMin, yMax}}
     , Title(std::move(_title))
-    , AxisArtist()
     , GuiContext(ArgGuiContext)
     {
         // Instantiate our dedicated Plot themes manager
@@ -68,10 +68,7 @@ namespace Slab::Graphics {
 
         if(this->GuiContext == nullptr)
         {
-            bGuiContextIsLocal = true;
-            auto &GuiModule = Slab::GetModule<FImGuiModule>("ImGui");
-            GuiContext = DynamicPointerCast<FImGuiContext>(GuiModule.CreateContext(w_ParentPlatformWindow));
-            AddResponder(GuiContext);
+            throw Exception("Null pointer provided to GuiContext");
         }
 
         AxisArtist.SetLabel("Axis");
@@ -131,30 +128,26 @@ namespace Slab::Graphics {
         return haveErased;
     }
 
-    void FPlot2DWindow::ImmediateDraw() {
+    void FPlot2DWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         OpenGL::CheckGLErrors(Str(__PRETTY_FUNCTION__) + "; '" + Title + "'");
 
-        FSlabWindow::ImmediateDraw();
+        FSlabWindow::ImmediateDraw(PlatformWindow);
 
         if (AutoReviewGraphRanges) ReviewGraphRanges();
 
         ArtistsDraw();
     }
 
-    void FPlot2DWindow::RegisterDeferredDrawCalls()
+    void FPlot2DWindow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
     {
-        FSlabWindow::RegisterDeferredDrawCalls();
+        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
         RegisterGUIDraws();
     }
 
     void FPlot2DWindow::RegisterGUIDraws() {
-        static bool bypass_gui = false; // When outputting to png, the whole draw for this window (including this
-        if (bypass_gui) { return; }     // function) is performed on top of the current draw. We thus bypass the gui
-                                        // draw to not get ImGui santity check "Forgot to call Render() or EndFrame()
-                                        // at the end of the previous frame?"
-
-        auto draw_call = [this] {
+        auto DrawCall = [this]
+        {
             auto popupName = AddUniqueIdToString(Title + Str(" window popup"));
 
             if (PopupOn && !POPUP_ON_MOUSE_CALL) {
@@ -176,121 +169,89 @@ namespace Slab::Graphics {
                     auto fileName = Title + " " +
                                     Core::FCommandLineInterfaceManager::getInstance().renderParametersToString({"N", "L"}) +
                                     ".png";
-                    bypass_gui = true;
+
                     OpenGL::OutputToPNG(this, fileName, w, (int) h);
-                    bypass_gui = false;
                 }
 
                 ImGui::EndPopup();
             }
 
-            if (ShowInterface || !bGuiContextIsLocal)
+
+            bool Closable = false;
+
+            const auto Viewport = GetViewport();
+            ImGui::SetNextWindowPos(
+                {
+                    static_cast<float>(Viewport.xMin+200),
+                    static_cast<float>(Viewport.yMin+200)
+                },
+                ImGuiCond_Appearing);
+            ImGui::SetNextWindowSize(
+                {
+                    static_cast<float>(Viewport.GetWidth()),
+                    static_cast<float>(Viewport.GetHeight())
+                },
+                ImGuiCond_Appearing);
+
+            ImGui::SetNextWindowBgAlpha(0.65);
+
+            constexpr auto Flags =
+                // ImGuiWindowFlags_NoCollapse |
+                ImGuiWindowFlags_NoResize |
+                // ImGuiWindowFlags_NoMove |
+                ImGuiWindowFlags_NoTitleBar |
+                ImGuiWindowFlags_NoBringToFrontOnFocus;
+
+            if (ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), &Closable, Flags))
             {
-                bool Began;
+                for (auto it = Content.begin(); it!=Content.end(); )
+                {
+                    IN artie = it->second;
 
-                if(bGuiContextIsLocal) {
-                    const auto Viewport = GetViewport();
-                    // auto sh = Slab::Graphics::GetGraphicsBackend()->getScreenHeight();
-                    // ImGui::SetNextWindowPos({(float)vp.xMin, (float)(sh-(vp.yMin+vp.height()))}, ImGuiCond_Appearing);
-                    ImGui::SetNextWindowPos(
-                        {
-                            static_cast<float>(Viewport.xMin),
-                            static_cast<float>(Viewport.yMin)
-                        },
-                        ImGuiCond_Always);
-                    ImGui::SetNextWindowSize(
-                        {
-                            .0f,
-                            static_cast<float>(Viewport.GetHeight())
-                        },
-                        ImGuiCond_Always);
-                    ImGui::SetNextWindowBgAlpha(0.65);
-                    Began = ImGui::Begin(Title.c_str(), &ShowInterface, ImGuiWindowFlags_NoFocusOnAppearing
-                    | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize);
-                } else {
-                    bool Closable = false;
+                    bool increment_iterator = true;
 
-                    const auto Viewport = GetViewport();
-                    ImGui::SetNextWindowPos(
-                        {
-                            static_cast<float>(Viewport.xMin+200),
-                            static_cast<float>(Viewport.yMin+200)
-                        },
-                        ImGuiCond_Appearing);
-                    ImGui::SetNextWindowSize(
-                        {
-                            static_cast<float>(Viewport.GetWidth()),
-                            static_cast<float>(Viewport.GetHeight())
-                        },
-                        ImGuiCond_Appearing);
+                    auto label = artie->GetLabel();
+                    if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
+                        increment_iterator = !z_order_up(Content, it);
+                    }
+                    ImGui::SameLine();
+                    ImGui::Text("z=%i", it->first);
+                    ImGui::SameLine();
+                    if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
+                        increment_iterator = !z_order_down(Content, it);
+                    }
+                    ImGui::SameLine();
 
-                    ImGui::SetNextWindowBgAlpha(0.65);
+                    bool visible = artie->IsVisible();
+                    if (ImGui::Checkbox((AddUniqueIdToString(artie->GetLabel())+"_checkbox").c_str() , &visible)) {
+                        artie->SetVisibility(visible);
+                    }
 
-                    constexpr auto Flags =
-                        // ImGuiWindowFlags_NoCollapse |
-                        ImGuiWindowFlags_NoResize |
-                        // ImGuiWindowFlags_NoMove |
-                        ImGuiWindowFlags_NoTitleBar |
-                        ImGuiWindowFlags_NoBringToFrontOnFocus;
-
-                    Began = ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), &Closable, Flags);
+                    if(increment_iterator) ++it;
                 }
 
-                if (Began) {
-                    for (auto it = Content.begin(); it!=Content.end(); ) {
-                        IN artie = it->second;
 
-                        bool increment_iterator = true;
+                auto avail_region = ImGui::GetContentRegionAvail();
+                ImGui::BeginChild(AddUniqueIdToString(Title + " :)").c_str(), {avail_region.x, 0},
+                                  ImGuiChildFlags_Border
+                                  | ImGuiChildFlags_AutoResizeY);
 
-                        auto label = artie->GetLabel();
-                        if (ImGui::ArrowButton((label + "##up").c_str(), ImGuiDir_Up)){
-                            increment_iterator = !z_order_up(Content, it);
-                        }
-                        ImGui::SameLine();
-                        ImGui::Text("z=%i", it->first);
-                        ImGui::SameLine();
-                        if (ImGui::ArrowButton((label + "##down").c_str(), ImGuiDir_Down)) {
-                            increment_iterator = !z_order_down(Content, it);
-                        }
-                        ImGui::SameLine();
+                for (IN cont: Content) {
+                    IN artie = cont.second;
 
-                        bool visible = artie->IsVisible();
-                        if (ImGui::Checkbox((AddUniqueIdToString(artie->GetLabel())+"_checkbox").c_str() , &visible)) {
-                            artie->SetVisibility(visible);
-                        }
-
-                        if(increment_iterator) ++it;
+                    if (artie->IsVisible() && artie->HasGUI()) {
+                        if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->GetLabel())).c_str()))
+                            artie->DrawGUI();
                     }
-
-                    if(!bGuiContextIsLocal) {
-                        auto avail_region = ImGui::GetContentRegionAvail();
-                        ImGui::BeginChild(AddUniqueIdToString(Title + " :)").c_str(), {avail_region.x, 0},
-                                          ImGuiChildFlags_Border
-                                          | ImGuiChildFlags_AutoResizeY);
-                    }
-
-                    for (IN cont: Content) {
-                        IN artie = cont.second;
-
-                        if (artie->IsVisible() && artie->HasGUI()) {
-                            if (ImGui::CollapsingHeader((AddUniqueIdToString(artie->GetLabel())).c_str()))
-                                artie->DrawGUI();
-                        }
-                    }
-
-                    if(!bGuiContextIsLocal) ImGui::EndChild();
                 }
 
-                ImGui::End();
-            }};
+                ImGui::EndChild();
+            }
 
-        if(bGuiContextIsLocal) {
-            GuiContext->NewFrame();
-            draw_call();
-            GuiContext->Render();
-        } else {
-            GuiContext->AddDrawCall(draw_call);
-        }
+            ImGui::End();
+        };
+
+        GuiContext->AddDrawCall(DrawCall);
     }
 
     void FPlot2DWindow::SetupOrtho() const {

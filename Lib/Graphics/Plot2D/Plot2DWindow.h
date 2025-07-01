@@ -45,9 +45,6 @@ namespace Slab::Graphics {
 
         float AnimationTimeSeconds = 0.2f;
 
-        Math::PointSet XHair;
-
-        bool bGuiContextIsLocal;
         Pointer<FImGuiContext> GuiContext;
 
         void SetupOrtho() const;
@@ -57,7 +54,7 @@ namespace Slab::Graphics {
 
         void ArtistsDraw();
         void toggleShowInterface();
-        virtual void RegisterGUIDraws();
+        void RegisterGUIDraws();
 
         friend class FArtist;
 
@@ -78,8 +75,8 @@ namespace Slab::Graphics {
 
         explicit FPlot2DWindow(Str title, const Pointer<FImGuiContext>& guiContext=nullptr);
 
-        void ImmediateDraw() override;
-        auto RegisterDeferredDrawCalls() -> void override;
+        void ImmediateDraw(const FPlatformWindow&) override;
+        auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 
         void AddArtist(const FArtist_ptr& pArtist, zOrder_t zOrder=0);
         bool RemoveArtist(const FArtist_ptr& pArtist);

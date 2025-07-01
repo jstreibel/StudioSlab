@@ -16,7 +16,7 @@
 namespace Slab::Graphics {
 
     class MainViewer : public FWindowRow {
-        Pointer<FGUIWindow> gui_window = New<FGUIWindow>();
+        Pointer<FGUIWindow> gui_window;
 
         Vector<Pointer<Viewer>> viewers;
         Pointer<Viewer> current_viewer;
@@ -31,7 +31,7 @@ namespace Slab::Graphics {
     public:
         explicit MainViewer(Pointer<Math::R2toR::FNumericFunction> baseFunction=nullptr);
 
-        void ImmediateDraw() override;
+        void ImmediateDraw(const FPlatformWindow&) override;
 
         bool NotifyKeyboard(EKeyMap key, EKeyState state, EModKeys modKeys) override;
 
