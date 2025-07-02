@@ -13,8 +13,7 @@ namespace Tests {
     using namespace Slab;
 
     LaTeXTests::LaTeXTests()
-    : Slab::Graphics::FWindowRow("LaTeX tests")
-    , latexWriter()
+    : FWindowRow("LaTeX tests")
     , writer(Core::Resources::GetIndexedFontFileName(10), 19)
     , graph("Graph")
     , stats(Graphics::FSlabWindowConfig{"Stats"})

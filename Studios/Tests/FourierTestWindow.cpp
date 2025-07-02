@@ -21,6 +21,7 @@
 #define Im 1
 
 namespace Tests {
+
     using namespace Slab;
 
     using Plot = Graphics::Plotter;

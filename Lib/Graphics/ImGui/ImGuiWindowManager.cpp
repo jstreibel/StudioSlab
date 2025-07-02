@@ -20,7 +20,7 @@ namespace Slab::Graphics {
 
     void FImGuiWindowManager::AddSlabWindow(const Pointer<FSlabWindow>& SlabWindow, bool Hidden)
     {
-        auto WrapperWindow = New<FImGuiWindow>(SlabWindow, Context);
+        auto WrapperWindow = New<FSlabWindow_ImGuiWrapper>(SlabWindow, Context);
         Windows.emplace_back(WrapperWindow);
     }
 

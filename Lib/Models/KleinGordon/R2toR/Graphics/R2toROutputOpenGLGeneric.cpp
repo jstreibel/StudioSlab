@@ -33,6 +33,8 @@ namespace Slab::Models::KGR2toR {
         NOT_IMPLEMENTED
     }
 
+    #define GUIContext DynamicPointerCast<Graphics::FImGuiContext>(Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
+
     OutputOpenGL::OutputOpenGL(CountType max_steps)
     : BaseMonitor(max_steps, "ℝ²↦ℝ OpenGL monitor", 1)
     , mSectionGraph("Sections")

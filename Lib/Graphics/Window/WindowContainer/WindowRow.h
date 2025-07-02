@@ -39,6 +39,8 @@ namespace Slab::Graphics {
 
         void ImmediateDraw(const FPlatformWindow&) override;
 
+        auto RegisterDeferredDrawCalls(const FPlatformWindow&) -> void override;
+
         void NotifyReshape(int w, int h) override;
 
         bool NotifyMouseMotion(int x, int y, int dx, int dy) override;

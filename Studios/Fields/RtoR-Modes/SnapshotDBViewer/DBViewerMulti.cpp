@@ -24,11 +24,10 @@ namespace Modes::DatabaseViewer {
     #define z_order(z) (z)
 
     DBViewerMulti::DBViewerMulti(const StrVector& dbFilenames, const Str &criticalParam)
-    : FWindowRow()
-    , guiWindow(Graphics::FSlabWindowConfig("GUI"))
-    , allDataDisplay("All data")
-    , fullParticularHistoryDisplay("Particular data")
-    , massesGraph("masses")
+    : guiWindow(Graphics::FSlabWindowConfig("GUI"))
+    , allDataDisplay              ("All data",        guiWindow.GetGUIWindowContext())
+    , fullParticularHistoryDisplay("Particular data", guiWindow.GetGUIWindowContext())
+    , massesGraph                 ("masses",          guiWindow.GetGUIWindowContext())
     {
         for(const auto &dbFilename : dbFilenames){
             auto parser = New<Modes::DatabaseViewer::DBParser>(dbFilename, criticalParam);

@@ -13,9 +13,15 @@
 
 namespace Slab::Graphics {
 
-    class
+    struct FImGuiWindowContext
+    {
+        explicit FImGuiWindowContext(const Pointer<FImGuiContext>& Context) : Context(Context) {}
 
-    FImGuiWindow final : public FSlabWindow {
+        Pointer<FImGuiContext> Context;
+        Str WindowId;
+    };
+
+    class FSlabWindow_ImGuiWrapper final : public FSlabWindow {
         static Atomic<CountType> Count;
         Str Id;
 
@@ -27,8 +33,8 @@ namespace Slab::Graphics {
          */
         struct FCallbackData
         {
-            FSlabWindow* SlabWindow;
-            const FPlatformWindow* PlatformWindow;
+            FSlabWindow* SlabWindow                 = nullptr;
+            const FPlatformWindow* PlatformWindow   = nullptr;
         } CallBackData;
 
     public:
@@ -37,7 +43,7 @@ namespace Slab::Graphics {
          * @param Context The ImGui context within which to show this window. If nullptr, then the
          * main context from the main window is used.
          */
-        explicit FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
+        explicit FSlabWindow_ImGuiWrapper(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
 
         void ImmediateDraw(const FPlatformWindow&) override;
 

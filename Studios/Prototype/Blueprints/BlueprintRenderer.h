@@ -16,7 +16,7 @@ namespace Slab::Blueprints {
     class BlueprintRenderer : public Graphics::FPlatformWindowEventListener {
         ed::EditorContext* m_Editor = nullptr;
 
-        // Pointer<Graphics::FImGuiContext> m_Context;
+        Pointer<Graphics::FImGuiContext> m_Context;
         const int            m_PinIconSize = 24;
         ImTextureID          m_HeaderBackground = nullptr;
         ImTextureID          m_SaveIcon = nullptr;

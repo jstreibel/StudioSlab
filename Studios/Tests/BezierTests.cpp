@@ -39,7 +39,7 @@ namespace Tests {
     BezierTests::BezierTests(const Pointer<Graphics::FImGuiContext>& GuiContext)
     : FWindowRow("Bezier Tests")
     , Stats(Graphics::FSlabWindowConfig("Stats"))
-    , Graph("Graph", GuiContext) {
+    , Graph("Graph", Graphics::FImGuiWindowContext{GuiContext}) {
         Param1 = static_cast<float>(Graphics::Animator::GetBezierParams().first);
         Param2 = static_cast<float>(Graphics::Animator::GetBezierParams().second);
         AnimTimeSeconds = Graph.GetAnimationTime();
@@ -62,12 +62,12 @@ namespace Tests {
 
         Graph.GetRegion().setLimits(-.2, 1.2, -.5, 1.5);
 
+
+        AddWindow(Dummy(Stats), Right, 0.2);
         AddWindow(Dummy(Graph));
     }
 
     void BezierTests::ImmediateDraw(const Graphics::FPlatformWindow& PlatformWindow) {
-        FSlabWindow::ImmediateDraw(PlatformWindow);
-
         CurrentPoint.clear();
         const auto &GraphRegion = Graph.GetRegion();
         if(Graphics::Animator::Contains(*GraphRegion.getReference_xMin())){
@@ -94,15 +94,14 @@ namespace Tests {
             CurrentPoint.AddPoint({t, CubicBezierInterpolation(t)});
         }
 
-        Graph.ImmediateDraw(PlatformWindow);
-        Stats.ImmediateDraw(PlatformWindow);
+        // Graph.ImmediateDraw(PlatformWindow);
+        // Stats.ImmediateDraw(PlatformWindow);
 
+        FWindowRow::ImmediateDraw(PlatformWindow);
     }
 
     void BezierTests::RegisterDeferredDrawCalls(const Graphics::FPlatformWindow& PlatformWindow)
     {
-        FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
-
         Stats.Set_x(this->Get_x()-100);
         Stats.Set_y(this->Get_y());
 
@@ -114,8 +113,9 @@ namespace Tests {
                 Graph.SetAnimationTime(AnimTimeSeconds);
             }});
 
-        Stats.RegisterDeferredDrawCalls(PlatformWindow);
+        // Stats.RegisterDeferredDrawCalls(PlatformWindow);
+        // Graph.RegisterDeferredDrawCalls(PlatformWindow);
 
-        Graph.RegisterDeferredDrawCalls(PlatformWindow);
+        FWindowRow::RegisterDeferredDrawCalls(PlatformWindow);
     }
 } // Tests

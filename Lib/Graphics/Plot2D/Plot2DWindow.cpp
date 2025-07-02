@@ -30,6 +30,8 @@
 #include "StudioSlab.h"
 #include "Graphics/OpenGL/Shader.h"
 
+#define GLOBAL_IMGUI_CONTEXT Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
+
 namespace Slab::Graphics {
 
     using Log = Core::Log;
@@ -56,20 +58,18 @@ namespace Slab::Graphics {
         DevFloat yMin,
         DevFloat yMax,
         Str _title,
-        const Pointer<FImGuiContext>& ArgGuiContext)
+        const FImGuiWindowContext& ImGuiWindowContext)
     : FSlabWindow(FSlabWindowConfig(_title))
     , Id(++WindowCount)
     , Region{{xMin, xMax, yMin, yMax}}
     , Title(std::move(_title))
-    , GuiContext(ArgGuiContext)
+    , WindowContext(ImGuiWindowContext)
     {
+        if(this->WindowContext.Context == nullptr) this->WindowContext.Context = GLOBAL_IMGUI_CONTEXT;
+        if(this->WindowContext.WindowId == "")     this->WindowContext.WindowId = GetUniqueName();
+
         // Instantiate our dedicated Plot themes manager
         PlotThemeManager::GetInstance();
-
-        if(this->GuiContext == nullptr)
-        {
-            throw Exception("Null pointer provided to GuiContext");
-        }
 
         AxisArtist.SetLabel("Axis");
         ArtistXHair.SetLabel("X-hair");
@@ -97,8 +97,8 @@ namespace Slab::Graphics {
 
     }
 
-    FPlot2DWindow::FPlot2DWindow(Str title, const Pointer<FImGuiContext>& GuiContext)
-    : FPlot2DWindow(-1, 1, -1, 1, std::move(title), GuiContext) {    }
+    FPlot2DWindow::FPlot2DWindow(Str Title, const FImGuiWindowContext& ImGuiWindowContext)
+    : FPlot2DWindow(-1, 1, -1, 1, std::move(Title), ImGuiWindowContext) {    }
 
     void FPlot2DWindow::AddArtist(const FArtist_ptr &pArtist, zOrder_t zOrder) {
         if (pArtist == nullptr) {
@@ -176,9 +176,6 @@ namespace Slab::Graphics {
                 ImGui::EndPopup();
             }
 
-
-            bool Closable = false;
-
             const auto Viewport = GetViewport();
             ImGui::SetNextWindowPos(
                 {
@@ -193,16 +190,16 @@ namespace Slab::Graphics {
                 },
                 ImGuiCond_Appearing);
 
-            ImGui::SetNextWindowBgAlpha(0.65);
+            ImGui::SetNextWindowBgAlpha(0.85);
 
-            constexpr auto Flags =
+            constexpr auto Flags = 0x0;
                 // ImGuiWindowFlags_NoCollapse |
-                ImGuiWindowFlags_NoResize |
-                // ImGuiWindowFlags_NoMove |
-                ImGuiWindowFlags_NoTitleBar |
-                ImGuiWindowFlags_NoBringToFrontOnFocus;
+                // ImGuiWindowFlags_NoResize; //   |
+                // ImGuiWindowFlags_NoMove     |
+                // ImGuiWindowFlags_NoTitleBar |
+                // ImGuiWindowFlags_NoBringToFrontOnFocus;
 
-            if (ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), &Closable, Flags))
+            if (ImGui::Begin(AddUniqueIdToString("Plot Detail").c_str(), nullptr, Flags))
             {
                 for (auto it = Content.begin(); it!=Content.end(); )
                 {
@@ -251,7 +248,7 @@ namespace Slab::Graphics {
             ImGui::End();
         };
 
-        GuiContext->AddDrawCall(DrawCall);
+        WindowContext.Context->AddDrawCall(DrawCall);
     }
 
     void FPlot2DWindow::SetupOrtho() const {

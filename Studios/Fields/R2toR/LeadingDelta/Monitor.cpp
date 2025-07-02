@@ -25,9 +25,13 @@ Slab::Math::R2toR::FunctionAzimuthalSymmetry nullFunc(new Slab::Math::RtoR::Null
 namespace Studios::Fields::R2toRLeadingDelta {
 
     OutGL::OutGL(CountType max_steps, Pointer<Slab::Math::R2toR::Function> drivingFunction)
-            : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction)),
-              mTotalEnergyGraph("Total energy"), mEnergyGraph("Energy"), mEnergyRatioGraph("Energy ratio"),
-              mSpeedsGraph("Time-derivatives"), mEnergyDensityGraph("Energy-densities") {
+    : Models::KGR2toR::OutputOpenGL(max_steps), drivingFunction(std::move(drivingFunction))
+    , mTotalEnergyGraph ("Total energy")
+    , mEnergyGraph      ("Energy")
+    , mEnergyRatioGraph ("Energy ratio")
+    , mSpeedsGraph      ("Time-derivatives")
+    , mEnergyDensityGraph("Energy-densities")
+    {
         energyRatioData = New<PointSet>();
 
         auto theme = Graphics::PlotThemeManager::GetCurrent();

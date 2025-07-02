@@ -12,7 +12,7 @@ namespace Tests {
 
     VShapeExpansionTest::VShapeExpansionTest()
     : FWindowRow("V-shape expansion test")
-    , graph("")
+    , graph("V-Shape expansion")
     , stats(Graphics::FSlabWindowConfig{"Stats"})
     {
         potential = New<Slab::Math::RtoR::NonlinearKGPotential>(1.0, 15, 1.0);

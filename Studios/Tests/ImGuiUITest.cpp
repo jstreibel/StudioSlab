@@ -10,6 +10,7 @@
 #include "Math/Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.h"
 
 namespace Tests {
+
     Slab::Pointer<Slab::Graphics::FSlabWindow> GetImGuiTestWindow() {
         using Plotter = Slab::Graphics::Plotter;
         auto theme = Slab::Graphics::PlotThemeManager::GetCurrent();
@@ -18,6 +19,6 @@ namespace Tests {
         const auto funky = Slab::New<Slab::Math::RtoR::RtoRPolynomial>(Slab::RealVector{0.25, 1.25});
         Plotter::AddRtoRFunction(plot_window, funky, theme->FuncPlotStyles[0], "A poly");
 
-        return Slab::New<Slab::Graphics::FImGuiWindow>(plot_window, nullptr);
+        return Slab::New<Slab::Graphics::FSlabWindow_ImGuiWrapper>(plot_window, nullptr);
     }
 } // Tests

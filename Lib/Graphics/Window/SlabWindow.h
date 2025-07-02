@@ -59,6 +59,8 @@ namespace Slab::Graphics {
 
         ~FSlabWindow() override;
 
+        auto GetUniqueName() const -> Str;
+
         auto GetConfig() -> FSlabWindowConfig&;
 
         auto NotifySystemWindowReshape(int w, int h)           -> bool final;

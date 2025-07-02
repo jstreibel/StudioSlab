@@ -19,9 +19,9 @@
 #define MyName
 
 namespace Slab::Graphics {
-    Atomic<CountType> FImGuiWindow::Count = 0;
+    Atomic<CountType> FSlabWindow_ImGuiWrapper::Count = 0;
 
-    FImGuiWindow::FImGuiWindow(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context)
+    FSlabWindow_ImGuiWrapper::FSlabWindow_ImGuiWrapper(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context)
     : FSlabWindow(SlabWindow->GetConfig())
     , Id(Str("ImGuiWindow##") + ToStr(++Count))
     , SlabWindow(std::move(SlabWindow))
@@ -37,7 +37,7 @@ namespace Slab::Graphics {
         // this->SlabWindow->SetDecorate(false);
     }
 
-    void FImGuiWindow::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
+    void FSlabWindow_ImGuiWrapper::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
         // This should be called in case of a local context, which is not the case
         // Context->NewFrame();
 
@@ -46,11 +46,9 @@ namespace Slab::Graphics {
         // FSlabWindow::Draw();
     }
 
-    void FImGuiWindow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
+    void FSlabWindow_ImGuiWrapper::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
     {
         FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
-
-        SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
 
         CallBackData.SlabWindow = SlabWindow.get();
         CallBackData.PlatformWindow = &PlatformWindow;
@@ -59,8 +57,9 @@ namespace Slab::Graphics {
             if (SlabWindow == nullptr) return;
 
             ImGui::SetNextWindowSizeConstraints({500,500}, {FLT_MAX, FLT_MAX});
+            auto UniqueId = SlabWindow->GetUniqueName();
             if(Fix WindowFlags = ImGuiWindowFlags_NoCollapse;
-               ImGui::Begin((Str("ImGui-wrapped SlabWindow") + Id).c_str(), nullptr, WindowFlags))
+               ImGui::Begin(UniqueId.c_str(), nullptr, WindowFlags))
             {
                 fix Pos = ImGui::GetWindowPos();
                 // fix Dim = ImGui::GetWindowSize();
@@ -101,6 +100,8 @@ namespace Slab::Graphics {
 
             ImGui::End();
         });
+
+        SlabWindow->RegisterDeferredDrawCalls(PlatformWindow);
     }
 
 } // Slab::Graphics

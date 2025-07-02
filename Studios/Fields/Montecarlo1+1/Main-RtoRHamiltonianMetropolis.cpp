@@ -9,16 +9,11 @@
 
 #include "Graphics/SlabGraphics.h"
 #include "Graphics/Window/SlabWindowManager.h"
-#include "Graphics/DataViewers/MainViewer.h"
-#include "Graphics/DataViewers/Viewers/FourierViewer.h"
 #include "Graphics/Plot2D/PlotThemeManager.h"
 
-#include "Math/Numerics/Metropolis/RtoR/RtoR-Action-Metropolis-Recipe.h"
 #include "MathApp.h"
 #include "Graphics/Plot2D/Plotter.h"
 
-#include "Utils/RandUtils.h"
-#include "Math/Function/RtoR/Model/FunctionsCollection/RtoRPolynomial.h"
 #include "Models/KleinGordon/RtoR-Montecarlo/RtoR-Hamiltonian-MetropolisHastings-Recipe.h"
 
 using Themes = Slab::Graphics::PlotThemeManager;

@@ -22,7 +22,7 @@ namespace Slab::Graphics {
     private:
         FImGuiWindowManager() = delete;
 
-        Vector<Pointer<FImGuiWindow>> Windows;
+        Vector<Pointer<FSlabWindow_ImGuiWrapper>> Windows;
         Pointer<FImGuiContext> Context;
     };
 

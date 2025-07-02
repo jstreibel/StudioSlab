@@ -8,6 +8,7 @@
 #include "3rdParty/ImGui.h"
 
 #include "Graphics/Utils.h"
+#include "Graphics/ImGui/ImGuiWindow.h"
 #include "Graphics/Window/SlabWindow.h"
 
 #include "Utils/Types.h"
@@ -19,18 +20,18 @@ namespace Slab::Graphics {
     class FGUIWindow : public FSlabWindow {
         Vector<Pair<Str, FColor>> Stats;
 
-        Pointer<FImGuiContext> GuiContext;
+        FImGuiWindowContext WindowContext;
 
         void Begin() const;
         void End() const;
     public:
-        explicit FGUIWindow(FSlabWindowConfig);
+        explicit FGUIWindow(FSlabWindowConfig, FImGuiWindowContext WindowContext = FImGuiWindowContext{nullptr});
 
         void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 
         void AddExternalDraw(const FDrawCall&) const;
 
-        Pointer<FImGuiContext> GetGUIContext();
+        FImGuiWindowContext GetGUIWindowContext();
 
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
     };

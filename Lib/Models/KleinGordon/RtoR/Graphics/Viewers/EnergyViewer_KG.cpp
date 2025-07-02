@@ -11,6 +11,9 @@ namespace Slab::Models {
 
     KGRtoR::EnergyViewer_KG::EnergyViewer_KG(const Pointer<Graphics::FGUIWindow> &gui_window)
     : KGViewer(gui_window)
+    , TotalEnergiesWindow(New<Graphics::FPlot2DWindow>("Energy",      gui_window->GetGUIWindowContext()))
+    , TemperaturesWindow (New<Graphics::FPlot2DWindow>("Temperature", gui_window->GetGUIWindowContext()))
+    , FullHistoriesWindow(New<Graphics::FPlot2DWindow>("Histories",   gui_window->GetGUIWindowContext()))
     {
         AddWindow(TemperaturesWindow);
         AddWindow(TotalEnergiesWindow);

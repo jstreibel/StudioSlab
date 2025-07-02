@@ -25,17 +25,18 @@ namespace Slab::Blueprints {
     }
 
     bool BlueprintRenderer::NotifyRender(const Graphics::FPlatformWindow&) {
-        // m_Context->NewFrame();
+        m_Context->NewFrame();
         // // // ImGui::NewFrame();
 
         DoDrawing();
 
-        // m_Context->Render();
+        m_Context->Render();
 
         return true;
     }
 
-    void BlueprintRenderer::DoDrawing() {
+    void BlueprintRenderer::DoDrawing()
+    {
         // auto& io = ImGui::GetIO();
         auto window_flags = 0;// ImGuiWindowFlags_NoTitleBar |
         // ImGuiWindowFlags_NoResize |
@@ -69,7 +70,7 @@ namespace Slab::Blueprints {
 
             //auto& style = ImGui::GetStyle();
 
-# if 0
+            if constexpr  (false)
             {
                 for (auto x = -io.DisplaySize.y; x < io.DisplaySize.x; x += 10.0f)
                 {
@@ -77,7 +78,6 @@ namespace Slab::Blueprints {
                         IM_COL32(255, 255, 0, 255));
                 }
             }
-# endif
 
             static ed::NodeId contextNodeId = 0;
             static ed::LinkId contextLinkId = 0;

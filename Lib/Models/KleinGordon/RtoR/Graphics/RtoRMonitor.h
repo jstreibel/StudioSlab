@@ -33,20 +33,17 @@ namespace Slab::Models::KGRtoR {
     class Monitor : public Graphics::BaseMonitor {
     protected:
         Vector<FRtoRPanel_ptr> dataViews;
-        Pointer<FRtoRPanel>
- currentDataView;
+        Pointer<FRtoRPanel> currentDataView;
 
-        Pointer<const R2toR::FNumericFunction>
- simulationHistory;
-        Pointer<Graphics::FPlot2DWindow> fullHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Full field history");
-        Graphics::HistoryArtist_ptr fullHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+        Pointer<const R2toR::FNumericFunction> simulationHistory;
+        Pointer<FPlot2DWindow> fullHistoryGraph;
+        HistoryArtist_ptr fullHistoryArtist = Slab::New<HistoryArtist>();
 
-        Pointer<const R2toR::FNumericFunction>
- spaceFTHistory;
-        Pointer<Graphics::FPlot2DWindow> fullSFTHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Full space FT history");
-        Graphics::HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<Graphics::HistoryArtist>();
+        Pointer<const R2toR::FNumericFunction> spaceFTHistory;
+        Pointer<FPlot2DWindow> fullSFTHistoryGraph;
+        HistoryArtist_ptr fullSFTHistoryArtist = Slab::New<HistoryArtist>();
 
-        Slab::Pointer<RtoRHistoryPanel> historyPanel;
+        Pointer<RtoRHistoryPanel> historyPanel;
 
         KGEnergy &hamiltonian;
 

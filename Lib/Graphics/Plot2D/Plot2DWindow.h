@@ -17,6 +17,7 @@
 
 #include "Artists/AxisArtist.h"
 #include "Artists/XHairArtist.h"
+#include "Graphics/ImGui/ImGuiWindow.h"
 #include "Graphics/Plot2D/Util/PlottingRegion2D.h"
 #include "Graphics/Plot2D/Artists/BackgroundArtist.h"
 #include "Graphics/Modules/ImGui/ImGuiContext.h"
@@ -45,7 +46,7 @@ namespace Slab::Graphics {
 
         float AnimationTimeSeconds = 0.2f;
 
-        Pointer<FImGuiContext> GuiContext;
+        FImGuiWindowContext WindowContext;
 
         void SetupOrtho() const;
 
@@ -69,11 +70,11 @@ namespace Slab::Graphics {
             DevFloat yMin,
             DevFloat yMax,
             Str title,
-            const Pointer<FImGuiContext>& ArgGuiContext);
+            const FImGuiWindowContext& ImGuiWindowContext);
 
     public:
 
-        explicit FPlot2DWindow(Str title, const Pointer<FImGuiContext>& guiContext=nullptr);
+        explicit FPlot2DWindow(Str Title, const FImGuiWindowContext& ImGuiWindowContext = FImGuiWindowContext{nullptr});
 
         void ImmediateDraw(const FPlatformWindow&) override;
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;

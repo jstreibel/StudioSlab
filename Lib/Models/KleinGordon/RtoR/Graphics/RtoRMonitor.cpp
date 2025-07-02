@@ -22,8 +22,11 @@
 namespace Slab::Models::KGRtoR {
 
     Monitor::Monitor(const Pointer<KGNumericConfig> &params, KGEnergy &hamiltonian, const Str &name)
-            : Graphics::BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
-            , hamiltonian(hamiltonian) {
+    : BaseMonitor(params->getn(), Str("ℝ↦ℝ ") + name, 10)
+    , hamiltonian(hamiltonian)
+    , fullHistoryGraph(   Slab::New<FPlot2DWindow>("Full field history"))
+    , fullSFTHistoryGraph(Slab::New<FPlot2DWindow>("Full space FT history"))
+    {
         fullHistoryArtist->SetLabel("ϕ(t,x)");
         fullHistoryArtist->SetAffectGraphRanges(true);
 

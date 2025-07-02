@@ -21,22 +21,22 @@ namespace Slab::Graphics {
     HistoryViewer::HistoryViewer(const Pointer<FGUIWindow> &gui_window, const Pointer<R2toR::FNumericFunction> &function)
     : Viewer(gui_window, function)
     {
-        history_window = New<FPlot2DWindow>("Function");
+        history_window = New<FPlot2DWindow>("Function", gui_window->GetGUIWindowContext());
         history_window->GetAxisArtist().setVerticalAxisLabel("");
         function_artist = Plotter::AddR2toRFunction(history_window, nullptr, "ϕ(t,x)");
         AddWindow(history_window);
 
-        xft_history_window = New<FPlot2DWindow>("Space DFT");
+        xft_history_window = New<FPlot2DWindow>("Space DFT", gui_window->GetGUIWindowContext());
         xft_history_window->GetAxisArtist().setVerticalAxisLabel("A");
         xft_history_window->GetAxisArtist().SetHorizontalAxisLabel("k");
         xft_amplitudes_artist = Plotter::AddR2toRFunction(xft_history_window, nullptr, "ℱₓ[ϕ]");
         AddWindow(xft_history_window, true);
 
-        auto slice_window = New<FPlot2DWindow>("Space instant");
+        auto slice_window = New<FPlot2DWindow>("Space instant", gui_window->GetGUIWindowContext());
         section_artist = Plotter::AddR2Section(slice_window, nullptr, "ϕ");
         addWindowToColumn(slice_window, 0);
 
-        auto dft_slice_window = New<FPlot2DWindow>("Space DFT instant");
+        auto dft_slice_window = New<FPlot2DWindow>("Space DFT instant", gui_window->GetGUIWindowContext());
         dft_section_artist = Plotter::AddR2Section(dft_slice_window, nullptr, "ℱₓ[ϕ]");
         addWindowToColumn(dft_slice_window, 1);
 

@@ -50,7 +50,7 @@ void setup_viewer(Slab::Pointer<Slab::Math::RtoR::NumericFunction_CPU> field) {
     auto plot_window = Slab::New<Slab::Graphics::FPlot2DWindow>("Plot");
     plot_window->Set_x(1700);
     plot_window->NotifyReshape(1200, 800);
-    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field,      Themes::GetCurrent()->FuncPlotStyles[0], "functional");
+    Slab::Graphics::Plotter::AddRtoRFunction(plot_window, field, Themes::GetCurrent()->FuncPlotStyles[0], "functional");
     auto ground_style = Themes::GetCurrent()->FuncPlotStyles[1].permuteColors(true);
     ground_style.filled = false;
     Slab::Graphics::Plotter::AddRtoRFunction(plot_window, trajectory, ground_style, "ground truth");

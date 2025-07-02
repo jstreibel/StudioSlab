@@ -22,12 +22,14 @@ namespace Slab::Graphics {
 
     constexpr auto KeepRedundantModes = false;
 
-    FourierViewer::FourierViewer(Pointer<FGUIWindow> gui_window) : Viewer(std::move(gui_window))
+    FourierViewer::FourierViewer(const Pointer<FGUIWindow>& gui_window) : Viewer(gui_window)
     {
-        kSpaceGraph  = New<FPlot2DWindow>("ℱₓ");
-        ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ");
-        xSpaceGraph  = New<FPlot2DWindow>("ϕ(t,x)");
-        ωkSpaceGraph = New<FPlot2DWindow>("ℱₜₓ");
+        auto ImGuiContextPtr = gui_window->GetGUIWindowContext();
+
+        kSpaceGraph  = New<FPlot2DWindow>("ℱₓ", ImGuiContextPtr);
+        ωSpaceGraph  = New<FPlot2DWindow>("ℱₜ", ImGuiContextPtr);
+        xSpaceGraph  = New<FPlot2DWindow>("ϕ(t,x)", ImGuiContextPtr);
+        ωkSpaceGraph = New<FPlot2DWindow>("ℱₜₓ", ImGuiContextPtr);
 
         inv_kSpaceArtist->SetLabel("ℱₖ⁻¹(t, x)");
         // inverseDFTDisplay->addArtist(inverseDFTArtist);

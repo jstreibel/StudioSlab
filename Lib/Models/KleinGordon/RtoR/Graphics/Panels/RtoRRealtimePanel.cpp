@@ -44,8 +44,8 @@ namespace Slab::Models::KGRtoR {
         Hamiltonian,
         "ℝ↦ℝ realtime monitor",
         "realtime monitoring of simulation state")
-    , FieldsGraph("Fields")
-    , EnergyGraph("Energy")
+    , FieldsGraph("Fields", GUIWindow.GetGUIWindowContext())
+    , EnergyGraph("Energy", GUIWindow.GetGUIWindowContext())
     // , imGuiWindow(Naked(mEnergyGraph))
     {
         {
@@ -120,25 +120,27 @@ namespace Slab::Models::KGRtoR {
         FRtoRPanel::ImmediateDraw(PlatformWindow);
     }
 
-    void FRealtimePanel::SetSimulationHistory(Pointer<const R2toR::FNumericFunction>
- SimHistory,
-                                             const Graphics::R2toRFunctionArtist_ptr &SimHistoryGraph) {
+    void FRealtimePanel::SetSimulationHistory(
+        Pointer<const R2toR::FNumericFunction> SimHistory,
+        const R2toRFunctionArtist_ptr &SimHistoryGraph)
+    {
         FRtoRPanel::SetSimulationHistory(SimHistory, SimHistoryGraph);
 
-        auto simulationHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Simulation history");
+        auto simulationHistoryGraph = Slab::New<Graphics::FPlot2DWindow>("Simulation history", guiWindow.GetGUIWindowContext());
         simulationHistoryGraph->AddArtist(SimHistoryGraph);
 
         AddWindow(simulationHistoryGraph, ADD_NEW_COLUMN);
         SetColumnRelativeWidth(1, -1);
     }
 
-    void FRealtimePanel::SetSpaceFourierHistory(Pointer<const R2toR::FNumericFunction>
- SftHistory,
-                                               const FDFTDataHistory &DFTData,
-                                               const R2toRFunctionArtist_ptr &SftHistoryArtist) {
+    void FRealtimePanel::SetSpaceFourierHistory(
+        Pointer<const R2toR::FNumericFunction> SftHistory,
+        const FDFTDataHistory &DFTData,
+        const R2toRFunctionArtist_ptr &SftHistoryArtist)
+    {
         FRtoRPanel::SetSpaceFourierHistory(SftHistory, DFTData, SftHistoryArtist);
 
-        auto sftHistoryGraph = Slab::New<FPlot2DWindow>("Space Fourier transform");
+        auto sftHistoryGraph = Slab::New<FPlot2DWindow>("Space Fourier transform", guiWindow.GetGUIWindowContext());
         sftHistoryGraph->AddArtist(SftHistoryArtist);
 
         AddWindow(sftHistoryGraph);

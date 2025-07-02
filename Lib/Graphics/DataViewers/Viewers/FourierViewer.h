@@ -83,7 +83,7 @@ namespace Slab::Graphics{
 
         Str GetName() const override;
 
-        explicit FourierViewer(Pointer<FGUIWindow>);
+        explicit FourierViewer(const Pointer<FGUIWindow>&);
 
         void SetFunction(Function func) override;
 

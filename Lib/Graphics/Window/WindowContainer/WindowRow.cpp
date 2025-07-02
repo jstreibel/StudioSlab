@@ -182,6 +182,15 @@ namespace Slab::Graphics {
         }
     }
 
+    void FWindowRow::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
+    {
+        for (auto & winData : std::ranges::reverse_view(WindowsList)) {
+            auto &window = *winData.window;
+
+            window.RegisterDeferredDrawCalls(PlatformWindow);
+        }
+    }
+
     void FWindowRow::NotifyReshape(int w, int h)  {
         FSlabWindow::NotifyReshape(w, h);
 

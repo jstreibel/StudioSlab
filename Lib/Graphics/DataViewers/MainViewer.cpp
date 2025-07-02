@@ -15,7 +15,7 @@ namespace Slab::Graphics {
     : gui_window(New<FGUIWindow>(FSlabWindowConfig("Main Viewer")))
     , base_function(std::move(baseFunction)) {
 
-        auto font_size = gui_window->GetGUIContext()->GetFontSize();
+        auto font_size = gui_window->GetGUIWindowContext().Context->GetFontSize();
 
         auto gui_size = 22*font_size;
 

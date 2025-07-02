@@ -15,14 +15,14 @@ namespace Slab::Models::KGRtoR {
 
     Str TimeFTViewer::GetName() const { return "Time-DFT space-average viewer"; }
 
-    TimeFTViewer::TimeFTViewer(const Pointer<Graphics::FGUIWindow> &pointer,
+    TimeFTViewer::TimeFTViewer(const Pointer<Graphics::FGUIWindow> &GuiWindow,
                                const Pointer<R2toR::FNumericFunction> &func,
                                const Pointer<R2toR::FNumericFunction> &ddtFunc)
-    : KGViewer(pointer, func, ddtFunc) {
+    : KGViewer(GuiWindow, func, ddtFunc) {
         using Plotter = Graphics::Plotter;
         using Themes = Graphics::PlotThemeManager;
 
-        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average");
+        auto window = New<Graphics::FPlot2DWindow>("Time-DFT space-average", GuiWindow->GetGUIWindowContext());
         timeDFTAverageArtist =
                 Plotter::AddRtoRFunction(window, nullptr, Themes::GetCurrent()->FuncPlotStyles[4], "⟨ℱₜ[ϕ]⟩ₓ(ω)", 15000);
         timeDFTAverageArtist->SetAffectGraphRanges(true);

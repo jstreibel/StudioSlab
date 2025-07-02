@@ -40,6 +40,11 @@ namespace Slab::Graphics {
 
     FSlabWindow::~FSlabWindow() = default;
 
+    auto FSlabWindow::GetUniqueName() const -> Str
+    {
+        return AddUniqueIdToString(GetTitle());
+    }
+
     auto FSlabWindow::GetConfig() -> FSlabWindowConfig& {
         return Config;
     }

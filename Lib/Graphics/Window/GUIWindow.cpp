@@ -7,7 +7,6 @@
 #include <utility>
 
 #include "3rdParty/ImGui.h"
-#include "WindowStyles.h"
 #include "Core/Controller/CommandLine/CommandLineInterfaceManager.h"
 #include "Core/Backend/BackendManager.h"
 
@@ -15,16 +14,19 @@
 #include "Graphics/Modules/ImGui/ImGuiModule.h"
 #include "StudioSlab.h"
 
+#define GLOBAL_IMGUI_CONTEXT Slab::DynamicPointerCast<Slab::Graphics::FImGuiContext>(Slab::Graphics::GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext())
+
 namespace Slab::Graphics {
 
-    FGUIWindow::FGUIWindow(FSlabWindowConfig config) : FSlabWindow(std::move(config)) {
+    FGUIWindow::FGUIWindow(FSlabWindowConfig config, FImGuiWindowContext WindowContext)
+    : FSlabWindow(std::move(config))
+    , WindowContext(WindowContext)
+    {
+        if (this->WindowContext.Context == nullptr) this->WindowContext.Context = GLOBAL_IMGUI_CONTEXT;
+        if (this->WindowContext.WindowId == "")     this->WindowContext.WindowId = GetUniqueName();
+
         SetClear(false);
         SetDecorate(false);
-
-        auto Context = GetGraphicsBackend()->GetMainSystemWindow()->GetGUIContext();
-        if(Context == nullptr) throw Exception("Failed to get GUIContext.");
-
-        GuiContext = DynamicPointerCast<FImGuiContext>(Context);
     }
 
 
@@ -37,7 +39,7 @@ namespace Slab::Graphics {
         FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
         Begin();
-        GuiContext->AddDrawCall([this]() {
+        WindowContext.Context->AddDrawCall([this]() {
             auto Viewport = GetViewport();
             const auto VpWidth = (float) Viewport.GetWidth(),
                     VpHeight = (float) Viewport.GetHeight();
@@ -47,8 +49,8 @@ namespace Slab::Graphics {
             ImGui::SetWindowPos(ImVec2{Vp_x, Vp_y});
             ImGui::SetWindowSize(ImVec2{VpWidth, VpHeight});
 
-            auto flags = ImGuiTreeNodeFlags_DefaultOpen;
-            if (!Stats.empty() && ImGui::CollapsingHeader("Stats", flags)) {
+            auto Flags = ImGuiTreeNodeFlags_DefaultOpen;
+            if (!Stats.empty() && ImGui::CollapsingHeader("Stats", Flags)) {
                 for (const auto &stat: Stats) {
                     const auto text = stat.first;
 
@@ -135,32 +137,44 @@ namespace Slab::Graphics {
     }
 
     void FGUIWindow::Begin() const {
-        GuiContext->AddDrawCall([this] {
-            bool closable = false;
+        WindowContext.Context->AddDrawCall([this]()
+        {
+            ImGui::SetNextWindowPos(
+                ImVec2(static_cast<float>(Get_x()), static_cast<float>(Get_y())),
+                ImGuiCond_Always);
+            ImGui::SetNextWindowSize(
+                ImVec2(static_cast<float>(GetWidth()), static_cast<float>(GetHeight())),
+                ImGuiCond_Always);
+            // ImGui::SetNextWindowFocus();
+            ImGui::SetNextWindowBgAlpha(0.9f);
 
-            // ImGui::SetNextWindowPos(ImVec2(this->Get_x(), this->Get_y()), ImGuiCond_Always);
-            // ImGui::SetNextWindowSize(ImVec2(this->GetWidth(), this->GetHeight()), ImGuiCond_Always);
-
-            ImGui::Begin("Stats", &closable,
-                         ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize |
-                         ImGuiWindowFlags_NoMove |
-                         ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoBringToFrontOnFocus);
+            bool Open = true;
+            ImGui::Begin("Stats", &Open,
+                  ImGuiWindowFlags_NoCollapse
+                | ImGuiWindowFlags_NoResize
+                | ImGuiWindowFlags_NoMove
+                | ImGuiWindowFlags_NoTitleBar
+                // | ImGuiWindowFlags_NoBringToFrontOnFocus
+                );
         });
     }
 
     void FGUIWindow::End() const {
-        GuiContext->AddDrawCall([]() { ImGui::End(); });
+        WindowContext.Context->AddDrawCall([]()
+        {
+            ImGui::End();
+        });
     }
 
     void FGUIWindow::AddExternalDraw(const FDrawCall& draw) const
     {
         this->Begin();
-        GuiContext->AddDrawCall(draw);
+        WindowContext.Context->AddDrawCall(draw);
         this->End();
     }
 
-    Pointer<FImGuiContext> FGUIWindow::GetGUIContext() {
-        return GuiContext;
+    FImGuiWindowContext FGUIWindow::GetGUIWindowContext() {
+        return WindowContext;
     }
 
 }

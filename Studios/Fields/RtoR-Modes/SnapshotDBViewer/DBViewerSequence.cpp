@@ -28,8 +28,8 @@ namespace Modes::DatabaseViewer {
     DBViewerSequence::DBViewerSequence(const StrVector& dbFilenames, const Str &criticalParam)
     : FWindowRow()
     , guiWindow(Graphics::FSlabWindowConfig{"GUI"})
-    , mashupDisplay("All data")
-    , massesGraph("masses")
+    , mashupDisplay("All data", guiWindow.GetGUIWindowContext())
+    , massesGraph("masses", guiWindow.GetGUIWindowContext())
     {
         for(const auto &dbFilename : dbFilenames) {
             auto parser = New<DBParser>(dbFilename, criticalParam, ".");
