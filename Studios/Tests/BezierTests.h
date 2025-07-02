@@ -2,8 +2,8 @@
 // Created by joao on 8/09/23.
 //
 
-#ifndef STUDIOSLAB_BEZIERTESTS_H
-#define STUDIOSLAB_BEZIERTESTS_H
+#ifndef STUDIOSLAB_BEZIER_TESTS_H
+#define STUDIOSLAB_BEZIER_TESTS_H
 
 #include "Graphics/Window/WindowContainer/WindowRow.h"
 #include "Graphics/Window/GUIWindow.h"
@@ -30,4 +30,4 @@ namespace Tests {
 
 } // Tests
 
-#endif //STUDIOSLAB_BEZIERTESTS_H
+#endif //STUDIOSLAB_BEZIER_TESTS_H

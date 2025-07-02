@@ -2,8 +2,8 @@
 // Created by joao on 6/13/24.
 //
 
-#ifndef STUDIOSLAB_IMGUIWINDOW_H
-#define STUDIOSLAB_IMGUIWINDOW_H
+#ifndef STUDIOSLAB_IMGUI_WINDOW_H
+#define STUDIOSLAB_IMGUI_WINDOW_H
 
 #include <Graphics/Modules/ImGui/ImGuiContext.h>
 
@@ -15,7 +15,8 @@ namespace Slab::Graphics {
 
     struct FImGuiWindowContext
     {
-        explicit FImGuiWindowContext(const Pointer<FImGuiContext>& Context) : Context(Context) {}
+        explicit FImGuiWindowContext(const Pointer<FImGuiContext>& Context, const Str& WindowId="")
+        : Context(Context), WindowId(WindowId) { }
 
         Pointer<FImGuiContext> Context;
         Str WindowId;
@@ -45,11 +46,9 @@ namespace Slab::Graphics {
          */
         explicit FSlabWindow_ImGuiWrapper(Pointer<FSlabWindow> SlabWindow, Pointer<FImGuiContext> Context);
 
-        void ImmediateDraw(const FPlatformWindow&) override;
-
         auto RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow) -> void override;
 };
 
 } // Slab::Graphics
 
-#endif //STUDIOSLAB_IMGUIWINDOW_H
+#endif //STUDIOSLAB_IMGUI_WINDOW_H

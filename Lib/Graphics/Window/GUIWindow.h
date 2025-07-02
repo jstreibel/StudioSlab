@@ -25,7 +25,7 @@ namespace Slab::Graphics {
         void Begin() const;
         void End() const;
     public:
-        explicit FGUIWindow(FSlabWindowConfig, FImGuiWindowContext WindowContext = FImGuiWindowContext{nullptr});
+        explicit FGUIWindow(FSlabWindowConfig, const FImGuiWindowContext& WindowContext = FImGuiWindowContext{nullptr});
 
         void AddVolatileStat(const Str &stat, FColor color = {-1, -1, -1});
 

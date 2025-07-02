@@ -18,7 +18,7 @@
 
 namespace Slab::Graphics {
 
-    FGUIWindow::FGUIWindow(FSlabWindowConfig config, FImGuiWindowContext WindowContext)
+    FGUIWindow::FGUIWindow(FSlabWindowConfig config, const FImGuiWindowContext& WindowContext)
     : FSlabWindow(std::move(config))
     , WindowContext(WindowContext)
     {
@@ -39,16 +39,7 @@ namespace Slab::Graphics {
         FSlabWindow::RegisterDeferredDrawCalls(PlatformWindow);
 
         Begin();
-        WindowContext.Context->AddDrawCall([this]() {
-            auto Viewport = GetViewport();
-            const auto VpWidth = (float) Viewport.GetWidth(),
-                    VpHeight = (float) Viewport.GetHeight();
-            const auto Vp_x = (float) Viewport.xMin,
-                    Vp_y = (float) Viewport.yMin;
-
-            ImGui::SetWindowPos(ImVec2{Vp_x, Vp_y});
-            ImGui::SetWindowSize(ImVec2{VpWidth, VpHeight});
-
+        WindowContext.Context->AddDrawCall([this] {
             auto Flags = ImGuiTreeNodeFlags_DefaultOpen;
             if (!Stats.empty() && ImGui::CollapsingHeader("Stats", Flags)) {
                 for (const auto &stat: Stats) {
@@ -93,7 +84,7 @@ namespace Slab::Graphics {
             }
 
 
-            if (auto AllInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
+            if (const auto AllInterfaces = Core::FCommandLineInterfaceManager::getInstance().getInterfaces();
                 !AllInterfaces.empty() && ImGui::CollapsingHeader("Interfaces")) {
 
                 for (auto &Interface: AllInterfaces) {
@@ -137,39 +128,26 @@ namespace Slab::Graphics {
     }
 
     void FGUIWindow::Begin() const {
-        WindowContext.Context->AddDrawCall([this]()
+        WindowContext.Context->AddDrawCall([this]
         {
-            ImGui::SetNextWindowPos(
-                ImVec2(static_cast<float>(Get_x()), static_cast<float>(Get_y())),
-                ImGuiCond_Always);
-            ImGui::SetNextWindowSize(
-                ImVec2(static_cast<float>(GetWidth()), static_cast<float>(GetHeight())),
-                ImGuiCond_Always);
-            // ImGui::SetNextWindowFocus();
-            ImGui::SetNextWindowBgAlpha(0.9f);
-
-            bool Open = true;
-            ImGui::Begin("Stats", &Open,
+            ImGui::Begin(WindowContext.WindowId.c_str(), nullptr,
                   ImGuiWindowFlags_NoCollapse
                 | ImGuiWindowFlags_NoResize
                 | ImGuiWindowFlags_NoMove
                 | ImGuiWindowFlags_NoTitleBar
                 // | ImGuiWindowFlags_NoBringToFrontOnFocus
                 );
+
+            // ImGui::Begin(WindowContext.WindowId.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
         });
     }
 
-    void FGUIWindow::End() const {
-        WindowContext.Context->AddDrawCall([]()
-        {
-            ImGui::End();
-        });
-    }
+    void FGUIWindow::End() const { WindowContext.Context->AddDrawCall([] { ImGui::End(); }); }
 
-    void FGUIWindow::AddExternalDraw(const FDrawCall& draw) const
+    void FGUIWindow::AddExternalDraw(const FDrawCall& Draw) const
     {
         this->Begin();
-        WindowContext.Context->AddDrawCall(draw);
+        WindowContext.Context->AddDrawCall(Draw);
         this->End();
     }
 

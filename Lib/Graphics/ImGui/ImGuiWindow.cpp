@@ -33,17 +33,8 @@ namespace Slab::Graphics {
             this->Context = DynamicPointerCast<FImGuiContext>(GUIContext);
         }
 
-        // this->SlabWindow->SetClear(false);
-        // this->SlabWindow->SetDecorate(false);
-    }
-
-    void FSlabWindow_ImGuiWrapper::ImmediateDraw(const FPlatformWindow& PlatformWindow) {
-        // This should be called in case of a local context, which is not the case
-        // Context->NewFrame();
-
-        // Context->Render();
-
-        // FSlabWindow::Draw();
+        this->SlabWindow->SetClear(false);
+        this->SlabWindow->SetDecorate(false);
     }
 
     void FSlabWindow_ImGuiWrapper::RegisterDeferredDrawCalls(const FPlatformWindow& PlatformWindow)
