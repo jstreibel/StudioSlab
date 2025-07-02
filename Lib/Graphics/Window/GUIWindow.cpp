@@ -132,9 +132,9 @@ namespace Slab::Graphics {
         {
             ImGui::Begin(WindowContext.WindowId.c_str());
 
+            auto Flags = ImGuiChildFlags_Border; //ImGuiChildFlags_FrameStyle;
             ImGui::BeginChild("##LeftPane",
-                ImVec2(this->GetWidth(), this->GetHeight()),
-                ImGuiChildFlags_FrameStyle);
+                ImVec2(this->GetWidth(), this->GetHeight()), Flags);
         });
     }
 
