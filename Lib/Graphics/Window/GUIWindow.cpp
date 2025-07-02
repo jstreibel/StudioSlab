@@ -130,19 +130,22 @@ namespace Slab::Graphics {
     void FGUIWindow::Begin() const {
         WindowContext.Context->AddDrawCall([this]
         {
-            ImGui::Begin(WindowContext.WindowId.c_str(), nullptr,
-                  ImGuiWindowFlags_NoCollapse
-                | ImGuiWindowFlags_NoResize
-                | ImGuiWindowFlags_NoMove
-                | ImGuiWindowFlags_NoTitleBar
-                // | ImGuiWindowFlags_NoBringToFrontOnFocus
-                );
+            ImGui::Begin(WindowContext.WindowId.c_str());
 
-            // ImGui::Begin(WindowContext.WindowId.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+            ImGui::BeginChild("##LeftPane",
+                ImVec2(this->GetWidth(), this->GetHeight()),
+                ImGuiChildFlags_FrameStyle);
         });
     }
 
-    void FGUIWindow::End() const { WindowContext.Context->AddDrawCall([] { ImGui::End(); }); }
+    void FGUIWindow::End() const
+    {
+        WindowContext.Context->AddDrawCall([]
+        {
+            ImGui::EndChild();
+            ImGui::End();
+        });
+    }
 
     void FGUIWindow::AddExternalDraw(const FDrawCall& Draw) const
     {
